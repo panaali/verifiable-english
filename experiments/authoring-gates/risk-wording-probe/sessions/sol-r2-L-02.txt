@@ -1,0 +1,129 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.
+(b) Yes: crossing between parked cars is dangerous.
+(c) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.
+(d) The text does not say.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift certainly leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall happens in every case the text allows.
+(b) A fall usually happens, but not in every case.
+(c) No fall happens: a robot is safe inside a lift.
+(d) The text does not say.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An agent prevents a harm by taking an action that cannot lead to the harm.
+By default, an action may be performed.
+
+The actions available to the agent are running the job and running the job with a memory limit. Running the job leads to data loss. Running the job with a memory limit might lead to data loss. Running the job with a memory limit might not lead to data loss.
+Rule 1. Every agent must prevent data loss.
+
+According to the text, which of the agent's actions fulfils Rule 1?
+(a) Running the job with a memory limit.
+(b) The text does not say.
+(c) Running the job.
+(d) Neither action.
+
+Text 4
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) No dizziness happens, because the patient does not weigh less than 50 kilograms.
+(b) Dizziness happens.
+(c) The text does not say.
+
+Text 5
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(b) Giving drug B leads to a fever in every case the text allows.
+(c) The text does not say.
+(d) In no case the text allows does giving drug B lead to a fever.
+
+Text 6
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+
+An agent can run the job or do nothing. Running the job might not lead to a server outage.
+
+What does the second sentence tell you?
+(a) If the agent runs the job, a server outage happens in no case the text allows.
+(b) In at least one case the text allows, the agent runs the job and no server outage happens.
+(c) A server outage is unlikely if the agent runs the job.
+(d) The text does not say.
+
+Text 7
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 50 kilograms. The weight of the patient is at most 90 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 52 kilograms. Giving the full dose might lead to dizziness.
+
+What does the last sentence tell you?
+(a) Dizziness is not ruled out if the clinic gives the full dose.
+(b) Dizziness happens in every case the text allows if the clinic gives the full dose.
+(c) The text does not say.
+(d) Dizziness is likely if the clinic gives the full dose.
+
+Text 8
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the clinic are giving the patient drug A and giving the patient drug B. Giving drug A allows a rash to happen.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in every case the text allows.
+(c) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in at least one case the text allows.
+(d) The clinic is permitted to let a rash happen when it gives drug A.
