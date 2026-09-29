@@ -413,14 +413,14 @@ Nothing in the harness reads `key` fields. A test will strip them from
     `income_based_jsa`.
 - **Predicates.**
   - Facts: `partner_of`, `lives_with`, `paid_for_week(person, benefit)`,
-    `relevant(benefit)`, `in_care_setting`, `inpatient`,
+    `relevant(benefit)`, `in_care_setting`, `care_ended`, `inpatient`,
     `in_custody_under_sentence`, `ever_resident_ew`, `remains_resident_ew`,
     `moved_to_scotland_or_ni`, `claimed`, `paid_without_claim`.
   - Derived: `reached_pa`, `reached_80`, `resident_in_week`, `has_rb`,
     `in_residential_care`, `excluded`, `entitled`, `recovered`.
 - **Integer constants, per role r ∈ {applicant, housemate}.**
   - `day`: `r_pa_date`, `r_eightieth`, `r_ew_from`, `r_ew_last_day`,
-    `r_scot_ni_from`, `r_care_from`, `r_admitted`, `r_treatment_start`,
+    `r_scot_ni_from`, `r_care_from`, `r_care_until`, `r_admitted`, `r_treatment_start`,
     `r_discharged`, `r_custody_from`, `r_release`, `r_claim_date`.
   - `elapsed_day`: `r_care_before_week` and `r_treatment_before_week`.
   - `gbp_penny`: `r_income`.
@@ -441,8 +441,12 @@ and `["decimal", "gbp_penny", …]`):
   fact is either an equality or a `date_no_later` bound (B2).
 - **R3:** `resident_in_week(r) ⇔ ever_resident_ew(r) ∧ date_no_later(r_ew_from, 2026-09-27) ∧ (remains_resident_ew(r) ∨ ¬date_before(r_ew_last_day, 2026-09-21))`.
 - **R5:** `in_care_setting(r) → elapsed_days(r_care_from, 2026-09-21, r_care_before_week)`,
-  and `in_residential_care(r) ⇔ in_care_setting(r) ∧ r_care_before_week ≥ 84 elapsed days`.
-  Every care stay in the profiles runs through QW.
+  and `in_residential_care(r) ⇔ in_care_setting(r) ∧ r_care_before_week ≥ 84 elapsed days ∧ (¬care_ended(r) ∨ date_no_later(2026-09-27, r_care_until))`.
+  A stay with a last day (`care.until`, fact `care_ended` and constant
+  `r_care_until`) lasts throughout QW only if that day is no earlier than QW₁.
+  The first translation left this bound out and read no end date (eligibility
+  recheck). Every profile field is now either carried by a fact or listed
+  with a reason as unread (`home`, O7), and the builder rejects any other field.
 - **R8:**
   - `inpatient(r) → shift_days(r_treatment_start, r_admitted, 1)`, the day
     after admission, by S3 reg. 2(5);
@@ -616,9 +620,11 @@ each.
 | M21: R11 without the QW₀ bound of AR6 | B16 |
 | M22: R11 without the E&W-start bound of AR6 | B19 |
 | M23: R6 also requiring the other person out of residential care (the first run's reading) | B17, B18 |
+| M24: R5 without the care end date (the reading before the recheck) | B20, B21, B22, B23, C25, C27 |
+| M25: R5 with the care end date strictly after QW₁ | C26 |
 
-Kill rate = mutants killed / 23; 23/23 is expected. (M20 to M23 were added by
-the eligibility review; the first run had M1 to M19.)
+Kill rate = mutants killed / 25; 25/25 is expected. (M20 to M23 were added by
+the eligibility review and M24, M25 by the recheck; the first run had M1 to M19.)
 
 **Gates.** Every command runs in the foreground with
 `PATH=~/.elan/bin:$PATH`:
