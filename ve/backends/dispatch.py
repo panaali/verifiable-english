@@ -6,6 +6,8 @@ selected Lean or Rust authority never falls back to Python.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
 import hashlib
 import json
 import os
@@ -13,7 +15,7 @@ from pathlib import Path
 import threading
 import time
 from dataclasses import asdict, is_dataclass
-from typing import Callable, TypeVar
+from typing import Callable, Iterator, TypeVar
 
 from .lean_service import CheckerUnavailable
 
@@ -25,7 +27,37 @@ _log_lock = threading.Lock()
 observers: list[Callable[[str, str], None]] = []
 
 
+# The authority of every call inside an adapter that composes other operations
+# (`pinned`); None outside one.
+_pin: ContextVar[str | None] = ContextVar("ve_authority_pin", default=None)
+
+
+@contextmanager
+def pinned(authority: str) -> Iterator[None]:
+    """Run a composing adapter's constituents on `authority`, whatever the
+    per-operation selection: the adapter's verdict then rests on that backend's
+    checks only, never on a constituent another override sent to Python."""
+    if authority not in _AUTHORITIES - {"shadow"}:
+        raise ValueError(f"invalid pinned authority {authority!r}")
+    token = _pin.set(authority)
+    try:
+        yield
+    finally:
+        _pin.reset(token)
+
+
+def composed(authority: str, run: Callable[[], T]) -> Callable[[], T]:
+    """`run` with its constituents pinned to `authority` (an adapter for `execute`)."""
+    def adapter() -> T:
+        with pinned(authority):
+            return run()
+    return adapter
+
+
 def authority_for(op: str) -> str:
+    pin = _pin.get()
+    if pin is not None:
+        return pin
     selected = os.environ.get("VE_AUTHORITY", "python")
     for entry in filter(None, os.environ.get("VE_AUTHORITY_OVERRIDES", "").split(",")):
         name, sep, authority = entry.partition("=")

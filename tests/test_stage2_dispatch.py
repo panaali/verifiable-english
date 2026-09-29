@@ -98,3 +98,48 @@ def test_lean_label_adapter_keeps_value_and_diagnostic(monkeypatch):
     with pytest.raises(AdmissionError) as candidate:
         validate_label("bad label")
     assert candidate.value.code == original.value.code
+
+
+def test_pinned_constituents_ignore_per_operation_overrides(monkeypatch):
+    from ve.backends import dispatch
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "certificate_replay=python")
+    with dispatch.pinned("lean"):
+        assert authority_for("certificate_replay") == "lean"
+        with dispatch.pinned("rust-experimental"):
+            assert authority_for("evaluate") == "rust-experimental"
+        assert authority_for("evaluate") == "lean"
+    assert authority_for("certificate_replay") == "python"
+    with pytest.raises(ValueError):
+        with dispatch.pinned("shadow"):
+            pass
+
+
+@pytest.mark.parametrize("op", ["premise_status", "compare"])
+def test_composing_adapters_check_their_constituents_on_lean(monkeypatch, op):
+    """An override selecting only the composing operation still puts every
+    certificate replay and model check under it on Lean."""
+    from ve.ast import Bottom, Const, Not, Top, Unary
+    from ve.backends import dispatch
+    from ve.equivalence import Budgets, compare
+    from ve.vacuity import premise_status
+    from tests.probe_matrix import raw_environment
+    from ve.environment import Environment
+    env = Environment(raw_environment(()))
+    atom = Unary("base", Const("x"))
+    calls = {
+        "premise_status": lambda: [premise_status(env, (atom, Not(atom)), max_proof_steps=64),
+                                   premise_status(env, (atom,), max_proof_steps=64)],
+        "compare": lambda: [compare(env, Top(), Bottom(), Budgets(64, 1, 4, 64)),
+                            compare(env, atom, atom, Budgets(64, 1, 4, 64))],
+    }
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = calls[op]()
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{op}=lean,certificate_replay=python,countermodel_check=python")
+    assert calls[op]() == expected
+    assert (op, "lean") in seen
+    assert {"certificate_replay", "countermodel_check"} <= {name for name, authority in seen
+                                                            if authority == "lean"}
+    assert not [name for name, authority in seen if authority == "python"]
