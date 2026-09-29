@@ -216,8 +216,12 @@ def write_result(path: Path, result: dict) -> None:
 
 
 def source_identity(env: dict[str, str]) -> tuple[str, bool]:
-    sha = command(["git", "rev-parse", "HEAD"], cwd=ROOT, env=env, stage="commit")
-    dirty = bool(command(["git", "status", "--porcelain", "--untracked-files=all"], cwd=ROOT,
+    # Repository config can make status trust cached filesystem state instead
+    # of the worktree: an fsmonitor hook or a stale untracked cache hides edits.
+    git = ["git", "--no-optional-locks", "-c", "core.fsmonitor=false",
+           "-c", "core.untrackedCache=false"]
+    sha = command([*git, "rev-parse", "HEAD"], cwd=ROOT, env=env, stage="commit")
+    dirty = bool(command([*git, "status", "--porcelain", "--untracked-files=all"], cwd=ROOT,
                          env=env, stage="worktree status"))
     return sha, dirty
 
