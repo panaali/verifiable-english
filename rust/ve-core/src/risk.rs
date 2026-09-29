@@ -3,7 +3,7 @@
 //! admits a decision nor certifies a policy verdict.
 use crate::{Error, Result, error};
 use num_bigint::{BigInt, Sign};
-use serde_json::Value;
+use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug)]
@@ -210,6 +210,79 @@ pub fn evaluate_risk_condition(value: &Value, ranges: &BTreeMap<String, Range>,
     Ok(evaluate(&tree, ranges))
 }
 
+/// Regenerate marginal `might` and `leads` cells from admitted source sides.
+/// This accepts a prepared differential input, not a raw decision or policy.
+/// The Lean route remains responsible for authentication and all verdicts.
+pub fn regenerate_risk_cells(input: &Value, ranges: &BTreeMap<String, Range>,
+                             scales: &BTreeMap<String, BigInt>) -> Result<Value> {
+    let object = input.as_object().ok_or_else(|| Error::new("InvalidInput", "risk cells"))?;
+    let names = |key| -> Result<Vec<String>> {
+        object.get(key).and_then(Value::as_array)
+            .ok_or_else(|| Error::new("InvalidInput", format!("risk {key}")))?
+            .iter().map(|item| item.as_str().map(str::to_owned)
+                        .ok_or_else(|| Error::new("InvalidInput", format!("risk {key}"))))
+            .collect()
+    };
+    let actions = names("alternatives")?;
+    let harms = names("harms")?;
+    if actions.len() > 16 || harms.len() > 32 {
+        return error("ResourceLimit", "risk cells");
+    }
+    let classes = object.get("classes").and_then(Value::as_object)
+        .ok_or_else(|| Error::new("InvalidInput", "risk classes"))?;
+    let always: BTreeSet<_> = names("always_possible")?.into_iter().collect();
+    let unexamined = object.get("unexamined")
+        .ok_or_else(|| Error::new("InvalidInput", "risk unexamined"))?;
+    if unexamined != "possible" && unexamined.get("ruled_out_by").and_then(Value::as_str).is_none() {
+        return error("InvalidInput", "risk unexamined");
+    }
+    let sources = object.get("cells").and_then(Value::as_array)
+        .ok_or_else(|| Error::new("InvalidInput", "risk cells"))?;
+    let mut by_cell = BTreeMap::new();
+    for source in sources {
+        let action = source.get("action").and_then(Value::as_str)
+            .ok_or_else(|| Error::new("InvalidInput", "risk cell action"))?;
+        let harm = source.get("harm").and_then(Value::as_str)
+            .ok_or_else(|| Error::new("InvalidInput", "risk cell harm"))?;
+        if !actions.iter().any(|name| name == action) || !harms.iter().any(|name| name == harm) {
+            return error("UnknownSymbol", format!("risk cell {action}/{harm}"));
+        }
+        if by_cell.insert((action, harm), source).is_some() {
+            return error("RiskTwoSources", format!("{action}/{harm}"));
+        }
+    }
+    let top = json!(["top"]);
+    let bottom = json!(["bottom"]);
+    let mut rows = Vec::new();
+    for action in &actions {
+        for harm in &harms {
+            let source = by_cell.get(&(action.as_str(), harm.as_str())).copied();
+            let addressed = source.is_some();
+            let sufficient = source.and_then(|s| s.get("sufficient")).unwrap_or(&bottom);
+            let default_possible = unexamined == "possible" || classes.get(harm)
+                .and_then(Value::as_str).is_some_and(|klass| always.contains(klass));
+            let unaddressed_necessary = if default_possible { &top } else { &bottom };
+            let necessary = source.and_then(|s| s.get("necessary"))
+                .unwrap_or(if addressed { &top } else { unaddressed_necessary });
+            if sufficient != necessary {
+                let inconsistency = json!(["and", sufficient, ["not", necessary]]);
+                if evaluate_risk_condition(&inconsistency, ranges, scales)?.0 {
+                    return error("SufficientOutsideNecessary", format!("{action}/{harm}"));
+                }
+            }
+            let leads = evaluate_risk_condition(sufficient, ranges, scales)?.1;
+            let might = evaluate_risk_condition(necessary, ranges, scales)?.0;
+            if source.and_then(|s| s.get("stated_might")).and_then(Value::as_bool) == Some(true)
+                && !might {
+                return error("RiskInconsistent", format!("{action}/{harm}"));
+            }
+            rows.push(json!({"action":action,"harm":harm,"might":might,"leads":leads,
+                             "unexamined":!addressed}));
+        }
+    }
+    Ok(json!(rows))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -239,5 +312,21 @@ mod tests {
             ["lt", ["quantity", "q"], one]]), &box_, &scales).unwrap_err().code, "RiskConditionShared");
         assert_eq!(evaluate_risk_condition(&json!(["eq", ["scale", "count", "2", q], zero]),
                                            &box_, &scales).unwrap_err().code, "RiskEqualityCoefficient");
+    }
+
+    #[test]
+    fn source_defaults_and_precaution_are_marginal() {
+        let ranges = BTreeMap::from([("q".into(), Range { tag: "count".into(), lo: 0.into(), hi: 1.into() })]);
+        let scales = BTreeMap::from([("count".into(), 1.into())]);
+        let record = json!({"alternatives":["run","wait"],"harms":["outage"],
+            "classes":{"outage":"severe"},"always_possible":["severe"],
+            "unexamined":{"ruled_out_by":"team"},
+            "cells":[{"action":"run","harm":"outage",
+                "necessary":["lt",["quantity","q"],["decimal","count","1"]]}]});
+        let rows = regenerate_risk_cells(&record, &ranges, &scales).unwrap();
+        assert_eq!(rows[0]["might"], true);
+        assert_eq!(rows[0]["leads"], false);
+        assert_eq!(rows[1]["might"], true);
+        assert_eq!(rows[1]["unexamined"], true);
     }
 }
