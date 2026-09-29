@@ -12,6 +12,7 @@ rejected by both certificate checkers.
 from __future__ import annotations
 
 import json
+import os
 import random
 import shutil
 from subprocesses import HANG_TIMEOUT
@@ -179,7 +180,7 @@ def test_sparse_defined_table_candidate_boundary(size):
         result = _run([str(LEAN), "route", "-"], [
             {"id": "sparse", "kind": "evaluate", "environment": env, "model": model, "ast": ast}])[0]
         assert result.get("values") == [True], result
-    rust = ROOT / "rust/target/release/ve"
+    rust = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
     if rust.exists():
         result = _run([str(rust), "conformance"], [
             {"id": "sparse", "environment": env, "model": model, "ast": ast}])[0]
@@ -203,7 +204,7 @@ def test_populated_defined_table_limit_boundary():
         result = _run([str(LEAN), "route", "-"], [
             {"id": "full", "kind": "evaluate", "environment": env, "model": model, "ast": [["top"]]}])[0]
         assert result["status"] == "error" and "ResourceLimit" in result["error"], result
-    rust = ROOT / "rust/target/release/ve"
+    rust = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
     if rust.exists():
         result = _run([str(rust), "conformance"], [
             {"id": "full", "environment": env, "model": model, "ast": [["top"]]}])[0]
@@ -235,21 +236,25 @@ def test_python_and_lean_elaborate_identically(generated):
 
 
 def test_rust_computes_the_same_tables(generated):
-    cargo = shutil.which("cargo")
-    if not cargo:
-        pytest.skip("cargo is not available")
     import os
-    env_vars = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
-    built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
-                            str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env_vars, capture_output=True,
-                           text=True, timeout=HANG_TIMEOUT)
-    assert built.returncode == 0, built.stderr
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert Path(os.environ["VE_RUST_BINARY"]).is_file(), "gate Rust build missing"
+    else:
+        cargo = shutil.which("cargo")
+        if not cargo:
+            pytest.skip("cargo is not available")
+        env_vars = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+        built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
+                                str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env_vars, capture_output=True,
+                               text=True, timeout=HANG_TIMEOUT)
+        assert built.returncode == 0, built.stderr
     requests, expected = [], []
     for index, env, model, _, _ in generated:
         ast = probes(env)
         requests.append({"id": f"ev{index}", "environment": env, "model": model, "ast": ast})
         expected.append(_python(env, model, ast)[1])
-    results = _run([str(ROOT / "rust/target/release/ve"), "conformance"], requests)
+    results = _run([os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")),
+                    "conformance"], requests)
     for values, result in zip(expected, results, strict=True):
         assert result.get("values") == values, result
 

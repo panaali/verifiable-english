@@ -1,4 +1,5 @@
 import VE.Norms.Admission
+import VE.Route.Run
 
 /-! The `ve_norms_route` executable (docs/spec/norms.md 11.4), invoked as
 `lean/.lake/build/bin/ve_norms_route <cases.json|->`. Each case is

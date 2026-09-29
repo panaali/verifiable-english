@@ -1,13 +1,9 @@
-"""Hash test for PLAN-EXPAND2 3.10(1): the v0, closure and order Lean sources
-and the existing `Main.lean` subcommands are unchanged by the route.
+"""Hash test for trusted Lean sources through migration stage 1.
 
 Usage (from lean/): python3 VE/Route/frozen.py        exits 0 iff unchanged.
-`frozen-sources.sha256` lists every Lean source file of the base commit that
-P0-Lean did not edit (the v0, closure, order, bridge and surface files, among
-others). The files P0-Lean edits are exactly: VE/ClaimGraph.lean (the label
-field), VE/GraphChecks.lean and VE/TableauChecks.lean (structure-instance
-syntax for the labelled Claim), VE/Audit.lean and VE.lean (imports and audit
-entries), Main.lean (one import and the `route` dispatch line), and VE/Route/*.
+`frozen-sources.sha256` lists every `VE/*.lean` module at stage 1,
+including the audit manifest, service protocol and generated English runner
+copy. New modules must be added to the manifest before this check passes.
 `Main.lean` with those two lines removed must hash to the base file.
 """
 import hashlib
@@ -23,11 +19,18 @@ ROUTE_LINES = ("import VE.Route.Run\n",
 
 def main():
     bad = []
+    recorded = set()
     for line in (HERE / "frozen-sources.sha256").read_text().splitlines():
         expected, name = line.split(maxsplit=1)
+        recorded.add(name)
         actual = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
         if actual != expected:
             bad.append(name)
+    trusted = {str(path.relative_to(ROOT)) for path in (ROOT / "VE").rglob("*.lean")}
+    for name in sorted(trusted - recorded):
+        bad.append(f"unlisted trusted module: {name}")
+    for name in sorted(recorded - trusted):
+        bad.append(f"obsolete trusted module: {name}")
     text = (ROOT / "Main.lean").read_text()
     for route_line in ROUTE_LINES:
         if text.count(route_line) != 1:

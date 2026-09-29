@@ -14,6 +14,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from subprocesses import HANG_TIMEOUT
 
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
@@ -27,11 +28,14 @@ from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
-RUST = ROOT / "rust/target/release/ve"
+RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
 
 
 @pytest.fixture(scope="module")
 def lean_executable():
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        assert LEAN.is_file(), f"gate Lean build missing: {LEAN}"
+        return LEAN
     if not LEAN.exists():
         lake = shutil.which("lake")
         if lake is None:
@@ -44,6 +48,9 @@ def lean_executable():
 
 @pytest.fixture(scope="module")
 def rust_executable():
+    if os.environ.get("VE_RUST_PREBUILT"):
+        assert RUST.is_file(), f"gate Rust build missing: {RUST}"
+        return RUST
     cargo = shutil.which("cargo")
     if cargo is None:
         pytest.skip("cargo is required for the W1 wire gate")
@@ -59,7 +66,7 @@ def rust_executable():
 def run(executable, cases):
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
     result = subprocess.run(command, input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=180)
+                            text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -109,6 +116,58 @@ def test_noninitial_subject_act_rejected_across_languages(lean_executable, rust_
     rust_result = run(rust_executable, [{"id": "act", "environment": raw, "ast": []}])[0]
     assert "invalid act phrase" in lean_result["error"]
     assert "invalid act phrase" in rust_result["error"]["message"]
+
+
+def _unit(name, guard=("top",), unless=(), sign=True):
+    return {"norm": {"name": name, "predicate": "permitted", "sign": sign, "guard": list(guard),
+                     "unless": [list(u) for u in unless], "over": []}}
+
+
+def _tree(times):
+    """A balanced `and` tree of 2 ** (times + 1) - 1 nodes."""
+    tree = ["top"]
+    for _ in range(times):
+        tree = ["and", tree, tree]
+    return tree
+
+
+@pytest.mark.parametrize("label,edit", [
+    ("missing", lambda preds: preds["required"]["regulated"].update(permission="missing")),
+    ("undeclared", lambda preds: preds["required"]["regulated"].pop("permission")),
+    ("act", lambda preds: preds["permitted"]["regulated"].update(act="{0} be seen")),
+])
+def test_permission_duals_are_declaration_checks_across_languages(lean_executable, label, edit):
+    """W1's dual checks run with the declarations, before any norm unit is read."""
+    raw = environment({"permitted": permission(), "required": obligation()}).to_dict()
+    edit(raw["vocabulary"]["predicates"])
+    units = [_unit("a", sign="yes")]
+    with pytest.raises(VEError) as python_error:
+        NormDocument(Environment(raw), units)
+    row = run(lean_executable, [{"id": label, "kind": "norms-elaborate", "environment": raw,
+                                 "norms": units}])[0]
+    assert row["status"] == "error"
+    assert row["error"] == str(python_error.value)
+
+
+@pytest.mark.parametrize("label,units,accepted", [
+    # Python's decoder: one budget per norm unit, guard then carve-outs.
+    ("guard", [_unit("a", _tree(13))], False),
+    ("guard-and-carve-out", [_unit("a", _tree(12), [_tree(11)])], False),
+    # Python's checker: one budget over every rule of the document.
+    ("document", [_unit(f"r{i}", _tree(11)) for i in range(3)], False),
+    ("within", [_unit("a", _tree(12), [_tree(9)]), _unit("b", _tree(8), sign=False)], True),
+])
+def test_node_budgets_match_python(lean_executable, label, units, accepted):
+    env = environment({"permitted": permission()})
+    row = run(lean_executable, [{"id": label, "kind": "norms-elaborate",
+                                 "environment": env.to_dict(), "norms": units}])[0]
+    if accepted:
+        NormDocument(env, units)
+        assert row["status"] == "ok", row
+    else:
+        with pytest.raises(VEError, match="AST exceeds"):
+            NormDocument(env, units)
+        assert row["status"] == "error" and "AST exceeds" in row["error"], row
 
 
 # Every separator of Python's no-argument `str.split()` (str.isspace).

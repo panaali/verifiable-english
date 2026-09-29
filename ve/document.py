@@ -9,8 +9,10 @@ from __future__ import annotations
 
 import json
 import hashlib
+import re
 from pathlib import Path
 
+from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
 from .environment import Environment
@@ -74,13 +76,14 @@ def _split(raw: bytes):
     if type(meta) is not dict or meta.get("format") != "ve-document@1":
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
-               "narrowings", "weights", "graph", "lemmas"}
+               "narrowings", "weights", "graph", "lemmas", "contexts", "assessments",
+               "bridges", "scoped"}
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     return meta, *_body(raw[boundary + 5:])
 
 
-def _meaning(value, open_names):
+def _meaning(value, open_names, *, reports=False):
     if value == "specified":
         return "specified"
     if type(value) is not dict or len(value) != 1:
@@ -88,28 +91,69 @@ def _meaning(value, open_names):
     status, detail = next(iter(value.items()))
     if status == "contextual" and type(detail) is str and detail:
         return status
-    if status == "open" and type(detail) is list and detail and all(type(x) is str for x in detail) and set(detail) <= open_names:
+    # Each name is declared or, under reports@0, shaped as a generated one; the
+    # reports layer then checks it against the names the document generates.
+    if status == "open" and type(detail) is list and detail and all(
+            type(x) is str and (x in open_names or reports and re.fullmatch(r"reports__(?:may|probably)__[1-9][0-9]*", x))
+            for x in detail):
         return status
     if status == "unformalised" and token(detail):
         return status
     raise VEError("invalid meaning status")
 
 
-def _content(env, unit, fences):
+def _quantity_content(env, unit, content, fences):
+    """W6 content: every statement is an annotated quantity admitted before
+    erasure. Legacy `ast` content is dimensionless source input; a fence goes
+    through the whole-grammar all-derivations gate (`parse_w6_sentence`)."""
+    from .units import elaborate_quantity, quantity_meaning_id
+    if "quantity" in content:
+        payload = content["quantity"]
+    elif "ast" in content:
+        payload = {"format": "ve-quantity@1", "formula": content["ast"]}
+    elif "fence" in content:
+        if content["fence"] != unit["id"]:
+            raise VEError("unit fence must match its id")
+        if unit["id"] not in fences:
+            raise VEError("missing VE fence")
+        if unit.get("surface") not in ("english", "strict"):
+            raise VEError("fenced content needs english or strict surface")
+        from .surface.time import parse_w6_sentence
+        payload = parse_w6_sentence(env, fences[unit["id"]].strip(), unit["surface"])
+    else:
+        raise VEError("unit content must bind one formula or norm")
+    canonical, _ = elaborate_quantity(env, payload)
+    return canonical, quantity_meaning_id(env, canonical)
+
+
+def _content(env, unit, fences, *, formula_env=None):
+    formula_env = env if formula_env is None else formula_env
     content = unit.get("content")
     if content is None:
         return None
     if type(content) is not dict or len(content) != 1:
         raise VEError("unit content must bind one formula or norm")
+    if env.unit_schema is not None and "norm" not in content:
+        return _quantity_content(env, unit, content, fences)
+    if "quantity" in content:
+        raise VEError("UnsupportedProfile: quantity content requires ve-units@1")
+    if "reports@0" in env.profiles and set(content) & {"report", "assessment", "negated"}:
+        return content, None  # The reports decoder binds its identity after all declarations.
     if "norm" in content:
+        if "soft-norms@0" in env.profiles:
+            from .softnorms import decode_rule, soft_digest
+            canonical = decode_rule(env, content).to_dict()
+            mid = soft_digest(f"ve-meaning-{env.identity_version}\n",
+                              {"environment_id": env.environment_id, "ast": canonical})
+            return canonical, mid
         from .norms import NormDocument
         if "norms@0" not in env.profiles:
             raise VEError("UnsupportedProfile: norms@0 is required")
         rule = NormDocument._decode(content)
         return rule.to_dict(), None
     if "ast" in content:
-        formula = formula_from_data(env, content["ast"])
-        return formula_to_data(env, formula), meaning_id(env, formula)
+        formula = formula_from_data(formula_env, content["ast"])
+        return formula_to_data(formula_env, formula), meaning_id(formula_env, formula)
     if "fence" not in content or content["fence"] != unit["id"]:
         raise VEError("unit fence must match its id")
     if unit["id"] not in fences:
@@ -117,16 +161,30 @@ def _content(env, unit, fences):
     text = fences[unit["id"]]
     if unit.get("surface") == "english":
         from .english import parse_english
-        document = parse_english(env, text)
+        document = parse_english(formula_env, text)
     elif unit.get("surface") == "strict":
         from .parser import parse
-        document = parse(env, text)
+        document = parse(formula_env, text)
     else:
         raise VEError("fenced content needs english or strict surface")
     if len(document.formulas) != 1:
         raise VEError("each VE fence must contain exactly one sentence")
     formula = document.formulas[0]
-    return formula_to_data(env, formula), meaning_id(env, formula)
+    return formula_to_data(formula_env, formula), meaning_id(formula_env, formula)
+
+
+def _wire_unit(unit):
+    """A compiled unit in the reports wire form that Python and Lean both decode.
+
+    Report content is already a wire tree; a compiled formula is the bare AST
+    and goes back into its ``{"ast": ...}`` wrapper (fence text included, since
+    the Lean route decodes no surface text).
+    """
+    content = unit["content"]
+    if content is not None and not (type(content) is dict and set(content) & {"report", "assessment", "negated"}):
+        content = {"ast": content}
+    return {"id": unit["id"], "span": unit["span"], "kind": unit["kind"], "meaning": unit["meaning"],
+            "support": unit["support"], **({"content": content} if content is not None else {})}
 
 
 def _parts(units):
@@ -162,6 +220,12 @@ def _parts(units):
             raise VEError("MIXED parts must partition their parent span")
 
 
+def _soft_contents(units):
+    return [u.get("content") for u in units
+            if type(u) is dict and u.get("kind") == "norm"
+            and type(u.get("content")) is dict and "norm" in u["content"]]
+
+
 def load_document(path: str | Path):
     raw = Path(path).read_bytes()
     meta, source, fences = _split(raw)
@@ -169,11 +233,28 @@ def load_document(path: str | Path):
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
-    env = Environment(meta["environment"])
+    soft_enabled = "soft-norms@0" in meta["environment"].get("profiles", [])
+    if soft_enabled:
+        from .softnorms import SoftEnvironment, check_soft_source
+        if type(meta.get("units")) is list:
+            # The environment and the norm units are one soft source (8).
+            check_soft_source(meta["environment"], _soft_contents(meta["units"]))
+        env = SoftEnvironment(meta["environment"])
+    else:
+        env = Environment(meta["environment"])
+    if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
+        raise VEError("unknown document metadata")
     open_names = validate_open_terms(env, meta.get("open_terms", []))
     units = meta.get("units")
     if type(units) is not list or not units:
         raise VEError("document needs units")
+    soft_document = None
+    formula_env = env
+    if soft_enabled:
+        from .softnorms import SoftNormDocument
+        soft_document = SoftNormDocument(env, _soft_contents(units))
+        formula_env = soft_document.extended_env
+        open_names = set(open_names) | soft_document.extended_env.decision_names
     compiled = []
     unit_ids = set()
     cursor = 0
@@ -202,11 +283,12 @@ def load_document(path: str | Path):
         except UnicodeDecodeError as exc:
             raise VEError("unit span cuts a UTF-8 character") from exc
         cursor = span[1]
-        kind = _check_kind(unit["kind"])
-        status = _meaning(unit["meaning"], open_names)
+        kind = _check_kind(unit["kind"], reports="reports@0" in env.profiles)
+        status = _meaning(unit["meaning"], open_names, reports="reports@0" in env.profiles)
         if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
-        content, mid = _content(env, unit, fences) if unit.get("content") is not None else (None, None)
+        content, mid = (_content(env, unit, fences, formula_env=formula_env)
+                        if unit.get("content") is not None else (None, None))
         is_norm = type(content) is dict and "norm" in content
         if is_norm:
             from .norms import norm_meaning_id, NormDocument
@@ -215,12 +297,14 @@ def load_document(path: str | Path):
                 quoted_norms.append(content)
             elif kind != "norm":
                 raise VEError("norm content requires a norm or quoted kind")
-            mid = norm_meaning_id(env, NormDocument._decode(content))
+            if not soft_enabled:
+                mid = norm_meaning_id(env, NormDocument._decode(content))
+        if (type(kind) is list and kind[0] == "unformalised" and
+                unit["meaning"] != {"unformalised": kind[1]}):
+            raise VEError(f"InvalidInput: unformalised kind reason does not match meaning of {uid}")
         if status == "unformalised" and content is not None:
             raise VEError("unformalised unit cannot assert content")
-        if type(unit["kind"]) is list and unit["kind"][0] == "unformalised" and status != "unformalised":
-            raise VEError("unformalised kind needs unformalised meaning")
-        if "meaning_id" in unit and unit["meaning_id"] != mid:
+        if "meaning_id" in unit and mid is not None and unit["meaning_id"] != mid:
             raise VEError("unit meaning id does not match content")
         explicit_status = unit.get("status")
         if explicit_status is not None and explicit_status not in STATUSES:
@@ -235,12 +319,33 @@ def load_document(path: str | Path):
                          **({"parent_id": parent_id} if parent_id is not None else {})})
     if cursor != len(source):
         raise VEError("unit spans do not partition all source bytes")
+    reports = None
+    if "reports@0" in env.profiles:
+        from .reports import ReportsDocument
+        if meta.get("reading_sets") or meta.get("lemmas"):
+            raise VEError("reports readings and lemma replay await the Lean route")
+        reported = [u for u in compiled if type(u["content"]) is dict
+                    and set(u["content"]) & {"report", "assessment", "negated"}]
+        reports = ReportsDocument(env, meta.get("contexts", []), meta.get("assessments", []),
+                                  [_wire_unit(u) for u in compiled], bridges=meta.get("bridges", []),
+                                  scoped=meta.get("scoped", []), open_terms=sorted(open_names))
+        for u in reported:
+            u["meaning_id"] = reports.meaning_id(u["content"])
+            original = next(raw for raw, _ in _parts(units) if raw["id"] == u["id"])
+            if "meaning_id" in original and original["meaning_id"] != u["meaning_id"]:
+                raise VEError("unit meaning id does not match content")
+        # 6: every unit's status is the meet of its meaning's and every result
+        # nested in its content and kind (an assessment node at any depth is OPEN,
+        # an act outside the slice anywhere in its kind LABELLED, an unformalised
+        # node anywhere in its kind UNFORMALISED).
+        for u, wire in zip(compiled, reports.units):
+            u["status"] = reports.unit_status(wire)
     from .norms import NormDocument
     if set(fences) != {u["id"] for u, _ in _parts(units) if type(u.get("content")) is dict
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    validate_reading_sets(env, reading_sets, unit_ids)
+    validate_reading_sets(formula_env, reading_sets, unit_ids)
     active = active_reading_sets(reading_sets)
     units_by_id = {u["id"]: u for u in compiled}
     for reading_set in active:
@@ -256,12 +361,16 @@ def load_document(path: str | Path):
                   and type(u["content"]) is dict and "norm" in u["content"]]
     quoted_norms.extend(u["content"] for u in norm_units if u["id"] in reading_units)
     if quoted_norms:
-        from .norm_admission import _check_quoted
-        for content in quoted_norms:
-            _check_quoted(env, content)
+        if not soft_enabled:
+            from .norm_admission import _check_quoted
+            for content in quoted_norms:
+                _check_quoted(env, content)
+        # Soft quoted norms were checked as single units by decode_rule above;
+        # they are not members of the active soft document or its layer premises.
     selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units]
     norms = (NormDocument(env, selected_norms)
-             if selected_norms or any(d.regulated is not None for d in env.predicates.values()) else None)
+             if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
+             else None)
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
         raise VEError("lemmas must be a list")
     for u in compiled:
@@ -285,7 +394,8 @@ def load_document(path: str | Path):
                                           allow_nan=False).encode("utf-8")).hexdigest()
     return {"meta": meta, "environment": env, "source": source, "source_id": sid,
             "document_id": document_id,
-            "units": compiled, "norms": norms,
+            "units": compiled, "soft_document": soft_document, "norms": norms,
+            "reports": reports,
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
 
 
@@ -324,7 +434,9 @@ def _assertion_disjunctions(env, sets):
     return result
 
 
-def coverage(doc):
+def coverage(doc, scoped=None):
+    """`scoped`: the reports layer's checked scoped verdicts (`check_document`);
+    without them a scoped check is reported as not replayed."""
     units = doc["units"]
     source = doc["source"]
     kinds = {}
@@ -337,17 +449,127 @@ def coverage(doc):
         if type(u["meaning"]) is dict and "unformalised" in u["meaning"]:
             reason = u["meaning"]["unformalised"]
             reasons[reason] = reasons.get(reason, 0) + 1
+        if doc.get("reports") is not None:
+            # 6: a nested unformalised kind is a part of the unit left unformalised
+            # (the root one needs an unformalised meaning, counted above).
+            from .reports import unformalised_kinds
+            for node in unformalised_kinds(u["kind"]):
+                if node["path"]:
+                    reasons[node["reason"]] = reasons.get(node["reason"], 0) + 1
     meta = doc["meta"]
-    bridge_count = sum(n.get("label", "").startswith("bridge:accepts(")
-                       for n in meta.get("graph", {}).get("nodes", []))
-    residual = {"open_terms": len(meta.get("open_terms", [])),
+    graph = meta.get("graph")
+    nodes = graph.get("nodes") if type(graph) is dict else None
+    labels = [n["label"] for n in nodes if type(n) is dict and type(n.get("label")) is str] \
+        if type(nodes) is list else []
+    residual = {"open_terms": len(meta.get("open_terms", [])) +
+                (len(doc["reports"].open_terms) if doc.get("reports") is not None else 0),
                 "assumptions": sum(u["support"] == "assumption" for u in units),
-                "bridge_leaves": bridge_count,
+                "bridge_leaves": sum(label.startswith("bridge:accepts(") for label in labels),
                 "unresolved_reading_sets": sum(r["status"] == "open" for r in meta.get("reading_sets", []))}
+    lines = {}
+    if doc.get("reports") is not None:
+        # 6: a nested bridge (`bridge:accepts_at`) assumes its payload as a root one
+        # does, and every report or assessment premise is an identified assumption
+        # whatever its support, so each line counts into the total.
+        residual["bridges_nested"] = sum(label.startswith("bridge:accepts_at(") for label in labels)
+        lines = doc["reports"].residual_lines(scoped)
+        residual.update({line: sum(detail.values()) if type(detail) is dict else len(detail)
+                         for line, detail in lines.items()})
+    alternatives = None
+    soft = doc.get("soft_document")
+    environment = doc.get("environment") or (soft.env if soft is not None else None)
+    if environment is not None and environment.alternatives is not None:
+        from .wire import loads_json
+        block = loads_json(environment.alternatives)
+        declared, cells, proximate = [], [], []
+        for unit in units:
+            if unit["kind"] != "asserted":
+                continue
+            content = unit["content"]
+            # Compiled formula content is the AST itself; norm content is a dict.
+            ast = content
+            if type(ast) is not list:
+                continue
+            negative = len(ast) == 2 and ast[0] == "not"
+            atom = ast[1] if negative else ast
+            if type(atom) is not list or len(atom) != 4 or atom[0] != "binary":
+                continue
+            if any(type(term) is not list or len(term) != 2 or term[0] != "const"
+                   for term in atom[2:]):
+                continue
+            first, second = atom[2][1], atom[3][1]
+            leaf = {"unit": unit["id"], "support": unit["support"]}
+            if atom[1] == block["available"] and not negative:
+                declared.append({"action": first, "chooser": second, **leaf})
+            elif atom[1] == block["leads_to"]:
+                cells.append({"action": first, "harm": second, "leads_to": not negative,
+                              "decider": block.get("decided_by", "unstated"), **leaf})
+            elif atom[1] == block.get("proximate") and not negative:
+                proximate.append({"action": first, "harm": second,
+                                  "decider": block.get("decided_by", "unstated"), **leaf})
+        mapped = {item["obligation"] for item in block.get("fulfilments", [])}
+        performed = block.get("performed", {}).get("obligation")
+        unmapped = [name for name, predicate in environment.predicates.items()
+                    if predicate.regulated is not None and predicate.regulated.role == "obligation"
+                    and name != performed and name not in mapped]
+        completion = ({"decider": block["outcomes"]["complete_by"],
+                       "premise": "alternatives:table_complete"}
+                      if type(block["outcomes"]) is dict else None)
+        # Enumerate the named cells for which the general completion premise
+        # supplies a negative answer, excluding every explicitly stated cell.
+        actions = {name for name, const in environment.constants.items()
+                   if const.sort == block["action"]}
+        actions.update(item["action"] for item in declared)
+        harms = {name for name, const in environment.constants.items()
+                 if const.sort == block["harm"]}
+        harms.update(item["harm"] for item in cells)
+        stated = {(item["action"], item["harm"]) for item in cells}
+        assumed = ([{"action": action, "harm": harm, **completion}
+                    for action in sorted(actions) for harm in sorted(harms)
+                    if (action, harm) not in stated] if completion else [])
+        alternatives = {"alternatives_declared": declared, "counterfactual_leaves": cells,
+                        "assumed_harm_free": assumed, "table_complete": completion,
+                        "proximate_judgments": proximate, "unmapped_obligations": unmapped,
+                        "dilemmas": [], "narrowings": meta.get("narrowings", [])}
+        residual.update({"alternatives_declared": len(declared), "counterfactual_leaves": len(cells),
+                         "assumed_harm_free": len(assumed),
+                         "table_complete": int(completion is not None),
+                         "proximate_judgments": len(proximate),
+                         "unmapped_obligations": len(unmapped), "dilemmas": 0,
+                         "narrowings": len(alternatives["narrowings"])})
+    soft = doc.get("soft_document")
+    if soft is not None:
+        decisions = soft.extended_env.decision_names
+        open_pairs = [
+            f"soft:coherence:{left.core.name},{right.core.name}"
+            for left, right in soft.collisions
+            if (left.rank is None or right.rank is None or
+                (left.rank not in soft.env.ranks_above[right.rank] and
+                 right.rank not in soft.env.ranks_above[left.rank]))]
+        residual["default_exceptions"] = sum(r.mode == "default" for r in soft.rules)
+        residual["instruction_switches"] = sum(len(r.alterable) for r in soft.rules)
+        residual["holistic_overrides"] = sum(name.startswith("soft__outweighs__") for name in decisions)
+        residual["weighing_points"] = len(open_pairs)
+        by_decider = {}
+        for rule in soft.rules:
+            if rule.mode == "default":
+                who = (rule.exception or {}).get("decided_by") or soft.env.soft.get("exception_decider") or "unstated"
+                by_decider[who] = by_decider.get(who, 0) + 1
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
             "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
             "unformalised_reasons": reasons,
-            "residual": residual, "residual_total": sum(residual.values())}
+            "residual": residual, "residual_total": sum(residual.values()),
+            **({"residual_lines": lines} if lines else {}),
+            **({"alternatives": alternatives} if alternatives is not None else {}),
+            **({"soft_status": "OPEN" if any(residual[key] for key in
+                ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"))
+                else "CHECKED",
+                "default_exceptions_by_decider": by_decider,
+                "soft_residual_labels": [
+                *sorted(soft.extended_env.decision_names),
+                *open_pairs],
+                "soft_background_labels": [label for label, _ in soft.exception_premises]}
+               if soft is not None else {})}
 
 
 def _check_narrowing_choices(meta, labels):
@@ -366,14 +588,133 @@ def _check_narrowing_choices(meta, labels):
                 raise VEError("reading choice conflicts with narrowing")
 
 
-def check_document(path):
-    doc = load_document(path)
+def quantity_admission_input(doc, active):
+    """The P0-shaped admission input of a quantity document, as sent to Lean
+    `ve_quantity` (case kind `document`). A unit with an active reading set
+    contributes only through readings labels."""
+    active_units = {r["unit"] for r in active}
+    return {"units": [{"id": u["id"], "span": u["span"], "kind": u["kind"],
+                       **({"content": u["content"]}
+                          if u["content"] is not None and u["id"] not in active_units else {})}
+                      for u in doc["units"]],
+            "graph": doc["meta"]["graph"],
+            **({"lemmas": doc["meta"]["lemmas"]} if "lemmas" in doc["meta"] else {}),
+            "open_terms": [o["name"] for o in doc["meta"].get("open_terms", [])],
+            "reading_sets": [{"id": r["id"], "version": r["version"],
+                              "readings": [c["content"] for c in r["readings"]]}
+                             for r in active],
+            "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
+
+
+def _check_quantity_document(doc, active):
+    """`ve document check` on the quantity route: Lean-mirrored admission of the
+    claim graph over annotated statements, then premise status of the
+    regenerated cores in the erased target."""
+    from .units import core_formula, erased_environment
     env = doc["environment"]
+    target = erased_environment(env)
+    result = {"format": "ve-document@1", "source_id": doc["source_id"],
+              "document_id": doc["document_id"],
+              "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
+    if any(c["kind"] != "asserted" or c["content"] is None for r in active for c in r["readings"]):
+        raise VEError("non-assertion reading admission needs an elaborator")
+    active_units = {r["unit"] for r in active}
+    payloads = [u["content"] for u in doc["units"] if u["kind"] == "asserted"
+                and u["content"] is not None and u["id"] not in active_units]
+    if "graph" in doc["meta"]:
+        result["admission"] = admit_document(env, quantity_admission_input(doc, active))
+        labels = [a.get("label") for a in result["admission"]["report"]["assumptions"]]
+        _check_narrowing_choices(doc["meta"], labels)
+        payloads.extend(a["quantity"] for a in result["admission"]["report"]["assumptions"])
+        result["admission"]["core_report_id"] = result["admission"]["report_id"]
+        result["admission"]["report_id"] = digest(
+            f"ve-report-{env.identity_version}\n",
+            {"environment_id": env.environment_id, "document": doc["document_id"],
+             "report": result["admission"]["report"]})
+    premises = [core_formula(env, p)[1] for p in payloads]
+    from .ast import Or
+    for reading_set in active:
+        cores = [core_formula(env, c["content"])[1] for c in reading_set["readings"]]
+        formula = cores[-1]
+        for previous in reversed(cores[:-1]):
+            formula = Or(previous, formula)
+        premises.append(formula)
+    result["premises"] = premise_status(target, premises)
+    if "admission" in result:
+        status = result["premises"]["status"]
+        result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
+                                           False if status == "model" else None)
+    return result
+
+
+@semantic_entry("document.check")
+def check_document(path):
+    from .search import model_search_scope
+    with model_search_scope():
+        return _check_document(path)
+
+
+def _check_document(path):
+    doc = load_document(path)
+    soft = doc["soft_document"]
+    if doc["reports"] is not None:
+        from .reports_route import checked_elaboration, run_case
+        meta = doc["meta"]
+        route_doc = {"units": [_wire_unit(u) for u in doc["units"]],
+                     "contexts": meta.get("contexts", []), "assessments": meta.get("assessments", []),
+                     "bridges": meta.get("bridges", []), "scoped": meta.get("scoped", []),
+                     "open_terms": [o["name"] for o in meta.get("open_terms", [])],
+                     **({"graph": meta["graph"]} if "graph" in meta else {})}
+        environment = meta["environment"]
+        reports = doc["reports"]
+        checked = checked_elaboration(reports, environment, route_doc)
+        # 6: the scoped checks' replayed verdicts, and every unit's and the
+        # document's status as the meet of all nested results, in Python and Lean.
+        replayed = run_case("reports-status", environment, route_doc)
+        statuses = reports.statuses(reports.scoped_verdicts(replayed["scoped"]))
+        if any(replayed.get(key) != statuses[key] for key in ("units", "document_status")):
+            raise VEError("ReportsConformance: Python and Lean differ at statuses")
+        result = {"format": "ve-document@1", "status": "UNVERIFIED",
+                  "source_id": doc["source_id"], "document_id": doc["document_id"],
+                  "coverage": coverage(doc, statuses["scoped"]), "reports": checked,
+                  "statuses": statuses}
+        # 7.1 row 4: P0's premise-set line over Background(E_reports) ++ Γ, where Γ
+        # is the report premises, the author's asserted units and the graph's
+        # admitted leaves, as in the plain W2 path.
+        extended = doc["reports"].extended_environment
+        premises = [formula_from_data(extended, p["ast"]) for p in checked["premises"]]
+        premises += [formula_from_data(extended, ast) for ast in _fixed_premises(doc, [])]
+        if "graph" in route_doc:
+            result["admission"] = run_case("admission", environment, route_doc)
+            premises += [formula_from_data(extended, a["ast"])
+                         for a in result["admission"]["report"]["assumptions"]]
+        result["premises"] = premise_status(extended, premises)
+        status = result["premises"]["status"]
+        if "admission" in result:
+            result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
+                                               False if status == "model" else None)
+            # A status needs an admitted graph over a premise set with a model: an
+            # inconsistent (or undecided) set makes every certificate vacuous.
+            if status == "model":
+                result["status"] = statuses["document_status"]
+        return result
+    env = soft.extended_env if soft is not None else doc["environment"]
+    if env.unit_schema is not None:
+        return _check_quantity_document(doc, active_reading_sets(doc["meta"].get("reading_sets", [])))
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
     result = {"format": "ve-document@1", "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc), "reading_plan": doc["reading_plan"]}
+    if soft is not None:
+        from .soft_route import elaborate_soft_document
+        elaborate_soft_document(soft)
+        result["soft"] = {"environment_id": doc["environment"].environment_id,
+                          "soft_document_hash": soft.document_hash,
+                          "decision_predicates": sorted(soft.extended_env.decision_names),
+                          "background_labels": [label for label, _ in soft.extended_env.soft_premises]}
+        assertions.extend(formula for _, formula in soft.elaborated.premises())
+        assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
     if "graph" in doc["meta"]:
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
@@ -407,7 +748,8 @@ def check_document(path):
                                       if all(c["kind"] == "asserted" and c["content"] is not None
                                              for c in r["readings"])],
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])]}
-        result["admission"] = admit_document(env, admission)
+        result["admission"] = (admit_document(doc["environment"], admission) if soft is not None
+                               else admit_document(env, admission))
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
@@ -427,7 +769,10 @@ def check_document(path):
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
     assertions.extend(_assertion_disjunctions(env, active))
-    if _unresolved_norm_reading(active):
+    if env.alternatives is not None:
+        result["premises"] = {"status": "UNKNOWN",
+                              "reason": "alternatives premise satisfiability requires the alternatives route"}
+    elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     else:
         result["premises"] = premise_status(env, assertions)
@@ -446,10 +791,18 @@ def render_document(path):
     doc = load_document(path)
     lines = []
     from .printer import render
+    render_env = (doc["soft_document"].extended_env if doc["soft_document"] is not None
+                  else doc["environment"])
 
     def wording(ast):
-        formula = formula_from_data(doc["environment"], ast)
-        return render(Document((formula,)), doc["environment"], "ve_english").strip()
+        if doc["environment"].unit_schema is not None:
+            from .surface.time import render_quantity_sentence
+            try:
+                return render_quantity_sentence(doc["environment"], ast)
+            except VEError:
+                return "The checked quantity statement " + json.dumps(ast["formula"]) + "."
+        formula = formula_from_data(render_env, ast)
+        return render(Document((formula,)), render_env, "ve_english").strip()
 
     descriptions = {
         "asserted": "a direct assertion", "norm": "a rule", "definition": "a definition",
@@ -474,6 +827,28 @@ def render_document(path):
         if content is None:
             return f"The passage is recorded as {kind_description(kind)}."
         if type(content) is dict and "norm" in content:
+            if doc["soft_document"] is not None:
+                rule = content["norm"]
+                if rule.get("mode") == "default":
+                    decider = rule["exception"].get("decided_by") or doc["environment"].soft.get("exception_decider")
+                    from .surface.softnorms import rule_paraphrase
+                    role = doc["environment"].predicates[rule["predicate"]].regulated.role
+                    decision_source = (f"an open decision by {decider}" if decider != "unstated"
+                                       else "an open decision whose decider the source does not name")
+                    description = (f"Rule {rule['name']} is a default rule on {rule['predicate']} with sign "
+                                   f"{'positive' if rule['sign'] else 'negative'}. Its exception is {decision_source}; "
+                                   "the rule applies only if that exception does not apply. "
+                                   + rule_paraphrase(rule["name"], "default", role=role, sign=rule["sign"],
+                                                     decider=decider, alterable=rule.get("alterable", ()),
+                                                     rank=rule.get("rank")))
+                else:
+                    description = (f"Rule {rule['name']} is a strict rule on {rule['predicate']} with sign "
+                                   f"{'positive' if rule['sign'] else 'negative'}.")
+                    if rule.get("alterable"):
+                        from .surface.softnorms import rule_paraphrase
+                        description += " " + rule_paraphrase(rule["name"], "strict", alterable=rule["alterable"])
+                return (description if kind == "norm" else
+                        f"{description} The source presents this as {kind_description(kind)}.")
             from .norms import NormDocument
             from .norm_english import render_rule_sentence
             rule = NormDocument._decode(content)
@@ -489,7 +864,11 @@ def render_document(path):
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for u in doc["units"]:
         lines.append(u["source"].strip())
-        prefix = "Checked reading: " if u["content"] is not None else "Recorded meaning: "
+        prefix = ("Open rule reading: " if type(u["content"]) is dict and
+                  "norm" in u["content"] and
+                  (u["content"]["norm"].get("mode") == "default" or
+                   bool(u["content"]["norm"].get("alterable"))) else
+                  "Checked reading: " if u["content"] is not None else "Recorded meaning: ")
         lines.append(prefix + kind_wording(u["kind"], u["content"]))
         reading_set = active_by_unit.get(u["id"])
         if reading_set is not None:

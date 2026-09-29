@@ -7,7 +7,7 @@ import sys
 from .ast import doc_from_json, document_to_data
 from .check import check
 from .environment import Environment
-from .errors import ResourceLimit, VEError
+from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .fol import document_from_named_fol
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 from .model import FiniteModel
@@ -33,7 +33,20 @@ def _emit(value):
     print(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False))
 
 
+EXIT_CHECKER_UNAVAILABLE = 5
+
+
 def main(argv=None):
+    """Exit codes: 0 success, 1 violated, 2 invalid input, 3 not found,
+    4 resource limit, 5 checker unavailable (operational, never a verdict)."""
+    try:
+        return _main(argv)
+    except CheckerUnavailable as exc:
+        _emit({"status": "CheckerUnavailable", "error": exc.to_dict()})
+        return EXIT_CHECKER_UNAVAILABLE
+
+
+def _main(argv=None):
     argv = sys.argv[1:] if argv is None else list(argv)
     if argv[:1] == ["assist"]:
         from .assist.cli import main as assist_main

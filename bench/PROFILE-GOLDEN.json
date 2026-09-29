@@ -1,0 +1,46 @@
+{
+  "documents": {
+    "/home/seyran/code/ve-bluedot/usecases/bluedot-grant/document.ve.md": {
+      "input_sha256": "35dc211fa21e6085947688ddcf6d7b79341a8c34329f23c280eb92a4e83a9420",
+      "output_sha256": "af218071aa281cdfd334dcc2171fecafbcaf7f86095f88d2c7c60e24ee6f3e6a"
+    },
+    "/home/seyran/code/ve-pilot-20260926T2321Z/usecases/claude-constitution-pilot/run-20260926T2321Z/translation.ve.md": {
+      "input_sha256": "475c67ae4936e911d4b9accc98d7703ff5e9123967df99d8845c02de49ecbb72",
+      "output_sha256": "6df2c5cec7750619b0fa047fac744961c918c4e9a60b0f3f40adcc712b4515c0"
+    },
+    "/home/seyran/code/ve-pilot-20260927T0407Z/usecases/claude-constitution-pilot/run-20260927T0407Z/translation.ve.md": {
+      "input_sha256": "475c67ae4936e911d4b9accc98d7703ff5e9123967df99d8845c02de49ecbb72",
+      "output_sha256": "6df2c5cec7750619b0fa047fac744961c918c4e9a60b0f3f40adcc712b4515c0"
+    },
+    "/home/seyran/code/ve-pilot-20260927T0600Z/usecases/claude-constitution-pilot/run-20260927T0600Z/translation.ve.md": {
+      "input_sha256": "5fc671178092dcf5ad5dcb5859ca96083f9483877903017226f9f2110056a640",
+      "output_sha256": "6fda04043f926512ebb905b6f42e7689292ebf3326ecac5ce28eaab89055f792"
+    },
+    "/home/seyran/code/ve-pilot-20260927T1800Z/usecases/claude-constitution-pilot/run-20260927T1800Z/translation.ve.md": {
+      "input_sha256": "f9147016532bfc89eac68332881b01472c8a53762b53b6c8ef417539da174ea5",
+      "output_sha256": "c227b673ee388d195c33a6b2704e87cfb98f2fe37386068b662f8120194c1699"
+    },
+    "/home/seyran/code/ve-pilot-20260928T0600Z/usecases/claude-constitution-pilot/run-20260928T0600Z/translation.ve.md": {
+      "input_sha256": "038c04cb9d7a6d21f457b4d6b7c2784e0f6c4f50a9c9ce5dcc3419025731f6bc",
+      "output_sha256": "6addc1323868b66c394fbb208d3e922c01632f994d9b54d6c3b39720f994fc7b"
+    },
+    "/home/seyran/code/ve-udhr-20260927T0646Z/usecases/udhr-pilot/run-20260927T0646Z/translation.ve.md": {
+      "input_sha256": "b68eaf6f24b252ac3e0d3a53f0485310543641d149a5e476d9f087cd2e88c959",
+      "output_sha256": "ab6ea1181e9a1549a16304c4a9a590827ce1fcf14b939c43ba607c0d421c51c5"
+    },
+    "/home/seyran/code/ve-udhr-20260927T1800Z/usecases/udhr-pilot/run-20260927T1800Z/translation.ve.md": {
+      "input_sha256": "44787cee639b8f7c9364dfc8ae3498ada6a991b21aa378b75faaf54e6087fdb9",
+      "output_sha256": "56dbf330ff606374cd7e0dfdd052ba04a430adffce15b570e7ffbaca5c4b721b"
+    },
+    "/home/seyran/code/ve-udhr-20260928T0600Z/usecases/udhr-pilot/run-20260928T0600Z/translation.ve.md": {
+      "input_sha256": "f5703877614e5fbe52d64f291e18baa419d439b1c7dc10c39c7513e84c7386be",
+      "output_sha256": "08b01e4673c2899651bb3f556ebba7e76f6589bc4294ebd03617ec6a85eefb0f"
+    },
+    "/home/seyran/code/ve-w6a/usecases/news-article/news-w6a.ve.md": {
+      "input_sha256": "6a9564230958516c9b362e0e5fac7e5cf2cd5723e83c3af6f1941df8590aebf1",
+      "error": "VEError",
+      "message": "Incorrect fields (missing=[], unknown=['unit_schema', 'units'])"
+    }
+  },
+  "editor_sha256": "1359cb6d85c076635ae09a080315b577d1b8827170788f780580f75597afb84f"
+}

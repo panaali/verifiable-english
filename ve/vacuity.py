@@ -1,11 +1,13 @@
 """Three-valued finite satisfiability report for a premise set."""
 from __future__ import annotations
 
+from .assurance import semantic_entry
 from .ast import Bottom
 from .entailment import check_entailment_certificate, prove_entailment
 from .search import check_countermodel, find_countermodel
 
 
+@semantic_entry("premise-status")
 def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
                    max_models=10_000, max_evaluations=100_000):
     """Return a model, a replayed contradiction certificate, or UNKNOWN."""

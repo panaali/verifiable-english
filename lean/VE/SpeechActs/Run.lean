@@ -173,11 +173,18 @@ def elaborated (dec : Wire.Decoded) : List (String × Json) :=
 
 /-! ## Models (model path): base tables supplied, regulated tables computed -/
 
+/-- Every tuple over the listed sorts' domains, in domain order. The route
+runner used this helper before its decoder split; speech model regeneration
+still needs the same enumeration. -/
+def tuples {α : Type} (M : VE.FiniteModel α) : List String → List (List α)
+  | [] => [[]]
+  | s :: ss => (M.domains s).flatMap (fun v => (tuples M ss).map (v :: ·))
+
 /-- Compute each regulated table from its completed outcome in layer order (norms.md 11.3). -/
 def computeRegulated (T : VE.Norms.Tree) (d : VE.Bridge.ModelData) : VE.Bridge.ModelData :=
   (syms T).foldl (fun d q => match q with
     | .reg r =>
-      let rows := (VE.Route.Wire.tuples d.toModel r.sorts).filter
+      let rows := (tuples d.toModel r.sorts).filter
         (fun row => (outcome T r).eval d.toModel (tupleVal row))
       { d with relations := d.relations ++ [(r.name, rows)] }
     | .defn _ => d) d

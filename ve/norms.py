@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from itertools import product
 import re
 
+from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
@@ -201,6 +202,8 @@ class NormDocument:
                     tuple(decoder.decode(x) for x in raw["unless"]), tuple(raw["over"]))
 
     def selection(self, predicate):
+        if type(self) is NormDocument and "soft-norms@0" in self.env.profiles:
+            raise VEError("UnsupportedProfile: soft rules require SoftNormDocument.elaborated")
         rules = [r for r in self.rules if r.predicate == predicate]
         if predicate not in self.env.predicates or self.env.predicates[predicate].regulated is None:
             raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
@@ -240,6 +243,7 @@ class NormDocument:
             return type(formula)(formula.sort, self._expand(formula.body, current, stack))
         return formula
 
+    @semantic_entry("norms.elaborate")
     def elaborate(self, predicate):
         positive, negative, _ = self.selection(predicate)
         decl = self.env.predicates[predicate]
@@ -249,6 +253,7 @@ class NormDocument:
         return _bind(_all((Implies(positive, atom), Implies(negative, Not(atom)),
                            Implies(silence, default))), decl.arguments)
 
+    @semantic_entry("norms.elaborate")
     def premises(self):
         return tuple((f"layer:norms:{p}", self.elaborate(p)) for p in self.order)
 
@@ -300,6 +305,11 @@ class NormDocument:
         return tuple(reports)
 
     def base_environment(self):
+        if type(self) is NormDocument and "soft-norms@0" in self.env.profiles:
+            raise VEError("UnsupportedProfile: soft rules require SoftNormDocument.elaborated")
+        if self.env.alternatives is not None:
+            from .errors import CheckerUnavailable
+            raise CheckerUnavailable("alternatives@0 requires the Lean checker")
         from .environment import Environment
         data = self.env.to_dict()
         data["vocabulary"]["predicates"] = {
@@ -321,6 +331,7 @@ class ConflictReport:
     detail: str = ""
 
 
+@semantic_entry("norms.conflict")
 def check_witness(document: NormDocument, target: str, model, values):
     """Independently validate an asserted target and typed tuple."""
     from .evaluate import _Evaluator
@@ -345,21 +356,29 @@ def check_witness(document: NormDocument, target: str, model, values):
 
 def prove_norm_entailment(document: NormDocument, premises, conclusion, **kwargs):
     """Produce a certificate for Background ++ regenerated norm layers ++ Γ."""
+    if not isinstance(document, NormDocument):
+        raise VEError("UnsupportedProfile: soft rules require the soft route")
     from .entailment import prove_entailment
     layers = tuple(formula for _, formula in document.premises())
     return prove_entailment(document.env, (*layers, *premises), conclusion, **kwargs)
 
 
+@semantic_entry("norms.certificate")
 def check_norm_entailment_certificate(document: NormDocument, premises, conclusion, certificate):
     """Replay the same ordered premise list used by `norms-certificate`."""
+    if not isinstance(document, NormDocument):
+        raise VEError("UnsupportedProfile: soft rules require the soft route")
     from .entailment import check_entailment_certificate
     layers = tuple(formula for _, formula in document.premises())
     return check_entailment_certificate(document.env, (*layers, *premises), conclusion, certificate)
 
 
+@semantic_entry("norms.conflict")
 def check_conflict(document: NormDocument, *, model=None, certificates=None,
                    max_evaluations=1_000_000, prove=False, tableau_steps=10_000):
     """A checked finite witness or certificates decide; exhaustion stays UNKNOWN."""
+    if not isinstance(document, NormDocument):
+        raise VEError("UnsupportedProfile: soft rules require the soft route")
     from .evaluate import _Evaluator, _Exhausted
     from .model import FiniteModel
     from .entailment import check_entailment_certificate, prove_entailment
