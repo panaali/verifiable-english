@@ -1,0 +1,241 @@
+{
+  "environment_id": "57004296a07ba3409f3b786cdd8bf3c07b2de5925e02a80114d2c96e7d7ae698",
+  "document_hash": "9c2b8b0e7714aab5d3d2b06b2d8139e76fa0e09736c6fd506df1ce0efede93d3",
+  "text_digest": "42de2a255d9647e018ba084dcf49a0d8a9c83b816e0f8b9a3fa848df7046f7cd",
+  "blocks": [
+    {
+      "handle": "handle-read-workspace",
+      "name": "read-workspace",
+      "number": 1,
+      "span": [
+        0,
+        136
+      ]
+    },
+    {
+      "handle": "handle-read-confirmed",
+      "name": "read-confirmed",
+      "number": 2,
+      "span": [
+        137,
+        267
+      ]
+    },
+    {
+      "handle": "handle-write-workspace",
+      "name": "write-workspace",
+      "number": 3,
+      "span": [
+        268,
+        405
+      ]
+    },
+    {
+      "handle": "handle-delete-workspace",
+      "name": "delete-workspace",
+      "number": 4,
+      "span": [
+        406,
+        544
+      ]
+    },
+    {
+      "handle": "handle-shell-read-only",
+      "name": "shell-read-only",
+      "number": 5,
+      "span": [
+        545,
+        653
+      ]
+    },
+    {
+      "handle": "handle-shell-confirmed",
+      "name": "shell-confirmed",
+      "number": 6,
+      "span": [
+        654,
+        763
+      ]
+    },
+    {
+      "handle": "handle-network-allowlisted",
+      "name": "network-allowlisted",
+      "number": 7,
+      "span": [
+        764,
+        897
+      ]
+    },
+    {
+      "handle": "handle-network-confirmed",
+      "name": "network-confirmed",
+      "number": 8,
+      "span": [
+        898,
+        1031
+      ]
+    },
+    {
+      "handle": "handle-message-user",
+      "name": "message-user",
+      "number": 9,
+      "span": [
+        1032,
+        1169
+      ]
+    },
+    {
+      "handle": "handle-purchase-confirmed",
+      "name": "purchase-confirmed",
+      "number": 10,
+      "span": [
+        1170,
+        1283
+      ]
+    },
+    {
+      "handle": "handle-secret-fetch-confirmed",
+      "name": "secret-fetch-confirmed",
+      "number": 11,
+      "span": [
+        1284,
+        1401
+      ]
+    },
+    {
+      "handle": "handle-credential-read-confirmed",
+      "name": "credential-read-confirmed",
+      "number": 12,
+      "span": [
+        1402,
+        1571
+      ]
+    },
+    {
+      "handle": "handle-read-outside",
+      "name": "read-outside",
+      "number": 13,
+      "span": [
+        1572,
+        1814
+      ]
+    },
+    {
+      "handle": "handle-write-outside",
+      "name": "write-outside",
+      "number": 14,
+      "span": [
+        1815,
+        2022
+      ]
+    },
+    {
+      "handle": "handle-delete-outside",
+      "name": "delete-outside",
+      "number": 15,
+      "span": [
+        2023,
+        2234
+      ]
+    },
+    {
+      "handle": "handle-delete-untracked",
+      "name": "delete-untracked",
+      "number": 16,
+      "span": [
+        2235,
+        2465
+      ]
+    },
+    {
+      "handle": "handle-shell-changes",
+      "name": "shell-changes",
+      "number": 17,
+      "span": [
+        2466,
+        2676
+      ]
+    },
+    {
+      "handle": "handle-network-unlisted",
+      "name": "network-unlisted",
+      "number": 18,
+      "span": [
+        2677,
+        2912
+      ]
+    },
+    {
+      "handle": "handle-message-others",
+      "name": "message-others",
+      "number": 19,
+      "span": [
+        2913,
+        3152
+      ]
+    },
+    {
+      "handle": "handle-purchase-unconfirmed",
+      "name": "purchase-unconfirmed",
+      "number": 20,
+      "span": [
+        3153,
+        3329
+      ]
+    },
+    {
+      "handle": "handle-purchase-over-limit",
+      "name": "purchase-over-limit",
+      "number": 21,
+      "span": [
+        3330,
+        3512
+      ]
+    },
+    {
+      "handle": "handle-elevated",
+      "name": "elevated",
+      "number": 22,
+      "span": [
+        3513,
+        3646
+      ]
+    },
+    {
+      "handle": "handle-disclose-secret",
+      "name": "disclose-secret",
+      "number": 23,
+      "span": [
+        3647,
+        3816
+      ]
+    },
+    {
+      "handle": "handle-credential-read",
+      "name": "credential-read",
+      "number": 24,
+      "span": [
+        3817,
+        4013
+      ]
+    },
+    {
+      "handle": "handle-report-delete",
+      "name": "report-delete",
+      "number": 25,
+      "span": [
+        4014,
+        4125
+      ]
+    },
+    {
+      "handle": "handle-report-purchase",
+      "name": "report-purchase",
+      "number": 26,
+      "span": [
+        4126,
+        4217
+      ]
+    }
+  ]
+}

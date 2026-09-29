@@ -12,5 +12,6 @@ import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
 import VE.English.Run
+import VE.SpeechActs.Run
 import VE.Time.Wire
 import VE.Time.Document
