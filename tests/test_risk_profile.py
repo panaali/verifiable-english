@@ -5,6 +5,7 @@ import pytest
 
 from ve.environment import Environment
 from ve.english import parse_english_with_metadata
+from ve.norm_english import parse_english as parse_norm_english
 from ve.errors import CheckerUnavailable, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.risk import run_case
@@ -173,6 +174,19 @@ def test_policy_english_uses_risk_readings():
     ):
         with pytest.raises(VEError, match=rewrite):
             parse_english_with_metadata(env, sentence)
+
+
+def test_risk_word_in_norm_guard_has_one_reading():
+    raw = risk_source()
+    raw["vocabulary"]["predicates"]["permitted"] = {
+        "arguments": ["action"], "description": "permission",
+        "regulated": {"role": "permission", "default": "deny", "act": "{0} be done"},
+    }
+    env = Environment(raw)
+    text = ("Rule 1. Every action may be done, if there is a harm such that both "
+            "that harm is severe and that action might lead to that harm.")
+    document = parse_norm_english(env, text)
+    assert document.document_hash
 
 
 def test_legend_tracks_declared_order_and_pending_condition():
