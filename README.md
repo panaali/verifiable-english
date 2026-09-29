@@ -4,7 +4,13 @@ An English-like language for human-inspectable, machine-checkable claims in AI o
 
 **Stage:** experimental Python v0 core, argument layer, constrained grammars, and Lean reference proofs implemented; full verification and oversight experiments are pending.
 
-Run the complete offline verification gate with `PATH="$HOME/.elan/bin:$PATH" python3 tools/gate.py`.
+Run the complete offline verification gate with `python3 tools/gate.py`.
+Every stage runs in an environment built from scratch, not inherited: `PATH` holds
+only the pinned Lean and Rust toolchain `bin` directories (under the account's
+`~/.elan/toolchains` and `~/.rustup/toolchains`), `uv` and `/usr/bin:/bin`; home,
+caches and temporary files are fresh directories owned by that run. The allowed
+variables are listed in `ALLOWED_ENVIRONMENT` in `tools/gate.py`, and the exact
+environment of each stage is recorded in the result.
 It checks the pinned Lean and Rust versions, syncs the locked Python environment,
 builds both native backends once, runs the Lean source audit, `cargo test`, and
 the full non-live pytest suite, then writes `gate-result.json` with the commit SHA, tool versions, counts,
