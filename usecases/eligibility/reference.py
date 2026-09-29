@@ -165,6 +165,15 @@ def throughout(period):
         (period.get("until") is None or period["until"] >= QW_END)
 
 
+def common_day(*periods):
+    """Reading AR8: some day of the qualifying week lies in every period {from?, until?}
+    (an absent end lies outside the week, AR5). A first or last day counts (AR7)."""
+    periods = [period or {} for period in periods]
+    first = max([QW_START] + [period["from"] for period in periods if period.get("from") is not None])
+    last = min([QW_END] + [period["until"] for period in periods if period.get("until") is not None])
+    return first <= last
+
+
 def excluded_partner_benefit(p, other, household):
     """Reg. 4(2)(a): "throughout the qualifying week, P is a partner of and living with"
     a person who has reached pensionable age and is paid a relevant benefit. Both the
@@ -191,17 +200,24 @@ def lives_with(p, other):
     return other is not None and not in_residential_care(p)
 
 
+def partner_at_home(other):
+    """Reg. 3(3) "in that week, P is the partner of and living with": P and the
+    housemate are partners and share their home on a common day of the week (AR8)."""
+    return other is not None and other["partner"] and common_day(other["partnership"], other["shared_home"])
+
+
 def amount(p, other):
     """Reg. 3, with each 'subject to' paragraph taking precedence. `other` is the
     housemate, whose record carries the couple. Reg. 3 says "in that week", not
-    "throughout" as reg. 4(2) does."""
+    "throughout" as reg. 4(2) does; in 3(3), "the partner of and living with" asks
+    for one day of the week in both the partnership and the shared home (AR8)."""
     rb = relevant_benefit(p)
     with_entitled = lives_with(p, other) and entitled(other, p, other)
     care = in_residential_care(p)
     if not reached_80(p):
         if not rb and (with_entitled or care):
             return Decimal("100.00")  # 3(2)
-        if rb and other is not None and other["partner"] and lives_with(p, other) and reached_80(other):
+        if rb and partner_at_home(other) and lives_with(p, other) and reached_80(other):
             return Decimal("300.00")  # 3(3)
         return Decimal("200.00")  # 3(1)
     if not rb and ((with_entitled and reached_80(other)) or care):

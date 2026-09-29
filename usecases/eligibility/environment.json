@@ -177,6 +177,13 @@
     ],
     "description": "R7b: the first person is a partner of the second on every day of the qualifying week (AR7)."
    },
+   "partner_at_home": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R14a: on one day of the qualifying week, the first person is a partner of the second and they share a mutual home (AR8)."
+   },
    "excluded_partner_benefit": {
     "arguments": [
      "person"

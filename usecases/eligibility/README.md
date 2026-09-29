@@ -8,17 +8,17 @@ of the W6a quantities and dates feature.
   (SI 2025/969, England and Wales), with the GOV.UK guide and two linked
   provisions. All four texts are pinned byte for byte with SHA-256 hashes in
   [PLAN.md](PLAN.md) section 1 and [`source/`](source/).
-- **Cases.** 76 applicant profiles in [`cases.json`](cases.json). Each has an
+- **Cases.** 80 applicant profiles in [`cases.json`](cases.json). Each has an
   answer key that was written by hand before VE was run on it. A separate
   program, [`reference.py`](reference.py), was written from the source text
-  and agrees with the key on all 76. Profiles B15 to B19 were added after the
+  and agrees with the key on all 80. Profiles B15 to B19 were added after the
   first run, by the eligibility review, B20 to B23 and C25 to C27 by the
-  eligibility recheck, and B24 to B30 for the review's finding C (see "Review
-  fixes" below).
+  eligibility recheck, B24 to B30 for the review's finding C, and B31 to B34
+  by the R7 recheck (see "Review fixes" below).
 - **Questions.** For each profile: Q1, is the applicant entitled? For an
   entitled applicant, also: Q2, how much? Q3, does HMRC take it back because
   income is over £35,000? Q4, how much does the applicant keep? That makes
-  253 scored questions (PLAN.md section 3).
+  269 scored questions (PLAN.md section 3).
 
 The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 
@@ -26,35 +26,35 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 
 | Route | Correct | Answered | Disagreements |
 |---|---|---|---|
-| Staged (the plan's fallback) | **253/253** questions, **76/76** profiles | 253/253 | none |
-| Single shot (the whole problem in one proof search) | 0/253 | 0/253 | none; every answer is OPEN |
+| Staged (the plan's fallback) | **269/269** questions, **80/80** profiles | 269/269 | none |
+| Single shot (the whole problem in one proof search) | 0/269 | 0/269 | none; every answer is OPEN |
 
 - **Staged route.** Every answer rests on proof certificates that Lean checked.
-  All 2,128 step certificates were accepted by the Lean `ve_quantity` checker.
-  All 253 answer documents were admitted by Lean.
+  All 2,352 step certificates were accepted by the Lean `ve_quantity` checker.
+  All 269 answer documents were admitted by Lean.
 - **Official answers.** On the 38 profiles whose answer the GOV.UK guide states
   directly, the staged route is correct on 131 of 131 questions.
-- **Unflagged profiles.** On the 65 profiles without a flag, it is correct on
-  218 of 218 questions.
-- **Flagged profiles.** Each of the 11 flagged profiles is also correct. This
+- **Unflagged profiles.** On the 67 profiles without a flag, it is correct on
+  226 of 226 questions.
+- **Flagged profiles.** Each of the 13 flagged profiles is also correct. This
   means VE followed the reading the key adopted (PLAN.md section 4.2). It does
   not settle which reading of the law is right.
 - **Disagreements.** There are none, so no disagreement needs a cause. No
-  existing key was changed after any VE run; the review, the recheck and the
-  finding C fix only added profiles.
+  existing key was changed after any VE run; the review, the recheck, the
+  finding C fix and the R7 recheck only added profiles.
 
 **Why this is not full independence.** One author wrote the key, the reference
 program and the VE translation, all from the same adopted readings. The 38
 guide-answered profiles are the part of the key that does not depend on this
 author's reading.
 
-**Does the case set catch translation errors?** Yes, for the 30 planned
+**Does the case set catch translation errors?** Yes, for the 32 planned
 mutants. Each mutant is a deliberate error in the translation, such as ">"
 written as "≥" or one benefit removed from the list. Every mutant changed the
-answer of the profile the plan named for it, so 30/30 were caught. The first
+answer of the profile the plan named for it, so 32/32 were caught. The first
 run had 19 mutants, and the case set missed three real errors that the review
-then found, and a fourth that the recheck found. Mutants M20 to M30 now
-reproduce those errors.
+then found, a fourth that the recheck found, and a fifth that the R7 recheck
+found. Mutants M20 to M32 now reproduce those errors.
 
 ## Review fixes
 
@@ -149,10 +149,38 @@ translation.
   Mutants M26 to M30 drop each whole-week test, make its bounds strict, or
   read "throughout" into reg. 3(3); each changes the profiles named for it.
 
+The R7 recheck (verdict FIX) found that the B30 check was too weak. The error
+was in all three: the key's reading, `reference.py` and the translation.
+
+- **D. One day for "the partner of and living with" (reg. 3(3), rule R14).**
+  Reg. 3(3) gives £300 when "in that week, P is the partner of and living
+  with" a person aged 80. R14 asked for a partnership on some day of the week
+  and a shared home on some day, not necessarily the same one. So B30 with the
+  partnership ending on 22 September, a day before the partner moves in, got
+  a Lean-admitted £300, where the regulation gives £200. Every premise was
+  true in the reference model, because the reference read 3(3) the same way.
+  - Reading AR8: some day of the week must lie in both periods. Since each
+    period includes a day of the week (AR5), that is two bounds: the home
+    begins no later than the partnership ends, and the partnership begins no
+    later than the home ends. A new rule R14a derives this, and R14's 3(3)
+    uses it. `reference.py` computes the intersection of the two periods and
+    the week directly, and a test checks that the two agree, in Python, Lean
+    and Rust, on every household of a grid of first and last days.
+  - B31 (the recheck's case) and B32 (the other order) share no day: £200.
+  - B33 and B34 share only one day, the last of one period and the first of
+    the other: £300. They are flagged `ambiguous-source`, because a reading
+    that needs the whole of that day would give £200.
+  - Mutant M31 restores the old 3(3) and changes B31 and B32; M32 makes both
+    bounds strict and changes B33 and B34.
+
+  The other paragraphs of reg. 3 ask "in that week" about one period only,
+  the shared home with a person whose entitlement is for the week, so AR8
+  concerns 3(3) alone.
+
 ## What stayed OPEN and why
 
 **Single shot is OPEN on every profile.** Each single-shot problem holds all
-48 rules and the profile's facts. The prover works through the premises in
+49 rules and the profile's facts. The prover works through the premises in
 order, one branch at a time. Each "exactly when" rule costs several levels on a
 branch: one to separate its two directions, then one split for each direction.
 On profile A01 the search reached the tableau depth limit of 124 levels at its
@@ -201,7 +229,7 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
 | R11 moved to Scotland or Northern Ireland | reg. 4(4) | CHECKED | under reading AR6: the move comes after a day of residence in England or Wales in the week (review A) |
 | R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact |
 | R13 entitlement | regs. 2 and 4(1) | CHECKED | |
-| R14 and R15 amounts | reg. 3(1) to (6) | CHECKED | each "subject to" is an explicit negated condition |
+| R14 and R15 amounts | reg. 3(1) to (6) | CHECKED | each "subject to" is an explicit negated condition; 3(3) needs the partnership and the shared home on one common day of the week (R14a, reading AR8, R7 recheck) |
 | R16 income charge | GOV.UK guide | CHECKED | its legal basis is not pinned (O6 OPEN) |
 | reg. 5(2) to (4), polygamous marriage | regs. 1 and 5 | UNFORMALISED | out of scope (O4) |
 | Scotland and Northern Ireland schemes | other instruments | UNFORMALISED | out of scope (O7) |
@@ -237,7 +265,7 @@ the statutory reading on each.
 
 ## English
 
-- **Facts.** 82 of 162 distinct fact statements have a controlled English
+- **Facts.** 86 of 166 distinct fact statements have a controlled English
   wording. Each of those parses back to the same statement with exactly one
   reading. Example: "The applicant's pensionable-age date is no later than
   2018-12-05." The other 80 are yes-or-no facts about a person, such as being a
@@ -264,7 +292,7 @@ the statutory reading on each.
   This avoids a quantifier over benefits, which would need a closure fact.
 - **Probe P6.** The plan expected single-shot certificates for profile A01.
   None were found, as explained above. The staged route answers A01 correctly.
-- **Mutant M13** (counting the partner's income) changes 58 profiles, not
+- **Mutant M13** (counting the partner's income) changes 62 profiles, not
   only D05. A household with no housemate has no housemate income, so under
   M13 the question about the payment being taken back becomes OPEN.
 
@@ -273,7 +301,7 @@ the statutory reading on each.
 | Path | Content |
 |---|---|
 | [`PLAN.md`](PLAN.md) | the plan, the adopted readings and the frozen key |
-| [`cases.json`](cases.json) | the 76 profiles and their keys |
+| [`cases.json`](cases.json) | the 80 profiles and their keys |
 | [`reference.py`](reference.py) | the independent reference program |
 | [`translation.py`](translation.py) | the VE translation: environment, rules, facts |
 | [`environment.json`](environment.json), [`rules.json`](rules.json) | the generated environment and rules |
@@ -283,4 +311,4 @@ the statutory reading on each.
 
 Run `PATH=~/.elan/bin:$PATH lake build` in `lean/` first. Then run
 `uv run python usecases/eligibility/run.py` from the repository root (about
-11 minutes). No model calls are made.
+6 minutes with the default six workers). No model calls are made.
