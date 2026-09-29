@@ -218,6 +218,7 @@ inductive Cond
   | and (a b : Cond)
   | or (a b : Cond)
   | not (a : Cond)
+  deriving DecidableEq
 
 def Rel.holds : Rel → Int → Prop
   | .lt, n => n < 0
