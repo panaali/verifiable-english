@@ -13,7 +13,8 @@
         {"contains": {"const": "norms"}}, {"contains": {"const": "english"}},
         {"contains": {"const": "environment"}}, {"contains": {"const": "model"}},
         {"contains": {"const": "check"}}, {"contains": {"const": "identity"}},
-        {"contains": {"const": "parse"}}, {"contains": {"const": "graph"}}]},
+        {"contains": {"const": "parse"}}, {"contains": {"const": "graph"}},
+        {"contains": {"const": "readings"}}]},
       "limits": {"type": "object", "required": ["max_line_bytes", "max_cases", "json_depth"],
         "additionalProperties": false,
         "properties": {
