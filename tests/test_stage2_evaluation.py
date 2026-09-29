@@ -32,6 +32,46 @@ def test_lean_admission_preserves_report_and_identity(monkeypatch):
     assert admit_document(case["environment"], case["document"]) == expected
 
 
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+def test_lean_norms_admission_with_data_flags_matches_python(monkeypatch):
+    from ve.norms import NormDocument
+    from tests.test_norms import permission, rule
+    raw = {"language": "ve.core@0.2", "profiles": ["data@0", "norms@0", "relational-fol@0"],
+           "spec_revision": environment()["spec_revision"],
+           "vocabulary": {"sorts": {"act": {"description": "act"}}, "constants": {},
+                          "predicates": {"permitted": permission(),
+                                         "owner": {"arguments": ["act", "act"], "description": "owner",
+                                                   "functional": True}}}}
+    env = Environment(raw)
+    norms = NormDocument(env, [rule("allow", "permitted", True)])
+    flag = Forall("act", Forall("act", Forall("act", Implies(
+        And(Binary("owner", Var(2), Var(1)), Binary("owner", Var(2), Var(0))), Eq(Var(1), Var(0))))))
+    from ve.ast import formula_to_data
+    document = {"units": [{"id": "u1", "span": [0, 20], "kind": "norm",
+                           "content": norms.rules[0].to_dict()}],
+                "graph": {"root": "flag", "nodes": [
+                    {"name": "layer", "ast": formula_to_data(env, norms.elaborate("permitted")),
+                     "label": "layer:norms:permitted"},
+                    {"name": "flag", "ast": formula_to_data(env, flag, _generated=True),
+                     "label": "background:flags"}]}}
+    rejected = {**document, "graph": {"root": "flag", "nodes": [
+        {**document["graph"]["nodes"][1], "label": "background:literals"}]}}
+    closure = {**raw, "profiles": ["closure@0", "norms@0", "relational-fol@0"],
+               "vocabulary": {**raw["vocabulary"], "predicates": {"permitted": permission()}}}
+    outcomes = {}
+    for authority in ("python", "lean"):
+        monkeypatch.setenv("VE_AUTHORITY", authority)
+        row = [admit_document(env, document)]
+        for e, d in ((env, rejected), (closure, document)):
+            try:
+                admit_document(e, d)
+            except VEError as error:
+                row.append((error.code, str(error)))
+        outcomes[authority] = row
+    assert outcomes["python"][0]["admitted"] and len(outcomes["python"]) == 3
+    assert outcomes["lean"] == outcomes["python"]
+
+
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
 def test_budgeted_order_evaluation_matches_python(monkeypatch):
     from tests.probe_matrix import model_wire, raw_environment
