@@ -1419,7 +1419,8 @@ def test_every_parsed_speech_act_has_its_surface_kind(lean):
     wordings = ["Click.", "Click, if atlas is reviewed.", "Do not click.", "Click check.", "Do not click check.",
                 "Open the desk.", "Open the writing desk.", "Do not share the token.", "Is atlas reviewed?",
                 "Is it the case that atlas is reviewed?", "Which one of atlas and beacon is reviewed?",
-                "Which of atlas, beacon are reviewed?", "Atlas is reviewed."]
+                "Which of atlas, beacon are reviewed?", "Atlas is reviewed.", "Do check.", "Question check.",
+                "How check, if atlas is reviewed.", "Do not do check.", "Check click.", "Does atlas click?"]
     variants = set()
     for base in wordings:
         variants |= {base, base.lower(), base.upper()}
@@ -1427,7 +1428,8 @@ def test_every_parsed_speech_act_has_its_surface_kind(lean):
             variants |= {c + base, base + c, base.replace(" ", c, 1), base.replace("s", c, 1),
                          base.replace("k", c, 1)}
     cases, expected = [], []
-    for env in (F0(), _unary_click_env()):
+    for env in (F0(), _unary_click_env(), *(_act_env("{0} " + v + " {1}") for v in ("do", "question", "how")),
+                _act_env("{0} {1} click")):
         env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
         E = Environment(env)
         for wording in sorted(variants):
@@ -1443,6 +1445,87 @@ def test_every_parsed_speech_act_has_its_surface_kind(lean):
             expected.append("InvalidInput: choice kind")
     assert len(cases) > 40
     assert [_lean_outcome(r) for r in run(cases)] == expected
+
+
+def _act_env(act, unary=False):
+    """F0 with `click_required`/`click_permitted` under `act` (over `["user"]` when `unary`)."""
+    env = _unary_click_env() if unary else F0()
+    env["vocabulary"]["predicates"]["reviewed"]["verbalisation"] = "{0} is reviewed"
+    for name in ("click_required", "click_permitted"):
+        env["vocabulary"]["predicates"][name]["regulated"]["act"] = act
+    return env
+
+
+# The interrogative first words of 3.2 a W1 act may begin with ("is" and "must" are reserved) and that the parser
+# does not refuse outright ("Which ..." and "Can ..." are its `OpenDomainWhich` and `ModalQuestion`).
+_ACT_INTERROGATIVES = ["question", "are", "does", "do", "did", "was", "were", "will", "would", "who", "what", "when",
+                       "where", "why", "how"]
+
+
+def test_act_verb_outranks_an_interrogative_word_in_both_cores(lean, tmp_path):
+    # Regression (speech-acts6 A1, the class): with the act "{0} do {1}", the parser reads "Do check." as the
+    # command to click `check`, but both classifiers took its interrogative first word for a question, so both
+    # cores accepted a question choice on it and rejected the instruction choice it parses as.  A final `?`
+    # decides first; a declared act's verb then outranks an interrogative first word (3.2).
+    asserted, question = {"ast": U("reviewed", "atlas")}, polar(U("reviewed", "atlas"))
+    require = command("require", "click_required", ["check"])
+    cases, expected = [], []
+    for verb in _ACT_INTERROGATIVES:
+        env = _act_env("{0} " + verb + " {1}")
+        E = Environment(env)
+        wording = verb.capitalize() + " check."
+        assert parse_speech(E, wording, E.speech_acts)[1] == "instruction", wording
+        for kind, content in [("asserted", asserted), ("question", question), ("instruction", require)]:
+            outcome = "ok" if kind == "instruction" else "InvalidInput: choice kind"
+            document, case = _choice_case(env, wording, kind, content)
+            assert _outcome(lambda: core(env, document)) == outcome, (wording, kind)
+            cases.append(case)
+            expected.append(outcome)
+        # A final `?` is still a question, and without the act the interrogative word is.
+        for wording, env in [(verb.capitalize() + " check?", env), (verb.capitalize() + " check.", _act_env("{0} click {1}"))]:
+            document, case = _choice_case(env, wording, "question", question)
+            assert _outcome(lambda: core(env, document)) == "ok", wording
+            cases.append(case)
+            expected.append("ok")
+    assert [_lean_outcome(r) for r in run(cases)] == expected
+    # The reproducer, fenced and inline.
+    env = _act_env("{0} do {1}")
+    assert _both_forms(tmp_path, "do-instruction", env, "Do check.", "instruction", require) == ["ok"] * 2
+    assert _both_forms(tmp_path, "do-question", env, "Do check.", "question", question) == \
+        ["InvalidInput: choice kind"] * 2
+    # The parser refuses "Can ..." and "Which ..." whatever the acts; both cores still agree on their kind.
+    for verb, error in [("can", "ModalQuestion"), ("which", "OpenDomainWhich")]:
+        env = _act_env("{0} " + verb + " {1}")
+        E = Environment(env)
+        with pytest.raises(VEError, match=error):
+            parse_speech(E, verb.capitalize() + " check.", E.speech_acts)
+        document, case = _choice_case(env, verb.capitalize() + " check.", "instruction", require)
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == "ok"
+
+
+def test_slot_first_act_reads_no_command_in_either_route(lean, tmp_path):
+    # Regression (speech-acts6 A1, the class): with the accepted W1 act "{0} {1} click", the parser read
+    # "Check click." as the command to click `check`, but no classifier knows a slot's fillers, so both cores took
+    # it for a declarative, accepted an asserted choice on it and rejected the instruction choice it parsed as.  An
+    # imperative begins with its act's verb (3.2): an act whose first word after `{0}` is a slot has none, so the
+    # parser reads no command of it and it classifies no wording, even one spelling its slot.
+    env = _act_env("{0} {1} click")
+    E = Environment(env)
+    asserted = {"ast": U("reviewed", "atlas")}
+    for wording in ["Check click.", "Do not check click.", "Check click, if atlas is reviewed."]:
+        with pytest.raises(VEError, match="InvalidInput: no single speech-act reading"):
+            parse_speech(E, wording, E.speech_acts)
+    for wording, kind, content, outcome in [
+            ("Check click.", "asserted", asserted, "ok"),
+            ("Check click.", "instruction", command("require", "click_required", ["check"]),
+             "InvalidInput: choice kind"),
+            ("{1} click.", "asserted", asserted, "ok")]:
+        document, case = _choice_case(env, wording, kind, content)
+        assert _outcome(lambda: core(env, document)) == _lean_outcome(run1(case)) == outcome, (wording, kind)
+        assert _both_forms(tmp_path, f"slot-{kind}-{len(wording)}", env, wording, kind, content) == [outcome] * 2
+    # A literal verb after a later slot still reads: "{0} click {1}" is F0's act.
+    E = Environment(_act_env("{0} click {1}"))
+    assert parse_speech(E, "Click check.", E.speech_acts)[1] == "instruction"
 
 
 def _source_outcome(env, span, units, fences=None, sets=()):
