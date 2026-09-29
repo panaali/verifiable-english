@@ -1,0 +1,457 @@
+{
+ "language": "ve.core@0.2",
+ "profiles": [
+  "documents@1",
+  "order@0",
+  "relational-fol@0",
+  "time@0"
+ ],
+ "spec_revision": "ve-v0.2-expand2-2026-09-25",
+ "vocabulary": {
+  "sorts": {
+   "person": {
+    "description": "A person in the applicant's household."
+   },
+   "benefit": {
+    "description": "A social security benefit."
+   }
+  },
+  "predicates": {
+   "partner_of": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The first person is a partner of the second (S1 reg. 1(3), taken as a fact, O3)."
+   },
+   "shares_home": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "The two persons share accommodation as their mutual home in the qualifying week (S1 reg. 1(4)(b), taken as a fact)."
+   },
+   "paid_for_week": {
+    "arguments": [
+     "person",
+     "benefit"
+    ],
+    "description": "The benefit has been, or falls to be, paid to the person for the qualifying week."
+   },
+   "ever_resident_ew": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person has a first day of ordinary residence in England and Wales."
+   },
+   "remains_resident_ew": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person's ordinary residence in England and Wales has not ended."
+   },
+   "moved_to_scotland_or_ni": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person has become ordinarily resident in Scotland or Northern Ireland."
+   },
+   "in_care_setting": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person resides in a care home, independent hospital or Polish resettlement accommodation throughout the qualifying week and from the care start date."
+   },
+   "inpatient": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is a hospital in-patient receiving free treatment, from the admission date to the discharge date."
+   },
+   "detained_in_custody": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is detained in custody from the custody start date to the release date."
+   },
+   "under_sentence": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person's custody is under a sentence imposed by a court."
+   },
+   "claimed": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person made a claim for the winter fuel payment on the claim date."
+   },
+   "paid_without_claim": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person is paid without a claim (S1 reg. 5(1))."
+   },
+   "reached_pa": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R2: the person reached pensionable age in or before the qualifying week."
+   },
+   "reached_80": {
+    "arguments": [
+     "person"
+    ],
+    "description": "The person reached the age of 80 in or before the qualifying week."
+   },
+   "resident_in_week": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R3: the person is ordinarily resident in England or Wales on a day of the qualifying week."
+   },
+   "has_rb": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R4: a relevant benefit has been, or falls to be, paid to the person for the qualifying week."
+   },
+   "in_residential_care": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R5: the person is in residential care (S1 reg. 1(4)(a))."
+   },
+   "lives_with": {
+    "arguments": [
+     "person",
+     "person"
+    ],
+    "description": "R6: the first person lives with the second (S1 reg. 1(4)(b))."
+   },
+   "excluded_partner_benefit": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R7: S1 reg. 4(2)(a) applies to the person."
+   },
+   "excluded_hospital": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R8: S1 reg. 4(2)(b) applies to the person."
+   },
+   "excluded_custody": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R9: S1 reg. 4(2)(c) applies to the person."
+   },
+   "excluded_care_benefit": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R10: S1 reg. 4(3) applies to the person."
+   },
+   "excluded_moved": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R11: S1 reg. 4(4) applies to the person."
+   },
+   "excluded_no_claim": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R12: S1 reg. 4(5) applies to the person."
+   },
+   "excluded": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R13: some exclusion in S1 reg. 4(2) to (5) applies to the person."
+   },
+   "entitled": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R13: the person is entitled to a winter fuel payment for winter 2026 to 2027."
+   },
+   "recovered": {
+    "arguments": [
+     "person"
+    ],
+    "description": "R16: HMRC takes the payment back from the person (S2)."
+   }
+  },
+  "constants": {
+   "applicant": {
+    "sort": "person",
+    "description": "The applicant P.",
+    "verbalisation": "the applicant"
+   },
+   "housemate": {
+    "sort": "person",
+    "description": "The one other person H in P's household, if any.",
+    "verbalisation": "the housemate"
+   },
+   "state_pension": {
+    "sort": "benefit",
+    "description": "The benefit the State Pension.",
+    "verbalisation": "the State Pension"
+   },
+   "attendance_allowance": {
+    "sort": "benefit",
+    "description": "The benefit Attendance Allowance.",
+    "verbalisation": "Attendance Allowance"
+   },
+   "income_support": {
+    "sort": "benefit",
+    "description": "The benefit income support.",
+    "verbalisation": "income support"
+   },
+   "income_based_jsa": {
+    "sort": "benefit",
+    "description": "The benefit income-based jobseeker's allowance.",
+    "verbalisation": "income-based jobseeker's allowance"
+   },
+   "pension_credit": {
+    "sort": "benefit",
+    "description": "The benefit state pension credit.",
+    "verbalisation": "state pension credit"
+   },
+   "income_related_esa": {
+    "sort": "benefit",
+    "description": "The benefit income-related employment and support allowance.",
+    "verbalisation": "income-related employment and support allowance"
+   },
+   "universal_credit": {
+    "sort": "benefit",
+    "description": "The benefit universal credit.",
+    "verbalisation": "universal credit"
+   },
+   "applicant_pa_date": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's pensionable-age date.",
+    "verbalisation": "the applicant's pensionable-age date"
+   },
+   "applicant_eightieth": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's 80th birthday.",
+    "verbalisation": "the applicant's 80th birthday"
+   },
+   "applicant_ew_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's first day of ordinary residence in England and Wales.",
+    "verbalisation": "the applicant's first day of ordinary residence in England and Wales"
+   },
+   "applicant_ew_last_day": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's last day of ordinary residence in England and Wales.",
+    "verbalisation": "the applicant's last day of ordinary residence in England and Wales"
+   },
+   "applicant_scot_ni_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's first day of ordinary residence in Scotland or Northern Ireland.",
+    "verbalisation": "the applicant's first day of ordinary residence in Scotland or Northern Ireland"
+   },
+   "applicant_care_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's care start date.",
+    "verbalisation": "the applicant's care start date"
+   },
+   "applicant_admitted": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's hospital admission date.",
+    "verbalisation": "the applicant's hospital admission date"
+   },
+   "applicant_treatment_start": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's treatment start date.",
+    "verbalisation": "the applicant's treatment start date"
+   },
+   "applicant_discharged": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's hospital discharge date.",
+    "verbalisation": "the applicant's hospital discharge date"
+   },
+   "applicant_custody_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's custody start date.",
+    "verbalisation": "the applicant's custody start date"
+   },
+   "applicant_release": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's release date.",
+    "verbalisation": "the applicant's release date"
+   },
+   "applicant_claim_date": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The applicant's claim date.",
+    "verbalisation": "the applicant's claim date"
+   },
+   "applicant_care_before_week": {
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "description": "The applicant's care days before the week.",
+    "verbalisation": "the applicant's care days before the week"
+   },
+   "applicant_treatment_before_week": {
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "description": "The applicant's treatment days before the week.",
+    "verbalisation": "the applicant's treatment days before the week"
+   },
+   "applicant_income": {
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "description": "The applicant's total income.",
+    "verbalisation": "the applicant's total income"
+   },
+   "housemate_pa_date": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's pensionable-age date.",
+    "verbalisation": "the housemate's pensionable-age date"
+   },
+   "housemate_eightieth": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's 80th birthday.",
+    "verbalisation": "the housemate's 80th birthday"
+   },
+   "housemate_ew_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's first day of ordinary residence in England and Wales.",
+    "verbalisation": "the housemate's first day of ordinary residence in England and Wales"
+   },
+   "housemate_ew_last_day": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's last day of ordinary residence in England and Wales.",
+    "verbalisation": "the housemate's last day of ordinary residence in England and Wales"
+   },
+   "housemate_scot_ni_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's first day of ordinary residence in Scotland or Northern Ireland.",
+    "verbalisation": "the housemate's first day of ordinary residence in Scotland or Northern Ireland"
+   },
+   "housemate_care_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's care start date.",
+    "verbalisation": "the housemate's care start date"
+   },
+   "housemate_admitted": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's hospital admission date.",
+    "verbalisation": "the housemate's hospital admission date"
+   },
+   "housemate_treatment_start": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's treatment start date.",
+    "verbalisation": "the housemate's treatment start date"
+   },
+   "housemate_discharged": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's hospital discharge date.",
+    "verbalisation": "the housemate's hospital discharge date"
+   },
+   "housemate_custody_from": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's custody start date.",
+    "verbalisation": "the housemate's custody start date"
+   },
+   "housemate_release": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's release date.",
+    "verbalisation": "the housemate's release date"
+   },
+   "housemate_claim_date": {
+    "sort": "$int",
+    "unit": "day",
+    "description": "The housemate's claim date.",
+    "verbalisation": "the housemate's claim date"
+   },
+   "housemate_care_before_week": {
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "description": "The housemate's care days before the week.",
+    "verbalisation": "the housemate's care days before the week"
+   },
+   "housemate_treatment_before_week": {
+    "sort": "$int",
+    "unit": "elapsed_day",
+    "description": "The housemate's treatment days before the week.",
+    "verbalisation": "the housemate's treatment days before the week"
+   },
+   "housemate_income": {
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "description": "The housemate's total income.",
+    "verbalisation": "the housemate's total income"
+   },
+   "amount": {
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "description": "The applicant's winter fuel payment amount.",
+    "verbalisation": "the applicant's winter fuel payment amount"
+   },
+   "recovered_amount": {
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "description": "The applicant's recovered amount.",
+    "verbalisation": "the applicant's recovered amount"
+   },
+   "kept": {
+    "sort": "$int",
+    "unit": "gbp_penny",
+    "description": "The applicant's amount kept.",
+    "verbalisation": "the applicant's amount kept"
+   }
+  }
+ },
+ "unit_schema": "ve-units@1",
+ "units": {
+  "day": {
+   "scale": "1",
+   "display": {
+    "kind": "iso_date"
+   }
+  },
+  "elapsed_day": {
+   "scale": "1",
+   "display": {
+    "kind": "decimal",
+    "label": "days"
+   }
+  },
+  "gbp_penny": {
+   "scale": "100",
+   "display": {
+    "kind": "money",
+    "currency": "GBP",
+    "input_symbol": "\u00a3"
+   }
+  }
+ }
+}
