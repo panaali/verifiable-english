@@ -21,3 +21,5 @@ import VE.Risk.Decl
 import VE.Risk.Severity
 import VE.Risk.Words
 import VE.Risk.Record
+import VE.Risk.Piecewise
+import VE.Risk.Report
