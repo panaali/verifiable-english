@@ -208,6 +208,24 @@ def generate(seed):
     for domain in (["b", "a"], ["a", "b"]):
         route_evaluate(f"reproducer-2-{''.join(domain)}", defined, [["top"]],
                        route_model(domain, p=["b"]))
+    # Loop recheck (round 2): a definition's generated biconditional past the
+    # node or depth limit, Reach bodies in the aggregate, limits before typing.
+    for name, body in ((f"premise-nodes-{n - 1}", doubling(n - 1)),
+                       (f"premise-depth-{(k := rng.randint(61, 63))}", nest(k, "s"))):
+        env = route_env(("definitions@0", "relational-fol@0"),
+                        {"d": {"arguments": ["s"], "description": "d",
+                               "defined": {"arguments": ["s"], "body": body}}})
+        route_evaluate(name, env, [["top"]], route_model(small))
+    reach = ["exists", "s", ["reach", "plus", ["body", "s", doubling(11)], ["var", 0], ["var", 0]]]
+    for profiles in (("closure@0", "relational-fol@0"), ("closure@0", "nary@0", "relational-fol@0")):
+        route_countermodel(f"reach-aggregate-{len(profiles)}", route_env(profiles), [reach] * 3, ["bottom"],
+                           route_model(small))
+    unbound = ["eq", ["var", 0], ["var", 0]]
+    for profiles in (("relational-fol@0",), ("order@0", "relational-fol@0"),
+                     ("closure@0", "relational-fol@0"), ("closure@0", "nary@0", "relational-fol@0")):
+        tag = "-".join(p.split("@")[0] for p in profiles)
+        route_evaluate(f"typed-after-limit-{tag}", route_env(profiles), [["and", unbound, doubling(n)]],
+                       route_model(small))
     # A named closure one entity past its budget.
     chain = entities(817)
     closure = route_env(("closure@0", "relational-fol@0"))
