@@ -29,9 +29,19 @@
 > Profiles B15 to B19 cover both (section 5). Mutants M20 to M23 restore the
 > old readings, or drop one bound of AR6 (section 8). Their keys were written by hand from S1 before
 > VE was run on them.
+>
+> **Eligibility recheck applied** (`eligibility-looprecheck1.final.md`,
+> verdict FIX). The translation ignored the end of a care stay
+> (`care.until`), so a stay that ended during or before QW still counted as
+> residential care. `reference.py` already read the end date. No profile had
+> one, so no existing key depended on it and all 62 keys stand. Profiles B20
+> to B23 and C25 to C27 end a care stay before or on QW₁ (section 5), in each
+> role and on each path residential care feeds: R6, R7, R10 and the amounts.
+> Mutants M24 and M25 drop the end date or make its bound strict (section 8).
+> Their keys were written by hand from S1 before VE was run on them.
 
 This use case measures VE's **accuracy**, not only its coverage. VE checks a
-published benefit rule on 62 applicant profiles, and its answers are compared
+published benefit rule on 69 applicant profiles, and its answers are compared
 with an answer key worked out beforehand from the source. It is also the first
 real-document test of the merged W6a quantities and dates feature
 ([units-schema.md](../../docs/spec/units-schema.md),
@@ -113,16 +123,17 @@ For each profile, four questions:
 | Q3 | If entitled, does HMRC take the payment back (S2: P's total income over £35,000)? | YES / NO |
 | Q4 | If entitled, how much does P keep after that? | £ amount |
 
-The profiles contain 48 entitled and 14 not-entitled cases. **Scoring
+The profiles contain 54 entitled and 15 not-entitled cases. **Scoring
 definition** (used everywhere in this plan and in the results):
 
 - Q1 is scored on every profile.
 - Q2, Q3 and Q4 are scored only on the profiles whose key is entitled. On a
   not-entitled profile they are **not applicable**, and neither the key nor VE
   gives them an answer. VE's NO on Q1 is scored as Q1 only.
-- That gives 62 + 48 + 48 + 48 = **206 scored questions**. The same 206 are
+- That gives 69 + 54 + 54 + 54 = **231 scored questions**. The same 231 are
   the denominator for accuracy, coverage and precision. (Before the
-  eligibility review added B15 to B19, it was 57 + 44 × 3 = 189.)
+  eligibility review added B15 to B19, it was 57 + 44 × 3 = 189; before the
+  recheck added B20 to B23 and C25 to C27, 62 + 48 × 3 = 206.)
 
 A disagreement on Q1 still costs the Q2 to Q4 points of an entitled profile.
 If VE answers NO or OPEN there, it gives no amount, and those three questions
@@ -145,7 +156,7 @@ qualifying week.
 | R2 | S1 reg. 2(a) | x reached pensionable age in or before QW. |
 | R3 | S1 reg. 2(b) | x is ordinarily resident in England or Wales on **any** day of QW: residence began no later than QW₁, and it continues or its last day is no earlier than QW₀. |
 | R4 | S1 reg. 1(3) "relevant benefit" | The closed list: income support, income-based JSA, state pension credit, income-related ESA and universal credit. State Pension and Attendance Allowance are not on it. |
-| R5 | S1 reg. 1(4)(a) | x is **in residential care** when x resides in a care home (or independent hospital, or Polish resettlement accommodation) throughout QW and for at least 12 weeks (84 days) ending immediately before QW. Care must have begun no later than 2026-06-29. |
+| R5 | S1 reg. 1(4)(a) | x is **in residential care** when x resides in a care home (or independent hospital, or Polish resettlement accommodation) throughout QW and for at least 12 weeks (84 days) ending immediately before QW. Care must have begun no later than 2026-06-29, and a stay with a last day must not end before QW₁ (2026-09-27). |
 | R6 | S1 reg. 1(4)(b) | x **lives with** y when they share accommodation as their mutual home and **x** is not in residential care. The condition is on x only; y may be in residential care. So R6 is not symmetric. |
 | R7 | S1 reg. 4(2)(a) | Excluded: throughout QW, x is a partner of and living with y, where y has reached pensionable age and RB(y). |
 | R8 | S1 reg. 4(2)(b) and S3 reg. 2(5) | Excluded: throughout QW, x receives free in-patient treatment, and has done so for **more than 52 weeks** (more than 364 days) ending immediately before QW. A treatment period begins the day **after** admission and ends on the day of leaving. So "throughout QW" means admission ≤ 2026-09-20 and discharge ≥ 2026-09-27, and "more than 52 weeks" means admission ≤ 2025-09-20. |
@@ -279,6 +290,10 @@ because £20,000.00 is not over £35,000.00.
 | B17 | b. 1955, care home from 2026-06-30, no RB; shares it with sister b. 1957 in residential care since 2025-01-10, no RB | YES | £100 | NO | £100 | P: 83 days → not R5; R6 conditions P only → P lives with sister; sister: R5 holds, ¬RB → R10 no → entitled; P under 80, ¬RB, lives with entitled → 3(2). Condition on both: £200 | SI |
 | B18 | as B17, but the housemate is P's partner and gets Pension Credit | NO | — | — | — | P lives with partner (R6 on P only); partner reached PA (2023-11-02) and RB(partner) → R7. Condition on both: YES £200 | SI |
 | B19 | b. 1955, resident in Scotland from 2026-09-22, resident in England from 2026-09-24 and remains | YES | £200 | NO | £200 | R3: resident 2026-09-24 to QW₁; R11 (AR6): the Scotland residence began within QW but before the first E&W day → no; → 3(1). Unordered R11: NO | SI |
+| B20 | b. 1955, care home 2025-01-10 to 2026-09-24, Pension Credit | YES | £200 | NO | £200 | stay ends before QW₁ → not throughout QW → not R5 → R10 no; RB, alone → 3(1). Ignoring the end: NO (R10) | SI |
+| B21 | b. 1944, care home 2025-01-10 to 2026-09-24, no RB | YES | £300 | NO | £300 | not R5 (as B20); P 80, alone → not 3(6) or 3(5) → 3(4). Ignoring the end: £150 | SI |
+| B22 | b. 1955, no RB; lives with sister b. 1957 in a care home 2025-01-10 to 2026-09-24, Pension Credit | YES | £100 | NO | £100 | sister not R5 → R10 no; R7 needs a partner → sister entitled; P ¬RB lives with entitled → 3(2). Ignoring the end: sister R10 → £200 | SI |
+| B23 | b. 1955, care home 2025-01-10 to 2026-09-24, no RB; lives with partner b. 1957 who gets Pension Credit | NO | — | — | — | P not R5 → P lives with partner (R6) → R7. Ignoring the end: P in residential care → no R7 → YES £100 | SI |
 | C01 | alone, b. 1960-06-27 | YES | £200 | NO | £200 | PA date 2026-09-27 = QW₁ → R2 holds | guide |
 | C02 | alone, b. 1960-06-28 | NO | — | — | — | PA date 2026-09-28 > QW₁ | guide |
 | C03 | alone, b. 1960-02-29 | YES | £200 | NO | £200 | PA 2026-02-28 or 2026-03-01; both ≤ QW₁ | guide |
@@ -303,6 +318,9 @@ because £20,000.00 is not over £35,000.00.
 | C22 | not paid automatically, claimed 2027-03-31 | YES | £200 | NO | £200 | R12: claim on or before 31 March | guide |
 | C23 | not paid automatically, claimed 2027-04-01 | NO | — | — | — | R12 | guide |
 | C24 | sentenced, custody 2026-03-01, released 2026-09-27 | YES | £200 | NO | £200 | AR1: released during QW → not throughout (flag `ambiguous-source`) | SI |
+| C25 | care home 2026-06-29 to 2026-09-26, no RB | YES | £200 | NO | £200 | 84 days before QW, but the last day is before QW₁ → not throughout QW → not R5 → 3(1). Ignoring the end: £100 | SI |
+| C26 | care home 2026-06-29 to 2026-09-27, no RB | YES | £100 | NO | £100 | last day = QW₁ → throughout QW → R5 → 3(2)(b)(ii) | SI |
+| C27 | care home 2026-06-29 to 2026-09-20, no RB | YES | £200 | NO | £200 | the stay ends before QW → not R5 → 3(1). Ignoring the end: £100 | SI |
 | D01 | alone b. 1955, income £35,000.00 | YES | £200 | NO | £200 | not over £35,000 | guide |
 | D02 | alone b. 1955, income £35,000.01 | YES | £200 | YES | £0 | over → whole payment recovered | guide |
 | D03 | alone b. 1955, income £34,999.99 | YES | £200 | NO | £200 | not over | guide |
@@ -312,13 +330,13 @@ because £20,000.00 is not over £35,000.00.
 
 **Summary.**
 
-- **Profiles.** There are 62: 13 in group A (S2 amount-table rows), 19 in group
-  B (exclusions and combinations), 24 in group C (date boundaries, each with
+- **Profiles.** There are 69: 13 in group A (S2 amount-table rows), 23 in group
+  B (exclusions and combinations), 27 in group C (date boundaries, each with
   both sides) and 6 in group D (the income threshold with one penny either
   side).
-- **Basis.** 38 are `guide` cases, 18 are `SI` cases and 6 are `SI≠guide`
+- **Basis.** 38 are `guide` cases, 25 are `SI` cases and 6 are `SI≠guide`
   cases.
-- **Flags.** 9 profiles carry a flag in `cases.json`, so 53 are unflagged.
+- **Flags.** 9 profiles carry a flag in `cases.json`, so 60 are unflagged.
   4 are flagged `ambiguous-source` (B10, B16, C11, C24); C11 is also `SI≠guide`.
 - **Benefit list.** Each of the five relevant benefits decides the answer of
   at least one profile: income support B11, income-based JSA B12, state
@@ -333,9 +351,17 @@ because £20,000.00 is not over £35,000.00.
   is the review's own example. AR6 takes the later of two bounds, and each
   bound decides one profile alone: QW₀ decides B16, and the start of E&W
   residence decides B19.
-- **Size.** The brief asked for about 40 profiles. The extra 22 come from
-  covering both sides of every date boundary, every benefit on the list, and
-  the two readings the review corrected.
+- **Recheck profiles.** B20 to B23 and C25 to C27 were added by the
+  eligibility recheck. Each ends a care stay: C25 on the day before QW₁ (the
+  recheck's own example), C27 before QW, and C26 on QW₁ itself, which counts as
+  throughout. B20 to B23 end a long stay during QW, so residential care fails
+  on each path it feeds: R10 (B20), 3(6) (B21), the housemate's R10 and so
+  3(2) (B22), and R6 and so R7 (B23). Ignoring the end date changes the key of
+  every one except C26.
+- **Size.** The brief asked for about 40 profiles. The extra 29 come from
+  covering both sides of every date boundary, every benefit on the list, the
+  two readings the review corrected, and the care end date the recheck found
+  unread.
 
 **Independent check of the key.** [`reference.py`](reference.py) is a
 stdlib-only reading written from S1–S4. It imports nothing from `ve` and was
@@ -349,6 +375,10 @@ relevant benefits from its list now changes at least one key. The review
 corrected its R6 and R11 in the same way as the rules in 4.1. After B15 to B19
 were added, it printed **62/62**. Restoring its old R11 changes the answers
 for B15, B16 and B19, and restoring its old R6 changes them for B17 and B18.
+Its R5 always read a care stay's end date. After B20 to B23 and C25 to C27
+were added, it printed **69/69**. Making it ignore the end date changes the
+answers for B20 to B23, C25 and C27, and making the end bound strict changes
+C26.
 
 **Limits of this independence.**
 
@@ -603,14 +633,14 @@ No model calls.
 ## 9. Metrics to report (`RESULTS.md`)
 
 - **Accuracy.**
-  - Strict, per profile: every scored question correct, x/62. OPEN counts as
+  - Strict, per profile: every scored question correct, x/69. OPEN counts as
     wrong.
-  - Per question (section 3): Q1 x/62; Q2 x/48; Q3 x/48; Q4 x/48; total
-    x/206.
-  - The same figures on the 53 unflagged profiles, on the 38 `guide`
+  - Per question (section 3): Q1 x/69; Q2 x/54; Q3 x/54; Q4 x/54; total
+    x/231.
+  - The same figures on the 60 unflagged profiles, on the 38 `guide`
     profiles (official answers), and for each flagged profile individually.
 - **Coverage.** Scored questions answered (certified YES/NO/amount) out of
-  206, and precision = correct / answered, over the same 206.
+  231, and precision = correct / answered, over the same 231.
 - **Evidence.** Certificates produced, and certificates replayed by Lean
   (must equal the number produced). Also profiles whose premises are
   consistent, and non-vacuity models accepted by Lean.
@@ -630,7 +660,7 @@ No model calls.
 | Path | Content |
 |---|---|
 | `PLAN.md` | this plan and the frozen key |
-| `cases.json` | the 62 profiles with their `key` (same as section 5) |
+| `cases.json` | the 69 profiles with their `key` (same as section 5) |
 | `reference.py` | the independent reference reading and key check |
 | `source/` | the pinned raw files, extracted text, and `extract_text.py` |
 

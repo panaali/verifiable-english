@@ -1,6 +1,6 @@
 {
   "format": "wfp-eligibility-cases@1",
-  "description": "Applicant profiles for Winter Fuel Payment winter 2026 to 2027 (England and Wales, SI 2025/969). Each 'key' is the hand-derived answer in PLAN.md section 5, written before any VE run. Omitted person fields take the 'defaults' below. Money is GBP as a decimal string.",
+  "description": "Applicant profiles for Winter Fuel Payment winter 2026 to 2027 (England and Wales, SI 2025/969). Each 'key' is the hand-derived answer in PLAN.md section 5, written before any VE run. Omitted person fields take the 'defaults' below. Money is GBP as a decimal string. A care stay is {from, until?}, where 'until' is the last day in the care setting and is absent while the stay continues.",
   "defaults": {
     "ew_from": "1990-01-01",
     "ew_last_day": null,
@@ -97,6 +97,16 @@
      "key": {"entitled": false}},
     {"id": "B19", "summary": "resident in Scotland from 2026-09-22, then in England from 2026-09-24 (added by the eligibility review)", "applicant": {"birth": "1955-03-14", "ew_from": "2026-09-24", "scot_ni_from": "2026-09-22"}, "housemate": null,
      "key": {"entitled": true, "amount": "200.00", "recovered": false, "kept": "200.00"}},
+    {"id": "B20", "summary": "care home from 2025-01-10 to 2026-09-24 with Pension Credit (added by the eligibility recheck)", "applicant": {"birth": "1955-03-14", "care": {"from": "2025-01-10", "until": "2026-09-24"}, "benefits": ["state_pension", "pension_credit"]}, "housemate": null,
+     "key": {"entitled": true, "amount": "200.00", "recovered": false, "kept": "200.00"}},
+    {"id": "B21", "summary": "over 80, care home from 2025-01-10 to 2026-09-24, no relevant benefit (added by the eligibility recheck)", "applicant": {"birth": "1944-05-02", "care": {"from": "2025-01-10", "until": "2026-09-24"}}, "housemate": null,
+     "key": {"entitled": true, "amount": "300.00", "recovered": false, "kept": "300.00"}},
+    {"id": "B22", "summary": "lives with a sister who was in a care home from 2025-01-10 to 2026-09-24 and gets Pension Credit (added by the eligibility recheck)", "applicant": {"birth": "1955-03-14"},
+     "housemate": {"birth": "1957-11-02", "partner": false, "care": {"from": "2025-01-10", "until": "2026-09-24"}, "benefits": ["state_pension", "pension_credit"]},
+     "key": {"entitled": true, "amount": "100.00", "recovered": false, "kept": "100.00"}},
+    {"id": "B23", "summary": "care home from 2025-01-10 to 2026-09-24, lives with a partner who gets Pension Credit (added by the eligibility recheck)", "applicant": {"birth": "1955-03-14", "care": {"from": "2025-01-10", "until": "2026-09-24"}},
+     "housemate": {"birth": "1957-11-02", "partner": true, "benefits": ["state_pension", "pension_credit"]},
+     "key": {"entitled": false}},
 
     {"id": "C01", "summary": "born 1960-06-27, pensionable age on 2026-09-27", "applicant": {"birth": "1960-06-27"}, "housemate": null,
      "key": {"entitled": true, "amount": "200.00", "recovered": false, "kept": "200.00"}},
@@ -152,6 +162,12 @@
      "key": {"entitled": false}},
     {"id": "C24", "summary": "serving a sentence, released on 2026-09-27", "flags": ["ambiguous-source"],
      "applicant": {"birth": "1955-03-14", "custody": {"from": "2026-03-01", "release": "2026-09-27", "sentenced": true}}, "housemate": null,
+     "key": {"entitled": true, "amount": "200.00", "recovered": false, "kept": "200.00"}},
+    {"id": "C25", "summary": "care home from 2026-06-29, last day there 2026-09-26 (added by the eligibility recheck)", "applicant": {"birth": "1955-03-14", "care": {"from": "2026-06-29", "until": "2026-09-26"}}, "housemate": null,
+     "key": {"entitled": true, "amount": "200.00", "recovered": false, "kept": "200.00"}},
+    {"id": "C26", "summary": "care home from 2026-06-29, last day there 2026-09-27 (added by the eligibility recheck)", "applicant": {"birth": "1955-03-14", "care": {"from": "2026-06-29", "until": "2026-09-27"}}, "housemate": null,
+     "key": {"entitled": true, "amount": "100.00", "recovered": false, "kept": "100.00"}},
+    {"id": "C27", "summary": "care home from 2026-06-29, last day there 2026-09-20 (added by the eligibility recheck)", "applicant": {"birth": "1955-03-14", "care": {"from": "2026-06-29", "until": "2026-09-20"}}, "housemate": null,
      "key": {"entitled": true, "amount": "200.00", "recovered": false, "kept": "200.00"}},
 
     {"id": "D01", "summary": "total income exactly GBP 35,000.00", "applicant": {"birth": "1955-03-14", "income": "35000.00"}, "housemate": null,

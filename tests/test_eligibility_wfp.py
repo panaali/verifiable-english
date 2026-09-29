@@ -25,8 +25,13 @@ from ve.units import _core_problem  # noqa: E402
 
 # sha256 of the canonical JSON of [[id, key], ...] in cases.json. A key change must
 # be its own commit that says why (PLAN.md status note); update this pin there.
-KEY_DIGEST = "fd00bc1c3d03989750dc411c4a7b916372bc2e41a6ca49c744e28e78099ba857"
+KEY_DIGEST = "a994884704126935b51fb63178e6516922ef738981e24e0c3eafdcc2ff89e8b6"
 REVIEW_PROFILES = {"B15", "B16", "B17", "B18", "B19"}  # added by the eligibility review
+RECHECK_PROFILES = {"B20", "B21", "B22", "B23", "C25", "C26", "C27"}  # added by the eligibility recheck
+
+
+def _digest(keys):
+    return sha256(json.dumps(keys, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 def keyed_cases():
@@ -39,12 +44,14 @@ def recorded():
 
 def test_key_is_frozen():
     keys = [[c["id"], c["key"]] for c in keyed_cases()["cases"]]
-    assert sha256(json.dumps(keys, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == KEY_DIGEST
-    assert len(keys) == 62 and sum(k["entitled"] for _, k in keys) == 48
-    # The eligibility review added B15 to B19 only; the other 57 keys keep the first run's pin.
-    before = [k for k in keys if k[0] not in REVIEW_PROFILES]
-    assert sha256(json.dumps(before, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
-        "90626e32dda2b34a96a87a0399e6fa6b69bf057614346b07649f050f9cb66197"
+    assert _digest(keys) == KEY_DIGEST
+    assert len(keys) == 69 and sum(k["entitled"] for _, k in keys) == 54
+    # The recheck added B20 to B23 and C25 to C27 only; the other 62 keep the review's pin,
+    # and the review added B15 to B19 only, so the first 57 keep the first run's pin.
+    before_recheck = [k for k in keys if k[0] not in RECHECK_PROFILES]
+    assert _digest(before_recheck) == "fd00bc1c3d03989750dc411c4a7b916372bc2e41a6ca49c744e28e78099ba857"
+    before = [k for k in before_recheck if k[0] not in REVIEW_PROFILES]
+    assert _digest(before) == "90626e32dda2b34a96a87a0399e6fa6b69bf057614346b07649f050f9cb66197"
 
 
 def test_plan_table_matches_cases_json():
@@ -61,7 +68,7 @@ def test_plan_table_matches_cases_json():
                     if key["entitled"] else ["NO", "—", "—", "—"])
         q1, q2, q3, q4 = rows[case["id"]]
         assert [q1, money(q2), q3, money(q4)] == expected, case["id"]
-    assert len(rows) == 62
+    assert len(rows) == 69
 
 
 def test_independent_reference_agrees_with_the_key():
@@ -93,16 +100,30 @@ def _both_out_of_care(p, other):
     return other is not None and not reference.in_residential_care(p) and not reference.in_residential_care(other)
 
 
+def _care_without_end(p):
+    """The translation's reading before the recheck: a care stay's end date is ignored."""
+    return p["care"] is not None and (reference.QW_START - p["care"]["from"]).days >= 84
+
+
+def _care_end_strict(p):
+    """R5 with the end bound strict: a stay whose last day is QW1 would not count."""
+    until = p["care"] and p["care"].get("until")
+    return _care_without_end(p) and (until is None or until > reference.QW_END)
+
+
 @pytest.mark.parametrize("name, old, profiles", [
     ("excluded_move", _unordered_move, {"B15", "B16", "B19"}),
     ("excluded_move", _move_without_week_bound, {"B16"}),
     ("excluded_move", _move_without_residence_bound, {"B19"}),
     ("lives_with", _both_out_of_care, {"B17", "B18"}),
+    ("in_residential_care", _care_without_end, {"B20", "B21", "B22", "B23", "C25", "C27"}),
+    ("in_residential_care", _care_end_strict, {"C26"}),
 ])
 def test_review_profiles_decide_the_corrected_readings(name, old, profiles, monkeypatch):
     """Eligibility review findings A (R11 order, AR6) and B (R6 condition on the subject
-    only): each old or partial reading changes exactly the review profiles added for it,
-    and no earlier profile, which is why the first run missed both."""
+    only), and the recheck's care end date (R5 "throughout the qualifying week"): each
+    old or partial reading changes exactly the profiles added for it, and no earlier
+    profile, which is why the earlier runs missed them."""
     monkeypatch.setattr(reference, name, old)
     data = keyed_cases()
     changed = {c["id"] for c in data["cases"] if reference.answer(c, data["defaults"]) != c["key"]}
