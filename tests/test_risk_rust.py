@@ -49,3 +49,32 @@ def test_200_small_separable_conditions_match_enumeration():
     assert result.returncode == 0, result.stdout + result.stderr
     rows = json.loads(result.stdout)
     assert [(row["possible"], row["certain"]) for row in rows] == expected
+
+
+def test_200_prepared_records_match_enumerated_marginal_cells():
+    rng = random.Random(20260930)
+    cases = []
+    expected = []
+    for index in range(200):
+        lo = rng.randrange(-3, 3)
+        hi = rng.randrange(lo, 4)
+        threshold = rng.randrange(-3, 4)
+        op = rng.choice(("lt", "le", "eq"))
+        necessary = [op, ["quantity", "q"], ["decimal", "count", str(threshold)]]
+        classes = {"outage": "severe"}
+        precaution = bool(rng.randrange(2))
+        record = {"alternatives": ["run", "wait"], "harms": ["outage"], "classes": classes,
+                  "always_possible": ["severe"] if precaution else [],
+                  "unexamined": {"ruled_out_by": "team"},
+                  "cells": [{"action": "run", "harm": "outage", "necessary": necessary}]}
+        cases.append({"id": str(index), "kind": "risk-cells", "record": record,
+                      "ranges": {"q": {"tag": "count", "lo": str(lo), "hi": str(hi)}},
+                      "scales": {"count": "1"}})
+        possible = any(_truth(necessary, {"q": q}) for q in range(lo, hi + 1))
+        expected.append(((possible, False), (precaution, False)))
+    result = subprocess.run([str(ROOT / "rust/target/release/ve"), "conformance"],
+                            input=json.dumps(cases), text=True, capture_output=True, timeout=120)
+    assert result.returncode == 0, result.stdout + result.stderr
+    rows = json.loads(result.stdout)
+    actual = [tuple((cell["might"], cell["leads"]) for cell in row["tables"]) for row in rows]
+    assert actual == expected
