@@ -50,8 +50,8 @@ def case(kind="alt-elaborate", rules=None, **extra):
             "norms": norms() if rules is None else rules, **extra}
 
 
-def conflict_packages():
-    source = case()
+def conflict_packages(rules=None):
+    source = case(rules=rules)
     env = Environment(source["environment"])
     base = Environment(base_environment(source["environment"]))
     elaborated = run_case(source)
@@ -89,6 +89,7 @@ def test_authored_rules_have_one_reading_and_declared_priority():
         ("law-0-prevention-exception", "permitted", ("law-1-ban",), 1),
         ("law-0-ban", "permitted", ("law-1-ban", "law-0-prevention-exception"), 0),
         ("law-2-obey", "required", (), 0),
+        ("law-3-threat", "lawfully_avoidable_threat", (), 1),
         ("law-3-preserve", "prevent_required", (), 2),
     ]
 
@@ -112,8 +113,9 @@ def test_rules_read_as_english_without_parser_scaffolding():
 def test_checker_certifies_conflict_free_and_replays_dilemma():
     packages = conflict_packages()
     assert sorted(packages) == sorted([
-        "breaks_first_law", "breaks_zeroth_law", "has_lawful_option", "permitted",
-        "prevent_required", "required", "required->permitted"])
+        "breaks_first_law", "breaks_zeroth_law", "has_lawful_option",
+        "lawfully_avoidable_threat", "permitted", "prevent_required", "required",
+        "required->permitted"])
     assert run_case(case("alt-conflict", packages=packages))["verdict"] == "CONFLICT-FREE"
     for name, diagnosis in (("b-A0", "NONE-PERMITTED"), ("b-A1", "NONE-PERMITTED"),
                             ("j", "OVER-REQUIRED")):
@@ -121,6 +123,21 @@ def test_checker_certifies_conflict_free_and_replays_dilemma():
                                witness={**spec_scenario(name), "chooser": "r"}))
         assert result["verdict"] == "DILEMMA"
         assert result["diagnosis"].startswith(diagnosis)
+
+
+def test_checker_replays_joint_law_3_reproducer():
+    """Review P1 (rule 12): Lean replayed two self-preservation duties, each met
+    by a different rescue, as a dilemma. With Law 3 yielding only threat by
+    threat it still does; with the joint exception the witness is no dilemma."""
+    witness = {**REGRESSIONS["two-rescues-destroy-robot-differently"][0], "chooser": "r"}
+    separate = norms({"law-3-preserve": {"unless": norms()[-1]["norm"]["unless"][:1]}})
+    result = run_case(case("alt-followable", rules=separate,
+                           packages=conflict_packages(separate), witness=witness))
+    assert result["verdict"] == "DILEMMA"
+    assert result["diagnosis"].startswith("JOINTLY-UNDISCHARGEABLE")
+    result = run_case(case("alt-followable", packages=conflict_packages(), witness=witness))
+    assert result["verdict"] == "UNKNOWN"
+    assert result["text"] == "UNKNOWN: the witness chooser has a clear action"
 
 
 # Review finding P2 (coverage count): replacing each spec entry's rule set with
@@ -160,10 +177,11 @@ def test_spec_models_show_priority_and_choice(group, clear):
 
 # An independent reading of the source for one robot: Law 0 over Law 1 over
 # Law 2 over Law 3. The Zeroth Law excuses a First Law breach only when it
-# prevents a harm to humanity and no alternative breaks neither law. Law 3's
-# prevention duty holds only while some permitted action avoids the harm and
-# every required action prevents it.
-SELF, HUMAN, HUMANITY = ("hs",), ("hp",), ("hh",)
+# prevents a harm to humanity and no alternative breaks neither law. Law 3
+# protects one existence against every threat that some permitted action
+# avoids. It yields entirely when no permitted action avoids all such threats,
+# and otherwise drops only a threat that some required action does not prevent.
+SELF, HUMAN, HUMANITY = ("hs", "hs2"), ("hp",), ("hh",)
 HARMS = SELF + HUMAN + HUMANITY
 
 
@@ -191,9 +209,9 @@ def source_reading(situation):
     permitted = [a for a in actions if a not in zeroth and (
         a not in first or (any(prevents(a, h) for h in HUMANITY) and not lawful_option))]
     required = [a for a in permitted if a in marked("ordered")]
-    duties = [h for h in SELF if avoidable(h)
-              and any((a, h) not in leads for a in permitted)
-              and all(prevents(a, h) for a in required)]
+    threats = [h for h in SELF if any((a, h) not in leads for a in permitted)]
+    jointly = any(all((a, h) not in leads for h in threats) for a in permitted)
+    duties = [h for h in threats if jointly and all(prevents(a, h) for a in required)]
     clear = [a for a in permitted if set(required) <= {a}
              and all((a, h) not in leads for h in duties)]
     return {"permitted": permitted, "required": required, "clear": clear}
@@ -201,7 +219,7 @@ def source_reading(situation):
 
 # Review findings P1: each reproducer, then its class.
 REGRESSIONS = {
-    # Rule 12 (review: rule 9): Law 3 yields to Laws 1 and 2.
+    # Rule 13 (review: rule 9): Law 3 yields to Laws 1 and 2.
     "obedience-destroys-robot": (model(["nothing", "obey"], [("obey", "hs")],
                                        ordered=["obey"]), ["obey"]),
     "obedience-destroys-robot-retreat-available": (
@@ -241,6 +259,36 @@ REGRESSIONS = {
               ordered=["work"]), ["rescue"]),
     "unavoidable-harm": (model(["nothing", "work"], [("nothing", "hp"), ("work", "hp")]),
                          ["nothing", "work"]),
+    # Rules 12-13 (review: rule 12): Law 3 yields to Laws 1 and 2 jointly, not
+    # threat by threat. Each rescue destroys the robot in its own way.
+    "two-rescues-destroy-robot-differently": (
+        model(["nothing", "fire_rescue", "water_rescue"],
+              [("nothing", "hp"), ("fire_rescue", "hs"), ("water_rescue", "hs2")]),
+        ["fire_rescue", "water_rescue"]),
+    "two-rescues-destroy-robot-alike": (
+        model(["nothing", "fire_rescue", "water_rescue"],
+              [("nothing", "hp"), ("fire_rescue", "hs"), ("water_rescue", "hs")]),
+        ["fire_rescue", "water_rescue"]),
+    "two-orders-destroy-robot-differently": (
+        model(["nothing", "obey", "obey2"], [("obey", "hs"), ("obey2", "hs2")],
+              ordered=["obey"]), ["obey"]),
+    "two-threats-without-higher-law": (
+        model(["nothing", "work"], [("nothing", "hs"), ("work", "hs2")]), ["nothing", "work"]),
+    "two-threats-one-safe-rescue": (
+        model(["nothing", "fire_rescue", "water_rescue", "shield"],
+              [("nothing", "hp"), ("fire_rescue", "hs"), ("water_rescue", "hs2")]), ["shield"]),
+    # A threat that every permitted action meets does not release the robot
+    # from one that a permitted action avoids.
+    "forced-threat-and-avoidable-threat": (
+        model(["nothing", "rescue", "rescue2"],
+              [("nothing", "hp"), ("rescue", "hs"), ("rescue", "hs2"), ("rescue2", "hs")]),
+        ["rescue2"]),
+    # Stated limit (README, OPEN): when no permitted action avoids every threat,
+    # Law 3 ranks none, so an action meeting both threats is clear as well.
+    "dominated-action-when-threats-conflict": (
+        model(["nothing", "a1", "a2", "a3"],
+              [("nothing", "hp"), ("a1", "hs"), ("a2", "hs2"), ("a3", "hs"), ("a3", "hs2")]),
+        ["a1", "a2", "a3"]),
 }
 
 
@@ -288,32 +336,43 @@ def rust_binary():
     return REPO / "rust/target/release/ve"
 
 
+V2_GUARD = ["and", ["binary", "harm_to", ["var", 0], ["var", 1]],
+            ["binary", "avoidable", ["var", 0], ["var", 1]]]
+
+
 def test_followability_agrees_across_python_rust_and_source_reading(rust_binary):
     """Lean elaborates; Python and Rust evaluate the closed base formula.
 
     Law 3's prevention duty never removes the last clear action: the full rule
-    set is followable exactly where it is followable without Rule 12. The v2
-    duty, with no exception for Laws 1 and 2, fails that on the same sample.
+    set is followable exactly where it is followable without Rule 13. The v2
+    duty, with no exception for Laws 1 and 2, fails that on the same sample,
+    and so does the duty that yields threat by threat but not jointly.
     """
     data = load()[0]
     base = base_environment(data)
     env = Environment(base)
     without_law_3 = [r for r in norms() if r["norm"]["name"] != "law-3-preserve"]
-    v2_law_3 = norms({"law-3-preserve": {"unless": []}})
+    v2_law_3 = norms({"law-3-preserve": {"guard": V2_GUARD, "unless": []}})
+    separate_law_3 = norms({"law-3-preserve": {"unless": norms()[-1]["norm"]["unless"][:1]}})
     formulas = [run_case(case(rules=rules))["followable"]["ast"]
-                for rules in (norms(), without_law_3, v2_law_3)]
+                for rules in (norms(), without_law_3, v2_law_3, separate_law_3)]
     situations = [*(item[0] for item in REGRESSIONS.values()), *sampled_models(300, 1985)]
     python = []
     for situation in situations:
         finite = FiniteModel.from_dict(env, situation["model"])
         python.append([evaluate(env, formula_from_data(env, f), finite, trace=False).value
                        for f in formulas])
-    rust = subprocess.run([str(rust_binary), "conformance"], input=json.dumps([
-        {"id": str(i), "kind": "evaluate", "environment": base, "ast": formulas,
-         "model": situation["model"]} for i, situation in enumerate(situations)]),
-        capture_output=True, text=True, timeout=300)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    assert [row["values"] for row in json.loads(rust.stdout)] == python
+    rust_values = []
+    for start in range(0, len(situations), 100):  # the CLI reads at most 16 MiB
+        rust = subprocess.run([str(rust_binary), "conformance"], input=json.dumps([
+            {"id": str(i), "kind": "evaluate", "environment": base, "ast": formulas,
+             "model": situation["model"]}
+            for i, situation in enumerate(situations[start:start + 100], start)]),
+            capture_output=True, text=True, timeout=300)
+        assert rust.returncode == 0, rust.stdout + rust.stderr
+        rust_values += [row["values"] for row in json.loads(rust.stdout)]
+    assert rust_values == python
     assert [row[0] for row in python] == [bool(source_reading(s)["clear"]) for s in situations]
-    assert all(full == unranked for full, unranked, _ in python)
-    assert any(unranked and not v2 for _, unranked, v2 in python)
+    assert all(full == unranked for full, unranked, _, _ in python)
+    assert any(unranked and not v2 for _, unranked, v2, _ in python)
+    assert any(unranked and not separate for _, unranked, _, separate in python)
