@@ -1187,3 +1187,5 @@ import VE.Discourse.English
 #print axioms VE.Discourse.discourse_renderInjective
 #print axioms VE.Discourse.presentation_expands
 #print axioms VE.Discourse.import_acyclic
+#print axioms VE.Discourse.Loader.linesOf_carriage_return
+#print axioms VE.Discourse.Loader.byteStrip_vertical_space
