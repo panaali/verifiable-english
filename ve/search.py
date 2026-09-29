@@ -75,6 +75,9 @@ def _query_models(env, minimum, maximum, used, formulas, *, defer_model_id):
 
 
 def _node_count(root: Any) -> int:
+    """Formula and term nodes as the type checker counts them: a Reach body
+    edge's formula counts, the edge wrapper itself does not (Lean
+    `formulaNodes`, Rust's shared checker)."""
     total, stack = 0, [root]
     while stack:
         node = stack.pop(); total += 1
@@ -83,6 +86,9 @@ def _node_count(root: Any) -> int:
             child = getattr(node, field, None)
             if child is not None: stack.append(child)
         stack.extend(getattr(node, "terms", ()))
+        edge = getattr(node, "edge", None)
+        if type(edge) is Body:
+            stack.append(edge.formula)
     return total
 
 

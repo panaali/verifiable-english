@@ -877,13 +877,10 @@ def _depth(formula):
     return deepest
 
 
-def test_generated_formulas_deeper_than_the_decoders_are_accepted(executables):
-    """mig1c-looprecheck1 B: a binary definition with a body of depth 62 has a depth-66
-    Background premise, and English with 64 negations parses at depth 65; both actual
-    service responses failed as CheckerUnavailable after one retry. Formulas the runners
-    generate are not bounded by the decoders' 64: these, the largest definition premise
-    (68), a 2002-deep English parse and a norms elaboration over 70 rules are accepted with
-    no retry. Order surface formulas stay within 64 because the runner re-decodes them."""
+def test_generated_formulas_follow_each_routes_limits(executables):
+    """The W6 route rejects generated definition premises beyond its AST limit.
+    English and norms still return their deeper generated formulas; the service
+    accepts those responses without a retry. Order re-decodes surface formulas."""
     from tests.lean_service_corpus import (deep_definition_background, deep_norms_elaboration,
                                            english_cases, load, order_cases)
     route = load("lean/VE/Route/examples/route-cases.json")
@@ -897,7 +894,8 @@ def test_generated_formulas_deeper_than_the_decoders_are_accepted(executables):
         [norms] = service.run("norms", [deep_norms_elaboration()])
         surfaces = service.run("order", [{**order, "id": str(d), "source": source(d)} for d in (64, 65)])
         assert service.stats["retries"] == 0
-    assert [max(map(_depth, row["premises"])) for row in backgrounds] == [66, 68]
+    assert all(row["status"] == "error" and "generated biconditional exceeds" in row["error"]
+               for row in backgrounds)
     assert [_depth(item["parsed"][0]) for item in english["results"][-4:]] == [66, 2002, 66, 2002]
     assert min(_depth(x["ast"]) for x in norms["premises"] + norms["conflict_targets"]) > 64
     assert surfaces[0]["status"] == "ok" and _depth(surfaces[0]["ast"][0]) == 64

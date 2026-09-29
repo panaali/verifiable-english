@@ -47,6 +47,22 @@ and the environment ID under the shared `ve-meaning-<identity-version>` digest
 domain. Every active norm block is validated even when the environment has no
 regulated predicates; norm content requires `norms@0`.
 
+With a `ve-units@1` environment (`documents@1`, `order@0`, `relational-fol@0`,
+`time@0`), `content` is `{"quantity":{...}}`: a `ve-quantity@1` statement
+admitted before erasure. Legacy `ast` content is dimensionless source input to
+the same admission, and an English fence is read once across the whole
+grammar (`parse_w6_sentence`). Graph nodes carry `quantity` instead of `ast`,
+and deductions carry `ve-quantity-certificate@1`. Lean `VE.Time.Document`
+admits the graph with the base provenance rules and no Background, and binds
+the report to the annotated meaning ids (`admit_quantity_report_sound`).
+A quantity lemma is `{"name", "conclusion", "leaves", "certificate"}`: leaves
+are `{"quantity", "label"}` with no `cite` label, and the certificate is a
+`ve-quantity-certificate@1` from exactly the leaves, in order, to the
+conclusion, checked when the lemma is decoded. A `cite:<bundle>/<lemma>` leaf
+states that conclusion and the report carries every lemma leaf with its label,
+so the root holds wherever the report's non-citation leaves hold
+(`cites_discharged`).
+
 A source unit that contains both checked and unresolved text has
 `{"id", "span", "status":"MIXED", "parts":[...]}`. Each part has the ordinary
 unit fields plus a unique ID and one status: `CHECKED`, `OPEN`, `LABELLED`, or
