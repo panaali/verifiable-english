@@ -83,6 +83,7 @@ Names have prefix `VE.Rights.`.
 | `Wire.rights_wire_conflict_sound` | A successful raw conflict replay with every certificate accepted decodes to exactly the replayed well-formed document, which is conflict-free over rights-admissible bases. |
 | `Wire.rights_wire_scope_sound` | A successful raw scope replay with no finding decodes to that document, and its audit with the replayed certificates is empty. |
 | `Wire.rights_wire_acceptance` | A successful raw entailment replay with an accepted certificate decodes to that document and gives the two halves of `rights_route_acceptance`. |
+| `Run.rights_wire_acceptance` | A successful `admission` case on the rights path answers with `RightsAdmissionAnswer`: the rights source is well-formed, the report is sound over `envPrime (correlate D)`, every leaf is an admitted unit, a regenerated layer, profile, soft or `Lim_D` premise or an existing coupling label, citations are closed, choices and coupled choices compatible, and the root holds under `backgroundR D ++ elaborate T″′` and the other assumptions (spec 9.3; `Run.runAdmission_sound`). |
 | `Wire.rights_wire_conflict_witness_sound` | A successful raw witness replay whose target formula is true refutes conflict-freedom, classified. |
 
 The remaining theorems are helper lemmas, audited with the same allowlist.
