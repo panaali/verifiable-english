@@ -295,8 +295,11 @@ for every existing environment (none has the block). `soft-norms@0` requires `no
           "hard": false}}
 ```
 
-`mode` defaults to `strict` when absent, so every existing `norms@0` unit is a valid soft unit with unchanged
-meaning. `rank` is a declared rank or absent. `alterable` is a sorted list of distinct declared parties. `exception`
+`over` is a set of rule names: a name repeated in one rule's `over` is rejected when the rule is decoded
+(`InvalidInput: duplicate over <m> in rule <n>`, 8 check 4.2), never merged or counted twice. Its order is the
+author's and is kept in the wire form and the document hash (3.4); nothing derived from it depends on that order
+(5.1). `mode` defaults to `strict` when absent, so every existing `norms@0` unit whose `over` repeats no name is a
+valid soft unit with unchanged meaning. `rank` is a declared rank or absent. `alterable` is a sorted list of distinct declared parties. `exception`
 is mandatory when `mode` is `default` and forbidden when `strict` (`InvalidInput: rule <n> is strict and declares an
 exception`); its `decided_by` is a string, `unstated`, or `null` to inherit the environment's `exception_decider`;
 when both are absent the diagnostic is `MissingExceptionDecider: rule <n>`. `sufficient` and `necessary` are
@@ -484,6 +487,11 @@ carve-outs of N in T′ := U_N ++ [derived_N]      (omitted when derived_N is sy
 precedence of T′      := author precedence of T; no derived edges
 regulated, definitions, completions of T′ := those of T; E′ as in 1.3
 ```
+
+`children(N)`, the rules whose `over` names `N`, is W1's: one entry per rule (a repeat is rejected, 3.2), in
+increasing rule-name order, whatever the order of the rules and of each `over` list. Every formula built from the
+precedence DAG (`yields`, `selects`, the strict selections in `blocked_N`), every size computed for it (8 checks 6.9
+to 6.15) and every regeneration of it (the soft route's comparison of Python's and Lean's `T′`) uses that order.
 
 `blocked_N` and `dominated_N` are the formulas of 4.2, unfolded: `P^s_p`, `N^s_p`, `P^s_r`, `N^s_m` are W1's
 selection formulas over the strict rules with `switch` as an extra carve-out; `dominated_N` inlines `eff_M` for every
@@ -805,6 +813,7 @@ the message, a name, or other input.
 | 3.5 | No W3 definition, then no W5 data flag, is declared | `SOFT_UNSUPPORTED_PROFILE` |
 | 4.1 | **Rule fields**, each norm object in order, its fields in this order. The object is `{"norm": {...}}` with every W1 field, optionally the soft fields, nothing else | `SOFT_INVALID_INPUT` |
 | 4.2 | *Inherited:* W1's field checks: rule-name syntax, `predicate` a string, `sign` a Boolean, `unless` an array of at most 8, `over` an array of strings, guard and carve-outs decode as FOL formulas, each within `MAX_DEPTH` and its own `MAX_NODES` budget (term nodes count) | `SOFT_INVALID_INPUT` |
+|  | then no name is repeated in `over` (the first repeat in order: `InvalidInput: duplicate over <m> in rule <n>`) | `SOFT_INVALID_INPUT` |
 | 4.3 | `mode` is absent, `strict` or `default` | `SOFT_INVALID_RULE_FIELDS` |
 | 4.4 | `rank` is absent, null or a string | `SOFT_INVALID_RULE_FIELDS` |
 | 4.5 | `alterable` is absent or an array of strings, sorted and distinct | `SOFT_INVALID_ALTERABLE` |
@@ -896,7 +905,7 @@ one phase, must produce the same code in Python and Lean.
 | `HardConstraintAltered: rule <n>` | `hard: true` with `mode: default` or a switch | error |
 | `UnknownSymbol: party <π>` | undeclared party in `alterable` or `instruction_of` | error |
 | `DuplicateDeclaration: rank <a>` / `party <π>` | duplicate names in the `soft` block | error |
-| `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` | field consistency (3.1, 3.2) | error |
+| `InvalidInput: rule <n> is strict and declares an exception` / `exception condition of rule <n> mentions <q>` / `invalid soft fields for <n>` / `instruction_of on <p>` / `duplicate over <m> in rule <n>` | field consistency (3.1, 3.2) | error |
 | `ResourceLimit: derived carve-out of rule <n>` / `ResourceLimit: ranks` / `ResourceLimit: parties` | `MAX_NODES` or `MAX_DEPTH` on unfolding; more than 16 ranks; more than 8 parties | error |
 | `ResourceLimit: decision predicate <name>` / `ResourceLimit: extended vocabulary` | a decision predicate name beyond `MAX_IDENTIFIER_BYTES`; `E′` beyond `MAX_PREDICATES` (6.4) | error |
 | `ResourceLimit: generated soft premise <label>` / `ResourceLimit: generated norm layer layer:norms:<p>` / `ResourceLimit: generated conflict target <t>` | a generated premise, layer or conflict target beyond `MAX_DEPTH` or `MAX_NODES` (6.11 to 6.13) | error |

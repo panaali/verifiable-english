@@ -30,10 +30,12 @@ from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_reche
                                     compare_rejected, main as conformance_main, soft4_reproducers,
                                     soft4_near_limit, _plain_chain, _negations, _opposed,
                                     _twice, _dual_outcomes, soft4_aggregate_reproducers,
-                                    smallest_queries, _exact, _exception)
+                                    smallest_queries, _exact, _exception,
+                                    soft_over_reproducers, soft_over_accepted)
+from ve.softnorms import decode_rule
 
-REJECTED_INPUTS = 4417
-ACCEPTED_NEAR_LIMIT = 86
+REJECTED_INPUTS = 4626
+ACCEPTED_NEAR_LIMIT = 90
 REJECTED_NEAR_LIMIT = 137
 
 
@@ -190,7 +192,7 @@ def test_reported_diagnostic_codes(raw, rules, code):
 @pytest.mark.parametrize("name,raw,rules,code",
                          [*loop_recheck_reproducers(), *soft2_reproducers(),
                           *soft3_reproducers(), *soft_limits_reproducers(), *soft4_reproducers(),
-                          *soft4_aggregate_reproducers()])
+                          *soft4_aggregate_reproducers(), *soft_over_reproducers()])
 def test_loop_recheck_diagnostic_precedence(name, raw, rules, code):
     with pytest.raises(VEError) as python_error:
         load_soft_document(raw, rules)
@@ -547,3 +549,42 @@ def test_python_and_lean_report_rank_warning_and_undeclared_tie():
     assert row["warnings"] == list(soft.warnings)
     assert "RankAgainstPrecedence: rule n over m" in row["warnings"]
     assert "undeclared tie: high, other" in row["warnings"]
+
+
+@pytest.mark.parametrize("name,raw,rules,code", list(soft_over_reproducers()))
+def test_repeated_over_is_rejected_at_decode(name, raw, rules, code):
+    # soft4-loop.final B: `over: ["a"] * 41` was accepted by Python, which merged the
+    # repeats, and rejected by Lean, which built one child per copy (a layer beyond
+    # MAX_NODES); with two copies both accepted and the public elaboration raised
+    # "regeneration mismatch: derived carve-outs". `over` is a set: both reject a
+    # repeat at 4.2 with one code and one text.
+    with pytest.raises(VEError) as python_error:
+        load_soft_document(raw, rules)
+    with pytest.raises(VEError) as lean_error:
+        _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    assert python_error.value.code == lean_error.value.code == code
+    assert str(python_error.value) == str(lean_error.value)
+    if code == "SOFT_INVALID_INPUT" and "repeat-before-predicate" not in name:
+        assert str(python_error.value) == "InvalidInput: duplicate over a in rule b"
+        # The W2 unit decoder (one norm unit on its own) rejects it the same way.
+        with pytest.raises(VEError) as unit_error:
+            decode_rule(SoftEnvironment(raw), next(r for r in rules if r["norm"]["name"] == "b"))
+        assert (unit_error.value.code, str(unit_error.value)) == (code, str(python_error.value))
+
+
+@pytest.mark.parametrize("name,raw,rules", list(soft_over_accepted()))
+def test_children_are_sorted_by_name_on_both_sides(name, raw, rules):
+    # soft4-loop.final B: distinct children given out of name order. Python built
+    # them in document order and Lean by name, so the regenerated derived carve-outs
+    # differed. The public elaboration regenerates with Lean and compares.
+    python = load_soft_document(raw, rules)
+    lean = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules})
+    elaborated = elaborate_soft_document(python)
+    assert elaborated["premises"] == lean["premises"]
+    assert lean["environment_prime"] == python.extended_env.to_dict()
+    # One canonical order for children: reversing every `over` list changes no derived
+    # carve-out and no layer on either side.
+    shuffled = [{"norm": {**r["norm"], "over": r["norm"]["over"][::-1]}} for r in rules]
+    again = _run({"id": name, "kind": "soft-elaborate", "environment": raw, "norms": shuffled})
+    assert (again["derived"], again["premises"]) == (lean["derived"], lean["premises"])
+    assert elaborate_soft_document(load_soft_document(raw, shuffled))["premises"] == elaborated["premises"]
