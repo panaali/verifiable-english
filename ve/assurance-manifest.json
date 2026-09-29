@@ -149,7 +149,8 @@
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "stage-1 service request decoder and dispatcher; additive and not yet on an assurance operation path",
       "lean/VE/Norms/Plain.lean": "stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises and the profile model check",
-      "lean/VE/Service/Standalone.lean":"stage-2 service modes environment, model, check and identity: wrap the pinned family decoders and recompute identities; additive and not yet on an assurance operation path"
+      "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
+      "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check and identity: wrap the pinned family decoders and recompute identities; additive and not yet on an assurance operation path"
     }
   },
   "plan_operations": {
