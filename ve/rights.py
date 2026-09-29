@@ -9,7 +9,7 @@ from copy import deepcopy
 from dataclasses import replace
 import re
 
-from .ast import And, Atom, Binary, Implies, Or, Top, Unary, Var, _Checker, _Decoder, _to_data
+from .ast import And, Atom, Binary, Bottom, Implies, Or, Top, Unary, Var, _Checker, _Decoder, _to_data
 from .environment import valid_identifier
 from .errors import DuplicateDeclaration, ResourceLimit, UnsupportedProfile, VEError
 from .norms import Norm, _bind, _instantiate
@@ -108,8 +108,7 @@ def _atom(name, arity):
 
 
 def _or(items):
-    items = iter(items)
-    result = next(items)
+    result = Bottom()
     for item in items:
         result = Or(result, item)
     return result

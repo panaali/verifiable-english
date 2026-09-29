@@ -1,0 +1,41 @@
+{
+  "fixtures": [
+    {
+      "conflict_targets": 4,
+      "fixture": "alpha",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 5,
+      "fixture": "beta",
+      "limitations": 0,
+      "lines": 2,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "gamma",
+      "limitations": 1,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "eta",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "theta",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    }
+  ],
+  "format": "rights-three-way@0",
+  "passed": 5
+}
