@@ -170,6 +170,8 @@ def test_poisoned_toolchain_variables_do_not_reach_real_tools(tmp_path, monkeypa
     (package / "Main.lean").write_text('def main : IO Unit := IO.println "probe"\n')
     # A directory toolchain file elan would honour instead of the pin.
     (package / "lean-toolchain").write_text("leanprover/lean4:v4.0.0\n")
+    # Lake, unlike uv, never joins an ancestor package.
+    (tmp_path / "lakefile.toml").write_text("invalid = [\n")
     lean = subprocess.run(["lean", "--version"], cwd=package, env=env, capture_output=True, text=True)
     assert lean.returncode == 0 and "version 4.24.0" in lean.stdout, lean.stdout + lean.stderr
     built = subprocess.run(["lake", "build"], cwd=package, env=env, capture_output=True, text=True)
@@ -219,7 +221,7 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
     versions = {"uv version": "uv 0.0.0", "lake version": "Lake (Lean version 4.24.0)",
                 "lean version": "Lean (version 4.24.0)", "rustc version": "rustc 1.98.1 (x)",
                 "cargo version": "cargo 1.98.1 (x)", "commit": "sha", "worktree status": "",
-                "Rust host": f"host: {target}",
+                "Rust host": f"host: {target}", "Python environment": str(root / ".venv"),
                 "native Rust tests": "test result: ok. 2 passed; 0 failed; 0 ignored;"}
 
     def run(label):
@@ -312,6 +314,91 @@ def test_gate_refuses_cargo_config_in_any_ancestor(tmp_path, location):
     workdir.rmdir()
     with gate.isolated_cargo(env) as (cargo_env, cwd):
         assert cwd == workdir and cargo_env["CARGO_NET_OFFLINE"] == "true"
+
+
+def ancestor_workspace(tmp_path):
+    # A copy of the checkout's Python project whose own lock is invalid, below a
+    # parent workspace that lists it as a member and carries a valid lock.
+    outer = tmp_path / "outer"
+    checkout = outer / "checkout"
+    checkout.mkdir(parents=True)
+    for name in ("pyproject.toml", ".python-version"):
+        (checkout / name).write_bytes((gate.ROOT / name).read_bytes())
+    (checkout / "uv.lock").write_text("invalid = [\n")
+    lock = (gate.ROOT / "uv.lock").read_text().replace(
+        'source = { editable = "." }', 'source = { editable = "checkout" }')
+    (outer / "uv.lock").write_text(lock.replace(
+        "\n[[package]]", '\n[manifest]\nmembers = ["verifiable-english"]\n\n[[package]]', 1))
+    (outer / "pyproject.toml").write_text('[tool.uv.workspace]\nmembers = ["checkout"]\n')
+    return outer, checkout
+
+
+def test_gate_refuses_ancestor_uv_workspace(tmp_path, monkeypatch):
+    outer, checkout = ancestor_workspace(tmp_path)
+    env = gate.gate_environment(tmp_path / "scratch")
+    sync = ["uv", "sync", "--locked", "--group", "dev", "--dry-run", "--offline"]
+    joined = subprocess.run(sync, cwd=checkout, env=env, capture_output=True, text=True)
+    assert joined.returncode == 0, joined.stderr
+    assert str(outer / ".venv") in joined.stderr
+    monkeypatch.setattr(gate, "ROOT", checkout)
+    monkeypatch.setattr(gate, "command", lambda *args, **kwargs: pytest.fail("uv invoked"))
+    with pytest.raises(RuntimeError, match="ancestor workspace"):
+        gate.check_python_project({"toolchains": {}}, env)
+    (outer / "pyproject.toml").unlink()
+    alone = subprocess.run(sync, cwd=checkout, env=env, capture_output=True, text=True)
+    assert alone.returncode != 0 and "uv.lock" in alone.stderr, alone.stderr
+
+
+@pytest.mark.parametrize("ancestor,refused", [
+    ('[tool.uv.workspace]\nmembers = ["*"]\n', True),
+    ('[project]\nname = "outer"\n[tool.uv.workspace]\n', True),
+    ("invalid = [\n", True),
+    ('tool = "uv"\n', True),
+    ("[tool]\nuv = 1\n", True),
+    ('[project]\nname = "outer"\n', False),
+    ("[tool.uv]\nmanaged = true\n", False),
+    ("[tool.black]\nline-length = 1\n", False),
+], ids=["workspace", "project-workspace", "malformed", "tool-string", "uv-integer", "project",
+        "uv-settings", "other-tool"])
+def test_ancestor_pyproject_kinds(tmp_path, ancestor, refused):
+    checkout = tmp_path / "a/b/checkout"
+    checkout.mkdir(parents=True)
+    (tmp_path / "a/pyproject.toml").write_text(ancestor)
+    (checkout / "pyproject.toml").write_text('[tool.uv.workspace]\nmembers = ["*"]\n')
+    expected = [tmp_path / "a/pyproject.toml"] if refused else []
+    assert gate.uv_workspace_ancestors(checkout) == expected
+
+
+def test_gate_rejects_python_environment_outside_checkout(tmp_path, monkeypatch):
+    monkeypatch.setattr(gate, "ROOT", tmp_path / "checkout")
+    stages = {"Python version": "Python 3.14.7",
+              "Python environment": str(tmp_path / ".venv")}
+    monkeypatch.setattr(gate, "command", lambda args, *, env, stage, cwd=None: stages.get(stage, ""))
+    with pytest.raises(RuntimeError, match="selected the environment"):
+        gate.check_python_project({"toolchains": {}}, {})
+    stages["Python environment"] = str(tmp_path / "checkout/.venv")
+    gate.check_python_project({"toolchains": {}}, {})
+
+
+def test_cargo_workspace_root_ignores_ancestor_workspaces(tmp_path):
+    # The Rust mirror: rust/Cargo.toml declares its own [workspace], so Cargo
+    # stops there and never takes an ancestor workspace's Cargo.lock.
+    assert "workspace" in tomllib.loads((gate.ROOT / "rust/Cargo.toml").read_text())
+    rust = tmp_path / "outer/checkout/rust"
+    (rust / "member/src").mkdir(parents=True)
+    (rust / "member/src/lib.rs").write_text("")
+    (rust / "member/Cargo.toml").write_text(
+        '[package]\nname = "member"\nversion = "0.1.0"\nedition = "2021"\n')
+    (rust / "Cargo.toml").write_text('[workspace]\nmembers = ["member"]\nresolver = "2"\n')
+    (tmp_path / "outer/Cargo.toml").write_text('[workspace]\nmembers = ["checkout/rust/member"]\n')
+    (tmp_path / "outer/Cargo.lock").write_text("invalid = [\n")
+    env = rust_environment(tmp_path / "scratch")
+    with gate.isolated_cargo(env) as (cargo_env, cwd):
+        run = subprocess.run(["cargo", "metadata", "--offline", "--no-deps", "--format-version", "1",
+                              "--manifest-path", str(rust / "Cargo.toml")],
+                             cwd=cwd, env=cargo_env, capture_output=True, text=True)
+    assert run.returncode == 0, run.stderr
+    assert json.loads(run.stdout)["workspace_root"] == str(rust)
 
 
 def test_cargo_registry_seed_takes_only_locked_archives(tmp_path, monkeypatch):
@@ -428,6 +515,8 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
             return ""
         if stage == "Lean build":
             raise interruption("interrupted")
+        if stage == "Python environment":
+            return str(gate.ROOT / ".venv")
         return ""
 
     monkeypatch.setattr(gate, "command", fake_command)
@@ -480,6 +569,8 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
             return "?? tests/conftest.py" if change_worktree and sha_calls == 2 else ""
         if stage == "Rust host":
             return f"host: {target}"
+        if stage == "Python environment":
+            return str(tmp_path / ".venv")
         if stage == "native Rust tests":
             return "test result: ok. 2 passed; 0 failed; 0 ignored;"
         if stage == "Python suite":

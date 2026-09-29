@@ -11,8 +11,10 @@ only the pinned Lean and Rust toolchain `bin` directories (under the account's
 caches and temporary files are fresh directories owned by that run. The allowed
 variables are listed in `ALLOWED_ENVIRONMENT` in `tools/gate.py`, and the exact
 environment of each stage is recorded in the result.
-It checks the pinned Lean and Rust versions, syncs the locked Python environment,
-builds both native backends once, runs the Lean source audit, `cargo test`, and
+It checks the pinned Lean and Rust versions, syncs the locked Python environment
+(refusing any ancestor `pyproject.toml` that declares a uv workspace, which would
+substitute its own lock and `.venv`, and checking that Python runs from the
+checkout's `.venv`), builds both native backends once, runs the Lean source audit, `cargo test`, and
 the full non-live pytest suite, then writes `gate-result.json` with the commit SHA, tool versions, counts,
 every skip and every failure. It exits nonzero for missing backends, unlisted skips,
 missing test IDs, a dirty or changing worktree, or failed stages. Expected test

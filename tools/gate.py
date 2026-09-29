@@ -44,7 +44,8 @@ ALLOWED_ENVIRONMENT = (
     "LANG", "LC_ALL",                   # C.UTF-8
     "GIT_CONFIG_NOSYSTEM",              # 1: no /etc/gitconfig
     "UV_CACHE_DIR",                     # fresh, in scratch
-    "UV_NO_CONFIG",                     # 1: no uv.toml from the user, system or ancestors
+    "UV_NO_CONFIG",                     # 1: no uv.toml from the user, system or ancestors;
+                                        # ancestor workspaces: uv_workspace_ancestors
     "LAKE_CACHE_DIR",                   # fresh, in scratch
     "CARGO_HOME",                       # fresh, in scratch; seeded by isolated_cargo
     "PYTHONNOUSERSITE",                 # 1
@@ -144,6 +145,43 @@ def check_toolchains(result: dict, env: dict[str, str]) -> None:
         raise RuntimeError(f"rustc version differs from rust-toolchain.toml ({rust_pin})")
     if not result["toolchains"]["cargo"].startswith(f"cargo {rust_pin} "):
         raise RuntimeError(f"Cargo version differs from rust-toolchain.toml ({rust_pin})")
+
+
+def uv_workspace_ancestors(root: Path) -> list[Path]:
+    # UV_NO_CONFIG does not stop workspace discovery: uv joins an ancestor
+    # pyproject.toml declaring [tool.uv.workspace] that lists the checkout, then
+    # takes that workspace's uv.lock, .python-version and .venv instead of the
+    # checkout's. An ancestor uv cannot parse is refused as well.
+    found = []
+    for parent in root.resolve().parents:
+        pyproject = parent / "pyproject.toml"
+        if not pyproject.is_file():
+            continue
+        try:
+            tool = tomllib.loads(pyproject.read_text()).get("tool", {})
+            uv = tool.get("uv", {}) if isinstance(tool, dict) else None
+            declares = not isinstance(uv, dict) or "workspace" in uv
+        except (OSError, UnicodeDecodeError, tomllib.TOMLDecodeError):
+            declares = True
+        if declares:
+            found.append(pyproject)
+    return found
+
+
+def check_python_project(result: dict, env: dict[str, str]) -> None:
+    workspaces = uv_workspace_ancestors(ROOT)
+    if workspaces:
+        raise RuntimeError(f"uv would use an ancestor workspace instead of {ROOT / 'uv.lock'}: "
+                           f"{[str(path) for path in workspaces]}")
+    command(["uv", "sync", "--locked", "--group", "dev"], env=env, stage="frozen Python lock")
+    result["toolchains"]["python"] = command(
+        ["uv", "run", "--frozen", "--no-sync", "python", "--version"],
+        env=env, stage="Python version")
+    # Every later Python stage must run in the environment synced from this lock.
+    prefix = command(["uv", "run", "--frozen", "--no-sync", "python", "-c",
+                      "import sys; print(sys.prefix)"], env=env, stage="Python environment")
+    if prefix != str(ROOT / ".venv"):
+        raise RuntimeError(f"uv selected the environment {prefix}, not {ROOT / '.venv'}")
 
 
 def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
@@ -333,10 +371,7 @@ def main() -> int:
             if not isinstance(expected, list) or not expected or not all(isinstance(x, str) for x in expected):
                 raise RuntimeError("invalid test collection baseline")
             check_toolchains(result, env)
-            command(["uv", "sync", "--locked", "--group", "dev"], env=env, stage="frozen Python lock")
-            result["toolchains"]["python"] = command(
-                ["uv", "run", "--frozen", "--no-sync", "python", "--version"],
-                env=env, stage="Python version")
+            check_python_project(result, env)
             result["stages"].append("toolchains")
 
             command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
