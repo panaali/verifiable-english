@@ -1,9 +1,13 @@
 # The `unspecified` completion in VE: plan (`norm-defaults@0`)
 
-> Status: planning draft 1 (2026-09-29). Design only: nothing is implemented, and every theorem and fixture below
+> Status: planning draft 2 (2026-09-29). Design only: nothing is implemented, and every theorem and fixture below
 > is an implementation obligation, not a claim. This is the planner's input to the Astra + Fable convergence that
 > ARCH-ROADMAP P1 "unspecified default" (DRI 2026-09-29) schedules for after rights merges. Rights merged to main
-> at `a1bf3a60`. A statement review of the resulting spec gates the Lean and Python work (PLAN-EXPAND2 rule 10).
+> at `a1bf3a60`. Draft 2 applies the converged statement review of draft 1
+> (`manage-agents/debates/norm-defaults-spec/{astra,fable}.md`: FIX, CONVERGED after round 2; section 12 maps each
+> finding to its change), with no other design change. The spec [norm-defaults.md](norm-defaults.md) is written from
+> this draft, copying section 7's statements and section 9's fixtures exactly; a statement pass on that diff alone
+> gates the Lean and Python work (PLAN-EXPAND2 rule 10).
 > Inputs: [norms.md](norms.md) (W1, cited `norms n`), [soft-norms.md](soft-norms.md) (`soft n`),
 > [rights.md](rights.md) (`rights n`), [alternatives.md](alternatives.md) (`alt n`), [document.md](document.md) (W2),
 > `risk.md` and `risk-PLAN.md` on branch `design/risk` (`risk n`, `risk-PLAN n`), [VISION.md](../../VISION.md),
@@ -44,7 +48,7 @@ the translator is never forced to invent a default.
 | D4 | Pair premises restricted to gaps (`Fill_T`) enter base admissibility, as soft's `Soft_T` does | 2.4 |
 | D5 | Per-point status: SETTLED yes/no, UNDECIDED (two checked fillings) or UNKNOWN; undecidedness propagates upward through guards | 2.5 |
 | D6 | CONFLICT-FREE means conflict-free under every admissible filling; a contradiction that needs a particular filling is a CONFLICT with a *latent* witness | 3.1 |
-| D7 | Legend: "When no rule decides, the text does not say whether a <noun> may <act>." | 4 |
+| D7 | Legend: "When nothing else in the text decides, the text does not say whether a <noun> may <act>." | 4 |
 | D8 | Translation policy: `unspecified` unless a cited span states the completion; an uncited deny/allow that a situation reaches is the finding `UngroundedDefault` | 3.2, 5 |
 | D9 | Conservativity: no existing identity, certificate or report moves; opting in is per environment | 6 |
 
@@ -83,8 +87,10 @@ For deny and allow this is W1's `IntendedAt`. For an unspecified predicate it is
 `(¬P ∧ ¬N) → (p ↔ d)`. An **expansion** of a base situation `B` is a structure over `E` with base restriction `B`
 that satisfies Background (flags, W3 definitions, literals, the profile pairs `∀x̄. r(x̄) → m(x̄)`) and `Intended3_p`
 for every regulated `p`, over the lower tables as in W1. A conflict-free W1 document has exactly one expansion per
-base situation. With gaps it has one per admissible way of filling the silences, and "the text says `p(ā)`" means
-that every expansion agrees. Only the profile premise constrains a gap (2.4).
+base situation. With gaps it has one per admissible way of filling the silences. For a CONFLICT-FREE document (3.1),
+"the text says `p(ā)`" means that every expansion agrees (`settled_all_expansions`, 7). A CONFLICT document may have
+no expansion for some fillings, so the statuses of 2.5 are defined over admissible fillings, not over expansions.
+Only the profile premise constrains a gap (2.4).
 
 ### 2.3 Elaboration: `fill`
 
@@ -115,7 +121,7 @@ decides. No author rule gains a child, so every author rule's `applies`, `yields
 `soften`, a strict `F_p` would block every default rule on `p` wherever no strict rule decides (soft 4.2 step 2), and
 its selection would depend on default selection, which is circular. After `soften`, `F_p` only reads finished
 selections. **Size**: one node and one precedence level per unspecified predicate; no guard is copied or inlined
-(limits, 8.3).
+(limits, 8).
 
 ### 2.4 Pair premises at gaps: `Fill_T`
 
@@ -151,11 +157,17 @@ permitted wherever it is required.
 ### 2.5 Status of a point; inherited undecidedness
 
 ```text
-SETTLED yes   every admissible filling (B ⊨ Fill_T, conflict-free at B) gives O‴_p°(ā) true    "the text says so"
+SETTLED yes   every admissible filling (B ⊨ Fill_T) gives O‴_p°(ā) true                         "the text says so"
 SETTLED no    every admissible filling gives false
 UNDECIDED     two admissible fillings give different values                                    "the text does not say"
 UNKNOWN       neither shown within budget (budget named); never promoted to either of the others
 ```
+
+Every admissible filling counts, including one at which a conflict target is true. A status that skipped conflicting
+fillings would report the value of the remaining ones as the text's content: in u6 the only conflict-free filling
+has `y_permitted(a)` false, so the checker would say the agent may not Y, and where no filling is conflict-free both
+SETTLED values would hold vacuously. In a CONFLICT-FREE document every admissible filling is conflict-free, so there
+the statuses are unaffected, and a SETTLED point has its value in every expansion (`settled_all_expansions`).
 
 UNDECIDED is not confined to unspecified predicates. Take `Rule 1. Every agent must report each action, if that
 agent may perform that action.`, with `report_required` deny-by-default and `permitted` unspecified with no rule.
@@ -167,15 +179,16 @@ one) is reported per predicate as `inherits_from`.
 Evidence (the search is untrusted, and every piece of evidence is checked):
 
 - **`table3`** computes outcomes on the finite base situation in DAG order, with every unsaid atom unknown, Kleene
-  connectives and finite quantifiers; where a pair closes it applies the profile rule (`m` := yes where `r` is yes;
-  `r` := no where `m` is no). A definite entry is SETTLED (`table3_sound`). Kleene is incomplete (`u ∨ ¬u` is
-  unknown), so an unknown entry is not yet UNDECIDED.
+  connectives and finite quantifiers; where a pair closes it applies the profile rule, only where the side it sets
+  is a gap (its `gap` formula of 2.4 Kleene-true there): `m` := yes where `r` is yes and `m` is a gap; `r` := no
+  where `m` is no and `r` is a gap. A decided pair clash (`r` yes, `m` decided no) is never closed: it is a CONFLICT
+  (3.1). A definite entry is SETTLED (`table3_sound`). Kleene is incomplete (`u ∨ ¬u` is unknown), so an unknown
+  entry is not yet UNDECIDED.
 - **Exhaustive check.** For an unknown entry, enumerate the admissible fillings of the unsaid atoms in `ā`'s cone,
   up to `MAX_UNSAID_ATOMS` (proposed 12, so at most 4,096 fillings); agreement is SETTLED
   (`settled_of_enumeration`).
-- **UNDECIDED** needs two finite fillings, each validated (`Fill_T` true and every conflict target false on the
-  situation), with opposite values at `ā` (`undecided_witness_sound`). The search starts from the canonical filling
-  and flips atoms in the cone.
+- **UNDECIDED** needs two finite fillings, each validated (`Fill_T` true on the situation), with opposite values at
+  `ā` (`undecided_witness_sound`). The search starts from the canonical filling and flips atoms in the cone.
 - Otherwise the status is UNKNOWN, naming `MAX_UNSAID_ATOMS` or `MAX_EVALUATIONS`.
 
 ## 3. Effects on checks and reports
@@ -201,7 +214,9 @@ predicate, `pairConflict` per pair).
 
 **Honest cost.** A document that is CONFLICT-FREE with `y_permitted` deny may be CONFLICT with it unspecified, for
 example `must X if may Y` beside `must not X` (fixture u6). This is deliberate: under deny, the consistency rested
-on an invented "Y is forbidden". Whether latent conflicts need their own status word is Q1.
+on an invented "Y is forbidden". Latent conflicts are CONFLICT, with a witness kind that names the filling (Q1,
+closed by the statement review). Beside the CONFLICT, `y_permitted(a)` is UNDECIDED (2.5), never "the text says the
+agent may not Y".
 
 ### 3.2 Gaps, grounded defaults, coverage and queries
 
@@ -285,17 +300,22 @@ soft 2.4's `comply_permitted`, no longer forced by 6.6.
 
 | Role | deny | allow | unspecified (new) |
 |---|---|---|---|
-| permission | `By default, a <noun> must not <act>.` | `By default, a <noun> may <act>.` | `When no rule decides, the text does not say whether a <noun> may <act>.` |
-| obligation | `By default, a <noun> need not <act>.` | `By default, a <noun> must <act>.` | `When no rule decides, the text does not say whether a <noun> must <act>.` |
-| plain | `By default, it is not the case that <verbalisation>.` | `By default, <verbalisation>.` | `When no rule decides, the text does not say whether <verbalisation>.` |
+| permission | `By default, a <noun> must not <act>.` | `By default, a <noun> may <act>.` | `When nothing else in the text decides, the text does not say whether a <noun> may <act>.` |
+| obligation | `By default, a <noun> need not <act>.` | `By default, a <noun> must <act>.` | `When nothing else in the text decides, the text does not say whether a <noun> must <act>.` |
+| plain | `By default, it is not the case that <verbalisation>.` | `By default, <verbalisation>.` | `When nothing else in the text decides, the text does not say whether <verbalisation>.` |
 
-Example (u0165.s07): "When no rule decides, the text does not say whether an entity may generate child sexual abuse
-material." **One reading:** "when no rule decides" means when no rule on this act selects, and "the text does not
-say whether" means that neither answer follows. It never means "may", and never "must not". **Registration:** one
-surface record, `norm-unspecified`, with keyword `When no rule decides, ` under `norm-defaults@0`, rendered by
-`ve/norm_english.py:default_sentence` beside today's `By default, ` sentence. No
+Example (u0165.s07): "When nothing else in the text decides, the text does not say whether an entity may generate
+child sexual abuse material." **One reading:** when no rule, no `By default` sentence and no pair sentence settles the
+answer, alone or together, neither answer follows. It never means "may", and never "must not". The sentence is true
+for every role, including a member of a declared pair: for a predicate outside a pair it says what "when no rule
+decides" would; in u5(a) and u5(b), where no rule on the act decides but the pair sentence (with, in (a), the other
+member's `By default` sentence) settles it, the sentence does not claim silence, and finding the answer is a reasoning
+item that 4.3 scores. A wording that says only "when no rule decides" would be false there. **Registration:** one
+surface record, `norm-unspecified`, with keyword `When nothing else in the text decides, ` under `norm-defaults@0`,
+rendered by `ve/norm_english.py:default_sentence` beside today's `By default, ` sentence, for every role. No
 registered keyword begins with `When` today (a grep of `ve/surface` on 2026-09-29), and the registry's
-duplicate-keyword refusal re-checks it. It joins the mixed English harness and `tests/test_english_unambiguity.py`.
+duplicate-keyword refusal re-checks it; u13 adds a keyword-collision check for `When nothing`. It joins the mixed
+English harness and `tests/test_english_unambiguity.py`.
 **Pair sentence:** in the legend of every declared pair with an unspecified member, `Whenever a <noun> must <act>, it
 may <act>.` This is the profile premise. W1 never renders it, because a completion always decided both sides; now it
 visibly settles gaps. It is render-only: the dual declaration is its source (Q10).
@@ -383,7 +403,8 @@ listing each theorem in plain words. **Naming.** Names use no primes and none of
 `admit`, even in comments). These are statement schemata in the style of norms 6: helper names are defined here, and
 the existing names (`Doc`, `Regulated`, `DecidesD`, `tupleVal`, `forget`, `IntendedAt`, `BaseAdmissible`,
 `ConflictFree`, `DocumentExpansion`, `outcomeBase`, `pairConflict`, `pairs`, `before`, `envAt`, `size`,
-`restrictAll`, `backgroundValid`, `canon`, `DecidesSoftD`, `DecidesR`, `inlineTree`) are those in `lean/VE` today.
+`restrictAll`, `backgroundValid`, `canon`, `DecidesSoftD`, `DecidesR`, `inlineTree`, `regulatedNames`, `ruleName`,
+`height`, `fuel`) are those in `lean/VE` today (`regulatedNames`, `ruleName` and `height` in `Norms/Tree.lean`).
 
 ```lean
 namespace VE.NormDefaults
@@ -408,7 +429,20 @@ def fillNode (r : Regulated) : Node :=
   { name := fillName r.name, pred := r.name, sign := true, guard := atom (unsaidName r.name) r.sorts,
     carveOuts := [], over := [] }
 
-/-- `WellFormed U.D`; `unspec` duplicate-free, ⊆ regulated names, placeholder `false`; reserved prefixes unused. -/
+/-- `U.switch p`: `p`'s completion becomes `unspecified` (placeholder `false`, `p` appended to `unspec`). -/
+def UDoc.switch (U : UDoc) (p : String) : UDoc :=
+  { D := { U.D with T := { U.D.T with regulated := U.D.T.regulated.map fun r =>
+             if r.name = p then { r with allowByDefault := false } else r } },
+    unspec := U.unspec ++ [p] }
+
+/-- `WellFormed U.D`; `unspec` duplicate-free, ⊆ regulated names, placeholder `false`; reserved prefixes unused; and
+    the author-side limits of 8, which `fill_wellFormed` proves sufficient for `WellFormed (fill U)`:
+    (i)   `ruleName (fillName p) = true` for every `p ∈ unspec` (its characters, and `p` at most 56 bytes);
+    (ii)  `unspec.map fillName` duplicate-free;
+    (iii) `U.D.T.nodes.length + unspec.length ≤ 256`;
+    (iv)  `height U.D.T (fuel U.D.T) N ≤ 15` for every `N ∈ U.D.T.nodes` with `N.pred ∈ unspec`;
+    (v)   the `VE.Bridge.formulaNodes` of every author guard and carve-out plus those of every `F_p` guard total at
+          most 10,000. -/
 def WellFormedU (U : UDoc) : Bool
 /-- `E‴` (unsaid predicates as base predicates) and `T‴` (fill nodes; every root on p gains `over := [fillName p]`). -/
 def fill (U : UDoc) : Doc
@@ -422,6 +456,11 @@ def gapF (U : UDoc) (p : String) : VE.Formula :=
     .and (.not (subst (fill U).T (before (fill U) p) (pos U.D.T p)))
          (.not (subst (fill U).T (before (fill U) p) (neg U.D.T p)))
   else .bottom
+/-- `default reached` (3.2) for any regulated `p`, deny/allow included: `gapF`'s `.and` body without its `unspec`
+    test (`gapF` is `.bottom` off `unspec`, so it cannot serve a deny/allow `p`). -/
+def reachedF (U : UDoc) (p : String) : VE.Formula :=
+  .and (.not (subst (fill U).T (before (fill U) p) (pos U.D.T p)))
+       (.not (subst (fill U).T (before (fill U) p) (neg U.D.T p)))
 def fillPremises (U : UDoc) : List VE.Formula :=
   ((pairs U.D.T).filter (fun pr => pr.req ∈ U.unspec ∨ pr.perm ∈ U.unspec)).map fun pr =>
     bindAll pr.sorts (.not (.and (pairConflict (fill U) pr) (.or (gapF U pr.req) (gapF U pr.perm))))
@@ -456,13 +495,13 @@ def canonicalFill (U : UDoc) (B : VE.Structure.{u}) : FillTables U B -- true on 
 def expandFill (U : UDoc) (B : VE.Structure.{u}) (F : FillTables U B) : VE.Structure.{u} :=
   forget (unsaidNames U) (canon (fill U) (withFill U B F))
 
+/-- Statuses (2.5) count every admissible filling, conflicting ones included. -/
 def SettledAs (U : UDoc) (B : VE.Structure.{u}) (r : Regulated) (vs : List B.Carrier) (b : Bool) : Prop :=
-  ∀ F : FillTables U B, BaseAdmissibleU U (withFill U B F) → ConflictFree (fill U) (withFill U B F) →
+  ∀ F : FillTables U B, BaseAdmissibleU U (withFill U B F) →
     ((outcomeBase (fill U) r.name).denote (withFill U B F) (tupleVal vs) ↔ b = true)
 def UndecidedAt (U : UDoc) (B : VE.Structure.{u}) (r : Regulated) (vs : List B.Carrier) : Prop :=
   ∃ F₁ F₂ : FillTables U B,
-    BaseAdmissibleU U (withFill U B F₁) ∧ ConflictFree (fill U) (withFill U B F₁) ∧
-    BaseAdmissibleU U (withFill U B F₂) ∧ ConflictFree (fill U) (withFill U B F₂) ∧
+    BaseAdmissibleU U (withFill U B F₁) ∧ BaseAdmissibleU U (withFill U B F₂) ∧
     (outcomeBase (fill U) r.name).denote (withFill U B F₁) (tupleVal vs) ∧
     ¬ (outcomeBase (fill U) r.name).denote (withFill U B F₂) (tupleVal vs)
 ```
@@ -470,6 +509,7 @@ def UndecidedAt (U : UDoc) (B : VE.Structure.{u}) (r : Regulated) (vs : List B.C
 All `h` below are `WellFormedU U = true`; all `hr` are `r ∈ U.D.T.regulated`.
 
 ```lean
+/-- The author-side limits of `WellFormedU` suffice: `fill` never produces a tree that W1's `validate` rejects (8). -/
 theorem fill_wellFormed (U) (h) : WellFormed (fill U) = true
 theorem fill_conservative (U) (h0 : U.unspec = []) : fill U = U.D ∧ fillPremises U = []
 
@@ -499,6 +539,7 @@ theorem fill_intended (U) (h) (r) (hr) (S : VE.Structure.{u}) :
 /-- Adequacy: the source expansions are exactly the filled W1 expansions with the unsaid tables forgotten. -/
 theorem fill_expansions (U) (h) (B : VE.Structure.{u}) (hB : BaseAdmissible U.D B) (S : VE.Structure.{u}) :
     Expansion3 U B S ↔
+      restrictAll U.D.T S = B ∧
       ∃ S' : VE.Structure.{u}, forget (unsaidNames U) S' = S ∧
         BaseAdmissibleU U (restrictAll (fill U).T S') ∧
         DocumentExpansion (fill U) (restrictAll (fill U).T S') S'
@@ -520,8 +561,15 @@ theorem settled_expansions (U) (h) (B) (hB : BaseAdmissible U.D B) (r) (hr) (vs 
     (hs : SettledAs U B r vs b) (F : FillTables U B) (hF : BaseAdmissibleU U (withFill U B F))
     (hcf : ConflictFree (fill U) (withFill U B F)) :
     Expansion3 U B (expandFill U B F) ∧ ((expandFill U B F).relation r.name vs ↔ b = true)
-theorem undecided_expansions (U) (h) (B) (hB : BaseAdmissible U.D B) (r) (hr) (vs : List B.Carrier)
-    (hu : UndecidedAt U B r vs) :
+/-- The headline reading of 2.2: in a CONFLICT-FREE document a SETTLED point has its value in every expansion.
+    `B` is `restrictAll U.D.T S`, whose carrier is `S.Carrier` definitionally, so `vs` types in both; `typed` is
+    needed because an admissible `S` holds no ill-typed tuple while an outcome formula may be true at one. -/
+theorem settled_all_expansions (U) (h) (hc : ConflictFreeU.{u} U) (r) (hr) (S : VE.Structure.{u})
+    (hS : Expansion3 U (restrictAll U.D.T S) S) (vs : List S.Carrier) (typed : VE.TupleTyped S r.sorts vs)
+    (b : Bool) (hs : SettledAs U (restrictAll U.D.T S) r vs b) :
+    S.relation r.name vs ↔ b = true
+theorem undecided_expansions (U) (h) (hc : ConflictFreeU.{u} U) (B) (hB : BaseAdmissible U.D B) (r) (hr)
+    (vs : List B.Carrier) (hu : UndecidedAt U B r vs) :
     ∃ F₁ F₂ : FillTables U B, Expansion3 U B (expandFill U B F₁) ∧ Expansion3 U B (expandFill U B F₂) ∧
       (expandFill U B F₁).relation r.name vs ∧ ¬ (expandFill U B F₂).relation r.name vs
 
@@ -531,12 +579,11 @@ theorem unreached_switch (U) (h) (p : String) (hp : p ∈ regulatedNames U.D.T) 
     (hnr : ∀ B : VE.Structure.{u}, BaseAdmissibleU U B → ∀ vs, VE.TupleTyped B (sortsOf U.D p) vs →
       ¬ (reachedF U p).denote B (tupleVal vs)) :
     ∀ B S : VE.Structure.{u}, BaseAdmissible U.D B → (Expansion3 U B S ↔ Expansion3 (U.switch p) B S)
-  -- U.switch p: placeholder false and p added to unspec; reachedF U p: gapF's formula for a deny/allow p
+  -- U.switch and reachedF are defined above
 ```
 
 Finite evidence. `FiniteFill U α` is a finite table per unsaid predicate, and `M.withFill F` is the finite model
-extended by it. `fillValid U M F` evaluates `fillPremises U` on `M.withFill F`. `conflictFreeEval D M` evaluates every
-conflict and pair target at every typed tuple.
+extended by it. `fillValid U M F` evaluates `fillPremises U` on `M.withFill F`.
 
 ```lean
 theorem table3_sound {α : Type u} [DecidableEq α] (U) (h) (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0))
@@ -547,12 +594,11 @@ theorem settled_of_table3 {α : Type u} [DecidableEq α] (U) (h) (M) (valid) (hb
     (ht : table3 U M r.name vs = some b) : SettledAs U M.asStructure r vs b
 theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U) (h) (M) (valid) (hb) (r) (hr) (vs) (typed) (b)
     (he : enumerateSettled U M r.name vs = some b) : SettledAs U M.asStructure r vs b
-  -- enumerateSettled: every filling of the cone's unsaid atoms (≤ MAX_UNSAID_ATOMS) that passes fillValid and
-  -- conflictFreeEval gives b, and at least one does
+  -- enumerateSettled: every filling of the cone's unsaid atoms (≤ MAX_UNSAID_ATOMS) that passes fillValid
+  -- gives b, and at least one does
 theorem undecided_witness_sound {α : Type u} [DecidableEq α] (U) (h) (M : VE.FiniteModel α)
     (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true) (F₁ F₂ : FiniteFill U α)
     (h₁ : fillValid U M F₁ = true) (h₂ : fillValid U M F₂ = true)
-    (c₁ : conflictFreeEval (fill U) (M.withFill F₁) = true) (c₂ : conflictFreeEval (fill U) (M.withFill F₂) = true)
     (r) (hr) (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
     (v₁ : (outcomeBase (fill U) r.name).eval (M.withFill F₁) (tupleVal vs) = true)
     (v₂ : (outcomeBase (fill U) r.name).eval (M.withFill F₂) (tupleVal vs) = false) :
@@ -604,11 +650,16 @@ exact regeneration, binding equality, leaf admission, checker soundness, documen
 applying rule); `fill_selects_author` holds because every author node keeps its `children` and fuel only grows.
 `fill_intended` is W1's `catalaValue` case split with `fill_decides`. `fill_expansions`: forward, take `S' := S`
 with `unsaid_p := S.relation p`, where `Fill_T` holds by W1's `subst_sound` and the profile premise in `S`;
-backward, forget the unsaid tables and apply `fill_intended`. `canonical_fill_sat` is pointwise: at a gap of `r`,
+backward, forget the unsaid tables and apply `fill_intended`. `settled_all_expansions` is `fill_expansions`
+forward: the filling read off `S` is admissible, `hc` makes it conflict-free, and `hs` gives its value.
+`fill_wellFormed` walks W1's `check` and `semanticCheck` on `T‴`: each `F_p` adds one rule, one rule name, one guard
+and one precedence level above the roots on `p`, and `WellFormedU` (i)–(v) bound exactly these. A `check` condition
+the proof finds uncovered is added to `WellFormedU` and to 8's table with its own diagnostic, never replaced by a bare
+`WellFormed (fill U)` hypothesis. `canonical_fill_sat` is pointwise: at a gap of `r`,
 `O_r‴ = P_r` is false; at a gap of `m`, `O_m‴` is true. The conflict theorems are W1's, instantiated on `fill U`
 with `BaseAdmissibleU`, as soft 6.4 instantiates them with `BaseAdmissible′`. `table3_sound` is by induction over
-the DAG (Kleene monotonicity, the pair rule justified by `Fill_T`). Every proof is audited with the unchanged axiom
-allowlist.
+the DAG (Kleene monotonicity, the pair rule justified by `Fill_T` at gaps only). Every proof is audited with the
+unchanged axiom allowlist.
 
 ## 8. Agreement, diagnostics and limits
 
@@ -625,14 +676,31 @@ completion and dropping a `Fill_T` premise, are rejected by the bound hashes.
 
 **Diagnostics** (shared text): `UnsupportedProfile: unspecified completion requires norm-defaults@0`;
 `InvalidInput: reserved name <n>` (the `unsaid__` and `unsaid--` prefixes); `InvalidModel("norms", "<unsaid__p> is a
-filling; supply it only with norm-defaults@0")`; `ResourceLimit: unsaid atoms`; `ResourceLimit: fill premise`.
+filling; supply it only with norm-defaults@0")`; `ResourceLimit: unsaid atoms`; `ResourceLimit: fill premise`;
+`ResourceLimit: unspecified name length`; and the author-side limits below.
 Report findings, never errors: `UngroundedDefault: <p>`; `LatentConflict: <rules> under <p>(<situation>)` (the
 witness kind of a CONFLICT); `UNSETTLED(<alternatives>)` (a DILEMMA diagnosis).
 
-**Limits.** `fill` adds at most 64 nodes and one precedence level. W1's limits (256 rules, depth 16, 8 carve-outs;
-norms 11.5) apply to the author document; whether `T‴` may exceed them depends on whether they are checked in Lean
-`WellFormed` or only by decoders (Q2). Sizes are computed before anything is built ("accepted means elaborable",
-soft 5.3), and `Fill_T` formulas count against `MAX_NODES`. `MAX_UNSAID_ATOMS` bounds enumeration and
+**Limits.** W1's rule count, rule names, AST budget and precedence depth are checked in Lean `WellFormed` (`check`,
+`Tree.lean:331`, `:335`, `:346`, `:357`), so they bind `T‴`, and under the profile the author limits shrink (Q2,
+closed by the statement review). For each unspecified predicate `fill` adds one rule, one rule name `unsaid--<p'>`,
+one guard and one precedence level above the roots on `p`, and one base predicate `unsaid__<p>`; it adds no regulated
+predicate and no carve-out, so the 64-regulated-predicate and 8-carve-out caps are unaffected. The decoder checks the
+author document against `WellFormedU`'s limits (7) after its W1 checks and before `fill` is built ("accepted means
+elaborable", soft 5.3), in this order, each under its own diagnostic:
+
+| Limit on the author document under the profile | Diagnostic |
+|---|---|
+| declared predicates + unspecified predicates ≤ 256: `E‴` crosses the Bridge in bound packages and supplied `unsaid__` tables (`Bridge.lean:89`) | `ResourceLimit: vocabulary size` |
+| author rules + unspecified predicates ≤ 256 (`WellFormedU` (iii)) | `ResourceLimit: rules` |
+| each unspecified predicate name at most 56 bytes, so `unsaid--<p'>` (`ruleName`) and `unsaid__<p>` (`Bridge.identifier`) stay within 64 (`WellFormedU` (i)) | `ResourceLimit: unspecified name length` |
+| AST nodes of the author guards and carve-outs plus one `F_p` guard per unspecified predicate ≤ 10,000 (`WellFormedU` (v)) | `ResourceLimit: AST exceeds 10,000 nodes` |
+| precedence height ≤ 15 for every author rule on an unspecified predicate (`WellFormedU` (iv)) | `ResourceLimit: precedence depth` |
+
+The character condition in `WellFormedU` (i) and the distinctness condition (ii) hold for every name decoded from the
+wire (`Surface.identifier`, `[a-z][a-z0-9_]*`, which `fillName` maps injectively into `ruleName`), so they have no wire
+diagnostic; they exclude Lean-built documents only. `fill_wellFormed` proves the limits sufficient, so no diagnostic
+ever names an `unsaid--` rule. `Fill_T` formulas count against `MAX_NODES`. `MAX_UNSAID_ATOMS` bounds enumeration and
 `MAX_EVALUATIONS` bounds the witness search. Every overflow is `ResourceLimit` or an UNKNOWN naming the budget, never
 a status.
 
@@ -643,7 +711,7 @@ a status.
   `claude` SETTLED no (rule); `sol` UNDECIDED (fillings `{}` and `{sol}`); `gaps: reachable`, rendered "an entity
   other than Claude"; the legend exactly as in 4.1's example. Variant allow: `sol` SETTLED yes "(by default)", plus
   `default reached` and `UngroundedDefault` (the audited failure, now a finding). Variant deny: `sol` SETTLED no,
-  plus `UngroundedDefault`. Both variants keep today's `environment_id`.
+  plus `UngroundedDefault`. In both variants the `environment_id` is the one computed by the unchanged decoder.
 - **u2: u0156.s03.** `system_prompt_deception_permitted(claude_instance, user)` unspecified; reading set
   `force-u0156-s03` {strict, default}, default with `decided_by: unstated`. Where
   `soft__excepted__no_system_prompt_deception` is true, strict is SETTLED no and default UNDECIDED (a checked
@@ -667,7 +735,8 @@ a status.
   with deny: CONFLICT, unchanged.
 - **u6: latent conflict.** `Every agent must X, if that agent may Y.` (on `x_required`) and `Every agent must not X.`
   (on `x_permitted`), with `y_permitted` unspecified: CONFLICT, witness kind `latent under y_permitted(a) = yes`, and
-  the English of 4.2. With `y_permitted` deny: CONFLICT-FREE, byte-identical to today.
+  the English of 4.2; `y_permitted(a)` UNDECIDED (not SETTLED no: the conflicting filling counts, 2.5). With
+  `y_permitted` deny: CONFLICT-FREE, byte-identical to today.
 - **u7: inherited.** `report_required` deny with 2.5's rule 1, `permitted` unspecified with no rules:
   `report_required` UNDECIDED at every action, with `inherits_from: [permitted]`; `table3` is unknown and a pair of
   witness fillings is given.
@@ -681,30 +750,35 @@ a status.
 - **u11: risk agent-ops** with `permitted` unspecified. k9: three UNDECIDED alternatives, none clear. k10:
   `default_decided` empty, and its two alternatives UNDECIDED.
 - **u12: Kleene incompleteness.** A guard `if that agent may Y, or it is not the case that that agent may Y`, with
-  `permitted_y` unspecified: `table3` unknown, SETTLED by enumeration. With `MAX_UNSAID_ATOMS = 0`: UNKNOWN naming the
+  `y_permitted` unspecified: `table3` unknown, SETTLED by enumeration. With `MAX_UNSAID_ATOMS = 0`: UNKNOWN naming the
   budget, never UNDECIDED.
-- **u13: English.** The three legend sentences render and parse with one derivation each; the pair sentence renders;
-  the keyword-collision check; carve-out, soft and status paraphrases exactly as in 4.2; norms 2.6 row 2's third
-  reading; `F_p` in no rendering.
+- **u13: English.** The three legend sentences render and parse with one derivation each; the legends of u5(a) and
+  u5(b) render, and each `When nothing else in the text decides` sentence in them parses with one derivation; the pair
+  sentence renders; the keyword-collision check for `When nothing`; carve-out, soft and status paraphrases exactly as
+  in 4.2; norms 2.6 row 2's third reading; `F_p` in no rendering.
 - **u14: identity and mutation.** Flipping a completion changes `environment_id`, and the stale certificate is
   rejected. `unsaid__x` as an author predicate is rejected under the profile and accepted without it. A supplied
   `unsaid__` table without the profile is `InvalidModel`. Dropping a `Fill_T` premise from a bound package is
   rejected.
 - **u15: unreached switch.** A UDHR-style unconditional prohibition over its scope has `gaps: none` (a certificate);
   switching deny to unspecified leaves every status and conclusion identical.
-- **u16: limits.** Author depth 16 on an unspecified predicate behaves as Q2 decides; `ResourceLimit` is never a
-  status.
+- **u16: limits.** With `p` unspecified: an author rule on `p` at precedence height 16 gives `ResourceLimit:
+  precedence depth`; `257 − |unspec|` author rules (256 with one unspecified predicate, which W1 alone accepts) give
+  `ResourceLimit: rules`; a 57-byte `p` gives `ResourceLimit: unspecified name length`. At height 15,
+  `256 − |unspec|` rules and a 56-byte `p` the document is accepted and `fill U` passes `WellFormed`. No diagnostic
+  mentions `unsaid--`; `ResourceLimit` is never a status.
 - **Z: conservativity.** The full existing suite, conformance reports and frozen hashes are unchanged.
 
 ## 10. Open questions
 
-1. **Latent conflicts:** CONFLICT (recommended; keeps W1's three statuses, and the witness kind names the filling), or
-   a separate status such as "CONFLICT-FREE where decided; latent conflict at …"?
-2. **Limits on `T‴`:** are W1's rule-count and depth limits in Lean `WellFormed` (then author limits shrink by one
-   level and 64 rules under the profile) or only in decoders (then synthetic nodes are exempt)? Needs a code check.
-3. **Soft coherence over gaps:** may `Coh_T`, a premise, constrain unsaid tables? A weighing point disjoint only if a
-   gap is answered "no" would then be silently discharged. Recommended: classify with unsaid atoms universal.
-4. **Followability:** "every filling" (recommended, as risk's "UNDECIDED and not clear"), or also "FOLLOWABLE IF …"?
+1. **Latent conflicts:** closed by the statement review: CONFLICT, keeping W1's three statuses, with the witness kind
+   naming the filling.
+2. **Limits on `T‴`:** closed by the statement review: W1's limits are in Lean `WellFormed`, so the author limits
+   shrink under the profile, each with its own diagnostic (8).
+3. **Soft coherence over gaps:** built as recommended (statement review): pairs are classified with unsaid atoms
+   universal (3.3), so no weighing point is silently discharged by a gap answered "no".
+4. **Followability:** built as recommended (statement review): "every filling", as risk's "UNDECIDED and not clear";
+   no "FOLLOWABLE IF …" verdict.
 5. **Evidence completeness:** Kleene plus bounded enumeration may leave many points UNKNOWN over large domains (pilot
    measurement needed); a two-copy "fill independence" certificate is a possible upgrade at double the vocabulary.
 6. **Reader tests:** thresholds, sample size, wording A or B (W8). Untested: whether "the text" reads naturally in an
@@ -723,7 +797,9 @@ a status.
 ## 11. Work items, sequencing and review checklist
 
 (1) Astra + Fable convergence on this plan, then the spec `norm-defaults.md` and its statement review before any code
-(the ARCH-ROADMAP precondition, rights merged, holds). (2) Lean: the `NormDefaults` modules and theorems (7), the
+(the ARCH-ROADMAP precondition, rights merged, holds). The review of draft 1 converged on FIX (section 12); draft 2
+and the spec apply it, and a statement pass on that diff alone (section 7's changed statements and fixtures u1, u5,
+u6, u12, u13 and u16) decides whether the build starts. (2) Lean: the `NormDefaults` modules and theorems (7), the
 profile branch in the norms, soft, rights and alternatives routes (risk after its merge), and assurance-manifest
 repins. (3) Python: decoder, `fill`, `Fill_T`, `table3`, searches, report block, legend and paraphrases,
 `completions` grounding validation, migration audit. (4) Rust: fixtures and `unsaid__` tables in models. (5) W8:
@@ -735,6 +811,38 @@ Statement review asks: (a) is dropping the third clause (2.2) the meaning of "th
 2.2 (`fill_expansions`), and is running `fill` last sound (`fill_selects_author`)? (c) Is `Fill_T` the only constraint
 on gaps (`canonical_fill_sat`, `fill_extends`)? (d) CONFLICT-FREE under every admissible filling, and latent
 conflicts as CONFLICT (Q1)? (e) Is the status evidence sound (`table3_sound`, `settled_of_enumeration`,
-`undecided_witness_sound`), with UNKNOWN never promoted? (f) `excepted_lifts`, rights (γ), followability (3.3)?
+`undecided_witness_sound`), with UNKNOWN never promoted, and does SETTLED mean "every expansion agrees" in a
+CONFLICT-FREE document (`settled_all_expansions`)? (f) `excepted_lifts`, rights (γ), followability (3.3)?
 (g) Legend, paraphrases and reader protocol (4)? (h) Translation policy and `UngroundedDefault` (5)?
-(i) Conservativity (`decode_conservative`, `fill_conservative`, `unreached_switch`, fixture Z)?
+(i) Conservativity (`decode_conservative`, `fill_conservative`, `unreached_switch`, fixture Z)? (j) Do `WellFormedU`'s
+limits make `fill U` well-formed (`fill_wellFormed`), each with its own diagnostic (8, u16)?
+
+## 12. Statement review of draft 1: findings and changes
+
+`manage-agents/debates/norm-defaults-spec/{astra,fable}.md`, 2026-09-29: FIX, CONVERGED after round 2 (Opus stood in
+for Astra in both rounds, as `astra.md` records). Draft 1 had no spec file; both sides asked for it to be written from
+the edited plan. Every change below is in this draft and in [norm-defaults.md](norm-defaults.md). Citations are
+round.item; a bare round number cites that round's agreed list or refinement.
+
+| # | Finding (raised by) | Change |
+|---|---|---|
+| 1 | `fill_expansions` is false: its right side never mentions `B`, so an expansion of another base situation satisfies it (Fable 1.1, Astra 1.2) | the right side begins `restrictAll U.D.T S = B ∧` (7) |
+| 2 | The statuses count only conflict-free fillings. In u6 that reports "the agent may not Y", the invented prohibition of section 0, and with no conflict-free filling both SETTLED values hold vacuously (Fable 1.2, Astra 1.3) | `ConflictFree` conjuncts dropped from `SettledAs` and `UndecidedAt`; `conflictFreeEval` dropped (its definition, `enumerateSettled`, `c₁ c₂` of `undecided_witness_sound`); `undecided_expansions` gains `hc : ConflictFreeU U`; new headline `settled_all_expansions`; 2.2 reads "every expansion agrees" for CONFLICT-FREE documents only; 2.5's table, note and UNDECIDED validation; 3.1; u6 gains `y_permitted(a)` UNDECIDED |
+| 3 | `table3`'s pair rule closes a decided pair clash, so `table3_sound` fails there (Fable 1.2, Astra 1.6) | the rule fires only where the side it sets is a gap; a decided clash is a CONFLICT (2.5, proof plan) |
+| 4 | `fill_wellFormed` is false at W1's limits, which Lean `WellFormed` checks (Tree.lean:331, :335, :346, :357), so Q2 is answered: author limits shrink (Fable 1.3 and 2.1, Astra 1.4 and 2) | `WellFormedU` (i) `ruleName (fillName p)` (Astra 2: `\|p\| ≤ 56` alone misses the characters), (iii) rules, (iv) height ≤ 15, (v) AST budget with `F_p` guards; `fill_wellFormed` proved from them; the decoder's named diagnostics and the vocabulary cap for `E‴` at the Bridge (8); Q2 closed; u16 |
+| 5 | The legend "When no rule decides, the text does not say whether …" is false for pair members: in u5(a, b) no rule decides, yet the text settles the point (Fable 1.4, Astra 1.5; wording Fable 2.2) | keyword `When nothing else in the text decides, ` for every role, with its one reading (4.1, D7); keyword-collision check for `When nothing`; u13 renders and parses u5(a, b) |
+| 6 | `U.switch`, `regulatedNames` and `reachedF` are used but not defined; `reachedF` cannot reuse `gapF`, which is ⊥ off `unspec` (Astra 1.6 and 2, Fable 2) | `UDoc.switch` and `reachedF` defined (7); `regulatedNames` cited from `Norms/Tree.lean:120` |
+| 7 | u12 names `permitted_y`; u1's deny variant has no "today's `environment_id`" (Fable 1.5) | `y_permitted`; "computed by the unchanged decoder" |
+| 8 | Q1, Q3 and Q4 accepted as recommended; "everything else is built as planned" (Fable 1, Astra 1 and 2) | Q1 closed (3.1); Q3 and Q4 built as recommended (10) |
+| 9 | Found while writing (i)–(v), under the converged rule "a `check` limit the proof finds uncovered is added to the list": two unspecified names differing only in `_` and `-` give one `unsaid--` name in a Lean-built document, which `check` rejects as a duplicate rule | `WellFormedU` (ii), `unspec.map fillName` duplicate-free; wire names never trigger it (8) |
+| 10 | Found while writing row 2's headline in Lean: as sketched (`vs` over `B`, conclusion over any `S`), `S.relation r.name vs` does not type, and without typedness it is false (an outcome formula may be true at an ill-typed tuple, which no admissible `S` holds) | `settled_all_expansions` takes `B := restrictAll U.D.T S` (the same carrier, definitionally) and `typed : VE.TupleTyped S r.sorts vs`; its content is unchanged |
+
+**Where the two round-2 texts crossed.** On the limits, each side conceded to the other's round-1 form: Fable proposed
+the bare conjunct `WellFormed (fill U) = true` in `WellFormedU` plus named checks in the decoder, and Astra proposed
+the named conditions in `WellFormedU` with `fill_wellFormed` proved from them. This draft takes the second, since it
+meets both sides' stated requirements: a missed limit cannot pass unnoticed (the proof fails, and the limit joins the
+list), each limit has its own author-facing diagnostic, and it is what makes u16's "no diagnostic mentions `unsaid--`"
+a consequence rather than a hope. On the legend, Astra accepted Fable's round-1 wording ("When neither a rule nor the
+sentence above decides", with the pair sentence first) while Fable replaced it in round 2, because "the sentence above"
+depends on rendering order and "a rule above" can attach wrongly. This draft takes Fable's round-2 keyword, which does
+not refer to position, so the rendering order is unchanged.
