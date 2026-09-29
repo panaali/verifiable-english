@@ -17,9 +17,11 @@ predicates): definition bodies and flags are FOL there, as in Python. Then
   case over the environment without the layer fields and the model with the
   computed defined tables added.
 
+* `certificate`: the core route's certificate branch over that Background,
+  bound to the submitted environment (`coreCertificate`).
+
 A definition body over an n-ary predicate does not decode in the projection
-and is rejected. Certificate cases are deferred: a certificate binds the
-submitted environment and its Background. -/
+and is rejected. -/
 namespace VE.Core.Layers
 open Lean
 open VE.Bridge (fields)
@@ -72,6 +74,36 @@ def folModel (names : List String) (model : Json) : Except String Json := do
 def tableJson (rows : List (List VE.Bridge.Entity)) : Json :=
   Json.arr (rows.map fun row => Json.arr (row.map fun e => Json.str e.2).toArray).toArray
 
+/-- The core route's certificate branch over a regenerated FOL `background`
+(embedded), bound to the submitted `environment`: every checked premise
+(Background first, then the case's premises) and the conclusion by meaning id.
+Acceptance is `VE.Core.Tableau.checkCertificate` over `background ++
+premises`, sound by `VE.Core.Tableau.checkCertificate_sound`. -/
+def coreCertificate (profiles : List String) (environment core : Json) (background : List VE.Formula)
+    (id : String) (j : Json) : Except String Json := do
+  let v ← VE.Core.Bridge.decodeEnvironment core
+  let E := v.environment
+  let premisesJson ← j.getObjVal? "premises"
+  let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
+  let ps ← VE.Core.Bridge.decodeFormulas E premisesJson
+  let c ← VE.Core.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  VE.Core.Bridge.checkFormula E c "conclusion"
+  VE.Route.Wire.nodeLimit ((c :: ps).map VE.Core.Bridge.formulaNodes)
+  let certificate ← VE.Core.Wire.decodeCertificate (← j.getObjVal? "certificate")
+  VE.Route.Wire.bindingOk profiles environment
+    (background.map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
+    (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
+    certificate.conclusion_meaning_id
+  if VE.Route.Steps.core certificate.trace > VE.Route.Steps.limit j then
+    throw VE.Route.Steps.stepLimit
+  return VE.Route.Wire.ok id [("valid", .bool (VE.Core.Tableau.checkCertificate E
+      (background.map VE.Core.embed ++ ps) c certificate)), ("background", toJson background.length)]
+
+/-- The regenerated Background of a core-family environment with layer fields,
+over the environment without them. -/
+def background (profiles : List String) (environment : Json) : Except String (List VE.Formula) := do
+  pure ((VE.Route.Wire.fullBackground (← decodeLayers profiles environment)).map Prod.fst)
+
 def run (profiles : List String) (environment : Json) (id kind : String) (j : Json) :
     Except String Json := do
   let rv ← decodeLayers profiles environment
@@ -79,6 +111,9 @@ def run (profiles : List String) (environment : Json) (id kind : String) (j : Js
   let _ ← VE.Core.Bridge.decodeEnvironment core
   if kind == "background" then
     return VE.Route.Wire.runBackground id (VE.Route.Wire.fullBackground rv)
+  if kind == "certificate" then
+    return ← coreCertificate profiles environment core
+      ((VE.Route.Wire.fullBackground rv).map Prod.fst) id j
   unless kind == "evaluate" || kind == "countermodel" do
     throw (VE.Route.Gate.unsupported
       s!"{kind} cases on the core family with definitions or data flags are deferred")

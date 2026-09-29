@@ -138,8 +138,8 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
 | `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
 | `lean/VE/Core/Bridge.lean` | 159 | 117 | 10–126 | `6cd616c3c663…` |
-| `lean/VE/Core/Wire.lean` | 166 | 166 | 1–166 | `88fd082b9693…` |
-| `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `b4604ca7788a…` |
+| `lean/VE/Core/Wire.lean` | 166 | 166 | 1–166 | `280802e8f79a…` |
+| `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `7a9f5a63f666…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
 | `lean/VE/Norms/Wire.lean` | 308 | 283 | 25–307 | `4af70fb4b49f…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |

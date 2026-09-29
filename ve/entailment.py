@@ -672,6 +672,109 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
                                  certificate: Any, *, max_steps: int = 10_000,
                                  _background: bool = True,
                                  _generated_premises: Sequence[bool] | None = None) -> EntailmentCertificateCheck:
+    """Replay a certificate under the selected authority.
+
+    The prover's self-replay of a generated trace (`_background=False`) and
+    replays with labelled generated premises belong to the retained proof
+    generator and stay Python's.
+    """
+    from .backends.dispatch import authority_for, execute
+    args = (env, premises, conclusion, certificate)
+    options = {"max_steps": max_steps, "_background": _background,
+               "_generated_premises": _generated_premises}
+    if (authority_for("certificate_replay") == "python" or not _background
+            or _generated_premises is not None):
+        return _check_certificate_python(*args, **options)
+    payload = {"environment_id": getattr(env, "environment_id", None),
+               "certificate": certificate if type(certificate) is dict else None}
+    return execute("certificate_replay", payload,
+                   lambda: _check_certificate_python(*args, **options),
+                   lean=lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))
+
+
+def _trace_nodes(node: Any) -> int:
+    """Python's replay charge, one step per trace node, counted structurally."""
+    total, stack = 0, [node]
+    while stack:
+        item = stack.pop()
+        if type(item) is not dict:
+            raise _InvalidTrace("trace node must be an object")
+        total += 1
+        children = item.get("children", [])
+        if type(children) is list:
+            stack.extend(children)
+    return total
+
+
+def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
+    """Validate inputs and bindings as Python does, then replay in Lean.
+
+    Lean decides validity over the whole trace; Python's budget charges one
+    step per node before checking it. Below a trace's node count the outcome
+    depends on where an invalid trace first fails, which Lean does not report,
+    so that case is CheckerUnavailable rather than a guess.
+    """
+    from .ast import _to_data
+    from .backends.lean_runner import route_mode, run
+    if getattr(env, "alternatives", None) is not None:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0,
+                                          "alternatives@0 requires the Lean checker")
+    try:
+        canonical_json(certificate)
+        full = _validate_inputs(env, premises, conclusion, background=True)
+        if type(max_steps) is not int or isinstance(max_steps, bool) or max_steps < 0:
+            raise ValueError("max_steps must be a nonnegative integer")
+        expected = _binding(env, full, conclusion)
+        if type(certificate) is not dict or set(certificate) != set(expected) | {"trace"}:
+            raise _InvalidTrace("certificate fields do not match the wire schema")
+        if env.closure and "nary@0" not in env.profiles and certificate.get('checker_version') == 've-tableau-closure-checker@0':
+            expected['checker_version'] = 've-tableau-closure-checker@0'
+        if any(certificate.get(key) != value for key, value in expected.items()):
+            raise _InvalidTrace("certificate is stale or bound to different inputs")
+        nodes = _trace_nodes(certificate["trace"])
+    except (ResourceLimit, RecursionError) as exc:
+        return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
+    except (VEError, ValueError, TypeError, KeyError, IndexError, AttributeError, _InvalidTrace) as exc:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
+    for profile in ("reports@0", "soft-norms@0"):
+        if profile in env.profiles:
+            raise CheckerUnavailable(f"CheckerUnavailable: Lean certificate replay on {profile} "
+                                     "environments is not available")
+    case = {"id": "certificate", "environment": env.to_dict(),
+            "premises": [_to_data(p) for p in premises], "conclusion": _to_data(conclusion),
+            "certificate": certificate}
+    if env.language == "ve.core@0.2":
+        # Lean's own cap is the trace size, so it reports validity; the public
+        # budget is applied below.
+        mode, case = route_mode(env), {**case, "kind": "certificate", "max_steps": max(nodes, 10_000)}
+    elif env.order:
+        mode, case = "order", {**case, "kind": "certificate"}
+    else:
+        mode = "check-certificate"
+    try:
+        valid = run(mode, [case])[0]["valid"]
+    except ResourceLimit as exc:
+        if str(exc).startswith("ResourceLimit: certificate replay exceeds"):
+            raise CheckerUnavailable("CheckerUnavailable: the trace exceeds the Lean route's "
+                                     "replay cap") from None
+        return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
+    except VEError as exc:
+        return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
+    if nodes > max_steps:
+        if valid:
+            return EntailmentCertificateCheck(False, "ResourceLimit", max_steps,
+                                              "certificate replay budget exhausted")
+        raise CheckerUnavailable("CheckerUnavailable: the replay budget is below the trace size "
+                                 "and Lean does not report where the trace fails")
+    if valid:
+        return EntailmentCertificateCheck(True, "Valid", nodes)
+    return EntailmentCertificateCheck(False, "InvalidCertificate", 0, "certificate does not replay")
+
+
+def _check_certificate_python(env: Any, premises: Sequence[Any], conclusion: Any,
+                              certificate: Any, *, max_steps: int = 10_000,
+                              _background: bool = True,
+                              _generated_premises: Sequence[bool] | None = None) -> EntailmentCertificateCheck:
     """Replay a certificate against the exact environment and ordered formulas."""
     if getattr(env, "alternatives", None) is not None:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0,

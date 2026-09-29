@@ -412,3 +412,23 @@ def test_search_streams_python_model_order(monkeypatch, profiles):
         monkeypatch.setenv("VE_AUTHORITY", "lean")
         assert (find_countermodel(env, (late,), Bottom(), **options).to_dict(),
                 find_distinguishing_model(env, Top(), late, **options).to_dict()) == expected
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+@pytest.mark.parametrize("profiles", [(), ("data@0",), ("definitions@0",), ("norms@0",),
+    ("closure@0",), ("closure@0", "nary@0"), ("closure@0", "nary@0", "definitions@0"), ("order@0",)])
+def test_certificate_replay_matches_python(monkeypatch, profiles):
+    """Lean replays; the public budget is charged one step per trace node."""
+    from tests.probe_matrix import raw_environment, semantic_formula
+    from ve.entailment import check_entailment_certificate, prove_entailment
+    env = Environment(raw_environment(profiles))
+    formula = semantic_formula(env)
+    proof = prove_entailment(env, (formula,), formula, max_steps=1000)
+    assert proof.status == "Found"
+    stale = {**proof.certificate, "conclusion_meaning_id": "0" * 64}
+    for certificate, budget in ((proof.certificate, 1000), (proof.certificate, 0), (stale, 1000)):
+        monkeypatch.setenv("VE_AUTHORITY", "python")
+        expected = check_entailment_certificate(env, (formula,), formula, certificate, max_steps=budget)
+        monkeypatch.setenv("VE_AUTHORITY", "lean")
+        assert check_entailment_certificate(env, (formula,), formula, certificate,
+                                            max_steps=budget) == expected
