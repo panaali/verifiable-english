@@ -261,10 +261,28 @@ def boundUnits (D : DDoc) : List String :=
   (D.K.mentions.filter fun x => formulaForm x.form).map Mention.unit ++
     (unitIdsOf D).filter fun u => contentUnit D u && hasSourceSlot D u
 
-/-- 4.1(6): every bound unit validates. -/
+/-- A reference surface of the unit's text that no recorded formula-producing mention overlaps.
+A derivation can accept a sentence with such a surface outside its slots (a registered spelling
+`He-api` over the reference word `he`, a section label `its`); it is still a slot to account for
+(3.4, the Python `_unrecorded`). -/
+def uncoveredSurface (D : DDoc) (u : String) : Option (Nat × Nat) :=
+  match D.text u with
+  | some s => (surfaceRanges D s).find? fun r =>
+      !(recordedSlots D u).any fun m => decide (m.span.1 < r.2) && decide (r.1 < m.span.2)
+  | none => none
+
+/-- Every reference surface of a unit with meaning is recorded (`UnrecordedSlot`). -/
+def coveredOk (D : DDoc) (u : String) : Except String Unit :=
+  if contentUnit D u then match uncoveredSurface D u with
+    | some r => .error ("UnrecordedSlot: " ++ u ++ ": [" ++ toString r.1 ++ ", " ++ toString r.2 ++ ")")
+    | none => .ok ()
+  else .ok ()
+
+/-- 4.1(6): every bound unit validates, and a validated unit with meaning leaves no reference
+surface unrecorded. -/
 def boundOk (D : DDoc) : Except String Unit :=
   allOk (boundUnits D) fun u => match validate D u with
-    | .ok _ => .ok ()
+    | .ok _ => coveredOk D u
     | .error e => .error e
 
 /-- 4.8: the active open reading sets (the latest version per unit, status `open`), in
