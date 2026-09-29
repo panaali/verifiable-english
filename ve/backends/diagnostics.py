@@ -19,6 +19,9 @@ _CODES = {
 }
 _CODES["AdmissionError"] = None  # imported lazily to avoid a package cycle
 _CODES["DependencyCycle"] = VEError
+# Python raises these errors without the code in the message; the Lean
+# runners prefix it only to carry the code.
+_UNPREFIXED = frozenset({"UnknownSymbol", "TypeMismatch", "UnboundVariable", "UnsupportedProfile"})
 
 
 def checker_error(message: str, *, code: str | None = None,
@@ -28,10 +31,12 @@ def checker_error(message: str, *, code: str | None = None,
     if match:
         code, generator = "InvalidModel", generator or match.group(1)
     elif code is None:
-        head = message.split(":", 1)[0]
+        head, sep, rest = message.partition(":")
         code = head if head in _CODES else "InvalidInput"
         if message.startswith("Definition "):
             code = "InvalidInput"
+        if code in _UNPREFIXED and sep:
+            message = rest.lstrip()
     cls = _CODES.get(code, VEError)
     if cls is None:
         from ..admission import AdmissionError

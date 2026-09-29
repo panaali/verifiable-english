@@ -1,6 +1,7 @@
 import VE.Norms.Plain
 import VE.Core.Wire
 import VE.Route.Run
+import VE.Service.TypingDiagnostic
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -130,16 +131,8 @@ def modelCase (j : Json) : Except String Json := do
 /-- A standalone typing request accepts one closed formula or a document of
 closed formulas. The family decoder performs the same typed AST check used by
 its route. -/
-def checkCase (j : Json) : Except String Json := do
-  let id ← VE.Bridge.stringField j "id"
-  let environment ← j.getObjVal? "environment"
-  let ast ← j.getObjVal? "ast"
-  let checked ← validated environment (typing := true)
+def decodeTyped (checked : Validated) (ast : Json) (formula : Bool) : Except String Unit := do
   let e := checked.envelope
-  let items ← ast.getArr?
-  let formula := match items[0]? with
-    | some (.str _) => true
-    | _ => false
   match e.family with
   | .fol =>
     let rv ← VE.Route.Run.decodeRouteVocabulary e
@@ -173,6 +166,25 @@ def checkCase (j : Json) : Except String Json := do
     else
       let _ ← VE.Order.Wire.decodeFormulas v.vocabulary.environment ast
       pure ()
+
+def checkCase (j : Json) : Except String Json := do
+  let id ← VE.Bridge.stringField j "id"
+  let environment ← j.getObjVal? "environment"
+  let ast ← j.getObjVal? "ast"
+  let checked ← validated environment (typing := true)
+  let e := checked.envelope
+  let items ← ast.getArr?
+  let formula := match items[0]? with
+    | some (.str _) => true
+    | _ => false
+  -- The verdict is the decoder's; a typing rejection is named as Python names it.
+  match decodeTyped checked ast formula with
+  | .ok () => pure ()
+  | .error message =>
+    if !message.startsWith "ResourceLimit" then
+      throw ((TypingDiagnostic.diagnose e.profiles e.vocabulary
+        (if formula then [ast] else items.toList)).getD message)
+    else throw message
   let envId ← VE.Route.Wire.environmentId e.profiles environment
   let meaningId ← VE.Route.Wire.meaningId e.profiles envId ast
   pure (VE.Route.Wire.ok id [("well_typed", .bool true), ("meaning_id", .str meaningId)])
