@@ -40,6 +40,7 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Flagged
+import VE.Service.Graph
 import VE.Norms.Run
 import VE.SoftNorms.Run
 import VE.Attribution.Content
@@ -807,6 +808,9 @@ import VE.Service.Protocol
 #print axioms VE.Norms.Flagged.conflictFree_flagged
 #print axioms VE.Norms.Flagged.norms_flagged_conflict_sound
 #print axioms VE.Norms.Flagged.norms_flagged_witness_sound
+#print axioms VE.Service.Graph.graph_sound
+#print axioms VE.Service.Graph.graph_entails
+#print axioms VE.Service.Graph.graph_unfolds
 #print axioms VE.Norms.Admission.admitNodes_ok
 #print axioms VE.Norms.Admission.mapM_ok_mem
 #print axioms VE.Norms.Admission.forM_ok
@@ -1735,6 +1739,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_identity
 #print axioms VE.Service.runMode_parse
+#print axioms VE.Service.runMode_graph
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq

@@ -428,7 +428,7 @@ def placeholders(value, line):
 
 hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
-                   "environment", "model", "check", "identity", "parse"],
+                   "environment", "model", "check", "identity", "parse", "graph"],
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
     hello["service"] = "other"
@@ -857,6 +857,9 @@ _SCHEMA_SEEDS = {
                  {"id": "c", "status": "ok", "kind": "source", "identity_id": "a" * 64}),
     "parse": ({"id": "c", "source": "true.\n"},
               {"id": "c", "status": "ok", "ast": [["top"]], "canonical": "true.\n"}),
+    "graph": ({"id": "c", "root": "r"},
+              {"id": "c", "status": "ok", "report": {"root": "r", "assumptions": ["r"]},
+               "assumptions": ["r"], "supporting_edges": [], "background": []}),
 }
 
 
@@ -888,7 +891,8 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "environment_id" if mode == "environment" else
                  "identity_id" if mode == "identity" else
                  "meaning_id" if mode == "check" else
-                 "ast" if mode == "parse" else "values")
+                 "ast" if mode == "parse" else
+                 "supporting_edges" if mode == "graph" else "values")
         answer["results"][0][field] = "true"
     elif mutation in ("wrong-digest", "wrong-index", "unbound-row"):
         bound = {"index": 0, "digest": {"$digest": 0}, "result": row.copy()}

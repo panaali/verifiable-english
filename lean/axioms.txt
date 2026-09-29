@@ -712,6 +712,9 @@
 'VE.Norms.Flagged.conflictFree_flagged' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Flagged.norms_flagged_conflict_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.Flagged.norms_flagged_witness_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Graph.graph_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Graph.graph_entails' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Graph.graph_unfolds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.Admission.admitNodes_ok' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Admission.mapM_ok_mem' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Admission.forM_ok' depends on axioms: [propext]
@@ -1626,9 +1629,10 @@
 'VE.Service.runMode_check' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_parse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.runMode_graph' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.caseResult_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runRequest_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.results_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.boundResults_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.respond_decoded' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 189 source files; 1633 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 190 source files; 1637 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
