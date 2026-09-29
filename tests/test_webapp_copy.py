@@ -4,6 +4,7 @@ import subprocess
 import sys
 
 from fastapi.testclient import TestClient
+import pytest
 
 from ve_webapp.server import Settings, create_app
 from webapp.vocabulary.audit import audit
@@ -49,9 +50,19 @@ def test_asimov_text_under_any_facts_is_catalogued():
         == {text for text, reasons in shown.items() if reasons != {'parsed'}}
 
 
-def test_strict_copy_gate_tracks_recorded_violations():
+# KNOWN OPEN MEASUREMENT. `make webapp-copy-check` (the strict gate) fails while any
+# recorded or dynamic language gap remains; closing them is the separate "web page in
+# VE" use case (W). This test does not treat that gate as passing: it checks the strict
+# command's exit status against the recorded gaps, requires a reason for every gap, and
+# then reports the gate as an expected failure with the current counts.
+def test_strict_copy_gate_is_a_known_open_measurement():
     process = subprocess.run([sys.executable, '-m', 'webapp.vocabulary.audit', '--strict'],
                              cwd=ROOT, capture_output=True, text=True, check=False)
     result = json.loads(process.stdout)
     assert result['errors'] == []
+    assert all(gap['reason'] for gap in result['gaps'] + result['dynamic_gaps'])
     assert process.returncode == int(bool(result['gaps'] or result['dynamic_gaps']))
+    if process.returncode:
+        pytest.xfail(f"Known open measurement: the strict web copy gate fails with "
+                     f"{len(result['gaps'])} recorded and {len(result['dynamic_gaps'])} dynamic "
+                     f"gaps (use case W, web page in VE)")

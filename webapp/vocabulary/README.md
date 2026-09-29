@@ -10,7 +10,8 @@ the editable vocabulary in a user's document.
 `catalogue.json` inventories the served HTML, browser JavaScript literals,
 Python literals that can reach the page, and every reader string of the
 VE-built Asimov section (`ve_webapp/asimov.json`; the explanation sentences a
-live re-run can add are catalogued from `ve_webapp/asimov.py`). Rebuild
+live re-run can add, and each scenario's text under any facts, are catalogued
+from `ve_webapp/asimov.py`). Rebuild
 `asimov.json` before regenerating the catalogue. Every visible entry is a SENTENCE or
 LABEL. A sentence marked `gap` failed the writable English parser's complete
 all-derivations check. `dynamic_gaps` records text whose runtime value cannot
@@ -26,10 +27,12 @@ make webapp-build
 
 The strict gate returns a nonzero exit code while any gap remains. It is
 the prerequisite of the `webapp-build` target, so that build stops on a copy
-violation. It is expected to fail at this measurement point. The regular test checks the
-served page, the source inventory, the vocabulary, all passing VE sentences,
-and all labels; it keeps the measured gaps explicit so the broader suite can
-stay green. To review changes after editing copy, run
+violation. It is expected to fail at this measurement point: the strict gate is
+a known open measurement, owned by the separate "web page in VE" use case. The
+regular test checks the served page, the source inventory, the vocabulary, all
+passing VE sentences, and all labels; it keeps the measured gaps explicit so the
+broader suite can stay green, and reports the strict gate as an expected
+failure (XFAIL) with the current gap counts rather than as a pass. To review changes after editing copy, run
 `.venv/bin/python -m webapp.vocabulary.build_catalogue`, inspect the catalogue
 diff, and run the strict gate again. Regeneration is not a waiver: it records
 new failures.
