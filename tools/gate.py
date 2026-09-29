@@ -156,14 +156,15 @@ def source_identity(env: dict[str, str]) -> tuple[str, bool]:
 
 
 def gate_environment() -> dict[str, str]:
+    # Build and discovery tools must not inherit ambient overrides of their
+    # executable, repository, import path, or configuration.
     env = {key: value for key, value in os.environ.items()
-           if not key.startswith(("PYTEST_", "CARGO_")) and key not in
-           {"RUSTFLAGS", "RUSTDOCFLAGS", "VE_LEAN_PREBUILT", "VE_RUST_PREBUILT",
-            "VE_RUST_BINARY", "VE_W5_RUST_BIN", "VE_GATE_PYTEST_RESULT",
-            "VE_GATE_PYTEST_PROGRESS"}}
+           if not key.startswith(("PYTEST_", "CARGO_", "PYTHON", "RUST", "GIT_",
+                                  "UV_", "VE_"))}
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + os.environ["PATH"]
     env["UV_CACHE_DIR"] = str(ROOT / ".cache/uv")
     env["CARGO_HOME"] = str(ROOT / ".cargo-home")
+    env["PYTHONNOUSERSITE"] = "1"
     env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
     return env
 
