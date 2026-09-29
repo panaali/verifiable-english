@@ -183,7 +183,7 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     from .ast import _to_data
     from .backends.dispatch import execute
     from .backends.lean_service import CheckerUnavailable
-    from .backends.lean_runner import evaluation_case, lean_mode, route_environment, run as lean_run
+    from .backends.lean_runner import lean_mode, route_environment, run as lean_run
     from .backends.rust_jsonl import run as rust_run
 
     case = {"id": "countermodel", "environment": env.to_dict(),
@@ -644,7 +644,6 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     """Search with a bounded Rust enumerator and Lean-checked witnesses."""
     from .ast import _to_data
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import evaluation_case, lean_mode, route_environment, run as lean_run
     from .backends.lean_service import CheckerUnavailable
     from .backends.rust_jsonl import run as rust_run
     from .profiles import require_checker
@@ -704,11 +703,11 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                     env, nonvacuous_for, model, max_evaluations,
                     semantic=semantic_nonvacuity)[0]:
                 raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
-            request = {**case, "kind": "countermodel", "model": model.to_dict(),
-                       "environment": route_environment(env)}
-            checked = lean_run(lean_mode(env), [request])[0]
-            if checked.get("refutes") is not True:
-                raise CheckerUnavailable("CheckerUnavailable: Lean rejected Rust search witness")
+            # A witness is published only through the countermodel.check entry
+            # (_witness_checked), which carries that operation's authority.
+            if not _witness_checked(env, premises, conclusion, model, max_evaluations):
+                raise CheckerUnavailable("CheckerUnavailable: the countermodel check rejected "
+                                         "the Rust search witness")
             detail = ""
         elif status == "NotFound":
             if row.get("model") is not None:
@@ -817,7 +816,6 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     """Find a bounded distinguishing witness with Rust; verify it in Lean."""
     from .ast import _to_data
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import evaluation_case, lean_mode, route_environment, run as lean_run
     from .backends.lean_service import CheckerUnavailable
     from .backends.rust_jsonl import run as rust_run
     from .profiles import require_checker
@@ -870,12 +868,12 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                     env, nonvacuous_for, model, max_evaluations,
                     semantic=semantic_nonvacuity)[0]:
                 raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
-            mode, request = evaluation_case(env, case["id"], [case["a"], case["b"]], model.to_dict())
-            checked = lean_run(mode, [request])[0]
-            values = checked.get("values")
-            if (type(values) is not list or len(values) != 2
-                    or any(type(v) is not bool for v in values) or values[0] == values[1]):
-                raise CheckerUnavailable("CheckerUnavailable: Lean rejected Rust distinguishing witness")
+            # Either direction, as a countermodel to the other, through the
+            # countermodel.check entry.
+            if not (_witness_checked(env, (a,), b, model, max_evaluations)
+                    or _witness_checked(env, (b,), a, model, max_evaluations)):
+                raise CheckerUnavailable("CheckerUnavailable: the countermodel check rejected "
+                                         "the Rust distinguishing witness")
             detail = ""
         elif status == "NotFound":
             if row.get("model") is not None:
