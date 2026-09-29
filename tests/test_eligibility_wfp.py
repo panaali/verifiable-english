@@ -25,7 +25,8 @@ from ve.units import _core_problem  # noqa: E402
 
 # sha256 of the canonical JSON of [[id, key], ...] in cases.json. A key change must
 # be its own commit that says why (PLAN.md status note); update this pin there.
-KEY_DIGEST = "90626e32dda2b34a96a87a0399e6fa6b69bf057614346b07649f050f9cb66197"
+KEY_DIGEST = "fd00bc1c3d03989750dc411c4a7b916372bc2e41a6ca49c744e28e78099ba857"
+REVIEW_PROFILES = {"B15", "B16", "B17", "B18", "B19"}  # added by the eligibility review
 
 
 def keyed_cases():
@@ -39,7 +40,11 @@ def recorded():
 def test_key_is_frozen():
     keys = [[c["id"], c["key"]] for c in keyed_cases()["cases"]]
     assert sha256(json.dumps(keys, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == KEY_DIGEST
-    assert len(keys) == 57 and sum(k["entitled"] for _, k in keys) == 44
+    assert len(keys) == 62 and sum(k["entitled"] for _, k in keys) == 48
+    # The eligibility review added B15 to B19 only; the other 57 keys keep the first run's pin.
+    before = [k for k in keys if k[0] not in REVIEW_PROFILES]
+    assert sha256(json.dumps(before, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
+        "90626e32dda2b34a96a87a0399e6fa6b69bf057614346b07649f050f9cb66197"
 
 
 def test_plan_table_matches_cases_json():
@@ -56,13 +61,52 @@ def test_plan_table_matches_cases_json():
                     if key["entitled"] else ["NO", "—", "—", "—"])
         q1, q2, q3, q4 = rows[case["id"]]
         assert [q1, money(q2), q3, money(q4)] == expected, case["id"]
-    assert len(rows) == 57
+    assert len(rows) == 62
 
 
 def test_independent_reference_agrees_with_the_key():
     data = keyed_cases()
     for case in data["cases"]:
         assert reference.answer(case, data["defaults"]) == case["key"], case["id"]
+
+
+def _unordered_move(p):
+    """The first run's reading of reg. 4(4), without the order "having been ... becomes"."""
+    return (reference.resident_in_qw(p) and p["scot_ni_from"] is not None
+            and p["scot_ni_from"] <= reference.QW_END)
+
+
+def _move_without_week_bound(p):
+    """Reg. 4(4) ordered after the start of E&W residence but not after a day of the week."""
+    return (reference.resident_in_qw(p) and p["scot_ni_from"] is not None
+            and p["ew_from"] <= p["scot_ni_from"] <= reference.QW_END)
+
+
+def _move_without_residence_bound(p):
+    """Reg. 4(4) ordered after the start of the week but not after the start of E&W residence."""
+    return (reference.resident_in_qw(p) and p["scot_ni_from"] is not None
+            and reference.QW_START <= p["scot_ni_from"] <= reference.QW_END)
+
+
+def _both_out_of_care(p, other):
+    """The first run's reading of reg. 1(4)(b), with the care condition on both persons."""
+    return other is not None and not reference.in_residential_care(p) and not reference.in_residential_care(other)
+
+
+@pytest.mark.parametrize("name, old, profiles", [
+    ("excluded_move", _unordered_move, {"B15", "B16", "B19"}),
+    ("excluded_move", _move_without_week_bound, {"B16"}),
+    ("excluded_move", _move_without_residence_bound, {"B19"}),
+    ("lives_with", _both_out_of_care, {"B17", "B18"}),
+])
+def test_review_profiles_decide_the_corrected_readings(name, old, profiles, monkeypatch):
+    """Eligibility review findings A (R11 order, AR6) and B (R6 condition on the subject
+    only): each old or partial reading changes exactly the review profiles added for it,
+    and no earlier profile, which is why the first run missed both."""
+    monkeypatch.setattr(reference, name, old)
+    data = keyed_cases()
+    changed = {c["id"] for c in data["cases"] if reference.answer(c, data["defaults"]) != c["key"]}
+    assert changed == profiles
 
 
 @pytest.mark.parametrize("benefit", sorted(reference.RELEVANT_BENEFITS))

@@ -138,9 +138,14 @@ def excluded_custody(p):
 
 
 def excluded_move(p):
-    """Reg. 4(4): having been resident in England or Wales in the week, becomes ordinarily
-    resident in Scotland or Northern Ireland on or before its last day."""
-    return resident_in_qw(p) and p["scot_ni_from"] is not None and p["scot_ni_from"] <= QW_END
+    """Reg. 4(4): having been resident in England or Wales on a day of the week, becomes
+    ordinarily resident in Scotland or Northern Ireland on or before its last day. The
+    order matters (reading AR6): the move comes on or after the first day of the week on
+    which P is resident in England or Wales, so a move before that day does not count."""
+    if not resident_in_qw(p) or p["scot_ni_from"] is None:
+        return False
+    first_ew_day = max(p["ew_from"], QW_START)
+    return first_ew_day <= p["scot_ni_from"] <= QW_END
 
 
 def excluded_no_claim(p):
@@ -164,8 +169,9 @@ def entitled(p, other):
 
 
 def lives_with(p, other):
-    """Reg. 1(4)(b); every housemate in cases.json shares P's home in the week."""
-    return other is not None and not in_residential_care(p) and not in_residential_care(other)
+    """Reg. 1(4)(b); every housemate in cases.json shares P's home in the week. "They are
+    not in residential care" qualifies P, the person who lives with another, not the other."""
+    return other is not None and not in_residential_care(p)
 
 
 def amount(p, other):

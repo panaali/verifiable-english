@@ -13,9 +13,25 @@
 > profiles B11 to B14 make each relevant-benefit membership decisive, with
 > deletion mutants M15 to M19 (sections 5 and 8). The new keys were written
 > before any VE run, in the same way as the others.
+>
+> **Eligibility review applied** (`eligibility-review.final.md`, verdict FIX),
+> after the first run. The review found two misreadings shared by the key's
+> reading, `reference.py` and the translation. No existing key depended on
+> either, so all 57 existing keys stand.
+>
+> - **A:** R11 lost the order in reg. 4(4). The move to Scotland or Northern
+>   Ireland must come on or after a day of QW on which x is resident in
+>   England or Wales (new reading AR6).
+> - **B:** R6 required the *other* person to be out of residential care. In
+>   reg. 1(4)(b), "they are not in residential care" qualifies only the person
+>   who lives with another.
+>
+> Profiles B15 to B19 cover both (section 5). Mutants M20 to M23 restore the
+> old readings, or drop one bound of AR6 (section 8). Their keys were written by hand from S1 before
+> VE was run on them.
 
 This use case measures VE's **accuracy**, not only its coverage. VE checks a
-published benefit rule on 57 applicant profiles, and its answers are compared
+published benefit rule on 62 applicant profiles, and its answers are compared
 with an answer key worked out beforehand from the source. It is also the first
 real-document test of the merged W6a quantities and dates feature
 ([units-schema.md](../../docs/spec/units-schema.md),
@@ -97,15 +113,16 @@ For each profile, four questions:
 | Q3 | If entitled, does HMRC take the payment back (S2: P's total income over £35,000)? | YES / NO |
 | Q4 | If entitled, how much does P keep after that? | £ amount |
 
-The profiles contain 44 entitled and 13 not-entitled cases. **Scoring
+The profiles contain 48 entitled and 14 not-entitled cases. **Scoring
 definition** (used everywhere in this plan and in the results):
 
 - Q1 is scored on every profile.
 - Q2, Q3 and Q4 are scored only on the profiles whose key is entitled. On a
   not-entitled profile they are **not applicable**, and neither the key nor VE
   gives them an answer. VE's NO on Q1 is scored as Q1 only.
-- That gives 57 + 44 + 44 + 44 = **189 scored questions**. The same 189 are
-  the denominator for accuracy, coverage and precision.
+- That gives 62 + 48 + 48 + 48 = **206 scored questions**. The same 206 are
+  the denominator for accuracy, coverage and precision. (Before the
+  eligibility review added B15 to B19, it was 57 + 44 × 3 = 189.)
 
 A disagreement on Q1 still costs the Q2 to Q4 points of an entitled profile.
 If VE answers NO or OPEN there, it gives no amount, and those three questions
@@ -129,12 +146,12 @@ qualifying week.
 | R3 | S1 reg. 2(b) | x is ordinarily resident in England or Wales on **any** day of QW: residence began no later than QW₁, and it continues or its last day is no earlier than QW₀. |
 | R4 | S1 reg. 1(3) "relevant benefit" | The closed list: income support, income-based JSA, state pension credit, income-related ESA and universal credit. State Pension and Attendance Allowance are not on it. |
 | R5 | S1 reg. 1(4)(a) | x is **in residential care** when x resides in a care home (or independent hospital, or Polish resettlement accommodation) throughout QW and for at least 12 weeks (84 days) ending immediately before QW. Care must have begun no later than 2026-06-29. |
-| R6 | S1 reg. 1(4)(b) | x **lives with** y when they share accommodation as their mutual home and neither is in residential care. |
+| R6 | S1 reg. 1(4)(b) | x **lives with** y when they share accommodation as their mutual home and **x** is not in residential care. The condition is on x only; y may be in residential care. So R6 is not symmetric. |
 | R7 | S1 reg. 4(2)(a) | Excluded: throughout QW, x is a partner of and living with y, where y has reached pensionable age and RB(y). |
 | R8 | S1 reg. 4(2)(b) and S3 reg. 2(5) | Excluded: throughout QW, x receives free in-patient treatment, and has done so for **more than 52 weeks** (more than 364 days) ending immediately before QW. A treatment period begins the day **after** admission and ends on the day of leaving. So "throughout QW" means admission ≤ 2026-09-20 and discharge ≥ 2026-09-27, and "more than 52 weeks" means admission ≤ 2025-09-20. |
 | R9 | S1 reg. 4(2)(c) | Excluded: throughout QW, x is detained in custody **under a sentence** imposed by a court. |
 | R10 | S1 reg. 4(3) | Excluded: x is in residential care (R5) and RB(x). |
-| R11 | S1 reg. 4(4) | Excluded: x was resident in England or Wales on a day of QW and became ordinarily resident in Scotland or Northern Ireland on or before QW₁. |
+| R11 | S1 reg. 4(4) | Excluded: x is resident in England or Wales on a day d of QW, and **afterwards** becomes ordinarily resident in Scotland or Northern Ireland: d ≤ the first day of that residence ≤ QW₁ (AR6). With d the earliest such day, this is: R3, and max(start of E&W residence, QW₀) ≤ start of Scotland/NI residence ≤ QW₁. |
 | R12 | S1 reg. 4(5)–(6), reg. 5(1) | Excluded: x made no claim on or before 2027-03-31, and was not paid without a claim. |
 | R13 | S1 regs. 2 and 4(1) | **entitled(x)** ⇔ R2 ∧ R3 ∧ none of R7–R12. |
 | R14 | S1 reg. 3(1)–(3), P not 80 by QW₁ | £100 if ¬RB(P) and (P lives with an entitled person, or P is in residential care) [3(2)]. Otherwise £300 if RB(P) and P is the partner of, and lives with, someone who has reached 80 by QW₁ [3(3)]. Otherwise £200 [3(1)]. |
@@ -157,13 +174,25 @@ qualifying week.
   residential care (R5). They are also not taken to "live with" the other
   residents under R6, because the profile gives no mutual home with an entitled
   person. Profile C11 is flagged `ambiguous-source` and `guide-divergence`: the
-  S2 care-home row would give £100, S1 as read here £200.
+  S2 care-home row would give £100, S1 as read here £200. When the profile does
+  give a mutual home (B17, B18), such a person lives with the housemate under
+  R6, even when the housemate is in residential care.
 - **AR4: relevant benefit paid to a couple.** "Paid to x" is a per-person fact
   in the profile. For Pension Credit, it is paid to the claimant of the couple.
   In B03, universal credit is recorded as paid to the partner only. The
   joint-UC question stays OPEN (O3).
 - **AR5: household extent.** A housemate listed in a profile shares P's home
   during QW. P lives with no one else.
+- **AR6: order in reg. 4(4)** (added by the eligibility review). "Having been
+  ordinarily resident in England or Wales on any day falling within the
+  qualifying week, P becomes ordinarily resident in Scotland or Northern
+  Ireland" puts the E&W day first. Residence in Scotland or Northern Ireland
+  that began before every E&W day of QW is not a move under 4(4). A move on
+  that same day counts, since a person can be resident in both places on the
+  day of moving. B15 and B19 (moved from Scotland to England, before or
+  during QW) follow from the text. B16 is flagged `ambiguous-source`: it is resident in Scotland from
+  before QW while still resident in England on its first two days. The
+  unordered reading, which ignores "having been", would exclude all three.
 
 ### 4.3 Bridges (facts derived outside VE, with their derivation)
 
@@ -245,6 +274,11 @@ because £20,000.00 is not over £35,000.00.
 | B12 | b. 1957, partner b. 1955 paid income-based JSA | NO | — | — | — | income-based JSA is on the R4 list; R7: partner reached PA and RB(partner) | SI |
 | B13 | b. 1955 paid income-related ESA, partner b. 1957, no RB | YES | £200 | NO | £200 | ESA is on the R4 list → RB(P) → not 3(2); partner under 80 → not 3(3) → 3(1). Without ESA on the list: £100 | SI |
 | B14 | b. 1955 paid universal credit, partner b. 1944, no RB | YES | £300 | NO | £300 | universal credit is on the R4 list → RB(P); partner 80 → 3(3). Without it on the list: £100 | SI |
+| B15 | b. 1955, resident in Scotland from 2026-09-20, resident in England from 2026-09-22 and remains | YES | £200 | NO | £200 | R3: resident 2026-09-22 to QW₁; R11 (AR6): the Scotland residence began before the first E&W day of QW → no; alone → 3(1). Unordered R11: NO | SI |
+| B16 | b. 1955, resident in Scotland from 2026-09-10, last day resident in England 2026-09-22 | YES | £200 | NO | £200 | R3: resident 2026-09-21 and 22; R11 (AR6): the Scotland residence began before 2026-09-21 → no; → 3(1) (flag `ambiguous-source`; unordered R11: NO) | SI |
+| B17 | b. 1955, care home from 2026-06-30, no RB; shares it with sister b. 1957 in residential care since 2025-01-10, no RB | YES | £100 | NO | £100 | P: 83 days → not R5; R6 conditions P only → P lives with sister; sister: R5 holds, ¬RB → R10 no → entitled; P under 80, ¬RB, lives with entitled → 3(2). Condition on both: £200 | SI |
+| B18 | as B17, but the housemate is P's partner and gets Pension Credit | NO | — | — | — | P lives with partner (R6 on P only); partner reached PA (2023-11-02) and RB(partner) → R7. Condition on both: YES £200 | SI |
+| B19 | b. 1955, resident in Scotland from 2026-09-22, resident in England from 2026-09-24 and remains | YES | £200 | NO | £200 | R3: resident 2026-09-24 to QW₁; R11 (AR6): the Scotland residence began within QW but before the first E&W day → no; → 3(1). Unordered R11: NO | SI |
 | C01 | alone, b. 1960-06-27 | YES | £200 | NO | £200 | PA date 2026-09-27 = QW₁ → R2 holds | guide |
 | C02 | alone, b. 1960-06-28 | NO | — | — | — | PA date 2026-09-28 > QW₁ | guide |
 | C03 | alone, b. 1960-02-29 | YES | £200 | NO | £200 | PA 2026-02-28 or 2026-03-01; both ≤ QW₁ | guide |
@@ -278,14 +312,14 @@ because £20,000.00 is not over £35,000.00.
 
 **Summary.**
 
-- **Profiles.** There are 57: 13 in group A (S2 amount-table rows), 14 in group
+- **Profiles.** There are 62: 13 in group A (S2 amount-table rows), 19 in group
   B (exclusions and combinations), 24 in group C (date boundaries, each with
   both sides) and 6 in group D (the income threshold with one penny either
   side).
-- **Basis.** 38 are `guide` cases, 13 are `SI` cases and 6 are `SI≠guide`
+- **Basis.** 38 are `guide` cases, 18 are `SI` cases and 6 are `SI≠guide`
   cases.
-- **Flags.** 8 profiles carry a flag in `cases.json`, so 49 are unflagged.
-  3 are flagged `ambiguous-source` (B10, C11, C24); C11 is also `SI≠guide`.
+- **Flags.** 9 profiles carry a flag in `cases.json`, so 53 are unflagged.
+  4 are flagged `ambiguous-source` (B10, B16, C11, C24); C11 is also `SI≠guide`.
 - **Benefit list.** Each of the five relevant benefits decides the answer of
   at least one profile: income support B11, income-based JSA B12, state
   pension credit B01 and B04, income-related ESA B13, universal credit B14.
@@ -293,8 +327,15 @@ because £20,000.00 is not over £35,000.00.
   of those four from the reference changed no key. Such a profile is
   hypothetical, since few people over pension age get these benefits, but the
   rule applies to it.
-- **Size.** The brief asked for about 40 profiles. The extra 17 come from
-  covering both sides of every date boundary and every benefit on the list.
+- **Review profiles.** B15 to B19 were added by the eligibility review. Under
+  the old readings of R11 (no order) and R6 (both persons out of residential
+  care), each of them has a different key, and no earlier profile did. B15
+  is the review's own example. AR6 takes the later of two bounds, and each
+  bound decides one profile alone: QW₀ decides B16, and the start of E&W
+  residence decides B19.
+- **Size.** The brief asked for about 40 profiles. The extra 22 come from
+  covering both sides of every date boundary, every benefit on the list, and
+  the two readings the review corrected.
 
 **Independent check of the key.** [`reference.py`](reference.py) is a
 stdlib-only reading written from S1–S4. It imports nothing from `ve` and was
@@ -304,7 +345,10 @@ both leap-day readings, and each rule in 4.1. Running
 `uv run python usecases/eligibility/reference.py` at the plan commit printed
 `qualifying week 2026-09-21 to 2026-09-27` and **53/53 agree with the hand key**.
 After B11 to B14 were added, it printed **57/57**. Deleting any one of the five
-relevant benefits from its list now changes at least one key.
+relevant benefits from its list now changes at least one key. The review
+corrected its R6 and R11 in the same way as the rules in 4.1. After B15 to B19
+were added, it printed **62/62**. Restoring its old R11 changes the answers
+for B15, B16 and B19, and restoring its old R6 changes them for B17 and B18.
 
 **Limits of this independence.**
 
@@ -375,7 +419,7 @@ and `["decimal", "gbp_penny", …]`):
   - `inpatient(r) → elapsed_days(r_treatment_start, 2026-09-21, r_treatment_before_week)`;
   - excluded when `inpatient(r) ∧ date_no_later(r_treatment_start, 2026-09-21) ∧ date_no_later(2026-09-27, r_discharged) ∧ r_treatment_before_week > 364 elapsed days`.
 - **R9 (AR1):** `in_custody_under_sentence(r) ∧ date_before(r_custody_from, 2026-09-21) ∧ date_after(r_release, 2026-09-27)`.
-- **R11:** `resident_in_week(r) ∧ moved_to_scotland_or_ni(r) ∧ date_no_later(r_scot_ni_from, 2026-09-27)`.
+- **R11 (AR6):** `resident_in_week(r) ∧ moved_to_scotland_or_ni(r) ∧ date_no_later(r_ew_from, r_scot_ni_from) ∧ date_no_later(2026-09-21, r_scot_ni_from) ∧ date_no_later(r_scot_ni_from, 2026-09-27)`.
 - **R12:** `¬paid_without_claim(r) ∧ ¬(claimed(r) ∧ date_no_later(r_claim_date, 2027-03-31))`.
 - **R14–R15:** one implication per paragraph, each concluding `amount = £…`.
   - Every "subject to" is compiled into explicit negated guards; the norms
@@ -538,8 +582,13 @@ each.
 | M17: R4 without state pension credit | B01, B04 |
 | M18: R4 without income-related ESA | B13 |
 | M19: R4 without universal credit | B14 |
+| M20: R11 without the order of AR6 (the first run's reading) | B15, B16, B19 |
+| M21: R11 without the QW₀ bound of AR6 | B16 |
+| M22: R11 without the E&W-start bound of AR6 | B19 |
+| M23: R6 also requiring the other person out of residential care (the first run's reading) | B17, B18 |
 
-Kill rate = mutants killed / 19; 19/19 is expected.
+Kill rate = mutants killed / 23; 23/23 is expected. (M20 to M23 were added by
+the eligibility review; the first run had M1 to M19.)
 
 **Gates.** Every command runs in the foreground with
 `PATH=~/.elan/bin:$PATH`:
@@ -554,14 +603,14 @@ No model calls.
 ## 9. Metrics to report (`RESULTS.md`)
 
 - **Accuracy.**
-  - Strict, per profile: every scored question correct, x/57. OPEN counts as
+  - Strict, per profile: every scored question correct, x/62. OPEN counts as
     wrong.
-  - Per question (section 3): Q1 x/57; Q2 x/44; Q3 x/44; Q4 x/44; total
-    x/189.
-  - The same figures on the 49 unflagged profiles, on the 38 `guide`
+  - Per question (section 3): Q1 x/62; Q2 x/48; Q3 x/48; Q4 x/48; total
+    x/206.
+  - The same figures on the 53 unflagged profiles, on the 38 `guide`
     profiles (official answers), and for each flagged profile individually.
 - **Coverage.** Scored questions answered (certified YES/NO/amount) out of
-  189, and precision = correct / answered, over the same 189.
+  206, and precision = correct / answered, over the same 206.
 - **Evidence.** Certificates produced, and certificates replayed by Lean
   (must equal the number produced). Also profiles whose premises are
   consistent, and non-vacuity models accepted by Lean.
@@ -581,7 +630,7 @@ No model calls.
 | Path | Content |
 |---|---|
 | `PLAN.md` | this plan and the frozen key |
-| `cases.json` | the 57 profiles with their `key` (same as section 5) |
+| `cases.json` | the 62 profiles with their `key` (same as section 5) |
 | `reference.py` | the independent reference reading and key check |
 | `source/` | the pinned raw files, extracted text, and `extract_text.py` |
 
