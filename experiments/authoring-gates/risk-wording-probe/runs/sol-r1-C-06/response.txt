@@ -1,0 +1,7 @@
+1. **(d)** Emptying the cache cannot lead to data loss.
+2. **(d)** Four kilograms is greater than three, so taking the lift leads to a failure.
+3. **(d)** The text says restarting the web server cannot lead to an outage.
+4. **(b)** “Serious or worse” allows serious or severe.
+5. **(c)** A less severe worst case means the crossing has a possible harm more severe than any possible harm between parked cars.
+6. **(d)** The allowed weight range includes parcels over 25 kilograms, which are dropped when taken up the stairs.
+7. **(a)** A rash might happen, while drowsiness follows from giving drug A.

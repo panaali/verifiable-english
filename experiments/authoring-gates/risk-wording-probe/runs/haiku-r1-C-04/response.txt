@@ -1,0 +1,15 @@
+# Answers
+
+**Text 1: (d)** A task delay happens in every case the text allows, because the text explicitly states "Running the job with a memory limit leads to a task delay" and the agent runs the job with a memory limit.
+
+**Text 2: (c)** No dizziness happens, because dizziness from the full dose occurs "exactly when the weight of the patient is less than 50 kilograms," and the patient's weight is 80 kilograms.
+
+**Text 3: (c)** The text does not say, because it only specifies what happens when the backup is restored, not what happens when doing nothing.
+
+**Text 4: (d)** A task delay is more severe, because the text classifies a task delay as "severe" and data loss as "minor," making task delay more severe.
+
+**Text 5: (a)** If the agent runs the job with a memory limit, task abandonment happens in no case the text allows, because "prevents" means the action stops task abandonment from occurring.
+
+**Text 6: (a)** The text does not say, because while it tells us doing nothing causes data loss and that data loss is avoidable, it doesn't specify whether deleting the production database leads to data loss or avoids it.
+
+**Text 7: (c)** No, Rule 1 does not forbid crossing between parked cars, because the text states this action "cannot lead to a collision," so the condition triggering Rule 1 (that an action "might lead to a collision") is not satisfied.

@@ -1,0 +1,8 @@
+1. **(a)** Emptying the cache cannot lead to data loss, so the text rules it out.
+2. **(c)** Only penicillin prevents a rash, because it cannot lead to one.
+3. **(b)** Reading the log file might lead to data loss, so data loss is not ruled out.
+4. **(c)** Peak memory above 4 GB causes failure, but the text does not say failure can happen only then.
+5. **(a)** At 80 kg, the patient does not meet the condition for dizziness from the full dose.
+6. **(d)** The text rules out an allergic reaction from giving penicillin.
+7. **(a)** At 38 degrees, the condition under which a seizure is possible does not hold.
+8. **(c)** Taking the lift leads to a fall in every case the text allows.

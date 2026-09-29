@@ -1,0 +1,8 @@
+1. **(b) A task delay.** The text calls task delay severe and data loss minor.
+2. **(c) No.** The text allows a parcel heavier than 25 kilograms, and taking the stairs then leads to a dropped parcel.
+3. **(a) A statement about what can happen.** It says data loss is ruled out when the agent empties the cache.
+4. **(a) No server outage happens.** Five gigabytes is not greater than eight, so the stated condition for an outage does not hold.
+5. **(c) In at least one case, deleting the production database avoids data loss.** Data loss is avoidable by an available action, and doing nothing always leads to it.
+6. **(d) Running the job with a memory limit.** That action might avoid a server outage, which meets the text’s definition of preventing it.
+7. **(d) No.** A task delay happens in every allowed case when the agent runs the job with a memory limit.
+8. **(c) Yes.** The text rules out a task delay at durations of 30 minutes or less.

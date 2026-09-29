@@ -1,0 +1,7 @@
+1. **(b)** A rash is not ruled out, while drowsiness happens in every case the text allows.
+2. **(c)** The crossing has a possible harm more severe than every possible harm from crossing between parked cars.
+3. **(c)** Memory above 4 GB guarantees failure, but a failure does not establish that memory was above 4 GB.
+4. **(b)** The text rules out data loss from emptying the cache.
+5. **(a)** A server outage is not ruled out if the agent runs the job.
+6. **(d)** Since the stairs always lead to a fall, the ramp must avoid a fall in at least one allowed case.
+7. **(c)** At 80 kg, the condition for dizziness is false, so no dizziness happens.

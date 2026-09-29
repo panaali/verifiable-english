@@ -1,0 +1,8 @@
+1. **(a)** “Exactly when” means a delay happens if the migration takes more than 30 minutes, and only then.
+2. **(b)** “Might prevent” allows a case without abandonment but says nothing about what doing nothing always causes.
+3. **(d)** Parcels can weigh more than 25 kilograms, and taking the stairs with one leads to a dropped parcel.
+4. **(a)** Since doing nothing leads to data loss, avoiding it must be possible by deleting the database in at least one case.
+5. **(b)** “Allows” says an outage can happen, without saying it always happens or that another action avoids it.
+6. **(d)** Taking the lift leads to a fall, and the robot takes the lift.
+7. **(c)** The text explicitly says emptying the cache cannot lead to data loss.
+8. **(d)** “Might lead” means data loss remains possible when the agent reads the file.

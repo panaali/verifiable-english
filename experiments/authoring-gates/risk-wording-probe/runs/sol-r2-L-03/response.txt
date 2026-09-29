@@ -1,0 +1,7 @@
+1. **(a)** “Prevents task abandonment” means it does not happen in any case the text allows when the agent runs the job with a memory limit.
+2. **(c)** The stated definition of a less severe worst case says running the job might cause a harm more severe than any harm the memory-limited action might cause.
+3. **(c)** “Cannot lead to” rules out lift failure in every allowed case where the robot takes the lift.
+4. **(a)** The text allows a lift failure but gives no probability for it.
+5. **(b)** “Avoidable by the agent” means at least one available action avoids the outage in at least one allowed case.
+6. **(b)** On the given severity scale, serious or worse means serious or severe.
+7. **(d)** A task delay happens in every allowed case when the agent runs the job with a memory limit.
