@@ -15,11 +15,24 @@ from ve.identity import meaning_id
 
 
 def _environment():
+    """The views vocabulary with `active` named by its word, `deployed`: the admission is the Lean
+    route's, whose discourse fragment reads a predicate by its name (a verbalisation only Python's
+    parser reads is outside it, `test_python_never_adds_an_admission`)."""
     data = vocabulary()
+    predicates = data["vocabulary"]["predicates"]
+    predicates["deployed"] = predicates.pop("active")
     data["language"] = LANGUAGE
     data.pop("profile")
     data["profiles"] = ["relational-fol@0", "ve.discourse@1"]
     data["spec_revision"] = SPEC_REVISION
+    return data
+
+
+def _nounless_environment():
+    """`item` without its declared noun: Python's English parser reads a sort by its declared noun
+    only, Lean's group opening by its name only, so a group spans the name in both."""
+    data = _environment()
+    data["vocabulary"]["sorts"]["item"].pop("verbalisation")
     return data
 
 
@@ -28,7 +41,17 @@ def _unit(uid, span, content):
             "support": "assumption", "content": {"ast": content}}
 
 
-def _write(tmp_path, front, source):
+OPEN_TERM = {"name": "t", "arguments": [], "decided_by": "reviewer", "necessary": [], "sufficient": [],
+             "factors": [], "precedents": [], "jurisdiction": "policy", "version": 1}
+OPEN_GRAPH = {"root": "n", "nodes": [{"name": "n", "ast": ["top"], "label": "open:t"}]}
+
+
+def _write(tmp_path, front, source, graph=True):
+    """The document text; a `@2` document gets a claim graph (one open-term leaf) unless it has one:
+    the Lean route, whose verdict it is, admits documents with a graph (a graph-less `@2` document
+    is an abstention, `test_graphless_document_is_an_abstention`)."""
+    if graph and front.get("format") == "ve-document@2" and "graph" not in front:
+        front = {**front, "graph": OPEN_GRAPH, "open_terms": [OPEN_TERM]}
     path = tmp_path / "discourse.ve.md"
     path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + source)
     return path
@@ -39,7 +62,7 @@ def _sample(tmp_path):
     cut = source.index(b"It")
     front = {"format": "ve-document@2", "environment": _environment(),
              "units": [_unit("u1", [0, cut], ["unary", "reviewed", ["const", "api"]]),
-                       _unit("u2", [cut, len(source)], ["unary", "active", ["const", "api"]])],
+                       _unit("u2", [cut, len(source)], ["unary", "deployed", ["const", "api"]])],
              "discourse": {"version": "ve.discourse@1", "anchors": [
                  {"id": "doc", "kind": "document", "label": "Policy", "span": [0, len(source)]}],
                  "names": [{"constant": "api", "display": "Api", "scope": "doc"}],
@@ -171,8 +194,31 @@ def test_joint_choices_correlate_and_detect_empty():
     assert _joint({}, [])["choices"] == [{}]
 
 
+FUSED = ["exists", "item", ["and", ["unary", "deployed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+TWICE = ["exists", "item", ["and", ["unary", "reviewed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+
+
+def test_group_openings_follow_lean(tmp_path):
+    """The authority directive on groups: Python's parser reads a sort by its declared noun only
+    (`A service`), the Lean grammar a group opening by the sort's name only (`An item`). The noun
+    was a Python-only admission and is now Lean's rejection; the name is Lean's admission, with
+    Python's diagnostic as a hint, and a wrong reading is rejected with Python's diagnostic (the
+    known limitation of docs/spec/discourse.md 8: Lean names ManifestMismatch)."""
+    fragment = "InvalidInput: group rs1@1:same-witness spans are outside the supported fragment"
+    source, front = _group_front(FUSED, opening="A service is deployed.", data=_environment())
+    with pytest.raises(VEError, match=f"^{fragment}$"):
+        load_document(_write(tmp_path, front, source))
+    source, front = _group_front(FUSED, data=_environment())
+    result = check_document(_write(tmp_path, front, source))
+    assert result["discourse_hints"] == [fragment]
+    assert result["coverage"]["bytes_by_status"] == {"OPEN": len(source)}
+    source, front = _group_front(TWICE, data=_environment())
+    with pytest.raises(VEError, match=f"^{fragment}$"):
+        load_document(_write(tmp_path, front, source))
+
+
 def test_same_witness_shape_rejects_split_quantifiers():
-    p = ["unary", "active", ["var", 0]]
+    p = ["unary", "deployed", ["var", 0]]
     q = ["unary", "reviewed", ["var", 0]]
     assert _same_witness(["exists", "item", ["and", p, q]])
     assert not _same_witness(["and", ["exists", "item", p],
@@ -183,7 +229,7 @@ def test_joint_verdict_uses_only_compatible_choices():
     data = _environment()
     data["profiles"].remove("ve.discourse@1")
     env = Environment(data)
-    p = ["unary", "active", ["const", "api"]]
+    p = ["unary", "deployed", ["const", "api"]]
     sets = [{"id": "r1", "version": 1, "status": "open", "readings": [
                 {"id": "a", "kind": "asserted", "content": p},
                 {"id": "b", "kind": "asserted", "content": ["not", p]}]},
@@ -200,7 +246,7 @@ def test_joint_premise_and_report_extension():
     data = _environment()
     data["profiles"].remove("ve.discourse@1")
     env = Environment(data)
-    p = ["unary", "active", ["const", "api"]]
+    p = ["unary", "deployed", ["const", "api"]]
     q = ["unary", "reviewed", ["const", "api"]]
     sets = [{"id": key, "version": 1, "status": "open", "readings": [
         {"id": "a", "kind": "asserted", "content": p},
@@ -251,12 +297,12 @@ def test_correlated_document_reaches_admission(tmp_path):
 
 
 def test_group_propagates_status_and_rejects_independent_fragment(tmp_path):
-    source = b"A service is deployed.\nIt is reviewed.\n"
+    source = b"An item is deployed.\nIt is reviewed.\n"
     cut = source.index(b"It")
-    data = _environment()
+    data = _nounless_environment()
     base = {**data, "profiles": ["relational-fol@0"]}
     env = Environment(base)
-    formula = ["exists", "item", ["and", ["unary", "active", ["var", 0]],
+    formula = ["exists", "item", ["and", ["unary", "deployed", ["var", 0]],
                                       ["unary", "reviewed", ["var", 0]]]]
     front = {"format": "ve-document@2", "environment": data,
         "units": [{"id": "u1", "span": [0, cut], "kind": "asserted",
@@ -321,7 +367,7 @@ def test_unrecorded_surfaces_are_slots_with_or_without_a_block(tmp_path):
     """Astra A1 (Python side): every reference surface of a content unit must be recorded."""
     for sentence in ("This service is deployed.", "It is deployed.", "Its owner is deployed."):
         source, units = _units(["Api is reviewed.", sentence],
-                               {"u1": ["unary", "reviewed", ["const", "api"]], "u2": ["unary", "active", ["const", "api"]]})
+                               {"u1": ["unary", "reviewed", ["const", "api"]], "u2": ["unary", "deployed", ["const", "api"]]})
         with pytest.raises(VEError, match="UnrecordedSlot: u2"):
             load_document(_write(tmp_path, _front(source, units), source))
         front = _front(source, units)
@@ -334,30 +380,30 @@ def test_ordinal_reconstructs_its_coordination(tmp_path):
     """Astra B: `the former`/`the latter` select a member of an earlier coordination."""
     pair = {"kind": "entity", "name": "api", "pair": ["api", "alice"]}
     source, units = _units(["Api and Alice are reviewed.", "The former is deployed."],
-                           {"u2": ["unary", "active", ["const", "api"]]})
+                           {"u2": ["unary", "deployed", ["const", "api"]]})
     front = _front(source, units, [_mention(source, "m1", "u2", "The former", "ordinal_pair", pair)])
     doc = load_document(_write(tmp_path, front, source))
     assert doc["discourse"]["presentations"]["u2"].strip() == "Api is deployed."
     assert doc["discourse"]["references"][0]["status"] == "resolved"
     # the reviewer's reproducer: `the latter` resolved to the first member
     source, units = _units(["Api and Alice are reviewed.", "The latter is deployed."],
-                           {"u2": ["unary", "active", ["const", "api"]]})
+                           {"u2": ["unary", "deployed", ["const", "api"]]})
     front = _front(source, units, [_mention(source, "m1", "u2", "The latter", "ordinal_pair", pair)])
     with pytest.raises(VEError, match="UnresolvedReference: m1"):
         load_document(_write(tmp_path, front, source))
     # no coordination before it: nothing to refer back to
     source, units = _units(["Api is reviewed.", "The latter is deployed."],
-                           {"u2": ["unary", "active", ["const", "api"]]})
+                           {"u2": ["unary", "deployed", ["const", "api"]]})
     front = _front(source, units, [_mention(source, "m1", "u2", "The latter", "ordinal_pair", pair)])
     with pytest.raises(VEError, match="UnresolvedReference: m1"):
         load_document(_write(tmp_path, front, source))
 
 
-def _group_front(reading_content, reading_id="same-witness"):
-    source, units = _units(["A service is deployed.", "It is reviewed."], kinds={"u1": "asserted"})
-    data = _environment()
+def _group_front(reading_content, reading_id="same-witness", opening="An item is deployed.", data=None):
+    source, units = _units([opening, "It is reviewed."], kinds={"u1": "asserted"})
+    data = data or _nounless_environment()
     env = Environment({**data, "profiles": ["relational-fol@0"]})
-    front = _front(source, units, extra={"groups": [{"set": "rs1", "version": 1, "reading": reading_id,
+    front = _front(source, units, environment=data, extra={"groups": [{"set": "rs1", "version": 1, "reading": reading_id,
                                                      "spans": ["u1", "u2"]}]})
     front["reading_sets"] = [{"id": "rs1", "unit": "u1", "version": 1, "status": "open", "readings": [
         {"id": reading_id, "kind": "asserted", "content": reading_content,
@@ -368,7 +414,7 @@ def _group_front(reading_content, reading_id="same-witness"):
 
 def test_group_reading_is_regenerated_from_the_spans(tmp_path):
     """Astra A2 (Python side): the recorded shared-witness reading must be the spans' English."""
-    fused = ["exists", "item", ["and", ["unary", "active", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
+    fused = ["exists", "item", ["and", ["unary", "deployed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
     source, front = _group_front(fused)
     assert [u["status"] for u in load_document(_write(tmp_path, front, source))["units"]] == ["OPEN", "OPEN"]
     twice = ["exists", "item", ["and", ["unary", "reviewed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
@@ -376,7 +422,7 @@ def test_group_reading_is_regenerated_from_the_spans(tmp_path):
     with pytest.raises(VEError, match="ManifestMismatch: groups.rs1@1:same-witness"):
         load_document(_write(tmp_path, front, source))
     # Fable C: the witness check does not depend on the reading's id
-    split = ["and", ["exists", "item", ["unary", "active", ["var", 0]]], ["exists", "item", ["unary", "reviewed", ["var", 0]]]]
+    split = ["and", ["exists", "item", ["unary", "deployed", ["var", 0]]], ["exists", "item", ["unary", "reviewed", ["var", 0]]]]
     source, front = _group_front(split, reading_id="fused")
     with pytest.raises(VEError, match="WitnessSplit: rs1@1:fused"):
         load_document(_write(tmp_path, front, source))
@@ -443,21 +489,30 @@ def test_empty_block_keeps_w2_reading_labels(tmp_path):
     assert result["admission"]["admitted"] is True
 
 
-def test_python_reports_only_what_it_checked(tmp_path):
-    """Fable B5: `resolved` only for elaborated mentions; a form Python does not elaborate is
-    UnsupportedProfile (not MentionNotSlot or a resource limit), on a unit with content and on
-    one without (Lean validates every unit with a recorded formula-producing mention, so Python
-    never passes one unchecked: slots directive, differential property); a location binding
+def test_python_reports_lean_references(tmp_path):
+    """Fable B5, under the Lean authority (discourse-authority-directive): a form Python does not
+    elaborate (a plural) was Python's `UnsupportedProfile` abstention; the verdict is now Lean's,
+    a rejection with Lean's diagnostic (Python's abstention names none) or an admission whose
+    references are Lean's, with Python's abstention kept as an editor hint. A location binding
     beside a pronoun is no resource limit."""
     plural = {"kind": "entity", "members": ["api", "alice"]}
     source, units = _units(["Api and Alice are reviewed.", "They are ready."])
     front = _front(source, units, [dict(_mention(source, "m1", "u2", "They", "plural", plural), reading="distributive")])
-    with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented"):
+    with pytest.raises(VEError, match="^IllTypedTarget: m1: api, alice$"):
         load_document(_write(tmp_path, front, source))
-    units[1]["kind"], units[1]["support"] = "asserted", "assumption"
-    units[1]["content"] = {"ast": ["unary", "ready", ["const", "alice"]]}
-    with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented"):
-        load_document(_write(tmp_path, front, source))
+    environment = _environment()
+    environment["vocabulary"]["constants"]["bob"] = {"sort": "agent", "description": "Bob"}
+    pair = {"kind": "entity", "members": ["alice", "bob"]}
+    ready = [["unary", "ready", ["const", c]] for c in ("alice", "bob")]
+    source, units = _units(["Alice and Bob are ready.", "They are ready."], {"u2": ["and", *ready]})
+    names = [{"constant": "alice", "display": "Alice", "scope": "doc"}, {"constant": "bob", "display": "Bob", "scope": "doc"}]
+    front = _front(source, units, [dict(_mention(source, "m1", "u2", "They", "plural", pair), reading="distributive")],
+                   names=names, environment=environment)
+    result = check_document(_write(tmp_path, front, source))
+    assert [(r["mention"], r["status"]) for r in result["references"]] == [("m1", "resolved")]
+    assert result["discourse_hints"] == [
+        "UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented in Python (u2)"]
+    assert "u2" not in result["reviewed_presentations"]
     source, front = _sample(tmp_path)
     front["discourse"]["mentions"].append(_mention(source, "m2", "u2", "deployed", "navigation",
                                                    {"kind": "anchor", "name": "doc"}))
@@ -473,10 +528,12 @@ def test_legacy_profile_environment_still_loads_as_format_1(tmp_path):
     assert load_document(_write(tmp_path, front, source))["units"][0]["status"] == "CHECKED"
 
 
-def test_lean_only_block_fields_are_unsupported_not_misread(tmp_path):
+def test_lean_only_block_fields_are_lean_verdicts(tmp_path):
+    """A validity claim Python does not evaluate was its `UnsupportedProfile` abstention; the
+    verdict is now Lean's: a claim on a premise unit is `InvalidInput: validity unit u1`."""
     source, front = _sample(tmp_path)
     front["discourse"]["validity"] = [{"unit": "u1", "document": "x", "holds": True}]
-    with pytest.raises(VEError, match="UnsupportedProfile: ve.discourse@1 validity claims are not implemented in Python"):
+    with pytest.raises(VEError, match="^InvalidInput: validity unit u1$"):
         load_document(_write(tmp_path, front, source))
 
 
@@ -505,3 +562,57 @@ def test_discourse_wording(tmp_path):
     front["units"][1]["span"] = [cut, len(source)]
     with pytest.raises(VEError, match=r"^InvalidInput: discourse wording of u2$"):
         check_document(_write(tmp_path, front, source))
+
+
+def test_lean_unavailable_is_never_a_python_verdict(tmp_path, monkeypatch):
+    """discourse-authority-directive 1: a `@2` document's admission is the Lean route's. Without an
+    answer from it (no executable, a crash, output that is not one well-formed answer to the case)
+    the result is `CheckerUnavailable`, never a Python-only CHECKED or rejection; a `@1` document
+    never asks it."""
+    from ve.backends.lean_service import CheckerUnavailable
+    source, front = _sample(tmp_path)
+    path = _write(tmp_path, front, source)
+    assert check_document(path)["references"][0]["status"] == "resolved"
+    broken = tmp_path / "route.sh"
+    for executable, body in [(tmp_path / "missing", None), ("/bin/false", None), ("/bin/cat", None),
+                             (broken, '[{"id": "python-admission", "status": "ok", "admitted": true}]'),
+                             (broken, '[{"id": "other", "status": "error", "error": "InvalidInput: x"}]')]:
+        if body is not None:
+            broken.write_text(f"#!/bin/sh\ncat > /dev/null\necho '{body}'\nexit 1\n" if "error" in body
+                              else f"#!/bin/sh\ncat > /dev/null\necho '{body}'\n")
+            broken.chmod(0o755)
+        monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(executable))
+        for call in (load_document, check_document, render_document):
+            with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
+                call(path)
+    source, units = _units(["Api is reviewed."], {"u1": ["unary", "reviewed", ["const", "api"]]})
+    older = {"format": "ve-document@1", "environment": {**_environment(), "profiles": ["relational-fol@0"]},
+             "units": units}
+    assert load_document(_write(tmp_path, older, source))["units"][0]["status"] == "CHECKED"
+
+
+def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch):
+    """Python neither adds nor removes an admission: its own check rejects the retargeted pronoun
+    (`InaccessibleTarget`), yet an admission from the route is the result (with Python's
+    diagnostic as a hint), and a route rejection of a document Python admits is the result too."""
+    source, front = _sample(tmp_path)
+    admitted = check_document(_write(tmp_path, front, source))
+    front["discourse"]["mentions"][0]["target"]["name"] = "alice"
+    retargeted = _write(tmp_path, front, source)
+    with pytest.raises(VEError, match="^InaccessibleTarget: m1: alice$"):
+        check_document(retargeted)
+    answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "r" * 64,
+              "references": admitted["references"], "statuses": {"u1": "CHECKED", "u2": "OPEN"}}
+    route = tmp_path / "route.sh"
+    route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps([answer]) + "'\n")
+    route.chmod(0o755)
+    monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(route))
+    result = check_document(retargeted)
+    assert result["report_id"] == "r" * 64 and result["discourse_hints"] == ["InaccessibleTarget: m1: alice"]
+    assert result["coverage"]["bytes_by_status"] == {"CHECKED": 17, "OPEN": 16}
+    route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps(
+        [{"id": "python-admission", "status": "error", "error": "StaleTarget: m1"}]) + "'\nexit 1\n")
+    front["discourse"]["mentions"][0]["target"]["name"] = "api"
+    with pytest.raises(VEError, match="^StaleTarget: m1$") as caught:
+        check_document(_write(tmp_path, front, source))
+    assert caught.value.code == "StaleTarget"

@@ -13,6 +13,7 @@ from pathlib import Path
 
 from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
+from .backends.lean_service import CheckerUnavailable
 from .environment import Environment
 from .errors import VEError
 from .identity import meaning_id, source_id
@@ -190,7 +191,29 @@ def stored_identities(raw: bytes):
 
 
 def load_document(path: str | Path):
+    """Load and check a document. A `ve-document@2` document's admission is Lean's
+    (`ve_discourse_route` on the same bytes, docs/spec/discourse.md 3.4): Python's checks give
+    the diagnostic text of a document Lean rejects too, and a document Lean admits that Python
+    cannot load is `CheckerUnavailable`, never a Python-only verdict."""
     raw = Path(path).read_bytes()
+    from .discourse import is_discourse_text, lean_admission, rejection, unavailable_report
+    if not is_discourse_text(raw):
+        return _load_document(raw, path, None)
+    lean = lean_admission(raw, Path(path).parent)
+    try:
+        return _load_document(raw, path, lean)
+    except CheckerUnavailable:
+        raise
+    except VEError as exc:
+        if lean["status"] != "error":
+            raise unavailable_report(exc) from exc
+        error = rejection(lean, exc)
+        if error is exc:
+            raise
+        raise error from exc
+
+
+def _load_document(raw: bytes, path: str | Path, lean):
     meta, source, fences = _split(raw)
     if not source:
         raise VEError("document source is empty")
@@ -310,7 +333,7 @@ def load_document(path: str | Path):
             "units": compiled, "norms": norms,
             "reading_plan": plan_choices([r for r in active if r["status"] == "open"])}
     if meta["format"] == "ve-document@2":
-        doc["discourse"] = validate_discourse(doc)
+        doc["discourse"] = validate_discourse(doc, lean)
         for unit in compiled:
             if unit.pop("explicit_status") not in (None, unit["status"]):
                 raise VEError("unit status contradicts content, meaning, or active reading set")
@@ -402,6 +425,19 @@ def check_document(path):
 
 def _check_document(path):
     doc = load_document(path)
+    if "discourse" not in doc:
+        return _report(doc)
+    try:
+        return _report(doc)
+    except CheckerUnavailable:
+        raise
+    except VEError as exc:
+        # Lean admitted the document (load_document): Python never rejects it on its own
+        from .discourse import unavailable_report
+        raise unavailable_report(exc) from exc
+
+
+def _report(doc):
     joint = doc.get("discourse", {}).get("joint")
     joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     env = doc["environment"]
