@@ -1,6 +1,9 @@
 import VE.Norms.Plain
 import VE.Core.Wire
 import VE.Core.Layers
+import VE.Core.Surface
+import VE.Closure.Surface
+import VE.Order.Surface
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
 
@@ -378,6 +381,95 @@ def identityCase (j : Json) : Except String Json := do
       VE.CertificateWire.digest "ve-deduction-v1\n" payload
     else throw s!"unknown identity kind {kind}"
   pure (VE.Route.Wire.ok id [("kind", .str kind), ("identity_id", .str value)])
+
+/-! ## Parsing -/
+
+def encodeKind : VE.Closure.Kind → Json
+  | .plus => .str "plus"
+  | .star => .str "star"
+
+/-- A closure-family formula on the wire (Python `_to_data`). -/
+def encodeClosure : VE.Closure.Formula → Json
+  | .top => Json.arr #[.str "top"]
+  | .bottom => Json.arr #[.str "bottom"]
+  | .unary p t => Json.arr #[.str "unary", .str p, VE.Route.Wire.encodeTerm t]
+  | .binary p t u => Json.arr #[.str "binary", .str p, VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .eq t u => Json.arr #[.str "eq", VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .not a => Json.arr #[.str "not", encodeClosure a]
+  | .and a b => Json.arr #[.str "and", encodeClosure a, encodeClosure b]
+  | .or a b => Json.arr #[.str "or", encodeClosure a, encodeClosure b]
+  | .implies a b => Json.arr #[.str "implies", encodeClosure a, encodeClosure b]
+  | .all s a => Json.arr #[.str "forall", .str s, encodeClosure a]
+  | .ex s a => Json.arr #[.str "exists", .str s, encodeClosure a]
+  | .reachNamed k p t u => Json.arr #[.str "reach", encodeKind k, Json.arr #[.str "named", .str p],
+      VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .reachBody k s a t u => Json.arr #[.str "reach", encodeKind k,
+      Json.arr #[.str "body", .str s, encodeClosure a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+
+def encodeCoreKind : VE.Core.Kind → Json
+  | .plus => .str "plus"
+  | .star => .str "star"
+
+/-- A core-family (closure + n-ary) formula on the wire (Python `_to_data`). -/
+def encodeCore : VE.Core.Formula → Json
+  | .top => Json.arr #[.str "top"]
+  | .bottom => Json.arr #[.str "bottom"]
+  | .unary p t => Json.arr #[.str "unary", .str p, VE.Route.Wire.encodeTerm t]
+  | .binary p t u => Json.arr #[.str "binary", .str p, VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .atom p ts => Json.arr #[.str "atom", .str p, Json.arr (ts.map VE.Route.Wire.encodeTerm).toArray]
+  | .eq t u => Json.arr #[.str "eq", VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .not a => Json.arr #[.str "not", encodeCore a]
+  | .and a b => Json.arr #[.str "and", encodeCore a, encodeCore b]
+  | .or a b => Json.arr #[.str "or", encodeCore a, encodeCore b]
+  | .implies a b => Json.arr #[.str "implies", encodeCore a, encodeCore b]
+  | .all s a => Json.arr #[.str "forall", .str s, encodeCore a]
+  | .ex s a => Json.arr #[.str "exists", .str s, encodeCore a]
+  | .reachNamed k p t u => Json.arr #[.str "reach", encodeCoreKind k, Json.arr #[.str "named", .str p],
+      VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .reachBody k s a t u => Json.arr #[.str "reach", encodeCoreKind k,
+      Json.arr #[.str "body", .str s, encodeCore a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+
+/-- Python's source cap (`MAX_SOURCE_BYTES`). -/
+def maxSourceBytes : Nat := 65536
+
+/-- A standalone parse (the plan's `parse` and `normalize` modes as one case).
+The family's surface parser, which also types every statement, decides whether
+`source` is accepted. The answer carries the parsed document on the wire (within
+Python's AST limits) and, where the family has a printer, its canonical text.
+The `definitions@0` surface sugar is in no Lean surface parser. -/
+def parseCase (j : Json) : Except String Json := do
+  let id ← VE.Bridge.stringField j "id"
+  let environment ← j.getObjVal? "environment"
+  let source ← VE.Bridge.stringField j "source"
+  let checked ← validated environment
+  let e := checked.envelope
+  if e.profiles.contains "definitions@0" then
+    throw (VE.Route.Gate.unsupported "the definitions surface is not in the Lean surface parser")
+  unless source.utf8ByteSize ≤ maxSourceBytes do
+    throw s!"ResourceLimit: source exceeds {maxSourceBytes} bytes"
+  let rejected := "SyntaxError: the source is not accepted by the Lean surface parser"
+  let (asts, canonical) ← match e.family with
+    | .fol => do
+      let rv ← VE.Route.Run.decodeRouteVocabulary e
+      let some fs := VE.Surface.parse rv.environment source | throw rejected
+      pure (fs.map VE.Route.Wire.encodeFormula, some (VE.Surface.print fs))
+    | .closure => do
+      let rv ← VE.Route.Run.decodeRouteVocabulary e
+      let some fs := VE.Closure.Surface.parse rv.environment source | throw rejected
+      pure (fs.map encodeClosure, some (VE.Closure.Surface.print fs))
+    | .closureNary => do
+      let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
+      let some fs := VE.Core.Surface.parse v.environment source | throw rejected
+      pure (fs.map encodeCore, some (VE.Core.Surface.print fs))
+    | .order => do
+      let v ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
+      let some fs := VE.Order.Surface.parse v.vocabulary.environment source | throw rejected
+      pure (fs.map VE.Order.Surface.formulaJson, none)
+  VE.Route.AstLimit.check asts
+  pure (VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
+    match canonical with
+    | some text => [("canonical", .str text)]
+    | none => []))
 
 def reported (run : Json → Except String Json) (j : Json) : Json :=
   match run j with

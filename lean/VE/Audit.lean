@@ -1734,6 +1734,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_model
 #print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_identity
+#print axioms VE.Service.runMode_parse
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq

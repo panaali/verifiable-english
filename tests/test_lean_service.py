@@ -428,7 +428,7 @@ def placeholders(value, line):
 
 hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
-                   "environment", "model", "check", "identity"],
+                   "environment", "model", "check", "identity", "parse"],
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
     hello["service"] = "other"
@@ -855,6 +855,8 @@ _SCHEMA_SEEDS = {
                            "meaning_id": "a" * 64}),
     "identity": ({"id": "c", "kind": "source"},
                  {"id": "c", "status": "ok", "kind": "source", "identity_id": "a" * 64}),
+    "parse": ({"id": "c", "source": "true.\n"},
+              {"id": "c", "status": "ok", "ast": [["top"]], "canonical": "true.\n"}),
 }
 
 
@@ -885,7 +887,8 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "valid" if mode in ("check-certificate", "order", "norms", "model") else
                  "environment_id" if mode == "environment" else
                  "identity_id" if mode == "identity" else
-                 "meaning_id" if mode == "check" else "values")
+                 "meaning_id" if mode == "check" else
+                 "ast" if mode == "parse" else "values")
         answer["results"][0][field] = "true"
     elif mutation in ("wrong-digest", "wrong-index", "unbound-row"):
         bound = {"index": 0, "digest": {"$digest": 0}, "result": row.copy()}

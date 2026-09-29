@@ -155,7 +155,7 @@
       "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
       "lean/VE/Norms/Plain.lean":"stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises and the profile model check",
       "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
-      "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check and identity: wrap the pinned family decoders and recompute identities; additive and not yet on an assurance operation path"
+      "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe"
     }
   },
   "plan_operations": {
