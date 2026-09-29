@@ -357,3 +357,74 @@ def test_soft_declarations_and_registry_have_single_canonical_readings():
     assert dispatch("Outranking in this document is strict.",
                     environment({"permitted": permission()})) is None
     assert by_tag("soft-should").profiles == ("soft-norms@0",)
+
+
+def test_rights_incident_prefix_reuses_one_reading_soft_grammar():
+    from tests.test_rights import claim, rights_env
+    from ve.rights import RightsEnvironment
+    from ve.surface.rights import parse_line, render_line
+
+    env = RightsEnvironment(rights_env())
+    source = render_line(env, "life", "claim", claim()["norm"])
+    assert parse_line(env, source, name="protect")["norm"] == claim()["norm"]
+    with pytest.raises(Exception, match="expected Claim, Liberty or Immunity"):
+        parse_line(env, source.replace("Claim of right", "Rule", 1), name="protect")
+    with pytest.raises(Exception, match="Norm consequence has no single declared reading"):
+        parse_line(env, source.replace("must protect", "should generally protect"), name="protect")
+
+
+def _rights_lines():
+    from tests.test_norms import obligation, permission
+    from tests.test_rights import rights_env
+    raw = rights_env()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["deprive_permitted"] = permission("allow", act="{0} deprive {1} of nationality",
+                                                 args=("state", "person"))
+    predicates["has_nationality"] = {"arguments": ["person"], "description": "nationality"}
+    predicates["arbitrary"] = {"arguments": ["state", "person"], "description": "arbitrary"}
+    raw["vocabulary"]["rights"]["alters"] = {"deprive_permitted": {
+        "holder_slot": 1, "status": "has_nationality", "recognition": None}}
+    exception = {"decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}
+
+    def norm(name, predicate, sign, guard=("top",), **soft):
+        return {"name": name, "predicate": predicate, "sign": sign, "guard": list(guard),
+                "unless": [], "over": [], **soft}
+
+    arbitrary = ["binary", "arbitrary", ["var", 1], ["var", 0]]
+    return raw, [
+        ("claim", norm("protect", "protect_required", True)),
+        ("claim", norm("no-protect", "protect_permitted", False, arbitrary)),
+        ("claim", norm("should-protect", "protect_required", True, mode="default", exception=exception)),
+        ("claim", norm("should-not", "protect_permitted", False, mode="default", exception=exception)),
+        ("liberty", norm("may-act", "person_may_act", True)),
+        ("liberty", norm("generally-act", "person_may_act", True, mode="default", exception=exception)),
+        ("immunity", norm("no-deprive", "deprive_permitted", False, arbitrary)),
+        # a guard naming a generated limitation predicate, in its one generated wording
+        ("claim", norm("lim-protect", "protect_required", True,
+                       ["binary", "rights__lim__1", ["var", 1], ["var", 0]])),
+    ]
+
+
+def test_every_rights_incident_shape_round_trips_with_one_reading():
+    from ve.rights import RightsEnvironment, correlate
+    from ve.surface.rights import parse_line, render_line
+
+    raw, lines = _rights_lines()
+    env = RightsEnvironment(raw)
+    units = [{"right": {"name": "r1", "holder": "person", "guard": ["top"], "lines": [
+                 {"kind": kind, "cites": {}, "norm": body} for kind, body in lines]}},
+             {"limitation": {"name": "l29", "scope": "all", "kinds": ["immunity"], "decided_by": "unstated",
+                             "conditions": [], "factors": []}}]
+    rights = correlate(raw, units)
+    seen = set()
+    for kind, body in lines:
+        source = render_line(env, "1", kind, body, rights=rights)
+        assert source.startswith(f"{kind.title()} of right 1. ")
+        assert "rights__" not in source
+        parsed = parse_line(env, source, name=body["name"], rights=rights)
+        assert (parsed["right"], parsed["kind"], parsed["norm"]) == ("1", kind, body)
+        seen.add(source[len(f"{kind.title()} of right 1. "):])
+    # distinct lines never share a sentence
+    assert len(seen) == len(lines)
+    assert "limitation 1 holds where that state deprives that person of nationality" in render_line(
+        env, "1", "claim", lines[-1][1], rights=rights)
