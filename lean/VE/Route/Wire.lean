@@ -9,6 +9,7 @@ import VE.Route.Budget
 import VE.Route.Decode
 import VE.Route.Flags
 import VE.Route.Steps
+import VE.Route.AstLimit
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -455,15 +456,26 @@ together, have at most 10,000 nodes (Python `_check_aggregate_ast` and
 def nodeLimit (sizes : List Nat) : Except String Unit :=
   if sizes.foldl (· + ·) 0 > 10000 then .error "ResourceLimit: AST node count" else .ok ()
 
-def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
-    Except String (List VE.Formula) := do
-  let fs ← (← j.getArr?).toList.mapM (VE.Bridge.decodeFormula 64)
-  if data && fs.any usesStringBinder then throw "UnsupportedProfile: $string quantification requires data stage 2"
-  unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
-  nodeLimit (fs.map VE.Bridge.formulaNodes)
+/-- A case's formulas as one shared decoder reads them (a document, or the
+premises followed by the conclusion), within the AST limits before anything is
+decoded or typed (`AstLimit.check`, Python's decoder order). -/
+def formulasJson (j : Json) (conclusion : Option Json := none) : Except String (List Json) := do
+  let fs := (← j.getArr?).toList ++ conclusion.toList
+  AstLimit.check fs
   pure fs
 
+def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
+    Except String (List VE.Formula) := do
+  let fs ← (← formulasJson j).mapM (VE.Bridge.decodeFormula 64)
+  nodeLimit (fs.map VE.Bridge.formulaNodes)
+  if data && fs.any usesStringBinder then throw "UnsupportedProfile: $string quantification requires data stage 2"
+  unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
+  pure fs
+
+/-- One closed formula (a conclusion, an admission claim or lemma, a reading):
+its own AST limits, then decoding, then typing. -/
 def decodeClosed (E : VE.Environment) (j : Json) (data : Bool := false) : Except String VE.Formula := do
+  AstLimit.check [j]
   let a ← VE.Bridge.decodeFormula 64 j
   if data && usesStringBinder a then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless a.check E [] do throw "ill-typed or unbound conclusion"
@@ -497,6 +509,7 @@ def runFol (profiles : List String) (environment : Json) (rv : RouteVocabulary) 
     let idx := modelIndex rv M
     return ok id [("values", toJson (← Budget.valuesF (Budget.tableMem M idx) M fs))]
   let premisesJson ← j.getObjVal? "premises"
+  let _ ← formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← decodeFormulas E premisesJson (profiles.contains "data@0")
   let c ← decodeClosed E (← j.getObjVal? "conclusion") (profiles.contains "data@0")
   nodeLimit ((c :: ps).map VE.Bridge.formulaNodes)
@@ -524,6 +537,7 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
     return ok id [("premises", toJson ((fullBackground rv).map (encodeFormula ∘ Prod.fst))),
       ("generators", toJson ((fullBackground rv).map Prod.snd))]
   if kind == "evaluate" then
+    let _ ← formulasJson (← j.getObjVal? "ast")
     let fs ← VE.Closure.Bridge.decodeFormulas E (← j.getObjVal? "ast")
     if profiles.contains "data@0" && fs.any closureUsesStringBinder then
       throw "$string quantification requires data stage 2"
@@ -532,6 +546,7 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
     let idx := modelIndex rv M
     return ok id [("values", toJson (← Budget.valuesC (Budget.tableMem M idx) M fs))]
   let premisesJson ← j.getObjVal? "premises"
+  let _ ← formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
   if profiles.contains "data@0" && ps.any closureUsesStringBinder then
     throw "$string quantification requires data stage 2"
@@ -590,6 +605,7 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     (j : Json) : Except String Json := do
   let E := rv.vocabulary.environment
   if kind == "evaluate" then
+    let _ ← formulasJson (← j.getObjVal? "ast")
     let fs ← VE.Order.Wire.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
     let d ← decodeOrderModel rv (← j.getObjVal? "model")
@@ -597,6 +613,7 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
     let idx := orderIndex rv M
     return ok id [("values", toJson (← Budget.orderValues (Budget.orderMem M idx) M fs))]
   let premisesJson ← j.getObjVal? "premises"
+  let _ ← formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← VE.Order.Wire.decodeFormulas E premisesJson
   let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
   unless c.check E [] do throw "ill-typed or unbound conclusion"

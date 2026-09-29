@@ -682,6 +682,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
         let conclusion = v
             .get("conclusion")
             .ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
+        crate::ast::ast_limit(premises.iter().chain([conclusion]))?;
         let mut nodes = 0;
         for premise in premises {
             formula_check(&env, premise, &[], 1, &mut nodes)?;
@@ -738,6 +739,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if formulas.is_empty() {
         return error("SyntaxError", "empty document");
     }
+    crate::ast::ast_limit(formulas)?;
     let mut nodes = 0;
     for f in formulas {
         formula_check(&env, f, &[], 1, &mut nodes)?;

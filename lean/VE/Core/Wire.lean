@@ -69,11 +69,13 @@ def run (profiles : List String) (environment : Json) (id kind : String)
   let v ← Bridge.decodeEnvironment environment
   let E := v.environment
   if kind == "evaluate" then
+    let _ ← VE.Route.Wire.formulasJson (← j.getObjVal? "ast")
     let fs ← Bridge.decodeFormulas E (← j.getObjVal? "ast")
     if fs.isEmpty then throw "empty document"
     let M ← decodeModel v (← j.getObjVal? "model")
     return VE.Route.Wire.ok id [("values", toJson (← VE.Route.Budget.valuesN (VE.Route.Budget.tableMem M (index v M)) M fs))]
   let premisesJson ← j.getObjVal? "premises"
+  let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← Bridge.decodeFormulas E premisesJson
   let c ← Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
   Bridge.checkFormula E c "conclusion"
@@ -130,6 +132,8 @@ theorem run_certificate_acceptance (profiles : List String) (environment : Json)
       (∀ p ∈ ps, p.denote S []) → c.denote S [] := by
   simp [run, hv, hpj, hps, hcj, hc, hcc, hpa, hcertj, hcert, bind, Except.bind,
     pure, Except.pure] at hrun
+  split at hrun
+  · cases hrun
   split at hrun
   · cases hrun
   split at hrun
