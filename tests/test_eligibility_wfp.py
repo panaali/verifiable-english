@@ -82,6 +82,37 @@ def test_plan_table_matches_cases_json():
     assert len(rows) == 76
 
 
+def test_plan_and_readme_counts_match_cases_json():
+    """Eligibility R7 recheck: PLAN.md section 3 still said 54 entitled and 15
+    not-entitled after B24 to B30 were added (59 and 17). The class: a count in the
+    prose that no test derives from cases.json. Each stated count is checked here."""
+    cases = keyed_cases()["cases"]
+    n, entitled = len(cases), sum(c["key"]["entitled"] for c in cases)
+    plan = " ".join((HERE / "PLAN.md").read_text(encoding="utf-8").split())
+    readme = " ".join((HERE / "README.md").read_text(encoding="utf-8").split())
+    stated = lambda pattern, text=plan: [int(x) for x in re.search(pattern, text).groups()]
+    assert stated(r"The profiles contain (\d+) entitled and (\d+) not-entitled cases") == [entitled, n - entitled]
+    assert stated(r"That gives (\d+) \+ (\d+) \+ (\d+) \+ (\d+) = \*\*(\d+) scored questions\*\*") == \
+        [n, entitled, entitled, entitled, n + 3 * entitled]
+    groups = [sum(c["id"][0] == g for c in cases) for g in "ABCD"]
+    assert stated(r"There are (\d+): (\d+) in group A .*?, (\d+) in group B .*?, (\d+) in group C .*? and (\d+) in group D") \
+        == [n, *groups]
+    flagged = sum(bool(c.get("flags")) for c in cases)
+    assert stated(r"(\d+) profiles carry a flag in `cases.json`, so (\d+) are unflagged") == [flagged, n - flagged]
+    basis = {}
+    for line in (HERE / "PLAN.md").read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) >= 6 and re.fullmatch(r"[A-D][0-9]{2}", cells[0]):
+            basis[cells[-1].split()[0]] = basis.get(cells[-1].split()[0], 0) + 1  # B01: "guide (...)"
+    assert stated(r"(\d+) are `guide` cases, (\d+) are `SI` cases and (\d+) are `SI≠guide` cases") == \
+        [basis.get("guide", 0), basis.get("SI", 0), basis.get("SI≠guide", 0)]
+    assert stated(r"published benefit rule on (\d+) applicant profiles") == [n]
+    assert stated(r"Kill rate = mutants killed / (\d+); (\d+)/(\d+) is expected") == [len(T.MUTANTS)] * 3
+    assert stated(r"\*\*Cases\.\*\* (\d+) applicant profiles", readme) == [n]
+    assert stated(r"agrees with the key on all (\d+)\.", readme) == [n]
+    assert stated(r"That makes (\d+) scored questions", readme) == [n + 3 * entitled]
+
+
 def test_independent_reference_agrees_with_the_key():
     data = keyed_cases()
     for case in data["cases"]:
