@@ -292,7 +292,7 @@ theorem atomPossible_congr {b₁ b₂ : Box} {f : LinForm} (h : ExtremaAgree b�
   have le2 : fmax b₁ f ≤ 0 ↔ fmax b₂ f ≤ 0 := by rw [Int.le_iff_lt_or_eq, Int.le_iff_lt_or_eq, h3, h4]
   have ge2 : 0 ≤ fmax b₁ f ↔ 0 ≤ fmax b₂ f := by rw [← Int.not_lt, ← Int.not_lt, h3]
   have gt1 : 0 < fmin b₁ f ↔ 0 < fmin b₂ f := SignEq.pos ⟨h1, h2⟩
-  cases r <;> simp only [atomPossible, atomCertain, decide_eq_decide, h1, h2, h3, h4, le1, le2, ge2, gt1] <;>
+  cases r <;> simp only [atomPossible, atomCertain, h1, h2, h3, h4, le1, le2, ge2, gt1] <;>
     exact ⟨trivial, trivial⟩
 
 theorem endsE_congr {b₁ b₂ : Box} : ∀ c : Cond, (∀ fr ∈ atomsOf c, ExtremaAgree b₁ b₂ fr.1.val) →
@@ -387,7 +387,7 @@ theorem famOf_mem (p : Estimate → Bool) (s : Side) :
     split at h
     · rename_i hp
       rcases List.mem_cons.mp h with rfl | h
-      · exact Or.inr ⟨est, by simp [List.find?_cons, hp], rfl⟩
+      · exact Or.inr ⟨est, by simp [hp], rfl⟩
       · obtain ⟨e', he', rfl⟩ := List.mem_map.mp h
         exact Or.inl ⟨e', List.mem_cons_of_mem _ he', rfl⟩
     · rename_i hp
@@ -395,7 +395,7 @@ theorem famOf_mem (p : Estimate → Bool) (s : Side) :
       · exact Or.inl ⟨est, List.mem_cons_self .., rfl⟩
       · rcases famOf_mem p s rest f h with ⟨e', he', rfl⟩ | ⟨e', hf, rfl⟩
         · exact Or.inl ⟨e', List.mem_cons_of_mem _ he', rfl⟩
-        · exact Or.inr ⟨e', by simp [List.find?_cons, hp, hf], rfl⟩
+        · exact Or.inr ⟨e', by simp [hp, hf], rfl⟩
 
 theorem famOf_find (p : Estimate → Bool) (s : Side) :
     ∀ (l : List Estimate) (est : Estimate), l.find? p = some est → (fun y => setSide s y est) ∈ famOf p s l
@@ -831,8 +831,8 @@ theorem boxWFB_view (b : Box) :
 theorem E_GS (hest : estimateOf d e.estimate = some est0) {x : Int} (hg : Gap x (endsOf d est0.quantity)) :
     GS x (endsOf d est0.quantity) (Elo R d e est0.quantity) ∧ GS x (endsOf d est0.quantity) (Ehi R d e est0.quantity) :=
   combine_GS hg R.risk.combination (famOn d e est0.quantity) (famOn_ne hest)
-    (fun f hf => (fam_seq hest (List.mem_filter.mp hf).1).1)
-    (fun f hf => (famOn_bounds hest hf).1) (fun f hf => (famOn_bounds hest hf).2.1)
+    (fun _ hf => (fam_seq hest (List.mem_filter.mp hf).1).1)
+    (fun _ hf => (famOn_bounds hest hf).1) (fun _ hf => (famOn_bounds hest hf).2.1)
 
 theorem E_const (hest : estimateOf d e.estimate = some est0) (y y' : Int) :
     (e.side = .hi → Elo R d e est0.quantity y = Elo R d e est0.quantity y') ∧
@@ -927,7 +927,7 @@ theorem minSum_split (b : Box) {q : String} {c : Int} :
         intro a ha
         have : a.1 ≠ q := fun he => hn.1 (he ▸ List.mem_map.mpr ⟨a, ha, rfl⟩)
         simpa using this
-      simp [List.filter_cons, this, termMin]
+      simp [this, termMin]
     · have hne : p.1 ≠ q := fun he => hn.1 (he ▸ List.mem_map.mpr ⟨(q, c), h, rfl⟩)
       have : (p.1 != q) = true := by simpa using hne
       rw [List.filter_cons, if_pos this, minSum_cons, minSum_split b hn.2 h]
@@ -946,7 +946,7 @@ theorem maxSum_split (b : Box) {q : String} {c : Int} :
         intro a ha
         have : a.1 ≠ q := fun he => hn.1 (he ▸ List.mem_map.mpr ⟨a, ha, rfl⟩)
         simpa using this
-      simp [List.filter_cons, this, termMax]
+      simp [this, termMax]
     · have hne : p.1 ≠ q := fun he => hn.1 (he ▸ List.mem_map.mpr ⟨(q, c), h, rfl⟩)
       have : (p.1 != q) = true := by simpa using hne
       rw [List.filter_cons, if_pos this, maxSum_cons, maxSum_split b hn.2 h]
