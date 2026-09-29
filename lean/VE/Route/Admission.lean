@@ -519,8 +519,8 @@ structure Admitted where
   report : Report
   kinds : List Json
 
-def decodeDoc (rv : Wire.RouteVocabulary) (data : Bool) (j : Json) : Except String Doc := do
-  let E := rv.environment
+def decodeDoc (rv : Wire.RouteVocabulary) (data : Bool) (j : Json)
+    (E : VE.Environment := rv.environment) : Except String Doc := do
   let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM (decodeUnit E data)
   require (units.length ≤ 10000) "ResourceLimit: unit count"
   require ((units.map DocUnit.id).eraseDups.length == units.length) "duplicate unit id"
@@ -546,11 +546,19 @@ def admitNodes (D : Doc) (ws : List WireNode) : Except String Unit :=
   | some w => .error (nodeDiagnostic D w)
   | none => .ok ()
 
+def graphRejected : String :=
+  "graph rejected: cycle, duplicate name, dangling premise, ill-typed claim or invalid certificate"
+
+/-- A certificate needing more than Python's 10,000 replay steps is not
+established, so the graph is rejected as for any invalid certificate. -/
 def checkGraph (E : VE.Environment) (g : VE.Graph.ClaimGraph VE.Tableau.Certificate) :
     Except String Report :=
-  match VE.Graph.checkTableau E g with
+  if g.nodes.any (fun n => match n.deduction with
+      | some e => Steps.fol e.certificate.trace > Steps.maxSteps
+      | none => false) then .error graphRejected
+  else match VE.Graph.checkTableau E g with
   | some r => .ok r
-  | none => .error "graph rejected: cycle, duplicate name, dangling premise, ill-typed claim or invalid certificate"
+  | none => .error graphRejected
 
 def admitDocument (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (j : Json) :
     Except String Admitted := do
@@ -585,6 +593,8 @@ theorem admitNodes_ok (D : Doc) (ws : List WireNode) (u : Unit) (h : admitNodes 
 theorem checkGraph_ok (E : VE.Environment) (g : VE.Graph.ClaimGraph VE.Tableau.Certificate)
     (r : Report) (h : checkGraph E g = .ok r) : VE.Graph.checkTableau E g = some r := by
   unfold checkGraph at h
+  split at h
+  · cases h
   split at h
   · cases h
     assumption

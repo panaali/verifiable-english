@@ -2,6 +2,7 @@ use crate::{
     Error, Formula, Result,
     ast::{check_in_context, decode_formula, has_reach},
     canonical_json, dependency_order, digest, error, loads_json,
+    model::definition_premise,
     wire::{fields, object},
 };
 use serde_json::{Value, json};
@@ -144,16 +145,11 @@ impl Environment {
         let modern = route || data.get("language") == Some(&json!("ve.core@0.1"));
         let order = data.get("profiles") == Some(&json!(["order@0", "relational-fol@0"]));
         let closure = modern && !route && !order;
-        let obj = fields(
-            data,
-            &[
-                "language",
-                if modern { "profiles" } else { "profile" },
-                "spec_revision",
-                "vocabulary",
-            ],
-            "InvalidInput",
-        )?;
+        let reports = route && data.get("profiles").and_then(Value::as_array)
+            .is_some_and(|p| p.contains(&json!("reports@0")));
+        let envelope = vec!["language", if modern { "profiles" } else { "profile" },
+                            "spec_revision", "vocabulary"];
+        let obj = fields(data, &envelope, "InvalidInput")?;
         let profiles: Vec<String> = if route {
             obj["profiles"]
                 .as_array()
@@ -185,6 +181,7 @@ impl Environment {
                 "norms@0",
                 "order@0",
                 "relational-fol@0",
+                "reports@0",
                 "time@0",
             ];
             for p in &profiles {
@@ -196,6 +193,27 @@ impl Environment {
                 return error("UnsupportedProfile", "Missing profile relational-fol@0");
             }
             let has = |name: &str| profiles.iter().any(|p| p == name);
+            if has("reports@0") {
+                if obj["vocabulary"].get("reports").is_none() {
+                    return error("UnsupportedProfile", "reports@0 needs a reports block");
+                }
+                for other in ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"] {
+                    if has(other) {
+                        return error("UnsupportedProfile", format!("reports@0 with {other} layers"));
+                    }
+                }
+                let block = fields(&obj["vocabulary"]["reports"], &["holders", "evidence"], "InvalidInput")?;
+                let holders = block["holders"].as_array().ok_or_else(|| Error::new("InvalidInput", "reports holders"))?;
+                if holders.is_empty() || holders.len() > 8 {
+                    return error("ResourceLimit", "reports holders");
+                }
+                let mut seen = BTreeSet::new();
+                for holder in holders {
+                    let holder = string(holder, "UnknownSymbol")?;
+                    if !seen.insert(holder) { return error("DuplicateDeclaration", "holder sort"); }
+                }
+                string(&block["evidence"], "UnknownSymbol")?;
+            }
             if has("order@0") && (has("closure@0") || has("nary@0")) {
                 let pair = if has("closure@0") {
                     "closure@0"
@@ -254,12 +272,24 @@ impl Environment {
         }
         let vocab = fields(
             &obj["vocabulary"],
-            &["sorts", "predicates", "constants"],
+            if reports { &["sorts", "predicates", "constants", "reports"] }
+            else { &["sorts", "predicates", "constants"] },
             "InvalidInput",
         )?;
         let sorts = object(&vocab["sorts"], "InvalidInput")?;
         let preds = object(&vocab["predicates"], "InvalidInput")?;
         let consts = object(&vocab["constants"], "InvalidInput")?;
+        if reports {
+            let block = &vocab["reports"];
+            for holder in block["holders"].as_array().unwrap() {
+                if !sorts.contains_key(holder.as_str().unwrap()) {
+                    return error("UnknownSymbol", "holder sort");
+                }
+            }
+            if !sorts.contains_key(block["evidence"].as_str().unwrap()) {
+                return error("UnknownSymbol", "evidence sort");
+            }
+        }
         if sorts.len() > 32 || preds.len() > 256 {
             return error("ResourceLimit", "vocabulary limit");
         }
@@ -426,21 +456,24 @@ impl Environment {
         let mut constants = BTreeMap::new();
         for (name, decl) in consts {
             let literal = route && decl.get("sort") == Some(&json!("$string"));
-            let d = fields(
-                decl,
-                if literal && decl.get("description").is_none() {
-                    &["sort"]
-                } else {
-                    &["sort", "description"]
-                },
-                "InvalidInput",
-            )?;
+            let mut keys = vec!["sort"];
+            if !literal || decl.get("description").is_some() { keys.push("description"); }
+            if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
+            let d = fields(decl, &keys, "InvalidInput")?;
             let s = string(&d["sort"], "UnknownSymbol")?;
             if !sorts.contains_key(s) && !(order && s == "$int") && !(route && s == "$string") {
                 return error("UnknownSymbol", "unknown constant sort");
             }
             if let Some(value) = d.get("description") {
                 description(value)?;
+            }
+            if let Some(value) = d.get("verbalisation") {
+                verbalisation(value)?;
+                // As Python and Lean: ASCII case-insensitively, no holder displays as the assessment.
+                let holder = vocab["reports"]["holders"].as_array().is_some_and(|h| h.contains(&json!(s)));
+                if holder && value.as_str().is_some_and(|w| w.to_ascii_lowercase() == "the stated assessment") {
+                    return error("InvalidInput", "holder verbalisation reserved");
+                }
             }
             constants.insert(name.clone(), s.into());
         }
@@ -513,6 +546,10 @@ impl Environment {
                 .map_err(|_| Error::new("InvalidInput",
                     format!("Definition {name}: the body is not a typed formula over the symbols below it")))?;
             below.predicates.insert(name.clone(), signature.clone());
+            // The generated biconditional has the AST limits of any formula,
+            // 10,000 nodes and depth 64 (Python checks `premise(definition)`
+            // after the body, in dependency order).
+            check_in_context(&below, &definition_premise(&name, &signature, &body), &[])?;
             result.push((name, signature, body));
         }
         Ok(result)

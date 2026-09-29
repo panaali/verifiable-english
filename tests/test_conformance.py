@@ -234,6 +234,20 @@ def test_identity_preimages_have_exact_domain_and_shape(env):
     assert source_id(b"true.\n") == hashlib.sha256(b"ve-source-v0\ntrue.\n").hexdigest()
 
 
+def test_repeated_meaning_id_serializes_once_per_call(env, monkeypatch):
+    import ve.wire as wire
+
+    original = wire.canonical_json
+    calls = []
+    def counted(value):
+        calls.append(value)
+        return original(value)
+    monkeypatch.setattr(wire, 'canonical_json', counted)
+    first = meaning_id(env, Document((Top(),)))
+    assert meaning_id(env, Document((Top(),))) == first
+    assert len(calls) == 2
+
+
 def test_nested_declaration_fields_are_exact():
     bad = json.loads(json.dumps(ENV_DATA))
     bad["vocabulary"]["predicates"]["owns"]["extra"] = "not allowed"
