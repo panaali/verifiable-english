@@ -89,6 +89,7 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
       | none => throw s!"AdmissionError: invalid label {s}"
   match e.family with
   | .closureNary =>
+    if kind == "admission" then throw (Gate.unsupported "admission on the closure family is deferred")
     if VE.Core.Layers.usesLayers environment then
       VE.Core.Layers.run e.profiles environment id kind j
     else VE.Core.Wire.run e.profiles environment id kind j

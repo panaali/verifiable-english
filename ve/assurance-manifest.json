@@ -51,7 +51,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 8575,
+    "total_lines": 8577,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -77,8 +77,8 @@
       {"file": "lean/VE/Order/Wire.lean", "lines": 292, "sha256": "03f085f67a4450364a606663ea88fc126d7abf7e0d5d4a84348ccaf96208da47",
        "ranges": [[24, 233], [247, 253]],
        "declarations": ["decodeEnvironment", "decodeFormula", "decodeModel", "decodeTrace", "decodeCertificate", "environmentId", "meaningId"]},
-      {"file": "lean/VE/Norms/Wire.lean", "lines": 306, "sha256": "911a3ac27e31f4d66445bf8c0f3b444891f7d39c2996d21d401cb44bfb19125b",
-       "ranges": [[25, 305]],
+      {"file": "lean/VE/Norms/Wire.lean", "lines": 308, "sha256": "4af70fb4b49fcab28d78eb8ed9926d739882c0078bb85add2f3f60b0cea1b52b",
+       "ranges": [[25, 307]],
        "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
