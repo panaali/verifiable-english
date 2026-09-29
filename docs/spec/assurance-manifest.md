@@ -159,7 +159,8 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
-| **total** | | **8,573** | | |
+| `lean/VE/Rights/Wire.lean` | 662 | 662 | 1–662 | `9bb3685c3869…` |
+| **total** | | **9,235** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
