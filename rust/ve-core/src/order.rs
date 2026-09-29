@@ -1,6 +1,7 @@
 //! Independent order@0 AST and finite-model route. Proof certificates remain on
 //! the Lean route; this evaluator cannot certify entailment.
 use crate::{Environment, Error, Result, digest, error};
+use crate::search::{domain_sizes, increment as odometer, next_combination};
 use num_bigint::BigInt;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -1056,61 +1057,6 @@ fn used_predicates(f: &Value, used: &mut BTreeSet<String>) {
         "forall" | "exists" => used_predicates(&a[2], used),
         _ => {}
     }
-}
-
-/// Python `search._domain_sizes`: bounded vectors by total entities, then lexicographically.
-fn domain_sizes(minima: &[usize], maximum: usize) -> Vec<Vec<usize>> {
-    fn walk(minima: &[usize], suffix: &[usize], maximum: usize, index: usize, remaining: usize,
-            prefix: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
-        if index == minima.len() {
-            if remaining == 0 { out.push(prefix.clone()); }
-            return;
-        }
-        let rest = maximum * (minima.len() - index - 1);
-        let low = minima[index].max(remaining.saturating_sub(rest));
-        let Some(high) = remaining.checked_sub(suffix[index + 1]) else { return };
-        for size in low..=high.min(maximum) {
-            prefix.push(size);
-            walk(minima, suffix, maximum, index + 1, remaining - size, prefix, out);
-            prefix.pop();
-        }
-    }
-    let mut suffix = vec![0; minima.len() + 1];
-    for index in (0..minima.len()).rev() {
-        suffix[index] = minima[index] + suffix[index + 1];
-    }
-    let mut out = Vec::new();
-    for total in suffix[0]..=minima.len() * maximum {
-        walk(minima, &suffix, maximum, 0, total, &mut Vec::new(), &mut out);
-    }
-    out
-}
-
-/// Advance an odometer (last position fastest); false once it wraps.
-fn odometer(values: &mut [usize], limits: &[usize]) -> bool {
-    for i in (0..values.len()).rev() {
-        if values[i] + 1 < limits[i] {
-            values[i] += 1;
-            return true;
-        }
-        values[i] = 0;
-    }
-    false
-}
-
-/// Advance a k-combination of 0..n in lexicographic order.
-fn next_combination(indices: &mut [usize], n: usize) -> bool {
-    let k = indices.len();
-    for i in (0..k).rev() {
-        if indices[i] < n - k + i {
-            indices[i] += 1;
-            for j in i + 1..k {
-                indices[j] = indices[j - 1] + 1;
-            }
-            return true;
-        }
-    }
-    false
 }
 
 /// Python `search._order_models`, in its exact order: domain sizes, integer
