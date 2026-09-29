@@ -950,6 +950,7 @@ import VE.Service.Protocol
 #print axioms VE.Service.runMode_english
 #print axioms VE.Service.runMode_environment
 #print axioms VE.Service.runMode_model
+#print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_identity
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
