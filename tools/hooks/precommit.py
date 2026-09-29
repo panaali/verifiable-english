@@ -5,7 +5,9 @@ Every check reads blobs from the index (GIT_INDEX_FILE is honoured) with
 reads the working tree. The policy code the checks reuse (tools/layer_policy.py,
 tools/check_lean_imports.py, tools/check_rust_deps.py, lean/audit.py) and the
 module layout it resolves imports against are the STAGED versions too, loaded
-from a snapshot of the index. No check runs tests or builds. The gate re-runs
+from a snapshot of the index. No check runs tests or builds; staged Lean headers
+are cross-checked with the pinned toolchain's `lean --deps` when it is
+installed. The gate re-runs
 only the Lean audit and (through the tests) the frozen-source check; secrets and
 layer imports have no later check (see the README's bypass section).
 """
@@ -35,6 +37,7 @@ LEAN_LEDGER = "tools/lean-layer-exceptions.json"
 INVENTORY = "lean/VE/Route/frozen-sources.sha256"
 FROZEN_SCRIPT = "lean/VE/Route/frozen.py"
 MAIN = "lean/Main.lean"
+LEAN_TOOLCHAIN = "lean/lean-toolchain"
 POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/check_lean_imports.py",
           "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py"}
 RUST_MANIFEST = re.compile(r"rust/(?:.+/)?Cargo\.toml")
@@ -78,6 +81,7 @@ def secrets_in(text: bytes):
 PRIVATE_KEY_FILE = re.compile(r"id_(?:rsa|dsa|ecdsa|ed25519)|.*\.(?:p12|pfx)|\.env(?:\..+)?")
 PUBLIC_ENV_FILE = re.compile(r"\.env\.(?:example|sample|template)")
 CORE_LEAN = re.compile(r"\b(sorry|sorryAx|admit|axiom)\b")
+NOTES: list[str] = []  # printed with --timings
 
 
 def git(*args: str, data: bytes | None = None) -> bytes:
@@ -293,7 +297,8 @@ def check_layers(index: Index) -> list[str]:
 
     python = [p for p in python if mappable(p, python_module(p)[0],
                                             module_layer(policy, python_module(p)[0]), "Python")]
-    lean = [p for p in lean if mappable(p, lean_module(p), layers.lean_layer(lean_module(p)), "Lean")]
+    headers = lean  # every staged header must be plain, mapped module or not
+    lean = {p for p in lean if mappable(p, lean_module(p), layers.lean_layer(lean_module(p)), "Lean")}
     if python:
         blobs = index.read([PYTHON_LEDGER, *python])
         ledger = json.loads(blobs[PYTHON_LEDGER] or b"{}")
@@ -311,13 +316,36 @@ def check_layers(index: Index) -> list[str]:
                 layer = module_layer(policy, target)
                 if layer is not None and importer < layer and edge not in ledger:
                     errors.append(f"{path}: new outward import {edge} (layer {importer} -> {layer})")
-    if lean:
-        blobs = index.read([LEAN_LEDGER, *lean])
+    if headers:
+        reader = policy.check_lean_imports
+        blobs = index.read([LEAN_LEDGER, LEAN_TOOLCHAIN, *headers])
         ledger = json.loads(blobs[LEAN_LEDGER] or b"{}")
         local = {lean_module(p) for p in index.listing() if p.startswith("lean/") and p.endswith(".lean")}
-        # The reader parses the header as Lean does, however many lines it spans.
-        sources = [blobs[path].decode("utf-8", "replace") for path in lean]
-        for path, targets in zip(lean, mapped(policy.check_lean_imports.imports, sources)):
+        read = {}
+        for path in headers:
+            try:
+                read[path] = reader.imports(blobs[path].decode("utf-8", "replace"))
+            except reader.HeaderError as error:
+                errors.append(f"{path}: Lean header {error}")
+        # The pinned toolchain's own header parser must agree with the plain-layout reading.
+        command = reader.pinned_lean((blobs[LEAN_TOOLCHAIN] or b"").decode()) if read else None
+        if command is None:
+            NOTES.append("lean --deps: pinned toolchain unavailable; plain-layout grammar only")
+        else:
+            folder = index.snapshot / ".lean-headers"
+            folder.mkdir()
+            files = {}
+            for number, path in enumerate(read):
+                files[path] = (folder / f"{number}.lean", read[path])
+                files[path][0].write_bytes(blobs[path])
+            wrong, checked = reader.lean_disagreements(command, files)
+            NOTES.append(f"lean --deps confirmed or refuted {checked} of {len(files)} staged Lean headers")
+            for path, message in sorted(wrong.items()):
+                errors.append(f"{path}: Lean header: {message}; {reader.PLAIN_LAYOUT}")
+                del read[path]
+        for path, targets in read.items():
+            if path not in lean:
+                continue
             module = lean_module(path)
             importer = layers.lean_layer(module)
             for target in targets:
@@ -439,6 +467,8 @@ def main(argv: list[str]) -> int:
                 for error in errors:
                     print(f"  {error}", file=sys.stderr)
     if "--timings" in argv:
+        for note in NOTES:
+            print(f"pre-commit: {note}", file=sys.stderr)
         print(f"pre-commit: total {time.perf_counter() - started:.3f} s "
               f"({len(index.changed)} staged paths)", file=sys.stderr)
     if failed:
