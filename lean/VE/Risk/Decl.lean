@@ -55,8 +55,8 @@ structure RiskEnv where
   deriving DecidableEq, Repr
 
 structure RiskDoc where
-  /-- the complete original environment, without the generated vocabulary -/
-  E : VE.Environment
+  /-- the declarations of the complete original environment `E`, without the generated vocabulary -/
+  vocab : VE.Bridge.Vocabulary
   /-- W6 tags with the exponent `k` of their scale `10^k` -/
   units : List (String × Nat)
   lits : List String
@@ -67,6 +67,13 @@ structure RiskDoc where
   T : Tree
   /-- active base assertion units, risk words inlined -/
   Γ : List VE.Formula
+  /-- `(environment_id, document_hash)` of the policy, which a record binds (3.4) -/
+  policy : String × String := ("", "")
+  /-- the labels of the base assertion units `Γ`, in order (V11 names a failing unit by its label) -/
+  labels : List String := []
+
+/-- The complete original environment (1.2): the declarations of `vocab`. -/
+def RiskDoc.E (R : RiskDoc) : VE.Environment := R.vocab.environment
 
 def mightName : String := "risk__might_lead_to"
 def classPred : String := "risk__class"
@@ -193,12 +200,19 @@ def riskSemanticCheck (R : RiskDoc) : Bool :=
   R.lits.all (fun l => R.E.constants l != some R.sev && !R.classes.contains l) &&
   R.T.definitions.all (fun d => !(generatedPreds ++ riskWords).contains d.name)
 
+/-- The harm constants of `E` (declared constants of the harm sort). -/
+def harmConstantsOfE (R : RiskDoc) : List String :=
+  (R.vocab.constants.filter (·.2 == R.alt.harm)).map Prod.fst
+
 def classPairs (R : RiskDoc) : List (String × String) := R.classes.flatMap fun a => R.classes.map (a, ·)
 
 /-- Clauses 2 to 6 of 4.1, with the diagnostics of 6. -/
 def checkRiskBlock (R : RiskDoc) : Except String Unit := do
   let s := R.risk.severity
   if R.E.sorts.contains s.sort then throw s!"RiskSeverityNotFresh: {s.sort}"
+  let symbols := R.vocab.sorts ++ R.vocab.predicates.map Prod.fst ++ R.vocab.constants.map Prod.fst
+  for n in symbols do
+    if n.startsWith "risk__" || s.classes.contains n then throw s!"RiskReserved: {n}"
   for p in generatedPreds ++ riskWords do
     if R.E.predicates p != none || R.E.constants p != none || R.E.sorts.contains p then throw s!"RiskReserved: {p}"
   for c in s.classes do
@@ -222,6 +236,8 @@ def checkRiskBlock (R : RiskDoc) : Except String Unit := do
     unless s.classes.contains c do throw s!"UnknownSymbol: risk.severity {c}"
     if hs.contains h then throw s!"HarmTwoClasses: {h}"
     hs := hs ++ [h]
+  for h in harmConstantsOfE R do
+    unless hs.contains h do throw s!"HarmUnclassified: {h}"
   for c in R.risk.alwaysPossible do
     unless s.classes.contains c do throw s!"UnknownSymbol: risk.always_possible {c}"
   for (_, ks) in R.risk.requiredAlternatives do

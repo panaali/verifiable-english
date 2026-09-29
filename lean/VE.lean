@@ -20,3 +20,4 @@ import VE.Risk.Background
 import VE.Risk.Decl
 import VE.Risk.Severity
 import VE.Risk.Words
+import VE.Risk.Record

@@ -73,6 +73,7 @@ import VE.Risk.Background
 import VE.Risk.Decl
 import VE.Risk.Severity
 import VE.Risk.Words
+import VE.Risk.Record
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1886,3 +1887,23 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Risk.risk_expansion
 #print axioms VE.Risk.compat_sat
 #print axioms VE.Risk.risk_conservative
+#print axioms VE.Risk.buildDecision_fields
+#print axioms VE.Risk.citeFailure_none
+#print axioms VE.Risk.admitDecision_sound
+#print axioms VE.Risk.viewGate_of_validate
+#print axioms VE.Risk.boxWFB_iff
+#print axioms VE.Risk.condOK_iff
+#print axioms VE.Risk.mem_cellsOf
+#print axioms VE.Risk.validate_facts
+#print axioms VE.Risk.suff_nec
+#print axioms VE.Risk.caseAt_completed
+#print axioms VE.Risk.regenerate_sound
+#print axioms VE.Risk.certain_within_possible
+#print axioms VE.Risk.regenerate_witness
+#print axioms VE.Risk.lookup_append
+#print axioms VE.Risk.lookup_classes
+#print axioms VE.Risk.modelVocabulary_valid
+#print axioms VE.Risk.regenerate_might_view
+#print axioms VE.Risk.regenerate_leads_view
+#print axioms VE.Risk.named_pairRows
+#print axioms VE.Risk.risk_scenario_sound
