@@ -837,3 +837,20 @@ def test_conditional_on_counts_unexamined_cells(cell):
     n = len(res["lines"]["unexamined_possible"])
     assert n == 10
     assert res["text"].startswith(f"Decision x — conditional on E and {n} unexamined cells counted as possible. ")
+
+
+def test_q3_names_the_ruling_out_source_and_unlisted_harms(cell):
+    """Review C3 (Fable): Q3 names the necessary side that ruled the harm out, not the first source,
+    and an observed harm the policy does not list is not reported as ruled out."""
+    env, policy = cell
+    log = Log()
+    log.add(1, "E", "estimate", estimate("q", "0", "5", "est", "assumption"))
+    log.add(2, "Cs", "condition", condition("act", "job_failure", "sufficient", gt(q("q"), dec("dimensionless", "10"))))
+    log.add(3, "Cn", "condition", condition("act", "job_failure", "necessary", gt(q("q"), dec("dimensionless", "8"))))
+    dx_record(log, policy, dimless("q"), ["E", "Cs", "Cn"])
+    log.add(101, "TK", "taken", {"decision": "DX", "alternative": "act"})
+    log.add(102, "O", "outcome", {"decision": "DX", "harms": ["job_failure", "flood"], "measurements": [],
+                                  "observer": "monitor", "support": "observation"})
+    res = one({"id": "a", "kind": "risk-audit", "environment": env, "document": {"norms": []},
+               "log": log.json(), "decision": {"id": "DX", "seq": 100}})
+    assert res["q3"] == ["job_failure: surprise: ruled out by Cn", "flood: not a harm of the policy"], res

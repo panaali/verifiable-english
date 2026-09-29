@@ -162,10 +162,10 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
 | `lean/VE/Risk/Wire.lean` | 385 | 385 | 1–385 | `805ffa8d04c4…` |
 | `lean/VE/Risk/Record.lean` | 1266 | 1266 | 1–1266 | `9b9aa82f9a8d…` |
-| `lean/VE/Risk/Audit.lean` | 186 | 186 | 1–186 | `00a2fac1c2ce…` |
+| `lean/VE/Risk/Audit.lean` | 190 | 190 | 1–190 | `62c518fee5d3…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
 | `lean/VE/Risk/Run.lean` | 651 | 651 | 1–651 | `6ecb8a1cbd36…` |
-| **total** | | **12,182** | | |
+| **total** | | **12,186** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

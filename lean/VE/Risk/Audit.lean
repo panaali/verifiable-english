@@ -137,8 +137,12 @@ def auditQ3 (R : RiskDoc) (log : Log) (hd : DecisionRef) (a : String) : List Str
         | .ok hs => hs
         | .error _ => []
       harmsSeen.map fun h =>
-        if t.might.contains (a, h) then s!"{h}: within the declared model"
-        else if addressed d a h then s!"{h}: surprise: ruled out by {((condsOn d a h).map (·.id) ++ (stmtsOn d a h).map (·.id)).headD "a statement"}"
+        if !(harms R).contains h then s!"{h}: not a harm of the policy"
+        else if t.might.contains (a, h) then s!"{h}: within the declared model"
+        -- the ruling-out source is the necessary side: a necessary or exact condition, or a stated `cannot`
+        else if addressed d a h then
+          s!"{h}: surprise: ruled out by {(((condsOn d a h).filter (·.form != .sufficient)).map (·.id) ++
+            ((stmtsOn d a h).filter (·.stated == .cannot)).map (·.id)).headD "a statement"}"
         else match R.risk.unexamined with
           | .ruledOutBy decider => s!"{h}: unexamined: ruled out by {decider}"
           | _ => s!"{h}: unexamined: ruled out by {d.chooserLabel}"
