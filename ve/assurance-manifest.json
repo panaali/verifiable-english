@@ -50,8 +50,8 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 9566,
-    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files and the speech-act decoder are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
+    "total_lines": 11141,
+    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, the speech-act decoder, and the risk decoders are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
        "ranges": [[1, 136]], "declarations": ["value", "parse", "caseTexts", "parseCases"]},
@@ -130,7 +130,23 @@
        "reason": "soft document admission decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/SoftNorms/Wire.lean", "lines": 462, "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
        "ranges": [[1, 462]], "declarations": ["decodeSoftNorm", "decodeSoftSource", "replaySoftConflict", "replaySoftWitness", "replaySoftEntailment"],
-       "reason": "soft wire and certificate decoder; the full file is pinned conservatively"}
+       "reason": "soft wire and certificate decoder; the full file is pinned conservatively"},
+      {"file": "lean/VE/Risk/Wire.lean", "lines": 383, "sha256": "5c2b2da0aa9c2def1b739622634035d480a0e7c7f64017c421cdac68e6c74c91",
+       "ranges": [[1, 383]],
+       "declarations": ["profileGate", "riskNormsView", "decodeUnits", "decodeRiskBlock", "decodeRiskSource", "decodeEntry", "decodeSupplied", "decodeLog"],
+       "reason": "risk profile gate, strict risk block, W6 units, source, entry and log decoder; the full file is pinned conservatively"},
+      {"file": "lean/VE/Risk/Record.lean", "lines": 1263, "sha256": "c7730476ebab7aa74ed986dd1fe975304f95510d87dd46fe6f4369539d23eac4",
+       "ranges": [[1, 1263]], "declarations": ["decodeRecord", "elabTerm", "elabCond", "decodeItem", "admitDecision"],
+       "reason": "decision record and cited-entry content decoder, condition elaboration and record admission; the full file is pinned conservatively"},
+      {"file": "lean/VE/Risk/Audit.lean", "lines": 186, "sha256": "00a2fac1c2ceb029cfdaebd19c20604a906a026365068ff819a0900cb5c605bd",
+       "ranges": [[1, 186]], "declarations": ["snapshotOf", "liveEstimates", "allEstimatesRecord", "auditQ12", "auditQ3"],
+       "reason": "audit snapshot admission and the recorded-estimate replay read log entry contents; the full file is pinned conservatively"},
+      {"file": "lean/VE/Risk/Admission.lean", "lines": 128, "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
+       "ranges": [[1, 128]], "declarations": ["admitDocument"],
+       "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"},
+      {"file": "lean/VE/Risk/Run.lean", "lines": 608, "sha256": "a317fe5b12bcad2400e7bc1abf65b8ccbe5839354809e45ecf057ec207d87c50",
+       "ranges": [[1, 608]], "declarations": ["decodeRef", "queried", "riskBaseEnvironmentJson", "decodePackage", "decodeWitnessModel", "runCase"],
+       "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
