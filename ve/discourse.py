@@ -10,21 +10,30 @@ competing quantifier of the candidate's sort, the coordinations an ordinal
 refers back to), each candidate is expanded into explicit English, and the
 expansions with one typed parse are the competitors; the recorded target must
 be the unique one and the expansion must reproduce the unit's content. Other
-reference forms are recorded but not elaborated in Python: a unit with content
-that uses one is `UnsupportedProfile`, never admitted unchecked. The Lean route
-(`ve_discourse_route`) is the trusted checker; it reads the same bytes.
+reference forms are recorded but not elaborated in Python.
+
+None of this decides an admission. The Lean route (`ve_discourse_route`) is the
+semantic authority: it reads the same bytes, and a `ve-document@2` document's
+verdict, unit statuses, references and report id are its answer
+(`validate_discourse`). Python's own check (`python_discourse`) gives editor
+hints and the diagnostic text of a document Lean rejects too; without an answer
+from Lean the result is `CheckerUnavailable`, never a Python-only verdict.
 """
 from __future__ import annotations
 
 import hashlib
 from itertools import product
+import json
+import os
+from pathlib import Path
 import re
+import subprocess
 
 from .admission import token
 from .ast import formula_to_data
-from .errors import VEError
+from .backends.lean_service import CheckerUnavailable
+from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .readings import active_reading_sets
-from .wire import digest
 
 PROFILE = "ve.discourse@1"
 _FORM_KINDS = {
@@ -952,7 +961,9 @@ def _unrecorded(doc, unit, rows, displays):
     return None
 
 
-def validate_discourse(doc):
+def python_discourse(doc):
+    """Python's own check of a discourse block (a port of the Lean validator): its verdict is a
+    diagnostic, never the admission, which is Lean's (`validate_discourse`)."""
     block = doc["meta"]["discourse"]
     if type(block) is not dict:
         raise VEError("InvalidInput: discourse block")
@@ -1118,7 +1129,7 @@ def validate_discourse(doc):
             gap = _unrecorded(doc, unit, producing, displays)
             if gap is not None:
                 raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
-    presentations = {}
+    presentations, failures = {}, []
     for unit in doc["units"]:
         rows = by_unit.get(unit["id"], [])
         producing = [m for m in rows if m["form"] not in _LOCATION]
@@ -1127,24 +1138,33 @@ def validate_discourse(doc):
         if not producing or unit["id"] in grouped:
             continue
         # every unit with a recorded formula-producing mention is validated, with meaning or
-        # without (the Lean `boundUnits`): one Python cannot elaborate is never passed unchecked
-        unsupported = sorted({m["form"] for m in producing} - _ELABORATED)
-        if unsupported:
-            raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
-                          f"is not implemented in Python ({unit['id']})")
-        for m in producing:
-            if not _surface_fits(doc, units, m):
-                raise VEError(f"MentionNotSlot: {m['id']}")
-        entity = [m for m in producing if m["target"]["kind"] == "entity"]
-        if len(entity) != len(producing):
-            raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
-                          f"is not implemented in Python ({unit['id']})")
-        presentation = _resolve_unit(doc, unit, sorted(producing, key=lambda m: m["span"][0]), names, anchors,
-                                     readings)
+        # without (the Lean `boundUnits`): one Python cannot elaborate is never passed unchecked.
+        # A unit Python rejects does not stop the others: their presentations are editor hints
+        # when Lean admits the document (`validate_discourse`).
+        try:
+            unsupported = sorted({m["form"] for m in producing} - _ELABORATED)
+            if unsupported:
+                raise VEError(f"UnsupportedProfile: ve.discourse@1 {', '.join(unsupported)} elaboration "
+                              f"is not implemented in Python ({unit['id']})")
+            for m in producing:
+                if not _surface_fits(doc, units, m):
+                    raise VEError(f"MentionNotSlot: {m['id']}")
+            entity = [m for m in producing if m["target"]["kind"] == "entity"]
+            if len(entity) != len(producing):
+                raise VEError(f"UnsupportedProfile: ve.discourse@1 unit reference elaboration "
+                              f"is not implemented in Python ({unit['id']})")
+            presentation = _resolve_unit(doc, unit, sorted(producing, key=lambda m: m["span"][0]), names,
+                                         anchors, readings)
+        except VEError as exc:
+            failures.append(exc)
+            continue
         for m in producing:
             statuses[m["id"]] = "resolved"
         if meaning:
             presentations[unit["id"]] = presentation
+    if failures:
+        failures[0].presentations, failures[0].failures = presentations, failures
+        raise failures[0]
     references = [{"mention": mid, "unit": m["unit"], "form": m["form"], "target": m["target"],
                    "status": statuses[mid]} for mid, m in mentions.items()]
     for group in groups:
@@ -1178,19 +1198,174 @@ def validate_discourse(doc):
             "presentations": presentations}
 
 
+# The Lean authority (docs/spec/discourse.md 3.4, 8) ----------------------------
+
+_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_discourse_route"
+_ROUTE_TIMEOUT = 300
+_CASE_ID = "python-admission"
+_STATUSES = {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
+
+
+def route_executable():
+    """The `ve_discourse_route` executable: `VE_DISCOURSE_ROUTE`, else the lake build."""
+    return Path(os.environ.get("VE_DISCOURSE_ROUTE") or _ROUTE)
+
+
+def is_discourse_text(raw):
+    """Whether a document text is a `ve-document@2` document, whose admission is Lean's. A text
+    that does not split is not (the loader rejects it with the Lean loader's own text)."""
+    from .document import _split
+    try:
+        return _split(raw)[0]["format"] == "ve-document@2"
+    except VEError:
+        return False
+
+
+def import_files(raw, directory):
+    """The sibling files the stored chain of a document text names, by the name its import pins
+    give (`bytes`), as the texts the Lean route receives as the case's `files`: the imports of the
+    document, of each stored document and of each embedded unit, to the nesting budget. A named
+    file Python would read but that is no UTF-8 text cannot reach Lean: `CheckerUnavailable`."""
+    from .document import _split
+    files, pending = {}, [(raw, 0)]
+    while pending:
+        text, depth = pending.pop()
+        if depth > _MAX_NESTING:
+            continue
+        try:
+            meta, source, _ = _split(text)
+        except VEError:
+            continue
+        block = meta.get("discourse") if type(meta.get("discourse")) is dict else {}
+        imports = block.get("imports", {}) if type(block.get("imports", {})) is dict else {}
+        for pin in imports.values():
+            name = pin.get("bytes") if type(pin) is dict else None
+            if type(name) is not str or name in files or not (directory / name).is_file():
+                continue
+            data = (directory / name).read_bytes()
+            try:
+                files[name] = data.decode("utf-8")
+            except UnicodeError:
+                raise CheckerUnavailable(f"CheckerUnavailable: import file {name} is not UTF-8 text, "
+                                         f"which the Lean discourse route cannot receive") from None
+            pending.append((data, depth + 1))
+        for child in _stored_children({**meta, "discourse": {**block, "imports": {}}}, source, directory):
+            pending.append((child, depth + 1))
+    return files
+
+
+def lean_admission(raw, directory):
+    """Lean's admission of a `ve-document@2` text (`ve_discourse_route`, kind `admission`), with the
+    sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
+    Anything else (no executable, a crash, a timeout, output that is not one answer to this case)
+    is `CheckerUnavailable`, never a verdict; there is no fallback to Python."""
+    executable = route_executable()
+    if not executable.is_file():
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route {executable} is not built")
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeError:
+        raise CheckerUnavailable("CheckerUnavailable: the document is not UTF-8 text, "
+                                 "which the Lean discourse route cannot receive") from None
+    case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": import_files(raw, directory)}
+    try:
+        proc = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
+                              capture_output=True, timeout=_ROUTE_TIMEOUT, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route did not answer ({exc})") from None
+    try:
+        rows = json.loads(proc.stdout)
+    except ValueError:
+        rows = None
+    row = rows[0] if type(rows) is list and len(rows) == 1 and type(rows[0]) is dict else {}
+    status = row.get("status")
+    well_formed = (row.get("id") == _CASE_ID and proc.returncode == (1 if status == "error" else 0) and (
+        type(row.get("error")) is str if status == "error" else
+        status == "ok" and row.get("admitted") in (True, "UNKNOWN") and type(row.get("report_id")) is str
+        and type(row.get("references")) is list and type(row.get("statuses")) is dict
+        and all(type(v) is str and v in _STATUSES for v in row["statuses"].values())))
+    if not well_formed:
+        detail = proc.stderr.decode("utf-8", "replace").strip()[-300:]
+        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case"
+                                 + (f" ({detail})" if detail else ""))
+    return row
+
+
+def _error_of(message):
+    """A Lean diagnostic as a Python error with its code."""
+    code = message.split(":", 1)[0]
+    cls = {"ResourceLimit": ResourceLimit, "UnsupportedProfile": UnsupportedProfile}.get(code, VEError)
+    error = cls(message)
+    if cls is VEError and code.isidentifier() and code[:1].isupper():
+        error.code = code
+    return error
+
+
+def rejection(lean, python_error):
+    """The error of a document Lean does not admit. Lean's `NotImplemented` is an abstention, not
+    a verdict: `UnsupportedProfile`. Otherwise both reject, and Python's diagnostic is kept when
+    Python rejects too (a different code is the known limitation of 8); Python's own abstention
+    (`UnsupportedProfile`) or admission gives Lean's diagnostic."""
+    message = lean["error"]
+    if message.startswith("NotImplemented"):
+        return UnsupportedProfile(f"UnsupportedProfile: the Lean discourse route abstains ({message})")
+    if python_error is not None and not str(python_error).startswith("UnsupportedProfile"):
+        return python_error
+    return _error_of(message)
+
+
+def unavailable_report(error):
+    """Python cannot load or report a document Lean admitted: no verdict, never a rejection."""
+    return CheckerUnavailable(f"CheckerUnavailable: Lean admits the document but Python cannot report it ({error})")
+
+
+def validate_discourse(doc, lean):
+    """The discourse admission of a loaded `@2` document: Lean's verdict (`lean`, the route's
+    answer on the same bytes), never Python's. Python's own check (`python_discourse`) only
+    supplies editor hints and diagnostic texts: a rejection when Lean rejects too, hints and the
+    reviewed presentations it could compute when Lean admits. The references, every unit's
+    status and the report id are Lean's."""
+    try:
+        info, error = python_discourse(doc), None
+    except CheckerUnavailable:
+        raise
+    except VEError as exc:
+        info, error = None, exc
+    if lean["status"] == "error":
+        raise rejection(lean, error)
+    if info is None:
+        block = doc["meta"]["discourse"]
+        active = active_reading_sets(doc["meta"].get("reading_sets", []))
+        try:
+            joint = _joint(block, active)
+        except VEError:
+            joint = {"status": "UNKNOWN", "budget": 64, "constraints": len(block.get("constraints", []))}
+        info = {"groups": block.get("groups", []), "joint": joint,
+                "presentations": getattr(error, "presentations", {})}
+    if lean["admitted"] == "UNKNOWN":
+        info["joint"] = {"status": "UNKNOWN", "budget": 64, "constraints": info["joint"]["constraints"]}
+    elif info["joint"]["status"] != "complete":
+        raise unavailable_report("Python's joint choices are over their budget")
+    if set(lean["statuses"]) != {u["id"] for u in doc["units"]}:
+        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route reported other units")
+    for unit in doc["units"]:
+        unit["status"] = lean["statuses"][unit["id"]]
+    info["references"] = lean["references"]
+    info["report_id"] = lean["report_id"]
+    info["validity"] = lean.get("validity", {})
+    info["hints"] = [str(e) for e in getattr(error, "failures", [error] if error is not None else [])]
+    return info
+
+
 def report_discourse(doc, result):
     info = doc["discourse"]
     result["references"] = info["references"]
     result["groups"] = info["groups"]
     result["reviewed_presentations"] = info.get("presentations", {})
     result["joint_choices"] = {k: v for k, v in info["joint"].items() if k != "choices"}
-    inner_id = result.get("admission", {}).get("report_id") or digest(
-        "ve-document-inner@1\n", {"document_id": doc["document_id"],
-                                   "premises": result["premises"]})
-    result["report_id"] = digest(
-        "ve-discourse-report@1\n",
-        {"profiles": doc["meta"]["environment"]["profiles"],
-         "environment_id": doc["environment"].environment_id,
-         "document_id": doc["document_id"],
-         "report_id": inner_id,
-         "references": result["references"], "validity": []})
+    # the report identity is Lean's (it binds Lean's references and validity verdicts)
+    result["report_id"] = info["report_id"]
+    if info["validity"]:
+        result["validity"] = info["validity"]
+    if info["hints"]:
+        result["discourse_hints"] = info["hints"]

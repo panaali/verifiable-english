@@ -840,9 +840,14 @@ def test_pending_unit_readings_never_reach_w2(lean, tmp_path):
             assert all(leaf["ast"] != claim for leaf in result["report"]["assumptions"])
         else:
             assert result["error"] == "AdmissionError: node n is not admitted under label readings:rs1@1:0"
-        # Python does not elaborate descriptions: a unit with meaning using one is unsupported
-        assert python_outcome(doc, tmp_path, env(PERSON)).startswith(
-            "UnsupportedProfile: ve.discourse@1 definite, possessive elaboration is not implemented in Python (u2)")
+        # Python does not elaborate descriptions: its abstention is a hint, the verdict Lean's
+        python = python_outcome(doc, tmp_path, env(PERSON))
+        if graph is None:
+            assert python["discourse_hints"] == [
+                "UnsupportedProfile: ve.discourse@1 definite, possessive elaboration is not implemented in Python (u2)"]
+            assert python["report_id"] == result["report_id"]
+        else:
+            assert python == result["error"]
 
 
 def test_unknown_admission_is_an_unknown_outcome(lean, tmp_path):
@@ -1009,8 +1014,11 @@ def test_definition_pins_are_checked(lean, tmp_path):
         assert python_outcome(iota(version), tmp_path) == f"StaleTarget: m1: eligible@{version}"
     unpinned = admit(iota())
     assert unpinned["status"] == "ok" and unpinned["statuses"]["u2"] == "CHECKED", unpinned
-    # Python does not elaborate definition references
-    assert python_outcome(iota(), tmp_path).startswith("UnsupportedProfile: ve.discourse@1 definition_ref")
+    # Python does not elaborate definition references: its abstention is a hint, the verdict and
+    # the statuses Lean's
+    python = python_outcome(iota(), tmp_path)
+    assert python["discourse_hints"][0].startswith("UnsupportedProfile: ve.discourse@1 definition_ref")
+    assert python["coverage"]["bytes_by_status"].get("CHECKED")
     pinned_pronoun = document(["Api is reviewed.", "It is deployed."],
                               [("m1", "u2", "It", "pronoun", {**entity("api"), "version": 1})], names=PY_NAMES,
                               contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
@@ -1662,3 +1670,188 @@ def test_lean_and_python_agree_on_discourse_wording(lean, tmp_path):
             key = python.split(" of ")[0] if "wording" in python else python.split(":")[0]
         outcomes[key] = outcomes.get(key, 0) + 1
     assert outcomes.get("admitted", 0) > 60 and outcomes.get("InvalidInput: discourse wording", 0) > 60, outcomes
+
+
+# Regressions for the discourse3 loop (manage-agents discourse3-loop.final.md) under the authority
+# directive (discourse-authority-directive.md): Python's expansion parser and Lean's lexer and
+# grammar kept disagreeing on edge-case wording (quotes, displays, agreement), with Lean admitting
+# what Python rejected. The admission is now Lean's by construction: Python's API relays the Lean
+# route's verdict, statuses, references and report id, and Python's own check only gives hints and
+# the diagnostic text of a document Lean rejects too.
+
+QUOTED_ENV = {"owns": ["person", "service"]}
+QUOTED_CONSTANTS = {"web_api": "service", "alice": "person", "bob": "person"}
+QUOTED_NAMES = [{"constant": "web_api", "display": '"web_api"', "scope": "doc"},
+                {"constant": "alice", "display": "Alice", "scope": "doc"}]
+OWNS = ["binary", "owns", ["const", "alice"], ["const", "web_api"]]
+FORMER = {"kind": "entity", "name": "alice", "pair": ["alice", "bob"]}
+
+
+def lean_verdict(doc, tmp_path, environment=None):
+    """Lean's and Python's outcomes on one document, which must be the same verdict: `admitted`
+    with Lean's report id, references and statuses in Python's result, or both rejecting (with
+    Python's diagnostic, which may differ in code only, docs/spec/discourse.md 8). Returns
+    (`admitted` or Lean's diagnostic, Python's hints or diagnostic)."""
+    row, python = admit(doc, environment), python_outcome(doc, tmp_path, environment)
+    if row["status"] == "ok":
+        assert isinstance(python, dict), (doc["_source"], python)
+        assert (python["report_id"], python["references"]) == (row["report_id"], row["references"])
+        loaded = load_document(tmp_path / "doc.ve.md")
+        assert {u["id"]: u["status"] for u in loaded["units"]} == row["statuses"]
+        return "admitted", python.get("discourse_hints", [])
+    assert isinstance(python, str) and not python.startswith("CheckerUnavailable"), (doc["_source"], python)
+    return row["error"], python
+
+
+def test_absent_spaces_beside_quotes_follow_lean(lean, tmp_path):
+    """A (discourse.py:359): `She owns"web_api".` with `She` recorded at [0, 3) for `alice` and
+    `web_api` displayed `"web_api"` passes discourse wording and is CHECKED in Lean, but Python's
+    parser rejected the expansion (`IllTypedTarget: m1: alice`). Demonstratives and ordinals did the
+    same. Python now admits it as Lean does; its parser's rejection is a hint."""
+    environment = env(QUOTED_ENV, QUOTED_CONSTANTS)
+    names_bob = [*QUOTED_NAMES, {"constant": "bob", "display": "Bob", "scope": "doc"}]
+    for sentences, surface, form, target, names in [
+            (['She owns"web_api".'], "She", "pronoun", entity("alice"), QUOTED_NAMES),
+            (['This person owns"web_api".'], "This person", "demonstrative", entity("alice"), QUOTED_NAMES),
+            (["Alice and Bob are here.", 'The former owns"web_api".'], "The former", "ordinal_pair", FORMER,
+             names_bob)]:
+        uid = f"u{len(sentences)}"
+        doc = document(sentences, [("m1", uid, surface, form, target)], names=names, contents={uid: OWNS})
+        assert lean_verdict(doc, tmp_path, environment) == ("admitted", ["IllTypedTarget: m1: alice"]), sentences
+        # with the space, Python's parser agrees and gives no hint
+        spaced = document([s.replace('owns"', 'owns "') for s in sentences], [("m1", uid, surface, form, target)],
+                          names=names, contents={uid: OWNS})
+        assert lean_verdict(spaced, tmp_path, environment) == ("admitted", []), sentences
+        # a wrong recorded content is still Lean's rejection, whatever Python's parser reads
+        wrong = document(sentences, [("m1", uid, surface, form, target)], names=names,
+                         contents={uid: ["binary", "owns", ["const", "bob"], ["const", "web_api"]]})
+        assert lean_verdict(wrong, tmp_path, environment)[0] == f"ManifestMismatch: bound.{uid}", sentences
+
+
+def test_displays_outside_replaced_mentions_follow_lean(lean, tmp_path):
+    """A (discourse.py:550): `She owns the API.` with `She` recorded for `alice` and `api`
+    registered with display `the API` is CHECKED in Lean (its grammar reads a registered display);
+    Python's parser read the unchanged suffix as display text and rejected it. Python now admits it
+    as Lean does."""
+    environment = env(QUOTED_ENV, {"api": "service", "alice": "person"})
+    names = [{"constant": "api", "display": "the API", "scope": "doc"},
+             {"constant": "alice", "display": "Alice", "scope": "doc"}]
+    content = {"u1": ["binary", "owns", ["const", "alice"], ["const", "api"]]}
+    doc = document(["She owns the API."], [("m1", "u1", "She", "pronoun", entity("alice"))], names=names,
+                   contents=content)
+    assert lean_verdict(doc, tmp_path, environment) == ("admitted", ["IllTypedTarget: m1: alice"])
+    for display in ["The API", "the  API", "API", "Api"]:
+        other = [{**names[0], "display": display}, names[1]]
+        variant = document([f"She owns {display}."], [("m1", "u1", "She", "pronoun", entity("alice"))],
+                           names=other, contents=content)
+        verdict, _ = lean_verdict(variant, tmp_path, environment)
+        assert verdict == "admitted" or verdict.startswith("InvalidInput"), (display, verdict)
+
+
+def test_agreement_follows_lean(lean, tmp_path):
+    """A (discourse.py:552): `It are safe.` with `It` recorded at [0, 2) for `api` is CHECKED in
+    Lean (its grammar does not check agreement) and was `IllTypedTarget: m1: api` in Python, as were
+    `This service are safe.` and `The former are ready.`. Python now admits them as Lean does."""
+    for opening, sentence, surface, form, target, content in [
+            ("Api is reviewed.", "It are safe.", "It", "pronoun", entity("api"), unary("safe", "api")),
+            ("Api is reviewed.", "This service are safe.", "This service", "demonstrative", entity("api"),
+             unary("safe", "api")),
+            ("Alice and Bob are ready.", "The former are ready.", "The former", "ordinal_pair", FORMER,
+             unary("ready", "alice"))]:
+        doc = document([opening, sentence], [("m1", "u2", surface, form, target)], names=PY_NAMES,
+                       contents={"u2": content})
+        assert lean_verdict(doc, tmp_path) == ("admitted", [f"IllTypedTarget: m1: {target['name']}"]), sentence
+
+
+def test_python_never_adds_an_admission(lean, tmp_path):
+    """The other direction of the class: what Python's parser reads but Lean's discourse fragment
+    does not is Lean's rejection, never a Python-only admission. `It is safe (v2.1).` (the recorded
+    known limitation) keeps Python's diagnostic, since both reject."""
+    doc = document(["It is safe (v2.1)."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
+                   contents={"u1": unary("safe", "api")})
+    assert lean_verdict(doc, tmp_path) == ("InvalidInput: unit u1 is outside the supported discourse fragment",
+                                           "IllTypedTarget: m1: api")
+    # a predicate verbalisation Python's parser reads (`is active` for `deployed`): Lean's fragment
+    # reads predicates by name
+    environment = env({"deployed": ["service"]})
+    environment["vocabulary"]["predicates"]["deployed"]["verbalisation"] = "{0} is active"
+    doc = document(["Api is reviewed.", "It is active."], [("m1", "u2", "It", "pronoun", entity("api"))],
+                   names=PY_NAMES, contents={"u2": unary("deployed", "api")})
+    assert lean_verdict(doc, tmp_path, environment)[0] == "InvalidInput: unit u2 is outside the supported discourse fragment"
+    assert isinstance(python_outcome(doc, tmp_path, environment), str)
+
+
+def test_graphless_document_is_an_abstention(lean, tmp_path):
+    """A `@2` document without a claim graph is loaded but never admitted by Python (document.md),
+    and the Lean route's admission needs a graph: Lean abstains (`NotImplemented`), and so does
+    Python (`UnsupportedProfile`), never a Python-only CHECKED."""
+    doc = document(["Api is reviewed.", "It is safe."], [IT_API], names=PY_NAMES,
+                   contents={"u1": unary("reviewed", "api"), **SAFE_U2})
+    doc.pop("graph")
+    doc.pop("open_terms")
+    assert admit(doc)["error"] == "NotImplemented: a document without a claim graph"
+    assert python_outcome(doc, tmp_path) == ("UnsupportedProfile: the Lean discourse route abstains "
+                                             "(NotImplemented: a document without a claim graph)")
+
+
+def test_validity_verdicts_are_lean_verdicts(lean, tmp_path):
+    """A validity claim, which Python never evaluated (its abstention), is admitted with Lean's
+    verdict and status."""
+    environment = env(constants=DOC_CONSTANTS)
+    for sentence, holds, verdict, status in [("This document is a valid VE document.", True, "checked", "CHECKED"),
+                                             ("This document is not a valid VE document.", False, "refuted",
+                                              "LABELLED")]:
+        doc = validity_doc(sentence, "this_policy", holds)
+        assert lean_verdict(doc, tmp_path, environment)[0] == "admitted"
+        python = python_outcome(doc, tmp_path, environment)
+        assert python["validity"] == {"u1": verdict}
+        assert python["coverage"]["bytes_by_status"] == {status: len(sentence)}
+
+
+# The differential property over the class: generated wording variants (quotes and the spaces
+# beside them, spacing, display names, pronouns, demonstratives, ordinals, agreement), each with a
+# recorded content that is the elaboration or not. The Python API's verdict is Lean's on every one.
+
+AUTHORITY_TARGETS = [("She", "pronoun", entity("alice")), ("This person", "demonstrative", entity("alice")),
+                     ("The former", "ordinal_pair", FORMER), ("It", "pronoun", entity("web_api")),
+                     ("This service", "demonstrative", entity("web_api"))]
+AUTHORITY_DISPLAYS = ['"web_api"'] * 3 + ["the web API", "Web", "API", "the  API", "Ápi"]
+AUTHORITY_SPACES = [" "] * 6 + ["  "]
+
+
+def authority_document(rng):
+    surface, form, target = rng.choice(AUTHORITY_TARGETS)
+    display = rng.choice(AUTHORITY_DISPLAYS)
+    person = target["name"] == "alice"
+    before, after = rng.choice([(" ", "")] * 3 + [("", "")] * 3 + [(" ", " "), ("", " "), ("  ", "")])
+    verb = rng.choice(["owns", "own"]) if person else rng.choice(["is", "are"])
+    rest = f"{verb}{before}{display}{after}." if person else f"{verb}{rng.choice(AUTHORITY_SPACES)}safe."
+    sentence = f"{surface}{rng.choice(AUTHORITY_SPACES)}{rest}"
+    opening = "Alice and Bob are here." if form == "ordinal_pair" else rng.choice(["Web is ready.", "Bob is here."])
+    right = OWNS if person else unary("safe", "web_api")
+    wrong = ["binary", "owns", ["const", "bob"], ["const", "web_api"]] if person else ["top"]
+    names = [{"constant": "web_api", "display": display, "scope": "doc"},
+             {"constant": "alice", "display": "Alice", "scope": "doc"}]
+    if form == "ordinal_pair":
+        names.append({"constant": "bob", "display": "Bob", "scope": "doc"})
+    return document([opening, sentence], [("m1", "u2", surface, form, target)], names=names,
+                    contents={"u2": right if rng.random() < 0.8 else wrong})
+
+
+def test_python_verdict_is_lean_verdict_on_wording_variants(lean, tmp_path):
+    environment = env({"owns": ["person", "service"], "safe": ["service"]}, QUOTED_CONSTANTS)
+    rng = __import__("random").Random(20261002)
+    docs = [authority_document(rng) for _ in range(300)]
+    rows = run([case("admission", doc, environment) for doc in docs])
+    outcomes = {"admitted": 0, "admitted over Python's parser": 0, "rejected": 0}
+    for doc, row in zip(docs, rows):
+        python = python_outcome(doc, tmp_path, environment)
+        where = (doc["_source"], doc["discourse"]["names"][0]["display"], row.get("error"), python)
+        if row["status"] == "ok":
+            assert isinstance(python, dict), where
+            assert (python["report_id"], python["references"]) == (row["report_id"], row["references"]), where
+            outcomes["admitted over Python's parser" if python.get("discourse_hints") else "admitted"] += 1
+        else:
+            assert isinstance(python, str) and not python.startswith("CheckerUnavailable"), where
+            outcomes["rejected"] += 1
+    assert all(n > 20 for n in outcomes.values()), outcomes
