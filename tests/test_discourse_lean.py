@@ -1056,6 +1056,18 @@ def test_renewal_items_are_counterexamples_to_the_approved_statements(lean, tmp_
     result = admit(authored)
     assert result["admitted"] is True and result["joint"] == 1
     assert [leaf["label"] for leaf in result["report"]["assumptions"]] == ["readings:rs1@1:0"]
+    # R7 fixture iota (10): `sec2` exports `eligible`, its definition unit lies in `sec2` and m1 pins
+    # version 2, yet no admitted environment declares a definition version, so the pinned
+    # reference is `StaleTarget` where the fixture expects CHECKED; unpinned, it is CHECKED
+    # (looprecheck2 B, WellFormed.lean:190)
+    pinned = iota_doc()
+    pinned["units"][1].update(kind="asserted", support="assumption", content={"ast": [
+        "forall", "service", ["implies", ["unary", "eligible", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]})
+    assert pinned["discourse"]["anchors"][1]["exports"] == ["eligible"] and pinned["units"][0]["kind"] == "definition"
+    assert pinned["discourse"]["mentions"][0]["target"]["version"] == 2
+    assert admit(pinned)["error"] == "StaleTarget: m1: eligible@2"
+    del pinned["discourse"]["mentions"][0]["target"]["version"]
+    assert admit(pinned)["statuses"]["u2"] == "CHECKED"
 
 
 # Regressions for the second loop re-check (manage-agents discourse-looprecheck2.final.md).
