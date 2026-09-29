@@ -231,10 +231,49 @@ class RightsDocument:
         self.rights = rights
         self.limitations = tuple(limitations)
         self.bar = bars[0] if bars else None
-        self.instances = tuple(self._instances(entries, names))
         self.outside = tuple(outside)
         self._validate_limitations(names)
+        self.line_env = self._line_environment(entries)
+        self.instances = tuple(self._instances(entries, names))
         self._correlate()
+
+    def _line_environment(self, entries):
+        """Declare source-key predicates before typing authored line guards."""
+        source = self.env.to_dict()
+        source["profiles"].remove("rights@0")
+        source["vocabulary"].pop("rights")
+        predicates = source["vocabulary"]["predicates"]
+        pairs = set()
+        for right_name, line in entries:
+            if type(line) is not dict:
+                continue
+            norm_fields = ("liberty", "recognition") if line.get("kind") == "power" else ("norm",)
+            for field in norm_fields:
+                raw = line.get(field)
+                if type(raw) is not dict:
+                    continue
+                subjects = (line.get("fan_out") or {}).values() if line.get("fan_out") else (raw.get("predicate"),)
+                for predicate in subjects:
+                    if predicate not in self.env.predicates:
+                        continue
+                    act = self._act(predicate)
+                    for limit in self.limitations:
+                        if ((limit["scope"] == "all" or right_name in limit["scope"]) and
+                                (limit["kinds"] == "all" or line.get("kind") in limit["kinds"])):
+                            pairs.add((limit["name"], act))
+        for index, (name, act) in enumerate(sorted(pairs), 1):
+            args = list(self.env.predicates[act].arguments)
+            predicates[f"rights__lim__{index}"] = {
+                "arguments": args, "description": f"limitation {name} of {act}"}
+        triples = sorted((name, act, condition["name"])
+                         for name, act in pairs
+                         for limit in self.limitations if limit["name"] == name
+                         for condition in limit["conditions"])
+        for index, (name, act, condition) in enumerate(triples, 1):
+            predicates[f"rights__cond__{index}"] = {
+                "arguments": list(self.env.predicates[act].arguments),
+                "description": f"condition {condition} of limitation {name} on {act}"}
+        return SoftEnvironment(source, generated=True)
 
     def _instances(self, entries, names):
         fan = 0
@@ -277,7 +316,7 @@ class RightsDocument:
                         if norm["name"] in names:
                             raise DuplicateDeclaration(f"rule {norm['name']}")
                         names.add(norm["name"])
-                    rule = decode_rule(self.env, {"norm": norm})
+                    rule = decode_rule(self.line_env, {"norm": norm})
                     slot = _slot(self.env, right, rule, line.get("holder_slot"),
                                  subject=instance_kind in ("liberty", "powerLiberty"))
                     _line_shape(self.env, right, instance_kind, rule, slot)
