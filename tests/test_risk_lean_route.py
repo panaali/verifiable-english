@@ -739,3 +739,35 @@ def test_k35e_mistyped_fact(ops):
     log, dx = l18(policy, fact_args=("data_loss",))
     res = decide(env, norms, log, dx)
     assert res["error"] == "RiskFact: confirmed", res
+
+
+# ---------------------------------------------------------------------------- W2 admission (risk_wire_acceptance)
+
+def test_w2_admission_uses_regenerated_risk_leaves():
+    env = agent_ops()
+    elaborated = one({"id": "p", "kind": "risk-elaborate", "environment": env, "document": {"norms": []}})
+    premise = next(p for p in elaborated["risk_premises"] if p["label"] == "risk:certain_possible")
+    document = {"units": [], "graph": {"root": "slot", "nodes": [
+        {"name": "slot", "label": premise["label"], "ast": premise["ast"]}]}}
+    res = one({"id": "w", "kind": "admission", "environment": env, "document": document})
+    assert res["status"] == "ok" and res["admitted"] is True, res
+    assert res["report"]["assumptions"][0]["label"] == "risk:certain_possible"
+    assert len(res["report_id"]) == 64
+    stale = deepcopy(document)
+    stale["graph"]["nodes"][0]["ast"] = ["top"]
+    assert one({"id": "w", "kind": "admission", "environment": env, "document": stale})["status"] == "error"
+    changed = deepcopy(env)
+    changed["risk"]["severity"]["decided_by"] = "another decider"
+    other = one({"id": "w", "kind": "admission", "environment": changed, "document": document})
+    assert other["status"] == "ok" and other["report_id"] != res["report_id"]
+
+
+def test_w2_admission_risk_word_in_a_unit():
+    env = agent_ops(extra_constants={"run": {"sort": "action", "description": "running the job"},
+                                     "ask": {"sort": "action", "description": "asking the user"}})
+    atom = ["binary", "risk__less_worst", ["const", "ask"], ["const", "run"]]
+    unit = {"id": "u", "span": [0, 1], "kind": "asserted", "content": atom}
+    document = {"units": [unit], "graph": {"root": "root", "nodes": [{"name": "root", "ast": atom, "unit": "u"}]}}
+    res = one({"id": "w", "kind": "admission", "environment": env, "document": document})
+    assert res["status"] == "ok" and res["admitted"] is True, res
+    assert res["report"]["root"]["ast"] == atom

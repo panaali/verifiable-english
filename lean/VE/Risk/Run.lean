@@ -1,4 +1,4 @@
-import VE.Risk.Wire
+import VE.Risk.Admission
 import VE.Alternatives.Run
 
 /-! The `ve_risk_route` executable (docs/spec/risk.md 7.3), invoked as
@@ -24,8 +24,10 @@ and the active base units).
 * `risk-audit` with `log`, `decision` (`{"id", "seq"}`) and optionally
   `alternative` → Q1, Q2, the procedure lines and Q3 (`risk_wire_audit_sound`).
 * `risk-certificate` → `valid`.
+* `admission` → the W2 graph report bound to the complete risk source
+  (`risk_wire_acceptance`), with `risk:*` and `risk:profile:<word>` leaves.
 * Cases without the profile, the block or a `risk-*` kind are delegated to
-  `VE.Alternatives.Run`. W2 `admission` with the risk block is not implemented.
+  `VE.Alternatives.Run`.
 
 Every text is a rendering of certified data (7.4). -/
 namespace VE.Risk.Run
@@ -504,9 +506,49 @@ def runCertificate (id : String) (j : Json) : Except String Json := do
   return ok id [("valid", .bool valid),
     ("conditional_on", toJson (VE.Alternatives.altPremiseLabels A ++ riskPremiseLabels R))]
 
+def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
+  ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson res.report),
+    ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray),
+    ("conditional_on", toJson (res.src.R.labels ++ riskPremiseLabels res.src.R))]
+
+def runAdmission (id : String) (environment document : Json) : Except String Json := do
+  let res ← Admission.admitDocument environment document
+  let envId ← VE.Alternatives.Replay.environmentId res.src.profiles environment
+  let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.src.profiles)
+    (VE.Norms.Run.reportPayload envId document res.report)
+  return encodeAdmitted id reportId res
+
+/-- A W2 answer is the exact graph-checker output, bound to the complete risk source. Its semantic consequence is
+over alt's premises plus `riskPremises` and the two regenerated definitions, and the ordinary W2 assumptions
+remaining in the report. -/
+def RiskAdmissionAnswer (id : String) (environment document answer : Json) : Prop :=
+  ∃ res : Admission.Admitted, ∃ envId reportId : String,
+    Admission.admitDocument environment document = .ok res ∧
+    VE.Alternatives.Replay.environmentId res.src.profiles environment = .ok envId ∧
+    VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.src.profiles)
+      (VE.Norms.Run.reportPayload envId document res.report) = .ok reportId ∧
+    answer = encodeAdmitted id reportId res ∧ WellFormedRisk res.src.R = true ∧
+    ∀ S : VE.Structure.{0}, S.Admissible (riskExtEnv res.src.R) →
+      Sat S (Admission.generated res) →
+      Sat S ((Admission.otherAssumptions res).map (·.formula)) →
+      res.report.root.formula.denote S []
+
+theorem runAdmission_sound (id : String) (environment document answer : Json)
+    (h : runAdmission id environment document = .ok answer) :
+    RiskAdmissionAnswer id environment document answer := by
+  unfold runAdmission at h
+  obtain ⟨res, hr, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨envId, he, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨reportId, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  exact ⟨res, envId, reportId, hr, he, hd, rfl, res.src.wf,
+    fun S hS hg ho => Admission.report_consequence res S hS hg ho⟩
+
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
+  if kind == "admission" then
+    return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
   if kind == "risk-elaborate" then
     let src ← decodeRiskSource (j.getObjValD "environment") (j.getObjValD "document")
     return ok id (Wire.regenerated src)
@@ -515,8 +557,28 @@ def runCase (j : Json) : Except String Json := do
   if kind == "risk-followable" then return ← runFollowable id j
   if kind == "risk-audit" then return ← runAudit id j
   if kind == "risk-certificate" then return ← runCertificate id j
-  if kind == "admission" then throw "UnsupportedProfile: W2 admission with the risk block is not implemented"
   throw s!"UnsupportedProfile: case kind {kind} is not available on the risk route"
+
+/-- Public W2 acceptance from raw input, with source and report bindings. -/
+theorem risk_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hn : usesRiskPath j = true) :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      RiskAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  have _ := hn
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp only [beq_self_eq_true, ↓reduceIte] at h
+  obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨document, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have he' : j.getObjValD "environment" = environment := by
+    simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by
+    simp only [Json.getObjValD, hd]; rfl
+  rw [he', hd']
+  exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
 def runCaseReported (j : Json) : Json :=
   if usesRiskPath j then
