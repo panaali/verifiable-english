@@ -59,6 +59,8 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
     sort = _identifier(severity["sort"], "severity.sort")
     if sort in sorts:
         raise VEError(f"RiskSeverityNotFresh: {sort}")
+    if sort in {"avoidable", "unavoidable", "allows", "prevents"}:
+        raise VEError(f"RiskReserved: {sort}")
     _short_text(severity["decided_by"], "severity.decided_by")
     classes = severity["classes"]
     if type(classes) is not list:
@@ -242,7 +244,8 @@ def _shape_case(case):
 
 def run_case(case: dict, *, binary: Path | None = None, timeout: int = 180) -> dict:
     """Send a raw case to Lean; an unavailable route is never a verdict."""
-    if type(case) is not dict or case.get("kind") not in _KINDS or type(case.get("environment")) is not dict:
+    if (type(case) is not dict or type(case.get("kind")) is not str
+            or case["kind"] not in _KINDS or type(case.get("environment")) is not dict):
         raise VEError("InvalidInput: risk route case")
     from .environment import Environment
     env = Environment(case["environment"])
