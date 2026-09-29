@@ -390,7 +390,9 @@ fold to `a`-`z`. Every other character, Unicode whitespace (` `, ` `, ...), o
 rule: the source wrapper trims a span and a fence, and the speech parser its wording, of those six ASCII whitespace
 characters only (Python's `wording_text`), and the parser matches act phrases, constant names and glosses folding only
 `A`-`Z` (`ascii_fold`), so a wording the parser reads as a command or question has that surface kind and no path
-(original kind, inline or fenced form) sees another sentence. The surface kind is decided in this order: a question when its normalised form ends
+(original kind, inline or fenced form) sees another sentence. The parser's command match folds only `A`-`Z` on both
+sides (no Unicode case mapping, so "Do not ßcheck." is not "Do not SScheck.") and a which-question's alternatives are
+trimmed of ASCII whitespace only. The surface kind is decided in this order: a question when its normalised form ends
 with `?`; a binding when it starts "in this task, " or "this document is task "; an instruction when it starts
 "do not ", "prove that ", "command " or the verb of a regulated act phrase as a whole word; a question when it starts
 with an interrogative word ("question", "is", "are", "does", "do", "did", "was", "were", "will", "would", "who",
@@ -1714,6 +1716,7 @@ statements of section 8 are unchanged.
 | B, Unicode trimming by original kind: "Atlas is reviewed?" followed by U+00A0 under a signed asserted choice passed both cores and the source wrapper for original kind `asserted`, but the wrapper Unicode-stripped the wording of a `question` or `instruction` unit before the core's check and rejected it | 3.2: every reader of a wording (span, fence, speech parser) trims only ASCII whitespace and folds only `A`-`Z`, and every unit with a signed choice passes its wording to the core, so the outcome is the core's on the raw wording whatever the original kind or form. |
 | A, interrogative act verbs: with the W1 act "{0} do {1}" (likewise "question", "will", "how", ...), the parser read "Do check." as a command, but both classifiers took its first word for a question, so both cores accepted a question choice on it and rejected the instruction choice | 3.2: a final `?` decides first, then a declared act's verb outranks an interrogative first word, in both cores. |
 | A, slot-first acts: with the W1 act "{0} {1} click", the parser read "Check click." as a command, but no classifier has a slot's fillers, so both cores accepted an asserted choice on it and rejected the instruction choice | 3.2: an imperative begins with its act's verb; an act whose first word after `{0}` is a slot has none, classifies no wording and is read as no command by the parser. |
+| B, parser case and trimming: the parser upper-cased a command's first letter with Unicode case mapping ("Do not ßcheck." forbade the act "{0} sscheck") and Unicode-stripped a which-question's alternatives | 3.2: the parser's command match folds only `A`-`Z` on both sides and alternatives are trimmed of ASCII whitespace only. |
 
 ## Change log
 
