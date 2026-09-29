@@ -619,7 +619,7 @@ def test_repository_corpus_accepts_no_wrong_reading():
     assert report['accepted_wrong_readings'] == 0
     assert not report['skipped']
     assert {'source': 'usecases/asimov-laws/rules.ve', 'surface': 'norms@0',
-            'rules': 6, 'round_trip': 'exact'} in report['non_formula_documents']
+            'rules': 13, 'round_trip': 'exact'} in report['non_formula_documents']
     assert report['natural'] and report['fallback']
     assert sum(report['fallback_dispositions'].values()) == report['fallback']
     assert report['real_documents']['exact_prose_round_trips'] > 0
