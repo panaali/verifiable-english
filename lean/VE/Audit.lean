@@ -42,6 +42,7 @@ import VE.Norms.Replay
 import VE.Norms.Flagged
 import VE.Service.Graph
 import VE.Service.Readings
+import VE.Service.FamilyBundle
 import VE.Service.GenericGraph
 import VE.Service.GenericReadings
 import VE.Service.Family
@@ -830,6 +831,19 @@ import VE.Service.Protocol
 #print axioms VE.Service.Readings.readings_none_sound
 #print axioms VE.Service.Readings.resolve_choice
 #print axioms VE.Service.Readings.readings_some_sound
+#print axioms VE.Service.FamilyBundle.mem_appendNew_left
+#print axioms VE.Service.FamilyBundle.mem_appendNew_right
+#print axioms VE.Service.FamilyBundle.lookupKnown_mem
+#print axioms VE.Service.FamilyBundle.citeAll_sound
+#print axioms VE.Service.FamilyBundle.checkLemma_sound
+#print axioms VE.Service.FamilyBundle.checkAll_sound
+#print axioms VE.Service.FamilyBundle.checkLemma_labels
+#print axioms VE.Service.FamilyBundle.checkAll_labels
+#print axioms VE.Service.FamilyBundle.bundle_sound
+#print axioms VE.Service.FamilyBundle.fol_bundle_sound
+#print axioms VE.Service.FamilyBundle.closure_bundle_sound
+#print axioms VE.Service.FamilyBundle.core_bundle_sound
+#print axioms VE.Service.FamilyBundle.order_bundle_sound
 #print axioms VE.Service.GenericGraph.acyclicCheck_dependency
 #print axioms VE.Service.GenericGraph.path_rank
 #print axioms VE.Service.GenericGraph.acyclicCheck_sound
@@ -1885,6 +1899,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_parse
 #print axioms VE.Service.runMode_graph
 #print axioms VE.Service.runMode_readings
+#print axioms VE.Service.runMode_bundle
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq
