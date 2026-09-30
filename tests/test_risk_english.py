@@ -4,12 +4,15 @@ Each accepted wording has one derivation, one formula and its canonical
 rendering; each rejected wording gives its rewrite in documents and in rule
 guards alike; the scoped rewrites of "every … cannot lead to" parse to the two
 formulas of 2.3; rule 2 of 2.5 has one derivation with alt's binder; P3's
-compact coordination is rejected (k22 uses its strict text); c5 is not
-registered and renders "(wording pending)". Review B3, A4, B7, C11.
+compact coordination is rejected (k22 uses its strict text); c5 is registered
+in risk-wording-probe-2's frozen wording "If <condition>, <action> leads to
+<harm>", parses, renders and round-trips, and the first probe's trailing form is
+rejected with that rewrite. Review B3, A4, B7, C11.
 """
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -23,7 +26,7 @@ from ve.english import EnglishVocabulary, parse_english_with_metadata, render_en
 from ve.environment import Environment
 from ve.errors import UnsupportedProfile, VEError
 from ve.norm_english import parse_english as parse_norm
-from ve.surface.risk import parse_wording
+from ve.surface.risk import SUFFICIENT_REWRITE, parse_wording, render_wording
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin/ve_risk_route"
@@ -135,6 +138,10 @@ def test_condition_wording_in_a_rule_is_record_only(ops):
     with pytest.raises(VEError, match="is a record statement"):
         parse_norm(ops, "Rule 1. Every action must not be performed, if that action leads to loss exactly when "
                         "that action leads to delay.")
+    # c5's first-probe trailing form inside a rule is record-only too, and the message names the frozen form
+    with pytest.raises(VEError, match=re.escape("'If …, … leads to …'")):
+        parse_norm(ops, "Rule 1. Every action must not be performed, if that action leads to loss if that action "
+                        "leads to delay.")
     # the carve-out reading stays: ", unless" is W1's carve-out
     document = parse_norm(ops, head + ", unless that action leads to delay.")
     assert document.rules[0].unless == (ast.Binary("leads_to", ast.Var(0), const("delay")),)
@@ -185,8 +192,87 @@ def test_record_statement_forms_and_two_harms():
     assert parse("Running might lead to an outage.")["form"] == "might"
     with pytest.raises(VEError, match="'might not lead to' is computed"):
         parse("Running might not lead to loss.")
-    with pytest.raises(VEError, match="pending"):
+    assert parse("If the peak memory is greater than 8 GB, Running leads to loss.") == {
+        "form": "sufficient", "action": "run", "harm": "loss",
+        "condition_text": "the peak memory is greater than 8 GB"}
+    with pytest.raises(VEError, match="If <condition>, <action> leads to <harm>"):
         parse("Running leads to loss if the peak memory is greater than 8 GB.")
+
+
+RECORD_LABELS = {"actions": {"Running": "run", "Waiting": "wait"},
+                 "harms": {"an outage": "outage", "loss": "loss", "a delay": "delay"}}
+
+
+@pytest.mark.parametrize("text,reading", [
+    ("If the peak memory is greater than 8 GB, Running leads to loss.",
+     {"form": "sufficient", "action": "run", "harm": "loss", "condition_text": "the peak memory is greater than 8 GB"}),
+    ("If both the queue is at least 3 and the peak memory is at most 2 GB, Waiting leads to a delay.",
+     {"form": "sufficient", "action": "wait", "harm": "delay",
+      "condition_text": "both the queue is at least 3 and the peak memory is at most 2 GB"}),
+    ("If it is not the case that the free memory is less than 4 GB, Running leads to an outage.",
+     {"form": "sufficient", "action": "run", "harm": "outage",
+      "condition_text": "it is not the case that the free memory is less than 4 GB"}),
+    ("Running cannot lead to loss unless the peak memory is greater than 8 GB.",
+     {"form": "necessary", "action": "run", "harm": "loss", "condition_text": "the peak memory is greater than 8 GB"}),
+    ("Waiting leads to a delay exactly when the queue is at least 3.",
+     {"form": "exact", "action": "wait", "harm": "delay", "condition_text": "the queue is at least 3"}),
+    ("Running might lead to an outage.", {"form": "might", "action": "run", "harm": "outage"}),
+    ("Running cannot lead to an outage.", {"form": "cannot", "action": "run", "harm": "outage"}),
+    ("Running leads to an outage.", {"form": "leads", "action": "run", "harm": "outage"}),
+])
+def test_record_statements_parse_render_and_round_trip(text, reading):
+    """c5 (frozen by risk-wording-probe-2) and the other record forms: one reading, one rendering, round trip."""
+    env = Environment(ops_raw())
+    parsed = parse_wording(text, env, context="record", **RECORD_LABELS)
+    assert parsed == reading
+    rendered = render_wording(parsed, **RECORD_LABELS)
+    assert rendered == text
+    assert parse_wording(rendered, env, context="record", **RECORD_LABELS) == parsed
+
+
+@pytest.mark.parametrize("text,message", [
+    # the first probe's trailing form (read as "only if") in every position it can take
+    ("Running leads to loss if the peak memory is greater than 8 GB.", SUFFICIENT_REWRITE),
+    ("Waiting leads to a delay if both the queue is at least 3 and the peak memory is at most 2 GB.",
+     SUFFICIENT_REWRITE),
+    ("If the queue is at least 3, Running leads to loss if the peak memory is greater than 8 GB.",
+     SUFFICIENT_REWRITE),
+    # "then" would make it the core surface's implication (risk-wording-probe-2 README)
+    ("If the peak memory is greater than 8 GB, then Running leads to loss.", "Drop 'then'"),
+    # no condition, or an unknown action or harm: no reading
+    ("If , Running leads to loss.", "no unique registered reading"),
+    ("If the peak memory is greater than 8 GB, Sleeping leads to loss.", "no unique registered reading"),
+    ("If the peak memory is greater than 8 GB, Running leads to ruin.", "no unique registered reading"),
+    # only "leads to" takes a fronted condition
+    ("If the peak memory is greater than 8 GB, Running might lead to loss.", "no unique registered reading"),
+])
+def test_sufficient_condition_rejections(text, message):
+    env = Environment(ops_raw())
+    with pytest.raises(VEError, match=re.escape(message)):
+        parse_wording(text, env, context="record", **RECORD_LABELS)
+
+
+def test_sufficient_condition_is_a_record_statement_only():
+    """2.3: a condition wording is record-only; in a guard the fronted form is rejected, the trailing one rewritten."""
+    env = Environment(ops_raw())
+    with pytest.raises(VEError, match="is a record statement"):
+        parse_wording("If the peak memory is greater than 8 GB, Running leads to loss.", env, **RECORD_LABELS)
+    with pytest.raises(VEError, match=re.escape(SUFFICIENT_REWRITE)):
+        parse_wording("Running leads to loss if the peak memory is greater than 8 GB.", env, **RECORD_LABELS)
+
+
+def test_render_wording_rejects_readings_it_cannot_name():
+    labels = dict(RECORD_LABELS)
+    for reading in ({"form": "sufficient", "action": "run", "harm": "loss"},
+                    {"form": "sufficient", "action": "run", "harm": "loss", "condition_text": ""},
+                    {"form": "leads", "action": "run", "harm": "loss", "condition_text": "q is 1"},
+                    {"form": "sufficient", "action": "jump", "harm": "loss", "condition_text": "q is 1"},
+                    {"form": "if", "action": "run", "harm": "loss", "condition_text": "q is 1"}):
+        with pytest.raises(VEError, match="InvalidInput"):
+            render_wording(reading, **labels)
+    with pytest.raises(VEError, match="no unique label"):
+        render_wording({"form": "sufficient", "action": "run", "harm": "loss", "condition_text": "q is 1"},
+                       actions={"Running": "run", "running": "run"}, harms=labels["harms"])
 
 
 def test_declared_wording_that_reuses_a_risk_form_keeps_its_identifier():
@@ -273,8 +359,9 @@ def test_paraphrases_are_the_legend_lines():
 
 
 @pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
-def test_sufficient_condition_renders_wording_pending():
-    """k2, k19: c5's rendering carries "(wording pending)"; necessary and exact forms render their lines."""
+def test_sufficient_condition_renders_its_frozen_legend_line():
+    """k2, k19: c5's legend line uses the frozen wording, with no "(wording pending)"; necessary and exact forms
+    render their lines."""
     env = cell_env()
     policy = _lean({"id": "p", "kind": "risk-elaborate", "environment": env, "document": {"norms": []}})
     log = Log()
@@ -293,5 +380,6 @@ def test_sufficient_condition_renders_wording_pending():
     assert res["legend"] == [
         '"<action> leads to <harm> exactly when <condition>" means the harm happens in every case they allow in '
         'which the condition holds, and in no case they allow in which it does not hold.',
-        '"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the '
-        'condition holds. (wording pending)']
+        '"If <condition>, <action> leads to <harm>" means the harm happens in every case they allow in which the '
+        'condition holds.']
+    assert not any("wording pending" in line for line in res["legend"])
