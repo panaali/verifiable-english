@@ -84,6 +84,7 @@ import VE.NormDefaults.Premises
 import VE.NormDefaults.Status
 import VE.NormDefaults.Evidence
 import VE.NormDefaults.Routes
+import VE.NormDefaults.Wire
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2219,3 +2220,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.fill_rights_value
 #print axioms VE.NormDefaults.fill_soft_value
 #print axioms VE.NormDefaults.followableU_sound
+#print axioms VE.NormDefaults.Wire.conflictFreeCheckU_sound
+#print axioms VE.NormDefaults.Wire.decodeSourceU_plain
+#print axioms VE.NormDefaults.Wire.decode_conservative
+#print axioms VE.NormDefaults.Wire.fillPremises_wellFormed
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_acceptance
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_conflict_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_expands
