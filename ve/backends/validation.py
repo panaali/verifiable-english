@@ -118,14 +118,18 @@ def validated_environment(env, data, decode: Callable[[], object]):
                     "an environment")
 
 
-def validated_model(env, wire, decode: Callable[[], object]):
-    """`decode()` builds a model of `env` from `wire`; Lean decides its validity."""
+def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):
+    """`decode()` builds a model of `env` from `wire`; Lean decides its validity
+    and, for a `claimed` identity pair, whether each claimed identity is the
+    recomputed one."""
     from .lean_runner import run
+    request = {"id": "model", "environment": env.to_dict(), "model": wire,
+               **({"claimed": claimed} if claimed is not None else {})}
     try:
-        cache = key("model", env.environment_id, wire)
+        cache = key("model", env.environment_id, wire, *(() if claimed is None else (claimed,)))
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
     return decided(decode, cache,
-                    lambda: run("model", [{"id": "model", "environment": env.to_dict(), "model": wire}])[0],
+                    lambda: run("model", [request])[0],
                     lambda built, row: row.get("valid") is True and row.get("model_id") == built.model_id,
                     "a model")

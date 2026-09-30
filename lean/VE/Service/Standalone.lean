@@ -247,6 +247,14 @@ def modelCase (j : Json) : Except String Json := do
     s!"ve-model-{VE.Route.Wire.identityVersion e.profiles}\n"
     (Json.mkObj [("environment_id", .str environmentId),
       ("model", ← normalizedModel environment model)])
+  -- An already-identified model (Python's `FiniteModel`) carries the identities
+  -- it claims; each must be the recomputed one.
+  if let .ok claimed := j.getObjVal? "claimed" then
+    VE.Bridge.exactFields claimed ["environment_id", "model_id"]
+    unless (← VE.Bridge.stringField claimed "environment_id") == environmentId do
+      throw "InvalidModel: model belongs to a different environment"
+    unless (← VE.Bridge.stringField claimed "model_id") == modelId do
+      throw "InvalidModel: model identity does not match its contents"
   pure (VE.Route.Wire.ok id [("valid", .bool true), ("model_id", .str modelId)])
 
 /-- A standalone typing request accepts one closed formula or a document of
