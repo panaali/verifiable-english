@@ -51,8 +51,8 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 9442,
-    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
+    "total_lines": 11604,
+    "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, and rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
        "ranges": [[1, 136]], "declarations": ["value", "parse", "caseTexts", "parseCases"]},
@@ -80,6 +80,9 @@
       {"file": "lean/VE/Norms/Wire.lean", "lines": 314, "sha256": "9e2638cc83529162bd8fff6c6927fa1a82e407149483e9978b14b735ff8b1d31",
        "ranges": [[25, 313]],
        "declarations": ["decodeRegulated", "decodeNormsEnvironment", "decodeNorm", "decodeSource", "regenerated"]},
+      {"file": "lean/VE/SpeechActs/Wire.lean", "lines": 993, "sha256": "fbe08d985f7fc507397eb1e74d7c9cc6ee8504dfc2e43f7cd77d78bf53f3e618",
+       "ranges": [[1, 993]], "declarations": ["parseScope", "decodeSpeechEnvironment", "decodeUnit", "decodeDocument"],
+       "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/Route/Gate.lean", "lines": 213, "sha256": "afccc527197416046f7e07fa9b2ae08d31bc717291724fe71e92a2d7de58a686",
        "ranges": [[126, 163]], "declarations": ["profilesOf", "decodeEnvelope"]},
       {"file": "lean/VE/Route/Admission.lean", "lines": 697, "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
@@ -137,13 +140,21 @@
        "reason": "soft document admission decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/SoftNorms/Wire.lean", "lines": 462, "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
        "ranges": [[1, 462]], "declarations": ["decodeSoftNorm", "decodeSoftSource", "replaySoftConflict", "replaySoftWitness", "replaySoftEntailment"],
-       "reason": "soft wire and certificate decoder; the full file is pinned conservatively"}
+       "reason": "soft wire and certificate decoder; the full file is pinned conservatively"},
+      {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
+       "ranges": [[1, 698]], "declarations": ["decodeRightsEnvironment", "decodeRightsSource", "replayRightsConflict", "replayRightsEntailment"],
+       "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"},
+      {"file": "lean/VE/Rights/Admission.lean", "lines": 471, "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
+       "ranges": [[1, 471]], "declarations": ["splitUnit", "checkSourceCites", "validateCouplings", "decodeRightsDoc", "admitDocument"],
+       "reason": "rights W2 admission and coupling decoder; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
+      "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
+      "lean/VE/SpeechActs/Run.lean": "lean:runner-glue: ve_speech_acts_route case dispatch, regenerated model tables and response rows; separate opt-in profile slice",
       "lean/VE/Alternatives/Run.lean": "lean:runner-glue: ve_alternatives_route case dispatch and response rows",
       "lean/VE/Attribution/Run.lean": "lean:runner-glue: ve_reports_route case dispatch and response rows",
       "lean/VE/Order/ProfileGate.lean": "lean:runner-glue: the default-mode evaluation dispatch (runEvaluationCaseReported_eq)",

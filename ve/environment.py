@@ -274,6 +274,7 @@ class Environment:
     sorts: object
     predicates: object
     constants: object
+    speech_acts: object
     unit_schema: str | None
     units: object
     reports: object
@@ -314,7 +315,8 @@ class Environment:
             raise UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
         fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
         has_alternatives = route and type(data) is dict and "alternatives" in data
-        require_fields(data, fields | ({"alternatives"} if has_alternatives else set())
+        require_fields(data, fields | ({"speech_acts"} if route and "speech-acts@0" in data.get("profiles", []) else set())
+                       | ({"alternatives"} if has_alternatives else set())
                        | ({"unit_schema", "units"} if extended else set()))
         order = False
         if route:
@@ -487,6 +489,17 @@ class Environment:
                                            if "description" in entry else None,
                                            entry.get("unit") if has_unit else None,
                                            _verbalisation(entry["verbalisation"]) if has_words else None)
+        speech_acts = None
+        if route and "speech-acts@0" in data["profiles"]:
+            from .speech_acts import validate_scope
+            speech_acts = validate_scope(data["speech_acts"], sorts, constants, predicates)
+            speech_acts = MappingProxyType({
+                **speech_acts,
+                **({"addressee": MappingProxyType(speech_acts["addressee"])}
+                   if "addressee" in speech_acts else {}),
+                **({"definites": MappingProxyType(speech_acts["definites"])}
+                   if "definites" in speech_acts else {}),
+            })
         reports = None
         if route and "reports@0" in data["profiles"]:
             raw_reports = vocab["reports"]
@@ -530,7 +543,8 @@ class Environment:
                              ("constants", MappingProxyType(constants)),
                              ("unit_schema", data["unit_schema"] if extended else None),
                              ("units", MappingProxyType(units) if extended else None),
-                             ("alternatives", alternatives)):
+                             ("alternatives", alternatives),
+                             ("speech_acts", speech_acts)):
             object.__setattr__(self, field, value)
         object.__setattr__(self, "reports", reports)
         if extended:
@@ -587,6 +601,12 @@ class Environment:
             return entry
 
         return {"language": self.language, **({"profiles": list(self.profiles)} if self.profile is None else {"profile": self.profile}), "spec_revision": self.spec_revision,
+                **({"speech_acts": {**self.speech_acts,
+                                    **({"addressee": dict(self.speech_acts["addressee"])}
+                                       if "addressee" in self.speech_acts else {}),
+                                    **({"definites": dict(self.speech_acts["definites"])}
+                                       if "definites" in self.speech_acts else {})}}
+                   if self.speech_acts is not None else {}),
                 **({"alternatives": loads_json(self.alternatives)} if self.alternatives is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
