@@ -215,7 +215,7 @@ def test_fill_shape():
     assert "norm-defaults@0" not in filled.profiles
     assert filled.predicates["x_permitted"].regulated.default == "deny"
     assert filled.predicates["unsaid__x_permitted"].arguments == ("act",)
-    assert filled.predicates["unsaid__x_permitted"].description == nd.FILL_DESCRIPTION
+    assert filled.predicates["unsaid__x_permitted"].description == nd.fill_description("x_permitted")
     # fill_selects_author: every author rule's selection is unchanged.
     author = doc.author.selection("x_permitted")[2]
     for name, formula in author.items():

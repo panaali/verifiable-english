@@ -14,7 +14,7 @@ Conventions that the Lean regenerator must share, byte for byte:
 * `unspec` is the sorted list of unspecified predicate names;
 * E‴ is the author environment without `norm-defaults@0`, each unspecified
   completion replaced by the placeholder `deny`, and one base predicate
-  `unsaid__<p>` (p's argument sorts, description `FILL_DESCRIPTION`) appended
+  `unsaid__<p>` (p's argument sorts, description `fill_description(p)`) appended
   per unspecified `p` in `unspec` order;
 * T‴ is the author rules in order, each root rule on an unspecified `p` with
   `over: [unsaid--<p'>]`, followed by the `F_p` rules in `unspec` order.
@@ -34,7 +34,6 @@ from .search import _used_predicates
 from .wire import digest
 
 PROFILE = "norm-defaults@0"
-FILL_DESCRIPTION = "norm-defaults filling"
 MAX_UNSAID_ATOMS = 12
 MAX_NAME_BYTES = 56
 
@@ -42,6 +41,11 @@ MAX_NAME_BYTES = 56
 def unsaid_name(predicate):
     """The fresh base predicate that fills the gaps of `predicate`."""
     return "unsaid__" + predicate
+
+
+def fill_description(predicate):
+    """The description of `unsaid__<p>` (spec 2.3), as Lean's `baseEnvironmentJsonU` writes it."""
+    return f"the text does not say whether {predicate}"
 
 
 def fill_name(predicate):
@@ -268,7 +272,7 @@ class UnspecifiedDocument:
         predicates = data["vocabulary"]["predicates"]
         for p in self.unspec:
             predicates[unsaid_name(p)] = {"arguments": list(self.env.predicates[p].arguments),
-                                          "description": FILL_DESCRIPTION}
+                                          "description": fill_description(p)}
         return self._environment_class()(data)
 
     def _environment_class(self):
