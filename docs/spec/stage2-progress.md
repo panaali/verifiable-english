@@ -5,7 +5,7 @@ This checkpoint follows [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.m
 ## Decisions recorded
 
 - **DRI decision (orchestrator, 2026-09-29): the search-refusal change is accepted.** Gate 2 checklist item 1b listed one test change that is not wording: under a backend authority, a search witness that the Lean countermodel check refuses returns `CheckerUnavailable` (`tests/test_assurance_manifest.py`). This follows the fail-closed assurance rule: a refused witness is a generator/check disagreement, never a verdict. The same rule governs every adapter.
-- **Pending DRI decision (worker's recommendation: accept): the Python-meter tests select the Python authority.** Main's rewritten `tests/test_w6a_limit_generator.py` counts the charges of Python's own evaluator (`_Evaluator.tick`) while it runs public calls. Under `VE_AUTHORITY=lean` those calls evaluate on Rust and Lean, so the meter counts nothing and three tests fail. `meter_python` now sets `VE_AUTHORITY=python`, since what these tests measure is Python's evaluator. No assertion changed. The suite already has this pattern in `tests/test_assurance_manifest.py:690` and `tests/test_alternatives_profile.py:101`. It is still a test change that is not wording, so checklist item 1b waits on this decision.
+- **DRI decision (orchestrator, 2026-09-30): the Python-meter tests select the Python authority; accepted with a condition, now met.** Main's rewritten `tests/test_w6a_limit_generator.py` counts the charges of Python's own evaluator (`_Evaluator.tick`) while it runs public calls. Under `VE_AUTHORITY=lean` those calls evaluate on Rust and Lean, so the meter counts nothing and three tests fail. `meter_python` now sets `VE_AUTHORITY=python`, since what these tests measure is Python's evaluator. No assertion changed. The suite already has this pattern in `tests/test_assurance_manifest.py:690` and `tests/test_alternatives_profile.py:101`. The condition: a Lean-authority counterpart. `test_lean_authority_reports_resource_limit_on_every_generated_case` feeds every case the same generator makes, for each seed, through the same public calls under `VE_AUTHORITY=lean`. It asserts `ResourceLimit` on each case and that every dispatched operation ran on Lean, with no Python fallback. It also asserts that the operations deciding the work-budget and domain cases (`evaluate`, `countermodel_check`, `model_validation`, `definitions_elaboration`) were dispatched. It counts no Python units.
 
 ## Gate 2 measurement
 
@@ -141,17 +141,17 @@ On the final code of this checkpoint (`VE_NATIVE_PREBUILT=1`, twelve file chunks
   - `tests/test_replay_conservativity.py`: Lean's invalid-replay wording;
   - `tests/test_stage2_dispatch.py`: fault injection patches the Rust client's runner.
 - This checkpoint:
-  - `tests/test_w6a_limit_generator.py`: `meter_python` selects the Python authority (pending DRI decision, above);
+  - `tests/test_w6a_limit_generator.py`: `meter_python` selects the Python authority (accepted by the DRI, above), and the new Lean-authority counterpart covers the same cases;
   - `tests/test_lean_service.py`: the handshake and per-mode schema seeds gain the `bundle` and `family-norms` modes, as the protocol requires;
   - the Stage 2 adapter tests (`test_stage2_*.py`) were extended for the new scope. Two assertions that pinned the old scope were replaced: `definitions@0` sources without sugar are now Lean's, and closure packages now compose through Lean.
 
-## Gate 2 checklist: not met (item 1b awaits one DRI decision)
+## Gate 2 checklist: met
 
 | # | Criterion | Status | Evidence or gap |
 |---|---|---|---|
 | 1 | The full suite passes under `VE_AUTHORITY=lean` | **Met** | 4,472 passed, 6 skipped. The merge smoke passes in five slices, and the agent-policy rerun passes alone. |
-| 1a | … for every class-A operation | **Met for the probe matrix; later 2c scope recorded** | Every class-A operation dispatches its own adapter. Of the previous 2,388 out-of-scope cells, 2,043 are now backend-decided. The 345 English-surface cells stay Python by the plan's decision (section 2.3, section 1.3). The remaining non-probe scope gaps above are 2c items the plan schedules before Gate 4. |
-| 1b | Fixture changes limited to `checker_build`, `record_id` and documented message wording | **Pending** | One new test change is not wording: the Python-meter tests select the Python authority (`test_w6a_limit_generator.py`). The worker recommends accepting it. |
+| 1a | … for every class-A operation | **Met for the probe matrix; later 2c scope recorded** | Every class-A operation dispatches its own adapter. Of the previous 2,388 out-of-scope cells, 2,043 are now backend-decided. The 345 English-surface cells stay Python by the plan's decision (section 2.3, section 1.3). Rechecked on 2026-09-30: all 345 are `parse_accept` cells on `english-surface` rows (`parse_english`). 115 are accepted, and Lean types each of their ASTs; 230 are Python rejections. The remaining non-probe scope gaps above are 2c items the plan schedules before Gate 4. |
+| 1b | Fixture changes limited to `checker_build`, `record_id` and documented message wording | **Met** | The two test changes that are not wording are accepted by the DRI: the search refusal (2026-09-29), and the Python-meter tests with their Lean-authority counterpart (2026-09-30). |
 | 2 | The full Stage 0 baseline and public API agree under the section-5 projection | **Met as measured** | 0 regressions and 0 different cells over 9,384 cells and every named probe. The 115 `baseline drift` cells are main's `lean_outcome` field, and each ran its own adapter. |
 | 3 | Matrix Lean/Rust column: empty regression diff | **Met under `VE_AUTHORITY=lean`** | Same report |
 | 4 | Adapter fault-injection tests | **Met** | `tests/test_stage2_faults.py` and `tests/test_stage2_dispatch.py` pass under both authorities |
