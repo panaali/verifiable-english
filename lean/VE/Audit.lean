@@ -81,6 +81,7 @@ import VE.NormDefaults.Fill
 import VE.NormDefaults.FillCheck
 import VE.NormDefaults.Semantics
 import VE.NormDefaults.Premises
+import VE.NormDefaults.Status
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2123,3 +2124,51 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.withFill_baseAdmissible
 #print axioms VE.NormDefaults.withFill_off
 #print axioms VE.NormDefaults.withFill_unsaid
+#print axioms VE.NormDefaults.background_declared
+#print axioms VE.NormDefaults.background_fill
+#print axioms VE.NormDefaults.background_switch
+#print axioms VE.NormDefaults.canonTyped_expansion
+#print axioms VE.NormDefaults.canonTyped_regulated
+#print axioms VE.NormDefaults.conflictFreeU_consistent
+#print axioms VE.NormDefaults.decidesD_nodes
+#print axioms VE.NormDefaults.decides_congr
+#print axioms VE.NormDefaults.decides_eq_nodes
+#print axioms VE.NormDefaults.decides_switch
+#print axioms VE.NormDefaults.denote_congr_preds
+#print axioms VE.NormDefaults.denote_rel_iff
+#print axioms VE.NormDefaults.envAt_switch
+#print axioms VE.NormDefaults.expandFill_expansion
+#print axioms VE.NormDefaults.expandFill_relation
+#print axioms VE.NormDefaults.expansion_eq_canonTyped
+#print axioms VE.NormDefaults.expansion_filled
+#print axioms VE.NormDefaults.fillPremises_of_expansion
+#print axioms VE.NormDefaults.fill_expansions
+#print axioms VE.NormDefaults.forget_agrees
+#print axioms VE.NormDefaults.intendedAt3_congr
+#print axioms VE.NormDefaults.layerNames_switch
+#print axioms VE.NormDefaults.lookupSym_switch
+#print axioms VE.NormDefaults.pairs_switch
+#print axioms VE.NormDefaults.preds_atom_sub
+#print axioms VE.NormDefaults.preds_bindAll
+#print axioms VE.NormDefaults.relation_of_expansion
+#print axioms VE.NormDefaults.restrictAll_forget_unsaid
+#print axioms VE.NormDefaults.restrictAll_switch
+#print axioms VE.NormDefaults.restrict_withFill
+#print axioms VE.NormDefaults.restrict_withFill_rel
+#print axioms VE.NormDefaults.sat_background_congr
+#print axioms VE.NormDefaults.settled_all_expansions
+#print axioms VE.NormDefaults.settled_expansions
+#print axioms VE.NormDefaults.size_fill
+#print axioms VE.NormDefaults.size_switch
+#print axioms VE.NormDefaults.stratum_switch
+#print axioms VE.NormDefaults.swReg_name
+#print axioms VE.NormDefaults.swReg_permission
+#print axioms VE.NormDefaults.swReg_role
+#print axioms VE.NormDefaults.swReg_sorts
+#print axioms VE.NormDefaults.swSym_name
+#print axioms VE.NormDefaults.switch_regulated
+#print axioms VE.NormDefaults.syms_switch
+#print axioms VE.NormDefaults.undecided_expansions
+#print axioms VE.NormDefaults.unreached_switch
+#print axioms VE.NormDefaults.unsaid_undeclared
+#print axioms VE.NormDefaults.withFill_agrees

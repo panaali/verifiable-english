@@ -59,9 +59,18 @@ def withFill (U : UDoc) (B : VE.Structure.{u}) (F : FillTables U B) : VE.Structu
 def canonicalFill (U : UDoc) (B : VE.Structure.{u}) : FillTables U B :=
   fun n _ => ∃ pr ∈ pairs U.D.T, pr.perm ∈ U.unspec ∧ n = unsaidName pr.perm
 
-/-- The canonical expansion of a filling with the unsaid tables forgotten. -/
+/-- `canon` read on typed tuples only: every layer symbol holds exactly on the typed
+tuples where its substituted meaning holds. (`canon` itself may hold on ill-typed
+tuples, so it need not be admissible; see `expansion_eq_canonTyped`.) -/
+def canonTyped (D : Doc) (B : VE.Structure.{u}) : VE.Structure.{u} :=
+  { B with relation := fun n vs => (canon D B).relation n vs ∧
+      (n ∈ layerNames D.T → ∃ ss, D.E.predicates n = some ss ∧ VE.TupleTyped B ss vs) }
+
+/-- The canonical expansion of a filling with the unsaid tables forgotten. Section 7
+writes `canon`; `canonTyped` is used because `canon` need not be admissible, so
+`Expansion3` could fail for it (statement finding, reported). -/
 def expandFill (U : UDoc) (B : VE.Structure.{u}) (F : FillTables U B) : VE.Structure.{u} :=
-  forget (unsaidNames U) (canon (fill U) (withFill U B F))
+  forget (unsaidNames U) (canonTyped (fill U) (withFill U B F))
 
 /-! ## Conservativity and the conflict iff -/
 
@@ -121,7 +130,7 @@ theorem withFill_baseAdmissible {B : VE.Structure.{u}} (hB : BaseAdmissible U.D 
   · exact (sat_literals_relation U.D.lits B _).mpr hB.2
 
 /-- Forgetting the unsaid tables of a filling gives back the base structure. -/
-theorem forget_withFill {B : VE.Structure.{u}} (hB : B.Admissible (envAt U.D 0)) (F : FillTables U B) :
+theorem forget_withFill {B : VE.Structure.{u}} {k : Nat} (hB : B.Admissible (envAt U.D k)) (F : FillTables U B) :
     forget (unsaidNames U) (withFill U B F) = B := by
   cases B with
   | mk C d c rel =>
@@ -133,7 +142,7 @@ theorem forget_withFill {B : VE.Structure.{u}} (hB : B.Admissible (envAt U.D 0))
       intro hr
       obtain ⟨ss, hss, _⟩ := hB.2 n vs hr
       obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hn
-      have : (envAt U.D 0).predicates (unsaidName p) = none := by
+      have : (envAt U.D k).predicates (unsaidName p) = none := by
         simp only [envAt, hide]
         split
         · rfl
