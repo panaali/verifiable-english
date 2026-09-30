@@ -7,7 +7,7 @@ interprets a condition or decides a risk cell.
 from __future__ import annotations
 
 from ..errors import SyntaxError, UnsupportedProfile, VEError
-from .registry import SurfaceRecord, register
+from .registry import SurfaceRecord, by_tag, register
 
 
 for tag, strict, wording, production in (
@@ -23,9 +23,16 @@ for tag, strict, wording, production in (
      "record necessary condition"),
     ("exact", "exact", "{0} leads to {1} exactly when {condition}",
      "record exact condition"),
+    # c5, frozen by risk-wording-probe-2: the condition comes first, and no "then".
+    ("sufficient", "sufficient", "If {condition}, {0} leads to {1}",
+     "record sufficient condition"),
 ):
     register(SurfaceRecord(f"risk-{tag}", strict, (), wording, production,
                            profiles=("risk@0",)))
+
+
+SUFFICIENT_REWRITE = ("Write a sufficient condition first: "
+                      "'If <condition>, <action> leads to <harm>.'")
 
 
 def parse_wording(text, env, *, actions=None, harms=None, classes=None, context="guard"):
@@ -33,7 +40,8 @@ def parse_wording(text, env, *, actions=None, harms=None, classes=None, context=
 
     `actions` and `harms` are record-local label-to-name maps; a policy caller
     may pass constant spellings instead. Conditions are returned as text for
-    W6's decoder. The pending sufficient form is deliberately not registered.
+    W6's decoder. The sufficient form is read only condition first (c5); the
+    trailing "leads to … if …" is rejected with that rewrite.
     """
     if "risk@0" not in env.profiles:
         raise UnsupportedProfile("risk@0 is required for risk wordings")
@@ -48,8 +56,14 @@ def parse_wording(text, env, *, actions=None, harms=None, classes=None, context=
         raise SyntaxError("Use 'might prevent' in a risk environment")
     if " is safer than " in sentence:
         raise SyntaxError("Use 'has a less severe worst case than' for the declared severity order")
-    if " leads to " in sentence and " if " in sentence:
-        raise SyntaxError("Sufficient-condition wording is pending; use form sufficient in JSON")
+    if " if " in sentence[sentence.find(" leads to ") + 1:] and " leads to " in sentence:
+        # the trailing "leads to … if …" is c5's first-probe wording (read as "only if")
+        raise SyntaxError(SUFFICIENT_REWRITE)
+    if sentence.startswith("If ") and " leads to " in sentence:
+        if ", then " in sentence:
+            raise SyntaxError("Drop 'then': " + SUFFICIENT_REWRITE)
+        if context != "record":
+            raise SyntaxError("A condition wording is a record statement; move it into the decision record")
     if context == "record" and " might not lead to " in sentence:
         raise SyntaxError("State a condition, or 'might lead to'; 'might not lead to' is computed")
     actions, harms, classes = ({} if m is None else m for m in (actions, harms, classes))
@@ -72,6 +86,11 @@ def parse_wording(text, env, *, actions=None, harms=None, classes=None, context=
                     if sentence.startswith(prefix) and sentence[len(prefix):]:
                         possibilities.append({"form": tag, "action": action, "harm": harm,
                                               "condition_text": sentence[len(prefix):]})
+                suffix = ", " + action_label + " leads to " + harm_label
+                if (sentence.startswith("If ") and sentence.endswith(suffix)
+                        and sentence[3:len(sentence) - len(suffix)]):
+                    possibilities.append({"form": "sufficient", "action": action, "harm": harm,
+                                          "condition_text": sentence[3:len(sentence) - len(suffix)]})
         if context == "guard":
             for other_label, other in actions.items():
                 if sentence == f"{action_label} has a less severe worst case than {other_label}":
@@ -86,6 +105,41 @@ def parse_wording(text, env, *, actions=None, harms=None, classes=None, context=
     if len(possibilities) != 1:
         raise SyntaxError("Risk wording has no unique registered reading")
     return possibilities[0]
+
+
+# The roles each form's wording names, in the order of its "{0}" and "{1}".
+_ROLES = {"might": ("action", "harm"), "cannot": ("action", "harm"), "leads": ("action", "harm"),
+          "might-not": ("action", "harm"), "necessary": ("action", "harm"), "exact": ("action", "harm"),
+          "sufficient": ("action", "harm"), "class": ("harm", "class"), "or-worse": ("harm", "class"),
+          "less-worst": ("left", "right")}
+
+
+def render_wording(reading, *, actions=None, harms=None, classes=None):
+    """Render a reading of `parse_wording` in its registered wording.
+
+    The maps are the same label-to-name maps; each name must have exactly one
+    label, so the sentence names what the reading names.
+    """
+    maps = {"action": actions, "left": actions, "right": actions, "harm": harms, "class": classes}
+    if type(reading) is not dict or type(reading.get("form")) is not str:
+        raise VEError("InvalidInput: risk reading")
+    record = by_tag("risk-" + reading["form"])
+    roles = _ROLES.get(reading["form"])
+    if record is None or roles is None:
+        raise VEError(f"InvalidInput: risk form {reading['form']}")
+    conditional = "{condition}" in record.fluent_form
+    if set(reading) != {"form", *roles, *(("condition_text",) if conditional else ())}:
+        raise VEError("InvalidInput: risk reading fields")
+    labels = []
+    for role in roles:
+        found = [label for label, name in (maps[role] or {}).items() if name == reading[role]]
+        if len(found) != 1:
+            raise VEError(f"InvalidInput: risk {role} {reading[role]} has no unique label")
+        labels.append(found[0])
+    condition = reading.get("condition_text")
+    if conditional and (type(condition) is not str or not condition):
+        raise VEError("InvalidInput: risk condition text")
+    return record.fluent_form.format(*labels, condition=condition) + "."
 
 
 def gap_lines(gaps):

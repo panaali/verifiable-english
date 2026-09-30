@@ -80,7 +80,8 @@ _RISK_EVERY_CANNOT = (
     "available action cannot lead to it: 'there is an action such that both that action is available to "
     "{chooser} and that action cannot lead to {harm}'.")
 _RISK_CONDITION_IN_RULE = (
-    "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …') is a record statement. "
+    "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a "
+    "record statement. "
     "In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record.")
 
 
