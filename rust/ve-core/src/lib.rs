@@ -2,6 +2,7 @@
 //! Experimental VE v0 and closure@0 core. Checked values have private fields; raw indexed
 //! syntax becomes a claim only through `Document::check` or `parse`.
 mod ast;
+mod discourse;
 mod environment;
 mod eval;
 mod model;
@@ -13,6 +14,7 @@ mod units;
 mod wire;
 
 pub use ast::{Document, Edge, Formula, ReachKind, Term};
+pub use discourse::{ELABORATED_DOCUMENT, elaborated_document_case};
 pub use environment::Environment;
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]

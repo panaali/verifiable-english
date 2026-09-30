@@ -15,8 +15,9 @@ from pathlib import Path
 from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
+from .backends.lean_service import CheckerUnavailable
 from .environment import Environment
-from .errors import VEError
+from .errors import ResourceLimit, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
 from .readings import (active_reading_sets, check_readings, plan_choices,
@@ -61,7 +62,9 @@ def _body(body: bytes):
     return bytes(source), fences
 
 
-def _split(raw: bytes):
+def front_matter(raw: bytes):
+    """The decoded JSON front matter of a document text and its body bytes, before any check of
+    the metadata or the body: all that names a text's format."""
     if len(raw) > MAX_DOCUMENT_BYTES:
         raise VEError("document byte budget exceeded")
     if not raw.startswith(b"---\n"):
@@ -73,16 +76,25 @@ def _split(raw: bytes):
         meta = json.loads(raw[4:boundary].decode("utf-8"))
     except (ValueError, UnicodeError) as exc:
         raise VEError("invalid JSON front matter") from exc
-    if type(meta) is not dict or meta.get("format") != "ve-document@1":
+    except RecursionError:
+        raise ResourceLimit("ResourceLimit: JSON front matter nesting exceeds the parser's depth") from None
+    return meta, raw[boundary + 5:]
+
+
+def _split(raw: bytes):
+    meta, body = front_matter(raw)
+    if type(meta) is not dict or meta.get("format") not in ("ve-document@1", "ve-document@2"):
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
                "narrowings", "couplings", "weights", "graph", "lemmas",
                "contexts", "assessments", "bridges", "scoped"}
+    if meta["format"] == "ve-document@2":
+        allowed.add("discourse")
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     if "couplings" in meta and "rights@0" not in meta.get("environment", {}).get("profiles", []):
         raise VEError("UnsupportedProfile: rights@0 is required for couplings")
-    return meta, *_body(raw[boundary + 5:])
+    return meta, *_body(body)
 
 
 def _meaning(value, open_names, *, reports=False):
@@ -236,34 +248,89 @@ def _parts(units):
             raise VEError("MIXED parts must partition their parent span")
 
 
+def _document_id(meta, source, fences):
+    """Bind checked metadata and all authored content, but keep removable weights and JSON
+    layout outside the evidence identity."""
+    identity_payload = {
+        "metadata": {key: value for key, value in meta.items() if key != "weights"},
+        "source": source.decode("utf-8"), "fences": fences}
+    return hashlib.sha256(
+        (meta["format"] + "\n").encode("ascii") + json.dumps(identity_payload, sort_keys=True,
+                                          ensure_ascii=False, separators=(",", ":"),
+                                          allow_nan=False).encode("utf-8")).hexdigest()
+
+
 def _soft_contents(units):
     return [u.get("content") for u in units
             if type(u) is dict and u.get("kind") == "norm"
             and type(u.get("content")) is dict and "norm" in u["content"]]
 
 
-def load_document(path: str | Path):
-    raw = Path(path).read_bytes()
+def _environment(data):
+    """The environment of a document's (profile-stripped) environment data."""
+    profiles = data.get("profiles", [])
+    if "rights@0" in profiles:
+        from .rights import RightsEnvironment
+        return RightsEnvironment(data)
+    if "soft-norms@0" in profiles:
+        from .softnorms import SoftEnvironment
+        return SoftEnvironment(data)
+    return Environment(data)
+
+
+def stored_identities(raw: bytes):
+    """The front matter, `source_id` and `document_id` of a stored document text: the decode and
+    identity of an imported or embedded document (discourse.md 4.1(10)), not its admission."""
     meta, source, fences = _split(raw)
     if not source:
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
-    rights_enabled = "rights@0" in meta["environment"].get("profiles", [])
-    soft_enabled = "soft-norms@0" in meta["environment"].get("profiles", [])
+    from .discourse import base_environment
+    env = _environment(base_environment(meta))
+    return meta, source_id(source, env), _document_id(meta, source, fences)
+
+
+def load_document(path: str | Path):
+    """Load and check a document. A `ve-document@2` document's admission is Lean's
+    (`ve_discourse_route` on the same bytes, docs/spec/discourse.md 3.4): Python's checks give
+    the diagnostic text of a document Lean rejects too, and a document Lean admits that Python
+    cannot load is `CheckerUnavailable`, never a Python-only verdict. Python's checks may fail in
+    any way on metadata Lean rejects (a `TypeError` on `"units": 7`): Lean's diagnostic then."""
+    raw = Path(path).read_bytes()
+    from .discourse import is_discourse_text, lean_admission, rejection, unavailable_report
+    if not is_discourse_text(raw):
+        return _load_document(raw, path, None)
+    lean = lean_admission(raw, Path(path).parent)
+    try:
+        return _load_document(raw, path, lean)
+    except CheckerUnavailable:
+        raise
+    except Exception as exc:
+        if lean["status"] != "error":
+            raise unavailable_report(exc) from exc
+        error = rejection(lean, exc if isinstance(exc, VEError) else None)
+        if error is exc:
+            raise
+        raise error from exc
+
+
+def _load_document(raw: bytes, path: str | Path, lean):
+    meta, source, fences = _split(raw)
+    if not source:
+        raise VEError("document source is empty")
+    if type(meta.get("environment")) is not dict:
+        raise VEError("document needs an embedded environment")
+    from .discourse import base_environment, validate_discourse
+    environment_data = base_environment(meta)
+    rights_enabled = "rights@0" in environment_data.get("profiles", [])
+    soft_enabled = "soft-norms@0" in environment_data.get("profiles", [])
     if soft_enabled and not rights_enabled:
-        from .softnorms import SoftEnvironment, check_soft_source
+        from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
-            check_soft_source(meta["environment"], _soft_contents(meta["units"]))
-    if rights_enabled:
-        from .rights import RightsEnvironment
-        env = RightsEnvironment(meta["environment"])
-    elif soft_enabled:
-        from .softnorms import SoftEnvironment
-        env = SoftEnvironment(meta["environment"])
-    else:
-        env = Environment(meta["environment"])
+            check_soft_source(environment_data, _soft_contents(meta["units"]))
+    env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
     open_names = validate_open_terms(env, meta.get("open_terms", []))
@@ -436,9 +503,10 @@ def load_document(path: str | Path):
                        (rights.bar is not None and i["kind"] in ("liberty", "powerLiberty"))
                        for i in active_lines):
                     unit["status"] = "OPEN"
-    for unit in compiled:
-        if unit.pop("explicit_status") not in (None, unit["status"]):
-            raise VEError("unit status contradicts content, meaning, or active reading set")
+    if meta["format"] == "ve-document@1":
+        for unit in compiled:
+            if unit.pop("explicit_status") not in (None, unit["status"]):
+                raise VEError("unit status contradicts content, meaning, or active reading set")
     reading_units = {r["unit"] for r in active}
     norm_units = [u for u in compiled if u["kind"] == "norm"
                   and type(u["content"]) is dict and "norm" in u["content"]]
@@ -466,22 +534,20 @@ def load_document(path: str | Path):
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
     sid = source_id(source, env)
-    # Bind checked metadata and all authored content, but keep removable weights
-    # and JSON layout outside the evidence identity.
-    identity_payload = {
-        "metadata": {key: value for key, value in meta.items() if key != "weights"},
-        "source": source.decode("utf-8"), "fences": fences}
-    document_id = hashlib.sha256(
-        b"ve-document@1\n" + json.dumps(identity_payload, sort_keys=True,
-                                          ensure_ascii=False, separators=(",", ":"),
-                                          allow_nan=False).encode("utf-8")).hexdigest()
-    return {"meta": meta, "environment": env, "source": source, "source_id": sid,
-            "document_id": document_id,
-            "units": compiled, "norms": norms, "soft_document": soft_document,
-            "reports": reports, "rights_document": rights_document,
-            "reading_plan": plan_choices(active if couplings else
-                                         [r for r in active if r["status"] == "open"],
-                                         couplings=couplings)}
+    document_id = _document_id(meta, source, fences)
+    doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
+           "document_id": document_id, "directory": Path(path).parent,
+           "units": compiled, "norms": norms, "soft_document": soft_document,
+           "reports": reports, "rights_document": rights_document,
+           "reading_plan": plan_choices(active if couplings else
+                                        [r for r in active if r["status"] == "open"],
+                                        couplings=couplings)}
+    if meta["format"] == "ve-document@2":
+        doc["discourse"] = validate_discourse(doc, lean)
+        for unit in compiled:
+            if unit.pop("explicit_status") not in (None, unit["status"]):
+                raise VEError("unit status contradicts content, meaning, or active reading set")
+    return doc
 
 
 def _fixed_and_active(doc):
@@ -812,6 +878,21 @@ def check_document(path):
 
 def _check_document(path):
     doc = load_document(path)
+    if "discourse" not in doc:
+        return _report(doc)
+    try:
+        return _report(doc)
+    except CheckerUnavailable:
+        raise
+    except Exception as exc:
+        # Lean admitted the document (load_document): Python never rejects it on its own
+        from .discourse import unavailable_report
+        raise unavailable_report(exc) from exc
+
+
+def _report(doc):
+    joint = doc.get("discourse", {}).get("joint")
+    joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     soft = doc["soft_document"]
     if doc["reports"] is not None:
         from .reports_route import checked_elaboration, run_case
@@ -830,7 +911,7 @@ def _check_document(path):
         statuses = reports.statuses(reports.scoped_verdicts(replayed["scoped"]))
         if any(replayed.get(key) != statuses[key] for key in ("units", "document_status")):
             raise VEError("ReportsConformance: Python and Lean differ at statuses")
-        result = {"format": "ve-document@1", "status": "UNVERIFIED",
+        result = {"format": doc["meta"]["format"], "status": "UNVERIFIED",
                   "source_id": doc["source_id"], "document_id": doc["document_id"],
                   "coverage": coverage(doc, statuses["scoped"]), "reports": checked,
                   "statuses": statuses}
@@ -860,7 +941,7 @@ def _check_document(path):
     fixed, active = _fixed_and_active(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
     rights_report = _rights_report(doc)
-    result = {"format": "ve-document@1", "source_id": doc["source_id"],
+    result = {"format": doc["meta"]["format"], "source_id": doc["source_id"],
               "document_id": doc["document_id"],
               "coverage": coverage(doc, rights_report=rights_report),
               "reading_plan": doc["reading_plan"]}
@@ -888,7 +969,10 @@ def _check_document(path):
             result["rights"]["report_status"] = "UNKNOWN: per-choice rights elaboration pending"
         else:
             result["rights"]["report"] = rights_report
-    if "graph" in doc["meta"]:
+    if "graph" in doc["meta"] and joint_pending:
+        result["admission"] = {"status": "UNKNOWN",
+                               "reason": "discourse citation and report extension pending"}
+    if "graph" in doc["meta"] and not joint_pending:
         if (_unresolved_norm_reading(active) and
                 any(type(node) is dict and type(node.get("label")) is str
                     and node["label"].startswith("layer:norms:")
@@ -934,6 +1018,9 @@ def _check_document(path):
                                                        soft_document=soft)
         else:
             result["admission"] = admit_document(env, admission)
+        if joint is not None:
+            from .discourse import check_joint_extensions
+            check_joint_extensions(doc["meta"], result["admission"]["report"], joint)
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
@@ -952,22 +1039,33 @@ def _check_document(path):
             f"ve-report-{env.identity_version}\n",
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
-    assertions.extend(_assertion_disjunctions(env, active))
+    if joint is not None and joint["constraints"]:
+        from .discourse import joint_assertion
+        joint_formula = joint_assertion(env, active, joint)
+        if joint_formula is not None:
+            assertions.append(joint_formula)
+    else:
+        assertions.extend(_assertion_disjunctions(env, active))
     if env.alternatives is not None:
         result["premises"] = {"status": "UNKNOWN",
                               "reason": "alternatives premise satisfiability requires the alternatives route"}
     elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
+    elif joint_pending or (joint is not None and joint["constraints"] and joint_formula is None):
+        result["premises"] = {"status": "UNKNOWN", "reason": "joint choice enumeration or elaboration pending"}
     else:
         result["premises"] = premise_status(env, assertions)
         if (result["premises"]["status"] != "INCONSISTENT"
                 and any(c["kind"] != "asserted" or c["content"] is None
                         for r in active for c in r["readings"])):
             result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
-    if "admission" in result:
+    if "admission" in result and "report" in result["admission"]:
         status = result["premises"]["status"]
         result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
                                            False if status == "model" else None)
+    if "discourse" in doc:
+        from .discourse import report_discourse
+        report_discourse(doc, result)
     return result
 
 
@@ -1082,6 +1180,9 @@ def render_document(path):
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for u in doc["units"]:
         lines.append(u["source"].strip())
+        expanded = doc.get("discourse", {}).get("presentations", {}).get(u["id"])
+        if expanded is not None:
+            lines.append("Reviewed wording: " + expanded.strip())
         prefix = ("Open rule reading: " if type(u["content"]) is dict and
                   "norm" in u["content"] and
                   (u["content"]["norm"].get("mode") == "default" or
@@ -1135,6 +1236,7 @@ def main(argv=None):
             active = active_reading_sets(doc["meta"].get("reading_sets", []))
             sets = [{**r, "readings": [{**c, "original_index": i}
                                       for i, c in enumerate(r["readings"])]} for r in active]
+            joint = doc.get("discourse", {}).get("joint")
             if args.narrowing:
                 matching = [n for n in doc["meta"].get("narrowings", []) if n["id"] == args.narrowing]
                 if len(matching) != 1:
@@ -1143,11 +1245,24 @@ def main(argv=None):
                 if not any((r["id"], r["version"]) == (narrowing["set"], narrowing["version"])
                            for r in sets):
                     raise VEError("narrowing does not target an active reading set")
-                sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
-                        if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
-                        for r in sets]
+                if joint is not None and joint["status"] == "complete":
+                    rs = next(r for r in sets if (r["id"], r["version"]) ==
+                              (narrowing["set"], narrowing["version"]))
+                    kept = {i for i, candidate in enumerate(rs["readings"])
+                            if candidate["id"] in narrowing["keeps"]}
+                    key = f"{rs['id']}@{rs['version']}"
+                    joint = {**joint, "choices": [c for c in joint["choices"]
+                                                   if c.get(key) in kept]}
+                    if not joint["choices"]:
+                        raise VEError(f"InvalidCompatibility: narrowing {narrowing['id']}")
+                    joint["count"] = len(joint["choices"])
+                elif joint is None:
+                    sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
+                            if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
+                            for r in sets]
             data = check_readings(doc["environment"], sets, conclusion,
                                   fixed=_fixed_premises(doc, sets),
+                                  joint_choices=joint,
                                   couplings=doc["meta"].get("couplings", []))
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"

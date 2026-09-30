@@ -191,6 +191,18 @@ def run_alternatives_case(executable, case: dict, *, timeout: float) -> dict:
     return rows[0]
 
 
+def run_discourse_case(executable, case: dict, *, timeout: float):
+    """Transport one discourse case to `ve_discourse_route`: its exit status, stdout and stderr
+    bytes. The caller (`ve/discourse.py` `lean_admission`) checks the answer; a route that cannot
+    start or does not answer in time is `CheckerUnavailable`."""
+    try:
+        proc = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
+                              capture_output=True, timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route did not answer ({exc})") from None
+    return proc.returncode, proc.stdout, proc.stderr
+
+
 def run_reports_case(executable, case: dict, *, timeout: float) -> dict:
     """Transport one reports case through the shared Lean process boundary."""
     try:

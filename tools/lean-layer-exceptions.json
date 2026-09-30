@@ -14,5 +14,9 @@
   "VE.Core.Route -> VE.Route.Checker": "Core route imports routed checker implementation.",
   "VE.Core.Route -> VE.Route.Gate": "Core route imports routed gate implementation.",
   "VE.Core.Route -> VE.Route.Route": "Core route imports routed profile definitions.",
-  "VE.Core.Wire -> VE.Route.Wire": "Core wire imports routed profile wire format."
+  "VE.Core.Wire -> VE.Route.Wire": "Core wire imports routed profile wire format.",
+  "VE.Discourse.Access -> VE.English.Parse": "Discourse accessibility walks the English parse trees of the units it resolves; extract a profile-owned tree interface.",
+  "VE.Discourse.English -> VE.English.Proofs": "Discourse English-surface theorems reuse the English grammar proofs; move them to a surface module.",
+  "VE.Discourse.Loader -> VE.Route.Run": "The ve-document@2 loader imports the routed runner for the W2 admission decoders it re-checks (Route.Admission.decodeKind, token); import those directly.",
+  "VE.Discourse.Manifest -> VE.English.Statements": "The discourse manifest uses the English statement shapes and tokens; extract a profile-owned statement interface."
 }

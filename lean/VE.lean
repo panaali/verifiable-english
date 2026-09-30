@@ -12,6 +12,13 @@ import VE.Norms.Run
 import VE.Norms.Replay
 import VE.SoftNorms.Run
 import VE.English.Run
+import VE.Discourse.Examples
+import VE.Discourse.Access
+import VE.Discourse.Resolve
+import VE.Discourse.WellFormed
+import VE.Discourse.Run
+import VE.Discourse.Theorems
+import VE.Discourse.English
 import VE.SpeechActs.Run
 import VE.Time.Wire
 import VE.Time.Document

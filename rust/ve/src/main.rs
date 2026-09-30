@@ -70,9 +70,10 @@ fn case(v: &Value) -> Result<Value> {
     if v.get("kind") == Some(&json!("quantity")) {
         return quantity_case(v);
     }
-    if v.get("family") == Some(&json!("elaborated-document")) {
-        if v.get("profile") != Some(&json!("reports@0"))
-            || v.get("untrusted") != Some(&json!(true))
+    // A reports case names its profile; any other elaborated document is a discourse case
+    // (docs/spec/discourse.md 11), checked below by `elaborated_document_case`.
+    if v.get("family") == Some(&json!("elaborated-document")) && v.get("profile") == Some(&json!("reports@0")) {
+        if v.get("untrusted") != Some(&json!(true))
             || v.get("envelope").is_none()
             || v.get("conclusion").is_none() {
             return Err(Error::new("InvalidInput", "reports search needs an untrusted elaboration, envelope and conclusion"));
@@ -87,6 +88,9 @@ fn case(v: &Value) -> Result<Value> {
     }
     if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
         return route_case(v, kind);
+    }
+    if v.get("family").is_some() {
+        return elaborated_document_case(v);
     }
     if v.get("environment")
         .and_then(|e| e.get("profiles"))
