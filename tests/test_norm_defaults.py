@@ -879,3 +879,15 @@ def test_document_conclusion_about_an_undecided_point_has_a_filled_countermodel(
     assert (sol,) in found.model.relations["csam_generation_permitted"]
     not_claude = ["not", ["unary", "csam_generation_permitted", ["const", "claude"]]]
     assert check_readings(env, [], not_claude, fixed=_fixed_premises(doc, []))["verdict"] == "ALL"
+
+
+def test_rust_fixture_is_the_python_regeneration():
+    """rust/ve-core/tests/norm_defaults.rs replays this corpus (spec 8: Rust never elaborates)."""
+    import json
+    from conformance.norm_defaults import RUST_FIXTURES, fixture_text, rust_fixture_rows
+    rows = rust_fixture_rows()
+    assert RUST_FIXTURES.read_text() == fixture_text(rows)
+    assert len(rows) == 79 and {r["kind"] for r in rows} == {"base", "layers"}
+    assert any(not r["admissible"] for r in rows if r["kind"] == "base")
+    assert all("norm-defaults@0" not in r["environment"]["profiles"] for r in rows)
+    assert json.loads(RUST_FIXTURES.read_text()) == rows
