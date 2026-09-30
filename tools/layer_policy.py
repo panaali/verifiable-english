@@ -93,7 +93,7 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
     if module in {"Main", "NormsMain", "SoftNormsMain", "RightsMain", "SpeechActsMain",
-                  "AlternativesMain", "QuantityMain", "ReportsMain",
+                  "AlternativesMain", "QuantityMain", "ReportsMain", "DiscourseMain",
                   "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module.startswith("VE.English.") or module in {
