@@ -19,7 +19,7 @@ PYTHON = {
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
-        "document equivalence norm_admission norm_defaults norm_defaults_english norm_strict "
+        "document equivalence norm_admission norm_defaults norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
         "reports_route rights_route soft_route speech_document").split(),
     5: ["argument_fixtures"],

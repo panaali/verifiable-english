@@ -844,7 +844,7 @@ def test_document_ungrounded_and_grounded_defaults(tmp_path):
                                                                                     "reason": "stated"}}))
 
 
-def test_document_completions_need_the_profile_and_graphs_await_lean(tmp_path):
+def test_document_completions_need_the_profile(tmp_path):
     import json
     from ve.document import check_document, load_document
     path = csam_document(tmp_path, "deny", {"csam_generation_permitted": {"cites": ["u1"], "reason": "x"}})
@@ -854,9 +854,28 @@ def test_document_completions_need_the_profile_and_graphs_await_lean(tmp_path):
     path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + raw[1])
     with pytest.raises(VEError, match="norm-defaults@0 is required for completions"):
         load_document(path)
-    graph = {"nodes": [], "edges": []}
-    with pytest.raises(VEError, match="claim-graph admission of norm-defaults@0 documents"):
-        check_document(csam_document(tmp_path, "unspecified", graph=graph))
+
+
+def test_document_graph_admits_the_layer_of_fill_u(tmp_path):
+    """A ve-document@1 graph under the profile: W1's admission on `fill U` (spec 2.3)."""
+    from ve.ast import formula_to_data
+    from ve.admission import AdmissionError
+    from ve.document import check_document
+    doc = nd.UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
+    (label, layer), = doc.filled.premises()
+    node = {"name": "layer", "ast": formula_to_data(doc.filled.env, layer), "label": label}
+    result = check_document(csam_document(tmp_path, "unspecified", graph={"root": "layer", "nodes": [node]}))
+    assert result["admission"]["admitted"] is True
+    assert result["admission"]["report"]["assumptions"] == [node]
+    # The author layer without `F_p` is not the layer of `fill U`.
+    from ve.environment import Environment
+    from ve.norms import NormDocument
+    deny = NormDocument(Environment(nd._placeholder(csam("unspecified").to_dict())), [CSAM_RULE])
+    author = formula_to_data(doc.filled.env, deny.premises()[0][1])
+    assert author != node["ast"]
+    with pytest.raises(AdmissionError):
+        check_document(csam_document(tmp_path, "unspecified", graph={"root": "layer", "nodes": [
+            {**node, "ast": author}]}))
 
 
 def test_document_conclusion_about_an_undecided_point_has_a_filled_countermodel(tmp_path):
