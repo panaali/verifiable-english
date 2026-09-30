@@ -52,13 +52,22 @@ def checker_error(message: str, *, code: str | None = None,
     return cls(message, span=location)
 
 
+def backend_rejection(error: VEError) -> VEError:
+    """Mark `error` as naming a rejection a Lean or Rust checker returned.
+
+    The mark is provenance only: the Gate 2 parity tool counts a rejection
+    cell as backend-decided when the error the operation raised carries it."""
+    error.backend_rejection = True
+    return error
+
+
 def require_ok(record: dict) -> dict:
     """Return a successful runner record or raise its classified diagnostic."""
     if record.get("status") == "error":
         error = record.get("error", "checker rejected request")
         if isinstance(error, dict):
-            raise checker_error(error.get("message", "checker rejected request"),
-                                code=error.get("code"), span=error.get("span"),
-                                generator=record.get("generator"))
-        raise checker_error(str(error), generator=record.get("generator"))
+            raise backend_rejection(checker_error(
+                error.get("message", "checker rejected request"), code=error.get("code"),
+                span=error.get("span"), generator=record.get("generator")))
+        raise backend_rejection(checker_error(str(error), generator=record.get("generator")))
     return record

@@ -13,6 +13,11 @@ and under the selected authority, and compared with the frozen Python baseline
   Python does (a Python change after Stage 0, such as a new record field);
 * ``same, adapter``: identical, and the operation's own adapter ran on the
   backend (its verdict came from the backend path);
+* ``same, backend rejection``: an identical rejection that a constituent
+  adapter's backend returned before the operation's own adapter was reached
+  (for example Lean's typing check refusing an unknown conclusion predicate
+  before a countermodel search); the error the operation raised carries the
+  backend's rejection mark (``diagnostics.backend_rejection``);
 * ``same, constituents``: identical, but only constituent adapters ran (for
   example Background or typing inside a certificate replay whose verdict is
   still Python's);
@@ -39,8 +44,8 @@ from ve.backends import dispatch  # noqa: E402
 from ve.errors import CheckerUnavailable  # noqa: E402
 
 REPORT = ROOT / "docs/spec/stage2-parity.md"
-CLASSES = ("regression", "different", "baseline drift", "same, adapter", "same, constituents",
-           "same, python")
+CLASSES = ("regression", "different", "baseline drift", "same, adapter", "same, backend rejection",
+           "same, constituents", "same, python")
 # The dispatch operation of each probed public operation's own adapter.
 ADAPTERS = {
     "admission": "admission", "background": "background", "countermodel_check": "countermodel_check",
@@ -71,14 +76,24 @@ def _observe(op: str, authority: str) -> None:
 def _outcome(call, *, expected=()):
     """Run one probed call under the backend; its inputs were built under Python."""
     _routed.clear()
+    raised: list[BaseException] = []
+
+    def traced():
+        try:
+            return call()
+        except BaseException as exc:
+            raised.append(exc)
+            raise
+
     os.environ["VE_AUTHORITY"] = _backend
     try:
-        result = _python_outcome(call, expected=expected)
+        result = _python_outcome(traced, expected=expected)
     except CheckerUnavailable as exc:
         result = {"cell": "X", "status": "CheckerUnavailable", "output": exc.to_dict()}
     finally:
         os.environ["VE_AUTHORITY"] = "python"
-    return {**result, "routed": sorted(_routed)}
+    rejected = bool(raised) and getattr(raised[-1], "backend_rejection", False) is True
+    return {**result, "routed": sorted(_routed), **({"backend_rejection": True} if rejected else {})}
 
 
 def _key(row) -> tuple:
@@ -93,6 +108,8 @@ def _classify(old, new, now=None, own=None) -> str:
     if _projected(old) == _projected(new):
         if own is not None and own in new.get("routed", ()):
             return "same, adapter"
+        if new["cell"] in ("R", "U") and new.get("backend_rejection"):
+            return "same, backend rejection"
         return "same, constituents" if new.get("routed") else "same, python"
     if now is not None and _projected(now) == _projected(new):
         return "baseline drift"
@@ -116,6 +133,7 @@ def compare(baseline: dict, now: dict, current: dict, only: str | None = None) -
         new = new_rows[key]
         klass = _classify(old, new, now_rows[key], ADAPTERS.get(key[2]))
         cells.append({"key": list(key), "class": klass, "routed": new.get("routed", []),
+                      "backend_rejection": bool(new.get("backend_rejection")),
                       "python": [old["cell"], old["status"]], "backend": [new["cell"], new["status"]],
                       **({"outputs": [probe.baseline_projection(old["output"]),
                                       probe.baseline_projection(new["output"])]}
@@ -154,10 +172,13 @@ def render(result: dict) -> str:
              "`regression` is an S cell that became R, U or X (`CheckerUnavailable`) or changed its verdict status, or an R/U cell whose code "
              "changed; `different` keeps the cell and status but changes the complete record; `baseline drift` "
              "differs from the baseline exactly as today's Python does; `same, adapter` is identical with the "
-             "operation's own adapter executed on the backend; `same, constituents` is identical with only "
+             "operation's own adapter executed on the backend; `same, backend rejection` is an identical "
+             "rejection that a constituent adapter's backend returned before the operation's own adapter was "
+             "reached; `same, constituents` is identical with only "
              "constituent adapters (Background, typing, evaluation) on the backend while the operation's verdict "
-             "is still Python's; `same, python` is identical because no adapter was dispatched. Only "
-             "`same, adapter` is backend coverage of the operation.", "",
+             "is still Python's; `same, python` is identical because no adapter was dispatched. "
+             "`same, adapter` and `same, backend rejection` are backend-decided cells; the other `same` classes "
+             "took Python's verdict.", "",
              f"Totals over {len(result['cells'])} cells: " +
              ", ".join(f"{name} {totals[name]}" for name in CLASSES) + ".", "",
              "| Operation | " + " | ".join(CLASSES) + " |", "|---|" + "---:|" * len(CLASSES)]
