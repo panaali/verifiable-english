@@ -1,0 +1,873 @@
+{
+  "source": {
+    "path": "source/udhr.md",
+    "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a",
+    "bytes": 10916,
+    "fetch_date_utc": "2026-09-27"
+  },
+  "baseline": "ve-green-flaky4",
+  "previous_run": "run-20260929T0600Z (ve-green-w6a); copied unchanged into base/",
+  "features_merged_since_previous_baseline": [
+    "soft-norms@0",
+    "speech-acts@0 (commands and questions; not applicable)",
+    "gates and use cases (no language change)"
+  ],
+  "old_unit_count": 116,
+  "old_boundary_aggregation": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "READINGS": 4,
+    "UNFORMALISED": 77
+  },
+  "old_to_new_units": {
+    "u001": [
+      "u001"
+    ],
+    "u002": [
+      "u002"
+    ],
+    "u003": [
+      "u003"
+    ],
+    "u004": [
+      "u004"
+    ],
+    "u005": [
+      "u005"
+    ],
+    "u006": [
+      "u006"
+    ],
+    "u007": [
+      "u007"
+    ],
+    "u008a": [
+      "u008a"
+    ],
+    "u008b": [
+      "u008b"
+    ],
+    "u009": [
+      "u009"
+    ],
+    "u010": [
+      "u010"
+    ],
+    "u011": [
+      "u011"
+    ],
+    "u012": [
+      "u012"
+    ],
+    "u013a": [
+      "u013a"
+    ],
+    "u013b": [
+      "u013ba",
+      "u013bb"
+    ],
+    "u014": [
+      "u014"
+    ],
+    "u015": [
+      "u015"
+    ],
+    "u016": [
+      "u016"
+    ],
+    "u017": [
+      "u017"
+    ],
+    "u018": [
+      "u018"
+    ],
+    "u019": [
+      "u019"
+    ],
+    "u020": [
+      "u020"
+    ],
+    "u021": [
+      "u021"
+    ],
+    "u022": [
+      "u022"
+    ],
+    "u023": [
+      "u023"
+    ],
+    "u024": [
+      "u024"
+    ],
+    "u025": [
+      "u025"
+    ],
+    "u026": [
+      "u026"
+    ],
+    "u027": [
+      "u027"
+    ],
+    "u028": [
+      "u028"
+    ],
+    "u029": [
+      "u029"
+    ],
+    "u030": [
+      "u030"
+    ],
+    "u031": [
+      "u031"
+    ],
+    "u032": [
+      "u032"
+    ],
+    "u033": [
+      "u033a",
+      "u033b"
+    ],
+    "u034": [
+      "u034"
+    ],
+    "u035": [
+      "u035"
+    ],
+    "u036": [
+      "u036"
+    ],
+    "u037": [
+      "u037"
+    ],
+    "u038": [
+      "u038"
+    ],
+    "u039": [
+      "u039"
+    ],
+    "u040": [
+      "u040"
+    ],
+    "u041": [
+      "u041"
+    ],
+    "u042": [
+      "u042"
+    ],
+    "u043": [
+      "u043"
+    ],
+    "u044": [
+      "u044"
+    ],
+    "u045": [
+      "u045a",
+      "u045b"
+    ],
+    "u046": [
+      "u046"
+    ],
+    "u047": [
+      "u047"
+    ],
+    "u048": [
+      "u048"
+    ],
+    "u049": [
+      "u049"
+    ],
+    "u050": [
+      "u050"
+    ],
+    "u051": [
+      "u051"
+    ],
+    "u052": [
+      "u052"
+    ],
+    "u053": [
+      "u053"
+    ],
+    "u054": [
+      "u054"
+    ],
+    "u055": [
+      "u055"
+    ],
+    "u056": [
+      "u056"
+    ],
+    "u057": [
+      "u057"
+    ],
+    "u058": [
+      "u058"
+    ],
+    "u059": [
+      "u059"
+    ],
+    "u060": [
+      "u060"
+    ],
+    "u061": [
+      "u061"
+    ],
+    "u062": [
+      "u062"
+    ],
+    "u063": [
+      "u063"
+    ],
+    "u064": [
+      "u064"
+    ],
+    "u065": [
+      "u065"
+    ],
+    "u066": [
+      "u066"
+    ],
+    "u067": [
+      "u067"
+    ],
+    "u068": [
+      "u068"
+    ],
+    "u069": [
+      "u069"
+    ],
+    "u070": [
+      "u070"
+    ],
+    "u071": [
+      "u071a",
+      "u071b"
+    ],
+    "u072": [
+      "u072"
+    ],
+    "u073": [
+      "u073"
+    ],
+    "u074": [
+      "u074"
+    ],
+    "u075": [
+      "u075"
+    ],
+    "u076": [
+      "u076"
+    ],
+    "u077": [
+      "u077"
+    ],
+    "u078": [
+      "u078"
+    ],
+    "u079": [
+      "u079a",
+      "u079b"
+    ],
+    "u080": [
+      "u080"
+    ],
+    "u081": [
+      "u081"
+    ],
+    "u082": [
+      "u082"
+    ],
+    "u083": [
+      "u083"
+    ],
+    "u084": [
+      "u084a",
+      "u084b",
+      "u084c",
+      "u084d"
+    ],
+    "u085": [
+      "u085"
+    ],
+    "u086": [
+      "u086"
+    ],
+    "u087": [
+      "u087"
+    ],
+    "u088": [
+      "u088"
+    ],
+    "u089": [
+      "u089"
+    ],
+    "u090": [
+      "u090"
+    ],
+    "u091": [
+      "u091"
+    ],
+    "u092": [
+      "u092"
+    ],
+    "u093": [
+      "u093"
+    ],
+    "u094": [
+      "u094"
+    ],
+    "u095": [
+      "u095"
+    ],
+    "u096": [
+      "u096"
+    ],
+    "u097": [
+      "u097"
+    ],
+    "u098": [
+      "u098"
+    ],
+    "u099": [
+      "u099a",
+      "u099b"
+    ],
+    "u100": [
+      "u100a",
+      "u100b"
+    ],
+    "u101": [
+      "u101"
+    ],
+    "u102": [
+      "u102"
+    ],
+    "u103": [
+      "u103"
+    ],
+    "u104": [
+      "u104"
+    ],
+    "u105": [
+      "u105a",
+      "u105b",
+      "u105c"
+    ],
+    "u106": [
+      "u106"
+    ],
+    "u107": [
+      "u107"
+    ],
+    "u108": [
+      "u108"
+    ],
+    "u109": [
+      "u109"
+    ],
+    "u110": [
+      "u110"
+    ],
+    "u111": [
+      "u111a",
+      "u111b"
+    ],
+    "u112": [
+      "u112"
+    ],
+    "u113": [
+      "u113"
+    ],
+    "u114": [
+      "u114"
+    ]
+  },
+  "unit_scale": "sentence or clause; coordinated regulated acts split; headings separate (unchanged from the previous run)",
+  "bytes_accounted": 10916,
+  "bytes_accounted_percent": 100,
+  "unit_count": 129,
+  "unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "READINGS": 4,
+    "UNFORMALISED": 90
+  },
+  "bytes_by_status": {
+    "CHECKED": 57,
+    "LABELLED": 535,
+    "READINGS": 593,
+    "UNFORMALISED": 9731
+  },
+  "claimed_covered_bytes": 1185,
+  "claimed_covered_percent": 10.86,
+  "claimed_covered_bytes_previous_run": 592,
+  "claimed_covered_bytes_excluding_prose_scoped_norm_candidates": 657,
+  "prose_scoped_units": [
+    "u052",
+    "u112",
+    "u114"
+  ],
+  "tool_status_bytes": {
+    "LABELLED": 535,
+    "UNFORMALISED": 9731,
+    "OPEN": 593,
+    "CHECKED": 57
+  },
+  "audit_verified_covered_bytes": 303,
+  "audit_verified_covered_percent": 2.78,
+  "audit_verified_substantive_bytes": 57,
+  "audit_pending_bytes": 593,
+  "audit_rejected_units_repaired": [
+    "u017",
+    "u052",
+    "u112",
+    "u114"
+  ],
+  "newly_covered_by_merged_features": [
+    "u017"
+  ],
+  "repaired_with_features_already_present_at_w6a": [
+    "u052",
+    "u112",
+    "u114"
+  ],
+  "open_terms": [
+    {
+      "name": "equal_before_law",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "equal legal standing",
+        "equal legal protection",
+        "scope of comparators"
+      ]
+    },
+    {
+      "name": "inherent_dignity",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of dignity",
+        "scope of inherence"
+      ]
+    },
+    {
+      "name": "inalienable_rights",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which rights",
+        "conditions on transfer or loss"
+      ]
+    },
+    {
+      "name": "essential",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "essential for which end",
+        "degree of necessity"
+      ]
+    },
+    {
+      "name": "greatest_importance",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "comparison class",
+        "measure of importance"
+      ]
+    },
+    {
+      "name": "natural_group_unit",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of natural",
+        "meaning of fundamental",
+        "what counts as family"
+      ]
+    },
+    {
+      "name": "arbitrary",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "legality",
+        "reasonableness",
+        "procedural safeguards"
+      ]
+    },
+    {
+      "name": "fair",
+      "decided_by": "applicable_court",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "procedural fairness",
+        "public access",
+        "independence"
+      ]
+    },
+    {
+      "name": "adequate",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "health needs",
+        "living conditions",
+        "resources"
+      ]
+    },
+    {
+      "name": "just",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "fairness criteria",
+        "comparison group"
+      ]
+    },
+    {
+      "name": "reasonable",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "hours",
+        "work setting",
+        "health and rest"
+      ]
+    },
+    {
+      "name": "genuine",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "authenticity of election or prosecution",
+        "procedural evidence"
+      ]
+    },
+    {
+      "name": "spirit_of_brotherhood",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "reciprocal conduct",
+        "meaning of brotherhood"
+      ]
+    },
+    {
+      "name": "justice",
+      "decided_by": "human_rights_interpreter",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "meaning of justice in the Preamble",
+        "scope of the claimed foundation"
+      ]
+    },
+    {
+      "name": "contrary_to_un_purposes_and_principles",
+      "decided_by": "unstated",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which purposes and principles count",
+        "what makes an act contrary to them"
+      ]
+    },
+    {
+      "name": "non_political_crime",
+      "decided_by": "unstated",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what separates a political from a non-political crime",
+        "who classifies the crime"
+      ]
+    },
+    {
+      "name": "rights_and_freedoms_set_forth",
+      "decided_by": "unstated",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which items of the Declaration count as rights and freedoms"
+      ]
+    },
+    {
+      "name": "aimed_at_destruction_of_rights",
+      "decided_by": "unstated",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what it is to aim at the destruction of a right",
+        "whether purpose or effect decides"
+      ]
+    }
+  ],
+  "reading_sets": [
+    {
+      "id": "rs_u017",
+      "unit": "u017",
+      "version": 2,
+      "candidates": [
+        {
+          "id": "strict",
+          "kind": "norm",
+          "formula_in_document": false,
+          "companion": "readings/u017.strict.ve.md"
+        },
+        {
+          "id": "default",
+          "kind": "norm",
+          "formula_in_document": false,
+          "companion": "readings/u017.default.ve.md"
+        }
+      ]
+    },
+    {
+      "id": "rs_u052",
+      "unit": "u052",
+      "version": 2,
+      "candidates": [
+        {
+          "id": "invocation_barred",
+          "kind": "norm",
+          "formula_in_document": false,
+          "companion": "readings/u052.invocation_barred.ve.md"
+        },
+        {
+          "id": "entitlement_withheld",
+          "kind": "asserted",
+          "formula_in_document": true,
+          "companion": null
+        }
+      ]
+    },
+    {
+      "id": "rs_u112",
+      "unit": "u112",
+      "version": 2,
+      "candidates": [
+        {
+          "id": "exercise_prohibited",
+          "kind": "norm",
+          "formula_in_document": false,
+          "companion": "readings/u112.exercise_prohibited.ve.md"
+        },
+        {
+          "id": "scope_limited",
+          "kind": "asserted",
+          "formula_in_document": true,
+          "companion": null
+        }
+      ]
+    },
+    {
+      "id": "rs_u114",
+      "unit": "u114",
+      "version": 2,
+      "candidates": [
+        {
+          "id": "interpretive_ban",
+          "kind": "norm",
+          "formula_in_document": false,
+          "companion": "readings/u114.interpretive_ban.ve.md"
+        },
+        {
+          "id": "no_implied_right",
+          "kind": "asserted",
+          "formula_in_document": true,
+          "companion": null
+        }
+      ]
+    }
+  ],
+  "missing_feature_tally": {
+    "attribution": 4,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 78,
+    "other:evaluative_open_claim": 2,
+    "other:metaphorical_endowment": 1,
+    "time": 1
+  },
+  "residual_missing_feature_tally_for_readings_units": {
+    "defaults": 3,
+    "norms": 3,
+    "other:norm_reading_candidates_hold_no_content_in_ve-document@1": 4,
+    "other:pairwise_relation_only_in_act_phrase": 1
+  },
+  "no_invented_permissions": {
+    "u074": "unconditional prohibition over every actor and person; its declared completion 'allow' is never consulted (witnesses.json: the same conclusion under 'deny'; dropping the rule loses it)",
+    "u017": "obligation-role predicates only; 'deny' completion means 'not required'; no permission predicate is declared, so nothing is permitted or forbidden for anyone",
+    "u052/u112/u114": "each prohibition is scoped by a sort that names exactly the people or acts the source names, so the completion is never consulted (witnesses.json); the cost is that the conditions sit in the sort description as prose",
+    "language_gap": "defaults: a conditional prohibition cannot leave the complement unspecified, because every regulated predicate needs a completion; scoping by sort is the only workaround"
+  },
+  "presupposition_check": "No heading, speaker marker or transition presupposes a substantive claim (title, Preamble, Article headings, 'The General Assembly,', 'Now, therefore,'); the labelled units are unchanged.",
+  "english_vocabulary_lint": [],
+  "english_rendering_note": "The three assertion readings render with predicate identifiers ('classified as ...'): the wordings tried were rejected by the English vocabulary lint, which allows only a one-word unary complement or an article-free binary verb, and rejects 'the', 'for', 'and' and 'or' inside a predicate wording.",
+  "companions": {
+    "u017.strict": {
+      "path": "readings/u017.strict.ve.md",
+      "meaning_id": "2c56fa86c37318cd98de4696764e694c87480bb422c45cda616091786923bac3",
+      "document_id": "386fa0d0105e2ed9af68fc09c78da590275f0163aaae92390344fa2a7c2884f2",
+      "premises": "model",
+      "coverage_bytes": {
+        "OPEN": 65
+      },
+      "residual": {
+        "open_terms": 1,
+        "assumptions": 0,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0
+      },
+      "soft": null
+    },
+    "u017.default": {
+      "path": "readings/u017.default.ve.md",
+      "meaning_id": "255300345a2e8a066a6a9e32c39df6857fe86844657228f8f7b9145857ec7161",
+      "document_id": "890ac59278086e82ea54bab3c0ad9a8a789d614d30ff4ef4ede4c763c327bc41",
+      "premises": "model",
+      "coverage_bytes": {
+        "OPEN": 65
+      },
+      "residual": {
+        "open_terms": 1,
+        "assumptions": 0,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0,
+        "default_exceptions": 1,
+        "instruction_switches": 0,
+        "holistic_overrides": 0,
+        "weighing_points": 0
+      },
+      "soft": {
+        "environment_id": "d6eb4b17aa5e7f34bef6540da7d877dcb516aaf521e1078c6feaab5a599b924d",
+        "soft_document_hash": "5fcaa2e41925a1056a3507c8120ab151d6637515cf79f54c19b0dd866e0df02e",
+        "decision_predicates": [
+          "soft__excepted__brotherhood_default"
+        ],
+        "background_labels": []
+      }
+    },
+    "u052.invocation_barred": {
+      "path": "readings/u052.invocation_barred.ve.md",
+      "meaning_id": "a8ea2ba2f6bb5236101acc191db8a3689a0aa0617e1eed3238e227733d4a8b63",
+      "document_id": "6ad8f753e97b0ead764f8d82377bb187dc924d51f8181b98c6db534d5ba87e3a",
+      "premises": "model",
+      "coverage_bytes": {
+        "OPEN": 182
+      },
+      "residual": {
+        "open_terms": 3,
+        "assumptions": 0,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0
+      },
+      "soft": null
+    },
+    "u112.exercise_prohibited": {
+      "path": "readings/u112.exercise_prohibited.ve.md",
+      "meaning_id": "6ceb92c97cc437e8ce32c3538e7c35395e6d6310aafb348dd73ea8c50011cf7d",
+      "document_id": "9c3bd3c7620c97246d0a90c49d35ae75887226866991666ee1ce49bc6207fa70",
+      "premises": "model",
+      "coverage_bytes": {
+        "OPEN": 121
+      },
+      "residual": {
+        "open_terms": 2,
+        "assumptions": 0,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0
+      },
+      "soft": null
+    },
+    "u114.interpretive_ban": {
+      "path": "readings/u114.interpretive_ban.ve.md",
+      "meaning_id": "43ede036d7830ea165274b71c96928bd8154135b35d1673c8219d4f952200f7f",
+      "document_id": "c3066bf63444406579dddbaff60adb4ee7b79fed4067dab42dad73178a4559ab",
+      "premises": "model",
+      "coverage_bytes": {
+        "OPEN": 225
+      },
+      "residual": {
+        "open_terms": 2,
+        "assumptions": 0,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0
+      },
+      "soft": null
+    }
+  },
+  "check_verdicts": {
+    "document_load": "PASS",
+    "byte_partition": "PASS",
+    "document_check": "PASS",
+    "premises": {
+      "status": "UNKNOWN",
+      "reason": "non-assertion reading elaboration pending"
+    },
+    "reading_plan_route": "enumerate",
+    "formal_norm_units": 1,
+    "companion_documents": {
+      "u017.strict": "PASS (premises: model)",
+      "u017.default": "PASS (premises: model)",
+      "u052.invocation_barred": "PASS (premises: model)",
+      "u112.exercise_prohibited": "PASS (premises: model)",
+      "u114.interpretive_ban": "PASS (premises: model)"
+    },
+    "u017_reading_separation": "PASS (certificates replayed)",
+    "completion_independence": "PASS for u074 and the three prohibition companions",
+    "render": "PASS",
+    "ve_natural": "document norm renderer used; full natural view does not round-trip W1 norm blocks"
+  },
+  "document_id": "49154046f85c639072c072df8c171d50d5a685f8b0c46a6b4d67e72d7d61dabb",
+  "source_id": "d5aec9555272e03e1949af3d5d4141c6e5c5c32d576dbac54c16cc5c06330dc6",
+  "coverage_tool": {
+    "source_bytes": 10916,
+    "accounted_bytes": 10916,
+    "coverage_percent": 100,
+    "bytes_by_kind": {
+      "meta": 535,
+      "unformalised": 1364,
+      "attributed": 801,
+      "norm": 8216
+    },
+    "bytes_by_status": {
+      "LABELLED": 535,
+      "UNFORMALISED": 9731,
+      "OPEN": 593,
+      "CHECKED": 57
+    },
+    "unformalised_reasons": {
+      "causation": 2,
+      "attribution": 4,
+      "modality_belief": 2,
+      "other_evaluative_open_claim": 2,
+      "norms": 78,
+      "time": 1,
+      "other_metaphorical_endowment": 1
+    },
+    "residual": {
+      "open_terms": 18,
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "unresolved_reading_sets": 4
+    },
+    "residual_total": 22
+  }
+}

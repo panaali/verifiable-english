@@ -1,0 +1,978 @@
+{
+  "u022a": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u022b": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u022c": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u029": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u032": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u033a": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u033b": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u035": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u039": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u041": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u046": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u048": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u049": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u051": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u063": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u066": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u070": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u073": {
+    "anyone_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "anyone_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "liberty": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_negative": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_positive": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  },
+  "u077": {
+    "anyone_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    },
+    "state_claim": {
+      "rule_dropped_completion_deny": {
+        "certificate_replayed": false,
+        "status": "NotFound"
+      },
+      "rule_kept_completion_allow": {
+        "certificate_replayed": true,
+        "status": "Found"
+      },
+      "rule_kept_completion_deny": {
+        "certificate_replayed": true,
+        "status": "Found"
+      }
+    }
+  }
+}
