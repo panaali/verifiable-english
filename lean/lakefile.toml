@@ -1,6 +1,6 @@
 name = "veReference"
 version = "0.1.0"
-defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_speech_acts_route", "ve_soft_norms_route", "ve_rights_route", "ve_quantity", "ve_reports_route", "ve_alternatives_route", "ve_service", "ve_english_run", "ve_response_decode"]
+defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_speech_acts_route", "ve_soft_norms_route", "ve_rights_route", "ve_quantity", "ve_reports_route", "ve_alternatives_route", "ve_service", "ve_english_run", "ve_response_decode", "ve_norm_defaults_route"]
 
 [[lean_lib]]
 name = "VE"
@@ -51,3 +51,7 @@ root = "VE.English.Run"
 [[lean_exe]]
 name = "ve_response_decode"
 root = "ResponseDecode"
+
+[[lean_exe]]
+name = "ve_norm_defaults_route"
+root = "VE.NormDefaults.Run"
