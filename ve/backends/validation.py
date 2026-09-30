@@ -24,6 +24,7 @@ from typing import Callable
 
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json
+from .diagnostics import backend_rejection
 
 _ACCEPTED: dict[tuple, bool] = {}
 _LIMIT = 1 << 14
@@ -95,7 +96,7 @@ def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[],
     try:
         row = ask()
     except VEError as rejected:
-        raise (error if error is not None else rejected) from None
+        raise (backend_rejection(error) if error is not None else rejected) from None
     if error is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean accepts {what} that the Python decoder "
                                  f"rejects ({error.code}: {error.message})")
