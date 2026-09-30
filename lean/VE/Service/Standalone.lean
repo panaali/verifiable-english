@@ -463,15 +463,15 @@ def maxSourceBytes : Nat := 65536
 The family's surface parser, which also types every statement, decides whether
 `source` is accepted. The answer carries the parsed document on the wire (within
 Python's AST limits) and, where the family has a printer, its canonical text.
-The `definitions@0` surface sugar is in no Lean surface parser. -/
+Over a `definitions@0` environment defined predicates read as declared
+predicates; the definitions surface sugar (`no`, `every … that is`, `iff`,
+`define`) is in no Lean surface parser, so a source using it is rejected. -/
 def parseCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let source ← VE.Bridge.stringField j "source"
   let checked ← validated environment
   let e := checked.envelope
-  if e.profiles.contains "definitions@0" then
-    throw (VE.Route.Gate.unsupported "the definitions surface is not in the Lean surface parser")
   unless source.utf8ByteSize ≤ maxSourceBytes do
     throw s!"ResourceLimit: source exceeds {maxSourceBytes} bytes"
   let rejected := "SyntaxError: the source is not accepted by the Lean surface parser"

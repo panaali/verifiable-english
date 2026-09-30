@@ -46,7 +46,7 @@ BODIES: dict[str, set[str]] = {
     "ve.norm_admission": {"_admit_norm_document_python"},
     "ve.admission": {"_admit_document_python", "_check_graph", "_validate_label_python"},
     "ve.bundle": {"_check_bundle_python"},
-    "ve.parser": {"_parse_python"},
+    "ve.parser": {"_parse_python", "_parse_python_marked"},
     "ve.vacuity": {"_premise_status"},
     "ve.equivalence": {"_compare"},
     "ve.argument": {"_check_argument_python", "_check_edge", "_lean_deductions"},
