@@ -1,4 +1,4 @@
-import VE.NormDefaults.Wire
+import VE.NormDefaults.Replay
 import VE.Norms.Run
 
 /-! The `ve_norm_defaults_route` executable (docs/spec/norm-defaults.md 3, 6 and 8),
@@ -12,6 +12,17 @@ delegates every other case to it.
   → `CONFLICT-FREE` when every target's certificate is bound and accepted over
   `E‴_base` and `Background_base(E‴) ++ Fill_T` (`Wire.normDefaults_wire_conflict_sound`),
   else `UNKNOWN` with the first failing target.
+* `norm-defaults-conflict` with `witness` (`target`, a `model` of `E‴_base` whose
+  `unsaid__` tables are the filling, `tuple`) → `CONFLICT` when the model passes
+  `Background_base` and `Fill_T` and the target is true at the tuple
+  (`Wire.normDefaults_wire_witness_sound`: settled or latent), else `UNKNOWN`.
+* `norm-defaults-status`: a base `model`, `predicate`, `tuple` and `method`
+  (`table3`, `enumerate`, or `undecided` with fillings `yes` and `no`) → `SETTLED
+  yes|no`, `UNDECIDED` or `UNKNOWN` (`Wire.normDefaults_wire_status_sound`).
+* `norm-defaults-gaps`: `predicate` and `packages` (key `reached:<p>`) → `gaps: none`
+  when the certificate for `∀x̄. ¬reached_p` is bound and accepted
+  (`Wire.normDefaults_wire_gaps_sound`), else `unknown`; with a filled `model` and
+  `tuple` → `reachable` when `reached_p` is true there (`Wire.normDefaults_wire_reached_sound`).
 * `norm-defaults-certificate`: `norms`, `premises`, `conclusion`, `certificate` →
   `valid` over `Background(E‴) ++ Fill_T ++ layer premises of T‴ ++ premises`
   (`Wire.normDefaults_wire_acceptance`).
@@ -46,6 +57,21 @@ def runCase (j : Json) : Except String Json := do
   if kind == "norm-defaults-elaborate" then
     let s ← Wire.decodeSourceU (← j.getObjVal? "environment") (j.getObjValD "norms")
     return VE.Route.Wire.ok id (Wire.regeneratedU s.U)
+  if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
+    let ⟨s, w⟩ ← Wire.replayWitnessU j
+    return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
+      ("target", .str w.target.1), ("targets", toJson ((VE.Norms.targets (fill s.U)).map (·.1)))]
+  if kind == "norm-defaults-status" then
+    let d ← Wire.replayStatus j
+    return VE.Route.Wire.ok id [("status", .str d.status.label), ("predicate", .str d.r.name)]
+  if kind == "norm-defaults-gaps" && (j.getObjVal? "model").toBool then
+    let ⟨_, d⟩ ← Wire.replayReached j
+    return VE.Route.Wire.ok id [("gaps", .str (if d.reached then "reachable" else "unknown")),
+      ("predicate", .str d.r.name)]
+  if kind == "norm-defaults-gaps" then
+    let g ← Wire.replayGaps j
+    return VE.Route.Wire.ok id [("gaps", .str (if g.none_ then "none" else "unknown")),
+      ("predicate", .str g.r.name)]
   if kind == "norm-defaults-conflict" then
     let res ← Wire.replayConflictU j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"

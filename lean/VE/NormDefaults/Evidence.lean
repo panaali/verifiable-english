@@ -341,9 +341,10 @@ def atomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab
 /-- "No author rule on `p` decides", over the prefix (`gapF` before substitution). -/
 def gapBody (U : UDoc) (p : String) : VE.Formula := .and (.not (pos U.D.T p)) (.not (neg U.D.T p))
 
-/-- The profile rule at a gap of an unspecified `q`: `q := yes` where `q` is the
-permission of a pair whose obligation is yes; `q := no` where `q` is the obligation
-of a pair whose permission is no (2.5). -/
+/-- The profile rule at a gap of an unspecified `q`, when the other member of the pair
+is already in the table: `q := yes` where `q` is the permission of a pair whose
+obligation is yes; `q := no` where `q` is the obligation of a pair whose permission
+is no (2.5). -/
 def pairRule {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
     (q : Regulated) (vs : List α) : Option Bool :=
   if decide (q.name ∈ U.unspec) && kleene M (atomV U M tab) (tupleVal vs) (gapBody U q.name) == some true then
@@ -352,20 +353,40 @@ def pairRule {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (
     else none
   else none
 
+/-- The entry of the symbol placed at this step. -/
+def stepEntry {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
+    (q : Sym) (vs : List α) : Option Bool :=
+  if tupleTypedB M q.sorts vs then
+    match kleene M (atomV U M tab) (tupleVal vs) (q.meaning (fill U).T) with
+    | some b => some b
+    | none => match q with
+      | .reg r => pairRule U M tab r vs
+      | .defn _ => none
+  else none
+
+/-- The profile rule where a pair closes at `q` and the side it sets is the earlier
+member `n`, still unknown and a gap: `n := yes` if `q` is the obligation and yes;
+`n := no` if `q` is the permission and no. -/
+def closeRule {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
+    (q : Sym) (qv : Option Bool) (n : String) (vs : List α) : Option Bool :=
+  match q with
+  | .defn _ => none
+  | .reg r =>
+    if decide (n ∈ U.unspec) && kleene M (atomV U M tab) (tupleVal vs) (gapBody U n) == some true then
+      if qv == some true && (pairs U.D.T).any (fun pr => pr.req == r.name && pr.perm == n) then some true
+      else if qv == some false && (pairs U.D.T).any (fun pr => pr.perm == r.name && pr.req == n) then some false
+      else none
+    else none
+
 /-- The table after the first `k` layer symbols of `T‴`. -/
 def tabK {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) : Nat → String → List α → Option Bool
   | 0 => fun _ _ => none
   | k + 1 => fun n vs => match (syms (fill U).T)[k]? with
     | some q =>
-      if n = q.name then
-        (if tupleTypedB M q.sorts vs then
-          match kleene M (atomV U M (tabK U M k)) (tupleVal vs) (q.meaning (fill U).T) with
-          | some b => some b
-          | none => match q with
-            | .reg r => pairRule U M (tabK U M k) r vs
-            | .defn _ => none
-        else none)
-      else tabK U M k n vs
+      if n = q.name then stepEntry U M (tabK U M k) q vs
+      else match tabK U M k n vs with
+        | some b => some b
+        | none => closeRule U M (tabK U M k) q (stepEntry U M (tabK U M k) q vs) n vs
     | none => tabK U M k n vs
 
 /-- `table3 U M n vs`: the three-valued outcome of `n` at `vs` (`none`: unknown). -/
@@ -389,6 +410,61 @@ open VE.SoftNorms (canon canon_subst canon_off canon_agrees)
 variable {α : Type u} [DecidableEq α] {U : UDoc} (hu : UValid U) (h : WellFormedU U = true)
   (M : VE.FiniteModel α) (F : FillTables U M.asStructure) (hF : BaseAdmissibleU U (withFill U M.asStructure F))
 include hu h hF
+
+/-- The outcome of a regulated predicate at the filled base. -/
+abbrev OutB (n : String) (vs : List α) : Prop :=
+  (outcomeBase (fill U) n).denote (withFill U M.asStructure F) (tupleVal vs)
+
+omit [DecidableEq α] hu h in
+/-- `Fill_T` at a gap of the permission: the obligation's yes forces the permission's yes. -/
+theorem perm_of_req {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.perm ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs)
+    (hgap : (gapF U pr.perm).denote (withFill U M.asStructure F) (tupleVal vs))
+    (hreq : OutB M F pr.req vs) : OutB M F pr.perm vs := by
+  have hprem := hF.2 _ (List.mem_map.mpr ⟨pr, List.mem_filter.mpr ⟨hpr, by simp [hp]⟩, rfl⟩)
+  rw [bindAll_denote_nil] at hprem
+  have := hprem vs htyped
+  simp only [VE.Formula.denote, pairConflict, not_and] at this
+  exact Classical.byContradiction fun hno => this ⟨hreq, hno⟩ (Or.inr hgap)
+
+omit [DecidableEq α] hu h in
+/-- `Fill_T` at a gap of the obligation: the permission's no forces the obligation's no. -/
+theorem notreq_of_notperm {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.req ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs)
+    (hgap : (gapF U pr.req).denote (withFill U M.asStructure F) (tupleVal vs))
+    (hperm : ¬ OutB M F pr.perm vs) : ¬ OutB M F pr.req vs := by
+  have hprem := hF.2 _ (List.mem_map.mpr ⟨pr, List.mem_filter.mpr ⟨hpr, by simp [hp]⟩, rfl⟩)
+  rw [bindAll_denote_nil] at hprem
+  have := hprem vs htyped
+  simp only [VE.Formula.denote, pairConflict, not_and] at this
+  exact fun hreq => this ⟨hreq, hperm⟩ (Or.inl hgap)
+
+/-- A Kleene-true gap body is the gap at the filled base. -/
+theorem gap_of_kleene (tab : String → List α → Option Bool)
+    (hA : ∀ p vs b, atomV U M tab p vs = some b →
+      ((canon (fill U) (withFill U M.asStructure F)).relation p vs ↔ b = true))
+    {r : Regulated} (hr : r ∈ U.D.T.regulated) (hp : r.name ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped (withFill U M.asStructure F) r.sorts vs)
+    (hk : kleene M (atomV U M tab) (tupleVal vs) (gapBody U r.name) = some true) :
+    (gapF U r.name).denote (withFill U M.asStructure F) (tupleVal vs) := by
+  have hv' := valid_of_wellFormed _ (fill_wellFormed U h)
+  have hc : ConstantsTyped (fill U) (withFill U M.asStructure F) := hF.1.1.1
+  have hkk := index_before hu.valid hr
+  have hT := rulesTyped_of_valid hu.valid hkk
+  have hmono : (gapBody U r.name).WellFormed (envAt (fill U) (before U.D r.name)) r.sorts.reverse := by
+    rw [← VE.check_iff_wellFormed]
+    exact check_envAt_fill hu ((VE.check_iff_wellFormed _ _ _).mpr
+      ⟨decides_wellFormed hT true, decides_wellFormed hT false⟩)
+  have := canon_subst hv' (withFill U M.asStructure F) hc _ _ _ hmono _ (tupleVal_typed _ _ vs htyped)
+  simp only [gapF, hp, if_true, before_fill hu]
+  exact this.mpr ((kleene_sound M _ _ hA _ _ true hk).mpr rfl)
+
+omit [DecidableEq α] hu hF in
+/-- The relation of a regulated predicate at `canon` is its outcome at the filled base. -/
+theorem canonO {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) :
+    (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔ OutB M F r.name vs :=
+  canon_regulated (valid_of_wellFormed _ (fill_wellFormed U h)) (withFill U M.asStructure F)
+    (show r ∈ (fill U).T.regulated from hr) vs
 
 theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
     ((canon (fill U) (withFill U M.asStructure F)).relation n vs ↔ b = true) := by
@@ -417,6 +493,75 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
     have hK : ∀ φ ρ b, kleene M (atomV U M (tabK U M k)) ρ φ = some b →
         (φ.denote (canon (fill U) (withFill U M.asStructure F)) ρ ↔ b = true) :=
       kleene_sound M _ _ hA
+    -- the symbol placed at this step
+    have hstep : ∀ q vs b, (syms (fill U).T)[k]? = some q → stepEntry U M (tabK U M k) q vs = some b →
+        ((canon (fill U) (withFill U M.asStructure F)).relation q.name vs ↔ b = true) := by
+      intro q vs b hq ht
+      unfold stepEntry at ht
+      split at ht
+      · rename_i hty
+        have htyX : VE.TupleTyped (canon (fill U) (withFill U M.asStructure F)) q.sorts vs :=
+          (tupleTyped_relation (withFill U M.asStructure F) _ _ vs).mpr
+            ((tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp hty))
+        have hag := canon_agrees hv' (withFill U M.asStructure F) hc (k + 1) k q (Nat.lt_succ_self k) hq vs htyX
+        split at ht
+        · rename_i b' hb'
+          simp only [Option.some.injEq] at ht
+          subst ht
+          exact hag.trans (hK _ _ _ hb')
+        · cases q with
+          | defn _ => cases ht
+          | reg r =>
+            have hr : r ∈ U.D.T.regulated := mem_syms_reg (T := (fill U).T) (List.mem_of_getElem? hq)
+            have htyped : VE.TupleTyped (withFill U M.asStructure F) r.sorts vs :=
+              (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp hty)
+            change (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔ b = true
+            simp only at ht
+            unfold pairRule at ht
+            split at ht
+            · rename_i hcond
+              simp only [Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq] at hcond
+              obtain ⟨hp, hgap⟩ := hcond
+              have hgapB := gap_of_kleene hu h M F hF _ hA hr hp vs htyped hgap
+              rw [canonO h M F hr]
+              split at ht
+              · rename_i hany
+                simp only [Option.some.injEq] at ht
+                subst ht
+                obtain ⟨pr, hpr, hpe⟩ := List.any_eq_true.mp hany
+                simp only [Bool.and_eq_true, beq_iff_eq] at hpe
+                obtain ⟨hperm, hreq⟩ := hpe
+                obtain ⟨m', hm', hm'n, _, hm's⟩ := pair_perm hu hpr
+                obtain ⟨r', hr'', hr'n, _, _, _⟩ := pair_req hpr
+                have hmr : m' = r := hu.regulated_eq hm' hr (hm'n.trans hperm)
+                subst hmr
+                have hreqO : OutB M F pr.req vs := by
+                  rw [← hr'n, ← canonO h M F hr'', hr'n]; exact (ih _ vs true hreq).mpr rfl
+                simp only [iff_true]
+                rw [← hperm]
+                exact perm_of_req M F hF hpr (by rw [hperm]; exact hp) vs (by rw [← hm's]; exact htyped)
+                  (by rw [hperm]; exact hgapB) hreqO
+              · split at ht
+                · rename_i _ hany
+                  simp only [Option.some.injEq] at ht
+                  subst ht
+                  obtain ⟨pr, hpr, hpe⟩ := List.any_eq_true.mp hany
+                  simp only [Bool.and_eq_true, beq_iff_eq] at hpe
+                  obtain ⟨hreq, hperm⟩ := hpe
+                  obtain ⟨r', hr'', hr'n, _, _, hr's⟩ := pair_req hpr
+                  obtain ⟨m', hm', hm'n, _, _⟩ := pair_perm hu hpr
+                  have hrr : r' = r := hu.regulated_eq hr'' hr (hr'n.trans hreq)
+                  subst hrr
+                  have hpermO : ¬ OutB M F pr.perm vs := fun hm => by
+                    rw [← hm'n, ← canonO h M F hm', hm'n] at hm
+                    cases (ih _ vs false hperm).mp hm
+                  simp only [Bool.false_eq_true, iff_false]
+                  rw [← hreq]
+                  exact notreq_of_notperm M F hF hpr (hreq ▸ hp) vs (by rw [← hr's]; exact htyped)
+                    (hreq ▸ hgapB) hpermO
+                · cases ht
+            · cases ht
+      · cases ht
     intro n vs b ht
     simp only [tabK] at ht
     split at ht
@@ -424,98 +569,81 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
       split at ht
       · rename_i hn
         subst hn
-        split at ht
-        · rename_i hty
-          have htyX : VE.TupleTyped (canon (fill U) (withFill U M.asStructure F)) q.sorts vs :=
-            (tupleTyped_relation (withFill U M.asStructure F) _ _ vs).mpr
-              ((tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp hty))
-          have hag := canon_agrees hv' (withFill U M.asStructure F) hc (k + 1) k q (Nat.lt_succ_self k) hq vs htyX
-          split at ht
-          · rename_i b' hb'
-            simp only [Option.some.injEq] at ht
-            subst ht
-            exact hag.trans (hK _ _ _ hb')
-          · cases q with
-            | defn _ => cases ht
-            | reg r =>
-              have hr' : r ∈ (fill U).T.regulated := mem_syms_reg (List.mem_of_getElem? hq)
-              have hr : r ∈ U.D.T.regulated := hr'
-              have htyped : VE.TupleTyped (withFill U M.asStructure F) r.sorts vs :=
-                (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp hty)
-              change (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔ b = true
-              simp only at ht
-              unfold pairRule at ht
+        exact hstep q vs b hq ht
+      · split at ht
+        · rename_i b' hb'
+          simp only [Option.some.injEq] at ht
+          subst ht
+          exact ih n vs b' hb'
+        · -- a pair closes at `q` and sets the earlier member `n`
+          unfold closeRule at ht
+          cases q with
+          | defn _ => cases ht
+          | reg r =>
+            simp only at ht
+            have hr : r ∈ U.D.T.regulated := mem_syms_reg (T := (fill U).T) (List.mem_of_getElem? hq)
+            split at ht
+            · rename_i hcond
+              simp only [Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq] at hcond
+              obtain ⟨hp, hgap⟩ := hcond
+              obtain ⟨rn, hrn, hrnn, _⟩ := hu.declared n hp
               split at ht
-              · rename_i hcond
-                simp only [Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq] at hcond
-                obtain ⟨hp, hgap⟩ := hcond
-                -- the gap, read at the base
-                have hgapB : (gapF U r.name).denote (withFill U M.asStructure F) (tupleVal vs) := by
-                  have hk := index_before hu.valid hr
-                  have hT := rulesTyped_of_valid hu.valid hk
-                  have hmono : (gapBody U r.name).WellFormed (envAt (fill U) (before U.D r.name)) r.sorts.reverse := by
-                    rw [← VE.check_iff_wellFormed]
-                    exact check_envAt_fill hu ((VE.check_iff_wellFormed _ _ _).mpr
-                      ⟨decides_wellFormed hT true, decides_wellFormed hT false⟩)
-                  have := canon_subst hv' (withFill U M.asStructure F) hc _ _ _ hmono _
-                    (tupleVal_typed _ _ vs htyped)
-                  simp only [gapF, hp, if_true, before_fill hu]
-                  exact this.mpr ((hK _ _ true hgap).mpr rfl)
-                have hO : (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔
-                    (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F) (tupleVal vs) :=
-                  canon_regulated hv' (withFill U M.asStructure F) hr' vs
-                split at ht
-                · rename_i hany
+              · rename_i hany
+                simp only [Option.some.injEq] at ht
+                subst ht
+                simp only [Bool.and_eq_true, beq_iff_eq, List.any_eq_true] at hany
+                obtain ⟨hq', pr, hpr, hreq, hperm⟩ := hany
+                have hqO : OutB M F r.name vs := (canonO h M F hr vs).mp ((hstep _ vs true hq hq').mpr rfl)
+                have htyq : tupleTypedB M r.sorts vs = true := by
+                  unfold stepEntry at hq'
+                  split at hq'
+                  · assumption
+                  · cases hq'
+                obtain ⟨r', hr'', hr'n, _, _, hr's⟩ := pair_req hpr
+                have hrr : r' = r := hu.regulated_eq hr'' hr (hr'n.trans hreq)
+                subst hrr
+                have htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs := by
+                  rw [← hr's]
+                  exact (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp htyq)
+                obtain ⟨m', hm', hm'n, _, hm's⟩ := pair_perm hu hpr
+                have hmn : rn = m' := hu.regulated_eq hrn hm' (hrnn.trans (hperm.symm.trans hm'n.symm))
+                subst hmn
+                have hgapB := gap_of_kleene hu h M F hF _ hA hrn (hrnn ▸ hp) vs (by rw [hm's]; exact htyped)
+                  (by rw [hrnn]; exact hgap)
+                rw [← hrnn, canonO h M F hrn, hrnn, ← hperm]
+                simp only [iff_true]
+                exact perm_of_req M F hF hpr (by rw [hperm]; exact hp) vs htyped (by rw [hperm, ← hrnn]; exact hgapB)
+                  (by rw [hreq]; exact hqO)
+              · split at ht
+                · rename_i _ hany
                   simp only [Option.some.injEq] at ht
                   subst ht
-                  obtain ⟨pr, hpr, hpe⟩ := List.any_eq_true.mp hany
-                  simp only [Bool.and_eq_true, beq_iff_eq] at hpe
-                  obtain ⟨hperm, hreq⟩ := hpe
+                  simp only [Bool.and_eq_true, beq_iff_eq, List.any_eq_true] at hany
+                  obtain ⟨hq', pr, hpr, hperm, hreq⟩ := hany
+                  have hqO : ¬ OutB M F r.name vs := fun ho => by
+                    cases (hstep _ vs false hq hq').mp ((canonO h M F hr vs).mpr ho)
+                  have htyq : tupleTypedB M r.sorts vs = true := by
+                    unfold stepEntry at hq'
+                    split at hq'
+                    · assumption
+                    · cases hq'
                   obtain ⟨m', hm', hm'n, _, hm's⟩ := pair_perm hu hpr
-                  obtain ⟨r', hr'', hr'n, _, _, _⟩ := pair_req hpr
                   have hmr : m' = r := hu.regulated_eq hm' hr (hm'n.trans hperm)
                   subst hmr
-                  have hreqO := (canon_regulated hv' (withFill U M.asStructure F) (show r' ∈ (fill U).T.regulated from hr'') vs).mp
-                    (by rw [hr'n]; exact (ih _ vs true hreq).mpr rfl)
-                  have hprem := hF.2 _ (List.mem_map.mpr ⟨pr, List.mem_filter.mpr ⟨hpr, by simp [hperm, hp]⟩, rfl⟩)
-                  rw [bindAll_denote_nil] at hprem
-                  have := hprem vs (by rw [← hm's]; exact htyped)
-                  simp only [VE.Formula.denote, pairConflict, not_and] at this
-                  rw [hO]
-                  simp only [iff_true]
-                  apply Classical.byContradiction
-                  intro hno
-                  exact this ⟨hr'n ▸ hreqO, hm'n ▸ hno⟩ (Or.inr (hm'n ▸ hgapB))
-                · split at ht
-                  · rename_i _ hany
-                    simp only [Option.some.injEq] at ht
-                    subst ht
-                    obtain ⟨pr, hpr, hpe⟩ := List.any_eq_true.mp hany
-                    simp only [Bool.and_eq_true, beq_iff_eq] at hpe
-                    obtain ⟨hreq, hperm⟩ := hpe
-                    obtain ⟨r', hr'', hr'n, _, _, hr's⟩ := pair_req hpr
-                    obtain ⟨m', hm', hm'n, _, _⟩ := pair_perm hu hpr
-                    have hrr : r' = r := hu.regulated_eq hr'' hr (hr'n.trans hreq)
-                    subst hrr
-                    have hpermO : ¬ (outcomeBase (fill U) m'.name).denote (withFill U M.asStructure F) (tupleVal vs) := by
-                      intro hm
-                      have hc' := (canon_regulated hv' (withFill U M.asStructure F)
-                        (show m' ∈ (fill U).T.regulated from hm') vs).mpr hm
-                      rw [hm'n] at hc'
-                      have := (ih _ vs false hperm).mp hc'
-                      cases this
-                    have hprem := hF.2 _ (List.mem_map.mpr ⟨pr, List.mem_filter.mpr ⟨hpr, by simp [hreq, hp]⟩, rfl⟩)
-                    rw [bindAll_denote_nil] at hprem
-                    have := hprem vs (by rw [← hr's]; exact htyped)
-                    simp only [VE.Formula.denote, pairConflict, not_and] at this
-                    rw [hO]
-                    simp only [Bool.false_eq_true, iff_false]
-                    intro hro
-                    exact this ⟨hr'n ▸ hro, hm'n ▸ hpermO⟩ (Or.inl (hr'n ▸ hgapB))
-                  · cases ht
-              · cases ht
-        · cases ht
-      · exact ih n vs b ht
+                  have htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs := by
+                    rw [← hm's]
+                    exact (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp htyq)
+                  obtain ⟨r', hr'', hr'n, _, _, hr's⟩ := pair_req hpr
+                  have hnr : rn = r' := hu.regulated_eq hrn hr'' (hrnn.trans (hreq.symm.trans hr'n.symm))
+                  subst hnr
+                  have hgapB := gap_of_kleene hu h M F hF _ hA hrn (hrnn ▸ hp) vs (by rw [hr's]; exact htyped)
+                    (by rw [hrnn]; exact hgap)
+                  rw [← hrnn, canonO h M F hrn, hrnn, ← hreq]
+                  simp only [Bool.false_eq_true, iff_false]
+                  exact notreq_of_notperm M F hF hpr (by rw [hreq]; exact hp) vs htyped (by rw [hreq, ← hrnn]; exact hgapB)
+                    (by rw [hperm]; exact hqO)
+                · cases ht
+            · cases ht
     · exact ih n vs b ht
 
 /-- The value `table3` gives is the outcome at the base in every admissible filling. -/

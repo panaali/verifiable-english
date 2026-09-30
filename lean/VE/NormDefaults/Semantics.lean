@@ -25,11 +25,6 @@ noncomputable def Value3 (U : UDoc) (r : Regulated) (S : VE.Structure.{u}) (vs :
   value3 (DecidesD U.D.T S (tupleVal vs) r.name true) (DecidesD U.D.T S (tupleVal vs) r.name false)
     (completionOf U r)
 
-/-- The outcome read as a constraint on the relation. -/
-def Outcome3.holds (o : Outcome3) (R : Prop) : Prop :=
-  match o with
-  | .yes => R | .no => ¬ R | .unsaid => True | .conflict => False
-
 def IntendedAt3 (U : UDoc) (r : Regulated) (S : VE.Structure.{u}) : Prop :=
   ∀ vs, VE.TupleTyped S r.sorts vs →
     match Value3 U r (forget [r.name] S) vs with

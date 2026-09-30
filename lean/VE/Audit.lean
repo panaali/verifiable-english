@@ -85,6 +85,8 @@ import VE.NormDefaults.Status
 import VE.NormDefaults.Evidence
 import VE.NormDefaults.Routes
 import VE.NormDefaults.Wire
+import VE.NormDefaults.Examples
+import VE.NormDefaults.Replay
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2227,3 +2229,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_acceptance
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_conflict_sound
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_expands
+#print axioms VE.NormDefaults.Wire.baseModelU_valid
+#print axioms VE.NormDefaults.Wire.lookup_append
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_gaps_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_reached_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_status_sound
+#print axioms VE.NormDefaults.Wire.normDefaults_wire_witness_sound
+#print axioms VE.NormDefaults.Wire.targetU_refutes
+#print axioms VE.NormDefaults.canonO
+#print axioms VE.NormDefaults.gap_of_kleene
+#print axioms VE.NormDefaults.notreq_of_notperm
+#print axioms VE.NormDefaults.perm_of_req

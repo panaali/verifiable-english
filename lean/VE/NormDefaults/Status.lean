@@ -619,7 +619,7 @@ end Switch
 of the switched document reaches to `unspecified` changes no expansion (5, 6.3).
 Section 7 quantifies `hnr` over the fillings of `U`; that statement is false: a
 pair premise can exclude, under the completion, every filling that reaches `p`,
-while the switched document admits one (statement finding, reported). -/
+while the switched document allows one (statement finding, reported). -/
 theorem unreached_switch (U : UDoc) (h : WellFormedU U = true) (p : String) (hp : p ∈ regulatedNames U.D.T)
     (hnp : p ∉ U.unspec) (h' : WellFormedU (U.switch p) = true)
     (hnr : ∀ B : VE.Structure.{u}, BaseAdmissibleU (U.switch p) B → ∀ vs, VE.TupleTyped B (sortsOf U.D p) vs →
