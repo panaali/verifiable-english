@@ -53,7 +53,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 11483,
+    "total_lines": 11833,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, and rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -145,7 +145,10 @@
        "reason": "norm-defaults@0 source, package and certificate decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/NormDefaults/Replay.lean", "lines": 371, "sha256": "46be075c87933872ce38a1f79fb9d80ab1bb9a871aed5175847de574f0be12f1",
        "ranges": [[1, 371]], "declarations": ["witnessFromU", "replayWitnessU", "decodeFilling", "replayStatus", "replayGaps", "replayReached"],
-       "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"}
+       "reason": "norm-defaults@0 witness, status and gap decoder; the full file is pinned conservatively"},
+      {"file": "lean/VE/NormDefaults/Admission.lean", "lines": 350, "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
+       "ranges": [[1, 350]], "declarations": ["fillJson", "decodeFilledDoc", "admitNodes", "admitDocument"],
+       "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
