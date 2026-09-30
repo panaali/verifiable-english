@@ -1,8 +1,9 @@
 """Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.
 
 Each public entry point dispatches its own adapter on FOL-family norm documents,
-with `data@0` flags and definitions (`lean/VE/Norms/Flagged.lean`). Norms on the
-other families are not dispatched yet.
+with `data@0` flags and definitions (`lean/VE/Norms/Flagged.lean`), and on
+first-order norm documents over the closure, core and order families
+(`lean/VE/Service/FamilyNorms.lean`).
 """
 from __future__ import annotations
 
@@ -27,16 +28,19 @@ pytestmark = pytest.mark.skipif(not (ROOT / "lean/.lake/build/bin/ve_service").e
                                 reason="Lean service has not been built")
 
 
-def flagged(*, total=False, definitions=False, family=()):
-    """Norms over a FOL environment with a flagged table and, optionally, a definition."""
+def flagged(*, total=False, definitions=False, family=(), data=True, relation=False):
+    """Norms over a FOL environment (or a `family` one) with a flagged table
+    (unless `data` is false) and, optionally, a definition and a homogeneous
+    binary relation."""
     predicates = {
         "required": obligation(),
         "permitted": permission(),
-        "owner": {"arguments": ["act", "party"], "description": "owner", "functional": True,
-                  **({"total": True} if total else {})},
+        "owner": {"arguments": ["act", "party"], "description": "owner",
+                  **({"functional": True, **({"total": True} if total else {})} if data else {})},
         "urgent": {"arguments": ["act"], "description": "urgent"},
+        **({"before": {"arguments": ["act", "act"], "description": "before"}} if relation else {}),
     }
-    profiles = {"data@0", "norms@0", "relational-fol@0", *family}
+    profiles = {"norms@0", "relational-fol@0", *family, *(("data@0",) if data else ())}
     if definitions:
         profiles.add("definitions@0")
         predicates["pressing"] = {"arguments": ["act"], "description": "pressing",
@@ -151,9 +155,63 @@ def test_a_witness_lean_refuses_is_checker_unavailable(monkeypatch):
         check_conflict(doc, model=model)
 
 
-def test_norms_outside_the_lean_route_are_not_dispatched(monkeypatch):
+FAMILIES = [(("closure@0",), False), (("closure@0",), True), (("closure@0", "nary@0"), False),
+            (("closure@0", "nary@0"), True), (("order@0",), False)]
+
+
+@pytest.mark.parametrize("family,definitions", FAMILIES)
+def test_norms_on_the_closure_core_and_order_families_are_leans(monkeypatch, family, definitions):
+    """First-order norm documents over the other families: Lean regenerates the
+    layers over the FOL view and checks the family's certificates."""
+    from ve.backends import lean_runner
+    env = flagged(definitions=definitions, family=family, data="order@0" not in family)
+    routed(monkeypatch, "python")
+    expected = outcomes(document(env))
+    assert expected["certificate"].valid and expected["conflict"].status == "CONFLICT-FREE"
+    ops = routed(monkeypatch, "lean")
+    modes = []
+    real = lean_runner.run
+
+    def spy(mode, cases, **kw):
+        modes.append(mode)
+        return real(mode, cases, **kw)
+
+    monkeypatch.setattr(lean_runner, "run", spy)
+    assert outcomes(document(env)) == expected
+    assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
+    assert "family-norms" in modes
+
+
+def test_a_family_certificate_bound_to_other_premises_is_invalid_in_lean():
+    from ve.backends.lean_runner import run
     env = flagged(family=("closure@0",))
     doc = document(env)
+    proof = prove_norm_entailment(doc, (), Top(), max_steps=200)
+    case = {"id": "c", "kind": "norms-certificate", "environment": env.to_dict(),
+            "norms": [r.to_dict() for r in doc.rules], "premises": [], "conclusion": ["top"],
+            "certificate": proof.certificate}
+    assert run("family-norms", [case])[0]["valid"] is True
+    with pytest.raises(VEError, match="stale"):
+        run("family-norms", [{**case, "premises": [["top"]]}])
+
+
+def test_family_conflict_witness_is_lean_checked(monkeypatch):
+    env = flagged(family=("closure@0",))
+    doc = NormDocument(env, [rule("must", "required", True, Unary("urgent", Var(0)))])
+    model = witness_model(doc, [["a", "p"]])
+    routed(monkeypatch, "python")
+    expected = check_conflict(doc, model=model)
+    assert expected.status == "CONFLICT"
+    ops = routed(monkeypatch, "lean")
+    assert check_conflict(doc, model=model) == expected
+    assert ("norms_conflict", "lean") in ops
+
+
+def test_norms_with_non_first_order_guards_are_not_dispatched(monkeypatch):
+    from ve.ast import Named, Reach
+    env = flagged(family=("closure@0",), relation=True)
+    guard = Reach("star", Named("before"), Var(0), Var(0))
+    doc = NormDocument(env, [rule("may", "permitted", True, guard)])
     ops = routed(monkeypatch, "lean")
     doc.elaborate("permitted")
     check_conflict(doc)

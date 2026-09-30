@@ -14,7 +14,7 @@
         {"contains": {"const": "environment"}}, {"contains": {"const": "model"}},
         {"contains": {"const": "check"}}, {"contains": {"const": "identity"}},
         {"contains": {"const": "parse"}}, {"contains": {"const": "graph"}},
-        {"contains": {"const": "readings"}}, {"contains": {"const": "bundle"}}]},
+        {"contains": {"const": "readings"}}, {"contains": {"const": "bundle"}}, {"contains": {"const": "family-norms"}}]},
       "limits": {"type": "object", "required": ["max_line_bytes", "max_cases", "json_depth"],
         "additionalProperties": false,
         "properties": {

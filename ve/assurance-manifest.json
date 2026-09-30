@@ -51,7 +51,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 12921,
+    "total_lines": 13165,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, and rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -100,12 +100,15 @@
       {"file": "lean/VE/Service/Readings.lean", "lines": 215, "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
        "ranges": [[1, 215]], "declarations": ["decodeModel", "readingsCase"],
        "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Family.lean", "lines": 817, "sha256": "edbcb9940ebae41e1fcc7903c8ee656bba20e269b0796a23a655aa40f734454e",
+      {"file": "lean/VE/Service/Family.lean", "lines": 817, "sha256": "e1e00be4379626252de90286a857d800f98086bf48b734093ab6d0e8d0f546c0",
        "ranges": [[1, 817]], "declarations": ["closureEnv", "coreEnv", "orderEnv", "decodeNode", "decodeEdge", "compose", "graphCase", "readings", "readingsCase"],
        "reason": "graph- and readings-mode decoders on the closure, core and order families: family contexts (formula, certificate, Background, binding, model), claims, deductions, recomputed identities, reading sets and evidence; the full file is pinned conservatively"},
       {"file": "lean/VE/Service/FamilyBundle.lean", "lines": 500, "sha256": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
        "ranges": [[1, 500]], "declarations": ["decodeLeaf", "decodeLemma", "decodeReadingSet", "run", "folCtx", "bundleCase"],
        "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"},
+      {"file": "lean/VE/Service/FamilyNorms.lean", "lines": 244, "sha256": "f2e5ffd9ed57abbd61dd3cf67775195363271814e55f954c4323405209d4cc3c",
+       "ranges": [[1, 244]], "declarations": ["folView", "viewModel", "decodeFamily", "certificateCase", "targetPackage", "conflictCase", "runCase"],
+       "reason": "family-norms decoder: the FOL view of the environment and the witness model, the family certificates and their bindings to the submitted and base environments; the full file is pinned conservatively"},
       {"file": "lean/VE/Definitions/Bundle.lean", "lines": 471, "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
        "ranges": [[1, 471]], "declarations": ["decodeLeaf", "decodeLemma"]},
       {"file": "lean/VE/Norms/Admission.lean", "lines": 465, "sha256": "a57c5bf09a155631bfdfddcdf682eb45b16444ad9c18f530012ab60638c198df",
@@ -176,7 +179,7 @@
       "lean/VE/Service/Protocol.lean": "stage-1 service request decoder and dispatcher; additive and not yet on an assurance operation path",
       "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
       "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
-      "lean/VE/Norms/Plain.lean":"stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises and the profile model check",
+      "lean/VE/Norms/Plain.lean":"stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
       "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
       "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe"
     }
@@ -512,7 +515,7 @@
       "authority": "python",
       "target": "lean",
       "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "elaborate_iff exists; not yet mapped in theorem-coverage.md; the Lean norms route takes FOL-family documents with definitions and data flags, and norms on the closure, core and order families are a Lean gap (plan 2.3)"},
+                    "reason": "elaborate_iff exists; not yet mapped in theorem-coverage.md; the Lean norms route takes FOL-family documents with definitions and data flags, and the family-norms mode (Service.FamilyNorms) first-order documents on the closure, core and order families, regenerated over the environment's FOL view"},
       "python": ["ve.norms:NormDocument.elaborate", "ve.norms:NormDocument.premises"],
       "outcomes": {"verdict": ["regenerated layer premises"], "unknown": [],
                    "rejection": ["DuplicateDeclaration", "UnsupportedProfile", "InvalidInput"],
@@ -524,7 +527,8 @@
         "planned_modes": [],
         "theorems": ["VE.Norms.elaborate_iff", "VE.Norms.elaborate_iff_at", "VE.Norms.norms_route_intended"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Flagged.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Flagged.lean",
+                     "lean/VE/Service/FamilyNorms.lean"]
       },
       "rust": {"commands": ["conformance"], "role": "evaluates the regenerated formulas"},
       "lean_call_sites": [],
@@ -550,12 +554,14 @@
           {"executable": "ve_norms_route", "mode": "", "kinds": ["norms-conflict"], "response": {"verdict": "string", "targets": "array<string>"}, "uncounted": {"targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
         ],
         "planned_modes": [],
-        "theorems": ["VE.Norms.conflictFreeCheck_sound", "VE.Norms.conflict_witness_sound", "VE.Norms.conflict_smallModel",
+        "theorems": ["VE.Service.FamilyNorms.closure_conflict_target_sound", "VE.Service.FamilyNorms.core_conflict_target_sound",
+                     "VE.Service.FamilyNorms.order_conflict_target_sound", "VE.Norms.conflictFreeCheck_sound", "VE.Norms.conflict_witness_sound", "VE.Norms.conflict_smallModel",
                      "VE.Norms.Replay.norms_wire_conflict_sound", "VE.Norms.Replay.norms_wire_conflict_free_expands",
                      "VE.Norms.Replay.norms_wire_conflict_witness_sound",
                      "VE.Norms.Flagged.norms_flagged_conflict_sound", "VE.Norms.Flagged.norms_flagged_witness_sound"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean",
+                     "lean/VE/Service/FamilyNorms.lean"]
       },
       "rust": {"commands": ["conformance"], "role": "evaluates Python-generated conflict targets"},
       "lean_call_sites": [],
@@ -581,11 +587,13 @@
           {"executable": "ve_norms_route", "mode": "", "kinds": ["norms-certificate"], "response": {"valid": "bool", "layers": "nat"}, "uncounted": {"layers": "the elaboration layers of the environment's norms"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
         ],
         "planned_modes": [],
-        "theorems": ["VE.Norms.Replay.norms_wire_acceptance", "VE.Norms.norms_route_acceptance",
+        "theorems": ["VE.Service.FamilyNorms.closure_norms_certificate_sound", "VE.Service.FamilyNorms.core_norms_certificate_sound",
+                     "VE.Service.FamilyNorms.order_norms_certificate_sound", "VE.Norms.Replay.norms_wire_acceptance", "VE.Norms.norms_route_acceptance",
                      "VE.Norms.norms_route_entails_iff", "VE.Norms.norms_route_countermodel",
                      "VE.Norms.Flagged.norms_flagged_acceptance"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean", "lean/VE/CertificateWire.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Replay.lean", "lean/VE/Norms/Flagged.lean", "lean/VE/CertificateWire.lean",
+                     "lean/VE/Service/FamilyNorms.lean"]
       },
       "rust": null,
       "lean_call_sites": [],

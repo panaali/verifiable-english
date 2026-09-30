@@ -13,7 +13,7 @@ from typing import Any, Sequence
 from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
                    Not, Or, Top, Unary, Var, Reach, Named, check_document, _Checker)
-from .errors import CheckerUnavailable, ResourceLimit, VEError
+from .errors import CheckerUnavailable, ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
 from .limits import MAX_NODES, MAX_TABLEAU_DEPTH
 from .wire import canonical_json
@@ -747,6 +747,9 @@ def _lean_replay_record(replay, nodes: int, max_steps: int) -> EntailmentCertifi
             raise CheckerUnavailable("CheckerUnavailable: the trace exceeds the Lean route's "
                                      "replay cap") from None
         return EntailmentCertificateCheck(False, "ResourceLimit", 0, str(exc))
+    except UnsupportedProfile as exc:
+        # A case Lean does not implement is a gap, never an invalid certificate.
+        raise CheckerUnavailable(f"CheckerUnavailable: {exc.message}") from None
     except VEError as exc:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0, str(exc))
     if nodes > max_steps:

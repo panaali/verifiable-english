@@ -42,6 +42,7 @@ import VE.Norms.Replay
 import VE.Norms.Flagged
 import VE.Service.Graph
 import VE.Service.Readings
+import VE.Service.FamilyNorms
 import VE.Service.FamilyBundle
 import VE.Service.GenericGraph
 import VE.Service.GenericReadings
@@ -831,6 +832,12 @@ import VE.Service.Protocol
 #print axioms VE.Service.Readings.readings_none_sound
 #print axioms VE.Service.Readings.resolve_choice
 #print axioms VE.Service.Readings.readings_some_sound
+#print axioms VE.Service.FamilyNorms.closure_norms_certificate_sound
+#print axioms VE.Service.FamilyNorms.core_norms_certificate_sound
+#print axioms VE.Service.FamilyNorms.order_norms_certificate_sound
+#print axioms VE.Service.FamilyNorms.closure_conflict_target_sound
+#print axioms VE.Service.FamilyNorms.core_conflict_target_sound
+#print axioms VE.Service.FamilyNorms.order_conflict_target_sound
 #print axioms VE.Service.Family.folRefutes_sound
 #print axioms VE.Service.Family.fol_readings_all_sound
 #print axioms VE.Service.Family.fol_readings_none_sound
@@ -1904,6 +1911,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_graph
 #print axioms VE.Service.runMode_readings
 #print axioms VE.Service.runMode_bundle
+#print axioms VE.Service.runMode_familyNorms
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq

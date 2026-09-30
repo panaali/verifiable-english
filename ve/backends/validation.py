@@ -76,9 +76,8 @@ def model_in_scope(env) -> bool:
 
 def family_in_scope(env) -> bool:
     """Whether Lean's `graph` and `readings` modes take a ve.core@0.2 envelope of
-    any family: no statement layer, no n-ary definition on the core family and
-    no norms profile pair on the order family (both deferred in Lean)."""
-    from ..background import _profile_premises
+    any family: no statement layer and no n-ary definition on the core family
+    (deferred in Lean)."""
     if env.language != "ve.core@0.2" or env.unit_schema is not None or env.alternatives is not None:
         return False
     if STATEMENT_LAYERS & set(env.profiles):
@@ -86,7 +85,7 @@ def family_in_scope(env) -> bool:
     if nary_core_definitions(env.profiles, [{"defined": True, "arguments": list(decl.arguments)}
                                             for decl in env.predicates.values() if decl.defined is not None]):
         return False
-    return not (env.order and _profile_premises(env))
+    return True
 
 
 def key(*parts) -> tuple:

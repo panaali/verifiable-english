@@ -107,21 +107,63 @@ def _regulated_closure(formula, regulated):
     return False
 
 
-def _lean_route(document) -> bool:
-    """Whether the Lean norms route regenerates `document`.
+_NON_FOL_TAGS = frozenset({"reach", "atom", "le", "lt", "num", "add", "scale"})
 
-    The route takes plain norm documents over FOL-family ve.core@0.2
-    environments, with definitions and data flags. Norms on the closure, core
-    and order families, and statement-layer environments (soft norms, reports,
-    alternatives, quantities), are not on it yet: their operations are not
+
+def _first_order(data) -> bool:
+    """Whether a formula on the wire uses first-order constructs only."""
+    stack = [data]
+    while stack:
+        node = stack.pop()
+        if type(node) is list:
+            if node and node[0] in _NON_FOL_TAGS:
+                return False
+            stack.extend(node[1:])
+    return True
+
+
+def _family_norms(document) -> bool:
+    """Whether Lean's `family-norms` mode (VE/Service/FamilyNorms.lean) takes a
+    norm document over the closure, core or order family: the norm formulas are
+    first-order, every regulated predicate is unary or binary and no declaration
+    uses `$int`, so the FOL route regenerates the document over the
+    environment's FOL view; certificates are the family's."""
+    from .backends.validation import family_in_scope
+    env = document.env
+    if not (env.closure or env.order) or not family_in_scope(env):
+        return False
+    if any(decl.regulated is not None and len(decl.arguments) > 2 for decl in env.predicates.values()):
+        return False
+    if any("$int" in decl.arguments for decl in env.predicates.values()) or any(
+            decl.sort == "$int" for decl in env.constants.values()):
+        return False
+    return all(_first_order(rule.to_dict()["norm"]["guard"]) and
+               all(_first_order(x) for x in rule.to_dict()["norm"]["unless"]) for rule in document.rules)
+
+
+def _lean_route(document) -> bool:
+    """Whether a Lean norms route regenerates `document`.
+
+    The norms route takes plain norm documents over FOL-family ve.core@0.2
+    environments, with definitions and data flags; the family-norms mode takes
+    first-order documents on the closure, core and order families
+    (`_family_norms`). Statement-layer environments (soft norms, reports,
+    alternatives, quantities) are not on either: their operations are not
     dispatched and keep the retained Python.
     """
     env = document.env
     from .profiles import STATEMENT_LAYERS
-    return (type(document) is NormDocument and env.language == "ve.core@0.2"
-            and not env.closure and not env.order and env.alternatives is None
-            and getattr(env, "unit_schema", None) is None
+    if type(document) is not NormDocument or env.language != "ve.core@0.2":
+        return False
+    if env.closure or env.order:
+        return _family_norms(document)
+    return (env.alternatives is None and getattr(env, "unit_schema", None) is None
             and not STATEMENT_LAYERS & set(env.profiles))
+
+
+def _lean_mode(document) -> str:
+    """The service mode of `document`'s norms cases."""
+    return "family-norms" if document.env.closure or document.env.order else "norms"
 
 
 def _lean_case(document, kind, **fields):
@@ -276,7 +318,7 @@ class NormDocument:
         cached = getattr(self, "_regenerated", None)
         if cached is None:
             from .backends.lean_runner import run
-            cached = self._regenerated = run("norms", [_lean_case(self, "norms-elaborate")])[0]
+            cached = self._regenerated = run(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
         return cached
 
     @semantic_entry("norms.elaborate")
@@ -466,7 +508,7 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
         return nodes
     case = _lean_case(document, "norms-certificate", premises=[_to_data(p) for p in premises],
                       conclusion=_to_data(conclusion), certificate=certificate)
-    return _lean_replay_record(lambda: run("norms", [case])[0]["valid"], nodes, max_steps)
+    return _lean_replay_record(lambda: run(_lean_mode(document), [case])[0]["valid"], nodes, max_steps)
 
 
 def _base_model(document, env, model):
@@ -591,7 +633,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
             if found is not None:
                 target, sorts, values = found
                 witness = {"target": target, "model": model.to_dict(), "tuple": list(values)}
-                row = run("norms", [_lean_case(document, "norms-conflict", witness=witness)])[0]
+                row = run(_lean_mode(document), [_lean_case(document, "norms-conflict", witness=witness)])[0]
                 if row["verdict"] != "CONFLICT" or row.get("target") != target:
                     raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the conflict "
                                              "witness Python's search found")
@@ -607,7 +649,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
             canonical_json(certificates)
         except (VEError, TypeError, ValueError):
             certificates = {}  # packages that are not JSON bind nothing
-        row =run("norms", [_lean_case(document, "norms-conflict", packages=certificates)])[0]
+        row = run(_lean_mode(document), [_lean_case(document, "norms-conflict", packages=certificates)])[0]
         if row["verdict"] == "CONFLICT-FREE":
             return ConflictReport("CONFLICT-FREE")
         if row["verdict"] != "UNKNOWN" or type(row.get("detail")) is not str:

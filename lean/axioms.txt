@@ -723,6 +723,12 @@
 'VE.Service.Readings.readings_none_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Readings.resolve_choice' depends on axioms: [propext, Quot.sound]
 'VE.Service.Readings.readings_some_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyNorms.closure_norms_certificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyNorms.core_norms_certificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyNorms.order_norms_certificate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyNorms.closure_conflict_target_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyNorms.core_conflict_target_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyNorms.order_conflict_target_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Family.folRefutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Family.fol_readings_all_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Family.fol_readings_none_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1782,6 +1788,7 @@
 'VE.Service.runMode_graph' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_readings' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_bundle' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.runMode_familyNorms' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.caseResult_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runRequest_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.results_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1906,4 +1913,4 @@
 'VE.Rights.valueSoft_of_decides' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_bar' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 215 source files; 1908 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 216 source files; 1915 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
