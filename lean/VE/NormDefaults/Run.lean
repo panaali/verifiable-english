@@ -61,13 +61,14 @@ def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
   VE.Route.Wire.ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson res.report),
     ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray)]
 
-/-- The report id is bound to the source environment (profile included), as on the
-norms route; certificates are bound to the regenerated `E‴`. -/
+/-- The report id is bound to the source environment under its own profiles
+(`norm-defaults@0` included), as the norms route binds it and as conflict packages
+are bound (`decodePackageU`); certificates are bound to the regenerated `E‴`. -/
 def runAdmission (id : String) (environment document : Json) : Except String Json := do
   let res ← Admission.admitDocument environment document
   let canonical ← Wire.canonicalEnvironmentJsonU environment
-  let envId ← VE.Route.Wire.environmentId res.s.src.ne.profiles canonical
-  let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.s.src.ne.profiles)
+  let envId ← VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical
+  let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
     (VE.Norms.Run.reportPayload envId document res.report)
   return encodeAdmitted id reportId res
 
@@ -75,8 +76,8 @@ def BindingsMatchSourceAndRegeneration (environment document : Json) (res : Admi
     (reportId : String) : Prop :=
   Admission.CertificatesBound environment res ∧
   ∃ canonical envId, Wire.canonicalEnvironmentJsonU environment = .ok canonical ∧
-    VE.Route.Wire.environmentId res.s.src.ne.profiles canonical = .ok envId ∧
-    VE.CertificateWire.digest (VE.Norms.Run.reportDomain res.s.src.ne.profiles)
+    VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical = .ok envId ∧
+    VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
       (VE.Norms.Run.reportPayload envId document res.report) = .ok reportId
 
 /-- W1's `AdmissionAnswer` on `fill U`: the answer is exactly the encoding of a checked
