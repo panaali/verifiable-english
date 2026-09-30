@@ -154,10 +154,11 @@ def ownSourceId (j : Json) : String :=
   let ps := (VE.Route.Gate.profilesOf (envOfPayload j)).toOption.getD []
   Loader.sourceId (baseProfiles ps) (Loader.sourceOf j)
 
-/-- The raw byte span of a unit of the front matter. -/
+/-- The raw byte span of a unit of the front matter (a part of a `MIXED` unit included). -/
 def rawUnitSpan (j : Json) (u : String) : Option (Nat × Nat) :=
   match (Loader.metaOf j).getObjValD "units" with
-  | .arr us => (us.toList.find? fun x => (x.getObjValD "id").getStr?.toOption == some u).bind fun x =>
+  | .arr us => ((us.toList.flatMap fun x => (Loader.partsOf x).toOption.getD [x]).find? fun x =>
+      (x.getObjValD "id").getStr?.toOption == some u).bind fun x =>
       (Loader.spanOf (x.getObjValD "span")).toOption
   | _ => none
 
