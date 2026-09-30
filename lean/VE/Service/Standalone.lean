@@ -539,10 +539,17 @@ def parseCase (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
   let source ← VE.Bridge.stringField j "source"
   let rejected := "SyntaxError: the source is not accepted by the Lean surface parser"
-  if isLegacy environment then
-    let l ← decodeLegacy environment
+  -- The frozen runners' source limits (`Bridge.sourceIdentifierBudget`, the
+  -- order surface's numeral cap), checked before parsing.
+  let limits := fun (order : Bool) => do
     unless source.utf8ByteSize ≤ maxSourceBytes do
       throw s!"ResourceLimit: source exceeds {maxSourceBytes} bytes"
+    unless VE.Bridge.sourceIdentifierBudget source do
+      throw "ResourceLimit: source identifier exceeds 64 bytes"
+    if order && VE.Order.Surface.oversizedNumeral source then throw "ResourceLimit: numeral length"
+  if isLegacy environment then
+    let l ← decodeLegacy environment
+    limits (match l with | .order _ => true | _ => false)
     let (asts, canonical) ← match l with
       | .v0 v => do
         let some fs := VE.Surface.parse v.environment source | throw rejected
@@ -560,8 +567,7 @@ def parseCase (j : Json) : Except String Json := do
       | none => [])
   let checked ← validated environment
   let e := checked.envelope
-  unless source.utf8ByteSize ≤ maxSourceBytes do
-    throw s!"ResourceLimit: source exceeds {maxSourceBytes} bytes"
+  limits (e.family == .order)
   let (asts, canonical) ← match e.family with
     | .fol => do
       let rv ← VE.Route.Run.decodeRouteVocabulary e
