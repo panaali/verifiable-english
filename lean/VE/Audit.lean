@@ -77,6 +77,7 @@ import VE.Service.Protocol
 import VE.NormDefaults.Dag
 import VE.NormDefaults.Tree
 import VE.NormDefaults.Check
+import VE.NormDefaults.Fill
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1980,3 +1981,64 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.rulesLoop_ok
 #print axioms VE.NormDefaults.tailSteps_ok
 #print axioms VE.NormDefaults.wellFormed_iff
+#print axioms VE.NormDefaults.UValid.acyclic
+#print axioms VE.NormDefaults.UValid.declared_pred
+#print axioms VE.NormDefaults.UValid.names_nodup
+#print axioms VE.NormDefaults.UValid.node_regulated
+#print axioms VE.NormDefaults.UValid.not_unsaid
+#print axioms VE.NormDefaults.UValid.over_fresh
+#print axioms VE.NormDefaults.UValid.over_node
+#print axioms VE.NormDefaults.UValid.regulated_eq
+#print axioms VE.NormDefaults.aboveCount_over
+#print axioms VE.NormDefaults.appliesD_fillRoot
+#print axioms VE.NormDefaults.belowCount_child
+#print axioms VE.NormDefaults.belowCount_lt
+#print axioms VE.NormDefaults.child_edge
+#print axioms VE.NormDefaults.children_fillRoot
+#print axioms VE.NormDefaults.children_fill_author
+#print axioms VE.NormDefaults.decidesD_fill
+#print axioms VE.NormDefaults.decides_either
+#print axioms VE.NormDefaults.fillEnv_constants
+#print axioms VE.NormDefaults.fillEnv_off
+#print axioms VE.NormDefaults.fillEnv_sorts
+#print axioms VE.NormDefaults.fillEnv_unsaid
+#print axioms VE.NormDefaults.fillRoot_carveOuts
+#print axioms VE.NormDefaults.fillRoot_guard
+#print axioms VE.NormDefaults.fillRoot_name
+#print axioms VE.NormDefaults.fillRoot_over
+#print axioms VE.NormDefaults.fillRoot_pred
+#print axioms VE.NormDefaults.fillRoot_sign
+#print axioms VE.NormDefaults.fill_E
+#print axioms VE.NormDefaults.fill_decides
+#print axioms VE.NormDefaults.fill_definitions
+#print axioms VE.NormDefaults.fill_eq_self
+#print axioms VE.NormDefaults.fill_lits
+#print axioms VE.NormDefaults.fill_local_conflict
+#print axioms VE.NormDefaults.fill_node_author
+#print axioms VE.NormDefaults.fill_nodes
+#print axioms VE.NormDefaults.fill_regulated
+#print axioms VE.NormDefaults.fill_selects_author
+#print axioms VE.NormDefaults.flatMap_congr'
+#print axioms VE.NormDefaults.fuel_fill
+#print axioms VE.NormDefaults.mem_children_fillNode
+#print axioms VE.NormDefaults.mem_fillNodes
+#print axioms VE.NormDefaults.mem_fill_nodes
+#print axioms VE.NormDefaults.mem_rulesOn_fill
+#print axioms VE.NormDefaults.nodeNames_precedence
+#print axioms VE.NormDefaults.over_edge
+#print axioms VE.NormDefaults.root_of_yields
+#print axioms VE.NormDefaults.selectsD_fillRoot
+#print axioms VE.NormDefaults.selects_fillNode
+#print axioms VE.NormDefaults.selects_fill_fuel
+#print axioms VE.NormDefaults.selects_of_yields
+#print axioms VE.NormDefaults.selects_stable
+#print axioms VE.NormDefaults.sortsOf_reg
+#print axioms VE.NormDefaults.unsaidName_inj
+#print axioms VE.NormDefaults.uvalid
+#print axioms VE.NormDefaults.yieldsD_fillRoot
+#print axioms VE.NormDefaults.yields_fill_author
+#print axioms VE.NormDefaults.yields_fill_fuel
+#print axioms VE.NormDefaults.yields_fuel_unfold
+#print axioms VE.NormDefaults.yields_iff_selects
+#print axioms VE.NormDefaults.yields_leaf
+#print axioms VE.NormDefaults.yields_stable
