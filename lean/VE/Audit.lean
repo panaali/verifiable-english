@@ -83,6 +83,7 @@ import VE.NormDefaults.Semantics
 import VE.NormDefaults.Premises
 import VE.NormDefaults.Status
 import VE.NormDefaults.Evidence
+import VE.NormDefaults.Routes
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2211,3 +2212,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.universalQF_bindAll
 #print axioms VE.NormDefaults.yields_fill_eq
 #print axioms VE.NormDefaults.yields_mono
+#print axioms VE.NormDefaults.excepted_collapses_under_deny
+#print axioms VE.NormDefaults.excepted_lifts
+#print axioms VE.NormDefaults.excepted_not_selects
+#print axioms VE.NormDefaults.excepted_undecided
+#print axioms VE.NormDefaults.fill_rights_value
+#print axioms VE.NormDefaults.fill_soft_value
+#print axioms VE.NormDefaults.followableU_sound
