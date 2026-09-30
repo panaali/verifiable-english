@@ -95,6 +95,12 @@ surface (`discourseSourceSurface`).
   A bound unit's content and every reading of its active set must be its elaboration
   (`ManifestMismatch: bound.<unit>`); an open set of candidate readings for an unresolved reference (2.4) is
   therefore not admitted by the route (fail closed).
+- **Location bindings** (1.4): a `section_ref`, a `navigation`, and any mention of a `unit` or `anchor` target
+  (`locationKind`; a pronoun or demonstrative naming a registered content name's units) produce no formula
+  (`producing` is false): they are never slots (`recordedSlots`, `mentionAt`), never bind a unit (`boundUnits`) and
+  never record a surface. Their targets are checked for existence (`locationTargetOk`: `DanglingAnchor`,
+  `UnresolvedReference`, `ManifestMismatch: mentions.<m>.content_name`, as Python), and a pronoun or demonstrative
+  naming a unit in a slot position (a unit with meaning or a group span, `slotUnit`) is `TargetKindMismatch`.
 - **Discourse wording** (4.1(4)): with its span, the unit of every formula-producing mention must be printable
   ASCII with canonical spacing once the layout around it is removed (`canonicalWording` in `toTokenSpans`: one
   space between words, none before `.,;:!?)`, none after `(`); otherwise `InvalidInput: discourse wording of
@@ -157,9 +163,11 @@ need renewed statement approval (the approved statement is false or unprovable a
     block may carry `validity`, `self_truth` and `choices` (the Manifest fields of 9.1); Python does not evaluate
     them and relays this route's verdicts on them (the Lean authority below).
 11. **The loader.** JSON `null` (which the restricted parser does not read), fenced English or strict content, norm
-    content, `MIXED` units and a document without a claim graph (W2 admission needs one; Python loads such a
-    document without admitting it) are `NotImplemented: <feature>`. A `@2` input is the document text; a W2 admission
-    object with a `format` field is the unchanged `@1` path.
+    content and a document without a claim graph (W2 admission needs one; Python loads such a document without
+    admitting it) are `NotImplemented: <feature>`. A `MIXED` unit is read as Python's `_parts` reads it (`partsOf`,
+    `mixedParents`): its parts, which partition its span in order and each carry a status, are the units, and the
+    parent's id names no unit (the constitution's u0214.s02, docs/spec/discourse.md 2.5). A `@2` input is the
+    document text; a W2 admission object with a `format` field is the unchanged `@1` path.
 12. **(renewal) Outcomes, `validity_self` and `validity_import`.** `outcomeOf` also treats `NotImplemented` as
     `unknown` (a check the route cannot complete is never a rejection), and a successful admission whose joint set hit
     the budget (`admitted: UNKNOWN`, 4.1(8)) as `unknown` (`outcome_unknown_of_joint`): "ResourceLimit (any)" of 4.7.
