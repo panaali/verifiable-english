@@ -1034,10 +1034,6 @@ def _report(doc):
             "unsaid_predicates": [f"unsaid__{p}" for p in defaults.unspec],
             "background_labels": [label for label, _ in defaults.fill_premises],
             "report": {line.predicate: list(line.lines()) for line in lines}}
-    if "graph" in doc["meta"] and defaults is not None:
-        # Admission regenerates W1 layers from the units; it has no fill.
-        raise VEError("UnsupportedProfile: claim-graph admission of norm-defaults@0 documents "
-                      "awaits the Lean route")
     if "graph" in doc["meta"] and joint_pending:
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}
@@ -1085,6 +1081,10 @@ def _report(doc):
             from .soft_route import admit_soft_document
             result["admission"] = admit_soft_document(doc["environment"], admission,
                                                        soft_document=soft)
+        elif defaults is not None:
+            # W1's admission on `fill U`, from the source environment (Lean
+            # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
+            result["admission"] = admit_document(doc["environment"], admission)
         else:
             result["admission"] = admit_document(env, admission)
         if joint is not None:

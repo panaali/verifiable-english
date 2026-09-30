@@ -433,6 +433,9 @@ def admit_document(environment, document) -> dict:
         if result.get("status") != "ok":
             raise AdmissionError(result.get("error", "alternatives admission failed"))
         return {key: value for key, value in result.items() if key not in ("id", "status")}
+    if "norm-defaults@0" in env.profiles:
+        from .norm_defaults_route import admit_norm_defaults_document
+        return admit_norm_defaults_document(env, document)
     # The norms route takes every input with a norm construct (11.4): a
     # regulated declaration or norm content, as Lean `usesNormsPath` does.
     if ("norms@0" in env.profiles and
