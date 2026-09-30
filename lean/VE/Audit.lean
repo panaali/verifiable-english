@@ -74,6 +74,8 @@ import VE.Alternatives.Validate
 import VE.Alternatives.Wire
 import VE.EvaluationCounts
 import VE.Service.Protocol
+import VE.NormDefaults.Dag
+import VE.NormDefaults.Tree
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1939,3 +1941,23 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.valueSoft_of_decides
 #print axioms VE.Rights.yields_bar
 #print axioms VE.Rights.yields_eq
+#print axioms VE.NormDefaults.countP_lt_of
+#print axioms VE.NormDefaults.count_le_one_of_nodup
+#print axioms VE.NormDefaults.dependencyOrder_congr
+#print axioms VE.NormDefaults.dependencyOrder_ok
+#print axioms VE.NormDefaults.exists_ready
+#print axioms VE.NormDefaults.filter_names
+#print axioms VE.NormDefaults.idxOf_append_left
+#print axioms VE.NormDefaults.idxOf_append_not
+#print axioms VE.NormDefaults.idxOf_lt_of_mem
+#print axioms VE.NormDefaults.kahn_congr
+#print axioms VE.NormDefaults.kahn_ok
+#print axioms VE.NormDefaults.mem_deps
+#print axioms VE.NormDefaults.mem_nodeNames
+#print axioms VE.NormDefaults.nodeNames_keyOf
+#print axioms VE.NormDefaults.node_eq_of_name
+#print axioms VE.NormDefaults.nodup_length_le
+#print axioms VE.NormDefaults.ordered_snoc
+#print axioms VE.NormDefaults.reachCount_lt
+#print axioms VE.NormDefaults.smallest_mem
+#print axioms VE.NormDefaults.smallest_some
