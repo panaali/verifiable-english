@@ -20,6 +20,7 @@ except ModuleNotFoundError:
     sys.modules["grimp"] = grimp
 import check_python_layers
 import check_rust_deps
+import layer_policy
 import select_tests
 
 from select_tests import select
@@ -174,18 +175,35 @@ class LayerSelectionTests(unittest.TestCase):
                       patch.object(check_python_layers.grimp, "build_graph", return_value=Graph())):
                     self.assertIn("ve.errors -> ve.argument", check_python_layers.violations())
 
-    def test_comment_prefixed_and_nested_lean_imports(self):
-        source = "/- outer /- inner -/ -/ import VE.Route.Run\n-- import VE.Fake\n"
+    def test_plain_lean_headers_with_comments(self):
+        source = "/- a comment -/\n-- import VE.Fake\n\nimport VE.Route.Run\n"
         self.assertEqual(check_lean_imports.imports(source), ["VE.Route.Run"])
-        self.assertEqual(check_lean_imports.imports("import «VE».Route.Run\n"),
-                         ["VE.Route.Run"])
 
-    def test_quoted_lean_local_import_is_checked(self):
+    def test_lean_headers_outside_the_plain_layout_are_rejected(self):
+        # Lean reads VE.Surface from each of these (tests/test_lean_import_reader.py
+        # checks the plain ones against Lean's own header parser).
+        for source in ("import\n  VE.Surface\n", "prelude import VE.Syntax import VE.Surface\n",
+                       "module\n\npublic import VE.Surface\n", "import«VE».Surface\n",
+                       "import /- c -/ VE.Surface\n", "import -- c\n  VE.Surface\n",
+                       "/- outer /- inner -/ -/ import VE.Surface\n", "/-/-/import VE.Surface\n",
+                       "import VE.Core.Bridge /-/-/import VE.Surface\n",
+                       "import VE.Core.Bridge import«VE».Surface\n"):
+            with self.assertRaises(check_lean_imports.HeaderError, msg=source):
+                check_lean_imports.imports(source)
+        for source in ('def s := "import VE.Surface"\n', "def x := Foo.import\nimportant VE.Surface\n",
+                       '/- "unclosed -/\ndef s := "\\" import VE.Surface"\n',
+                       "import VE.Core.Bridge\ndef «an import VE.Surface» := 1\n",
+                       "import VE.Core.Bridge\ndef x := 1\nimport VE.Surface\n",
+                       "/-! doc -/\nimport VE.Surface\n"):
+            self.assertNotIn("VE.Surface", check_lean_imports.imports(source), source)
+
+    def test_lean_header_outside_the_plain_layout_fails_the_checker(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "lean/VE/Core").mkdir(parents=True)
             (root / "lean/VE/Route").mkdir(parents=True)
-            (root / "lean/VE/Core/Wire.lean").write_text("import «VE».Route.Run\n")
+            (root / "lean/lean-toolchain").write_text((layer_policy.ROOT / "lean/lean-toolchain").read_text())
+            (root / "lean/VE/Core/Wire.lean").write_text("/-/-/import VE.Route.Run\n")
             (root / "lean/VE/Route/Run.lean").write_text("")
             ledger = root / "exceptions.json"
             ledger.write_text("{}")
@@ -194,7 +212,16 @@ class LayerSelectionTests(unittest.TestCase):
                   patch.object(check_lean_imports, "LEDGER", ledger),
                   redirect_stderr(error)):
                 self.assertEqual(check_lean_imports.main(), 1)
+            self.assertIn("Lean header not in the plain layout: lean/VE/Core/Wire.lean: line 1: "
+                          "`/-` inside a block comment", error.getvalue())
+            (root / "lean/VE/Core/Wire.lean").write_text("import VE.Route.Run\n")
+            error = io.StringIO()
+            with (patch.object(check_lean_imports, "ROOT", root),
+                  patch.object(check_lean_imports, "LEDGER", ledger),
+                  redirect_stderr(error)):
+                self.assertEqual(check_lean_imports.main(), 1)
             self.assertIn("new outward Lean import: VE.Core.Wire -> VE.Route.Run", error.getvalue())
+            self.assertNotIn("plain layout", error.getvalue())
 
     def test_unmapped_lean_importer_reports_error(self):
         with TemporaryDirectory() as directory:
@@ -224,6 +251,16 @@ class LayerSelectionTests(unittest.TestCase):
                   redirect_stderr(error)):
                 self.assertEqual(check_lean_imports.main(), 1)
             self.assertIn("unmapped Lean module: Alien", error.getvalue())
+
+    def test_namespace_package_imports_resolve_to_the_package(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ve/surface").mkdir(parents=True)
+            (root / "ve/surface/registry.py").write_text("")  # no __init__.py
+            for source in ("from ve import surface\n", "import ve\nve.surface\n"):
+                self.assertIn("ve.surface", layer_policy.python_imports("ve.ast", source, {}, root=root))
+            self.assertNotIn("ve.absent", layer_policy.python_imports(
+                "ve.ast", "from ve import absent\n", {}, root=root))
 
     def test_experiment_import_forms_are_outer_layer(self):
         with TemporaryDirectory() as directory:
