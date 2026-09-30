@@ -1,0 +1,6 @@
+For every action, if the tool of that action is "read_file", then there is a file such that that action reads that file.
+For every action, if the tool of that action is "write_file", then there is a file such that that action writes that file.
+For every action, if the tool of that action is "delete_file", then there is a file such that that action deletes that file.
+For every action, if the tool of that action is "web_fetch", then there is a host such that that action contacts that host.
+For every action, if the tool of that action is "send_email", then there is a person such that that action messages that person.
+For every action, if the tool of that action is "post_message", then there is a person such that that action messages that person.

@@ -421,6 +421,7 @@ theorem citation_choices_retained (E : VE.Environment) (bg : List VE.Definitions
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
   cases h
   refine ⟨fun m hm k' hk' hid l hl => ?_, VE.Route.Gate.require_ok hch⟩
   have hall := List.all_eq_true.mp (VE.Route.Gate.require_ok hhyp) k' hk'

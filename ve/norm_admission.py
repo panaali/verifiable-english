@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 
+from .assurance import semantic_entry
 from . import admission as w2
 from .environment import Environment
 from .errors import ResourceLimit, UnsupportedProfile, VEError
@@ -24,8 +25,12 @@ def _check_quoted(env, content):
     NormDocument(env, [replace(rule, over=())])
 
 
+@semantic_entry("admission")
 def admit_norm_document(environment, document):
     env = environment if type(environment) is Environment else Environment(environment)
+    if env.alternatives is not None:
+        from .admission import admit_document
+        return admit_document(env, document)
     if "norms@0" not in env.profiles:
         raise UnsupportedProfile("norms@0 is required")
     if env.closure or env.order:
