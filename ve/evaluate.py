@@ -172,18 +172,15 @@ class _Evaluator:
 def _validate_model(env: Any, model: FiniteModel) -> FiniteModel:
     if type(model) is not FiniteModel:
         raise InvalidModel("expected a validated FiniteModel")
-    if model.environment_id != env.environment_id:
-        raise InvalidModel("model belongs to a different environment")
     try:
-        validated = FiniteModel.from_dict(env, model.to_dict())
+        # The selected authority decides the model's validity, Background
+        # included, and whether its claimed identities are the recomputed ones.
+        return FiniteModel.from_dict(env, model.to_dict(), _claimed={
+            "environment_id": model.environment_id, "model_id": model.model_id})
     except VEError:
         raise
     except (AttributeError, KeyError, TypeError, ValueError) as exc:
         raise InvalidModel("malformed FiniteModel object") from exc
-    if validated.model_id != model.model_id:
-        raise InvalidModel("model identity does not match its contents")
-    # FiniteModel.from_dict validated Background under the selected authority.
-    return validated
 
 
 def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,

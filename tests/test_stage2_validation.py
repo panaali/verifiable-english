@@ -145,6 +145,34 @@ def test_statement_layers_and_rust_keep_the_python_decoder(monkeypatch):
     assert calls == []
 
 
+def test_lean_rejects_a_model_whose_claimed_identity_is_stale(monkeypatch):
+    """An existing FiniteModel's claimed identities are checked by Lean's model
+    mode: a stale model_id or a model of another environment is Lean's
+    rejection, named with Python's diagnostic."""
+    from dataclasses import replace
+    from ve.ast import Unary, Const
+    from ve.evaluate import evaluate
+    env = Environment(pm.raw_environment(()))
+    other = Environment(pm.raw_environment(("data@0",)))
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    model = FiniteModel.from_dict(env, pm.model_wire(env))
+    formula = Unary("base", Const("x"))
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    row = lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
+                                     "claimed": {"environment_id": env.environment_id,
+                                                 "model_id": model.model_id}}])[0]
+    assert row["model_id"] == model.model_id
+    for stale, message in ((replace(model, model_id="0" * 64), "does not match its contents"),
+                           (replace(model, environment_id=other.environment_id), "different environment")):
+        with pytest.raises(InvalidModel, match=message) as raised:
+            evaluate(env, formula, stale)
+        assert getattr(raised.value, "backend_rejection", False) is True
+        with pytest.raises(VEError, match=f"InvalidModel: model .*{message}"):
+            lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
+                                       "claimed": {"environment_id": stale.environment_id,
+                                                   "model_id": stale.model_id}}])
+
+
 def test_model_identity_sorts_domains_as_python_does(monkeypatch):
     """Python's model identity sorts each domain's entities (`j10` before `j2`)."""
     env = Environment(pm.raw_environment(()))
