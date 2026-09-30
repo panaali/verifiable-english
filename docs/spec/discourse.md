@@ -175,7 +175,14 @@ correspondence of 4.3; neither is a location binding.
 their mention is a slot of the unit's derivation (4.3). `section_ref`, `navigation`, `unit` and `anchor` targets are
 location bindings: they are entries of the unit's binding table, produce no formula, and never occupy a slot; a
 unit consisting only of a location binding is LABELLED (4.9), and a location target in a slot position is
-`TargetKindMismatch`.
+`TargetKindMismatch`. The target decides, not the form: a `pronoun` or `demonstrative` naming a `unit` target
+("this broad pattern of treatment and trust", "it" for a registered content name, 2.5) is a location binding, so a
+**formula-producing mention** is one whose form is formula-producing and whose target is neither a `unit` nor an
+`anchor`. Such a location binding stands only in a unit no derivation reads, a unit without meaning (no content and
+no active reading set) that is not a group span; in a unit with meaning or a group span its position is a slot and
+it is `TargetKindMismatch: <mention>: <form>, unit`. A location binding's target must exist like any other
+(`DanglingAnchor: <anchor>`; `UnresolvedReference: <mention>` for an empty or unknown unit list;
+`ManifestMismatch: mentions.<m>.content_name` when its content name does not list exactly its units).
 
 ### 1.5 Reading groups and compatibility constraints
 
@@ -300,6 +307,12 @@ description, authoring offers the uniqueness sentence as an explicit unit the au
 
 Expected reference outcomes only; no status upgrade is claimed for any of these units (plan page 4).
 
+The u0214.s02 entry is a regression fixture of both checkers (`tests/test_discourse_constitution.py`, on the pinned
+bytes of u0214.s01 and u0214.s02): run as written, as a `MIXED` unit, it is admitted with
+both references `navigation` and its parts LABELLED and UNFORMALISED. It runs in a `ve-document@2` document with a
+claim graph and without fenced content; the pinned translation it comes from also carries a fenced English clause
+and a norm unit, which the route does not compose yet (11).
+
 ```text
 Constitution run 20260927T1800Z (units.json; spans are the ledger's)
 u0136.s01  "Such potential harms always have to be weighed against the potential benefits of taking an action."
@@ -309,12 +322,15 @@ u0136.s01  "Such potential harms always have to be weighed against the potential
 u0182.s03  "Or does it escape these mechanisms?"
            kind question; `it` → the entity registered for the model in that section, `these mechanisms` → a `unit`
            list; LABELLED as a question with its references in the inventory.
-u0214.s02  "We call this broad pattern of treatment and trust Claude's principal hierarchy, and it helps define what
-           we mean by broad safety."
-           MIXED: the naming clause registers the content name "Claude's principal hierarchy" (1.3) over a `unit`
-           target (the preceding units) and is LABELLED; "it helps define what we mean by broad safety" resolves
-           `it` to that content name's `unit` target and stays UNFORMALISED (no "helps define" semantics;
-           `broad_safety` remains the open term).
+u0214.s02  "We call this broad pattern of treatment and trust Claude’s principal hierarchy, and it helps define what
+           we mean by broad safety." (the source's apostrophe is U+2019)
+           MIXED: the naming clause registers the content name "Claude’s principal hierarchy" (1.3) over a `unit`
+           target (the preceding units) and is LABELLED, its `this broad pattern of treatment and trust` a
+           `demonstrative` location binding to that `unit` target (1.4); "it helps define what we mean by broad
+           safety" resolves `it` (a `pronoun` location binding) to that content name's `unit` target and stays
+           UNFORMALISED (no "helps define" semantics; `broad_safety` remains the open term). Neither part has
+           meaning, so neither mention is a slot and neither part needs discourse wording (4.1(4)): the name keeps
+           its curly apostrophe.
            Calling the whole passage OPEN stays forbidden (the rejected u0214 audit).
 u0256.s03  "Indeed, it can explore these questions as fascinating aspects of its novel existence."
            `it`/`its` → the registered model entity; `these questions` → a `unit` list (content, not an entity);
@@ -441,8 +457,8 @@ English parser included) is used only for editor hints (`discourse_hints`, the r
 compute) and for the diagnostic text of a document Lean rejects too (8); a document Lean admits and Python's port
 rejects is admitted, with Python's diagnostic as a hint. A route that is missing, fails, times out or answers
 anything but one well-formed answer to the case is `CheckerUnavailable`, and so is a document Lean admits that
-Python cannot load or report; Lean's `NotImplemented` (fenced content, norm content, `MIXED` units, JSON `null`, a
-document without a claim graph) is `UnsupportedProfile`, and Lean's `ResourceLimit` stays Lean's. Neither is a
+Python cannot load or report; Lean's `NotImplemented` (fenced content, norm content, JSON `null`, a document
+without a claim graph) is `UnsupportedProfile`, and Lean's `ResourceLimit` stays Lean's. Neither is a
 verdict, and neither is ever a Python-only CHECKED. A text is a `ve-document@2` document when its JSON front matter's
 `format` says so, read before and apart from every other check, so a body or metadata Python's checks read
 differently still reaches Lean; what Python does before Lean's answer (that test, collecting the sibling files)
@@ -494,8 +510,8 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
 4. Every mention names a unit and its byte range starts and ends on tokens the lexer (6) reads from that unit's
    own bytes (`InvalidInput: mention <m> names an unknown unit`, `InvalidInput: mention <m> span`), checked for
    every mention before the rest of the block. **Discourse wording.** With its span, the unit of every recorded
-   reference (a formula-producing mention: every form but `section_ref` and `navigation`) must have discourse
-   wording: once the layout characters around it (ASCII space, tab, newline, return) are removed, the text is
+   reference (a formula-producing mention, 1.4: a form other than `section_ref` and `navigation` whose target is
+   not a `unit` or an `anchor`) must have discourse wording: once the layout characters around it (ASCII space, tab, newline, return) are removed, the text is
    printable ASCII (U+0020 to U+007E) with canonical spacing, one ASCII space between words, none before
    `.,;:!?)` and none after `(`; so no tab, newline, Unicode space, control or non-ASCII character (a folded
    `İ`, `ı`, `ſ`, a curly quote, an accented letter) lies inside a sentence. Anything else is `InvalidInput:
@@ -505,7 +521,8 @@ A `ve-document@2` document `D` over environment `E` is well-formed when, in this
    sentences alone (without the layout around them) with each recorded reference replaced by the English
    parser's own spelling of the target constant (`api`, `"web_api"`), never by its registered display, which
    names the constant only in the reviewed presentation (Lean never parses a display). A unit that records no
-   reference keeps its own wording (slot discovery and `Acc` read it as segments, 6). Mention spans within one
+   reference keeps its own wording (slot discovery and `Acc` read it as segments, 6), and so does a unit whose
+   mentions are all location bindings, which are never parsed (u0214.s02's `Claude’s`, 2.5). Mention spans within one
    unit are disjoint or properly nested
    (`InvalidInput: mentions <a>, <b> overlap`); every target exists (`UnresolvedReference` when the manifest
    records none, `DanglingAnchor`, `UnknownDocument`, `UnknownRule`, W3's `Citation is absent, cyclic, or not
@@ -873,7 +890,7 @@ the compatibility relation and that citations and reports extend to it (4.8), th
 identities and provenance (3.5, 4.5, 4.8), and that bindings are exact (3.3). Existential witness naming is not
 presented as W3's unique conservative expansion; there is no witness naming.
 
-**Composition with the norm routes.** An elaborated norm unit enters W1 (`norms@0`) as ordinary norm content with
+**Composition with the norm routes** (specified; the route does not implement it yet, 11). An elaborated norm unit enters W1 (`norms@0`) as ordinary norm content with
 its rule identity unchanged. Where the soft route (`soft-norms@0`, [soft-norms.md](soft-norms.md) 6) applies to
 such a unit, its coherence premises (`Coh_T`, the `conditional_on: soft:coherence:<a>,<b>` list) and its conditional
 guarantees are retained unchanged on the elaborated content: no discourse binding discharges, hides or reorders a
@@ -1893,7 +1910,14 @@ formulas within `MAX_NODES`; every overflow is `ResourceLimit` with the limit na
 validity check, `unconfirmed`). Every binding, elaborated formula, group reading, joint set, document table and
 identity is regenerated from the decoded document at every trusted site (3.4); the manifest is validated, never
 trusted. Compositions: `norms@0` unchanged; `soft-norms@0` only with its coherence premises and conditional
-guarantees retained, otherwise explicitly unsupported (5). Rust never resolves references: on the
+guarantees retained, otherwise explicitly unsupported (5). **Stated limitation of the route today.** Those two
+compositions are specified, not implemented: the Lean route answers norm content with `NotImplemented: norm
+content` and the frozen gate answers `soft-norms@0` with `UnsupportedProfile: Unsupported profile soft-norms@0`, so
+a document with a norm or soft-norm unit is `UnsupportedProfile` and never admitted by this route. Fenced English or
+strict content and a document without a claim graph are the other two abstentions (3.4). The constitution pilot
+(run 20260930T0600Z, its `probes/discourse-probe.json`) hits all three on the text of 2.5: its translation has a
+norm unit (u0165.s07) and one checked clause as a fenced English block (u0248), and without that clause it has no
+claim graph; its u0214.s02 is checked here only in a document without them (2.5). Rust never resolves references: on the
 `elaborated-document` family a discourse case carries the Python-generated elaborated formulas marked `untrusted:
 true`, and its verdict must agree with Python's and Lean's regenerated ones (regression evidence; the trust path is
 Lean).
@@ -2016,3 +2040,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-10-01 | Draft 4, amendment | After `manage-agents/discourse2-loop.final.md` and `discourse-spacing-directive.md`: discourse wording (4.1(4)), the whitespace class closed by restriction. A unit that records a reference is printable ASCII with canonical spacing once the layout around it is removed, or `InvalidInput: discourse wording of <unit>` in both checkers before parsing; Python parses its expansions without that layout and with the parser's own spelling of each target constant, never a registered display. Differing codes on inputs both reject are a recorded known limitation (8). |
 | 2026-10-02 | Draft 4, amendment | After `manage-agents/discourse3-loop.final.md` and `discourse-authority-directive.md`: Python's `@2` admission is Lean's (3.4). The verdict, unit statuses, references, validity verdicts and report id come from the Lean route's `admission` answer on the same bytes; Python's own checks give hints and the diagnostic text of a document both reject (8); no Lean answer is `CheckerUnavailable`, Lean's `NotImplemented` (now also a document without a claim graph) is `UnsupportedProfile`. The quote-spacing, display and agreement differences of the loop are hints, not verdicts. |
 | 2026-10-03 | Draft 4, amendment | After `manage-agents/discourse4-looprecheck1.final.md` (3.4): a `@2` text is recognised by its front matter's `format` alone, so a body Python splits differently still reaches Lean; the import collector and every check before Lean's answer read any front matter; Lean's loader splits lines at `\r` and `\r\n` too and strips fence lines as `bytes.strip()` does; a front matter over Lean's JSON depth is `ResourceLimit`, which Python never replaces by its own rejection. |
+| 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse-example-directive.md` (constitution pilot run 20260930T0600Z, u0214.s02 failing four ways): the target, not the form, makes a location binding (1.4): a pronoun or demonstrative naming a `unit` target is a location binding, never a slot and never parsed, so its unit needs no discourse wording (4.1(4)); in a unit with meaning or a group span it is `TargetKindMismatch`; every location target is checked for existence in Lean too. The Lean route reads `MIXED` units as Python does (3.4). 2.5's u0214.s02 is a regression fixture, with the source's curly apostrophe. Fenced content, a document without a claim graph and norm or soft-norm composition remain stated limitations of the route (11), with the pilot as the example. |
