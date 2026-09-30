@@ -7,7 +7,9 @@ responsibility until it is split; exact legacy edges are tracked separately.
 from __future__ import annotations
 
 import ast
+from functools import cache
 from pathlib import Path
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-measurements"}
@@ -89,12 +91,22 @@ def python_layer(module: str) -> int | None:
     return max(matches)[1] if matches else None
 
 
+@cache
+def lean_executables(root: Path = ROOT) -> dict[str, str]:
+    """Map each `lean_exe` in lean/lakefile.toml to its root module."""
+    lakefile = tomllib.loads((root / "lean/lakefile.toml").read_text())
+    return {exe["name"]: exe.get("root", exe["name"]) for exe in lakefile.get("lean_exe", [])}
+
+
+def lean_entry(module: str) -> bool:
+    """Executable roots and top-level `*Main` modules are route and service entry points."""
+    return module in lean_executables().values() or ("." not in module and module.endswith("Main"))
+
+
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module in {"Main", "NormsMain", "SoftNormsMain", "RightsMain", "SpeechActsMain",
-                  "AlternativesMain", "QuantityMain", "ReportsMain", "DiscourseMain",
-                  "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
+    if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",

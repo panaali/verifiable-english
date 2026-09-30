@@ -9,15 +9,17 @@ public reexport facade, not an architectural dependency source.
 
 | Layer | Python `ve` modules | Lean modules | Rust |
 |---|---|---|---|
-| 1 kernel | `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` (one crate currently contains kernel, profile and surface code) |
-| 2 profiles | `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`order`, `route`, `eval`, `search`); intra-crate Rust imports are not enforced yet |
-| 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
-| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_strict`, `openterms`, `propose`, `readings`, `search`, `stream_audit`, `vacuity`, `assist.*` | `Main`, `NormsMain`, `Serve`, `ResponseDecode`, `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
+| 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` (one crate currently contains kernel, profile and surface code) |
+| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`order`, `route`, `eval`, `search`); intra-crate Rust imports are not enforced yet |
+| 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `report_english`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
+| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_strict`, `openterms`, `propose`, `readings`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
 
 The exact assignments, including exceptions to these patterns, live in
 [`tools/layer_policy.py`](../tools/layer_policy.py). New Python and Lean modules
-must be classified there. Rust's two crate boundaries are in
+must be classified there; `tools/test_layer_policy.py` fails on any unclassified
+module in `ve/` or `lean/`. A new route or service executable needs no entry:
+its `lakefile.toml` root, or a top-level `*Main` module, is tool layer by rule. Rust's two crate boundaries are in
 [`tools/check_rust_deps.py`](../tools/check_rust_deps.py). The desired future
 split is separate Rust kernel, profile and surface crates; the present crate
 check cannot claim to enforce boundaries inside `ve-core`.
@@ -48,9 +50,8 @@ always selected.
 | `ve_experiments/**`, `experiments/**`, `usecases/**`, `paper/**`, documentation | Layer 5, except generated `docs/english-surface.md` and `docs/fluent-examples.md` are layer 1 because tests compare their contents |
 | Unknown paths | Layer 1 full-suite fallback |
 
-Tests that call `lean/.lake/build/bin/ve_conformance`,
-`ve_norms_route`, `ve_service`, `ve_english_run`, `ve_response_decode`,
-or `rust/target/release/ve` are treated
+Tests that call a `lean/.lake/build/bin` executable (any `lean_exe` named in
+`lean/lakefile.toml`) or `rust/target/release/ve` are treated
 as tool-level consumers even without a Python import. Tests that read
 `usecases` data are app-level consumers. Four cross-cutting Python files always run:
 `test_conformance.py`, `test_lean_conformance.py`,
