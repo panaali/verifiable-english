@@ -826,6 +826,7 @@ class PredicateReport:
     certificate: dict = field(default_factory=dict)
     inherits_from: tuple[str, ...] = ()
     grounding: str = ""
+    situation: object = None
 
     def lines(self):
         result = [f"completion: {self.completion}"]
@@ -881,6 +882,27 @@ def _reached_witness(document, situation, predicate, max_unsaid_atoms, max_evalu
     return None
 
 
+def search_reached(document, predicate, *, max_domain_size=2, max_models=10_000):
+    """An untrusted small-model search for a situation, filling and tuple where no
+    author rule on `predicate` decides; every result is checked by `check_reached`."""
+    from .search import find_countermodel
+    sorts = document.env.predicates[predicate].arguments
+    base = document.filled.base_environment()
+    result = find_countermodel(base, [formula for _, formula in document.fill_premises],
+                               _bind(Not(document.reached(predicate)), sorts),
+                               max_domain_size=max_domain_size, max_models=max_models)
+    if result.status != "Found":
+        return None
+    data = result.model.to_dict()
+    filling = {unsaid_name(p): frozenset(tuple(row) for row in data["relations"].pop(unsaid_name(p)))
+               for p in document.unspec}
+    situation = document.situation(data)
+    for values in product(*(situation.domains[s] for s in sorts)):
+        if check_reached(document, situation, filling, predicate, values):
+            return situation, tuple(values), filling
+    return None
+
+
 def check_reached(document, situation, filling, predicate, values):
     """A `gaps: reachable` or `default reached` witness: an admissible filling at
     which the reached formula holds."""
@@ -907,7 +929,7 @@ def check_reached_certificate(document, predicate, package):
 
 def report(document, *, model=None, prove=False, certificates=None, completions=None,
            translation=False, max_unsaid_atoms=MAX_UNSAID_ATOMS, max_evaluations=MAX_EVALUATIONS,
-           tableau_steps=10_000):
+           tableau_steps=10_000, search_domain_size=None):
     """One PredicateReport per regulated predicate, in layer order (spec 3.2).
 
     A witness needs a supplied base situation; a certificate is proved (`prove`)
@@ -921,7 +943,7 @@ def report(document, *, model=None, prove=False, certificates=None, completions=
     result = []
     for predicate in document.filled.order:
         completion = document.completion(predicate)
-        reached, witness, certificate = "unknown", (), {}
+        reached, witness, certificate, found_in = "unknown", (), {}, situation
         if situation is not None:
             try:
                 found = _reached_witness(document, situation, predicate, max_unsaid_atoms, max_evaluations)
@@ -929,6 +951,10 @@ def report(document, *, model=None, prove=False, certificates=None, completions=
                 found = None
             if found is not None:
                 reached, witness = "reachable", found
+        elif search_domain_size is not None:
+            found = search_reached(document, predicate, max_domain_size=search_domain_size)
+            if found is not None:
+                found_in, witness, reached = found[0], (found[1], found[2]), "reachable"
         if reached == "unknown":
             package = (certificates or {}).get(predicate)
             if package is None and prove:
@@ -947,7 +973,8 @@ def report(document, *, model=None, prove=False, certificates=None, completions=
             elif translation and reached == "reachable":
                 grounding = f"UngroundedDefault: {predicate}"
         result.append(PredicateReport(predicate, completion, reached, witness, certificate,
-                                      document.inherits_from(predicate), grounding))
+                                      document.inherits_from(predicate), grounding,
+                                      found_in if reached == "reachable" else None))
     return tuple(result)
 
 
