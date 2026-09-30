@@ -103,7 +103,7 @@ theorem UValid.not_unsaid {n : String} {ss : List String} (hn : U.D.E.predicates
 
 end Valid
 
-theorem flatMap_congr' {α β : Type} {l : List α} {f g : α → List β} (h : ∀ x ∈ l, f x = g x) :
+theorem flatMap_congr_mem {α β : Type} {l : List α} {f g : α → List β} (h : ∀ x ∈ l, f x = g x) :
     l.flatMap f = l.flatMap g := by
   induction l with
   | nil => rfl
@@ -209,7 +209,7 @@ theorem children_fill_author {N : Node} (hN : N ∈ U.D.T.nodes) :
     obtain ⟨r, _, _, rfl⟩ := mem_fillNodes.mp hC
     simp [fillNode]
   rw [h₂, List.append_nil]
-  apply flatMap_congr'
+  apply flatMap_congr_mem
   intro C _
   rcases fillRoot_over U C with ⟨hp, ho, ho'⟩ | ⟨_, he⟩
   · simp only [fillRoot_pred, ho', ho]
