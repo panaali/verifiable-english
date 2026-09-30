@@ -188,22 +188,29 @@ class _Kleene:
 
 class UnspecifiedDocument:
     """`U = (D, unspec)` on the norms route: the validated author document, its
-    limits (spec 8), `fill U` and `Fill_T`."""
+    limits (spec 8), `fill U` and `Fill_T`. `D` is the author tree itself here;
+    the soft route's `D` is `soften T` (`UnspecifiedSoftDocument`)."""
 
     def __init__(self, env, units):
         if PROFILE not in env.profiles:
             raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 is required")
         if "soft-norms@0" in env.profiles or env.alternatives is not None:
-            raise UnsupportedProfile("UnsupportedProfile: the norm-defaults route is built for norms@0 only")
+            raise UnsupportedProfile("UnsupportedProfile: the norm-defaults route is built for norms@0 "
+                                     "and soft-norms@0 (UnspecifiedSoftDocument) only")
         self.env = env
         # W1's checks, and the reserved `unsaid--` rule names (2.1).
         self.author = NormDocument(env, units)
+        self._build()
+
+    def _build(self):
+        env = self.env
         self.unspec = tuple(sorted(p for p, d in env.predicates.items()
                                    if d.regulated is not None and d.regulated.default == "unspecified"))
         self._check_limits()
         self.filled_env = self._filled_environment()
         self._check_ast()
-        self.filled = FilledNormDocument(self.filled_env, self._filled_rules())
+        self.filled = self._filled_class()(self.filled_env, self._filled_rules())
+        self._install_soft_premises()
         self.fill_premises = self._fill_premises()
         self.filled.fill_premises = self.fill_premises
         self.filled._filled_base = None
@@ -218,6 +225,12 @@ class UnspecifiedDocument:
         self.fill_hash = digest(f"ve-norm-defaults-fill-{env.identity_version}\n",
                                 {"environment_id": env.environment_id,
                                  "premises": [[label, _to_data(f)] for label, f in self.fill_premises]})
+
+    def _filled_class(self):
+        return FilledNormDocument
+
+    def _install_soft_premises(self):
+        pass
 
     # Spec 8: the author-side limits, in order, before `fill` is built.
     def _check_limits(self):
@@ -250,15 +263,15 @@ class UnspecifiedDocument:
         return _atom(unsaid_name(p), len(self.env.predicates[p].arguments))
 
     def _filled_environment(self):
-        data = self.env.to_dict()
-        data["profiles"] = [p for p in data["profiles"] if p != PROFILE]
+        data = _placeholder(self.author.env.to_dict())
         predicates = data["vocabulary"]["predicates"]
-        for p in self.unspec:
-            predicates[p]["regulated"]["default"] = "deny"
         for p in self.unspec:
             predicates[unsaid_name(p)] = {"arguments": list(self.env.predicates[p].arguments),
                                           "description": FILL_DESCRIPTION}
-        return Environment(data)
+        return self._environment_class()(data)
+
+    def _environment_class(self):
+        return Environment
 
     def _filled_rules(self):
         unspec = set(self.unspec)
@@ -591,6 +604,92 @@ class UnspecifiedDocument:
             for row in product(*(situation.domains[s] for s in sorts)):
                 result.append(self.status(situation, p, row, **options))
         return tuple(result)
+
+
+def _placeholder(data):
+    """The environment without norm-defaults@0, each unspecified completion the placeholder deny."""
+    data = copy.deepcopy(data)
+    data["profiles"] = [p for p in data["profiles"] if p != PROFILE]
+    for decl in data["vocabulary"]["predicates"].values():
+        if decl.get("regulated", {}).get("default") == "unspecified":
+            decl["regulated"]["default"] = "deny"
+    return data
+
+
+class FilledSoftBaseEnvironment(Environment):
+    """Background_base(E′‴) ++ Soft_T ++ Fill_T."""
+
+    def __init__(self, data, soft_premises=(), fill_premises=()):
+        object.__setattr__(self, "soft_premises", tuple(soft_premises))
+        object.__setattr__(self, "fill_premises", tuple(fill_premises))
+        super().__init__(data)
+
+
+def _filled_soft_class():
+    from .softnorms import SoftenedNormDocument
+
+    class FilledSoftNormDocument(SoftenedNormDocument):
+        """`fill (soften T)`: a W1 tree over E′‴ whose base carries Soft_T and Fill_T."""
+        fill_premises = ()
+        soft_premises = ()
+
+        def base_environment(self):
+            cached = getattr(self, "_filled_base", None)
+            if cached is not None:
+                return cached
+            data = self.env.to_dict()
+            data["vocabulary"].pop("soft", None)
+            data["vocabulary"]["predicates"] = {
+                name: {k: v for k, v in decl.items() if k != "instruction_of"}
+                for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
+            data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0")]
+            base = FilledSoftBaseEnvironment(data, self.soft_premises, self.fill_premises)
+            self._filled_base = base
+            return base
+
+    return FilledSoftNormDocument
+
+
+class UnspecifiedSoftDocument(UnspecifiedDocument):
+    """`U = (soften D, unspec)` (spec 2.3 order: `fill` runs after `soften`).
+
+    The soft document is validated and softened over the placeholder
+    completions, which `soften` never reads; `fill` then adds the gaps. Exc_T is
+    unchanged and Coh_T is regenerated on the filled tree, so its selections
+    carry unsaid atoms where guards mention unspecified predicates (3.3)."""
+
+    def __init__(self, env, units):
+        from .softnorms import SoftEnvironment, SoftNormDocument
+        if PROFILE not in env.profiles:
+            raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 is required")
+        if not isinstance(env, SoftEnvironment):
+            raise UnsupportedProfile("UnsupportedProfile: soft-norms@0 is required")
+        self.env = env
+        self.soft = SoftNormDocument(SoftEnvironment(_placeholder(env.to_dict())), units)
+        for rule in self.soft.rules:
+            if rule.core.name.startswith("unsaid--"):
+                raise VEError(f"InvalidInput: reserved name {rule.core.name}")
+        self.author = self.soft.elaborated
+        self._build()
+
+    def _filled_class(self):
+        return _filled_soft_class()
+
+    def _environment_class(self):
+        from .softnorms import SoftEnvironment
+        return lambda data: SoftEnvironment(data, generated=True)
+
+    def _install_soft_premises(self):
+        filled = self.filled
+        premises = list(self.soft.exception_premises)
+        for left, right in self.soft.collisions:
+            a, b = sorted((left.core.name, right.core.name))
+            sides = [filled._expand(filled.selection(r.core.predicate)[2][r.core.name], r.core.predicate)
+                     for r in (left, right)]
+            sorts = self.env.predicates[left.core.predicate].arguments
+            premises.append((f"soft:coherence:{a},{b}", _bind(Not(And(*sides)), sorts)))
+        filled.soft_premises = tuple(premises)
+        filled._filled_base = None
 
 
 def _bindings(sorts, values):

@@ -632,3 +632,115 @@ def test_u13_fill_rules_are_never_rendered():
     texts.append(english.latent_conflict_sentence(doc, situation, nd.check_conflict(doc, model=ONE_ACT)))
     assert all("unsaid" not in text for text in texts)
     assert "unsaid--" in " ".join(r.name for r in doc.filled.rules)
+
+
+# Soft route: fill after soften (2.3 order), u2, u3, u8.
+
+def soft_environment(predicates, sorts, soft=None):
+    from ve.softnorms import SoftEnvironment
+    raw = raw_environment(predicates, sorts=sorts, profiles=["norm-defaults@0", "norms@0", "relational-fol@0",
+                                                             "soft-norms@0"])
+    if soft is not None:
+        raw["vocabulary"]["soft"] = soft
+    return SoftEnvironment(raw)
+
+
+def soft_rule(name, predicate, sign, mode="strict", **extra):
+    raw = {"name": name, "predicate": predicate, "sign": sign, "guard": ["top"], "unless": [], "over": []}
+    if mode == "default":
+        raw.update(mode="default", exception={"decided_by": "unstated", "sufficient": [], "necessary": [],
+                                              "factors": []})
+    raw.update(extra)
+    return {"norm": raw}
+
+
+def gamma(perm):
+    return nd.UnspecifiedSoftDocument(
+        soft_environment({"x_required": obligation("deny", act="{0} do x", args=("assistant",)),
+                          "x_permitted": permission(perm, act="{0} do x", args=("assistant",))},
+                         ("assistant", "user")),
+        [soft_rule("s", "x_required", True, "default")])
+
+
+def soft_situation(decision, rows):
+    return {"complete": True, "domains": {"assistant": ["a"], "user": []}, "constants": {},
+            "relations": {decision: rows}}
+
+
+def test_u8_soft_gamma_with_an_unspecified_permission_is_conflict_free():
+    doc = gamma("unspecified")
+    assert nd.check_conflict(doc, prove=True).status == "CONFLICT-FREE"
+    selects = soft_situation("soft__excepted__s", [])
+    excepted = soft_situation("soft__excepted__s", [["a"]])
+    permitted = status_of(doc, "x_permitted", ("a",), selects)
+    assert (permitted.status, permitted.value) == ("SETTLED", True)
+    assert status_of(doc, "x_permitted", ("a",), excepted).status == "UNDECIDED"
+    deny = gamma("deny")
+    report = nd.check_conflict(deny, model=selects)
+    assert (report.status, report.target, report.kind) == ("CONFLICT", "x_required->x_permitted", "settled")
+    # fill runs after soften: the softened rules keep their selections.
+    for name, formula in doc.author.selection("x_required")[2].items():
+        assert doc.filled.selection("x_required")[2][name] == formula
+
+
+
+def deception(default, mode, **extra):
+    env = soft_environment({"system_prompt_deception_permitted": permission(
+        default, act="{0} deceive {1} about the system prompt", args=("claude_instance", "user"))},
+        ("claude_instance", "user"))
+    return nd.UnspecifiedSoftDocument(env, [soft_rule("no-system-prompt-deception",
+                                                      "system_prompt_deception_permitted", False, mode, **extra)])
+
+
+def deception_situation(excepted, doc=None):
+    """The same situation for both readings; the strict reading has no decision table."""
+    relations = {"soft__excepted__no_system_prompt_deception": [["c", "u"]] if excepted else []}
+    if doc is not None:
+        relations = {k: v for k, v in relations.items() if k in doc.situation_environment().predicates}
+    return {"complete": True, "domains": {"claude_instance": ["c"], "user": ["u"]}, "constants": {},
+            "relations": relations}
+
+
+def test_u2_strict_and_default_readings_are_told_apart_by_a_checked_situation():
+    strict, default = deception("unspecified", "strict"), deception("unspecified", "default")
+    point = ("system_prompt_deception_permitted", ("c", "u"))
+    excepted = deception_situation(True, default)
+    strict_status = status_of(strict, *point, deception_situation(True, strict))
+    default_status = status_of(default, *point, excepted)
+    assert (strict_status.status, strict_status.value) == ("SETTLED", False)
+    assert default_status.status == "UNDECIDED"
+    # The default reading's countermodel to "not permitted" is a filled situation.
+    situation = default.situation(excepted)
+    yes, _ = default_status.fillings
+    assert default.value(situation, yes, *point) is True and default.fill_valid(situation, yes)
+    for doc in (strict, default):
+        settled = status_of(doc, *point, deception_situation(False, doc))
+        assert (settled.status, settled.value) == ("SETTLED", False)
+
+
+def test_u2_deny_variant_keeps_the_collapse_as_a_regression():
+    default = deception("deny", "default")
+    for excepted in (True, False):
+        settled = status_of(default, "system_prompt_deception_permitted", ("c", "u"), deception_situation(excepted))
+        assert (settled.status, settled.value) == ("SETTLED", False)
+    (line,) = nd.report(default, model=deception_situation(True))
+    assert line.lines()[:2] == ("completion: deny", "default reached: reachable")
+    assert line.witness[0] == ("c", "u")
+
+
+def test_u3_hard_strict_reading_and_default_reading():
+    env = soft_environment({"cyberweapon_creation_permitted": permission(
+        "unspecified", act="{0} create cyberweapons", args=("claude_instance",))}, ("claude_instance",))
+    strict = nd.UnspecifiedSoftDocument(env, [soft_rule("no-cyberweapons", "cyberweapon_creation_permitted",
+                                                        False, hard=True)])
+    default = nd.UnspecifiedSoftDocument(env, [soft_rule("no-cyberweapons", "cyberweapon_creation_permitted",
+                                                         False, "default")])
+    situation = {"complete": True, "domains": {"claude_instance": ["c"]}, "constants": {},
+                 "relations": {}}
+    excepted = {**situation, "relations": {"soft__excepted__no_cyberweapons": [["c"]]}}
+    hard = status_of(strict, "cyberweapon_creation_permitted", ("c",), situation)
+    assert (hard.status, hard.value) == ("SETTLED", False)
+    assert status_of(default, "cyberweapon_creation_permitted", ("c",), excepted).status == "UNDECIDED"
+    # The hard rule's selection is untouched by fill (fill_selects_author).
+    selected = strict.author.selection("cyberweapon_creation_permitted")[2]["no-cyberweapons"]
+    assert strict.filled.selection("cyberweapon_creation_permitted")[2]["no-cyberweapons"] == selected
