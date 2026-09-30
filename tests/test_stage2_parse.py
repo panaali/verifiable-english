@@ -32,7 +32,9 @@ def sources(env):
 
 
 @pytest.mark.parametrize("family", [(), ("closure@0",), ("closure@0", "nary@0"), ("order@0",),
-                                    ("data@0",), ("norms@0",)])
+                                    ("data@0",), ("norms@0",), ("definitions@0",),
+                                    ("closure@0", "definitions@0"),
+                                    ("closure@0", "nary@0", "definitions@0")])
 def test_parse_and_canonical_text_match_python(monkeypatch, family):
     env = Environment(pm.raw_environment(family))
     seen = []
@@ -47,13 +49,35 @@ def test_parse_and_canonical_text_match_python(monkeypatch, family):
     assert ("parse", "lean") in seen
 
 
-def test_definitions_sugar_stays_with_python(monkeypatch):
+SUGAR = ["no item is base.\n", "every item a that is derived, (a is base).\n",
+         "(@x is base) iff (@x is derived).\n",
+         "define derived(a) as (a is base).\n@x is derived.\n"]
+
+
+def test_definitions_sources_without_sugar_are_leans(monkeypatch):
+    """Over a definitions@0 environment Lean's parser decides every source that
+    reads no definitions sugar."""
     env = Environment(pm.raw_environment(("definitions@0",)))
-    seen = []
-    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    parse(env, "no item is base.\n")
-    assert ("parse", "lean") not in seen
+    asked = []
+    fake(monkeypatch, lambda case: asked.append(case["source"]) or
+         {"id": "parse", "status": "ok", "ast": [["unary", "derived", ["const", "x"]]]})
+    parse(env, "@x is derived.\n")
+    assert asked == ["@x is derived.\n"]
+
+
+@pytest.mark.parametrize("source", SUGAR)
+def test_definitions_sugar_stays_with_python(monkeypatch, source):
+    """A source read through the definitions sugar keeps Python's reading (the
+    sugar is in no Lean surface parser: a recorded scope gap); Lean is not asked."""
+    env = Environment(pm.raw_environment(("definitions@0",)))
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = (outcome(lambda: parse(env, source)), outcome(lambda: canonicalize(env, source)))
+    assert expected[0][0] == "accepted", source
+    real = lean_runner.run
+    fake(monkeypatch, lambda case: pytest.fail("Lean was asked about a sugared source"))
+    assert (outcome(lambda: parse(env, source)), outcome(lambda: canonicalize(env, source))) == expected
+    with pytest.raises(VEError):
+        real("parse", [{"id": "parse", "environment": env.to_dict(), "source": source}])
 
 
 def fake(monkeypatch, row):
