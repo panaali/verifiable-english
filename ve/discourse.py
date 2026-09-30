@@ -43,8 +43,8 @@ _FORM_KINDS = {
     "ordinal_pair": {"entity"}, "plural": {"entity"},
     "such": {"predicate"}, "definition_ref": {"predicate"},
     "document_name": {"document"}, "citation": {"claim"},
-    "section_ref": {"anchor"}, "navigation": {"anchor", "unit"},
-}
+    "section_ref": {"anchor", "unit", "rule"}, "navigation": {"anchor", "unit"},
+}  # the Lean `formFits`
 _LOCATION = {"section_ref", "navigation"}
 _LOCATION_KINDS = {"unit", "anchor"}
 _ELABORATED = {"pronoun", "demonstrative", "ordinal_pair"}
@@ -1109,6 +1109,8 @@ def python_discourse(doc):
         if form not in _FORM_KINDS or type(target) is not dict:
             raise VEError(f"InvalidInput: mention {mid}")
         kind = target.get("kind")
+        if form in {"pronoun", "demonstrative"} and kind == "claim":
+            raise VEError(f"UnsupportedTarget: {mid}: claim")  # 1.4, the Lean `mentionsOk`
         if kind not in _FORM_KINDS[form]:
             raise VEError(f"TargetKindMismatch: {mid}: {form}, {kind}")
         if "reading" in m and m["reading"] not in {"assertive", "presuppositional", "distributive"}:
@@ -1153,6 +1155,8 @@ def python_discourse(doc):
                 pair = target.get("pair")
                 if type(pair) is not list or len(pair) != 2 or target.get("name") not in pair:
                     raise VEError("InvalidInput: ordinal pair")
+        elif kind in {"anchor", "rule"} and type(target.get("name")) is not str:
+            raise VEError(f"InvalidInput: mention {mid} target")
         elif kind == "anchor":
             if target.get("name") not in anchors:
                 raise VEError(f"DanglingAnchor: {target.get('name')}")
