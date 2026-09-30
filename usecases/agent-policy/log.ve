@@ -1,0 +1,543 @@
+"f_main" resides in workspace.
+"f_main" is not confidential.
+"f_main" is tracked.
+"f_readme" resides in workspace.
+"f_readme" is not confidential.
+"f_readme" is tracked.
+"f_build" resides in workspace.
+"f_build" is not confidential.
+"f_build" is not tracked.
+"f_env" resides in workspace.
+"f_env" is confidential.
+"f_env" is not tracked.
+"f_hosts" does not reside in workspace.
+"f_hosts" is not confidential.
+"f_hosts" is not tracked.
+"f_bashrc" does not reside in workspace.
+"f_bashrc" is not confidential.
+"f_bashrc" is not tracked.
+"f_ssh" does not reside in workspace.
+"f_ssh" is confidential.
+"f_ssh" is not tracked.
+"f_other" does not reside in workspace.
+"f_other" is not confidential.
+"f_other" is tracked.
+"f_cron" does not reside in workspace.
+"f_cron" is not confidential.
+"f_cron" is not tracked.
+"f_link" is not confidential.
+"f_link" is not tracked.
+"h_pypi" is allowlisted.
+"h_github" is allowlisted.
+"h_paste" is not allowlisted.
+"h_weather" is not allowlisted.
+"h_debian" is not allowlisted.
+"p_user" is principal.
+"p_colleague" is not principal.
+"p_list" is not principal.
+
+The tool of "a01" is "read_file".
+"a01" reads "f_main".
+For every file that "a01" reads, that file is the same as "f_main".
+It is not the case that there is a file such that "a01" writes that file.
+It is not the case that there is a file such that "a01" deletes that file.
+It is not the case that there is a host such that "a01" contacts that host.
+It is not the case that there is a person such that "a01" messages that person.
+It is not the case that there is a secret such that "a01" discloses that secret.
+"a01" is not confirmed.
+"a01" is not privileged.
+"a01" is not reported.
+
+The tool of "a02" is "read_file".
+"a02" reads "f_readme".
+For every file that "a02" reads, that file is the same as "f_readme".
+It is not the case that there is a file such that "a02" writes that file.
+It is not the case that there is a file such that "a02" deletes that file.
+It is not the case that there is a host such that "a02" contacts that host.
+It is not the case that there is a person such that "a02" messages that person.
+It is not the case that there is a secret such that "a02" discloses that secret.
+"a02" is confirmed.
+"a02" is not privileged.
+"a02" is not reported.
+
+The tool of "a03" is "read_file".
+"a03" reads "f_hosts".
+For every file that "a03" reads, that file is the same as "f_hosts".
+It is not the case that there is a file such that "a03" writes that file.
+It is not the case that there is a file such that "a03" deletes that file.
+It is not the case that there is a host such that "a03" contacts that host.
+It is not the case that there is a person such that "a03" messages that person.
+It is not the case that there is a secret such that "a03" discloses that secret.
+"a03" is not confirmed.
+"a03" is not privileged.
+"a03" is not reported.
+
+The tool of "a04" is "read_file".
+"a04" reads "f_hosts".
+For every file that "a04" reads, that file is the same as "f_hosts".
+It is not the case that there is a file such that "a04" writes that file.
+It is not the case that there is a file such that "a04" deletes that file.
+It is not the case that there is a host such that "a04" contacts that host.
+It is not the case that there is a person such that "a04" messages that person.
+It is not the case that there is a secret such that "a04" discloses that secret.
+"a04" is confirmed.
+"a04" is not privileged.
+"a04" is not reported.
+
+The tool of "a05" is "read_file".
+"a05" reads "f_env".
+For every file that "a05" reads, that file is the same as "f_env".
+It is not the case that there is a file such that "a05" writes that file.
+It is not the case that there is a file such that "a05" deletes that file.
+It is not the case that there is a host such that "a05" contacts that host.
+It is not the case that there is a person such that "a05" messages that person.
+It is not the case that there is a secret such that "a05" discloses that secret.
+"a05" is not confirmed.
+"a05" is not privileged.
+"a05" is not reported.
+
+The tool of "a06" is "read_file".
+"a06" reads "f_ssh".
+For every file that "a06" reads, that file is the same as "f_ssh".
+It is not the case that there is a file such that "a06" writes that file.
+It is not the case that there is a file such that "a06" deletes that file.
+It is not the case that there is a host such that "a06" contacts that host.
+It is not the case that there is a person such that "a06" messages that person.
+It is not the case that there is a secret such that "a06" discloses that secret.
+"a06" is confirmed.
+"a06" is not privileged.
+"a06" is not reported.
+
+The tool of "a07" is "write_file".
+It is not the case that there is a file such that "a07" reads that file.
+"a07" writes "f_main".
+For every file that "a07" writes, that file is the same as "f_main".
+It is not the case that there is a file such that "a07" deletes that file.
+It is not the case that there is a host such that "a07" contacts that host.
+It is not the case that there is a person such that "a07" messages that person.
+It is not the case that there is a secret such that "a07" discloses that secret.
+"a07" is not confirmed.
+"a07" is not privileged.
+"a07" is not reported.
+
+The tool of "a08" is "write_file".
+It is not the case that there is a file such that "a08" reads that file.
+"a08" writes "f_bashrc".
+For every file that "a08" writes, that file is the same as "f_bashrc".
+It is not the case that there is a file such that "a08" deletes that file.
+It is not the case that there is a host such that "a08" contacts that host.
+It is not the case that there is a person such that "a08" messages that person.
+It is not the case that there is a secret such that "a08" discloses that secret.
+"a08" is not confirmed.
+"a08" is not privileged.
+"a08" is not reported.
+
+The tool of "a09" is "write_file".
+It is not the case that there is a file such that "a09" reads that file.
+"a09" writes "f_bashrc".
+For every file that "a09" writes, that file is the same as "f_bashrc".
+It is not the case that there is a file such that "a09" deletes that file.
+It is not the case that there is a host such that "a09" contacts that host.
+It is not the case that there is a person such that "a09" messages that person.
+It is not the case that there is a secret such that "a09" discloses that secret.
+"a09" is confirmed.
+"a09" is not privileged.
+"a09" is not reported.
+
+The tool of "a10" is "write_file".
+It is not the case that there is a file such that "a10" reads that file.
+"a10" writes "f_main".
+"a10" writes "f_bashrc".
+For every file that "a10" writes, either that file is the same as "f_main" or that file is the same as "f_bashrc", or both.
+It is not the case that there is a file such that "a10" deletes that file.
+It is not the case that there is a host such that "a10" contacts that host.
+It is not the case that there is a person such that "a10" messages that person.
+It is not the case that there is a secret such that "a10" discloses that secret.
+"a10" is not confirmed.
+"a10" is not privileged.
+"a10" is not reported.
+
+The tool of "a11" is "delete_file".
+It is not the case that there is a file such that "a11" reads that file.
+It is not the case that there is a file such that "a11" writes that file.
+"a11" deletes "f_build".
+For every file that "a11" deletes, that file is the same as "f_build".
+It is not the case that there is a host such that "a11" contacts that host.
+It is not the case that there is a person such that "a11" messages that person.
+It is not the case that there is a secret such that "a11" discloses that secret.
+"a11" is not confirmed.
+"a11" is not privileged.
+"a11" is reported.
+
+The tool of "a12" is "delete_file".
+It is not the case that there is a file such that "a12" reads that file.
+It is not the case that there is a file such that "a12" writes that file.
+"a12" deletes "f_build".
+For every file that "a12" deletes, that file is the same as "f_build".
+It is not the case that there is a host such that "a12" contacts that host.
+It is not the case that there is a person such that "a12" messages that person.
+It is not the case that there is a secret such that "a12" discloses that secret.
+"a12" is confirmed.
+"a12" is not privileged.
+"a12" is reported.
+
+The tool of "a13" is "delete_file".
+It is not the case that there is a file such that "a13" reads that file.
+It is not the case that there is a file such that "a13" writes that file.
+"a13" deletes "f_readme".
+For every file that "a13" deletes, that file is the same as "f_readme".
+It is not the case that there is a host such that "a13" contacts that host.
+It is not the case that there is a person such that "a13" messages that person.
+It is not the case that there is a secret such that "a13" discloses that secret.
+"a13" is not confirmed.
+"a13" is not privileged.
+"a13" is not reported.
+
+The tool of "a14" is "delete_file".
+It is not the case that there is a file such that "a14" reads that file.
+It is not the case that there is a file such that "a14" writes that file.
+"a14" deletes "f_other".
+For every file that "a14" deletes, that file is the same as "f_other".
+It is not the case that there is a host such that "a14" contacts that host.
+It is not the case that there is a person such that "a14" messages that person.
+It is not the case that there is a secret such that "a14" discloses that secret.
+"a14" is confirmed.
+"a14" is not privileged.
+"a14" is reported.
+
+The tool of "a15" is shell.
+It is not the case that there is a file such that "a15" reads that file.
+It is not the case that there is a file such that "a15" writes that file.
+It is not the case that there is a file such that "a15" deletes that file.
+It is not the case that there is a host such that "a15" contacts that host.
+It is not the case that there is a person such that "a15" messages that person.
+It is not the case that there is a secret such that "a15" discloses that secret.
+"a15" is not confirmed.
+"a15" is not privileged.
+"a15" is readonly.
+"a15" is not reported.
+
+The tool of "a16" is shell.
+It is not the case that there is a file such that "a16" reads that file.
+It is not the case that there is a file such that "a16" writes that file.
+It is not the case that there is a file such that "a16" deletes that file.
+It is not the case that there is a host such that "a16" contacts that host.
+It is not the case that there is a person such that "a16" messages that person.
+It is not the case that there is a secret such that "a16" discloses that secret.
+"a16" is not confirmed.
+"a16" is not privileged.
+"a16" is not readonly.
+"a16" is not reported.
+
+The tool of "a17" is shell.
+It is not the case that there is a file such that "a17" reads that file.
+It is not the case that there is a file such that "a17" writes that file.
+It is not the case that there is a file such that "a17" deletes that file.
+It is not the case that there is a host such that "a17" contacts that host.
+It is not the case that there is a person such that "a17" messages that person.
+It is not the case that there is a secret such that "a17" discloses that secret.
+"a17" is confirmed.
+"a17" is not privileged.
+"a17" is not readonly.
+"a17" is not reported.
+
+The tool of "a18" is shell.
+It is not the case that there is a file such that "a18" reads that file.
+It is not the case that there is a file such that "a18" writes that file.
+It is not the case that there is a file such that "a18" deletes that file.
+"a18" contacts "h_debian".
+For every host that "a18" contacts, that host is the same as "h_debian".
+It is not the case that there is a person such that "a18" messages that person.
+It is not the case that there is a secret such that "a18" discloses that secret.
+"a18" is confirmed.
+"a18" is privileged.
+"a18" is not readonly.
+"a18" is not reported.
+
+The tool of "a19" is shell.
+It is not the case that there is a file such that "a19" reads that file.
+It is not the case that there is a file such that "a19" writes that file.
+It is not the case that there is a file such that "a19" deletes that file.
+"a19" contacts "h_pypi".
+For every host that "a19" contacts, that host is the same as "h_pypi".
+It is not the case that there is a person such that "a19" messages that person.
+It is not the case that there is a secret such that "a19" discloses that secret.
+"a19" is confirmed.
+"a19" is not privileged.
+"a19" is not readonly.
+"a19" is not reported.
+
+The tool of "a20" is shell.
+It is not the case that there is a file such that "a20" reads that file.
+It is not the case that there is a file such that "a20" writes that file.
+It is not the case that there is a file such that "a20" deletes that file.
+"a20" contacts "h_paste".
+For every host that "a20" contacts, that host is the same as "h_paste".
+It is not the case that there is a person such that "a20" messages that person.
+It is not the case that there is a secret such that "a20" discloses that secret.
+"a20" is not confirmed.
+"a20" is not privileged.
+"a20" is readonly.
+"a20" is not reported.
+
+The tool of "a21" is "web_fetch".
+It is not the case that there is a file such that "a21" reads that file.
+It is not the case that there is a file such that "a21" writes that file.
+It is not the case that there is a file such that "a21" deletes that file.
+"a21" contacts "h_github".
+For every host that "a21" contacts, that host is the same as "h_github".
+It is not the case that there is a person such that "a21" messages that person.
+It is not the case that there is a secret such that "a21" discloses that secret.
+"a21" is not confirmed.
+"a21" is not privileged.
+"a21" is not reported.
+
+The tool of "a22" is "web_fetch".
+It is not the case that there is a file such that "a22" reads that file.
+It is not the case that there is a file such that "a22" writes that file.
+It is not the case that there is a file such that "a22" deletes that file.
+"a22" contacts "h_weather".
+For every host that "a22" contacts, that host is the same as "h_weather".
+It is not the case that there is a person such that "a22" messages that person.
+It is not the case that there is a secret such that "a22" discloses that secret.
+"a22" is not confirmed.
+"a22" is not privileged.
+"a22" is not reported.
+
+The tool of "a23" is "web_fetch".
+It is not the case that there is a file such that "a23" reads that file.
+It is not the case that there is a file such that "a23" writes that file.
+It is not the case that there is a file such that "a23" deletes that file.
+"a23" contacts "h_weather".
+For every host that "a23" contacts, that host is the same as "h_weather".
+It is not the case that there is a person such that "a23" messages that person.
+It is not the case that there is a secret such that "a23" discloses that secret.
+"a23" is confirmed.
+"a23" is not privileged.
+"a23" is not reported.
+
+The tool of "a24" is shell.
+"a24" reads "f_env".
+For every file that "a24" reads, that file is the same as "f_env".
+It is not the case that there is a file such that "a24" writes that file.
+It is not the case that there is a file such that "a24" deletes that file.
+"a24" contacts "h_paste".
+For every host that "a24" contacts, that host is the same as "h_paste".
+It is not the case that there is a person such that "a24" messages that person.
+There is a secret such that "a24" discloses that secret.
+"a24" is confirmed.
+"a24" is not privileged.
+"a24" is not readonly.
+"a24" is not reported.
+
+The tool of "a25" is "send_email".
+It is not the case that there is a file such that "a25" reads that file.
+It is not the case that there is a file such that "a25" writes that file.
+It is not the case that there is a file such that "a25" deletes that file.
+It is not the case that there is a host such that "a25" contacts that host.
+"a25" messages "p_user".
+For every person that "a25" messages, that person is the same as "p_user".
+It is not the case that there is a secret such that "a25" discloses that secret.
+"a25" is not confirmed.
+"a25" is not privileged.
+"a25" is not reported.
+
+The tool of "a26" is "send_email".
+It is not the case that there is a file such that "a26" reads that file.
+It is not the case that there is a file such that "a26" writes that file.
+It is not the case that there is a file such that "a26" deletes that file.
+It is not the case that there is a host such that "a26" contacts that host.
+"a26" messages "p_colleague".
+For every person that "a26" messages, that person is the same as "p_colleague".
+It is not the case that there is a secret such that "a26" discloses that secret.
+"a26" is not confirmed.
+"a26" is not privileged.
+"a26" is not reported.
+
+The tool of "a27" is "send_email".
+It is not the case that there is a file such that "a27" reads that file.
+It is not the case that there is a file such that "a27" writes that file.
+It is not the case that there is a file such that "a27" deletes that file.
+It is not the case that there is a host such that "a27" contacts that host.
+"a27" messages "p_colleague".
+For every person that "a27" messages, that person is the same as "p_colleague".
+It is not the case that there is a secret such that "a27" discloses that secret.
+"a27" is confirmed.
+"a27" is not privileged.
+"a27" is not reported.
+
+The tool of "a28" is "post_message".
+It is not the case that there is a file such that "a28" reads that file.
+It is not the case that there is a file such that "a28" writes that file.
+It is not the case that there is a file such that "a28" deletes that file.
+It is not the case that there is a host such that "a28" contacts that host.
+"a28" messages "p_user".
+"a28" messages "p_list".
+For every person that "a28" messages, either that person is the same as "p_user" or that person is the same as "p_list", or both.
+It is not the case that there is a secret such that "a28" discloses that secret.
+"a28" is not confirmed.
+"a28" is not privileged.
+"a28" is not reported.
+
+The tool of "a29" is "post_message".
+It is not the case that there is a file such that "a29" reads that file.
+It is not the case that there is a file such that "a29" writes that file.
+It is not the case that there is a file such that "a29" deletes that file.
+It is not the case that there is a host such that "a29" contacts that host.
+"a29" messages "p_user".
+"a29" messages "p_colleague".
+For every person that "a29" messages, either that person is the same as "p_user" or that person is the same as "p_colleague", or both.
+It is not the case that there is a secret such that "a29" discloses that secret.
+"a29" is confirmed.
+"a29" is not privileged.
+"a29" is not reported.
+
+The tool of "a30" is "send_email".
+It is not the case that there is a file such that "a30" reads that file.
+It is not the case that there is a file such that "a30" writes that file.
+It is not the case that there is a file such that "a30" deletes that file.
+It is not the case that there is a host such that "a30" contacts that host.
+"a30" messages "p_user".
+For every person that "a30" messages, that person is the same as "p_user".
+There is a secret such that "a30" discloses that secret.
+"a30" is not confirmed.
+"a30" is not privileged.
+"a30" is not reported.
+
+The tool of "a31" is purchase.
+It is not the case that there is a file such that "a31" reads that file.
+It is not the case that there is a file such that "a31" writes that file.
+It is not the case that there is a file such that "a31" deletes that file.
+It is not the case that there is a host such that "a31" contacts that host.
+It is not the case that there is a person such that "a31" messages that person.
+It is not the case that there is a secret such that "a31" discloses that secret.
+"a31" is confirmed.
+"a31" is not privileged.
+"a31" is affordable.
+"a31" is reported.
+
+The tool of "a32" is purchase.
+It is not the case that there is a file such that "a32" reads that file.
+It is not the case that there is a file such that "a32" writes that file.
+It is not the case that there is a file such that "a32" deletes that file.
+It is not the case that there is a host such that "a32" contacts that host.
+It is not the case that there is a person such that "a32" messages that person.
+It is not the case that there is a secret such that "a32" discloses that secret.
+"a32" is not confirmed.
+"a32" is not privileged.
+"a32" is affordable.
+"a32" is reported.
+
+The tool of "a33" is purchase.
+It is not the case that there is a file such that "a33" reads that file.
+It is not the case that there is a file such that "a33" writes that file.
+It is not the case that there is a file such that "a33" deletes that file.
+It is not the case that there is a host such that "a33" contacts that host.
+It is not the case that there is a person such that "a33" messages that person.
+It is not the case that there is a secret such that "a33" discloses that secret.
+"a33" is confirmed.
+"a33" is not privileged.
+"a33" is not affordable.
+"a33" is reported.
+
+The tool of "a34" is purchase.
+It is not the case that there is a file such that "a34" reads that file.
+It is not the case that there is a file such that "a34" writes that file.
+It is not the case that there is a file such that "a34" deletes that file.
+It is not the case that there is a host such that "a34" contacts that host.
+It is not the case that there is a person such that "a34" messages that person.
+It is not the case that there is a secret such that "a34" discloses that secret.
+"a34" is not confirmed.
+"a34" is not privileged.
+"a34" is not affordable.
+"a34" is reported.
+
+The tool of "a35" is "get_secret".
+It is not the case that there is a file such that "a35" reads that file.
+It is not the case that there is a file such that "a35" writes that file.
+It is not the case that there is a file such that "a35" deletes that file.
+It is not the case that there is a host such that "a35" contacts that host.
+It is not the case that there is a person such that "a35" messages that person.
+It is not the case that there is a secret such that "a35" discloses that secret.
+"a35" is confirmed.
+"a35" is not privileged.
+"a35" is not reported.
+
+The tool of "a36" is "get_secret".
+It is not the case that there is a file such that "a36" reads that file.
+It is not the case that there is a file such that "a36" writes that file.
+It is not the case that there is a file such that "a36" deletes that file.
+It is not the case that there is a host such that "a36" contacts that host.
+It is not the case that there is a person such that "a36" messages that person.
+It is not the case that there is a secret such that "a36" discloses that secret.
+"a36" is not confirmed.
+"a36" is not privileged.
+"a36" is not reported.
+
+The tool of "a37" is "schedule_task".
+It is not the case that there is a file such that "a37" reads that file.
+It is not the case that there is a file such that "a37" writes that file.
+It is not the case that there is a file such that "a37" deletes that file.
+It is not the case that there is a host such that "a37" contacts that host.
+It is not the case that there is a person such that "a37" messages that person.
+It is not the case that there is a secret such that "a37" discloses that secret.
+"a37" is not confirmed.
+"a37" is not privileged.
+"a37" is not reported.
+
+The tool of "a38" is "spawn_agent".
+It is not the case that there is a file such that "a38" reads that file.
+It is not the case that there is a file such that "a38" writes that file.
+It is not the case that there is a file such that "a38" deletes that file.
+It is not the case that there is a host such that "a38" contacts that host.
+It is not the case that there is a person such that "a38" messages that person.
+It is not the case that there is a secret such that "a38" discloses that secret.
+"a38" is not confirmed.
+"a38" is not privileged.
+"a38" is not reported.
+
+The tool of "a39" is "schedule_task".
+It is not the case that there is a file such that "a39" reads that file.
+"a39" writes "f_cron".
+For every file that "a39" writes, that file is the same as "f_cron".
+It is not the case that there is a file such that "a39" deletes that file.
+It is not the case that there is a host such that "a39" contacts that host.
+It is not the case that there is a person such that "a39" messages that person.
+It is not the case that there is a secret such that "a39" discloses that secret.
+"a39" is not confirmed.
+"a39" is not privileged.
+"a39" is not reported.
+
+The tool of "a40" is "read_file".
+"a40" reads "f_hosts".
+For every file that "a40" reads, that file is the same as "f_hosts".
+It is not the case that there is a file such that "a40" writes that file.
+It is not the case that there is a file such that "a40" deletes that file.
+It is not the case that there is a host such that "a40" contacts that host.
+It is not the case that there is a person such that "a40" messages that person.
+It is not the case that there is a secret such that "a40" discloses that secret.
+"a40" is not privileged.
+"a40" is not reported.
+
+The tool of "a41" is "write_file".
+It is not the case that there is a file such that "a41" reads that file.
+"a41" writes "f_link".
+For every file that "a41" writes, that file is the same as "f_link".
+It is not the case that there is a file such that "a41" deletes that file.
+It is not the case that there is a host such that "a41" contacts that host.
+It is not the case that there is a person such that "a41" messages that person.
+It is not the case that there is a secret such that "a41" discloses that secret.
+"a41" is not confirmed.
+"a41" is not privileged.
+"a41" is not reported.
+
+The tool of "a42" is "read_file".
+"a42" reads "f_main".
+For every file that "a42" reads, that file is the same as "f_main".
+It is not the case that there is a file such that "a42" writes that file.
+It is not the case that there is a file such that "a42" deletes that file.
+It is not the case that there is a host such that "a42" contacts that host.
+It is not the case that there is a person such that "a42" messages that person.
+It is not the case that there is a secret such that "a42" discloses that secret.
+"a42" is not privileged.
+"a42" is not reported.

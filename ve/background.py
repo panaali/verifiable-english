@@ -138,6 +138,24 @@ def _valid_soft(env, model):
             raise InvalidModel(f"soft premise {label} is false", generator="soft")
 
 
+def _rights_premises(env):
+    # Installed only by correlate, never accepted from authored wire fields.
+    return tuple(formula for _, formula in getattr(env, "rights_premises", ()))
+
+
+def _valid_rights(env, model):
+    if not getattr(env, "rights_premises", ()):
+        return
+    from .evaluate import _evaluate_validated
+    from .limits import MAX_EVALUATIONS
+    for label, formula in env.rights_premises:
+        result = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS)
+        if result.value is None:
+            raise ResourceLimit(f"Rights background evaluation budget exhausted: {label}")
+        if result.value is not True:
+            raise InvalidModel(f"rights premise {label} is false", generator="rights")
+
+
 # Each entry is (premise generator, validity checker).
 HOOKS: dict[str, tuple[Callable, Callable]] = {
     "flags": (_flag_premises, _valid_flags),
@@ -151,6 +169,8 @@ def _background_hooks(env):
     yield from HOOKS.items()
     if getattr(env, "soft_premises", ()):
         yield "soft", (_soft_premises, _valid_soft)
+    if getattr(env, "rights_premises", ()):
+        yield "rights", (_rights_premises, _valid_rights)
 
 
 def _background_python(env) -> tuple[Premise, ...]:

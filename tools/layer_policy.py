@@ -42,8 +42,9 @@ def python_imports(module: str, source: str, exports: dict[str, str],
     facade_aliases = set()
 
     def local_module(name: str) -> bool:
+        # A directory without __init__.py still imports, as a namespace package.
         path = root.joinpath(*name.split("."))
-        return path.with_suffix(".py").exists() or (path / "__init__.py").exists()
+        return path.with_suffix(".py").exists() or path.is_dir()
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -89,7 +90,9 @@ def python_layer(module: str) -> int | None:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module in {"Main", "NormsMain", "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
+    if module in {"Main", "NormsMain", "SoftNormsMain", "RightsMain", "SpeechActsMain",
+                  "AlternativesMain", "QuantityMain", "ReportsMain",
+                  "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
@@ -140,7 +143,7 @@ def source_layer(path: str) -> int | None:
     if parts[0] == "tools":
         if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py",
                       "check_python_layers.py", "check_lean_imports.py",
-                      "check_rust_deps.py", "test_layer_policy.py"}:
+                      "check_rust_deps.py", "test_layer_policy.py", "lean_header_imports.lean"}:
             return 1  # changing the policy invalidates every selection
         return 4 if p.suffix == ".py" else None
     if parts[0] == "tests":

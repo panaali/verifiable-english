@@ -39,7 +39,7 @@ BODIES: dict[str, set[str]] = {
     "ve.order": {"decode_trace", "_Replayer", "replay_trace"},
     "ve.background": {"_background_python", "_dependency_order_python", "_validate_background_python",
                       "_valid_flags", "_valid_definitions", "_valid_literals", "_valid_profile",
-                      "_valid_soft"},
+                      "_valid_soft", "_valid_rights"},
     "ve.definitions": {"_compile_python"},
     "ve.norms": {"NormDocument._elaborate_python", "NormDocument._premises_python", "check_witness",
                  "_check_conflict_python", "_norm_certificate_python"},
@@ -73,6 +73,14 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
         SURFACE + " (soft norms are a Lean-only route; soft_route.check_regenerated compares Lean's regeneration)",
     ("ve.softnorms", "_rule_references", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
     ("ve.softnorms", "_within_limits", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
+    ("ve.rights", "RightsDocument.__init__", "ve.ast", "_Checker"):
+        SURFACE + " (rights: Lean-only route; rights_route replays the document through ve_rights_route)",
+    ("ve.rights_route", "check_rights_regenerated", "ve.ast", "_Checker"):
+        SURFACE + " (rights: Lean-only route; check_rights_regenerated compares Lean's regeneration)",
+    ("ve.speech_acts", "SpeechDocument._question", "ve.ast", "_Checker"):
+        SURFACE + " (speech acts: Lean-only route with no Python admission dispatch)",
+    ("ve.speech_english", "_body", "ve.ast", "_Checker"):
+        SURFACE + " (speech acts: Lean-only route with no Python admission dispatch)",
 }
 
 

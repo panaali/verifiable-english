@@ -15,15 +15,39 @@ layers =
     ve.ast:ve.environment:ve.errors:ve.identity:ve.limits:ve.model:ve.wire
 ignore_imports =
     ve.assist.cli -> ve_experiments.assist_haiku
+    ve.ast -> ve.backends.dispatch
+    ve.ast -> ve.backends.lean_runner
+    ve.ast -> ve.backends.rust_jsonl
     ve.ast -> ve.surface.nary
     ve.ast -> ve.surface.registry
+    ve.background -> ve.backends.dispatch
+    ve.background -> ve.backends.lean_runner
+    ve.background -> ve.backends.lean_service
+    ve.background -> ve.backends.validation
     ve.closure -> ve.surface.registry
+    ve.definitions -> ve.backends.dispatch
+    ve.definitions -> ve.backends.lean_runner
+    ve.definitions -> ve.backends.validation
     ve.english -> ve.argument
+    ve.entailment -> ve.backends.dispatch
+    ve.entailment -> ve.backends.lean_runner
+    ve.environment -> ve.backends.dispatch
+    ve.environment -> ve.backends.validation
     ve.environment -> ve.definitions
     ve.environment -> ve.profiles
+    ve.evaluate -> ve.backends.dispatch
+    ve.evaluate -> ve.backends.lean_runner
+    ve.evaluate -> ve.backends.rust_jsonl
     ve.evaluate -> ve.surface.registry
+    ve.model -> ve.backends.dispatch
+    ve.model -> ve.backends.validation
     ve.model -> ve.background
     ve.model -> ve.definitions
     ve.model -> ve.evaluate
+    ve.norms -> ve.backends.dispatch
+    ve.norms -> ve.backends.lean_runner
     ve.norms -> ve.search
+    ve.parser -> ve.backends.dispatch
+    ve.parser -> ve.backends.lean_runner
+    ve.parser -> ve.backends.validation
     ve.wire -> ve.surface.registry
