@@ -545,14 +545,14 @@ def _lean_deductions(graph, claims, records, reachable, executable):
 
 
 def _lean_graph_scope(graph) -> bool:
-    """Whether Lean's `graph` mode composes this package: the frozen v0 envelope,
-    or a ve.core@0.2 environment of any family (`validation.family_in_scope`).
-    ve.core@0.1 packages are not composed by Lean yet."""
-    from .backends.validation import family_in_scope
+    """Whether Lean's `graph` mode composes this package: the frozen v0 and v0.1
+    envelopes, or a ve.core@0.2 environment of any family
+    (`validation.family_in_scope`)."""
+    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
     env = getattr(graph, "env", None)
     if type(env) is not Environment:
         return False
-    if env.language == "ve.core@0":
+    if env.language in LEGACY_LANGUAGES:
         return True
     return family_in_scope(env)
 

@@ -234,3 +234,31 @@ def test_lean_acceptance_of_rejected_definitions_is_unavailable(monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "definitions_elaboration=lean")
     with pytest.raises(CheckerUnavailable, match="Python decoder rejects"):
         compile_definitions(env, entries, version="v")
+
+
+@pytest.mark.parametrize("kind", ["v0", "closure", "order"])
+def test_frozen_envelopes_and_their_models_are_validated_in_lean(monkeypatch, kind):
+    from dataclasses import replace
+    from ve.ast import Const, Unary
+    from ve.evaluate import evaluate
+    from tests.test_stage2_graph import legacy_environment
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    env = legacy_environment(kind)
+    data = env.to_dict()
+    bad = json.loads(json.dumps(data))
+    bad["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
+    wire = pm.model_wire(env)
+    wrong = {**wire, "constants": {"x": "absent"}}
+    expected = [outcome(lambda: Environment(x)) for x in (data, bad)] + \
+        [outcome(lambda: FiniteModel.from_dict(env, w)) for w in (wire, wrong)]
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    assert [outcome(lambda: Environment(x)) for x in (data, bad)] + \
+        [outcome(lambda: FiniteModel.from_dict(env, w)) for w in (wire, wrong)] == expected
+    assert ("environment_validation", "lean") in seen and ("model_validation", "lean") in seen
+    model = FiniteModel.from_dict(env, wire)
+    with pytest.raises(InvalidModel, match="does not match its contents") as raised:
+        evaluate(env, Unary("base", Const("x")), replace(model, model_id="0" * 64))
+    assert getattr(raised.value, "backend_rejection", False) is True

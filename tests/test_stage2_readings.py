@@ -146,3 +146,18 @@ def test_readings_on_the_closure_core_and_order_families(monkeypatch, family, ve
         case["evidence"]["model"]["relations"]["base"] = []
         with pytest.raises(VEError, match="does not check"):
             lean_runner.run("readings", [case])
+
+
+@pytest.mark.parametrize("kind", ["v0", "closure", "order"])
+@pytest.mark.parametrize("verdict", list(QUERIES))
+def test_readings_on_the_frozen_envelopes(monkeypatch, kind, verdict):
+    from tests.test_stage2_graph import legacy_environment
+    legacy = legacy_environment(kind)
+    sets, conclusion, fixed = QUERIES[verdict]
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = check_readings(legacy, sets, conclusion, fixed=fixed)
+    assert expected["verdict"] == verdict
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    calls = cases(monkeypatch)
+    assert check_readings(legacy, sets, conclusion, fixed=fixed) == expected
+    assert [row["verdict"] for _, row in calls] == [verdict]

@@ -60,14 +60,19 @@ def test_a_lean_only_bundle_rejection_is_leans(monkeypatch):
 
 def family_bundle(family):
     """Two lemmas, the second citing the first, over a probe environment of
-    `family`, each proving the family's semantic formula (Background leaves first)."""
+    `family` (or a frozen envelope: "v0", "closure", "order"), each proving the
+    family's semantic formula (Background leaves first)."""
     from ve.ast import And, formula_to_data
     from ve.background import background
     from ve.entailment import prove_entailment
     from ve.environment import Environment
     from ve.identity import meaning_id
     from tests import probe_matrix as pm
-    env = Environment(pm.raw_environment(family))
+    if isinstance(family, str):
+        from tests.test_stage2_graph import legacy_environment
+        env = legacy_environment(family)
+    else:
+        env = Environment(pm.raw_environment(family))
     bg = [{"label": "background:" + p.generator, "ast": formula_to_data(env, p.formula)}
           for p in background(env)]
     f = pm.semantic_formula(env)
@@ -87,7 +92,7 @@ def family_bundle(family):
 
 FAMILIES = [("closure@0",), ("closure@0", "nary@0"), ("order@0",), ("closure@0", "definitions@0"),
             ("closure@0", "nary@0", "data@0"), ("norms@0",), ("closure@0", "norms@0"),
-            ("definitions@0", "norms@0")]
+            ("definitions@0", "norms@0"), "v0", "closure", "order"]
 
 
 @pytest.mark.parametrize("family", FAMILIES)

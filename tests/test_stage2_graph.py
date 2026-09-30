@@ -187,15 +187,35 @@ def test_a_family_certificate_bound_elsewhere_is_rejected_by_lean(monkeypatch):
         lean_runner.run("graph", [case])
 
 
-def test_legacy_closure_packages_are_not_composed_by_lean(monkeypatch):
-    from ve.environment import CLOSURE_LANGUAGE, CLOSURE_PROFILES, CLOSURE_REVISION, PROFILE
+def legacy_environment(kind):
+    """The frozen pre-route envelopes of the Stage 0 probes (ve.core@0, and
+    ve.core@0.1 closure or order)."""
+    from ve.environment import (LANGUAGE, PROFILE, SPEC_REVISION as V0_REV, CLOSURE_LANGUAGE,
+                                CLOSURE_PROFILES, CLOSURE_REVISION, ORDER_PROFILES, ORDER_REVISION)
     raw = pm.raw_environment(())
-    raw.update(language=CLOSURE_LANGUAGE, spec_revision=CLOSURE_REVISION, profiles=list(CLOSURE_PROFILES))
-    env = Environment(raw)
-    graph = ArgumentGraph(env, (claim(env, "root"),), (), "root")
+    raw.pop("profiles")
+    if kind == "v0":
+        raw.update(language=LANGUAGE, spec_revision=V0_REV, profile=PROFILE)
+    else:
+        raw.update(language=CLOSURE_LANGUAGE,
+                   spec_revision=CLOSURE_REVISION if kind == "closure" else ORDER_REVISION,
+                   profiles=list(CLOSURE_PROFILES if kind == "closure" else ORDER_PROFILES))
+    return Environment(raw)
+
+
+@pytest.mark.parametrize("kind", ["closure", "order"])
+def test_legacy_packages_compose_through_lean(monkeypatch, kind):
+    env = legacy_environment(kind)
+    formula = Unary("base", Const("x"))
+    graph = with_certs(ArgumentGraph(env, (claim(env, "root", formula), claim(env, "a", formula)),
+                                     (Deduction("er", ("a",), "root"),), "root"))
+    routed(monkeypatch, "python")
+    expected = check_argument(graph, search=False).to_dict()
+    assert expected["composed"]
     seen = routed(monkeypatch, "lean")
-    check_argument(graph, search=False)
-    assert ("graph", "lean") not in seen
+    calls = graph_calls(monkeypatch)
+    assert check_argument(graph, search=False).to_dict() == expected
+    assert ("graph", "lean") in seen and len(calls) == 1
 
 
 def test_norms_profile_premises_are_background_leaves(monkeypatch):
