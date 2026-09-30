@@ -1,0 +1,10 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient drug C or give the patient nothing. The age of the patient is at least 18 years. The age of the patient is at most 90 years. If the age of the patient is greater than 70 years, giving the patient drug C leads to confusion.
+
+The clinic gives the patient drug C, and the age of the patient is 40 years. What does the text tell you about confusion?
+(a) No confusion happens, because the age of the patient is not greater than 70 years.
+(b) The text does not say.
+(c) Confusion happens.
