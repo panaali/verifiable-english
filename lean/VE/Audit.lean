@@ -42,6 +42,9 @@ import VE.Norms.Replay
 import VE.Norms.Flagged
 import VE.Service.Graph
 import VE.Service.Readings
+import VE.Service.GenericGraph
+import VE.Service.GenericReadings
+import VE.Service.Family
 import VE.Norms.Run
 import VE.SpeechActs.Tree
 import VE.SpeechActs.Demand
@@ -827,6 +830,43 @@ import VE.Service.Protocol
 #print axioms VE.Service.Readings.readings_none_sound
 #print axioms VE.Service.Readings.resolve_choice
 #print axioms VE.Service.Readings.readings_some_sound
+#print axioms VE.Service.GenericGraph.acyclicCheck_dependency
+#print axioms VE.Service.GenericGraph.path_rank
+#print axioms VE.Service.GenericGraph.acyclicCheck_sound
+#print axioms VE.Service.GenericGraph.lookup_sound
+#print axioms VE.Service.GenericGraph.resolve_sound
+#print axioms VE.Service.GenericGraph.checkNode_sound
+#print axioms VE.Service.GenericGraph.checkNodes_sound
+#print axioms VE.Service.GenericGraph.check_sound
+#print axioms VE.Service.GenericReadings.disjunction_holds
+#print axioms VE.Service.GenericReadings.choice_covers
+#print axioms VE.Service.GenericReadings.choice_within
+#print axioms VE.Service.GenericReadings.resolve_choice
+#print axioms VE.Service.GenericReadings.refutes_not_ent
+#print axioms VE.Service.GenericReadings.readings_all_sound
+#print axioms VE.Service.GenericReadings.readings_none_sound
+#print axioms VE.Service.GenericReadings.readings_some_sound
+#print axioms VE.Service.Family.closureRefutes_sound
+#print axioms VE.Service.Family.coreRefutes_sound
+#print axioms VE.Service.Family.orderRefutes_sound
+#print axioms VE.Service.Family.closure_graph_sound
+#print axioms VE.Service.Family.closure_graph_entails
+#print axioms VE.Service.Family.closure_graph_unfolds
+#print axioms VE.Service.Family.core_graph_sound
+#print axioms VE.Service.Family.core_graph_entails
+#print axioms VE.Service.Family.core_graph_unfolds
+#print axioms VE.Service.Family.order_graph_sound
+#print axioms VE.Service.Family.order_graph_entails
+#print axioms VE.Service.Family.order_graph_unfolds
+#print axioms VE.Service.Family.closure_readings_all_sound
+#print axioms VE.Service.Family.closure_readings_none_sound
+#print axioms VE.Service.Family.closure_readings_some_sound
+#print axioms VE.Service.Family.core_readings_all_sound
+#print axioms VE.Service.Family.core_readings_none_sound
+#print axioms VE.Service.Family.core_readings_some_sound
+#print axioms VE.Service.Family.order_readings_all_sound
+#print axioms VE.Service.Family.order_readings_none_sound
+#print axioms VE.Service.Family.order_readings_some_sound
 #print axioms VE.Norms.Admission.admitNodes_ok
 #print axioms VE.Norms.Admission.mapM_ok_mem
 #print axioms VE.Norms.Admission.forM_ok

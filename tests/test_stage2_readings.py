@@ -123,3 +123,26 @@ def test_readings_over_a_norms_environment(monkeypatch, verdict):
     calls = cases(monkeypatch)
     assert check_readings(norms_env, sets, conclusion, fixed=fixed) == expected
     assert [row["verdict"] for _, row in calls] == [verdict]
+
+
+@pytest.mark.parametrize("family", [("closure@0",), ("closure@0", "nary@0"), ("order@0",),
+                                    ("closure@0", "definitions@0"), ("closure@0", "nary@0", "data@0"),
+                                    ("order@0", "norms@0")])
+@pytest.mark.parametrize("verdict", list(QUERIES))
+def test_readings_on_the_closure_core_and_order_families(monkeypatch, family, verdict):
+    """Lean's readings mode checks verdicts over every family (VE/Service/Family.lean)."""
+    family_env = Environment(pm.raw_environment(family))
+    sets, conclusion, fixed = QUERIES[verdict]
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    expected = check_readings(family_env, sets, conclusion, fixed=fixed)
+    assert expected["verdict"] == verdict
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    calls = cases(monkeypatch)
+    assert check_readings(family_env, sets, conclusion, fixed=fixed) == expected
+    [(case, row)] = calls
+    assert row["verdict"] == verdict
+    if verdict == "NONE":
+        case = copy.deepcopy(case)
+        case["evidence"]["model"]["relations"]["base"] = []
+        with pytest.raises(VEError, match="does not check"):
+            lean_runner.run("readings", [case])

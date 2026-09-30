@@ -148,8 +148,50 @@ def test_a_lean_refusal_or_different_projection_is_unavailable(monkeypatch):
     assert result.status == "CheckerUnavailable" and "projection" in result.errors[0]["message"]
 
 
-def test_other_families_are_not_composed_by_lean(monkeypatch):
+FAMILIES = [("closure@0",), ("closure@0", "nary@0"), ("order@0",), ("closure@0", "definitions@0"),
+            ("closure@0", "nary@0", "data@0"), ("closure@0", "norms@0"), ("order@0", "norms@0")]
+
+
+@pytest.mark.parametrize("family", FAMILIES)
+def test_closure_core_and_order_packages_compose_through_lean(monkeypatch, family):
+    """A package over the closure, core or order family composes through
+    Lean's graph mode (VE/Service/Family.lean): each deduction's certificate is
+    the family's, and the report's leaves are Python's composition."""
+    env = Environment(pm.raw_environment(family))
+    formula = pm.semantic_formula(env)
+    graph = with_certs(ArgumentGraph(env, (claim(env, "root", formula), claim(env, "a", formula),
+                                           claim(env, "b")),
+                                     (Deduction("er", ("a", "b"), "root"),), "root"))
+    routed(monkeypatch, "python")
+    expected = check_argument(graph, search=False).to_dict()
+    assert expected["composed"], family
+    seen = routed(monkeypatch, "lean")
+    calls = graph_calls(monkeypatch)
+    assert check_argument(graph, search=False).to_dict() == expected
+    assert ("graph", "lean") in seen
+    [(_, [row])] = calls
+    assert row["assumptions"] == ["a", "b"] and row["supporting_edges"] == ["er"]
+
+
+def test_a_family_certificate_bound_elsewhere_is_rejected_by_lean(monkeypatch):
     env = Environment(pm.raw_environment(("closure@0",)))
+    formula = pm.semantic_formula(env)
+    graph = with_certs(ArgumentGraph(env, (claim(env, "root", formula), claim(env, "a", formula)),
+                                     (Deduction("er", ("a",), "root"),), "root"))
+    routed(monkeypatch, "lean")
+    calls = graph_calls(monkeypatch)
+    check_argument(graph, search=False)
+    [([case], _)] = calls
+    case["edges"][0]["certificate"]["premise_meaning_ids"] = ["0" * 64]
+    with pytest.raises(VEError, match="stale"):
+        lean_runner.run("graph", [case])
+
+
+def test_legacy_closure_packages_are_not_composed_by_lean(monkeypatch):
+    from ve.environment import CLOSURE_LANGUAGE, CLOSURE_PROFILES, CLOSURE_REVISION, PROFILE
+    raw = pm.raw_environment(())
+    raw.update(language=CLOSURE_LANGUAGE, spec_revision=CLOSURE_REVISION, profiles=list(CLOSURE_PROFILES))
+    env = Environment(raw)
     graph = ArgumentGraph(env, (claim(env, "root"),), (), "root")
     seen = routed(monkeypatch, "lean")
     check_argument(graph, search=False)

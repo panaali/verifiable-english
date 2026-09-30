@@ -546,17 +546,15 @@ def _lean_deductions(graph, claims, records, reachable, executable):
 
 def _lean_graph_scope(graph) -> bool:
     """Whether Lean's `graph` mode composes this package: the frozen v0 envelope,
-    or a ve.core@0.2 FOL-family environment without statement layers. The closure, core and order families (and ve.core@0.1)
-    are not composed by Lean yet."""
+    or a ve.core@0.2 environment of any family (`validation.family_in_scope`).
+    ve.core@0.1 packages are not composed by Lean yet."""
+    from .backends.validation import family_in_scope
     env = getattr(graph, "env", None)
     if type(env) is not Environment:
         return False
     if env.language == "ve.core@0":
         return True
-    from .profiles import STATEMENT_LAYERS
-    return (env.language == "ve.core@0.2" and not env.closure
-            and not env.order and env.unit_schema is None and env.alternatives is None
-            and not STATEMENT_LAYERS & set(env.profiles))
+    return family_in_scope(env)
 
 
 @semantic_entry("graph.compose")
