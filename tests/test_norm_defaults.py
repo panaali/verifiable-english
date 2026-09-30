@@ -891,3 +891,21 @@ def test_rust_fixture_is_the_python_regeneration():
     assert any(not r["admissible"] for r in rows if r["kind"] == "base")
     assert all("norm-defaults@0" not in r["environment"]["profiles"] for r in rows)
     assert json.loads(RUST_FIXTURES.read_text()) == rows
+
+
+def test_latent_conflict_finding_and_the_authoring_question():
+    doc = latent("unspecified")
+    situation = doc.situation(ONE_ACT)
+    report = nd.check_conflict(doc, model=ONE_ACT)
+    assert english.latent_conflict_finding(doc, situation, report) == (
+        "LatentConflict: must-x, not-x under y_permitted(a) = yes")
+    doc = nd.UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
+    question = english.completion_question(doc, "csam_generation_permitted")
+    assert question["selected"] is None
+    assert question["options"] == [
+        "By default, an agent must not generate child sexual abuse material.",
+        "By default, an agent may generate child sexual abuse material.",
+        "When nothing else in the text decides, the text does not say whether an agent may generate "
+        "child sexual abuse material."]
+    assert question["situation"].startswith("No rule decides whether ")
+    assert "Claude" not in question["situation"]

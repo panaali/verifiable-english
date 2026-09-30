@@ -351,3 +351,29 @@ def silence_sentence(document, predicate):
     scope, _ = _bindings(decl, words)
     return ("the text does not say whether " + unspecified_clause(env, predicate) + ", if "
             + _guard_text(condition, env, words, scope))
+
+
+def latent_conflict_finding(document, situation, report):
+    """Spec 8's report finding for a latent CONFLICT: `LatentConflict: <rules> under <p>(<situation>)`."""
+    if report.kind != "latent":
+        raise VEError("InvalidInput: not a latent conflict")
+    filling = {name: frozenset(tuple(row) for row in rows) for name, rows in report.filling.items()}
+    predicates = report.target.split("->") if "->" in report.target else [report.target]
+    rules = sorted({r.name for p in predicates
+                    for r in _selected_author_rules(document, situation, filling, p, report.tuple)})
+    under = ", ".join(f"{q}({', '.join(row)}) = {'yes' if value else 'no'}" for q, row, value in report.under)
+    return f"LatentConflict: {', '.join(rules)} under {under}"
+
+
+def completion_question(document, predicate, *, max_domain_size=2):
+    """Spec 5's authoring question: the three legend sentences, unranked and with
+    none preselected, beside a checked situation that no rule on `predicate` decides."""
+    from .norm_defaults import search_reached
+    env = document.env
+    options = [default_sentence(env, predicate, completion) for completion in COMPLETIONS]
+    found = search_reached(document, predicate, max_domain_size=max_domain_size)
+    situation = None
+    if found is not None:
+        model, values, _ = found
+        situation = "No rule decides whether " + point_clause(env, model, predicate, values) + "."
+    return {"predicate": predicate, "options": options, "selected": None, "situation": situation}
