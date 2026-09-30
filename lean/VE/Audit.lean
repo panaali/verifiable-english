@@ -80,6 +80,7 @@ import VE.NormDefaults.Check
 import VE.NormDefaults.Fill
 import VE.NormDefaults.FillCheck
 import VE.NormDefaults.Semantics
+import VE.NormDefaults.Premises
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2101,3 +2102,24 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.fill_intended
 #print axioms VE.NormDefaults.unsaidName_ne_regulated
 #print axioms VE.NormDefaults.value3_holds
+#print axioms VE.NormDefaults.actChecks_dual
+#print axioms VE.NormDefaults.actChecks_eq
+#print axioms VE.NormDefaults.before_fill
+#print axioms VE.NormDefaults.canonical_fill_sat
+#print axioms VE.NormDefaults.conflictFreeU_iff
+#print axioms VE.NormDefaults.fillPremises_nil
+#print axioms VE.NormDefaults.fill_conservative
+#print axioms VE.NormDefaults.fill_extends
+#print axioms VE.NormDefaults.fill_sat_of
+#print axioms VE.NormDefaults.forIn_each
+#print axioms VE.NormDefaults.forget_withFill
+#print axioms VE.NormDefaults.gapF_fill
+#print axioms VE.NormDefaults.outcomeBase_fill
+#print axioms VE.NormDefaults.outcome_at_gap
+#print axioms VE.NormDefaults.pair_perm
+#print axioms VE.NormDefaults.pair_req
+#print axioms VE.NormDefaults.pair_roles
+#print axioms VE.NormDefaults.sat_literals_relation
+#print axioms VE.NormDefaults.withFill_baseAdmissible
+#print axioms VE.NormDefaults.withFill_off
+#print axioms VE.NormDefaults.withFill_unsaid
