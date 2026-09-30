@@ -156,6 +156,25 @@ def _valid_rights(env, model):
             raise InvalidModel(f"rights premise {label} is false", generator="rights")
 
 
+def _fill_premises(env):
+    # Installed only by norm-defaults `fill` (Fill_T, norm-defaults 2.4), never
+    # accepted from authored wire fields.
+    return tuple(formula for _, formula in getattr(env, "fill_premises", ()))
+
+
+def _valid_fill(env, model):
+    if not getattr(env, "fill_premises", ()):
+        return
+    from .evaluate import _evaluate_validated
+    from .limits import MAX_EVALUATIONS
+    for label, formula in env.fill_premises:
+        result = _evaluate_validated((formula,), model, max_evaluations=MAX_EVALUATIONS)
+        if result.value is None:
+            raise ResourceLimit(f"Fill background evaluation budget exhausted: {label}")
+        if result.value is not True:
+            raise InvalidModel(f"fill premise {label} is false", generator="norm-defaults")
+
+
 # Each entry is (premise generator, validity checker).
 HOOKS: dict[str, tuple[Callable, Callable]] = {
     "flags": (_flag_premises, _valid_flags),
@@ -171,6 +190,8 @@ def _background_hooks(env):
         yield "soft", (_soft_premises, _valid_soft)
     if getattr(env, "rights_premises", ()):
         yield "rights", (_rights_premises, _valid_rights)
+    if getattr(env, "fill_premises", ()):
+        yield "norm-defaults", (_fill_premises, _valid_fill)
 
 
 @semantic_entry("definitions.elaborate")
