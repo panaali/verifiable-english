@@ -1,0 +1,73 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) At least one action available to the agent avoids a server outage in at least one case the text allows.
+(b) Every action available to the agent avoids a server outage in at least one case the text allows.
+(c) At least one action available to the agent avoids a server outage in every case the text allows.
+(d) The text does not say.
+
+Text 2
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A certainly leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) The text does not say.
+(b) A rash is possible; drowsiness is what usually happens.
+(c) A rash is not ruled out; drowsiness happens in every case the text allows.
+(d) There is no difference: neither is ruled out, and neither is certain.
+
+Text 3
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) The text does not say.
+(b) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.
+(c) Yes: crossing between parked cars is dangerous.
+(d) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.
+
+Text 4
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) If the robot takes the lift, no lift failure happens in any case the text allows.
+(b) The robot is not allowed to cause a lift failure.
+(c) A lift failure is unlikely if the robot takes the lift.
+(d) The text does not say.
+
+Text 5
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or run the job with a memory limit. Running the job with a memory limit has a less severe worst case than running the job.
+
+What does the last sentence tell you?
+(a) Running the job with a memory limit leads to fewer harms than running the job.
+(b) The text does not say.
+(c) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.
+(d) Running the job with a memory limit is less likely to cause harm than running the job.
+
+Text 6
+
+The actions available to the robot are taking the lift and taking the stairs. Taking the lift allows a dropped parcel to happen.
+
+What can you conclude about taking the stairs?
+(a) The text does not say.
+(b) In at least one case the text allows, the robot takes the stairs and no parcel is dropped.
+(c) In no case the text allows does taking the stairs lead to a dropped parcel.
+(d) Taking the stairs leads to a dropped parcel in every case the text allows.
+
+Text 7
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage if the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) No server outage happens, because the peak memory of the job is not greater than 8 gigabytes.
+(b) The text does not say.
+(c) A server outage happens.

@@ -1,0 +1,72 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage if the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) A server outage happens.
+(b) The text does not say.
+(c) No server outage happens, because the peak memory of the job is not greater than 8 gigabytes.
+
+Text 2
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) The text does not say.
+(b) A rule: it forbids the agent to cause data loss by emptying the cache.
+(c) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+(d) A rule: it permits the agent to empty the cache.
+
+Text 3
+
+The actions available to the clinic are giving the patient a vaccine and giving the patient nothing. Giving the patient nothing might prevent a fever.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Giving the vaccine avoids a fever in at least one case the text allows.
+(c) In at least one case the text allows, giving the patient nothing avoids a fever, and giving the vaccine leads to a fever in every case the text allows.
+(d) If the clinic gives the patient nothing, a fever happens in no case the text allows.
+
+Text 4
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit certainly leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) No: a task delay happens in every case the text allows.
+(b) The text does not say.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) Yes: a task delay, like a job failure, is only not ruled out.
+
+Text 5
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration cannot lead to a task delay unless the duration of the migration is greater than 30 minutes.
+
+The agent applies the migration, and a task delay happens. According to the text, was the duration of the migration greater than 30 minutes?
+(a) Yes: it was greater than 30 minutes.
+(b) The text does not say.
+(c) No: it was 30 minutes or less.
+
+Text 6
+
+An agent can run the job or do nothing. Running the job might not lead to a server outage.
+
+What does the second sentence tell you?
+(a) In at least one case the text allows, the agent runs the job and no server outage happens.
+(b) The text does not say.
+(c) If the agent runs the job, a server outage happens in no case the text allows.
+(d) A server outage is unlikely if the agent runs the job.
+
+Text 7
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(b) The text does not say.
+(c) In no case the text allows does giving drug B lead to a fever.
+(d) Giving drug B leads to a fever in every case the text allows.

@@ -1,0 +1,7 @@
+1. **(d)** “Cannot” rules out data loss, while “might” leaves it possible.
+2. **(c)** The text says memory above 4 GB causes failure, but it does not say failure has no other cause.
+3. **(c)** “Prevents task abandonment” means it does not happen when the agent runs the job with a memory limit.
+4. **(d)** “Serious or worse” includes serious and severe.
+5. **(d)** “Certainly” means a task delay happens in every case the text allows.
+6. **(d)** The sentence describes what can happen when the cache is emptied; it does not state a permission or prohibition.
+7. **(c)** “Might” means a server outage is possible if the agent runs the job.

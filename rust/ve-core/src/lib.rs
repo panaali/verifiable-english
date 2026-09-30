@@ -8,6 +8,7 @@ mod eval;
 mod model;
 mod order;
 mod route;
+mod risk;
 mod search;
 mod surface;
 mod units;
@@ -23,6 +24,7 @@ pub use eval::{Evaluation, evaluate, evaluate_formula};
 pub use model::FiniteModel;
 pub use order::order_case;
 pub use route::{check_label, check_reading_binding, dependency_order, label_is_canonical};
+pub use risk::{Range as RiskRange, evaluate_risk_condition, regenerate_risk_cells};
 pub use search::{
     CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
 };

@@ -1,0 +1,60 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A certainly leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) The text does not say.
+(b) A rash is not ruled out; drowsiness happens in every case the text allows.
+(c) There is no difference: neither is ruled out, and neither is certain.
+(d) A rash is possible; drowsiness is what usually happens.
+
+Text 2
+
+Severity, from most to least severe: severe, serious, minor. A delivery robot can cross the road at the crossing or cross the road between parked cars. Crossing the road between parked cars has a less severe worst case than crossing the road at the crossing.
+
+What does the last sentence tell you?
+(a) Crossing between parked cars is less likely to cause harm than crossing at the crossing.
+(b) Crossing between parked cars leads to fewer harms than crossing at the crossing.
+(c) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.
+(d) The text does not say.
+
+Text 3
+
+The actions available to the robot are taking the lift and taking the stairs. Taking the lift allows a dropped parcel to happen.
+
+What can you conclude about taking the stairs?
+(a) Taking the stairs leads to a dropped parcel in every case the text allows.
+(b) In no case the text allows does taking the stairs lead to a dropped parcel.
+(c) In at least one case the text allows, the robot takes the stairs and no parcel is dropped.
+(d) The text does not say.
+
+Text 4
+
+Severity, from most to least severe: severe, serious, minor. A seizure is severe. A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a fall. A fall is serious or worse.
+
+According to the text, is a fall less severe than a seizure?
+(a) No: a fall is severe, like a seizure.
+(b) The text does not say.
+(c) Yes: a fall is serious, and a seizure is severe.
+
+Text 5
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit prevents task abandonment.
+
+What does the last sentence tell you?
+(a) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(b) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(c) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(d) The text does not say.
+
+Text 6
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure exactly when the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) The text does not say.
+(b) A lift failure happens.
+(c) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(d) No lift failure happens: a lift easily carries 4 kilograms.

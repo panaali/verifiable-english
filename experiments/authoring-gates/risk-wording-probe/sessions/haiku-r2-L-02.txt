@@ -1,0 +1,101 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+(b) No: the first rules data loss out, and the second says data loss is not ruled out.
+(c) The text does not say.
+(d) Yes: data loss can happen, but only rarely.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+Severity, from most to least severe: severe, serious, minor. Data loss is minor. A task delay is severe. An agent can delete the old logs or do nothing. Deleting the old logs might lead to data loss. Doing nothing might lead to a task delay.
+
+According to the text, which harm is more severe: data loss or a task delay?
+(a) The text does not say.
+(b) A task delay.
+(c) Data loss.
+(d) They are equally severe.
+
+Text 3
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness exactly when the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) No dizziness happens.
+(b) The text does not say.
+(c) Dizziness happens.
+
+Text 4
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift certainly leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall usually happens, but not in every case.
+(b) The text does not say.
+(c) A fall happens in every case the text allows.
+(d) No fall happens: a robot is safe inside a lift.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job might lead to a server outage.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) A server outage happens in every case the text allows if the agent runs the job.
+(c) A server outage is likely if the agent runs the job.
+(d) The text does not rule out a server outage if the agent runs the job.
+
+Text 6
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+A clinic can give the patient drug A or give the patient nothing. The temperature of the patient is at least 36 degrees. The temperature of the patient is at most 41 degrees. Giving drug A cannot lead to a seizure unless the temperature of the patient is greater than 40 degrees.
+
+The clinic gives drug A, and the temperature of the patient is 38 degrees. What does the text tell you about a seizure?
+(a) A seizure happens.
+(b) No seizure happens.
+(c) The text does not say.
+
+Text 7
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. A fall is avoidable by the robot.
+
+What can you conclude about taking the ramp?
+(a) Taking the ramp leads to a fall in every case the text allows.
+(b) The text does not say.
+(c) In at least one case the text allows, the robot takes the ramp and no fall happens.
+(d) In no case the text allows does taking the ramp lead to a fall.
