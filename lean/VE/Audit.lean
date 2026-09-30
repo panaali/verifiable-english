@@ -79,6 +79,7 @@ import VE.NormDefaults.Tree
 import VE.NormDefaults.Check
 import VE.NormDefaults.Fill
 import VE.NormDefaults.FillCheck
+import VE.NormDefaults.Semantics
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2093,3 +2094,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.find_of_name
 #print axioms VE.NormDefaults.flatMap_congr_mem
 #print axioms VE.NormDefaults.sum_append_nat
+#print axioms VE.NormDefaults.catala_completed
+#print axioms VE.NormDefaults.catala_unspecified
+#print axioms VE.NormDefaults.completionOf_other
+#print axioms VE.NormDefaults.completionOf_unspec
+#print axioms VE.NormDefaults.fill_intended
+#print axioms VE.NormDefaults.unsaidName_ne_regulated
+#print axioms VE.NormDefaults.value3_holds
