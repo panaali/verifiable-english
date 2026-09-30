@@ -16,9 +16,15 @@ namespace VE.Discourse
 open VE.English (Tok)
 universe u
 
-/-- The mention the manifest records at a slot (its unit, span and form). -/
+/-- A location target (1.4): a `unit` or `anchor` target produces no formula and never fills a
+slot, whatever the mention's form. -/
+def locationKind (k : TargetKind) : Bool := k == .unit || k == .anchor
+
+/-- The mention the manifest records at a slot (its unit, span and form); a location binding
+is never one. -/
 def mentionAt (D : DDoc) (m : Slot) : Option Mention :=
-  D.K.mentions.find? fun x => x.unit == m.unit && x.span == m.span && x.form == m.form
+  D.K.mentions.find? fun x => x.unit == m.unit && x.span == m.span && x.form == m.form &&
+    !locationKind x.target.kind
 
 /-- `K.target(m)`: the target the manifest records at slot `m`. -/
 def recordedTarget (D : DDoc) (m : Slot) : Option Target := (mentionAt D m).map Mention.target

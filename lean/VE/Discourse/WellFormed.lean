@@ -166,6 +166,36 @@ def kindText : TargetKind → String
 
 def mentionUnitLength (D : DDoc) (x : Mention) : Option Nat := (D.text x.unit).map List.length
 
+def groupedUnits (D : DDoc) : List String := D.K.groups.flatMap Group.spans
+
+def contentOf (D : DDoc) (u : String) : Option VE.Formula := (unitOf D.base u).bind DocUnit.content
+
+/-- The unit carries an active reading set: its readings are its meaning (W2 drops its content). -/
+def setUnit (D : DDoc) (u : String) : Bool := D.sets.any (·.unit == u)
+
+/-- A slot position (1.4): a unit with meaning (content or an active reading set) or a group
+span is read by a derivation, so a pronoun or demonstrative in it is a slot. -/
+def slotUnit (D : DDoc) (u : String) : Bool :=
+  (contentOf D u).isSome || setUnit D u || (groupedUnits D).contains u
+
+/-- 4.1(4): a location binding's target exists: an anchor of the table (`DanglingAnchor`), or a
+nonempty list of source units (`UnresolvedReference`) that its content name, if any, lists
+exactly (`ManifestMismatch: mentions.<m>.content_name`). A formula-producing mention's target is
+checked by `Acc` (4.2). -/
+def locationTargetOk (D : DDoc) (x : Mention) : Except String Unit :=
+  match x.target.kind with
+  | .anchor => match x.target.name with
+    | some a => req (anchorOf D a).isSome ("DanglingAnchor: " ++ a)
+    | none => .error ("InvalidInput: mention " ++ x.id ++ " target")
+  | .unit => runAll [
+    fun _ => req (!x.target.units.isEmpty && x.target.units.all (unitIdsOf D).contains)
+      ("UnresolvedReference: " ++ x.id),
+    fun _ => match x.target.contentName with
+      | some n => req (D.K.contentNames.any fun c => c.name == n && c.units == x.target.units)
+          ("ManifestMismatch: mentions." ++ x.id ++ ".content_name")
+      | none => .ok ()]
+  | _ => .ok ()
+
 /-- The sort the restriction's context `[σ]` names. -/
 def restrictionSort (D : DDoc) (m : Mention) : Option String :=
   match m.restriction with
@@ -211,7 +241,7 @@ def mentionsOk (D : DDoc) : Except String Unit := runAll [
     req ((unitIdsOf D).contains x.unit && decide (x.span.1 < x.span.2) &&
       (match mentionUnitLength D x with
        | some n => decide (x.span.2 ≤ n)
-       | none => !formulaForm x.form)) ("InvalidInput: mention " ++ x.id ++ " span"),
+       | none => !producing x)) ("InvalidInput: mention " ++ x.id ++ " span"),
   fun _ => allOk D.K.mentions fun x => allOk D.K.mentions fun y =>
     if x.id != y.id && x.unit == y.unit && !spansDisjoint x.span y.span && !spansNested x.span y.span then
       .error ("InvalidInput: mentions " ++ x.id ++ ", " ++ y.id ++ " overlap") else .ok (),
@@ -222,6 +252,12 @@ def mentionsOk (D : DDoc) : Except String Unit := runAll [
       ("UnsupportedTarget: " ++ x.id ++ ": claim"),
   fun _ => allOk D.K.mentions fun x => req (formFits x.form x.target.kind)
     ("TargetKindMismatch: " ++ x.id ++ ": " ++ formText x.form ++ ", " ++ kindText x.target.kind),
+  -- a location target in a slot position (1.4): a pronoun or demonstrative naming a unit is a
+  -- location binding only in a unit no derivation reads
+  fun _ => allOk D.K.mentions fun x =>
+    req (!(formulaForm x.form && locationKind x.target.kind && slotUnit D x.unit))
+      ("TargetKindMismatch: " ++ x.id ++ ": " ++ formText x.form ++ ", " ++ kindText x.target.kind),
+  fun _ => allOk D.K.mentions fun x => if producing x then .ok () else locationTargetOk D x,
   fun _ => allOk D.K.mentions fun x =>
     if x.form == .definite then
       match x.restriction, x.reading, restrictionSort D x with
@@ -232,13 +268,6 @@ def mentionsOk (D : DDoc) : Except String Unit := runAll [
       | some _, some .assertive, some _ => .ok ()
       | _, _, _ => .error ("InvalidInput: restriction of " ++ x.id)
     else .ok ()]
-
-def groupedUnits (D : DDoc) : List String := D.K.groups.flatMap Group.spans
-
-def contentOf (D : DDoc) (u : String) : Option VE.Formula := (unitOf D.base u).bind DocUnit.content
-
-/-- The unit carries an active reading set: its readings are its meaning (W2 drops its content). -/
-def setUnit (D : DDoc) (u : String) : Bool := D.sets.any (·.unit == u)
 
 /-- A unit whose meaning is admitted on its own: it carries content or an active reading set,
 and is not a group span (a span's meaning is its group's, 1.5). A reading set is never a way
@@ -258,13 +287,13 @@ def hasSourceSlot (D : DDoc) (u : String) : Bool :=
 mention, and every unit with content or a reading set whose source has a reference slot
 (recorded or not). -/
 def boundUnits (D : DDoc) : List String :=
-  (D.K.mentions.filter fun x => formulaForm x.form).map Mention.unit ++
+  (D.K.mentions.filter fun x => producing x).map Mention.unit ++
     (unitIdsOf D).filter fun u => contentUnit D u && hasSourceSlot D u
 
 /-- The prose byte ranges of the unit's recorded formula-producing mentions (a location binding
 is never a slot, so it never accounts for one). -/
 def recordedBytes (D : DDoc) (u : String) : List (Nat × Nat) :=
-  (D.K.mentions.filter fun x => x.unit == u && formulaForm x.form).map Mention.bytes
+  (D.K.mentions.filter fun x => x.unit == u && producing x).map Mention.bytes
 
 /-- The first reference surface of the unit that no recorded formula-producing mention records
 with exactly its byte range: overlapping or containing it is not enough (a pronoun `It` recorded
@@ -420,7 +449,7 @@ theorem wellFormed_of (D : DDoc) (h : WellFormedDiscourse D = true) : wellFormed
   | error e => rw [hw] at h; cases h
 
 theorem wf_bound (D : DDoc) (h : WellFormedDiscourse D = true) (x : Mention) (hx : x ∈ D.K.mentions)
-    (hf : formulaForm x.form = true) : ∃ A, validate D x.unit = .ok A := by
+    (hf : producing x = true) : ∃ A, validate D x.unit = .ok A := by
   have hb := runAll_ok _ (wellFormed_of D h) (fun _ => boundOk D) (by simp)
   have hu : x.unit ∈ boundUnits D := by
     unfold boundUnits
@@ -568,7 +597,7 @@ theorem recorded_mention {D : DDoc} {m : Slot} {t : Target} (h : recordedTarget 
     unfold mentionAt at hx'
     have hp := List.find?_some hx'
     simp only [Bool.and_eq_true, beq_iff_eq] at hp
-    exact ⟨x, List.mem_of_find?_eq_some hx', rfl, hp.1.1, hp.1.2, hp.2⟩
+    exact ⟨x, List.mem_of_find?_eq_some hx', rfl, hp.1.1.1, hp.1.1.2, hp.1.2⟩
 
 /-- The mention an ill-typed derivation's diagnostic names: its culprit slot's recorded
 mention, a mention of the unit. -/
@@ -632,10 +661,10 @@ theorem ill_typed_target_single (D : DDoc) (u : String) (s : List Tok) (hs : D.t
     unfold recordedSlots
     rw [List.mem_mergeSort]
     refine List.mem_map.mpr ⟨x, List.mem_filter.mpr ⟨hx, ?_⟩, ?_⟩
-    · simp [hu, hp.2, hf]
+    · simp [producing, hu, hp.1.2, hp.2, hf]
     · rcases m' with ⟨mu, msp, mf⟩
       simp only at hp ⊢
-      rw [hp.1.1, hp.1.2, hp.2]
+      rw [hp.1.1.1, hp.1.1.2, hp.1.2]
   rw [hone, List.mem_singleton] at hin
   subst hin
   refine ⟨": " ++ ((recordedTarget D m').map targetText).getD "?", ?_⟩
@@ -643,17 +672,17 @@ theorem ill_typed_target_single (D : DDoc) (u : String) (s : List Tok) (hs : D.t
   simp [mentionIdAt, hmx, String.append_assoc]
 
 theorem recordedSlots_nil {D : DDoc} {u : String} (h : recordedSlots D u = []) :
-    ∀ x ∈ D.K.mentions, x.unit = u → formulaForm x.form = false := by
+    ∀ x ∈ D.K.mentions, x.unit = u → producing x = false := by
   intro x hx hu
   have hl := List.length_mergeSort (le := slotBefore)
-    ((D.K.mentions.filter fun x => x.unit == u && formulaForm x.form).map fun x => (⟨x.unit, x.span, x.form⟩ : Slot))
+    ((D.K.mentions.filter fun x => x.unit == u && producing x).map fun x => (⟨x.unit, x.span, x.form⟩ : Slot))
   unfold recordedSlots at h
   rw [h] at hl
   simp only [List.length_nil, List.length_map] at hl
   have hn := List.length_eq_zero_iff.mp hl.symm
-  cases hf : formulaForm x.form
+  cases hf : producing x
   · rfl
-  · have hmem : x ∈ D.K.mentions.filter (fun x => x.unit == u && formulaForm x.form) :=
+  · have hmem : x ∈ D.K.mentions.filter (fun x => x.unit == u && producing x) :=
       List.mem_filter.mpr ⟨hx, by simp [hu, hf]⟩
     rw [hn] at hmem
     cases hmem
@@ -661,15 +690,15 @@ theorem recordedSlots_nil {D : DDoc} {u : String} (h : recordedSlots D u = []) :
 theorem recordedTarget_none {D : DDoc} {u : String} (h : recordedSlots D u = []) (m : Slot) (hu : m.unit = u)
     (hf : formulaForm m.form = true) : recordedTarget D m = none := by
   unfold recordedTarget mentionAt
-  cases hx : D.K.mentions.find? (fun x => x.unit == m.unit && x.span == m.span && x.form == m.form) with
+  cases hx : D.K.mentions.find? (fun x => x.unit == m.unit && x.span == m.span && x.form == m.form &&
+      !locationKind x.target.kind) with
   | none => rfl
   | some x =>
     have hm := List.mem_of_find?_eq_some hx
     have hp := List.find?_some hx
     simp only [Bool.and_eq_true, beq_iff_eq] at hp
-    have := recordedSlots_nil h x hm (by rw [hp.1.1, hu])
-    rw [hp.2, hf] at this
-    cases this
+    have := recordedSlots_nil h x hm (by rw [hp.1.1.1, hu])
+    simp [producing, hp.1.2, hf, hp.2] at this
 
 theorem vectors_acc (D : DDoc) : ∀ (slots : List Slot) (vec : List Target),
     vec ∈ vectors (slots.map (accCands D)) → ∀ m ∈ slots, Acc D m (assignOf slots vec m)
@@ -784,12 +813,12 @@ theorem validate_complete (D : DDoc) (h : WellFormedDiscourse D = true) (u : Str
       simp only [hrv, hs0, List.zip_nil_left, List.all_nil, Bool.not_true, Bool.false_eq_true, if_false,
         aligned, beq_self_eq_true, Bool.and_self, hb, bne_self_eq_false, hres, he0, hck, if_true]
   · -- a recorded formula-producing mention at `u`: `u` is bound, so well-formedness validated it
-    obtain ⟨x, hx, hxf⟩ : ∃ x ∈ D.K.mentions, x.unit = u ∧ formulaForm x.form = true := by
+    obtain ⟨x, hx, hxf⟩ : ∃ x ∈ D.K.mentions, x.unit = u ∧ producing x = true := by
       unfold recordedSlots at hb
-      cases hl : (D.K.mentions.filter fun x => x.unit == u && formulaForm x.form) with
+      cases hl : (D.K.mentions.filter fun x => x.unit == u && producing x) with
       | nil => simp [hl] at hb
       | cons x xs =>
-        have hm : x ∈ D.K.mentions.filter fun x => x.unit == u && formulaForm x.form := by rw [hl]; exact List.mem_cons_self
+        have hm : x ∈ D.K.mentions.filter fun x => x.unit == u && producing x := by rw [hl]; exact List.mem_cons_self
         obtain ⟨hmem, hp⟩ := List.mem_filter.mp hm
         simp only [Bool.and_eq_true, beq_iff_eq] at hp
         exact ⟨x, hmem, hp⟩
