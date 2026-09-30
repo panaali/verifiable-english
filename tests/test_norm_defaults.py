@@ -49,15 +49,19 @@ def status_of(doc, predicate, row, situation=ONE_ACT, **options):
 # u1: u0165.s07, audited shape.
 
 def csam(default):
-    return environment(
+    raw = raw_environment(
         {"csam_generation_permitted": permission(default, act="{0} generate child sexual abuse material",
-                                                 args=("entity",))},
-        sorts=("entity",), constants={"claude": {"sort": "entity", "description": "Claude"},
-                                      "sol": {"sort": "entity", "description": "Sol"}})
+                                                 args=("agent",))},
+        sorts=("agent",), constants={"claude": {"sort": "agent", "description": "Claude",
+                                                "verbalisation": "Claude"},
+                                     "sol": {"sort": "agent", "description": "Sol", "verbalisation": "Sol"}})
+    # "entity" is a reserved word of the English vocabulary; the audited sort was `entity`.
+    raw["vocabulary"]["sorts"]["agent"]["verbalisation"] = {"singular": "agent", "plural": "agents"}
+    return Environment(raw)
 
 
 CSAM_RULE = rule("no-csam-generation", "csam_generation_permitted", False, Eq(Var(0), Const("claude")))
-CSAM_SITUATION = {"complete": True, "domains": {"entity": ["claude0", "sol0"]},
+CSAM_SITUATION = {"complete": True, "domains": {"agent": ["claude0", "sol0"]},
                   "constants": {"claude": "claude0", "sol": "sol0"}, "relations": {}}
 
 
@@ -462,3 +466,169 @@ def test_audit_cli_lists_the_changes_a_switch_makes(tmp_path, capsys):
     assert (entry["completion"], entry["default_reached"]) == ("allow", "reachable")
     assert entry["changes_if_switched"] == [{"predicate": "csam_generation_permitted", "tuple": ["sol0"],
                                              "before": "SETTLED yes", "after": "UNDECIDED"}]
+
+
+# u13: English.
+
+from ve import norm_defaults_english as english  # noqa: E402
+from ve.norm_english import default_sentence, pair_sentence, render_english  # noqa: E402
+
+
+def test_u13_legend_sentences_render_and_parse_with_one_derivation_for_every_role():
+    env = environment({"x_permitted": permission("unspecified"),
+                       "x_required": obligation("unspecified"),
+                       "x_plain": {"arguments": ["act"], "description": "plain", "verbalisation": "{0} is late",
+                                   "regulated": {"role": "plain", "default": "unspecified"}}})
+    expected = {
+        "x_permitted": "When nothing else in the text decides, the text does not say whether an act may be done.",
+        "x_required": "When nothing else in the text decides, the text does not say whether an act must be done.",
+        "x_plain": "When nothing else in the text decides, the text does not say whether an act is late."}
+    for predicate, sentence in expected.items():
+        assert default_sentence(env, predicate) == sentence
+        assert english.parse_legend_sentence(env, sentence) == ("completion", predicate, "unspecified")
+        for completion in ("deny", "allow"):
+            other = default_sentence(env, predicate, completion)
+            assert other.startswith("By default, ")
+            assert english.parse_legend_sentence(env, other) == ("completion", predicate, completion)
+    assert english.legend(env)[-1] == "Whenever an act must be done, it may be done."
+
+
+def test_u13_u1_legend_is_the_spec_example():
+    assert english.legend(csam("unspecified")) == (
+        "When nothing else in the text decides, the text does not say whether an agent may generate "
+        "child sexual abuse material.",)
+
+
+def test_u13_u5_legends_render_and_their_silence_sentences_parse():
+    for predicates, legend in (
+            ({"x_required": obligation("unspecified"), "x_permitted": permission("deny")},
+             ("When nothing else in the text decides, the text does not say whether an act must be done.",
+              "By default, an act must not be done.",
+              "Whenever an act must be done, it may be done.")),
+            ({"x_required": obligation("deny"), "x_permitted": permission("unspecified")},
+             ("By default, an act need not be done.",
+              "When nothing else in the text decides, the text does not say whether an act may be done.",
+              "Whenever an act must be done, it may be done."))):
+        env = environment(predicates)
+        assert english.legend(env) == legend
+        readings = [english.parse_legend_sentence(env, sentence) for sentence in legend]
+        assert readings[-1] == ("pair", "x_required", "x_permitted")
+        assert sum(r[2] == "unspecified" for r in readings) == 1
+
+
+def test_u13_pair_sentence_for_distinct_sorts():
+    env = environment({"help_required": obligation("deny", "help_permitted", act="{0} help {1}",
+                                                   args=("state", "person")),
+                       "help_permitted": permission("unspecified", act="{0} help {1}", args=("state", "person"))},
+                      sorts=("state", "person"))
+    assert pair_sentence(env, "help_required") == "Whenever a state must help a person, it may help that person."
+    assert english.parse_legend_sentence(env, pair_sentence(env, "help_required"))[0] == "pair"
+
+
+def test_u13_keyword_collision_and_profile_gate():
+    from ve.surface.registry import by_tag, dispatch, keywords
+    record = by_tag("norm-unspecified")
+    assert record.english_keywords == ("When nothing else in the text decides, ",)
+    assert record.profiles == ("norm-defaults@0", "norms@0")
+    for keyword, other in keywords():
+        if other is record:
+            continue
+        assert not keyword.casefold().startswith("when nothing"), keyword
+        assert not "when nothing else in the text decides, ".startswith(keyword.casefold()), keyword
+    source = "When nothing else in the text decides, the text does not say whether an act may be done."
+    assert dispatch(source, environment({"x_permitted": permission("unspecified")}))[1] is record
+    w1 = Environment(raw_environment({"x_permitted": permission("deny")}, profiles=["norms@0", "relational-fol@0"]))
+    assert dispatch(source, w1) is None
+    with pytest.raises(VEError, match="requires norm-defaults@0"):
+        english.parse_legend_sentence(w1, source)
+
+
+def test_u13_carve_out_soft_and_status_paraphrases():
+    env = csam("unspecified")
+    assert english.carve_out_paraphrase(env, "csam_generation_permitted") == (
+        "When this condition holds, this rule is silent; other rules may decide; if none does, "
+        "the text does not say whether an agent may generate child sexual abuse material.")
+    assert english.carve_out_paraphrase(csam("deny"), "csam_generation_permitted").endswith(
+        "if none does, by default, an agent must not generate child sexual abuse material.")
+    assert english.soft_default_paraphrase(env, "csam_generation_permitted", 12) == (
+        "An agent must not generate child sexual abuse material unless rule 12's exception applies there; "
+        "where it applies and no other rule decides, the text does not say whether an agent may generate "
+        "child sexual abuse material.")
+    doc = nd.UnspecifiedDocument(env, [CSAM_RULE])
+    situation = doc.situation(CSAM_SITUATION)
+    claude, sol = doc.statuses(situation)
+    assert english.status_sentence(doc, situation, claude) == (
+        "The text says Claude must not generate child sexual abuse material (rule 1).")
+    assert english.status_sentence(doc, situation, sol) == (
+        "The text does not say whether Sol may generate child sexual abuse material: "
+        "no rule decides this situation.")
+    assert english.silence_sentence(doc, "csam_generation_permitted") == (
+        "the text does not say whether an agent other than Claude may generate child sexual abuse material")
+    (line,) = nd.report(doc, model=CSAM_SITUATION)
+    assert english.gap_sentence(doc, situation, line) == (
+        "The text does not say whether Sol may generate child sexual abuse material: "
+        "no rule decides this situation.")
+    assert english.filling_sentence(env, situation, "csam_generation_permitted", ("sol0",), True) == (
+        "Here the text does not say whether Sol may generate child sexual abuse material; "
+        "this situation answers 'yes'.")
+
+
+def test_u13_pair_inherited_and_latent_paraphrases():
+    env = environment({"x_required": obligation("deny"), "x_permitted": permission("unspecified")})
+    doc = nd.UnspecifiedDocument(env, [rule("must", "x_required", True)])
+    situation = doc.situation(ONE_ACT)
+    assert english.status_sentence(doc, situation, doc.status(situation, "x_permitted", ("a",))) == (
+        "A may be done: rule 1 requires it, and whatever must be done may be done.")
+    env = environment({"x_required": obligation("unspecified"), "x_permitted": permission("deny")})
+    doc = nd.UnspecifiedDocument(env, [])
+    assert english.status_sentence(doc, situation, doc.status(situation, "x_required", ("a",))) == (
+        "A need not be done: it is not permitted by default, and whatever must be done may be done.")
+    env = environment({"report_required": obligation("deny", None, act="{0} be reported"),
+                       "permitted": permission("unspecified")})
+    doc = nd.UnspecifiedDocument(env, [rule("rule-1", "report_required", True, Unary("permitted", Var(0)))])
+    assert english.status_sentence(doc, situation, doc.status(situation, "report_required", ("a",))) == (
+        "The text does not say whether a must be reported: rule 1 decides only if a may be done, "
+        "and the text does not say whether a may be done.")
+    doc = latent("unspecified")
+    report = nd.check_conflict(doc, model=ONE_ACT)
+    assert english.latent_conflict_sentence(doc, situation, report) == (
+        "Rules 1 and 2 contradict each other if a may be tried, and the text does not say whether a may be "
+        "tried. To settle it, add a rule about whether a may be tried, or add a condition to one of the rules.")
+
+
+def test_u13_norms_2_6_row_2_third_reading():
+    """`Every state must not deprive each person of liberty unless that state affords
+    that person due process`: with the completion unspecified, deprivation with due
+    process is "the text does not say"."""
+    from ve.ast import Binary
+    base = {"affords_due_process": {"arguments": ["state", "person"], "description": "due process",
+                                    "verbalisation": "{0} affords {1} due process"}}
+    env = environment({**base, "deprive_permitted": permission("unspecified", act="{0} deprive {1} of liberty",
+                                                              args=("state", "person"))},
+                      sorts=("state", "person"))
+    carve = Binary("affords_due_process", Var(1), Var(0))
+    doc = nd.UnspecifiedDocument(env, [rule("no-deprivation", "deprive_permitted", False, unless=(carve,))])
+    situation = {"complete": True, "domains": {"state": ["s"], "person": ["p", "q"]}, "constants": {},
+                 "relations": {"affords_due_process": [["s", "p"]]}}
+    with_process = status_of(doc, "deprive_permitted", ("s", "p"), situation)
+    without = status_of(doc, "deprive_permitted", ("s", "q"), situation)
+    assert with_process.status == "UNDECIDED"
+    assert (without.status, without.value) == ("SETTLED", False)
+    assert english.carve_out_paraphrase(env, "deprive_permitted").endswith(
+        "if none does, the text does not say whether a state may deprive a person of liberty.")
+    for default, value in (("deny", False), ("allow", True)):
+        env = environment({**base, "deprive_permitted": permission(default, act="{0} deprive {1} of liberty",
+                                                                  args=("state", "person"))},
+                          sorts=("state", "person"))
+        doc = nd.UnspecifiedDocument(env, [rule("no-deprivation", "deprive_permitted", False, unless=(carve,))])
+        assert status_of(doc, "deprive_permitted", ("s", "p"), situation).value is value
+
+
+def test_u13_fill_rules_are_never_rendered():
+    doc = latent("unspecified")
+    situation = doc.situation(ONE_ACT)
+    texts = [render_english(doc.author)[0], *english.legend(doc.env)]
+    texts += [english.status_sentence(doc, situation, s) for s in doc.statuses(situation)]
+    texts.append(english.latent_conflict_sentence(doc, situation, nd.check_conflict(doc, model=ONE_ACT)))
+    assert all("unsaid" not in text for text in texts)
+    assert "unsaid--" in " ".join(r.name for r in doc.filled.rules)
