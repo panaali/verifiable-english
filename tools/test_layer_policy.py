@@ -223,6 +223,74 @@ class LayerSelectionTests(unittest.TestCase):
             self.assertIn("new outward Lean import: VE.Core.Wire -> VE.Route.Run", error.getvalue())
             self.assertNotIn("plain layout", error.getvalue())
 
+    def test_every_lean_and_python_module_is_classified(self):
+        lean = [".".join(path.relative_to(layer_policy.ROOT / "lean").with_suffix("").parts)
+                for path in (layer_policy.ROOT / "lean").rglob("*.lean")
+                if ".lake" not in path.parts]
+        python = [".".join(path.relative_to(layer_policy.ROOT).with_suffix("").parts)
+                  .removesuffix(".__init__")
+                  for path in (layer_policy.ROOT / "ve").rglob("*.py")]
+        self.assertIn("AlternativesMain", lean)
+        self.assertEqual([m for m in lean if layer_policy.lean_layer(m) is None], [])
+        self.assertEqual([m for m in python if m != "ve" and layer_policy.python_layer(m) is None], [])
+
+    def test_lean_entry_modules_are_tool_layer(self):
+        roots = layer_policy.lean_executables().values()
+        self.assertTrue({"Main", "AlternativesMain", "ReportsMain", "Serve"} <= set(roots))
+        for module in (*roots, "RiskMain"):
+            with self.subTest(module=module):
+                self.assertEqual(layer_policy.lean_layer(module), 4)
+        with patch.object(layer_policy, "lean_executables", return_value={"ve_new": "Launch"}):
+            self.assertEqual(layer_policy.lean_layer("Launch"), 4)
+        for module in ("Alien", "VE.RiskMain", "Launch"):
+            self.assertNotEqual(layer_policy.lean_layer(module), 4, module)
+
+    def test_new_entry_module_passes_the_lean_checker(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "lean/VE/Route").mkdir(parents=True)
+            (root / "lean/VE/Route/Run.lean").write_text("")
+            (root / "lean/RiskMain.lean").write_text("import VE.Route.Run\n")
+            ledger = root / "exceptions.json"
+            ledger.write_text("{}")
+            error = io.StringIO()
+            with (patch.object(check_lean_imports, "ROOT", root),
+                  patch.object(check_lean_imports, "LEDGER", ledger),
+                  redirect_stderr(error)):
+                self.assertEqual(check_lean_imports.main(), 0, error.getvalue())
+
+    def test_documented_python_layers_match_policy(self):
+        from fnmatch import fnmatch
+        import re
+        rows = {}  # the layer map is the first table whose rows start with a layer number
+        for line in (layer_policy.ROOT / "docs/ARCHITECTURE-LAYERS.md").read_text().splitlines():
+            if re.match(r"\| [1-5] ", line):
+                rows.setdefault(int(line[2]), line.split("|")[2])
+        for layer, names in layer_policy.PYTHON.items():
+            patterns = [p.removesuffix(".*") for p in re.findall(r"`([^`]+)`", rows[layer])
+                        if p != "ve_experiments.*"]
+            with self.subTest(layer=layer):
+                self.assertEqual([n for n in names if not any(fnmatch(n, p) for p in patterns)], [])
+                self.assertEqual([p for p in patterns if not any(fnmatch(n, p) for n in names)], [])
+
+    def test_every_lean_executable_consumer_is_tool_layer(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests").mkdir()
+            path = root / "tests/test_route.py"
+            for name in layer_policy.lean_executables():
+                path.write_text(f'BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "{name}"\n')
+                select_tests.test_layer.cache_clear()
+                with self.subTest(name=name), patch.object(select_tests, "ROOT", root):
+                    self.assertEqual(select_tests.test_layer(path), 4)
+            select_tests.test_layer.cache_clear()
+        real_exists = Path.exists
+        for binary in ("ve_quantity", "ve_discourse_route", "ve_reports_route"):
+            with self.subTest(binary=binary), patch.object(
+                Path, "exists", lambda path: False if path.name == binary else real_exists(path)
+            ):
+                self.assertTrue(select(["ve/search.py"])["lean_build"])
+
     def test_unmapped_lean_importer_reports_error(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
