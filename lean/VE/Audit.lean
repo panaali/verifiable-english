@@ -76,6 +76,7 @@ import VE.EvaluationCounts
 import VE.Service.Protocol
 import VE.NormDefaults.Dag
 import VE.NormDefaults.Tree
+import VE.NormDefaults.Check
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -1961,3 +1962,21 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.reachCount_lt
 #print axioms VE.NormDefaults.smallest_mem
 #print axioms VE.NormDefaults.smallest_some
+#print axioms VE.NormDefaults.astBody_ok
+#print axioms VE.NormDefaults.astLoop_ok
+#print axioms VE.NormDefaults.check_eq
+#print axioms VE.NormDefaults.check_iff
+#print axioms VE.NormDefaults.defBody_ok
+#print axioms VE.NormDefaults.ebind_ok
+#print axioms VE.NormDefaults.epure_ok
+#print axioms VE.NormDefaults.ethrow_ok
+#print axioms VE.NormDefaults.forIn_cons_ok
+#print axioms VE.NormDefaults.forIn_nil_ok
+#print axioms VE.NormDefaults.forIn_unit_ok
+#print axioms VE.NormDefaults.overBody_ok
+#print axioms VE.NormDefaults.overInner_ok
+#print axioms VE.NormDefaults.regBody_ok
+#print axioms VE.NormDefaults.ruleBody_ok
+#print axioms VE.NormDefaults.rulesLoop_ok
+#print axioms VE.NormDefaults.tailSteps_ok
+#print axioms VE.NormDefaults.wellFormed_iff
