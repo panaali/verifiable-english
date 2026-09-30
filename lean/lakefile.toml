@@ -58,4 +58,4 @@ root = "ResponseDecode"
 
 [[lean_exe]]
 name = "ve_norm_defaults_route"
-root = "VE.NormDefaults.Run"
+root = "NormDefaultsMain"

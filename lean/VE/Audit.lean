@@ -94,6 +94,8 @@ import VE.NormDefaults.Routes
 import VE.NormDefaults.Wire
 import VE.NormDefaults.Examples
 import VE.NormDefaults.Replay
+import VE.NormDefaults.Admission
+import VE.NormDefaults.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2476,3 +2478,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.gap_of_kleene
 #print axioms VE.NormDefaults.notreq_of_notperm
 #print axioms VE.NormDefaults.perm_of_req
+#print axioms VE.NormDefaults.Admission.admitNodes_ok
+#print axioms VE.NormDefaults.Admission.fill_lits_source
+#print axioms VE.NormDefaults.Admission.admitDocument_spec
+#print axioms VE.NormDefaults.Admission.layerLeaf_formula
+#print axioms VE.NormDefaults.Admission.fillLeaf_formula
+#print axioms VE.NormDefaults.Admission.wire_report_consequence
+#print axioms VE.NormDefaults.Run.runAdmission_sound
+#print axioms VE.NormDefaults.Run.normDefaults_wire_admission
