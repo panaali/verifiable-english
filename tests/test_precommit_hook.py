@@ -231,6 +231,19 @@ def test_staged_policy_code_is_the_policy(staging):
     rejects(staging, "internal error: RuntimeError: policy file tools/layer_policy.py is missing from the index")
 
 
+def test_staged_lean_entry_modules_are_tool_layer(staging):
+    # layers-entry-directive: a new route entry module needs no hand-listed layer.
+    staging.stage("lean/RiskMain.lean", "import VE.Route.Run\n")
+    passes(staging)
+    staging.stage("lean/Launch.lean", "import VE.Route.Run\n")
+    rejects(staging, "unmapped Lean module Launch")
+    lakefile = staging.head("lean/lakefile.toml")
+    staging.stage("lean/lakefile.toml", lakefile + b'\n[[lean_exe]]\nname = "ve_launch"\nroot = "Launch"\n')
+    passes(staging)
+    staging.stage("lean/lakefile.toml", None)
+    rejects(staging, "internal error: RuntimeError: policy file lean/lakefile.toml is missing from the index")
+
+
 def test_new_outward_python_import_is_rejected(staging):
     staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import parser\n")
     rejects(staging, "layer imports check failed",
