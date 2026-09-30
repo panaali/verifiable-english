@@ -1,0 +1,7 @@
+1. **(a)** “Might” leaves a server outage possible when the agent runs the job.
+2. **(a)** The text says nothing about whether doing nothing leads to data loss.
+3. **(b)** Five gigabytes is not greater than eight, so the stated “exactly when” condition rules out an outage.
+4. **(a)** Four kilograms exceeds the threshold that the text says leads to lift failure.
+5. **(c)** “Cannot” rules out data loss, while “might” leaves it possible.
+6. **(a)** A less severe worst case means running the job leaves possible a harm worse than any left possible with the memory limit.
+7. **(a)** Nausea is ruled out for drug B, but drug A can cause it at doses above 40 milligrams.

@@ -1,0 +1,17 @@
+# Answers
+
+**Text 1:** **(b)** — "Might lead to" by definition means the harm is not ruled out, which is exactly what option (b) states.
+
+**Text 2:** **(b)** — To prevent a rash, the clinic must take an action that "cannot lead" to it; only penicillin cannot lead to a rash, so only penicillin fulfills Rule 1.
+
+**Text 3:** **(b)** — "Certainly leads to" means the harm happens in every case allowed by the text, so there is no case where a task delay is avoided.
+
+**Text 4:** **(a)** — The definition given states that having "less severe worst case" means the other action "might lead to a harm more severe than every harm" the first action might lead to, which is precisely what option (a) describes.
+
+**Text 5:** **(c)** — "Might prevent" means the action might not lead to the harm AND another action (the vaccine) leads to it, so giving nothing avoids fever in some cases while the vaccine leads to it in every case.
+
+**Text 6:** **(c)** — "Leads to exactly when weight > 3 kg" means failure happens in all cases with weight > 3 kg; since the parcel is 4 kg, a lift failure happens.
+
+**Text 7:** **(a)** — "Avoidable by" means some action available to the agent might not lead to the harm, which means at least one action avoids it in at least one case.
+
+**Text 8:** **(a)** — "Might not lead to" means some case allows the action without the harm, so in at least one case the job runs with no server outage.

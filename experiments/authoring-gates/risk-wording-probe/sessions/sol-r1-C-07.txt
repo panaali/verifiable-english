@@ -1,0 +1,73 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+(b) Yes: data loss can happen, but only rarely.
+(c) The text does not say.
+(d) No: the first rules data loss out, and the second says data loss is not ruled out.
+
+Text 2
+
+An agent can run the job with a memory limit or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job with a memory limit leads to a job failure if the peak memory of the job is greater than 4 gigabytes.
+
+The agent runs the job with a memory limit, and a job failure happens. According to the text, was the peak memory of the job greater than 4 gigabytes?
+(a) Yes: a job failure needs a peak memory greater than 4 gigabytes.
+(b) No: a job failure needs a peak memory of at most 4 gigabytes.
+(c) The text does not say.
+
+Text 3
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit prevents task abandonment.
+
+What does the last sentence tell you?
+(a) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(b) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(c) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(d) The text does not say.
+
+Text 4
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or do nothing. Running the job might lead to a server outage. A server outage is serious or worse.
+
+According to the text, which severities could a server outage have?
+(a) The text does not say.
+(b) Only severe.
+(c) Only serious.
+(d) Serious or severe.
+
+Text 5
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit certainly leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) The text does not say.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) No: a task delay happens in every case the text allows.
+
+Text 6
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) A rule: it forbids the agent to cause data loss by emptying the cache.
+(b) A rule: it permits the agent to empty the cache.
+(c) The text does not say.
+(d) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+
+Text 7
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job might lead to a server outage.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) A server outage happens in every case the text allows if the agent runs the job.
+(c) The text does not rule out a server outage if the agent runs the job.
+(d) A server outage is likely if the agent runs the job.

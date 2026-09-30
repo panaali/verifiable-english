@@ -1,0 +1,111 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. A late delivery is serious or worse. A collision is minor. A delivery robot can cross the road at the crossing or wait. Crossing the road at the crossing might lead to a collision. Waiting might lead to a late delivery.
+
+According to the text, which severities could a late delivery have?
+(a) Serious or severe.
+(b) Only serious.
+(c) Only minor.
+(d) The text does not say.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An agent prevents a harm by taking an action that cannot lead to the harm.
+By default, an action may be performed.
+
+The actions available to the agent are running the job and running the job with a memory limit. Running the job leads to data loss. Running the job with a memory limit might lead to data loss. Running the job with a memory limit might not lead to data loss.
+Rule 1. Every agent must prevent data loss.
+
+According to the text, which of the agent's actions fulfils Rule 1?
+(a) Neither action.
+(b) The text does not say.
+(c) Running the job.
+(d) Running the job with a memory limit.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. Running the job allows a server outage to happen.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in every case the text allows.
+(c) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in at least one case the text allows.
+(d) The agent is permitted to let a server outage happen by running the job.
+
+Text 4
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 50 kilograms. The weight of the patient is at most 90 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 52 kilograms. Giving the full dose might lead to dizziness.
+
+What does the last sentence tell you?
+(a) Dizziness is likely if the clinic gives the full dose.
+(b) Dizziness happens in every case the text allows if the clinic gives the full dose.
+(c) The text does not say.
+(d) Dizziness is not ruled out if the clinic gives the full dose.
+
+Text 5
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall usually happens, but not in every case.
+(b) The text does not say.
+(c) A fall happens in every case the text allows.
+(d) No fall happens: a robot is safe inside a lift.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) The robot is not allowed to cause a lift failure.
+(b) If the robot takes the lift, no lift failure happens in any case the text allows.
+(c) A lift failure is unlikely if the robot takes the lift.
+(d) The text does not say.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) Every action available to the agent avoids a server outage in at least one case the text allows.
+(b) The text does not say.
+(c) At least one action available to the agent avoids a server outage in every case the text allows.
+(d) At least one action available to the agent avoids a server outage in at least one case the text allows.

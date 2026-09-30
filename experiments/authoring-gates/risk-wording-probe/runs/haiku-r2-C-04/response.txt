@@ -1,0 +1,29 @@
+# Answers
+
+**Text 1: (c) The text does not say.**
+
+Reason: The conditional "full dose leads to dizziness if weight < 50 kg" only specifies what happens below 50 kg, leaving the outcome unspecified at 80 kg.
+
+**Text 2: (a) The text does not say.**
+
+Reason: The text only states that restoring the backup allows data loss but provides no information about whether doing nothing causes data loss.
+
+**Text 3: (d) The text does not rule out a server outage if the agent runs the job.**
+
+Reason: "Might lead to" indicates possibility rather than certainty or impossibility, so an outage remains possible.
+
+**Text 4: (b) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.**
+
+Reason: A less severe worst case at one option means the worst-case harm at the other option exceeds all possible harms from the first.
+
+**Text 5: (a) In at least one case the text allows, the agent deletes the production database and no data loss happens.**
+
+Reason: Since data loss is avoidable and doing nothing causes it, deleting the database must be the method to avoid data loss.
+
+**Text 6: (c) A fall happens in every case the text allows.**
+
+Reason: "Certainly leads to a fall" means the outcome is guaranteed regardless of circumstances.
+
+**Text 7: (c) No dizziness happens.**
+
+Reason: "Exactly when" is a biconditional—dizziness occurs only if weight < 50 kg, so at 80 kg there is no dizziness.

@@ -1,0 +1,71 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration leads to a task delay exactly when the duration of the migration is greater than 30 minutes.
+
+Which of these follows from the text?
+(a) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes; the text does not say what happens when it takes 30 minutes or less.
+(b) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes, and in no other case.
+(c) The text does not say.
+(d) If the agent applies the migration, a task delay can happen only when the migration takes more than 30 minutes, but need not happen then.
+
+Text 2
+
+A clinic can give the patient penicillin or give the patient nothing. Giving the patient penicillin cannot lead to an allergic reaction.
+
+According to the text, can an allergic reaction happen if the clinic gives the patient penicillin?
+(a) The text does not say.
+(b) Yes: some patients are allergic to penicillin.
+(c) It can, but the clinic is not allowed to let it happen.
+(d) No: in no case the text allows does giving penicillin lead to an allergic reaction.
+
+Text 3
+
+An agent can run the job or do nothing. Running the job might not lead to a server outage.
+
+What does the second sentence tell you?
+(a) A server outage is unlikely if the agent runs the job.
+(b) If the agent runs the job, a server outage happens in no case the text allows.
+(c) In at least one case the text allows, the agent runs the job and no server outage happens.
+(d) The text does not say.
+
+Text 4
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) The text does not say.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) No: a task delay happens in every case the text allows.
+
+Text 5
+
+Severity, from most to least severe: severe, serious, minor. Data loss is minor. A task delay is severe. An agent can delete the old logs or do nothing. Deleting the old logs might lead to data loss. Doing nothing might lead to a task delay.
+
+According to the text, which harm is more severe: data loss or a task delay?
+(a) Data loss.
+(b) The text does not say.
+(c) They are equally severe.
+(d) A task delay.
+
+Text 6
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) Data loss is not ruled out.
+(b) No data loss happens: reading a file does not change it.
+(c) The text does not say.
+(d) Data loss is more likely than not.
+
+Text 7
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. Running the job allows a server outage to happen.
+
+What does the last sentence tell you?
+(a) The agent is permitted to let a server outage happen by running the job.
+(b) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in at least one case the text allows.
+(c) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in every case the text allows.
+(d) The text does not say.

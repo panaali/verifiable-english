@@ -1,0 +1,22 @@
+# Answers
+
+**Text 1: (c) The text does not say.**
+The text guarantees failure only when weight > 28 kg (a subset of possible cases), and states lifting "might" lead to failure, but doesn't quantify the likelihood across the full 1–30 kg range.
+
+**Text 2: (b) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.**
+"Less severe worst case" means the worst outcome without the memory limit is worse than any outcome with it, making (b) the precise restatement.
+
+**Text 3: (c) The text does not say.**
+"Might prevent" only establishes possibility, not certainty or frequency; it also says nothing about what "doing nothing" causes.
+
+**Text 4: (d) A lift failure happens.**
+"Exactly when weight > 3 kg" means failure occurs if and only if that condition holds; 4 kg > 3 kg, so failure is certain.
+
+**Text 5: (c) The text does not say.**
+The rule states that weight > 4 GB is a *sufficient* condition for failure, but the observed failure doesn't prove it was the cause—the text doesn't establish it as necessary.
+
+**Text 6: (a) If the robot takes the lift, no lift failure happens in any case the text allows.**
+"Cannot lead to" is a universal negation—it excludes lift failure in all possible scenarios when the lift is taken.
+
+**Text 7: (d) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.**
+Rule 1 only forbids actions that "might lead to collision"; since crossing between parked cars "cannot" cause collision, Rule 1's condition is not met.

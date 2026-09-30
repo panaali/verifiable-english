@@ -1,0 +1,7 @@
+1. **(b)** Restarting the web server cannot lead to a server outage in any case the text allows.
+2. **(b)** A fall could be serious or severe, so the text does not establish that it is less severe than a seizure.
+3. **(d)** Running the job always causes an outage, while another available action avoids one in at least one case.
+4. **(d)** The parcel weighs more than 3 kilograms, so taking the lift leads to a lift failure.
+5. **(a)** The parcel meets the stated condition for a lift failure.
+6. **(c)** “Might lead to” means the text does not rule out an outage.
+7. **(a)** The memory limit avoids abandonment in at least one case, and the only other action, doing nothing, always leads to it.
