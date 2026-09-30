@@ -13,13 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-measurements"}
 
 PYTHON = {
-    1: "ast environment errors identity limits model wire".split(),
-    2: ("background closure definitions entailment evaluate norms order profiles").split(),
+    1: "ast environment errors identity limits model wire assurance".split(),
+    2: ("background closure definitions entailment evaluate norms order profiles "
+        "alternatives reports rights softnorms speech_acts units").split(),
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
-        "norm_english parser printer surface lexicon").split(),
+        "norm_english parser printer surface lexicon report_english speech_english").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_strict openterms propose readings "
-        "search stream_audit vacuity assist").split(),
+        "search stream_audit vacuity assist discourse quantity_admission reports_route "
+        "rights_route soft_route speech_document").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
@@ -42,8 +44,9 @@ def python_imports(module: str, source: str, exports: dict[str, str],
     facade_aliases = set()
 
     def local_module(name: str) -> bool:
+        # A directory without __init__.py still imports, as a namespace package.
         path = root.joinpath(*name.split("."))
-        return path.with_suffix(".py").exists() or (path / "__init__.py").exists()
+        return path.with_suffix(".py").exists() or path.is_dir()
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -89,7 +92,9 @@ def python_layer(module: str) -> int | None:
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module in {"Main", "NormsMain", "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
+    if module in {"Main", "NormsMain", "SoftNormsMain", "RightsMain", "SpeechActsMain",
+                  "AlternativesMain", "QuantityMain", "ReportsMain", "DiscourseMain",
+                  "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
@@ -140,7 +145,7 @@ def source_layer(path: str) -> int | None:
     if parts[0] == "tools":
         if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py",
                       "check_python_layers.py", "check_lean_imports.py",
-                      "check_rust_deps.py", "test_layer_policy.py"}:
+                      "check_rust_deps.py", "test_layer_policy.py", "lean_header_imports.lean"}:
             return 1  # changing the policy invalidates every selection
         return 4 if p.suffix == ".py" else None
     if parts[0] == "tests":

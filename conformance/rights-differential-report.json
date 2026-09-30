@@ -1,0 +1,21 @@
+{
+  "accepted_by_both": 1000,
+  "documents": 1322,
+  "format": "rights-differential@0",
+  "loaded_as_documents": 1000,
+  "rejected_by_both": 322,
+  "rejections_with_the_same_text": 322,
+  "seeds_examined": 1322,
+  "shapes": [
+    "bar:query",
+    "bar:rule",
+    "claim",
+    "fan-out",
+    "immunity",
+    "liberty",
+    "limitation",
+    "powerLiberty",
+    "powerRecognition",
+    "right_lines"
+  ]
+}
