@@ -1,0 +1,34 @@
+# Text 1
+**(b) No:** the first rules data loss out, and the second says data loss is not ruled out.
+
+"Cannot lead to" means the declarations rule it out; "might lead to" means they don't rule it out—these directly contradict each other.
+
+# Text 2
+**(b) A task delay.**
+
+The text explicitly states that a task delay is "severe" and data loss is "minor," and the legend orders severity with severe > minor.
+
+# Text 3
+**(a) No dizziness happens.**
+
+The rule states dizziness occurs "exactly when weight < 50 kg," meaning only when that condition holds. The patient weighs 80 kg, which doesn't satisfy the condition, so dizziness does not happen.
+
+# Text 4
+**(c) A fall happens in every case the text allows.**
+
+"Certainly leads to" means the harm happens in every case the text allows. Since the robot takes the lift and that action certainly leads to a fall, the result holds.
+
+# Text 5
+**(d) The text does not rule out a server outage if the agent runs the job.**
+
+By definition, "might lead to" means the declarations do not rule out the harm—so a server outage is not ruled out.
+
+# Text 6
+**(b) No seizure happens.**
+
+"Cannot lead to seizure unless temperature > 40°" means seizures can only occur if that condition holds. At 38°C, the condition is false, so seizure cannot happen.
+
+# Text 7
+**(c) In at least one case the text allows, the robot takes the ramp and no fall happens.**
+
+Since a fall is avoidable and taking stairs always leads to a fall, taking the ramp must be the action that avoids the fall in at least one case.

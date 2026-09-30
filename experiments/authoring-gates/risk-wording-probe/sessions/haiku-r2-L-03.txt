@@ -1,0 +1,109 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) There is no difference: neither is ruled out, and neither is certain.
+(b) The text does not say.
+(c) A rash is not ruled out; drowsiness happens in every case the text allows.
+(d) A rash is possible; drowsiness is what usually happens.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+(b) The text does not say.
+(c) In at least one case the text allows, the agent does nothing and no data loss happens.
+(d) In no case the text allows does doing nothing lead to data loss.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> might prevent <harm>" means the action might not lead to the harm, and another action available to the same chooser leads to it.
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit might prevent task abandonment.
+
+What does the last sentence tell you?
+(a) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(b) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(c) The text does not say.
+(d) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage if the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) The text does not say.
+(b) No server outage happens, because the peak memory of the job is not greater than 8 gigabytes.
+(c) A server outage happens.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+
+An agent can delete the only copy of the database or do nothing. Deleting the only copy of the database might not lead to data loss.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) If the agent deletes the only copy, data loss happens in no case the text allows.
+(c) If the agent deletes the only copy, data loss happens in every case the text allows.
+(d) In at least one case the text allows, the agent deletes the only copy and no data loss happens.
+
+Text 6
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+A clinic can give the patient penicillin or give the patient nothing. Giving the patient penicillin cannot lead to an allergic reaction.
+
+According to the text, can an allergic reaction happen if the clinic gives the patient penicillin?
+(a) It can, but the clinic is not allowed to let it happen.
+(b) The text does not say.
+(c) Yes: some patients are allergic to penicillin.
+(d) No: in no case the text allows does giving penicillin lead to an allergic reaction.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An agent prevents a harm by taking an action that cannot lead to the harm.
+By default, an action may be performed.
+
+The actions available to the agent are running the job and running the job with a memory limit. Running the job leads to data loss. Running the job with a memory limit might lead to data loss. Running the job with a memory limit might not lead to data loss.
+Rule 1. Every agent must prevent data loss.
+
+According to the text, which of the agent's actions fulfils Rule 1?
+(a) The text does not say.
+(b) Neither action.
+(c) Running the job.
+(d) Running the job with a memory limit.

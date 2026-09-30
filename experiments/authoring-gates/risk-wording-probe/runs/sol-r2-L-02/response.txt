@@ -1,0 +1,8 @@
+1. **(a)** Crossing between parked cars cannot lead to a collision, so Rule 1 does not forbid it.
+2. **(a)** Taking the lift certainly leads to a fall, and the robot takes the lift.
+3. **(d)** Neither action is said to rule out data loss, which is required to prevent it.
+4. **(c)** The dizziness rule applies below 50 kilograms and says nothing about a patient weighing 80 kilograms.
+5. **(a)** Drug B is the only available action that could make the fever avoidable in at least one case.
+6. **(b)** “Might not lead” means there is at least one allowed case with no outage after running the job.
+7. **(a)** “Might lead” says dizziness is not ruled out with the full dose.
+8. **(c)** “Allows” means drug A always causes a rash and the other available action, drug B, avoids it in at least one case.
