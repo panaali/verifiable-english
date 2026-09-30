@@ -538,7 +538,11 @@ class UnspecifiedDocument:
         if len(values) != len(sorts) or any(v not in situation.domains[s] for s, v in zip(sorts, values)):
             raise VEError("InvalidModel: point tuple has wrong length or sort")
         try:
-            settled = self.table3(situation, budget=max_evaluations).get((predicate, values))
+            cached = getattr(self, "_table3_cache", None)
+            if cached is None or cached[0] is not situation or cached[1] != max_evaluations:
+                cached = self._table3_cache = (situation, max_evaluations,
+                                               self.table3(situation, budget=max_evaluations))
+            settled = cached[2].get((predicate, values))
             if settled is not None:
                 return Status(predicate, values, "SETTLED", settled, "table3")
             formula = self.filled.outcome(predicate, base=True)
