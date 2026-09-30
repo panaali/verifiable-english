@@ -82,6 +82,7 @@ import VE.NormDefaults.FillCheck
 import VE.NormDefaults.Semantics
 import VE.NormDefaults.Premises
 import VE.NormDefaults.Status
+import VE.NormDefaults.Evidence
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2172,3 +2173,22 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.unreached_switch
 #print axioms VE.NormDefaults.unsaid_undeclared
 #print axioms VE.NormDefaults.withFill_agrees
+#print axioms VE.NormDefaults.admissible_of_fillValid
+#print axioms VE.NormDefaults.canon_regulated
+#print axioms VE.NormDefaults.conflictU_pair_witness_sound
+#print axioms VE.NormDefaults.conflictU_witness_sound
+#print axioms VE.NormDefaults.denote_withFill_finite
+#print axioms VE.NormDefaults.eval_withFill
+#print axioms VE.NormDefaults.kall_sound
+#print axioms VE.NormDefaults.kand_sound
+#print axioms VE.NormDefaults.kany_sound
+#print axioms VE.NormDefaults.kleene_sound
+#print axioms VE.NormDefaults.kneg_sound
+#print axioms VE.NormDefaults.kor_sound
+#print axioms VE.NormDefaults.settled_of_table3
+#print axioms VE.NormDefaults.tabK_sound
+#print axioms VE.NormDefaults.table3_outcome
+#print axioms VE.NormDefaults.table3_sound
+#print axioms VE.NormDefaults.tupleTypedB_iff
+#print axioms VE.NormDefaults.undecided_witness_sound
+#print axioms VE.NormDefaults.withFill_finite_rel
