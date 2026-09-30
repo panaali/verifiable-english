@@ -341,9 +341,10 @@ def plan_choices(sets, *, limit=64, couplings=()):
 def _lean_readings_scope(env) -> bool:
     """Whether Lean's `readings` mode checks verdicts over `env`: a ve.core@0.2
     FOL-family environment without statement layers."""
+    from .profiles import STATEMENT_LAYERS
     return (getattr(env, "language", None) == "ve.core@0.2" and not env.closure and not env.order
             and env.unit_schema is None and env.alternatives is None
-            and not {"soft-norms@0", "reports@0"} & set(env.profiles))
+            and not STATEMENT_LAYERS & set(env.profiles))
 
 
 @semantic_entry("readings")

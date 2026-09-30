@@ -117,10 +117,11 @@ def _lean_route(document) -> bool:
     dispatched and keep the retained Python.
     """
     env = document.env
+    from .profiles import STATEMENT_LAYERS
     return (type(document) is NormDocument and env.language == "ve.core@0.2"
             and not env.closure and not env.order and env.alternatives is None
             and getattr(env, "unit_schema", None) is None
-            and not {"soft-norms@0", "reports@0"} & set(env.profiles))
+            and not STATEMENT_LAYERS & set(env.profiles))
 
 
 def _lean_case(document, kind, **fields):

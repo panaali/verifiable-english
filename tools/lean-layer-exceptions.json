@@ -14,5 +14,7 @@
   "VE.Core.Route -> VE.Route.Checker": "Core route imports routed checker implementation.",
   "VE.Core.Route -> VE.Route.Gate": "Core route imports routed gate implementation.",
   "VE.Core.Route -> VE.Route.Route": "Core route imports routed profile definitions.",
-  "VE.Core.Wire -> VE.Route.Wire": "Core wire imports routed profile wire format."
+  "VE.Core.Wire -> VE.Route.Wire": "Core wire imports routed profile wire format.",
+  "VE.Core.Layers -> VE.Route.Wire": "Stage 2c core-family layer glue decodes definitions and data flags with the FOL route's reviewed decoders over the FOL projection (SEMANTICS-MIGRATION-PLAN.md 2c).",
+  "VE.Norms.Plain -> VE.Route.Run": "Stage 2 norms glue decodes the route vocabulary with Route.Run.decodeRouteVocabulary; move that decoder out of the runner module."
 }

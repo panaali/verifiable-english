@@ -553,9 +553,10 @@ def _lean_graph_scope(graph) -> bool:
         return False
     if env.language == "ve.core@0":
         return True
+    from .profiles import STATEMENT_LAYERS
     return (env.language == "ve.core@0.2" and not env.closure
             and not env.order and env.unit_schema is None and env.alternatives is None
-            and not {"soft-norms@0", "reports@0"} & set(env.profiles))
+            and not STATEMENT_LAYERS & set(env.profiles))
 
 
 @semantic_entry("graph.compose")

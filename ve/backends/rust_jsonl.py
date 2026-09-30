@@ -33,16 +33,34 @@ def _run_checker(argv, *, input, timeout):
 
 
 def soft_case(env) -> dict:
-    """The case field carrying a validated soft document's Background slot.
+    """The case field carrying a validated soft document's Background slot,
+    followed by a correlated rights document's.
 
-    Soft premises are not environment data (Python keeps them on the extended
-    environment); Rust validates every model against them as Python does.
+    Soft and rights premises are not environment data (Python keeps them on the
+    extended environment); Rust validates every model against them as Python
+    does.
     """
-    premises = getattr(env, "soft_premises", ())
+    premises = (*getattr(env, "soft_premises", ()), *getattr(env, "rights_premises", ()))
     if not premises:
         return {}
     from ..ast import _to_data
     return {"soft_premises": [_to_data(formula) for _, formula in premises]}
+
+
+def rust_environment(env) -> dict:
+    """The environment of a Rust evaluation or search case: without the
+    `speech-acts@0` scope and the `rights@0` block, which declare no vocabulary
+    and constrain no model (their Lean routes check them). Rust answers carry
+    no environment identity; witnesses are validated over `env` itself."""
+    data = env.to_dict()
+    if "speech-acts@0" in env.profiles:
+        data = {**{key: value for key, value in data.items() if key != "speech_acts"},
+                "profiles": [p for p in data["profiles"] if p != "speech-acts@0"]}
+    if "rights@0" in env.profiles:
+        data = {**data, "vocabulary": {key: value for key, value in data["vocabulary"].items()
+                                       if key != "rights"},
+                "profiles": [p for p in data["profiles"] if p != "rights@0"]}
+    return data
 
 
 def run(case: dict, *, executable: str | os.PathLike | None = None,

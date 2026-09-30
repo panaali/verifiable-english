@@ -234,9 +234,9 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
     from .ast import _to_data
     from .backends.dispatch import execute
     from .backends.lean_runner import evaluation_case, run as lean_run
-    from .backends.rust_jsonl import run as rust_run, soft_case
+    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
 
-    case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": env.to_dict(), **soft_case(env),
+    case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": rust_environment(env), **soft_case(env),
             "model": model.to_dict(), "ast": [_to_data(f) for f in formulas],
             "max_evaluations": max_evaluations,
             "max_trace_nodes": min(max_evaluations, max_trace_nodes),

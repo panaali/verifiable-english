@@ -204,9 +204,12 @@ def background(env) -> tuple[Premise, ...]:
         base = tuple(Premise(formula_from_data(env, wire, _generated=True), generator)
                      for wire, generator in zip(row["premises"], row["generators"], strict=True))
         # Trusted composition: soft premises belong to a validated soft
-        # document, not to the environment JSON. Lean regenerates them in the
-        # soft route, and soft_route.check_regenerated compares them there.
-        return base + tuple(Premise(formula, "soft") for formula in _soft_premises(env))
+        # document, and rights premises to a correlated rights document, not to
+        # the environment JSON. Lean regenerates them in the soft and rights
+        # routes, and soft_route.check_regenerated and
+        # rights_route.check_rights_regenerated compare them there.
+        return (base + tuple(Premise(formula, "soft") for formula in _soft_premises(env))
+                + tuple(Premise(formula, "rights") for formula in _rights_premises(env)))
 
     return execute("background", case, lambda: _background_python(env), lean=lean)
 

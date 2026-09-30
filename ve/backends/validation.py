@@ -24,13 +24,12 @@ from typing import Callable
 
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json
+from ..profiles import STATEMENT_LAYERS
 from .diagnostics import backend_rejection
 
 _ACCEPTED: dict[tuple, bool] = {}
 _LIMIT = 1 << 14
-# Statement layers whose validity Lean's environment and model modes refuse
-# (their own routes validate them).
-_LAYERED = frozenset({"soft-norms@0", "reports@0"})
+_LAYERED = STATEMENT_LAYERS
 
 
 def nary_core_definitions(profiles, predicates) -> bool:
@@ -46,7 +45,7 @@ def environment_in_scope(data) -> bool:
     """Whether Lean's `environment` mode validates this environment input."""
     if type(data) is not dict or data.get("language") != "ve.core@0.2":
         return False
-    if {"unit_schema", "units", "alternatives"} & set(data):
+    if {"unit_schema", "units", "alternatives", "speech_acts"} & set(data):
         return False
     profiles = data.get("profiles")
     if type(profiles) is not list:

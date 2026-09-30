@@ -138,29 +138,34 @@ def certificate (profiles : List String) (environment stripped : Json) (T : Tree
       id "certificate" j
 
 /-- Statement-layer profiles whose declarations Plain removes before decoding:
-`reports@0` (the reports block, constant verbalisations) and `soft-norms@0`
-(the soft block, `instruction_of`). Identities keep the submitted environment. -/
+`reports@0` (the reports block, constant verbalisations), `soft-norms@0` (the
+soft block, `instruction_of`), `rights@0` (the rights block) and
+`speech-acts@0` (the `speech_acts` scope block). None of them declares
+vocabulary or constrains a model. Identities keep the submitted environment. -/
+def statementLayers : List String := ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0"]
+
 def layered (environment : Json) : Bool :=
   match environment.getObjValD "profiles" with
-  | .arr ps => ps.any (fun p => p == .str "reports@0" || p == .str "soft-norms@0")
+  | .arr ps => ps.any (fun p => statementLayers.any (p == .str ·))
   | _ => false
 
 def reduced (environment : Json) : Except String Json := do
-  let profiles := (← VE.Route.Gate.profilesOf environment).filter
-    (fun p => p != "reports@0" && p != "soft-norms@0")
+  let environment := Json.mkObj ((← fields environment).filter (·.1 != "speech_acts"))
+  let profiles := (← VE.Route.Gate.profilesOf environment).filter (!statementLayers.contains ·)
   let vocabulary ← environment.getObjVal? "vocabulary"
   let constants ← (← fields (← vocabulary.getObjVal? "constants")).mapM fun (c, entry) => do
     pure (c, Json.mkObj ((← fields entry).filter (·.1 != "verbalisation")))
   let predicates ← (← fields (← vocabulary.getObjVal? "predicates")).mapM fun (p, entry) => do
     pure (p, Json.mkObj ((← fields entry).filter (·.1 != "instruction_of")))
-  let rest := (← fields vocabulary).filter (fun kv => kv.1 != "reports" && kv.1 != "soft")
+  let rest := (← fields vocabulary).filter (fun kv => kv.1 != "reports" && kv.1 != "soft" && kv.1 != "rights")
   pure ((environment.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
     (((Json.mkObj rest).setObjVal! "constants" (Json.mkObj constants)).setObjVal! "predicates"
       (Json.mkObj predicates)))
 
-/-- The premises a validated soft document adds to Background, as the case
-carries them (a trusted composition point: they are not environment data;
-the Lean soft route regenerates them). Each is a closed FOL formula. -/
+/-- The premises a validated soft document adds to Background, followed by
+those a correlated rights document adds, as the case carries them (a trusted
+composition point: they are not environment data; the Lean soft and rights
+routes regenerate them). Each is a closed FOL formula. -/
 def softPremises (E : VE.Environment) (j : Json) : Except String (List VE.Formula) := do
   match j.getObjVal? "soft_premises" with
   | .error _ => pure []
