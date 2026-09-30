@@ -10,6 +10,7 @@ import VE.Service.Graph
 import VE.Service.Readings
 import VE.Service.Family
 import VE.Service.FamilyBundle
+import VE.Service.FamilyNorms
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -45,7 +46,7 @@ def maxCases : Nat := 4096
 
 inductive Mode where
   | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
-  | parse | graph | readings | bundle
+  | parse | graph | readings | bundle | familyNorms
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -63,9 +64,10 @@ def Mode.name : Mode → String
   | .graph => "graph"
   | .readings => "readings"
   | .bundle => "bundle"
+  | .familyNorms => "family-norms"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
-  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle]
+  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -96,6 +98,7 @@ def runMode : Mode → Json → Json
   | .graph, j => Standalone.reported Family.graphMode j
   | .readings, j => Standalone.reported Family.readingsMode j
   | .bundle, j => Standalone.reported FamilyBundle.bundleCase j
+  | .familyNorms, j => FamilyNorms.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -489,6 +492,8 @@ theorem runMode_readings (j : Json) :
     runMode .readings j = Standalone.reported Family.readingsMode j := rfl
 theorem runMode_bundle (j : Json) :
     runMode .bundle j = Standalone.reported FamilyBundle.bundleCase j := rfl
+theorem runMode_familyNorms (j : Json) :
+    runMode .familyNorms j = FamilyNorms.runCaseReported j := rfl
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 

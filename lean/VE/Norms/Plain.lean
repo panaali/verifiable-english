@@ -1,5 +1,6 @@
 import VE.Norms.Wire
 import VE.Route.Run
+import VE.Order.Conservativity
 
 /-! Plain route cases on environments with `regulated` declarations, on every
 checker family (the migration plan's stage 2c).
@@ -108,6 +109,30 @@ def closureCertificate (profiles : List String) (environment : Json) (rv : VE.Ro
   return VE.Route.Wire.ok id [("valid", .bool (VE.Closure.Tableau.checkCertificate E
       (background.map VE.Closure.embed ++ ps) c certificate)), ("background", toJson background.length)]
 
+/-- The order route's certificate branch over the literals and the norms
+profile premises (embedded, `VE.Order.embed`), bound to the submitted
+`environment` in Python's Background order, literals then profile
+(`VE.Order.Tableau.checkCertificate_sound`). -/
+def orderCertificate (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteOrderVocabulary)
+    (profile : List VE.Formula) (id : String) (j : Json) : Except String Json := do
+  let E := rv.vocabulary.environment
+  let premisesJson ← j.getObjVal? "premises"
+  let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
+  let ps ← VE.Order.Wire.decodeFormulas E premisesJson
+  let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
+  unless c.check E [] do throw "ill-typed or unbound conclusion"
+  VE.Route.Wire.nodeLimit ((c :: ps).map VE.Order.Wire.formulaNodes)
+  let certificate ← VE.Order.Wire.decodeCertificate (← j.getObjVal? "certificate")
+  let literals := VE.Route.Background.literals rv.literals
+  VE.Route.Wire.bindingOk profiles environment
+    ((literals ++ profile).map VE.Route.Wire.encodeFormula ++ (← premisesJson.getArr?).toList)
+    (← j.getObjVal? "conclusion") certificate.environment_id certificate.premise_meaning_ids
+    certificate.conclusion_meaning_id
+  if VE.Route.Steps.order certificate.trace > VE.Route.Steps.limit j then throw VE.Route.Steps.stepLimit
+  let background := VE.Route.Background.orderLiterals rv.literals ++ profile.map VE.Order.embed
+  return VE.Route.Wire.ok id [("valid", .bool (VE.Order.Tableau.checkCertificate E (background ++ ps) c certificate)),
+    ("background", toJson background.length)]
+
 /-- A certificate case over the environment without the validated extension,
 bound to the submitted one: the family's Background, then the profile premises. -/
 def certificate (profiles : List String) (environment stripped : Json) (T : Tree)
@@ -132,10 +157,9 @@ def certificate (profiles : List String) (environment stripped : Json) (T : Tree
       VE.Core.Layers.coreCertificate profiles environment stripped
         (VE.Route.Background.literals (VE.Core.Wire.literals v) ++ profile) id j
   | .order =>
-    unless profile.isEmpty do
-      throw (VE.Route.Gate.unsupported "profile pairs on the order family are deferred")
-    VE.Route.Wire.runOrder profiles environment (← VE.Route.Wire.decodeOrderVocabulary e.vocabulary)
-      id "certificate" j
+    let rv ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
+    if profile.isEmpty then VE.Route.Wire.runOrder profiles environment rv id "certificate" j
+    else orderCertificate profiles environment rv profile id j
 
 /-- Statement-layer profiles whose declarations Plain removes before decoding:
 `reports@0` (the reports block, constant verbalisations), `soft-norms@0` (the

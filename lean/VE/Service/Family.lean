@@ -28,7 +28,7 @@ take their soundness from the family's existing theorems:
 Background is the family route's (`Standalone.folBackground` on the closure
 family; literals, or the core layers' flags, definitions and literals, then
 the norms profile premises on the core family; order literals on the order
-family, whose profile pairs are deferred as in `Norms.Plain`). -/
+family, then its norms profile premises, embedded). -/
 namespace VE.Service.Family
 open Lean
 open VE.Service.GenericGraph (Claim Node Edge ClaimGraph Report Ent)
@@ -247,8 +247,7 @@ def orderEnv (environment : Json) (checked : Standalone.Validated) : Except Stri
   let e := checked.envelope
   let rv ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
   let E := rv.vocabulary.environment
-  unless (← profilePremises environment).isEmpty do
-    throw (VE.Route.Gate.unsupported "profile pairs on the order family are deferred")
+  let profile ← profilePremises environment
   let envId ← Standalone.environmentIdOf e.profiles environment
   let lits := VE.Route.Background.literals rv.literals
   let decodeF := fun (j : Json) => do
@@ -264,10 +263,11 @@ def orderEnv (environment : Json) (checked : Standalone.Validated) : Except Stri
     meaningId := VE.Route.Wire.meaningId e.profiles envId
     certificate := VE.Order.Wire.decodeCertificate
     bound := fun premises conclusion c => VE.Route.Wire.bindingOk e.profiles environment
-      (lits.map VE.Route.Wire.encodeFormula ++ premises) conclusion
+      ((lits ++ profile).map VE.Route.Wire.encodeFormula ++ premises) conclusion
       c.environment_id c.premise_meaning_ids c.conclusion_meaning_id
-    background := ((VE.Route.Background.orderLiterals rv.literals).zip lits).map fun (a, f) =>
-      (a, VE.Route.Wire.encodeFormula f, "literals")
+    background := ((VE.Route.Background.orderLiterals rv.literals).zip lits).map (fun (a, f) =>
+      (a, VE.Route.Wire.encodeFormula f, "literals")) ++
+      profile.map fun f => (VE.Order.embed f, VE.Route.Wire.encodeFormula f, "profile")
     model := orderModel rv }⟩
 
 /-! ## FOL formulas (the frozen v0 envelope's readings and bundles) -/

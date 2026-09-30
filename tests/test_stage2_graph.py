@@ -233,3 +233,21 @@ def test_norms_profile_premises_are_background_leaves(monkeypatch):
     assert check_argument(graph, search=False).to_dict() == expected
     [(_, [row])] = calls
     assert [b["label"] for b in row["background"]] == ["background:profile"]
+
+
+@pytest.mark.parametrize("family", [("closure@0",), ("closure@0", "nary@0"), ("order@0",)])
+def test_norms_profile_premises_are_background_leaves_on_every_family(monkeypatch, family):
+    """On the closure, core and order families too, the norms profile premises
+    close Background and compose through Lean as Background leaves."""
+    from tests.test_stage2_norms import flagged
+    env = flagged(family=family, data="order@0" not in family)
+    graph = with_certs(ArgumentGraph(env, (Claim.create(env, "root", "true.\n"),),
+                                     (Deduction("er", (), "root"),), "root"))
+    routed(monkeypatch, "python")
+    expected = check_argument(graph, search=False).to_dict()
+    assert expected["composed"]
+    routed(monkeypatch, "lean")
+    calls = graph_calls(monkeypatch)
+    assert check_argument(graph, search=False).to_dict() == expected
+    [(_, [row])] = calls
+    assert [b["label"] for b in row["background"]][-1] == "background:profile"

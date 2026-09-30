@@ -46,6 +46,7 @@ ignore_imports =
     ve.model -> ve.evaluate
     ve.norms -> ve.backends.dispatch
     ve.norms -> ve.backends.lean_runner
+    ve.norms -> ve.backends.validation
     ve.norms -> ve.search
     ve.parser -> ve.backends.dispatch
     ve.parser -> ve.backends.lean_runner
