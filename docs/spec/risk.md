@@ -151,7 +151,7 @@ Every harm constant of the policy is a harm of every decision. The regenerated t
   `RiskUnestimated: <quantity>` when a condition mentions it.
 - **Cells.** A cell is a pair (alternative, harm). A cell's **sources** (plan 2.2) are at most one sufficient
   condition `S` and at most one necessary condition `N`:
-  - a sufficient condition (`leads to … if C`) gives `S = C`, a necessary one (`cannot lead to … unless C`) gives
+  - a sufficient condition (`If C, … leads to …`) gives `S = C`, a necessary one (`cannot lead to … unless C`) gives
     `N = C`, and an exact one (`leads to … exactly when C`) gives both;
   - a stated `leads to` gives `S = ⊤`, a stated `cannot lead to` gives `N = ⊥`, and a stated `might lead to` gives
     neither: it is a consistency assertion (4.4).
