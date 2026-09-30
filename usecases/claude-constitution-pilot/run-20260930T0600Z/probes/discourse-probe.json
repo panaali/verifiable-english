@@ -1,0 +1,14 @@
+{
+  "unit": "u0214.s02",
+  "returncode": 1,
+  "target_of_this_broad_pattern": [
+    "u0214.s01"
+  ],
+  "attempts_in_order": [
+    "1. Base translation minus its norm declaration and norm unit, plus the discourse block: the Lean route abstains (NotImplemented: fenced English or strict content) because the one checked clause u0248 is a fenced English block.",
+    "2. Fence removed: the route abstains (NotImplemented: a document without a claim graph); a discourse document must keep a claim graph.",
+    "3. u0248 written as JSON content ({\"ast\": ...}) with its graph node: InvalidInput: discourse wording of u0214.s02.p1. The unit holding a recorded mention must be printable ASCII (docs/spec/discourse.md 4.1(4)); the name has U+2019 (Claude’s).",
+    "4. Naming clause cut before the name (two labelled fragments, which the translation would not otherwise do): MentionNotSlot: m-this-pattern. A demonstrative that targets a unit is recorded as a location in the spec (1.4) but this tag treats every demonstrative as a slot of a bound formula, and a naming clause has none. This is the last attempt and the one in `error` below."
+  ],
+  "error": "ve.errors.VEError: MentionNotSlot: m-this-pattern"
+}
