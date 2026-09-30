@@ -1,0 +1,242 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "data@0",
+    "norms@0",
+    "relational-fol@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {
+      "action": {
+        "description": "an action in the agent's log"
+      },
+      "file": {
+        "description": "a file path, as resolved by the path resolver"
+      },
+      "host": {
+        "description": "a network host"
+      },
+      "person": {
+        "description": "a message recipient"
+      },
+      "secret": {
+        "description": "a secret value found by the data-loss scanner"
+      },
+      "directory": {
+        "description": "a directory, such as the agent's workspace"
+      }
+    },
+    "predicates": {
+      "tool": {
+        "arguments": [
+          "action",
+          "$string"
+        ],
+        "description": "the tool that the agent harness records for the action",
+        "verbalisation": "{0} uses {1}"
+      },
+      "reads": {
+        "arguments": [
+          "action",
+          "file"
+        ],
+        "description": "{0} reads {1}, as recorded by the file tools and the shell tracer",
+        "verbalisation": "{0} reads {1}"
+      },
+      "writes": {
+        "arguments": [
+          "action",
+          "file"
+        ],
+        "description": "{0} writes {1}, as recorded by the file tools and the shell tracer",
+        "verbalisation": "{0} writes {1}"
+      },
+      "deletes": {
+        "arguments": [
+          "action",
+          "file"
+        ],
+        "description": "{0} deletes {1}, as recorded by the file tools and the shell tracer",
+        "verbalisation": "{0} deletes {1}"
+      },
+      "contacts": {
+        "arguments": [
+          "action",
+          "host"
+        ],
+        "description": "{0} contacts {1}, as recorded by the network layer",
+        "verbalisation": "{0} contacts {1}"
+      },
+      "messages": {
+        "arguments": [
+          "action",
+          "person"
+        ],
+        "description": "{0} messages {1}, as recorded by the mail and chat tools",
+        "verbalisation": "{0} messages {1}"
+      },
+      "discloses": {
+        "arguments": [
+          "action",
+          "secret"
+        ],
+        "description": "{0} discloses {1}, as recorded by the data-loss scanner",
+        "verbalisation": "{0} discloses {1}"
+      },
+      "resides_in": {
+        "arguments": [
+          "file",
+          "directory"
+        ],
+        "description": "{0} resides in {1}, as resolved by the path resolver",
+        "verbalisation": "{0} resides in {1}",
+        "negative_verbalisation": "{0} does not reside in {1}"
+      },
+      "confidential": {
+        "arguments": [
+          "file"
+        ],
+        "description": "{0} is confidential, as recorded by the path resolver: the file is on the credential path list",
+        "verbalisation": "{0} is confidential",
+        "negative_verbalisation": "{0} is not confidential"
+      },
+      "tracked": {
+        "arguments": [
+          "file"
+        ],
+        "description": "{0} is tracked, as recorded by git: the file is under version control",
+        "verbalisation": "{0} is tracked",
+        "negative_verbalisation": "{0} is not tracked"
+      },
+      "allowlisted": {
+        "arguments": [
+          "host"
+        ],
+        "description": "{0} is allowlisted, as recorded by the network layer: the host is on the network allowlist",
+        "verbalisation": "{0} is allowlisted",
+        "negative_verbalisation": "{0} is not allowlisted"
+      },
+      "principal": {
+        "arguments": [
+          "person"
+        ],
+        "description": "{0} is principal, as recorded by the harness: the person is the user the agent works for",
+        "verbalisation": "{0} is principal",
+        "negative_verbalisation": "{0} is not principal"
+      },
+      "confirmed": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is confirmed, as recorded by the harness: the user confirmed the action in a dialog",
+        "verbalisation": "{0} is confirmed",
+        "negative_verbalisation": "{0} is not confirmed"
+      },
+      "readonly": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is readonly, as recorded by the shell classifier: the command changes nothing",
+        "verbalisation": "{0} is readonly",
+        "negative_verbalisation": "{0} is not readonly"
+      },
+      "privileged": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is privileged, as recorded by the shell: the action runs with elevated privileges",
+        "verbalisation": "{0} is privileged",
+        "negative_verbalisation": "{0} is not privileged"
+      },
+      "affordable": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is affordable, as recorded by the payment tool: the amount is within the spending limit",
+        "verbalisation": "{0} is affordable",
+        "negative_verbalisation": "{0} is not affordable"
+      },
+      "reported": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is reported, as recorded by the harness: the action was reported to the user",
+        "verbalisation": "{0} is reported",
+        "negative_verbalisation": "{0} is not reported"
+      },
+      "permitted": {
+        "arguments": [
+          "action"
+        ],
+        "description": "the agent may perform the action",
+        "regulated": {
+          "role": "permission",
+          "default": "deny",
+          "act": "{0} be performed"
+        }
+      },
+      "report_required": {
+        "arguments": [
+          "action"
+        ],
+        "description": "the agent must report the action to the user",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be reported to the user"
+        }
+      }
+    },
+    "constants": {
+      "read_file": {
+        "sort": "$string",
+        "description": "the read_file tool"
+      },
+      "write_file": {
+        "sort": "$string",
+        "description": "the write_file tool"
+      },
+      "delete_file": {
+        "sort": "$string",
+        "description": "the delete_file tool"
+      },
+      "shell": {
+        "sort": "$string",
+        "description": "the shell tool"
+      },
+      "web_fetch": {
+        "sort": "$string",
+        "description": "the web_fetch tool"
+      },
+      "send_email": {
+        "sort": "$string",
+        "description": "the send_email tool"
+      },
+      "post_message": {
+        "sort": "$string",
+        "description": "the post_message tool"
+      },
+      "purchase": {
+        "sort": "$string",
+        "description": "the purchase tool"
+      },
+      "get_secret": {
+        "sort": "$string",
+        "description": "the get_secret tool"
+      },
+      "schedule_task": {
+        "sort": "$string",
+        "description": "the schedule_task tool"
+      },
+      "spawn_agent": {
+        "sort": "$string",
+        "description": "the spawn_agent tool"
+      },
+      "workspace": {
+        "sort": "directory",
+        "description": "the workspace directory of the agent's task"
+      }
+    }
+  }
+}

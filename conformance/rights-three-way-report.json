@@ -1,0 +1,131 @@
+{
+  "fixtures": [
+    {
+      "conflict_targets": 4,
+      "fixture": "alpha",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 5,
+      "fixture": "beta",
+      "limitations": 0,
+      "lines": 2,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 5,
+      "fixture": "gamma",
+      "limitations": 2,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "delta",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 7,
+      "fixture": "epsilon",
+      "limitations": 0,
+      "lines": 4,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "eta",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "theta-row",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "kappa",
+      "limitations": 1,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 7,
+      "fixture": "mu",
+      "limitations": 0,
+      "lines": 2,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "nu",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "omicron",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "pi",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 5,
+      "fixture": "rho",
+      "limitations": 1,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 4,
+      "fixture": "sigma",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 5,
+      "fixture": "tau",
+      "limitations": 3,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 7,
+      "fixture": "psi",
+      "limitations": 0,
+      "lines": 2,
+      "three_way": "PASS"
+    },
+    {
+      "conflict_targets": 5,
+      "fixture": "charged",
+      "limitations": 0,
+      "lines": 1,
+      "three_way": "PASS"
+    },
+    {
+      "fixture": "theta",
+      "skipped_documents": 24,
+      "three_way": "PASS",
+      "wrapped_documents": 36
+    }
+  ],
+  "format": "rights-three-way@0",
+  "passed": 18
+}

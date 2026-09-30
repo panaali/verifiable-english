@@ -218,3 +218,11 @@ and an `argument_units` or `unit` field on an environment without the extension.
   literals; the inner certificate binding environment.
 * Nothing is claimed about rendering, the diagnosis, Q3, the English surface (item 3), reader comprehension, or
   the truth of estimates, conditions, statements, the alternative list or the classification (7.4).
+* Composition with rights and discourse (merged from `ve-integration` on 2026-09-30) is not implemented, and
+  neither plan requires it. `risk@0` requires `alternatives@0`, `alternatives@0` excludes `soft-norms@0`, and
+  `rights@0` requires `soft-norms@0`, so a profile list with both `risk@0` and `rights@0` is rejected before
+  either route runs (`ve/profiles.py`). The discourse adapter strips `ve.discourse@1` and hands the remaining
+  environment on unchanged. No test covers a discourse document whose base profiles include `risk@0`, and the
+  risk route has no discourse-specific code. Risk and rights are independent
+  `ve_risk_route` / `ve_rights_route` executables, and `VE/Audit.lean` audits the union of both theorem lists.
+  How risk and norms' third default fit together after rights merges stays with the norms plan (risk-PLAN 11).
