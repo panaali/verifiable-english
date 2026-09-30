@@ -11,12 +11,14 @@ import hashlib
 import json
 import re
 
+from .assurance import semantic_entry
 from . import ast
-from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, english_lark_grammar
+from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
 from .errors import SyntaxError, VEError
 from .norms import Norm, NormDocument
 from .surface import norms as _registered_surface  # noqa: F401
+from .surface import softnorms as _soft_surface
 
 
 def _words(env):
@@ -43,8 +45,9 @@ def _bindings(decl, words):
 
 
 def _guard_text(formula, env, words, scope):
-    traversal = EnglishTraversal(env, words)
-    traversal.maximum = Counter(sort for sort, _ in scope)
+    traversal = EnglishTraversal(env, words, word_markers=env.alternatives is not None)
+    initial = tuple(sort for sort, _ in scope)
+    traversal.maximum = _max_scope(formula, initial, Counter(initial))
     return traversal.formula(formula, scope)
 
 
@@ -68,6 +71,20 @@ def _parse_guard(source, env, words, scope):
         prefixes.append("for every " + noun + ", ")
     require_unique_derivation(env, "".join(prefixes) + source + ".")
     return formula
+
+
+def _mentions_outcome(formula, predicate):
+    """Find a deontic self-edge at any tuple, including another action."""
+    if isinstance(formula, (ast.Unary, ast.Binary)):
+        return formula.predicate == predicate
+    if isinstance(formula, (ast.Forall, ast.Exists)):
+        return _mentions_outcome(formula.body, predicate)
+    if isinstance(formula, ast.Not):
+        return _mentions_outcome(formula.body, predicate)
+    if isinstance(formula, (ast.And, ast.Or, ast.Implies)):
+        return (_mentions_outcome(formula.left, predicate) or
+                _mentions_outcome(formula.right, predicate))
+    return False
 
 
 def _consequence(rule, env, words):
@@ -113,20 +130,25 @@ def default_sentence(env, predicate):
 def render_rule_sentence(rule, env, words=None):
     """Render the content of one rule, including quoted rules outside a layer."""
     words = _words(env) if words is None else words
-    consequence, scope = _consequence(rule, env, words)
+    core = getattr(rule, "core", rule)
+    consequence, scope = (_soft_consequence(rule, env, words)
+                          if getattr(rule, "mode", "strict") == "default" else
+                          _consequence(core, env, words))
     sentence = consequence
-    if not isinstance(rule.guard, ast.Top):
-        sentence += ", if " + _guard_text(rule.guard, env, words, scope)
-    if len(rule.unless) == 1:
-        sentence += ", unless " + _guard_text(rule.unless[0], env, words, scope)
+    if not isinstance(core.guard, ast.Top):
+        sentence += ", if " + _guard_text(core.guard, env, words, scope)
+    if len(core.unless) == 1:
+        sentence += ", unless " + _guard_text(core.unless[0], env, words, scope)
     sentence += "."
-    if len(rule.unless) > 1:
+    if len(core.unless) > 1:
         sentence += " " + " ".join("Except when " + _guard_text(u, env, words, scope) + "."
-                                   for u in rule.unless)
+                                   for u in core.unless)
     return sentence
 
 
-def render_english(document: NormDocument, *, handles=None):
+def render_english(document: NormDocument, *, handles=None, _w1=False):
+    if not _w1 and _soft_surface.SOFT_PROFILE in document.env.profiles:
+        return _render_soft_english(document, handles=handles)
     env = document.env
     if handles is not None and (set(handles) != {r.name for r in document.rules}
                                 or len(set(handles.values())) != len(handles)
@@ -221,7 +243,10 @@ def _parse_consequence(text, env, words):
     return matches[0]
 
 
-def parse_english(env, source, manifest=None, *, existing_names=()):
+@semantic_entry("english.admission")
+def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
+    if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
+        return _parse_soft_english(env, source, manifest, existing_names=existing_names)
     if type(source) is not str:
         raise SyntaxError("Norm English must be text")
     if manifest is not None:
@@ -297,7 +322,314 @@ def parse_english(env, source, manifest=None, *, existing_names=()):
             raise VEError("UnknownRule: display reference")
         rules.append(Norm(name, predicate, sign, guard, carveouts,
                           tuple(names[ref - 1] for ref in refs)))
-    document = NormDocument(env, rules)
+    try:
+        document = NormDocument(env, rules)
+    except VEError as exc:
+        if (env.alternatives is not None and str(exc).startswith("DependencyCycle: ") and
+                any(_mentions_outcome(formula, rule.predicate)
+                    for rule in rules for formula in (rule.guard, *rule.unless))):
+            raise VEError(f"{exc}; GuardOnOwnOutcome: A condition on this rule's own "
+                          "predicate creates a cycle. An author may instead select a factual guard "
+                          "like Rule 9: there is a robot such that that action is available to "
+                          "that robot and every other action available to that robot injures a human being or "
+                          "allows a harm to a human being to happen. This changes the rule's "
+                          "meaning and does not track later rules that forbid those actions "
+                          "for other reasons.") from exc
+        raise
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document
+
+
+_SOFT_NOTE = re.compile(
+    r"Rule ([1-9][0-9]*) (serves ([a-z][a-z0-9_]*)|is excepted (only )?when (.+))\.")
+_SOFT_DECIDER = re.compile(r"The exception to rule ([1-9][0-9]*) is decided by (.+)\.", re.S)
+_SOFT_FACTORS = re.compile(r"The exception to rule ([1-9][0-9]*) takes account of (.+)\.", re.S)
+_SOFT_HEADER = re.compile(r"Rule ([1-9][0-9]*)(?: \(([^()]*)\))?\. (.*)\Z", re.S)
+
+
+def _soft_consequence(rule, env, words):
+    core = getattr(rule, "core", rule)
+    strict, scope = _consequence(core, env, words)
+    reg = env.predicates[core.predicate].regulated
+    if getattr(rule, "mode", "strict") != "default":
+        return strict, scope
+    if reg.role == "plain":
+        raise SyntaxError("A default rule needs a declared obligation or permission act")
+    modal = ("should" if core.sign else "generally need not") if reg.role == "obligation" else (
+        "generally may" if core.sign else "should not")
+    strict_modal = ("must" if core.sign else "need not") if reg.role == "obligation" else (
+        "may" if core.sign else "must not")
+    return strict.replace(" " + strict_modal + " ", " " + modal + " ", 1), scope
+
+
+def _soft_rewrite_consequence(sentence, env, words):
+    """Find exactly one declared deontic reading and its W1 equivalent."""
+    matches = []
+    for name, decl in env.predicates.items():
+        if decl.regulated is None:
+            continue
+        for sign in (True, False):
+            base = Norm("candidate", name, sign, ast.Top())
+            strict, _ = _consequence(base, env, words)
+            candidates = [(strict, "strict")]
+            _, nouns = _bindings(decl, words)
+            if len(nouns) == 2:
+                candidates.append((strict.replace("each " + nouns[1], "any " + nouns[1]), "strict"))
+            if decl.regulated.role == "permission" and not sign:
+                candidates.append((strict.replace("Every " + nouns[0] + " must not ",
+                                                  "No " + nouns[0] + " may ", 1), "strict"))
+            if decl.regulated.role != "plain":
+                soft, _ = _soft_consequence(_soft_surface.SoftNorm(
+                    "candidate", name, sign, ast.Top(), mode="default"), env, words)
+                candidates.append((soft, "default"))
+                if len(nouns) == 2:
+                    candidates.append((soft.replace("each " + nouns[1], "any " + nouns[1]), "default"))
+                if " should not " in soft:
+                    candidates.append((soft.replace(" should not ", " generally must not ", 1), "default"))
+                elif " should " in soft:
+                    candidates.append((soft.replace(" should ", " generally must ", 1), "default"))
+            for wording, mode in candidates:
+                if sentence.casefold().startswith(wording.casefold()) and (
+                    len(sentence) == len(wording) or sentence[len(wording):].startswith(", ")):
+                    matches.append((name, sign, mode, wording, strict))
+    if len(matches) != 1:
+        if re.search(r"\b(?:normally|typically|usually|as a rule)\b", sentence, re.I):
+            raise SyntaxError("Frequency wording has two readings; choose a default rule or a frequency claim")
+        raise SyntaxError("Norm consequence has no single declared reading; use a declared act phrase")
+    name, sign, mode, wording, strict = matches[0]
+    return name, sign, mode, strict + sentence[len(wording):]
+
+
+def _soft_note_parts(tail, number):
+    """Separate W1 carve-outs from the soft annotations in one rule block."""
+    markers = (" Rule ", " The exception to rule ")
+    pos = min((tail.find(x) for x in markers if x in tail), default=-1)
+    if pos < 0:
+        return tail, ""
+    return tail[:pos], tail[pos + 1:]
+
+
+def _parse_soft_notes(notes, number, env, words, scope):
+    result = {"rank": None, "decided_by": None, "sufficient": [], "necessary": [], "factors": []}
+    if not notes:
+        return result
+    remaining = notes
+    while remaining:
+        quoted = escaped = False
+        point = -1
+        for index, char in enumerate(remaining):
+            if escaped:
+                escaped = False
+            elif quoted and char == "\\":
+                escaped = True
+            elif char == '"':
+                quoted = not quoted
+            elif not quoted and remaining.startswith(". ", index):
+                point = index
+                break
+        statement = remaining if point < 0 else remaining[:point + 1]
+        remaining = "" if point < 0 else remaining[point + 2:]
+        m = _SOFT_NOTE.fullmatch(statement)
+        if m:
+            if int(m[1]) != number:
+                raise SyntaxError("Soft annotation names another rule")
+            if m[3] is not None:
+                if result["rank"] is not None:
+                    raise SyntaxError("Duplicate rank attribution")
+                result["rank"] = m[3]
+            else:
+                key = "necessary" if m[4] else "sufficient"
+                result[key].append(_parse_guard(m[5], env, words, scope))
+            continue
+        m = _SOFT_DECIDER.fullmatch(statement)
+        if m and int(m[1]) == number:
+            if result["decided_by"] is not None:
+                raise SyntaxError("Duplicate exception decider")
+            if m[2].startswith('"'):
+                try:
+                    result["decided_by"] = json.loads(m[2])
+                except ValueError as exc:
+                    raise SyntaxError("Invalid quoted exception decider") from exc
+                if type(result["decided_by"]) is not str:
+                    raise SyntaxError("Invalid quoted exception decider")
+            else:
+                result["decided_by"] = m[2]
+            continue
+        m = _SOFT_FACTORS.fullmatch(statement)
+        if m and int(m[1]) == number:
+            if result["factors"]:
+                raise SyntaxError("Duplicate exception factors")
+            # Canonical output quotes each factor, preserving embedded commas.
+            # The source's natural list spelling is accepted for authoring.
+            if m[2].startswith('"'):
+                try:
+                    result["factors"] = json.loads("[" + m[2] + "]")
+                except (ValueError, TypeError) as exc:
+                    raise SyntaxError("Invalid quoted exception factors") from exc
+                if (type(result["factors"]) is not list or
+                        any(type(factor) is not str for factor in result["factors"])):
+                    raise SyntaxError("Invalid quoted exception factors")
+            else:
+                result["factors"] = [piece.strip() for piece in
+                                     re.split(r", (?:and )?| and ", m[2])]
+            continue
+        raise SyntaxError(f"Unknown soft annotation {statement!r}")
+    return result
+
+
+def _parse_soft_english(env, source, manifest, *, existing_names):
+    if type(source) is not str:
+        raise SyntaxError("Norm English must be text")
+    if manifest is not None and (type(manifest) is not dict or
+                                 manifest.get("environment_id") != env.environment_id or
+                                 manifest.get("text_digest") != hashlib.sha256(source.encode()).hexdigest()):
+        raise VEError("IdentityMetadataMismatch: stale English export")
+    words = _words(env)
+    transformed = []
+    metadata = []
+    for line in source.split("\n") if source else []:
+        if re.fullmatch(r"Rule [1-9][0-9]* takes precedence over rule [1-9][0-9]*\.", line):
+            transformed.append(line)
+            continue
+        m = _SOFT_HEADER.fullmatch(line)
+        if m is None:
+            raise SyntaxError("Expected a numbered soft rule block")
+        number = int(m[1])
+        refs, parties = _soft_surface.parse_header_options(m[2] or "")
+        first, notes = _soft_note_parts(m[3], number)
+        sentence_end = first.find(". ")
+        consequence = first if sentence_end < 0 else first[:sentence_end + 1]
+        carveouts = "" if sentence_end < 0 else first[sentence_end + 1:]
+        if not consequence.endswith("."):
+            raise SyntaxError("Expected a complete soft rule sentence")
+        name, sign, mode, strict = _soft_rewrite_consequence(consequence[:-1], env, words)
+        decl = env.predicates[name]
+        scope, _ = _bindings(decl, words)
+        fields = _parse_soft_notes(notes, number, env, words, scope)
+        if mode == "strict" and (fields["decided_by"] is not None or fields["sufficient"] or
+                                 fields["necessary"] or fields["factors"]):
+            raise SyntaxError("A strict rule has no exception decision")
+        header = ("Rule " + str(number) +
+                  _soft_surface.render_header_options(refs, ()) + ". ")
+        transformed.append(header + strict + "." + (" " + carveouts if carveouts else ""))
+        metadata.append((mode, parties, fields))
+    w1 = parse_english(env, "\n".join(transformed), None, existing_names=existing_names, _w1=True)
+    if len(w1.rules) != len(metadata):
+        raise SyntaxError("Soft annotation count does not match rule count")
+    rules = []
+    for rule, (mode, parties, fields) in zip(w1.rules, metadata):
+        rules.append(_soft_surface.SoftNorm(
+            rule.name, rule.predicate, rule.sign, rule.guard, rule.unless, rule.over,
+            mode, fields["rank"], parties,
+            (fields["decided_by"] or ("unstated" if mode == "default" and
+             not getattr(env, "soft", {}).get("exception_decider") else None)),
+            tuple(fields["sufficient"]), tuple(fields["necessary"]), tuple(fields["factors"])))
+    if manifest is not None:
+        blocks = [line for line in source.split("\n") if not re.fullmatch(
+            r"Rule [1-9][0-9]* takes precedence over rule [1-9][0-9]*\.", line)]
+        entries = manifest.get("blocks")
+        if type(entries) is not list or len(entries) != len(rules):
+            raise VEError("IdentityMetadataMismatch: block count")
+        names = []
+        handles = set()
+        offset = 0
+        for i, (block, entry) in enumerate(zip(blocks, entries), 1):
+            if type(entry) is not dict or entry.get("number") != i or entry.get("span") != [offset, offset + len(block)]:
+                raise VEError("IdentityMetadataMismatch: block mapping")
+            handle = entry.get("handle")
+            name = entry.get("name")
+            if (type(handle) is not str or not handle or handle in handles or
+                    type(name) is not str or name in names or name in existing_names):
+                raise VEError("IdentityMetadataMismatch: block mapping")
+            handles.add(handle)
+            names.append(name)
+            offset += len(block) + 1
+        w1_positions = {rule.name: i for i, rule in enumerate(w1.rules)}
+        restored = []
+        for i, rule in enumerate(rules):
+            restored.append(_soft_surface.SoftNorm(
+                names[i], rule.predicate, rule.sign, rule.guard, rule.unless,
+                tuple(names[w1_positions[parent]] for parent in rule.over),
+                rule.mode, rule.rank, rule.alterable,
+                rule.decided_by, rule.sufficient, rule.necessary, rule.factors,
+                manifest["blocks"][i].get("hard", False) if manifest is not None else False))
+        rules = restored
+    from .softnorms import SoftEnvironment, SoftNormDocument
+    soft_env = env if isinstance(env, SoftEnvironment) else SoftEnvironment(env.to_dict())
+    try:
+        document = SoftNormDocument(soft_env, [rule.to_dict() for rule in rules])
+    except VEError as exc:
+        if str(exc).startswith("DependencyCycle:"):
+            raise VEError(f"{exc}; DualGuardCycle: a soft decision introduces a guard dependency") from exc
+        raise
+    if manifest is not None and manifest.get("document_hash") != document.document_hash:
+        raise VEError("IdentityMetadataMismatch: norm document hash")
+    return document
+
+
+def _render_soft_english(document, *, handles=None):
+    from .softnorms import SoftNormDocument
+    soft_hash = document.document_hash if isinstance(document, SoftNormDocument) else None
+    if isinstance(document, SoftNormDocument):
+        from .ast import _Decoder
+        rules = []
+        for source_rule in document.rules:
+            core = source_rule.core
+            exception = source_rule.exception or {}
+            rules.append(_soft_surface.SoftNorm(
+                core.name, core.predicate, core.sign, core.guard, core.unless, core.over,
+                source_rule.mode, source_rule.rank, source_rule.alterable,
+                exception.get("decided_by"),
+                tuple(_Decoder().decode(x) for x in exception.get("sufficient", ())),
+                tuple(_Decoder().decode(x) for x in exception.get("necessary", ())),
+                tuple(exception.get("factors", ())), source_rule.hard))
+        document = NormDocument(document.env, rules)
+    text, manifest = render_english(document, handles=handles, _w1=True)
+    words = _words(document.env)
+    lines = []
+    numbers = {rule.name: i for i, rule in enumerate(document.rules, 1)}
+    for i, (line, rule) in enumerate(zip(text.split("\n"), document.rules), 1):
+        m = _SOFT_HEADER.fullmatch(line)
+        if m is None:
+            raise SyntaxError("Invalid W1 rule block in soft export")
+        consequence, _ = _consequence(rule, document.env, words)
+        soft, scope = _soft_consequence(rule, document.env, words)
+        body = m[3].replace(consequence, soft, 1)
+        header = ("Rule " + str(i) +
+                  _soft_surface.render_header_options(tuple(numbers[n] for n in rule.over),
+                                                       tuple(getattr(rule, "alterable", ()))) + ". ")
+        annotations = []
+        rank = getattr(rule, "rank", None)
+        if rank:
+            annotations.append(f"Rule {i} serves {rank}.")
+        if getattr(rule, "mode", "strict") == "default":
+            decider = getattr(rule, "decided_by", None)
+            if decider and (decider != "unstated" or
+                            getattr(document.env, "soft", {}).get("exception_decider")):
+                annotations.append(f"The exception to rule {i} is decided by " +
+                                   json.dumps(decider, ensure_ascii=False) + ".")
+            for formula in getattr(rule, "sufficient", ()):
+                annotations.append(f"Rule {i} is excepted when {_guard_text(formula, document.env, words, scope)}.")
+            for formula in getattr(rule, "necessary", ()):
+                annotations.append(f"Rule {i} is excepted only when {_guard_text(formula, document.env, words, scope)}.")
+            factors = getattr(rule, "factors", ())
+            if factors:
+                annotations.append(f"The exception to rule {i} takes account of " +
+                                   ", ".join(json.dumps(f, ensure_ascii=False) for f in factors) + ".")
+        lines.append(header + body + (" " + " ".join(annotations) if annotations else ""))
+    source = "\n".join(lines)
+    start = 0
+    for entry, line in zip(manifest["blocks"], lines):
+        entry["span"] = [start, start + len(line)]
+        rule = document.rules[entry["number"] - 1]
+        if getattr(rule, "hard", False):
+            entry["hard"] = True
+        start += len(line) + 1
+    manifest["text_digest"] = hashlib.sha256(source.encode()).hexdigest()
+    if soft_hash is None:
+        from .softnorms import SoftEnvironment
+        soft_env = document.env if isinstance(document.env, SoftEnvironment) else SoftEnvironment(document.env.to_dict())
+        soft_hash = SoftNormDocument(soft_env, [rule.to_dict() for rule in document.rules]).document_hash
+    manifest["document_hash"] = soft_hash
+    return source, manifest

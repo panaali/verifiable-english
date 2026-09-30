@@ -1,0 +1,740 @@
+{
+ "source": "PLAN.md sections 6, 7, 9 and 11; the key was frozen at commit 685a0b07, and the plan review fixes (commit after it, before any VE run) amended section 11 m2 and metric M8 only",
+ "actions": {
+  "a01": {
+   "verdict": "APPROVED",
+   "positive": [
+    1
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a02": {
+   "verdict": "APPROVED",
+   "positive": [
+    1,
+    2
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a03": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    13
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a04": {
+   "verdict": "APPROVED",
+   "positive": [
+    2
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a05": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    24
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a06": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    24
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a07": {
+   "verdict": "APPROVED",
+   "positive": [
+    3
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a08": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    14
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a09": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    14
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a10": {
+   "verdict": "CONFLICT",
+   "positive": [
+    3
+   ],
+   "negative": [
+    14
+   ],
+   "open": [],
+   "deny": "⊥",
+   "allow": "⊥",
+   "rule_25": "not covered"
+  },
+  "a11": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    16
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "required"
+  },
+  "a12": {
+   "verdict": "APPROVED",
+   "positive": [
+    4
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "required (reported)"
+  },
+  "a13": {
+   "verdict": "APPROVED",
+   "positive": [
+    4
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "required, BREACH"
+  },
+  "a14": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    15
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "required"
+  },
+  "a15": {
+   "verdict": "APPROVED",
+   "positive": [
+    5
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a16": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    17
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a17": {
+   "verdict": "APPROVED",
+   "positive": [
+    6
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a18": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    22
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a19": {
+   "verdict": "APPROVED",
+   "positive": [
+    6,
+    7,
+    8
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a20": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    18
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a21": {
+   "verdict": "APPROVED",
+   "positive": [
+    7
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a22": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    18
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a23": {
+   "verdict": "APPROVED",
+   "positive": [
+    8
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a24": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    23,
+    24
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a25": {
+   "verdict": "APPROVED",
+   "positive": [
+    9
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a26": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    19
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a27": {
+   "verdict": "NOT-COVERED",
+   "positive": [],
+   "negative": [],
+   "open": [],
+   "deny": "F",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a28": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    19
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a29": {
+   "verdict": "APPROVED",
+   "positive": [
+    9
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a30": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    23
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a31": {
+   "verdict": "APPROVED",
+   "positive": [
+    10
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "required (reported)"
+  },
+  "a32": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    20
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "required"
+  },
+  "a33": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    21
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "required"
+  },
+  "a34": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    20,
+    21
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "required"
+  },
+  "a35": {
+   "verdict": "APPROVED",
+   "positive": [
+    11
+   ],
+   "negative": [],
+   "open": [],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a36": {
+   "verdict": "NOT-COVERED",
+   "positive": [],
+   "negative": [],
+   "open": [],
+   "deny": "F",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a37": {
+   "verdict": "NOT-COVERED",
+   "positive": [],
+   "negative": [],
+   "open": [],
+   "deny": "F",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a38": {
+   "verdict": "NOT-COVERED",
+   "positive": [],
+   "negative": [],
+   "open": [],
+   "deny": "F",
+   "allow": "P",
+   "rule_25": "not covered"
+  },
+  "a39": {
+   "verdict": "REJECTED",
+   "positive": [],
+   "negative": [
+    14
+   ],
+   "open": [],
+   "deny": "F",
+   "allow": "F",
+   "rule_25": "not covered"
+  },
+  "a40": {
+   "verdict": "UNDETERMINED",
+   "positive": [],
+   "negative": [],
+   "open": [
+    2,
+    13
+   ],
+   "deny": "?",
+   "allow": "?",
+   "rule_25": "not covered"
+  },
+  "a41": {
+   "verdict": "UNDETERMINED",
+   "positive": [],
+   "negative": [],
+   "open": [
+    3,
+    14
+   ],
+   "deny": "?",
+   "allow": "?",
+   "rule_25": "not covered"
+  },
+  "a42": {
+   "verdict": "APPROVED",
+   "positive": [
+    1
+   ],
+   "negative": [],
+   "open": [
+    2
+   ],
+   "deny": "P",
+   "allow": "P",
+   "rule_25": "not covered"
+  }
+ },
+ "totals": {
+  "APPROVED": 16,
+  "REJECTED": 19,
+  "NOT-COVERED": 4,
+  "CONFLICT": 1,
+  "UNDETERMINED": 2
+ },
+ "forced_default_sensitive": [
+  "a27",
+  "a36",
+  "a37",
+  "a38"
+ ],
+ "obligation": {
+  "covered": [
+   "a11",
+   "a12",
+   "a13",
+   "a14",
+   "a31",
+   "a32",
+   "a33",
+   "a34"
+  ],
+  "breach_neednot": [
+   "a13"
+  ],
+  "breach_must": [
+   "a01",
+   "a02",
+   "a04",
+   "a07",
+   "a13",
+   "a15",
+   "a17",
+   "a19",
+   "a21",
+   "a23",
+   "a25",
+   "a29",
+   "a35",
+   "a42"
+  ]
+ },
+ "policy": {
+  "conflict": {
+   "permitted": "CONFLICT",
+   "report_required": "CONFLICT-FREE"
+  },
+  "satisfiable_pairs": [
+   [
+    3,
+    14
+   ]
+  ],
+  "pair_queries": 144,
+  "never_deciding": [
+   12
+  ],
+  "dead_guards": [],
+  "covered_tools": [
+   "read_file",
+   "write_file",
+   "delete_file",
+   "shell",
+   "web_fetch",
+   "purchase"
+  ],
+  "gap_tools": [
+   "send_email",
+   "post_message",
+   "get_secret",
+   "schedule_task",
+   "spawn_agent"
+  ],
+  "unnamed_tool": "gap or OPEN",
+  "required_overlaps": [
+   [
+    1,
+    2
+   ],
+   [
+    6,
+    7
+   ],
+   [
+    6,
+    8
+   ],
+   [
+    7,
+    8
+   ],
+   [
+    20,
+    21
+   ],
+   [
+    23,
+    24
+   ]
+  ]
+ },
+ "mutants": {
+  "m1": {
+   "conflict_permitted": "CONFLICT-FREE",
+   "changes": {
+    "a10": {
+     "verdict": "REJECTED",
+     "negative": [
+      14
+     ]
+    }
+   },
+   "satisfiable_pairs": []
+  },
+  "m2": {
+   "changes": {
+    "a27": {
+     "verdict": "APPROVED",
+     "positive": [
+      "M"
+     ]
+    },
+    "a29": {
+     "verdict": "APPROVED",
+     "positive": [
+      9,
+      "M"
+     ]
+    }
+   },
+   "gaps_closed": [
+    "send_email",
+    "post_message"
+   ],
+   "pair_queries": 156,
+   "satisfiable_pairs": [
+    [
+     3,
+     14
+    ]
+   ],
+   "never_deciding": [
+    12
+   ],
+   "new_overlaps": [
+    [
+     9,
+     "M"
+    ]
+   ]
+  },
+  "m3": {
+   "changes": {
+    "a27": {
+     "verdict": "APPROVED",
+     "positive": [
+      2
+     ]
+    },
+    "a12": {
+     "positive": [
+      2,
+      4
+     ]
+    },
+    "a17": {
+     "positive": [
+      2,
+      6
+     ]
+    },
+    "a19": {
+     "positive": [
+      2,
+      6,
+      7,
+      8
+     ]
+    },
+    "a23": {
+     "positive": [
+      2,
+      8
+     ]
+    },
+    "a29": {
+     "positive": [
+      2,
+      9
+     ]
+    },
+    "a31": {
+     "positive": [
+      2,
+      10
+     ]
+    },
+    "a35": {
+     "positive": [
+      2,
+      11
+     ]
+    }
+   },
+   "gaps_closed": [
+    "send_email",
+    "post_message"
+   ],
+   "gaps_stay": [
+    "get_secret",
+    "schedule_task",
+    "spawn_agent"
+   ]
+  },
+  "m4": {
+   "changes": {
+    "a01": {
+     "verdict": "UNDETERMINED",
+     "open": [
+      1,
+      13,
+      24
+     ]
+    }
+   }
+  },
+  "m5": {
+   "changes": {
+    "a06": {
+     "verdict": "CONFLICT",
+     "positive": [
+      12
+     ],
+     "negative": [
+      24
+     ]
+    }
+   },
+   "pair_satisfiable_added": [
+    [
+     12,
+     24
+    ]
+   ],
+   "never_deciding": []
+  },
+  "m6": {
+   "changes": {
+    "a36": {
+     "verdict": "APPROVED",
+     "positive": [
+      11
+     ]
+    }
+   }
+  }
+ },
+ "metrics": {
+  "M1": "42/42",
+  "M2": "42/42",
+  "M3": 0,
+  "M6": "4/4",
+  "M7": "6/6",
+  "M8": [
+   "39/39",
+   "42/42"
+  ]
+ }
+}

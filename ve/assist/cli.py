@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import sys
 
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from ..wire import loads_json
 from .api import call_tool, tool_schemas, tools_for_session
 from .session import AssistSession
@@ -156,6 +156,23 @@ def render(command, result):
     return "\n".join(lines)
 
 
+EXIT_CHECKER_UNAVAILABLE = 5
+
+
+def exit_code(result):
+    """0 for an ok result, 5 when no verdict was obtained (CheckerUnavailable), else 2.
+
+    Session actions and tool calls return operational failures as results, so
+    the code is read from the result, not only from a raised exception. Such an
+    action is not saved: the ledger must replay, and an operational failure
+    does not recur once the checker is available again.
+    """
+    if result.get("ok", True):
+        return 0
+    error = result.get("error")
+    return EXIT_CHECKER_UNAVAILABLE if type(error) is dict and error.get("code") == "CheckerUnavailable" else 2
+
+
 def _proposer(args):
     from ve_experiments.assist_haiku import ClaudeProposer
     ledger = args.calls_ledger or str(args.session) + ".calls.jsonl"
@@ -234,7 +251,7 @@ def main(argv=None):
 
     def emit(command, result):
         print(json.dumps(result, ensure_ascii=False, indent=1) if args.json else render(command, result))
-        return 0 if result.get("ok", True) else 2
+        return exit_code(result)
 
     try:
         if args.command == "tools":
@@ -279,9 +296,11 @@ def main(argv=None):
             if args.proposer:
                 session.proposer = _proposer(args)
             result = call_tool(session, args.tool, args.arguments)
-            _save(session, args.session)
+            code = exit_code({"ok": bool(result.get("ok")), "error": result.get("error")})
+            if code != EXIT_CHECKER_UNAVAILABLE:
+                _save(session, args.session)
             print(json.dumps(result, ensure_ascii=False, indent=1))
-            return 0 if result.get("ok") else 2
+            return code
         mapping = {
             "sentences": ("sentences", {}),
             "freeze": ("freeze_target", {"target": args.__dict__.get("target"), "text": args.__dict__.get("text"),
@@ -315,8 +334,12 @@ def main(argv=None):
         if command == "propose":
             session.proposer = _proposer(args)
         result = session.apply(action, arguments)
-        _save(session, args.session)
+        if exit_code(result) != EXIT_CHECKER_UNAVAILABLE:
+            _save(session, args.session)
         return emit(command, result)
+    except CheckerUnavailable as exc:
+        print(f"error: CheckerUnavailable: {exc.message}", file=sys.stderr)
+        return EXIT_CHECKER_UNAVAILABLE
     except (VEError, OSError, ValueError, RuntimeError) as exc:
         message = exc.message if isinstance(exc, VEError) else str(exc)
         print(f"error: {message}", file=sys.stderr)

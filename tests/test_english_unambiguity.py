@@ -249,3 +249,182 @@ def test_earley_time_budget_with_host_alarm(monkeypatch):
     assert 0 < iterations[0] < 100
     assert alarm.handler is host_handler
     assert alarm.timer == (30, 0)
+
+
+def _soft_env():
+    """Use the admitted profile and its declared parties and ranks."""
+    from tests.test_norms import environment, obligation, permission
+    from ve.softnorms import SoftEnvironment
+    raw = environment({"required": obligation(), "permitted": permission()}).to_dict()
+    raw["profiles"] = sorted((*raw["profiles"], "soft-norms@0"))
+    raw["vocabulary"]["soft"] = {"parties": ["operator", "user"],
+                                  "ranks": ["helpfulness"], "outranks": [], "ties": [],
+                                  "outranking": {"mode": "strict"}}
+    return SoftEnvironment(raw)
+
+
+def test_soft_modal_wordings_are_one_reading_and_profile_gated():
+    from tests.test_norms import environment, obligation, permission
+    from ve.norm_english import parse_english, render_english
+    from ve.surface.softnorms import SoftNorm, modal_reading
+    from ve.norms import NormDocument
+    from ve.ast import Top
+
+    env = _soft_env()
+    cases = (("required", True, "should"),
+             ("required", False, "generally need not"),
+             ("permitted", True, "generally may"),
+             ("permitted", False, "should not"))
+    for predicate, sign, wording in cases:
+        doc = NormDocument(env, [SoftNorm("soft", predicate, sign, Top(), mode="default",
+                                          decided_by="assistant")])
+        source, manifest = render_english(doc)
+        assert f" {wording} " in source
+        assert [r.to_dict() for r in parse_english(env, source, manifest).rules] == [r.to_dict() for r in doc.rules]
+        assert modal_reading(wording)[0] == "default"
+    w1 = environment({"required": obligation(), "permitted": permission()})
+    for sentence in ("Every act should be done.", "Every act generally may be done."):
+        with pytest.raises(SyntaxError, match="single declared reading"):
+            parse_english(w1, "Rule 1. " + sentence)
+
+
+def test_soft_synonyms_canonicalize_and_frequency_wordings_remain_open():
+    from ve.norm_english import parse_english, render_english
+    from ve.surface.softnorms import frequency_readings, normalize_modal
+
+    env = _soft_env()
+    for input_word, canonical in (("generally must", "should"),
+                                  ("generally must not", "should not")):
+        source = "Rule 1. Every act " + input_word + " be done."
+        doc = parse_english(env, source)
+        assert " " + canonical + " " in render_english(doc)[0]
+        assert normalize_modal(input_word) == canonical
+    for word in ("normally", "typically", "usually", "as a rule"):
+        readings = frequency_readings(word, "doing the act")
+        assert len(readings) == 2 and "frequency claim" in readings[1]
+        with pytest.raises(SyntaxError, match="Frequency wording has two readings"):
+            parse_english(env, "Rule 1. Every act " + word + " may be done.")
+    for phrase in ("should generally", "should generally not"):
+        with pytest.raises(SyntaxError):
+            parse_english(env, "Rule 1. Every act " + phrase + " be done.")
+
+
+def test_soft_rule_options_exception_conditions_and_manifest():
+    from ve.ast import Top
+    from ve.norm_english import parse_english, render_english
+    from ve.norms import NormDocument
+    from ve.surface.softnorms import SoftNorm
+
+    env = _soft_env()
+    rules = [SoftNorm("hard", "required", True, Top(), mode="default", decided_by="assistant", alterable=("user",)),
+             SoftNorm("default", "required", False, Top(), over=("hard",),
+                      mode="default", rank="helpfulness", alterable=("operator", "user"),
+                      decided_by="assistant", sufficient=(Top(),), necessary=(Top(),),
+                      factors=("safety", "the user's wishes"))]
+    doc = NormDocument(env, rules)
+    source, manifest = render_english(doc, handles={"hard": "h", "default": "d"})
+    assert "Rule 1 (user may turn off)." in source
+    assert "Rule 2 (exception to rule 1; operator and user may turn off)." in source
+    assert "Rule 2 serves helpfulness." in source
+    assert "is excepted when this holds in all cases" in source
+    assert "is excepted only when this holds in all cases" in source
+    assert [r.to_dict() for r in parse_english(env, source, manifest).rules] == [r.to_dict() for r in rules]
+    assert parse_english(env, source).rules[1].core.over == ("rule-1",)
+    stale = dict(manifest, text_digest="0" * 64)
+    with pytest.raises(Exception, match="IdentityMetadataMismatch"):
+        parse_english(env, source, stale)
+
+
+def test_soft_declarations_and_registry_have_single_canonical_readings():
+    from ve.surface import softnorms
+    from ve.surface.registry import by_tag, dispatch
+
+    cases = (("Safety outranks ethics.", "outranks", ("safety", "ethics")),
+             ("Safety and ethics are not ranked.", "tie", ("safety", "ethics")),
+             ("Outranking in this document is strict.", "outranking", {"mode": "strict"}),
+             ("Outranking in this document is holistic; assistant decides when a lower-ranked rule "
+              "outweighs a higher-ranked one in a situation.", "outranking",
+              {"mode": "holistic", "decided_by": "assistant"}),
+             ("Exceptions to rules in this document are decided by assistant, unless a rule "
+              "says otherwise.", "exception_decider", "assistant"),
+             ('"An operator request records an instruction of operator."',
+              "instruction_of", ("An operator request", "operator")))
+    for source, kind, value in cases:
+        assert softnorms.parse_declaration(source) == (kind, value)
+        assert softnorms.render_declaration(kind, value) == source
+    assert dispatch("Outranking in this document is strict.", _soft_env())[1].wire_tag == "soft-document-outranking"
+    from tests.test_norms import environment, permission
+    assert dispatch("Outranking in this document is strict.",
+                    environment({"permitted": permission()})) is None
+    assert by_tag("soft-should").profiles == ("soft-norms@0",)
+
+
+def test_rights_incident_prefix_reuses_one_reading_soft_grammar():
+    from tests.test_rights import claim, rights_env
+    from ve.rights import RightsEnvironment
+    from ve.surface.rights import parse_line, render_line
+
+    env = RightsEnvironment(rights_env())
+    source = render_line(env, "life", "claim", claim()["norm"])
+    assert parse_line(env, source, name="protect")["norm"] == claim()["norm"]
+    with pytest.raises(Exception, match="expected Claim, Liberty or Immunity"):
+        parse_line(env, source.replace("Claim of right", "Rule", 1), name="protect")
+    with pytest.raises(Exception, match="Norm consequence has no single declared reading"):
+        parse_line(env, source.replace("must protect", "should generally protect"), name="protect")
+
+
+def _rights_lines():
+    from tests.test_norms import obligation, permission
+    from tests.test_rights import rights_env
+    raw = rights_env()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["deprive_permitted"] = permission("allow", act="{0} deprive {1} of nationality",
+                                                 args=("state", "person"))
+    predicates["has_nationality"] = {"arguments": ["person"], "description": "nationality"}
+    predicates["arbitrary"] = {"arguments": ["state", "person"], "description": "arbitrary"}
+    raw["vocabulary"]["rights"]["alters"] = {"deprive_permitted": {
+        "holder_slot": 1, "status": "has_nationality", "recognition": None}}
+    exception = {"decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}
+
+    def norm(name, predicate, sign, guard=("top",), **soft):
+        return {"name": name, "predicate": predicate, "sign": sign, "guard": list(guard),
+                "unless": [], "over": [], **soft}
+
+    arbitrary = ["binary", "arbitrary", ["var", 1], ["var", 0]]
+    return raw, [
+        ("claim", norm("protect", "protect_required", True)),
+        ("claim", norm("no-protect", "protect_permitted", False, arbitrary)),
+        ("claim", norm("should-protect", "protect_required", True, mode="default", exception=exception)),
+        ("claim", norm("should-not", "protect_permitted", False, mode="default", exception=exception)),
+        ("liberty", norm("may-act", "person_may_act", True)),
+        ("liberty", norm("generally-act", "person_may_act", True, mode="default", exception=exception)),
+        ("immunity", norm("no-deprive", "deprive_permitted", False, arbitrary)),
+        # a guard naming a generated limitation predicate, in its one generated wording
+        ("claim", norm("lim-protect", "protect_required", True,
+                       ["binary", "rights__lim__1", ["var", 1], ["var", 0]])),
+    ]
+
+
+def test_every_rights_incident_shape_round_trips_with_one_reading():
+    from ve.rights import RightsEnvironment, correlate
+    from ve.surface.rights import parse_line, render_line
+
+    raw, lines = _rights_lines()
+    env = RightsEnvironment(raw)
+    units = [{"right": {"name": "r1", "holder": "person", "guard": ["top"], "lines": [
+                 {"kind": kind, "cites": {}, "norm": body} for kind, body in lines]}},
+             {"limitation": {"name": "l29", "scope": "all", "kinds": ["immunity"], "decided_by": "unstated",
+                             "conditions": [], "factors": []}}]
+    rights = correlate(raw, units)
+    seen = set()
+    for kind, body in lines:
+        source = render_line(env, "1", kind, body, rights=rights)
+        assert source.startswith(f"{kind.title()} of right 1. ")
+        assert "rights__" not in source
+        parsed = parse_line(env, source, name=body["name"], rights=rights)
+        assert (parsed["right"], parsed["kind"], parsed["norm"]) == ("1", kind, body)
+        seen.add(source[len(f"{kind.title()} of right 1. "):])
+    # distinct lines never share a sentence
+    assert len(seen) == len(lines)
+    assert "limitation 1 holds where that state deprives that person of nationality" in render_line(
+        env, "1", "claim", lines[-1][1], rights=rights)

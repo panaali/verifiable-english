@@ -233,6 +233,15 @@ is the proved Lean statement.
   bundles, χ quotation, ψ W1 rule references, ω corpus, the proved-carrier case of η (it needs a certificate), and
   the 1,000-manifest Python/Lean differential. `discourse-joint` reports the joint set and the disjunction, not
   ALL/NONE/SOME verdicts.
+- **Composition with the later profiles** (merge of `ve-integration`, 2026-09-30): a `@2` document composes with
+  `norms@0` (spec 5). The spec's `soft-norms@0` composition is not yet available: `soft-norms@0` is not in the
+  frozen gate registry (`VE/Route/Gate.lean`), so this route rejects it (`UnsupportedProfile: Unsupported profile
+  soft-norms@0`), and Python's `@2` path gives that diagnostic. `rights@0`, `reports@0`, the alternatives and
+  quantity profiles, and the `couplings`/`contexts`/`assessments`/`bridges`/`scoped` metadata stay `@1`-only (spec
+  out of scope); on a `@2` document they are rejected, never silently accepted. Python passes both `joint_choices`
+  and `couplings` to `check_readings`; a coupled document needs `rights@0`, so both are never set at once. On the
+  Rust `elaborated-document` family a case with `profile: reports@0` is a reports case and every other case is a
+  discourse case (`rust/ve/src/main.rs`).
 - **The Lean authority** (`manage-agents/discourse-authority-directive.md`, spec 3.4): Python's admission of a
   `ve-document@2` document is this route's `admission` answer on the same bytes (`ve/discourse.py`
   `lean_admission`, `validate_discourse`), with the sibling files its imports name: the verdict, every unit's
