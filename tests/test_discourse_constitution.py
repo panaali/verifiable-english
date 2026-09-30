@@ -186,10 +186,36 @@ def test_location_targets_must_exist(lean, tmp_path, target, expected):
     assert rejected(doc, tmp_path) == (expected, expected)
 
 
-def test_navigation_anchor_must_exist(lean, tmp_path):
+@pytest.mark.parametrize("form", ["navigation", "section_ref"])
+@pytest.mark.parametrize("target, expected", [
+    ({"kind": "anchor", "name": "sec9"}, "DanglingAnchor: sec9"),
+    ({"kind": "anchor"}, "InvalidInput: mention m-this-pattern target"),
+    ({"kind": "unit", "units": ["u9"]}, "UnresolvedReference: m-this-pattern"),
+    ({"kind": "rule", "name": "r1"}, "UnknownRule: r1"),
+    ({"kind": "rule"}, "InvalidInput: mention m-this-pattern target"),
+], ids=["anchor", "anchor-no-name", "unit", "rule", "rule-no-name"])
+def test_every_location_target_must_exist(lean, tmp_path, form, target, expected):
+    """discourse-example looprecheck1 B (WellFormed.lean:197): Lean admitted a `section_ref` to the
+    rule `r1` as `navigation` though the route reads no norm content, so no rule exists (4.1(4)
+    `UnknownRule`). Every location form and target kind is checked in both; a `navigation` to a
+    rule is the form/kind mismatch it is in both."""
     doc = example(mixed=False)
-    doc["discourse"]["mentions"][0].update(form="navigation", target={"kind": "anchor", "name": "sec9"})
-    assert rejected(doc, tmp_path) == ("DanglingAnchor: sec9", "DanglingAnchor: sec9")
+    doc["discourse"]["mentions"][0].update(form=form, target=target)
+    if form == "navigation" and target["kind"] == "rule":
+        expected = "TargetKindMismatch: m-this-pattern: navigation, rule"
+    assert rejected(doc, tmp_path) == (expected, expected)
+
+
+def test_section_ref_to_a_unit_is_a_location(lean, tmp_path):
+    """A `section_ref` fits a `unit` target in both (Python rejected it as `TargetKindMismatch`)."""
+    doc = example()
+    doc["discourse"]["mentions"][0]["form"] = "section_ref"
+    row = admit(doc)
+    assert row["status"] == "ok" and row["admitted"] is True, row
+    assert [(r["form"], r["status"]) for r in row["references"]] == [("section_ref", "navigation"),
+                                                                      ("pronoun", "navigation")]
+    result = python(doc, tmp_path)
+    assert (result["report_id"], result["references"]) == (row["report_id"], row["references"])
 
 
 def test_formula_producing_mentions_still_need_discourse_wording(lean, tmp_path):
