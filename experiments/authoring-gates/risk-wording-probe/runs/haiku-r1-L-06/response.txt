@@ -1,0 +1,17 @@
+Looking at each text carefully using the provided legends:
+
+**Text 1: (b)** The outage only occurs if peak memory > 8GB, and since the peak memory is 5GB, the condition for the outage is not met.
+
+**Text 2: (a)** "Prevents task abandonment" means the action rules out abandonment in all cases the text allows.
+
+**Text 3: (c)** To prevent data loss, an action must "cannot lead to" data loss; running the job "leads to" it, and running with a limit "might lead to" it, so neither action prevents it.
+
+**Text 4: (d)** "Might lead to" means not ruled out (the rash is possible but not certain), while "certainly leads to" means it happens in every case.
+
+**Text 5: (d)** "Might lead to" means exactly that the text does not rule out the outage—it could happen but is not stated as certain.
+
+**Text 6: (b)** A fall is "serious or worse," meaning it could be serious (less severe than seizure) or severe (equal to seizure), so the text does not definitively say a fall is less severe.
+
+**Text 7: (b)** "Exactly when" means the outage happens if and only if peak memory > 8GB; since peak memory is 5GB, no outage happens.
+
+**Text 8: (c)** The text explicitly states "Emptying the cache cannot lead to data loss," so data loss is ruled out.

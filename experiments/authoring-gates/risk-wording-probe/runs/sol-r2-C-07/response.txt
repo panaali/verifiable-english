@@ -1,0 +1,7 @@
+1. **(b)** The stated rule covers memory above 8 GB, but says nothing about outages at 5 GB.
+2. **(c)** “Cannot” says data loss does not occur in any case allowed by the text when the cache is emptied.
+3. **(a)** The sentence allows that giving nothing prevents a fever in some case, but none of the other options states that without adding an unsupported claim.
+4. **(a)** “Certainly” means the memory-limited job causes a task delay in every allowed case.
+5. **(a)** A delay can occur only if the migration lasts more than 30 minutes.
+6. **(a)** “Might not” allows at least one case where the job runs without an outage.
+7. **(a)** Since the other two actions lead to fever, avoidability requires at least one case where drug B avoids it.

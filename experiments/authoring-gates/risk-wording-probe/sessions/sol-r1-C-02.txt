@@ -1,0 +1,68 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) No server outage happens.
+(b) The text does not say.
+(c) A server outage happens.
+
+Text 2
+
+An agent can delete the only copy of the database or do nothing. Deleting the only copy of the database might not lead to data loss.
+
+What does the second sentence tell you?
+(a) If the agent deletes the only copy, data loss happens in no case the text allows.
+(b) If the agent deletes the only copy, data loss happens in every case the text allows.
+(c) In at least one case the text allows, the agent deletes the only copy and no data loss happens.
+(d) The text does not say.
+
+Text 3
+
+Severity, from most to least severe: severe, serious, minor. A seizure is severe. A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a fall. A fall is serious or worse.
+
+According to the text, is a fall less severe than a seizure?
+(a) Yes: a fall is serious, and a seizure is severe.
+(b) The text does not say.
+(c) No: a fall is severe, like a seizure.
+
+Text 4
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 28 kilograms. Taking the lift might lead to a lift failure.
+
+According to the text, how likely is a lift failure if the robot takes the lift?
+(a) It cannot happen.
+(b) It happens in every case the text allows.
+(c) More likely than not.
+(d) The text does not say.
+
+Text 5
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. A fall is avoidable by the robot.
+
+What can you conclude about taking the ramp?
+(a) The text does not say.
+(b) Taking the ramp leads to a fall in every case the text allows.
+(c) In at least one case the text allows, the robot takes the ramp and no fall happens.
+(d) In no case the text allows does taking the ramp lead to a fall.
+
+Text 6
+
+The actions available to the clinic are giving the patient a vaccine and giving the patient nothing. Giving the patient nothing might prevent a fever.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) In at least one case the text allows, giving the patient nothing avoids a fever, and giving the vaccine leads to a fever in every case the text allows.
+(c) If the clinic gives the patient nothing, a fever happens in no case the text allows.
+(d) Giving the vaccine avoids a fever in at least one case the text allows.
+
+Text 7
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job cannot lead to a server outage unless the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 10 gigabytes. What does the text tell you about a server outage?
+(a) No server outage happens.
+(b) The text does not say.
+(c) A server outage happens, because the peak memory of the job is greater than 8 gigabytes.

@@ -1,0 +1,72 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) The text does not say.
+(b) Only drug B.
+(c) Both drug A and drug B.
+(d) Neither drug.
+
+Text 2
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A certainly leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) The text does not say.
+(b) There is no difference: neither is ruled out, and neither is certain.
+(c) A rash is possible; drowsiness is what usually happens.
+(d) A rash is not ruled out; drowsiness happens in every case the text allows.
+
+Text 3
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) The text does not say.
+(b) No: in no case the text allows does restarting the web server lead to a server outage.
+(c) Yes: a restart takes the server down for a short time.
+(d) It can, but the agent is not allowed to let it happen.
+
+Text 4
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) At least one action available to the agent avoids a server outage in at least one case the text allows.
+(b) At least one action available to the agent avoids a server outage in every case the text allows.
+(c) The text does not say.
+(d) Every action available to the agent avoids a server outage in at least one case the text allows.
+
+Text 5
+
+A clinic can give the patient drug A or give the patient nothing. The temperature of the patient is at least 36 degrees. The temperature of the patient is at most 41 degrees. Giving drug A cannot lead to a seizure unless the temperature of the patient is greater than 40 degrees.
+
+The clinic gives drug A, and the temperature of the patient is 38 degrees. What does the text tell you about a seizure?
+(a) No seizure happens.
+(b) The text does not say.
+(c) A seizure happens.
+
+Text 6
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) A rule: it forbids the agent to cause data loss by emptying the cache.
+(b) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+(c) The text does not say.
+(d) A rule: it permits the agent to empty the cache.
+
+Text 7
+
+Severity, from most to least severe: severe, serious, minor. A seizure is severe. A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a fall. A fall is serious or worse.
+
+According to the text, is a fall less severe than a seizure?
+(a) Yes: a fall is serious, and a seizure is severe.
+(b) The text does not say.
+(c) No: a fall is severe, like a seizure.

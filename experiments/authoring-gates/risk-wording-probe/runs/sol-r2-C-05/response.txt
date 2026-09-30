@@ -1,0 +1,7 @@
+1. **(c)** The text says memory above 4 GB causes failure, but it does not say every failure has that cause.
+2. **(a)** With the full dose, dizziness happens exactly when weight is below 50 kg; 80 kg is above that.
+3. **(d)** Since a fall is avoidable and the stairs lead to a fall, the robot can take the ramp without falling in at least one case.
+4. **(a)** The text rules out an allergic reaction from giving penicillin.
+5. **(b)** A task delay is severe, while data loss is minor.
+6. **(c)** Running the job with a memory limit leads to a task delay in every case the text allows.
+7. **(c)** Memory above 8 GB permits a server outage but does not guarantee one.

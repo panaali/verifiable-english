@@ -7,6 +7,7 @@
   "ve.english -> ve.argument": "English argument parsing also constructs tool-layer graphs; move the argument entry point to tools.",
   "ve.environment -> ve.definitions": "Environment constructor compiles profile definitions; move profile validation out of kernel construction.",
   "ve.environment -> ve.profiles": "Environment constructor validates the profile route; separate kernel vocabulary from profile dispatch.",
+  "ve.environment -> ve.risk": "Environment validation checks the risk@0 declaration block, which lives beside the route transport; split the block checks into a profile module.",
   "ve.environment -> ve.speech_acts": "Environment validation decodes the speech-acts vocabulary block; extract a profile-owned decoder hook.",
   "ve.environment -> ve.units": "Environment validation checks the W6 unit schema and profiles; extract a profile-owned decoder hook.",
   "ve.evaluate -> ve.surface.registry": "Evaluator invokes registered n-ary hooks; move semantic hook dispatch inward.",

@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 use serde_json::{Value, json};
+use num_bigint::BigInt;
+use std::collections::BTreeMap;
 use std::io::{self, BufRead, Read, Write};
 use ve_core::*;
 
@@ -67,6 +69,35 @@ fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
 }
 fn case(v: &Value) -> Result<Value> {
+    if v.get("kind") == Some(&json!("risk-condition"))
+        || v.get("kind") == Some(&json!("risk-cells")) {
+        let id = v.get("id").cloned().unwrap_or(json!(""));
+        let entries = field(v, "ranges")?.as_object()
+            .ok_or_else(|| Error::new("InvalidInput", "risk ranges"))?;
+        let mut ranges = BTreeMap::new();
+        for (name, row) in entries {
+            let tag = field(row, "tag")?.as_str()
+                .ok_or_else(|| Error::new("InvalidInput", "risk range tag"))?;
+            let parse = |key| -> Result<BigInt> {
+                field(row, key)?.as_str().ok_or_else(|| Error::new("InvalidInput", "risk range endpoint"))?
+                    .parse().map_err(|_| Error::new("InvalidInput", "risk range endpoint"))
+            };
+            ranges.insert(name.clone(), RiskRange { tag: tag.into(), lo: parse("lo")?, hi: parse("hi")? });
+        }
+        let mut scales = BTreeMap::new();
+        for (tag, value) in field(v, "scales")?.as_object()
+            .ok_or_else(|| Error::new("InvalidInput", "risk scales"))? {
+            let scale = value.as_str().ok_or_else(|| Error::new("InvalidInput", "risk scale"))?
+                .parse().map_err(|_| Error::new("InvalidInput", "risk scale"))?;
+            scales.insert(tag.clone(), scale);
+        }
+        if v.get("kind") == Some(&json!("risk-cells")) {
+            let rows = regenerate_risk_cells(field(v, "record")?, &ranges, &scales)?;
+            return Ok(json!({"id":id,"status":"ok","tables":rows}));
+        }
+        let (possible, certain) = evaluate_risk_condition(field(v, "condition")?, &ranges, &scales)?;
+        return Ok(json!({"id":id,"status":"ok","possible":possible,"certain":certain}));
+    }
     if v.get("kind") == Some(&json!("quantity")) {
         return quantity_case(v);
     }

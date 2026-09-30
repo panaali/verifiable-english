@@ -291,6 +291,17 @@ class LayerSelectionTests(unittest.TestCase):
             ):
                 self.assertTrue(select(["ve/search.py"])["lean_build"])
 
+    def test_non_default_lean_executables_are_built_by_name(self):
+        extra = sorted(set(layer_policy.lean_executables()) - layer_policy.lean_default_targets())
+        self.assertIn("ve_risk_eval", extra)
+        real_exists = Path.exists
+        with patch.object(Path, "exists",
+                          lambda path: False if path.name == "ve_risk_eval" else real_exists(path)):
+            plan = select(["ve/search.py"])
+        self.assertIn("tests/test_risk_differential.py", plan["selected"])
+        self.assertIn(["lake", "build"], plan["commands"])
+        self.assertIn(["lake", "build", "ve_risk_eval"], plan["commands"])
+
     def test_unmapped_lean_importer_reports_error(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
