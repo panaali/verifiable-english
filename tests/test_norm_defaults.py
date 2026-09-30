@@ -796,3 +796,86 @@ def test_u9_rights_gamma_third_variant_leaves_the_limited_arrest_undecided():
     for name, formula in doc.author.selection("arrest_permitted")[2].items():
         assert doc.filled.selection("arrest_permitted")[2][name] == formula
     assert [r.name for r in doc.filled.rules if r.name.startswith("unsaid--")] == ["unsaid--arrest-permitted"]
+
+
+# ve-document@1 (spec 3.2, 5): layers of fill U, the gaps residual and grounding.
+
+def csam_document(tmp_path, default, completions=None, graph=None):
+    source = b"Claude should never generate child sexual abuse material.\n"
+    rule_unit = {"id": "u1", "span": [0, len(source)], "kind": "norm", "meaning": "specified",
+                 "support": "none", "content": CSAM_RULE.to_dict()}
+    front = {"format": "ve-document@1", "environment": csam(default).to_dict(), "units": [rule_unit]}
+    if completions is not None:
+        front["completions"] = completions
+    if graph is not None:
+        front["graph"] = graph
+    path = tmp_path / "csam.ve.md"
+    import json
+    path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + source)
+    return path
+
+
+def test_document_gaps_residual_and_the_unit_stays_checked(tmp_path):
+    from ve.document import check_document, coverage, load_document
+    doc = load_document(csam_document(tmp_path, "unspecified"))
+    assert doc["norms"] is None and doc["norm_defaults"].unspec == ("csam_generation_permitted",)
+    summary = coverage(doc)
+    assert summary["residual"]["gaps"] == 1 and summary["residual"]["ungrounded_defaults"] == 0
+    assert summary["norm_defaults"] == {"gaps": ["csam_generation_permitted"], "findings": []}
+    assert doc["units"][0]["status"] == "CHECKED"
+    result = check_document(csam_document(tmp_path, "unspecified"))
+    assert result["premises"]["status"] == "model"
+    assert result["norm_defaults"]["report"] == {
+        "csam_generation_permitted": ["completion: unspecified", "gaps: reachable"]}
+    assert result["norm_defaults"]["background_labels"] == []
+
+
+def test_document_ungrounded_and_grounded_defaults(tmp_path):
+    from ve.document import coverage, load_document
+    for default in ("allow", "deny"):
+        summary = coverage(load_document(csam_document(tmp_path, default)))
+        assert summary["residual"]["ungrounded_defaults"] == 1
+        assert summary["norm_defaults"]["findings"] == ["UngroundedDefault: csam_generation_permitted"]
+        grounded = coverage(load_document(csam_document(
+            tmp_path, default, {"csam_generation_permitted": {"cites": ["u1"], "reason": "stated"}})))
+        assert grounded["residual"]["ungrounded_defaults"] == 0
+    with pytest.raises(VEError, match="cites an unknown unit"):
+        load_document(csam_document(tmp_path, "deny", {"csam_generation_permitted": {"cites": ["u9"],
+                                                                                    "reason": "stated"}}))
+
+
+def test_document_completions_need_the_profile_and_graphs_await_lean(tmp_path):
+    import json
+    from ve.document import check_document, load_document
+    path = csam_document(tmp_path, "deny", {"csam_generation_permitted": {"cites": ["u1"], "reason": "x"}})
+    raw = path.read_bytes().split(b"\n---\n")
+    front = json.loads(raw[0][4:])
+    front["environment"]["profiles"] = ["norms@0", "relational-fol@0"]
+    path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + raw[1])
+    with pytest.raises(VEError, match="norm-defaults@0 is required for completions"):
+        load_document(path)
+    graph = {"nodes": [], "edges": []}
+    with pytest.raises(VEError, match="claim-graph admission of norm-defaults@0 documents"):
+        check_document(csam_document(tmp_path, "unspecified", graph=graph))
+
+
+def test_document_conclusion_about_an_undecided_point_has_a_filled_countermodel(tmp_path):
+    from ve.document import _checking_environment, _fixed_premises, load_document
+    from ve.readings import check_readings
+    doc = load_document(csam_document(tmp_path, "unspecified"))
+    env = _checking_environment(doc)
+    assert env is doc["norm_defaults"].filled.env
+    not_sol = ["not", ["unary", "csam_generation_permitted", ["const", "sol"]]]
+    fixed = _fixed_premises(doc, [])
+    assert check_readings(env, [], not_sol, fixed=fixed)["verdict"] == "NONE"
+    # The countermodel answers the silence: the filling says Sol may.
+    from ve.ast import formula_from_data
+    from ve.search import find_countermodel
+    found = find_countermodel(env, [formula_from_data(env, ast) for ast in fixed],
+                              formula_from_data(env, not_sol))
+    assert found.status == "Found"
+    sol = found.model.constants["sol"]
+    assert (sol,) in found.model.relations["unsaid__csam_generation_permitted"]
+    assert (sol,) in found.model.relations["csam_generation_permitted"]
+    not_claude = ["not", ["unary", "csam_generation_permitted", ["const", "claude"]]]
+    assert check_readings(env, [], not_claude, fixed=_fixed_premises(doc, []))["verdict"] == "ALL"
