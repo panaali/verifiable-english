@@ -614,29 +614,33 @@
       "target": "lean",
       "assurance": {"current": "experimental", "at_switch": "experimental",
                     "reason": "admission theorems exist; not yet mapped in theorem-coverage.md"},
-      "python": ["ve.admission:admit_document", "ve.norm_admission:admit_norm_document"],
+      "python": ["ve.admission:admit_document", "ve.norm_admission:admit_norm_document", "ve.norm_defaults_route:admit_norm_defaults_document"],
       "outcomes": {"verdict": ["admitted report"], "unknown": [],
                    "rejection": ["AdmissionError", "UnsupportedProfile", "InvalidInput"],
                    "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
       "lean": {
         "bindings": [
           {"executable": "ve_conformance", "mode": "route", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Route/Run.lean"]},
-          {"executable": "ve_norms_route", "mode": "", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {"executable": "ve_norms_route", "mode": "", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Norms/Run.lean"]},
+          {"executable": "ve_norm_defaults_route", "mode": "", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/NormDefaults/Run.lean"]}
         ],
         "planned_modes": [],
         "theorems": ["VE.Route.Admission.admit_report_sound", "VE.Route.Admission.admit_string_sound",
                      "VE.Route.Admission.admit_labels_decoded", "VE.Norms.Admission.admitDocument_spec",
                      "VE.Norms.Admission.norms_wire_admission_sound", "VE.Norms.Admission.norms_wire_report_consequence",
-                     "VE.Norms.Run.runAdmission_sound", "VE.Norms.Run.norms_wire_acceptance"],
+                     "VE.Norms.Run.runAdmission_sound", "VE.Norms.Run.norms_wire_acceptance",
+                     "VE.NormDefaults.Admission.admitDocument_spec", "VE.NormDefaults.Admission.wire_report_consequence",
+                     "VE.NormDefaults.Run.runAdmission_sound", "VE.NormDefaults.Run.normDefaults_wire_admission"],
         "planned_theorems": [],
-        "decoders": ["lean/VE/Json.lean", "lean/VE/Route/Admission.lean", "lean/VE/Route/Wire.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Route/Gate.lean", "lean/VE/Norms/Admission.lean"]
+        "decoders": ["lean/VE/Json.lean", "lean/VE/Route/Admission.lean", "lean/VE/Route/Wire.lean", "lean/VE/Norms/Wire.lean", "lean/VE/Route/Gate.lean", "lean/VE/Norms/Admission.lean", "lean/VE/NormDefaults/Wire.lean", "lean/VE/NormDefaults/Admission.lean"]
       },
       "rust": null,
       "lean_call_sites": [],
       "tests": ["tests/test_p0_three_way.py::test_report_identity_binds_environment_and_document",
                 "tests/test_p0_three_way.py::test_data_background_deduction_admission_matches_lean",
                 "tests/test_norms_three_way.py::test_norm_document_admission_and_provenance_match_lean",
-                "tests/test_norm_admission.py::test_active_norm_unit_admits_only_its_regenerated_layer"],
+                "tests/test_norm_admission.py::test_active_norm_unit_admits_only_its_regenerated_layer",
+                "tests/test_norm_defaults_three_way.py::test_admission_tampering_is_rejected_by_both"],
       "trusted": ["python:implementation", "python:wire", "lean:kernel", "lean:compiler", "lean:decoders", "lean:runner-glue", "python:record-identity"],
       "notes": []
     },
