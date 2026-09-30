@@ -1,5 +1,5 @@
 import VE.Rights.Route
-import VE.SoftNorms.Run
+import VE.SoftNorms.Admission
 
 /-! The rights decoder and replays (docs/spec/rights.md 3, 9.3 and 9.4).
 
