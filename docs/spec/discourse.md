@@ -182,7 +182,14 @@ unit consisting only of a location binding is LABELLED (4.9), and a location tar
 no active reading set) that is not a group span; in a unit with meaning or a group span its position is a slot and
 it is `TargetKindMismatch: <mention>: <form>, unit`. A location binding's target must exist like any other
 (`DanglingAnchor: <anchor>`; `UnresolvedReference: <mention>` for an empty or unknown unit list;
-`ManifestMismatch: mentions.<m>.content_name` when its content name does not list exactly its units).
+`ManifestMismatch: mentions.<m>.content_name` when its content name does not list exactly its units;
+`UnknownRule: <rule>` for a rule name no norm unit carries, which is every rule name on the route, since it reads no
+norm content (11); `InvalidInput: mention <m> target` for an anchor or rule target without a name). The form/kind
+table is one in both checkers (the Lean `formFits`, Python's `_FORM_KINDS`): `pronoun` and `demonstrative` fit
+`entity` and `unit`; `definite`, `ordinal_pair`, `possessive` and `plural` fit `entity`; `such` and `definition_ref`
+fit `predicate`; `section_ref` fits `anchor`, `unit` and `rule`; `navigation` fits `anchor` and `unit`;
+`document_name` fits `document`; `citation` fits `claim`. A `pronoun` or `demonstrative` naming a `claim` is
+`UnsupportedTarget` (below), every other pair outside the table `TargetKindMismatch`.
 
 ### 1.5 Reading groups and compatibility constraints
 
@@ -2041,3 +2048,4 @@ Each is a point where the plan or the debate left a reading open; the review may
 | 2026-10-02 | Draft 4, amendment | After `manage-agents/discourse3-loop.final.md` and `discourse-authority-directive.md`: Python's `@2` admission is Lean's (3.4). The verdict, unit statuses, references, validity verdicts and report id come from the Lean route's `admission` answer on the same bytes; Python's own checks give hints and the diagnostic text of a document both reject (8); no Lean answer is `CheckerUnavailable`, Lean's `NotImplemented` (now also a document without a claim graph) is `UnsupportedProfile`. The quote-spacing, display and agreement differences of the loop are hints, not verdicts. |
 | 2026-10-03 | Draft 4, amendment | After `manage-agents/discourse4-looprecheck1.final.md` (3.4): a `@2` text is recognised by its front matter's `format` alone, so a body Python splits differently still reaches Lean; the import collector and every check before Lean's answer read any front matter; Lean's loader splits lines at `\r` and `\r\n` too and strips fence lines as `bytes.strip()` does; a front matter over Lean's JSON depth is `ResourceLimit`, which Python never replaces by its own rejection. |
 | 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse-example-directive.md` (constitution pilot run 20260930T0600Z, u0214.s02 failing four ways): the target, not the form, makes a location binding (1.4): a pronoun or demonstrative naming a `unit` target is a location binding, never a slot and never parsed, so its unit needs no discourse wording (4.1(4)); in a unit with meaning or a group span it is `TargetKindMismatch`; every location target is checked for existence in Lean too. The Lean route reads `MIXED` units as Python does (3.4). 2.5's u0214.s02 is a regression fixture, with the source's curly apostrophe. Fenced content, a document without a claim graph and norm or soft-norm composition remain stated limitations of the route (11), with the pilot as the example. |
+| 2026-09-30 | Draft 4, amendment | After `manage-agents/discourse-example-looprecheck1.final.md` (B): the form/kind table is stated (1.4) and is one table in both checkers, `section_ref` fitting `anchor`, `unit` and `rule` (Python fitted only `anchor`); a location binding's `rule` target is checked for existence in Lean too (`UnknownRule`, every rule name on the route, which reads no norm content), and `Acc`'s `rule r` reads W1 rule names (`ruleNames`), not unit ids; an anchor or rule target without a name is `InvalidInput: mention <m> target`, and a pronoun or demonstrative naming a claim `UnsupportedTarget`, in both. |
