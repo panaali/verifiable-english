@@ -1,0 +1,73 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) The text does not say.
+(b) Yes: a task delay, like a job failure, is only not ruled out.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) No: a task delay happens in every case the text allows.
+
+Text 2
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness exactly when the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) The text does not say.
+(b) Dizziness happens.
+(c) No dizziness happens.
+
+Text 3
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+(b) In at least one case the text allows, the agent does nothing and no data loss happens.
+(c) The text does not say.
+(d) In no case the text allows does doing nothing lead to data loss.
+
+Text 4
+
+Severity, from most to least severe: severe, serious, minor. Data loss is minor. A task delay is severe. An agent can delete the old logs or do nothing. Deleting the old logs might lead to data loss. Doing nothing might lead to a task delay.
+
+According to the text, which harm is more severe: data loss or a task delay?
+(a) They are equally severe.
+(b) The text does not say.
+(c) Data loss.
+(d) A task delay.
+
+Text 5
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit prevents task abandonment.
+
+What does the last sentence tell you?
+(a) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(b) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(c) The text does not say.
+(d) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+
+Text 6
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) The text does not say.
+(b) In no case the text allows does deleting the production database lead to data loss.
+(c) Deleting the production database leads to data loss in every case the text allows.
+(d) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+
+Text 7
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) The text does not say.
+(b) Yes: crossing between parked cars is dangerous.
+(c) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.
+(d) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.

@@ -1,0 +1,74 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to a server outage, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+According to the text, if the agent empties the cache, can data loss happen?
+(a) The text does not say.
+(b) It can, but the policy forbids the agent to let it happen.
+(c) It can, unless the user has confirmed emptying the cache.
+(d) No: the text rules out data loss when the agent empties the cache.
+
+Text 2
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure exactly when the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(b) The text does not say.
+(c) No lift failure happens: a lift easily carries 4 kilograms.
+(d) A lift failure happens.
+
+Text 3
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) Yes: a restart takes the server down for a short time.
+(b) It can, but the agent is not allowed to let it happen.
+(c) The text does not say.
+(d) No: in no case the text allows does restarting the web server lead to a server outage.
+
+Text 4
+
+Severity, from most to least severe: severe, serious, minor. A late delivery is serious or worse. A collision is minor. A delivery robot can cross the road at the crossing or wait. Crossing the road at the crossing might lead to a collision. Waiting might lead to a late delivery.
+
+According to the text, which severities could a late delivery have?
+(a) The text does not say.
+(b) Serious or severe.
+(c) Only minor.
+(d) Only serious.
+
+Text 5
+
+Severity, from most to least severe: severe, serious, minor. A delivery robot can cross the road at the crossing or cross the road between parked cars. Crossing the road between parked cars has a less severe worst case than crossing the road at the crossing.
+
+What does the last sentence tell you?
+(a) Crossing between parked cars leads to fewer harms than crossing at the crossing.
+(b) The text does not say.
+(c) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.
+(d) Crossing between parked cars is less likely to cause harm than crossing at the crossing.
+
+Text 6
+
+A delivery robot can take the stairs or take the lift. The weight of the parcel is at least 2 kilograms. The weight of the parcel is at most 30 kilograms. Taking the stairs leads to a dropped parcel if the weight of the parcel is greater than 25 kilograms. Taking the stairs might not lead to a dropped parcel.
+
+According to the text, is a dropped parcel ruled out if the robot takes the stairs?
+(a) Yes: in no case the text allows does taking the stairs lead to a dropped parcel.
+(b) No: taking the stairs leads to a dropped parcel in every case the text allows.
+(c) The text does not say.
+(d) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.
+
+Text 7
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) A rash is not ruled out; drowsiness happens in every case the text allows.
+(b) A rash is possible; drowsiness is what usually happens.
+(c) The text does not say.
+(d) There is no difference: neither is ruled out, and neither is certain.

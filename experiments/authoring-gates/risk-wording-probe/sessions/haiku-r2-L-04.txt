@@ -1,0 +1,119 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) No server outage happens.
+(b) A server outage happens.
+(c) The text does not say.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 28 kilograms. Taking the lift might lead to a lift failure.
+
+According to the text, how likely is a lift failure if the robot takes the lift?
+(a) The text does not say.
+(b) It happens in every case the text allows.
+(c) It cannot happen.
+(d) More likely than not.
+
+Text 3
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) Dizziness happens.
+(b) No dizziness happens, because the patient does not weigh less than 50 kilograms.
+(c) The text does not say.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to a server outage, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+According to the text, if the agent empties the cache, can data loss happen?
+(a) The text does not say.
+(b) It can, unless the user has confirmed emptying the cache.
+(c) No: the text rules out data loss when the agent empties the cache.
+(d) It can, but the policy forbids the agent to let it happen.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay usually happens, but not in every case.
+(b) No: a task delay happens in every case the text allows.
+(c) Yes: a task delay, like a job failure, is only not ruled out.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A delivery robot can take the stairs or take the lift. The weight of the parcel is at least 2 kilograms. The weight of the parcel is at most 30 kilograms. Taking the stairs leads to a dropped parcel if the weight of the parcel is greater than 25 kilograms. Taking the stairs might not lead to a dropped parcel.
+
+According to the text, is a dropped parcel ruled out if the robot takes the stairs?
+(a) No: taking the stairs leads to a dropped parcel in every case the text allows.
+(b) Yes: in no case the text allows does taking the stairs lead to a dropped parcel.
+(c) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.
+(d) The text does not say.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job cannot lead to a server outage unless the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 10 gigabytes. What does the text tell you about a server outage?
+(a) No server outage happens.
+(b) A server outage happens, because the peak memory of the job is greater than 8 gigabytes.
+(c) The text does not say.
+
+Text 8
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+
+Severity, from most to least severe: severe, serious, minor. A delivery robot can cross the road at the crossing or cross the road between parked cars. Crossing the road between parked cars has a less severe worst case than crossing the road at the crossing.
+
+What does the last sentence tell you?
+(a) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.
+(b) The text does not say.
+(c) Crossing between parked cars is less likely to cause harm than crossing at the crossing.
+(d) Crossing between parked cars leads to fewer harms than crossing at the crossing.

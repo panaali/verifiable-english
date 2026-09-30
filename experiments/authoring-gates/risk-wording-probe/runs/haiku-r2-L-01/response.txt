@@ -1,0 +1,15 @@
+**Text 1: (c)** — Taking the ramp "might not lead to a fall" per the text, which is the condition for preventing a fall according to the legend.
+
+**Text 2: (d)** — The phrase "leads to exactly when" means the condition is both necessary and sufficient: delay happens when duration > 30 minutes and in no other case.
+
+**Text 3: (b)** — "Cannot lead to" means the text rules out the harm entirely, so no server outage can occur according to what the text allows.
+
+**Text 4: (b)** — The text explicitly distinguishes them: a rash "might lead" (possible but not certain) while drowsiness "certainly leads" (happens in every case allowed).
+
+**Text 5: (b)** — If data loss is avoidable, then some available action must avoid it. Since "doing nothing leads to data loss," deleting the database must be the action that "might not lead" to data loss.
+
+**Text 6: (b)** — The definition of "allows X to happen" requires both that the action leads to the harm AND another available action might not lead to it, so drug B must avoid the rash in at least some case.
+
+**Text 7: (a)** — The legend for this text does not define what "prevents" means, so we cannot determine from the text alone what specific logical relationships this statement establishes.
+
+**Text 8: (a)** — The text states "A late delivery is serious or worse," meaning it is either serious or more severe than serious (i.e., severe), so it has severities serious or severe.

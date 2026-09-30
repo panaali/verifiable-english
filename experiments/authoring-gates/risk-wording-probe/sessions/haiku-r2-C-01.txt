@@ -1,0 +1,70 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(b) A lift failure happens.
+(c) The text does not say.
+(d) No lift failure happens: a lift easily carries 4 kilograms.
+
+Text 2
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) Yes: data loss can happen, but only rarely.
+(b) The text does not say.
+(c) No: the first rules data loss out, and the second says data loss is not ruled out.
+(d) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+
+Text 3
+
+A delivery robot can take the stairs or take the lift. The weight of the parcel is at least 2 kilograms. The weight of the parcel is at most 30 kilograms. Taking the stairs leads to a dropped parcel if the weight of the parcel is greater than 25 kilograms. Taking the stairs might not lead to a dropped parcel.
+
+According to the text, is a dropped parcel ruled out if the robot takes the stairs?
+(a) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.
+(b) No: taking the stairs leads to a dropped parcel in every case the text allows.
+(c) Yes: in no case the text allows does taking the stairs lead to a dropped parcel.
+(d) The text does not say.
+
+Text 4
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job cannot lead to a server outage unless the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 10 gigabytes. What does the text tell you about a server outage?
+(a) A server outage happens, because the peak memory of the job is greater than 8 gigabytes.
+(b) The text does not say.
+(c) No server outage happens.
+
+Text 5
+
+The actions available to the clinic are giving the patient drug A and giving the patient drug B. Giving drug A allows a rash to happen.
+
+What does the last sentence tell you?
+(a) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in every case the text allows.
+(b) The text does not say.
+(c) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in at least one case the text allows.
+(d) The clinic is permitted to let a rash happen when it gives drug A.
+
+Text 6
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) The text does not say.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) No: a task delay happens in every case the text allows.
+
+Text 7
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or do nothing. Running the job might lead to a server outage. A server outage is serious or worse.
+
+According to the text, which severities could a server outage have?
+(a) The text does not say.
+(b) Only serious.
+(c) Only severe.
+(d) Serious or severe.

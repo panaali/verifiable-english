@@ -1,0 +1,13 @@
+# Answers
+
+**Text 1: (a)** - The word "might" indicates that dizziness is not ruled out as a possibility when giving the full dose.
+
+**Text 2: (c)** - If a task delay occurred and the text states delays only occur when duration > 30 minutes, then the duration must have been greater than 30 minutes.
+
+**Text 3: (a)** - "Might lead to a rash" means a rash is possible but not certain; "leads to drowsiness" means drowsiness definitely happens—this is the only difference the text establishes.
+
+**Text 4: (b)** - The text explicitly ranks data loss as "minor" and task delay as "severe," making task delay more severe.
+
+**Text 5: (b)** - Since the peak memory (5 GB) is not greater than 8 GB, the condition that would trigger a server outage is not met; the text provides no information about whether an outage occurs under these circumstances.
+
+**Text 6: (c)** - "Allows" means the outcome is possible or permitted to occur; it tells us the agent can take an action (running the job) where a server outage could happen.

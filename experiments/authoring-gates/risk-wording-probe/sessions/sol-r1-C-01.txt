@@ -1,0 +1,70 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration cannot lead to a task delay unless the duration of the migration is greater than 30 minutes.
+
+The agent applies the migration, and a task delay happens. According to the text, was the duration of the migration greater than 30 minutes?
+(a) Yes: it was greater than 30 minutes.
+(b) No: it was 30 minutes or less.
+(c) The text does not say.
+
+Text 2
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(b) No lift failure happens: a lift easily carries 4 kilograms.
+(c) The text does not say.
+(d) A lift failure happens.
+
+Text 3
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) Neither drug.
+(b) Both drug A and drug B.
+(c) The text does not say.
+(d) Only drug B.
+
+Text 4
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) In no case the text allows does doing nothing lead to data loss.
+(b) In at least one case the text allows, the agent does nothing and no data loss happens.
+(c) The text does not say.
+(d) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+
+Text 5
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) In no case the text allows does deleting the production database lead to data loss.
+(b) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+(c) Deleting the production database leads to data loss in every case the text allows.
+(d) The text does not say.
+
+Text 6
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift certainly leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) The text does not say.
+(b) No fall happens: a robot is safe inside a lift.
+(c) A fall happens in every case the text allows.
+(d) A fall usually happens, but not in every case.
+
+Text 7
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 50 kilograms. The weight of the patient is at most 90 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 52 kilograms. Giving the full dose might lead to dizziness.
+
+What does the last sentence tell you?
+(a) Dizziness happens in every case the text allows if the clinic gives the full dose.
+(b) Dizziness is likely if the clinic gives the full dose.
+(c) Dizziness is not ruled out if the clinic gives the full dose.
+(d) The text does not say.

@@ -1,0 +1,22 @@
+# Answers
+
+**Text 1: (a) Data loss is not ruled out.**
+The legend defines "might lead to" as meaning the harm is not ruled out, so reading the log file doesn't rule out data loss.
+
+**Text 2: (c) Serious or severe.**
+"Serious or worse" includes both serious and the one severity worse than serious, which is severe.
+
+**Text 3: (d) A lift failure happens.**
+The rule states that taking the lift leads to failure if weight > 3 kg; since the parcel weighs 4 kg, the condition is met and failure occurs in every allowed case.
+
+**Text 4: (b) In at least one case the text allows, the clinic gives drug B and no fever happens.**
+Since both doing nothing and drug A lead to fever, but fever is avoidable by the clinic, drug B must be the action that avoids fever in at least one case.
+
+**Text 5: (c) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in at least one case the text allows.**
+"Allows harm to happen" means the action leads to the harm plus at least one other action might not lead to it.
+
+**Text 6: (a) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.**
+"Cannot lead to" is defined as ruling out the harm, so this is a factual statement about possibilities, not a rule.
+
+**Text 7: (b) Only drug B.**
+Drug B cannot lead to nausea (nausea is ruled out), while drug A leads to nausea when dose > 40 mg, so nausea is not ruled out for drug A.

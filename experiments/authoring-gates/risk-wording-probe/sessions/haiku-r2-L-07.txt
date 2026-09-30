@@ -1,0 +1,111 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) Data loss is not ruled out.
+(b) No data loss happens: reading a file does not change it.
+(c) Data loss is more likely than not.
+(d) The text does not say.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or do nothing. Running the job might lead to a server outage. A server outage is serious or worse.
+
+According to the text, which severities could a server outage have?
+(a) Only serious.
+(b) The text does not say.
+(c) Serious or severe.
+(d) Only severe.
+
+Text 3
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) No lift failure happens: a lift easily carries 4 kilograms.
+(b) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(c) The text does not say.
+(d) A lift failure happens.
+
+Text 4
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) The text does not say.
+(b) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(c) In no case the text allows does giving drug B lead to a fever.
+(d) Giving drug B leads to a fever in every case the text allows.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. Running the job allows a server outage to happen.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in every case the text allows.
+(c) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in at least one case the text allows.
+(d) The agent is permitted to let a server outage happen by running the job.
+
+Text 6
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+(b) A rule: it forbids the agent to cause data loss by emptying the cache.
+(c) The text does not say.
+(d) A rule: it permits the agent to empty the cache.
+
+Text 7
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) Neither drug.
+(b) Only drug B.
+(c) Both drug A and drug B.
+(d) The text does not say.

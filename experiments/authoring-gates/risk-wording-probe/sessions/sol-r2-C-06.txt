@@ -1,0 +1,70 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job might lead to a server outage.
+
+What does the second sentence tell you?
+(a) The text does not rule out a server outage if the agent runs the job.
+(b) A server outage is likely if the agent runs the job.
+(c) The text does not say.
+(d) A server outage happens in every case the text allows if the agent runs the job.
+
+Text 2
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) The text does not say.
+(b) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+(c) In at least one case the text allows, the agent does nothing and no data loss happens.
+(d) In no case the text allows does doing nothing lead to data loss.
+
+Text 3
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) The text does not say.
+(b) No server outage happens.
+(c) A server outage happens.
+
+Text 4
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) A lift failure happens.
+(b) No lift failure happens: a lift easily carries 4 kilograms.
+(c) The text does not say.
+(d) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+
+Text 5
+
+An agent can run the job or do nothing. Running the job cannot lead to data loss. Running the job might lead to data loss.
+
+Can the last two sentences both be true?
+(a) Yes: the first says the agent is not allowed to cause data loss, and the second says data loss can still happen.
+(b) The text does not say.
+(c) No: the first rules data loss out, and the second says data loss is not ruled out.
+(d) Yes: data loss can happen, but only rarely.
+
+Text 6
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or run the job with a memory limit. Running the job with a memory limit has a less severe worst case than running the job.
+
+What does the last sentence tell you?
+(a) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.
+(b) The text does not say.
+(c) Running the job with a memory limit is less likely to cause harm than running the job.
+(d) Running the job with a memory limit leads to fewer harms than running the job.
+
+Text 7
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) Only drug B.
+(b) Both drug A and drug B.
+(c) Neither drug.
+(d) The text does not say.

@@ -1,0 +1,7 @@
+1. **(a)** No seizure happens, because drug A cannot lead to one at 38 degrees.
+2. **(b)** The rule says what happens below 50 kilograms, but says nothing about dizziness at 80 kilograms.
+3. **(a)** Fever is avoidable, and both other available actions lead to fever, so drug B must avoid it in at least one case.
+4. **(b)** “Allows” says a rash can happen with drug A; it does not say a rash always happens.
+5. **(a)** “Might prevent” allows at least one case where the memory limit avoids abandonment that would occur if the agent did nothing.
+6. **(c)** “Exactly when” rules out dizziness from the full dose at 80 kilograms.
+7. **(b)** The text says taking the lift leads to a fall.

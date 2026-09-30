@@ -1,0 +1,20 @@
+**Text 1: (a)**
+Since nothing and drug A both lead to fever, and fever is avoidable by the clinic, the clinic must be able to avoid it through drug B—meaning at least one case exists where drug B doesn't cause fever.
+
+**Text 2: (d)**
+"Restarting the web server cannot lead to a server outage" means the text rules out this outcome entirely, so no server outage happens in any case the text allows when restarting.
+
+**Text 3: (c)**
+The full dose leads to dizziness exactly when weight is less than 50kg, but the patient weighs 80kg (not less than 50kg), so dizziness does not happen.
+
+**Text 4: (c)**
+"Taking the lift certainly leads to a fall" means a fall happens in every case the text allows when the robot takes the lift.
+
+**Text 5: (b)**
+"A server outage is serious or worse" means it could be at the serious level or more severe (severe), so the possible severities are both serious and severe.
+
+**Text 6: (a)**
+The definition states a robot prevents a harm by taking an action that might not lead to the harm; since taking the ramp might not lead to a fall, the robot fulfills Rule 1 by taking the ramp in cases where the fall is avoided.
+
+**Text 7: (d)**
+Drug B "cannot lead to nausea" (ruled out completely), while drug A "leads to nausea if dose > 40mg"—so nausea is not ruled out for A since the dose could exceed 40mg.
