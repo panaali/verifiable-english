@@ -178,10 +178,11 @@ span is read by a derivation, so a pronoun or demonstrative in it is a slot. -/
 def slotUnit (D : DDoc) (u : String) : Bool :=
   (contentOf D u).isSome || setUnit D u || (groupedUnits D).contains u
 
-/-- 4.1(4): a location binding's target exists: an anchor of the table (`DanglingAnchor`), or a
+/-- 4.1(4): a location binding's target exists: an anchor of the table (`DanglingAnchor`), a
 nonempty list of source units (`UnresolvedReference`) that its content name, if any, lists
-exactly (`ManifestMismatch: mentions.<m>.content_name`). A formula-producing mention's target is
-checked by `Acc` (4.2). -/
+exactly (`ManifestMismatch: mentions.<m>.content_name`), or a W1 rule name (`UnknownRule`). No
+other kind fits a location binding (`formFits`, checked before). A formula-producing mention's
+target is checked by `Acc` (4.2). -/
 def locationTargetOk (D : DDoc) (x : Mention) : Except String Unit :=
   match x.target.kind with
   | .anchor => match x.target.name with
@@ -194,7 +195,10 @@ def locationTargetOk (D : DDoc) (x : Mention) : Except String Unit :=
       | some n => req (D.K.contentNames.any fun c => c.name == n && c.units == x.target.units)
           ("ManifestMismatch: mentions." ++ x.id ++ ".content_name")
       | none => .ok ()]
-  | _ => .ok ()
+  | .rule => match x.target.name with
+    | some r => req ((ruleNames D).contains r) ("UnknownRule: " ++ r)
+    | none => .error ("InvalidInput: mention " ++ x.id ++ " target")
+  | .entity | .predicate | .claim | .document => .ok ()
 
 /-- The sort the restriction's context `[σ]` names. -/
 def restrictionSort (D : DDoc) (m : Mention) : Option String :=

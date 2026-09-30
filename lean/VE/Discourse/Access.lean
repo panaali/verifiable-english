@@ -124,6 +124,11 @@ def unitKeys (D : DDoc) : List (String × Nat × Nat × Kind) := D.base.units.ma
 def unitIds (D : DDoc) : List String := (unitKeys D).map (·.1)
 def lemmaNames (D : DDoc) : List String := D.base.lemmas.map (·.name)
 
+/-- The W1 stable rule names of the document (4.2 `rule r`): the names of its norm contents, not
+unit ids. The route loads no norm content (`NotImplemented: norm content`, 3.4), so a document it
+reads has none, and every `rule` target is `UnknownRule` (4.1(4)). -/
+def ruleNames (_D : DDoc) : List String := []
+
 def unitSpan (D : DDoc) (u : String) : Option (Nat × Nat) :=
   ((unitKeys D).find? (·.1 == u)).map fun k => (k.2.1, k.2.2.1)
 
@@ -340,7 +345,7 @@ def accB (D : DDoc) (m : Slot) (t : Target) : Bool :=
       | none => true
       | some n => D.K.contentNames.any fun c => c.name == n && c.units == us
   | ⟨.anchor, some a, none, [], none, [], none⟩ => (anchorOf D a).isSome
-  | ⟨.rule, some r, none, [], none, [], none⟩ => (unitKeys D).any fun k => k.1 == r && decide (k.2.2.2 = .norm)
+  | ⟨.rule, some r, none, [], none, [], none⟩ => (ruleNames D).contains r
   | ⟨.claim, some l, none, [], none, [], none⟩ => (lemmaNames D).contains l
   | ⟨.document, some d, none, [], none, [], none⟩ => D.K.documents.any fun x => x.name == d &&
       x.display.any fun s => lexWords s == ((ownText D m).drop m.span.1).take (m.span.2 - m.span.1)
@@ -362,7 +367,7 @@ def candidateParts (D : DDoc) (m : Slot) : List (List Target) :=
    (match namedSection D m with | some a => a.exports.map predTarget | none => []),
    (subs (unitIds D)).flatMap (fun us => unitTarget us none :: D.K.contentNames.map (fun c => unitTarget us (some c.name))),
    D.K.anchors.map (fun a => namedTarget .anchor a.id),
-   (unitKeys D).map (fun k => namedTarget .rule k.1),
+   (ruleNames D).map (namedTarget .rule),
    (lemmaNames D).map (namedTarget .claim),
    D.K.documents.map (fun d => namedTarget .document d.name)]
 
@@ -517,10 +522,8 @@ theorem accB_candidates (D : DDoc) (m : Slot) (t : Target) (h : accB D m t = tru
     exact mem_candidates (D.K.anchors.map (fun a => namedTarget .anchor a.id)) (by simp [candidateParts])
       (List.mem_map.mpr ⟨x, hm, by rw [he]; rfl⟩)
   · rename_i r
-    simp only [List.any_eq_true, Bool.and_eq_true, beq_iff_eq] at h
-    obtain ⟨k, hk, rfl, _⟩ := h
-    exact mem_candidates ((unitKeys D).map (fun k => namedTarget .rule k.1)) (by simp [candidateParts])
-      (List.mem_map.mpr ⟨k, hk, rfl⟩)
+    exact mem_candidates ((ruleNames D).map (namedTarget .rule)) (by simp [candidateParts])
+      (List.mem_map.mpr ⟨r, List.contains_iff_mem.mp h, rfl⟩)
   · rename_i l
     exact mem_candidates ((lemmaNames D).map (namedTarget .claim)) (by simp [candidateParts])
       (List.mem_map.mpr ⟨l, List.contains_iff_mem.mp h, rfl⟩)
@@ -660,6 +663,6 @@ theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
   have hanc : ∀ a, anchorOf D a = anchorOf D₂ a := by intro a; simp only [anchorOf, han]
   have hconstf : constAcc D m = constAcc D₂ m := funext hconst
   unfold Acc accB
-  simp only [hconstf, hconst, hpairs, hprops, hord, hsec, hcq, hu, hanc, hE, hc, hd, hb.1, hb.2, hown]
+  simp only [hconstf, hconst, hpairs, hprops, hord, hsec, hcq, hu, hanc, hE, hc, hd, ruleNames, hb.2, hown]
 
 end VE.Discourse

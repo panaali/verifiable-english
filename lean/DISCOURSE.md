@@ -99,7 +99,8 @@ surface (`discourseSourceSurface`).
   (`locationKind`; a pronoun or demonstrative naming a registered content name's units) produce no formula
   (`producing` is false): they are never slots (`recordedSlots`, `mentionAt`), never bind a unit (`boundUnits`) and
   never record a surface. Their targets are checked for existence (`locationTargetOk`: `DanglingAnchor`,
-  `UnresolvedReference`, `ManifestMismatch: mentions.<m>.content_name`, as Python), and a pronoun or demonstrative
+  `UnresolvedReference`, `ManifestMismatch: mentions.<m>.content_name`, `UnknownRule` for a `section_ref` to a rule,
+as Python; `ruleNames` is empty because the route reads no norm content), and a pronoun or demonstrative
   naming a unit in a slot position (a unit with meaning or a group span, `slotUnit`) is `TargetKindMismatch`.
 - **Discourse wording** (4.1(4)): with its span, the unit of every formula-producing mention must be printable
   ASCII with canonical spacing once the layout around it is removed (`canonicalWording` in `toTokenSpans`: one
