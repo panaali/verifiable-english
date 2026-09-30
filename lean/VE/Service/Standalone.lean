@@ -83,13 +83,22 @@ def alternativesReduced (environment : Json) : Except String Json := do
     (vocabulary.setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
 
 /-- The environment typing decodes: statement-layer profiles that add no typing
-constraint removed (`reports@0`, `soft-norms@0`, `alternatives@0` with its
-profile words declared). -/
+constraint removed (`reports@0`, `soft-norms@0`, `rights@0`, `speech-acts@0`
+with its `speech_acts` scope block, `alternatives@0` with its profile words
+declared). -/
 def typingReduced (environment : Json) : Except String Json := do
   let profiles := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let mut env := environment
   if profiles.contains "reports@0" then env ← reportsReduced env
   if profiles.contains "alternatives@0" then env ← alternativesReduced env
+  if profiles.contains "speech-acts@0" || profiles.contains "rights@0" then
+    -- The speech-act scope names addressees and definites and the rights
+    -- layer's declarations are ordinary vocabulary: neither constrains typing.
+    let fields := (← VE.Bridge.fields env).filter (·.1 != "speech_acts")
+    let vocabulary ← env.getObjVal? "vocabulary"
+    let vocabulary := Json.mkObj ((← VE.Bridge.fields vocabulary).filter (·.1 != "rights"))
+    env := ((Json.mkObj fields).setObjVal! "profiles" (toJson ((← VE.Route.Gate.profilesOf env).filter
+      (fun p => p != "speech-acts@0" && p != "rights@0")))).setObjVal! "vocabulary" vocabulary
   if profiles.contains "soft-norms@0" then
     -- The soft block and `instruction_of` fields declare parties and ranks,
     -- never argument sorts.
@@ -98,7 +107,8 @@ def typingReduced (environment : Json) : Except String Json := do
       pure (p, Json.mkObj ((← VE.Bridge.fields entry).filter (·.1 != "instruction_of")))
     let fields := (← VE.Bridge.fields vocabulary).filter (·.1 != "soft")
     env := (env.setObjVal! "profiles" (toJson (profiles.filter (fun p =>
-      p != "soft-norms@0" && p != "reports@0" && p != "alternatives@0")))).setObjVal! "vocabulary"
+      p != "soft-norms@0" && p != "reports@0" && p != "alternatives@0" && p != "rights@0" &&
+      p != "speech-acts@0")))).setObjVal! "vocabulary"
       ((Json.mkObj fields).setObjVal! "predicates" (Json.mkObj predicates))
   pure env
 

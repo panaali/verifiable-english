@@ -776,11 +776,13 @@ def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -
     if env.language == "ve.core@0.2":
         # Lean's own cap is the trace size, so it reports validity; the public
         # budget is applied below. The norms route's Plain glue also answers
-        # reports@0 and soft-norms@0 environments; soft premises are a
-        # validated soft document's Background slot, carried by the case.
-        layered = {"reports@0", "soft-norms@0"} & set(env.profiles)
+        # environments with statement layers; soft and rights premises are a
+        # validated soft or rights document's Background slots, carried by the case.
+        from .profiles import STATEMENT_LAYERS
+        layered = STATEMENT_LAYERS & set(env.profiles)
         mode = "norms" if layered else route_mode(env)
-        soft = getattr(env, "soft_premises", ())
+        # Background order: the environment's generators, then soft, then rights.
+        soft = (*getattr(env, "soft_premises", ()), *getattr(env, "rights_premises", ()))
         case = {**case, "kind": "certificate", "max_steps": max(nodes, 10_000),
                 **({"soft_premises": [_to_data(f) for _, f in soft]} if soft else {})}
     elif env.order:

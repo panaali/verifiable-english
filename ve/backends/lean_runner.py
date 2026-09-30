@@ -45,7 +45,7 @@ def lean_mode(env) -> str:
 def route_environment(env) -> dict:
     """The environment of a route case whose answer carries no environment identity.
 
-    The route gate refuses reports@0 and soft-norms@0. No Background generator,
+    The route gate refuses reports@0, soft-norms@0, speech-acts@0 and rights@0. No Background generator,
     evaluation or countermodel check reads the reports block or the soft
     declarations, so such cases take the vocabulary without them (for reports,
     the one the Lean attribution decoder hands the route decoder,
@@ -58,6 +58,18 @@ def route_environment(env) -> dict:
                                    for name, entry in vocabulary["constants"].items()}
         data = {**data, "vocabulary": vocabulary,
                 "profiles": [p for p in data["profiles"] if p != "reports@0"]}
+    if "speech-acts@0" in env.profiles:
+        # The speech-act scope names addressees and definites; no generator,
+        # evaluation or countermodel check reads it (the speech route does).
+        data = {**{key: value for key, value in data.items() if key != "speech_acts"},
+                "profiles": [p for p in data["profiles"] if p != "speech-acts@0"]}
+    if "rights@0" in env.profiles:
+        # The rights block declares rights over ordinary vocabulary; its
+        # limitation premises are installed by `correlate`, never read from it,
+        # and the rights route regenerates them.
+        data = {**data, "vocabulary": {key: value for key, value in data["vocabulary"].items()
+                                       if key != "rights"},
+                "profiles": [p for p in data["profiles"] if p != "rights@0"]}
     if "soft-norms@0" in env.profiles:
         # The soft block and instruction_of name parties and ranks; the soft
         # premises a validated soft document adds are not environment data.

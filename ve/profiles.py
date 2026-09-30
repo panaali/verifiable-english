@@ -35,6 +35,12 @@ REGISTRY = (
 BY_NAME = {record.name: record for record in REGISTRY}
 
 
+
+# Statement layers whose own Lean routes check them. They declare no vocabulary
+# and constrain no model; Lean's standalone, readings and graph modes refuse
+# them, and route and Rust cases carry the environment without their blocks.
+STATEMENT_LAYERS = frozenset({"soft-norms@0", "reports@0", "speech-acts@0", "rights@0"})
+
 def checker_family(profiles):
     """Validate the exact sorted set and return its supported checker family."""
     if type(profiles) is not list or any(type(p) is not str for p in profiles):

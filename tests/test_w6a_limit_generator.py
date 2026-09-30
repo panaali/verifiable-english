@@ -250,7 +250,11 @@ def meter_python(monkeypatch):
     """Count the evaluation units Python charges (`_Evaluator.tick`, the only gate
     of the budget), per case, and stop at the first charge past a budget: an
     evaluator whose own check was skipped or widened, or a case that goes on
-    charging after its budget is spent, fails here instead of running on."""
+    charging after its budget is spent, fails here instead of running on.
+
+    The meter reads Python's evaluator, so the metered cases run on the Python
+    authority whatever VE_AUTHORITY selects."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
     units = [0]
     charge = _Evaluator.tick
 

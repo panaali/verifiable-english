@@ -351,9 +351,10 @@ def _lean_parse_scope(env: Any) -> bool:
     """Whether Lean's `parse` mode takes sources over `env`: ve.core@0.2 without
     the definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
     `define`), which no Lean surface parser has, and without statement layers."""
+    from .profiles import STATEMENT_LAYERS
     return (getattr(env, "language", None) == "ve.core@0.2"
             and "definitions@0" not in env.profiles and env.unit_schema is None
-            and env.alternatives is None and not {"soft-norms@0", "reports@0"} & set(env.profiles))
+            and env.alternatives is None and not STATEMENT_LAYERS & set(env.profiles))
 
 
 @semantic_entry("parse")
