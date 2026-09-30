@@ -78,6 +78,7 @@ import VE.NormDefaults.Dag
 import VE.NormDefaults.Tree
 import VE.NormDefaults.Check
 import VE.NormDefaults.Fill
+import VE.NormDefaults.FillCheck
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2018,7 +2019,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.fill_nodes
 #print axioms VE.NormDefaults.fill_regulated
 #print axioms VE.NormDefaults.fill_selects_author
-#print axioms VE.NormDefaults.flatMap_congr'
 #print axioms VE.NormDefaults.fuel_fill
 #print axioms VE.NormDefaults.mem_children_fillNode
 #print axioms VE.NormDefaults.mem_fillNodes
@@ -2042,3 +2042,54 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.NormDefaults.yields_iff_selects
 #print axioms VE.NormDefaults.yields_leaf
 #print axioms VE.NormDefaults.yields_stable
+#print axioms VE.NormDefaults.atom_typed
+#print axioms VE.NormDefaults.check_envAt_fill
+#print axioms VE.NormDefaults.check_fill
+#print axioms VE.NormDefaults.envAt_fill_mono
+#print axioms VE.NormDefaults.envAt_fill_unsaid
+#print axioms VE.NormDefaults.eq_of_name
+#print axioms VE.NormDefaults.fillEnv_declared
+#print axioms VE.NormDefaults.fillEnv_mono
+#print axioms VE.NormDefaults.fillName_inj
+#print axioms VE.NormDefaults.fillNodes_length
+#print axioms VE.NormDefaults.fillRegs_names
+#print axioms VE.NormDefaults.fill_acyclic
+#print axioms VE.NormDefaults.fill_ast
+#print axioms VE.NormDefaults.fill_checkOK
+#print axioms VE.NormDefaults.fill_defOK
+#print axioms VE.NormDefaults.fill_heights
+#print axioms VE.NormDefaults.fill_mentions_filtered
+#print axioms VE.NormDefaults.fill_names_nodup
+#print axioms VE.NormDefaults.fill_nodeOK
+#print axioms VE.NormDefaults.fill_overOK
+#print axioms VE.NormDefaults.fill_regOK
+#print axioms VE.NormDefaults.fill_semanticCheck
+#print axioms VE.NormDefaults.fill_stratum_key
+#print axioms VE.NormDefaults.fill_wellFormed
+#print axioms VE.NormDefaults.foldl_max_le
+#print axioms VE.NormDefaults.formulas_fill
+#print axioms VE.NormDefaults.height_fillRoot
+#print axioms VE.NormDefaults.height_fill_author
+#print axioms VE.NormDefaults.height_stable
+#print axioms VE.NormDefaults.inj_of_nodup_map
+#print axioms VE.NormDefaults.layerNames_fill
+#print axioms VE.NormDefaults.layer_declared
+#print axioms VE.NormDefaults.nodup_map_of_inj
+#print axioms VE.NormDefaults.nodup_of_count
+#print axioms VE.NormDefaults.nodup_of_dupNameOf
+#print axioms VE.NormDefaults.order_fill
+#print axioms VE.NormDefaults.preds_declared
+#print axioms VE.NormDefaults.regulatedNames_nodup
+#print axioms VE.NormDefaults.ruleNodes_fillRoot
+#print axioms VE.NormDefaults.rulesOn_fill
+#print axioms VE.NormDefaults.stratum_declared
+#print axioms VE.NormDefaults.stratum_names
+#print axioms VE.NormDefaults.sum_map_erase
+#print axioms VE.NormDefaults.sum_map_le
+#print axioms VE.NormDefaults.syms_fill
+#print axioms VE.NormDefaults.termSort_congr
+#print axioms VE.NormDefaults.typeDiagnostic_congr
+#print axioms VE.NormDefaults.typeDiagnostic_fill
+#print axioms VE.NormDefaults.find_of_name
+#print axioms VE.NormDefaults.flatMap_congr_mem
+#print axioms VE.NormDefaults.sum_append_nat
