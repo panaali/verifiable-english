@@ -554,4 +554,357 @@ theorem settled_of_table3 {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFor
   intro F hF
   exact table3_outcome (uvalid h) h M F hF hr vs b ht
 
+/-! ## Exhaustive enumeration -/
+
+/-- The enumeration budget (2.5): at most `2 ^ 12 = 4,096` fillings. -/
+def MAX_UNSAID_ATOMS : Nat := 12
+
+/-- Every typed tuple of the given sorts over `M`. -/
+def allTuples {α : Type u} (M : VE.FiniteModel α) : List String → List (List α)
+  | [] => [[]]
+  | s :: ss => (M.domains s).flatMap (fun v => (allTuples M ss).map (v :: ·))
+
+theorem mem_allTuples {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) :
+    ∀ (ss : List String) (vs : List α), vs ∈ allTuples M ss ↔ VE.TupleTyped M.asStructure ss vs
+  | [], [] => by simp [allTuples, VE.TupleTyped]
+  | [], _ :: _ => by simp [allTuples, VE.TupleTyped]
+  | s :: ss, [] => by simp [allTuples, VE.TupleTyped]
+  | s :: ss, v :: vs => by
+    simp only [allTuples, List.mem_flatMap, List.mem_map, List.cons.injEq, VE.TupleTyped]
+    constructor
+    · rintro ⟨w, hw, ws, hws, rfl, rfl⟩
+      exact ⟨hw, (mem_allTuples M ss ws).mp hws⟩
+    · rintro ⟨hv, hvs⟩
+      exact ⟨v, hv, vs, (mem_allTuples M ss vs).mpr hvs, rfl, rfl⟩
+
+/-- The unsaid atoms of a finite situation: every unsaid predicate at every typed tuple. -/
+def unsaidAtoms {α : Type u} (U : UDoc) (M : VE.FiniteModel α) : List (String × List α) :=
+  U.unspec.flatMap (fun p => (allTuples M (sortsOf U.D p)).map (fun vs => (unsaidName p, vs)))
+
+def subsets {β : Type u} : List β → List (List β)
+  | [] => [[]]
+  | x :: xs => subsets xs ++ (subsets xs).map (x :: ·)
+
+theorem filter_mem_subsets {β : Type u} (q : β → Bool) : ∀ l : List β, l.filter q ∈ subsets l
+  | [] => by simp [subsets]
+  | x :: xs => by
+    simp only [List.filter_cons, subsets, List.mem_append, List.mem_map]
+    split
+    · exact Or.inr ⟨_, filter_mem_subsets q xs, rfl⟩
+    · exact Or.inl (filter_mem_subsets q xs)
+
+/-- The finite filling with exactly the given atoms. -/
+def fillOfAtoms {α : Type u} {U : UDoc} (A : List (String × List α)) : FiniteFill U α :=
+  fun n => (A.filter (·.1 == n)).map (·.2)
+
+theorem mem_fillOfAtoms {α : Type u} {U : UDoc} (A : List (String × List α)) (n : String) (ws : List α) :
+    ws ∈ (fillOfAtoms (U := U) A) n ↔ (n, ws) ∈ A := by
+  simp only [fillOfAtoms, List.mem_map, List.mem_filter, beq_iff_eq]
+  constructor
+  · rintro ⟨⟨a₁, a₂⟩, ⟨ha, he⟩, rfl⟩
+    simp only at he
+    subst he
+    exact ha
+  · intro hA
+    exact ⟨(n, ws), ⟨hA, rfl⟩, rfl⟩
+
+theorem mem_unsaidAtoms {α : Type u} {U : UDoc} {M : VE.FiniteModel α} {p : String} (hp : p ∈ U.unspec)
+    (ws : List α) : (unsaidName p, ws) ∈ unsaidAtoms U M ↔ ws ∈ allTuples M (sortsOf U.D p) := by
+  simp only [unsaidAtoms, List.mem_flatMap, List.mem_map, Prod.mk.injEq]
+  constructor
+  · rintro ⟨q, _, ws', hws', hn, rfl⟩
+    rw [unsaidName_inj hn] at hws'
+    exact hws'
+  · intro hw
+    exact ⟨p, hp, ws, hw, rfl, rfl⟩
+
+/-- `enumerateSettled`: every filling of the unsaid atoms (at most
+`MAX_UNSAID_ATOMS` of them) that passes `fillValid` gives `b`, and at least one does. -/
+def enumerateSettled {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
+    Option Bool :=
+  let atoms := unsaidAtoms U M
+  if atoms.length > MAX_UNSAID_ATOMS then none else
+  let vals := (subsets atoms).filterMap (fun A =>
+    let F : FiniteFill U α := fillOfAtoms A
+    if fillValid U M F then some ((outcomeBase (fill U) n).eval (M.withFill F) (tupleVal vs)) else none)
+  match vals with
+  | [] => none
+  | b :: bs => if bs.all (· == b) then some b else none
+
+theorem enumerate_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
+    {b : Bool} (he : enumerateSettled U M n vs = some b) :
+    ∀ A ∈ subsets (unsaidAtoms U M), fillValid U M (fillOfAtoms A) = true →
+      (outcomeBase (fill U) n).eval (M.withFill (fillOfAtoms (U := U) A)) (tupleVal vs) = b := by
+  intro A hA hv
+  unfold enumerateSettled at he
+  simp only at he
+  split at he
+  · cases he
+  · split at he
+    · cases he
+    · rename_i b0 bs hvals
+      split at he
+      · rename_i hall
+        simp only [Option.some.injEq] at he
+        subst he
+        have hmem : (outcomeBase (fill U) n).eval (M.withFill (fillOfAtoms (U := U) A)) (tupleVal vs) ∈ b0 :: bs := by
+          rw [← hvals]
+          exact List.mem_filterMap.mpr ⟨A, hA, by simp [hv]⟩
+        rcases List.mem_cons.mp hmem with h' | h'
+        · exact h'
+        · simpa using List.all_eq_true.mp hall _ h'
+      · cases he
+
+/-- `settled_of_enumeration`: agreement of every checked filling is SETTLED. -/
+theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
+    (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
+    (r : Regulated) (hr : r ∈ U.D.T.regulated) (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
+    (b : Bool) (he : enumerateSettled U M r.name vs = some b) : SettledAs U M.asStructure r vs b := by
+  have _ := h
+  have _ := valid
+  have _ := hb
+  have _ := hr
+  have _ := typed
+  classical
+  intro F hF
+  let A := (unsaidAtoms U M).filter (fun a => decide (F a.1 a.2))
+  let FA : FiniteFill U α := fillOfAtoms A
+  -- the finite filling of `F`'s atoms has the same tables
+  have hrel : ∀ n ws, (withFill U M.asStructure (finFill M FA)).relation n ws ↔ (withFill U M.asStructure F).relation n ws := by
+    intro n ws
+    by_cases hun : n ∈ unsaidNames U
+    · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hun
+      rw [withFill_unsaid U _ _ hp, withFill_unsaid U _ _ hp]
+      show (ws ∈ FA (unsaidName p) ∧ _) ↔ (F (unsaidName p) ws ∧ _)
+      rw [mem_fillOfAtoms, List.mem_filter, mem_unsaidAtoms hp, mem_allTuples]
+      simp only [decide_eq_true_eq]
+      constructor
+      · rintro ⟨⟨_, hF'⟩, ht⟩; exact ⟨hF', ht⟩
+      · rintro ⟨hF', ht⟩; exact ⟨⟨ht, hF'⟩, ht⟩
+    · exact (withFill_off U M.asStructure (finFill M FA) hun ws).trans (withFill_off U M.asStructure F hun ws).symm
+  have heq : withFill U M.asStructure (finFill M FA) = withFill U M.asStructure F := by
+    unfold withFill
+    congr 1
+    funext n ws
+    exact propext (hrel n ws)
+  have hFA : BaseAdmissibleU U (withFill U M.asStructure (finFill M FA)) := by rw [heq]; exact hF
+  have hvalid : fillValid U M FA = true :=
+    List.all_eq_true.mpr fun φ hφ => (eval_withFill U M FA φ []).mpr (hFA.2 φ hφ)
+  have hval := enumerate_all he A (filter_mem_subsets _ _) hvalid
+  have hd : (outcomeBase (fill U) r.name).denote (withFill U M.asStructure (finFill M FA)) (tupleVal vs) ↔
+      (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F) (tupleVal vs) :=
+    denote_rel_iff M.asStructure _ _ hrel _ _
+  rw [← hd]
+  exact (eval_withFill U M FA _ _).symm.trans (by rw [hval])
+
+/-! ## The fragment gate -/
+
+/-- A universally closed quantifier-free formula. -/
+def UniversalQF (φ : VE.Formula) : Prop := VE.SoftNorms.universalQF φ = true
+
+theorem universalQF_bindAll (ss : List String) (φ : VE.Formula) :
+    VE.SoftNorms.universalQF (bindAll ss φ) = VE.SoftNorms.universalQF φ := by
+  induction ss with
+  | nil => rfl
+  | cons s ss ih => exact ih
+
+theorem qfree_inst : ∀ (σ : List VE.Term) (φ : VE.Formula), Formula.qfree (inst σ φ) = Formula.qfree φ := by
+  intro σ φ
+  induction φ generalizing σ with
+  | top | bottom | unary | binary | eq => rfl
+  | not a ih => simp only [inst, Formula.qfree, ih]
+  | and a b ia ib | or a b ia ib | implies a b ia ib => simp only [inst, Formula.qfree, ia, ib]
+  | all s a _ | ex s a _ => rfl
+
+theorem qfree_substWith (tbl : Table) : ∀ φ : VE.Formula,
+    Formula.qfree (substWith tbl φ) = true ↔
+      Formula.qfree φ = true ∧ ∀ q ∈ preds φ, ∀ F, tbl q = some F → Formula.qfree F = true := by
+  intro φ
+  induction φ with
+  | top | bottom | eq => simp [substWith, Formula.qfree, preds]
+  | unary q t =>
+    simp only [substWith, preds, List.mem_singleton, forall_eq]
+    cases hq : tbl q with
+    | none => simp [Formula.qfree]
+    | some F => simp [qfree_inst, Formula.qfree]
+  | binary q t w =>
+    simp only [substWith, preds, List.mem_singleton, forall_eq]
+    cases hq : tbl q with
+    | none => simp [Formula.qfree]
+    | some F => simp [qfree_inst, Formula.qfree]
+  | not a ih => simp only [substWith, Formula.qfree, preds, ih]
+  | and a b ia ib | or a b ia ib | implies a b ia ib =>
+    simp only [substWith, Formula.qfree, Bool.and_eq_true, preds, List.mem_append, ia, ib]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, h3, h4⟩
+      exact ⟨⟨h1, h3⟩, fun q hq => hq.elim (h2 q) (h4 q)⟩
+    · rintro ⟨⟨h1, h3⟩, h2⟩
+      exact ⟨⟨h1, fun q hq => h2 q (Or.inl hq)⟩, h3, fun q hq => h2 q (Or.inr hq)⟩
+  | all s a _ | ex s a _ => simp [substWith, Formula.qfree]
+
+theorem qfree_anyF (l : List VE.Formula) : Formula.qfree (anyF l) = true ↔ ∀ a ∈ l, Formula.qfree a = true := by
+  suffices ∀ acc, Formula.qfree (l.foldl .or acc) = true ↔ Formula.qfree acc = true ∧ ∀ a ∈ l, Formula.qfree a = true by
+    simpa [anyF, Formula.qfree] using this .bottom
+  induction l with
+  | nil => intro acc; simp
+  | cons b l ih =>
+    intro acc
+    simp only [List.foldl_cons, ih, Formula.qfree, Bool.and_eq_true, List.mem_cons, forall_eq_or_imp]
+    exact ⟨fun ⟨⟨h1, h2⟩, h3⟩ => ⟨h1, h2, h3⟩, fun ⟨h1, h2, h3⟩ => ⟨⟨h1, h2⟩, h3⟩⟩
+
+theorem preds_anyF (l : List VE.Formula) : ∀ q ∈ preds (anyF l), ∃ a ∈ l, q ∈ preds a := by
+  suffices ∀ acc, ∀ q ∈ preds (l.foldl .or acc), q ∈ preds acc ∨ ∃ a ∈ l, q ∈ preds a by
+    intro q hq
+    rcases this .bottom q hq with h | h
+    · simp [preds] at h
+    · exact h
+  induction l with
+  | nil => intro acc q hq; exact Or.inl hq
+  | cons b l ih =>
+    intro acc q hq
+    rcases ih _ q hq with h | ⟨a, ha, hqa⟩
+    · simp only [preds, List.mem_append] at h
+      rcases h with h | h
+      · exact Or.inl h
+      · exact Or.inr ⟨b, List.mem_cons_self, h⟩
+    · exact Or.inr ⟨a, List.mem_cons_of_mem _ ha, hqa⟩
+
+theorem preds_anyF_of (l : List VE.Formula) {a : VE.Formula} (ha : a ∈ l) : ∀ q ∈ preds a, q ∈ preds (anyF l) := by
+  suffices ∀ acc, (∀ q ∈ preds acc, q ∈ preds (l.foldl .or acc)) ∧ ∀ b ∈ l, ∀ q ∈ preds b, q ∈ preds (l.foldl .or acc) by
+    exact (this .bottom).2 a ha
+  clear ha
+  induction l with
+  | nil => intro acc; exact ⟨fun q hq => hq, fun b hb => absurd hb List.not_mem_nil⟩
+  | cons c l ih =>
+    intro acc
+    obtain ⟨h1, h2⟩ := ih (.or acc c)
+    refine ⟨fun q hq => h1 q (by simp [preds, hq]), fun b hb q hq => ?_⟩
+    rcases List.mem_cons.mp hb with rfl | hb
+    · exact h1 q (by simp [preds, hq])
+    · exact h2 b hb q hq
+
+/-- More fuel only adds rules: quantifier-freeness goes down, predicates go up. -/
+theorem yields_mono (T : Tree) : ∀ (f g : Nat) (N : Node), f ≤ g →
+    (Formula.qfree (yields T g N) = true → Formula.qfree (yields T f N) = true) ∧
+    (∀ q ∈ preds (yields T f N), q ∈ preds (yields T g N))
+  | 0, 0, _, _ => ⟨id, fun _ h => h⟩
+  | 0, g + 1, N, _ => by
+    refine ⟨fun h => ?_, fun q hq => ?_⟩
+    · simp only [yields, Formula.qfree, Bool.and_eq_true] at h ⊢
+      exact ⟨h.1, rfl⟩
+    · simp only [yields, preds, anyF, List.foldl_nil, List.mem_append] at hq ⊢
+      rcases hq with hq | hq
+      · exact Or.inl hq
+      · simp at hq
+  | f + 1, g + 1, N, hfg => by
+    have ih := fun C => yields_mono T f g C (by omega)
+    refine ⟨fun h => ?_, fun q hq => ?_⟩
+    · simp only [yields, Formula.qfree, Bool.and_eq_true, qfree_anyF, List.mem_map] at h ⊢
+      refine ⟨h.1, fun a ⟨C, hC, he⟩ => ?_⟩
+      subst he
+      exact (ih C).1 (h.2 _ ⟨C, hC, rfl⟩)
+    · simp only [yields, preds, List.mem_append] at hq ⊢
+      rcases hq with hq | hq
+      · exact Or.inl hq
+      · obtain ⟨a, ha, hqa⟩ := preds_anyF _ q hq
+        obtain ⟨C, hC, rfl⟩ := List.mem_map.mp ha
+        exact Or.inr (preds_anyF_of _ (List.mem_map_of_mem hC) q ((ih C).2 q hqa))
+  | f + 1, 0, _, h => absurd h (by omega)
+
+theorem selects_mono (T : Tree) (f g : Nat) (N : Node) (hfg : f ≤ g) :
+    (Formula.qfree (selects T g N) = true → Formula.qfree (selects T f N) = true) ∧
+    (∀ q ∈ preds (selects T f N), q ∈ preds (selects T g N)) := by
+  refine ⟨fun h => ?_, fun q hq => ?_⟩
+  · simp only [selects, Formula.qfree, Bool.and_eq_true, qfree_anyF, List.mem_map] at h ⊢
+    refine ⟨h.1, fun a ⟨C, hC, he⟩ => ?_⟩
+    subst he
+    exact (yields_mono T f g C hfg).1 (h.2 _ ⟨C, hC, rfl⟩)
+  · simp only [selects, preds, List.mem_append] at hq ⊢
+    rcases hq with hq | hq
+    · exact Or.inl hq
+    · obtain ⟨a, ha, hqa⟩ := preds_anyF _ q hq
+      obtain ⟨C, hC, rfl⟩ := List.mem_map.mp ha
+      exact Or.inr (preds_anyF_of _ (List.mem_map_of_mem hC) q ((yields_mono T f g C hfg).2 q hqa))
+
+section Gate
+variable {U : UDoc} (hu : UValid U)
+include hu
+
+theorem yields_fill_eq : ∀ (f : Nat) (N : Node), N ∈ U.D.T.nodes → yields (fill U).T f N = yields U.D.T f N
+  | 0, _, _ => rfl
+  | f + 1, N, hN => by
+    simp only [yields, children_fill_author hu hN]
+    congr 2
+    apply List.map_congr_left
+    intro C hC
+    exact yields_fill_eq f C (mem_children_iff.mp hC).1
+
+theorem selects_fill_eq (f : Nat) {N : Node} (hN : N ∈ U.D.T.nodes) :
+    selects (fill U).T f (fillRoot U N) = selects U.D.T f N := by
+  simp only [selects, applies, fillRoot_guard, fillRoot_carveOuts, children_fillRoot, children_fill_author hu hN]
+  congr 3
+  apply List.map_congr_left
+  intro C hC
+  exact yields_fill_eq hu f C (mem_children_iff.mp hC).1
+
+/-- The author part of `pos`/`neg` on `T‴` is at least as large as on `T`. -/
+theorem decides_fill_gate (p : String) (sign : Bool) :
+    (Formula.qfree (decides (fill U).T p sign) = true → Formula.qfree (decides U.D.T p sign) = true) ∧
+    (∀ q ∈ preds (decides U.D.T p sign), q ∈ preds (decides (fill U).T p sign)) := by
+  have hfuel : fuel U.D.T ≤ fuel (fill U).T := by rw [fuel_fill]; omega
+  have hmem : ∀ N ∈ (rulesOn U.D.T p).filter (·.sign == sign),
+      fillRoot U N ∈ (rulesOn (fill U).T p).filter (·.sign == sign) := by
+    intro N hN
+    simp only [List.mem_filter, rulesOn, beq_iff_eq] at hN ⊢
+    exact ⟨⟨mem_fill_nodes.mpr (Or.inl ⟨N, hN.1.1, rfl⟩), by simpa using hN.1.2⟩, by simpa using hN.2⟩
+  refine ⟨fun h => ?_, fun q hq => ?_⟩
+  · simp only [decides, qfree_anyF, List.mem_map] at h ⊢
+    rintro a ⟨N, hN, rfl⟩
+    have hNm : N ∈ U.D.T.nodes := (List.mem_filter.mp (List.mem_filter.mp hN).1).1
+    have := h _ ⟨fillRoot U N, hmem N hN, rfl⟩
+    rw [selects_fill_eq hu _ hNm] at this
+    exact (selects_mono U.D.T _ _ N hfuel).1 this
+  · simp only [decides] at hq ⊢
+    obtain ⟨a, ha, hqa⟩ := preds_anyF _ q hq
+    obtain ⟨N, hN, rfl⟩ := List.mem_map.mp ha
+    have hNm : N ∈ U.D.T.nodes := (List.mem_filter.mp (List.mem_filter.mp hN).1).1
+    refine preds_anyF_of _ (List.mem_map_of_mem (hmem N hN)) q ?_
+    rw [selects_fill_eq hu _ hNm]
+    exact (selects_mono U.D.T _ _ N hfuel).2 q hqa
+
+theorem qfree_gapF (hf : InFragment (fill U) = true) (p : String) : Formula.qfree (gapF U p) = true := by
+  unfold gapF
+  split
+  · rename_i hp
+    obtain ⟨r, hr, hrn, _⟩ := hu.declared p hp
+    simp only [InFragment, Bool.and_eq_true, List.all_eq_true] at hf
+    have hc := hf.1 r hr
+    simp only [conflict, Formula.qfree, Bool.and_eq_true, subst, hrn] at hc
+    simp only [Formula.qfree, Bool.and_eq_true, subst, pos, neg]
+    obtain ⟨hP, hN⟩ := hc
+    rw [qfree_substWith] at hP hN ⊢
+    rw [qfree_substWith]
+    exact ⟨⟨(decides_fill_gate hu p true).1 hP.1, fun q hq => hP.2 q ((decides_fill_gate hu p true).2 q hq)⟩,
+      ⟨(decides_fill_gate hu p false).1 hN.1, fun q hq => hN.2 q ((decides_fill_gate hu p false).2 q hq)⟩⟩
+  · rfl
+
+end Gate
+
+/-- `fillPremises_universal`: under W1's gate on `fill U`, every `Fill_T` formula is
+universal quantifier-free, so it survives substructures (`conflict_smallModel`'s
+obligation extends to `fill`). -/
+theorem fillPremises_universal (U : UDoc) (h : WellFormedU U = true) (hf : InFragment (fill U) = true) :
+    ∀ φ ∈ fillPremises U, UniversalQF φ := by
+  have hu := uvalid h
+  intro φ hφ
+  obtain ⟨pr, hpr, rfl⟩ := List.mem_map.mp hφ
+  have hpr : pr ∈ pairs (fill U).T := (List.mem_filter.mp hpr).1
+  unfold UniversalQF
+  rw [universalQF_bindAll]
+  have hpc : Formula.qfree (pairConflict (fill U) pr) = true := by
+    simp only [InFragment, Bool.and_eq_true, List.all_eq_true] at hf
+    exact hf.2 pr hpr
+  simp only [VE.SoftNorms.universalQF, Formula.qfree, Bool.and_eq_true]
+  exact ⟨hpc, qfree_gapF hu hf _, qfree_gapF hu hf _⟩
+
 end VE.NormDefaults
