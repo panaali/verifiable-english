@@ -17,8 +17,8 @@ import subprocess
 import sys
 
 from check_lean_imports import imports as lean_imports
-from layer_policy import (NAMES, ROOT, lean_executables, lean_layer, python_exports,
-                          python_imports, python_layer, source_layer)
+from layer_policy import (NAMES, ROOT, lean_default_targets, lean_executables, lean_layer,
+                          python_exports, python_imports, python_layer, source_layer)
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 # These exercise the public wire across languages, routes, and frozen fixtures.
@@ -208,6 +208,12 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     commands = [list(cmd) for cmd in CHECKS]
     if lean:
         commands.append(["lake", "build"])
+        # Harness executables such as ve_risk_eval are outside defaultTargets.
+        named = sorted(name for name in lean_executables()
+                       if name not in lean_default_targets()
+                       and any(name in source for source in selected_sources))
+        if named:
+            commands.append(["lake", "build", *named])
     commands.append(["python3", "lean/audit.py"])
     if rust:
         commands.append(["cargo", "test", "--locked", "--all-features", "--manifest-path",

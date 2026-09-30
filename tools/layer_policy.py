@@ -23,7 +23,7 @@ PYTHON = {
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_strict openterms propose readings "
         "search stream_audit vacuity assist discourse quantity_admission reports_route "
-        "rights_route soft_route speech_document").split(),
+        "risk rights_route soft_route speech_document").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
@@ -96,6 +96,11 @@ def lean_executables(root: Path = ROOT) -> dict[str, str]:
     """Map each `lean_exe` in lean/lakefile.toml to its root module."""
     lakefile = tomllib.loads((root / "lean/lakefile.toml").read_text())
     return {exe["name"]: exe.get("root", exe["name"]) for exe in lakefile.get("lean_exe", [])}
+
+
+def lean_default_targets(root: Path = ROOT) -> set[str]:
+    """Targets a plain `lake build` produces; other executables must be named."""
+    return set(tomllib.loads((root / "lean/lakefile.toml").read_text()).get("defaultTargets", []))
 
 
 def lean_entry(module: str) -> bool:

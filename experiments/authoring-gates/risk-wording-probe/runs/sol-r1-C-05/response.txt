@@ -1,0 +1,7 @@
+1. **(a)** “Avoidable” means an available action can prevent a server outage in at least one case the text allows.
+2. **(c)** A rash might happen, while drowsiness happens whenever the clinic gives drug A.
+3. **(d)** A collision is ruled out for crossing between parked cars, so Rule 1’s condition does not apply.
+4. **(a)** “Cannot lead to” rules out a lift failure when the robot takes the lift.
+5. **(c)** A less severe worst case means running the job has a possible harm more severe than any possible harm from running it with a memory limit.
+6. **(a)** The text says nothing about what can happen when the robot takes the stairs.
+7. **(b)** The text says an outage happens above 8 gigabytes but does not say what happens at 5 gigabytes.

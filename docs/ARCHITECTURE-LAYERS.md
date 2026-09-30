@@ -12,7 +12,7 @@ public reexport facade, not an architectural dependency source.
 | 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` (one crate currently contains kernel, profile and surface code) |
 | 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`order`, `route`, `eval`, `search`); intra-crate Rust imports are not enforced yet |
 | 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `report_english`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
-| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_strict`, `openterms`, `propose`, `readings`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
+| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_strict`, `openterms`, `propose`, `readings`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
 
 The exact assignments, including exceptions to these patterns, live in
@@ -57,7 +57,9 @@ as tool-level consumers even without a Python import. Tests that read
 `test_conformance.py`, `test_lean_conformance.py`,
 `test_replay_conservativity.py`, and `test_p0_three_way.py`. The Python, Lean,
 Rust import/dependency checks, selector boundary checks, and Lean axiom audit
-always run. A missing native binary is built before its selected consumer runs.
+always run. A missing native binary is built before its selected consumer runs;
+a `lean_exe` outside `defaultTargets` (such as `ve_risk_eval`) is named in its own
+`lake build` when a selected test uses it.
 The randomized recovery replay and wall-clock deadline tests are layer-5
 measurements even though their imported implementation is in layer 4.
 
