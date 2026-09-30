@@ -1,0 +1,15 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"If <condition>, <action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A delivery robot can take the ramp or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 25 kilograms. If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall.
+
+The robot takes the ramp with a parcel that weighs 3 kilograms. What does the text tell you?
+(a) The text does not say.
+(b) A fall might happen or might not: the text only says that a fall needs a parcel heavier than 2 kilograms.
+(c) No fall happens: a robot easily carries a 3-kilogram parcel on a ramp.
+(d) A fall happens.
