@@ -9,7 +9,7 @@ audits every theorem: no `sorry`, only `propext`, `Classical.choice` and `Quot.s
 (`python3 VE/Route/frozen.py` passes; `frozen-sources.sha256` gained the new modules and the new
 `VE/Audit.lean` hash, every other entry is unchanged). `VE/Audit.lean` gained imports and audit
 entries only; `lakefile.toml` gained the `ve_norm_defaults_route` target (root
-`VE/NormDefaults/Run.lean`, also in `defaultTargets`). The audit allowlist is unchanged.
+`NormDefaultsMain.lean`, which calls `VE.NormDefaults.Run.main`; also in `defaultTargets`). The audit allowlist is unchanged.
 
 ## Files
 
@@ -27,7 +27,8 @@ entries only; `lakefile.toml` gained the `ve_norm_defaults_route` target (root
 | `Routes.lean` | `fill_soft_value`, `excepted_lifts`, `excepted_collapses_under_deny`, `fill_rights_value`; the followability formulas on the filled tree (`allFollowableU`, `backgroundBaseAltU`, `BaseAdmissibleAltU`) and `followableU_sound` |
 | `Wire.lean` | The `norm-defaults@0` decoder (`decodeSourceU`), `decode_conservative`; regenerated outputs (`regeneratedU`); conflict-package replay over `E‴_base` and `Background_base(E‴) ++ Fill_T` (`normDefaults_wire_conflict_sound`, `normDefaults_wire_expands`); entailment replay (`normDefaults_wire_acceptance`) |
 | `Replay.lean` | Filled CONFLICT witnesses over `E‴_base` (`baseModelVocabularyU`, `normDefaults_wire_witness_sound`), status replays (`table3`, enumeration, two fillings; `normDefaults_wire_status_sound`) and `gaps: none` certificates (`normDefaults_wire_gaps_sound`) |
-| `Run.lean` | The `ve_norm_defaults_route` executable: `norm-defaults-elaborate`, `-conflict` (packages or `witness`), `-status`, `-gaps`, `-certificate`; every other case goes to the unchanged `ve_norms_route` logic |
+| `Admission.lean` | W2 admission on `fill U` (`admitDocument`, `admitDocument_spec`): nodes over `E‴`, certificates bound to the regenerated `E‴` JSON (`fillJson`), leaves that are W2 provenance, a layer of `T‴`, a pair premise or a `Fill_T` premise under `unsaid:pair:<r>,<m>`; `wire_report_consequence` |
+| `Run.lean` | The `ve_norm_defaults_route` dispatch: `norm-defaults-elaborate`, `-conflict` (packages or `witness`), `-status` (answer key `point_status`), `-gaps`, `-certificate`, and `admission` under the profile (`normDefaults_wire_admission`; the report id binds the source environment under its own profiles); every other case goes to the unchanged `ve_norms_route` logic |
 | `Examples.lean` | Build-time `#guard` regressions in the shapes of fixtures u1, u5 (a)–(c), u6, u12 and u16 |
 
 ## How the proofs are organised
@@ -130,6 +131,7 @@ decision formula or `IntendedAt3` reads (`sat_background_congr`, `intendedAt3_co
 
 ## Not done in this item
 
-`default reached` witnesses and `UngroundedDefault` findings on the wire (the report block), the W2
-admission branch under the profile, the soft, rights,
-alternatives and risk route branches (their Wire/Run files are frozen here), Python, Rust and W8.
+`default reached` witnesses and `UngroundedDefault` findings on the wire (the report block), the soft, rights,
+alternatives and risk route branches (their Wire/Run files are frozen here) and W8. Python's side
+(`ve/norm_defaults_route.py`) and the three-way fixtures (`conformance/norm_defaults_three_way.py`,
+`tests/test_norm_defaults_three_way.py`) were added at integration.
