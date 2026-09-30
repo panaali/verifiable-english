@@ -456,4 +456,88 @@ theorem wellFormed_iff (D : Doc) : WellFormed D = true ↔ CheckOK D ∧ semanti
     rw [hc]
     simp [hs]
 
+/-! ## The act checks -/
+
+def seenBody (r : Regulated) (seen : List (List String × Option String × Bool)) :
+    Except String (ForInStep (List (List String × Option String × Bool))) :=
+  if seen.contains (r.sorts, r.act, r.role == .permission) = true then
+    throw s!"DuplicateActRole: {if r.role == .permission then "permission" else "obligation"}, {r.act.getD ""}"
+  else pure (.yield (seen ++ [(r.sorts, r.act, r.role == .permission)]))
+
+def linkBody (regulated : List Regulated) (r : Regulated) (linked : List String) :
+    Except String (ForInStep (List String)) :=
+  if (r.role != .obligation) = true then pure (.yield linked) else
+  match r.permission with
+  | none =>
+    match regulated.find? (fun m => m.role == .permission && m.sorts == r.sorts && m.act == r.act) with
+    | some m => throw s!"MissingPermissionDual: {r.name}, {m.name}"
+    | _ => pure (.yield linked)
+  | some pm =>
+    match regulated.find? (·.name == pm) with
+    | none => throw s!"MissingPermissionDual: {r.name}, {pm}"
+    | some m =>
+      if (m.role == .permission) = true then
+        if (m.sorts == r.sorts) = true then
+          if (m.act == r.act) = true then
+            if linked.contains pm = true then throw s!"DuplicateActRole: obligation, {r.act.getD ""}"
+            else pure (.yield (linked ++ [pm]))
+          else throw s!"DualActMismatch: {r.name}, {pm}"
+        else throw s!"DualSortMismatch: {r.name}, {pm}"
+      else throw s!"MissingPermissionDual: {r.name}, {pm}"
+
+def actSteps (regulated : List Regulated) : Except String Unit :=
+  forIn (regulated.filter (·.role != .plain)) ([] : List (List String × Option String × Bool)) seenBody >>=
+    fun _ => forIn regulated ([] : List String) (linkBody regulated) >>= fun _ => pure PUnit.unit
+
+theorem actChecks_eq (regulated : List Regulated) : actChecks regulated = actSteps regulated := rfl
+
+theorem forIn_each {α σ ε : Type} (f : α → σ → Except ε (ForInStep σ))
+    (hf : ∀ x t r, f x t = .ok r → ∃ t', r = .yield t') :
+    ∀ (l : List α) (s s' : σ), forIn l s f = .ok s' → ∀ x ∈ l, ∃ t t', f x t = .ok (.yield t')
+  | [], _, _, _, x, hx => absurd hx List.not_mem_nil
+  | y :: l, s, s', h, x, hx => by
+    rw [List.forIn_cons] at h
+    cases hy : f y s with
+    | error e => rw [hy] at h; cases h
+    | ok r =>
+      obtain ⟨t', rfl⟩ := hf y s r hy
+      rw [hy] at h
+      rcases List.mem_cons.mp hx with rfl | hx
+      · exact ⟨s, t', hy⟩
+      · exact forIn_each f hf l t' s' h x hx
+
+/-- A declared dual is a permission (3.1, `MissingPermissionDual`). -/
+theorem actChecks_dual {regulated : List Regulated} (h : actChecks regulated = .ok ()) {r : Regulated}
+    (hr : r ∈ regulated) (ho : r.role = .obligation) {pm : String} (hpm : r.permission = some pm) :
+    ∃ m, regulated.find? (·.name == pm) = some m ∧ m.role = .permission := by
+  rw [actChecks_eq] at h
+  unfold actSteps at h
+  obtain ⟨_, _, h⟩ := (ebind_ok _ _ _).mp h
+  obtain ⟨linked, hl, _⟩ := (ebind_ok _ _ _).mp h
+  have hf : ∀ x t r', linkBody regulated x t = .ok r' → ∃ t', r' = .yield t' := by
+    intro x t r' hx
+    unfold linkBody at hx
+    split at hx
+    · simp only [pure, Except.pure, Except.ok.injEq] at hx; exact ⟨_, hx.symm⟩
+    · split at hx
+      · split at hx
+        · simp [ethrow_ok] at hx
+        · simp only [pure, Except.pure, Except.ok.injEq] at hx; exact ⟨_, hx.symm⟩
+      · split at hx
+        · simp [ethrow_ok] at hx
+        · repeat' split at hx
+          all_goals first
+            | (simp [ethrow_ok] at hx)
+            | (simp only [pure, Except.pure, Except.ok.injEq] at hx; exact ⟨_, hx.symm⟩)
+  obtain ⟨t, t', ht⟩ := forIn_each (linkBody regulated) hf regulated [] linked hl r hr
+  unfold linkBody at ht
+  simp only [ho, bne_self_eq_false, Bool.false_eq_true, if_false, hpm] at ht
+  split at ht
+  · simp [ethrow_ok] at ht
+  · rename_i m hm
+    refine ⟨m, hm, ?_⟩
+    by_cases hmr : (m.role == .permission) = true
+    · simpa using hmr
+    · simp [hmr, ethrow_ok] at ht
+
 end VE.NormDefaults
