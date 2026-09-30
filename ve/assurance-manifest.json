@@ -131,7 +131,7 @@
       {"file": "lean/VE/SoftNorms/Wire.lean", "lines": 462, "sha256": "641a13b4cd6917aad8444951d4ea4e89da0afd5ba10706a2bb0c62aa8caf0ce4",
        "ranges": [[1, 462]], "declarations": ["decodeSoftNorm", "decodeSoftSource", "replaySoftConflict", "replaySoftWitness", "replaySoftEntailment"],
        "reason": "soft wire and certificate decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "736de0246f3164c162148fa2c068be1b106c9171dd6ee87c407422d3469960ac",
+      {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
        "ranges": [[1, 698]], "declarations": ["decodeRightsEnvironment", "decodeRightsSource", "replayRightsConflict", "replayRightsEntailment"],
        "reason": "rights source, package and certificate decoder; the full file is pinned conservatively"},
       {"file": "lean/VE/Rights/Admission.lean", "lines": 471, "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
