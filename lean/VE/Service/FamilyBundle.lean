@@ -420,19 +420,27 @@ def folCtx (environment : Json) (checked : Standalone.Validated) :
     background := Family.withAst bg id
     model := fun _ => throw "no models in a bundle" })
 
-def folValid (E : VE.Environment) (c : VE.Tableau.Certificate) (ps : List VE.Formula) (r : VE.Formula) : Bool :=
-  VE.Tableau.checkCertificate E ps r c
-
 /-- The service `bundle` mode: a lemma bundle over a ve.core@0.2 environment of
-any family, norms environments included. -/
+any family, norms environments included, or over a frozen pre-route envelope. -/
 def bundleCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  if Standalone.isLegacy environment then
+    match ← Standalone.decodeLegacy environment with
+    | .v0 v =>
+      return ← run (← Family.legacyFolCtx environment v) (Family.folValid v.environment)
+        (fun c => VE.Route.Steps.fol c.trace) .or id j
+    | .closure v =>
+      return ← run (← Family.legacyClosureCtx environment v) (Family.closureValid v.environment)
+        (fun c => VE.Route.Steps.closure c.trace) .or id j
+    | .order v =>
+      return ← run (← Family.legacyOrderCtx environment v) (Family.orderValid v.environment)
+        (fun c => VE.Route.Steps.order c.trace) .or id j
   let checked ← Standalone.validated environment
   match checked.envelope.family with
   | .fol =>
     let (rv, ctx) ← folCtx environment checked
-    run ctx (folValid rv.environment) (fun c => VE.Route.Steps.fol c.trace) .or id j
+    run ctx (Family.folValid rv.environment) (fun c => VE.Route.Steps.fol c.trace) .or id j
   | .closure =>
     let f ← Family.closureEnv environment checked
     run f.ctx (Family.closureValid f.rv.environment) (fun c => VE.Route.Steps.closure c.trace) .or id j
@@ -449,7 +457,7 @@ def bundleCase (j : Json) : Except String Json := do
 theorem fol_bundle_sound (E : VE.Environment) (bg : List (Leaf VE.Formula))
     (sets : List (ReadingSet VE.Formula)) (bind : List Json → Json → VE.Tableau.Certificate → Except String Unit)
     (Ls : List (Lemma VE.Formula VE.Tableau.Certificate)) (res : List (Known VE.Formula))
-    (accepted : checkAll (folValid E) (fun c => VE.Route.Steps.fol c.trace) .or bg sets bind [] Ls = .ok res) :
+    (accepted : checkAll (Family.folValid E) (fun c => VE.Route.Steps.fol c.trace) .or bg sets bind [] Ls = .ok res) :
     ∀ k ∈ res, (ReadingCompatible k.leaves ∧ ReadingBound .or sets k.leaves) ∧
       ∀ S : VE.Structure.{u}, S.Admissible E → (∀ l ∈ k.leaves, l.2.denote S []) → k.conclusion.denote S [] :=
   bundle_sound (fun S : VE.Structure.{u} => S.Admissible E) (fun S (a : VE.Formula) => a.denote S [])

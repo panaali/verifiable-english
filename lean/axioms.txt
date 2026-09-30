@@ -723,6 +723,10 @@
 'VE.Service.Readings.readings_none_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Readings.resolve_choice' depends on axioms: [propext, Quot.sound]
 'VE.Service.Readings.readings_some_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Family.folRefutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Family.fol_readings_all_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Family.fol_readings_none_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Family.fol_readings_some_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.FamilyBundle.mem_appendNew_left' does not depend on any axioms
 'VE.Service.FamilyBundle.mem_appendNew_right' depends on axioms: [propext, Quot.sound]
 'VE.Service.FamilyBundle.lookupKnown_mem' depends on axioms: [propext]
@@ -1902,4 +1906,4 @@
 'VE.Rights.valueSoft_of_decides' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_bar' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 215 source files; 1904 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 215 source files; 1908 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

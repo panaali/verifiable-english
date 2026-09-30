@@ -41,8 +41,15 @@ def nary_core_definitions(profiles, predicates) -> bool:
                and len(entry["arguments"]) > 2 for entry in predicates)
 
 
+# The frozen pre-route envelopes, which Lean's standalone modes decode with
+# their frozen decoders (Standalone.decodeLegacy).
+LEGACY_LANGUAGES = frozenset({"ve.core@0", "ve.core@0.1"})
+
+
 def environment_in_scope(data) -> bool:
     """Whether Lean's `environment` mode validates this environment input."""
+    if type(data) is dict and data.get("language") in LEGACY_LANGUAGES:
+        return True
     if type(data) is not dict or data.get("language") != "ve.core@0.2":
         return False
     if {"unit_schema", "units", "alternatives", "speech_acts"} & set(data):
@@ -59,6 +66,8 @@ def environment_in_scope(data) -> bool:
 
 def model_in_scope(env) -> bool:
     """Whether Lean's `model` mode validates models over `env`."""
+    if env.language in LEGACY_LANGUAGES:
+        return True
     return (env.language == "ve.core@0.2" and env.unit_schema is None and env.alternatives is None
             and not _LAYERED & set(env.profiles)
             and not ({"closure@0", "nary@0"} <= set(env.profiles) and any(

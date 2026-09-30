@@ -1,6 +1,6 @@
 {
   "$id": "environment.json",
-  "$comment": "Standalone Route.Gate and vocabulary validation.",
+  "$comment": "Standalone Route.Gate and vocabulary validation, or a frozen pre-route envelope's decoder (Standalone.decodeLegacy).",
   "row": {"anyOf": [
     {"$ref": "common.json#/$defs/case_error"},
     {"$ref": "common.json#/$defs/error"},
@@ -11,5 +11,14 @@
         "status": {"const": "ok"},
         "environment_id": {"$ref": "common.json#/$defs/hex64"},
         "profiles": {"$ref": "common.json#/$defs/strings", "x-equals": "/environment/profiles"},
-        "family": {"enum": ["fol", "closure", "closure+n-ary", "order"]}}}]}
+        "family": {"enum": ["fol", "closure", "closure+n-ary", "order"]}}},
+    {"$comment": "The frozen v0 envelope (ve.core@0) names its one profile in `profile`.",
+      "type": "object", "required": ["id", "status", "environment_id", "profile", "family"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "profile": {"type": "string", "x-equals": "/environment/profile"},
+        "family": {"const": "fol"}}}]}
 }

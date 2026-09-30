@@ -339,9 +339,12 @@ def plan_choices(sets, *, limit=64, couplings=()):
 
 
 def _lean_readings_scope(env) -> bool:
-    """Whether Lean's `readings` mode checks verdicts over `env`: a ve.core@0.2
-    environment of any family (`validation.family_in_scope`)."""
-    from .backends.validation import family_in_scope
+    """Whether Lean's `readings` mode checks verdicts over `env`: the frozen v0
+    and v0.1 envelopes, or a ve.core@0.2 environment of any family
+    (`validation.family_in_scope`)."""
+    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
+    if getattr(env, "language", None) in LEGACY_LANGUAGES:
+        return True
     return getattr(env, "language", None) == "ve.core@0.2" and family_in_scope(env)
 
 

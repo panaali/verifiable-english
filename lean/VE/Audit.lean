@@ -831,6 +831,10 @@ import VE.Service.Protocol
 #print axioms VE.Service.Readings.readings_none_sound
 #print axioms VE.Service.Readings.resolve_choice
 #print axioms VE.Service.Readings.readings_some_sound
+#print axioms VE.Service.Family.folRefutes_sound
+#print axioms VE.Service.Family.fol_readings_all_sound
+#print axioms VE.Service.Family.fol_readings_none_sound
+#print axioms VE.Service.Family.fol_readings_some_sound
 #print axioms VE.Service.FamilyBundle.mem_appendNew_left
 #print axioms VE.Service.FamilyBundle.mem_appendNew_right
 #print axioms VE.Service.FamilyBundle.lookupKnown_mem

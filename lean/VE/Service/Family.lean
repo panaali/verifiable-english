@@ -270,6 +270,107 @@ def orderEnv (environment : Json) (checked : Standalone.Validated) : Except Stri
       (a, VE.Route.Wire.encodeFormula f, "literals")
     model := orderModel rv }⟩
 
+/-! ## FOL formulas (the frozen v0 envelope's readings and bundles) -/
+
+def folWf (E : VE.Environment) (a : VE.Formula) : Bool := a.check E []
+
+def folValid (E : VE.Environment) (c : VE.Tableau.Certificate) (ps : List VE.Formula)
+    (r : VE.Formula) : Bool :=
+  VE.Tableau.checkCertificate E ps r c
+
+abbrev FolModel (E : VE.Environment) := { M : VE.FiniteModel Entity // M.Valid E }
+
+def folRefutes (names : List String) (E : VE.Environment) (M : FolModel E)
+    (Γ : List VE.Formula) (φ : VE.Formula) : Bool :=
+  VE.Route.Budget.refutesF (VE.Route.Budget.tableMem M.1 (VE.Route.Budget.tableIndex names M.1)) M.1
+    VE.Time.maxEvaluations Γ φ 0 == some true
+
+theorem folRefutes_sound (names : List String) (E : VE.Environment) (M : FolModel E)
+    (Γ : List VE.Formula) (φ : VE.Formula) (h : folRefutes names E M Γ φ = true) :
+    Refutes (fun S : VE.Structure.{0} => S.Admissible E) (fun S a => a.denote S []) Γ φ := by
+  have hr : VE.Route.Budget.refutesF (VE.Route.Budget.tableMem M.1 (VE.Route.Budget.tableIndex names M.1))
+      M.1 VE.Time.maxEvaluations Γ φ 0 = some true := by simpa [folRefutes] using h
+  have hc := VE.Route.Budget.refutesF_sound _ M.1 _ (VE.Route.Budget.tableMem_iff names M.1) Γ φ 0 true hr
+  obtain ⟨hp, hn⟩ := (VE.countermodelCheck_iff M.1 Γ φ).mp hc.symm
+  exact ⟨M.1.asStructure, M.2, hp, hn⟩
+
+/-! ## The frozen pre-route envelopes
+
+`ve.core@0` (FOL) and `ve.core@0.1` (closure; order) have no Background and
+bind certificates by their frozen identity domains (`Standalone.Legacy`). -/
+
+/-- A legacy envelope's identity and certificate binding. -/
+def legacyIds (l : Standalone.Legacy) (environment : Json) :
+    Except String (String × (Json → Except String String) ×
+      (List Json → Json → String → List String → String → Except String Unit)) := do
+  let envId ← Standalone.legacyEnvironmentId l environment
+  let meaningId := Standalone.legacyMeaningId l envId
+  pure (envId, meaningId, fun premises conclusion e ps q => do
+    let expected ← premises.mapM meaningId
+    let c ← meaningId conclusion
+    unless e == envId && ps == expected && q == c do
+      throw "certificate is stale or bound to different inputs")
+
+def legacyCtx {F C M : Type} (l : Standalone.Legacy) (environment : Json) (decodeF : Json → Except String F)
+    (certificate : Json → Except String C) (fields : C → String × List String × String)
+    (model : Json → Except String M) : Except String (Ctx F C M) := do
+  let (envId, meaningId, bind) ← legacyIds l environment
+  pure {
+    environment := environment
+    envId := envId
+    version := l.version
+    formula := fun j => do
+      VE.Route.AstLimit.check [j]
+      decodeF j
+    meaningId := meaningId
+    certificate := certificate
+    bound := fun premises conclusion c =>
+      let (e, ps, q) := fields c
+      bind premises conclusion e ps q
+    background := []
+    model := model }
+
+def bridgeModel (v : VE.Bridge.Vocabulary) (j : Json) :
+    Except String { M : VE.FiniteModel Entity // M.Valid v.environment } :=
+  match h : VE.Bridge.decodeModel v j with
+  | .ok M => .ok ⟨M, VE.Bridge.decodeModel_valid v j M h⟩
+  | .error e => .error e
+
+def legacyFolCtx (environment : Json) (v : VE.Bridge.Vocabulary) :
+    Except String (Ctx VE.Formula VE.Tableau.Certificate (FolModel v.environment)) :=
+  legacyCtx (.v0 v) environment
+    (fun j => do
+      let a ← VE.Bridge.decodeFormula 64 j
+      unless a.check v.environment [] do throw "ill-typed or unbound formula"
+      pure a)
+    VE.CertificateWire.decodeCertificate
+    (fun c => (c.environment_id, c.premise_meaning_ids, c.conclusion_meaning_id)) (bridgeModel v)
+
+def legacyClosureCtx (environment : Json) (v : VE.Bridge.Vocabulary) :
+    Except String (Ctx VE.Closure.Formula VE.Closure.Tableau.Certificate (ClosureModel v.environment)) :=
+  legacyCtx (.closure v) environment
+    (fun j => do
+      let a ← VE.Closure.Bridge.decodeFormula 64 j
+      unless a.check v.environment [] do throw "ill-typed or unbound formula"
+      pure a)
+    VE.CertificateWire.decodeClosureCertificate
+    (fun c => (c.environment_id, c.premise_meaning_ids, c.conclusion_meaning_id)) (bridgeModel v)
+
+def legacyOrderModel (v : VE.Order.Vocabulary) (j : Json) : Except String (OrderModel v.environment) := do
+  let d ← VE.Order.Wire.decodeValidModel v j
+  if h : VE.Order.validModel? v d = true then pure ⟨d, (VE.Order.validModel_iff v d).mp h⟩
+  else throw "model is not semantically admissible"
+
+def legacyOrderCtx (environment : Json) (v : VE.Order.Vocabulary) :
+    Except String (Ctx VE.Order.Formula VE.Order.Tableau.Certificate (OrderModel v.environment)) :=
+  legacyCtx (.order v) environment
+    (fun j => do
+      let a ← VE.Order.Wire.decodeFormula 64 j
+      unless a.check v.environment [] do throw "ill-typed or unbound formula"
+      pure a)
+    VE.Order.Wire.decodeCertificate
+    (fun c => (c.environment_id, c.premise_meaning_ids, c.conclusion_meaning_id)) (legacyOrderModel v)
+
 /-! ## Graph composition -/
 
 section Graph
@@ -409,6 +510,15 @@ end Graph
 def graphCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  if Standalone.isLegacy environment then
+    match ← Standalone.decodeLegacy environment with
+    | .closure v =>
+      return answer id (← compose (← legacyClosureCtx environment v) (closureWf v.environment)
+        (closureValid v.environment) j)
+    | .order v =>
+      return answer id (← compose (← legacyOrderCtx environment v) (orderWf v.environment)
+        (orderValid v.environment) j)
+    | .v0 _ => throw "the v0 envelope composes through Graph.graphCase"
   let checked ← Standalone.validated environment
   match checked.envelope.family with
   | .closure =>
@@ -542,6 +652,17 @@ def readings (ctx : Ctx F C M) (valid : C → List F → F → Bool) (refutes : 
 /-- The `readings` case on the closure, core and order families. -/
 def readingsCase (j : Json) : Except String Json := do
   let environment ← j.getObjVal? "environment"
+  if Standalone.isLegacy environment then
+    match ← Standalone.decodeLegacy environment with
+    | .v0 v =>
+      return ← readings (← legacyFolCtx environment v) (folValid v.environment)
+        (folRefutes (v.predicates.map Prod.fst) v.environment) .or .bottom j
+    | .closure v =>
+      return ← readings (← legacyClosureCtx environment v) (closureValid v.environment)
+        (closureRefutes (v.predicates.map Prod.fst) v.environment) .or .bottom j
+    | .order v =>
+      return ← readings (← legacyOrderCtx environment v) (orderValid v.environment)
+        (orderRefutes (v.predicates.map Prod.fst) v.environment) .or .bottom j
   let checked ← Standalone.validated environment
   match checked.envelope.family with
   | .closure =>
@@ -566,6 +687,31 @@ For each family: an accepted `ALL` certificate makes every choice entail the
 conclusion; an accepted `NONE` model is a countermodel for every choice; an
 accepted `SOME` pair gives an entailing and a refuted choice
 (`GenericReadings.readings_*_sound` at the family's semantics). -/
+
+theorem fol_readings_all_sound (E : VE.Environment) (B fixed : List VE.Formula)
+    (sets : List (List VE.Formula)) (φ : VE.Formula) (c : VE.Tableau.Certificate)
+    (h : folValid E c (B ++ fixed ++ sets.map (disjunction .or .bottom)) φ = true) :
+    ∀ choice, Choice sets choice → VE.Entails.{u} E (B ++ fixed ++ choice) φ :=
+  GenericReadings.readings_all_sound (VE.Formula.or) VE.Formula.bottom
+    (fun S : VE.Structure.{u} => S.Admissible E)
+    (fun (S : VE.Structure.{u}) (a : VE.Formula) => a.denote S []) (fun _ _ _ => Iff.rfl) (fun _ h => h)
+    B fixed sets φ (VE.Tableau.checkCertificate_sound E _ φ c h)
+
+theorem fol_readings_none_sound (names : List String) (E : VE.Environment) (M : FolModel E)
+    (B fixed : List VE.Formula) (sets : List (List VE.Formula)) (φ : VE.Formula)
+    (h : folRefutes names E M (B ++ fixed ++ sets.flatten) φ = true) :
+    ∀ choice, Choice sets choice → ¬ VE.Entails.{0} E (B ++ fixed ++ choice) φ :=
+  GenericReadings.readings_none_sound _ _ B fixed sets φ (folRefutes_sound names E M _ φ h)
+
+theorem fol_readings_some_sound (names : List String) (E : VE.Environment)
+    (B fixed : List VE.Formula) (sets : List (List VE.Formula)) (φ : VE.Formula)
+    (proved refuted : List VE.Formula) (hp : Choice sets proved) (hr : Choice sets refuted)
+    (c : VE.Tableau.Certificate) (hc : folValid E c (B ++ fixed ++ proved) φ = true)
+    (M : FolModel E) (hm : folRefutes names E M (B ++ fixed ++ refuted) φ = true) :
+    (∃ choice, Choice sets choice ∧ VE.Entails.{0} E (B ++ fixed ++ choice) φ) ∧
+      (∃ choice, Choice sets choice ∧ ¬ VE.Entails.{0} E (B ++ fixed ++ choice) φ) :=
+  GenericReadings.readings_some_sound _ _ B fixed sets φ proved refuted hp hr
+    (VE.Tableau.checkCertificate_sound E _ φ c hc) (folRefutes_sound names E M _ φ hm)
 
 theorem closure_readings_all_sound (E : VE.Environment) (B fixed : List VE.Closure.Formula)
     (sets : List (List VE.Closure.Formula)) (φ : VE.Closure.Formula) (c : VE.Closure.Tableau.Certificate)
@@ -653,13 +799,19 @@ def isFamily (environment : Json) : Bool :=
     | .error _ => false
 
 /-- The service `graph` mode: the FOL family and the v0 envelope through
-`Graph.graphCase`, the closure, core and order families through `graphCase`. -/
+`Graph.graphCase`, the closure, core and order families and the ve.core@0.1
+envelopes through `graphCase`. -/
 def graphMode (j : Json) : Except String Json := do
-  if isFamily (← j.getObjVal? "environment") then graphCase j else Graph.graphCase j
+  let environment ← j.getObjVal? "environment"
+  if isFamily environment || environment.getObjValD "language" == .str "ve.core@0.1" then graphCase j
+  else Graph.graphCase j
 
 /-- The service `readings` mode: the FOL family through
-`Readings.readingsCase`, the closure, core and order families through `readingsCase`. -/
+`Readings.readingsCase`, the closure, core and order families and the frozen
+pre-route envelopes through `readingsCase`. -/
 def readingsMode (j : Json) : Except String Json := do
-  if isFamily (← j.getObjVal? "environment") then readingsCase j else Readings.readingsCase j
+  let environment ← j.getObjVal? "environment"
+  if isFamily environment || Standalone.isLegacy environment then readingsCase j
+  else Readings.readingsCase j
 
 end VE.Service.Family

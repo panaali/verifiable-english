@@ -51,7 +51,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 12761,
+    "total_lines": 12921,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, and rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -100,11 +100,11 @@
       {"file": "lean/VE/Service/Readings.lean", "lines": 215, "sha256": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
        "ranges": [[1, 215]], "declarations": ["decodeModel", "readingsCase"],
        "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/Family.lean", "lines": 665, "sha256": "1cb0c6650190332f04f3e64f6d29ca17eb51c663ee666a4d2bbf23f1a02fd87d",
-       "ranges": [[1, 665]], "declarations": ["closureEnv", "coreEnv", "orderEnv", "decodeNode", "decodeEdge", "compose", "graphCase", "readings", "readingsCase"],
+      {"file": "lean/VE/Service/Family.lean", "lines": 817, "sha256": "edbcb9940ebae41e1fcc7903c8ee656bba20e269b0796a23a655aa40f734454e",
+       "ranges": [[1, 817]], "declarations": ["closureEnv", "coreEnv", "orderEnv", "decodeNode", "decodeEdge", "compose", "graphCase", "readings", "readingsCase"],
        "reason": "graph- and readings-mode decoders on the closure, core and order families: family contexts (formula, certificate, Background, binding, model), claims, deductions, recomputed identities, reading sets and evidence; the full file is pinned conservatively"},
-      {"file": "lean/VE/Service/FamilyBundle.lean", "lines": 492, "sha256": "4c6595934845bac76592aca5709c15a9f438009962db6913b356480baa1ba6c7",
-       "ranges": [[1, 492]], "declarations": ["decodeLeaf", "decodeLemma", "decodeReadingSet", "run", "folCtx", "bundleCase"],
+      {"file": "lean/VE/Service/FamilyBundle.lean", "lines": 500, "sha256": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
+       "ranges": [[1, 500]], "declarations": ["decodeLeaf", "decodeLemma", "decodeReadingSet", "run", "folCtx", "bundleCase"],
        "reason": "bundle-mode decoder over the family contexts: lemmas, leaves, citations, reading sets and certificate bindings; the full file is pinned conservatively"},
       {"file": "lean/VE/Definitions/Bundle.lean", "lines": 471, "sha256": "fc86d51a7f848ba1ad4ca613f73494ef09c1e908c81ef1e0429b73c7351accbb",
        "ranges": [[1, 471]], "declarations": ["decodeLeaf", "decodeLemma"]},
@@ -718,7 +718,8 @@
                      "VE.Service.Family.closure_readings_some_sound", "VE.Service.Family.core_readings_all_sound",
                      "VE.Service.Family.core_readings_none_sound", "VE.Service.Family.core_readings_some_sound",
                      "VE.Service.Family.order_readings_all_sound", "VE.Service.Family.order_readings_none_sound",
-                     "VE.Service.Family.order_readings_some_sound"],
+                     "VE.Service.Family.order_readings_some_sound", "VE.Service.Family.fol_readings_all_sound",
+                     "VE.Service.Family.fol_readings_none_sound", "VE.Service.Family.fol_readings_some_sound"],
         "planned_theorems": [],
         "decoders": ["lean/VE/Service/Readings.lean", "lean/VE/Service/Family.lean"]
       },

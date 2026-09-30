@@ -103,9 +103,11 @@ def _lean_bundle_mode(data) -> str | None:
     takes FOL-family ve.core@0.2 environments without norm declarations or
     statement layers. `bundle` (`VE.Service.FamilyBundle`) takes every other
     ve.core@0.2 environment of any family (`validation.family_in_scope`),
-    norms environments included."""
-    from .backends.validation import family_in_scope
+    norms environments included, and the frozen v0 and v0.1 envelopes."""
+    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
     environment = data.get("environment") if type(data) is dict else None
+    if type(environment) is dict and environment.get("language") in LEGACY_LANGUAGES:
+        return "bundle"
     if type(environment) is not dict or environment.get("language") != "ve.core@0.2":
         return None
     if {"unit_schema", "units", "alternatives", "speech_acts"} & set(environment):

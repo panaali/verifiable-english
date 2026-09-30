@@ -115,3 +115,19 @@ def test_a_lean_only_rejection_is_leans(monkeypatch):
     fake(monkeypatch, reject)
     with pytest.raises(VEError, match="not accepted by the Lean surface parser"):
         parse(env, "true.\n")
+
+
+@pytest.mark.parametrize("kind", ["v0", "closure", "order"])
+def test_frozen_envelopes_parse_in_lean(monkeypatch, kind):
+    from tests.test_stage2_graph import legacy_environment
+    env = legacy_environment(kind)
+    seen = []
+    monkeypatch.setattr(dispatch, "observers", [lambda op, authority: seen.append((op, authority))])
+    for source in ["@x is base.\n", "broken.\n", "for every item a, (a is base).\n", "true.\n\n"]:
+        results = {}
+        for authority in ("python", "lean"):
+            monkeypatch.setenv("VE_AUTHORITY", authority)
+            results[authority] = (outcome(lambda: parse(env, source)),
+                                  outcome(lambda: canonicalize(env, source)))
+        assert results["lean"] == results["python"], source
+    assert ("parse", "lean") in seen

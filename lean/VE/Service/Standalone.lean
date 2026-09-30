@@ -162,9 +162,57 @@ def validated (environment : Json) (typing : Bool := false) : Except String Vali
 def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope :=
   (·.envelope) <$> validated environment
 
+/-! ## The frozen pre-route envelopes -/
+
+/-- A frozen pre-route envelope, decoded by its frozen decoder: `ve.core@0`
+(v0), or `ve.core@0.1` (closure, or order with exactly the order profiles). -/
+inductive Legacy where
+  | v0 (v : VE.Bridge.Vocabulary)
+  | closure (v : VE.Bridge.Vocabulary)
+  | order (v : VE.Order.Vocabulary)
+
+/-- Python's identity domain (`Environment.identity_version`). -/
+def Legacy.version : Legacy → String
+  | .v0 _ => "v0"
+  | .closure _ => "v0.1"
+  | .order _ => "v0.1-order"
+
+def Legacy.family : Legacy → String
+  | .v0 _ => "fol"
+  | .closure _ => "closure"
+  | .order _ => "order"
+
+def isLegacy (environment : Json) : Bool :=
+  environment.getObjValD "language" == .str "ve.core@0" ||
+    environment.getObjValD "language" == .str "ve.core@0.1"
+
+def decodeLegacy (environment : Json) : Except String Legacy := do
+  let language ← VE.Bridge.stringField environment "language"
+  if language == "ve.core@0" then pure (.v0 (← VE.Bridge.decodeEnvironment environment))
+  else if language == "ve.core@0.1" then
+    if environment.getObjValD "profiles" == toJson ["order@0", "relational-fol@0"] then
+      pure (.order (← VE.Order.Wire.decodeEnvironment environment))
+    else pure (.closure (← VE.Closure.Bridge.decodeEnvironment environment))
+  else throw "UnsupportedProfile: Unsupported language"
+
+def legacyEnvironmentId (l : Legacy) (environment : Json) : Except String String :=
+  VE.CertificateWire.digest s!"ve-environment-{l.version}\n" environment
+
+def legacyMeaningId (l : Legacy) (envId : String) (ast : Json) : Except String String :=
+  VE.CertificateWire.digest s!"ve-meaning-{l.version}\n"
+    (Json.mkObj [("environment_id", .str envId), ("ast", ast)])
+
 def environmentCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
+  if isLegacy environment then
+    let l ← decodeLegacy environment
+    let envId ← legacyEnvironmentId l environment
+    -- v0 names its one profile in `profile`; ve.core@0.1 lists `profiles`.
+    return VE.Route.Wire.ok id ([("environment_id", .str envId)] ++
+      (match l with
+       | .v0 _ => [("profile", environment.getObjValD "profile")]
+       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)])
   let e ← validatedEnvironment environment
   let environmentId ← environmentIdOf e.profiles environment
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
@@ -205,10 +253,37 @@ def normalizedModel (environment j : Json) : Except String Json := do
       decide ((a.getStr?.toOption.getD "") ≤ (b.getStr?.toOption.getD "")))).toArray))
   pure ((j.setObjVal! "relations" (Json.mkObj sorted)).setObjVal! "domains" (Json.mkObj domains))
 
+/-- An already-identified model (Python's `FiniteModel`) carries the identities
+it claims; each must be the recomputed one. -/
+def checkClaimed (j : Json) (environmentId modelId : String) : Except String Unit := do
+  if let .ok claimed := j.getObjVal? "claimed" then
+    VE.Bridge.exactFields claimed ["environment_id", "model_id"]
+    unless (← VE.Bridge.stringField claimed "environment_id") == environmentId do
+      throw "InvalidModel: model belongs to a different environment"
+    unless (← VE.Bridge.stringField claimed "model_id") == modelId do
+      throw "InvalidModel: model identity does not match its contents"
+
+def legacyModelCase (id : String) (environment model : Json) (j : Json) : Except String Json := do
+  let l ← decodeLegacy environment
+  match l with
+  | .v0 v | .closure v =>
+    let _ ← VE.Bridge.decodeModel v model
+    pure ()
+  | .order v =>
+    let _ ← VE.Order.Wire.decodeValidModel v model
+    pure ()
+  let environmentId ← legacyEnvironmentId l environment
+  let modelId ← VE.CertificateWire.digest s!"ve-model-{l.version}\n"
+    (Json.mkObj [("environment_id", .str environmentId),
+      ("model", ← normalizedModel environment model)])
+  checkClaimed j environmentId modelId
+  pure (VE.Route.Wire.ok id [("valid", .bool true), ("model_id", .str modelId)])
+
 def modelCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let model ← j.getObjVal? "model"
+  if isLegacy environment then return ← legacyModelCase id environment model j
   let checked ← validated environment
   let e := checked.envelope
   match e.family with
@@ -247,14 +322,7 @@ def modelCase (j : Json) : Except String Json := do
     s!"ve-model-{VE.Route.Wire.identityVersion e.profiles}\n"
     (Json.mkObj [("environment_id", .str environmentId),
       ("model", ← normalizedModel environment model)])
-  -- An already-identified model (Python's `FiniteModel`) carries the identities
-  -- it claims; each must be the recomputed one.
-  if let .ok claimed := j.getObjVal? "claimed" then
-    VE.Bridge.exactFields claimed ["environment_id", "model_id"]
-    unless (← VE.Bridge.stringField claimed "environment_id") == environmentId do
-      throw "InvalidModel: model belongs to a different environment"
-    unless (← VE.Bridge.stringField claimed "model_id") == modelId do
-      throw "InvalidModel: model identity does not match its contents"
+  checkClaimed j environmentId modelId
   pure (VE.Route.Wire.ok id [("valid", .bool true), ("model_id", .str modelId)])
 
 /-- A standalone typing request accepts one closed formula or a document of
@@ -470,11 +538,30 @@ def parseCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let source ← VE.Bridge.stringField j "source"
+  let rejected := "SyntaxError: the source is not accepted by the Lean surface parser"
+  if isLegacy environment then
+    let l ← decodeLegacy environment
+    unless source.utf8ByteSize ≤ maxSourceBytes do
+      throw s!"ResourceLimit: source exceeds {maxSourceBytes} bytes"
+    let (asts, canonical) ← match l with
+      | .v0 v => do
+        let some fs := VE.Surface.parse v.environment source | throw rejected
+        pure (fs.map VE.Route.Wire.encodeFormula, some (VE.Surface.print fs))
+      | .closure v => do
+        let some fs := VE.Closure.Surface.parse v.environment source | throw rejected
+        pure (fs.map encodeClosure, some (VE.Closure.Surface.print fs))
+      | .order v => do
+        let some fs := VE.Order.Surface.parse v.environment source | throw rejected
+        pure (fs.map VE.Order.Surface.formulaJson, none)
+    VE.Route.AstLimit.check asts
+    return VE.Route.Wire.ok id ([("ast", Json.arr asts.toArray)] ++
+      match canonical with
+      | some text => [("canonical", .str text)]
+      | none => [])
   let checked ← validated environment
   let e := checked.envelope
   unless source.utf8ByteSize ≤ maxSourceBytes do
     throw s!"ResourceLimit: source exceeds {maxSourceBytes} bytes"
-  let rejected := "SyntaxError: the source is not accepted by the Lean surface parser"
   let (asts, canonical) ← match e.family with
     | .fol => do
       let rv ← VE.Route.Run.decodeRouteVocabulary e

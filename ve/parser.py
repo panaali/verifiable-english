@@ -355,9 +355,11 @@ class _Parser:
 
 
 def _lean_parse_scope(env: Any) -> bool:
-    """Whether Lean's `parse` mode takes sources over `env`: ve.core@0.2 without
-    statement layers."""
+    """Whether Lean's `parse` mode takes sources over `env`: the frozen v0 and
+    v0.1 envelopes, and ve.core@0.2 without statement layers."""
     from .profiles import STATEMENT_LAYERS
+    if getattr(env, "language", None) in ("ve.core@0", "ve.core@0.1"):
+        return True
     return (getattr(env, "language", None) == "ve.core@0.2"
             and env.unit_schema is None
             and env.alternatives is None and not STATEMENT_LAYERS & set(env.profiles))
