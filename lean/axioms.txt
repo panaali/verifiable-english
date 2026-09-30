@@ -723,6 +723,19 @@
 'VE.Service.Readings.readings_none_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Readings.resolve_choice' depends on axioms: [propext, Quot.sound]
 'VE.Service.Readings.readings_some_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyBundle.mem_appendNew_left' does not depend on any axioms
+'VE.Service.FamilyBundle.mem_appendNew_right' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.lookupKnown_mem' depends on axioms: [propext]
+'VE.Service.FamilyBundle.citeAll_sound' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.checkLemma_sound' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.checkAll_sound' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.checkLemma_labels' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.checkAll_labels' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.bundle_sound' depends on axioms: [propext, Quot.sound]
+'VE.Service.FamilyBundle.fol_bundle_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyBundle.closure_bundle_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyBundle.core_bundle_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.FamilyBundle.order_bundle_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.GenericGraph.acyclicCheck_dependency' depends on axioms: [propext, Quot.sound]
 'VE.Service.GenericGraph.path_rank' depends on axioms: [propext, Quot.sound]
 'VE.Service.GenericGraph.acyclicCheck_sound' depends on axioms: [propext, Quot.sound]
@@ -1764,6 +1777,7 @@
 'VE.Service.runMode_parse' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_graph' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_readings' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.runMode_bundle' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.caseResult_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runRequest_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.results_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1888,4 +1902,4 @@
 'VE.Rights.valueSoft_of_decides' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_bar' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 214 source files; 1890 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 215 source files; 1904 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.

@@ -9,7 +9,7 @@ The single source of truth for the shapes of `ve_service` responses
   text does not split into cases). Result `i` is bound:
   `{"digest": digests[i], "index": i, "result"}`. A request error is bound too: it echoes
   the nonce, the mode and `digests`.
-* `<mode>.json` for the ten modes: `row` is the schema of one `result`; its context is
+* `<mode>.json` for every mode: `row` is the schema of one `result`; its context is
   the request case at the same position.
 * `common.json`: shared value domains, each the domain of the Lean decoder named in
   its `$comment` (formulas, terms, kinds, labels, ...).
