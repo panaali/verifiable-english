@@ -46,6 +46,7 @@ _FORM_KINDS = {
     "section_ref": {"anchor"}, "navigation": {"anchor", "unit"},
 }
 _LOCATION = {"section_ref", "navigation"}
+_LOCATION_KINDS = {"unit", "anchor"}
 _ELABORATED = {"pronoun", "demonstrative", "ordinal_pair"}
 _LIMITS = {"anchors": 1024, "mentions": 4096, "names": 1024,
            "documents": 64, "groups": 256, "constraints": 1024}
@@ -360,6 +361,14 @@ _LAYOUT = " \t\n\r"
 _CLOSING = ".,;:!?)"
 
 
+def _location(m):
+    """A location binding (1.4, the Lean `producing` negated): a `section_ref` or `navigation`, or
+    any mention of a `unit` or `anchor` target ("this broad pattern", "it" for a registered content
+    name). It produces no formula, never fills a slot and is never parsed."""
+    target = m.get("target")
+    return m.get("form") in _LOCATION or (type(target) is dict and target.get("kind") in _LOCATION_KINDS)
+
+
 def _canonical_wording(text):
     """Discourse wording (4.1(4), the Lean `canonicalWording`): once the layout characters around
     it are removed, the text is printable ASCII with canonical spacing: one space between words,
@@ -374,8 +383,8 @@ def _token_spans(doc, block):
     """Every mention's prose byte range starts and ends on token boundaries of its unit, which the
     lexer reads from the unit's own bytes (the Lean `toTokenSpans`, before any other check of the
     block's contents): an unknown unit or a range that does not is `InvalidInput`. With its span,
-    the unit of every recorded reference (a formula-producing mention) must have discourse wording
-    (`InvalidInput: discourse wording of <unit>`)."""
+    the unit of every recorded reference (a formula-producing mention, not a location binding) must
+    have discourse wording (`InvalidInput: discourse wording of <unit>`)."""
     units = {u["id"]: u for u in doc["units"]}
     mentions = block.get("mentions", [])
     for m in mentions if type(mentions) is list else []:
@@ -391,7 +400,7 @@ def _token_spans(doc, block):
         ends = [i for i, (_, _, b) in enumerate(tokens) if b == span[1]]
         if len(starts) != 1 or len(ends) != 1 or starts[0] > ends[0]:
             raise VEError(f"InvalidInput: mention {m['id']} span")
-        if (m.get("form") in _FORM_KINDS and m["form"] not in _LOCATION
+        if (m.get("form") in _FORM_KINDS and not _location(m)
                 and not _canonical_wording(units[m["unit"]]["source"])):
             raise VEError(f"InvalidInput: discourse wording of {m['unit']}")
 
@@ -1105,6 +1114,17 @@ def python_discourse(doc):
         if "reading" in m and m["reading"] not in {"assertive", "presuppositional", "distributive"}:
             raise VEError(f"InvalidInput: reading {m['reading']}")
         by_unit.setdefault(uid, []).append(m)
+    # a location target in a slot position (1.4): a pronoun or demonstrative naming a unit is a
+    # location binding only in a unit no derivation reads (no meaning, not a group span; the Lean
+    # `slotUnit`)
+    group_spans = {u for g in _array(block, "groups") if type(g) is dict and type(g.get("spans")) is list
+                   for u in g["spans"] if type(u) is str}
+    for mid, m in mentions.items():
+        uid, kind = m["unit"], m["target"]["kind"]
+        if (m["form"] not in _LOCATION and kind in _LOCATION_KINDS
+                and (units[uid]["content"] is not None or any(s["unit"] == uid for s in active)
+                     or uid in group_spans)):
+            raise VEError(f"TargetKindMismatch: {mid}: {m['form']}, {kind}")
     for uid, rows in by_unit.items():
         rows.sort(key=lambda m: (m["span"][0], -m["span"][1]))
         for i, a in enumerate(rows):
@@ -1140,7 +1160,8 @@ def python_discourse(doc):
             if target.get("name") not in env.predicates:
                 raise VEError(f"UnresolvedReference: {mid}")
         elif kind == "unit":
-            if type(target.get("units")) is not list or any(u not in units for u in target["units"]):
+            if (type(target.get("units")) is not list or not target["units"]
+                    or any(u not in units for u in target["units"])):
                 raise VEError(f"UnresolvedReference: {mid}")
             if "content_name" in target and not any(c["name"] == target["content_name"] and c["units"] == target["units"] for c in content_names):
                 raise VEError(f"ManifestMismatch: mentions.{mid}.content_name")
@@ -1155,7 +1176,7 @@ def python_discourse(doc):
             lemmas = doc["meta"].get("lemmas", [])
             if target.get("name") not in {l.get("meaning_id") for l in lemmas if type(l) is dict}:
                 raise VEError("Citation is absent, cyclic, or not earlier in the bundle")
-        statuses[mid] = "navigation" if form in _LOCATION else "recorded"
+        statuses[mid] = "navigation" if _location(m) else "recorded"
     groups = _array(block, "groups")
     for group in groups:
         if type(group) is dict and type(group.get("spans")) is list:
@@ -1167,14 +1188,14 @@ def python_discourse(doc):
         return unit["content"] is not None or any(s["unit"] == unit["id"] for s in active)
     for unit in doc["units"]:
         if has_meaning(unit) and unit["id"] not in grouped:
-            producing = [m for m in by_unit.get(unit["id"], []) if m["form"] not in _LOCATION]
+            producing = [m for m in by_unit.get(unit["id"], []) if not _location(m)]
             gap = _unrecorded(doc, unit, producing, displays)
             if gap is not None:
                 raise VEError(f"UnrecordedSlot: {unit['id']}: [{gap[0]}, {gap[1]})")
     presentations, failures = {}, []
     for unit in doc["units"]:
         rows = by_unit.get(unit["id"], [])
-        producing = [m for m in rows if m["form"] not in _LOCATION]
+        producing = [m for m in rows if not _location(m)]
         readings = [r["content"] for s in active if s["unit"] == unit["id"] for r in s["readings"]]
         meaning = has_meaning(unit)
         if not producing or unit["id"] in grouped:
@@ -1221,7 +1242,7 @@ def python_discourse(doc):
         for uid in group["spans"]:
             if uid not in units or units[uid]["content"] is not None or any(s["unit"] == uid and s is not rs for s in active):
                 raise VEError(f"IndependentFragment: {uid}")
-            if any(m["form"] not in _LOCATION for m in by_unit.get(uid, [])):
+            if any(not _location(m) for m in by_unit.get(uid, [])):
                 raise VEError(f"IndependentFragment: {uid}")
         reading = next(r for r in rs["readings"] if r["id"] == group["reading"])
         if not _same_witness(reading.get("content")):
