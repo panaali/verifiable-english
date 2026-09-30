@@ -340,11 +340,9 @@ def plan_choices(sets, *, limit=64, couplings=()):
 
 def _lean_readings_scope(env) -> bool:
     """Whether Lean's `readings` mode checks verdicts over `env`: a ve.core@0.2
-    FOL-family environment without statement layers."""
-    from .profiles import STATEMENT_LAYERS
-    return (getattr(env, "language", None) == "ve.core@0.2" and not env.closure and not env.order
-            and env.unit_schema is None and env.alternatives is None
-            and not STATEMENT_LAYERS & set(env.profiles))
+    environment of any family (`validation.family_in_scope`)."""
+    from .backends.validation import family_in_scope
+    return getattr(env, "language", None) == "ve.core@0.2" and family_in_scope(env)
 
 
 @semantic_entry("readings")

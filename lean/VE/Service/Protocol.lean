@@ -8,6 +8,7 @@ import VE.Service.EnglishRun
 import VE.Service.Standalone
 import VE.Service.Graph
 import VE.Service.Readings
+import VE.Service.Family
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -90,8 +91,8 @@ def runMode : Mode → Json → Json
   | .check, j => Standalone.reported Standalone.checkCase j
   | .identity, j => Standalone.reported Standalone.identityCase j
   | .parse, j => Standalone.reported Standalone.parseCase j
-  | .graph, j => Standalone.reported Graph.graphCase j
-  | .readings, j => Standalone.reported Readings.readingsCase j
+  | .graph, j => Standalone.reported Family.graphMode j
+  | .readings, j => Standalone.reported Family.readingsMode j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -480,9 +481,9 @@ theorem runMode_identity (j : Json) :
 theorem runMode_parse (j : Json) :
     runMode .parse j = Standalone.reported Standalone.parseCase j := rfl
 theorem runMode_graph (j : Json) :
-    runMode .graph j = Standalone.reported Graph.graphCase j := rfl
+    runMode .graph j = Standalone.reported Family.graphMode j := rfl
 theorem runMode_readings (j : Json) :
-    runMode .readings j = Standalone.reported Readings.readingsCase j := rfl
+    runMode .readings j = Standalone.reported Family.readingsMode j := rfl
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 
