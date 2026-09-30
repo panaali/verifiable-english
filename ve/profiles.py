@@ -23,6 +23,7 @@ REGISTRY = (
     ProfileRecord("definitions@0", "definitions", "statement", "inherited"),
     ProfileRecord("documents@1", "documents", "statement", "inherited"),
     ProfileRecord("nary@0", "", "checker", "closure+n-ary"),
+    ProfileRecord("norm-defaults@0", "norm-defaults", "statement", "inherited"),
     ProfileRecord("norms@0", "norms", "statement", "inherited"),
     ProfileRecord("soft-norms@0", "soft", "statement", "inherited"),
     ProfileRecord("order@0", "", "checker", "order"),
@@ -75,6 +76,8 @@ def checker_family(profiles):
         raise UnsupportedProfile("rights@0 requires soft-norms@0")
     if "soft-norms@0" in profiles and "norms@0" not in profiles:
         raise UnsupportedProfile("soft-norms@0 requires norms@0")
+    if "norm-defaults@0" in profiles and "norms@0" not in profiles:
+        raise UnsupportedProfile("norm-defaults@0 requires norms@0")
     return ("order" if "order@0" in checker else
             "closure+n-ary" if "nary@0" in checker else
             "closure" if "closure@0" in checker else "fol")
