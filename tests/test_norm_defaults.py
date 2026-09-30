@@ -744,3 +744,55 @@ def test_u3_hard_strict_reading_and_default_reading():
     # The hard rule's selection is untouched by fill (fill_selects_author).
     selected = strict.author.selection("cyberweapon_creation_permitted")[2]["no-cyberweapons"]
     assert strict.filled.selection("cyberweapon_creation_permitted")[2]["no-cyberweapons"] == selected
+
+
+# Rights route: fill after soften after correlate (u9).
+
+def arrest_environment(default):
+    from ve.rights import RightsEnvironment
+    raw = raw_environment({
+        "arrest_permitted": permission(default, act="{0} arrest {1}", args=("state", "person")),
+        "arbitrary": {"arguments": ["state", "person"], "description": "the arrest is arbitrary",
+                      "verbalisation": "{0} arrests {1} arbitrarily"}},
+        sorts=("state", "person"),
+        profiles=["norm-defaults@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"])
+    raw["vocabulary"]["rights"] = {"holders": ["person"], "bearers": ["state"], "protected": [], "alters": {}}
+    return RightsEnvironment(raw)
+
+
+ARTICLE_9 = [
+    {"right": {"name": "liberty", "holder": "person", "guard": ["top"], "lines": [
+        {"kind": "claim", "holder_slot": None, "cites": {},
+         "norm": {"name": "art9", "predicate": "arrest_permitted", "sign": False,
+                  "guard": ["binary", "arbitrary", ["var", 1], ["var", 0]], "unless": [], "over": []}}]}},
+    {"limitation": {"name": "l29", "scope": ["liberty"], "kinds": ["claim"], "decided_by": "unstated",
+                    "conditions": [{"name": "law", "role": "necessary", "decided_by": None,
+                                    "verbalisation": "determined by law"}], "factors": []}}]
+
+
+def arrest_situation(limited, determined=True):
+    return {"complete": True, "domains": {"state": ["s"], "person": ["p"]}, "constants": {},
+            "relations": {"arbitrary": [["s", "p"]], "rights__lim__1": [["s", "p"]] if limited else [],
+                          "rights__cond__1": [["s", "p"]] if limited and determined else []}}
+
+
+def test_u9_rights_gamma_third_variant_leaves_the_limited_arrest_undecided():
+    documents = {default: nd.UnspecifiedRightsDocument(arrest_environment(default), ARTICLE_9)
+                 for default in ("unspecified", "allow", "deny")}
+    expected = {"unspecified": ("UNDECIDED", None), "allow": ("SETTLED", True), "deny": ("SETTLED", False)}
+    for default, doc in documents.items():
+        limited = status_of(doc, "arrest_permitted", ("s", "p"), arrest_situation(True))
+        assert (limited.status, limited.value) == expected[default], default
+        unlimited = status_of(doc, "arrest_permitted", ("s", "p"), arrest_situation(False))
+        assert (unlimited.status, unlimited.value) == ("SETTLED", False)
+        assert nd.check_conflict(doc, prove=True).status == "CONFLICT-FREE"
+        # The limitation premise stays in the filled base: lim without its necessary condition is inadmissible.
+        situation = doc.situation(arrest_situation(True, determined=False))
+        assert not doc.fill_valid(situation, doc.canonical_filling(situation))
+    # The correlated rules, and so the rights and duties projected from their selections, are the same.
+    rules = {default: [r.to_dict() for r in doc.soft.rules] for default, doc in documents.items()}
+    assert rules["unspecified"] == rules["allow"] == rules["deny"]
+    doc = documents["unspecified"]
+    for name, formula in doc.author.selection("arrest_permitted")[2].items():
+        assert doc.filled.selection("arrest_permitted")[2][name] == formula
+    assert [r.name for r in doc.filled.rules if r.name.startswith("unsaid--")] == ["unsaid--arrest-permitted"]

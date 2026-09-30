@@ -234,7 +234,8 @@ class UnspecifiedDocument:
 
     # Spec 8: the author-side limits, in order, before `fill` is built.
     def _check_limits(self):
-        if len(self.env.predicates) + len(self.unspec) > MAX_PREDICATES:
+        # E‴ is D's vocabulary (E′ on the soft route) plus the unsaid predicates.
+        if len(self.author.env.predicates) + len(self.unspec) > MAX_PREDICATES:
             raise ResourceLimit("vocabulary size")
         if len(self.author.rules) + len(self.unspec) > 256:
             raise ResourceLimit("rules")
@@ -617,10 +618,11 @@ def _placeholder(data):
 
 
 class FilledSoftBaseEnvironment(Environment):
-    """Background_base(E′‴) ++ Soft_T ++ Fill_T."""
+    """Background_base(E′‴) ++ Soft_T (++ the rights limitation premises) ++ Fill_T."""
 
-    def __init__(self, data, soft_premises=(), fill_premises=()):
+    def __init__(self, data, soft_premises=(), fill_premises=(), rights_premises=()):
         object.__setattr__(self, "soft_premises", tuple(soft_premises))
+        object.__setattr__(self, "rights_premises", tuple(rights_premises))
         object.__setattr__(self, "fill_premises", tuple(fill_premises))
         super().__init__(data)
 
@@ -632,6 +634,7 @@ def _filled_soft_class():
         """`fill (soften T)`: a W1 tree over E′‴ whose base carries Soft_T and Fill_T."""
         fill_premises = ()
         soft_premises = ()
+        rights_premises = ()
 
         def base_environment(self):
             cached = getattr(self, "_filled_base", None)
@@ -643,7 +646,8 @@ def _filled_soft_class():
                 name: {k: v for k, v in decl.items() if k != "instruction_of"}
                 for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
             data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0")]
-            base = FilledSoftBaseEnvironment(data, self.soft_premises, self.fill_premises)
+            base = FilledSoftBaseEnvironment(data, self.soft_premises, self.fill_premises,
+                                             self.rights_premises)
             self._filled_base = base
             return base
 
@@ -689,7 +693,29 @@ class UnspecifiedSoftDocument(UnspecifiedDocument):
             sorts = self.env.predicates[left.core.predicate].arguments
             premises.append((f"soft:coherence:{a},{b}", _bind(Not(And(*sides)), sorts)))
         filled.soft_premises = tuple(premises)
+        filled.rights_premises = tuple(getattr(self.soft.extended_env, "rights_premises", ()))
         filled._filled_base = None
+
+
+class UnspecifiedRightsDocument(UnspecifiedSoftDocument):
+    """`U = (soften (correlate D), unspec)`: correlate and soften run over the
+    placeholder completions, then `fill` (spec 2.3, 3.3). The limitation
+    premises stay in the filled base; `F_p` is no right line and no narrowing."""
+
+    def __init__(self, env, units):
+        from .rights import RightsDocument, RightsEnvironment
+        if PROFILE not in env.profiles:
+            raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 is required")
+        if not isinstance(env, RightsEnvironment):
+            raise UnsupportedProfile("UnsupportedProfile: rights@0 is required")
+        self.env = env
+        self.rights = RightsDocument(RightsEnvironment(_placeholder(env.to_dict())), units)
+        self.soft = self.rights.soft_document
+        for rule in self.soft.rules:
+            if rule.core.name.startswith("unsaid--"):
+                raise VEError(f"InvalidInput: reserved name {rule.core.name}")
+        self.author = self.soft.elaborated
+        self._build()
 
 
 def _bindings(sorts, values):
