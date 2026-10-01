@@ -1,10 +1,11 @@
 # The `unspecified` completion (`norm-defaults@0`): specification
 
-> Status: statement specification, draft 1 (2026-09-29), written from [norm-defaults-PLAN.md](norm-defaults-PLAN.md)
+> Status: statement specification, draft 2 (2026-10-01): draft 1 with the statement changes the Lean build and the
+> integration review found (section 12). Draft 1 (2026-09-29) was written from [norm-defaults-PLAN.md](norm-defaults-PLAN.md)
 > draft 2, which applies the converged statement review of plan draft 1
 > (`manage-agents/debates/norm-defaults-spec/{astra,fable}.md`: FIX, CONVERGED after round 2); section 11 maps each
-> finding to its change. Sections 1 to 10 are the plan's sections 1 to 10; section 7's statements and section 9's
-> fixtures are copied from the plan exactly. This is the statement under review: a statement pass on this draft's
+> finding to its change. Sections 1 to 10 are the plan's sections 1 to 10; draft 1 copied section 7's statements and
+> section 9's fixtures from the plan exactly, and draft 2's departures from them are listed in section 12. This is the statement under review: a statement pass on this draft's
 > changes (section 7's changed statements and fixtures u1, u5, u6, u12, u13 and u16) decides whether the Lean and
 > Python work starts (PLAN-EXPAND2 rule 10), and a new draft alone opens nothing. Theorem statements and fixtures are
 > implementation obligations, not claims of completed proofs or tests. The evidence (plan section 0) and the work
@@ -31,8 +32,8 @@ The profile premise constrains fillings only at gaps (`Fill_T`, 2.4).
 
 In this specification: the decisions (1), the semantics (2), checks and reports (3), the English (4), translation and
 authoring policy (5), migration and conservativity (6), the Lean definitions and exact statements (7), agreement,
-diagnostics and limits (8), the fixtures (9), the open questions (10), and the statement review's findings and
-changes (11).
+diagnostics and limits (8), the fixtures (9), the open questions (10), the statement review's findings and
+changes (11), and the statement changes found by the Lean build and the integration review (12).
 
 ## 1. Decisions
 
@@ -175,14 +176,24 @@ one) is reported per predicate as `inherits_from`.
 Evidence (the search is untrusted, and every piece of evidence is checked):
 
 - **`table3`** computes outcomes on the finite base situation in DAG order, with every unsaid atom unknown, Kleene
-  connectives and finite quantifiers; where a pair closes it applies the profile rule, only where the side it sets
-  is a gap (its `gap` formula of 2.4 Kleene-true there): `m` := yes where `r` is yes and `m` is a gap; `r` := no
-  where `m` is no and `r` is a gap. A decided pair clash (`r` yes, `m` decided no) is never closed: it is a CONFLICT
-  (3.1). A definite entry is SETTLED (`table3_sound`). Kleene is incomplete (`u ∨ ¬u` is unknown), so an unknown
-  entry is not yet UNDECIDED.
-- **Exhaustive check.** For an unknown entry, enumerate the admissible fillings of the unsaid atoms in `ā`'s cone,
-  up to `MAX_UNSAID_ATOMS` (proposed 12, so at most 4,096 fillings); agreement is SETTLED
-  (`settled_of_enumeration`).
+  connectives and finite quantifiers. Each symbol is placed once and reads only the symbols placed before it. Where
+  a pair closes it applies the profile rule, only where the side it sets is a gap (its `gap` formula of 2.4
+  Kleene-true there): `m` := yes where `r` is yes and `m` is a gap; `r` := no where `m` is no and `r` is a gap. The
+  side it sets is the member being placed, or the earlier member if that is still unknown; a symbol placed between
+  the two members has already read the earlier one as unknown and keeps its entry (enumeration settles it). Python
+  and Lean compute this same table (`tabK`). A decided pair clash (`r` yes, `m` decided no) is never closed: it is a
+  CONFLICT (3.1). A definite entry is SETTLED (`table3_sound`). Kleene is incomplete (`u ∨ ¬u` is unknown), so an
+  unknown entry is not yet UNDECIDED.
+- **Exhaustive check.** For an unknown entry, enumerate the assignments of the unsaid atoms in `ā`'s cone, up to
+  `MAX_UNSAID_ATOMS` (proposed 12, so at most 4,096 assignments). The cone is the set of unsaid atoms on which the
+  Kleene value at `ā` depends, closed under the ground `Fill_T` instances that mention one of them (`coneAtoms`); the
+  other unsaid atoms stay unknown. An assignment under which some `Fill_T` formula is Kleene-false is skipped;
+  agreement of the rest is SETTLED (`settled_of_enumeration`). Any atom list is sound: an admissible filling agrees
+  with the assignment of its own values on the list, no `Fill_T` formula is false under it, and a definite Kleene
+  value is the filling's value. The closure makes the check exact: a touching instance is decided by the cone, an
+  instance outside it is true under the canonical filling off the cone, so every assignment that is kept extends to
+  an admissible filling. Enumerating only the cone with the other atoms fixed to one filling would not be sound; the
+  other atoms are unknown, not fixed. The budget counts the cone's atoms, in Python and in Lean.
 - **UNDECIDED** needs two finite fillings, each validated (`Fill_T` true on the situation), with opposite values at
   `ā` (`undecided_witness_sound`). The search starts from the canonical filling and flips atoms in the cone.
 - Otherwise the status is UNKNOWN, naming `MAX_UNSAID_ATOMS` or `MAX_EVALUATIONS`.
@@ -359,8 +370,9 @@ Recommendation: `unspecified` becomes the translation default **as policy, not a
   A deny or allow is grounded in a document-level block `{"completions": {"<p>": {"cites": ["<unit id>", …],
   "reason": "…"}}}`, validated like narrowing `reason_spans` (the ids exist and their spans are in the source); the
   block is part of the document identity, not of `environment_id`. A deny or allow with a `default reached` witness
-  and no citation is `UngroundedDefault: <p>`. An unreached one is harmless and not flagged: switching it is proved
-  meaning-preserving (`unreached_switch`).
+  and no citation is `UngroundedDefault: <p>`. One without a witness is not flagged. Switching it to `unspecified` is
+  proved meaning-preserving (`unreached_switch`) by a `gaps: none` certificate for `p` on the switched document
+  `U.switch p`; `default reached: none` on the document itself does not prove it (6.3).
 - **Authoring.** The IDE asks, showing the three legend sentences with a situation no rule covers, with no option
   preselected; it never fills in the value.
 - **Pilots.** The translator rule "NO INVENTED PERMISSIONS" (`manage-agents/ve-run-log.md:874`) generalises to "no
@@ -382,9 +394,19 @@ four environments. Detecting a translation document mechanically is Q7.
    certificate. Stale certificates are rejected (norms 10.8).
 3. **Migration audit.** `ve norms completions --audit <doc>` is Python, untrusted and report-only. For every deny or
    allow predicate it gives the `default reached` evidence. For a reached one it lists the conclusions and statuses
-   that would change if switched (a re-run under `unspecified`). For an unreached one it gives the certificate that
-   switching preserves meaning; UDHR SUMMARY.md:8's "completion is never used (checked under both completions)"
-   becomes one such certificate. It never rewrites anything automatically.
+   that would change if switched (a re-run under `unspecified`). For an unreached one it gives the `gaps` line of
+   `p` on the switched document `U.switch p`: a `gaps: none` certificate there is the certificate that switching
+   preserves meaning (`unreached_switch`, whose hypothesis it is through `normDefaults_wire_gaps_sound`), and a
+   reachable gap there is shown with its witness. UDHR SUMMARY.md:8's "completion is never used (checked under both
+   completions)" becomes one such certificate. It never rewrites anything automatically.
+
+   `default reached: none` on `U` is not that certificate. Counterexample: `x_required` unspecified with no rules,
+   paired with `x_permitted` (deny, rule "may X if may P"), and `p_permitted` deny with the rule "may P if X need not
+   be done". Under `U`, `O_x_permitted = O_p_permitted = ¬unsaid_x_required`, so `Fill_T` at the gap of `x_required`
+   forces `unsaid_x_required` no; then `p_permitted` is yes everywhere and never reached, and `U` has the certificate.
+   After switching `p_permitted`, the filling `x_required` yes, `p_permitted` yes (its gap filled yes),
+   `x_permitted` yes is admissible: an expansion that `U` rejects, and `x_required` moves from SETTLED no to
+   UNDECIDED. The switched document's `gaps` line for `p_permitted` is `reachable` (fixture a1).
 4. **Pilots and use cases migrate by re-running, never by editing frozen keys.** Constitution: u0165.s07 goes back
    to an `entity` sort with an unspecified completion, and u0156.s03 and u0165.s03 become unspecified. Agent-policy:
    one unspecified environment is added beside the four shipped ones, which remain as regressions; the answer key
@@ -488,8 +510,12 @@ def Expansion3 (U : UDoc) (B S : VE.Structure.{u}) : Prop :=
 def FillTables (U : UDoc) (B : VE.Structure.{u}) : Type u := String → List B.Carrier → Prop
 def withFill (U : UDoc) (B : VE.Structure.{u}) (F : FillTables U B) : VE.Structure.{u}
 def canonicalFill (U : UDoc) (B : VE.Structure.{u}) : FillTables U B -- true on permission pair members, else false
+/-- `canon` read on typed tuples: a layer symbol's relation holds only at tuples of its declared sorts (12, item 1). -/
+def canonTyped (D : Doc) (B : VE.Structure.{u}) : VE.Structure.{u} :=
+  { B with relation := fun n vs => (canon D B).relation n vs ∧
+      (n ∈ layerNames D.T → ∃ ss, D.E.predicates n = some ss ∧ VE.TupleTyped B ss vs) }
 def expandFill (U : UDoc) (B : VE.Structure.{u}) (F : FillTables U B) : VE.Structure.{u} :=
-  forget (unsaidNames U) (canon (fill U) (withFill U B F))
+  forget (unsaidNames U) (canonTyped (fill U) (withFill U B F))
 
 /-- Statuses (2.5) count every admissible filling, conflicting ones included. -/
 def SettledAs (U : UDoc) (B : VE.Structure.{u}) (r : Regulated) (vs : List B.Carrier) (b : Bool) : Prop :=
@@ -553,7 +579,8 @@ theorem conflictFreeU_iff (U) (h) :
 theorem conflictFreeU_consistent (U) (h) (hc : ConflictFreeU.{u} U) (B : VE.Structure.{u})
     (hB : BaseAdmissible U.D B) : ∃ S, Expansion3 U B S
 
-theorem settled_expansions (U) (h) (B) (hB : BaseAdmissible U.D B) (r) (hr) (vs : List B.Carrier) (b : Bool)
+theorem settled_expansions (U) (h) (B) (hB : BaseAdmissible U.D B) (r) (hr) (vs : List B.Carrier)
+    (typed : VE.TupleTyped B r.sorts vs) (b : Bool)
     (hs : SettledAs U B r vs b) (F : FillTables U B) (hF : BaseAdmissibleU U (withFill U B F))
     (hcf : ConflictFree (fill U) (withFill U B F)) :
     Expansion3 U B (expandFill U B F) ∧ ((expandFill U B F).relation r.name vs ↔ b = true)
@@ -565,17 +592,18 @@ theorem settled_all_expansions (U) (h) (hc : ConflictFreeU.{u} U) (r) (hr) (S : 
     (b : Bool) (hs : SettledAs U (restrictAll U.D.T S) r vs b) :
     S.relation r.name vs ↔ b = true
 theorem undecided_expansions (U) (h) (hc : ConflictFreeU.{u} U) (B) (hB : BaseAdmissible U.D B) (r) (hr)
-    (vs : List B.Carrier) (hu : UndecidedAt U B r vs) :
+    (vs : List B.Carrier) (typed : VE.TupleTyped B r.sorts vs) (hu : UndecidedAt U B r vs) :
     ∃ F₁ F₂ : FillTables U B, Expansion3 U B (expandFill U B F₁) ∧ Expansion3 U B (expandFill U B F₂) ∧
       (expandFill U B F₁).relation r.name vs ∧ ¬ (expandFill U B F₂).relation r.name vs
 
-/-- Switching a never-reached deny/allow completion to `unspecified` changes no expansion (5, 6.3). -/
+/-- Switching a deny/allow completion to `unspecified` changes no expansion when no admissible filling of the
+    switched document reaches it (5, 6.3): the hypothesis is `gaps: none` for `p` on `U.switch p`. -/
 theorem unreached_switch (U) (h) (p : String) (hp : p ∈ regulatedNames U.D.T) (hnp : p ∉ U.unspec)
     (h' : WellFormedU (U.switch p) = true)
-    (hnr : ∀ B : VE.Structure.{u}, BaseAdmissibleU U B → ∀ vs, VE.TupleTyped B (sortsOf U.D p) vs →
-      ¬ (reachedF U p).denote B (tupleVal vs)) :
+    (hnr : ∀ B : VE.Structure.{u}, BaseAdmissibleU (U.switch p) B → ∀ vs, VE.TupleTyped B (sortsOf U.D p) vs →
+      ¬ (reachedF (U.switch p) p).denote B (tupleVal vs)) :
     ∀ B S : VE.Structure.{u}, BaseAdmissible U.D B → (Expansion3 U B S ↔ Expansion3 (U.switch p) B S)
-  -- U.switch and reachedF are defined above
+  -- U.switch and reachedF are defined above; the form with hnr over U's fillings is false (6.3, 12 item 2)
 ```
 
 Finite evidence. `FiniteFill U α` is a finite table per unsaid predicate, and `M.withFill F` is the finite model
@@ -590,8 +618,8 @@ theorem settled_of_table3 {α : Type u} [DecidableEq α] (U) (h) (M) (valid) (hb
     (ht : table3 U M r.name vs = some b) : SettledAs U M.asStructure r vs b
 theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U) (h) (M) (valid) (hb) (r) (hr) (vs) (typed) (b)
     (he : enumerateSettled U M r.name vs = some b) : SettledAs U M.asStructure r vs b
-  -- enumerateSettled: every filling of the cone's unsaid atoms (≤ MAX_UNSAID_ATOMS) that passes fillValid
-  -- gives b, and at least one does
+  -- enumerateSettled: every assignment of the closed cone's unsaid atoms (coneAtoms, ≤ MAX_UNSAID_ATOMS; the
+  -- other unsaid atoms unknown) under which no Fill_T formula is Kleene-false gives b, and at least one is left
 theorem undecided_witness_sound {α : Type u} [DecidableEq α] (U) (h) (M : VE.FiniteModel α)
     (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true) (F₁ F₂ : FiniteFill U α)
     (h₁ : fillValid U M F₁ = true) (h₂ : fillValid U M F₂ = true)
@@ -623,7 +651,8 @@ theorem excepted_lifts (D : SoftDoc) (unspec) (h) (r) (hr : r.name ∈ unspec) (
     (hx : (exceptedF D N).denote S (tupleVal vs)) :
     Value3 ⟨soften D, unspec⟩ r S vs = .unsaid
   -- companion excepted_collapses_under_deny: same hypotheses with r ∉ unspec, r.allowByDefault = false give .no
-theorem fill_rights_value (D : RightsDoc) (unspec) (h) (r) (hr) (S : VE.Structure.{u}) (vs : List S.Carrier) :
+theorem fill_rights_value (D : RightsDoc) (unspec) (h : WellFormedRights D = true) (r)
+    (hr : r ∈ (correlate D).T.regulated) (S : VE.Structure.{u}) (vs : List S.Carrier) :
     Value3 ⟨soften (correlate D), unspec⟩ r S vs =
       value3 (DecidesR D S (tupleVal vs) r.name true) (DecidesR D S (tupleVal vs) r.name false)
         (completionOf ⟨soften (correlate D), unspec⟩ r)                     -- by correlate_faithful
@@ -664,11 +693,14 @@ default-reached targets, the report and the migration audit. **Lean** regenerate
 certifies all the evidence. **Rust** never elaborates (norms 11.6): it receives the filled premise list untrusted, and
 its models carry the `unsaid__` tables as ordinary base tables; the only Rust change is fixtures.
 
-**Differentials.** 1,000 generated trees × completion assignments over {deny, allow, unspecified}, including pairs
-and guards that mention lower regulated predicates, give byte-identical `T‴` and `Fill_T` in Python and Lean. 300
-generated finite situations give identical `table3` results and statuses. Lean validates every UNDECIDED and latent
-witness, and Rust's evaluator agrees on every supplied premise list. norms 10.8's mutations, plus flipping a
-completion and dropping a `Fill_T` premise, are rejected by the bound hashes.
+**Differentials** (`conformance/norm_defaults_differential.py`, run by `tests/test_norm_defaults_three_way.py`).
+1,000 generated trees × completion assignments over {deny, allow, unspecified}, including a pair and guards that
+mention lower regulated predicates in a drawn order (so other symbols land between the pair's members), give
+byte-identical `T‴` and `Fill_T` (and every other regenerated output) in Python and Lean. On 1,000 generated finite
+situations (at least the 300 asked for; some have more unsaid atoms than `MAX_UNSAID_ATOMS`) every `table3` entry is
+identical and every status is the one Lean's replay reports; Lean validates every UNDECIDED and latent witness. Rust's
+evaluator agrees on every premise list in its fixture file (`conformance/norm_defaults_rust.json`). norms 10.8's
+mutations, plus flipping a completion and dropping a `Fill_T` premise, are rejected by the bound hashes.
 
 **Diagnostics** (shared text): `UnsupportedProfile: unspecified completion requires norm-defaults@0`;
 `InvalidInput: reserved name <n>` (the `unsaid__` and `unsaid--` prefixes); `InvalidModel("norms", "<unsaid__p> is a
@@ -764,6 +796,12 @@ a status.
   `256 − |unspec|` rules and a 56-byte `p` the document is accepted and `fill U` passes `WellFormed`. No diagnostic
   mentions `unsaid--`; `ResourceLimit` is never a status.
 - **Z: conservativity.** The full existing suite, conformance reports and frozen hashes are unchanged.
+- **Review regressions** (12; `conformance/norm_defaults_three_way.py`). **b1:** `x_permitted` unspecified with no
+  rules, `a_permitted` deny with "may A if may X", `x_required` deny with "must X if c", `c(a)` true: `table3` gives
+  `x_permitted(a)` yes and leaves `a_permitted(a)` unknown in Python and Lean, and enumeration settles it yes in both.
+  **b2:** u12 over 13 acts (13 unsaid atoms, one in each point's cone): SETTLED yes by enumeration in both. **a1:**
+  6.3's counterexample: `p_permitted` has `default reached: none` under deny and `gaps: reachable` when switched; the
+  audit gives no certificate for it, and lists `x_required` moving from SETTLED no to UNDECIDED.
 
 ## 10. Open questions
 
@@ -825,3 +863,20 @@ round-2 keyword, which does not refer to position, so the rendering order is unc
 `settled_all_expansions`, `undecided_expansions`, `undecided_witness_sound` and the `enumerateSettled` comment), 2.5's
 `table3` pair rule, 4.1's legend and its one reading, 8's limits and diagnostics, and fixtures u1, u5, u6, u12, u13
 and u16. If it is clean, the build starts; everything else in sections 2 to 9 is built as specified.
+
+## 12. Statement changes found by the Lean build and the integration review
+
+The Lean build (`lean/NORMDEFAULTS.md`, "Findings") showed four section-7 statements false as written; the DRI accepted
+each change, and the integration review (2026-10-01, `manage-agents/norm-defaults-review-astra.final.md`,
+`manage-agents/reviews/norm-defaults-review-fable.md`) found that this specification and the Python audit still
+stated or implemented the false forms, and that Python and Lean computed `table3` and enumeration differently. Section
+7 now shows the statements as proved.
+
+| # | Finding | Change |
+|---|---|---|
+| 1 | `expandFill` with `canon` need not be admissible: `canon` holds on ill-typed tuples wherever a substituted outcome is true there; with typed tuples only, `settled_expansions` and `undecided_expansions` still fail at an ill-typed `vs` | `canonTyped`; `expandFill` uses it; both theorems take `typed : VE.TupleTyped B r.sorts vs`, as `settled_all_expansions` does (11, item 10) |
+| 2 | `unreached_switch` with `hnr` over `U`'s fillings is false (6.3's counterexample) | `hnr` over the admissible fillings of `U.switch p`, reading `reachedF (U.switch p) p`; 5 and 6.3 say the certificate is `gaps: none` on the switched document, and the migration audit proves it there (`audit_completions`: `switched_gaps`, `certificate`, `switched_witness`) |
+| 3 | `fill_rights_value` needs `WellFormedRights D` (what `correlate_faithful` needs); `WellFormedU` does not imply it, and the conclusion never needs `WellFormedU` | `h : WellFormedRights D = true` in place of `WellFormedU` |
+| 4 | `table3` (review B1): Python closed the earlier member of a pair on demand, before the symbols placed in between read it; Lean's `closeRule` closes it only when the later member is placed | Python follows Lean step for step (2.5); every fixture point and every differential point compares the two tables |
+| 5 | Enumeration (review B2): Lean enumerated every unsaid atom of the situation, Python the closed cone, so a wide situation with a small cone was SETTLED in Python and UNKNOWN in Lean | Lean enumerates the closed cone (`coneAtoms`), as 2.5 always said; `settled_of_enumeration`'s statement is unchanged and holds for any atom list (2.5 gives the argument) |
+| 6 | Spec 8's differentials were not built (review) | built, as 8 now describes |
