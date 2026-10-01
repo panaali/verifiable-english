@@ -52,7 +52,7 @@ def test_three_way_fixtures(lean_executable):
     result = run(lean_executable)
     rows = {row["fixture"]: row for row in result["fixtures"]}
     assert [r for r in result["fixtures"] if r["mismatches"]] == []
-    assert result["passed"] == len(rows) == 16
+    assert result["passed"] == len(rows) == 18
     assert all(set(r["kinds"]) >= {"elaborate", "table3", "status", "conflict", "gaps", "certificate",
                                    "admission"} for r in rows.values())
     # The spec 9 expectations, as both engines report them.
@@ -73,6 +73,11 @@ def test_three_way_fixtures(lean_executable):
     between = rows["b1-between"]
     assert between["statuses"][:4] == ["SETTLED yes", "UNDECIDED", "SETTLED yes", "UNDECIDED"]
     assert between["evidence"][:4] == ["table3", "undecided", "enumerate", "undecided"]
+    # loop recheck B1: row `b` of `x_required` does not read the close made at row `a`
+    # (through ∃ or a constant): unknown in both tables, settled by enumeration in both
+    assert rows["b1-rows-exists"]["evidence"] == ["table3", "enumerate"] * 2 + ["enumerate", "table3"] * 2
+    assert set(rows["b1-rows-exists"]["statuses"]) == {"SETTLED yes"}
+    assert rows["b1-rows-const"]["evidence"][:4] == ["table3", "enumerate"] * 2
     # review B2: 13 unsaid atoms in the situation, one in each point's cone
     assert set(rows["b2-wide"]["statuses"][13:]) == {"SETTLED yes"}  # after y_permitted
     assert set(rows["b2-wide"]["evidence"][13:]) == {"enumerate"}

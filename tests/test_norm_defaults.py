@@ -238,6 +238,29 @@ def test_table3_leaves_a_symbol_between_pair_members_unknown_and_enumeration_set
     assert (settled.status, settled.value, settled.evidence) == ("SETTLED", True, "enumeration")
     assert (doc.status(situation, "x_permitted", ("a",)).evidence) == "table3"
 
+
+@pytest.mark.parametrize("kind", ["exists", "const"])
+def test_table3_rows_of_a_symbol_read_the_table_before_it(kind):
+    """Loop recheck B1: the close of `x_permitted(a)` made at row `a` of `x_required` is not
+    read by its row `b` (through ∃ or a constant), so the table does not depend on row order;
+    Lean's `tabK` gives the same entries (`Examples.lean`, `uRows`)."""
+    from conformance.norm_defaults import rows_close, rows_situations
+    raw, units = rows_close(kind)
+    doc = nd.UnspecifiedDocument(Environment(raw), [NormDocument._decode(u) for u in units])
+    assert doc.filled.order == ("x_permitted", "x_required")
+    for raw_situation in rows_situations(kind):
+        (held,) = raw_situation["relations"]["c"][0]
+        (other,) = {"a", "b"} - {held}
+        situation = doc.situation(raw_situation)
+        table = doc.table3(situation)
+        assert table[("x_required", (held,))] is True and table[("x_permitted", (held,))] is True
+        assert table[("x_required", (other,))] is None and table[("x_permitted", (other,))] is None
+        if kind == "const" and held == "b":
+            continue  # `x_required(a)` reads `x_permitted(k)`, its own pair member: UNDECIDED
+        for p in ("x_required", "x_permitted"):
+            settled = doc.status(situation, p, (other,))
+            assert (settled.status, settled.value, settled.evidence) == ("SETTLED", True, "enumeration")
+
 # fill (2.3) and its conservativity (6.1, fixture Z).
 
 def test_fill_shape():
@@ -983,7 +1006,7 @@ def test_rust_fixture_is_the_python_regeneration():
     from conformance.norm_defaults import RUST_FIXTURES, fixture_text, rust_fixture_rows
     rows = rust_fixture_rows()
     assert RUST_FIXTURES.read_text() == fixture_text(rows)
-    assert len(rows) == 92 and {r["kind"] for r in rows} == {"base", "layers"}
+    assert len(rows) == 113 and {r["kind"] for r in rows} == {"base", "layers"}
     assert any(not r["admissible"] for r in rows if r["kind"] == "base")
     assert all("norm-defaults@0" not in r["environment"]["profiles"] for r in rows)
     assert json.loads(RUST_FIXTURES.read_text()) == rows

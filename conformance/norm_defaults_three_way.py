@@ -36,8 +36,8 @@ from ve.environment import Environment  # noqa: E402
 from ve import norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
 from ve.norms import NormDocument  # noqa: E402
-from conformance.norm_defaults import (_environment, _norm, _regulated, between, sources,  # noqa: E402
-                                       switch_counterexample)
+from conformance.norm_defaults import (ROW_GUARDS, _environment, _norm, _regulated, between,  # noqa: E402
+                                       rows_close, rows_situations, sources, switch_counterexample)
 
 NORMS_ROUTE = ("u1", "u5a", "u5b", "u5c", "u6", "u7", "u12")
 ACT = {"complete": True, "domains": {"act": ["a", "b"]}, "constants": {}, "relations": {}}
@@ -45,7 +45,8 @@ ACT = {"complete": True, "domains": {"act": ["a", "b"]}, "constants": {}, "relat
 
 def variants():
     """The deny and allow variants of u1 and u6 (spec 9), u15's unreached switch, and the
-    review regressions: a symbol placed between the members of a pair (B1), a point whose
+    review regressions: a symbol placed between the members of a pair (B1), rows of one symbol
+    that must not read a close made at another of its rows (B1, loop recheck), a point whose
     cone is small in a situation with more unsaid atoms than `MAX_UNSAID_ATOMS` (B2), and
     6.3's counterexample to taking the switch certificate from the unswitched document (A1)."""
     u1 = next(raw for name, raw in _raw_sources() if name == "u1")
@@ -59,6 +60,8 @@ def variants():
         yield f"u15-{default}", _environment({"x_permitted": _regulated("permission", default)}), \
             [_norm("never", "x_permitted", False)], [ACT]
     yield "b1-between", *between(), [{**ACT, "relations": {"c": [["a"]]}}]
+    for kind in ROW_GUARDS:
+        yield f"b1-rows-{kind}", *rows_close(kind), rows_situations(kind)
     y = ["unary", "y_permitted", ["var", 0]]
     yield "b2-wide", _environment({
         "x_permitted": _regulated("permission", "deny"),
