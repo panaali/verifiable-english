@@ -19,12 +19,12 @@ obligations and a risk default were invented. Those statuses are withdrawn.
 | Status | 2026-09-27 baseline | Previous (withdrawn) | Now |
 |---|---:|---:|---:|
 | CHECKED | 780 B (10.2%), 12 units | 6,709 B (88.1%), 67 | **3,351 B (44.0%), 40** |
-| LABELLED | 3,513 B (46.1%), 50 | 853 B (11.2%), 25 | 1,107 B (14.5%), 26 |
+| LABELLED | 3,513 B (46.1%), 50 | 853 B (11.2%), 25 | 1,029 B (13.5%), 25 |
 | OPEN | 2,081 B (27.3%), 22 | 0 B (0%), 0 | 2,114 B (27.7%), 19 |
-| UNFORMALISED | 1,245 B (16.3%), 9 | 57 B (0.7%), 1 | 1,047 B (13.7%), 8 |
+| UNFORMALISED | 1,245 B (16.3%), 9 | 57 B (0.7%), 1 | 1,125 B (14.8%), 9 |
 | **Total** | **7,619 B, 93** | **7,619 B, 93** | **7,619 B, 93** |
 
-`ve document coverage` reports 100% byte accounting, 4 open terms and 18
+`ve document coverage` reports 100% byte accounting, 4 open terms and 19
 assumption lines. `ve document check` reports premise consistency `UNKNOWN`
 under its bounded search. A CHECKED status means a typed formula states what
 the span says. It does not establish the draft's predictions, provenance,
@@ -38,12 +38,19 @@ between named constants, quantifiers, equality or a defined term. Every
 content word in its symbols occurs in the span or in a recorded resolution.
 Tests enforce both rules.
 
-The kind keeps the speaker. Only the author's notes are plain assertions (18
-units, each with a signed reading set). OLD, NEW and PASTE wording is
-attributed to that text (16 units). Each title candidate is attributed to its
-candidate (4). The intention in note 5 (u062) and the paste instruction (u067)
-make up the last two. Hedges and commitments stay nested inside the
-attribution, for example `old_text says (applicant promised …)`.
+The kind keeps the speaker and the force. Only the author's notes are plain
+assertions (19 units, each with a signed reading set). OLD, NEW and PASTE
+wording is attributed to that text (16 units). Each title candidate is
+attributed to its candidate (4). The paste instruction (u067) is the last one.
+Hedges and commitments stay nested inside the attribution, for example
+`old_text says (applicant promised …)`. A note is never recast as a belief,
+an intention or exposition: an OPEN note is `author says …`, and an
+unformalisable note keeps the plain `unformalised` kind.
+
+VEX is a proposal. Where the draft calls it "proposed mandatory evidence" or
+says it "would require" evidence, the reading states that VEX is evidence and
+that, once adopted, it is mandatory for statistical and approximate claims and
+requires evidence. Nothing states that VEX is adopted.
 
 ## Author choices for the five terms
 
@@ -72,7 +79,7 @@ is OPEN on it:
 | Term | Used by CHECKED units | OPEN units |
 |---|---|---|
 | `affordable_proof` | `u038 u050 u089`; `u051` uses its `within_budget` clause | none |
-| `matched_cost` | `u062` (the planned comparison, as an intention) | `u013 u018 u024 u079` |
+| `matched_cost` | `u062` (the comparison in the revised form text includes formalisation and proof production) | `u013 u018 u024 u079` |
 | `real_artefact` | `u041 u092` (real artefacts in the benchmark test transfer) | `u015 u021 u031 u063 u082` |
 | `misleading_formalisation` | none | `u014 u017 u040 u064 u078 u091` |
 | `catastrophic_risk` | none | `u022 u027 u083 u085` |
@@ -95,7 +102,11 @@ author, decides what its form heading means by "catastrophic risk".
 | Milestone clauses turned into `require` obligations with deny/allow defaults | Removed. Milestones are LABELLED plans, or OPEN where they mention a defined term. |
 | Risk default `unexamined: possible` | Removed. No risk policy, severity class or default is supplied. |
 | u054 "claims no novelty" | Now "the draft does not claim novelty …". |
-| u039/u090 made VEX require the quality review | VEX requires evidence, and that evidence still needs quality review. |
+| u039/u090 made VEX require the quality review | Once adopted, VEX requires evidence, and that evidence still needs quality review. |
+| u007, u009, u056, u074, u076 dropped "mandatory evidence": the readings held if VEX were optional or not evidence | VEX is evidence and, once adopted, is mandatory for statistical and approximate claims (`is_evidence`, `adopted`, `mandatory_for`). |
+| u039/u090 dropped the force of "would": a required evidence item existed now | The requirement is conditional on VEX being adopted. |
+| u062 "are included" was recast as the applicant's intention | Asserted, with a signed reading set. |
+| Same class: u033 (OLD hope) was the applicant's, not the OLD text's; u053 and u069 were the author's beliefs; u063 and u064 were exposition | u033 is attributed to the OLD text. u053 (`vague_evaluation`) and u069 (`vague_comparison`) are plain UNFORMALISED notes, and u063 and u064 are `author says …` (OPEN). |
 | u060 attributed the author's motivation to the update | UNFORMALISED. No attribution to the update remains. |
 | Omissions in u003, u019, u026, u029, u052 | u003 states both tools and all three issues, and u029 both harms. u052 keeps "in general". u019 is a LABELLED plan, and u026 is UNFORMALISED. |
 | `decide()` gaps | It now checks proof-cost recording, budget and deadline registered before the claim, reviewer blindness and the severity assessment. |
@@ -121,6 +132,9 @@ choice, recorded in `RESOLUTIONS` and in the reading set's `why`.
 | u062 | "the matched-cost comparison": the one in the revised form text |
 | u067 | "its label or count": the pasted candidate's |
 | u068 | "sentence and paragraph": respectively |
+| u007, u056, u074 | "proposed mandatory evidence (VEX)": VEX is evidence and, once adopted, is mandatory for the two claim classes |
+| u009, u076 | "developing mandatory evidence (VEX)": the same, for the VEX being developed |
+| u039, u090 | "would": once VEX is adopted |
 | u070 | "its": the proof rule; "the extra space": in the revised passages |
 
 ## Remaining limits
@@ -130,10 +144,11 @@ choice, recorded in `RESOLUTIONS` and in the reading set's `why`.
 | Causation route together with definitions | `u029 u035 u047 u086` | UNFORMALISED here; checked in `causal.ve.md` |
 | Means and motivation links | `u026 u060 u084` | UNFORMALISED |
 | Baseline and tolerance for "close to the current length" | `u069` | UNFORMALISED |
+| A sense of "appropriate" for the existing credit | `u053` | UNFORMALISED |
 | Natural wording for this vocabulary | all 40 CHECKED | The natural grammar's lint rejects these templates, so every rendering is the explicit form, parsed back to the same formula. |
 
-Headings, OLD/NEW/PASTE labels, plans, the hope in `u033` and the credit
-judgment in `u053` remain LABELLED.
+Headings, OLD/NEW/PASTE labels, plans and the OLD text's hope in `u033`
+remain LABELLED.
 
 ## Recheck
 
