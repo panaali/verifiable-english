@@ -873,7 +873,7 @@
   "tests/test_compose_dispatch.py::test_row_on_python[D9]",
   "tests/test_compose_dispatch.py::test_unsorted_and_repeated_profiles",
   "tests/test_compose_integration.py::test_gamma_document_admission_and_end_to_end",
-  "tests/test_compose_integration.py::test_gamma_slot_models_python_rust_and_lean_fixture",
+  "tests/test_compose_integration.py::test_gamma_slot_models_python_rust_and_lean_agree",
   "tests/test_conformance.py::test_acceptance_rejects_valid_but_substituted_candidate_ast",
   "tests/test_conformance.py::test_all_semantic_boundaries_recheck_raw_ast",
   "tests/test_conformance.py::test_alpha_variants_have_same_ast_and_meaning_but_distinct_source_id",
