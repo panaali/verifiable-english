@@ -13,13 +13,19 @@ Those tests do not transfer Lean's proofs to Rust or prove the input decoders.
 Run from the repository root. Both cargo directories must stay in the worktree
 in this sandbox; `.gitignore` excludes them. `Cargo.lock` pins the dependencies.
 
+`lean/checkers.lock` pins the SHA-256 of `rust/target/release/ve`, and the Rust
+backend refuses any other binary. Build through `tools/rust_build.py`: it sets
+`CARGO_HOME` and `CARGO_TARGET_DIR` as below and maps the checkout, `CARGO_HOME`
+and the target directory to fixed names with `--remap-path-prefix`. A plain
+`cargo build` embeds the absolute paths of dependency sources, so its hash
+depends on where the checkout is. The script prints the hash and whether it is
+pinned; after a change to the Rust sources, pin the printed hash.
+
 ```sh
-export CARGO_HOME="$PWD/.cargo-home"
-export CARGO_TARGET_DIR="$PWD/rust/target"
-cargo build -j 2 --locked --release --manifest-path rust/Cargo.toml
-cargo test -j 2 --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
+python3 tools/rust_build.py            # release build; --check fails if unpinned
+python3 tools/rust_build.py test -j 2 --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
 cargo fmt --manifest-path rust/Cargo.toml --all --check
-cargo clippy -j 2 --manifest-path rust/Cargo.toml --workspace --all-targets --all-features -- -D warnings
+python3 tools/rust_build.py clippy -j 2 --manifest-path rust/Cargo.toml --workspace --all-targets --all-features -- -D warnings
 
 rust/target/release/ve parse --env examples/environment.json --source examples/requirements.ve
 rust/target/release/ve format --env examples/environment.json --source examples/requirements.ve
