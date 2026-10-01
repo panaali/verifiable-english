@@ -1,0 +1,3 @@
+**(a) A fall happens.**
+
+The text explicitly states "If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall," and since the parcel weighs 3 kilograms (which is greater than 2) and the robot takes the ramp, the condition for a fall is met.

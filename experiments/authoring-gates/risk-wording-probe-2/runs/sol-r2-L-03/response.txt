@@ -1,0 +1,1 @@
+(c) No: it was 60 gigabytes or less. If it had been greater than 60 gigabytes, compressing it would have caused a server outage.

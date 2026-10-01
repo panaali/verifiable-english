@@ -1,0 +1,1 @@
+(a) No: it was 60 gigabytes or less, because compressing files larger than 60 gigabytes would have caused an outage, and none happened.

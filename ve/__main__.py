@@ -92,6 +92,23 @@ def _main(argv=None):
     if argv[:1] == ["document"]:
         from .document import main as document_main
         return document_main(argv[1:])
+    if argv[:2] == ["norms", "completions"]:
+        completions_parser = argparse.ArgumentParser(prog="python -m ve norms completions")
+        completions_parser.add_argument("--audit", required=True,
+                                        help="ve-document@1, or JSON with environment and norms")
+        completions_parser.add_argument("--situation", help="complete finite base situation JSON")
+        completions_parser.add_argument("--no-prove", action="store_true",
+                                        help="skip the certificates for unreached completions")
+        options = completions_parser.parse_args(argv[2:])
+        try:
+            from .norm_defaults import audit_completions, load_audit_source
+            env, units = load_audit_source(_read(options.audit))
+            situation = loads_json(_read(options.situation)) if options.situation else None
+            _emit(audit_completions(env, units, model=situation, prove=not options.no_prove))
+            return 0
+        except VEError as exc:
+            _emit({"status": "InvalidInput", "error": exc.to_dict()})
+            return 2
     if argv[:1] == ["speech-acts"]:
         speech_parser = argparse.ArgumentParser(prog="python -m ve speech-acts")
         speech_parser.add_argument("path", help="experimental ve-document@2 source")
