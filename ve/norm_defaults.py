@@ -936,8 +936,9 @@ def check_reached_certificate(document, predicate, package):
 
 def report(document, *, model=None, prove=False, certificates=None, completions=None,
            translation=False, max_unsaid_atoms=MAX_UNSAID_ATOMS, max_evaluations=MAX_EVALUATIONS,
-           tableau_steps=10_000, search_domain_size=None):
-    """One PredicateReport per regulated predicate, in layer order (spec 3.2).
+           tableau_steps=10_000, search_domain_size=None, predicates=None):
+    """One PredicateReport per regulated predicate, in layer order (spec 3.2);
+    `predicates` restricts the report to the named ones.
 
     A witness needs a supplied base situation; a certificate is proved (`prove`)
     or replayed (`certificates`, keyed by predicate). `UngroundedDefault` is
@@ -949,6 +950,8 @@ def report(document, *, model=None, prove=False, certificates=None, completions=
     completions = {} if completions is None else completions
     result = []
     for predicate in document.filled.order:
+        if predicates is not None and predicate not in predicates:
+            continue
         completion = document.completion(predicate)
         reached, witness, certificate, found_in = "unknown", (), {}, situation
         if situation is not None:
@@ -1006,7 +1009,14 @@ def _profiled(raw, switched=()):
 def audit_completions(env, units, *, model=None, prove=True, **options):
     """For every deny or allow completion: its `default reached` evidence; if it
     is reached, the statuses that switching it to `unspecified` changes on the
-    supplied situation; if not, the certificate that switching preserves them."""
+    supplied situation; if not, the `gaps` line of the predicate on the switched
+    document, whose certificate is the one that switching preserves meaning.
+
+    `unreached_switch` (spec 7) needs "no admissible filling of `U.switch p`
+    reaches `p`": a `default reached: none` certificate on `U` is not enough,
+    because switching `p` can make a filling of another gap admissible that
+    `U`'s pair premises excluded (spec 6.3's counterexample). So the certificate
+    is proved on `_profiled(raw, (p,))`, never taken from `U`'s own report."""
     raw = env.to_dict()
     document = UnspecifiedDocument(_profiled(raw), units)
     lines = {r.predicate: r for r in report(document, model=model, prove=prove, **options)}
@@ -1021,13 +1031,16 @@ def audit_completions(env, units, *, model=None, prove=True, **options):
         line = lines[predicate]
         entry = {"predicate": predicate, "completion": line.completion, "default_reached": line.reached}
         if line.reached == "reachable":
-            values, filling = line.witness
-            entry["witness"] = {"tuple": list(values),
-                                "filling": {k: [list(r) for r in sorted(v)] for k, v in filling.items()}}
-        if line.reached == "none":
-            entry["certificate"] = line.certificate
+            entry["witness"] = _witness_json(line.witness)
+        switched = UnspecifiedDocument(_profiled(raw, (predicate,)), units)
+        if line.reached != "reachable":
+            (gap,) = report(switched, model=model, prove=prove, predicates=(predicate,), **options)
+            entry["switched_gaps"] = gap.reached
+            if gap.reached == "none":
+                entry["certificate"] = gap.certificate
+            elif gap.reached == "reachable":
+                entry["switched_witness"] = _witness_json(gap.witness)
         if before is not None:
-            switched = UnspecifiedDocument(_profiled(raw, (predicate,)), units)
             situation = switched.situation(model)
             changes = []
             for status in switched.statuses(situation):
@@ -1038,6 +1051,11 @@ def audit_completions(env, units, *, model=None, prove=True, **options):
             entry["changes_if_switched"] = changes
         result.append(entry)
     return {"environment_id": env.environment_id, "completions": result}
+
+
+def _witness_json(witness):
+    values, filling = witness
+    return {"tuple": list(values), "filling": {k: [list(r) for r in sorted(v)] for k, v in filling.items()}}
 
 
 def _status_text(status):
