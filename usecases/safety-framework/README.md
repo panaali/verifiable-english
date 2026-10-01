@@ -33,8 +33,8 @@ texts not chosen. The PDF states no licence, so it is not committed here.
 
 | File | Contents |
 |---|---|
-| [rules.d1.ve](rules.d1.ve) | 43 VE rules: one per commitment and per reading of it, each with the sentence it translates |
-| [facts.d1.ve](facts.d1.ve) | 44 VE premises: the level tables, the closure sentences, the Glossary definitions and one bridge |
+| [rules.d1.ve](rules.d1.ve) | 44 VE rules: one per commitment and per reading of it, each with the sentence it translates |
+| [facts.d1.ve](facts.d1.ve) | 43 VE premises: the level tables, the closure sentences, the Glossary definitions and one bridge |
 | [vocabulary.py](vocabulary.py), [environment.d1.json](environment.d1.json) | the vocabulary; each predicate's description is its legend |
 | [cases.json](cases.json), [answer-key.json](answer-key.json) | the 85 cases and the 262 answers of PLAN sections 5 and 6, transcribed before VE ran |
 | [run.py](run.py), [translation.py](translation.py), [severity_and_dates.py](severity_and_dates.py) | the harness that runs VE on every case and compares with the key |
@@ -43,29 +43,29 @@ texts not chosen. The PDF states no licence, so it is not committed here.
 | [reference.py](reference.py) | a second reading of the commitments in plain Python, which shares no code with VE |
 | [../../tests/test_safety_framework.py](../../tests/test_safety_framework.py) | the test: it fails on any mismatch with the key or any change in a result |
 
-Run `python usecases/safety-framework/run.py` to recompute everything (about 70 seconds). The severity family
+Run `python usecases/safety-framework/run.py` to recompute everything (a few minutes). The severity family
 needs the Lean risk route, so run `lake build` in `lean/` first.
 
 ## Result: agreement with the answer key
 
-VE agrees with the answer key on **256 of 262** items.
+VE agrees with the answer key on **257 of 262** items.
 
 | Family | What it asks | Agreement |
 |---|---|---|
 | A | what each level requires, for each of five activities | 157 / 160 |
 | B | what each level requires whatever the activity | 40 / 40 |
-| K | what the process triggers require | 16 / 18 |
+| K | what the process triggers require | 18 / 18 |
 | R | when the text deems a model's risk acceptable | 11 / 11 |
-| C | conflicts | 6 / 6 |
-| G | gaps | 8 / 9 |
+| C | conflicts | 4 / 6 |
+| G | gaps | 9 / 9 |
 | N | commitments that can never apply | 3 / 3 |
 | S | severity and causation | 12 / 12 |
 | D | dates | 3 / 3 |
 
-### The six disagreements
+### The five disagreements
 
-Each disagreement is a finding. Three show an error in a note of the answer key. The other three show the effect of
-a closure sentence that the plan itself chose.
+Each disagreement is a finding. Three show an error in a note of the answer key. The other two show that the key's
+conflict answers rest on a narrowing that the results review withdrew.
 
 1. **A-L5-INT, A-L6-INT and A-L7-INT (DM).** Both VE and the key say that deployment mitigations are not required
    for an ordinary internal deployment at these levels. The key adds that, under one reading, a rule releases them
@@ -73,13 +73,22 @@ a closure sentence that the plan itself chose.
    mention internal deployment. So no rule speaks about mitigations for an ordinary internal deployment at the ML
    R&D levels: the text is silent there. The independent Python reading ([reference.py](reference.py)) finds the
    same.
-2. **K2-L1, K2-L5 and G3.** These cases ask about an alert threshold for a Tracked Capability Level. The plan treats
-   "For CCLs, we define alert thresholds" (1.3.2) as a closure sentence, and the Glossary says that a TCL is not a
-   CCL. Together they say that a TCL has no alert threshold. VE proves that these three cases contradict the text,
-   and it checks the proof. The protocol does not score a contradictory case, so these count as misses. The key's
-   own reason ("alert thresholds are defined for CCLs only") is the reason VE gives. Section 1.2 does say that
-   "early warning evaluations will be used to assess the proximity of a model to a TCL", but it names no trigger,
-   so it stays unformalised.
+2. **C1 and C-doc.** The key says that the recommended security level (F16) never conflicts with the
+   insider-misuse sentence (F15). It was written under narrowing N2, which read the field's "should" as a default
+   rule only. The adjustment cases of 2.2 fit a strict rule with stated exceptions just as well, so the results
+   review withdrew N2 and the translation now keeps both forces (reading set RS3force). Under the strict force,
+   when both sentences name one act (RS6 = same), they conflict: Security level 2+ includes the insider-threat
+   measures that F15 says need not be added. VE finds a witness that satisfies every premise: CBRN uplift level 1,
+   further development. So C1 is SOME(RS3 = Ds, RS3force = strict, RS6 = same), and C-doc adds this choice to C3's.
+   With N2 restored, C1 is conflict-free at every choice (`variants.with_N2` in [results.json](results.json)). The
+   independent Python reading finds the same.
+
+The first run also missed K2-L1, K2-L5 and G3, which ask about an alert threshold for a Tracked Capability Level.
+The translation had read "For CCLs, we define alert thresholds" (1.3.2) as a closure, so that only a CCL could have
+an alert threshold. The sentence does not say that, and the results review removed the premise. These cases now
+agree with the key: no rule speaks about an alert threshold for a TCL. Section 1.2 does say that "early warning
+evaluations will be used to assess the proximity of a model to a TCL", but it names no trigger, so it stays
+unformalised.
 
 ## The rules and their check status
 
@@ -100,7 +109,7 @@ has more than one reading of it. The table gives each commitment in plain Englis
 | F12, F13 (2.1.2, 3.1.2) | A deployment takes place only after the governance function finds its residual risk acceptable. | OPEN | two readings: within the section's process, or for every model |
 | F14 (2.1.2, 3.1.2) | A material update to a safety case goes to the governance function for review. | CHECKED | |
 | F15 (2.2) | Mitigations against insider misuse beyond the baseline controls are not required. | OPEN | two readings: the same act as Security Level 2+'s insider measures, or a different one |
-| F16 (2.2, 3.2.2) | The recommended security level should be applied. | OPEN | two readings: a recommendation to the field only, or a "should" that also binds the developer |
+| F16 (2.2, 3.2.2) | The recommended security level should be applied. | OPEN | two readings: a recommendation to the field only, or a "should" that also binds the developer, strictly or as a default |
 | F17 (3.2.1) | At the stealth TCL, periodic misalignment assessments run, and safeguards are added when they are needed. | OPEN | "periodic" and reaching a level are open terms |
 | F18 (5.1) | The framework is reviewed at least once a year. | CHECKED | |
 | F18 (5.1) | It is reviewed more often when there are reasonable grounds. | OPEN | "reasonable grounds" is an open term |
@@ -114,19 +123,24 @@ and its reason.
 
 ## Conflicts found
 
-**One conflict.** Under one choice of readings, two commitments contradict each other. Rule F9 says that deployment
-mitigations need not be in place for an internal deployment of a misuse model. Rule F10 says that they must be in
-place for a high-risk internal deployment of an ML R&D model. A model that has reached both a misuse level and an
-ML R&D level, proposed for high-risk internal deployment, falls under both. This happens only when three readings
-hold together: the conditions are a gate (RS1 = G), "not internal deployment" is a release (RS8 = rel), and the two
-bullets name one act (RS9 = same). VE finds a witness situation that satisfies every premise. This is C3, and it
-is the only conflict in the whole document (C-doc).
+**Two conflicts.** Each needs its own choice of readings.
 
-**No conflict in the other four pairs.**
+- **C3.** Rule F9 says that deployment mitigations need not be in place for an internal deployment of a misuse
+  model. Rule F10 says that they must be in place for a high-risk internal deployment of an ML R&D model. A model
+  that has reached both a misuse level and an ML R&D level, proposed for high-risk internal deployment, falls under
+  both. This happens only when three readings hold together: the conditions are a gate (RS1 = G), "not internal
+  deployment" is a release (RS8 = rel), and the two bullets name one act (RS9 = same).
+- **C1.** The recommended security level (F16) against the insider-misuse sentence (F15). Security level 2+ includes
+  measures against insider threats, and F15 says that mitigations against insiders beyond the baseline are not
+  required. This happens only when the recommendation binds the developer (RS3 = Ds) with strict force (RS3force =
+  strict), and both sentences name one act (RS6 = same). Under the default force, the strict "not required"
+  overrides the default rule without a conflict.
 
-- C1: the recommended security level against the insider-misuse sentence. Under the reading in which the
-  recommendation binds the developer, it is a default rule, and the strict "not required" overrides it without a
-  conflict. Without narrowing N2, so that the recommendation is strict, the two do conflict when both name one act.
+VE finds a witness situation that satisfies every premise for each. These are the only conflicts in the whole
+document (C-doc).
+
+**No conflict in the other three pairs.**
+
 - C2: footnote 4 is an exception to F2.
 - C4 and C5: the rules regulate different acts. "Deemed acceptable" is a classification, not a permission to
   deploy.
@@ -139,7 +153,7 @@ is the only conflict in the whole document (C-doc).
 |---|---|---|
 | G1 | further development of a CCL model whose security condition fails | silent unless the conditions are read as a gate |
 | G2 | an ordinary internal deployment of an ML R&D CCL model | no governance review is required |
-| G3 | an alert threshold for a TCL | impossible under the text (see the disagreements) |
+| G3 | an alert threshold for a TCL | silent: no rule mentions it |
 | G4, G5 | significant cyber or manipulation risk, or a risk outside the four domains | only the catch-all "deemed acceptable" applies; no safeguard is required |
 | G6 | the first external deployment of a model that is not a frontier model | no capability assessment is required; governance review only if F12 covers every model |
 | G7 | disclosure for a TCL | silent: disclosure needs a CCL |
@@ -157,7 +171,7 @@ condition makes no rule conclude "acceptable", but no rule says "not acceptable"
   sentence "We identify TCLs for CBRN risk, as well as ML R&D and misalignment risks", with checked certificates.
 - **N2.** Whether the CBRN TCL has a recommended security level is undetermined. VE finds two checked models of the
   premises, one with and one without such a level. VE does not invent one.
-- **N3.** No commitment is dead. Each of the 43 rules is selected in some situation that satisfies every premise.
+- **N3.** No commitment is dead. Each of the 44 rules is selected in some situation that satisfies every premise.
 
 ## Severity, causation and dates
 
@@ -190,29 +204,29 @@ All 54,373 bytes of the source are in exactly one unit of the document (290 unit
 
 | Status | Bytes | Share |
 |---|---|---|
-| CHECKED | 4,843 | 8.9% |
+| CHECKED | 4,595 | 8.5% |
 | OPEN | 7,356 | 13.5% |
-| LABELLED | 35,309 | 64.9% |
+| LABELLED | 35,557 | 65.4% |
 | UNFORMALISED | 6,865 | 12.6% |
 
 The CHECKED share includes 1,108 bytes that the severity and date documents check. Within the main document alone,
-3,735 bytes are CHECKED. The plan expected less than 10%. Most of the text is exposition, examples, definitions and
+3,487 bytes are CHECKED. The plan expected less than 10%. Most of the text is exposition, examples, definitions and
 page layout. The commitments are OPEN because their conditions use open terms.
 
 ## Metrics
 
 | Metric | Result | Expected |
 |---|---|---|
-| M1 agreement with the key | 256/262 | 262/262, every miss explained |
-| M2 reading sets | 13 sets (12 in the main document, RS10 in the date document), placed on 18 units; at most 8 choices per item; VE's own readings query is UNKNOWN on every norm set | as found |
-| M3 CHECKED share | 8.9% | under 10% |
+| M1 agreement with the key | 257/262 | 262/262, every miss explained |
+| M2 reading sets | 14 sets (13 in the main document, RS10 in the date document), placed on 18 units; at most 16 choices per item, and 64 for C-doc, the union over every act; VE's own readings query is UNKNOWN on every norm set | as found |
+| M3 CHECKED share | 8.5% | under 10% |
 | M4 how each answer is backed | each per-choice answer rests on a case model that VE validated, a replayed certificate, or the Lean risk route | reported |
 | M5 one-off identifiers | 0 | 0 |
 | M6 untraced premises or rules | 0; one bridge marked as an assumption | 0 |
-| M7 items whose completed outcome depends on the default | 146, exactly the silent ones | the silent items |
+| M7 items whose completed outcome depends on the default | 146, exactly at the silent cells and at the C1 conflict cell (B-L2 to B-L4, RECSEC) | the silent items |
 | M8 evidence | every certificate is replayed; conflict witnesses satisfy every premise; the severity answers come from the Lean risk route | reported |
 | M9 seeded mutants detected | 6/6 (m4 and m6 differ from the plan's expectation, PLAN section 12) | 6/6 |
-| M10 cost | 85 cases, 98 documents, 483 case models, 1,660 prover calls, about 70 seconds | reported |
+| M10 cost | 85 cases, 108 documents, 658 case models, 2,054 prover calls, a few minutes | reported |
 
 ## Deviations
 
@@ -222,3 +236,5 @@ PLAN section 12 lists every deviation, with its reason. The main ones:
 - The conflict check runs against the premises, because VE's W1 check also counts impossible situations, such as a
   proposal that is both internal and external.
 - Four Glossary sentences and one bridge became premises.
+- After the results review: "For CCLs, we define alert thresholds" is no longer a premise, and narrowing N2 is
+  withdrawn, so F16 under RS3 = Ds keeps both its strict and its default force.

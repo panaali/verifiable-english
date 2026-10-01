@@ -5,6 +5,8 @@
 > were committed before any VE run. The plan review's findings A to C
 > (`manage-agents/safety-framework-planreview.final.md`) were applied in a separate commit, also before any VE run:
 > RS3 and N2, B DISC and K9, and family R. No answer-key cell was changed after VE ran. No model calls were made.
+> The results review (`manage-agents/safety-framework-review.final.md`) withdrew narrowing N2 and the alert-threshold
+> closure of 4.1; section 12, items 20 and 21, gives the changes.
 
 This use case translates someone else's text, so it runs in **translation mode** ([VISION.md](../../VISION.md) 3,
 [document.md](../../docs/spec/document.md)):
@@ -83,7 +85,8 @@ Quotations below are from the extracted text and each was checked to occur in it
 ### 3.1 Reading sets (written before the translation; none is collapsed)
 
 Each set is cited to its source unit. The translation keeps every reading, and the harness evaluates every
-complete choice of readings (section 9). "N1" and "N2" are the only narrowings; each cites source units and is
+complete choice of readings (section 9). "N1" and "N2" are the only narrowings (N2 was withdrawn after the
+results review, section 12 item 21); each cites source units and is
 listed in the residual, and section 9 also reports what changes without each.
 
 | Id | Source unit | Readings | Why the text admits each |
@@ -93,7 +96,7 @@ listed in the residual, and section 9 also reports what changes without each.
 | RS1 | 1.3.5 bullets 2 to 4: "will be deemed to pose an acceptable level of residual risk for further development or deployment, if: …" | **S**: the listed conditions are sufficient for the classification "deemed acceptable", which gates nothing by itself / **G**: the listed conditions are sufficient for the classification, as worded, and are also necessary before the named activity proceeds (a gate). Under both readings the classification follows when the conditions hold; G adds the gate. | The words say "if". The heading "Risk Acceptance Determination", 1.3.3 "mitigations that will be required to bring a model to an acceptable level of risk" and the bullets' own "This is required only for …" all point to a gate. The text never says that development or deployment stops when the conditions fail. |
 | RS2 | 2.1.2 step 2 "external deployments of a model take place only after the appropriate governance function determines the residual risk to be acceptable"; 3.1.2 step 2, the same for "external deployments and high-risk internal deployments" | **P**: within its section's process, which "will be applied to models reaching a misuse T/CCL" (2.1.2) or "for deployments of a model reaching a ML R&D and Misalignment T/CCL" (3.1.2) / **U**: about every model | Inside the process the sentence's subject is "a model", with no qualifier. |
 | RS3 | the recommended security levels (2.2 and 3.2.2 tables): "the minimum appropriate level of security the field of frontier AI should apply"; for ML R&D automation level 1 "this must be taken on by the frontier AI field as a whole" | **F**: a recommendation to the field, not a norm on the developer / **Ds**: the field's "should" read distributively, so it also binds the developer as a member of the field. Under Ds the force follows the RS4 rule for "should" ({strict, default}), narrowed by N2. | The addressee is "the field", with "should". 1.3.5 nonetheless uses "the recommended security level" as one of three ways the developer's own security condition can hold. |
-| N2 | narrowing of RS3 = Ds to **default** force | cites 2.2 "may be adjusted if … a model does not possess capabilities meaningfully different from other publicly available models that have weaker security applied … or if we assess that the benefits of the open release of model weights outweigh the risks", footnote 11 "The same caveats regarding security levels for misuse CCLs apply", and 1.3.5 bullets 2 and 3 "or we otherwise assess that the level of security applied is adequate … or we assess that the benefits of the open release of model weights outweigh the risks" | The text itself states when the recommended level need not be applied. A strict reading would contradict those stated cases, so they become the default rule's excepted cases (soft-norms.md 1.1: OT16, OT4 and OT5 as sufficient conditions). The developer's only strict security commitment is the SEC condition of F9 and F10 (under RS1 = G). Section 9 reports what changes without N2. |
+| N2 | **withdrawn after the results review (section 12, item 21).** Narrowing of RS3 = Ds to **default** force | cites 2.2 "may be adjusted if … a model does not possess capabilities meaningfully different from other publicly available models that have weaker security applied … or if we assess that the benefits of the open release of model weights outweigh the risks", footnote 11 "The same caveats regarding security levels for misuse CCLs apply", and 1.3.5 bullets 2 and 3 "or we otherwise assess that the level of security applied is adequate … or we assess that the benefits of the open release of model weights outweigh the risks" | The text itself states when the recommended level need not be applied. A strict reading would contradict those stated cases, so they become the default rule's excepted cases (soft-norms.md 1.1: OT16, OT4 and OT5 as sufficient conditions). The developer's only strict security commitment is the SEC condition of F9 and F10 (under RS1 = G). Section 9 reports what changes without N2. |
 | RS4 | hedged force: 5.2 "we aim to share"; 1.3.5 Note "should also be assessed holistically"; Glossary "The residual risk should be brought within the acceptable levels"; Note on ML R&D CCLs "Risk assessment must take into account …" | for "aim to": **default norm** (a soft norm, decider unstated) / **intent** (no norm). For "should" and "must": **strict** / **default**, the [soft-norms.md](../../docs/spec/soft-norms.md) 2.2 translation rule | "Aim" states a goal. The force words follow the general rule. |
 | RS5 | 1.3.2 "we determine whether a substantial modification has been made and whether a further critical capability assessment is required if (1) … and (2) …" | **D**: (1) and (2) trigger the determination / **R**: (1) and (2) make a further assessment required | The "if" clause can attach to "we determine" or to "is required". |
 | RS6 | 2.2 "the risks of insider misuse … are effectively addressed by our baseline controls … additional mitigations beyond these established safeguards are not required" against 2.1.1 Security Level 2+ "with additional security measures designed to address risks from insider threats" | **same**: both concern one act, adding insider-risk mitigations to a model at a misuse CCL / **different**: insider *misuse* of capabilities is not insider *threat* to weights | Both name insiders and "additional" measures. Background checks appear on both lists. |
@@ -159,7 +162,8 @@ Each has the W2 schema (`name`, `arguments`, `decided_by`, `necessary`, `suffici
 
 L0 is "no T/CCL reached". **Closure sentences stated by the text:** misuse CCLs are in exactly CBRN, cyber and
 harmful manipulation (1.2); "We identify TCLs for CBRN risk, as well as ML R&D and misalignment risks" (1.2); "For
-CCLs, we define 'alert thresholds'" (1.3.2). The text states no closure for recommended security levels: it says
+CCLs, we define 'alert thresholds'" (1.3.2), withdrawn as a closure after the results review: it says that CCLs have
+alert thresholds, not that only CCLs do (section 12, item 20). The text states no closure for recommended security levels: it says
 "We recommend a security level for each CCL" and lists levels only in the CCL tables.
 
 ### 4.2 Commitments
@@ -513,7 +517,7 @@ the D2 or D3 unit's status, after checking that the byte ranges are equal (probe
 ## 12. Deviations (after running VE; empty at plan time)
 
 Each entry gives the section and cell, the old value, the new value and the reason. No answer-key cell was changed;
-the six disagreements with the key are findings and are listed in [README.md](README.md).
+the five disagreements with the key are findings and are listed in [README.md](README.md).
 
 1. **Section 7, vocabulary.** Old: one obligation `meet(proposal, requirement)` with requirement constants. New: one
    obligation per act, such as `residual_assessed` with the act phrase "be subject to a residual risk assessment",
@@ -561,6 +565,27 @@ the six disagreements with the key are findings and are listed in [README.md](RE
     `environment.d2.json` and `environment.d3.json` files. The rules and premises of D1 are `rules.d1.ve` and
     `facts.d1.ve`; `fsf.d1.ve.md` is built locally by `build_document.py`. The results are in `README.md` and
     `results.json`, so there is no `RESULTS.md`. `cases.json` and `answer-key.json` were transcribed in their own commit.
+20. **Section 4.1, closure of "For CCLs, we define alert thresholds" (results review, finding A).** Old: the premise
+    `closure-alert-thresholds`, that only a CCL can have an alert threshold; with the Glossary's "a TCL is not a
+    CCL" it made K2-L1, K2-L5 and G3 inconsistent, and the 1.3.2 unit counted as CHECKED. New: no premise; the unit
+    is a LABELLED definition. Reason: the sentence states what CCLs have and names no exclusion. Whether a model has
+    reached a level or an alert threshold is OT1, which only the developer decides; a test now checks that no premise
+    mentions either predicate and that each finding alone is consistent with the premises. The other closures stay:
+    each is an enumeration the text states as complete ("the following risk domains", "two kinds of risks", "We
+    identify TCLs for … We may include TCLs for additional risks in the future"). K2-L1, K2-L5 and G3 now agree with
+    the key.
+21. **Section 3.1, N2 withdrawn (results review, finding B).** Old: under RS3 = Ds, F16 is a default rule only,
+    because the 2.2 adjustment cases "contradict" a strict reading. New: the force of F16 under Ds is its own
+    reading set, RS3force = {strict, default}, by the RS4 rule for "should". Both forces carry the adjustment cases
+    (OT16) and 1.3.5's "otherwise assess" (OT4, OT5): as excepted cases of the default rule, and as an explicit
+    "unless" of the strict rule (`f16-ds-strict`). Reason: stated exceptions fit a strict rule as well as a default
+    one, so they do not exclude it. Effect: C1 is SOME(RS3 = Ds ∧ RS3force = strict ∧ RS6 = same), as the key's own
+    note on C1 predicted without N2, and C-doc adds this choice to C3's. The key (section 6) was written under N2 and
+    is unchanged, so C1 and C-doc are recorded disagreements. M7 now also counts a conflicted cell, where the
+    completed outcome falls to the default. The `without_N2` variant became `with_N2`, which restores the narrowing
+    and finds C1 conflict-free. A test checks that every "should" or "must" of RS3 and RS4 keeps a strict sibling.
+22. **build_document.py `--check`.** It wrote `fsf.d1.ve.md` beside the source, so it failed on a read-only copy.
+    It now measures the document in a temporary directory and writes nothing.
 
 ## 13. Files for the implementation round (not this commit)
 
