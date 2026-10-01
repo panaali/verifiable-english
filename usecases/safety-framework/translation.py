@@ -36,6 +36,9 @@ READING_SETS = {
     "RS1": ("S", "G"),
     "RS2": ("P", "U"),
     "RS3": ("F", "Ds"),
+    # The force of F16 under RS3 = Ds: the RS4 rule for "should" ({strict, default}). The 2.2
+    # adjustment cases are exceptions under both forces, so they exclude neither (no narrowing).
+    "RS3force": ("strict", "default"),
     "RS4aim": ("default", "intent"),
     "RS4holistic": ("strict", "default"),
     "RS4within": ("strict", "default"),
@@ -125,7 +128,7 @@ def applies(block, choice):
 def document(choice, *, default="deny", drop=(), extra=(), precedence=None):
     """The soft norm document of one complete (or partial) reading choice.
 
-    `extra` adds (id, text) rules (mutants and the reading without N2);
+    `extra` adds (id, text) rules (mutants and the withdrawn N2 narrowing);
     `drop` removes rules by id; `precedence` replaces PRECEDENCE (mutant m1).
     """
     precedence = PRECEDENCE if precedence is None else precedence

@@ -15,7 +15,7 @@ checks its hash, partitions every byte into the units of `UNITS`, and writes:
 
 Each unit starts at its anchor (the first occurrence after the previous anchor)
 and runs to the next one; the first starts at byte 0. `--check` fails if the
-committed `spans.json` or `coverage.json` would change.
+committed `spans.json` or `coverage.json` would change, and writes no file.
 """
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ import argparse
 import hashlib
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -83,8 +84,8 @@ READINGS = {
     "rs1_bullet4": ("RS1", {"s": ["f11-acc"], "g": ["f11-acc", "f11-dm", "f11-sec"]}),
     "rs2_misuse": ("RS2", {"p": ["f12-p"], "u": ["f12-u"]}),
     "rs2_ml_rd": ("RS2", {"p": ["f13-p"], "u": ["f13-u"]}),
-    "rs3_misuse": ("RS3", {"f": [], "ds": ["f16-ds"]}),
-    "rs3_ml_rd": ("RS3", {"f": [], "ds": ["f16-ds"]}),
+    "rs3_misuse": ("RS3 and RS3force", {"f": [], "ds_default": ["f16-ds"], "ds_strict": ["f16-ds-strict"]}),
+    "rs3_ml_rd": ("RS3 and RS3force", {"f": [], "ds_default": ["f16-ds"], "ds_strict": ["f16-ds-strict"]}),
     "rs4_aim": ("RS4aim", {"default": ["f19-default"], "intent": []}),
     "rs4_holistic": ("RS4holistic", {"strict": ["f20-holistic-strict"], "default": ["f20-holistic-default"]}),
     "rs4_within": ("RS4within", {"strict": ["f20-within-strict"], "default": ["f20-within-default"]}),
@@ -226,7 +227,9 @@ UNITS = [
     ("To understand if such a change in capability", "s132-light-weight", hedged()),
     ("We may also apply material capability change assessments", "s132-non-frontier", hedged()),
     ("Central to our critical capability assessments are", "s132-early-warning", label("definition")),
-    ("For CCLs, we define", "s132-alert-thresholds", facts("closure-alert-thresholds")),
+    # "For CCLs, we define alert thresholds" says that CCLs have them, not that only CCLs do:
+    # no premise, so an alert threshold for a TCL stays possible (K2, G3).
+    ("For CCLs, we define", "s132-alert-thresholds", label("definition")),
     ("In our evaluations, we seek to apply", "s132-scaffolding", unformalised("aim_without_force")),
     ("We may run early warning evaluations more ", "s132-may-run", hedged()),
     ("4 A critical capability assessment may not be conducted", "fn4",
@@ -510,7 +513,7 @@ EXTRA_PREMISE_UNITS = {"activities-development": "s135-bullet2"}
 
 # A distinguishing situation per reading set: a case of cases.json at which the readings
 # give different answers in results.json.
-DISTINGUISHING = {"RS1": "A-L2-EXT", "RS2": "A-L0-EXT", "RS3": "B-L2", "RS4aim": "K9-L2", "RS4holistic": "K6",
+DISTINGUISHING = {"RS1": "A-L2-EXT", "RS2": "A-L0-EXT", "RS3 and RS3force": "B-L2", "RS4aim": "K9-L2", "RS4holistic": "K6",
                   "RS4within": "B-L2", "RS4elicitation": "K6", "RS5": "K3", "RS6": "B-L2", "RS7": "A-L0-LRX",
                   "RS8": "A-L2-INT", "RS9": "A-L6-HRI"}
 
@@ -628,8 +631,12 @@ def main(argv=None):
     if hashlib.sha256(source).hexdigest() != TEXT_SHA256 or len(source) != TEXT_BYTES:
         raise SystemExit("the source is not the pinned FSF 3.1 text")
     document, records = build(source)
-    out = args.source.parent / "fsf.d1.ve.md"
-    report, statuses = measure(document, out)
+    if args.check:
+        # --check writes nothing beside the source, which may be a read-only copy.
+        with tempfile.TemporaryDirectory() as scratch:
+            report, statuses = measure(document, Path(scratch) / "fsf.d1.ve.md")
+    else:
+        report, statuses = measure(document, args.source.parent / "fsf.d1.ve.md")
     results = json.loads((HERE / "results.json").read_text())
     totals = master(records, statuses, results)
     spans_text = json.dumps({"source_sha256": TEXT_SHA256, "source_bytes": TEXT_BYTES, "units": records},
