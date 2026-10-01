@@ -1,6 +1,7 @@
 # Feature composition: the stack contract, the base-premise slot, the dispatcher and candidate content (stage S0)
 
-> Status: item-1 specification, draft 2 (2026-10-01), written from [composition-PLAN.md](composition-PLAN.md) draft
+> Status: item-1 specification, draft 3 (2026-10-01; draft 3 is the `norm-defaults@0` delta of the change log,
+> which needs the statement recheck of both seats), written from [composition-PLAN.md](composition-PLAN.md) draft
 > 2, the transcription of the converged Astra + Fable design debate
 > (`manage-agents/debates/design-compose/{astra,fable}.md`, CONVERGED after round 3: REVISE to draft 2, then BUILD
 > through statement review; the Astra seat was held by Sol xhigh as the recorded cross-family stand-in). Draft 2
@@ -66,26 +67,29 @@ rank  step        profile            owns                         hands its succ
  4    CHAIN       rights@0           holders, incidents,          a soft document; Lim_D
                                      limitations, the bar
                   soft-norms@0       force, exceptions, ranks     a W1 tree; Soft_T
+                  norm-defaults@0    silence (`unspecified`)      the W1 tree filled last; Fill_T
                   norms@0            applicability, conflict      layer premises
  5    CHECK       relational-fol@0   truth, proof, countermodels  certificate or finite model
 ```
 
-A **wrapper profile** is a profile of ranks 1 to 3; a **chain profile** is one of the three of rank 4. A wrapper
+A **wrapper profile** is a profile of ranks 1 to 3; a **chain profile** is one of the four of rank 4. A wrapper
 validates and strips its own profile and hands the remaining list to `dispatch` (4.2); it never calls a route by
-name. `norm-defaults@0` is unmerged and has no position here; plan 2.9 says where it and the other profiles would
-attach.
+name. `norm-defaults@0` (merged 2026-10-01, [norm-defaults.md](norm-defaults.md)) sits inside the chain as plan 2.9
+said: `fill` runs last on whichever chain route checks the list (its D3), and a list whose chain is `norms@0` with
+`norm-defaults@0` has its own route, `normDefaults` (1.3). Plan 2.9 says where the other profiles would attach.
 
 ### 1.2 Profile lists
 
 ```text
-registered        the fifteen names of ve/profiles.py REGISTRY: alternatives@0, closure@0, data@0, definitions@0,
-                  documents@1, nary@0, norms@0, soft-norms@0, order@0, relational-fol@0, speech-acts@0, reports@0,
-                  risk@0, rights@0, time@0
+registered        the sixteen names of ve/profiles.py REGISTRY: alternatives@0, closure@0, data@0, definitions@0,
+                  documents@1, nary@0, norm-defaults@0, norms@0, soft-norms@0, order@0, relational-fol@0,
+                  speech-acts@0, reports@0, risk@0, rights@0, time@0
 wrapperProfiles   [ve.discourse@1, right-clauses@0, readings@1]            in stack order
 base ps           ps without its wrapper profiles
 today's list      a list today's gate accepts: TodayList ps (4.2), the acceptance set of ve/profiles.py
                   checker_family
-chain list        a strictly increasing list whose base is a today's list with route norms, soft or rights, and
+chain list        a strictly increasing list whose base is a today's list with route norms, normDefaults, soft or
+                  rights, and
                   each of whose wrapper profiles sits on that route (4.2)
 ```
 
@@ -94,7 +98,7 @@ means in Python and `List.Pairwise (· < ·)` in Lean.
 
 ### 1.3 Routes
 
-A **route** is the entry that checks a document under a profile list. The first eight exist today and are what
+A **route** is the entry that checks a document under a profile list. The first nine exist today and are what
 today's gate chooses between. The last three are the heads of the stack's wrappers: the discourse wrapper exists
 today over `frozen` only, and the other two are built by S3 and S1.
 
@@ -102,6 +106,7 @@ today over `frozen` only, and the other two are built by S3 and S1.
 |---|---|---|
 | `frozen` | yes | P0: `ve_conformance` / service mode `route`, with its four checker families; with a `ve-units@1` environment the same lists go to `ve_quantity`, which is this head's own choice and stays so |
 | `norms` | yes | `ve_norms_route` / service mode `norms`; a case without a norm construct is delegated to P0 unchanged (`usesNormsPath`, norms 11.4) |
+| `normDefaults` | yes | `ve_norm_defaults_route`: the norms route with `fill` last (norm-defaults 2.3); Python's `ve/admission.py` branch before the norms route |
 | `soft` | yes | `ve_soft_norms_route` |
 | `rights` | yes | `ve_rights_route` |
 | `alternatives` | yes | `ve_alternatives_route` |
@@ -417,38 +422,45 @@ text, followed by the head. The checks, in order; the first that fires is the an
 | 2 | `alternatives@0` without `norms@0` | `alternatives@0 requires norms@0` |
 | 3 | `alternatives@0` with `soft-norms@0` | `alternatives@0 with soft-norms@0` |
 | 4 | `risk@0` without `alternatives@0` | `risk@0 requires alternatives@0` |
-| 5 | some profile is not registered (the first such, in list order) | `Unsupported profile <p>` |
-| 6 | `speech-acts@0` without `norms@0` | `speech-acts@0 requires norms@0` |
-| 7 | `speech-acts@0` with a profile outside `relational-fol@0`, `norms@0`, `speech-acts@0` (the first such) | `speech-acts@0 with <p>` |
-| 8 | `relational-fol@0` missing | `Missing profile relational-fol@0` |
-| 9 | `reports@0` with the first present of `norms@0`, `definitions@0`, `data@0` | `reports@0 with <p> layers` |
-| 10 | `reports@0` with the first present of `closure@0`, `nary@0`, `order@0` | `reports@0 requires the fol checker, not <p>` |
-| 11 | `order@0` with `closure@0`; else `order@0` with `nary@0` | `Unsupported profile combination closure@0 x order@0` / `… nary@0 x order@0` |
-| 12 | `nary@0` without `closure@0` | `Unsupported profile nary@0 without closure@0` |
-| 13 | `risk@0` with `closure@0`, `nary@0` or `order@0` | `the risk norms route admits FOL documents only` |
-| 14 | `rights@0` without `soft-norms@0` | `rights@0 requires soft-norms@0` |
-| 15 | `soft-norms@0` without `norms@0` | `soft-norms@0 requires norms@0` |
+| 5 | `risk@0` with `norm-defaults@0` | `risk@0 with norm-defaults@0 is not implemented` |
+| 6 | `alternatives@0` with `norm-defaults@0` | `alternatives@0 with norm-defaults@0 is not implemented` |
+| 7 | some profile is not registered (the first such, in list order) | `Unsupported profile <p>` |
+| 8 | `speech-acts@0` without `norms@0` | `speech-acts@0 requires norms@0` |
+| 9 | `speech-acts@0` with a profile outside `relational-fol@0`, `norms@0`, `speech-acts@0` (the first such) | `speech-acts@0 with <p>` |
+| 10 | `relational-fol@0` missing | `Missing profile relational-fol@0` |
+| 11 | `reports@0` with the first present of `norms@0`, `definitions@0`, `data@0` | `reports@0 with <p> layers` |
+| 12 | `reports@0` with the first present of `closure@0`, `nary@0`, `order@0` | `reports@0 requires the fol checker, not <p>` |
+| 13 | `order@0` with `closure@0`; else `order@0` with `nary@0` | `Unsupported profile combination closure@0 x order@0` / `… nary@0 x order@0` |
+| 14 | `nary@0` without `closure@0` | `Unsupported profile nary@0 without closure@0` |
+| 15 | `risk@0` with `closure@0`, `nary@0` or `order@0` | `the risk norms route admits FOL documents only` |
+| 16 | `rights@0` without `soft-norms@0` | `rights@0 requires soft-norms@0` |
+| 17 | `soft-norms@0` without `norms@0` | `soft-norms@0 requires norms@0` |
+| 18 | `norm-defaults@0` without `norms@0` | `norm-defaults@0 requires norms@0` |
 
 An accepted list has the route of the first line that applies:
 
 ```text
 risk@0 ∈ ps → risk          alternatives@0 ∈ ps → alternatives     speech-acts@0 ∈ ps → speechActs
 reports@0 ∈ ps → reports    rights@0 ∈ ps → rights                 soft-norms@0 ∈ ps → soft
-norms@0 ∈ ps → norms        otherwise → frozen
+norm-defaults@0 ∈ ps → normDefaults                                norms@0 ∈ ps → norms
+otherwise → frozen
 ```
 
 So `alternatives@0`, `risk@0` and `speech-acts@0` lists, which all contain `norms@0`, keep their own routes, and
 `reports@0` keeps its own. The checker family (FOL, closure, closure with n-ary, order) is not part of the route:
 it stays the head's own choice, as do the head's content-level abstentions (`the norms route admits FOL documents
-only`, `rights route with definitions is not implemented`), which are unchanged.
+only`, `rights route with definitions is not implemented`), which are unchanged. `norm-defaults@0` beside
+`soft-norms@0` keeps the soft or rights route, whose `fill` runs last (norm-defaults 2.3); today those heads abstain
+on such a document (`ve/document.py`: `norm-defaults@0 documents on the soft and rights routes await the Lean
+route`), which is again the head's own abstention and not `dispatch`'s.
 
 **Step 3, the wrappers.** With `r` the route of `base ps`, each wrapper profile of `ps` must sit on `r`:
 
 | Wrapper | Sits on | Otherwise |
 |---|---|---|
-| `ve.discourse@1` | `frozen`, `norms`, `soft`, `rights` | `ve.discourse@1 with <b>` |
+| `ve.discourse@1` | `frozen`, `norms`, `normDefaults`, `soft`, `rights` | `ve.discourse@1 with <b>` |
 | `right-clauses@0` | `rights` | `right-clauses@0 requires rights@0`, or `right-clauses@0 with <b>` |
-| `readings@1` | `norms`, `soft`, `rights` | `readings@1 requires norms@0`, or `readings@1 with <b>` |
+| `readings@1` | `norms`, `normDefaults`, `soft`, `rights` | `readings@1 requires norms@0`, or `readings@1 with <b>` |
 
 `<b>` is the profile that names `r` when `r` is outside the chain: `reports@0`, `speech-acts@0`, `alternatives@0`
 or `risk@0`. The `requires` form is used when `r` is `frozen` or a chain route below the one the wrapper needs.
@@ -458,7 +470,8 @@ has no wrapper.
 
 Consequences, each a theorem of 9.3: on a list without wrapper profiles `dispatch` is `today` (so on today's
 lists it is today's route and on today's rejections today's diagnostic); on a chain list it is the stack's head;
-after a wrapper strips its own profile, `dispatch` on the rest succeeds with the next head; every error is the
+after a wrapper strips its own profile, `dispatch` on the rest succeeds with the next head; on a list that is not
+strictly increasing it is the order error, whatever the list contains (`dispatch_unsorted`); every error is the
 order error, today's error on the base, or one of the refusals above. The frozen gate's answers on its own
 registry are `today`'s (`today_classify`).
 
@@ -551,6 +564,10 @@ its `-elaborate` kind, Rust evaluating regenerated formulas marked untrusted). W
 profile, Python's `checker_family` is extended so that it equals `dispatch` on every list containing that profile,
 and the differential of fixture D-all (10.1) is extended to those lists.
 
+With `norm-defaults@0` in the list, `fill` runs after the stage's elaboration, last (norm-defaults D3), and its
+`Fill_T` joins the slot after the stage's own premises (plan open question 13: whoever merges second adds the
+instance). Each stage's specification states that instance for the routes it sits on; S0 builds none.
+
 E1 and E2 are in no row because they belong to no one stage: the first of these stages to wire `dispatch`
 registers both and checks fixtures G1 to G3 (10.4) in its own specification. S0 fixes their texts and shows
 neither, since it wires nothing.
@@ -602,7 +619,7 @@ New in S0 as texts of `dispatch`; no executable raises them until a wrapper's st
 | `UnsupportedProfile: readings@1 requires norms@0` | `readings@1` over the `frozen` route | error |
 | `UnsupportedProfile: right-clauses@0 requires rights@0` | `right-clauses@0` over `frozen`, `norms` or `soft` | error |
 
-Unchanged, and returned by `dispatch` verbatim: the texts of 4.2's fifteen checks, in that order. Unchanged and not
+Unchanged, and returned by `dispatch` verbatim: the texts of 4.2's eighteen checks, in that order. Unchanged and not
 `dispatch`'s: every head's own texts, the discourse wrapper's (`ve.discourse@1 requires ve-document@2`,
 `discourse admission requires the FOL family`), and every W1, soft, rights and P0 diagnostic.
 
@@ -831,19 +848,20 @@ namespace VE.Compose
 def unsupported (message : String) : String := "UnsupportedProfile: " ++ message
 
 def registered : List String :=
-  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norms@0", "soft-norms@0",
-   "order@0", "relational-fol@0", "speech-acts@0", "reports@0", "risk@0", "rights@0", "time@0"]
+  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norm-defaults@0",
+   "norms@0", "soft-norms@0", "order@0", "relational-fol@0", "speech-acts@0", "reports@0", "risk@0", "rights@0",
+   "time@0"]
 def speechAllow : List String := ["relational-fol@0", "norms@0", "speech-acts@0"]
 /-- The stack's wrapper profiles, in stack order (ranks 1, 2, 3). -/
 def wrapperProfiles : List String := ["ve.discourse@1", "right-clauses@0", "readings@1"]
 
 inductive Route
   | frozen | reports | speechActs | alternatives | risk
-  | norms | soft | rights
+  | norms | normDefaults | soft | rights
   | readings | clauses | discourse
   deriving DecidableEq, Repr
 
-/-- ve/profiles.py checker_family as a gate: the fifteen checks of 4.2 in order, with its texts. -/
+/-- ve/profiles.py checker_family as a gate: the eighteen checks of 4.2 in order, with its texts. -/
 def todayGate (ps : List String) : Except String Unit :=
   if !decide (ps.Pairwise (· < ·)) then .error (unsupported "profiles must be sorted and unique")
   else if ps.contains "alternatives@0" && !ps.contains "norms@0" then
@@ -852,6 +870,10 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "alternatives@0 with soft-norms@0")
   else if ps.contains "risk@0" && !ps.contains "alternatives@0" then
     .error (unsupported "risk@0 requires alternatives@0")
+  else if ps.contains "risk@0" && ps.contains "norm-defaults@0" then
+    .error (unsupported "risk@0 with norm-defaults@0 is not implemented")
+  else if ps.contains "alternatives@0" && ps.contains "norm-defaults@0" then
+    .error (unsupported "alternatives@0 with norm-defaults@0 is not implemented")
   else match ps.find? (fun p => !registered.contains p) with
   | some p => .error (unsupported s!"Unsupported profile {p}")
   | none =>
@@ -880,13 +902,15 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "rights@0 requires soft-norms@0")
   else if ps.contains "soft-norms@0" && !ps.contains "norms@0" then
     .error (unsupported "soft-norms@0 requires norms@0")
+  else if ps.contains "norm-defaults@0" && !ps.contains "norms@0" then
+    .error (unsupported "norm-defaults@0 requires norms@0")
   else .ok ()
 
 def todayHead (ps : List String) : Route :=
   if ps.contains "risk@0" then .risk else if ps.contains "alternatives@0" then .alternatives
   else if ps.contains "speech-acts@0" then .speechActs else if ps.contains "reports@0" then .reports
   else if ps.contains "rights@0" then .rights else if ps.contains "soft-norms@0" then .soft
-  else if ps.contains "norms@0" then .norms else .frozen
+  else if ps.contains "norm-defaults@0" then .normDefaults else if ps.contains "norms@0" then .norms else .frozen
 
 def today (ps : List String) : Except String Route := (todayGate ps).map (fun _ => todayHead ps)
 
@@ -898,7 +922,8 @@ def TodayList (ps : List String) : Prop :=
   ("speech-acts@0" ∈ ps → "norms@0" ∈ ps ∧ ∀ p ∈ ps, p ∈ speechAllow) ∧
   ("reports@0" ∈ ps → ∀ p ∈ ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"], p ∉ ps) ∧
   ("order@0" ∈ ps → "closure@0" ∉ ps ∧ "nary@0" ∉ ps) ∧ ("nary@0" ∈ ps → "closure@0" ∈ ps) ∧
-  ("rights@0" ∈ ps → "soft-norms@0" ∈ ps) ∧ ("soft-norms@0" ∈ ps → "norms@0" ∈ ps)
+  ("rights@0" ∈ ps → "soft-norms@0" ∈ ps) ∧ ("soft-norms@0" ∈ ps → "norms@0" ∈ ps) ∧
+  ("norm-defaults@0" ∈ ps → "norms@0" ∈ ps ∧ "alternatives@0" ∉ ps ∧ "risk@0" ∉ ps)
 
 theorem today_sound (ps : List String) (r : Route) (h : today ps = .ok r) : TodayList ps ∧ r = todayHead ps
 theorem today_complete (ps : List String) (h : TodayList ps) : today ps = .ok (todayHead ps)
@@ -910,15 +935,20 @@ theorem today_classify (ps : List String) (h : ∀ p ∈ ps, VE.Route.Gate.known
 
 /-- What each of today's heads may rely on; these are the requirements of the heads' own Lean gates. -/
 theorem today_frozen (ps) (h : today ps = .ok .frozen) :
-  ∀ p ∈ ["norms@0", "soft-norms@0", "rights@0", "reports@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps
+  ∀ p ∈ ["norms@0", "norm-defaults@0", "soft-norms@0", "rights@0", "reports@0", "speech-acts@0", "alternatives@0",
+    "risk@0"], p ∉ ps
 theorem today_norms (ps) (h : today ps = .ok .norms) :
-  "norms@0" ∈ ps ∧ ∀ p ∈ ["soft-norms@0", "rights@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps
+  "norms@0" ∈ ps ∧
+    ∀ p ∈ ["norm-defaults@0", "soft-norms@0", "rights@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps
+theorem today_normDefaults (ps) (h : today ps = .ok .normDefaults) :
+  "norm-defaults@0" ∈ ps ∧ "norms@0" ∈ ps ∧
+    ∀ p ∈ ["soft-norms@0", "rights@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps
 theorem today_soft (ps) (h : today ps = .ok .soft) : "soft-norms@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "rights@0" ∉ ps
 theorem today_rights (ps) (h : today ps = .ok .rights) : "rights@0" ∈ ps ∧ "soft-norms@0" ∈ ps ∧ "norms@0" ∈ ps
 theorem today_alternatives (ps) (h : today ps = .ok .alternatives) :
-  "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps
+  "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps ∧ "norm-defaults@0" ∉ ps
 theorem today_risk (ps) (h : today ps = .ok .risk) :
-  "risk@0" ∈ ps ∧ "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps
+  "risk@0" ∈ ps ∧ "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "norm-defaults@0" ∉ ps
 theorem today_speech (ps) (h : today ps = .ok .speechActs) : VE.SpeechActs.Wire.profileGate ps = .ok ()
 theorem today_reports (ps) (h : today ps = .ok .reports) :
   "reports@0" ∈ ps ∧ ∀ p ∈ ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"], p ∉ ps
@@ -928,9 +958,9 @@ theorem today_reports (ps) (h : today ps = .ok .reports) :
 def base (ps : List String) : List String := ps.filter (fun p => !wrapperProfiles.contains p)
 
 def sitsOn (w : String) (r : Route) : Bool :=
-  if w == "ve.discourse@1" then r == .frozen || r == .norms || r == .soft || r == .rights
+  if w == "ve.discourse@1" then r == .frozen || r == .norms || r == .normDefaults || r == .soft || r == .rights
   else if w == "right-clauses@0" then r == .rights
-  else if w == "readings@1" then r == .norms || r == .soft || r == .rights
+  else if w == "readings@1" then r == .norms || r == .normDefaults || r == .soft || r == .rights
   else false
 
 def wrapperHead (w : String) : Route :=
@@ -959,7 +989,7 @@ def dispatch (ps : List String) : Except String Route :=
       | none => .ok r
 
 def ChainList (ps : List String) : Prop :=
-  ps.Pairwise (· < ·) ∧ ∃ r, today (base ps) = .ok r ∧ (r = .norms ∨ r = .soft ∨ r = .rights) ∧
+  ps.Pairwise (· < ·) ∧ ∃ r, today (base ps) = .ok r ∧ (r = .norms ∨ r = .normDefaults ∨ r = .soft ∨ r = .rights) ∧
     ∀ w ∈ wrapperProfiles, w ∈ ps → sitsOn w r = true
 def stackHead (ps : List String) : Route :=
   match (wrapperProfiles.filter ps.contains).head? with
@@ -968,6 +998,9 @@ def stackHead (ps : List String) : Route :=
 
 /-- Today's lists keep today's route, and today's rejections keep today's diagnostic. -/
 theorem dispatch_today (ps : List String) (h : ∀ w ∈ wrapperProfiles, w ∉ ps) : dispatch ps = today ps
+/-- D-unsorted: every list that is not strictly increasing gets the order error, whatever it contains. -/
+theorem dispatch_unsorted (ps : List String) (h : ¬ ps.Pairwise (· < ·)) :
+  dispatch ps = .error (unsupported "profiles must be sorted and unique")
 theorem dispatch_chain (ps : List String) (h : ChainList ps) : dispatch ps = .ok (stackHead ps)
 /-- A wrapper that strips its own profile hands dispatch a list it accepts. -/
 theorem dispatch_descends (ps : List String) (w : String) (hw : w ∈ wrapperProfiles)
@@ -994,8 +1027,10 @@ declarative `TodayList` (`today_sound`, `today_complete`), against the frozen cl
 (`today_classify`), and against Python on every sorted list of registered profiles, texts included (fixture
 D-all, whose two literals `Examples.lean` guards `today` against). `VE.SpeechActs.Wire.profileGate` is the
 existing gate of `lean/VE/SpeechActs/Wire.lean` (the statement uses its namespace as that file declares it). The
-alternatives, risk, rights and reports gates take the environment JSON, so their requirements are stated as
-membership facts; each is the list of `unless … contains` checks of that route's `profileGate` or decoder. In
+alternatives, risk, rights, reports and norm-defaults gates take the environment JSON, so their requirements are
+stated as membership facts; each is the list of `unless … contains` checks of that route's `profileGate` or
+decoder, and `norm-defaults@0 ∉ ps` in `today_norms`, `today_alternatives` and `today_risk` is the gate's checks 5,
+6 and the head order (those routes do not replay `fill`, norm-defaults' integration gap). In
 `refusal_names` the `requires` case has `b = "rights@0"` or `"norms@0"`, absent because the base route is below it.
 
 ### 9.4 `Content.lean`
@@ -1150,22 +1185,33 @@ Lists are written as they are passed. "ok r" is `.ok r`; a text is the complete 
 | D39 | `norms@0, readings@1, relational-fol@0, rights@0` | `UnsupportedProfile: rights@0 requires soft-norms@0` (today's text for the base list passes through) |
 | D40 | `readings@1, norms@0, relational-fol@0` | `UnsupportedProfile: profiles must be sorted and unique` |
 | D41 | `readings@1, relational-fol@0, right-clauses@0` | `UnsupportedProfile: right-clauses@0 requires rights@0` (two wrappers refuse; the first in stack order answers) |
+| D42 | `norm-defaults@0, norms@0, relational-fol@0` | ok `normDefaults` |
+| D43 | `norm-defaults@0, norms@0, relational-fol@0, soft-norms@0` | ok `soft` (the soft head's `fill` runs last; its document abstention is its own, 4.2) |
+| D44 | `norm-defaults@0, norms@0, relational-fol@0, rights@0, soft-norms@0` | ok `rights` |
+| D45 | `norm-defaults@0, relational-fol@0` | `UnsupportedProfile: norm-defaults@0 requires norms@0` |
+| D46 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0` | `UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented` |
+| D47 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented` (check 5 before check 6) |
+| D48 | `norm-defaults@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 requires alternatives@0` (check 4 before check 5) |
+| D49 | `norm-defaults@0, norms@0, relational-fol@0, speech-acts@0` | `UnsupportedProfile: speech-acts@0 with norm-defaults@0` |
+| D50 | `norm-defaults@0, norms@0, readings@1, relational-fol@0` | ok `readings`; with `readings@1` removed: ok `normDefaults` |
+| D51 | `norm-defaults@0, norms@0, relational-fol@0, ve.discourse@1` | ok `discourse`; with `ve.discourse@1` removed: ok `normDefaults` |
+| D52 | `norm-defaults@0, norms@0, relational-fol@0, right-clauses@0` | `UnsupportedProfile: right-clauses@0 requires rights@0` |
 
 - **D-all (Python against the specification, and Lean against Python).** For every strictly increasing sublist of
-  the fifteen registered profiles (32,768 lists), `ve.profiles.checker_family` raises exactly when the Python
+  the sixteen registered profiles (65,536 lists), `ve.profiles.checker_family` raises exactly when the Python
   transcription of `TodayList` in the test is false, and when it raises, its text equals the text of the first
   check of 4.2 that fires. Text comparison: Python's message with `UnsupportedProfile: ` prefixed unless it already
   starts with it (the two speech-act messages do).
 
   That half compares Python with a Python transcription. The plan's S0 acceptance is wider: `dispatch` equals
-  `checker_family` on every sorted subset, diagnostics included. So the same test also emits Python's 32,768
+  `checker_family` on every sorted subset, diagnostics included. So the same test also emits Python's 65,536
   outcomes as one code string, and Lean is guarded against it:
-  - The lists are taken in the order of a mask `m = 0, …, 32767` over the registry in code point order: bit `j`
+  - The lists are taken in the order of a mask `m = 0, …, 65535` over the registry in code point order: bit `j`
     of `m` is set exactly when the `j`-th name is in the list.
   - A list's outcome text is `ok` when `checker_family` returns, and otherwise its message under the text
     comparison above.
   - `todayTexts` is the list of distinct outcome texts in order of first appearance. `todayCodes` is a string of
-    32,768 characters whose `m`-th character is the position of list `m`'s text in `todayTexts`, written in the
+    65,536 characters whose `m`-th character is the position of list `m`'s text in `todayTexts`, written in the
     alphabet `0-9a-zA-Z`. The test fails if there are more than 62 distinct texts.
   - Both are literals of `Examples.lean` (`todayTexts : List String`, `todayCodes : String`). The test reads them
     from that file and asserts that they equal what it computes from Python.
@@ -1173,18 +1219,23 @@ Lists are written as they are passed. "ok r" is `.ok r`; a text is the complete 
     from `todayTexts` is `ok` when `today` of list `m` is `.ok _`, and is `e` when it is `.error e`. The same file
     guards that its registry in code point order is strictly increasing and a permutation of `registered`.
 
-  So Lean's texts meet Python's on every one of these lists, not on rows D1 to D27 only, and `dispatch` meets
+  So Lean's texts meet Python's on every one of these lists, not on the rows below only, and `dispatch` meets
   `today` on them by `dispatch_today`. The literals are derived, never trusted: Python recomputes them on every
   test run and Lean re-evaluates `today` on every build.
 
-  The same test asserts rows D1 to D27 on Python and reads rows D1 to D41 from one table that `Examples.lean`
-  repeats as `#guard dispatch [...] == ...`, so that the Lean and Python expectations are one text. Python has no
+  The table above is the one table. The test reads rows D1 to D52 from this section, with their removals, and
+  asserts that `Examples.lean` repeats exactly these rows, each as `#guard dispatch [...] == ...` under a `-- D<n>`
+  comment, so that the Lean and Python expectations are one text. On Python it asserts every row: a row without a
+  wrapper profile against `checker_family` (its error text, or that it accepts), and a row with one against Python's
+  outcome on the base list followed by a transcription of step 3 and the head table in the test. Python has no
   single routing function, so the head table of 4.2 is not a Python differential: it is
   checked by review against the call sites (`ve/document.py` `_environment`, `ve/admission.py` `admit_document`,
   `ve/backends/lean_runner.py`) and, in Lean, by the `today_<route>` facts against each route's own gate. The
   expected values of this section were derived by reading `checker_family`; no row has been executed yet.
 - **D-unsorted.** For 200 seeded permutations of accepted lists that are not increasing, and 50 lists with a
-  repeated profile: `profiles must be sorted and unique` from both.
+  repeated profile: `profiles must be sorted and unique` from Python; from Lean on every list that is not strictly
+  increasing, by `dispatch_unsorted` (9.3), and on the test's seeded lists themselves by one `#guard` over the
+  literal `unsortedLists` of `Examples.lean`, which the test regenerates and compares.
 - **D-frozen.** `python3 VE/Route/frozen.py` passes and no file under `conformance/` changes.
 
 ### 10.2 The slot
@@ -1245,11 +1296,12 @@ and verdicts byte-identical") is D-frozen: S0 turns nothing on.
 ## 11. Limits, regeneration, Python, Rust
 
 `dispatch` is linear in the list and total; a list longer than the registry plus three wrappers is rejected by
-check 1 or check 5. The slot theorems hold for a slot of any length; executables bound a slot by the limits of the
+check 1 or check 7. The slot theorems hold for a slot of any length; executables bound a slot by the limits of the
 layer that generates it, and every overflow is `ResourceLimit` with the limit named, never a truth value. A slot is
 regenerated from the decoded units at every trusted site (norms 11.3); a finite model supplies base tables
-including every table the slot mentions, and `backgroundValidP` evaluates the whole slot on it. Python in S0: one
-test file, no change to `ve/profiles.py` and no new module. Rust in S0: nothing. From S1 on, Rust never elaborates
+including every table the slot mentions, and `backgroundValidP` evaluates the whole slot on it. Python in S0: two
+test files (`tests/test_compose_dispatch.py` for 10.1, `tests/test_compose_integration.py` for 10.2's slot on
+documents), no change to `ve/profiles.py` and no new module. Rust in S0: nothing. From S1 on, Rust never elaborates
 a layer: it evaluates the Python-generated formulas of the slot marked `untrusted: true`, and its verdict must
 agree with Python's and Lean's regenerated ones (regression evidence; the trust path is Lean). So three-way
 agreement for the stack is Lean authority plus two differentials, not three independent implementations (plan open
@@ -1259,8 +1311,8 @@ question 12).
 
 1. The stack (1.1) and the six obligations (4.1): one rank per profile; rule 2's single exception; what S0
    provides against what each layer supplies.
-2. `todayGate` (4.2, 9.3) against `ve/profiles.py` `checker_family` line by line: the fifteen checks, their order,
-   their texts, the first-offender choices in checks 5, 7, 9, 10 and 11; `TodayList` as its declarative form;
+2. `todayGate` (4.2, 9.3) against `ve/profiles.py` `checker_family` line by line: the eighteen checks, their order,
+   their texts, the first-offender choices in checks 7, 9, 11, 12 and 13; `TodayList` as its declarative form;
    `today_classify` against `VE.Route.Gate.classify`.
 3. The heads (4.2): `alternatives@0`, `risk@0`, `speech-acts@0` lists keep their routes although they contain
    `norms@0`; `reports@0` keeps its own; the checker family and `unit_schema` stay the head's business.
@@ -1283,7 +1335,7 @@ question 12).
     with a mixed `holds` pair left to `right-clauses.md` (G8); G9 without exception; the non-wordings of 2.2.
 11. The report contract (3, 7): `conditional_on` order and its verbatim slot labels; the status text as the lower
     route's line, with only the reading and relation families omitted at zero.
-12. The diagnostics (8) and the fixtures (10), each against the definitions; D1 to D41 derived by hand; D-all's
+12. The diagnostics (8) and the fixtures (10), each against the definitions; D1 to D52 derived by hand; D-all's
     Lean half against the plan's S0 acceptance.
 13. Section 6: that S3 and S4 need nothing of S1 or S2.
 14. The resolved choices of section 13.
@@ -1307,14 +1359,14 @@ Each is a point where the plan left a reading open; the review may overturn any 
    stage its own item-1 specification and names three of the files; the converged debate sends S0 to statement
    review first. The later stages' theorems stay in the plan as sketches (9.5).
 2. **`dispatch` returns a head for the three wrappers** (`readings`, `clauses`, `discourse`), although two of
-   those heads do not exist until S1 and S3. The alternative, a dispatcher that knows only today's eight routes,
+   those heads do not exist until S1 and S3. The alternative, a dispatcher that knows only today's routes,
    would have each stage redefine the order, which is what the stack exists to prevent.
 3. **A missing lower layer is `<a> requires <b>`, not `<a> with <b>`.** The plan's rule 6 names only the `with`
    form for a combination outside the stack. A wrapper over a list that merely lacks its base is not such a
    combination, and today's convention for it is `requires` (`rights@0 requires soft-norms@0`).
 4. **`readings@1` requires `norms@0`.** Without it the profile could add only formula candidates, which W2 has
    today without a profile. S1's specification may relax this.
-5. **`ve.discourse@1` sits on `frozen` and on the three chain routes, and on nothing else.** Today's discourse
+5. **`ve.discourse@1` sits on `frozen` and on the chain routes, and on nothing else.** Today's discourse
    lists are FOL-family lists over the frozen gate's registry, which includes `norms@0`; on those with `norms@0`
    the route below the wrapper becomes `norms`, whose own identity case delegates a document without a norm
    construct to P0 unchanged, so no document admitted today should change. That is an obligation of S4's
@@ -1323,7 +1375,7 @@ Each is a point where the plan left a reading open; the review may overturn any 
    today's text.
 6. **The checker family and `unit_schema` are not part of the route.** `frozen` covers the four families and the
    quantity route as today; a chain head keeps its own "FOL documents only" abstention.
-7. **`todayGate` transcribes Python rather than calling the Lean gates.** No single Lean gate knows all fifteen
+7. **`todayGate` transcribes Python rather than calling the Lean gates.** No single Lean gate knows all sixteen
    profiles (`VE.Route.Gate.registry` has nine; each statement route checks its own list), and the public behaviour
    to preserve is Python's. The Lean gates are tied in by `today_classify` and the `today_<route>` facts.
 8. **`slot_conflict_free` and `slotRoute` take no typing hypothesis**, following the rights proof, which uses
@@ -1382,6 +1434,15 @@ and 20 stand as corrected after the verification of the first transcription (sec
     not"; the first transcription left open whether a quotation is excepted. The converged text excepts nothing,
     so nothing is excepted: S1's and S4's specifications, which define those two slots, define them so that G9
     holds of every rendering, and how they do so is theirs to state.
+21. **`norm-defaults@0` is a chain profile with a route of its own below soft** (draft 3). Python admits a
+    `norm-defaults@0` list without `soft-norms@0` by its own branch (`ve/admission.py`, before the norms route) and
+    Lean by its own executable (`ve_norm_defaults_route`), so `dispatch` names that entry `normDefaults` rather
+    than folding it into `norms`, whose executable refuses the profile; a wrapper that called `norms` by name would
+    otherwise reach the wrong entry. With `soft-norms@0` the soft or rights head keeps the list, as norm-defaults
+    2.3 orders `fill` last on those routes. `ve.discourse@1` and `readings@1` sit on `normDefaults` as on `norms`
+    (plan 2.9: inside the chain; plan open question 13: `Fill_T` joins the slot); `right-clauses@0` requires
+    `rights@0` there. The alternative, refusing every wrapper beside `norm-defaults@0` until a stage adds the
+    instance, would accept `readings@1` over soft with `norm-defaults@0` and refuse it over norms with it.
 
 ## Change log
 
@@ -1390,3 +1451,4 @@ and 20 stand as corrected after the verification of the first transcription (sec
 | 2026-10-01 | Draft 1 | First statement specification, from plan draft 2: the stack contract with its six obligations; today's gate transcribed with fifteen checks and its eight routes; `dispatch` with three wrapper heads and named refusals; the base-premise slot with unique expansion, certified conflict-freedom, witness, acceptance, countermodel and exactness relative to a slot; monotonicity; gating; the rights route as the instance `P := Lim_D`; the candidate content type with its declared names; the lifting lemma stated for S2a; eighteen report sentences with their one reading; diagnostics; fixtures D1 to D41 with the exhaustive Python differential, L1 to L9, C1 to C6, G1 to G6; thirteen resolved choices. No code, Lean or frozen contract changes. |
 | 2026-10-01 | Draft 2 | The converged statement review applied, nothing else (`manage-agents/debates/compose-spec/`, FIX after round 3; edits 1 to 7 are the Fable seat's round 1 list, edit 8 the Astra seat's English-contract finding with both seats' round-3 precisions). (1) Status text: the lower route's line verbatim, coherence and limitation counts printed at zero as today; only the reading and relation families are omitted at zero (7). (2) A gated relation premise's slot label ends ` under <set>@<v>:<i>`, and `conditional_on` lists slot labels verbatim (1.5, 3, E9, 6, 8, 13.13; plan 2.3 and 2.7). (3) S0 shows and checks no sentence: E1, E2 and G1 to G3 belong to the first stage that wires `dispatch` (2, 2.1, 6, 10.4). (4) E1 reworded so that it names two features (2.1, 2.4, G1). (5) One citation production for E5 and E7; slots not defined in 2.1 are the registering stage's (2, 2.1). (6) D-all gains a Lean half: Python's 32,768 outcomes as `todayCodes` over `todayTexts`, guarded against `today` in `Examples.lean` (10.1, 9.3 note). (7) L9 is an `rfl` equation between each instance theorem and its original, described as definitional agreement of the two types; "token for token" dropped (10.2, 12). (8) E14 restricted to the strict and default candidates of one rule with an `outcome` probe, a completion and a checked value on both sides; permission values read `is permitted to` and `is not permitted to`; new rows E19 (`outcome`), E20 (`selects`) and E21 (`holds`) with the four cases of the second sentence; the reader's checklist chooses the wording by probe; fixtures G7 to G9; three non-wordings (2.1, 2.2, 2.3, 6, 10.4). Checklist items 6, 10, 11 and 12 follow the edits, and section 12 records the outcome and the remaining gate. Resolved choice 13 rewritten; choices 14 to 19 and one flagged point added. No Lean statement of 9.2 to 9.5 changed. No code, Lean or frozen contract changes. |
 | 2026-10-01 | Draft 2, verification corrections | The statement-only verification of the first transcription of draft 2 (commit `34a13b11`; `manage-agents/compose-p3ver1.final.md`) found edits 1 to 7, the plan's gated-label amendment and the unchanged Lean blocks of 9.2 to 9.5 in order, and two departures from the converged text in edit 8. Both corrected, nothing else. (a) E21 is confined to two assertion candidates, as converged: a pair with a candidate that is not an assertion is never worded by E21 or by its frame; a mixed pair recorded with a `holds` probe is worded by `right-clauses.md` behind W8, and G8 states what that wording may say of F13's pair instead of applying E21's frame to it (2.1: the E21 row, the routing sentence under "When E14 is used", case 2, the two E21 paragraphs; 2.2; 2.3; G8; checklist item 10; choices 15 and 17). (b) G9 is unconditional, as converged: no rendered sentence contains "may not", quoted source text included; the point flagged in section 13 is closed as resolved choice 20 (2.2, G9). The status note and section 12 record the verification. No Lean statement of 9.2 to 9.5 changed. No code, Lean or frozen contract changes. |
+| 2026-10-01 | Draft 3 | The `norm-defaults@0` delta, after `main` merged that profile (`45ec9510`; Fable review of S0, A1). Needs the statement recheck of both seats. 1.1: the profile in the chain table, a chain profile is one of four. 1.2: sixteen registered names. 1.3: route `normDefaults` (nine today). 4.2: checks 5, 6 and 18 (`risk@0 with norm-defaults@0 is not implemented`, `alternatives@0 with norm-defaults@0 is not implemented`, `norm-defaults@0 requires norms@0`), later checks renumbered; head `normDefaults` between `soft` and `norms`; the soft and rights heads' abstention on such documents; `ve.discourse@1` and `readings@1` sit on `normDefaults`. 6: `Fill_T` joins the slot last (plan open question 13). 8: eighteen checks. 9.3: `registered`, `Route`, `todayGate`, `todayHead`, `TodayList`, `sitsOn`, `ChainList` as above; `today_frozen` and `today_norms` exclude the profile, `today_alternatives` and `today_risk` gain `"norm-defaults@0" ∉ ps`, new `today_normDefaults` and `dispatch_unsorted`. 10.1: rows D42 to D52; D-all over 65,536 lists; the table of 10.1 is the one table that Python and `Examples.lean` both read (Fable B1); D-unsorted from Lean by `dispatch_unsorted` and a guard over the seeded lists. 11: two test files. 12, 13: counts; 13.21 added. |

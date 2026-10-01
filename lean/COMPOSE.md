@@ -17,7 +17,7 @@ target). S0 changes no behaviour: no executable calls anything here.
 | `Slot.lean` | The base-premise slot: `SlotWellFormed`, `slotCheck`, `BaseAdmissibleP`, `backgroundBaseP`, `backgroundP`, `ConflictFreeP`; `gate`; `Labelled`; `slotConflictFreeCheck`, `backgroundValidP`; `PrefixAdmissibleP`, the layer chain (`slotSymLayer`, `SlotChain`, `slotChain`, `slotRouteChain`) and `slotRoute`; the route theorems relative to a slot; the rights route as the instance `P := Lim_D` |
 | `Dispatch.lean` | `unsupported`, `registered`, `speechAllow`, `wrapperProfiles`, `Route`; today's gate `todayGate`, `todayHead`, `today` and the declarative `TodayList`; the stack: `base`, `sitsOn`, `wrapperHead`, `outside`, `refusal`, `dispatch`, `ChainList`, `stackHead` |
 | `Content.lean` | `Content` (five constructors), `Content.kind`, `Content.needs`, `lineRuleNames`, `Content.declared` |
-| `Examples.lean` | Build-time `#guard` checks of fixtures D1 to D41 (with the removals of D28 to D31), D-all, L1 to L8 and C1 to C6, and the two `rfl` equations of L9 |
+| `Examples.lean` | Build-time `#guard` checks of fixtures D1 to D52 (with the removals of D28 to D31, D50 and D51; the rows are spec 10.1's one table, which `tests/test_compose_dispatch.py` reads and requires these guards to repeat), D-all, D-unsorted's seeded lists, L1 to L8 and C1 to C6, and the two `rfl` equations of L9 |
 
 ## How the proofs are organised
 
@@ -31,9 +31,10 @@ target). S0 changes no behaviour: no executable calls anything here.
   `background′ (correlate D) ++ limPremises D`. `rights_acceptance_from_slot` and `rights_countermodel_from_slot`
   carry the statements of `rights_route_acceptance` and `rights_route_countermodel` and are proved from the slot
   theorems alone; fixture L9 checks with `rfl` that their types agree definitionally with the originals'.
-* `todayGate` is a transcription of `ve/profiles.py` `checker_family`. It is checked against the declarative
+* `todayGate` is a transcription of `ve/profiles.py` `checker_family` as merged with `norm-defaults@0` (sixteen
+  names, eighteen checks; `normDefaults` is the ninth route, spec draft 3). It is checked against the declarative
   `TodayList` in both directions (`todayGate_sound`, `todayGate_complete`), against the frozen classifier on the
-  frozen registry (`today_classify`), and against Python on all 32,768 sorted lists of registered profiles,
+  frozen registry (`today_classify`), and against Python on all 65,536 sorted lists of registered profiles,
   texts included (fixture D-all in `Examples.lean`, whose literals `tests/test_compose_dispatch.py` recomputes
   from Python).
 * The `dispatch` theorems go through one characterisation, `dispatch_ok_iff`: `dispatch` succeeds exactly on a
@@ -87,19 +88,20 @@ target). S0 changes no behaviour: no executable calls anything here.
 | `today_ok`, `today_error` | `today` answers `ok` with `todayHead` exactly when the gate accepts, and passes the gate's error through. |
 | `today_sound` | A list `today` routes is a `TodayList`, and its route is `todayHead`. |
 | `today_complete` | Every `TodayList` is routed to `todayHead`. |
-| `todayHead_cases` | `todayHead` is the first of risk, alternatives, speech acts, reports, rights, soft, norms present, else frozen. |
+| `todayHead_cases` | `todayHead` is the first of risk, alternatives, speech acts, reports, rights, soft, norm defaults, norms present, else frozen. |
 | `todayHead_not_wrapper` | `todayHead` never answers a wrapper's head. |
 | `known_registered` | Every profile of the frozen gate's registry is registered. |
 | `todayGate_classify` | On the frozen gate's registry, today's gate is the frozen classifier with its family forgotten. |
 | `today_classify` | There, both accept the same lists and reject the others with the same text. |
-| `today_frozen`, `today_norms`, `today_soft`, `today_rights`, `today_alternatives`, `today_risk`, `today_reports` | What each of today's heads may rely on: the memberships its own Lean gate requires. |
+| `today_frozen`, `today_norms`, `today_normDefaults`, `today_soft`, `today_rights`, `today_alternatives`, `today_risk`, `today_reports` | What each of today's heads may rely on: the memberships its own Lean gate requires. |
 | `forIn_yield_ok` | A loop whose every step yields succeeds. |
 | `today_speech` | A list routed to speech acts passes the speech-act route's own profile gate. |
 | `mem_base`, `base_mem`, `mem_wrappers`, `base_of_no_wrapper` | Membership in the base list and in the present wrappers; a list without wrappers is its own base. |
 | `dispatch_ok_iff` | `dispatch` succeeds exactly on a sorted list whose base has a route every present wrapper sits on, and answers the stack's head. |
 | `dispatch_today` | On a list without wrapper profiles `dispatch` is `today`: today's lists keep today's route, today's rejections keep today's diagnostic. |
 | `dispatch_chain` | On a chain list `dispatch` answers the stack's head. |
-| `dispatch_descends` | After a wrapper strips its own profile from a list `dispatch` accepts, `dispatch` accepts the rest with its stack head. |
+| `dispatch_descends` | When `dispatch` answers a wrapper's head on a list, then after that wrapper strips its own profile, `dispatch` accepts the rest with its stack head. |
+| `dispatch_unsorted` | Every list that is not strictly increasing gets the order error, whatever it contains. |
 | `dispatch_discourse_frozen` | On today's discourse lists the wrapper is the head and what it sits on is today's frozen route. |
 | `dispatch_error` | Every error of `dispatch` is the order error, today's error on the base list, or a wrapper's named refusal. |
 | `refusal_names` | A refusal names two profiles of the list (`with`), or one of the list and one it lacks (`requires`). |

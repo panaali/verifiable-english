@@ -2652,6 +2652,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Compose.today_classify
 #print axioms VE.Compose.today_frozen
 #print axioms VE.Compose.today_norms
+#print axioms VE.Compose.today_normDefaults
 #print axioms VE.Compose.today_soft
 #print axioms VE.Compose.today_rights
 #print axioms VE.Compose.today_alternatives
@@ -2665,6 +2666,7 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Compose.dispatch_ok_iff
 #print axioms VE.Compose.base_of_no_wrapper
 #print axioms VE.Compose.dispatch_today
+#print axioms VE.Compose.dispatch_unsorted
 #print axioms VE.Compose.dispatch_chain
 #print axioms VE.Compose.dispatch_descends
 #print axioms VE.Compose.dispatch_discourse_frozen
