@@ -1,0 +1,977 @@
+{
+ "source": "PLAN.md section 5 case facts: one proposal p; the levels named and no others; the activity named; every open term not listed is unset (false in the case model)",
+ "activities": {
+  "DEV": [
+   "further_development"
+  ],
+  "INT": [
+   "internal"
+  ],
+  "HRI": [
+   "internal",
+   "high_risk"
+  ],
+  "LRX": [
+   "external",
+   "low_risk",
+   "first_deployment",
+   "frontier",
+   "governance_found_acceptable"
+  ],
+  "EXT": [
+   "external",
+   "first_deployment",
+   "frontier"
+  ],
+  "EXT-NOGOV": [
+   "external",
+   "first_deployment",
+   "frontier"
+  ],
+  "EXT-NONFRONTIER": [
+   "external",
+   "first_deployment"
+  ]
+ },
+ "cases": [
+  {
+   "id": "A-L0-DEV",
+   "family": "A",
+   "levels": [],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L0-INT",
+   "family": "A",
+   "levels": [],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L0-HRI",
+   "family": "A",
+   "levels": [],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L0-LRX",
+   "family": "A",
+   "levels": [],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L0-EXT",
+   "family": "A",
+   "levels": [],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L1-DEV",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L1-INT",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L1-HRI",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L1-LRX",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L1-EXT",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L2-DEV",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L2-INT",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L2-HRI",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L2-LRX",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L2-EXT",
+   "family": "A",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L3-DEV",
+   "family": "A",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L3-INT",
+   "family": "A",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L3-HRI",
+   "family": "A",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L3-LRX",
+   "family": "A",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L3-EXT",
+   "family": "A",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L4-DEV",
+   "family": "A",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L4-INT",
+   "family": "A",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L4-HRI",
+   "family": "A",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L4-LRX",
+   "family": "A",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L4-EXT",
+   "family": "A",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L5-DEV",
+   "family": "A",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L5-INT",
+   "family": "A",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L5-HRI",
+   "family": "A",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L5-LRX",
+   "family": "A",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L5-EXT",
+   "family": "A",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L6-DEV",
+   "family": "A",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L6-INT",
+   "family": "A",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L6-HRI",
+   "family": "A",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L6-LRX",
+   "family": "A",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L6-EXT",
+   "family": "A",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "A-L7-DEV",
+   "family": "A",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "A-L7-INT",
+   "family": "A",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "A-L7-HRI",
+   "family": "A",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": "HRI",
+   "findings": []
+  },
+  {
+   "id": "A-L7-LRX",
+   "family": "A",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": "LRX",
+   "findings": []
+  },
+  {
+   "id": "A-L7-EXT",
+   "family": "A",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "B-L0",
+   "family": "B",
+   "levels": [],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L1",
+   "family": "B",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L2",
+   "family": "B",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L3",
+   "family": "B",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L4",
+   "family": "B",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L5",
+   "family": "B",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L6",
+   "family": "B",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "B-L7",
+   "family": "B",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "K1-L2",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "cbrn_uplift_level_1"
+    ]
+   ]
+  },
+  {
+   "id": "K1-L3",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "cyber_uplift_level_1"
+    ]
+   ]
+  },
+  {
+   "id": "K1-L4",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "harmful_manipulation_level_1"
+    ]
+   ]
+  },
+  {
+   "id": "K1-L6",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "ml_rd_acceleration_level_1"
+    ]
+   ]
+  },
+  {
+   "id": "K1-L7",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "ml_rd_automation_level_1"
+    ]
+   ]
+  },
+  {
+   "id": "K2-L1",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "cbrn_uplift_tcl"
+    ]
+   ]
+  },
+  {
+   "id": "K2-L5",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "stealth_and_situational_awareness_tcl"
+    ]
+   ]
+  },
+  {
+   "id": "K3",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "external",
+     "p"
+    ],
+    [
+     "subsequent",
+     "p"
+    ],
+    [
+     "new_capabilities",
+     "p"
+    ],
+    [
+     "could_undermine_justification",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K4",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "post_training_run_completed",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K5",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "material_safety_case_update",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K6",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": []
+  },
+  {
+   "id": "K7",
+   "family": "K",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "INT",
+   "findings": [
+    [
+     "internal_risk_unacceptable_without_safeguards",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K8",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "adherence_undermined",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K9-L2",
+   "family": "K",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": null,
+   "findings": [
+    [
+     "unmitigated_public_safety_risk",
+     "p"
+    ],
+    [
+     "sharing_facilitates_safety",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K9-L3",
+   "family": "K",
+   "levels": [
+    "cyber_uplift_level_1"
+   ],
+   "activity": null,
+   "findings": [
+    [
+     "unmitigated_public_safety_risk",
+     "p"
+    ],
+    [
+     "sharing_facilitates_safety",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K9-L4",
+   "family": "K",
+   "levels": [
+    "harmful_manipulation_level_1"
+   ],
+   "activity": null,
+   "findings": [
+    [
+     "unmitigated_public_safety_risk",
+     "p"
+    ],
+    [
+     "sharing_facilitates_safety",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K9-L6",
+   "family": "K",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": null,
+   "findings": [
+    [
+     "unmitigated_public_safety_risk",
+     "p"
+    ],
+    [
+     "sharing_facilitates_safety",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "K9-L7",
+   "family": "K",
+   "levels": [
+    "ml_rd_automation_level_1"
+   ],
+   "activity": null,
+   "findings": [
+    [
+     "unmitigated_public_safety_risk",
+     "p"
+    ],
+    [
+     "sharing_facilitates_safety",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "R1",
+   "family": "R",
+   "levels": [],
+   "activity": "EXT",
+   "findings": []
+  },
+  {
+   "id": "R2",
+   "family": "R",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "EXT",
+   "findings": [
+    [
+     "mitigates",
+     "p",
+     "cbrn_uplift_level_1"
+    ],
+    [
+     "applies",
+     "p",
+     "security_level_2_plus"
+    ]
+   ]
+  },
+  {
+   "id": "R3",
+   "family": "R",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "EXT",
+   "findings": [
+    [
+     "applies",
+     "p",
+     "security_level_2_plus"
+    ]
+   ],
+   "note": "DM-h found not to hold: the mitigates finding is false"
+  },
+  {
+   "id": "R4",
+   "family": "R",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "DEV",
+   "findings": [
+    [
+     "applies",
+     "p",
+     "security_level_2_plus"
+    ]
+   ]
+  },
+  {
+   "id": "R5",
+   "family": "R",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "HRI",
+   "findings": [
+    [
+     "mitigates",
+     "p",
+     "ml_rd_acceleration_level_1"
+    ],
+    [
+     "security_assessed_adequate",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "R6",
+   "family": "R",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "EXT",
+   "findings": [
+    [
+     "unlikely_misalignment_propensities",
+     "p"
+    ],
+    [
+     "open_release_benefits_outweigh_risks",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "R7",
+   "family": "R",
+   "levels": [
+    "stealth_and_situational_awareness_tcl"
+   ],
+   "activity": "EXT",
+   "findings": [
+    [
+     "mitigates",
+     "p",
+     "stealth_and_situational_awareness_tcl"
+    ]
+   ],
+   "note": "OT4 and OT5 found not to hold"
+  },
+  {
+   "id": "R8",
+   "family": "R",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": "EXT",
+   "findings": [
+    [
+     "mitigates",
+     "p",
+     "cbrn_uplift_tcl"
+    ],
+    [
+     "applies",
+     "p",
+     "security_level_2_plus"
+    ]
+   ]
+  },
+  {
+   "id": "R9",
+   "family": "R",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "EXT-NOGOV",
+   "findings": [
+    [
+     "mitigates",
+     "p",
+     "cbrn_uplift_level_1"
+    ],
+    [
+     "applies",
+     "p",
+     "security_level_2_plus"
+    ]
+   ]
+  },
+  {
+   "id": "G1",
+   "family": "G",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "DEV",
+   "findings": []
+  },
+  {
+   "id": "G2",
+   "family": "G",
+   "levels": [
+    "ml_rd_acceleration_level_1"
+   ],
+   "activity": "INT",
+   "findings": []
+  },
+  {
+   "id": "G3",
+   "family": "G",
+   "levels": [],
+   "activity": null,
+   "findings": [
+    [
+     "approaches",
+     "p",
+     "cbrn_uplift_tcl"
+    ]
+   ]
+  },
+  {
+   "id": "G4",
+   "family": "G",
+   "levels": [],
+   "activity": "EXT",
+   "findings": [],
+   "note": "significant but not severe cyber or manipulation risk: no level is reached"
+  },
+  {
+   "id": "G5",
+   "family": "G",
+   "levels": [],
+   "activity": "EXT",
+   "findings": [],
+   "note": "a capability in a domain outside the four: no level is reached"
+  },
+  {
+   "id": "G6",
+   "family": "G",
+   "levels": [],
+   "activity": "EXT-NONFRONTIER",
+   "findings": []
+  },
+  {
+   "id": "G7",
+   "family": "G",
+   "levels": [
+    "cbrn_uplift_tcl"
+   ],
+   "activity": null,
+   "findings": [
+    [
+     "unmitigated_public_safety_risk",
+     "p"
+    ],
+    [
+     "sharing_facilitates_safety",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "G8",
+   "family": "G",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "EXT",
+   "findings": [
+    [
+     "governance_found_acceptable",
+     "p"
+    ],
+    [
+     "circumvention_evidence",
+     "p"
+    ]
+   ]
+  },
+  {
+   "id": "G9-TCCL",
+   "family": "G",
+   "levels": [
+    "cbrn_uplift_level_1"
+   ],
+   "activity": "EXT-NOGOV",
+   "findings": []
+  },
+  {
+   "id": "G9-L0",
+   "family": "G",
+   "levels": [],
+   "activity": "EXT-NOGOV",
+   "findings": []
+  }
+ ]
+}
