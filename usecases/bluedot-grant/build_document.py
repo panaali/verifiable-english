@@ -13,6 +13,8 @@ from ve.identity import meaning_id
 from ve.ast import Top, formula_from_data
 from ve.entailment import prove_entailment
 from ve.profiles import LANGUAGE, SPEC_REVISION
+from .author_choices import CHOICES
+from .semantic_readings import READINGS
 
 HERE = Path(__file__).resolve().parent
 SOURCE = (HERE / "source.md").read_bytes()
@@ -23,7 +25,7 @@ def predicate(words: str, sort: str = "artifact") -> dict:
             "verbalisation": "{0} " + words}
 
 
-ENV = {"language": LANGUAGE, "profiles": ["relational-fol@0"],
+ENV = {"language": LANGUAGE, "profiles": ["definitions@0", "relational-fol@0"],
        "spec_revision": SPEC_REVISION,
        "vocabulary": {
            "sorts": {
@@ -51,6 +53,9 @@ ENV = {"language": LANGUAGE, "profiles": ["relational-fol@0"],
                "conditional_on_foundations": predicate("is conditional on declared foundations"),
                "concerns_estimated_leaves": predicate("concerns estimated leaves"),
                "concerns_proved_subclaims": predicate("concerns proved subclaims"),
+               "establishes_truth": {"arguments": ["artifact", "artifact"],
+                                     "description": "establishes the truth of",
+                                     "verbalisation": "{0} establishes the truth of {1}"},
            },
            "constants": {
                "draft": {"sort": "artifact", "description": "this grant draft"},
@@ -61,7 +66,34 @@ ENV = {"language": LANGUAGE, "profiles": ["relational-fol@0"],
                "milestones": {"sort": "artifact", "description": "the existing evidence layer milestones"},
                "guarantee": {"sort": "artifact", "description": "the proof guarantee"},
                "caveat": {"sort": "artifact", "description": "the existing stability caveat"},
+               "foundations": {"sort": "artifact", "description": "the declared foundations"},
            }}}
+
+# These are source propositions, never observations supplied by the checker.
+# Definitions bind the five author decisions to explicit conjunctions of
+# auditable inputs.  author_choices.py specifies how numerical flags are made.
+for _, subject, propositions in READINGS.values():
+    ENV["vocabulary"]["constants"].setdefault(
+        subject, {"sort": "artifact", "description": subject.replace("_", " ")})
+    for name in propositions:
+        ENV["vocabulary"]["predicates"].setdefault(
+            name, predicate(name.replace("_", " ")))
+
+def conjunction(items):
+    result = items[0]
+    for item in items[1:]:
+        result = ["and", result, item]
+    return result
+
+
+for term, choice in CHOICES.items():
+    for flag in choice["flags"]:
+        ENV["vocabulary"]["predicates"].setdefault(flag, predicate(flag.replace("_", " ")))
+    ENV["vocabulary"]["predicates"][term] = {
+        "arguments": ["artifact"], "description": choice["rule"],
+        "defined": {"arguments": ["artifact"],
+                    "body": conjunction([["unary", flag, ["var", 0]] for flag in choice["flags"]])},
+    }
 
 
 def atom(name: str, subject: str = "draft") -> list:
@@ -183,38 +215,39 @@ def build() -> dict:
             end = pos + len(part.encode())
             status, kind, meaning, support, ast = classify(part, line_no)
             uid = f"u{len(units)+1:03d}"
+            if uid in READINGS:
+                kind, subject, propositions = READINGS[uid]
+                ast = conjunction([atom(name, subject) for name in propositions])
+                status, meaning = "CHECKED", "specified"
+                support = "assumption" if kind == "asserted" else "none"
+            elif uid == "u049":
+                ast = ["and", ["not", ["binary", "establishes_truth",
+                                         ["const", "proof_rule"], ["const", "foundations"]]],
+                       ["not", atom("establishes_faithful_formalisation", "proof_rule")]]
+            elif uid in {"u022", "u027", "u083", "u085"}:
+                status, kind, meaning, support, ast = "LABELLED", "meta", "specified", "none", None
+            elif uid == "u033":
+                # "Should help" is a prediction/hope here, not a demand on an
+                # addressee.  A soft obligation would change the author's claim.
+                status, kind, meaning, support, ast = "LABELLED", ["attributed", "applicant", "expects", "asserted"], "specified", "none", None
             unit = {"id": uid, "span": [pos, end], "status": status,
                     "kind": kind, "meaning": meaning, "support": support}
             if ast is not None:
                 unit["content"] = {"ast": ast}
                 mid = meaning_id(env, formula_from_data(env, ast))
-                reading_sets.append({"id": f"reading-{uid}", "unit": uid, "version": 1,
-                                     "status": "authored", "signature": "grant-author",
-                                     "readings": [{"id": "chosen", "kind": "asserted", "meaning_id": mid,
-                                                   "content": ast,
-                                                   "admission": {"who": "grant-author",
-                                                                 "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-                                                                 "distinguishing_models": {}}}]})
+                if kind == "asserted" or uid not in READINGS:
+                    reading_sets.append({"id": f"reading-{uid}", "unit": uid, "version": 1,
+                                         "status": "authored", "signature": "grant-author",
+                                         "readings": [{"id": "chosen", "kind": "asserted", "meaning_id": mid,
+                                                       "content": ast,
+                                                       "admission": {"who": "grant-author",
+                                                                     "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+                                                                     "distinguishing_models": {}}}]})
             units.append(unit)
             pos = end
     assert pos == len(SOURCE)
-    open_terms = [{"name": name, "arguments": [], "decided_by": "proposal-author",
-                   "necessary": [], "sufficient": [], "factors": [factor],
-                   "precedents": [], "jurisdiction": "this-draft", "version": 1}
-                  for name, factor in OPEN.items()]
-    nodes = [{"name": f"claim-{r['unit']}", "ast": r["readings"][0]["content"],
-              "label": f"readings:{r['id']}@1:0"} for r in reading_sets]
-    # The conclusion is deliberately tautological. Its report retains every
-    # authored premise and makes no empirical claim from the conjunction.
-    premises = [formula_from_data(env, node["ast"]) for node in nodes]
-    certificate = prove_entailment(env, premises, Top()).certificate
-    assert certificate is not None
-    nodes.append({"name": "accounted-readings", "ast": ["top"],
-                  "premises": [node["name"] for node in nodes],
-                  "certificate": certificate})
     return {"format": "ve-document@1", "environment": ENV, "units": units,
-            "open_terms": open_terms, "reading_sets": reading_sets,
-            "graph": {"root": "accounted-readings", "nodes": nodes}}
+            "open_terms": [], "reading_sets": reading_sets}
 
 
 def main() -> None:
