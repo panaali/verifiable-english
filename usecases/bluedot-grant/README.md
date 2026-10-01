@@ -149,3 +149,14 @@ UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest
 
 The generator uses only local source bytes and checker APIs. It makes no model
 calls and does not modify `source.md`.
+
+Verification on this worktree (2026-10-01): `lake build` completed 488 jobs;
+`lean/audit.py` passed its 249-file, 2,437-declaration audit; the BlueDot test
+file passed 13 tests. The full suite passed **4,895 tests, 10 skipped, 0
+failed** with `VE_NATIVE_PREBUILT=1`, `VE_LEAN_PREBUILT=1` and
+`VE_RUST_SHA256=04470aa2a3a7c14367f4040d1da37e2b356ad0c07f82a0b9731f0b34049261f4`,
+the SHA-256 of the Rust binary built from this checkout. `main` pins a
+different build in `lean/checkers.lock`. The suite ran in four parts with
+`pytest -n` because the machine was shared: three file groups and then the
+remaining 116 files. No Rust source or trust lock was changed for this use
+case.
