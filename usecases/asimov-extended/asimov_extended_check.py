@@ -150,8 +150,8 @@ def category(base, ext):
     return "SHARPENED" if set(ext) < set(base) else "CHANGED"
 
 
-def read_all(specs, rank=None):
-    return {name: {"base": reading.read(spec, False, rank), "ext": reading.read(spec, True, rank)}
+def read_all(specs, rank=None, permission_default="allow"):
+    return {name: {side: reading.read(spec, side == "ext", rank, permission_default) for side in ("base", "ext")}
             for name, spec in specs.items()}
 
 
@@ -192,6 +192,31 @@ def mutant(name, env, ext_rules):
     else:
         result["clear"] = {k: v["clear"] for k, v in decide(raw, rules, {k: records[k] for k in focus}).items()}
     return result
+
+
+# ---------------------------------------------------------------------------- the permission default
+
+def deny_environment(env):
+    """The environment with `permitted` completed to deny: only a rule's grant permits an action."""
+    raw = deepcopy(env)
+    raw["vocabulary"]["predicates"]["permitted"]["regulated"]["default"] = "deny"
+    return raw
+
+
+def permission_default(env, base_rules, ext_rules, specs, allowed):
+    """Every record decided again with `permitted` defaulting to deny, against `allowed`, its decisions under
+    the case's default allow. The source grants no permission by default; "allow" is a modeling choice, and a
+    record listed in `changed` has a clear set that depends on it."""
+    lean = both(deny_environment(env), base_rules, ext_rules, specs)
+    independent = read_all(specs, permission_default="deny")
+    changed = {side: [n for n in specs if sorted(lean[side][n]["clear"]) != sorted(allowed[side][n]["clear"])]
+               for side in ("base", "ext")}
+    return {"records": len(specs), "changed": changed,
+            "base_clear": sum(bool(lean["base"][n]["clear"]) for n in specs),
+            "ext_clear": sum(bool(lean["ext"][n]["clear"]) for n in specs),
+            "ext_clear_when_changed": {n: lean["ext"][n]["clear"] for n in changed["ext"]},
+            "lean_vs_reading_disagreements": sorted({n for n in specs for side in ("base", "ext")
+                                                     if not agrees(lean[side][n], independent[n][side])})}
 
 
 # ---------------------------------------------------------------------------- sampled records
@@ -300,6 +325,11 @@ def compute(sample=SAMPLE):
     disagreements = [k for k in specs for side in ("base", "ext")
                      if not agrees(sample_lean[side][k], sample_reading[k][side])]
     timing["sampled_seconds"] = round(time.time() - start, 1)
+
+    start = time.time()
+    deny = {"records": permission_default(env, base_rules, ext_rules, records, lean),
+            "sampled": permission_default(env, base_rules, ext_rules, specs, sample_lean)}
+    timing["permission_default_seconds"] = round(time.time() - start, 1)
     mutants = dict(zip(("M1", "M2", "M3", "M4", "M5"), mutant_jobs.get()))
     mutant_pool.close()
     mutant_pool.join()
@@ -311,7 +341,7 @@ def compute(sample=SAMPLE):
                       "ext_clear": sum(bool(sample_lean["ext"][k]["clear"]) for k in specs),
                       **properties(specs, sample_lean)}
     return {"document": document, "records": per_record, "mutants": mutants, "sampled": sampled_result,
-            "timing": timing}
+            "permission_default_deny": deny, "timing": timing}
 
 
 def compare(results, key):
