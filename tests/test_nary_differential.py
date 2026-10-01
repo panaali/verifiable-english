@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from tools import rust_build
 from ve.ast import And, Atom, Body, Const, Eq, Forall, Implies, Reach, Var, formula_to_data
 from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
@@ -89,7 +90,7 @@ def rust_binary():
         cargo = shutil.which("cargo")
         if cargo is None:
             pytest.skip("Rust is unavailable")
-        env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home")}
+        env = rust_build.cargo_env()
         result = subprocess.run([cargo, "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
                                 env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr

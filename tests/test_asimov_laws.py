@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from conformance.alternatives import base_environment, cases, scenario
+from tools import rust_build
 from ve.alternatives import run_case
 from ve.ast import Not, _Decoder, formula_from_data
 from ve.entailment import prove_entailment
@@ -331,8 +332,7 @@ def rust_binary():
     cargo = shutil.which("cargo")
     if cargo is None:
         pytest.skip("cargo is unavailable")
-    env = {**os.environ, "CARGO_HOME": str(REPO / ".cargo-home"),
-           "CARGO_TARGET_DIR": str(REPO / "rust/target")}
+    env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(REPO / "rust/Cargo.toml")],
                            env=env, capture_output=True, text=True, timeout=600)
