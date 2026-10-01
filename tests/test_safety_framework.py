@@ -93,7 +93,8 @@ def test_metrics():
 
 def test_span_accounting_is_complete():
     coverage = json.loads((HERE / "coverage.json").read_text())
-    assert sum(coverage["d1"]["bytes_by_status"].values()) == build_document.TEXT_BYTES
+    assert coverage["source_bytes"] == coverage["accounted_bytes"] == build_document.TEXT_BYTES
+    assert sum(coverage["bytes_by_status"].values()) == build_document.TEXT_BYTES
     assert sum(coverage["master_bytes_by_status"].values()) == build_document.TEXT_BYTES
     spans = json.loads((HERE / "spans.json").read_text())["units"]
     assert spans[0]["span"][0] == 0 and spans[-1]["span"][1] == build_document.TEXT_BYTES
