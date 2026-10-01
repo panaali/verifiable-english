@@ -1,7 +1,8 @@
 """norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
 
 Random trees over deny, allow and unspecified completions, with pairs and guards
-that mention lower regulated predicates, on random two-element situations. Every
+that mention lower regulated predicates (at the rule's row, under ∃ and ∀, or at a
+constant), on random two-element situations. Every
 filling of the unsaid tables is enumerated as ground truth: `table3` is sound
 (`table3_sound`), a SETTLED status holds under every admissible filling, an
 UNDECIDED one has two checked fillings, no status is UNKNOWN within the atom
@@ -14,6 +15,7 @@ from itertools import product
 import pytest
 
 from ve.ast import And, Binary, Not, Or, Top, Unary, Var
+from conformance.norm_defaults_differential import CONSTANTS, atom as _atom
 from ve.environment import Environment
 from ve.evaluate import _Evaluator
 from ve.norms import Norm, NormDocument
@@ -23,11 +25,6 @@ from tests.test_norm_defaults import obligation, permission, raw_environment
 # Guards may mention only predicates earlier in this order (no dependency cycles).
 ORDER = ("y_permitted", "x_permitted", "x_required")
 BASE = ("c1", "c2")
-
-
-def _atom(rng, allowed):
-    name = rng.choice(allowed)
-    return Unary(name, Var(0))
 
 
 def _guard(rng, allowed, depth=2):
@@ -50,7 +47,7 @@ def case(seed):
     profiles = (["norm-defaults@0", "norms@0", "relational-fol@0"]
                 if "unspecified" in completions.values() or rng.random() < 0.5
                 else ["norms@0", "relational-fol@0"])
-    env = Environment(raw_environment(predicates, profiles=profiles))
+    env = Environment(raw_environment(predicates, constants=CONSTANTS, profiles=profiles))
     rules = []
     for index in range(rng.randint(0, 5)):
         predicate = rng.choice(ORDER)
@@ -59,7 +56,7 @@ def case(seed):
         over = tuple(rng.sample(same, 1)) if same and rng.random() < 0.3 else ()
         unless = (_guard(rng, allowed, 1),) if rng.random() < 0.25 else ()
         rules.append(Norm(f"r{index}", predicate, rng.random() < 0.5, _guard(rng, allowed), unless, over))
-    situation = {"complete": True, "domains": {"act": ["a", "b"]}, "constants": {},
+    situation = {"complete": True, "domains": {"act": ["a", "b"]}, "constants": {"k": rng.choice(("a", "b"))},
                  "relations": {b: [[e] for e in ("a", "b") if rng.random() < 0.5] for b in BASE}}
     return env, rules, situation
 
