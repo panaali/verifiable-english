@@ -3,7 +3,9 @@
 > Status: **PLAN**, 2026-10-01, branch `usecase/safety-framework` (backlog item 2). No VE translation exists yet
 > and VE has not been run on any case. The answer key in section 6 is frozen at the commit that adds this file. A
 > later change to a key must be a separate commit that says why; it must not be folded into a results commit. No
-> model calls were made. Plan review (two frontier reviewers) is pending.
+> model calls were made. The plan review's findings A to C
+> (`manage-agents/safety-framework-planreview.final.md`) were applied before any VE run: RS3 and N2, B DISC and K9,
+> and family R.
 
 This use case translates someone else's text, so it runs in **translation mode** ([VISION.md](../../VISION.md) 3,
 [document.md](../../docs/spec/document.md)):
@@ -82,16 +84,17 @@ Quotations below are from the extracted text and each was checked to occur in it
 ### 3.1 Reading sets (written before the translation; none is collapsed)
 
 Each set is cited to its source unit. The translation keeps every reading, and the harness evaluates every
-complete choice of readings (section 9). "N1" is the only narrowing; it cites source units and is listed in the
-residual, and section 9 also reports what changes without it.
+complete choice of readings (section 9). "N1" and "N2" are the only narrowings; each cites source units and is
+listed in the residual, and section 9 also reports what changes without each.
 
 | Id | Source unit | Readings | Why the text admits each |
 |---|---|---|---|
 | RS0 | every "we will …" about the developer's own process | **commitment** (an obligation on the developer) / **prediction** (an assertion about the future) | "Will" is not a deontic word. |
 | N1 | narrowing of RS0 to **commitment** | cites 4.1 "designed to ensure the robust implementation of the processes outlined in this Frontier Safety Framework" and 5.1 "an assessment of our adherence to the Framework" | The text treats its own process sentences as things one adheres to. A "will" sentence that also carries "may", "where appropriate", "as appropriate" or "as needed" is not narrowed; it stays RS4. Under N1 a commitment is strict (`must`). |
-| RS1 | 1.3.5 bullets 2 to 4: "will be deemed to pose an acceptable level of residual risk for further development or deployment, if: …" | **S**: the listed conditions are sufficient for the classification "deemed acceptable", which gates nothing by itself / **G**: the listed conditions are necessary before the named activity proceeds (a gate) | The words say "if". The heading "Risk Acceptance Determination", 1.3.3 "mitigations that will be required to bring a model to an acceptable level of risk" and the bullets' own "This is required only for …" all point to a gate. The text never says that development or deployment stops when the conditions fail. |
+| RS1 | 1.3.5 bullets 2 to 4: "will be deemed to pose an acceptable level of residual risk for further development or deployment, if: …" | **S**: the listed conditions are sufficient for the classification "deemed acceptable", which gates nothing by itself / **G**: the listed conditions are sufficient for the classification, as worded, and are also necessary before the named activity proceeds (a gate). Under both readings the classification follows when the conditions hold; G adds the gate. | The words say "if". The heading "Risk Acceptance Determination", 1.3.3 "mitigations that will be required to bring a model to an acceptable level of risk" and the bullets' own "This is required only for …" all point to a gate. The text never says that development or deployment stops when the conditions fail. |
 | RS2 | 2.1.2 step 2 "external deployments of a model take place only after the appropriate governance function determines the residual risk to be acceptable"; 3.1.2 step 2, the same for "external deployments and high-risk internal deployments" | **P**: within its section's process, which "will be applied to models reaching a misuse T/CCL" (2.1.2) or "for deployments of a model reaching a ML R&D and Misalignment T/CCL" (3.1.2) / **U**: about every model | Inside the process the sentence's subject is "a model", with no qualifier. |
-| RS3 | the recommended security levels (2.2 and 3.2.2 tables): "the minimum appropriate level of security the field of frontier AI should apply"; for ML R&D automation level 1 "this must be taken on by the frontier AI field as a whole" | **F**: a recommendation to the field, not an obligation on the developer / **D**: an obligation on the developer, with the 2.2 "may be adjusted if …" cases as exceptions | The addressee is "the field". 1.3.5 nonetheless uses "the recommended security level" as a condition for the developer. |
+| RS3 | the recommended security levels (2.2 and 3.2.2 tables): "the minimum appropriate level of security the field of frontier AI should apply"; for ML R&D automation level 1 "this must be taken on by the frontier AI field as a whole" | **F**: a recommendation to the field, not a norm on the developer / **Ds**: the field's "should" read distributively, so it also binds the developer as a member of the field. Under Ds the force follows the RS4 rule for "should" ({strict, default}), narrowed by N2. | The addressee is "the field", with "should". 1.3.5 nonetheless uses "the recommended security level" as one of three ways the developer's own security condition can hold. |
+| N2 | narrowing of RS3 = Ds to **default** force | cites 2.2 "may be adjusted if … a model does not possess capabilities meaningfully different from other publicly available models that have weaker security applied … or if we assess that the benefits of the open release of model weights outweigh the risks", footnote 11 "The same caveats regarding security levels for misuse CCLs apply", and 1.3.5 bullets 2 and 3 "or we otherwise assess that the level of security applied is adequate … or we assess that the benefits of the open release of model weights outweigh the risks" | The text itself states when the recommended level need not be applied. A strict reading would contradict those stated cases, so they become the default rule's excepted cases (soft-norms.md 1.1: OT16, OT4 and OT5 as sufficient conditions). The developer's only strict security commitment is the SEC condition of F9 and F10 (under RS1 = G). Section 9 reports what changes without N2. |
 | RS4 | hedged force: 5.2 "we aim to share"; 1.3.5 Note "should also be assessed holistically"; Glossary "The residual risk should be brought within the acceptable levels"; Note on ML R&D CCLs "Risk assessment must take into account …" | for "aim to": **default norm** (a soft norm, decider unstated) / **intent** (no norm). For "should" and "must": **strict** / **default**, the [soft-norms.md](../../docs/spec/soft-norms.md) 2.2 translation rule | "Aim" states a goal. The force words follow the general rule. |
 | RS5 | 1.3.2 "we determine whether a substantial modification has been made and whether a further critical capability assessment is required if (1) … and (2) …" | **D**: (1) and (2) trigger the determination / **R**: (1) and (2) make a further assessment required | The "if" clause can attach to "we determine" or to "is required". |
 | RS6 | 2.2 "the risks of insider misuse … are effectively addressed by our baseline controls … additional mitigations beyond these established safeguards are not required" against 2.1.1 Security Level 2+ "with additional security measures designed to address risks from insider threats" | **same**: both concern one act, adding insider-risk mitigations to a model at a misuse CCL / **different**: insider *misuse* of capabilities is not insider *threat* to weights | Both name insiders and "additional" measures. Background checks appear on both lists. |
@@ -178,7 +181,7 @@ CCLs, we define 'alert thresholds'" (1.3.2). The text states no closure for reco
 | F13 | 3.1.2 step 2 | External and high-risk internal deployments take place only after GOV. (RS2) |
 | F14 | 2.1.2/3.1.2 step 3 | "Material updates to a safety case will be submitted to the appropriate governance function for review." |
 | F15 | 2.2 intro | Insider misuse at misuse T/CCLs: "additional mitigations beyond these established safeguards are not required". (RS6) |
-| F16 | 2.1.1, 2.2, 3.2.2 | Recommended security levels (table in 4.1), with the 2.2 adjustment cases (OT16). Footnote 11 applies the same caveats to ML R&D. (RS3) |
+| F16 | 2.1.1, 2.2, 3.2.2 | Recommended security levels (table in 4.1), with the 2.2 adjustment cases (OT16, OT5). Footnote 11 applies the same caveats to ML R&D. Under RS3 = Ds (with N2) a default rule on the developer, whose excepted cases are OT16, OT4 and OT5; under F no rule on the developer. (RS3, N2) |
 | F17 | 3.2.1 | At L5: "periodic residual risk assessments of the misalignment risk" (PRA, OT12), which account for high-risk internal deployments. If the internal-deployment residual risk is unacceptable without additional safeguards, "these will be applied" (ADD). |
 | F18 | 5.1 | Review "at least once a year", more often given reasonable grounds (OT13). The updated version is reviewed by governance bodies. (RS10) |
 | F19 | 5.2 | At a CCL posing an unmitigated, material risk to public safety (OT11), "we aim to share relevant information with appropriate government authorities" (DISC). (RS4) |
@@ -191,7 +194,8 @@ URLs, page furniture) is accounted for as LABELLED or UNFORMALISED units, with r
 
 The brief's four questions map to the families:
 
-- "What is required at each named level": families A, B and K.
+- "What is required at each named level": families A, B and K, and family R for the risk acceptance determination
+  itself (when the text deems a model's risk acceptable, kept apart from any permission to deploy).
 - "Do any two commitments conflict": family C.
 - "Which levels or situations no rule covers": family G, plus the NONE cells of A and B.
 - "Which commitments can never apply": family N.
@@ -204,9 +208,14 @@ The brief's four questions map to the families:
   is scored.
 - **NONE**: it holds under no choice.
 - **Requirements.** "R is required" means some rule's obligation `meet(p, R)` selects at the case's proposal `p`
-  (selection as in [agent-policy](../agent-policy/PLAN.md) 5), under both completion defaults.
+  (selection as in [agent-policy](../agent-policy/PLAN.md) 5), under both completion defaults. A default rule
+  (a soft norm) counts when it selects with no exception finding, which the case leaves unset; the results say
+  which requirements are only soft.
 - **REL**: a "need not" rule selects. It counts as covered, but it is not a requirement.
-- **Conflicts.** CONFLICT is the W1 conflict check on the document of that choice.
+- **Deemed acceptable** (family R): a rule of F8 to F11 concludes the classification at `p`. It is a classification,
+  never a permission to proceed (3.3).
+- **Conflicts.** CONFLICT is the W1 conflict check on the document of that choice. A strict rule that blocks a
+  default rule on the same act is not a conflict (soft-norms.md 1.4 and 4.2).
 
 **Case facts.**
 
@@ -221,19 +230,20 @@ The brief's four questions map to the families:
 |---|---|---|
 | A: required conditions per level and activity | A-L*k*-*X* for *k* = 0…7 and *X* ∈ {DEV, INT, HRI, LRX, EXT}: 40 cases | 4 atoms each (DM, SEC, GOV, CCA): 160 |
 | B: per-level requirements independent of the activity | B-L0 … B-L7: 8 cases | 5 atoms each (RRA, SC, PRA, RECSEC, DISC): 40 |
-| K: process triggers | K1 (5 cases), K2 (2), K3 to K8 | 13 |
+| K: process triggers | K1 (5 cases), K2 (2), K3 to K8, K9 (5) | 18 |
+| R: risk acceptance determination | R1 to R9 | 11 |
 | C: conflicts | C1 to C5, C-doc | 6 |
 | G: gaps | G1 to G9 | 9 |
 | N: never applies | N1 to N3 | 3 |
 | S: severity and causation | S1 (7 levels), S2 to S6 | 12 |
 | D: dates | D1 to D3 | 3 |
-| **Total** | | **246** |
+| **Total** | | **262** |
 
 ## 6. Answer key (written before any VE run)
 
 Notation:
 
-- G, S: RS1; U, P: RS2; D, F: RS3; M, E: RS7; rel: RS8 release; same: RS9 or RS6 "same".
+- G, S: RS1; U, P: RS2; Ds, F: RS3; M, E: RS7; rel: RS8 release; same: RS9 or RS6 "same".
 - DM is DM-h at L1 to L4, DM-g at L5 and DM-s at L6 and L7. SEC is SEC-t at L5.
 
 ### 6.1 Family A (160 items)
@@ -267,13 +277,15 @@ becomes NONE: nothing is required. That is reported, not scored.
 |---|---|---|---|---|---|
 | B-L0 | NONE | NONE | NONE | NONE | NONE |
 | B-L1 | ALL | NONE | NONE | NONE (no level stated) | NONE (not a CCL) |
-| B-L2, B-L3, B-L4 | ALL | ALL | NONE | SOME(D): SL2+ | SOME(RS4 default norm), conditional on OT11 |
+| B-L2, B-L3, B-L4 | ALL | ALL | NONE | SOME(Ds): SL2+, soft | NONE (OT11 unset; see K9) |
 | B-L5 | ALL | NONE | ALL | NONE (no level stated) | NONE |
-| B-L6 | ALL | ALL | NONE | SOME(D): SL3 | SOME(RS4 default norm), conditional on OT11 |
-| B-L7 | ALL | ALL | NONE | SOME(D): SL4 | SOME(RS4 default norm), conditional on OT11 |
+| B-L6 | ALL | ALL | NONE | SOME(Ds): SL3, soft | NONE (OT11 unset; see K9) |
+| B-L7 | ALL | ALL | NONE | SOME(Ds): SL4, soft | NONE (OT11 unset; see K9) |
 
-Totals: ALL 13, SOME 10, NONE 17. Under D, RECSEC is required unless an OT16 adjustment finding holds
-(F16, footnote 11).
+Totals: ALL 13, SOME 5, NONE 22. Under Ds (with N2), RECSEC is a default rule: it selects unless an exception
+finding (OT16, OT4 or OT5) holds, and the B cases leave those unset (F16, footnote 11). Under F nothing on the
+developer selects. The case facts leave OT11 unset, so F19's guard fails and DISC is NONE in every B case; family K9
+stipulates the OT11 findings.
 
 ### 6.3 Family K (13 items)
 
@@ -287,17 +299,39 @@ Totals: ALL 13, SOME 10, NONE 17. Under D, RECSEC is required unless an OT16 adj
 | K6 | the framework at any time | a review at least yearly required | ALL | F18 (the deadline is family D) |
 | K7 | L5, internal deployment, and the finding that the residual risk is unacceptable without additional safeguards | ADD required | ALL | F17 "these will be applied" |
 | K8 | reasonable grounds (OT13) found | a more frequent review required | ALL, conditional on OT13 | F18 |
+| K9-L2, K9-L3, K9-L4, K9-L6, K9-L7 | the model has reached the CCL, and both OT11 findings hold: the CCL poses an unmitigated and material risk to overall public safety, and sharing will facilitate safety | sharing information with government authorities required (DISC) | SOME(RS4 "aim to" = default norm), soft | F19. Under "intent" no norm selects. |
+
+### 6.3a Family R: risk acceptance determination (11 items)
+
+"Deemed acceptable" is the classification of 1.3.5. It is never a permission to proceed (3.3), so R9 also asks
+whether any rule permits or forbids proceeding. Under RS1 the classification follows from the stated conditions in
+both readings; RS8 limits the deployment-mitigation condition to the activities the bullet names. Every open term
+not named is unset.
+
+| Case | Situation | Item | Key | Justification |
+|---|---|---|---|---|
+| R1 | L0, EXT | deemed acceptable | ALL | F8 |
+| R2 | L2, EXT; DM-h found (OT2); Security level 2+ applied | deemed acceptable | ALL | F9: both conditions hold |
+| R3 | L2, EXT; Security level 2+ applied; DM-h found **not** to hold | deemed acceptable | NONE | F9's DM condition fails, and no other rule concludes the classification. The text never says the opposite either (silent) |
+| R4 | L2, DEV; Security level 2+ applied; DM-h unset | deemed acceptable | ALL | F9: DM is "required only for external deployment", so SEC alone is the condition for further development |
+| R5 | L6, HRI; DM-s found (OT2); security assessed adequate (OT4), no recommended level applied | deemed acceptable | ALL | F10: SEC's second disjunct |
+| R6 | L5, EXT; very unlikely propensities found (OT6); open release judged beneficial (OT5) | deemed acceptable | ALL | F11: DM-g's second disjunct and SEC-t's second disjunct |
+| R7 | L5, EXT; DM-g found (OT2); OT4 and OT5 found **not** to hold | deemed acceptable | NONE | F11's SEC-t fails |
+| R8 | L1, EXT; DM-h found (OT2); Security level 2+ applied; OT4 and OT5 unset | deemed acceptable | NONE | No unit states a recommended level for L1, so SEC's first disjunct cannot hold (N2 of family N); nothing is invented |
+| R9a | L2, EXT; DM-h found; Security level 2+ applied; GOV not determined | deemed acceptable | ALL | F9 |
+| R9b | the same case | some rule permits proceeding | NONE | "Deemed acceptable" is a classification only (3.3) |
+| R9c | the same case | some rule forbids proceeding | ALL | F12 covers misuse T/CCL models under P and U, and GOV is absent |
 
 ### 6.4 Family C: conflicts (6 items)
 
 | Case | Rules | Key | Witness or reason |
 |---|---|---|---|
-| C1 | F15 against F16 | SOME(RS6 same ∧ D) | A model at L2 (or L3, L4). Under D the SL2+ insider-threat measures are required; under "same" F15 says the same additional mitigations are not required. |
+| C1 | F15 against F16 | NONE | A model at L2 (or L3, L4). Under F the recommendation puts no norm on the developer. Under Ds (with N2) the SL2+ insider-threat measures are a default rule; under RS6 "same", F15's strict "need not" regulates the same act and blocks the default rule instead of conflicting with it (soft-norms.md 4.2). Without N2 (Ds strict), C1 would be SOME(RS6 same ∧ Ds strict); section 9 reports this. |
 | C2 | F2 against F3 | NONE | Under E, F3 is an exception to F2 (precedence from the footnote's attachment). Under M, F3 is no norm. Mutant m1 removes the precedence and must give CONFLICT. |
 | C3 | F9 against F10 | SOME(G ∧ rel ∧ RS9 same) | A model at a misuse T/CCL and an ML R&D CCL, proposed for high-risk internal deployment. F9 releases DM for internal deployment and F10 requires it. |
-| C4 | F16 against F9/F10's SEC and the 2.2 adjustment cases | NONE | SEC is a disjunction that contains the recommended level. The adjustments are exceptions under D, and under F there is no obligation. |
+| C4 | F16 against F9/F10's SEC and the 2.2 adjustment cases | NONE | SEC is a disjunction that contains the recommended level. The adjustments are the default rule's excepted cases under Ds, and under F there is no norm on the developer. |
 | C5 | F8 against F12/F13 (U) at L0 | NONE | F8 is a classification, not a permission (3.3), so "deemed acceptable" and "only after GOV" never collide. |
-| C-doc | the whole document, per choice | SOME((RS6 same ∧ D) ∨ (G ∧ rel ∧ RS9 same)) | Exactly C1 and C3. Otherwise CONFLICT-FREE. |
+| C-doc | the whole document, per choice | SOME(G ∧ rel ∧ RS9 same) | Exactly C3. Otherwise CONFLICT-FREE. |
 
 ### 6.5 Family G: gaps (9 items)
 
@@ -385,8 +419,8 @@ the D2 or D3 unit's status, after checking that the byte ranges are equal (probe
     `external(proposal)`, `low_risk_external(proposal)`, `first_external_of_new_frontier_model(proposal)`;
   - open-term predicates, one per OT.
 - **Regulated obligation `meet(proposal, requirement)`**, act phrase `{0} meet {1}`. Under RS1 = G each F9 to F11
-  condition is a `must` rule. Under RS8 = rel the "not …" clauses are `need not` rules. Under S, F9 to F11
-  conclude the plain predicate `deemed_acceptable(proposal)` instead.
+  condition is a `must` rule. Under RS8 = rel the "not …" clauses are `need not` rules. Under both RS1 readings,
+  F8 to F11 conclude the plain predicate `deemed_acceptable(proposal)` when their conditions hold (family R).
 - **Regulated permission `proceed(proposal)`.** Only F12/F13 forbid it ("must not proceed, unless …").
   Selection-based verdicts make the default irrelevant (3.3).
 - **Reading sets.** Each RS is a W2 reading set on its source unit, with one candidate per reading. The harness
@@ -455,8 +489,8 @@ the D2 or D3 unit's status, after checking that the byte ranges are equal (probe
 
 | # | Metric | Expected |
 |---|---|---|
-| M1 | key agreement per family (A 160, B 40, K 13, C 6, G 9, N 3, S 12, D 3), with SOME conditions matched exactly | 246/246; every miss is explained in section 12 |
-| M2 | reading sets: count, the choices enumerated per case, cases whose verdict is SOME, native `readings` verdicts | 11 sets plus N1; at most 32 choices per case; native UNKNOWN on every norm set |
+| M1 | key agreement per family (A 160, B 40, K 18, R 11, C 6, G 9, N 3, S 12, D 3), with SOME conditions matched exactly | 262/262; every miss is explained in section 12 |
+| M2 | reading sets: count, the choices enumerated per case, cases whose verdict is SOME, native `readings` verdicts | 11 sets plus N1 and N2; at most 32 choices per case; native UNKNOWN on every norm set |
 | M3 | span accounting: `bytes_by_status` (CHECKED, OPEN, LABELLED, UNFORMALISED) and `bytes_by_kind`, both totalling 54,373 (100%); reasons for unformalised bytes; the residual (open terms with deciders, assumptions, bridges, narrowings, unresolved reading sets) | **CHECKED under 10% of bytes, probably under 5%**: closure sentences, severity classes and dates. Commitments are OPEN, because their guards carry OT1. A lower number is the honest outcome. |
 | M4 | structure-conditional answers: items answered with a certificate or a validated witness per choice, although their units are OPEN | reported per family |
 | M5 | CHECKED-bar lint (P7): one-off identifiers; rules per source bullet | 0; each of F9, F10 and F11 is one rule |
@@ -471,7 +505,7 @@ the D2 or D3 unit's status, after checking that the byte ranges are equal (probe
 | Id | Mutation | Expected change |
 |---|---|---|
 | m1 | remove F3's precedence over F2 (keep RS7 = E) | C2 becomes SOME(E): CONFLICT under E. The CCA item of every LRX case stays SOME(M) as a requirement, but under E it is now CONFLICT instead of REL |
-| m2 | add "the recommended security level for the CBRN uplift TCL is Security level 2+" (an invented threshold) | N2 becomes satisfiable at L1; B-L1 RECSEC becomes SOME(D); M6 flags the untraced fact |
+| m2 | add "the recommended security level for the CBRN uplift TCL is Security level 2+" (an invented threshold) | N2 becomes satisfiable at L1; B-L1 RECSEC becomes SOME(Ds); M6 flags the untraced fact |
 | m3 | add an order SL2+ < SL3 < SL4 | S4 becomes ALL; M6 flags it |
 | m4 | add a cyber TCL constant | N1 becomes satisfiable; M6 flags it |
 | m5 | turn F8 into a permission ("may proceed") | C5 becomes CONFLICT under U; M6 flags the invented permission |
