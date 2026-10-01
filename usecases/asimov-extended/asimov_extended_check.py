@@ -1,6 +1,6 @@
 """Runs VE on every case of the asimov-extended use case and compares with the answer key.
 
-`python usecases/asimov-extended/check.py` writes `results.json` and prints the
+`python usecases/asimov-extended/asimov_extended_check.py` writes `results.json` and prints the
 comparison with `answer-key.json`. VE's Lean route (`ve_risk_route`) decides
 every record; the comparison reads the answer key only after every result is
 computed. What runs (PLAN.md sections 7, 8 and 10):
@@ -9,7 +9,7 @@ computed. What runs (PLAN.md sections 7, 8 and 10):
    replayed by Lean, for base + additions and for the base rules alone, and
    followability with each expected dilemma record as the witness.
 2. The 51 records of PLAN.md section 5, each under the base rules (1-13) and
-   under base + additions (1-29), and the independent reading of `reading.py`.
+   under base + additions (1-29), and the independent reading of `asimov_extended_reading.py`.
 3. Five seeded mutants (PLAN.md section 8).
 4. 300 sampled records: Lean against the independent reading, and the sampled
    properties Q1-Q3 (PLAN.md section 7; these are not certificates).
@@ -31,9 +31,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-import cases  # noqa: E402
-import reading  # noqa: E402
-from cases import HARMS, REPO  # noqa: E402
+import asimov_extended_cases as cases  # noqa: E402
+import asimov_extended_reading as reading  # noqa: E402
+from asimov_extended_cases import HARMS, REPO  # noqa: E402
 from ve.ast import Not, _Decoder  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
 from ve.environment import Environment  # noqa: E402

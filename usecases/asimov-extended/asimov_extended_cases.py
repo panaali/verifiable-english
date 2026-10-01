@@ -57,9 +57,8 @@ def v2_document():
 
 
 def source_text(extended=True):
-    """base.ve keeps v2's bytes (no final newline); the additions follow on the next line."""
-    base = (HERE / "base.ve").read_text()
-    return base + "\n" + (HERE / "additions.ve").read_text().rstrip("\n") if extended else base
+    """rules.ve is base.ve (v2's bytes, no final newline) followed by the additions, rules 14-29."""
+    return (HERE / ("rules.ve" if extended else "base.ve")).read_text()
 
 
 def _named(env, doc, names):
@@ -80,15 +79,15 @@ def document(extended=True):
     """The parsed document, bound to the manifest when it is checked in (base + additions)."""
     env = Environment(environment())
     text = source_text(extended)
-    manifest_path = HERE / "rules.manifest.json"
-    if extended and manifest_path.exists():
+    manifest_path = HERE / ("rules.manifest.json" if extended else "base.manifest.json")
+    if manifest_path.exists():
         return parse_english(env, text, json.loads(manifest_path.read_text()))
     return _named(env, parse_english(env, text), rule_names(extended))
 
 
-def render_manifest():
-    doc = _named(Environment(environment()), parse_english(Environment(environment()), source_text()), rule_names())
-    return render_english(doc)
+def render_manifest(extended=True):
+    env = Environment(environment())
+    return render_english(_named(env, parse_english(env, source_text(extended)), rule_names(extended)))
 
 
 def norms(extended=True, replace=None):

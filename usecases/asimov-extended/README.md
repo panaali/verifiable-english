@@ -8,14 +8,17 @@ nothing about orders that conflict with each other. Each added rule, derived nam
 | File | What it holds |
 | --- | --- |
 | [base.ve](base.ve) | v2's 13 rules. The only change is `might prevent` for `prevents` in rules 9 and 13, which a risk environment requires; the meaning is the same. |
-| [additions.ve](additions.ve) | rules 14–29: the additions (14–25) and four short definitions they use (26–29) |
+| [rules.ve](rules.ve) | the whole document: `base.ve` byte for byte, then rules 14–29, the additions (14–25) and four short definitions they use (26–29) |
 | [environment.json](environment.json) | v2's vocabulary, the `risk@0` profile, 8 harms in 4 severity classes, the order data and the new derived names |
-| [rules.manifest.json](rules.manifest.json) | the identity of the 29-rule document (base + additions) |
+| [rules.manifest.json](rules.manifest.json), [base.manifest.json](base.manifest.json) | the identities of the 29-rule document and of the base rules alone |
 | [source.md](source.md) | where each part comes from |
-| [cases.py](cases.py) | the 51 decision records |
-| [reading.py](reading.py) | an independent reading of all 29 rules for one robot |
-| [check.py](check.py) | runs VE on every case and compares the results with the answer key |
+| [asimov_extended_cases.py](asimov_extended_cases.py) | the 51 decision records |
+| [asimov_extended_reading.py](asimov_extended_reading.py) | an independent reading of all 29 rules for one robot |
+| [asimov_extended_check.py](asimov_extended_check.py) | runs VE on every case and compares the results with the answer key |
 | [answer-key.json](answer-key.json), [results.json](results.json) | the key from PLAN.md sections 6–8, and VE's results |
+
+SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b537f5`, `rules.ve`
+`6180eecd325c2ce9b9861f46223c7a1d30b2c82028d91e93454fc58c0f4a392a`.
 
 ## Results in brief
 
@@ -161,7 +164,7 @@ edited; [PLAN.md](PLAN.md) section 13 records each item.
 
 ## Timing
 
-One run of `check.py` on 12 workers (16 cores, shared with other jobs at a load average near 20, so these
+One run of `asimov_extended_check.py` on 12 workers (16 cores, shared with other jobs at a load average near 20, so these
 are rough): conflict certificates for the extended rules 82 s (18 targets found and replayed) and for the v2
 rules 7 s; the two followability witnesses 14 s; the 102 decisions of the 51 records 71 s; the 600 decisions of
 the 300 sampled records 212 s; the five mutants, beside them, 283 s. The whole run took 6.4 minutes.
@@ -172,6 +175,6 @@ extended dilemmas are 1 NONE-PERMITTED (every action breaks the Zeroth Law, as Q
 ## Running it
 
 ```sh
-PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/check.py   # writes results.json
+PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/asimov_extended_check.py   # writes results.json
 PATH="$HOME/.elan/bin:$PATH" uv run pytest -q tests/test_asimov_extended.py tests/test_asimov_laws.py
 ```

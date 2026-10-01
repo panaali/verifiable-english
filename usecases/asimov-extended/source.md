@@ -13,7 +13,7 @@ does not change (risk.md 2.2).
 
 ## The additions (authored, not Asimov's)
 
-Rules 14–29 in [additions.ve](additions.ve) are **this project's additions**,
+Rules 14–29 in [rules.ve](rules.ve), after the 13 lines of `base.ve`, are **this project's additions**,
 written by "the Asimov extension author" for this use case. Asimov states none
 of them. The Three Laws rank laws, not harms, and say nothing about orders
 that conflict with each other. The additions are:

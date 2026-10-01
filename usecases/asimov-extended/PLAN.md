@@ -474,3 +474,8 @@ recorded in section 13, not made silently.
    although one required order prevails over the other. In both, every action breaks the First Law, rule 19
    permits both orders, and the prevailing order is not a valid order because rule 20 counts only a lawful order.
    This is the OPEN item "rule 20 ignores the excuses of rules 9 and 19" (section 9), observed.
+5. **File layout.** The repository's corpus audit (`tests/test_natural.py`) reads every `.ve` file with its own
+   `.manifest.json`, and a file of additions alone cannot be a document: its first rule would be rule 14. So the
+   additions are not in a file of their own. `rules.ve` holds the whole document: its first 13 lines are `base.ve`
+   byte for byte, and rules 14–29 follow. `base.ve` has its own manifest, `base.manifest.json`. A test checks the
+   prefix, so v2's rules stay unchanged and separate.
