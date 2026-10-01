@@ -479,3 +479,10 @@ recorded in section 13, not made silently.
    additions are not in a file of their own. `rules.ve` holds the whole document: its first 13 lines are `base.ve`
    byte for byte, and rules 14–29 follow. `base.ve` has its own manifest, `base.manifest.json`. A test checks the
    prefix, so v2's rules stay unchanged and separate.
+6. **The permission default is surfaced and measured (review finding B).** The environment, as v2's, completes
+   `permitted` to allow: an action that no rule forbids may be performed. The source grants no such permission;
+   it is v2's modeling choice. The check now decides every record again with `permitted` completed to deny
+   (`permission_default_deny` in `results.json`), and the independent reading has the same switch. Base's clear
+   set changes in 24 of the 51 records, P9 among them: its unordered actions are permitted only by the default.
+   Ext's changes in none of the 51 and in 3 of the 300 sampled records, which keep a clear action. Lean and the
+   reading agree on all 702 decisions. The answer key is unchanged; README OPEN states the assumption.

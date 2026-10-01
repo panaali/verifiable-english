@@ -11,6 +11,12 @@ with one forced rewording: a risk environment rejects the bare word
 `prevents`, so rules 9 and 13 say `might prevent`. The meaning of the word
 does not change (risk.md 2.2).
 
+The environment keeps v2's completion defaults, which are modeling choices,
+not Asimov's. An action that no rule forbids may be performed. An action is
+not required unless a rule requires it, and a derived name is false unless a
+rule derives it. The source grants no permission by default. Most v2 verdicts,
+P9's among them, rest on that default (README, "The permission default").
+
 ## The additions (authored, not Asimov's)
 
 Rules 14–29 in [rules.ve](rules.ve), after the 13 lines of `base.ve`, are **this project's additions**,
