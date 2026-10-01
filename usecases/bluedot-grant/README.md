@@ -97,3 +97,14 @@ UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest
 
 The two generators use only local source bytes and checker APIs. They make no
 model calls and do not modify `source.md`.
+
+Verification on this worktree: `lake build` completed 488 jobs;
+`lean/audit.py` passed its 249-file, 2,437-declaration audit; the focused
+BlueDot test passed 4 tests. The full suite passed **4,886 tests, 10 skipped**
+with `VE_NATIVE_PREBUILT=1`, `VE_LEAN_PREBUILT=1`, and
+`VE_RUST_SHA256=04470aa2a3a7c14367f4040d1da37e2b356ad0c07f82a0b9731f0b34049261f4`,
+the SHA-256 of the Rust binary built from this checkout. The first full-suite
+run without that override had 134 Rust authority failures: `main` pins
+`7d74b350…` in `lean/checkers.lock`, which differs from this local build.
+Those 134 tests passed with the local SHA override before the successful full
+rerun. No Rust source or trust lock was changed for this use case.
