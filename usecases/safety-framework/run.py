@@ -242,6 +242,51 @@ def constants_of(formula, found=None):
     return found
 
 
+PROVER_CALLS = [0]
+
+
+def PREMISES():
+    return [f for _, _, formulas in T.facts() for f in formulas]
+
+
+def identifier_lint():
+    """P7 / M5: no identifier packs a level, number or condition into its name.
+
+    A constant may carry a digit only if it is a source label (a level or a
+    security level). No predicate name contains a constant name, a digit, or a
+    condition word. Rules per source commitment are counted."""
+    env = T.environment()
+    labels = set(V.LEVELS) | set(V.MEASURES)
+    words = ("_if_", "_unless_", "_after_", "_before_", "_requires_", "_when_")
+    violations = []
+    for name in env.constants:
+        if re.search(r"[0-9]", name) and name not in labels:
+            violations.append(f"constant {name}")
+    for name in env.predicates:
+        if re.search(r"[0-9]", name) or any(w in f"_{name}_" for w in words) or any(
+                c in name for c in env.constants if len(c) > 4):
+            violations.append(f"predicate {name}")
+    per_source = {}
+    for block in T.rule_blocks():
+        source = block.source.split(",")[0]
+        per_source.setdefault(source, []).append(block.id)
+    return {"violations": violations, "rules_per_source": per_source}
+
+
+def invention_audit():
+    """M6: every premise and rule is traced to a source span (its header), and every forced
+    choice the translation makes is listed."""
+    untraced = [b.id for b in T.read_blocks("facts.d1.ve") + T.rule_blocks() if not b.source.strip()]
+    bridges = [b.id for b in T.read_blocks("facts.d1.ve") if "bridge" in b.source]
+    return {"untraced": untraced, "bridges": bridges,
+            "forced_choices": [
+                "completion defaults: every regulated predicate is run under deny and under allow (M7)",
+                "an unset open term is false in a case model (the decider made no such finding)",
+                "a soft exception is found exactly where a sufficient condition the text states holds",
+                "D3: \"a year\" from 2026-04-17 is 365 days (no 29 February in between; W6a has no year unit)",
+                "D2: unexamined (action, harm) cells count as possible (risk@0 unexamined: possible)"]}
+
+
 def refute(premises, stated, goal=None, env=None):
     """A replayed certificate that `premises + stated` entail `goal` (default: a contradiction).
 
@@ -259,6 +304,7 @@ def refute(premises, stated, goal=None, env=None):
                   if (predicates_of(f) & symbols
                       and (type(f) in (A.Forall, A.Implies) or not constants_of(f) or constants_of(f) & names))
                   or (not predicates_of(f) and constants_of(f) & names)]
+        PROVER_CALLS[0] += 1
         proof = prove_entailment(env, tuple(chosen) + tuple(stated), goal, max_steps=PROVER_STEPS)
         if proof.status == "Found":
             if check_entailment_certificate(env, tuple(chosen) + tuple(stated), goal, proof.certificate).valid:
@@ -768,6 +814,11 @@ def run():
                 "mismatch": [r["choice"] for r in rows if not r["coincide"]]}
     progress("variants")
     results["variants"] = variants()
+    results["lint"] = identifier_lint()
+    results["invention_audit"] = invention_audit()
+    results["cost"] = {"rule_candidates": len(T.rule_blocks()), "premises": len(PREMISES()),
+                       "documents_built": len(_DOCS), "case_models": len(_MODELS),
+                       "cases": len(CASES), "prover_calls": PROVER_CALLS[0]}
     results["seconds"] = round(time.time() - started, 1)
     return results
 
@@ -909,6 +960,11 @@ def same_set(verdict, result):
         variables = sorted(set(result["cone"]) | set(condition_vars(verdict)[1] if verdict.startswith("SOME(") else []))
         return verdict_set(verdict, variables) == result_set(result, variables)
     return False
+
+
+def severity_and_dates_available():
+    import severity_and_dates
+    return severity_and_dates.RISK_ROUTE.exists()
 
 
 def main(argv=None):
