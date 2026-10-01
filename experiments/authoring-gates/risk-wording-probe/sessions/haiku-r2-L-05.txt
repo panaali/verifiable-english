@@ -1,0 +1,124 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the robot are taking the lift and taking the stairs. Taking the lift allows a dropped parcel to happen.
+
+What can you conclude about taking the stairs?
+(a) The text does not say.
+(b) In at least one case the text allows, the robot takes the stairs and no parcel is dropped.
+(c) Taking the stairs leads to a dropped parcel in every case the text allows.
+(d) In no case the text allows does taking the stairs lead to a dropped parcel.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) A lift failure is unlikely if the robot takes the lift.
+(c) If the robot takes the lift, no lift failure happens in any case the text allows.
+(d) The robot is not allowed to cause a lift failure.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+An agent can run the job with a memory limit or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job with a memory limit leads to a job failure if the peak memory of the job is greater than 4 gigabytes.
+
+The agent runs the job with a memory limit, and a job failure happens. According to the text, was the peak memory of the job greater than 4 gigabytes?
+(a) No: a job failure needs a peak memory of at most 4 gigabytes.
+(b) Yes: a job failure needs a peak memory greater than 4 gigabytes.
+(c) The text does not say.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An agent prevents a harm by taking an action that might not lead to the harm.
+By default, an action may be performed.
+
+The actions available to the agent are running the job and running the job with a memory limit. Running the job leads to a server outage. Running the job with a memory limit might lead to a server outage. Running the job with a memory limit might not lead to a server outage.
+Rule 1. Every agent must prevent a server outage.
+
+According to the text, which of the agent's actions fulfils Rule 1?
+(a) The text does not say.
+(b) Neither action.
+(c) Running the job.
+(d) Running the job with a memory limit.
+
+Text 5
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) No fall happens: a robot is safe inside a lift.
+(b) A fall usually happens, but not in every case.
+(c) The text does not say.
+(d) A fall happens in every case the text allows.
+
+Text 6
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. A seizure is severe. A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a fall. A fall is serious or worse.
+
+According to the text, is a fall less severe than a seizure?
+(a) No: a fall is severe, like a seizure.
+(b) Yes: a fall is serious, and a seizure is severe.
+(c) The text does not say.
+
+Text 7
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) The text does not say.
+(b) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.
+(c) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.
+(d) Yes: crossing between parked cars is dangerous.
+
+Text 8
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration cannot lead to a task delay unless the duration of the migration is greater than 30 minutes.
+
+The agent applies the migration, and a task delay happens. According to the text, was the duration of the migration greater than 30 minutes?
+(a) The text does not say.
+(b) No: it was 30 minutes or less.
+(c) Yes: it was greater than 30 minutes.

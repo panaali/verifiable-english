@@ -40,6 +40,7 @@ MAIN = "lean/Main.lean"
 LEAN_TOOLCHAIN = "lean/lean-toolchain"
 POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/check_lean_imports.py",
           "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py"}
+LAKEFILE = "lean/lakefile.toml"  # its executable roots are tool-layer entry modules
 RUST_MANIFEST = re.compile(r"rust/(?:.+/)?Cargo\.toml")
 BLOB_MODES = {"100644", "100755", "120000"}
 ALLOW_SECRET = b"pragma: allowlist secret"
@@ -171,18 +172,18 @@ class Index:
     def policy(self) -> SimpleNamespace:
         """Load the staged policy modules from a snapshot of the index.
 
-        The snapshot holds the policy code, `ve/__init__.py`, every Rust manifest,
-        every staged directory and an empty stand-in for every other staged `.py`
+        The snapshot holds the policy code, `ve/__init__.py`, the Lake and Rust
+        manifests, every staged directory and an empty stand-in for every other staged `.py`
         path, so module resolution (`layer_policy.python_imports` tests file and
         directory existence) sees the staged tree, never the working tree.
         """
         if self._policy is None:
             listing = self.listing()
-            real = [*POLICY.values(), "ve/__init__.py",
+            real = [*POLICY.values(), LAKEFILE, "ve/__init__.py",
                     *(p for p in listing if RUST_MANIFEST.fullmatch(p))]
             blobs = self.read(real)
             for path, blob in blobs.items():
-                if blob is None and path in POLICY.values():
+                if blob is None and path in {*POLICY.values(), LAKEFILE}:
                     raise RuntimeError(f"policy file {path} is missing from the index")
             for folder in {PurePosixPath(p).parent for p in listing}:
                 (self.snapshot / folder).mkdir(parents=True, exist_ok=True)

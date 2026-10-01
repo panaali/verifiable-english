@@ -1,0 +1,25 @@
+I'll work through each text carefully using the legends provided.
+
+**Text 1:** **(b)**
+"Might prevent" means the action might not lead to harm, AND another action leads to it. So: giving nothing might avoid fever, and giving vaccine leads to fever in every case.
+
+**Text 2:** **(b)**
+"Allows harm to happen" means the action leads to harm, and another action might not. So: drug A leads to rash in every case, and drug B might not in at least one case.
+
+**Text 3:** **(d)**
+"Less severe worst case" means the compared action might lead to a harm more severe than every harm the first action might lead to. So: crossing at the crossing might cause more severe harm than any harm from crossing between parked cars.
+
+**Text 4:** **(c)**
+"Might not lead to harm" means some case allowed avoids the harm. So: in at least one case, deleting the database happens without data loss.
+
+**Text 5:** **(c)**
+"Might lead" means not ruled out (uncertain); "leads to" means happens in every case. The difference: rash is not ruled out (uncertain), drowsiness happens in every case (certain).
+
+**Text 6:** **(a)**
+"Leads to exactly when" means the harm happens in every case where the condition holds. At 4 kg > 3 kg, the condition holds, so a lift failure happens.
+
+**Text 7:** **(d)**
+"Prevent harm" means taking an action that might not lead to it. Running the job always causes outage (doesn't prevent), but running it with a memory limit might not cause outage (prevents).
+
+**Text 8:** **(c)**
+"Might lead to" means the declared conditions do not rule the harm out. Dizziness is not ruled out when giving the full dose (it definitely happens when weight < 52 kg, and is possible otherwise).

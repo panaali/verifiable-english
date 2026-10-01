@@ -56,6 +56,32 @@ _COMPARISONS = (('{0} is less than {1}', ast.Lt, False), ('{0} is at most {1}', 
 # term of a valid AST parses back.
 _INT_MASK = '\x00'
 _CONCLUSION_MARKERS = ('therefore ', 'so ', 'hence ', 'it follows that ')
+# risk.md 2.3: wordings rejected in a risk environment, each with its rewrite.
+# They are matched after an atom's subject, in guards, carve-outs and statements.
+_RISK_REJECTED = (
+    (r'may lead to', "Use 'might lead to': 'may' is permission."),
+    (r'does not lead to', "Choose 'cannot lead to' or 'might not lead to'."),
+    (r'(?:could lead to|risks|is likely to lead to|increases the risk of)',
+     "Use 'might lead to' for possibility under the declared record."),
+    (r'certainly leads to', "Use 'leads to' for certainty under the declared record."),
+    (r'prevents', "Use 'might prevent' in a risk environment."),
+    (r'is safer than', "Use 'has a less severe worst case than'."),
+)
+# The risk wordings and the rejected forms a declared predicate may not reuse (1.2, 2.3).
+_RISK_TEMPLATES = ('{0} might lead to {1}', '{0} cannot lead to {1}', '{0} might not lead to {1}',
+                   '{0} is {1}', '{0} is {1} or worse', '{0} has a less severe worst case than {1}',
+                   '{0} is more severe than {1}', '{0} might prevent {1}', '{0} does not lead to {1}',
+                   '{0} may lead to {1}', '{0} could lead to {1}', '{0} risks {1}',
+                   '{0} is likely to lead to {1}', '{0} increases the risk of {1}',
+                   '{0} certainly leads to {1}', '{0} prevents {1}', '{0} is safer than {1}')
+_RISK_EVERY_CANNOT = (
+    "Choose whether no available action might lead to the harm: 'it is not the case that there is an action "
+    "such that both that action is available to {chooser} and that action might lead to {harm}'; or some "
+    "available action cannot lead to it: 'there is an action such that both that action is available to "
+    "{chooser} and that action cannot lead to {harm}'.")
+_RISK_CONDITION_IN_RULE = (
+    "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …') is a record statement. "
+    "In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record.")
 
 
 def _mentioned_constants(value):
@@ -371,17 +397,51 @@ class EnglishVocabulary:
                     name = block[role]
                     self.predicates[name] = env.predicates[name].verbalisation
                     issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
+            self.alternatives_words = ('avoidable', 'unavoidable', 'allows', 'prevents')
             self.predicates.update({
                 'avoidable': '{0} is avoidable by {1}',
                 'unavoidable': '{0} is unavoidable by {1}',
                 'allows': '{0} allows {1} to happen',
-                'prevents': '{0} prevents {1}',
+                'prevents': ('{0} might prevent {1}' if getattr(env, 'risk', None) is not None
+                             else '{0} prevents {1}'),
             })
             self.input_aliases = [
                 ('avoidable', '{0} is preventable by {1}', False),
                 ('allows', '{0} lets {1} happen', False),
-                (block['leads_to'], '{0} does not lead to {1}', True),
             ]
+            if getattr(env, 'risk', None) is None:
+                self.input_aliases.append((block['leads_to'], '{0} does not lead to {1}', True))
+            else:
+                from .wire import loads_json
+                risk = loads_json(env.risk)
+                severity_sort = risk['severity']['sort']
+                self.sorts[severity_sort] = 'severity'
+                self.predicates.update({
+                    'risk__might_lead_to': '{0} might lead to {1}',
+                    'risk__class': '{0} is {1}',
+                    'risk__or_worse': '{0} is {1} or worse',
+                    'risk__less_worst': '{0} has a less severe worst case than {1}',
+                })
+                # c2 and c4 are the canonical negated forms (2.1, 2.3): parsed and rendered,
+                # so `¬leads_to` never renders as "it is not the case that … leads to".
+                self.negatives[block['leads_to']] = '{0} might not lead to {1}'
+                self.negatives['risk__might_lead_to'] = '{0} cannot lead to {1}'
+                # A declared wording that reuses a risk wording or a rejected form keeps its
+                # quoted identifier, as any colliding form does; the environment is unaffected.
+                risk_keys = {wording_key(t) for t in _RISK_TEMPLATES}
+                roles = {block[r] for r in ('available', 'leads_to', 'inaction', 'taken', 'proximate') if r in block}
+                for name, decl in env.predicates.items():
+                    if name in roles or name.startswith('risk__') or name in self.alternatives_words:
+                        continue
+                    forms = (self.predicates.get(name), self.negatives.get(name))
+                    if not any(form and wording_key(form) in risk_keys for form in forms):
+                        continue
+                    if name in self.overlay['predicates']:
+                        raise VEError(f'English wording for {name!r} reuses a risk@0 wording')
+                    issues.add(VocabularyLint(f'/vocabulary/predicates/{name}/verbalisation', 'DUPLICATE_TEMPLATE'))
+                    self.predicates[name] = ('{0} is classified as ' + quote(name) if len(decl.arguments) == 1
+                                             else '{0} has the recorded relation ' + quote(name) + ' to {1}')
+                    self.negatives.pop(name, None)
         else:
             self.input_aliases = []
         # rights@0 fixes one wording per generated limitation, condition and aimed
@@ -397,6 +457,14 @@ class EnglishVocabulary:
         self.constants = {name: (name if re.fullmatch('[a-z]+', name)
                                 and name not in _RESERVED and name not in {'is', 'has'} else quote(name))
                           for name in env.constants}
+        if getattr(env, 'risk', None) is not None:
+            # Severity classes are constants of E_risk (1.2; enumeration of
+            # env.constants lists declarations only), with the same
+            # reserved-word check: a class named `every` keeps its quoted identifier.
+            from .wire import loads_json
+            for klass in loads_json(env.risk)['severity']['classes']:
+                self.constants[klass] = (klass if re.fullmatch('[a-z]+', klass) and klass not in _RESERVED
+                                         and klass not in {'is', 'has'} else quote(klass))
         # Names are declared display data, never inferred from descriptions.
         # A rejected or colliding form retains its exact quoted identifier.
         aliases = {}
@@ -1037,6 +1105,15 @@ class EnglishParser:
         if len(nodes) != 1:
             self.error('The vocabulary gives this clause more than one meaning. Use distinct predicate templates.')
         tail = re.match(r'\s+([A-Za-z][A-Za-z0-9_-]*)', self.source[longest:])
+        if (getattr(self.env, 'risk', None) is not None and tail
+                and tail[1].lower() in ('unless', 'exactly', 'if')):
+            from .wire import loads_json
+            leads_to = loads_json(self.env.alternatives)['leads_to']
+            if any(type(n) is ast.Binary and n.predicate == leads_to
+                   or type(n) is ast.Not and type(n.body) is ast.Binary
+                   and n.body.predicate == 'risk__might_lead_to' for n in nodes):
+                # 2.3: conditions are record statements in stage A (Q-templates).
+                self.error(_RISK_CONDITION_IN_RULE)
         clause_heads = {t.split()[1].lower() for t in (*self.words.predicates.values(),
                          *self.words.negatives.values(), *(t for _, t, _ in self.words.input_aliases))}
         if tail and tail[1].lower() not in BOUNDARIES | clause_heads:
@@ -1162,6 +1239,14 @@ class EnglishParser:
         end = min(len(self.source), max(end, content, start + 1))
         phrase = self.source[start:end]
         if getattr(self.env, 'alternatives', None) is not None:
+            # The cut phrase stops before boundary words ("is", "does", "that"),
+            # so the rejected wordings are matched on the text after the subject,
+            # at a word boundary, with or without a following object.
+            lowered = self.source[start:].lower()
+            if getattr(self.env, 'risk', None) is not None:
+                for pattern, message in _RISK_REJECTED:
+                    if re.match(pattern + r'(?![A-Za-z0-9_])', lowered):
+                        self.error(message)
             lowered = phrase.lower()
             if lowered.startswith('causes '):
                 self.error("The proximate cause wording needs a declared proximate role; declare it or write 'leads to'.")
@@ -1228,7 +1313,9 @@ class EnglishParser:
             self.error('The chooser has no antecedent; write there is a ' +
                        self.words.sorts[block['chooser']] + ' such that that action is available '
                        'to that ' + self.words.sorts[block['chooser']] + ' and …')
+        owner_start = self.i
         owner = self.term(scope)
+        owner_end = self.i
         if mode != 'every' and self.take(' excluding '):
             excluded = self.term(scope)
             if (type(excluded) is not ast.Var or
@@ -1258,6 +1345,18 @@ class EnglishParser:
             return verb_atom()
 
         body = verb_phrase()
+        if mode == 'every' and getattr(self.env, 'risk', None) is not None:
+            # 2.3: "every … cannot lead to <harm>" has the scope ambiguity of
+            # object-position "every" under "must not"; offer both scoped rewrites.
+            def cannot(node):
+                return (type(node) is ast.Not and type(node.body) is ast.Binary
+                        and node.body.predicate == 'risk__might_lead_to')
+            parts = (body.left, body.right) if type(body) in (ast.And, ast.Or) else (body,)
+            harm = next((part.body.right for part in parts if cannot(part)), None)
+            if harm is not None:
+                harm_text = (self.words.constants.get(harm.name, harm.name) if type(harm) is ast.Const
+                             else 'that ' + self.words.sorts[block['harm']])
+                self.error(_RISK_EVERY_CANNOT.format(chooser=self.source[owner_start:owner_end], harm=harm_text))
         lifted_owner = ast.Var(owner.index + 1) if type(owner) is ast.Var else owner
         available = ast.Binary(block['available'], ast.Var(0), lifted_owner)
         if mode != 'every':

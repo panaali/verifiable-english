@@ -29,6 +29,7 @@ REGISTRY = (
     ProfileRecord(BASE, "", "checker", "fol"),
     ProfileRecord("speech-acts@0", "speech-acts", "statement", "inherited"),
     ProfileRecord("reports@0", "reports", "statement", "inherited"),
+    ProfileRecord("risk@0", "risk", "statement", "inherited"),
     ProfileRecord("rights@0", "rights", "statement", "inherited"),
     ProfileRecord("time@0", "time", "statement", "inherited"),
 )
@@ -53,6 +54,8 @@ def checker_family(profiles):
             raise UnsupportedProfile("alternatives@0 requires norms@0")
         if "soft-norms@0" in profiles:
             raise UnsupportedProfile("alternatives@0 with soft-norms@0")
+    if "risk@0" in profiles and "alternatives@0" not in profiles:
+        raise UnsupportedProfile("risk@0 requires alternatives@0")
     for profile in profiles:
         if profile not in BY_NAME:
             raise UnsupportedProfile(f"Unsupported profile {profile}")
@@ -78,6 +81,8 @@ def checker_family(profiles):
     if "nary@0" in checker and "closure@0" not in checker:
         # Stage 1 requires the closure+n-ary Core family.
         raise UnsupportedProfile("Unsupported profile nary@0 without closure@0")
+    if "risk@0" in profiles and checker:
+        raise UnsupportedProfile("the risk norms route admits FOL documents only")
     if "rights@0" in profiles and "soft-norms@0" not in profiles:
         raise UnsupportedProfile("rights@0 requires soft-norms@0")
     if "soft-norms@0" in profiles and "norms@0" not in profiles:

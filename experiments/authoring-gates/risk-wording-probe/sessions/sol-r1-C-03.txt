@@ -1,0 +1,68 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient drug A or give the patient nothing. The temperature of the patient is at least 36 degrees. The temperature of the patient is at most 41 degrees. Giving drug A cannot lead to a seizure unless the temperature of the patient is greater than 40 degrees.
+
+The clinic gives drug A, and the temperature of the patient is 38 degrees. What does the text tell you about a seizure?
+(a) No seizure happens.
+(b) A seizure happens.
+(c) The text does not say.
+
+Text 2
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) Dizziness happens.
+(b) The text does not say.
+(c) No dizziness happens, because the patient does not weigh less than 50 kilograms.
+
+Text 3
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(b) The text does not say.
+(c) In no case the text allows does giving drug B lead to a fever.
+(d) Giving drug B leads to a fever in every case the text allows.
+
+Text 4
+
+The actions available to the clinic are giving the patient drug A and giving the patient drug B. Giving drug A allows a rash to happen.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) The clinic is permitted to let a rash happen when it gives drug A.
+(c) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in at least one case the text allows.
+(d) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in every case the text allows.
+
+Text 5
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit might prevent task abandonment.
+
+What does the last sentence tell you?
+(a) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(b) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(c) The text does not say.
+(d) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+
+Text 6
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness exactly when the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) The text does not say.
+(b) Dizziness happens.
+(c) No dizziness happens.
+
+Text 7
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) No fall happens: a robot is safe inside a lift.
+(b) A fall happens in every case the text allows.
+(c) A fall usually happens, but not in every case.
+(d) The text does not say.

@@ -157,7 +157,7 @@ class ConstantDecl:
     unit: str | None = None
     verbalisation: str | None = None
 
-def _alternatives_block(raw, sorts, predicates, constants):
+def _alternatives_block(raw, sorts, predicates, constants, *, risk_enabled=False):
     """Check declarations only; Lean owns inlining, validity and followability."""
     mandatory = {"chooser", "action", "harm", "available", "leads_to", "outcomes"}
     optional = {"decided_by", "performed", "inaction", "taken", "proximate", "fulfilments"}
@@ -260,6 +260,9 @@ def _alternatives_block(raw, sorts, predicates, constants):
         if body == "avoids":
             if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
                 raise VEError(f"FulfilmentSort: {name}")
+        elif body == "excludes" and risk_enabled:
+            if decl.arguments != (role_sorts["chooser"], role_sorts["harm"]):
+                raise VEError(f"FulfilmentSort: {name}")
         elif type(body) is not list:
             raise VEError("InvalidInput: alternatives.fulfilments")
     return canonical_json(raw)
@@ -279,6 +282,7 @@ class Environment:
     units: object
     reports: object
     alternatives: bytes | None
+    risk: bytes | None
     _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
@@ -315,8 +319,10 @@ class Environment:
             raise UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
         fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
         has_alternatives = route and type(data) is dict and "alternatives" in data
+        has_risk = route and type(data) is dict and "risk" in data
         require_fields(data, fields | ({"speech_acts"} if route and "speech-acts@0" in data.get("profiles", []) else set())
                        | ({"alternatives"} if has_alternatives else set())
+                       | ({"risk"} if has_risk else set())
                        | ({"unit_schema", "units"} if extended else set()))
         order = False
         if route:
@@ -325,10 +331,9 @@ class Environment:
                 raise UnsupportedProfile(f"Unsupported specification revision {data['spec_revision']}")
             order = family == "order"
             if extended:
-                from .units import W6_PROFILES
-                if tuple(data["profiles"]) not in W6_PROFILES:
-                    raise UnsupportedProfile("ve-units@1 requires exactly order@0, relational-fol@0 "
-                                             "and time@0, optionally with documents@1")
+                from .units import RISK_UNIT_PROFILES, W6_PROFILE_TEXT, W6_PROFILES
+                if tuple(data["profiles"]) not in W6_PROFILES + RISK_UNIT_PROFILES:
+                    raise UnsupportedProfile(W6_PROFILE_TEXT)
         elif closure:
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
@@ -484,11 +489,21 @@ class Environment:
                 from .units import validate_tag
                 if sort != INT_SORT:
                     raise VEError(f"Unit on non-integer constant {name}")
+                if type(entry["unit"]) is not str:
+                    raise VEError("String expected")
                 validate_tag(entry["unit"], units)
             constants[name] = ConstantDecl(sort, _description(entry["description"])
                                            if "description" in entry else None,
                                            entry.get("unit") if has_unit else None,
                                            _verbalisation(entry["verbalisation"]) if has_words else None)
+        if route and "risk@0" in data["profiles"]:
+            # The Lean risk route's checks after the vocabulary, at its point and in its order
+            # (VE.Risk.Wire.decodeRiskSource): W6's route conditions, then what the route refuses.
+            if extended:
+                from .units import validate_extension
+                validate_extension(data["profiles"], units, sorts, constants)
+            from .risk import check_route_declarations
+            check_route_declarations(predicates, constants)
         speech_acts = None
         if route and "speech-acts@0" in data["profiles"]:
             from .speech_acts import validate_scope
@@ -523,10 +538,20 @@ class Environment:
             raise ResourceLimit("At most 64 declared $string literals")
         alternatives = None
         if route and "alternatives@0" in data["profiles"]:
-            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants)
+            alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants,
+                                               risk_enabled="risk@0" in data["profiles"])
         elif has_alternatives:
             raise UnsupportedProfile("alternatives block requires alternatives@0")
+        risk = None
+        if route and "risk@0" in data["profiles"]:
+            from .risk import validate_block
+            risk = validate_block(data.get("risk"), sorts, predicates, constants,
+                                  loads_json(alternatives), units)
+        elif has_risk:
+            raise UnsupportedProfile("risk block requires risk@0")
         profile_predicates = {}
+        profile_sorts = {}
+        profile_constants = {}
         if alternatives is not None:
             block = loads_json(alternatives)
             for name, arguments in (("avoidable", (block["harm"], block["chooser"])),
@@ -534,22 +559,41 @@ class Environment:
                                     ("allows", (block["action"], block["harm"])),
                                     ("prevents", (block["action"], block["harm"]))):
                 profile_predicates[name] = PredicateDecl(arguments, "alternatives@0 profile word")
+        if risk is not None:
+            block = loads_json(risk)
+            severity_sort = block["severity"]["sort"]
+            profile_sorts[severity_sort] = SortDecl("risk severity")
+            for klass in block["severity"]["classes"]:
+                profile_constants[klass] = ConstantDecl(severity_sort, "risk severity class")
+            alt_block = loads_json(alternatives)
+            for name, arguments in (
+                ("risk__might_lead_to", (alt_block["action"], alt_block["harm"])),
+                ("risk__class", (alt_block["harm"], severity_sort)),
+                ("risk__more_severe", (severity_sort, severity_sort)),
+                ("risk__or_worse", (alt_block["harm"], severity_sort)),
+                ("risk__less_worst", (alt_block["action"], alt_block["action"])),
+            ):
+                profile_predicates[name] = PredicateDecl(arguments, "risk@0 generated word")
         for field, value in (("language", data["language"]), ("profile", None if modern else PROFILE),
                              ("profiles", tuple(data["profiles"]) if route else
                               (ORDER_PROFILES if order else CLOSURE_PROFILES) if closure else (PROFILE,)),
                              ("spec_revision", data["spec_revision"]),
-                             ("sorts", MappingProxyType(sorts)), ("predicates", _ProfilePredicates(predicates, profile_predicates)
+                             ("sorts", _ProfilePredicates(sorts, profile_sorts) if risk is not None
+                              else MappingProxyType(sorts)), ("predicates", _ProfilePredicates(predicates, profile_predicates)
                               if alternatives is not None else MappingProxyType(predicates)),
-                             ("constants", MappingProxyType(constants)),
+                             ("constants", _ProfilePredicates(constants, profile_constants) if risk is not None
+                              else MappingProxyType(constants)),
                              ("unit_schema", data["unit_schema"] if extended else None),
                              ("units", MappingProxyType(units) if extended else None),
                              ("alternatives", alternatives),
                              ("speech_acts", speech_acts)):
             object.__setattr__(self, field, value)
+        object.__setattr__(self, "risk", risk)
         object.__setattr__(self, "reports", reports)
-        if extended:
+        if extended and risk is None:  # a risk environment was checked after its vocabulary
             from .units import validate_extension
             validate_extension(self.profiles, units, sorts, constants)
+        if extended:
             # Rust and Lean digest the submitted environment; Python digests
             # to_dict(). Any spelling that does not survive the round trip would
             # give the same input two identities, so it is rejected.
@@ -608,6 +652,7 @@ class Environment:
                                        if "definites" in self.speech_acts else {})}}
                    if self.speech_acts is not None else {}),
                 **({"alternatives": loads_json(self.alternatives)} if self.alternatives is not None else {}),
+                **({"risk": loads_json(self.risk)} if self.risk is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}

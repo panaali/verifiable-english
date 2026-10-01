@@ -1,0 +1,22 @@
+# Answers
+
+**Text 1: (c)**
+The text explicitly states "Emptying the cache cannot lead to data loss," which directly rules out data loss as a possible outcome.
+
+**Text 2: (d)**
+The text says the action "allows a rash to happen," which only indicates possibility, not certainty, and provides no information about drug B's effects or how the cases compare.
+
+**Text 3: (a)**
+The text states "Taking the lift certainly leads to a fall," so in every scenario where the robot takes the lift (which it does), a fall definitely happens.
+
+**Text 4: (d)**
+The phrase "leads to a task delay exactly when the duration is greater than 30 minutes" is a biconditional—it means delay occurs if and only if duration > 30 min, so delay happens in that case and no other.
+
+**Text 5: (a)**
+"Cannot lead to data loss" and "might lead to data loss" directly contradict each other: the first rules out possibility entirely, while the second asserts it is possible.
+
+**Text 6: (b)**
+"Might not lead to data loss" means it is possible that no data loss occurs—so in at least one scenario the text allows, deletion does not cause data loss.
+
+**Text 7: (d)**
+The text says failure "might" happen and specifies it occurs when weight > 28 kg, but provides no information about actual probability or likelihood—only that it is possible under certain conditions.
