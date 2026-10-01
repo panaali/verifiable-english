@@ -111,6 +111,35 @@ def u12 : UDoc :=
 #guard WellFormedU u12
 #guard table3 u12 m5 "x_required" ["a"] == none
 #guard enumerateSettled u12 m5 "x_required" ["a"] == some true
+-- more than `MAX_UNSAID_ATOMS` unsaid atoms in the situation, one in the point's cone:
+-- enumeration over the cone settles it, as Python's does (review B2)
+def m13 : VE.FiniteModel String := modelOf "act" ((List.range 13).map (fun i => if i = 0 then "a" else s!"a{i}")) []
+#guard (unsaidAtoms u12 m13).length == 13
+#guard coneAtoms u12 m13 "x_required" ["a"] == [(unsaidName "y_permitted", ["a"])]
+#guard enumerateSettled u12 m13 "x_required" ["a"] == some true
+
+/-! ## A symbol placed between the members of a pair (review B1)
+
+`x_permitted` unspecified with no rules; `a_permitted` deny, "may A if may X";
+`x_required` deny, "must X if c". `table3` places `a_permitted` before the pair closes, so
+`a_permitted(a)` stays unknown there; Python's `table3` does the same, and enumeration over
+the cone settles it yes in both. -/
+
+def aperm : Regulated := ⟨"a_permitted", ["act"], false, .permission, some "{0} be audited", none⟩
+
+def uBetween : UDoc :=
+  ⟨⟨envOf [("x_required", ["act"]), ("x_permitted", ["act"]), ("a_permitted", ["act"]), ("c", ["act"])]
+      [("a", "act")], [],
+    ⟨[req, perm, aperm], [],
+     [⟨"may-a", "a_permitted", true, .unary "x_permitted" (.var 0), [], []⟩,
+      ⟨"must-x", "x_required", true, .unary "c" (.var 0), [], []⟩]⟩⟩, ["x_permitted"]⟩
+
+def mc : VE.FiniteModel String := modelOf "act" ["a"] [("c", [["a"]])]
+#guard WellFormedU uBetween
+#guard (syms (fill uBetween).T).map (·.name) == ["x_permitted", "a_permitted", "x_required"]
+#guard table3 uBetween mc "x_permitted" ["a"] == some true
+#guard table3 uBetween mc "a_permitted" ["a"] == none
+#guard enumerateSettled uBetween mc "a_permitted" ["a"] == some true
 
 /-! ## u16: limits -/
 

@@ -746,44 +746,126 @@ theorem mem_unsaidAtoms {α : Type u} {U : UDoc} {M : VE.FiniteModel α} {p : St
   · intro hw
     exact ⟨p, hp, ws, hw, rfl, rfl⟩
 
-/-- `enumerateSettled`: every filling of the unsaid atoms (at most
-`MAX_UNSAID_ATOMS` of them) that passes `fillValid` gives `b`, and at least one does. -/
+/-! ### The cone of a point
+
+The atoms that `enumerateSettled` enumerates are untrusted for soundness: any list
+gives a sound answer (`settled_of_enumeration`). They are computed as Python's
+`UnspecifiedDocument.cone` computes them, so that both sides enumerate the same atoms
+under the same budget: the unsaid atoms on which the Kleene value of the point
+depends, closed under the `Fill_T` instances that mention one of them. -/
+
+/-- An atom with nothing filled: an unsaid atom is unknown and is its own cone. -/
+def coneAtom {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (p : String) (vs : List α) :
+    Option Bool × List (String × List α) :=
+  if p ∈ unsaidNames U then (none, [(p, vs)]) else (some (decide (vs ∈ M.relations p)), [])
+
+/-- A binary junction: `stop` is the value that decides it (true for `or`). -/
+def coneJoin {β : Type u} (stop : Bool) (x y : Option Bool × List β) : Option Bool × List β :=
+  if x.1 == some stop || y.1 == some stop then (some stop, [])
+  else if x.1.isNone || y.1.isNone then
+    (none, (if x.1.isNone then x.2 else []) ++ (if y.1.isNone then y.2 else []))
+  else (some (!stop), [])
+
+/-- A finite quantifier: `stop` is the value that decides it (true for `ex`). -/
+def coneList {β : Type u} (stop : Bool) (l : List (Option Bool × List β)) : Option Bool × List β :=
+  if l.any (·.1 == some stop) then (some stop, [])
+  else if l.any (·.1.isNone) then (none, (l.filter (·.1.isNone)).flatMap (·.2))
+  else (some (!stop), [])
+
+/-- Kleene evaluation with nothing filled that also returns the unsaid atoms an
+unknown value depends on (a definite value returns none). -/
+def coneEval {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (ρ : List α) :
+    VE.Formula → Option Bool × List (String × List α)
+  | .top => (some true, [])
+  | .bottom => (some false, [])
+  | .unary p t => match t.denote M.asStructure ρ with
+      | some v => coneAtom U M p [v]
+      | none => (some false, [])
+  | .binary p t w => match t.denote M.asStructure ρ, w.denote M.asStructure ρ with
+      | some v, some v' => coneAtom U M p [v, v']
+      | _, _ => (some false, [])
+  | .eq t w => match t.denote M.asStructure ρ, w.denote M.asStructure ρ with
+      | some v, some v' => (some (decide (v = v')), [])
+      | _, _ => (some false, [])
+  | .not a => let x := coneEval U M ρ a; (kneg x.1, x.2)
+  | .and a b => coneJoin false (coneEval U M ρ a) (coneEval U M ρ b)
+  | .or a b => coneJoin true (coneEval U M ρ a) (coneEval U M ρ b)
+  | .implies a b => let x := coneEval U M ρ a; coneJoin true (kneg x.1, x.2) (coneEval U M ρ b)
+  | .all s a => coneList false ((M.domains s).map (fun v => coneEval U M (v :: ρ) a))
+  | .ex s a => coneList true ((M.domains s).map (fun v => coneEval U M (v :: ρ) a))
+
+/-- The body of the `Fill_T` premise of a pair, before its universal closure. -/
+def fillBody (U : UDoc) (pr : Pair) : VE.Formula :=
+  .not (.and (pairConflict (fill U) pr) (.or (gapF U pr.req) (gapF U pr.perm)))
+
+/-- Add the atoms of every instance that meets the atoms found so far, until nothing changes. -/
+def closeCone {β : Type u} [DecidableEq β] : Nat → List (List β) → List β → List β
+  | 0, _, acc => acc
+  | k + 1, pending, acc =>
+    let hit := pending.filter (fun is => is.any (· ∈ acc))
+    if hit.isEmpty then acc
+    else closeCone k (pending.filter (fun is => !is.any (· ∈ acc))) (acc ++ hit.flatten).eraseDups
+
+/-- The closed cone of `n` at `vs` (2.5): empty where the Kleene value is definite. -/
+def coneAtoms {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
+    List (String × List α) :=
+  let x := coneEval U M (tupleVal vs) (outcomeBase (fill U) n)
+  if x.1.isSome then [] else
+  let inst := (openPairs U).flatMap (fun pr => (allTuples M pr.sorts).filterMap (fun ws =>
+    let y := coneEval U M (tupleVal ws) (fillBody U pr)
+    if y.1.isNone then some y.2 else none))
+  closeCone (inst.length + 1) inst x.2.eraseDups
+
+/-- An assignment of the atoms `C` (true exactly on `A`); other unsaid atoms unknown. -/
+def coneAtomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C A : List (String × List α))
+    (p : String) (vs : List α) : Option Bool :=
+  if p ∈ unsaidNames U then (if (p, vs) ∈ C then some (decide ((p, vs) ∈ A)) else none)
+  else some (decide (vs ∈ M.relations p))
+
+/-- The value of `n` at `vs` under each assignment of the atoms `C` that no `Fill_T`
+formula refutes in Kleene evaluation (`none` where it stays unknown). -/
+def coneValues {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C : List (String × List α))
+    (n : String) (vs : List α) : List (Option Bool) :=
+  (subsets C).filterMap (fun A =>
+    if (fillPremises U).any (fun φ => kleene M (coneAtomV U M C A) [] φ == some false) then none
+    else some (kleene M (coneAtomV U M C A) (tupleVal vs) (outcomeBase (fill U) n)))
+
+/-- `enumerateSettled`: every assignment of the cone's unsaid atoms (at most
+`MAX_UNSAID_ATOMS` of them) that `Fill_T` does not refute gives `b`, and at least one
+assignment is left. -/
 def enumerateSettled {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
     Option Bool :=
-  let atoms := unsaidAtoms U M
-  if atoms.length > MAX_UNSAID_ATOMS then none else
-  let vals := (subsets atoms).filterMap (fun A =>
-    let F : FiniteFill U α := fillOfAtoms A
-    if fillValid U M F then some ((outcomeBase (fill U) n).eval (M.withFill F) (tupleVal vs)) else none)
-  match vals with
-  | [] => none
-  | b :: bs => if bs.all (· == b) then some b else none
+  let C := coneAtoms U M n vs
+  if C.length > MAX_UNSAID_ATOMS then none else
+  match coneValues U M C n vs with
+  | some b :: bs => if bs.all (· == some b) then some b else none
+  | _ => none
 
 theorem enumerate_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
     {b : Bool} (he : enumerateSettled U M n vs = some b) :
-    ∀ A ∈ subsets (unsaidAtoms U M), fillValid U M (fillOfAtoms A) = true →
-      (outcomeBase (fill U) n).eval (M.withFill (fillOfAtoms (U := U) A)) (tupleVal vs) = b := by
-  intro A hA hv
+    ∀ x ∈ coneValues U M (coneAtoms U M n vs) n vs, x = some b := by
+  intro x hx
   unfold enumerateSettled at he
   simp only at he
   split at he
   · cases he
   · split at he
-    · cases he
     · rename_i b0 bs hvals
       split at he
       · rename_i hall
         simp only [Option.some.injEq] at he
         subst he
-        have hmem : (outcomeBase (fill U) n).eval (M.withFill (fillOfAtoms (U := U) A)) (tupleVal vs) ∈ b0 :: bs := by
-          rw [← hvals]
-          exact List.mem_filterMap.mpr ⟨A, hA, by simp [hv]⟩
-        rcases List.mem_cons.mp hmem with h' | h'
+        rw [hvals] at hx
+        rcases List.mem_cons.mp hx with h' | h'
         · exact h'
         · simpa using List.all_eq_true.mp hall _ h'
       · cases he
+    · cases he
 
-/-- `settled_of_enumeration`: agreement of every checked filling is SETTLED. -/
+/-- `settled_of_enumeration`: agreement of every assignment of the cone that `Fill_T`
+does not refute is SETTLED. Any atom list is sound here: an admissible filling agrees
+with the assignment of its own values on the list, which no `Fill_T` formula refutes
+(each is true under the filling), and a definite Kleene value is the filling's value. -/
 theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
     (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
     (r : Regulated) (hr : r ∈ U.D.T.regulated) (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
@@ -795,35 +877,37 @@ theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : We
   have _ := typed
   classical
   intro F hF
-  let A := (unsaidAtoms U M).filter (fun a => decide (F a.1 a.2))
-  let FA : FiniteFill U α := fillOfAtoms A
-  -- the finite filling of `F`'s atoms has the same tables
-  have hrel : ∀ n ws, (withFill U M.asStructure (finFill M FA)).relation n ws ↔ (withFill U M.asStructure F).relation n ws := by
-    intro n ws
-    by_cases hun : n ∈ unsaidNames U
-    · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hun
-      rw [withFill_unsaid U _ _ hp, withFill_unsaid U _ _ hp]
-      show (ws ∈ FA (unsaidName p) ∧ _) ↔ (F (unsaidName p) ws ∧ _)
-      rw [mem_fillOfAtoms, List.mem_filter, mem_unsaidAtoms hp, mem_allTuples]
-      simp only [decide_eq_true_eq]
-      constructor
-      · rintro ⟨⟨_, hF'⟩, ht⟩; exact ⟨hF', ht⟩
-      · rintro ⟨hF', ht⟩; exact ⟨⟨ht, hF'⟩, ht⟩
-    · exact (withFill_off U M.asStructure (finFill M FA) hun ws).trans (withFill_off U M.asStructure F hun ws).symm
-  have heq : withFill U M.asStructure (finFill M FA) = withFill U M.asStructure F := by
-    unfold withFill
-    congr 1
-    funext n ws
-    exact propext (hrel n ws)
-  have hFA : BaseAdmissibleU U (withFill U M.asStructure (finFill M FA)) := by rw [heq]; exact hF
-  have hvalid : fillValid U M FA = true :=
-    List.all_eq_true.mpr fun φ hφ => (eval_withFill U M FA φ []).mpr (hFA.2 φ hφ)
-  have hval := enumerate_all he A (filter_mem_subsets _ _) hvalid
-  have hd : (outcomeBase (fill U) r.name).denote (withFill U M.asStructure (finFill M FA)) (tupleVal vs) ↔
-      (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F) (tupleVal vs) :=
-    denote_rel_iff M.asStructure _ _ hrel _ _
-  rw [← hd]
-  exact (eval_withFill U M FA _ _).symm.trans (by rw [hval])
+  let S := withFill U M.asStructure F
+  let C := coneAtoms U M r.name vs
+  let A := C.filter (fun a => decide (S.relation a.1 a.2))
+  have hA : ∀ p ws c, coneAtomV U M C A p ws = some c → (S.relation p ws ↔ c = true) := by
+    intro p ws c hc
+    unfold coneAtomV at hc
+    split at hc
+    · split at hc
+      · rename_i _ hC
+        simp only [Option.some.injEq] at hc
+        subst hc
+        simp only [A, List.mem_filter, decide_eq_true_eq]
+        exact ⟨fun hs => ⟨hC, hs⟩, fun hs => hs.2⟩
+      · cases hc
+    · rename_i hun
+      simp only [Option.some.injEq] at hc
+      subst hc
+      rw [withFill_off U _ F hun]
+      simp [VE.FiniteModel.asStructure]
+  have hK : ∀ φ ρ c, kleene M (coneAtomV U M C A) ρ φ = some c → (φ.denote S ρ ↔ c = true) :=
+    kleene_sound M _ S.relation hA
+  have hnot : (fillPremises U).any (fun φ => kleene M (coneAtomV U M C A) [] φ == some false) = false := by
+    rw [Bool.eq_false_iff]
+    intro hany
+    obtain ⟨φ, hφ, hk⟩ := List.any_eq_true.mp hany
+    have := (hK φ [] false (by simpa using hk)).mp (hF.2 φ hφ)
+    cases this
+  have hmem : kleene M (coneAtomV U M C A) (tupleVal vs) (outcomeBase (fill U) r.name) ∈
+      coneValues U M C r.name vs :=
+    List.mem_filterMap.mpr ⟨A, filter_mem_subsets _ C, by simp [hnot]⟩
+  exact hK _ _ b (enumerate_all he _ hmem)
 
 /-! ## The fragment gate -/
 
