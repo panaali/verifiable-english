@@ -70,6 +70,9 @@ BASE = {
                      "assessment found", "the developer (\"we\", 1.3.2)", "{0} has reached {1}", "OT1"),
     "approaches": _open(["proposal", "level"], "the model of {0} has reached an alert threshold for {1}",
                         "the developer (\"we\", 1.3.2)", "{0} approaches {1}", "OT1"),
+    "at_least_as_strong": _base(["measure", "measure"], "{0} is at least as strong as {1}. The text states no such "
+                                "order (footnotes 12 and 13 say only \"may include\"); the vocabulary has the word "
+                                "so that question S4 can be asked"),
     "applies": _base(["proposal", "measure"], "security mitigations reaching {1} have been applied to the "
                      "model weights of {0}", "{0} applies {1}"),
     # The activity proposed (Glossary, p. 19).

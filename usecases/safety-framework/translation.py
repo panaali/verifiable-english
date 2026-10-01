@@ -86,21 +86,36 @@ def environment(default="deny"):
     return SoftEnvironment(vocabulary.environment(default))
 
 
+@lru_cache(maxsize=None)
+def _rule_blocks():
+    return tuple(read_blocks("rules.d1.ve"))
+
+
 def rule_blocks():
-    return [b for b in read_blocks("rules.d1.ve")]
+    return list(_rule_blocks())
+
+
+def parsed_rule(block_id, default="deny"):
+    """One candidate rule, parsed alone with the one-reading check, as a wire dict.
+
+    The wire form does not depend on the completion defaults, so it is parsed once."""
+    return _parsed_rule(block_id)
 
 
 @lru_cache(maxsize=None)
-def parsed_rule(block_id, default="deny", text=None):
-    """One candidate rule, parsed alone with the one-reading check, as a wire dict."""
+def _parsed_rule(block_id):
     block = next(b for b in rule_blocks() if b.id == block_id)
-    source = text if text is not None else block.text
-    document = parse_rules(environment(default), source)
+    document = parse_rules(environment("deny"), block.text)
     if len(document.rules) != 1:
         raise SystemExit(f"{block_id}: expected one rule")
     data = document.rules[0].to_dict()["norm"]
     data["name"] = block_id
     return json.dumps(data, sort_keys=True)
+
+
+@lru_cache(maxsize=None)
+def _parsed_text(text):
+    return json.dumps(parse_rules(environment("deny"), text).rules[0].to_dict()["norm"], sort_keys=True)
 
 
 def applies(block, choice):
@@ -120,7 +135,7 @@ def document(choice, *, default="deny", drop=(), extra=(), precedence=None):
             continue
         rules.append(json.loads(parsed_rule(block.id, default)))
     for rule_id, text in extra:
-        data = parse_rules(environment(default), text).rules[0].to_dict()["norm"]
+        data = json.loads(_parsed_text(text))
         data["name"] = rule_id
         rules.append(data)
     names = {r["name"] for r in rules}
