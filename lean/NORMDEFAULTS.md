@@ -136,6 +136,10 @@ decision formula or `IntendedAt3` reads (`sat_background_congr`, `intendedAt3_co
   `x_permitted` is placed first. Python's `table3` follows these steps exactly; before the
   integration review it closed the earlier member on demand, so a symbol placed in between could
   be SETTLED by Python's `table3` and stay unknown in Lean's (`Examples.lean`, `uBetween`; fixture b1).
+  `tabK` computes every entry of step `k + 1` from `tabK k`, so no row of a symbol reads a close made
+  at another of its rows; Python entered rows one at a time until the loop recheck, and a later row
+  read that close through ∃ or a constant (`Examples.lean`, `uRows`; fixtures b1-rows-exists and
+  b1-rows-const).
 - `canonicalFill` needs no typing: `withFill` reads every filling on typed tuples only.
 - `reservedFree` checks the reserved prefixes on regulated, defined and rule names, and that the
   names `fill` introduces are undeclared; base predicate names cannot be enumerated from an
