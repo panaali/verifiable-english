@@ -490,6 +490,42 @@ def test_u15_unreached_switch_keeps_every_status():
                                  never, model=situation)
     (entry,) = audit["completions"]
     assert entry["default_reached"] == "none" and entry["changes_if_switched"] == []
+    # the certificate is `gaps: none` proved on the switched document
+    assert entry["switched_gaps"] == "none"
+    assert nd.check_reached_certificate(switched, "x_permitted", entry["certificate"])
+    assert not nd.check_reached_certificate(deny, "x_permitted", entry["certificate"])
+
+
+def switch_counterexample(p_default="deny"):
+    """Spec 6.3: `x_required` unspecified with no rules, paired with `x_permitted` (deny,
+    "may X if may P"); `p_permitted` deny, "may P if X need not be done"."""
+    env = environment({"x_required": obligation("unspecified"), "x_permitted": permission("deny"),
+                       "p_permitted": permission(p_default, act="{0} be tried")})
+    return env, [rule("may-x", "x_permitted", True, Unary("p_permitted", Var(0))),
+                 rule("may-p", "p_permitted", True, Not(Unary("x_required", Var(0))))]
+
+
+def test_audit_certificate_is_proved_on_the_switched_document():
+    """Review A1: under U no admissible filling reaches `p_permitted` (the pair premise
+    forces `x_required` no), so U has a `default reached: none` certificate; switching it
+    admits `x_required` yes, `p_permitted` yes, `x_permitted` yes, an expansion U rejects.
+    The audit must not offer U's certificate as the proof that switching preserves meaning."""
+    env, units = switch_counterexample()
+    unswitched = nd.UnspecifiedDocument(env, units)
+    (line,) = nd.report(unswitched, prove=True, predicates=("p_permitted",))
+    assert line.reached == "none"
+    audit = nd.audit_completions(env, units, model=ONE_ACT)
+    entry = next(e for e in audit["completions"] if e["predicate"] == "p_permitted")
+    assert entry["default_reached"] == "none"
+    assert entry["switched_gaps"] == "reachable" and "certificate" not in entry
+    assert entry["switched_witness"]["filling"]["unsaid__x_required"] == [["a"]]
+    assert {"predicate": "x_required", "tuple": ["a"], "before": "SETTLED no",
+            "after": "UNDECIDED"} in entry["changes_if_switched"]
+    switched = nd.UnspecifiedDocument(switch_counterexample("unspecified")[0], units)
+    situation = switched.situation(ONE_ACT)
+    values, filling = next(r for r in nd.report(switched, model=ONE_ACT, predicates=("p_permitted",))).witness
+    assert nd.check_reached(switched, situation, filling, "p_permitted", values)
+    assert not unswitched.fill_valid(unswitched.situation(ONE_ACT), filling)
 
 
 def test_audit_cli_lists_the_changes_a_switch_makes(tmp_path, capsys):
