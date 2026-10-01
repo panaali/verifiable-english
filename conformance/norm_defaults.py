@@ -61,6 +61,31 @@ def between():
              _norm("must-x", "x_required", True, ["unary", "c", ["var", 0]])])
 
 
+# Loop recheck B1: the second guard of `x_required`, reading `x_permitted` at another row.
+ROW_GUARDS = {"exists": (["exists", "act", ["unary", "x_permitted", ["var", 0]]], {}),
+              "const": (["unary", "x_permitted", ["const", "k"]], {"k": {"sort": "act", "description": "k"}})}
+
+
+def rows_close(kind):
+    """`x_permitted` unspecified with no rules; `x_required` "must X if c" and "must X if
+    `ROW_GUARDS[kind]`". Over acts a and b with `c(a)`, the pair closes `x_permitted(a)` at row
+    `a` of `x_required`; its row `b` reads the table before `x_required`, as Lean's `tabK` does,
+    so `x_required(b)` is unknown in `table3` whichever row `c` holds on (enumeration settles it)."""
+    guard, constants = ROW_GUARDS[kind]
+    return (_environment({"x_required": _regulated("obligation", "deny", permission="x_permitted"),
+                          "x_permitted": _regulated("permission", "unspecified"),
+                          "c": {"arguments": ["act"], "description": "c"}}, constants=constants),
+            [_norm("must-x", "x_required", True, ["unary", "c", ["var", 0]]),
+             _norm("must-x-2", "x_required", True, guard)])
+
+
+def rows_situations(kind):
+    """The rows-close situations: acts a and b, `c` on one of them, `k` naming a."""
+    constants = {"k": "a"} if ROW_GUARDS[kind][1] else {}
+    return [{"complete": True, "domains": {"act": ["a", "b"]}, "constants": constants,
+             "relations": {"c": [[row]]}} for row in ("a", "b")]
+
+
 def switch_counterexample(p_default):
     """Review A1, spec 6.3: `x_required` unspecified with no rules, paired with `x_permitted` (deny,
     "may X if may P"); `p_permitted` (`p_default`), "may P if X need not be done"."""
@@ -103,6 +128,7 @@ def sources():
          [_norm("r", "x_permitted", True, ["or", y, ["not", y]])], [act]),
         ("b1", *between(), [{**act, "domains": {"act": ["a"]}, "relations": {"c": [["a"]]}}]),
         ("a1-deny", *switch_counterexample("deny"), [{**act, "domains": {"act": ["a"]}}]),
+        *((f"b1-rows-{kind}", *rows_close(kind), rows_situations(kind)) for kind in ROW_GUARDS),
         ("a1-unspecified", *switch_counterexample("unspecified"), [{**act, "domains": {"act": ["a"]}}]),
     ]
     for name, raw, units, situations in items:

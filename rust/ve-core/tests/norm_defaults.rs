@@ -12,7 +12,7 @@ fn replay_untrusted_norm_defaults_fillings() {
     ))
     .unwrap();
     let rows = cases.as_array().unwrap();
-    assert_eq!(rows.len(), 92);
+    assert_eq!(rows.len(), 113);
     for case in rows {
         let name = case["id"].as_str().unwrap();
         assert_eq!(case["untrusted"], Value::Bool(true), "{name} source trust flag");
