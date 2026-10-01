@@ -154,10 +154,11 @@ def ownSourceId (j : Json) : String :=
   let ps := (VE.Route.Gate.profilesOf (envOfPayload j)).toOption.getD []
   Loader.sourceId (baseProfiles ps) (Loader.sourceOf j)
 
-/-- The raw byte span of a unit of the front matter. -/
+/-- The raw byte span of a unit of the front matter (a part of a `MIXED` unit included). -/
 def rawUnitSpan (j : Json) (u : String) : Option (Nat × Nat) :=
   match (Loader.metaOf j).getObjValD "units" with
-  | .arr us => (us.toList.find? fun x => (x.getObjValD "id").getStr?.toOption == some u).bind fun x =>
+  | .arr us => ((us.toList.flatMap fun x => (Loader.partsOf x).toOption.getD [x]).find? fun x =>
+      (x.getObjValD "id").getStr?.toOption == some u).bind fun x =>
       (Loader.spanOf (x.getObjValD "span")).toOption
   | _ => none
 
@@ -468,6 +469,13 @@ def verdictText : Verdict → String
 
 def locationForm (f : String) : Bool := f == "section_ref" || f == "navigation"
 
+/-- A location binding on the wire (1.4): a location form, or a `unit` or `anchor` target. -/
+def locationMention (m : Json) : Bool :=
+  locationForm ((m.getObjValD "form").getStr?.toOption.getD "") ||
+    match ((m.getObjValD "target").getObjValD "kind").getStr?.toOption with
+    | some k => k == "unit" || k == "anchor"
+    | none => false
+
 /-- 7.1: one reference line per recorded mention, in manifest order, with the recorded target:
 `resolved` (elaborated and checked), `navigation` (a location binding) or `pending`. -/
 def referencesJson (front : Json) (pending : List (String × String)) : Json :=
@@ -480,7 +488,7 @@ def referencesJson (front : Json) (pending : List (String × String)) : Json :=
     Json.mkObj [("mention", .str id), ("unit", m.getObjValD "unit"), ("form", .str form),
       ("target", m.getObjValD "target"),
       ("status", .str (if (pending.map Prod.snd).contains ("PresuppositionUnresolved: " ++ id) then "pending"
-        else if locationForm form then "navigation" else "resolved"))]).toArray
+        else if locationMention m then "navigation" else "resolved"))]).toArray
 
 /-- The prepared discourse document (the part of the admission before well-formedness): the
 wrapper, the front matter under the base pair, the manifest and the token spans. -/
