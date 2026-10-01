@@ -5,7 +5,10 @@
 > CONVERGED after round 3; the Astra seat was held in all three rounds by Sol xhigh as the recorded cross-family
 > stand-in): REVISE draft 1 into draft 2, then BUILD through statement review with no second design debate.
 > Section 10 maps each converged edit to its change. The statement specification of the stack contract and of stage
-> S0 is [composition.md](composition.md). Baseline `main` at
+> S0 is [composition.md](composition.md). Its statement review converged on FIX after round 3
+> (`manage-agents/debates/compose-spec/{astra,fable}.md`, the Astra seat again held by Sol xhigh) and amended this
+> plan in one respect, the label of a gated relation premise (2.3, 2.7), with pointers in sections 3, 4 (S0's
+> acceptance) and 9; nothing else changed (change log). Baseline `main` at
 > `2205be39`. Trigger: ARCH-ROADMAP "P1 FEATURE COMPOSITION" and the UDHR-audit feature list
 > (`manage-agents/ARCH-ROADMAP.md`, entries of 2026-09-30T06), from the pilots
 > `manage-agents/pilots/{claude-constitution,udhr}/run-20260930T{0600,1800}Z` (`FEATURE-REVIEW.md`, `AUDIT.md`,
@@ -198,10 +201,13 @@ Choice_D            base premises, slot `readings`, regenerated, never on the wi
                       fixed units alone generate.
                                       readings:<set>@<v>:<i>:quiet (one owner), readings:quiet:<source key of g>
 Rel_D, gated        a totality premise ρ of a relation (2.7) on a line of candidate a_{s,i} enters the slot as
-                    χ_{s,i} → ρ, under its label with the reading named; a fixed line's ρ enters as it is
+                    χ_{s,i} → ρ, under the label rights:relation:<line>:total under <set>@<v>:<i>, which names the
+                    reading: candidates of one set may share a line name (2.2), and slot labels are pairwise
+                    distinct. A fixed line's ρ enters as it is, under rights:relation:<line>:total
 combined slot       slotP D := Lim_D ++ Choice_D ++ gated Rel_D, in this order, each formula with its label:
                     rights:limitation:… | readings:…, coupling:…, constraint:…, narrowing:… |
-                    rights:relation:<line>:total. Model correspondence, per compatible choice c: the base
+                    rights:relation:<line>:total[ under <set>@<v>:<i>]. conditional_on lists these labels
+                    verbatim. Model correspondence, per compatible choice c: the base
                     structures of sup D satisfying the slot in which exactly c's atoms hold are, up to the name
                     map and the choice vocabulary, the base structures of c's own document (base_down, base_up, S2)
 ```
@@ -363,7 +369,9 @@ result unchanged.
   sort", labelled `rights:relation:<line>:total`, listed in `conditional_on` and in the residual. The relation may
   be an open term with a decider. On a line of a reading candidate the premise enters the slot gated by the
   candidate's atom, `χ_{s,i} → ρ` (2.3): ungated, the claim candidate of Art. 15(1) would impose "every person has a
-  responsible state" on the two assertion readings of its own set (F13).
+  responsible state" on the two assertion readings of its own set (F13). The gated premise's label is
+  `rights:relation:<line>:total under <set>@<v>:<i>`: it names the reading in the slot itself, because candidates
+  of one set may share a line name, and `conditional_on` lists the slot label verbatim.
 - `elided`: the spans of the unit that neither the act phrase, a clause nor the relation accounts for. It is
   mandatory under the profile, an empty list when nothing is left out, and reported as `elided_bytes` per unit.
   An elision is no longer a sentence in a reason field; it is a number the audit can sort by.
@@ -376,7 +384,8 @@ situation with a state that is not the person's country separates it from the un
 defect of `u077` becomes a checkable difference). With `total`, "some state owes this to each person" is a theorem
 (`relation_some_bearer`), without any rule quantifying over duties: Art. 15(1) gets a claim candidate beside its
 two assertions. The totality premise is existential, so the document leaves norms 7's fragment
-(`fragment: no (rights:relation:<line>:total)`); certificates and witnesses still decide, completeness does not.
+(`fragment: no (<label>)`, with the premise's slot label: `rights:relation:<line>:total`, or its gated form ending
+` under <set>@<v>:<i>`); certificates and witnesses still decide, completeness does not.
 
 ### 2.8 References on the chain
 
@@ -435,7 +444,10 @@ lists unchanged, and a stack wrapper beside one of them is the named abstention 
   should secure social security for each person, unless an exception applies.* They differ here: suppose the
   decider decides the exception applies to Ruritania. Under (1) Ruritania still must. Under (2) it is not required
   to." The question names the decision as a decision; it never states it as a fact of the situation (finding
-  `SeparatedByDecisionOnly`, 2.4).
+  `SeparatedByDecisionOnly`, 2.4). This wording is for the strict and default candidates of one rule with an
+  outcome probe. Every other pair is shown in the wording of its probe (outcome, selection, assertion), which
+  states only what the check established, and a permission outcome reads "is permitted to" or "is not permitted
+  to", never "may not" ([composition.md](composition.md) 2.1, E14 and E19 to E21).
   Verdicts read "Under every reading of the 14 open sentences, no two rules contradict" and "Read sentence 12 as
   *must* and sentence 15 as *should*: rules 12 and 15 contradict when …". Clauses are ordinary "if … and …"
   sentences; the relation is "where that state is the country of that person"; totality is "Every person has at
@@ -533,7 +545,8 @@ end VE.Compose
 Acceptance: the Lean audit passes with the unchanged allowlist; `rights_route_acceptance` and
 `rights_route_countermodel` are re-derived as instances (their statements untouched); `dispatch` equals
 `ve/profiles.py` `checker_family` followed by today's route choice on every sorted subset of the registered
-profiles, diagnostics included; no conformance output moves.
+profiles, diagnostics included (composition.md fixture D-all, whose Lean half guards `today` against Python's
+32,768 outcomes); no conformance output moves.
 
 ### S1. Content-bearing candidates and separating situations (`readings@1`, part A)
 
@@ -976,9 +989,11 @@ work beyond registering the wordings named in section 3 (W7) and the IDE questio
 Draft 1 went to the Astra + Fable design debate (`manage-agents/debates/design-compose/`), with questions 1, 4
 and 7 as the named points of attack. It converged after round 3 on REVISE: draft 2 (this file), then BUILD through
 statement review with no second design debate. The orchestrator checks draft 2 against section 10. Then: S0's
-statements ([composition.md](composition.md)) are reviewed and built first (small, no behaviour change); S1, S3
-and S4 get item-1 specifications in parallel (`readings.md`, `right-clauses.md`, an amendment section of
-`discourse.md`), each with its statement review before Lean. S1's specification starts from the probe key and
+statements ([composition.md](composition.md)) are reviewed and built first (small, no behaviour change). That
+review converged on FIX after round 3 (`manage-agents/debates/compose-spec/`): eight edits, applied in
+composition.md draft 2, none to a Lean statement. Both seats recheck that diff once, and S0's Lean starts after
+the recheck without a new debate. S1, S3 and S4 get item-1 specifications in parallel (`readings.md`,
+`right-clauses.md`, an amendment section of `discourse.md`), each with its statement review before Lean. S1's specification starts from the probe key and
 the shared base (section 10, edits 4 and 5). S2's specification follows S1's merge, and its statement review
 attacks `superpose_faithful` with F21 before the rights case. Every stage ends with both pilots rerun and audited,
 and section 6's table replaced by measured results.
@@ -1019,3 +1034,4 @@ documents may number them differently (`sharedName`, S1).
 |---|---|---|
 | 2026-10-01 | Draft 1 | First plan: the stack and its six rules; content-bearing candidates; superposition with choice premises; separating situations over a shared base with private decision assignments; per-reading rights; structured lines with clauses, relation and `elided`; discourse on the chain; five stages with Lean statements, twenty pilot fixtures, the measured unlock table and fifteen open questions. Design only. |
 | 2026-10-01 | Draft 2 | The converged design debate applied, nothing else (section 10): owner-based quiescence including `aimed_m` under a fixed bar, with F21; rule 2's stated exception; `dispatch` preserving every route of today, with an error branch only outside today's lists and the validated chain; the probe key `(kind, predicate, tuple)` with the renamed-twin fixture F22; fixed units' decisions in the shared base; S2 split into S2a (soft) and S2b (rights, enumerated until proved), with the UDHR unlock qualified; W2's formula-only ALL and NONE route kept; names distinct across sets; fixed `over` and `cites` references mapped to every qualified copy; the combined slot `Lim_D ++ Choice_D ++ gated Rel_D`; the empty-carrier resolution with the lifting lemma and the fallback wording; `Content` in S0; the findings and wordings of questions 4 and 7. The statement specification of the stack contract and S0 is [composition.md](composition.md). Design only. |
+| 2026-10-01 | Draft 2, statement-review amendment | The converged statement review of composition.md applied where it reaches this plan (`manage-agents/debates/compose-spec/`, FIX after round 3), nothing else. A gated relation premise's slot label is `rights:relation:<line>:total under <set>@<v>:<i>`, naming its reading in the slot itself, and `conditional_on` lists slot labels verbatim (2.3 `Rel_D, gated` and `combined slot`; 2.7 the relation bullet and the fragment line). Pointers only: section 3 (the force question is E14's narrow case; other pairs are worded by their probe; no "may not"), S0's acceptance (fixture D-all's Lean half), section 9 (the review's outcome and the remaining recheck). No statement, fixture F1 to F22 or stage changed. Design only. |

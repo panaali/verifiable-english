@@ -1,21 +1,27 @@
 # Feature composition: the stack contract, the base-premise slot, the dispatcher and candidate content (stage S0)
 
-> Status: item-1 specification, draft 1 (2026-10-01), written from [composition-PLAN.md](composition-PLAN.md) draft
+> Status: item-1 specification, draft 2 (2026-10-01), written from [composition-PLAN.md](composition-PLAN.md) draft
 > 2, the transcription of the converged Astra + Fable design debate
 > (`manage-agents/debates/design-compose/{astra,fable}.md`, CONVERGED after round 3: REVISE to draft 2, then BUILD
-> through statement review; the Astra seat was held by Sol xhigh as the recorded cross-family stand-in). It is the
-> statement under the Astra + Fable item-1 review that gates S0's Lean and the item-1 specifications of the later
-> stages (PLAN-EXPAND2 rule 10): a draft alone opens nothing. **Scope** (13.1): the contract every layer of the
+> through statement review; the Astra seat was held by Sol xhigh as the recorded cross-family stand-in). Draft 2
+> applies the converged statement review of draft 1 and nothing else
+> (`manage-agents/debates/compose-spec/{astra,fable}.md`, CONVERGED after round 3 on FIX; the Astra seat was again
+> held by Sol xhigh): eight edits, mapped in the change log, and no Lean statement of 9.2 to 9.5 changed. The gate
+> that remains is one diff-only recheck of draft 2 by both seats; S0's Lean then starts without a new debate. It is
+> the statement under the Astra + Fable item-1 review that gates S0's Lean and the item-1 specifications of the
+> later stages (PLAN-EXPAND2 rule 10): a draft alone opens nothing. **Scope** (13.1): the contract every layer of the
 > stack signs, and everything stage S0 builds (`VE.Compose`: the slot, the dispatcher, the content type). Stages
 > S1, S3 and S4 get their own specifications (`readings.md`, `right-clauses.md`, an amendment of
 > [discourse.md](discourse.md)) and S2's follows S1's merge (plan section 9); this file fixes what those must
 > instantiate (section 6) and the English they share (section 2), and restates none of their theorems. Sections 4,
 > 5 and 9 are the statements under review; section 13 lists every point where this draft chose between readings of
-> the plan. Theorem statements and fixtures are implementation obligations, not claims of completed proofs or
-> tests. Inputs: the plan; [norms.md](norms.md) (W1), [soft-norms.md](soft-norms.md), [rights.md](rights.md),
-> [document.md](document.md) (W2), [discourse.md](discourse.md); and, read at `main` `2205be39`,
+> the plan or of the review. Theorem statements and fixtures are implementation obligations, not claims of
+> completed proofs or tests. Inputs: the plan; [norms.md](norms.md) (W1), [soft-norms.md](soft-norms.md),
+> [rights.md](rights.md), [document.md](document.md) (W2), [discourse.md](discourse.md),
+> [attribution.md](attribution.md) (2.1, for draft 2); and, read at `main` `2205be39`,
 > `lean/VE/Semantics.lean`, `lean/VE/Norms/{Basic,Tree,Prefix,Conflict,Replay}.lean`,
-> `lean/VE/SoftNorms/{Tree,Soften,Semantics,Coherence}.lean`, `lean/VE/Rights/{Tree,Correlate,Semantics,Route,Examples}.lean`,
+> `lean/VE/SoftNorms/{Tree,Soften,Semantics,Coherence,Run}.lean`,
+> `lean/VE/Rights/{Tree,Correlate,Semantics,Route,Examples,Run}.lean`,
 > `lean/VE/Route/{Gate,Layer,Route,Readings}.lean`, `lean/VE/Discourse/Admission.lean`, `ve/profiles.py`,
 > `ve/readings.py`, `ve/admission.py`, `ve/backends/lean_runner.py`. Nothing here changes a frozen contract, a
 > canonical byte, an identity, an existing theorem statement, a checker function or the answer of any executable.
@@ -31,8 +37,8 @@ instance `P := Lim_D ++ Choice_D ++ gated Rel_D`. Second, the **dispatcher**: on
 its route, which returns today's route on every list that has one and today's diagnostic on every list today's
 gate rejects, the head of the stack on a chain list, and a named abstention only for a stack wrapper beside a
 route outside the chain. Third, the **candidate content type** shared by readings and reference resolution. S0
-changes no behaviour: it adds Lean definitions and theorems and one Python test, wires nothing, and adds no
-executable, no case kind and no profile. What it buys: a new layer restates no route theorem, the order of layers
+changes no behaviour: it adds Lean definitions and theorems and one Python test, wires nothing, shows no sentence,
+and adds no executable, no case kind and no profile. What it buys: a new layer restates no route theorem, the order of layers
 is one reviewed definition instead of five call sites, and S3 and S4 can be built without S1 or S2.
 
 In this specification: definitions (1), the English (2), wire and identity (3), the semantics (4), what the slot
@@ -130,11 +136,16 @@ label families    soft:exception:…, soft:coherence:…      existing; not in a
                   rights:limitation:<L>:<act key>:<necessary|sufficient>:<c>          Lim_D   (existing, rights 1.3)
                   readings:<set>@<v>:one, readings:<set>@<v>:<i>:quiet, readings:quiet:<source key>,
                   coupling:<id>, constraint:<n>, narrowing:<id>                         Choice_D (S2)
-                  rights:relation:<line>:total                                          Rel_D    (S3)
+                  rights:relation:<line>:total                          a fixed line    Rel_D    (S3)
+                  rights:relation:<line>:total under <set>@<v>:<i>      a line of candidate a_{s,i}, gated
 gate χ P          the list of χ → ρ for ρ in P, for a closed base formula χ
 combined slot     Lim_D ++ Choice_D ++ gated Rel_D, in this order: the totality premise ρ of a relation on a line of
                   candidate a_{s,i} enters as χ_{s,i} → ρ, a fixed line's ρ as it is
 ```
+
+The label of a gated premise names its reading in the slot itself, not only in a report. Candidates of one set may
+share a line name (plan 2.2: a shared name is the set's interface), so without the reading two candidates'
+totality premises would carry one label and the slot would not be `wellLabelled` (9.2).
 
 **The gating rule.** `sup` gates everything a candidate owns or causes: its guards, its exception conditions, the
 predicates generated for it, the premises it brings and the nodes generated because of it (plan 2.3). In slot
@@ -180,9 +191,12 @@ sorts, constants and predicates and the prefix `rd-` on rule, right and limitati
 
 Nothing in this section is a norm word, and no sentence here can be written by an author as document content:
 these are the sentences VE **says** about a composed document. Each has one derivation because it begins with a
-fixed lead that no other registered production begins with, and its slots are closed classes defined in 2.1. W7
-registers each template with the stage named in the last column, and each passes the all-derivations gate before
-it is shown. S0 itself shows only the two abstention sentences.
+fixed lead that no other registered production begins with (E19 to E21 share one lead and differ in the fixed
+words that follow the situation), and its slots are closed classes, defined in 2.1 or by the registering stage.
+W7 registers each template with the stage named in the last column, and each passes the all-derivations gate
+before it is shown. S0 registers and shows none of them: it wires nothing (0, 8, 11), so no executable raises an
+abstention of `dispatch` before a wrapper's stage calls it. S0 fixes the texts of the two abstention sentences E1
+and E2, and the first stage that wires `dispatch` registers them (6).
 
 ### 2.1 Wordings
 
@@ -192,38 +206,86 @@ it is `reading <i>`, with `<i>` the candidate's 1-based position in the set, exc
 differ only in their deontic verb, where it is that verb in italics as the candidate's own VE sentence has it
 (*must*, *should*, *must not*, *should not*, *may*, *generally may*). `<decider>` is the declared decider's name,
 or the words `the decider` when the declaration says `unstated`. `<feature>` is the one name of a profile in the
-table of 2.2.
+table of 2.2. `<citation>` is the one citation production, used in E5 and E7: `sentence <n>` for one cited
+sentence, `sentences <n>[, <n>]* and <n>` for more. A slot this section does not define (`<axis>`, `<result
+sentence>`, `<totality sentence>`, `<source word>`, the two paraphrases of E14, `<subject>`, `<act phrase>`,
+`<situation>`, `<kind>`, `<surface>`, `<target>`) is defined by the stage that registers the wording, in that
+stage's specification; this specification fixes the frames.
 
 | # | Wording | The one reading | Formal content | Stage |
 |---|---|---|---|---|
-| E1 | `This document turns on <feature a> and <feature b>. VE cannot check these two together yet. Nothing in this document was checked.` | The two named features are both enabled and no route checks them together. No verdict of any kind was produced. | `UnsupportedProfile: <a> with <b>` (4.2) | S0 |
-| E2 | `This document turns on <feature a>, which needs <feature b>. Nothing in this document was checked.` | Feature a is enabled and feature b, which it is built on, is not. | `UnsupportedProfile: <a> requires <b>` | S0 |
+| E1 | `This document turns on two features. The first is <feature a>. The second is <feature b>. VE cannot check these two together yet. Nothing in this document was checked.` | The two named features are both enabled and no route checks them together. No verdict of any kind was produced. | `UnsupportedProfile: <a> with <b>` (4.2) | the first stage that wires `dispatch`; S0 fixes the text |
+| E2 | `This document turns on <feature a>, which needs <feature b>. Nothing in this document was checked.` | Feature a is enabled and feature b, which it is built on, is not. | `UnsupportedProfile: <a> requires <b>` | as E1 |
 | E3 | `This holds provided that:` followed by one sentence per line | The result above is proved only for situations in which every listed sentence is true. VE does not say that they are true. | the used slot premises, by label (`conditional_on`, 7) | each slot's stage |
 | E4 | `Sentence <n> is read in exactly one of its <k> listed ways.` | One candidate of the set is in force, the same one everywhere in the document. | `readings:<set>@<v>:one` and the bit encoding of plan 2.3 | S2 |
-| E5 | `Sentences <n>[, <n>]* and <n> are read with the same <axis>, because of sentence <n>[, <n>]*.` | The listed sets take candidates that carry the same label on the axis. The cited sentences are the reason given for this choice; they do not prove it. | `coupling:<id>`; rights documents keep rights 2.1's coupling sentence unchanged | S1 |
+| E5 | `Sentences <n>[, <n>]* and <n> are read with the same <axis>, because of <citation>.` | The listed sets take candidates that carry the same label on the axis. The cited sentences are the reason given for this choice; they do not prove it. | `coupling:<id>`; rights documents keep rights 2.1's coupling sentence unchanged | S1 |
 | E6 | `If sentence <n> is read as <reading>, sentence <n> is read as <reading>.` / `Sentence <n> is not read as <reading> while sentence <n> is read as <reading>.` | `requires` / `excludes` between two named candidates (discourse 1.5). | `constraint:<n>` | S2 |
-| E7 | `Sentence <n> is not read as <reading>, because of sentence <n>[, <n>]*.` | A recorded narrowing drops that candidate. The cited sentences are its stated reason. | `narrowing:<id>` | S2 |
+| E7 | `Sentence <n> is not read as <reading>, because of <citation>.` | A recorded narrowing drops that candidate. The cited sentences are its stated reason. | `narrowing:<id>` | S2 |
 | E8 | `A way of reading a sentence that is not taken adds nothing: its exception, switch, limitation and bar conditions hold nowhere.` | Under each choice, every decision table that exists only because of an unchosen candidate is empty. | every quiescence premise used | S2 |
-| E9 | `If sentence <n> is read as <reading>: <totality sentence>` | The totality sentence of a relation (the plan's instance: *Every person has at least one country.*) is assumed only under that reading. Under the other readings nothing is assumed. | `χ_{s,i} → ρ`, label `rights:relation:<line>:total` | S3 with S2 |
+| E9 | `If sentence <n> is read as <reading>: <totality sentence>` | The totality sentence of a relation (the plan's instance: *Every person has at least one country.*) is assumed only under that reading. Under the other readings nothing is assumed. | `χ_{s,i} → ρ`, label `rights:relation:<line>:total under <set>@<v>:<i>` (1.5) | S3 with S2 |
 | E10 | `Under every reading of the <k> open sentences, <result sentence>` | For every compatible choice of one candidate per open sentence, and every situation of that choice's document, the result holds. | plan S2 `superpose_all`, `superpose_conflict_free` | S2 |
 | E11 | `Under every reading with at least one individual, <result sentence>` | As E10, restricted to situations in which something exists. Used **only** if the lifting lemma (4.5) fails in statement review; then E10 is never used for an entailment. | `superpose_all` with the non-emptiness hypothesis | S2, fallback |
 | E12 | `Read sentence <n> as <reading>[ and sentence <n> as <reading>]*: <result sentence>` | The result holds, or the conflict occurs, under exactly the named candidates and whatever the other open sentences are read as, unless they are named too. | a certificate or countermodel with those atoms assumed (plan 2.5) | S2 |
 | E13 | `This does not depend on how sentence <n> is read.` | The certificate uses no premise that mentions the set of that sentence. | no used leaf mentions the set | S2 |
-| E14 | `This sentence says <source word>. (1) <strict paraphrase> (2) <default paraphrase> They differ here: suppose <decider> decides the exception applies to <subject>. Under (1) <outcome sentence>. Under (2) <outcome sentence>.` | The two candidates give different outcomes in the shown situation once the exception's decision table holds there. The decision is supposed, and attributed to who decides; it is not a fact of the situation. | a checked separating situation with the default candidate's decision, and its probe's two values (plan 2.4) | S1 (W8) |
+| E14 | `This sentence says <source word>. (1) <strict paraphrase> (2) <default paraphrase> They differ here: suppose <decider> decides the exception applies to <subject>. Under (1) <outcome sentence>. Under (2) <outcome sentence>.` | The two candidates give different outcomes in the shown situation once the exception's decision table holds there. The decision is supposed, and attributed to who decides; it is not a fact of the situation. | a checked separating situation with the default candidate's decision, an `outcome` probe and a checked value on each side (plan 2.4); used only under the four conditions below | S1 (W8) |
 | E15 | `These two readings differ only where <decider> decides that the exception applies. No situation separates them without that decision.` | Finding `SeparatedByDecisionOnly`. The set is admitted. | plan 2.4 | S1 |
 | E16 | `These two readings are about different acts: <act phrase> / <act phrase>. No situation separates them on a shared act.` | Finding `SeparatedByActOnly`. The set is admitted. | plan 2.4 | S1 |
 | E17 | `No compatible way of reading the open sentences reads sentence <n> as <reading>.` | Finding `DeadReading`: the couplings, constraints and narrowings exclude the candidate. | a certificate of `¬χ_{s,i}` from `Choice_D` | S2 |
 | E18 | `"<surface>" in sentence <n> is taken to refer to <target>: resolved by the translator, not checked.` | A provenance mention. It is attributed to who recorded it, counted apart from checked resolutions, and changes no status. | plan 2.8; only if S4's specification admits provenance mentions | S4 |
+| E19 | `These two readings differ here: <situation>. Under <reading>, <outcome sentence>. Under <reading>, <outcome sentence>.` | In the shown situation the probed act has the first stated outcome under the first reading, and the second stated outcome under the other. Each stated outcome is a checked value; where the check gave the other reading none, the second sentence is one of the two below that state no value. | a checked separating situation with an `outcome` probe (plan 2.4), on a pair E14 does not cover | S1 |
+| E20 | `These two readings differ here: <situation>. Under <reading>, a <kind> on <act phrase> is selected for <subject>. Under <reading>, none is selected.` / `These two readings differ here: <situation>. Under <reading>, no <kind> on <act phrase> is selected for <subject>. Under <reading>, one is selected.` | In the shown situation some rule or line of the named kind on the act is selected for the subject under one reading, and none is under the other. Nothing is said about the act's outcome, which may be the same under both. The second sentence follows the cases below. | a checked separating situation with a `selects` probe, key (kind, predicate, tuple) (plan 2.4) | S2b |
+| E21 | `These two readings differ here: <situation>. Under <reading>, the sentence is true there. Under <reading>, it is false there.` | Between two assertion candidates: the open sentence, read the first way, is true in the shown situation; read the other way, it is false there. A truth value is stated only for an assertion candidate (below). | a checked separating situation with a `holds` probe (plan 2.4) | S1; `right-clauses.md` for a mixed pair |
 
-The two outcome sentences of E14 state the checked value of the probed act under each candidate in the shown
+The outcome sentences of E14 and E19 state the checked value of the probed act under a candidate in the shown
 situation; they are never inferred from the verb. For an obligation they are `<subject> still must` and `<subject>
 is not required to` (the plan's instance: "Under (1) Ruritania still must. Under (2) it is not required to.");
-for a permission, `<subject> may` and `<subject> may not`. Which candidate gets which is read off the probe: where
-a default prohibition is excepted, the other rules and the declared default decide the act, and they may still
-forbid it. In a document, the strict and the default reading of one rule also differ where a strict rule decides
-the act and where the strict twin blocks other default rules (plan S1: `force_agrees_off_exception` is about a
-rule alone); S1's specification adds one sentence for each to E14, behind the W8 fidelity gate (plan open
-question 3).
+for a permission, `<subject> is permitted to` and `<subject> is not permitted to`. VE never says `may not`: it
+has two readings, and attribution 2.1 rejects it as input for that reason. Which candidate gets which is read off
+the probe: where a default prohibition is excepted, the other rules and the declared default decide the act, and
+they may still forbid it. In a document, the strict and the default reading of one rule also differ where a
+strict rule decides the act and where the strict twin blocks other default rules (plan S1:
+`force_agrees_off_exception` is about a rule alone); S1's specification adds one sentence for each to E14, behind
+the W8 fidelity gate (plan open question 3).
+
+**When E14 is used.** Only when all four hold: the two candidates are the strict and the default candidate of one
+rule; the recorded probe is an `outcome` probe; both readings have an admissible completion on the shown base
+(some assignment to the reading's own generated predicates makes "fixed units + candidate" admissible there, plan
+2.4); and the checker obtained one value on each side, the witnessing side's under the shown decision and the
+other side's from a single evaluation (that side owns no generated predicate), and the two values differ. Every
+other pair of candidates is worded by the row of its probe's form: E19 for `outcome`, E20 for `selects`, E21 for
+`holds` (plan S1, `Probe`).
+
+**What E19 to E21 may state.** A checked separation proves that one reading reaches the recorded value of the
+probe on the shown base and that the other reading cannot reach that value there (plan 2.4, `Separated`), and no
+more. So the first sentence names the witnessing reading, the one the situation was checked for, and states the
+recorded value. The second sentence is about the other reading, and it is the first of these that applies:
+
+1. That reading has no admissible completion on the shown base. The second sentence is `Under <reading>, this
+   situation is ruled out, whatever is decided.` No value is stated for that reading.
+2. The probe is `selects` or `holds`. Such a probe has one of two values in every admissible completion and none
+   reaches the recorded one, so the second sentence states the opposite value, as the row has it (E21 only of an
+   assertion candidate, as said below).
+3. The probe is `outcome`, and the checker evaluated that side once and obtained a value (the side owns no
+   generated predicate and the act has an outcome there). The second sentence is that outcome sentence.
+4. The probe is `outcome`, and on that side the act has no outcome there (`ValueSoft` is `none`) or its outcome
+   varies with what is decided. The second sentence is `Under <reading> that is not so, whatever is decided.`
+
+E20's two forms follow the recorded value: the first sentence says that a rule or line is selected when the probe
+recorded `true`, and that none is when it recorded `false`. "Selected" is the probe's own notion (rights 4.4,
+`SelectsR`; plan S1, `Observes`): the rule or line decides there. It is not the weaker "its condition holds",
+which is why the row does not say "applies".
+
+E21's first sentence likewise states the recorded value, `the sentence is true there` or `the sentence is false
+there`. E21 states a truth value only for an assertion candidate, whose own formula is among the assertions the
+probe evaluates (plan S1, `one`). Between two assertion candidates the fixed assertions hold in the shown
+situation under both readings, so the two sentences report the truth of the open sentence itself, both values are
+checked, and the reading under which it is true is named first. For a candidate that is not an assertion the
+probe evaluates the fixed assertions only, and "the sentence is true there" would report other sentences' truth:
+of such a candidate E21 says at most that the situation is ruled out (case 1, fixture G8). Any other mixed pair
+recorded with a `holds` probe is worded by `right-clauses.md` behind W8, naming the assertions actually probed.
+
+Where the shown situation includes a decision of the witnessing reading, `<situation>` states it as a supposition
+attributed to its decider, as E14 does, never as a fact (2.2).
 
 ### 2.2 Feature names, synonyms and non-wordings
 
@@ -245,6 +307,13 @@ No synonyms are accepted or produced. Not wordings, and never produced:
 
 - A decision stated as a fact: "Ruritania lacks the resources and the exception applies." E14 says "suppose
   `<decider>` decides the exception applies".
+- "may not": it has two readings, and attribution 2.1 rejects it as input for that reason. A permission value
+  reads `is not permitted to` (E14, E19; fixture G9).
+- A value the check did not establish: an outcome, a selection or a truth value for a reading under which the
+  shown situation is ruled out; an outcome that depends on what is decided; "the sentence is false there" of a
+  candidate that is not an assertion. E19 to E21 then use the two sentences of 2.1 that state no value.
+- E14 for a pair that does not meet its four conditions, or "in the form of E14" for a selection or an assertion
+  probe.
 - "Under every reading" for an entailment when the fallback of E11 is in force.
 - Any generated name: a choice atom, `ve__here`, a bit predicate, an `rd-` name, a generated decision predicate.
   Reports say "sentence 12 read as *must*", never an atom (plan 2.3).
@@ -256,11 +325,12 @@ No synonyms are accepted or produced. Not wordings, and never produced:
 ### 2.3 The reader's checklist (norms 2.5, soft-norms 2.3 and rights 2.3, extended)
 
 For a composed document the IDE shows, in English only: for every open sentence, its candidates in order with
-their paraphrases and E4; for every pair of candidates the separating situation in the form of E14, and E15 or E16
-when the finding applies; every coupling (E5), constraint (E6) and narrowing (E7) with its cited sentences; under
-every result, E3 with the premises used, limitation sentences in rights 2.1's wording and coherence premises in
-soft-norms 2.1's; for a result that needed no reading premise of a set, E13; for an abstention, E1 or E2 and
-nothing else.
+their paraphrases and E4; for every pair of candidates, the checked separating situation in the wording of its
+probe: E14 where its four conditions hold (2.1), otherwise the row of the probe's form (E19, E20 or E21); E15 or
+E16 when the finding applies; every coupling (E5), constraint (E6) and narrowing (E7) with its cited sentences;
+under every result, E3 with the premises used, limitation sentences in rights 2.1's wording and coherence
+premises in soft-norms 2.1's; for a result that needed no reading premise of a set, E13; for an abstention, E1 or
+E2 and nothing else.
 
 ### 2.4 Examples from the pinned sources
 
@@ -281,8 +351,8 @@ nothing else.
   at least one responsible state." Under readings 1 and 2 (the two assertions) the sentence is not among the
   provisos.
 - A document with profiles `alternatives@0, norms@0, readings@1, relational-fol@0`. E1: "This document turns on
-  readings that carry rules and alternatives. VE cannot check these two together yet. Nothing in this document was
-  checked."
+  two features. The first is readings that carry rules. The second is alternatives. VE cannot check these two
+  together yet. Nothing in this document was checked."
 
 ## 3. Wire form and identity
 
@@ -293,8 +363,8 @@ the later stages:
   and Python regenerate the slot from the decoded document and bind it to the document hash.
 - `conditional_on` lists the labels of the slot premises a certificate's used leaves contain, after the existing
   `soft:coherence:*` entries, in slot order: `rights:limitation:*`, then the `Choice_D` families in the order of
-  1.5, then `rights:relation:*`. A gated premise is listed under its own label with the reading appended:
-  `rights:relation:<line>:total under <set>@<v>:<i>`.
+  1.5, then `rights:relation:*`. Slot labels are listed verbatim. A gated premise's slot label already names its
+  reading (1.5: `rights:relation:<line>:total under <set>@<v>:<i>`), so nothing is appended here.
 - S0 fixes no identity rule for a wrapper profile. The discourse wrapper's is discourse 3.5 and stays: inner
   identities are computed under the stripped profile list and the outer report binds the full list. Each new
   wrapper's specification states its own rule, and none may change an identity of a document that does not turn
@@ -454,9 +524,9 @@ inhabited). Three statements settle what this means for the stack.
 
 | Stage | Slot it adds | Gated? | Identity theorem | Dispatch wiring | Sentences it registers |
 |---|---|---|---|---|---|
-| S1 `readings@1`, part A | none | — | sets without content-bearing candidates validate as today (`separation_conservative`) | registers `readings@1`; the head `readings` validates sets and hands the rest to `dispatch` | E5, E14, E15, E16 |
-| S2a, S2b `readings@1`, part B | `Choice_D` (labels of 1.5), appended after `Lim_D` | quiescence by owners; no premise of `Choice_D` is itself gated | `sup_no_sets`; formula-only documents keep W2's route | the head `readings` checks `sup D` on `dispatch`'s next route | E4, E6, E7, E8, E10 (or E11), E12, E13, E17 |
-| S3 `right-clauses@0` | `Rel_D` (`rights:relation:<line>:total`), appended last | a candidate line's premise by its atom, once S2 is in | `plain_identity` | registers `right-clauses@0`; the head `clauses` elaborates and calls `dispatch` | E9, the clause and relation sentences |
+| S1 `readings@1`, part A | none | — | sets without content-bearing candidates validate as today (`separation_conservative`) | registers `readings@1`; the head `readings` validates sets and hands the rest to `dispatch` | E5, E14, E15, E16, E19, E21 |
+| S2a, S2b `readings@1`, part B | `Choice_D` (labels of 1.5), appended after `Lim_D` | quiescence by owners; no premise of `Choice_D` is itself gated | `sup_no_sets`; formula-only documents keep W2's route | the head `readings` checks `sup D` on `dispatch`'s next route | E4, E6, E7, E8, E10 (or E11), E12, E13, E17; E20 with S2b |
+| S3 `right-clauses@0` | `Rel_D` (`rights:relation:<line>:total`, ending ` under <set>@<v>:<i>` on a candidate's line), appended last | a candidate line's premise by its atom, once S2 is in | `plain_identity` | registers `right-clauses@0`; the head `clauses` elaborates and calls `dispatch` | E9, the clause and relation sentences, the wording of a mixed pair with a `holds` probe (2.1, G8) |
 | S4 `ve.discourse@1` on the chain | none | — | `resolve_identity`, `composed_base_unchanged` | the wrapper calls `dispatch` on the base list instead of the frozen gate | E18, if admitted |
 
 Each stage's specification states: `SlotWellFormed` for its slot; the label of every premise and its sentence;
@@ -465,6 +535,10 @@ inserted before an existing one; and the three-way agreement it offers (Lean aut
 its `-elaborate` kind, Rust evaluating regenerated formulas marked untrusted). When a stage registers a wrapper
 profile, Python's `checker_family` is extended so that it equals `dispatch` on every list containing that profile,
 and the differential of fixture D-all (10.1) is extended to those lists.
+
+E1 and E2 are in no row because they belong to no one stage: the first of these stages to wire `dispatch`
+registers both and checks fixtures G1 to G3 (10.4) in its own specification. S0 fixes their texts and shows
+neither, since it wires nothing.
 
 The order S0, then S1, S2a, S2b in one lane, with S3 and S4 as independent lanes, depends on `Content` and the
 slot being S0's: S3 imports `VE.Compose.Slot`, S4 imports `VE.Compose.Content` and `VE.Compose.Dispatch`, and
@@ -475,12 +549,25 @@ neither imports `VE.Readings`.
 S0 changes no report. The contract for the stages:
 
 ```text
-conditional_on        soft:coherence:<a>,<b> …, then the slot labels used, in slot order (3)
-status text           CONFLICT-FREE among rules on the same act, conditional on <k> coherence premises, <l>
-                      limitation premises, <m> reading premises and <n> relation premises (<labels>)
-                      [, under couplings <ids>]; <j> weighing points open; situation exhibited: yes | UNKNOWN (<budget>)
-                      a family with count 0 is omitted, so a rights document without reading sets prints
-                      rights 7.3's line unchanged
+conditional_on        soft:coherence:<a>,<b> …, then the slot labels used, verbatim, in slot order (3)
+status text           the lower route's line verbatim: rights 7.3's on a rights document, soft-norms 7.3's on a
+                      soft document (which keeps "coherent situation exhibited"). Its coherence and limitation
+                      counts are printed as today, zero included (lean/VE/Rights/Run.lean, SoftNorms/Run.lean).
+                      Only two families are new, <m> reading premises (the used premises of Choice_D) and <n>
+                      relation premises (those of Rel_D), and each is omitted when its count is 0. A family that
+                      is present joins the line's list of counts in slot order, the list written with commas and
+                      "and" before its last member:
+                        rights   conditional on <k> coherence premises and <l> limitation premises          m = n = 0
+                                 conditional on <k> coherence premises, <l> limitation premises and <m>
+                                   reading premises                                                         n = 0
+                                 conditional on <k> coherence premises, <l> limitation premises and <n>
+                                   relation premises                                                        m = 0
+                                 conditional on <k> coherence premises, <l> limitation premises, <m> reading
+                                   premises and <n> relation premises
+                        soft     conditional on <k> coherence premises                                      m = 0
+                                 conditional on <k> coherence premises and <m> reading premises
+                      Everything before and after the list is the lower route's text. So a document in which no
+                      reading or relation premise was used prints today's line, byte for byte
 abstention            the diagnostic of 8 and its sentence E1 or E2; no status, no coverage line
 residual lines        slot_premises_used (per certificate, by family); for S2: reading_premises, dead_readings;
                       for S3: relation_premises, elided_bytes; for S4: provenance_mentions, counted apart from
@@ -516,7 +603,7 @@ Named by the plan and raised by a later stage; the text is fixed here so that th
 | `ReadingsNotSuperposable: <sets>` | S2: candidates stratify alone and cycle together; the enumerated fallback then decides | finding |
 | `DeadReading: <set>:<i>` | S2 | finding |
 | `SeparatedByActOnly: <set>: <i>, <j>` / `SeparatedByDecisionOnly: <set>: <i>, <j>` | S1 | finding |
-| `fragment: no (rights:relation:<line>:total)` | S3: an existential slot premise leaves norms 7's fragment | report line |
+| `fragment: no (<label>)`, `<label>` the totality premise's slot label of 1.5 (`rights:relation:<line>:total`, ending ` under <set>@<v>:<i>` when gated) | S3: an existential slot premise leaves norms 7's fragment | report line |
 
 Order: stack order (RESOLVE, STRUCTURE, SUPERPOSE, then the chain's existing order), then each layer's own table.
 Within `dispatch` the order is 4.2's. A refused list is never partly checked.
@@ -889,7 +976,8 @@ end VE.Compose
 
 Notes for the review. `todayGate` is a transcription of a Python function and is checked three ways: against the
 declarative `TodayList` (`today_sound`, `today_complete`), against the frozen classifier on its registry
-(`today_classify`), and against Python on every list (fixture D-all). `VE.SpeechActs.Wire.profileGate` is the
+(`today_classify`), and against Python on every sorted list of registered profiles, texts included (fixture
+D-all, whose two literals `Examples.lean` guards `today` against). `VE.SpeechActs.Wire.profileGate` is the
 existing gate of `lean/VE/SpeechActs/Wire.lean` (the statement uses its namespace as that file declares it). The
 alternatives, risk, rights and reports gates take the environment JSON, so their requirements are stated as
 membership facts; each is the list of `unless … contains` checks of that route's `profileGate` or decoder. In
@@ -1048,13 +1136,35 @@ Lists are written as they are passed. "ok r" is `.ok r`; a text is the complete 
 | D40 | `readings@1, norms@0, relational-fol@0` | `UnsupportedProfile: profiles must be sorted and unique` |
 | D41 | `readings@1, relational-fol@0, right-clauses@0` | `UnsupportedProfile: right-clauses@0 requires rights@0` (two wrappers refuse; the first in stack order answers) |
 
-- **D-all (Python against the specification).** For every strictly increasing sublist of the fifteen registered
-  profiles (32,768 lists), `ve.profiles.checker_family` raises exactly when the Python transcription of `TodayList`
-  in the test is false, and when it raises, its text equals the text of the first check of 4.2 that fires. Text
-  comparison: Python's message with `UnsupportedProfile: ` prefixed unless it already starts with it (the two
-  speech-act messages do). The same test asserts rows D1 to D27 on Python and reads rows D1 to D41 from one table
-  that `Examples.lean` repeats as `#guard dispatch [...] == ...`, so that the Lean and Python expectations are one
-  text. Python has no single routing function, so the head table of 4.2 is not a Python differential: it is
+- **D-all (Python against the specification, and Lean against Python).** For every strictly increasing sublist of
+  the fifteen registered profiles (32,768 lists), `ve.profiles.checker_family` raises exactly when the Python
+  transcription of `TodayList` in the test is false, and when it raises, its text equals the text of the first
+  check of 4.2 that fires. Text comparison: Python's message with `UnsupportedProfile: ` prefixed unless it already
+  starts with it (the two speech-act messages do).
+
+  That half compares Python with a Python transcription. The plan's S0 acceptance is wider: `dispatch` equals
+  `checker_family` on every sorted subset, diagnostics included. So the same test also emits Python's 32,768
+  outcomes as one code string, and Lean is guarded against it:
+  - The lists are taken in the order of a mask `m = 0, …, 32767` over the registry in code point order: bit `j`
+    of `m` is set exactly when the `j`-th name is in the list.
+  - A list's outcome text is `ok` when `checker_family` returns, and otherwise its message under the text
+    comparison above.
+  - `todayTexts` is the list of distinct outcome texts in order of first appearance. `todayCodes` is a string of
+    32,768 characters whose `m`-th character is the position of list `m`'s text in `todayTexts`, written in the
+    alphabet `0-9a-zA-Z`. The test fails if there are more than 62 distinct texts.
+  - Both are literals of `Examples.lean` (`todayTexts : List String`, `todayCodes : String`). The test reads them
+    from that file and asserts that they equal what it computes from Python.
+  - `Examples.lean` guards `today` against them: one `#guard` that for every `m` the text `todayCodes` selects
+    from `todayTexts` is `ok` when `today` of list `m` is `.ok _`, and is `e` when it is `.error e`. The same file
+    guards that its registry in code point order is strictly increasing and a permutation of `registered`.
+
+  So Lean's texts meet Python's on every one of these lists, not on rows D1 to D27 only, and `dispatch` meets
+  `today` on them by `dispatch_today`. The literals are derived, never trusted: Python recomputes them on every
+  test run and Lean re-evaluates `today` on every build.
+
+  The same test asserts rows D1 to D27 on Python and reads rows D1 to D41 from one table that `Examples.lean`
+  repeats as `#guard dispatch [...] == ...`, so that the Lean and Python expectations are one text. Python has no
+  single routing function, so the head table of 4.2 is not a Python differential: it is
   checked by review against the call sites (`ve/document.py` `_environment`, `ve/admission.py` `admit_document`,
   `ve/backends/lean_runner.py`) and, in Lean, by the `today_<route>` facts against each route's own gate. The
   expected values of this section were derived by reading `checker_family`; no row has been executed yet.
@@ -1078,7 +1188,7 @@ limitation 29 with two necessary conditions, generated predicates `rights__lim__
 | L6 | `gamma`, slot `[.unary "undeclared" (.var 0)]` | `slotCheck = false`: an open formula over an undeclared predicate is not a slot, and no theorem applies to it |
 | L7 | `gamma`, `gate χ (limPremises gamma)` with `χ := .bottom` | `slotCheck = true`; `backgroundValidP (correlate gamma) (gate .bottom (limPremises gamma)) M₂ = true`: a premise gated by a false atom imposes nothing (`sat_gate_off`); with `χ := .top` the value is `false`, as in L4 (`sat_gate_on`) |
 | L8 | `eta`, slot `limPremises eta` (empty: no limitation) with the bar | `backgroundValidP (correlate eta) [] aimed = true`; the instance theorems hold with a bar present |
-| L9 | theorems | `rights_acceptance_from_slot` and `rights_countermodel_from_slot` compile with statements identical, token for token after `open`, to `VE.Rights.rights_route_acceptance` and `rights_route_countermodel`; the audit lists them with the unchanged allowlist |
+| L9 | theorems | `example : @rights_acceptance_from_slot = @VE.Rights.rights_route_acceptance := rfl` and `example : @rights_countermodel_from_slot = @VE.Rights.rights_route_countermodel := rfl` compile in `Examples.lean` (with the universe written out as `.{u}` on both sides if elaboration asks for it). Such an equation is well typed only when the two theorem types agree definitionally, and that agreement is what the check shows; nothing is claimed about the source text of the two statements. The audit lists both new theorems with the unchanged allowlist |
 
 ### 10.3 Content
 
@@ -1093,16 +1203,21 @@ limitation 29 with two necessary conditions, generated predicates `rights__lim__
 
 ### 10.4 The English
 
-Each wording of 2.1 with one instance, checked by the stage that registers it; S0 checks E1 and E2 only.
+Each wording of 2.1 with one instance, checked by the stage that registers it. S0 checks none of them, because it
+shows no sentence: G1 to G3 are checked with E1 and E2 by the first stage that wires `dispatch` (6). The stage of
+every other row is named in it.
 
 | # | Instance | Expected |
 |---|---|---|
-| G1 | E1 for D34 | "This document turns on readings that carry rules and alternatives. VE cannot check these two together yet. Nothing in this document was checked." One derivation |
+| G1 | E1 for D34 | "This document turns on two features. The first is readings that carry rules. The second is alternatives. VE cannot check these two together yet. Nothing in this document was checked." One derivation |
 | G2 | E2 for D33 | "This document turns on clauses on right lines, which needs rights. Nothing in this document was checked." One derivation |
 | G3 | the nine feature names of 2.2 | pairwise distinct; none is a prefix of another followed by a space |
 | G4 | E14 on plan fixture F1 with decider `unstated` | contains "suppose the decider decides the exception applies"; does not contain "and the exception applies" (S1) |
 | G5 | E10 and E11 | never both in one report; E11 only with the fallback of 4.5 (S2) |
 | G6 | any sentence of 2.1 rendered for a real document | contains no `ve__`, no `rd-` and no `soft__` or `rights__` substring |
+| G7 | plan fixture F10: the two limitation candidates of `u112`, separated by a `selects` probe on a claim line where the limitation holds | rendered as E20, never as E14. The first sentence states the recorded value: "a `<kind>` on `<act phrase>` is selected for `<subject>`" when the probe recorded `true` (the reading "on the liberties"), "no `<kind>` … is selected" when it recorded `false` (the reading "on every line"). The second sentence follows the four cases of 2.1 (S2b) |
+| G8 | plan fixture F13: an assertion candidate and the claim candidate of `u054`, on the situation with a person no state is responsible for, recorded with a `holds` probe | never E14 and no "suppose". A truth value is stated only for the assertion candidate: "Under `<reading>`, the sentence is true there." The claim reading has no admissible completion there, so its sentence is "Under `<reading>`, this situation is ruled out, whatever is decided." Nothing says that the claim's sentence is false (`right-clauses.md`) |
+| G9 | every wording of 2.1, rendered | no rendered sentence contains "may not" (each registering stage, for its own wordings) |
 
 ### 10.5 The plan's fixtures
 
@@ -1140,19 +1255,27 @@ question 12).
    is needed and where it is not; the syntactic identity of the premise list; `slot_route_entails_iff` as the
    generalisation of `soft_route_entails_iff`.
 6. The instances (9.2): the five definitional facts; `rights_acceptance_from_slot` and
-   `rights_countermodel_from_slot` with statements identical to the originals.
+   `rights_countermodel_from_slot` with statement types that agree definitionally with the originals' (L9).
 7. Monotonicity and gating (4.3, 4.4): `conflictFreeP_append` and its false converse; `sat_gate_on`,
    `sat_gate_off`; the combined slot's order; the gating rule of 1.5 against plan 2.3 and fixture F21.
 8. The empty structure (4.5, 9.5): the vacuity argument for `ConflictFree` against W1's arity check; `adjoinOne`
    and `adjoin_denote` case by case against `Formula.denote`; the fallback wording.
 9. `Content` (1.6, 9.4): five constructors against plan 2.2's wire; why a bar and a quantity are not contents;
    `declared` against the closure and cross-set rules of plan 2.2.
-10. The English (2): one reading per wording; the `<reading>` and `<decider>` slots; E10 against E11; E14 against
-    the debate's wording; the non-wordings of 2.2.
-11. The report contract (3, 7): `conditional_on` order; the status text with zero-count families omitted.
-12. The diagnostics (8) and the fixtures (10), each against the definitions; D1 to D41 derived by hand.
+10. The English (2): one reading per wording; the `<reading>`, `<decider>` and `<citation>` slots; E10 against
+    E11; E14 against the debate's wording and its four conditions of use; E19 to E21 and the four cases of the
+    second sentence against `Separated` and `Observes` (plan 2.4, S1); the non-wordings of 2.2.
+11. The report contract (3, 7): `conditional_on` order and its verbatim slot labels; the status text as the lower
+    route's line, with only the reading and relation families omitted at zero.
+12. The diagnostics (8) and the fixtures (10), each against the definitions; D1 to D41 derived by hand; D-all's
+    Lean half against the plan's S0 acceptance.
 13. Section 6: that S3 and S4 need nothing of S1 or S2.
 14. The resolved choices of section 13.
+
+Outcome of the review of draft 1 (`manage-agents/debates/compose-spec/`, converged after round 3): FIX, eight
+edits, all applied in draft 2 (change log). No Lean statement of 9.2 to 9.5 changed; the edits fell on the English
+(2), the labels (1.5, 3), the status text (7), the fixtures (10) and S0's scope. Both seats recheck the diff of
+draft 2 once. S0's Lean starts after that recheck, since edit 3 changes S0's own scope; no new debate is opened.
 
 ## 13. Resolved choices in this draft
 
@@ -1194,11 +1317,47 @@ Each is a point where the plan left a reading open; the review may overturn any 
     definitions, and proving them first settles E10 against E11 before `readings.md` registers either.
 12. **The feature names of 2.2 and the `<reading>` naming rule of 2.1 are proposals** of this draft; the plan
     gives example sentences, not a naming rule. Each goes through W7 with its stage.
-13. **`conditional_on` appends the reading to a gated premise's label** (`… under <set>@<v>:<i>`), so that one
-    relation line read under two candidates gives two distinguishable entries.
+13. **A gated premise's slot label names its reading** (`… under <set>@<v>:<i>`), and `conditional_on` lists slot
+    labels verbatim. Draft 1 appended the reading only in `conditional_on`; candidates of one set may share a line
+    name, so two gated premises then had one slot label and `wellLabelled` failed (statement review, edit 2).
+
+Choices 14 to 19 were made in draft 2, in writing the converged statement review down. The two seats wrote their
+third rounds concurrently, so each stated precisions the other had not seen; where the two texts differ, this
+draft takes the reading that satisfies both, and the diff-only recheck is where each seat confirms it.
+
+14. **E1 and E2 are S0's texts and the first wiring stage's sentences** (edit 3). S0 wires nothing, so it can
+    neither show nor check a sentence; G1 to G3 move with them.
+15. **The second sentence of E19 to E21 has four cases** (edit 8). The Fable seat's rule is that a value is named
+    only when the checker evaluated that side once and obtained one, and that the sentence is otherwise the denial
+    "that is not so, whatever is decided". The Astra seat's rule is that the other reading gets the opposite value
+    only when it has an admissible completion, and is otherwise said to have none. Both hold together: no
+    completion gives the "ruled out" sentence, a two-valued probe with a completion gives the opposite value, an
+    outcome with one checked value gives that value, and any other outcome gives the denial. The words "this
+    situation is ruled out, whatever is decided" are this draft's English for "no admissible completion" and go
+    through W7 and W8 with the registering stage.
+16. **E20 says "is selected", in the order of the recorded value.** The Fable seat's frame is "a `<kind>` on `<act
+    phrase>` applies to `<subject>`" and "none does"; the Astra seat's precision is "is selected" or "none is
+    selected", in the order the probe establishes. This draft keeps the frame and takes the verb and the order from
+    the precision: the plan itself separates a rule that applies from one that selects (plan 2.3), and the probe is
+    about selection.
+17. **A mixed pair with a `holds` probe.** The Fable seat confines E21 to two assertion candidates and leaves a
+    mixed pair to `right-clauses.md`; the Astra seat has G8 exercise F13's branch without a completion. This draft
+    lets E21's frame state a truth value for the assertion candidate and "ruled out" for the other (G8), and
+    leaves every other mixed case to `right-clauses.md`.
+18. **D-all's code string is one character per list over a table of the distinct outcome texts** (edit 6). The
+    review fixed "one code string" that `Examples.lean` guards `today` against; the table makes the code carry
+    the full text of every diagnostic, parameters included, without parsing a message in Lean.
+19. **The gate is the stricter of the two round-3 texts.** The Fable seat withdrew "S0's Lean may start once
+    edits 6 and 7 are in", because edit 3 changes S0's scope; the Astra seat's last round still carries that
+    sentence. Under the stricter text S0 starts after the recheck of all eight edits, which satisfies both.
+
+Flagged for the recheck, not decided here: G9 is written as converged, "no rendered sentence contains *may not*".
+A `<source word>` or a `<surface>` quotes source bytes, and a source may say "may not"; whether a quotation is
+excepted is for S1's and S4's specifications, which define those slots.
 
 ## Change log
 
 | Date | Revision | Changes |
 |---|---|---|
 | 2026-10-01 | Draft 1 | First statement specification, from plan draft 2: the stack contract with its six obligations; today's gate transcribed with fifteen checks and its eight routes; `dispatch` with three wrapper heads and named refusals; the base-premise slot with unique expansion, certified conflict-freedom, witness, acceptance, countermodel and exactness relative to a slot; monotonicity; gating; the rights route as the instance `P := Lim_D`; the candidate content type with its declared names; the lifting lemma stated for S2a; eighteen report sentences with their one reading; diagnostics; fixtures D1 to D41 with the exhaustive Python differential, L1 to L9, C1 to C6, G1 to G6; thirteen resolved choices. No code, Lean or frozen contract changes. |
+| 2026-10-01 | Draft 2 | The converged statement review applied, nothing else (`manage-agents/debates/compose-spec/`, FIX after round 3; edits 1 to 7 are the Fable seat's round 1 list, edit 8 the Astra seat's English-contract finding with both seats' round-3 precisions). (1) Status text: the lower route's line verbatim, coherence and limitation counts printed at zero as today; only the reading and relation families are omitted at zero (7). (2) A gated relation premise's slot label ends ` under <set>@<v>:<i>`, and `conditional_on` lists slot labels verbatim (1.5, 3, E9, 6, 8, 13.13; plan 2.3 and 2.7). (3) S0 shows and checks no sentence: E1, E2 and G1 to G3 belong to the first stage that wires `dispatch` (2, 2.1, 6, 10.4). (4) E1 reworded so that it names two features (2.1, 2.4, G1). (5) One citation production for E5 and E7; slots not defined in 2.1 are the registering stage's (2, 2.1). (6) D-all gains a Lean half: Python's 32,768 outcomes as `todayCodes` over `todayTexts`, guarded against `today` in `Examples.lean` (10.1, 9.3 note). (7) L9 is an `rfl` equation between each instance theorem and its original, described as definitional agreement of the two types; "token for token" dropped (10.2, 12). (8) E14 restricted to the strict and default candidates of one rule with an `outcome` probe, a completion and a checked value on both sides; permission values read `is permitted to` and `is not permitted to`; new rows E19 (`outcome`), E20 (`selects`) and E21 (`holds`) with the four cases of the second sentence; the reader's checklist chooses the wording by probe; fixtures G7 to G9; three non-wordings (2.1, 2.2, 2.3, 6, 10.4). Checklist items 6, 10, 11 and 12 follow the edits, and section 12 records the outcome and the remaining gate. Resolved choice 13 rewritten; choices 14 to 19 and one flagged point added. No Lean statement of 9.2 to 9.5 changed. No code, Lean or frozen contract changes. |
