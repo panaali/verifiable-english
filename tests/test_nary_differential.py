@@ -16,6 +16,7 @@ from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.environment import Environment
 from ve.evaluate import evaluate
+from ve.background import background
 from ve.identity import meaning_id
 from ve.model import FiniteModel
 from ve.closure import induction_step
@@ -45,6 +46,20 @@ def invoke(binary, command, cases, *, errors=False):
                             capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode == int(errors), result.stdout + result.stderr
     return json.loads(result.stdout)
+
+
+def test_nary_route_regenerates_literal_background(lean_binary):
+    raw = environment(3).to_dict()
+    raw["vocabulary"]["constants"].update({
+        "litone": {"sort": "$string"}, "littwo": {"sort": "$string"}})
+    env = Environment(raw)
+    row = invoke(lean_binary, "route", [{"id": "nary-background",
+        "kind": "background", "environment": env.to_dict()}])[0]
+    from ve.ast import formula_to_data
+    premises = background(env)
+    assert row["status"] == "ok"
+    assert row["background"] == [formula_to_data(env, item.formula) for item in premises]
+    assert row["generators"] == [item.generator for item in premises]
 
 
 @pytest.fixture(scope="module")
@@ -133,6 +148,32 @@ def test_statement_profile_preserves_core_family(lean_binary, rust_binary):
                   "ast": [formula_to_data(combined, atom)], "model": model}
     assert invoke(lean_binary, "route", [evaluation])[0]["values"] == [True]
     assert invoke(rust_binary, "conformance", [evaluation])[0]["values"] == [True]
+
+
+def test_stage0_core_nary_probe_checks_positions_and_replay(lean_binary, rust_binary):
+    from tests import probe_matrix as probe
+
+    env = Environment(probe.raw_environment(("closure@0", "nary@0")))
+    model_wire = probe.model_wire(env)
+    model = FiniteModel.from_dict(env, model_wire)
+    atom = probe.semantic_formula(env)
+    reversed_atom = Atom("triple", (Const("y"), Const("x"), Const("x")))
+    assert [evaluate(env, formula, model).value for formula in (atom, reversed_atom)] == [True, False]
+    case = {"id": "stage0-nary", "kind": "evaluate", "environment": env.to_dict(),
+            "ast": [formula_to_data(env, formula) for formula in (atom, reversed_atom)],
+            "model": model_wire}
+    assert invoke(lean_binary, "route", [case])[0]["values"] == [True, False]
+    assert invoke(rust_binary, "conformance", [case])[0]["values"] == [True, False]
+
+    premises = (Forall("item", Atom("triple", (Var(0), Const("y"), Const("x")))),)
+    proof = prove_entailment(env, premises, atom)
+    assert proof.status == "Found"
+    assert check_entailment_certificate(env, premises, atom, proof.certificate).valid
+    replay = {"id": "stage0-nary-replay", "kind": "certificate",
+              "environment": env.to_dict(),
+              "premises": [formula_to_data(env, premise) for premise in premises],
+              "conclusion": formula_to_data(env, atom), "certificate": proof.certificate}
+    assert invoke(lean_binary, "route", [replay])[0]["valid"] is True
 
 
 def test_substitution_quantification_and_body_closure_agree_with_lean(lean_binary):

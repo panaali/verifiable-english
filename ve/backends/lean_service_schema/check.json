@@ -1,0 +1,14 @@
+{
+  "$id": "check.json",
+  "$comment": "Standalone checked formula or document with recomputed meaning identity.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"$ref": "common.json#/$defs/error"},
+    {"type": "object", "required": ["id", "status", "well_typed", "meaning_id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "well_typed": {"const": true},
+        "meaning_id": {"$ref": "common.json#/$defs/hex64"}}}]}
+}

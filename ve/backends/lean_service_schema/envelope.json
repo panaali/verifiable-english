@@ -10,7 +10,11 @@
       "modes": {"$ref": "common.json#/$defs/strings", "allOf": [
         {"contains": {"const": "evaluate"}}, {"contains": {"const": "check-certificate"}},
         {"contains": {"const": "order"}}, {"contains": {"const": "route"}},
-        {"contains": {"const": "norms"}}, {"contains": {"const": "english"}}]},
+        {"contains": {"const": "norms"}}, {"contains": {"const": "english"}},
+        {"contains": {"const": "environment"}}, {"contains": {"const": "model"}},
+        {"contains": {"const": "check"}}, {"contains": {"const": "identity"}},
+        {"contains": {"const": "parse"}}, {"contains": {"const": "graph"}},
+        {"contains": {"const": "readings"}}, {"contains": {"const": "bundle"}}, {"contains": {"const": "family-norms"}}]},
       "limits": {"type": "object", "required": ["max_line_bytes", "max_cases", "json_depth"],
         "additionalProperties": false,
         "properties": {

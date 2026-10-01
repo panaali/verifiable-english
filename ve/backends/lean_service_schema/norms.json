@@ -7,6 +7,10 @@
       {"$ref": "common.json#/$defs/error"},
       {"x-select": [
         {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "common.json#/$defs/admission"}},
+        {"when": {"$ref": "#/$defs/kind/background"}, "then": {"$ref": "route.json#/$defs/background"}},
+        {"when": {"$ref": "route.json#/$defs/kind/evaluate"}, "then": {"$ref": "route.json#/$defs/evaluate"}},
+        {"when": {"$ref": "route.json#/$defs/kind/countermodel"}, "then": {"$ref": "route.json#/$defs/countermodel"}},
+        {"when": {"$ref": "route.json#/$defs/kind/certificate"}, "then": {"$ref": "route.json#/$defs/certificate"}},
         {"when": {"$ref": "#/$defs/kind/norms-elaborate"}, "then": {"$ref": "#/$defs/norms-elaborate"}},
         {"when": {"$ref": "#/$defs/kind/norms-certificate"}, "then": {"$ref": "#/$defs/norms-certificate"}},
         {"when": {"allOf": [{"$ref": "#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]},
@@ -14,9 +18,12 @@
         {"when": {"$ref": "#/$defs/kind/norms-conflict"}, "then": {"$ref": "#/$defs/norms-conflict"}}]}]}},
     {"when": true, "then": {"$ref": "route.json#/row"}}]},
   "$defs": {
-    "norms_path": {"$comment": "Norms.Run.usesNormsPath: a regulated predicate, a norms field, a norms-* kind or a unit with norm content.",
+    "norms_path": {"$comment": "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a reports@0 or soft-norms@0 environment).",
       "type": "object", "anyOf": [
         {"required": ["norms"]},
+        {"required": ["environment"], "properties": {"environment": {
+          "type": "object", "required": ["profiles"], "properties": {"profiles": {
+            "type": "array", "contains": {"enum": ["reports@0", "soft-norms@0"]}}}}}},
         {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "norms-.*"}}},
         {"required": ["environment"], "properties": {"environment": {
           "type": "object", "required": ["vocabulary"], "properties": {"vocabulary": {
@@ -28,6 +35,7 @@
               "type": "object", "required": ["norm"]}}}}}}}}]},
     "kind": {
       "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}},
+      "background": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "background"}}},
       "norms-elaborate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-elaborate"}}},
       "norms-certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-certificate"}}},
       "norms-conflict": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "norms-conflict"}}}},
@@ -41,7 +49,7 @@
         "background": {"type": "array", "items": {
           "type": "object", "required": ["generator", "ast"], "additionalProperties": false,
           "properties": {
-            "generator": {"enum": ["definitions", "literals", "profile"]},
+            "generator": {"enum": ["flags", "definitions", "literals", "profile"]},
             "ast": {"$ref": "common.json#/$defs/generated_formula"}}}},
         "premises": {"type": "array", "items": {
           "type": "object", "required": ["label", "ast"], "additionalProperties": false,

@@ -427,7 +427,8 @@ def placeholders(value, line):
 
 
 hello = {"service": "ve-lean@1", "protocol": 2,
-         "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english"],
+         "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
+                   "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms"],
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
     hello["service"] = "other"
@@ -845,6 +846,25 @@ _SCHEMA_SEEDS = {
     "english": ({"cases": [{}]}, {"admissible": True, "covers": True,
                                  "results": [{"parsed": None, "checked": False,
                                               "rendered": None, "roundtrip": False}]}),
+    "environment": ({"id": "c", "environment": {"profiles": ["relational-fol@0"]}},
+                    {"id": "c", "status": "ok", "environment_id": "a" * 64,
+                     "profiles": ["relational-fol@0"], "family": "fol"}),
+    "model": ({"id": "c"}, {"id": "c", "status": "ok", "valid": True,
+                           "model_id": "a" * 64}),
+    "check": ({"id": "c"}, {"id": "c", "status": "ok", "well_typed": True,
+                           "meaning_id": "a" * 64}),
+    "identity": ({"id": "c", "kind": "source"},
+                 {"id": "c", "status": "ok", "kind": "source", "identity_id": "a" * 64}),
+    "parse": ({"id": "c", "source": "true.\n"},
+              {"id": "c", "status": "ok", "ast": [["top"]], "canonical": "true.\n"}),
+    "graph": ({"id": "c", "root": "r"},
+              {"id": "c", "status": "ok", "report": {"root": "r", "assumptions": ["r"]},
+               "assumptions": ["r"], "supporting_edges": [], "background": []}),
+    "readings": ({"id": "c", "verdict": "ALL"}, {"id": "c", "status": "ok", "verdict": "ALL"}),
+    "bundle": ({"id": "c", "lemmas": [{"meaning_id": "a" * 64}]},
+               {"id": "c", "status": "ok", "checked": 1, "lemmas": ["a" * 64]}),
+    "family-norms": ({"id": "c", "kind": "norms-certificate"},
+                     {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 1}),
 }
 
 
@@ -871,8 +891,16 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
     elif mutation == "extra-row-field":
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
-        field = "admissible" if mode == "english" else "valid" if mode in (
-            "check-certificate", "order", "norms") else "values"
+        field = ("admissible" if mode == "english" else
+                 "valid" if mode in ("check-certificate", "order", "norms", "model") else
+                 "environment_id" if mode == "environment" else
+                 "identity_id" if mode == "identity" else
+                 "meaning_id" if mode == "check" else
+                 "ast" if mode == "parse" else
+                 "supporting_edges" if mode == "graph" else
+                 "verdict" if mode == "readings" else
+                 "lemmas" if mode == "bundle" else
+                 "valid" if mode == "family-norms" else "values")
         answer["results"][0][field] = "true"
     elif mutation in ("wrong-digest", "wrong-index", "unbound-row"):
         bound = {"index": 0, "digest": {"$digest": 0}, "result": row.copy()}
