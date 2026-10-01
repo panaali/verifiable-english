@@ -634,9 +634,10 @@ def main(argv=None):
     totals = master(records, statuses, results)
     spans_text = json.dumps({"source_sha256": TEXT_SHA256, "source_bytes": TEXT_BYTES, "units": records},
                             indent=1) + "\n"
+    # The partition fields stay at the top level, as tools/coverage_dashboard.py reads them.
     coverage_text = json.dumps({"document": "fsf.d1.ve.md (built locally, not committed)",
                                 "document_sha256": hashlib.sha256(document).hexdigest(),
-                                "d1": report, "master_bytes_by_status": totals}, indent=1, sort_keys=True) + "\n"
+                                **report, "master_bytes_by_status": totals}, indent=1, sort_keys=True) + "\n"
     if args.check:
         if (HERE / "spans.json").read_text() != spans_text or (HERE / "coverage.json").read_text() != coverage_text:
             raise SystemExit("spans.json or coverage.json is out of date")
