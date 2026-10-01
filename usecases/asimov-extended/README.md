@@ -35,6 +35,10 @@ SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b5
 - **Mutants:** 5 of 5 behave as the key says.
 - **Sampled records (300, not certificates):** Lean agrees with the independent reading on all 300. The plan's
   claims Q1 and Q2 hold. **Q3 does not**: it fails on 2 records, a finding explained below.
+- **The permission default is a modeling choice, not Asimov's.** Like v2, the environment lets an action that no
+  rule forbids be performed. Asimov's text grants no such permission. With nothing permitted by default, v2's rules
+  give a clear action in only 13 of the 51 records, and P9's base verdict is among those that change. The extended
+  rules change in none of the 51 records and in 3 of the 300 sampled ones; see [the permission default](#the-permission-default).
 
 ## The rules and their check status
 
@@ -44,7 +48,7 @@ to the same text, and reproduces the manifest. No rule uses the parser's listing
 
 | Rules | Status | What they say |
 | --- | --- | --- |
-| 1–13 | CHECKED (Asimov, v2) | The Zeroth, First, Second and Third Laws, exactly as v2 reads them. |
+| 1–13 | CHECKED (Asimov, v2) | The Zeroth, First, Second and Third Laws, exactly as v2 reads them, with v2's completion defaults (a modeling choice, see OPEN). |
 | 14 | CHECKED (addition) | An action is lawful if it breaks neither the First nor the Zeroth Law. |
 | 15–16 | CHECKED (addition) | The candidates are the lawful actions. If no competing action is lawful, every action that keeps the Zeroth Law is a candidate. |
 | 17, 25 | CHECKED (addition) | An action is possibly harmful if it might lead to a harm to a human being, or if nobody ordered it and it might lead to a harm to its own robot. |
@@ -110,7 +114,7 @@ reader might rank: `two-necessary-injuries` (its harms carry no class) and `domi
 | P6, two deaths against one | none | **nothing, pull** | **tie**: both worst cases are a death. **Needs counting** (`risk@0` stage C) or a preference between actions |
 | P7, a possible injury against possible property damage | swerve, brake | **brake** | brake's worst case is less severe |
 | P8, every action breaks the Zeroth Law | none | none | **still a dilemma**: no source or addition ranks one Zeroth Law breach above another |
-| P9, an unordered action that might destroy the robot | nothing, act | **nothing** | rule 25: the robot avoids a needless possible loss of itself |
+| P9, an unordered action that might destroy the robot | nothing, act | **nothing** | rule 25: the robot avoids a needless possible loss of itself. The v2 result rests on the permission default: no v2 rule grants either action |
 | P10, the only rescue might destroy the robot | rescue | rescue | unchanged: doing nothing breaks the First Law, so it cannot make the rescue needlessly risky |
 
 **Totals** (the key's categories): 32 unchanged, 9 resolved, 3 ties, 4 sharpened (a smaller clear set), 1 changed,
@@ -140,7 +144,38 @@ edited; [PLAN.md](PLAN.md) section 13 records each item.
    targets), and 18 rather than 8 for the v2 rules alone, because the environment declares the new names even when
    no rule uses them. The verdicts are as keyed.
 
+## The permission default
+
+The environment completes `permitted` to allow, as v2's does: an action that no rule forbids may be performed. The
+other completions are to deny: an action is not required, and a derived name is false, unless a rule says so.
+v2's README lists these defaults as modeling choices. **The default allow is not in the source.** Asimov's laws
+forbid and require; they never say that whatever they leave open is permitted. v2's rules grant permission only to
+a protective action (rule 1), an ordered one (rule 2) and a First Law breach that the Zeroth Law excuses (rule 9).
+Every other permission in the v2 results comes from the default.
+
+`asimov_extended_check.py` measures how much rests on it. It decides every record again with `permitted`
+completed to deny, and the independent reading has the same switch (`permission_default="deny"`). Lean and the
+reading agree on all 102 decisions of the records and all 600 of the sample.
+
+| Records | v2: clear set changes | v2: records with a clear action | Extended: clear set changes |
+| --- | --- | --- | --- |
+| the 51 decision records | 24, P9 among them | 13 (37 with the default) | none |
+| the 300 sampled records | 129 | 138 (256 with the default) | 3 (`Q039`, `Q225`, `Q290`), each keeping a clear action |
+
+So the v2 verdicts depend on the default throughout. In P9, neither `nothing` nor `act` is ordered or
+protective, and no v2 rule grants them, so with nothing permitted by default the record has no permitted action.
+The extended rules depend on it much less, because rule 19 grants permission to every candidate that no
+candidate beats. They still use it in one case: an action that a candidate beats but that rule 18 does not
+forbid. Rule 18 only forbids possible harm to a human being or to the robot. In `Q290`, `a2` damages property and
+`a1` harms nothing, so only the default permits `a2`. In `Q039` and `Q225`, the same holds for an action that
+might harm humanity.
+
 ## OPEN
+
+- **The permission default.** An action that no rule forbids is permitted. This is v2's modeling choice, not
+  Asimov's, and most v2 verdicts depend on it ([above](#the-permission-default)). Revising it needs an authored
+  rule saying which actions the laws leave permitted. The extended rules' answers on the 51 records do not depend
+  on it.
 
 - **Counting and aggregation.** Worst-case comparison counts one death the same as two (P6), and one threat to the
   robot the same as two. The missing feature is `risk@0` stage C (costs, additive loss) or a way to state
@@ -155,6 +190,8 @@ edited; [PLAN.md](PLAN.md) section 13 records each item.
 - **Order validity.** VE does not check that "ordered before" is a strict order or that "outranks" is one-way;
   both are annotator data. A valid order must be lawful, so an order excused by rule 9 or rule 19 never prevails
   (finding 1). A chain of overrides is not analysed.
+- **Fidelity of the base rules.** Rules 1–13 are v2's translation of Asimov, and v2's completion defaults
+  apply with them. The verdicts are faithful to the source only together with the permission default above.
 - **Fidelity of the additions.** Rule 19 sets aside the source's "injure" versus "allow to come to harm"
   distinction in a dilemma. Rule 18 extends the First Law's priority over orders to possible harm (P3). The
   severity order and each harm's class are declared, never derived. Two possible harms are possible separately;
@@ -164,10 +201,11 @@ edited; [PLAN.md](PLAN.md) section 13 records each item.
 
 ## Timing
 
-One run of `asimov_extended_check.py` on 12 workers (16 cores, shared with other jobs at a load average near 20, so these
-are rough): conflict certificates for the extended rules 82 s (18 targets found and replayed) and for the v2
-rules 7 s; the two followability witnesses 14 s; the 102 decisions of the 51 records 71 s; the 600 decisions of
-the 300 sampled records 212 s; the five mutants, beside them, 283 s. The whole run took 6.4 minutes.
+One run of `asimov_extended_check.py` on 12 workers (16 cores, shared with other jobs at a load average near 29, so these
+are rough): conflict certificates for the extended rules 57 s (18 targets found and replayed) and for the v2
+rules 4 s; the two followability witnesses 10 s; the 102 decisions of the 51 records 49 s; the 600 decisions of
+the 300 sampled records 227 s; the 702 decisions again with the permission default denied 599 s; the five
+mutants, beside them, 874 s. The whole run took about 16 minutes.
 
 On the sample, the v2 rules give a clear action in 256 of 300 records and the extended rules in 295. The 5
 extended dilemmas are 1 NONE-PERMITTED (every action breaks the Zeroth Law, as Q2 says) and 4 OVER-REQUIRED.

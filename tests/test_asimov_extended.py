@@ -4,7 +4,7 @@ The static tests check that v2 stays unchanged and separate, that every rule
 has one reading in plain English, and that the committed `results.json`
 agrees with the answer key written before any VE run, except for the findings
 the README lists. `test_rerun_equals_the_committed_results` reruns VE on
-every case (about seven minutes on 12 workers), so any change in the rules,
+every case (about sixteen minutes on 12 workers), so any change in the rules,
 the records or VE's behaviour fails.
 """
 import hashlib
@@ -46,6 +46,18 @@ FINDINGS = {
     "Q3_failures": ["Q051", "Q067"],
     "conflict_targets": {"ext": [18, 14], "base": [18, 8]},
 }
+
+# README "The permission default": the records whose clear set changes when `permitted` defaults to deny.
+DENY_BASE_CHANGES = [
+    "S:a", "S:c-7", "S:o-7", "S:l5", "R:rescue-destroys-robot", "R:self-preservation-without-conflict",
+    "R:ordered-unnecessary-injury", "R:unnecessary-injury", "R:unnecessary-allowed-human-harm",
+    "R:unrelated-work-while-human-harmed", "R:unrelated-work-while-humanity-harmed", "R:ordered-unrelated-work",
+    "R:unavoidable-harm", "R:two-rescues-destroy-robot-differently", "R:two-rescues-destroy-robot-alike",
+    "R:two-threats-without-higher-law", "R:two-threats-one-safe-rescue", "R:forced-threat-and-avoidable-threat",
+    "R:dominated-action-when-threats-conflict", "P:P1 risky-rescues", "P:P2 certain-injury-vs-possible-death",
+    "P:P7 injury-vs-property", "P:P9 unordered-possible-robot-loss", "P:P10 risky-rescue-only",
+]
+DENY_SAMPLED = {"base_changes": 129, "base_clear": 138, "ext_changes": ["Q039", "Q225", "Q290"], "ext_clear": 295}
 
 
 def sha256(path):
@@ -148,6 +160,57 @@ def test_each_q3_failure_is_an_order_excused_by_rule_19():
         assert reading.read(spec, False)["permitted"] == []
         # ... and one of them prevails over the other by rules 21-22, but is not a valid order (rule 20).
         assert not check.no_prevailing(spec, ext)
+
+
+def test_every_completion_default_is_stated_and_only_permission_allows():
+    """Review finding B: a completion default the source does not state must be surfaced. Only `permitted`
+    completes to allow; README and source.md name it, and README OPEN lists it."""
+    env = cases.environment()
+    defaults = {name: p["regulated"]["default"] for name, p in env["vocabulary"]["predicates"].items()
+                if "regulated" in p}
+    assert {name for name, d in defaults.items() if d == "allow"} == {"permitted"}
+    assert set(defaults.values()) == {"allow", "deny"}
+    readme = (HERE / "README.md").read_text()
+    open_section = readme.split("\n## OPEN\n")[1].split("\n## ")[0]
+    assert "**The permission default.**" in open_section
+    assert "## The permission default" in readme
+    assert "modeling choices" in (HERE / "source.md").read_text()
+
+
+def test_p9_base_verdict_rests_on_the_permission_default():
+    """Review finding B's example: no v2 rule grants P9's actions, so only the default permits them."""
+    spec = cases.all_records()["P:P9 unordered-possible-robot-loss"]
+    assert reading.read(spec, False)["clear"] == ["nothing", "act"]
+    denied = reading.read(spec, False, permission_default="deny")
+    assert (denied["permitted"], denied["dilemma"]) == ([], "NONE-PERMITTED")
+    assert reading.read(spec, True, permission_default="deny")["clear"] == ["nothing"]
+
+
+def test_the_reading_with_permission_denied_by_default_gives_the_committed_counts():
+    records, specs = cases.all_records(), check.sampled()
+    for name, spec in records.items():
+        for side, extended in (("base", False), ("ext", True)):
+            allowed = sorted(reading.read(spec, extended)["clear"])
+            denied = sorted(reading.read(spec, extended, permission_default="deny")["clear"])
+            assert (allowed != denied) == (side == "base" and name in DENY_BASE_CHANGES), (name, side)
+    allow, deny = check.read_all(specs), check.read_all(specs, permission_default="deny")
+    changes = {side: [k for k in specs if sorted(allow[k][side]["clear"]) != sorted(deny[k][side]["clear"])]
+               for side in ("base", "ext")}
+    assert len(changes["base"]) == DENY_SAMPLED["base_changes"]
+    assert changes["ext"] == DENY_SAMPLED["ext_changes"]
+    assert sum(bool(deny[k]["base"]["clear"]) for k in specs) == DENY_SAMPLED["base_clear"]
+    assert sum(bool(deny[k]["ext"]["clear"]) for k in specs) == DENY_SAMPLED["ext_clear"]
+
+
+def test_the_committed_permission_default_results_agree_with_the_reading():
+    deny = RESULTS["permission_default_deny"]
+    assert deny["records"]["changed"] == {"base": DENY_BASE_CHANGES, "ext": []}
+    assert (deny["records"]["records"], deny["records"]["base_clear"], deny["records"]["ext_clear"]) == (51, 13, 49)
+    assert deny["sampled"]["changed"]["ext"] == DENY_SAMPLED["ext_changes"]
+    assert len(deny["sampled"]["changed"]["base"]) == DENY_SAMPLED["base_changes"]
+    assert (deny["sampled"]["base_clear"], deny["sampled"]["ext_clear"]) == (138, 295)
+    assert all(deny["sampled"]["ext_clear_when_changed"].values())
+    assert deny["records"]["lean_vs_reading_disagreements"] == deny["sampled"]["lean_vs_reading_disagreements"] == []
 
 
 @pytest.mark.skipif(not check.BINARY.exists(), reason="ve_risk_route is not built")
