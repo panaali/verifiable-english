@@ -1,0 +1,108 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the clinic are giving the patient drug A, giving the patient drug B and giving the patient nothing. Giving the patient nothing leads to a fever. Giving drug A leads to a fever. A fever is avoidable by the clinic.
+
+What can you conclude about giving drug B?
+(a) In at least one case the text allows, the clinic gives drug B and no fever happens.
+(b) Giving drug B leads to a fever in every case the text allows.
+(c) The text does not say.
+(d) In no case the text allows does giving drug B lead to a fever.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) It can, but the agent is not allowed to let it happen.
+(b) Yes: a restart takes the server down for a short time.
+(c) The text does not say.
+(d) No: in no case the text allows does restarting the web server lead to a server outage.
+
+Text 3
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness exactly when the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) The text does not say.
+(b) Dizziness happens.
+(c) No dizziness happens.
+
+Text 4
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift certainly leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall usually happens, but not in every case.
+(b) No fall happens: a robot is safe inside a lift.
+(c) A fall happens in every case the text allows.
+(d) The text does not say.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or do nothing. Running the job might lead to a server outage. A server outage is serious or worse.
+
+According to the text, which severities could a server outage have?
+(a) Only severe.
+(b) Serious or severe.
+(c) Only serious.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+A robot prevents a harm by taking an action that might not lead to the harm.
+By default, an action may be performed.
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. Taking the ramp might lead to a fall. Taking the ramp might not lead to a fall.
+Rule 1. Every robot must prevent a fall.
+
+According to the text, does the robot fulfil Rule 1 if it takes the ramp?
+(a) Yes: in at least one case the text allows, taking the ramp avoids a fall.
+(b) No: the text does not rule out a fall when the robot takes the ramp.
+(c) The text does not say.
+
+Text 7
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) The text does not say.
+(b) Neither drug.
+(c) Both drug A and drug B.
+(d) Only drug B.

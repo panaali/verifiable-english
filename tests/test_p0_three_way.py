@@ -21,6 +21,7 @@ from pathlib import Path
 import pytest
 
 from conformance.p0 import FAMILIES, lean_case
+from tools import rust_build
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_conformance"
@@ -212,7 +213,7 @@ def rust_executable():
     cargo = shutil.which("cargo")
     if not cargo:
         pytest.skip("cargo is not available")
-    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+    env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
                             str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env, capture_output=True,
                            text=True, timeout=HANG_TIMEOUT)

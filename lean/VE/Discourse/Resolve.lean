@@ -412,12 +412,17 @@ def spanText (D : DDoc) (m : Slot) : String :=
 def formulaForm (f : Form) : Bool :=
   !(f == .sectionRef || f == .navigation)
 
+/-- A recorded mention is formula-producing when its form is and its target is not a location
+(1.4): a pronoun or demonstrative naming a `unit` target ("this broad pattern", "it" for a
+registered content name) is a location binding, as a `section_ref` or `navigation` is. -/
+def producing (x : Mention) : Bool := formulaForm x.form && !locationKind x.target.kind
+
 def slotBefore (a b : Slot) : Bool := a.span.1 < b.span.1 || (a.span.1 == b.span.1 && b.span.2 ≤ a.span.2)
 
 /-- The formula-producing mentions of `u` as slots, source order: an enclosing slot before
 its nested slots (4.3). -/
 def recordedSlots (D : DDoc) (u : String) : List Slot :=
-  ((D.K.mentions.filter fun x => x.unit == u && formulaForm x.form).map
+  ((D.K.mentions.filter fun x => x.unit == u && producing x).map
     fun x => (⟨x.unit, x.span, x.form⟩ : Slot)).mergeSort slotBefore
 
 def candCount (D : DDoc) (m : Slot) : Nat := (slotCands D m).length

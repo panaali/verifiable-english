@@ -227,13 +227,22 @@ structure Admitted where
   report : VE.Graph.Report
   kinds : List Json
 
+/-- Python `admit_norm_document`'s envelope gates, checked before the document:
+the `norms@0` profile, then the FOL family, with Python's diagnostics. -/
+def envelopeGate (environment : Json) : Except String Unit := do
+  let e ← VE.Route.Gate.decodeEnvelope environment
+  unless e.profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
+  unless e.family == .fol do
+    throw (VE.Route.Gate.unsupported "norm document admission is FOL-only")
+
 /-- Required document admission: regenerated norm layers, W2 provenance,
 certificate bindings, graph checking, citations and reading choices. -/
 def admitDocument (environment document : Json) : Except String Admitted := do
+  envelopeGate environment
   VE.Bridge.displayFields document ["units", "graph"]
     ["lemmas", "open_terms", "reading_sets", "narrowings"]
   let (clean, norms, quoted) ← splitDocument document
-  let src ← Wire.decodeSource environment norms
+  let src ← Wire.decodeSource environment norms (flags := true)
   quoted.forM (checkQuoted src)
   let D₀ ← VE.Route.Admission.decodeDoc src.ne.rv (src.ne.profiles.contains "data@0") clean
   let D := { D₀ with literals := src.ne.rv.literals }
@@ -263,7 +272,7 @@ environment's literals, and every graph node is decoded from the source graph
 with the AST that its certificate binds. -/
 def SourceDecoded (environment document : Json) (res : Admitted) : Prop :=
   (∃ clean norms quoted, splitDocument document = .ok (clean, norms, quoted) ∧
-    Wire.decodeSource environment norms = .ok res.src ∧
+    Wire.decodeSource environment norms (flags := true) = .ok res.src ∧
     (∀ q ∈ quoted, checkQuoted res.src q = .ok ()) ∧
     ∃ D₀, VE.Route.Admission.decodeDoc res.src.ne.rv (res.src.ne.profiles.contains "data@0") clean = .ok D₀ ∧
       res.doc = { D₀ with literals := res.src.ne.rv.literals }) ∧
@@ -308,6 +317,7 @@ theorem admitDocument_spec (environment document : Json) (res : Admitted)
       w.claim = leaf ∧ w.deduction = none ∧ NodeAdmitted res.src res.doc w) ∧
     CitationsClosed res.doc res.report ∧ ChoicesCompatible res.report := by
   unfold admitDocument at h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨⟨clean, norms, quoted⟩, hsplit, h⟩ := bind_ok h
   obtain ⟨src, hsrc, h⟩ := bind_ok h

@@ -1,0 +1,103 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) The text does not say.
+(b) No: in no case the text allows does restarting the web server lead to a server outage.
+(c) Yes: a restart takes the server down for a short time.
+(d) It can, but the agent is not allowed to let it happen.
+
+Text 2
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. A seizure is severe. A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a fall. A fall is serious or worse.
+
+According to the text, is a fall less severe than a seizure?
+(a) Yes: a fall is serious, and a seizure is severe.
+(b) The text does not say.
+(c) No: a fall is severe, like a seizure.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. Running the job allows a server outage to happen.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) The agent is permitted to let a server outage happen by running the job.
+(c) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in every case the text allows.
+(d) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in at least one case the text allows.
+
+Text 4
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) The text does not say.
+(b) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(c) No lift failure happens: a lift easily carries 4 kilograms.
+(d) A lift failure happens.
+
+Text 5
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure exactly when the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) A lift failure happens.
+(b) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(c) The text does not say.
+(d) No lift failure happens: a lift easily carries 4 kilograms.
+
+Text 6
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job might lead to a server outage.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) A server outage is likely if the agent runs the job.
+(c) The text does not rule out a server outage if the agent runs the job.
+(d) A server outage happens in every case the text allows if the agent runs the job.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> might prevent <harm>" means the action might not lead to the harm, and another action available to the same chooser leads to it.
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit might prevent task abandonment.
+
+What does the last sentence tell you?
+(a) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(b) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(c) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(d) The text does not say.

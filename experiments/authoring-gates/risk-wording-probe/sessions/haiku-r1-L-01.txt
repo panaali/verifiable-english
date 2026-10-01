@@ -1,0 +1,121 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) No: a task delay happens in every case the text allows.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) The text does not say.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) Every action available to the agent avoids a server outage in at least one case the text allows.
+(b) The text does not say.
+(c) At least one action available to the agent avoids a server outage in every case the text allows.
+(d) At least one action available to the agent avoids a server outage in at least one case the text allows.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) No data loss happens: reading a file does not change it.
+(b) The text does not say.
+(c) Data loss is more likely than not.
+(d) Data loss is not ruled out.
+
+Text 4
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the robot are taking the lift and taking the stairs. Taking the lift allows a dropped parcel to happen.
+
+What can you conclude about taking the stairs?
+(a) In at least one case the text allows, the robot takes the stairs and no parcel is dropped.
+(b) Taking the stairs leads to a dropped parcel in every case the text allows.
+(c) In no case the text allows does taking the stairs lead to a dropped parcel.
+(d) The text does not say.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+Severity, from most to least severe: severe, serious, minor. Data loss is minor. A task delay is severe. An agent can delete the old logs or do nothing. Deleting the old logs might lead to data loss. Doing nothing might lead to a task delay.
+
+According to the text, which harm is more severe: data loss or a task delay?
+(a) The text does not say.
+(b) A task delay.
+(c) Data loss.
+(d) They are equally severe.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) The robot is not allowed to cause a lift failure.
+(b) If the robot takes the lift, no lift failure happens in any case the text allows.
+(c) The text does not say.
+(d) A lift failure is unlikely if the robot takes the lift.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+(b) A rule: it permits the agent to empty the cache.
+(c) The text does not say.
+(d) A rule: it forbids the agent to cause data loss by emptying the cache.
+
+Text 8
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+A clinic can give the patient drug A or give the patient nothing. The temperature of the patient is at least 36 degrees. The temperature of the patient is at most 41 degrees. Giving drug A cannot lead to a seizure unless the temperature of the patient is greater than 40 degrees.
+
+The clinic gives drug A, and the temperature of the patient is 38 degrees. What does the text tell you about a seizure?
+(a) A seizure happens.
+(b) No seizure happens.
+(c) The text does not say.

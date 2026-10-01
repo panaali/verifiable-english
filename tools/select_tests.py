@@ -17,8 +17,8 @@ import subprocess
 import sys
 
 from check_lean_imports import imports as lean_imports
-from layer_policy import (NAMES, ROOT, lean_layer, python_exports, python_imports,
-                          python_layer, source_layer)
+from layer_policy import (NAMES, ROOT, lean_default_targets, lean_executables, lean_layer,
+                          python_exports, python_imports, python_layer, source_layer)
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 # These exercise the public wire across languages, routes, and frozen fixtures.
@@ -37,6 +37,8 @@ CHECKS = (
     ("python3", "tools/check_rust_deps.py"),
     ("python3", "tools/test_layer_policy.py"),
 )
+# Cargo with path-independent flags, so the release binary matches lean/checkers.lock.
+CARGO = ["python3", "tools/rust_build.py"]
 
 
 def git_lines(*args: str) -> list[str]:
@@ -106,8 +108,7 @@ def test_layer(path: Path, seen: frozenset[Path] = frozenset()) -> int:
         layers.append(5)
     if "rust/target/" in source or "VE_W5_RUST_BIN" in source:
         layers.append(4)
-    if "lean/.lake/" in source or any(name in source for name in
-        ("ve_conformance", "ve_norms_route", "ve_service", "ve_english_run", "ve_response_decode")):
+    if "lean/.lake/" in source or any(name in source for name in lean_executables()):
         layers.append(4)
     if '"-m", "ve"' in source or "'-m', 've'" in source:
         layers.append(4)
@@ -192,14 +193,12 @@ def select(paths: list[str], *, full: bool = False) -> dict:
         dependent_tests.update(added)
     selected = sorted(path for path, layer in classified.items()
                       if layer >= minimum or path in ALWAYS or path in dependent_tests)
-    lean_binaries = ("ve_conformance", "ve_norms_route", "ve_service",
-                     "ve_english_run", "ve_response_decode")
     selected_sources = [(ROOT / p).read_text() for p in selected]
     lean = (fallback or any(p.startswith("lean/") or p.startswith("conformance/") for p in paths)
             or not (ROOT / "lean/.lake/build/bin/ve_conformance").exists()
             or any(any(name in source for source in selected_sources)
                    and not (ROOT / "lean/.lake/build/bin" / name).exists()
-                   for name in lean_binaries[1:]))
+                   for name in lean_executables()))
     rust = fallback or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
     rust_release_binary = (rust or (any("rust/target/release/ve" in (ROOT / p).read_text()
                                        or "VE_W5_RUST_BIN" in (ROOT / p).read_text()
@@ -211,15 +210,21 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     commands = [list(cmd) for cmd in CHECKS]
     if lean:
         commands.append(["lake", "build"])
+        # Harness executables such as ve_risk_eval are outside defaultTargets.
+        named = sorted(name for name in lean_executables()
+                       if name not in lean_default_targets()
+                       and any(name in source for source in selected_sources))
+        if named:
+            commands.append(["lake", "build", *named])
     commands.append(["python3", "lean/audit.py"])
     if rust:
-        commands.append(["cargo", "test", "--locked", "--all-features", "--manifest-path",
+        commands.append([*CARGO, "test", "--locked", "--all-features", "--manifest-path",
                          "rust/Cargo.toml", "--", "--test-threads=1"])
     if rust_release_binary:
-        commands.append(["cargo", "build", "--locked", "--release", "--manifest-path",
+        commands.append([*CARGO, "build", "--locked", "--release", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
     if rust_debug_binary:
-        commands.append(["cargo", "build", "--locked", "--manifest-path",
+        commands.append([*CARGO, "build", "--locked", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
     commands.append(["uv", "run", "--frozen", "--group", "dev", "python", "-m",
                      "pytest", "-q", *selected])

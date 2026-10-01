@@ -1,0 +1,14 @@
+{
+  "$id": "family-norms.json",
+  "$comment": "Mode family-norms: Service.FamilyNorms.runCase, the norms route's regenerating cases on the closure, core and order families (regeneration over the FOL view, certificates checked by the family checker); the rows are the norms route's.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"$ref": "common.json#/$defs/error"},
+    {"x-select": [
+      {"when": {"$ref": "norms.json#/$defs/kind/norms-elaborate"}, "then": {"$ref": "norms.json#/$defs/norms-elaborate"}},
+      {"when": {"$ref": "norms.json#/$defs/kind/norms-certificate"}, "then": {"$ref": "norms.json#/$defs/norms-certificate"}},
+      {"when": {"allOf": [{"$ref": "norms.json#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]},
+       "then": {"$ref": "norms.json#/$defs/norms-witness"}},
+      {"when": {"$ref": "norms.json#/$defs/kind/norms-conflict"}, "then": {"$ref": "norms.json#/$defs/norms-conflict"}},
+      {"when": true, "then": false}]}]}
+}

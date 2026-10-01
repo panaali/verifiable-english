@@ -1,0 +1,22 @@
+# Answers with one-sentence reasons
+
+**Text 1: (b) A lift failure happens.**
+The text states that taking the lift leads to lift failure if weight > 3 kg, and since 4 kg > 3 kg, a lift failure must happen.
+
+**Text 2: (c) No: the first rules data loss out, and the second says data loss is not ruled out.**
+These statements directly contradict each other—one says data loss is impossible, the other that it's possible.
+
+**Text 3: (a) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.**
+The text permits parcel weights up to 30 kg, and explicitly states that taking stairs with weight > 25 kg leads to a dropped parcel, so a dropped parcel is not ruled out.
+
+**Text 4: (b) The text does not say.**
+While the text indicates that a server outage is not ruled out when peak memory is 10 GB (which is > 8 GB), it does not confirm that an outage actually happens.
+
+**Text 5: (d) The clinic is permitted to let a rash happen when it gives drug A.**
+"Allows a rash to happen" means a rash is possible or permitted, not that it necessarily occurs.
+
+**Text 6: (d) No: a task delay happens in every case the text allows.**
+The text states "Running the job with a memory limit leads to a task delay," which means a task delay always occurs when this action is taken.
+
+**Text 7: (d) Serious or severe.**
+The text states that a server outage is "serious or worse," and since "severe" is worse than "serious," a server outage can be either serious or severe.

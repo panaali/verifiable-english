@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from tools import rust_build
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -703,7 +704,7 @@ def test_rust_report_witness_replays_in_lean(lean):
         assert binary.is_file(), f"gate Rust build missing: {binary}"
     if not binary.exists():
         built = subprocess.run(["cargo", "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
-                               capture_output=True, text=True, timeout=600)
+                               env=rust_build.cargo_env(), capture_output=True, text=True, timeout=600)
         assert built.returncode == 0, built.stdout + built.stderr
     cases = [
         (doc(report("the_article", "says", "c3", ast(U("safe", "service")))), U("safe", "service")),

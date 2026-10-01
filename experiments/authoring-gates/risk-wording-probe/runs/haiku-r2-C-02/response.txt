@@ -1,0 +1,20 @@
+**Text 1: (c) Serious or severe.**
+The text explicitly states "A late delivery is serious or worse," which means serious or severe.
+
+**Text 2: (a) In at least one case the text allows, the clinic gives drug B and no fever happens.**
+Since giving nothing and drug A both lead to fever, yet "a fever is avoidable by the clinic," drug B must be the action that avoids it.
+
+**Text 3: (d) No: a task delay happens in every case the text allows.**
+The text states "Running the job with a memory limit certainly leads to a task delay," where "certainly" means it always occurs.
+
+**Text 4: (c) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.**
+"Prevents task abandonment" means the action ensures abandonment does not occur.
+
+**Text 5: (c) No: the text rules out data loss when the agent empties the cache.**
+The text directly states "Emptying the cache cannot lead to data loss," ruling it out entirely.
+
+**Text 6: (a) In at least one case the text allows, the agent deletes the only copy and no data loss happens.**
+"Might not lead to data loss" means it's possible (in at least one case) that deletion occurs without data loss.
+
+**Text 7: (b) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes, and in no other case.**
+"Exactly when the duration is greater than 30 minutes" means task delay occurs if and only if this condition holds—it happens then and in no other case.

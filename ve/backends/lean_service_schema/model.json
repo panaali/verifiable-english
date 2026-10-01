@@ -1,0 +1,14 @@
+{
+  "$id": "model.json",
+  "$comment": "Standalone checked finite model and recomputed identity.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"$ref": "common.json#/$defs/error"},
+    {"type": "object", "required": ["id", "status", "valid", "model_id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "valid": {"const": true},
+        "model_id": {"$ref": "common.json#/$defs/hex64"}}}]}
+}

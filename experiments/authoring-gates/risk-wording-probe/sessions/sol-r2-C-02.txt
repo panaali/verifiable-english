@@ -1,0 +1,70 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 50 kilograms. The weight of the patient is at most 90 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 52 kilograms. Giving the full dose might lead to dizziness.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Dizziness is not ruled out if the clinic gives the full dose.
+(c) Dizziness happens in every case the text allows if the clinic gives the full dose.
+(d) Dizziness is likely if the clinic gives the full dose.
+
+Text 2
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift certainly leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall happens in every case the text allows.
+(b) No fall happens: a robot is safe inside a lift.
+(c) A fall usually happens, but not in every case.
+(d) The text does not say.
+
+Text 3
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Every action available to the agent avoids a server outage in at least one case the text allows.
+(c) At least one action available to the agent avoids a server outage in at least one case the text allows.
+(d) At least one action available to the agent avoids a server outage in every case the text allows.
+
+Text 4
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) Yes: a restart takes the server down for a short time.
+(b) No: in no case the text allows does restarting the web server lead to a server outage.
+(c) It can, but the agent is not allowed to let it happen.
+(d) The text does not say.
+
+Text 5
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) No dizziness happens, because the patient does not weigh less than 50 kilograms.
+(b) Dizziness happens.
+(c) The text does not say.
+
+Text 6
+
+The actions available to the clinic are giving the patient drug A and giving the patient drug B. Giving drug A allows a rash to happen.
+
+What does the last sentence tell you?
+(a) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in at least one case the text allows.
+(b) The clinic is permitted to let a rash happen when it gives drug A.
+(c) The text does not say.
+(d) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in every case the text allows.
+
+Text 7
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or do nothing. Running the job might lead to a server outage. A server outage is serious or worse.
+
+According to the text, which severities could a server outage have?
+(a) Only severe.
+(b) Only serious.
+(c) Serious or severe.
+(d) The text does not say.
