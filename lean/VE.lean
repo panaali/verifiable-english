@@ -1,4 +1,5 @@
 import VE.Audit
+import VE.Compose.Slot
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks

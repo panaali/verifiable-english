@@ -102,6 +102,7 @@ import VE.Discourse.WellFormed
 import VE.Discourse.Run
 import VE.Discourse.Theorems
 import VE.Discourse.English
+import VE.Compose.Slot
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2578,3 +2579,43 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.valueSoft_of_decides
 #print axioms VE.Rights.yields_bar
 #print axioms VE.Rights.yields_eq
+#print axioms VE.Compose.slotCheck_sound
+#print axioms VE.Compose.sat_nil
+#print axioms VE.Compose.sat_append
+#print axioms VE.Compose.slot_empty
+#print axioms VE.Compose.slot_empty_conflictFree
+#print axioms VE.Compose.slot_empty_background
+#print axioms VE.Compose.baseAdmissibleP_append
+#print axioms VE.Compose.slotWellFormed_append
+#print axioms VE.Compose.conflictFreeP_append
+#print axioms VE.Compose.gate_wellFormed
+#print axioms VE.Compose.sat_gate_on
+#print axioms VE.Compose.sat_gate_off
+#print axioms VE.Compose.slot_coherent_expands_all
+#print axioms VE.Compose.slot_empty_check
+#print axioms VE.Compose.slotConflictFreeCheck_target
+#print axioms VE.Compose.sat_backgroundBaseP
+#print axioms VE.Compose.slot_conflict_free
+#print axioms VE.Compose.baseAdmissibleP_of_valid
+#print axioms VE.Compose.slot_conflict_witness_sound
+#print axioms VE.Compose.slot_restrict_admissible
+#print axioms VE.Compose.slot_layer_expands
+#print axioms VE.Compose.prefixAdmissibleP_zero
+#print axioms VE.Compose.slotChain_hc
+#print axioms VE.Compose.slotRouteChain_premises
+#print axioms VE.Compose.slotRouteChain_restrict
+#print axioms VE.Compose.sat_slot_restrict
+#print axioms VE.Compose.slot_route_backgroundSound
+#print axioms VE.Compose.slot_route_backgroundComplete
+#print axioms VE.Compose.slot_route_intended
+#print axioms VE.Compose.slot_route_acceptance
+#print axioms VE.Compose.slot_route_countermodel
+#print axioms VE.Compose.slot_route_entails_iff
+#print axioms VE.Compose.rights_is_slot
+#print axioms VE.Compose.rights_conflictFree_is_slot
+#print axioms VE.Compose.rights_background_is_slot
+#print axioms VE.Compose.rights_check_is_slot
+#print axioms VE.Compose.rights_valid_is_slot
+#print axioms VE.Compose.rights_slot_wellFormed
+#print axioms VE.Compose.rights_acceptance_from_slot
+#print axioms VE.Compose.rights_countermodel_from_slot
