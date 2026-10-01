@@ -81,7 +81,8 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
         raise CheckerUnavailable(f"CheckerUnavailable: invalid Rust build lock: {exc}") from None
     digest = hashlib.sha256(binary.read_bytes()).hexdigest()
     if digest not in allowed:
-        raise CheckerUnavailable(f"CheckerUnavailable: Rust executable hash mismatch: {binary}")
+        raise CheckerUnavailable(f"CheckerUnavailable: Rust executable hash mismatch: {binary} "
+                                 "(build it with python3 tools/rust_build.py)")
     data = json.dumps(case, ensure_ascii=False, separators=(",", ":")).encode() + b"\n"
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")

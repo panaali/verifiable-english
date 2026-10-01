@@ -170,7 +170,7 @@ ASTs and canonical strings. Rust never reads the golden `expected` field.
 the JSONL digest and outcome distribution. Replay/regenerate with:
 
 ```sh
-cargo build -j 2 --locked --release --manifest-path rust/Cargo.toml
+python3 tools/rust_build.py
 python conformance/fuzz.py --rust rust/target/release/ve --count 5000
 ```
 

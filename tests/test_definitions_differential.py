@@ -22,6 +22,7 @@ from pathlib import Path
 
 import pytest
 
+from tools import rust_build
 from ve.profiles import LANGUAGE, SPEC_REVISION
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -243,7 +244,7 @@ def test_rust_computes_the_same_tables(generated):
         cargo = shutil.which("cargo")
         if not cargo:
             pytest.skip("cargo is not available")
-        env_vars = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"), "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+        env_vars = rust_build.cargo_env()
         built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release", "--manifest-path",
                                 str(ROOT / "rust/Cargo.toml")], cwd=ROOT, env=env_vars, capture_output=True,
                                text=True, timeout=HANG_TIMEOUT)
