@@ -13,6 +13,7 @@ from copy import deepcopy
 
 import pytest
 
+from conformance import norm_defaults_differential as differential
 from conformance.norm_defaults_three_way import (admission_document, certificate_case, conflict_case,
                                                  fixtures, run)
 from ve import norm_defaults as nd
@@ -51,9 +52,9 @@ def test_three_way_fixtures(lean_executable):
     result = run(lean_executable)
     rows = {row["fixture"]: row for row in result["fixtures"]}
     assert [r for r in result["fixtures"] if r["mismatches"]] == []
-    assert result["passed"] == len(rows) == 12
-    assert all(set(r["kinds"]) >= {"elaborate", "status", "conflict", "gaps", "certificate", "admission"}
-               for r in rows.values())
+    assert result["passed"] == len(rows) == 16
+    assert all(set(r["kinds"]) >= {"elaborate", "table3", "status", "conflict", "gaps", "certificate",
+                                   "admission"} for r in rows.values())
     # The spec 9 expectations, as both engines report them.
     assert rows["u1"]["statuses"] == ["SETTLED no", "UNDECIDED"] and rows["u1"]["gaps"] == ["reachable"]
     assert rows["u1-allow"]["statuses"] == ["SETTLED no", "SETTLED yes"]
@@ -67,6 +68,19 @@ def test_three_way_fixtures(lean_executable):
     assert rows["u12"]["statuses"] == ["UNDECIDED", "UNDECIDED", "SETTLED yes", "SETTLED yes"]
     assert rows["u15-deny"]["gaps"] == rows["u15-unspecified"]["gaps"] == ["none"]
     assert rows["u15-deny"]["statuses"] == rows["u15-unspecified"]["statuses"]
+    # review B1: `a_permitted(a)` sits between the pair's members; `table3` leaves it
+    # unknown in both engines and the cone enumeration settles it in both
+    between = rows["b1-between"]
+    assert between["statuses"][:4] == ["SETTLED yes", "UNDECIDED", "SETTLED yes", "UNDECIDED"]
+    assert between["evidence"][:4] == ["table3", "undecided", "enumerate", "undecided"]
+    # review B2: 13 unsaid atoms in the situation, one in each point's cone
+    assert set(rows["b2-wide"]["statuses"][13:]) == {"SETTLED yes"}  # after y_permitted
+    assert set(rows["b2-wide"]["evidence"][13:]) == {"enumerate"}
+    # review A1: unreached under U, reachable once switched
+    gaps = {name: dict(zip(rows_order(name), rows[name]["gaps"]))
+            for name in ("a1-switch-deny", "a1-switch-unspecified")}
+    assert gaps["a1-switch-deny"]["p_permitted"] == "none"
+    assert gaps["a1-switch-unspecified"]["p_permitted"] == "reachable"
 
 
 def test_python_enumeration_is_replayed_by_lean_enumeration(lean_executable):
@@ -79,6 +93,52 @@ def test_python_enumeration_is_replayed_by_lean_enumeration(lean_executable):
                              predicate="x_permitted", tuple=["a"])
     rows = route.run_cases([{**base, "method": "enumerate"}, {**base, "method": "table3"}], lean_executable)
     assert [r["point_status"] for r in rows] == ["SETTLED yes", "UNKNOWN"]
+
+
+def rows_order(name):
+    return list(_document(name).filled.order)
+
+
+def test_audit_certificate_replays_on_the_switched_source(lean_executable):
+    """Review A1: the migration audit's certificate is `gaps: none` on `U.switch p`, which
+    Lean's `normDefaults_wire_gaps_sound` turns into `unreached_switch`'s hypothesis. In 6.3's
+    counterexample U's own certificate replays on U, but Lean finds the switched gap reachable."""
+    env, units, situations = next((e, u, s) for n, e, u, s in fixtures() if n == "u15-deny")
+    rules = [NormDocument._decode(u) for u in units]
+    audit = nd.audit_completions(Environment(env), rules, model=situations[0])
+    (entry,) = audit["completions"]
+    switched = nd.UnspecifiedDocument(Environment(nd._profiled(env, ("x_permitted",)).to_dict()), rules)
+    case = route.source_case(switched, "norm-defaults-gaps", predicate="x_permitted",
+                             packages={"reached:x_permitted": entry["certificate"]})
+    assert route.run_cases([case], lean_executable)[0]["gaps"] == "none"
+
+    env, units, situations = next((e, u, s) for n, e, u, s in fixtures() if n == "a1-switch-deny")
+    rules = [NormDocument._decode(u) for u in units]
+    unswitched = nd.UnspecifiedDocument(Environment(env), rules)
+    (line,) = nd.report(unswitched, prove=True, predicates=("p_permitted",))
+    audit = nd.audit_completions(Environment(env), rules, model=situations[0])
+    entry = next(e for e in audit["completions"] if e["predicate"] == "p_permitted")
+    assert entry["switched_gaps"] == "reachable" and "certificate" not in entry
+    switched = nd.UnspecifiedDocument(Environment(nd._profiled(env, ("p_permitted",)).to_dict()), rules)
+    situation = switched.situation(situations[0])
+    filling = {k: frozenset(tuple(r) for r in v) for k, v in entry["switched_witness"]["filling"].items()}
+    cases = [route.source_case(unswitched, "norm-defaults-gaps", predicate="p_permitted",
+                               packages={"reached:p_permitted": line.certificate}),
+             route.source_case(switched, "norm-defaults-gaps", predicate="p_permitted",
+                               model=switched.with_filling(situation, filling).to_dict(),
+                               tuple=entry["switched_witness"]["tuple"]),
+             route.source_case(switched, "norm-defaults-gaps", predicate="p_permitted",
+                               packages={"reached:p_permitted": line.certificate})]
+    assert [r["gaps"] for r in route.run_cases(cases, lean_executable)] == ["none", "reachable", "unknown"]
+
+
+def test_spec8_differentials(lean_executable):
+    """Spec 8: 1,000 generated trees regenerate byte for byte in Lean; on 1,000 generated
+    situations every `table3` entry and every status is Lean's (conformance/norm_defaults_differential.py)."""
+    result = differential.run(lean_executable)
+    assert result["mismatches"] == []
+    assert result["counts"]["elaborate"] == 1000 and result["counts"]["status"] > 9000
+    assert result["counts"]["conflict:latent"] > 0 and result["wide"] > 0 and result["unspecified"] > 500
 
 
 def fixtures_situation(name):
