@@ -442,3 +442,35 @@ recorded in section 13, not made silently.
    - **C (FF variants are not a counting gap).** `b-A0 FF` and `b-A1 FF` are described as equal-outcome ties needing
      a preference between actions; the counting gap is reserved for P6 (and the v2 threat tie). Their key values
      (clear {nothing, pull}, TIE) are unchanged.
+2. **Wording (step 0).** The parser rejects the target English of section 4.2 in three ways, so the wording and
+   the shape of some formulas changed. The answer key did not change.
+   - `there is a robot such that that action is available to that robot and another action available to that
+     robot …` is accepted only with the listing scaffolding (`both of the following hold: first clause: …`), which
+     is not plain English (v2 review P2). `both … and …` joins two simple statements only, and `candidate` alone
+     gets the wording `is candidate`. Instead, four short definitions carry the parts: rule 26 (`own_robot_harm`),
+     rule 27 (`competes_with`: two actions available to the same robot), rule 28 (`less_severe_competitor`) and
+     rule 29 (`beaten_by_a_candidate`). `candidate` is `candidate_action` and `breaks_no_law` is `lawful_action`.
+   - `needlessly_risky` is gone as a name. Rule 17 now says which actions are `possibly_harmful` to a human
+     being, and rule 25 adds the unordered actions that might harm their own robot. Rule 18 forbids an action that
+     is `possibly_harmful` and `beaten_by_a_candidate`; rule 20's carve-out says the same.
+   - Rule 18 is an exception to rule 9 only. W1 precedence is transitive (norms.md 4.2: an exception's whole
+     subtree yields), and rule 9 is under 8, 8 under 2 and 2 under 1, so this is the same as "exception to rules 1,
+     2, 9" and avoids copying the rule three times.
+   - Rule 16 says "no competing action is lawful" instead of "its robot has no lawful option", and rules 21–22 add
+     "competes with".
+   - **Why the shape matters:** every derived name is inlined into the conflict targets. The deepest target,
+     `prevent_required` (v2's rule 13), nests within two levels of VE's limit of 64 (`ve/limits.py`); the plan's
+     shape (with `needlessly_risky` and a `has_no_lawful_option` helper) exceeded it. The rule names fix the order of
+     each inlined disjunction (norms.md 4.1), so the additions are named `tie-…`, which sorts after v2's `law-…`.
+     Named `add-…`, an earlier draft of these rules was refused as "Formula exceeds 64 nesting levels".
+   - **Formula differences:** on every record (all actions available to the one robot) each formula is equivalent
+     to section 4.2's. They differ only for an action available to no robot (rules 16 and 19 then treat it as a
+     candidate that nothing beats), and for a reflexive `ordered_before` or `outranks` row, since `competes_with` is
+     reflexive and VE has no English for "is not the same action". Both are outside every record.
+3. **Conflict targets.** Ext replays **18** targets, not 14: v2's 8 and the 10 derived names of the additions. Base
+   alone in the risk environment also replays 18, not 8: the environment declares the new derived names, and a
+   name that no rule regulates is still a target. The verdicts are as keyed (CONFLICT-FREE).
+4. **Q3 is false on the sample (a finding; the key stays).** On 2 of 300 sampled records Ext is OVER-REQUIRED
+   although one required order prevails over the other. In both, every action breaks the First Law, rule 19
+   permits both orders, and the prevailing order is not a valid order because rule 20 counts only a lawful order.
+   This is the OPEN item "rule 20 ignores the excuses of rules 9 and 19" (section 9), observed.
