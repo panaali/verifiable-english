@@ -1,0 +1,14 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"If <condition>, <action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+An agent can copy the backup to the new disk or do nothing. The size of the backup is at least 10 gigabytes. The size of the backup is at most 400 gigabytes. If the size of the backup is greater than 250 gigabytes, copying the backup to the new disk leads to a job failure.
+
+The agent copies the backup to the new disk, and the size of the backup is 100 gigabytes. What does the text tell you about a job failure?
+(a) The text does not say.
+(b) No job failure happens, because the size of the backup is not greater than 250 gigabytes.
+(c) A job failure happens.

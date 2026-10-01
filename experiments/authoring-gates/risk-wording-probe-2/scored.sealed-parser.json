@@ -1,0 +1,650 @@
+[
+ {
+  "session": "haiku-r1-L-01",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-L-02",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-L-03",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-L-04",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-C-01",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-C-02",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-C-03",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r1-C-04",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-L-01",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-L-02",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-L-03",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-L-04",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-C-01",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-C-02",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-C-03",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "haiku-r2-C-04",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-L-01",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-L-02",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-L-03",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-L-04",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-C-01",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-C-02",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-C-03",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r1-C-04",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-L-01",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-L-02",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-L-03",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-L-04",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-C-01",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-C-02",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-C-03",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ },
+ {
+  "session": "sol-r2-C-04",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": null,
+  "label": null,
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "unparseable",
+  "correct": false,
+  "critical": false,
+  "reason": ""
+ }
+]

@@ -1,0 +1,650 @@
+[
+ {
+  "session": "haiku-r1-L-01",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**Answer: (c) The text does not say.** The text only specifies that a job failure occurs \"if the size of the backup is greater than 250 gigabytes,\" but since the backup is 100 gigabytes (not greater than 250), this conditional does not apply and provides no information about whether a failure occurs in this scenario."
+ },
+ {
+  "session": "haiku-r1-L-02",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(b) The text does not say.** The rule specifies that confusion occurs only when age > 70 and drug C is given, but since the patient is 40 years old, this rule's condition is not triggered, leaving the text silent on whether confusion occurs under other circumstances."
+ },
+ {
+  "session": "haiku-r1-L-03",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "(b) A fall happens. **Reason:** The parcel weighs 3 kilograms, which satisfies the condition \"greater than 2 kilograms,\" and the text explicitly states that when this condition holds and the ramp is taken, a fall leads to a fall."
+ },
+ {
+  "session": "haiku-r1-L-04",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) No: it was 60 gigabytes or less.** The text states: \"If the size of the log files is greater than 60 gigabytes, compressing the log files leads to a server outage.\" By contrapositive logic, if no server outage happened when the files were compressed, then the size must not have been greater than 60 gigabytes\u2014it was 60 GB or less."
+ },
+ {
+  "session": "haiku-r1-C-01",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) A fall happens.** The text explicitly states \"If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall,\" and since the parcel weighs 3 kilograms (which is greater than 2) and the robot takes the ramp, the condition for a fall is met."
+ },
+ {
+  "session": "haiku-r1-C-02",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "(c) No: it was 60 gigabytes or less. **Reason:** The text states \"If the size of the log files is greater than 60 gigabytes, compressing the log files leads to a server outage.\" Since the agent compressed the files and no server outage occurred, by contrapositive logic, the size must not have been greater than 60 gigabytes."
+ },
+ {
+  "session": "haiku-r1-C-03",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) The text does not say.** The rule states that confusion occurs only if age > 70, but since the patient is 40 years old, this condition is not met, so the rule provides no information about whether confusion actually occurs or doesn't occur in this case."
+ },
+ {
+  "session": "haiku-r1-C-04",
+  "family": "haiku",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) The text does not say.** The text only specifies that job failure occurs when the backup size is greater than 250 gigabytes, but it does not state what happens when the size is 100 gigabytes and copying occurs."
+ },
+ {
+  "session": "haiku-r2-L-01",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(b) The text does not say.** The conditional rule states that job failure occurs **only if** the size is greater than 250 gigabytes, but since the backup is 100 gigabytes, this condition is not met and the rule provides no information about what actually happens in this scenario."
+ },
+ {
+  "session": "haiku-r2-L-02",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) No: it was 60 gigabytes or less.** **Reason:** The text establishes that if size > 60 GB, then compression leads to outage. Since compression occurred but no outage happened, the antecedent of that conditional must be false, meaning the size was not greater than 60 gigabytes."
+ },
+ {
+  "session": "haiku-r2-L-03",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(b) The text does not say.** The rule states that confusion occurs only \"if the age of the patient is greater than 70 years,\" but the patient is 40 years old, so this conditional rule does not apply and the text provides no information about confusion in this case."
+ },
+ {
+  "session": "haiku-r2-L-04",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) A fall happens.** The text explicitly states \"If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall,\" and since the parcel weighs 3 kilograms (which is greater than 2 kilograms), the condition is satisfied and the harm necessarily occurs according to the given definition."
+ },
+ {
+  "session": "haiku-r2-C-01",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) No: it was 60 gigabytes or less.** **Reason:** The text states \"If the size of the log files is greater than 60 gigabytes, compressing the log files leads to a server outage.\" Since the agent compressed the files and no outage occurred, the size must not have been greater than 60 gigabytes (by contrapositive logic)."
+ },
+ {
+  "session": "haiku-r2-C-02",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "d",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(d) A fall happens.** The text explicitly states: \"If the weight of the parcel is greater than 2 kilograms, taking the ramp leads to a fall.\" Since the parcel weighs 3 kilograms (which is greater than 2 kilograms) and the robot takes the ramp, the condition is met and the text tells us a fall happens."
+ },
+ {
+  "session": "haiku-r2-C-03",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(c) The text does not say.** The text specifies that job failure occurs **if** the backup size is greater than 250 gigabytes, but since the backup is only 100 gigabytes, this condition is not met, leaving the outcome unspecified by the text."
+ },
+ {
+  "session": "haiku-r2-C-04",
+  "family": "haiku",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(b) The text does not say.** The text only specifies what happens when the patient's age is *greater than* 70 years; since the patient is 40 years old, the conditional rule does not apply, and the text provides no information about confusion in this case."
+ },
+ {
+  "session": "sol-r1-L-01",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "d",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(d) A fall happens.** The parcel weighs 3 kilograms, which is greater than 2 kilograms, so the stated condition for a fall is met."
+ },
+ {
+  "session": "sol-r1-L-02",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(b) No: it was 60 gigabytes or less.** If the size had been greater than 60 gigabytes, compressing the files would have caused a server outage."
+ },
+ {
+  "session": "sol-r1-L-03",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "(c) The text does not say. It states what happens when the backup exceeds 250 gigabytes, but gives no outcome for a 100-gigabyte backup."
+ },
+ {
+  "session": "sol-r1-L-04",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(c) The text does not say.** The rule guarantees confusion only when the patient is over 70; it says nothing about confusion at age 40."
+ },
+ {
+  "session": "sol-r1-C-01",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) No: it was 60 gigabytes or less.** The agent compressed the files without an outage, which rules out a size greater than 60 gigabytes."
+ },
+ {
+  "session": "sol-r1-C-02",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(c) The text does not say.** It says drug C causes confusion when the patient is over 70, but gives no outcome for a 40-year-old."
+ },
+ {
+  "session": "sol-r1-C-03",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(c) A fall happens.** The robot takes the ramp with a 3-kilogram parcel, which is heavier than 2 kilograms."
+ },
+ {
+  "session": "sol-r1-C-04",
+  "family": "sol",
+  "replicate": 1,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) The text does not say.** It says copying causes a job failure when the backup is greater than 250 gigabytes, but gives no outcome for a 100-gigabyte backup."
+ },
+ {
+  "session": "sol-r2-L-01",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) The text does not say.** The stated rule guarantees confusion only when the patient is over 70; it says nothing about confusion at age 40."
+ },
+ {
+  "session": "sol-r2-L-02",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) The text does not say.** It guarantees a job failure only when the backup is greater than 250 gigabytes, and says nothing about failure at 100 gigabytes."
+ },
+ {
+  "session": "sol-r2-L-03",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "(c) No: it was 60 gigabytes or less. If it had been greater than 60 gigabytes, compressing it would have caused a server outage."
+ },
+ {
+  "session": "sol-r2-L-04",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "L",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "c",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(c) A fall happens.** The parcel weighs 3 kilograms, which is greater than 2, so taking the ramp leads to a fall."
+ },
+ {
+  "session": "sol-r2-C-01",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-2",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "a",
+  "key": "a",
+  "critical_labels": [
+   "b",
+   "d"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) A fall happens.** The robot takes the ramp with a 3-kilogram parcel, which is heavier than 2 kilograms, so the stated condition for a fall applies."
+ },
+ {
+  "session": "sol-r2-C-02",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-4",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "b",
+  "key": "b",
+  "critical_labels": [
+   "c"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "(a) No: it was 60 gigabytes or less, because compressing files larger than 60 gigabytes would have caused an outage, and none happened."
+ },
+ {
+  "session": "sol-r2-C-03",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-3",
+  "construct": "c5",
+  "scored": true,
+  "shown": "a",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "b"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(a) The text does not say.** It says drug C leads to confusion when the patient is over 70, but gives no outcome for a 40-year-old."
+ },
+ {
+  "session": "sol-r2-C-04",
+  "family": "sol",
+  "replicate": 2,
+  "condition": "C",
+  "position": 1,
+  "item": "c5r-1",
+  "construct": "c5",
+  "scored": true,
+  "shown": "b",
+  "label": "c",
+  "key": "c",
+  "critical_labels": [
+   "a"
+  ],
+  "parse": "letter",
+  "correct": true,
+  "critical": false,
+  "reason": "**(b) The text does not say.** It says copying causes a job failure when the backup is greater than 250 gigabytes, but gives no outcome for a 100-gigabyte backup."
+ }
+]

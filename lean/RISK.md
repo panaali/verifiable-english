@@ -162,7 +162,7 @@ between candidates.
 | Kind | Extra input | Output |
 |---|---|---|
 | `risk-elaborate` | none | `environment_id`, `document_hash`, `e_risk`, `legend`, `risk_premises`, `unranked_severities`, `inlined`, `alternatives`, `base_premises`, `followable`, `unmapped_obligations`, and W1's regenerated outputs |
-| `risk-decision` | `decision` (the decision entry), `entries` (the supplied entries) | a diagnostic (with the witness case of `S ∧ ¬N` for `SufficientOutsideNecessary` and `RiskInconsistent`); or `verdict: CONFLICT` with the target and tuple; or `tables` (with witnesses), `statuses` (with firing rules and `by_default`), `worst_cases`, `margins`, `record_invalid`, `record_conflict`, `lines` (`unexamined_possible`, `assumed_ruled_out`, `point_estimates`, `default_decided`, `dilemmas`), `legend` (the condition lines of 2.4 the record's forms need, c5's with "(wording pending)"), `clear`, `conditional_on`, `decision_record_id`, `text` |
+| `risk-decision` | `decision` (the decision entry), `entries` (the supplied entries) | a diagnostic (with the witness case of `S ∧ ¬N` for `SufficientOutsideNecessary` and `RiskInconsistent`); or `verdict: CONFLICT` with the target and tuple; or `tables` (with witnesses), `statuses` (with firing rules and `by_default`), `worst_cases`, `margins`, `record_invalid`, `record_conflict`, `lines` (`unexamined_possible`, `assumed_ruled_out`, `point_estimates`, `default_decided`, `dilemmas`), `legend` (the condition lines of 2.4 the record's forms need, c5's in its frozen wording), `clear`, `conditional_on`, `decision_record_id`, `text` |
 | `risk-conflict` | `packages`, or `witness` (`model`, `target`, `tuple`) | CONFLICT-FREE / CONFLICT / UNKNOWN |
 | `risk-followable` | `packages` and `package`, or `packages` and `witness` (`model`, `chooser`) | FOLLOWABLE / DILEMMA / UNKNOWN / `not computed` |
 | `risk-audit` | `log`, `decision` (`{"id", "seq"}`), optional `alternative` (else the `taken` entry) | `q1` (`NO CLEAR ACTION AT DECISION TIME: <alt diagnosis>; <alternative> was <status>.`, or the conflict with "not evaluated"), `q2`, `procedure`, `q3`, `not_concluded` |
@@ -185,7 +185,7 @@ Cases without the profile, the block or a `risk-*` kind are delegated to `VE.Alt
 | `tests/test_risk_diagnostics.py` | Python's environment check against Lean on 57 single faults, 5 accepted variants and 309 pairs of faults |
 | `tests/test_risk_w6_extension.py` | the W6 extension (looprecheck1 B1): 65 faults of every W6 rule and the route gates around it, singly and paired with block faults, one text from Python and Lean; 8 accepted variants elaborated with Python's identity; the base binding without the annotations; six W6 texts equal in Python, Lean's `ve_quantity` and Rust |
 | `tests/test_risk_profile.py` | the frozen W6 text (A1), identity, the profile gate, dispatch-only record handling (A3) |
-| `tests/test_risk_english.py` | k19 (B3): one reading and the canonical rendering per wording, every 2.3 rejection in documents and rule guards, the scoped rewrites, rule 2 in alt's binder form, P3 rejected, c5 pending |
+| `tests/test_risk_english.py` | k19 (B3): one reading and the canonical rendering per wording, every 2.3 rejection in documents and rule guards, the scoped rewrites, rule 2 in alt's binder form, P3 rejected, c5's frozen wording parsed, rendered and round-tripped, its trailing form rejected |
 | `tests/test_risk_rust.py` | Rust's evaluator against enumeration on small boxes |
 
 Not covered by a test: kC1 is a stage C fixture (recorded, not a stage A acceptance fixture; stage C fields are
