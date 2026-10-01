@@ -6,7 +6,10 @@
 > through statement review; the Astra seat was held by Sol xhigh as the recorded cross-family stand-in). Draft 2
 > applies the converged statement review of draft 1 and nothing else
 > (`manage-agents/debates/compose-spec/{astra,fable}.md`, CONVERGED after round 3 on FIX; the Astra seat was again
-> held by Sol xhigh): eight edits, mapped in the change log, and no Lean statement of 9.2 to 9.5 changed. The gate
+> held by Sol xhigh): eight edits, mapped in the change log, and no Lean statement of 9.2 to 9.5 changed. A
+> statement-only verification of the first transcription of those edits (commit `34a13b11`) found two departures
+> from the converged text, both in edit 8's English: E21's frame was applied to a mixed pair, and the "may not"
+> fixture was left open for quoted source text. Both are corrected here (change log; 13.17, 13.20). The gate
 > that remains is one diff-only recheck of draft 2 by both seats; S0's Lean then starts without a new debate. It is
 > the statement under the Astra + Fable item-1 review that gates S0's Lean and the item-1 specifications of the
 > later stages (PLAN-EXPAND2 rule 10): a draft alone opens nothing. **Scope** (13.1): the contract every layer of the
@@ -234,7 +237,7 @@ stage's specification; this specification fixes the frames.
 | E18 | `"<surface>" in sentence <n> is taken to refer to <target>: resolved by the translator, not checked.` | A provenance mention. It is attributed to who recorded it, counted apart from checked resolutions, and changes no status. | plan 2.8; only if S4's specification admits provenance mentions | S4 |
 | E19 | `These two readings differ here: <situation>. Under <reading>, <outcome sentence>. Under <reading>, <outcome sentence>.` | In the shown situation the probed act has the first stated outcome under the first reading, and the second stated outcome under the other. Each stated outcome is a checked value; where the check gave the other reading none, the second sentence is one of the two below that state no value. | a checked separating situation with an `outcome` probe (plan 2.4), on a pair E14 does not cover | S1 |
 | E20 | `These two readings differ here: <situation>. Under <reading>, a <kind> on <act phrase> is selected for <subject>. Under <reading>, none is selected.` / `These two readings differ here: <situation>. Under <reading>, no <kind> on <act phrase> is selected for <subject>. Under <reading>, one is selected.` | In the shown situation some rule or line of the named kind on the act is selected for the subject under one reading, and none is under the other. Nothing is said about the act's outcome, which may be the same under both. The second sentence follows the cases below. | a checked separating situation with a `selects` probe, key (kind, predicate, tuple) (plan 2.4) | S2b |
-| E21 | `These two readings differ here: <situation>. Under <reading>, the sentence is true there. Under <reading>, it is false there.` | Between two assertion candidates: the open sentence, read the first way, is true in the shown situation; read the other way, it is false there. A truth value is stated only for an assertion candidate (below). | a checked separating situation with a `holds` probe (plan 2.4) | S1; `right-clauses.md` for a mixed pair |
+| E21 | `These two readings differ here: <situation>. Under <reading>, the sentence is true there. Under <reading>, it is false there.` | Used only between two assertion candidates: the open sentence, read the first way, is true in the shown situation; read the other way, it is false there. Both values are checked (below). | a checked separating situation with a `holds` probe (plan 2.4), both candidates assertions | S1. A pair with a candidate that is not an assertion is not E21's: `right-clauses.md` words it (below) |
 
 The outcome sentences of E14 and E19 state the checked value of the probed act under a candidate in the shown
 situation; they are never inferred from the verb. For an obligation they are `<subject> still must` and `<subject>
@@ -252,8 +255,9 @@ rule; the recorded probe is an `outcome` probe; both readings have an admissible
 (some assignment to the reading's own generated predicates makes "fixed units + candidate" admissible there, plan
 2.4); and the checker obtained one value on each side, the witnessing side's under the shown decision and the
 other side's from a single evaluation (that side owns no generated predicate), and the two values differ. Every
-other pair of candidates is worded by the row of its probe's form: E19 for `outcome`, E20 for `selects`, E21 for
-`holds` (plan S1, `Probe`).
+other pair of candidates is worded by the form of its probe (plan S1, `Probe`): E19 for `outcome`; E20 for
+`selects`; for `holds`, E21 when both candidates are assertions, and the wording of `right-clauses.md` when one
+of them is not (the two paragraphs on E21 below).
 
 **What E19 to E21 may state.** A checked separation proves that one reading reaches the recorded value of the
 probe on the shown base and that the other reading cannot reach that value there (plan 2.4, `Separated`), and no
@@ -263,8 +267,8 @@ recorded value. The second sentence is about the other reading, and it is the fi
 1. That reading has no admissible completion on the shown base. The second sentence is `Under <reading>, this
    situation is ruled out, whatever is decided.` No value is stated for that reading.
 2. The probe is `selects` or `holds`. Such a probe has one of two values in every admissible completion and none
-   reaches the recorded one, so the second sentence states the opposite value, as the row has it (E21 only of an
-   assertion candidate, as said below).
+   reaches the recorded one, so the second sentence states the opposite value, as the row has it. For E21, which
+   is between two assertion candidates only, this is the case that applies (below).
 3. The probe is `outcome`, and the checker evaluated that side once and obtained a value (the side owns no
    generated predicate and the act has an outcome there). The second sentence is that outcome sentence.
 4. The probe is `outcome`, and on that side the act has no outcome there (`ValueSoft` is `none`) or its outcome
@@ -275,14 +279,20 @@ recorded `true`, and that none is when it recorded `false`. "Selected" is the pr
 `SelectsR`; plan S1, `Observes`): the rule or line decides there. It is not the weaker "its condition holds",
 which is why the row does not say "applies".
 
-E21's first sentence likewise states the recorded value, `the sentence is true there` or `the sentence is false
-there`. E21 states a truth value only for an assertion candidate, whose own formula is among the assertions the
-probe evaluates (plan S1, `one`). Between two assertion candidates the fixed assertions hold in the shown
-situation under both readings, so the two sentences report the truth of the open sentence itself, both values are
-checked, and the reading under which it is true is named first. For a candidate that is not an assertion the
-probe evaluates the fixed assertions only, and "the sentence is true there" would report other sentences' truth:
-of such a candidate E21 says at most that the situation is ruled out (case 1, fixture G8). Any other mixed pair
-recorded with a `holds` probe is worded by `right-clauses.md` behind W8, naming the assertions actually probed.
+E21 is used only between two assertion candidates. An assertion candidate's own formula is among the assertions
+the probe evaluates (plan S1, `one`), and an assertion adds no rule and owns no generated predicate, so the two
+readings have the same rules, and a base that is admissible under one is admissible under the other: case 1 does
+not arise. A checked separation then shows that the fixed assertions hold in the shown situation under both
+readings and that the open sentence is true under one reading and false under the other. So the two sentences
+report the truth of the open sentence itself and both values are checked. Either reading could therefore stand
+first; the row names first the reading under which the sentence is true.
+
+A pair in which a candidate is not an assertion is never worded by E21, and E21's frame is not applied to it,
+whatever its `holds` probe recorded. For such a candidate the probe evaluates the fixed assertions only, and "the
+sentence is true there" would report other sentences' truth. A mixed pair recorded with a `holds` probe is worded
+by `right-clauses.md` behind W8, naming the assertions actually probed. This specification fixes no frame for
+that wording, only what it may state: a truth value only for an assertion candidate, and no value for a reading
+that has no admissible completion on the shown base; it is never E14. Fixture G8 holds it to that on F13's pair.
 
 Where the shown situation includes a decision of the witnessing reading, `<situation>` states it as a supposition
 attributed to its decider, as E14 does, never as a fact (2.2).
@@ -308,12 +318,16 @@ No synonyms are accepted or produced. Not wordings, and never produced:
 - A decision stated as a fact: "Ruritania lacks the resources and the exception applies." E14 says "suppose
   `<decider>` decides the exception applies".
 - "may not": it has two readings, and attribution 2.1 rejects it as input for that reason. A permission value
-  reads `is not permitted to` (E14, E19; fixture G9).
+  reads `is not permitted to` (E14, E19). The words appear in no rendered sentence of 2.1, in a frame or in what
+  fills a slot, quoted source text included (fixture G9, 13.20).
 - A value the check did not establish: an outcome, a selection or a truth value for a reading under which the
-  shown situation is ruled out; an outcome that depends on what is decided; "the sentence is false there" of a
-  candidate that is not an assertion. E19 to E21 then use the two sentences of 2.1 that state no value.
+  shown situation is ruled out; an outcome that depends on what is decided; "the sentence is true there" or "the
+  sentence is false there" of a candidate that is not an assertion. E19 and E20 then use the two sentences of 2.1
+  that state no value.
 - E14 for a pair that does not meet its four conditions, or "in the form of E14" for a selection or an assertion
   probe.
+- E21, or its frame, for a pair in which a candidate is not an assertion. `right-clauses.md` words a mixed pair
+  recorded with a `holds` probe (2.1, fixture G8).
 - "Under every reading" for an entailment when the fallback of E11 is in force.
 - Any generated name: a choice atom, `ve__here`, a bit predicate, an `rd-` name, a generated decision predicate.
   Reports say "sentence 12 read as *must*", never an atom (plan 2.3).
@@ -326,11 +340,12 @@ No synonyms are accepted or produced. Not wordings, and never produced:
 
 For a composed document the IDE shows, in English only: for every open sentence, its candidates in order with
 their paraphrases and E4; for every pair of candidates, the checked separating situation in the wording of its
-probe: E14 where its four conditions hold (2.1), otherwise the row of the probe's form (E19, E20 or E21); E15 or
-E16 when the finding applies; every coupling (E5), constraint (E6) and narrowing (E7) with its cited sentences;
-under every result, E3 with the premises used, limitation sentences in rights 2.1's wording and coherence
-premises in soft-norms 2.1's; for a result that needed no reading premise of a set, E13; for an abstention, E1 or
-E2 and nothing else.
+probe: E14 where its four conditions hold (2.1), otherwise the row of the probe's form (E19, E20, or E21 between
+two assertion candidates; a mixed pair recorded with a `holds` probe has `right-clauses.md`'s wording, 2.1); E15
+or E16 when the finding applies; every coupling (E5), constraint (E6) and narrowing (E7) with its cited
+sentences; under every result, E3 with the premises used, limitation sentences in rights 2.1's wording and
+coherence premises in soft-norms 2.1's; for a result that needed no reading premise of a set, E13; for an
+abstention, E1 or E2 and nothing else.
 
 ### 2.4 Examples from the pinned sources
 
@@ -1216,8 +1231,8 @@ every other row is named in it.
 | G5 | E10 and E11 | never both in one report; E11 only with the fallback of 4.5 (S2) |
 | G6 | any sentence of 2.1 rendered for a real document | contains no `ve__`, no `rd-` and no `soft__` or `rights__` substring |
 | G7 | plan fixture F10: the two limitation candidates of `u112`, separated by a `selects` probe on a claim line where the limitation holds | rendered as E20, never as E14. The first sentence states the recorded value: "a `<kind>` on `<act phrase>` is selected for `<subject>`" when the probe recorded `true` (the reading "on the liberties"), "no `<kind>` … is selected" when it recorded `false` (the reading "on every line"). The second sentence follows the four cases of 2.1 (S2b) |
-| G8 | plan fixture F13: an assertion candidate and the claim candidate of `u054`, on the situation with a person no state is responsible for, recorded with a `holds` probe | never E14 and no "suppose". A truth value is stated only for the assertion candidate: "Under `<reading>`, the sentence is true there." The claim reading has no admissible completion there, so its sentence is "Under `<reading>`, this situation is ruled out, whatever is decided." Nothing says that the claim's sentence is false (`right-clauses.md`) |
-| G9 | every wording of 2.1, rendered | no rendered sentence contains "may not" (each registering stage, for its own wordings) |
+| G8 | plan fixture F13: an assertion candidate and the claim candidate of `u054`, on the situation with a person no state is responsible for, recorded with a `holds` probe | worded by `right-clauses.md` behind W8, not by E21, whose frame is for two assertion candidates; never E14 and no "suppose". Whatever that wording is, it states a truth value only for the assertion candidate and names the assertions actually probed. The claim reading has no admissible completion on that situation, and the wording says of it only that: no truth value is stated for it, and nothing says that the claim's sentence is false (`right-clauses.md`) |
+| G9 | every wording of 2.1, rendered | no rendered sentence contains "may not". The fixture is unconditional: it covers the frame and whatever fills a slot, a `<source word>` or a `<surface>` that quotes source text included (13.20) (each registering stage, for its own wordings and the slots it defines) |
 
 ### 10.5 The plan's fixtures
 
@@ -1264,7 +1279,8 @@ question 12).
    `declared` against the closure and cross-set rules of plan 2.2.
 10. The English (2): one reading per wording; the `<reading>`, `<decider>` and `<citation>` slots; E10 against
     E11; E14 against the debate's wording and its four conditions of use; E19 to E21 and the four cases of the
-    second sentence against `Separated` and `Observes` (plan 2.4, S1); the non-wordings of 2.2.
+    second sentence against `Separated` and `Observes` (plan 2.4, S1); E21 confined to two assertion candidates,
+    with a mixed `holds` pair left to `right-clauses.md` (G8); G9 without exception; the non-wordings of 2.2.
 11. The report contract (3, 7): `conditional_on` order and its verbatim slot labels; the status text as the lower
     route's line, with only the reading and relation families omitted at zero.
 12. The diagnostics (8) and the fixtures (10), each against the definitions; D1 to D41 derived by hand; D-all's
@@ -1276,6 +1292,12 @@ Outcome of the review of draft 1 (`manage-agents/debates/compose-spec/`, converg
 edits, all applied in draft 2 (change log). No Lean statement of 9.2 to 9.5 changed; the edits fell on the English
 (2), the labels (1.5, 3), the status text (7), the fixtures (10) and S0's scope. Both seats recheck the diff of
 draft 2 once. S0's Lean starts after that recheck, since edit 3 changes S0's own scope; no new debate is opened.
+
+A statement-only verification of the first transcription of draft 2 (commit `34a13b11`;
+`manage-agents/compose-p3ver1.final.md`) found edits 1 to 7, the plan's gated-label amendment and the unchanged
+Lean blocks of 9.2 to 9.5 in order, and failed edit 8 on two points: E21's frame applied to F13's mixed pair, and
+G9 left open for quoted source text. Both are corrected in this revision (13.17, 13.20; change log), and the
+recheck reads the corrected text.
 
 ## 13. Resolved choices in this draft
 
@@ -1321,9 +1343,10 @@ Each is a point where the plan left a reading open; the review may overturn any 
     labels verbatim. Draft 1 appended the reading only in `conditional_on`; candidates of one set may share a line
     name, so two gated premises then had one slot label and `wellLabelled` failed (statement review, edit 2).
 
-Choices 14 to 19 were made in draft 2, in writing the converged statement review down. The two seats wrote their
+Choices 14 to 20 were made in draft 2, in writing the converged statement review down. The two seats wrote their
 third rounds concurrently, so each stated precisions the other had not seen; where the two texts differ, this
-draft takes the reading that satisfies both, and the diff-only recheck is where each seat confirms it.
+draft takes the reading that satisfies both, and the diff-only recheck is where each seat confirms it. Choices 17
+and 20 stand as corrected after the verification of the first transcription (section 12).
 
 14. **E1 and E2 are S0's texts and the first wiring stage's sentences** (edit 3). S0 wires nothing, so it can
     neither show nor check a sentence; G1 to G3 move with them.
@@ -1332,7 +1355,8 @@ draft takes the reading that satisfies both, and the diff-only recheck is where 
     "that is not so, whatever is decided". The Astra seat's rule is that the other reading gets the opposite value
     only when it has an admissible completion, and is otherwise said to have none. Both hold together: no
     completion gives the "ruled out" sentence, a two-valued probe with a completion gives the opposite value, an
-    outcome with one checked value gives that value, and any other outcome gives the denial. The words "this
+    outcome with one checked value gives that value, and any other outcome gives the denial. For E21, which is
+    between two assertion candidates, only the second of these arises (2.1, choice 17). The words "this
     situation is ruled out, whatever is decided" are this draft's English for "no admissible completion" and go
     through W7 and W8 with the registering stage.
 16. **E20 says "is selected", in the order of the recorded value.** The Fable seat's frame is "a `<kind>` on `<act
@@ -1340,20 +1364,24 @@ draft takes the reading that satisfies both, and the diff-only recheck is where 
     selected", in the order the probe establishes. This draft keeps the frame and takes the verb and the order from
     the precision: the plan itself separates a rule that applies from one that selects (plan 2.3), and the probe is
     about selection.
-17. **A mixed pair with a `holds` probe.** The Fable seat confines E21 to two assertion candidates and leaves a
-    mixed pair to `right-clauses.md`; the Astra seat has G8 exercise F13's branch without a completion. This draft
-    lets E21's frame state a truth value for the assertion candidate and "ruled out" for the other (G8), and
-    leaves every other mixed case to `right-clauses.md`.
+17. **A mixed pair with a `holds` probe is not E21's.** The converged text confines E21 to two assertion
+    candidates and gives a mixed pair recorded with `holds` to `right-clauses.md` behind W8 (the Fable seat's
+    round 3); the Astra seat has G8 exercise F13's branch without a completion and has a `holds` wording name the
+    assertions actually probed. Both hold together without E21: G8 is a fixture of `right-clauses.md`'s wording,
+    which states a truth value only for the assertion candidate, names the assertions probed, and says of the
+    claim reading only that the situation has no admissible completion under it. The first transcription let
+    E21's frame word F13's pair; the verification rejected that, and it is withdrawn.
 18. **D-all's code string is one character per list over a table of the distinct outcome texts** (edit 6). The
     review fixed "one code string" that `Examples.lean` guards `today` against; the table makes the code carry
     the full text of every diagnostic, parameters included, without parsing a message in Lean.
 19. **The gate is the stricter of the two round-3 texts.** The Fable seat withdrew "S0's Lean may start once
     edits 6 and 7 are in", because edit 3 changes S0's scope; the Astra seat's last round still carries that
     sentence. Under the stricter text S0 starts after the recheck of all eight edits, which satisfies both.
-
-Flagged for the recheck, not decided here: G9 is written as converged, "no rendered sentence contains *may not*".
-A `<source word>` or a `<surface>` quotes source bytes, and a source may say "may not"; whether a quotation is
-excepted is for S1's and S4's specifications, which define those slots.
+20. **G9 has no exception for quoted source text.** The converged fixture is unconditional: no rendered sentence
+    of 2.1 contains "may not". A `<source word>` or a `<surface>` quotes source bytes, and a source may say "may
+    not"; the first transcription left open whether a quotation is excepted. The converged text excepts nothing,
+    so nothing is excepted: S1's and S4's specifications, which define those two slots, define them so that G9
+    holds of every rendering, and how they do so is theirs to state.
 
 ## Change log
 
@@ -1361,3 +1389,4 @@ excepted is for S1's and S4's specifications, which define those slots.
 |---|---|---|
 | 2026-10-01 | Draft 1 | First statement specification, from plan draft 2: the stack contract with its six obligations; today's gate transcribed with fifteen checks and its eight routes; `dispatch` with three wrapper heads and named refusals; the base-premise slot with unique expansion, certified conflict-freedom, witness, acceptance, countermodel and exactness relative to a slot; monotonicity; gating; the rights route as the instance `P := Lim_D`; the candidate content type with its declared names; the lifting lemma stated for S2a; eighteen report sentences with their one reading; diagnostics; fixtures D1 to D41 with the exhaustive Python differential, L1 to L9, C1 to C6, G1 to G6; thirteen resolved choices. No code, Lean or frozen contract changes. |
 | 2026-10-01 | Draft 2 | The converged statement review applied, nothing else (`manage-agents/debates/compose-spec/`, FIX after round 3; edits 1 to 7 are the Fable seat's round 1 list, edit 8 the Astra seat's English-contract finding with both seats' round-3 precisions). (1) Status text: the lower route's line verbatim, coherence and limitation counts printed at zero as today; only the reading and relation families are omitted at zero (7). (2) A gated relation premise's slot label ends ` under <set>@<v>:<i>`, and `conditional_on` lists slot labels verbatim (1.5, 3, E9, 6, 8, 13.13; plan 2.3 and 2.7). (3) S0 shows and checks no sentence: E1, E2 and G1 to G3 belong to the first stage that wires `dispatch` (2, 2.1, 6, 10.4). (4) E1 reworded so that it names two features (2.1, 2.4, G1). (5) One citation production for E5 and E7; slots not defined in 2.1 are the registering stage's (2, 2.1). (6) D-all gains a Lean half: Python's 32,768 outcomes as `todayCodes` over `todayTexts`, guarded against `today` in `Examples.lean` (10.1, 9.3 note). (7) L9 is an `rfl` equation between each instance theorem and its original, described as definitional agreement of the two types; "token for token" dropped (10.2, 12). (8) E14 restricted to the strict and default candidates of one rule with an `outcome` probe, a completion and a checked value on both sides; permission values read `is permitted to` and `is not permitted to`; new rows E19 (`outcome`), E20 (`selects`) and E21 (`holds`) with the four cases of the second sentence; the reader's checklist chooses the wording by probe; fixtures G7 to G9; three non-wordings (2.1, 2.2, 2.3, 6, 10.4). Checklist items 6, 10, 11 and 12 follow the edits, and section 12 records the outcome and the remaining gate. Resolved choice 13 rewritten; choices 14 to 19 and one flagged point added. No Lean statement of 9.2 to 9.5 changed. No code, Lean or frozen contract changes. |
+| 2026-10-01 | Draft 2, verification corrections | The statement-only verification of the first transcription of draft 2 (commit `34a13b11`; `manage-agents/compose-p3ver1.final.md`) found edits 1 to 7, the plan's gated-label amendment and the unchanged Lean blocks of 9.2 to 9.5 in order, and two departures from the converged text in edit 8. Both corrected, nothing else. (a) E21 is confined to two assertion candidates, as converged: a pair with a candidate that is not an assertion is never worded by E21 or by its frame; a mixed pair recorded with a `holds` probe is worded by `right-clauses.md` behind W8, and G8 states what that wording may say of F13's pair instead of applying E21's frame to it (2.1: the E21 row, the routing sentence under "When E14 is used", case 2, the two E21 paragraphs; 2.2; 2.3; G8; checklist item 10; choices 15 and 17). (b) G9 is unconditional, as converged: no rendered sentence contains "may not", quoted source text included; the point flagged in section 13 is closed as resolved choice 20 (2.2, G9). The status note and section 12 record the verification. No Lean statement of 9.2 to 9.5 changed. No code, Lean or frozen contract changes. |
