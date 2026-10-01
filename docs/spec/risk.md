@@ -851,6 +851,10 @@ also a document DILEMMA witness only when the policy's conflict status is CONFLI
 P1 `unspecified` default lands, an alternative decided by it will be UNDECIDED and not clear. Until then
 `default_decided` lists the alternatives whose status came from the completion default (plan 11).
 
+The 2026-10-01 merge retains this as an integration gap: `risk@0` with `norm-defaults@0` is rejected during profile
+validation. The risk route has no `Fill_T` replay or UNDECIDED decision row yet. See norm-defaults 3.3 for the
+required sequencing and cross-route fixtures.
+
 ### 4.9 Point estimates and margins
 
 **Point estimates** (plan 7.3). For every `leads to` or `cannot` result, the report names each point estimate among

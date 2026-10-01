@@ -109,22 +109,62 @@ def _consequence(rule, env, words):
     return text, scope
 
 
-def default_sentence(env, predicate):
+def default_sentence(env, predicate, completion=None):
+    """The legend sentence of `predicate`'s completion (the declared one unless
+    `completion` names another, as the legend grammar's alternatives do)."""
     decl = env.predicates[predicate]
     reg = decl.regulated
     if reg is None:
         raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
+    default = reg.default if completion is None else completion
     words = _words(env)
     nouns = [words.sorts[s] for s in decl.arguments]
     article = lambda noun: ("an " if noun[0].lower() in "aeiou" else "a ") + noun
+    if default == "unspecified":
+        # norm-defaults 4.1: one reading, "neither answer follows" where nothing
+        # else in the text (no rule, `By default` or pair sentence) settles it.
+        return UNSPECIFIED_KEYWORD + "the text does not say whether " + unspecified_clause(env, predicate) + "."
     if reg.role == "plain":
-        template = (words.predicates[predicate] if reg.default == "allow" else
+        template = (words.predicates[predicate] if default == "allow" else
                     words.negatives.get(predicate) or "it is not the case that " + words.predicates[predicate])
         return "By default, " + template.format(*(article(n) for n in nouns)) + "."
-    modal = ("may" if reg.default == "allow" else "must not") if reg.role == "permission" else (
-        "must" if reg.default == "allow" else "need not")
+    modal = ("may" if default == "allow" else "must not") if reg.role == "permission" else (
+        "must" if default == "allow" else "need not")
     template = reg.act.replace("{0} ", "{0} " + modal + " ", 1)
     return "By default, " + template.format(*(article(n) for n in nouns)) + "."
+
+
+UNSPECIFIED_KEYWORD = "When nothing else in the text decides, "
+
+
+def unspecified_clause(env, predicate, arguments=None):
+    """`a <noun> may <act>`, `a <noun> must <act>` or the plain verbalisation,
+    with indefinite arguments unless `arguments` names them."""
+    decl = env.predicates[predicate]
+    reg = decl.regulated
+    words = _words(env)
+    if arguments is None:
+        arguments = [("an " if n[0].lower() in "aeiou" else "a ") + n
+                     for n in (words.sorts[s] for s in decl.arguments)]
+    if reg.role == "plain":
+        return words.predicates[predicate].format(*arguments)
+    modal = "may" if reg.role == "permission" else "must"
+    return reg.act.replace("{0} ", "{0} " + modal + " ", 1).format(*arguments)
+
+
+def pair_sentence(env, required):
+    """norm-defaults 4.1: the profile premise of a declared pair, render-only."""
+    decl = env.predicates[required]
+    reg = decl.regulated
+    if reg is None or reg.permission is None:
+        raise VEError(f"UnknownSymbol: declared pair {required}")
+    words = _words(env)
+    scope, nouns = _bindings(decl, words)
+    refs = [scope[len(scope) - i - 1][1] for i in range(len(nouns))]
+    first = [("an " if n[0].lower() in "aeiou" else "a ") + n for n in nouns]
+    must = reg.act.replace("{0} ", "{0} must ", 1).format(*first)
+    may = reg.act.replace("{0} ", "{0} may ", 1).format("it", *refs[1:])
+    return "Whenever " + must + ", " + may + "."
 
 
 def render_rule_sentence(rule, env, words=None):

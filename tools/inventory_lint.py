@@ -39,12 +39,14 @@ BODIES: dict[str, set[str]] = {
     "ve.order": {"decode_trace", "_Replayer", "replay_trace"},
     "ve.background": {"_background_python", "_dependency_order_python", "_validate_background_python",
                       "_valid_flags", "_valid_definitions", "_valid_literals", "_valid_profile",
-                      "_valid_soft", "_valid_rights"},
+                      "_valid_soft", "_valid_rights", "_valid_fill"},
     "ve.definitions": {"_compile_python"},
     "ve.norms": {"NormDocument._elaborate_python", "NormDocument._premises_python", "check_witness",
                  "_check_conflict_python", "_norm_certificate_python"},
+    "ve.norm_defaults": {"check_conflict"},
     "ve.norm_admission": {"_admit_norm_document_python"},
     "ve.admission": {"_admit_document_python", "_check_graph", "_validate_label_python"},
+    "ve.norm_defaults_route": {"admit_norm_defaults_document"},
     "ve.bundle": {"_check_bundle_python"},
     "ve.parser": {"_parse_python", "_parse_python_marked"},
     "ve.vacuity": {"_premise_status"},
@@ -68,6 +70,10 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
         "checker's), as ast._typed does; case premises and conclusions go through check_document",
     ("ve.norms", "NormDocument.__init__", "ve.ast", "_Checker"):
         SURFACE + " (the Lean norms route decodes and validates the norm objects: Norms.Wire.decodeSource)",
+    ("ve.norm_defaults", "UnspecifiedDocument._build", "ve.ast", "_Checker"):
+        SURFACE + " (checks generated Fill_T size; NormDefaults.Wire regenerates and checks it in Lean)",
+    ("ve.norm_defaults", "UnspecifiedDocument._check_ast", "ve.ast", "_Checker"):
+        SURFACE + " (checks author guards and generated fill guards; NormDefaults.Wire re-decodes them in Lean)",
     ("ve.norm_english", "_parse_guard", "ve.ast", "_Checker"): SURFACE,
     ("ve.soft_route", "_open_data", "ve.ast", "_Checker"):
         SURFACE + " (soft norms are a Lean-only route; soft_route.check_regenerated compares Lean's regeneration)",
