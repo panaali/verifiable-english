@@ -1,10 +1,10 @@
 {
  "accounted_bytes": 54373,
  "bytes_by_kind": {
-  "asserted": 3168,
+  "asserted": 2920,
   "attributed": 1855,
   "causal": 807,
-  "definition": 7251,
+  "definition": 7499,
   "example": 4436,
   "explanation": 3200,
   "exposition": 9861,
@@ -14,18 +14,18 @@
   "unformalised": 6865
  },
  "bytes_by_status": {
-  "CHECKED": 3735,
-  "LABELLED": 36417,
+  "CHECKED": 3487,
+  "LABELLED": 36665,
   "OPEN": 7356,
   "UNFORMALISED": 6865
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "fsf.d1.ve.md (built locally, not committed)",
- "document_sha256": "e24701e3745699c473652fade534ff1fd58ecbc2428939cbc3fb551880a6bde8",
+ "document_sha256": "17a3989ea1ad9456185b8d2807a1add441b8fbc9d1de8c8a0efc2528692e2996",
  "master_bytes_by_status": {
-  "CHECKED": 4843,
-  "LABELLED": 35309,
+  "CHECKED": 4595,
+  "LABELLED": 35557,
   "OPEN": 7356,
   "UNFORMALISED": 6865
  },

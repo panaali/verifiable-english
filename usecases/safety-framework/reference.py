@@ -18,7 +18,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 CASES = {c["id"]: c for c in json.loads((HERE / "cases.json").read_text())["cases"]}
 ACTIVITIES = json.loads((HERE / "cases.json").read_text())["activities"]
-SETS = {"RS1": ("S", "G"), "RS2": ("P", "U"), "RS3": ("F", "Ds"), "RS4aim": ("default", "intent"),
+SETS = {"RS1": ("S", "G"), "RS2": ("P", "U"), "RS3": ("F", "Ds"), "RS3force": ("strict", "default"),
+        "RS4aim": ("default", "intent"),
         "RS5": ("D", "R"), "RS6": ("same", "different"), "RS7": ("E", "M"), "RS8": ("scope", "rel"),
         "RS9": ("same", "different")}
 MISUSE = {"cbrn_uplift_tcl", "cbrn_uplift_level_1", "cyber_uplift_level_1", "harmful_manipulation_level_1"}
@@ -74,7 +75,12 @@ def requirements(s, c):
     if mlrd_tcl:
         out["PRA"] = "must"                                       # F17
     if c["RS3"] == "Ds" and any(l in RECOMMENDED for l in levels):
-        out["RECSEC"] = "should"                                  # F16 under Ds (N2: default force)
+        # F16 under Ds, strict or default; no exception finding is stipulated.
+        out["RECSEC"] = "must" if c["RS3force"] == "strict" else "should"
+        if misuse - TRACKED and c["RS6"] == "same":
+            # SL2+ includes the insider-threat measures, which F15 (same act) says need not be added:
+            # a strict "need not" blocks a default rule (soft-norms 4.2) and contradicts a strict one (C1).
+            out["INSIDER"] = "conflict" if c["RS3force"] == "strict" else "need not"
     return out
 
 
@@ -88,7 +94,7 @@ def verdict(holds, sets):
     return "SOME", [dict(zip(sets, x)) for x in true]
 
 
-ALL_SETS = ("RS1", "RS2", "RS3", "RS7", "RS8", "RS9")
+ALL_SETS = ("RS1", "RS2", "RS3", "RS3force", "RS6", "RS7", "RS8", "RS9")
 
 
 def family_a_b():
@@ -136,10 +142,13 @@ def matches(key_verdict, ours):
 def family_c_g():
     rows = {}
     witness = {"levels": {"cbrn_uplift_level_1", "ml_rd_acceleration_level_1"}, "facts": {"internal", "high_risk"}}
-    conflict = verdict(lambda c: requirements(witness, c).get("DM") == "conflict", ALL_SETS)
-    rows["C3"] = rows["C-doc"] = conflict
-    for cid in ("C1", "C2", "C4", "C5"):
-        rows[cid] = ("NONE", [])        # PLAN 6.4: blocked default (C1), exception (C2), no shared act (C4, C5)
+    rows["C3"] = verdict(lambda c: requirements(witness, c).get("DM") == "conflict", ALL_SETS)
+    insider = {"levels": {"cbrn_uplift_level_1"}, "facts": set()}
+    rows["C1"] = verdict(lambda c: requirements(insider, c).get("INSIDER") == "conflict", ALL_SETS)
+    rows["C-doc"] = verdict(lambda c: requirements(witness, c).get("DM") == "conflict"
+                            or requirements(insider, c).get("INSIDER") == "conflict", ALL_SETS)
+    for cid in ("C2", "C4", "C5"):
+        rows[cid] = ("NONE", [])        # PLAN 6.4: exception (C2), no shared act (C4, C5)
     g1 = situation(CASES["G1"])
     rows["G1"] = verdict(lambda c: "SEC" not in requirements(g1, c), ALL_SETS)
     g2 = situation(CASES["G2"])

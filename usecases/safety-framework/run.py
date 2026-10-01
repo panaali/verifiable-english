@@ -105,7 +105,7 @@ _DOCS = {}
 
 
 def document(choice, default="deny", variant=()):
-    """The document of a choice; `variant` is a tuple of (kind, payload) edits (mutants, N2 off)."""
+    """The document of a choice; `variant` is a tuple of (kind, payload) edits (mutants, N2 on)."""
     drop, extra, precedence = set(), [], None
     for kind, payload in variant:
         if kind == "drop":
@@ -611,10 +611,10 @@ def rules_on(*predicates):
 
 
 CONFLICT_CLUSTERS = {
-    "CONFLICT:f15:f16": ("f15-same", "f15-diff", "f16-ds"),
+    "CONFLICT:f15:f16": ("f15-same", "f15-diff", "f16-ds", "f16-ds-strict"),
     "CONFLICT:f2:f3": ("f2", "f3"),
     "CONFLICT:f9:f10": ("f9-dm", "f9-rel", "f10-dm-same", "f10-dm-diff", "f10-rel-same", "f10-rel-diff"),
-    "CONFLICT:f16:sec": ("f16-ds", "f9-sec", "f10-sec"),
+    "CONFLICT:f16:sec": ("f16-ds", "f16-ds-strict", "f9-sec", "f10-sec"),
     "CONFLICT:f8:f12f13": ("f8", "f12-p", "f12-u", "f13-p", "f13-u"),
 }
 
@@ -736,14 +736,15 @@ def relevant_predicates(kind, case, choice):
 
 def default_sensitive(kind, case, level=None):
     """Per choice: does a completed outcome of the item's predicates differ between the
-    defaults, and does no rule select on them (silent)? M7 expects the two to coincide."""
+    defaults, and is the cell silent (no rule selects) or conflicted (rules of both signs
+    select, so the outcome falls to the default)? M7 expects the two to coincide."""
     if kind not in SELECTION_ITEMS and not kind.startswith("SILENT:") or kind.startswith("SILENT:EVIDENCE"):
         return None
     rows = []
     for assignment in choices(cone(item_predicates(kind))):
         choice = full_choice(assignment)
         predicates = relevant_predicates(kind, case, choice)
-        values, silent = {}, {}
+        values, silent, conflicted = {}, {}, {}
         for default in ("deny", "allow"):
             doc = document(choice, default)
             model = case_model(doc, case_atoms(case))
@@ -754,11 +755,14 @@ def default_sensitive(kind, case, level=None):
                         continue
                     values.setdefault((predicate, args), []).append(completed(doc, model, predicate, args))
                     if default == "deny":
-                        silent[(predicate, args)] = not (predicate in doc.elaborated.order and
-                                                         doc.elaborated.selected_rules(predicate, model, args))
+                        rules = (doc.elaborated.selected_rules(predicate, model, args)
+                                 if predicate in doc.elaborated.order else [])
+                        silent[(predicate, args)] = not rules
+                        conflicted[(predicate, args)] = {r.sign for r in rules} == {True, False}
         sensitive = {k: a != b for k, (a, b) in values.items()}
         rows.append({"choice": dict(assignment), "sensitive": any(sensitive.values()),
-                     "coincide": all(sensitive[k] == silent[k] for k in sensitive)})
+                     "conflicted": any(conflicted.values()),
+                     "coincide": all(sensitive[k] == (silent[k] or conflicted[k]) for k in sensitive)})
     return rows
 
 
@@ -822,6 +826,7 @@ def run():
         if rows is not None:
             results["default_sensitive"][item["id"]] = {
                 "choices": len(rows), "sensitive_choices": sum(r["sensitive"] for r in rows),
+                "conflicted_choices": [r["choice"] for r in rows if r["conflicted"]],
                 "mismatch": [r["choice"] for r in rows if not r["coincide"]]}
     progress("variants")
     results["variants"] = variants()
@@ -834,15 +839,8 @@ def run():
     return results
 
 
-# --- variants: without N1 (prediction), without N2 (strict), mutants ----------------------------
+# --- variants: without N1 (prediction), with N2 (default only), mutants ----------------------------
 
-F16_STRICT = ("f16-strict", "Rule 1. Every proposal must apply each measure to the model weights, if there is a "
-              "level such that all of the following hold: (a) that proposal has reached that level; (b) at least one "
-              "of the following holds: (i) that level recommends that measure; (ii) there is a second measure such "
-              "that both that level recommends the second measure and the second measure includes that measure, "
-              "unless at least one of the following holds: (a) that proposal is classified as \"like_public_models\"; "
-              "(b) either that proposal is classified as \"security_assessed_adequate\" or that proposal is classified "
-              "as \"open_release_benefits_outweigh_risks\", or both.")
 MUTANTS = {
     "m1": (("precedence", {}),),
     "m2": (),  # a fact edit, below
@@ -867,11 +865,13 @@ MUTANTS = {
 
 def variants():
     out = {}
-    # Without N2: F16 under Ds is strict.
-    strict = (("drop", ("f16-ds",)), ("add", (*F16_STRICT, (("RS3", "Ds"),))))
-    out["without_N2"] = {
-        "C1": conflict_result(("f15-same", "f15-diff", "f16-ds", "f16-strict"), strict),
-        "B-L2/RECSEC": item_result("RECSEC", CASES["B-L2"], variant=strict),
+    # With N2, the plan's withdrawn narrowing: F16 under Ds is a default rule at both forces.
+    narrowed = (("drop", ("f16-ds-strict",)),
+                ("add", ("f16-ds-n2", next(b.text for b in T.rule_blocks() if b.id == "f16-ds"),
+                         (("RS3", "Ds"), ("RS3force", "strict")))))
+    out["with_N2"] = {
+        "C1": conflict_result(CONFLICT_CLUSTERS["CONFLICT:f15:f16"] + ("f16-ds-n2",), narrowed),
+        "B-L2/RECSEC": item_result("RECSEC", CASES["B-L2"], variant=narrowed),
     }
     # Without N1: every rule from a "will" sentence is a prediction, not a norm.
     prediction = (("drop", tuple(sorted(T.WILL_RULES))),)

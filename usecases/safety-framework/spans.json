@@ -609,11 +609,8 @@
     11131,
     11379
    ],
-   "kind": "asserted",
-   "premises": [
-    "closure-alert-thresholds"
-   ],
-   "status": "CHECKED"
+   "kind": "definition",
+   "status": "LABELLED"
   },
   {
    "id": "s132-scaffolding",
