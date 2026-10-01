@@ -1,11 +1,10 @@
 # Use case: safety-framework (Google DeepMind Frontier Safety Framework, version 3.1)
 
-> Status: **PLAN**, 2026-10-01, branch `usecase/safety-framework` (backlog item 2). No VE translation exists yet
-> and VE has not been run on any case. The answer key in section 6 is frozen at the commit that adds this file. A
-> later change to a key must be a separate commit that says why; it must not be folded into a results commit. No
-> model calls were made. The plan review's findings A to C
-> (`manage-agents/safety-framework-planreview.final.md`) were applied before any VE run: RS3 and N2, B DISC and K9,
-> and family R.
+> Status: **BUILT**, 2026-10-01, branch `usecase/safety-framework` (backlog item 2). Results are in
+> [README.md](README.md), and every deviation from this plan is in section 12. The plan and its answer key (section 6)
+> were committed before any VE run. The plan review's findings A to C
+> (`manage-agents/safety-framework-planreview.final.md`) were applied in a separate commit, also before any VE run:
+> RS3 and N2, B DISC and K9, and family R. No answer-key cell was changed after VE ran. No model calls were made.
 
 This use case translates someone else's text, so it runs in **translation mode** ([VISION.md](../../VISION.md) 3,
 [document.md](../../docs/spec/document.md)):
@@ -513,7 +512,55 @@ the D2 or D3 unit's status, after checking that the byte ranges are equal (probe
 
 ## 12. Deviations (after running VE; empty at plan time)
 
-Each entry gives the section and cell, the old value, the new value and the reason.
+Each entry gives the section and cell, the old value, the new value and the reason. No answer-key cell was changed;
+the six disagreements with the key are findings and are listed in [README.md](README.md).
+
+1. **Section 7, vocabulary.** Old: one obligation `meet(proposal, requirement)` with requirement constants. New: one
+   obligation per act, such as `residual_assessed` with the act phrase "be subject to a residual risk assessment",
+   and `applied(proposal, measure)` for security levels. Reason: VE writes a constant in a rule as a quoted
+   identifier, while an act phrase reads as plain English. Rules still quantify over proposals, levels and measures.
+2. **Section 7, level facts.** Old: `misuse(domain)`. New: `misuse(level)` and `ml_rd_and_misalignment(level)`;
+   `concerns(level, domain)` stays for the closure sentences. Reason: VE's English guards nest at most three
+   lists deep, and the domain detour cost one level in the classification rules.
+3. **M5, rules per bullet.** Old: one rule each for F9, F10 and F11. New: one classification rule per bullet, plus
+   one rule per gated condition (DM, SEC) and one per release. Reason: each sub-bullet has its own scope sentence.
+   No rule is per level.
+4. **Section 4.1, premises.** Added, each cited to its sentence: no TCL is a CCL (Glossary), the activity
+   definitions (Glossary; "further development or deployment", 1.3.5), and the bridge that no level belongs to two
+   of the four domains (1.3.1, support `assumption`). The bridge is stated as six exclusions, because VE's prover
+   found no certificate from the equality form.
+5. **Section 5, conflicts.** Old: the W1 conflict check. New: the W1 check against the premises. A CONFLICT needs a
+   witness situation that satisfies every premise; CONFLICT-FREE needs certificates from the premises. Reason: W1
+   checks all base structures, including a proposal that is both internal and external. The plain W1 status is
+   recorded too; it is UNKNOWN for F9 against F10 under G, rel and RS9 different.
+6. **Section 5, GOV.** The plan did not say how "GOV required" is decided. New: with the governance determination
+   removed from the case, some rule forbids proceeding.
+7. **Section 5, unset open terms.** An unset finding is false in the case model: the decider has made no such
+   finding. A soft exception is found exactly where a sufficient condition that the text states holds.
+8. **K4.** No regulated act has a checkpoint slot, so VE answers K4 from the vocabulary; F5 itself selects.
+9. **S4.** Asked in D1, not D2: it is about security levels. D1 has the word `at_least_as_strong` and no premise
+   uses it. **S1** is a transcription check: the classes are inputs read from the text, which the risk route admits.
+10. **D2 and D3.** D2 counts unexamined cells as possible. RS10 is a reading set of D3 only. The countermodel for
+    the "unstated" reading dates a last review on 2026-06-01, which the text does not state.
+11. **Section 7, routed units.** A unit checked in D2 or D3 is LABELLED in D1 and CHECKED in the master map.
+12. **Section 3.1, placement.** RS1 and RS8 sit on three bullets, and RS2 and RS3 on two sections. Each has one
+    reading set per unit in the document, and the harness makes one choice for all of them.
+13. **O2.** Every norm reading set in the document has pending content, so VE's native `readings` query is UNKNOWN,
+    as expected. The ALL, SOME and NONE results come from the harness's expansion of choices.
+14. **Restated rules.** F7's safety case appears four times and F14 twice. Each rule is carried once; a
+    restatement is OPEN or LABELLED with a note.
+15. **Mutants.** m4 adds a level that is tracked and concerns cyber: the premises become inconsistent, with a
+    certificate, rather than N1 becoming satisfiable. m6 deletes the whole sentence, so DM is no longer limited to
+    external deployment. The twelve DM items change as expected. C3 does not disappear: the conflict moves to
+    further development of a model at both a misuse level and an ML R&D CCL (F10's release against the unscoped DM).
+16. **Without N1.** The prediction reading is computed on eight representative items, not on all items.
+17. **Probes P1 to P7.** P1 to P6 passed. P2: the norm reading sets load, and every choice is admitted by
+    `SoftNormDocument`. P3: the risk route admits a record with only `might` statements. P7 found no violation.
+18. **Build.** The first `lake build` logged a failure at `VE.English.Run:c.o`; a second run built it and finished.
+19. **Section 13, files.** The D2 and D3 environments are built by `severity_and_dates.py` instead of committed
+    `environment.d2.json` and `environment.d3.json` files. The rules and premises of D1 are `rules.d1.ve` and
+    `facts.d1.ve`; `fsf.d1.ve.md` is built locally by `build_document.py`. The results are in `README.md` and
+    `results.json`, so there is no `RESULTS.md`. `cases.json` and `answer-key.json` were transcribed in their own commit.
 
 ## 13. Files for the implementation round (not this commit)
 
