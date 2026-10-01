@@ -4,27 +4,28 @@ import VE.SpeechActs.Wire
 /-! The dispatcher (docs/spec/composition.md 1.1 to 1.3, 4.2, 8, 9.3).
 
 `today` is `ve/profiles.py` `checker_family`, check for check and text for text, followed by today's route
-choice. `dispatch` is `today` on the list without the stack's wrapper profiles, followed by the wrappers: each
-present wrapper must sit on that route, and the head is the first wrapper present in stack order, or the
-route itself. It is the function the wrappers will call; S0 calls it nowhere. -/
+choice (nine routes since `norm-defaults@0` was merged). `dispatch` is `today` on the list without the stack's
+wrapper profiles, followed by the wrappers: each present wrapper must sit on that route, and the head is the first
+wrapper present in stack order, or the route itself. It is the function the wrappers will call; S0 calls it nowhere. -/
 namespace VE.Compose
 
 def unsupported (message : String) : String := "UnsupportedProfile: " ++ message
 
 def registered : List String :=
-  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norms@0", "soft-norms@0",
-   "order@0", "relational-fol@0", "speech-acts@0", "reports@0", "risk@0", "rights@0", "time@0"]
+  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norm-defaults@0",
+   "norms@0", "soft-norms@0", "order@0", "relational-fol@0", "speech-acts@0", "reports@0", "risk@0", "rights@0",
+   "time@0"]
 def speechAllow : List String := ["relational-fol@0", "norms@0", "speech-acts@0"]
 /-- The stack's wrapper profiles, in stack order (ranks 1, 2, 3). -/
 def wrapperProfiles : List String := ["ve.discourse@1", "right-clauses@0", "readings@1"]
 
 inductive Route
   | frozen | reports | speechActs | alternatives | risk
-  | norms | soft | rights
+  | norms | normDefaults | soft | rights
   | readings | clauses | discourse
   deriving DecidableEq, Repr
 
-/-- ve/profiles.py checker_family as a gate: the fifteen checks of 4.2 in order, with its texts. -/
+/-- ve/profiles.py checker_family as a gate: the eighteen checks of 4.2 in order, with its texts. -/
 def todayGate (ps : List String) : Except String Unit :=
   if !decide (ps.Pairwise (· < ·)) then .error (unsupported "profiles must be sorted and unique")
   else if ps.contains "alternatives@0" && !ps.contains "norms@0" then
@@ -33,6 +34,10 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "alternatives@0 with soft-norms@0")
   else if ps.contains "risk@0" && !ps.contains "alternatives@0" then
     .error (unsupported "risk@0 requires alternatives@0")
+  else if ps.contains "risk@0" && ps.contains "norm-defaults@0" then
+    .error (unsupported "risk@0 with norm-defaults@0 is not implemented")
+  else if ps.contains "alternatives@0" && ps.contains "norm-defaults@0" then
+    .error (unsupported "alternatives@0 with norm-defaults@0 is not implemented")
   else match ps.find? (fun p => !registered.contains p) with
   | some p => .error (unsupported s!"Unsupported profile {p}")
   | none =>
@@ -61,13 +66,15 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "rights@0 requires soft-norms@0")
   else if ps.contains "soft-norms@0" && !ps.contains "norms@0" then
     .error (unsupported "soft-norms@0 requires norms@0")
+  else if ps.contains "norm-defaults@0" && !ps.contains "norms@0" then
+    .error (unsupported "norm-defaults@0 requires norms@0")
   else .ok ()
 
 def todayHead (ps : List String) : Route :=
   if ps.contains "risk@0" then .risk else if ps.contains "alternatives@0" then .alternatives
   else if ps.contains "speech-acts@0" then .speechActs else if ps.contains "reports@0" then .reports
   else if ps.contains "rights@0" then .rights else if ps.contains "soft-norms@0" then .soft
-  else if ps.contains "norms@0" then .norms else .frozen
+  else if ps.contains "norm-defaults@0" then .normDefaults else if ps.contains "norms@0" then .norms else .frozen
 
 def today (ps : List String) : Except String Route := (todayGate ps).map (fun _ => todayHead ps)
 
@@ -79,7 +86,8 @@ def TodayList (ps : List String) : Prop :=
   ("speech-acts@0" ∈ ps → "norms@0" ∈ ps ∧ ∀ p ∈ ps, p ∈ speechAllow) ∧
   ("reports@0" ∈ ps → ∀ p ∈ ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"], p ∉ ps) ∧
   ("order@0" ∈ ps → "closure@0" ∉ ps ∧ "nary@0" ∉ ps) ∧ ("nary@0" ∈ ps → "closure@0" ∈ ps) ∧
-  ("rights@0" ∈ ps → "soft-norms@0" ∈ ps) ∧ ("soft-norms@0" ∈ ps → "norms@0" ∈ ps)
+  ("rights@0" ∈ ps → "soft-norms@0" ∈ ps) ∧ ("soft-norms@0" ∈ ps → "norms@0" ∈ ps) ∧
+  ("norm-defaults@0" ∈ ps → "norms@0" ∈ ps ∧ "alternatives@0" ∉ ps ∧ "risk@0" ∉ ps)
 
 /-! ## `today` against its specifications -/
 
@@ -99,6 +107,8 @@ theorem todayGate_sound (ps : List String) (h : todayGate ps = .ok ()) : TodayLi
   obtain ⟨h1, h⟩ := ite_error_ok h
   obtain ⟨h2, h⟩ := ite_error_ok h
   obtain ⟨h3, h⟩ := ite_error_ok h
+  obtain ⟨hd1, h⟩ := ite_error_ok h
+  obtain ⟨hd2, h⟩ := ite_error_ok h
   split at h
   · cases h
   rename_i hreg
@@ -119,12 +129,13 @@ theorem todayGate_sound (ps : List String) (h : todayGate ps = .ok ()) : TodayLi
   obtain ⟨h8, h⟩ := ite_error_ok h
   obtain ⟨h9, h⟩ := ite_error_ok h
   obtain ⟨h10, h⟩ := ite_error_ok h
+  obtain ⟨h11, h⟩ := ite_error_ok h
   have mem : ∀ {l : List String} {x : String}, ¬ (!l.contains x) = true → x ∈ l := fun h =>
     List.contains_iff_mem.mp (by simpa using h)
   have nmem : ∀ {x : String}, ¬ ps.contains x = true → x ∉ ps := fun h hx => h (List.contains_iff_mem.mpr hx)
   simp only [contains_eq, Bool.not_eq_true', decide_eq_false_iff_not, Bool.and_eq_true, Bool.or_eq_true,
-    decide_eq_true_eq, not_and, not_or, Classical.not_not] at hs h1 h2 h3 h4 hrf h5 h6 h7 h8 h9 h10
-  refine ⟨hs, fun p hp => mem (List.find?_eq_none.mp hreg p hp), hrf, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    decide_eq_true_eq, not_and, not_or, Classical.not_not] at hs h1 h2 h3 hd1 hd2 h4 hrf h5 h6 h7 h8 h9 h10 h11
+  refine ⟨hs, fun p hp => mem (List.find?_eq_none.mp hreg p hp), hrf, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ha; exact ⟨h1 ha, h2 ha⟩
   · intro hr
     exact ⟨h3 hr, fun hc => (h8 hr).1.1 hc, fun hn => (h8 hr).1.2 hn, fun ho => (h8 hr).2 ho⟩
@@ -148,13 +159,14 @@ theorem todayGate_sound (ps : List String) (h : todayGate ps = .ok ()) : TodayLi
   · intro hn; exact h7 hn
   · intro hr; exact h9 hr
   · intro hsn; exact h10 hsn
+  · intro hnd; exact ⟨h11 hnd, fun ha => hd2 ha hnd, fun hr => hd1 hr hnd⟩
 
 theorem ite_ok_of {α : Type} {c : Prop} [Decidable c] {e : String} {r : Except String α} {x : α}
     (hc : ¬ c) (h : r = .ok x) : (if c then .error e else r) = .ok x := by
   rw [if_neg hc]; exact h
 
 theorem todayGate_complete (ps : List String) (h : TodayList ps) : todayGate ps = .ok () := by
-  obtain ⟨hs, hreg, hrf, ha, hr, hsp, hrep, ho, hn, hri, hso⟩ := h
+  obtain ⟨hs, hreg, hrf, ha, hr, hsp, hrep, ho, hn, hri, hso, hnd⟩ := h
   have cm := contains_eq ps
   have nm : ∀ {x : String}, x ∉ ps → ps.contains x = false := fun hx => by rw [cm]; exact decide_eq_false hx
   have ym : ∀ {x : String}, x ∈ ps → ps.contains x = true := fun hx => by rw [cm]; exact decide_eq_true hx
@@ -174,6 +186,14 @@ theorem todayGate_complete (ps : List String) (h : TodayList ps) : todayGate ps 
     simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
     rw [ym (hr (List.contains_iff_mem.mp hc.1)).1] at hc
     cases hc.2
+  refine ite_ok_of ?_ ?_
+  · intro hc
+    simp only [Bool.and_eq_true] at hc
+    exact (hnd (List.contains_iff_mem.mp hc.2)).2.2 (List.contains_iff_mem.mp hc.1)
+  refine ite_ok_of ?_ ?_
+  · intro hc
+    simp only [Bool.and_eq_true] at hc
+    exact (hnd (List.contains_iff_mem.mp hc.2)).2.1 (List.contains_iff_mem.mp hc.1)
   split
   · rename_i p hp
     exfalso
@@ -239,10 +259,15 @@ theorem todayGate_complete (ps : List String) (h : TodayList ps) : todayGate ps 
     simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
     rw [ym (hri (List.contains_iff_mem.mp hc.1))] at hc
     cases hc.2
-  refine ite_ok_of ?_ rfl
+  refine ite_ok_of ?_ ?_
   · intro hc
     simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
     rw [ym (hso (List.contains_iff_mem.mp hc.1))] at hc
+    cases hc.2
+  refine ite_ok_of ?_ rfl
+  · intro hc
+    simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
+    rw [ym (hnd (List.contains_iff_mem.mp hc.1)).1] at hc
     cases hc.2
 
 theorem today_ok {ps : List String} {r : Route} (h : today ps = .ok r) :
@@ -264,7 +289,7 @@ theorem today_complete (ps : List String) (h : TodayList ps) : today ps = .ok (t
   rw [todayGate_complete ps h]
   rfl
 
-/-- The eight heads of `todayHead`, each with the memberships that select it. -/
+/-- The nine heads of `todayHead`, each with the memberships that select it. -/
 theorem todayHead_cases (l : List String) :
     (todayHead l = .risk ∧ "risk@0" ∈ l) ∨
     (todayHead l = .alternatives ∧ "risk@0" ∉ l ∧ "alternatives@0" ∈ l) ∨
@@ -274,10 +299,12 @@ theorem todayHead_cases (l : List String) :
       "rights@0" ∈ l) ∨
     (todayHead l = .soft ∧ "risk@0" ∉ l ∧ "alternatives@0" ∉ l ∧ "speech-acts@0" ∉ l ∧ "reports@0" ∉ l ∧
       "rights@0" ∉ l ∧ "soft-norms@0" ∈ l) ∨
+    (todayHead l = .normDefaults ∧ "risk@0" ∉ l ∧ "alternatives@0" ∉ l ∧ "speech-acts@0" ∉ l ∧
+      "reports@0" ∉ l ∧ "rights@0" ∉ l ∧ "soft-norms@0" ∉ l ∧ "norm-defaults@0" ∈ l) ∨
     (todayHead l = .norms ∧ "risk@0" ∉ l ∧ "alternatives@0" ∉ l ∧ "speech-acts@0" ∉ l ∧ "reports@0" ∉ l ∧
-      "rights@0" ∉ l ∧ "soft-norms@0" ∉ l ∧ "norms@0" ∈ l) ∨
+      "rights@0" ∉ l ∧ "soft-norms@0" ∉ l ∧ "norm-defaults@0" ∉ l ∧ "norms@0" ∈ l) ∨
     (todayHead l = .frozen ∧ "risk@0" ∉ l ∧ "alternatives@0" ∉ l ∧ "speech-acts@0" ∉ l ∧ "reports@0" ∉ l ∧
-      "rights@0" ∉ l ∧ "soft-norms@0" ∉ l ∧ "norms@0" ∉ l) := by
+      "rights@0" ∉ l ∧ "soft-norms@0" ∉ l ∧ "norm-defaults@0" ∉ l ∧ "norms@0" ∉ l) := by
   simp only [todayHead, contains_eq, decide_eq_true_eq]
   by_cases h1 : "risk@0" ∈ l
   · simp [h1]
@@ -291,13 +318,15 @@ theorem todayHead_cases (l : List String) :
   · simp [h1, h2, h3, h4, h5]
   by_cases h6 : "soft-norms@0" ∈ l
   · simp [h1, h2, h3, h4, h5, h6]
+  by_cases hd : "norm-defaults@0" ∈ l
+  · simp [h1, h2, h3, h4, h5, h6, hd]
   by_cases h7 : "norms@0" ∈ l
-  · simp [h1, h2, h3, h4, h5, h6, h7]
-  · simp [h1, h2, h3, h4, h5, h6, h7]
+  · simp [h1, h2, h3, h4, h5, h6, hd, h7]
+  · simp [h1, h2, h3, h4, h5, h6, hd, h7]
 
 theorem todayHead_not_wrapper (l : List String) :
     todayHead l ≠ .readings ∧ todayHead l ≠ .clauses ∧ todayHead l ≠ .discourse := by
-  rcases todayHead_cases l with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ <;>
+  rcases todayHead_cases l with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ <;>
     rw [h] <;> exact ⟨by decide, by decide, by decide⟩
 
 theorem known_registered (p : String) (h : VE.Route.Gate.known p = true) : registered.contains p = true := by
@@ -319,13 +348,14 @@ theorem todayGate_classify (ps : List String) (h : ∀ p ∈ ps, VE.Route.Gate.k
   have hP := nk "reports@0" rfl
   have hI := nk "rights@0" rfl
   have hF := nk "soft-norms@0" rfl
+  have hD := nk "norm-defaults@0" rfl
   have f1 : ps.find? (fun p => !registered.contains p) = none :=
     List.find?_eq_none.mpr (fun p hp => by rw [known_registered p (h p hp)]; decide)
   have f2 : ps.find? (fun p => !VE.Route.Gate.known p) = none :=
     List.find?_eq_none.mpr (fun p hp => by simp [h p hp])
   unfold todayGate VE.Route.Gate.classify
   rw [f1, f2]
-  simp only [hA, hR, hS, hP, hI, hF, Bool.false_and, Bool.and_false, Bool.false_eq_true, if_false]
+  simp only [hA, hR, hS, hP, hI, hF, hD, Bool.false_and, Bool.and_false, Bool.false_eq_true, if_false]
   have eb : VE.Route.Gate.base = "relational-fol@0" := rfl
   have e1 : VE.Route.Gate.unsupported "profiles must be sorted and unique" =
       unsupported "profiles must be sorted and unique" := rfl
@@ -357,27 +387,38 @@ theorem today_classify (ps : List String) (h : ∀ p ∈ ps, VE.Route.Gate.known
   rw [todayGate_classify ps h]
   cases VE.Route.Gate.classify ps <;> simp [Except.map]
 
-/-! ## What each of today's heads may rely on -/
-
 /-- What each of today's heads may rely on; these are the requirements of the heads' own Lean gates. -/
 theorem today_frozen (ps : List String) (h : today ps = .ok .frozen) :
-    ∀ p ∈ ["norms@0", "soft-norms@0", "rights@0", "reports@0", "speech-acts@0", "alternatives@0", "risk@0"],
-      p ∉ ps := by
+    ∀ p ∈ ["norms@0", "norm-defaults@0", "soft-norms@0", "rights@0", "reports@0", "speech-acts@0",
+      "alternatives@0", "risk@0"], p ∉ ps := by
   have he := (today_ok h).2
   intro p hp
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ <;>
     rw [e] at he <;> try cases he
-  obtain ⟨a1, a2, a3, a4, a5, a6, a7⟩ := h
-  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> assumption
+  obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8⟩ := h
+  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> assumption
 
 theorem today_norms (ps : List String) (h : today ps = .ok .norms) :
-    "norms@0" ∈ ps ∧ ∀ p ∈ ["soft-norms@0", "rights@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps := by
+    "norms@0" ∈ ps ∧
+      ∀ p ∈ ["norm-defaults@0", "soft-norms@0", "rights@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps := by
   have he := (today_ok h).2
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ <;>
+    rw [e] at he <;> try cases he
+  obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8⟩ := h
+  refine ⟨a8, fun p hp => ?_⟩
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;> assumption
+
+theorem today_normDefaults (ps : List String) (h : today ps = .ok .normDefaults) :
+    "norm-defaults@0" ∈ ps ∧ "norms@0" ∈ ps ∧
+      ∀ p ∈ ["soft-norms@0", "rights@0", "speech-acts@0", "alternatives@0", "risk@0"], p ∉ ps := by
+  have he := (today_ok h).2
+  have hl := todayGate_sound ps (today_ok h).1
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨a1, a2, a3, a4, a5, a6, a7⟩ := h
-  refine ⟨a7, fun p hp => ?_⟩
+  refine ⟨a7, (hl.2.2.2.2.2.2.2.2.2.2.2 a7).1, fun p hp => ?_⟩
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
   rcases hp with rfl | rfl | rfl | rfl | rfl <;> assumption
 
@@ -385,38 +426,39 @@ theorem today_soft (ps : List String) (h : today ps = .ok .soft) :
     "soft-norms@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "rights@0" ∉ ps := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨_, _, _, _, a5, a6⟩ := h
-  exact ⟨a6, hl.2.2.2.2.2.2.2.2.2.2 a6, a5⟩
+  exact ⟨a6, hl.2.2.2.2.2.2.2.2.2.2.1 a6, a5⟩
 
 theorem today_rights (ps : List String) (h : today ps = .ok .rights) :
     "rights@0" ∈ ps ∧ "soft-norms@0" ∈ ps ∧ "norms@0" ∈ ps := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨_, _, _, _, a5⟩ := h
   have hs := hl.2.2.2.2.2.2.2.2.2.1 a5
-  exact ⟨a5, hs, hl.2.2.2.2.2.2.2.2.2.2 hs⟩
+  exact ⟨a5, hs, hl.2.2.2.2.2.2.2.2.2.2.1 hs⟩
 
 theorem today_alternatives (ps : List String) (h : today ps = .ok .alternatives) :
-    "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps := by
+    "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps ∧ "norm-defaults@0" ∉ ps := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨a1, a2⟩ := h
-  exact ⟨a2, (hl.2.2.2.1 a2).1, (hl.2.2.2.1 a2).2, a1⟩
+  exact ⟨a2, (hl.2.2.2.1 a2).1, (hl.2.2.2.1 a2).2, a1,
+    fun hd => (hl.2.2.2.2.2.2.2.2.2.2.2 hd).2.1 a2⟩
 
 theorem today_risk (ps : List String) (h : today ps = .ok .risk) :
-    "risk@0" ∈ ps ∧ "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps := by
+    "risk@0" ∈ ps ∧ "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "norm-defaults@0" ∉ ps := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
-  rcases todayHead_cases ps with ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   have ha := (hl.2.2.2.2.1 h).1
-  exact ⟨h, ha, (hl.2.2.2.1 ha).1, (hl.2.2.2.1 ha).2⟩
+  exact ⟨h, ha, (hl.2.2.2.1 ha).1, (hl.2.2.2.1 ha).2, fun hd => (hl.2.2.2.2.2.2.2.2.2.2.2 hd).2.2 h⟩
 
 theorem forIn_yield_ok (l : List String) {f : String → PUnit → Except String (ForInStep PUnit)}
     (hf : ∀ p ∈ l, f p PUnit.unit = .ok (.yield PUnit.unit)) : forIn l PUnit.unit f = .ok PUnit.unit := by
@@ -430,7 +472,7 @@ theorem today_speech (ps : List String) (h : today ps = .ok .speechActs) :
     VE.SpeechActs.Wire.profileGate ps = .ok () := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨_, _, hsa⟩ := h
   obtain ⟨hn, hall⟩ := hl.2.2.2.2.2.1 hsa
@@ -451,7 +493,7 @@ theorem today_reports (ps : List String) (h : today ps = .ok .reports) :
     "reports@0" ∈ ps ∧ ∀ p ∈ ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"], p ∉ ps := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
-  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
+  rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨_, _, _, hr⟩ := h
   exact ⟨hr, hl.2.2.2.2.2.2.1 hr⟩
@@ -461,9 +503,9 @@ theorem today_reports (ps : List String) (h : today ps = .ok .reports) :
 def base (ps : List String) : List String := ps.filter (fun p => !wrapperProfiles.contains p)
 
 def sitsOn (w : String) (r : Route) : Bool :=
-  if w == "ve.discourse@1" then r == .frozen || r == .norms || r == .soft || r == .rights
+  if w == "ve.discourse@1" then r == .frozen || r == .norms || r == .normDefaults || r == .soft || r == .rights
   else if w == "right-clauses@0" then r == .rights
-  else if w == "readings@1" then r == .norms || r == .soft || r == .rights
+  else if w == "readings@1" then r == .norms || r == .normDefaults || r == .soft || r == .rights
   else false
 
 def wrapperHead (w : String) : Route :=
@@ -492,7 +534,7 @@ def dispatch (ps : List String) : Except String Route :=
       | none => .ok r
 
 def ChainList (ps : List String) : Prop :=
-  ps.Pairwise (· < ·) ∧ ∃ r, today (base ps) = .ok r ∧ (r = .norms ∨ r = .soft ∨ r = .rights) ∧
+  ps.Pairwise (· < ·) ∧ ∃ r, today (base ps) = .ok r ∧ (r = .norms ∨ r = .normDefaults ∨ r = .soft ∨ r = .rights) ∧
     ∀ w ∈ wrapperProfiles, w ∈ ps → sitsOn w r = true
 def stackHead (ps : List String) : Route :=
   match (wrapperProfiles.filter ps.contains).head? with
@@ -569,6 +611,12 @@ theorem dispatch_today (ps : List String) (h : ∀ w ∈ wrapperProfiles, w ∉ 
     rw [if_pos (by simpa using hs), if_pos (by simpa using hs)]
     rfl
 
+/-- D-unsorted: every list that is not strictly increasing gets the order error, whatever it contains. -/
+theorem dispatch_unsorted (ps : List String) (h : ¬ ps.Pairwise (· < ·)) :
+    dispatch ps = .error (unsupported "profiles must be sorted and unique") := by
+  unfold dispatch
+  rw [if_pos (by simpa using h)]
+
 theorem dispatch_chain (ps : List String) (h : ChainList ps) : dispatch ps = .ok (stackHead ps) := by
   obtain ⟨hs, r, hr, _, hsit⟩ := h
   exact (dispatch_ok_iff ps _).mpr ⟨hs, r, hr, hsit, rfl⟩
@@ -641,7 +689,7 @@ theorem refusal_names (ps : List String) (w : String) (r : Route) (hw : w ∈ ps
   have nr : "rights@0" ∉ wrapperProfiles := by decide
   have nn : "norms@0" ∉ wrapperProfiles := by decide
   rcases todayHead_cases (base ps) with ⟨e, h1⟩ | ⟨e, _, h1⟩ | ⟨e, _, _, h1⟩ | ⟨e, _, _, _, h1⟩ |
-      ⟨e, h⟩ | ⟨e, h⟩ | ⟨e, h⟩ | ⟨e, h⟩ <;> rw [e] at he <;> subst he
+      ⟨e, h⟩ | ⟨e, h⟩ | ⟨e, h⟩ | ⟨e, h⟩ | ⟨e, h⟩ <;> rw [e] at he <;> subst he
   · exact Or.inl ⟨"risk@0", (nw (by decide)).mp h1, rfl⟩
   · exact Or.inl ⟨"alternatives@0", (nw (by decide)).mp h1, rfl⟩
   · exact Or.inl ⟨"speech-acts@0", (nw (by decide)).mp h1, rfl⟩
@@ -661,8 +709,12 @@ theorem refusal_names (ps : List String) (w : String) (r : Route) (hw : w ∈ ps
     refine Or.inr ⟨"rights@0", fun hp => h5 ((nw nr).mpr hp), ?_⟩
     show unsupported (if _ then _ else _) = _
     rw [if_pos (by decide), String.append_assoc]; rfl
-  · obtain ⟨_, _, _, _, _, _, h7⟩ := h
-    refine Or.inr ⟨"norms@0", fun hp => h7 ((nw nn).mpr hp), ?_⟩
+  · obtain ⟨_, _, _, _, h5, _⟩ := h
+    refine Or.inr ⟨"rights@0", fun hp => h5 ((nw nr).mpr hp), ?_⟩
+    show unsupported (if _ then _ else _) = _
+    rw [if_pos (by decide), String.append_assoc]; rfl
+  · obtain ⟨_, _, _, _, _, _, _, h8⟩ := h
+    refine Or.inr ⟨"norms@0", fun hp => h8 ((nw nn).mpr hp), ?_⟩
     show unsupported (if _ then _ else _) = _
     rw [if_neg (by decide), String.append_assoc]; rfl
 
