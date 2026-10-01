@@ -1,0 +1,80 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient penicillin or give the patient nothing. Giving the patient penicillin cannot lead to an allergic reaction.
+
+According to the text, can an allergic reaction happen if the clinic gives the patient penicillin?
+(a) It can, but the clinic is not allowed to let it happen.
+(b) The text does not say.
+(c) Yes: some patients are allergic to penicillin.
+(d) No: in no case the text allows does giving penicillin lead to an allergic reaction.
+
+Text 2
+
+The actions available to the clinic are giving the patient a vaccine and giving the patient nothing. Giving the patient nothing might prevent a fever.
+
+What does the last sentence tell you?
+(a) In at least one case the text allows, giving the patient nothing avoids a fever, and giving the vaccine leads to a fever in every case the text allows.
+(b) The text does not say.
+(c) If the clinic gives the patient nothing, a fever happens in no case the text allows.
+(d) Giving the vaccine avoids a fever in at least one case the text allows.
+
+Text 3
+
+An agent can run the job or do nothing. Running the job might not lead to a server outage.
+
+What does the second sentence tell you?
+(a) If the agent runs the job, a server outage happens in no case the text allows.
+(b) A server outage is unlikely if the agent runs the job.
+(c) The text does not say.
+(d) In at least one case the text allows, the agent runs the job and no server outage happens.
+
+Text 4
+
+The actions available to the robot are taking the lift and taking the stairs. Taking the lift allows a dropped parcel to happen.
+
+What can you conclude about taking the stairs?
+(a) In no case the text allows does taking the stairs lead to a dropped parcel.
+(b) Taking the stairs leads to a dropped parcel in every case the text allows.
+(c) In at least one case the text allows, the robot takes the stairs and no parcel is dropped.
+(d) The text does not say.
+
+Text 5
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. A fall is avoidable by the robot.
+
+What can you conclude about taking the ramp?
+(a) The text does not say.
+(b) In at least one case the text allows, the robot takes the ramp and no fall happens.
+(c) Taking the ramp leads to a fall in every case the text allows.
+(d) In no case the text allows does taking the ramp lead to a fall.
+
+Text 6
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) Data loss is more likely than not.
+(b) The text does not say.
+(c) No data loss happens: reading a file does not change it.
+(d) Data loss is not ruled out.
+
+Text 7
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) A server outage happens.
+(b) The text does not say.
+(c) No server outage happens.
+
+Text 8
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) A fall usually happens, but not in every case.
+(b) The text does not say.
+(c) A fall happens in every case the text allows.
+(d) No fall happens: a robot is safe inside a lift.

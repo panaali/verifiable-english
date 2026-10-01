@@ -2,6 +2,7 @@
 .venv/
 __pycache__/
 .pytest_cache/
+gate-result.json
 .hypothesis/
 .review/
 *.egg-info/

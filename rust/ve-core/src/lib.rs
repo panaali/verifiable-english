@@ -2,29 +2,37 @@
 //! Experimental VE v0 and closure@0 core. Checked values have private fields; raw indexed
 //! syntax becomes a claim only through `Document::check` or `parse`.
 mod ast;
+mod discourse;
 mod environment;
 mod eval;
 mod model;
 mod order;
 mod route;
+mod risk;
 mod search;
 mod surface;
+mod units;
 mod wire;
 
 pub use ast::{Document, Edge, Formula, ReachKind, Term};
+pub use discourse::{ELABORATED_DOCUMENT, elaborated_document_case};
 pub use environment::Environment;
 #[cfg(feature = "bench-internals")]
 #[doc(hidden)]
 pub use eval::EvaluationKernel;
-pub use eval::{Evaluation, evaluate, evaluate_formula};
+pub use eval::{Evaluation, TracedEvaluation, evaluate, evaluate_formula, evaluate_traced};
 pub use model::FiniteModel;
 pub use order::order_case;
 pub use route::{check_label, check_reading_binding, dependency_order, label_is_canonical};
+pub use risk::{Range as RiskRange, evaluate_risk_condition, regenerate_risk_cells};
 pub use search::{
-    CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult, find_countermodel,
+    CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult,
+    find_countermodel, find_countermodel_min, find_countermodel_with_nonvacuity,
+    find_distinguishing_model, find_distinguishing_model_with_nonvacuity,
 };
 use serde::Serialize;
 pub use surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};
+pub use units::quantity_case;
 pub use wire::{canonical_json, digest, loads_json};
 
 pub const MAX_PACKAGE_BYTES: usize = 16 * 1024 * 1024;

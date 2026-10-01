@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 use serde_json::{Value, json};
+use num_bigint::BigInt;
+use std::collections::BTreeMap;
 use std::io::{self, BufRead, Read, Write};
 use ve_core::*;
 
@@ -34,8 +36,34 @@ fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
         }),
     }
 }
+fn nonvacuity(env: &Environment, v: &Value) -> Result<(Option<Formula>, bool)> {
+    let semantic = match v.get("semantic_nonvacuity") {
+        None => false,
+        Some(value) => value.as_bool().ok_or_else(||
+            Error::new("InvalidInput", "semantic_nonvacuity must be Boolean"))?,
+    };
+    let guard = match v.get("nonvacuous_for") {
+        None => None,
+        Some(value) => Some(Document::from_value(env, &json!([value]))?.formulas()[0].clone()),
+    };
+    if semantic && guard.is_none() {
+        return Err(Error::new("InvalidInput", "semantic_nonvacuity requires nonvacuous_for"));
+    }
+    Ok((guard, semantic))
+}
 /// The route kinds that need only a gated envelope: the label grammar and the
 /// dependency-DAG order (same diagnostics as Python and the Lean `route`).
+/// The case's `soft_premises` (a validated soft document's Background slot),
+/// typed over the environment and attached to it.
+fn soft(env: Environment, v: &Value) -> Result<Environment> {
+    match v.get("soft_premises") {
+        None => Ok(env),
+        Some(asts) => {
+            let premises = Document::from_value(&env, asts)?.formulas().to_vec();
+            Ok(env.with_soft_premises(premises))
+        }
+    }
+}
 fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Environment::from_value(field(v, "environment")?)?;
     let id = v.get("id").cloned().unwrap_or(json!(""));
@@ -67,8 +95,115 @@ fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
 }
 fn case(v: &Value) -> Result<Value> {
+    if v.get("kind") == Some(&json!("risk-condition"))
+        || v.get("kind") == Some(&json!("risk-cells")) {
+        let id = v.get("id").cloned().unwrap_or(json!(""));
+        let entries = field(v, "ranges")?.as_object()
+            .ok_or_else(|| Error::new("InvalidInput", "risk ranges"))?;
+        let mut ranges = BTreeMap::new();
+        for (name, row) in entries {
+            let tag = field(row, "tag")?.as_str()
+                .ok_or_else(|| Error::new("InvalidInput", "risk range tag"))?;
+            let parse = |key| -> Result<BigInt> {
+                field(row, key)?.as_str().ok_or_else(|| Error::new("InvalidInput", "risk range endpoint"))?
+                    .parse().map_err(|_| Error::new("InvalidInput", "risk range endpoint"))
+            };
+            ranges.insert(name.clone(), RiskRange { tag: tag.into(), lo: parse("lo")?, hi: parse("hi")? });
+        }
+        let mut scales = BTreeMap::new();
+        for (tag, value) in field(v, "scales")?.as_object()
+            .ok_or_else(|| Error::new("InvalidInput", "risk scales"))? {
+            let scale = value.as_str().ok_or_else(|| Error::new("InvalidInput", "risk scale"))?
+                .parse().map_err(|_| Error::new("InvalidInput", "risk scale"))?;
+            scales.insert(tag.clone(), scale);
+        }
+        if v.get("kind") == Some(&json!("risk-cells")) {
+            let rows = regenerate_risk_cells(field(v, "record")?, &ranges, &scales)?;
+            return Ok(json!({"id":id,"status":"ok","tables":rows}));
+        }
+        let (possible, certain) = evaluate_risk_condition(field(v, "condition")?, &ranges, &scales)?;
+        return Ok(json!({"id":id,"status":"ok","possible":possible,"certain":certain}));
+    }
+    if v.get("kind") == Some(&json!("quantity")) {
+        return quantity_case(v);
+    }
+    // A reports case names its profile; any other elaborated document is a discourse case
+    // (docs/spec/discourse.md 11), checked below by `elaborated_document_case`.
+    if v.get("family") == Some(&json!("elaborated-document")) && v.get("profile") == Some(&json!("reports@0")) {
+        if v.get("untrusted") != Some(&json!(true))
+            || v.get("envelope").is_none()
+            || v.get("conclusion").is_none() {
+            return Err(Error::new("InvalidInput", "reports search needs an untrusted elaboration, envelope and conclusion"));
+        }
+        let mut plain = v.clone();
+        let object = plain.as_object_mut().ok_or_else(|| Error::new("InvalidInput", "reports search object"))?;
+        for key in ["family", "profile", "untrusted", "envelope"] { object.remove(key); }
+        let mut result = case(&plain)?;
+        result["untrusted"] = json!(true);
+        result["envelope"] = v["envelope"].clone();
+        return Ok(result);
+    }
     if let Some(kind @ ("label" | "dependency-order")) = v.get("kind").and_then(Value::as_str) {
         return route_case(v, kind);
+    }
+    if v.get("family").is_some() {
+        return elaborated_document_case(v);
+    }
+    if v.get("kind").and_then(Value::as_str) == Some("check") {
+        let env = Environment::from_value(field(v, "environment")?)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let ast = field(v, "ast")?;
+        let items = ast.as_array().ok_or_else(|| Error::new("SyntaxError", "AST must be an array"))?;
+        let document = if items.first().is_some_and(Value::is_string) {
+            json!([ast])
+        } else {
+            ast.clone()
+        };
+        Document::from_value(&env, &document)?;
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":"ok","well_typed":true}));
+    }
+    if v.get("kind").and_then(Value::as_str) == Some("evaluate-budgeted") {
+        let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let doc = Document::from_value(&env, field(v, "ast")?)?;
+        let model = FiniteModel::from_value(&env, field(v, "model")?)?;
+        let budget = number(v, "max_evaluations", MAX_EVALUATIONS)?;
+        let trace = v.get("trace").and_then(Value::as_bool).unwrap_or(false);
+        let mut out = if trace {
+            let trace_budget = number(v, "max_trace_nodes", 10_000)?;
+            serde_json::to_value(evaluate_traced(&doc, &model, budget, trace_budget)?).unwrap()
+        } else {
+            serde_json::to_value(evaluate(&doc, &model, budget)?).unwrap()
+        };
+        out["id"] = v.get("id").cloned().unwrap_or(json!(""));
+        return Ok(out);
+    }
+    if v.get("kind").and_then(Value::as_str) == Some("distinguishing-model") {
+        let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let doc = Document::from_value(&env, &json!([field(v, "a")?, field(v, "b")?]))?;
+        let bounds = SearchBounds {
+            max_domain_size: usize::try_from(number(v, "max_domain_size", 2)?)
+                .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?,
+            max_models: number(v, "max_models", 10_000)?,
+            max_evaluations: number(v, "max_evaluations", MAX_EVALUATIONS)?,
+        };
+        let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+            .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
+        let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
+        let (guard, semantic) = nonvacuity(&env, v)?;
+        let mut out = find_distinguishing_model_with_nonvacuity(&env, doc.formulas()[0].clone(),
+            doc.formulas()[1].clone(), bounds, minimum.max(usize::from(nonempty)),
+            guard.as_ref(), semantic)?.to_value();
+        out["id"] = v.get("id").cloned().unwrap_or(json!(""));
+        return Ok(out);
     }
     if v.get("environment")
         .and_then(|e| e.get("profiles"))
@@ -77,7 +212,7 @@ fn case(v: &Value) -> Result<Value> {
     {
         return order_case(v);
     }
-    let env = Environment::from_value(field(v, "environment")?)?;
+    let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
     if let Some(conclusion) = v.get("conclusion") {
         let ps = field(v, "premises")?
             .as_array()
@@ -101,7 +236,12 @@ fn case(v: &Value) -> Result<Value> {
             max_models: number(v, "max_models", 10_000)?,
             max_evaluations: maximum,
         };
-        let mut out = find_countermodel(&env, &problem, bounds)?.to_value();
+        let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+            .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
+        let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
+        let (guard, semantic) = nonvacuity(&env, v)?;
+        let mut out = find_countermodel_with_nonvacuity(&env, &problem, bounds,
+            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic)?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
@@ -149,6 +289,61 @@ fn case(v: &Value) -> Result<Value> {
         out["model_id"] = json!(model.model_id());
     }
     Ok(out)
+}
+
+#[cfg(test)]
+mod reports_tests {
+    use super::*;
+
+    #[test]
+    fn untrusted_reports_search_keeps_envelope_and_finds_nonfactive_witness() {
+        let env = json!({
+            "language":"ve.core@0.2",
+            "profiles":["documents@1","relational-fol@0","reports@0"],
+            "spec_revision":"ve-v0.2-expand2-2026-09-25",
+            "vocabulary":{
+                "reports":{"holders":["person","text"],"evidence":"evidence"},
+                "sorts":{"person":{"description":"person"},"text":{"description":"text"},
+                         "evidence":{"description":"evidence"}},
+                "predicates":{"safe":{"arguments":["person"],"description":"safe"},
+                              "reports__says__1":{"arguments":["text"],"description":"report"}},
+                "constants":{"article":{"sort":"text","description":"article"},
+                             "alice":{"sort":"person","description":"Alice"}}
+            }
+        });
+        let input = json!({"family":"elaborated-document","profile":"reports@0",
+                           "untrusted":true,"envelope":{"document_id":"bound"},
+                           "environment":env,
+                           "premises":[["unary","reports__says__1",["const","article"]]],
+                           "conclusion":["unary","safe",["const","alice"]]});
+        let result = case(&input).unwrap();
+        assert_eq!(result["status"], "Found");
+        assert_eq!(result["untrusted"], true);
+        assert_eq!(result["envelope"], input["envelope"]);
+        assert_eq!(result["model"]["relations"]["safe"], json!([]));
+        let mut unmarked = input.clone();
+        unmarked["untrusted"] = json!(false);
+        assert!(case(&unmarked).is_err());
+    }
+
+    #[test]
+    fn reports_holder_verbalisation_reserved_in_any_ascii_case() {
+        for (words, reserved) in [("the stated assessment", true), ("The Stated Assessment", true),
+                                  ("the stated assessments", false)] {
+            let env = json!({
+                "language":"ve.core@0.2",
+                "profiles":["relational-fol@0","reports@0"],
+                "spec_revision":"ve-v0.2-expand2-2026-09-25",
+                "vocabulary":{
+                    "reports":{"holders":["text"],"evidence":"evidence"},
+                    "sorts":{"text":{"description":"text"},"evidence":{"description":"evidence"}},
+                    "predicates":{},
+                    "constants":{"article":{"sort":"text","description":"article","verbalisation":words}}
+                }
+            });
+            assert_eq!(ve_core::Environment::from_value(&env).is_err(), reserved, "{words}");
+        }
+    }
 }
 fn case_record(v: &Value) -> Value {
     match case(v) {

@@ -1,0 +1,84 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration leads to a task delay exactly when the duration of the migration is greater than 30 minutes.
+
+Which of these follows from the text?
+(a) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes, and in no other case.
+(b) If the agent applies the migration, a task delay can happen only when the migration takes more than 30 minutes, but need not happen then.
+(c) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes; the text does not say what happens when it takes 30 minutes or less.
+(d) The text does not say.
+
+Text 2
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit might prevent task abandonment.
+
+What does the last sentence tell you?
+(a) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(b) The text does not say.
+(c) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(d) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+
+Text 3
+
+A delivery robot can take the stairs or take the lift. The weight of the parcel is at least 2 kilograms. The weight of the parcel is at most 30 kilograms. Taking the stairs leads to a dropped parcel if the weight of the parcel is greater than 25 kilograms. Taking the stairs might not lead to a dropped parcel.
+
+According to the text, is a dropped parcel ruled out if the robot takes the stairs?
+(a) The text does not say.
+(b) No: taking the stairs leads to a dropped parcel in every case the text allows.
+(c) Yes: in no case the text allows does taking the stairs lead to a dropped parcel.
+(d) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.
+
+Text 4
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+(b) The text does not say.
+(c) Deleting the production database leads to data loss in every case the text allows.
+(d) In no case the text allows does deleting the production database lead to data loss.
+
+Text 5
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. Running the job allows a server outage to happen.
+
+What does the last sentence tell you?
+(a) The agent is permitted to let a server outage happen by running the job.
+(b) The text does not say.
+(c) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in every case the text allows.
+(d) Running the job leads to a server outage in every case the text allows, and at least one other action available to the agent avoids a server outage in at least one case the text allows.
+
+Text 6
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) The text does not say.
+(b) A fall usually happens, but not in every case.
+(c) No fall happens: a robot is safe inside a lift.
+(d) A fall happens in every case the text allows.
+
+Text 7
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to a server outage, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+According to the text, if the agent empties the cache, can data loss happen?
+(a) It can, unless the user has confirmed emptying the cache.
+(b) The text does not say.
+(c) No: the text rules out data loss when the agent empties the cache.
+(d) It can, but the policy forbids the agent to let it happen.
+
+Text 8
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) No data loss happens: reading a file does not change it.
+(b) Data loss is more likely than not.
+(c) The text does not say.
+(d) Data loss is not ruled out.

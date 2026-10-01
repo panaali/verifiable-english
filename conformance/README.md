@@ -102,7 +102,9 @@ path or stdin. Exit 0 means every case was evaluated, 1 means a case was
 rejected, and 2 means malformed restricted JSON or incorrect invocation.
 Logical false is a successful result. Rejections have `{id, status: "error",
 error: string}`. `expected` and `expected_refutes` are never read by Lean.
-With no `lake`, Python golden checks run but Lean checks are explicitly skipped.
+With no `lake`, standalone pytest skips Lean checks. The full verification
+entry point is `python3 tools/gate.py`, which requires Lean and fails on any
+unlisted skip. Its checked-in optional policy is `tools/gate-optional.json`.
 
 The bridge validates vocabulary declarations, typed ASTs and model inventories.
 Successful model decoding is now proved to imply semantic admissibility.
@@ -148,9 +150,10 @@ python conformance/generate.py
 UV_CACHE_DIR=/private/tmp/ve-uv-cache uv run --frozen python -m pytest tests/test_rust_conformance.py -q
 ```
 
-The Python test builds Rust when `cargo` is available, otherwise skips its Rust
-checks. It similarly skips Lean checks when `lake` is absent. Available tools
-that fail to build cause test failures, not skips. It checks every fixture file
+Standalone Python tests build Rust when `cargo` is available, otherwise skip
+its Rust checks. They similarly skip Lean checks when `lake` is absent. The
+full gate builds each backend once, runs native `cargo test`, reuses those
+artifacts, and fails if either required backend is missing. It checks every fixture file
 above, including the new countermodels; the original Python/Lean test remains
 unchanged. CLI regressions check that an oversized JSONL record produces one
 error and later records still run, and that empty premises files are rejected.
@@ -320,6 +323,29 @@ countermodels (checked by Lean's proved `checkCountermodel` gate) and random
 evaluations. The report is `order-report.json`; `tests/test_order.py` reruns the
 corpus. Rust evaluates checked order ASTs and supplied models via its separate
 order route.
+
+## Alternatives route fixtures
+
+`alternatives.py` generates the a, b, b′(A, A5), c, d, e, f, g, h, j, l5, o, t and u scenario shapes from
+`docs/spec/alternatives.md` §8. `tests/test_alternatives_three_way.py` asks the
+Lean alternatives route to validate each scenario and generate its closed
+followability formula plus existential probes for all four profile words.
+Python and Rust then evaluate those Lean-generated formulas against the same
+base model and compare with Lean's scenario report. The Rust route receives a
+plain base environment and never elaborates alternatives or supplies a
+profile-word table. The s2, b′(A⁻) and b′(A⁻5) cases separately check Lean's
+CONFLICT witnesses against independent evaluation of the regenerated targets.
+The p1, p2 and p6 cases check that signed rows reject an unstated cell,
+`complete_by` accepts the missing negative cell only under its document-bound
+premise, and a new positive row outside the document cells is rejected. For
+p2, Python and Rust also evaluate Lean's followability, avoidability and
+allows formulas on the accepted model.
+The same test module binds Python prover certificates to the complete
+alternatives source, replays CONFLICT-FREE and the b-A₁, b-B and j DILEMMA
+witnesses in Lean, and replays a rule-free FOLLOWABLE certificate. A changed
+block decider invalidates the conflict packages. Fixture h3 checks that an
+unsupported proximate-cause claim fails Lean model validation and that Python
+and Rust both evaluate the generated proximate premise as false.
 
 ## P0 route fixtures
 

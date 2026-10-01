@@ -1,0 +1,37 @@
+{
+ "accounted_bytes": 5448,
+ "bytes_by_kind": {
+  "asserted": 320,
+  "attributed": 263,
+  "exposition": 1788,
+  "meta": 2789,
+  "unformalised": 288
+ },
+ "bytes_by_status": {
+  "CHECKED": 507,
+  "OPEN": 76,
+  "UNFORMALISED": 4865
+ },
+ "coverage_percent": 100,
+ "document": "news-w6a.ve.md",
+ "residual": {
+  "assumptions": 0,
+  "bridge_leaves": 6,
+  "open_terms": 1,
+  "unresolved_reading_sets": 1
+ },
+ "residual_total": 8,
+ "source_bytes": 5448,
+ "unformalised_reasons": {
+  "count_exceeds_bound": 1,
+  "duplicate_of_paraphrase": 1,
+  "figurative_or_vague": 1,
+  "missing_old_range": 1,
+  "missing_previous_expectation": 1,
+  "provenance_metadata": 1,
+  "relational_route_claims_ve": 5,
+  "vague_degree": 1,
+  "vague_pledge_manner": 1,
+  "vague_timelier": 1
+ }
+}

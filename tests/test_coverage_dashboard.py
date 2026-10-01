@@ -14,6 +14,8 @@ spec.loader.exec_module(dashboard)
 def test_baseline_is_tied_to_existing_audits():
     table = dashboard.baseline()
     assert "| news-article | 1 | 11 | 3 | 11 | 26 |" in table
+    assert "| news-article (W6a, 2026-09-28) | 6 | 4 | 5 | 12 | 27 |" in table
+    assert "| news-article | 5448 | 5448 | 8 |" in table
     assert "17/19" in table
     assert "Art. I §7 has no audited pilot yet" in table
 
@@ -23,6 +25,8 @@ def test_pilot_partition_must_be_complete(tmp_path):
         target = tmp_path / "usecases" / name
         target.mkdir(parents=True)
         (target / "coverage.md").write_text((ROOT / "usecases" / name / "coverage.md").read_text())
+    for name, (file, _, _) in dashboard.REFRESHED.items():
+        (tmp_path / "usecases" / name / file).write_text((ROOT / "usecases" / name / file).read_text())
     debate = tmp_path / "usecases/birthright-citizenship-debate"
     debate.mkdir()
     (debate / "coverage.md").write_text((ROOT / "usecases/birthright-citizenship-debate/coverage.md").read_text())

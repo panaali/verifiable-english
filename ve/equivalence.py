@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Formula, Implies, Not, Or, Top, Unary, Var, Reach, Body, check_formula)
 from .entailment import check_entailment_certificate, prove_entailment
@@ -172,6 +173,7 @@ def _direction(env, a, b, budgets):
                            attempts=tuple(attempts))
 
 
+@semantic_entry("compare")
 def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) -> ComparisonResult:
     """Compare closed formulas in all VE structures, including allowed empty sorts.
 
@@ -181,6 +183,19 @@ def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) 
     raise; exhausted valid searches return UNKNOWN, with a reason.
     """
     budgets = _budgets(budgets)
+    from .backends.dispatch import composed, execute
+
+    def run():
+        return _compare(env, a, b, budgets)
+
+    payload = {"environment_id": getattr(env, "environment_id", None), **asdict(budgets)}
+    return execute("compare", payload, run, lean=composed("lean", run),
+                   rust=composed("rust-experimental", run))
+
+
+def _compare(env, a, b, budgets) -> ComparisonResult:
+    """Python's two-clause rule over checked constituents (trusted, narrowed:
+    SEMANTICS-MIGRATION-PLAN.md section 1.2)."""
     check_formula(env, a)
     check_formula(env, b)
     forward, reverse = _direction(env, a, b, budgets), _direction(env, b, a, budgets)
@@ -356,6 +371,7 @@ class ReferenceValidation:
                 "certificates": self.certificates, "attempts": list(self.attempts)}
 
 
+@semantic_entry("reference.validate")
 def validate_reference(env, f: Formula, budgets=None) -> ReferenceValidation:
     """Require a checked non-vacuous satisfying model and a falsifying model.
 

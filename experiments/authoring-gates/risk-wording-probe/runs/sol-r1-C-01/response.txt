@@ -1,0 +1,7 @@
+1. **(a)** A delay after applying the migration is possible only if it lasted more than 30 minutes.
+2. **(d)** Taking the lift with a 4-kilogram parcel meets the stated condition for failure.
+3. **(d)** Drug B cannot lead to nausea, while nausea is possible with drug A.
+4. **(c)** The text says nothing about what happens when the agent does nothing.
+5. **(b)** Data loss is avoidable, and doing nothing causes it, so deleting the database must avoid it in at least one allowed case.
+6. **(c)** The text says taking the lift certainly leads to a fall.
+7. **(c)** “Might lead to dizziness” means dizziness is possible with the full dose.

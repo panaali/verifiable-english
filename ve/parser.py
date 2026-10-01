@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import re
 from typing import Any
 
+from .assurance import semantic_entry
 from . import ast
 from .errors import (ResourceLimit, ShadowedVariable, Span, SyntaxError, VEError,
                      UnboundVariable, UnknownSymbol)
@@ -37,6 +38,9 @@ class _Parser:
         self.spans: list[Span] = []
         self.names: list[str | None] = []
         self.nodes = 0
+        # Whether a definitions@0 sugar production was read (`no`, `every ...
+        # that is`, `iff`, `define`); no Lean surface parser has them.
+        self.sugar = False
 
     def span(self, start: int, end: int | None = None) -> Span:
         end = self.i if end is None else end
@@ -191,6 +195,7 @@ class _Parser:
             right = self.formula(depth + 1); self.literal(")")
             return self.node(start, ast.Implies(left, right))
         if definitions and self.s.startswith("no ", self.i):
+            self.sugar = True
             self.i += 3
             sort, pos = self.identifier("sort identifier")
             if sort not in self.env.sorts:
@@ -203,6 +208,7 @@ class _Parser:
             return self.node(start, ast.Forall(sort, ast.Not(ast.Unary(predicate, ast.Var(0)))))
         if definitions and self.s.startswith("every ", self.i):
             from .environment import RESERVED
+            self.sugar = True
             self.i += 6
             sort, pos = self.identifier("sort identifier")
             if sort not in self.env.sorts:
@@ -261,6 +267,7 @@ class _Parser:
             elif self.s.startswith(") or (", self.i):
                 self.i += 6; constructor = ast.Or
             elif definitions and self.s.startswith(") iff (", self.i):
+                self.sugar = True
                 self.i += 7; constructor = None
             else:
                 self.error("expected ') and (' or ') or ('")
@@ -316,6 +323,7 @@ class _Parser:
             if "definitions@0" in self.env.profiles and self.s.startswith("define ", self.i):
                 from .environment import RESERVED
                 from .definitions import Definition, premise
+                self.sugar = True
                 self.i += 7
                 predicate, pos = self.identifier("defined predicate")
                 if predicate not in self.env.definition_entries:
@@ -346,7 +354,73 @@ class _Parser:
         return ast.Document(tuple(formulas))
 
 
+def _lean_parse_scope(env: Any) -> bool:
+    """Whether Lean's `parse` mode takes sources over `env`: the frozen v0 and
+    v0.1 envelopes, and ve.core@0.2 without statement layers."""
+    from .profiles import STATEMENT_LAYERS
+    if getattr(env, "language", None) in ("ve.core@0", "ve.core@0.1"):
+        return True
+    return (getattr(env, "language", None) == "ve.core@0.2"
+            and env.unit_schema is None
+            and env.alternatives is None and not STATEMENT_LAYERS & set(env.profiles))
+
+
+@semantic_entry("parse")
 def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
+    """Parse and type a source under the selected authority.
+
+    Under a backend authority Lean's surface parser for the envelope's family
+    decides acceptance; the Python parser reads the document and its source
+    metadata, names a rejection both make, and its document must be Lean's
+    (the same AST and, where Lean prints, the same canonical text).
+    """
+    from .backends.dispatch import authority_for, execute
+
+    def python():
+        return _parse_python(env, source)
+
+    if authority_for("parse") in ("python", "rust-experimental") or not _lean_parse_scope(env):
+        return python()
+    return execute("parse", {"kind": "parse"}, python, lean=lambda: _parse_lean(env, source, python))
+
+
+def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:
+    from .backends.lean_runner import run
+    from .backends.validation import decided, key
+    if "definitions@0" in env.profiles:
+        # The definitions@0 surface sugar (`no`, `every ... that is`, `iff`,
+        # `define`) is in no Lean surface parser: a source the Python reader
+        # accepts through it keeps Python's reading (a recorded scope gap).
+        # Every other source over the environment is Lean's to accept.
+        try:
+            result, sugar = _parse_python_marked(env, source)
+        except VEError:
+            sugar = False
+        if sugar:
+            return result
+    try:
+        text = source if isinstance(source, str) else source.decode("ascii")
+        cache = key("parse", env.environment_id, text)
+    except (UnicodeError, VEError, TypeError, ValueError, AttributeError):
+        text, cache = None, None
+
+    def same(result: ParseResult, row: dict) -> bool:
+        from .printer import print_document
+        if row.get("ast") != [ast._to_data(f) for f in result.document.formulas]:
+            return False
+        return "canonical" not in row or row["canonical"] == print_document(env, result.document)
+
+    return decided(python, cache,
+                   lambda: run("parse", [{"id": "parse", "environment": env.to_dict(), "source": text}])[0],
+                   same, "a source")
+
+
+def _parse_python(env: Any, source: str | bytes) -> ParseResult:
+    return _parse_python_marked(env, source)[0]
+
+
+def _parse_python_marked(env: Any, source: str | bytes) -> tuple[ParseResult, bool]:
+    """The Python reading, and whether it read a definitions@0 sugar production."""
     if isinstance(source, bytes):
         if len(source) > MAX_SOURCE_BYTES:
             raise ResourceLimit(f"source exceeds {MAX_SOURCE_BYTES} bytes")
@@ -376,18 +450,22 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
         if exc.span is None:
             exc.span = Span(0, len(source), 1, 1)
         raise
-    return ParseResult(document, SourceMetadata(source, tuple(parser.spans), tuple(parser.names)))
+    return (ParseResult(document, SourceMetadata(source, tuple(parser.spans), tuple(parser.names))),
+            parser.sugar)
 
 
+@semantic_entry("parse")
 def parse(env: Any, source: str | bytes) -> ast.Document:
     return parse_with_metadata(env, source).document
 
 
+@semantic_entry("parse")
 def canonicalize(env: Any, source: str | bytes) -> str:
     from .printer import print_document
     return print_document(env, parse(env, source))
 
 
+@semantic_entry("parse")
 def is_canonical(env: Any, source: str | bytes) -> bool:
     try:
         text = source.decode("ascii") if isinstance(source, bytes) else source

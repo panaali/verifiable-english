@@ -1,0 +1,73 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 28 kilograms. Taking the lift might lead to a lift failure.
+
+According to the text, how likely is a lift failure if the robot takes the lift?
+(a) It happens in every case the text allows.
+(b) It cannot happen.
+(c) The text does not say.
+(d) More likely than not.
+
+Text 2
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or run the job with a memory limit. Running the job with a memory limit has a less severe worst case than running the job.
+
+What does the last sentence tell you?
+(a) Running the job with a memory limit is less likely to cause harm than running the job.
+(b) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.
+(c) The text does not say.
+(d) Running the job with a memory limit leads to fewer harms than running the job.
+
+Text 3
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit might prevent task abandonment.
+
+What does the last sentence tell you?
+(a) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(b) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(c) The text does not say.
+(d) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+
+Text 4
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure exactly when the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) No lift failure happens: a lift easily carries 4 kilograms.
+(b) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+(c) The text does not say.
+(d) A lift failure happens.
+
+Text 5
+
+An agent can run the job with a memory limit or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job with a memory limit leads to a job failure if the peak memory of the job is greater than 4 gigabytes.
+
+The agent runs the job with a memory limit, and a job failure happens. According to the text, was the peak memory of the job greater than 4 gigabytes?
+(a) Yes: a job failure needs a peak memory greater than 4 gigabytes.
+(b) No: a job failure needs a peak memory of at most 4 gigabytes.
+(c) The text does not say.
+
+Text 6
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) If the robot takes the lift, no lift failure happens in any case the text allows.
+(b) The text does not say.
+(c) A lift failure is unlikely if the robot takes the lift.
+(d) The robot is not allowed to cause a lift failure.
+
+Text 7
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.
+(b) Yes: crossing between parked cars is dangerous.
+(c) The text does not say.
+(d) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.

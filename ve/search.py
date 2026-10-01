@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from itertools import combinations, product
+from contextlib import contextmanager
+from contextvars import ContextVar
+from itertools import combinations, product, tee
 import math
 from typing import Any, Iterator, Sequence
 
+from .assurance import semantic_entry
 from .ast import (Reach, Named, Body, And, Atom, Binary, Eq, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
 from .evaluate import (_Evaluator, _Exhausted, _evaluate_validated,
@@ -20,7 +23,61 @@ class _SearchSpaceLimit(Exception):
     pass
 
 
+_model_pool = ContextVar("ve_model_pool", default=None)
+
+
+@dataclass(frozen=True, slots=True)
+class _TerminalModelError:
+    error: Exception
+
+
+def _models_with_terminal_error(models):
+    # tee buffers values but treats a source exception as exhaustion. Make the
+    # failure a buffered value so every reader reaches the same terminal state.
+    try:
+        yield from models
+    except Exception as exc:
+        yield _TerminalModelError(exc)
+
+
+def _read_shared_models(reader):
+    for item in reader:
+        if isinstance(item, _TerminalModelError):
+            raise item.error
+        yield item
+
+
+@contextmanager
+def model_search_scope():
+    """Share an ordered model stream among queries in one document check."""
+    token = _model_pool.set({})
+    try:
+        yield
+    finally:
+        _model_pool.reset(token)
+
+
+def _query_models(env, minimum, maximum, used, formulas, *, defer_model_id):
+    pool = _model_pool.get()
+    if pool is None:
+        return _models(env, minimum, maximum, used, formulas,
+                       _defer_model_id=defer_model_id)
+    # The formula key matters for order@0, whose candidate integer cells are
+    # derived from the query. AST nodes are immutable value objects.
+    key = (env.environment_id, minimum, maximum, used,
+           formulas if getattr(env, "order", False) else (), defer_model_id)
+    if key not in pool:
+        pool[key] = _models_with_terminal_error(
+            _models(env, minimum, maximum, used, formulas,
+                    _defer_model_id=defer_model_id))
+    pool[key], reader = tee(pool[key])
+    return _read_shared_models(reader)
+
+
 def _node_count(root: Any) -> int:
+    """Formula and term nodes as the type checker counts them: a Reach body
+    edge's formula counts, the edge wrapper itself does not (Lean
+    `formulaNodes`, Rust's shared checker)."""
     total, stack = 0, [root]
     while stack:
         node = stack.pop(); total += 1
@@ -29,6 +86,9 @@ def _node_count(root: Any) -> int:
             child = getattr(node, field, None)
             if child is not None: stack.append(child)
         stack.extend(getattr(node, "terms", ()))
+        edge = getattr(node, "edge", None)
+        if type(edge) is Body:
+            stack.append(edge.formula)
     return total
 
 
@@ -106,6 +166,7 @@ def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any,
     return valid, tuple(values), bool(result.value), work, ("Valid" if valid else "NotCountermodel")
 
 
+@semantic_entry("countermodel.check")
 def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model: FiniteModel,
                        *, max_evaluations: int = 1_000_000) -> CountermodelCheck:
     """Independently validate and check a purported finite countermodel."""
@@ -119,12 +180,53 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     check_formula(env, conclusion)
     _check_aggregate_ast(premises, conclusion)
     model = _validate_model(env, model)
-    valid, values, conclusion_value, work, status = _check_countermodel_values(
-        premises, conclusion, model, max_evaluations)
-    return CountermodelCheck(valid, values, conclusion_value, work, env.environment_id,
-                             model.model_id, status,
-                             tuple(meaning_id(env, x) for x in premises),
-                             meaning_id(env, conclusion))
+    from .ast import _to_data
+    from .backends.dispatch import execute
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.lean_runner import lean_mode, route_environment, run as lean_run
+    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+
+    case = {"id": "countermodel", "environment": rust_environment(env), **soft_case(env),
+            "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
+            "model": model.to_dict(), "max_evaluations": max_evaluations}
+
+    def python():
+        valid, values, conclusion_value, work, status = _check_countermodel_values(
+            premises, conclusion, model, max_evaluations)
+        return CountermodelCheck(valid, values, conclusion_value, work, env.environment_id,
+                                 model.model_id, status,
+                                 tuple(meaning_id(env, x) for x in premises),
+                                 meaning_id(env, conclusion))
+
+    def rust():
+        row = rust_run(case)
+        # Rust binds its answer to the environment it was sent: `env` itself, or
+        # without the statement-layer blocks Rust does not read (`rust_environment`).
+        bound_env, bound_model = env, model
+        if case["environment"] != env.to_dict():
+            from .environment import Environment
+            bound_env = Environment(case["environment"])
+            bound_model = FiniteModel.from_dict(bound_env, model.to_dict())
+        if (row["environment_id"] != bound_env.environment_id or row["model_id"] != bound_model.model_id
+                or tuple(row["premise_meaning_ids"]) != tuple(meaning_id(bound_env, f) for f in premises)
+                or row["conclusion_meaning_id"] != meaning_id(bound_env, conclusion)):
+            raise CheckerUnavailable("CheckerUnavailable: Rust countermodel identity mismatch")
+        return CountermodelCheck(row["valid"], tuple(row["premise_values"]),
+                                 row["conclusion_value"], row["evaluations"],
+                                 env.environment_id, model.model_id, row["status"],
+                                 tuple(meaning_id(env, f) for f in premises), meaning_id(env, conclusion))
+
+    def lean():
+        result = rust()
+        if result.status == "ResourceLimit":
+            return result
+        request = {**case, "kind": "countermodel", "environment": route_environment(env)}
+        row = lean_run(lean_mode(env), [request])[0]
+        if row["refutes"] != result.valid:
+            raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
+        return result
+
+    return execute("countermodel_check", case, python, lean=lean, rust=rust)
 
 
 def _used_predicates(*formulas: Any) -> frozenset[str]:
@@ -172,11 +274,28 @@ def _relation_assignments(env: Any, domains: dict[str, list[str]],
         raise _SearchSpaceLimit
     atoms = tuple((name, row) for name in sorted(used)
                   for row in product(*(domains[s] for s in env.predicates[name].arguments)))
+    base_predicates = set(env.predicates) - env.definition_entries.keys()
+    regulated_pairs = tuple((name, decl.regulated.permission)
+                            for name, decl in env.predicates.items()
+                            if decl.regulated is not None and decl.regulated.permission is not None
+                            and name in base_predicates and decl.regulated.permission in base_predicates)
+    flagged = tuple((name, decl) for name, decl in env.predicates.items()
+                    if name in base_predicates and (decl.functional or decl.total))
     for size in range(len(atoms) + 1):
         for subset in combinations(atoms, size):
             relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
             for name, row in subset:
                 relations[name].append(list(row))
+            # These declarations are model-validity conditions. Filtering them
+            # here preserves the order and count of models yielded by _models.
+            if any(not {tuple(row) for row in relations[required]} <=
+                   {tuple(row) for row in relations[permitted]}
+                   for required, permitted in regulated_pairs):
+                continue
+            if any((decl.functional and len({row[0] for row in relations[name]}) != len(relations[name]))
+                   or (decl.total and {row[0] for row in relations[name]} != set(domains[decl.arguments[0]]))
+                   for name, decl in flagged):
+                continue
             yield relations
 
 
@@ -201,6 +320,10 @@ def _domain_sizes(minima: list[int], maximum: int) -> Iterator[tuple[int, ...]]:
 
 
 ORDER_SEARCH_MAGNITUDE = 3
+# ResourceLimit details a Rust search reports exactly as Python does; other
+# Rust details are reclassified from the counters.
+_RUST_DETAILS = frozenset({"search relation atom space exceeds runtime limit",
+                           "evaluation budget exhausted", "model-attempt budget exhausted"})
 
 
 def _int_terms(formulas, int_constants) -> tuple[list[Any], set[int]]:
@@ -303,7 +426,7 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
 
 
 def _models(env: Any, minimum_size: int, maximum: int,
-            used: frozenset[str], formulas=()) -> Iterator[FiniteModel]:
+            used: frozenset[str], formulas=(), *, _defer_model_id=False) -> Iterator[FiniteModel]:
     used = used | frozenset(name for name, decl in env.predicates.items()
                             if decl.functional or decl.total)
     if env.definition_entries:
@@ -338,7 +461,8 @@ def _models(env: Any, minimum_size: int, maximum: int,
                 constant_map = dict(zip(constants, denotations, strict=True))
                 try:
                     yield FiniteModel.from_dict(env, {"complete": True, "domains": domains,
-                                                      "constants": constant_map, "relations": relations})
+                                                      "constants": constant_map, "relations": relations},
+                                                _defer_model_id=_defer_model_id)
                 except InvalidModel as exc:
                     if exc.generator is None:
                         raise
@@ -413,6 +537,17 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
     return ok and all(guard_hits.values()), evaluator.work, False
 
 
+def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model: FiniteModel,
+                     max_evaluations: int) -> bool:
+    """Search is untrusted generation: a candidate is reported as `Found` only
+    once the countermodel.check verdict entry accepts it, so the witness carries
+    that operation's authority (and a migrated check refuses rather than being
+    bypassed). The check re-evaluates what the search already evaluated, within
+    the caller's budget; its work is not charged to the public search counters.
+    """
+    return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
+
+
 def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity):
     if any(type(x) is not int or x < 0
@@ -432,7 +567,7 @@ def _validate_options(min_domain_size, max_domain_size, max_models, max_evaluati
     return minimum_size
 
 
-def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
+def _find_countermodel_python(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
                       min_domain_size: int = 0, nonempty_domains: bool = False,
                       nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
                       max_models: int = 10_000,
@@ -456,9 +591,9 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                                   detail, min_domain_size, nonempty_domains,
                                   max_evaluations, nonvacuous_id, semantic_nonvacuity)
     checked = work = 0
-    iterator = _models(env, minimum_size, max_domain_size,
-                       _used_predicates(*premises, conclusion, nonvacuous_for),
-                       (*premises, conclusion, nonvacuous_for))
+    iterator = _query_models(env, minimum_size, max_domain_size,
+                             _used_predicates(*premises, conclusion, nonvacuous_for),
+                             (*premises, conclusion, nonvacuous_for), defer_model_id=True)
     while checked < max_models:
         try:
             model = next(iterator)
@@ -487,7 +622,10 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         if status == "ResourceLimit":
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
         if valid:
-            return finish("Found", model, checked, work)
+            if not model.model_id:
+                model = FiniteModel.from_dict(env, model.to_dict())
+            if _witness_checked(env, premises, conclusion, model, max_evaluations):
+                return finish("Found", model, checked, work)
     # Probe exhaustion once more; this validates but does not evaluate another model.
     try:
         next(iterator)
@@ -502,7 +640,104 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     return finish("ResourceLimit", None, checked, work, "model-attempt budget exhausted")
 
 
-def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
+@semantic_entry("countermodel.search")
+def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max_domain_size: int = 2,
+                      min_domain_size: int = 0, nonempty_domains: bool = False,
+                      nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
+                      max_models: int = 10_000,
+                      max_evaluations: int = 1_000_000) -> CountermodelResult:
+    """Search with a bounded Rust enumerator and Lean-checked witnesses."""
+    from .ast import _to_data
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+    from .profiles import require_checker
+
+    if authority_for("countermodel_search") == "python":
+        return _find_countermodel_python(
+            env, premises, conclusion, max_domain_size=max_domain_size,
+            min_domain_size=min_domain_size, nonempty_domains=nonempty_domains,
+            nonvacuous_for=nonvacuous_for, semantic_nonvacuity=semantic_nonvacuity,
+            max_models=max_models, max_evaluations=max_evaluations)
+
+    premises = _premises(premises)
+    require_checker(env)
+    _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
+                      nonempty_domains, nonvacuous_for, semantic_nonvacuity)
+    _check_aggregate_ast(premises, conclusion)
+    for formula in premises:
+        check_formula(env, formula)
+    check_formula(env, conclusion)
+    if nonvacuous_for is not None:
+        check_formula(env, nonvacuous_for)
+    case = {"id": "countermodel-search", "environment": rust_environment(env), **soft_case(env),
+            "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
+            "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
+            "nonempty_domains": nonempty_domains, "max_models": max_models,
+            "max_evaluations": max_evaluations,
+            **({} if nonvacuous_for is None else
+               {"nonvacuous_for": _to_data(nonvacuous_for),
+                "semantic_nonvacuity": semantic_nonvacuity})}
+
+    def python():
+        return _find_countermodel_python(
+            env, premises, conclusion, max_domain_size=max_domain_size,
+            min_domain_size=min_domain_size, nonempty_domains=nonempty_domains,
+            nonvacuous_for=nonvacuous_for, semantic_nonvacuity=semantic_nonvacuity,
+            max_models=max_models, max_evaluations=max_evaluations)
+
+    def rust():
+        row = rust_run(case)
+        status = row.get("status")
+        if (type(status) is not str or status not in {"Found", "NotFound", "ResourceLimit"}
+                or type(row.get("models_checked")) is not int
+                or type(row.get("evaluations")) is not int
+                or not 0 <= row["models_checked"] <= max_models
+                or not 0 <= row["evaluations"] <= max_evaluations):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust search result")
+        model = None
+        if status == "Found":
+            if not isinstance(row.get("model"), dict):
+                raise CheckerUnavailable("CheckerUnavailable: missing Rust search witness")
+            try:
+                model = FiniteModel.from_dict(env, row["model"])
+            except VEError as exc:
+                raise CheckerUnavailable(
+                    f"CheckerUnavailable: invalid Rust search witness: {exc}") from exc
+            if nonvacuous_for is not None and not _nonvacuous(
+                    env, nonvacuous_for, model, max_evaluations,
+                    semantic=semantic_nonvacuity)[0]:
+                raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
+            # A witness is published only through the countermodel.check entry
+            # (_witness_checked), which carries that operation's authority.
+            if not _witness_checked(env, premises, conclusion, model, max_evaluations):
+                raise CheckerUnavailable("CheckerUnavailable: the countermodel check rejected "
+                                         "the Rust search witness")
+            detail = ""
+        elif status == "NotFound":
+            if row.get("model") is not None:
+                raise CheckerUnavailable("CheckerUnavailable: unexpected Rust search witness")
+            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+                      if nonvacuous_for is not None else
+                      "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
+        elif row.get("detail") in _RUST_DETAILS:
+            detail = row["detail"]
+        elif row["models_checked"] >= max_models:
+            detail = "model-attempt budget exhausted"
+        elif row["evaluations"] >= max_evaluations:
+            detail = "evaluation budget exhausted"
+        else:
+            detail = "model-attempt budget exhausted"
+        return CountermodelResult(status, model, row["models_checked"], row["evaluations"],
+                                  max_domain_size, max_models, detail, min_domain_size,
+                                  nonempty_domains, max_evaluations,
+                                  meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
+                                  semantic_nonvacuity)
+
+    return execute("countermodel_search", case, python, lean=rust, rust=rust)
+
+
+def _find_distinguishing_model_python(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
                               min_domain_size: int = 0, nonempty_domains: bool = False,
                               nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
                               max_models: int = 10_000,
@@ -525,8 +760,9 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                                   max_evaluations, nonvacuous_id, semantic_nonvacuity)
 
     checked = work = 0
-    iterator = _models(env, minimum_size, max_domain_size,
-                       _used_predicates(a, b, nonvacuous_for), (a, b, nonvacuous_for))
+    iterator = _query_models(env, minimum_size, max_domain_size,
+                             _used_predicates(a, b, nonvacuous_for), (a, b, nonvacuous_for),
+                             defer_model_id=True)
     while checked < max_models:
         try:
             model = next(iterator)
@@ -558,7 +794,11 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         if right.status == "ResourceLimit":
             return finish("ResourceLimit", None, checked, work, "evaluation budget exhausted")
         if left.value != right.value:
-            return finish("Found", model, checked, work)
+            if not model.model_id:
+                model = FiniteModel.from_dict(env, model.to_dict())
+            if _witness_checked(env, *(((a,), b) if left.value else ((b,), a)),
+                                model, max_evaluations):
+                return finish("Found", model, checked, work)
     try:
         next(iterator)
     except StopIteration:
@@ -570,3 +810,92 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
         return finish("ResourceLimit", None, checked, work,
                       "search relation atom space exceeds runtime limit")
     return finish("ResourceLimit", None, checked, work, "model-attempt budget exhausted")
+
+
+@semantic_entry("countermodel.search")
+def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
+                              min_domain_size: int = 0, nonempty_domains: bool = False,
+                              nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
+                              max_models: int = 10_000,
+                              max_evaluations: int = 1_000_000) -> CountermodelResult:
+    """Find a bounded distinguishing witness with Rust; verify it in Lean."""
+    from .ast import _to_data
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+    from .profiles import require_checker
+
+    def python():
+        return _find_distinguishing_model_python(
+            env, a, b, max_domain_size=max_domain_size,
+            min_domain_size=min_domain_size, nonempty_domains=nonempty_domains,
+            nonvacuous_for=nonvacuous_for, semantic_nonvacuity=semantic_nonvacuity,
+            max_models=max_models, max_evaluations=max_evaluations)
+
+    if authority_for("distinguishing_model") == "python":
+        return python()
+    require_checker(env)
+    _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
+                      nonempty_domains, nonvacuous_for, semantic_nonvacuity)
+    if _node_count(a) + _node_count(b) > MAX_NODES:
+        raise ResourceLimit(f"formula pair exceeds aggregate {MAX_NODES}-node search limit")
+    check_formula(env, a); check_formula(env, b)
+    if nonvacuous_for is not None:
+        check_formula(env, nonvacuous_for)
+    case = {"id": "distinguishing-model", "kind": "distinguishing-model", **soft_case(env),
+            "environment": rust_environment(env), "a": _to_data(a), "b": _to_data(b),
+            "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
+            "nonempty_domains": nonempty_domains, "max_models": max_models,
+            "max_evaluations": max_evaluations,
+            **({} if nonvacuous_for is None else
+               {"nonvacuous_for": _to_data(nonvacuous_for),
+                "semantic_nonvacuity": semantic_nonvacuity})}
+
+    def rust():
+        row = rust_run(case)
+        status = row.get("status")
+        if (type(status) is not str or status not in {"Found", "NotFound", "ResourceLimit"}
+                or type(row.get("models_checked")) is not int
+                or type(row.get("evaluations")) is not int
+                or not 0 <= row["models_checked"] <= max_models
+                or not 0 <= row["evaluations"] <= max_evaluations):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Rust distinguishing result")
+        model = None
+        if status == "Found":
+            if not isinstance(row.get("model"), dict):
+                raise CheckerUnavailable("CheckerUnavailable: missing Rust distinguishing witness")
+            try:
+                model = FiniteModel.from_dict(env, row["model"])
+            except VEError as exc:
+                raise CheckerUnavailable(
+                    f"CheckerUnavailable: invalid Rust distinguishing witness: {exc}") from exc
+            if nonvacuous_for is not None and not _nonvacuous(
+                    env, nonvacuous_for, model, max_evaluations,
+                    semantic=semantic_nonvacuity)[0]:
+                raise CheckerUnavailable("CheckerUnavailable: Rust witness violates non-vacuity")
+            # Either direction, as a countermodel to the other, through the
+            # countermodel.check entry.
+            if not (_witness_checked(env, (a,), b, model, max_evaluations)
+                    or _witness_checked(env, (b,), a, model, max_evaluations)):
+                raise CheckerUnavailable("CheckerUnavailable: the countermodel check rejected "
+                                         "the Rust distinguishing witness")
+            detail = ""
+        elif status == "NotFound":
+            if row.get("model") is not None:
+                raise CheckerUnavailable("CheckerUnavailable: unexpected Rust distinguishing witness")
+            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+                      if nonvacuous_for is not None else
+                      "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
+        elif row.get("detail") in _RUST_DETAILS:
+            detail = row["detail"]
+        elif row["models_checked"] >= max_models:
+            detail = "model-attempt budget exhausted"
+        else:
+            detail = "evaluation budget exhausted"
+        return CountermodelResult(status, model, row["models_checked"], row["evaluations"],
+                                  max_domain_size, max_models, detail, min_domain_size,
+                                  nonempty_domains, max_evaluations,
+                                  meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
+                                  semantic_nonvacuity)
+
+    return execute("distinguishing_model", case, python, lean=rust, rust=rust)
