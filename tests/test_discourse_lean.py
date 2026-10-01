@@ -2122,3 +2122,45 @@ def test_unencodable_names_and_files_agree_with_lean(lean, tmp_path, monkeypatch
     # a document that is no UTF-8 text cannot reach Lean, and is no document
     for raw in [text(base).encode() + b"\xff", text(base).encode().replace(b"Api is", b"\xc3(pi is")]:
         assert encoding_verdicts(raw, tmp_path) == (None, "InvalidInput: the document is not UTF-8 text")
+
+
+# The form/kind table of 1.4 (the Lean `formFits`, Python's `_FORM_KINDS`).
+FITS = {"pronoun": {"entity", "unit"}, "demonstrative": {"entity", "unit"}, "definite": {"entity"},
+        "ordinal_pair": {"entity"}, "such": {"predicate"}, "possessive": {"entity"}, "plural": {"entity"},
+        "section_ref": {"anchor", "unit", "rule"}, "definition_ref": {"predicate"},
+        "document_name": {"document"}, "citation": {"claim"}, "navigation": {"anchor", "unit"}}
+KIND_TARGETS = {"entity": {"name": "api"}, "predicate": {"name": "reviewed"}, "unit": {"units": ["u1"]},
+                "anchor": {"name": "doc"}, "rule": {"name": "r1"}, "claim": {"name": "l1"},
+                "document": {"name": "policy"}}
+
+
+def test_form_kind_table_is_one_table(lean, tmp_path):
+    """discourse-example looprecheck1 B (Access.lean:290): Lean fitted `section_ref` to `unit` and
+    `rule`, Python only to `anchor`. Every form and kind now gets the same answer in both: a pair
+    outside the table is `TargetKindMismatch` (a pronoun or demonstrative naming a claim is
+    `UnsupportedTarget`), a pair inside it never is."""
+    from ve.discourse import _FORM_KINDS
+    assert _FORM_KINDS == FITS
+    pairs, docs = [], []
+    for form in FITS:
+        for kind, fields in KIND_TARGETS.items():
+            target = {"kind": kind, **fields}
+            if form == "plural":
+                target["members"] = ["api", "alice"]
+            if form == "ordinal_pair":
+                target.update(name="api", pair=["api", "alice"])
+            pairs.append((form, kind))
+            docs.append(document(["Api is reviewed.", "See it."], [("m1", "u2", "it", form, target)],
+                                 contents={"u1": unary("reviewed", "api")}))
+    rows = run([case("admission", d) for d in docs])
+    for (form, kind), doc, row in zip(pairs, docs, rows):
+        python = python_outcome(doc, tmp_path)
+        lean_error = row.get("error", "admitted")
+        if form in {"pronoun", "demonstrative"} and kind == "claim":
+            assert lean_error == python == "UnsupportedTarget: m1: claim", (form, kind, row, python)
+        elif kind not in FITS[form]:
+            expected = f"TargetKindMismatch: m1: {form}, {kind}"
+            assert lean_error == python == expected, (form, kind, row, python)
+        else:
+            assert not lean_error.startswith("TargetKindMismatch"), (form, kind, row)
+            assert not (isinstance(python, str) and python.startswith("TargetKindMismatch")), (form, kind, python)
