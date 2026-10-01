@@ -147,4 +147,3 @@ Rule 1 as sealed (README, Scoring; the first probe's allowance): c5 passes when,
 | c5r-4 | L | haiku | haiku-r2-L-02 | a | b | b | correct | **(a) No: it was 60 gigabytes or less.** **Reason:** The text establishes that if size > 60 GB, then compression leads to outage. Since compression occurred but no outage happened, the antecedent of that conditional must be false, meaning the size was not greater than 60 gigabytes. |
 | c5r-4 | L | sol | sol-r1-L-02 | b | b | b | correct | **(b) No: it was 60 gigabytes or less.** If the size had been greater than 60 gigabytes, compressing the files would have caused a server outage. |
 | c5r-4 | L | sol | sol-r2-L-03 | c | b | b | correct | (c) No: it was 60 gigabytes or less. If it had been greater than 60 gigabytes, compressing it would have caused a server outage. |
-

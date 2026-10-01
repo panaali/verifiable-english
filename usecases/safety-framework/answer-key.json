@@ -1,0 +1,1870 @@
+{
+ "source": "PLAN.md section 6 as amended by the plan review (commit 151f59f3); transcribed, not changed",
+ "items": [
+  {
+   "id": "A-L0-DEV/DM",
+   "case": "A-L0-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-DEV/SEC",
+   "case": "A-L0-DEV",
+   "item": "SEC",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-DEV/GOV",
+   "case": "A-L0-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-DEV/CCA",
+   "case": "A-L0-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-INT/DM",
+   "case": "A-L0-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-INT/SEC",
+   "case": "A-L0-INT",
+   "item": "SEC",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-INT/GOV",
+   "case": "A-L0-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-INT/CCA",
+   "case": "A-L0-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-HRI/DM",
+   "case": "A-L0-HRI",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-HRI/SEC",
+   "case": "A-L0-HRI",
+   "item": "SEC",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-HRI/GOV",
+   "case": "A-L0-HRI",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-HRI/CCA",
+   "case": "A-L0-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-LRX/DM",
+   "case": "A-L0-LRX",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-LRX/SEC",
+   "case": "A-L0-LRX",
+   "item": "SEC",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-LRX/GOV",
+   "case": "A-L0-LRX",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-LRX/CCA",
+   "case": "A-L0-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-EXT/DM",
+   "case": "A-L0-EXT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-EXT/SEC",
+   "case": "A-L0-EXT",
+   "item": "SEC",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-EXT/GOV",
+   "case": "A-L0-EXT",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L0-EXT/CCA",
+   "case": "A-L0-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-DEV/DM",
+   "case": "A-L1-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L1-DEV/SEC",
+   "case": "A-L1-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-DEV/GOV",
+   "case": "A-L1-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-DEV/CCA",
+   "case": "A-L1-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-INT/DM",
+   "case": "A-L1-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L1-INT/SEC",
+   "case": "A-L1-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-INT/GOV",
+   "case": "A-L1-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-INT/CCA",
+   "case": "A-L1-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-HRI/DM",
+   "case": "A-L1-HRI",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L1-HRI/SEC",
+   "case": "A-L1-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-HRI/GOV",
+   "case": "A-L1-HRI",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-HRI/CCA",
+   "case": "A-L1-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-LRX/DM",
+   "case": "A-L1-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-LRX/SEC",
+   "case": "A-L1-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-LRX/GOV",
+   "case": "A-L1-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-LRX/CCA",
+   "case": "A-L1-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-EXT/DM",
+   "case": "A-L1-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-EXT/SEC",
+   "case": "A-L1-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-EXT/GOV",
+   "case": "A-L1-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L1-EXT/CCA",
+   "case": "A-L1-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-DEV/DM",
+   "case": "A-L2-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L2-DEV/SEC",
+   "case": "A-L2-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-DEV/GOV",
+   "case": "A-L2-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-DEV/CCA",
+   "case": "A-L2-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-INT/DM",
+   "case": "A-L2-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L2-INT/SEC",
+   "case": "A-L2-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-INT/GOV",
+   "case": "A-L2-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-INT/CCA",
+   "case": "A-L2-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-HRI/DM",
+   "case": "A-L2-HRI",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L2-HRI/SEC",
+   "case": "A-L2-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-HRI/GOV",
+   "case": "A-L2-HRI",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-HRI/CCA",
+   "case": "A-L2-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-LRX/DM",
+   "case": "A-L2-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-LRX/SEC",
+   "case": "A-L2-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-LRX/GOV",
+   "case": "A-L2-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-LRX/CCA",
+   "case": "A-L2-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-EXT/DM",
+   "case": "A-L2-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-EXT/SEC",
+   "case": "A-L2-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-EXT/GOV",
+   "case": "A-L2-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L2-EXT/CCA",
+   "case": "A-L2-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-DEV/DM",
+   "case": "A-L3-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L3-DEV/SEC",
+   "case": "A-L3-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-DEV/GOV",
+   "case": "A-L3-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-DEV/CCA",
+   "case": "A-L3-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-INT/DM",
+   "case": "A-L3-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L3-INT/SEC",
+   "case": "A-L3-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-INT/GOV",
+   "case": "A-L3-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-INT/CCA",
+   "case": "A-L3-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-HRI/DM",
+   "case": "A-L3-HRI",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L3-HRI/SEC",
+   "case": "A-L3-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-HRI/GOV",
+   "case": "A-L3-HRI",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-HRI/CCA",
+   "case": "A-L3-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-LRX/DM",
+   "case": "A-L3-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-LRX/SEC",
+   "case": "A-L3-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-LRX/GOV",
+   "case": "A-L3-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-LRX/CCA",
+   "case": "A-L3-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-EXT/DM",
+   "case": "A-L3-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-EXT/SEC",
+   "case": "A-L3-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-EXT/GOV",
+   "case": "A-L3-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L3-EXT/CCA",
+   "case": "A-L3-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-DEV/DM",
+   "case": "A-L4-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L4-DEV/SEC",
+   "case": "A-L4-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-DEV/GOV",
+   "case": "A-L4-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-DEV/CCA",
+   "case": "A-L4-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-INT/DM",
+   "case": "A-L4-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L4-INT/SEC",
+   "case": "A-L4-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-INT/GOV",
+   "case": "A-L4-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-INT/CCA",
+   "case": "A-L4-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-HRI/DM",
+   "case": "A-L4-HRI",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L4-HRI/SEC",
+   "case": "A-L4-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-HRI/GOV",
+   "case": "A-L4-HRI",
+   "item": "GOV",
+   "key": "SOME(U)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-HRI/CCA",
+   "case": "A-L4-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-LRX/DM",
+   "case": "A-L4-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-LRX/SEC",
+   "case": "A-L4-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-LRX/GOV",
+   "case": "A-L4-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-LRX/CCA",
+   "case": "A-L4-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-EXT/DM",
+   "case": "A-L4-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-EXT/SEC",
+   "case": "A-L4-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-EXT/GOV",
+   "case": "A-L4-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L4-EXT/CCA",
+   "case": "A-L4-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-DEV/DM",
+   "case": "A-L5-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L5-DEV/SEC",
+   "case": "A-L5-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-DEV/GOV",
+   "case": "A-L5-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-DEV/CCA",
+   "case": "A-L5-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-INT/DM",
+   "case": "A-L5-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L5-INT/SEC",
+   "case": "A-L5-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-INT/GOV",
+   "case": "A-L5-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-INT/CCA",
+   "case": "A-L5-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-HRI/DM",
+   "case": "A-L5-HRI",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-HRI/SEC",
+   "case": "A-L5-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-HRI/GOV",
+   "case": "A-L5-HRI",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-HRI/CCA",
+   "case": "A-L5-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-LRX/DM",
+   "case": "A-L5-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-LRX/SEC",
+   "case": "A-L5-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-LRX/GOV",
+   "case": "A-L5-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-LRX/CCA",
+   "case": "A-L5-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-EXT/DM",
+   "case": "A-L5-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-EXT/SEC",
+   "case": "A-L5-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-EXT/GOV",
+   "case": "A-L5-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L5-EXT/CCA",
+   "case": "A-L5-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-DEV/DM",
+   "case": "A-L6-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L6-DEV/SEC",
+   "case": "A-L6-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-DEV/GOV",
+   "case": "A-L6-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-DEV/CCA",
+   "case": "A-L6-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-INT/DM",
+   "case": "A-L6-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L6-INT/SEC",
+   "case": "A-L6-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-INT/GOV",
+   "case": "A-L6-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-INT/CCA",
+   "case": "A-L6-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-HRI/DM",
+   "case": "A-L6-HRI",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-HRI/SEC",
+   "case": "A-L6-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-HRI/GOV",
+   "case": "A-L6-HRI",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-HRI/CCA",
+   "case": "A-L6-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-LRX/DM",
+   "case": "A-L6-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-LRX/SEC",
+   "case": "A-L6-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-LRX/GOV",
+   "case": "A-L6-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-LRX/CCA",
+   "case": "A-L6-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-EXT/DM",
+   "case": "A-L6-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-EXT/SEC",
+   "case": "A-L6-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-EXT/GOV",
+   "case": "A-L6-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L6-EXT/CCA",
+   "case": "A-L6-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-DEV/DM",
+   "case": "A-L7-DEV",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L7-DEV/SEC",
+   "case": "A-L7-DEV",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-DEV/GOV",
+   "case": "A-L7-DEV",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-DEV/CCA",
+   "case": "A-L7-DEV",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-INT/DM",
+   "case": "A-L7-INT",
+   "item": "DM",
+   "key": "NONE",
+   "plan": "6.1",
+   "rel": "SOME(G & rel)"
+  },
+  {
+   "id": "A-L7-INT/SEC",
+   "case": "A-L7-INT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-INT/GOV",
+   "case": "A-L7-INT",
+   "item": "GOV",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-INT/CCA",
+   "case": "A-L7-INT",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-HRI/DM",
+   "case": "A-L7-HRI",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-HRI/SEC",
+   "case": "A-L7-HRI",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-HRI/GOV",
+   "case": "A-L7-HRI",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-HRI/CCA",
+   "case": "A-L7-HRI",
+   "item": "CCA",
+   "key": "NONE",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-LRX/DM",
+   "case": "A-L7-LRX",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-LRX/SEC",
+   "case": "A-L7-LRX",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-LRX/GOV",
+   "case": "A-L7-LRX",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-LRX/CCA",
+   "case": "A-L7-LRX",
+   "item": "CCA",
+   "key": "SOME(M)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-EXT/DM",
+   "case": "A-L7-EXT",
+   "item": "DM",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-EXT/SEC",
+   "case": "A-L7-EXT",
+   "item": "SEC",
+   "key": "SOME(G)",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-EXT/GOV",
+   "case": "A-L7-EXT",
+   "item": "GOV",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "A-L7-EXT/CCA",
+   "case": "A-L7-EXT",
+   "item": "CCA",
+   "key": "ALL",
+   "plan": "6.1"
+  },
+  {
+   "id": "B-L0/RRA",
+   "case": "B-L0",
+   "item": "RRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L0/SC",
+   "case": "B-L0",
+   "item": "SC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L0/PRA",
+   "case": "B-L0",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L0/RECSEC",
+   "case": "B-L0",
+   "item": "RECSEC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L0/DISC",
+   "case": "B-L0",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L1/RRA",
+   "case": "B-L1",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L1/SC",
+   "case": "B-L1",
+   "item": "SC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L1/PRA",
+   "case": "B-L1",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L1/RECSEC",
+   "case": "B-L1",
+   "item": "RECSEC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L1/DISC",
+   "case": "B-L1",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L2/RRA",
+   "case": "B-L2",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L2/SC",
+   "case": "B-L2",
+   "item": "SC",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L2/PRA",
+   "case": "B-L2",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L2/RECSEC",
+   "case": "B-L2",
+   "item": "RECSEC",
+   "key": "SOME(Ds)",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L2/DISC",
+   "case": "B-L2",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L3/RRA",
+   "case": "B-L3",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L3/SC",
+   "case": "B-L3",
+   "item": "SC",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L3/PRA",
+   "case": "B-L3",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L3/RECSEC",
+   "case": "B-L3",
+   "item": "RECSEC",
+   "key": "SOME(Ds)",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L3/DISC",
+   "case": "B-L3",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L4/RRA",
+   "case": "B-L4",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L4/SC",
+   "case": "B-L4",
+   "item": "SC",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L4/PRA",
+   "case": "B-L4",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L4/RECSEC",
+   "case": "B-L4",
+   "item": "RECSEC",
+   "key": "SOME(Ds)",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L4/DISC",
+   "case": "B-L4",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L5/RRA",
+   "case": "B-L5",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L5/SC",
+   "case": "B-L5",
+   "item": "SC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L5/PRA",
+   "case": "B-L5",
+   "item": "PRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L5/RECSEC",
+   "case": "B-L5",
+   "item": "RECSEC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L5/DISC",
+   "case": "B-L5",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L6/RRA",
+   "case": "B-L6",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L6/SC",
+   "case": "B-L6",
+   "item": "SC",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L6/PRA",
+   "case": "B-L6",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L6/RECSEC",
+   "case": "B-L6",
+   "item": "RECSEC",
+   "key": "SOME(Ds)",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L6/DISC",
+   "case": "B-L6",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L7/RRA",
+   "case": "B-L7",
+   "item": "RRA",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L7/SC",
+   "case": "B-L7",
+   "item": "SC",
+   "key": "ALL",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L7/PRA",
+   "case": "B-L7",
+   "item": "PRA",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L7/RECSEC",
+   "case": "B-L7",
+   "item": "RECSEC",
+   "key": "SOME(Ds)",
+   "plan": "6.2"
+  },
+  {
+   "id": "B-L7/DISC",
+   "case": "B-L7",
+   "item": "DISC",
+   "key": "NONE",
+   "plan": "6.2"
+  },
+  {
+   "id": "K1-L2/PROXIMITY",
+   "case": "K1-L2",
+   "item": "PROXIMITY",
+   "key": "ALL",
+   "plan": "6.3",
+   "level": "cbrn_uplift_level_1"
+  },
+  {
+   "id": "K1-L3/PROXIMITY",
+   "case": "K1-L3",
+   "item": "PROXIMITY",
+   "key": "ALL",
+   "plan": "6.3",
+   "level": "cyber_uplift_level_1"
+  },
+  {
+   "id": "K1-L4/PROXIMITY",
+   "case": "K1-L4",
+   "item": "PROXIMITY",
+   "key": "ALL",
+   "plan": "6.3",
+   "level": "harmful_manipulation_level_1"
+  },
+  {
+   "id": "K1-L6/PROXIMITY",
+   "case": "K1-L6",
+   "item": "PROXIMITY",
+   "key": "ALL",
+   "plan": "6.3",
+   "level": "ml_rd_acceleration_level_1"
+  },
+  {
+   "id": "K1-L7/PROXIMITY",
+   "case": "K1-L7",
+   "item": "PROXIMITY",
+   "key": "ALL",
+   "plan": "6.3",
+   "level": "ml_rd_automation_level_1"
+  },
+  {
+   "id": "K2-L1/PROXIMITY",
+   "case": "K2-L1",
+   "item": "PROXIMITY",
+   "key": "NONE",
+   "plan": "6.3",
+   "level": "cbrn_uplift_tcl"
+  },
+  {
+   "id": "K2-L5/PROXIMITY",
+   "case": "K2-L5",
+   "item": "PROXIMITY",
+   "key": "NONE",
+   "plan": "6.3",
+   "level": "stealth_and_situational_awareness_tcl"
+  },
+  {
+   "id": "K3/FURTHER_CCA",
+   "case": "K3",
+   "item": "FURTHER_CCA",
+   "key": "SOME(R)",
+   "plan": "6.3"
+  },
+  {
+   "id": "K4/CHECKPOINT_MCCA",
+   "case": "K4",
+   "item": "CHECKPOINT_MCCA",
+   "key": "NONE",
+   "plan": "6.3"
+  },
+  {
+   "id": "K5/SUBMISSION",
+   "case": "K5",
+   "item": "SUBMISSION",
+   "key": "ALL",
+   "plan": "6.3"
+  },
+  {
+   "id": "K6/YEARLY_REVIEW",
+   "case": "K6",
+   "item": "YEARLY_REVIEW",
+   "key": "ALL",
+   "plan": "6.3"
+  },
+  {
+   "id": "K7/ADD",
+   "case": "K7",
+   "item": "ADD",
+   "key": "ALL",
+   "plan": "6.3"
+  },
+  {
+   "id": "K8/FREQUENT_REVIEW",
+   "case": "K8",
+   "item": "FREQUENT_REVIEW",
+   "key": "ALL",
+   "plan": "6.3"
+  },
+  {
+   "id": "K9-L2/DISC",
+   "case": "K9-L2",
+   "item": "DISC",
+   "key": "SOME(RS4aim=default)",
+   "plan": "6.3"
+  },
+  {
+   "id": "K9-L3/DISC",
+   "case": "K9-L3",
+   "item": "DISC",
+   "key": "SOME(RS4aim=default)",
+   "plan": "6.3"
+  },
+  {
+   "id": "K9-L4/DISC",
+   "case": "K9-L4",
+   "item": "DISC",
+   "key": "SOME(RS4aim=default)",
+   "plan": "6.3"
+  },
+  {
+   "id": "K9-L6/DISC",
+   "case": "K9-L6",
+   "item": "DISC",
+   "key": "SOME(RS4aim=default)",
+   "plan": "6.3"
+  },
+  {
+   "id": "K9-L7/DISC",
+   "case": "K9-L7",
+   "item": "DISC",
+   "key": "SOME(RS4aim=default)",
+   "plan": "6.3"
+  },
+  {
+   "id": "R1/ACCEPTABLE",
+   "case": "R1",
+   "item": "ACCEPTABLE",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R2/ACCEPTABLE",
+   "case": "R2",
+   "item": "ACCEPTABLE",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R3/ACCEPTABLE",
+   "case": "R3",
+   "item": "ACCEPTABLE",
+   "key": "NONE",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R4/ACCEPTABLE",
+   "case": "R4",
+   "item": "ACCEPTABLE",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R5/ACCEPTABLE",
+   "case": "R5",
+   "item": "ACCEPTABLE",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R6/ACCEPTABLE",
+   "case": "R6",
+   "item": "ACCEPTABLE",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R7/ACCEPTABLE",
+   "case": "R7",
+   "item": "ACCEPTABLE",
+   "key": "NONE",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R8/ACCEPTABLE",
+   "case": "R8",
+   "item": "ACCEPTABLE",
+   "key": "NONE",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R9a/ACCEPTABLE",
+   "case": "R9",
+   "item": "ACCEPTABLE",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R9b/PERMITS",
+   "case": "R9",
+   "item": "PERMITS",
+   "key": "NONE",
+   "plan": "6.3a"
+  },
+  {
+   "id": "R9c/FORBIDS",
+   "case": "R9",
+   "item": "FORBIDS",
+   "key": "ALL",
+   "plan": "6.3a"
+  },
+  {
+   "id": "C1",
+   "case": null,
+   "item": "CONFLICT:f15:f16",
+   "key": "NONE",
+   "plan": "6.4"
+  },
+  {
+   "id": "C2",
+   "case": null,
+   "item": "CONFLICT:f2:f3",
+   "key": "NONE",
+   "plan": "6.4"
+  },
+  {
+   "id": "C3",
+   "case": null,
+   "item": "CONFLICT:f9:f10",
+   "key": "SOME(G & rel & RS9=same)",
+   "plan": "6.4"
+  },
+  {
+   "id": "C4",
+   "case": null,
+   "item": "CONFLICT:f16:sec",
+   "key": "NONE",
+   "plan": "6.4"
+  },
+  {
+   "id": "C5",
+   "case": null,
+   "item": "CONFLICT:f8:f12f13",
+   "key": "NONE",
+   "plan": "6.4"
+  },
+  {
+   "id": "C-doc",
+   "case": null,
+   "item": "CONFLICT:document",
+   "key": "SOME(G & rel & RS9=same)",
+   "plan": "6.4"
+  },
+  {
+   "id": "G1",
+   "case": "G1",
+   "item": "SILENT:SEC",
+   "key": "SOME(S)",
+   "plan": "6.5"
+  },
+  {
+   "id": "G2",
+   "case": "G2",
+   "item": "SILENT:GOV",
+   "key": "ALL",
+   "plan": "6.5"
+  },
+  {
+   "id": "G3",
+   "case": "G3",
+   "item": "SILENT:PROXIMITY",
+   "key": "ALL",
+   "plan": "6.5"
+  },
+  {
+   "id": "G4",
+   "case": "G4",
+   "item": "CATCH_ALL",
+   "key": "ALL",
+   "plan": "6.5"
+  },
+  {
+   "id": "G5",
+   "case": "G5",
+   "item": "CATCH_ALL",
+   "key": "ALL",
+   "plan": "6.5"
+  },
+  {
+   "id": "G6",
+   "case": "G6",
+   "item": "SILENT:CCA+GOV",
+   "key": {
+    "SILENT:CCA": "ALL",
+    "GOV": "SOME(U)"
+   },
+   "plan": "6.5"
+  },
+  {
+   "id": "G7",
+   "case": "G7",
+   "item": "SILENT:DISC",
+   "key": "ALL",
+   "plan": "6.5"
+  },
+  {
+   "id": "G8",
+   "case": "G8",
+   "item": "SILENT:EVIDENCE",
+   "key": "ALL",
+   "plan": "6.5"
+  },
+  {
+   "id": "G9",
+   "case": "G9-TCCL",
+   "item": "FORBIDS+L0",
+   "key": {
+    "FORBIDS": "ALL",
+    "FORBIDS@G9-L0": "SOME(U)"
+   },
+   "plan": "6.5"
+  },
+  {
+   "id": "N1",
+   "case": null,
+   "item": "NEVER:cyber_or_manipulation_tcl",
+   "key": "ALL",
+   "plan": "6.6"
+  },
+  {
+   "id": "N2",
+   "case": null,
+   "item": "UNDETERMINED:recommended_level_l1",
+   "key": "NOT_CERTIFIABLE",
+   "plan": "6.6"
+  },
+  {
+   "id": "N3",
+   "case": null,
+   "item": "DEAD_RULES",
+   "key": "NONE",
+   "plan": "6.6"
+  },
+  {
+   "id": "S1-L1",
+   "case": null,
+   "item": "SEVERITY:cbrn_uplift_tcl",
+   "key": "significant",
+   "plan": "6.7"
+  },
+  {
+   "id": "S1-L2",
+   "case": null,
+   "item": "SEVERITY:cbrn_uplift_level_1",
+   "key": "severe",
+   "plan": "6.7"
+  },
+  {
+   "id": "S1-L3",
+   "case": null,
+   "item": "SEVERITY:cyber_uplift_level_1",
+   "key": "severe",
+   "plan": "6.7"
+  },
+  {
+   "id": "S1-L4",
+   "case": null,
+   "item": "SEVERITY:harmful_manipulation_level_1",
+   "key": "severe",
+   "plan": "6.7"
+  },
+  {
+   "id": "S1-L5",
+   "case": null,
+   "item": "SEVERITY:stealth_and_situational_awareness_tcl",
+   "key": "significant",
+   "plan": "6.7"
+  },
+  {
+   "id": "S1-L6",
+   "case": null,
+   "item": "SEVERITY:ml_rd_acceleration_level_1",
+   "key": "severe",
+   "plan": "6.7"
+  },
+  {
+   "id": "S1-L7",
+   "case": null,
+   "item": "SEVERITY:ml_rd_automation_level_1",
+   "key": "severe",
+   "plan": "6.7"
+  },
+  {
+   "id": "S2",
+   "case": null,
+   "item": "CCL_ABOVE_TCL",
+   "key": "ALL",
+   "plan": "6.7"
+  },
+  {
+   "id": "S3",
+   "case": null,
+   "item": "CATASTROPHIC_ORDERED",
+   "key": "NONE",
+   "plan": "6.7"
+  },
+  {
+   "id": "S4",
+   "case": null,
+   "item": "SL4_AT_LEAST_SL3",
+   "key": "NONE",
+   "plan": "6.7"
+  },
+  {
+   "id": "S5",
+   "case": null,
+   "item": "MIGHT_SEVERE",
+   "key": "ALL",
+   "plan": "6.7"
+  },
+  {
+   "id": "S6",
+   "case": null,
+   "item": "LEADS_TO_SEVERE",
+   "key": "NONE",
+   "plan": "6.7"
+  },
+  {
+   "id": "D1",
+   "case": null,
+   "item": "VERSION_DATES_INCREASING",
+   "key": "ALL",
+   "plan": "6.8"
+  },
+  {
+   "id": "D2",
+   "case": null,
+   "item": "REVIEW_BY_2027_04_17",
+   "key": "SOME(RS10=publication)",
+   "plan": "6.8"
+  },
+  {
+   "id": "D3",
+   "case": null,
+   "item": "PUBLISHED_BEFORE_RETRIEVAL",
+   "key": "ALL",
+   "plan": "6.8"
+  }
+ ]
+}
