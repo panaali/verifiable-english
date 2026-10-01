@@ -176,7 +176,8 @@ one) is reported per predicate as `inherits_from`.
 Evidence (the search is untrusted, and every piece of evidence is checked):
 
 - **`table3`** computes outcomes on the finite base situation in DAG order, with every unsaid atom unknown, Kleene
-  connectives and finite quantifiers. Each symbol is placed once and reads only the symbols placed before it. Where
+  connectives and finite quantifiers. Each symbol is placed once: all its rows, and every close they make, are
+  computed from the table before it and only then entered, so no row reads a close made at another row. Where
   a pair closes it applies the profile rule, only where the side it sets is a gap (its `gap` formula of 2.4
   Kleene-true there): `m` := yes where `r` is yes and `m` is a gap; `r` := no where `m` is no and `r` is a gap. The
   side it sets is the member being placed, or the earlier member if that is still unknown; a symbol placed between
@@ -695,10 +696,12 @@ its models carry the `unsaid__` tables as ordinary base tables; the only Rust ch
 
 **Differentials** (`conformance/norm_defaults_differential.py`, run by `tests/test_norm_defaults_three_way.py`).
 1,000 generated trees × completion assignments over {deny, allow, unspecified}, including a pair and guards that
-mention lower regulated predicates in a drawn order (so other symbols land between the pair's members), give
+mention lower regulated predicates in a drawn order (so other symbols land between the pair's members), at the rule's
+own row, under ∃ and ∀, or at a constant (so one row of a symbol reads another row of a lower one), give
 byte-identical `T‴` and `Fill_T` (and every other regenerated output) in Python and Lean. On 1,000 generated finite
 situations (at least the 300 asked for; some have more unsaid atoms than `MAX_UNSAID_ATOMS`) every `table3` entry is
-identical and every status is the one Lean's replay reports; Lean validates every UNDECIDED and latent witness. Rust's
+identical and every status is the one Lean's replay reports (an UNKNOWN past the budget is Lean's enumeration
+declining too); Lean validates every UNDECIDED and latent witness. Rust's
 evaluator agrees on every premise list in its fixture file (`conformance/norm_defaults_rust.json`). norms 10.8's
 mutations, plus flipping a completion and dropping a `Fill_T` premise, are rejected by the bound hashes.
 
@@ -799,7 +802,10 @@ a status.
 - **Review regressions** (12; `conformance/norm_defaults_three_way.py`). **b1:** `x_permitted` unspecified with no
   rules, `a_permitted` deny with "may A if may X", `x_required` deny with "must X if c", `c(a)` true: `table3` gives
   `x_permitted(a)` yes and leaves `a_permitted(a)` unknown in Python and Lean, and enumeration settles it yes in both.
-  **b2:** u12 over 13 acts (13 unsaid atoms, one in each point's cone): SETTLED yes by enumeration in both. **a1:**
+  **b1-rows:** `x_permitted` unspecified with no rules, `x_required` deny with "must X if c" and "must X if someone
+  may X" (b1-rows-exists) or "must X if K may be done" (b1-rows-const, `K` naming a), acts a and b, `c` on one act:
+  `table3` gives both members yes at that act and leaves the other act unknown in Python and Lean, whichever act `c`
+  holds on; enumeration settles it yes in both (in b1-rows-const with `c(b)` it is UNDECIDED in both). **b2:** u12 over 13 acts (13 unsaid atoms, one in each point's cone): SETTLED yes by enumeration in both. **a1:**
   6.3's counterexample: `p_permitted` has `default reached: none` under deny and `gaps: reachable` when switched; the
   audit gives no certificate for it, and lists `x_required` moving from SETTLED no to UNDECIDED.
 
@@ -880,3 +886,4 @@ stated or implemented the false forms, and that Python and Lean computed `table3
 | 4 | `table3` (review B1): Python closed the earlier member of a pair on demand, before the symbols placed in between read it; Lean's `closeRule` closes it only when the later member is placed | Python follows Lean step for step (2.5); every fixture point and every differential point compares the two tables |
 | 5 | Enumeration (review B2): Lean enumerated every unsaid atom of the situation, Python the closed cone, so a wide situation with a small cone was SETTLED in Python and UNKNOWN in Lean | Lean enumerates the closed cone (`coneAtoms`), as 2.5 always said; `settled_of_enumeration`'s statement is unchanged and holds for any atom list (2.5 gives the argument) |
 | 6 | Spec 8's differentials were not built (review) | built, as 8 now describes |
+| 7 | `table3` (loop recheck of B1): Python entered a symbol row by row, so a close of the earlier pair member made at one row was read by a later row of the same symbol through ∃ or a constant ("must X if c" and "must X if someone may X", acts a and b, `c(a)`): SETTLED in Python, unknown in Lean, and Python's table depended on row order. The differential's guards were all at the rule's own row, so it could not see this | every row of a symbol, and every close it makes, reads the table before the symbol (2.5), as `tabK` does; fixtures b1-rows-exists and b1-rows-const (Python, three-way, Rust corpus, `Examples.lean` `uRows`); 8's differentials draw ∃, ∀ and constant guards |
