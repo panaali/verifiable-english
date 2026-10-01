@@ -2,6 +2,7 @@ import VE.Audit
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
+import VE.Compose.Examples
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks
