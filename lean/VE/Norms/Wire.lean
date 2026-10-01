@@ -14,8 +14,8 @@ for identity. Norm objects (3.2) are decoded into `Node`s. Nothing on the wire
 supplies an elaboration: premises, Background and conflict formulas are
 regenerated from the decoded values.
 
-Scope: FOL documents without W3 definitions (W3's decoder is not on this
-branch). W2 admission and report theorems are in `Norms.Admission` and
+Scope: FOL documents, with W3 definitions; `data@0` flags on document
+admission only (`decodeSource`). W2 admission and report theorems are in `Norms.Admission` and
 `Norms.Run`. -/
 namespace VE.Norms.Wire
 open Lean
@@ -262,20 +262,28 @@ structure Source where
   env : D.E = ne.rv.environment
   lits : D.lits = ne.rv.literals
 
-/-- Decode the environment and the norm objects (no W3 definitions on this
-path); the diagnostics are those of `validate`. -/
-def decodeSource (environment norms : Json) : Except String Source := do
+/-- Decode the environment and the norm objects; W3 definitions join the tree as
+layer symbols. The diagnostics are those of `validate`.
+
+`data@0` flags are admitted only when `flags` is set, which document admission
+does: its Background leaves `background:flags` are W2's (`Route.Admission`,
+regenerated from the decoded flags), and its report theorem takes the flag
+premises as a separate hypothesis. Every other norms case keeps the gate, since
+its regenerated Background and conflict checks are stated over literals and
+profile premises only (`backgroundBase`). -/
+def decodeSource (environment norms : Json) (flags : Bool := false) : Except String Source := do
   let ne ← decodeNormsEnvironment environment
-  unless ne.rv.definitions.isEmpty do
-    throw "UnsupportedProfile: norms route with definitions is not implemented"
-  unless ne.rv.flags.isEmpty do
+  unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
+    throw "defined declarations require the definitions@0 profile"
+  unless flags || ne.rv.flags.isEmpty do
     throw "UnsupportedProfile: norms route with data flags is not implemented"
   let units ← match norms with
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: norms must be an array"
   if units.length > 256 then throw "ResourceLimit: rules"
   let nodes ← units.mapM decodeNorm
-  let D : Doc := ⟨ne.rv.environment, ne.rv.literals, ⟨ne.regulated, [], nodes⟩⟩
+  let defs := ne.rv.definitions.map fun d => ({ name := d.name, args := d.args, body := d.body } : Definition)
+  let D : Doc := ⟨ne.rv.environment, ne.rv.literals, ⟨ne.regulated, defs, nodes⟩⟩
   match hv : validate D with
   | .error e => throw e
   | .ok () => pure ⟨ne, D, by unfold WellFormed; rw [hv], rfl, rfl⟩

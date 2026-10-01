@@ -544,9 +544,87 @@ def _lean_deductions(graph, claims, records, reachable, executable):
     return False, "Lean did not accept every supporting deduction certificate", "rejected"
 
 
+def _lean_graph_scope(graph) -> bool:
+    """Whether Lean's `graph` mode composes this package: the frozen v0 and v0.1
+    envelopes, or a ve.core@0.2 environment of any family
+    (`validation.family_in_scope`)."""
+    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
+    env = getattr(graph, "env", None)
+    if type(env) is not Environment:
+        return False
+    if env.language in LEGACY_LANGUAGES:
+        return True
+    return family_in_scope(env)
+
+
 @semantic_entry("graph.compose")
 def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_size=1,
                    max_models=1_000, max_evaluations=100_000, lean_executable=None):
+    """Check an argument under the selected authority.
+
+    Under a backend authority the per-edge replays and model checks run on the
+    backend (`dispatch.composed`), the package-wide diagnostic statuses stay
+    Python's (trusted, narrowed: SEMANTICS-MIGRATION-PLAN.md section 1.2), and a
+    composition additionally needs Lean's `graph` report for the root, whose
+    projection must be the record's composition exactly.
+    """
+    from .backends.dispatch import authority_for, execute
+    options = {"search": search, "max_proof_steps": max_proof_steps, "max_domain_size": max_domain_size,
+               "max_models": max_models, "max_evaluations": max_evaluations,
+               "lean_executable": lean_executable}
+
+    def python():
+        return _check_argument_python(graph, **options)
+
+    if authority_for("graph") in ("python", "rust-experimental") or not _lean_graph_scope(graph):
+        return python()
+    return execute("graph", {"kind": "graph"}, python, lean=lambda: _check_argument_lean(graph, options))
+
+
+def _check_argument_lean(graph, options):
+    from .backends.dispatch import pinned
+    from .backends.lean_runner import run
+    with pinned("lean"):
+        result = _check_argument_python(graph, **options)
+    if not result.composed:
+        return result
+    env = graph.env
+    supporting = set(result.composition["supporting_edge_ids"])
+    edges = []
+    for record in result.edges:
+        proofs = [a["certificate"]["proof"] for a in record["artifacts"] if a["kind"] == "follows"
+                  and a.get("check", {}).get("valid") and "certificate" in a]
+        if record["edge_id"] in supporting and proofs:
+            edges.append({"name": record["name"], "premises": list(record["premises"]),
+                          "conclusion": record["conclusion"], "edge_id": record["edge_id"],
+                          "certificate": proofs[0]})
+    nodes = [{"name": c.name, "source": c.source, "ast": formula_to_data(env, c.ast),
+              "claim_id": c.claim_id, **({} if c.label == "asserted" else {"label": c.label})}
+             for c in graph.claims]
+    case = {"id": "graph", "environment": env.to_dict(), "nodes": nodes, "edges": edges,
+            "root": graph.root}
+    try:
+        row = run("graph", [case])[0]
+    except (CheckerUnavailable, VEError) as exc:
+        # Lean refusing a composition of edges it replayed one by one is a
+        # disagreement, not a verdict; an operational failure is the same.
+        error = exc if isinstance(exc, CheckerUnavailable) else CheckerUnavailable(
+            f"CheckerUnavailable: Lean's graph mode rejects the composition ({exc.message})")
+        return ArgumentResult("CheckerUnavailable", errors=(error.to_dict(),))
+    names = {record["edge_id"]: record["name"] for record in result.edges}
+    background = [{"label": a["label"], "ast": a["ast"]}
+                  for a in result.composition["assumptions"] if a.get("label", "").startswith("background:")]
+    if (row["report"]["root"] != graph.root
+            or row["assumptions"] != list(result.remaining_assumptions)
+            or row["supporting_edges"] != [names[i] for i in result.composition["supporting_edge_ids"]]
+            or row["background"] != background):
+        error = CheckerUnavailable("CheckerUnavailable: Lean's graph projection differs from the composition record")
+        return ArgumentResult("CheckerUnavailable", errors=(error.to_dict(),))
+    return result
+
+
+def _check_argument_python(graph, *, search=True, max_proof_steps=10_000, max_domain_size=1,
+                           max_models=1_000, max_evaluations=100_000, lean_executable=None):
     """Validate and check a submitted DAG; never discharge factual assumptions.
 
     ``search=False`` performs certificate/witness replay only. Search bounds are

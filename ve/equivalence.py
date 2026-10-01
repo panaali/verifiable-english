@@ -183,6 +183,19 @@ def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) 
     raise; exhausted valid searches return UNKNOWN, with a reason.
     """
     budgets = _budgets(budgets)
+    from .backends.dispatch import composed, execute
+
+    def run():
+        return _compare(env, a, b, budgets)
+
+    payload = {"environment_id": getattr(env, "environment_id", None), **asdict(budgets)}
+    return execute("compare", payload, run, lean=composed("lean", run),
+                   rust=composed("rust-experimental", run))
+
+
+def _compare(env, a, b, budgets) -> ComparisonResult:
+    """Python's two-clause rule over checked constituents (trusted, narrowed:
+    SEMANTICS-MIGRATION-PLAN.md section 1.2)."""
     check_formula(env, a)
     check_formula(env, b)
     forward, reverse = _direction(env, a, b, budgets), _direction(env, b, a, budgets)
