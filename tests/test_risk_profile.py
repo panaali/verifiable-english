@@ -185,7 +185,7 @@ def test_record_diagnostics_are_the_routes():
     assert errors["empty-id"] == errors["empty-alternative-label"] == "RiskBinding: policy"
 
 
-def test_frozen_wordings_and_pending_sufficient_form():
+def test_frozen_wordings_and_sufficient_form():
     env = Environment(risk_source())
     actions = {"Running": "run", "Waiting": "wait"}
     harms = {"outage": "outage"}
@@ -203,13 +203,15 @@ def test_frozen_wordings_and_pending_sufficient_form():
         "form": "necessary", "action": "run", "harm": "outage",
         "condition_text": "memory is at most 5"}
     assert parse("Running leads to outage exactly when memory exceeds 5.", "record")["form"] == "exact"
+    assert parse("If memory exceeds 5, Running leads to outage.", "record") == {
+        "form": "sufficient", "action": "run", "harm": "outage", "condition_text": "memory exceeds 5"}
     for wording in ("Running may lead to outage.", "Running does not lead to outage.",
                     "Running leads to outage if memory exceeds 5.", "Running prevents outage.",
                     "Running might not lead to outage."):
         with pytest.raises(VEError):
             parse(wording, "record" if "might not" in wording else "guard")
     for word in ("might", "cannot", "leads", "might-not", "class", "or-worse", "less-worst",
-                 "necessary", "exact"):
+                 "necessary", "exact", "sufficient"):
         assert enabled(by_tag("risk-" + word), env)
 
 

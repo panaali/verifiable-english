@@ -300,4 +300,3 @@ def test_soft_norms_profile_is_unsupported(lean, tmp_path):
     assert row["error"] == "UnsupportedProfile: Unsupported profile soft-norms@0", row
     with pytest.raises(VEError, match="soft-norms@0"):
         python(doc, tmp_path)
-

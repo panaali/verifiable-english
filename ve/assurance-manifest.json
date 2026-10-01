@@ -166,7 +166,7 @@
       {"file": "lean/VE/Risk/Admission.lean", "lines": 128, "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
        "ranges": [[1, 128]], "declarations": ["admitDocument"],
        "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Run.lean", "lines": 651, "sha256": "6ecb8a1cbd36acd487c0d188820b65eedc1af5a94a78b009b907c58868b53e8d",
+      {"file": "lean/VE/Risk/Run.lean", "lines": 651, "sha256": "dbfad8022806b033c58c9382cb6a963eb6eb2c04e0aca4c83722c659222a1a5e",
        "ranges": [[1, 651]], "declarations": ["decodeRef", "queried", "riskBaseEnvironmentJson", "decodePackage", "decodeWitnessModel", "runCase"],
        "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"},
       {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",

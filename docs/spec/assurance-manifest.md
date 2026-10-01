@@ -171,7 +171,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Risk/Record.lean` | 1266 | 1266 | 1–1266 | `9b9aa82f9a8d…` |
 | `lean/VE/Risk/Audit.lean` | 190 | 190 | 1–190 | `62c518fee5d3…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
-| `lean/VE/Risk/Run.lean` | 651 | 651 | 1–651 | `6ecb8a1cbd36…` |
+| `lean/VE/Risk/Run.lean` | 651 | 651 | 1–651 | `dbfad8022806…` |
 | `lean/VE/Rights/Wire.lean` | 698 | 698 | 1–698 | `fc25e57bed1a…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
 | **total** | | **15,887** | | |
