@@ -23,7 +23,7 @@ entries only; `lakefile.toml` gained the `ve_norm_defaults_route` target (root
 | `Semantics.lean` | `Outcome3`, `value3`, `Value3`, `IntendedAt3`, `Expansion3`; `fill_intended` |
 | `Premises.lean` | `gapF`, `reachedF`, `fillPremises` (`Fill_T`), `BaseAdmissibleU`, `ConflictFreeU`, `FillTables`, `withFill`, `canonicalFill`, `canonTyped`, `expandFill`; `fill_conservative`, `conflictFreeU_iff`, `canonical_fill_sat`, `fill_extends` |
 | `Status.lean` | `fill_expansions`, `conflictFreeU_consistent`, `SettledAs`, `UndecidedAt`, `settled_expansions`, `settled_all_expansions`, `undecided_expansions`, `unreached_switch` |
-| `Evidence.lean` | `FiniteFill`, `FiniteModel.withFill`, `fillValid`; Kleene evaluation (`kleene`, `kleene_sound`); `table3` (DAG order, pair rule); `enumerateSettled`; `table3_sound`, `settled_of_table3`, `settled_of_enumeration`, `undecided_witness_sound`, `conflictU_witness_sound` (and its pair companion), `UniversalQF`, `fillPremises_universal` |
+| `Evidence.lean` | `FiniteFill`, `FiniteModel.withFill`, `fillValid`; Kleene evaluation (`kleene`, `kleene_sound`); `table3` (DAG order, pair rule); the closed cone of a point (`coneEval`, `coneAtoms`) and `enumerateSettled` over it; `table3_sound`, `settled_of_table3`, `settled_of_enumeration`, `undecided_witness_sound`, `conflictU_witness_sound` (and its pair companion), `UniversalQF`, `fillPremises_universal` |
 | `Routes.lean` | `fill_soft_value`, `excepted_lifts`, `excepted_collapses_under_deny`, `fill_rights_value`; the followability formulas on the filled tree (`allFollowableU`, `backgroundBaseAltU`, `BaseAdmissibleAltU`) and `followableU_sound` |
 | `Wire.lean` | The `norm-defaults@0` decoder (`decodeSourceU`), `decode_conservative`; regenerated outputs (`regeneratedU`); conflict-package replay over `E‴_base` and `Background_base(E‴) ++ Fill_T` (`normDefaults_wire_conflict_sound`, `normDefaults_wire_expands`); entailment replay (`normDefaults_wire_acceptance`) |
 | `Replay.lean` | Filled CONFLICT witnesses over `E‴_base` (`baseModelVocabularyU`, `normDefaults_wire_witness_sound`), status replays (`table3`, enumeration, two fillings; `normDefaults_wire_status_sound`) and `gaps: none` certificates (`normDefaults_wire_gaps_sound`) |
@@ -72,7 +72,8 @@ decision formula or `IntendedAt3` reads (`sat_background_congr`, `intendedAt3_co
   `unspecified` changes no expansion (see finding 2).
 - `table3_sound`, `settled_of_table3`: a definite `table3` entry is the outcome under every checked
   filling, hence SETTLED.
-- `settled_of_enumeration`: agreement of every checked filling is SETTLED.
+- `settled_of_enumeration`: agreement of every assignment of the point's closed cone that no `Fill_T` formula
+  refutes (in Kleene evaluation, the other unsaid atoms unknown) is SETTLED; any atom list is sound.
 - `undecided_witness_sound`: two checked finite fillings with opposite outcomes witness UNDECIDED.
 - `conflictU_witness_sound` (and `conflictU_pair_witness_sound`): a filled finite witness (settled or
   latent) refutes `ConflictFreeU`.
@@ -107,20 +108,34 @@ decision formula or `IntendedAt3` reads (`sat_background_congr`, `intendedAt3_co
    Under `U` the pair premise forces every gap of `r` to "no", so `p` is never reached and `hnr`
    holds; after the switch, `r` = yes, `p` = yes (a gap filled yes), `m` = yes is an expansion of
    `U.switch p` that `U` rejects. Change: `hnr` quantifies over the admissible fillings of
-   `U.switch p` and reads `reachedF (U.switch p) p`. The migration audit (6.3) must compute the
-   certificate on the switched document.
+   `U.switch p` and reads `reachedF (U.switch p) p`. The migration audit (6.3) computes the
+   certificate on the switched document (`audit_completions`: `switched_gaps`; fixture a1 is this
+   counterexample, and spec 5, 6.3 and 7 now state the corrected form).
 3. **`fill_rights_value`** takes `WellFormedRights D` (what `correlate_faithful` needs);
    `WellFormedU` does not imply it.
 
 ## Notes for the Python side and the statement pass
 
-- `enumerateSettled` enumerates every unsaid atom of the finite situation (bounded by
-  `MAX_UNSAID_ATOMS = 12`). Enumerating only the atoms in `ā`'s cone, with the others fixed, is not
-  sound in general: a premise at a point in the cone can read, through a guard, an atom outside it.
+- `enumerateSettled` enumerates the point's closed cone, exactly as Python's `UnspecifiedDocument.cone`
+  computes it: `coneEval` is Kleene evaluation with nothing filled that also returns the unsaid atoms
+  an unknown value depends on, and `coneAtoms` closes them under the ground `Fill_T` instances that
+  mention one of them. The budget `MAX_UNSAID_ATOMS = 12` counts the cone, in both. Under each
+  assignment of the cone the other unsaid atoms stay **unknown**; an assignment under which some
+  `Fill_T` formula is Kleene-false is skipped. That is sound for any atom list (an admissible filling
+  agrees with the assignment of its own values on the list, no `Fill_T` formula is false under it,
+  and a definite Kleene value is its value), so `settled_of_enumeration` needs no fact about the
+  cone. The variant that is unsound is a different one: enumerating the cone with the other atoms
+  **fixed** to one filling, since a premise at a point in the cone can read, through a guard, an atom
+  outside it. Before the integration review Lean enumerated every unsaid atom of the situation, so a
+  situation with more than 12 unsaid atoms and a small cone was SETTLED in Python and UNKNOWN here
+  (`Examples.lean`: u12 over 13 acts).
 - `table3`'s pair rule fires where the pair closes: it sets the member being placed if that member
   is the gap, and otherwise the earlier member's still-unknown entry (`closeRule`); symbols placed
-  in between keep the earlier unknown (sound, less complete). Fixture u5(b) needs the second case:
-  with no dependency between the members, `x_permitted` is placed first.
+  in between keep the earlier unknown (sound, less complete; enumeration over the cone settles
+  them). Fixture u5(b) needs the second case: with no dependency between the members,
+  `x_permitted` is placed first. Python's `table3` follows these steps exactly; before the
+  integration review it closed the earlier member on demand, so a symbol placed in between could
+  be SETTLED by Python's `table3` and stay unknown in Lean's (`Examples.lean`, `uBetween`; fixture b1).
 - `canonicalFill` needs no typing: `withFill` reads every filling on typed tuples only.
 - `reservedFree` checks the reserved prefixes on regulated, defined and rule names, and that the
   names `fill` introduces are undeclared; base predicate names cannot be enumerated from an
@@ -133,5 +148,7 @@ decision formula or `IntendedAt3` reads (`sat_background_congr`, `intendedAt3_co
 
 `default reached` witnesses and `UngroundedDefault` findings on the wire (the report block), the soft, rights,
 alternatives and risk route branches (their Wire/Run files are frozen here) and W8. Python's side
-(`ve/norm_defaults_route.py`) and the three-way fixtures (`conformance/norm_defaults_three_way.py`,
+(`ve/norm_defaults_route.py`), spec 8's differentials (`conformance/norm_defaults_differential.py`: 1,000
+generated trees regenerated byte for byte, `table3` and statuses on 1,000 generated situations) and the
+three-way fixtures (`conformance/norm_defaults_three_way.py`,
 `tests/test_norm_defaults_three_way.py`) were added at integration.
