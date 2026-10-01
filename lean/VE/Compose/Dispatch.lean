@@ -350,6 +350,7 @@ theorem todayGate_classify (ps : List String) (h : ∀ p ∈ ps, VE.Route.Gate.k
   · simp only [hs, decide_false, Bool.not_false, if_true]
     rfl
 
+/-- On the frozen gate's own registry, today's gate is the frozen classifier: same acceptance, same text. -/
 theorem today_classify (ps : List String) (h : ∀ p ∈ ps, VE.Route.Gate.known p = true) :
     (todayGate ps = .ok () ↔ ∃ f, VE.Route.Gate.classify ps = .ok f) ∧
     (∀ e, todayGate ps = .error e ↔ VE.Route.Gate.classify ps = .error e) := by
@@ -358,6 +359,7 @@ theorem today_classify (ps : List String) (h : ∀ p ∈ ps, VE.Route.Gate.known
 
 /-! ## What each of today's heads may rely on -/
 
+/-- What each of today's heads may rely on; these are the requirements of the heads' own Lean gates. -/
 theorem today_frozen (ps : List String) (h : today ps = .ok .frozen) :
     ∀ p ∈ ["norms@0", "soft-norms@0", "rights@0", "reports@0", "speech-acts@0", "alternatives@0", "risk@0"],
       p ∉ ps := by
