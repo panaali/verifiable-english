@@ -18,6 +18,8 @@ import tempfile
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from tools import rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route")
@@ -53,7 +55,7 @@ ALLOWED_ENVIRONMENT = (
 )
 # Added only for the stage that needs them.
 STAGE_ENVIRONMENT = {
-    "cargo": ("CARGO_NET_OFFLINE",),
+    "cargo": ("CARGO_NET_OFFLINE", "CARGO_ENCODED_RUSTFLAGS"),
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
@@ -331,9 +333,10 @@ def seed_registry(cargo_home: Path) -> None:
 
 
 @contextmanager
-def isolated_cargo(env: dict[str, str]):
+def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
     # Cargo runs in the scratch directory, outside the checkout and any home,
-    # with the fresh CARGO_HOME from gate_environment.
+    # with the fresh CARGO_HOME from gate_environment. Its paths are remapped,
+    # so the build is byte-identical to a checkout build pinned in checkers.lock.
     workdir = scratch_of(env) / "cargo"
     workdir.mkdir()
     cargo_home = Path(env["CARGO_HOME"])
@@ -341,7 +344,9 @@ def isolated_cargo(env: dict[str, str]):
     if configs:
         raise RuntimeError(f"Cargo would read ambient configuration: {[str(p) for p in configs]}")
     seed_registry(cargo_home)
-    yield {**env, "CARGO_NET_OFFLINE": "true"}, workdir
+    flags = rust_build.encoded_rustflags(root=ROOT, cargo_home=cargo_home,
+                                         target_dir=target_dir or ROOT / "rust/target")
+    yield {**env, "CARGO_NET_OFFLINE": "true", "CARGO_ENCODED_RUSTFLAGS": flags}, workdir
 
 
 def main() -> int:
@@ -385,22 +390,23 @@ def main() -> int:
                     env=env, stage="Lean audit")
             result["stages"].append("lean_audit")
 
-            host = command(["rustc", "-vV"], env=env, stage="Rust host")
-            match = re.search(r"^host: (\S+)$", host, re.MULTILINE)
-            if not match:
-                raise RuntimeError("rustc did not report a host target")
-            target = match.group(1)
+            # The host build at rust/target/release/ve: the executable the Rust
+            # backend loads and checkers.lock pins. An explicit --target would
+            # change crate metadata and so the hash.
             target_dir = ROOT / "rust/target"
-            cargo_options = ["--target-dir", str(target_dir), "--target", target]
+            cargo_options = ["--target-dir", str(target_dir)]
 
-            with isolated_cargo(env) as (cargo_env, cargo_cwd):
+            with isolated_cargo(env, target_dir) as (cargo_env, cargo_cwd):
                 record_environment(result, "cargo", cargo_env)
                 command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
                          str(ROOT / "rust/Cargo.toml")], cwd=cargo_cwd, env=cargo_env,
                         stage="Rust build")
-                rust_binary = target_dir / target / "release/ve"
+                rust_binary = target_dir / "release/ve"
                 if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
                     raise RuntimeError(f"Rust build did not produce {rust_binary}")
+                if rust_build.digest(rust_binary) not in rust_build.pinned_digests(
+                        ROOT / "lean/checkers.lock"):
+                    raise RuntimeError(f"Rust build {rust_binary} is not pinned in lean/checkers.lock")
                 result["stages"].append("rust_build")
 
                 rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
