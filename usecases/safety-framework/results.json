@@ -1627,6 +1627,14 @@
    "ve": "SOME(RS10=publication)"
   }
  ],
+ "cost": {
+  "case_models": 483,
+  "cases": 85,
+  "documents_built": 98,
+  "premises": 44,
+  "prover_calls": 1660,
+  "rule_candidates": 43
+ },
  "d2_d3": {
   "S": {
    "S1-cbrn_uplift_level_1": "severe",
@@ -3272,6 +3280,19 @@
    },
    "true": []
   }
+ },
+ "invention_audit": {
+  "bridges": [
+   "bridge-one-domain"
+  ],
+  "forced_choices": [
+   "completion defaults: every regulated predicate is run under deny and under allow (M7)",
+   "an unset open term is false in a case model (the decider made no such finding)",
+   "a soft exception is found exactly where a sufficient condition the text states holds",
+   "D3: \"a year\" from 2026-04-17 is 365 days (no 29 February in between; W6a has no year unit)",
+   "D2: unexamined (action, harm) cells count as possible (risk@0 unexamined: possible)"
+  ],
+  "untraced": []
  },
  "items": {
   "A-L0-DEV/CCA": {
@@ -75319,6 +75340,92 @@
     }
    ]
   }
+ },
+ "lint": {
+  "rules_per_source": {
+   "F10": [
+    "f10-acc",
+    "f10-dm-same",
+    "f10-dm-diff",
+    "f10-sec",
+    "f10-rel-same",
+    "f10-rel-diff"
+   ],
+   "F11": [
+    "f11-acc",
+    "f11-dm",
+    "f11-sec",
+    "f11-rel"
+   ],
+   "F12": [
+    "f12-p",
+    "f12-u"
+   ],
+   "F13": [
+    "f13-p",
+    "f13-u"
+   ],
+   "F14": [
+    "f14"
+   ],
+   "F15": [
+    "f15-same",
+    "f15-diff"
+   ],
+   "F16": [
+    "f16-ds"
+   ],
+   "F17": [
+    "f17-pra",
+    "f17-add"
+   ],
+   "F18": [
+    "f18-yearly",
+    "f18-frequent"
+   ],
+   "F19": [
+    "f19-default"
+   ],
+   "F2": [
+    "f2"
+   ],
+   "F20": [
+    "f20-holistic-strict",
+    "f20-holistic-default",
+    "f20-within-strict",
+    "f20-within-default",
+    "f20-elicitation-strict",
+    "f20-elicitation-default"
+   ],
+   "F3": [
+    "f3"
+   ],
+   "F4": [
+    "f4-check-d",
+    "f4-check-r",
+    "f4-further-r"
+   ],
+   "F5": [
+    "f5"
+   ],
+   "F6": [
+    "f6"
+   ],
+   "F7": [
+    "f7-rra",
+    "f7-sc"
+   ],
+   "F8": [
+    "f8"
+   ],
+   "F9": [
+    "f9-acc",
+    "f9-dm",
+    "f9-sec",
+    "f9-rel"
+   ]
+  },
+  "violations": []
  },
  "premises": {
   "A-L0-DEV": {

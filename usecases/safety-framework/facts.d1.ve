@@ -6,8 +6,10 @@
 "harmful_manipulation_level_1" is critical. "harmful_manipulation_level_1" is misuse. "harmful_manipulation_level_1" concerns "harmful_manipulation". "harmful_manipulation_level_1" recommends "security_level_2_plus".
 ## levels-stealth | always | 3.2.1: the Stealth and Situational Awareness TCL
 "stealth_and_situational_awareness_tcl" is tracked. "stealth_and_situational_awareness_tcl" is classified as "ml_rd_and_misalignment". "stealth_and_situational_awareness_tcl" concerns "ml_rd_and_misalignment_domain".
-## levels-ml-rd | always | table 3.2.2.a: ML R&D acceleration level 1 and ML R&D automation level 1
-"ml_rd_acceleration_level_1" is critical. "ml_rd_acceleration_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_acceleration_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_acceleration_level_1" recommends "security_level_3". "ml_rd_automation_level_1" is critical. "ml_rd_automation_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_automation_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_automation_level_1" recommends "security_level_4".
+## levels-ml-rd-acceleration | always | table 3.2.2.a: ML R&D acceleration level 1
+"ml_rd_acceleration_level_1" is critical. "ml_rd_acceleration_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_acceleration_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_acceleration_level_1" recommends "security_level_3".
+## levels-ml-rd-automation | always | table 3.2.2.a: ML R&D automation level 1 ("We recommend Security level 4")
+"ml_rd_automation_level_1" is critical. "ml_rd_automation_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_automation_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_automation_level_1" recommends "security_level_4".
 ## measures-sl2plus | always | 2.1.1 "Security Level 2+ ... with additional security measures designed to address risks from insider threats"
 "security_level_2_plus" includes "insider_threat_measures". "insider_threat_measures" addresses insiders.
 ## closure-misuse-ccls | always | 1.2 "For misuse risk, we define CCLs in the following risk domains": CBRN, cyber and harmful manipulation
