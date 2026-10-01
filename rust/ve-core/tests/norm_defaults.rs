@@ -12,7 +12,7 @@ fn replay_untrusted_norm_defaults_fillings() {
     ))
     .unwrap();
     let rows = cases.as_array().unwrap();
-    assert_eq!(rows.len(), 79);
+    assert_eq!(rows.len(), 92);
     for case in rows {
         let name = case["id"].as_str().unwrap();
         assert_eq!(case["untrusted"], Value::Bool(true), "{name} source trust flag");
@@ -35,6 +35,45 @@ fn replay_untrusted_norm_defaults_fillings() {
             assert!(values.iter().all(|value| *value), "{name} layers");
         }
     }
+}
+
+#[test]
+fn switch_certificate_needs_the_switched_fillings() {
+    // Spec 6.3 (review A1): with `p_permitted` deny no admissible filling reaches it,
+    // but once it is switched to unspecified one does. Rust evaluates both from the
+    // untrusted premise lists; the reached targets follow the layer order
+    // (`x_required`, `p_permitted`, `x_permitted`).
+    let cases: Value = serde_json::from_slice(include_bytes!(
+        "../../../conformance/norm_defaults_rust.json"
+    ))
+    .unwrap();
+    let reached = |prefix: &str| -> Vec<bool> {
+        let mut found = Vec::new();
+        for case in cases.as_array().unwrap() {
+            let name = case["id"].as_str().unwrap();
+            if !name.starts_with(prefix) || case["kind"] != "base" {
+                continue;
+            }
+            let environment = Environment::from_value(&case["environment"]).unwrap();
+            let document = Document::from_value(&environment, &case["formulas"]).unwrap();
+            let model = FiniteModel::from_value(&environment, &case["model"]).unwrap();
+            let value = |index: usize| {
+                evaluate_formula(&document, index, &model, 1_000_000)
+                    .unwrap()
+                    .value
+                    .unwrap()
+            };
+            let start = case["target_start"].as_u64().unwrap() as usize;
+            if (0..start).all(value) {
+                found.push(value(case["reached_start"].as_u64().unwrap() as usize + 1));
+            }
+        }
+        found
+    };
+    let deny = reached("a1-deny-");
+    let switched = reached("a1-unspecified-");
+    assert!(!deny.is_empty() && deny.iter().all(|value| !value));
+    assert!(switched.iter().any(|value| *value));
 }
 
 #[test]

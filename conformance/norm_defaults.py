@@ -50,6 +50,27 @@ def _norm(name, predicate, sign, guard=("top",), over=()):
                      "unless": [], "over": list(over)}}
 
 
+def between():
+    """Review B1: `x_permitted` unspecified with no rules, `a_permitted` "may A if may X" placed
+    between the members of the pair, `x_required` "must X if c"."""
+    return (_environment({"x_required": _regulated("obligation", "deny", permission="x_permitted"),
+                          "x_permitted": _regulated("permission", "unspecified"),
+                          "a_permitted": _regulated("permission", "deny", "{0} be audited"),
+                          "c": {"arguments": ["act"], "description": "c"}}),
+            [_norm("may-a", "a_permitted", True, ["unary", "x_permitted", ["var", 0]]),
+             _norm("must-x", "x_required", True, ["unary", "c", ["var", 0]])])
+
+
+def switch_counterexample(p_default):
+    """Review A1, spec 6.3: `x_required` unspecified with no rules, paired with `x_permitted` (deny,
+    "may X if may P"); `p_permitted` (`p_default`), "may P if X need not be done"."""
+    return (_environment({"x_required": _regulated("obligation", "unspecified", permission="x_permitted"),
+                          "x_permitted": _regulated("permission", "deny"),
+                          "p_permitted": _regulated("permission", p_default, "{0} be tried")}),
+            [_norm("may-x", "x_permitted", True, ["unary", "p_permitted", ["var", 0]]),
+             _norm("may-p", "p_permitted", True, ["not", ["unary", "x_required", ["var", 0]]])])
+
+
 def sources():
     """(name, document, situations) for the norms, soft and rights routes."""
     y = ["unary", "y_permitted", ["var", 0]]
@@ -80,6 +101,9 @@ def sources():
         ("u12", _environment({"x_permitted": _regulated("permission", "deny"),
                               "y_permitted": _regulated("permission", "unspecified", "{0} be tried")}),
          [_norm("r", "x_permitted", True, ["or", y, ["not", y]])], [act]),
+        ("b1", *between(), [{**act, "domains": {"act": ["a"]}, "relations": {"c": [["a"]]}}]),
+        ("a1-deny", *switch_counterexample("deny"), [{**act, "domains": {"act": ["a"]}}]),
+        ("a1-unspecified", *switch_counterexample("unspecified"), [{**act, "domains": {"act": ["a"]}}]),
     ]
     for name, raw, units, situations in items:
         yield name, nd.UnspecifiedDocument(Environment(raw), [NormDocument._decode(u) for u in units]), situations

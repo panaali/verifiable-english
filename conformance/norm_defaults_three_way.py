@@ -36,7 +36,8 @@ from ve.environment import Environment  # noqa: E402
 from ve import norm_defaults as nd  # noqa: E402
 from ve import norm_defaults_route as route  # noqa: E402
 from ve.norms import NormDocument  # noqa: E402
-from conformance.norm_defaults import _environment, _norm, _regulated, sources  # noqa: E402
+from conformance.norm_defaults import (_environment, _norm, _regulated, between, sources,  # noqa: E402
+                                       switch_counterexample)
 
 NORMS_ROUTE = ("u1", "u5a", "u5b", "u5c", "u6", "u7", "u12")
 ACT = {"complete": True, "domains": {"act": ["a", "b"]}, "constants": {}, "relations": {}}
@@ -57,14 +58,7 @@ def variants():
     for default in ("deny", "unspecified"):
         yield f"u15-{default}", _environment({"x_permitted": _regulated("permission", default)}), \
             [_norm("never", "x_permitted", False)], [ACT]
-    c = {"arguments": ["act"], "description": "c"}
-    yield "b1-between", _environment({
-        "x_required": _regulated("obligation", "deny", permission="x_permitted"),
-        "x_permitted": _regulated("permission", "unspecified"),
-        "a_permitted": _regulated("permission", "deny", "{0} be audited"), "c": c}), \
-        [_norm("may-a", "a_permitted", True, ["unary", "x_permitted", ["var", 0]]),
-         _norm("must-x", "x_required", True, ["unary", "c", ["var", 0]])], \
-        [{**ACT, "relations": {"c": [["a"]]}}]
+    yield "b1-between", *between(), [{**ACT, "relations": {"c": [["a"]]}}]
     y = ["unary", "y_permitted", ["var", 0]]
     yield "b2-wide", _environment({
         "x_permitted": _regulated("permission", "deny"),
@@ -74,15 +68,6 @@ def variants():
     for default in ("deny", "unspecified"):
         yield f"a1-switch-{default}", *switch_counterexample(default), [{**ACT, "domains": {"act": ["a"]}}]
 
-
-def switch_counterexample(p_default):
-    """Spec 6.3: `x_required` unspecified with no rules, paired with `x_permitted` (deny,
-    "may X if may P"); `p_permitted` (`p_default`), "may P if X need not be done"."""
-    return (_environment({"x_required": _regulated("obligation", "unspecified", permission="x_permitted"),
-                          "x_permitted": _regulated("permission", "deny"),
-                          "p_permitted": _regulated("permission", p_default, "{0} be tried")}),
-            [_norm("may-x", "x_permitted", True, ["unary", "p_permitted", ["var", 0]]),
-             _norm("may-p", "p_permitted", True, ["not", ["unary", "x_required", ["var", 0]]])])
 
 
 def _switch(env, predicate, default):
