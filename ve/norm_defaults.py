@@ -433,45 +433,44 @@ class UnspecifiedDocument:
     # Spec 2.5: table3, enumeration, witnesses.
     def table3(self, situation, *, budget=None):
         """Kleene outcomes in DAG order with every unsaid atom unknown, closed by
-        the profile rule at gaps only; `None` is unknown."""
+        the profile rule at gaps only; `None` is unknown.
+
+        This is Lean's `table3` step for step (`tabK`): each symbol is placed once,
+        reading only the symbols placed before it. Where a pair closes, the rule sets
+        the member being placed (`pairRule`) or the earlier member if it is still
+        unknown (`closeRule`); a symbol placed between the two members keeps reading
+        the earlier one as unknown, and enumeration settles it instead."""
         situation = self.situation(situation) if type(situation) is dict else situation
-        table, active = {}, set()
-        dual = {}
+        table = {}
+        partner = {}
         for required, permission, _ in self.pairs():
-            dual[permission] = ("permission", required)
-            dual[required] = ("required", permission)
+            partner[permission] = ("permission", required)
+            partner[required] = ("required", permission)
         outcomes = {p: self.filled.outcome(p) for p in self.filled.order}
         gaps = {p: And(Not(self.author_sides(p)[0]), Not(self.author_sides(p)[1])) for p in self.unspec}
-        kleene = None
+        kleene = _Kleene(self, situation, lookup=lambda p, row: table.get((p, row)), budget=budget)
 
-        def entry(p, row):
-            key = (p, row)
-            if key in table:
-                return table[key]
-            if key in active:
-                return None
-            active.add(key)
-            sorts = self.env.predicates[p].arguments
-            bindings = _bindings(sorts, row)
-            value, _ = kleene.formula(outcomes[p], bindings)
-            if value is None and p in dual and p in self.unspec:
-                side, other = dual[p]
-                at_gap, _ = kleene.formula(gaps[p], bindings)
-                if at_gap is True:
-                    other_value = entry(other, row)
-                    if side == "permission" and other_value is True:
-                        value = True
-                    elif side == "required" and other_value is False:
-                        value = False
-            active.discard(key)
-            table[key] = value
-            return value
+        def at_gap(p, bindings):
+            return p in self.unspec and kleene.formula(gaps[p], bindings)[0] is True
 
-        kleene = _Kleene(self, situation, lookup=entry, budget=budget)
         for p in self.filled.order:
             sorts = self.env.predicates[p].arguments
             for row in product(*(situation.domains[s] for s in sorts)):
-                entry(p, row)
+                bindings = _bindings(sorts, row)
+                value, _ = kleene.formula(outcomes[p], bindings)
+                side, other = partner.get(p, (None, None))
+                if value is None and side is not None and at_gap(p, bindings):
+                    if side == "permission" and table.get((other, row)) is True:
+                        value = True
+                    elif side == "required" and table.get((other, row)) is False:
+                        value = False
+                table[(p, row)] = value
+                if (side is not None and (other, row) in table and table[(other, row)] is None
+                        and at_gap(other, bindings)):
+                    if side == "required" and value is True:
+                        table[(other, row)] = True
+                    elif side == "permission" and value is False:
+                        table[(other, row)] = False
         return table
 
     def instances(self, situation):

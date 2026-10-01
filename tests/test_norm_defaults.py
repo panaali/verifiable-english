@@ -197,6 +197,47 @@ def test_u12_excluded_middle_settles_by_enumeration_and_budget_zero_is_unknown()
     assert (unknown.status, unknown.evidence) == ("UNKNOWN", "MAX_UNSAID_ATOMS")
 
 
+
+def test_u12_cone_enumeration_ignores_atoms_outside_the_cone():
+    """Review B2: 13 unsaid atoms in the situation, one in the point's cone. Python and
+    Lean (`coneAtoms`, `Examples.lean`) both enumerate the closed cone, under the same budget."""
+    env = environment({"x_permitted": permission("deny"),
+                       "y_permitted": permission("unspecified", act="{0} be tried")})
+    y = Unary("y_permitted", Var(0))
+    doc = nd.UnspecifiedDocument(env, [rule("r", "x_permitted", True, Or(y, Not(y)))])
+    acts = ["a"] + [f"a{i}" for i in range(1, 13)]
+    situation = doc.situation({"complete": True, "domains": {"act": acts}, "constants": {}, "relations": {}})
+    _, atoms, _ = doc.cone(situation, doc.filled.outcome("x_permitted", base=True), ("act",), ("a",))
+    assert atoms == {("unsaid__y_permitted", ("a",))}
+    settled = doc.status(situation, "x_permitted", ("a",))
+    assert (settled.status, settled.value, settled.evidence) == ("SETTLED", True, "enumeration")
+
+
+# table3 places each symbol once, in DAG order, as Lean's `tabK` does (review B1).
+
+def between():
+    """`x_permitted` unspecified with no rules, `a_permitted` "may A if may X" placed
+    between the members of the pair, `x_required` "must X if c"."""
+    env = environment({"x_required": obligation("deny"), "x_permitted": permission("unspecified"),
+                       "a_permitted": permission("deny", act="{0} be audited"),
+                       "c": {"arguments": ["act"], "description": "c"}})
+    return nd.UnspecifiedDocument(env, [rule("may-a", "a_permitted", True, Unary("x_permitted", Var(0))),
+                                        rule("must-x", "x_required", True, Unary("c", Var(0)))])
+
+
+def test_table3_leaves_a_symbol_between_pair_members_unknown_and_enumeration_settles_it():
+    doc = between()
+    assert doc.filled.order == ("x_permitted", "a_permitted", "x_required")
+    situation = doc.situation({"complete": True, "domains": {"act": ["a"]}, "constants": {},
+                               "relations": {"c": [["a"]]}})
+    table = doc.table3(situation)
+    # the pair closes at `x_required` and sets the earlier member; `a_permitted` read it as unknown
+    assert table[("x_permitted", ("a",))] is True and table[("x_required", ("a",))] is True
+    assert table[("a_permitted", ("a",))] is None
+    settled = doc.status(situation, "a_permitted", ("a",))
+    assert (settled.status, settled.value, settled.evidence) == ("SETTLED", True, "enumeration")
+    assert (doc.status(situation, "x_permitted", ("a",)).evidence) == "table3"
+
 # fill (2.3) and its conservativity (6.1, fixture Z).
 
 def test_fill_shape():
