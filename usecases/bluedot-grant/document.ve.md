@@ -135,6 +135,28 @@
           "description": "is proposed",
           "verbalisation": "{0} is proposed"
         },
+        "adopted": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is adopted",
+          "verbalisation": "{0} is adopted"
+        },
+        "is_evidence": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is evidence",
+          "verbalisation": "{0} is evidence"
+        },
+        "mandatory_for": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is mandatory for",
+          "verbalisation": "{0} is mandatory for {1}"
+        },
         "applies_to": {
           "arguments": [
             "item",
@@ -1400,7 +1422,7 @@
           ]
         ]
       },
-      "meaning_id": "c4bdfa0fb70558f4aa1b19238ea03c8c2c041a43250969e417946fd3ca3e1137"
+      "meaning_id": "3f167dfcc53809bb7419e5273f1cc00e59751e3fd25d91d0fcd6334a172b4090"
     },
     {
       "id": "u004",
@@ -1478,34 +1500,56 @@
             [
               "and",
               [
-                "binary",
-                "applies_to",
+                "unary",
+                "is_evidence",
                 [
                   "const",
                   "vex"
-                ],
-                [
-                  "const",
-                  "statistical_claims"
                 ]
               ],
               [
-                "binary",
-                "applies_to",
+                "implies",
                 [
-                  "const",
-                  "vex"
+                  "unary",
+                  "adopted",
+                  [
+                    "const",
+                    "vex"
+                  ]
                 ],
                 [
-                  "const",
-                  "approximate_claims"
+                  "and",
+                  [
+                    "binary",
+                    "mandatory_for",
+                    [
+                      "const",
+                      "vex"
+                    ],
+                    [
+                      "const",
+                      "statistical_claims"
+                    ]
+                  ],
+                  [
+                    "binary",
+                    "mandatory_for",
+                    [
+                      "const",
+                      "vex"
+                    ],
+                    [
+                      "const",
+                      "approximate_claims"
+                    ]
+                  ]
                 ]
               ]
             ]
           ]
         ]
       },
-      "meaning_id": "2ff0bc0e44fd287679251fcf56af0f7f2b8fda5015746ba5417df1082c6b987e"
+      "meaning_id": "6bff4ef20b9f9759c63cf66b03df599a4f69b04cc38d56deac56eac97e528950"
     },
     {
       "id": "u008",
@@ -1579,27 +1623,49 @@
               [
                 "and",
                 [
-                  "binary",
-                  "applies_to",
+                  "unary",
+                  "is_evidence",
                   [
                     "const",
                     "vex"
-                  ],
-                  [
-                    "const",
-                    "statistical_claims"
                   ]
                 ],
                 [
-                  "binary",
-                  "applies_to",
+                  "implies",
                   [
-                    "const",
-                    "vex"
+                    "unary",
+                    "adopted",
+                    [
+                      "const",
+                      "vex"
+                    ]
                   ],
                   [
-                    "const",
-                    "approximate_claims"
+                    "and",
+                    [
+                      "binary",
+                      "mandatory_for",
+                      [
+                        "const",
+                        "vex"
+                      ],
+                      [
+                        "const",
+                        "statistical_claims"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "mandatory_for",
+                      [
+                        "const",
+                        "vex"
+                      ],
+                      [
+                        "const",
+                        "approximate_claims"
+                      ]
+                    ]
                   ]
                 ]
               ]
@@ -1607,7 +1673,7 @@
           ]
         ]
       },
-      "meaning_id": "2a8d055831e191655f6cf7d0c0179161662732c3e1eb7a708cce6677fc2604d3"
+      "meaning_id": "19ebb1e81053364c0221dff065b6b816dcdde2cb008ec4f3ed82f092744ca3f3"
     },
     {
       "id": "u010",
@@ -2178,7 +2244,7 @@
           ]
         ]
       },
-      "meaning_id": "6c557ba84d494cf9567fb3a347bec17c041e7902b435f5564bb101fe19ac83c8"
+      "meaning_id": "cd6230d3ca9005cbf5091948a86cae70066786b9a9198a48973e123c00407f8c"
     },
     {
       "id": "u031",
@@ -2256,7 +2322,7 @@
           ]
         ]
       },
-      "meaning_id": "9dae19292423dd8c75598d89cc148d70e96b615eac72e36c8b062cd2e402f399"
+      "meaning_id": "5af8f8e26f6971c47957a608c8eda3a2f43597b1cfad11f0cfcff5fdf374eb10"
     },
     {
       "id": "u033",
@@ -2267,9 +2333,14 @@
       "status": "LABELLED",
       "kind": [
         "attributed",
-        "applicant",
-        "expects",
-        "asserted"
+        "old_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "expects",
+          "asserted"
+        ]
       ],
       "meaning": "specified",
       "support": "none"
@@ -2339,7 +2410,7 @@
           ]
         ]
       },
-      "meaning_id": "2698b5a2339fb91ae6718428889993c960a34254d6a0daa03309156e41526319"
+      "meaning_id": "2791f77e0646ce20fd420318a65c06a48049d58d7702353b26fd84f2d184ac75"
     },
     {
       "id": "u037",
@@ -2374,7 +2445,7 @@
           ]
         ]
       },
-      "meaning_id": "7765dcc531dde581e8239d400853958accb2657a3064534e60131f80f91f79e7"
+      "meaning_id": "fa0c0c6ef4c8436c0d2ac9e54fd0724d77b84895d1f292e4df00118e3fd96fb5"
     },
     {
       "id": "u038",
@@ -2449,7 +2520,7 @@
           ]
         ]
       },
-      "meaning_id": "13bda2bed43bf4d682c68690841ef754200aaac9ef1a1e6c1744bd2593215c79"
+      "meaning_id": "06589d19d138f0f1cb711d2a837d6815669a4702dafb105f377efa13d058f4bb"
     },
     {
       "id": "u039",
@@ -2468,28 +2539,20 @@
       "support": "none",
       "content": {
         "ast": [
-          "and",
+          "implies",
           [
-            "exists",
-            "evidence",
+            "unary",
+            "adopted",
             [
-              "binary",
-              "required_by",
-              [
-                "var",
-                0
-              ],
-              [
-                "const",
-                "vex"
-              ]
+              "const",
+              "vex"
             ]
           ],
           [
-            "forall",
-            "evidence",
+            "and",
             [
-              "implies",
+              "exists",
+              "evidence",
               [
                 "binary",
                 "required_by",
@@ -2501,20 +2564,39 @@
                   "const",
                   "vex"
                 ]
-              ],
+              ]
+            ],
+            [
+              "forall",
+              "evidence",
               [
-                "unary",
-                "needs_quality_review",
+                "implies",
                 [
-                  "var",
-                  0
+                  "binary",
+                  "required_by",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "const",
+                    "vex"
+                  ]
+                ],
+                [
+                  "unary",
+                  "needs_quality_review",
+                  [
+                    "var",
+                    0
+                  ]
                 ]
               ]
             ]
           ]
         ]
       },
-      "meaning_id": "ced1a3b2c2a1aa5bddc3f8c5867041f0aff6fa19b5079e3f75057b5e4dafd6a9"
+      "meaning_id": "7dca1515df049cee76a68bdf30a61abb26c0ddbf5641f8bcf996e9712d525228"
     },
     {
       "id": "u040",
@@ -2591,7 +2673,7 @@
           ]
         ]
       },
-      "meaning_id": "3bdc6777f9ed5cdcf97a022dbb26efa2dc79a89a69580ab70151b1a665fee818"
+      "meaning_id": "642f9361b739d292d337b122f0172c52ba8a7ecdc51272243b201c27db734663"
     },
     {
       "id": "u042",
@@ -2682,7 +2764,7 @@
           ]
         ]
       },
-      "meaning_id": "20d0a4f4f0e3772a638fb716a662c9acbdd6aef3c3ea26f2f845e1676ab6cd48"
+      "meaning_id": "74d35899c431b933a702d551c36208d98043e6a7bd3205c22ccf9e05cdfe99f8"
     },
     {
       "id": "u043",
@@ -2741,7 +2823,7 @@
           ]
         ]
       },
-      "meaning_id": "f31ef0c3a7d0a469364808e49d03d2c9f4abc947d5ee4ef642908daf9097f1d6"
+      "meaning_id": "563c60cd8e00c58dffcceda69032062983abd8f3aabebc07c367fa228affa7f5"
     },
     {
       "id": "u045",
@@ -2770,7 +2852,7 @@
           ]
         ]
       },
-      "meaning_id": "b28c25a6e3a644147afc1767c7b87ab2d989bf498bff4ec083c86a1d1d5b33dd"
+      "meaning_id": "8e411a7a665e00e075ab96f44d34f159b6be1c1887e3d3819e1a792efe79c5c1"
     },
     {
       "id": "u046",
@@ -2826,7 +2908,7 @@
           ]
         ]
       },
-      "meaning_id": "6d9133150535c44a3728774637e6f6fc03ec8c95dbdb105af5551238541ba334"
+      "meaning_id": "925502592f3b5761980d8933d56de245a4a7e913ed182bfc8002346cd3c70fa5"
     },
     {
       "id": "u047",
@@ -2868,7 +2950,7 @@
           ]
         ]
       },
-      "meaning_id": "c093909f2edc6119367788b0d701617499e165d69a7362d02e56dc987ddeaecb"
+      "meaning_id": "3dbe72072958b242002078dcba4f2a9f761373dc0781594270dad027a80b645b"
     },
     {
       "id": "u049",
@@ -2915,7 +2997,7 @@
           ]
         ]
       },
-      "meaning_id": "22c76bd8d1cdff5225b3785ec6a057fd42d5163f1b79be3b173cc94e9c476355"
+      "meaning_id": "32e8e97593393f15e0b7ff6db58f7d97490f6d4d2979b561c45472dac0db4d0b"
     },
     {
       "id": "u050",
@@ -2985,7 +3067,7 @@
           ]
         ]
       },
-      "meaning_id": "ba8c9e1d7076da5aa49c20df0da5dd544ed631f0955957f77eac5896fa99da3a"
+      "meaning_id": "ca34424d51143725115d7c8669c75c886d76d171016c6e9109c8cc3721819e87"
     },
     {
       "id": "u051",
@@ -3063,7 +3145,7 @@
           ]
         ]
       },
-      "meaning_id": "35d157b16d3cc07deb49d2d20e9464d89240eb832159a7c691fe3331a6e3986e"
+      "meaning_id": "8ac2ae834da731a19e66de7a4a3ad3810ec2363d8abc8d177a3727e631ea041a"
     },
     {
       "id": "u052",
@@ -3089,7 +3171,7 @@
           ]
         ]
       },
-      "meaning_id": "468cf8d9a17cf6c611326b3ab555b5690ea90cb120914d7062718b4c1c53b81b"
+      "meaning_id": "23d0b95337602e844904cf78d02c58114f2ba21fee5168593bee391eb74b1cfb"
     },
     {
       "id": "u053",
@@ -3097,14 +3179,14 @@
         4043,
         4121
       ],
-      "status": "LABELLED",
+      "status": "UNFORMALISED",
       "kind": [
-        "attributed",
-        "author",
-        "believes",
-        "asserted"
+        "unformalised",
+        "vague_evaluation"
       ],
-      "meaning": "specified",
+      "meaning": {
+        "unformalised": "vague_evaluation"
+      },
       "support": "none"
     },
     {
@@ -3152,7 +3234,7 @@
           ]
         ]
       },
-      "meaning_id": "2c5383f4b9e00f6e985297a93f99d7c51e7cc4ff92fbca665554c19222afb01e"
+      "meaning_id": "eb62309fe921d12cd7fd9eacea0a485ce31dfaf213ed15acfcde2733e5ca99fd"
     },
     {
       "id": "u055",
@@ -3196,7 +3278,7 @@
           ]
         ]
       },
-      "meaning_id": "d37ef683cea18f77012fe2942c8a524ae8bc9594e0e8b3f482f56b0fbd8763da"
+      "meaning_id": "0d5c58ebc8c3e7e9633e864b52a87ed9308eaa962fda26e1df0dc97fe1be5f12"
     },
     {
       "id": "u056",
@@ -3227,33 +3309,55 @@
           [
             "and",
             [
-              "binary",
-              "applies_to",
+              "unary",
+              "is_evidence",
               [
                 "const",
                 "vex"
-              ],
-              [
-                "const",
-                "statistical_claims"
               ]
             ],
             [
-              "binary",
-              "applies_to",
+              "implies",
               [
-                "const",
-                "vex"
+                "unary",
+                "adopted",
+                [
+                  "const",
+                  "vex"
+                ]
               ],
               [
-                "const",
-                "approximate_claims"
+                "and",
+                [
+                  "binary",
+                  "mandatory_for",
+                  [
+                    "const",
+                    "vex"
+                  ],
+                  [
+                    "const",
+                    "statistical_claims"
+                  ]
+                ],
+                [
+                  "binary",
+                  "mandatory_for",
+                  [
+                    "const",
+                    "vex"
+                  ],
+                  [
+                    "const",
+                    "approximate_claims"
+                  ]
+                ]
               ]
             ]
           ]
         ]
       },
-      "meaning_id": "2bf5d6d14a8547302d603cc483b5bd16a42434e24d09489512c5b98bc9029628"
+      "meaning_id": "852446402ab0be71d42dad7e0c1505197a3697de32f08c5ac06a9b6e01a4674c"
     },
     {
       "id": "u057",
@@ -3282,7 +3386,7 @@
           ]
         ]
       },
-      "meaning_id": "872ed6e6e61ec34c1ce2486596840c0d90bc20d51e69ce6bec8ef6bd18246324"
+      "meaning_id": "16cc54122728895e1203f3fca71c76a82ae4c3e44d3107e4b37e39a4fbd3c75c"
     },
     {
       "id": "u058",
@@ -3329,7 +3433,7 @@
           ]
         ]
       },
-      "meaning_id": "f0dfec44725970444f437dd1f06f5e6172655614e1ec5043e165418fbab50e1d"
+      "meaning_id": "c4a3257600b098f8c02ee113d35b966eb0699188e7a500f628b8ea55d81ee0a5"
     },
     {
       "id": "u059",
@@ -3355,7 +3459,7 @@
           ]
         ]
       },
-      "meaning_id": "cc0bf635e8bbddb2df598784ffa054eb20aef7cb7c1f8130d402943c090e255c"
+      "meaning_id": "b39f52d9d50fa0a4c80661745585d3d444259649d3a1e014ebf7ce1d07f82fbc"
     },
     {
       "id": "u060",
@@ -3418,7 +3522,7 @@
           ]
         ]
       },
-      "meaning_id": "87d1dd196697aed33d9b8fd78cc197b6903c5881ef02cbfb4bd4a43445e34812"
+      "meaning_id": "5d1091690b7442abd76a3ccda6f224df766693afc4d6f3a4b1b5dda251c3e85d"
     },
     {
       "id": "u062",
@@ -3427,14 +3531,9 @@
         4915
       ],
       "status": "CHECKED",
-      "kind": [
-        "attributed",
-        "applicant",
-        "intends",
-        "asserted"
-      ],
+      "kind": "asserted",
       "meaning": "specified",
-      "support": "none",
+      "support": "assumption",
       "content": {
         "ast": [
           "and",
@@ -3475,7 +3574,7 @@
           ]
         ]
       },
-      "meaning_id": "b11529ea833c7ac1f6c5e86e83d7ddde6f07fb1b575f794aa95ed00ecf6cd4d1"
+      "meaning_id": "a6a666917f8a10b82f72b2e8e8a06134f8acc23123c90f4734d0168e5f5abee4"
     },
     {
       "id": "u063",
@@ -3484,7 +3583,12 @@
         5091
       ],
       "status": "OPEN",
-      "kind": "exposition",
+      "kind": [
+        "attributed",
+        "author",
+        "says",
+        "asserted"
+      ],
       "meaning": {
         "open": [
           "real_artefact"
@@ -3499,7 +3603,12 @@
         5247
       ],
       "status": "OPEN",
-      "kind": "exposition",
+      "kind": [
+        "attributed",
+        "author",
+        "says",
+        "asserted"
+      ],
       "meaning": {
         "open": [
           "misleading_formalisation"
@@ -3534,7 +3643,7 @@
           ]
         ]
       },
-      "meaning_id": "5179ba16721d3a4db8c9c74bef3158ceae99110f5610c79c1b66cc633aa6672f"
+      "meaning_id": "cb45f49dbcd75d33fb599296a751f8cbc2f49feb4237a3a22a28c3613bcd6d18"
     },
     {
       "id": "u066",
@@ -3611,7 +3720,7 @@
           ]
         ]
       },
-      "meaning_id": "d856145e59b7f72cbe901ab7db87d7e226d7acc20df7731045f03c4fd3112b84"
+      "meaning_id": "3cc38ac6780382f8ff55c400de100ead614fff612c94aa147410265923ca6f1f"
     },
     {
       "id": "u067",
@@ -3732,7 +3841,7 @@
           ]
         ]
       },
-      "meaning_id": "472df1d4666839f8bbe05a1e1aa742c7d5a439222afeae42ca6c2008ba1719aa"
+      "meaning_id": "6d64e69fc0e8533faab035befdff2e741797d08489e9be1cadde6e5bfec85d8f"
     },
     {
       "id": "u068",
@@ -3839,7 +3948,7 @@
           ]
         ]
       },
-      "meaning_id": "e7a9e380582df000a4e2ab51d68e547e408189895db6a742c8735ad929bb0fe9"
+      "meaning_id": "79f461dd888be7952d2b2852e8bbe2789dd41cba47bfe322b9a2a382ea8be5df"
     },
     {
       "id": "u069",
@@ -3849,13 +3958,8 @@
       ],
       "status": "UNFORMALISED",
       "kind": [
-        "attributed",
-        "author",
-        "believes",
-        [
-          "unformalised",
-          "vague_comparison"
-        ]
+        "unformalised",
+        "vague_comparison"
       ],
       "meaning": {
         "unformalised": "vague_comparison"
@@ -3901,7 +4005,7 @@
           ]
         ]
       },
-      "meaning_id": "3aef6163940255571276545b09d19eeae06d3eb8a934e586e53ff6ca46ddcaf4"
+      "meaning_id": "891bb11a5ffacbee9bb203d9204e2443fb146608583648ca7cf7c2d3befa4f42"
     },
     {
       "id": "u071",
@@ -3979,34 +4083,56 @@
             [
               "and",
               [
-                "binary",
-                "applies_to",
+                "unary",
+                "is_evidence",
                 [
                   "const",
                   "vex"
-                ],
-                [
-                  "const",
-                  "statistical_claims"
                 ]
               ],
               [
-                "binary",
-                "applies_to",
+                "implies",
                 [
-                  "const",
-                  "vex"
+                  "unary",
+                  "adopted",
+                  [
+                    "const",
+                    "vex"
+                  ]
                 ],
                 [
-                  "const",
-                  "approximate_claims"
+                  "and",
+                  [
+                    "binary",
+                    "mandatory_for",
+                    [
+                      "const",
+                      "vex"
+                    ],
+                    [
+                      "const",
+                      "statistical_claims"
+                    ]
+                  ],
+                  [
+                    "binary",
+                    "mandatory_for",
+                    [
+                      "const",
+                      "vex"
+                    ],
+                    [
+                      "const",
+                      "approximate_claims"
+                    ]
+                  ]
                 ]
               ]
             ]
           ]
         ]
       },
-      "meaning_id": "2ff0bc0e44fd287679251fcf56af0f7f2b8fda5015746ba5417df1082c6b987e"
+      "meaning_id": "6bff4ef20b9f9759c63cf66b03df599a4f69b04cc38d56deac56eac97e528950"
     },
     {
       "id": "u075",
@@ -4080,27 +4206,49 @@
               [
                 "and",
                 [
-                  "binary",
-                  "applies_to",
+                  "unary",
+                  "is_evidence",
                   [
                     "const",
                     "vex"
-                  ],
-                  [
-                    "const",
-                    "statistical_claims"
                   ]
                 ],
                 [
-                  "binary",
-                  "applies_to",
+                  "implies",
                   [
-                    "const",
-                    "vex"
+                    "unary",
+                    "adopted",
+                    [
+                      "const",
+                      "vex"
+                    ]
                   ],
                   [
-                    "const",
-                    "approximate_claims"
+                    "and",
+                    [
+                      "binary",
+                      "mandatory_for",
+                      [
+                        "const",
+                        "vex"
+                      ],
+                      [
+                        "const",
+                        "statistical_claims"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "mandatory_for",
+                      [
+                        "const",
+                        "vex"
+                      ],
+                      [
+                        "const",
+                        "approximate_claims"
+                      ]
+                    ]
                   ]
                 ]
               ]
@@ -4108,7 +4256,7 @@
           ]
         ]
       },
-      "meaning_id": "2a8d055831e191655f6cf7d0c0179161662732c3e1eb7a708cce6677fc2604d3"
+      "meaning_id": "19ebb1e81053364c0221dff065b6b816dcdde2cb008ec4f3ed82f092744ca3f3"
     },
     {
       "id": "u077",
@@ -4343,7 +4491,7 @@
           ]
         ]
       },
-      "meaning_id": "2698b5a2339fb91ae6718428889993c960a34254d6a0daa03309156e41526319"
+      "meaning_id": "2791f77e0646ce20fd420318a65c06a48049d58d7702353b26fd84f2d184ac75"
     },
     {
       "id": "u088",
@@ -4378,7 +4526,7 @@
           ]
         ]
       },
-      "meaning_id": "7765dcc531dde581e8239d400853958accb2657a3064534e60131f80f91f79e7"
+      "meaning_id": "fa0c0c6ef4c8436c0d2ac9e54fd0724d77b84895d1f292e4df00118e3fd96fb5"
     },
     {
       "id": "u089",
@@ -4453,7 +4601,7 @@
           ]
         ]
       },
-      "meaning_id": "13bda2bed43bf4d682c68690841ef754200aaac9ef1a1e6c1744bd2593215c79"
+      "meaning_id": "06589d19d138f0f1cb711d2a837d6815669a4702dafb105f377efa13d058f4bb"
     },
     {
       "id": "u090",
@@ -4472,28 +4620,20 @@
       "support": "none",
       "content": {
         "ast": [
-          "and",
+          "implies",
           [
-            "exists",
-            "evidence",
+            "unary",
+            "adopted",
             [
-              "binary",
-              "required_by",
-              [
-                "var",
-                0
-              ],
-              [
-                "const",
-                "vex"
-              ]
+              "const",
+              "vex"
             ]
           ],
           [
-            "forall",
-            "evidence",
+            "and",
             [
-              "implies",
+              "exists",
+              "evidence",
               [
                 "binary",
                 "required_by",
@@ -4505,20 +4645,39 @@
                   "const",
                   "vex"
                 ]
-              ],
+              ]
+            ],
+            [
+              "forall",
+              "evidence",
               [
-                "unary",
-                "needs_quality_review",
+                "implies",
                 [
-                  "var",
-                  0
+                  "binary",
+                  "required_by",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "const",
+                    "vex"
+                  ]
+                ],
+                [
+                  "unary",
+                  "needs_quality_review",
+                  [
+                    "var",
+                    0
+                  ]
                 ]
               ]
             ]
           ]
         ]
       },
-      "meaning_id": "ced1a3b2c2a1aa5bddc3f8c5867041f0aff6fa19b5079e3f75057b5e4dafd6a9"
+      "meaning_id": "7dca1515df049cee76a68bdf30a61abb26c0ddbf5641f8bcf996e9712d525228"
     },
     {
       "id": "u091",
@@ -4595,7 +4754,7 @@
           ]
         ]
       },
-      "meaning_id": "3bdc6777f9ed5cdcf97a022dbb26efa2dc79a89a69580ab70151b1a665fee818"
+      "meaning_id": "642f9361b739d292d337b122f0172c52ba8a7ecdc51272243b201c27db734663"
     },
     {
       "id": "u093",
@@ -4686,7 +4845,7 @@
           ]
         ]
       },
-      "meaning_id": "20d0a4f4f0e3772a638fb716a662c9acbdd6aef3c3ea26f2f845e1676ab6cd48"
+      "meaning_id": "74d35899c431b933a702d551c36208d98043e6a7bd3205c22ccf9e05cdfe99f8"
     }
   ],
   "open_terms": [
@@ -4762,7 +4921,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "f31ef0c3a7d0a469364808e49d03d2c9f4abc947d5ee4ef642908daf9097f1d6",
+          "meaning_id": "563c60cd8e00c58dffcceda69032062983abd8f3aabebc07c367fa228affa7f5",
           "content": [
             "and",
             [
@@ -4815,7 +4974,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "b28c25a6e3a644147afc1767c7b87ab2d989bf498bff4ec083c86a1d1d5b33dd",
+          "meaning_id": "8e411a7a665e00e075ab96f44d34f159b6be1c1887e3d3819e1a792efe79c5c1",
           "content": [
             "not",
             [
@@ -4849,7 +5008,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "6d9133150535c44a3728774637e6f6fc03ec8c95dbdb105af5551238541ba334",
+          "meaning_id": "925502592f3b5761980d8933d56de245a4a7e913ed182bfc8002346cd3c70fa5",
           "content": [
             "and",
             [
@@ -4910,7 +5069,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "c093909f2edc6119367788b0d701617499e165d69a7362d02e56dc987ddeaecb",
+          "meaning_id": "3dbe72072958b242002078dcba4f2a9f761373dc0781594270dad027a80b645b",
           "content": [
             "binary",
             "conditional_on",
@@ -4941,7 +5100,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "22c76bd8d1cdff5225b3785ec6a057fd42d5163f1b79be3b173cc94e9c476355",
+          "meaning_id": "32e8e97593393f15e0b7ff6db58f7d97490f6d4d2979b561c45472dac0db4d0b",
           "content": [
             "and",
             [
@@ -4993,7 +5152,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "ba8c9e1d7076da5aa49c20df0da5dd544ed631f0955957f77eac5896fa99da3a",
+          "meaning_id": "ca34424d51143725115d7c8669c75c886d76d171016c6e9109c8cc3721819e87",
           "content": [
             "forall",
             "claim",
@@ -5068,7 +5227,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "35d157b16d3cc07deb49d2d20e9464d89240eb832159a7c691fe3331a6e3986e",
+          "meaning_id": "8ac2ae834da731a19e66de7a4a3ad3810ec2363d8abc8d177a3727e631ea041a",
           "content": [
             "forall",
             "claim",
@@ -5151,7 +5310,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "468cf8d9a17cf6c611326b3ab555b5690ea90cb120914d7062718b4c1c53b81b",
+          "meaning_id": "23d0b95337602e844904cf78d02c58114f2ba21fee5168593bee391eb74b1cfb",
           "content": [
             "binary",
             "benefit_of",
@@ -5182,7 +5341,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "2c5383f4b9e00f6e985297a93f99d7c51e7cc4ff92fbca665554c19222afb01e",
+          "meaning_id": "eb62309fe921d12cd7fd9eacea0a485ce31dfaf213ed15acfcde2733e5ca99fd",
           "content": [
             "and",
             [
@@ -5234,7 +5393,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "d37ef683cea18f77012fe2942c8a524ae8bc9594e0e8b3f482f56b0fbd8763da",
+          "meaning_id": "0d5c58ebc8c3e7e9633e864b52a87ed9308eaa962fda26e1df0dc97fe1be5f12",
           "content": [
             "and",
             [
@@ -5283,7 +5442,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "872ed6e6e61ec34c1ce2486596840c0d90bc20d51e69ce6bec8ef6bd18246324",
+          "meaning_id": "16cc54122728895e1203f3fca71c76a82ae4c3e44d3107e4b37e39a4fbd3c75c",
           "content": [
             "not",
             [
@@ -5317,7 +5476,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "f0dfec44725970444f437dd1f06f5e6172655614e1ec5043e165418fbab50e1d",
+          "meaning_id": "c4a3257600b098f8c02ee113d35b966eb0699188e7a500f628b8ea55d81ee0a5",
           "content": [
             "and",
             [
@@ -5369,7 +5528,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "cc0bf635e8bbddb2df598784ffa054eb20aef7cb7c1f8130d402943c090e255c",
+          "meaning_id": "b39f52d9d50fa0a4c80661745585d3d444259649d3a1e014ebf7ce1d07f82fbc",
           "content": [
             "binary",
             "schedules",
@@ -5400,7 +5559,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "87d1dd196697aed33d9b8fd78cc197b6903c5881ef02cbfb4bd4a43445e34812",
+          "meaning_id": "5d1091690b7442abd76a3ccda6f224df766693afc4d6f3a4b1b5dda251c3e85d",
           "content": [
             "and",
             [
@@ -5443,6 +5602,63 @@
       ]
     },
     {
+      "id": "reading-u062",
+      "unit": "u062",
+      "version": 1,
+      "status": "authored",
+      "signature": "grant-author",
+      "readings": [
+        {
+          "id": "chosen",
+          "kind": "asserted",
+          "meaning_id": "a6a666917f8a10b82f72b2e8e8a06134f8acc23123c90f4734d0168e5f5abee4",
+          "content": [
+            "and",
+            [
+              "unary",
+              "matched_cost",
+              [
+                "const",
+                "revised_comparison"
+              ]
+            ],
+            [
+              "and",
+              [
+                "binary",
+                "counts_cost",
+                [
+                  "const",
+                  "revised_comparison"
+                ],
+                [
+                  "const",
+                  "formalisation_work"
+                ]
+              ],
+              [
+                "binary",
+                "counts_cost",
+                [
+                  "const",
+                  "revised_comparison"
+                ],
+                [
+                  "const",
+                  "proof_production"
+                ]
+              ]
+            ]
+          ],
+          "admission": {
+            "who": "grant-author",
+            "why": "A present-tense report by the author, so asserted; 'the matched-cost comparison' uses the defined matched_cost predicate. Resolution: 'the matched-cost comparison' -> the comparison in the revised form text.",
+            "distinguishing_models": {}
+          }
+        }
+      ]
+    },
+    {
       "id": "reading-u065",
       "unit": "u065",
       "version": 1,
@@ -5452,7 +5668,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "5179ba16721d3a4db8c9c74bef3158ceae99110f5610c79c1b66cc633aa6672f",
+          "meaning_id": "cb45f49dbcd75d33fb599296a751f8cbc2f49feb4237a3a22a28c3613bcd6d18",
           "content": [
             "forall",
             "field",
@@ -5486,7 +5702,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "d856145e59b7f72cbe901ab7db87d7e226d7acc20df7731045f03c4fd3112b84",
+          "meaning_id": "3cc38ac6780382f8ff55c400de100ead614fff612c94aa147410265923ca6f1f",
           "content": [
             "and",
             [
@@ -5568,7 +5784,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "e7a9e380582df000a4e2ab51d68e547e408189895db6a742c8735ad929bb0fe9",
+          "meaning_id": "79f461dd888be7952d2b2852e8bbe2789dd41cba47bfe322b9a2a382ea8be5df",
           "content": [
             "and",
             [
@@ -5680,7 +5896,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "3aef6163940255571276545b09d19eeae06d3eb8a934e586e53ff6ca46ddcaf4",
+          "meaning_id": "891bb11a5ffacbee9bb203d9204e2443fb146608583648ca7cf7c2d3befa4f42",
           "content": [
             "and",
             [
