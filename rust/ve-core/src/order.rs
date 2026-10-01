@@ -1,6 +1,7 @@
 //! Independent order@0 AST and finite-model route. Proof certificates remain on
 //! the Lean route; this evaluator cannot certify entailment.
 use crate::{Environment, Error, Result, digest, error};
+use crate::search::{domain_sizes, increment as odometer, next_combination};
 use num_bigint::BigInt;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -356,6 +357,107 @@ fn eval(f: &Value, model: &Model, ctx: &[Cell], work: &mut u64, limit: u64) -> R
         _ => unreachable!(),
     })
 }
+
+fn py_cell(v: &Cell) -> String {
+    match v {
+        Cell::Object(s) => format!("'{s}'"),
+        Cell::Integer(n) => n.to_string(),
+    }
+}
+
+fn trace_node(kind: &str, value: bool, bindings: &[(String, String)], detail: String,
+              children: Vec<Value>) -> Value {
+    let bindings = bindings.iter().enumerate().map(|(index, (sort, local_id))|
+        json!({"debruijn_index":index,"sort":sort,"local_id":local_id})).collect::<Vec<_>>();
+    json!({"kind":kind,"value":value,"bindings":bindings,"detail":detail,"children":children})
+}
+
+fn traced_eval(f: &Value, model: &Model, ctx: &[Cell], bindings: &[(String, String)],
+               work: &mut u64, limit: u64) -> Result<(bool, Value)> {
+    if *work >= limit {
+        return error("ResourceLimit", "evaluation budget");
+    }
+    *work += 1;
+    let (kind, a) = tag(f)?;
+    let (value, label, detail, children) = match kind {
+        "top" => (true, "top", String::new(), vec![]),
+        "bottom" => (false, "bottom", String::new(), vec![]),
+        "unary" | "binary" => {
+            let row = a[2..].iter().map(|t| eval_term(t, model, ctx)).collect::<Vec<_>>();
+            let value = model.relations[a[1].as_str().unwrap()].contains(&row);
+            let cells = row.iter().map(py_cell).collect::<Vec<_>>();
+            let tuple = if cells.len() == 1 { format!("({},)", cells[0]) }
+                        else { format!("({})", cells.join(", ")) };
+            (value, kind, format!("{}{tuple}", a[1].as_str().unwrap()), vec![])
+        }
+        "eq" => {
+            let left = eval_term(&a[1], model, ctx);
+            let right = eval_term(&a[2], model, ctx);
+            (left == right, "equality",
+             format!("{} equals {}", cell_value(&left).as_str().unwrap(),
+                     cell_value(&right).as_str().unwrap()), vec![])
+        }
+        "lt" | "le" => {
+            let Cell::Integer(left) = eval_term(&a[1], model, ctx) else { unreachable!() };
+            let Cell::Integer(right) = eval_term(&a[2], model, ctx) else { unreachable!() };
+            (if kind == "lt" { left < right } else { left <= right }, "comparison",
+             format!("{left} {} {right}", if kind == "lt" { "<" } else { "<=" }), vec![])
+        }
+        "not" => {
+            let (child_value, child) = traced_eval(&a[1], model, ctx, bindings, work, limit)?;
+            (!child_value, "not", String::new(), vec![child])
+        }
+        "and" | "or" | "implies" => {
+            let (left, first) = traced_eval(&a[1], model, ctx, bindings, work, limit)?;
+            if kind == "and" && !left {
+                (false, kind, "right branch not needed".into(), vec![first])
+            } else if kind == "or" && left {
+                (true, kind, "right branch not needed".into(), vec![first])
+            } else if kind == "implies" && !left {
+                (true, kind, "vacuously true: antecedent is false".into(), vec![first])
+            } else {
+                let (right, second) = traced_eval(&a[2], model, ctx, bindings, work, limit)?;
+                (if kind == "and" { left && right } else { right }, kind, String::new(),
+                 vec![first, second])
+            }
+        }
+        "forall" | "exists" => {
+            let universal = kind == "forall";
+            let sort = a[1].as_str().unwrap();
+            let domain = &model.domains[sort];
+            if domain.is_empty() {
+                (universal, kind, if universal { "vacuously true: domain is empty" }
+                    else { "false: domain is empty" }.into(), vec![])
+            } else {
+                let mut children = Vec::new();
+                let mut decisive = None;
+                for entity in domain {
+                    let mut next_ctx = vec![Cell::Object(entity.clone())];
+                    next_ctx.extend_from_slice(ctx);
+                    let mut next_bindings = vec![(sort.to_owned(), entity.clone())];
+                    next_bindings.extend_from_slice(bindings);
+                    let (child_value, child) = traced_eval(&a[2], model, &next_ctx,
+                        &next_bindings, work, limit)?;
+                    children.push(child);
+                    if child_value != universal {
+                        decisive = Some(entity);
+                        break;
+                    }
+                }
+                let value = decisive.is_none() == universal;
+                let detail = match decisive {
+                    Some(entity) if universal => format!("counterexample {entity}"),
+                    Some(entity) => format!("witness {entity}"),
+                    None if universal => "all entities checked".into(),
+                    None => "no witness".into(),
+                };
+                (value, kind, detail, children)
+            }
+        }
+        _ => unreachable!(),
+    };
+    Ok((value, trace_node(label, value, bindings, detail, children)))
+}
 fn print_term(t: &Value, names: &[String]) -> String {
     let (kind, a) = tag(t).expect("checked term");
     match kind {
@@ -674,6 +776,95 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if !env.order() {
         return error("UnsupportedProfile", "order profile required");
     }
+    if v.get("kind") == Some(&json!("check")) {
+        let ast = v.get("ast").ok_or_else(|| Error::new("InvalidInput", "ast missing"))?;
+        let items = array(ast)?;
+        let formulas = if items.first().is_some_and(Value::is_string) {
+            vec![ast]
+        } else {
+            items.iter().collect::<Vec<_>>()
+        };
+        if formulas.is_empty() {
+            return error("SyntaxError", "empty document");
+        }
+        let mut nodes = 0;
+        for formula in formulas {
+            formula_check(&env, formula, &[], 1, &mut nodes)?;
+        }
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":"ok","well_typed":true}));
+    }
+    if v.get("kind") == Some(&json!("evaluate-budgeted")) {
+        let trace = v.get("trace") == Some(&json!(true));
+        let formulas = array(v.get("ast").ok_or_else(|| Error::new("InvalidInput", "ast missing"))?)?;
+        if formulas.is_empty() {
+            return error("SyntaxError", "empty document");
+        }
+        let mut nodes = 0;
+        for formula in formulas {
+            formula_check(&env, formula, &[], 1, &mut nodes)?;
+        }
+        let model = Model::decode(&env,
+            v.get("model").ok_or_else(|| Error::new("InvalidInput", "model missing"))?)?;
+        let maximum = v.get("max_evaluations").and_then(Value::as_u64)
+            .unwrap_or(crate::MAX_EVALUATIONS);
+        if maximum > crate::MAX_EVALUATIONS {
+            return error("ResourceLimit", "evaluation budget exceeds v0 limit");
+        }
+        if trace {
+            let trace_budget = v.get("max_trace_nodes").and_then(Value::as_u64).unwrap_or(10_000);
+            let limit = maximum.min(trace_budget);
+            let mut work = 0;
+            let mut children = Vec::new();
+            let mut status = "Satisfied";
+            let mut value = Some(true);
+            let mut detail = "all statements satisfied".to_owned();
+            for (index, formula) in formulas.iter().enumerate() {
+                match traced_eval(formula, &model, &[], &[], &mut work, limit) {
+                    Ok((true, child)) => children.push(child),
+                    Ok((false, child)) => {
+                        children.push(child);
+                        status = "Violated";
+                        value = Some(false);
+                        detail = format!("statement {} violated", index + 1);
+                        break;
+                    }
+                    Err(e) if e.code == "ResourceLimit" => {
+                        status = "ResourceLimit";
+                        value = None;
+                        detail = if trace_budget < maximum { "trace-node budget exhausted" }
+                            else { "formula-node evaluation budget exhausted" }.to_owned();
+                        break;
+                    }
+                    Err(e) => return Err(e),
+                }
+            }
+            let explanation = json!({"kind":if value.is_some() { "document" } else { "resource_limit" },
+                "value":value,"bindings":[],"detail":detail,"children":children});
+            return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+                "status":status,"value":value,"evaluations":work,"explanation":explanation}));
+        }
+        let mut work = 0;
+        let mut value = true;
+        for formula in formulas {
+            match eval(formula, &model, &[], &mut work, maximum) {
+                Ok(result) => {
+                    if !result {
+                        value = false;
+                        break;
+                    }
+                }
+                Err(e) if e.code == "ResourceLimit" => {
+                    return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+                        "status":"ResourceLimit","value":null,"evaluations":work}));
+                }
+                Err(e) => return Err(e),
+            }
+        }
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":if value { "Satisfied" } else { "Violated" },
+            "value":value,"evaluations":work}));
+    }
     if v.get("kind") == Some(&json!("countermodel")) {
         let premises = array(
             v.get("premises")
@@ -707,6 +898,19 @@ pub fn order_case(v: &Value) -> Result<Value> {
         return Ok(
             json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","valid":valid}),
         );
+    }
+    if v.get("kind").is_none() && v.get("premises").is_some() && v.get("conclusion").is_some()
+        && v.get("certificate").is_none() {
+        return if v.get("model").is_some() {
+            order_countermodel_check(&env, v)
+        } else {
+            order_search(&env, v, None)
+        };
+    }
+    if v.get("kind") == Some(&json!("distinguishing-model")) {
+        let a = v.get("a").ok_or_else(|| Error::new("InvalidInput", "a missing"))?;
+        let b = v.get("b").ok_or_else(|| Error::new("InvalidInput", "b missing"))?;
+        return order_search(&env, v, Some((a, b)));
     }
     if v.get("kind").is_some_and(|kind| kind != "evaluate")
         || v.get("certificate").is_some()
@@ -780,4 +984,452 @@ pub fn order_case(v: &Value) -> Result<Value> {
         )?);
     }
     Ok(out)
+}
+
+/// Python `search.ORDER_SEARCH_MAGNITUDE`: integer constants range over
+/// [-3, 3] plus every numeral and its neighbours.
+const ORDER_SEARCH_MAGNITUDE: i64 = 3;
+const SEARCH_SPACE: &str = "search relation atom space exceeds runtime limit";
+
+fn by_magnitude(values: BTreeSet<BigInt>) -> Vec<BigInt> {
+    let mut values: Vec<_> = values.into_iter().collect();
+    values.sort_by(|a, b| (a.magnitude(), a).cmp(&(b.magnitude(), b)));
+    values
+}
+
+/// Python `search._int_terms`: integer terms in predicate argument positions,
+/// and every numeral (and scale coefficient) occurring anywhere in a term.
+fn int_terms(f: &Value, ints: &BTreeSet<String>, arguments: &mut Vec<Value>,
+             numerals: &mut BTreeSet<BigInt>) {
+    fn term(t: &Value, argument: bool, ints: &BTreeSet<String>, arguments: &mut Vec<Value>,
+            numerals: &mut BTreeSet<BigInt>) {
+        let Ok((kind, a)) = tag(t) else { return };
+        if argument && kind != "var"
+            && !(kind == "const" && !a.get(1).and_then(Value::as_str).is_some_and(|c| ints.contains(c))) {
+            arguments.push(t.clone());
+        }
+        match kind {
+            "num" => { if let Ok(n) = decimal(&a[1]) { numerals.insert(n); } }
+            "add" => {
+                term(&a[1], false, ints, arguments, numerals);
+                term(&a[2], false, ints, arguments, numerals);
+            }
+            "scale" => {
+                if let Ok(n) = decimal(&a[1]) { numerals.insert(n); }
+                term(&a[2], false, ints, arguments, numerals);
+            }
+            _ => {}
+        }
+    }
+    let Ok((kind, a)) = tag(f) else { return };
+    match kind {
+        "unary" | "binary" => for t in &a[2..] { term(t, true, ints, arguments, numerals) },
+        "eq" | "lt" | "le" => {
+            term(&a[1], false, ints, arguments, numerals);
+            term(&a[2], false, ints, arguments, numerals);
+        }
+        "and" | "or" | "implies" => {
+            int_terms(&a[1], ints, arguments, numerals);
+            int_terms(&a[2], ints, arguments, numerals);
+        }
+        "not" => int_terms(&a[1], ints, arguments, numerals),
+        "forall" | "exists" => int_terms(&a[2], ints, arguments, numerals),
+        _ => {}
+    }
+}
+
+fn int_value(t: &Value, numbers: &BTreeMap<String, BigInt>) -> BigInt {
+    let (kind, a) = tag(t).expect("checked term");
+    match kind {
+        "num" => decimal(&a[1]).expect("checked number"),
+        "add" => int_value(&a[1], numbers) + int_value(&a[2], numbers),
+        "scale" => decimal(&a[1]).expect("checked number") * int_value(&a[2], numbers),
+        _ => numbers[a[1].as_str().expect("checked constant")].clone(),
+    }
+}
+
+fn used_predicates(f: &Value, used: &mut BTreeSet<String>) {
+    let Ok((kind, a)) = tag(f) else { return };
+    match kind {
+        "unary" | "binary" => { used.insert(a[1].as_str().unwrap_or("").to_owned()); }
+        "and" | "or" | "implies" => { used_predicates(&a[1], used); used_predicates(&a[2], used); }
+        "not" => used_predicates(&a[1], used),
+        "forall" | "exists" => used_predicates(&a[2], used),
+        _ => {}
+    }
+}
+
+/// Python `search._order_models`, in its exact order: domain sizes, integer
+/// constant assignments over the search values, used-relation subsets by
+/// size, then object constant denotations. `visit` returns true to stop.
+/// A model Python rejects with a Background generator is skipped.
+fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum: usize,
+                used: &BTreeSet<String>,
+                visit: &mut dyn FnMut(Model) -> Result<bool>) -> Result<()> {
+    let sorts: Vec<String> = env.model_sorts().into_iter().collect();
+    let int_constants: Vec<&String> = env.constants.iter()
+        .filter(|(_, sort)| *sort == "$int").map(|(name, _)| name).collect();
+    let object_constants: Vec<&String> = env.constants.iter()
+        .filter(|(_, sort)| *sort != "$int").map(|(name, _)| name).collect();
+    let ints: BTreeSet<String> = int_constants.iter().map(|c| (*c).clone()).collect();
+    let mut arguments = Vec::new();
+    let mut numerals = BTreeSet::new();
+    for f in formulas {
+        int_terms(f, &ints, &mut arguments, &mut numerals);
+    }
+    let mut values: BTreeSet<BigInt> =
+        (-ORDER_SEARCH_MAGNITUDE..=ORDER_SEARCH_MAGNITUDE).map(BigInt::from).collect();
+    for k in &numerals {
+        values.insert(k - 1);
+        values.insert(k.clone());
+        values.insert(k + 1);
+    }
+    let values = by_magnitude(values);
+    let minima: Vec<usize> = sorts.iter().map(|sort| {
+        let mut least = minimum;
+        if object_constants.iter().any(|c| &env.constants[*c] == sort) {
+            least = least.max(1);
+        }
+        if sort == "$string" {
+            least = least.max(env.constants.values().filter(|s| *s == "$string").count());
+        }
+        least
+    }).collect();
+    let relation_names: Vec<&String> = env.predicates.keys().filter(|p| !env.is_defined(p)).collect();
+    for sizes in domain_sizes(&minima, maximum) {
+        let domains: BTreeMap<&String, Vec<String>> = sorts.iter().zip(&sizes)
+            .map(|(sort, n)| (sort, (0..*n).map(|i| format!("e{i}")).collect())).collect();
+        let mut assignment = vec![0; int_constants.len()];
+        let assignment_limits = vec![values.len(); int_constants.len()];
+        loop {
+            let numbers: BTreeMap<String, BigInt> = int_constants.iter().zip(&assignment)
+                .map(|(c, i)| ((*c).clone(), values[*i].clone())).collect();
+            let cells = by_magnitude(arguments.iter().map(|t| int_value(t, &numbers)).collect());
+            let pool = |sort: &str| -> Vec<Value> {
+                if sort == "$int" { cells.iter().map(|n| json!(n.to_string())).collect() }
+                else { domains.get(&sort.to_owned()).map_or_else(Vec::new,
+                    |d| d.iter().map(|e| json!(e)).collect()) }
+            };
+            let possible: usize = used.iter()
+                .map(|p| env.predicates[p].iter().map(|s| pool(s).len()).product::<usize>()).sum();
+            if possible > 100_000 {
+                return error("ResourceLimit", SEARCH_SPACE);
+            }
+            let mut atoms: Vec<(&String, Vec<Value>)> = Vec::new();
+            for p in used {
+                let pools: Vec<Vec<Value>> = env.predicates[p].iter().map(|s| pool(s)).collect();
+                if pools.iter().any(Vec::is_empty) { continue; }
+                let limits: Vec<usize> = pools.iter().map(Vec::len).collect();
+                let mut row = vec![0; pools.len()];
+                loop {
+                    atoms.push((p, row.iter().zip(&pools).map(|(i, pool)| pool[*i].clone()).collect()));
+                    if !odometer(&mut row, &limits) { break; }
+                }
+            }
+            let choice_limits: Vec<usize> = object_constants.iter()
+                .map(|c| domains[&env.constants[*c]].len()).collect();
+            let choosable = choice_limits.iter().all(|n| *n > 0);
+            for size in 0..=atoms.len() {
+                let mut subset: Vec<usize> = (0..size).collect();
+                loop {
+                    let mut relations: BTreeMap<&String, Vec<Value>> =
+                        relation_names.iter().map(|p| (*p, Vec::new())).collect();
+                    for index in &subset {
+                        let (p, row) = &atoms[*index];
+                        relations.get_mut(p).expect("declared relation").push(json!(row));
+                    }
+                    let mut choice = vec![0; object_constants.len()];
+                    while choosable {
+                        let mut constants: BTreeMap<&String, Value> = numbers.iter()
+                            .map(|(c, n)| (int_constants.iter().find(|x| **x == c).copied()
+                                .expect("integer constant"), json!(n.to_string()))).collect();
+                        for (c, i) in object_constants.iter().zip(&choice) {
+                            constants.insert(c, json!(domains[&env.constants[*c]][*i]));
+                        }
+                        let raw = json!({"complete":true,"domains":domains,
+                            "constants":constants,"relations":relations});
+                        match Model::decode(env, &raw) {
+                            Ok(model) => if visit(model)? { return Ok(()); },
+                            Err(e) if e.code == "InvalidModel" && e.message.ends_with("(literals)") => {}
+                            Err(e) => return Err(e),
+                        }
+                        if !odometer(&mut choice, &choice_limits) { break; }
+                    }
+                    if size == 0 || !next_combination(&mut subset, atoms.len()) { break; }
+                }
+            }
+            if !odometer(&mut assignment, &assignment_limits) { break; }
+        }
+    }
+    Ok(())
+}
+
+/// Python `search._check_countermodel_values`: premises in order, then the
+/// conclusion, sharing one budget.
+fn countermodel_values(premises: &[Value], conclusion: &Value, model: &Model, maximum: u64)
+    -> Result<(&'static str, Vec<bool>, Option<bool>, u64)> {
+    let mut work = 0;
+    let mut values = Vec::new();
+    for f in premises {
+        match eval(f, model, &[], &mut work, maximum) {
+            Ok(value) => {
+                values.push(value);
+                if !value { return Ok(("NotCountermodel", values, None, work)); }
+            }
+            Err(e) if e.code == "ResourceLimit" => return Ok(("ResourceLimit", values, None, work)),
+            Err(e) => return Err(e),
+        }
+    }
+    match eval(conclusion, model, &[], &mut work, maximum) {
+        Ok(value) => Ok((if value { "NotCountermodel" } else { "Valid" }, values, Some(value), work)),
+        Err(e) if e.code == "ResourceLimit" => Ok(("ResourceLimit", values, None, work)),
+        Err(e) => Err(e),
+    }
+}
+
+/// Python `search._nonvacuous` over order formulas: (suitable, work, exhausted).
+fn nonvacuous(formula: &Value, model: &Model, maximum: u64, semantic: bool) -> (bool, u64, bool) {
+    struct Walk<'a> {
+        model: &'a Model,
+        maximum: u64,
+        work: u64,
+        semantic: bool,
+        ok: bool,
+        hits: BTreeMap<Vec<usize>, bool>,
+    }
+    impl Walk<'_> {
+        fn tick(&mut self) -> Result<()> {
+            if self.work >= self.maximum {
+                return error("ResourceLimit", "evaluation budget");
+            }
+            self.work += 1;
+            Ok(())
+        }
+        fn hit(&mut self, guards: &[&Value], ctx: &[Cell], path: &[usize]) -> Result<()> {
+            self.hits.entry(path.to_vec()).or_insert(false);
+            let mut value = true;
+            for guard in guards {
+                value &= eval(guard, self.model, ctx, &mut self.work, self.maximum)?;
+                if !value { break; }
+            }
+            *self.hits.get_mut(path).expect("hit entry") |= value;
+            Ok(())
+        }
+        fn clause_guards<'v>(&mut self, node: &'v Value) -> Result<Vec<&'v Value>> {
+            let mut guards = Vec::new();
+            let mut stack = vec![node];
+            while let Some(disjunct) = stack.pop() {
+                self.tick()?;
+                let (kind, a) = tag(disjunct)?;
+                if kind == "or" {
+                    stack.push(&a[2]);
+                    stack.push(&a[1]);
+                } else if kind == "not" {
+                    guards.push(&a[1]);
+                }
+            }
+            Ok(guards)
+        }
+        fn walk(&mut self, node: &Value, ctx: &[Cell], path: &mut Vec<usize>, universal: bool,
+                in_clause: bool) -> Result<()> {
+            self.tick()?;
+            let (kind, a) = tag(node)?;
+            match kind {
+                "implies" => {
+                    self.hit(&[&a[1]], ctx, path)?;
+                    path.push(0);
+                    self.walk(&a[1], ctx, path, universal, false)?;
+                    path.pop(); path.push(1);
+                    self.walk(&a[2], ctx, path, universal, false)?;
+                    path.pop();
+                }
+                "and" | "or" => {
+                    let is_or = kind == "or";
+                    if self.semantic && universal && is_or && !in_clause {
+                        let guards = self.clause_guards(node)?;
+                        if !guards.is_empty() {
+                            self.hit(&guards, ctx, path)?;
+                        }
+                    }
+                    for (index, child) in [&a[1], &a[2]].into_iter().enumerate() {
+                        path.push(index);
+                        self.walk(child, ctx, path, universal, is_or)?;
+                        path.pop();
+                    }
+                }
+                "not" => {
+                    path.push(0);
+                    self.walk(&a[1], ctx, path, universal, false)?;
+                    path.pop();
+                }
+                "forall" | "exists" => {
+                    let domain = &self.model.domains[a[1].as_str().expect("checked sort")];
+                    if domain.is_empty() { self.ok = false; }
+                    for entity in domain.clone() {
+                        let mut next = vec![Cell::Object(entity)];
+                        next.extend_from_slice(ctx);
+                        path.push(0);
+                        self.walk(&a[2], &next, path, universal || kind == "forall", false)?;
+                        path.pop();
+                    }
+                }
+                _ => {}
+            }
+            Ok(())
+        }
+    }
+    let mut state = Walk { model, maximum, work: 0, semantic, ok: true, hits: BTreeMap::new() };
+    match state.walk(formula, &[], &mut Vec::new(), false, false) {
+        Ok(()) => (state.ok && state.hits.values().all(|v| *v), state.work, false),
+        Err(_) => (false, state.work, true),
+    }
+}
+
+fn model_id(env: &Environment, model: &Model) -> Result<String> {
+    digest(&format!("ve-model-{}\n", env.identity_version()),
+           &json!({"environment_id":env.environment_id(),"model":model.canonical}))
+}
+
+fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
+    match v.get(name) {
+        None => Ok(default),
+        Some(value) => value.as_u64().ok_or_else(|| Error::new("InvalidInput", format!("{name} must be a nonnegative integer"))),
+    }
+}
+
+/// Bounded order search: a countermodel (`premises`, `conclusion`) or a
+/// distinguishing model (`a`, `b`), with Python's options and counters.
+fn order_search(env: &Environment, v: &Value, pair: Option<(&Value, &Value)>) -> Result<Value> {
+    let premises: Vec<Value> = match pair {
+        Some(_) => Vec::new(),
+        None => array(v.get("premises").ok_or_else(|| Error::new("InvalidInput", "premises missing"))?)?.to_vec(),
+    };
+    let conclusion = v.get("conclusion");
+    let guard = v.get("nonvacuous_for");
+    let semantic = v.get("semantic_nonvacuity") == Some(&json!(true));
+    let maximum_size = usize::try_from(number(v, "max_domain_size", 2)?)
+        .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?;
+    let max_models = number(v, "max_models", 10_000)?;
+    let max_evaluations = number(v, "max_evaluations", crate::MAX_EVALUATIONS)?;
+    let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+        .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?
+        .max(usize::from(v.get("nonempty_domains") == Some(&json!(true))));
+    if maximum_size > 1000 || max_evaluations > crate::MAX_EVALUATIONS || minimum > maximum_size {
+        return error("ResourceLimit", "search bounds exceed v0 envelope");
+    }
+    let mut formulas: Vec<&Value> = match pair {
+        Some((a, b)) => vec![a, b],
+        None => premises.iter().chain(conclusion).collect(),
+    };
+    crate::ast::ast_limit(formulas.iter().copied())?;
+    let mut nodes = 0;
+    for f in &formulas {
+        formula_check(env, f, &[], 1, &mut nodes)?;
+    }
+    if let Some(g) = guard {
+        formula_check(env, g, &[], 1, &mut 0)?;
+        formulas.push(g);
+    }
+    let mut used = BTreeSet::new();
+    for f in &formulas {
+        used_predicates(f, &mut used);
+    }
+    let conclusion = conclusion.cloned();
+    let (mut checked, mut work) = (0u64, 0u64);
+    let mut outcome: Option<(&'static str, Option<Value>, &'static str)> = None;
+    let search = order_models(env, &formulas, minimum, maximum_size, &used, &mut |model| {
+        if checked >= max_models {
+            outcome = Some(("ResourceLimit", None, "model-attempt budget exhausted"));
+            return Ok(true);
+        }
+        if work >= max_evaluations {
+            outcome = Some(("ResourceLimit", None, "evaluation budget exhausted"));
+            return Ok(true);
+        }
+        if let Some(g) = guard {
+            let (suitable, spent, exhausted) = nonvacuous(g, &model, max_evaluations - work, semantic);
+            work += spent;
+            if exhausted {
+                checked += 1;
+                outcome = Some(("ResourceLimit", None, "evaluation budget exhausted"));
+                return Ok(true);
+            }
+            if !suitable {
+                checked += 1;
+                return Ok(false);
+            }
+        }
+        let found = match pair {
+            None => {
+                let (status, _, _, spent) = countermodel_values(
+                    &premises, conclusion.as_ref().expect("conclusion"), &model, max_evaluations - work)?;
+                checked += 1;
+                work += spent;
+                if status == "ResourceLimit" {
+                    outcome = Some(("ResourceLimit", None, "evaluation budget exhausted"));
+                    return Ok(true);
+                }
+                status == "Valid"
+            }
+            Some((a, b)) => {
+                let mut spent = 0;
+                let left = eval(a, &model, &[], &mut spent, max_evaluations - work);
+                let left = match left {
+                    Ok(value) => value,
+                    Err(e) if e.code == "ResourceLimit" => {
+                        checked += 1;
+                        work += spent;
+                        outcome = Some(("ResourceLimit", None, "evaluation budget exhausted"));
+                        return Ok(true);
+                    }
+                    Err(e) => return Err(e),
+                };
+                let right = eval(b, &model, &[], &mut spent, max_evaluations - work);
+                checked += 1;
+                work += spent;
+                match right {
+                    Ok(value) => left != value,
+                    Err(e) if e.code == "ResourceLimit" => {
+                        outcome = Some(("ResourceLimit", None, "evaluation budget exhausted"));
+                        return Ok(true);
+                    }
+                    Err(e) => return Err(e),
+                }
+            }
+        };
+        if found {
+            outcome = Some(("Found", Some(model.canonical.clone()), ""));
+            return Ok(true);
+        }
+        Ok(false)
+    });
+    let (status, model, detail) = match search {
+        Ok(()) => outcome.unwrap_or(("NotFound", None, "")),
+        Err(e) if e.code == "ResourceLimit" && e.message == SEARCH_SPACE => ("ResourceLimit", None, SEARCH_SPACE),
+        Err(e) => return Err(e),
+    };
+    Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":status,"model":model,
+        "models_checked":checked,"evaluations":work,"max_domain_size":maximum_size,
+        "max_models":max_models,"detail":detail}))
+}
+
+/// A supplied order countermodel, as Python's `check_countermodel` reports it.
+fn order_countermodel_check(env: &Environment, v: &Value) -> Result<Value> {
+    let premises = array(v.get("premises").ok_or_else(|| Error::new("InvalidInput", "premises missing"))?)?;
+    let conclusion = v.get("conclusion").ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
+    crate::ast::ast_limit(premises.iter().chain([conclusion]))?;
+    let mut nodes = 0;
+    for f in premises.iter().chain([conclusion]) {
+        formula_check(env, f, &[], 1, &mut nodes)?;
+    }
+    let model = Model::decode(env, v.get("model").ok_or_else(|| Error::new("InvalidInput", "model missing"))?)?;
+    let maximum = number(v, "max_evaluations", crate::MAX_EVALUATIONS)?;
+    let (status, values, conclusion_value, work) = countermodel_values(premises, conclusion, &model, maximum)?;
+    let meaning = |a: &Value| digest(&format!("ve-meaning-{}\n", env.identity_version()),
+                                      &json!({"environment_id":env.environment_id(),"ast":a}));
+    Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),"valid":status == "Valid",
+        "premise_values":values,"conclusion_value":conclusion_value,"evaluations":work,
+        "environment_id":env.environment_id(),"model_id":model_id(env, &model)?,"status":status,
+        "premise_meaning_ids":premises.iter().map(meaning).collect::<Result<Vec<_>>>()?,
+        "conclusion_meaning_id":meaning(conclusion)?}))
 }

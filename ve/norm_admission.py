@@ -27,6 +27,28 @@ def _check_quoted(env, content):
 
 @semantic_entry("admission")
 def admit_norm_document(environment, document):
+    """Admit a document containing norm units under the selected authority."""
+    from .backends.dispatch import authority_for, execute
+    if authority_for("norms_admission") == "python":
+        return _admit_norm_document_python(environment, document)
+    env = environment if type(environment) is Environment else Environment(environment)
+    if env.alternatives is not None:
+        from .admission import admit_document
+        return admit_document(env, document)
+    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}
+
+    def lean():
+        from .backends.lean_runner import run
+        from .errors import CheckerUnavailable
+        row = run("norms", [case])[0]
+        if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean norms admission result")
+        return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+
+    return execute("norms_admission", case, lambda: _admit_norm_document_python(env, document), lean=lean)
+
+
+def _admit_norm_document_python(environment, document):
     env = environment if type(environment) is Environment else Environment(environment)
     if env.alternatives is not None:
         from .admission import admit_document

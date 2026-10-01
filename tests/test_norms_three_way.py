@@ -16,6 +16,7 @@ from pathlib import Path
 import pytest
 from subprocesses import HANG_TIMEOUT
 
+from tools import rust_build
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
 from ve.adapters.cedar import translate
 from ve.environment import Environment
@@ -54,8 +55,7 @@ def rust_executable():
     cargo = shutil.which("cargo")
     if cargo is None:
         pytest.skip("cargo is required for the W1 wire gate")
-    env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"),
-           "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+    env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(ROOT / "rust/Cargo.toml")],
                            cwd=ROOT, env=env, capture_output=True, text=True, timeout=600)

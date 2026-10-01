@@ -173,14 +173,45 @@ def _background_hooks(env):
         yield "rights", (_rights_premises, _valid_rights)
 
 
-@semantic_entry("definitions.elaborate")
-def background(env) -> tuple[Premise, ...]:
+def _background_python(env) -> tuple[Premise, ...]:
     # Every checking site consults Background, so the gate on checker families
     # that have not landed sits here and in validate_background.
     from .profiles import require_checker
     require_checker(env)
     return tuple(Premise(formula, generator)
                  for generator, (make, _) in _background_hooks(env) for formula in make(env))
+
+
+@semantic_entry("definitions.elaborate")
+def background(env) -> tuple[Premise, ...]:
+    """Environment premises from the selected authority, with the legacy type."""
+    from .backends.dispatch import execute
+    from .backends.lean_runner import route_environment, route_mode, run
+    from .ast import formula_from_data
+
+    case = {"id": "background", "kind": "background", "environment": env.to_dict()}
+
+    def lean():
+        if env.language != "ve.core@0.2":
+            # The frozen v0 and v0.1 envelopes have no generated Background: their
+            # Lean certificate runners bind the case premises alone.
+            return ()
+        request = {**case, "environment": route_environment(env)}
+        row = run(route_mode(env), [request])[0]
+        if len(row["premises"]) != len(row["generators"]):
+            from .backends.lean_service import CheckerUnavailable
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")
+        base = tuple(Premise(formula_from_data(env, wire, _generated=True), generator)
+                     for wire, generator in zip(row["premises"], row["generators"], strict=True))
+        # Trusted composition: soft premises belong to a validated soft
+        # document, and rights premises to a correlated rights document, not to
+        # the environment JSON. Lean regenerates them in the soft and rights
+        # routes, and soft_route.check_regenerated and
+        # rights_route.check_rights_regenerated compare them there.
+        return (base + tuple(Premise(formula, "soft") for formula in _soft_premises(env))
+                + tuple(Premise(formula, "rights") for formula in _rights_premises(env)))
+
+    return execute("background", case, lambda: _background_python(env), lean=lean)
 
 
 def checked_premises(env, layer_premises, case_premises):
@@ -194,6 +225,29 @@ def checked_premises(env, layer_premises, case_premises):
 
 @semantic_entry("definitions.elaborate")
 def validate_background(env, model) -> None:
+    """Background validity of a model under the selected authority.
+
+    Under a backend authority Lean's model mode decides (it checks the flags,
+    definitions, literals and profile generators); the Python checks name a
+    rejection both make (`backends.validation.decided`). A search candidate
+    without an identity (`_defer_model_id`) and environments outside Lean's
+    model mode keep the Python checks.
+    """
+    from .backends.dispatch import authority_for, execute
+    from .backends.validation import model_in_scope, validated_model
+    if (authority_for("model_validation") in ("python", "rust-experimental") or not model_in_scope(env)
+            or getattr(env, "soft_premises", ()) or not getattr(model, "model_id", "")):
+        return _validate_background_python(env, model)
+
+    def python():
+        _validate_background_python(env, model)
+        return model
+
+    execute("model_validation", {"kind": "model"}, python,
+            lean=lambda: validated_model(env, model.to_dict(), python))
+
+
+def _validate_background_python(env, model) -> None:
     from .profiles import require_checker
     require_checker(env)
     for generator, (_, validate) in _background_hooks(env):
@@ -205,9 +259,7 @@ def validate_background(env, model) -> None:
             raise
 
 
-@semantic_entry("definitions.elaborate")
-def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
-    """Dependencies precede dependents in one DAG over defined and regulated symbols."""
+def _dependency_order_python(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
     from .errors import ResourceLimit, VEError
     if len(dependencies) > 256:
         raise ResourceLimit("dependency graph size")
@@ -223,6 +275,41 @@ def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tup
         for mentions in remaining.values():
             mentions.discard(ready)
     return tuple(ordered)
+
+
+_DEPENDENCY_ENVIRONMENT = {
+    "language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {"sorts": {}, "predicates": {}, "constants": {}},
+}
+
+
+@semantic_entry("definitions.elaborate")
+def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
+    """Dependencies precede dependents in one DAG over defined and regulated symbols."""
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_runner import run
+    from .backends.lean_service import CheckerUnavailable
+    from .errors import ResourceLimit
+
+    if authority_for("dependency_order") == "python":
+        return _dependency_order_python(dependencies)
+    if len(dependencies) > 256:
+        raise ResourceLimit("dependency graph size")
+    case = {"id": "dependency-order", "kind": "dependency-order",
+            "environment": _DEPENDENCY_ENVIRONMENT,
+            "nodes": [{"name": name, "mentions": sorted(dependencies[name])}
+                      for name in sorted(dependencies)]}
+
+    def lean():
+        order = run("route", [case])[0]["order"]
+        if (type(order) is not list or len(order) != len(dependencies)
+                or set(order) != set(dependencies)):
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean dependency order")
+        return tuple(order)
+
+    return execute("dependency_order", case,
+                   lambda: _dependency_order_python(dependencies), lean=lean)
 
 
 def dependency_order_nodes(nodes) -> tuple[str, ...]:

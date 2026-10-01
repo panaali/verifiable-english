@@ -68,7 +68,38 @@ class FiniteModel:
 
     @classmethod
     @semantic_entry("model")
-    def from_dict(cls, env: Any, wire: Any, *, _defer_model_id: bool = False) -> "FiniteModel":
+    def from_dict(cls, env: Any, wire: Any, *, _defer_model_id: bool = False,
+                  _claimed: dict | None = None) -> "FiniteModel":
+        """Decode and validate a model under the selected authority.
+
+        `_defer_model_id` marks a search generator's candidate: it is never
+        reported before `countermodel.check` checks it, so it keeps Python's
+        structural decoder. `_claimed` holds the `environment_id` and
+        `model_id` an existing `FiniteModel` claims; each must be the
+        recomputed identity.
+        """
+        from .backends.dispatch import authority_for, execute
+
+        def python():
+            if _claimed is not None and _claimed["environment_id"] != env.environment_id:
+                raise InvalidModel("model belongs to a different environment")
+            built = cls._decode(env, wire, _defer_model_id=_defer_model_id)
+            if _claimed is not None and built.model_id != _claimed["model_id"]:
+                raise InvalidModel("model identity does not match its contents")
+            return built
+
+        # rust-experimental covers evaluation and search only; its witnesses
+        # keep the Python decoder, as before any adapter existed.
+        if _defer_model_id or authority_for("model_validation") in ("python", "rust-experimental"):
+            return python()
+        from .backends.validation import model_in_scope, validated_model
+        if not model_in_scope(env):
+            return python()
+        return execute("model_validation", {"kind": "model"}, python,
+                       lean=lambda: validated_model(env, wire, python, claimed=_claimed))
+
+    @classmethod
+    def _decode(cls, env: Any, wire: Any, *, _defer_model_id: bool = False) -> "FiniteModel":
         _keys(wire, {"complete", "domains", "constants", "relations"}, "")
         if wire["complete"] is not True:
             _fail("complete must be the Boolean true", "/complete")
@@ -180,8 +211,8 @@ class FiniteModel:
             model_id = digest(f"ve-model-{env.identity_version}\n", {"environment_id": environment_id, "model": normalized})
         model = cls(MappingProxyType(domains), MappingProxyType(constants), MappingProxyType(relations),
                     environment_id, model_id, tuple(sorted(defined_names)))
-        from .background import validate_background
-        validate_background(env, model)
+        from .background import _validate_background_python
+        _validate_background_python(env, model)
         return model
 
     def to_dict(self) -> dict[str, Any]:

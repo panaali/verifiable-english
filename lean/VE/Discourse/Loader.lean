@@ -14,8 +14,9 @@ ids), the active reading sets with their statuses and reading ids, and each unit
 
 What the Lean route does not implement is `NotImplemented: <feature>`, never a rejection of the
 document (4.7: an import whose check cannot complete is `unconfirmed`): fenced English or
-strict content, norm content, `MIXED` units, distinguishing models of reading sets, a document
-without a claim graph, and JSON `null`, which the restricted parser does not read. Decoding, hashing and display remain named
+strict content, norm content, distinguishing models of reading sets, a document without a claim
+graph, and JSON `null`, which the restricted parser does not read. A `MIXED` unit is read as
+`_parts` reads it: its parts are the units. Decoding, hashing and display remain named
 trust boundaries (3.4). -/
 namespace VE.Discourse.Loader
 open Lean
@@ -189,7 +190,6 @@ def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
   let keys ← match u with
     | .obj kvs => pure (kvs.toList.map Prod.fst)
     | _ => throw "invalid unit schema"
-  if (u.getObjValD "status").getStr?.toOption == some "MIXED" then throw (notImplemented "MIXED units")
   let required := ["id", "span", "kind", "meaning", "support"]
   unless required.all keys.contains && keys.all (required ++ ["content", "surface", "meaning_id", "status"]).contains do
     throw "invalid unit schema"
@@ -234,14 +234,62 @@ def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
     else if meaning == "unformalised" then "UNFORMALISED" else "LABELLED"
   pure ⟨id, (a, b), kind, content, status, explicit⟩
 
+/-- `_parts`: a unit, or the parts of an explicitly partitioned `MIXED` unit (document.md). The
+parent is provenance only: its bytes are counted once, by its parts, which partition its span
+in order, and its id names no unit. -/
+def partsOf (u : Json) : Except String (List Json) := do
+  let keys ← match u with
+    | .obj kvs => pure (kvs.toList.map Prod.fst)
+    | _ => throw "invalid unit schema"
+  if (u.getObjValD "status").getStr?.toOption != some "MIXED" then
+    if keys.contains "parts" then throw "parts require MIXED status"
+    return [u]
+  unless keys.length == 4 && ["id", "span", "status", "parts"].all keys.contains &&
+      token ((u.getObjValD "id").getStr?.toOption.getD "") do
+    throw "invalid MIXED unit schema"
+  let needs := "MIXED unit needs partitioned parts"
+  let (a, b) ← match (u.getObjValD "span").getArr?.toOption.map Array.toList with
+    | some [x, y] => match x.getNat?.toOption, y.getNat?.toOption with
+      | some a, some b => pure (a, b)
+      | _, _ => throw needs
+    | _ => throw needs
+  let parts ← match u.getObjValD "parts" with
+    | .arr ps => if ps.size < 2 then throw needs else pure ps.toList
+    | _ => throw needs
+  let partition := "MIXED parts must partition their parent span"
+  let stop ← parts.foldlM (fun cursor p => do
+    unless statuses.contains ((p.getObjValD "status").getStr?.toOption.getD "") do throw partition
+    match (p.getObjValD "span").getArr?.toOption.map Array.toList with
+    | some [x, y] => match x.getNat?.toOption, y.getNat?.toOption with
+      | some c, some d => if c == cursor then pure d else throw partition
+      | _, _ => throw partition
+    | _ => throw partition) a
+  unless stop == b do throw partition
+  pure parts
+
+/-- The ids of the `MIXED` parents: tokens, no two alike (`invalid MIXED unit id`, `duplicate
+MIXED unit id`), checked before any unit is compiled. -/
+def mixedParents (us : List Json) : Except String (List String) := do
+  let ids := us.filterMap fun u => if (u.getObjValD "status").getStr?.toOption == some "MIXED" then
+    some ((u.getObjValD "id").getStr?.toOption.getD "") else none
+  unless ids.all token do throw "invalid MIXED unit id"
+  unless ids.eraseDups.length == ids.length do throw "duplicate MIXED unit id"
+  pure ids
+
+/-- `load_document`'s units in order, a `MIXED` unit contributing its parts. -/
 def compileUnits (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
-    (source : String) (openNames : List String) : Nat → List Json → Except String (List Unit₀)
+    (source : String) (openNames : List String) (parents : List String) :
+    Nat → List Json → Except String (List Unit₀)
   | cursor, [] => if cursor == source.utf8ByteSize then .ok [] else .error "unit spans do not partition all source bytes"
   | cursor, u :: us => do
-    let x ← compileUnit rv profiles envId source openNames cursor u
-    let rest ← compileUnits rv profiles envId source openNames x.span.2 us
-    if (rest.map Unit₀.id).contains x.id then throw "duplicate or invalid unit id"
-    pure (x :: rest)
+    let parts ← partsOf u
+    let (xs, stop) ← parts.foldlM (fun (acc : List Unit₀ × Nat) p => do
+      let x ← compileUnit rv profiles envId source openNames acc.2 p
+      if parents.contains x.id || (acc.1.map Unit₀.id).contains x.id then throw "duplicate or invalid unit id"
+      pure (acc.1 ++ [x], x.span.2)) ([], cursor)
+    let rest ← compileUnits rv profiles envId source openNames parents stop us
+    if xs.any fun x => (rest.map Unit₀.id).contains x.id then throw "duplicate or invalid unit id"
+    pure (xs ++ rest)
 
 /-- `validate_open_terms`: the declared open-term names. -/
 def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except String (List String) := do
@@ -449,7 +497,8 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   let unitsJ ← match front.getObjVal? "units" with
     | .ok (.arr xs) => if xs.isEmpty then throw "document needs units" else pure xs.toList
     | _ => throw "document needs units"
-  let units ← compileUnits rv profiles envId source openNames 0 unitsJ
+  let parents ← mixedParents unitsJ
+  let units ← compileUnits rv profiles envId source openNames parents 0 unitsJ
   unless fences.isEmpty do throw (notImplemented "fenced English or strict content")
   let all ← compileSets rv profiles envId (units.map Unit₀.id) (optionalList front "reading_sets")
   let active := activeOf all

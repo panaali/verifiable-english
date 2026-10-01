@@ -5,6 +5,12 @@ import VE.Order.Surface
 import VE.Route.Run
 import VE.Norms.Run
 import VE.Service.EnglishRun
+import VE.Service.Standalone
+import VE.Service.Graph
+import VE.Service.Readings
+import VE.Service.Family
+import VE.Service.FamilyBundle
+import VE.Service.FamilyNorms
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -39,7 +45,8 @@ def maxLineBytes : Nat := 16777216
 def maxCases : Nat := 4096
 
 inductive Mode where
-  | evaluate | checkCertificate | order | route | norms | english
+  | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
+  | parse | graph | readings | bundle | familyNorms
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -49,8 +56,18 @@ def Mode.name : Mode → String
   | .route => "route"
   | .norms => "norms"
   | .english => "english"
+  | .environment => "environment"
+  | .model => "model"
+  | .check => "check"
+  | .identity => "identity"
+  | .parse => "parse"
+  | .graph => "graph"
+  | .readings => "readings"
+  | .bundle => "bundle"
+  | .familyNorms => "family-norms"
 
-def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english]
+def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
+  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -73,6 +90,15 @@ def runMode : Mode → Json → Json
   | .route, j => VE.Route.Run.runCaseReported j
   | .norms, j => VE.Norms.Run.runCaseReported j
   | .english, j => englishReported j
+  | .environment, j => Standalone.reported Standalone.environmentCase j
+  | .model, j => Standalone.reported Standalone.modelCase j
+  | .check, j => Standalone.reported Standalone.checkCase j
+  | .identity, j => Standalone.reported Standalone.identityCase j
+  | .parse, j => Standalone.reported Standalone.parseCase j
+  | .graph, j => Standalone.reported Family.graphMode j
+  | .readings, j => Standalone.reported Family.readingsMode j
+  | .bundle, j => Standalone.reported FamilyBundle.bundleCase j
+  | .familyNorms, j => FamilyNorms.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -450,6 +476,24 @@ theorem runMode_english (j : Json) :
         (match j with | .str text => text | _ => j.compress) with
       | .ok result => result
       | .error message => Json.mkObj [("status", .str "error"), ("error", .str message)] := rfl
+theorem runMode_environment (j : Json) :
+    runMode .environment j = Standalone.reported Standalone.environmentCase j := rfl
+theorem runMode_model (j : Json) :
+    runMode .model j = Standalone.reported Standalone.modelCase j := rfl
+theorem runMode_check (j : Json) :
+    runMode .check j = Standalone.reported Standalone.checkCase j := rfl
+theorem runMode_identity (j : Json) :
+    runMode .identity j = Standalone.reported Standalone.identityCase j := rfl
+theorem runMode_parse (j : Json) :
+    runMode .parse j = Standalone.reported Standalone.parseCase j := rfl
+theorem runMode_graph (j : Json) :
+    runMode .graph j = Standalone.reported Family.graphMode j := rfl
+theorem runMode_readings (j : Json) :
+    runMode .readings j = Standalone.reported Family.readingsMode j := rfl
+theorem runMode_bundle (j : Json) :
+    runMode .bundle j = Standalone.reported FamilyBundle.bundleCase j := rfl
+theorem runMode_familyNorms (j : Json) :
+    runMode .familyNorms j = FamilyNorms.runCaseReported j := rfl
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 

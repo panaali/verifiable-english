@@ -13,6 +13,8 @@ own bytes; a byte range that does not start and end on token boundaries of its u
 `InvalidInput`. The byte range is kept (`Mention.bytes`): slot discovery compares it exactly.
 The unit of every formula-producing mention must have discourse wording (`canonicalWording`,
 docs/spec/discourse.md 4.1(4)), checked with its span: `InvalidInput: discourse wording of <unit>`.
+A location binding (a `section_ref`, a `navigation`, or any mention of a `unit` or `anchor`
+target, 1.4) is never parsed, so its unit keeps its own wording.
 
 Beyond 3.1 the block may carry `validity` bindings, `self_truth` labels and the recorded
 reading choices `choices` (the Manifest fields of 9.1). A target's `version` pin is carried as
@@ -272,14 +274,14 @@ def canonicalWording (t : String) : Bool :=
     (cs.zip cs.tail).all fun (a, b) => !(a == ' ' && (b == ' ' || closingChar b)) && !(a == '(' && b == ' ')
 
 /-- Every mention's span as a token range of its unit; the unit of every recorded reference (a
-formula-producing mention) has discourse wording (`InvalidInput: discourse wording of <unit>`),
-checked with its span, before the rest of the block. -/
+formula-producing mention, `producing`) has discourse wording (`InvalidInput: discourse wording
+of <unit>`), checked with its span, before the rest of the block. -/
 def toTokenSpans (src : Source) (D : VE.Route.Admission.Doc) (K : Manifest) : Except String Manifest := do
   let ms ← K.mentions.mapM fun m => do
     match src.unitToks D m.unit with
     | some ts =>
       let span ← tokenSpan ts m
-      if formulaForm m.form && !((src.unitText D m.unit).all canonicalWording) then
+      if producing m && !((src.unitText D m.unit).all canonicalWording) then
         throw s!"InvalidInput: discourse wording of {m.unit}"
       pure { m with span := span }
     | none => throw s!"InvalidInput: mention {m.id} names an unknown unit"

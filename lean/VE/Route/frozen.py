@@ -1,7 +1,7 @@
-"""Hash test for trusted Lean sources through migration stage 1.
+"""Hash test for the reviewed trusted Lean source inventory.
 
 Usage (from lean/): python3 VE/Route/frozen.py        exits 0 iff unchanged.
-`frozen-sources.sha256` lists every `VE/*.lean` module at stage 1,
+`frozen-sources.sha256` lists every reviewed `VE/*.lean` module,
 including the audit manifest, service protocol and generated English runner
 copy. New modules must be added to the manifest before this check passes.
 `Main.lean` with those two lines removed must hash to the base file.

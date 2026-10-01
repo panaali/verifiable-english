@@ -8,7 +8,9 @@ across the quantity runner and every route family, with both reproducers from
 the W6a loop review. Python, Lean and Rust must each report `ResourceLimit`,
 and the work each spends is bounded by measures that do not grow with machine
 load: Python's own evaluation units, and the CPU seconds of each Lean and Rust
-batch (neither reports its units).
+batch (neither reports its units). The same cases also go through the public
+API under the Lean authority, which must report `ResourceLimit` without any
+operation falling back to Python.
 """
 from __future__ import annotations
 
@@ -23,6 +25,7 @@ from conformance.p0 import envelope
 from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
+from ve.backends import dispatch
 from ve.errors import ResourceLimit
 from ve.evaluate import _Evaluator
 from ve.limits import MAX_EVALUATIONS
@@ -32,6 +35,7 @@ from ve.units import elaborate_quantity, erased_environment, quantity_countermod
 ROOT = Path(__file__).resolve().parents[1]
 QUANTITY = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
 ROUTE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
+SERVICE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_service"
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
@@ -250,7 +254,11 @@ def meter_python(monkeypatch):
     """Count the evaluation units Python charges (`_Evaluator.tick`, the only gate
     of the budget), per case, and stop at the first charge past a budget: an
     evaluator whose own check was skipped or widened, or a case that goes on
-    charging after its budget is spent, fails here instead of running on."""
+    charging after its budget is spent, fails here instead of running on.
+
+    The meter reads Python's evaluator, so the metered cases run on the Python
+    authority whatever VE_AUTHORITY selects."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
     units = [0]
     charge = _Evaluator.tick
 
@@ -294,6 +302,31 @@ def test_every_backend_reports_resource_limit_in_bounded_time(seed, monkeypatch)
         limited = (got.get("status") == "error" and got["error"]["code"] == "ResourceLimit") or \
             got.get("status") == "ResourceLimit"
         assert limited, got
+
+
+# The operations that decide the work-budget and domain cases once the
+# structural caps of `limits.py` (checked before any backend is called) pass.
+BUDGET_OPERATIONS = {"evaluate", "countermodel_check", "model_validation", "definitions_elaboration"}
+
+
+@pytest.mark.skipif(not SERVICE.exists(), reason="build the Lean service")
+@pytest.mark.parametrize("seed", SEEDS)
+def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, monkeypatch):
+    """The Lean-authority counterpart of the metered test above: the same
+    generated cases, through the same public calls under VE_AUTHORITY=lean, each
+    report `ResourceLimit`, and every operation they dispatch runs on Lean (no
+    Python fallback). It counts no Python units: the verdicts are the backends'."""
+    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
+    calls = []
+    monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
+    dispatched = set()
+    for name, verdict, _, _, _ in generate(seed):
+        calls.clear()
+        assert verdict(), f"{name}: no ResourceLimit under the Lean authority"
+        assert all(authority == "lean" for _, authority in calls), (name, calls)
+        dispatched.update(op for op, _ in calls)
+    assert BUDGET_OPERATIONS <= dispatched, BUDGET_OPERATIONS - dispatched
 
 
 # --- The Python meter keeps the regression power of the old wall-clock bound ---

@@ -36,8 +36,34 @@ fn number(v: &Value, name: &str, default: u64) -> Result<u64> {
         }),
     }
 }
+fn nonvacuity(env: &Environment, v: &Value) -> Result<(Option<Formula>, bool)> {
+    let semantic = match v.get("semantic_nonvacuity") {
+        None => false,
+        Some(value) => value.as_bool().ok_or_else(||
+            Error::new("InvalidInput", "semantic_nonvacuity must be Boolean"))?,
+    };
+    let guard = match v.get("nonvacuous_for") {
+        None => None,
+        Some(value) => Some(Document::from_value(env, &json!([value]))?.formulas()[0].clone()),
+    };
+    if semantic && guard.is_none() {
+        return Err(Error::new("InvalidInput", "semantic_nonvacuity requires nonvacuous_for"));
+    }
+    Ok((guard, semantic))
+}
 /// The route kinds that need only a gated envelope: the label grammar and the
 /// dependency-DAG order (same diagnostics as Python and the Lean `route`).
+/// The case's `soft_premises` (a validated soft document's Background slot),
+/// typed over the environment and attached to it.
+fn soft(env: Environment, v: &Value) -> Result<Environment> {
+    match v.get("soft_premises") {
+        None => Ok(env),
+        Some(asts) => {
+            let premises = Document::from_value(&env, asts)?.formulas().to_vec();
+            Ok(env.with_soft_premises(premises))
+        }
+    }
+}
 fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Environment::from_value(field(v, "environment")?)?;
     let id = v.get("id").cloned().unwrap_or(json!(""));
@@ -123,6 +149,62 @@ fn case(v: &Value) -> Result<Value> {
     if v.get("family").is_some() {
         return elaborated_document_case(v);
     }
+    if v.get("kind").and_then(Value::as_str) == Some("check") {
+        let env = Environment::from_value(field(v, "environment")?)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let ast = field(v, "ast")?;
+        let items = ast.as_array().ok_or_else(|| Error::new("SyntaxError", "AST must be an array"))?;
+        let document = if items.first().is_some_and(Value::is_string) {
+            json!([ast])
+        } else {
+            ast.clone()
+        };
+        Document::from_value(&env, &document)?;
+        return Ok(json!({"id":v.get("id").cloned().unwrap_or(json!("")),
+            "status":"ok","well_typed":true}));
+    }
+    if v.get("kind").and_then(Value::as_str) == Some("evaluate-budgeted") {
+        let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let doc = Document::from_value(&env, field(v, "ast")?)?;
+        let model = FiniteModel::from_value(&env, field(v, "model")?)?;
+        let budget = number(v, "max_evaluations", MAX_EVALUATIONS)?;
+        let trace = v.get("trace").and_then(Value::as_bool).unwrap_or(false);
+        let mut out = if trace {
+            let trace_budget = number(v, "max_trace_nodes", 10_000)?;
+            serde_json::to_value(evaluate_traced(&doc, &model, budget, trace_budget)?).unwrap()
+        } else {
+            serde_json::to_value(evaluate(&doc, &model, budget)?).unwrap()
+        };
+        out["id"] = v.get("id").cloned().unwrap_or(json!(""));
+        return Ok(out);
+    }
+    if v.get("kind").and_then(Value::as_str) == Some("distinguishing-model") {
+        let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
+        if env.order() {
+            return order_case(v);
+        }
+        let doc = Document::from_value(&env, &json!([field(v, "a")?, field(v, "b")?]))?;
+        let bounds = SearchBounds {
+            max_domain_size: usize::try_from(number(v, "max_domain_size", 2)?)
+                .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?,
+            max_models: number(v, "max_models", 10_000)?,
+            max_evaluations: number(v, "max_evaluations", MAX_EVALUATIONS)?,
+        };
+        let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+            .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
+        let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
+        let (guard, semantic) = nonvacuity(&env, v)?;
+        let mut out = find_distinguishing_model_with_nonvacuity(&env, doc.formulas()[0].clone(),
+            doc.formulas()[1].clone(), bounds, minimum.max(usize::from(nonempty)),
+            guard.as_ref(), semantic)?.to_value();
+        out["id"] = v.get("id").cloned().unwrap_or(json!(""));
+        return Ok(out);
+    }
     if v.get("environment")
         .and_then(|e| e.get("profiles"))
         .and_then(Value::as_array)
@@ -130,7 +212,7 @@ fn case(v: &Value) -> Result<Value> {
     {
         return order_case(v);
     }
-    let env = Environment::from_value(field(v, "environment")?)?;
+    let env = soft(Environment::from_value(field(v, "environment")?)?, v)?;
     if let Some(conclusion) = v.get("conclusion") {
         let ps = field(v, "premises")?
             .as_array()
@@ -154,7 +236,12 @@ fn case(v: &Value) -> Result<Value> {
             max_models: number(v, "max_models", 10_000)?,
             max_evaluations: maximum,
         };
-        let mut out = find_countermodel(&env, &problem, bounds)?.to_value();
+        let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
+            .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?;
+        let nonempty = v.get("nonempty_domains").and_then(Value::as_bool).unwrap_or(false);
+        let (guard, semantic) = nonvacuity(&env, v)?;
+        let mut out = find_countermodel_with_nonvacuity(&env, &problem, bounds,
+            minimum.max(usize::from(nonempty)), guard.as_ref(), semantic)?.to_value();
         out["id"] = v.get("id").cloned().unwrap_or(json!(""));
         return Ok(out);
     }
