@@ -19,9 +19,9 @@ HERE = REPO / "usecases" / "asimov-extended"
 V2 = REPO / "usecases" / "asimov-laws"
 sys.path.insert(0, str(HERE))
 
-import cases  # noqa: E402
-import check  # noqa: E402
-import reading  # noqa: E402
+import asimov_extended_cases as cases  # noqa: E402
+import asimov_extended_check as check  # noqa: E402
+import asimov_extended_reading as reading  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.norm_english import render_english  # noqa: E402
 
@@ -84,8 +84,11 @@ def test_every_rule_has_one_reading_in_plain_english():
     # The additions are separate from v2, labelled, and come after it.
     assert [rule.name for rule in doc.rules[13:]] == cases.ADDITION_NAMES
     assert all(name.startswith("tie-") for name in cases.ADDITION_NAMES)
-    additions = (HERE / "additions.ve").read_text().splitlines()
+    base = (HERE / "base.ve").read_text()
+    assert text.startswith(base + "\n")
+    additions = text[len(base) + 1:].splitlines()
     assert [line.split(".")[0].split(" (")[0] for line in additions] == [f"Rule {n}" for n in range(14, 30)]
+    assert render_english(cases.document(False)) == (base, json.loads((HERE / "base.manifest.json").read_text()))
 
 
 def test_the_environment_extends_v2_without_changing_it():
@@ -106,7 +109,7 @@ def test_the_environment_extends_v2_without_changing_it():
 
 
 def test_the_independent_reading_gives_the_answer_key():
-    """The reading of `reading.py` was written from the plan's English, before and apart from VE's results."""
+    """The reading of `asimov_extended_reading.py` was written from the plan's English, before and apart from VE's results."""
     for name, spec in cases.all_records().items():
         expected = KEY["records"][name]
         assert sorted(reading.read(spec, False)["clear"]) == sorted(expected["base"]), name

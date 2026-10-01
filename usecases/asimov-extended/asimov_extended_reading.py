@@ -10,7 +10,7 @@ available to its one robot, so "competes with" always holds.
 """
 from __future__ import annotations
 
-from cases import HUMAN, HUMANITY, SELF
+from asimov_extended_cases import HUMAN, HUMANITY, SELF
 
 RANK = {"catastrophic": 3, "fatal": 2, "injuring": 1, "damaging": 0}
 CLASS = {"humanity_harm": "catastrophic", "death_1": "fatal", "death_2": "fatal", "death_3": "fatal",
