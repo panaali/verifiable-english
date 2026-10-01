@@ -428,3 +428,20 @@ def test_every_rights_incident_shape_round_trips_with_one_reading():
     assert len(seen) == len(lines)
     assert "limitation 1 holds where that state deprives that person of nationality" in render_line(
         env, "1", "claim", lines[-1][1], rights=rights)
+
+
+def test_unspecified_completion_legend_is_one_reading_and_profile_gated():
+    """norm-defaults 4.1: the `When nothing else in the text decides` sentence
+    joins the harness; all three completions of every predicate share one grammar."""
+    from tests.test_norm_defaults import environment, obligation, permission
+    from ve.norm_defaults_english import legend, legend_grammar, parse_legend_sentence
+    from ve.surface.unambiguity import require_unique_derivation
+
+    env = environment({"x_required": obligation("deny"), "x_permitted": permission("unspecified")})
+    grammar = legend_grammar(env)
+    for sentence in legend(env):
+        assert require_unique_derivation(env, sentence, grammar=grammar).data == "start"
+    assert parse_legend_sentence(env, "When nothing else in the text  decides, the text does not say "
+                                      "whether an act may be done.") == ("completion", "x_permitted", "unspecified")
+    with pytest.raises(SyntaxError):
+        parse_legend_sentence(env, "When no rule decides, the text does not say whether an act may be done.")

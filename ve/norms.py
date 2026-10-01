@@ -215,6 +215,9 @@ class NormDocument:
                 raise VEError(f"InvalidInput: invalid rule name {rule.name!r}")
             if rule.name in names:
                 raise DuplicateDeclaration(f"rule {rule.name}")
+            if rule.name.startswith("unsaid--") and "norm-defaults@0" in env.profiles:
+                # norm-defaults 2.1: reserved for the rules `fill` adds.
+                raise VEError(f"InvalidInput: reserved name {rule.name}")
             names.add(rule.name)
             if rule.predicate not in env.predicates or env.predicates[rule.predicate].regulated is None:
                 raise VEError(f"UnknownSymbol: regulated predicate {rule.predicate}")
@@ -288,7 +291,15 @@ class NormDocument:
         return (_any(selected[r.name] for r in rules if r.sign),
                 _any(selected[r.name] for r in rules if not r.sign), selected)
 
+    def _require_completion(self):
+        # An unspecified completion has no W1 layer of its own: norm-defaults
+        # elaborates the document by `fill` into an ordinary W1 tree first.
+        if "norm-defaults@0" in self.env.profiles:
+            raise VEError("UnsupportedProfile: norm-defaults@0 documents are checked through fill "
+                          "(ve.norm_defaults)")
+
     def outcome(self, predicate, *, base=False):
+        self._require_completion()
         positive, negative, _ = self.selection(predicate)
         default = self.env.predicates[predicate].regulated.default
         outcome = positive if default == "deny" else Not(negative)
@@ -324,6 +335,7 @@ class NormDocument:
     @semantic_entry("norms.elaborate")
     def elaborate(self, predicate):
         """The generated layer premise of `predicate`, from the selected authority."""
+        self._require_completion()
         from .backends.dispatch import authority_for, execute
         if authority_for("norms_elaborate") == "python" or not _lean_route(self):
             return self._elaborate_python(predicate)
@@ -350,6 +362,7 @@ class NormDocument:
     @semantic_entry("norms.elaborate")
     def premises(self):
         """The labelled layer premises in layer order, from the selected authority."""
+        self._require_completion()
         from .backends.dispatch import authority_for, execute
         if authority_for("norms_elaborate") == "python" or not _lean_route(self):
             return self._premises_python()
@@ -412,6 +425,7 @@ class NormDocument:
         return tuple(reports)
 
     def base_environment(self):
+        self._require_completion()
         if type(self) is NormDocument and "soft-norms@0" in self.env.profiles:
             raise VEError("UnsupportedProfile: soft rules require SoftNormDocument.elaborated")
         if self.env.alternatives is not None:
@@ -438,11 +452,24 @@ class ConflictReport:
     detail: str = ""
 
 
+def _reject_filling(document, model):
+    """A filling table belongs to a norm-defaults@0 document (norm-defaults 8)."""
+    relations = model.get("relations") if type(model) is dict else None
+    if type(relations) is dict:
+        for name in sorted(relations):
+            if (type(name) is str and name.startswith("unsaid__")
+                    and name not in document.env.predicates):
+                from .errors import InvalidModel
+                raise InvalidModel(f"{name} is a filling; supply it only with norm-defaults@0",
+                                   generator="norms")
+
+
 @semantic_entry("norms.conflict")
 def check_witness(document: NormDocument, target: str, model, values):
     """Independently validate an asserted target and typed tuple."""
     from .evaluate import _Evaluator
     from .model import FiniteModel
+    _reject_filling(document, model)
     env = document.base_environment()
     model = FiniteModel.from_dict(env, model) if type(model) is dict else model
     if model.environment_id != env.environment_id:
@@ -571,6 +598,8 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
     """A checked finite witness or certificates decide; exhaustion stays UNKNOWN."""
     if not isinstance(document, NormDocument):
         raise VEError("UnsupportedProfile: soft rules require the soft route")
+    document._require_completion()
+    _reject_filling(document, model)
     from .backends.dispatch import authority_for, execute
     options = {"model": model, "certificates": certificates, "max_evaluations": max_evaluations,
                "prove": prove, "tableau_steps": tableau_steps}
