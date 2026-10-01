@@ -104,6 +104,7 @@ import VE.Discourse.Theorems
 import VE.Discourse.English
 import VE.Compose.Slot
 import VE.Compose.Dispatch
+import VE.Compose.Content
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2654,3 +2655,5 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Compose.dispatch_discourse_frozen
 #print axioms VE.Compose.dispatch_error
 #print axioms VE.Compose.refusal_names
+#print axioms VE.Compose.needs_chain
+#print axioms VE.Compose.assertion_declares_nothing
