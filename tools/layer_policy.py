@@ -7,19 +7,23 @@ responsibility until it is split; exact legacy edges are tracked separately.
 from __future__ import annotations
 
 import ast
+from functools import cache
 from pathlib import Path
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-measurements"}
 
 PYTHON = {
-    1: "ast environment errors identity limits model wire".split(),
-    2: ("background closure definitions entailment evaluate norms order profiles").split(),
+    1: "ast environment errors identity limits model wire assurance".split(),
+    2: ("background closure definitions entailment evaluate norms order profiles "
+        "alternatives reports rights softnorms speech_acts units").split(),
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
-        "norm_english parser printer surface lexicon").split(),
+        "norm_english parser printer surface lexicon report_english speech_english").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_strict openterms propose readings "
-        "search stream_audit vacuity assist").split(),
+        "search stream_audit vacuity assist discourse quantity_admission reports_route "
+        "risk rights_route soft_route speech_document").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
@@ -87,12 +91,27 @@ def python_layer(module: str) -> int | None:
     return max(matches)[1] if matches else None
 
 
+@cache
+def lean_executables(root: Path = ROOT) -> dict[str, str]:
+    """Map each `lean_exe` in lean/lakefile.toml to its root module."""
+    lakefile = tomllib.loads((root / "lean/lakefile.toml").read_text())
+    return {exe["name"]: exe.get("root", exe["name"]) for exe in lakefile.get("lean_exe", [])}
+
+
+def lean_default_targets(root: Path = ROOT) -> set[str]:
+    """Targets a plain `lake build` produces; other executables must be named."""
+    return set(tomllib.loads((root / "lean/lakefile.toml").read_text()).get("defaultTargets", []))
+
+
+def lean_entry(module: str) -> bool:
+    """Executable roots and top-level `*Main` modules are route and service entry points."""
+    return module in lean_executables().values() or ("." not in module and module.endswith("Main"))
+
+
 def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
         return 5  # aggregation and audit targets
-    if module in {"Main", "NormsMain", "SoftNormsMain", "RightsMain", "SpeechActsMain",
-                  "AlternativesMain", "QuantityMain", "ReportsMain",
-                  "Serve", "ResponseDecode"} or module.endswith(".Run") or module.startswith("VE.Service."):
+    if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",

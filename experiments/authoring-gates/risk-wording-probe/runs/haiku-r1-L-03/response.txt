@@ -1,0 +1,25 @@
+# Answers
+
+**Text 1: (a)**
+The phrase "allows data loss to happen" means restoring the backup leads to data loss AND another available action (doing nothing) might not lead to it, so there exists at least one case where doing nothing avoids data loss.
+
+**Text 2: (a)**
+"Cannot lead to task delay unless duration > 30 minutes" means if a task delay occurs, the duration must have been greater than 30 minutes. Since the task delay happened, the duration must have exceeded 30 minutes.
+
+**Text 3: (d)**
+"Might not lead to server outage" means some case the text allows shows the job running without an outage occurring, directly establishing that at least one case exists where running the job causes no outage.
+
+**Text 4: (a)**
+Since "a fall is avoidable by the robot" means some action might not lead to a fall, and taking stairs always leads to a fall, the ramp must be the action that avoids it—so in at least one case, taking the ramp results in no fall.
+
+**Text 5: (c)**
+"Certainly leads to a task delay" means the task delay happens in every case allowed by the text. Therefore, there is no case with no task delay.
+
+**Text 6: (a)**
+The statement "leads to failure if peak > 4GB" only establishes what happens when the condition holds; it does not rule out failure when peak ≤ 4GB, so observing a failure does not determine whether the peak memory exceeded 4GB.
+
+**Text 7: (b)**
+The definition of "less severe worst case" directly means the alternative action might lead to a harm more severe than every harm the first action might lead to, which is exactly what option (b) states.
+
+**Text 8: (a)**
+"Cannot lead to an allergic reaction" means the declared estimates and statements rule the allergic reaction out completely, so no allergic reaction can happen when penicillin is given.

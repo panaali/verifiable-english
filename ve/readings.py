@@ -350,7 +350,8 @@ def _lean_readings_scope(env) -> bool:
 
 @semantic_entry("readings")
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
-                   max_models=10_000, max_evaluations=100_000, fixed=(), couplings=()):
+                   max_models=10_000, max_evaluations=100_000, fixed=(), joint_choices=None,
+                   couplings=()):
     """Checked ALL/SOME/NONE for assertion sets; otherwise honest UNKNOWN.
 
     Every positive proof is replayed by the certificate checker, and every
@@ -362,7 +363,8 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     """
     from .backends.dispatch import authority_for, composed, execute
     options = {"max_steps": max_steps, "max_domain_size": max_domain_size, "max_models": max_models,
-               "max_evaluations": max_evaluations, "fixed": fixed, "couplings": couplings}
+               "max_evaluations": max_evaluations, "fixed": fixed, "joint_choices": joint_choices,
+               "couplings": couplings}
 
     def python():
         return _check_readings_python(env, sets, conclusion_ast, **options)
@@ -374,6 +376,12 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         # every per-choice certificate and model is checked on the backend, and
         # the coupled enumeration and its verdict stay Python's (trusted,
         # narrowed; a recorded gap).
+        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
+    if joint_choices is not None:
+        # Discourse joint choices (docs/spec/discourse.md) have no Lean
+        # interface yet either: each choice's certificate and model is checked
+        # on the backend, and the joint enumeration and its verdict stay
+        # Python's (a recorded gap, as for couplings).
         return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
     return execute("readings", {"kind": "readings"}, python,
                    lean=lambda: _check_readings_lean(env, sets, conclusion_ast, options))
@@ -405,14 +413,59 @@ def _check_readings_lean(env, sets, conclusion_ast, options):
 
 
 def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
-                           max_models=10_000, max_evaluations=100_000, fixed=(), couplings=(),
-                           evidence=None):
+                           max_models=10_000, max_evaluations=100_000, fixed=(), joint_choices=None,
+                           couplings=(), evidence=None):
     """`evidence`, when given, receives the verdict's evidence on the wire."""
     from .ast import Or
     from .entailment import check_entailment_certificate, prove_entailment
     from .search import check_countermodel, find_countermodel
     from .vacuity import premise_status
 
+    if joint_choices is not None:
+        if joint_choices.get("status") == "UNKNOWN":
+            return {"verdict": "UNKNOWN", "route": "joint-choices",
+                    "budget": {"max_choices": joint_choices["budget"]}}
+        if not all(all(r["kind"] == "asserted" and r["content"] is not None
+                       for r in s["readings"]) for s in sets):
+            return {"verdict": "UNKNOWN", "route": "joint-choices",
+                    "reason": "non-assertion elaborator is not yet available"}
+        conclusion = formula_from_data(env, conclusion_ast)
+        fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
+        formulas = {f"{s['id']}@{s['version']}": [formula_from_data(env, r["content"])
+                                                   for r in s["readings"]] for s in sets}
+        positive, negative = [], []
+        unknown = False
+        for choice in joint_choices["choices"]:
+            premises = [*fixed_formulas, *(formulas[key][index] for key, index in choice.items())]
+            proof = prove_entailment(env, premises, conclusion, max_steps=max_steps)
+            if proof.status == "Found" and check_entailment_certificate(
+                    env, premises, conclusion, proof.certificate, max_steps=max_steps).valid:
+                positive.append({"choice": choice, "certificate": proof.certificate,
+                                 "premises": premise_status(
+                                     env, premises, max_proof_steps=max_steps,
+                                     max_domain_size=max_domain_size, max_models=max_models,
+                                     max_evaluations=max_evaluations)})
+                continue
+            model = find_countermodel(env, premises, conclusion,
+                                      max_domain_size=max_domain_size, max_models=max_models,
+                                      max_evaluations=max_evaluations)
+            if model.status == "Found" and check_countermodel(
+                    env, premises, conclusion, model.model,
+                    max_evaluations=max_evaluations).valid:
+                negative.append({"choice": choice, "model_id": model.model.model_id})
+            else:
+                unknown = True
+        if unknown:
+            return {"verdict": "UNKNOWN", "route": "joint-choices",
+                    "reason": "a compatible choice could not be classified"}
+        if positive and negative:
+            return {"verdict": "SOME", "route": "joint-choices", "proof": positive[0],
+                    "countermodel": negative[0]}
+        if positive:
+            return {"verdict": "ALL", "route": "joint-choices", "proofs": positive}
+        return {"verdict": "NONE", "route": "joint-choices", "countermodels": negative}
+
+    plan = plan_choices(sets)
     plan = plan_choices(sets, couplings=couplings)
     if plan["route"] == "UNKNOWN":
         return {"verdict": "UNKNOWN", "route": plan["route"], "budget": plan["budget"],

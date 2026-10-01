@@ -1,0 +1,20 @@
+**Text 1: (b) Only drug B.**
+Only drug B has nausea explicitly ruled out ("cannot lead to nausea"), while drug A allows nausea in doses above 40mg.
+
+**Text 2: (d) A rash is not ruled out; drowsiness happens in every case the text allows.**
+A rash "might" occur (possible but not certain), while drug A "certainly leads to" drowsiness (certain in every case).
+
+**Text 3: (b) No: in no case the text allows does restarting the web server lead to a server outage.**
+The text explicitly states "Restarting the web server cannot lead to a server outage," which rules out this outcome entirely.
+
+**Text 4: (a) At least one action available to the agent avoids a server outage in at least one case the text allows.**
+"Avoidable" means it's possible to avoid the outage—some action succeeds in preventing it in some scenario—not that all actions or all scenarios do so.
+
+**Text 5: (a) No seizure happens.**
+Drug A causes seizures only if temperature > 40°; since the patient's temperature is 38°, the condition is not met, so no seizure occurs.
+
+**Text 6: (b) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.**
+The sentence describes a factual consequence of an action, not a prescriptive rule about what must or must not be done.
+
+**Text 7: (b) The text does not say.**
+A fall is "serious or worse" (either serious or severe), so a fall could be equally severe as a seizure; the text does not establish that a fall is definitively less severe.

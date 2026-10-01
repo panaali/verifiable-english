@@ -1,0 +1,7 @@
+1. **(a)** A lift failure is possible, but the text gives no probability.
+2. **(a)** Crossing between parked cars cannot lead to a collision, so Rule 1 does not forbid it.
+3. **(d)** A rash is possible, while drowsiness follows whenever drug A is given.
+4. **(a)** The text rules out a lift failure whenever the robot takes the lift.
+5. **(b)** At 38 degrees, the stated exception does not apply, so a seizure is ruled out.
+6. **(d)** “Serious or worse” allows serious or severe.
+7. **(c)** “Might not” means at least one allowed case has no data loss after deletion.

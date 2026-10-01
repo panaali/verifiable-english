@@ -1,0 +1,124 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 50 kilograms. The weight of the patient is at most 90 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 52 kilograms. Giving the full dose might lead to dizziness.
+
+What does the last sentence tell you?
+(a) Dizziness happens in every case the text allows if the clinic gives the full dose.
+(b) Dizziness is not ruled out if the clinic gives the full dose.
+(c) Dizziness is likely if the clinic gives the full dose.
+(d) The text does not say.
+
+Text 2
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+A clinic prevents a harm by taking an action that cannot lead to the harm.
+By default, an action may be performed.
+
+The actions available to the clinic are giving the patient an antihistamine and giving the patient penicillin. Giving the patient an antihistamine might lead to a rash. Giving the patient an antihistamine might not lead to a rash. Giving the patient penicillin cannot lead to a rash.
+Rule 1. Every clinic must prevent a rash.
+
+According to the text, which of the clinic's actions fulfil Rule 1?
+(a) Only giving the patient an antihistamine.
+(b) Only giving the patient penicillin.
+(c) The text does not say.
+(d) Giving the patient an antihistamine and giving the patient penicillin.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit certainly leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) No: a task delay happens in every case the text allows.
+(c) The text does not say.
+(d) Yes: a task delay usually happens, but not in every case.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or run the job with a memory limit. Running the job with a memory limit has a less severe worst case than running the job.
+
+What does the last sentence tell you?
+(a) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.
+(b) Running the job with a memory limit leads to fewer harms than running the job.
+(c) Running the job with a memory limit is less likely to cause harm than running the job.
+(d) The text does not say.
+
+Text 5
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> might prevent <harm>" means the action might not lead to the harm, and another action available to the same chooser leads to it.
+
+The actions available to the clinic are giving the patient a vaccine and giving the patient nothing. Giving the patient nothing might prevent a fever.
+
+What does the last sentence tell you?
+(a) Giving the vaccine avoids a fever in at least one case the text allows.
+(b) If the clinic gives the patient nothing, a fever happens in no case the text allows.
+(c) In at least one case the text allows, giving the patient nothing avoids a fever, and giving the vaccine leads to a fever in every case the text allows.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 20 kilograms. Taking the lift leads to a lift failure exactly when the weight of the parcel is greater than 3 kilograms.
+
+The robot takes the lift with a parcel that weighs 4 kilograms. What does the text tell you?
+(a) No lift failure happens: a lift easily carries 4 kilograms.
+(b) The text does not say.
+(c) A lift failure happens.
+(d) A lift failure might happen or might not: the text only says that a lift failure needs a parcel heavier than 3 kilograms.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) At least one action available to the agent avoids a server outage in at least one case the text allows.
+(b) Every action available to the agent avoids a server outage in at least one case the text allows.
+(c) At least one action available to the agent avoids a server outage in every case the text allows.
+(d) The text does not say.
+
+Text 8
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+
+An agent can run the job or do nothing. Running the job might not lead to a server outage.
+
+What does the second sentence tell you?
+(a) In at least one case the text allows, the agent runs the job and no server outage happens.
+(b) A server outage is unlikely if the agent runs the job.
+(c) The text does not say.
+(d) If the agent runs the job, a server outage happens in no case the text allows.

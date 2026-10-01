@@ -1,0 +1,129 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) It can, but the agent is not allowed to let it happen.
+(b) The text does not say.
+(c) No: in no case the text allows does restarting the web server lead to a server outage.
+(d) Yes: a restart takes the server down for a short time.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the robot are crossing the road at the crossing and crossing the road between parked cars.
+Rule 1. Every action must not be performed, if that action might lead to a collision, unless a staff member has approved that action.
+Crossing the road between parked cars cannot lead to a collision.
+Rule 2. Every action may be performed, if a staff member has approved that action.
+
+No staff member has approved anything. Does Rule 1 forbid the robot to cross the road between parked cars?
+(a) Yes: crossing between parked cars might lead to a collision, and the sentence about it only tells the robot not to let a collision happen.
+(b) No: the text rules out a collision when the robot crosses between parked cars, so Rule 1 does not apply to that action.
+(c) Yes: crossing between parked cars is dangerous.
+(d) The text does not say.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or run the job with a memory limit. Running the job with a memory limit has a less severe worst case than running the job.
+
+What does the last sentence tell you?
+(a) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.
+(b) Running the job with a memory limit leads to fewer harms than running the job.
+(c) Running the job with a memory limit is less likely to cause harm than running the job.
+(d) The text does not say.
+
+Text 4
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A certainly leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) A rash is not ruled out; drowsiness happens in every case the text allows.
+(b) The text does not say.
+(c) A rash is possible; drowsiness is what usually happens.
+(d) There is no difference: neither is ruled out, and neither is certain.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+(b) In at least one case the text allows, the agent does nothing and no data loss happens.
+(c) In no case the text allows does doing nothing lead to data loss.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) Data loss is not ruled out.
+(b) The text does not say.
+(c) No data loss happens: reading a file does not change it.
+(d) Data loss is more likely than not.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An agent prevents a harm by taking an action that might not lead to the harm.
+By default, an action may be performed.
+
+The actions available to the agent are running the job and running the job with a memory limit. Running the job leads to a server outage. Running the job with a memory limit might lead to a server outage. Running the job with a memory limit might not lead to a server outage.
+Rule 1. Every agent must prevent a server outage.
+
+According to the text, which of the agent's actions fulfils Rule 1?
+(a) Running the job with a memory limit.
+(b) Neither action.
+(c) Running the job.
+(d) The text does not say.
+
+Text 8
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A clinic can give the patient drug A or give the patient drug B. The dose of drug A is at least 10 milligrams. The dose of drug A is at most 50 milligrams. Giving drug A leads to nausea if the dose of drug A is greater than 40 milligrams. Giving drug A might not lead to nausea. Giving drug B cannot lead to nausea.
+
+According to the text, with which drug is nausea ruled out?
+(a) Both drug A and drug B.
+(b) The text does not say.
+(c) Only drug B.
+(d) Neither drug.

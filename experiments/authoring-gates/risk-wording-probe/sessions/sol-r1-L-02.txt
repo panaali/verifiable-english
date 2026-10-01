@@ -1,0 +1,106 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) The text does not say.
+(b) A rash is not ruled out; drowsiness happens in every case the text allows.
+(c) A rash is possible; drowsiness is what usually happens.
+(d) There is no difference: neither is ruled out, and neither is certain.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+
+Severity, from most to least severe: severe, serious, minor. A delivery robot can cross the road at the crossing or cross the road between parked cars. Crossing the road between parked cars has a less severe worst case than crossing the road at the crossing.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) Crossing between parked cars leads to fewer harms than crossing at the crossing.
+(c) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.
+(d) Crossing between parked cars is less likely to cause harm than crossing at the crossing.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> if <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds.
+
+An agent can run the job with a memory limit or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job with a memory limit leads to a job failure if the peak memory of the job is greater than 4 gigabytes.
+
+The agent runs the job with a memory limit, and a job failure happens. According to the text, was the peak memory of the job greater than 4 gigabytes?
+(a) No: a job failure needs a peak memory of at most 4 gigabytes.
+(b) Yes: a job failure needs a peak memory greater than 4 gigabytes.
+(c) The text does not say.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to a server outage, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+According to the text, if the agent empties the cache, can data loss happen?
+(a) The text does not say.
+(b) No: the text rules out data loss when the agent empties the cache.
+(c) It can, unless the user has confirmed emptying the cache.
+(d) It can, but the policy forbids the agent to let it happen.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job might lead to a server outage.
+
+What does the second sentence tell you?
+(a) The text does not rule out a server outage if the agent runs the job.
+(b) A server outage is likely if the agent runs the job.
+(c) A server outage happens in every case the text allows if the agent runs the job.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. A fall is avoidable by the robot.
+
+What can you conclude about taking the ramp?
+(a) The text does not say.
+(b) Taking the ramp leads to a fall in every case the text allows.
+(c) In no case the text allows does taking the ramp lead to a fall.
+(d) In at least one case the text allows, the robot takes the ramp and no fall happens.
+
+Text 7
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness exactly when the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) The text does not say.
+(b) Dizziness happens.
+(c) No dizziness happens.

@@ -1,0 +1,25 @@
+# Answers
+
+**Text 1: (b)**
+The definition of "allows <harm> to happen" explicitly means another available action might not lead to it, so in at least one case the text allows, taking the stairs avoids a dropped parcel.
+
+**Text 2: (c)**
+"Cannot lead to <harm>" means the statements rule the harm out, so taking the lift guarantees no lift failure in every case the text allows.
+
+**Text 3: (c)**
+The rule is a conditional: "if peak > 4 GB, then failure." The job failure happened, but we cannot work backward from the consequence to conclude the condition was met—failure could occur for other reasons the text doesn't exclude.
+
+**Text 4: (d)**
+"An agent prevents harm by taking an action that might not lead to the harm." Running the job with a memory limit "might not lead to" an outage, meaning some cases avoid it, so it allows prevention; running the job always leads to one, so it doesn't.
+
+**Text 5: (d)**
+"Taking the lift leads to a fall" means a fall happens in every case the text allows, so the robot taking the lift guarantees the stated outcome occurs.
+
+**Text 6: (c)**
+A seizure is severe; a fall is "serious or worse" (either serious or severe, per the scale). Since a fall could be either serious or severe, the text does not determine whether it is less severe than a seizure.
+
+**Text 7: (b)**
+Rule 1 forbids actions that "might lead to" collision. Since "crossing between parked cars cannot lead to collision" rules out collision entirely, the "might lead to" condition is false, so Rule 1 does not apply.
+
+**Text 8: (c)**
+"Cannot lead to <harm> unless <condition>" means harm cannot happen without the condition being true; by contrapositive, if harm happened, the condition must hold, so duration must be greater than 30 minutes.
