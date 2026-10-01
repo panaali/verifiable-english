@@ -10,11 +10,74 @@
     "spec_revision": "ve-v0.2-expand2-2026-09-25",
     "vocabulary": {
       "sorts": {
-        "artifact": {
-          "description": "an artifact",
+        "item": {
+          "description": "a named thing the draft talks about",
           "verbalisation": {
-            "singular": "artifact",
-            "plural": "artifacts"
+            "singular": "item",
+            "plural": "items"
+          }
+        },
+        "claim": {
+          "description": "a claim submitted for checking",
+          "verbalisation": {
+            "singular": "claim",
+            "plural": "claims"
+          }
+        },
+        "proof": {
+          "description": "a proof of a claim",
+          "verbalisation": {
+            "singular": "proof",
+            "plural": "proofs"
+          }
+        },
+        "comparison": {
+          "description": "a comparison of methods",
+          "verbalisation": {
+            "singular": "comparison",
+            "plural": "comparisons"
+          }
+        },
+        "artefact": {
+          "description": "a benchmark artefact",
+          "verbalisation": {
+            "singular": "artefact",
+            "plural": "artefacts"
+          }
+        },
+        "formalisation": {
+          "description": "a formalisation of a source task",
+          "verbalisation": {
+            "singular": "formalisation",
+            "plural": "formalisations"
+          }
+        },
+        "pathway": {
+          "description": "a documented pathway to harm",
+          "verbalisation": {
+            "singular": "pathway",
+            "plural": "pathways"
+          }
+        },
+        "evidence": {
+          "description": "an item of evidence",
+          "verbalisation": {
+            "singular": "evidence item",
+            "plural": "evidence items"
+          }
+        },
+        "candidate": {
+          "description": "a short-answer candidate",
+          "verbalisation": {
+            "singular": "candidate",
+            "plural": "candidates"
+          }
+        },
+        "field": {
+          "description": "a form field",
+          "verbalisation": {
+            "singular": "field",
+            "plural": "fields"
           }
         },
         "foundation_leaf": {
@@ -24,15 +87,77 @@
             "plural": "foundation leaves"
           }
         },
-        "field": {
-          "description": "a form field",
+        "harm": {
+          "description": "an oversight harm",
           "verbalisation": {
-            "singular": "field",
-            "plural": "fields"
+            "singular": "harm",
+            "plural": "harms"
           }
         }
       },
       "predicates": {
+        "tested_against": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is tested against",
+          "verbalisation": "{0} is tested against {1}"
+        },
+        "tested_on": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is tested on",
+          "verbalisation": "{0} is tested on {1}"
+        },
+        "tested_to_improve": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is tested to improve",
+          "verbalisation": "{0} is tested to improve {1}"
+        },
+        "developed_to_improve": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is developed to improve",
+          "verbalisation": "{0} is developed to improve {1}"
+        },
+        "proposed": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is proposed",
+          "verbalisation": "{0} is proposed"
+        },
+        "applies_to": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is for",
+          "verbalisation": "{0} is for {1}"
+        },
+        "tests": {
+          "arguments": [
+            "item",
+            "harm"
+          ],
+          "description": "tests",
+          "verbalisation": "{0} tests {1}"
+        },
+        "misstates_task": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "misstates the task",
+          "verbalisation": "{0} misstates the task"
+        },
         "accepted_without_proof": {
           "arguments": [
             "foundation_leaf"
@@ -40,33 +165,189 @@
           "description": "is accepted without proof",
           "verbalisation": "{0} is accepted without proof"
         },
-        "claims_vex_result": {
+        "honest": {
           "arguments": [
-            "artifact"
+            "claim"
           ],
-          "description": "claims a VEX result",
-          "verbalisation": "{0} claims a VEX result"
+          "description": "is honest",
+          "verbalisation": "{0} is honest"
         },
-        "claims_completed_extension": {
+        "unresolved": {
           "arguments": [
-            "artifact"
+            "claim"
           ],
-          "description": "claims a completed extension",
-          "verbalisation": "{0} claims a completed extension"
+          "description": "is unresolved",
+          "verbalisation": "{0} is unresolved"
         },
-        "reports_new_result": {
+        "proof_of": {
           "arguments": [
-            "artifact"
+            "proof",
+            "claim"
           ],
-          "description": "reports a new experimental result",
-          "verbalisation": "{0} reports a new experimental result"
+          "description": "is a proof of",
+          "verbalisation": "{0} is a proof of {1}"
         },
-        "asserts_cost_advantage": {
+        "required_by": {
           "arguments": [
-            "artifact"
+            "evidence",
+            "item"
           ],
-          "description": "asserts a cost advantage",
-          "verbalisation": "{0} asserts a cost advantage"
+          "description": "is required by",
+          "verbalisation": "{0} is required by {1}"
+        },
+        "needs_quality_review": {
+          "arguments": [
+            "evidence"
+          ],
+          "description": "still needs quality review",
+          "verbalisation": "{0} still needs quality review"
+        },
+        "null_result": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is a null result",
+          "verbalisation": "{0} is a null result"
+        },
+        "negative_result": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is a negative result",
+          "verbalisation": "{0} is a negative result"
+        },
+        "published": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is published",
+          "verbalisation": "{0} is published"
+        },
+        "copied_from": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is copied from",
+          "verbalisation": "{0} is copied from {1}"
+        },
+        "used_as": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is used as",
+          "verbalisation": "{0} is used as {1}"
+        },
+        "current_form_text": {
+          "arguments": [
+            "item"
+          ],
+          "description": "is the current form text",
+          "verbalisation": "{0} is the current form text"
+        },
+        "supplies_context": {
+          "arguments": [
+            "item"
+          ],
+          "description": "supplies the surrounding context",
+          "verbalisation": "{0} supplies the surrounding context"
+        },
+        "follows": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "follows",
+          "verbalisation": "{0} follows {1}"
+        },
+        "conditional_on": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is conditional on",
+          "verbalisation": "{0} is conditional on {1}"
+        },
+        "establishes_truth_of": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "establishes the truth of",
+          "verbalisation": "{0} establishes the truth of {1}"
+        },
+        "establishes_fidelity_of": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "establishes the faithful formalisation of",
+          "verbalisation": "{0} establishes the faithful formalisation of {1}"
+        },
+        "benefit_of": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is a benefit of",
+          "verbalisation": "{0} is a benefit of {1}"
+        },
+        "claims": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "claims",
+          "verbalisation": "{0} claims {1}"
+        },
+        "asserts": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "asserts",
+          "verbalisation": "{0} asserts {1}"
+        },
+        "reports": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "reports",
+          "verbalisation": "{0} reports {1}"
+        },
+        "concerns": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "concerns",
+          "verbalisation": "{0} concerns {1}"
+        },
+        "guarantees": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "guarantees",
+          "verbalisation": "{0} guarantees {1}"
+        },
+        "schedules": {
+          "arguments": [
+            "item",
+            "item"
+          ],
+          "description": "is the development schedule of",
+          "verbalisation": "{0} is the development schedule of {1}"
+        },
+        "counts_cost": {
+          "arguments": [
+            "comparison",
+            "item"
+          ],
+          "description": "includes the cost of",
+          "verbalisation": "{0} includes the cost of {1}"
         },
         "revised": {
           "arguments": [
@@ -75,691 +356,193 @@
           "description": "is revised",
           "verbalisation": "{0} is revised"
         },
-        "includes_formalisation": {
+        "includes": {
           "arguments": [
-            "artifact"
+            "item",
+            "item"
           ],
-          "description": "includes formalisation",
-          "verbalisation": "{0} includes formalisation"
+          "description": "includes",
+          "verbalisation": "{0} includes {1}"
         },
-        "includes_proof_production": {
+        "pasted": {
           "arguments": [
-            "artifact"
+            "candidate"
           ],
-          "description": "includes proof production",
-          "verbalisation": "{0} includes proof production"
+          "description": "is pasted",
+          "verbalisation": "{0} is pasted"
         },
-        "includes_spaces": {
+        "pasted_with": {
           "arguments": [
-            "artifact"
+            "candidate",
+            "item"
           ],
-          "description": "includes spaces",
-          "verbalisation": "{0} includes spaces"
+          "description": "is pasted with",
+          "verbalisation": "{0} is pasted with {1}"
         },
-        "includes_punctuation": {
+        "replaces": {
           "arguments": [
-            "artifact"
+            "item",
+            "item"
           ],
-          "description": "includes punctuation",
-          "verbalisation": "{0} includes punctuation"
+          "description": "replaces",
+          "verbalisation": "{0} replaces {1}"
         },
-        "includes_labels": {
+        "states": {
           "arguments": [
-            "artifact"
+            "item",
+            "item"
           ],
-          "description": "includes labels",
-          "verbalisation": "{0} includes labels"
+          "description": "states",
+          "verbalisation": "{0} states {1}"
         },
-        "includes_trailing_newlines": {
+        "tests_transfer": {
           "arguments": [
-            "artifact"
+            "artefact"
           ],
-          "description": "includes trailing newlines",
-          "verbalisation": "{0} includes trailing newlines"
+          "description": "tests transfer",
+          "verbalisation": "{0} tests transfer"
         },
-        "establishes_foundation_truth": {
+        "included_in": {
           "arguments": [
-            "artifact"
+            "artefact",
+            "item"
           ],
-          "description": "establishes foundation truth",
-          "verbalisation": "{0} establishes foundation truth"
-        },
-        "establishes_faithful_formalisation": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "establishes faithful formalisation",
-          "verbalisation": "{0} establishes faithful formalisation"
-        },
-        "guarantees_evidence_quality": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "guarantees evidence quality",
-          "verbalisation": "{0} guarantees evidence quality"
-        },
-        "schedules_development": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "schedules evidence layer development",
-          "verbalisation": "{0} schedules evidence layer development"
-        },
-        "conditional_on_foundations": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "is conditional on declared foundations",
-          "verbalisation": "{0} is conditional on declared foundations"
-        },
-        "concerns_estimated_leaves": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "concerns estimated leaves",
-          "verbalisation": "{0} concerns estimated leaves"
-        },
-        "concerns_proved_subclaims": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "concerns proved subclaims",
-          "verbalisation": "{0} concerns proved subclaims"
-        },
-        "establishes_truth": {
-          "arguments": [
-            "artifact",
-            "artifact"
-          ],
-          "description": "establishes the truth of",
-          "verbalisation": "{0} establishes the truth of {1}"
-        },
-        "tests_checker": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests checker",
-          "verbalisation": "{0} tests checker"
-        },
-        "tests_evidence_layer": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests evidence layer",
-          "verbalisation": "{0} tests evidence layer"
-        },
-        "compares_cross_examination": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "compares cross examination",
-          "verbalisation": "{0} compares cross examination"
-        },
-        "tests_mandatory_proofs": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests mandatory proofs",
-          "verbalisation": "{0} tests mandatory proofs"
-        },
-        "tests_obfuscated_arguments": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests obfuscated arguments",
-          "verbalisation": "{0} tests obfuscated arguments"
-        },
-        "proposes_vex": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "proposes vex",
-          "verbalisation": "{0} proposes vex"
-        },
-        "develops_vex": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "develops vex",
-          "verbalisation": "{0} develops vex"
-        },
-        "aims_oversight": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "aims oversight",
-          "verbalisation": "{0} aims oversight"
-        },
-        "release_by_oct25": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "release by oct25",
-          "verbalisation": "{0} release by oct25"
-        },
-        "tests_checker_deference": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests checker deference",
-          "verbalisation": "{0} tests checker deference"
-        },
-        "tests_adversarial_pushback": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests adversarial pushback",
-          "verbalisation": "{0} tests adversarial pushback"
-        },
-        "tests_definition_shift": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests definition shift",
-          "verbalisation": "{0} tests definition shift"
-        },
-        "tests_smuggled_premises": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests smuggled premises",
-          "verbalisation": "{0} tests smuggled premises"
-        },
-        "uses_matched_cost": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "uses matched cost",
-          "verbalisation": "{0} uses matched cost"
-        },
-        "includes_certificate_production": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "includes certificate production",
-          "verbalisation": "{0} includes certificate production"
-        },
-        "tests_flaw_localisation": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests flaw localisation",
-          "verbalisation": "{0} tests flaw localisation"
-        },
-        "uses_50_to_5000_steps": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "uses 50 to 5000 steps",
-          "verbalisation": "{0} uses 50 to 5000 steps"
-        },
-        "separates_error_classes": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "separates error classes",
-          "verbalisation": "{0} separates error classes"
-        },
-        "includes_real_artefacts": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "includes real artefacts",
-          "verbalisation": "{0} includes real artefacts"
-        },
-        "replicates_model_families": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "replicates model families",
-          "verbalisation": "{0} replicates model families"
-        },
-        "focuses_large_untrusted_artefacts": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "focuses large untrusted artefacts",
-          "verbalisation": "{0} focuses large untrusted artefacts"
-        },
-        "focuses_universal_or_negative_claims": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "focuses universal or negative claims",
-          "verbalisation": "{0} focuses universal or negative claims"
-        },
-        "tests_forged_checker": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests forged checker",
-          "verbalisation": "{0} tests forged checker"
-        },
-        "tests_sustained_pushback": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests sustained pushback",
-          "verbalisation": "{0} tests sustained pushback"
-        },
-        "claims_implementation": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "claims implementation",
-          "verbalisation": "{0} claims implementation"
-        },
-        "tests_equivocation": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests equivocation",
-          "verbalisation": "{0} tests equivocation"
-        },
-        "accepts_only_checked_derivations": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "accepts only checked derivations",
-          "verbalisation": "{0} accepts only checked derivations"
-        },
-        "excludes_assumed_false_subclaims": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "excludes assumed false subclaims",
-          "verbalisation": "{0} excludes assumed false subclaims"
-        },
-        "blocks_barnes_christiano_for_formalised_claims": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "blocks barnes christiano for formalised claims",
-          "verbalisation": "{0} blocks barnes christiano for formalised claims"
-        },
-        "increases_false_confidence": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "increases false confidence",
-          "verbalisation": "{0} increases false confidence"
-        },
-        "tests_deference_harm": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests deference harm",
-          "verbalisation": "{0} tests deference harm"
-        },
-        "tests_transfer_beyond_planted_flaws": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests transfer beyond planted flaws",
-          "verbalisation": "{0} tests transfer beyond planted flaws"
-        },
-        "commits_publish_null_and_negative": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "commits publish null and negative",
-          "verbalisation": "{0} commits publish null and negative"
-        },
-        "misstates_task": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "misstates task",
-          "verbalisation": "{0} misstates task"
-        },
-        "unresolved_without_affordable_proof": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "unresolved without affordable proof",
-          "verbalisation": "{0} unresolved without affordable proof"
-        },
-        "requires_evidence": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "requires evidence",
-          "verbalisation": "{0} requires evidence"
-        },
-        "requires_quality_review": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "requires quality review",
-          "verbalisation": "{0} requires quality review"
-        },
-        "tests_false_foundations": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests false foundations",
-          "verbalisation": "{0} tests false foundations"
-        },
-        "tests_misleading_formalisation": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "tests misleading formalisation",
-          "verbalisation": "{0} tests misleading formalisation"
-        },
-        "publishes_benchmark_harness_analysis": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "publishes benchmark harness analysis",
-          "verbalisation": "{0} publishes benchmark harness analysis"
-        },
-        "publishes_even_if_no_advantage": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "publishes even if no advantage",
-          "verbalisation": "{0} publishes even if no advantage"
-        },
-        "copied_from_current_form": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "copied from current form",
-          "verbalisation": "{0} copied from current form"
-        },
-        "context_supplied_by_rapid_draft": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "context supplied by rapid draft",
-          "verbalisation": "{0} context supplied by rapid draft"
-        },
-        "excludes_superseded_wording": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "excludes superseded wording",
-          "verbalisation": "{0} excludes superseded wording"
-        },
-        "cites_obfuscation_recheck": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "cites obfuscation recheck",
-          "verbalisation": "{0} cites obfuscation recheck"
-        },
-        "cites_positioning_review": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "cites positioning review",
-          "verbalisation": "{0} cites positioning review"
-        },
-        "prevents_false_subclaims_as_new_assumptions": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "prevents false subclaims as new assumptions",
-          "verbalisation": "{0} prevents false subclaims as new assumptions"
-        },
-        "requires_affordable_proof": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "requires affordable proof",
-          "verbalisation": "{0} requires affordable proof"
-        },
-        "unresolved_when_proof_beyond_budget": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "unresolved when proof beyond budget",
-          "verbalisation": "{0} unresolved when proof beyond budget"
-        },
-        "benefit_of_sound_proof_checking": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "benefit of sound proof checking",
-          "verbalisation": "{0} benefit of sound proof checking"
-        },
-        "claims_no_proofs_debate_novelty": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "claims no proofs debate novelty",
-          "verbalisation": "{0} claims no proofs debate novelty"
-        },
-        "claims_no_english_surface_benefit": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "claims no english surface benefit",
-          "verbalisation": "{0} claims no english surface benefit"
-        },
-        "proposes_mandatory_evidence": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "proposes mandatory evidence",
-          "verbalisation": "{0} proposes mandatory evidence"
-        },
-        "covers_statistical_claims": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "covers statistical claims",
-          "verbalisation": "{0} covers statistical claims"
-        },
-        "covers_approximate_claims": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "covers approximate claims",
-          "verbalisation": "{0} covers approximate claims"
-        },
-        "focus_motivated_by_judge_ceiling": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "focus motivated by judge ceiling",
-          "verbalisation": "{0} focus motivated by judge ceiling"
-        },
-        "retains_oct25_milestone": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "retains oct25 milestone",
-          "verbalisation": "{0} retains oct25 milestone"
-        },
-        "retains_50_to_5000_range": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "retains 50 to 5000 range",
-          "verbalisation": "{0} retains 50 to 5000 range"
-        },
-        "retains_real_artefact_tests": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "retains real artefact tests",
-          "verbalisation": "{0} retains real artefact tests"
-        },
-        "retains_cross_family_replication": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "retains cross family replication",
-          "verbalisation": "{0} retains cross family replication"
-        },
-        "retains_forged_checker_control": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "retains forged checker control",
-          "verbalisation": "{0} retains forged checker control"
-        },
-        "retains_null_publication": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "retains null publication",
-          "verbalisation": "{0} retains null publication"
-        },
-        "covers_premise_risk": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "covers premise risk",
-          "verbalisation": "{0} covers premise risk"
-        },
-        "covers_meaning_risk": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "covers meaning risk",
-          "verbalisation": "{0} covers meaning risk"
-        },
-        "covers_smuggled_premises": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "covers smuggled premises",
-          "verbalisation": "{0} covers smuggled premises"
-        },
-        "covers_definition_shift": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "covers definition shift",
-          "verbalisation": "{0} covers definition shift"
-        },
-        "selects_one_candidate": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "selects one candidate",
-          "verbalisation": "{0} selects one candidate"
-        },
-        "excludes_label": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "excludes label",
-          "verbalisation": "{0} excludes label"
-        },
-        "excludes_count": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "excludes count",
-          "verbalisation": "{0} excludes count"
-        },
-        "replace_only_indicated_sentence": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "replace only indicated sentence",
-          "verbalisation": "{0} replace only indicated sentence"
-        },
-        "replace_only_indicated_paragraph": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "replace only indicated paragraph",
-          "verbalisation": "{0} replace only indicated paragraph"
-        },
-        "states_proof_rule": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "states proof rule",
-          "verbalisation": "{0} states proof rule"
-        },
-        "states_proof_limits": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "states proof limits",
-          "verbalisation": "{0} states proof limits"
+          "description": "is included in",
+          "verbalisation": "{0} is included in {1}"
         },
         "same_task": {
           "arguments": [
-            "artifact"
+            "comparison"
           ],
-          "description": "same task",
-          "verbalisation": "{0} same task"
+          "description": "author-choice clause of matched_cost: uses the same task for both arms",
+          "verbalisation": "{0} uses the same task for both arms"
         },
-        "preregistered_budget": {
+        "budget_preregistered": {
           "arguments": [
-            "artifact"
+            "comparison"
           ],
-          "description": "preregistered budget",
-          "verbalisation": "{0} preregistered budget"
+          "description": "author-choice clause of matched_cost: has a budget registered before the comparison starts",
+          "verbalisation": "{0} has a budget registered before the comparison starts"
         },
-        "all_costs_logged": {
+        "totals_within_tolerance": {
           "arguments": [
-            "artifact"
+            "comparison"
           ],
-          "description": "all costs logged",
-          "verbalisation": "{0} all costs logged"
-        },
-        "within_five_percent": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "within five percent",
-          "verbalisation": "{0} within five percent"
+          "description": "author-choice clause of matched_cost: has arm totals that differ by at most 5% of the larger total",
+          "verbalisation": "{0} has arm totals that differ by at most 5% of the larger total"
         },
         "matched_cost": {
           "arguments": [
-            "artifact"
+            "comparison"
           ],
-          "description": "same task and preregistered budget; count authoring, formalisation, proof production, compute and review for both arms; absolute total-cost difference <= 5% of the larger total",
+          "description": "Author choice signed by grant-author. Rule: same task; budget registered before the comparison starts; count authoring, formalisation, proof production, compute and review for both arms; absolute total-cost difference at most 5% of the larger total. Why: A comparison must count the work that each method actually requires.",
+          "verbalisation": "{0} is at matched cost",
           "defined": {
             "arguments": [
-              "artifact"
+              "comparison"
             ],
             "body": [
               "and",
               [
+                "unary",
+                "same_task",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
                 "and",
                 [
-                  "and",
-                  [
-                    "unary",
-                    "same_task",
-                    [
-                      "var",
-                      0
-                    ]
-                  ],
-                  [
-                    "unary",
-                    "preregistered_budget",
-                    [
-                      "var",
-                      0
-                    ]
-                  ]
-                ],
-                [
                   "unary",
-                  "all_costs_logged",
+                  "budget_preregistered",
                   [
                     "var",
                     0
                   ]
-                ]
-              ],
-              [
-                "unary",
-                "within_five_percent",
+                ],
                 [
-                  "var",
-                  0
+                  "and",
+                  [
+                    "binary",
+                    "counts_cost",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "const",
+                      "authoring"
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "counts_cost",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "const",
+                        "formalisation_work"
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "counts_cost",
+                        [
+                          "var",
+                          0
+                        ],
+                        [
+                          "const",
+                          "proof_production"
+                        ]
+                      ],
+                      [
+                        "and",
+                        [
+                          "binary",
+                          "counts_cost",
+                          [
+                            "var",
+                            0
+                          ],
+                          [
+                            "const",
+                            "compute"
+                          ]
+                        ],
+                        [
+                          "and",
+                          [
+                            "binary",
+                            "counts_cost",
+                            [
+                              "var",
+                              0
+                            ],
+                            [
+                              "const",
+                              "review"
+                            ]
+                          ],
+                          [
+                            "unary",
+                            "totals_within_tolerance",
+                            [
+                              "var",
+                              0
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
                 ]
               ]
             ]
@@ -767,50 +550,67 @@
         },
         "provenance_recorded": {
           "arguments": [
-            "artifact"
+            "artefact"
           ],
-          "description": "provenance recorded",
-          "verbalisation": "{0} provenance recorded"
+          "description": "author-choice clause of real_artefact: has a recorded provenance hash",
+          "verbalisation": "{0} has a recorded provenance hash"
         },
         "independent_task": {
           "arguments": [
-            "artifact"
+            "artefact"
           ],
-          "description": "independent task",
-          "verbalisation": "{0} independent task"
+          "description": "author-choice clause of real_artefact: was created for a non-benchmark task",
+          "verbalisation": "{0} was created for a non-benchmark task"
         },
         "predates_selection": {
           "arguments": [
-            "artifact"
+            "artefact"
           ],
-          "description": "predates selection",
-          "verbalisation": "{0} predates selection"
+          "description": "author-choice clause of real_artefact: was created before it was selected",
+          "verbalisation": "{0} was created before it was selected"
         },
         "no_seeded_flaw": {
           "arguments": [
-            "artifact"
+            "artefact"
           ],
-          "description": "no seeded flaw",
-          "verbalisation": "{0} no seeded flaw"
+          "description": "author-choice clause of real_artefact: has no flaw seeded by the evaluators",
+          "verbalisation": "{0} has no flaw seeded by the evaluators"
         },
         "real_artefact": {
           "arguments": [
-            "artifact"
+            "artefact"
           ],
-          "description": "provenance hash and creation date recorded; created for a non-benchmark task before selection; no flaw seeded by the evaluators",
+          "description": "Author choice signed by grant-author. Rule: provenance SHA-256 recorded; created for a non-benchmark task; created before it was selected; no flaw seeded by the evaluators. Why: The transfer arm should use material made for an independent purpose.",
+          "verbalisation": "{0} is a real artefact",
           "defined": {
             "arguments": [
-              "artifact"
+              "artefact"
             ],
             "body": [
               "and",
               [
+                "unary",
+                "provenance_recorded",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
                 "and",
+                [
+                  "unary",
+                  "independent_task",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
                 [
                   "and",
                   [
                     "unary",
-                    "provenance_recorded",
+                    "predates_selection",
                     [
                       "var",
                       0
@@ -818,79 +618,332 @@
                   ],
                   [
                     "unary",
-                    "independent_task",
+                    "no_seeded_flaw",
                     [
                       "var",
                       0
                     ]
                   ]
-                ],
-                [
-                  "unary",
-                  "predates_selection",
-                  [
-                    "var",
-                    0
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "no_seeded_flaw",
-                [
-                  "var",
-                  0
                 ]
               ]
             ]
           }
         },
-        "costs_recorded": {
+        "proof_cost_recorded": {
           "arguments": [
-            "artifact"
+            "proof"
           ],
-          "description": "costs recorded",
-          "verbalisation": "{0} costs recorded"
+          "description": "author-choice clause of affordable_proof: has its proof cost recorded",
+          "verbalisation": "{0} has its proof cost recorded"
+        },
+        "formalisation_cost_recorded": {
+          "arguments": [
+            "proof"
+          ],
+          "description": "author-choice clause of affordable_proof: has its formalisation cost recorded",
+          "verbalisation": "{0} has its formalisation cost recorded"
+        },
+        "certificate_complete": {
+          "arguments": [
+            "proof"
+          ],
+          "description": "author-choice clause of affordable_proof: has a complete certificate",
+          "verbalisation": "{0} has a complete certificate"
         },
         "certificate_checked": {
           "arguments": [
-            "artifact"
+            "proof"
           ],
-          "description": "certificate checked",
-          "verbalisation": "{0} certificate checked"
+          "description": "author-choice clause of affordable_proof: has a certificate the checker accepts",
+          "verbalisation": "{0} has a certificate the checker accepts"
+        },
+        "claim_budget_preregistered": {
+          "arguments": [
+            "proof"
+          ],
+          "description": "author-choice clause of affordable_proof: has a budget registered before the claim",
+          "verbalisation": "{0} has a budget registered before the claim"
+        },
+        "claim_deadline_preregistered": {
+          "arguments": [
+            "proof"
+          ],
+          "description": "author-choice clause of affordable_proof: has a deadline registered before the claim",
+          "verbalisation": "{0} has a deadline registered before the claim"
         },
         "within_budget": {
           "arguments": [
-            "artifact"
+            "proof"
           ],
-          "description": "within budget",
-          "verbalisation": "{0} within budget"
+          "description": "author-choice clause of affordable_proof: has a total cost within its registered budget",
+          "verbalisation": "{0} has a total cost within its registered budget"
         },
         "within_deadline": {
           "arguments": [
-            "artifact"
+            "proof"
           ],
-          "description": "within deadline",
-          "verbalisation": "{0} within deadline"
+          "description": "author-choice clause of affordable_proof: has an elapsed time within its registered deadline",
+          "verbalisation": "{0} has an elapsed time within its registered deadline"
         },
         "affordable_proof": {
           "arguments": [
-            "artifact"
+            "proof"
           ],
-          "description": "proof and formalisation costs recorded; checker accepts a complete certificate; total cost <= preregistered per-claim budget and elapsed time <= preregistered deadline",
+          "description": "Author choice signed by grant-author. Rule: proof cost and formalisation cost recorded; the checker accepts a complete certificate; budget and deadline registered before the claim; total cost within that budget and elapsed time within that deadline. Why: Affordability must include the full route to a checked certificate.",
+          "verbalisation": "{0} is an affordable proof",
           "defined": {
             "arguments": [
-              "artifact"
+              "proof"
             ],
             "body": [
               "and",
               [
+                "unary",
+                "proof_cost_recorded",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
                 "and",
+                [
+                  "unary",
+                  "formalisation_cost_recorded",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
                 [
                   "and",
                   [
                     "unary",
-                    "costs_recorded",
+                    "certificate_complete",
+                    [
+                      "var",
+                      0
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "unary",
+                      "certificate_checked",
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "unary",
+                        "claim_budget_preregistered",
+                        [
+                          "var",
+                          0
+                        ]
+                      ],
+                      [
+                        "and",
+                        [
+                          "unary",
+                          "claim_deadline_preregistered",
+                          [
+                            "var",
+                            0
+                          ]
+                        ],
+                        [
+                          "and",
+                          [
+                            "unary",
+                            "within_budget",
+                            [
+                              "var",
+                              0
+                            ]
+                          ],
+                          [
+                            "unary",
+                            "within_deadline",
+                            [
+                              "var",
+                              0
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          }
+        },
+        "source_pinned": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "author-choice clause of misleading_formalisation: has a pinned source-task hash",
+          "verbalisation": "{0} has a pinned source-task hash"
+        },
+        "formula_pinned": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "author-choice clause of misleading_formalisation: has a pinned formula hash",
+          "verbalisation": "{0} has a pinned formula hash"
+        },
+        "answer_changing_counterexample": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "author-choice clause of misleading_formalisation: has a concrete input with a different answer",
+          "verbalisation": "{0} has a concrete input with a different answer"
+        },
+        "two_reproductions": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "author-choice clause of misleading_formalisation: has the difference reproduced by two distinct reviewers",
+          "verbalisation": "{0} has the difference reproduced by two distinct reviewers"
+        },
+        "reviewers_blind": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "author-choice clause of misleading_formalisation: has every reproducing reviewer blind to the arm",
+          "verbalisation": "{0} has every reproducing reviewer blind to the arm"
+        },
+        "misleading_formalisation": {
+          "arguments": [
+            "formalisation"
+          ],
+          "description": "Author choice signed by grant-author. Rule: source task and formula hashes pinned; a concrete input on which the formula and the source task give different answers; two distinct reviewers, each blind to the arm, reproduce that difference. Why: A fidelity failure needs an inspectable difference from the source task.",
+          "verbalisation": "{0} is a misleading formalisation",
+          "defined": {
+            "arguments": [
+              "formalisation"
+            ],
+            "body": [
+              "and",
+              [
+                "unary",
+                "source_pinned",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "unary",
+                  "formula_pinned",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "and",
+                  [
+                    "unary",
+                    "answer_changing_counterexample",
+                    [
+                      "var",
+                      0
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "unary",
+                      "two_reproductions",
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "unary",
+                      "reviewers_blind",
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          }
+        },
+        "pathway_documented": {
+          "arguments": [
+            "pathway"
+          ],
+          "description": "author-choice clause of catastrophic_risk: has a documented pathway",
+          "verbalisation": "{0} has a documented pathway"
+        },
+        "evidence_recorded": {
+          "arguments": [
+            "pathway"
+          ],
+          "description": "author-choice clause of catastrophic_risk: has its pathway evidence recorded",
+          "verbalisation": "{0} has its pathway evidence recorded"
+        },
+        "severity_assessed": {
+          "arguments": [
+            "pathway"
+          ],
+          "description": "author-choice clause of catastrophic_risk: has a recorded severity assessment",
+          "verbalisation": "{0} has a recorded severity assessment"
+        },
+        "meets_severity_threshold": {
+          "arguments": [
+            "pathway"
+          ],
+          "description": "author-choice clause of catastrophic_risk: reaches human extinction or at least 1,000,000 projected deaths",
+          "verbalisation": "{0} reaches human extinction or at least 1,000,000 projected deaths"
+        },
+        "catastrophic_risk": {
+          "arguments": [
+            "pathway"
+          ],
+          "description": "Author choice signed by grant-author. Rule: documented pathway to human extinction or at least 1,000,000 projected deaths; pathway evidence and a severity assessment recorded; possibility is a separate judgment and is never inferred from this classification. Why: The grant question needs a severity boundary and a separate possibility judgment.",
+          "verbalisation": "{0} is a catastrophic risk",
+          "defined": {
+            "arguments": [
+              "pathway"
+            ],
+            "body": [
+              "and",
+              [
+                "unary",
+                "pathway_documented",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "and",
+                [
+                  "unary",
+                  "evidence_recorded",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "and",
+                  [
+                    "unary",
+                    "severity_assessed",
                     [
                       "var",
                       0
@@ -898,152 +951,12 @@
                   ],
                   [
                     "unary",
-                    "certificate_checked",
+                    "meets_severity_threshold",
                     [
                       "var",
                       0
                     ]
                   ]
-                ],
-                [
-                  "unary",
-                  "within_budget",
-                  [
-                    "var",
-                    0
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "within_deadline",
-                [
-                  "var",
-                  0
-                ]
-              ]
-            ]
-          }
-        },
-        "source_and_formula_pinned": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "source and formula pinned",
-          "verbalisation": "{0} source and formula pinned"
-        },
-        "answer_changing_counterexample": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "answer changing counterexample",
-          "verbalisation": "{0} answer changing counterexample"
-        },
-        "two_blind_reproductions": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "two blind reproductions",
-          "verbalisation": "{0} two blind reproductions"
-        },
-        "misleading_formalisation": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "source task and formula pinned; a concrete input gives different answers; two independent reviewers reproduce the difference without knowing the arm",
-          "defined": {
-            "arguments": [
-              "artifact"
-            ],
-            "body": [
-              "and",
-              [
-                "and",
-                [
-                  "unary",
-                  "source_and_formula_pinned",
-                  [
-                    "var",
-                    0
-                  ]
-                ],
-                [
-                  "unary",
-                  "answer_changing_counterexample",
-                  [
-                    "var",
-                    0
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "two_blind_reproductions",
-                [
-                  "var",
-                  0
-                ]
-              ]
-            ]
-          }
-        },
-        "severity_threshold": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "severity threshold",
-          "verbalisation": "{0} severity threshold"
-        },
-        "pathway_documented": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "pathway documented",
-          "verbalisation": "{0} pathway documented"
-        },
-        "evidence_recorded": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "evidence recorded",
-          "verbalisation": "{0} evidence recorded"
-        },
-        "catastrophic_risk": {
-          "arguments": [
-            "artifact"
-          ],
-          "description": "documented pathway to human extinction or at least 1,000,000 deaths; pathway evidence and severity assessment recorded; possibility is separately evaluated and is never inferred from this classification alone",
-          "defined": {
-            "arguments": [
-              "artifact"
-            ],
-            "body": [
-              "and",
-              [
-                "and",
-                [
-                  "unary",
-                  "severity_threshold",
-                  [
-                    "var",
-                    0
-                  ]
-                ],
-                [
-                  "unary",
-                  "pathway_documented",
-                  [
-                    "var",
-                    0
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "evidence_recorded",
-                [
-                  "var",
-                  0
                 ]
               ]
             ]
@@ -1051,93 +964,281 @@
         }
       },
       "constants": {
-        "draft": {
-          "sort": "artifact",
-          "description": "this grant draft"
+        "verified_checker": {
+          "sort": "item",
+          "description": "the verified checker"
         },
-        "comparison": {
-          "sort": "artifact",
-          "description": "the matched-cost comparison"
+        "evidence_layer": {
+          "sort": "item",
+          "description": "the auditable evidence layer"
         },
-        "counts": {
-          "sort": "artifact",
-          "description": "the stated character counts"
+        "cross_examination": {
+          "sort": "item",
+          "description": "cross-examination"
         },
-        "proof_rule": {
-          "sort": "artifact",
-          "description": "the mandatory proof rule"
+        "smuggled_premises": {
+          "sort": "item",
+          "description": "smuggled premises"
         },
-        "requirements": {
-          "sort": "artifact",
-          "description": "the proposed evidence requirements"
+        "equivocation": {
+          "sort": "item",
+          "description": "equivocation"
         },
-        "milestones": {
-          "sort": "artifact",
-          "description": "the existing evidence layer milestones"
+        "shifting_definitions": {
+          "sort": "item",
+          "description": "shifting definitions"
         },
-        "guarantee": {
-          "sort": "artifact",
-          "description": "the proof guarantee"
+        "mandatory_checked_proofs": {
+          "sort": "item",
+          "description": "mandatory checked proofs"
         },
-        "caveat": {
-          "sort": "artifact",
-          "description": "the existing stability caveat"
-        },
-        "foundations": {
-          "sort": "artifact",
-          "description": "the declared foundations"
-        },
-        "benchmark": {
-          "sort": "artifact",
-          "description": "benchmark"
-        },
-        "proof_label": {
-          "sort": "artifact",
-          "description": "proof label"
-        },
-        "controls": {
-          "sort": "artifact",
-          "description": "controls"
-        },
-        "artefact_arm": {
-          "sort": "artifact",
-          "description": "artefact arm"
-        },
-        "formalisation": {
-          "sort": "artifact",
-          "description": "formalisation"
-        },
-        "claim": {
-          "sort": "artifact",
-          "description": "claim"
+        "obfuscated_arguments": {
+          "sort": "item",
+          "description": "obfuscated arguments"
         },
         "vex": {
-          "sort": "artifact",
-          "description": "vex"
+          "sort": "item",
+          "description": "VEX"
+        },
+        "statistical_claims": {
+          "sort": "item",
+          "description": "statistical claims"
+        },
+        "approximate_claims": {
+          "sort": "item",
+          "description": "approximate claims"
+        },
+        "formalisable_claims": {
+          "sort": "item",
+          "description": "formalisable claims"
+        },
+        "oversight": {
+          "sort": "item",
+          "description": "oversight of untrusted AI work"
+        },
+        "deference_control": {
+          "sort": "item",
+          "description": "the deference control"
+        },
+        "shifting_definition_control": {
+          "sort": "item",
+          "description": "the shifting-definition control"
+        },
+        "smuggled_premise_control": {
+          "sort": "item",
+          "description": "the smuggled-premise control"
+        },
+        "benchmark": {
+          "sort": "item",
+          "description": "the benchmark"
+        },
+        "harness": {
+          "sort": "item",
+          "description": "the harness"
+        },
+        "failure_analysis": {
+          "sort": "item",
+          "description": "the failure analysis"
         },
         "old_text": {
-          "sort": "artifact",
-          "description": "old text"
+          "sort": "item",
+          "description": "OLD"
+        },
+        "form_edits_file": {
+          "sort": "item",
+          "description": "FORM-EDITS-2026-09-21.md"
+        },
+        "rapid_draft": {
+          "sort": "item",
+          "description": "bluedot-rapid-draft-v3.md"
+        },
+        "superseded_wording": {
+          "sort": "item",
+          "description": "the superseded wording of bluedot-rapid-draft-v3.md"
         },
         "correction": {
-          "sort": "artifact",
-          "description": "correction"
+          "sort": "item",
+          "description": "the correction"
         },
-        "honest_answer": {
-          "sort": "artifact",
-          "description": "honest answer"
+        "recheck_section": {
+          "sort": "item",
+          "description": "section 3 of /Users/seyran/code/manage-agents/reviews/obfuscation-recheck.md"
         },
-        "paste_action": {
-          "sort": "artifact",
-          "description": "paste action"
+        "positioning_section": {
+          "sort": "item",
+          "description": "section 4 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"
         },
-        "edits": {
-          "sort": "artifact",
-          "description": "edits"
+        "positioning_correction": {
+          "sort": "item",
+          "description": "Correction 2 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"
+        },
+        "guarantee": {
+          "sort": "item",
+          "description": "the guarantee of mandatory proof"
+        },
+        "declared_foundations": {
+          "sort": "item",
+          "description": "the declared foundations"
+        },
+        "prevention": {
+          "sort": "item",
+          "description": "mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions"
+        },
+        "sound_proof_checking": {
+          "sort": "item",
+          "description": "sound proof checking in general"
+        },
+        "draft": {
+          "sort": "item",
+          "description": "this draft"
+        },
+        "debate_novelty": {
+          "sort": "item",
+          "description": "novelty for proofs plus debate"
+        },
+        "english_surface_benefit": {
+          "sort": "item",
+          "description": "a benefit from VE's English surface"
+        },
+        "stability_caveat": {
+          "sort": "item",
+          "description": "the existing stability caveat"
+        },
+        "estimated_leaves": {
+          "sort": "item",
+          "description": "estimated leaves"
+        },
+        "proved_subclaims": {
+          "sort": "item",
+          "description": "proved sub-claims"
+        },
+        "evidence_requirements": {
+          "sort": "item",
+          "description": "evidence requirements"
+        },
+        "evidence_quality": {
+          "sort": "item",
+          "description": "evidence quality"
+        },
+        "vex_result": {
+          "sort": "item",
+          "description": "a VEX result"
+        },
+        "completed_extension": {
+          "sort": "item",
+          "description": "a completed extension"
+        },
+        "evidence_layer_milestones": {
+          "sort": "item",
+          "description": "the existing evidence-layer milestones"
+        },
+        "revised_form_text": {
+          "sort": "item",
+          "description": "the revised form text"
+        },
+        "new_results": {
+          "sort": "item",
+          "description": "new experimental results"
+        },
+        "cost_advantage": {
+          "sort": "item",
+          "description": "a cost advantage"
+        },
+        "character_counts": {
+          "sort": "item",
+          "description": "the character counts"
+        },
+        "spaces": {
+          "sort": "item",
+          "description": "spaces"
+        },
+        "punctuation": {
+          "sort": "item",
+          "description": "punctuation"
+        },
+        "labels": {
+          "sort": "item",
+          "description": "labels"
+        },
+        "trailing_newlines": {
+          "sort": "item",
+          "description": "trailing newlines"
+        },
+        "its_label": {
+          "sort": "item",
+          "description": "the candidate's label"
+        },
+        "its_count": {
+          "sort": "item",
+          "description": "the candidate's count"
+        },
+        "contribution_edit": {
+          "sort": "item",
+          "description": "the contribution edit"
+        },
+        "harms_edit": {
+          "sort": "item",
+          "description": "the harms edit"
+        },
+        "indicated_sentence": {
+          "sort": "item",
+          "description": "the indicated sentence"
+        },
+        "indicated_paragraph": {
+          "sort": "item",
+          "description": "the indicated paragraph"
         },
         "extra_space": {
-          "sort": "artifact",
-          "description": "extra space"
+          "sort": "item",
+          "description": "the extra space in the revised passages"
+        },
+        "proof_rule": {
+          "sort": "item",
+          "description": "the proof rule"
+        },
+        "proof_rule_limits": {
+          "sort": "item",
+          "description": "the limits of the proof rule"
+        },
+        "authoring": {
+          "sort": "item",
+          "description": "authoring"
+        },
+        "formalisation_work": {
+          "sort": "item",
+          "description": "formalisation"
+        },
+        "proof_production": {
+          "sort": "item",
+          "description": "proof production"
+        },
+        "compute": {
+          "sort": "item",
+          "description": "compute"
+        },
+        "review": {
+          "sort": "item",
+          "description": "review"
+        },
+        "revised_comparison": {
+          "sort": "comparison",
+          "description": "the matched-cost comparison in the revised form text"
+        },
+        "false_confidence": {
+          "sort": "harm",
+          "description": "increased false confidence"
+        },
+        "premise_confidence": {
+          "sort": "harm",
+          "description": "increased false confidence about premise truth"
+        },
+        "fidelity_confidence": {
+          "sort": "harm",
+          "description": "increased false confidence about faithful formalisation"
+        },
+        "false_subclaim_accepted": {
+          "sort": "harm",
+          "description": "an arbitrary false sub-claim accepted as a new assumption"
         }
       }
     }
@@ -1184,34 +1285,122 @@
         "ast": [
           "and",
           [
-            "and",
+            "binary",
+            "tested_against",
             [
-              "unary",
-              "tests_checker",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "verified_checker"
             ],
             [
-              "unary",
-              "tests_evidence_layer",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "cross_examination"
             ]
           ],
           [
-            "unary",
-            "compares_cross_examination",
+            "and",
             [
-              "const",
-              "draft"
+              "binary",
+              "tested_against",
+              [
+                "const",
+                "evidence_layer"
+              ],
+              [
+                "const",
+                "cross_examination"
+              ]
+            ],
+            [
+              "and",
+              [
+                "binary",
+                "tested_on",
+                [
+                  "const",
+                  "verified_checker"
+                ],
+                [
+                  "const",
+                  "smuggled_premises"
+                ]
+              ],
+              [
+                "and",
+                [
+                  "binary",
+                  "tested_on",
+                  [
+                    "const",
+                    "verified_checker"
+                  ],
+                  [
+                    "const",
+                    "equivocation"
+                  ]
+                ],
+                [
+                  "and",
+                  [
+                    "binary",
+                    "tested_on",
+                    [
+                      "const",
+                      "verified_checker"
+                    ],
+                    [
+                      "const",
+                      "shifting_definitions"
+                    ]
+                  ],
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "tested_on",
+                      [
+                        "const",
+                        "evidence_layer"
+                      ],
+                      [
+                        "const",
+                        "smuggled_premises"
+                      ]
+                    ],
+                    [
+                      "and",
+                      [
+                        "binary",
+                        "tested_on",
+                        [
+                          "const",
+                          "evidence_layer"
+                        ],
+                        [
+                          "const",
+                          "equivocation"
+                        ]
+                      ],
+                      [
+                        "binary",
+                        "tested_on",
+                        [
+                          "const",
+                          "evidence_layer"
+                        ],
+                        [
+                          "const",
+                          "shifting_definitions"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "c4bdfa0fb70558f4aa1b19238ea03c8c2c041a43250969e417946fd3ca3e1137"
     },
     {
       "id": "u004",
@@ -1255,8 +1444,8 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
+        "candidate_1",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
@@ -1265,34 +1454,58 @@
         "ast": [
           "and",
           [
-            "and",
+            "binary",
+            "tested_on",
             [
-              "unary",
-              "tests_mandatory_proofs",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "mandatory_checked_proofs"
             ],
             [
-              "unary",
-              "tests_obfuscated_arguments",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "obfuscated_arguments"
             ]
           ],
           [
-            "unary",
-            "proposes_vex",
+            "and",
             [
-              "const",
-              "draft"
+              "unary",
+              "proposed",
+              [
+                "const",
+                "vex"
+              ]
+            ],
+            [
+              "and",
+              [
+                "binary",
+                "applies_to",
+                [
+                  "const",
+                  "vex"
+                ],
+                [
+                  "const",
+                  "statistical_claims"
+                ]
+              ],
+              [
+                "binary",
+                "applies_to",
+                [
+                  "const",
+                  "vex"
+                ],
+                [
+                  "const",
+                  "approximate_claims"
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2ff0bc0e44fd287679251fcf56af0f7f2b8fda5015746ba5417df1082c6b987e"
     },
     {
       "id": "u008",
@@ -1314,8 +1527,8 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
+        "candidate_2",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
@@ -1324,34 +1537,77 @@
         "ast": [
           "and",
           [
-            "and",
+            "binary",
+            "tested_to_improve",
             [
-              "unary",
-              "tests_mandatory_proofs",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "mandatory_checked_proofs"
             ],
             [
-              "unary",
-              "develops_vex",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "oversight"
             ]
           ],
           [
-            "unary",
-            "aims_oversight",
+            "and",
             [
-              "const",
-              "draft"
+              "binary",
+              "applies_to",
+              [
+                "const",
+                "mandatory_checked_proofs"
+              ],
+              [
+                "const",
+                "formalisable_claims"
+              ]
+            ],
+            [
+              "and",
+              [
+                "binary",
+                "developed_to_improve",
+                [
+                  "const",
+                  "vex"
+                ],
+                [
+                  "const",
+                  "oversight"
+                ]
+              ],
+              [
+                "and",
+                [
+                  "binary",
+                  "applies_to",
+                  [
+                    "const",
+                    "vex"
+                  ],
+                  [
+                    "const",
+                    "statistical_claims"
+                  ]
+                ],
+                [
+                  "binary",
+                  "applies_to",
+                  [
+                    "const",
+                    "vex"
+                  ],
+                  [
+                    "const",
+                    "approximate_claims"
+                  ]
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2a8d055831e191655f6cf7d0c0179161662732c3e1eb7a708cce6677fc2604d3"
     },
     {
       "id": "u010",
@@ -1381,47 +1637,20 @@
         696,
         854
       ],
-      "status": "CHECKED",
+      "status": "LABELLED",
       "kind": [
         "attributed",
         "old_text",
         "says",
-        "asserted"
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
+        ]
       ],
       "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "release_by_oct25",
-              [
-                "const",
-                "benchmark"
-              ]
-            ],
-            [
-              "unary",
-              "tests_checker_deference",
-              [
-                "const",
-                "benchmark"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "tests_adversarial_pushback",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
-        ]
-      }
+      "support": "none"
     },
     {
       "id": "u013",
@@ -1429,58 +1658,24 @@
         854,
         974
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
         "attributed",
         "old_text",
         "says",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "unary",
-                "tests_definition_shift",
-                [
-                  "const",
-                  "comparison"
-                ]
-              ],
-              [
-                "unary",
-                "tests_smuggled_premises",
-                [
-                  "const",
-                  "comparison"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "uses_matched_cost",
-              [
-                "const",
-                "comparison"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "includes_certificate_production",
-            [
-              "const",
-              "comparison"
-            ]
-          ]
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "matched_cost"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u014",
@@ -1488,47 +1683,24 @@
         974,
         1105
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
         "attributed",
         "old_text",
         "says",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "tests_flaw_localisation",
-              [
-                "const",
-                "benchmark"
-              ]
-            ],
-            [
-              "unary",
-              "uses_50_to_5000_steps",
-              [
-                "const",
-                "benchmark"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "separates_error_classes",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "misleading_formalisation"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u015",
@@ -1536,36 +1708,24 @@
         1105,
         1190
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
         "attributed",
         "old_text",
         "says",
-        "instruction"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "includes_real_artefacts",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "replicates_model_families",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "real_artefact"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u016",
@@ -1584,69 +1744,24 @@
         1194,
         1414
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "and",
-                [
-                  "unary",
-                  "release_by_oct25",
-                  [
-                    "const",
-                    "benchmark"
-                  ]
-                ],
-                [
-                  "unary",
-                  "tests_mandatory_proofs",
-                  [
-                    "const",
-                    "benchmark"
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "tests_obfuscated_arguments",
-                [
-                  "const",
-                  "benchmark"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "uses_50_to_5000_steps",
-              [
-                "const",
-                "benchmark"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "separates_error_classes",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+        "new_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "misleading_formalisation"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u018",
@@ -1654,53 +1769,24 @@
         1414,
         1508
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "unary",
-                "compares_cross_examination",
-                [
-                  "const",
-                  "comparison"
-                ]
-              ],
-              [
-                "unary",
-                "uses_matched_cost",
-                [
-                  "const",
-                  "comparison"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "includes_formalisation",
-              [
-                "const",
-                "comparison"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "includes_proof_production",
-            [
-              "const",
-              "comparison"
-            ]
-          ]
+      "status": "OPEN",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "matched_cost"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u019",
@@ -1708,31 +1794,20 @@
         1508,
         1609
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "focuses_large_untrusted_artefacts",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "focuses_universal_or_negative_claims",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+      "status": "LABELLED",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": "specified",
+      "support": "none"
     },
     {
       "id": "u020",
@@ -1740,31 +1815,20 @@
         1609,
         1681
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "tests_forged_checker",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "tests_sustained_pushback",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+      "status": "LABELLED",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": "specified",
+      "support": "none"
     },
     {
       "id": "u021",
@@ -1772,31 +1836,24 @@
         1681,
         1744
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "includes_real_artefacts",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "replicates_model_families",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+      "status": "OPEN",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "real_artefact"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u022",
@@ -1804,9 +1861,13 @@
         1744,
         1812
       ],
-      "status": "LABELLED",
-      "kind": "meta",
-      "meaning": "specified",
+      "status": "OPEN",
+      "kind": "question",
+      "meaning": {
+        "open": [
+          "catastrophic_risk"
+        ]
+      },
       "support": "none"
     },
     {
@@ -1826,69 +1887,19 @@
         1816,
         2021
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
         "attributed",
         "old_text",
         "says",
         "asserted"
       ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "and",
-                [
-                  "unary",
-                  "claims_implementation",
-                  [
-                    "const",
-                    "draft"
-                  ]
-                ],
-                [
-                  "unary",
-                  "tests_smuggled_premises",
-                  [
-                    "const",
-                    "draft"
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "tests_equivocation",
-                [
-                  "const",
-                  "draft"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "tests_definition_shift",
-              [
-                "const",
-                "draft"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "compares_cross_examination",
-            [
-              "const",
-              "draft"
-            ]
-          ]
+      "meaning": {
+        "open": [
+          "matched_cost"
         ]
-      }
+      },
+      "support": "none"
     },
     {
       "id": "u025",
@@ -1907,47 +1918,20 @@
         2025,
         2287
       ],
-      "status": "CHECKED",
+      "status": "UNFORMALISED",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "accepts_only_checked_derivations",
-              [
-                "const",
-                "proof_rule"
-              ]
-            ],
-            [
-              "unary",
-              "excludes_assumed_false_subclaims",
-              [
-                "const",
-                "proof_rule"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "blocks_barnes_christiano_for_formalised_claims",
-            [
-              "const",
-              "proof_rule"
-            ]
-          ]
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "unformalised",
+          "causal_means"
         ]
-      }
+      ],
+      "meaning": {
+        "unformalised": "causal_means"
+      },
+      "support": "none"
     },
     {
       "id": "u027",
@@ -1955,9 +1939,13 @@
         2287,
         2349
       ],
-      "status": "LABELLED",
-      "kind": "meta",
-      "meaning": "specified",
+      "status": "OPEN",
+      "kind": "question",
+      "meaning": {
+        "open": [
+          "catastrophic_risk"
+        ]
+      },
       "support": "none"
     },
     {
@@ -1977,115 +1965,30 @@
         2353,
         2446
       ],
-      "status": "CHECKED",
+      "status": "UNFORMALISED",
       "kind": [
-        "hedged",
-        "could",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "unary",
-          "increases_false_confidence",
+        "attributed",
+        "old_text",
+        "says",
+        [
+          "hedged",
+          "could",
           [
-            "const",
-            "proof_label"
+            "unformalised",
+            "causal_route_excludes_definitions"
           ]
         ]
-      }
+      ],
+      "meaning": {
+        "unformalised": "causal_route_excludes_definitions"
+      },
+      "support": "none"
     },
     {
       "id": "u030",
       "span": [
         2446,
         2529
-      ],
-      "status": "CHECKED",
-      "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "tests_deference_harm",
-              [
-                "const",
-                "controls"
-              ]
-            ],
-            [
-              "unary",
-              "tests_definition_shift",
-              [
-                "const",
-                "controls"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "tests_smuggled_premises",
-            [
-              "const",
-              "controls"
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u031",
-      "span": [
-        2529,
-        2588
-      ],
-      "status": "CHECKED",
-      "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "includes_real_artefacts",
-            [
-              "const",
-              "artefact_arm"
-            ]
-          ],
-          [
-            "unary",
-            "tests_transfer_beyond_planted_flaws",
-            [
-              "const",
-              "artefact_arm"
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u032",
-      "span": [
-        2588,
-        2633
       ],
       "status": "CHECKED",
       "kind": [
@@ -2098,14 +2001,262 @@
       "support": "none",
       "content": {
         "ast": [
-          "unary",
-          "commits_publish_null_and_negative",
+          "and",
           [
-            "const",
-            "draft"
+            "or",
+            [
+              "binary",
+              "tests",
+              [
+                "const",
+                "deference_control"
+              ],
+              [
+                "const",
+                "premise_confidence"
+              ]
+            ],
+            [
+              "binary",
+              "tests",
+              [
+                "const",
+                "deference_control"
+              ],
+              [
+                "const",
+                "fidelity_confidence"
+              ]
+            ]
+          ],
+          [
+            "and",
+            [
+              "or",
+              [
+                "binary",
+                "tests",
+                [
+                  "const",
+                  "shifting_definition_control"
+                ],
+                [
+                  "const",
+                  "premise_confidence"
+                ]
+              ],
+              [
+                "binary",
+                "tests",
+                [
+                  "const",
+                  "shifting_definition_control"
+                ],
+                [
+                  "const",
+                  "fidelity_confidence"
+                ]
+              ]
+            ],
+            [
+              "and",
+              [
+                "or",
+                [
+                  "binary",
+                  "tests",
+                  [
+                    "const",
+                    "smuggled_premise_control"
+                  ],
+                  [
+                    "const",
+                    "premise_confidence"
+                  ]
+                ],
+                [
+                  "binary",
+                  "tests",
+                  [
+                    "const",
+                    "smuggled_premise_control"
+                  ],
+                  [
+                    "const",
+                    "fidelity_confidence"
+                  ]
+                ]
+              ],
+              [
+                "and",
+                [
+                  "or",
+                  [
+                    "binary",
+                    "tests",
+                    [
+                      "const",
+                      "deference_control"
+                    ],
+                    [
+                      "const",
+                      "premise_confidence"
+                    ]
+                  ],
+                  [
+                    "or",
+                    [
+                      "binary",
+                      "tests",
+                      [
+                        "const",
+                        "shifting_definition_control"
+                      ],
+                      [
+                        "const",
+                        "premise_confidence"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "tests",
+                      [
+                        "const",
+                        "smuggled_premise_control"
+                      ],
+                      [
+                        "const",
+                        "premise_confidence"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "or",
+                  [
+                    "binary",
+                    "tests",
+                    [
+                      "const",
+                      "deference_control"
+                    ],
+                    [
+                      "const",
+                      "fidelity_confidence"
+                    ]
+                  ],
+                  [
+                    "or",
+                    [
+                      "binary",
+                      "tests",
+                      [
+                        "const",
+                        "shifting_definition_control"
+                      ],
+                      [
+                        "const",
+                        "fidelity_confidence"
+                      ]
+                    ],
+                    [
+                      "binary",
+                      "tests",
+                      [
+                        "const",
+                        "smuggled_premise_control"
+                      ],
+                      [
+                        "const",
+                        "fidelity_confidence"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "6c557ba84d494cf9567fb3a347bec17c041e7902b435f5564bb101fe19ac83c8"
+    },
+    {
+      "id": "u031",
+      "span": [
+        2529,
+        2588
+      ],
+      "status": "OPEN",
+      "kind": [
+        "attributed",
+        "old_text",
+        "says",
+        "asserted"
+      ],
+      "meaning": {
+        "open": [
+          "real_artefact"
+        ]
+      },
+      "support": "none"
+    },
+    {
+      "id": "u032",
+      "span": [
+        2588,
+        2633
+      ],
+      "status": "CHECKED",
+      "kind": [
+        "attributed",
+        "old_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "promised",
+          "asserted"
+        ]
+      ],
+      "meaning": "specified",
+      "support": "none",
+      "content": {
+        "ast": [
+          "forall",
+          "item",
+          [
+            "implies",
+            [
+              "or",
+              [
+                "unary",
+                "null_result",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "negative_result",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ],
+            [
+              "unary",
+              "published",
+              [
+                "var",
+                0
+              ]
+            ]
+          ]
+        ]
+      },
+      "meaning_id": "9dae19292423dd8c75598d89cc148d70e96b615eac72e36c8b062cd2e402f399"
     },
     {
       "id": "u033",
@@ -2140,24 +2291,24 @@
         2761,
         2808
       ],
-      "status": "CHECKED",
+      "status": "UNFORMALISED",
       "kind": [
-        "hedged",
-        "could",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "unary",
-          "increases_false_confidence",
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "hedged",
+          "could",
           [
-            "const",
-            "proof_label"
+            "unformalised",
+            "causal_route_excludes_definitions"
           ]
         ]
-      }
+      ],
+      "meaning": {
+        "unformalised": "causal_route_excludes_definitions"
+      },
+      "support": "none"
     },
     {
       "id": "u036",
@@ -2166,9 +2317,14 @@
         2857
       ],
       "status": "CHECKED",
-      "kind": "exposition",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        "asserted"
+      ],
       "meaning": "specified",
-      "support": "assumption",
+      "support": "none",
       "content": {
         "ast": [
           "forall",
@@ -2182,7 +2338,8 @@
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2698b5a2339fb91ae6718428889993c960a34254d6a0daa03309156e41526319"
     },
     {
       "id": "u037",
@@ -2192,22 +2349,32 @@
       ],
       "status": "CHECKED",
       "kind": [
-        "hedged",
-        "could",
-        "asserted"
+        "attributed",
+        "new_text",
+        "says",
+        [
+          "hedged",
+          "could",
+          "asserted"
+        ]
       ],
       "meaning": "specified",
       "support": "none",
       "content": {
         "ast": [
-          "unary",
-          "misstates_task",
+          "exists",
+          "formalisation",
           [
-            "const",
-            "formalisation"
+            "unary",
+            "misstates_task",
+            [
+              "var",
+              0
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "7765dcc531dde581e8239d400853958accb2657a3064534e60131f80f91f79e7"
     },
     {
       "id": "u038",
@@ -2216,19 +2383,73 @@
         2969
       ],
       "status": "CHECKED",
-      "kind": "asserted",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        "asserted"
+      ],
       "meaning": "specified",
-      "support": "assumption",
+      "support": "none",
       "content": {
         "ast": [
-          "unary",
-          "unresolved_without_affordable_proof",
+          "forall",
+          "claim",
           [
-            "const",
-            "claim"
+            "implies",
+            [
+              "and",
+              [
+                "unary",
+                "honest",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "not",
+                [
+                  "exists",
+                  "proof",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "proof_of",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "unary",
+                      "affordable_proof",
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "unary",
+              "unresolved",
+              [
+                "var",
+                0
+              ]
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "13bda2bed43bf4d682c68690841ef754200aaac9ef1a1e6c1744bd2593215c79"
     },
     {
       "id": "u039",
@@ -2239,8 +2460,8 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
+        "new_text",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
@@ -2249,23 +2470,51 @@
         "ast": [
           "and",
           [
-            "unary",
-            "requires_evidence",
+            "exists",
+            "evidence",
             [
-              "const",
-              "vex"
+              "binary",
+              "required_by",
+              [
+                "var",
+                0
+              ],
+              [
+                "const",
+                "vex"
+              ]
             ]
           ],
           [
-            "unary",
-            "requires_quality_review",
+            "forall",
+            "evidence",
             [
-              "const",
-              "vex"
+              "implies",
+              [
+                "binary",
+                "required_by",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "const",
+                  "vex"
+                ]
+              ],
+              [
+                "unary",
+                "needs_quality_review",
+                [
+                  "var",
+                  0
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "ced1a3b2c2a1aa5bddc3f8c5867041f0aff6fa19b5079e3f75057b5e4dafd6a9"
     },
     {
       "id": "u040",
@@ -2273,47 +2522,19 @@
         3030,
         3119
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
+        "attributed",
+        "new_text",
+        "says",
         "asserted"
       ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "tests_forged_checker",
-              [
-                "const",
-                "controls"
-              ]
-            ],
-            [
-              "unary",
-              "tests_false_foundations",
-              [
-                "const",
-                "controls"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "tests_misleading_formalisation",
-            [
-              "const",
-              "controls"
-            ]
-          ]
+      "meaning": {
+        "open": [
+          "misleading_formalisation"
         ]
-      }
+      },
+      "support": "none"
     },
     {
       "id": "u041",
@@ -2323,34 +2544,54 @@
       ],
       "status": "CHECKED",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
+        "attributed",
+        "new_text",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
       "support": "none",
       "content": {
         "ast": [
-          "and",
+          "forall",
+          "artefact",
           [
-            "unary",
-            "includes_real_artefacts",
+            "implies",
             [
-              "const",
-              "artefact_arm"
-            ]
-          ],
-          [
-            "unary",
-            "tests_transfer_beyond_planted_flaws",
+              "and",
+              [
+                "unary",
+                "real_artefact",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "binary",
+                "included_in",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "const",
+                  "benchmark"
+                ]
+              ]
+            ],
             [
-              "const",
-              "artefact_arm"
+              "unary",
+              "tests_transfer",
+              [
+                "var",
+                0
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "3bdc6777f9ed5cdcf97a022dbb26efa2dc79a89a69580ab70151b1a665fee818"
     },
     {
       "id": "u042",
@@ -2361,9 +2602,14 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
-        "asserted"
+        "new_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "promised",
+          "asserted"
+        ]
       ],
       "meaning": "specified",
       "support": "none",
@@ -2371,34 +2617,72 @@
         "ast": [
           "and",
           [
-            "and",
+            "forall",
+            "item",
             [
-              "unary",
-              "commits_publish_null_and_negative",
+              "implies",
               [
-                "const",
-                "draft"
-              ]
-            ],
-            [
-              "unary",
-              "publishes_benchmark_harness_analysis",
+                "or",
+                [
+                  "unary",
+                  "null_result",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "negative_result",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
               [
-                "const",
-                "draft"
+                "unary",
+                "published",
+                [
+                  "var",
+                  0
+                ]
               ]
             ]
           ],
           [
-            "unary",
-            "publishes_even_if_no_advantage",
+            "and",
             [
-              "const",
-              "draft"
+              "unary",
+              "published",
+              [
+                "const",
+                "benchmark"
+              ]
+            ],
+            [
+              "and",
+              [
+                "unary",
+                "published",
+                [
+                  "const",
+                  "harness"
+                ]
+              ],
+              [
+                "unary",
+                "published",
+                [
+                  "const",
+                  "failure_analysis"
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "20d0a4f4f0e3772a638fb716a662c9acbdd6aef3c3ea26f2f845e1676ab6cd48"
     },
     {
       "id": "u043",
@@ -2425,23 +2709,39 @@
         "ast": [
           "and",
           [
-            "unary",
-            "copied_from_current_form",
+            "binary",
+            "copied_from",
             [
               "const",
               "old_text"
+            ],
+            [
+              "const",
+              "form_edits_file"
             ]
           ],
           [
-            "unary",
-            "context_supplied_by_rapid_draft",
+            "and",
             [
-              "const",
-              "old_text"
+              "unary",
+              "current_form_text",
+              [
+                "const",
+                "form_edits_file"
+              ]
+            ],
+            [
+              "unary",
+              "supplies_context",
+              [
+                "const",
+                "rapid_draft"
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "f31ef0c3a7d0a469364808e49d03d2c9f4abc947d5ee4ef642908daf9097f1d6"
     },
     {
       "id": "u045",
@@ -2455,14 +2755,22 @@
       "support": "assumption",
       "content": {
         "ast": [
-          "unary",
-          "excludes_superseded_wording",
+          "not",
           [
-            "const",
-            "old_text"
+            "binary",
+            "used_as",
+            [
+              "const",
+              "superseded_wording"
+            ],
+            [
+              "const",
+              "old_text"
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "b28c25a6e3a644147afc1767c7b87ab2d989bf498bff4ec083c86a1d1d5b33dd"
     },
     {
       "id": "u046",
@@ -2478,23 +2786,47 @@
         "ast": [
           "and",
           [
-            "unary",
-            "cites_obfuscation_recheck",
+            "binary",
+            "follows",
             [
               "const",
               "correction"
+            ],
+            [
+              "const",
+              "recheck_section"
             ]
           ],
           [
-            "unary",
-            "cites_positioning_review",
+            "and",
             [
-              "const",
-              "correction"
+              "binary",
+              "follows",
+              [
+                "const",
+                "correction"
+              ],
+              [
+                "const",
+                "positioning_section"
+              ]
+            ],
+            [
+              "binary",
+              "follows",
+              [
+                "const",
+                "correction"
+              ],
+              [
+                "const",
+                "positioning_correction"
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "6d9133150535c44a3728774637e6f6fc03ec8c95dbdb105af5551238541ba334"
     },
     {
       "id": "u047",
@@ -2502,25 +2834,15 @@
         3676,
         3768
       ],
-      "status": "CHECKED",
+      "status": "UNFORMALISED",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
+        "unformalised",
+        "causal_route_excludes_definitions"
       ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "unary",
-          "prevents_false_subclaims_as_new_assumptions",
-          [
-            "const",
-            "proof_rule"
-          ]
-        ]
-      }
+      "meaning": {
+        "unformalised": "causal_route_excludes_definitions"
+      },
+      "support": "none"
     },
     {
       "id": "u048",
@@ -2529,19 +2851,24 @@
         3826
       ],
       "status": "CHECKED",
-      "kind": "meta",
+      "kind": "asserted",
       "meaning": "specified",
       "support": "assumption",
       "content": {
         "ast": [
-          "unary",
-          "conditional_on_foundations",
+          "binary",
+          "conditional_on",
           [
             "const",
             "guarantee"
+          ],
+          [
+            "const",
+            "declared_foundations"
           ]
         ]
-      }
+      },
+      "meaning_id": "c093909f2edc6119367788b0d701617499e165d69a7362d02e56dc987ddeaecb"
     },
     {
       "id": "u049",
@@ -2550,7 +2877,7 @@
         3887
       ],
       "status": "CHECKED",
-      "kind": "meta",
+      "kind": "asserted",
       "meaning": "specified",
       "support": "assumption",
       "content": {
@@ -2560,30 +2887,35 @@
             "not",
             [
               "binary",
-              "establishes_truth",
+              "establishes_truth_of",
               [
                 "const",
-                "proof_rule"
+                "guarantee"
               ],
               [
                 "const",
-                "foundations"
+                "declared_foundations"
               ]
             ]
           ],
           [
             "not",
             [
-              "unary",
-              "establishes_faithful_formalisation",
+              "binary",
+              "establishes_fidelity_of",
               [
                 "const",
-                "proof_rule"
+                "guarantee"
+              ],
+              [
+                "const",
+                "declared_foundations"
               ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "22c76bd8d1cdff5225b3785ec6a057fd42d5163f1b79be3b173cc94e9c476355"
     },
     {
       "id": "u050",
@@ -2597,14 +2929,63 @@
       "support": "assumption",
       "content": {
         "ast": [
-          "unary",
-          "requires_affordable_proof",
+          "forall",
+          "claim",
           [
-            "const",
-            "honest_answer"
+            "implies",
+            [
+              "and",
+              [
+                "unary",
+                "honest",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "not",
+                [
+                  "unary",
+                  "unresolved",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ],
+            [
+              "exists",
+              "proof",
+              [
+                "and",
+                [
+                  "binary",
+                  "proof_of",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ],
+                [
+                  "unary",
+                  "affordable_proof",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ]
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "ba8c9e1d7076da5aa49c20df0da5dd544ed631f0955957f77eac5896fa99da3a"
     },
     {
       "id": "u051",
@@ -2618,14 +2999,71 @@
       "support": "assumption",
       "content": {
         "ast": [
-          "unary",
-          "unresolved_when_proof_beyond_budget",
+          "forall",
+          "claim",
           [
-            "const",
-            "claim"
+            "implies",
+            [
+              "and",
+              [
+                "exists",
+                "proof",
+                [
+                  "binary",
+                  "proof_of",
+                  [
+                    "var",
+                    0
+                  ],
+                  [
+                    "var",
+                    1
+                  ]
+                ]
+              ],
+              [
+                "forall",
+                "proof",
+                [
+                  "implies",
+                  [
+                    "binary",
+                    "proof_of",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ],
+                  [
+                    "not",
+                    [
+                      "unary",
+                      "within_budget",
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "unary",
+              "unresolved",
+              [
+                "var",
+                0
+              ]
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "35d157b16d3cc07deb49d2d20e9464d89240eb832159a7c691fe3331a6e3986e"
     },
     {
       "id": "u052",
@@ -2634,24 +3072,24 @@
         4043
       ],
       "status": "CHECKED",
-      "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
-      ],
+      "kind": "asserted",
       "meaning": "specified",
-      "support": "none",
+      "support": "assumption",
       "content": {
         "ast": [
-          "unary",
-          "benefit_of_sound_proof_checking",
+          "binary",
+          "benefit_of",
           [
             "const",
-            "proof_rule"
+            "prevention"
+          ],
+          [
+            "const",
+            "sound_proof_checking"
           ]
         ]
-      }
+      },
+      "meaning_id": "468cf8d9a17cf6c611326b3ab555b5690ea90cb120914d7062718b4c1c53b81b"
     },
     {
       "id": "u053",
@@ -2683,23 +3121,38 @@
         "ast": [
           "and",
           [
-            "unary",
-            "claims_no_proofs_debate_novelty",
+            "not",
             [
-              "const",
-              "draft"
+              "binary",
+              "claims",
+              [
+                "const",
+                "draft"
+              ],
+              [
+                "const",
+                "debate_novelty"
+              ]
             ]
           ],
           [
-            "unary",
-            "claims_no_english_surface_benefit",
+            "not",
             [
-              "const",
-              "draft"
+              "binary",
+              "claims",
+              [
+                "const",
+                "draft"
+              ],
+              [
+                "const",
+                "english_surface_benefit"
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2c5383f4b9e00f6e985297a93f99d7c51e7cc4ff92fbca665554c19222afb01e"
     },
     {
       "id": "u055",
@@ -2708,39 +3161,270 @@
         4284
       ],
       "status": "CHECKED",
-      "kind": "meta",
+      "kind": "asserted",
       "meaning": "specified",
       "support": "assumption",
       "content": {
         "ast": [
           "and",
           [
-            "unary",
-            "concerns_estimated_leaves",
+            "binary",
+            "concerns",
             [
               "const",
-              "caveat"
+              "stability_caveat"
+            ],
+            [
+              "const",
+              "estimated_leaves"
             ]
           ],
           [
             "not",
             [
-              "unary",
-              "concerns_proved_subclaims",
+              "binary",
+              "concerns",
               [
                 "const",
-                "caveat"
+                "stability_caveat"
+              ],
+              [
+                "const",
+                "proved_subclaims"
               ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "d37ef683cea18f77012fe2942c8a524ae8bc9594e0e8b3f482f56b0fbd8763da"
     },
     {
       "id": "u056",
       "span": [
         4284,
         4375
+      ],
+      "status": "CHECKED",
+      "kind": [
+        "attributed",
+        "new_text",
+        "says",
+        "asserted"
+      ],
+      "meaning": "specified",
+      "support": "none",
+      "content": {
+        "ast": [
+          "and",
+          [
+            "unary",
+            "proposed",
+            [
+              "const",
+              "vex"
+            ]
+          ],
+          [
+            "and",
+            [
+              "binary",
+              "applies_to",
+              [
+                "const",
+                "vex"
+              ],
+              [
+                "const",
+                "statistical_claims"
+              ]
+            ],
+            [
+              "binary",
+              "applies_to",
+              [
+                "const",
+                "vex"
+              ],
+              [
+                "const",
+                "approximate_claims"
+              ]
+            ]
+          ]
+        ]
+      },
+      "meaning_id": "2bf5d6d14a8547302d603cc483b5bd16a42434e24d09489512c5b98bc9029628"
+    },
+    {
+      "id": "u057",
+      "span": [
+        4375,
+        4432
+      ],
+      "status": "CHECKED",
+      "kind": "asserted",
+      "meaning": "specified",
+      "support": "assumption",
+      "content": {
+        "ast": [
+          "not",
+          [
+            "binary",
+            "guarantees",
+            [
+              "const",
+              "evidence_requirements"
+            ],
+            [
+              "const",
+              "evidence_quality"
+            ]
+          ]
+        ]
+      },
+      "meaning_id": "872ed6e6e61ec34c1ce2486596840c0d90bc20d51e69ce6bec8ef6bd18246324"
+    },
+    {
+      "id": "u058",
+      "span": [
+        4432,
+        4485
+      ],
+      "status": "CHECKED",
+      "kind": "asserted",
+      "meaning": "specified",
+      "support": "assumption",
+      "content": {
+        "ast": [
+          "and",
+          [
+            "not",
+            [
+              "binary",
+              "claims",
+              [
+                "const",
+                "draft"
+              ],
+              [
+                "const",
+                "vex_result"
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "binary",
+              "claims",
+              [
+                "const",
+                "draft"
+              ],
+              [
+                "const",
+                "completed_extension"
+              ]
+            ]
+          ]
+        ]
+      },
+      "meaning_id": "f0dfec44725970444f437dd1f06f5e6172655614e1ec5043e165418fbab50e1d"
+    },
+    {
+      "id": "u059",
+      "span": [
+        4485,
+        4557
+      ],
+      "status": "CHECKED",
+      "kind": "asserted",
+      "meaning": "specified",
+      "support": "assumption",
+      "content": {
+        "ast": [
+          "binary",
+          "schedules",
+          [
+            "const",
+            "evidence_layer_milestones"
+          ],
+          [
+            "const",
+            "vex"
+          ]
+        ]
+      },
+      "meaning_id": "cc0bf635e8bbddb2df598784ffa054eb20aef7cb7c1f8130d402943c090e255c"
+    },
+    {
+      "id": "u060",
+      "span": [
+        4557,
+        4744
+      ],
+      "status": "UNFORMALISED",
+      "kind": [
+        "unformalised",
+        "motivation_link"
+      ],
+      "meaning": {
+        "unformalised": "motivation_link"
+      },
+      "support": "none"
+    },
+    {
+      "id": "u061",
+      "span": [
+        4744,
+        4835
+      ],
+      "status": "CHECKED",
+      "kind": "asserted",
+      "meaning": "specified",
+      "support": "assumption",
+      "content": {
+        "ast": [
+          "and",
+          [
+            "not",
+            [
+              "binary",
+              "reports",
+              [
+                "const",
+                "revised_form_text"
+              ],
+              [
+                "const",
+                "new_results"
+              ]
+            ]
+          ],
+          [
+            "not",
+            [
+              "binary",
+              "asserts",
+              [
+                "const",
+                "revised_form_text"
+              ],
+              [
+                "const",
+                "cost_advantage"
+              ]
+            ]
+          ]
+        ]
+      },
+      "meaning_id": "87d1dd196697aed33d9b8fd78cc197b6903c5881ef02cbfb4bd4a43445e34812"
+    },
+    {
+      "id": "u062",
+      "span": [
+        4835,
+        4915
       ],
       "status": "CHECKED",
       "kind": [
@@ -2755,251 +3439,43 @@
         "ast": [
           "and",
           [
-            "and",
+            "unary",
+            "matched_cost",
             [
-              "unary",
-              "proposes_mandatory_evidence",
-              [
-                "const",
-                "vex"
-              ]
-            ],
-            [
-              "unary",
-              "covers_statistical_claims",
-              [
-                "const",
-                "vex"
-              ]
+              "const",
+              "revised_comparison"
             ]
           ],
           [
-            "unary",
-            "covers_approximate_claims",
-            [
-              "const",
-              "vex"
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u057",
-      "span": [
-        4375,
-        4432
-      ],
-      "status": "CHECKED",
-      "kind": "meta",
-      "meaning": "specified",
-      "support": "assumption",
-      "content": {
-        "ast": [
-          "not",
-          [
-            "unary",
-            "guarantees_evidence_quality",
-            [
-              "const",
-              "requirements"
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u058",
-      "span": [
-        4432,
-        4485
-      ],
-      "status": "CHECKED",
-      "kind": "meta",
-      "meaning": "specified",
-      "support": "assumption",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "not",
-            [
-              "unary",
-              "claims_vex_result",
-              [
-                "const",
-                "draft"
-              ]
-            ]
-          ],
-          [
-            "not",
-            [
-              "unary",
-              "claims_completed_extension",
-              [
-                "const",
-                "draft"
-              ]
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u059",
-      "span": [
-        4485,
-        4557
-      ],
-      "status": "CHECKED",
-      "kind": "meta",
-      "meaning": "specified",
-      "support": "assumption",
-      "content": {
-        "ast": [
-          "unary",
-          "schedules_development",
-          [
-            "const",
-            "milestones"
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u060",
-      "span": [
-        4557,
-        4744
-      ],
-      "status": "CHECKED",
-      "kind": [
-        "attributed",
-        "supplied_update",
-        "says",
-        [
-          "causal",
-          "because",
-          "asserted",
-          "asserted"
-        ]
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
             "and",
             [
-              "and",
+              "binary",
+              "counts_cost",
               [
-                "unary",
-                "focus_motivated_by_judge_ceiling",
-                [
-                  "const",
-                  "benchmark"
-                ]
+                "const",
+                "revised_comparison"
               ],
               [
-                "unary",
-                "focuses_large_untrusted_artefacts",
-                [
-                  "const",
-                  "benchmark"
-                ]
+                "const",
+                "formalisation_work"
               ]
             ],
             [
-              "unary",
-              "focuses_universal_or_negative_claims",
+              "binary",
+              "counts_cost",
               [
                 "const",
-                "benchmark"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "tests_sustained_pushback",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "id": "u061",
-      "span": [
-        4744,
-        4835
-      ],
-      "status": "CHECKED",
-      "kind": "meta",
-      "meaning": "specified",
-      "support": "assumption",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "not",
-            [
-              "unary",
-              "reports_new_result",
+                "revised_comparison"
+              ],
               [
                 "const",
-                "draft"
-              ]
-            ]
-          ],
-          [
-            "not",
-            [
-              "unary",
-              "asserts_cost_advantage",
-              [
-                "const",
-                "draft"
+                "proof_production"
               ]
             ]
           ]
         ]
-      }
-    },
-    {
-      "id": "u062",
-      "span": [
-        4835,
-        4915
-      ],
-      "status": "CHECKED",
-      "kind": "meta",
-      "meaning": "specified",
-      "support": "assumption",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "includes_formalisation",
-            [
-              "const",
-              "comparison"
-            ]
-          ],
-          [
-            "unary",
-            "includes_proof_production",
-            [
-              "const",
-              "comparison"
-            ]
-          ]
-        ]
-      }
+      },
+      "meaning_id": "b11529ea833c7ac1f6c5e86e83d7ddde6f07fb1b575f794aa95ed00ecf6cd4d1"
     },
     {
       "id": "u063",
@@ -3007,75 +3483,14 @@
         4915,
         5091
       ],
-      "status": "CHECKED",
-      "kind": "asserted",
-      "meaning": "specified",
-      "support": "assumption",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "and",
-                [
-                  "and",
-                  [
-                    "unary",
-                    "retains_oct25_milestone",
-                    [
-                      "const",
-                      "draft"
-                    ]
-                  ],
-                  [
-                    "unary",
-                    "retains_50_to_5000_range",
-                    [
-                      "const",
-                      "draft"
-                    ]
-                  ]
-                ],
-                [
-                  "unary",
-                  "retains_real_artefact_tests",
-                  [
-                    "const",
-                    "draft"
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "retains_cross_family_replication",
-                [
-                  "const",
-                  "draft"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "retains_forged_checker_control",
-              [
-                "const",
-                "draft"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "retains_null_publication",
-            [
-              "const",
-              "draft"
-            ]
-          ]
+      "status": "OPEN",
+      "kind": "exposition",
+      "meaning": {
+        "open": [
+          "real_artefact"
         ]
-      }
+      },
+      "support": "none"
     },
     {
       "id": "u064",
@@ -3083,58 +3498,14 @@
         5091,
         5247
       ],
-      "status": "CHECKED",
-      "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "unary",
-                "covers_premise_risk",
-                [
-                  "const",
-                  "controls"
-                ]
-              ],
-              [
-                "unary",
-                "covers_meaning_risk",
-                [
-                  "const",
-                  "controls"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "covers_smuggled_premises",
-              [
-                "const",
-                "controls"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "covers_definition_shift",
-            [
-              "const",
-              "controls"
-            ]
-          ]
+      "status": "OPEN",
+      "kind": "exposition",
+      "meaning": {
+        "open": [
+          "misleading_formalisation"
         ]
-      }
+      },
+      "support": "none"
     },
     {
       "id": "u065",
@@ -3143,15 +3514,15 @@
         5284
       ],
       "status": "CHECKED",
-      "kind": "meta",
+      "kind": "asserted",
       "meaning": "specified",
       "support": "assumption",
       "content": {
         "ast": [
-          "not",
+          "forall",
+          "field",
           [
-            "exists",
-            "field",
+            "not",
             [
               "unary",
               "revised",
@@ -3162,7 +3533,8 @@
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "5179ba16721d3a4db8c9c74bef3158ceae99110f5610c79c1b66cc633aa6672f"
     },
     {
       "id": "u066",
@@ -3171,58 +3543,75 @@
         5377
       ],
       "status": "CHECKED",
-      "kind": "meta",
+      "kind": "asserted",
       "meaning": "specified",
       "support": "assumption",
       "content": {
         "ast": [
           "and",
           [
-            "and",
+            "binary",
+            "includes",
             [
-              "unary",
-              "includes_spaces",
-              [
-                "const",
-                "counts"
-              ]
+              "const",
+              "character_counts"
             ],
             [
-              "unary",
-              "includes_punctuation",
-              [
-                "const",
-                "counts"
-              ]
+              "const",
+              "spaces"
             ]
           ],
           [
             "and",
             [
-              "not",
+              "binary",
+              "includes",
               [
-                "unary",
-                "includes_labels",
-                [
-                  "const",
-                  "counts"
-                ]
+                "const",
+                "character_counts"
+              ],
+              [
+                "const",
+                "punctuation"
               ]
             ],
             [
-              "not",
+              "and",
               [
-                "unary",
-                "includes_trailing_newlines",
+                "not",
                 [
-                  "const",
-                  "counts"
+                  "binary",
+                  "includes",
+                  [
+                    "const",
+                    "character_counts"
+                  ],
+                  [
+                    "const",
+                    "labels"
+                  ]
+                ]
+              ],
+              [
+                "not",
+                [
+                  "binary",
+                  "includes",
+                  [
+                    "const",
+                    "character_counts"
+                  ],
+                  [
+                    "const",
+                    "trailing_newlines"
+                  ]
                 ]
               ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "d856145e59b7f72cbe901ab7db87d7e226d7acc20df7731045f03c4fd3112b84"
     },
     {
       "id": "u067",
@@ -3238,34 +3627,112 @@
         "ast": [
           "and",
           [
-            "and",
+            "exists",
+            "candidate",
             [
               "unary",
-              "selects_one_candidate",
+              "pasted",
               [
-                "const",
-                "paste_action"
-              ]
-            ],
-            [
-              "unary",
-              "excludes_label",
-              [
-                "const",
-                "paste_action"
+                "var",
+                0
               ]
             ]
           ],
           [
-            "unary",
-            "excludes_count",
+            "and",
             [
-              "const",
-              "paste_action"
+              "forall",
+              "candidate",
+              [
+                "forall",
+                "candidate",
+                [
+                  "implies",
+                  [
+                    "and",
+                    [
+                      "unary",
+                      "pasted",
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "unary",
+                      "pasted",
+                      [
+                        "var",
+                        1
+                      ]
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "forall",
+              "candidate",
+              [
+                "implies",
+                [
+                  "unary",
+                  "pasted",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "and",
+                  [
+                    "not",
+                    [
+                      "binary",
+                      "pasted_with",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "const",
+                        "its_label"
+                      ]
+                    ]
+                  ],
+                  [
+                    "not",
+                    [
+                      "binary",
+                      "pasted_with",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "const",
+                        "its_count"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "472df1d4666839f8bbe05a1e1aa742c7d5a439222afeae42ca6c2008ba1719aa"
     },
     {
       "id": "u068",
@@ -3281,23 +3748,98 @@
         "ast": [
           "and",
           [
-            "unary",
-            "replace_only_indicated_sentence",
+            "binary",
+            "replaces",
             [
               "const",
-              "edits"
+              "contribution_edit"
+            ],
+            [
+              "const",
+              "indicated_sentence"
             ]
           ],
           [
-            "unary",
-            "replace_only_indicated_paragraph",
+            "and",
             [
-              "const",
-              "edits"
+              "binary",
+              "replaces",
+              [
+                "const",
+                "harms_edit"
+              ],
+              [
+                "const",
+                "indicated_paragraph"
+              ]
+            ],
+            [
+              "and",
+              [
+                "forall",
+                "item",
+                [
+                  "implies",
+                  [
+                    "binary",
+                    "replaces",
+                    [
+                      "const",
+                      "contribution_edit"
+                    ],
+                    [
+                      "var",
+                      0
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "const",
+                      "indicated_sentence"
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "forall",
+                "item",
+                [
+                  "implies",
+                  [
+                    "binary",
+                    "replaces",
+                    [
+                      "const",
+                      "harms_edit"
+                    ],
+                    [
+                      "var",
+                      0
+                    ]
+                  ],
+                  [
+                    "eq",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "const",
+                      "indicated_paragraph"
+                    ]
+                  ]
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "e7a9e380582df000a4e2ab51d68e547e408189895db6a742c8735ad929bb0fe9"
     },
     {
       "id": "u069",
@@ -3334,23 +3876,32 @@
         "ast": [
           "and",
           [
-            "unary",
-            "states_proof_rule",
+            "binary",
+            "states",
             [
               "const",
               "extra_space"
+            ],
+            [
+              "const",
+              "proof_rule"
             ]
           ],
           [
-            "unary",
-            "states_proof_limits",
+            "binary",
+            "states",
             [
               "const",
               "extra_space"
+            ],
+            [
+              "const",
+              "proof_rule_limits"
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "3aef6163940255571276545b09d19eeae06d3eb8a934e586e53ff6ca46ddcaf4"
     },
     {
       "id": "u071",
@@ -3394,8 +3945,8 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
+        "candidate_1",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
@@ -3404,34 +3955,58 @@
         "ast": [
           "and",
           [
-            "and",
+            "binary",
+            "tested_on",
             [
-              "unary",
-              "tests_mandatory_proofs",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "mandatory_checked_proofs"
             ],
             [
-              "unary",
-              "tests_obfuscated_arguments",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "obfuscated_arguments"
             ]
           ],
           [
-            "unary",
-            "proposes_vex",
+            "and",
             [
-              "const",
-              "draft"
+              "unary",
+              "proposed",
+              [
+                "const",
+                "vex"
+              ]
+            ],
+            [
+              "and",
+              [
+                "binary",
+                "applies_to",
+                [
+                  "const",
+                  "vex"
+                ],
+                [
+                  "const",
+                  "statistical_claims"
+                ]
+              ],
+              [
+                "binary",
+                "applies_to",
+                [
+                  "const",
+                  "vex"
+                ],
+                [
+                  "const",
+                  "approximate_claims"
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2ff0bc0e44fd287679251fcf56af0f7f2b8fda5015746ba5417df1082c6b987e"
     },
     {
       "id": "u075",
@@ -3453,8 +4028,8 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
+        "candidate_2",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
@@ -3463,34 +4038,77 @@
         "ast": [
           "and",
           [
-            "and",
+            "binary",
+            "tested_to_improve",
             [
-              "unary",
-              "tests_mandatory_proofs",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "mandatory_checked_proofs"
             ],
             [
-              "unary",
-              "develops_vex",
-              [
-                "const",
-                "draft"
-              ]
+              "const",
+              "oversight"
             ]
           ],
           [
-            "unary",
-            "aims_oversight",
+            "and",
             [
-              "const",
-              "draft"
+              "binary",
+              "applies_to",
+              [
+                "const",
+                "mandatory_checked_proofs"
+              ],
+              [
+                "const",
+                "formalisable_claims"
+              ]
+            ],
+            [
+              "and",
+              [
+                "binary",
+                "developed_to_improve",
+                [
+                  "const",
+                  "vex"
+                ],
+                [
+                  "const",
+                  "oversight"
+                ]
+              ],
+              [
+                "and",
+                [
+                  "binary",
+                  "applies_to",
+                  [
+                    "const",
+                    "vex"
+                  ],
+                  [
+                    "const",
+                    "statistical_claims"
+                  ]
+                ],
+                [
+                  "binary",
+                  "applies_to",
+                  [
+                    "const",
+                    "vex"
+                  ],
+                  [
+                    "const",
+                    "approximate_claims"
+                  ]
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2a8d055831e191655f6cf7d0c0179161662732c3e1eb7a708cce6677fc2604d3"
     },
     {
       "id": "u077",
@@ -3509,69 +4127,24 @@
         6170,
         6390
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "and",
-                [
-                  "unary",
-                  "release_by_oct25",
-                  [
-                    "const",
-                    "benchmark"
-                  ]
-                ],
-                [
-                  "unary",
-                  "tests_mandatory_proofs",
-                  [
-                    "const",
-                    "benchmark"
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "tests_obfuscated_arguments",
-                [
-                  "const",
-                  "benchmark"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "uses_50_to_5000_steps",
-              [
-                "const",
-                "benchmark"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "separates_error_classes",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+        "paste_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "misleading_formalisation"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u079",
@@ -3579,53 +4152,24 @@
         6390,
         6484
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "and",
-              [
-                "unary",
-                "compares_cross_examination",
-                [
-                  "const",
-                  "comparison"
-                ]
-              ],
-              [
-                "unary",
-                "uses_matched_cost",
-                [
-                  "const",
-                  "comparison"
-                ]
-              ]
-            ],
-            [
-              "unary",
-              "includes_formalisation",
-              [
-                "const",
-                "comparison"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "includes_proof_production",
-            [
-              "const",
-              "comparison"
-            ]
-          ]
+      "status": "OPEN",
+      "kind": [
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "matched_cost"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u080",
@@ -3633,31 +4177,20 @@
         6484,
         6585
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "focuses_large_untrusted_artefacts",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "focuses_universal_or_negative_claims",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+      "status": "LABELLED",
+      "kind": [
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": "specified",
+      "support": "none"
     },
     {
       "id": "u081",
@@ -3665,31 +4198,20 @@
         6585,
         6657
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "tests_forged_checker",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "tests_sustained_pushback",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+      "status": "LABELLED",
+      "kind": [
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": "specified",
+      "support": "none"
     },
     {
       "id": "u082",
@@ -3697,31 +4219,24 @@
         6657,
         6720
       ],
-      "status": "CHECKED",
-      "kind": "instruction",
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "unary",
-            "includes_real_artefacts",
-            [
-              "const",
-              "benchmark"
-            ]
-          ],
-          [
-            "unary",
-            "replicates_model_families",
-            [
-              "const",
-              "benchmark"
-            ]
-          ]
+      "status": "OPEN",
+      "kind": [
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "intends",
+          "asserted"
         ]
-      }
+      ],
+      "meaning": {
+        "open": [
+          "real_artefact"
+        ]
+      },
+      "support": "none"
     },
     {
       "id": "u083",
@@ -3729,9 +4244,13 @@
         6720,
         6783
       ],
-      "status": "LABELLED",
-      "kind": "meta",
-      "meaning": "specified",
+      "status": "OPEN",
+      "kind": "question",
+      "meaning": {
+        "open": [
+          "catastrophic_risk"
+        ]
+      },
       "support": "none"
     },
     {
@@ -3740,47 +4259,20 @@
         6783,
         7045
       ],
-      "status": "CHECKED",
+      "status": "UNFORMALISED",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "accepts_only_checked_derivations",
-              [
-                "const",
-                "proof_rule"
-              ]
-            ],
-            [
-              "unary",
-              "excludes_assumed_false_subclaims",
-              [
-                "const",
-                "proof_rule"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "blocks_barnes_christiano_for_formalised_claims",
-            [
-              "const",
-              "proof_rule"
-            ]
-          ]
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "unformalised",
+          "causal_means"
         ]
-      }
+      ],
+      "meaning": {
+        "unformalised": "causal_means"
+      },
+      "support": "none"
     },
     {
       "id": "u085",
@@ -3788,9 +4280,13 @@
         7045,
         7102
       ],
-      "status": "LABELLED",
-      "kind": "meta",
-      "meaning": "specified",
+      "status": "OPEN",
+      "kind": "question",
+      "meaning": {
+        "open": [
+          "catastrophic_risk"
+        ]
+      },
       "support": "none"
     },
     {
@@ -3799,24 +4295,24 @@
         7102,
         7149
       ],
-      "status": "CHECKED",
+      "status": "UNFORMALISED",
       "kind": [
-        "hedged",
-        "could",
-        "asserted"
-      ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "unary",
-          "increases_false_confidence",
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "hedged",
+          "could",
           [
-            "const",
-            "proof_label"
+            "unformalised",
+            "causal_route_excludes_definitions"
           ]
         ]
-      }
+      ],
+      "meaning": {
+        "unformalised": "causal_route_excludes_definitions"
+      },
+      "support": "none"
     },
     {
       "id": "u087",
@@ -3825,9 +4321,14 @@
         7198
       ],
       "status": "CHECKED",
-      "kind": "meta",
+      "kind": [
+        "attributed",
+        "paste_text",
+        "says",
+        "asserted"
+      ],
       "meaning": "specified",
-      "support": "assumption",
+      "support": "none",
       "content": {
         "ast": [
           "forall",
@@ -3841,7 +4342,8 @@
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "2698b5a2339fb91ae6718428889993c960a34254d6a0daa03309156e41526319"
     },
     {
       "id": "u088",
@@ -3851,22 +4353,32 @@
       ],
       "status": "CHECKED",
       "kind": [
-        "hedged",
-        "could",
-        "asserted"
+        "attributed",
+        "paste_text",
+        "says",
+        [
+          "hedged",
+          "could",
+          "asserted"
+        ]
       ],
       "meaning": "specified",
       "support": "none",
       "content": {
         "ast": [
-          "unary",
-          "misstates_task",
+          "exists",
+          "formalisation",
           [
-            "const",
-            "formalisation"
+            "unary",
+            "misstates_task",
+            [
+              "var",
+              0
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "7765dcc531dde581e8239d400853958accb2657a3064534e60131f80f91f79e7"
     },
     {
       "id": "u089",
@@ -3875,19 +4387,73 @@
         7310
       ],
       "status": "CHECKED",
-      "kind": "asserted",
+      "kind": [
+        "attributed",
+        "paste_text",
+        "says",
+        "asserted"
+      ],
       "meaning": "specified",
-      "support": "assumption",
+      "support": "none",
       "content": {
         "ast": [
-          "unary",
-          "unresolved_without_affordable_proof",
+          "forall",
+          "claim",
           [
-            "const",
-            "claim"
+            "implies",
+            [
+              "and",
+              [
+                "unary",
+                "honest",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "not",
+                [
+                  "exists",
+                  "proof",
+                  [
+                    "and",
+                    [
+                      "binary",
+                      "proof_of",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "unary",
+                      "affordable_proof",
+                      [
+                        "var",
+                        0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "unary",
+              "unresolved",
+              [
+                "var",
+                0
+              ]
+            ]
           ]
         ]
-      }
+      },
+      "meaning_id": "13bda2bed43bf4d682c68690841ef754200aaac9ef1a1e6c1744bd2593215c79"
     },
     {
       "id": "u090",
@@ -3898,8 +4464,8 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
+        "paste_text",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
@@ -3908,23 +4474,51 @@
         "ast": [
           "and",
           [
-            "unary",
-            "requires_evidence",
+            "exists",
+            "evidence",
             [
-              "const",
-              "vex"
+              "binary",
+              "required_by",
+              [
+                "var",
+                0
+              ],
+              [
+                "const",
+                "vex"
+              ]
             ]
           ],
           [
-            "unary",
-            "requires_quality_review",
+            "forall",
+            "evidence",
             [
-              "const",
-              "vex"
+              "implies",
+              [
+                "binary",
+                "required_by",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "const",
+                  "vex"
+                ]
+              ],
+              [
+                "unary",
+                "needs_quality_review",
+                [
+                  "var",
+                  0
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "ced1a3b2c2a1aa5bddc3f8c5867041f0aff6fa19b5079e3f75057b5e4dafd6a9"
     },
     {
       "id": "u091",
@@ -3932,47 +4526,19 @@
         7371,
         7460
       ],
-      "status": "CHECKED",
+      "status": "OPEN",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
+        "attributed",
+        "paste_text",
+        "says",
         "asserted"
       ],
-      "meaning": "specified",
-      "support": "none",
-      "content": {
-        "ast": [
-          "and",
-          [
-            "and",
-            [
-              "unary",
-              "tests_forged_checker",
-              [
-                "const",
-                "controls"
-              ]
-            ],
-            [
-              "unary",
-              "tests_false_foundations",
-              [
-                "const",
-                "controls"
-              ]
-            ]
-          ],
-          [
-            "unary",
-            "tests_misleading_formalisation",
-            [
-              "const",
-              "controls"
-            ]
-          ]
+      "meaning": {
+        "open": [
+          "misleading_formalisation"
         ]
-      }
+      },
+      "support": "none"
     },
     {
       "id": "u092",
@@ -3982,34 +4548,54 @@
       ],
       "status": "CHECKED",
       "kind": [
-        "causal",
-        "because",
-        "asserted",
+        "attributed",
+        "paste_text",
+        "says",
         "asserted"
       ],
       "meaning": "specified",
       "support": "none",
       "content": {
         "ast": [
-          "and",
+          "forall",
+          "artefact",
           [
-            "unary",
-            "includes_real_artefacts",
+            "implies",
             [
-              "const",
-              "artefact_arm"
-            ]
-          ],
-          [
-            "unary",
-            "tests_transfer_beyond_planted_flaws",
+              "and",
+              [
+                "unary",
+                "real_artefact",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "binary",
+                "included_in",
+                [
+                  "var",
+                  0
+                ],
+                [
+                  "const",
+                  "benchmark"
+                ]
+              ]
+            ],
             [
-              "const",
-              "artefact_arm"
+              "unary",
+              "tests_transfer",
+              [
+                "var",
+                0
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "3bdc6777f9ed5cdcf97a022dbb26efa2dc79a89a69580ab70151b1a665fee818"
     },
     {
       "id": "u093",
@@ -4020,9 +4606,14 @@
       "status": "CHECKED",
       "kind": [
         "attributed",
-        "applicant",
-        "intends",
-        "asserted"
+        "paste_text",
+        "says",
+        [
+          "attributed",
+          "applicant",
+          "promised",
+          "asserted"
+        ]
       ],
       "meaning": "specified",
       "support": "none",
@@ -4030,96 +4621,137 @@
         "ast": [
           "and",
           [
-            "and",
+            "forall",
+            "item",
             [
-              "unary",
-              "commits_publish_null_and_negative",
+              "implies",
               [
-                "const",
-                "draft"
-              ]
-            ],
-            [
-              "unary",
-              "publishes_benchmark_harness_analysis",
+                "or",
+                [
+                  "unary",
+                  "null_result",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "negative_result",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
               [
-                "const",
-                "draft"
+                "unary",
+                "published",
+                [
+                  "var",
+                  0
+                ]
               ]
             ]
           ],
           [
-            "unary",
-            "publishes_even_if_no_advantage",
+            "and",
             [
-              "const",
-              "draft"
+              "unary",
+              "published",
+              [
+                "const",
+                "benchmark"
+              ]
+            ],
+            [
+              "and",
+              [
+                "unary",
+                "published",
+                [
+                  "const",
+                  "harness"
+                ]
+              ],
+              [
+                "unary",
+                "published",
+                [
+                  "const",
+                  "failure_analysis"
+                ]
+              ]
             ]
           ]
         ]
-      }
+      },
+      "meaning_id": "20d0a4f4f0e3772a638fb716a662c9acbdd6aef3c3ea26f2f845e1676ab6cd48"
     }
   ],
-  "open_terms": [],
+  "open_terms": [
+    {
+      "name": "matched_cost",
+      "arguments": [
+        "comparison"
+      ],
+      "decided_by": "grant-author",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "OLD wording written before the author's rule, or a milestone plan item recorded only as a plan; applying the definition would add content the span does not state."
+      ],
+      "precedents": [],
+      "jurisdiction": "this-draft",
+      "version": 1
+    },
+    {
+      "name": "real_artefact",
+      "arguments": [
+        "artefact"
+      ],
+      "decided_by": "grant-author",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "OLD wording, a milestone plan item, or a list of retained items; the span does not say which artefacts the defined predicate classifies."
+      ],
+      "precedents": [],
+      "jurisdiction": "this-draft",
+      "version": 1
+    },
+    {
+      "name": "misleading_formalisation",
+      "arguments": [
+        "formalisation"
+      ],
+      "decided_by": "grant-author",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "Used as an error class or as the name of a control; the span does not say how the control or class relates to the defined predicate on formalisations."
+      ],
+      "precedents": [],
+      "jurisdiction": "this-draft",
+      "version": 1
+    },
+    {
+      "name": "catastrophic_risk",
+      "arguments": [
+        "pathway"
+      ],
+      "decided_by": "bluedot",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "The funder's form heading. BlueDot, not the grant author, decides the sense of its question, and the draft gives no reduction estimate."
+      ],
+      "precedents": [],
+      "jurisdiction": "this-draft",
+      "version": 1
+    }
+  ],
   "reading_sets": [
-    {
-      "id": "reading-u036",
-      "unit": "u036",
-      "version": 1,
-      "status": "authored",
-      "signature": "grant-author",
-      "readings": [
-        {
-          "id": "chosen",
-          "kind": "asserted",
-          "meaning_id": "913dcfd9cdc8bd9db32a458ec0ff2a57011df62ebbd834b34f879c506f80fb7d",
-          "content": [
-            "forall",
-            "foundation_leaf",
-            [
-              "unary",
-              "accepted_without_proof",
-              [
-                "var",
-                0
-              ]
-            ]
-          ],
-          "admission": {
-            "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-            "distinguishing_models": {}
-          }
-        }
-      ]
-    },
-    {
-      "id": "reading-u038",
-      "unit": "u038",
-      "version": 1,
-      "status": "authored",
-      "signature": "grant-author",
-      "readings": [
-        {
-          "id": "chosen",
-          "kind": "asserted",
-          "meaning_id": "d140bc9d3a0b99ecc65a0147236d05b43a46dc9d8c6101ddd41baa8f74137cc0",
-          "content": [
-            "unary",
-            "unresolved_without_affordable_proof",
-            [
-              "const",
-              "claim"
-            ]
-          ],
-          "admission": {
-            "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-            "distinguishing_models": {}
-          }
-        }
-      ]
-    },
     {
       "id": "reading-u044",
       "unit": "u044",
@@ -4130,29 +4762,44 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "3712931d5fd2ccceff66b84aa1526542658121345f07799497343550a3e7dc74",
+          "meaning_id": "f31ef0c3a7d0a469364808e49d03d2c9f4abc947d5ee4ef642908daf9097f1d6",
           "content": [
             "and",
             [
-              "unary",
-              "copied_from_current_form",
+              "binary",
+              "copied_from",
               [
                 "const",
                 "old_text"
+              ],
+              [
+                "const",
+                "form_edits_file"
               ]
             ],
             [
-              "unary",
-              "context_supplied_by_rapid_draft",
+              "and",
               [
-                "const",
-                "old_text"
+                "unary",
+                "current_form_text",
+                [
+                  "const",
+                  "form_edits_file"
+                ]
+              ],
+              [
+                "unary",
+                "supplies_context",
+                [
+                  "const",
+                  "rapid_draft"
+                ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "Provenance of the OLD wording and of the context.",
             "distinguishing_models": {}
           }
         }
@@ -4168,18 +4815,25 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "6ed5a784e5d91428382ad9ee5935a420a981287b3c1f0c1d9d023fcdc4920ecd",
+          "meaning_id": "b28c25a6e3a644147afc1767c7b87ab2d989bf498bff4ec083c86a1d1d5b33dd",
           "content": [
-            "unary",
-            "excludes_superseded_wording",
+            "not",
             [
-              "const",
-              "old_text"
+              "binary",
+              "used_as",
+              [
+                "const",
+                "superseded_wording"
+              ],
+              [
+                "const",
+                "old_text"
+              ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'its' is bluedot-rapid-draft-v3.md. Resolution: 'its' -> bluedot-rapid-draft-v3.md.",
             "distinguishing_models": {}
           }
         }
@@ -4195,29 +4849,52 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "3012af7b01169f7dfa9b8f2ef0a8a5fa327e8f297e26d0978af4112217ad4a8a",
+          "meaning_id": "6d9133150535c44a3728774637e6f6fc03ec8c95dbdb105af5551238541ba334",
           "content": [
             "and",
             [
-              "unary",
-              "cites_obfuscation_recheck",
+              "binary",
+              "follows",
               [
                 "const",
                 "correction"
+              ],
+              [
+                "const",
+                "recheck_section"
               ]
             ],
             [
-              "unary",
-              "cites_positioning_review",
+              "and",
               [
-                "const",
-                "correction"
+                "binary",
+                "follows",
+                [
+                  "const",
+                  "correction"
+                ],
+                [
+                  "const",
+                  "positioning_section"
+                ]
+              ],
+              [
+                "binary",
+                "follows",
+                [
+                  "const",
+                  "correction"
+                ],
+                [
+                  "const",
+                  "positioning_correction"
+                ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "The three cited sources of the correction.",
             "distinguishing_models": {}
           }
         }
@@ -4233,18 +4910,22 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "8e402522c951854551da5a9e28620466a2031b9fd92012102f74f7dac02b88c9",
+          "meaning_id": "c093909f2edc6119367788b0d701617499e165d69a7362d02e56dc987ddeaecb",
           "content": [
-            "unary",
-            "conditional_on_foundations",
+            "binary",
+            "conditional_on",
             [
               "const",
               "guarantee"
+            ],
+            [
+              "const",
+              "declared_foundations"
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'the guarantee' is the guarantee of mandatory proof. Resolution: 'the guarantee' -> the guarantee of mandatory proof.",
             "distinguishing_models": {}
           }
         }
@@ -4260,39 +4941,43 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "9458c1fa08121b017e11eba431e47a0e6a2387e5d687bc5465edc0f0e8ab3985",
+          "meaning_id": "22c76bd8d1cdff5225b3785ec6a057fd42d5163f1b79be3b173cc94e9c476355",
           "content": [
             "and",
             [
               "not",
               [
                 "binary",
-                "establishes_truth",
+                "establishes_truth_of",
                 [
                   "const",
-                  "proof_rule"
+                  "guarantee"
                 ],
                 [
                   "const",
-                  "foundations"
+                  "declared_foundations"
                 ]
               ]
             ],
             [
               "not",
               [
-                "unary",
-                "establishes_faithful_formalisation",
+                "binary",
+                "establishes_fidelity_of",
                 [
                   "const",
-                  "proof_rule"
+                  "guarantee"
+                ],
+                [
+                  "const",
+                  "declared_foundations"
                 ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'It' is the guarantee, the subject of the preceding clause; 'their' is the declared foundations. Resolution: 'It' -> the guarantee of mandatory proof, the subject of the preceding clause; 'their' -> the declared foundations.",
             "distinguishing_models": {}
           }
         }
@@ -4308,18 +4993,66 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "ceed7c3236e4f1091f7a950ec8e3031415aea2874876bdf9f74c91463fc91f50",
+          "meaning_id": "ba8c9e1d7076da5aa49c20df0da5dd544ed631f0955957f77eac5896fa99da3a",
           "content": [
-            "unary",
-            "requires_affordable_proof",
+            "forall",
+            "claim",
             [
-              "const",
-              "honest_answer"
+              "implies",
+              [
+                "and",
+                [
+                  "unary",
+                  "honest",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "not",
+                  [
+                    "unary",
+                    "unresolved",
+                    [
+                      "var",
+                      0
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "exists",
+                "proof",
+                [
+                  "and",
+                  [
+                    "binary",
+                    "proof_of",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ],
+                  [
+                    "unary",
+                    "affordable_proof",
+                    [
+                      "var",
+                      0
+                    ]
+                  ]
+                ]
+              ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'needs' is read as needed to leave the 'unresolved' status; uses the defined affordable_proof predicate. Resolution: 'needs' -> needed for the claim not to remain unresolved.",
             "distinguishing_models": {}
           }
         }
@@ -4335,18 +5068,105 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "7bcc453e32b9ad82c1d586216f8ec6fff62ad97e3344ed3142b12bd08d34cd72",
+          "meaning_id": "35d157b16d3cc07deb49d2d20e9464d89240eb832159a7c691fe3331a6e3986e",
           "content": [
-            "unary",
-            "unresolved_when_proof_beyond_budget",
+            "forall",
+            "claim",
             [
-              "const",
-              "claim"
+              "implies",
+              [
+                "and",
+                [
+                  "exists",
+                  "proof",
+                  [
+                    "binary",
+                    "proof_of",
+                    [
+                      "var",
+                      0
+                    ],
+                    [
+                      "var",
+                      1
+                    ]
+                  ]
+                ],
+                [
+                  "forall",
+                  "proof",
+                  [
+                    "implies",
+                    [
+                      "binary",
+                      "proof_of",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "var",
+                        1
+                      ]
+                    ],
+                    [
+                      "not",
+                      [
+                        "unary",
+                        "within_budget",
+                        [
+                          "var",
+                          0
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "unresolved",
+                [
+                  "var",
+                  0
+                ]
+              ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'beyond budget' is the negation of affordable_proof's within_budget clause; 'the claim' is the claim those proofs prove. Resolution: 'the claim' -> the claim the over-budget proofs are proofs of; 'beyond budget' -> total cost not within the registered budget (the within_budget clause of affordable_proof).",
+            "distinguishing_models": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": "reading-u052",
+      "unit": "u052",
+      "version": 1,
+      "status": "authored",
+      "signature": "grant-author",
+      "readings": [
+        {
+          "id": "chosen",
+          "kind": "asserted",
+          "meaning_id": "468cf8d9a17cf6c611326b3ab555b5690ea90cb120914d7062718b4c1c53b81b",
+          "content": [
+            "binary",
+            "benefit_of",
+            [
+              "const",
+              "prevention"
+            ],
+            [
+              "const",
+              "sound_proof_checking"
+            ]
+          ],
+          "admission": {
+            "who": "grant-author",
+            "why": "'This' is note 2's protection against arbitrary false sub-claims. Resolution: 'This' -> note 2's protection: mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions.",
             "distinguishing_models": {}
           }
         }
@@ -4362,29 +5182,43 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a43f36ea25c9f39cd66daa8cc70ffc55d8b9efe8077fdc87640e09090444488c",
+          "meaning_id": "2c5383f4b9e00f6e985297a93f99d7c51e7cc4ff92fbca665554c19222afb01e",
           "content": [
             "and",
             [
-              "unary",
-              "claims_no_proofs_debate_novelty",
+              "not",
               [
-                "const",
-                "draft"
+                "binary",
+                "claims",
+                [
+                  "const",
+                  "draft"
+                ],
+                [
+                  "const",
+                  "debate_novelty"
+                ]
               ]
             ],
             [
-              "unary",
-              "claims_no_english_surface_benefit",
+              "not",
               [
-                "const",
-                "draft"
+                "binary",
+                "claims",
+                [
+                  "const",
+                  "draft"
+                ],
+                [
+                  "const",
+                  "english_surface_benefit"
+                ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "Nothing is claimed; the draft does not claim that there is no novelty. Resolution: 'is claimed' -> claimed by this draft.",
             "distinguishing_models": {}
           }
         }
@@ -4400,32 +5234,40 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "96350382046f5bd577b7154b89667d6f786fa809a1688f03067bc4289b099157",
+          "meaning_id": "d37ef683cea18f77012fe2942c8a524ae8bc9594e0e8b3f482f56b0fbd8763da",
           "content": [
             "and",
             [
-              "unary",
-              "concerns_estimated_leaves",
+              "binary",
+              "concerns",
               [
                 "const",
-                "caveat"
+                "stability_caveat"
+              ],
+              [
+                "const",
+                "estimated_leaves"
               ]
             ],
             [
               "not",
               [
-                "unary",
-                "concerns_proved_subclaims",
+                "binary",
+                "concerns",
                 [
                   "const",
-                  "caveat"
+                  "stability_caveat"
+                ],
+                [
+                  "const",
+                  "proved_subclaims"
                 ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "The caveat's scope.",
             "distinguishing_models": {}
           }
         }
@@ -4441,21 +5283,25 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "7ab4f3575a615616a5c3d04cf1723297885881e0fb64377a09a0365864e56c61",
+          "meaning_id": "872ed6e6e61ec34c1ce2486596840c0d90bc20d51e69ce6bec8ef6bd18246324",
           "content": [
             "not",
             [
-              "unary",
-              "guarantees_evidence_quality",
+              "binary",
+              "guarantees",
               [
                 "const",
-                "requirements"
+                "evidence_requirements"
+              ],
+              [
+                "const",
+                "evidence_quality"
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "A negated relation.",
             "distinguishing_models": {}
           }
         }
@@ -4471,35 +5317,43 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "c7e4aec60f45c9e479a5f1902e5d860f673367e9c67fcf05fa5dce15d2098683",
+          "meaning_id": "f0dfec44725970444f437dd1f06f5e6172655614e1ec5043e165418fbab50e1d",
           "content": [
             "and",
             [
               "not",
               [
-                "unary",
-                "claims_vex_result",
+                "binary",
+                "claims",
                 [
                   "const",
                   "draft"
+                ],
+                [
+                  "const",
+                  "vex_result"
                 ]
               ]
             ],
             [
               "not",
               [
-                "unary",
-                "claims_completed_extension",
+                "binary",
+                "claims",
                 [
                   "const",
                   "draft"
+                ],
+                [
+                  "const",
+                  "completed_extension"
                 ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "Nothing is claimed. Resolution: 'is claimed' -> claimed by this draft.",
             "distinguishing_models": {}
           }
         }
@@ -4515,18 +5369,22 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "782cd15fc4a9b845706c9aa565a0d7a2d0426fdc062057110ad630ca53932566",
+          "meaning_id": "cc0bf635e8bbddb2df598784ffa054eb20aef7cb7c1f8130d402943c090e255c",
           "content": [
-            "unary",
-            "schedules_development",
+            "binary",
+            "schedules",
             [
               "const",
-              "milestones"
+              "evidence_layer_milestones"
+            ],
+            [
+              "const",
+              "vex"
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'its' is VEX. Resolution: 'its' -> VEX.",
             "distinguishing_models": {}
           }
         }
@@ -4542,155 +5400,43 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "b06030f6978464b1b2e2d593a2601b8d71fe8ff7ed4c0c8b8bab87679d99d51a",
+          "meaning_id": "87d1dd196697aed33d9b8fd78cc197b6903c5881ef02cbfb4bd4a43445e34812",
           "content": [
             "and",
             [
               "not",
               [
-                "unary",
-                "reports_new_result",
+                "binary",
+                "reports",
                 [
                   "const",
-                  "draft"
-                ]
-              ]
-            ],
-            [
-              "not",
-              [
-                "unary",
-                "asserts_cost_advantage",
-                [
-                  "const",
-                  "draft"
-                ]
-              ]
-            ]
-          ],
-          "admission": {
-            "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-            "distinguishing_models": {}
-          }
-        }
-      ]
-    },
-    {
-      "id": "reading-u062",
-      "unit": "u062",
-      "version": 1,
-      "status": "authored",
-      "signature": "grant-author",
-      "readings": [
-        {
-          "id": "chosen",
-          "kind": "asserted",
-          "meaning_id": "4b1a85fd32363f8d7ae10fd1de121a99cda3526112185c04c30c214a499d13d5",
-          "content": [
-            "and",
-            [
-              "unary",
-              "includes_formalisation",
-              [
-                "const",
-                "comparison"
-              ]
-            ],
-            [
-              "unary",
-              "includes_proof_production",
-              [
-                "const",
-                "comparison"
-              ]
-            ]
-          ],
-          "admission": {
-            "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-            "distinguishing_models": {}
-          }
-        }
-      ]
-    },
-    {
-      "id": "reading-u063",
-      "unit": "u063",
-      "version": 1,
-      "status": "authored",
-      "signature": "grant-author",
-      "readings": [
-        {
-          "id": "chosen",
-          "kind": "asserted",
-          "meaning_id": "86356f9e46b7e8caeb35130fb69af240e5f25b797b26cdc144ac16c4c495cd0f",
-          "content": [
-            "and",
-            [
-              "and",
-              [
-                "and",
-                [
-                  "and",
-                  [
-                    "and",
-                    [
-                      "unary",
-                      "retains_oct25_milestone",
-                      [
-                        "const",
-                        "draft"
-                      ]
-                    ],
-                    [
-                      "unary",
-                      "retains_50_to_5000_range",
-                      [
-                        "const",
-                        "draft"
-                      ]
-                    ]
-                  ],
-                  [
-                    "unary",
-                    "retains_real_artefact_tests",
-                    [
-                      "const",
-                      "draft"
-                    ]
-                  ]
+                  "revised_form_text"
                 ],
                 [
-                  "unary",
-                  "retains_cross_family_replication",
-                  [
-                    "const",
-                    "draft"
-                  ]
-                ]
-              ],
-              [
-                "unary",
-                "retains_forged_checker_control",
-                [
                   "const",
-                  "draft"
+                  "new_results"
                 ]
               ]
             ],
             [
-              "unary",
-              "retains_null_publication",
+              "not",
               [
-                "const",
-                "draft"
+                "binary",
+                "asserts",
+                [
+                  "const",
+                  "revised_form_text"
+                ],
+                [
+                  "const",
+                  "cost_advantage"
+                ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "Two negated relations.",
             "distinguishing_models": {}
           }
         }
@@ -4706,12 +5452,12 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "8df1fc42a3e6e8f356852a288a61e6f2f02f1d27f84e9636b4346a08259eb9d6",
+          "meaning_id": "5179ba16721d3a4db8c9c74bef3158ceae99110f5610c79c1b66cc633aa6672f",
           "content": [
-            "not",
+            "forall",
+            "field",
             [
-              "exists",
-              "field",
+              "not",
               [
                 "unary",
                 "revised",
@@ -4724,7 +5470,7 @@
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "The budget is one field.",
             "distinguishing_models": {}
           }
         }
@@ -4740,49 +5486,65 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "9ea2030953ee0fff6c8c7226707b0342fea5fa63a51553c746ef48f6b1d14267",
+          "meaning_id": "d856145e59b7f72cbe901ab7db87d7e226d7acc20df7731045f03c4fd3112b84",
           "content": [
             "and",
             [
-              "and",
+              "binary",
+              "includes",
               [
-                "unary",
-                "includes_spaces",
-                [
-                  "const",
-                  "counts"
-                ]
+                "const",
+                "character_counts"
               ],
               [
-                "unary",
-                "includes_punctuation",
-                [
-                  "const",
-                  "counts"
-                ]
+                "const",
+                "spaces"
               ]
             ],
             [
               "and",
               [
-                "not",
+                "binary",
+                "includes",
                 [
-                  "unary",
-                  "includes_labels",
-                  [
-                    "const",
-                    "counts"
-                  ]
+                  "const",
+                  "character_counts"
+                ],
+                [
+                  "const",
+                  "punctuation"
                 ]
               ],
               [
-                "not",
+                "and",
                 [
-                  "unary",
-                  "includes_trailing_newlines",
+                  "not",
                   [
-                    "const",
-                    "counts"
+                    "binary",
+                    "includes",
+                    [
+                      "const",
+                      "character_counts"
+                    ],
+                    [
+                      "const",
+                      "labels"
+                    ]
+                  ]
+                ],
+                [
+                  "not",
+                  [
+                    "binary",
+                    "includes",
+                    [
+                      "const",
+                      "character_counts"
+                    ],
+                    [
+                      "const",
+                      "trailing_newlines"
+                    ]
                   ]
                 ]
               ]
@@ -4790,7 +5552,7 @@
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "What the stated counts include.",
             "distinguishing_models": {}
           }
         }
@@ -4806,29 +5568,103 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "f984afc80adc4c788d963bb4b94269bb4ae59a15989f07f80717f47ff982e9f8",
+          "meaning_id": "e7a9e380582df000a4e2ab51d68e547e408189895db6a742c8735ad929bb0fe9",
           "content": [
             "and",
             [
-              "unary",
-              "replace_only_indicated_sentence",
+              "binary",
+              "replaces",
               [
                 "const",
-                "edits"
+                "contribution_edit"
+              ],
+              [
+                "const",
+                "indicated_sentence"
               ]
             ],
             [
-              "unary",
-              "replace_only_indicated_paragraph",
+              "and",
               [
-                "const",
-                "edits"
+                "binary",
+                "replaces",
+                [
+                  "const",
+                  "harms_edit"
+                ],
+                [
+                  "const",
+                  "indicated_paragraph"
+                ]
+              ],
+              [
+                "and",
+                [
+                  "forall",
+                  "item",
+                  [
+                    "implies",
+                    [
+                      "binary",
+                      "replaces",
+                      [
+                        "const",
+                        "contribution_edit"
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "eq",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "const",
+                        "indicated_sentence"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "forall",
+                  "item",
+                  [
+                    "implies",
+                    [
+                      "binary",
+                      "replaces",
+                      [
+                        "const",
+                        "harms_edit"
+                      ],
+                      [
+                        "var",
+                        0
+                      ]
+                    ],
+                    [
+                      "eq",
+                      [
+                        "var",
+                        0
+                      ],
+                      [
+                        "const",
+                        "indicated_paragraph"
+                      ]
+                    ]
+                  ]
+                ]
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "Respectively: the contribution edit replaces only the sentence, and the harms edit only the paragraph. Resolution: 'sentence and paragraph' -> respectively, the contribution sentence and the harms paragraph.",
             "distinguishing_models": {}
           }
         }
@@ -4844,87 +5680,37 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a6d7dc09f0ca0973507eadf3932690502b531cc1ff7b8bea3f1a49123c657461",
+          "meaning_id": "3aef6163940255571276545b09d19eeae06d3eb8a934e586e53ff6ca46ddcaf4",
           "content": [
             "and",
             [
-              "unary",
-              "states_proof_rule",
+              "binary",
+              "states",
               [
                 "const",
                 "extra_space"
+              ],
+              [
+                "const",
+                "proof_rule"
               ]
             ],
             [
-              "unary",
-              "states_proof_limits",
+              "binary",
+              "states",
               [
                 "const",
                 "extra_space"
-              ]
-            ]
-          ],
-          "admission": {
-            "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-            "distinguishing_models": {}
-          }
-        }
-      ]
-    },
-    {
-      "id": "reading-u087",
-      "unit": "u087",
-      "version": 1,
-      "status": "authored",
-      "signature": "grant-author",
-      "readings": [
-        {
-          "id": "chosen",
-          "kind": "asserted",
-          "meaning_id": "913dcfd9cdc8bd9db32a458ec0ff2a57011df62ebbd834b34f879c506f80fb7d",
-          "content": [
-            "forall",
-            "foundation_leaf",
-            [
-              "unary",
-              "accepted_without_proof",
+              ],
               [
-                "var",
-                0
+                "const",
+                "proof_rule_limits"
               ]
             ]
           ],
           "admission": {
             "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
-            "distinguishing_models": {}
-          }
-        }
-      ]
-    },
-    {
-      "id": "reading-u089",
-      "unit": "u089",
-      "version": 1,
-      "status": "authored",
-      "signature": "grant-author",
-      "readings": [
-        {
-          "id": "chosen",
-          "kind": "asserted",
-          "meaning_id": "d140bc9d3a0b99ecc65a0147236d05b43a46dc9d8c6101ddd41baa8f74137cc0",
-          "content": [
-            "unary",
-            "unresolved_without_affordable_proof",
-            [
-              "const",
-              "claim"
-            ]
-          ],
-          "admission": {
-            "who": "grant-author",
-            "why": "Chosen reading of this source clause; scope is this draft, not an empirical verification.",
+            "why": "'its' is the proof rule; 'the extra space' is in the revised passages. Resolution: 'its' -> the proof rule; 'the extra space' -> in the revised passages.",
             "distinguishing_models": {}
           }
         }
