@@ -1,0 +1,2146 @@
+{
+  "asserted_reading_set_units": [
+    "u054"
+  ],
+  "audit_0930_units_faithful": [
+    "u023",
+    "u069",
+    "u104",
+    "u107",
+    "u074",
+    "u022a",
+    "u022b",
+    "u022c",
+    "u048",
+    "u066",
+    "u070",
+    "u073",
+    "u114",
+    "u111"
+  ],
+  "audit_0930_units_unfaithful_repaired": [
+    "u054",
+    "u039",
+    "u035",
+    "u032",
+    "u033a",
+    "u049"
+  ],
+  "audit_pending_bytes": 1789,
+  "audit_repaired_units": [
+    "u054",
+    "u039",
+    "u035",
+    "u032",
+    "u033a",
+    "u049",
+    "u029",
+    "u046",
+    "u077"
+  ],
+  "audit_repairs_0930": {
+    "u029": "Same defect as the rejected units (found by the translator, not sampled): 'avoid refusing recognition' and 'recognise' are one duty. One polarity.",
+    "u032": "Rejected 2026-09-30 (labels: the two polarities were one duty). Repaired: one polarity, no polarity label; the act phrase keeps 'without any discrimination'.",
+    "u033a": "Rejected 2026-09-30 (labels and content: the negative candidate dropped 'equal protection'). Repaired: only the positive candidate 'protect equally against discrimination in violation of this Declaration'.",
+    "u035": "Rejected 2026-09-30 (scope lost). Repaired: the holder sort person_with_violated_rights carries 'for acts violating the fundamental rights granted by the constitution or by law' in prose, disclosed as elided in the candidates' reasons; the duplicate negative candidate is dropped.",
+    "u039": "Rejected 2026-09-30 (weakened and unscoped). Repaired: the holder sort person_in_determination carries the scope 'in the determination of rights and obligations and of any criminal charge' in prose; the act phrase keeps 'fair public hearing by an independent impartial tribunal'; 'in full equality' is the named open term full_equality and listed as elided in every candidate's reason; the duplicate negative candidate is dropped.",
+    "u046": "Same defect as the rejected units (not sampled): 'avoid denying protection by law' and 'protect by law' are one duty. One polarity.",
+    "u049": "Rejected 2026-09-30 (labels: the positive candidate repeated the negative duty). Repaired: only the avoiding duty, plus the liberty reading.",
+    "u054": "Rejected 2026-09-30 (strengthened: every state must grant each person a nationality). Repaired: the claim candidates are dropped; the set holds the asserted readings 'each person has some nationality' and 'for each person some state grants a nationality'.",
+    "u077": "Same defect as the rejected units (not sampled): 'avoid denying equal access' and 'give equal access' are one duty. One polarity."
+  },
+  "audit_verified_covered_bytes": 1469,
+  "audit_verified_covered_percent": 13.46,
+  "audit_verified_units": [
+    "u001",
+    "u002",
+    "u012",
+    "u014",
+    "u017",
+    "u021",
+    "u022a",
+    "u022b",
+    "u022c",
+    "u023",
+    "u026",
+    "u028",
+    "u030",
+    "u034",
+    "u036",
+    "u048",
+    "u050",
+    "u053",
+    "u056",
+    "u062",
+    "u065",
+    "u066",
+    "u069",
+    "u070",
+    "u072",
+    "u073",
+    "u074",
+    "u080",
+    "u083",
+    "u088",
+    "u095",
+    "u104",
+    "u107",
+    "u109",
+    "u111",
+    "u113",
+    "u114"
+  ],
+  "baseline": "ve-green-risk",
+  "bytes_accounted": 10916,
+  "bytes_accounted_percent": 100,
+  "bytes_by_status": {
+    "CHECKED": 57,
+    "LABELLED": 535,
+    "OPEN": 337,
+    "READINGS": 2329,
+    "UNFORMALISED": 7658
+  },
+  "checks": {
+    "byte_partition": "PASS (units partition all 10,916 bytes)",
+    "companion_documents": {
+      "u017.default": {
+        "coverage_bytes": {
+          "OPEN": 65
+        },
+        "path": "readings/u017.default.ve.md",
+        "premises": "model",
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "default_exceptions": 1,
+          "holistic_overrides": 0,
+          "instruction_switches": 0,
+          "open_terms": 1,
+          "unresolved_reading_sets": 0,
+          "weighing_points": 0
+        }
+      },
+      "u017.strict": {
+        "coverage_bytes": {
+          "OPEN": 65
+        },
+        "path": "readings/u017.strict.ve.md",
+        "premises": "model",
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "open_terms": 1,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u052.invocation_barred": {
+        "coverage_bytes": {
+          "OPEN": 182
+        },
+        "path": "readings/u052.invocation_barred.ve.md",
+        "premises": "model",
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "open_terms": 3,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u112.exercise_prohibited": {
+        "coverage_bytes": {
+          "OPEN": 121
+        },
+        "path": "readings/u112.exercise_prohibited.ve.md",
+        "premises": "model",
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "open_terms": 2,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u114.interpretive_ban": {
+        "coverage_bytes": {
+          "OPEN": 225
+        },
+        "path": "readings/u114.interpretive_ban.ve.md",
+        "premises": "model",
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "open_terms": 2,
+          "unresolved_reading_sets": 0
+        }
+      }
+    },
+    "document_check": "PASS",
+    "document_load": "PASS",
+    "english_vocabulary_lint": [
+      "/vocabulary/predicates/grants_nationality/verbalisation: TEMPLATE_SHAPE",
+      "/vocabulary/predicates/has_a_nationality/verbalisation: LOGICAL_WORD",
+      "/vocabulary/predicates/has_a_nationality/verbalisation: SYMBOL_COLLISION",
+      "/vocabulary/predicates/has_a_nationality/verbalisation: TEMPLATE_SHAPE",
+      "/vocabulary/predicates/is_state/verbalisation: LOGICAL_WORD",
+      "/vocabulary/predicates/is_state/verbalisation: UNARY_MODIFIER"
+    ],
+    "premises": {
+      "reason": "non-assertion reading elaboration pending",
+      "status": "UNKNOWN"
+    },
+    "reading_plan": {
+      "choice_count": 128,
+      "route": "UNKNOWN"
+    },
+    "reading_sets_validated_at_load": "PASS (each right candidate elaborated through the rights route; each ordered pair separated by a checked finite situation)",
+    "render": "PASS (rendered.md, readings-rendered.md)",
+    "rights_report": "UNKNOWN: per-choice rights elaboration pending",
+    "witnesses": "PASS: rule kept entails its conclusion under both completions with replayed certificates; dropping the rule loses it"
+  },
+  "claimed_covered_bytes": 3258,
+  "claimed_covered_bytes_previous_run": 3258,
+  "claimed_covered_bytes_previous_run_percent": 29.85,
+  "claimed_covered_percent": 29.85,
+  "coverage_tool": {
+    "accounted_bytes": 10916,
+    "bytes_by_kind": {
+      "asserted": 45,
+      "attributed": 801,
+      "limitation": 337,
+      "meta": 535,
+      "norm": 1306,
+      "right": 1691,
+      "unformalised": 6201
+    },
+    "bytes_by_status": {
+      "CHECKED": 57,
+      "LABELLED": 535,
+      "OPEN": 2666,
+      "UNFORMALISED": 7658
+    },
+    "coverage_percent": 100,
+    "default_exceptions_by_decider": {},
+    "residual": {
+      "assumptions": 0,
+      "bar_terms": 0,
+      "bearer_readings": 19,
+      "bridge_leaves": 0,
+      "couplings": 0,
+      "default_exceptions": 0,
+      "force_readings": 0,
+      "holistic_overrides": 0,
+      "incident_readings": 7,
+      "instruction_switches": 0,
+      "limitation_deciders_unstated": 1,
+      "limitation_terms": 0,
+      "narrowings": 0,
+      "open_terms": 34,
+      "polarity_readings": 11,
+      "power_shadows": 0,
+      "rights_findings_pending": 1,
+      "unresolved_reading_sets": 24,
+      "weighing_points": 0
+    },
+    "residual_total": 97,
+    "rights_residual_labels": [],
+    "soft_background_labels": [],
+    "soft_residual_labels": [],
+    "soft_status": "CHECKED",
+    "source_bytes": 10916,
+    "unformalised_reasons": {
+      "attribution": 4,
+      "causation": 2,
+      "modality_belief": 2,
+      "norms": 9,
+      "other_act_phrase_grammar": 2,
+      "other_evaluative_open_claim": 2,
+      "other_force_variants_in_one_reading_set": 43,
+      "other_metaphorical_endowment": 1,
+      "other_right_lines_in_reading_sets": 4,
+      "time": 1
+    }
+  },
+  "covered_by_rights_readings_bytes": 1691,
+  "covered_by_rights_units": [
+    "u022a",
+    "u022b",
+    "u022c",
+    "u029",
+    "u032",
+    "u033a",
+    "u033b",
+    "u035",
+    "u039",
+    "u041",
+    "u046",
+    "u048",
+    "u049",
+    "u051",
+    "u063",
+    "u066",
+    "u070",
+    "u073",
+    "u077",
+    "u111"
+  ],
+  "document_id": "97f655918bf14a652250205dbdc05dadee2602efb5e4a57050fbb0371cab4533",
+  "features_merged_since_previous_baseline": [
+    "risk@0 (severity classes, decision records, certified margins over the alternatives route; NOT USED: risk@0 requires alternatives@0, alternatives@0 cannot combine with soft-norms@0, and rights@0 requires soft-norms@0 (ve.profiles.checker_family); the UDHR text states no quantities, margins or chooser/harm structure either)",
+    "infra: Lean risk route, W6 unit-extension diagnostics, assurance manifest (no change to rights, norms or readings)"
+  ],
+  "language_change_for_udhr": "none: no unit gains a status from a newly merged feature; differences from the previous run are audit repairs only",
+  "language_findings": [
+    "force: a strict and a defeasible right candidate need different base predicates (the defeasible one adds its exception decision), so a reading set cannot hold both and no single checked situation separates them; force is therefore fixed strict for units without a weakening word, and the 43 'shall' and Articles 22-27 units stay UNFORMALISED",
+    "act phrases: at most 80 bytes, plain words only, no 'and', 'or', 'for', 'no', 'not', 'is', 'if', each slot once; lists are worded with 'as well as' and long clauses are shortened, with the full clause in the predicate description",
+    "size: at most 64 regulated predicates per environment; four readings per right (two polarities, two bearers) cost two predicates per right once the two bearer readings share predicates through an is_state guard",
+    "reading-set candidates must be whole right blocks: 'this right includes ...' (right_lines), limitations and bars cannot be candidates, so u067, u068, u071a, u071b stay blocked and Article 30's bar is not used",
+    "limitation and bar act on rights lines fixed in the document; here every line is a reading-set candidate, so the u111 limitation has empty scope (limitation_terms 0) until per-choice elaboration exists",
+    "document reading sets cannot hold norm content, so u017, u052, u112, u114 keep companion documents for their norm candidates",
+    "load time: validating 20 right reading sets takes about 85 seconds per document load"
+  ],
+  "missing_feature_tally": {
+    "attribution": 4,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 9,
+    "other:act_phrase_grammar": 2,
+    "other:evaluative_open_claim": 2,
+    "other:force_variants_in_one_reading_set": 43,
+    "other:metaphorical_endowment": 1,
+    "other:right_lines_in_reading_sets": 4,
+    "time": 1
+  },
+  "missing_feature_tally_previous_run": {
+    "attribution": 4,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 9,
+    "other:act_phrase_grammar": 2,
+    "other:evaluative_open_claim": 2,
+    "other:force_variants_in_one_reading_set": 43,
+    "other:metaphorical_endowment": 1,
+    "other:right_lines_in_reading_sets": 4,
+    "time": 1
+  },
+  "newly_covered_bytes": 0,
+  "no_invented_permissions": {
+    "claims": "every claim predicate is obligation-role with completion 'deny' (= not required); no permission predicate is used for a duty, so no prohibition makes anything permitted for anyone else. The state reading is the same duty guarded by is_state: for non-states its completion is 'not required', declared and not derived from the source (witnesses.json shows the rule decides every state under both completions and that dropping it loses the conclusion)",
+    "liberties": "the seven liberty predicates are permission-role with completion 'deny' (the tool requires some completion); in the liberty reading the rule is unconditional over the whole person sort, so the completion is never consulted (witnesses.json, both completions); in the other readings the predicate is mentioned by no rule. This stray declaration is flagged for the audit",
+    "polarity_repairs": "u029, u032, u033a, u035, u039, u046, u049, u077 now carry one duty (or the avoiding duty plus a liberty); no 'allow' reading of a prohibition was added",
+    "u035_u039": "holder sorts person_with_violated_rights and person_in_determination carry the scope as prose; a duty is stated only toward their members and nobody is permitted anything; completion 'deny' means 'not required'",
+    "u041": "holder sort charged_person carries 'charged with a penal offence' as prose; no duty is stated for anyone else",
+    "u052_u112_u114": "norm candidates unchanged in form: unconditional prohibitions over a sort whose description carries the conditions (prose-scoped), completion never consulted",
+    "u054": "asserted formulas over has_a_nationality and grants_nationality: no norm predicate, no default, no permission",
+    "u074": "unchanged: unconditional prohibition; completion never consulted"
+  },
+  "old_boundary_aggregation": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "OPEN": 1,
+    "READINGS": 21,
+    "UNFORMALISED": 59
+  },
+  "old_to_new_units": {
+    "u001": [
+      "u001"
+    ],
+    "u002": [
+      "u002"
+    ],
+    "u003": [
+      "u003"
+    ],
+    "u004": [
+      "u004"
+    ],
+    "u005": [
+      "u005"
+    ],
+    "u006": [
+      "u006"
+    ],
+    "u007": [
+      "u007"
+    ],
+    "u008a": [
+      "u008a"
+    ],
+    "u008b": [
+      "u008b"
+    ],
+    "u009": [
+      "u009"
+    ],
+    "u010": [
+      "u010"
+    ],
+    "u011": [
+      "u011"
+    ],
+    "u012": [
+      "u012"
+    ],
+    "u013a": [
+      "u013a"
+    ],
+    "u013b": [
+      "u013ba",
+      "u013bb"
+    ],
+    "u014": [
+      "u014"
+    ],
+    "u015": [
+      "u015"
+    ],
+    "u016": [
+      "u016"
+    ],
+    "u017": [
+      "u017"
+    ],
+    "u018": [
+      "u018"
+    ],
+    "u019": [
+      "u019"
+    ],
+    "u020": [
+      "u020"
+    ],
+    "u021": [
+      "u021"
+    ],
+    "u022": [
+      "u022a",
+      "u022b",
+      "u022c"
+    ],
+    "u023": [
+      "u023"
+    ],
+    "u024": [
+      "u024"
+    ],
+    "u025": [
+      "u025"
+    ],
+    "u026": [
+      "u026"
+    ],
+    "u027": [
+      "u027"
+    ],
+    "u028": [
+      "u028"
+    ],
+    "u029": [
+      "u029"
+    ],
+    "u030": [
+      "u030"
+    ],
+    "u031": [
+      "u031"
+    ],
+    "u032": [
+      "u032"
+    ],
+    "u033": [
+      "u033a",
+      "u033b"
+    ],
+    "u034": [
+      "u034"
+    ],
+    "u035": [
+      "u035"
+    ],
+    "u036": [
+      "u036"
+    ],
+    "u037": [
+      "u037"
+    ],
+    "u038": [
+      "u038"
+    ],
+    "u039": [
+      "u039"
+    ],
+    "u040": [
+      "u040"
+    ],
+    "u041": [
+      "u041"
+    ],
+    "u042": [
+      "u042"
+    ],
+    "u043": [
+      "u043"
+    ],
+    "u044": [
+      "u044"
+    ],
+    "u045": [
+      "u045a",
+      "u045b"
+    ],
+    "u046": [
+      "u046"
+    ],
+    "u047": [
+      "u047"
+    ],
+    "u048": [
+      "u048"
+    ],
+    "u049": [
+      "u049"
+    ],
+    "u050": [
+      "u050"
+    ],
+    "u051": [
+      "u051"
+    ],
+    "u052": [
+      "u052"
+    ],
+    "u053": [
+      "u053"
+    ],
+    "u054": [
+      "u054"
+    ],
+    "u055": [
+      "u055"
+    ],
+    "u056": [
+      "u056"
+    ],
+    "u057": [
+      "u057"
+    ],
+    "u058": [
+      "u058"
+    ],
+    "u059": [
+      "u059"
+    ],
+    "u060": [
+      "u060"
+    ],
+    "u061": [
+      "u061"
+    ],
+    "u062": [
+      "u062"
+    ],
+    "u063": [
+      "u063"
+    ],
+    "u064": [
+      "u064"
+    ],
+    "u065": [
+      "u065"
+    ],
+    "u066": [
+      "u066"
+    ],
+    "u067": [
+      "u067"
+    ],
+    "u068": [
+      "u068"
+    ],
+    "u069": [
+      "u069"
+    ],
+    "u070": [
+      "u070"
+    ],
+    "u071": [
+      "u071a",
+      "u071b"
+    ],
+    "u072": [
+      "u072"
+    ],
+    "u073": [
+      "u073"
+    ],
+    "u074": [
+      "u074"
+    ],
+    "u075": [
+      "u075"
+    ],
+    "u076": [
+      "u076"
+    ],
+    "u077": [
+      "u077"
+    ],
+    "u078": [
+      "u078"
+    ],
+    "u079": [
+      "u079a",
+      "u079b"
+    ],
+    "u080": [
+      "u080"
+    ],
+    "u081": [
+      "u081"
+    ],
+    "u082": [
+      "u082"
+    ],
+    "u083": [
+      "u083"
+    ],
+    "u084": [
+      "u084a",
+      "u084b",
+      "u084c",
+      "u084d"
+    ],
+    "u085": [
+      "u085"
+    ],
+    "u086": [
+      "u086"
+    ],
+    "u087": [
+      "u087"
+    ],
+    "u088": [
+      "u088"
+    ],
+    "u089": [
+      "u089"
+    ],
+    "u090": [
+      "u090"
+    ],
+    "u091": [
+      "u091"
+    ],
+    "u092": [
+      "u092"
+    ],
+    "u093": [
+      "u093"
+    ],
+    "u094": [
+      "u094"
+    ],
+    "u095": [
+      "u095"
+    ],
+    "u096": [
+      "u096"
+    ],
+    "u097": [
+      "u097"
+    ],
+    "u098": [
+      "u098"
+    ],
+    "u099": [
+      "u099a",
+      "u099b"
+    ],
+    "u100": [
+      "u100a",
+      "u100b"
+    ],
+    "u101": [
+      "u101"
+    ],
+    "u102": [
+      "u102"
+    ],
+    "u103": [
+      "u103"
+    ],
+    "u104": [
+      "u104"
+    ],
+    "u105": [
+      "u105a",
+      "u105b",
+      "u105c"
+    ],
+    "u106": [
+      "u106"
+    ],
+    "u107": [
+      "u107"
+    ],
+    "u108": [
+      "u108"
+    ],
+    "u109": [
+      "u109"
+    ],
+    "u110": [
+      "u110"
+    ],
+    "u111": [
+      "u111"
+    ],
+    "u112": [
+      "u112"
+    ],
+    "u113": [
+      "u113"
+    ],
+    "u114": [
+      "u114"
+    ]
+  },
+  "old_unit_count": 116,
+  "open_term_deciders_changed_to_unstated": {
+    "adequate": "human_rights_interpreter",
+    "arbitrary": "applicable_court",
+    "equal_before_law": "applicable_court",
+    "essential": "human_rights_interpreter",
+    "fair": "applicable_court",
+    "genuine": "human_rights_interpreter",
+    "greatest_importance": "human_rights_interpreter",
+    "inalienable_rights": "human_rights_interpreter",
+    "inherent_dignity": "human_rights_interpreter",
+    "just": "human_rights_interpreter",
+    "justice": "human_rights_interpreter",
+    "natural_group_unit": "human_rights_interpreter",
+    "reasonable": "human_rights_interpreter",
+    "spirit_of_brotherhood": "human_rights_interpreter"
+  },
+  "open_terms": [
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "equal legal standing",
+        "equal legal protection",
+        "scope of comparators"
+      ],
+      "name": "equal_before_law",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "meaning of dignity",
+        "scope of inherence"
+      ],
+      "name": "inherent_dignity",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which rights",
+        "conditions on transfer or loss"
+      ],
+      "name": "inalienable_rights",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "essential for which end",
+        "degree of necessity"
+      ],
+      "name": "essential",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "comparison class",
+        "measure of importance"
+      ],
+      "name": "greatest_importance",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "meaning of natural",
+        "meaning of fundamental",
+        "what counts as family"
+      ],
+      "name": "natural_group_unit",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "legality",
+        "reasonableness",
+        "procedural safeguards"
+      ],
+      "name": "arbitrary",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "procedural fairness",
+        "public access",
+        "independence"
+      ],
+      "name": "fair",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "health needs",
+        "living conditions",
+        "resources"
+      ],
+      "name": "adequate",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "fairness criteria",
+        "comparison group"
+      ],
+      "name": "just",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "hours",
+        "work setting",
+        "health and rest"
+      ],
+      "name": "reasonable",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "authenticity of election or prosecution",
+        "procedural evidence"
+      ],
+      "name": "genuine",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "reciprocal conduct",
+        "meaning of brotherhood"
+      ],
+      "name": "spirit_of_brotherhood",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "meaning of justice in the Preamble",
+        "scope of the claimed foundation"
+      ],
+      "name": "justice",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which purposes and principles count",
+        "what makes an act contrary to them"
+      ],
+      "name": "contrary_to_un_purposes_and_principles",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what separates a political from a non-political crime",
+        "who classifies the crime"
+      ],
+      "name": "non_political_crime",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which items of the Declaration count as rights and freedoms"
+      ],
+      "name": "rights_and_freedoms_set_forth",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what it is to aim at the destruction of a right",
+        "whether purpose or effect decides"
+      ],
+      "name": "aimed_at_destruction_of_rights",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as discrimination",
+        "which distinctions are meant"
+      ],
+      "name": "discrimination",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes protection equal",
+        "the comparators"
+      ],
+      "name": "equal_protection_of_the_law",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes a remedy effective"
+      ],
+      "name": "effective",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which national tribunals are competent"
+      ],
+      "name": "competent",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which rights the constitution or law grants",
+        "which of them are fundamental"
+      ],
+      "name": "fundamental_rights_granted",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes a tribunal independent",
+        "what makes a tribunal impartial"
+      ],
+      "name": "independent_and_impartial",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which guarantees are necessary for a defence"
+      ],
+      "name": "guarantees_necessary_for_defence",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as persecution"
+      ],
+      "name": "persecution",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "who the comparators are for equality of the hearing",
+        "what full equality requires"
+      ],
+      "name": "full_equality",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what it is for a limitation to be determined by law"
+      ],
+      "name": "determined_by_law",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what due recognition and respect for the rights and freedoms of others requires"
+      ],
+      "name": "due_recognition_and_respect",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which requirements are just"
+      ],
+      "name": "just_requirements",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "whose morality",
+        "which requirements of morality"
+      ],
+      "name": "morality",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as public order"
+      ],
+      "name": "public_order",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as the general welfare"
+      ],
+      "name": "general_welfare",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes a society democratic"
+      ],
+      "name": "democratic_society",
+      "necessary": [],
+      "sufficient": []
+    }
+  ],
+  "ordered_candidate_pairs_separated_by_a_checked_situation": 200,
+  "presupposition_check": "No heading or speaker marker presupposes a substantive claim; the labelled units are unchanged from the audited previous run. u060 (the family is the natural and fundamental group unit) stays UNFORMALISED as an evaluative claim.",
+  "previous_run": "run-20260930T0600Z (ve-green-discourse); its translation is rebuilt from prev/ (the 2026-09-29T1800Z translation) with only the changes stated in build.py; its AUDIT.md repairs are applied",
+  "previous_run_audit_verified_covered_bytes": 732,
+  "previous_run_old_boundary_aggregation": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "OPEN": 1,
+    "READINGS": 21,
+    "UNFORMALISED": 59
+  },
+  "previous_run_unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "OPEN": 1,
+    "READINGS": 24,
+    "UNFORMALISED": 70
+  },
+  "reading_sets": [
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u022a",
+      "unit": "u022a",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u022b",
+      "unit": "u022b",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u022c",
+      "unit": "u022c",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u029",
+      "unit": "u029",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u032",
+      "unit": "u032",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u033a",
+      "unit": "u033a",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u033b",
+      "unit": "u033b",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u035",
+      "unit": "u035",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u039",
+      "unit": "u039",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u041",
+      "unit": "u041",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u046",
+      "unit": "u046",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u048",
+      "unit": "u048",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u049",
+      "unit": "u049",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u051",
+      "unit": "u051",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u063",
+      "unit": "u063",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u066",
+      "unit": "u066",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u070",
+      "unit": "u070",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u073",
+      "unit": "u073",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u077",
+      "unit": "u077",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u017.strict.ve.md",
+          "content_in_document": false,
+          "id": "strict",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u017.default.ve.md",
+          "content_in_document": false,
+          "id": "default",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u017",
+      "unit": "u017",
+      "version": 2
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u052.invocation_barred.ve.md",
+          "content_in_document": false,
+          "id": "invocation_barred",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "case_excluded",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u052",
+      "unit": "u052",
+      "version": 3
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u112.exercise_prohibited.ve.md",
+          "content_in_document": false,
+          "id": "exercise_prohibited",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "exercise_unprotected",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u112",
+      "unit": "u112",
+      "version": 3
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u114.interpretive_ban.ve.md",
+          "content_in_document": false,
+          "id": "interpretive_ban",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "no_implied_right",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u114",
+      "unit": "u114",
+      "version": 2
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "each_person_has_a_nationality",
+          "kind": "asserted",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "some_state_grants_each",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u054",
+      "unit": "u054",
+      "version": 1
+    }
+  ],
+  "right_candidates": 67,
+  "right_reading_sets": 19,
+  "source": {
+    "bytes": 10916,
+    "fetch_date_utc": "2026-09-27",
+    "path": "source/udhr.md",
+    "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a"
+  },
+  "source_id": "0874bda003b4533dc1ce92a2be1667cc3dd78df9f49a1817d9f0c94a6dbab3d5",
+  "statuses_dropped_by_repair": "none: every rejected unit stays READINGS, with narrower or different candidates; the claimed bytes are unchanged but what a covered byte claims is now weaker and disclosed (see units.json)",
+  "tool_residual": {
+    "assumptions": 0,
+    "bar_terms": 0,
+    "bearer_readings": 19,
+    "bridge_leaves": 0,
+    "couplings": 0,
+    "default_exceptions": 0,
+    "force_readings": 0,
+    "holistic_overrides": 0,
+    "incident_readings": 7,
+    "instruction_switches": 0,
+    "limitation_deciders_unstated": 1,
+    "limitation_terms": 0,
+    "narrowings": 0,
+    "open_terms": 34,
+    "polarity_readings": 11,
+    "power_shadows": 0,
+    "rights_findings_pending": 1,
+    "unresolved_reading_sets": 24,
+    "weighing_points": 0
+  },
+  "tool_status_bytes": {
+    "CHECKED": 57,
+    "LABELLED": 535,
+    "OPEN": 2666,
+    "UNFORMALISED": 7658
+  },
+  "unit_count": 130,
+  "unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "OPEN": 1,
+    "READINGS": 24,
+    "UNFORMALISED": 70
+  },
+  "unit_scale": "sentence or clause; coordinated regulated acts split; headings separate. Changes from the previous run: u022 split into u022a-c (three coordinated rights); u111a and u111b merged into u111 (one limitation)",
+  "vocabulary_use": {
+    "predicate_limit": 256,
+    "predicates": 47,
+    "regulated_limit": 64,
+    "regulated_predicates": 38,
+    "sort_limit": 32,
+    "sorts": 8
+  }
+}

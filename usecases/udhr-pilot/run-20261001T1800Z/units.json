@@ -1,0 +1,2475 @@
+{
+  "source_sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a",
+  "units": [
+    {
+      "id": "u001",
+      "article": "title",
+      "span": [
+        0,
+        41
+      ],
+      "status": "LABELLED",
+      "source": "# Universal Declaration of Human Rights",
+      "old_unit": "u001",
+      "previous_unit": "u001",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u002",
+      "article": "Preamble",
+      "span": [
+        41,
+        54
+      ],
+      "status": "LABELLED",
+      "source": "## Preamble",
+      "old_unit": "u002",
+      "previous_unit": "u002",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u003",
+      "article": "Preamble",
+      "span": [
+        54,
+        236
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas recognition of the inherent dignity and of the equal and inalienable rights of all members of the human family is the foundation of freedom, justice and peace in the world,",
+      "missing_feature": "causation",
+      "open_terms": [
+        "inherent_dignity",
+        "inalienable_rights",
+        "justice"
+      ],
+      "old_unit": "u003",
+      "previous_unit": "u003",
+      "semantic_kind": "evaluative causal claim",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u004",
+      "article": "Preamble",
+      "span": [
+        236,
+        363
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas disregard and contempt for human rights have resulted in barbarous acts which have outraged the conscience of mankind,",
+      "missing_feature": "causation",
+      "old_unit": "u004",
+      "previous_unit": "u004",
+      "semantic_kind": "causal claim with evaluative words",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u005",
+      "article": "Preamble",
+      "span": [
+        363,
+        552
+      ],
+      "status": "UNFORMALISED",
+      "source": "and the advent of a world in which human beings shall enjoy freedom of speech and belief and freedom from fear and want has been proclaimed as the highest aspiration of the common people,",
+      "missing_feature": "attribution",
+      "old_unit": "u005",
+      "previous_unit": "u005",
+      "semantic_kind": [
+        "attributed",
+        "unstated",
+        "says",
+        "asserted"
+      ],
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u006",
+      "article": "Preamble",
+      "span": [
+        552,
+        747
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas it is essential, if man is not to be compelled to have recourse, as a last resort, to rebellion against tyranny and oppression, that human rights should be protected by the rule of law,",
+      "missing_feature": "modality/belief",
+      "open_terms": [
+        "essential"
+      ],
+      "old_unit": "u006",
+      "previous_unit": "u006",
+      "semantic_kind": "evaluative conditional claim with should",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u007",
+      "article": "Preamble",
+      "span": [
+        747,
+        838
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas it is essential to promote the development of friendly relations between nations,",
+      "missing_feature": "modality/belief",
+      "open_terms": [
+        "essential"
+      ],
+      "old_unit": "u007",
+      "previous_unit": "u007",
+      "semantic_kind": "evaluative claim",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u008a",
+      "article": "Preamble",
+      "span": [
+        838,
+        1037
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas the peoples of the United Nations have in the Charter reaffirmed their faith in fundamental human rights, in the dignity and worth of the human person and in the equal rights of men and women",
+      "missing_feature": "attribution",
+      "old_unit": "u008",
+      "previous_unit": "u008a",
+      "semantic_kind": [
+        "attributed",
+        "peoples_of_un",
+        "believes",
+        "asserted"
+      ],
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u008b",
+      "article": "Preamble",
+      "span": [
+        1037,
+        1134
+      ],
+      "status": "UNFORMALISED",
+      "source": "and have determined to promote social progress and better standards of life in larger freedom,",
+      "missing_feature": "attribution",
+      "old_unit": "u008",
+      "previous_unit": "u008b",
+      "semantic_kind": [
+        "attributed",
+        "peoples_of_un",
+        "intends",
+        "norm"
+      ],
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u009",
+      "article": "Preamble",
+      "span": [
+        1134,
+        1330
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas Member States have pledged themselves to achieve, in co-operation with the United Nations, the promotion of universal respect for and observance of human rights and fundamental freedoms,",
+      "missing_feature": "attribution",
+      "old_unit": "u009",
+      "previous_unit": "u009",
+      "semantic_kind": [
+        "attributed",
+        "member_states",
+        "promised",
+        "norm"
+      ],
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u010",
+      "article": "Preamble",
+      "span": [
+        1330,
+        1462
+      ],
+      "status": "UNFORMALISED",
+      "source": "Whereas a common understanding of these rights and freedoms is of the greatest importance for the full realization of this pledge,",
+      "open_terms": [
+        "greatest_importance"
+      ],
+      "old_unit": "u010",
+      "missing_feature": "other:evaluative_open_claim",
+      "previous_unit": "u010",
+      "semantic_kind": "evaluative claim",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u011",
+      "article": "Preamble",
+      "span": [
+        1462,
+        1479
+      ],
+      "status": "LABELLED",
+      "source": "Now, therefore,",
+      "old_unit": "u011",
+      "previous_unit": "u011",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u012",
+      "article": "Preamble",
+      "span": [
+        1479,
+        1502
+      ],
+      "status": "LABELLED",
+      "source": "The General Assembly,",
+      "old_unit": "u012",
+      "previous_unit": "u012",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u013a",
+      "article": "Preamble",
+      "span": [
+        1502,
+        1622
+      ],
+      "status": "UNFORMALISED",
+      "source": "Proclaims this Universal Declaration of Human Rights as a common standard of achievement for all peoples and all nations",
+      "missing_feature": "norms",
+      "old_unit": "u013",
+      "previous_unit": "u013a",
+      "semantic_kind": [
+        "attributed",
+        "general_assembly",
+        "says",
+        "norm"
+      ],
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u013ba",
+      "article": "Preamble",
+      "span": [
+        1622,
+        1817
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to the end that every individual and every organ of society, keeping this Declaration constantly in mind, shall strive by teaching and education to promote respect for these rights and freedoms",
+      "missing_feature": "norms",
+      "old_unit": "u013",
+      "previous_unit": "u013b",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u013bb",
+      "article": "Preamble",
+      "span": [
+        1817,
+        2058
+      ],
+      "status": "UNFORMALISED",
+      "source": "and by progressive measures, national and international, to secure their universal and effective recognition and observance, both among the peoples of Member States themselves and among the peoples of territories under their jurisdiction.",
+      "missing_feature": "norms",
+      "old_unit": "u013",
+      "previous_unit": "u013b",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u014",
+      "article": "Article 1",
+      "span": [
+        2058,
+        2072
+      ],
+      "status": "LABELLED",
+      "source": "## Article 1",
+      "old_unit": "u014",
+      "previous_unit": "u014",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u015",
+      "article": "Article 1",
+      "span": [
+        2072,
+        2136
+      ],
+      "status": "UNFORMALISED",
+      "source": "All human beings are born free and equal in dignity and rights.",
+      "missing_feature": "time",
+      "old_unit": "u015",
+      "previous_unit": "u015",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u016",
+      "article": "Article 1",
+      "span": [
+        2136,
+        2179
+      ],
+      "status": "UNFORMALISED",
+      "source": "They are endowed with reason and conscience",
+      "missing_feature": "other:metaphorical_endowment",
+      "old_unit": "u016",
+      "previous_unit": "u016",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u017",
+      "article": "Article 1",
+      "span": [
+        2179,
+        2244
+      ],
+      "status": "READINGS",
+      "source": "and should act towards one another in a spirit of brotherhood.",
+      "reading_set": "rs_u017",
+      "unresolved_features": [
+        "norms",
+        "defaults"
+      ],
+      "old_unit": "u017",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "open_terms": [
+        "spirit_of_brotherhood"
+      ],
+      "previous_unit": "u017",
+      "previous_status": "READINGS",
+      "candidates": [
+        "strict",
+        "default"
+      ],
+      "companions": [
+        "readings/u017.strict.ve.md",
+        "readings/u017.default.ve.md"
+      ],
+      "audit_repair": "Every candidate now has checked content: norm candidates as companion documents, assertion candidates as formulas in this document. Pending a fresh independent audit.",
+      "formal_depth": "Both candidates are formal: an obligation on every human being, strict or with an open exception. 'Each other human being' sits in the act phrase and 'spirit of brotherhood' is a named open term.",
+      "new_feature": "soft-norms@0 (should as a default rule with an open exception)",
+      "residual_missing_features": [
+        "other:norm_reading_candidates_hold_no_content_in_ve-document@1",
+        "other:pairwise_relation_only_in_act_phrase"
+      ]
+    },
+    {
+      "id": "u018",
+      "article": "Article 2",
+      "span": [
+        2244,
+        2258
+      ],
+      "status": "LABELLED",
+      "source": "## Article 2",
+      "old_unit": "u018",
+      "previous_unit": "u018",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u019",
+      "article": "Article 2",
+      "span": [
+        2258,
+        2509
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone is entitled to all the rights and freedoms set forth in this Declaration, without distinction of any kind, such as race, colour, sex, language, religion, political or other opinion, national or social origin, property, birth or other status.",
+      "missing_feature": "norms",
+      "old_unit": "u019",
+      "previous_unit": "u019",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u020",
+      "article": "Article 2",
+      "span": [
+        2509,
+        2776
+      ],
+      "status": "UNFORMALISED",
+      "source": "Furthermore, no distinction shall be made on the basis of the political, jurisdictional or international status of the country or territory to which a person belongs, whether it be independent, trust, non-self-governing or under any other limitation of sovereignty.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u020",
+      "previous_unit": "u020",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u021",
+      "article": "Article 3",
+      "span": [
+        2776,
+        2790
+      ],
+      "status": "LABELLED",
+      "source": "## Article 3",
+      "old_unit": "u021",
+      "previous_unit": "u021",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u022a",
+      "article": "Article 3",
+      "span": [
+        2790,
+        2820
+      ],
+      "status": "READINGS",
+      "source": "Everyone has the right to life",
+      "old_unit": "u022",
+      "previous_unit": "u022",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 3: the first of three coordinated rights"
+    },
+    {
+      "id": "u022b",
+      "article": "Article 3",
+      "span": [
+        2820,
+        2829
+      ],
+      "status": "READINGS",
+      "source": ", liberty",
+      "old_unit": "u022",
+      "previous_unit": "u022",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 3: 'liberty' (elliptical: 'Everyone has the right to' is carried from u022a)"
+    },
+    {
+      "id": "u022c",
+      "article": "Article 3",
+      "span": [
+        2829,
+        2855
+      ],
+      "status": "READINGS",
+      "source": " and security of person.\n\n",
+      "old_unit": "u022",
+      "previous_unit": "u022",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 3: 'security of person' (elliptical: 'Everyone has the right to' is carried from u022a)"
+    },
+    {
+      "id": "u023",
+      "article": "Article 4",
+      "span": [
+        2855,
+        2869
+      ],
+      "status": "LABELLED",
+      "source": "## Article 4",
+      "old_unit": "u023",
+      "previous_unit": "u023",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u024",
+      "article": "Article 4",
+      "span": [
+        2869,
+        2915
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be held in slavery or servitude;",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u024",
+      "previous_unit": "u024",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u025",
+      "article": "Article 4",
+      "span": [
+        2915,
+        2984
+      ],
+      "status": "UNFORMALISED",
+      "source": "slavery and the slave trade shall be prohibited in all their forms.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u025",
+      "previous_unit": "u025",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u026",
+      "article": "Article 5",
+      "span": [
+        2984,
+        2998
+      ],
+      "status": "LABELLED",
+      "source": "## Article 5",
+      "old_unit": "u026",
+      "previous_unit": "u026",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u027",
+      "article": "Article 5",
+      "span": [
+        2998,
+        3095
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u027",
+      "previous_unit": "u027",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u028",
+      "article": "Article 6",
+      "span": [
+        3095,
+        3109
+      ],
+      "status": "LABELLED",
+      "source": "## Article 6",
+      "old_unit": "u028",
+      "previous_unit": "u028",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u029",
+      "article": "Article 6",
+      "span": [
+        3109,
+        3187
+      ],
+      "status": "READINGS",
+      "source": "Everyone has the right to recognition everywhere as a person before the law.",
+      "old_unit": "u029",
+      "previous_unit": "u029",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: none: 'refusing recognition' and 'recognising' are one duty, so only the positive act is kept. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 6",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Same defect as the rejected units (found by the translator, not sampled): 'avoid refusing recognition' and 'recognise' are one duty. One polarity. Pending a fresh independent audit."
+    },
+    {
+      "id": "u030",
+      "article": "Article 7",
+      "span": [
+        3187,
+        3201
+      ],
+      "status": "LABELLED",
+      "source": "## Article 7",
+      "old_unit": "u030",
+      "previous_unit": "u030",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u031",
+      "article": "Article 7",
+      "span": [
+        3201,
+        3229
+      ],
+      "status": "UNFORMALISED",
+      "source": "All are equal before the law",
+      "open_terms": [
+        "equal_before_law"
+      ],
+      "old_unit": "u031",
+      "missing_feature": "norms",
+      "previous_unit": "u031",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u032",
+      "article": "Article 7",
+      "span": [
+        3229,
+        3306
+      ],
+      "status": "READINGS",
+      "source": "and are entitled without any discrimination to equal protection of the law.",
+      "old_unit": "u032",
+      "previous_unit": "u032",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [
+        "discrimination",
+        "equal_protection_of_the_law"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: none: 'avoid denying equal protection' is the same duty as 'give equal protection', so only the positive act is kept. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 7, first sentence, second clause ('All ... are entitled': the subject is carried from u031)",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30 (labels: the two polarities were one duty). Repaired: one polarity, no polarity label; the act phrase keeps 'without any discrimination'."
+    },
+    {
+      "id": "u033a",
+      "article": "Article 7",
+      "span": [
+        3306,
+        3402
+      ],
+      "status": "READINGS",
+      "source": "All are entitled to equal protection against any discrimination in violation of this Declaration",
+      "old_unit": "u033",
+      "previous_unit": "u033",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [
+        "discrimination",
+        "equal_protection_of_the_law"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: none: 'protection' fixes the positive duty; 'avoid exposing to discrimination' dropped 'equal protection' and is no longer a candidate. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 7, second sentence, first clause",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30 (labels and content: the negative candidate dropped 'equal protection'). Repaired: only the positive candidate 'protect equally against discrimination in violation of this Declaration'."
+    },
+    {
+      "id": "u033b",
+      "article": "Article 7",
+      "span": [
+        3402,
+        3455
+      ],
+      "status": "READINGS",
+      "source": "and against any incitement to such discrimination.",
+      "old_unit": "u033",
+      "previous_unit": "u033",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [
+        "discrimination",
+        "equal_protection_of_the_law"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: none in the act phrase: 'such discrimination' keeps the source's anaphor, read as discrimination in violation of this Declaration (u033a, not a checked reference); 'protection' fixes the positive duty, so 'avoid inciting discrimination' (a narrower duty without 'equal protection') is no longer a candidate. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 7, second sentence, second clause; 'such discrimination' is read from u033a",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30T1800Z (label: a negative 'avoid inciting discrimination' candidate dropped 'equal protection'). Repaired: one polarity, the positive duty 'protect equally against incitement to such discrimination' (65 bytes, the anaphor kept). Pending a fresh independent audit."
+    },
+    {
+      "id": "u034",
+      "article": "Article 8",
+      "span": [
+        3455,
+        3469
+      ],
+      "status": "LABELLED",
+      "source": "## Article 8",
+      "old_unit": "u034",
+      "previous_unit": "u034",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u035",
+      "article": "Article 8",
+      "span": [
+        3469,
+        3637
+      ],
+      "status": "READINGS",
+      "source": "Everyone has the right to an effective remedy by the competent national tribunals for acts violating the fundamental rights granted him by the constitution or by law.",
+      "old_unit": "u035",
+      "previous_unit": "u035",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [
+        "effective",
+        "competent",
+        "fundamental_rights_granted"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: the scope 'for acts violating the fundamental rights granted by the constitution or by law' is carried only by the description of the holder sort person_with_violated_rights (prose-scoped, not a checked clause). The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)",
+        "other:prose_scoped_holder_sort"
+      ],
+      "note": "Article 8; 'avoid denying a remedy' is the same duty as 'provide a remedy', so one polarity",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30 (scope lost). Repaired: the holder sort person_with_violated_rights carries 'for acts violating the fundamental rights granted by the constitution or by law' in prose, disclosed as elided in the candidates' reasons; the duplicate negative candidate is dropped. Pending a fresh independent audit."
+    },
+    {
+      "id": "u036",
+      "article": "Article 9",
+      "span": [
+        3637,
+        3651
+      ],
+      "status": "LABELLED",
+      "source": "## Article 9",
+      "old_unit": "u036",
+      "previous_unit": "u036",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u037",
+      "article": "Article 9",
+      "span": [
+        3651,
+        3719
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be subjected to arbitrary arrest, detention or exile.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "arbitrary"
+      ],
+      "old_unit": "u037",
+      "previous_unit": "u037",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u038",
+      "article": "Article 10",
+      "span": [
+        3719,
+        3734
+      ],
+      "status": "LABELLED",
+      "source": "## Article 10",
+      "old_unit": "u038",
+      "previous_unit": "u038",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u039",
+      "article": "Article 10",
+      "span": [
+        3734,
+        3935
+      ],
+      "status": "READINGS",
+      "source": "Everyone is entitled in full equality to a fair and public hearing by an independent and impartial tribunal, in the determination of his rights and obligations and of any criminal charge against him.",
+      "open_terms": [
+        "fair",
+        "independent_and_impartial",
+        "full_equality"
+      ],
+      "old_unit": "u039",
+      "previous_unit": "u039",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: 'in full equality' (no slot: 88 bytes with it; named as the open term full_equality); 'in the determination of his rights and obligations and of any criminal charge against him' is carried only by the description of the holder sort person_in_determination (prose-scoped, not a checked clause); 'fair and public' and 'independent and impartial' shown without 'and'. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)",
+        "other:prose_scoped_holder_sort"
+      ],
+      "note": "Article 10; 'avoid denying a hearing' is the same duty as 'give a hearing', so one polarity",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30 (weakened and unscoped). Repaired: the holder sort person_in_determination carries the scope 'in the determination of rights and obligations and of any criminal charge' in prose; the act phrase keeps 'fair public hearing by an independent impartial tribunal'; 'in full equality' is the named open term full_equality and listed as elided in every candidate's reason; the duplicate negative candidate is dropped. Pending a fresh independent audit."
+    },
+    {
+      "id": "u040",
+      "article": "Article 11",
+      "span": [
+        3935,
+        3950
+      ],
+      "status": "LABELLED",
+      "source": "## Article 11",
+      "old_unit": "u040",
+      "previous_unit": "u040",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u041",
+      "article": "Article 11",
+      "span": [
+        3950,
+        4151
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone charged with a penal offence has the right to be presumed innocent until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence.",
+      "missing_feature": "other:act_phrase_grammar",
+      "old_unit": "u041",
+      "previous_unit": "u041",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "Demoted from READINGS by the 2026-09-30T1800Z audit: the clause 'until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence' does not fit an 80-byte act phrase (the nearest wording is 93 to 103 bytes), and the shorter wording the audit accepted as fitting still drops the guarantees, which was the defect (a closed trial would end the presumption)."
+    },
+    {
+      "id": "u042",
+      "article": "Article 11",
+      "span": [
+        4151,
+        4351
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. No one shall be held guilty of any penal offence on account of any act or omission which did not constitute a penal offence, under national or international law, at the time when it was committed.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u042",
+      "previous_unit": "u042",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u043",
+      "article": "Article 11",
+      "span": [
+        4351,
+        4469
+      ],
+      "status": "UNFORMALISED",
+      "source": "Nor shall a heavier penalty be imposed than the one that was applicable at the time the penal offence was committed.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u043",
+      "previous_unit": "u043",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u044",
+      "article": "Article 12",
+      "span": [
+        4469,
+        4484
+      ],
+      "status": "LABELLED",
+      "source": "## Article 12",
+      "old_unit": "u044",
+      "previous_unit": "u044",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u045a",
+      "article": "Article 12",
+      "span": [
+        4484,
+        4584
+      ],
+      "status": "UNFORMALISED",
+      "source": "No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "arbitrary"
+      ],
+      "old_unit": "u045",
+      "previous_unit": "u045",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u045b",
+      "article": "Article 12",
+      "span": [
+        4584,
+        4633
+      ],
+      "status": "UNFORMALISED",
+      "source": ", nor to attacks upon his honour and reputation.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "arbitrary"
+      ],
+      "old_unit": "u045",
+      "previous_unit": "u045",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u046",
+      "article": "Article 12",
+      "span": [
+        4633,
+        4724
+      ],
+      "status": "READINGS",
+      "source": "Everyone has the right to the protection of the law against such interference or attacks.",
+      "old_unit": "u046",
+      "previous_unit": "u046",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [
+        "arbitrary"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: 'such interference or attacks' keeps the source's anaphor: it is read as the arbitrary interference with privacy, family, home or correspondence (u045a) and the attacks upon honour and reputation (u045b), not a checked reference; 'or' is worded 'as well as' (protection against each). The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 12, second sentence",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30T1800Z (weakened). Repaired: the act phrase is 'protect by law against such interference as well as attacks' (67 bytes), the source's own anaphor; 'such interference or attacks' is read from u045a and u045b in the reason (not a checked reference); 'or' is worded 'as well as'. Pending a fresh independent audit."
+    },
+    {
+      "id": "u047",
+      "article": "Article 13",
+      "span": [
+        4724,
+        4739
+      ],
+      "status": "LABELLED",
+      "source": "## Article 13",
+      "old_unit": "u047",
+      "previous_unit": "u047",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u048",
+      "article": "Article 13",
+      "span": [
+        4739,
+        4837
+      ],
+      "status": "READINGS",
+      "source": "1. Everyone has the right to freedom of movement and residence within the borders of each state.",
+      "old_unit": "u048",
+      "previous_unit": "u048",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive",
+        "liberty"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: 'the borders of' in the two duties. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 13(1)"
+    },
+    {
+      "id": "u049",
+      "article": "Article 13",
+      "span": [
+        4837,
+        4935
+      ],
+      "status": "READINGS",
+      "source": "2. Everyone has the right to leave any country, including his own, and to return to his country.",
+      "old_unit": "u049",
+      "previous_unit": "u049",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim",
+        "liberty"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: 'including his own'. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 13(2); 'allow to leave' repeats the negative duty and no securing reading exists, so the claim is the avoiding duty only (plus the liberty reading)",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30 (labels: the positive candidate repeated the negative duty). Repaired: only the avoiding duty, plus the liberty reading."
+    },
+    {
+      "id": "u050",
+      "article": "Article 14",
+      "span": [
+        4935,
+        4950
+      ],
+      "status": "LABELLED",
+      "source": "## Article 14",
+      "old_unit": "u050",
+      "previous_unit": "u050",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u051",
+      "article": "Article 14",
+      "span": [
+        4950,
+        5042
+      ],
+      "status": "READINGS",
+      "source": "1. Everyone has the right to seek and to enjoy in other countries asylum from persecution.",
+      "old_unit": "u051",
+      "previous_unit": "u051",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive",
+        "liberty"
+      ],
+      "open_terms": [
+        "persecution"
+      ],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: 'from persecution' in the avoiding duty (carried by 'asylum' and the open term persecution; the 80-byte limit forces a choice with 'in other countries'); 'seek' in the securing duty. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 14(1); 'in other countries' places the asylum in states other than the person's own",
+      "audit_repair": "Not sampled; same defect class (the avoiding duty dropped 'in other countries'). The avoiding act now says 'in other countries' (80 bytes) and drops 'from persecution' (disclosed). Pending a fresh audit. Pending a fresh independent audit."
+    },
+    {
+      "id": "u052",
+      "article": "Article 14",
+      "span": [
+        5042,
+        5224
+      ],
+      "status": "READINGS",
+      "source": "2. This right may not be invoked in the case of prosecutions genuinely arising from non-political crimes or from acts contrary to the purposes and principles of the United Nations.",
+      "open_terms": [
+        "genuine",
+        "non_political_crime",
+        "contrary_to_un_purposes_and_principles"
+      ],
+      "reading_set": "rs_u052",
+      "unresolved_features": [
+        "norms",
+        "other:exception_scope"
+      ],
+      "old_unit": "u052",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "previous_unit": "u052",
+      "previous_status": "READINGS",
+      "candidates": [
+        "invocation_barred",
+        "case_excluded"
+      ],
+      "companions": [
+        "readings/u052.invocation_barred.ve.md"
+      ],
+      "audit_repair": "Repaired after the 2026-09-29 audit. The norm reading now ranges over (person, excluded prosecution) so it bars invoking the right in the case of such a prosecution only; the formula reading ranges over prosecutions, not persons; the act phrase says 'seek as well as enjoy'; the person-level readings are dropped. Pending a fresh independent audit.",
+      "formal_depth": "The norm candidate is an unconditional prohibition over a sort whose description (prose, not checked structure) carries the source's conditions; the source states no completion for anyone else, so none is invented. The assertion candidate is fully formal: both grounds, and the negated entitlement.",
+      "new_feature": null,
+      "residual_missing_features": [
+        "other:norm_reading_candidates_hold_no_content_in_ve-document@1",
+        "norms",
+        "defaults"
+      ]
+    },
+    {
+      "id": "u053",
+      "article": "Article 15",
+      "span": [
+        5224,
+        5239
+      ],
+      "status": "LABELLED",
+      "source": "## Article 15",
+      "old_unit": "u053",
+      "previous_unit": "u053",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u054",
+      "article": "Article 15",
+      "span": [
+        5239,
+        5284
+      ],
+      "status": "READINGS",
+      "source": "1. Everyone has the right to a nationality.",
+      "old_unit": "u054",
+      "previous_unit": "u054",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "each_person_has_a_nationality",
+        "some_state_grants_each"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 environment with asserted readings (FOL quantifiers over person and bearer)",
+      "axes_open": [
+        "statement"
+      ],
+      "formal_depth": "Two asserted formulas, checked at load and separated by a checked finite situation: each person has some nationality; for each person some state grants a nationality. The claim reading (some state must grant it) is absent: a right block cannot say 'some state' and a norm cannot be a disjunction over bearers; rights and assertions cannot share one set (UnsupportedProfile: mixed rights distinguishing situations).",
+      "residual_missing_features": [
+        "other:bearer_holder_relation (a duty on 'some state' or 'his country')",
+        "other:rights_and_assertions_in_one_reading_set"
+      ],
+      "audit_repair": "Rejected 2026-09-30 (strengthened: every state must grant each person a nationality). Repaired: the claim candidates are dropped; the set holds the asserted readings 'each person has some nationality' and 'for each person some state grants a nationality'. Pending a fresh independent audit.",
+      "note": "Article 15(1)"
+    },
+    {
+      "id": "u055",
+      "article": "Article 15",
+      "span": [
+        5284,
+        5392
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u055",
+      "previous_unit": "u055",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u056",
+      "article": "Article 16",
+      "span": [
+        5392,
+        5407
+      ],
+      "status": "LABELLED",
+      "source": "## Article 16",
+      "old_unit": "u056",
+      "previous_unit": "u056",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u057",
+      "article": "Article 16",
+      "span": [
+        5407,
+        5545
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Men and women of full age, without any limitation due to race, nationality or religion, have the right to marry and to found a family.",
+      "missing_feature": "norms",
+      "old_unit": "u057",
+      "previous_unit": "u057",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u058",
+      "article": "Article 16",
+      "span": [
+        5545,
+        5636
+      ],
+      "status": "UNFORMALISED",
+      "source": "They are entitled to equal rights as to marriage, during marriage and at its dissolution.",
+      "missing_feature": "norms",
+      "old_unit": "u058",
+      "previous_unit": "u058",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u059",
+      "article": "Article 16",
+      "span": [
+        5636,
+        5733
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Marriage shall be entered into only with the free and full consent of the intending spouses.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u059",
+      "previous_unit": "u059",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u060",
+      "article": "Article 16",
+      "span": [
+        5733,
+        5799
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. The family is the natural and fundamental group unit of society",
+      "open_terms": [
+        "natural_group_unit"
+      ],
+      "old_unit": "u060",
+      "missing_feature": "other:evaluative_open_claim",
+      "previous_unit": "u060",
+      "semantic_kind": "evaluative claim",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u061",
+      "article": "Article 16",
+      "span": [
+        5799,
+        5857
+      ],
+      "status": "UNFORMALISED",
+      "source": "and is entitled to protection by society and the State.",
+      "missing_feature": "norms",
+      "old_unit": "u061",
+      "previous_unit": "u061",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u062",
+      "article": "Article 17",
+      "span": [
+        5857,
+        5872
+      ],
+      "status": "LABELLED",
+      "source": "## Article 17",
+      "old_unit": "u062",
+      "previous_unit": "u062",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u063",
+      "article": "Article 17",
+      "span": [
+        5872,
+        5960
+      ],
+      "status": "READINGS",
+      "source": "1. Everyone has the right to own property alone as well as in association with others.",
+      "old_unit": "u063",
+      "previous_unit": "u063",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive",
+        "liberty"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: 'jointly with others' and 'with others' stand for 'in association with others' in the two duties. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 17(1)",
+      "audit_repair": "Not sampled; same defect class (the duties dropped 'alone as well as in association with others'). The duties now say 'alone as well as jointly with others' / 'alone as well as with others'. Pending a fresh audit. Pending a fresh independent audit."
+    },
+    {
+      "id": "u064",
+      "article": "Article 17",
+      "span": [
+        5960,
+        6018
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. No one shall be arbitrarily deprived of his property.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u064",
+      "previous_unit": "u064",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u065",
+      "article": "Article 18",
+      "span": [
+        6018,
+        6033
+      ],
+      "status": "LABELLED",
+      "source": "## Article 18",
+      "old_unit": "u065",
+      "previous_unit": "u065",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u066",
+      "article": "Article 18",
+      "span": [
+        6033,
+        6104
+      ],
+      "status": "READINGS",
+      "source": "Everyone has the right to freedom of thought, conscience and religion;",
+      "old_unit": "u066",
+      "previous_unit": "u066",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive",
+        "liberty"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 18, first clause (the list is worded without a comma, which the act-phrase grammar forbids)"
+    },
+    {
+      "id": "u067",
+      "article": "Article 18",
+      "span": [
+        6104,
+        6166
+      ],
+      "status": "UNFORMALISED",
+      "source": "this right includes freedom to change his religion or belief,",
+      "missing_feature": "other:right_lines_in_reading_sets",
+      "old_unit": "u067",
+      "previous_unit": "u067",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "'this right includes ...' adds lines to an existing right (right_lines), but a reading-set candidate can only be a whole right block, so the inclusion cannot be stated in a set."
+    },
+    {
+      "id": "u068",
+      "article": "Article 18",
+      "span": [
+        6166,
+        6329
+      ],
+      "status": "UNFORMALISED",
+      "source": "and freedom, either alone or in community with others and in public or private, to manifest his religion or belief in teaching, practice, worship and observance.",
+      "missing_feature": "other:right_lines_in_reading_sets",
+      "old_unit": "u068",
+      "previous_unit": "u068",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "'this right includes ...' adds lines to an existing right (right_lines), but a reading-set candidate can only be a whole right block, so the inclusion cannot be stated in a set."
+    },
+    {
+      "id": "u069",
+      "article": "Article 19",
+      "span": [
+        6329,
+        6344
+      ],
+      "status": "LABELLED",
+      "source": "## Article 19",
+      "old_unit": "u069",
+      "previous_unit": "u069",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u070",
+      "article": "Article 19",
+      "span": [
+        6344,
+        6405
+      ],
+      "status": "READINGS",
+      "source": "Everyone has the right to freedom of opinion and expression;",
+      "old_unit": "u070",
+      "previous_unit": "u070",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive",
+        "liberty"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 19, first clause"
+    },
+    {
+      "id": "u071a",
+      "article": "Article 19",
+      "span": [
+        6405,
+        6470
+      ],
+      "status": "UNFORMALISED",
+      "source": "this right includes freedom to hold opinions without interference",
+      "missing_feature": "other:right_lines_in_reading_sets",
+      "old_unit": "u071",
+      "previous_unit": "u071",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "'this right includes ...' adds lines to an existing right (right_lines), but a reading-set candidate can only be a whole right block, so the inclusion cannot be stated in a set."
+    },
+    {
+      "id": "u071b",
+      "article": "Article 19",
+      "span": [
+        6470,
+        6573
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to seek, receive and impart information and ideas through any media and regardless of frontiers.",
+      "missing_feature": "other:right_lines_in_reading_sets",
+      "old_unit": "u071",
+      "previous_unit": "u071",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "'this right includes ...' adds lines to an existing right (right_lines), but a reading-set candidate can only be a whole right block, so the inclusion cannot be stated in a set."
+    },
+    {
+      "id": "u072",
+      "article": "Article 20",
+      "span": [
+        6573,
+        6588
+      ],
+      "status": "LABELLED",
+      "source": "## Article 20",
+      "old_unit": "u072",
+      "previous_unit": "u072",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u073",
+      "article": "Article 20",
+      "span": [
+        6588,
+        6664
+      ],
+      "status": "READINGS",
+      "source": "1. Everyone has the right to freedom of peaceful assembly and association.",
+      "old_unit": "u073",
+      "previous_unit": "u073",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_negative",
+        "state_positive",
+        "anyone_negative",
+        "anyone_positive",
+        "liberty"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident",
+        "polarity"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause. The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 20(1)"
+    },
+    {
+      "id": "u074",
+      "article": "Article 20",
+      "span": [
+        6664,
+        6721
+      ],
+      "status": "CHECKED",
+      "source": "2. No one may be compelled to belong to an association.",
+      "old_unit": "u074",
+      "previous_unit": "u074",
+      "audit_repair": "Strict legal prohibition: every actor is forbidden to compel any person to belong to an association. The rejected physical-possibility reading is absent.",
+      "previous_status": "CHECKED"
+    },
+    {
+      "id": "u075",
+      "article": "Article 21",
+      "span": [
+        6721,
+        6736
+      ],
+      "status": "LABELLED",
+      "source": "## Article 21",
+      "old_unit": "u075",
+      "previous_unit": "u075",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u076",
+      "article": "Article 21",
+      "span": [
+        6736,
+        6861
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to take part in the government of his country, directly or through freely chosen representatives.",
+      "missing_feature": "other:act_phrase_grammar",
+      "old_unit": "u076",
+      "previous_unit": "u076",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The act would not fit an act phrase (at most 80 bytes; no 'or', 'and', 'for', 'in which' clauses)."
+    },
+    {
+      "id": "u077",
+      "article": "Article 21",
+      "span": [
+        6861,
+        6938
+      ],
+      "status": "READINGS",
+      "source": "2. Everyone has the right of equal access to public service in his country.",
+      "old_unit": "u077",
+      "previous_unit": "u077",
+      "previous_status": "UNFORMALISED",
+      "candidates": [
+        "state_claim",
+        "anyone_claim"
+      ],
+      "open_terms": [],
+      "new_feature": "rights@0 (holder, claim and liberty lines, reading sets with labelled axes)",
+      "axes_open": [
+        "bearer",
+        "incident"
+      ],
+      "force_note": "Force is read as strict for every candidate: the unit has no weakening word ('should', 'shall', 'generally', a resources qualifier) and lies outside Articles 22-27, where Article 22 opens force by cross-reference. A defeasible variant cannot share a reading set with a strict one (metrics.language_findings).",
+      "formal_depth": "Every candidate is a complete right block (holder, one line) checked at load; every pair of candidates is separated by a checked finite situation. Act phrases follow the act-phrase grammar and can be shorter than the source clause; elided from the act phrases: none in the act phrase; the bearer-holder relation is not checked: nothing says which bearer is the country of which person ('in their own country' stays a phrase, not a relation). The full source clause is in each predicate's description.",
+      "residual_missing_features": [
+        "defaults (a defeasible variant cannot share this set)",
+        "other:act_phrase_grammar (act phrases shorter than the clause)"
+      ],
+      "note": "Article 21(2)",
+      "polarity_note": "One polarity only: the audit found 'avoid denying X' and 'give X' to be one duty, so no polarity axis is offered (table.py)",
+      "audit_repair": "Rejected 2026-09-30T1800Z (strengthened). Repaired: the act phrase ends 'in their own country' (64 bytes); the bearer-holder relation (which bearer is whose country) stays unchecked and is disclosed. Pending a fresh independent audit."
+    },
+    {
+      "id": "u078",
+      "article": "Article 21",
+      "span": [
+        6938,
+        7015
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. The will of the people shall be the basis of the authority of government;",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u078",
+      "previous_unit": "u078",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u079a",
+      "article": "Article 21",
+      "span": [
+        7015,
+        7124
+      ],
+      "status": "UNFORMALISED",
+      "source": "this will shall be expressed in periodic and genuine elections which shall be by universal and equal suffrage",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "genuine"
+      ],
+      "old_unit": "u079",
+      "previous_unit": "u079",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u079b",
+      "article": "Article 21",
+      "span": [
+        7124,
+        7200
+      ],
+      "status": "UNFORMALISED",
+      "source": "and shall be held by secret vote or by equivalent free voting procedures.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "genuine"
+      ],
+      "old_unit": "u079",
+      "previous_unit": "u079",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u080",
+      "article": "Article 22",
+      "span": [
+        7200,
+        7215
+      ],
+      "status": "LABELLED",
+      "source": "## Article 22",
+      "old_unit": "u080",
+      "previous_unit": "u080",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u081",
+      "article": "Article 22",
+      "span": [
+        7215,
+        7281
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone, as a member of society, has the right to social security",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u081",
+      "previous_unit": "u081",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u082",
+      "article": "Article 22",
+      "span": [
+        7281,
+        7558
+      ],
+      "status": "UNFORMALISED",
+      "source": "and is entitled to realization, through national effort and international co-operation and in accordance with the organization and resources of each State, of the economic, social and cultural rights indispensable for his dignity and the free development of his personality.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u082",
+      "previous_unit": "u082",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u083",
+      "article": "Article 23",
+      "span": [
+        7558,
+        7573
+      ],
+      "status": "LABELLED",
+      "source": "## Article 23",
+      "old_unit": "u083",
+      "previous_unit": "u083",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u084a",
+      "article": "Article 23",
+      "span": [
+        7573,
+        7606
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to work",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u084b",
+      "article": "Article 23",
+      "span": [
+        7606,
+        7636
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to free choice of employment",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u084c",
+      "article": "Article 23",
+      "span": [
+        7636,
+        7679
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to just and favourable conditions of work",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u084d",
+      "article": "Article 23",
+      "span": [
+        7679,
+        7721
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to protection against unemployment.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u084",
+      "previous_unit": "u084",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u085",
+      "article": "Article 23",
+      "span": [
+        7721,
+        7806
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Everyone, without any discrimination, has the right to equal pay for equal work.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u085",
+      "previous_unit": "u085",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u086",
+      "article": "Article 23",
+      "span": [
+        7806,
+        8022
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. Everyone who works has the right to just and favourable remuneration ensuring for himself and his family an existence worthy of human dignity, and supplemented, if necessary, by other means of social protection.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "just"
+      ],
+      "old_unit": "u086",
+      "previous_unit": "u086",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u087",
+      "article": "Article 23",
+      "span": [
+        8022,
+        8119
+      ],
+      "status": "UNFORMALISED",
+      "source": "4. Everyone has the right to form and to join trade unions for the protection of his interests.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u087",
+      "previous_unit": "u087",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u088",
+      "article": "Article 24",
+      "span": [
+        8119,
+        8134
+      ],
+      "status": "LABELLED",
+      "source": "## Article 24",
+      "old_unit": "u088",
+      "previous_unit": "u088",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u089",
+      "article": "Article 24",
+      "span": [
+        8134,
+        8260
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone has the right to rest and leisure, including reasonable limitation of working hours and periodic holidays with pay.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "reasonable"
+      ],
+      "old_unit": "u089",
+      "previous_unit": "u089",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u090",
+      "article": "Article 25",
+      "span": [
+        8260,
+        8275
+      ],
+      "status": "LABELLED",
+      "source": "## Article 25",
+      "old_unit": "u090",
+      "previous_unit": "u090",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u091",
+      "article": "Article 25",
+      "span": [
+        8275,
+        8476
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to a standard of living adequate for the health and well-being of himself and of his family, including food, clothing, housing and medical care and necessary social services,",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "open_terms": [
+        "adequate"
+      ],
+      "old_unit": "u091",
+      "previous_unit": "u091",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u092",
+      "article": "Article 25",
+      "span": [
+        8476,
+        8639
+      ],
+      "status": "UNFORMALISED",
+      "source": "and the right to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of livelihood in circumstances beyond his control.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u092",
+      "previous_unit": "u092",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u093",
+      "article": "Article 25",
+      "span": [
+        8639,
+        8712
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Motherhood and childhood are entitled to special care and assistance.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u093",
+      "previous_unit": "u093",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u094",
+      "article": "Article 25",
+      "span": [
+        8712,
+        8802
+      ],
+      "status": "UNFORMALISED",
+      "source": "All children, whether born in or out of wedlock, shall enjoy the same social protection.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u094",
+      "previous_unit": "u094",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u095",
+      "article": "Article 26",
+      "span": [
+        8802,
+        8817
+      ],
+      "status": "LABELLED",
+      "source": "## Article 26",
+      "old_unit": "u095",
+      "previous_unit": "u095",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u096",
+      "article": "Article 26",
+      "span": [
+        8817,
+        8857
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right to education.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u096",
+      "previous_unit": "u096",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u097",
+      "article": "Article 26",
+      "span": [
+        8857,
+        8933
+      ],
+      "status": "UNFORMALISED",
+      "source": "Education shall be free, at least in the elementary and fundamental stages.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u097",
+      "previous_unit": "u097",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u098",
+      "article": "Article 26",
+      "span": [
+        8933,
+        8975
+      ],
+      "status": "UNFORMALISED",
+      "source": "Elementary education shall be compulsory.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u098",
+      "previous_unit": "u098",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u099a",
+      "article": "Article 26",
+      "span": [
+        8975,
+        9045
+      ],
+      "status": "UNFORMALISED",
+      "source": "Technical and professional education shall be made generally available",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u099",
+      "previous_unit": "u099",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u099b",
+      "article": "Article 26",
+      "span": [
+        9045,
+        9126
+      ],
+      "status": "UNFORMALISED",
+      "source": "and higher education shall be equally accessible to all on the basis of merit.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u099",
+      "previous_unit": "u099",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u100a",
+      "article": "Article 26",
+      "span": [
+        9126,
+        9205
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Education shall be directed to the full development of the human personality",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u100",
+      "previous_unit": "u100",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u100b",
+      "article": "Article 26",
+      "span": [
+        9205,
+        9285
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to the strengthening of respect for human rights and fundamental freedoms.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u100",
+      "previous_unit": "u100",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u101",
+      "article": "Article 26",
+      "span": [
+        9285,
+        9389
+      ],
+      "status": "UNFORMALISED",
+      "source": "It shall promote understanding, tolerance and friendship among all nations, racial or religious groups,",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u101",
+      "previous_unit": "u101",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u102",
+      "article": "Article 26",
+      "span": [
+        9389,
+        9475
+      ],
+      "status": "UNFORMALISED",
+      "source": "and shall further the activities of the United Nations for the maintenance of peace.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u102",
+      "previous_unit": "u102",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u103",
+      "article": "Article 26",
+      "span": [
+        9475,
+        9577
+      ],
+      "status": "UNFORMALISED",
+      "source": "3. Parents have a prior right to choose the kind of education that shall be given to their children.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u103",
+      "previous_unit": "u103",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u104",
+      "article": "Article 27",
+      "span": [
+        9577,
+        9592
+      ],
+      "status": "LABELLED",
+      "source": "## Article 27",
+      "old_unit": "u104",
+      "previous_unit": "u104",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u105a",
+      "article": "Article 27",
+      "span": [
+        9592,
+        9677
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has the right freely to participate in the cultural life of the community",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u105",
+      "previous_unit": "u105",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u105b",
+      "article": "Article 27",
+      "span": [
+        9677,
+        9696
+      ],
+      "status": "UNFORMALISED",
+      "source": ", to enjoy the arts",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u105",
+      "previous_unit": "u105",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u105c",
+      "article": "Article 27",
+      "span": [
+        9696,
+        9755
+      ],
+      "status": "UNFORMALISED",
+      "source": "and to share in scientific advancement and its benefits.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u105",
+      "previous_unit": "u105",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u106",
+      "article": "Article 27",
+      "span": [
+        9755,
+        9926
+      ],
+      "status": "UNFORMALISED",
+      "source": "2. Everyone has the right to the protection of the moral and material interests resulting from any scientific, literary or artistic production of which he is the author.",
+      "missing_feature": "other:force_variants_in_one_reading_set",
+      "old_unit": "u106",
+      "previous_unit": "u106",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The unit either uses 'shall' (soft-norms 2.2: a READINGS set on force) or lies in Articles 22-27 (force opened by Article 22). A strict and a defeasible candidate need different base predicates, so no single checked situation separates them and no reading set can hold both."
+    },
+    {
+      "id": "u107",
+      "article": "Article 28",
+      "span": [
+        9926,
+        9941
+      ],
+      "status": "LABELLED",
+      "source": "## Article 28",
+      "old_unit": "u107",
+      "previous_unit": "u107",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u108",
+      "article": "Article 28",
+      "span": [
+        9941,
+        10085
+      ],
+      "status": "UNFORMALISED",
+      "source": "Everyone is entitled to a social and international order in which the rights and freedoms set forth in this Declaration can be fully realized.",
+      "missing_feature": "other:act_phrase_grammar",
+      "old_unit": "u108",
+      "previous_unit": "u108",
+      "previous_status": "UNFORMALISED",
+      "previous_missing_feature": "norms",
+      "blocker_detail": "The act would not fit an act phrase (at most 80 bytes; no 'or', 'and', 'for', 'in which' clauses)."
+    },
+    {
+      "id": "u109",
+      "article": "Article 29",
+      "span": [
+        10085,
+        10100
+      ],
+      "status": "LABELLED",
+      "source": "## Article 29",
+      "old_unit": "u109",
+      "previous_unit": "u109",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u110",
+      "article": "Article 29",
+      "span": [
+        10100,
+        10218
+      ],
+      "status": "UNFORMALISED",
+      "source": "1. Everyone has duties to the community in which alone the free and full development of his personality is possible.",
+      "missing_feature": "norms",
+      "old_unit": "u110",
+      "previous_unit": "u110",
+      "previous_status": "UNFORMALISED"
+    },
+    {
+      "id": "u111",
+      "article": "Article 29",
+      "span": [
+        10218,
+        10555
+      ],
+      "status": "OPEN",
+      "source": "2. In the exercise of his rights and freedoms, everyone shall be subject only to such limitations as are determined by law solely for the purpose of securing due recognition and respect for the rights and freedoms of others and of meeting the just requirements of morality, public order and the general welfare in a democratic society.\n\n",
+      "open_terms": [
+        "determined_by_law",
+        "due_recognition_and_respect",
+        "just_requirements",
+        "morality",
+        "public_order",
+        "general_welfare",
+        "democratic_society"
+      ],
+      "old_unit": "u111",
+      "previous_unit": "u111",
+      "previous_status": "UNFORMALISED",
+      "new_feature": "rights@0 (limitation with necessary conditions and purposes)",
+      "formal_depth": "A limitation on every right and every line: the right is limited in a situation only where the limitation holds; it holds only where it is determined by law and only where it is solely for a permitted purpose (two purposes listed). Its decider is unstated. The two source units u111a and u111b are one unit because splitting the purpose clause changes its meaning ('and' joins the two permitted purposes). INERT for now: the document's rights lines are all reading-set candidates, so no act is in the limitation's scope (limitation_terms = 0) until per-choice elaboration exists.",
+      "residual_missing_features": [
+        "other:per_choice_rights_elaboration"
+      ]
+    },
+    {
+      "id": "u112",
+      "article": "Article 29",
+      "span": [
+        10555,
+        10676
+      ],
+      "status": "READINGS",
+      "source": "3. These rights and freedoms may in no case be exercised contrary to the purposes and principles of the United Nations.",
+      "reading_set": "rs_u112",
+      "unresolved_features": [
+        "norms"
+      ],
+      "old_unit": "u112",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "previous_unit": "u112",
+      "previous_status": "READINGS",
+      "candidates": [
+        "exercise_prohibited",
+        "exercise_unprotected"
+      ],
+      "open_terms": [
+        "rights_and_freedoms_set_forth",
+        "contrary_to_un_purposes_and_principles"
+      ],
+      "companions": [
+        "readings/u112.exercise_prohibited.ve.md"
+      ],
+      "audit_repair": "Repaired after the 2026-09-29 audit. The formula reading now ranges over single exercises (an exercise is not a person), so one contrary exercise removes protection from that exercise only; the norm reading is unchanged. Pending a fresh independent audit.",
+      "formal_depth": "The norm candidate is an unconditional prohibition over a sort whose description (prose, not checked structure) carries the source's conditions; the source states no completion for anyone else, so none is invented. The assertion candidate is fully formal: no right protects an exercise contrary to UN purposes and principles.",
+      "new_feature": null,
+      "residual_missing_features": [
+        "other:norm_reading_candidates_hold_no_content_in_ve-document@1",
+        "norms",
+        "defaults"
+      ]
+    },
+    {
+      "id": "u113",
+      "article": "Article 30",
+      "span": [
+        10676,
+        10691
+      ],
+      "status": "LABELLED",
+      "source": "## Article 30",
+      "old_unit": "u113",
+      "previous_unit": "u113",
+      "previous_status": "LABELLED"
+    },
+    {
+      "id": "u114",
+      "article": "Article 30",
+      "span": [
+        10691,
+        10916
+      ],
+      "status": "READINGS",
+      "source": "Nothing in this Declaration may be interpreted as implying for any State, group or person any right to engage in any activity or to perform any act aimed at the destruction of any of the rights and freedoms set forth herein.",
+      "reading_set": "rs_u114",
+      "unresolved_features": [
+        "norms"
+      ],
+      "old_unit": "u114",
+      "missing_feature": "norms",
+      "reading_elaboration": "pending; candidates have no VE content",
+      "previous_unit": "u114",
+      "previous_status": "READINGS",
+      "candidates": [
+        "interpretive_ban",
+        "no_implied_right"
+      ],
+      "open_terms": [
+        "rights_and_freedoms_set_forth",
+        "aimed_at_destruction_of_rights"
+      ],
+      "companions": [
+        "readings/u114.interpretive_ban.ve.md"
+      ],
+      "audit_repair": "Every candidate now has checked content: norm candidates as companion documents, assertion candidates as formulas in this document. Pending a fresh independent audit.",
+      "formal_depth": "The norm candidate is an unconditional prohibition over a sort whose description (prose, not checked structure) carries the source's conditions; the source states no completion for anyone else, so none is invented. The assertion candidate is fully formal: no bearer has an implied destructive right.",
+      "new_feature": null,
+      "residual_missing_features": [
+        "other:norm_reading_candidates_hold_no_content_in_ve-document@1",
+        "norms",
+        "defaults"
+      ]
+    }
+  ],
+  "note": "READINGS units hold an open reading set; the tool reports them as OPEN. Right candidates carry their content in the document; the norm candidates of u017, u052, u112, u114 sit in readings/ companion documents."
+}
