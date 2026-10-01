@@ -2,6 +2,7 @@ import VE.Tableau
 import VE.TableauExtended
 import VE.Core.TableauExtended
 import VE.Order.Tableau
+import Lean.Data.Json
 
 /-! Certificate replay steps.
 
@@ -16,6 +17,17 @@ namespace VE.Route.Steps
 def maxSteps : Nat := 10000
 
 def stepLimit : String := "ResourceLimit: certificate replay exceeds 10,000 steps"
+
+/-- The largest `max_steps` a route certificate case may request. -/
+def caseCap : Nat := 1000000
+
+/-- A route certificate case's step cap: its `max_steps` field (at most
+`caseCap`; the adapter sets it to learn validity past the default budget, and
+applies the caller's public budget itself), else `maxSteps`. -/
+def limit (j : Lean.Json) : Nat :=
+  match j.getObjVal? "max_steps" >>= (·.getNat?) with
+  | .ok n => min n caseCap
+  | .error _ => maxSteps
 
 mutual
 def fol : VE.Tableau.Trace → Nat

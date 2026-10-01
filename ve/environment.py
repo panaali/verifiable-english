@@ -287,6 +287,28 @@ class Environment:
 
     @semantic_entry("environment")
     def __init__(self, data, *, _generated_reports=False):
+        """Decode and validate an environment under the selected authority."""
+        from .backends.dispatch import authority_for, execute
+
+        def python():
+            self._decode(data, _generated_reports=_generated_reports)
+            return self
+
+        # rust-experimental covers evaluation and search only; environments
+        # keep the Python decoder there, as before any adapter existed.
+        if _generated_reports or authority_for("environment_validation") in ("python", "rust-experimental"):
+            python()
+            return
+        from .backends.validation import environment_in_scope, validated_environment
+        if not environment_in_scope(data):
+            # Statement-layer and legacy envelopes are validated by their own
+            # routes; Lean's environment mode does not take them.
+            python()
+            return
+        execute("environment_validation", {"kind": "environment"}, python,
+                lean=lambda: validated_environment(self, data, python))
+
+    def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
         modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)

@@ -10,6 +10,7 @@ import subprocess
 import sys
 
 import pytest
+from tools import rust_build
 from ve import Environment, FiniteModel, evaluate, parse, print_document
 from ve.ast import document_from_data, document_to_data
 from ve.errors import VEError
@@ -34,7 +35,7 @@ def rust_executable():
         return binary
     cargo = shutil.which('cargo')
     if not cargo: pytest.skip('cargo is not available')
-    env = {**os.environ, 'CARGO_HOME': str(ROOT/'.cargo-home'), 'CARGO_TARGET_DIR': str(ROOT/'rust/target')}
+    env = rust_build.cargo_env()
     run = subprocess.run([cargo, 'build', '-j', '2', '--locked', '--release', '--manifest-path', str(ROOT/'rust/Cargo.toml')],
                          cwd=ROOT, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr

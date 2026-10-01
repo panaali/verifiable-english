@@ -14,7 +14,7 @@ from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
-from .errors import DuplicateDeclaration, ResourceLimit, VEError
+from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, VEError
 from .search import _used_predicates
 from .wire import digest, require_fields
 
@@ -105,6 +105,76 @@ def _regulated_closure(formula, regulated):
         return (_regulated_closure(formula.left, regulated) or
                 _regulated_closure(formula.right, regulated))
     return False
+
+
+_NON_FOL_TAGS = frozenset({"reach", "atom", "le", "lt", "num", "add", "scale"})
+
+
+def _first_order(data) -> bool:
+    """Whether a formula on the wire uses first-order constructs only."""
+    stack = [data]
+    while stack:
+        node = stack.pop()
+        if type(node) is list:
+            if node and node[0] in _NON_FOL_TAGS:
+                return False
+            stack.extend(node[1:])
+    return True
+
+
+def _family_norms(document) -> bool:
+    """Whether Lean's `family-norms` mode (VE/Service/FamilyNorms.lean) takes a
+    norm document over the closure, core or order family: the norm formulas are
+    first-order, every regulated predicate is unary or binary and no declaration
+    uses `$int`, so the FOL route regenerates the document over the
+    environment's FOL view; certificates are the family's."""
+    from .backends.validation import family_in_scope
+    env = document.env
+    if not (env.closure or env.order) or not family_in_scope(env):
+        return False
+    if any(decl.regulated is not None and len(decl.arguments) > 2 for decl in env.predicates.values()):
+        return False
+    if any("$int" in decl.arguments for decl in env.predicates.values()) or any(
+            decl.sort == "$int" for decl in env.constants.values()):
+        return False
+    return all(_first_order(rule.to_dict()["norm"]["guard"]) and
+               all(_first_order(x) for x in rule.to_dict()["norm"]["unless"]) for rule in document.rules)
+
+
+def _lean_route(document) -> bool:
+    """Whether a Lean norms route regenerates `document`.
+
+    The norms route takes plain norm documents over FOL-family ve.core@0.2
+    environments, with definitions and data flags; the family-norms mode takes
+    first-order documents on the closure, core and order families
+    (`_family_norms`). Statement-layer environments (soft norms, reports,
+    alternatives, quantities) are not on either: their operations are not
+    dispatched and keep the retained Python.
+    """
+    env = document.env
+    from .profiles import STATEMENT_LAYERS
+    if type(document) is not NormDocument or env.language != "ve.core@0.2":
+        return False
+    if env.closure or env.order:
+        return _family_norms(document)
+    return (env.alternatives is None and getattr(env, "unit_schema", None) is None
+            and not STATEMENT_LAYERS & set(env.profiles))
+
+
+def _lean_mode(document) -> str:
+    """The service mode of `document`'s norms cases."""
+    return "family-norms" if document.env.closure or document.env.order else "norms"
+
+
+def _lean_case(document, kind, **fields):
+    """A norms-route case over the document's own environment and norm objects."""
+    return {"id": kind, "kind": kind, "environment": document.env.to_dict(),
+            "norms": [rule.to_dict() for rule in document.rules], **fields}
+
+
+def _lean_formula(data):
+    """A formula Lean regenerated and typed, read structurally."""
+    return _Decoder().decode(data)
 
 
 @dataclass(frozen=True, slots=True)
@@ -243,8 +313,32 @@ class NormDocument:
             return type(formula)(formula.sort, self._expand(formula.body, current, stack))
         return formula
 
+    def _lean_regenerated(self) -> dict:
+        """Lean's `norms-elaborate` answer for this document, kept per document."""
+        cached = getattr(self, "_regenerated", None)
+        if cached is None:
+            from .backends.lean_runner import run
+            cached = self._regenerated = run(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
+        return cached
+
     @semantic_entry("norms.elaborate")
     def elaborate(self, predicate):
+        """The generated layer premise of `predicate`, from the selected authority."""
+        from .backends.dispatch import authority_for, execute
+        if authority_for("norms_elaborate") == "python" or not _lean_route(self):
+            return self._elaborate_python(predicate)
+
+        def lean():
+            label = f"layer:norms:{predicate}"
+            for item in self._lean_regenerated()["premises"]:
+                if item.get("label") == label:
+                    return _lean_formula(item["ast"])
+            raise VEError(f"UnknownSymbol: regulated predicate {predicate}")
+
+        return execute("norms_elaborate", {"document_hash": self.document_hash, "predicate": predicate},
+                       lambda: self._elaborate_python(predicate), lean=lean)
+
+    def _elaborate_python(self, predicate):
         positive, negative, _ = self.selection(predicate)
         decl = self.env.predicates[predicate]
         atom = _atom(predicate, len(decl.arguments))
@@ -255,7 +349,20 @@ class NormDocument:
 
     @semantic_entry("norms.elaborate")
     def premises(self):
-        return tuple((f"layer:norms:{p}", self.elaborate(p)) for p in self.order)
+        """The labelled layer premises in layer order, from the selected authority."""
+        from .backends.dispatch import authority_for, execute
+        if authority_for("norms_elaborate") == "python" or not _lean_route(self):
+            return self._premises_python()
+
+        def lean():
+            return tuple((item["label"], _lean_formula(item["ast"]))
+                         for item in self._lean_regenerated()["premises"])
+
+        return execute("norms_elaborate", {"document_hash": self.document_hash},
+                       self._premises_python, lean=lean)
+
+    def _premises_python(self):
+        return tuple((f"layer:norms:{p}", self._elaborate_python(p)) for p in self.order)
 
     def meaning_id(self, name):
         """A rule identity binds its AST and environment, never its display number."""
@@ -368,9 +475,94 @@ def check_norm_entailment_certificate(document: NormDocument, premises, conclusi
     """Replay the same ordered premise list used by `norms-certificate`."""
     if not isinstance(document, NormDocument):
         raise VEError("UnsupportedProfile: soft rules require the soft route")
+    from .backends.dispatch import authority_for, execute
+    if authority_for("norms_certificate") == "python" or not _lean_route(document):
+        return _norm_certificate_python(document, premises, conclusion, certificate)
+    payload = {"document_hash": document.document_hash,
+               "certificate": certificate if type(certificate) is dict else None}
+    return execute("norms_certificate", payload,
+                   lambda: _norm_certificate_python(document, premises, conclusion, certificate),
+                   lean=lambda: _norm_certificate_lean(document, premises, conclusion, certificate))
+
+
+def _norm_certificate_python(document, premises, conclusion, certificate):
     from .entailment import check_entailment_certificate
     layers = tuple(formula for _, formula in document.premises())
     return check_entailment_certificate(document.env, (*layers, *premises), conclusion, certificate)
+
+
+def _norm_certificate_lean(document, premises, conclusion, certificate):
+    """Python's input and binding checks, then Lean's `norms-certificate` replay.
+
+    Lean regenerates Background (flags first) and the layer premises itself and
+    binds the certificate to them; the layers named in the pre-checks are
+    Lean's too (`premises()` is dispatched).
+    """
+    from .ast import _to_data
+    from .backends.lean_runner import run
+    from .entailment import EntailmentCertificateCheck, _lean_replay_record, _replay_prechecks
+    max_steps = 10_000
+    layers = tuple(formula for _, formula in document.premises())
+    nodes = _replay_prechecks(document.env, (*layers, *premises), conclusion, certificate, max_steps)
+    if isinstance(nodes, EntailmentCertificateCheck):
+        return nodes
+    case = _lean_case(document, "norms-certificate", premises=[_to_data(p) for p in premises],
+                      conclusion=_to_data(conclusion), certificate=certificate)
+    return _lean_replay_record(lambda: run(_lean_mode(document), [case])[0]["valid"], nodes, max_steps)
+
+
+def _base_model(document, env, model):
+    """The witness model over the base environment. Decoding validates it,
+    Background included, under the selected authority (FiniteModel.from_dict)."""
+    from .model import FiniteModel
+    model = FiniteModel.from_dict(env, model) if type(model) is dict else model
+    if model.environment_id != env.environment_id:
+        raise VEError("InvalidModel: witness environment does not match base environment")
+    return model
+
+
+def _find_conflict(document, env, model, max_evaluations):
+    """Python's witness search: the first target and typed tuple whose conflict
+    formula evaluates true on `model`, or None. Raises `_Exhausted`."""
+    from .evaluate import _Evaluator
+    evaluator = _Evaluator(env, model, max_evaluations, trace=False)
+    for target, sorts, formula in document.conflict_targets():
+        _Checker(env).formula(formula, tuple(reversed(sorts)))
+        for values in product(*(model.domains[s] for s in sorts)):
+            bindings = tuple(zip(reversed(sorts), reversed(values)))
+            if evaluator.formula(formula, bindings)[0]:
+                return target, sorts, values
+    return None
+
+
+def _conflict_report(document, target, sorts, model, values):
+    """The CONFLICT record; its situation names the rules Python selects there."""
+    setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
+    if target in document.order:
+        selected = document.selected_rules(target, model, values)
+        role = document.env.predicates[target].regulated.role
+        pos = "permits" if role == "permission" else "requires" if role == "obligation" else "affirms"
+        neg = "forbids" if role == "permission" else "releases" if role == "obligation" else "denies"
+        decisions = "; ".join(f"rule {r.name} {pos if r.sign else neg}" for r in selected)
+    else:
+        required, permitted = target.split("->", 1)
+        decisions = f"{required} is required, but {permitted} is not permitted"
+    return ConflictReport("CONFLICT", target, tuple(values), f"{setting}: {decisions}")
+
+
+def _prove_targets(document, env, tableau_steps):
+    """Certificates for every conflict target from Python's (untrusted) prover,
+    or the UNKNOWN record of the first target it cannot prove."""
+    from .entailment import prove_entailment
+    certificates = {}
+    for target, sorts, formula in document.conflict_targets():
+        result = prove_entailment(env, (), _bind(Not(formula), sorts), max_steps=tableau_steps)
+        if result.status != "Found":
+            return ConflictReport("UNKNOWN", detail=f"tableau budget or open branch: {target}")
+        certificates[target] = {"environment_id": document.env.environment_id,
+                                "document_hash": document.document_hash,
+                                "target": target, "certificate": result.certificate}
+    return certificates
 
 
 @semantic_entry("norms.conflict")
@@ -379,47 +571,32 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
     """A checked finite witness or certificates decide; exhaustion stays UNKNOWN."""
     if not isinstance(document, NormDocument):
         raise VEError("UnsupportedProfile: soft rules require the soft route")
-    from .evaluate import _Evaluator, _Exhausted
-    from .model import FiniteModel
-    from .entailment import check_entailment_certificate, prove_entailment
+    from .backends.dispatch import authority_for, execute
+    options = {"model": model, "certificates": certificates, "max_evaluations": max_evaluations,
+               "prove": prove, "tableau_steps": tableau_steps}
+    if authority_for("norms_conflict") == "python" or not _lean_route(document):
+        return _check_conflict_python(document, **options)
+    return execute("norms_conflict", {"document_hash": document.document_hash, "prove": prove},
+                   lambda: _check_conflict_python(document, **options),
+                   lean=lambda: _check_conflict_lean(document, **options))
+
+
+def _check_conflict_python(document, *, model, certificates, max_evaluations, prove, tableau_steps):
+    from .evaluate import _Exhausted
+    from .entailment import check_entailment_certificate
     env = document.base_environment()
     if model is not None:
-        model = FiniteModel.from_dict(env, model) if type(model) is dict else model
-        if model.environment_id != env.environment_id:
-            raise VEError("InvalidModel: witness environment does not match base environment")
-        from .background import validate_background
-        validate_background(env, model)
-        evaluator = _Evaluator(env, model, max_evaluations, trace=False)
+        model = _base_model(document, env, model)
         try:
-            for target, sorts, formula in document.conflict_targets():
-                _Checker(env).formula(formula, tuple(reversed(sorts)))
-                for values in product(*(model.domains[s] for s in sorts)):
-                    bindings = tuple(zip(reversed(sorts), reversed(values)))
-                    if evaluator.formula(formula, bindings)[0]:
-                        setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
-                        if target in document.order:
-                            selected = document.selected_rules(target, model, values)
-                            role = document.env.predicates[target].regulated.role
-                            pos = "permits" if role == "permission" else "requires" if role == "obligation" else "affirms"
-                            neg = "forbids" if role == "permission" else "releases" if role == "obligation" else "denies"
-                            decisions = "; ".join(f"rule {r.name} {pos if r.sign else neg}" for r in selected)
-                        else:
-                            required, permitted = target.split("->", 1)
-                            decisions = f"{required} is required, but {permitted} is not permitted"
-                        situation = f"{setting}: {decisions}"
-                        return ConflictReport("CONFLICT", target, tuple(values), situation)
+            found = _find_conflict(document, env, model, max_evaluations)
+            if found is not None:
+                return _conflict_report(document, *found[:2], model, found[2])
         except _Exhausted:
             return ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
     if prove:
-        certificates = {}
-        for target, sorts, formula in document.conflict_targets():
-            conclusion = _bind(Not(formula), sorts)
-            result = prove_entailment(env, (), conclusion, max_steps=tableau_steps)
-            if result.status != "Found":
-                return ConflictReport("UNKNOWN", detail=f"tableau budget or open branch: {target}")
-            certificates[target] = {"environment_id": document.env.environment_id,
-                                    "document_hash": document.document_hash,
-                                    "target": target, "certificate": result.certificate}
+        certificates = _prove_targets(document, env, tableau_steps)
+        if isinstance(certificates, ConflictReport):
+            return certificates
     if certificates is not None:
         for target, sorts, formula in document.conflict_targets():
             package = certificates.get(target)
@@ -432,4 +609,50 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
             if not checked.valid:
                 return ConflictReport("UNKNOWN", detail=f"invalid certificate for {target}")
         return ConflictReport("CONFLICT-FREE")
+    return ConflictReport("UNKNOWN", detail="tableau budget or search bound")
+
+
+def _check_conflict_lean(document, *, model, certificates, max_evaluations, prove, tableau_steps):
+    """Lean's `norms-conflict` decides CONFLICT and CONFLICT-FREE.
+
+    Python's witness search and prover are untrusted generators: a found
+    witness is replayed by Lean (a refused one is a generator/check
+    disagreement, CheckerUnavailable), and every certificate package is
+    replayed by Lean over the regenerated targets. Exhausting either generator
+    yields UNKNOWN, which asserts nothing. The model is validated as Python
+    validates it until the model adapter lands; Lean validates it again.
+    """
+    from .backends.lean_runner import run
+    from .evaluate import _Exhausted
+    from .wire import canonical_json
+    env = document.base_environment()
+    if model is not None:
+        model = _base_model(document, env, model)
+        try:
+            found = _find_conflict(document, env, model, max_evaluations)
+            if found is not None:
+                target, sorts, values = found
+                witness = {"target": target, "model": model.to_dict(), "tuple": list(values)}
+                row = run(_lean_mode(document), [_lean_case(document, "norms-conflict", witness=witness)])[0]
+                if row["verdict"] != "CONFLICT" or row.get("target") != target:
+                    raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the conflict "
+                                             "witness Python's search found")
+                return _conflict_report(document, target, sorts, model, values)
+        except _Exhausted:
+            return ConflictReport("UNKNOWN", detail="MAX_EVALUATIONS")
+    if prove:
+        certificates = _prove_targets(document, env, tableau_steps)
+        if isinstance(certificates, ConflictReport):
+            return certificates
+    if certificates is not None:
+        try:
+            canonical_json(certificates)
+        except (VEError, TypeError, ValueError):
+            certificates = {}  # packages that are not JSON bind nothing
+        row = run(_lean_mode(document), [_lean_case(document, "norms-conflict", packages=certificates)])[0]
+        if row["verdict"] == "CONFLICT-FREE":
+            return ConflictReport("CONFLICT-FREE")
+        if row["verdict"] != "UNKNOWN" or type(row.get("detail")) is not str:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean conflict result")
+        return ConflictReport("UNKNOWN", detail=row["detail"])
     return ConflictReport("UNKNOWN", detail="tableau budget or search bound")

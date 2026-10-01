@@ -10,12 +10,13 @@ formulas are regenerated from the environment.
 """
 from __future__ import annotations
 
+from pathlib import Path
 import re
 from typing import NamedTuple
 
 from .assurance import semantic_entry
 from .ast import Or, formula_from_data, formula_to_data
-from .background import HOOKS, background
+from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
 from .environment import Environment
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
@@ -95,11 +96,33 @@ def parse_label(s) -> Label | None:
     return label if label is not None and label.render() == s else None
 
 
-@semantic_entry("label")
-def validate_label(s) -> str:
+def _validate_label_python(s) -> str:
     if parse_label(s) is None:
         raise AdmissionError(f"AdmissionError: invalid label {s}")
     return s
+
+
+@semantic_entry("label")
+def validate_label(s) -> str:
+    """Check the public label grammar through the selected authority."""
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_runner import run
+    from .backends.lean_service import CheckerUnavailable
+
+    if type(s) is not str:
+        raise AdmissionError(f"AdmissionError: invalid label {s}")
+    if authority_for("label") == "python":
+        return _validate_label_python(s)
+    case = {"id": "label", "kind": "label", "environment": _DEPENDENCY_ENVIRONMENT,
+            "label": s}
+
+    def lean():
+        label = run("route", [case])[0].get("label")
+        if type(label) is not str or label != s:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean label result")
+        return label
+
+    return execute("label", case, lambda: _validate_label_python(s), lean=lean)
 
 
 # Kinds are kept in their wire form (a string or a tagged list); decoding only validates.
@@ -412,6 +435,62 @@ def _claim_json(env, claim):
 
 @semantic_entry("admission")
 def admit_document(environment, document) -> dict:
+    """Admit a document under the selected checker authority."""
+    from .backends.dispatch import authority_for, execute
+    from .backends.lean_runner import run
+    from .backends.lean_service import CheckerUnavailable
+
+    if authority_for("admission") == "python":
+        return _admit_document_python(environment, document)
+    from .softnorms import SoftEnvironment
+    if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
+            "soft-norms@0" in environment.get("profiles", [])):
+        # The soft route is Lean's (soft_route.admit_soft_document runs it).
+        return _admit_document_python(environment, document)
+    env = environment if type(environment) is Environment else Environment(environment)
+    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),
+            "document": document}
+
+    def lean():
+        # Envelope routing, not a verdict: the Lean route admits ve.core@0.2 only.
+        if env.language != LANGUAGE:
+            raise VEError("admission requires a ve.core@0.2 environment")
+        if env.alternatives is not None:
+            # The alternatives route is Lean's (Lean-only operation); the Python
+            # entry only transports the case to it.
+            return _admit_document_python(env, document)
+        if env.unit_schema is not None:
+            return _lean_quantity_admission(env, document)
+        row = run("norms" if "norms@0" in env.profiles and (
+            any(d.regulated is not None for d in env.predicates.values()) or
+            (type(document) is dict and type(document.get("units")) is list and
+             any(type(u) is dict and type(u.get("content")) is dict and
+                 "norm" in u["content"] for u in document["units"]))
+        ) else "route", [case])[0]
+        expected = {"id", "status", "admitted", "report", "report_id", "kinds"}
+        if set(row) != expected or row["admitted"] is not True:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
+        return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+
+    return execute("admission", case, lambda: _admit_document_python(env, document), lean=lean)
+
+
+QUANTITY_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_quantity"
+
+
+def _lean_quantity_admission(env, document) -> dict:
+    """W6 quantity admission by Lean `ve_quantity` (case kind `document`)."""
+    from .backends import lean as backend
+    from .backends.diagnostics import checker_error
+    [row] = backend.run("admission", QUANTITY_ROUTE,
+                        [{"id": "admission", "kind": "document", "environment": env.to_dict(),
+                          "document": document}], runner="ve_quantity", timeout=60.0)
+    if row["status"] == "error":
+        raise checker_error(row["error"])
+    return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+
+
+def _admit_document_python(environment, document) -> dict:
     """Admit a ve.core@0.2 document (FOL family) or raise with Lean's diagnostic.
 
     Returns the admitted report, its `ve-report-<identity>` id and the units'

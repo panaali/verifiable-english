@@ -39,6 +39,14 @@ import VE.Norms.SmallModel
 import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
+import VE.Norms.Flagged
+import VE.Service.Graph
+import VE.Service.Readings
+import VE.Service.FamilyNorms
+import VE.Service.FamilyBundle
+import VE.Service.GenericGraph
+import VE.Service.GenericReadings
+import VE.Service.Family
 import VE.Norms.Run
 import VE.SpeechActs.Tree
 import VE.SpeechActs.Demand
@@ -824,6 +832,86 @@ import VE.Discourse.English
 #print axioms VE.Norms.Replay.norms_wire_conflict_witness_sound
 #print axioms VE.Norms.Replay.target_refutes
 #print axioms VE.Norms.Replay.norms_wire_acceptance
+#print axioms VE.Norms.Flagged.replayEntailment_source
+#print axioms VE.Norms.Flagged.norms_flagged_acceptance
+#print axioms VE.Norms.Flagged.conflictFreeCheck_target
+#print axioms VE.Norms.Flagged.conflictFreeCheck_sound
+#print axioms VE.Norms.Flagged.replayConflict_source
+#print axioms VE.Norms.Flagged.conflictFree_plain
+#print axioms VE.Norms.Flagged.conflictFree_flagged
+#print axioms VE.Norms.Flagged.norms_flagged_conflict_sound
+#print axioms VE.Norms.Flagged.norms_flagged_witness_sound
+#print axioms VE.Service.Graph.graph_sound
+#print axioms VE.Service.Graph.graph_entails
+#print axioms VE.Service.Graph.graph_unfolds
+#print axioms VE.Service.Readings.disjunction_denote
+#print axioms VE.Service.Readings.choice_covers
+#print axioms VE.Service.Readings.choice_within
+#print axioms VE.Service.Readings.readings_all_sound
+#print axioms VE.Service.Readings.refutes_not_entails
+#print axioms VE.Service.Readings.readings_none_sound
+#print axioms VE.Service.Readings.resolve_choice
+#print axioms VE.Service.Readings.readings_some_sound
+#print axioms VE.Service.FamilyNorms.closure_norms_certificate_sound
+#print axioms VE.Service.FamilyNorms.core_norms_certificate_sound
+#print axioms VE.Service.FamilyNorms.order_norms_certificate_sound
+#print axioms VE.Service.FamilyNorms.closure_conflict_target_sound
+#print axioms VE.Service.FamilyNorms.core_conflict_target_sound
+#print axioms VE.Service.FamilyNorms.order_conflict_target_sound
+#print axioms VE.Service.Family.folRefutes_sound
+#print axioms VE.Service.Family.fol_readings_all_sound
+#print axioms VE.Service.Family.fol_readings_none_sound
+#print axioms VE.Service.Family.fol_readings_some_sound
+#print axioms VE.Service.FamilyBundle.mem_appendNew_left
+#print axioms VE.Service.FamilyBundle.mem_appendNew_right
+#print axioms VE.Service.FamilyBundle.lookupKnown_mem
+#print axioms VE.Service.FamilyBundle.citeAll_sound
+#print axioms VE.Service.FamilyBundle.checkLemma_sound
+#print axioms VE.Service.FamilyBundle.checkAll_sound
+#print axioms VE.Service.FamilyBundle.checkLemma_labels
+#print axioms VE.Service.FamilyBundle.checkAll_labels
+#print axioms VE.Service.FamilyBundle.bundle_sound
+#print axioms VE.Service.FamilyBundle.fol_bundle_sound
+#print axioms VE.Service.FamilyBundle.closure_bundle_sound
+#print axioms VE.Service.FamilyBundle.core_bundle_sound
+#print axioms VE.Service.FamilyBundle.order_bundle_sound
+#print axioms VE.Service.GenericGraph.acyclicCheck_dependency
+#print axioms VE.Service.GenericGraph.path_rank
+#print axioms VE.Service.GenericGraph.acyclicCheck_sound
+#print axioms VE.Service.GenericGraph.lookup_sound
+#print axioms VE.Service.GenericGraph.resolve_sound
+#print axioms VE.Service.GenericGraph.checkNode_sound
+#print axioms VE.Service.GenericGraph.checkNodes_sound
+#print axioms VE.Service.GenericGraph.check_sound
+#print axioms VE.Service.GenericReadings.disjunction_holds
+#print axioms VE.Service.GenericReadings.choice_covers
+#print axioms VE.Service.GenericReadings.choice_within
+#print axioms VE.Service.GenericReadings.resolve_choice
+#print axioms VE.Service.GenericReadings.refutes_not_ent
+#print axioms VE.Service.GenericReadings.readings_all_sound
+#print axioms VE.Service.GenericReadings.readings_none_sound
+#print axioms VE.Service.GenericReadings.readings_some_sound
+#print axioms VE.Service.Family.closureRefutes_sound
+#print axioms VE.Service.Family.coreRefutes_sound
+#print axioms VE.Service.Family.orderRefutes_sound
+#print axioms VE.Service.Family.closure_graph_sound
+#print axioms VE.Service.Family.closure_graph_entails
+#print axioms VE.Service.Family.closure_graph_unfolds
+#print axioms VE.Service.Family.core_graph_sound
+#print axioms VE.Service.Family.core_graph_entails
+#print axioms VE.Service.Family.core_graph_unfolds
+#print axioms VE.Service.Family.order_graph_sound
+#print axioms VE.Service.Family.order_graph_entails
+#print axioms VE.Service.Family.order_graph_unfolds
+#print axioms VE.Service.Family.closure_readings_all_sound
+#print axioms VE.Service.Family.closure_readings_none_sound
+#print axioms VE.Service.Family.closure_readings_some_sound
+#print axioms VE.Service.Family.core_readings_all_sound
+#print axioms VE.Service.Family.core_readings_none_sound
+#print axioms VE.Service.Family.core_readings_some_sound
+#print axioms VE.Service.Family.order_readings_all_sound
+#print axioms VE.Service.Family.order_readings_none_sound
+#print axioms VE.Service.Family.order_readings_some_sound
 #print axioms VE.Norms.Admission.admitNodes_ok
 #print axioms VE.Norms.Admission.mapM_ok_mem
 #print axioms VE.Norms.Admission.forM_ok
@@ -1835,6 +1923,15 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_route
 #print axioms VE.Service.runMode_norms
 #print axioms VE.Service.runMode_english
+#print axioms VE.Service.runMode_environment
+#print axioms VE.Service.runMode_model
+#print axioms VE.Service.runMode_check
+#print axioms VE.Service.runMode_identity
+#print axioms VE.Service.runMode_parse
+#print axioms VE.Service.runMode_graph
+#print axioms VE.Service.runMode_readings
+#print axioms VE.Service.runMode_bundle
+#print axioms VE.Service.runMode_familyNorms
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq

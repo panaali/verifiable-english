@@ -132,6 +132,9 @@ pub struct Environment {
     pub(crate) profile_pairs: Vec<(String, String)>,
     /// Identity-bound definitions (W3), in dependency order.
     pub(crate) definitions: Vec<(String, Vec<String>, Formula)>,
+    /// Premises a validated soft document adds to Background (Python's
+    /// `soft_premises` slot); never part of the environment JSON or identity.
+    pub(crate) soft_premises: Vec<Formula>,
     data: Value,
     id: String,
 }
@@ -182,6 +185,7 @@ impl Environment {
                 "order@0",
                 "relational-fol@0",
                 "reports@0",
+                "soft-norms@0",
                 "time@0",
             ];
             for p in &profiles {
@@ -213,6 +217,9 @@ impl Environment {
                     if !seen.insert(holder) { return error("DuplicateDeclaration", "holder sort"); }
                 }
                 string(&block["evidence"], "UnknownSymbol")?;
+            }
+            if has("soft-norms@0") && !has("norms@0") {
+                return error("UnsupportedProfile", "soft-norms@0 requires norms@0");
             }
             if has("order@0") && (has("closure@0") || has("nary@0")) {
                 let pair = if has("closure@0") {
@@ -270,12 +277,14 @@ impl Environment {
                 "unsupported language, profile or specification revision",
             );
         }
-        let vocab = fields(
-            &obj["vocabulary"],
-            if reports { &["sorts", "predicates", "constants", "reports"] }
-            else { &["sorts", "predicates", "constants"] },
-            "InvalidInput",
-        )?;
+        // soft-norms@0 declares parties and ranks (the `soft` block and each
+        // predicate's `instruction_of`); they bind identity and carry no
+        // semantics this route checks.
+        let soft = route && profiles.iter().any(|p| p == "soft-norms@0");
+        let mut vocab_keys = vec!["sorts", "predicates", "constants"];
+        if reports { vocab_keys.push("reports"); }
+        if soft && obj["vocabulary"].get("soft").is_some() { vocab_keys.push("soft"); }
+        let vocab = fields(&obj["vocabulary"], &vocab_keys, "InvalidInput")?;
         let sorts = object(&vocab["sorts"], "InvalidInput")?;
         let preds = object(&vocab["predicates"], "InvalidInput")?;
         let consts = object(&vocab["constants"], "InvalidInput")?;
@@ -343,6 +352,7 @@ impl Environment {
             if is_defined { keys.push("defined"); }
             if decl.get("functional").is_some() { keys.push("functional"); }
             if decl.get("total").is_some() { keys.push("total"); }
+            if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
             let d = entry_fields(decl, &keys, true,
                 route && profiles.iter().any(|p| p == "norms@0"))?;
             let maximum_arity = if route && profiles.iter().any(|p| p == "nary@0") { 6 } else { 2 };
@@ -500,6 +510,7 @@ impl Environment {
             constants,
             profile_pairs,
             definitions: Vec::new(),
+            soft_premises: Vec::new(),
             data: canonical_data.clone(),
             id: digest(&format!("ve-environment-{version}\n"), &canonical_data)?,
         };
@@ -553,6 +564,12 @@ impl Environment {
             result.push((name, signature, body));
         }
         Ok(result)
+    }
+    /// This environment with the premises a validated soft document adds to
+    /// Background: models must satisfy them (`InvalidModel(soft)`).
+    pub fn with_soft_premises(mut self, premises: Vec<Formula>) -> Self {
+        self.soft_premises = premises;
+        self
     }
     pub(crate) fn is_defined(&self, name: &str) -> bool {
         self.definitions.iter().any(|(n, _, _)| n == name)
