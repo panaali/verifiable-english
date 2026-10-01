@@ -1,110 +1,151 @@
 # BlueDot grant draft, authored in VE
 
-This measures translation of our own grant draft after merging the 2026-09-30
-feature work. The source is unchanged: [`source.md`](source.md) has SHA-256
+This measures translation of our own grant draft. The source is unchanged:
+[`source.md`](source.md) has SHA-256
 `a9fa225acce6a684af7519c9c6fa82a20fc3a7e685a04b7e1a4bac88a0d6ed22`
 and 7,619 UTF-8 bytes. [`document.ve.md`](document.ve.md) partitions every
-source byte into the same 93 units as the 2026-09-27 baseline. The source is
-copied byte for byte after its JSON front matter. [`natural-view.md`](natural-view.md)
-lists each source span and its checked rendering.
+source byte into the same 93 units as the 2026-09-27 baseline, and copies the
+source byte for byte after its JSON front matter.
+[`natural-view.md`](natural-view.md) lists each span, its status, its kind and
+the checked rendering.
 
 ## Before and after coverage
 
-| Status | 2026-09-27 bytes | 2026-09-27 units | Now bytes | Now units |
-|---|---:|---:|---:|---:|
-| CHECKED | 780 (10.2%) | 12 | 6,709 (88.1%) | 67 |
-| LABELLED | 3,513 (46.1%) | 50 | 853 (11.2%) | 25 |
-| OPEN | 2,081 (27.3%) | 22 | 0 (0%) | 0 |
-| UNFORMALISED | 1,245 (16.3%) | 9 | 57 (0.7%) | 1 |
-| **Total** | **7,619** | **93** | **7,619** | **93** |
+The previous version reported 88.1% CHECKED. Review found that most of it was
+relabelling: one-off atoms such as `uses_50_to_5000_steps` were auto-declared
+per unit, the five definitions were never used, and causal links, a year,
+obligations and a risk default were invented. Those statuses are withdrawn.
 
-`ve document coverage` reports 100% byte accounting and no residual open
-terms. Its remaining 23 assumption lines are author readings, not evidence that
-the underlying empirical and causal claims are true. `ve document check` reports
-premise consistency `UNKNOWN` under its bounded search. The prior document's
-tautological graph was removed: the five definitions are checked as definitions,
-and this version does not claim a proof of the whole proposal.
+| Status | 2026-09-27 baseline | Previous (withdrawn) | Now |
+|---|---:|---:|---:|
+| CHECKED | 780 B (10.2%), 12 units | 6,709 B (88.1%), 67 | **3,351 B (44.0%), 40** |
+| LABELLED | 3,513 B (46.1%), 50 | 853 B (11.2%), 25 | 1,107 B (14.5%), 26 |
+| OPEN | 2,081 B (27.3%), 22 | 0 B (0%), 0 | 2,114 B (27.7%), 19 |
+| UNFORMALISED | 1,245 B (16.3%), 9 | 57 B (0.7%), 1 | 1,047 B (13.7%), 8 |
+| **Total** | **7,619 B, 93** | **7,619 B, 93** | **7,619 B, 93** |
 
-## Author choices for the five former open terms
+`ve document coverage` reports 100% byte accounting, 4 open terms and 18
+assumption lines. `ve document check` reports premise consistency `UNKNOWN`
+under its bounded search. A CHECKED status means a typed formula states what
+the span says. It does not establish the draft's predictions, provenance,
+risk reduction or causal mechanisms.
 
-[`author_choices.py`](author_choices.py) contains the signed `grant-author`
-rule, a short reason, and an executable record classifier for each term. The
-VE environment also defines each term as the conjunction of its required
-evidence flags. No record of a real trial or event is supplied as true.
+## What CHECKED means here
 
-| Term | Operational decision rule |
+[`semantic_readings.py`](semantic_readings.py) has one authored entry for each
+of the 93 units. Nothing is auto-declared. A CHECKED formula uses relations
+between named constants, quantifiers, equality or a defined term. Every
+content word in its symbols occurs in the span or in a recorded resolution.
+Tests enforce both rules.
+
+The kind keeps the speaker. Only the author's notes are plain assertions (18
+units, each with a signed reading set). OLD, NEW and PASTE wording is
+attributed to that text (16 units). Each title candidate is attributed to its
+candidate (4). The intention in note 5 (u062) and the paste instruction (u067)
+make up the last two. Hedges and commitments stay nested inside the
+attribution, for example `old_text says (applicant promised …)`.
+
+## Author choices for the five terms
+
+[`author_choices.py`](author_choices.py) gives each term a signed rule and a
+reason. The rule is a list of clauses. The document records the choice in the
+term's definition. The predicate's description carries the signature, the
+rule and the reason, and its body is the conjunction of the clauses. `decide()`
+is exactly the conjunction of the same clauses, so the classifier and the
+definition cannot drift. Tests show that every clause can fail on its own.
+
+| Term | Clauses (author choice) |
 |---|---|
-| `matched_cost` | Same task and preregistered budget record; log authoring, formalisation, proof, compute, and review for both arms; totals differ by at most 5% of the larger total. |
-| `real_artefact` | Record a provenance SHA-256 and creation and selection dates; the independent task predates selection, and evaluators did not seed a flaw. |
-| `affordable_proof` | A complete certificate passes the checker and both full cost and elapsed time meet budgets registered before the claim. |
-| `misleading_formalisation` | Pin source and formula hashes, identify an answer-changing counterexample, and obtain two distinct blind reproductions. |
-| `catastrophic_risk` | Record a pathway and its evidence to human extinction or at least one million projected deaths. Possibility of that pathway needs a separate risk judgment. |
+| `matched_cost` | same task; budget registered before the comparison starts; the cost of authoring, formalisation, proof production, compute and review is counted for both arms; arm totals differ by at most 5% of the larger |
+| `real_artefact` | provenance SHA-256 recorded; created for a non-benchmark task; created before selection; no flaw seeded by evaluators |
+| `affordable_proof` | proof cost and formalisation cost recorded; complete certificate; accepted by the checker; budget and deadline registered before the claim; cost within budget and time within deadline |
+| `misleading_formalisation` | source and formula hashes pinned; an answer-changing concrete input; two distinct reviewers reproduce it; every reproducing reviewer is blind to the arm |
+| `catastrophic_risk` | documented pathway; pathway evidence recorded; severity assessment recorded; extinction or at least 1,000,000 projected deaths. Possibility is a separate judgment. |
 
-The thresholds are author choices for this exercise; the checker does not
-infer that any real case satisfies them. Boundary tests show what each rule
-accepts and rejects. These rules replace the previous unresolved metadata,
-including occurrences in OLD wording, NEW wording, PASTE copies, and notes.
+No record of a real trial or event is supplied as true.
 
-## What the merged features unlocked
+## Where the definitions are used, and where they stay open
 
-The byte partition stays in one relational document. Some statement profiles
-cannot be combined in a single VE environment, so
-[`feature-readings.json`](feature-readings.json) holds source-linked readings
-checked by their separate feature APIs. Its entries retain the source unit IDs
-and source SHA-256. The main document's recursive `kind` records causal,
-attributed, hedged and instructional force; source propositions in those units
-are typed but do not become unqualified empirical premises.
+Every unit that mentions a defined term either uses that term's predicate or
+is OPEN on it:
 
-| Merged feature | Newly checked source units | Treatment |
+| Term | Used by CHECKED units | OPEN units |
 |---|---|---|
-| Causation | `u026 u030 u031 u040 u041 u047 u052 u060 u064 u084 u091 u092` | Causal kind, including the update's stated motivation. It records the proposed relation, without proving a causal effect. |
-| Attribution and reported speech | `u003 u007 u009 u012 u013 u014 u015 u017 u024 u032 u039 u042 u056 u060 u074 u076 u078 u090 u093` | OLD text is quoted, and future work is an applicant intention. `u003 u007 u060 u074` also pass the reports layer without promoting the inner claim to truth. |
-| Speech acts and commands | `u018 u019 u020 u021 u067 u079 u080 u081 u082` | All nine edit instructions are active `require` commands on the separate speech act route. The OLD `u015` instruction stays quoted. |
-| Risk possibility and severity | `u029 u035 u037 u086 u088` | The “could/may” harms round-trip as “might lead to.” The severity class is explicitly `unassessed`; no harm magnitude is invented. |
-| Units and time | `u012 u017 u078` | A separate annotated date statement checks 2026-10-25 as the intended deadline, using the dated draft context for the year. It does not assert release occurred. |
-| Soft norms | none | The only “should,” `u033`, predicts that open research material will help others. It names no obligated actor or regulated action, so it remains a labelled hope. `u039` and `u090` describe an intended VEX requirement, not an active norm. |
-| Discourse and pronouns | none on the discourse route | The author resolves “It” in `u049` to the proof rule and “their” to the foundations in its typed reading. The merged discourse route rejects this compound source sentence as outside its supported fragment; the binding remains an author choice. |
+| `affordable_proof` | `u038 u050 u089`; `u051` uses its `within_budget` clause | none |
+| `matched_cost` | `u062` (the planned comparison, as an intention) | `u013 u018 u024 u079` |
+| `real_artefact` | `u041 u092` (real artefacts in the benchmark test transfer) | `u015 u021 u031 u063 u082` |
+| `misleading_formalisation` | none | `u014 u017 u040 u064 u078 u091` |
+| `catastrophic_risk` | none | `u022 u027 u083 u085` |
 
-The table describes features used in a unit, so `u060` appears in both causal
-and attribution rows. The 67 CHECKED units also include bounded statements
-about the draft, the named decision criteria, and copied source metadata.
-The checked renderings are audited parser round trips; some use the explicit
-form when the writable natural grammar has no faithful phrasing.
+The four open terms are declared in the document's `open_terms` with their
+reasons. OLD wording predates the author's rules. Milestone items are plans,
+so they are not formalised. "Misleading-formalisation controls" and error
+classes do not say how they relate to a formalisation. BlueDot, not the
+author, decides what its form heading means by "catastrophic risk".
+
+## Removed or corrected content
+
+| Finding | Correction |
+|---|---|
+| Causal "because" on "test these harms", "test transfer", "is a benefit of", "cover" | No causal kind anywhere. These are plain relations (`tests`, `benefit_of`) or OPEN. |
+| Merged causation route never invoked | [`causal.ve.md`](causal.ve.md) checks `u029 u035 u047 u086` on `alternatives@0` over the same bytes. Lean admission types `prevents` in u047. The Lean route refuses `alternatives@0` together with definitions, so these units are UNFORMALISED (`causal_route_excludes_definitions`) in the main document and are not counted as CHECKED. |
+| Stated causal links the route cannot express | `u026 u084` ("blocks … by excluding …") are `causal_means`; `u060` ("motivates") is `motivation_link`. All three are UNFORMALISED. |
+| u041/u092 gained "beyond planted flaws" | They now state only "real artefacts test transfer". |
+| Year 2026 and "intended" OLD u012 | No date reading remains, because the source gives no year. u012 is a LABELLED plan attributed to the OLD text. |
+| Milestone clauses turned into `require` obligations with deny/allow defaults | Removed. Milestones are LABELLED plans, or OPEN where they mention a defined term. |
+| Risk default `unexamined: possible` | Removed. No risk policy, severity class or default is supplied. |
+| u054 "claims no novelty" | Now "the draft does not claim novelty …". |
+| u039/u090 made VEX require the quality review | VEX requires evidence, and that evidence still needs quality review. |
+| u060 attributed the author's motivation to the update | UNFORMALISED. No attribution to the update remains. |
+| Omissions in u003, u019, u026, u029, u052 | u003 states both tools and all three issues, and u029 both harms. u052 keeps "in general". u019 is a LABELLED plan, and u026 is UNFORMALISED. |
+| `decide()` gaps | It now checks proof-cost recording, budget and deadline registered before the claim, reviewer blindness and the severity assessment. |
+
+## Author resolutions
+
+The discourse route does not admit these resolutions. Each is an author
+choice, recorded in `RESOLUTIONS` and in the reading set's `why`.
+
+| Unit | Resolution |
+|---|---|
+| u030 | "these harms": the two false-confidence harms of u029 |
+| u040, u091 | "these harms": the harms of the preceding NEW sentence (unit stays OPEN) |
+| u041, u092 | "real artefacts": those included in the benchmark; "transfer" left unqualified |
+| u045 | "its": bluedot-rapid-draft-v3.md |
+| u048 | "the guarantee": the guarantee of mandatory proof |
+| u049 | "It": the guarantee; "their": the declared foundations |
+| u050 | "needs": needed for the claim not to remain unresolved |
+| u051 | "the claim": the claim those proofs prove; "beyond budget": not `within_budget` |
+| u052 | "This": note 2's protection against arbitrary false sub-claims |
+| u054, u058 | "is claimed": by this draft |
+| u059 | "its": VEX |
+| u062 | "the matched-cost comparison": the one in the revised form text |
+| u067 | "its label or count": the pasted candidate's |
+| u068 | "sentence and paragraph": respectively |
+| u070 | "its": the proof rule; "the extra space": in the revised passages |
 
 ## Remaining limits
 
-| Missing capability | Source units | Coverage treatment |
-|---|---:|---|
-| Baseline and tolerance for “close to the current length” | 1 (`u069`) | UNFORMALISED, 57 bytes. The source does not give a baseline or tolerance. |
-| Discourse validation of the compound pronoun sentence | 1 (`u049`) | The author reading is CHECKED as a relational formula; its pronoun binding is not independently admitted by `ve.discourse@1`. |
+| Missing capability | Units | Treatment |
+|---|---|---|
+| Causation route together with definitions | `u029 u035 u047 u086` | UNFORMALISED here; checked in `causal.ve.md` |
+| Means and motivation links | `u026 u060 u084` | UNFORMALISED |
+| Baseline and tolerance for "close to the current length" | `u069` | UNFORMALISED |
+| Natural wording for this vocabulary | all 40 CHECKED | The natural grammar's lint rejects these templates, so every rendering is the explicit form, parsed back to the same formula. |
 
-Headings, OLD/NEW/PASTE labels, the predictive hope `u033`, and the subjective
-credit judgment `u053` remain LABELLED. A CHECKED status validates a chosen
-formal reading and its typing. It does not establish the draft's experimental
-predictions, cited provenance, risk reduction, or causal mechanism.
+Headings, OLD/NEW/PASTE labels, plans, the hope in `u033` and the credit
+judgment in `u053` remain LABELLED.
 
 ## Recheck
 
 ```sh
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m usecases.bluedot-grant.build_document
-UV_CACHE_DIR=/tmp/uv-cache uv run python -m usecases.bluedot-grant.feature_readings
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m ve document check usecases/bluedot-grant/document.ve.md
+UV_CACHE_DIR=/tmp/uv-cache uv run python -m ve document check usecases/bluedot-grant/causal.ve.md
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m ve document coverage usecases/bluedot-grant/document.ve.md
 PATH="$HOME/.elan/bin:$PATH" lake build  # in lean/
 UV_CACHE_DIR=/tmp/uv-cache uv run python lean/audit.py
 UV_CACHE_DIR=/tmp/uv-cache uv run python -m pytest
 ```
 
-The two generators use only local source bytes and checker APIs. They make no
-model calls and do not modify `source.md`.
-
-Verification on this worktree: `lake build` completed 488 jobs;
-`lean/audit.py` passed its 249-file, 2,437-declaration audit; the focused
-BlueDot test passed 4 tests. The full suite passed **4,886 tests, 10 skipped**
-with `VE_NATIVE_PREBUILT=1`, `VE_LEAN_PREBUILT=1`, and
-`VE_RUST_SHA256=04470aa2a3a7c14367f4040d1da37e2b356ad0c07f82a0b9731f0b34049261f4`,
-the SHA-256 of the Rust binary built from this checkout. The first full-suite
-run without that override had 134 Rust authority failures: `main` pins
-`7d74b350…` in `lean/checkers.lock`, which differs from this local build.
-Those 134 tests passed with the local SHA override before the successful full
-rerun. No Rust source or trust lock was changed for this use case.
+The generator uses only local source bytes and checker APIs. It makes no model
+calls and does not modify `source.md`.
