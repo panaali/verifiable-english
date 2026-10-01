@@ -1,0 +1,3 @@
+**(a) No: it was 60 gigabytes or less.**
+
+**Reason:** The text establishes that if size > 60 GB, then compression leads to outage. Since compression occurred but no outage happened, the antecedent of that conditional must be false, meaning the size was not greater than 60 gigabytes.

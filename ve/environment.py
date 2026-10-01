@@ -124,11 +124,15 @@ class RegulatedDecl:
     permission: str | None = None
 
 
-def _regulated(raw, args, name):
+def _regulated(raw, args, name, *, unspecified=False):
     if type(raw) is not dict or "role" not in raw or "default" not in raw:
         raise VEError(f"InvalidInput: regulated declaration {name} needs role and default")
     role, default = raw["role"], raw["default"]
-    if role not in ("permission", "obligation", "plain") or default not in ("deny", "allow"):
+    if default == "unspecified" and role in ("permission", "obligation", "plain") and not unspecified:
+        # norm-defaults 2.1: a statement of silence, accepted only under its profile.
+        raise UnsupportedProfile("UnsupportedProfile: unspecified completion requires norm-defaults@0")
+    if (role not in ("permission", "obligation", "plain")
+            or default not in ("deny", "allow", *(("unspecified",) if unspecified else ()))):
         raise VEError(f"InvalidInput: invalid regulated role or default for {name}")
     required = {"role", "default"} | ({"act"} if role != "plain" else set())
     allowed = required | ({"permission"} if role == "obligation" else set())
@@ -429,7 +433,9 @@ class Environment:
             verbalisation = _verbalisation(entry["verbalisation"]) if "verbalisation" in entry else None
             negative = (_verbalisation(entry["negative_verbalisation"])
                         if "negative_verbalisation" in entry else None)
-            regulated = _regulated(entry["regulated"], args, name) if "regulated" in entry else None
+            regulated = (_regulated(entry["regulated"], args, name,
+                                    unspecified=route and "norm-defaults@0" in data["profiles"])
+                         if "regulated" in entry else None)
             if defined:
                 payload = entry["defined"]
                 require_fields(payload, {"arguments", "body"}, path=f"/vocabulary/predicates/{name}/defined")
@@ -440,6 +446,11 @@ class Environment:
                                              entry.get("functional"), entry.get("total"),
                                              canonical_json(entry["defined"]) if defined else None,
                                              argument_units)
+        if route and "norm-defaults@0" in data["profiles"]:
+            # norm-defaults 2.1: `unsaid__` names the fillings `fill` adds.
+            for name in predicates:
+                if name.startswith("unsaid__"):
+                    raise VEError(f"InvalidInput: reserved name {name}")
         regulated_names = [n for n, p in predicates.items() if p.regulated is not None]
         if len(regulated_names) > 64:
             raise ResourceLimit("regulated predicates")

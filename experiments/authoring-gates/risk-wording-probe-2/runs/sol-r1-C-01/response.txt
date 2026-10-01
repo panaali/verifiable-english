@@ -1,0 +1,1 @@
+**(a) No: it was 60 gigabytes or less.** The agent compressed the files without an outage, which rules out a size greater than 60 gigabytes.

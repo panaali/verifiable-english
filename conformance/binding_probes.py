@@ -119,6 +119,14 @@ def _norms_admission():
     return {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}
 
 
+def _norm_defaults_admission():
+    from conformance.norm_defaults import sources
+    from conformance.norm_defaults_three_way import admission_document
+    document = next(d for name, d, _ in sources() if name == "u5a")
+    return {"id": "admission", "kind": "admission", "environment": document.env.to_dict(),
+            "document": admission_document(document)}
+
+
 def _quantity_admission():
     from tests.test_w6a_documents import base_document, doc_env
     raw = doc_env()
@@ -165,6 +173,7 @@ BUILDERS = {
     ("norms.certificate", N, "", "norms-certificate"): _norms_certificate,
     ("admission", C, "route", "admission"): lambda: _route_fixture("admission", "admission"),
     ("admission", N, "", "admission"): _norms_admission,
+    ("admission", "ve_norm_defaults_route", "", "admission"): _norm_defaults_admission,
     ("admission", "ve_quantity", "", "document"): _quantity_admission,
     ("label", C, "route", "label"): lambda: _route_fixture("labels", "label"),
     ("graph.compose", C, "route", "certificate"): lambda: _certificate_case(_route(), "edge", "certificate"),

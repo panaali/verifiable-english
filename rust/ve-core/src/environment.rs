@@ -401,6 +401,11 @@ impl Environment {
                     .ok_or_else(|| Error::new("InvalidInput", "regulated role is required"))?;
                 let default = r.get("default").map(|v| string(v, "InvalidInput")).transpose()?
                     .ok_or_else(|| Error::new("InvalidInput", "regulated default is required"))?;
+                if default == "unspecified" && ["permission", "obligation", "plain"].contains(&role) {
+                    // norm-defaults 2.1: Rust decodes no norm-defaults@0 environment.
+                    return error("UnsupportedProfile",
+                                 "UnsupportedProfile: unspecified completion requires norm-defaults@0");
+                }
                 if !["permission", "obligation", "plain"].contains(&role)
                     || !["allow", "deny"].contains(&default) {
                     return error("InvalidInput", "invalid regulated role or default");

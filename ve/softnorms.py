@@ -94,7 +94,7 @@ _ENVELOPE = {'language', 'profiles', 'spec_revision', 'vocabulary'}
 _BLOCK_FIELDS = {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}
 _W1_FIELDS = ('name', 'predicate', 'sign', 'guard', 'unless', 'over')
 _SOFT_FIELDS = ('mode', 'rank', 'alterable', 'exception', 'hard')
-_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'time@0')
+_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'norm-defaults@0', 'time@0')
 _CHECKER_PROFILES = ('closure@0', 'nary@0', 'order@0')
 SOFT_PROFILE = 'soft-norms@0'
 
