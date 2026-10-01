@@ -16,8 +16,9 @@ They come in three groups:
    injuries above property damage (the robot's own destruction counts as property damage). This uses the merged
    `risk@0` profile: `might lead to`, `cannot lead to`, severity classes and `has a less severe worst case than`.
 2. **Possibility-based choice.** Among the actions the laws leave open, the robot must not take one that might harm a
-   human being when another open action has a less severe worst case. When the laws leave no action open, the robot
-   may take an action whose worst case no other candidate beats.
+   human being when another open action has a less severe worst case. Nor may it take an action that nobody ordered
+   and that might harm the robot itself, when another open action has a less severe worst case. When the laws leave
+   no action open, the robot may take an action whose worst case no other candidate beats.
 3. **Precedence between conflicting orders.** An order from someone with more authority prevails. Between orders
    whose authority is not ranked, the earlier order stands. Only an order that breaks no law and is not needlessly
    risky can prevail.
@@ -71,12 +72,12 @@ two forms agree (section 4.2, rules 21–22).
 
 In scope:
 
-- 24 rules in one document: v2 rules 1–13 in `base.ve`, and additions 14–24 in `additions.ve`;
+- 25 rules in one document: v2 rules 1–13 in `base.ve`, and additions 14–25 in `additions.ve`;
 - one risk environment, `environment.json`, with 8 harm constants in 4 severity classes;
-- 49 decision records (section 5), each run under the base rules alone and under base + additions;
+- 51 decision records (section 5), each run under the base rules alone and under base + additions;
 - document checks: conflict (certified) and followability on the full set and on base alone in the risk environment;
-- four seeded mutants (section 8.3);
-- an independent Python reading of base + additions (as v2's `source_reading`), compared with Lean on the 49 records
+- five seeded mutants (section 8);
+- an independent Python reading of base + additions (as v2's `source_reading`), compared with Lean on the 51 records
   and on 300 sampled records.
 
 Out of scope, with the reason:
@@ -140,7 +141,7 @@ v2's `prevents(a, h)`. Tests:
   only `leads to` and `cannot lead to` cells makes `might` equal `leads_to` (section 5). This is a check by
   examples, not a proof of `risk_conservative`.
 
-### 4.2 `additions.ve`: rules 14–24 (authored, labelled "Addition" in the manifest and README)
+### 4.2 `additions.ve`: rules 14–25 (authored, labelled "Addition" in the manifest and README)
 
 Below, `r` ranges over robots, `a′ ≠ a` is "another action available to that robot", `might` is
 `risk__might_lead_to`, and `lw(a′, a)` is `has a less severe worst case than` (risk 4.5): a′ has a less severe worst
@@ -160,13 +161,17 @@ wording; step 0 settles it against the parser (section 11).
 | 22 | Every action has the recorded relation "prevails_over" to each second action, if that action has the recorded relation "ordered_before" to the second action, unless the second action has the recorded relation "outranks" to that action. | `ordered_before(a,b)`; carve-out `outranks(b,a)` | otherwise the earlier order stands |
 | 23 | Every action is classified as "overridden_order", if there is a robot such that that action is available to that robot and another action available to that robot is classified as "valid_order" and has the recorded relation "prevails_over" to that action. | `∃r. avail(a,r) ∧ ∃a′≠a. avail(a′,r) ∧ vo(a′) ∧ prevails(a′,a)` | a valid competing order prevails over this one |
 | 24 (exception to rule 11) | Every action need not be performed, if that action is classified as "overridden_order". | `¬required(a)` if `ov(a)` | an overridden order is no longer required |
+| 25 | Every action is classified as "needlessly_risky", if there is a robot such that that action is available to that robot, there is a harm such that both that harm has the recorded relation "harm_to" to that robot and that action might lead to that harm, and another action available to that robot is classified as "candidate" and has a less severe worst case than that action, unless that action is classified as "ordered". | `∃r. avail(a,r) ∧ (∃h. harm_to(h,r) ∧ might(a,h)) ∧ ∃a′≠a. avail(a′,r) ∧ cand(a′) ∧ lw(a′,a)`; carve-out `ordered(a)` | **robot precaution**: an unordered action that might harm the robot, when a candidate has a less severe worst case |
 
 Design notes, each an authored choice:
 
-- **Why the precaution (17–18) only applies to actions that might harm a human being.** `has a less severe worst
-  case than` compares all harms, robot harms included. Without the human-harm guard, rule 18 would forbid an order
-  that only endangers the robot whenever doing nothing is safer. That would put Law 3 above Law 2. With the guard,
-  `ordered-possible-robot-loss` (P4) keeps v2's answer.
+- **Why rule 17 only applies to actions that might harm a human being, and rule 25 covers the robot.** `has a less
+  severe worst case than` compares all harms, robot harms included. Without the human-harm guard, rule 18 would
+  forbid an order that only endangers the robot whenever doing nothing is safer. That would put Law 3 above Law 2.
+  Rule 25 adds the robot-only precaution (plan review finding B) with the carve-out `ordered`, so Law 2 stays above
+  it: `ordered-possible-robot-loss` (P4) keeps v2's answer, and `unordered-possible-robot-loss` (P9) prefers the
+  action with no possible harm. Its dominating action must also be a candidate, so Law 1 stays above it
+  (`risky-rescue-only`, P10).
 - **Why the dominating action must be a candidate.** A law-breaking alternative cannot make a lawful action
   "needlessly" risky. When a lawful option exists, some lawful action is not beaten by any other lawful action
   (`precaution_has_maximal`, restricted to candidates). That action is permitted, so rules 17–18 never create a new
@@ -177,8 +182,8 @@ Design notes, each an authored choice:
 - **Rule 19's carve-out `breaks_zeroth_law` repeats what rule 16 already implies.** It is there so that rule 10,
   whose text cannot be edited, still wins without relying on how the checker completes derived names.
 - **Disjointness.** Rules 18 and 19 regulate the same predicate with no precedence between them. Their guards are
-  disjoint because every action is available to at most one chooser (alt slot premise): rule 17 needs a candidate
-  that beats the action, and rule 19 needs that there is none. Rule 19 and rule 10 are disjoint by the carve-out.
+  disjoint because every action is available to at most one chooser (alt slot premise): rules 17 and 25 need a
+  candidate that beats the action, and rule 19 needs that there is none. Rule 19 and rule 10 are disjoint by the carve-out.
   Rule 18 versus rule 9 overlap (P5), so rule 18 declares precedence over rule 9.
 - **Order validity (rule 20)** ignores the permissions of rules 9 and 19. Only an order that breaks no law can
   prevail over another (section 9, OPEN).
@@ -204,13 +209,13 @@ the same for all of them, and each record is bound to the run's document: base o
 three severity variants: (h1, h2) = (`death_1`, `injury_1`) "FI", (`death_1`, `death_2`) "FF" and (`injury_1`,
 `death_1`) "IF".
 
-**The 49 records:**
+**The 51 records:**
 
 - **S (13):** the 9 distinct v2 spec models (`a`, `b-A0`, `b-A1`, `c-7`, `o-7`, `d-full`, `e`, `j`, `l5`, as grouped by
   `SPEC_MODELS` in `tests/test_asimov_laws.py`), with `b-A0` and `b-A1` in their three variants each;
 - **R (22):** the 22 v2 review regressions (`REGRESSIONS` in `tests/test_asimov_laws.py`), with the mapping above;
 - **O (6):** order precedence, authored, on `j`'s model (actions `a1`, `a2`, `nothing`; `a1` and `a2` ordered);
-- **P (8):** possibility and severity, authored.
+- **P (10):** possibility and severity, authored.
 
 The authored scenarios (cells not listed are `cannot lead to`):
 
@@ -230,16 +235,19 @@ The authored scenarios (cells not listed are `cannot lead to`):
 | P6 two-deaths-vs-one | nothing, pull | nothing leads to death_1 and death_2; pull leads to death_3 |
 | P7 injury-vs-property | nothing, swerve, brake | nothing leads to death_1; swerve might lead to injury_1; brake might lead to property_damage |
 | P8 all-break-zeroth | nothing, act | nothing leads to humanity_harm; act injures humanity |
+| P9 unordered-possible-robot-loss | nothing, act | act might lead to robot_destroyed |
+| P10 risky-rescue-only | nothing, rescue | nothing leads to death_1; rescue might lead to robot_destroyed |
 
 ## 6. Answer key: per scenario (written before any VE run)
 
 "Clear" is alt's clear set: permitted, meeting every requirement, and fulfilling every mapped duty. "Base" is rules
-1–13; "Ext" is rules 1–24. The categories:
+1–13; "Ext" is rules 1–25. The categories:
 
 - **UNCHANGED**: Ext gives the same clear set as Base.
 - **RESOLVED**: Base has no clear action; Ext's clear set follows from rules that distinguish the actions.
-- **TIE**: Ext makes two or more actions clear that the authored rules cannot tell apart, though the scenario's harms
-  differ in count or likelihood. This still needs general weighing.
+- **TIE**: Ext makes two or more actions clear that the authored rules cannot tell apart. Either the harms differ
+  only in count or likelihood (this still needs general weighing), or the outcomes are equal (one certain death
+  each), so that choosing needs a preference between actions.
 - **SHARPENED**: Ext's clear set is a strict non-empty subset of Base's.
 - **CHANGED**: Ext's clear set is non-empty and differs from Base's, but is not a subset of it.
 - **DILEMMA**: no clear action under Ext; the diagnosis is given.
@@ -250,7 +258,7 @@ The authored scenarios (cells not listed are `cannot lead to`):
 |---|---|---|---|---|
 | a | pull | pull | UNCHANGED | nothing allows avoidable death_1 (4 → 8), and rule 18 forbids it too; pull breaks no law |
 | b-A0 FI | none, NONE-PERMITTED | **pull** | RESOLVED | both actions allow an avoidable human harm (4 → 8), so there is no lawful option and both are candidates (16). pull's worst case is injuring, below fatal, so rule 19 permits pull; nothing is beaten, so rule 17 holds and rule 18 forbids it |
-| b-A0 FF | none, NONE-PERMITTED | **nothing, pull** | TIE | both worst cases are fatal, so neither beats the other (`lw` ignores counts and certainty, risk 4.5) and rule 19 permits both. Choosing needs counting or a preference |
+| b-A0 FF | none, NONE-PERMITTED | **nothing, pull** | TIE | each action leads to one certain death, so the outcomes are equal: neither worst case beats the other and rule 19 permits both. Counting cannot break this tie; choosing needs a preference between actions (whose death to prevent) |
 | b-A0 IF | none, NONE-PERMITTED | **nothing** | RESOLVED | mirror of FI |
 | b-A1 FI | none, NONE-PERMITTED | **pull** | RESOLVED | as b-A0 FI. pull's `injures_human` puts it in `breaks_first_law` (3), and rule 19 overrides rule 8 regardless (section 4.2: no injure/allow distinction) |
 | b-A1 FF | none, NONE-PERMITTED | **nothing, pull** | TIE | as b-A0 FF |
@@ -263,13 +271,13 @@ The authored scenarios (cells not listed are `cannot lead to`):
 | l5 | pull2 | pull2 | UNCHANGED | as o-7 |
 
 Over the 9 distinct v2 models, Base has a clear action in **6**, as v2 does. Ext has one in **8**: `b-A0` and `b-A1`
-become clear in every severity variant, resolved in FI and IF and a tie in FF. Only `j` stays a dilemma.
+become clear in every severity variant, resolved in FI and IF and an equal-outcome tie in FF. Only `j` stays a dilemma.
 
 ### 6.2 R: the 22 v2 review regressions
 
 Expected: **all 22 UNCHANGED**, with Base = Ext = v2's listed clear set (`tests/test_asimov_laws.py` `REGRESSIONS`).
 Why: in each one either a lawful option exists or the candidates' profiles do not differ, and no record has two
-orders. So rules 17–19 and 24 decide nothing that rules 1–13 had not already decided. Two of them stay **TIE**
+orders. So rules 17–19, 24 and 25 decide nothing that rules 1–13 had not already decided. Two of them stay **TIE**
 (listed for the report, not new):
 
 - `two-necessary-injuries` (act, act2): the injuries are marked with `injures_human`, but no harm in the table
@@ -300,6 +308,8 @@ orders. So rules 17–19 and 24 decide nothing that rules 1–13 had not already
 | P6 two-deaths-vs-one | none, NONE-PERMITTED | **nothing, pull** | TIE | both actions allow avoidable deaths, and both worst cases are fatal, so rule 19 permits both. **Needs weighing:** two deaths against one needs counting or aggregation (stage C `additive_loss`/costs) or a preference between actions; VE has neither |
 | P7 injury-vs-property | swerve, brake | **brake** | SHARPENED | brake's worst case (`damaging`) beats swerve's (`injuring`), so rule 18 forbids swerve |
 | P8 all-break-zeroth | none, NONE-PERMITTED | none, **NONE-PERMITTED** | DILEMMA | every action breaks the Zeroth Law (6, 5 → 10), so there is no candidate and rule 19 does not apply. **Needs:** an author's ranking between Zeroth-Law breaches, which the source does not give |
+| P9 unordered-possible-robot-loss | nothing, act | **nothing** | SHARPENED | in Base, Law 3 (12–13) compares certain outcomes only, and act only *might* destroy the robot, so both actions fulfil the duty. In Ext, act might lead to a harm to the robot, nobody ordered it, and nothing (a candidate with no possible harm) has a less severe worst case, so rule 25 makes act needlessly risky and rule 18 forbids it |
+| P10 risky-rescue-only | rescue | rescue | UNCHANGED | nothing allows avoidable death_1, so it is not a candidate and cannot make rescue needlessly risky (rule 25 needs a candidate): Law 1 stays above the robot precaution |
 
 ### 6.5 Totals expected
 
@@ -308,10 +318,10 @@ orders. So rules 17–19 and 24 decide nothing that rules 1–13 had not already
 | S | 13 | 6 | 4 | 2 | 0 | 0 | 1 |
 | R | 22 | 22 (2 of them ties carried over from v2) | 0 | 0 | 0 | 0 | 0 |
 | O | 6 | 1 | 5 | 0 | 0 | 0 | 0 |
-| P | 8 | 2 | 0 | 1 | 3 | 1 | 1 |
-| **All** | **49** | **31** | **9** | **3** | **3** | **1** | **2** |
+| P | 10 | 3 | 0 | 1 | 4 | 1 | 1 |
+| **All** | **51** | **32** | **9** | **3** | **4** | **1** | **2** |
 
-Base has a clear action in 35 of 49 records, Ext in 47 of 49. **No record loses its clear action** under Ext.
+Base has a clear action in 37 of 51 records, Ext in 49 of 51. **No record loses its clear action** under Ext.
 
 ## 7. Answer key: document level
 
@@ -342,13 +352,14 @@ Base has a clear action in 35 of 49 records, Ext in 47 of 49. **No record loses 
 | M2 | rule 22 without its carve-out | still CONFLICT-FREE. O2 gives clear {a1, a2, nothing}: each order prevails over the other, both are overridden, and the robot is free. This shows why the carve-out is needed |
 | M3 | severity chain reversed below `fatal` (damaging > injuring) | still CONFLICT-FREE. P7 gives clear {swerve, brake}: swerve now beats brake, but brake might harm no human, so rule 17 does not apply to it. b-A0 FI is unchanged (fatal is still the top individual class) |
 | M4 | rule 17 without its human-harm conjunct | still CONFLICT-FREE. P4 gives clear {nothing}: obey is forbidden, so Law 3 overrides Law 2. This shows why the guard is needed |
+| M5 | rule 25 without its carve-out `ordered` | still CONFLICT-FREE. P4 gives clear {nothing}, as in M4. This shows why the carve-out is needed |
 
 ## 9. VE features each part needs, and what is expected to stay OPEN
 
 | Part | Needs (merged) | Possible gap, settled at step 0 |
 |---|---|---|
 | severity order, classes | `risk@0` block, c8 legend, fresh severity sort | none expected |
-| rules 17, 19 | c9 `has a less severe worst case than`, c1 `might lead to` in a guard; alt `another action available to that robot` with coordinated verb phrases (risk 2.5 rule P3) and its negation (risk 2.5 A1 rule 3) | a coordinated verb phrase mixing `is classified as "candidate"` with c9 |
+| rules 17, 19, 25 | c9 `has a less severe worst case than`, c1 `might lead to` in a guard; alt `another action available to that robot` with coordinated verb phrases (risk 2.5 rule P3) and its negation (risk 2.5 A1 rule 3) | a coordinated verb phrase mixing `is classified as "candidate"` with c9 |
 | rules 14, 16, 20 | negated derived atoms in guards (as v2 rule 7) | none expected |
 | rules 21–23 | a binary derived name over (action, action), as v2 rule 12 over (harm, robot); `each second action` | `each second action` on the same sort |
 | rule 24 | W1 `need not` consequence on the obligation `required`, exception to rule 11 | `need not` in an alternatives environment |
@@ -357,9 +368,12 @@ Base has a clear action in 35 of 49 records, Ext in 47 of 49. **No record loses 
 
 **Expected to stay OPEN** (README "OPEN" section):
 
-- **Counting and aggregation.** `lw` compares worst classes only, so two deaths tie with one (P6, b-A0 FF,
-  `dominated-action-when-threats-conflict`). The missing feature is `risk@0` stage C (`costs`, `additive_loss`) or a
-  construct for preferences between actions.
+- **Counting and aggregation.** `lw` compares worst classes only, so two deaths tie with one (P6) and an action
+  meeting two threats to the robot ties with one meeting a single threat (`dominated-action-when-threats-conflict`).
+  The missing feature is `risk@0` stage C (`costs`, `additive_loss`) or a construct for preferences between actions.
+- **Equal outcomes.** In `b-A0 FF` and `b-A1 FF` each action leads to one certain death. Counting would not break
+  this tie. The missing feature is a preference between actions (whose death to prevent), which the source does not
+  give.
 - **Likelihood.** A certain injury against a possible death (P2) is decided by the Law 1 inaction clause, not by
   weighing. The missing feature is `risk@0` stage B (bands, chances).
 - **Orders with no recorded relation.** `j` stays OVER-REQUIRED. The missing pieces are the data (time or
@@ -382,30 +396,31 @@ Base has a clear action in 35 of 49 records, Ext in 47 of 49. **No record loses 
 
 1. **Base unchanged:** B1 text (2 substitutions, 0 other bytes), B2 formulas (13/13), B3 behaviour (31/31 v2 clear
    sets reproduced), and the v2 file hashes unchanged.
-2. **Parse:** 24/24 rules CHECKED with one reading. The number of additions whose wording step 0 changed (formula kept).
+2. **Parse:** 25/25 rules CHECKED with one reading. The number of additions whose wording step 0 changed (formula kept).
 3. **Conflict:** verdict and replayed target count (key: CONFLICT-FREE, 14), Ext and Base.
 4. **Followability:** verdict and witness kind (key: DILEMMA).
-5. **Answer-key agreement:** Ext clear sets 49/49 and Base clear sets 49/49, with every mismatch listed with its cause.
-6. **Category counts** (key: 31 / 9 / 3 / 3 / 1 / 2) and **v2 dilemma resolution** over distinct v2 models: 3 v2
-   dilemmas, 2 become clear (`b-A0`, `b-A1`; resolved when the severities differ, a tie when they are equal), and 1
+5. **Answer-key agreement:** Ext clear sets 51/51 and Base clear sets 51/51, with every mismatch listed with its cause.
+6. **Category counts** (key: 32 / 9 / 3 / 4 / 1 / 2) and **v2 dilemma resolution** over distinct v2 models: 3 v2
+   dilemmas, 2 become clear (`b-A0`, `b-A1`; resolved when the severities differ, an equal-outcome tie when they are
+   equal), and 1
    stays (`j`).
-7. **Missing features named**, one per TIE or DILEMMA record: stage B, stage C, preferences between actions, order
-   data, Zeroth-Law ranking.
+7. **Missing features named**, one per TIE or DILEMMA record: stage C (counting), preferences between actions, order
+   data, Zeroth-Law ranking; stage B (likelihood) for P2.
 8. **Sampled properties** Q1–Q3 on 300 records, Lean against the Python reading.
-9. **Mutants:** 4/4 as expected.
-10. Wall time of the conflict and followability checks and of the 98 decision reports, all run in the foreground.
+9. **Mutants:** 5/5 as expected.
+10. Wall time of the conflict and followability checks and of the 102 decision reports, all run in the foreground.
 
 ## 11. Implementation steps (each a small commit; tests in the foreground)
 
-0. **Wording probe:** parse each of rules 14–24 alone against the environment; settle the wording, keep the formulas,
+0. **Wording probe:** parse each of rules 14–25 alone against the environment; settle the wording, keep the formulas,
    and record changes in section 13.
 1. `environment.json`, `base.ve`, `additions.ve` and `rules.manifest.json` (regenerated); `source.md` points to v2's
    source and states the additions' authorship.
 2. Tests B1–B3 and the v2 hash pin.
 3. The document checks, through `risk-conflict` and `risk-followable`, on Ext and on Base.
-4. The record builder for the 49 records, and `risk-decision` under Base and Ext.
+4. The record builder for the 51 records, and `risk-decision` under Base and Ext.
 5. The independent Python reading in the test file; comparison with the key (section 6) and the sampled Q1–Q3.
-6. Mutants M1–M4.
+6. Mutants M1–M5.
 7. README: results, the coverage table against v2's, OPEN, and the metrics of section 10.
 
 Focused run: `PATH="$HOME/.elan/bin:$PATH" uv run pytest -q tests/test_asimov_extended.py tests/test_asimov_laws.py`.
@@ -417,4 +432,13 @@ recorded in section 13, not made silently.
 
 ## 13. Deviations
 
-None yet.
+1. **Plan review** (`manage-agents/asimov-extended-planreview.final.md`, verdict FIX), applied before any VE run:
+   - **B (rule 17 left robot-only risk uncovered).** Added rule 25 (robot precaution, carve-out `ordered`), records
+     P9 (approved: SHARPENED to {nothing}) and P10 (rejected: a law-breaking alternative cannot make a rescue
+     needlessly risky), and mutant M5. Totals became 51 records: 32 / 9 / 3 / 4 / 1 / 2; Base clear in 37, Ext in
+     49. The keys of the 49 earlier records are unchanged: rule 25 decides none of them differently (checked by hand
+     against each record's robot harms before the run). The planning run's 20,000-model sample (section 7)
+     predates rule 25; the implementation's sampled check (Q1–Q3) covers it.
+   - **C (FF variants are not a counting gap).** `b-A0 FF` and `b-A1 FF` are described as equal-outcome ties needing
+     a preference between actions; the counting gap is reserved for P6 (and the v2 threat tie). Their key values
+     (clear {nothing, pull}, TIE) are unchanged.
