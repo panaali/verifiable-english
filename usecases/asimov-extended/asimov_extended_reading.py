@@ -7,6 +7,12 @@ a precaution against possible harm when a candidate action has a less severe
 worst case, a least-severe-worst-case permission when every action breaks a
 law, and precedence between competing orders. Every action of a record is
 available to its one robot, so "competes with" always holds.
+
+`permission_default` is the environment's completion default for `permitted`.
+The case uses "allow", a modeling choice the source does not state: an action
+no rule forbids may be performed. With "deny", an action is permitted only
+when a rule grants it: rule 1 (protects the robot), rule 2 (ordered), rule 9
+(the Zeroth Law excuse) or, in the extended rules, rule 19.
 """
 from __future__ import annotations
 
@@ -18,7 +24,7 @@ CLASS = {"humanity_harm": "catastrophic", "death_1": "fatal", "death_2": "fatal"
          "robot_damaged": "damaging"}
 
 
-def read(spec, extended=True, rank=None):
+def read(spec, extended=True, rank=None, permission_default="allow"):
     """Permitted, required and clear actions, and the dilemma kind when nothing is clear."""
     rank = RANK if rank is None else rank
     actions = spec["actions"]
@@ -37,9 +43,10 @@ def read(spec, extended=True, rank=None):
     lawful = {a for a in actions if a not in first | zeroth}
     excused = {a for a in actions if any(prevents(a, h) for h in HUMANITY) and not lawful}
     ordered = marked("ordered")
+    granted = lambda a: permission_default == "allow" or a in ordered | marked("protects_robot") | excused  # noqa: E731
 
     if not extended:
-        permitted = [a for a in actions if a not in zeroth and (a not in first or a in excused)]
+        permitted = [a for a in actions if a not in zeroth and (a not in first or a in excused) and granted(a)]
         required = [a for a in permitted if a in ordered]
     else:
         # A candidate breaks no law; when no action is lawful, every action that keeps the Zeroth Law is one.
@@ -54,7 +61,8 @@ def read(spec, extended=True, rank=None):
         precaution = possibly_harmful & beaten
         least_severe = candidates - beaten - zeroth
         permitted = [a for a in actions if a not in zeroth and a not in precaution
-                     and (a not in first or a in excused or a in least_severe)]
+                     and (a not in first or a in excused or a in least_severe)
+                     and (granted(a) or a in least_severe)]
         valid = {a for a in ordered if a in lawful and a not in precaution}
         outranks, before = pairs("outranks"), pairs("ordered_before")
         prevails = lambda b, a: (b, a) in outranks or ((b, a) in before and (a, b) not in outranks)  # noqa: E731
