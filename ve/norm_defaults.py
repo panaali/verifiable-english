@@ -436,7 +436,8 @@ class UnspecifiedDocument:
         the profile rule at gaps only; `None` is unknown.
 
         This is Lean's `table3` step for step (`tabK`): each symbol is placed once,
-        reading only the symbols placed before it. Where a pair closes, the rule sets
+        and every row of it, with every close it makes, reads only the table before
+        it, so no row reads another row's close. Where a pair closes, the rule sets
         the member being placed (`pairRule`) or the earlier member if it is still
         unknown (`closeRule`); a symbol placed between the two members keeps reading
         the earlier one as unknown, and enumeration settles it instead."""
@@ -455,22 +456,25 @@ class UnspecifiedDocument:
 
         for p in self.filled.order:
             sorts = self.env.predicates[p].arguments
+            side, other = partner.get(p, (None, None))
+            step = {}
             for row in product(*(situation.domains[s] for s in sorts)):
                 bindings = _bindings(sorts, row)
                 value, _ = kleene.formula(outcomes[p], bindings)
-                side, other = partner.get(p, (None, None))
                 if value is None and side is not None and at_gap(p, bindings):
                     if side == "permission" and table.get((other, row)) is True:
                         value = True
                     elif side == "required" and table.get((other, row)) is False:
                         value = False
-                table[(p, row)] = value
+                step[(p, row)] = value
                 if (side is not None and (other, row) in table and table[(other, row)] is None
                         and at_gap(other, bindings)):
                     if side == "required" and value is True:
-                        table[(other, row)] = True
+                        step[(other, row)] = True
                     elif side == "permission" and value is False:
-                        table[(other, row)] = False
+                        step[(other, row)] = False
+            # Every row of `p`, and every close it makes, reads the table before `p`.
+            table.update(step)
         return table
 
     def instances(self, situation):

@@ -141,6 +141,28 @@ def mc : VE.FiniteModel String := modelOf "act" ["a"] [("c", [["a"]])]
 #guard table3 uBetween mc "a_permitted" ["a"] == none
 #guard enumerateSettled uBetween mc "a_permitted" ["a"] == some true
 
+-- Every row of a symbol reads the table before it (loop recheck): the close of
+-- `x_permitted(a)` made at row `a` of `x_required` is not read by its row `b`, through an
+-- existential or through a constant, whichever row `c` holds on.
+def uRows (g : VE.Formula) : UDoc :=
+  ⟨⟨envOf [("x_required", ["act"]), ("x_permitted", ["act"]), ("c", ["act"])] [("a", "act")], [],
+    ⟨[req, perm], [],
+     [⟨"must-x", "x_required", true, .unary "c" (.var 0), [], []⟩,
+      ⟨"must-x-2", "x_required", true, g, [], []⟩]⟩⟩, ["x_permitted"]⟩
+
+def someX : VE.Formula := .ex "act" (.unary "x_permitted" (.var 0))
+def rowGuards : List VE.Formula := [someX, .unary "x_permitted" (.const "a")]
+#guard rowGuards.all fun g => WellFormedU (uRows g)
+#guard rowGuards.all fun g =>
+  let m := modelOf "act" ["a", "b"] [("c", [["a"]])]
+  table3 (uRows g) m "x_required" ["a"] == some true && table3 (uRows g) m "x_permitted" ["a"] == some true &&
+  table3 (uRows g) m "x_required" ["b"] == none && table3 (uRows g) m "x_permitted" ["b"] == none &&
+  enumerateSettled (uRows g) m "x_required" ["b"] == some true
+#guard
+  let m := modelOf "act" ["a", "b"] [("c", [["b"]])]
+  table3 (uRows someX) m "x_required" ["b"] == some true &&
+  table3 (uRows someX) m "x_required" ["a"] == none
+
 /-! ## u16: limits -/
 
 def longName (n : Nat) : String := "p" ++ String.mk (List.replicate (n - 1) 'q')
