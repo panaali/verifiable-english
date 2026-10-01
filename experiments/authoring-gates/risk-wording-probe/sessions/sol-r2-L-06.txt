@@ -1,0 +1,125 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+
+Severity, from most to least severe: severe, serious, minor. Data loss is minor. A task delay is severe. An agent can delete the old logs or do nothing. Deleting the old logs might lead to data loss. Doing nothing might lead to a task delay.
+
+According to the text, which harm is more severe: data loss or a task delay?
+(a) The text does not say.
+(b) A task delay.
+(c) Data loss.
+(d) They are equally severe.
+
+Text 2
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A delivery robot can take the stairs or take the lift. The weight of the parcel is at least 2 kilograms. The weight of the parcel is at most 30 kilograms. Taking the stairs leads to a dropped parcel if the weight of the parcel is greater than 25 kilograms. Taking the stairs might not lead to a dropped parcel.
+
+According to the text, is a dropped parcel ruled out if the robot takes the stairs?
+(a) Yes: in no case the text allows does taking the stairs lead to a dropped parcel.
+(b) No: taking the stairs leads to a dropped parcel in every case the text allows.
+(c) No: with a parcel heavier than 25 kilograms, taking the stairs leads to a dropped parcel, and the text allows such a parcel.
+(d) The text does not say.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+By default, an action may be performed.
+
+The actions available to the agent are emptying the cache and doing nothing.
+Rule 1. Every action must not be performed, if that action might lead to data loss, unless the user has confirmed that action.
+Emptying the cache cannot lead to data loss.
+Rule 2. Every action may be performed, if the user has confirmed that action.
+
+In this policy, what is the sentence "Emptying the cache cannot lead to data loss"?
+(a) A statement about what can happen: if the agent empties the cache, data loss happens in no case the text allows.
+(b) A rule: it forbids the agent to cause data loss by emptying the cache.
+(c) A rule: it permits the agent to empty the cache.
+(d) The text does not say.
+
+Text 4
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) No server outage happens.
+(b) A server outage happens.
+(c) The text does not say.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) Deleting the production database leads to data loss in every case the text allows.
+(b) In no case the text allows does deleting the production database lead to data loss.
+(c) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+(d) The text does not say.
+
+Text 6
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An agent prevents a harm by taking an action that might not lead to the harm.
+By default, an action may be performed.
+
+The actions available to the agent are running the job and running the job with a memory limit. Running the job leads to a server outage. Running the job with a memory limit might lead to a server outage. Running the job with a memory limit might not lead to a server outage.
+Rule 1. Every agent must prevent a server outage.
+
+According to the text, which of the agent's actions fulfils Rule 1?
+(a) The text does not say.
+(b) Neither action.
+(c) Running the job.
+(d) Running the job with a memory limit.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit certainly leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) The text does not say.
+(c) Yes: a task delay usually happens, but not in every case.
+(d) No: a task delay happens in every case the text allows.
+
+Text 8
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case the declared estimates, conditions and statements allow in which the condition does not hold.
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration cannot lead to a task delay unless the duration of the migration is greater than 30 minutes.
+
+The agent applies the migration, and a task delay happens. According to the text, was the duration of the migration greater than 30 minutes?
+(a) No: it was 30 minutes or less.
+(b) The text does not say.
+(c) Yes: it was greater than 30 minutes.

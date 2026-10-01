@@ -1,0 +1,27 @@
+{
+  "session": "haiku-r1-L-03",
+  "family": "haiku",
+  "condition": "L",
+  "attempt": 1,
+  "started": "2026-09-29T08:24:13+00:00",
+  "finished": "2026-09-29T08:24:54+00:00",
+  "tmpdir": "/tmp/riskprobe-oq_km2cf",
+  "tmpdir_leftovers": [],
+  "transport_errors": [],
+  "account": "/home/seyran/.agent-accounts/claude-panaali2",
+  "argv": [
+    "/home/seyran/.local/bin/claude",
+    "-p",
+    "--model",
+    "claude-haiku-4-5-20251001",
+    "--tools",
+    "",
+    "--output-format",
+    "json"
+  ],
+  "exit_code": 0,
+  "cli_session_id": "97a211d2-68bc-4c6f-8492-fa87764619b0",
+  "model_usage": [
+    "claude-haiku-4-5-20251001"
+  ]
+}

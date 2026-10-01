@@ -10,12 +10,13 @@ import hashlib
 import json
 from pathlib import Path
 import sys
-import subprocess
 from typing import Any
 
+from .assurance import semantic_entry
 from .ast import (Reach, Named, Body, Formula, Not, Unary, Binary, formula_from_data, formula_to_data)
+from .backends import lean as lean_backend
 from .environment import Environment, validate_identifier
-from .errors import InvalidModel, ResourceLimit, VEError
+from .errors import CheckerUnavailable, InvalidModel, ResourceLimit, VEError
 from .identity import meaning_id, source_id
 from .model import FiniteModel
 from .parser import parse
@@ -103,6 +104,7 @@ class Claim:
                    meaning_id(env, ast), evidence_ids, _label(label))
 
     @property
+    @semantic_entry("identity")
     def claim_id(self):
         # Aliases and factual support do not change the committed statement.
         payload = {"environment_id": self.environment_id,
@@ -238,6 +240,7 @@ class ArgumentGraph:
         return cls.from_dict(loads_json(data))
 
 
+@semantic_entry("identity")
 def deduction_identity(graph, deduction):
     claims = {c.name: c for c in graph.claims}
     return digest("ve-deduction-v1\n", {"version": ARGUMENT_VERSION,
@@ -363,6 +366,20 @@ class ArgumentResult:
     lean_checked: bool = False
     lean_detail: str = "Lean replay not requested"
     premises: dict = field(default_factory=dict)
+    lean_outcome: str = "not_requested"
+
+    @property
+    def lean_status(self):
+        return "Lean-checked: " + ("yes" if self.lean_checked else
+                                   "unavailable" if self.lean_outcome == "unavailable" else "no")
+
+    def require_available(self):
+        """Re-raise a `CheckerUnavailable` status so a caller cannot read it as a finding."""
+        if self.status == "CheckerUnavailable":
+            error = self.errors[0] if self.errors else {}
+            raise CheckerUnavailable(error.get("message", "a verdict the argument needs is unavailable"),
+                                     operation=error.get("operation", ""), backend=error.get("backend", ""))
+        return self
 
     def to_dict(self):
         data = {"version": ARGUMENT_VERSION, "assurance": "experimental", "status": self.status,
@@ -372,14 +389,18 @@ class ArgumentResult:
                 "unresolved_obligations": list(self.unresolved_obligations), "composed": self.composed,
                 "proof": "Python replay checked" if self.composed else "not_checked", "intent": "unconfirmed",
                 "profiles": list(self.profiles), "lean_checked": self.lean_checked,
-                "lean_status": "Lean-checked: " + ("yes" if self.lean_checked else "no"),
-                "lean_detail": self.lean_detail,
+                "lean_status": self.lean_status, "lean_detail": self.lean_detail,
                 "approval": "unassessed", "edges": list(self.edges), "errors": list(self.errors),
                 "composition": self.composition, "checker_build": self.checker_build,
                 "contradictory_premises": list(self.contradictory_premises),
                 "warnings": list(self.warnings)}
         if self.premises:
             data["premises"] = self.premises
+        # Only `unavailable` is new in ve-argument-tableau@1 records; every other
+        # outcome is implied by lean_checked and lean_detail, and is left out so
+        # those records keep their identity (as `premises` is left out when empty).
+        if self.lean_outcome == "unavailable":
+            data["lean_outcome"] = self.lean_outcome
         data["record_id"] = hashlib.sha256(b"ve-argument-diagnostic-record-v1\n" + json.dumps(
             data, sort_keys=True, ensure_ascii=True, separators=(",", ":")).encode("ascii")).hexdigest()
         return data
@@ -483,9 +504,13 @@ def _check_edge(graph, edge, claims, *, search, max_proof_steps, max_domain_size
 
 
 def _lean_deductions(graph, claims, records, reachable, executable):
-    """Optional independent replay; never infer a Lean result from Python success."""
+    """Optional independent replay; never infer a Lean result from Python success.
+
+    Returns `(lean_checked, lean_detail, lean_outcome)`. The outcome separates
+    Lean's rejection (`rejected`) from an operational failure (`unavailable`).
+    """
     if executable is None:
-        return False, "Lean replay not requested"
+        return False, "Lean replay not requested", "not_requested"
     cases = []
     for record in records:
         if record['conclusion'] not in reachable:
@@ -493,43 +518,123 @@ def _lean_deductions(graph, claims, records, reachable, executable):
         candidates = [a for a in record['artifacts'] if a['kind'] == 'follows'
                       and a.get('check', {}).get('valid') and 'certificate' in a]
         if not candidates:
-            return False, "A supporting deduction has no certificate"
+            return False, "A supporting deduction has no certificate", "not_applicable"
         cases.append({'id': record['edge_id'], 'environment': graph.env.to_dict(),
                       'premises': [formula_to_data(graph.env, claims[n].ast) for n in record['premises']],
                       'conclusion': formula_to_data(graph.env, claims[record['conclusion']].ast),
                       'certificate': candidates[0]['certificate']['proof']})
     if not cases:
-        return False, "No deduction certificates to replay"
+        return False, "No deduction certificates to replay", "not_applicable"
+    route = graph.env.language == 've.core@0.2'
+    if route:
+        cases = [{**case, 'kind': 'certificate'} for case in cases]
     try:
-        route = graph.env.language == 've.core@0.2'
-        if route:
-            cases = [{**case, 'kind': 'certificate'} for case in cases]
-        proc = subprocess.run([str(executable), 'route' if route else 'check-certificate'], input=canonical_json(cases),
-                              capture_output=True, timeout=LEAN_REPLAY_TIMEOUT)
-        rows = loads_json(proc.stdout)
-        if route:
-            from .background import background
-            extra = {'background': len(background(graph.env))}
-        else:
-            extra = {}
-        expected = [{'id': c['id'], 'status': 'ok', 'valid': True,
-                     **extra} for c in cases]
-        if proc.returncode == 0 and rows == expected:
-            return True, f"{len(cases)} supporting deduction certificates accepted by Lean"
-        return False, "Lean did not accept every supporting deduction certificate"
-    except (OSError, subprocess.TimeoutExpired, VEError, ValueError):
-        return False, "Lean replay unavailable or failed"
+        rows = lean_backend.run("graph.compose", executable, cases, runner="ve_conformance",
+                                mode='route' if route else 'check-certificate', timeout=LEAN_REPLAY_TIMEOUT)
+    except CheckerUnavailable as exc:
+        return False, f"Lean replay unavailable (operational, not a verdict): {exc.message}", "unavailable"
+    if route:
+        from .background import background
+        extra = {'background': len(background(graph.env))}
+    else:
+        extra = {}
+    expected = [{'id': c['id'], 'status': 'ok', 'valid': True, **extra} for c in cases]
+    if rows == expected:
+        return True, f"{len(cases)} supporting deduction certificates accepted by Lean", "accepted"
+    return False, "Lean did not accept every supporting deduction certificate", "rejected"
 
 
+def _lean_graph_scope(graph) -> bool:
+    """Whether Lean's `graph` mode composes this package: the frozen v0 and v0.1
+    envelopes, or a ve.core@0.2 environment of any family
+    (`validation.family_in_scope`)."""
+    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
+    env = getattr(graph, "env", None)
+    if type(env) is not Environment:
+        return False
+    if env.language in LEGACY_LANGUAGES:
+        return True
+    return family_in_scope(env)
+
+
+@semantic_entry("graph.compose")
 def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_size=1,
                    max_models=1_000, max_evaluations=100_000, lean_executable=None):
+    """Check an argument under the selected authority.
+
+    Under a backend authority the per-edge replays and model checks run on the
+    backend (`dispatch.composed`), the package-wide diagnostic statuses stay
+    Python's (trusted, narrowed: SEMANTICS-MIGRATION-PLAN.md section 1.2), and a
+    composition additionally needs Lean's `graph` report for the root, whose
+    projection must be the record's composition exactly.
+    """
+    from .backends.dispatch import authority_for, execute
+    options = {"search": search, "max_proof_steps": max_proof_steps, "max_domain_size": max_domain_size,
+               "max_models": max_models, "max_evaluations": max_evaluations,
+               "lean_executable": lean_executable}
+
+    def python():
+        return _check_argument_python(graph, **options)
+
+    if authority_for("graph") in ("python", "rust-experimental") or not _lean_graph_scope(graph):
+        return python()
+    return execute("graph", {"kind": "graph"}, python, lean=lambda: _check_argument_lean(graph, options))
+
+
+def _check_argument_lean(graph, options):
+    from .backends.dispatch import pinned
+    from .backends.lean_runner import run
+    with pinned("lean"):
+        result = _check_argument_python(graph, **options)
+    if not result.composed:
+        return result
+    env = graph.env
+    supporting = set(result.composition["supporting_edge_ids"])
+    edges = []
+    for record in result.edges:
+        proofs = [a["certificate"]["proof"] for a in record["artifacts"] if a["kind"] == "follows"
+                  and a.get("check", {}).get("valid") and "certificate" in a]
+        if record["edge_id"] in supporting and proofs:
+            edges.append({"name": record["name"], "premises": list(record["premises"]),
+                          "conclusion": record["conclusion"], "edge_id": record["edge_id"],
+                          "certificate": proofs[0]})
+    nodes = [{"name": c.name, "source": c.source, "ast": formula_to_data(env, c.ast),
+              "claim_id": c.claim_id, **({} if c.label == "asserted" else {"label": c.label})}
+             for c in graph.claims]
+    case = {"id": "graph", "environment": env.to_dict(), "nodes": nodes, "edges": edges,
+            "root": graph.root}
+    try:
+        row = run("graph", [case])[0]
+    except (CheckerUnavailable, VEError) as exc:
+        # Lean refusing a composition of edges it replayed one by one is a
+        # disagreement, not a verdict; an operational failure is the same.
+        error = exc if isinstance(exc, CheckerUnavailable) else CheckerUnavailable(
+            f"CheckerUnavailable: Lean's graph mode rejects the composition ({exc.message})")
+        return ArgumentResult("CheckerUnavailable", errors=(error.to_dict(),))
+    names = {record["edge_id"]: record["name"] for record in result.edges}
+    background = [{"label": a["label"], "ast": a["ast"]}
+                  for a in result.composition["assumptions"] if a.get("label", "").startswith("background:")]
+    if (row["report"]["root"] != graph.root
+            or row["assumptions"] != list(result.remaining_assumptions)
+            or row["supporting_edges"] != [names[i] for i in result.composition["supporting_edge_ids"]]
+            or row["background"] != background):
+        error = CheckerUnavailable("CheckerUnavailable: Lean's graph projection differs from the composition record")
+        return ArgumentResult("CheckerUnavailable", errors=(error.to_dict(),))
+    return result
+
+
+def _check_argument_python(graph, *, search=True, max_proof_steps=10_000, max_domain_size=1,
+                           max_models=1_000, max_evaluations=100_000, lean_executable=None):
     """Validate and check a submitted DAG; never discharge factual assumptions.
 
     ``search=False`` performs certificate/witness replay only. Search bounds are
     per edge/direction. Search failure is operational information, never a gap.
     Invalid submissions return diagnostics; invalid constructor inputs may raise.
     ``lean_executable`` optionally replays the supporting deduction certificates;
-    the result labels actual Lean acceptance separately from Python replay.
+    the result labels actual Lean acceptance separately from Python replay, and
+    ``lean_outcome`` separates Lean's rejection from Lean being unavailable.
+    Status ``CheckerUnavailable`` means a needed verdict could not be obtained
+    (operational); it is never a logical finding.
     Host cancellation propagates and is never converted into a logical finding.
     """
     try:
@@ -594,8 +699,10 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
                     "meaning_id": meaning_id(graph.env, item.formula, _generated=True)}
                     for item in background(graph.env))
             composition["record_id"] = digest("ve-composition-v1\n", composition)
-        lean_checked, lean_detail = (_lean_deductions(graph, claims, records, reachable, lean_executable)
-                                     if composed else (False, "Root deductions are not established"))
+        lean_checked, lean_detail, lean_outcome = (
+            _lean_deductions(graph, claims, records, reachable, lean_executable) if composed else
+            (False, "Root deductions are not established",
+             "not_requested" if lean_executable is None else "not_applicable"))
         from .vacuity import premise_status
         root_premises = tuple(claims[name].ast for name in leaves)
         premise_report = premise_status(graph.env, root_premises,
@@ -609,7 +716,10 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
         return ArgumentResult(status, graph.graph_id, graph.env.environment_id, graph.root,
                               findings, leaves, unresolved, composed, records, errors, composition, checker_build,
                               contradictory, warnings, tuple(graph.env.profiles), lean_checked, lean_detail,
-                              premise_report)
+                              premise_report, lean_outcome)
+    except CheckerUnavailable as exc:
+        # Operational: a verdict this record needs could not be obtained.
+        return ArgumentResult("CheckerUnavailable", errors=(exc.to_dict(),))
     except (VEError, RecursionError) as exc:
         if isinstance(exc, RecursionError):
             exc = ResourceLimit("Argument exceeds runtime recursion budget")
@@ -652,7 +762,7 @@ def outstanding_obligations(graph, result):
     return {"graph_id": result.graph_id, "assurance": "experimental", "status": result.status,
         "proof": "Python replay checked under listed assumptions" if result.composed else "not checked for the root",
         "profiles": list(result.profiles), "lean_checked": result.lean_checked,
-        "lean_status": "Lean-checked: " + ("yes" if result.lean_checked else "no"),
+        "lean_status": result.lean_status, "lean_outcome": result.lean_outcome,
         "lean_detail": result.lean_detail,
         "root": claims[graph.root].to_dict(graph.env), "target_scope": graph.target_scope,
         "interpretation": {"status": "unconfirmed", "outstanding": True,

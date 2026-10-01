@@ -61,9 +61,21 @@ evidence-layer maths corrected; paper v1 (rev2, mostly negative); P1, P3, iceber
 | news-article | 1 | 11 | 3 | 11 | 26 |
 | us-constitution-14th-s1 | 0 | 1 | 3 | 0 | 4 |
 
+Later refreshed audits (the dated files above stay unchanged):
+
+| Use case (refresh) | DIRECT | REIFIED | OPAQUE | NO | Total |
+|---|---:|---:|---:|---:|---:|
+| news-article (W6a, 2026-09-28) | 6 | 4 | 5 | 12 | 27 |
+
 Other denominators: birthright debate has **4/9** claims with a direct VE statement and **5/9** unformalised; US Constitution Art. I §7 has no audited pilot yet.
 Math mini paper: **17/19** current verified outcomes (15 tableau certificates plus T9 and T9e by closure induction); its older `coverage.md` records the 15 tableau results. C1 is false, with a countermodel; T7mono remains resource-limited.
-These are claim/section labels, not source-byte coverage. The `.ve.md` pilot partition measurements are pending.
+These are claim/section labels, not source-byte coverage.
+
+Measured `.ve.md` pilot partitions:
+
+| Document | Accounted bytes | Source bytes | Residual |
+|---|---:|---:|---:|
+| news-article | 5448 | 5448 | 8 |
 <!-- W2-COVERAGE-END -->
 
 ## 3. Wrap-up state (2026-09-23, lead asked to stop starting new work)
@@ -163,3 +175,5 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 - **Soft norms and weighing** ("should", "generally", holistic priorities): Claude's constitution (154 norm-blocked units). Design in docs/spec/soft-norms-PLAN.md (debate running).
 - **Rights / claim-rights** ("Everyone has the right to X" -> correlative duties on others; Hohfeld-style right-duty pairs): UDHR pilot (63 of 72 unformalised units norm-blocked). To design after soft norms, sharing the W1 elaboration.
 - **Causation, action alternatives, priority across different obligations**: Asimov laws use case (inaction clauses, obey-vs-self-preserve choices, Zeroth-law tradeoff).
+  Trust cost: Alternatives (`alternatives@0`): new trusted decoder, inliner, slot generator, followability formula and `ve_alternatives_route` executable, proved from raw JSON under the unchanged allowlist; untrusted: the Python block-shape check, the rendered diagnosis, Rust evaluation (docs/spec/alternatives.md 4.9, lean/ALTERNATIVES.md).
+  Trust cost: Risk (`risk@0`, stage A): new trusted block, entry and record decoders, condition normaliser and evaluator, record admission, cell regenerator, severity closure, inliner, slot premises, decision-model builder, certified margin check, audit snapshot admission and `ve_risk_route`, proved from raw JSON under the unchanged allowlist; untrusted: the Python shape check and surface, rendering, Rust evaluation (docs/spec/risk.md 9, lean/RISK.md).

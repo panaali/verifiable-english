@@ -2,6 +2,7 @@ import VE.Route.Admission
 import VE.Definitions.Bundle
 import VE.Json
 import VE.Core.Wire
+import VE.Core.Layers
 
 /-! The `route` subcommand of `ve_conformance` (PLAN-EXPAND2 3.4). Each case
 is `{"id", "environment", "kind"?, ...}` with a `ve.core@0.2` environment; the
@@ -68,7 +69,11 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
   if kind == "dependency-order" then
     return ← Wire.runDependencyOrder id j
   if kind == "label" then
-    if e.family == .closureNary then
+    if e.family == .closureNary && VE.Core.Layers.usesLayers environment then
+      let _ ← VE.Core.Layers.decodeLayers e.profiles environment
+      let _ ← VE.Core.Bridge.decodeEnvironment (← VE.Core.Layers.coreEnvironment environment)
+      pure ()
+    else if e.family == .closureNary then
       let _ ← VE.Core.Bridge.decodeEnvironment environment
       pure ()
     else if e.family == .order then
@@ -84,7 +89,10 @@ def dispatch (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
       | none => throw s!"AdmissionError: invalid label {s}"
   match e.family with
   | .closureNary =>
-    VE.Core.Wire.run e.profiles environment id kind j
+    if kind == "admission" then throw (Gate.unsupported "admission on the closure family is deferred")
+    if VE.Core.Layers.usesLayers environment then
+      VE.Core.Layers.run e.profiles environment id kind j
+    else VE.Core.Wire.run e.profiles environment id kind j
   | .order =>
     if kind == "admission" then throw (Gate.unsupported "admission on the order family is deferred")
     let v ← Wire.decodeOrderVocabulary e.vocabulary

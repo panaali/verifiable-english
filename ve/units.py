@@ -1,0 +1,649 @@
+"""W6 annotated quantities. Admission precedes erasure into the frozen integer AST.
+
+Python gives early diagnostics and regeneration; the Lean `quantity` route
+(`VE.Time`) is the authority for admission, erasure and certificate binding.
+"""
+from __future__ import annotations
+
+from datetime import date, timedelta
+import re
+
+from .ast import decimal_from_wire, MAX_NUMERAL_CHARS
+from .environment import INT_SORT, STRING_SORT, valid_identifier
+from .errors import ResourceLimit, TypeMismatch, UnsupportedProfile, VEError
+from .limits import MAX_NODES
+from .wire import canonical_json, digest
+
+SCHEMA = "ve-units@1"
+DIMENSIONLESS = "dimensionless"
+DAY = {"scale": "1", "display": {"kind": "iso_date"}}
+ELAPSED_DAY = {"scale": "1", "display": {"kind": "decimal", "label": "days"}}
+_DATE_MAX = (date(9999, 12, 31) - date(1970, 1, 1)).days
+_DECIMAL = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?\Z", re.ASCII)
+_ISO = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z", re.ASCII)
+_SLOT = re.compile(r"0|[1-9][0-9]*\Z", re.ASCII)
+# Exactly the characters for which Python's str.isspace() holds, listed so that
+# Rust and Lean check the same display-string rule.
+SPACES = frozenset(map(chr, (9, 10, 11, 12, 13, 28, 29, 30, 31, 32, 0x85, 0xA0, 0x1680,
+                             *range(0x2000, 0x200B), 0x2028, 0x2029, 0x202F, 0x205F, 0x3000)))
+# Characters a decimal amount can begin or end with. A display affix must not
+# touch the amount with one of these, so an affixed literal is never also a
+# bare decimal, a date, or a literal with an affix on the other side.
+_AMOUNT_CHARS = frozenset("-.0123456789")
+POINTS_SUFFIX = " percentage points"
+W6_PROFILES = (("order@0", "relational-fol@0", "time@0"),
+               ("documents@1", "order@0", "relational-fol@0", "time@0"))
+# risk@0 carries the unit extension on its own route (risk.md 1, 3.1); the
+# frozen quantity-route tuples and their diagnostic above are unchanged.
+RISK_UNIT_PROFILES = (("alternatives@0", "norms@0", "relational-fol@0", "risk@0"),)
+W6_PROFILE_TEXT = ("ve-units@1 requires exactly order@0, relational-fol@0 and time@0, "
+                   "optionally with documents@1")
+NUMBERS2 = "$int quantification requires the missing numbers2 route"
+
+
+def quote(s):
+    """Lean's `String.quote`, which the Lean and Rust W6 decoders use in their texts."""
+    escapes = {"\n": "\\n", "\t": "\\t", "\\": "\\\\", '"': '\\"'}
+    return '"' + "".join(escapes.get(c) or (f"\\x{ord(c):02x}" if ord(c) <= 31 or c == "\x7f" else c)
+                         for c in s) + '"'
+
+
+def _object(value):
+    if type(value) is not dict:
+        raise VEError("object expected")
+    return value
+
+
+def _string(value):
+    if type(value) is not str:
+        raise VEError("String expected")
+    return value
+
+
+def _fields(value, required, optional=()):
+    """Lean's `exactFields` (no optional fields) and `shape`, with their texts."""
+    got = f"got [{', '.join(sorted(_object(value)))}]"
+    if optional:
+        if not set(required) <= set(value) or not set(value) <= set(required) | set(optional):
+            raise VEError(f"fields do not match: required [{', '.join(required)}], "
+                          f"optional [{', '.join(optional)}], {got}")
+    elif set(value) != set(required):
+        raise VEError(f"fields do not match: expected [{', '.join(required)}], {got}")
+
+
+def _scale(tag, text):
+    """Lean's `decodeScale`: a canonical integer that is a positive power of ten."""
+    _string(text)
+    if len(text) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit("numeral length")
+    if not re.fullmatch(r"-?[0-9]+", text, re.ASCII):
+        raise VEError("invalid integer")
+    if str(int(text)) != text:
+        raise VEError("non-canonical integer")
+    if text[0] != "1" or set(text[1:]) - {"0"}:
+        raise VEError(f"UnitScale({tag}): expected a positive power of ten")
+    return int(text)
+
+
+def validate_units(schema, raw):
+    """The unit records, with the texts of Lean's `decodeUnit` and in its (sorted) tag order."""
+    if schema != SCHEMA:
+        raise UnsupportedProfile("Unsupported unit schema")
+    if type(raw) is not dict:
+        raise VEError("units must be an object")
+    if len(raw) > 64:
+        raise ResourceLimit("At most 64 unit tags")
+    for tag, record in sorted(raw.items()):
+        if not valid_identifier(tag) or tag == DIMENSIONLESS:
+            raise VEError(f"Invalid unit tag {quote(tag)}")
+        _fields(record, ("scale", "display"))
+        scale = _scale(tag, record["scale"])
+        display = record["display"]
+        if type(display) is not dict or "kind" not in display:
+            raise VEError(f"Invalid display for {tag}")
+        kind = _string(display["kind"])
+        if kind == "percent":
+            _fields(display, ("kind",))
+        elif kind == "money":
+            _fields(display, ("kind", "currency"), ("input_symbol",))
+            currency = _string(display["currency"])
+            if not re.fullmatch(r"[A-Z]{3}", currency):
+                raise VEError(f"Invalid currency for {tag}")
+            if "input_symbol" in display:
+                display_string(_string(display["input_symbol"]), trailing_space=True)
+        elif kind == "decimal":
+            _fields(display, ("kind", "label"), ("placement",))
+            display_string(_string(display["label"]))
+            if _string(display.get("placement", "suffix")) not in ("prefix", "suffix"):
+                raise VEError(f"Invalid placement for {tag}")
+        elif kind == "iso_date":
+            _fields(display, ("kind",))
+            if tag != "day" or scale != 1:
+                raise VEError("iso_date requires day at scale 1")
+        else:
+            raise VEError(f"Unknown display kind {kind}")
+        if tag == "day" and record != DAY:
+            raise VEError("Reserved unit day has a fixed declaration")
+        if tag == "elapsed_day" and record != ELAPSED_DAY:
+            raise VEError("Reserved unit elapsed_day has a fixed declaration")
+    check_display_injective(raw)
+    return raw
+
+
+def display_string(s, *, trailing_space=False, what="Display string"):
+    """Nonempty words of non-space characters joined by single spaces.
+
+    An input symbol may end in one space ("EUR "). Other whitespace, and
+    spacing the sentence normalizer would rewrite, is rejected."""
+    if type(s) is not str or not s:
+        raise VEError(f"{what} must be nonempty")
+    if len(s) > 256:
+        raise ResourceLimit(f"{what} exceeds 256 characters")
+    words = s.split(" ")
+    if trailing_space and len(words) > 1 and words[-1] == "":
+        words = words[:-1]
+    if any(not word or SPACES & set(word) for word in words):
+        raise VEError(f"{what} {quote(s)} must be whitespace-normalized")
+    return s
+
+
+def sentence_initial(words):
+    """The sentence-initial spelling of a name: its first letter ASCII-uppercased."""
+    first = words[:1]
+    return (first.upper() if "a" <= first <= "z" else first) + words[1:]
+
+
+def check_verbalisations(constants):
+    """Constant names are spelled so that the sentence normalizer keeps them and
+    no two share a spelling, even when one starts a sentence. Then a rendered
+    name is read back as exactly its own constant. Names are checked in sorted
+    order, as the Lean and Rust decoders read a JSON object."""
+    spellings = {}
+    for name, decl in sorted(constants.items()):
+        if decl.verbalisation is None:
+            continue
+        display_string(decl.verbalisation, what="Verbalisation")
+        key = sentence_initial(decl.verbalisation)
+        if key in spellings:
+            raise VEError(f"VerbalisationCollision({spellings[key]}, {name})")
+        spellings[key] = name
+
+
+def display_affixes(units):
+    """Every enabled literal affix as (side, text, tag), including input aliases.
+
+    A literal is an amount with exactly one affix: a prefix before it or a suffix
+    after it. The percentage-point wording is an enabled suffix alias of the
+    percent tag."""
+    forms = []
+    for tag, record in units.items():
+        display = record["display"]
+        kind = display["kind"]
+        if kind == "percent":
+            forms += [("suffix", "%", tag), ("suffix", POINTS_SUFFIX, tag)]
+        elif kind == "money":
+            forms.append(("prefix", display["currency"] + " ", tag))
+            if "input_symbol" in display:
+                forms.append(("prefix", display["input_symbol"], tag))
+        elif kind == "decimal":
+            if display.get("placement", "suffix") == "prefix":
+                forms.append(("prefix", display["label"] + " ", tag))
+            else:
+                forms.append(("suffix", " " + display["label"], tag))
+    return forms
+
+
+def check_display_injective(units):
+    """Reject any two enabled literal forms that can spell one string.
+
+    Canonical displays and input aliases are one class: no affix may extend
+    another on the same side, even for the same tag, and no affix may touch the
+    amount with a digit, sign or point. Then every literal string has at most one
+    (tag, amount) reading; bare decimals and dates carry no affix at all."""
+    forms = display_affixes(dict(sorted(units.items())))
+    for side, text, _ in forms:
+        edge = text[0] if side == "prefix" else text[-1]
+        if edge in _AMOUNT_CHARS:
+            raise VEError(f"DisplayCollision({quote(text)} touches the amount)")
+    for i, (side, text, _) in enumerate(forms):
+        for other_side, other, _ in forms[i + 1:]:
+            if side != other_side:
+                continue
+            extends = (text.startswith(other) or other.startswith(text) if side == "prefix"
+                       else text.endswith(other) or other.endswith(text))
+            if extends:
+                raise VEError(f"DisplayCollision({quote(text)}, {quote(other)})")
+
+
+def validate_tag(tag, units):
+    if type(tag) is not str or (tag != DIMENSIONLESS and (units is None or tag not in units)):
+        raise VEError(f"UnknownUnit({tag})")
+    return tag
+
+
+def validate_slot_units(raw, args, units):
+    if type(raw) is not dict:
+        raise VEError("argument_units must be an object")
+    result = {}
+    for slot, tag in sorted(raw.items()):
+        if type(slot) is not str or not _SLOT.fullmatch(slot) or int(slot) >= len(args):
+            raise VEError(f"Invalid argument unit slot {slot}")
+        if args[int(slot)] != INT_SORT:
+            raise VEError(f"Unit on non-integer slot {slot}")
+        result[slot] = validate_tag(_string(tag), units)
+    return {slot: result[slot] for slot in raw}
+
+
+def validate_extension(profiles, units, sorts, constants):
+    """Route-level W6 environment conditions, after the vocabulary is decoded."""
+    if tuple(profiles) not in W6_PROFILES + RISK_UNIT_PROFILES:
+        raise UnsupportedProfile(W6_PROFILE_TEXT)
+    for tag in (DIMENSIONLESS, *sorted(units)):
+        if tag in sorts:
+            raise VEError(f"Unit tag {tag} collides with a declared sort")
+    if any(decl.sort == STRING_SORT for decl in constants.values()):
+        raise UnsupportedProfile("$string literals are not admitted with ve-units@1")
+    check_verbalisations(constants)
+
+
+def decimal_digits(text):
+    return sum(c in "0123456789" for c in text)
+
+
+def decimal_exact(text, tag, env):
+    """Lower a decimal literal of at most 40 digits (sign and point uncounted).
+
+    Every admitted coordinate (at most 40 characters) renders on any declared
+    scale (at most 39 places) with at most 40 digits, so rendering reparses."""
+    validate_tag(tag, env.units)
+    if type(text) is str and decimal_digits(text) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit(f"Decimal literal exceeds {MAX_NUMERAL_CHARS} digits")
+    if type(text) is not str or not _DECIMAL.fullmatch(text):
+        raise VEError(f"Invalid decimal literal {text!r}")
+    scale = 1 if tag == DIMENSIONLESS else int(env.units[tag]["scale"])
+    sign = -1 if text.startswith("-") else 1
+    digits = text.lstrip("-").split(".")
+    places = len(digits[1]) if len(digits) == 2 else 0
+    numerator = sign * int("".join(digits)) * scale
+    divisor = 10 ** places
+    if numerator % divisor:
+        raise VEError(f"UnitPrecision({tag}, scale={scale})")
+    coordinate = numerator // divisor
+    if len(str(coordinate)) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit("Lowered integer exceeds 40 characters")
+    return coordinate
+
+
+def day_number(iso):
+    if type(iso) is not str or not _ISO.fullmatch(iso):
+        raise VEError(f"InvalidDate({iso})")
+    try:
+        d = date.fromisoformat(iso)
+    except ValueError as exc:
+        raise VEError(f"InvalidDate({iso})") from exc
+    n = (d - date(1970, 1, 1)).days
+    if n < 0:
+        raise VEError(f"DateRange({iso})")
+    return n
+
+
+def iso_date(coordinate):
+    if type(coordinate) is not int or not 0 <= coordinate <= _DATE_MAX:
+        raise VEError(f"DateRange({coordinate})")
+    return (date(1970, 1, 1) + timedelta(days=coordinate)).isoformat()
+
+
+def render_coordinate(tag, coordinate, env):
+    validate_tag(tag, env.units)
+    if tag == DIMENSIONLESS:
+        return str(coordinate)
+    record = env.units[tag]
+    kind = record["display"]["kind"]
+    if kind == "iso_date":
+        return iso_date(coordinate)
+    scale = int(record["scale"])
+    precision = len(str(scale)) - 1
+    amount = ("-" if coordinate < 0 else "") + str(abs(coordinate) // scale)
+    if precision:
+        amount += "." + str(abs(coordinate) % scale).zfill(precision)
+    display = record["display"]
+    if kind == "percent":
+        return amount + "%"
+    if kind == "money":
+        return display["currency"] + " " + amount
+    label = display["label"]
+    return label + " " + amount if display.get("placement") == "prefix" else amount + " " + label
+
+
+# Statement types keep unit tags and user sorts in separate namespaces, so a
+# sort spelled like a tag is never a quantity type.
+def _unit(tag):
+    return ("unit", tag)
+
+
+def _sort(name):
+    return ("sort", name)
+
+
+def _same(a, b):
+    if a != b:
+        if a[0] == b[0] == "unit":
+            raise TypeMismatch(f"UnitMismatch({a[1]},{b[1]})")
+        raise TypeMismatch(f"TypeMismatch({a[0]} {a[1]},{b[0]} {b[1]})")
+    return a
+
+
+def _need(node, tag, arity):
+    if type(node) is not list or len(node) != arity or node[0] != tag:
+        raise VEError(f"Invalid {tag} node")
+
+
+_TEMPORAL = ("date_on", "date_before", "date_after", "date_no_later", "within_days",
+             "shift_days", "elapsed_days")
+_W6B = ("sunday", "excluded_sundays", "forall_date", "exists_date", "trace_all", "trace_some")
+
+
+class _Elaborator:
+    """Formula and term depth are budgeted separately (each at most 64), as in
+    the frozen checker; every array node counts toward 10,000."""
+
+    def __init__(self, env):
+        if env.unit_schema != SCHEMA:
+            raise UnsupportedProfile("quantities require ve-units@1")
+        self.env = env
+        self.nodes = 0
+
+    def tick(self, depth):
+        self.nodes += 1
+        if self.nodes > 10000 or depth > 64:
+            raise ResourceLimit("Quantity AST exceeds node or depth limit")
+
+    def tag(self, tag):
+        return validate_tag(tag, self.env.units)
+
+    def term(self, node, context=(), depth=1):
+        """Return (type, annotated term, erased term); context lists user sorts."""
+        self.tick(depth)
+        if type(node) is not list or not node or type(node[0]) is not str:
+            raise VEError("Invalid quantity term")
+        op, arity = node[0], len(node)
+        if op == "var" and arity == 2:
+            index = node[1]
+            if type(index) is not int or not 0 <= index < len(context):
+                raise VEError(f"Unbound variable {index!r}")
+            return _sort(context[index]), node, node
+        if op == "var" and arity == 3:
+            raise UnsupportedProfile(NUMBERS2)
+        if op == "const" and arity in (2, 3):
+            name = node[-1]
+            decl = self.env.constants.get(name) if type(name) is str else None
+            if decl is None:
+                raise VEError(f"Unknown constant {name!r}")
+            if decl.sort != INT_SORT:
+                if arity == 3:
+                    raise TypeMismatch(f"Unit on object constant {name}")
+                return _sort(decl.sort), node, node
+            tag = self.tag(node[1]) if arity == 3 else DIMENSIONLESS
+            _same(_unit(tag), _unit(decl.unit or DIMENSIONLESS))
+            return _unit(tag), ["const", tag, name], ["const", name]
+        if op in ("num", "decimal") and arity == 3 or op == "num" and arity == 2:
+            tag = self.tag(node[1]) if arity == 3 else DIMENSIONLESS
+            text = node[-1]
+            coordinate = decimal_from_wire(text) if op == "num" else decimal_exact(text, tag, self.env)
+            return _unit(tag), ["num", tag, str(coordinate)], ["num", str(coordinate)]
+        if op == "date" and arity == 2:
+            # The literal names the reserved tag; it must be declared like any other.
+            tag = self.tag("day")
+            coordinate = day_number(node[1])
+            return _unit(tag), ["num", tag, str(coordinate)], ["num", str(coordinate)]
+        if op in ("add", "scale") and arity in (3, 4):
+            tag = self.tag(node[1]) if arity == 4 else DIMENSIONLESS
+            if op == "scale":
+                coefficient = decimal_from_wire(node[-2])
+                found, q, core = self.term(node[-1], context, depth + 1)
+                _same(_unit(tag), found)
+                if tag == "day":
+                    raise TypeMismatch("Calendar dates cannot be scaled")
+                return _unit(tag), ["scale", tag, str(coefficient), q], ["scale", str(coefficient), core]
+            left, lq, lc = self.term(node[-2], context, depth + 1)
+            right, rq, rc = self.term(node[-1], context, depth + 1)
+            _same(_unit(tag), _same(left, right))
+            if tag == "day":
+                raise TypeMismatch("Calendar dates cannot be added")
+            return _unit(tag), ["add", tag, lq, rq], ["add", lc, rc]
+        raise VEError(f"Invalid quantity term {op}")
+
+    def formula(self, node, context=(), depth=1):
+        self.tick(depth)
+        if type(node) is not list or not node or type(node[0]) is not str:
+            raise VEError("Invalid quantity formula")
+        op = node[0]
+        if op in ("top", "bottom") and len(node) == 1:
+            return node, node
+        if op in ("eq", "lt", "le") and len(node) == 3:
+            lt, lq, lc = self.term(node[1], context)
+            rt, rq, rc = self.term(node[2], context)
+            _same(lt, rt)
+            if op != "eq" and lt[0] != "unit":
+                raise TypeMismatch("Order needs quantity terms")
+            return [op, lq, rq], [op, lc, rc]
+        if op in ("unary", "binary"):
+            if len(node) != (3 if op == "unary" else 4) or type(node[1]) is not str:
+                raise VEError(f"Invalid {op} arity")
+            decl = self.env.predicates.get(node[1])
+            args = node[2:]
+            if decl is None or len(args) != len(decl.arguments):
+                raise VEError(f"Unknown predicate or arity {node[1]}")
+            units = decl.argument_units or {}
+            terms = [self.term(t, context) for t in args]
+            for i, (found, _, _) in enumerate(terms):
+                sort = decl.arguments[i]
+                _same(found, _unit(units.get(str(i), DIMENSIONLESS)) if sort == INT_SORT else _sort(sort))
+            return [op, node[1], *(t[1] for t in terms)], [op, node[1], *(t[2] for t in terms)]
+        if op == "atom":
+            raise UnsupportedProfile("n-ary atoms are not admitted on the order@0 quantity route")
+        if op == "not" and len(node) == 2:
+            q, c = self.formula(node[1], context, depth + 1)
+            return [op, q], [op, c]
+        if op in ("and", "or", "implies") and len(node) == 3:
+            lq, lc = self.formula(node[1], context, depth + 1)
+            rq, rc = self.formula(node[2], context, depth + 1)
+            return [op, lq, rq], [op, lc, rc]
+        if op in ("forall", "exists"):
+            if len(node) in (3, 4) and node[1] == INT_SORT:
+                raise UnsupportedProfile(NUMBERS2)
+            if len(node) != 3 or type(node[1]) is not str or node[1] not in self.env.sorts:
+                raise VEError("Invalid quantity binder")
+            q, c = self.formula(node[2], (node[1], *context), depth + 1)
+            return [op, node[1], q], [op, node[1], c]
+        if op in _TEMPORAL:
+            return self.temporal(node, context)
+        if op in _W6B:
+            raise UnsupportedProfile(NUMBERS2)
+        raise VEError(f"Unknown quantity formula {op}")
+
+    def temporal(self, node, context):
+        op = node[0]
+        _need(node, op, 4 if op in ("within_days", "shift_days", "elapsed_days") else 3)
+        a, aq, ac = self.term(node[1], context)
+        b, bq, bc = self.term(node[2], context)
+        day = _unit(self.tag("day"))
+        _same(a, day); _same(b, day)
+        guard = lambda x: ["and", ["le", ["num", "0"], x], ["le", x, ["num", str(_DATE_MAX)]]]
+        both = ["and", guard(ac), guard(bc)]
+        if op == "date_on": body = ["eq", ac, bc]
+        elif op == "date_before": body = ["lt", ac, bc]
+        elif op == "date_after": body = ["lt", bc, ac]
+        elif op == "date_no_later": body = ["le", ac, bc]
+        elif op == "elapsed_days":
+            v, vq, vc = self.term(node[3], context)
+            _same(v, _unit(self.tag("elapsed_day")))
+            body = ["eq", vc, ["add", bc, ["scale", "-1", ac]]]
+            return [op, aq, bq, vq], ["and", both, body]
+        else:
+            n = decimal_from_wire(node[3])
+            if n < 0:
+                raise VEError("Day offset must be nonnegative")
+            upper = ["add", bc, ["num", str(n)]]
+            body = (["and", ["le", bc, ac], ["le", ac, upper]] if op == "within_days"
+                    else ["eq", ac, upper])
+            return [op, aq, bq, str(n)], ["and", both, body]
+        return [op, aq, bq], ["and", both, body]
+
+
+def _source_nodes(formula):
+    """Every array node of the submitted formula counts toward 10,000, checked
+    before elaboration so a statement's first diagnostic does not depend on where
+    its type errors sit (Lean `jsonNodes`, Rust `budget`)."""
+    count, stack = 0, [formula]
+    while stack:
+        node = stack.pop()
+        if type(node) is list:
+            count += 1
+            if count > 10000:
+                raise ResourceLimit("Quantity AST exceeds node or depth limit")
+            stack.extend(node)
+
+
+def elaborate_quantity(env, payload):
+    """Return canonical annotated payload and regenerated frozen-core formula data."""
+    _fields(payload, ("format", "formula"), ("traces", "Q"))
+    if payload["format"] != "ve-quantity@1":
+        raise VEError("Unsupported quantity format")
+    traces = payload.get("traces", [])
+    if type(traces) is not list:
+        raise VEError("traces must be an array")
+    if traces:
+        # Trace declarations exist only for trace_all/trace_some, which need
+        # integer binders; Rust and Lean gate them identically.
+        raise UnsupportedProfile("trace declarations require the missing numbers2 route")
+    _source_nodes(payload["formula"])
+    q, core = _Elaborator(env).formula(payload["formula"])
+    if "Q" in payload and canonical_json(payload["Q"]) != canonical_json(q):
+        raise VEError("Quantity Q differs from regenerated formula")
+    # The target vocabulary has the same symbols and checker profile, with only
+    # W6 declaration fields removed. The frozen checker validates regenerated
+    # data in that independently identified environment.
+    from .ast import formula_from_data
+    formula_from_data(erased_environment(env), core)
+    return {"format": "ve-quantity@1", "formula": q, "traces": []}, core
+
+
+def erased_data(data):
+    """The core target environment data for W6 environment data."""
+    data = canonical_copy(data)
+    del data["unit_schema"]
+    del data["units"]
+    for declaration in data["vocabulary"]["predicates"].values():
+        declaration.pop("argument_units", None)
+    for declaration in data["vocabulary"]["constants"].values():
+        declaration.pop("unit", None)
+        declaration.pop("verbalisation", None)
+    return data
+
+
+def canonical_copy(data):
+    from .wire import loads_json
+    return loads_json(canonical_json(data))
+
+
+def erased_environment(env):
+    """Regenerate the core target environment; never trust a supplied target ID."""
+    from .environment import Environment
+    if env.unit_schema != SCHEMA:
+        raise UnsupportedProfile("quantities require ve-units@1")
+    return Environment(erased_data(env.to_dict()))
+
+
+def core_formula(env, payload):
+    """The erased target environment and the regenerated core formula of an
+    admitted statement, for checks that run on the frozen checker."""
+    from .ast import formula_from_data
+    _, core = elaborate_quantity(env, payload)
+    target = erased_environment(env)
+    return target, formula_from_data(target, core)
+
+
+def quantity_meaning_id(env, payload):
+    canonical, _ = elaborate_quantity(env, payload)
+    return digest(f"ve-meaning-{env.identity_version}\n",
+                  {"environment_id": env.environment_id, "ast": canonical})
+
+
+# --- Quantity evidence: a core order certificate wrapped by the annotated binding
+
+CERTIFICATE_FORMAT = "ve-quantity-certificate@1"
+
+
+def _core_problem(env, premises, conclusion):
+    """Regenerate each annotated statement; return target env, ids and core ASTs."""
+    from .ast import formula_from_data
+    target = erased_environment(env)
+    admitted = [elaborate_quantity(env, p) for p in (*premises, conclusion)]
+    ids = [digest(f"ve-meaning-{env.identity_version}\n",
+                  {"environment_id": env.environment_id, "ast": canonical})
+           for canonical, _ in admitted]
+    cores = [formula_from_data(target, core) for _, core in admitted]
+    check_quantity_limits(cores)
+    return target, ids, cores
+
+
+AGGREGATE_LIMIT = "premises and conclusion exceed aggregate 10000-node limit"
+
+
+def check_quantity_limits(cores):
+    """The static limits of a quantity problem, after each statement's own limits
+    and before any model is decoded, certificate read or evaluation run: the
+    regenerated cores (premises, then the conclusion) have at most 10,000 formula
+    and term nodes together (Lean `quantityLimits`, Rust `quantity_limits`)."""
+    from .search import _node_count
+    if sum(_node_count(core) for core in cores) > MAX_NODES:
+        raise ResourceLimit(AGGREGATE_LIMIT)
+
+
+def prove_quantity(env, premises, conclusion, *, max_steps=10_000):
+    """Search an order certificate for the regenerated problem and bind it to the
+    annotated statements. Returns None when search is inconclusive."""
+    from .entailment import prove_entailment
+    target, ids, cores = _core_problem(env, premises, conclusion)
+    result = prove_entailment(target, cores[:-1], cores[-1], max_steps=max_steps)
+    if result.certificate is None:
+        return None
+    return {"format": CERTIFICATE_FORMAT, "environment_id": env.environment_id,
+            "premise_meaning_ids": ids[:-1], "conclusion_meaning_id": ids[-1],
+            "core": result.certificate}
+
+
+def check_quantity_certificate(env, premises, conclusion, certificate, *, max_steps=10_000):
+    """Early Python check mirroring Lean `checkW6Certificate`: the outer binding to
+    the annotated statements, then the core certificate for their regeneration."""
+    from .entailment import check_entailment_certificate
+    target, ids, cores = _core_problem(env, premises, conclusion)
+    if (type(certificate) is not dict or set(certificate) != {
+            "format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "core"}
+            or certificate["format"] != CERTIFICATE_FORMAT):
+        raise VEError("Invalid quantity certificate")
+    if (certificate["environment_id"] != env.environment_id
+            or certificate["premise_meaning_ids"] != ids[:-1]
+            or certificate["conclusion_meaning_id"] != ids[-1]):
+        raise VEError("W6 certificate is stale or bound to different annotated statements")
+    return check_entailment_certificate(target, cores[:-1], cores[-1], certificate["core"],
+                                        max_steps=max_steps).valid
+
+
+BUDGET_EXHAUSTED = "formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+
+
+def quantity_countermodel(env, premises, conclusion, model_data):
+    """Whether finite tables for the target vocabulary refute the regenerated claim.
+
+    An exhausted evaluation budget is UNKNOWN and raises, as in Lean and Rust;
+    it is never reported as "does not refute"."""
+    from .model import FiniteModel
+    from .search import check_countermodel
+    target, _, cores = _core_problem(env, premises, conclusion)
+    checked = check_countermodel(target, cores[:-1], cores[-1],
+                                 FiniteModel.from_dict(target, model_data))
+    if checked.status == "ResourceLimit":
+        raise ResourceLimit(BUDGET_EXHAUSTED)
+    return checked.valid

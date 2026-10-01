@@ -16,6 +16,7 @@
 | 2026-09-25 | v1 (f901398): seven workstreams, for review. |
 | 2026-09-25 | v2 (3606cfd). Reordered per the vision reviews: documents with 100% span accounting, open-term schema and non-assertive kinds first; then definitions and citation; n-ary atoms; narrowed norms; numbers continue; unified checker stage 2 and the English Lean proof deferred. Norm semantics rewritten: Catala applicability, stratified regulated predicates, no precedence cycles, one completion per dual pair, `required → permitted`, three-valued conflict status. P0 background premises, composed `ve.core@0.2` route, dispatch sites, claim labels, vacuity. Strings restricted. Reading sets and narrowings. W8 authoring. Ownership matrix. Response table. |
 | 2026-09-25 | v3 (this file), the converged Astra + Fable change list applied, nothing else. **Debate item 1 (P0):** the `Layer` contract now carries source and target environments, model restriction and expansion maps and compositional faithfulness (premise concatenation kept); the checker is parametric over syntax and semantics with four allowed families (FOL, closure, closure+n-ary, order; other mixes rejected); the interface freezes after the existing v0, closure and order instances compile; W4's Core instance is gated later. **Item 2:** one dependency DAG over definitions ∪ regulated predicates (definitions may sit above norms); both reversed-order statements deleted; precedence is a DAG; stable rule names, numbers display-only. **Item 3:** executable Lean document/graph decoding and admission for the new route with an end-to-end report theorem (nested kinds, bridge leaves, transitive provenance); "structurally impossible" dropped; citation binds reading choices and narrowings; a general legacy graph decoder deferred (section 7). **Item 4:** `$string` literals declared in the identity-bound vocabulary, `Background(env)` only; Rust decodes declarations, regenerates Background and checks elaborated documents (new conformance family); Python/Lean differential elaboration tests added as W3(7) and W5(7). **Item 5 (W1):** completed outcomes `O_p` from selection disjunctions `P_p`/`N_p`; conflict := `P_p ∧ N_p` or `O_required ∧ ¬O_permitted` after recursive substitution of lower outcomes; theorem: no conflict ⇔ unique admissible expansion (profile premises included), quantified over base structures; both default counterexamples added to W1(5). **Item 6:** small-model claim restated as a proof-gated fragment theorem `conflict_smallModel` (quantifier-free after expansion; universal, function-free, closure-free, `$int`-free admissibility theory; `total` excluded; per-sort bound `max(1, constants + witness variables)`); completeness enabled only after the Lean proof; the total-functional `¬r(x,x)` regression must report CONFLICT with a two-element witness, never CONFLICT-FREE. **Item 7 (W2, VISION §3):** ALL by disjunction and the shared-model NONE only for assertion readings under identical backgrounds; other kinds enumerate complete choices up to 64 or UNKNOWN; nested kinds; labels carry the choice; citations require compatible choices. **Item 8 (P0/W7):** prefix disjointness replaced by longest-match registration plus complete all-derivations checking on every accepted English input; ambiguity rejects; budget exhaustion rejects with a diagnostic naming the budget; corpus stays regression evidence. **Item 9 (W6):** integer-time n-ary examples deferred to W4 stage 2; FRET re-rates with user-sort time; units are identity-bound tags on signature slots and statement occurrences/binders with Lean admission before integer erasure; conversions deferred. **Item 10:** distinctness nested under each binder; caps at-least ≤ 8, exactly/at-most ≤ 7, both applied to "n of m"; row 8 stays REIFIED and says so. **Item 11:** numbers2 merges first and is in the matrix; Cedar acceptance is a joint W1+W5 gate; `ve/adapters/` is a package; `p(a,a,b)` valid; `UnsupportedProfile` dispatch and checker-build hash fixed. **Item 12:** Cedar evidence pinned at `1999ea2` (115 decisions, 11 scenarios); math baseline 17/19 today, target 18/19; rows 7b and 22b both stay NO for the same reason; 85,000 round trips versus 12,750 Earley texts; "without it" removed. P0 (section 3) rewritten as a hand-off spec: files, interfaces, tests, acceptance. |
+| 2026-09-28 | W6 unit-schema REVISE, applying [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z) plus [Fable round 3(a–c)](/home/seyran/code/manage-agents/debates/design-units/fable.md#round-3-2026-09-28t0001z), as selected for the writing task ([convergence record](/home/seyran/code/manage-agents/debates/design-units/result.txt)). Admission caps stay 8/7/7; W6(4) separates them from finite-evaluation guarantees, pins positive six-entity fixtures and UNKNOWN seven-entity fixtures, and records that positive exact-seven counts cannot evaluate true under the current expansion/budget. The Sunday expansion becomes a disjunction with both date guards and a required equivalence proof. W6a ground quantities, user-sort counting and seven quantifier-free date operations may build without numbers2 under the existing gates; W6b integer-quantifier/calendar/trace forms reject until numbers2 supports them. [The revised schema](docs/spec/units-schema.md) specifies pre-lowering literals supplied to Lean, regenerated-Q correspondence, identity-bound trace declarations/references, date binders, display injectivity and exact English wordings. This applies the selected round combination, not Astra round 3's cap-6/Q-only proposal. Decision 9.3 section re-review of the amended contracts is required before build and has not been run by this writing task. No model calls or implementation changes. |
 
 ## 1. Aim
 
@@ -634,11 +635,15 @@ points, money as minor units) as `Num` under an identity-bound unit tag (schema 
 stated endpoint conventions. Event-sort and time-indexed relation conventions with time as a user sort
 (`occurs_at(e, t)`; with W4, `holds(signal, t)` over user sorts). Integer-time n-ary relations
 (`value(signal, t, v)` with `t : $int`) are W4 stage 2 (section 7) and are not promised here. Finite traces: a
-declared horizon `H` per document; `always` and `eventually` as bounded quantification over `[0, H]`. Counting
+identity-bound trace declarations with origin, tick unit and horizon `H`; explicit every/some-position wording
+for bounded quantification over `[0, H]`. Counting
 sugar for literal n: "at least n" (n ≤ 8), "exactly n" and "at most n" (n ≤ 7), "n of the m S are P" (both bounds
 apply: m ≤ 8 for the outer at-least, n ≤ 7 and m ≤ 7 for the exactly forms, so m ≤ 7). The excluded-day rule as a
 weekday case-split elaboration. Re-rated news article and FRET sample (FRET with user-sort time); Art. I s7
 timing clause. Evaluation-only `count@0` is deferred (section 7).
+The caps are admission bounds, not evaluation guarantees; acceptance (4)
+defines the pinned finite-evaluation envelope. The detailed wire, literal
+correspondence and identity contract is [the unit schema](docs/spec/units-schema.md).
 
 **Semantics.**
 
@@ -652,26 +657,41 @@ unit schema (identity-bound, statement layer; the checker sees $int):
                 dimensionless); Python rejects at type-check; Lean admission checks the annotations before erasing
                 them to $int; conversions between tags are not provided (section 7)
   rendering     the tag restores the decimal or date form; identity binds tags through environment_id
-"within n days of d"   d ≤ t ∧ t ≤ d + n (both ends inclusive);  "before d"  t < d;  "no later than d"  t ≤ d;  "after d"  t > d
-"Sunday(t)"            ∃q. t = 7q + k_sunday (integer quantifier, from numbers2)
-"n days, Sundays excepted, from d" ↦ ⋀_{k=0..6} (d ≡ k (mod 7) → deadline = d + off(k)), off(k) computed by the elaborator
-                       and proved in Lean equal to the counting definition "the least D with n non-Sundays in (d, D]"
+"t is on or after d and on or before n days after d"
+                      validDate(d) ∧ validDate(t) ∧ d ≤ t ∧ t ≤ d + n (both ends inclusive)
+"before d" / "no later than d" / "after d"
+                      validDate(d) ∧ validDate(t), conjoined with t < d / t ≤ d / t > d respectively
+"Sunday(t)"            validDate(t) ∧ ∃q. t = 7q + 3 (epoch Thursday=0; gated on numbers2)
+"n days after d, excluding Sundays and not counting d"
+                      ↦ validDate(d) ∧ validDate(D) ∧ ⋁_{k=0..6} (∃q. d = 7q+k ∧ D = d+off(k,n))
+                       (gated on numbers2; right-associated cases in residue order; fresh q in each case)
+                       off(k,n) computed by the elaborator and proved equal to "the least D with n non-Sundays in (d, D]";
+                       also prove equivalence to the previous guarded conjunction of residue implications
 at least n s x, φ      ↦ ∃x1. φ(x1) ∧ ∃x2. x2 ≠ x1 ∧ φ(x2) ∧ ... ∃xn. (⋀_{i<n} xn ≠ xi) ∧ φ(xn)
-                       (distinctness nested under each binder, so evaluation prunes per binder; capture-avoiding:
-                       φ's free indices shifted; Lean `expand_atLeast_iff`)
+                       (under xj: inequalities against x1,...,x(j-1), then φ(xj), then the next existential;
+                       right-associated conjunctions, no trailing true; inequalities are negated equality;
+                       capture-avoiding: φ's free indices shifted; Lean `expand_atLeast_iff`)
 exactly n              ↦ at least n ∧ ¬ at least n+1;   at most n ↦ ¬ at least n+1;   n of the m S are P ↦ exactly m S ∧ exactly n (S ∧ P)
-finite trace           always φ ↦ ∀t. 0 ≤ t ∧ t ≤ H → φ(t);  eventually φ ↦ ∃t. 0 ≤ t ∧ t ≤ H ∧ φ(t)
+finite trace           at every/some position from 0 through H in the selected trace (gated on numbers2):
+                       ∀t. 0 ≤ t ∧ t ≤ H → φ(t) / ∃t. 0 ≤ t ∧ t ≤ H ∧ φ(t)
 ```
 
 **Trusted core.** Checker unchanged. Lean: `expand_atLeast_iff` (finite and general structures, with the
-substitution lemmas), `excludedDays_iff` (case split equals the counting definition), a small `dayNumber` with
+substitution lemmas), `excludedDays_iff` (case split equals the counting definition), equivalence of the guarded
+disjunctive and implication Sunday forms, a small `dayNumber` with
 monotonicity and its differential test against Python's `datetime`; unit-annotation admission (`Time.units_admit`)
 in the route decoder before erasure; the `time@0` layer registers no new formulas beyond order@0, so it rides the
 existing order route. Statement review of the endpoint conventions and the unit schema (rule 10) before Lean
 starts.
 
-**Depends on / files.** numbers2 merged (integer quantifiers); W4 stage 1 for n-ary relations over user sorts; P0
-registry and admission. Owns `ve/surface/time.py`, `ve/surface/count.py`, `ve/units.py`, `lean/VE/Time/*`,
+**Depends on / files.** W6a: P0 registry/admission and unit-schema section re-review; ground quantities,
+user-sort counting and the seven quantifier-free date operations can build without numbers2 under the existing
+proof, conformance and English-fidelity gates. W6b: numbers2 merged with a proved supported integer-quantifier
+route for Sunday/excluded-Sunday operations, date/integer binders, finite traces and acceptance (3).
+Unsupported forms reject on the baseline with `UnsupportedProfile` naming `$int` quantification and the missing
+numbers2 route; strict-only authoring does not bypass
+route admission. W4 stage 1 remains required for n-ary relations over user sorts. Owns
+`ve/surface/time.py`, `ve/surface/count.py`, `ve/units.py`, `lean/VE/Time/*`,
 `usecases/news-article` (through W2's format). Does not edit `ve/ast.py` or `ve/evaluate.py` (no `Count` node this
 round).
 
@@ -679,12 +699,21 @@ round).
 the 18") stays REIFIED because 18 exceeds the counting bound, and the coverage table says so; rows 7b and 22b
 both stay NO for the same reason (their comparison operand is absent from the source), and the table says so.
 (2) FRET: the 30 sampled items re-rated with time-indexed relations over a user time sort; items needing integer
-time or real values stay NO and are said to. (3) Art. I s7: for each of the seven presentment weekdays, a checked
+time or real values stay NO and are said to. (3) Art. I s7 (**gated on numbers2**): for each of the seven presentment weekdays, a checked
 model of the elaboration agrees with a brute-force calendar computation of the deadline; a certified entailment
 that a bill returned on elapsed day 11 is always timely; a countermodel for "returned on elapsed day 12 is always
 timely" (presented on a Sunday, days 1-12 contain one Sunday). (4) No certificate is produced or accepted for an
-unexpanded counting form; the expansion certifies; "at least 8", "exactly 7" and "7 of the 7" evaluate within
-`MAX_EVALUATIONS`; "at least 9" and "exactly 8" are rejected at parse with a diagnostic naming the bound;
+unexpanded counting form; its admitted expansion may certify on the proof route. Admission caps remain 8/7/7,
+separate from evaluation guarantees. Pin the unit schema's section 5 expansion and [unit-schema gate 4](docs/spec/units-schema.md#8-proof-obligations-and-implementation-gates)'s
+models: one user sort with exactly N entities and unary S and P true of all of them, no other entities or
+constants, single-atom predicate bodies. With `trace=False` and `MAX_EVALUATIONS=1,000,000`, "at least 8" on
+N=8 evaluates true in 359 evaluations; "exactly 6" and "6 of the 6" on N=6 evaluate true in 120,536 and
+244,997 evaluations. On N=7, "exactly 7", "7 of the 7" and "at least 8" exhaust 1,000,000 evaluations and
+report UNKNOWN naming the budget, never false or a successful evaluation. Under this canonical expansion and
+budget, "exactly 7" and "7 of the 7" cannot evaluate true in any finite model; false/UNKNOWN or a separately
+checked proof-route result remain possible. Other admitted inputs may exhaust resources; the passing envelope
+is fixture-specific. Restoring guaranteed positive exact-seven evaluation needs a separately reviewed change.
+"At least 9", "exactly 8", "at most 8" and "16 of the 18" reject at admission naming the bound;
 scope-capture tests: φ mentioning an outer variable, nested counting, a bound variable named like an outer one.
 (5) Date conversion agrees with Python's `datetime` on 10,000 dates including year ends and leap days; negative
 day numbers and pre-Gregorian dates are rejected with a diagnostic; English round trips. (6) Units: a comparison
@@ -864,14 +893,15 @@ Dependencies and start conditions:
 
 | Workstream | Depends on | Blocks | Starts | Model |
 |---|---|---|---|---|
-| numbers2 | none (in flight) | P0 Rust and `entailment.py` edits, W4, W6 | merges first when green | Sol (Codex) |
+| numbers2 | none (in flight) | P0 Rust and `entailment.py` edits, W4, W6b | merges first when green | Sol (Codex) |
 | P0 Python | numbers2 merged before Rust, `entailment.py`, `grammar.py` edits; everything else now | every Python workstream | now | GPT-6 Sol (Codex) |
 | P0 Lean | none | W1, W3, W4, W5 Lean route instantiation | now | Opus 5.5 |
 | W2 | P0 (labels, admission, vacuity) for checking; format and pilots start now | W1 (unit schema), W8 (unit tools) | now (new files) | Sol (format), Opus 5.5 (pilots) |
 | W3 | P0 | W1 (definitions for duals) | Lean now against the day-one Layer draft; Python after P0 | Opus 5.5 (Lean), Sol (Python) |
 | W4 stage 1 | P0, numbers2 | W5 merge, W6 n-ary relations, Rust for W5 | Lean now; Python after P0 and numbers2 | Opus 5.5 (Lean), Sol (Python, Rust) |
 | W1 | P0, W3 merged, W2 unit schema, `docs/spec/norms.md` review | joint Cedar gate in W5 | spec now; Lean after spec review; Python after W3 | Opus 5.5 (Lean), Sol (Python, adapter) |
-| W6 | numbers2 merged, W4 stage 1, P0 registry and admission, unit-schema review | none | after numbers2 | Sol (Python), Opus 5.5 (Lean) |
+| W6a | P0 registry and admission, unit-schema section re-review; W4 stage 1 for n-ary user-sort relations | none | after its existing gates; does not wait for numbers2 | Sol (Python), Opus 5.5 (Lean) |
+| W6b | numbers2 merged and integer-quantifier route supported, P0 registry and admission, unit-schema section re-review | none | after numbers2 and its existing gates | Sol (Python), Opus 5.5 (Lean) |
 | W5 stage 1 | P0; merge after W4 stage 1; joint Cedar gate after W1 | none | Python after P0 (behind the gate) | Sol (Python, Rust), Opus 5.5 (Lean) |
 | W7 | P0 registry (harness); Lean skeleton none | none | now | Opus 5.5 (Lean), Sol (harness) |
 | W8 | none (harness, sealed sets); per construct after its merge | offering of every construct | now | Sol; audits Astra xhigh |
@@ -879,6 +909,7 @@ Dependencies and start conditions:
 Merge order: **numbers2 → P0 → W2 code checkpoint → W3 → W4 stage 1 → W1 →
 W6 → W5 stage 1 (Python earlier behind the gate; Rust after W4; joint Cedar gate with W1) → W7 harness (any time
 after P0) → W8 per construct**. W2 completion still requires the three pilots and independent ratings above.
+W6a may start before numbers2 once its own gates pass; the displayed full-W6 integration order still includes W6b.
 Each merge re-runs the full suite, `lean/audit.py`, Rust conformance, the
 per-input unambiguity check on every English fixture, the mixed English harness, the coverage dashboard and the
 vacuity report on every pilot.
@@ -910,7 +941,9 @@ Start now, in parallel, on disjoint files:
 - **W8 harness and sealed sets** (Sol): `experiments/authoring-gates/`, `ve/deelaborate.py` skeleton.
 
 After P0 lands: W3 Python, W4 stage 1 Python, W5 stage 1 Python (Sol). After W3 merges: W1 Python and the Cedar
-adapter (Sol). After numbers2 and W4 stage 1 merge: W6 (Sol, Opus) and W5 Rust (Sol). W8 gates each construct as
+adapter (Sol). W6a (Sol, Opus) can start after P0 and its section re-review under the existing gates, without
+waiting for numbers2; n-ary user-sort relations still wait for W4 stage 1. After numbers2's proved integer-quantifier
+route: W6b (Sol, Opus); after numbers2 and W4 stage 1 merge: W5 Rust (Sol). W8 gates each construct as
 it merges. Peak: four Opus 5.5 Lean agents on the three Claude accounts and three to four Sol agents on Codex.
 Reviews: Astra + Fable xhigh on each spec section before build (W1 norms spec and W6 unit schema are the two
 section reviews that remain; no further whole-plan review) and cross-family review before merge; write-ups by
@@ -949,7 +982,7 @@ gates continuous.
 | 7. Reading sets by kind (Fable A2, Astra B1; Astra R1 §7, Fable R1 §7) | ALL by disjunction and the shared-model NONE only for assertion readings under identical backgrounds; other kinds enumerate complete choices ≤ 64 or UNKNOWN, each choice elaborated separately; nested kinds; labels `readings:<set>@<version>:<choice|all>`; norm-reading test in W2(6); VISION.md section 3 point 3 amended | W2 reading sets, (1), (6), (7); VISION.md §3 |
 | 8. Surface unambiguity per input (Astra A5, Fable C1; Astra R2 §5, Fable R2 §3) | prefix disjointness replaced by longest-match registration with the extracted keyword list and a test; the all-derivations parser runs on every accepted English input on every route; more than one derivation rejects; budget exhaustion rejects with a diagnostic naming the budget and the author falls back to strict text (Astra R2 wrote "UNKNOWN" for this outcome, Fable R2 "reject naming the budget"; the plan records rejection, since a parser that cannot verify unambiguity admits no AST either way, and the diagnostic names the budget as both asked; Astra R2 scoped the check to `ve.core@0.2` with legacy routes preserved, Fable R2 to all routes with P0's fixture replay as the evidence that nothing existing is rejected; the plan takes all routes, which the replay makes identical for every existing input); corpus and mixed harness stay regression evidence | 3.2, rule 10, W7, 3.10(3) |
 | 9. W6 route and units (Astra A4, B2; Fable B3, B6; Astra R2 §6, Fable R2 §4) | integer-time n-ary examples moved to W4 stage 2 with a trigger; FRET re-rated with user-sort time; W4(6) witnesses over user sorts; unit schema: declared tags `(scale, display)`, annotations on signature slots and occurrences/binders, identity-bound, Python type-check and Lean admission before erasure, dimensionless default, conversions deferred with a trigger; unit-schema statement review before Lean | W6 deliverables, semantics, trusted core, (2), (6); W4(6); section 7 |
-| 10. Counting bounds (Fable B2; Astra R2 §7) | distinctness nested under each binder; at-least ≤ 8, exactly/at-most ≤ 7, both applied to "n of m"; row 8 stays REIFIED and says so; `count@0` trigger restated; resource limits and UNKNOWN unchanged | W6 deliverables, semantics, (1), (4); section 7 |
+| 10. Counting bounds (Fable B2; Astra R2 §7) | distinctness nested under each binder; at-least ≤ 8, exactly/at-most ≤ 7, both applied to "n of m"; row 8 stays REIFIED and says so; `count@0` trigger restated; resource limits and UNKNOWN unchanged. The 2026-09-28 design-units amendment pins right association and separates these admission bounds from evaluation guarantees: positive six-entity fixtures pass, positive seven-count fixtures exhaust the current budget. | W6 deliverables, semantics, (1), (4); section 7 |
 | 11. Scheduling and code facts (Astra B3; Fable C2, C3, C6; Fable R1 §8) | numbers2 first in the merge order and in both matrices, P0 and W4 rebase; W1(2) split into W1's no-attribute gate and the joint W1+W5 gate; `ve/adapters/` a package (W5 owns it, W1 owns `cedar.py` inside); `p(a,a,b)` valid in W4 semantics and (8); `UnsupportedProfile` dispatch fixed with the profile named; `_checker_build` covers order and every new module | 3.3, 5, 6, W1(2), W4, W5 |
 | 12. Evidence corrections (Fable B7, C5; Astra B3 table claim) | Cedar: `cedar-integration-tests@1999ea2`, 11 scenarios, 115 recorded decisions, plus `cedar-examples@c251f7d` for the 143-policy mechanical run, exclusions listed by reason; math baseline 17/19 today (T9, T9e certified by closure induction 2026-09-22), target 18/19; rows 7b and 22b both NO for the absent operand; 85,000 round trips distinguished from 12,750 Earley texts (8,500 + 4,250); "without it" removed from the W8 Haiku 4/24 sentence; acceptance lists, this table and VISION.md updated together | W1(2), W3(2), W5(3), W6(1), W7, W8 |
 

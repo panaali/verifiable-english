@@ -1,0 +1,7 @@
+1. **(a) Serious or severe.** “Serious or worse” includes serious and severe.
+2. **(a) Neither action.** Running the job always causes data loss, and the memory limit does not rule it out.
+3. **(c).** Running the job always causes an outage, while another action avoids one in at least one allowed case.
+4. **(d).** “Might lead to dizziness” means dizziness is not ruled out.
+5. **(c).** Taking the lift leads to a fall in every case the text allows.
+6. **(b).** Taking the lift rules out lift failure in every case the text allows.
+7. **(d).** “Avoidable” means at least one available action avoids an outage in at least one allowed case.

@@ -1,4 +1,7 @@
 import VE.Norms.Admission
+import VE.Norms.Flagged
+import VE.Norms.Plain
+import VE.Route.Run
 
 /-! The `ve_norms_route` executable (docs/spec/norms.md 11.4), invoked as
 `lean/.lake/build/bin/ve_norms_route <cases.json|->`. Each case is
@@ -20,9 +23,16 @@ import VE.Norms.Admission
   `valid`; the certificate binds the complete environment, the regenerated
   `Background ++ layer premises` followed by `premises`, and the conclusion
   (`Replay.norms_wire_acceptance`).
+* The three `norms-*` kinds accept `data@0` flags, whose regenerated premises
+  come first in Background; a conflict case with flags or definitions checks
+  over Python's base environment and base Background (`Flagged`).
 * `admission`: a W2 FOL `document` containing norm units → a checked report,
   source-bound report id and unit kinds; the answer is exactly
   `encodeAdmitted` of the checked admission (`Run.norms_wire_acceptance`).
+* `background`, `evaluate` and `countermodel` on an environment with
+  `regulated` declarations and no norm objects → `Plain.run`: the route's
+  answer over the environment without the validated extension, with the
+  profile premises added to Background and required of models.
 * Any case without a norm construct (no `regulated` field, no `norms`, not a
   `norms-*` kind) is delegated unchanged to P0 `Route.Run.runCase`. A norm
   input never falls back to P0 after a failed decode.
@@ -126,25 +136,29 @@ def runCase (j : Json) : Except String Json := do
     return ← runAdmission id environment document
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
-    let src ← Wire.decodeSource environment (j.getObjValD "norms")
-    return VE.Route.Wire.ok id (Wire.regenerated src.D)
+    let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
+    return VE.Route.Wire.ok id (Flagged.regenerated src)
   if kind == "norms-certificate" then
-    let r ← Replay.replayEntailment j
-    return VE.Route.Wire.ok id [("valid", .bool r.valid),
-      ("background", toJson (background r.src.D).length), ("layers", toJson (elaborate r.src.D.T).length)]
+    let r ← Flagged.replayEntailment j
+    return VE.Route.Wire.ok id [("valid", .bool (Flagged.valid r)),
+      ("background", toJson (Flagged.flagPremises r.src ++ background r.src.D).length),
+      ("layers", toJson (elaborate r.src.D.T).length)]
   if kind == "norms-conflict" && (j.getObjVal? "witness").toBool then
-    let ⟨src, w⟩ ← Replay.replayWitness j
+    let ⟨src, w⟩ ← Flagged.replayWitness j
     return VE.Route.Wire.ok id [("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),
       ("target", .str w.target.1), ("targets", toJson ((targets src.D).map (·.1)))]
   if kind == "norms-conflict" then
-    let res ← Replay.replayConflict j
+    let res ← Flagged.replayConflict j
     let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
       ("targets", toJson ((targets res.src.D).map (·.1)))] ++
-      match Replay.firstFailure res with
+      match Flagged.firstFailure res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
-  if usesNormsPath j then
+  if Plain.isPlainKind kind && (usesNormsPath j || Plain.layered (j.getObjValD "environment"))
+      && !(j.getObjVal? "norms").toBool then
+    return ← Plain.run j
+  if usesNormsPath j || Plain.layered (j.getObjValD "environment") then
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norms route"
   VE.Route.Run.runCase j
 
@@ -171,7 +185,7 @@ theorem norms_wire_acceptance (j answer : Json) (h : runCase j = .ok answer)
   exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
 def runCaseReported (j : Json) : Json :=
-  if usesNormsPath j then
+  if usesNormsPath j || Plain.layered (j.getObjValD "environment") then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),

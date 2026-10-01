@@ -1,0 +1,6 @@
+1. **(b)** A rash might happen, while drowsiness certainly happens if the clinic gives drug A.
+2. **(c)** The worst harm possible at the crossing is more severe than the worst harm possible between parked cars.
+3. **(d)** The text says what taking the lift allows, but says nothing about dropped parcels when taking the stairs.
+4. **(b)** A fall could be serious or severe, so it may or may not be less severe than a seizure.
+5. **(b)** Preventing task abandonment means it cannot happen when the agent runs the job with a memory limit.
+6. **(b)** Four kilograms is greater than three, so taking the lift leads to a lift failure.

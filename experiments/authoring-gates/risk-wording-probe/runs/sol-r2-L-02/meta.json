@@ -1,0 +1,27 @@
+{
+  "session": "sol-r2-L-02",
+  "family": "sol",
+  "condition": "L",
+  "attempt": 1,
+  "started": "2026-09-29T08:28:44+00:00",
+  "finished": "2026-09-29T08:28:55+00:00",
+  "tmpdir": "/tmp/riskprobe-v45ssabb",
+  "tmpdir_leftovers": [],
+  "transport_errors": [],
+  "argv": [
+    "codex",
+    "exec",
+    "-m",
+    "gpt-6-sol",
+    "-s",
+    "read-only",
+    "--skip-git-repo-check",
+    "-C",
+    "/tmp/riskprobe-v45ssabb",
+    "--json",
+    "<session text>"
+  ],
+  "exit_code": 0,
+  "tool_items": [],
+  "cli_session_id": "01a0ec47-d3d2-7433-8c03-277fce2a6fe2"
+}

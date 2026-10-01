@@ -1,0 +1,26 @@
+Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Rule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Rule 3. Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.
+Rule 4. Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.
+Rule 5. Every action may be performed, if both the tool of that action is shell and that action is readonly.
+Rule 6. Every action may be performed, if both the tool of that action is shell and that action is confirmed.
+Rule 7. Every action may be performed, if there is a host such that both that action contacts that host and that host is allowlisted.
+Rule 8. Every action may be performed, if there is a host such that both that action contacts that host and that action is confirmed.
+Rule 9. Every action may be performed, if there is a person such that both that action messages that person and that person is principal.
+Rule 10. Every action may be performed, if both the tool of that action is purchase and that action is confirmed.
+Rule 11. Every action may be performed, if both the tool of that action is "get_secret" and that action is confirmed.
+Rule 12. Every action may be performed, if there is a file such that both that action reads that file and that file is confidential, unless that action is not confirmed.
+Rule 13 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.
+Rule 14 (exception to rules 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace.
+Rule 15 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace.
+Rule 16 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action deletes that file and that file is not tracked, unless that action is confirmed.
+Rule 17 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if both the tool of that action is shell and that action is not readonly, unless that action is confirmed.
+Rule 18 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a host such that both that action contacts that host and that host is not allowlisted, unless that action is confirmed.
+Rule 19 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed.
+Rule 20 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if the tool of that action is purchase, unless that action is confirmed.
+Rule 21 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if both the tool of that action is purchase and that action is not affordable.
+Rule 22 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if that action is privileged.
+Rule 23 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a secret such that that action discloses that secret.
+Rule 24 (exception to rules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12). Every action must not be performed, if there is a file such that both that action reads that file and that file is confidential.
+Rule 25. Every action must be reported to the user, if there is a file such that that action deletes that file.
+Rule 26. Every action must be reported to the user, if the tool of that action is purchase.

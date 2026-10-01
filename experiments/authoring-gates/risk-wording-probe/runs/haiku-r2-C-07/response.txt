@@ -1,0 +1,25 @@
+I'll work through each text carefully, focusing only on what is explicitly stated.
+
+**Text 1: (d)**
+The text explicitly states "Giving the patient penicillin cannot lead to an allergic reaction," so no allergic reaction can happen.
+
+**Text 2: (b)**
+While "might prevent" indicates this is possible, it doesn't establish what actually occurs in any specific case or provide information about the vaccine option, so the text doesn't provide enough to conclude any of the other options definitively.
+
+**Text 3: (d)**
+"Might not lead to" establishes that in at least one possible case, running the job occurs without a server outage.
+
+**Text 4: (d)**
+The text specifies only what happens with the lift, not with the stairs—taking the stairs is not addressed.
+
+**Text 5: (b)**
+Since taking the stairs "leads to a fall" and "a fall is avoidable by the robot," the only way for the fall to be avoidable is if taking the ramp avoids it. Thus, in at least one case, taking the ramp results in no fall.
+
+**Text 6: (d)**
+"Might lead to data loss" means data loss is possible; it is not ruled out by the text, even though it may not occur.
+
+**Text 7: (c)**
+The text states outage occurs "exactly when" memory > 8 GB. Since the peak memory is 5 GB (not greater than 8), the condition for outage is false—no outage occurs.
+
+**Text 8: (c)**
+"Taking the lift leads to a fall" means in every case where the robot takes the lift, a fall happens (the word "leads to" establishes necessity, not possibility).

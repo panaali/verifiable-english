@@ -1,0 +1,122 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+A robot prevents a harm by taking an action that might not lead to the harm.
+By default, an action may be performed.
+
+The actions available to the robot are taking the ramp and taking the stairs. Taking the stairs leads to a fall. Taking the ramp might lead to a fall. Taking the ramp might not lead to a fall.
+Rule 1. Every robot must prevent a fall.
+
+According to the text, does the robot fulfil Rule 1 if it takes the ramp?
+(a) The text does not say.
+(b) No: the text does not rule out a fall when the robot takes the ramp.
+(c) Yes: in at least one case the text allows, taking the ramp avoids a fall.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case the declared estimates, conditions and statements allow in which the condition holds, and in no case they allow in which it does not hold.
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration leads to a task delay exactly when the duration of the migration is greater than 30 minutes.
+
+Which of these follows from the text?
+(a) The text does not say.
+(b) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes; the text does not say what happens when it takes 30 minutes or less.
+(c) If the agent applies the migration, a task delay can happen only when the migration takes more than 30 minutes, but need not happen then.
+(d) If the agent applies the migration, a task delay happens when the migration takes more than 30 minutes, and in no other case.
+
+Text 3
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+An agent can restart the web server or do nothing. Restarting the web server cannot lead to a server outage.
+
+According to the text, can a server outage happen if the agent restarts the web server?
+(a) It can, but the agent is not allowed to let it happen.
+(b) No: in no case the text allows does restarting the web server lead to a server outage.
+(c) The text does not say.
+(d) Yes: a restart takes the server down for a short time.
+
+Text 4
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> certainly leads to <harm>" means it happens in every case they allow.
+
+A clinic can give the patient drug A or give the patient nothing. Giving drug A might lead to a rash. Giving drug A certainly leads to drowsiness.
+
+According to the text, what is the difference between a rash and drowsiness if the clinic gives drug A?
+(a) The text does not say.
+(b) A rash is not ruled out; drowsiness happens in every case the text allows.
+(c) A rash is possible; drowsiness is what usually happens.
+(d) There is no difference: neither is ruled out, and neither is certain.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) The text does not say.
+(b) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+(c) Deleting the production database leads to data loss in every case the text allows.
+(d) In no case the text allows does deleting the production database lead to data loss.
+
+Text 6
+
+Legend:
+Each clinic faces one choice among the actions available to it and takes at most one of them.
+"<action> leads to <harm>" means the harm happens in every case the declared estimates, conditions and statements allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+
+The actions available to the clinic are giving the patient drug A and giving the patient drug B. Giving drug A allows a rash to happen.
+
+What does the last sentence tell you?
+(a) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in every case the text allows.
+(b) Giving drug A leads to a rash in every case the text allows, and giving drug B avoids a rash in at least one case the text allows.
+(c) The text does not say.
+(d) The clinic is permitted to let a rash happen when it gives drug A.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit prevents task abandonment.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(c) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(d) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+
+Text 8
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. A late delivery is serious or worse. A collision is minor. A delivery robot can cross the road at the crossing or wait. Crossing the road at the crossing might lead to a collision. Waiting might lead to a late delivery.
+
+According to the text, which severities could a late delivery have?
+(a) Serious or severe.
+(b) Only serious.
+(c) The text does not say.
+(d) Only minor.

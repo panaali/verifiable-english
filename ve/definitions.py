@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .assurance import semantic_entry
 from . import ast
 from .background import dependency_order
 from .environment import Environment
@@ -87,12 +88,95 @@ def _restricted(env: Environment, allowed: set[str]) -> Environment:
 _COMPILED: dict[tuple[str, str], tuple[Definition, ...]] = {}
 
 
+@semantic_entry("definitions.elaborate")
 def compile_definitions(env: Environment, entries: dict[str, dict], *,
                         version: str) -> tuple[Definition, ...]:
     """Check declared bodies and order them below their dependents.
 
     ``entries`` contains identity-bound body payloads from the vocabulary.
+    Under a backend authority Lean validates and orders them (`_compile_lean`).
     """
+    from .backends.dispatch import authority_for, execute
+    from .backends.validation import model_in_scope
+
+    def python():
+        return _compile_python(env, entries, version=version)
+
+    if authority_for("definitions_elaboration") in ("python", "rust-experimental") \
+            or not model_in_scope(env):
+        return python()
+    return execute("definitions_elaboration", {"environment_id": env.environment_id, "version": version},
+                   python, lean=lambda: _compile_lean(env, entries, version, python))
+
+
+def _wire_entries(env: Environment, entries) -> dict | None:
+    """`entries` embedded as `defined` fields of `env`'s declarations, or None
+    when they cannot be (then only Python's structural decoder reads them)."""
+    if type(entries) is not dict:
+        return None
+    raw = env.to_dict()
+    predicates = raw["vocabulary"]["predicates"]
+    for declaration in predicates.values():
+        declaration.pop("defined", None)
+    for name, entry in entries.items():
+        if name not in predicates or type(entry) is not dict or set(entry) != {"arguments", "body"}:
+            return None
+        body = entry["body"]
+        predicates[name]["defined"] = {"arguments": entry["arguments"],
+                                       "body": body if type(body) is list else ast._to_data(body)}
+    return raw
+
+
+def _lean_definition(env: Environment, premise_wire) -> Definition:
+    """A definition read back from its regenerated premise
+    `∀x̄. (head(x̄) → body) ∧ (body → head(x̄))`."""
+    node = premise_wire
+    sorts = []
+    while type(node) is list and node and node[0] == "forall":
+        sorts.append(node[1])
+        node = node[2]
+    if (type(node) is not list or node[:1] != ["and"] or type(node[1]) is not list
+            or node[1][:1] != ["implies"] or type(node[1][1]) is not list or len(node[1][1]) < 2):
+        from .errors import CheckerUnavailable
+        raise CheckerUnavailable("CheckerUnavailable: malformed Lean definition premise")
+    return Definition(node[1][1][1], tuple(sorts), ast._Decoder().decode(node[1][2]))
+
+
+def _compile_lean(env: Environment, entries, version, python) -> tuple[Definition, ...]:
+    """Lean's route Background decides the definitions and their order.
+
+    Python's elaborator runs as the structural decoder and names a rejection
+    both make (`backends.validation.decided`).
+    """
+    from .backends.lean_runner import route_mode, run
+    from .backends.validation import decided, key, nary_core_definitions
+    raw = _wire_entries(env, entries)
+    if raw is None or type(version) is not str or not version:
+        return python()
+    if nary_core_definitions(env.profiles, raw["vocabulary"]["predicates"].values()):
+        return python()  # outside Lean's core layer glue (a recorded gap)
+    definitions = []
+
+    def ask():
+        row = run(route_mode(env), [{"id": "definitions", "kind": "background", "environment": raw}])[0]
+        definitions[:] = [_lean_definition(env, premise) for premise, generator
+                          in zip(row["premises"], row["generators"], strict=True)
+                          if generator == "definitions"]
+        return row
+
+    def same(built, row):
+        return [(d.name, d.arguments, ast._to_data(d.body)) for d in built] == \
+               [(d.name, d.arguments, ast._to_data(d.body)) for d in definitions]
+
+    try:
+        cache = key("definitions", raw, version)
+    except (VEError, TypeError, ValueError, RecursionError):
+        cache = None
+    return decided(python, cache, ask, same, "definitions")
+
+
+def _compile_python(env: Environment, entries: dict[str, dict], *,
+                    version: str) -> tuple[Definition, ...]:
     if "definitions@0" not in env.profiles:
         raise VEError("Definitions require definitions@0")
     key = (env.environment_id, version)
@@ -148,6 +232,7 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
     return tuple(ordered)
 
 
+@semantic_entry("definitions.elaborate")
 def expand(definitions: tuple[Definition, ...]) -> tuple[ast.Formula, ...]:
     """Executable statement-layer elaboration in dependency order."""
     return tuple(premise(definition) for definition in definitions)

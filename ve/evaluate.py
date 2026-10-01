@@ -4,11 +4,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
                   Num, Add, Scale, Lt, Le)
 from .model import FiniteModel
-from .errors import InvalidModel, ResourceLimit, VEError
+from .errors import CheckerUnavailable, InvalidModel, ResourceLimit, VEError
 from .limits import MAX_EVALUATIONS
 
 
@@ -171,19 +172,15 @@ class _Evaluator:
 def _validate_model(env: Any, model: FiniteModel) -> FiniteModel:
     if type(model) is not FiniteModel:
         raise InvalidModel("expected a validated FiniteModel")
-    if model.environment_id != env.environment_id:
-        raise InvalidModel("model belongs to a different environment")
     try:
-        validated = FiniteModel.from_dict(env, model.to_dict())
+        # The selected authority decides the model's validity, Background
+        # included, and whether its claimed identities are the recomputed ones.
+        return FiniteModel.from_dict(env, model.to_dict(), _claimed={
+            "environment_id": model.environment_id, "model_id": model.model_id})
     except VEError:
         raise
     except (AttributeError, KeyError, TypeError, ValueError) as exc:
         raise InvalidModel("malformed FiniteModel object") from exc
-    if validated.model_id != model.model_id:
-        raise InvalidModel("model identity does not match its contents")
-    from .background import validate_background
-    validate_background(env, validated)
-    return validated
 
 
 def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
@@ -210,9 +207,12 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
         return EvaluationResult("ResourceLimit", None, root, evaluator.work)
 
 
+@semantic_entry("evaluate")
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
-    """Validate the public inputs and evaluate a closed formula or document."""
+    """Evaluate under the selected authority while keeping the public schema."""
+    if getattr(env, "alternatives", None) is not None:
+        raise CheckerUnavailable("alternatives@0 requires the Lean checker")
     if not isinstance(max_evaluations, int) or isinstance(max_evaluations, bool) or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
     if max_evaluations > MAX_EVALUATIONS:
@@ -228,5 +228,48 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
         check_formula(env, value)
         formulas = (value,)
     model = _validate_model(env, model)
-    return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
-                               max_trace_nodes=max_trace_nodes, trace=trace)
+    from .ast import _to_data
+    from .backends.dispatch import execute
+    from .backends.lean_runner import evaluation_case, run as lean_run
+    from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
+
+    case = {"id": "evaluate", "kind": "evaluate-budgeted", "environment": rust_environment(env), **soft_case(env),
+            "model": model.to_dict(), "ast": [_to_data(f) for f in formulas],
+            "max_evaluations": max_evaluations,
+            "max_trace_nodes": min(max_evaluations, max_trace_nodes),
+            "trace": trace}
+
+    def python():
+        return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
+                                   max_trace_nodes=max_trace_nodes, trace=trace)
+
+    def rust():
+        row = rust_run(case)
+        def explanation(wire):
+            if not isinstance(wire, dict) or set(wire) != {"kind", "value", "bindings", "detail", "children"}:
+                raise CheckerUnavailable("CheckerUnavailable: malformed Rust evaluation trace")
+            bindings = wire["bindings"]
+            if not isinstance(bindings, list) or any(
+                not isinstance(item, dict) or item.get("debruijn_index") != index
+                or set(item) != {"debruijn_index", "sort", "local_id"}
+                for index, item in enumerate(bindings)
+            ):
+                raise CheckerUnavailable("CheckerUnavailable: malformed Rust trace bindings")
+            return Explanation(wire["kind"], wire["value"],
+                               tuple((item["sort"], item["local_id"]) for item in bindings),
+                               wire["detail"], tuple(explanation(child) for child in wire["children"]))
+        return EvaluationResult(row["status"], row["value"],
+                                explanation(row["explanation"]) if trace else None,
+                                row["evaluations"])
+
+    def lean():
+        result = rust()
+        if result.status == "ResourceLimit":
+            return result
+        mode, request = evaluation_case(env, "evaluate", case["ast"], model.to_dict())
+        value = all(lean_run(mode, [request])[0]["values"])
+        if value != result.value:
+            raise CheckerUnavailable("CheckerUnavailable: Lean and Rust evaluation disagree")
+        return result
+
+    return execute("evaluate", case, python, lean=lean, rust=rust)

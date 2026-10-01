@@ -1,0 +1,68 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can read the log file or do nothing. Reading the log file might lead to data loss.
+
+The agent reads the log file. What does the text tell you about data loss?
+(a) The text does not say.
+(b) No data loss happens: reading a file does not change it.
+(c) Data loss is more likely than not.
+(d) Data loss is not ruled out.
+
+Text 2
+
+A clinic can give the patient penicillin or give the patient nothing. Giving the patient penicillin cannot lead to an allergic reaction.
+
+According to the text, can an allergic reaction happen if the clinic gives the patient penicillin?
+(a) The text does not say.
+(b) Yes: some patients are allergic to penicillin.
+(c) It can, but the clinic is not allowed to let it happen.
+(d) No: in no case the text allows does giving penicillin lead to an allergic reaction.
+
+Text 3
+
+An agent can apply the database migration or do nothing. The duration of the migration is at least 5 minutes. The duration of the migration is at most 60 minutes. Applying the migration cannot lead to a task delay unless the duration of the migration is greater than 30 minutes.
+
+The agent applies the migration, and a task delay happens. According to the text, was the duration of the migration greater than 30 minutes?
+(a) No: it was 30 minutes or less.
+(b) Yes: it was greater than 30 minutes.
+(c) The text does not say.
+
+Text 4
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit might prevent task abandonment.
+
+What does the last sentence tell you?
+(a) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(b) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+(c) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(d) The text does not say.
+
+Text 5
+
+An agent can run the job or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job leads to a server outage exactly when the peak memory of the job is greater than 8 gigabytes.
+
+The agent runs the job, and the peak memory of the job is 5 gigabytes. What does the text tell you about a server outage?
+(a) The text does not say.
+(b) No server outage happens.
+(c) A server outage happens.
+
+Text 6
+
+An agent can run the job with a memory limit or do nothing. The peak memory of the job is at least 2 gigabytes. The peak memory of the job is at most 12 gigabytes. Running the job with a memory limit leads to a job failure if the peak memory of the job is greater than 4 gigabytes.
+
+The agent runs the job with a memory limit, and a job failure happens. According to the text, was the peak memory of the job greater than 4 gigabytes?
+(a) The text does not say.
+(b) Yes: a job failure needs a peak memory greater than 4 gigabytes.
+(c) No: a job failure needs a peak memory of at most 4 gigabytes.
+
+Text 7
+
+An agent can run the job or do nothing. Running the job might not lead to a server outage.
+
+What does the second sentence tell you?
+(a) If the agent runs the job, a server outage happens in no case the text allows.
+(b) A server outage is unlikely if the agent runs the job.
+(c) The text does not say.
+(d) In at least one case the text allows, the agent runs the job and no server outage happens.

@@ -1,14 +1,35 @@
 """Three-valued finite satisfiability report for a premise set."""
 from __future__ import annotations
 
+from .assurance import semantic_entry
 from .ast import Bottom
 from .entailment import check_entailment_certificate, prove_entailment
 from .search import check_countermodel, find_countermodel
 
 
+@semantic_entry("premise-status")
 def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
                    max_models=10_000, max_evaluations=100_000):
-    """Return a model, a replayed contradiction certificate, or UNKNOWN."""
+    """Return a model, a replayed contradiction certificate, or UNKNOWN.
+
+    A relabelling of one checked result: `INCONSISTENT` is one replayed
+    certificate of ⊥, `model` one checked model of the premises. The prover and
+    the model search are untrusted generators. Under a backend authority the
+    replay and the model check run on that backend (`dispatch.composed`).
+    """
+    from .backends.dispatch import composed, execute
+    budgets = {"max_proof_steps": max_proof_steps, "max_domain_size": max_domain_size,
+               "max_models": max_models, "max_evaluations": max_evaluations}
+
+    def run():
+        return _premise_status(env, premises, **budgets)
+
+    payload = {"environment_id": getattr(env, "environment_id", None), **budgets}
+    return execute("premise_status", payload, run, lean=composed("lean", run),
+                   rust=composed("rust-experimental", run))
+
+
+def _premise_status(env, premises, *, max_proof_steps, max_domain_size, max_models, max_evaluations):
     def contradiction(budget):
         proof = prove_entailment(env, premises, Bottom(), max_steps=budget)
         if proof.status == "Found":
