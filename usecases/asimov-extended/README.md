@@ -38,7 +38,9 @@ SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b5
 - **The permission default is a modeling choice, not Asimov's.** Like v2, the environment lets an action that no
   rule forbids be performed. Asimov's text grants no such permission. With nothing permitted by default, v2's rules
   give a clear action in only 13 of the 51 records, and P9's base verdict is among those that change. The extended
-  rules change in none of the 51 records and in 3 of the 300 sampled ones; see [the permission default](#the-permission-default).
+  rules' decisions change in none of the 51 records. In the 300 sampled ones, the clear set changes in 3, and
+  `permitted` changes in 9: six keep their clear action, but one of their actions is permitted only by the default
+  that Asimov's text does not give; see [the permission default](#the-permission-default).
 
 ## The rules and their check status
 
@@ -155,12 +157,17 @@ Every other permission in the v2 results comes from the default.
 
 `asimov_extended_check.py` measures how much rests on it. It decides every record again with `permitted`
 completed to deny, and the independent reading has the same switch (`permission_default="deny"`). Lean and the
-reading agree on all 102 decisions of the records and all 600 of the sample.
+reading agree on all 102 decisions of the records and all 600 of the sample. Each status is compared on its own
+(`changed` in `results.json`): a record can keep its clear set and still lose a permission.
 
-| Records | v2: clear set changes | v2: records with a clear action | Extended: clear set changes |
-| --- | --- | --- | --- |
-| the 51 decision records | 24, P9 among them | 13 (37 with the default) | none |
-| the 300 sampled records | 129 | 138 (256 with the default) | 3 (`Q039`, `Q225`, `Q290`), each keeping a clear action |
+| Records | v2: clear set changes | v2: `permitted` changes | v2: records with a clear action | Extended: clear set changes | Extended: `permitted` changes |
+| --- | --- | --- | --- | --- | --- |
+| the 51 decision records | 24, P9 among them | 38 | 13 (37 with the default) | none | none |
+| the 300 sampled records | 129 | 208 | 138 (256 with the default) | 3 (`Q039`, `Q225`, `Q290`), each keeping a clear action | 9: those 3 and `Q019`, `Q117`, `Q177`, `Q190`, `Q233`, `Q292` |
+
+The required actions never change, under either set of rules. A record whose clear set changes is not always
+a new dilemma: in 11 sampled records v2 still gives a clear action, a smaller set in 8 of them and a different
+action in 3.
 
 So the v2 verdicts depend on the default throughout. In P9, neither `nothing` nor `act` is ordered or
 protective, and no v2 rule grants them, so with nothing permitted by default the record has no permitted action.
@@ -168,14 +175,17 @@ The extended rules depend on it much less, because rule 19 grants permission to 
 candidate beats. They still use it in one case: an action that a candidate beats but that rule 18 does not
 forbid. Rule 18 only forbids possible harm to a human being or to the robot. In `Q290`, `a2` damages property and
 `a1` harms nothing, so only the default permits `a2`. In `Q039` and `Q225`, the same holds for an action that
-might harm humanity.
+might harm humanity. In the other six, the action that loses its permission is not required, so the clear action,
+a required order, stays the same. The permission is still the default's alone: in `Q233`, `a1` damages
+property; in `Q019`, `Q117`, `Q177`, `Q190` and `Q292`, it might harm humanity. `results.json` lists, for each
+of the nine, the actions only the default permits (`ext_permitted_only_by_default`).
 
 ## OPEN
 
 - **The permission default.** An action that no rule forbids is permitted. This is v2's modeling choice, not
   Asimov's, and most v2 verdicts depend on it ([above](#the-permission-default)). Revising it needs an authored
-  rule saying which actions the laws leave permitted. The extended rules' answers on the 51 records do not depend
-  on it.
+  rule saying which actions the laws leave permitted. The extended rules' decisions on the 51 records do not depend
+  on it; in 9 of the 300 sampled records, an action is permitted only by it.
 
 - **Counting and aggregation.** Worst-case comparison counts one death the same as two (P6), and one threat to the
   robot the same as two. The missing feature is `risk@0` stage C (costs, additive loss) or a way to state
@@ -205,7 +215,8 @@ One run of `asimov_extended_check.py` on 12 workers (16 cores, shared with other
 are rough): conflict certificates for the extended rules 57 s (18 targets found and replayed) and for the v2
 rules 4 s; the two followability witnesses 10 s; the 102 decisions of the 51 records 49 s; the 600 decisions of
 the 300 sampled records 227 s; the 702 decisions again with the permission default denied 599 s; the five
-mutants, beside them, 874 s. The whole run took about 16 minutes.
+mutants, beside them, 874 s. The whole run took about 16 minutes. A later run at a load average near 2 took
+about 12 minutes (the 702 decisions with the default denied 366 s, the mutants 670 s).
 
 On the sample, the v2 rules give a clear action in 256 of 300 records and the extended rules in 295. The 5
 extended dilemmas are 1 NONE-PERMITTED (every action breaks the Zeroth Law, as Q2 says) and 4 OVER-REQUIRED.

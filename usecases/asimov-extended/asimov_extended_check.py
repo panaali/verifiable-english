@@ -203,18 +203,32 @@ def deny_environment(env):
     return raw
 
 
+STATUSES = ("clear", "permitted", "required", "dilemma")
+
+
+def status_changes(allowed, denied, specs):
+    """For each status and side, the records whose status differs between the two defaults. A record can keep
+    its clear set and still lose a permission, so every status is counted on its own."""
+    same = lambda x, y: x == y if not isinstance(x, list) else sorted(x) == sorted(y)  # noqa: E731
+    return {status: {side: [n for n in specs if not same(allowed[side][n][status], denied[side][n][status])]
+                     for side in ("base", "ext")} for status in STATUSES}
+
+
 def permission_default(env, base_rules, ext_rules, specs, allowed):
     """Every record decided again with `permitted` defaulting to deny, against `allowed`, its decisions under
     the case's default allow. The source grants no permission by default; "allow" is a modeling choice, and a
-    record listed in `changed` has a clear set that depends on it."""
+    record listed in `changed[status]` has that status depending on it. `ext_permitted_only_by_default` names,
+    for each extended record that changes, the actions only the default permits."""
     lean = both(deny_environment(env), base_rules, ext_rules, specs)
     independent = read_all(specs, permission_default="deny")
-    changed = {side: [n for n in specs if sorted(lean[side][n]["clear"]) != sorted(allowed[side][n]["clear"])]
-               for side in ("base", "ext")}
+    changed = status_changes(allowed, lean, specs)
     return {"records": len(specs), "changed": changed,
             "base_clear": sum(bool(lean["base"][n]["clear"]) for n in specs),
             "ext_clear": sum(bool(lean["ext"][n]["clear"]) for n in specs),
-            "ext_clear_when_changed": {n: lean["ext"][n]["clear"] for n in changed["ext"]},
+            "ext_clear_when_changed": {n: lean["ext"][n]["clear"] for n in changed["clear"]["ext"]},
+            "ext_permitted_only_by_default": {
+                n: [a for a in allowed["ext"][n]["permitted"] if a not in lean["ext"][n]["permitted"]]
+                for n in changed["permitted"]["ext"]},
             "lean_vs_reading_disagreements": sorted({n for n in specs for side in ("base", "ext")
                                                      if not agrees(lean[side][n], independent[n][side])})}
 

@@ -47,7 +47,8 @@ FINDINGS = {
     "conflict_targets": {"ext": [18, 14], "base": [18, 8]},
 }
 
-# README "The permission default": the records whose clear set changes when `permitted` defaults to deny.
+# README "The permission default": the records whose statuses change when `permitted` defaults to deny. A record
+# can keep its clear set and still lose a permission, so each status is listed on its own (review finding B).
 DENY_BASE_CHANGES = [
     "S:a", "S:c-7", "S:o-7", "S:l5", "R:rescue-destroys-robot", "R:self-preservation-without-conflict",
     "R:ordered-unnecessary-injury", "R:unnecessary-injury", "R:unnecessary-allowed-human-harm",
@@ -57,8 +58,32 @@ DENY_BASE_CHANGES = [
     "R:dominated-action-when-threats-conflict", "P:P1 risky-rescues", "P:P2 certain-injury-vs-possible-death",
     "P:P7 injury-vs-property", "P:P9 unordered-possible-robot-loss", "P:P10 risky-rescue-only",
 ]
-DENY_SAMPLED = {"base_changes": 129, "base_clear": 138, "ext_changes": ["Q039", "Q225", "Q290"], "ext_clear": 295}
-
+# The v2 records that keep their clear set but lose a permission.
+DENY_BASE_PERMISSION_ONLY = [
+    "S:d-full", "S:j", "R:obedience-destroys-robot", "R:obedience-destroys-robot-retreat-available",
+    "R:ordered-action-preserves-robot", "R:two-orders-destroy-robot-differently", "O:O1 j-earlier",
+    "O:O2 j-later-more-authority", "O:O3 j-earlier-more-authority", "O:O4 j-simultaneous-more-authority",
+    "O:O5 j-later-authority-risky", "O:O6 j-later-authority-unlawful", "P:P3 ordered-possible-injury",
+    "P:P4 ordered-possible-robot-loss",
+]
+DENY_RECORDS = {
+    "clear": {"base": DENY_BASE_CHANGES, "ext": []},
+    "permitted": {"base": [n for n in cases.all_records() if n in DENY_BASE_CHANGES + DENY_BASE_PERMISSION_ONLY],
+                  "ext": []},
+    "required": {"base": [], "ext": []},
+    "dilemma": {"base": DENY_BASE_CHANGES, "ext": []},
+}
+# The sampled records: v2's counts, and the extended records by name with the actions only the default permits.
+DENY_SAMPLED = {
+    "base": {"clear": 129, "permitted": 208, "required": 0, "dilemma": 118},
+    "ext": {"clear": ["Q039", "Q225", "Q290"],
+            "permitted": ["Q019", "Q039", "Q117", "Q177", "Q190", "Q225", "Q233", "Q290", "Q292"],
+            "required": [], "dilemma": []},
+    "ext_permitted_only_by_default": {"Q019": ["nothing"], "Q039": ["a2"], "Q117": ["a1"], "Q177": ["nothing"],
+                                      "Q190": ["a3"], "Q225": ["a1"], "Q233": ["a1"], "Q290": ["a2"],
+                                      "Q292": ["a1"]},
+    "base_clear": 138, "ext_clear": 295,
+}
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -186,28 +211,48 @@ def test_p9_base_verdict_rests_on_the_permission_default():
     assert reading.read(spec, True, permission_default="deny")["clear"] == ["nothing"]
 
 
+def _sides(read):
+    return {side: {name: decisions[side] for name, decisions in read.items()} for side in ("base", "ext")}
+
+
 def test_the_reading_with_permission_denied_by_default_gives_the_committed_counts():
+    """Every status is compared, not only the clear set: in six sampled records the extended rules keep the
+    clear action but an unrequired action is permitted only by the default (review finding B)."""
     records, specs = cases.all_records(), check.sampled()
-    for name, spec in records.items():
-        for side, extended in (("base", False), ("ext", True)):
-            allowed = sorted(reading.read(spec, extended)["clear"])
-            denied = sorted(reading.read(spec, extended, permission_default="deny")["clear"])
-            assert (allowed != denied) == (side == "base" and name in DENY_BASE_CHANGES), (name, side)
-    allow, deny = check.read_all(specs), check.read_all(specs, permission_default="deny")
-    changes = {side: [k for k in specs if sorted(allow[k][side]["clear"]) != sorted(deny[k][side]["clear"])]
-               for side in ("base", "ext")}
-    assert len(changes["base"]) == DENY_SAMPLED["base_changes"]
-    assert changes["ext"] == DENY_SAMPLED["ext_changes"]
-    assert sum(bool(deny[k]["base"]["clear"]) for k in specs) == DENY_SAMPLED["base_clear"]
-    assert sum(bool(deny[k]["ext"]["clear"]) for k in specs) == DENY_SAMPLED["ext_clear"]
+    changes = check.status_changes(_sides(check.read_all(records)),
+                                   _sides(check.read_all(records, permission_default="deny")), records)
+    assert changes == DENY_RECORDS
+    allow, deny = _sides(check.read_all(specs)), _sides(check.read_all(specs, permission_default="deny"))
+    changes = check.status_changes(allow, deny, specs)
+    assert {status: len(changes[status]["base"]) for status in check.STATUSES} == DENY_SAMPLED["base"]
+    assert {status: changes[status]["ext"] for status in check.STATUSES} == DENY_SAMPLED["ext"]
+    assert {n: [a for a in allow["ext"][n]["permitted"] if a not in deny["ext"][n]["permitted"]]
+            for n in changes["permitted"]["ext"]} == DENY_SAMPLED["ext_permitted_only_by_default"]
+    assert sum(bool(deny["base"][k]["clear"]) for k in specs) == DENY_SAMPLED["base_clear"]
+    assert sum(bool(deny["ext"][k]["clear"]) for k in specs) == DENY_SAMPLED["ext_clear"]
+
+
+def test_a_lost_permission_counts_even_when_the_clear_set_stays():
+    """Review finding B's example: in Q019 only the default permits `nothing`, which might harm humanity and is
+    beaten by the order `a1`; rule 18 does not forbid it, so the clear set stays `a1` either way."""
+    spec = check.sampled()["Q019"]
+    allowed, denied = reading.read(spec, True), reading.read(spec, True, permission_default="deny")
+    assert allowed["clear"] == denied["clear"] == ["a1"]
+    assert (allowed["permitted"], denied["permitted"]) == (["nothing", "a1"], ["a1"])
+    sides = lambda decision: {side: {"Q019": decision} for side in ("base", "ext")}  # noqa: E731
+    changes = check.status_changes(sides(allowed), sides(denied), {"Q019": spec})
+    assert changes["clear"]["ext"] == [] and changes["permitted"]["ext"] == ["Q019"]
 
 
 def test_the_committed_permission_default_results_agree_with_the_reading():
     deny = RESULTS["permission_default_deny"]
-    assert deny["records"]["changed"] == {"base": DENY_BASE_CHANGES, "ext": []}
+    assert deny["records"]["changed"] == DENY_RECORDS
     assert (deny["records"]["records"], deny["records"]["base_clear"], deny["records"]["ext_clear"]) == (51, 13, 49)
-    assert deny["sampled"]["changed"]["ext"] == DENY_SAMPLED["ext_changes"]
-    assert len(deny["sampled"]["changed"]["base"]) == DENY_SAMPLED["base_changes"]
+    assert deny["records"]["ext_permitted_only_by_default"] == {}
+    sampled = deny["sampled"]["changed"]
+    assert {status: len(sampled[status]["base"]) for status in check.STATUSES} == DENY_SAMPLED["base"]
+    assert {status: sampled[status]["ext"] for status in check.STATUSES} == DENY_SAMPLED["ext"]
+    assert deny["sampled"]["ext_permitted_only_by_default"] == DENY_SAMPLED["ext_permitted_only_by_default"]
     assert (deny["sampled"]["base_clear"], deny["sampled"]["ext_clear"]) == (138, 295)
     assert all(deny["sampled"]["ext_clear_when_changed"].values())
     assert deny["records"]["lean_vs_reading_disagreements"] == deny["sampled"]["lean_vs_reading_disagreements"] == []

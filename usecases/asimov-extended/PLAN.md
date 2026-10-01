@@ -484,5 +484,6 @@ recorded in section 13, not made silently.
    it is v2's modeling choice. The check now decides every record again with `permitted` completed to deny
    (`permission_default_deny` in `results.json`), and the independent reading has the same switch. Base's clear
    set changes in 24 of the 51 records, P9 among them: its unordered actions are permitted only by the default.
-   Ext's changes in none of the 51 and in 3 of the 300 sampled records, which keep a clear action. Lean and the
-   reading agree on all 702 decisions. The answer key is unchanged; README OPEN states the assumption.
+   Ext's changes in none of the 51 and in 3 of the 300 sampled records, which keep a clear action. Each status is
+   counted on its own (loop recheck finding B): Ext's `permitted` changes in 9 sampled records, six of them with
+   the same clear action. Lean and the reading agree on all 702 decisions. The answer key is unchanged; README OPEN states the assumption.
