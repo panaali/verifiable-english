@@ -90,7 +90,8 @@ def conflict(env, rules, witness=None):
     elaborated = elaborate(env, rules)
     base = Environment(_base_environment(env, elaborated))
     packages, unproved = {}, []
-    for target in elaborated["conflict_targets"]:
+    # A witness is replayed alone: Lean decides it, and no certificate is searched for.
+    for target in [] if witness else elaborated["conflict_targets"]:
         conclusion = _bind(Not(_Decoder().decode(target["ast"])), target["sorts"])
         proof = prove_entailment(base, (), conclusion, max_steps=PROVER_STEPS)
         if proof.status == "Found":
@@ -130,6 +131,13 @@ def decide(env, rules, specs):
     bound = policy(env, rules)
     batch = [cases.decision_case(name, env, rules, spec, bound) for name, spec in specs.items()]
     return {name: summary(report) for name, report in zip(specs, run(batch))}
+
+
+def both(env, base_rules, ext_rules, specs):
+    """The base and the extended decisions of the same records, side by side."""
+    with ThreadPoolExecutor(2) as pool:
+        base, ext = pool.map(lambda rules: decide(env, rules, specs), (base_rules, ext_rules))
+    return {"base": base, "ext": ext}
 
 
 def category(base, ext):
@@ -178,10 +186,10 @@ def mutant(name, env, ext_rules):
     if name == "M1":
         model = cases.witness_model(raw, records[focus[0]])
         witness = {"model": model, "target": "permitted", "tuple": ["obey"]}
-    result, _ = conflict(raw, rules)
+    result, _ = conflict(raw, rules, witness)
     if witness:
-        result["witness"] = {"record": focus[0], "verdict": conflict(raw, rules, witness)[0]["verdict"]}
-    if name != "M1":
+        result["witness"] = focus[0]
+    else:
         result["clear"] = {k: v["clear"] for k, v in decide(raw, rules, {k: records[k] for k in focus}).items()}
     return result
 
@@ -268,8 +276,13 @@ def compute(sample=SAMPLE):
     timing["followability_seconds"] = round(time.time() - start, 1)
     document = {"ext_conflict": ext_conflict, "base_conflict": done["base"][0], "ext_followable": follow}
 
+    # The mutants run beside the decisions and the sample.
+    mutant_pool = multiprocessing.get_context("fork").Pool(5)
+    mutant_jobs = mutant_pool.starmap_async(mutant, [(m, env, ext_rules) for m in ("M1", "M2", "M3", "M4", "M5")])
+    mutant_start = time.time()
+
     start = time.time()
-    lean = {"base": decide(env, base_rules, records), "ext": decide(env, ext_rules, records)}
+    lean = both(env, base_rules, ext_rules, records)
     timing["decisions_seconds"] = round(time.time() - start, 1)
     timing["decisions"] = 2 * len(records)
     independent = read_all(records)
@@ -281,20 +294,18 @@ def compute(sample=SAMPLE):
                                                    for side in ("base", "ext")}}
 
     start = time.time()
-    with multiprocessing.get_context("fork").Pool(5) as pool:
-        mutants = dict(zip(("M1", "M2", "M3", "M4", "M5"),
-                           pool.starmap(mutant, [(m, env, ext_rules) for m in ("M1", "M2", "M3", "M4", "M5")])))
-    for result in mutants.values():
-        result.pop("seconds")
-    timing["mutants_seconds"] = round(time.time() - start, 1)
-
-    start = time.time()
     specs = sampled(sample)
-    sample_lean = {"base": decide(env, base_rules, specs), "ext": decide(env, ext_rules, specs)}
+    sample_lean = both(env, base_rules, ext_rules, specs)
     sample_reading = read_all(specs)
     disagreements = [k for k in specs for side in ("base", "ext")
                      if not agrees(sample_lean[side][k], sample_reading[k][side])]
     timing["sampled_seconds"] = round(time.time() - start, 1)
+    mutants = dict(zip(("M1", "M2", "M3", "M4", "M5"), mutant_jobs.get()))
+    mutant_pool.close()
+    mutant_pool.join()
+    for result in mutants.values():
+        result.pop("seconds")
+    timing["mutants_done_after_seconds"] = round(time.time() - mutant_start, 1)
     sampled_result = {"records": len(specs), "seed": SEED, "lean_vs_reading_disagreements": sorted(set(disagreements)),
                       "base_clear": sum(bool(sample_lean["base"][k]["clear"]) for k in specs),
                       "ext_clear": sum(bool(sample_lean["ext"][k]["clear"]) for k in specs),
@@ -332,7 +343,7 @@ def compare(results, key):
     mutants = {}
     for name, expected in key["mutants"].items():
         got = results["mutants"][name]
-        ok = got["verdict"] == expected["conflict"] or (got.get("witness") or {}).get("verdict") == expected["conflict"]
+        ok = got["verdict"] == expected["conflict"]
         if "record" in expected:
             ok = ok and sorted(got["clear"][expected["record"]]) == sorted(expected["ext"])
             for record, clear in expected.get("unchanged", {}).items():

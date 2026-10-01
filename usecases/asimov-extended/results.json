@@ -3,25 +3,13 @@
   "base_agree": 51,
   "categories": {
    "CHANGED": 1,
+   "DILEMMA": 2,
    "RESOLVED": 9,
    "SHARPENED": 4,
    "TIE": 3,
-   "UNCHANGED": 34
+   "UNCHANGED": 32
   },
-  "disagreements": [
-   {
-    "key": "DILEMMA",
-    "record": "S:j",
-    "side": "category",
-    "ve": "UNCHANGED"
-   },
-   {
-    "key": "DILEMMA",
-    "record": "P:P8 all-break-zeroth",
-    "side": "category",
-    "ve": "UNCHANGED"
-   }
-  ],
+  "disagreements": [],
   "document": {
    "base_conflict": true,
    "base_conflict_targets": [
@@ -43,7 +31,13 @@
    "M4": true,
    "M5": true
   },
-  "records": 51
+  "records": 51,
+  "sampled": {
+   "Q1": true,
+   "Q2": true,
+   "Q3": false,
+   "lean_vs_reading": true
+  }
  },
  "document": {
   "base_conflict": {
@@ -129,14 +123,9 @@
     "prevent_required",
     "required->permitted"
    ],
-   "unproved": [
-    "permitted"
-   ],
-   "verdict": "UNKNOWN",
-   "witness": {
-    "record": "P:P3 ordered-possible-injury",
-    "verdict": "CONFLICT"
-   }
+   "unproved": [],
+   "verdict": "CONFLICT",
+   "witness": "P:P3 ordered-possible-injury"
   },
   "M2": {
    "clear": {
@@ -700,7 +689,7 @@
     "permitted": [],
     "required": []
    },
-   "category": "UNCHANGED",
+   "category": "DILEMMA",
    "ext": {
     "clear": [],
     "dilemma": "NONE-PERMITTED",
@@ -1672,7 +1661,7 @@
      "a2"
     ]
    },
-   "category": "UNCHANGED",
+   "category": "DILEMMA",
    "ext": {
     "clear": [],
     "dilemma": "OVER-REQUIRED",
@@ -1766,12 +1755,12 @@
   "seed": 2026
  },
  "timing": {
-  "conflict_base_seconds": 1.8,
-  "conflict_ext_seconds": 33.9,
+  "conflict_base_seconds": 6.8,
+  "conflict_ext_seconds": 81.6,
   "decisions": 102,
-  "decisions_seconds": 35.9,
-  "followability_seconds": 6.6,
-  "mutants_seconds": 138.2,
-  "sampled_seconds": 183.0
+  "decisions_seconds": 70.9,
+  "followability_seconds": 14.2,
+  "mutants_done_after_seconds": 282.8,
+  "sampled_seconds": 211.8
  }
 }
