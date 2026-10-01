@@ -627,7 +627,16 @@ def document_conflicts():
     return {p: conflict_result(tuple(ids)) for p, ids in sorted(by_predicate.items())}
 
 
+def _total(result):
+    total = 1
+    for s in result["cone"]:
+        total *= len(SETS[s])
+    return total
+
+
 def intersect_results(results):
+    # A part that holds at every choice of its cone constrains nothing; its sets stay outside the cone.
+    results = [r for r in results if len(r["true"]) != _total(r)]
     sets = sorted({s for r in results for s in r["cone"]})
     true = []
     for assignment in choices(tuple(sets)):
@@ -638,6 +647,8 @@ def intersect_results(results):
 
 
 def union_result(results):
+    # A result with no true choice adds nothing to a union; its reading sets stay outside the cone.
+    results = [r for r in results if r["true"]] or results[:1]
     sets = sorted({s for r in results for s in r["cone"]})
     true = []
     for assignment in choices(tuple(sets)):
