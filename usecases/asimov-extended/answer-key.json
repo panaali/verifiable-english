@@ -1,0 +1,554 @@
+{
+ "source": "PLAN.md sections 6, 7 and 8, frozen at commit 19fec859 and amended before any VE run by the plan review (commit 0f923181, PLAN.md section 13 item 1). Never edited to match VE.",
+ "records": {
+  "S:a": {
+   "base": [
+    "pull"
+   ],
+   "ext": [
+    "pull"
+   ],
+   "category": "UNCHANGED"
+  },
+  "S:b-A0 FI": {
+   "base": [],
+   "ext": [
+    "pull"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "NONE-PERMITTED"
+  },
+  "S:b-A0 FF": {
+   "base": [],
+   "ext": [
+    "nothing",
+    "pull"
+   ],
+   "category": "TIE",
+   "base_dilemma": "NONE-PERMITTED",
+   "missing": "a preference between actions (equal outcomes: whose death to prevent)"
+  },
+  "S:b-A0 IF": {
+   "base": [],
+   "ext": [
+    "nothing"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "NONE-PERMITTED"
+  },
+  "S:b-A1 FI": {
+   "base": [],
+   "ext": [
+    "pull"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "NONE-PERMITTED"
+  },
+  "S:b-A1 FF": {
+   "base": [],
+   "ext": [
+    "nothing",
+    "pull"
+   ],
+   "category": "TIE",
+   "base_dilemma": "NONE-PERMITTED",
+   "missing": "a preference between actions (equal outcomes: whose death to prevent)"
+  },
+  "S:b-A1 IF": {
+   "base": [],
+   "ext": [
+    "nothing"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "NONE-PERMITTED"
+  },
+  "S:c-7": {
+   "base": [
+    "nothing",
+    "pull"
+   ],
+   "ext": [
+    "nothing",
+    "pull"
+   ],
+   "category": "UNCHANGED"
+  },
+  "S:o-7": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "S:d-full": {
+   "base": [
+    "shield",
+    "retreat"
+   ],
+   "ext": [
+    "shield",
+    "retreat"
+   ],
+   "category": "UNCHANGED"
+  },
+  "S:e": {
+   "base": [
+    "act"
+   ],
+   "ext": [
+    "act"
+   ],
+   "category": "UNCHANGED"
+  },
+  "S:j": {
+   "base": [],
+   "ext": [],
+   "category": "DILEMMA",
+   "base_dilemma": "OVER-REQUIRED",
+   "ext_dilemma": "OVER-REQUIRED",
+   "missing": "order data (time or authority); for simultaneous orders of equal authority, a preference between actions"
+  },
+  "S:l5": {
+   "base": [
+    "pull2"
+   ],
+   "ext": [
+    "pull2"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:obedience-destroys-robot": {
+   "base": [
+    "obey"
+   ],
+   "ext": [
+    "obey"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:obedience-destroys-robot-retreat-available": {
+   "base": [
+    "obey"
+   ],
+   "ext": [
+    "obey"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:rescue-destroys-robot": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:ordered-action-preserves-robot": {
+   "base": [
+    "shield"
+   ],
+   "ext": [
+    "shield"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:self-preservation-without-conflict": {
+   "base": [
+    "shield",
+    "retreat"
+   ],
+   "ext": [
+    "shield",
+    "retreat"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:ordered-unnecessary-injury": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:unnecessary-injury": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:unnecessary-allowed-human-harm": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:necessary-injury": {
+   "base": [
+    "act"
+   ],
+   "ext": [
+    "act"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:two-necessary-injuries": {
+   "base": [
+    "act",
+    "act2"
+   ],
+   "ext": [
+    "act",
+    "act2"
+   ],
+   "category": "UNCHANGED",
+   "note": "tie carried over from v2: no harm in the table carries a class"
+  },
+  "R:harmless-looking-rescue-breaks-zeroth-law": {
+   "base": [
+    "act"
+   ],
+   "ext": [
+    "act"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:unrelated-work-while-human-harmed": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:unrelated-work-while-humanity-harmed": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:ordered-unrelated-work": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:unavoidable-harm": {
+   "base": [
+    "nothing",
+    "work"
+   ],
+   "ext": [
+    "nothing",
+    "work"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:two-rescues-destroy-robot-differently": {
+   "base": [
+    "fire_rescue",
+    "water_rescue"
+   ],
+   "ext": [
+    "fire_rescue",
+    "water_rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:two-rescues-destroy-robot-alike": {
+   "base": [
+    "fire_rescue",
+    "water_rescue"
+   ],
+   "ext": [
+    "fire_rescue",
+    "water_rescue"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:two-orders-destroy-robot-differently": {
+   "base": [
+    "obey"
+   ],
+   "ext": [
+    "obey"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:two-threats-without-higher-law": {
+   "base": [
+    "nothing",
+    "work"
+   ],
+   "ext": [
+    "nothing",
+    "work"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:two-threats-one-safe-rescue": {
+   "base": [
+    "shield"
+   ],
+   "ext": [
+    "shield"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:forced-threat-and-avoidable-threat": {
+   "base": [
+    "rescue2"
+   ],
+   "ext": [
+    "rescue2"
+   ],
+   "category": "UNCHANGED"
+  },
+  "R:dominated-action-when-threats-conflict": {
+   "base": [
+    "a1",
+    "a2",
+    "a3"
+   ],
+   "ext": [
+    "a1",
+    "a2",
+    "a3"
+   ],
+   "category": "UNCHANGED",
+   "note": "tie carried over from v2: counting threats needs risk@0 stage C"
+  },
+  "O:O1 j-earlier": {
+   "base": [],
+   "ext": [
+    "a1"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "OVER-REQUIRED"
+  },
+  "O:O2 j-later-more-authority": {
+   "base": [],
+   "ext": [
+    "a2"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "OVER-REQUIRED"
+  },
+  "O:O3 j-earlier-more-authority": {
+   "base": [],
+   "ext": [
+    "a1"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "OVER-REQUIRED"
+  },
+  "O:O4 j-simultaneous-more-authority": {
+   "base": [],
+   "ext": [
+    "a2"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "OVER-REQUIRED"
+  },
+  "O:O5 j-later-authority-risky": {
+   "base": [],
+   "ext": [
+    "a1"
+   ],
+   "category": "RESOLVED",
+   "base_dilemma": "OVER-REQUIRED"
+  },
+  "O:O6 j-later-authority-unlawful": {
+   "base": [
+    "a1"
+   ],
+   "ext": [
+    "a1"
+   ],
+   "category": "UNCHANGED"
+  },
+  "P:P1 risky-rescues": {
+   "base": [
+    "rescue_a",
+    "rescue_b"
+   ],
+   "ext": [
+    "rescue_b"
+   ],
+   "category": "SHARPENED"
+  },
+  "P:P2 certain-injury-vs-possible-death": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED",
+   "missing": "risk@0 stage B (bands and chances) to weigh a certain injury against a possible death"
+  },
+  "P:P3 ordered-possible-injury": {
+   "base": [
+    "obey"
+   ],
+   "ext": [
+    "nothing"
+   ],
+   "category": "CHANGED"
+  },
+  "P:P4 ordered-possible-robot-loss": {
+   "base": [
+    "obey"
+   ],
+   "ext": [
+    "obey"
+   ],
+   "category": "UNCHANGED"
+  },
+  "P:P5 unequal-necessary-injuries": {
+   "base": [
+    "act",
+    "act2"
+   ],
+   "ext": [
+    "act2"
+   ],
+   "category": "SHARPENED"
+  },
+  "P:P6 two-deaths-vs-one": {
+   "base": [],
+   "ext": [
+    "nothing",
+    "pull"
+   ],
+   "category": "TIE",
+   "base_dilemma": "NONE-PERMITTED",
+   "missing": "counting or aggregation (risk@0 stage C costs, additive_loss) or a preference between actions"
+  },
+  "P:P7 injury-vs-property": {
+   "base": [
+    "swerve",
+    "brake"
+   ],
+   "ext": [
+    "brake"
+   ],
+   "category": "SHARPENED"
+  },
+  "P:P8 all-break-zeroth": {
+   "base": [],
+   "ext": [],
+   "category": "DILEMMA",
+   "base_dilemma": "NONE-PERMITTED",
+   "ext_dilemma": "NONE-PERMITTED",
+   "missing": "an author's ranking between Zeroth-Law breaches"
+  },
+  "P:P9 unordered-possible-robot-loss": {
+   "base": [
+    "nothing",
+    "act"
+   ],
+   "ext": [
+    "nothing"
+   ],
+   "category": "SHARPENED"
+  },
+  "P:P10 risky-rescue-only": {
+   "base": [
+    "rescue"
+   ],
+   "ext": [
+    "rescue"
+   ],
+   "category": "UNCHANGED"
+  }
+ },
+ "totals": {
+  "records": 51,
+  "UNCHANGED": 32,
+  "RESOLVED": 9,
+  "TIE": 3,
+  "SHARPENED": 4,
+  "CHANGED": 1,
+  "DILEMMA": 2,
+  "base_clear": 37,
+  "ext_clear": 49,
+  "lost_clear": 0
+ },
+ "document": {
+  "ext_conflict": "CONFLICT-FREE",
+  "ext_conflict_targets": 14,
+  "base_conflict": "CONFLICT-FREE",
+  "base_conflict_targets": 8,
+  "ext_followable": "DILEMMA",
+  "ext_witness_kinds": [
+   "OVER-REQUIRED",
+   "NONE-PERMITTED"
+  ]
+ },
+ "mutants": {
+  "M1": {
+   "conflict": "CONFLICT",
+   "target": "permitted",
+   "witness": "P:P3 ordered-possible-injury"
+  },
+  "M2": {
+   "conflict": "CONFLICT-FREE",
+   "record": "O:O2 j-later-more-authority",
+   "ext": [
+    "a1",
+    "a2",
+    "nothing"
+   ]
+  },
+  "M3": {
+   "conflict": "CONFLICT-FREE",
+   "record": "P:P7 injury-vs-property",
+   "ext": [
+    "swerve",
+    "brake"
+   ],
+   "unchanged": {
+    "S:b-A0 FI": [
+     "pull"
+    ]
+   }
+  },
+  "M4": {
+   "conflict": "CONFLICT-FREE",
+   "record": "P:P4 ordered-possible-robot-loss",
+   "ext": [
+    "nothing"
+   ]
+  },
+  "M5": {
+   "conflict": "CONFLICT-FREE",
+   "record": "P:P4 ordered-possible-robot-loss",
+   "ext": [
+    "nothing"
+   ]
+  }
+ },
+ "sampled": {
+  "Q1_lost_clear": 0,
+  "Q2": "NONE-PERMITTED exactly when every alternative breaks the Zeroth Law",
+  "Q3": "OVER-REQUIRED only with two or more required orders, neither prevailing over the other"
+ }
+}

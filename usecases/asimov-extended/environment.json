@@ -192,7 +192,7 @@
           "act": "{0} prevent {1}"
         }
       },
-      "breaks_no_law": {
+      "lawful_action": {
         "arguments": [
           "action"
         ],
@@ -206,7 +206,7 @@
         "arguments": [
           "action"
         ],
-        "description": "The action breaks no law, or its robot has no lawful option and the action keeps the Zeroth Law, as derived by addition rules 15 and 16 (authored, not Asimov's)",
+        "description": "The action breaks no law, or no competing action is lawful and the action keeps the Zeroth Law, as derived by addition rules 15 and 16 (authored, not Asimov's)",
         "regulated": {
           "role": "plain",
           "default": "deny"
@@ -269,7 +269,7 @@
           "action",
           "action"
         ],
-        "description": "The two actions are available to the same robot, as derived by addition rule 27 (authored, not Asimov's)",
+        "description": "The two actions are available to the same robot (an action competes with itself), as derived by addition rule 27 (authored, not Asimov's)",
         "regulated": {
           "role": "plain",
           "default": "deny"

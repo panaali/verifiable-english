@@ -1,0 +1,1777 @@
+{
+ "comparison": {
+  "base_agree": 51,
+  "categories": {
+   "CHANGED": 1,
+   "RESOLVED": 9,
+   "SHARPENED": 4,
+   "TIE": 3,
+   "UNCHANGED": 34
+  },
+  "disagreements": [
+   {
+    "key": "DILEMMA",
+    "record": "S:j",
+    "side": "category",
+    "ve": "UNCHANGED"
+   },
+   {
+    "key": "DILEMMA",
+    "record": "P:P8 all-break-zeroth",
+    "side": "category",
+    "ve": "UNCHANGED"
+   }
+  ],
+  "document": {
+   "base_conflict": true,
+   "base_conflict_targets": [
+    18,
+    8
+   ],
+   "ext_conflict": true,
+   "ext_conflict_targets": [
+    18,
+    14
+   ],
+   "ext_followable": true
+  },
+  "ext_agree": 51,
+  "mutants": {
+   "M1": true,
+   "M2": true,
+   "M3": true,
+   "M4": true,
+   "M5": true
+  },
+  "records": 51
+ },
+ "document": {
+  "base_conflict": {
+   "targets": [
+    "beaten_by_a_candidate",
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "candidate_action",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "less_severe_competitor",
+    "overridden_order",
+    "own_robot_harm",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "possibly_harmful",
+    "prevails_over",
+    "required",
+    "prevent_required",
+    "valid_order",
+    "required->permitted"
+   ],
+   "unproved": [],
+   "verdict": "CONFLICT-FREE"
+  },
+  "ext_conflict": {
+   "targets": [
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "candidate_action",
+    "less_severe_competitor",
+    "beaten_by_a_candidate",
+    "own_robot_harm",
+    "possibly_harmful",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "prevails_over",
+    "valid_order",
+    "overridden_order",
+    "required",
+    "prevent_required",
+    "required->permitted"
+   ],
+   "unproved": [],
+   "verdict": "CONFLICT-FREE"
+  },
+  "ext_followable": [
+   {
+    "diagnosis": "OVER-REQUIRED(a1, a2): a1, a2 are all required",
+    "verdict": "DILEMMA",
+    "witness": "S:j"
+   },
+   {
+    "diagnosis": "NONE-PERMITTED: every available action is forbidden",
+    "verdict": "DILEMMA",
+    "witness": "P:P8 all-break-zeroth"
+   }
+  ]
+ },
+ "mutants": {
+  "M1": {
+   "targets": [
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "candidate_action",
+    "less_severe_competitor",
+    "beaten_by_a_candidate",
+    "own_robot_harm",
+    "possibly_harmful",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "prevails_over",
+    "valid_order",
+    "overridden_order",
+    "required",
+    "prevent_required",
+    "required->permitted"
+   ],
+   "unproved": [
+    "permitted"
+   ],
+   "verdict": "UNKNOWN",
+   "witness": {
+    "record": "P:P3 ordered-possible-injury",
+    "verdict": "CONFLICT"
+   }
+  },
+  "M2": {
+   "clear": {
+    "O:O2 j-later-more-authority": [
+     "a1",
+     "a2",
+     "nothing"
+    ]
+   },
+   "targets": [
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "candidate_action",
+    "less_severe_competitor",
+    "beaten_by_a_candidate",
+    "own_robot_harm",
+    "possibly_harmful",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "prevails_over",
+    "valid_order",
+    "overridden_order",
+    "required",
+    "prevent_required",
+    "required->permitted"
+   ],
+   "unproved": [],
+   "verdict": "CONFLICT-FREE"
+  },
+  "M3": {
+   "clear": {
+    "P:P7 injury-vs-property": [
+     "swerve",
+     "brake"
+    ],
+    "S:b-A0 FI": [
+     "pull"
+    ]
+   },
+   "targets": [
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "candidate_action",
+    "less_severe_competitor",
+    "beaten_by_a_candidate",
+    "own_robot_harm",
+    "possibly_harmful",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "prevails_over",
+    "valid_order",
+    "overridden_order",
+    "required",
+    "prevent_required",
+    "required->permitted"
+   ],
+   "unproved": [],
+   "verdict": "CONFLICT-FREE"
+  },
+  "M4": {
+   "clear": {
+    "P:P4 ordered-possible-robot-loss": [
+     "nothing"
+    ]
+   },
+   "targets": [
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "candidate_action",
+    "less_severe_competitor",
+    "beaten_by_a_candidate",
+    "own_robot_harm",
+    "possibly_harmful",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "prevails_over",
+    "valid_order",
+    "overridden_order",
+    "required",
+    "prevent_required",
+    "required->permitted"
+   ],
+   "unproved": [],
+   "verdict": "CONFLICT-FREE"
+  },
+  "M5": {
+   "clear": {
+    "P:P4 ordered-possible-robot-loss": [
+     "nothing"
+    ]
+   },
+   "targets": [
+    "breaks_first_law",
+    "breaks_zeroth_law",
+    "competes_with",
+    "has_lawful_option",
+    "lawful_action",
+    "candidate_action",
+    "less_severe_competitor",
+    "beaten_by_a_candidate",
+    "own_robot_harm",
+    "possibly_harmful",
+    "permitted",
+    "lawfully_avoidable_threat",
+    "prevails_over",
+    "valid_order",
+    "overridden_order",
+    "required",
+    "prevent_required",
+    "required->permitted"
+   ],
+   "unproved": [],
+   "verdict": "CONFLICT-FREE"
+  }
+ },
+ "records": {
+  "O:O1 j-earlier": {
+   "base": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "a1"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "O:O2 j-later-more-authority": {
+   "base": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "a2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a2"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "O:O3 j-earlier-more-authority": {
+   "base": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "a1"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "O:O4 j-simultaneous-more-authority": {
+   "base": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "a2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a2"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "O:O5 j-later-authority-risky": {
+   "base": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "a1"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "nothing"
+    ],
+    "required": [
+     "a1"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "O:O6 j-later-authority-unlawful": {
+   "base": {
+    "clear": [
+     "a1"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "nothing"
+    ],
+    "required": [
+     "a1"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "a1"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "nothing"
+    ],
+    "required": [
+     "a1"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P1 risky-rescues": {
+   "base": {
+    "clear": [
+     "rescue_a",
+     "rescue_b"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue_a",
+     "rescue_b"
+    ],
+    "required": []
+   },
+   "category": "SHARPENED",
+   "ext": {
+    "clear": [
+     "rescue_b"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue_b"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P10 risky-rescue-only": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P2 certain-injury-vs-possible-death": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P3 ordered-possible-injury": {
+   "base": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "category": "CHANGED",
+   "ext": {
+    "clear": [
+     "nothing"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P4 ordered-possible-robot-loss": {
+   "base": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P5 unequal-necessary-injuries": {
+   "base": {
+    "clear": [
+     "act",
+     "act2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act",
+     "act2"
+    ],
+    "required": []
+   },
+   "category": "SHARPENED",
+   "ext": {
+    "clear": [
+     "act2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act2"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P6 two-deaths-vs-one": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "TIE",
+   "ext": {
+    "clear": [
+     "nothing",
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P7 injury-vs-property": {
+   "base": {
+    "clear": [
+     "swerve",
+     "brake"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "swerve",
+     "brake"
+    ],
+    "required": []
+   },
+   "category": "SHARPENED",
+   "ext": {
+    "clear": [
+     "brake"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "brake"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P8 all-break-zeroth": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "P:P9 unordered-possible-robot-loss": {
+   "base": {
+    "clear": [
+     "nothing",
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "act"
+    ],
+    "required": []
+   },
+   "category": "SHARPENED",
+   "ext": {
+    "clear": [
+     "nothing"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:dominated-action-when-threats-conflict": {
+   "base": {
+    "clear": [
+     "a1",
+     "a2",
+     "a3"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "a2",
+     "a3"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "a1",
+     "a2",
+     "a3"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "a1",
+     "a2",
+     "a3"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:forced-threat-and-avoidable-threat": {
+   "base": {
+    "clear": [
+     "rescue2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue",
+     "rescue2"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue",
+     "rescue2"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:harmless-looking-rescue-breaks-zeroth-law": {
+   "base": {
+    "clear": [
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:necessary-injury": {
+   "base": {
+    "clear": [
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:obedience-destroys-robot": {
+   "base": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:obedience-destroys-robot-retreat-available": {
+   "base": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey",
+     "retreat"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "obey",
+     "retreat"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:ordered-action-preserves-robot": {
+   "base": {
+    "clear": [
+     "shield"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "shield",
+     "retreat"
+    ],
+    "required": [
+     "shield"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "shield"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "shield",
+     "retreat"
+    ],
+    "required": [
+     "shield"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:ordered-unnecessary-injury": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:ordered-unrelated-work": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:rescue-destroys-robot": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:self-preservation-without-conflict": {
+   "base": {
+    "clear": [
+     "shield",
+     "retreat"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "shield",
+     "retreat"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "shield",
+     "retreat"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "shield",
+     "retreat"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:two-necessary-injuries": {
+   "base": {
+    "clear": [
+     "act",
+     "act2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act",
+     "act2"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "act",
+     "act2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act",
+     "act2"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:two-orders-destroy-robot-differently": {
+   "base": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey",
+     "obey2"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "obey"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "obey"
+    ],
+    "required": [
+     "obey"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:two-rescues-destroy-robot-alike": {
+   "base": {
+    "clear": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:two-rescues-destroy-robot-differently": {
+   "base": {
+    "clear": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:two-threats-one-safe-rescue": {
+   "base": {
+    "clear": [
+     "shield"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "fire_rescue",
+     "water_rescue",
+     "shield"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "shield"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "shield"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:two-threats-without-higher-law": {
+   "base": {
+    "clear": [
+     "nothing",
+     "work"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "work"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "nothing",
+     "work"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "work"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:unavoidable-harm": {
+   "base": {
+    "clear": [
+     "nothing",
+     "work"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "work"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "nothing",
+     "work"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "work"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:unnecessary-allowed-human-harm": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:unnecessary-injury": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:unrelated-work-while-human-harmed": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "R:unrelated-work-while-humanity-harmed": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:a": {
+   "base": {
+    "clear": [
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "pull"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:b-A0 FF": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "TIE",
+   "ext": {
+    "clear": [
+     "nothing",
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:b-A0 FI": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:b-A0 IF": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "nothing"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:b-A1 FF": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "TIE",
+   "ext": {
+    "clear": [
+     "nothing",
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:b-A1 FI": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:b-A1 IF": {
+   "base": {
+    "clear": [],
+    "dilemma": "NONE-PERMITTED",
+    "permitted": [],
+    "required": []
+   },
+   "category": "RESOLVED",
+   "ext": {
+    "clear": [
+     "nothing"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:c-7": {
+   "base": {
+    "clear": [
+     "nothing",
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "pull"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "nothing",
+     "pull"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "nothing",
+     "pull"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:d-full": {
+   "base": {
+    "clear": [
+     "shield",
+     "retreat"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "shield",
+     "retreat",
+     "nothing"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "shield",
+     "retreat"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "shield",
+     "retreat"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:e": {
+   "base": {
+    "clear": [
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "act"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "act"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:j": {
+   "base": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [],
+    "dilemma": "OVER-REQUIRED",
+    "permitted": [
+     "a1",
+     "a2",
+     "nothing"
+    ],
+    "required": [
+     "a1",
+     "a2"
+    ]
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:l5": {
+   "base": {
+    "clear": [
+     "pull2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "pull2"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "pull2"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "pull2"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  },
+  "S:o-7": {
+   "base": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "category": "UNCHANGED",
+   "ext": {
+    "clear": [
+     "rescue"
+    ],
+    "dilemma": null,
+    "permitted": [
+     "rescue"
+    ],
+    "required": []
+   },
+   "independent_agrees": {
+    "base": true,
+    "ext": true
+   }
+  }
+ },
+ "sampled": {
+  "Q1_lost_clear": [],
+  "Q2_failures": [],
+  "Q3_failures": [
+   "Q051",
+   "Q067"
+  ],
+  "base_clear": 256,
+  "ext_clear": 295,
+  "ext_dilemmas": {
+   "NONE-PERMITTED": 1,
+   "OVER-REQUIRED": 4
+  },
+  "lean_vs_reading_disagreements": [],
+  "none_permitted": 1,
+  "over_required": 4,
+  "records": 300,
+  "seed": 2026
+ },
+ "timing": {
+  "conflict_base_seconds": 1.8,
+  "conflict_ext_seconds": 33.9,
+  "decisions": 102,
+  "decisions_seconds": 35.9,
+  "followability_seconds": 6.6,
+  "mutants_seconds": 138.2,
+  "sampled_seconds": 183.0
+ }
+}
