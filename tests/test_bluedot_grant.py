@@ -295,7 +295,8 @@ def test_no_invented_content(doc, vocabulary):
         assert by_id[uid]["status"] in {"LABELLED", "OPEN"}
         assert by_id[uid]["kind"][0] == "attributed" and by_id[uid]["kind"][3] == readings.PLAN
     # Superseded OLD wording is attributed to the OLD text, never a current plan.
-    for uid in ("u003", "u012", "u013", "u014", "u015", "u024", "u029", "u030", "u031", "u032"):
+    for uid in ("u003", "u012", "u013", "u014", "u015", "u024", "u029", "u030", "u031", "u032",
+                "u033"):
         assert by_id[uid]["kind"][:2] == ["attributed", "old_text"], uid
     assert by_id["u041"]["content"] == by_id["u092"]["content"] == readings.TRANSFER
     assert "plant" not in json.dumps(vocabulary).lower()
@@ -308,10 +309,10 @@ def test_meaning_shift_and_omission_regressions(doc):
         content = by_id[uid]["content"]
         assert content[0] == "and" and all(part[0] == "not" and part[1][1] == "claims"
                                            for part in content[1:])
-    # VEX requires evidence; nothing makes VEX require the quality review.
+    # VEX would require evidence; nothing makes VEX require the quality review.
     for uid in ("u039", "u090"):
         content = by_id[uid]["content"]
-        assert predicates(content) == {"required_by", "needs_quality_review"}
+        assert predicates(content) == {"adopted", "required_by", "needs_quality_review"}
         assert ["unary", "needs_quality_review", ["const", "vex"]] not in json.loads(json.dumps(content))
     # The motivation is the author's link, not the update's; it is unformalised.
     assert by_id["u060"]["status"] == "UNFORMALISED"
@@ -332,6 +333,140 @@ def test_meaning_shift_and_omission_regressions(doc):
             assert unit["id"] in readings.RESOLUTIONS, unit["id"]
             if unit["id"] in sets:
                 assert readings.RESOLUTIONS[unit["id"]] in sets[unit["id"]]["readings"][0]["admission"]["why"]
+
+
+def holds(ast, model, stack=()):
+    """Evaluate a formula in a finite model: ``model`` maps each sort to its
+    elements and each predicate to its set of argument tuples."""
+    op = ast[0]
+    if op in ("unary", "binary"):
+        args = tuple(stack[-1 - a[1]] if a[0] == "var" else a[1] for a in ast[2:])
+        return args in model[ast[1]]
+    if op == "and":
+        return holds(ast[1], model, stack) and holds(ast[2], model, stack)
+    if op == "or":
+        return holds(ast[1], model, stack) or holds(ast[2], model, stack)
+    if op == "not":
+        return not holds(ast[1], model, stack)
+    if op == "implies":
+        return not holds(ast[1], model, stack) or holds(ast[2], model, stack)
+    if op in ("forall", "exists"):
+        test = all if op == "forall" else any
+        return test(holds(ast[2], model, (*stack, e)) for e in model[ast[1]])
+    raise AssertionError(op)
+
+
+def vex_model(**overrides):
+    """VEX adopted as mandatory evidence, with one reviewed evidence item."""
+    model = {"evidence": {"e1"}, "is_evidence": {("vex",)}, "adopted": {("vex",)},
+             "mandatory_for": {("vex", c) for c in readings.VEX_CLASSES},
+             "required_by": {("e1", "vex")}, "needs_quality_review": {("e1",)}}
+    model.update(overrides)
+    return model
+
+
+def conjuncts(ast):
+    return [p for side in ast[1:] for p in conjuncts(side)] if ast[0] == "and" else [ast]
+
+
+def _vex_part(ast):
+    """The conjuncts of a title or note reading that mention VEX's evidence role."""
+    return [p for p in conjuncts(ast) if {"is_evidence", "mandatory_for", "adopted"} & predicates(p)]
+
+
+def test_mandatory_evidence_is_stated_and_stays_a_proposal(doc):
+    # Review: five spans call VEX "mandatory evidence", but the formulas only
+    # said it was proposed or developed and was "for" the claims, so they held
+    # if VEX were optional or not evidence.
+    by_id = {u["id"]: u for u in doc["units"]}
+    spans = [u for u in doc["units"] if re.search(r"mandatory evidence", u["source"])]
+    assert [u["id"] for u in spans] == ["u007", "u009", "u056", "u074", "u076"]
+    for unit in spans:
+        assert unit["status"] == "CHECKED", unit["id"]
+        assert not any(p[1] == "applies_to" and p[2] == ["const", "vex"]
+                       for p in conjuncts(unit["content"])), unit["id"]
+        part = readings.conj(*_vex_part(unit["content"]))
+        assert part == readings.VEX_MANDATORY, unit["id"]
+        assert holds(part, vex_model()), unit["id"]
+        # Optional once adopted, or not evidence: the reading is false.
+        assert not holds(part, vex_model(mandatory_for={("vex", "statistical_claims")})), unit["id"]
+        assert not holds(part, vex_model(is_evidence=set())), unit["id"]
+        # Still a proposal: nothing asserts that VEX is adopted.
+        assert holds(part, vex_model(adopted=set(), mandatory_for=set())), unit["id"]
+        assert ["unary", "adopted", ["const", "vex"]] not in conjuncts(unit["content"])
+    for uid in ("u007", "u056", "u074"):
+        assert ["unary", "proposed", ["const", "vex"]] in conjuncts(by_id[uid]["content"])
+
+
+def test_would_keeps_its_conditional_force(doc):
+    # Review: u039/u090 "VEX would require evidence" was read as a required
+    # evidence item existing now.  The requirement holds once VEX is adopted.
+    for uid in ("u039", "u090"):
+        content = next(u for u in doc["units"] if u["id"] == uid)["content"]
+        assert content == readings.VEX_EVIDENCE
+        assert content[0] == "implies" and content[1] == ["unary", "adopted", ["const", "vex"]]
+        assert holds(content, vex_model())
+        assert holds(content, vex_model(adopted=set(), required_by=set(), needs_quality_review=set()))
+        assert not holds(content, vex_model(required_by=set()))
+        assert not holds(content, vex_model(needs_quality_review=set()))
+    # The class: each modal word in a checked span is kept by the kind or by
+    # an explicit condition; none becomes a plain present-tense fact.
+    modal = {"would": lambda u: u["content"][0] == "implies",
+             "may": lambda u: "hedged" in kind_tags(u["kind"]),
+             "could": lambda u: "hedged" in kind_tags(u["kind"]),
+             "will": lambda u: "promised" in json.dumps(u["kind"]),
+             "should": lambda u: "expects" in json.dumps(u["kind"])}
+    seen = set()
+    for unit in doc["units"]:
+        for word, kept in modal.items():
+            if unit["status"] == "CHECKED" and re.search(rf"\b{word}\b", unit["source"]):
+                assert kept(unit), (unit["id"], word)
+                seen.add(word)
+    assert seen == {"would", "may", "will"}
+
+
+def _sections(doc):
+    """Yield (section, unit) where the section is OLD, NEW or Notes."""
+    markers = {"OLD\n": "OLD", "NEW\n": "NEW", "Notes\n\n": "Notes", "=== PASTE ===\n\n": None}
+    section = None
+    for unit in doc["units"]:
+        if unit["source"] in markers:
+            section = markers[unit["source"]]
+        elif unit["kind"] in ("meta", "question"):
+            if section != "Notes":
+                section = None
+        else:
+            yield section, unit
+
+
+def test_kinds_keep_speaker_and_force(doc):
+    # Review: u062 reports, in the present tense, what the comparison
+    # includes; a PLAN kind turned it into an intention.  The class: OLD
+    # wording is the OLD text's, and the author's notes are asserted or the
+    # author's statement, never a belief, intention, expectation or exposition.
+    seen = Counter()
+    for section, unit in _sections(doc):
+        seen[section] += 1
+        if section == "OLD":
+            assert unit["kind"][:2] == ["attributed", "old_text"], unit["id"]
+        elif section == "NEW":
+            assert unit["kind"][:2] == ["attributed", "new_text"], unit["id"]
+        elif section == "Notes":
+            text = json.dumps(unit["kind"])
+            assert not re.search(r'"(intends|believes|expects|promised|exposition)"', text), unit["id"]
+            if unit["status"] == "CHECKED":
+                # "is presented as" (u056) reports the revised text's wording.
+                assert unit["kind"] in ("asserted", "instruction") or \
+                    unit["kind"][:3] == ["attributed", "new_text", "says"], unit["id"]
+            elif unit["status"] == "OPEN":
+                assert unit["kind"] == readings.AUTHOR_SAYS, unit["id"]
+            else:
+                assert unit["kind"] == ["unformalised", unit["meaning"]["unformalised"]], unit["id"]
+    assert seen["OLD"] == 11 and seen["NEW"] == 14 and seen["Notes"] == 27
+    by_id = {u["id"]: u for u in doc["units"]}
+    assert by_id["u062"]["kind"] == "asserted" and by_id["u062"]["support"] == "assumption"
+    assert "reading-u062" in {r["id"] for r in doc["meta"]["reading_sets"]}
+    assert by_id["u033"]["kind"][:2] == ["attributed", "old_text"]
 
 
 def test_causal_units_on_the_merged_route(doc):
@@ -362,11 +497,11 @@ def test_document_coverage_and_premise_limit():
     assert coverage["source_bytes"] == coverage["accounted_bytes"] == 7619
     assert coverage["coverage_percent"] == 100
     assert coverage["bytes_by_status"] == {
-        "CHECKED": 3351, "LABELLED": 1107, "OPEN": 2114, "UNFORMALISED": 1047}
+        "CHECKED": 3351, "LABELLED": 1029, "OPEN": 2114, "UNFORMALISED": 1125}
     assert coverage["unformalised_reasons"] == {
         "causal_means": 2, "causal_route_excludes_definitions": 4,
-        "motivation_link": 1, "vague_comparison": 1}
+        "motivation_link": 1, "vague_comparison": 1, "vague_evaluation": 1}
     assert coverage["residual"]["open_terms"] == 4
     assert Counter(u["status"] for u in load_document(ROOT / "document.ve.md")["units"]) == {
-        "CHECKED": 40, "LABELLED": 26, "OPEN": 19, "UNFORMALISED": 8}
+        "CHECKED": 40, "LABELLED": 25, "OPEN": 19, "UNFORMALISED": 9}
     assert result["premises"]["status"] in {"UNKNOWN", "model"}

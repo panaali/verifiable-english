@@ -66,7 +66,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
   (a) "mandatory_checked_proofs" has the recorded relation "tested_on" to "obfuscated_arguments";
   (b) all of the following hold:
     (i) vex is classified as "proposed";
-    (ii) both vex has the recorded relation "applies_to" to "statistical_claims" and vex has the recorded relation "applies_to" to "approximate_claims".
+    (ii) all of the following hold:
+      (a) vex is classified as "is_evidence";
+      (b) if vex is classified as "adopted", then both vex has the recorded relation "mandatory_for" to "statistical_claims" and vex has the recorded relation "mandatory_for" to "approximate_claims".
+
+**Author resolution:** 'proposed mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory for statistical and approximate claims; nothing says it is adopted.
 
 ### u008 · LABELLED
 
@@ -86,7 +90,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
     (i) "mandatory_checked_proofs" has the recorded relation "applies_to" to "formalisable_claims";
     (ii) all of the following hold:
       (a) vex has the recorded relation "developed_to_improve" to oversight;
-      (b) both vex has the recorded relation "applies_to" to "statistical_claims" and vex has the recorded relation "applies_to" to "approximate_claims".
+      (b) all of the following hold:
+        (i) vex is classified as "is_evidence";
+        (ii) if vex is classified as "adopted", then both vex has the recorded relation "mandatory_for" to "statistical_claims" and vex has the recorded relation "mandatory_for" to "approximate_claims".
+
+**Author resolution:** 'developing mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory for statistical and approximate claims; nothing says it is adopted.
 
 ### u010 · LABELLED
 
@@ -250,7 +258,7 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 > The open benchmark, harness and failure analysis should help other oversight researchers even if VE provides no advantage.
 
-**Kind:** ["attributed", "applicant", "expects", "asserted"].
+**Kind:** ["attributed", "old_text", "says", ["attributed", "applicant", "expects", "asserted"]].
 
 ### u034 · LABELLED
 
@@ -298,9 +306,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 **Kind:** ["attributed", "new_text", "says", "asserted"].
 
-**explicit-form fallback:** Both of the following hold:
+**explicit-form fallback:** If vex is classified as "adopted", then both of the following hold:
   (a) there is an evidence item that has the recorded relation "required_by" to vex;
   (b) every evidence item that has the recorded relation "required_by" to vex is classified as "needs_quality_review".
+
+**Author resolution:** 'would' -> once VEX is adopted; nothing says it is adopted.
 
 ### u040 · OPEN
 
@@ -430,11 +440,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 **Author resolution:** 'This' -> note 2's protection: mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions.
 
-### u053 · LABELLED
+### u053 · UNFORMALISED
 
 > The existing credit to prover-estimator debate section 8 remains appropriate;
 
-**Kind:** ["attributed", "author", "believes", "asserted"].
+**Missing feature:** vague_evaluation.
 
 ### u054 · CHECKED
 
@@ -466,7 +476,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 **explicit-form fallback:** All of the following hold:
   (a) vex is classified as "proposed";
-  (b) both vex has the recorded relation "applies_to" to "statistical_claims" and vex has the recorded relation "applies_to" to "approximate_claims".
+  (b) all of the following hold:
+    (i) vex is classified as "is_evidence";
+    (ii) if vex is classified as "adopted", then both vex has the recorded relation "mandatory_for" to "statistical_claims" and vex has the recorded relation "mandatory_for" to "approximate_claims".
+
+**Author resolution:** 'proposed mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory for statistical and approximate claims; nothing says it is adopted.
 
 ### u057 · CHECKED
 
@@ -518,7 +532,7 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 > Formalisation and proof production are included in the matched-cost comparison.
 
-**Kind:** ["attributed", "applicant", "intends", "asserted"].
+**Kind:** "asserted".
 
 **explicit-form fallback:** All of the following hold:
   (a) "revised_comparison" is classified as "matched_cost";
@@ -636,7 +650,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
   (a) "mandatory_checked_proofs" has the recorded relation "tested_on" to "obfuscated_arguments";
   (b) all of the following hold:
     (i) vex is classified as "proposed";
-    (ii) both vex has the recorded relation "applies_to" to "statistical_claims" and vex has the recorded relation "applies_to" to "approximate_claims".
+    (ii) all of the following hold:
+      (a) vex is classified as "is_evidence";
+      (b) if vex is classified as "adopted", then both vex has the recorded relation "mandatory_for" to "statistical_claims" and vex has the recorded relation "mandatory_for" to "approximate_claims".
+
+**Author resolution:** 'proposed mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory for statistical and approximate claims; nothing says it is adopted.
 
 ### u075 · LABELLED
 
@@ -656,7 +674,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
     (i) "mandatory_checked_proofs" has the recorded relation "applies_to" to "formalisable_claims";
     (ii) all of the following hold:
       (a) vex has the recorded relation "developed_to_improve" to oversight;
-      (b) both vex has the recorded relation "applies_to" to "statistical_claims" and vex has the recorded relation "applies_to" to "approximate_claims".
+      (b) all of the following hold:
+        (i) vex is classified as "is_evidence";
+        (ii) if vex is classified as "adopted", then both vex has the recorded relation "mandatory_for" to "statistical_claims" and vex has the recorded relation "mandatory_for" to "approximate_claims".
+
+**Author resolution:** 'developing mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory for statistical and approximate claims; nothing says it is adopted.
 
 ### u077 · LABELLED
 
@@ -752,9 +774,11 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 **Kind:** ["attributed", "paste_text", "says", "asserted"].
 
-**explicit-form fallback:** Both of the following hold:
+**explicit-form fallback:** If vex is classified as "adopted", then both of the following hold:
   (a) there is an evidence item that has the recorded relation "required_by" to vex;
   (b) every evidence item that has the recorded relation "required_by" to vex is classified as "needs_quality_review".
+
+**Author resolution:** 'would' -> once VEX is adopted; nothing says it is adopted.
 
 ### u091 · OPEN
 

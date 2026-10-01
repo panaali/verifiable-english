@@ -101,6 +101,9 @@ PREDICATES = {
     "tested_to_improve": rel(["item", "item"], "{0} is tested to improve {1}"),
     "developed_to_improve": rel(["item", "item"], "{0} is developed to improve {1}"),
     "proposed": rel(["item"], "{0} is proposed"),
+    "adopted": rel(["item"], "{0} is adopted"),
+    "is_evidence": rel(["item"], "{0} is evidence"),
+    "mandatory_for": rel(["item", "item"], "{0} is mandatory for {1}"),
     "applies_to": rel(["item", "item"], "{0} is for {1}"),
     "tests": rel(["item", "harm"], "{0} tests {1}"),
     "misstates_task": rel(["formalisation"], "{0} misstates the task"),
@@ -229,24 +232,29 @@ def nested(holder, inner):
 COULD = ["hedged", "could", "asserted"]
 PROMISED = ["attributed", "applicant", "promised", "asserted"]
 PLAN = ["attributed", "applicant", "intends", "asserted"]
+# The author's own statement, for an OPEN note that cannot enter the premises.
+AUTHOR_SAYS = ["attributed", "author", "says", "asserted"]
 CANDIDATE_1 = ["attributed", "candidate_1", "says", "asserted"]
 CANDIDATE_2 = ["attributed", "candidate_2", "says", "asserted"]
 
 # Shared contents.  Each NEW sentence and its PASTE copy have one reading.
+# VEX is a proposal: it is evidence, and once adopted it is mandatory for the
+# two claim classes.  "proposed mandatory evidence" and "would require" keep
+# that conditional force; nothing says VEX is adopted.
+VEX_CLASSES = ("statistical_claims", "approximate_claims")
+VEX_MANDATORY = conj(un("is_evidence", "vex"),
+                     implies(un("adopted", "vex"),
+                             conj(*[bi("mandatory_for", "vex", c) for c in VEX_CLASSES])))
 ISSUES = ("smuggled_premises", "equivocation", "shifting_definitions")
 TITLE_OLD = conj(*[bi("tested_against", tool, "cross_examination")
                    for tool in ("verified_checker", "evidence_layer")],
                  *[bi("tested_on", tool, issue)
                    for tool in ("verified_checker", "evidence_layer") for issue in ISSUES])
 TITLE_ONE = conj(bi("tested_on", "mandatory_checked_proofs", "obfuscated_arguments"),
-                 un("proposed", "vex"),
-                 bi("applies_to", "vex", "statistical_claims"),
-                 bi("applies_to", "vex", "approximate_claims"))
+                 un("proposed", "vex"), VEX_MANDATORY)
 TITLE_TWO = conj(bi("tested_to_improve", "mandatory_checked_proofs", "oversight"),
                  bi("applies_to", "mandatory_checked_proofs", "formalisable_claims"),
-                 bi("developed_to_improve", "vex", "oversight"),
-                 bi("applies_to", "vex", "statistical_claims"),
-                 bi("applies_to", "vex", "approximate_claims"))
+                 bi("developed_to_improve", "vex", "oversight"), VEX_MANDATORY)
 OLD_HARMS = ("premise_confidence", "fidelity_confidence")
 OLD_CONTROLS = ("deference_control", "shifting_definition_control", "smuggled_premise_control")
 LABEL_HARM = bi("leads_to", "proof_label", "false_confidence")
@@ -257,9 +265,11 @@ UNRESOLVED = forall("claim", implies(
     conj(un("honest", V(0)),
          neg(exists("proof", conj(bi("proof_of", V(0), V(1)), un("affordable_proof", V(0)))))),
     un("unresolved", V(0))))
-VEX_EVIDENCE = conj(exists("evidence", bi("required_by", V(0), "vex")),
-                    forall("evidence", implies(bi("required_by", V(0), "vex"),
-                                               un("needs_quality_review", V(0)))))
+# "would": the requirement holds once VEX is adopted, not now.
+VEX_EVIDENCE = implies(un("adopted", "vex"),
+                       conj(exists("evidence", bi("required_by", V(0), "vex")),
+                            forall("evidence", implies(bi("required_by", V(0), "vex"),
+                                                       un("needs_quality_review", V(0))))))
 TRANSFER = forall("artefact", implies(
     conj(un("real_artefact", V(0)), bi("included_in", V(0), "benchmark")),
     un("tests_transfer", V(0))))
@@ -308,13 +318,14 @@ PASTE_PLAN = nested("paste_text", PLAN)
 
 WHY = {
     "title_old": "Each of the checker and the evidence layer is tested against cross-examination on each named issue; 'Verifiable English:' names the project.",
-    "title_one": "Candidate wording only; 'against obfuscated arguments' is the test condition, and VEX is proposed for the two claim classes.",
-    "title_two": "Candidate wording only; the purpose 'to improve oversight' is read as applying to both the testing and the developing.",
+    "title_one": "Candidate wording only; 'against obfuscated arguments' is the test condition; VEX is proposed, is evidence, and once adopted is mandatory for the two claim classes.",
+    "title_two": "Candidate wording only; the purpose 'to improve oversight' is read as applying to both the testing and the developing; VEX is evidence that, once adopted, is mandatory for the two claim classes.",
     "label_could": "A possibility, not a prediction; no severity or likelihood is added.",
     "misstate": "A possibility that some formalisation misstates its task.",
     "leaves": "Universal over declared foundation leaves.",
     "affordable": "Uses the defined affordable_proof predicate.",
-    "vex": "VEX requires evidence; that evidence still needs quality review. Nothing requires the review.",
+    "vex": "'would': once VEX is adopted, it requires evidence, and that evidence still needs quality review. Nothing says VEX is adopted or requires the review.",
+    "vex_note": "'is presented as' attributes the description to the revised text; VEX is proposed, is evidence, and once adopted is mandatory for the two claim classes.",
     "transfer": "Uses the defined real_artefact predicate; 'real artefacts' are those in the benchmark.",
     "publish": "A commitment; it is unconditional, so 'even if VE provides no advantage' adds no condition.",
 }
@@ -352,7 +363,7 @@ READINGS = {
                     "Collective reading: each control tests one of these harms, and each harm is tested by one of the controls."),
     "u031": opened(OLD, "real_artefact"),
     "u032": checked(nested("old_text", PROMISED), NULL_RESULTS, "A commitment in the OLD text."),
-    "u033": labelled(["attributed", "applicant", "expects", "asserted"]),
+    "u033": labelled(nested("old_text", ["attributed", "applicant", "expects", "asserted"])),
     "u034": META,
     "u035": causal(nested("new_text", ["hedged", "could", CAUSAL_GAP])),
     "u036": checked(NEW, FOUNDATION_LEAVES, WHY["leaves"]),
@@ -389,16 +400,17 @@ READINGS = {
                     "'beyond budget' is the negation of affordable_proof's within_budget clause; 'the claim' is the claim those proofs prove."),
     "u052": checked("asserted", bi("benefit_of", "prevention", "sound_proof_checking"),
                     "'This' is note 2's protection against arbitrary false sub-claims."),
-    "u053": labelled(["attributed", "author", "believes", "asserted"]),
+    # The author's notes report in the present tense: asserted, or the author's
+    # statement where an open term keeps it out of the premises.  Never a
+    # belief, an intention or exposition.
+    "u053": unformalised("vague_evaluation"),
     "u054": checked("asserted", conj(neg(bi("claims", "draft", "debate_novelty")),
                                      neg(bi("claims", "draft", "english_surface_benefit"))),
                     "Nothing is claimed; the draft does not claim that there is no novelty."),
     "u055": checked("asserted", conj(bi("concerns", "stability_caveat", "estimated_leaves"),
                                      neg(bi("concerns", "stability_caveat", "proved_subclaims"))),
                     "The caveat's scope."),
-    "u056": checked(NEW, conj(un("proposed", "vex"), bi("applies_to", "vex", "statistical_claims"),
-                              bi("applies_to", "vex", "approximate_claims")),
-                    "'is presented as' attributes the description to the revised text."),
+    "u056": checked(NEW, conj(un("proposed", "vex"), VEX_MANDATORY), WHY["vex_note"]),
     "u057": checked("asserted", neg(bi("guarantees", "evidence_requirements", "evidence_quality")),
                     "A negated relation."),
     "u058": checked("asserted", conj(neg(bi("claims", "draft", "vex_result")),
@@ -410,12 +422,12 @@ READINGS = {
     "u061": checked("asserted", conj(neg(bi("reports", "revised_form_text", "new_results")),
                                      neg(bi("asserts", "revised_form_text", "cost_advantage"))),
                     "Two negated relations."),
-    "u062": checked(PLAN, conj(un("matched_cost", "revised_comparison"),
+    "u062": checked("asserted", conj(un("matched_cost", "revised_comparison"),
                                bi("counts_cost", "revised_comparison", "formalisation_work"),
                                bi("counts_cost", "revised_comparison", "proof_production")),
-                    "A plan, so attributed as an intention; 'the matched-cost comparison' uses the defined matched_cost predicate."),
-    "u063": opened("exposition", "real_artefact"),
-    "u064": opened("exposition", "misleading_formalisation"),
+                    "A present-tense report by the author, so asserted; 'the matched-cost comparison' uses the defined matched_cost predicate."),
+    "u063": opened(AUTHOR_SAYS, "real_artefact"),
+    "u064": opened(AUTHOR_SAYS, "misleading_formalisation"),
     "u065": checked("asserted", forall("field", neg(un("revised", V(0)))), "The budget is one field."),
     "u066": checked("asserted", conj(bi("includes", "character_counts", "spaces"),
                                      bi("includes", "character_counts", "punctuation"),
@@ -435,7 +447,7 @@ READINGS = {
                                      only("contribution_edit", "indicated_sentence"),
                                      only("harms_edit", "indicated_paragraph")),
                     "Respectively: the contribution edit replaces only the sentence, and the harms edit only the paragraph."),
-    "u069": unformalised("vague_comparison", ["attributed", "author", "believes", ["unformalised", "vague_comparison"]]),
+    "u069": unformalised("vague_comparison"),
     "u070": checked("asserted", conj(bi("states", "extra_space", "proof_rule"),
                                      bi("states", "extra_space", "proof_rule_limits")),
                     "'its' is the proof rule; 'the extra space' is in the revised passages."),
@@ -476,11 +488,20 @@ CAUSAL = {
 }
 CAUSAL_SORTS = ("chooser", "action", "harm")
 
+VEX_PROPOSED = ("'proposed mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory "
+                "for statistical and approximate claims; nothing says it is adopted")
+VEX_DEVELOPED = ("'developing mandatory evidence (VEX)' -> VEX is evidence and, once adopted, is mandatory "
+                 "for statistical and approximate claims; nothing says it is adopted")
+VEX_WOULD = "'would' -> once VEX is adopted; nothing says it is adopted"
+
 # Every pronoun, ellipsis or contextual restriction the author resolved.  Each
 # is an author choice recorded here and in the README; none is admitted by the
 # discourse route.
 RESOLUTIONS = {
+    "u007": VEX_PROPOSED,
+    "u009": VEX_DEVELOPED,
     "u030": "'these harms' -> the two harms of u029: increased false confidence about premise truth, and about faithful formalisation",
+    "u039": VEX_WOULD,
     "u040": "'these harms' -> the harms of u035-u037 (unit stays OPEN)",
     "u041": "'real artefacts' -> real artefacts included in the benchmark; 'transfer' left unqualified",
     "u045": "'its' -> bluedot-rapid-draft-v3.md",
@@ -490,12 +511,16 @@ RESOLUTIONS = {
     "u051": "'the claim' -> the claim the over-budget proofs are proofs of; 'beyond budget' -> total cost not within the registered budget (the within_budget clause of affordable_proof)",
     "u052": "'This' -> note 2's protection: mandatory proof preventing arbitrary false sub-claims from being accepted as new assumptions",
     "u054": "'is claimed' -> claimed by this draft",
+    "u056": VEX_PROPOSED,
     "u058": "'is claimed' -> claimed by this draft",
     "u059": "'its' -> VEX",
     "u062": "'the matched-cost comparison' -> the comparison in the revised form text",
     "u067": "'its label or count' -> the pasted candidate's label and count",
     "u068": "'sentence and paragraph' -> respectively, the contribution sentence and the harms paragraph",
     "u070": "'its' -> the proof rule; 'the extra space' -> in the revised passages",
+    "u074": VEX_PROPOSED,
+    "u076": VEX_DEVELOPED,
+    "u090": VEX_WOULD,
     "u091": "'these harms' -> the harms of u086-u088 (unit stays OPEN)",
     "u092": "'real artefacts' -> real artefacts included in the benchmark; 'transfer' left unqualified",
 }
