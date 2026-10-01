@@ -1,0 +1,8 @@
+1. **(b)** “Exactly when” means a delay happens if the migration takes more than 30 minutes and does not happen otherwise.
+2. **(a)** A task delay is severe, while data loss is minor.
+3. **(d)** “Might prevent” means giving nothing avoids a fever in at least one case and giving the vaccine always causes one.
+4. **(b)** Since doing nothing always causes data loss, deleting the database must avoid it in at least one case for data loss to be avoidable.
+5. **(b)** The text says dizziness happens below 50 kilograms but gives no outcome at 80 kilograms.
+6. **(b)** Running the job with a memory limit causes a task delay in every case the text allows.
+7. **(d)** “Allows” means drug A always causes a rash and drug B avoids one in at least one case.
+8. **(c)** Only penicillin cannot lead to a rash, so only it fulfills the rule to prevent one.

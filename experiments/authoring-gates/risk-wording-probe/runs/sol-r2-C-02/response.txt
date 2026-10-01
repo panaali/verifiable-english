@@ -1,0 +1,7 @@
+1. **(b)** “Might” means dizziness is possible with the full dose, but is not certain.
+2. **(a)** The text says taking the lift certainly leads to a fall.
+3. **(d)** “Avoidable by the agent” means at least one available action prevents an outage in every case the text allows.
+4. **(b)** The text rules out a server outage from restarting the web server.
+5. **(c)** The text says what happens below 50 kilograms, but gives no outcome for 80 kilograms.
+6. **(b)** “Allows a rash to happen” says the clinic may let a rash occur when giving drug A.
+7. **(c)** “Serious or worse” includes serious and severe.

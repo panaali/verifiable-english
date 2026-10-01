@@ -1,0 +1,7 @@
+1. **(a)** “Allows” means doing nothing, the other available action, avoids data loss in at least one allowed case.
+2. **(d)** “Might not lead” means at least one allowed case has deletion without data loss.
+3. **(a)** A rash is not ruled out, while drowsiness happens in every allowed case.
+4. **(c)** Data loss cannot be both ruled out and not ruled out for the same action.
+5. **(b)** The text defines preventing a fall as taking an action that avoids it in at least one allowed case.
+6. **(c)** “Might prevent” means doing nothing sometimes avoids fever and the vaccine always leads to it.
+7. **(a)** The outage statement applies when memory exceeds 8 gigabytes, so it gives no answer for 5 gigabytes.

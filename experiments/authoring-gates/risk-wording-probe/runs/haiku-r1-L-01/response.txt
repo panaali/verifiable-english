@@ -1,0 +1,17 @@
+# Answers
+
+**Text 1: (b)** — "Running the job with a memory limit leads to a task delay" means it happens in every case allowed, so there is no case with no task delay.
+
+**Text 2: (d)** — The definition of "avoidable by" is that "some action available to the chooser might not lead to the harm," which means at least one action avoids it in at least one case.
+
+**Text 3: (d)** — "Might lead to" means the declared estimates do not rule the harm out, so data loss is not ruled out.
+
+**Text 4: (a)** — "Taking the lift allows a dropped parcel" means another action available (taking stairs) might not lead to it; therefore in at least one case the text allows, taking the stairs avoids a dropped parcel.
+
+**Text 5: (b)** — The text explicitly assigns data loss as minor and task delay as severe; severe is more severe than minor.
+
+**Text 6: (b)** — "Cannot lead to" means the declared statements rule out the harm; therefore if the robot takes the lift, no lift failure happens in any case the text allows.
+
+**Text 7: (a)** — The sentence declares that data loss is ruled out by the estimates and conditions; it is a factual statement about what can happen, not a rule about what the agent should do.
+
+**Text 8: (b)** — "Cannot lead to a seizure unless temperature > 40" means a seizure cannot happen when temperature ≤ 40; since the patient's temperature is 38 degrees, no seizure happens.

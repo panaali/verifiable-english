@@ -1,0 +1,1 @@
+**(a) The text does not say.** It says copying causes a job failure when the backup is greater than 250 gigabytes, but gives no outcome for a 100-gigabyte backup.

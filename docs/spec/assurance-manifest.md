@@ -128,7 +128,8 @@ The test compares that classification with a scan of `lean/`, so a new JSON-hand
 
 `lean/VE/Norms/Admission.lean` lines 22–45 (`splitUnit`, `splitDocument`) are pinned because they rewrite the wire
 document before `decodeDoc` sees it and `admitDocument_spec` takes their result as given; the remaining JSON reads
-in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
+in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`, and its `envelopeGate` only rejects,
+through the pinned `Gate.decodeEnvelope`.
 
 <!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
@@ -138,16 +139,22 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
 | `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
 | `lean/VE/Core/Bridge.lean` | 159 | 117 | 10–126 | `6cd616c3c663…` |
-| `lean/VE/Core/Wire.lean` | 164 | 164 | 1–164 | `a5e1d57194b2…` |
-| `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `b4604ca7788a…` |
+| `lean/VE/Core/Wire.lean` | 166 | 166 | 1–166 | `280802e8f79a…` |
+| `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `7a9f5a63f666…` |
 | `lean/VE/Order/Wire.lean` | 292 | 217 | 24–233, 247–253 | `03f085f67a44…` |
-| `lean/VE/Norms/Wire.lean` | 306 | 281 | 25–305 | `911a3ac27e31…` |
+| `lean/VE/Norms/Wire.lean` | 314 | 289 | 25–313 | `9e2638cc8352…` |
 | `lean/VE/SpeechActs/Wire.lean` | 993 | 993 | 1–993 | `fbe08d985f7f…` |
 | `lean/VE/Route/Gate.lean` | 213 | 38 | 126–163 | `afccc5271974…` |
 | `lean/VE/Route/Admission.lean` | 697 | 697 | 1–697 | `230006c26a07…` |
 | `lean/VE/Norms/Replay.lean` | 393 | 69 | 92–140, 272–291 | `dfc40bd4fb00…` |
+| `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
+| `lean/VE/Service/Graph.lean` | 255 | 255 | 1–255 | `cd0523e5ad4d…` |
+| `lean/VE/Service/Readings.lean` | 215 | 215 | 1–215 | `357a25dda81b…` |
+| `lean/VE/Service/Family.lean` | 817 | 817 | 1–817 | `e1e00be43796…` |
+| `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
+| `lean/VE/Service/FamilyNorms.lean` | 244 | 244 | 1–244 | `f2e5ffd9ed57…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
-| `lean/VE/Norms/Admission.lean` | 455 | 24 | 22–45 | `9996af265c1e…` |
+| `lean/VE/Norms/Admission.lean` | 465 | 24 | 22–45 | `a57c5bf09a15…` |
 | `lean/VE/Alternatives/Wire.lean` | 296 | 296 | 1–296 | `26827ec1010c…` |
 | `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
@@ -160,12 +167,17 @@ in `admitDocument` are specified by `SourceDecoded` in `admitDocument_spec`.
 | `lean/VE/SoftNorms/Phases.lean` | 362 | 362 | 1–362 | `a19fb700f52c…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `65c5511e845d…` |
 | `lean/VE/SoftNorms/Wire.lean` | 462 | 462 | 1–462 | `641a13b4cd69…` |
+| `lean/VE/Risk/Wire.lean` | 487 | 487 | 1–487 | `3c35ffb89361…` |
+| `lean/VE/Risk/Record.lean` | 1266 | 1266 | 1–1266 | `9b9aa82f9a8d…` |
+| `lean/VE/Risk/Audit.lean` | 190 | 190 | 1–190 | `62c518fee5d3…` |
+| `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
+| `lean/VE/Risk/Run.lean` | 651 | 651 | 1–651 | `dbfad8022806…` |
 | `lean/VE/Rights/Wire.lean` | 698 | 698 | 1–698 | `fc25e57bed1a…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
 | `lean/VE/NormDefaults/Wire.lean` | 377 | 377 | 1–377 | `b823854df575…` |
 | `lean/VE/NormDefaults/Replay.lean` | 371 | 371 | 1–371 | `46be075c8793…` |
 | `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
-| **total** | | **11,833** | | |
+| **total** | | **16,985** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -182,8 +194,9 @@ dispatch (`lean:runner-glue`), and `lean/VE/English/Run.lean`, a harness no theo
   backend is imported (module or function alias, absolute or relative import); the operation argument must be a
   literal, and any other reference to `run` (stored, passed or rebound) fails the test. At run time `run` also
   refuses a caller inside `ve` that is not a declared call site of the operation, which covers indirections the
-  scan cannot see. Only `ve/backends/lean.py` and the additive stage-1
-  `ve/backends/lean_service.py` may import `subprocess`.
+  scan cannot see. Only `ve/backends/lean.py`, the additive stage-1
+  `ve/backends/lean_service.py` and the stage-2 Rust JSON-lines client `ve/backends/rust_jsonl.py` may import
+  `subprocess`.
 - **Lean bindings.**
   - Each executable is a `lean_exe` in `lean/lakefile.toml`.
   - Each mode string occurs in its root file.
@@ -247,15 +260,15 @@ the manifest `notes`, not changed:
 | `certificate.check` | leaf | python → lean | experimental / reference-theorems-checked | `ve.entailment:check_entailment_certificate` | `ve_conformance check-certificate`<br>`ve_conformance route certificate`<br>`ve_conformance order certificate` | `VE.Tableau.checkCertificate_sound`<br>`VE.Closure.Tableau.checkCertificate_sound`<br>`VE.Closure.Tableau.checkCertificate_sound_v0`<br>`VE.Core.Tableau.checkCertificate_sound`<br>`VE.Core.Tableau.checkCertificate_sound_v0`<br>`VE.Order.Tableau.checkCertificate_sound`<br>`VE.CertificateWire.Query.accepts_sound`<br>`VE.CertificateWire.ClosureQuery.accepts_sound`<br>`VE.Order.Wire.Query.accepts_sound`<br>`VE.Core.Wire.run_certificate_acceptance`<br>`VE.Route.route_acceptance`<br>`VE.Route.core_route_acceptance` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `definitions.elaborate` | leaf | python → lean | experimental / experimental | `ve.definitions:compile_definitions`<br>`ve.definitions:expand`<br>`ve.background:background`<br>`ve.background:validate_background`<br>`ve.background:dependency_order` | `ve_conformance route background`<br>`ve_conformance route dependency-order` | `VE.Definitions.stepOk_sound`<br>`VE.Definitions.chainOk_sound`<br>`VE.Definitions.faithful`<br>`VE.Definitions.conservative`<br>`VE.Definitions.conservative_entails`<br>`VE.Definitions.routeLayer_background_sound`<br>`VE.Route.Background.fol_background_sound`<br>`VE.Route.Background.fol_background_complete`<br>`VE.Data.Background.generate_sat_iff` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `norms.elaborate` | leaf | python → lean | experimental / experimental | `ve.norms:NormDocument.elaborate`<br>`ve.norms:NormDocument.premises` | `ve_norms_route (default) norms-elaborate` | `VE.Norms.elaborate_iff`<br>`VE.Norms.elaborate_iff_at`<br>`VE.Norms.norms_route_intended` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
-| `norms.conflict` | leaf | python → lean | experimental / experimental | `ve.norms:check_witness`<br>`ve.norms:check_conflict` | `ve_norms_route (default) norms-conflict` | `VE.Norms.conflictFreeCheck_sound`<br>`VE.Norms.conflict_witness_sound`<br>`VE.Norms.conflict_smallModel`<br>`VE.Norms.Replay.norms_wire_conflict_sound`<br>`VE.Norms.Replay.norms_wire_conflict_free_expands`<br>`VE.Norms.Replay.norms_wire_conflict_witness_sound` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
-| `norms.certificate` | leaf | python → lean | experimental / experimental | `ve.norms:check_norm_entailment_certificate` | `ve_norms_route (default) norms-certificate` | `VE.Norms.Replay.norms_wire_acceptance`<br>`VE.Norms.norms_route_acceptance`<br>`VE.Norms.norms_route_entails_iff`<br>`VE.Norms.norms_route_countermodel` | none | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `norms.conflict` | leaf | python → lean | experimental / experimental | `ve.norms:check_witness`<br>`ve.norms:check_conflict` | `ve_norms_route (default) norms-conflict` | `VE.Service.FamilyNorms.closure_conflict_target_sound`<br>`VE.Service.FamilyNorms.core_conflict_target_sound`<br>`VE.Service.FamilyNorms.order_conflict_target_sound`<br>`VE.Norms.conflictFreeCheck_sound`<br>`VE.Norms.conflict_witness_sound`<br>`VE.Norms.conflict_smallModel`<br>`VE.Norms.Replay.norms_wire_conflict_sound`<br>`VE.Norms.Replay.norms_wire_conflict_free_expands`<br>`VE.Norms.Replay.norms_wire_conflict_witness_sound`<br>`VE.Norms.Flagged.norms_flagged_conflict_sound`<br>`VE.Norms.Flagged.norms_flagged_witness_sound` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `norms.certificate` | leaf | python → lean | experimental / experimental | `ve.norms:check_norm_entailment_certificate` | `ve_norms_route (default) norms-certificate` | `VE.Service.FamilyNorms.closure_norms_certificate_sound`<br>`VE.Service.FamilyNorms.core_norms_certificate_sound`<br>`VE.Service.FamilyNorms.order_norms_certificate_sound`<br>`VE.Norms.Replay.norms_wire_acceptance`<br>`VE.Norms.norms_route_acceptance`<br>`VE.Norms.norms_route_entails_iff`<br>`VE.Norms.norms_route_countermodel`<br>`VE.Norms.Flagged.norms_flagged_acceptance` | none | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `soft.elaborate` | leaf | lean-only → lean | experimental / experimental | none | none | none | none | `lean:kernel`<br>`lean:compiler` |
-| `admission` | leaf | python → lean | experimental / experimental | `ve.admission:admit_document`<br>`ve.norm_admission:admit_norm_document`<br>`ve.norm_defaults_route:admit_norm_defaults_document` | `ve_conformance route admission`<br>`ve_norms_route (default) admission`<br>`ve_norm_defaults_route (default) admission` | `VE.Route.Admission.admit_report_sound`<br>`VE.Route.Admission.admit_string_sound`<br>`VE.Route.Admission.admit_labels_decoded`<br>`VE.Norms.Admission.admitDocument_spec`<br>`VE.Norms.Admission.norms_wire_admission_sound`<br>`VE.Norms.Admission.norms_wire_report_consequence`<br>`VE.Norms.Run.runAdmission_sound`<br>`VE.Norms.Run.norms_wire_acceptance`<br>`VE.NormDefaults.Admission.admitDocument_spec`<br>`VE.NormDefaults.Admission.wire_report_consequence`<br>`VE.NormDefaults.Run.runAdmission_sound`<br>`VE.NormDefaults.Run.normDefaults_wire_admission` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:record-identity` |
+| `admission` | leaf | python → lean | experimental / experimental | `ve.admission:admit_document`<br>`ve.norm_admission:admit_norm_document`<br>`ve.norm_defaults_route:admit_norm_defaults_document` | `ve_conformance route admission`<br>`ve_norms_route (default) admission`<br>`ve_norm_defaults_route (default) admission`<br>`ve_quantity (default) document` | `VE.Route.Admission.admit_report_sound`<br>`VE.Route.Admission.admit_string_sound`<br>`VE.Route.Admission.admit_labels_decoded`<br>`VE.Norms.Admission.admitDocument_spec`<br>`VE.Norms.Admission.norms_wire_admission_sound`<br>`VE.Norms.Admission.norms_wire_report_consequence`<br>`VE.Norms.Run.runAdmission_sound`<br>`VE.Norms.Run.norms_wire_acceptance`<br>`VE.NormDefaults.Admission.admitDocument_spec`<br>`VE.NormDefaults.Admission.wire_report_consequence`<br>`VE.NormDefaults.Run.runAdmission_sound`<br>`VE.NormDefaults.Run.normDefaults_wire_admission` | none | `python:implementation`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:record-identity` |
 | `label` | leaf | python → lean | experimental / experimental | `ve.admission:parse_label`<br>`ve.admission:validate_label` | `ve_conformance route label` | `VE.Route.Admission.parseLabel_render` | `conformance` | `python:implementation`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
 | `identity` | leaf | python → lean | experimental / experimental | `ve.identity:source_id`<br>`ve.identity:meaning_id`<br>`ve.argument:Claim.claim_id`<br>`ve.argument:deduction_identity` | none | none | `conformance` | `python:implementation`<br>`python:wire` |
-| `readings` | combination | python → lean | experimental / reference-theorems-checked | `ve.readings:check_readings` | none | `VE.Route.readings_all_iff`<br>`VE.Route.readings_all_sound (planned)`<br>`VE.Route.readings_none_sound (planned)`<br>`VE.Route.readings_some_sound (planned)` | none | `python:implementation`<br>`python:readings-rule`<br>`python:wire` |
-| `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
-| `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.checkAll_length`<br>`VE.Definitions.Bundle.backgroundLeaves_hold` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
+| `readings` | combination | python → lean | experimental / reference-theorems-checked | `ve.readings:check_readings` | none | `VE.Route.readings_all_iff`<br>`VE.Service.Readings.readings_all_sound`<br>`VE.Service.Readings.readings_none_sound`<br>`VE.Service.Readings.readings_some_sound`<br>`VE.Service.Family.closure_readings_all_sound`<br>`VE.Service.Family.closure_readings_none_sound`<br>`VE.Service.Family.closure_readings_some_sound`<br>`VE.Service.Family.core_readings_all_sound`<br>`VE.Service.Family.core_readings_none_sound`<br>`VE.Service.Family.core_readings_some_sound`<br>`VE.Service.Family.order_readings_all_sound`<br>`VE.Service.Family.order_readings_none_sound`<br>`VE.Service.Family.order_readings_some_sound`<br>`VE.Service.Family.fol_readings_all_sound`<br>`VE.Service.Family.fol_readings_none_sound`<br>`VE.Service.Family.fol_readings_some_sound` | none | `python:implementation`<br>`python:readings-rule`<br>`python:wire` |
+| `graph.compose` | combination | python → lean | experimental / reference-theorems-checked | `ve.argument:check_argument` | `ve_conformance route certificate`<br>`ve_conformance check-certificate` | `VE.Graph.check_sound`<br>`VE.Graph.check_entails`<br>`VE.Graph.check_unfolds`<br>`VE.Graph.tableau_certificateSound`<br>`VE.composition_sound`<br>`VE.Service.Graph.graph_sound`<br>`VE.Service.Graph.graph_entails`<br>`VE.Service.Graph.graph_unfolds`<br>`VE.Service.Family.closure_graph_sound`<br>`VE.Service.Family.closure_graph_entails`<br>`VE.Service.Family.closure_graph_unfolds`<br>`VE.Service.Family.core_graph_sound`<br>`VE.Service.Family.core_graph_entails`<br>`VE.Service.Family.core_graph_unfolds`<br>`VE.Service.Family.order_graph_sound`<br>`VE.Service.Family.order_graph_entails`<br>`VE.Service.Family.order_graph_unfolds` | none | `python:implementation`<br>`python:composition-rule`<br>`python:argument-diagnostics`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders` |
+| `bundle.check` | leaf | python → lean | experimental / experimental | `ve.bundle:check_bundle` | `ve_conformance route bundle` | `VE.Definitions.Bundle.bundle_sound`<br>`VE.Definitions.Bundle.checkAll_sound`<br>`VE.Definitions.Bundle.checkAll_length`<br>`VE.Definitions.Bundle.backgroundLeaves_hold`<br>`VE.Service.FamilyBundle.bundle_sound`<br>`VE.Service.FamilyBundle.fol_bundle_sound`<br>`VE.Service.FamilyBundle.closure_bundle_sound`<br>`VE.Service.FamilyBundle.core_bundle_sound`<br>`VE.Service.FamilyBundle.order_bundle_sound` | none | `python:implementation`<br>`python:record-identity`<br>`python:backend-adapter`<br>`python:wire`<br>`lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 | `english.admission` | surface | python → python | experimental / experimental | `ve.english:parse_english_with_metadata`<br>`ve.english:parse_english`<br>`ve.english:parse_english_argument`<br>`ve.norm_english:parse_english`<br>`ve.surface.unambiguity:require_unique_derivation` | none | `VE.English.checked_unique_derivation`<br>`VE.English.checked_one_reading`<br>`VE.English.checked_parse_render`<br>`VE.English.checked_render_injective`<br>`VE.English.admissible_sound`<br>`VE.English.core_parse_sound` | none | `python:implementation`<br>`python:surface` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |

@@ -297,6 +297,13 @@ with `permitted` unspecified: in k9 (empty rule set) all three alternatives are 
 "running the job with the memory limit" and "asking the user" move from `default_decided` to UNDECIDED. Sequencing
 is Q9.
 
+**Integration gap (2026-10-01).** The merged alternatives and risk Lean routes still consume completed deny/allow
+norms and do not replay `Fill_T` or classify an unspecified permission. Their combination with `norm-defaults@0`
+is rejected at profile validation with `UnsupportedProfile`; neither route may report a two-valued decision for a
+silent permission. The W1 norm-defaults route, soft and rights semantics, and the existing alternatives/risk routes
+remain available separately. Implementing `fill(inlineTree A)` and risk's three-valued decision report, followed by
+the cross-route fixtures u10/u11, is required before these profile pairs can be enabled.
+
 **Grounded completions stay.** Cedar's `permitted(request)` stays deny: Cedar's documented semantics is deny unless
 a policy permits, a citation the adapter records. Gatekeeper's `admitted` stays allow for the same reason.
 Candidates for `unspecified`, which this specification does not change: norms 9.1's "By default, a state may make a

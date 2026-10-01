@@ -1,0 +1,20 @@
+## Text 1: **(d)** — A rash is not ruled out; drowsiness happens in every case the text allows.
+The text states "might lead to a rash" (possible but not certain) versus "leads to drowsiness" (guaranteed), clearly distinguishing the two outcomes.
+
+## Text 2: **(c)** — No seizure happens.
+The text says seizures only occur when temperature > 40°, but the patient's temperature is 38°, so the seizure condition is not met.
+
+## Text 3: **(c)** — A lift failure happens.
+The text states the lift fails "exactly when" the parcel exceeds 3 kg; since the parcel weighs 4 kg, a failure occurs.
+
+## Text 4: **(b)** — The text does not say.
+"A fall is serious or worse" means the fall could be either serious OR severe (equally severe as a seizure), making the comparison indeterminate.
+
+## Text 5: **(d)** — In at least one case the text allows, the robot takes the ramp and no fall happens.
+Since stairs always causes a fall and falls are avoidable, there must be at least one scenario where taking the ramp avoids the fall.
+
+## Text 6: **(a)** — The text does not rule out a server outage if the agent runs the job.
+"Might lead to" means an outage is possible (not ruled out) but not certain.
+
+## Text 7: **(d)** — The text does not say.
+The text only specifies what happens with the lift; it contains no information about outcomes from taking the stairs.

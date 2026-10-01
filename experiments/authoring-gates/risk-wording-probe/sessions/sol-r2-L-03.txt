@@ -1,0 +1,103 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+
+The actions available to the agent are running the job with a memory limit and doing nothing. Running the job with a memory limit prevents task abandonment.
+
+What does the last sentence tell you?
+(a) If the agent runs the job with a memory limit, task abandonment happens in no case the text allows.
+(b) The text does not say.
+(c) Running the job with a memory limit leads to task abandonment in every case the text allows.
+(d) In at least one case the text allows, running the job with a memory limit avoids task abandonment, and doing nothing leads to task abandonment in every case the text allows.
+
+Text 2
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+
+Severity, from most to least severe: severe, serious, minor. An agent can run the job or run the job with a memory limit. Running the job with a memory limit has a less severe worst case than running the job.
+
+What does the last sentence tell you?
+(a) Running the job with a memory limit is less likely to cause harm than running the job.
+(b) Running the job with a memory limit leads to fewer harms than running the job.
+(c) The text leaves possible a harm from running the job that is more severe than every harm it leaves possible from running the job with a memory limit.
+(d) The text does not say.
+
+Text 3
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> cannot lead to <harm>" means the declared estimates, conditions and statements rule the harm out.
+
+A delivery robot can take the stairs or take the lift. Taking the lift cannot lead to a lift failure.
+
+What does the second sentence tell you?
+(a) The text does not say.
+(b) A lift failure is unlikely if the robot takes the lift.
+(c) If the robot takes the lift, no lift failure happens in any case the text allows.
+(d) The robot is not allowed to cause a lift failure.
+
+Text 4
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds.
+
+A delivery robot can take the lift or take the stairs. The weight of the parcel is at least 1 kilogram. The weight of the parcel is at most 30 kilograms. Taking the lift leads to a lift failure if the weight of the parcel is greater than 28 kilograms. Taking the lift might lead to a lift failure.
+
+According to the text, how likely is a lift failure if the robot takes the lift?
+(a) The text does not say.
+(b) It happens in every case the text allows.
+(c) More likely than not.
+(d) It cannot happen.
+
+Text 5
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might not lead to <harm>" means some case the declared estimates, conditions and statements allow avoids the harm.
+"<harm> is avoidable by <chooser>" means some action available to the chooser might not lead to the harm.
+
+The actions available to the agent are running the job, running the job with a memory limit and doing nothing. A server outage is avoidable by the agent.
+
+What does the last sentence tell you?
+(a) The text does not say.
+(b) At least one action available to the agent avoids a server outage in at least one case the text allows.
+(c) Every action available to the agent avoids a server outage in at least one case the text allows.
+(d) At least one action available to the agent avoids a server outage in every case the text allows.
+
+Text 6
+
+Legend:
+Each robot faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<harm> is <class> or worse" means the harm is <class> or more severe than <class>.
+
+Severity, from most to least severe: severe, serious, minor. A late delivery is serious or worse. A collision is minor. A delivery robot can cross the road at the crossing or wait. Crossing the road at the crossing might lead to a collision. Waiting might lead to a late delivery.
+
+According to the text, which severities could a late delivery have?
+(a) The text does not say.
+(b) Serious or severe.
+(c) Only serious.
+(d) Only minor.
+
+Text 7
+
+Legend:
+Each agent faces one choice among the actions available to it and takes at most one of them.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> leads to <harm>" means it happens in every case they allow.
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job with a memory limit might lead to a job failure. Running the job with a memory limit leads to a task delay.
+
+The agent runs the job with a memory limit. According to the text, is there any case with no task delay?
+(a) Yes: a task delay, like a job failure, is only not ruled out.
+(b) Yes: a task delay usually happens, but not in every case.
+(c) The text does not say.
+(d) No: a task delay happens in every case the text allows.

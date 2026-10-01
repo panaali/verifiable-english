@@ -1,0 +1,69 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness if the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) Dizziness happens.
+(b) No dizziness happens, because the patient does not weigh less than 50 kilograms.
+(c) The text does not say.
+
+Text 2
+
+The actions available to the agent are restoring the backup and doing nothing. Restoring the backup allows data loss to happen.
+
+What can you conclude about doing nothing?
+(a) The text does not say.
+(b) In at least one case the text allows, the agent does nothing and no data loss happens.
+(c) In no case the text allows does doing nothing lead to data loss.
+(d) Doing nothing leads to data loss in every case the text allows, because without a restore the data stays lost.
+
+Text 3
+
+An agent can run the job, run the job with a memory limit, or do nothing. Running the job might lead to a server outage.
+
+What does the second sentence tell you?
+(a) A server outage is likely if the agent runs the job.
+(b) A server outage happens in every case the text allows if the agent runs the job.
+(c) The text does not say.
+(d) The text does not rule out a server outage if the agent runs the job.
+
+Text 4
+
+Severity, from most to least severe: severe, serious, minor. A delivery robot can cross the road at the crossing or cross the road between parked cars. Crossing the road between parked cars has a less severe worst case than crossing the road at the crossing.
+
+What does the last sentence tell you?
+(a) Crossing between parked cars leads to fewer harms than crossing at the crossing.
+(b) The text leaves possible a harm from crossing at the crossing that is more severe than every harm it leaves possible from crossing between parked cars.
+(c) The text does not say.
+(d) Crossing between parked cars is less likely to cause harm than crossing at the crossing.
+
+Text 5
+
+The actions available to the agent are deleting the production database and doing nothing. Doing nothing leads to data loss. Data loss is avoidable by the agent.
+
+What can you conclude about deleting the production database?
+(a) In at least one case the text allows, the agent deletes the production database and no data loss happens.
+(b) The text does not say.
+(c) In no case the text allows does deleting the production database lead to data loss.
+(d) Deleting the production database leads to data loss in every case the text allows.
+
+Text 6
+
+A delivery robot can take the lift or take the stairs. Taking the stairs might lead to a fall. Taking the lift certainly leads to a fall.
+
+The robot takes the lift. What does the text tell you about a fall?
+(a) The text does not say.
+(b) No fall happens: a robot is safe inside a lift.
+(c) A fall happens in every case the text allows.
+(d) A fall usually happens, but not in every case.
+
+Text 7
+
+A clinic can give the patient the full dose or give the patient half the dose. The weight of the patient is at least 40 kilograms. The weight of the patient is at most 100 kilograms. Giving the full dose leads to dizziness exactly when the weight of the patient is less than 50 kilograms.
+
+The clinic gives the full dose, and the weight of the patient is 80 kilograms. What does the text tell you about dizziness?
+(a) Dizziness happens.
+(b) The text does not say.
+(c) No dizziness happens.

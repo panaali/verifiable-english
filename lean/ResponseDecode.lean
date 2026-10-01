@@ -402,6 +402,28 @@ def english (row case : Json) (index : Nat) : Check :=
       need (results.size == cases.size) "one result per case"
       for item in results do englishItem item]
 
+def standalone (mode : String) (r case : Json) (index : Nat) : Check :=
+  firstOk [fun _ => caseErrorRow r index false,
+    fun _ => errorRow r case [],
+    fun _ => do
+      if mode == "environment" then
+        okRow r case ["environment_id", "profiles", "family"]
+        hex64 (← field r "environment_id")
+        let _ ← VE.Bridge.strings (← field r "profiles")
+        need ((← field r "profiles") == (← path case ["environment", "profiles"])) "profiles"
+        let f ← (← field r "family").getStr?
+        need (["fol", "closure", "closure+n-ary", "order"].contains f) "family"
+      else if mode == "model" then
+        okRow r case ["valid", "model_id"]
+        need (isField r "valid" (.bool true)) "valid"
+        hex64 (← field r "model_id")
+      else
+        okRow r case ["kind", "identity_id"]
+        need ((← field r "kind") == (← field case "kind")) "kind"
+        let k ← (← field r "kind").getStr?
+        need (["source", "meaning", "model", "claim", "edge"].contains k) "kind"
+        hex64 (← field r "identity_id")]
+
 def row (mode : String) (r case : Json) (index : Nat) : Check :=
   match mode with
   | "evaluate" => evaluate r case index
@@ -410,6 +432,7 @@ def row (mode : String) (r case : Json) (index : Nat) : Check :=
   | "route" => route r case index
   | "norms" => norms r case index
   | "english" => english r case index
+  | "environment" | "model" | "identity" => standalone mode r case index
   | m => throw s!"unknown mode {m}"
 
 /-! ## Invariants: content the runners guarantee

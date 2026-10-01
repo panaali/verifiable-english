@@ -1,6 +1,6 @@
 name = "veReference"
 version = "0.1.0"
-defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_discourse_route", "ve_speech_acts_route", "ve_soft_norms_route", "ve_rights_route", "ve_quantity", "ve_reports_route", "ve_alternatives_route", "ve_service", "ve_english_run", "ve_response_decode", "ve_norm_defaults_route"]
+defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_norms_route", "ve_discourse_route", "ve_speech_acts_route", "ve_soft_norms_route", "ve_rights_route", "ve_quantity", "ve_reports_route", "ve_alternatives_route", "ve_risk_route", "ve_risk_eval", "ve_norm_defaults_route", "ve_service", "ve_english_run", "ve_response_decode"]
 
 [[lean_lib]]
 name = "VE"
@@ -38,6 +38,10 @@ name = "ve_alternatives_route"
 root = "AlternativesMain"
 
 [[lean_exe]]
+name = "ve_risk_route"
+root = "RiskMain"
+
+[[lean_exe]]
 name = "ve_rights_route"
 root = "RightsMain"
 
@@ -59,3 +63,7 @@ root = "ResponseDecode"
 [[lean_exe]]
 name = "ve_norm_defaults_route"
 root = "NormDefaultsMain"
+
+[[lean_exe]]
+name = "ve_risk_eval"
+root = "RiskEvalMain"

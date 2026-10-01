@@ -1,0 +1,22 @@
+# Answers with Reasons
+
+**Text 1: (b)**
+"Avoidable" means the server outage can be avoided in at least some case—at least one of the three actions prevents it in at least one scenario the text allows.
+
+**Text 2: (a)**
+"Cannot lead to" is absolute: it rules out a lift failure entirely, so taking the lift avoids it in every case the text allows.
+
+**Text 3: (b)**
+The rule only restricts the outcome when peak memory ≤ 8 GB; at 10 GB, the rule doesn't apply, so the text leaves open whether an outage occurs.
+
+**Text 4: (b)**
+A "less severe worst case" means the worst-case harm from crossing between parked cars is less severe than the worst-case harm from crossing at the crossing—so the crossing scenario leaves possible a more severe harm than any outcome from between parked cars.
+
+**Text 5: (a)**
+The rule only triggers when weight < 50 kg; at 80 kg, the condition is not met, so the text says nothing about whether dizziness occurs.
+
+**Text 6: (b)**
+The text allows parcels between 26–30 kg, and explicitly states that at those weights, taking the stairs leads to a dropped parcel, so the outcome is not ruled out.
+
+**Text 7: (b)**
+"Might lead" means a rash is possible but not certain; "certainly leads" means drowsiness happens in every case the text allows—a clear difference in their status.

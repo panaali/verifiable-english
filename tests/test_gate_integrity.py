@@ -199,17 +199,24 @@ def test_poisoned_toolchain_variables_do_not_reach_real_tools(tmp_path, monkeypa
     assert not marker.exists()
 
 
+def pin_rust_binary(root, data=b"binary"):
+    # The gate refuses a Rust build whose hash checkers.lock does not pin.
+    lock = root / "lean/checkers.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    lock.write_text(json.dumps({"rust_jsonl": [hashlib.sha256(data).hexdigest()]}))
+
+
 def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, monkeypatch):
-    target = "x86_64-unknown-linux-gnu"
     root = tmp_path / "root"
     for name in ("lean/lean-toolchain", "rust-toolchain.toml", "uv.lock", "rust/Cargo.lock"):
         (root / name).parent.mkdir(parents=True, exist_ok=True)
         (root / name).write_bytes((gate.ROOT / name).read_bytes())
-    for binary in [root / "rust/target" / target / "release/ve",
+    for binary in [root / "rust/target/release/ve",
                    *(root / "lean/.lake/build/bin" / name for name in gate.LEAN_BINARIES)]:
         binary.parent.mkdir(parents=True, exist_ok=True)
         binary.write_text("binary")
         binary.chmod(0o755)
+    pin_rust_binary(root)
     policy = tmp_path / "policy.json"
     policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
     collection = tmp_path / "collection.json"
@@ -221,7 +228,7 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
     versions = {"uv version": "uv 0.0.0", "lake version": "Lake (Lean version 4.24.0)",
                 "lean version": "Lean (version 4.24.0)", "rustc version": "rustc 1.98.1 (x)",
                 "cargo version": "cargo 1.98.1 (x)", "commit": "sha", "worktree status": "",
-                "Rust host": f"host: {target}", "Python environment": str(root / ".venv"),
+                "Python environment": str(root / ".venv"),
                 "native Rust tests": "test result: ok. 2 passed; 0 failed; 0 ignored;"}
 
     def run(label):
@@ -531,10 +538,10 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
                                                          (False, True)])
 def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
         tmp_path, monkeypatch, change_head, change_worktree):
-    target = "x86_64-unknown-linux-gnu"
-    rust_binary = tmp_path / "rust/target" / target / "release/ve"
+    rust_binary = tmp_path / "rust/target/release/ve"
     rust_binary.parent.mkdir(parents=True)
     rust_binary.write_text("binary")
+    pin_rust_binary(tmp_path)
     (tmp_path / "rust/Cargo.lock").write_text("version = 4\n")
     for name in gate.LEAN_BINARIES:
         binary = tmp_path / "lean/.lake/build/bin" / name
@@ -567,8 +574,6 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
         if stage == "worktree status":
             assert "--untracked-files=all" in args
             return "?? tests/conftest.py" if change_worktree and sha_calls == 2 else ""
-        if stage == "Rust host":
-            return f"host: {target}"
         if stage == "Python environment":
             return str(tmp_path / ".venv")
         if stage == "native Rust tests":
@@ -585,9 +590,48 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
     assert "lean_audit" in record["stages"]
     cargo = [row for row in seen if row[2] in ("Rust build", "native Rust tests")]
     assert len(cargo) == 2
-    assert all("--target-dir" in row[0] and target in row[0] for row in cargo)
+    # The host build the Rust backend loads; an explicit --target changes its hash.
+    assert all("--target-dir" in row[0] and "--target" not in row[0] for row in cargo)
+    assert all(f"--remap-path-prefix={row[1]['CARGO_HOME']}=/cargo-home"
+               in row[1]["CARGO_ENCODED_RUSTFLAGS"].split("\x1f") for row in cargo)
     assert all(row[1]["CARGO_HOME"] != str(tmp_path / ".cargo-home") for row in cargo)
     assert all(row[1]["CARGO_NET_OFFLINE"] == "true" for row in cargo)
     pytest_env = next(row[1] for row in seen if row[2] == "Python suite")
     assert pytest_env["VE_RUST_BINARY"] == str(rust_binary)
     assert [row[2] for row in seen].count("commit") == 2
+
+
+def test_gate_refuses_a_rust_build_checkers_lock_does_not_pin(tmp_path, monkeypatch):
+    # A build that embeds its checkout's paths has a hash no lock can pin for
+    # every checkout; the gate stops before the suite instead of reporting
+    # every Rust-backed test as CheckerUnavailable.
+    rust_binary = tmp_path / "rust/target/release/ve"
+    for binary in [rust_binary, *(tmp_path / "lean/.lake/build/bin" / name for name in gate.LEAN_BINARIES)]:
+        binary.parent.mkdir(parents=True, exist_ok=True)
+        binary.write_text("binary")
+        binary.chmod(0o755)
+    (tmp_path / "rust/Cargo.lock").write_text("version = 4\n")
+    pin_rust_binary(tmp_path, b"another build")
+    policy = tmp_path / "policy.json"
+    policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
+    collection = tmp_path / "collection.json"
+    collection.write_text(json.dumps(events()["collected"]))
+    output = tmp_path / "record.json"
+    monkeypatch.setattr(gate, "ROOT", tmp_path)
+    monkeypatch.setattr(gate, "POLICY", policy)
+    monkeypatch.setattr(gate, "COLLECTION", collection)
+    monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
+    monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
+    stages = []
+
+    def fake_command(args, *, env, stage, cwd=None):
+        stages.append(stage)
+        return str(tmp_path / ".venv") if stage == "Python environment" else ""
+
+    monkeypatch.setattr(gate, "command", fake_command)
+    assert gate.main() == 1
+    record = json.loads(output.read_text())
+    assert record["status"] == "failed"
+    assert "rust_build" not in record["stages"]
+    assert any("not pinned in lean/checkers.lock" in failure["reason"] for failure in record["failures"])
+    assert "Python suite" not in stages

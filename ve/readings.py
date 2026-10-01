@@ -338,6 +338,16 @@ def plan_choices(sets, *, limit=64, couplings=()):
              for c in product(*(range(len(s["readings"])) for s in sets))]}
 
 
+def _lean_readings_scope(env) -> bool:
+    """Whether Lean's `readings` mode checks verdicts over `env`: the frozen v0
+    and v0.1 envelopes, or a ve.core@0.2 environment of any family
+    (`validation.family_in_scope`)."""
+    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
+    if getattr(env, "language", None) in LEGACY_LANGUAGES:
+        return True
+    return getattr(env, "language", None) == "ve.core@0.2" and family_in_scope(env)
+
+
 @semantic_entry("readings")
 def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
                    max_models=10_000, max_evaluations=100_000, fixed=(), joint_choices=None,
@@ -347,7 +357,65 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     Every positive proof is replayed by the certificate checker, and every
     negative claim has an independently checked finite model. Failure of
     bounded search means UNKNOWN. We never infer NONE from proof failure.
+    Under a backend authority the replays and model checks run on the backend
+    and Lean's `readings` mode must confirm an ALL, NONE or SOME verdict from
+    its evidence (`lean/VE/Service/Readings.lean`).
     """
+    from .backends.dispatch import authority_for, composed, execute
+    options = {"max_steps": max_steps, "max_domain_size": max_domain_size, "max_models": max_models,
+               "max_evaluations": max_evaluations, "fixed": fixed, "joint_choices": joint_choices,
+               "couplings": couplings}
+
+    def python():
+        return _check_readings_python(env, sets, conclusion_ast, **options)
+
+    if authority_for("readings") in ("python", "rust-experimental") or not _lean_readings_scope(env):
+        return python()
+    if couplings:
+        # Coupled choices (docs/spec/rights-PLAN.md) have no Lean interface yet:
+        # every per-choice certificate and model is checked on the backend, and
+        # the coupled enumeration and its verdict stay Python's (trusted,
+        # narrowed; a recorded gap).
+        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
+    if joint_choices is not None:
+        # Discourse joint choices (docs/spec/discourse.md) have no Lean
+        # interface yet either: each choice's certificate and model is checked
+        # on the backend, and the joint enumeration and its verdict stay
+        # Python's (a recorded gap, as for couplings).
+        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
+    return execute("readings", {"kind": "readings"}, python,
+                   lean=lambda: _check_readings_lean(env, sets, conclusion_ast, options))
+
+
+def _check_readings_lean(env, sets, conclusion_ast, options):
+    from .backends.dispatch import pinned
+    from .backends.lean_runner import run
+    from .errors import CheckerUnavailable
+    evidence = {}
+    with pinned("lean"):
+        result = _check_readings_python(env, sets, conclusion_ast, evidence=evidence, **options)
+    verdict = result["verdict"]
+    if verdict not in ("ALL", "NONE", "SOME"):
+        return result  # UNKNOWN asserts nothing
+    case = {"id": "readings", "environment": env.to_dict(), "fixed": list(options["fixed"]),
+            "sets": [[r["content"] for r in s["readings"]] for s in sets],
+            "conclusion": conclusion_ast, "verdict": verdict, "evidence": evidence}
+    try:
+        row = run("readings", [case])[0]
+    except VEError as exc:
+        # Lean refusing evidence whose parts it checked one by one is a
+        # disagreement, never an input rejection.
+        raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the readings verdict: "
+                                 + exc.message) from None
+    if row["verdict"] != verdict:
+        raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the readings verdict")
+    return result
+
+
+def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
+                           max_models=10_000, max_evaluations=100_000, fixed=(), joint_choices=None,
+                           couplings=(), evidence=None):
+    """`evidence`, when given, receives the verdict's evidence on the wire."""
     from .ast import Or
     from .entailment import check_entailment_certificate, prove_entailment
     from .search import check_countermodel, find_countermodel
@@ -422,6 +490,8 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
                                                max_steps=max_steps)
         return result.certificate if replay.valid else None
 
+    models = {}
+
     def witness(premises):
         found = find_countermodel(env, premises, conclusion, max_domain_size=max_domain_size,
                                   max_models=max_models, max_evaluations=max_evaluations)
@@ -429,7 +499,12 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
             return None
         checked = check_countermodel(env, premises, conclusion, found.model,
                                      max_evaluations=max_evaluations)
-        return found.model.model_id if checked.valid else None
+        if not checked.valid:
+            return None
+        models[found.model.model_id] = found.model.to_dict()
+        return found.model.model_id
+
+    evidence = {} if evidence is None else evidence
 
     if couplings:
         outcomes = []
@@ -480,11 +555,13 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
                False if status["status"] == "model" else None)
     all_proof = prove([*fixed_formulas, *disjunctions])
     if all_proof is not None:
+        evidence["certificate"] = all_proof
         return {"verdict": "ALL", "route": "assertion-disjunction", "certificate": all_proof,
                 "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets],
                 "vacuous": vacuous, "premises": status}
     shared = witness([*fixed_formulas, *(f for rs in formulas for f in rs)])
     if shared is not None:
+        evidence["model"] = models[shared]
         return {"verdict": "NONE", "route": "assertion-shared-model", "model_id": shared,
                 "labels": [f"readings:{s['id']}@{s['version']}:all" for s in sets],
                 "vacuous": vacuous, "premises": status}
@@ -508,10 +585,12 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
                     max_evaluations=max_evaluations)
                 positive = {"choice": labels, "certificate": cert,
                             "premises": choice_status}
+                evidence["proof"] = {"choice": list(choice), "certificate": cert}
         if negative is None:
             model_id = witness(premises)
             if model_id is not None:
                 negative = {"choice": labels, "model_id": model_id}
+                evidence["countermodel"] = {"choice": list(choice), "model": models[model_id]}
         if positive is not None and negative is not None:
             return {"verdict": "SOME", "route": "assertion-choices", "proof": positive,
                     "countermodel": negative,
