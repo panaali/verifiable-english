@@ -368,4 +368,776 @@ def actOnly (D : Doc) (s : String) (i j : Nat) : Option (String × String) :=
     | [a], [b] => if a == b then none else some (a, b)
     | _, _ => none
   | _, _ => none
+
+/-! ## Proofs: the finite evaluation -/
+
+theorem typedTuple_iff {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) :
+    ∀ (ss : List String) (vs : List α), typedTuple M ss vs = true ↔ VE.TupleTyped M.asStructure ss vs
+  | [], [] => by simp [typedTuple, VE.TupleTyped]
+  | [], _ :: _ => by simp [typedTuple, VE.TupleTyped]
+  | _ :: _, [] => by simp [typedTuple, VE.TupleTyped]
+  | s :: ss, v :: vs => by
+    simp only [typedTuple, Bool.and_eq_true, decide_eq_true_eq, VE.TupleTyped, typedTuple_iff M ss vs]
+    rfl
+
+theorem mem_tuplesOf {α : Type u} (M : VE.FiniteModel α) :
+    ∀ (ss : List String) (vs : List α), vs ∈ tuplesOf M ss ↔ VE.TupleTyped M.asStructure ss vs
+  | [], [] => by simp [tuplesOf, VE.TupleTyped]
+  | [], _ :: _ => by simp [tuplesOf, VE.TupleTyped]
+  | s :: ss, [] => by simp [tuplesOf, VE.TupleTyped]
+  | s :: ss, v :: vs => by
+    simp only [tuplesOf, List.mem_flatMap, List.mem_map, VE.TupleTyped, List.cons.injEq]
+    constructor
+    · rintro ⟨w, hw, us, hus, rfl, rfl⟩
+      exact ⟨hw, (mem_tuplesOf M ss us).mp hus⟩
+    · rintro ⟨hv, hvs⟩
+      exact ⟨v, hv, vs, (mem_tuplesOf M ss vs).mpr hvs, rfl, rfl⟩
+
+theorem selectable_mem {X : RightsDoc} {k p : String} {N : SoftNode} (h : N ∈ selectable X k p) :
+    N ∈ (correlate X).T.nodes ∧ N.pred = p := by
+  unfold selectable at h
+  split at h
+  · obtain ⟨hN, hp⟩ := List.mem_filter.mp h
+    refine ⟨?_, by simpa using hp⟩
+    simp only [correlate, List.mem_append]
+    exact Or.inl (Or.inr hN)
+  · obtain ⟨RN, hRN, rfl⟩ := List.mem_map.mp h
+    obtain ⟨hRN, hk⟩ := List.mem_filter.mp hRN
+    simp only [Bool.and_eq_true, beq_iff_eq] at hk
+    refine ⟨?_, hk.2⟩
+    simp only [correlate, List.mem_append, List.mem_map]
+    exact Or.inl (Or.inl ⟨RN, hRN, rfl⟩)
+
+theorem catalaValue_eq (P N : Prop) (d v : Bool) :
+    VE.Norms.catalaValue P N d = some v ↔ ¬ (P ∧ N) ∧ ((if d then ¬ N else P) ↔ v = true) := by
+  classical
+  unfold VE.Norms.catalaValue
+  by_cases hP : P <;> by_cases hN : N <;> cases d <;> cases v <;> simp [hP, hN]
+
+/-- The finite evaluation is the semantics, on an admissible side and a typed probe. -/
+theorem observe_sound {α : Type u} [DecidableEq α] (c : Chain) (X : RightsDoc) (A : List VE.Formula)
+    (h : chainWF c X = true)
+    (hA : ∀ a ∈ A, a.WellFormed (envAt (soften (correlate X)) (size (soften (correlate X)))) [])
+    (M : VE.FiniteModel α) (valid : M.Valid (envAt (soften (correlate X)) 0))
+    (hb : backgroundValidR X M = true) (q : Probe α) (hq : probeTyped X M q = true) (v : Bool) :
+  observe X A M q = some v ↔ Observes X A M.asStructure q v := by
+  have hw := chain_soft c X h
+  have hv := VE.SoftNorms.softValid_of_wellFormed _ hw
+  have hB : VE.Norms.BaseAdmissible (soften (correlate X)) M.asStructure :=
+    (VE.Rights.baseAdmissibleR_of_valid X M valid hb).1.1
+  cases q with
+  | outcome p vs =>
+    simp only [probeTyped, Bool.and_eq_true, List.any_eq_true, beq_iff_eq] at hq
+    obtain ⟨⟨r, hr, rfl⟩, ht⟩ := hq
+    have hr' : r ∈ (correlate X).T.regulated := hr
+    have hfind : (correlate X).T.regulated.find? (·.name == r.name) = some r :=
+      VE.SoftNorms.find_key Regulated.name _ hv.regNames r hr'
+    have hs : VE.SoftNorms.sortsIn X.soft.T.regulated r.name = r.sorts := VE.SoftNorms.sortsOf_reg hv hr'
+    rw [hs, typedTuple_iff] at ht
+    have hc := VE.SoftNorms.conflict_canon hv _ hB hr' vs ht
+    have ho := VE.SoftNorms.outcome_canon hv _ hB hr' vs ht
+    rw [← VE.eval_iff_denote] at hc ho
+    simp only [observe, hfind]
+    constructor
+    · intro hobs
+      refine ⟨r, hr', rfl, ht, ?_⟩
+      unfold ValueSoft
+      rw [catalaValue_eq]
+      split at hobs
+      · cases hobs
+      · rename_i hcf
+        cases hobs
+        exact ⟨fun hpn => hcf (hc.mpr hpn), ho.symm⟩
+    · rintro ⟨r', hr'', hn, _, hval⟩
+      have : r' = r := by
+        have := VE.SoftNorms.find_key Regulated.name _ hv.regNames r' hr''
+        rw [hn, hfind] at this
+        exact (Option.some.inj this).symm
+      subst this
+      unfold ValueSoft at hval
+      rw [catalaValue_eq] at hval
+      rw [if_neg (fun hcf => hval.1 (hc.mp hcf))]
+      congr 1
+      have h2 := hval.2
+      cases hov : (outcomeBase (soften (correlate X)) r'.name).eval M (tupleVal vs) <;> cases v
+      · rfl
+      · exact absurd (ho.mpr (h2.mpr rfl)) (by simp [hov])
+      · exact absurd (h2.mp (ho.mp hov)) (by simp)
+      · rfl
+  | selects k p vs =>
+    simp only [probeTyped, Bool.and_eq_true] at hq
+    obtain ⟨_, ht⟩ := hq
+    rw [typedTuple_iff] at ht
+    have hsel : ∀ N ∈ selectable X k p,
+        (circ (correlate X) (selects' (correlate X) N)).eval M (tupleVal vs) = true ↔
+          SelectsSoftD (correlate X) (expand X M.asStructure) (tupleVal vs) (VE.SoftNorms.fuel (correlate X)) N := by
+      intro N hN
+      obtain ⟨hN', hp⟩ := selectable_mem hN
+      have ht' : VE.TupleTyped M.asStructure (VE.SoftNorms.sortsOf (correlate X) N.pred) vs := by
+        rw [hp]; exact ht
+      rw [VE.eval_iff_denote]
+      unfold circ
+      rw [VE.SoftNorms.circ_canon hv _ hB _ _ (hv.selTyped N hN') _ (VE.Norms.tupleVal_typed _ _ vs ht')]
+      exact VE.SoftNorms.selectsPrime_denote _ _ _ N
+    simp only [observe, Observes, Option.some.injEq]
+    constructor
+    · rintro rfl
+      refine ⟨ht, ?_⟩
+      rw [List.any_eq_true]
+      exact ⟨fun ⟨N, hN, hs⟩ => ⟨N, hN, (hsel N hN).mpr hs⟩, fun ⟨N, hN, hs⟩ => ⟨N, hN, (hsel N hN).mp hs⟩⟩
+    · rintro ⟨_, hiff⟩
+      cases hany : (selectable X k p).any (fun N =>
+          (circ (correlate X) (selects' (correlate X) N)).eval M (tupleVal vs))
+      · cases v
+        · rfl
+        · exfalso
+          obtain ⟨N, hN, hs⟩ := hiff.mpr rfl
+          have := (hsel N hN).mpr hs
+          rw [List.any_eq_false] at hany
+          exact hany N hN (by simp [this])
+      · rw [List.any_eq_true] at hany
+        obtain ⟨N, hN, hs⟩ := hany
+        exact (hiff.mp ⟨N, hN, (hsel N hN).mp hs⟩).symm
+  | holds =>
+    have hh : ∀ a ∈ A, (circ (correlate X) a).eval M [] = true ↔ a.denote (expand X M.asStructure) [] := by
+      intro a ha
+      rw [VE.eval_iff_denote]
+      exact VE.SoftNorms.circ_canon hv _ hB a [] (hA a ha) [] (VE.typed_empty _)
+    simp only [observe, Observes, Option.some.injEq]
+    constructor
+    · rintro rfl
+      rw [List.all_eq_true]
+      exact ⟨fun h a ha => (hh a ha).mpr (h a ha), fun h a ha => (hh a ha).mp (h a ha)⟩
+    · intro hiff
+      cases hall : A.all (fun a => (circ (correlate X) a).eval M [])
+      · cases v
+        · rfl
+        · exfalso
+          have h' := hiff.mpr rfl
+          rw [List.all_eq_false] at hall
+          obtain ⟨a, ha, hf⟩ := hall
+          exact hf ((hh a ha).mpr (h' a ha))
+      · rw [List.all_eq_true] at hall
+        exact (hiff.mp (fun a ha => (hh a ha).mp (hall a ha))).symm
+
+/-! ## Proofs: the candidate's document keeps the frame -/
+
+theorem buildStep_soft (keep : String → Bool) (pick : ReadingSet → Option Candidate)
+    (acc : RightsDoc × List VE.Formula) (it : Item) :
+    ∃ extra, (buildStep keep pick acc it).1.soft =
+      { acc.1.soft with T := { acc.1.soft.T with nodes := acc.1.soft.T.nodes ++ extra } } := by
+  have hp : ∀ (X : RightsDoc) c cs, ∃ extra, (place X c cs).soft =
+      { X.soft with T := { X.soft.T with nodes := X.soft.T.nodes ++ extra } } := by
+    intro X c cs
+    cases c with
+    | norm N => exact ⟨[N], rfl⟩
+    | _ => exact ⟨[], by simp [place]⟩
+  cases it with
+  | fixed u c cs =>
+    simp only [buildStep]
+    split
+    · exact hp _ c cs
+    · exact ⟨[], by simp⟩
+  | bar u b =>
+    simp only [buildStep]
+    split
+    · exact ⟨[], by simp⟩
+    · exact ⟨[], by simp⟩
+  | set R =>
+    simp only [buildStep]
+    split
+    · exact hp _ _ _
+    · exact ⟨[], by simp⟩
+
+theorem build_soft (D : Doc) (keep : String → Bool) (pick : ReadingSet → Option Candidate) :
+    ∃ extra, (build D keep pick).1.soft =
+      { D.frame.soft with T := { D.frame.soft.T with nodes := D.frame.soft.T.nodes ++ extra } } := by
+  rw [build_eq]
+  suffices ∀ (l : List Item) (acc : RightsDoc × List VE.Formula), ∃ extra,
+      (l.foldl (buildStep keep pick) acc).1.soft =
+        { acc.1.soft with T := { acc.1.soft.T with nodes := acc.1.soft.T.nodes ++ extra } } from this _ _
+  intro l
+  induction l with
+  | nil => intro acc; exact ⟨[], by simp⟩
+  | cons it l ih =>
+    intro acc
+    obtain ⟨e1, h1⟩ := buildStep_soft keep pick acc it
+    obtain ⟨e2, h2⟩ := ih (buildStep keep pick acc it)
+    refine ⟨e1 ++ e2, ?_⟩
+    simp only [List.foldl_cons, h2, h1, List.append_assoc]
+
+/-- The facts of the frame a candidate's document keeps. -/
+structure KeepsFrame (D : Doc) (X : RightsDoc) : Prop where
+  E : X.soft.E = D.frame.soft.E
+  regulated : X.soft.T.regulated = D.frame.soft.T.regulated
+  definitions : X.soft.T.definitions = D.frame.soft.T.definitions
+  nodes : ∀ N ∈ D.frame.soft.T.nodes, N ∈ X.soft.T.nodes
+
+theorem keepsFrame_build (D : Doc) (keep : String → Bool) (pick : ReadingSet → Option Candidate) :
+    KeepsFrame D (build D keep pick).1 := by
+  obtain ⟨e, h⟩ := build_soft D keep pick
+  refine ⟨by rw [h], by rw [h], by rw [h], fun N hN => ?_⟩
+  rw [h]
+  exact List.mem_append_left _ hN
+
+theorem keepsFrame_one (D : Doc) (s : String) (i : Nat) : KeepsFrame D (one D s i).1 := keepsFrame_build _ _ _
+
+/-! ## Proofs: the layer symbols of a candidate's document are hidden in the author's vocabulary -/
+
+theorem names_nodup_of_order {ns : List VE.Route.DepNode} {o : List String}
+    (h : VE.Route.dependencyOrder ns = .ok o) : (VE.Route.nodeNames ns).Nodup := by
+  unfold VE.Route.dependencyOrder at h
+  split at h
+  · cases h
+  · rename_i hf
+    rw [List.find?_eq_none] at hf
+    rw [List.nodup_iff_count]
+    intro a
+    by_cases ha : a ∈ VE.Route.nodeNames ns
+    · have := hf a ha; simp at this; omega
+    · have : List.count a (VE.Route.nodeNames ns) = 0 := List.count_eq_zero.mpr ha
+      omega
+
+theorem lookupSym_name {T : VE.Norms.Tree} {n : String} {q : VE.Norms.Sym} (h : VE.Norms.lookupSym T n = some q) :
+    q.name = n := by
+  unfold VE.Norms.lookupSym at h
+  split at h
+  · rename_i r hf
+    cases h
+    simpa [VE.Norms.Sym.name] using List.find?_some hf
+  · obtain ⟨d, hd, rfl⟩ := Option.map_eq_some_iff.mp h
+    simpa [VE.Norms.Sym.name] using List.find?_some hd
+
+theorem nodeNames_stratum (T : VE.Norms.Tree) :
+    VE.Route.nodeNames (VE.Norms.stratumNodes T) = T.regulated.map (·.name) ++ T.definitions.map (·.name) := by
+  simp [VE.Route.nodeNames, VE.Norms.stratumNodes, Function.comp_def]
+
+theorem lookupSym_some {T : VE.Norms.Tree} {x : String}
+    (h : x ∈ T.regulated.map (·.name) ++ T.definitions.map (·.name)) : ∃ q, VE.Norms.lookupSym T x = some q := by
+  unfold VE.Norms.lookupSym
+  split
+  · exact ⟨_, rfl⟩
+  · rename_i hn
+    rcases List.mem_append.mp h with h | h
+    · obtain ⟨r, hr, rfl⟩ := List.mem_map.mp h
+      exact absurd (List.find?_eq_none.mp hn r hr) (by simp)
+    · obtain ⟨d, hd, rfl⟩ := List.mem_map.mp h
+      cases hf : T.definitions.find? (·.name == d.name) with
+      | none => exact absurd (List.find?_eq_none.mp hf d hd) (by simp)
+      | some d' => exact ⟨_, rfl⟩
+
+theorem layer_sub (Tf T' : VE.Norms.Tree) (hr : Tf.regulated = T'.regulated) (hd : Tf.definitions = T'.definitions)
+    (hm : ∀ N ∈ Tf.nodes, ∃ N' ∈ T'.nodes, N'.pred = N.pred ∧ ∀ φ ∈ N.guard :: N.carveOuts, φ ∈ N'.guard :: N'.carveOuts) :
+    ∀ x ∈ VE.Norms.layerNames T', x ∈ VE.Norms.layerNames Tf := by
+  intro x hx
+  obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hx
+  obtain ⟨y, hy, hl⟩ := List.mem_filterMap.mp hq
+  have hqy := lookupSym_name hl
+  unfold VE.Norms.order at hy
+  split at hy
+  · rename_i o' ho'
+    obtain ⟨_, hmem', _, hac'⟩ := VE.Route.dag_acyclic _ _ ho'
+    have hyn : y ∈ VE.Route.nodeNames (VE.Norms.stratumNodes T') := (hmem' y).mp hy
+    have hnames : VE.Route.nodeNames (VE.Norms.stratumNodes Tf) = VE.Route.nodeNames (VE.Norms.stratumNodes T') := by
+      rw [nodeNames_stratum, nodeNames_stratum, hr, hd]
+    -- every edge of the frame's stratum graph is an edge of the elaborated one
+    have hedge : ∀ a b, VE.Route.DepEdge (VE.Norms.stratumNodes Tf) a b →
+        VE.Route.DepEdge (VE.Norms.stratumNodes T') a b := by
+      rintro a b ⟨n, hn, rfl, hb⟩
+      simp only [VE.Route.deps, List.mem_filter, hnames] at hb
+      obtain ⟨hbm, hbc⟩ := hb
+      simp only [VE.Norms.stratumNodes, List.mem_append, List.mem_map] at hn
+      rcases hn with ⟨r, hrm, rfl⟩ | ⟨d, hdm, rfl⟩
+      · refine ⟨⟨r.name, ((VE.Norms.Sym.reg r).formulas T').flatMap VE.Norms.preds⟩,
+          by simp only [VE.Norms.stratumNodes, List.mem_append, List.mem_map]; exact Or.inl ⟨r, hr ▸ hrm, rfl⟩,
+          rfl, ?_⟩
+        simp only [VE.Route.deps, List.mem_filter, hbc, and_true]
+        simp only [VE.Norms.Sym.formulas, List.mem_flatMap, VE.Norms.rulesOn, List.mem_filter, beq_iff_eq] at hbm ⊢
+        obtain ⟨φ, ⟨N, ⟨hN, hp⟩, hφ⟩, hq⟩ := hbm
+        obtain ⟨N', hN', hp', hφ'⟩ := hm N hN
+        exact ⟨φ, ⟨N', ⟨hN', hp'.trans hp⟩, hφ' φ hφ⟩, hq⟩
+      · refine ⟨⟨d.name, VE.Norms.preds d.body⟩,
+          by simp only [VE.Norms.stratumNodes, List.mem_append, List.mem_map]; exact Or.inr ⟨d, hd ▸ hdm, rfl⟩,
+          rfl, ?_⟩
+        simp only [VE.Route.deps, List.mem_filter, hbc, and_true]
+        exact hbm
+    have hpath : ∀ a b, VE.Route.DepPath (VE.Norms.stratumNodes Tf) a b →
+        VE.Route.DepPath (VE.Norms.stratumNodes T') a b := by
+      intro a b h
+      induction h with
+      | edge he => exact .edge (hedge _ _ he)
+      | trans _ _ ih₁ ih₂ => exact .trans ih₁ ih₂
+    have hnd : (VE.Route.nodeNames (VE.Norms.stratumNodes Tf)).Nodup := hnames ▸ names_nodup_of_order ho'
+    obtain ⟨of, hof⟩ := VE.NormDefaults.dependencyOrder_ok _ hnd (fun a h => hac' a (hpath a a h))
+    obtain ⟨_, hmemf, _, _⟩ := VE.Route.dag_acyclic _ _ hof
+    have hyf : y ∈ VE.Route.nodeNames (VE.Norms.stratumNodes Tf) := hnames ▸ hyn
+    obtain ⟨q', hq'⟩ := lookupSym_some (by rw [← nodeNames_stratum]; exact hyf)
+    refine List.mem_map.mpr ⟨q', List.mem_filterMap.mpr ⟨y, ?_, hq'⟩, ?_⟩
+    · unfold VE.Norms.order; rw [hof]; exact (hmemf y).mpr hyf
+    · rw [lookupSym_name hq', hqy]
+  · cases hy
+
+/-- The layer symbols of a candidate's elaborated document are hidden in the author's base vocabulary. -/
+theorem layerNames_hidden (D : Doc) (X : RightsDoc) (hX : KeepsFrame D X) :
+    ∀ x ∈ VE.Norms.layerNames (soften (correlate X)).T, x ∈ VE.Norms.layerNames D.frame.soft.base.T := by
+  apply layer_sub
+  · show D.frame.soft.T.regulated = X.soft.T.regulated; rw [hX.regulated]
+  · show D.frame.soft.T.definitions = X.soft.T.definitions; rw [hX.definitions]
+  · intro N hN
+    obtain ⟨F, hF, rfl⟩ := List.mem_map.mp hN
+    refine ⟨VE.SoftNorms.primeNode (correlate X) F, ?_, rfl, ?_⟩
+    · show _ ∈ (correlate X).T.nodes.map (VE.SoftNorms.primeNode (correlate X))
+      apply List.mem_map_of_mem
+      simp only [correlate, List.mem_append]
+      exact Or.inl (Or.inr (hX.nodes F hF))
+    · intro φ hφ
+      simp only [VE.SoftNorms.primeNode, List.mem_cons, List.mem_append] at hφ ⊢
+      rcases hφ with h | h
+      · exact Or.inl h
+      · exact Or.inr (Or.inl h)
+
+/-! ## Proofs: tables -/
+
+theorem tableOf_cons {α : Type u} (t : GenKey × List (List α)) (T : List (GenKey × List (List α))) (k : GenKey) :
+    tableOf (t :: T) k = if t.1 = k then t.2 else tableOf T k := by
+  by_cases h : t.1 = k <;> simp [tableOf, h]
+
+theorem tableOf_nil {α : Type u} (k : GenKey) : tableOf ([] : List (GenKey × List (List α))) k = [] := rfl
+
+theorem mem_tableOf {α : Type u} : ∀ {T : List (GenKey × List (List α))} {k : GenKey} {vs : List α},
+    vs ∈ tableOf T k → tablesOf T k vs
+  | [], _, _, h => by simp [tableOf_nil] at h
+  | t :: T, k, vs, h => by
+    rw [tableOf_cons] at h
+    split at h
+    · exact ⟨t, List.mem_cons_self, by assumption, h⟩
+    · obtain ⟨t', ht', he, hv⟩ := mem_tableOf h
+      exact ⟨t', List.mem_cons_of_mem _ ht', he, hv⟩
+
+theorem mem_tableOf_iff {α : Type u} : ∀ {T : List (GenKey × List (List α))}, (T.map (·.1)).Nodup →
+    ∀ (k : GenKey) (vs : List α), vs ∈ tableOf T k ↔ tablesOf T k vs
+  | [], _, k, vs => by simp [tableOf_nil, tablesOf]
+  | t :: T, hn, k, vs => by
+    refine ⟨mem_tableOf, ?_⟩
+    rintro ⟨t', ht', he, hv⟩
+    rw [List.map_cons, List.nodup_cons] at hn
+    rw [tableOf_cons]
+    rcases List.mem_cons.mp ht' with rfl | ht'
+    · rw [if_pos he]; exact hv
+    · by_cases h : t.1 = k
+      · exfalso; exact hn.1 (h ▸ he ▸ List.mem_map_of_mem ht')
+      · rw [if_neg h]; exact (mem_tableOf_iff hn.2 k vs).mpr ⟨t', ht', he, hv⟩
+
+theorem tableOf_filter {α : Type u} (P : GenKey × List (List α) → Bool) (k : GenKey)
+    (hP : ∀ t : GenKey × List (List α), t.1 = k → P t = true) :
+    ∀ T : List (GenKey × List (List α)), tableOf (T.filter P) k = tableOf T k
+  | [] => rfl
+  | t :: T => by
+    by_cases h : t.1 = k
+    · rw [List.filter_cons_of_pos (hP t h), tableOf_cons, tableOf_cons, if_pos h, if_pos h]
+    · rw [tableOf_cons, if_neg h]
+      by_cases hp : P t = true
+      · rw [List.filter_cons_of_pos hp, tableOf_cons, if_neg h, tableOf_filter P k hP T]
+      · rw [List.filter_cons_of_neg hp, tableOf_filter P k hP T]
+
+theorem tableOf_append_of_not {α : Type u} (k : GenKey) :
+    ∀ (A B : List (GenKey × List (List α))), (∀ t ∈ A, t.1 ≠ k) → tableOf (A ++ B) k = tableOf B k
+  | [], _, _ => rfl
+  | t :: A, B, h => by
+    rw [List.cons_append, tableOf_cons, if_neg (h t List.mem_cons_self)]
+    exact tableOf_append_of_not k A B (fun t' ht' => h t' (List.mem_cons_of_mem _ ht'))
+
+theorem tableOf_none {α : Type u} (k : GenKey) :
+    ∀ (A : List (GenKey × List (List α))), (∀ t ∈ A, t.1 ≠ k) → tableOf A k = []
+  | A, h => by simpa using tableOf_append_of_not k A [] h
+
+theorem tablesFor_generated {α : Type u} (D : Doc) (s : String) (i : Nat) (T : List (GenKey × List (List α)))
+    (k : GenKey) (hk : (genKeys (one D s i).1).any (·.1 == k) = true) :
+    tableOf (tablesFor D s i T) k = tableOf T k :=
+  tableOf_filter _ k (fun t ht => by rw [ht]; exact hk) T
+
+theorem find_name {X : RightsDoc} {p : String} {g : GenKey × String × List String}
+    (h : (genKeys X).find? (·.2.1 == p) = some g) : g ∈ genKeys X ∧ g.2.1 = p :=
+  ⟨List.mem_of_find?_eq_some h, by simpa using List.find?_some h⟩
+
+theorem keyOfName_of_find {X : RightsDoc} {p : String} {g : GenKey × String × List String}
+    (h : (genKeys X).find? (·.2.1 == p) = some g) : keyOfName X p = some g.1 := by
+  simp [keyOfName, h]
+
+/-- The finite model of a side is the completion: the relations agree name by name. -/
+theorem tablesModel_eq {α : Type u} (X : RightsDoc) (M : VE.FiniteModel α) (T : List (GenKey × List (List α)))
+    (G : Tables α) (hG : ∀ g ∈ genKeys X, ∀ vs, vs ∈ tableOf T g.1 ↔ G g.1 vs) :
+    (tablesModel X M T).asStructure = withTables X M.asStructure G := by
+  simp only [VE.FiniteModel.asStructure, tablesModel, withTables]
+  congr
+  funext p vs
+  split
+  · rename_i g hg
+    exact propext (hG g (find_name hg).1 vs)
+  · rfl
+
+theorem observes_rel {X : RightsDoc} {A : List VE.Formula} {α : Type u} {d : String → α → Prop}
+    {c : String → Option α} {R1 R2 : String → List α → Prop} (h : R1 = R2) (q : Probe α) (v : Bool)
+    (ho : Observes X A ⟨α, d, c, R1⟩ q v) : Observes X A ⟨α, d, c, R2⟩ q v := by
+  subst h; exact ho
+
+theorem genKeys_find_none {X : RightsDoc} {p : String} (h : (genKeys X).find? (·.2.1 == p) = none) :
+    (∀ d ∈ VE.SoftNorms.decisions (correlate X), d.1 ≠ p) ∧ (∀ d ∈ VE.Rights.genDecls X, d.1 ≠ p) := by
+  have hn := genKeys_names X
+  have hall : ∀ d ∈ VE.SoftNorms.decisions (correlate X) ++ VE.Rights.genDecls X, d.1 ≠ p := by
+    intro d hd
+    rw [← hn] at hd
+    obtain ⟨g, hg, rfl⟩ := List.mem_map.mp hd
+    have := List.find?_eq_none.mp h g hg
+    simpa using this
+  exact ⟨fun d hd => hall d (List.mem_append_left _ hd), fun d hd => hall d (List.mem_append_right _ hd)⟩
+
+/-- Outside the generated names, the elaborated base vocabulary of a candidate's document is the author's. -/
+theorem envAt_author (D : Doc) (X : RightsDoc) (hX : KeepsFrame D X) {p : String} {ss : List String}
+    (hg : (genKeys X).find? (·.2.1 == p) = none) (ha : (authorEnv D).predicates p = some ss) :
+    (envAt (soften (correlate X)) 0).predicates p = some ss := by
+  obtain ⟨hd, hr⟩ := genKeys_find_none hg
+  simp only [authorEnv, envAt, VE.Norms.hide, List.drop_zero] at ha ⊢
+  split at ha
+  · cases ha
+  · rename_i hnl
+    rw [if_neg (fun hl => hnl (layerNames_hidden D X hX p hl))]
+    show (VE.SoftNorms.envPrime (correlate X)).predicates p = some ss
+    simp only [VE.SoftNorms.envPrime]
+    rw [List.find?_eq_none.mpr (fun d hd' => by simpa using hd d hd')]
+    show (VE.Rights.envR X).predicates p = some ss
+    simp only [VE.Rights.envR]
+    rw [List.find?_eq_none.mpr (fun d hd' => by simpa using hr d hd'), hX.E]
+    exact ha
+
+theorem envAt_constants (D : Doc) (X : RightsDoc) (hX : KeepsFrame D X) :
+    (envAt (soften (correlate X)) 0).constants = (authorEnv D).constants := by
+  show X.soft.E.constants = D.frame.soft.E.constants
+  rw [hX.E]
+
+theorem typedTuple_domains {α : Type u} [DecidableEq α] {M M' : VE.FiniteModel α} (h : M.domains = M'.domains) :
+    ∀ (ss : List String) (vs : List α), typedTuple M ss vs = typedTuple M' ss vs
+  | [], [] => rfl
+  | [], _ :: _ => rfl
+  | _ :: _, [] => rfl
+  | s :: ss, v :: vs => by simp only [typedTuple, h, typedTuple_domains h ss vs]
+
+theorem tupleTyped_tablesModel {α : Type u} [DecidableEq α] (X : RightsDoc) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) (ss : List String) (vs : List α) :
+    VE.TupleTyped (tablesModel X M T).asStructure ss vs ↔ VE.TupleTyped M.asStructure ss vs := by
+  rw [← typedTuple_iff, ← typedTuple_iff, typedTuple_domains (M := tablesModel X M T) (M' := M) rfl]
+
+/-- A side's finite model is valid over its elaborated base vocabulary: the base is valid over the author's,
+    and the tables are typed. -/
+theorem valid_tablesModel {α : Type u} [DecidableEq α] (D : Doc) (X : RightsDoc) (hX : KeepsFrame D X)
+    (M : VE.FiniteModel α) (valid : M.Valid (authorEnv D)) (T : List (GenKey × List (List α)))
+    (ht : tablesTyped X M T = true) : (tablesModel X M T).Valid (envAt (soften (correlate X)) 0) := by
+  refine ⟨fun c s hc => ?_, fun p vs hvs => ?_⟩
+  · rw [envAt_constants D X hX] at hc
+    exact valid.1 c s hc
+  · change vs ∈ (tablesModel X M T).relations p at hvs
+    simp only [tablesModel] at hvs
+    split at hvs
+    · rename_i g hg
+      obtain ⟨hgm, hgp⟩ := find_name hg
+      obtain ⟨t, htT, htk, hvt⟩ := mem_tableOf hvs
+      simp only [tablesTyped, List.all_eq_true, Bool.and_eq_true, Bool.or_eq_true, bne_iff_ne, ne_eq] at ht
+      have := (ht t htT).2 vs hvt g hgm
+      rw [hgp, keyOfName_of_find hg, htk] at this
+      simp only [not_true_eq_false, false_or] at this
+      unfold declaredTyped at this
+      split at this
+      · rename_i ss hss
+        exact ⟨ss, hss, (tupleTyped_tablesModel X M T ss vs).mpr ((typedTuple_iff M ss vs).mp this)⟩
+      · cases this
+    · rename_i hg
+      obtain ⟨ss, hss, hty⟩ := valid.2 p vs hvs
+      exact ⟨ss, envAt_author D X hX hg hss, (tupleTyped_tablesModel X M T ss vs).mpr hty⟩
+
+/-! ## Proofs: `separates_sound` -/
+
+theorem mem_uniq {β : Type u} [BEq β] [LawfulBEq β] {x : β} : ∀ {l : List β}, x ∈ uniq l ↔ x ∈ l
+  | [] => by simp [uniq]
+  | y :: ys => by
+    simp only [uniq]
+    split
+    · rename_i h
+      rw [mem_uniq, List.mem_cons]
+      refine ⟨Or.inr, ?_⟩
+      rintro (rfl | h')
+      · exact mem_uniq.mp (List.contains_iff_mem.mp h)
+      · exact h'
+    · simp only [List.mem_cons, mem_uniq]
+
+theorem filter_mem_subsets {β : Type u} (P : β → Bool) : ∀ (L : List β), L.filter P ∈ subsets L
+  | [] => by simp [subsets]
+  | x :: xs => by
+    simp only [subsets, List.mem_append, List.mem_map]
+    by_cases h : P x = true
+    · rw [List.filter_cons_of_pos h]; exact Or.inl ⟨_, filter_mem_subsets P xs, rfl⟩
+    · rw [List.filter_cons_of_neg h]; exact Or.inr (filter_mem_subsets P xs)
+
+theorem mem_assignments_foldr {α : Type u} (f : GenKey → List (List α)) (P : GenKey → List α → Bool) :
+    ∀ ks : List GenKey, ks.map (fun k => (k, (f k).filter (P k))) ∈
+      ks.foldr (fun k acc => (subsets (f k)).flatMap (fun tbl => acc.map ((k, tbl) :: ·))) [[]]
+  | [] => by simp
+  | k :: ks => by
+    simp only [List.map_cons, List.foldr_cons, List.mem_flatMap, List.mem_map]
+    exact ⟨_, filter_mem_subsets (P k) (f k), _, mem_assignments_foldr f P ks, rfl⟩
+
+theorem tableOf_map_keys {α : Type u} (f : GenKey → List (List α)) (k : GenKey) :
+    ∀ ks : List GenKey, tableOf (ks.map (fun k' => (k', f k'))) k = if k ∈ ks then f k else []
+  | [] => by simp [tableOf_nil]
+  | k' :: ks => by
+    rw [List.map_cons, tableOf_cons, tableOf_map_keys f k ks]
+    by_cases h : k' = k
+    · subst h; simp
+    · simp only [if_neg h, List.mem_cons]
+      by_cases hk : k ∈ ks
+      · simp [hk]
+      · simp [hk, Ne.symm h]
+
+theorem tableOf_append_right_not {α : Type u} (k : GenKey) :
+    ∀ (A B : List (GenKey × List (List α))), (∀ t ∈ B, t.1 ≠ k) → tableOf (A ++ B) k = tableOf A k
+  | [], B, h => by rw [List.nil_append, tableOf_none k B h, tableOf_nil]
+  | t :: A, B, h => by
+    rw [List.cons_append, tableOf_cons, tableOf_cons, tableOf_append_right_not k A B h]
+
+theorem withTables_domain {X : RightsDoc} {S : VE.Structure.{u}} {G : Tables S.Carrier} :
+    (withTables X S G).domain = S.domain := rfl
+
+theorem tupleTyped_withTables {X : RightsDoc} {S : VE.Structure.{u}} {G : Tables S.Carrier} :
+    ∀ (ss : List String) (vs : List S.Carrier), VE.TupleTyped (withTables X S G) ss vs ↔ VE.TupleTyped S ss vs
+  | [], [] => by simp only [VE.TupleTyped]
+  | [], _ :: _ => by simp only [VE.TupleTyped]
+  | _ :: _, [] => by simp only [VE.TupleTyped]
+  | s :: ss, v :: vs => by
+    simp only [VE.TupleTyped]
+    exact and_congr (by rw [withTables_domain]) (tupleTyped_withTables ss vs)
+
+theorem backgroundValidR_of_admissible {α : Type u} [DecidableEq α] (X : RightsDoc) (M : VE.FiniteModel α)
+    (h : BaseAdmissibleR X M.asStructure) : backgroundValidR X M = true := by
+  obtain ⟨⟨⟨_, hbb⟩, hsoft⟩, hlim⟩ := h
+  simp only [backgroundValidR, VE.SoftNorms.backgroundValid', VE.Norms.backgroundValid, Bool.and_eq_true,
+    List.all_eq_true]
+  exact ⟨⟨fun a ha => (VE.eval_iff_denote M [] a).mpr (hbb a ha), fun a ha => (VE.eval_iff_denote M [] a).mpr
+    (hsoft a ha)⟩, fun a ha => (VE.eval_iff_denote M [] a).mpr (hlim a ha)⟩
+
+theorem probeTyped_congr {α : Type u} [DecidableEq α] {X Y : RightsDoc} {M M' : VE.FiniteModel α}
+    (hr : X.soft.T.regulated = Y.soft.T.regulated) (hd : M.domains = M'.domains) (q : Probe α) :
+    probeTyped X M q = probeTyped Y M' q := by
+  cases q <;> simp only [probeTyped, hr, typedTuple_domains hd]
+
+theorem sideWF_one (D : Doc) (hD : WellFormedDoc D = true) {s : String} {i : Nat}
+    (hi : (candidate D s i).bind (·.content) ≠ none) : sideWF D (one D s i) = true := by
+  unfold candidate at hi
+  cases hR : D.sets.find? (·.id == s) with
+  | none => rw [hR] at hi; exact absurd rfl hi
+  | some R =>
+    rw [hR] at hi
+    have hRm := List.mem_of_find?_eq_some hR
+    have hRs : R.id = s := by simpa using List.find?_some hR
+    simp only [Option.bind_some] at hi
+    cases ha : R.candidates[i]? with
+    | none => rw [ha] at hi; exact absurd rfl hi
+    | some a =>
+      rw [ha] at hi
+      have hlt : i < R.candidates.length := (List.getElem?_eq_some_iff.mp ha).1
+      simp only [WellFormedDoc, Bool.and_eq_true, List.all_eq_true, List.mem_range, Bool.or_eq_true] at hD
+      rcases hD.2 R hRm i hlt with h | h
+      · rw [ha] at h
+        simp only [Option.bind_some, Option.isNone_iff_eq_none] at h
+        exact absurd h hi
+      · rw [← hRs]; exact h
+
+/-- The relations of a side's finite model are those of its completion. -/
+theorem tablesModel_rel {α : Type u} (X : RightsDoc) (M : VE.FiniteModel α) (T : List (GenKey × List (List α)))
+    (G : Tables α)
+    (hG : ∀ p g, (genKeys X).find? (·.2.1 == p) = some g → ∀ vs, vs ∈ tableOf T g.1 ↔ G g.1 vs) :
+    (fun p vs => vs ∈ (tablesModel X M T).relations p) =
+      (fun p vs => match (genKeys X).find? (·.2.1 == p) with
+        | some g => G g.1 vs
+        | none => vs ∈ M.relations p) := by
+  funext p vs
+  simp only [tablesModel]
+  split
+  · rename_i g hg
+    exact propext (hG p g hg vs)
+  · rfl
+
+/-- The witness side of `separates_sound`. -/
+theorem separates_witness {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFormedDoc D = true) (s : String)
+    (i : Nat) (hi : (candidate D s i).bind (·.content) ≠ none) (σ : Situation α) (valid : σ.base.Valid (authorEnv D))
+    (hnd : ((σ.fixed ++ σ.decisions).map (·.1)).Nodup)
+    (hdec : ∀ t ∈ σ.decisions, owned D s i t.1 = true)
+    (hpt : probeTyped (one D s i).1 σ.base σ.probe = true)
+    (hsvi : sideValid D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) = true)
+    (hvi : sideValue D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) σ.probe = some σ.value) :
+    Achieves D s i σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value := by
+  have hwi := sideWF_one D hD hi
+  simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hwi
+  have hAi : ∀ a ∈ (one D s i).2, a.WellFormed (envAt (soften (correlate (one D s i).1))
+      (size (soften (correlate (one D s i).1)))) [] :=
+    fun a ha => (VE.check_iff_wellFormed _ _ _).mp (hwi.2 a ha)
+  simp only [sideValid, Bool.and_eq_true] at hsvi
+  obtain ⟨httT, hbgi⟩ := hsvi
+  have hvalT := valid_tablesModel D (one D s i).1 (keepsFrame_one D s i) σ.base valid _ httT
+  have hGi : ∀ p g, (genKeys (one D s i).1).find? (·.2.1 == p) = some g → ∀ vs,
+      vs ∈ tableOf (tablesFor D s i (σ.fixed ++ σ.decisions)) g.1 ↔ tablesOf (σ.fixed ++ σ.decisions) g.1 vs := by
+    intro p g hg vs
+    have hk : (genKeys (one D s i).1).any (·.1 == g.1) = true := List.any_eq_true.mpr ⟨g, (find_name hg).1, by simp⟩
+    rw [tablesFor_generated D s i _ g.1 hk]
+    exact mem_tableOf_iff hnd g.1 vs
+  have hreli := tablesModel_rel (one D s i).1 σ.base _ _ hGi
+  have hBi := VE.Rights.baseAdmissibleR_of_valid (one D s i).1 _ hvalT hbgi
+  have hpti : probeTyped (one D s i).1 (tablesModel (one D s i).1 σ.base
+      (tablesFor D s i (σ.fixed ++ σ.decisions))) σ.probe = true := by
+    exact (probeTyped_congr (X := (one D s i).1) (Y := (one D s i).1)
+      (M := tablesModel (one D s i).1 σ.base (tablesFor D s i (σ.fixed ++ σ.decisions))) (M' := σ.base)
+      rfl rfl σ.probe).trans hpt
+  have hobsi := (observe_sound D.chain (one D s i).1 (one D s i).2 hwi.1 hAi _ hvalT hbgi σ.probe hpti
+    σ.value).mp hvi
+  refine ⟨valid, tablesOf (σ.fixed ++ σ.decisions), ?_, ?_, observes_rel hreli σ.probe σ.value hobsi⟩
+  · intro k hk vs
+    simp only [tablesOf, List.mem_append]
+    constructor
+    · rintro ⟨t, ht | ht, rfl, hv⟩
+      · exact ⟨t, ht, rfl, hv⟩
+      · rw [hdec t ht] at hk; cases hk
+    · rintro ⟨t, ht, rfl, hv⟩; exact ⟨t, Or.inl ht, rfl, hv⟩
+  · have e : (tablesModel (one D s i).1 σ.base (tablesFor D s i (σ.fixed ++ σ.decisions))).asStructure =
+        withTables (one D s i).1 σ.base.asStructure (tablesOf (σ.fixed ++ σ.decisions)) := by
+      simp only [VE.FiniteModel.asStructure, withTables]
+      congr 1
+    rw [← e]; exact hBi
+
+/-- The other side of `separates_sound`: a completion of `j` with the recorded value is one of the enumerated
+    assignments. -/
+theorem separates_other {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFormedDoc D = true) (s : String)
+    (i j : Nat) (hj : (candidate D s j).bind (·.content) ≠ none) (σ : Situation α)
+    (hndf : (σ.fixed.map (·.1)).Nodup)
+    (hfx : ∀ t ∈ σ.fixed, owned D s j t.1 = false)
+    (htyj : tablesTyped (one D s j).1 σ.base (tablesFor D s j σ.fixed) = true)
+    (hpt : probeTyped (one D s i).1 σ.base σ.probe = true)
+    (hall : ∀ G ∈ assignments D s j σ.base, (sideValid D s j σ.base (tablesFor D s j σ.fixed ++ G) &&
+          sideValue D s j σ.base (tablesFor D s j σ.fixed ++ G) σ.probe == some σ.value) = false) :
+    ¬ Achieves D s j σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value := by
+  classical
+  rintro ⟨_, G, hagree, hBA, hObs⟩
+  have hadm : (withTables (one D s j).1 σ.base.asStructure G).Admissible
+      (envAt (soften (correlate (one D s j).1)) 0) := hBA.1.1.1
+  have htyp : ∀ p g, (genKeys (one D s j).1).find? (·.2.1 == p) = some g → ∀ vs, G g.1 vs →
+      ∃ ss, (envAt (soften (correlate (one D s j).1)) 0).predicates p = some ss ∧
+        VE.TupleTyped σ.base.asStructure ss vs := by
+    intro p g hg vs hv
+    have hrel : (withTables (one D s j).1 σ.base.asStructure G).relation p vs := by
+      simp only [withTables, hg]; exact hv
+    obtain ⟨ss, hss, ht⟩ := hadm.2 p vs hrel
+    exact ⟨ss, hss, (tupleTyped_withTables ss vs).mp ht⟩
+  let G' : List (GenKey × List (List α)) := (ownedKeys D s j).map (fun k =>
+    (k, (keyTuples (one D s j).1 σ.base k).filter (fun vs => decide (G k vs))))
+  have hG'mem : G' ∈ assignments D s j σ.base := mem_assignments_foldr _ _ _
+  have hGj : ∀ p g, (genKeys (one D s j).1).find? (·.2.1 == p) = some g → ∀ vs,
+      vs ∈ tableOf (tablesFor D s j σ.fixed ++ G') g.1 ↔ G g.1 vs := by
+    intro p g hg vs
+    have hgm := find_name hg
+    have hk : (genKeys (one D s j).1).any (·.1 == g.1) = true := List.any_eq_true.mpr ⟨g, hgm.1, by simp⟩
+    by_cases ho : owned D s j g.1 = true
+    · rw [tableOf_append_of_not g.1 _ _ (fun t ht e => by
+          have := hfx t (List.mem_filter.mp ht).1; rw [e, ho] at this; cases this)]
+      show vs ∈ tableOf ((ownedKeys D s j).map (fun k =>
+        (k, (keyTuples (one D s j).1 σ.base k).filter (fun vs => decide (G k vs))))) g.1 ↔ G g.1 vs
+      rw [tableOf_map_keys (fun k => (keyTuples (one D s j).1 σ.base k).filter (fun vs => decide (G k vs))) g.1]
+      have hmem : g.1 ∈ ownedKeys D s j := List.mem_filter.mpr ⟨List.mem_map_of_mem hgm.1, ho⟩
+      rw [if_pos hmem, List.mem_filter, decide_eq_true_eq]
+      refine ⟨fun h => h.2, fun hv => ⟨?_, hv⟩⟩
+      obtain ⟨ss, hss, ht⟩ := htyp p g hg vs hv
+      rw [keyTuples, mem_uniq, List.mem_flatMap]
+      refine ⟨g, hgm.1, ?_⟩
+      rw [hgm.2, keyOfName_of_find hg]
+      simp only [beq_self_eq_true, if_true, hss]
+      exact (mem_tuplesOf σ.base ss vs).mpr ht
+    · have ho' : owned D s j g.1 = false := by simpa using ho
+      rw [tableOf_append_right_not g.1 _ _ (fun t ht e => by
+          obtain ⟨k, hk', rfl⟩ := List.mem_map.mp ht
+          have := (List.mem_filter.mp hk').2
+          simp only at e; rw [e, ho'] at this; cases this),
+        tablesFor_generated D s j _ g.1 hk, mem_tableOf_iff hndf]
+      exact (hagree g.1 ho' vs).symm
+  have hrelj := tablesModel_rel (one D s j).1 σ.base _ _ hGj
+  have heq : (tablesModel (one D s j).1 σ.base (tablesFor D s j σ.fixed ++ G')).asStructure =
+      withTables (one D s j).1 σ.base.asStructure G := by
+    simp only [VE.FiniteModel.asStructure, withTables]
+    congr 1
+  have hBA' : BaseAdmissibleR (one D s j).1
+      (tablesModel (one D s j).1 σ.base (tablesFor D s j σ.fixed ++ G')).asStructure := by
+    rw [heq]; exact hBA
+  have hvalj : (tablesModel (one D s j).1 σ.base (tablesFor D s j σ.fixed ++ G')).Valid
+      (envAt (soften (correlate (one D s j).1)) 0) := hBA'.1.1.1
+  have hbgj := backgroundValidR_of_admissible _ _ hBA'
+  have htyG' : tablesTyped (one D s j).1 σ.base G' = true := by
+    simp only [tablesTyped, List.all_eq_true, Bool.and_eq_true, Bool.or_eq_true, bne_iff_ne, ne_eq]
+    intro t ht
+    obtain ⟨k, hk, rfl⟩ := List.mem_map.mp ht
+    obtain ⟨hk1, _⟩ := List.mem_filter.mp hk
+    obtain ⟨g0, hg0, hg0k⟩ := List.mem_map.mp hk1
+    refine ⟨List.any_eq_true.mpr ⟨g0, hg0, by simp [hg0k]⟩, fun vs hvs g'' _ => ?_⟩
+    obtain ⟨_, hv⟩ := List.mem_filter.mp hvs
+    rw [decide_eq_true_eq] at hv
+    by_cases hkn : keyOfName (one D s j).1 g''.2.1 = some k
+    · right
+      simp only [keyOfName, Option.map_eq_some_iff] at hkn
+      obtain ⟨g3, hg3, hg3k⟩ := hkn
+      obtain ⟨ss, hss, ht⟩ := htyp g''.2.1 g3 hg3 vs (hg3k ▸ hv)
+      simp only [declaredTyped, hss]
+      exact (typedTuple_iff σ.base ss vs).mpr ht
+    · exact Or.inl hkn
+  have htyT' : tablesTyped (one D s j).1 σ.base (tablesFor D s j σ.fixed ++ G') = true := by
+    simp only [tablesTyped, List.all_append, Bool.and_eq_true] at htyj htyG' ⊢
+    exact ⟨htyj, htyG'⟩
+  have hsvj : sideValid D s j σ.base (tablesFor D s j σ.fixed ++ G') = true := by
+    simp only [sideValid, Bool.and_eq_true]
+    exact ⟨htyT', hbgj⟩
+  have hwj := sideWF_one D hD hj
+  simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hwj
+  have hAj : ∀ a ∈ (one D s j).2, a.WellFormed (envAt (soften (correlate (one D s j).1))
+      (size (soften (correlate (one D s j).1)))) [] :=
+    fun a ha => (VE.check_iff_wellFormed _ _ _).mp (hwj.2 a ha)
+  have hptj : probeTyped (one D s j).1 (tablesModel (one D s j).1 σ.base (tablesFor D s j σ.fixed ++ G'))
+      σ.probe = true := by
+    refine (probeTyped_congr (X := (one D s j).1) (Y := (one D s i).1)
+      (M := tablesModel (one D s j).1 σ.base (tablesFor D s j σ.fixed ++ G')) (M' := σ.base)
+      ?_ rfl σ.probe).trans hpt
+    rw [(keepsFrame_one D s j).regulated, (keepsFrame_one D s i).regulated]
+  have hobsj := observes_rel hrelj.symm σ.probe σ.value hObs
+  have hsvalj := (observe_sound D.chain (one D s j).1 (one D s j).2 hwj.1 hAj _ hvalj hbgj σ.probe hptj
+    σ.value).mpr hobsj
+  have := hall G' hG'mem
+  simp only [sideValue] at this
+  rw [hsvj, hsvalj] at this
+  simp at this
+
+theorem separates_sound {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFormedDoc D = true) (s : String)
+    (i j : Nat) (hi : (candidate D s i).bind (·.content) ≠ none) (hj : (candidate D s j).bind (·.content) ≠ none)
+    (σ : Situation α) (valid : σ.base.Valid (authorEnv D)) (h : separates D s i j σ = true) :
+  Achieves D s i σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value ∧
+    ¬ Achieves D s j σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value := by
+  simp only [separates, situationWF, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, beq_iff_eq,
+    Bool.not_eq_true', Bool.or_eq_true] at h
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨hnd, hfx⟩, hdec⟩, htyi⟩, htyj⟩, hpt⟩, hsvi⟩, hvi⟩, _⟩, hall⟩ := h
+  have hndf : (σ.fixed.map (·.1)).Nodup := by
+    rw [List.map_append] at hnd; exact (List.nodup_append.mp hnd).1
+  refine ⟨separates_witness D hD s i hi σ valid hnd (fun t ht => (hdec t ht).1) hpt hsvi hvi,
+    separates_other D hD s i j hj σ hndf (fun t ht => (hfx t ht).1.2) htyj hpt (fun G hG => ?_)⟩
+  have := hall G hG
+  simpa using this
+
+/-- The corollary: a checked separation proves `Separated`. -/
+theorem separates_separated {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFormedDoc D = true) (s : String)
+    (i j : Nat) (hi : (candidate D s i).bind (·.content) ≠ none) (hj : (candidate D s j).bind (·.content) ≠ none)
+    (σ : Situation α) (valid : σ.base.Valid (authorEnv D)) (h : separates D s i j σ = true) :
+  Separated.{u} D s i j :=
+  ⟨σ.base.asStructure, tablesOf σ.fixed, σ.probe, σ.value,
+    Or.inl (separates_sound D hD s i j hi hj σ valid h)⟩
+
 end VE.Readings
