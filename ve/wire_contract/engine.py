@@ -235,11 +235,26 @@ def _name(value, cls):
 
 
 def _json_text(value):
+    def string(v):
+        result = ['"']
+        for char in v:
+            if char == '"':
+                result.append('\\"')
+            elif char == "\\":
+                result.append("\\\\")
+            elif ord(char) < 0x20:
+                result.append(f"\\u{ord(char):04x}")
+            else:
+                result.append(char)
+        return "".join(result) + '"'
+
     def encode(v):
         if type(v) is dict:
             return "{" + ",".join(encode(k) + ":" + encode(v[k]) for k in sorted(v)) + "}"
         if type(v) in (list, tuple):
             return "[" + ",".join(map(encode, v)) + "]"
+        if type(v) is str:
+            return string(v)
         return json.dumps(v, ensure_ascii=False, separators=(",", ":"))
     full = encode(value)
     if len(full.encode("utf-8")) <= 80:
