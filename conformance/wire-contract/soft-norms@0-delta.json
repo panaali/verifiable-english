@@ -1,0 +1,80 @@
+{
+  "continuation_coverage_met": true,
+  "contract": "soft-norms@0",
+  "coverage_unmet": {
+    "adjacent_phase_pairs": [],
+    "first": [],
+    "masked": []
+  },
+  "coverage_unmet_reasons": {
+    "4.11b": "Reached only by an explicit null, which the wire readers refuse before diagnosis: Lean has no witness; Python has its first-fault and masking witnesses."
+  },
+  "inherited_records": "text and args are language-specific until base contracts exist",
+  "public_diagnostic_changes": [],
+  "python_legacy_code_disagreements": [],
+  "python_legacy_sample": "seed 0, first 2000 generic pair/triple cases",
+  "python_legacy_text_deltas": {
+    "4.1c": {
+      "contract": "InvalidInput: invalid norm fields",
+      "count": 136,
+      "example": "r0-field+r0-sign",
+      "legacy": "InvalidInput: invalid norm fields ['exception', 'extra', 'guard', 'mode', 'name', 'over', 'predicate', 'rank', 'sign', 'unless']"
+    },
+    "6.11": {
+      "contract": "ResourceLimit: generated soft premise",
+      "count": 1,
+      "example": "premise-depth+layer-nodes",
+      "legacy": "ResourceLimit: generated soft premise soft:exception:a0:sufficient:0"
+    },
+    "6.5a": {
+      "contract": "ResourceLimit: AST exceeds 10,000 nodes",
+      "count": 7,
+      "example": "document-nodes+precedence-cycle",
+      "legacy": "AST exceeds 10,000 nodes"
+    }
+  },
+  "revision": 3,
+  "s3_pre": {
+    "code_differences": [
+      {
+        "case": "L:speech-acts@0:env",
+        "lean": [
+          "SOFT_UNSUPPORTED_PROFILE",
+          "UnsupportedProfile: Unsupported profile speech-acts@0"
+        ],
+        "python": [
+          "SOFT_INVALID_INPUT",
+          "Incorrect fields (missing=['speech_acts'], unknown=[])"
+        ]
+      },
+      {
+        "case": "L:speech-acts@0:base",
+        "lean": [
+          "SOFT_UNSUPPORTED_PROFILE",
+          "UnsupportedProfile: Unsupported profile speech-acts@0"
+        ],
+        "python": [
+          "SOFT_INVALID_INPUT",
+          "Incorrect fields (missing=['speech_acts'], unknown=[])"
+        ]
+      },
+      {
+        "case": "L:norm-defaults@0:unspecified",
+        "lean": [
+          "SOFT_INVALID_INPUT",
+          "InvalidInput: invalid regulated role or default for x_required"
+        ],
+        "python": [
+          "SOFT_UNSUPPORTED_PROFILE",
+          "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+        ]
+      }
+    ],
+    "detail": "conformance/wire-contract/s3-pre.md",
+    "status": "closed: no legacy verdict difference",
+    "verdict_differences": []
+  },
+  "status": "shadow",
+  "three_way_cases": 6007,
+  "three_way_disagreements": []
+}

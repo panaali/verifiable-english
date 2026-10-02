@@ -2949,4 +2949,11 @@
 'VE.Readings.Wire.layerNames_sub' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.author_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.Wire.readings_wire_separate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
-PASS: 276 source files; 2951 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+'VE.WireContract.run_clean_iff' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.run_fault_first' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.run_phase_major' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.expand_views' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.expandAll_views' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.instances_views' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.findSome_congr_reached' depends on axioms: [propext, Quot.sound]
+'VE.WireContract.run_congr_reached' depends on axioms: [propext, Quot.sound]

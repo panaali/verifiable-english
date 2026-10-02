@@ -1,0 +1,105 @@
+{
+  "all_check_count": 105,
+  "checks_without_first": {
+    "lean": [
+      "4.11b"
+    ],
+    "python": []
+  },
+  "checks_without_masked": {
+    "lean": [
+      "1.1",
+      "4.11b"
+    ],
+    "python": [
+      "1.1"
+    ]
+  },
+  "contract": "soft-norms@0",
+  "coverage_met": true,
+  "coverage_unmet": {
+    "adjacent_phase_pairs": [],
+    "first": [],
+    "masked": []
+  },
+  "coverage_unmet_reasons": {
+    "4.11b": "Reached only by an explicit null, which the wire readers refuse before diagnosis: Lean has no witness; Python has its first-fault and masking witnesses."
+  },
+  "deferred": {
+    "lean": 0,
+    "python": 0
+  },
+  "deferred_share": {
+    "lean": 0.0,
+    "python": 0.0
+  },
+  "feasibility": {
+    "coarse": 3,
+    "met": true,
+    "n1": 43,
+    "n2": 8,
+    "of": 67,
+    "t3": 13,
+    "threshold": 45,
+    "total": 51
+  },
+  "first_check_count": {
+    "lean": 104,
+    "python": 105
+  },
+  "legacy_code_differences": [
+    {
+      "case": "L:speech-acts@0:env",
+      "lean": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: Unsupported profile speech-acts@0"
+      ],
+      "python": [
+        "SOFT_INVALID_INPUT",
+        "Incorrect fields (missing=['speech_acts'], unknown=[])"
+      ]
+    },
+    {
+      "case": "L:speech-acts@0:base",
+      "lean": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: Unsupported profile speech-acts@0"
+      ],
+      "python": [
+        "SOFT_INVALID_INPUT",
+        "Incorrect fields (missing=['speech_acts'], unknown=[])"
+      ]
+    },
+    {
+      "case": "L:norm-defaults@0:unspecified",
+      "lean": [
+        "SOFT_INVALID_INPUT",
+        "InvalidInput: invalid regulated role or default for x_required"
+      ],
+      "python": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+      ]
+    }
+  ],
+  "legacy_verdict_differences": [],
+  "masking_not_required": {
+    "1.1": "the first instance of the table: no earlier check exists, and 8.3 requires a masking witness for every check after it"
+  },
+  "mismatches": [],
+  "oracle": "fault catalogue: hand-written check, path and args per fault, text from the contract's template, table position from the contract; inherited text from each legacy validator",
+  "residual": {
+    "lean": 0,
+    "python": 0
+  },
+  "revision": 3,
+  "s3_pre": "closed: no legacy verdict difference",
+  "text_delta_count": 303,
+  "tiers": {
+    "0": 165,
+    "A": 4280,
+    "B": 200,
+    "legacy_differences": 14,
+    "replayed": 3917
+  }
+}

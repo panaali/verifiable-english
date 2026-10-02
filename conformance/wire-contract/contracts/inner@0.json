@@ -1,0 +1,11 @@
+{
+  "contract":"inner@0","revision":1,"format":1,"status":"shadow",
+  "input":["x","ys"],"uses":[],
+  "codes":{"INNER_BAD":{"class":"InvalidInput","summary":"Invalid inner value"}},
+  "residual":"INNER_BAD","phases":[{"name":"body","checks":[
+    {"id":"b1","kind":"type","at":"/x","type":"integer","code":"INNER_BAD","text":"Inner: x is {value:json}"},
+    {"id":"g1","each":"/ys/*","checks":[
+      {"id":"b2","kind":"type","type":"string","code":"INNER_BAD","text":"Inner: y {index}"}
+    ]}
+  ]}]
+}

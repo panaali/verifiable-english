@@ -275,6 +275,7 @@ the manifest `notes`, not changed:
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
 | `reference.validate` | combination | python → python | experimental / experimental | `ve.equivalence:validate_reference` | none | none | none | `python:implementation`<br>`python:reference-rule` |
 | `document.check` | combination | python → lean | experimental / experimental | `ve.document:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
+| `wire.diagnose` | leaf | lean-only → lean | experimental / experimental | none | `ve_diagnose soft-norms@0 soft-elaborate,admission` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue` |
 | `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
 <!-- END GENERATED -->
 

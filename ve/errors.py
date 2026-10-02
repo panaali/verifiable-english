@@ -13,9 +13,11 @@ class Span:
 class VEError(ValueError):
     code = "InvalidInput"
 
-    def __init__(self, message: str, *, span: Span | None = None, path: str = ""):
+    def __init__(self, message: str, *, span: Span | None = None, path: str = "",
+                 diagnostic: dict | None = None):
         super().__init__(message)
         self.message, self.span, self.path = message, span, path
+        self.diagnostic = diagnostic
 
     def to_dict(self) -> dict:
         result = {"code": self.code, "message": self.message}
@@ -23,6 +25,8 @@ class VEError(ValueError):
             result["path"] = self.path
         if self.span is not None:
             result["span"] = {k: getattr(self.span, k) for k in ("start", "end", "line", "column")}
+        if self.diagnostic is not None:
+            result["diagnostic"] = self.diagnostic
         return result
 
 

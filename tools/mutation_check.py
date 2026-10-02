@@ -1,7 +1,8 @@
 """Prove excluded tests stay green for one detectable fault per layer.
 
-This temporarily edits five *clean* source files, restoring each in a finally
-block. Run only in a worktree without concurrent tests or source edits. The
+The default run temporarily edits five *clean* source files; --wire-only swaps
+two generated Lean check rows. Each edit is restored in a finally block. Run only
+in a worktree without concurrent tests or source edits. The
 faults never invoke a model service. Summary JSON goes to the path supplied by
 --output; raw pytest logs go to /tmp/ve-layer-mutations.
 """
@@ -41,6 +42,32 @@ CASES = (
 FAILURE = re.compile(r"^(?:FAILED|ERROR) (tests/\S+)", re.MULTILINE)
 
 
+def wire_generated_table_mutation() -> int:
+    """A swapped pair of generated Lean checks must be caught by regeneration."""
+    target = ROOT / "lean/VE/WireContract/Tables/SoftNorms.lean"
+    original = target.read_text()
+    baseline = subprocess.run(["git", "show", "HEAD:lean/VE/WireContract/Tables/SoftNorms.lean"],
+                              cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    if original != baseline:
+        raise RuntimeError("refusing to mutate an edited generated wire table")
+    first = original.index('.check { id := "1.1"')
+    second = original.index(', .check { id := "1.2"', first)
+    third = original.index(', .check { id := "1.3"', second)
+    row1 = original[first:second]
+    row2 = original[second + 2:third]
+    try:
+        target.write_text(original[:first] + row2 + ", " + row1 + original[third:])
+        checked = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
+                                 cwd=ROOT, capture_output=True, text=True, timeout=60)
+        if checked.returncode != 1 or "WC11" not in checked.stdout:
+            print("wire generated table mutation escaped --check", file=sys.stderr)
+            return 1
+    finally:
+        target.write_text(original)
+    print("wire generated Lean row swap detected by --check")
+    return 0
+
+
 def pytest_run(files: list[str], log: Path, *, workers: int = 4,
                stop_early: bool = False) -> tuple[int, set[str], float]:
     env = dict(os.environ)
@@ -67,7 +94,11 @@ def main() -> int:
                         help="maximum pytest workers for each exclusion run")
     parser.add_argument("--chunk-size", type=int, default=11,
                         help="maximum excluded test files per pytest invocation")
+    parser.add_argument("--wire-only", action="store_true",
+                        help="check the generated wire-table swap mutation only")
     args = parser.parse_args()
+    if args.wire_only:
+        return wire_generated_table_mutation()
     if args.workers < 1 or args.chunk_size < 1:
         parser.error("--workers and --chunk-size must be positive")
     output = ROOT / args.output
