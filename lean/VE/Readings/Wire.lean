@@ -1,4 +1,4 @@
-import VE.Readings.Separate
+import VE.Readings.Lines
 import VE.Rights.Wire
 import VE.Compose.Dispatch
 
@@ -423,7 +423,8 @@ def stepOne (D : Doc) (s : String) (i j : Nat) (sid : String) (wName : String) (
 
 def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
   let chain : Option String := match c with
-    | .rights => match VE.Rights.validateRights X.1 with
+    -- The line order first (DRI ruling 1): each entry a line of its right, none listed twice (`linesOnce`).
+    | .rights => (lineOrderText X.1).or <| match VE.Rights.validateRights X.1 with
       | .error e => some e
       | .ok () => none
     | .soft =>

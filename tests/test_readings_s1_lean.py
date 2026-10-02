@@ -310,6 +310,45 @@ def test_k19_rights_candidates_under_a_fixed_limitation(lean):
     assert rs["pairs"][0]["pair"]["separated"] is True
 
 
+def test_line_order_lists_each_line_once(lean):
+    """DRI ruling 1 (review finding B): S1 admission refuses a candidate's document whose line order repeats an
+    entry, with one stable text, and an entry that is no line of its right with the rights decoder's
+    `UnknownRight` (a `right_lines` unit before its right). `genKeys_nodup` takes this check as its hypothesis."""
+    raw = env_rights()
+    arbitrary = ["binary", "arbitrary_arrest", ["var", 1], ["var", 0]]
+
+    def line(mode, name="no-arbitrary-arrest", guard=arbitrary):
+        return {"kind": "claim", "norm": norm_object(name, "arrest_permitted", False, mode, guard=guard)}
+
+    base = {"domains": {"state": ["texas"], "person": ["ann", "bob"]}, "constants": {},
+            "relations": {"arbitrary_arrest": [["texas", "ann"]], "journalist": []}}
+    sigma = entry(base, "default", {"outcome": {"predicate": "arrest_permitted", "tuple": ["texas", "ann"]}}, True,
+                  decisions=[{"key": {"excepted": "no-arbitrary-arrest"}, "tuples": [["texas", "ann"]]}])
+    sid = situation_id(raw, sigma)
+
+    def rs9(strict_lines):
+        return reading_set("rs9", "u9", [
+            reading("strict", {"right": {"name": "r9", "holder": "person", "lines": strict_lines}},
+                    {"default": sid}, kind="right"),
+            reading("default", {"right": {"name": "r9", "holder": "person", "lines": [line("default")]}},
+                    {"strict": sid}, kind="right")], {sid: sigma})
+
+    row = validate(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9([line("strict")])]})
+    assert row["status"] == "ok", row
+    row = validate(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9([line("strict"), line("strict")])]})
+    assert row["error"] == "InvalidInput: line order lists a line of right r9 twice under rs9@1:0"
+    # A fixed `right_lines` unit before the candidates' right: its line is in the order and in no right.
+    journalist = ["unary", "journalist", ["var", 0]]
+    extra = {"right_lines": {"right": "r9", "lines": [line("strict", "no-detention", journalist)]}}
+    row = validate(lean, raw, {"units": [{"id": "u1", "kind": "right_lines", "content": extra}, {"id": "u9"}],
+                               "reading_sets": [rs9([line("strict")])]})
+    assert row["error"] == "UnknownRight: r9 under rs9@1:0"
+    # After the right, the same unit is a line of it.
+    row = validate(lean, raw, {"units": [{"id": "u9"}, {"id": "u1", "kind": "right_lines", "content": extra}],
+                               "reading_sets": [rs9([line("strict")])]})
+    assert row["status"] == "ok", row
+
+
 def test_other_kinds_go_to_the_lower_route(lean):
     raw = env_k()
     row = run(lean, [{"id": "e", "kind": "soft-elaborate", "environment": raw,

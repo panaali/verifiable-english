@@ -122,6 +122,7 @@ import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
 import VE.Readings.Separate
+import VE.Readings.Lines
 import VE.Readings.Examples
 import VE.Readings.Wire
 import VE.Readings.Run
@@ -3008,6 +3009,46 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.one_formula_only
 #print axioms VE.Readings.keyedNodes_nodes
 #print axioms VE.Readings.genKeys_names
+#print axioms VE.Readings.lineOrderText_go
+#print axioms VE.Readings.linesOnce_of_text
+#print axioms VE.Readings.checkRights_steps
+#print axioms VE.Readings.bind_ok_right
+#print axioms VE.Readings.throw_bind_ok
+#print axioms VE.Readings.nodup_of_count
+#print axioms VE.Readings.dupOf_nodup
+#print axioms VE.Readings.stepsHead_dup
+#print axioms VE.Readings.stepsPreds_rights
+#print axioms VE.Readings.stepsRights_lines
+#print axioms VE.Readings.stepsLines_limits
+#print axioms VE.Readings.limBody_ok
+#print axioms VE.Readings.stepsLimits_conds
+#print axioms VE.Readings.throw_ok
+#print axioms VE.Readings.checkSourceLine_fan
+#print axioms VE.Readings.rightsNames_of_check
+#print axioms VE.Readings.rightsNames_of_chainWF
+#print axioms VE.Readings.nodup_of_map
+#print axioms VE.Readings.nodup_map_of_inj
+#print axioms VE.Readings.nodup_flatMap_iff
+#print axioms VE.Readings.pairwise_of_ne
+#print axioms VE.Readings.insertBy_perm
+#print axioms VE.Readings.sortBy_perm
+#print axioms VE.Readings.dedup_nodup
+#print axioms VE.Readings.nodeOf_name
+#print axioms VE.Readings.keyedNodes_bearerless
+#print axioms VE.Readings.instancesOf_fan
+#print axioms VE.Readings.mapIdx_bearers
+#print axioms VE.Readings.instancesOf_bearers
+#print axioms VE.Readings.mem_linesAux
+#print axioms VE.Readings.linesAux_pairwise
+#print axioms VE.Readings.rules_eq
+#print axioms VE.Readings.distinct_lines
+#print axioms VE.Readings.owned_mem
+#print axioms VE.Readings.owned_rsLines
+#print axioms VE.Readings.pairwise_all
+#print axioms VE.Readings.keyedNodes_pairwise
+#print axioms VE.Readings.nodup_append_tag
+#print axioms VE.Readings.genKeys_keys
+#print axioms VE.Readings.genKeys_nodup
 #print axioms VE.Readings.decisionOnly_spec
 #print axioms VE.Readings.typedTuple_iff
 #print axioms VE.Readings.mem_tuplesOf

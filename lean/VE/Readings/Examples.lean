@@ -1,4 +1,4 @@
-import VE.Readings.Separate
+import VE.Readings.Lines
 import VE.Rights.Examples
 
 /-! The item-1 fixtures of docs/spec/composition-s1.md 9.2 on one small document, as build-time checks (`#guard`:
@@ -286,12 +286,14 @@ def σ21c : Situation String := sit m0 [(.outweighs "avoid_required" "lo" "hi", 
 #guard !situationWF K21c "rs1" 0 1 σ21c
 #guard !separates K21c "rs1" 0 1 σ21c
 
-/-! ## `genKeys_nodup` as approved does not hold
+/-! ## `genKeys_nodup` and the line order (DRI ruling 1)
 
-`WellFormedRights` accepts a document whose `sourceOrder` lists one default fan-out line twice: the two copies are
-four instances `rights-fan-1` to `rights-fan-4` with distinct rule names, and two pairs of them carry the same source
-key `excepted no-torture (bearer b)`. `one D s i` never builds such an order (each unit's lines are appended once),
-so the statement needs a hypothesis on `sourceOrder`; it is reported against spec 8.3 and not proved here. -/
+As first approved the statement was false. `WellFormedRights` accepts a document whose `sourceOrder` lists one
+default fan-out line twice: the two copies are four instances `rights-fan-1` to `rights-fan-4` with distinct rule
+names, and two pairs of them carry the same source key `excepted no-torture (bearer b)` (`twiceListed`). It also
+accepts an order that lists a line its right does not have, and the rights checks never compare the order with the
+rights' lines (`orderOnly`: the order lists no entry twice, and keys still repeat). `genKeys_nodup` now takes
+`linesOnce` as its hypothesis; S1 admission refuses both documents with `lineOrderText`'s texts. -/
 
 def fanDefault : VE.Rights.SourceLine :=
   ⟨.claim, some (defaultNode "no-torture" "torture_permitted_state" false), none, none,
@@ -302,5 +304,24 @@ def twiceListed : VE.Rights.RightsDoc :=
     sourceOrder := some [("r5", fanDefault), ("r5", fanDefault)] }
 #guard chainWF .rights twiceListed
 #guard !decide (((genKeys twiceListed).map (·.1)).Nodup)
+#guard !linesOnce twiceListed
+#guard lineOrderText twiceListed == some "InvalidInput: line order lists a line of right r5 twice"
+
+/-- The same line with a citation added: another entry, which no right lists. -/
+def fanCited : VE.Rights.SourceLine := { fanDefault with cites := [("note", [])] }
+def orderOnly : VE.Rights.RightsDoc :=
+  { twiceListed with sourceOrder := some [("r5", fanDefault), ("r5", fanCited)] }
+#guard chainWF .rights orderOnly
+#guard decide (VE.Rights.sourceLines orderOnly).Nodup
+#guard !decide (((genKeys orderOnly).map (·.1)).Nodup)
+#guard !linesOnce orderOnly
+#guard lineOrderText orderOnly == some "UnknownRight: r5"
+
+/-- Listed once, the same document has distinct keys, as `genKeys_nodup` proves. -/
+def listedOnce : VE.Rights.RightsDoc := { twiceListed with sourceOrder := some [("r5", fanDefault)] }
+#guard chainWF .rights listedOnce && linesOnce listedOnce
+#guard decide (((genKeys listedOnce).map (·.1)).Nodup)
+-- Every candidate document of K19 passes the check.
+#guard linesOnce (one K19 "rs9" 0).1 && linesOnce (one K19 "rs9" 1).1
 
 end VE.Readings.Examples

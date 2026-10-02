@@ -5,6 +5,7 @@ import VE.Compose.Content
 import VE.Compose.Examples
 import VE.Readings.Doc
 import VE.Readings.Separate
+import VE.Readings.Lines
 import VE.Readings.Wire
 import VE.Readings.Run
 import VE.Readings.Examples
