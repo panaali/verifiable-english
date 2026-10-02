@@ -9,7 +9,9 @@ record: every field, with `text` rendered from the contract's template and the c
 legacy text and `args` is `{"message": text}`. They also compare the engines with each other on the whole
 record (but `text` and `args` of inherited checks), each engine's code with its legacy validator's, and
 Lean's text with the Lean route's for the checks whose text is the contract's. Tier B and the replayed corpora check that the engines agree
-and that each reports a fault exactly when its legacy validator rejects.
+and that each reports a fault exactly when its legacy validator rejects. Every engine record, in every tier, has
+exactly the fault record's members (2.7). The gate exits non-zero unless every required row of spec 9 holds
+(`gate_failures`), feasibility judged from `n1 + n2` against 45 of 67.
 """
 
 import argparse
@@ -38,6 +40,11 @@ BIN = ROOT / "lean/.lake/build/bin"
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
 EXAMPLES = ROOT / "ve/wire_contract/examples/soft-norms@0"
 EXPECTED_FIELDS = ("contract", "revision", "check", "phase", "code", "class", "path")
+# The fault record's members (2.7; `contract.schema.json`, `$defs/fault`, closed to others).
+RECORD_FIELDS = frozenset(EXPECTED_FIELDS + ("text", "args"))
+# Spec 9: feasibility is `n1 + n2` out of the 67 numbered checks of soft-norms.md 8, required at least 45.
+FEASIBILITY_OF = 67
+FEASIBILITY_THRESHOLD = 45
 # The profiles that Python's registry has and the Lean route's does not (s3-pre.md). Both legacy validators
 # reject a soft source that lists any of them; the codes differ on two.
 PYTHON_ONLY_PROFILES = ("alternatives@0", "norm-defaults@0", "reports@0", "rights@0", "risk@0",
@@ -116,8 +123,8 @@ def feasibility(contract):
         walk(phase["checks"])
     counts = Counter(tiers.values())
     return {"n1": counts["T1"], "n2": counts["T2"], "coarse": counts["coarse"], "t3": counts["T3"],
-            "total": counts["T1"] + counts["T2"], "of": len(tiers), "threshold": 45,
-            "met": counts["T1"] + counts["T2"] >= 45}
+            "total": counts["T1"] + counts["T2"], "of": len(tiers), "threshold": FEASIBILITY_THRESHOLD,
+            "met": len(tiers) == FEASIBILITY_OF and counts["T1"] + counts["T2"] >= FEASIBILITY_THRESHOLD}
 
 
 def tier_b(faults, prints, count=200, seed=19):
@@ -197,6 +204,21 @@ def legacy_difference_sources(contract):
     return cases
 
 
+def shape_problems(record):
+    """How an engine's fault record departs from the schema's closed shape (2.7): a missing or an extra
+    member. Checked on every record of every tier, so a stray field both engines add is not hidden by their
+    agreeing with each other."""
+    if not isinstance(record, dict):
+        return [f"record {record!r} is not an object"]
+    problems = []
+    if set(record) != RECORD_FIELDS:
+        problems.append(f"record fields: missing {sorted(RECORD_FIELDS - set(record))}, "
+                        f"extra {sorted(set(record) - RECORD_FIELDS)}")
+    if "args" in record and not isinstance(record["args"], dict):
+        problems.append(f"args {record['args']!r} is not an object")
+    return problems
+
+
 def record_problems(record, expected, legacy):
     """How an engine's record differs from the expected record (8.3, tiers 0 and A): every field of
     `expected`, `text` and `args` included. An expected record without `text` is an inherited check's: its
@@ -205,6 +227,8 @@ def record_problems(record, expected, legacy):
     are those on which the two legacy validators differ)."""
     if record is None:
         return [f"expected {expected['check']} {expected['path']}, got clean"]
+    if shape_problems(record):
+        return shape_problems(record)
     if any(record[key] != expected[key] for key in EXPECTED_FIELDS):
         return [f"expected {expected['check']} {expected['path']}, got {record['check']} {record['path']}"]
     if "text" in expected:
@@ -320,6 +344,8 @@ def report():
         for language, record, legacy in languages:
             if legacy is not None and record is None:
                 residual[language] += 1
+            if record is not None and expected is None:
+                problems += [f"{language}: {problem}" for problem in shape_problems(record)]
             if tier == "L":
                 continue
             if (legacy is None) != (record is None):
@@ -413,6 +439,32 @@ def report():
     }
 
 
+def gate_failures(value):
+    """Every requirement of spec 9 that the report `value` does not meet; empty when the gate passes. The
+    feasibility row is judged from `n1` and `n2` against the spec's own numbers, not from the report's `met`
+    or `threshold`."""
+    failures = []
+    if value["mismatches"]:
+        failures.append(f"tier 0 and A: {len(value['mismatches'])} mismatches")
+    for language in ("python", "lean"):
+        if value["residual"].get(language, 1):
+            failures.append(f"residual count {value['residual'].get(language)} in {language}")
+    if not value["coverage_met"]:
+        failures.append(f"coverage unmet: {value['coverage_unmet']}")
+    feasible = value["feasibility"]
+    total = feasible["n1"] + feasible["n2"]
+    if feasible["of"] != FEASIBILITY_OF:
+        failures.append(f"feasibility counts {feasible['of']} numbered checks, not {FEASIBILITY_OF}")
+    if total < FEASIBILITY_THRESHOLD:
+        failures.append(f"feasibility {total} of {feasible['of']}, below {FEASIBILITY_THRESHOLD}")
+    if (feasible["total"], feasible["threshold"], feasible["met"]) != (
+            total, FEASIBILITY_THRESHOLD, total >= FEASIBILITY_THRESHOLD and feasible["of"] == FEASIBILITY_OF):
+        failures.append(f"feasibility report inconsistent: {feasible}")
+    if not value["s3_pre"].startswith("closed"):
+        failures.append(f"S3-pre {value['s3_pre']}")
+    return failures
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
@@ -426,9 +478,12 @@ def main():
     else:
         REPORT.write_text(rendered)
     print(f"{sum(value['tiers'].values())} cases; {len(value['mismatches'])} mismatches; "
-          f"coverage unmet: {value['coverage_unmet']}; S3-pre {value['s3_pre']}")
-    return bool(value["mismatches"] or any(value["residual"].values()) or not value["coverage_met"]
-                or value["s3_pre"].startswith("open"))
+          f"coverage unmet: {value['coverage_unmet']}; feasibility {value['feasibility']['total']}; "
+          f"S3-pre {value['s3_pre']}")
+    failures = gate_failures(value)
+    for failure in failures:
+        print(f"gate fails: {failure}")
+    return bool(failures)
 
 
 if __name__ == "__main__":
