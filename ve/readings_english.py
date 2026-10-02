@@ -47,10 +47,15 @@ def force_twin_sentence(source_word, strict_paraphrase, default_paraphrase,
 
 
 def decision_only_sentence(decider):
-    """E15, emitted only for the proved sufficient criterion of S1 1.7."""
+    """E25, shown for the finding `SeparatedByDecisionOnly` in place of E15.
+
+    E15 states what `decision_only_sound` would prove, and that theorem is not
+    proved yet (DRI ruling 2 of 2026-10-02): the finding is not certified, and
+    the sentence says so instead of stating the claim as checked.
+    """
     who = "the decider" if decider == "unstated" else decider
-    return (f"These two readings differ only where {who} decides that the exception applies. "
-            "No situation separates them without that decision.")
+    return (f"It is not certified that these two readings differ only where {who} "
+            "decides that the exception applies.")
 
 
 def act_only_sentence(first_act, second_act):
@@ -75,7 +80,7 @@ def outcome_pair_sentence(situation, witness, other, role, subject_name, value,
 def assertion_pair_sentence(situation, true_reading, false_reading):
     """E21 is only for two assertion candidates with checked opposite values."""
     return (f"These two readings differ here: {situation}. Under {true_reading}, "
-            f"the sentence is true there. Under {false_reading}, the sentence is false there.")
+            f"the sentence is true there. Under {false_reading}, it is false there.")
 
 
 def _series(values):
