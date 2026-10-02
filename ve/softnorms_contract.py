@@ -214,14 +214,31 @@ def rule_typing(root, items):
 
 
 def soft_semantic(root, items):
+    document = _prepared(root)
+    try:
+        soft.NormDocument(document.env, [rule.core for rule in document.rules])
+    except VEError as exc:
+        message = str(exc)
+        if message in ("AST exceeds 10,000 nodes", "ResourceLimit: AST exceeds 10,000 nodes"):
+            return "6.5a", {}
+        if message in ("precedence depth", "ResourceLimit: precedence depth"):
+            return "6.6", {}
+        if message.startswith("DependencyCycle: "):
+            graph = {rule.core.name: set(rule.core.over) for rule in document.rules}
+            try:
+                soft.dependency_order(graph)
+            except VEError:
+                member = "6.5b"
+            else:
+                member = "6.7"
+            return member, {"detail": message.removeprefix("DependencyCycle: ")}
+        # 6.5 to 6.7 name only the base W1 faults above. A different base
+        # rejection has no member in this classifier and remains a residual.
+        return None
     try:
         soft.load_soft_document(_environment(root), root["norms"])
     except VEError as exc:
         message = str(exc)
-        if message == "AST exceeds 10,000 nodes" or message == "ResourceLimit: AST exceeds 10,000 nodes":
-            return "6.5a", {}
-        if message == "precedence depth" or message == "ResourceLimit: precedence depth":
-            return "6.6", {}
         if message.startswith("SoftOverHard: "):
             return "6.8", {"detail": message.removeprefix("SoftOverHard: ")}
         for prefix, member in (("ResourceLimit: derived carve-out of rule ", "6.9"),
@@ -229,7 +246,8 @@ def soft_semantic(root, items):
                                ("ResourceLimit: generated norm layer ", "6.12"),
                                ("ResourceLimit: generated conflict target ", "6.13")):
             if message.startswith(prefix):
-                return member, {"detail": message[len(prefix):]}
+                detail = message[len(prefix):]
+                return member, {"detail": " of rule " + detail if member == "6.9" else detail}
         if message == "ResourceLimit: generated norm layers":
             return "6.15", {}
         if message == "ResourceLimit: generated background":
