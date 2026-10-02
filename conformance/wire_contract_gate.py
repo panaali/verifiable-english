@@ -12,8 +12,9 @@ Lean's text with the Lean route's for the checks whose text is the contract's. T
 and that each reports a fault exactly when its legacy validator rejects. Every engine record, in every tier, has
 exactly the fault record's members (2.7), each of the schema's type. The gate exits non-zero unless every
 required row of spec 9 holds (`gate_failures`), each judged from the data the report summarizes and not from
-the report's own verdicts: coverage from the unmet lists, S3-pre from the legacy verdict differences, and
-feasibility from `n1 + n2` against 45 of 67, the tier counts partitioning the 67.
+the report's own verdicts: coverage from the unmet lists (a gap exempt only under 8.3's table of allowed gaps),
+S3-pre from the legacy verdict differences, and feasibility from `n1 + n2` against 45 of 67, the tier counts
+partitioning the 67.
 """
 
 import argparse
@@ -44,6 +45,7 @@ from ve.wire_contract.engine import Deferred, Fault, load, run
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
+SPEC = ROOT / "docs/spec/wire-contract.md"
 # The tests' `soft-norms@0` inputs that no other source of the corpus builds, as `tests/contract_input_recorder.py`
 # records them from the test files of `RECORDED_TESTS` (`--record-test-inputs` rewrites the file).
 TEST_INPUTS = ROOT / "conformance/wire-contract/soft-norms@0-test-inputs.json"
@@ -59,6 +61,38 @@ FEASIBILITY_THRESHOLD = 45
 # reject a soft source that lists any of them; the codes differ on two.
 PYTHON_ONLY_PROFILES = ("alternatives@0", "norm-defaults@0", "reports@0", "rights@0", "risk@0",
                         "speech-acts@0")
+
+
+# The rows of 8.3's table of allowed coverage gaps, each with the checks it applies to, judged from the fault
+# catalogue: G1, the checks every fault of which only the in-process API can carry.
+GAP_APPLIES = {"G1": lambda faults: {f.check for f in faults} - {f.check for f in faults if f.readers != "python"}}
+
+
+def allowed_gaps():
+    """8.3's table of allowed coverage gaps, read from the spec: {gap: (language, reason)}."""
+    text = SPEC.read_text()
+    section = text[text.index("**Allowed coverage gaps.**"):text.index("### 8.4")]
+    rows = {}
+    for line in section.splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if re.fullmatch(r"G\d+", cells[0]):
+            if len(cells) != 4 or cells[0] in rows:
+                raise ValueError(f"malformed row of the allowed coverage gaps: {line}")
+            rows[cells[0]] = (cells[1].lower(), cells[3])
+    if set(rows) != set(GAP_APPLIES):
+        raise ValueError(f"allowed coverage gaps {sorted(rows)}, rules for {sorted(GAP_APPLIES)}")
+    return rows
+
+
+def exempt_gaps(language):
+    """{check: reason} for each check that `language` may lack a witness for (8.3): the table's rows for that
+    language, each applied to the checks the fault catalogue gives it."""
+    faults = catalogue()
+    exempt = {}
+    for gap, (row_language, reason) in sorted(allowed_gaps().items()):
+        if row_language == language:
+            exempt.update((check, reason) for check in GAP_APPLIES[gap](faults))
+    return exempt
 
 
 def inherited_checks(contract):
@@ -447,7 +481,7 @@ def report():
         raise ValueError("an inherited check's text is not `{message}`: the oracle compares it with the legacy text")
     faults = catalogue()
     codes = legacy_codes()
-    python_only = [fault for fault in faults if fault.readers == "python"]
+    lean_exempt = exempt_gaps("lean")
     cases = gate_cases(contract)
 
     lean_cases = [case for case in cases if case[6]]
@@ -530,19 +564,15 @@ def report():
     without_first = {language: sorted(set(checks) - first[language], key=checks.index) for language in first}
     without_masked = {language: sorted(set(checks) - masked[language], key=checks.index) for language in masked}
     adjacent = [(a, a + 1) for a in range(len(contract["phases"]) - 1)]
-    python_only_checks = sorted({f.check for f in python_only})
     unmet = {
-        "first": sorted(set(without_first["python"]) | (set(without_first["lean"]) - set(python_only_checks)),
+        "first": sorted(set(without_first["python"]) | (set(without_first["lean"]) - set(lean_exempt)),
                         key=checks.index),
         # 8.3: every check after the table's first instance is masked by an earlier one; the first has none.
-        "masked": sorted((set(without_masked["python"]) | (set(without_masked["lean"]) - set(python_only_checks)))
+        "masked": sorted((set(without_masked["python"]) | (set(without_masked["lean"]) - set(lean_exempt)))
                          - {table_first}, key=checks.index),
         "adjacent_phase_pairs": [list(pair) for pair in adjacent if pair not in phase_pairs],
     }
-    reasons = {check: reason for check, reason in UNREACHED.items()}
-    for check in python_only_checks:
-        reasons[check] = ("Reached only by an explicit null, which the wire readers refuse before diagnosis: "
-                          "Lean has no witness; Python has its first-fault and masking witnesses.")
+    reasons = {**UNREACHED, **lean_exempt}
     verdict_open = bool(legacy_verdicts)
     return {
         "contract": contract["contract"], "revision": contract["revision"],
@@ -605,8 +635,10 @@ def gate_failures(value):
 
 def _coverage_failures(value):
     """8.3's coverage row: met only when every unmet list is empty, the stated `coverage_met` agrees, and
-    the unmet lists hold every check the report shows without a first or a masking witness (a Lean-only gap
-    being one the reasons explain)."""
+    the unmet lists hold every check the report shows without a first or a masking witness. A gap is exempt
+    only where 8.3's table of allowed gaps covers it: a row for its language that the fault catalogue applies
+    to the check, with the row's reason as the check's entry of `coverage_unmet_reasons`. Any other entry
+    fails, whatever it says."""
     failures = []
     unmet = value["coverage_unmet"]
     rows = ("first", "masked", "adjacent_phase_pairs")
@@ -622,6 +654,12 @@ def _coverage_failures(value):
     if set(value["masking_not_required"]) - {checks[0]}:
         failures.append(f"masking not required of {sorted(value['masking_not_required'])}, only of {checks[0]}")
     reasons = value["coverage_unmet_reasons"]
+    allowed = {language: exempt_gaps(language) for language in ("python", "lean")}
+    if not isinstance(reasons, dict):
+        return failures + [f"coverage_unmet_reasons is malformed: {reasons!r}"]
+    for check, reason in sorted(reasons.items()):
+        if all(allowed[language].get(check) != reason for language in allowed):
+            failures.append(f"coverage_unmet_reasons of {check} is no allowed gap of 8.3: {reason!r}")
     for row, without in (("first", value["checks_without_first"]), ("masked", value["checks_without_masked"])):
         if set(without) != {"python", "lean"}:
             failures.append(f"checks without {row} witness, languages {sorted(without)}")
@@ -629,8 +667,7 @@ def _coverage_failures(value):
         exempt = set(value["masking_not_required"]) if row == "masked" else set()
         for language in ("python", "lean"):
             hidden = set(without[language]) - set(unmet[row]) - exempt
-            if language == "lean":
-                hidden -= set(reasons)
+            hidden -= {check for check, reason in allowed[language].items() if reasons.get(check) == reason}
             if hidden:
                 failures.append(f"{language} has no {row} witness for {sorted(hidden)}, not in coverage_unmet")
             if row == "first" and value["first_check_count"].get(language) != len(checks) - len(without[language]):

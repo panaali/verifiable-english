@@ -1383,6 +1383,15 @@ Each T2 hook is also compared between Python and Lean on every Tier 0 to B input
 existing corpora (the soft conformance fixtures, the stage-0 baseline's rejection cells, the use-case documents)
 are replayed in shadow: `clean` on accepted inputs, a fault on rejected ones.
 
+**Allowed coverage gaps.** A check may lack its first-fault or masking witness in one language only for a reason
+in this table, stated verbatim as the check's entry of the report's `coverage_unmet_reasons`. Whether a row
+applies to a check is judged from the fault catalogue (`conformance/wire_contract_faults.py`), never from the
+report; any other entry, and any gap no row covers, fails the coverage row of 9.
+
+| Gap | Language | Applies to | Reason |
+|---|---|---|---|
+| G1 | Lean | a check every catalogue fault of which only the in-process API can carry (`readers` `python`) | Reached only by an explicit null, which the wire readers refuse before diagnosis: Lean has no witness; Python has its first-fault and masking witnesses. |
+
 ### 8.4 Conservativity
 
 - **Z1.** The full existing suite, the conformance reports, `conformance/identity.json`, the frozen baseline and

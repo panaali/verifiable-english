@@ -269,3 +269,46 @@ def test_soft_semantic_names_no_member_for_an_unknown_softened_failure(monkeypat
     monkeypatch.setattr(softnorms_contract.soft, "load_soft_document", reject)
     assert softnorms_contract.soft_semantic(root, []) is None
     assert run(CONTRACT, root, registry=REGISTRY) is CLEAN
+
+
+def test_only_an_allowed_gap_of_8_3_exempts_a_missing_witness(monkeypatch, tmp_path):
+    """Wire2 loop (B): any entry of `coverage_unmet_reasons` exempted a missing Lean witness, so check 2.5
+    added to Lean's `checks_without_first`, its count adjusted, with the reason "x" passed. A gap is now
+    exempt only under a row of 8.3's table of allowed gaps, read from the spec, whose applicability is judged
+    from the fault catalogue, with the row's reason verbatim; any other entry fails."""
+    gaps = wire_contract_gate.allowed_gaps()
+    assert list(gaps) == ["G1"] and gaps["G1"][0] == "lean"
+    null_reason = gaps["G1"][1]
+    assert wire_contract_gate.exempt_gaps("lean") == {"4.11b": null_reason}
+    assert wire_contract_gate.exempt_gaps("python") == {}
+    assert {fault.check for fault in catalogue() if fault.readers == "python"} == {"4.11b"}
+    assert json.loads(REPORT.read_text())["coverage_unmet_reasons"] == {"4.11b": null_reason}
+    def lean_gap(row, reason, check="2.5"):
+        def change(value):
+            value[f"checks_without_{row}"]["lean"].append(check)
+            if row == "first":
+                value["first_check_count"]["lean"] -= 1
+            value["coverage_unmet_reasons"][check] = reason
+        return change
+    assert _broken(lambda value: None) == []
+    for row in ("first", "masked"):
+        assert _broken(lean_gap(row, "x")), row             # the finding's probe
+        assert _broken(lean_gap(row, null_reason)), row     # an allowed reason where its row does not apply
+    # No row allows a Python gap, whatever its reason.
+    def python_gap(value):
+        value["checks_without_first"]["python"].append("4.11b")
+        value["first_check_count"]["python"] -= 1
+    assert _broken(python_gap)
+    # The one allowed gap with another reason, and an entry that exempts nothing, fail as well.
+    assert _broken(lambda value: value["coverage_unmet_reasons"].update({"4.11b": "x"}))
+    assert _broken(lambda value: value["coverage_unmet_reasons"].update({"2.5": null_reason}))
+    assert _broken(lambda value: value.update(coverage_unmet_reasons=[]))
+    # A row without its applicability rule, or a malformed row, is refused rather than read.
+    spec = tmp_path / "wire-contract.md"
+    text = wire_contract_gate.SPEC.read_text()
+    row = next(line for line in text.splitlines() if line.startswith("| G1 |"))
+    for changed in (text.replace(row, row + "\n| G2 | Lean | anything | x |"), text.replace(row, row + " extra |")):
+        spec.write_text(changed)
+        monkeypatch.setattr(wire_contract_gate, "SPEC", spec)
+        with pytest.raises(ValueError):
+            wire_contract_gate.allowed_gaps()
