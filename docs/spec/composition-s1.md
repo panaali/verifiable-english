@@ -1,12 +1,17 @@
 # Composition stage S1: content-bearing reading candidates and separating situations (`readings@1`, part A)
 
-> Status: item-1 specification, draft 1 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
+> Status: item-1 specification, draft 2 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
 > draft 2 (its sections 2.2 and 2.4, its S1 section, its fixtures and its open questions 3, 4, 12 and 13) through
 > the pointer plan [composition-S1-PLAN.md](composition-S1-PLAN.md) draft 2, which records the converged Astra +
 > Fable design debate (`manage-agents/debates/design-compose-s1/{astra,fable}.md`, CONVERGED after round 3; the
 > Astra seat was held by Sol xhigh as the recorded cross-family stand-in) and the edits of it that bind S1. This is
 > the file the plan and [composition.md](composition.md) call `readings.md`. It is the statement under the Astra +
-> Fable item-1 review that gates S1's Lean (PLAN-EXPAND2 rule 10): a draft alone opens nothing. **Frozen inputs**:
+> Fable item-1 review that gates S1's Lean (PLAN-EXPAND2 rule 10): a draft alone opens nothing. **Draft 2** applies
+> the converged statement review of draft 1 (`manage-agents/debates/compose-s1-spec/{astra,fable}.md`, verdict FIX,
+> CONVERGED after round 3, the Astra seat again held by Sol xhigh) and nothing else: Fable's six edits and the Astra
+> seat's refusal of a fixed unit attached to two sets, each listed in the change log. No design question is
+> reopened. The changed statements, admission rules, wording and fixtures are under re-review (12), and the build
+> opens when it passes. **Frozen inputs**:
 > composition.md draft 3 (the stack contract, `dispatch`, the slot, `Content`, the wordings E1 to E21 and the
 > diagnostics texts of its section 8) and `lean/VE/Compose/{Slot,Dispatch,Content}.lean` as merged; this file
 > instantiates them and changes none. Sections 1, 4 and 8 are the statements under review; section 13 lists every
@@ -71,7 +76,8 @@ a list validates as today.
 ```text
 content              composition.md 1.6: assertion φ | norm N | right R | rightLines r ls | limitation L
 candidate            an id, a content or none, the cites of a norm content, labels
-pending candidate    content null on the wire: as today, nothing is checked for it
+pending candidate    a candidate with no content of this section: content null on the wire, or a wire content S1
+                     does not elaborate (a quantity, a composite W2 kind). S1 checks nothing for it
 content-bearing      a candidate whose content is a norm, a right, right lines or a limitation
 formula-only set     a set none of whose candidates is content-bearing
 content-bearing set  a set with at least one content-bearing candidate
@@ -83,8 +89,10 @@ document D           the chain, the frame (the environment: E, literals, the sof
 ```
 
 A candidate of a composite W2 kind (quoted, hedged, causal), a quantity candidate and a bar candidate are not
-contents: the first two keep today's handling, and a bar candidate keeps `content: null` (13.8). A set may mix
-kinds (plan 2.2): the unit takes the kind of the candidate chosen.
+contents: the first two keep today's handling of their own content, and a bar candidate keeps `content: null`
+(13.8). All three are pending candidates in every check of S1: such a candidate has no document `one D s i`, it
+declares nothing, and a pair it is in needs no situation (3, 4.5). A set may mix kinds (plan 2.2): the unit takes
+the kind of the candidate chosen.
 
 ### 1.3 Declared names, interface names, attached units
 
@@ -103,7 +111,8 @@ fixed(s)                        the fixed units u with attached(u) ⊆ {s}, in s
 ```
 
 A fixed unit that uses a name declared by set `t` exists only relative to `t`'s readings: in S2 it is copied per
-candidate (plan 2.3). So it takes part in checking `t`'s candidates and in no other set's (13.4).
+candidate (plan 2.3). So it takes part in checking `t`'s candidates and in no other set's (13.4). A fixed unit
+attached to more than one set would take part in no check at all, so S1 refuses the document (4.2).
 
 ### 1.4 A candidate's document
 
@@ -163,7 +172,9 @@ probe            outcome p v̄       the value of the regulated predicate p at t
                  holds             whether every assertion in force is true
 completion       a reading's document, the base, the shared tables, and tables for the keys the reading owns,
                  admissible for the reading's document (BaseAdmissibleR)
-Achieves(a, B, F, q, v)   some completion of a over base B and shared tables F gives probe q the value v
+Achieves(a, B, F, q, v)   B is admissible over the author's base vocabulary (no true tuple on any other predicate,
+                          a generated one included), and some completion of a over base B and shared tables F
+                          gives probe q the value v
 Separated(a, b)           ∃ B, F, q, v. Achieves(a, B, F, q, v) ∧ ¬ Achieves(b, B, F, q, v), or the same with a and b
                           exchanged
 ```
@@ -225,13 +236,18 @@ situation records them.
 
 | # | Wording | The one reading | Formal content | Gate |
 |---|---|---|---|---|
-| E22 | `Where this sentence applies and a rule that says must, must not, may or need not decides the same act the other way, (1) contradicts that rule and (2) gives way to it.` | Where the open sentence's rule applies and a strict rule decides the act against it, the strict reading is a conflict with that rule and the default reading is blocked by it. | soft-norms 4.2 step 2; W1's conflict check. Shown after E14 only when the default reading's document has a strict rule on the twin's act, of the opposite effect, that is not related to the twin by precedence (`over`, in either direction, through any chain) | W7, W8 |
-| E23 | `Under (1), a rule on the same act that says should, should not, generally may or generally need not gives way wherever (1) applies. Under (2), it gives way only as the ranks of the two rules decide.` | A strict rule blocks every default rule on its act where it selects. A default rule blocks none: only rank dominance makes one default rule give way to another. | soft-norms 4.2 steps 2 and 3. Shown after E14 only when that document has a default rule, other than the twin, on the twin's act that is not related to the twin by precedence | W7, W8 |
+| E22 | `Where this sentence applies and a rule that says must, must not, may or need not decides the same act the other way, (1) contradicts that rule and (2) gives way to it.` | Where the open sentence's rule applies and a strict rule decides the act against it, the strict reading is a conflict with that rule and the default reading is blocked by it. | soft-norms 4.2 step 2; W1's conflict check. Shown after E14 only when no rule of the default reading's document takes precedence over the twin (none names it in `over`), and that document has a strict rule on the twin's act, of the opposite effect (incompatible with the twin, soft-norms 1.4), that is not related to the twin by precedence (`over`, in either direction, through any chain) | W7, W8 |
+| E23 | `Under (1), a rule on the same act that says should, should not, generally may or generally need not gives way wherever (1) applies. Under (2), it gives way only as the ranks of the two rules decide.` | Where the strict reading's rule applies, it blocks that other rule: a strict rule blocks a default rule on its own predicate, or one whose effect is incompatible with its own across the act's declared pair, wherever it selects, and with no rule taking precedence over it the strict rule selects wherever it applies. The default reading's rule blocks nothing: under strict outranking, one of two default rules gives way to the other only by rank dominance. | soft-norms 4.2 steps 2 and 3. Shown after E14 only when all of these hold: the document's outranking flag is `strict`; no rule of the default reading's document takes precedence over the twin; that document has a default rule, other than the twin, on the twin's act that step 2 blocks under the strict twin (it is on the twin's predicate, or its effect is incompatible with the twin's across the declared pair, soft-norms 1.4) and that is not related to the twin by precedence | W7, W8 |
 | E24 | `These two readings differ in a checked situation that VE cannot yet show in words.` | A situation separating the two readings was checked. No registered sentence renders it. Nothing is said about what the difference is. | a checked separation whose probe has no registered wording yet: a `selects` probe until S2b registers E20; a mixed pair recorded with `holds` until `right-clauses.md` registers its wording (composition.md 2.1) | W7 |
 
 E22 and E23 are the two sentences composition.md 2.1 asks S1 to add to E14 (plan open question 3). They are
 statements of the semantics, not of the shown situation, which is why each is conditional and each is shown only
-when the document has a rule it speaks of. No theorem backs them beyond the definitions they paraphrase;
+when the document has a rule it speaks of and the semantics makes the sentence true of that rule. Three cases are
+therefore left without either sentence (soft-norms 4.2 steps 2 and 3). A twin that some rule takes precedence over
+need not select where it applies, and a strict rule that does not select contradicts and blocks nothing. A strict
+rule does not block a default rule of a compatible effect on the other predicate of the declared pair (a strict
+requirement beside a default permission). Under holistic outranking the `outweighs` decision, not rank alone,
+decides between two default rules. No theorem backs the two sentences beyond the definitions they paraphrase;
 `force_agrees_off_exception` (8.3) says only that a rule alone differs from its strict twin nowhere but where the
 exception applies.
 
@@ -315,8 +331,9 @@ A content-bearing set records its separations in a new optional field, and may r
 - The situation id is the digest, under the domain tag `ve-situation-<identity version>`, of
   `{"environment_id", "situation"}` with the entry in canonical form, as a model id is computed today.
 - In a content-bearing set, `admission.distinguishing_models` maps each other reading to a situation id for every
-  pair in which neither candidate is pending; both readings of a pair may name one situation. A pair with a pending
-  candidate keeps any token, as today. `models` is not read for such a set.
+  pair in which neither candidate is pending (1.2: a quantity, composite or bar candidate is pending); both
+  readings of a pair may name one situation. A pair with a pending candidate keeps any token, as today. `models`
+  is not read for such a set.
 - `source_word` is a byte span inside the unit's span.
 
 Identity. S1 adds no identity. Every new key is absent from canonical bytes when absent, so existing reading sets,
@@ -334,9 +351,10 @@ The head `readings` validates and strips `readings@1` and calls `dispatch` on th
 `dispatch_descends`). A document none of whose sets is content-bearing is handed to the lower route unchanged,
 with today's reading-set validation (4.9). Otherwise the head runs, in this order, stopping at the first error:
 today's structural validation of the sets with its texts; the abstentions of 1.1 and 1.2; reserved names (1.8);
-distinct declarations (4.3); closure (4.2); the lower route's own checks on `free D`; per set in source order and
-per candidate by index, the chain's well-formedness of `one D s i` (4.4); per set and per pair, the separation
-check (4.5); couplings (4.7). A refused document is never partly checked.
+distinct declarations (4.3); closure, then single attachment (4.2); the lower route's own checks on `free D`; per
+set in source order and per candidate by index, the chain's well-formedness of `one D s i` (4.4); per set and per
+pair of candidates neither of which is pending, the separation check (4.5); couplings (4.7). A refused document is
+never partly checked.
 
 The layer contract of composition.md 4.1, for this stage:
 
@@ -347,7 +365,7 @@ The layer contract of composition.md 4.1, for this stage:
 | 3. Regenerated | `readings-validate`'s answer (8.4), compared byte for byte between Python and Lean |
 | 4. Premises through slots | none: S1 adds no premise (5) |
 | 5. Identity when unused | `one_formula_only`, `separation_conservative` |
-| 6. Abstention is named | the three `UnsupportedProfile` texts of section 7 |
+| 6. Abstention is named | the four `UnsupportedProfile` texts of section 7 |
 
 ### 4.2 Closure and interface names
 
@@ -357,6 +375,14 @@ A fixed unit may use a name declared by a set only if it is an interface name of
 use only names declared in its own document `one D s i`: its own, those of `fixed(s)`. A name it uses that only
 another set, or a fixed unit attached to another set, declares is undeclared there, and the chain reports it (4.4).
 
+**Single attachment.** After closure, every fixed unit must be attached to at most one set:
+`UnsupportedProfile: readings@1 fixed unit <u> depends on reading sets <s> and <t>` otherwise, for the first such
+unit in source order, `<s>` and `<t>` the first two sets it is attached to, in source order. A unit attached to two
+sets is in neither `free D` nor any `one D s i` (1.4), so no check of S1 would read it, and the document would be
+admitted with that unit unchecked. Checking it needs one candidate of each set, which is S2's complete choice: the
+refusal is S1's named abstention, and S2 lifts it (13.4). The check runs before `free D` and every `one D s i` are
+checked.
+
 ### 4.3 Distinct declarations across sets
 
 Every name a candidate declares is distinct from every name a fixed unit declares and from every name a candidate
@@ -365,6 +391,15 @@ source order, or `<t>` the words `the document` for a fixed name. Candidates of 
 check is over all open sets at once and compares names whatever their kind (13.14), because the chain requires
 rule, right, limitation and bar names to be distinct together, and a compatible choice in S2 holds one candidate of
 every set. It is the hypothesis `distinctAcrossSets` that the plan's `choice_wellFormed` names.
+
+The same check requires the names declared by fixed units, bars included, to be distinct across the whole
+document, whatever their kind and whichever sets the units are attached to. The chain cannot be left to find such
+a duplicate: two fixed units attached to different sets meet in no `one D s i`, and single attachment (4.2) does
+not help, since each of the two is attached to one set. A name that two fixed units declare is refused with the
+chain's own text for a repeated name, for the first fixed unit in source order that declares a name an earlier one
+declares, and its first such name: `DuplicateDeclaration: rule <name>` (norms 4.1); on the rights chain
+`DuplicateDeclaration: right <name>` when a right has the name, else `limitation <name>` when a limitation has it,
+else `bar` when a bar has it, else `rule <name>` (rights 8, as `checkRights` words it).
 
 ### 4.4 Each candidate elaborates
 
@@ -379,13 +414,18 @@ suffix (plan F5).
 
 ### 4.5 The separation check
 
-For readings `a` (the witness) and `b` of a set and a situation `σ` recorded for the pair:
+For readings `a` (the witness) and `b` of a set, neither of them pending (1.2), and a situation `σ` recorded for
+the pair:
 
-1. `σ` is well-formed: its id is its digest; `base` is a typed finite model over the author's base vocabulary;
-   every `fixed` key is owned by neither reading and is generated in `a`'s or in `b`'s document; every `decisions`
-   key is owned by `a` and generated in `a`'s document; tables are typed over the base's domains by the key's
-   sorts; the probe names a regulated predicate, a kind of 1.6 and a typed tuple. A reading reads the shared
-   tables of the keys its own document generates, and no other.
+1. `σ` is well-formed: its id is its digest; `base` is a typed finite model over the author's base vocabulary and
+   lists no other predicate; no key is listed twice; every `fixed` key is owned by neither reading and is
+   generated in `a`'s or in `b`'s document; every `decisions` key is owned by `a` and generated in `a`'s document;
+   every table, the shared tables each reading reads and the decisions, is typed over the base's domains by the
+   key's sorts; the probe names a regulated predicate, a kind of 1.6 and a typed tuple. A reading reads the shared
+   tables of the keys its own document generates, and no other. A situation that fails this step is refused with
+   section 7's texts and separates nothing. `separates` checks the step itself (`situationWF`, 8.3), and the
+   decoder refuses such a situation, so a malformed table can never make the other side's failure count as a
+   separation (K21).
 2. **The witness.** `a`'s document with the base, the shared tables and the decisions is admissible (the
    regenerated base background, the exception and coherence premises, the limitation premises), else
    `distinguishing model violates a generated premise`. The probe has the recorded value there.
@@ -436,9 +476,9 @@ pending`. A formula-only document keeps W2's ALL, NONE and SOME route verbatim.
 
 ## 5. What a checked separation certifies, and what S1 does not add
 
-1. A checked separation proves `Separated`: one reading has a completion on the shown base, with the shown shared
-   tables, in which the probe has the recorded value, and the other reading has none. It proves no more
-   (composition.md 2.1, "What E19 to E21 may state").
+1. A checked separation proves, of the shown base and the shown shared tables, that the witnessing reading has a
+   completion in which the probe has the recorded value and that the other reading has none (`separates_sound`,
+   8.3). `Separated` follows from it. It proves no more (composition.md 2.1, "What E19 to E21 may state").
 2. It is about the documents `one D s a` and `one D s b`: the fixed units that depend on no other open sentence,
    and the candidate. It does not say that the two readings differ under every choice of the other open sentences,
    or under any: that is S2's per-choice semantics.
@@ -465,6 +505,7 @@ In the order of 4.1. Texts in the first table are composition.md 8's or today's,
 |---|---|---|
 | `InvalidInput: name <n> begins with ve__` / `begins with rd-` | 1.8 | error |
 | `DuplicateDeclaration: <name> in reading sets <s> and <t>` | 4.3 | error |
+| `DuplicateDeclaration: rule <name>` / `right <name>` / `limitation <name>` / `bar` | 4.3: two fixed units declare one name (the chain's text) | error |
 | `ReadingInterface: <set>: <name>` | 4.2 | error |
 | `distinguishing model id does not match model` | a situation's id is not its digest (today's text) | error |
 | `distinguishing model violates a generated premise` | 4.5 step 2 (today's text) | error |
@@ -479,9 +520,10 @@ New in S1:
 | `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` | 1.1 | error |
 | `UnsupportedProfile: reading <set>:<id> of kind <k> requires <profile>` | a content whose `Content.needs` is not in the list | error |
 | `UnsupportedProfile: readings@1 bar candidate content is not implemented` | a bar candidate with content (13.8) | error |
+| `UnsupportedProfile: readings@1 fixed unit <u> depends on reading sets <s> and <t>` | 4.2: a fixed unit attached to more than one set | error |
 | `InvalidInput: reading <set>:<id> has kind <k> and content of kind <k′>` | 3 | error |
-| `InvalidInput: invalid situation <id>` | 4.5 step 1, shape or typing | error |
-| `InvalidInput: situation <id> decides <key>, which reading <r> does not own` | a `decisions` key that is not the witness's, or a `fixed` key that is not shared | error |
+| `InvalidInput: invalid situation <id>` | 4.5 step 1: shape or typing, a base that lists a predicate outside the author's base vocabulary, a key listed twice, a `fixed` key that neither reading's document generates, a `decisions` key that the witness's document does not generate | error |
+| `InvalidInput: situation <id> decides <key>, which reading <r> does not own` | a `decisions` key that the witness does not own, or a `fixed` key that one of the two readings owns (it is not shared) | error |
 | `InvalidInput: invalid source word span` | `source_word` outside the unit's span | error |
 | `<chain diagnostic> under <set>@<v>:<i>` | 4.4 | error, or finding for a chain finding |
 
@@ -636,21 +678,32 @@ def sideWF (D : Doc) (X : RightsDoc × List VE.Formula) : Bool :=
     X.2.all (fun a => a.check (envAt (soften (correlate X.1)) (size (soften (correlate X.1)))) [])
 /-- 1.8 on the frame and on every fixed and candidate content. -/
 def reservedFree (D : Doc) : Bool
-/-- 4.3: no name declared by a candidate is declared by a fixed unit or by a candidate of another set. -/
+/-- The names a fixed unit or a bar declares; none for a set. -/
+def Item.names : Item → List String
+  | .fixed _ c _ => c.declared.map (·.2)
+  | .bar _ b => [b.name]
+  | .set _ => []
+/-- 4.3: no name declared by a candidate is declared by a fixed unit or by a candidate of another set, and no two
+    fixed units declare one name. -/
 def distinctAcrossSets (D : Doc) : Bool
 /-- 4.2: every name a fixed unit uses that a set declares is an interface name of that set. -/
 def interfaceClosed (D : Doc) : Bool
+/-- 4.2: no fixed unit is attached to two sets. Such a unit would be in neither `free D` nor any `one D s i`. -/
+def singlyAttached (D : Doc) : Bool
 def WellFormedDoc (D : Doc) : Bool :=
-  reservedFree D && distinctAcrossSets D && interfaceClosed D && sideWF D (free D) &&
+  reservedFree D && distinctAcrossSets D && interfaceClosed D && singlyAttached D && sideWF D (free D) &&
   D.sets.all (fun R => (List.range R.candidates.length).all (fun i =>
     (R.candidates[i]?.bind (·.content)).isNone || sideWF D (one D R.id i)))
 
 theorem distinctAcrossSets_spec (D : Doc) : distinctAcrossSets D = true ↔
   (∀ R ∈ D.sets, ∀ n ∈ declaredBy R, ∀ u c cs, Item.fixed u c cs ∈ D.items → ∀ m ∈ c.declared, m.2 ≠ n.2) ∧
   (∀ R ∈ D.sets, ∀ n ∈ declaredBy R, ∀ u b, Item.bar u b ∈ D.items → b.name ≠ n.2) ∧
-  (∀ R ∈ D.sets, ∀ R' ∈ D.sets, R.id ≠ R'.id → ∀ n ∈ declaredBy R, ∀ m ∈ declaredBy R', m.2 ≠ n.2)
+  (∀ R ∈ D.sets, ∀ R' ∈ D.sets, R.id ≠ R'.id → ∀ n ∈ declaredBy R, ∀ m ∈ declaredBy R', m.2 ≠ n.2) ∧
+  D.items.Pairwise (fun x y => ∀ n ∈ x.names, n ∉ y.names)
 theorem interfaceClosed_spec (D : Doc) : interfaceClosed D = true ↔
   ∀ u c cs, Item.fixed u c cs ∈ D.items → ∀ n ∈ uses c cs, ∀ R ∈ D.sets, n ∈ declaredBy R → n ∈ interfaceOf R
+theorem singlyAttached_spec (D : Doc) : singlyAttached D = true ↔
+  ∀ u t t', Attached D u t → Attached D u t' → t = t'
 
 /-- Without rights content the rights elaboration is the soft document itself. -/
 theorem correlate_noRights (X : RightsDoc) (h : noRights X = true) : correlate X = X.soft ∧ limPremises X = []
@@ -671,7 +724,11 @@ end VE.Readings
 Notes for the review. `place` is `addUnit`'s fold step on decoded units; a `rightLines` whose right is absent
 leaves `rs` as it is and records the lines in `sourceOrder`, so `WellFormedRights` answers `UnknownRight: <r>` as
 the decoder does today. `chain_norms_value` is `soften_faithful` with `soften_hard_identity`, both existing.
-`chainWF` asks `WellFormedSoft` on the norms chain as well (13.6).
+`chainWF` asks `WellFormedSoft` on the norms chain as well (13.6). `singlyAttached` is what makes `free D` and the
+documents `one D s i` cover every fixed unit: a free unit is in all of them, a unit attached to `s` alone is in
+every `one D s i` (and every candidate of `s` has content, or closure would have failed), and no unit is left in
+none. The last conjunct of `distinctAcrossSets_spec` is 4.3's check on fixed units: it compares two different
+items, so it says nothing of the names inside one unit, which the chain checks where the unit sits.
 
 ### 8.3 `Separate.lean`
 
@@ -751,10 +808,15 @@ def Observes (X : RightsDoc) (A : List VE.Formula) (B : VE.Structure.{u}) : Prob
           SelectsSoftD (correlate X) (expand X B) (tupleVal vs) (VE.SoftNorms.fuel (correlate X)) N) ↔ v = true)
   | .holds, v => ((∀ a ∈ A, a.denote (expand X B) []) ↔ v = true)
 
-/-- Some completion of candidate i over base B and shared tables F gives q the value v. Tables of keys the
-    candidate does not own are F's and are not reassigned. -/
+/-- The author's base vocabulary. -/
+def authorEnv (D : Doc) : VE.Environment := envAt D.frame.soft.base 0
+/-- B is admissible over the author's base vocabulary, and some completion of candidate i over B and shared
+    tables F gives q the value v. Tables of keys the candidate does not own are F's and are not reassigned.
+    Without the first conjunct a base could carry a true tuple on a predicate that one reading's document
+    generates and the other's does not declare (K2b). -/
 def Achieves (D : Doc) (s : String) (i : Nat) (B : VE.Structure.{u}) (F : Tables B.Carrier)
     (q : Probe B.Carrier) (v : Bool) : Prop :=
+  B.Admissible (authorEnv D) ∧
   ∃ G : Tables B.Carrier, (∀ k, owned D s i k = false → ∀ vs, G k vs ↔ F k vs) ∧
     BaseAdmissibleR (one D s i).1 (withTables (one D s i).1 B G) ∧
     Observes (one D s i).1 (one D s i).2 (withTables (one D s i).1 B G) q v
@@ -770,8 +832,6 @@ structure Situation (α : Type u) where
   decisions : List (GenKey × List (List α))
   probe : Probe α
   value : Bool
-/-- The author's base vocabulary. -/
-def authorEnv (D : Doc) : VE.Environment := envAt D.frame.soft.base 0
 /-- M with, for every generated predicate of X, the table of its key in T (`[]` when absent). -/
 def tablesModel {α : Type u} (X : RightsDoc) (M : VE.FiniteModel α) (T : List (GenKey × List (List α))) :
   VE.FiniteModel α
@@ -808,11 +868,24 @@ def maxCells : Nat := 12
 def tablesFor {α : Type u} (D : Doc) (s : String) (i : Nat) (T : List (GenKey × List (List α))) :
     List (GenKey × List (List α)) :=
   T.filter (fun t => (genKeys (one D s i).1).any (·.1 == t.1))
+/-- The tables of T as relations: the table of key k, empty when T has none. -/
+def tablesOf {α : Type u} (T : List (GenKey × List (List α))) : Tables α :=
+  fun k vs => ∃ t ∈ T, t.1 = k ∧ vs ∈ t.2
+/-- 4.5 step 1 without the id, i the witness: no key listed twice; every shared key owned by neither reading and
+    generated in i's or in j's document; every decision key owned by i and generated in i's document; the tables
+    each reading reads typed over the base; the probe typed. -/
+def situationWF {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) : Bool :=
+  decide (((σ.fixed ++ σ.decisions).map (·.1)).Nodup) &&
+  σ.fixed.all (fun t => !owned D s i t.1 && !owned D s j t.1 &&
+    ((genKeys (one D s i).1).any (·.1 == t.1) || (genKeys (one D s j).1).any (·.1 == t.1))) &&
+  σ.decisions.all (fun t => owned D s i t.1 && (genKeys (one D s i).1).any (·.1 == t.1)) &&
+  tablesTyped (one D s i).1 σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) &&
+  tablesTyped (one D s j).1 σ.base (tablesFor D s j σ.fixed) &&
+  probeTyped (one D s i).1 σ.base σ.probe
 
-/-- i is the witness. False when the bound is exceeded. -/
+/-- i is the witness. False on a situation that fails 4.5 step 1, and when the bound is exceeded. -/
 def separates {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) : Bool :=
-  σ.fixed.all (fun t => !owned D s i t.1 && !owned D s j t.1) && σ.decisions.all (fun t => owned D s i t.1) &&
-  probeTyped (one D s i).1 σ.base σ.probe &&
+  situationWF D s i j σ &&
   sideValid D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) &&
   sideValue D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) σ.probe == some σ.value &&
   decide (cells D s j σ.base ≤ maxCells) &&
@@ -831,6 +904,12 @@ theorem observe_sound {α : Type u} [DecidableEq α] (c : Chain) (X : RightsDoc)
 theorem separates_sound {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFormedDoc D = true) (s : String)
     (i j : Nat) (hi : (candidate D s i).bind (·.content) ≠ none) (hj : (candidate D s j).bind (·.content) ≠ none)
     (σ : Situation α) (valid : σ.base.Valid (authorEnv D)) (h : separates D s i j σ = true) :
+  Achieves D s i σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value ∧
+    ¬ Achieves D s j σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value
+/-- The corollary: a checked separation proves `Separated`. -/
+theorem separates_separated {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFormedDoc D = true) (s : String)
+    (i j : Nat) (hi : (candidate D s i).bind (·.content) ≠ none) (hj : (candidate D s j).bind (·.content) ≠ none)
+    (σ : Situation α) (valid : σ.base.Valid (authorEnv D)) (h : separates D s i j σ = true) :
   Separated.{u} D s i j
 
 /-! ## Conservativity (4.9) -/
@@ -841,11 +920,14 @@ def probesOf {α : Type u} (D : Doc) (M : VE.FiniteModel α) : List (Probe α)
 def observeAll {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
     (F : List (GenKey × List (List α))) : List (Option Bool) :=
   (probesOf D M).map (sideValue D s i M (tablesFor D s i F))
-/-- Neither side owns a key: some probe separates exactly when the two observations differ. -/
+/-- Neither side owns a key, and F is a well-formed list of shared tables (4.5 step 1; its typing is in `hvi` and
+    `hvj`): some probe separates exactly when the two observations differ. -/
 theorem separation_conservative {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat)
     (M : VE.FiniteModel α) (F : List (GenKey × List (List α)))
     (hi : ownedKeys D s i = []) (hj : ownedKeys D s j = [])
-    (hF : ∀ t ∈ F, owned D s i t.1 = false ∧ owned D s j t.1 = false)
+    (hF : ∀ t ∈ F, owned D s i t.1 = false ∧ owned D s j t.1 = false ∧
+      ((genKeys (one D s i).1).any (·.1 == t.1) || (genKeys (one D s j).1).any (·.1 == t.1)) = true)
+    (hu : (F.map (·.1)).Nodup)
     (hvi : sideValid D s i M (tablesFor D s i F) = true) (hvj : sideValid D s j M (tablesFor D s j F) = true) :
   (∃ q ∈ probesOf D M, ∃ v, separates D s i j ⟨M, F, [], q, v⟩ = true ∨ separates D s j i ⟨M, F, [], q, v⟩ = true) ↔
     observeAll D s i M F ≠ observeAll D s j M F
@@ -876,6 +958,7 @@ theorem decisionOnly_spec (D : Doc) (s : String) (i j : Nat) (k : GenKey) (h : d
 /-- Achieves, with the table of k₀ empty. -/
 def AchievesQuiet (D : Doc) (s : String) (j : Nat) (k₀ : GenKey) (B : VE.Structure.{u}) (F : Tables B.Carrier)
     (q : Probe B.Carrier) (v : Bool) : Prop :=
+  B.Admissible (authorEnv D) ∧
   ∃ G : Tables B.Carrier, (∀ k, owned D s j k = false → ∀ vs, G k vs ↔ F k vs) ∧ (∀ vs, ¬ G k₀ vs) ∧
     BaseAdmissibleR (one D s j).1 (withTables (one D s j).1 B G) ∧
     Observes (one D s j).1 (one D s j).2 (withTables (one D s j).1 B G) q v
@@ -895,13 +978,24 @@ Notes for the review. `Achieves` uses `BaseAdmissibleR`, which is `BaseAdmissibl
 by `rights_is_slot`; on the soft and norms chains `limPremises` is empty and `correlate X` is the soft document
 (`correlate_noRights`). `withTables` and `expand` keep the carrier, so a `Probe B.Carrier` is a probe of both.
 `observe_sound` is `conflict_canon`, `outcome_canon`, `circ_canon` and `selectsPrime_denote`
-(`lean/VE/SoftNorms/Coherence.lean`) under `chain_soft`. In `separates_sound` the hypothesis on the base is the
+(`lean/VE/SoftNorms/Coherence.lean`) under `chain_soft`. `Achieves` and `AchievesQuiet` ask that the base be
+admissible over the author's vocabulary. `withTables` passes `B.relation` through on every name the document does
+not generate, and `Structure.Admissible` refuses a true tuple on an undeclared predicate; so without the conjunct
+a base carrying a tuple on one reading's generated predicate would be admissible for that reading alone,
+`Separated` would hold of K2's pair, and `decision_only_sound` would be false on K1 (K2b). In `separates_sound`
+the hypothesis `valid` supplies that conjunct (`FiniteModel.Valid` is `asStructure.Admissible`), and it is the
 author's vocabulary only: validity of each side's model over its own base vocabulary follows from it, from
-`tablesTyped` and from the freshness of generated names that `chainWF` checks. The other side's negation ranges
-over all tables: admissibility forces every table into the typed tuples of the finite domains, which is what
-`assignments` enumerates. `force_agrees_off_exception` is deliberately about a rule alone (plan S1); E22 and E23
-say what else differs in a document, and no theorem claims otherwise. `decision_only_sound` is the only statement
-behind E15.
+`tablesTyped` and from the freshness of generated names that `chainWF` checks. The conclusion is about the shown
+base and the shown shared tables (`tablesOf σ.fixed`), which is what composition.md 2.1 says a checked separation
+proves: the witness reaches the recorded value there and the other reading cannot. `Separated` is its corollary
+`separates_separated`. `situationWF` makes both sides read one list of well-typed shared tables, each key once:
+without it an ill-typed table on a key that only the other reading's document generates would fail every
+`sideValid` of that side, and `separates` would answer true for a malformed situation (K21). The other side's
+negation ranges over all tables: admissibility forces every table into the typed tuples of the finite domains,
+which is what `assignments` enumerates. `separation_conservative` takes step 1 for its list `F` as hypotheses,
+since `separates` now refuses a list that fails it. `force_agrees_off_exception` is deliberately about a rule
+alone (plan S1); E22 and E23 say what else differs in a document, and no theorem claims otherwise.
+`decision_only_sound` is the only statement behind E15.
 
 ### 8.4 `Wire.lean`, `Run.lean`
 
@@ -920,11 +1014,19 @@ structure SeparateReplay where
   ho : (candidate D set other).bind (·.content) ≠ none
   σ : Situation VE.Bridge.Entity
   valid : σ.base.Valid (authorEnv D)
+  /-- 4.5 step 1: the decoder refuses a malformed situation with section 7's texts. -/
+  shape : situationWF D set witness other σ = true
 def replaySeparate (j : Lean.Json) : Except String SeparateReplay
 theorem readings_wire_separate_sound (j : Lean.Json) (r : SeparateReplay) (h : replaySeparate j = .ok r)
-    (hs : separates r.D r.set r.witness r.other r.σ = true) : Separated r.D r.set r.witness r.other
+    (hs : separates r.D r.set r.witness r.other r.σ = true) :
+  Achieves r.D r.set r.witness r.σ.base.asStructure (tablesOf r.σ.fixed) r.σ.probe r.σ.value ∧
+    ¬ Achieves r.D r.set r.other r.σ.base.asStructure (tablesOf r.σ.fixed) r.σ.probe r.σ.value
 end VE.Readings.Wire
 ```
+
+`Separated r.D r.set r.witness r.other` follows by `separates_separated`. The decoder checks 4.5 step 1 before it
+answers: a situation that fails it is `InvalidInput` with section 7's text, on both case kinds below, and is never
+answered `separated: false`.
 
 Case kinds on `ve_readings_route`:
 
@@ -934,7 +1036,7 @@ Case kinds on `ve_readings_route`:
   situation; the findings of 4.6; or the first diagnostic of 4.1.
 - `readings-separate`: one pair, one situation. The answer is `separated: true | false`, the witness's value, and
   for the other side whether it has an admissible completion and, when it owns no key, its one value (the facts
-  E19's four cases need).
+  E19's four cases need); for a situation that fails 4.5 step 1, the diagnostic.
 - Every other kind: `readings@1` is stripped and the case is run by the lower route's logic unchanged.
 
 S1 has no kind named `-elaborate`: `readings-validate`'s answer is its regenerated output, and S2 adds
@@ -974,6 +1076,10 @@ Spans are UTF-8 byte offsets into the pinned sources (plan section 5). "Today" i
 
 F8's admission half is 4.2's `ReadingInterface` (K9); its copies are S2b's.
 
+F3 and F4 presuppose that neither pilot document has a fixed unit attached to two sets: 4.2 refuses the whole
+document for one such unit. Neither document has been checked for one. The rerun of section 11 reports it before
+the build relies on these two fixtures.
+
 ### 9.2 Lean and Python fixtures on one small document
 
 `lean/VE/Readings/Examples.lean` as `#guard` lines, and the same cases through `readings-validate` in
@@ -989,12 +1095,13 @@ relational-fol@0, soft-norms@0` unless said. Rules: `S` is the strict rule `no-d
 |---|---|---|
 | K1 | `rs1`; σ = (`m0`, fixed none, witness 1, decisions `excepted no-deception` = {(a, u)}, `q0`, false) | `ownedKeys` 0 = `[]`, 1 = `[excepted no-deception]`; `separates … 1 0 σ = true`; with witness 0, no decision, value true: `false` (the default reading reaches true with the empty table); `decisionOnly D rs1 0 1 = some (excepted no-deception)`; finding `SeparatedByDecisionOnly: rs1: 0, 1` |
 | K2 | `Df` with `necessary: [⊥]` | K1's σ: `distinguishing model violates a generated premise`; the same base, witness 1, no decision, value true: `distinguishing model does not separate readings`; no probe of `probesOf` separates the pair on `m0` |
+| K2b | K2's set; as the base of a situation, `m0` with one more relation: `soft__excepted__no_deception` = {(a, u)}, the default document's generated exception predicate | through the wire, `InvalidInput: invalid situation <id>`: the base lists a predicate outside the author's base vocabulary. In Lean, an `example` that this structure is not `Admissible (authorEnv D)`, so that `Achieves` is false of both candidates on it, for every `F`, probe and value, and the base witnesses no `Separated`. Without the admissibility conjunct it would separate the pair: the default document overrides the predicate with its own table, and the strict document inherits a true tuple on a predicate it does not declare. The fixture does not ask for a proof that K2's pair is inseparable on every base (8.5) |
 | K3 | {`S` named `no-deception-a`, `S` named `no-deception-b`} | for every probe of `probesOf` and both values, `separates = false` in both directions; `observeAll` equal. Both default: with witness 0, `excepted no-deception-a` = {(a, u)}, `q0`, false: `false` (the other reading empties `avoid_required` with its own table). The `selects norm avoid_required (a, u)` probe has the same value under both |
 | K4 | {`S` named `avoid-x`, strict `help-x` on `+help_required`}; σ = (`m0`, witness 0, `q0`, true) | `separates = true`; `actOnly = some (avoid_required, help_required)`; finding `SeparatedByActOnly: rs1: 0, 1` |
 | K5 | K1 with a fixed default rule `be-kind` on `+help_required`; σ = K1's with fixed `excepted be-kind` = {(a, u)} | `excepted be-kind` is shared for both candidates and owned by neither; `separates = true`; `cells … 0 = 0`, `cells … 1 = 1`: the fixed table is not enumerated. The same table under `decisions`: `InvalidInput: situation <id> decides excepted be-kind, which reading default does not own`. The finding of K1 still holds (`be-kind` is on another act) |
 | K6 | K1 with a fixed strict rule `never-avoid` on `−avoid_required`, guard `⊤`; σ = (`m0`, witness 1, no decision, `q0`, false) | under 1 the default rule is blocked and `never-avoid` decides: `some false`; under 0 two strict rules collide: no value. `separates = true` with no decision; `decisionOnly = none`, no finding; E19 with case 4's second sentence |
 | K7 | K1 with 13 users; witness 0, no decision, `q0` at `(a, u1)`, true | `cells … 1 = 13`: `ResourceLimit: decision assignments`; `separates = false` |
-| K8 | a second set `rs2` on unit `u2` with a candidate declaring `no-deception` | `DuplicateDeclaration: no-deception in reading sets rs1 and rs2`. A candidate of `rs1` declaring the fixed `be-kind`: `DuplicateDeclaration: be-kind in reading sets rs1 and the document` |
+| K8 | a second set `rs2` on unit `u2` with a candidate declaring `no-deception` | `DuplicateDeclaration: no-deception in reading sets rs1 and rs2`. A candidate of `rs1` declaring the fixed `be-kind`: `DuplicateDeclaration: be-kind in reading sets rs1 and the document`. With K20's `rs2`, two fixed strict rules both named `twice-x`, one on `−avoid_required` with `over: [no-deception]` and one on `−help_required` with `over: [be-kind]`: `DuplicateDeclaration: rule twice-x` (each is attached to one set, and the two meet in no `one D s i`) |
 | K9 | a fixed strict rule `except-x` on `−avoid_required`, guard `asks`, `over: [no-deception]` | admitted: `no-deception` is an interface name of `rs1`; `attached except-x = [rs1]`; `one D rs1 i` holds it and, with K4's set as `rs2`, `one D rs2 i` does not. With candidate 1 renamed `no-deceit`: `ReadingInterface: rs1: no-deception` |
 | K10 | a candidate rule named `rd-1-x`; a base predicate `ve__bit__1__0` | `InvalidInput: name rd-1-x begins with rd-`; `InvalidInput: name ve__bit__1__0 begins with ve__` |
 | K11 | a fixed strict rule `be-strict` on `+avoid_required`; `Df` with `over: [be-strict]` | `SoftOverHard: rule no-deception over be-strict under rs1@1:1` |
@@ -1006,6 +1113,8 @@ relational-fol@0, soft-norms@0` unless said. Rules: `S` is the strict rule `no-d
 | K17 | K4 on `norms@0, readings@1, relational-fol@0` | the same results on the norms chain; a default candidate there is rejected as a norm unit with soft fields is today, by the W1 decoder's text |
 | K18 | K1 with `norm-defaults@0` in the list | `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` |
 | K19 | rights chain, `VE.Rights.Examples.gamma`'s environment: fixed limitation `l29` (scope all, two necessary conditions); set `rs9` of right `r9` {claim `no-arbitrary-arrest` strict, the same claim default}; base: Texas; Ann, Bob; `arbitrary_arrest` = {(Texas, Ann)}; σ = (witness 1, fixed none, decisions `excepted no-arbitrary-arrest` = {(Texas, Ann)}, outcome `arrest_permitted (Texas, Ann)`, true) | `lim l29 arrest_permitted` and its two `cond` keys are shared; `ownedKeys` 0 = `[]`; `separates = true` (strict: the claim selects, not permitted); `SeparatedByDecisionOnly: rs9: 0, 1`; under candidate 1 the uncited exception's finding with ` under rs9@1:1` |
+| K20 | K1 plus a second set `rs2` on unit `u2`, {strict `be-kind`, default `be-kind`} on `+help_required`, and on unit `u3` a fixed strict rule `both-x` on `−avoid_required`, guard `asks`, `over: [no-deception, be-kind]` | closure passes: `no-deception` is an interface name of `rs1` and `be-kind` of `rs2`. `attached u3 = [rs1, rs2]`, so `singlyAttached D = false` and the answer is `UnsupportedProfile: readings@1 fixed unit u3 depends on reading sets rs1 and rs2`; neither `free D` nor any `one D s i` is checked. With `over: [no-deception]` alone, `attached u3 = [rs1]` and the check passes |
+| K21 | malformed situations. (a) K1's σ with a `fixed` table `excepted be-kind` = {(a, u)}, in K1's document, which has no rule `be-kind`. (b) K5's σ with `excepted be-kind` listed twice in `fixed`. (c) K1 with the `soft` block's ranks `lo` and `hi`, `hi` outranking `lo`, outranking `holistic` decided by `unstated`; `S` and `Df` ranked `lo`; a fixed default rule `never-avoid-d` on `−avoid_required`, guard `⊤`, ranked `hi`, its exception as `Df`'s; σ = (`m0`, fixed `outweighs avoid_required lo hi` = {(u, a)}, witness 0, no decision, `q0`, true) | each: `situationWF = false`, `separates = false`, and through the wire `InvalidInput: invalid situation <id>`. In (a) neither reading's document generates the key. In (c) the key is shared and only the default reading's document generates it (the strict reading has no colliding pair of default rules), so the strict witness never reads the table, and its tuple is ill-typed: without step 1 in `separates`, every completion of the default reading would fail on that table and the pair would be shown as separated, by E19 with case 1's second sentence |
 
 ### 9.3 Differential and pilots
 
@@ -1017,7 +1126,8 @@ relational-fol@0, soft-norms@0` unless said. Rules: `S` is the strict rule `no-d
   separates exactly when the two observation lists differ.
 - **Pilots.** The constitution's 14 sets and the UDHR's 4 norm-candidate sets (`u017`, `u052`, `u112`, `u114`)
   validate in the document with their stored situations; the UDHR's right sets validate in the document with
-  situations found by the search; section 11's figures are reported.
+  situations found by the search; section 11's figures are reported, among them any pilot document that the
+  single-attachment check of 4.2 refuses.
 - **F20.** With `readings@1` off no file under `conformance/` changes and `python3 VE/Route/frozen.py` passes.
 
 ### 9.4 The English
@@ -1030,7 +1140,7 @@ relational-fol@0, soft-norms@0` unless said. Rules: `S` is the strict rule `no-d
 | H1 | E14 on K1 | the text of 2.5; one derivation; the second outcome sentence names `a`, no pronoun |
 | H2 | E15 on K1; on K6 and K14 | shown on K1; not shown on K6 or K14 |
 | H3 | E19 on K6, K12, K14 | cases 4, 3 and 1 of composition.md 2.1, texts of 2.5 |
-| H4 | E22, E23 | neither on K1. E22 after E14 on K1 with K6's rule given the guard `asks` (it does not apply on `m0`, so E14's conditions hold); not on K9, whose strict rule is an exception to the twin. E23 after E14 on K1 with a fixed default rule on `−avoid_required`, guard `asks` |
+| H4 | E22, E23 | neither on K1. E22 after E14 on K1 with K6's rule given the guard `asks` (it does not apply on `m0`, so E14's conditions hold); not on K9, whose strict rule is an exception to the twin. E23 after E14 on K1 with a fixed default rule on `−avoid_required`, guard `asks`, the `soft` block's outranking `strict`. Negative cases. A rule takes precedence over the twin: on K9 with K6's rule (guard `asks`) added, no E22; on K9 with that fixed default rule added, no E23. Outranking: the E23 document with outranking `holistic`, decided by `unstated`, no E23. Blocking: K with the permission predicate `avoid_permitted(agent, user)`, allow by default, declared as `avoid_required`'s dual, and the fixed default rule on `+avoid_permitted` instead, guard `asks`: no E23 (a permission beside the requirement, which step 2 does not block). On K5, no E23 (`be-kind` is on another act) |
 | H5 | E24 | shown for K12's `holds` recording; never beside E14, E19 or E21 for the same pair |
 | H6 | E5 on F6; E16 on K4 | as 9.1 and 2.5 |
 
@@ -1068,12 +1178,21 @@ The plan names, for S1 (its section 6, ledgers of 2026-09-30T18:00Z):
 
 The stage's rerun reports, per text and against these baselines: for each named unit, whether its recorded
 primary blocker is gone, its new status and its bytes; the sets admitted in the document, by probe form; the
-findings; pairs rejected, with their text; `ResourceLimit` hits; the load time. For the constitution the plan
-expects no status change. The four UDHR units `u067`, `u068`, `u071a`, `u071b` are admissible by closure in S1
-(13.17); the plan counts their unlock under S2b, and the rerun says where it falls. No coverage number is predicted,
-and the measured row replaces the plan's.
+findings; pairs rejected, with their text; `ResourceLimit` hits; the load time. It also reports, per pilot
+document, whether the single-attachment check of 4.2 refuses it, and if so the unit and the two sets. A refusal
+covers the whole document, so one such unit fails F3 or F4; neither pilot has been checked for one, and this
+report comes before the build relies on those fixtures. For the constitution the plan expects no status change.
+The four UDHR units `u067`, `u068`, `u071a`, `u071b` are admissible by closure in S1 (13.17); the plan counts
+their unlock under S2b, and the rerun says where it falls. No coverage number is predicted, and the measured row
+replaces the plan's.
 
 ## 12. Statement review checklist (Astra + Fable, before S1's Lean)
+
+The re-review of draft 2 covers what the statement review changed and no more: `WellFormedDoc` in 8.2
+(`singlyAttached`, the fixed-name conjunct of `distinctAcrossSets_spec`) with 4.2 and 4.3; 8.3 and 8.4 (`Achieves`,
+`AchievesQuiet`, `situationWF`, `separates`, `separates_sound`, `separation_conservative`'s hypotheses,
+`readings_wire_separate_sound`); the rows of E22 and E23 with H4; pending candidates in 1.2; fixtures K2b, K20
+and K21 and K8's added case; and the choices of 13.21.
 
 1. The frozen inputs: nothing of composition.md or `lean/VE/Compose/*` is changed; `dispatch` is used as defined;
    `Content` and `Content.declared` are S0's.
@@ -1083,17 +1202,19 @@ and the measured row replaces the plan's.
    F5 and K19 under both classifications (13.3).
 4. Probes (1.6, 8.3): the key (kind, predicate, tuple) against `ve/readings.py`; no rule name; `Observes` on the
    expansion; the value `none` at a collision.
-5. `Achieves`, `Separated`, `separates` and `separates_sound`: the witness; the bound; why the other side's
-   negation is exhausted by `assignments`.
+5. `Achieves`, `Separated`, `separates` and `separates_sound`: admissibility of the base over the author's
+   vocabulary; step 1 inside `separates`; the conclusion on the shown base and shared tables; the witness; the
+   bound; why the other side's negation is exhausted by `assignments`.
 6. `separation_conservative` against today's comparison, and its difference at a collision (13.19).
 7. `force_agrees_off_exception` as the plan states it; `decisionOnly` and `decision_only_sound`; that E15 claims
    no more.
-8. Admission (4.1 to 4.4): the order; `ReadingInterface`; the cross-set check as the precondition of
-   `choice_wellFormed`; the chain diagnostics with their reading.
+8. Admission (4.1 to 4.4): the order; `ReadingInterface`; single attachment and its named abstention; the
+   cross-set check as the precondition of `choice_wellFormed`, with fixed names distinct across the document; the
+   chain diagnostics with their reading.
 9. The three chains (13.6) and the abstention on `norm-defaults@0` (13.7).
 10. The wire (3): the situation, its id, keys by source; nothing in canonical bytes when absent.
 11. The English (2): the slots; E14 without a pronoun and with a closed source word; E22 and E23 against
-    soft-norms 4.2; E24; which wording a pair gets; G9.
+    soft-norms 4.2, with the conditions under which each is shown; E24; which wording a pair gets; G9.
 12. Conservativity (4.9) and F20; the fixtures (9), each derived by hand.
 13. The resolved choices of section 13.
 
@@ -1115,7 +1236,7 @@ Each is a point where the plan left a reading open; the review may overturn any 
    well-formed. `sharedName` is replaced by keys.
 4. **`one D s i` omits fixed units attached to other sets**, and holds those attached to `s`. The plan says "fixed
    units plus the candidate"; a fixed unit that uses another set's interface name has no meaning without a
-   candidate of that set. A unit attached to two sets is in no `one`.
+   candidate of that set. A unit attached to two sets is refused in S1; S2 lifts this.
 5. **Probes are read in the expansion of a completion** (`canon`), and tuples are typed. The plan's `Observes`
    applies `ValueSoft` to the base, where a guard that mentions a regulated predicate would read an empty table.
 6. **Three chains, one check.** On the norms chain a candidate's document is checked as the soft document with the
@@ -1147,7 +1268,8 @@ Each is a point where the plan left a reading open; the review may overturn any 
 15. **`Doc` carries what S1 reads**: couplings and narrowings as data, a candidate's `cites`, items in source
     order. The plan's sketch has `base`, `asserted` and `constraints`; discourse's constraints are added by the
     stage that reads them.
-16. **A pending candidate declares nothing**, so a set with one has no interface name.
+16. **A pending candidate declares nothing**, so a set with one has no interface name. A candidate S1 does not
+    elaborate (a quantity, a composite kind, a bar) is pending in this sense too (1.2).
 17. **Fixed units attached to a set are admitted in S1**, because closure and `ReadingInterface` are S1's (plan
     2.2, composition.md 8). Their copies and every verdict about them are S2b's.
 18. **The rejection text is today's**, `distinguishing model does not separate readings` (composition.md 8); the
@@ -1157,9 +1279,22 @@ Each is a point where the plan left a reading open; the review may overturn any 
     compare the two on collision-free pairs.
 20. **Chain findings that need no certificate are reported per candidate** in S1 (F5). Certified licences and the
     limitation audit across readings are S2b's.
+21. **Forms draft 2 chose where the statement review fixed the correction and not its form.** The review may
+    overturn any of them.
+    - A name that two fixed units declare is refused with the chain's own `DuplicateDeclaration` text (4.3), so
+      the correction adds no text.
+    - Step 1 of 4.5 is one function, `situationWF`, which `separates` calls first and `SeparateReplay` carries as
+      a field.
+    - `separation_conservative` takes step 1 for its list of shared tables as hypotheses; without them the
+      statement is false of a list that `separates` now refuses.
+    - K21 has three cases: an ungenerated key, a repeated key, and the review's own case of an ill-typed table on
+      a key only the other reading's document generates.
+    - H4's negative cases use a declared dual and a holistic flag, which environment K does not have.
+    - K8 gains a case for the fixed-name check.
 
 ## Change log
 
 | Date | Revision | Changes |
 |---|---|---|
 | 2026-10-02 | Draft 1 | First statement specification of stage S1, from plan draft 2 through the pointer plan's draft 2: candidates as contents on three chains; fixed units, attached units and a candidate's document; source keys, shared and owned; situations with a witness, a probe and a value; `Achieves`, `Separated`, the executable `separates` with its bound; admission in four checks; two findings with checkable criteria; labels and couplings on every chain; the slots of E5, E14, E15, E16, E19, E21 and the sentences E22 to E24; the wire of a situation; diagnostics; the Lean statements `separates_sound`, `observe_sound`, `separation_conservative`, `force_agrees_off_exception`, `decision_only_sound`, `one_formula_only` and the chain lemmas; fixtures F1 to F6, F15, F19, F20, F22 in S1's share, K1 to K19, the differential, the pilots, the English; the measured unlock; twenty resolved choices. No code, Lean or frozen contract changes. |
+| 2026-10-02 | Draft 2 | The converged statement review of draft 1 applied (`manage-agents/debates/compose-s1-spec`, verdict FIX, CONVERGED after round 3), nothing else, and no design question reopened. **(1) Admissibility** (Fable 1, Astra 1): `Achieves` and `AchievesQuiet` require `B.Admissible (authorEnv D)`; `authorEnv` moved above them; 1.6; fixture K2b. **(2) Soundness on the shown base** (Fable 2): `separates_sound` and `readings_wire_separate_sound` conclude that the witness achieves the recorded value and the other reading cannot, on the shown base and `tablesOf σ.fixed`; `Separated` is the corollary `separates_separated`; 5.1. **(3) Step 1 of 4.5 enforced** (Fable 3): `situationWF` (keys once, generated-key membership, typing of both readings' shared tables, the probe) is the first conjunct of `separates` and a field of `SeparateReplay`; the decoder refuses a malformed situation; `separation_conservative` takes step 1 as hypotheses; section 7's row; fixture K21. **(4) E22 and E23** (Fable 4): both shown only when no rule takes precedence over the twin; E23 only when the other default rule is one step 2 blocks and outranking is strict; E23's "one reading" cell corrected; the wordings unchanged; H4's negative cases. **(5) Fixed names** (Fable 5): names declared by fixed units are distinct across the whole document (4.3, the last conjunct of `distinctAcrossSets_spec`, `Item.names`), with the chain's own text; K8's added case. **(6) Pending** (Fable 6): a quantity, composite or bar candidate is pending in every check of S1 (1.2, 3, 4.1, 4.5, 13.16). **(7) Single attachment** (Astra 2): `WellFormedDoc` gains `singlyAttached` with `singlyAttached_spec`, checked after closure and before `free D` and every `one D s i` (4.1, 4.2); the new text `UnsupportedProfile: readings@1 fixed unit <u> depends on reading sets <s> and <t>`; 13.4; fixture K20; 9.1, 9.3 and section 11 report any pilot document the check refuses, which has not been checked. Also: the status note, the re-review scope in 12, resolved choice 21. No code, Lean or frozen contract changes. |
