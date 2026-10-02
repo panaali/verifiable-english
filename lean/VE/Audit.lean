@@ -3195,3 +3195,9 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.digit_char
 #print axioms VE.Readings.toDigitsCore_valid
 #print axioms VE.Readings.toDigitsCore_value
+#print axioms VE.Readings.Examples.kh_sup_const
+#print axioms VE.Readings.Examples.kh_choice_const
+#print axioms VE.Readings.Examples.kh_valid
+#print axioms VE.Readings.Examples.kh_slot
+#print axioms VE.Readings.Examples.kh_encodes
+#print axioms VE.Readings.Examples.kh_base_down_fails
