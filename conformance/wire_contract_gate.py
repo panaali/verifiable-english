@@ -10,8 +10,10 @@ legacy text and `args` is `{"message": text}`. They also compare the engines wit
 record (but `text` and `args` of inherited checks), each engine's code with its legacy validator's, and
 Lean's text with the Lean route's for the checks whose text is the contract's. Tier B and the replayed corpora check that the engines agree
 and that each reports a fault exactly when its legacy validator rejects. Every engine record, in every tier, has
-exactly the fault record's members (2.7). The gate exits non-zero unless every required row of spec 9 holds
-(`gate_failures`), feasibility judged from `n1 + n2` against 45 of 67.
+exactly the fault record's members (2.7), each of the schema's type. The gate exits non-zero unless every
+required row of spec 9 holds (`gate_failures`), each judged from the data the report summarizes and not from
+the report's own verdicts: coverage from the unmet lists, S3-pre from the legacy verdict differences, and
+feasibility from `n1 + n2` against 45 of 67, the tier counts partitioning the 67.
 """
 
 import argparse
@@ -204,18 +206,31 @@ def legacy_difference_sources(contract):
     return cases
 
 
+def _schema_types():
+    """Each fault record member's JSON type, read from `contract.schema.json` (`$defs/fault`)."""
+    schema = json.loads((ROOT / "ve/wire_contract/contract.schema.json").read_text())
+    return {name: member["type"] for name, member in schema["$defs"]["fault"]["properties"].items()}
+
+
+RECORD_TYPES = _schema_types()
+# A JSON type's Python values; `bool` is not an integer in JSON, though it is an `int` in Python.
+JSON_TYPES = {"string": lambda value: type(value) is str, "integer": lambda value: type(value) is int,
+              "object": lambda value: type(value) is dict}
+
+
 def shape_problems(record):
     """How an engine's fault record departs from the schema's closed shape (2.7): a missing or an extra
-    member. Checked on every record of every tier, so a stray field both engines add is not hidden by their
-    agreeing with each other."""
+    member, or a member of the wrong type. Checked on every record of every tier, so a stray field or a
+    non-string `text` that both engines produce is not hidden by their agreeing with each other."""
     if not isinstance(record, dict):
         return [f"record {record!r} is not an object"]
     problems = []
     if set(record) != RECORD_FIELDS:
         problems.append(f"record fields: missing {sorted(RECORD_FIELDS - set(record))}, "
                         f"extra {sorted(set(record) - RECORD_FIELDS)}")
-    if "args" in record and not isinstance(record["args"], dict):
-        problems.append(f"args {record['args']!r} is not an object")
+    for name, kind in sorted(RECORD_TYPES.items()):
+        if name in record and not JSON_TYPES[kind](record[name]):
+            problems.append(f"{name} {record[name]!r} is not of type {kind}")
     return problems
 
 
@@ -439,29 +454,93 @@ def report():
     }
 
 
+def _count(value):
+    return type(value) is int and value >= 0
+
+
 def gate_failures(value):
-    """Every requirement of spec 9 that the report `value` does not meet; empty when the gate passes. The
-    feasibility row is judged from `n1` and `n2` against the spec's own numbers, not from the report's `met`
-    or `threshold`."""
+    """Every requirement of spec 9 that the report `value` does not meet; empty when the gate passes. No
+    summary the report states is trusted over the data it summarizes: coverage is judged from the unmet
+    lists and the checks without witnesses, S3-pre from the recorded legacy verdict differences, and
+    feasibility from `n1` and `n2` against the spec's own numbers, its four counts partitioning the 67
+    numbered checks; each stated summary must also agree with its data."""
     failures = []
     if value["mismatches"]:
         failures.append(f"tier 0 and A: {len(value['mismatches'])} mismatches")
+    # A required row over no case is vacuous: every tier, the legacy differences of S3-pre included, ran.
+    for tier in ("0", "A", "B", "replayed", "legacy_differences"):
+        if not _count(value["tiers"].get(tier)) or not value["tiers"][tier]:
+            failures.append(f"tier {tier} ran {value['tiers'].get(tier)!r} cases")
     for language in ("python", "lean"):
-        if value["residual"].get(language, 1):
-            failures.append(f"residual count {value['residual'].get(language)} in {language}")
-    if not value["coverage_met"]:
-        failures.append(f"coverage unmet: {value['coverage_unmet']}")
-    feasible = value["feasibility"]
+        if value["residual"].get(language) != 0 or not _count(value["residual"].get(language)):
+            failures.append(f"residual count {value['residual'].get(language)!r} in {language}")
+    failures += _coverage_failures(value)
+    failures += _feasibility_failures(value["feasibility"])
+    differences = value["legacy_verdict_differences"]
+    if not isinstance(differences, list) or differences:
+        failures.append(f"S3-pre: legacy verdict differences {differences!r}")
+    if not isinstance(value["s3_pre"], str) or not value["s3_pre"].startswith("closed"):
+        failures.append(f"S3-pre {value['s3_pre']!r}")
+    return failures
+
+
+def _coverage_failures(value):
+    """8.3's coverage row: met only when every unmet list is empty, the stated `coverage_met` agrees, and
+    the unmet lists hold every check the report shows without a first or a masking witness (a Lean-only gap
+    being one the reasons explain)."""
+    failures = []
+    unmet = value["coverage_unmet"]
+    rows = ("first", "masked", "adjacent_phase_pairs")
+    if not isinstance(unmet, dict) or set(unmet) != set(rows) or any(type(unmet[row]) is not list for row in rows):
+        return [f"coverage unmet is malformed: {unmet!r}"]
+    if any(unmet[row] for row in rows):
+        failures.append(f"coverage unmet: {unmet}")
+    if value["coverage_met"] is not True:
+        failures.append(f"coverage_met {value['coverage_met']!r}")
+    checks = all_checks(load("soft-norms@0"))
+    if value["all_check_count"] != len(checks):
+        failures.append(f"all_check_count {value['all_check_count']!r}, the table has {len(checks)}")
+    if set(value["masking_not_required"]) - {checks[0]}:
+        failures.append(f"masking not required of {sorted(value['masking_not_required'])}, only of {checks[0]}")
+    reasons = value["coverage_unmet_reasons"]
+    for row, without in (("first", value["checks_without_first"]), ("masked", value["checks_without_masked"])):
+        if set(without) != {"python", "lean"}:
+            failures.append(f"checks without {row} witness, languages {sorted(without)}")
+            continue
+        exempt = set(value["masking_not_required"]) if row == "masked" else set()
+        for language in ("python", "lean"):
+            hidden = set(without[language]) - set(unmet[row]) - exempt
+            if language == "lean":
+                hidden -= set(reasons)
+            if hidden:
+                failures.append(f"{language} has no {row} witness for {sorted(hidden)}, not in coverage_unmet")
+            if row == "first" and value["first_check_count"].get(language) != len(checks) - len(without[language]):
+                failures.append(f"first_check_count of {language} {value['first_check_count'].get(language)!r}, "
+                                f"{len(without[language])} of {len(checks)} checks without one")
+    return failures
+
+
+def _feasibility_failures(feasible):
+    """Spec 9's feasibility row, from `n1` and `n2` against 45 of 67: the four counts are non-negative
+    integers that partition the 67 numbered checks, so no count can exceed the checks there are, and the
+    report's `total`, `threshold` and `met` are what those counts give."""
+    failures = []
+    parts = ("n1", "n2", "coarse", "t3")
+    if not all(_count(feasible.get(part)) for part in parts + ("of", "total", "threshold")) \
+            or type(feasible.get("met")) is not bool:
+        return [f"feasibility counts are not non-negative integers, or met is not Boolean: {feasible}"]
     total = feasible["n1"] + feasible["n2"]
     if feasible["of"] != FEASIBILITY_OF:
         failures.append(f"feasibility counts {feasible['of']} numbered checks, not {FEASIBILITY_OF}")
+    if sum(feasible[part] for part in parts) != FEASIBILITY_OF:
+        failures.append(f"feasibility counts {sum(feasible[part] for part in parts)} checks by tier, not the "
+                        f"{FEASIBILITY_OF} numbered checks")
     if total < FEASIBILITY_THRESHOLD:
         failures.append(f"feasibility {total} of {feasible['of']}, below {FEASIBILITY_THRESHOLD}")
-    if (feasible["total"], feasible["threshold"], feasible["met"]) != (
-            total, FEASIBILITY_THRESHOLD, total >= FEASIBILITY_THRESHOLD and feasible["of"] == FEASIBILITY_OF):
+    met = (total >= FEASIBILITY_THRESHOLD and feasible["of"] == FEASIBILITY_OF
+           and sum(feasible[part] for part in parts) == FEASIBILITY_OF)
+    if (feasible.get("total"), feasible.get("threshold"), feasible.get("met")) != (total, FEASIBILITY_THRESHOLD, met):
         failures.append(f"feasibility report inconsistent: {feasible}")
-    if not value["s3_pre"].startswith("closed"):
-        failures.append(f"S3-pre {value['s3_pre']}")
     return failures
 
 
