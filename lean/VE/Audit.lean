@@ -128,6 +128,7 @@ import VE.Readings.Examples
 import VE.Readings.Wire
 import VE.Readings.Run
 import VE.Readings.Choice
+import VE.Readings.Simulate
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3201,3 +3202,36 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Examples.kh_slot
 #print axioms VE.Readings.Examples.kh_encodes
 #print axioms VE.Readings.Examples.kh_base_down_fails
+#print axioms VE.Readings.strictYields_mono
+#print axioms VE.Readings.yields_mono
+#print axioms VE.Readings.strictYields_mono_le
+#print axioms VE.Readings.yields_mono_le
+#print axioms VE.Readings.strictYields_stable
+#print axioms VE.Readings.yields_stable
+#print axioms VE.Readings.strictYields_stable_le
+#print axioms VE.Readings.yields_stable_le
+#print axioms VE.Readings.children_mem
+#print axioms VE.Readings.sim_strictYields
+#print axioms VE.Readings.sim_strictSelects
+#print axioms VE.Readings.sim_dualPerm
+#print axioms VE.Readings.sim_dualOblig
+#print axioms VE.Readings.sim_act
+#print axioms VE.Readings.sim_rk
+#print axioms VE.Readings.sim_higher
+#print axioms VE.Readings.sim_comparable
+#print axioms VE.Readings.sim_incompatible
+#print axioms VE.Readings.sim_rankFuel
+#print axioms VE.Readings.sim_strictSelects_fuel
+#print axioms VE.Readings.sim_strictDecides
+#print axioms VE.Readings.sim_blocked
+#print axioms VE.Readings.sim_eligible
+#print axioms VE.Readings.sim_eligible_extra
+#print axioms VE.Readings.effD_eligible
+#print axioms VE.Readings.sim_domWith
+#print axioms VE.Readings.sim_eff
+#print axioms VE.Readings.sim_applies
+#print axioms VE.Readings.sim_applies_extra
+#print axioms VE.Readings.sim_yields
+#print axioms VE.Readings.sim_selects_fuel
+#print axioms VE.Readings.sim_decides
+#print axioms VE.Readings.value_sim
