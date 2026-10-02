@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-measurements"}
 
 PYTHON = {
-    1: "ast environment errors identity limits model wire assurance".split(),
+    1: "ast environment errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
         "alternatives reports rights softnorms speech_acts units").split(),
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
