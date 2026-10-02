@@ -128,6 +128,7 @@ import VE.Readings.Examples
 import VE.Readings.Wire
 import VE.Readings.Run
 import VE.Readings.Choice
+import VE.Readings.Superpose
 import VE.WireContract.Engine
 
 #print axioms Iceberg.mul_sub
@@ -3144,3 +3145,53 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.index_of_mem
 #print axioms VE.Readings.choices_spec
 #print axioms VE.Readings.uniformPrecedence_spec
+#print axioms VE.Readings.sup_wellFormed
+#print axioms VE.Readings.bitsVal_lt
+#print axioms VE.Readings.testBit_ge
+#print axioms VE.Readings.testBit_bitsVal
+#print axioms VE.Readings.eq_of_low_bits
+#print axioms VE.Readings.le_two_pow_bitsOf
+#print axioms VE.Readings.conj_denote
+#print axioms VE.Readings.disj_denote
+#print axioms VE.Readings.pattern_denote
+#print axioms VE.Readings.pattern_unique
+#print axioms VE.Readings.pattern_exists
+#print axioms VE.Readings.findIdx_set
+#print axioms VE.Readings.findIdx_of_nodup
+#print axioms VE.Readings.find_eq_findIdx
+#print axioms VE.Readings.find_findIdx
+#print axioms VE.Readings.setSize_eq
+#print axioms VE.Readings.candidate_isSome
+#print axioms VE.Readings.choiceAtom_eq
+#print axioms VE.Readings.choiceAtom_bottom
+#print axioms VE.Readings.complete_mem
+#print axioms VE.Readings.complete_map
+#print axioms VE.Readings.encodes_atoms
+#print axioms VE.Readings.sat_of_mem_labelled
+#print axioms VE.Readings.slotP_choice
+#print axioms VE.Readings.choice_core_sat
+#print axioms VE.Readings.isEmpty_false_of_mem
+#print axioms VE.Readings.one_sat
+#print axioms VE.Readings.ids_inj
+#print axioms VE.Readings.supReady_nodup
+#print axioms VE.Readings.superposable_supReady
+#print axioms VE.Readings.atom_at
+#print axioms VE.Readings.mem_sets_getElem
+#print axioms VE.Readings.find_of_nodup
+#print axioms VE.Readings.candidate_at
+#print axioms VE.Readings.encodes_unique
+#print axioms VE.Readings.toString_data
+#print axioms VE.Readings.digits_ne
+#print axioms VE.Readings.split_underscore
+#print axioms VE.Readings.toDigits_inj
+#print axioms VE.Readings.bitName_inj
+#print axioms VE.Readings.term_relation_congr
+#print axioms VE.Readings.denote_relation_congr
+#print axioms VE.Readings.mem_of_index
+#print axioms VE.Readings.core_model
+#print axioms VE.Readings.checkCertificate_typed
+#print axioms VE.Readings.dead_sound
+#print axioms VE.Readings.unsat_sound
+#print axioms VE.Readings.digit_char
+#print axioms VE.Readings.toDigitsCore_valid
+#print axioms VE.Readings.toDigitsCore_value
