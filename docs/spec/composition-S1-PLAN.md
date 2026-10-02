@@ -48,9 +48,17 @@ review (PLAN-EXPAND2 rule 10) before any S1 Lean starts; a draft alone opens not
 spec instantiates them and changes none. The stage ends with both pilots rerun and audited on the units the parent
 plan names for S1 (its section 6, row S1; spec section 11), and the measured figures replace that row.
 
+Statement review of spec draft 1 (`manage-agents/debates/compose-s1-spec/{astra,fable}.md`, CONVERGED after round
+3; the Astra seat was again held by Sol xhigh as the recorded cross-family stand-in): **FIX**. The joint position
+names seven corrections to composition-s1.md (Fable's six edits and the Astra seat's refusal of a fixed unit
+attached to two sets) and none to this file: the design, the table above and every pointer in it stand. Spec draft
+2 applies them and lists each in its change log. The S1 Lean build stays closed until the re-review of the changed
+statements, admission rules, wording and fixtures passes (spec section 12).
+
 ## Change log
 
 | Revision | Changes |
 |---|---|
 | Draft 1 (commit `3a99ed1e`) | The pointer: item 1 is stage S1 of composition-PLAN.md. |
 | Draft 2 (2026-10-02) | The converged design debate applied, nothing else: the status note, the table of the converged edits that bind S1 with their places in the parent plan and in the spec, the process line. The pointer paragraph is unchanged. No statement, fixture or stage of the parent plan changed. Design only. |
+| Draft 2, review note (2026-10-02) | The outcome of the statement review of spec draft 1 recorded under Process: FIX, applied in spec draft 2, re-review pending. The joint position asks no edit of this file, and none is made beyond this record: no pointer, edit, stage or design point changed. |
