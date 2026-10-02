@@ -74,7 +74,7 @@ def with_faults(*names):
 
 
 def record(check, phase, code, cls, path, text, args=None):
-    return {"contract": "soft-norms@0", "revision": 3, "check": check, "phase": phase, "code": code,
+    return {"contract": "soft-norms@0", "revision": 4, "check": check, "phase": phase, "code": code,
             "class": cls, "path": path, "text": text, "args": args or {}}
 
 
@@ -204,10 +204,7 @@ def s3_pre_sources():
 
 
 def test_s3_pre_norm_defaults_profile(built):
-    """S3-pre (conformance/wire-contract/s3-pre.md): with `norm-defaults@0` among the profiles, which Python
-    passes to W1's decoding and Lean does not, both legacy validators reject every source. Both engines
-    report the Lean route's check, because the Python hooks use the Lean lists; Python's legacy code differs
-    only where its decoding admits an `unspecified` default."""
+    """S4-pre: both legacy validators reject every source with the same code."""
     from ve.errors import VEError
     from ve.softnorms import load_soft_document
 
@@ -217,8 +214,11 @@ def test_s3_pre_norm_defaults_profile(built):
     for (raw, rules), (engine, legacy), (lean_code, check) in zip(sources, rows, expected):
         with pytest.raises(VEError) as caught:
             load_soft_document(json.loads(json.dumps(raw)), json.loads(json.dumps(rules)))
-        assert caught.value.code == "SOFT_UNSUPPORTED_PROFILE"
-        assert "checked through fill" in str(caught.value)
+        assert caught.value.code == lean_code
+        if check == "2.3":
+            assert str(caught.value) == "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+        else:
+            assert "checked through fill" in str(caught.value)
         assert legacy["status"] == "error" and legacy["code"] == lean_code
         assert engine["diagnostic"]["check"] == check
         agree(engine, legacy)
@@ -228,8 +228,8 @@ def test_s3_pre_norm_defaults_profile(built):
         assert canonical_json(python) == canonical_json(engine["diagnostic"])
 
 
-# What Python's legacy validator does with each profile that its registry has and the Lean route's does not
-# (s3-pre.md). `rights@0` is a verdict difference: Python accepts the source and the Lean route rejects it.
+# What Python's legacy validator does with each profile absent from the Lean soft route
+# (s3-pre.md and s4-pre.md). The rights and speech-act differences are now closed.
 PYTHON_ONLY_LEGACY = {
     "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "alternatives@0 with soft-norms@0"),
     "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",
@@ -239,7 +239,7 @@ PYTHON_ONLY_LEGACY = {
     # alone refuses it at 3.2 with the Lean route's text (it accepted before the fix).
     "rights@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0"),
     "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "risk@0 requires alternatives@0"),
-    "speech-acts@0": ("SOFT_INVALID_INPUT", "Incorrect fields (missing=['speech_acts'], unknown=[])"),
+    "speech-acts@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile speech-acts@0"),
 }
 
 
