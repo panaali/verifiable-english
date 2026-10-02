@@ -1,33 +1,38 @@
 # Wire contracts, stage S4 item 1: `soft-norms@0` becomes public (statement specification)
 
-> Status: statement specification, draft 1 (2026-10-02). This is the item-1 statement spec of
-> [wire-contract-S4-PLAN.md](wire-contract-S4-PLAN.md) draft 2 (the **plan**). It covers item 1 only: the switch
+> Status: statement specification, draft 2 (2026-10-02). This is the item-1 statement spec of
+> [wire-contract-S4-PLAN.md](wire-contract-S4-PLAN.md) draft 3 (the **plan**). It covers item 1 only: the switch
 > of the pilot contract `soft-norms@0` from `shadow` to `public`, which is step 6 of 5.1 of
 > [wire-contract-PLAN.md](wire-contract-PLAN.md) (the **base plan**) for row 1 of its 5.3. It builds on
 > [wire-contract.md](wire-contract.md) (the **base spec**) and changes no definition of it. The Astra + Fable
-> statement review comes before any build step. No debate was held on stage S4 (plan, status paragraph), so that
-> review is the first reading of everything here that the base plan's debate did not decide; section 12 lists
-> those choices. Theorem statements and fixtures are implementation obligations, not claims of completed proofs
-> or tests. Nothing was built or run for this draft: the Lean of 5.2 has not been compiled, the expected records
-> of section 8 and the expected delta of section 6 were derived by hand, and every `file:line` reference was read
-> on `main` at `2ee50149` and must be re-read at each step. Nothing here changes a verdict, an identity, a code,
-> a frozen contract, an existing theorem statement or a checker function.
+> statement review comes before any build step. It was held on draft 1
+> (`manage-agents/debates/wire-s4-spec/{fable,astra}.md`; Sol at xhigh stood in for Astra, as `astra.md`
+> records) and converged after round 2 on FIX. Draft 2 applies its edits, which section 13 lists, and makes no
+> other change; both reviewers confirm the revised text against that list before the measurement commit. No
+> debate was held on stage S4 before that review (plan, status paragraph), so it was the first reading of
+> everything here that the base plan's debate did not decide; section 12 lists those choices. Fixtures are
+> implementation obligations, not claims of completed tests. Nothing was built or run for this draft: the
+> expected records of section 8 and the expected delta of section 6 were derived by hand, and every `file:line`
+> reference was read on `main` at `2ee50149` and must be re-read at each step. Nothing here changes a verdict,
+> an identity, a code, a frozen contract, an existing theorem statement or a checker function.
 
 ## 0. Scope, one paragraph
 
 After S0 to S3 the contract `soft-norms@0` runs in shadow: both engines compute the record of every rejection,
 the gate compares them on 8,576 inputs, and no output of any program has changed. Item 1 makes the contract
 **public** in the one place where Python rejects a submitted soft source on the soft route: the error then
-carries the contract's record, and its message is the record's text. The legacy validators still decide, alone,
-whether a source is accepted. Lean's route rows are frozen and do not change; `ve_diagnose` already prints the
-record. Before the switch, the list of messages that will change is measured on the gate's whole corpus and
+carries the contract's record. When a check of the table fails, the record names the first one that fails and
+the message is that check's text; otherwise the message is the validator's. The legacy validators still decide,
+alone, whether a source is accepted. Lean's route rows are frozen and do not change; `ve_diagnose` already prints
+the record. Before the switch, the list of messages that will change is measured on the gate's whole corpus and
 signed by the DRI, and the three inputs on which the two legacy validators report different codes are settled
 (S4-pre). The Rust engine and the base contracts are later items of the plan and are not specified here.
 
 In this specification: the decisions (1), the definitions (2), the English, one reading each (3), the diagnostics
-(4), the Lean statements (5), the expected delta of this profile (6), the files and gates of the switch commit
-(7), the acceptance fixtures (8), the switch gate (9), limits (10), the statement review checklist (11), and the
-choices this draft resolves (12).
+(4), the Lean statements relied on (5), the expected delta of this profile (6), the files and gates of the
+measurement commit and the switch commit (7), the acceptance fixtures (8), the switch gate (9), limits (10), the
+statement review checklist (11), the choices this specification resolves (12), and the statement review response
+(13).
 
 ## 1. Decisions
 
@@ -38,8 +43,8 @@ choices this draft resolves (12).
 | D3 | One production call site, in `ve/soft_route.py`, inside the handler of the rejection. On an accepted input no diagnostic module is imported | 2.4 |
 | D4 | The legacy validators are not edited by the switch, so the gate keeps comparing the engine with them after the switch | 2.4, 7.1 |
 | D5 | `code` is never written by the switch. On the corpus the record's `code` equals it; the three inputs where the legacy validators' codes differ are settled first, outside this work (S4-pre) | 2.8 |
-| D6 | A public change is a changed message. The complete list on the gate's corpus is measured, stored, and signed check by check; the gate fails on a change without a signature and on a signature without a change | 2.7, 9 |
-| D7 | The switch is the contract's revision 4. In Lean only the generated table's revision changes; three optional statements say that this changes no finding | 2.6, 5.2 |
+| D6 | A public change is a changed message. The complete list on the gate's corpus is measured, stored, and signed check by check; when the contract is `public`, the gate fails on a change without a signature and on a signature without a change | 2.7, 9 |
+| D7 | The switch is the contract's revision 4. In Lean only the generated table's revision changes (T3, L2) | 2.6 |
 | D8 | Either reverting the switch commit, or setting `status` back to `shadow` under a new revision, restores today's output | 2.2 |
 | D9 | The entry points that are not switched are listed, and stay as they are | 2.5 |
 
@@ -54,6 +59,7 @@ choices this draft resolves (12).
 | overlay | the table of 2.8 that turns a legacy rejection and an outcome into the **reported record**: the fault record, the residual record, or the deferred record |
 | legacy validator | for this unit, `load_soft_document` in Python and `Wire.decodeSoftSource` in Lean (section 6) |
 | the gate, the corpus | `conformance/wire_contract_gate.py` and the cases of its `gate_cases`: tiers 0, A, B, the replayed sources and the legacy-difference inputs (tier L) |
+| a corpus case that Lean reads | a corpus case that the gate sends to the Lean binaries (the last member of a case of `gate_cases`; `wire_contract_gate.py:487`). Lean reads every case except one built from a catalogue fault whose readers are not both engines, and a recorded test input that carries a `null`, which only the in-process API can pass |
 | inherited check | a hook or classifier member marked `inherited`: its text is the inherited decoder's own, in each language (2.5, rule 5) |
 
 A **soft source** is a pair of an environment and a list of norm units, the root of the contract
@@ -88,8 +94,8 @@ The function returns `error`, the same object, in every case. It does this, in o
 
 1. If `error.diagnostic` is not `None`, return.
 2. If the contract's `status` is not `public`, return.
-3. Let the root be `{"environment": e, "norms": n}` with `e` and `n` copies of the two arguments; the arguments
-   are not modified.
+3. Let the root be `{"environment": e, "norms": n}` with `e` and `n` deep copies of the two arguments, as the
+   gate takes them (`wire_contract_gate.py:420`); the arguments are not modified.
 4. Let `outcome` be `engine.run(contract, root, registry=registry)`.
 5. Let `record` be `engine.overlay(contract, error, outcome)`, with no Lean argument.
 6. Set `error.diagnostic` to `record`, and set `error.message` and `error.args` so that `error.message` and
@@ -148,14 +154,19 @@ The import rule of base spec 7.3 becomes, for Python: inside `ve/`, outside `ve/
 imports the one name `public_rejection`; that name occurs there in one import statement and one call, both
 inside one `except VEError` handler of `admit_soft_document`; the call is the operand of a `raise`; and no module
 imports `ve.wire_contract`. `tests/test_softnorms_contract.py::test_diagnostic_modules_stay_off_verdict_import_paths`
-is rewritten to check exactly this by a scan of the syntax trees. The Lean import rule is unchanged, except as
-5.4 says.
+is rewritten to check exactly this by a scan of the syntax trees. The Lean import rule is unchanged.
+
+The scan resolves each import to the module it names before it compares. A relative import
+(`from .softnorms_contract import …`, `from . import softnorms_contract`) is resolved against the package of the
+importing file, and `from <package> import <module>` (`from ve import softnorms_contract`) is an import of
+`<package>.<module>`. Today's scan compares absolute module names only (`test_softnorms_contract.py:236–241`)
+and passes both forms; `soft_route.py` imports relatively.
 
 ### 2.5 Entry points: switched, and not switched
 
 | Entry point | After the switch |
 |---|---|
-| `ve.soft_route.admit_soft_document(environment, document)` with a submitted environment; reached from `ve.admission` when the environment lists `soft-norms@0` (`admission.py:499–502`). This is the adapter's case kind `admission` | **public**: the error carries the record |
+| `ve.soft_route.admit_soft_document(environment, document)` with a submitted environment; reached from `ve.admission` when the environment lists `soft-norms@0` (`admission.py:499–502`). This is the adapter's case kind `admission` | **public**: the error carries the reported record (2.3) |
 
 Not switched; each keeps today's message and has no record:
 
@@ -258,9 +269,10 @@ By construction:
 
 - **(A) The public record is the measured one.** The call site reports `overlay(run(…))` through
   `public_rejection`, and the gate measures the delta with the same two functions on the same registry.
-- **(B) In Lean, the switch changes no finding.** The engine reads a table's phases only, and revision 4 has the
-  phases of revision 3 (5.2 states it; without the statements, the evidence is fixture T3, the regenerated
-  module's diff).
+- **(B) In Lean only the generated table's revision changes (T3, L2).** The engine reads a table's phases only
+  (`instances`, `Engine.lean:226–227`), and revision 4 has the phases of revision 3, so no finding changes. The
+  evidence is the regenerated module's diff (T3) and the rows of `ve_diagnose` before and after (L2); no Lean
+  statement is added for it.
 - **(C) The base spec's claims (A) and (B)** hold as before: the expansion, and the record conditional on equal
   predicate results.
 
@@ -269,8 +281,9 @@ Tested, not constructed:
 - that the engine reports a fault exactly when the legacy validator rejects, and rule K: on the corpus, at zero
   tolerance;
 - that the signed list is complete: on the corpus only (10, item 3);
-- that Python's public text equals the text of Lean's `ve_diagnose` record: on the corpus, for checks that are
-  not inherited. The order inside the classifier sets 5.7–5.8 and 6.5–6.15 is the validators' own;
+- that Python's public text equals the text of Lean's `ve_diagnose` record: on every corpus case that Lean
+  reads, for checks that are not inherited. The order inside the classifier sets 5.7–5.8 and 6.5–6.15 is the
+  validators' own;
 - V1, V2 and V3 of 2.4.
 
 ## 3. English: one reading each
@@ -287,7 +300,7 @@ like a rule name; `<wording>` is the check's row in `docs/spec/soft-norms-wire-t
 | a fault record | `This input is rejected. The first check that fails is <id>: <wording>` | that this is the only check that fails |
 | a residual record | `This input is rejected, but no check in the table fails. The message shown comes from the validator, not from the table.` | that the input is valid |
 | a deferred record | `This input is rejected. This program cannot tell which check fails first, because it cannot run check <id> itself. The message shown comes from the validator, not from the table.` | that check `<id>` fails |
-| no record | `This input is rejected. The message shown comes from the validator. The table was not consulted.` | that no table covers this kind of input; the same input may have a record through another entry point (2.5) |
+| no record | `This input is rejected. The message shown comes from the validator. No contract record is available for this error.` | that no table covers this kind of input, or that the table was not consulted: the same input may have a record through another entry point (2.5), and under the failure rule of 2.3 the engine ran and raised |
 
 Example, for the source of fixture S1: `This input is rejected. The first check that fails is 2.7a: The
 `parties` item, when present, is a string in the class `soft_name`.` "First" always means the order of base spec
@@ -301,8 +314,8 @@ and has two readings.
 | Wording | Its two readings | Written instead |
 |---|---|---|
 | "The contract is switched to enforcing." | the contract decides whether an input is rejected; or it chooses the message of a rejection | "The contract is public: when the validator rejects a source, the contract chooses the message. It never decides whether a source is rejected." |
-| "The diagnostics become uniform." | every program prints the same message for every input; or Python's message is the contract's text | "On the gate's corpus, Python's message is the text of the record that Lean's `ve_diagnose` gives for the same source, except on inherited checks." |
-| "Rejections of soft sources carry the record." | every rejection, through every entry point; or the one of 2.4 | "A rejection raised by soft-route admission of a submitted source carries the record." |
+| "The diagnostics become uniform." | every program prints the same message for every input; or Python's message is the contract's text | "On every corpus case that Lean reads, Python's message is the text of the record that Lean's `ve_diagnose` gives for the same source, except on inherited checks." |
+| "Rejections of soft sources carry the record." | every rejection, through every entry point; or the one of 2.4 | "A rejection raised by soft-route admission of a submitted source carries the contract's record, one of the three of 2.3." |
 | "`code` is unchanged." | the error's `code`; or the record's | "The error's `code` is the legacy validator's, as today. The record's `code` is the contract's. On the corpus they are equal." |
 | "The message changes to the contract's text." | every message becomes different; or the message is now taken from the contract and is often the same words | "The message is the record's text. For most rejections these are the words the validator printed before; the delta report lists the checks for which they differ." |
 | "The delta report is complete." | no other message can change; or no other message changes on the corpus | "Every message change on the gate's corpus is in the report." |
@@ -311,20 +324,22 @@ and has two readings.
 
 The `release_note` of the signing file is this text, with the list filled from `signed`:
 
-> When `ve` rejects a soft-norm source at admission, the error now has one more member, `diagnostic`. It names
-> the first check of the validation table that fails, with the place in the input and a code. The table is
-> `docs/spec/soft-norms-wire-table.md`; "first" is its order from top to bottom. The message of the error is now
-> the text of that check. For most rejections it is the same message as before. It is a different message for
-> these checks: ⟨for each signed check: its id, and its sentence from `signed`⟩. Whether a source is accepted or
-> rejected has not changed. The error's `code` has not changed. Other ways of submitting a soft source (a
-> document check, the rights route, English input) report as before.
+> When `ve` rejects a soft-norm source at admission, the error now has one more member, `diagnostic`: the error
+> carries the contract's record. When a check of the table fails, the record names the first one that fails and
+> the message is that check's text; otherwise the message is the validator's. The table is
+> `docs/spec/soft-norms-wire-table.md`; "first" is its order from top to bottom. With the check, the record gives
+> the place in the input and a code. For most rejections the message is the same as before. It is a different
+> message for these checks: ⟨for each signed check: its id, and its sentence from `signed`⟩. Whether a source is
+> accepted or rejected has not changed. The error's `code` has not changed. Other ways of submitting a soft
+> source (a document check, the rights route, English input) report as before.
 
 ### 3.4 The paragraph added to soft-norms.md, section 8
 
-> **The public record.** When soft-route admission rejects a submitted source, the error carries `diagnostic`:
-> the record of the first failing check of the wire contract `soft-norms@0`
-> ([soft-norms-wire-table.md](soft-norms-wire-table.md); [wire-contract.md](wire-contract.md) 2.7), and the
-> error's message is that record's text. The checks, their order and their codes are those of this section. The
+> **The public record.** When soft-route admission rejects a submitted source, the error carries the contract's
+> record, in its member `diagnostic`. The contract is the wire contract `soft-norms@0`
+> ([soft-norms-wire-table.md](soft-norms-wire-table.md); [wire-contract.md](wire-contract.md) 2.7). When a check
+> of the table fails, the record names the first one that fails and the message is that check's text; otherwise
+> the message is the validator's. The checks, their order and their codes are those of this section. The
 > contract chooses the message only: the validator decides, as before, whether the source is rejected.
 
 ## 4. Diagnostics
@@ -366,12 +381,20 @@ spec 4.1. With no record, `to_dict()` is today's.
 | `path`, `span` | unchanged; the record's `path` is not copied into `error.path` |
 | every other member of `to_dict()` | unchanged; `VEError.to_dict` is not edited (`errors.py:22–30`) |
 
+So `to_dict()` of the raised error is the legacy error's `to_dict()` with `message` replaced and `diagnostic`
+added. A legacy error that has a `path` keeps it as a member (`errors.py:24–25`). The two paths are measured
+from different places and may differ: the error's `path` is relative to the environment, and the record's is
+relative to the root. W1's errors carry a `path` (`environment.py:364–532`) and reach the call site through
+check 2.3; such an error can have the `path` `/vocabulary/predicates/x` while its record has `/environment`.
+The soft table's own errors set no `path`, which is why the two objects of 4.1 have none.
+
 A consumer that validates Python's error object against a closed shape must admit `diagnostic`. The switch
 commit lists every such schema and stored expectation it had to change; none is known from reading.
 
 ### 4.3 Lean
 
-- Every row of `ve_soft_norms_route` is byte-identical to its row before the switch, on the whole corpus.
+- Every row of `ve_soft_norms_route` is byte-identical to its row before the switch, on every corpus case that
+  Lean reads.
 - `ve_diagnose soft-norms@0` prints the same rows as before, except that every record has `"revision": 4`.
 - Where the Lean route's text differs from the contract's (a name that is not a string and whose compact JSON
   is longer than 80 bytes, checks 2.7a and 2.8c; base spec section 6), the route keeps its text. That is not a
@@ -393,10 +416,16 @@ The gate (`conformance/wire_contract_gate.py`) prints one more line per unmet ro
 | `gate fails: boundary: <case>: <what differs>` | a row of tier P (8.2) fails |
 | `gate fails: the legacy validator modified its source in <n> cases` | fixture Z5 fails |
 
-## 5. Lean: the statements
+The first two lines and the two `boundary` lines belong to rows that section 9 enforces only when the contract's
+`status` is `public`; they are printed only then.
 
-The switch edits no hand-written Lean module. Section 5.1 restates what the public record rests on; 5.2 gives
-the new statements, which are optional.
+## 5. Lean: the statements relied on
+
+The switch edits no hand-written Lean module and adds no Lean statement. Section 5.1 restates what the public
+record rests on. Draft 1 offered three optional statements in a new module (`instances_phases_only`,
+`run_phases_only`, `run_revision`); the statement review dropped them (section 13). The append-only exception
+for `VE/Audit.lean` that the debate's edit c granted names S1b and is not extended, and (B) of 2.9 rests on the
+fixtures T3 and L2.
 
 ### 5.1 Relied on, as built (`lean/VE/WireContract/Engine.lean:453–534`)
 
@@ -426,64 +455,9 @@ end VE.WireContract
 ```
 
 These four, and their four helpers (`expand_views`, `expandAll_views`, `instances_views`,
-`findSome_congr_reached`), are in `VE/Audit.lean` (lines 2974–2981). Item 1 changes none of them.
-
-### 5.2 New, optional (`lean/VE/WireContract/Revision.lean`)
-
-```lean
-import VE.WireContract.Engine
-
-namespace VE.WireContract
-open Lean
-
-/-- The expansion reads a table's phases only. -/
-theorem instances_phases_only (t u : Table) (h : Hooks) (j : Json) (hp : t.phases = u.phases) :
-    instances t h j = instances u h j
-
-/-- The engine reads a table's phases only: two tables with the same phases report the same finding. -/
-theorem run_phases_only (t u : Table) (h : Hooks) (j : Json) (hp : t.phases = u.phases) :
-    run t h j = run u h j
-
-/-- A new revision number changes no finding. -/
-theorem run_revision (t : Table) (n : Nat) (h : Hooks) (j : Json) :
-    run { t with revision := n } h j = run t h j
-
-end VE.WireContract
-```
-
-The module has these three theorems and nothing else: no definition, no `#eval`, no JSON handling of its own.
-No primes, and none of the audit's forbidden words, in comments either.
-
-### 5.3 What these do and do not say
-
-- `run_revision` is the switch as Lean sees it. The switch changes the table's `revision` from 3 to 4 and
-  leaves its phases as they were, so for every hook set and every input the finding is the one the gate measured
-  at revision 3. `record` (`Engine.lean:420–423`) then writes the table's `contract` and `revision` beside the
-  finding's fields, so a `ve_diagnose` row differs from its row before the switch in the member `revision` only.
-- `run_phases_only` is the general form: it also covers a change of `contract` or of the `residual` code.
-- All three follow from the definitions by unfolding (`instances` is a `flatMap` over `t.phases`, and `run` is
-  `findSome?` over `instances`). They are stated so that "the switch changes no Lean finding" is a checked
-  sentence and not a remark, not because they are hard.
-- They say nothing about Python, about the legacy validators, or about whether revision 4's phases really are
-  revision 3's: that last fact is fixture T3, the diff of the regenerated module.
-- No theorem relates the contract to a decoder (base plan 3.2); none is added.
-
-### 5.4 Audit, inventory and the import rule
-
-The three statements are optional, as the base spec's were. If they are added:
-
-- `Revision.lean` is a new line of `VE/Route/frozen-sources.sha256`. `Engine.lean` is not edited, so its line
-  does not change; that is why the statements are in a module of their own.
-- `VE/Audit.lean` gains one `import` line and three `#print axioms` lines, added only; its inventory line is
-  rehashed; `lean/axioms.txt` gains the three names. The axioms are within `propext`, `Classical.choice` and
-  `Quot.sound`.
-- `tools/check_lean_imports.py`: `AUDIT_IMPORTS` gains `VE.WireContract.Revision`. No other importer is
-  admitted.
-
-The append-only change of `VE/Audit.lean` is the exception that the debate's edit c granted for S1b. Whether it
-extends to this step is for the statement review (plan section 8, question 6). If it does not, or if the
-statements are dropped for any other reason, `VE/Audit.lean` is not touched, the commit's inventory diff is the
-one generated rehash of 2.6, and (B) of 2.9 rests on fixture T3 and on the gate rerun at revision 4.
+`findSome_congr_reached`), are in `VE/Audit.lean` (lines 2974–2981). Item 1 changes none of them, and it does
+not touch `VE/Audit.lean`, `lean/axioms.txt` or `tools/check_lean_imports.py`. No theorem relates the contract
+to a decoder (base plan 3.2); none is added.
 
 ## 6. The expected delta of this profile
 
@@ -518,9 +492,22 @@ Lean: no row changes (4.3). Rust: no column.
 Codes: none changes at the switch (rule K). The code changes of S4-pre are Python's legacy validator's, are
 decided and recorded there (2.8), and are not part of this list.
 
-## 7. The switch commit: files and gates
+## 7. The measurement commit and the switch commit: files and gates
 
 ### 7.1 Diff scope
+
+Item 1 is two commits of this work, after the commit of S4-pre: the **measurement commit** (plan step S4.1a)
+and the **switch commit** (S4.1c). The measured delta is read and signed between them (S4.1b).
+
+**The measurement commit.** The contract stays at revision 3 and `shadow`; no file of `ve/` or `lean/` changes.
+
+| Changed | By |
+|---|---|
+| `conformance/wire_contract_gate.py`, `conformance/wire_contract_delta.py` | the measurement of 2.7. From this commit the gate enforces the rows S4-pre and rule K of section 9 |
+| the stored gate and delta reports under `conformance/wire-contract/` | regenerated at revision 3; the delta report is computed over the whole corpus and has `public_diagnostic_changes` |
+| tests | the fixtures G3, G6 and G8 |
+
+**The switch commit.**
 
 | Changed | By |
 |---|---|
@@ -528,23 +515,25 @@ decided and recorded there (2.8), and are not part of this list.
 | `lean/VE/WireContract/Tables/SoftNorms.lean` and its line in `VE/Route/frozen-sources.sha256` | generated (2.6) |
 | `ve/softnorms_contract.py` | gains `public_rejection` (2.3); its module comment no longer says it is imported by tools and tests only |
 | `ve/soft_route.py` | the handler of 2.4 |
-| `conformance/wire_contract_gate.py`, `conformance/wire_contract_delta.py`, and the stored reports under `conformance/wire-contract/` (gate, delta, golden, catalogue), with the new `soft-norms@0-switch.json` | 2.7, 9 |
-| tests | the new fixtures of section 8; in `tests/test_softnorms_contract.py`, the import scan (2.4) and the assertion that `status` is `shadow` |
+| `conformance/wire_contract_gate.py` | tier P (8.2), which calls `public_rejection` and so cannot come before it, and the rows of section 9 that the measurement commit did not add; three of them are enforced only at `public` |
+| the stored reports under `conformance/wire-contract/` (gate, delta, golden, catalogue), with the new `soft-norms@0-switch.json` and, for the two sources of 8.5, `soft-norms@0-test-inputs.json` | regenerated at revision 4 (2.6); 2.7, 8.5, 9 |
+| tests | the new fixtures of section 8, other than those of the measurement commit; `tests/contract_input_recorder.py`, which gains the two wrappers of 8.5; in `tests/test_softnorms_contract.py`, the import scan (2.4) and the assertion that `status` is `shadow` |
 | `ve/assurance-manifest.json` and the generated part of `docs/spec/assurance-manifest.md` | the `reason` of `wire.diagnose` says "shadow diagnostic pilot"; it becomes "diagnostic only; no verdict or identity depends on it". Nothing else of the manifest changes: the call site starts no Lean process, so the operation gains no call site |
 | `docs/spec/soft-norms.md` | the paragraph of 3.4 |
 | this file | a response section, as the base spec's sections 14 to 18 |
-| only with 5.2: `lean/VE/WireContract/Revision.lean`, `VE/Audit.lean`, `lean/axioms.txt`, their inventory lines, `tools/check_lean_imports.py` | 5.4 |
 
-Not changed, and checked by the diff-scope test of C1: `ve/softnorms.py`, `ve/errors.py`,
+Not changed by either commit, and checked by the diff-scope test of C1: `ve/softnorms.py`, `ve/errors.py`,
 `ve/wire_contract/engine.py`, `limits.json`, `names.json`, `contract.schema.json`, the contract's examples, every
-Lean module other than those named above, `Main.lean`, every Rust file, `conformance/identity.json`, the frozen
-baseline.
+Lean module other than the generated table, `VE/Audit.lean`, `lean/axioms.txt`, `tools/check_lean_imports.py`,
+`Main.lean`, every Rust file, `conformance/identity.json`, the frozen baseline.
 
-The commit of S4-pre is a different commit, before this one, with its own scope (2.8).
+The commit of S4-pre is a different commit, before both, with its own scope (2.8).
 
 ### 7.2 The gates
 
-The four conservativity gates of base plan 5.2, as amended by the debate, for this commit:
+The four conservativity gates of base plan 5.2, as amended by the debate, are stated here for the switch
+commit. The measurement commit meets them with nothing to show: its diff is its own table of 7.1 (C1), it
+changes no verdict (C2) and no public diagnostic (C3), and its inventory diff is empty (C4).
 
 - **C1.** The diff is within 7.1. `VEError.to_dict()` is not edited; the member `diagnostic`, which it has had
   since S1a, is set for the first time.
@@ -552,8 +541,7 @@ The four conservativity gates of base plan 5.2, as amended by the debate, for th
   fault on every rejected one. Python's deferred count is 0; a deferred outcome would be counted, not compared.
 - **C3.** Public diagnostics change only as the signed delta lists (2.7); the gate fails otherwise.
 - **C4.** `lake build`, `lean/audit.py`, `frozen.py` and the manifest test pass. The inventory diff is the
-  generated rehash of 2.6, plus, only with 5.2, the added line of `Revision.lean` and the rehash of
-  `VE/Audit.lean` for its added lines.
+  generated rehash of 2.6 and nothing else, so the commit and its revert do not touch `VE/Audit.lean`.
 
 The corpus-completeness test `tests/test_wire_gate_corpus.py` is kept, with its three tests as they are (8.5).
 
@@ -577,7 +565,7 @@ nothing else of a document is read before the source is validated. "The call" is
 | S3 | the call on B with `language` `"x"` | `code` `SOFT_UNSUPPORTED_PROFILE`; record: `1.2`, phase `envelope`, class `UnsupportedProfile`, path `/environment/language`, text `UnsupportedProfile: Unsupported language`, args `{}`; the error's type is the legacy error's |
 | S4 | the call on B with rule 3 over `b1` | `code` `SOFT_OVER_HARD`; record: `6.8`, phase `semantic`, class `InvalidInput`, path `""`, text `SoftOverHard: rule d3 over b1`, args `{"detail": "rule d3 over b1"}`. The error comes from the third validation statement |
 | S5 | for each of S1 to S4: the legacy error `e` from `load_soft_document` on the same source | the raised error has `e`'s type and `e`'s `code`; `str` of it, its `message` and its record's `text` are equal |
-| S6 | the call on B (accepted), in a fresh interpreter, with the Lean route available | admission returns as today; afterwards neither `ve.softnorms_contract` nor `ve.wire_contract` is in `sys.modules` |
+| S6 | the call on B (accepted), in a subprocess started without the recorder plugin (the plugin imports both diagnostic modules), with the Lean route available | admission returns as today; afterwards neither `ve.softnorms_contract` nor `ve.wire_contract` is in `sys.modules` |
 | S7 | the call with `SoftEnvironment(B's environment)` and rule 3 renamed `b1` | raises the legacy error as today: `diagnostic` is `None`, the message is `DuplicateDeclaration: rule b1` |
 | S8 | the call on B with `_run` replaced by a function that raises `VEError("x")` | raises that error: `diagnostic` is `None`, the message is `x` |
 | S9 | `public_rejection` on B (accepted) with a hand-made `VEError("legacy says no")` whose `code` is set to `SOFT_INVALID_INPUT` | returns the same object; `message` is `legacy says no`; `diagnostic` is the residual record: `check` and `phase` `residual`, `code` `SOFT_INVALID_INPUT`, class `InvalidInput`, path `""`, text `legacy says no`, args `{}` |
@@ -586,23 +574,24 @@ nothing else of a document is read before the source is validated. "The call" is
 | S12 | `public_rejection` on S1's source and legacy error, with the contract of revision 3 (`shadow`) | returns the error unchanged |
 | S13 | `public_rejection` twice on S1's source and error | the second call changes nothing; `diagnostic` is the object the first call set |
 | S14 | `public_rejection` on S1's source and error | the two arguments are equal, after the call, to copies taken before it |
-| S15 | the syntax-tree scan of 2.4 on the tree; and on a tree in which `ve/document.py` imports `ve.softnorms_contract` | passes; fails |
+| S15 | the syntax-tree scan of 2.4 on the tree; and on each of three changed trees: (a) `ve/document.py` gains a relative import of the module (`from .softnorms_contract import soft_source`); (b) `ve/soft_route.py` gains a second call of `public_rejection`; (c) in `ve/soft_route.py` the one call is not the operand of a `raise` (its result is bound to a name, which is then raised) | passes; fails on each of (a), (b) and (c) |
 | S16 | `load_soft_document` on S1's source; `SoftEnvironment` on S1's environment | each raises an error whose `diagnostic` is `None` and whose message is the legacy text |
 
 ### 8.2 The delta and the gate
 
-Tier **P** of the gate runs, for every corpus case that Python's legacy validator rejects with an error `e`:
-`public_rejection(environment, norms, e′)` on a fresh legacy error `e′` of the same source; and, where every
-norm of the case is an object with a member `norm` (so that D(N) carries the source unchanged), the call.
+Tier **P** of the gate runs only when the contract's `status` is `public` (section 9). It runs, for every corpus
+case that Python's legacy validator rejects with an error `e`: `public_rejection(environment, norms, e′)` on a
+fresh legacy error `e′` of the same source; and, where every norm of the case is an object with a member `norm`
+(so that D(N) carries the source unchanged), the call.
 
 | Case | Input | Expected |
 |---|---|---|
 | G1 | tier P, every case, the function | the returned error's `diagnostic` equals the reported record of 2.7, computed apart; its `message` is that record's `text`; its type and `code` are `e`'s |
-| G2 | tier P, every case with a document, the call | raises; `to_dict()` is `{"code": e.code, "message": text, "diagnostic": record}` with the record of G1 |
-| G3 | the gate before the switch, at revision 3, with the measurement of 2.7 added | the sum of text changes over checks that are not inherited is the gate's `text_delta_count`; `public_diagnostic_changes` lists each check of section 6 that has a case, and any check beyond section 6 is reported, not dropped |
-| G4 | the signing file without the entry of 4.1c | the gate fails with the first line of 4.4 |
-| G5 | the signing file with an entry `1.1` | the gate fails with the second line of 4.4 |
-| G6 | the gate before S4-pre | fails with `legacy code differences` naming the three inputs of 2.8, and with `public delta: 3 code differences` |
+| G2 | tier P, every case with a document, the call | raises; `to_dict()` equals the legacy error `e`'s `to_dict()` with `message` replaced by the `text` of G1's record and `diagnostic` added with that record. A `path` or `span` of `e` stays a member, unchanged (4.2) |
+| G3 | the gate at the measurement commit: revision 3, `shadow`, after S4-pre | the sum of text changes over checks that are not inherited is the gate's `text_delta_count`; `public_diagnostic_changes` lists each check of section 6 that has a case, and any check beyond section 6 is reported, not dropped. The gate exits 0: the three rows that section 9 enforces only at `public` do not fail it |
+| G4 | at `public`, the signing file without the entry of 4.1c | the gate fails with the first line of 4.4 |
+| G5 | at `public`, the signing file with an entry `1.1` | the gate fails with the second line of 4.4 |
+| G6 | the gate's measurement at the measurement commit, with Python's legacy code and text on the three inputs of 2.8 replaced, in the test only, by the values of the table of 2.8 (the values before S4-pre) | fails with `legacy code differences` naming the three inputs of 2.8, and with `public delta: 3 code differences` |
 | G7 | the gate after S4-pre and the switch | exits 0: every row of section 9 holds |
 | G8 | the delta report after a contract text is edited, without regeneration | `conformance/wire_contract_delta.py --check` fails |
 
@@ -612,7 +601,8 @@ norm of the case is an object with a member `norm` (so that D(N) carries the sou
   every frozen hash are unchanged by the switch commit, except the files of 7.1. Every stored expectation of a
   Python error's text that the commit changes is listed in it.
 - **Z2.** `VEError("x").to_dict()` is `{"code": "InvalidInput", "message": "x"}`, as today.
-- **Z3.** Every row of `ve_soft_norms_route` on the corpus is byte-identical to the snapshot before the commit.
+- **Z3.** Every row of `ve_soft_norms_route`, on every corpus case that Lean reads, is byte-identical to the
+  snapshot before the commit.
 - **Z4.** On every corpus case, Python's legacy validator gives the verdict, code and text of the snapshot
   before the commit. (The commit of S4-pre has its own snapshot rule, 2.8.)
 - **Z5.** On every corpus case, the environment and the norms are equal, after `load_soft_document` returned or
@@ -624,9 +614,7 @@ norm of the case is an object with a member `norm` (so that D(N) carries the sou
 | Case | Input | Expected |
 |---|---|---|
 | L1 | `ve_diagnose soft-norms@0` on S1's source, as a `soft-elaborate` case | `{"id": …, "status": "ok", "outcome": "fault", "diagnostic": r}` with `r` the record of 4.1's first object |
-| L2 | `ve_diagnose soft-norms@0` on the whole corpus, before and after the commit | the rows are equal once `"revision": 3` is read as `4` |
-| L3 | only with 5.2: `lake build`, `lean/audit.py` | pass; the three names are in `lean/axioms.txt` |
-| L4 | only with 5.2: a module `VE.SoftNorms.Run` importing `VE.WireContract.Revision` | `tools/check_lean_imports.py` fails |
+| L2 | `ve_diagnose soft-norms@0` on every corpus case that Lean reads, before and after the commit | the rows are equal once `"revision": 3` is read as `4` |
 | T1 | `tools/wire_contract.py --check` on the committed tree | exits 0 and prints nothing |
 | T2 | the contract with `status` `public` and `revision` 3 | `WC10` |
 | T3 | `lean/VE/WireContract/Tables/SoftNorms.lean` at the commit, against its parent | the diff is the header comment and the numeral of `revision`, and nothing else |
@@ -635,16 +623,44 @@ norm of the case is an object with a member `norm` (so that D(N) carries the sou
 ### 8.5 The corpus-completeness test
 
 `tests/test_wire_gate_corpus.py` keeps its three tests. The new tests of 8.1 are in files that its recorder's
-globs match (`tests/test_*contract*`, `tests/test_soft*`), and the recorder also records a source handed to
-`public_rejection` or to `admit_soft_document`. So every source that S1 to S16 submit is either built by a
-source of the corpus or stored in `soft-norms@0-test-inputs.json`, and the gate replays it; a source the gate
-does not replay fails the test, as today.
+globs match (`tests/test_*contract*`, `tests/test_soft*`).
+
+The recorder as it is does not see the two new paths. It records a call only when the caller is a file of
+`tests/` or the soft conformance module (`contract_input_recorder.py:25–27`). After the switch the legacy
+validation is called from `ve/soft_route.py` and the engine from `ve/softnorms_contract.py`, so a source that a
+test submits only through the call, or only through `public_rejection`, reaches no wrapper that records it. The
+switch commit therefore edits `tests/contract_input_recorder.py` (7.1). It gains two wrappers; like the others,
+each records only a call made from a file of `tests/` or from the soft conformance module, and passes every
+call on unchanged:
+
+- `ve.soft_route.admit_soft_document`: when `environment` is not a `SoftEnvironment` and `soft_document` is
+  `None`, it records `(environment, active)`, with `active` selected as the call site selects it (2.4). A
+  document from which `active` cannot be selected records nothing.
+- `ve.softnorms_contract.public_rejection`: it records `(environment, norms)`.
+
+Each wrapper is shown to work by one source that the tests submit through that path and through no other: no
+test file hands it to a legacy validator, to an engine or to a Lean binary.
+
+| Case | Input | Expected |
+|---|---|---|
+| S17 | the call on B with parties `["p", "R!"]` | raises as S1: `to_dict()` is the first object of 4.1 with `R!` for `Q!` in `message`, `text` and `args`. The source is in `soft-norms@0-test-inputs.json` |
+| S18 | `public_rejection` on B with parties `["p", "T!"]` and a hand-made `VEError("x")` | returns the same object; `diagnostic` is S1's record with `T!` for `Q!` in `text` and `args`; the message is `InvalidInput: invalid soft name T!`; `code` is `InvalidInput`, the hand-made error's own. The source is in `soft-norms@0-test-inputs.json` |
+
+A source is stored in `soft-norms@0-test-inputs.json` only if a test records it today and no other source of
+the corpus builds it: that is the last assertion of
+`test_gate_corpus_holds_every_contract_and_soft_test_input`, as it is. So with either wrapper missing, that test
+fails on the stored source of its path.
+
+So every source that S1 to S18 submit under the recorder is either built by a source of the corpus or stored in
+`soft-norms@0-test-inputs.json`, and the gate replays it; a source the gate does not replay fails the test, as
+today. S6 runs outside the recorder; its source is B, which the corpus holds.
 
 ## 9. The switch gate
 
-The DRI reviews one gate report at revision 4, the delta report and the signing file. The switch commit is made
-only when every row holds, and the gate exits non-zero on any unmet row, judging each from the data and not
-from a stated summary (base spec section 17).
+The DRI reviews one gate report at revision 4, the delta report and the signing file. Astra and Fable read the
+measured delta and the signing file before the switch commit (section 13). The switch commit is made only when
+every row holds, and the gate exits non-zero on any unmet row that is enforced, judging each from the data and
+not from a stated summary (base spec section 17).
 
 | Row | Definition | Required |
 |---|---|---|
@@ -657,6 +673,15 @@ from a stated summary (base spec section 17).
 | the source is not modified | Z5 | 0 cases |
 | the legacy validators | Z3 and Z4 | byte-identical |
 | the corpus | `tests/test_wire_gate_corpus.py` | passes |
+
+When each row is enforced:
+
+- The rows S4-pre and rule K are enforced from the measurement commit on, whatever the `status`.
+- The rows "the signed delta", "the boundary" and "errors without a record" are enforced only when the
+  contract's `status` is `public`. In shadow they cannot hold: `public_rejection` returns every error as it
+  received it (2.3, step 2), and the signatures are given on the list that the measurement commit stores. In
+  shadow the gate still measures and stores `public_diagnostic_changes`.
+- Every other row is enforced whatever the `status`.
 
 A row that fails after the switch commit is handled by a revert of the commit, or by a revision that sets
 `status` to `shadow` (2.2).
@@ -681,8 +706,9 @@ A row that fails after the switch commit is handled by a revert of the commit, o
    visible only where the gate or a test runs the same input.
 8. **Cost.** A rejection at the call site costs one engine run, in which `soft_semantic` runs the legacy
    validator again. An accepted source costs nothing.
-9. **The Lean statements are about the Lean engine and any table.** They do not say that the two revisions have
-   the same phases (T3 does), and they say nothing about Python.
+9. **Two paths.** The error's `path`, where the legacy validation set one, is relative to the environment; the
+   record's `path` is relative to the root. They may differ (`/vocabulary/predicates/x` against `/environment`,
+   4.2), and the switch changes neither.
 10. **No surface prints the sentences of 3.1.** They are fixed, not shown; W8's fidelity gate may change them.
 
 ## 11. Statement review checklist (Astra + Fable, before any build step)
@@ -699,19 +725,18 @@ A row that fails after the switch commit is handled by a revert of the commit, o
    Can the two classes be aligned without a verdict change?
 6. **The delta (2.7, 6).** Is a signature per check fine enough? Derive the expected list of section 6
    independently; attack 4.2a and the 3.2 rows.
-7. **The Lean statements (5.2).** Are they the right objects, true as stated, and worth their audit lines? Does
-   edit c's exception extend to them (5.4)?
-8. **Wordings (3).** Does each sentence have one reading? Is any rejected wording of 3.2 still in this file or
+7. **Wordings (3).** Does each sentence have one reading? Is any rejected wording of 3.2 still in this file or
    in the plan?
-9. **Conservativity (7, 8.3).** Can anything in the switch commit change a verdict, an identity, a code, or a
+8. **Conservativity (7, 8.3).** Can anything in the switch commit change a verdict, an identity, a code, or a
    Lean byte other than the generated table's revision?
-10. **The corpus (8.5).** Does the recorder see sources submitted through the two new paths?
+9. **The corpus (8.5).** Does the recorder see sources submitted through the two new paths?
 
-## 12. Choices this draft resolves, and open points
+## 12. Choices this specification resolves, and open points
 
 The base plan and base spec fix that there is a switch commit, that it sets `VEError.diagnostic` and the
-message, and that it adds one production call site. Everything below is this draft's, for the statement review
-to accept or change.
+message, and that it adds one production call site. Everything below is this specification's own choice, put to
+the statement review. The review withdrew R10, corrected the reason of R12 and reworded the texts of R11
+(section 13); it asked for no change to the others.
 
 | # | Choice | Relative to the base documents |
 |---|---|---|
@@ -724,21 +749,60 @@ to accept or change.
 | R7 | The import of the diagnostic module is inside the handler, and the import rule for Python is restated for one importer | base spec 7.3 forbade every import in S0 to S3 |
 | R8 | A public change is defined on every check, inherited ones too, over the whole corpus; signatures are per check, in a file written by hand | base plan C3 says the delta report is complete; the stored report is a sample and counts checks that are not inherited |
 | R9 | Rule K with S4-pre: code differences are fixed in Python first and cannot be signed | base plan 5.1, step 5, leaves the decision to the DRI; `s3-pre.md` left the three inputs for it |
-| R10 | Three optional Lean statements in a new module | the base plan promises none for a switch |
 | R11 | The sentence for an error without a record (3.1), and the texts of 3.3 and 3.4 | base spec 3.3 has three sentences |
-| R12 | `error.path` is not set from the record's `path` | `VEError` has a `path` member that the soft errors do not use |
+| R12 | `error.path` is not set from the record's `path` | the two are measured from different places. W1's errors, which reach the call site through check 2.3, carry a `path` relative to the environment (`environment.py:364–532`); the record's `path` is relative to the root (4.2). The soft table's own errors set no `path` |
 
-Open, for the review or the build to settle:
+R10 (three optional Lean statements in a new module) is withdrawn; the numbers of R11 and R12 are kept.
 
-1. **The dispatcher.** `ve.admission` runs Python's admission through `execute("admission", …)`
-   (`admission.py:475`). Whether that path compares or rewrites the text of a rejection was not read; checklist
-   item 4.
+Open, for the build to settle, with the two points that the statement review closed:
+
+1. **The dispatcher. Closed by the statement review.** For a submitted soft environment `ve.admission` returns
+   through `_admit_document_python` (`admission.py:446–449`) before it reaches `execute("admission", …)`
+   (`admission.py:475`). So no dispatcher compares or rewrites the text of this rejection.
 2. **S4-pre's second class.** `norm-defaults@0` in Python's inherited profiles may be needed by the
    norm-defaults route (`norm_defaults.py:683` builds a soft document over a placeholder environment). Not run.
 3. **4.2a.** Whether the Python hook's texts equal the validator's on every input is not known (section 6).
 4. **A closed error schema.** No consumer with a closed shape for Python's error object is known from reading;
    the suite decides (4.2).
-5. **The recorder.** How `tests/contract_input_recorder.py` captures inputs was not read; 8.5 states what it
-   must capture after the switch.
+5. **The recorder. Closed by the statement review.** `tests/contract_input_recorder.py` records only a call
+   whose caller is a test file or the soft conformance module (lines 25–27), so as it is it does not see the two
+   new paths. 8.5 states the two wrappers it gains, and 7.1 puts the file in the switch commit's scope.
 6. **The stored delta report** states 6,007 cases and a 2,000-case sample, against the gate's 8,576. It is
    regenerated over the whole corpus by 2.7; until then its counts are not the corpus's.
+
+## 13. Statement review response (draft 2)
+
+Source: `manage-agents/debates/wire-s4-spec/{fable,astra}.md`. Verdict: **FIX**, converged after round 2. The
+edits are the nine of Fable's round 2 list, which Astra's round 2 accepts, and the one that Astra's round 2
+adds (row 10). Nothing was run for this draft.
+
+| # | Edit of the review | Change in this draft |
+|---|---|---|
+| 1 | Recorder: `tests/contract_input_recorder.py` enters the switch commit's scope, with wrappers for `admit_soft_document` and `public_rejection`; S6 runs in a subprocess without the plugin; one test source submitted only through each new path | 7.1 (tests row, test-inputs file); 8.1 (S6); 8.5 (the two wrappers, S17, S18) |
+| 2 | Import scan: it resolves relative imports and `from <package> import <module>`; S15 has three failing trees | 2.4; 8.1 (S15) |
+| 3 | `path`: a legacy error keeps its `path`, so G2 compares with the legacy error's `to_dict()`; the two paths may differ; R12's reason was false | 4.2; 8.2 (G2); 10, item 9; 12 (R12) |
+| 4 | Sequence: S4.1a is a commit of its own and enforces S4-pre and rule K; the rows "the signed delta", "the boundary" and "errors without a record" are enforced only at `public` | 7.1; 7.2; 9; 4.4; D6; 8.2 (tier P, G3, G4, G5) |
+| 5 | Lean statements: 5.2 to 5.4, the last row of 7.1, C4's clause, L3, L4, R10, checklist item 7 and limit 9 are struck; D7 and (B) of 2.9 read "In Lean only the generated table's revision changes (T3, L2)"; 5.1 stays | status paragraph; D7; 2.4 (last sentence of the import rule); 2.9 (B); 5; 7.1; 7.2 (C4); 8.4; 10; 11; 12 |
+| 6 | "copies" becomes "deep copies" | 2.3, step 3 |
+| 7 | Outcome wording: "the error carries the contract's record. When a check of the table fails, the record names the first one that fails and the message is that check's text; otherwise the message is the validator's."; the sentence for no record ends "No contract record is available for this error." | 0; 2.5 (the switched row); 3.1; 3.2, row 3; 3.3; 3.4 |
+| 8 | Lean scope: "on every corpus case that Lean reads" | 2.1 (the term); 2.9 (the tested text claim, which had the same fault); 3.2, row 2; 4.3; 8.3 (Z3); 8.4 (L2) |
+| 9 | Open points 1 and 5 are closed | 12 |
+| 10 | G6 cannot run "before S4-pre", because the measurement code comes after it; it becomes a fixture that runs once that code exists | 8.2 (G6) |
+
+The plan's part of each edit is in its section 10.
+
+Where an edit left the wording to this draft, the wording chosen is listed here, for the confirmation:
+
+- the term "a corpus case that Lean reads" of 2.1, read from `gate_cases`;
+- the two sources of S17 and S18, and the use of the corpus test's last assertion as their proof;
+- the form of G6: the values of the table of 2.8 put in place of Python's legacy results, in the test only;
+- the split of the gate's code in 7.1: the measurement and the rows S4-pre and rule K in the measurement
+  commit; tier P and the other new rows in the switch commit, because tier P calls `public_rejection`;
+- limit 9 of section 10: the struck limit's number now holds the limit on the two paths (edit 3).
+
+Order, as the review fixed it:
+
+- S4-pre may start at once: no edit touches it.
+- Both reviewers confirm this revised text against the table above, in one pass on the diff, before the
+  measurement commit.
+- The switch commit waits for the measured, signed delta, which both reviewers read (section 9).
