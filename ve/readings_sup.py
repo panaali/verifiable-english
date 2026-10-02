@@ -7,6 +7,11 @@ The order here is the source order of ``Document.sets`` and candidate order.
 
 from __future__ import annotations
 
+from copy import deepcopy
+
+from .errors import VEError
+from .readings_s1 import Content, decode_content
+
 MAX_CHOICES = 64
 READING_SORT = "ve__reading"
 HERE = "ve__here"
@@ -65,6 +70,144 @@ def choice_vocabulary(sets) -> dict:
             "predicates": {bit_name(position, bit): [READING_SORT]
                            for position, reading_set in enumerate(sets, 1)
                            for bit in range(bits_of(len(reading_set.candidates)))}}
+
+
+def sup_ready(sets, couplings=(), narrowings=()) -> bool:
+    """The shape conjuncts of S2 1.8, including the active-version checks.
+
+    The decoder has further checks, notably a shared coupling label value.
+    This predicate deliberately mirrors only ``supReady`` in the spec.
+    """
+    ids = [reading_set.id for reading_set in sets]
+    if len(ids) != len(set(ids)) or any(
+            not reading_set.candidates or any(a.content is None for a in reading_set.candidates)
+            for reading_set in sets):
+        return False
+    by_version = {(reading_set.id, reading_set.version): reading_set for reading_set in sets}
+    if len({item["id"] for item in couplings}) != len(couplings):
+        return False
+    for coupling in couplings:
+        refs = [(ref["set"], ref["version"]) for ref in coupling["sets"]]
+        if (len(refs) < 2 or len({set_id for set_id, _ in refs}) != len(refs)
+                or any(ref not in by_version for ref in refs)):
+            return False
+        if any(coupling["axis"] not in candidate.labels
+               for ref in refs for candidate in by_version[ref].candidates):
+            return False
+    if len({item["id"] for item in narrowings}) != len(narrowings):
+        return False
+    for narrowing in narrowings:
+        reading_set = by_version.get((narrowing["set"], narrowing["version"]))
+        if reading_set is not None:
+            candidate_ids = {a.id for a in reading_set.candidates}
+            if not narrowing["keeps"] or not set(narrowing["keeps"]) <= candidate_ids:
+                return False
+    return True
+
+
+def position(sets, set_id: str, index: int) -> int:
+    """The 1-based candidate position across all open sets."""
+    before = 0
+    for reading_set in sets:
+        if reading_set.id == set_id:
+            if 0 <= index < len(reading_set.candidates):
+                return before + index + 1
+            break
+        before += len(reading_set.candidates)
+    raise ValueError("candidate outside active reading sets")
+
+
+def qualify(number: int, name: str) -> str:
+    return f"rd-{number}-{name}"
+
+
+def copies(doc, name: str) -> list[str]:
+    """All qualified copies of an interface rule, or the fixed rule name."""
+    for reading_set in doc.sets:
+        if ("rule", name) in doc.interface_of(reading_set):
+            return [qualify(position(doc.sets, reading_set.id, index), name)
+                    for index in range(len(reading_set.candidates))]
+    return [name]
+
+
+def uniform_precedence(doc) -> bool:
+    """S2 1.8's protection against an unchosen copy yielding to a fixed child."""
+    for _, fixed in doc.fixed_units():
+        if fixed.kind != "norm":
+            continue
+        for name in fixed.body.get("over", []):
+            for reading_set in doc.sets:
+                if ("rule", name) not in doc.interface_of(reading_set):
+                    continue
+                parents = [frozenset(a.content.body.get("over", [])) for a in reading_set.candidates
+                           if a.content is not None and a.content.kind == "norm"
+                           and a.content.body.get("name") == name]
+                if len(parents) != len(reading_set.candidates) or len(set(parents)) != 1:
+                    return False
+    return True
+
+
+def choice_contents(doc, choice):
+    """Every fixed unit and chosen candidate at its source position, own names."""
+    if list(choice) != [reading_set.id for reading_set in doc.sets] or any(
+            type(choice[R.id]) is not int or not 0 <= choice[R.id] < len(R.candidates)
+            for R in doc.sets):
+        raise VEError("InvalidInput: incomplete reading choice")
+    return doc.build(lambda _: True, lambda R: R.candidates[choice[R.id]])
+
+
+def superposed_contents(doc):
+    """S2a's gated assertions and norms in S1's source order.
+
+    This is a raw content transformation. A caller must extend the frame with
+    ``choice_vocabulary`` and run the lower chain's well-formedness check before
+    treating the result as superposable.
+    """
+    if any(a.content is None for R in doc.sets for a in R.candidates):
+        raise VEError("InvalidInput: pending reading cannot be superposed")
+    out = []
+    for item in doc.items:
+        if item[0] == "bar":
+            raise VEError("UnsupportedProfile: rights superposition is S2b")
+        if item[0] == "fixed":
+            content = item[2]
+            if content.kind != "norm":
+                out.append(content)
+                continue
+            raw = deepcopy(content.raw)
+            raw["norm"]["over"] = [copy for name in content.body.get("over", [])
+                                    for copy in copies(doc, name)]
+            if "cites" in raw:
+                cites = {}
+                for key, value in raw["cites"].items():
+                    if key.startswith("over:"):
+                        for name in copies(doc, key[5:]):
+                            cites["over:" + name] = value
+                    else:
+                        cites[key] = value
+                raw["cites"] = cites
+            out.append(decode_content(raw))
+            continue
+        reading_set = item[2]
+        number = next(i for i, R in enumerate(doc.sets, 1) if R.id == reading_set.id)
+        for index, candidate in enumerate(reading_set.candidates):
+            content = candidate.content
+            atom = pattern(number, len(reading_set.candidates), index)
+            if content.kind == "assertion":
+                out.append(decode_content(["implies", atom, deepcopy(content.body)]))
+            elif content.kind == "norm":
+                raw = deepcopy(content.raw)
+                rule = raw["norm"]
+                rule["name"] = qualify(position(doc.sets, reading_set.id, index), rule["name"])
+                rule["guard"] = ["and", rule.get("guard", ["top"]), atom]
+                exception = rule.get("exception")
+                if isinstance(exception, dict) and isinstance(exception.get("sufficient"), list):
+                    exception["sufficient"] = [["and", formula, atom]
+                                               for formula in exception["sufficient"]]
+                out.append(decode_content(raw))
+            else:
+                raise VEError("UnsupportedProfile: rights superposition is S2b")
+    return out
 
 
 def in_force(reading_set, narrowing: dict) -> bool:

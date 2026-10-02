@@ -2,8 +2,10 @@
 
 from dataclasses import dataclass
 
-from ve.readings_sup import (bits_of, choice_atom, choice_core, choice_vocabulary,
-                             choices, pattern, unsatisfiable_ids)
+from ve.readings_sup import (bits_of, choice_atom, choice_contents, choice_core, choice_vocabulary,
+                             choices, copies, pattern, sup_ready, superposed_contents,
+                             uniform_precedence, unsatisfiable_ids)
+from ve.readings_s1 import Candidate as S1Candidate, Content, Document, ReadingSet
 from ve.readings_s2_english import (OVER_BUDGET, QUIET, dead_reading, every_result,
                                     named_result, none_result, not_superposed,
                                     result_sentence)
@@ -69,6 +71,55 @@ def test_unsatisfiable_and_65_choice_boundary():
     found, over = choices(many)
     assert len(found) == 65 and over
     assert found[0] == {f"rs{i}": 0 for i in range(7)}
+
+
+def _norm(name, *, over=(), mode="strict", sufficient=()):
+    body = {"name": name, "predicate": "required", "sign": True,
+            "guard": ["top"], "over": list(over), "mode": mode}
+    if mode == "default":
+        body["exception"] = {"decided_by": "unstated", "sufficient": list(sufficient),
+                             "necessary": [], "factors": []}
+    return Content("norm", body, {"norm": body})
+
+
+def _doc(candidates, fixed=()):
+    doc = Document.__new__(Document)
+    reading_set = ReadingSet({"id": "rs1", "unit": "u1", "version": 1},
+                             [S1Candidate(f"a{i}", c, {}) for i, c in enumerate(candidates)])
+    doc.items = [("fixed", f"f{i}", c) for i, c in enumerate(fixed)] + [("set", "u1", reading_set)]
+    return doc
+
+
+def test_superposition_gates_and_qualifies_without_mutating_sources():
+    first = _norm("rule-x")
+    second = _norm("rule-x", mode="default", sufficient=(["top"],))
+    fixed = _norm("stop-x", over=("rule-x",))
+    doc = _doc([first, second], [fixed])
+    assert sup_ready(doc.sets)
+    assert uniform_precedence(doc)
+    assert copies(doc, "rule-x") == ["rd-1-rule-x", "rd-2-rule-x"]
+    result = superposed_contents(doc)
+    assert result[0].body["over"] == ["rd-1-rule-x", "rd-2-rule-x"]
+    assert result[1].body["name"] == "rd-1-rule-x"
+    assert result[2].body["name"] == "rd-2-rule-x"
+    assert result[2].body["guard"] == ["and", ["top"], ["unary", "ve__bit__1__0", ["const", "ve__here"]]]
+    assert result[2].body["exception"]["sufficient"] == [
+        ["and", ["top"], ["unary", "ve__bit__1__0", ["const", "ve__here"]]]]
+    assert fixed.body["over"] == ["rule-x"]
+    assert second.body["name"] == "rule-x"
+    assert [c.body["name"] for c in choice_contents(doc, {"rs1": 1})] == ["stop-x", "rule-x"]
+
+
+def test_uniform_precedence_catches_m8_leak_and_shape_rejects_m17():
+    fixed = _norm("stop-x", over=("waive-x",))
+    doc = _doc([_norm("waive-x"), _norm("waive-x", over=("base-x",))], [fixed])
+    assert not uniform_precedence(doc)
+    doc.sets[0].candidates[1].content = None
+    assert not sup_ready(doc.sets)
+    doc.sets[0].candidates[1].content = _norm("waive-x", over=("base-x",))
+    coupling = {"id": "c1", "axis": "force", "sets": [
+        {"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}]}
+    assert not sup_ready(doc.sets, [coupling])
 
 
 def test_closed_s2_english_instances():
