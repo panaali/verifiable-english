@@ -5,7 +5,7 @@
     "fault": 2000
   },
   "disagreements": [],
-  "revision": 1,
+  "revision": 2,
   "sample": "seed 0, first 2000 generic pair/triple cases",
   "text_deltas": {
     "4.1c": {

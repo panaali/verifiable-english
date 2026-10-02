@@ -32,6 +32,7 @@ class Fault:
     labels: frozenset = frozenset()   # hand-declared semantic footprint, beyond the fields it changes
     key: tuple = ()                   # order key inside a classifier set; () is the member's index
     readers: str = "both"             # "python": only the in-process reader carries it (a `null`)
+    reads: tuple = ()                 # locations its expected outcome depends on beyond those it changes
 
     def source(self):
         raw, rules = multi_fault_base()
@@ -124,19 +125,25 @@ def _multi_expected():
 KEYS = {f"r{i}-condition": (0, 2) for i in (0, 2, 3)} | {f"r{i}-guard": (0,) for i in range(4)}
 
 
+def _replacing(apply, *paths):
+    """Mark a mutation as replacing the values at `paths` whole (its footprint covers everything under them)."""
+    apply.replaces = paths
+    return apply
+
+
 def _set_at(path, value):
     def apply(root):
         target = root
         for step in path[:-1]:
             target = target[step]
         target[path[-1]] = deepcopy(value)
-    return apply
+    return _replacing(apply, tuple(path))
 
 
 def _replace_rules(new_rules):
     def apply(root):
         root["norms"] = deepcopy(new_rules)
-    return apply
+    return _replacing(apply, ("norms",))
 
 
 def _env(change):
@@ -248,11 +255,20 @@ def _derived():
         ("precedence-depth", "6.6", "", _rules(lambda rules: rules.extend(
             norm(f"z{i}", "x_required", True, over=[f"z{i - 1}"] if i else []) for i in range(20)))),
         ("stratification", "6.7", "", _replace_rules(rules_6_7)),
-        ("softened-cycle", "6.10a", "", holistic_6_10a),
+        ("softened-cycle", "6.10a", "", _replacing(holistic_6_10a, ("norms",),
+                                                     ("environment", "vocabulary", "soft", "outranking"))),
     ]
 
 
 DERIVED_KEYS = {"r0-necessary-budget": (1, 1)}
+# Faults whose expected check also depends on what other faults change: 6.4a and 6.4b count and name the
+# decision predicates, which the rules determine.
+READS = {"vocabulary-limit": (("norms",),), "long-decision-names": (("norms",),)}
+# Faults that spend one shared node budget (W1's document budget, 6.5a and 6.10b): two of them together can
+# exceed it although each fits, so they are never combined.
+BUDGET = frozenset({"document-budget"})
+LABELS = {name: BUDGET for name in ("document-nodes", "derived-depth", "derived-nodes", "premise-depth",
+                                    "layer-nodes", "r0-necessary-budget")}
 
 
 def _reproducers():
@@ -271,7 +287,8 @@ def _reproducers():
             def apply(root, environment=environment, rules=rules):
                 root["environment"] = deepcopy(environment)
                 root["norms"] = deepcopy(rules)
-            found.append(Fault(name, check, path, apply, frozenset({"whole-source"}), keys.get(name, ())))
+            found.append(Fault(name, check, path, _replacing(apply, ("environment",), ("norms",)),
+                               frozenset({"whole-source"}), keys.get(name, ())))
     return found
 
 
@@ -292,9 +309,10 @@ def catalogue():
     for name, group, _, _, apply in multi_faults():
         check, path = expected[name]
         faults.append(Fault(name, check, path, lambda root, apply=apply: apply(root["environment"], root["norms"]),
-                            frozenset({group}), KEYS.get(name, ())))
+                            frozenset({group}) | LABELS.get(name, frozenset()), KEYS.get(name, ())))
     for name, check, path, apply in _derived():
-        faults.append(Fault(name, check, path, apply, frozenset({name}), DERIVED_KEYS.get(name, ())))
+        faults.append(Fault(name, check, path, apply, frozenset({name}) | LABELS.get(name, frozenset()),
+                            DERIVED_KEYS.get(name, ()), reads=READS.get(name, ())))
     return faults + _reproducers() + _python_only()
 
 
@@ -450,19 +468,24 @@ def changed_paths(before, after, prefix=()):
 
 
 def footprint(fault):
-    """The fields a fault changes in its base source, with its hand-declared labels."""
+    """A fault's hand-declared labels, the locations it writes (those where its source differs from the
+    base, and those it replaces whole) and the further locations its expected outcome reads."""
     base = multi_fault_base()
     raw, rules = fault.source()
-    return fault.labels, frozenset(changed_paths({"environment": base[0], "norms": base[1]},
-                                                 {"environment": raw, "norms": rules}))
+    writes = changed_paths({"environment": base[0], "norms": base[1]}, {"environment": raw, "norms": rules})
+    writes |= set(getattr(fault.apply, "replaces", ()))
+    return fault.labels, frozenset(writes), frozenset(fault.reads)
 
 
 def overlaps(left, right):
-    """Two footprints overlap when they share a label or one changed location contains the other."""
-    (left_labels, left_paths), (right_labels, right_paths) = left, right
+    """Two faults are not independent when they share a label, or when a location one writes contains, or
+    lies under, a location the other writes or reads."""
+    (left_labels, left_writes, left_reads), (right_labels, right_writes, right_reads) = left, right
     if left_labels & right_labels:
         return True
-    return any(a[:len(b)] == b or b[:len(a)] == a for a in left_paths for b in right_paths)
+    def meet(writes, others):
+        return any(a[:len(b)] == b or b[:len(a)] == a for a in writes for b in others)
+    return meet(left_writes, right_writes | right_reads) or meet(right_writes, left_reads)
 
 
 if __name__ == "__main__":

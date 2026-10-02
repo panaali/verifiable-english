@@ -1,23 +1,41 @@
 {
   "all_check_count": 106,
-  "checks_without_first": [
-    "4.11b",
-    "6.10a",
-    "6.10c"
-  ],
-  "checks_without_masked": [
-    "1.1",
-    "4.11b",
-    "6.10a",
-    "6.10c"
-  ],
+  "checks_without_first": {
+    "lean": [
+      "4.11b",
+      "6.10c"
+    ],
+    "python": [
+      "6.10c"
+    ]
+  },
+  "checks_without_masked": {
+    "lean": [
+      "1.1",
+      "4.11b",
+      "6.10c"
+    ],
+    "python": [
+      "1.1",
+      "6.10c"
+    ]
+  },
   "contract": "soft-norms@0",
   "coverage_met": false,
-  "coverage_notes": {
-    "1.1": "The first table check has no earlier check that can mask it.",
-    "4.11b": "Its distinguishing value is an explicit null; the Lean case reader rejects raw null before diagnosis.",
-    "6.10a": "No reachable first-fault witness for the softened-document cycle classifier member was found.",
-    "6.10c": "No reachable first-fault witness for the softened-document fallback classifier member was found."
+  "coverage_unmet": {
+    "adjacent_phase_pairs": [],
+    "first": [
+      "6.10c"
+    ],
+    "masked": [
+      "1.1",
+      "6.10c"
+    ]
+  },
+  "coverage_unmet_reasons": {
+    "1.1": "The first instance of the table: no earlier check exists, so no input can mask it, and the coverage rule of 8.3 cannot be met for it as stated.",
+    "4.11b": "Reached only by an explicit null, which the wire readers refuse before diagnosis: Lean has no witness; Python has its first-fault and masking witnesses.",
+    "6.10c": "The fallback member of `soft_semantic`: W1's checks of T' other than its resource limits (6.10b) and its stratification (6.10a). T' is well typed by construction, 6.9 bounds its carve-out counts before W1 runs, and its new names are fresh by 2.1a and 6.4a. Seeded searches over 10,000 small documents (2026-10-02) reached 6.10a and never 6.10c."
   },
   "deferred": {
     "lean": 0,
@@ -28,27 +46,86 @@
     "python": 0.0
   },
   "feasibility": {
+    "coarse": 3,
+    "met": true,
     "n1": 43,
     "n2": 8,
     "of": 67,
+    "t3": 13,
     "threshold": 45,
     "total": 51
   },
-  "first_check_count": 103,
+  "first_check_count": {
+    "lean": 104,
+    "python": 105
+  },
+  "legacy_code_differences": [
+    {
+      "case": "L:speech-acts@0:env",
+      "lean": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: Unsupported profile speech-acts@0"
+      ],
+      "python": [
+        "SOFT_INVALID_INPUT",
+        "Incorrect fields (missing=['speech_acts'], unknown=[])"
+      ]
+    },
+    {
+      "case": "L:speech-acts@0:base",
+      "lean": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: Unsupported profile speech-acts@0"
+      ],
+      "python": [
+        "SOFT_INVALID_INPUT",
+        "Incorrect fields (missing=['speech_acts'], unknown=[])"
+      ]
+    },
+    {
+      "case": "L:norm-defaults@0:unspecified",
+      "lean": [
+        "SOFT_INVALID_INPUT",
+        "InvalidInput: invalid regulated role or default for x_required"
+      ],
+      "python": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+      ]
+    }
+  ],
+  "legacy_verdict_differences": [
+    {
+      "case": "L:rights@0:env",
+      "lean": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: Unsupported profile rights@0"
+      ],
+      "python": null
+    },
+    {
+      "case": "L:rights@0:base",
+      "lean": [
+        "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: Unsupported profile rights@0"
+      ],
+      "python": null
+    }
+  ],
   "mismatches": [],
+  "oracle": "fault catalogue: hand-written check and path per fault, table position from the contract",
   "residual": {
     "lean": 0,
     "python": 0
   },
-  "revision": 1,
-  "s3_pre": "closed: no verdict difference",
-  "text_delta_count": 193,
+  "revision": 2,
+  "s3_pre": "open: a reachable legacy verdict difference is not fixed (s3-pre.md)",
+  "text_delta_count": 232,
   "tiers": {
-    "0": 161,
-    "A": 3407,
-    "A_mask": 102,
+    "0": 165,
+    "A": 4287,
     "B": 200,
-    "replay_accepted": 2,
-    "replay_rejected": 17
+    "legacy_differences": 13,
+    "replayed": 1348
   }
 }

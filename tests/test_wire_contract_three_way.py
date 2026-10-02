@@ -140,7 +140,7 @@ def _forms(edit):
 
 
 def _forms_record(check, phase, code, cls, path, text, args=None):
-    return canonical_json({"contract": "forms@0", "revision": 1, "check": check, "phase": phase,
+    return canonical_json({"contract": "forms@0", "revision": 2, "check": check, "phase": phase,
                            "code": code, "class": cls, "path": path, "text": text, "args": args or {}})
 
 
@@ -187,6 +187,58 @@ FORMS = {
 }
 
 
+def _kinds(kinds):
+    return _forms(lambda d: d.update(kinds=kinds))
+
+
+def _kind_fault(check, path, text, args=None):
+    return _forms_record(check, "kinds", "FORMS_SHAPE", "InvalidInput", path, text, args)
+
+
+K = "/doc/kinds/"
+# Phase `kinds`: one target per kind of 2.4. F1 has no `kinds`, so every target is absent and holds.
+FORMS.update({
+    "F14 null form fails": (dict(FORMS_BASE, nothing=1),
+                            _kind_fault("k00", "/nothing", "Kinds: nothing 1", {"value": "1"})),
+    "F15 exact_keys fails": (_kinds({"type": True, "exact_keys": {"b": 1}}),
+                             _kind_fault("k02", K + "exact_keys", "Kinds: exact keys")),
+    "F16 type fails, absent arg": (_kinds({"type": 1}),
+                                   _kind_fault("k01", K + "type", "Kinds: type 1", {"value": "1", "other": ""})),
+    "F17 keys fails": (_kinds({"keys": {"a": 1, "c": 1}}), _kind_fault("k03", K + "keys", "Kinds: keys")),
+    "F18 const fails": (_kinds({"const": "d"}), _kind_fault("k04", K + "const", "Kinds: const d", {"value": "d"})),
+    "F19 enum fails": (_kinds({"enum": 3}), _kind_fault("k05", K + "enum", "Kinds: enum 3", {"value": "3"})),
+    "F20 max_items, index renderer": (
+        _kinds({"max_items": [1, 2]}),
+        _kind_fault("k06", K + "max_items", "Kinds: 2 items over 1", {"count": "2", "limit": "1"})),
+    "F21 max_bytes fails": (_kinds({"max_bytes": "abc"}),
+                            _kind_fault("k07", K + "max_bytes", "Kinds: 3 bytes over 2", {"count": "3", "limit": "2"})),
+    "F22 name fails": (_kinds({"name": "A"}), _kind_fault("k08", K + "name", "Kinds: name A", {"value": "A"})),
+    "F23 sorted_unique, list renderer": (
+        _kinds({"sorted_unique": ["b", "a"]}),
+        _kind_fault("k09", K + "sorted_unique", "Kinds: unsorted a, b", {"value": "a, b"})),
+    "F24 declared_in fails": (_kinds({"declared_in": "z"}),
+                              _kind_fault("k10", K + "declared_in", "Kinds: undeclared z", {"value": "z"})),
+    "F25 requires member fails": (_kinds({"requires_member": {}}),
+                                  _kind_fault("k11", K + "requires_member", "Kinds: requires member")),
+    "F26 requires item fails": (_kinds({"requires_item": []}),
+                                _kind_fault("k12", K + "requires_item", "Kinds: requires item")),
+    "F27 excludes member fails": (_kinds({"excludes_member": {"a": 1}}),
+                                  _kind_fault("k13", K + "excludes_member", "Kinds: excludes member")),
+    "F28 excludes item fails": (_kinds({"excludes_item": ["a"]}),
+                                _kind_fault("k14", K + "excludes_item", "Kinds: excludes item")),
+    "F29 unique_so_far fails": (_kinds({"list": [{"v": 1}, {"v": 1}]}),
+                                _kind_fault("k15", K + "list/1/v", "Kinds: repeated 1 at 1",
+                                            {"value": "1", "index": "1"})),
+    "F30 name on key fails": (_kinds({"map": {"A": 1}}), _kind_fault("k16", K + "map/A", "Kinds: key A",
+                                                                     {"key": "A"})),
+    "F31 every kind holds": (_kinds({
+        "type": True, "exact_keys": {"a": 1}, "keys": {"a": 1}, "const": "c", "enum": 2, "max_items": [1],
+        "max_bytes": "ab", "name": "ab", "sorted_unique": ["a", "b"], "declared_in": "a",
+        "requires_member": {"a": 1}, "requires_item": ["a"], "excludes_member": {}, "excludes_item": [],
+        "list": [{"v": 1}, {"v": 2}, {}], "map": {"ok": 1}, "keyed": 1}), "clean"),
+})
+
+
 def test_forms_corpus_spec_python_lean():
     """Wire review (Astra A, Fable B2, B6): hand-derived records, Python and Lean, on the literal forms, the
     tuple type form, literal braces, U+0001 and a viewed include over a nested include."""
@@ -198,3 +250,88 @@ def test_forms_corpus_spec_python_lean():
                      limits=LIMITS, names=NAMES)
         lean = "clean" if row["outcome"] == "clean" else canonical_json(row["diagnostic"])
         assert (_record(python), lean) == (expected, expected), name
+
+
+def _lean_outcome(unit, root):
+    """`ve_diagnose`'s answer as an engine outcome, for the overlay's `lean` argument (2.8)."""
+    from ve.wire_contract.engine import Fault as EngineFault
+    [row] = _lean(unit, [root], "corpus")
+    return CLEAN if row["outcome"] == "clean" else EngineFault(row["diagnostic"])
+
+
+def test_overlay_e40_e41_lean_answers_for_a_python_deferral():
+    """Spec 8.1, E40 and E41 (wire review, Fable B6): when Python defers and Lean answers, the overlay
+    reports Lean's record, or the residual record when Lean's answer is clean."""
+    from ve.errors import VEError
+    from ve.wire_contract.engine import overlay
+    contract = CONTRACTS["defer@0"]
+    legacy = VEError("legacy says no")
+    e34, e36 = {"v": 1, "w": "x"}, {"v": 1, "w": 2}
+    for root in (e34, e36):
+        assert run(contract, root, registry=_registry(), contracts=CONTRACTS, limits=LIMITS,
+                   names=NAMES) == Deferred("d2")
+    e40 = overlay(contract, legacy, Deferred("d2"), lean=lambda: _lean_outcome("defer@0", e34))
+    assert canonical_json(e40) == DEFER["E34"][1]
+    assert json.loads(DEFER["E34"][1])["check"] == "d3"
+    e41 = overlay(contract, legacy, Deferred("d2"), lean=lambda: _lean_outcome("defer@0", e36))
+    assert e41 == {"contract": "defer@0", "revision": 1, "check": "residual", "phase": "residual",
+                   "code": "DEFER_INVALID_INPUT", "class": "InvalidInput", "path": "", "text": "legacy says no",
+                   "args": {}}
+
+
+def test_engine_corpus_covers_every_form():
+    """Spec 8.1's coverage rule (wire review, Fable B6): over the corpus, every T1 kind fails and holds and
+    holds on an absent target (`max_count` has no target), every literal form holds and does not, every
+    type form matches and does not, and every renderer renders a value and an absent one. Measured by
+    instrumenting the Python engine; the same cases run in Lean in the tests above."""
+    from collections import defaultdict
+    import ve.wire_contract.engine as engine
+    from tests.test_wire_contract_corpus import CASES
+    seen = defaultdict(set)
+    fails, guard, type_of, render = engine._fails, engine._guard, engine._type, engine._render
+
+    def traced_fails(entry, root, items, earlier, names, limits):
+        result = fails(entry, root, items, earlier, names, limits)
+        kind = entry["kind"] + (":key" if entry.get("on") == "key" else "") + (
+            (":member" if "member" in entry else ":item") if entry["kind"] in ("requires", "excludes") else "")
+        seen[kind].add("absent" if result[3] is engine.ABSENT and kind != "max_count"
+                       else "fail" if result[0] else "hold")
+        return result
+
+    def traced_guard(root, items, literals):
+        for literal in literals:
+            seen["literal " + next(iter(literal))].add(guard(root, items, [literal]))
+        return guard(root, items, literals)
+
+    def traced_type(value, form):
+        result = type_of(value, form)
+        if type(form) is not list:
+            seen["type " + (form if type(form) is str else next(iter(form)))].add(result)
+        return result
+
+    def traced_render(value, renderer):
+        seen["renderer " + renderer].add(value is not engine.ABSENT)
+        return render(value, renderer)
+
+    engine._fails, engine._guard, engine._type, engine._render = (traced_fails, traced_guard, traced_type,
+                                                                  traced_render)
+    try:
+        for unit, roots in (("demo@0", [case[1] for case in CASES]), ("defer@0", [r for r, _ in DEFER.values()]),
+                            ("forms@0", [r for r, _ in FORMS.values()])):
+            for root in roots:
+                run(CONTRACTS[unit], root, registry=_registry(), contracts=CONTRACTS, limits=LIMITS, names=NAMES)
+    finally:
+        engine._fails, engine._guard, engine._type, engine._render = fails, guard, type_of, render
+    kinds = ["type", "exact_keys", "keys", "const", "enum", "max_items", "max_bytes", "name", "name:key",
+             "sorted_unique", "unique_so_far", "declared_in", "requires:member", "requires:item",
+             "excludes:member", "excludes:item"]
+    for kind in kinds:
+        assert seen[kind] == {"fail", "hold", "absent"}, kind
+    assert seen["max_count"] == {"fail", "hold"}
+    for literal in ("present", "absent", "equals", "differs", "is", "is_not"):
+        assert seen["literal " + literal] == {True, False}, literal
+    for form in ("null", "boolean", "integer", "string", "array", "object", "array_of", "tuple"):
+        assert seen["type " + form] == {True, False}, form
+    for renderer in ("raw", "json", "index", "count", "list"):
+        assert True in seen["renderer " + renderer], renderer
+    assert any(False in values for key, values in seen.items() if key.startswith("renderer "))
