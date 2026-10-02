@@ -34,7 +34,7 @@ def reports():
     })
     return {"engine-golden.json": engine,
             "soft-norms@0-golden.json": {"source": "docs/spec/wire-contract.md 8.3",
-                                         "contract": "soft-norms@0", "revision": 1,
+                                         "contract": "soft-norms@0", "revision": 2,
                                          "fixtures": dict(sorted(pilot.items()))}}
 
 

@@ -10,9 +10,9 @@ import pytest
 
 from conformance.soft_norms import generated
 from tests.test_soft_norms_lean import env, norm, ranks, should
-from ve.errors import VEError
+from ve.errors import UnsupportedProfile, VEError
 from ve.softnorms import load_soft_document
-from ve.softnorms_contract import REGISTRY, soft_source
+from ve.softnorms_contract import INHERITED_PROFILES, REGISTRY, ROUTE_PROFILES, soft_source
 from ve.wire import loads_json
 from ve.wire_contract.engine import CLEAN, Fault, load, run
 from tools.wire_contract import process
@@ -99,16 +99,74 @@ def test_valid_examples_are_clean_and_accepted():
         assert diagnose(source["environment"], source["norms"]) is CLEAN
 
 
-def test_norm_defaults_inherited_hook_keeps_legacy_text_in_shadow():
+# Profiles that Python's registry knows and the Lean soft route does not (wire review, Fable A1).
+PYTHON_ONLY_PROFILES = {"alternatives@0": 0, "norm-defaults@0": 0, "reports@0": 2, "rights@0": 2,
+                        "risk@0": 2, "speech-acts@0": 3}
+
+
+@pytest.mark.parametrize("profile", sorted(PYTHON_ONLY_PROFILES))
+def test_profiles_outside_the_lean_route_fail_check_3_2(profile):
+    """Check 3.2 reads the Lean route's registry, as `profile_registered` does in Lean, whatever Python's
+    legacy validator does with the profile (s3-pre.md lists what it does)."""
+    source = env()
+    source["profiles"] = sorted(source["profiles"] + [profile])
+    outcome = diagnose(source, [])
+    index = PYTHON_ONLY_PROFILES[profile]
+    assert outcome.record == {
+        "contract": "soft-norms@0", "revision": 2, "check": "3.2", "phase": "profiles",
+        "code": "SOFT_UNSUPPORTED_PROFILE", "class": "UnsupportedProfile",
+        "path": f"/environment/profiles/{index}", "text": f"UnsupportedProfile: Unsupported profile {profile}",
+        "args": {"value": profile}}
+
+
+def test_norm_defaults_with_unspecified_default_fails_check_2_3():
+    """W1's declarations are decoded under Lean's inherited profiles, without `norm-defaults@0`, so the
+    `unspecified` default fails 2.3 in both engines (Python's legacy validator reports it later)."""
     source = env(profiles=("norms@0", "norm-defaults@0", "soft-norms@0"))
+    source["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
     with pytest.raises(VEError) as legacy:
         load_soft_document(deepcopy(source), [])
-    outcome = diagnose(source, [])
-    assert isinstance(outcome, Fault)
-    assert outcome.record["check"] == "6.10c"
-    assert outcome.record["code"] == "SOFT_INVALID_INPUT"
-    assert outcome.record["text"] == str(legacy.value)
     assert legacy.value.code == "SOFT_UNSUPPORTED_PROFILE"
+    outcome = diagnose(source, [])
+    assert (outcome.record["check"], outcome.record["code"], outcome.record["path"]) == (
+        "2.3", "SOFT_INVALID_INPUT", "/environment")
+
+
+def test_hook_lists_are_the_lean_route_lists():
+    root = Path(__file__).resolve().parents[1] / "lean/VE"
+    phases = (root / "SoftNorms/Phases.lean").read_text()
+    inherited = re.search(r"def inheritedProfiles : List String := \[(.*?)\]", phases)[1]
+    assert INHERITED_PROFILES == tuple(re.findall(r'"([^"]+)"', inherited))
+    gate = (root / "Route/Gate.lean").read_text()
+    registry = gate[gate.index("def registry : List ProfileRecord"):gate.index("def known")]
+    base = re.search(r'def base : String := "([^"]+)"', gate)[1]
+    names = set(re.findall(r'⟨"([^"]+)"', registry)) | ({base} if "⟨base," in registry else set())
+    assert ROUTE_PROFILES == names | {"soft-norms@0"}
+
+
+def test_decision_names_are_reported_prefix_by_prefix():
+    """6.4a names the first long `excepted` name before any long `off` name, as both legacy validators do,
+    even when the rule with the long `off` name comes first (wire review, Fable B1)."""
+    from conformance.soft_norms import multi_fault_base
+    environment, rules = multi_fault_base()
+    rules[1]["norm"]["name"] = "b" * 52
+    rules[3]["norm"]["name"] = "d" * 52
+    with pytest.raises(VEError) as legacy:
+        load_soft_document(deepcopy(environment), deepcopy(rules))
+    outcome = diagnose(environment, rules)
+    name = "soft__excepted__" + "d" * 52
+    assert str(legacy.value) == f"ResourceLimit: decision predicate {name}"
+    assert (outcome.record["check"], outcome.record["path"], outcome.record["text"]) == (
+        "6.4a", "", str(legacy.value))
+
+
+def test_adapter_mirrors_lean_on_missing_members():
+    """2.1: a member the case lacks is `null`; a case without a known kind has no input (Lean's adapter)."""
+    assert soft_source({"kind": "soft-elaborate", "environment": env()})["norms"] is None
+    for kind in (None, "evaluation"):
+        case = {"environment": env(), "norms": []} | ({} if kind is None else {"kind": kind})
+        with pytest.raises(UnsupportedProfile, match=f"case kind {kind or 'null'} has no wire contract input"):
+            soft_source(case)
 
 
 def test_generated_wordings_and_lock_are_current():

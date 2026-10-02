@@ -74,7 +74,7 @@ def with_faults(*names):
 
 
 def record(check, phase, code, cls, path, text, args=None):
-    return {"contract": "soft-norms@0", "revision": 1, "check": check, "phase": phase, "code": code,
+    return {"contract": "soft-norms@0", "revision": 2, "check": check, "phase": phase, "code": code,
             "class": cls, "path": path, "text": text, "args": args or {}}
 
 
@@ -184,8 +184,9 @@ def test_adapter_rejects_other_case_kinds(built):
 
 def test_s3_pre_norm_defaults_profile(built):
     """S3-pre (conformance/wire-contract/s3-pre.md): with `norm-defaults@0` among the profiles, which Python
-    passes to W1's decoding and Lean does not, both implementations reject every source, so no verdict differs.
-    The codes are pinned as found: they differ only where Python's decoding admits an `unspecified` default."""
+    passes to W1's decoding and Lean does not, both legacy validators reject every source. Both engines
+    report the Lean route's check, because the Python hooks use the Lean lists; Python's legacy code differs
+    only where its decoding admits an `unspecified` default."""
     from ve.errors import VEError
     from ve.softnorms import load_soft_document
 
@@ -211,3 +212,67 @@ def test_s3_pre_norm_defaults_profile(built):
         assert legacy["status"] == "error" and legacy["code"] == lean_code
         assert engine["diagnostic"]["check"] == check
         agree(engine, legacy)
+        python = python_record(raw, rules)
+        if check in INHERITED:
+            python.pop("text"), python.pop("args"), engine["diagnostic"].pop("text"), engine["diagnostic"].pop("args")
+        assert canonical_json(python) == canonical_json(engine["diagnostic"])
+
+
+# What Python's legacy validator does with each profile that its registry has and the Lean route's does not
+# (s3-pre.md). `rights@0` is a verdict difference: Python accepts the source and the Lean route rejects it.
+PYTHON_ONLY_LEGACY = {
+    "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "alternatives@0 with soft-norms@0"),
+    "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",
+                        "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"),
+    "reports@0": ("SOFT_UNSUPPORTED_PROFILE", "reports@0 with norms@0 layers"),
+    "rights@0": None,
+    "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "risk@0 requires alternatives@0"),
+    "speech-acts@0": ("SOFT_INVALID_INPUT", "Incorrect fields (missing=['speech_acts'], unknown=[])"),
+}
+
+
+def python_record(raw, rules):
+    from ve.softnorms_contract import REGISTRY
+    from ve.wire_contract.engine import Fault, load, run
+    outcome = run(load("soft-norms@0"), {"environment": raw, "norms": rules}, registry=REGISTRY)
+    return outcome.record if isinstance(outcome, Fault) else "clean"
+
+
+def test_profiles_outside_the_lean_route_three_way(built):
+    """Wire review (Fable A1): both engines report check 3.2 on every profile outside the Lean route's
+    registry; the legacy outcomes are pinned, including Python's acceptance of `rights@0`."""
+    from ve.errors import VEError
+    from ve.softnorms import load_soft_document
+    names = sorted(PYTHON_ONLY_LEGACY)
+    sources = []
+    for name in names:
+        for raw, rules in ((env(), []), multi_fault_base()):
+            raw["profiles"] = sorted(raw["profiles"] + [name])
+            sources.append((name, raw, rules))
+    rows = both(built, [(raw, rules) for _, raw, rules in sources])
+    for (name, raw, rules), (engine, legacy) in zip(sources, rows):
+        assert legacy["status"] == "error" and legacy["code"] == "SOFT_UNSUPPORTED_PROFILE", name
+        assert engine["diagnostic"]["check"] == "3.2", name
+        agree(engine, legacy)
+        assert canonical_json(python_record(raw, rules)) == canonical_json(engine["diagnostic"]), name
+        try:
+            load_soft_document(json.loads(json.dumps(raw)), json.loads(json.dumps(rules)))
+            python_legacy = None
+        except VEError as error:
+            python_legacy = (error.code, str(error))
+        assert python_legacy == PYTHON_ONLY_LEGACY[name], name
+
+
+def test_decision_names_prefix_order_three_way(built):
+    """Wire review (Fable B1): a strict rule's long `off` name before a default rule's long `excepted` name;
+    both legacy validators and both engines name the `excepted` one."""
+    raw, rules = multi_fault_base()
+    rules[1]["norm"]["name"] = "b" * 52
+    rules[3]["norm"]["name"] = "d" * 52
+    [(engine, legacy)] = both(built, [(raw, rules)])
+    name = "soft__excepted__" + "d" * 52
+    expected = record("6.4a", "semantic", "SOFT_RESOURCE_LIMIT", "ResourceLimit", "",
+                      f"ResourceLimit: decision predicate {name}", {"name": name})
+    assert legacy["error"] == expected["text"]
+    assert canonical_json(engine["diagnostic"]) == canonical_json(expected)
+    assert canonical_json(python_record(raw, rules)) == canonical_json(expected)

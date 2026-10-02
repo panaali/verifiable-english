@@ -9,7 +9,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/outranking",
       "phase": "declarations",
-      "revision": 1,
+      "revision": 2,
       "text": "MissingExceptionDecider: outranking"
     },
     "P11": {
@@ -22,7 +22,7 @@
       "contract": "soft-norms@0",
       "path": "/norms/2/norm/exception",
       "phase": "rule-fields",
-      "revision": 1,
+      "revision": 2,
       "text": "MissingExceptionDecider: rule c2"
     },
     "P12": {
@@ -35,7 +35,7 @@
       "contract": "soft-norms@0",
       "path": "/norms/1/norm/exception",
       "phase": "rule-fields",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: rule b1 is strict and declares an exception"
     },
     "P13": {
@@ -48,7 +48,7 @@
       "contract": "soft-norms@0",
       "path": "/norms/3/norm/name",
       "phase": "references",
-      "revision": 1,
+      "revision": 2,
       "text": "DuplicateDeclaration: rule b1"
     },
     "P14": {
@@ -61,7 +61,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/outranks",
       "phase": "semantic",
-      "revision": 1,
+      "revision": 2,
       "text": "DependencyCycle: a, b"
     },
     "P15": {
@@ -74,7 +74,7 @@
       "contract": "soft-norms@0",
       "path": "",
       "phase": "semantic",
-      "revision": 1,
+      "revision": 2,
       "text": "SoftOverHard: rule d3 over b1"
     },
     "P16": {
@@ -87,7 +87,7 @@
       "contract": "soft-norms@0",
       "path": "",
       "phase": "semantic",
-      "revision": 1,
+      "revision": 2,
       "text": "DependencyCycle: a0, c2"
     },
     "P17": {
@@ -110,7 +110,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/parties/1",
       "phase": "declarations",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: invalid soft name Q!"
     },
     "P3": {
@@ -123,7 +123,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/parties/2",
       "phase": "declarations",
-      "revision": 1,
+      "revision": 2,
       "text": "DuplicateDeclaration: party p"
     },
     "P4": {
@@ -134,7 +134,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/language",
       "phase": "envelope",
-      "revision": 1,
+      "revision": 2,
       "text": "UnsupportedProfile: Unsupported language"
     },
     "P5": {
@@ -145,7 +145,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/parties",
       "phase": "declarations",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: parties must be an array"
     },
     "P6": {
@@ -158,7 +158,7 @@
       "contract": "soft-norms@0",
       "path": "/norms/0/norm/hard",
       "phase": "rule-fields",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: hard of rule a0 must be Boolean"
     },
     "P7": {
@@ -171,7 +171,7 @@
       "contract": "soft-norms@0",
       "path": "/norms/0/norm/exception/factors/0",
       "phase": "rule-fields",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: invalid factors of rule a"
     },
     "P8": {
@@ -182,7 +182,7 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/outranks/1/1",
       "phase": "declarations",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: invalid outranks pair"
     },
     "P9": {
@@ -193,10 +193,10 @@
       "contract": "soft-norms@0",
       "path": "/environment/vocabulary/soft/ties/1",
       "phase": "declarations",
-      "revision": 1,
+      "revision": 2,
       "text": "InvalidInput: invalid ties pair"
     }
   },
-  "revision": 1,
+  "revision": 2,
   "source": "docs/spec/wire-contract.md 8.3"
 }

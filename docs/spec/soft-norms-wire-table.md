@@ -20,7 +20,7 @@
 | `2.2a` | `SOFT_INVALID_INPUT` | the item's `instruction_of`, when present, is a string. |
 | `2.2b` | `SOFT_INVALID_INPUT` | When the item's `instruction_of` is present: the item, when it is an object, has no key `regulated`. |
 | `2.2c` | `SOFT_INVALID_INPUT` | When the item's `instruction_of` is present: the item, when it is an object, has no key `defined`. |
-| `2.3` | `SOFT_INVALID_INPUT` | The inherited W1 declarations accept the transformed environment. |
+| `2.3` | `SOFT_INVALID_INPUT` | W1's environment decoder accepts `/environment` with `instruction_of` removed from every predicate, `soft` removed from the vocabulary, and the profiles reduced to `norms@0`, `relational-fol@0` and those of `data@0`, `definitions@0`, `documents@1` and `time@0` that it lists. |
 | `2.4` | `SOFT_INVALID_BLOCK` | `/environment/vocabulary/soft`, when present, is an object with the keys `outranking` and no other key except `parties`, `ranks`, `outranks`, `ties`, `exception_decider`. |
 | `2.5` | `SOFT_INVALID_ARRAY` | `/environment/vocabulary/soft/parties`, when present, is an array. |
 | `2.6` | `SOFT_RESOURCE_LIMIT` | `/environment/vocabulary/soft/parties`, when it is an array or an object, has at most 8 (MAX_SOFT_PARTIES) members. |
@@ -54,7 +54,7 @@
 | **Phase 3, profiles** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
 | `3.1` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array of strings, is in strictly increasing code point order. |
 | `profile-items` | group | For each member of `/environment/profiles/*`, in order, all of the following for one member before the next member: |
-| `3.2` | `SOFT_UNSUPPORTED_PROFILE` | The item is a registered profile. |
+| `3.2` | `SOFT_UNSUPPORTED_PROFILE` | The item is one of `closure@0`, `data@0`, `definitions@0`, `documents@1`, `nary@0`, `norms@0`, `order@0`, `relational-fol@0`, `soft-norms@0` and `time@0`. |
 | `3.3a` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array, contains "relational-fol@0". |
 | `3.3b` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array, contains "soft-norms@0". |
 | `3.3c` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array, contains "norms@0". |
@@ -68,7 +68,7 @@
 | `4.1a` | `SOFT_INVALID_INPUT` | the item, when present, is an object with exactly the keys `norm`. |
 | `4.1b` | `SOFT_INVALID_INPUT` | the item's `norm`, when present, is an object. |
 | `4.1c` | `SOFT_INVALID_INPUT` | the item's `norm`, when present, is an object with the keys `name`, `predicate`, `sign`, `guard`, `unless`, `over` and no other key except `mode`, `rank`, `alterable`, `exception`, `hard`. |
-| `4.2a` | `SOFT_INVALID_INPUT` | The inherited W1 rule fields are valid. |
+| `4.2a` | `SOFT_INVALID_INPUT` | W1's rule decoder accepts the item's `norm` restricted to `name`, `predicate`, `sign`, `guard`, `unless` and `over`, its `name` is a rule name, and it has at most 8 carve-outs. |
 | `over-names` | group | For each member of `@/norm/over/*`, in order, all of the following for one member before the next member: |
 | `4.2b` | `SOFT_INVALID_INPUT` | the item, when present, differs from the same value of every earlier item of this group. |
 | `4.3` | `SOFT_INVALID_RULE_FIELDS` | the item's `norm/mode`, when present, is one of "strict", "default". |
@@ -87,10 +87,10 @@
 | `4.12` | `SOFT_INVALID_DECIDER` | When the item's `norm/mode` is "default" and the item's `norm/exception/decided_by` is a string: the item's `norm/exception/decided_by`, when present, is a string in the class `decider`. |
 | `4.13a` | `SOFT_EXCEPTION_ARRAY` | When the item's `norm/mode` is "default": the item's `norm/exception/sufficient`, when present, is an array. |
 | `sufficient` | group | When the item's `norm/mode` is "default": For each member of `@/norm/exception/sufficient/*`, in order, all of the following for one member before the next member: |
-| `4.13b` | `SOFT_INVALID_INPUT` | The inherited FOL formula decoder accepts the item. |
+| `4.13b` | `SOFT_INVALID_INPUT` | W1's formula decoder accepts the item as one formula within its own node budget. |
 | `4.13c` | `SOFT_EXCEPTION_ARRAY` | When the item's `norm/mode` is "default": the item's `norm/exception/necessary`, when present, is an array. |
 | `necessary` | group | When the item's `norm/mode` is "default": For each member of `@/norm/exception/necessary/*`, in order, all of the following for one member before the next member: |
-| `4.13d` | `SOFT_INVALID_INPUT` | The inherited FOL formula decoder accepts the item. |
+| `4.13d` | `SOFT_INVALID_INPUT` | W1's formula decoder accepts the item as one formula within its own node budget. |
 | `4.14a` | `SOFT_INVALID_FACTORS` | When the item's `norm/mode` is "default": the item's `norm/exception/factors`, when present, is an array of strings. |
 | `factors` | group | When the item's `norm/mode` is "default": For each member of `@/norm/exception/factors/*`, in order, all of the following for one member before the next member: |
 | `4.14b` | `SOFT_INVALID_FACTORS` | the item, when it is a string, is at most 200 (MAX_FACTOR_BYTES) bytes long in UTF-8. |
@@ -106,23 +106,23 @@
 | `rule-names` | group | For each member of `/norms/*/norm/name`, in order, all of the following for one member before the next member: |
 | `5.3` | `SOFT_DUPLICATE_DECLARATION` | the item, when present, differs from the same value of every earlier item of this group. |
 | `rule-refs` | group | For each member of `/norms/*`, in order, all of the following for one member before the next member: |
-| `5.4` | `SOFT_INVALID_INPUT` | The rule names a regulated predicate. |
+| `5.4` | `SOFT_INVALID_INPUT` | The predicate named by the item's `norm/predicate` is declared with `regulated`. |
 | `5.5` | `SOFT_UNKNOWN_RANK` | When the item's `norm/rank` is a string: the item's `norm/rank`, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
 | `alterable-refs` | group | For each member of `@/norm/alterable/*`, in order, all of the following for one member before the next member: |
 | `5.6` | `SOFT_UNKNOWN_PARTY` | the item, when present, equals one of the values at `/environment/vocabulary/soft/parties/*`. |
-| `5.7` | `SOFT_INVALID_INPUT` | The inherited W1 rule guard and carve-outs are typed. |
-| `5.8a` | `SOFT_INVALID_INPUT` | The inherited W1 exception conditions are typed. |
-| `5.8b` | `SOFT_INVALID_EXCEPTION_CONDITION` | No exception condition mentions a regulated, defined, or reserved soft predicate. |
+| `5.7` | `SOFT_INVALID_INPUT` | The item's guard and carve-outs are well typed over the sorts of its predicate, in that order, and together have at most 10,000 nodes. |
+| `5.8a` | `SOFT_INVALID_INPUT` | Each condition of the item's exception, `sufficient` before `necessary`, is well typed over the sorts of its predicate, and the guard, the carve-outs and the conditions up to it together have at most 10,000 nodes. |
+| `5.8b` | `SOFT_INVALID_EXCEPTION_CONDITION` | No condition of the item's exception names a predicate that is declared with `regulated`, is defined, or starts with `soft__`. |
 | `over-refs` | group | For each member of `@/norm/over/*`, in order, all of the following for one member before the next member: |
 | `5.9a` | `SOFT_INVALID_INPUT` | the item, when present, equals one of the values at `/norms/*/norm/name`. |
-| `5.9b` | `SOFT_INVALID_INPUT` | The referenced parent rule regulates the same predicate. |
+| `5.9b` | `SOFT_INVALID_INPUT` | The rule named by the item has the same `predicate` as the enclosing item's rule. |
 | **Phase 6, semantic** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
 | `6.1` | `SOFT_DEPENDENCY_CYCLE` | The outranking graph is acyclic. |
 | `tie-comparisons` | group | For each member of `/environment/vocabulary/soft/ties/*`, in order, all of the following for one member before the next member: |
-| `6.2` | `SOFT_TIE_AGAINST_ORDER` | The tied ranks are not ordered by outranking. |
-| `6.3` | `SOFT_DUPLICATE_DECLARATION` | No unordered tie is repeated. |
-| `6.4a` | `SOFT_RESOURCE_LIMIT` | Generated decision names fit the identifier limit. |
-| `6.4b` | `SOFT_RESOURCE_LIMIT` | The extended vocabulary stays within resource limits. |
+| `6.2` | `SOFT_TIE_AGAINST_ORDER` | Neither rank of the item outranks the other, directly or through other ranks. |
+| `6.3` | `SOFT_DUPLICATE_DECLARATION` | No two ties of `/environment/vocabulary/soft/ties` hold the same two ranks, in either order. |
+| `6.4a` | `SOFT_RESOURCE_LIMIT` | Every generated decision predicate name is at most 64 bytes long in UTF-8. |
+| `6.4b` | `SOFT_RESOURCE_LIMIT` | The declared predicates and the generated decision predicates are together at most 256. |
 | `6.5a` | `SOFT_RESOURCE_LIMIT` | The base document stays within the W1 node budget. |
 | `6.5b` | `SOFT_DEPENDENCY_CYCLE` | Author precedence is acyclic. |
 | `6.6` | `SOFT_RESOURCE_LIMIT` | Precedence depth is at most sixteen. |
@@ -136,4 +136,4 @@
 | `6.12` | `SOFT_RESOURCE_LIMIT` | Each generated norm layer stays within resource limits. |
 | `6.13` | `SOFT_RESOURCE_LIMIT` | Each generated conflict target stays within resource limits. |
 | `6.14` | `SOFT_RESOURCE_LIMIT` | The generated background stays within one budget. |
-| `6.15` | `SOFT_RESOURCE_LIMIT` | The layers and top stay within one budget. |
+| `6.15` | `SOFT_RESOURCE_LIMIT` | The generated norm layers and the one-node conclusion of the smallest query together fit one checker's budget of 10,000 nodes. |

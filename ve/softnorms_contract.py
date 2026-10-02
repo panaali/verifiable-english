@@ -5,18 +5,34 @@ diagnostic tools and tests; no acceptance or identity path imports it.
 """
 
 from dataclasses import replace
+import json
 
 from ve import profiles
 from ve.environment import Environment
-from ve.errors import UnsupportedProfile, VEError
+from ve.errors import ResourceLimit, UnsupportedProfile, VEError
 from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
 from ve import softnorms as soft
 from ve.wire_contract.engine import Registry
 
 
+# The Lean engine is the specification (wire-contract.md D3) and every hook must agree with it on the
+# inputs where it is reached (2.5, rule 2). Two lists differ between `ve/softnorms.py` and the Lean
+# route, so the hooks below use Lean's, and a test compares them with the Lean sources:
+# the profiles that phase 2 passes on to W1's decoding (`Phases.inheritedProfiles`; Python's
+# `_INHERITED_PROFILES` adds `norm-defaults@0`), and the registry of check 3.2 (`VE.Route.Gate.registry`
+# with `soft-norms@0`; Python's `profiles.BY_NAME` adds six statement layers). Where the two legacy
+# validators therefore differ, conformance/wire-contract/s3-pre.md records the inputs.
+INHERITED_PROFILES = ("data@0", "definitions@0", "documents@1", "time@0")
+ROUTE_PROFILES = frozenset({"closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norms@0",
+                            "order@0", profiles.BASE, "time@0", soft.SOFT_PROFILE})
+DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__")
+
+
 def soft_source(case):
-    """Build the root for a standalone, elaborate, or admission route case."""
-    if case.get("kind") == "admission":
+    """Build the root of a `soft-elaborate` or `admission` route case, as the Lean adapter does: a
+    member the case lacks is `null` (2.1), and any other kind has no wire contract input."""
+    kind = case.get("kind")
+    if kind == "admission":
         document = case.get("document", {})
         units = document.get("units", []) if type(document) is dict else []
         active = [unit["content"] for unit in units
@@ -24,9 +40,10 @@ def soft_source(case):
                   and type(unit.get("content")) is dict
                   and "norm" in unit["content"]]
         return {"environment": case.get("environment"), "norms": active}
-    if case.get("kind") not in (None, "soft-elaborate"):
-        raise UnsupportedProfile(f"case kind {case['kind']} has no wire contract input")
-    return {"environment": case.get("environment"), "norms": case.get("norms", [])}
+    if kind != "soft-elaborate":
+        shown = kind if type(kind) is str else json.dumps(kind, separators=(",", ":"))
+        raise UnsupportedProfile(f"UnsupportedProfile: case kind {shown} has no wire contract input")
+    return {"environment": case.get("environment"), "norms": case.get("norms")}
 
 
 def _environment(root):
@@ -52,7 +69,7 @@ def _failure(call):
 def w1_declarations(root, items):
     data = _environment(root)
     vocabulary = _vocabulary(root)
-    base = sorted({p for p in data["profiles"] if p in soft._INHERITED_PROFILES}
+    base = sorted({p for p in data["profiles"] if p in INHERITED_PROFILES}
                   | {"norms@0", profiles.BASE})
     stripped = {**data, "profiles": base, "vocabulary": {
         "sorts": vocabulary["sorts"], "constants": vocabulary["constants"],
@@ -64,7 +81,7 @@ def w1_declarations(root, items):
 
 def profile_registered(root, items):
     value = soft_source_item(root, items)
-    return value not in profiles.BY_NAME
+    return value not in ROUTE_PROFILES
 
 
 def soft_source_item(root, items):
@@ -185,10 +202,13 @@ def _prepared(root):
 
 
 def decision_names_fit(root, items):
-    document = _prepared(root)
-    for name in document._decisions():
-        if name.startswith(("soft__excepted__", "soft__off__", "soft__outweighs__")) and len(name.encode("utf-8")) > MAX_IDENTIFIER_BYTES:
-            return {"name": name}
+    """6.4a: the first decision name over the limit, prefix by prefix and in rule order within a prefix, as
+    `SoftNormDocument` and Lean's `Wire.primeVocabulary` (`decisionNames`) report it."""
+    decisions = _prepared(root)._decisions()
+    for prefix in DECISION_PREFIXES:
+        for name in decisions:
+            if name.startswith(prefix) and len(name.encode("utf-8")) > MAX_IDENTIFIER_BYTES:
+                return {"name": name}
     return None
 
 
@@ -254,7 +274,9 @@ def soft_semantic(root, items):
             return "6.14", {}
         if message.startswith("DependencyCycle: "):
             return "6.10a", {"detail": message.removeprefix("DependencyCycle: ")}
-        if message == "ResourceLimit: derived carve-out" or message.startswith("ResourceLimit: "):
+        # Rule 12 tests the exception class where Lean tests the leading `ResourceLimit: ` (section 6);
+        # it also covers Python's extra rule, the text `ResourceLimit: derived carve-out` alone.
+        if isinstance(exc, ResourceLimit):
             return "6.10b", {"message": message}
         return "6.10c", {"message": message}
     return None
