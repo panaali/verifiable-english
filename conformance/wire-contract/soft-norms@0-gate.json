@@ -1,0 +1,54 @@
+{
+  "all_check_count": 106,
+  "checks_without_first": [
+    "4.11b",
+    "6.10a",
+    "6.10c"
+  ],
+  "checks_without_masked": [
+    "1.1",
+    "4.11b",
+    "6.10a",
+    "6.10c"
+  ],
+  "contract": "soft-norms@0",
+  "coverage_met": false,
+  "coverage_notes": {
+    "1.1": "The first table check has no earlier check that can mask it.",
+    "4.11b": "Its distinguishing value is an explicit null; the Lean case reader rejects raw null before diagnosis.",
+    "6.10a": "No reachable first-fault witness for the softened-document cycle classifier member was found.",
+    "6.10c": "No reachable first-fault witness for the softened-document fallback classifier member was found."
+  },
+  "deferred": {
+    "lean": 0,
+    "python": 0
+  },
+  "deferred_share": {
+    "lean": 0.0,
+    "python": 0.0
+  },
+  "feasibility": {
+    "n1": 43,
+    "n2": 8,
+    "of": 67,
+    "threshold": 45,
+    "total": 51
+  },
+  "first_check_count": 103,
+  "mismatches": [],
+  "residual": {
+    "lean": 0,
+    "python": 0
+  },
+  "revision": 1,
+  "s3_pre": "closed: no verdict difference",
+  "text_delta_count": 193,
+  "tiers": {
+    "0": 161,
+    "A": 3407,
+    "A_mask": 102,
+    "B": 200,
+    "replay_accepted": 2,
+    "replay_rejected": 17
+  }
+}
