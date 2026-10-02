@@ -1,0 +1,383 @@
+{
+  "contract": "soft-norms@0",
+  "faults": {
+    "1.1": [
+      "env-extra"
+    ],
+    "1.2": [
+      "language"
+    ],
+    "1.3": [
+      "profiles-shape"
+    ],
+    "1.4": [
+      "revision"
+    ],
+    "1.5a": [
+      "vocabulary-field"
+    ],
+    "1.5b": [
+      "sorts-shape"
+    ],
+    "1.5c": [
+      "predicates-shape"
+    ],
+    "1.5d": [
+      "constants-shape"
+    ],
+    "1.6": [
+      "norms-shape"
+    ],
+    "1.7": [
+      "norms-limit"
+    ],
+    "2.10": [
+      "strict-decider"
+    ],
+    "2.11": [
+      "outranking-decider-type"
+    ],
+    "2.12": [
+      "holistic-decider"
+    ],
+    "2.13": [
+      "outranking-decider-name"
+    ],
+    "2.14": [
+      "exception-decider"
+    ],
+    "2.15": [
+      "outranks-shape"
+    ],
+    "2.16a": [
+      "outranks-arity"
+    ],
+    "2.16b": [
+      "outranks-pair"
+    ],
+    "2.16c": [
+      "outranks-repeat"
+    ],
+    "2.17a": [
+      "ties-shape"
+    ],
+    "2.17b": [
+      "ties-arity"
+    ],
+    "2.17c": [
+      "ties-same"
+    ],
+    "2.17d": [
+      "ties-pair"
+    ],
+    "2.1a": [
+      "reserved-name",
+      "reserved-name-z"
+    ],
+    "2.1b": [
+      "dunder-regulated"
+    ],
+    "2.2a": [
+      "instruction-type"
+    ],
+    "2.2b": [
+      "instruction-regulated"
+    ],
+    "2.2c": [
+      "instruction-defined"
+    ],
+    "2.3": [
+      "act-role",
+      "malformed-predicate",
+      "missing-dual"
+    ],
+    "2.4": [
+      "block-field"
+    ],
+    "2.5": [
+      "parties-shape"
+    ],
+    "2.6": [
+      "parties-limit"
+    ],
+    "2.7a": [
+      "party-name"
+    ],
+    "2.7b": [
+      "party-repeat"
+    ],
+    "2.8a": [
+      "ranks-shape"
+    ],
+    "2.8b": [
+      "ranks-limit"
+    ],
+    "2.8c": [
+      "rank-name"
+    ],
+    "2.8d": [
+      "rank-repeat"
+    ],
+    "2.9a": [
+      "outranking-field"
+    ],
+    "2.9b": [
+      "outranking-mode"
+    ],
+    "3.1": [
+      "profiles-order",
+      "profiles-repeat"
+    ],
+    "3.2": [
+      "profile-unknown"
+    ],
+    "3.3a": [
+      "profile-base"
+    ],
+    "3.3b": [
+      "profile-soft"
+    ],
+    "3.3c": [
+      "profile-norms"
+    ],
+    "3.4a": [
+      "profile-checker"
+    ],
+    "3.4b": [
+      "profile-nary"
+    ],
+    "3.4c": [
+      "profile-order"
+    ],
+    "3.5a": [
+      "definition"
+    ],
+    "3.5b": [
+      "data-flag"
+    ],
+    "4.10": [
+      "r0-decider-type",
+      "r3-decider-type"
+    ],
+    "4.11a": [
+      "inherited-decider"
+    ],
+    "4.11b": [
+      "null-decider"
+    ],
+    "4.12": [
+      "r0-decider",
+      "r3-decider"
+    ],
+    "4.13a": [
+      "r0-sufficient",
+      "r2-sufficient",
+      "r3-sufficient"
+    ],
+    "4.13b": [
+      "r0-condition-syntax",
+      "r2-condition-syntax",
+      "r3-condition-syntax"
+    ],
+    "4.13c": [
+      "r0-necessary-shape"
+    ],
+    "4.13d": [
+      "r0-necessary-syntax"
+    ],
+    "4.14a": [
+      "r0-factors-shape"
+    ],
+    "4.14b": [
+      "r0-factors",
+      "r2-factors",
+      "r3-factors"
+    ],
+    "4.1a": [
+      "r0-unit-field"
+    ],
+    "4.1b": [
+      "r0-norm-shape"
+    ],
+    "4.1c": [
+      "r0-field",
+      "r1-field",
+      "r2-field",
+      "r3-field"
+    ],
+    "4.2a": [
+      "r0-guard-nodes",
+      "r0-sign",
+      "r1-guard-nodes",
+      "r1-sign",
+      "r2-guard-nodes",
+      "r2-sign",
+      "r3-guard-nodes",
+      "r3-sign"
+    ],
+    "4.2b": [
+      "r0-over-repeat",
+      "r1-over-repeat",
+      "r2-over-repeat",
+      "r3-over-repeat"
+    ],
+    "4.3": [
+      "r0-mode",
+      "r1-mode",
+      "r2-mode",
+      "r3-mode"
+    ],
+    "4.4": [
+      "r0-rank-type",
+      "r1-rank-type",
+      "r2-rank-type",
+      "r3-rank-type"
+    ],
+    "4.5a": [
+      "r1-alterable-shape"
+    ],
+    "4.5b": [
+      "r0-alterable",
+      "r1-alterable",
+      "r2-alterable",
+      "r3-alterable"
+    ],
+    "4.6": [
+      "r0-hard-type",
+      "r1-hard-type",
+      "r2-hard-type",
+      "r3-hard-type"
+    ],
+    "4.7a": [
+      "r0-hard",
+      "r2-hard",
+      "r3-hard"
+    ],
+    "4.7b": [
+      "r1-hard-alterable"
+    ],
+    "4.8": [
+      "r1-strict-exception"
+    ],
+    "4.9a": [
+      "r0-no-exception"
+    ],
+    "4.9b": [
+      "r0-exception",
+      "r2-exception",
+      "r3-exception"
+    ],
+    "5.1": [
+      "instruction-party"
+    ],
+    "5.2a": [
+      "outranks-rank"
+    ],
+    "5.2b": [
+      "ties-rank"
+    ],
+    "5.3": [
+      "duplicate-rule"
+    ],
+    "5.4": [
+      "r0-predicate",
+      "r1-predicate",
+      "r2-predicate",
+      "r3-predicate"
+    ],
+    "5.5": [
+      "r0-rank",
+      "r1-rank",
+      "r2-rank",
+      "r3-rank"
+    ],
+    "5.6": [
+      "r0-party",
+      "r1-party",
+      "r2-party",
+      "r3-party"
+    ],
+    "5.7": [
+      "r0-guard",
+      "r1-guard",
+      "r2-guard",
+      "r3-guard"
+    ],
+    "5.8a": [
+      "r0-necessary-budget",
+      "soft3-rule-nodes-before-exception-condition"
+    ],
+    "5.8b": [
+      "r0-condition",
+      "r2-condition",
+      "r3-condition"
+    ],
+    "5.9a": [
+      "r0-over",
+      "r1-over",
+      "r2-over",
+      "r3-over"
+    ],
+    "5.9b": [
+      "r3-over-predicate"
+    ],
+    "6.1": [
+      "rank-cycle"
+    ],
+    "6.10a": [
+      "softened-cycle"
+    ],
+    "6.10b": [
+      "derived-nodes"
+    ],
+    "6.11": [
+      "premise-depth"
+    ],
+    "6.12": [
+      "layer-nodes"
+    ],
+    "6.13": [
+      "soft4-target-doubling-11"
+    ],
+    "6.14": [
+      "soft4-background-premise-nodes-9996"
+    ],
+    "6.15": [
+      "soft4-layers-strict-guard-4981"
+    ],
+    "6.2": [
+      "tie-against-order"
+    ],
+    "6.3": [
+      "tie-repeat"
+    ],
+    "6.4a": [
+      "decision-name",
+      "long-decision-names"
+    ],
+    "6.4b": [
+      "vocabulary-limit"
+    ],
+    "6.5a": [
+      "document-nodes"
+    ],
+    "6.5b": [
+      "precedence-cycle"
+    ],
+    "6.6": [
+      "precedence-depth"
+    ],
+    "6.7": [
+      "stratification"
+    ],
+    "6.8": [
+      "soft-over-hard"
+    ],
+    "6.9": [
+      "derived-depth"
+    ]
+  },
+  "unreached": {
+    "6.10c": "The fallback member of `soft_semantic`: W1's checks of T' other than its resource limits (6.10b) and its stratification (6.10a). T' is well typed by construction, 6.9 bounds its carve-out counts before W1 runs, and its new names are fresh by 2.1a and 6.4a. Seeded searches over 10,000 small documents (2026-10-02) reached 6.10a and never 6.10c."
+  }
+}

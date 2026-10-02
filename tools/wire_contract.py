@@ -239,8 +239,30 @@ def english_table(contract, *, limits=None):
     return "\n".join(lines) + "\n"
 
 
-def lint(contract, *, limits, names, known=None):
-    """Return (code, detail) findings; no fixture or legacy verdict is changed."""
+def _views_inside(contract, phases, known, seen=frozenset()):
+    """The ids of includes with a view anywhere inside the named phases of a contract, following its own
+    includes into the contracts they name (2.6: views do not nest)."""
+    found = []
+    def walk(entries):
+        for entry in entries:
+            if "each" in entry:
+                walk(entry["checks"])
+            elif entry.get("kind") == "include":
+                if "view" in entry:
+                    found.append(f"{contract['contract']}:{entry['id']}")
+                target = known.get(entry.get("contract"))
+                step = (entry.get("contract"), tuple(entry.get("phases", ())))
+                if target is not None and step not in seen:
+                    found.extend(_views_inside(target, entry.get("phases", ()), known, seen | {step}))
+    for phase in contract["phases"]:
+        if phase["name"] in phases:
+            walk(phase["checks"])
+    return found
+
+
+def lint(contract, *, limits, names, known=None, catalogue=None):
+    """Return (code, detail) findings; no fixture or legacy verdict is changed. `catalogue`, when given, is
+    the set of checks and classifier members with a fault in the fault catalogue (8.3, the `WC08` clause)."""
     known = known or {}
     findings = []
     def issue(code, detail):
@@ -327,7 +349,7 @@ def lint(contract, *, limits, names, known=None):
             renderers[name] = renderer
         if (set(entry.get("args", {})) | set(entry.get("returns", []))) - renderers.keys():
             issue("WC04", f"unused argument {entry['id']}")
-    def walk(entries, depth=0, included=False):
+    def walk(entries, depth=0):
         for entry in entries:
             if type(entry) is not dict or "id" not in entry:
                 issue("WC01", "invalid entry")
@@ -341,7 +363,7 @@ def lint(contract, *, limits, names, known=None):
                 if set(entry) - {"id", "each", "when", "checks"} or type(entry.get("checks")) is not list:
                     issue("WC01", f"invalid group shape {eid}")
                 pattern(entry["each"], depth, wild=True)
-                walk(entry["checks"], depth + 1, included)
+                walk(entry["checks"], depth + 1)
                 continue
             kind = entry.get("kind")
             if kind == "include":
@@ -349,13 +371,14 @@ def lint(contract, *, limits, names, known=None):
                     issue("WC01", f"invalid include shape {eid}")
                 if ("view" in entry) != ("says" in entry):
                     issue("WC08" if "view" in entry else "WC01", f"include says/view mismatch {eid}")
-                if "view" in entry and included:
-                    issue("WC09", f"nested view {eid}")
                 target = known.get(entry.get("contract"))
                 if target is None or entry["contract"] not in contract["uses"]:
                     issue("WC09", f"unknown include {eid}")
                 elif not set(entry["phases"]) <= {p["name"] for p in target["phases"]}:
                     issue("WC09", f"unknown phase {eid}")
+                else:
+                    for inner in _views_inside(target, entry["phases"], known):
+                        issue("WC09", f"include with a view {inner} inside the phases included by {eid}")
                 if "as" in entry:
                     used.add(entry["as"])
                 for value in (entry.get("contract", ""), entry.get("view", ""),
@@ -400,6 +423,8 @@ def lint(contract, *, limits, names, known=None):
                 template(member)
                 if (kind == "hook" or member is not entry) and not member.get("says"):
                     issue("WC08", f"missing says {mid}")
+                if (kind == "hook" or member is not entry) and catalogue is not None and mid not in catalogue:
+                    issue("WC08", f"no fault in the fault catalogue for {mid}")
                 if member.get("inherited") and (member.get("returns") != ["message"] or member["text"] != "{message}"):
                     issue("WC08", f"invalid inherited text {mid}")
                 for value in (mid, member["code"], member["text"], member.get("says", "")):
@@ -433,8 +458,30 @@ def lint(contract, *, limits, names, known=None):
     return findings
 
 
-def process(directory=DATA, *, write=False):
+def default_catalogue(directory):
+    """The checks with a fault in the fault catalogue (8.3), per contract: the index of the pilot's
+    catalogue (`conformance/wire_contract_faults.py`, kept current by a test) for the shipped contracts,
+    and the hand-derived records of the engine corpus for the corpus contracts."""
+    if directory.resolve() == DATA.resolve():
+        index = ROOT / "conformance/wire-contract/soft-norms@0-catalogue.json"
+        if not index.exists():
+            return {}
+        value = json.loads(index.read_text())
+        return {value["contract"]: set(value["faults"]) | set(value["unreached"])}
+    golden = directory.parent / "engine-golden.json"
+    if not golden.exists():
+        return None
+    records = json.loads(golden.read_text())
+    return {unit: {r["check"] for r in cases.values() if type(r) is dict and "check" in r}
+            for unit, cases in records.items() if unit.endswith("@0") and type(cases) is dict}
+
+
+def process(directory=DATA, *, write=False, catalogue=None):
+    """Lint, lock and regenerate (4.3). `catalogue` maps a contract to the checks with a catalogue fault;
+    by default it is `default_catalogue(directory)`, and a contract it does not name has none."""
     findings = []
+    if catalogue is None:
+        catalogue = default_catalogue(directory)
     def issue(path, code, detail):
         findings.append(f"{path}: {code}: {detail}")
     try:
@@ -475,7 +522,8 @@ def process(directory=DATA, *, write=False):
             continue
         if path in files[2:]:
             try:
-                for code, detail in lint(value, limits=limits, names=names, known=contracts):
+                checks = None if catalogue is None else catalogue.get(value.get("contract"), set())
+                for code, detail in lint(value, limits=limits, names=names, known=contracts, catalogue=checks):
                     issue(path, code, detail)
             except (KeyError, IndexError, TypeError, ValueError) as exc:
                 issue(path, "WC01", f"invalid contract shape: {exc}")
