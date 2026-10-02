@@ -2,7 +2,8 @@
 
 The policy states no completion default for either regulated predicate, so the
 case ships one environment per pair of defaults (PLAN section 3.2), plus the
-flag-free copy that the Lean norms route accepts (PLAN section 8). Run
+flag-free copy that the Lean norms route accepts (PLAN section 8), and one with
+both completions unspecified under norm-defaults@0. Run
 `python usecases/agent-policy/environments.py` to regenerate them; the test
 checks that the committed files equal this output.
 """
@@ -106,6 +107,18 @@ def lean_variant():
     return data
 
 
+def unspecified_variant():
+    """Both completions `unspecified` under norm-defaults@0 (docs/spec/norm-defaults.md
+    fixture u4): the policy states neither default, and this says so."""
+    data = variant("unspecified", "unspecified")
+    data["profiles"] = sorted({*data["profiles"], "norm-defaults@0"})
+    return data
+
+
+def unspecified_file():
+    return {"environment.unspecified.json": json.dumps(unspecified_variant(), indent=2) + "\n"}
+
+
 def files():
     out = {f"environment.{name}.json": variant(*defaults) for name, defaults in VARIANTS.items()}
     out["environment.lean.json"] = lean_variant()
@@ -113,5 +126,5 @@ def files():
 
 
 if __name__ == "__main__":
-    for name, text in files().items():
+    for name, text in {**files(), **unspecified_file()}.items():
         (HERE / name).write_text(text)

@@ -1,0 +1,3 @@
+**(b) The text does not say.**
+
+The rule states that confusion occurs only "if the age of the patient is greater than 70 years," but the patient is 40 years old, so this conditional rule does not apply and the text provides no information about confusion in this case.

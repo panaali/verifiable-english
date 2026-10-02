@@ -11,6 +11,7 @@ import time
 import pytest
 
 from subprocesses import HANG_TIMEOUT
+from tools import rust_build
 from ve import argument, bundle
 from ve.surface import unambiguity
 
@@ -71,8 +72,8 @@ def _build_backends(lock):
     cargo = shutil.which("cargo")
     assert lake is not None, "lake is required for the complete test suite"
     assert cargo is not None, "cargo is required for the complete test suite"
-    cargo_env = {**os.environ, "CARGO_HOME": str(ROOT / ".cargo-home"),
-                 "CARGO_TARGET_DIR": str(ROOT / "rust/target")}
+    # Path-independent, so the release binary matches lean/checkers.lock.
+    cargo_env = rust_build.cargo_env()
     commands = (
         ([lake, "build"], ROOT / "lean", None),
         ([cargo, "build", "-j", "2", "--locked", "--release",

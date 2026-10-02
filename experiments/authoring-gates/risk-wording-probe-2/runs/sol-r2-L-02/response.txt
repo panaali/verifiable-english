@@ -1,0 +1,1 @@
+**(a) The text does not say.** It guarantees a job failure only when the backup is greater than 250 gigabytes, and says nothing about failure at 100 gigabytes.

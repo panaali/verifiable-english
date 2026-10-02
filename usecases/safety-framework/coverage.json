@@ -1,0 +1,62 @@
+{
+ "accounted_bytes": 54373,
+ "bytes_by_kind": {
+  "asserted": 2920,
+  "attributed": 1855,
+  "causal": 807,
+  "definition": 7499,
+  "example": 4436,
+  "explanation": 3200,
+  "exposition": 9861,
+  "hedged": 3276,
+  "meta": 5545,
+  "norm": 8109,
+  "unformalised": 6865
+ },
+ "bytes_by_status": {
+  "CHECKED": 3487,
+  "LABELLED": 36665,
+  "OPEN": 7356,
+  "UNFORMALISED": 6865
+ },
+ "coverage_percent": 100,
+ "default_exceptions_by_decider": {},
+ "document": "fsf.d1.ve.md (built locally, not committed)",
+ "document_sha256": "17a3989ea1ad9456185b8d2807a1add441b8fbc9d1de8c8a0efc2528692e2996",
+ "master_bytes_by_status": {
+  "CHECKED": 4595,
+  "LABELLED": 35557,
+  "OPEN": 7356,
+  "UNFORMALISED": 6865
+ },
+ "residual": {
+  "assumptions": 1,
+  "bridge_leaves": 0,
+  "default_exceptions": 0,
+  "holistic_overrides": 0,
+  "instruction_switches": 0,
+  "open_terms": 16,
+  "unresolved_reading_sets": 18,
+  "weighing_points": 0
+ },
+ "residual_total": 35,
+ "soft_background_labels": [],
+ "soft_residual_labels": [],
+ "soft_status": "CHECKED",
+ "source_bytes": 54373,
+ "unformalised_reasons": {
+  "addressed_to_the_field": 2,
+  "aim_without_force": 2,
+  "as_appropriate": 3,
+  "degree_term": 3,
+  "event_order": 2,
+  "external_reference": 7,
+  "iterative_process": 2,
+  "may_be_adjusted": 2,
+  "no_deadline_or_trigger": 2,
+  "no_trigger_stated": 1,
+  "process_description": 2,
+  "unspecified_process": 2,
+  "where_appropriate": 1
+ }
+}
