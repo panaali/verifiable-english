@@ -1,0 +1,182 @@
+"""The pilot contract soft-norms@0 in the Lean engine (`ve_diagnose soft-norms@0`), docs/spec/wire-contract.md
+section 6 and 8.3, against the hand-derived records and against the legacy Lean route.
+
+The legacy route `ve_soft_norms_route` decides accept or reject and reports a code; the engine only names the
+first failing check. On every case here the engine reports a fault exactly when the route rejects, with the
+route's code, and, for a check that is not inherited, the route's text (spec 6: Lean's texts). The cases are
+the fixtures P1 to P17, every single fault of `conformance.soft_norms.multi_faults()` (tier 0) and the pairs
+and triples of `multi_fault_cases()` (tier A, the oracle being the fault of least table position).
+"""
+from __future__ import annotations
+
+import json
+import shutil
+import subprocess
+from pathlib import Path
+
+import pytest
+
+from conformance.soft_norms import multi_fault_base, multi_fault_cases, multi_faults
+from tests.test_soft_norms_lean import env, norm
+from ve.wire import canonical_json
+
+ROOT = Path(__file__).resolve().parents[1]
+BIN = ROOT / "lean/.lake/build/bin"
+S = "/environment/vocabulary/soft"
+# Checks and classifier members whose text is the inherited decoder's (spec 2.5, rule 5).
+INHERITED = {"2.3", "4.2a", "4.13b", "4.13d", "5.7", "5.8a", "6.10b", "6.10c"}
+
+
+@pytest.fixture(scope="module")
+def built():
+    if not (BIN / "ve_diagnose").exists() or not (BIN / "ve_soft_norms_route").exists():
+        lake = shutil.which("lake")
+        if lake is None:
+            pytest.skip("lake is required for ve_diagnose and ve_soft_norms_route")
+        result = subprocess.run([lake, "build", "ve_diagnose", "ve_soft_norms_route"], cwd=ROOT / "lean",
+                                capture_output=True, text=True, timeout=1200)
+        assert result.returncode == 0, result.stdout + result.stderr
+    return BIN
+
+
+def call(binary, args, cases):
+    result = subprocess.run([str(binary), *args, "-"], input=json.dumps(cases), text=True, capture_output=True,
+                            timeout=600)
+    assert result.returncode in (0, 1), result.stderr
+    rows = json.loads(result.stdout)
+    assert len(rows) == len(cases)
+    return rows
+
+
+def cases(sources):
+    return [{"id": f"c{n}", "kind": "soft-elaborate", "environment": raw, "norms": rules}
+            for n, (raw, rules) in enumerate(sources)]
+
+
+def both(bin_dir, sources, size=100):
+    """(engine row, legacy row) per source, in batches within the runners' 16 MiB package limit."""
+    rows = []
+    for start in range(0, len(sources), size):
+        batch = cases(sources[start:start + size])
+        engine = call(bin_dir / "ve_diagnose", ["soft-norms@0"], batch)
+        legacy = call(bin_dir / "ve_soft_norms_route", [], batch)
+        assert all(row["status"] == "ok" for row in engine)
+        rows += zip(engine, legacy)
+    return rows
+
+
+def with_faults(*names):
+    raw, rules = multi_fault_base()
+    table = {f[0]: f for f in multi_faults()}
+    for name in names:
+        table[name][4](raw, rules)
+    return raw, rules
+
+
+def record(check, phase, code, cls, path, text, args=None):
+    return {"contract": "soft-norms@0", "revision": 1, "check": check, "phase": phase, "code": code,
+            "class": cls, "path": path, "text": text, "args": args or {}}
+
+
+def agree(engine, legacy):
+    """The engine names a fault exactly when the route rejects, with the route's code and (unless inherited)
+    its text."""
+    if legacy["status"] != "error":
+        assert engine["outcome"] == "clean", (engine, legacy)
+        return
+    assert engine["outcome"] == "fault", (engine, legacy)
+    diagnostic = engine["diagnostic"]
+    assert diagnostic["code"] == legacy["code"], (diagnostic, legacy)
+    if diagnostic["check"] not in INHERITED:
+        assert diagnostic["text"] == legacy["error"], (diagnostic, legacy)
+
+
+FIXTURES = {
+    "P2": (("party-name",), record("2.7a", "declarations", "SOFT_INVALID_NAME", "InvalidInput", S + "/parties/1",
+                                   "InvalidInput: invalid soft name Q!", {"value": "Q!"})),
+    "P3": (("party-repeat",), record("2.7b", "declarations", "SOFT_DUPLICATE_DECLARATION", "DuplicateDeclaration",
+                                     S + "/parties/2", "DuplicateDeclaration: party p", {"value": "p"})),
+    "P4": (("language",), record("1.2", "envelope", "SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile",
+                                 "/environment/language", "UnsupportedProfile: Unsupported language")),
+    "P5": (("parties-shape", "r3-rank-type"), record("2.5", "declarations", "SOFT_INVALID_ARRAY", "InvalidInput",
+                                                     S + "/parties", "InvalidInput: parties must be an array")),
+    "P6": (("r0-hard-type", "r1-mode"), record("4.6", "rule-fields", "SOFT_INVALID_RULE_FIELDS", "InvalidInput",
+                                               "/norms/0/norm/hard", "InvalidInput: hard of rule a0 must be Boolean",
+                                               {"name": "a0"})),
+    "P8": (("outranks-pair",), record("2.16b", "declarations", "SOFT_INVALID_OUTRANKS_PAIR", "InvalidInput",
+                                      S + "/outranks/1/1", "InvalidInput: invalid outranks pair")),
+    "P9": (("ties-pair",), record("2.17d", "declarations", "SOFT_INVALID_TIES_PAIR", "InvalidInput",
+                                  S + "/ties/1", "InvalidInput: invalid ties pair")),
+    "P10": (("holistic-decider",), record("2.12", "declarations", "SOFT_MISSING_DECIDER", "InvalidInput",
+                                          S + "/outranking", "MissingExceptionDecider: outranking")),
+    "P11": (("inherited-decider",), record("4.11a", "rule-fields", "SOFT_MISSING_DECIDER", "InvalidInput",
+                                           "/norms/2/norm/exception", "MissingExceptionDecider: rule c2",
+                                           {"name": "c2"})),
+    "P12": (("r1-strict-exception",), record("4.8", "rule-fields", "SOFT_STRICT_EXCEPTION", "InvalidInput",
+                                             "/norms/1/norm/exception",
+                                             "InvalidInput: rule b1 is strict and declares an exception",
+                                             {"name": "b1"})),
+    "P13": (("duplicate-rule",), record("5.3", "references", "SOFT_DUPLICATE_DECLARATION", "DuplicateDeclaration",
+                                        "/norms/3/norm/name", "DuplicateDeclaration: rule b1", {"value": "b1"})),
+    "P14": (("rank-cycle",), record("6.1", "semantic", "SOFT_DEPENDENCY_CYCLE", "InvalidInput", S + "/outranks",
+                                    "DependencyCycle: a, b", {"detail": "a, b"})),
+    "P15": (("soft-over-hard",), record("6.8", "semantic", "SOFT_OVER_HARD", "InvalidInput", "",
+                                        "SoftOverHard: rule d3 over b1", {"detail": "rule d3 over b1"})),
+    "P16": (("precedence-cycle", "soft-over-hard"), record("6.5b", "semantic", "SOFT_DEPENDENCY_CYCLE",
+                                                           "InvalidInput", "", "DependencyCycle: a0, c2",
+                                                           {"detail": "a0, c2"})),
+}
+
+
+def p7_source():
+    """On `env()`: rule `a` default with a factor of 201 bytes, then rule `b` with rank `z`."""
+    exception = {"decided_by": "assistant", "sufficient": [], "necessary": [], "factors": ["x" * 201]}
+    return env(), [norm("a", "x_required", True, mode="default", exception=exception),
+                   norm("b", "x_permitted", False, rank="z")]
+
+
+def test_fixtures_p1_to_p17(built):
+    names = sorted(FIXTURES)
+    sources = [multi_fault_base(), (env(), []), p7_source(), with_faults("malformed-predicate"),
+               *[with_faults(*FIXTURES[name][0]) for name in names]]
+    rows = both(built, sources)
+    base, empty, p7, p17, *rest = rows
+    for engine, legacy in (base, empty):  # P1: both examples are accepted, and the engine is clean
+        assert legacy["status"] == "ok" and engine["outcome"] == "clean"
+    assert canonical_json(p7[0]["diagnostic"]) == canonical_json(record(
+        "4.14b", "rule-fields", "SOFT_INVALID_FACTORS", "InvalidInput", "/norms/0/norm/exception/factors/0",
+        "InvalidInput: invalid factors of rule a", {"name": "a"}))
+    agree(*p7)
+    diagnostic = p17[0]["diagnostic"]
+    assert (diagnostic["check"], diagnostic["path"], diagnostic["code"]) == ("2.3", "/environment",
+                                                                             "SOFT_INVALID_INPUT")
+    assert diagnostic["args"] == {"message": diagnostic["text"]}
+    agree(*p17)
+    for name, (engine, legacy) in zip(names, rest):
+        assert canonical_json(engine["diagnostic"]) == canonical_json(FIXTURES[name][1]), name
+        agree(engine, legacy)
+
+
+def test_tier0_every_single_fault(built):
+    """Each fault alone: the route rejects, and the engine names a check with the fault's code."""
+    faults = multi_faults()
+    rows = both(built, [with_faults(f[0]) for f in faults])
+    for fault, (engine, legacy) in zip(faults, rows):
+        assert legacy["status"] == "error", fault[0]
+        assert legacy["code"] == fault[3], fault[0]
+        agree(engine, legacy)
+
+
+def test_tier_a_pairs_and_triples(built):
+    """Two and three faults: the engine's code is the code of the fault of least table position, as the route's."""
+    combos = list(multi_fault_cases())
+    rows = both(built, [(raw, rules) for _, raw, rules, _ in combos])
+    for (name, _, _, expected), (engine, legacy) in zip(combos, rows):
+        assert legacy["code"] == expected, name
+        agree(engine, legacy)
+
+
+def test_adapter_rejects_other_case_kinds(built):
+    rows = call(built / "ve_diagnose", ["soft-norms@0"], [{"id": "x", "kind": "evaluation"}])
+    assert rows == [{"id": "x", "status": "error",
+                     "error": "UnsupportedProfile: case kind evaluation has no wire contract input"}]

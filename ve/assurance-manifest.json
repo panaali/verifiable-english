@@ -220,6 +220,7 @@
       "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
       "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
       "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
+      "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
       "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)"
     }
   },
