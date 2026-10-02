@@ -1,0 +1,124 @@
+{
+  "environment_id": "0dbd6881de9baec3038cf353b06fe22e79e374048bfd6aa562e8fadcf7f790aa",
+  "document_hash": "6eed0b29d7c24f592aade559141a6397ddde7e0c778c95bad0d9663a307aa64e",
+  "text_digest": "c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b537f5",
+  "blocks": [
+    {
+      "handle": "handle-law-3-permission",
+      "name": "law-3-permission",
+      "number": 1,
+      "span": [
+        0,
+        88
+      ]
+    },
+    {
+      "handle": "handle-law-2-permission",
+      "name": "law-2-permission",
+      "number": 2,
+      "span": [
+        89,
+        192
+      ]
+    },
+    {
+      "handle": "handle-law-1-injury",
+      "name": "law-1-injury",
+      "number": 3,
+      "span": [
+        193,
+        299
+      ]
+    },
+    {
+      "handle": "handle-law-1-inaction",
+      "name": "law-1-inaction",
+      "number": 4,
+      "span": [
+        300,
+        476
+      ]
+    },
+    {
+      "handle": "handle-law-0-injury",
+      "name": "law-0-injury",
+      "number": 5,
+      "span": [
+        477,
+        587
+      ]
+    },
+    {
+      "handle": "handle-law-0-inaction",
+      "name": "law-0-inaction",
+      "number": 6,
+      "span": [
+        588,
+        768
+      ]
+    },
+    {
+      "handle": "handle-lawful-option",
+      "name": "lawful-option",
+      "number": 7,
+      "span": [
+        769,
+        974
+      ]
+    },
+    {
+      "handle": "handle-law-1-ban",
+      "name": "law-1-ban",
+      "number": 8,
+      "span": [
+        975,
+        1092
+      ]
+    },
+    {
+      "handle": "handle-law-0-prevention-exception",
+      "name": "law-0-prevention-exception",
+      "number": 9,
+      "span": [
+        1093,
+        1403
+      ]
+    },
+    {
+      "handle": "handle-law-0-ban",
+      "name": "law-0-ban",
+      "number": 10,
+      "span": [
+        1404,
+        1527
+      ]
+    },
+    {
+      "handle": "handle-law-2-obey",
+      "name": "law-2-obey",
+      "number": 11,
+      "span": [
+        1528,
+        1649
+      ]
+    },
+    {
+      "handle": "handle-law-3-threat",
+      "name": "law-3-threat",
+      "number": 12,
+      "span": [
+        1650,
+        1895
+      ]
+    },
+    {
+      "handle": "handle-law-3-preserve",
+      "name": "law-3-preserve",
+      "number": 13,
+      "span": [
+        1896,
+        2397
+      ]
+    }
+  ]
+}
