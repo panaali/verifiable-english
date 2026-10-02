@@ -40,7 +40,9 @@ SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b5
   give a clear action in only 13 of the 51 records, and P9's base verdict is among those that change. The extended
   rules' decisions change in none of the 51 records. In the 300 sampled ones, the clear set changes in 3, and
   `permitted` changes in 9: six keep their clear action, but one of their actions is permitted only by the default
-  that Asimov's text does not give; see [the permission default](#the-permission-default).
+  that Asimov's text does not give; see [the permission default](#the-permission-default). The `unspecified`
+  completion of `norm-defaults@0` would state the source's silence, but it does not combine with `alternatives@0`
+  and `risk@0` yet, so the default stays and no verdict changes ([why](#why-the-default-is-not-unspecified)).
 
 ## The rules and their check status
 
@@ -180,11 +182,40 @@ a required order, stays the same. The permission is still the default's alone: i
 property; in `Q019`, `Q117`, `Q177`, `Q190` and `Q292`, it might harm humanity. `results.json` lists, for each
 of the nine, the actions only the default permits (`ext_permitted_only_by_default`).
 
+### Why the default is not `unspecified`
+
+The review's finding was that unspecified actions default to permitted. Since `norm-defaults@0` merged, VE has
+a completion for exactly this case: `unspecified`, "when nothing else in the text decides, the text does not say
+whether an action may be performed". It is the faithful one here, and the case does not use it yet:
+
+| | Before `norm-defaults@0` | Now |
+|---|---|---|
+| `permitted` | allow (v2's modeling choice) | **allow, unchanged**; `unspecified` is blocked, below |
+| `required`, `prevent_required`, the derived names | deny | unchanged; a derived name is this project's own definition, so false-unless-derived is part of it |
+| verdicts on the 51 records and the 300 sampled | as above | **unchanged**: no verdict changes, because nothing was re-run under a different completion |
+
+Every result of this case is a `risk@0` decision over `alternatives@0` choices, and `norm-defaults@0` combines
+with neither yet (docs/spec/norm-defaults.md 3.3, "Integration gap"): the routes still consume completed
+allow/deny norms and cannot report a permission the text leaves open. Both engines reject the switched
+environment: Python with `UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented` (and, without
+`risk@0`, `alternatives@0 with norm-defaults@0 is not implemented`), and Lean's risk route with
+`UnsupportedProfile: Unsupported profile norm-defaults@0`; a test checks both, so this section fails when the
+combination lands. Rust decodes neither profile; it has no separate leg.
+
+The deny measurement above shows where the default matters, but it is not the `unspecified` result, which is not
+computed. Where only the default permits an action, `unspecified` would make that action neither permitted nor
+forbidden but UNDECIDED, and so not clear (spec 3.3: a clear action needs its permission under every admissible
+filling). For the extended rules the deny run finds such actions in 9 of the 300 sampled records
+(`ext_permitted_only_by_default`) and in none of the 51 records; for the v2 rules, `permitted` changes in 38 of the
+51, P9 among them, and in 208 of the 300.
+
 ## OPEN
 
 - **The permission default.** An action that no rule forbids is permitted. This is v2's modeling choice, not
-  Asimov's, and most v2 verdicts depend on it ([above](#the-permission-default)). Revising it needs an authored
-  rule saying which actions the laws leave permitted. The extended rules' decisions on the 51 records do not depend
+  Asimov's, and most v2 verdicts depend on it ([above](#the-permission-default)). The faithful completion is
+  `unspecified`, which waits for `norm-defaults@0` to combine with `alternatives@0` and `risk@0`
+  ([why](#why-the-default-is-not-unspecified)); otherwise revising it needs an authored rule saying which actions
+  the laws leave permitted. The extended rules' decisions on the 51 records do not depend
   on it; in 9 of the 300 sampled records, an action is permitted only by it.
 
 - **Counting and aggregation.** Worst-case comparison counts one death the same as two (P6), and one threat to the
