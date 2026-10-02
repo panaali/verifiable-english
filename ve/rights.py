@@ -49,9 +49,12 @@ class RightsEnvironment(SoftEnvironment):
             raise UnsupportedProfile("rights@0 requires soft-norms@0")
         raw = deepcopy(data)
         rights = raw.get("vocabulary", {}).pop("rights", None)
-        if type(rights) is not dict or set(rights) != {"holders", "bearers", "protected", "alters"}:
-            raise VEError("InvalidInput: rights block")
-        for entry in (rights["alters"].values() if type(rights["alters"]) is dict else ()):
+        # As Lean's `decodeRightsBlock` reads the block: `holders` and `bearers` are required, `protected` and
+        # `alters` optional (an absent one is empty). The block is kept as written, so its identity is Lean's.
+        if (type(rights) is not dict or not {"holders", "bearers"} <= set(rights)
+                or not set(rights) <= {"holders", "bearers", "protected", "alters"}):
+            raise VEError("InvalidInput: invalid rights block")
+        for entry in (rights["alters"].values() if type(rights.get("alters")) is dict else ()):
             if type(entry) is dict and "recognition" in entry and entry["recognition"] is None:
                 # 3.1's null recognition is the absent key: canonical JSON has no null,
                 # and the Lean wire sends the field absent.
@@ -68,7 +71,7 @@ class RightsEnvironment(SoftEnvironment):
                 raise VEError(f"UnknownSymbol: sort {sort}")
         object.__setattr__(self, "holders", holders)
         object.__setattr__(self, "bearers", bearers)
-        protected = rights["protected"]
+        protected = rights.get("protected", [])
         if type(protected) is not list or len(set(protected)) != len(protected):
             raise VEError("InvalidInput: protected")
         for name in protected:
@@ -76,7 +79,7 @@ class RightsEnvironment(SoftEnvironment):
             if (decl is None or decl.regulated is not None or decl.defined is not None
                     or not set(decl.arguments) & set(holders)):
                 raise VEError(f"InvalidInput: protected {name}")
-        alters = rights["alters"]
+        alters = rights.get("alters", {})
         if type(alters) is not dict:
             raise VEError("InvalidInput: alters")
         for act, entry in alters.items():
@@ -166,7 +169,7 @@ def _line_shape(env, right, kind, rule, slot):
                       and reg is not None and reg.role == "permission" and core.sign)
     valid = valid or (kind == "immunity" and subject in env.bearers and reg is not None
                       and reg.role == "permission" and not core.sign and
-                      core.predicate in env.rights["alters"] and
+                      core.predicate in env.rights.get("alters", {}) and
                       env.rights["alters"][core.predicate]["holder_slot"] == slot)
     if not valid:
         raise VEError(f"IncidentShape: {core.name} on right {right['name']}")
@@ -369,12 +372,12 @@ class RightsDocument:
                                  subject=instance_kind in ("liberty", "powerLiberty"))
                     _line_shape(self.env, right, instance_kind, rule, slot)
                     if instance_kind == "powerLiberty":
-                        alter = self.env.rights["alters"].get(predicate)
+                        alter = self.env.rights.get("alters", {}).get(predicate)
                         if alter is None or alter["holder_slot"] != 0 or alter.get("recognition") is None:
                             raise VEError(f"IncidentShape: {rule.core.name} on right {right_name}")
                     if instance_kind == "powerRecognition":
                         liberty = line["liberty"]["predicate"]
-                        alter = self.env.rights["alters"].get(liberty)
+                        alter = self.env.rights.get("alters", {}).get(liberty)
                         if alter is None or predicate != alter.get("recognition"):
                             raise VEError(f"IncidentShape: {rule.core.name} on right {right_name}")
                     if bearer is not None:
@@ -447,7 +450,8 @@ class RightsDocument:
     def _act(self, predicate):
         declaration = self.env.predicates[predicate]
         reg = declaration.regulated
-        return reg.permission if reg.role == "obligation" and reg.permission else predicate
+        # A base predicate is its own act here; the line's decoder refuses it (`UnknownSymbol`), as Lean's does.
+        return reg.permission if reg is not None and reg.role == "obligation" and reg.permission else predicate
 
     def _in_scope(self, limit, instance):
         return ((limit["scope"] == "all" or instance["right"] in limit["scope"])
