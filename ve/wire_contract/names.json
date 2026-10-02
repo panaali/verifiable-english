@@ -1,0 +1,6 @@
+{
+  "soft_name": {"first": "a-z", "rest": "a-z0-9_", "max_bytes": 64, "forbid_infix": ["__"]},
+  "not_soft_reserved": {"forbid_prefix": ["soft__"]},
+  "no_double_underscore": {"forbid_infix": ["__"]},
+  "decider": {"min_bytes": 1, "max_bytes": 64}
+}

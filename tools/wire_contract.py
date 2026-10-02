@@ -1,0 +1,372 @@
+"""Lint format-1 wire tables and generate their single English reading.
+
+The executable stays diagnostic-only: neither it nor its output is on a verdict
+or identity path. ``--write`` updates lock hashes; ``--check`` is read-only.
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import sys
+
+from lean.audit import FORBIDDEN
+from ve.wire import canonical_json, loads_json
+from ve.wire_contract.engine import CLEAN, Registry, run
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "ve/wire_contract"
+CLASSES = {"InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration",
+           "UnboundVariable", "ShadowedVariable", "TypeMismatch", "InvalidModel",
+           "UnsupportedProfile", "ResourceLimit"}
+T1 = {"type", "exact_keys", "keys", "const", "enum", "max_items", "max_bytes",
+      "max_count", "name", "sorted_unique", "unique_so_far", "declared_in",
+      "requires", "excludes"}
+RENDERERS = {"raw", "json", "index", "count", "list"}
+ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9.-]*\Z")
+PART = re.compile(r"[0-9]+|[^0-9]+")
+PLACEHOLDER = re.compile(r"\{([A-Za-z_][A-Za-z_0-9]*)(?::([A-Za-z]+))?\}")
+LOCATION = re.compile(r"(?:@(?:[0-9]+)?(?=/|$))?(?:/(?:[^*/~]|~[01])*)*\Z")
+PATTERN = re.compile(r"(?:@(?:[0-9]+)?(?=/|$))?(?:/(?:[^/~]|~[01])*)*\Z")
+
+
+def _hash(value):
+    return hashlib.sha256(canonical_json(value)).hexdigest()
+
+
+def _id_key(value):
+    return tuple(tuple((0, int(run)) if run.isdigit() else (1, run)
+                       for run in PART.findall(part)) for part in value.split("."))
+
+
+def _comparable(a, b):
+    left, right = _id_key(a), _id_key(b)
+    for x, y in zip(left, right):
+        for p, q in zip(x, y):
+            if p[0] != q[0]:
+                return False
+            if p != q:
+                break
+    return True
+
+
+def _type_word(form):
+    atoms = {"null": "null", "boolean": "a Boolean", "integer": "an integer",
+             "string": "a string", "array": "an array", "object": "an object"}
+    plurals = {"null": "nulls", "boolean": "Booleans", "integer": "integers",
+               "string": "strings", "array": "arrays", "object": "objects"}
+    if type(form) is list:
+        return " or ".join(_type_word(f) for f in form)
+    if type(form) is str:
+        return atoms[form]
+    if "array_of" in form:
+        return "an array of " + plurals[form["array_of"]]
+    return "an array of exactly " + str(len(form["tuple"])) + " elements: " + ", ".join(
+        atoms[a] for a in form["tuple"])
+
+
+def _place(loc):
+    if loc == "@":
+        return "the item"
+    match = re.fullmatch(r"@([0-9]*)(?:/(.*))?", loc)
+    if match:
+        base = "the item" if int(match[1] or 0) == 0 else "the enclosing item"
+        return base + ("'s `" + match[2] + "`" if match[2] else "")
+    return f"`{loc}`"
+
+
+def _literal(literal):
+    op, arg = next(iter(literal.items()))
+    loc = arg if op in ("present", "absent") else arg[0]
+    where = _place(loc)
+    if op in ("present", "absent"):
+        return f"{where} is {op}"
+    if op in ("equals", "differs"):
+        value = json.dumps(arg[1], ensure_ascii=False, separators=(",", ":"))
+        return f"{where} is " + (value if op == "equals" else "absent or is not " + value)
+    typ = _type_word(arg[1])
+    return f"{where} is " + (typ if op == "is" else "absent or is not " + typ)
+
+
+def wording(entry, *, inside=False, limits=None):
+    """The sentence specified in wire-contract.md 3.1, from one table row."""
+    if "each" in entry:
+        return (f"For each member of `{entry['each']}`, in order, all of the following "
+                "for one member before the next member:")
+    if entry.get("kind") == "include":
+        names = ", ".join(f"`{n}`" for n in entry["phases"])
+        sentence = (f"The checks of phase {names} of `{entry['contract']}`, in their order, "
+                    f"on {_place(entry.get('at', '@' if inside else ''))}")
+        if "view" in entry:
+            sentence += f" as transformed by the view `{entry['view']}`: {entry['says']}"
+        else:
+            sentence += "."
+        if "as" in entry:
+            sentence += f" They are reported with code `{entry['as']}`."
+        return sentence
+    kind = entry["kind"]
+    if kind in ("hook", "classifier"):
+        return entry.get("says", "") if kind == "hook" else " ".join(
+            m["says"] for m in entry["emits"])
+    loc = entry.get("at", "@" if inside else "")
+    w = _place(loc)
+    keys = lambda k: ", ".join(f"`{x}`" for x in entry[k])
+    literal = lambda v: json.dumps(v, ensure_ascii=False, separators=(",", ":"))
+    if kind == "type":
+        sentence = f"{w}, when present, is {_type_word(entry['type'])}."
+    elif kind == "exact_keys":
+        sentence = f"{w}, when present, is an object with exactly the keys {keys('keys')}."
+    elif kind == "keys":
+        sentence = f"{w}, when present, is an object with the keys {keys('required')}"
+        sentence += (f" and no other key except {keys('optional')}." if entry["optional"]
+                     else " and no other key.")
+    elif kind == "const":
+        sentence = f"{w}, when present, is {literal(entry['value'])}."
+    elif kind == "enum":
+        sentence = f"{w}, when present, is one of {', '.join(map(literal, entry['values']))}."
+    elif kind == "max_items":
+        sentence = f"{w}, when it is an array or an object, has at most {_bound(entry['limit'], limits)} members."
+    elif kind == "max_bytes":
+        sentence = f"{w}, when it is a string, is at most {_bound(entry['limit'], limits)} bytes long in UTF-8."
+    elif kind == "max_count":
+        sentence = f"There are at most {_bound(entry['limit'], limits)} values at `{entry['of']}`."
+    elif kind == "name":
+        sentence = (f"The key of {w} is in the class `{entry['class']}`." if entry.get("on") == "key"
+                    else f"{w}, when present, is a string in the class `{entry['class']}`.")
+    elif kind == "sorted_unique":
+        sentence = f"{w}, when it is an array of strings, is in strictly increasing code point order."
+    elif kind == "unique_so_far":
+        sentence = f"{w}, when present, differs from the same value of every earlier item of this group."
+    elif kind == "declared_in":
+        sentence = f"{w}, when present, equals one of the values at `{entry['set']}`."
+    elif kind in ("requires", "excludes"):
+        if "member" in entry:
+            sentence = (f"{w}, when it is an object, has " + ("the key " if kind == "requires" else "no key ")
+                        + f"`{entry['member']}`.")
+        else:
+            sentence = (f"{w}, when it is an array, " + ("contains " if kind == "requires" else "does not contain ")
+                        + literal(entry["item"]) + ".")
+    else:
+        raise ValueError(kind)
+    if entry.get("when"):
+        sentence = "When " + " and ".join(_literal(x) for x in entry["when"]) + ": " + sentence
+    return sentence
+
+
+def _bound(value, limits=None):
+    if type(value) is int:
+        return str(value)
+    limits = limits or loads_json((DATA / "limits.json").read_bytes())
+    return f"{limits[value]} ({value})"
+
+
+def english_table(contract, *, limits=None):
+    lines = ["<!-- GENERATED by tools/wire_contract.py; do not edit. -->",
+             "| Check | Code | One reading |", "|---|---|---|"]
+    def entries(rows, inside=False):
+        for entry in rows:
+            if "each" in entry:
+                lines.append(f"| `{entry['id']}` | group | {wording(entry)} |")
+                entries(entry["checks"], True)
+            elif entry.get("kind") == "classifier":
+                for member in entry["emits"]:
+                    lines.append(f"| `{member['id']}` | `{member['code']}` | {member['says']} |")
+            else:
+                code = entry.get("code", entry.get("as", "include"))
+                lines.append(f"| `{entry['id']}` | `{code}` | {wording(entry, inside=inside, limits=limits)} |")
+    for index, phase in enumerate(contract["phases"], 1):
+        lines.append(f"| **Phase {index}, {phase['name']}** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |")
+        entries(phase["checks"])
+    return "\n".join(lines) + "\n"
+
+
+def lint(contract, *, limits, names, known=None):
+    """Return (code, detail) findings; no fixture or legacy verdict is changed."""
+    known = known or {}
+    findings = []
+    def issue(code, detail):
+        findings.append((code, detail))
+    required = {"contract", "revision", "format", "status", "input", "uses", "codes", "residual", "phases"}
+    if (type(contract) is not dict or not required <= contract.keys() or
+            contract.keys() - required - {"adapter"} or contract.get("format") != 1 or
+            contract.get("status") not in ("shadow", "public") or
+            type(contract.get("revision")) is not int or contract["revision"] < 1):
+        return [("WC01", "invalid contract envelope")]
+    codes = contract["codes"]
+    if type(codes) is not dict or any(type(v) is not dict or set(v) != {"class", "summary"}
+                                      or v["class"] not in CLASSES for v in codes.values()):
+        issue("WC03", "invalid code declaration")
+        return findings
+    used = {contract["residual"]}
+    seen = set()
+    ordered = []
+    def pattern(loc, depth, *, wild=False):
+        if type(loc) is not str or not (PATTERN if wild else LOCATION).fullmatch(loc):
+            issue("WC06", f"invalid location {loc!r}")
+            return
+        match = re.match(r"@([0-9]*)", loc)
+        if match and int(match[1] or 0) >= depth:
+            issue("WC06", f"unbound item base {loc}")
+    def guard(entry, depth):
+        for literal in entry.get("when", []):
+            if type(literal) is not dict or len(literal) != 1:
+                issue("WC01", "invalid guard literal")
+                continue
+            op, arg = next(iter(literal.items()))
+            if op not in {"present", "absent", "equals", "differs", "is", "is_not"}:
+                issue("WC01", f"unknown guard {op}")
+                continue
+            loc = arg if op in ("present", "absent") else arg[0]
+            pattern(loc, depth)
+            if op in ("equals", "differs") and type(arg[1]) not in (str, int, bool):
+                issue("WC06", "non-scalar literal")
+    def template(entry):
+        value = entry["text"]
+        if type(value) is not str or not value.isascii():
+            issue("WC04", "non-ASCII template")
+            return
+        cleared = value.replace("{{", "").replace("}}", "")
+        found = list(PLACEHOLDER.finditer(cleared))
+        if re.sub(PLACEHOLDER, "", cleared).count("{") or re.sub(PLACEHOLDER, "", cleared).count("}"):
+            issue("WC04", f"unbalanced template {entry['id']}")
+        allowed = {"value", "key", "index", "count", "limit"} | set(entry.get("args", {})) | set(entry.get("returns", []))
+        renderers = {}
+        for item in found:
+            name, renderer = item.groups()
+            renderer = renderer or "raw"
+            if name not in allowed or renderer not in RENDERERS or (name in renderers and renderers[name] != renderer):
+                issue("WC04", f"invalid placeholder {entry['id']}:{name}")
+            renderers[name] = renderer
+        if (set(entry.get("args", {})) | set(entry.get("returns", []))) - renderers.keys():
+            issue("WC04", f"unused argument {entry['id']}")
+    def walk(entries, depth=0, included=False):
+        for entry in entries:
+            if type(entry) is not dict or "id" not in entry:
+                issue("WC01", "invalid entry")
+                continue
+            eid = entry["id"]
+            if type(eid) is not str or not ID.fullmatch(eid) or eid == "residual" or eid in seen:
+                issue("WC02", f"invalid or repeated id {eid}")
+            seen.add(eid)
+            guard(entry, depth)
+            if "each" in entry:
+                pattern(entry["each"], depth, wild=True)
+                walk(entry["checks"], depth + 1, included)
+                continue
+            kind = entry.get("kind")
+            if kind == "include":
+                if ("view" in entry) != ("says" in entry):
+                    issue("WC08" if "view" in entry else "WC01", f"include says/view mismatch {eid}")
+                if "view" in entry and included:
+                    issue("WC09", f"nested view {eid}")
+                target = known.get(entry.get("contract"))
+                if target is None or entry["contract"] not in contract["uses"]:
+                    issue("WC09", f"unknown include {eid}")
+                elif not set(entry["phases"]) <= {p["name"] for p in target["phases"]}:
+                    issue("WC09", f"unknown phase {eid}")
+                if "as" in entry:
+                    used.add(entry["as"])
+                pattern(entry.get("at", "@" if depth else ""), depth)
+                continue
+            if kind == "classifier":
+                members = entry.get("emits", [])
+            elif kind in T1 | {"hook"}:
+                members = [entry]
+            else:
+                issue("WC01", f"unknown kind {kind}")
+                continue
+            for member in members:
+                mid = member["id"]
+                if member is not entry:
+                    if mid in seen or not ID.fullmatch(mid):
+                        issue("WC02", f"invalid or repeated member {mid}")
+                    seen.add(mid)
+                if ordered and (not _comparable(ordered[-1], mid) or _id_key(ordered[-1]) >= _id_key(mid)):
+                    issue("WC02", f"out-of-order check {mid}")
+                ordered.append(mid)
+                used.add(member["code"])
+                template(member)
+                if (kind == "hook" or member is not entry) and not member.get("says"):
+                    issue("WC08", f"missing says {mid}")
+                if member.get("inherited") and (member.get("returns") != ["message"] or member["text"] != "{message}"):
+                    issue("WC08", f"invalid inherited text {mid}")
+                for value in (mid, member["code"], member["text"], member.get("says", "")):
+                    if FORBIDDEN.search(value):
+                        issue("WC07", f"forbidden Lean token {mid}")
+            if kind == "classifier":
+                continue
+            loc = entry.get("at", "@" if depth else "")
+            pattern(loc, depth)
+            for arg in entry.get("args", {}).values():
+                pattern(arg, depth)
+            if kind == "unique_so_far" and (not depth or not loc.startswith("@")):
+                issue("WC06", f"unique_so_far needs a group {eid}")
+            if kind == "name":
+                if entry.get("class") not in names:
+                    issue("WC05", f"unknown name class {eid}")
+                if entry.get("on") == "key" and loc == "":
+                    issue("WC06", f"key check at root {eid}")
+            if kind in ("max_items", "max_bytes", "max_count") and type(entry["limit"]) is str and entry["limit"] not in limits:
+                issue("WC05", f"unknown limit {eid}")
+            if kind in ("max_count", "declared_in"):
+                pattern(entry["of"] if kind == "max_count" else entry["set"], depth, wild=True)
+    for phase in contract["phases"]:
+        walk(phase["checks"])
+    if used != set(codes):
+        issue("WC03", f"code declarations differ from uses: {sorted(used ^ set(codes))}")
+    return findings
+
+
+def process(directory=DATA, *, write=False):
+    findings = []
+    def issue(path, code, detail):
+        findings.append(f"{path}: {code}: {detail}")
+    try:
+        limits = loads_json((directory / "limits.json").read_bytes())
+        names = loads_json((directory / "names.json").read_bytes())
+        lock_path = directory / "contracts.lock"
+        lock = loads_json(lock_path.read_bytes()) if lock_path.exists() else {}
+    except Exception as exc:
+        return [f"{directory}: WC01: {exc}"]
+    files = [directory / "limits.json", directory / "names.json"] + sorted(directory.glob("*@*.json"))
+    contracts = {}
+    for path in files[2:]:
+        try:
+            value = loads_json(path.read_bytes())
+            contracts[value["contract"]] = value
+        except Exception as exc:
+            issue(path, "WC01", str(exc))
+    for path in files:
+        try:
+            value = loads_json(path.read_bytes())
+        except Exception:
+            continue
+        if path in files[2:]:
+            for code, detail in lint(value, limits=limits, names=names, known=contracts):
+                issue(path, code, detail)
+        wanted = {"revision": value.get("revision", 1), "sha256": _hash(value)}
+        if write:
+            lock[path.name] = wanted
+        elif lock.get(path.name) != wanted:
+            issue(path, "WC10", "lock hash or revision differs")
+    if write and not findings:
+        lock_path.write_bytes(canonical_json(lock) + b"\n")
+    return findings
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--write", action="store_true")
+    parser.add_argument("--directory", type=Path, default=DATA)
+    args = parser.parse_args()
+    findings = process(args.directory, write=args.write)
+    for line in findings:
+        print(line)
+    return bool(findings)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

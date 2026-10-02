@@ -68,14 +68,17 @@ def load(unit: str, *, directory: Path = ROOT) -> dict:
 def _domain(value, depth=0):
     if depth > 256:
         return False
-    if value is None or type(value) in (bool, str):
+    if value is None or type(value) is bool:
         return True
+    if type(value) is str:
+        return not any(0xD800 <= ord(char) <= 0xDFFF for char in value)
     if type(value) is int:
         return 0 <= value <= 2**53 - 1
     if type(value) in (list, tuple):
         return all(_domain(v, depth + 1) for v in value)
     if type(value) is dict:
-        return all(type(k) is str and _domain(v, depth + 1) for k, v in value.items())
+        return all(_domain(k, depth + 1) and type(k) is str and _domain(v, depth + 1)
+                   for k, v in value.items())
     return False
 
 
@@ -392,8 +395,8 @@ def run(contract, root, *, registry=None, contracts=None, limits=None, names=Non
                 if fn is None:
                     return Deferred("/".join(ids + (entry["id"],)))
                 answer = fn(current, items)
-                fail, extra, _, _ = (bool(answer), answer if type(answer) is dict else {}, path,
-                                      values["value"])
+                fail = answer is not None and answer is not False
+                extra = answer if type(answer) is dict else {}
             elif kind == "classifier":
                 fn = registry.classifiers.get(entry["classifier"])
                 if fn is None:
@@ -421,7 +424,7 @@ def run(contract, root, *, registry=None, contracts=None, limits=None, names=Non
             if sites:
                 if viewed:
                     rendered["inner_path"] = path
-                    path = _pointer(sites[-1])
+                    path = "".join(_pointer(s) for s in sites)
                 else:
                     path = "".join(_pointer(s) for s in sites) + path
             record = {"contract": contract["contract"], "revision": contract["revision"],
