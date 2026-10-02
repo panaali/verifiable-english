@@ -17,12 +17,20 @@ Lean rejected the profile at check 3.2 with `SOFT_UNSUPPORTED_PROFILE`. Python
 now rejects `speech-acts@0` at the profile check with the latter code and text.
 
 The only profile passed to Python's inherited W1 decoder but omitted from
-Lean's `inheritedProfiles` was `norm-defaults@0`. Python now omits it there as
-well. An `unspecified` default under that profile therefore fails the inherited
-declaration check with `SOFT_INVALID_INPUT` in both languages. The inherited
-texts remain language-specific: Python says `UnsupportedProfile: unspecified
+Lean's `inheritedProfiles` was `norm-defaults@0`. Python omits it when validating
+a submitted source on the standalone soft route. An `unspecified` default under
+that profile therefore fails the inherited declaration check with
+`SOFT_INVALID_INPUT` in both languages. The inherited texts remain
+language-specific: Python says `UnsupportedProfile: unspecified
 completion requires norm-defaults@0`; Lean says `InvalidInput: invalid
 regulated role or default for x_required` on the recorded input.
+
+The full suite exposed a separate consumer: `norm_defaults.UnspecifiedSoftDocument`
+constructs placeholder completions through `SoftEnvironment`. That route still
+passes `norm-defaults@0` to W1, as it did before S4-pre. The narrower list is
+selected only by `load_soft_document` and raw soft admission. This preserves the
+norm-defaults route's verdicts and identities while closing the soft route's
+code difference.
 
 ## Corpus result
 
