@@ -2,12 +2,13 @@
 
 import pytest
 
-from tests.test_norms import environment
+from tests.test_norms import environment, permission
 from ve.ast import formula_from_data
 from ve.environment import Environment
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
 from ve.identity import meaning_id
-from ve.readings import source_word_text, validate_couplings, validate_reading_sets
+from ve.readings import (s1_content_kind, s1_content_meaning_id, source_word_text,
+                         validate_couplings, validate_reading_sets)
 from ve.readings_english import (E22, E23, E24, act_only_sentence,
                                  assertion_pair_sentence, coupling_sentence,
                                  decision_only_sentence, force_twin_sentence,
@@ -104,3 +105,43 @@ def test_s1_report_sentences_keep_their_checked_claims_narrow():
     with pytest.raises(VEError, match="E14 needs a source word"):
         force_twin_sentence("may not", "strict", "default", "unstated", ("a",),
                             "obligation", True, False)
+
+
+def test_candidate_norm_has_the_fixed_unit_meaning_id():
+    from ve.norms import NormDocument, norm_meaning_id
+    env = environment({"permitted": permission()})
+    content = {"norm": {"name": "help", "predicate": "permitted", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []}}
+    reading = {"id": "strict", "kind": "norm", "content": content}
+    assert s1_content_kind(content) == "norm"
+    assert s1_content_meaning_id(env, "rs", reading) == norm_meaning_id(
+        env, NormDocument._decode(content))
+    assert s1_content_kind({"quantity": {}}) is None
+    with pytest.raises(VEError, match="kind asserted and content of kind norm"):
+        s1_content_meaning_id(env, "rs", {**reading, "kind": "asserted"})
+    with pytest.raises(VEError, match="requires rights@0"):
+        s1_content_meaning_id(env, "rs", {**reading, "kind": "right",
+                                               "content": {"right": {}}})
+    with pytest.raises(VEError, match="bar candidate content is not implemented"):
+        s1_content_meaning_id(env, "rs", {**reading, "kind": "bar",
+                                               "content": {"bar": {}}})
+
+
+def test_content_bearing_set_fails_closed_until_separation_replay_exists():
+    raw = environment({"permitted": permission()}).to_dict()
+    raw["profiles"] = sorted({*raw["profiles"], "readings@1"})
+    env = Environment(raw)
+    content = {"norm": {"name": "help", "predicate": "permitted", "sign": True,
+                        "guard": ["top"], "unless": [], "over": []}}
+    candidate = {"id": "strict", "kind": "norm", "content": content,
+                 "meaning_id": s1_content_meaning_id(
+                     env, "rs", {"id": "strict", "kind": "norm", "content": content}),
+                 "admission": {"who": "reviewer", "why": "recorded",
+                               "distinguishing_models": {}}}
+    set_ = {"id": "rs", "unit": "u", "version": 1, "status": "open",
+            "readings": [candidate], "situations": {}}
+    with pytest.raises(CheckerUnavailable, match="awaits Lean replay"):
+        validate_reading_sets(env, [set_], {"u"})
+    candidate["meaning_id"] = "wrong"
+    with pytest.raises(VEError, match="meaning id does not match content"):
+        validate_reading_sets(env, [set_], {"u"})
