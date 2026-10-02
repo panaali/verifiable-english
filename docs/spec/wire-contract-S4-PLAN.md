@@ -1,0 +1,2 @@
+# Wire contract stage S4 (pointer plan)
+Item 1 of THIS plan is stage S4 of docs/spec/wire-contract-PLAN.md (S0-S3 merged on main, contract in shadow; DRI gate met 2026-10-02 on a complete corpus). Apply that plan's S4 section exactly: the first profile switched from shadow to the contract's diagnostics, accept/reject and identities unchanged, only diagnostics may become uniform (listed per profile), the corpus-completeness test kept. Honest open questions.
