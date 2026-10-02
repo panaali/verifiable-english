@@ -52,12 +52,19 @@ def _sorted_items(value):
 # The environment (1.1)
 
 class S1Environment:
-    """The environment with `readings@1`, its chain, and the lower and frame environments."""
+    """The environment with `readings@1`, its chain, and the lower and frame environments. The environment is read
+    as Lean receives it (`wire`), as the document is: an explicit null is an absent field at every depth, so
+    `vocabulary.soft: null` or a predicate's `regulated: null` is decoded as Lean decodes it."""
 
     def __init__(self, data):
         from .document import _environment
+        data = wire(data)
         self.data = data
-        self.profiles = list(data["profiles"])
+        profiles = data.get("profiles") if type(data) is dict else None
+        if type(profiles) is not list or any(type(p) is not str for p in profiles):
+            # Lean's `profilesOf`: an absent profiles field (or a null one, which `wire` omits) is refused first.
+            raise VEError("UnsupportedProfile: profiles must be a sorted unique array")
+        self.profiles = list(profiles)
         if READINGS not in self.profiles:
             raise VEError("UnsupportedProfile: readings@1 is required")
         self.lower_profiles = [p for p in self.profiles if p != READINGS]
