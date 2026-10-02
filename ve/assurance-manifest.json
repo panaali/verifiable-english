@@ -964,6 +964,29 @@
       "notes": []
     },
     {
+      "id": "wire.diagnose",
+      "summary": "diagnostic-only Lean wire contract engine; reports a first fault after a legacy rejection",
+      "class": "leaf",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {"current": "experimental", "at_switch": "experimental",
+                    "reason": "shadow diagnostic pilot; no verdict or identity depends on it"},
+      "python": [],
+      "outcomes": {"verdict": [], "unknown": [], "rejection": [], "budget": [],
+                   "operational": ["CheckerUnavailable"]},
+      "lean": {"bindings": [
+        {"executable": "ve_diagnose", "mode": "soft-norms@0",
+         "kinds": ["soft-elaborate", "admission"],
+         "response": {"outcome": "string"},
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean"]}
+      ], "planned_modes": [], "theorems": [], "planned_theorems": [], "decoders": []},
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": ["tests/test_wire_contract_soft_lean.py::test_fixtures_p1_to_p17"],
+      "trusted": ["lean:kernel", "lean:compiler", "lean:runner-glue"],
+      "notes": ["The binding has no verdict authority. A missing executable is a deferred diagnostic, never an admission failure."]
+    },
+    {
       "id": "check",
       "summary": "`ve check`: acceptance, canonical text, evaluation and premise report of one source",
       "class": "combination",

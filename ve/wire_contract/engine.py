@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 from typing import Callable
 
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
 from ve.wire import canonical_json, loads_json
 
 
@@ -463,7 +463,11 @@ def overlay(contract, legacy_error: VEError | None, outcome, lean=None):
     if legacy_error is None:
         return None
     if isinstance(outcome, Deferred) and lean is not None:
-        outcome = lean
+        try:
+            outcome = lean() if callable(lean) else lean
+        except CheckerUnavailable:
+            # Diagnosis is optional; the legacy validator has already rejected.
+            pass
     if isinstance(outcome, Deferred):
         return {"contract": contract["contract"], "revision": contract["revision"],
                 "deferred": outcome.id, "text": str(legacy_error)}

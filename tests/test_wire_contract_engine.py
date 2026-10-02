@@ -1,6 +1,6 @@
 """Independent cases for the format-1 diagnostic interpreter."""
 
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
 from ve.wire_contract.engine import CLEAN, Deferred, Fault, Registry, overlay, run
 
 
@@ -58,6 +58,9 @@ def test_include_view_and_deferred_overlay():
     assert result == Deferred("a")
     record = overlay(outer, VEError("legacy"), result)
     assert record == {"contract": "demo@0", "revision": 1, "deferred": "a", "text": "legacy"}
+    def unavailable():
+        raise CheckerUnavailable("diagnoser unavailable")
+    assert overlay(outer, VEError("legacy"), result, lean=unavailable) == record
     registry = Registry().register(views={"pick": lambda value: {"x": value["x"]}})
     result = run(outer, {"doc": {"x": "wrong"}}, registry=registry,
                  contracts={"inner@0": inner})
