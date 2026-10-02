@@ -1,18 +1,21 @@
 # Composition stage S2: superposed verdicts across readings (`readings@1`, part B), milestone S2a
 
-> Status: item-1 specification, draft 3 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
+> Status: item-1 specification, draft 4 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
 > draft 2 (its sections 2.1, 2.3, 2.5 and 2.6, its S2 section, its fixtures and its open questions 1, 2, 5, 6, 9, 13
-> and 16) through the pointer plan [composition-S2-PLAN.md](composition-S2-PLAN.md) draft 4, which records the
+> and 16) through the pointer plan [composition-S2-PLAN.md](composition-S2-PLAN.md) draft 5, which records the
 > converged Astra + Fable design debate (`manage-agents/debates/design-compose-s2/{astra,fable}.md`, CONVERGED after
 > round 3; the Astra seat was held by Sol xhigh as the recorded cross-family stand-in) and the edits of it that bind
 > S2. Draft 2 applied the converged Astra + Fable statement review of draft 1
 > (`manage-agents/debates/compose-s2-spec/{astra,fable}.md`, CONVERGED after round 2 on FIX: five corrections, listed
-> in the change log; the Astra seat's round 1 is recorded as held by Sol xhigh) and nothing else. Draft 3 applies the
+> in the change log; the Astra seat's round 1 is recorded as held by Sol xhigh) and nothing else. Draft 3 applied the
 > three wording corrections of the confirmation round on draft 2 (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on
 > three statement-level claims, 1.1's route order, 7's decoder claim and M17(a), with every definition confirmed as
-> the requested repair) and nothing else: no definition, theorem statement or fixture value changed. It is the
+> the requested repair) and nothing else. Draft 4 applies the one correction of the confirmation round on draft 3
+> (`manage-agents/compose-s2-p3ver2.final.md`: 7's decoder correction and M17(a) confirmed; FAIL on one statement,
+> the route choice of 1.1 and 4.1 step 2, which evaluated `superposable D` on the rights chain) and nothing else: no
+> definition, theorem statement or fixture value changed. It is the
 > statement under the Astra + Fable item-1 review that gates S2's Lean (PLAN-EXPAND2 rule 10): a draft alone opens
-> nothing, and the build opens on the PASS of the confirmation round on draft 3, scoped to the three edited passages.
+> nothing, and the build opens on the PASS of the confirmation round on draft 4, scoped to the edited passages.
 > Its item is **S2a**: superposition on the soft and norms chains, the enumerated fallback on
 > every chain; section 12 says what S2b inherits and does not specify it. **Frozen inputs**: composition.md draft 3
 > (the stack contract, `dispatch`, the slot, `gate`, the labelled slot, `Content`, the wordings E1 to E21, the label
@@ -89,7 +92,10 @@ The row is chosen after the couplings and narrowings are decoded with today's te
 rows are decided from the decoded document alone, and W2 returns there: a W2 document keeps today's coupled choices,
 its on-request narrowing and its budget, and never sees `choiceCore D`, `ReadingsUnsatisfiable` or `DeadReading`
 (4.7, fixture M18); no narrowing becomes a premise, no finding is computed and nothing of 1.2 to 1.9 is built for
-it. Choosing between the last two rows computes exactly what `superposable D` reads (1.8: `supReady D`,
+it. A document on none of the first three rows whose chain is rights takes the enumerated row unconditionally (until
+S2b): choosing it computes nothing of 1.2 to 1.9, `superposable D` is not evaluated, and `ReadingsNotSuperposable`
+never reaches a rights document (fixture M12); `sup D` of a rights document is S2b's (12). On the soft and norms
+chains, choosing between the last two rows computes exactly what `superposable D` reads (1.8: `supReady D`,
 `uniformPrecedence D`, `sup D` of 1.4 and the chain's well-formedness on it) and nothing else of 1.2 to 1.9:
 `ReadingsNotSuperposable` is that choice's own outcome when `superposable D` is false, and `choiceCore D`,
 `DeadReading` and `Choice_D` are computed only after the route is chosen (4.1 steps 3 and 4).
@@ -439,7 +445,9 @@ After S1's admission (its 4.1, unchanged, through the separation check and coupl
    route verbatim: today's `coupled_choices` over the couplings, a recorded narrowing applied only on request
    (`--narrowing`, `ve/document.py`), today's budget; no `choiceCore D`, no `ReadingsUnsatisfiable`, no
    `DeadReading` (4.7, fixture M18). Pending ends here; the abstention is S1's. For a document on none of the first
-   three rows, `superposable D` decides between the last two (1.8): `supReady D`, `uniformPrecedence D`, `sup D` (1.4)
+   three rows: on the rights chain, the enumerated route unconditionally (until S2b), with nothing of 1.2 to 1.9
+   computed, `superposable D` not evaluated and no finding (fixture M12); on the soft and norms chains,
+   `superposable D` decides between the last two rows (1.8): `supReady D`, `uniformPrecedence D`, `sup D` (1.4)
    and the chain's well-formedness on it are computed here and nothing else of 1.2 to 1.9; when it is false, the
    finding `ReadingsNotSuperposable` with its cause (1.8, 7) and the enumerated route.
 3. On the superposed and enumerated routes: computes `choiceCore D` (1.6). If Python's search finds no compatible
@@ -454,8 +462,8 @@ After S1's admission (its 4.1, unchanged, through the separation check and coupl
    in canonical order, stopping past 64; for each, checks
    `choiceDoc D c` with the lower route (`readings-choice`), refusing the document when a choice's document fails
    the chain's well-formedness (7); combines the verdicts (4.6).
-6. Reports (6). Findings (`ReadingsNotSuperposable` at step 2, `DeadReading` at step 3) never change a verdict;
-   neither reaches a W2, pending or abstaining document.
+6. Reports (6). Findings (`ReadingsNotSuperposable` at step 2, on the soft and norms chains only; `DeadReading` at
+   step 3) never change a verdict; neither reaches a W2, pending or abstaining document.
 
 ### 4.2 The elaboration, regenerated
 
@@ -1444,3 +1452,4 @@ any of them.
 | 2026-10-02 | Draft 1 | First statement specification of stage S2's item 1 (S2a), from plan draft 2 through the pointer plan's draft 2: the four routes of a `readings@1` document; choices, compatibility and `choiceDoc`; the choice vocabulary and atoms; `sup D` with gating, qualification and A1's copy mapping; owners and the labelled `Choice_D`; the name map and the pulled structure; the superposability condition with its three causes; the evidence forms and two findings; the slots of E4, E7, E8, E10, E12, E13, E17 and the sentences E26 to E29; the case kinds; the semantics with both directions of model correspondence, the empty situation, the verdict table and the enumerated route; the report and diagnostics; the Lean statements `sup_no_sets`, `sup_wellFormed`, `choice_wellFormed`, `asserted_shared`, `slot_wellFormed`, `slot_wellLabelled`, `encodes_unique`, `encodes_atoms`, `superpose_faithful`, `base_down`, `superpose_situation`, `base_up`, `superpose_conflict_iff`, `superpose_conflict_free`, `superpose_conflict_witness`, `superpose_all`, `superpose_all_base`, `superpose_countermodel`, `dead_sound`, `unsat_sound`, `superpose_assertions`, `choices_spec`, the lifting lemma of composition.md 9.5 and two wire theorems; fixtures F2, F3, F18 and F20 in S2a's share, M1 to M16, the differential, the shadow test with M8's mutation check, the pilots, the English; the measured unlock; what S2b inherits; seventeen resolved choices, three of them repairs of the plan's sketch (14.3, 14.4, 14.6). No code, Lean or frozen contract changes. |
 | 2026-10-02 | Draft 2 | The converged Astra + Fable statement review of draft 1 applied (`manage-agents/debates/compose-s2-spec/{astra,fable}.md`, CONVERGED after round 2 on FIX) and nothing else, five corrections: (1) the route of 1.1 is chosen after the decoders run with today's texts and before `choiceCore D`, the `⊥` check and `DeadReading`, which now run only on the superposed and enumerated routes; W2 keeps its verdicts, `CouplingUnsatisfiable`, its on-request narrowing and its budget verbatim (1.1, 1.2, 1.9, 4.1, 4.7, 7, 14.17; F20 extended; fixture M18, the coupled formula-only document with two recorded narrowings that draft 1 would have refused). (2) `supReady` gains the shape of the couplings and narrowings that today's `validate_couplings` and `validate_narrowings` require (`couplingShape`, `narrowingShape`: active references, a label on every coupled candidate, distinct coupling ids and narrowing ids, non-empty keeps of the set's own candidates for a narrowing in force; a stale narrowing stays inactive), named in 7 as the Lean counterpart of their texts and carried by `superposable`, `SupReplay.sp` and the `hr` of `choices_spec`, `dead_sound` and `unsat_sound`; this is what `encodes_unique` and the theorems on it need (1.8, 8.3, 8.4's note; fixture M17 a to d). (3) `origin` is defined on the names of `sup D` and used by `owners` there; `qName` goes through the set that declares the name and the candidate the choice takes in it, so the name map of an interface name lands on the chosen copy (1.5, 1.7, 8.3; M1's expected map retained and spelled out). (4) M8's mutation check names the one copy that is a child of `base-x` and the leak through `stop-x` under choice 0. (5) 8.1 and 13.1 say which S1 files receive additive integration (`Wire.lean`, `Run.lean`) with no S1 definition, statement or case kind changed. No statement of S0 or S1 changed; no design change. The converged process: one confirmation round on the edited passages opens the build. |
 | 2026-10-02 | Draft 3 | The confirmation round on draft 2 applied (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on three statement-level wording claims, every definition confirmed as the requested repair, no unrelated change found) and nothing else, three corrections: (1) 1.1 and 4.1 say what choosing the route computes: the first three rows are decided from the decoded document alone, and W2 returns before any narrowing becomes a premise, before `choiceCore D` and before any finding; choosing between the superposed and enumerated rows computes `superposable D`, and so `sup D`, and nothing else of 1.2 to 1.9 (1.1; 4.1 steps 1, 2, 4, 5 and 6). (2) The decoder claim of 7 is limited to the shape invariants `supReady` enforces: a `Doc` that fails a conjunct is one today's texts refuse, and not conversely, since `validate_couplings` also refuses an empty label intersection (its second `CouplingLabelMissing`), an unsatisfiable coupling and its field and count checks (7; 1.8; 8.3's docstrings and note). (3) M17(a) says that no theorem of 8.4 assuming `supReady` or `superposable` applies to the document, not that no theorem of 8.4 does (`encodes_atoms` assumes neither). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 3, scoped to these passages. |
+| 2026-10-02 | Draft 4 | The confirmation round on draft 3 applied (`manage-agents/compose-s2-p3ver2.final.md`: 7's decoder correction and M17(a) confirmed; FAIL on one statement-level claim introduced by draft 3's route-order repair; definitions, theorem statements and fixture values found unchanged, no unrelated change found) and nothing else, one correction: 1.1 and 4.1 step 2 said that every document on none of the first three rows computes `superposable D` to choose between the superposed and enumerated rows, which reached the rights chain, whose fallback 1.1's table makes unconditional and whose `sup D` is S2b's (12); they now say that a rights document takes the enumerated row unconditionally (until S2b) with nothing of 1.2 to 1.9 computed, `superposable D` not evaluated and no `ReadingsNotSuperposable` (fixture M12), and that computing `superposable D`, and so `sup D`, is the soft and norms chains' alone (1.1; 4.1 steps 2 and 6). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 4, scoped to these passages. |
