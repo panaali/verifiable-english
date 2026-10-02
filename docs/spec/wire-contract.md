@@ -1583,3 +1583,16 @@ report is unchanged: 6,007 cases, no mismatch, residual 0 in both languages, cov
 |---|---|
 | B: the gate's exit did not enforce the feasibility threshold of 45 (a report at 44 that matched the stored one passed) | treated as the class "a required row of section 9 the exit does not check": `gate_failures` in the gate lists every unmet row (tier 0 and A mismatches, the residual count of each language, coverage, feasibility, S3-pre) and the gate exits non-zero on any. Feasibility is judged from `n1 + n2` against the section's own 45 of 67, not from the report's `met` or `threshold`, and a report whose `total`, `threshold` or `met` disagrees with them fails |
 | C: `record_problems` ignored an unexpected top-level field, so one both engines added passed | every engine record, in every tier (with or without an expected record), must have exactly the members of `$defs/fault` in `contract.schema.json`, which is closed, and `args` must be an object; a test ties the gate's field set to the schema |
+
+## 17. Wire loop final response (2026-10-02)
+
+Sources: `manage-agents/wire-loop.final.md`, FIX, on branch `wire/integrate` at `92199a0d`, and the
+orchestrator's `manage-agents/wire-gate-directive.md`. The gate (`soft-norms@0-gate.json`) runs 7,468 cases
+(tier 0 165, tier A 4,280, tier B 200, replayed 2,809, legacy differences 14) with no mismatch, residual 0 and
+deferred 0 in both languages, coverage met, feasibility 51 of 67 (`n1` 43, `n2` 8), S3-pre closed; it exits 0.
+
+| Finding | Change |
+|---|---|
+| B: a nonempty `coverage_unmet` passed with `coverage_met` true; B: recorded legacy verdict differences passed with an `s3_pre` of `closed`; C: feasibility counts above the 67 numbered checks passed | treated as the class "a stated summary trusted over its data": `gate_failures` judges coverage from the unmet lists and from the checks without a first or masking witness (a Lean-only gap only where `coverage_unmet_reasons` explains it), S3-pre from `legacy_verdict_differences` (and fails if the legacy-difference tier ran no case), and feasibility from `n1`, `n2`, `coarse` and `t3`, non-negative integers that must partition the 67 numbered checks. Each stated summary (`coverage_met`, `s3_pre`, `total`, `threshold`, `met`, `all_check_count`, `first_check_count`, `masking_not_required`) must also agree with its data, and every tier must have run |
+| C: Tier B and replay records accepted a non-string `text` | every member of every engine record, in every tier, has the type `$defs/fault` gives it in `contract.schema.json` (read from the schema; a Boolean is not an integer) |
+| Directive: the corpus condition | the gate replays, deduplicated, every `soft-norms@0` input of `tests/test_*contract*` (which include `tests/test_wire_contract*`) and of the soft conformance fixtures: the pairs and triples of `multi_fault_cases()`, P1 to P17, the shadow, probe, S3-pre and admission sources, the acceptance fixtures of soft-norms.md 10 and the Rust fixtures' sources, each built by the code that builds it for its test. `tests/test_wire_gate_corpus.py` reruns the contract tests under a recorder that captures every input sent to either engine or either legacy validator and fails if one is missing from the gate's corpus; 1,442 were missing before |
