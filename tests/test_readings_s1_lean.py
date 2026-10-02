@@ -10,6 +10,7 @@ abstention, and delegation of another case kind to the lower route.
 """
 from __future__ import annotations
 
+import copy
 import json
 import shutil
 import subprocess
@@ -494,6 +495,162 @@ def test_explicit_null_on_the_norms_chain(lean):
         r["content"]["norm"].update({"mode": None, "hard": None, "alterable": None, "rank": None})
     assert agreed(lean, raw, document) == plain
     assert not plain.get("error", "").startswith("fields do not match"), plain
+
+
+K1_SOFT_BLOCK = {"parties": ["operator", "user"], "ranks": ["helpfulness"], "outranks": [], "ties": [],
+                 "outranking": {"mode": "strict"}}
+
+
+def _k1_soft_block():
+    raw = env_k()
+    raw["vocabulary"]["soft"] = copy.deepcopy(K1_SOFT_BLOCK)
+    return raw
+
+
+def _k1_norms():
+    return env_k(profiles=("norms@0", "readings@1", "relational-fol@0"))
+
+
+def _k1_norms_document(raw):
+    document, _ = k1_document(raw)
+    for r in document["reading_sets"][0]["readings"]:
+        r["content"]["norm"].pop("mode", None)
+        r["content"]["norm"].pop("exception", None)
+    return document
+
+
+NULL_ENVIRONMENTS = {
+    # name: (environment, its document from the environment, the kind of the open set's unit)
+    "soft": (env_k, lambda raw: k1_document(raw)[0], "norm"),
+    "soft block": (_k1_soft_block, lambda raw: k1_document(raw)[0], "norm"),
+    "norms": (_k1_norms, _k1_norms_document, "norm"),
+    "rights": (env_rights, lambda raw: {"units": [{"id": "u9"}],
+                                        "reading_sets": [rs9(raw, r9_right([r9_line("strict")]))]}, "right"),
+}
+# Optional environment fields the environments above leave out, written as null.
+OPTIONAL_ENVIRONMENT_FIELDS = [("vocabulary", "soft"), ("vocabulary", "rights"),
+                               ("vocabulary", "predicates", "asks", "regulated"),
+                               ("vocabulary", "predicates", "asks", "instruction_of"),
+                               ("vocabulary", "predicates", "arbitrary_arrest", "regulated"),
+                               ("vocabulary", "predicates", "avoid_required", "instruction_of"),
+                               ("vocabulary", "predicates", "arrest_permitted", "instruction_of")]
+
+
+def _fields(value, path=()):
+    """Every field of a JSON object at every depth, as a path of keys."""
+    if type(value) is dict:
+        for key, item in value.items():
+            yield (*path, key)
+            yield from _fields(item, (*path, key))
+    elif type(value) is list:
+        for index, item in enumerate(value):
+            yield from _fields(item, (*path, index))
+
+
+def _nulled(raw, path):
+    """`raw` with the field at `path` written as null, or None when its parent is not an object."""
+    raw = copy.deepcopy(raw)
+    parent = raw
+    for key in path[:-1]:
+        if type(parent) is dict and key in parent or type(parent) is list and type(key) is int:
+            parent = parent[key]
+        else:
+            return None
+    if type(parent) is not dict:
+        return None
+    parent[path[-1]] = None
+    return raw
+
+
+ENVIRONMENT_NULLS = [(name, path) for name, (make, _, _) in NULL_ENVIRONMENTS.items()
+                     for path in [*_fields(make()), *(p for p in OPTIONAL_ENVIRONMENT_FIELDS
+                                                      if _nulled(make(), p) is not None
+                                                      and p not in set(_fields(make())))]]
+
+
+def _python_answer(raw, document):
+    from ve.errors import VEError
+    from ve.readings_route import rights_findings
+    from ve.readings_s1 import answer
+    try:
+        return {"status": "ok", **answer(raw, document, chain_findings=rights_findings)}
+    except VEError as exc:
+        return {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
+
+
+def _known_text_difference(name, path):
+    """The cases whose environment, without the field, Lean and Python refuse with different texts: the route is
+    `CheckerUnavailable` on them, with the null exactly as without the field, and admits nothing. Not this finding's
+    class and not changed: a required field missing (the environment decoders' texts differ: `fields do not match`
+    against `Incorrect fields`, `invalid signature` against `Undeclared predicate argument sort`), and a candidate's
+    content made ill-typed by the environment (Lean's content decoder refuses it before any candidate label, or with
+    its code, `UnknownSymbol: `, before the text: the malformed-contents limitation of the earlier rechecks)."""
+    required = (path[-1] in ("arguments", "description") or path[:2] == ("vocabulary", "sorts") and len(path) == 3
+                or name == "norms" and len(path) <= 2 and path not in (("profiles",), ("vocabulary", "soft"),
+                                                                       ("vocabulary", "rights"))
+                or name == "rights" and path == ("vocabulary",))
+    ill_typed = path in (("vocabulary", "predicates", "avoid_required"),
+                         ("vocabulary", "predicates", "avoid_required", "regulated")) and name != "norms" or \
+        name == "rights" and path == ("vocabulary", "predicates", "arbitrary_arrest")
+    return required or ill_typed
+
+
+def _route(lean_path_environment, document, unit_kind):
+    """The route's outcome: Lean's row, its diagnostic, or the name of an operational failure."""
+    from ve.errors import CheckerUnavailable, VEError
+    from ve.readings_route import validate as route_validate
+    units = [{"id": u["id"], "kind": u.get("kind", unit_kind), **({"content": u["content"]} if "content" in u else {})}
+             for u in document["units"]]
+    try:
+        row = route_validate(lean_path_environment, units, document["reading_sets"])
+    except CheckerUnavailable:
+        return "CheckerUnavailable"
+    except VEError as exc:
+        return {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
+    return {k: v for k, v in row.items() if k != "id"}
+
+
+@pytest.mark.parametrize("name,path", ENVIRONMENT_NULLS, ids=lambda v: v if type(v) is str else ".".join(map(str, v)))
+def test_explicit_null_is_absent_in_the_environment(lean, name, path):
+    """Review finding B (compose-s1-loop): Python decoded the raw environment while Lean receives it through `wire`,
+    so `vocabulary.soft: null`, `vocabulary.rights: null` or a predicate's `regulated: null` was `ok` for Lean,
+    refused by Python, and `CheckerUnavailable` on the route. Every S1 entry point now reads the environment as
+    Lean does: each field of each environment, at every depth, and each optional field it leaves out, written as
+    null, is the field absent to Lean, to Python's regeneration and to the route (`ve/readings_route.py`, Rust's
+    replay included), and outside the pinned text differences the route answers Lean's row or raises Lean's
+    diagnostic. The class covers `vocabulary.rights.protected` and `alters` (optional to Lean's rights decoder, so
+    to Python's now), a null `profiles` (Lean's text, not a Python `KeyError`) and a right's line on a predicate
+    whose `regulated` is null (Lean's `UnknownSymbol`, not a Python `AttributeError`)."""
+    from ve.errors import VEError
+    make, make_document, unit_kind = NULL_ENVIRONMENTS[name]
+    nulled = _nulled(make(), path)
+    absent = wire(nulled)
+    # The situation ids are over the environment Lean receives, the one without the null; when that environment
+    # has no id (no profiles, say), over the environment as made.
+    try:
+        document = make_document(absent)
+    except (KeyError, TypeError, ValueError, VEError):
+        document = make_document(make())
+    row = {k: v for k, v in validate(lean, nulled, document).items() if k != "id"}
+    assert row == {k: v for k, v in validate(lean, absent, document).items() if k != "id"}
+    python = _python_answer(nulled, document)
+    assert python == _python_answer(absent, document)
+    routed = _route(nulled, document, unit_kind)
+    assert routed == _route(absent, document, unit_kind)
+    if _known_text_difference(name, path):
+        assert row["status"] == "error" and python["status"] == "error" and python != row, (row, python)
+        assert routed == "CheckerUnavailable"
+    else:
+        assert python == row
+        assert routed == row
+
+
+def test_environment_nulls_cover_the_reported_fields():
+    """The fields of the finding are among the cases, and agree: `vocabulary.soft` and `vocabulary.rights` on K1."""
+    for case in (("soft", ("vocabulary", "soft")), ("soft", ("vocabulary", "rights")),
+                 ("rights", ("vocabulary", "rights", "protected")), ("rights", ("vocabulary", "rights", "alters")),
+                 ("soft", ("profiles",)), ("rights", ("vocabulary", "predicates", "arrest_permitted", "regulated"))):
+        assert case in ENVIRONMENT_NULLS and not _known_text_difference(*case)
 
 
 def test_other_kinds_go_to_the_lower_route(lean):

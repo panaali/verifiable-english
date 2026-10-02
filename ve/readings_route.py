@@ -94,7 +94,8 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=Tr
     answer remain operational failures (`CheckerUnavailable`); only a well-formed Lean error row, which Python
     reproduces, can reject the document.
     """
-    document = document_wire(units, reading_sets)
+    # One normalised input (`wire`: an explicit null is an absent field) for Lean and Python alike.
+    environment, document = wire(environment), wire(document_wire(units, reading_sets))
     case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
     rows = run_lean([case], executable=executable)
     row = rows[0]
@@ -120,7 +121,7 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=Tr
 def separate_many(environment, units, reading_sets, queries, *, executable=LEAN_ROUTE):
     """`readings-separate` for each (set, situation id, other reading): Lean's answer per query, or its
     diagnostic (the search's check, 8.5). The document carries the candidate situations."""
-    document = document_wire(units, reading_sets)
+    environment, document = wire(environment), wire(document_wire(units, reading_sets))
     cases = [{"id": f"q{n}", "kind": "readings-separate", "environment": environment, "document": document,
               "set": s, "situation": sid, "other": other} for n, (s, sid, other) in enumerate(queries)]
     return run_lean(cases, executable=executable) if cases else []
