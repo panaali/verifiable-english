@@ -389,12 +389,13 @@ class Side:
             env = self.senv.soft_frame()
             check_soft_source(env.to_dict(), norms)
             self.soft = SoftNormDocument(env, norms)
-        from .ast import _Checker, formula_from_data
+        from .ast import formula_from_data
         env = self.soft.extended_env
         try:
             for ast in self.assertions:
-                _Checker(env, generated=True).formula(formula_from_data(env, ast, _generated=True), ())
-        except VEError:
+                # Decoding types the closed formula over the complete vocabulary (`a.check` in `sideWF`).
+                formula_from_data(env, ast, _generated=True)
+        except (VEError, SyntaxError):
             raise VEError("InvalidInput: ill-typed assertion") from None
 
     # -- the chain's document hash (Run.documentHash)
