@@ -5,11 +5,17 @@ import subprocess
 from copy import deepcopy
 from pathlib import Path
 
+import pytest
+
+from conformance.soft_norms import multi_fault_base
 from conformance.wire_contract_golden import reports as golden_reports
 from tests.test_wire_contract_corpus import CONTRACTS, LIMITS, NAMES, _registry
 from tests.test_wire_contract_lean import DEFER, DEMO
 from tests.test_wire_contract_soft_lean import FIXTURES, INHERITED, fixture_sources
 from tests.test_soft_norms_lean import elaborate, env, should
+from ve.admission import admit_document
+from ve.errors import VEError
+from ve.softnorms import load_soft_document
 from ve.softnorms_contract import REGISTRY
 from ve.wire import canonical_json
 from ve.wire_contract.engine import CLEAN, Deferred, Fault, load, run
@@ -96,6 +102,54 @@ def test_soft_pilot_spec_python_lean():
                 python.record.pop(key)
                 expected.pop(key)
         assert canonical_json(python.record) == canonical_json(expected), name
+
+
+def test_s4_public_admission_spec_python_lean():
+    """S1–S4: the admitted error, Python engine and Lean engine agree with the spec record."""
+    sources = []
+    raw, norms = multi_fault_base()
+    raw["vocabulary"]["soft"]["parties"] = ["p", "Q!"]
+    sources.append((raw, norms))
+    raw, norms = multi_fault_base()
+    norms[0]["norm"]["extra"] = 1
+    sources.append((raw, norms))
+    raw, norms = multi_fault_base()
+    raw["language"] = "x"
+    sources.append((raw, norms))
+    raw, norms = multi_fault_base()
+    norms[3]["norm"]["over"] = ["b1"]
+    sources.append((raw, norms))
+
+    # The expected records are copied from section 4.1 and S3–S4 of section 8.1,
+    # without consulting either engine or the admission error.
+    fields = [
+        ("2.7a", "declarations", "SOFT_INVALID_NAME", "InvalidInput",
+         "/environment/vocabulary/soft/parties/1", "InvalidInput: invalid soft name Q!", {"value": "Q!"}),
+        ("4.1c", "rule-fields", "SOFT_INVALID_INPUT", "InvalidInput",
+         "/norms/0/norm", "InvalidInput: invalid norm fields", {}),
+        ("1.2", "envelope", "SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile",
+         "/environment/language", "UnsupportedProfile: Unsupported language", {}),
+        ("6.8", "semantic", "SOFT_OVER_HARD", "InvalidInput", "",
+         "SoftOverHard: rule d3 over b1", {"detail": "rule d3 over b1"}),
+    ]
+    expected = [dict(zip(("check", "phase", "code", "class", "path", "text", "args"), row),
+                     contract="soft-norms@0", revision=4) for row in fields]
+    roots = [{"environment": raw, "norms": norms} for raw, norms in sources]
+    rows = _lean("soft-norms@0", roots, "soft-elaborate")
+    for index, ((raw, norms), root, row, record) in enumerate(zip(sources, roots, rows, expected)):
+        with pytest.raises(VEError) as old:
+            load_soft_document(deepcopy(raw), deepcopy(norms))
+        document = {"units": [{"kind": "norm", "content": deepcopy(unit)} for unit in norms]}
+        with pytest.raises(VEError) as caught:
+            admit_document(deepcopy(raw), document)
+        public = caught.value
+        assert type(public) is type(old.value), index
+        assert public.code == old.value.code == record["code"], index
+        assert public.to_dict() == {**old.value.to_dict(), "message": record["text"],
+                                    "diagnostic": record}, index
+        python = run(load("soft-norms@0"), root, registry=REGISTRY)
+        assert isinstance(python, Fault), index
+        assert python.record == row["diagnostic"] == record, index
 
 
 def admission_sources():

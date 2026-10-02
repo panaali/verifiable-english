@@ -9,6 +9,7 @@ import sys
 import pytest
 
 from conformance.soft_norms import multi_fault_base
+from ve.admission import admit_document
 from ve.errors import VEError
 from ve.soft_route import admit_soft_document
 from ve.softnorms import SoftEnvironment, load_soft_document
@@ -61,6 +62,11 @@ def test_public_call_reports_the_first_fault_and_keeps_the_legacy_error():
         with pytest.raises(VEError) as caught:
             admit_soft_document(raw, document(norms))
         error = caught.value
+        with pytest.raises(VEError) as admitted:
+            admit_document(raw, document(norms))
+        # The public API routes submitted soft sources through this same boundary.
+        assert type(admitted.value) is type(error)
+        assert admitted.value.to_dict() == error.to_dict()
         record = error.diagnostic
         assert type(error) is type(old) and error.code == old.code == code
         assert (record["check"], record["code"], record["path"], record["text"]) == (
@@ -132,6 +138,7 @@ def test_accepted_call_does_not_import_diagnostics():
     code = """import sys
 from conformance.soft_norms import multi_fault_base
 from ve.ast import formula_to_data
+from ve.admission import admit_document
 from ve.soft_route import admit_soft_document
 from ve.softnorms import SoftEnvironment, SoftNormDocument
 raw, norms = multi_fault_base()
@@ -141,7 +148,8 @@ ast = formula_to_data(soft.extended_env, formula, _generated=True)
 document = {'units': [{'id': f'u{i}', 'span': [i, i + 1], 'kind': 'norm', 'content': n}
                       for i, n in enumerate(norms)],
             'graph': {'root': 'leaf', 'nodes': [{'name': 'leaf', 'ast': ast, 'label': label}]}}
-admit_soft_document(raw, document)
+direct = admit_soft_document(raw, document)
+assert admit_document(raw, document) == direct
 assert 've.softnorms_contract' not in sys.modules
 assert 've.wire_contract' not in sys.modules
 """
