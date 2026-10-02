@@ -110,10 +110,13 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 ## The wire (`ve_readings_route`)
 
 A case is `{"id", "kind", "environment", "document", ...}`; `readings@1` must be in the environment's profiles and
-`dispatch` must name the head `readings`. The document is `{"units": [{"id", "content"?}], "reading_sets":
+`dispatch` must name the head `readings`. The document is `{"units": [{"id", "kind"?, "content"?}], "reading_sets":
 [...]}`. A unit's `content` is a formula, a unit content of the chain (`{"norm", "cites"?}`, `{"right"}`,
-`{"right_lines"}`, `{"limitation"}`, `{"bar"}`), or absent (the restricted JSON input has no `null`); reading sets
-are W2's with S1's `situations`, and a reading's absent `content` is pending. The active version of each unit is
+`{"right_lines"}`, `{"limitation"}`, `{"bar"}`), or absent (the restricted JSON input has no `null`); a unit with
+content carries its W2 `kind` (a string, or an array for a composite kind), and its content is in force only under
+that kind (`Wire.inForce`: a formula under `asserted`, a norm under `norm`, a rights block under a rights kind or
+`norm`). Reading sets are W2's with S1's `situations`; a reading's absent `content` is pending, and so is a formula
+candidate of another kind than `asserted`. The active version of each unit is
 the latest. A situation entry is `{"base", "fixed", "witness", "decisions", "probe", "value"}` (section 3), its
 base over the author's base model vocabulary with lowercase entity identifiers (`complete` may be omitted), and its
 id is `digest("ve-situation-<identity version>\n", {"environment_id", "situation"})`.

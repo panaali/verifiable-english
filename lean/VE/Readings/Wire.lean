@@ -5,9 +5,10 @@ import VE.Compose.Dispatch
 /-! The wire of `readings@1` part A (docs/spec/composition-s1.md 3, 4.1, 7, 8.4).
 
 A case carries the environment (with `readings@1` in its profiles) and a document
-`{"units": [{"id", "content"}], "reading_sets": [...]}`: each unit's `content` is a formula, a unit content of
-the chain (`{"norm", "cites"?}`, `{"right"}`, `{"right_lines"}`, `{"limitation"}`, `{"bar"}`) or `null`, and the
-reading sets are W2's, with S1's `situations`. Other keys of a unit or a document are not read here: the
+`{"units": [{"id", "kind", "content"}], "reading_sets": [...]}`: each unit's `content` is a formula, a unit content
+of the chain (`{"norm", "cites"?}`, `{"right"}`, `{"right_lines"}`, `{"limitation"}`, `{"bar"}`) or absent, its
+`kind` the W2 kind that decides whether the content is in force (`inForce`), and the reading sets are W2's, with
+S1's `situations`. Other keys of a unit or a document are not read here: the
 structural validation of W2 is Python's (4.1). The decoder builds the `Doc` of 1.2 from the active version of
 every set (W2: the latest version per unit): an open set is an item `.set`, the one signed reading of an authored
 set is a fixed unit, and every other unit with content is a fixed unit or a bar. It runs the checks of 4.1 in
@@ -125,10 +126,11 @@ def decodeContent (re : ReadingsEnvironment) (j : Json) : Except String Decoded 
 
 /-! ## The document -/
 
-/-- A reading of a set as written: id, kind, content, admission, labels. -/
+/-- A reading of a set as written: id, kind (`none` for a composite W2 kind, which is not a string), content,
+    admission, labels. -/
 structure ReadingJ where
   id : String
-  kind : String
+  kind : Option String
   content : Json
   models : List (String × String)
   labels : List (String × String)
@@ -147,7 +149,8 @@ def invalidSet : String := "invalid reading set"
 def decodeReading (j : Json) : Except String ReadingJ := do
   let id ← stringField j "id"
   let kind ← match j.getObjValD "kind" with
-    | .str k => pure k
+    | .str k => pure (some k)
+    | .arr _ => pure none
     | _ => throw "invalid reading"
   let models ← match (j.getObjValD "admission").getObjVal? "distinguishing_models" with
     | .ok m => (← fields m).mapM fun (k, v) => do
@@ -202,21 +205,41 @@ structure Decoded2 where
 
 def contentKind : Content → String := Content.kind
 
+/-- The unit kinds whose content is in force (1.2). A formula is asserted only by a unit of kind `asserted`, and a
+    norm is a rule only in a unit of kind `norm`; a rights block is correlated from a unit of any rights kind or
+    `norm` (the content's block decides, as the rights decoder reads it). Any other kind, a composite W2 kind
+    (quoted, hedged, causal; not a string) included, keeps its content out of the document, as Python's W2 loader
+    does. -/
+def rightsKinds : List String := ["right", "right_lines", "limitation", "bar", "norm"]
+
+def inForce (kind : Option String) : Content → Bool
+  | .assertion _ => kind == some "asserted"
+  | .norm _ => kind == some "norm"
+  | _ => kind.any rightsKinds.contains
+
 def decodeCandidate (re : ReadingsEnvironment) (setId : String) (r : ReadingJ) : Except String Candidate := do
   match ← decodeContent re r.content with
   | .pending => pure ⟨r.id, none, [], r.labels⟩
   | .bar _ => throw "UnsupportedProfile: readings@1 bar candidate content is not implemented"
   | .content c cs =>
     match c with
-    | .assertion _ => pure ⟨r.id, some c, cs, r.labels⟩
+    -- A formula of a kind other than `asserted` (a question, a quoted or hedged formula) is pending (1.2).
+    | .assertion _ => pure ⟨r.id, if r.kind == some "asserted" then some c else none, cs, r.labels⟩
     | _ =>
-      if r.kind != c.kind then
-        throw s!"InvalidInput: reading {setId}:{r.id} has kind {r.kind} and content of kind {c.kind}"
+      if r.kind != some c.kind then
+        throw s!"InvalidInput: reading {setId}:{r.id} has kind {r.kind.getD "composite"} and content of kind {c.kind}"
       pure ⟨r.id, some c, cs, r.labels⟩
 
 def decodeDocument (re : ReadingsEnvironment) (document : Json) : Except String Decoded2 := do
+  -- Each unit carries its kind: whether its content is in force depends on it (`inForce`).
   let units ← match document.getObjValD "units" with
-    | .arr us => us.toList.mapM fun u => do pure (← stringField u "id", u.getObjValD "content")
+    | .arr us => us.toList.mapM fun u => do
+        let kind ← match u.getObjValD "kind" with
+          | .str k => pure (some k)
+          | .arr _ => pure none
+          | .null => if u.getObjValD "content" == .null then pure none else throw "InvalidInput: unit kind is required"
+          | _ => throw "InvalidInput: unit kind is required"
+        pure (← stringField u "id", kind, u.getObjValD "content")
     | _ => throw "InvalidInput: document must list units"
   let sets ← match document.getObjValD "reading_sets" with
     | .arr ss => ss.toList.mapM decodeSet
@@ -226,7 +249,7 @@ def decodeDocument (re : ReadingsEnvironment) (document : Json) : Except String 
   let unitIds := units.map (·.1)
   let mut items : List Item := []
   let mut itemsJ : List ItemJ := []
-  for (u, content) in units do
+  for (u, kind, content) in units do
     match act.find? (·.unit == u) with
     | some R =>
       if R.status == "open" then
@@ -237,14 +260,18 @@ def decodeDocument (re : ReadingsEnvironment) (document : Json) : Except String 
         match R.readings with
         | [r] =>
           match ← decodeContent re r.content with
-          | .content c cs => items := items ++ [.fixed u c cs]; itemsJ := itemsJ ++ [.fixed u r.content]
-          | .bar b => items := items ++ [.bar u b]; itemsJ := itemsJ ++ [.bar u r.content]
+          | .content c cs =>
+            if inForce r.kind c then items := items ++ [.fixed u c cs]; itemsJ := itemsJ ++ [.fixed u r.content]
+          | .bar b =>
+            if r.kind.any rightsKinds.contains then items := items ++ [.bar u b]; itemsJ := itemsJ ++ [.bar u r.content]
           | .pending => pure ()
         | _ => throw "authored reading needs one signed choice"
     | none =>
       match ← decodeContent re content with
-      | .content c cs => items := items ++ [.fixed u c cs]; itemsJ := itemsJ ++ [.fixed u content]
-      | .bar b => items := items ++ [.bar u b]; itemsJ := itemsJ ++ [.bar u content]
+      | .content c cs =>
+        if inForce kind c then items := items ++ [.fixed u c cs]; itemsJ := itemsJ ++ [.fixed u content]
+      | .bar b =>
+        if kind.any rightsKinds.contains then items := items ++ [.bar u b]; itemsJ := itemsJ ++ [.bar u content]
       | .pending => pure ()
   pure ⟨items, itemsJ, unitIds⟩
 

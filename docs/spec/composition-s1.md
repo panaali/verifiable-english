@@ -91,6 +91,13 @@ document D           the chain, the frame (the environment: E, literals, the sof
                      content, a fixed bar, or an open set
 ```
 
+A unit's content is in force only under its kind, as W2 loads it (Python's `ve/document.py`): a formula is an
+assertion only in a unit or candidate of kind `asserted`, a norm is a rule only in a unit of kind `norm`, and a
+rights block is correlated from a unit of a rights kind or `norm`. Any other unit (a quoted norm, a formula of kind
+`question` or `example`, any composite kind) is no fixed unit, and a formula candidate of another kind is pending.
+So the wire of 8.4 carries every unit's `kind`, and a unit with content and no kind is refused (`InvalidInput: unit
+kind is required`).
+
 A candidate of a composite W2 kind (quoted, hedged, causal), a quantity candidate and a bar candidate are not
 contents: the first two keep today's handling of their own content, and a bar candidate keeps `content: null`
 (13.8). All three are pending candidates in every check of S1: such a candidate has no document `one D s i`, it
