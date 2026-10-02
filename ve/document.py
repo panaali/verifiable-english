@@ -92,7 +92,8 @@ def _split(raw: bytes):
         allowed.add("discourse")
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
-    if "couplings" in meta and "rights@0" not in meta.get("environment", {}).get("profiles", []):
+    if "couplings" in meta and not {"rights@0", "readings@1"}.intersection(
+            meta.get("environment", {}).get("profiles", [])):
         raise VEError("UnsupportedProfile: rights@0 is required for couplings")
     if "completions" in meta and "norm-defaults@0" not in meta.get("environment", {}).get("profiles", []):
         raise VEError("UnsupportedProfile: norm-defaults@0 is required for completions")
@@ -462,7 +463,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    validate_reading_sets(env if rights_enabled else formula_env, reading_sets, unit_ids)
+    validate_reading_sets(env if rights_enabled else formula_env, reading_sets, unit_ids,
+                          source=source, unit_spans={u["id"]: u["span"] for u in compiled})
     active = active_reading_sets(reading_sets)
     couplings = meta.get("couplings", [])
     validate_couplings(env, couplings, reading_sets, unit_ids)
@@ -1275,6 +1277,10 @@ def render_document(path):
                                                         candidate_rights(candidate["content"])))
     sets = {r["id"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for coupling in doc["meta"].get("couplings", []):
+        if "readings@1" in doc["environment"].profiles and "rights@0" not in doc["environment"].profiles:
+            from .readings_english import coupling_sentence
+            lines.append(coupling_sentence(coupling, sets, doc["units"]))
+            continue
         units = [sets[ref["set"]]["unit"] for ref in coupling["sets"]]
         lines.append(f"Reading units {', '.join(units[:-1])} and {units[-1]} with the same "
                      f"{coupling['axis']}, because {', '.join(coupling['reason_spans'])} "
