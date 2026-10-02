@@ -16,9 +16,10 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 |---|---|
 | `Doc.lean` | 8.2 verbatim: `Chain`, `chainOf`, `Candidate`, `ReadingSet`, `Item`, `Coupling`, `Narrowing`, `Doc`, `candidate`; the names a content uses (`uses`), `declaredBy`, `interfaceOf`, the relation `Attached` and its computation `attached` (a table per fixed unit, one level per step, stopping at a fixed point, fuel `D.items.length`); `place`, `build`, `free`, `one`; `chainWF`, `sideWF`, `reservedFree`, `distinctAcrossSets`, `interfaceClosed`, `singlyAttached`, `WellFormedDoc` |
 | `Separate.lean` | 8.3: `GenKey`, `genKeys`, `owned`, `ownedKeys`; `Tables`, `withTables`, `expand`, `Probe`, `selectable`, `Observes`, `authorEnv`, `Achieves`, `Separated`; the executable check (`Situation`, `tablesModel`, `tablesTyped`, `probeTyped`, `observe`, `sideValid`, `sideValue`, `cells`, `assignments`, `tablesFor`, `tablesOf`, `situationWF`, `separates`); `probesOf`, `observeAll`; `strictOf`, `strictTwin`, `forceTwins`, `decisionOnly`, `AchievesQuiet`, `actOnly` |
+| `Lines.lean` | DRI ruling 1: `linesOnce`, the admission text `lineOrderText` (4.4), `checkRights` in named steps (equal by `rfl`) and the facts read from it, and `genKeys_nodup` |
 | `Wire.lean` | 8.4: the environment on the three chains, the document's units and active reading sets, contents, keys, tables, probes and situations; the checks of 4.1 with section 7's texts (`admissionText`); `SeparateReplay`, `replaySeparate`, `readings_wire_separate_sound` |
 | `Run.lean`, `../ReadingsMain.lean` | The `ve_readings_route` executable |
-| `Examples.lean` | Build-time `#guard` regressions on fixtures K1 to K21 of 9.2 (87 checks), K2b's inadmissible base as two theorems, and the counterexample to `genKeys_nodup` |
+| `Examples.lean` | Build-time `#guard` regressions on fixtures K1 to K22 of 9.2, K2b's inadmissible base as two theorems, and the two counterexamples to `genKeys_nodup` without its hypothesis (`twiceListed`, `orderOnly`) |
 
 ## Theorems
 
@@ -80,6 +81,20 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
   `assignments_nil`, `separates_noKeys`, `strictTwin_nodes`, `switch_false`, `strictDecides_alone`, `eff_alone`,
   `applies_alone`, `yields_alone`, `decides_alone`.
 
+### `Lines.lean` (DRI ruling 1)
+
+* `genKeys_nodup`: on a document that passes its chain's checks and whose line order lists each line of each right
+  once (`linesOnce`), no two generated base predicates have one source key.
+* `linesOnce_of_text`, `lineOrderText_go`: the admission check of 4.4 (`lineOrderText`, `UnknownRight: <r>` or
+  `InvalidInput: line order lists a line of right <r> twice`) passes only on a document `linesOnce` accepts.
+* `checkRights_steps`: `checkRights` restated in named steps, equal to it by `rfl`; `rightsNames_of_check`,
+  `rightsNames_of_chainWF` read from it that rule names, limitation names, each limitation's condition names and each
+  line's fan-out bearer sorts are distinct (`stepsHead_dup`, `stepsPreds_rights`, `stepsRights_lines`,
+  `stepsLines_limits`, `stepsLimits_conds`, `limBody_ok`, `checkSourceLine_fan`).
+* `keyedNodes_pairwise`: no two rules of the elaboration carry one source rule name and bearer
+  (`keyedNodes_bearerless`, `linesAux_pairwise`, `instancesOf_fan`, `instancesOf_bearers`, `distinct_lines`).
+* List lemmas: `nodup_flatMap_iff`, `pairwise_of_ne`, `sortBy_perm`, `insertBy_perm`, `dedup_nodup`, and others.
+
 ### `Wire.lean`
 
 * `readings_wire_separate_sound`: a decoded `readings-separate` replay for which `separates` answers true proves
@@ -94,13 +109,9 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 
 ## Statements of 8.3 not proved here
 
-* `genKeys_nodup` is false as approved. `WellFormedRights` accepts a rights document whose `sourceOrder` lists one
-  default fan-out line twice (the decoder never builds one, but the statement quantifies over every `X`): the four
-  instances have distinct rule names, and two pairs of them carry the same key `excepted no-torture (bearer b)`.
-  `Examples.lean` checks the counterexample (`twiceListed`). A corrected statement needs a hypothesis on
-  `sourceOrder` (for instance that it lists each right's lines once, as `place` builds it). Reported against 8.3;
-  no proof in this module relies on unique keys: `tablesTyped` and `keyTuples` type a key's tables by the declared
-  sorts of every generated predicate that reads it.
+* `genKeys_nodup` as first approved was false (`WellFormedRights` accepts a line order that lists one default
+  fan-out line twice, `Examples.lean` `twiceListed`, or a line its right lacks, `orderOnly`). DRI ruling 1 of
+  2026-10-02 adds the hypothesis `linesOnce X = true`, and the corrected statement is proved in `Lines.lean`.
 * `decision_only_sound` is not proved (see the work-item report). `decisionOnly` and `decisionOnly_spec` are
   in place, so the criterion is computed; the theorem that backs it is open. Until it is proved the finding is
   **not certified** (DRI ruling 2 of 2026-10-02): `readings-validate` writes it as

@@ -420,6 +420,14 @@ else `bar` when a bar has it, else `rule <name>` (rights 8, as `checkRights` wor
 
 ### 4.4 Each candidate elaborates
 
+**The line order first** (DRI ruling 1 of 2026-10-02). On the rights chain, `free D` and every `one D s i` with
+content list each line of each right once in their line order (`sourceOrder`, which `place` builds): the first entry,
+in line order, that is no line of a right of that name is the rights decoder's `UnknownRight: <r>` (a `right_lines`
+unit before its right, which `VE.Rights.Wire.addUnit` refuses and `place` does not), and the first entry that an
+earlier entry repeats (a right that lists one line twice) is `InvalidInput: line order lists a line of right <r>
+twice`; on `one D s i` either text takes the suffix below. `linesOnce` (8.3) is the check as a Boolean, and
+`genKeys_nodup` takes it as its hypothesis. The frozen rights checks are unchanged; this check runs before them.
+
 For every candidate with content, `one D s i` passes the chain's well-formedness: `WellFormedRights` on the rights
 chain; `WellFormedSoft` on the soft chain; on the norms chain `WellFormedSoft` of the document with the empty soft
 block, every rule strict (13.6). Every assertion in force is well-formed over the complete vocabulary. A failure is
@@ -548,6 +556,8 @@ New in S1:
 | `InvalidInput: invalid situation <id>` | 4.5 step 1: a witness that is not one of the pair's two readings, shape or typing, a base that lists a predicate outside the author's base vocabulary, a key listed twice, a `fixed` key that neither reading's document generates, a `decisions` key that the witness's document does not generate | error |
 | `InvalidInput: situation <id> decides <key>, which reading <r> does not own` | a `decisions` key that the witness does not own, or a `fixed` key that one of the two readings owns (it is not shared) | error |
 | `InvalidInput: invalid source word span` | `source_word` outside the unit's span | error |
+| `InvalidInput: line order lists a line of right <r> twice` | 4.4: the line order of `free D` or of `one D s i` (then with ` under <set>@<v>:<i>`) repeats an entry (DRI ruling 1) | error |
+| `UnknownRight: <r>` | 4.4: a line order entry that is no line of a right named `<r>` (the rights decoder's text) | error |
 | `<chain diagnostic> under <set>@<v>:<i>` | 4.4 | error, or finding for a chain finding |
 
 `<key>` is written as in 1.5's table: `excepted <r>`, `off <r> <π>`, `outweighs <a> <L> <H>`, `lim <L> <a>`,
@@ -559,7 +569,8 @@ and P0 text; `dispatch`'s texts.
 
 ### 8.1 Files
 
-`lean/VE/Readings/Doc.lean` (8.2), `Separate.lean` (8.3), `Wire.lean` and `Run.lean` (8.4), `Examples.lean` (the
+`lean/VE/Readings/Doc.lean` (8.2), `Separate.lean` (8.3), `Lines.lean` (`linesOnce`, its admission text and
+`genKeys_nodup`, 8.3, DRI ruling 1), `Wire.lean` and `Run.lean` (8.4), `Examples.lean` (the
 `#guard` fixtures of 9.2), the root `lean/ReadingsMain.lean` of the new target `ve_readings_route`, and
 `lean/READINGS.md` listing each theorem in plain words. `VE.lean` and `VE/Audit.lean` gain imports and audit
 entries; the audit allowlist is unchanged (`propext`, `Classical.choice`, `Quot.sound`). Frozen `Norms/*`,
@@ -746,7 +757,9 @@ end VE.Readings
 
 Notes for the review. `place` is `addUnit`'s fold step on decoded units; a `rightLines` whose right is absent
 leaves `rs` as it is and records the lines in `sourceOrder`, so `WellFormedRights` answers `UnknownRight: <r>` as
-the decoder does today. `chain_norms_value` is `soften_faithful` with `soften_hard_identity`, both existing.
+the decoder does today. When the right comes later in source order, `WellFormedRights` does not see it (it reads the
+rights' own lines, and the order then holds a line the right lacks); the line-order check of 4.4 answers
+`UnknownRight: <r>` there, as `addUnit` does. `chain_norms_value` is `soften_faithful` with `soften_hard_identity`, both existing.
 `chainWF` asks `WellFormedSoft` on the norms chain as well (13.6). `singlyAttached` is what makes `free D` and the
 documents `one D s i` cover every fixed unit: a free unit is in all of them, a unit attached to `s` alone is in
 every `one D s i` (and every candidate of `s` has content, or closure would have failed), and no unit is left in
@@ -780,7 +793,13 @@ inductive GenKey
 def genKeys (X : RightsDoc) : List (GenKey × String × List String)
 theorem genKeys_names (X : RightsDoc) :
   (genKeys X).map (fun g => (g.2.1, g.2.2)) = VE.SoftNorms.decisions (correlate X) ++ VE.Rights.genDecls X
-theorem genKeys_nodup (c : Chain) (X : RightsDoc) (h : chainWF c X = true) : ((genKeys X).map (·.1)).Nodup
+/-- The line order lists each line of each right once, and only lines of its right (DRI ruling 1; in
+    `Lines.lean`, with the admission text `lineOrderText` of 4.4 and `linesOnce_of_text`). -/
+def linesOnce (X : RightsDoc) : Bool :=
+  decide (VE.Rights.sourceLines X).Nodup &&
+  (VE.Rights.sourceLines X).all (fun e => X.rs.any (fun R => R.name == e.1 && R.lines.contains e.2))
+theorem genKeys_nodup (c : Chain) (X : RightsDoc) (h : chainWF c X = true) (hl : linesOnce X = true) :
+  ((genKeys X).map (·.1)).Nodup
 
 /-- The rule or limitation name a key carries; `none` for a key over environment names only. -/
 def GenKey.source : GenKey → Option (String × String)
@@ -999,7 +1018,10 @@ def actOnly (D : Doc) (s : String) (i j : Nat) : Option (String × String)
 end VE.Readings
 ```
 
-Notes for the review. `Achieves` uses `BaseAdmissibleR`, which is `BaseAdmissibleP (correlate X) (limPremises X)`
+Notes for the review. `genKeys_nodup` as first approved, without `hl`, was false (DRI ruling 1): `WellFormedRights`
+accepts an order that lists one default fan-out line twice (`Examples.lean`, `twiceListed`), and an order that lists
+a line no right has (`orderOnly`, no entry repeated); two pairs of keys then repeat. The hypothesis is the admission
+check of 4.4, which refuses both. `Achieves` uses `BaseAdmissibleR`, which is `BaseAdmissibleP (correlate X) (limPremises X)`
 by `rights_is_slot`; on the soft and norms chains `limPremises` is empty and `correlate X` is the soft document
 (`correlate_noRights`). `withTables` and `expand` keep the carrier, so a `Probe B.Carrier` is a probe of both.
 `observe_sound` is `conflict_canon`, `outcome_canon`, `circ_canon` and `selectsPrime_denote`
@@ -1152,6 +1174,7 @@ relational-fol@0, soft-norms@0` unless said. Rules: `S` is the strict rule `no-d
 | K18 | K1 with `norm-defaults@0` in the list | `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` |
 | K19 | rights chain, `VE.Rights.Examples.gamma`'s environment: fixed limitation `l29` (scope all, two necessary conditions); set `rs9` of right `r9` {claim `no-arbitrary-arrest` strict, the same claim default}; base: Texas; Ann, Bob; `arbitrary_arrest` = {(Texas, Ann)}; σ = (witness 1, fixed none, decisions `excepted no-arbitrary-arrest` = {(Texas, Ann)}, outcome `arrest_permitted (Texas, Ann)`, true) | `lim l29 arrest_permitted` and its two `cond` keys are shared; `ownedKeys` 0 = `[]`; `separates = true` (strict: the claim selects, not permitted); `SeparatedByDecisionOnly: rs9: 0, 1 (not certified)`; under candidate 1 the uncited exception's finding with ` under rs9@1:1` |
 | K20 | K1 plus a second set `rs2` on unit `u2`, {strict `be-kind`, default `be-kind`} on `+help_required`, and on unit `u3` a fixed strict rule `both-x` on `−avoid_required`, guard `asks`, `over: [no-deception, be-kind]` | closure passes: `no-deception` is an interface name of `rs1` and `be-kind` of `rs2`. `attached u3 = [rs1, rs2]`, so `singlyAttached D = false` and the answer is `UnsupportedProfile: readings@1 fixed unit u3 depends on reading sets rs1 and rs2`; neither `free D` nor any `one D s i` is checked. With `over: [no-deception]` alone, `attached u3 = [rs1]` and the check passes |
+| K22 | rights chain, K19's environment and `rs9`; (a) candidate 0's right lists its claim line twice; (b) a fixed `right_lines` unit on `r9` with a strict claim `no-detention` guarded by `journalist`, before `u9`; (c) the same unit after `u9` | (a) `InvalidInput: line order lists a line of right r9 twice under rs9@1:0`; (b) `UnknownRight: r9 under rs9@1:0` (the line is in the order and in no right); (c) admitted. In Lean, `linesOnce` is false of `twiceListed` and `orderOnly` and `genKeys` repeats keys on both, and true of the document listing the line once (DRI ruling 1) |
 | K21 | malformed situations. (a) K1's σ with a `fixed` table `excepted be-kind` = {(a, u)}, in K1's document, which has no rule `be-kind`. (b) K5's σ with `excepted be-kind` listed twice in `fixed`. (c) K1 with the `soft` block's ranks `lo` and `hi`, `hi` outranking `lo`, outranking `holistic` decided by `unstated`; `S` and `Df` ranked `lo`; a fixed default rule `never-avoid-d` on `−avoid_required`, guard `⊤`, ranked `hi`, its exception as `Df`'s; σ = (`m0`, fixed `outweighs avoid_required lo hi` = {(u, a)}, witness 0, no decision, `q0`, true) | each: `situationWF = false`, `separates = false`, and through the wire `InvalidInput: invalid situation <id>`. In (a) neither reading's document generates the key. In (c) the key is shared and only the default reading's document generates it (the strict reading has no colliding pair of default rules), so the strict witness never reads the table, and its tuple is ill-typed: without step 1 in `separates`, every completion of the default reading would fail on that table and the pair would be shown as separated, by E19 with case 1's second sentence |
 
 ### 9.3 Differential and pilots
