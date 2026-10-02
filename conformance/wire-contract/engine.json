@@ -1,0 +1,1337 @@
+[
+  {
+    "id": "E1",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": "E2",
+    "root": {
+      "doc": {
+        "seed": 7,
+        "part": {
+          "ys": [
+            "u"
+          ],
+          "x": 1
+        },
+        "table": {
+          "k": 1
+        },
+        "refs": [
+          "a"
+        ],
+        "owner": "root",
+        "mode": "open",
+        "items": [
+          {
+            "tags": [
+              "x",
+              "y"
+            ],
+            "name": "a"
+          },
+          {
+            "tags": [],
+            "name": "b"
+          }
+        ]
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": "E3",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "A!",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "shut",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.4",
+      "path": "/doc/mode",
+      "text": "Shape: mode \"shut\""
+    }
+  },
+  {
+    "id": "E4",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.1",
+      "path": "/doc",
+      "text": "Shape: document"
+    }
+  },
+  {
+    "id": "E5",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7,
+        "zzz": 1
+      }
+    },
+    "expected": {
+      "check": "1.1",
+      "path": "/doc",
+      "text": "Shape: document"
+    }
+  },
+  {
+    "id": "E6",
+    "root": {
+      "doc": []
+    },
+    "expected": {
+      "check": "1.1",
+      "path": "/doc",
+      "text": "Shape: document"
+    }
+  },
+  {
+    "id": "E6b",
+    "root": {},
+    "expected": {
+      "check": "1.1",
+      "path": "/doc",
+      "text": "Shape: document"
+    }
+  },
+  {
+    "id": "E7",
+    "root": {
+      "doc": {
+        "items": {},
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.2",
+      "path": "/doc/items",
+      "text": "Shape: items"
+    }
+  },
+  {
+    "id": "E8",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": []
+          },
+          {
+            "name": "b",
+            "tags": []
+          },
+          {
+            "name": "c",
+            "tags": []
+          },
+          {
+            "name": "d",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.3",
+      "path": "/doc/items",
+      "text": "Limit: 4 items, at most 3"
+    }
+  },
+  {
+    "id": "E9",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a",
+          3
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.5",
+      "path": "/doc/refs",
+      "text": "Shape: refs"
+    }
+  },
+  {
+    "id": "E10",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "closed",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7,
+        "note": "n"
+      }
+    },
+    "expected": {
+      "check": "1.6",
+      "path": "/doc",
+      "text": "Shape: a closed document has a note"
+    }
+  },
+  {
+    "id": "E11",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.7",
+      "path": "/doc",
+      "text": "Shape: an open document has no owner"
+    }
+  },
+  {
+    "id": "E12",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "admin",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.8",
+      "path": "/doc/owner",
+      "text": "Shape: owner admin"
+    }
+  },
+  {
+    "id": "E13",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "closed",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": "E14",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a",
+          "self"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "1.9",
+      "path": "/doc/refs",
+      "text": "Shape: refs names self"
+    }
+  },
+  {
+    "id": "E15",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "b"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7,
+        "note": "n"
+      }
+    },
+    "expected": {
+      "check": "1.10",
+      "path": "/doc/refs",
+      "text": "Shape: a note needs the ref a"
+    }
+  },
+  {
+    "id": "E16",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              1
+            ]
+          },
+          {
+            "name": "B",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.1d",
+      "path": "/doc/items/0/tags",
+      "text": "Shape: tags of a"
+    }
+  },
+  {
+    "id": "E17",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "y",
+              "x"
+            ]
+          },
+          {
+            "name": "a",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.1c",
+      "path": "/doc/items/1/name",
+      "text": "Duplicate: a"
+    }
+  },
+  {
+    "id": "E18",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "A",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "B",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.1b",
+      "path": "/doc/items/0/name",
+      "text": "Name: A"
+    }
+  },
+  {
+    "id": "E19",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": 7,
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.1b",
+      "path": "/doc/items/0/name",
+      "text": "Name: 7"
+    }
+  },
+  {
+    "id": "E19b",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a__b",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.1b",
+      "path": "/doc/items/0/name",
+      "text": "Name: a__b"
+    }
+  },
+  {
+    "id": "E19c",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "abcdefghi",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.1b",
+      "path": "/doc/items/0/name",
+      "text": "Name: abcdefghi"
+    }
+  },
+  {
+    "id": "E20",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": [
+              "long",
+              "ok"
+            ]
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.2b",
+      "path": "/doc/items/1/tags/0",
+      "text": "Limit: tag long of b"
+    }
+  },
+  {
+    "id": "E21",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "😀": 1,
+          "ｚ": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.3a",
+      "path": "/doc/table/ｚ",
+      "text": "Name: ｚ"
+    }
+  },
+  {
+    "id": "E22",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": "s"
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.3b",
+      "path": "/doc/table/k",
+      "text": "Shape: table entry k is \"s\""
+    }
+  },
+  {
+    "id": "E23",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.3b",
+      "path": "/doc/table/k",
+      "text": "Shape: table entry k is \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..."
+    }
+  },
+  {
+    "id": "E24",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a",
+          "c"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "3.1",
+      "path": "/doc/refs/1",
+      "text": "Unknown: c"
+    }
+  },
+  {
+    "id": "E25",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": [
+              "d",
+              "e"
+            ]
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "3.2",
+      "path": "",
+      "text": "Limit: 5 tags"
+    }
+  },
+  {
+    "id": "E26",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u",
+            2
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "3.3/b2",
+      "path": "/doc/part/ys/1",
+      "text": "Inner: y 1"
+    }
+  },
+  {
+    "id": "E27",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": "s"
+      }
+    },
+    "expected": {
+      "check": "3.4/b1",
+      "path": "/doc",
+      "text": "Inner: x is \"s\""
+    }
+  },
+  {
+    "id": "E28",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "z",
+            "tags": []
+          },
+          {
+            "name": "bad",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "z"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "4.1",
+      "path": "",
+      "text": "Semantic: bad, z"
+    }
+  },
+  {
+    "id": "E29a",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a",
+          "a",
+          "b"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "4.3a",
+      "path": "",
+      "text": "Semantic: first 3"
+    }
+  },
+  {
+    "id": "E29b",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a",
+          "b"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "4.3b",
+      "path": "",
+      "text": "Semantic: second"
+    }
+  },
+  {
+    "id": "E30",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a",
+          "a",
+          "b",
+          "b"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": "E31",
+    "root": {
+      "doc": {
+        "items": [],
+        "mode": "open",
+        "owner": "root",
+        "refs": [],
+        "table": {},
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": null
+  },
+  {
+    "id": "E32",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ]
+      }
+    },
+    "expected": null
+  }
+]

@@ -1,7 +1,9 @@
 """Hand-derived format-1 cases from wire-contract.md section 8.1."""
 
 from copy import deepcopy
+import json
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -48,13 +50,23 @@ def _case(change):
     return value
 
 
+def _reversed_objects(value):
+    if type(value) is dict:
+        return {key: _reversed_objects(item) for key, item in reversed(list(value.items()))}
+    if type(value) is list:
+        return [_reversed_objects(item) for item in value]
+    return value
+
+
 CASES = [
     ("E1", BASE, None),
+    ("E2", _reversed_objects(BASE), None),
     ("E3", _case(lambda d: (d.update(mode="shut"), d["items"][0].update(name="A!"))),
      ("1.4", "/doc/mode", 'Shape: mode "shut"')),
     ("E4", _case(lambda d: d.pop("refs")), ("1.1", "/doc", "Shape: document")),
     ("E5", _case(lambda d: d.update(zzz=1)), ("1.1", "/doc", "Shape: document")),
     ("E6", {"doc": []}, ("1.1", "/doc", "Shape: document")),
+    ("E6b", {}, ("1.1", "/doc", "Shape: document")),
     ("E7", _case(lambda d: d.update(items={})), ("1.2", "/doc/items", "Shape: items")),
     ("E8", _case(lambda d: d.update(items=[{"name": x, "tags": []}
                                                 for x in "abcd"])),
@@ -80,6 +92,10 @@ CASES = [
      ("2.1b", "/doc/items/0/name", "Name: A")),
     ("E19", _case(lambda d: d["items"][0].update(name=7)),
      ("2.1b", "/doc/items/0/name", "Name: 7")),
+    ("E19b", _case(lambda d: d["items"][0].update(name="a__b")),
+     ("2.1b", "/doc/items/0/name", "Name: a__b")),
+    ("E19c", _case(lambda d: d["items"][0].update(name="abcdefghi")),
+     ("2.1b", "/doc/items/0/name", "Name: abcdefghi")),
     ("E20", _case(lambda d: d["items"][1].update(tags=["long", "ok"])),
      ("2.2b", "/doc/items/1/tags/0", "Limit: tag long of b")),
     ("E21", _case(lambda d: d.update(table={"😀": 1, "ｚ": 1})),
@@ -104,6 +120,7 @@ CASES = [
      ("4.3a", "", "Semantic: first 3")),
     ("E29b", _case(lambda d: d.update(refs=["a", "b"])),
      ("4.3b", "", "Semantic: second")),
+    ("E30", _case(lambda d: d.update(refs=["a", "a", "b", "b"])), None),
     ("E31", _case(lambda d: d.update(items=[], refs=[], table={})), None),
     ("E32", _case(lambda d: (d.pop("table"), d.pop("part"), d.pop("seed"))), None),
 ]
@@ -132,6 +149,13 @@ def test_deferred_and_overlay():
     assert overlay(CONTRACTS["demo@0"], None, outcome) is None
 
 
+def test_view_inner_path_and_recode():
+    outcome = _run("demo@0", _case(lambda d: d.update(seed="s")))
+    assert outcome.record["code"] == "DEMO_SEMANTIC"
+    assert outcome.record["class"] == "InvalidInput"
+    assert outcome.record["args"] == {"value": '"s"', "inner_path": "/x"}
+
+
 def test_locks_and_wordings():
     assert process(DIRECTORY) == []
     check = CONTRACTS["demo@0"]["phases"][1]["checks"][0]["checks"][2]
@@ -140,3 +164,32 @@ def test_locks_and_wordings():
     table = english_table(CONTRACTS["demo@0"], limits=LIMITS)
     assert "No check of this phase runs unless every check of the earlier phases holds" in table
     assert "For each member of `/doc/items/*`, in order" in table
+
+
+def test_engine_json_replays_hand_derived_cases():
+    fixture = json.loads((DIRECTORY.parent / "engine.json").read_text())
+    assert len(fixture) == len(CASES)
+    for item, (label, root, expected) in zip(fixture, CASES):
+        assert item == {"id": label, "root": root, "expected": None if expected is None else
+                        {"check": expected[0], "path": expected[1], "text": expected[2]}}
+        outcome = _run("demo@0", item["root"])
+        if item["expected"] is None:
+            assert outcome is CLEAN
+        else:
+            assert isinstance(outcome, Fault)
+            assert all(outcome.record[key] == value for key, value in item["expected"].items())
+
+
+def test_lock_detects_edit_and_requires_revision(tmp_path):
+    directory = tmp_path / "contracts"
+    shutil.copytree(DIRECTORY, directory)
+    path = directory / "inner@0.json"
+    value = json.loads(path.read_text())
+    value["codes"]["INNER_BAD"]["summary"] = "Changed summary"
+    path.write_text(json.dumps(value))
+    assert any("WC10" in finding for finding in process(directory))
+    assert any("higher revision" in finding for finding in process(directory, write=True))
+    value["revision"] += 1
+    path.write_text(json.dumps(value))
+    assert process(directory, write=True) == []
+    assert process(directory) == []
