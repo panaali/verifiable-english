@@ -86,8 +86,12 @@ def test_s1_report_sentences_keep_their_checked_claims_narrow():
         "(2) *Every agent should avoid deceiving each user.* They differ here: "
         "suppose the decider decides the exception applies to a and u. "
         "Under (1) a still must. Under (2) a is not required to.")
-    assert decision_only_sentence("unstated").startswith(
-        "These two readings differ only where the decider decides")
+    # DRI ruling 2: `decision_only_sound` is unproved, so the finding's English says it is not certified
+    # and never states the claim as checked (E15's "No situation separates them ..." is not shown).
+    assert decision_only_sentence("unstated") == (
+        "It is not certified that these two readings differ only where the decider decides "
+        "that the exception applies.")
+    assert "No situation separates" not in decision_only_sentence("the operator")
     assert act_only_sentence("avoid deceiving", "help").endswith(
         "No situation separates them on a shared act.")
     assert outcome_pair_sentence("a is an agent; u is a user", "*should*", "*must*",
@@ -98,8 +102,10 @@ def test_s1_report_sentences_keep_their_checked_claims_narrow():
     assert "situation is ruled out" in outcome_pair_sentence(
         "a is an agent", "*must*", "*should*", "obligation", "a", True,
         other_admissible=False)
-    assert "the sentence is false there" in assertion_pair_sentence(
-        "a asks u", "reading 2", "reading 1")
+    # E21's frame (composition.md 2.1): the second sentence says "it is false there".
+    assert assertion_pair_sentence("a asks u", "reading 2", "reading 1") == (
+        "These two readings differ here: a asks u. Under reading 2, the sentence is true there. "
+        "Under reading 1, it is false there.")
     for sentence in (twin, E22, E23, E24):
         assert all(prefix not in sentence for prefix in ("ve__", "rd-", "soft__", "rights__", "may not"))
     with pytest.raises(VEError, match="E14 needs a source word"):

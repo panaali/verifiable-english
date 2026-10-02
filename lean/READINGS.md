@@ -102,7 +102,10 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
   no proof in this module relies on unique keys: `tablesTyped` and `keyTuples` type a key's tables by the declared
   sorts of every generated predicate that reads it.
 * `decision_only_sound` is not proved (see the work-item report). `decisionOnly` and `decisionOnly_spec` are
-  in place, so E15's criterion is computed; the theorem that backs it is open.
+  in place, so the criterion is computed; the theorem that backs it is open. Until it is proved the finding is
+  **not certified** (DRI ruling 2 of 2026-10-02): `readings-validate` writes it as
+  `SeparatedByDecisionOnly: <set>: <i>, <j> (not certified)`, its English is E25 ("It is not certified that ..."),
+  not E15, and nothing downstream reads it as a checked result.
 
 ## The wire (`ve_readings_route`)
 
@@ -119,7 +122,9 @@ id is `digest("ve-situation-<identity version>\n", {"environment_id", "situation
   `sets`, per content-bearing set in source order: `candidates` (per candidate `id`, `index`, `pending`, and for a
   candidate with content the chain's `document_hash` of `one D s i`, its `owned` and `shared` keys with their
   generated `name`s, its chain `findings` with ` under <set>@<v>:<i>`), `pairs` (per ordered pair, neither pending,
-  the recorded situation and its facts) and the `findings` of 4.6. A failing check is the first diagnostic of 4.1.
+  the recorded situation and its facts; a situation whose witness is not one of the pair's two readings is
+  `InvalidInput: invalid situation <id>`) and the `findings` of 4.6 (the decision-only finding marked
+  ` (not certified)`). A failing check is the first diagnostic of 4.1.
 * `readings-separate` takes `set`, `situation` and `other` and answers `pair`: `separated`, `witness`,
   `witness_admissible`, `witness_value`, `other_admissible`, and `other_value` when the other reading owns no key.
 * Every other kind is run by the lower route's runner with `readings@1` stripped.

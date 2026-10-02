@@ -119,6 +119,9 @@ def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List J
       let w := match entry.getObjValD "witness" with
         | .str w => w
         | _ => ""
+      -- The situation is recorded for this pair: its witness is one of the two readings. A third reading as
+      -- witness would check another pair and leave this one uncompared.
+      unless w == x.id || w == y.id do throw s!"InvalidInput: invalid situation {sid}"
       let otherName := if w == x.id then y.id else x.id
       let f ← pairFacts a R.id sid otherName
       unless f.witnessValid do throw "distinguishing model violates a generated premise"
@@ -126,12 +129,18 @@ def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List J
       out := out ++ [Json.mkObj [("reading", .str x.id), ("other", .str y.id), ("pair", pairJson f sid)]]
   pure out
 
+/-- The finding of 1.7 for strict twin `i` and default twin `j`. Its theorem `decision_only_sound` is not proved
+    yet (`lean/READINGS.md`), so the finding says on its face that it is not certified, and nothing reads it as a
+    checked result (DRI ruling 2 of 2026-10-02). -/
+def decisionOnlyText (s : String) (i j : Nat) : String :=
+  s!"SeparatedByDecisionOnly: {s}: {i}, {j} (not certified)"
+
 /-- 4.6: the findings of an admitted set, per unordered pair. -/
 def setFindings (a : Admitted) (R : ReadingSet) : List String :=
   let n := R.candidates.length
   (List.range n).flatMap (fun i => ((List.range n).filter (i < ·)).flatMap (fun j =>
-    (if (decisionOnly a.D R.id i j).isSome then [s!"SeparatedByDecisionOnly: {R.id}: {i}, {j}"]
-     else if (decisionOnly a.D R.id j i).isSome then [s!"SeparatedByDecisionOnly: {R.id}: {j}, {i}"] else []) ++
+    (if (decisionOnly a.D R.id i j).isSome then [decisionOnlyText R.id i j]
+     else if (decisionOnly a.D R.id j i).isSome then [decisionOnlyText R.id j i] else []) ++
     (if (actOnly a.D R.id i j).isSome then [s!"SeparatedByActOnly: {R.id}: {i}, {j}"] else [])))
 
 def validateResult (a : Admitted) : Except String (List (String × Json)) := do

@@ -126,7 +126,7 @@ def test_k1_separation_keys_and_finding(lean):
     strict, default = rs1["candidates"]
     assert strict["owned"] == [] and strict["shared"] == []
     assert default["owned"] == [{"key": {"excepted": "no-deception"}, "name": "soft__excepted__no_deception"}]
-    assert rs1["findings"] == ["SeparatedByDecisionOnly: rs1: 0, 1"]
+    assert rs1["findings"] == ["SeparatedByDecisionOnly: rs1: 0, 1 (not certified)"]
     pair = rs1["pairs"][0]["pair"]
     assert pair == {"situation": sid, "witness": "default", "separated": True, "witness_admissible": True,
                     "witness_value": False, "other_admissible": True, "other_value": True}
@@ -193,6 +193,35 @@ def test_k20_fixed_unit_attached_to_two_sets(lean):
     assert [s["set"] for s in row["sets"]] == ["rs1", "rs2"]
 
 
+def test_a_third_reading_never_witnesses_a_pair(lean):
+    """Review finding A (compose-s1): every pair names a situation whose witness is one of the pair.
+
+    K3's renamed twins are separated by no situation. With K4's `help-x` as a third reading, one situation with
+    `help-x` as witness separates `help-x` from each twin; recorded for the twins' own pair it used to be replayed
+    as (help-x, twin) and the twins were reported separated."""
+    raw = env_k()
+    sigma = entry(M0, "help", Q0, False)
+    sid = situation_id(raw, sigma)
+    others = {"a": ("b", "help"), "b": ("a", "help"), "help": ("a", "b")}
+    contents = {"a": norm("no-deception-a", "avoid_required", True),
+                "b": norm("no-deception-b", "avoid_required", True),
+                "help": norm("help-x", "help_required", True)}
+    rs1 = reading_set("rs1", "u1", [reading(r, contents[r], {o: sid for o in others[r]}) for r in others],
+                      {sid: sigma})
+    row = validate(lean, raw, {"units": [{"id": "u1"}], "reading_sets": [rs1]})
+    assert row == {"id": "v", "status": "error", "error": f"InvalidInput: invalid situation {sid}"}
+    # The same situation recorded only for pairs it is a witness of is accepted.
+    sigma_ab = entry(M0, "a", {"selects": {"kind": "norm", "predicate": "avoid_required", "tuple": ["a", "u"]}},
+                     True)
+    sid_ab = situation_id(raw, sigma_ab)
+    models = {"a": {"b": sid_ab, "help": sid}, "b": {"a": sid_ab, "help": sid}, "help": {"a": sid, "b": sid}}
+    rs1 = reading_set("rs1", "u1", [reading(r, contents[r], models[r]) for r in others],
+                      {sid: sigma, sid_ab: sigma_ab})
+    row = validate(lean, raw, {"units": [{"id": "u1"}], "reading_sets": [rs1]})
+    # K3: the twins' own situation separates nothing, so the set is refused for the right reason.
+    assert row == {"id": "v", "status": "error", "error": "distinguishing model does not separate readings"}
+
+
 def test_k18_norm_defaults_abstention(lean):
     raw = env_k(profiles=("norm-defaults@0", *SOFT_PROFILES))
     document, _ = k1_document(raw)
@@ -233,7 +262,7 @@ def test_k19_rights_candidates_under_a_fixed_limitation(lean):
     assert strict["owned"] == [] and strict["findings"] == []
     assert default["findings"] == ["UnlicensedLimitation: exception of rule no-arbitrary-arrest on right r9"
                                    " under rs9@1:1"]
-    assert rs["findings"] == ["SeparatedByDecisionOnly: rs9: 0, 1"]
+    assert rs["findings"] == ["SeparatedByDecisionOnly: rs9: 0, 1 (not certified)"]
     assert rs["pairs"][0]["pair"]["separated"] is True
 
 
