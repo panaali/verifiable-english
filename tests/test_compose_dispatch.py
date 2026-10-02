@@ -15,7 +15,9 @@ from ve.errors import UnsupportedProfile
 from ve.profiles import BY_NAME, checker_family
 
 
-REGISTERED = tuple(sorted(BY_NAME))
+# S0's literal table is frozen over its original sixteen profiles. S1 adds a
+# wrapper; testing that wrapper must not rewrite the S0 Lean literal table.
+REGISTERED = tuple(sorted(set(BY_NAME) - {"readings@1"}))
 SPEC_REGISTERED = frozenset({
     "alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1",
     "nary@0", "norm-defaults@0", "norms@0", "soft-norms@0", "order@0", "relational-fol@0",
@@ -126,6 +128,7 @@ def _today_literals():
 
 def test_all_registered_subsets():
     assert set(REGISTERED) == SPEC_REGISTERED
+    assert set(BY_NAME) == SPEC_REGISTERED | {"readings@1"}
     texts, codes = _today_literals()
     assert texts[0] == "UnsupportedProfile: Missing profile relational-fol@0"
     assert len(codes) == 65_536
@@ -225,6 +228,22 @@ def test_one_table_in_spec_and_lean():
     rows = _spec_rows()
     assert [n for n, *_ in rows] == list(range(1, 53))
     assert _lean_rows() == rows
+
+
+def test_s1_wrapper_profile_gate():
+    for base in ("norms@0", "norm-defaults@0", "soft-norms@0", "rights@0"):
+        profiles = {"relational-fol@0", "norms@0", "readings@1"}
+        if base == "norm-defaults@0":
+            profiles.add(base)
+        if base in ("soft-norms@0", "rights@0"):
+            profiles.add("soft-norms@0")
+        if base == "rights@0":
+            profiles.add(base)
+        assert checker_family(sorted(profiles)) == checker_family(sorted(profiles - {"readings@1"}))
+    with pytest.raises(UnsupportedProfile, match="readings@1 requires norms@0"):
+        checker_family(["readings@1", "relational-fol@0"])
+    with pytest.raises(UnsupportedProfile, match="readings@1 with alternatives@0"):
+        checker_family(["alternatives@0", "norms@0", "readings@1", "relational-fol@0"])
 
 
 @pytest.mark.parametrize("n,profiles,expected,removals", _spec_rows(), ids=[f"D{n}" for n, *_ in _spec_rows()])
