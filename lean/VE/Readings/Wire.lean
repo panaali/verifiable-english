@@ -60,18 +60,20 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .error e => throw e
   let lowerJson ← stripReadings environment
   let lower := profiles.filter (· != readingsProfile)
+  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it.
+  let frameJson := lowerJson.setObjVal! "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
   match chainOf profiles with
   | .rights =>
-    let re ← VE.Rights.Wire.decodeRightsEnvironment lowerJson
+    let re ← VE.Rights.Wire.decodeRightsEnvironment frameJson
     pure ⟨.rights, profiles, lower, re.se, re.block, environment, lowerJson⟩
   | .soft =>
-    let checked ← match VE.SoftNorms.Phases.checkSource lowerJson (.arr #[]) with
+    let checked ← match VE.SoftNorms.Phases.checkSource frameJson (.arr #[]) with
       | .ok c => pure c
       | .error f => throw f.message
-    pure ⟨.soft, profiles, lower, ⟨checked.ne, checked.soft, checked.profiles, lowerJson⟩, emptyRights,
+    pure ⟨.soft, profiles, lower, ⟨checked.ne, checked.soft, checked.profiles, frameJson⟩, emptyRights,
       environment, lowerJson⟩
   | .norms =>
-    let ne ← VE.Norms.Wire.decodeNormsEnvironment lowerJson
+    let ne ← VE.Norms.Wire.decodeNormsEnvironment frameJson
     pure ⟨.norms, profiles, lower, ⟨ne, emptySoft, lower, lowerJson⟩, emptyRights, environment, lowerJson⟩
 
 /-- The frame (1.2): the environment and no unit. -/
