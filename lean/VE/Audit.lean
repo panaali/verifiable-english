@@ -127,6 +127,7 @@ import VE.Readings.Lines
 import VE.Readings.Examples
 import VE.Readings.Wire
 import VE.Readings.Run
+import VE.Readings.Choice
 import VE.WireContract.Engine
 
 #print axioms Iceberg.mul_sub
@@ -3134,3 +3135,12 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Compose.adjoin_nonempty
 #print axioms VE.Compose.adjoin_sat
 #print axioms VE.Compose.adjoin_baseAdmissibleP
+#print axioms VE.Readings.take_step
+#print axioms VE.Readings.search_eq
+#print axioms VE.Readings.mem_allFrom
+#print axioms VE.Readings.fits_of
+#print axioms VE.Readings.inj_of_nodup_map
+#print axioms VE.Readings.find_id_unique
+#print axioms VE.Readings.index_of_mem
+#print axioms VE.Readings.choices_spec
+#print axioms VE.Readings.uniformPrecedence_spec
