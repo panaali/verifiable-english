@@ -8,7 +8,10 @@ from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
 from ve.readings import source_word_text, validate_couplings, validate_reading_sets
-from ve.readings_english import coupling_sentence
+from ve.readings_english import (E22, E23, E24, act_only_sentence,
+                                 assertion_pair_sentence, coupling_sentence,
+                                 decision_only_sentence, force_twin_sentence,
+                                 outcome_pair_sentence)
 
 
 def _formula_sets(env):
@@ -70,3 +73,34 @@ def test_source_word_is_a_byte_span_and_has_a_closed_vocabulary():
         source_word_text(source, [13, 15], [0, 13])
     with pytest.raises(VEError, match="invalid source word span"):
         source_word_text(source, [21, 22], [0, len(source)])
+
+
+def test_s1_report_sentences_keep_their_checked_claims_narrow():
+    twin = force_twin_sentence(
+        "shall", "Every agent must avoid deceiving each user.",
+        "Every agent should avoid deceiving each user.", "unstated", ("a", "u"),
+        "obligation", True, False)
+    assert twin == (
+        "This sentence says *shall*. (1) *Every agent must avoid deceiving each user.* "
+        "(2) *Every agent should avoid deceiving each user.* They differ here: "
+        "suppose the decider decides the exception applies to a and u. "
+        "Under (1) a still must. Under (2) a is not required to.")
+    assert decision_only_sentence("unstated").startswith(
+        "These two readings differ only where the decider decides")
+    assert act_only_sentence("avoid deceiving", "help").endswith(
+        "No situation separates them on a shared act.")
+    assert outcome_pair_sentence("a is an agent; u is a user", "*should*", "*must*",
+                                 "obligation", "a", False, other_admissible=True) == (
+        "These two readings differ here: a is an agent; u is a user. "
+        "Under *should*, a is not required to. "
+        "Under *must* that is not so, whatever is decided.")
+    assert "situation is ruled out" in outcome_pair_sentence(
+        "a is an agent", "*must*", "*should*", "obligation", "a", True,
+        other_admissible=False)
+    assert "the sentence is false there" in assertion_pair_sentence(
+        "a asks u", "reading 2", "reading 1")
+    for sentence in (twin, E22, E23, E24):
+        assert all(prefix not in sentence for prefix in ("ve__", "rd-", "soft__", "rights__", "may not"))
+    with pytest.raises(VEError, match="E14 needs a source word"):
+        force_twin_sentence("may not", "strict", "default", "unstated", ("a",),
+                            "obligation", True, False)

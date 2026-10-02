@@ -13,10 +13,7 @@ from .admission import _check_kind, token
 from .ast import formula_from_data
 from .errors import UnsupportedProfile, VEError
 from .identity import meaning_id
-
-
-SOURCE_WORDS = frozenset({"shall", "shall not", "should", "should not", "shouldn't",
-                          "must", "must not", "always", "never"})
+from .readings_english import SOURCE_WORDS
 
 
 def source_word_text(source: bytes, span, unit_span):
