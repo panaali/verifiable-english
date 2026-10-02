@@ -13,8 +13,8 @@ and that each reports a fault exactly when its legacy validator rejects. Every e
 exactly the fault record's members (2.7), each of the schema's type. The gate exits non-zero unless every
 required row of spec 9 holds (`gate_failures`), each judged from the data the report summarizes and not from
 the report's own verdicts: coverage from the unmet lists (a gap exempt only under 8.3's table of allowed gaps),
-S3-pre from the legacy verdict differences, and feasibility from `n1 + n2` against 45 of 67, the tier counts
-partitioning the 67.
+S3-pre from the legacy verdict differences, the deferred share from the deferred counts, and feasibility from
+`n1 + n2` against 45 of 67, the tier counts partitioning the 67.
 """
 
 import argparse
@@ -498,19 +498,24 @@ def report():
         sizes[tier] += 1
         python_legacy, python_outcome = _python(contract, raw, norms)
         py = python_outcome.record if isinstance(python_outcome, Fault) else None
-        if isinstance(python_outcome, Deferred):
-            deferred["python"] += 1
+        problems = []
+        # 2.8: a deferred outcome counts under the deferred share of its language, never as residual.
+        deferring = {"python": isinstance(python_outcome, Deferred), "lean": False}
         if lean_reads:
             engine_row, legacy_row = next(lean_engine), next(lean_legacy)
-            ln = engine_row.get("diagnostic") if engine_row.get("outcome") == "fault" else None
+            outcome = engine_row.get("outcome") if engine_row.get("status") == "ok" else None
+            if outcome not in ("fault", "clean", "deferred"):
+                problems.append(f"lean: ve_diagnose row without an outcome: {engine_row}")
+            ln = engine_row.get("diagnostic") if outcome == "fault" else None
+            deferring["lean"] = outcome == "deferred"
             lean_legacy_result = ((legacy_row["code"], legacy_row["error"]) if legacy_row["status"] == "error"
                                   else None)
         else:
             ln = lean_legacy_result = None
-        problems = []
         languages = [("python", py, python_legacy)] + ([("lean", ln, lean_legacy_result)] if lean_reads else [])
         for language, record, legacy in languages:
-            if legacy is not None and record is None:
+            deferred[language] += deferring[language]
+            if legacy is not None and record is None and not deferring[language]:
                 residual[language] += 1
             if record is not None and expected is None:
                 problems += [f"{language}: {problem}" for problem in shape_problems(record)]
@@ -518,7 +523,7 @@ def report():
                 continue
             if (legacy is None) != (record is None):
                 problems.append(f"{language}: legacy {'accepts' if legacy is None else 'rejects'}, engine "
-                                f"{'clean' if record is None else record['check']}")
+                                f"{record['check'] if record else 'deferred' if deferring[language] else 'clean'}")
             elif record is not None and record["code"] != legacy[0]:
                 problems.append(f"{language}: engine code {record['code']}, legacy {legacy[0]}")
         if lean_reads and (py is None) == (ln is None) and py is not None:
@@ -623,6 +628,7 @@ def gate_failures(value):
     for language in ("python", "lean"):
         if value["residual"].get(language) != 0 or not _count(value["residual"].get(language)):
             failures.append(f"residual count {value['residual'].get(language)!r} in {language}")
+    failures += _deferred_failures(value)
     failures += _coverage_failures(value)
     failures += _feasibility_failures(value["feasibility"])
     differences = value["legacy_verdict_differences"]
@@ -630,6 +636,30 @@ def gate_failures(value):
         failures.append(f"S3-pre: legacy verdict differences {differences!r}")
     if not isinstance(value["s3_pre"], str) or not value["s3_pre"].startswith("closed"):
         failures.append(f"S3-pre {value['s3_pre']!r}")
+    return failures
+
+
+def _deferred_failures(value):
+    """Spec 9's deferred share, judged from the deferred counts: each is a non-negative integer no larger
+    than the cases run, Lean's is 0 (2.8: the Lean engine never defers), and each stated share is its
+    count over the cases run, the tiers' sum."""
+    failures = []
+    tiers = [value["tiers"].get(tier) for tier in ("0", "A", "B", "replayed", "legacy_differences")]
+    cases = sum(tiers) if all(_count(n) for n in tiers) and set(value["tiers"]) == {
+        "0", "A", "B", "replayed", "legacy_differences"} else None
+    deferred, share = value["deferred"], value["deferred_share"]
+    if not isinstance(deferred, dict) or not isinstance(share, dict) \
+            or set(deferred) != {"python", "lean"} or set(share) != {"python", "lean"}:
+        return [f"deferred {deferred!r} or deferred_share {share!r} is malformed"]
+    for language in ("python", "lean"):
+        count = deferred[language]
+        if not _count(count) or cases is None or count > cases:
+            failures.append(f"deferred count {count!r} in {language}, of {cases!r} cases")
+            continue
+        if language == "lean" and count:
+            failures.append(f"Lean deferred {count} cases: the Lean engine never defers (2.8)")
+        if type(share[language]) not in (int, float) or share[language] != count / max(1, cases):
+            failures.append(f"deferred_share of {language} {share[language]!r}, {count} of {cases} cases deferred")
     return failures
 
 
