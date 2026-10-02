@@ -5,11 +5,10 @@ import subprocess
 from copy import deepcopy
 from pathlib import Path
 
-from conformance.soft_norms import multi_fault_base
 from conformance.wire_contract_golden import reports as golden_reports
 from tests.test_wire_contract_corpus import CONTRACTS, LIMITS, NAMES, _registry
 from tests.test_wire_contract_lean import DEFER, DEMO
-from tests.test_wire_contract_soft_lean import FIXTURES, INHERITED, p7_source, with_faults
+from tests.test_wire_contract_soft_lean import FIXTURES, INHERITED, fixture_sources
 from tests.test_soft_norms_lean import elaborate, env, should
 from ve.softnorms_contract import REGISTRY
 from ve.wire import canonical_json
@@ -73,8 +72,7 @@ def test_soft_pilot_spec_python_lean():
     """P1–P17: whole records, except inherited decoder text and its args."""
     contract = load("soft-norms@0")
     named = sorted(FIXTURES)
-    sources = [multi_fault_base(), (env(), []), p7_source(), with_faults("malformed-predicate"),
-               *[with_faults(*FIXTURES[name][0]) for name in named]]
+    sources = fixture_sources()
     roots = [{"environment": env, "norms": rules} for env, rules in sources]
     rows = _lean("soft-norms@0", roots, "soft-elaborate")
     for root, row in zip(roots[:2], rows[:2]):
@@ -100,9 +98,16 @@ def test_soft_pilot_spec_python_lean():
         assert canonical_json(python.record) == canonical_json(expected), name
 
 
-def test_admission_adapter_uses_active_norm_units():
-    environment = env()
+def admission_sources():
+    """The admission case's soft source, and the same with an invalid `mode` in its first unit."""
     rules = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    bad = deepcopy(rules)
+    bad[0]["norm"]["mode"] = "invalid"
+    return (env(), rules), (env(), bad)
+
+
+def test_admission_adapter_uses_active_norm_units():
+    (environment, rules), (_, bad_rules) = admission_sources()
     elaborated = elaborate(Path(__file__).resolve().parents[1] /
                            "lean/.lake/build/bin/ve_soft_norms_route", environment, rules)
     coherence = next(b for b in elaborated["background"] if b.get("label") == "soft:coherence:a,b")
@@ -119,7 +124,7 @@ def test_admission_adapter_uses_active_norm_units():
                             input=json.dumps([submitted]), text=True, capture_output=True, timeout=180)
     assert json.loads(legacy.stdout)[0]["status"] == "ok"
     bad = deepcopy(case)
-    bad["document"]["units"][0]["content"]["norm"]["mode"] = "invalid"
+    bad["document"]["units"][0]["content"] = bad_rules[0]
     [lean_bad] = _lean("soft-norms@0", [bad], "admission")
     python_root = REGISTRY.adapters["soft_source"]({"kind": "admission", **bad})
     python_bad = run(load("soft-norms@0"), python_root, registry=REGISTRY)

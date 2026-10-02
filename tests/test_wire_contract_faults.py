@@ -64,9 +64,13 @@ def test_footprints_keep_interacting_faults_apart():
     assert not overlaps(prints["language"], prints["r0-mode"])
 
 
+# 2.11 and 4.10 share a code; the gate replays this pair whatever tier A samples.
+SHARED_CODE_PAIR = ("r0-decider-type", "outranking-decider-type")
+
+
 def test_the_oracle_judges_the_check_not_only_the_code():
     """2.11 and 4.10 share the code SOFT_INVALID_DECIDER; the expected record names 2.11."""
-    combo = (FAULTS["r0-decider-type"], FAULTS["outranking-decider-type"])
+    combo = tuple(FAULTS[name] for name in SHARED_CODE_PAIR)
     first = expected_first(CONTRACT, combo)
     assert first.name == "outranking-decider-type"
     expected = expected_record(CONTRACT, first)

@@ -8,10 +8,15 @@ from ve.errors import VEError
 from ve.softnorms import load_soft_document
 
 
-def test_norm_defaults_profile_rejects_on_both_soft_routes():
+def probe_sources():
+    """`env()` under `norm-defaults@0`, with no rule and with one."""
     environment = env(profiles=("norms@0", "norm-defaults@0", "soft-norms@0"))
+    return [(environment, norms) for norms in ([], [should("a", "x_required", True)])]
+
+
+def test_norm_defaults_profile_rejects_on_both_soft_routes():
     cases = []
-    for index, norms in enumerate(([], [should("a", "x_required", True)])):
+    for index, (environment, norms) in enumerate(probe_sources()):
         try:
             load_soft_document(environment, norms)
         except VEError as error:
