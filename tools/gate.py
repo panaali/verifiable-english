@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 from tools import rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
-LEAN_BINARIES = ("ve_conformance", "ve_norms_route")
+LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
                    "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
@@ -380,6 +380,9 @@ def main() -> int:
             result["stages"].append("toolchains")
 
             command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
+            # Risk's finite-condition differential uses a non-default executable.
+            command(["lake", "build", "ve_risk_eval"], cwd=ROOT / "lean", env=env,
+                    stage="Lean risk evaluator build")
             for name in LEAN_BINARIES:
                 binary = ROOT / "lean/.lake/build/bin" / name
                 if not binary.is_file() or not os.access(binary, os.X_OK):

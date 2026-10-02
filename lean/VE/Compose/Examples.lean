@@ -1,0 +1,574 @@
+import VE.Compose.Slot
+import VE.Compose.Dispatch
+import VE.Compose.Content
+import VE.Rights.Examples
+
+/-! The item-1 acceptance fixtures of docs/spec/composition.md section 10 as build-time checks (`#guard`: the
+build fails if one is false), and the two definitional instance checks of L9.
+
+* 10.1, `dispatch`: rows D1 to D52, one `#guard` each under a `-- D<n>` comment, and the removals of D28 to D31,
+  D50 and D51 (a wrapper that strips its own profile gets the next head); `tests/test_compose_dispatch.py` reads
+  the rows from the spec's table and fails unless these guards repeat it exactly. D-all: `todayTexts` and
+  `todayCodes` are Python's outcomes of `ve.profiles.checker_family` on all 65,536 strictly increasing lists of the
+  registered profiles, list `m` being the mask `m` over the registry in code point order; the test recomputes both
+  from Python and compares them with the literals below, and the `#guard` below compares them with `today`.
+  D-unsorted: `unsortedLists` are the test's 250 seeded lists that are not strictly increasing (regenerated and
+  compared by the test); `dispatch_unsorted` covers every such list.
+* 10.2, the slot, on the documents of `VE.Rights.Examples` (L1 to L9).
+* 10.3, the candidate content type (C1 to C6). -/
+namespace VE.Compose.Examples
+open VE.Compose
+open VE.Rights (correlate limPremises backgroundR backgroundBaseR backgroundValidR)
+open VE.Rights.Examples (alpha gamma epsilon eta aimed model l29 arrestClaim strictNode)
+universe u
+
+/-- Equality of answers, for the rows below. -/
+local instance : BEq (Except String Route) where
+  beq
+    | .ok a, .ok b => a == b
+    | .error e, .error f => e == f
+    | _, _ => false
+
+/-! ## 10.1 `dispatch`: rows D1 to D52 (the one table of composition.md 10.1, which the Python test reads) -/
+
+-- D1
+#guard dispatch ["relational-fol@0"] == .ok .frozen
+-- D2
+#guard dispatch ["closure@0", "nary@0", "relational-fol@0"] == .ok .frozen
+-- D3
+#guard dispatch ["order@0", "relational-fol@0", "time@0"] == .ok .frozen
+-- D4
+#guard dispatch ["norms@0", "relational-fol@0"] == .ok .norms
+-- D5
+#guard dispatch ["norms@0", "relational-fol@0", "soft-norms@0"] == .ok .soft
+-- D6
+#guard dispatch ["norms@0", "relational-fol@0", "rights@0", "soft-norms@0"] == .ok .rights
+-- D7
+#guard dispatch ["alternatives@0", "norms@0", "relational-fol@0"] == .ok .alternatives
+-- D8
+#guard dispatch ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"] == .ok .risk
+-- D9
+#guard dispatch ["norms@0", "relational-fol@0", "speech-acts@0"] == .ok .speechActs
+-- D10
+#guard dispatch ["relational-fol@0", "reports@0"] == .ok .reports
+-- D11
+#guard dispatch ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0"] == .ok .soft
+-- D12
+#guard dispatch ["definitions@0", "norms@0", "relational-fol@0"] == .ok .norms
+-- D13
+#guard dispatch ["relational-fol@0", "norms@0"] == .error "UnsupportedProfile: profiles must be sorted and unique"
+-- D14
+#guard dispatch ["alternatives@0", "relational-fol@0"] == .error "UnsupportedProfile: alternatives@0 requires norms@0"
+-- D15
+#guard dispatch ["alternatives@0", "norms@0", "relational-fol@0", "soft-norms@0"] == .error "UnsupportedProfile: alternatives@0 with soft-norms@0"
+-- D16
+#guard dispatch ["norms@0", "relational-fol@0", "risk@0"] == .error "UnsupportedProfile: risk@0 requires alternatives@0"
+-- D17
+#guard dispatch ["relational-fol@0", "zzz@0"] == .error "UnsupportedProfile: Unsupported profile zzz@0"
+-- D18
+#guard dispatch ["relational-fol@0", "speech-acts@0"] == .error "UnsupportedProfile: speech-acts@0 requires norms@0"
+-- D19
+#guard dispatch ["norms@0", "relational-fol@0", "soft-norms@0", "speech-acts@0"] == .error "UnsupportedProfile: speech-acts@0 with soft-norms@0"
+-- D20
+#guard dispatch ["norms@0"] == .error "UnsupportedProfile: Missing profile relational-fol@0"
+-- D21
+#guard dispatch ["norms@0", "relational-fol@0", "reports@0"] == .error "UnsupportedProfile: reports@0 with norms@0 layers"
+-- D22
+#guard dispatch ["order@0", "relational-fol@0", "reports@0"] == .error "UnsupportedProfile: reports@0 requires the fol checker, not order@0"
+-- D23
+#guard dispatch ["closure@0", "order@0", "relational-fol@0"] == .error "UnsupportedProfile: Unsupported profile combination closure@0 x order@0"
+-- D24
+#guard dispatch ["nary@0", "relational-fol@0"] == .error "UnsupportedProfile: Unsupported profile nary@0 without closure@0"
+-- D25
+#guard dispatch ["alternatives@0", "norms@0", "order@0", "relational-fol@0", "risk@0"] == .error "UnsupportedProfile: the risk norms route admits FOL documents only"
+-- D26
+#guard dispatch ["norms@0", "relational-fol@0", "rights@0"] == .error "UnsupportedProfile: rights@0 requires soft-norms@0"
+-- D27
+#guard dispatch ["relational-fol@0", "soft-norms@0"] == .error "UnsupportedProfile: soft-norms@0 requires norms@0"
+-- D28
+#guard dispatch ["norms@0", "readings@1", "relational-fol@0", "soft-norms@0"] == .ok .readings
+-- D29
+#guard dispatch ["norms@0", "readings@1", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0", "ve.discourse@1"] == .ok .discourse
+-- D30
+#guard dispatch ["relational-fol@0", "ve.discourse@1"] == .ok .discourse
+-- D31
+#guard dispatch ["norms@0", "relational-fol@0", "soft-norms@0", "ve.discourse@1"] == .ok .discourse
+-- D32
+#guard dispatch ["readings@1", "relational-fol@0"] == .error "UnsupportedProfile: readings@1 requires norms@0"
+-- D33
+#guard dispatch ["norms@0", "relational-fol@0", "right-clauses@0", "soft-norms@0"] == .error "UnsupportedProfile: right-clauses@0 requires rights@0"
+-- D34
+#guard dispatch ["alternatives@0", "norms@0", "readings@1", "relational-fol@0"] == .error "UnsupportedProfile: readings@1 with alternatives@0"
+-- D35
+#guard dispatch ["alternatives@0", "norms@0", "readings@1", "relational-fol@0", "risk@0"] == .error "UnsupportedProfile: readings@1 with risk@0"
+-- D36
+#guard dispatch ["norms@0", "relational-fol@0", "speech-acts@0", "ve.discourse@1"] == .error "UnsupportedProfile: ve.discourse@1 with speech-acts@0"
+-- D37
+#guard dispatch ["relational-fol@0", "reports@0", "ve.discourse@1"] == .error "UnsupportedProfile: ve.discourse@1 with reports@0"
+-- D38
+#guard dispatch ["norms@0", "readings@1", "relational-fol@0", "speech-acts@0"] == .error "UnsupportedProfile: readings@1 with speech-acts@0"
+-- D39
+#guard dispatch ["norms@0", "readings@1", "relational-fol@0", "rights@0"] == .error "UnsupportedProfile: rights@0 requires soft-norms@0"
+-- D40
+#guard dispatch ["readings@1", "norms@0", "relational-fol@0"] == .error "UnsupportedProfile: profiles must be sorted and unique"
+-- D41
+#guard dispatch ["readings@1", "relational-fol@0", "right-clauses@0"] == .error "UnsupportedProfile: right-clauses@0 requires rights@0"
+
+-- D42
+#guard dispatch ["norm-defaults@0", "norms@0", "relational-fol@0"] == .ok .normDefaults
+-- D43
+#guard dispatch ["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"] == .ok .soft
+-- D44
+#guard dispatch ["norm-defaults@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"] == .ok .rights
+-- D45
+#guard dispatch ["norm-defaults@0", "relational-fol@0"] == .error "UnsupportedProfile: norm-defaults@0 requires norms@0"
+-- D46
+#guard dispatch ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0"] == .error "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented"
+-- D47
+#guard dispatch ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"] == .error "UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented"
+-- D48
+#guard dispatch ["norm-defaults@0", "relational-fol@0", "risk@0"] == .error "UnsupportedProfile: risk@0 requires alternatives@0"
+-- D49
+#guard dispatch ["norm-defaults@0", "norms@0", "relational-fol@0", "speech-acts@0"] == .error "UnsupportedProfile: speech-acts@0 with norm-defaults@0"
+-- D50
+#guard dispatch ["norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"] == .ok .readings
+-- D51
+#guard dispatch ["norm-defaults@0", "norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
+-- D52
+#guard dispatch ["norm-defaults@0", "norms@0", "relational-fol@0", "right-clauses@0"] == .error "UnsupportedProfile: right-clauses@0 requires rights@0"
+/-! The removals of D28 to D31, D50 and D51: each strips the head wrapper of the list before it. -/
+
+-- D28, readings@1 removed
+#guard dispatch (["norms@0", "readings@1", "relational-fol@0", "soft-norms@0"].filter (· != "readings@1")) == .ok .soft
+-- D29, ve.discourse@1 removed
+#guard dispatch (["norms@0", "readings@1", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0", "ve.discourse@1"].filter (· != "ve.discourse@1")) == .ok .clauses
+-- D29, right-clauses@0 removed
+#guard dispatch (["norms@0", "readings@1", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0"].filter (· != "right-clauses@0")) == .ok .readings
+-- D29, readings@1 removed
+#guard dispatch (["norms@0", "readings@1", "relational-fol@0", "rights@0", "soft-norms@0"].filter (· != "readings@1")) == .ok .rights
+-- D30, ve.discourse@1 removed
+#guard dispatch (["relational-fol@0", "ve.discourse@1"].filter (· != "ve.discourse@1")) == .ok .frozen
+-- D31, ve.discourse@1 removed
+#guard dispatch (["norms@0", "relational-fol@0", "soft-norms@0", "ve.discourse@1"].filter (· != "ve.discourse@1")) == .ok .soft
+
+-- D50, readings@1 removed
+#guard dispatch (["norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"].filter (· != "readings@1")) == .ok .normDefaults
+-- D51, ve.discourse@1 removed
+#guard dispatch (["norm-defaults@0", "norms@0", "relational-fol@0", "ve.discourse@1"].filter (· != "ve.discourse@1")) == .ok .normDefaults
+
+/-! ## 10.1 D-all: today's gate against Python on every sorted list of registered profiles -/
+
+/-- The registry in code point order. -/
+def registrySorted : List String :=
+  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norm-defaults@0", "norms@0", "order@0", "relational-fol@0", "reports@0", "rights@0", "risk@0", "soft-norms@0", "speech-acts@0", "time@0"]
+
+#guard decide (registrySorted.Pairwise (· < ·))
+#guard registrySorted.length == registered.length && registrySorted.all registered.contains &&
+  registered.all registrySorted.contains
+
+/-- List `m`: the registered profiles whose bit is set in `m`, in code point order. -/
+def maskList (m : Nat) : List String :=
+  (List.range registrySorted.length).filterMap (fun j => if m.testBit j then registrySorted[j]? else none)
+
+/-- The position of a code character in the alphabet `0-9a-zA-Z`. -/
+def codeIndex (c : Char) : Nat :=
+  if c.isDigit then c.toNat - '0'.toNat
+  else if c.isLower then c.toNat - 'a'.toNat + 10
+  else c.toNat - 'A'.toNat + 36
+
+/-- `ok` when today's gate accepts, its text when it rejects. -/
+def todayText (ps : List String) : String :=
+  match today ps with
+  | .ok _ => "ok"
+  | .error e => e
+
+def todayTexts : List String :=
+  ["UnsupportedProfile: Missing profile relational-fol@0",
+   "UnsupportedProfile: alternatives@0 requires norms@0",
+   "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented",
+   "ok",
+   "UnsupportedProfile: Unsupported profile nary@0 without closure@0",
+   "UnsupportedProfile: norm-defaults@0 requires norms@0",
+   "UnsupportedProfile: Unsupported profile combination closure@0 x order@0",
+   "UnsupportedProfile: Unsupported profile combination nary@0 x order@0",
+   "UnsupportedProfile: reports@0 requires the fol checker, not closure@0",
+   "UnsupportedProfile: reports@0 with data@0 layers",
+   "UnsupportedProfile: reports@0 with definitions@0 layers",
+   "UnsupportedProfile: reports@0 requires the fol checker, not nary@0",
+   "UnsupportedProfile: reports@0 with norms@0 layers",
+   "UnsupportedProfile: reports@0 requires the fol checker, not order@0",
+   "UnsupportedProfile: rights@0 requires soft-norms@0",
+   "UnsupportedProfile: risk@0 requires alternatives@0",
+   "UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented",
+   "UnsupportedProfile: the risk norms route admits FOL documents only",
+   "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "UnsupportedProfile: soft-norms@0 requires norms@0",
+   "UnsupportedProfile: speech-acts@0 requires norms@0",
+   "UnsupportedProfile: speech-acts@0 with alternatives@0",
+   "UnsupportedProfile: speech-acts@0 with closure@0",
+   "UnsupportedProfile: speech-acts@0 with data@0",
+   "UnsupportedProfile: speech-acts@0 with definitions@0",
+   "UnsupportedProfile: speech-acts@0 with documents@1",
+   "UnsupportedProfile: speech-acts@0 with nary@0",
+   "UnsupportedProfile: speech-acts@0 with norm-defaults@0",
+   "UnsupportedProfile: speech-acts@0 with order@0",
+   "UnsupportedProfile: speech-acts@0 with reports@0",
+   "UnsupportedProfile: speech-acts@0 with rights@0",
+   "UnsupportedProfile: speech-acts@0 with soft-norms@0",
+   "UnsupportedProfile: speech-acts@0 with time@0"]
+
+def todayCodes : String := "01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202313131313131313131313131313131314131413141314131413141314131413151515151515151515151515151515151415141514151415141514151415141513333333333333333333333333333333344334433443344334433443344334433323232323232323232323232323232324232423242324232423242324232423231613161316131613161316131613161716171617161716171617161716171615161516151615161516151615161516171617161716171617161716171617161336633663366336633663366336633667766776677667766776677667766776632623262326232623262326232623262726272627262726272627262726272620101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000020202020202020202020202020202020202020202020202020202020202020231819191a1a1a1a131819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a151819191a1a1a1a151819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c201010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e141e141e141e141e141e141e141e141e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e141e141e141e141e141e141e141e141e1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee44ee44ee44ee44ee44ee44ee44ee44eee2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e242e242e242e242e242e242e242e242e2e161e161e161e161e161e161e161e16171617161716171617161716171617161e161e161e161e161e161e161e161e16171617161716171617161716171617161ee66ee66ee66ee66ee66ee66ee66ee6677667766776677667766776677667766e262e262e262e262e262e262e262e2627262726272627262726272627262726201010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202e1819191a1a1a1a1e1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1e1819191a1a1a1a1e1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f3fhf3fhf3fhf3fhf3fhf3fhf3fhf3fhf4fhf4fhf4fhf4fhf4fhf4fhf4fhf4fhfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fhf6fhf6fhf6fhf6fhf6fhf6fhf6fhf6f7f6f7f6f7f6f7f6f7f6f7f6f7f6f7f6fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fefhfefhfefhfefhfefhfefhfefhfefhf4fhf4fhf4fhf4fhf4fhf4fhf4fhf4fhfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fhf6fhf6fhf6fhf6fhf6fhf6fhf6fhf6f7f6f7f6f7f6f7f6f7f6f7f6f7f6f7f6fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfg010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j13i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3ij161j161j161j161j161j161j161j16171617161716171617161716171617161j161j161j161j161j161j161j161j161716171617161716171617161716171613i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1j1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicid1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicici010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j13i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3ij161j161j161j161j161j161j161j16171617161716171617161716171617161j161j161j161j161j161j161j161j161716171617161716171617161716171613i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1j1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicid1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k10lmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k13lmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1ulmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1ulmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgk1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1viminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1viminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1uiminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1uiminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififi01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202313131313131313131313131313131314131413141314131413141314131413151515151515151515151515151515151415141514151415141514151415141513333333333333333333333333333333344334433443344334433443344334433323232323232323232323232323232324232423242324232423242324232423231613161316131613161316131613161716171617161716171617161716171615161516151615161516151615161516171617161716171617161716171617161336633663366336633663366336633667766776677667766776677667766776632623262326232623262326232623262726272627262726272627262726272620101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000020202020202020202020202020202020202020202020202020202020202020231819191a1a1a1a131819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a151819191a1a1a1a151819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c201010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e141e141e141e141e141e141e141e141e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e141e141e141e141e141e141e141e141e1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee44ee44ee44ee44ee44ee44ee44ee44eee2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e242e242e242e242e242e242e242e242e2e161e161e161e161e161e161e161e16171617161716171617161716171617161e161e161e161e161e161e161e161e16171617161716171617161716171617161ee66ee66ee66ee66ee66ee66ee66ee6677667766776677667766776677667766e262e262e262e262e262e262e262e2627262726272627262726272627262726201010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101000000000000000000000000000000000000000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010100000000000000000000000000000000000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202e1819191a1a1a1a1e1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1e1819191a1a1a1a1e1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f3fhf3fhf3fhf3fhf3fhf3fhf3fhf3fhf4fhf4fhf4fhf4fhf4fhf4fhf4fhf4fhfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fhf6fhf6fhf6fhf6fhf6fhf6fhf6fhf6f7f6f7f6f7f6f7f6f7f6f7f6f7f6f7f6fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fefhfefhfefhfefhfefhfefhfefhfefhf4fhf4fhf4fhf4fhf4fhf4fhf4fhf4fhfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fhf6fhf6fhf6fhf6fhf6fhf6fhf6fhf6f7f6f7f6f7f6f7f6f7f6f7f6f7f6f7f6fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0fgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfg010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j13i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3ij161j161j161j161j161j161j161j16171617161716171617161716171617161j161j161j161j161j161j161j161j161716171617161716171617161716171613i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1j1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicid1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicici010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j1j141j141j141j141j141j141j141j141j13i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3i4i3ij161j161j161j161j161j161j161j16171617161716171617161716171617161j161j161j161j161j161j161j161j161716171617161716171617161716171613i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i3i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i7i6i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0i0ij1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1j1819191a1a1a1a1j1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicid1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1d1819191a1a1a1a1d1819191a1a1a1a1b1819191a1a1a1a1b1819191a1a1a1a1cicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicicif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1wlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1wlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1ulmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1ulmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1tlmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1slmlnlmlolmlnlmlplmlnlmlolmlnlmlqlmlnlmlolmlnlmlplmlnlmlolmlnlmlr2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2q2m2n2m2o2m2n2m2p2m2n2m2o2m2n2m2f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgf1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1flflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflflfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgfgk1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1viminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1viminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1uiminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1uiminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1timinimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimik1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1k1siminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimiriminimioiminimipiminimioiminimiqiminimioiminimipiminimioiminimif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififif1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1fifififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififififi"
+
+#guard todayTexts.length ≤ 62 && todayCodes.length == 2 ^ registrySorted.length
+#guard (List.range (2 ^ registrySorted.length)).all (fun m =>
+  todayTexts[codeIndex (todayCodes.toList.toArray.getD m ' ')]? == some (todayText (maskList m)))
+
+/-! ## 10.1 D-unsorted: the test's seeded lists that are not strictly increasing -/
+
+def unsortedLists : List (List String) := [
+  ["definitions@0", "rights@0", "closure@0", "norm-defaults@0", "soft-norms@0", "norms@0", "nary@0", "relational-fol@0"],
+  ["norms@0", "documents@1", "order@0", "definitions@0", "data@0", "relational-fol@0", "soft-norms@0"],
+  ["closure@0", "time@0", "rights@0", "soft-norms@0", "norms@0", "definitions@0", "relational-fol@0"],
+  ["relational-fol@0", "order@0", "norms@0", "data@0", "norm-defaults@0", "definitions@0", "soft-norms@0", "rights@0"],
+  ["relational-fol@0", "closure@0", "data@0", "time@0"],
+  ["time@0", "order@0", "documents@1", "definitions@0", "relational-fol@0"],
+  ["definitions@0", "soft-norms@0", "closure@0", "norms@0", "norm-defaults@0", "relational-fol@0", "rights@0", "time@0", "data@0"],
+  ["norm-defaults@0", "documents@1", "closure@0", "nary@0", "norms@0", "soft-norms@0", "relational-fol@0"],
+  ["time@0", "order@0", "relational-fol@0", "norms@0", "soft-norms@0", "definitions@0"],
+  ["risk@0", "norms@0", "alternatives@0", "data@0", "definitions@0", "relational-fol@0", "documents@1"],
+  ["norms@0", "relational-fol@0", "order@0", "norm-defaults@0", "data@0", "soft-norms@0", "definitions@0"],
+  ["order@0", "definitions@0", "norms@0", "data@0", "relational-fol@0", "documents@1"],
+  ["soft-norms@0", "closure@0", "documents@1", "time@0", "norms@0", "rights@0", "relational-fol@0"],
+  ["order@0", "definitions@0", "data@0", "norms@0", "norm-defaults@0", "soft-norms@0", "relational-fol@0"],
+  ["norm-defaults@0", "rights@0", "soft-norms@0", "norms@0", "data@0", "relational-fol@0", "definitions@0"],
+  ["norms@0", "relational-fol@0", "norm-defaults@0"],
+  ["norms@0", "closure@0", "time@0", "documents@1", "rights@0", "soft-norms@0", "definitions@0", "relational-fol@0"],
+  ["nary@0", "soft-norms@0", "norms@0", "closure@0", "definitions@0", "documents@1", "relational-fol@0"],
+  ["relational-fol@0", "data@0", "order@0", "soft-norms@0", "norms@0"],
+  ["closure@0", "relational-fol@0", "norms@0", "alternatives@0", "documents@1", "nary@0", "time@0"],
+  ["rights@0", "documents@1", "definitions@0", "nary@0", "data@0", "norms@0", "soft-norms@0", "relational-fol@0", "closure@0"],
+  ["soft-norms@0", "data@0", "nary@0", "closure@0", "norms@0", "relational-fol@0"],
+  ["norms@0", "data@0", "closure@0", "time@0", "relational-fol@0", "definitions@0", "documents@1"],
+  ["nary@0", "norms@0", "definitions@0", "relational-fol@0", "rights@0", "documents@1", "data@0", "soft-norms@0", "closure@0", "norm-defaults@0"],
+  ["soft-norms@0", "documents@1", "norms@0", "relational-fol@0"],
+  ["relational-fol@0", "norms@0", "closure@0", "data@0", "soft-norms@0", "definitions@0"],
+  ["soft-norms@0", "nary@0", "relational-fol@0", "definitions@0", "data@0", "norms@0", "closure@0"],
+  ["soft-norms@0", "rights@0", "nary@0", "norms@0", "relational-fol@0", "closure@0", "documents@1"],
+  ["documents@1", "alternatives@0", "risk@0", "norms@0", "definitions@0", "relational-fol@0", "data@0"],
+  ["soft-norms@0", "data@0", "time@0", "order@0", "norms@0", "rights@0", "definitions@0", "relational-fol@0"],
+  ["norm-defaults@0", "order@0", "relational-fol@0", "soft-norms@0", "norms@0"],
+  ["time@0", "soft-norms@0", "order@0", "relational-fol@0", "data@0", "norms@0"],
+  ["relational-fol@0", "order@0", "data@0", "definitions@0"],
+  ["norm-defaults@0", "soft-norms@0", "norms@0", "definitions@0", "data@0", "nary@0", "documents@1", "relational-fol@0", "closure@0"],
+  ["rights@0", "relational-fol@0", "norms@0", "soft-norms@0", "order@0", "data@0"],
+  ["norms@0", "definitions@0", "soft-norms@0", "documents@1", "closure@0", "relational-fol@0"],
+  ["data@0", "time@0", "relational-fol@0", "norms@0", "documents@1", "soft-norms@0", "order@0"],
+  ["order@0", "documents@1", "time@0", "relational-fol@0", "definitions@0", "soft-norms@0", "norms@0"],
+  ["data@0", "soft-norms@0", "relational-fol@0", "norms@0", "definitions@0", "closure@0", "time@0"],
+  ["norms@0", "documents@1", "data@0", "relational-fol@0", "norm-defaults@0"],
+  ["order@0", "relational-fol@0", "norms@0"],
+  ["documents@1", "norms@0", "data@0", "soft-norms@0", "relational-fol@0", "closure@0", "nary@0", "definitions@0", "rights@0", "time@0"],
+  ["norms@0", "soft-norms@0", "rights@0", "relational-fol@0", "time@0", "data@0"],
+  ["relational-fol@0", "norms@0", "time@0", "closure@0", "nary@0"],
+  ["data@0", "definitions@0", "norms@0", "relational-fol@0", "norm-defaults@0"],
+  ["relational-fol@0", "norms@0", "soft-norms@0", "definitions@0", "rights@0", "nary@0", "closure@0", "time@0", "norm-defaults@0", "documents@1"],
+  ["norms@0", "relational-fol@0", "soft-norms@0", "definitions@0", "norm-defaults@0"],
+  ["order@0", "documents@1", "alternatives@0", "time@0", "norms@0", "relational-fol@0"],
+  ["closure@0", "documents@1", "data@0", "norms@0", "definitions@0", "relational-fol@0", "nary@0"],
+  ["norms@0", "time@0", "relational-fol@0", "documents@1", "closure@0", "norm-defaults@0", "nary@0"],
+  ["rights@0", "soft-norms@0", "relational-fol@0", "documents@1", "norms@0", "time@0"],
+  ["soft-norms@0", "documents@1", "relational-fol@0", "norms@0", "definitions@0", "order@0"],
+  ["data@0", "relational-fol@0", "norms@0", "definitions@0", "time@0", "closure@0", "norm-defaults@0", "nary@0", "documents@1"],
+  ["relational-fol@0", "closure@0", "documents@1"],
+  ["definitions@0", "documents@1", "soft-norms@0", "relational-fol@0", "closure@0", "norms@0"],
+  ["relational-fol@0", "time@0", "closure@0", "soft-norms@0", "data@0", "norm-defaults@0", "documents@1", "norms@0", "nary@0"],
+  ["closure@0", "soft-norms@0", "norms@0", "relational-fol@0", "definitions@0", "documents@1", "data@0"],
+  ["data@0", "time@0", "nary@0", "definitions@0", "closure@0", "relational-fol@0", "norms@0"],
+  ["norms@0", "relational-fol@0", "norm-defaults@0", "data@0", "closure@0", "nary@0", "definitions@0", "soft-norms@0", "time@0"],
+  ["documents@1", "time@0", "relational-fol@0", "norms@0"],
+  ["norms@0", "documents@1", "relational-fol@0"],
+  ["soft-norms@0", "data@0", "definitions@0", "documents@1", "relational-fol@0", "norms@0", "norm-defaults@0", "closure@0", "time@0"],
+  ["norms@0", "soft-norms@0", "closure@0", "relational-fol@0", "norm-defaults@0", "definitions@0", "nary@0"],
+  ["closure@0", "norms@0", "nary@0", "definitions@0", "relational-fol@0", "documents@1", "soft-norms@0"],
+  ["time@0", "norms@0", "closure@0", "alternatives@0", "relational-fol@0"],
+  ["norms@0", "relational-fol@0", "data@0", "order@0", "alternatives@0", "time@0"],
+  ["relational-fol@0", "data@0", "soft-norms@0", "time@0", "order@0", "rights@0", "norms@0", "norm-defaults@0", "documents@1"],
+  ["norm-defaults@0", "data@0", "closure@0", "norms@0", "nary@0", "relational-fol@0"],
+  ["time@0", "norms@0", "definitions@0", "closure@0", "documents@1", "relational-fol@0", "soft-norms@0"],
+  ["definitions@0", "time@0", "relational-fol@0", "norms@0", "data@0"],
+  ["definitions@0", "norms@0", "relational-fol@0", "alternatives@0"],
+  ["norms@0", "data@0", "closure@0", "relational-fol@0", "nary@0"],
+  ["soft-norms@0", "norm-defaults@0", "data@0", "documents@1", "norms@0", "order@0", "relational-fol@0"],
+  ["order@0", "relational-fol@0", "data@0", "documents@1", "time@0", "norms@0", "rights@0", "soft-norms@0"],
+  ["relational-fol@0", "data@0", "closure@0", "documents@1"],
+  ["time@0", "documents@1", "closure@0", "soft-norms@0", "relational-fol@0", "definitions@0", "nary@0", "data@0", "norms@0"],
+  ["documents@1", "alternatives@0", "norms@0", "data@0", "relational-fol@0", "risk@0"],
+  ["soft-norms@0", "data@0", "closure@0", "norms@0", "documents@1", "rights@0", "definitions@0", "time@0", "relational-fol@0", "norm-defaults@0"],
+  ["soft-norms@0", "closure@0", "relational-fol@0", "norms@0", "time@0", "rights@0", "data@0"],
+  ["documents@1", "rights@0", "closure@0", "norm-defaults@0", "norms@0", "soft-norms@0", "nary@0", "relational-fol@0"],
+  ["data@0", "norms@0", "documents@1", "relational-fol@0", "closure@0", "alternatives@0"],
+  ["relational-fol@0", "rights@0", "documents@1", "soft-norms@0", "norms@0", "order@0", "norm-defaults@0", "data@0", "time@0"],
+  ["time@0", "norm-defaults@0", "relational-fol@0", "norms@0", "definitions@0", "closure@0"],
+  ["norms@0", "relational-fol@0", "documents@1", "nary@0", "closure@0", "alternatives@0", "data@0"],
+  ["norm-defaults@0", "definitions@0", "documents@1", "relational-fol@0", "nary@0", "norms@0", "closure@0"],
+  ["norms@0", "data@0", "norm-defaults@0", "soft-norms@0", "relational-fol@0", "rights@0"],
+  ["relational-fol@0", "definitions@0", "nary@0", "data@0", "closure@0", "norms@0", "time@0"],
+  ["relational-fol@0", "data@0", "order@0", "norms@0", "documents@1"],
+  ["alternatives@0", "time@0", "norms@0", "documents@1", "definitions@0", "relational-fol@0", "order@0"],
+  ["relational-fol@0", "definitions@0"],
+  ["order@0", "soft-norms@0", "time@0", "norms@0", "relational-fol@0", "definitions@0", "norm-defaults@0"],
+  ["soft-norms@0", "data@0", "documents@1", "norms@0", "closure@0", "relational-fol@0"],
+  ["definitions@0", "data@0", "time@0", "relational-fol@0", "norms@0", "closure@0", "norm-defaults@0"],
+  ["soft-norms@0", "documents@1", "relational-fol@0", "nary@0", "rights@0", "norms@0", "closure@0", "time@0"],
+  ["rights@0", "data@0", "time@0", "closure@0", "norms@0", "soft-norms@0", "relational-fol@0"],
+  ["norm-defaults@0", "data@0", "relational-fol@0", "documents@1", "norms@0", "closure@0"],
+  ["rights@0", "soft-norms@0", "relational-fol@0", "time@0", "norms@0"],
+  ["soft-norms@0", "data@0", "definitions@0", "nary@0", "norms@0", "closure@0", "norm-defaults@0", "relational-fol@0"],
+  ["closure@0", "time@0", "relational-fol@0", "soft-norms@0", "norms@0", "data@0"],
+  ["definitions@0", "alternatives@0", "relational-fol@0", "order@0", "norms@0", "documents@1"],
+  ["relational-fol@0", "time@0", "soft-norms@0", "norms@0", "data@0", "norm-defaults@0", "order@0"],
+  ["relational-fol@0", "rights@0", "documents@1", "soft-norms@0", "data@0", "norms@0"],
+  ["documents@1", "norms@0", "definitions@0", "relational-fol@0", "data@0", "order@0", "time@0"],
+  ["norms@0", "norm-defaults@0", "relational-fol@0", "nary@0", "documents@1", "closure@0", "soft-norms@0", "time@0", "definitions@0"],
+  ["definitions@0", "data@0", "norms@0", "time@0", "documents@1", "relational-fol@0", "norm-defaults@0", "order@0"],
+  ["documents@1", "relational-fol@0", "nary@0", "closure@0", "definitions@0"],
+  ["norms@0", "definitions@0", "order@0", "documents@1", "data@0", "relational-fol@0"],
+  ["documents@1", "rights@0", "relational-fol@0", "time@0", "norms@0", "soft-norms@0", "data@0", "definitions@0"],
+  ["documents@1", "data@0", "relational-fol@0", "closure@0", "nary@0", "definitions@0"],
+  ["norms@0", "documents@1", "soft-norms@0", "data@0", "time@0", "nary@0", "closure@0", "relational-fol@0"],
+  ["documents@1", "time@0", "norms@0", "definitions@0", "relational-fol@0"],
+  ["definitions@0", "alternatives@0", "closure@0", "norms@0", "documents@1", "relational-fol@0"],
+  ["relational-fol@0", "time@0", "norms@0", "closure@0", "data@0"],
+  ["soft-norms@0", "norm-defaults@0", "documents@1", "relational-fol@0", "time@0", "order@0", "rights@0", "norms@0"],
+  ["definitions@0", "documents@1", "soft-norms@0", "relational-fol@0", "time@0", "data@0", "norms@0"],
+  ["norms@0", "time@0", "definitions@0", "relational-fol@0", "rights@0", "soft-norms@0"],
+  ["relational-fol@0", "alternatives@0", "nary@0", "definitions@0", "closure@0", "data@0", "norms@0"],
+  ["norm-defaults@0", "definitions@0", "closure@0", "rights@0", "nary@0", "soft-norms@0", "norms@0", "relational-fol@0", "documents@1"],
+  ["closure@0", "time@0", "definitions@0", "alternatives@0", "nary@0", "norms@0", "relational-fol@0"],
+  ["rights@0", "soft-norms@0", "definitions@0", "closure@0", "relational-fol@0", "nary@0", "time@0", "norms@0"],
+  ["norms@0", "data@0", "documents@1", "rights@0", "soft-norms@0", "definitions@0", "relational-fol@0"],
+  ["time@0", "order@0", "relational-fol@0", "documents@1"],
+  ["alternatives@0", "norms@0", "time@0", "order@0", "relational-fol@0", "data@0"],
+  ["relational-fol@0", "definitions@0", "time@0", "rights@0", "data@0", "norms@0", "soft-norms@0"],
+  ["norms@0", "time@0", "soft-norms@0", "relational-fol@0"],
+  ["soft-norms@0", "rights@0", "norms@0", "closure@0", "documents@1", "nary@0", "relational-fol@0"],
+  ["time@0", "soft-norms@0", "norms@0", "relational-fol@0"],
+  ["data@0", "soft-norms@0", "norm-defaults@0", "relational-fol@0", "definitions@0", "norms@0"],
+  ["norm-defaults@0", "relational-fol@0", "norms@0", "order@0"],
+  ["norms@0", "closure@0", "soft-norms@0", "rights@0", "relational-fol@0"],
+  ["relational-fol@0", "documents@1", "closure@0", "soft-norms@0", "data@0", "norms@0"],
+  ["time@0", "relational-fol@0"],
+  ["closure@0", "norms@0", "soft-norms@0", "documents@1", "definitions@0", "data@0", "relational-fol@0"],
+  ["relational-fol@0", "documents@1", "norms@0", "norm-defaults@0", "soft-norms@0", "closure@0", "time@0"],
+  ["rights@0", "data@0", "nary@0", "closure@0", "documents@1", "norms@0", "relational-fol@0", "norm-defaults@0", "soft-norms@0"],
+  ["closure@0", "norms@0", "documents@1", "definitions@0", "time@0", "soft-norms@0", "relational-fol@0"],
+  ["soft-norms@0", "documents@1", "relational-fol@0", "norms@0", "data@0"],
+  ["data@0", "relational-fol@0", "norms@0", "norm-defaults@0"],
+  ["relational-fol@0", "soft-norms@0", "documents@1", "closure@0", "norms@0", "nary@0", "time@0"],
+  ["definitions@0", "nary@0", "norms@0", "rights@0", "soft-norms@0", "closure@0", "relational-fol@0", "data@0"],
+  ["data@0", "time@0", "documents@1", "order@0", "norms@0", "relational-fol@0", "alternatives@0"],
+  ["norms@0", "closure@0", "definitions@0", "documents@1", "relational-fol@0"],
+  ["soft-norms@0", "time@0", "documents@1", "relational-fol@0", "norms@0", "definitions@0"],
+  ["norms@0", "relational-fol@0", "alternatives@0", "documents@1"],
+  ["norms@0", "relational-fol@0", "closure@0", "definitions@0", "data@0", "time@0", "soft-norms@0", "norm-defaults@0"],
+  ["relational-fol@0", "data@0", "closure@0", "time@0", "soft-norms@0", "norms@0"],
+  ["documents@1", "soft-norms@0", "time@0", "closure@0", "relational-fol@0", "norms@0", "definitions@0", "rights@0"],
+  ["time@0", "alternatives@0", "documents@1", "norms@0", "data@0", "relational-fol@0"],
+  ["norms@0", "documents@1", "closure@0", "soft-norms@0", "relational-fol@0"],
+  ["definitions@0", "documents@1", "closure@0", "relational-fol@0", "time@0", "nary@0", "norms@0"],
+  ["rights@0", "norms@0", "order@0", "soft-norms@0", "documents@1", "relational-fol@0"],
+  ["closure@0", "soft-norms@0", "norm-defaults@0", "rights@0", "norms@0", "relational-fol@0"],
+  ["norms@0", "documents@1", "alternatives@0", "time@0", "definitions@0", "closure@0", "relational-fol@0"],
+  ["definitions@0", "relational-fol@0", "soft-norms@0", "norm-defaults@0", "time@0", "norms@0"],
+  ["documents@1", "relational-fol@0", "norms@0", "order@0", "definitions@0", "soft-norms@0"],
+  ["norm-defaults@0", "soft-norms@0", "closure@0", "norms@0", "relational-fol@0"],
+  ["order@0", "rights@0", "soft-norms@0", "relational-fol@0", "norms@0", "documents@1", "definitions@0", "time@0", "data@0", "norm-defaults@0"],
+  ["norms@0", "relational-fol@0", "documents@1", "time@0", "nary@0", "closure@0", "definitions@0"],
+  ["data@0", "time@0", "relational-fol@0", "soft-norms@0", "definitions@0", "norms@0"],
+  ["order@0", "soft-norms@0", "time@0", "relational-fol@0", "norms@0", "data@0"],
+  ["relational-fol@0", "order@0", "norms@0", "data@0"],
+  ["closure@0", "norms@0", "soft-norms@0", "nary@0", "data@0", "relational-fol@0", "norm-defaults@0"],
+  ["norms@0", "norm-defaults@0", "relational-fol@0", "soft-norms@0", "time@0"],
+  ["norms@0", "alternatives@0", "documents@1", "definitions@0", "relational-fol@0", "order@0"],
+  ["norms@0", "rights@0", "relational-fol@0", "definitions@0", "documents@1", "soft-norms@0"],
+  ["data@0", "relational-fol@0", "documents@1", "definitions@0"],
+  ["documents@1", "order@0", "norms@0", "time@0", "soft-norms@0", "definitions@0", "relational-fol@0"],
+  ["relational-fol@0", "norms@0", "definitions@0"],
+  ["documents@1", "definitions@0", "closure@0", "nary@0", "relational-fol@0", "data@0", "time@0"],
+  ["norms@0", "time@0", "relational-fol@0", "definitions@0", "closure@0", "alternatives@0"],
+  ["rights@0", "documents@1", "soft-norms@0", "time@0", "relational-fol@0", "data@0", "norms@0"],
+  ["definitions@0", "norms@0", "data@0", "nary@0", "closure@0", "relational-fol@0"],
+  ["soft-norms@0", "definitions@0", "rights@0", "relational-fol@0", "data@0", "time@0", "norms@0"],
+  ["relational-fol@0", "closure@0", "data@0", "definitions@0", "soft-norms@0", "norms@0", "documents@1", "nary@0"],
+  ["norms@0", "alternatives@0", "relational-fol@0", "documents@1", "risk@0"],
+  ["relational-fol@0", "norms@0", "data@0", "alternatives@0", "documents@1"],
+  ["relational-fol@0", "closure@0", "documents@1"],
+  ["time@0", "documents@1", "rights@0", "norms@0", "definitions@0", "relational-fol@0", "soft-norms@0", "closure@0", "nary@0"],
+  ["time@0", "relational-fol@0", "nary@0", "closure@0"],
+  ["documents@1", "definitions@0", "time@0", "relational-fol@0", "norms@0"],
+  ["soft-norms@0", "norms@0", "definitions@0", "rights@0", "order@0", "relational-fol@0", "norm-defaults@0"],
+  ["norms@0", "relational-fol@0", "norm-defaults@0", "data@0", "closure@0", "soft-norms@0"],
+  ["definitions@0", "relational-fol@0", "data@0", "documents@1", "norms@0", "time@0", "order@0", "norm-defaults@0"],
+  ["documents@1", "relational-fol@0", "alternatives@0", "norms@0"],
+  ["definitions@0", "relational-fol@0", "nary@0", "time@0", "closure@0"],
+  ["time@0", "relational-fol@0", "norms@0", "definitions@0", "risk@0", "alternatives@0"],
+  ["norms@0", "soft-norms@0", "data@0", "definitions@0", "relational-fol@0", "rights@0"],
+  ["definitions@0", "closure@0", "time@0", "relational-fol@0", "soft-norms@0", "rights@0", "documents@1", "norms@0"],
+  ["documents@1", "time@0", "rights@0", "definitions@0", "soft-norms@0", "norms@0", "relational-fol@0"],
+  ["relational-fol@0", "nary@0", "definitions@0", "time@0", "closure@0", "data@0"],
+  ["soft-norms@0", "relational-fol@0", "closure@0", "norms@0"],
+  ["norm-defaults@0", "norms@0", "closure@0", "relational-fol@0", "definitions@0", "time@0"],
+  ["order@0", "relational-fol@0", "data@0", "definitions@0", "norms@0", "norm-defaults@0", "documents@1"],
+  ["data@0", "order@0", "time@0", "documents@1", "norms@0", "relational-fol@0"],
+  ["documents@1", "alternatives@0", "definitions@0", "relational-fol@0", "nary@0", "data@0", "norms@0", "closure@0"],
+  ["closure@0", "norms@0", "norm-defaults@0", "relational-fol@0", "soft-norms@0"],
+  ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "data@0", "soft-norms@0"],
+  ["data@0", "norms@0", "relational-fol@0", "order@0"],
+  ["soft-norms@0", "relational-fol@0", "rights@0", "documents@1", "norms@0", "norm-defaults@0"],
+  ["order@0", "definitions@0", "time@0", "documents@1", "data@0", "soft-norms@0", "norms@0", "relational-fol@0"],
+  ["definitions@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"],
+  ["documents@1", "relational-fol@0", "relational-fol@0", "time@0"],
+  ["data@0", "documents@1", "relational-fol@0", "relational-fol@0", "time@0"],
+  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "norms@0", "relational-fol@0", "alternatives@0"],
+  ["data@0", "definitions@0", "relational-fol@0", "norms@0", "relational-fol@0"],
+  ["norms@0", "soft-norms@0", "relational-fol@0", "soft-norms@0"],
+  ["norm-defaults@0", "norm-defaults@0", "norms@0", "relational-fol@0", "time@0"],
+  ["alternatives@0", "definitions@0", "norms@0", "relational-fol@0", "time@0", "definitions@0"],
+  ["closure@0", "definitions@0", "relational-fol@0", "nary@0", "relational-fol@0", "time@0"],
+  ["norm-defaults@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"],
+  ["alternatives@0", "definitions@0", "documents@1", "norms@0", "definitions@0", "relational-fol@0", "time@0"],
+  ["definitions@0", "norm-defaults@0", "norms@0", "order@0", "relational-fol@0", "relational-fol@0", "soft-norms@0", "time@0"],
+  ["norms@0", "closure@0", "data@0", "definitions@0", "nary@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0", "time@0"],
+  ["closure@0", "norm-defaults@0", "norms@0", "norms@0", "relational-fol@0", "soft-norms@0", "time@0"],
+  ["closure@0", "relational-fol@0", "data@0", "definitions@0", "relational-fol@0"],
+  ["alternatives@0", "data@0", "data@0", "norms@0", "relational-fol@0"],
+  ["closure@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norms@0", "relational-fol@0"],
+  ["alternatives@0", "norms@0", "alternatives@0", "order@0", "relational-fol@0", "time@0"],
+  ["data@0", "definitions@0", "norm-defaults@0", "norms@0", "order@0", "relational-fol@0", "norm-defaults@0"],
+  ["definitions@0", "relational-fol@0", "relational-fol@0", "time@0"],
+  ["closure@0", "data@0", "definitions@0", "soft-norms@0", "norms@0", "relational-fol@0", "soft-norms@0", "time@0"],
+  ["data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0", "soft-norms@0"],
+  ["closure@0", "data@0", "documents@1", "documents@1", "norms@0", "relational-fol@0", "soft-norms@0"],
+  ["definitions@0", "norm-defaults@0", "norms@0", "order@0", "relational-fol@0", "time@0", "definitions@0"],
+  ["data@0", "documents@1", "documents@1", "norms@0", "relational-fol@0"],
+  ["alternatives@0", "data@0", "documents@1", "documents@1", "norms@0", "relational-fol@0", "risk@0", "time@0"],
+  ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "order@0", "relational-fol@0"],
+  ["closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "relational-fol@0", "data@0", "time@0"],
+  ["data@0", "norm-defaults@0", "data@0", "norms@0", "relational-fol@0", "soft-norms@0", "time@0"],
+  ["closure@0", "data@0", "definitions@0", "documents@1", "norms@0", "soft-norms@0", "relational-fol@0", "soft-norms@0"],
+  ["data@0", "norm-defaults@0", "norms@0", "order@0", "data@0", "relational-fol@0", "time@0"],
+  ["closure@0", "documents@1", "relational-fol@0", "nary@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0", "time@0"],
+  ["data@0", "documents@1", "documents@1", "norms@0", "relational-fol@0", "time@0"],
+  ["data@0", "norms@0", "documents@1", "norms@0", "relational-fol@0"],
+  ["closure@0", "data@0", "relational-fol@0", "definitions@0", "documents@1", "nary@0", "norms@0", "relational-fol@0", "soft-norms@0"],
+  ["documents@1", "documents@1", "order@0", "relational-fol@0"],
+  ["definitions@0", "alternatives@0", "definitions@0", "documents@1", "norms@0", "order@0", "relational-fol@0", "time@0"],
+  ["alternatives@0", "definitions@0", "norms@0", "order@0", "relational-fol@0", "time@0", "time@0"],
+  ["norms@0", "closure@0", "data@0", "norm-defaults@0", "norms@0", "relational-fol@0", "time@0"],
+  ["nary@0", "alternatives@0", "closure@0", "data@0", "documents@1", "nary@0", "norms@0", "relational-fol@0", "time@0"],
+  ["documents@1", "alternatives@0", "data@0", "documents@1", "norms@0", "order@0", "relational-fol@0"],
+  ["definitions@0", "norms@0", "order@0", "relational-fol@0", "rights@0", "soft-norms@0", "definitions@0", "time@0"],
+  ["data@0", "definitions@0", "norm-defaults@0", "norms@0", "order@0", "relational-fol@0", "rights@0", "order@0", "soft-norms@0"],
+  ["alternatives@0", "data@0", "definitions@0", "time@0", "norms@0", "relational-fol@0", "time@0"],
+  ["reports@0", "documents@1", "relational-fol@0", "reports@0", "time@0"],
+  ["data@0", "definitions@0", "documents@1", "norms@0", "order@0", "relational-fol@0", "rights@0", "soft-norms@0", "time@0", "order@0"],
+  ["definitions@0", "documents@1", "order@0", "relational-fol@0", "time@0", "time@0"],
+  ["data@0", "definitions@0", "documents@1", "data@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"],
+  ["definitions@0", "documents@1", "relational-fol@0", "relational-fol@0"],
+  ["alternatives@0", "documents@1", "norms@0", "relational-fol@0", "risk@0", "relational-fol@0"]]
+
+#guard unsortedLists.length == 250 && unsortedLists.all (fun ps => !decide (ps.Pairwise (· < ·)))
+#guard unsortedLists.all (fun ps => dispatch ps == .error "UnsupportedProfile: profiles must be sorted and unique")
+
+/-! ## 10.2 The slot -/
+
+-- L1: alpha, the empty slot
+#guard limPremises alpha == []
+#guard backgroundP (correlate alpha) [] == VE.SoftNorms.background' (correlate alpha)
+#guard slotCheck (correlate alpha) []
+
+-- L2: gamma, the slot Lim_D
+#guard slotCheck (correlate gamma) (limPremises gamma)
+#guard backgroundP (correlate gamma) (limPremises gamma) == backgroundR gamma
+#guard backgroundBaseP (correlate gamma) (limPremises gamma) == backgroundBaseR gamma
+
+def arrestAnn : List (List String) := [["Texas", "Ann"]]
+
+/-- L3's model: an arbitrary arrest of Ann under limitation 29 with both necessary conditions. -/
+def modelOne : VE.FiniteModel String :=
+  model [("arbitrary_arrest", arrestAnn), ("rights__lim__1", arrestAnn), ("rights__cond__1", arrestAnn),
+    ("rights__cond__2", arrestAnn)]
+
+/-- L4's model: L3's without the second condition. -/
+def modelTwo : VE.FiniteModel String :=
+  model [("arbitrary_arrest", arrestAnn), ("rights__lim__1", arrestAnn), ("rights__cond__1", arrestAnn)]
+
+-- L3
+#guard backgroundValidP (correlate gamma) (limPremises gamma) modelOne
+#guard backgroundValidP (correlate gamma) (limPremises gamma) modelOne == backgroundValidR gamma modelOne
+
+-- L4: the slot, not the soft background, rejects the model
+#guard !backgroundValidP (correlate gamma) (limPremises gamma) modelTwo
+#guard VE.SoftNorms.backgroundValid' (correlate gamma) modelTwo
+
+/-- L5's extra premise: limitation 29 holds for no arrest. -/
+def noLimitation : List VE.Formula :=
+  [VE.Norms.bindAll ["state", "person"] (.not (VE.Norms.atom "rights__lim__1" ["state", "person"]))]
+
+-- L5: a longer slot admits fewer bases
+#guard slotCheck (correlate gamma) (limPremises gamma ++ noLimitation)
+#guard !backgroundValidP (correlate gamma) (limPremises gamma ++ noLimitation) modelOne
+#guard backgroundValidP (correlate gamma) (limPremises gamma ++ noLimitation) (model [("arbitrary_arrest", arrestAnn)])
+
+-- L6: an open formula over an undeclared predicate is not a slot
+#guard !slotCheck (correlate gamma) [.unary "undeclared" (.var 0)]
+
+-- L7: a premise gated by a false atom imposes nothing; gated by a true one it is in force
+#guard slotCheck (correlate gamma) (gate .bottom (limPremises gamma))
+#guard backgroundValidP (correlate gamma) (gate .bottom (limPremises gamma)) modelTwo
+#guard !backgroundValidP (correlate gamma) (gate .top (limPremises gamma)) modelTwo
+
+-- L8: eta, with the bar and no limitation
+#guard limPremises (eta) == []
+#guard backgroundValidP (correlate (eta)) [] aimed
+#guard backgroundValidP (correlate (eta)) (limPremises (eta)) aimed == backgroundValidR (eta) aimed
+
+-- L9: the two instance theorems have the types of the rights originals, definitionally
+example : @rights_acceptance_from_slot.{u} = @VE.Rights.rights_route_acceptance.{u} := rfl
+example : @rights_countermodel_from_slot.{u} = @VE.Rights.rights_route_countermodel.{u} := rfl
+
+/-! ## 10.3 Content -/
+
+/-- The right of `gamma`. -/
+def r9 : VE.Rights.Right := ⟨"r9", "person", .top, [arrestClaim]⟩
+
+/-- The right of `epsilon`, with its power line. -/
+def r16 : VE.Rights.Right := epsilon.rs.headD r9
+
+#guard gamma.rs == [r9]
+#guard r16.name == "r16"
+
+-- C1
+#guard (Content.norm (strictNode "no-deprivation" "deprive_permitted" false)).kind == "norm"
+#guard (Content.norm (strictNode "no-deprivation" "deprive_permitted" false)).needs == some "norms@0"
+#guard (Content.norm (strictNode "no-deprivation" "deprive_permitted" false)).declared == [("rule", "no-deprivation")]
+-- C2
+#guard (Content.right r9).kind == "right"
+#guard (Content.right r9).needs == some "rights@0"
+#guard (Content.right r9).declared == [("right", "r9"), ("rule", "no-arbitrary-arrest")]
+-- C3: the target right is named, not declared
+#guard (Content.rightLines "r9" [arrestClaim]).kind == "right_lines"
+#guard (Content.rightLines "r9" [arrestClaim]).declared == [("rule", "no-arbitrary-arrest")]
+-- C4: condition names are scoped to their limitation
+#guard (Content.limitation l29).kind == "limitation"
+#guard (Content.limitation l29).needs == some "rights@0"
+#guard (Content.limitation l29).declared == [("limitation", "l29")]
+-- C5
+#guard (Content.assertion .top).kind == "asserted"
+#guard (Content.assertion .top).needs == none
+#guard (Content.assertion .top).declared == []
+-- C6: the right, then both rule names of the power, liberty first, then the claim line's rule
+#guard (Content.right r16).declared ==
+  [("right", "r16"), ("rule", "may-marry"), ("rule", "recognise-marriage"), ("rule", "register-marriage")]
+
+end VE.Compose.Examples

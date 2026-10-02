@@ -102,6 +102,9 @@ import VE.Discourse.WellFormed
 import VE.Discourse.Run
 import VE.Discourse.Theorems
 import VE.Discourse.English
+import VE.Compose.Slot
+import VE.Compose.Dispatch
+import VE.Compose.Content
 import VE.NormDefaults.Dag
 import VE.NormDefaults.Tree
 import VE.NormDefaults.Check
@@ -2593,6 +2596,84 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Rights.valueSoft_of_decides
 #print axioms VE.Rights.yields_bar
 #print axioms VE.Rights.yields_eq
+#print axioms VE.Compose.slotCheck_sound
+#print axioms VE.Compose.sat_nil
+#print axioms VE.Compose.sat_append
+#print axioms VE.Compose.slot_empty
+#print axioms VE.Compose.slot_empty_conflictFree
+#print axioms VE.Compose.slot_empty_background
+#print axioms VE.Compose.baseAdmissibleP_append
+#print axioms VE.Compose.slotWellFormed_append
+#print axioms VE.Compose.conflictFreeP_append
+#print axioms VE.Compose.gate_wellFormed
+#print axioms VE.Compose.sat_gate_on
+#print axioms VE.Compose.sat_gate_off
+#print axioms VE.Compose.slot_coherent_expands_all
+#print axioms VE.Compose.slot_empty_check
+#print axioms VE.Compose.slotConflictFreeCheck_target
+#print axioms VE.Compose.sat_backgroundBaseP
+#print axioms VE.Compose.slot_conflict_free
+#print axioms VE.Compose.baseAdmissibleP_of_valid
+#print axioms VE.Compose.slot_conflict_witness_sound
+#print axioms VE.Compose.slot_restrict_admissible
+#print axioms VE.Compose.slot_layer_expands
+#print axioms VE.Compose.prefixAdmissibleP_zero
+#print axioms VE.Compose.slotChain_hc
+#print axioms VE.Compose.slotRouteChain_premises
+#print axioms VE.Compose.slotRouteChain_restrict
+#print axioms VE.Compose.sat_slot_restrict
+#print axioms VE.Compose.slot_route_backgroundSound
+#print axioms VE.Compose.slot_route_backgroundComplete
+#print axioms VE.Compose.slot_route_intended
+#print axioms VE.Compose.slot_route_acceptance
+#print axioms VE.Compose.slot_route_countermodel
+#print axioms VE.Compose.slot_route_entails_iff
+#print axioms VE.Compose.rights_is_slot
+#print axioms VE.Compose.rights_conflictFree_is_slot
+#print axioms VE.Compose.rights_background_is_slot
+#print axioms VE.Compose.rights_check_is_slot
+#print axioms VE.Compose.rights_valid_is_slot
+#print axioms VE.Compose.rights_slot_wellFormed
+#print axioms VE.Compose.rights_acceptance_from_slot
+#print axioms VE.Compose.rights_countermodel_from_slot
+#print axioms VE.Compose.contains_eq
+#print axioms VE.Compose.ite_error_ok
+#print axioms VE.Compose.todayGate_sound
+#print axioms VE.Compose.ite_ok_of
+#print axioms VE.Compose.todayGate_complete
+#print axioms VE.Compose.today_ok
+#print axioms VE.Compose.today_error
+#print axioms VE.Compose.today_sound
+#print axioms VE.Compose.today_complete
+#print axioms VE.Compose.todayHead_cases
+#print axioms VE.Compose.todayHead_not_wrapper
+#print axioms VE.Compose.known_registered
+#print axioms VE.Compose.todayGate_classify
+#print axioms VE.Compose.today_classify
+#print axioms VE.Compose.today_frozen
+#print axioms VE.Compose.today_norms
+#print axioms VE.Compose.today_normDefaults
+#print axioms VE.Compose.today_soft
+#print axioms VE.Compose.today_rights
+#print axioms VE.Compose.today_alternatives
+#print axioms VE.Compose.today_risk
+#print axioms VE.Compose.forIn_yield_ok
+#print axioms VE.Compose.today_speech
+#print axioms VE.Compose.today_reports
+#print axioms VE.Compose.mem_base
+#print axioms VE.Compose.base_mem
+#print axioms VE.Compose.mem_wrappers
+#print axioms VE.Compose.dispatch_ok_iff
+#print axioms VE.Compose.base_of_no_wrapper
+#print axioms VE.Compose.dispatch_today
+#print axioms VE.Compose.dispatch_unsorted
+#print axioms VE.Compose.dispatch_chain
+#print axioms VE.Compose.dispatch_descends
+#print axioms VE.Compose.dispatch_discourse_frozen
+#print axioms VE.Compose.dispatch_error
+#print axioms VE.Compose.refusal_names
+#print axioms VE.Compose.needs_chain
+#print axioms VE.Compose.assertion_declares_nothing
 #print axioms VE.NormDefaults.countP_lt_of
 #print axioms VE.NormDefaults.count_le_one_of_nodup
 #print axioms VE.NormDefaults.dependencyOrder_congr
