@@ -23,6 +23,15 @@ CLASSES = {"InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration
 T1 = {"type", "exact_keys", "keys", "const", "enum", "max_items", "max_bytes",
       "max_count", "name", "sorted_unique", "unique_so_far", "declared_in",
       "requires", "excludes"}
+PARAMS = {
+    "type": {"type"}, "exact_keys": {"keys"}, "keys": {"required", "optional"},
+    "const": {"value"}, "enum": {"values"}, "max_items": {"limit"},
+    "max_bytes": {"limit"}, "max_count": {"of", "limit"}, "name": {"class"},
+    "sorted_unique": set(), "unique_so_far": set(), "declared_in": {"set"},
+    "requires": set(), "excludes": set(), "hook": {"hook"},
+    "classifier": {"classifier", "emits"},
+}
+CHECK_COMMON = {"id", "kind", "at", "when", "code", "text", "args", "says"}
 RENDERERS = {"raw", "json", "index", "count", "list"}
 ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9.-]*\Z")
 PART = re.compile(r"[0-9]+|[^0-9]+")
@@ -47,7 +56,9 @@ def _comparable(a, b):
             if p[0] != q[0]:
                 return False
             if p != q:
-                break
+                return True
+        if len(x) != len(y):
+            return True
     return True
 
 
@@ -91,9 +102,11 @@ def _literal(literal):
 
 def wording(entry, *, inside=False, limits=None):
     """The sentence specified in wire-contract.md 3.1, from one table row."""
+    prefix = ("When " + " and ".join(_literal(x) for x in entry["when"]) + ": "
+              if entry.get("when") else "")
     if "each" in entry:
-        return (f"For each member of `{entry['each']}`, in order, all of the following "
-                "for one member before the next member:")
+        return prefix + (f"For each member of `{entry['each']}`, in order, all of the following "
+                         "for one member before the next member:")
     if entry.get("kind") == "include":
         names = ", ".join(f"`{n}`" for n in entry["phases"])
         sentence = (f"The checks of phase {names} of `{entry['contract']}`, in their order, "
@@ -104,11 +117,12 @@ def wording(entry, *, inside=False, limits=None):
             sentence += "."
         if "as" in entry:
             sentence += f" They are reported with code `{entry['as']}`."
-        return sentence
+        return prefix + sentence
     kind = entry["kind"]
     if kind in ("hook", "classifier"):
-        return entry.get("says", "") if kind == "hook" else " ".join(
+        return prefix + (entry.get("says", "") if kind == "hook" else " ".join(
             m["says"] for m in entry["emits"])
+        )
     loc = entry.get("at", "@" if inside else "")
     w = _place(loc)
     keys = lambda k: ", ".join(f"`{x}`" for x in entry[k])
@@ -149,9 +163,7 @@ def wording(entry, *, inside=False, limits=None):
                         + literal(entry["item"]) + ".")
     else:
         raise ValueError(kind)
-    if entry.get("when"):
-        sentence = "When " + " and ".join(_literal(x) for x in entry["when"]) + ": " + sentence
-    return sentence
+    return prefix + sentence
 
 
 def _bound(value, limits=None):
@@ -194,11 +206,41 @@ def lint(contract, *, limits, names, known=None):
             type(contract.get("revision")) is not int or contract["revision"] < 1):
         return [("WC01", "invalid contract envelope")]
     codes = contract["codes"]
+    if (type(limits) is not dict or any(type(value) is not int or value < 0
+                                        for value in limits.values())):
+        issue("WC05", "limits must be named non-negative integers")
+    if type(names) is not dict:
+        issue("WC05", "names must be an object")
+        return findings
+    for class_name, definition in names.items():
+        allowed = {"first", "rest", "min_bytes", "max_bytes", "forbid_prefix", "forbid_infix", "enum"}
+        if type(definition) is not dict or set(definition) - allowed:
+            issue("WC05", f"invalid name class {class_name}")
+            continue
+        for bound in ("min_bytes", "max_bytes"):
+            if bound in definition and (type(definition[bound]) is not int or definition[bound] < 0):
+                issue("WC05", f"invalid {bound} in {class_name}")
+        for char_set in ("first", "rest"):
+            if char_set in definition:
+                spec = definition[char_set]
+                if (type(spec) is not str or not re.fullmatch(r"(?:[ -~](?:-[ -~])?)*", spec)
+                        or any(a > b for a, b in re.findall(r"(.)-(.)", spec))):
+                    issue("WC05", f"invalid character set in {class_name}")
+        for strings in ("forbid_prefix", "forbid_infix", "enum"):
+            if strings in definition and (type(definition[strings]) is not list or
+                                           any(type(v) is not str for v in definition[strings])):
+                issue("WC05", f"invalid {strings} in {class_name}")
     if type(codes) is not dict or any(type(v) is not dict or set(v) != {"class", "summary"}
                                       or v["class"] not in CLASSES for v in codes.values()):
         issue("WC03", "invalid code declaration")
         return findings
     used = {contract["residual"]}
+    for value in (contract["contract"], contract.get("adapter", ""),
+                  *(phase.get("name", "") for phase in contract["phases"]),
+                  *(part for code, definition in codes.items()
+                    for part in (code, definition["class"], definition["summary"]))):
+        if FORBIDDEN.search(value):
+            issue("WC07", f"forbidden Lean token in {value}")
     seen = set()
     ordered = []
     def pattern(loc, depth, *, wild=False):
@@ -251,11 +293,15 @@ def lint(contract, *, limits, names, known=None):
             seen.add(eid)
             guard(entry, depth)
             if "each" in entry:
+                if set(entry) - {"id", "each", "when", "checks"} or type(entry.get("checks")) is not list:
+                    issue("WC01", f"invalid group shape {eid}")
                 pattern(entry["each"], depth, wild=True)
                 walk(entry["checks"], depth + 1, included)
                 continue
             kind = entry.get("kind")
             if kind == "include":
+                if set(entry) - {"id", "kind", "contract", "phases", "at", "view", "says", "as"} or not {"contract", "phases"} <= set(entry):
+                    issue("WC01", f"invalid include shape {eid}")
                 if ("view" in entry) != ("says" in entry):
                     issue("WC08" if "view" in entry else "WC01", f"include says/view mismatch {eid}")
                 if "view" in entry and included:
@@ -267,6 +313,10 @@ def lint(contract, *, limits, names, known=None):
                     issue("WC09", f"unknown phase {eid}")
                 if "as" in entry:
                     used.add(entry["as"])
+                for value in (entry.get("contract", ""), entry.get("view", ""),
+                              entry.get("says", ""), entry.get("as", "")):
+                    if FORBIDDEN.search(value):
+                        issue("WC07", f"forbidden Lean token {eid}")
                 pattern(entry.get("at", "@" if depth else ""), depth)
                 continue
             if kind == "classifier":
@@ -276,6 +326,22 @@ def lint(contract, *, limits, names, known=None):
             else:
                 issue("WC01", f"unknown kind {kind}")
                 continue
+            required_fields = {"id", "kind"} | PARAMS[kind]
+            if kind != "classifier":
+                required_fields |= {"code", "text"}
+            optional_fields = CHECK_COMMON | PARAMS[kind]
+            if kind == "name":
+                optional_fields |= {"on"}
+            if kind in ("requires", "excludes"):
+                optional_fields |= {"member", "item"}
+            if kind == "hook":
+                optional_fields |= {"returns", "inherited"}
+            if kind == "classifier":
+                optional_fields -= {"code", "text", "args", "says"}
+            if not required_fields <= set(entry) or set(entry) - optional_fields:
+                issue("WC01", f"invalid {kind} shape {eid}")
+            if kind in ("requires", "excludes") and ("member" in entry) == ("item" in entry):
+                issue("WC01", f"{kind} needs exactly one member or item {eid}")
             for member in members:
                 mid = member["id"]
                 if member is not entry:
@@ -295,7 +361,11 @@ def lint(contract, *, limits, names, known=None):
                     if FORBIDDEN.search(value):
                         issue("WC07", f"forbidden Lean token {mid}")
             if kind == "classifier":
+                if FORBIDDEN.search(entry["classifier"]):
+                    issue("WC07", f"forbidden Lean token {eid}")
                 continue
+            if kind == "hook" and FORBIDDEN.search(entry["hook"]):
+                issue("WC07", f"forbidden Lean token {eid}")
             loc = entry.get("at", "@" if depth else "")
             pattern(loc, depth)
             for arg in entry.get("args", {}).values():
@@ -343,13 +413,59 @@ def process(directory=DATA, *, write=False):
         except Exception:
             continue
         if path in files[2:]:
-            for code, detail in lint(value, limits=limits, names=names, known=contracts):
-                issue(path, code, detail)
-        wanted = {"revision": value.get("revision", 1), "sha256": _hash(value)}
+            try:
+                for code, detail in lint(value, limits=limits, names=names, known=contracts):
+                    issue(path, code, detail)
+            except (KeyError, IndexError, TypeError, ValueError) as exc:
+                issue(path, "WC01", f"invalid contract shape: {exc}")
+        old = lock.get(path.name)
+        revision = value.get("revision")
+        if revision is None:
+            revision = (old["revision"] + 1 if write and old and old["sha256"] != _hash(value)
+                        else old["revision"] if old else 1)
+        wanted = {"revision": revision, "sha256": _hash(value)}
         if write:
-            lock[path.name] = wanted
+            if old and old["sha256"] != wanted["sha256"] and old["revision"] >= revision:
+                issue(path, "WC10", "changed content needs a higher revision")
+            else:
+                lock[path.name] = wanted
         elif lock.get(path.name) != wanted:
             issue(path, "WC10", "lock hash or revision differs")
+    if directory.resolve() == DATA.resolve() and "soft-norms@0" in contracts:
+        from ve.softnorms import load_soft_document
+        from ve.softnorms_contract import REGISTRY
+        def registered(entries):
+            for entry in entries:
+                if "each" in entry:
+                    registered(entry["checks"])
+                elif entry["kind"] == "hook" and entry["hook"] not in REGISTRY.hooks:
+                    issue(directory / "soft-norms@0.json", "WC08", f"unregistered hook {entry['hook']}")
+                elif entry["kind"] == "classifier" and entry["classifier"] not in REGISTRY.classifiers:
+                    issue(directory / "soft-norms@0.json", "WC08", f"unregistered classifier {entry['classifier']}")
+                elif entry["kind"] == "include" and "view" in entry and entry["view"] not in REGISTRY.views:
+                    issue(directory / "soft-norms@0.json", "WC08", f"unregistered view {entry['view']}")
+        for phase in contracts["soft-norms@0"]["phases"]:
+            registered(phase["checks"])
+        if contracts["soft-norms@0"].get("adapter") not in REGISTRY.adapters:
+            issue(directory / "soft-norms@0.json", "WC08", "unregistered adapter")
+        examples = sorted((directory / "examples/soft-norms@0").glob("*.json"))
+        if len(examples) < 2:
+            issue(directory / "examples/soft-norms@0", "WC10", "fewer than two examples")
+        for example in examples:
+            try:
+                root = loads_json(example.read_bytes())
+                load_soft_document(root["environment"], root["norms"])
+                if run(contracts["soft-norms@0"], root, registry=REGISTRY,
+                       limits=limits, names=names) is not CLEAN:
+                    issue(example, "WC10", "engine does not report clean")
+            except Exception as exc:
+                issue(example, "WC10", f"example is not accepted: {exc}")
+        generated = english_table(contracts["soft-norms@0"], limits=limits)
+        target = ROOT / "docs/spec/soft-norms-wire-table.md"
+        if write and not findings:
+            target.write_text(generated)
+        elif not write and (not target.exists() or target.read_text() != generated):
+            issue(target, "WC11", "generated English table differs")
     if write and not findings:
         lock_path.write_bytes(canonical_json(lock) + b"\n")
     return findings
