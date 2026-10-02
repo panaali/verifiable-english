@@ -292,11 +292,14 @@ class LayerSelectionTests(unittest.TestCase):
                 self.assertTrue(select(["ve/search.py"])["lean_build"])
 
     def test_non_default_lean_executables_are_built_by_name(self):
-        extra = sorted(set(layer_policy.lean_executables()) - layer_policy.lean_default_targets())
-        self.assertIn("ve_risk_eval", extra)
+        self.assertIn("ve_risk_eval", layer_policy.lean_executables())
+        # Simulate a route outside defaultTargets; the current lakefile builds it
+        # by default, but the selector must still support explicitly named builds.
+        defaults = layer_policy.lean_default_targets() - {"ve_risk_eval"}
         real_exists = Path.exists
-        with patch.object(Path, "exists",
-                          lambda path: False if path.name == "ve_risk_eval" else real_exists(path)):
+        with (patch.object(select_tests, "lean_default_targets", return_value=defaults),
+              patch.object(Path, "exists",
+                           lambda path: False if path.name == "ve_risk_eval" else real_exists(path))):
             plan = select(["ve/search.py"])
         self.assertIn("tests/test_risk_differential.py", plan["selected"])
         self.assertIn(["lake", "build"], plan["commands"])
