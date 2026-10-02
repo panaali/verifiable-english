@@ -94,9 +94,10 @@ _ENVELOPE = {'language', 'profiles', 'spec_revision', 'vocabulary'}
 _BLOCK_FIELDS = {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}
 _W1_FIELDS = ('name', 'predicate', 'sign', 'guard', 'unless', 'over')
 _SOFT_FIELDS = ('mode', 'rank', 'alterable', 'exception', 'hard')
-# Match the soft route's inherited W1 profiles. In particular, norm-defaults@0
-# is a layer checked through fill, not a W1 declaration permission here.
-_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'time@0')
+# The norm-defaults route needs this profile while constructing placeholder
+# completions. A submitted soft source uses the narrower Lean soft-route list.
+_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'norm-defaults@0', 'time@0')
+_SOFT_ROUTE_INHERITED_PROFILES = tuple(p for p in _INHERITED_PROFILES if p != 'norm-defaults@0')
 _CHECKER_PROFILES = ('closure@0', 'nary@0', 'order@0')
 # Statement layers with their own route over a soft source. The Lean rights route
 # strips `rights@0` before the soft decoder (`Rights/Wire.lean`), and the Lean soft
@@ -220,7 +221,7 @@ def _pairs(block, field):
     return tuple(pairs)
 
 
-def _declarations(data, generated):
+def _declarations(data, generated, *, submitted_soft_route=False):
     vocab = data['vocabulary']
     # Canonical key order: Lean enumerates JSON objects by key.
     predicates = sorted(vocab['predicates'].items())
@@ -234,7 +235,8 @@ def _declarations(data, generated):
             if type(entry['instruction_of']) is not str or 'regulated' in entry or 'defined' in entry:
                 raise _fault('SOFT_INVALID_INPUT', f'InvalidInput: instruction_of on {name}')
             instructions[name] = entry['instruction_of']
-    profiles = sorted({p for p in data['profiles'] if p in _INHERITED_PROFILES}
+    inherited = _SOFT_ROUTE_INHERITED_PROFILES if submitted_soft_route else _INHERITED_PROFILES
+    profiles = sorted({p for p in data['profiles'] if p in inherited}
                       | {'norms@0', profile_registry.BASE})
     stripped = {**data, 'profiles': profiles, 'vocabulary': {
         'sorts': vocab['sorts'], 'constants': vocab['constants'],
@@ -484,16 +486,19 @@ def _rank_semantics(ctx):
     return above
 
 
-def check_soft_source(environment, norms=None, *, generated=False, layers=frozenset()):
+def check_soft_source(environment, norms=None, *, generated=False, layers=frozenset(),
+                      submitted_soft_route=False):
     """Phases 1 to 5 and the rank checks of phase 6 over one soft source.
 
     Raises the first failing check of the table with its code. A caller that
     holds the raw environment and norms together runs this before building
     `SoftEnvironment`, so an environment fault never masks an earlier-phase
     fault in a rule. `layers` are the statement layers of `LAYER_ROUTES` whose
-    own route is checking the source (`RightsEnvironment` passes `rights@0`)."""
+    own route is checking the source (`RightsEnvironment` passes `rights@0`).
+    `submitted_soft_route` matches Lean's inherited W1 profile list at the
+    stand-alone soft route without changing norm-defaults fill construction."""
     _envelope(environment, norms)
-    ctx = _declarations(environment, generated)
+    ctx = _declarations(environment, generated, submitted_soft_route=submitted_soft_route)
     _profiles(environment, ctx.env, layers)
     rules = [_rule_fields(unit, ctx.exception_decider) for unit in (norms or ())]
     _environment_references(ctx)
@@ -504,7 +509,7 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
 
 def load_soft_document(environment, norms):
     """A soft source from raw JSON, validated in table order over the whole source."""
-    check_soft_source(environment, norms)
+    check_soft_source(environment, norms, submitted_soft_route=True)
     return SoftNormDocument(SoftEnvironment(environment), norms)
 
 
