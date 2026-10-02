@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent
 ABSENT = object()
 _PATTERN = re.compile(r"^(?:@(?:[0-9]+)?(?=/|$))?(?:/[^/]*)*$")
 _TOKEN = re.compile(r"(?:0|[1-9][0-9]*)\Z")
-_PLACEHOLDER = re.compile(r"\{([a-zA-Z_][a-zA-Z_0-9]*)(?::(raw|json|index|count|list))?\}")
+_PLACEHOLDER_ANY = re.compile(r"\{([A-Za-z_][A-Za-z_0-9]*)(?::([A-Za-z]+))?\}")
 
 
 @dataclass(frozen=True)
@@ -279,15 +279,49 @@ def _render(value, renderer):
     return _json_text(value)
 
 
+def pieces(template):
+    """Split a template (2.7) into ("lit", text) and ("arg", name, renderer) pieces.
+
+    `{{` and `}}` are literal braces; adjacent literal text is one piece. A brace
+    that opens no placeholder, or a lone closing brace, is a ValueError; the
+    renderer name is returned as written and checked by the lint.
+    """
+    out, literal, i = [], [], 0
+    while i < len(template):
+        if template.startswith(("{{", "}}"), i):
+            literal.append(template[i])
+            i += 2
+            continue
+        if template[i] == "}":
+            raise ValueError(f"unbalanced brace in template: {template}")
+        if template[i] == "{":
+            match = _PLACEHOLDER_ANY.match(template, i)
+            if match is None:
+                raise ValueError(f"unbalanced brace in template: {template}")
+            if literal:
+                out.append(("lit", "".join(literal)))
+                literal = []
+            out.append(("arg", match[1], match[2] or "raw"))
+            i = match.end()
+            continue
+        literal.append(template[i])
+        i += 1
+    if literal:
+        out.append(("lit", "".join(literal)))
+    return out
+
+
 def _template(template, values):
-    escaped = template.replace("{{", "\x01").replace("}}", "\x02")
-    args = {}
-    def replace(match):
-        name, renderer = match.groups()
-        rendered = _render(values.get(name, ABSENT), renderer or "raw")
+    args, text = {}, []
+    for piece in pieces(template):
+        if piece[0] == "lit":
+            text.append(piece[1])
+            continue
+        _, name, renderer = piece
+        rendered = _render(values.get(name, ABSENT), renderer)
         args[name] = rendered
-        return rendered
-    return _PLACEHOLDER.sub(replace, escaped).replace("\x01", "{").replace("\x02", "}"), args
+        text.append(rendered)
+    return "".join(text), args
 
 
 def _limit(value, limits):
@@ -358,8 +392,12 @@ def run(contract, root, *, registry=None, contracts=None, limits=None, names=Non
         root = {}
     root = {name: root.get(name) for name in contract["input"]}
 
-    def walk(entries, phase, current, items=(), earlier=(), sites=(), ids=(), recode=None,
-             viewed=False, declaring_codes=None):
+    # The frame under resolved includes, as `Frame` in Engine.lean (2.7): the
+    # include ids, the sites of the enclosing includes without a view since the
+    # view (or since the top), the site of the enclosing include with a view,
+    # and the outermost `as` with the class its declaring contract gives it.
+    def walk(entries, phase, current, items=(), earlier=(), site=(), view_site=None, ids=(),
+             recode=None, declaring_codes=None):
         declaring_codes = declaring_codes or contract["codes"]
         for entry in entries:
             if not _guard(current, items, entry.get("when", [])):
@@ -368,31 +406,35 @@ def run(contract, root, *, registry=None, contracts=None, limits=None, names=Non
                 prior = []
                 for path, _ in matches(current, items, entry["each"]):
                     result = walk(entry["checks"], phase, current, (path,) + items,
-                                  tuple(prior), sites, ids, recode, viewed, declaring_codes)
+                                  tuple(prior), site, view_site, ids, recode, declaring_codes)
                     if result is not CLEAN:
                         return result
                     prior.append(path)
                 continue
             if entry.get("kind") == "include":
-                site = resolve(current, items, entry.get("at", "@" if items else ""))
-                if site is None:
+                found = resolve(current, items, entry.get("at", "@" if items else ""))
+                if found is None:
                     continue
-                site_path, value = site
+                site_path, value = found
                 view_name = entry.get("view")
                 if view_name:
                     view = registry.views.get(view_name)
                     if view is None:
                         return Deferred("/".join(ids + (entry["id"],)))
                     value = view(value)
+                enters_view = bool(view_name) and view_site is None
+                inner_site = () if enters_view else site + tuple(site_path)
+                inner_view_site = site + tuple(site_path) if enters_view else view_site
+                inner_recode = recode or (
+                    (entry["as"], declaring_codes[entry["as"]]["class"]) if "as" in entry else None)
                 inner = contracts.get(entry["contract"])
                 if inner is None:
                     inner = load(entry["contract"])
                 for included_phase in inner["phases"]:
                     if included_phase["name"] in entry["phases"]:
                         result = walk(included_phase["checks"], phase, value, (), (),
-                                      sites + (site_path,), ids + (entry["id"],),
-                                      recode or entry.get("as"), viewed or bool(view_name),
-                                      inner["codes"])
+                                      inner_site, inner_view_site, ids + (entry["id"],),
+                                      inner_recode, inner["codes"])
                         if result is not CLEAN:
                             return result
                 continue
@@ -437,14 +479,12 @@ def run(contract, root, *, registry=None, contracts=None, limits=None, names=Non
                 values[name] = found[1] if found else ABSENT
             values.update(extra)
             text, rendered = _template(member["text"], values)
-            code = recode or member["code"]
-            cls = (contract["codes"] if recode else declaring_codes)[code]["class"]
-            if sites:
-                if viewed:
-                    rendered["inner_path"] = path
-                    path = "".join(_pointer(s) for s in sites)
-                else:
-                    path = "".join(_pointer(s) for s in sites) + path
+            code, cls = recode or (member["code"], declaring_codes[member["code"]]["class"])
+            if view_site is not None:
+                rendered["inner_path"] = _pointer(site) + path
+                path = _pointer(view_site)
+            else:
+                path = _pointer(site) + path
             record = {"contract": contract["contract"], "revision": contract["revision"],
                       "check": "/".join(ids + (member["id"],)), "phase": phase,
                       "code": code, "class": cls, "path": path, "text": text, "args": rendered}

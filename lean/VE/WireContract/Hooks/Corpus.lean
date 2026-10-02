@@ -39,22 +39,25 @@ def classifier : String → Json → List Pointer → ClassifierResult
   | _, _, _ => .ok
 
 /-- `part_view`: an object whose only member `x` is the `seed` of the value, or 0 when the value is not an
-    object with a `seed`. -/
+    object with a `seed`. `same_view` (`forms@0`): the value unchanged. -/
 def view : String → Json → Json
   | "part_view", d => match d with
     | .obj _ => match d.getObjVal? "seed" with
       | .ok seed => Json.mkObj [("x", seed)]
       | .error _ => Json.mkObj [("x", natJson 0)]
     | _ => Json.mkObj [("x", natJson 0)]
+  | "same_view", v => v
   | _, v => v
 
 def hooks : Hooks := ⟨predicate, classifier, view⟩
 
 /-- The names this module registers. -/
-def registered : List String := ["no_bad_name", "lean_only", "demo_rules", "part_view"]
+def registered : List String := ["no_bad_name", "lean_only", "demo_rules", "part_view", "same_view"]
 
 #guard Tables.Corpus.Inner.table.hookNames.all registered.contains
 #guard Tables.Corpus.Demo.table.hookNames.all registered.contains
 #guard Tables.Corpus.Defer.table.hookNames.all registered.contains
+#guard Tables.Corpus.Mid.table.hookNames.all registered.contains
+#guard Tables.Corpus.Forms.table.hookNames.all registered.contains
 
 end VE.WireContract.Hooks.Corpus
