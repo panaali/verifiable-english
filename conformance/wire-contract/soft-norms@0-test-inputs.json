@@ -3677,5 +3677,381 @@
     }
    }
   ]
+ ],
+ [
+  "tests/test_softnorms_public_contract.py::test_new_entry_paths_have_distinct_corpus_inputs",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "q": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "q",
+      "instruction_of": "p"
+     },
+     "u": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "u"
+     },
+     "x_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "x_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "deny",
+       "permission": "x_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "soft": {
+     "exception_decider": "assistant",
+     "outranking": {
+      "mode": "strict"
+     },
+     "outranks": [
+      [
+       "a",
+       "b"
+      ]
+     ],
+     "parties": [
+      "p",
+      "R!"
+     ],
+     "ranks": [
+      "a",
+      "b",
+      "c"
+     ],
+     "ties": [
+      [
+       "b",
+       "c"
+      ]
+     ]
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [
+       "f"
+      ],
+      "necessary": [],
+      "sufficient": [
+       [
+        "unary",
+        "q",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "a0",
+     "over": [],
+     "predicate": "x_required",
+     "rank": "a",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "alterable": [
+      "p",
+      "q"
+     ],
+     "guard": [
+      "top"
+     ],
+     "name": "b1",
+     "over": [],
+     "predicate": "x_permitted",
+     "sign": false,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "c2",
+     "over": [
+      "a0"
+     ],
+     "predicate": "x_required",
+     "rank": "b",
+     "sign": false,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [
+       "f"
+      ],
+      "necessary": [],
+      "sufficient": [
+       [
+        "unary",
+        "q",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "d3",
+     "over": [],
+     "predicate": "x_permitted",
+     "sign": true,
+     "unless": []
+    }
+   }
+  ]
+ ],
+ [
+  "tests/test_softnorms_public_contract.py::test_new_entry_paths_have_distinct_corpus_inputs",
+  {
+   "language": "ve.core@0.2",
+   "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+   ],
+   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+   "vocabulary": {
+    "constants": {},
+    "predicates": {
+     "q": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "q",
+      "instruction_of": "p"
+     },
+     "u": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "u"
+     },
+     "x_permitted": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "permission",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "allow",
+       "role": "permission"
+      }
+     },
+     "x_required": {
+      "arguments": [
+       "assistant"
+      ],
+      "description": "obligation",
+      "regulated": {
+       "act": "{0} do x",
+       "default": "deny",
+       "permission": "x_permitted",
+       "role": "obligation"
+      }
+     }
+    },
+    "soft": {
+     "exception_decider": "assistant",
+     "outranking": {
+      "mode": "strict"
+     },
+     "outranks": [
+      [
+       "a",
+       "b"
+      ]
+     ],
+     "parties": [
+      "p",
+      "T!"
+     ],
+     "ranks": [
+      "a",
+      "b",
+      "c"
+     ],
+     "ties": [
+      [
+       "b",
+       "c"
+      ]
+     ]
+    },
+    "sorts": {
+     "assistant": {
+      "description": "assistant"
+     },
+     "user": {
+      "description": "user"
+     }
+    }
+   }
+  },
+  [
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [
+       "f"
+      ],
+      "necessary": [],
+      "sufficient": [
+       [
+        "unary",
+        "q",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "a0",
+     "over": [],
+     "predicate": "x_required",
+     "rank": "a",
+     "sign": true,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "alterable": [
+      "p",
+      "q"
+     ],
+     "guard": [
+      "top"
+     ],
+     "name": "b1",
+     "over": [],
+     "predicate": "x_permitted",
+     "sign": false,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "factors": [],
+      "necessary": [],
+      "sufficient": []
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "c2",
+     "over": [
+      "a0"
+     ],
+     "predicate": "x_required",
+     "rank": "b",
+     "sign": false,
+     "unless": []
+    }
+   },
+   {
+    "norm": {
+     "exception": {
+      "decided_by": "assistant",
+      "factors": [
+       "f"
+      ],
+      "necessary": [],
+      "sufficient": [
+       [
+        "unary",
+        "q",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     },
+     "guard": [
+      "top"
+     ],
+     "mode": "default",
+     "name": "d3",
+     "over": [],
+     "predicate": "x_permitted",
+     "sign": true,
+     "unless": []
+    }
+   }
+  ]
  ]
 ]

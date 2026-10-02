@@ -1,7 +1,7 @@
 {
   "continuation_coverage_met": true,
   "contract": "soft-norms@0",
-  "contract_sha256": "e25148b9ffa7b6507044e99f986016623fe637400a70c88e3eb50fd0311cacd1",
+  "contract_sha256": "050c739ee1456fdb10232c3fb22bc23d3740ed2e1f332c1ff112530541900487",
   "coverage_unmet": {
     "adjacent_phase_pairs": [],
     "first": [],
@@ -107,14 +107,14 @@
       "legacy": "AST exceeds 10,000 nodes"
     }
   },
-  "revision": 3,
+  "revision": 4,
   "s3_pre": {
     "code_differences": [],
     "detail": "conformance/wire-contract/s3-pre.md",
     "status": "closed: no legacy verdict difference",
     "verdict_differences": []
   },
-  "status": "shadow",
-  "three_way_cases": 8576,
+  "status": "public",
+  "three_way_cases": 8578,
   "three_way_disagreements": []
 }

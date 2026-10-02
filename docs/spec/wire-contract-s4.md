@@ -806,3 +806,36 @@ Order, as the review fixed it:
 - Both reviewers confirm this revised text against the table above, in one pass on the diff, before the
   measurement commit.
 - The switch commit waits for the measured, signed delta, which both reviewers read (section 9).
+
+## 14. Item-1 implementation response (2026-10-02)
+
+S4-pre is `10d8a0f8`: the two legacy code classes of 2.8 were aligned in Python's soft table. A positional
+comparison of all 8,576 corpus cases found exactly the three intended rejected rows changed and no verdict
+change; [s4-pre.md](../../conformance/wire-contract/s4-pre.md) records their old and new code and text.
+The full suite subsequently found that the norm-defaults route still needs `norm-defaults@0` during fill
+construction. Correction `1509d4ee` retains that inherited profile there while selecting Lean's narrower list
+for submitted sources on the soft route; the same three corpus rows remain the only legacy changes.
+
+The shadow measurement is `fd251c2d`. Its gate ran 8,576 cases with no mismatch, residual, deferred or code
+difference. The measured, stored public text changes were:
+
+| Check | Cases | Change in the public message |
+|---|---:|---|
+| `2.7a` | 43 | a non-string party name uses compact JSON spelling |
+| `3.2` | 10 | an unsupported profile uses the route's standard text |
+| `4.1c` | 210 | the norm's key list is omitted |
+| `6.5a` | 20 | `ResourceLimit:` is added |
+| `6.6` | 2 | `ResourceLimit:` is added |
+| `6.11` | 16 | the generated premise label is omitted |
+
+That is 301 message changes in six checks on the measurement corpus. No inherited check changed text. The
+six sentences and the release note are in
+[soft-norms@0-switch.json](../../conformance/wire-contract/soft-norms@0-switch.json). The user's instruction
+for this implementation forbade model calls, so no new Astra or Fable review of the measured delta was run.
+
+At revision 4, two additional test inputs enter the corpus through the new call paths. The public gate then
+ran 8,578 cases with zero mismatches, residuals, deferred outcomes, legacy code differences, record/code
+differences, errors without a record, source mutations or boundary differences. The six text-change counts
+remained the same. `lake build`, `lean/audit.py`, and `VE/Route/frozen.py` passed. Only the generated Lean table
+and its inventory hash changed; no handwritten Lean statement or Rust file changed for item 1. The final suite
+result and switch commit are recorded in the implementation report to the user.

@@ -33,13 +33,15 @@ def _record(environment, norms):
 
 
 def _install():
-    from ve import soft_route, softnorms
+    from ve import soft_route, softnorms, softnorms_contract
     from ve.softnorms_contract import soft_source
     from ve.wire_contract import engine
 
     original_run, original_load, original_subprocess = engine.run, softnorms.load_soft_document, subprocess.run
     original_route, original_environment = soft_route._run, softnorms.SoftEnvironment.__init__
     original_document = softnorms.SoftNormDocument.__init__
+    original_admit = soft_route.admit_soft_document
+    original_public = softnorms_contract.public_rejection
     # The raw environment of each `SoftEnvironment` a test built, by the object's id (the object is kept).
     environments = {}
 
@@ -69,6 +71,24 @@ def _install():
             _record(environment, norms)
         return original_load(environment, norms, *args, **kwargs)
 
+    def admit_soft_document(environment, document, *args, **kwargs):
+        if (_from_tests() and not isinstance(environment, softnorms.SoftEnvironment)
+                and kwargs.get("soft_document") is None):
+            try:
+                active = [unit["content"] for unit in document["units"]
+                          if unit["kind"] == "norm" and type(unit.get("content")) is dict
+                          and "norm" in unit["content"]]
+            except (KeyError, TypeError):
+                pass
+            else:
+                _record(environment, active)
+        return original_admit(environment, document, *args, **kwargs)
+
+    def public_rejection(environment, norms, error, *args, **kwargs):
+        if _from_tests():
+            _record(environment, norms)
+        return original_public(environment, norms, error, *args, **kwargs)
+
     def run_process(command, *args, **kwargs):
         if _from_tests() and isinstance(command, (list, tuple)) and command:
             name = Path(str(command[0])).name
@@ -87,6 +107,8 @@ def _install():
 
     engine.run, softnorms.load_soft_document, subprocess.run = run, load_soft_document, run_process
     soft_route._run = route
+    soft_route.admit_soft_document = admit_soft_document
+    softnorms_contract.public_rejection = public_rejection
     softnorms.SoftEnvironment.__init__, softnorms.SoftNormDocument.__init__ = environment_init, document_init
 
 

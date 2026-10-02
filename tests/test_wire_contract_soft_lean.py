@@ -74,7 +74,7 @@ def with_faults(*names):
 
 
 def record(check, phase, code, cls, path, text, args=None):
-    return {"contract": "soft-norms@0", "revision": 3, "check": check, "phase": phase, "code": code,
+    return {"contract": "soft-norms@0", "revision": 4, "check": check, "phase": phase, "code": code,
             "class": cls, "path": path, "text": text, "args": args or {}}
 
 
@@ -228,8 +228,8 @@ def test_s3_pre_norm_defaults_profile(built):
         assert canonical_json(python) == canonical_json(engine["diagnostic"])
 
 
-# What Python's legacy validator does with each profile that its registry has and the Lean route's does not
-# (s3-pre.md). `rights@0` is a verdict difference: Python accepts the source and the Lean route rejects it.
+# What Python's legacy validator does with each profile absent from the Lean soft route
+# (s3-pre.md and s4-pre.md). The rights and speech-act differences are now closed.
 PYTHON_ONLY_LEGACY = {
     "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "alternatives@0 with soft-norms@0"),
     "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",

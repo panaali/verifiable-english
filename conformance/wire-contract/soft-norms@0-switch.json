@@ -1,0 +1,13 @@
+{
+  "contract": "soft-norms@0",
+  "revision": 4,
+  "signed": {
+    "2.7a": "A malformed party name that is not a string is shown as compact JSON instead of Python's value spelling.",
+    "3.2": "An unsupported profile is named by the soft route's standard UnsupportedProfile text instead of a profile-specific later error.",
+    "4.1c": "An invalid norm's field error ends after 'invalid norm fields' instead of listing the unit's keys.",
+    "6.5a": "An AST node limit error gains the ResourceLimit prefix.",
+    "6.6": "A precedence depth error gains the ResourceLimit prefix.",
+    "6.11": "A generated soft premise limit error no longer appends the premise label."
+  },
+  "release_note": "When ve rejects a soft-norm source at admission, the error now has one more member, diagnostic: the error carries the contract's record. When a check of the table fails, the record names the first one that fails and the message is that check's text; otherwise the message is the validator's. The table is docs/spec/soft-norms-wire-table.md; first is its order from top to bottom. With the check, the record gives the place in the input and a code. For most rejections the message is the same as before. It is a different message for these checks: 2.7a, a malformed non-string party name uses compact JSON; 3.2, an unsupported profile uses the standard soft-route text; 4.1c, invalid norm fields omit the unit's key list; 6.5a, an AST node limit gains ResourceLimit; 6.6, precedence depth gains ResourceLimit; 6.11, a generated soft premise limit omits the premise label. Whether a source is accepted or rejected has not changed. The error's code has not changed. Other ways of submitting a soft source (a document check, the rights route, English input) report as before."
+}

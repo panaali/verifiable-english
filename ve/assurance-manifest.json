@@ -51,6 +51,7 @@
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
+    "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
@@ -970,7 +971,7 @@
       "authority": "lean-only",
       "target": "lean",
       "assurance": {"current": "experimental", "at_switch": "experimental",
-                    "reason": "shadow diagnostic pilot; no verdict or identity depends on it"},
+                    "reason": "diagnostic only; no verdict or identity depends on it"},
       "python": [],
       "outcomes": {"verdict": [], "unknown": [], "rejection": [], "budget": [],
                    "operational": ["CheckerUnavailable"]},

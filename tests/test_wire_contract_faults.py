@@ -18,6 +18,7 @@ from conformance.wire_contract_gate import (_applied, all_checks, feasibility, g
                                             shape_problems)
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, rendered, route)
+from ve.errors import VEError
 from ve.softnorms_contract import REGISTRY
 from ve.wire_contract.engine import CLEAN, Fault, load, run
 
@@ -230,6 +231,22 @@ def test_delta_check_detects_an_unregenerated_contract_text(tmp_path, monkeypatc
     assert wire_contract_delta.main() == 1
 
 
+def test_public_gate_requires_exactly_the_measured_signatures(tmp_path, monkeypatch):
+    report = json.loads(REPORT.read_text())
+    assert report["status"] == "public"
+    signatures = json.loads(wire_contract_gate.SWITCH.read_text())
+    path = tmp_path / "switch.json"
+    monkeypatch.setattr(wire_contract_gate, "SWITCH", path)
+    missing = deepcopy(signatures)
+    missing["signed"].pop("4.1c")
+    path.write_text(json.dumps(missing))
+    assert "public delta: check 4.1c changes text in 210 cases and is not signed" in gate_failures(report)
+    extra = deepcopy(signatures)
+    extra["signed"]["1.1"] = "No measured change."
+    path.write_text(json.dumps(extra))
+    assert "public delta: signed check 1.1 has no text change" in gate_failures(report)
+
+
 def test_gate_fails_when_a_stated_summary_contradicts_its_data():
     """Wire loop final (B, B, C): `gate_failures` trusted the report's own summaries, so a report with a
     nonempty `coverage_unmet` and `coverage_met` true, one with legacy verdict differences under an S3-pre
@@ -381,7 +398,8 @@ def test_report_counts_deferrals_apart_from_residuals_and_refuses_a_row_without_
     monkeypatch.setattr(wire_contract_gate, "gate_cases",
                         lambda contract: [("R", "R:deferred", raw, norms, None, (), True)])
     monkeypatch.setattr(wire_contract_gate, "_python",
-                        lambda contract, raw, norms: (("SOFT_UNSUPPORTED_PROFILE", "m"), Deferred("1.2")))
+                        lambda contract, raw, norms: (("SOFT_UNSUPPORTED_PROFILE", "m"), Deferred("1.2"),
+                                                     VEError("m"), False))
     rows = {"ve_diagnose": {"status": "ok", "outcome": "deferred"},
             "ve_soft_norms_route": {"status": "error", "code": "SOFT_UNSUPPORTED_PROFILE", "error": "m"}}
     monkeypatch.setattr(wire_contract_gate, "_lean_rows", lambda binary, unit, cases: [rows[binary]] * len(cases))
