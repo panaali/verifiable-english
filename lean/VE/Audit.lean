@@ -105,6 +105,7 @@ import VE.Discourse.English
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
+import VE.Compose.Adjoin
 import VE.NormDefaults.Dag
 import VE.NormDefaults.Tree
 import VE.NormDefaults.Check
@@ -3125,3 +3126,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.WireContract.instances_views
 #print axioms VE.WireContract.findSome_congr_reached
 #print axioms VE.WireContract.run_congr_reached
+#print axioms VE.Compose.adjoin_term
+#print axioms VE.Compose.adjoin_relation
+#print axioms VE.Compose.adjoin_denote
+#print axioms VE.Compose.adjoin_tupleTyped
+#print axioms VE.Compose.adjoin_admissible
+#print axioms VE.Compose.adjoin_nonempty
+#print axioms VE.Compose.adjoin_sat
+#print axioms VE.Compose.adjoin_baseAdmissibleP
