@@ -373,6 +373,14 @@ set in source order and per candidate by index, the chain's well-formedness of `
 pair of candidates neither of which is pending, the separation check (4.5); couplings (4.7). A refused document is
 never partly checked.
 
+**S1 limitation: what Lean checks** (DRI ruling 3 of 2026-10-02). Lean's `readings-validate` (8.4) decodes the
+units and the active sets and runs the checks above from the abstentions to the separation check. It does not
+decode couplings or narrowings, so it does not run 4.7, and it does not repeat W2's structural validation of the
+sets (today's texts of `validate_reading_sets`), which Python runs first. `Doc.couplings` and `Doc.narrowings` are
+empty in every decoded document. Those checks are Python's alone (`ve/readings.py`: `validate_reading_sets`,
+`validate_couplings`, `validate_narrowings`), with their texts unchanged, and no report says that Lean checked
+them: the report's `readings.checked_by` names what each checker covers (6).
+
 The layer contract of composition.md 4.1, for this stage:
 
 | Rule | What S1 supplies |
@@ -523,9 +531,13 @@ pending`. A formula-only document keeps W2's ALL, NONE and SOME route verbatim.
 ## 6. The report
 
 Per content-bearing set: the candidates with content and the pending ones; per pair, the situation id, the probe's
-form and the wording of 2.3; the findings; the chain's static findings per candidate with their reading. Residual
-lines: `separations` (pairs by probe form: outcome, selects, holds), `findings` (the two of 1.7, counted),
-`pending_candidates`, and on every chain rights 7.2's `couplings` line. `conditional_on` and the status text are
+form and the wording of 2.3; the findings, those not certified listed apart (1.7); the chain's static findings per
+candidate with their reading. Residual lines: `separations` (pairs by probe form: outcome, selects, holds),
+`findings` (the two of 1.7, counted; `readings_findings` in the coverage residual), `pending_candidates`, and on
+every chain rights 7.2's `couplings` line. The report says which checker covers what (`checked_by`): Lean the
+admission, the separations and the findings; Python W2's structure, couplings and narrowings (4.1, S1 limitation);
+Rust the untrusted replay of each situation (10). Python's implementation is `ve/readings_route.py` (`report`,
+`Wording`). `conditional_on` and the status text are
 the lower route's, unchanged (composition.md 7). Every English line about a separation is one of 2.3.
 
 ## 7. Diagnostics
@@ -1222,7 +1234,11 @@ today, and is measured, not assumed.
 
 Regeneration: `one D s i`, its generated vocabulary, its keys and every formula evaluated are recomputed from the
 decoded document at every trusted site and bound to the chain's document hash; nothing is read from the wire as
-authority. Python: `ve/profiles.py` registers the profile; `ve/readings.py` validates the wire of section 3,
+authority. Python's regeneration of `readings-validate` is `ve/readings_s1.py` (`answer`); `ve/readings_route.py`
+compares it with Lean's byte for byte on every load, and a difference is `CheckerUnavailable`, never a verdict. One
+field is not independent: the rights chain's per-candidate findings (`limitationScope`, `noDistinction`) have no
+Python implementation, and Python reads them from the rights route's `rights-scope` and `rights-elaborate` on the
+candidate's document, as its rights report does today. Python: `ve/profiles.py` registers the profile; `ve/readings.py` validates the wire of section 3,
 searches for situations (domain size at most 2 per sort, preferring the probe order of 2.3) and delegates every
 separation verdict to Lean under a backend authority; it renders section 2. Rust: no elaboration; it evaluates the
 Python-generated outcome, selection and premise formulas of both sides on the situation, marked `untrusted: true`,
