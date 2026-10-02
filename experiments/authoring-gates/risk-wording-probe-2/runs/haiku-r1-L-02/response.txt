@@ -1,0 +1,3 @@
+**(b) The text does not say.**
+
+The rule specifies that confusion occurs only when age > 70 and drug C is given, but since the patient is 40 years old, this rule's condition is not triggered, leaving the text silent on whether confusion occurs under other circumstances.

@@ -1,0 +1,3 @@
+(b) A fall happens.
+
+**Reason:** The parcel weighs 3 kilograms, which satisfies the condition "greater than 2 kilograms," and the text explicitly states that when this condition holds and the ramp is taken, a fall leads to a fall.

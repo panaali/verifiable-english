@@ -1,0 +1,1 @@
+**(b) No: it was 60 gigabytes or less.** If the size had been greater than 60 gigabytes, compressing the files would have caused a server outage.

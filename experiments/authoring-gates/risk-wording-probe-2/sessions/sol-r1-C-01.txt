@@ -1,0 +1,10 @@
+Read each short text and answer its question from the text alone. Choose one option and give a one-sentence reason.
+
+Text 1
+
+An agent can compress the log files or do nothing. The size of the log files is at least 1 gigabyte. The size of the log files is at most 80 gigabytes. If the size of the log files is greater than 60 gigabytes, compressing the log files leads to a server outage.
+
+The agent compresses the log files, and no server outage happens. According to the text, was the size of the log files greater than 60 gigabytes?
+(a) No: it was 60 gigabytes or less.
+(b) The text does not say.
+(c) Yes: it was greater than 60 gigabytes.
