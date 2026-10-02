@@ -1572,3 +1572,14 @@ mismatch and residual 0 in both languages, coverage met, and S3-pre closed; it e
 | A: the `rights@0` legacy verdict difference (Python's soft route accepts, the Lean route rejects at 3.2); S3-pre open | fixed outside the wire work, in Python's soft table, as S3-pre requires: the Lean rights route strips `rights@0` before the soft decoder, so Python's check 3.2 refuses `rights@0` unless its route is the caller (`ve/softnorms.py`, `LAYER_ROUTES`; `RightsEnvironment.LAYERS`), with the Lean route's code and text. Both legacy validators now reject every profile outside the Lean route's registry; tier L adds a whole rights source; `s3-pre.md` records the fix. The code differences on `speech-acts@0` and on `unspecified` under `norm-defaults@0` remain, reported, for plan 5.1 step 5 |
 | B: coverage unmet: no first-fault witness for 6.10c, no masking witness for 1.1 and 6.10c | 8.3's masking clause is stated for every check after the table's first instance (1.1 has no earlier check); 6.10c, the fallback member of `soft_semantic` that no input reached, is removed (revision 3): `soft_semantic` rule 13 now names no member, as rule 3a, so such a rejection would show as a residual, which the gate requires to be 0. `UNREACHED` is empty |
 | B: tier A had no independent expected `text` or `args` | the catalogue carries hand-written `args` for every fault of a check that is not inherited, with the locations they read in the fault's footprint; the oracle renders the expected `text` from the contract's template itself; an inherited record's `text` must be its language's legacy text, with `args` `{"message": text}`. `record_problems` in the gate holds the comparison |
+
+## 16. Wire re-check 2 response (2026-10-02)
+
+Source: `manage-agents/wire-looprecheck2.final.md`, FIX, on branch `wire/integrate` at `846128ef`. The gate's
+report is unchanged: 6,007 cases, no mismatch, residual 0 in both languages, coverage met, feasibility 51 of
+67, S3-pre closed; it exits 0.
+
+| Finding | Change |
+|---|---|
+| B: the gate's exit did not enforce the feasibility threshold of 45 (a report at 44 that matched the stored one passed) | treated as the class "a required row of section 9 the exit does not check": `gate_failures` in the gate lists every unmet row (tier 0 and A mismatches, the residual count of each language, coverage, feasibility, S3-pre) and the gate exits non-zero on any. Feasibility is judged from `n1 + n2` against the section's own 45 of 67, not from the report's `met` or `threshold`, and a report whose `total`, `threshold` or `met` disagrees with them fails |
+| C: `record_problems` ignored an unexpected top-level field, so one both engines added passed | every engine record, in every tier (with or without an expected record), must have exactly the members of `$defs/fault` in `contract.schema.json`, which is closed, and `args` must be an object; a test ties the gate's field set to the schema |
