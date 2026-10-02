@@ -312,44 +312,126 @@ def test_k19_rights_candidates_under_a_fixed_limitation(lean):
     assert rs["pairs"][0]["pair"]["separated"] is True
 
 
+ARBITRARY = ["binary", "arbitrary_arrest", ["var", 1], ["var", 0]]
+R9_BASE = {"domains": {"state": ["texas"], "person": ["ann", "bob"]}, "constants": {},
+           "relations": {"arbitrary_arrest": [["texas", "ann"]], "journalist": []}}
+
+
+def r9_line(mode, name="no-arbitrary-arrest", guard=ARBITRARY, **fields):
+    return {"kind": "claim", "norm": norm_object(name, "arrest_permitted", False, mode, guard=guard), **fields}
+
+
+def r9_right(lines, **fields):
+    return {"right": {"name": "r9", "holder": "person", "guard": ["top"], "lines": lines, **fields}}
+
+
+def rs9(raw, strict, default=None):
+    """K22's set: right r9 with a strict and a default claim line, the default's witness situation recorded."""
+    sigma = entry(R9_BASE, "default", {"outcome": {"predicate": "arrest_permitted", "tuple": ["texas", "ann"]}},
+                  True, decisions=[{"key": {"excepted": "no-arbitrary-arrest"}, "tuples": [["texas", "ann"]]}])
+    sid = situation_id(raw, sigma)
+    return reading_set("rs9", "u9", [
+        reading("strict", strict, {"default": sid}, kind="right"),
+        reading("default", default or r9_right([r9_line("default")]), {"strict": sid}, kind="right")], {sid: sigma})
+
+
+def agreed(lean, raw, document):
+    """Lean's row, after checking that Python regenerates it byte for byte (4.1 rule 3)."""
+    from ve.errors import VEError
+    from ve.readings_route import rights_findings
+    from ve.readings_s1 import answer
+    row = {k: v for k, v in validate(lean, raw, document).items() if k != "id"}
+    try:
+        python = {"status": "ok", **answer(raw, document, chain_findings=rights_findings)}
+    except VEError as exc:
+        python = {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
+    assert python == row
+    return row
+
+
 def test_line_order_lists_each_line_once(lean):
     """DRI ruling 1 (review finding B): S1 admission refuses a candidate's document whose line order repeats an
     entry, with one stable text, and an entry that is no line of its right with the rights decoder's
     `UnknownRight` (a `right_lines` unit before its right). `genKeys_nodup` takes this check as its hypothesis."""
     raw = env_rights()
-    arbitrary = ["binary", "arbitrary_arrest", ["var", 1], ["var", 0]]
-
-    def line(mode, name="no-arbitrary-arrest", guard=arbitrary):
-        return {"kind": "claim", "norm": norm_object(name, "arrest_permitted", False, mode, guard=guard)}
-
-    base = {"domains": {"state": ["texas"], "person": ["ann", "bob"]}, "constants": {},
-            "relations": {"arbitrary_arrest": [["texas", "ann"]], "journalist": []}}
-    sigma = entry(base, "default", {"outcome": {"predicate": "arrest_permitted", "tuple": ["texas", "ann"]}}, True,
-                  decisions=[{"key": {"excepted": "no-arbitrary-arrest"}, "tuples": [["texas", "ann"]]}])
-    sid = situation_id(raw, sigma)
-
-    def rs9(strict_lines):
-        return reading_set("rs9", "u9", [
-            reading("strict", {"right": {"name": "r9", "holder": "person", "guard": ["top"], "lines": strict_lines}},
-                    {"default": sid}, kind="right"),
-            reading("default", {"right": {"name": "r9", "holder": "person", "guard": ["top"],
-                                         "lines": [line("default")]}},
-                    {"strict": sid}, kind="right")], {sid: sigma})
-
-    row = validate(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9([line("strict")])]})
+    row = agreed(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9(raw, r9_right([r9_line("strict")]))]})
     assert row["status"] == "ok", row
-    row = validate(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9([line("strict"), line("strict")])]})
+    row = agreed(lean, raw, {"units": [{"id": "u9"}],
+                             "reading_sets": [rs9(raw, r9_right([r9_line("strict"), r9_line("strict")]))]})
     assert row["error"] == "InvalidInput: line order lists a line of right r9 twice under rs9@1:0"
     # A fixed `right_lines` unit before the candidates' right: its line is in the order and in no right.
     journalist = ["unary", "journalist", ["var", 0]]
-    extra = {"right_lines": {"right": "r9", "lines": [line("strict", "no-detention", journalist)]}}
-    row = validate(lean, raw, {"units": [{"id": "u1", "kind": "right_lines", "content": extra}, {"id": "u9"}],
-                               "reading_sets": [rs9([line("strict")])]})
+    extra = {"right_lines": {"right": "r9", "lines": [r9_line("strict", "no-detention", journalist)]}}
+    row = agreed(lean, raw, {"units": [{"id": "u1", "kind": "right_lines", "content": extra}, {"id": "u9"}],
+                             "reading_sets": [rs9(raw, r9_right([r9_line("strict")]))]})
     assert row["error"] == "UnknownRight: r9 under rs9@1:0"
     # After the right, the same unit is a line of it.
-    row = validate(lean, raw, {"units": [{"id": "u9"}, {"id": "u1", "kind": "right_lines", "content": extra}],
-                               "reading_sets": [rs9([line("strict")])]})
+    row = agreed(lean, raw, {"units": [{"id": "u9"}, {"id": "u1", "kind": "right_lines", "content": extra}],
+                             "reading_sets": [rs9(raw, r9_right([r9_line("strict")]))]})
     assert row["status"] == "ok", row
+
+
+SAME_LINE = {
+    # Review finding B (compose-s1-looprecheck1): the second line differs only by `cites: {}`.
+    "empty cites": r9_line("strict", cites={}),
+    "empty fan_out": r9_line("strict", fan_out={}),
+    "keys reordered": dict(reversed(list(r9_line("strict").items()))),
+    **{f"norm {k}": {**r9_line("strict"), "norm": {**r9_line("strict")["norm"], k: v}}
+       for k, v in (("mode", "strict"), ("alterable", []), ("hard", False), ("rank", None))},
+}
+
+
+@pytest.mark.parametrize("variant", sorted(SAME_LINE))
+def test_line_order_compares_lines_decoded(lean, variant):
+    """Lean's line order holds decoded lines (`SourceLine`): a line written again with a default field spelled
+    out is the same line listed twice, and Python says so with Lean's text."""
+    raw = env_rights()
+    document = {"units": [{"id": "u9"}],
+                "reading_sets": [rs9(raw, r9_right([r9_line("strict"), SAME_LINE[variant]]))]}
+    row = agreed(lean, raw, document)
+    assert row["error"] == "InvalidInput: line order lists a line of right r9 twice under rs9@1:0"
+
+
+TWIN_STRICT = {
+    "empty cites": r9_right([r9_line("strict", cites={})]),
+    "empty fan_out": r9_right([r9_line("strict", fan_out={})]),
+    "norm hard": r9_right([{**r9_line("strict"), "norm": {**r9_line("strict")["norm"], "hard": False}}]),
+    "no guard": {"right": {k: v for k, v in r9_right([r9_line("strict")])["right"].items() if k != "guard"}},
+}
+
+
+@pytest.mark.parametrize("variant", sorted(TWIN_STRICT))
+def test_force_twins_compare_contents_decoded(lean, variant):
+    """`forceTwins` (1.7) compares decoded contents: the strict right written with a default spelled out (or the
+    guard left to its default `top`) is still the default right's twin, and both report the finding."""
+    raw = env_rights()
+    row = agreed(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9(raw, TWIN_STRICT[variant])]})
+    assert row["status"] == "ok", row
+    assert row["sets"][0]["findings"] == ["SeparatedByDecisionOnly: rs9: 0, 1 (not certified)"]
+
+
+LIMITATION = {"name": "l29", "scope": ["r9"], "kinds": "all", "decided_by": "unstated", "factors": [],
+              "conditions": [{"name": "determined_by_law", "role": "necessary",
+                              "verbalisation": "the limitation is determined by law"}]}
+DEFAULTED_UNITS = {
+    "condition without decider": ({"limitation": LIMITATION}, "ok"),
+    "limitation without decider": ({"limitation": {k: v for k, v in LIMITATION.items() if k != "decided_by"}},
+                                   "MissingExceptionDecider: limitation l29 under rs9@1:0"),
+    "bar without decider": ({"bar": {"name": "b30", "reading": "rule"}}, "ok"),
+    "bar with null decider": ({"bar": {"name": "b30", "reading": "rule", "decided_by": None}}, "ok"),
+}
+
+
+@pytest.mark.parametrize("variant", sorted(DEFAULTED_UNITS))
+def test_rights_units_read_with_lean_defaults(lean, variant):
+    """A field Lean's rights decoder reads as optional (absent and null alike on its wire) is read so by Python's
+    regeneration too: an absent decider inherits, is missing, or (a bar's) is accepted, as Lean decides."""
+    raw = env_rights()
+    content, expected = DEFAULTED_UNITS[variant]
+    kind = next(iter(content))
+    row = agreed(lean, raw, {"units": [{"id": "u9"}, {"id": "u29", "kind": kind, "content": content}],
+                             "reading_sets": [rs9(raw, r9_right([r9_line("strict")]))]})
+    assert row.get("error", row["status"]) == expected, row
 
 
 def test_other_kinds_go_to_the_lower_route(lean):

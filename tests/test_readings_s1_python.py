@@ -151,3 +151,42 @@ def test_content_bearing_set_fails_closed_until_separation_replay_exists():
     candidate["meaning_id"] = "wrong"
     with pytest.raises(VEError, match="meaning id does not match content"):
         validate_reading_sets(env, [set_], {"u"})
+
+
+def test_lines_compare_as_lean_decodes_them():
+    """`line_value` is Lean's `SourceLine`: a default spelled out, an empty `cites` or `fan_out`, or another key
+    order is the same line; a fan-out line's absent predicate is its first mapped predicate (compose-s1 review
+    finding B: the line order and force twins compare these values, not JSON)."""
+    from ve.readings_s1 import Content, force_twins, line_value
+    norm = {"name": "no-arrest", "predicate": "arrest_permitted", "sign": False, "guard": ["top"], "unless": [],
+            "over": []}
+    line = {"kind": "claim", "norm": norm}
+    same = [{**line, "cites": {}}, {**line, "fan_out": {}}, dict(reversed(list(line.items()))),
+            {**line, "norm": {**norm, "mode": "strict", "alterable": [], "hard": False, "rank": None}}]
+    assert all(line_value(x) == line_value(line) for x in same)
+    assert line_value({**line, "cites": {"guard": ["u1"]}}) != line_value(line)
+    assert line_value({**line, "holder_slot": 1}) != line_value(line)
+    fan = {"kind": "claim", "fan_out": {"state": "arrest_permitted"},
+           "norm": {k: v for k, v in norm.items() if k != "predicate"}}
+    assert line_value(fan) == line_value({**fan, "norm": norm})
+    # A line Lean does not decode keeps its JSON.
+    assert line_value({"kind": "duty"}) != line_value({"kind": "duty", "cites": {}})
+    default = {**norm, "mode": "default", "exception": {"decided_by": "unstated", "sufficient": [],
+                                                        "necessary": [], "factors": []}}
+    strict_right = Content("right", {"name": "r9", "holder": "person", "lines": [{**line, "cites": {}}]}, None)
+    default_right = Content("right", {"name": "r9", "holder": "person", "guard": ["top"],
+                                      "lines": [{"kind": "claim", "norm": default}]}, None)
+    assert force_twins(strict_right, default_right) == (norm, default)
+    assert force_twins(default_right, strict_right) is None
+
+
+def test_rights_units_read_with_lean_defaults():
+    from ve.readings_s1 import lean_defaults
+    assert lean_defaults({"right": {"name": "r", "holder": "h", "lines": [{"kind": "claim", "fan_out": {}}]}}) == \
+        {"right": {"name": "r", "holder": "h", "guard": ["top"], "lines": [{"kind": "claim"}]}}
+    assert lean_defaults({"limitation": {"name": "l", "conditions": [{"name": "c"}]}}) == \
+        {"limitation": {"decided_by": None, "name": "l", "conditions": [{"decided_by": None, "name": "c"}]}}
+    assert lean_defaults({"bar": {"name": "b", "reading": "rule"}})["bar"]["decided_by"] == "unstated"
+    assert lean_defaults({"bar": {"name": "b", "reading": "rule", "decided_by": ""}})["bar"]["decided_by"] == ""
+    unit = {"norm": {"name": "n"}, "cites": {}}
+    assert lean_defaults(unit) is unit

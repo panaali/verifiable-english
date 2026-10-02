@@ -159,6 +159,93 @@ def _line_uses(line):
     return uses + _cite_uses(line.get("cites", {}))
 
 
+# Decoded values. Lean compares contents as it decodes them (`SourceLine`, `SoftNode`, a right's header), not as
+# written: an absent `cites`, `fan_out`, `mode`, `alterable` or `hard` is its default, and formulas are trees.
+# Every comparison of contents goes through these values (the line order of 4.4, force twins of 1.7).
+
+_UNDECODED = (VEError, TypeError, KeyError, AttributeError, ValueError, RecursionError)
+_LINE_FIELDS = {"kind", "norm", "liberty", "recognition", "fan_out", "holder_slot", "cites"}
+
+
+def node_value(raw, fan_pred=None):
+    """A norm object as `ruleFields` decodes it (a `SoftNode`); raises when it does not decode. A fan-out line's
+    absent predicate is its first mapped predicate (`decodeLineNorm`). The exception decider decides only whether
+    the object decodes, never its value, so a stand-in is passed."""
+    from .softnorms import _rule_fields
+    if type(raw) is dict and fan_pred is not None and "predicate" not in raw:
+        raw = {**raw, "predicate": fan_pred}
+    f = _rule_fields({"norm": wire(raw)}, "unstated")
+    exception = None
+    if f.mode == "default":
+        exception = (f.exception.get("decided_by"), f.conditions["sufficient"], f.conditions["necessary"],
+                     tuple(f.exception["factors"]))
+    return (f.core, f.mode, f.rank, f.alterable, exception, f.hard)
+
+
+def line_value(line):
+    """A line as `decodeLine` decodes it (a `SourceLine`): kind, rules, fan-out, holder slot, citations. A line
+    Lean does not decode keeps its JSON: Lean refuses its document before comparing any line."""
+    j = wire(line)
+    try:
+        if set(j) - _LINE_FIELDS or j["kind"] not in ("claim", "liberty", "immunity", "power"):
+            raise ValueError("line")
+        slot = j.get("holder_slot", 0)
+        if type(slot) is not int or slot < 0 or any(
+                type(us) is not list or not us or any(type(u) is not str for u in us)
+                for us in j.get("cites", {}).values()):
+            raise ValueError("line")
+        fan = j.get("fan_out", {})
+        fan_out = tuple(sorted(fan.items()))
+        if any(type(p) is not str for _, p in fan_out):
+            raise TypeError("fan_out")
+        fan_pred = fan_out[0][1] if fan_out else None
+        rules = tuple(node_value(j[k], fan_pred) if k in j else None for k in ("norm", "liberty", "recognition"))
+        cites = tuple((k, tuple(v)) for k, v in sorted(j.get("cites", {}).items()))
+        return (j["kind"], rules, fan_out, j.get("holder_slot"), cites)
+    except _UNDECODED:
+        return ("undecoded", _canonical(j))
+
+
+def lean_defaults(unit):
+    """A rights unit with the defaults Lean's rights decoder reads written out, for Python's rights decoder, which
+    requires the fields. Lean receives `wire(unit)`, so an absent field and a null one are the same to it: a right's
+    guard is `top` (`decodeRight`), an empty `fan_out` is no fan-out (`decodeLine`), a limitation's or condition's
+    decider is null (`decodeLimitation`, `decodeCondition`), and a bar's absent decider, which `validDecider`
+    accepts and nothing reads, is `unstated` (`decodeBar`). Anything else is left as written."""
+    if type(unit) is not dict or len(unit) != 1:
+        return unit
+    [(kind, body)] = unit.items()
+    if type(body) is not dict:
+        return unit
+
+    def line(x):
+        if type(x) is dict and x.get("fan_out") == {}:
+            return {k: v for k, v in x.items() if k != "fan_out"}
+        return x
+
+    if kind in ("right", "right_lines"):
+        body = dict(body)
+        if kind == "right" and body.get("guard") is None:
+            body["guard"] = ["top"]
+        if type(body.get("lines")) is list:
+            body["lines"] = [line(x) for x in body["lines"]]
+    elif kind == "limitation":
+        body = {"decided_by": None, **body}
+        if type(body.get("conditions")) is list:
+            body["conditions"] = [{"decided_by": None, **c} if type(c) is dict else c for c in body["conditions"]]
+    elif kind == "bar" and body.get("decided_by") is None:
+        body = {**body, "decided_by": "unstated"}
+    return {kind: body}
+
+
+def _right_header(body):
+    """A right's name, holder and guard as `decodeRight` decodes them: an absent guard is `top`."""
+    from .ast import Top
+    from .softnorms import _fol
+    guard = wire(body).get("guard")
+    return (body.get("name"), body.get("holder"), Top() if guard is None else _fol(guard))
+
+
 def decode_content(j):
     """`Content`, `("bar", body)` or None (pending), as `Wire.decodeContent` reads a unit content."""
     if type(j) is list:
@@ -328,19 +415,20 @@ class Side:
     # -- the line order (DRI ruling 1, 4.4)
 
     def line_order_text(self):
+        # Lines compare as Lean decodes them (`SourceLine`, `line_value`), not as written.
         rights, order = [], []
         for c in self.contents:
             if not isinstance(c, Content):
                 continue
             if c.kind == "right":
-                rights.append([c.body["name"], [_canonical(wire(line)) for line in c.lines()]])
-                order.extend((c.body["name"], _canonical(wire(line))) for line in c.lines())
+                rights.append([c.body["name"], [line_value(line) for line in c.lines()]])
+                order.extend((c.body["name"], line_value(line)) for line in c.lines())
             elif c.kind == "right_lines":
                 r = c.body["right"]
                 for entry in rights:
                     if entry[0] == r:
-                        entry[1].extend(_canonical(wire(line)) for line in c.lines())
-                order.extend((r, _canonical(wire(line))) for line in c.lines())
+                        entry[1].extend(line_value(line) for line in c.lines())
+                order.extend((r, line_value(line)) for line in c.lines())
         seen = []
         for r, line in order:
             if not any(name == r and line in lines for name, lines in rights):
@@ -372,9 +460,9 @@ class Side:
             units = [{"source_units": list(self.unit_ids)}]
             for c in self.contents:
                 if not isinstance(c, Content):
-                    units.append({"bar": c[1]})
+                    units.append(lean_defaults({"bar": c[1]}))
                 elif c.kind != "assertion":
-                    units.append(c.raw)
+                    units.append(lean_defaults(c.raw))
             self.rights = RightsDocument(self.senv.frame, units)
             self.soft = self.rights.soft_document
         else:
@@ -1063,47 +1151,48 @@ def decision_only_text(s, i, j):
     return f"SeparatedByDecisionOnly: {s}: {i}, {j} (not certified)"
 
 
-def _node_fields(norm):
-    """A norm's fields as `SoftNode` holds them: absent optional fields at their defaults."""
-    return {"mode": "strict", "rank": None, "alterable": [], "exception": None, "hard": False,
-            "unless": [], "over": [], **norm}
-
-
 def _twin_nodes(strict, default):
-    s, d = _node_fields(strict), _node_fields(default)
-    if s["mode"] != "strict" or d["mode"] != "default":
-        return False
-    return {**s, "mode": "default", "exception": d["exception"], "hard": d["hard"]} == d
+    """`twinNodes` on decoded rules (`node_value`): strict and default, equal in every other field (mode,
+    exception and hard apart)."""
+    (s_core, s_mode, s_rank, s_alterable, _, _), (d_core, d_mode, d_rank, d_alterable, _, _) = strict, default
+    return s_mode == "strict" and d_mode == "default" and (s_core, s_rank, s_alterable) == (d_core, d_rank, d_alterable)
 
 
 def _twin_lines(line, other):
-    if type(line.get("norm")) is not dict or type(other.get("norm")) is not dict:
-        return None
-    if _twin_nodes(line["norm"], other["norm"]) and not line.get("fan_out") and \
-            {**line, "norm": other["norm"]} == other:
-        return (line["norm"], other["norm"])
-    return None
+    """`twinLines` on decoded lines (`line_value`): equal but in their `norm`, which are twins; no fan-out."""
+    if line[0] == "undecoded" or other[0] == "undecoded":
+        return False
+    kind, (norm, liberty, recognition), fan_out, slot, cites = line
+    twin = other[1][0]
+    return norm is not None and twin is not None and _twin_nodes(norm, twin) and not fan_out and \
+        (kind, (twin, liberty, recognition), fan_out, slot, cites) == other
 
 
 def _twin_line_lists(ls, others):
-    if not ls or not others:
+    """`twinLineLists`: the raw `norm` objects of the one twin position, strict first; lines compare decoded."""
+    values, other_values = [line_value(x) for x in ls], [line_value(x) for x in others]
+    k = 0
+    while k < len(ls) and k < len(others) and values[k] == other_values[k]:
+        k += 1
+    if k == len(ls) or k == len(others) or not _twin_lines(values[k], other_values[k]):
         return None
-    if ls[0] == others[0]:
-        return _twin_line_lists(ls[1:], others[1:])
-    pair = _twin_lines(ls[0], others[0])
-    return pair if pair is not None and ls[1:] == others[1:] else None
+    return (ls[k]["norm"], others[k]["norm"]) if values[k + 1:] == other_values[k + 1:] else None
 
 
 def force_twins(c, other):
-    if c.kind == other.kind == "norm":
-        return (c.body, other.body) if _twin_nodes(c.body, other.body) else None
-    if c.kind == other.kind == "right":
-        if (c.body["name"], c.body["holder"], c.body["guard"]) != (other.body["name"], other.body["holder"],
-                                                                   other.body["guard"]):
-            return None
-        return _twin_line_lists(c.lines(), other.lines())
-    if c.kind == other.kind == "right_lines":
-        return _twin_line_lists(c.lines(), other.lines()) if c.body["right"] == other.body["right"] else None
+    """`forceTwins` (1.7): the raw strict and default rule of a pair of force twins, compared as Lean decodes
+    them; None otherwise."""
+    try:
+        if c.kind == other.kind == "norm":
+            return (c.body, other.body) if _twin_nodes(node_value(c.body), node_value(other.body)) else None
+        if c.kind == other.kind == "right":
+            if _right_header(c.body) != _right_header(other.body):
+                return None
+            return _twin_line_lists(c.lines(), other.lines())
+        if c.kind == other.kind == "right_lines":
+            return _twin_line_lists(c.lines(), other.lines()) if c.body["right"] == other.body["right"] else None
+    except _UNDECODED:
+        pass  # a content Lean does not decode: its document is refused before any finding
     return None
 
 
