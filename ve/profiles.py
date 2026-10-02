@@ -27,6 +27,7 @@ REGISTRY = (
     ProfileRecord("norms@0", "norms", "statement", "inherited"),
     ProfileRecord("soft-norms@0", "soft", "statement", "inherited"),
     ProfileRecord("order@0", "", "checker", "order"),
+    ProfileRecord("readings@1", "readings", "statement", "inherited"),
     ProfileRecord(BASE, "", "checker", "fol"),
     ProfileRecord("speech-acts@0", "speech-acts", "statement", "inherited"),
     ProfileRecord("reports@0", "reports", "statement", "inherited"),
@@ -50,6 +51,15 @@ def checker_family(profiles):
         raise UnsupportedProfile("profiles must be a sorted unique array")
     if profiles != sorted(set(profiles)):
         raise UnsupportedProfile("profiles must be sorted and unique")
+    if "readings@1" in profiles:
+        base = [profile for profile in profiles if profile != "readings@1"]
+        family = checker_family(base)
+        if "norms@0" not in base:
+            raise UnsupportedProfile("UnsupportedProfile: readings@1 requires norms@0")
+        for outside in ("reports@0", "speech-acts@0", "alternatives@0", "risk@0"):
+            if outside in base:
+                raise UnsupportedProfile(f"UnsupportedProfile: readings@1 with {outside}")
+        return family
     if "alternatives@0" in profiles:
         if "norms@0" not in profiles:
             raise UnsupportedProfile("alternatives@0 requires norms@0")
