@@ -49,6 +49,25 @@ def norm(name, pred, sign, mode="strict", over=(), guard=("top",), sufficient=()
     return {"norm": body}
 
 
+def nulled(rng, body):
+    """A norm object with some optional fields written as null, which Lean reads as absent (finding B,
+    looprecheck2): `hard`, `alterable` and `rank` at any mode, `mode` on a strict rule."""
+    keys = ["hard", "alterable", "rank"] + (["mode"] if body.get("mode", "strict") == "strict" else [])
+    for key in keys:
+        if rng.random() < 0.15:
+            body[key] = None
+    return body
+
+
+def null_cited(rng, content):
+    """A norm content with `cites: null` beside it, sometimes."""
+    if type(content) is dict and "norm" in content:
+        nulled(rng, content["norm"])
+        if rng.random() < 0.15:
+            content["cites"] = None
+    return content
+
+
 def reading(rid, content, kind="norm"):
     return {"id": rid, "kind": kind, "content": content, "meaning_id": "m",
             "admission": {"who": "w", "why": "y", "distinguishing_models": {}}}
@@ -89,6 +108,10 @@ def twins(rng):
         units.append(unit("u5", norm("lenient", pred, False, "default", guard=ASKS)))
     if rng.random() < 0.3:
         units.append(unit("u6", rng.choice([ASKS_ALL, NOT_ASKS_ALL]), "asserted"))
+    for r in candidates:
+        null_cited(rng, r["content"])
+    for u in units:
+        null_cited(rng, u.get("content"))
     rng.shuffle(units)
     return env_k(), {"units": units, "reading_sets": [reading_set("rs1", "u1", candidates)]}, None
 
@@ -117,21 +140,28 @@ def two_acts(rng):
         for c in candidates:
             c["content"]["norm"].pop("mode", None)
             c["content"]["norm"].pop("exception", None)
+    for c in candidates:
+        null_cited(rng, c["content"])
     return env_k(profiles), {"units": [unit("u1")], "reading_sets": [reading_set("rs1", "u1", candidates)]}, None
 
 
 def decoded_variant(rng, line):
-    """`line` as written differently, decoded the same by Lean (`decodeLine`): an empty `cites` or `fan_out`, a
-    strict norm's soft fields at their defaults, the keys in another order."""
+    """`line` as written differently, decoded the same by Lean (`decodeLine`): an empty or null `cites` or
+    `fan_out`, a strict norm's soft fields at their defaults or null, the keys in another order. Lean's input has no
+    null (`wire` omits it), so an explicit null is the field's default to both (review finding B, looprecheck2)."""
     line = copy.deepcopy(line)
     if rng.random() < 0.3:
-        line["cites"] = {}
+        line["cites"] = rng.choice([{}, None])
     if rng.random() < 0.2:
-        line["fan_out"] = {}
+        line["fan_out"] = rng.choice([{}, None])
+    if rng.random() < 0.1:
+        line[rng.choice(["holder_slot", "liberty", "recognition"])] = None
     if line["norm"].get("mode", "strict") == "strict":
         for key, value in (("mode", "strict"), ("alterable", []), ("hard", False), ("rank", None)):
             if rng.random() < 0.2:
-                line["norm"][key] = value
+                line["norm"][key] = rng.choice([value, None])
+    else:
+        nulled(rng, line["norm"])
     if rng.random() < 0.3:
         line = dict(reversed(list(line.items())))
     return line
@@ -149,7 +179,9 @@ def rights(rng):
         # Lean's decoder defaults, written or not (an absent guard is `top`, an empty `fan_out` none).
         right = r["content"]["right"]
         if rng.random() < 0.3:
-            del right["guard"]
+            right["guard"] = None
+            if rng.random() < 0.5:
+                del right["guard"]
         right["lines"] = [decoded_variant(rng, line) for line in right["lines"]]
     units = [unit("u9", kind="right")]
     if rng.random() < 0.6:
@@ -160,7 +192,10 @@ def rights(rng):
         limitation = {"name": "l29", "scope": "all", "kinds": "all", "decided_by": "unstated", "factors": [],
                       "conditions": conditions}
         if rng.random() < 0.2:
-            del limitation["decided_by"]  # MissingExceptionDecider, from both
+            # MissingExceptionDecider, from both, whether the decider is absent or null.
+            limitation["decided_by"] = None
+            if rng.random() < 0.5:
+                del limitation["decided_by"]
         units.append(unit("u29", {"limitation": limitation}, "limitation"))
     if rng.random() < 0.3:
         bar = {"name": "b30", "reading": rng.choice(["rule", "query"])}
