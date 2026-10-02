@@ -2739,4 +2739,4 @@
 'VE.WireContract.instances_views' depends on axioms: [propext, Quot.sound]
 'VE.WireContract.findSome_congr_reached' depends on axioms: [propext, Quot.sound]
 'VE.WireContract.run_congr_reached' depends on axioms: [propext, Quot.sound]
-PASS: 271 source files; 2741 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+PASS: 273 source files; 2741 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
