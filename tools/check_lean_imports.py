@@ -29,6 +29,26 @@ KEYWORD_NAMES = {"import", "prelude", "module", "public", "meta", "all"}
 ORACLE_BUDGET = 3.0
 
 
+# docs/spec/wire-contract.md 7.3: the wire contract engine chooses diagnostics and never a verdict, so no
+# module on a verdict path may import it. Only its own modules, the `ve_diagnose` root and the audit
+# manifest (the engine theorems only) do.
+DIAGNOSTIC_ONLY = "VE.WireContract"
+DIAGNOSTIC_IMPORTERS = frozenset({"DiagnoseMain"})
+AUDIT_IMPORTS = frozenset({"VE.WireContract.Engine"})
+
+
+def diagnostic_only_violation(importer: str, imported: str) -> str | None:
+    """The message for an import of a diagnostic-only module that the rule of spec 7.3 does not admit."""
+    if imported != DIAGNOSTIC_ONLY and not imported.startswith(DIAGNOSTIC_ONLY + "."):
+        return None
+    if importer.startswith(DIAGNOSTIC_ONLY + ".") or importer in DIAGNOSTIC_IMPORTERS:
+        return None
+    if importer == "VE.Audit" and imported in AUDIT_IMPORTS:
+        return None
+    return (f"{importer} -> {imported}: {DIAGNOSTIC_ONLY}.* is diagnostic only and may be imported by "
+            f"{DIAGNOSTIC_ONLY}.*, DiagnoseMain and (the engine only) VE.Audit (docs/spec/wire-contract.md 7.3)")
+
+
 class HeaderError(ValueError):
     """A Lean header outside the plain layout; `line` is 1-based."""
 
@@ -198,6 +218,8 @@ def main() -> int:
                                              for importer, found in read.items()}, budget=60)
         headers.extend(f"{paths[importer].relative_to(ROOT)}: {message}; {PLAIN_LAYOUT}"
                        for importer, message in sorted(wrong.items()))
+    diagnostic = sorted(message for importer, found in read.items() for imported in found
+                        if (message := diagnostic_only_violation(importer, imported)) is not None)
     for importer, found in read.items():
         for imported in found:
             if imported not in paths:
@@ -215,11 +237,13 @@ def main() -> int:
         print(message, file=sys.stderr)
     for message in (f"missing local Lean import: {x}" for x in sorted(unknown)):
         print(message, file=sys.stderr)
+    for message in diagnostic:
+        print(f"diagnostic-only Lean import: {message}", file=sys.stderr)
     for edge in sorted(edges - expected.keys()):
         print(f"new outward Lean import: {edge}", file=sys.stderr)
     for edge in sorted(expected.keys() - edges):
         print(f"stale Lean exception: {edge}", file=sys.stderr)
-    if unmapped or headers or unknown or edges != expected.keys():
+    if unmapped or headers or unknown or diagnostic or edges != expected.keys():
         return 1
     print(f"Lean layer graph kept ({len(paths)} modules, {len(edges)} reviewed legacy edges)")
     return 0
