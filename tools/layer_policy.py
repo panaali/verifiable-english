@@ -23,7 +23,7 @@ PYTHON = {
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
-        "reports_route risk rights_route soft_route speech_document").split(),
+        "reports_route risk rights_route soft_route speech_document readings_route readings_s1").split(),
     5: ["argument_fixtures"],
 }
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}

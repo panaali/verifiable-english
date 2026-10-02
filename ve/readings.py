@@ -122,7 +122,8 @@ def _right_situation(env, content, wire, unit_ids=()):
     return model.model_id, (tuple(outcomes), tuple(sorted(selected)))
 
 
-def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None):
+def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None,
+                          lean_replay=False):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
     seen = set()
@@ -212,7 +213,8 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
                 raise VEError("invalid distinguishing model id")
             model_ids.update(admission["distinguishing_models"].values())
         if s1_bearing:
-            situations = item.get("situations")
+            # `situations` is optional (3): a set whose pairs all have a pending candidate records none.
+            situations = item.get("situations", {})
             if (type(situations) is not dict or "models" in item
                     or any(not token(name) for name in situations)):
                 raise VEError("InvalidInput: invalid situation set")
@@ -220,7 +222,11 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             # per-reading model comparison. The S1 Lean replay must check the
             # common base, shared decisions and every completion of the other
             # reading before this metadata can become an admission claim.
-            raise CheckerUnavailable("CheckerUnavailable: readings@1 content separation awaits Lean replay")
+            if not lean_replay:
+                raise CheckerUnavailable("CheckerUnavailable: readings@1 content separation awaits Lean replay")
+            if "rejected_history" in item and type(item["rejected_history"]) is not list:
+                raise VEError("invalid rejected reading history")
+            continue
         models = item.get("models", {})
         if type(models) is not dict or set(models) != model_ids:
             raise VEError("distinguishing models must be supplied by id")

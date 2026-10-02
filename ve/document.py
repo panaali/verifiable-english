@@ -20,7 +20,7 @@ from .environment import Environment
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
-from .readings import (active_reading_sets, check_readings, plan_choices,
+from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
                        validate_couplings, validate_narrowings, validate_reading_sets)
 from .wire import digest
 from .vacuity import premise_status
@@ -263,10 +263,32 @@ def _document_id(meta, source, fences):
                                           allow_nan=False).encode("utf-8")).hexdigest()
 
 
-def _soft_contents(units):
+def _soft_contents(units, exclude=frozenset()):
     return [u.get("content") for u in units
-            if type(u) is dict and u.get("kind") == "norm"
+            if type(u) is dict and u.get("kind") == "norm" and u.get("id") not in exclude
             and type(u.get("content")) is dict and "norm" in u["content"]]
+
+
+def _s1_attached(environment_data, meta):
+    """Under `readings@1`, the fixed units attached to an open content-bearing set (composition-s1.md 1.3): they
+    belong to that set's candidates' documents, and the lower route checks `free D` without them (4.1). A
+    document S1 cannot decode is left whole here; the readings route reports its diagnostic."""
+    if "readings@1" not in environment_data.get("profiles", []):
+        return frozenset()
+    sets = meta.get("reading_sets", [])
+    if type(sets) is not list or not any(
+            type(s) is dict and type(s.get("readings")) is list and any(
+                type(r) is dict and s1_content_kind(r.get("content")) in {"norm", "right", "right_lines", "limitation"}
+                for r in s["readings"]) for s in sets):
+        return frozenset()
+    from .readings_s1 import Document as S1Document, S1Environment
+    try:
+        units = [{"id": u["id"], "kind": u.get("kind"), "content": u.get("content")}
+                 for u, _ in _parts(meta.get("units", []))]
+        attached = S1Document(S1Environment(environment_data), {"units": units, "reading_sets": sets}).attached()
+    except (VEError, KeyError, TypeError):
+        return frozenset()
+    return frozenset(u for u, owners in attached.items() if owners)
 
 
 def _environment(data):
@@ -334,11 +356,12 @@ def _load_document(raw: bytes, path: str | Path, lean):
         # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
         raise VEError("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
                       "routes await the Lean route")
+    attached = _s1_attached(environment_data, meta)
     if soft_enabled and not rights_enabled:
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
-            check_soft_source(environment_data, _soft_contents(meta["units"]))
+            check_soft_source(environment_data, _soft_contents(meta["units"], attached))
     env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
@@ -353,10 +376,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         from .rights import RightsDocument
         # Citations name source units (3.2): the rights source carries every unit id.
         ids = [u.get("id") for u, _ in _parts(units) if type(u) is dict and type(u.get("id")) is str]
-        rights_document = RightsDocument(env, [{"source_units": ids}] + [
-            u["content"] for u, _ in _parts(units)
-            if type(u.get("content")) is dict and
-            u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")])
+        rights_document = RightsDocument(env, _rights_units(units, attached))
         soft_document = rights_document.soft_document
         formula_env = soft_document.extended_env
         open_names = (set(open_names) | formula_env.decision_names |
@@ -365,7 +385,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
                       set(rights_document.bar_names.values()))
     elif soft_enabled:
         from .softnorms import SoftNormDocument
-        soft_document = SoftNormDocument(env, _soft_contents(units))
+        soft_document = SoftNormDocument(env, _soft_contents(units, attached))
         formula_env = soft_document.extended_env
         open_names = set(open_names) | soft_document.extended_env.decision_names
     compiled = []
@@ -463,8 +483,19 @@ def _load_document(raw: bytes, path: str | Path, lean):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    validate_reading_sets(env if rights_enabled else formula_env, reading_sets, unit_ids,
-                          source=source, unit_spans={u["id"]: u["span"] for u in compiled})
+    s1_content = "readings@1" in env.profiles and type(reading_sets) is list and any(
+        type(s) is dict and type(s.get("readings")) is list and any(
+            type(r) is dict and s1_content_kind(r.get("content")) in
+            {"norm", "right", "right_lines", "limitation"} for r in s["readings"])
+        for s in reading_sets)
+    validate_reading_sets(env if rights_enabled or s1_content else formula_env,
+                          reading_sets, unit_ids, source=source,
+                          unit_spans={u["id"]: u["span"] for u in compiled},
+                          lean_replay=s1_content)
+    readings_s1 = None
+    if s1_content:
+        from .readings_route import validate as validate_s1
+        readings_s1 = validate_s1(env.to_dict(), compiled, reading_sets)
     active = active_reading_sets(reading_sets)
     couplings = meta.get("couplings", [])
     validate_couplings(env, couplings, reading_sets, unit_ids)
@@ -528,7 +559,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
                 _check_quoted(env, content)
         # Soft quoted norms were checked as single units by decode_rule above;
         # they are not members of the active soft document or its layer premises.
-    selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units]
+    # Under readings@1, fixed units attached to an open set are checked in its candidates' documents (S1 1.3).
+    selected_norms = [u["content"] for u in norm_units if u["id"] not in reading_units and u["id"] not in attached]
     norms = (NormDocument(env, selected_norms)
              if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
              else None)
@@ -557,6 +589,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
            "units": compiled, "norms": norms, "soft_document": soft_document,
            "norm_defaults": norm_defaults,
            "reports": reports, "rights_document": rights_document,
+           "readings_s1": readings_s1,
            "reading_plan": plan_choices(active if couplings else
                                         [r for r in active if r["status"] == "open"],
                                         couplings=couplings)}
@@ -634,11 +667,46 @@ def _rights_source_units(doc):
         if u["kind"] in (*_RIGHTS_KINDS, "norm") and type(u["content"]) is dict]
 
 
+def _content_bearing(doc):
+    """Whether the document has a content-bearing reading set (composition-s1.md 1.2)."""
+    row = doc.get("readings_s1")
+    return row is not None and row.get("content_bearing") is True
+
+
+def _lower_soft_document(doc):
+    """The soft document the lower route checks: under `readings@1` the head strips the profile and hands every
+    other case to the lower route (composition-s1.md 4.1), so its environment is the one without it."""
+    soft = doc["soft_document"]
+    if "readings@1" not in doc["environment"].profiles:
+        return soft
+    data = doc["environment"].to_dict()
+    data["profiles"] = [p for p in data["profiles"] if p != "readings@1"]
+    lower = _environment(data)
+    attached = _s1_attached(doc["environment"].to_dict(), doc["meta"])
+    if doc["rights_document"] is not None:
+        from .rights import RightsDocument
+        return RightsDocument(lower, _rights_units(doc["meta"]["units"], attached)).soft_document
+    from .softnorms import SoftNormDocument
+    return SoftNormDocument(lower, _soft_contents(doc["meta"]["units"], attached))
+
+
+def _rights_units(units, exclude=frozenset()):
+    """The rights source of a document's units: the unit ids, then every rights or norm content."""
+    ids = [u.get("id") for u, _ in _parts(units) if type(u) is dict and type(u.get("id")) is str]
+    return [{"source_units": ids}] + [
+        u["content"] for u, _ in _parts(units)
+        if type(u.get("content")) is dict and u.get("id") not in exclude and
+        u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")]
+
+
 def _rights_report(doc):
     """The Lean-replayed rights report, or None while a rights reading set still
     needs per-choice elaboration (its findings are then not yet known)."""
     rights = doc.get("rights_document")
     if rights is None:
+        return None
+    if _content_bearing(doc):
+        # composition-s1.md 4.8: the rights report keeps "per-choice rights elaboration pending".
         return None
     if any(c["kind"] in _RIGHTS_KINDS
            for reading_set in active_reading_sets(doc["meta"].get("reading_sets", []))
@@ -805,6 +873,15 @@ def coverage(doc, scoped=None, rights_report=None):
         else:
             residual["unlicensed_limitations"] = len(rights_report["unlicensed_limitations"])
             residual["distinction_hits"] = sum(len(row["hits"]) for row in rights_report["distinction"])
+    if _content_bearing(doc):
+        # composition-s1.md 6: separations by probe form, findings, pending candidates, and the couplings line
+        # on every chain.
+        from .readings_route import report as readings_report
+        readings = readings_report(doc)
+        residual["separations"] = sum(readings["separations"].values())
+        residual["readings_findings"] = sum(readings["findings"].values())
+        residual["pending_candidates"] = readings["pending_candidates"]
+        residual["couplings"] = readings["couplings"]
     defaults_lines = None
     if doc.get("norm_defaults") is not None:
         # norm-defaults 3.2: a gap is no open term and changes no unit status.
@@ -1004,7 +1081,7 @@ def _report(doc):
               "reading_plan": doc["reading_plan"]}
     if soft is not None:
         from .soft_route import elaborate_soft_document
-        elaborate_soft_document(soft)
+        elaborate_soft_document(_lower_soft_document(doc))
         result["soft"] = {"environment_id": doc["environment"].environment_id,
                           "soft_document_hash": soft.document_hash,
                           "decision_predicates": sorted(soft.extended_env.decision_names),
@@ -1120,6 +1197,9 @@ def _report(doc):
     if env.alternatives is not None:
         result["premises"] = {"status": "UNKNOWN",
                               "reason": "alternatives premise satisfiability requires the alternatives route"}
+    elif _content_bearing(doc):
+        # composition-s1.md 4.8: S1 adds no verdict; a result that depends on a content-bearing set waits for S2.
+        result["premises"] = {"status": "UNKNOWN", "reason": "superposition pending"}
     elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     elif joint_pending or (joint is not None and joint["constraints"] and joint_formula is None):
@@ -1134,6 +1214,9 @@ def _report(doc):
         status = result["premises"]["status"]
         result["admission"]["vacuous"] = (True if status == "INCONSISTENT" else
                                            False if status == "model" else None)
+    if _content_bearing(doc):
+        from .readings_route import report as readings_report
+        result["readings"] = readings_report(doc)
     if "discourse" in doc:
         from .discourse import report_discourse
         report_discourse(doc, result)
@@ -1249,6 +1332,10 @@ def render_document(path):
             {"source_units": sorted(u["id"] for u in doc["units"])}, content])
 
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
+    s1_wording = None
+    if _content_bearing(doc):
+        from .readings_route import Wording
+        s1_wording = Wording(doc)
     for u in doc["units"]:
         lines.append(u["source"].strip())
         expanded = doc.get("discourse", {}).get("presentations", {}).get(u["id"])
@@ -1275,6 +1362,9 @@ def render_document(path):
                     lead += " (" + ", ".join(f"{axis} {value}" for axis, value in sorted(labels.items())) + ")"
                 lines.append(f"{lead}: " + kind_wording(candidate["kind"], candidate["content"],
                                                         candidate_rights(candidate["content"])))
+            if s1_wording is not None and reading_set["status"] == "open":
+                # composition-s1.md 2.3: each checked pair's wording, then E16 under the set.
+                lines.extend(s1_wording.set_lines(u["id"]))
     sets = {r["id"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
     for coupling in doc["meta"].get("couplings", []):
         if "readings@1" in doc["environment"].profiles and "rights@0" not in doc["environment"].profiles:
