@@ -10,7 +10,6 @@ from functools import lru_cache
 import json
 
 from ve import profiles
-from ve.environment import Environment
 from ve.errors import ResourceLimit, UnsupportedProfile, VEError
 from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
 from ve import softnorms as soft
@@ -101,7 +100,7 @@ def w1_declarations(root, items):
         "predicates": {name: ({k: v for k, v in entry.items() if k != "instruction_of"}
                              if type(entry) is dict else entry)
                        for name, entry in vocabulary["predicates"].items()}}}
-    return _failure(lambda: Environment(stripped))
+    return _failure(lambda: soft.soft_route_environment(stripped, data["profiles"]))
 
 
 def profile_registered(root, items):

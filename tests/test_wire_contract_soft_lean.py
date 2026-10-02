@@ -215,10 +215,12 @@ def test_s3_pre_norm_defaults_profile(built):
         with pytest.raises(VEError) as caught:
             load_soft_document(json.loads(json.dumps(raw)), json.loads(json.dumps(rules)))
         assert caught.value.code == lean_code
+        # The source lists `norm-defaults@0`, so no text may name that profile as missing (Fable B2).
+        assert "checked through fill" in str(caught.value)
+        assert "requires norm-defaults@0" not in str(caught.value)
         if check == "2.3":
-            assert str(caught.value) == "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-        else:
-            assert "checked through fill" in str(caught.value)
+            assert str(caught.value) == ("UnsupportedProfile: norm-defaults@0 documents are checked through "
+                                         "fill (ve.norm_defaults)")
         assert legacy["status"] == "error" and legacy["code"] == lean_code
         assert engine["diagnostic"]["check"] == check
         agree(engine, legacy)
