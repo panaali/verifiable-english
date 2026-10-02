@@ -180,3 +180,34 @@ def test_adapter_rejects_other_case_kinds(built):
     rows = call(built / "ve_diagnose", ["soft-norms@0"], [{"id": "x", "kind": "evaluation"}])
     assert rows == [{"id": "x", "status": "error",
                      "error": "UnsupportedProfile: case kind evaluation has no wire contract input"}]
+
+
+def test_s3_pre_norm_defaults_profile(built):
+    """S3-pre (conformance/wire-contract/s3-pre.md): with `norm-defaults@0` among the profiles, which Python
+    passes to W1's decoding and Lean does not, both implementations reject every source, so no verdict differs.
+    The codes are pinned as found: they differ only where Python's decoding admits an `unspecified` default."""
+    from ve.errors import VEError
+    from ve.softnorms import load_soft_document
+
+    def with_profile(raw):
+        raw["profiles"] = sorted(raw["profiles"] + ["norm-defaults@0"])
+        return raw
+
+    plain = with_profile(env())
+    bare = with_profile(env())
+    for entry in bare["vocabulary"]["predicates"].values():
+        entry.pop("regulated", None)
+    unspecified = with_profile(env())
+    unspecified["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
+    base_raw, base_rules = multi_fault_base()
+    sources = [(with_profile(base_raw), base_rules), (plain, []), (bare, []), (unspecified, [])]
+    expected = [("SOFT_UNSUPPORTED_PROFILE", "3.2")] * 3 + [("SOFT_INVALID_INPUT", "2.3")]
+    rows = both(built, sources)
+    for (raw, rules), (engine, legacy), (lean_code, check) in zip(sources, rows, expected):
+        with pytest.raises(VEError) as caught:
+            load_soft_document(json.loads(json.dumps(raw)), json.loads(json.dumps(rules)))
+        assert caught.value.code == "SOFT_UNSUPPORTED_PROFILE"
+        assert "checked through fill" in str(caught.value)
+        assert legacy["status"] == "error" and legacy["code"] == lean_code
+        assert engine["diagnostic"]["check"] == check
+        agree(engine, legacy)
