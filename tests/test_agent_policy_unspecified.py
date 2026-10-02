@@ -22,7 +22,7 @@ from ve import norm_defaults as nd  # noqa: E402
 KEY = json.loads((HERE / "answer-key.json").read_text())
 RESULTS = json.loads((HERE / "results.json").read_text())
 COMPLETE = RESULTS["M8"]["finite_model_complete_records"]
-# README.md:151-152: approved, unreported actions that are breaches only under "must be reported".
+# README.md "The reporting obligation": approved, unreported actions that are breaches only under "must be reported".
 APPROVED_UNREPORTED = ["a01", "a02", "a04", "a07", "a15", "a17", "a19", "a21", "a23", "a25", "a29", "a35", "a42"]
 
 

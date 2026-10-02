@@ -15,8 +15,10 @@ but it does not reproduce any published policy. The plan, with the answer key wr
 | [log.ve](log.ve) | an inventory of 10 files, 5 hosts and 3 people, then 42 action records (501 sentences) | `1e329a6e5644afafb8ac62ffaba77394012c1f453be6d044a7811bdcf65186e3` |
 | [log-schema.ve](log-schema.ve) | six assumptions about log records, used only by the gap queries | `8cec9bce64eb45802decc4f11f373e9d4f1ddd105b1f9220ae2b1218d80b4c3f` |
 | `environment.*.json` | the vocabulary, in four copies that differ only in the two defaults, plus a Lean copy | |
+| `environment.unspecified*.json` | both defaults `unspecified` under `norm-defaults@0`, plus a flag-free Lean copy | |
 | [answer-key.json](answer-key.json) | PLAN sections 6, 7 and 11 as data | |
 | [check.py](check.py), [focused.py](focused.py) | the harness that runs VE on every case | |
+| [unspecified.py](unspecified.py) | the re-run with both defaults `unspecified`, replayed in Lean | |
 | [results.json](results.json) | everything the harness computed | |
 
 ## Result: agreement with the answer key
@@ -29,6 +31,7 @@ VE agrees with the answer key on **42 of 42** actions. There is no disagreement 
 | M2 deciding rules (and the open rules of UNDETERMINED actions) | 42/42 | 42/42 |
 | M3 actions approved or rejected although no rule selects them | 0 | 0 |
 | M4 actions whose completed outcome changes with the default | a27, a36, a37, a38 | the same four |
+| M4 with the default `unspecified`: actions whose permission the policy does not settle | a27, a36, a37, a38 (UNDECIDED) | the same four |
 | M5 policy findings | as expected (below) | section 7 |
 | M6 seeded defects found | 4/4 | 4/4 |
 | M7 mutants that change exactly the named results | 6/6 | 6/6 |
@@ -151,6 +154,38 @@ the other 34. Under the "need not be reported" default, one approved action is n
 be: **a13**. Under the "must be reported" default, 13 more approved actions become breaches: a01, a02, a04,
 a07, a15, a17, a19, a21, a23, a25, a29, a35 and a42.
 
+## With the default `unspecified` (norm-defaults@0)
+
+The policy states no default, so the four environments above each add one it does not state.
+`environment.unspecified.json` says what the policy says instead: where no rule decides, the text is silent
+(`docs/spec/norm-defaults.md`, fixture u4). [unspecified.py](unspecified.py) computes the status of
+`permitted(a)` and `report_required(a)` for the 39 records that are one finite model (a01 to a39; a40 to a42
+leave facts open, so their situation is not one model and they are not in this check). Lean's norm-defaults route
+replays every status, the a10 conflict witness and both gap witnesses: **81 of 81 agree**, on a flag-free copy of
+the environment, as for the norms route (the statuses are the same without the flags; the harness checks this).
+
+**The verdicts do not change.** The harness's verdict never reads the default, so all 42 verdicts, the deciding
+rules and the policy findings stay as above. What changes is the completed outcome, and only where a default
+decided it:
+
+| Action | Predicate | Before: deny / allow (or need not / must) | After | Why |
+|---|---|---|---|---|
+| a27, a36, a37, a38 | `permitted` | F / P | **UNDECIDED** | no rule decides the action (NOT-COVERED), and the policy states no default |
+| the 30 complete records that rules 25 and 26 do not cover, a10 excepted | `report_required` | F / P | **UNDECIDED** | no reporting rule covers the action, and the policy states no default |
+| a10 | `report_required` | ⊥ / ⊥ | **UNDECIDED** | no reporting rule covers a10. A completed outcome was a contradiction because of the permission conflict; the status ranges over every admissible filling, and fillings answer either way |
+| every other point | both | | unchanged | a rule decides it: SETTLED with the same value, and a10's `permitted` is still a CONFLICT between rules 3 and 14 |
+
+So `permitted` is UNDECIDED exactly on the four actions the key marks as forced by the default (M4), and nothing
+a rule decides moves. Both predicates have reachable gaps (a27 is a witness for each), and neither inherits
+undecidedness from the other (`inherits_from` is empty: rules 25 and 26 do not mention permission).
+
+**Reporting breaches.** a13 is still a breach: rule 25 requires the report, and no default is involved. The
+other approved, unreported actions were breaches only under the "must be reported" default. Now the policy
+does not say whether they must be reported: a01, a02, a04, a07, a15, a17, a19, a21, a23, a25, a29 and a35 are
+UNDECIDED (a42 is outside the finite-model check; the key's entry for it is unchanged).
+
+The four shipped environments stay as regressions, and the answer key is unchanged.
+
 ## Policy-level findings
 
 | Finding | Result | Evidence |
@@ -192,11 +227,11 @@ In m3, rule 2 also overlaps with each rule it now shares an action with. That fo
 
 ## Where VE forced a choice
 
-1. **Completion defaults.** VE requires a default for each regulated predicate, and allows only "deny" or
-   "allow". The policy states none. The case therefore ships four environments with each combination, and the
-   verdict never reads the default. VE's completed outcome for a27, a36, a37 and a38 is whatever default the
-   environment was given. Only the verdict is honest about them. The planned `unspecified` default (ARCH-ROADMAP
-   P1) is not on main.
+1. **Completion defaults (resolved by `norm-defaults@0`).** `norms@0` requires a default for each regulated
+   predicate, and allows only "deny" or "allow". The policy states none. The case therefore ships four
+   environments with each combination, and the verdict never reads the default; VE's completed outcome for a27,
+   a36, a37 and a38 was whatever default the environment was given. `environment.unspecified.json` no longer
+   forces a choice: those four are UNDECIDED (see "With the default `unspecified`" above).
 2. **Precedence edge by edge.** `norms@0` has no "every prohibition overrides every permission" declaration.
    The 143 edges are listed rule by rule, and omitting one of them is defect D1.
 3. **The spending limit.** VE cannot compare amounts over a variable action here, so the payment tool emits a
@@ -237,8 +272,9 @@ item 6).
    action, because `order@0` forbids quantifying over integers.
 3. **Time.** "Confirmed before the action", "reported after it", and permissions that expire are not
    expressible.
-4. **An unspecified default.** Until ARCH-ROADMAP P1 lands, a completed outcome for an uncovered action is the
-   environment's default.
+4. **An unspecified default.** Closed by `norm-defaults@0`: with the default `unspecified`, an uncovered action's
+   permission and an uncovered action's report obligation are UNDECIDED, not the environment's default. The
+   statuses of a40 to a42, whose records are not one finite model, are not computed.
 5. **A combining algorithm.** "Deny overrides allow" has to be written as 143 edges.
 6. **The speech-act items below.**
 
@@ -261,9 +297,11 @@ From the repository root, with `~/.elan/bin` on `PATH`:
 python usecases/agent-policy/check.py base --write       # every action and the policy queries
 python usecases/agent-policy/check.py mutants --write    # the six mutants (several minutes)
 python usecases/agent-policy/check.py replay --write     # Lean and Rust replay of the base evidence
-pytest -q tests/test_agent_policy.py tests/test_agent_policy_rerun.py
+python usecases/agent-policy/unspecified.py --write      # the default `unspecified`, with Lean replay
+pytest -q tests/test_agent_policy.py tests/test_agent_policy_rerun.py tests/test_agent_policy_unspecified.py
 ```
 
 `tests/test_agent_policy.py` checks the files, the answer key against the plan, and `results.json` against
 the key. `tests/test_agent_policy_rerun.py` reruns VE on every action and policy query and fails on any change
-from `results.json`.
+from `results.json`. `tests/test_agent_policy_unspecified.py` recomputes the `unspecified` statuses and checks
+each changed outcome against the key.
