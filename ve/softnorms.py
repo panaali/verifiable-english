@@ -94,7 +94,9 @@ _ENVELOPE = {'language', 'profiles', 'spec_revision', 'vocabulary'}
 _BLOCK_FIELDS = {'parties', 'ranks', 'outranks', 'ties', 'outranking', 'exception_decider'}
 _W1_FIELDS = ('name', 'predicate', 'sign', 'guard', 'unless', 'over')
 _SOFT_FIELDS = ('mode', 'rank', 'alterable', 'exception', 'hard')
-_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'norm-defaults@0', 'time@0')
+# Match the soft route's inherited W1 profiles. In particular, norm-defaults@0
+# is a layer checked through fill, not a W1 declaration permission here.
+_INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'time@0')
 _CHECKER_PROFILES = ('closure@0', 'nary@0', 'order@0')
 # Statement layers with their own route over a soft source. The Lean rights route
 # strips `rights@0` before the soft decoder (`Rights/Wire.lean`), and the Lean soft
@@ -276,7 +278,9 @@ def _profiles(data, env, layers=frozenset()):
     if profiles != sorted(set(profiles)):
         raise fail('profiles must be sorted and unique')
     for profile in profiles:
-        if profile not in profile_registry.BY_NAME or (profile in LAYER_ROUTES and profile not in layers):
+        # speech-acts@0 is registered for its own route, not this soft route.
+        if (profile not in profile_registry.BY_NAME or profile == 'speech-acts@0'
+                or (profile in LAYER_ROUTES and profile not in layers)):
             raise fail(f'Unsupported profile {profile}')
     if profile_registry.BASE not in profiles:
         raise fail(f'Missing profile {profile_registry.BASE}')

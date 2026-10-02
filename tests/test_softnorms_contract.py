@@ -126,7 +126,8 @@ def test_norm_defaults_with_unspecified_default_fails_check_2_3():
     source["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
     with pytest.raises(VEError) as legacy:
         load_soft_document(deepcopy(source), [])
-    assert legacy.value.code == "SOFT_UNSUPPORTED_PROFILE"
+    assert legacy.value.code == "SOFT_INVALID_INPUT"
+    assert str(legacy.value) == "UnsupportedProfile: unspecified completion requires norm-defaults@0"
     outcome = diagnose(source, [])
     assert (outcome.record["check"], outcome.record["code"], outcome.record["path"]) == (
         "2.3", "SOFT_INVALID_INPUT", "/environment")
