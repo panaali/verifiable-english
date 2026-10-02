@@ -1,7 +1,7 @@
 """Prove excluded tests stay green for one detectable fault per layer.
 
 The default run temporarily edits five *clean* source files; --wire-only swaps
-two generated English rows. Each edit is restored in a finally block. Run only
+two generated Lean check rows. Each edit is restored in a finally block. Run only
 in a worktree without concurrent tests or source edits. The
 faults never invoke a model service. Summary JSON goes to the path supplied by
 --output; raw pytest logs go to /tmp/ve-layer-mutations.
@@ -43,19 +43,20 @@ FAILURE = re.compile(r"^(?:FAILED|ERROR) (tests/\S+)", re.MULTILINE)
 
 
 def wire_generated_table_mutation() -> int:
-    """A swapped generated English row must be caught by regeneration."""
-    target = ROOT / "docs/spec/soft-norms-wire-table.md"
+    """A swapped pair of generated Lean checks must be caught by regeneration."""
+    target = ROOT / "lean/VE/WireContract/Tables/SoftNorms.lean"
     original = target.read_text()
-    baseline = subprocess.run(["git", "show", "HEAD:docs/spec/soft-norms-wire-table.md"],
+    baseline = subprocess.run(["git", "show", "HEAD:lean/VE/WireContract/Tables/SoftNorms.lean"],
                               cwd=ROOT, capture_output=True, text=True, check=True).stdout
     if original != baseline:
         raise RuntimeError("refusing to mutate an edited generated wire table")
-    rows = original.splitlines(keepends=True)
-    first = next(i for i, row in enumerate(rows) if row.startswith("| `1.1` |"))
-    second = next(i for i, row in enumerate(rows) if row.startswith("| `1.2` |"))
-    rows[first], rows[second] = rows[second], rows[first]
+    first = original.index('.check { id := "1.1"')
+    second = original.index(', .check { id := "1.2"', first)
+    third = original.index(', .check { id := "1.3"', second)
+    row1 = original[first:second]
+    row2 = original[second + 2:third]
     try:
-        target.write_text("".join(rows))
+        target.write_text(original[:first] + row2 + ", " + row1 + original[third:])
         checked = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                                  cwd=ROOT, capture_output=True, text=True, timeout=60)
         if checked.returncode != 1 or "WC11" not in checked.stdout:
@@ -63,7 +64,7 @@ def wire_generated_table_mutation() -> int:
             return 1
     finally:
         target.write_text(original)
-    print("wire generated table mutation detected by --check")
+    print("wire generated Lean row swap detected by --check")
     return 0
 
 
