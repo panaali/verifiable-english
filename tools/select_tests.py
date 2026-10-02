@@ -37,6 +37,8 @@ CHECKS = (
     ("python3", "tools/check_rust_deps.py"),
     ("python3", "tools/test_layer_policy.py"),
 )
+# Cargo with path-independent flags, so the release binary matches lean/checkers.lock.
+CARGO = ["python3", "tools/rust_build.py"]
 
 
 def git_lines(*args: str) -> list[str]:
@@ -216,13 +218,13 @@ def select(paths: list[str], *, full: bool = False) -> dict:
             commands.append(["lake", "build", *named])
     commands.append(["python3", "lean/audit.py"])
     if rust:
-        commands.append(["cargo", "test", "--locked", "--all-features", "--manifest-path",
+        commands.append([*CARGO, "test", "--locked", "--all-features", "--manifest-path",
                          "rust/Cargo.toml", "--", "--test-threads=1"])
     if rust_release_binary:
-        commands.append(["cargo", "build", "--locked", "--release", "--manifest-path",
+        commands.append([*CARGO, "build", "--locked", "--release", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
     if rust_debug_binary:
-        commands.append(["cargo", "build", "--locked", "--manifest-path",
+        commands.append([*CARGO, "build", "--locked", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
     commands.append(["uv", "run", "--frozen", "--group", "dev", "python", "-m",
                      "pytest", "-q", *selected])

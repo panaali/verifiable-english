@@ -1,0 +1,1 @@
+(c) The text does not say. It states what happens when the backup exceeds 250 gigabytes, but gives no outcome for a 100-gigabyte backup.

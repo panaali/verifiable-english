@@ -14,6 +14,7 @@ import sys
 
 import pytest
 
+from tools import rust_build
 from ve.ast import _to_data
 from ve.environment import Environment
 from ve.errors import VEError
@@ -31,7 +32,7 @@ def rust():
         cargo = shutil.which("cargo")
         if cargo is None:
             pytest.skip("cargo is required for speech-act FOL conformance")
-        built = subprocess.run([cargo, "build", "-p", "ve"], cwd=ROOT / "rust",
+        built = subprocess.run([cargo, "build", "-p", "ve"], cwd=ROOT / "rust", env=rust_build.cargo_env(),
                                capture_output=True, text=True, timeout=600)
         assert built.returncode == 0, built.stdout + built.stderr
     return executable

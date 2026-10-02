@@ -84,7 +84,8 @@ def timed(fn, iterations, repeats):
 
 
 def main(repeats, output, closure_only=False):
-    env = {**os.environ,'CARGO_HOME':str(ROOT/'.cargo-home'),'CARGO_TARGET_DIR':str(ROOT/'rust/target')}
+    from tools import rust_build
+    env = rust_build.cargo_env()
     subprocess.run(['cargo','build','-j','2','--locked','--release','--manifest-path',str(ROOT/'rust/Cargo.toml'),
                     '--features','bench-internals','--example','bench'],cwd=ROOT,env=env,check=True)
     cases=inputs(repeats)

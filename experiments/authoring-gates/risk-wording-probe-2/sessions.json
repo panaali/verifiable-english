@@ -1,0 +1,559 @@
+{
+  "seed": 1614966022,
+  "generator": "seal.py (random.Random(seed), Python 3)",
+  "dropped": [],
+  "sessions": [
+    {
+      "session": "haiku-r1-L-01",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "a",
+            "b": "b",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-L-02",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "a",
+            "b": "c",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-L-03",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "c",
+            "b": "a",
+            "c": "b",
+            "d": "d"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-L-04",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "b",
+            "b": "c",
+            "c": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-C-01",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "a",
+            "b": "b",
+            "c": "c",
+            "d": "d"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-C-02",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "a",
+            "b": "c",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-C-03",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "c",
+            "b": "a",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r1-C-04",
+      "family": "haiku",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "c",
+            "b": "b",
+            "c": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-L-01",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "a",
+            "b": "c",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-L-02",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "b",
+            "b": "a",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-L-03",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "a",
+            "b": "c",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-L-04",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "a",
+            "b": "d",
+            "c": "c",
+            "d": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-C-01",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "b",
+            "b": "a",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-C-02",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "b",
+            "b": "c",
+            "c": "d",
+            "d": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-C-03",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "a",
+            "b": "b",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "haiku-r2-C-04",
+      "family": "haiku",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "b",
+            "b": "c",
+            "c": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-L-01",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "d",
+            "b": "b",
+            "c": "c",
+            "d": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-L-02",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "c",
+            "b": "b",
+            "c": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-L-03",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "b",
+            "b": "a",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-L-04",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "b",
+            "b": "a",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-C-01",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "b",
+            "b": "c",
+            "c": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-C-02",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "b",
+            "b": "a",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-C-03",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "d",
+            "b": "b",
+            "c": "a",
+            "d": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r1-C-04",
+      "family": "sol",
+      "replicate": 1,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "c",
+            "b": "a",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-L-01",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "c",
+            "b": "a",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-L-02",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "c",
+            "b": "a",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-L-03",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "a",
+            "b": "c",
+            "c": "b"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-L-04",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "L",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "d",
+            "b": "b",
+            "c": "a",
+            "d": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-C-01",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-2",
+          "shown_to_label": {
+            "a": "a",
+            "b": "d",
+            "c": "b",
+            "d": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-C-02",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-4",
+          "shown_to_label": {
+            "a": "b",
+            "b": "a",
+            "c": "c"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-C-03",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-3",
+          "shown_to_label": {
+            "a": "c",
+            "b": "b",
+            "c": "a"
+          }
+        }
+      ]
+    },
+    {
+      "session": "sol-r2-C-04",
+      "family": "sol",
+      "replicate": 2,
+      "condition": "C",
+      "items": [
+        {
+          "position": 1,
+          "item": "c5r-1",
+          "shown_to_label": {
+            "a": "b",
+            "b": "c",
+            "c": "a"
+          }
+        }
+      ]
+    }
+  ]
+}

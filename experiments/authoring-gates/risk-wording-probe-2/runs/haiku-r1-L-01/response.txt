@@ -1,0 +1,3 @@
+**Answer: (c) The text does not say.**
+
+The text only specifies that a job failure occurs "if the size of the backup is greater than 250 gigabytes," but since the backup is 100 gigabytes (not greater than 250), this conditional does not apply and provides no information about whether a failure occurs in this scenario.

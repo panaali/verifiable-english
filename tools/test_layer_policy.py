@@ -42,12 +42,12 @@ class LayerSelectionTests(unittest.TestCase):
         lean = select(["lean/VE/Norms/Wire.lean"])
         rust = select(["rust/ve/src/main.rs"])
         self.assertIn(["lake", "build"], lean["commands"])
-        self.assertTrue(any(command[:2] == ["cargo", "test"] for command in rust["commands"]))
-        self.assertIn(["cargo", "build", "--locked", "--release", "--manifest-path",
+        self.assertTrue(any(command[:3] == [*select_tests.CARGO, "test"] for command in rust["commands"]))
+        self.assertIn([*select_tests.CARGO, "build", "--locked", "--release", "--manifest-path",
                        "rust/Cargo.toml", "-p", "ve"], rust["commands"])
-        self.assertIn(["cargo", "build", "--locked", "--manifest-path",
+        self.assertIn([*select_tests.CARGO, "build", "--locked", "--manifest-path",
                        "rust/Cargo.toml", "-p", "ve"], rust["commands"])
-        self.assertLess(rust["commands"].index(["cargo", "build", "--locked",
+        self.assertLess(rust["commands"].index([*select_tests.CARGO, "build", "--locked",
                                                   "--manifest-path", "rust/Cargo.toml",
                                                   "-p", "ve"]), len(rust["commands"]) - 1)
         self.assertIn("tests/test_rust_conformance.py", rust["selected"])
@@ -60,7 +60,7 @@ class LayerSelectionTests(unittest.TestCase):
                           else real_exists(path)):
             plan = select(["ve/search.py"])
         self.assertIn("tests/test_nary_differential.py", plan["selected"])
-        self.assertIn(["cargo", "build", "--locked", "--manifest-path",
+        self.assertIn([*select_tests.CARGO, "build", "--locked", "--manifest-path",
                        "rust/Cargo.toml", "-p", "ve"], plan["commands"])
 
     def test_unknown_input_falls_back_to_full_native_and_python_suite(self):
@@ -292,11 +292,14 @@ class LayerSelectionTests(unittest.TestCase):
                 self.assertTrue(select(["ve/search.py"])["lean_build"])
 
     def test_non_default_lean_executables_are_built_by_name(self):
-        extra = sorted(set(layer_policy.lean_executables()) - layer_policy.lean_default_targets())
-        self.assertIn("ve_risk_eval", extra)
+        self.assertIn("ve_risk_eval", layer_policy.lean_executables())
+        # Simulate a route outside defaultTargets; the current lakefile builds it
+        # by default, but the selector must still support explicitly named builds.
+        defaults = layer_policy.lean_default_targets() - {"ve_risk_eval"}
         real_exists = Path.exists
-        with patch.object(Path, "exists",
-                          lambda path: False if path.name == "ve_risk_eval" else real_exists(path)):
+        with (patch.object(select_tests, "lean_default_targets", return_value=defaults),
+              patch.object(Path, "exists",
+                           lambda path: False if path.name == "ve_risk_eval" else real_exists(path))):
             plan = select(["ve/search.py"])
         self.assertIn("tests/test_risk_differential.py", plan["selected"])
         self.assertIn(["lake", "build"], plan["commands"])
