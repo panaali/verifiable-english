@@ -289,10 +289,13 @@ class ReadingSet:
 
 
 class Document:
-    """The items of 1.2 in source order: ("fixed", unit, Content), ("bar", unit, raw json), ("set", ReadingSet)."""
+    """The items of 1.2 in source order: ("fixed", unit, Content), ("bar", unit, raw json), ("set", ReadingSet).
+    The document is read as Lean receives it (`wire`): an explicit null is an absent field at every depth, so a
+    right's line with `cites: null` or a norm with `mode: null` is decoded with its defaults, as Lean decodes it."""
 
     def __init__(self, senv, document):
         self.senv = senv
+        document = wire(document)
         units = document["units"]
         sets = document.get("reading_sets") or []
         self.unit_ids = [u["id"] for u in units]
