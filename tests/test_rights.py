@@ -142,6 +142,27 @@ def test_profile_and_identity_bound_rights_block():
         RightsEnvironment(raw)
 
 
+def test_soft_route_alone_refuses_rights_profile():
+    """S3-pre (wire-contract.md 9): the rights route strips `rights@0` before the soft table, as the Lean
+    rights route does, so a soft source that lists it is refused by the soft route alone at 3.2, with the
+    Lean soft route's text, while the rights route still admits it."""
+    from ve.softnorms import check_soft_source, load_soft_document
+    from ve.soft_route import admit_soft_document
+    raw = rights_env()
+    RightsEnvironment(deepcopy(raw))
+    stripped = deepcopy(raw)
+    del stripped["vocabulary"]["rights"]
+    for attempt in (lambda: check_soft_source(deepcopy(stripped)),
+                    lambda: load_soft_document(deepcopy(stripped), []),
+                    lambda: SoftEnvironment(deepcopy(stripped)),
+                    lambda: admit_soft_document(deepcopy(stripped), {"units": []})):
+        with pytest.raises(VEError) as caught:
+            attempt()
+        assert (caught.value.code, str(caught.value)) == (
+            "SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0")
+    check_soft_source(deepcopy(stripped), layers=frozenset({"rights@0"}))
+
+
 def test_claim_is_one_soft_rule_and_limitation_is_one_pack():
     units = [right(), {"limitation": {"name": "l29", "scope": "all", "kinds": ["claim"],
                                     "decided_by": "unstated", "conditions": [

@@ -225,7 +225,9 @@ PYTHON_ONLY_LEGACY = {
     "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",
                         "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"),
     "reports@0": ("SOFT_UNSUPPORTED_PROFILE", "reports@0 with norms@0 layers"),
-    "rights@0": None,
+    # S3-pre: the rights route strips `rights@0` before the soft table, as Lean's does, so the soft route
+    # alone refuses it at 3.2 with the Lean route's text (it accepted before the fix).
+    "rights@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0"),
     "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "risk@0 requires alternatives@0"),
     "speech-acts@0": ("SOFT_INVALID_INPUT", "Incorrect fields (missing=['speech_acts'], unknown=[])"),
 }
@@ -240,7 +242,8 @@ def python_record(raw, rules):
 
 def test_profiles_outside_the_lean_route_three_way(built):
     """Wire review (Fable A1): both engines report check 3.2 on every profile outside the Lean route's
-    registry; the legacy outcomes are pinned, including Python's acceptance of `rights@0`."""
+    registry; the legacy outcomes are pinned. No profile is a legacy verdict difference: both legacy
+    validators reject every one (S3-pre; Python accepted `rights@0` before the fix)."""
     from ve.errors import VEError
     from ve.softnorms import load_soft_document
     names = sorted(PYTHON_ONLY_LEGACY)
@@ -261,6 +264,7 @@ def test_profiles_outside_the_lean_route_three_way(built):
         except VEError as error:
             python_legacy = (error.code, str(error))
         assert python_legacy == PYTHON_ONLY_LEGACY[name], name
+        assert python_legacy is not None, name
 
 
 def test_decision_names_prefix_order_three_way(built):
