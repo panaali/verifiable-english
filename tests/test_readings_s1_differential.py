@@ -244,6 +244,27 @@ def faulty(rng):
     return raw, document, fault
 
 
+def environment_nulled(rng, raw):
+    """`raw` with some optional environment fields written as null, which Lean reads as absent (review finding B,
+    compose-s1-loop): a soft or rights block the environment leaves out, a base predicate's `regulated` and any
+    predicate's `instruction_of`, and the rights block's `protected` and `alters` (optional to Lean's decoder: an
+    absent one is empty, under the identity of the environment without it)."""
+    raw = copy.deepcopy(raw)
+    vocabulary = raw["vocabulary"]
+    for key in ("soft", "rights"):
+        if key not in vocabulary and rng.random() < 0.15:
+            vocabulary[key] = None
+    for declaration in vocabulary["predicates"].values():
+        for key in ("regulated", "instruction_of"):
+            if key not in declaration and rng.random() < 0.1:
+                declaration[key] = None
+    if type(vocabulary.get("rights")) is dict:
+        for key in ("protected", "alters"):
+            if rng.random() < 0.15:
+                vocabulary["rights"][key] = None
+    return raw
+
+
 GENERATORS = [(twins, 5), (renamed, 1), (mixed, 2), (two_acts, 1), (rights, 2), (faulty, 3)]
 
 
@@ -303,6 +324,8 @@ def test_generated_sets_agree_with_lean(lean):
     cases, expectations = [], []
     for n in range(COUNT):
         name, raw, document, fault = generate(rng)
+        # Its own generator, so that the documents are the ones generated without the nulls.
+        raw = environment_nulled(random.Random(f"{SEED}-environment-{n}"), raw)
         rs = document["reading_sets"][0]
         found = {}
         try:
