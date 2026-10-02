@@ -448,7 +448,8 @@ def check_wire_contract(index: Index) -> list[str]:
     watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
                "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                "docs/spec/soft-norms-wire-table.md", "lean/VE/WireContract/",
-               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/")
+               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/",
+               "conformance/wire-contract/soft-norms@0-catalogue.json")
     if not any(path.startswith(watched) for path in index.changed):
         return []
     names = [path for path in index.listing()
@@ -456,7 +457,9 @@ def check_wire_contract(index: Index) -> list[str]:
                                  "lean/VE/WireContract/")) or path in {
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                  "lean/VE/Route/frozen-sources.sha256",
-                 "docs/spec/soft-norms-wire-table.md"}]
+                 "docs/spec/soft-norms-wire-table.md",
+                 "conformance/wire-contract/soft-norms@0-catalogue.json",
+                 "conformance/wire-contract/engine-golden.json"}]
     for path, blob in index.read(names).items():
         if blob is None:
             continue
