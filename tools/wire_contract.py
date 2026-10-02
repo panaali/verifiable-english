@@ -121,22 +121,31 @@ def _type_word(form):
         atoms[a] for a in form["tuple"])
 
 
-def _place(loc):
-    if loc == "@":
-        return "the item"
+def _place(loc, groups=()):
+    """A location in words (3.1). Inside groups, `@n` is the item of the group `n` levels out, named by
+    that group's id, so every sentence names the group whose item it reads: `the `ranks` item`."""
     match = re.fullmatch(r"@([0-9]*)(?:/(.*))?", loc)
     if match:
         level = int(match[1] or 0)
-        base = ("the item" if level == 0 else "the enclosing item" if level == 1
-                else f"the item {level} groups out")
+        base = f"the `{groups[level]}` item" if level < len(groups) else f"the item {level} groups out"
         return base + ("'s `" + match[2] + "`" if match[2] else "")
-    return f"`{loc}`"
+    return f"`{loc}`" if loc else "the input"
 
 
-def _literal(literal):
+def _members(pattern, groups):
+    """The values a group runs over, in words: the members of one container, or the values at a pattern."""
+    if pattern.endswith("/*") and "*" not in pattern[:-2]:
+        return f"each member of {_place(pattern[:-2], groups)}"
+    match = re.fullmatch(r"(@[0-9]*)/(.*)", pattern)
+    if match:
+        return f"each value at `{match[2]}` under {_place(match[1], groups)}"
+    return f"each value at `{pattern}`"
+
+
+def _literal(literal, groups=()):
     op, arg = next(iter(literal.items()))
     loc = arg if op in ("present", "absent") else arg[0]
-    where = _place(loc)
+    where = _place(loc, groups)
     if op in ("present", "absent"):
         return f"{where} is {op}"
     if op in ("equals", "differs"):
@@ -146,31 +155,56 @@ def _literal(literal):
     return f"{where} is " + (typ if op == "is" else "absent or is not " + typ)
 
 
-def wording(entry, *, inside=False, limits=None):
-    """The sentence specified in wire-contract.md 3.1, from one table row."""
-    prefix = ("When " + " and ".join(_literal(x) for x in entry["when"]) + ": "
+def _ids(entries):
+    """The check and member ids of a list of entries, groups included, in table order."""
+    out = []
+    for entry in entries:
+        if "each" in entry:
+            out += _ids(entry["checks"])
+        elif entry.get("kind") == "classifier":
+            out += [m["id"] for m in entry["emits"]]
+        elif entry.get("kind") != "include":
+            out.append(entry["id"])
+    return out
+
+
+def _lead(groups):
+    """The item a hand-written sentence inside groups reads, named: its `the item` is this one."""
+    return ("For the " + " of the ".join(f"`{g}` item" for g in groups) + ": ") if groups else ""
+
+
+def wording(entry, *, groups=(), limits=None):
+    """The sentence specified in wire-contract.md 3.1, from one table row. `groups` are the ids of the
+    enclosing groups, innermost first; a group's own sentence is read in the groups around it."""
+    prefix = ("When " + " and ".join(_literal(x, groups) for x in entry["when"]) + ": "
               if entry.get("when") else "")
+    def sentence_after(prefix, sentence):
+        return prefix + (sentence[0].lower() + sentence[1:] if prefix and sentence.startswith("The ") else sentence)
     if "each" in entry:
-        return prefix + (f"For each member of `{entry['each']}`, in order, all of the following "
-                         "for one member before the next member:")
+        ids = _ids(entry["checks"])
+        checks = (f"check `{ids[0]}` runs" if len(ids) == 1 else f"checks `{ids[0]}` and `{ids[1]}` run"
+                  if len(ids) == 2 else f"checks `{ids[0]}` to `{ids[-1]}` run")
+        guard = (", when " + " and ".join(_literal(x, groups) for x in entry["when"])) if entry.get("when") else ""
+        return (f"Group `{entry['id']}`{guard}: its item is {_members(entry['each'], groups)}, in order; "
+                f"{checks} on one item before the next item.")
     if entry.get("kind") == "include":
         names = ", ".join(f"`{n}`" for n in entry["phases"])
         sentence = (f"The checks of phase {names} of `{entry['contract']}`, in their order, "
-                    f"on {_place(entry.get('at', '@' if inside else ''))}")
+                    f"on {_place(entry.get('at', '@' if groups else ''), groups)}")
         if "view" in entry:
             sentence += f" as transformed by the view `{entry['view']}`: {entry['says']}"
         else:
             sentence += "."
         if "as" in entry:
             sentence += f" They are reported with code `{entry['as']}`."
-        return prefix + sentence
+        return sentence_after(prefix, sentence)
     kind = entry["kind"]
-    if kind in ("hook", "classifier"):
-        return prefix + (entry.get("says", "") if kind == "hook" else " ".join(
-            m["says"] for m in entry["emits"])
-        )
-    loc = entry.get("at", "@" if inside else "")
-    w = _place(loc)
+    if kind == "hook":
+        return prefix + _lead(groups) + entry.get("says", "")
+    if kind == "classifier":
+        return prefix + _lead(groups) + " ".join(m["says"] for m in entry["emits"])
+    loc = entry.get("at", "@" if groups else "")
+    w = _place(loc, groups)
     keys = lambda k: ", ".join(f"`{x}`" for x in entry[k])
     literal = lambda v: json.dumps(v, ensure_ascii=False, separators=(",", ":"))
     if kind == "type":
@@ -197,7 +231,9 @@ def wording(entry, *, inside=False, limits=None):
     elif kind == "sorted_unique":
         sentence = f"{w}, when it is an array of strings, is in strictly increasing code point order."
     elif kind == "unique_so_far":
-        sentence = f"{w}, when present, differs from the same value of every earlier item of this group."
+        within = "".join(f" of the same `{g}` item" for g in groups[1:2])
+        sentence = (f"{w}, when present, differs from the value at the same place in every earlier "
+                    f"`{groups[0]}` item{within}.")
     elif kind == "declared_in":
         sentence = f"{w}, when present, equals one of the values at `{entry['set']}`."
     elif kind in ("requires", "excludes"):
@@ -209,7 +245,7 @@ def wording(entry, *, inside=False, limits=None):
                         + literal(entry["item"]) + ".")
     else:
         raise ValueError(kind)
-    return prefix + sentence
+    return sentence_after(prefix, sentence[0].upper() + sentence[1:])
 
 
 def _bound(value, limits=None):
@@ -220,19 +256,23 @@ def _bound(value, limits=None):
 
 
 def english_table(contract, *, limits=None):
+    """The generated table: one row per check, member, group and include, in table order. A row inside a
+    group is marked with one `·` per enclosing group, and a group's row names the checks it covers."""
     lines = ["<!-- GENERATED by tools/wire_contract.py; do not edit. -->",
              "| Check | Code | One reading |", "|---|---|---|"]
-    def entries(rows, inside=False):
+    def entries(rows, groups=()):
+        mark = "· " * len(groups)
         for entry in rows:
             if "each" in entry:
-                lines.append(f"| `{entry['id']}` | group | {wording(entry)} |")
-                entries(entry["checks"], True)
+                lines.append(f"| {mark}`{entry['id']}` | group | {wording(entry, groups=groups)} |")
+                entries(entry["checks"], (entry["id"],) + groups)
             elif entry.get("kind") == "classifier":
                 for member in entry["emits"]:
-                    lines.append(f"| `{member['id']}` | `{member['code']}` | {member['says']} |")
+                    lines.append(f"| {mark}`{member['id']}` | `{member['code']}` | "
+                                 f"{_lead(groups)}{member['says']} |")
             else:
                 code = entry.get("code", entry.get("as", "include"))
-                lines.append(f"| `{entry['id']}` | `{code}` | {wording(entry, inside=inside, limits=limits)} |")
+                lines.append(f"| {mark}`{entry['id']}` | `{code}` | {wording(entry, groups=groups, limits=limits)} |")
     for index, phase in enumerate(contract["phases"], 1):
         lines.append(f"| **Phase {index}, {phase['name']}** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |")
         entries(phase["checks"])

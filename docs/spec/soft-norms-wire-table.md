@@ -13,25 +13,25 @@
 | `1.6` | `SOFT_INVALID_INPUT` | `/norms`, when present, is an array. |
 | `1.7` | `SOFT_RESOURCE_LIMIT` | `/norms`, when it is an array or an object, has at most 256 (MAX_RULES) members. |
 | **Phase 2, declarations** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
-| `pred-name` | group | For each member of `/environment/vocabulary/predicates/*`, in order, all of the following for one member before the next member: |
-| `2.1a` | `SOFT_INVALID_NAME` | The key of the item is in the class `not_soft_reserved`. |
-| `2.1b` | `SOFT_INVALID_NAME` | When the item's `regulated` is present: The key of the item is in the class `no_double_underscore`. |
-| `pred-instruction` | group | For each member of `/environment/vocabulary/predicates/*`, in order, all of the following for one member before the next member: |
-| `2.2a` | `SOFT_INVALID_INPUT` | the item's `instruction_of`, when present, is a string. |
-| `2.2b` | `SOFT_INVALID_INPUT` | When the item's `instruction_of` is present: the item, when it is an object, has no key `regulated`. |
-| `2.2c` | `SOFT_INVALID_INPUT` | When the item's `instruction_of` is present: the item, when it is an object, has no key `defined`. |
+| `pred-name` | group | Group `pred-name`: its item is each member of `/environment/vocabulary/predicates`, in order; checks `2.1a` and `2.1b` run on one item before the next item. |
+| · `2.1a` | `SOFT_INVALID_NAME` | The key of the `pred-name` item is in the class `not_soft_reserved`. |
+| · `2.1b` | `SOFT_INVALID_NAME` | When the `pred-name` item's `regulated` is present: the key of the `pred-name` item is in the class `no_double_underscore`. |
+| `pred-instruction` | group | Group `pred-instruction`: its item is each member of `/environment/vocabulary/predicates`, in order; checks `2.2a` to `2.2c` run on one item before the next item. |
+| · `2.2a` | `SOFT_INVALID_INPUT` | The `pred-instruction` item's `instruction_of`, when present, is a string. |
+| · `2.2b` | `SOFT_INVALID_INPUT` | When the `pred-instruction` item's `instruction_of` is present: the `pred-instruction` item, when it is an object, has no key `regulated`. |
+| · `2.2c` | `SOFT_INVALID_INPUT` | When the `pred-instruction` item's `instruction_of` is present: the `pred-instruction` item, when it is an object, has no key `defined`. |
 | `2.3` | `SOFT_INVALID_INPUT` | W1's environment decoder accepts `/environment` with `instruction_of` removed from every predicate, `soft` removed from the vocabulary, and the profiles reduced to `norms@0`, `relational-fol@0` and those of `data@0`, `definitions@0`, `documents@1` and `time@0` that it lists. |
 | `2.4` | `SOFT_INVALID_BLOCK` | `/environment/vocabulary/soft`, when present, is an object with the keys `outranking` and no other key except `parties`, `ranks`, `outranks`, `ties`, `exception_decider`. |
 | `2.5` | `SOFT_INVALID_ARRAY` | `/environment/vocabulary/soft/parties`, when present, is an array. |
 | `2.6` | `SOFT_RESOURCE_LIMIT` | `/environment/vocabulary/soft/parties`, when it is an array or an object, has at most 8 (MAX_SOFT_PARTIES) members. |
-| `parties` | group | For each member of `/environment/vocabulary/soft/parties/*`, in order, all of the following for one member before the next member: |
-| `2.7a` | `SOFT_INVALID_NAME` | the item, when present, is a string in the class `soft_name`. |
-| `2.7b` | `SOFT_DUPLICATE_DECLARATION` | the item, when present, differs from the same value of every earlier item of this group. |
+| `parties` | group | Group `parties`: its item is each member of `/environment/vocabulary/soft/parties`, in order; checks `2.7a` and `2.7b` run on one item before the next item. |
+| · `2.7a` | `SOFT_INVALID_NAME` | The `parties` item, when present, is a string in the class `soft_name`. |
+| · `2.7b` | `SOFT_DUPLICATE_DECLARATION` | The `parties` item, when present, differs from the value at the same place in every earlier `parties` item. |
 | `2.8a` | `SOFT_INVALID_ARRAY` | `/environment/vocabulary/soft/ranks`, when present, is an array. |
 | `2.8b` | `SOFT_RESOURCE_LIMIT` | `/environment/vocabulary/soft/ranks`, when it is an array or an object, has at most 16 (MAX_SOFT_RANKS) members. |
-| `ranks` | group | For each member of `/environment/vocabulary/soft/ranks/*`, in order, all of the following for one member before the next member: |
-| `2.8c` | `SOFT_INVALID_NAME` | the item, when present, is a string in the class `soft_name`. |
-| `2.8d` | `SOFT_DUPLICATE_DECLARATION` | the item, when present, differs from the same value of every earlier item of this group. |
+| `ranks` | group | Group `ranks`: its item is each member of `/environment/vocabulary/soft/ranks`, in order; checks `2.8c` and `2.8d` run on one item before the next item. |
+| · `2.8c` | `SOFT_INVALID_NAME` | The `ranks` item, when present, is a string in the class `soft_name`. |
+| · `2.8d` | `SOFT_DUPLICATE_DECLARATION` | The `ranks` item, when present, differs from the value at the same place in every earlier `ranks` item. |
 | `2.9a` | `SOFT_INVALID_OUTRANKING` | `/environment/vocabulary/soft/outranking`, when present, is an object with the keys `mode` and no other key except `decided_by`. |
 | `2.9b` | `SOFT_INVALID_OUTRANKING` | `/environment/vocabulary/soft/outranking/mode`, when present, is one of "strict", "holistic". |
 | `2.10` | `SOFT_STRICT_OUTRANKING_DECIDER` | When `/environment/vocabulary/soft/outranking/mode` is "strict": `/environment/vocabulary/soft/outranking`, when it is an object, has no key `decided_by`. |
@@ -40,21 +40,21 @@
 | `2.13` | `SOFT_INVALID_DECIDER` | `/environment/vocabulary/soft/outranking/decided_by`, when present, is a string in the class `decider`. |
 | `2.14` | `SOFT_INVALID_DECIDER` | `/environment/vocabulary/soft/exception_decider`, when present, is a string in the class `decider`. |
 | `2.15` | `SOFT_INVALID_ARRAY` | `/environment/vocabulary/soft/outranks`, when present, is an array. |
-| `outranks` | group | For each member of `/environment/vocabulary/soft/outranks/*`, in order, all of the following for one member before the next member: |
-| `2.16a` | `SOFT_INVALID_OUTRANKS_PAIR` | the item, when present, is an array of exactly 2 elements: a string, a string. |
-| `outranks-pair` | group | For each member of `@/*`, in order, all of the following for one member before the next member: |
-| `2.16b` | `SOFT_INVALID_OUTRANKS_PAIR` | the item, when present, differs from the same value of every earlier item of this group. |
-| `2.16c` | `SOFT_INVALID_OUTRANKS_PAIR` | the item, when present, differs from the same value of every earlier item of this group. |
+| `outranks` | group | Group `outranks`: its item is each member of `/environment/vocabulary/soft/outranks`, in order; checks `2.16a` to `2.16c` run on one item before the next item. |
+| · `2.16a` | `SOFT_INVALID_OUTRANKS_PAIR` | The `outranks` item, when present, is an array of exactly 2 elements: a string, a string. |
+| · `outranks-pair` | group | Group `outranks-pair`: its item is each member of the `outranks` item, in order; check `2.16b` runs on one item before the next item. |
+| · · `2.16b` | `SOFT_INVALID_OUTRANKS_PAIR` | The `outranks-pair` item, when present, differs from the value at the same place in every earlier `outranks-pair` item of the same `outranks` item. |
+| · `2.16c` | `SOFT_INVALID_OUTRANKS_PAIR` | The `outranks` item, when present, differs from the value at the same place in every earlier `outranks` item. |
 | `2.17a` | `SOFT_INVALID_ARRAY` | `/environment/vocabulary/soft/ties`, when present, is an array. |
-| `ties` | group | For each member of `/environment/vocabulary/soft/ties/*`, in order, all of the following for one member before the next member: |
-| `2.17b` | `SOFT_INVALID_TIES_PAIR` | the item, when present, is an array of exactly 2 elements: a string, a string. |
-| `ties-pair` | group | For each member of `@/*`, in order, all of the following for one member before the next member: |
-| `2.17c` | `SOFT_INVALID_TIES_PAIR` | the item, when present, differs from the same value of every earlier item of this group. |
-| `2.17d` | `SOFT_INVALID_TIES_PAIR` | the item, when present, differs from the same value of every earlier item of this group. |
+| `ties` | group | Group `ties`: its item is each member of `/environment/vocabulary/soft/ties`, in order; checks `2.17b` to `2.17d` run on one item before the next item. |
+| · `2.17b` | `SOFT_INVALID_TIES_PAIR` | The `ties` item, when present, is an array of exactly 2 elements: a string, a string. |
+| · `ties-pair` | group | Group `ties-pair`: its item is each member of the `ties` item, in order; check `2.17c` runs on one item before the next item. |
+| · · `2.17c` | `SOFT_INVALID_TIES_PAIR` | The `ties-pair` item, when present, differs from the value at the same place in every earlier `ties-pair` item of the same `ties` item. |
+| · `2.17d` | `SOFT_INVALID_TIES_PAIR` | The `ties` item, when present, differs from the value at the same place in every earlier `ties` item. |
 | **Phase 3, profiles** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
 | `3.1` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array of strings, is in strictly increasing code point order. |
-| `profile-items` | group | For each member of `/environment/profiles/*`, in order, all of the following for one member before the next member: |
-| `3.2` | `SOFT_UNSUPPORTED_PROFILE` | The item is one of `closure@0`, `data@0`, `definitions@0`, `documents@1`, `nary@0`, `norms@0`, `order@0`, `relational-fol@0`, `soft-norms@0` and `time@0`. |
+| `profile-items` | group | Group `profile-items`: its item is each member of `/environment/profiles`, in order; check `3.2` runs on one item before the next item. |
+| · `3.2` | `SOFT_UNSUPPORTED_PROFILE` | For the `profile-items` item: The item is one of `closure@0`, `data@0`, `definitions@0`, `documents@1`, `nary@0`, `norms@0`, `order@0`, `relational-fol@0`, `soft-norms@0` and `time@0`. |
 | `3.3a` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array, contains "relational-fol@0". |
 | `3.3b` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array, contains "soft-norms@0". |
 | `3.3c` | `SOFT_UNSUPPORTED_PROFILE` | `/environment/profiles`, when it is an array, contains "norms@0". |
@@ -64,62 +64,62 @@
 | `3.5a` | `SOFT_UNSUPPORTED_PROFILE` | No predicate has a definition. |
 | `3.5b` | `SOFT_UNSUPPORTED_PROFILE` | No predicate has a functional or total data flag. |
 | **Phase 4, rule-fields** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
-| `rules-fields` | group | For each member of `/norms/*`, in order, all of the following for one member before the next member: |
-| `4.1a` | `SOFT_INVALID_INPUT` | the item, when present, is an object with exactly the keys `norm`. |
-| `4.1b` | `SOFT_INVALID_INPUT` | the item's `norm`, when present, is an object. |
-| `4.1c` | `SOFT_INVALID_INPUT` | the item's `norm`, when present, is an object with the keys `name`, `predicate`, `sign`, `guard`, `unless`, `over` and no other key except `mode`, `rank`, `alterable`, `exception`, `hard`. |
-| `4.2a` | `SOFT_INVALID_INPUT` | W1's rule decoder accepts the item's `norm` restricted to `name`, `predicate`, `sign`, `guard`, `unless` and `over`, its `name` is a rule name, and it has at most 8 carve-outs. |
-| `over-names` | group | For each member of `@/norm/over/*`, in order, all of the following for one member before the next member: |
-| `4.2b` | `SOFT_INVALID_INPUT` | the item, when present, differs from the same value of every earlier item of this group. |
-| `4.3` | `SOFT_INVALID_RULE_FIELDS` | the item's `norm/mode`, when present, is one of "strict", "default". |
-| `4.4` | `SOFT_INVALID_RULE_FIELDS` | the item's `norm/rank`, when present, is null or a string. |
-| `4.5a` | `SOFT_INVALID_ALTERABLE` | the item's `norm/alterable`, when present, is an array of strings. |
-| `4.5b` | `SOFT_INVALID_ALTERABLE` | the item's `norm/alterable`, when it is an array of strings, is in strictly increasing code point order. |
-| `4.6` | `SOFT_INVALID_RULE_FIELDS` | the item's `norm/hard`, when present, is a Boolean. |
-| `4.7a` | `SOFT_HARD_CONSTRAINT` | When the item's `norm/hard` is true: the item's `norm/mode`, when present, is one of "strict". |
-| `4.7b` | `SOFT_HARD_CONSTRAINT` | When the item's `norm/hard` is true: the item's `norm/alterable`, when it is an array or an object, has at most 0 members. |
-| `4.8` | `SOFT_STRICT_EXCEPTION` | When the item's `norm/mode` is absent or is not "default": the item's `norm/exception`, when present, is null. |
-| `4.9a` | `SOFT_MISSING_EXCEPTION` | When the item's `norm/mode` is "default": the item's `norm`, when it is an object, has the key `exception`. |
-| `4.9b` | `SOFT_MISSING_EXCEPTION` | When the item's `norm/mode` is "default": the item's `norm/exception`, when present, is an object with the keys `sufficient`, `necessary`, `factors` and no other key except `decided_by`. |
-| `4.10` | `SOFT_INVALID_DECIDER` | When the item's `norm/mode` is "default": the item's `norm/exception/decided_by`, when present, is null or a string. |
-| `4.11a` | `SOFT_MISSING_DECIDER` | When the item's `norm/mode` is "default" and `/environment/vocabulary/soft/exception_decider` is absent: the item's `norm/exception`, when it is an object, has the key `decided_by`. |
-| `4.11b` | `SOFT_MISSING_DECIDER` | When the item's `norm/mode` is "default" and `/environment/vocabulary/soft/exception_decider` is absent: the item's `norm/exception/decided_by`, when present, is a string. |
-| `4.12` | `SOFT_INVALID_DECIDER` | When the item's `norm/mode` is "default" and the item's `norm/exception/decided_by` is a string: the item's `norm/exception/decided_by`, when present, is a string in the class `decider`. |
-| `4.13a` | `SOFT_EXCEPTION_ARRAY` | When the item's `norm/mode` is "default": the item's `norm/exception/sufficient`, when present, is an array. |
-| `sufficient` | group | When the item's `norm/mode` is "default": For each member of `@/norm/exception/sufficient/*`, in order, all of the following for one member before the next member: |
-| `4.13b` | `SOFT_INVALID_INPUT` | W1's formula decoder accepts the item as one formula within its own node budget. |
-| `4.13c` | `SOFT_EXCEPTION_ARRAY` | When the item's `norm/mode` is "default": the item's `norm/exception/necessary`, when present, is an array. |
-| `necessary` | group | When the item's `norm/mode` is "default": For each member of `@/norm/exception/necessary/*`, in order, all of the following for one member before the next member: |
-| `4.13d` | `SOFT_INVALID_INPUT` | W1's formula decoder accepts the item as one formula within its own node budget. |
-| `4.14a` | `SOFT_INVALID_FACTORS` | When the item's `norm/mode` is "default": the item's `norm/exception/factors`, when present, is an array of strings. |
-| `factors` | group | When the item's `norm/mode` is "default": For each member of `@/norm/exception/factors/*`, in order, all of the following for one member before the next member: |
-| `4.14b` | `SOFT_INVALID_FACTORS` | the item, when it is a string, is at most 200 (MAX_FACTOR_BYTES) bytes long in UTF-8. |
+| `rules-fields` | group | Group `rules-fields`: its item is each member of `/norms`, in order; checks `4.1a` to `4.14b` run on one item before the next item. |
+| · `4.1a` | `SOFT_INVALID_INPUT` | The `rules-fields` item, when present, is an object with exactly the keys `norm`. |
+| · `4.1b` | `SOFT_INVALID_INPUT` | The `rules-fields` item's `norm`, when present, is an object. |
+| · `4.1c` | `SOFT_INVALID_INPUT` | The `rules-fields` item's `norm`, when present, is an object with the keys `name`, `predicate`, `sign`, `guard`, `unless`, `over` and no other key except `mode`, `rank`, `alterable`, `exception`, `hard`. |
+| · `4.2a` | `SOFT_INVALID_INPUT` | For the `rules-fields` item: W1's rule decoder accepts the item's `norm` restricted to `name`, `predicate`, `sign`, `guard`, `unless` and `over`, its `name` is a rule name, and it has at most 8 carve-outs. |
+| · `over-names` | group | Group `over-names`: its item is each member of the `rules-fields` item's `norm/over`, in order; check `4.2b` runs on one item before the next item. |
+| · · `4.2b` | `SOFT_INVALID_INPUT` | The `over-names` item, when present, differs from the value at the same place in every earlier `over-names` item of the same `rules-fields` item. |
+| · `4.3` | `SOFT_INVALID_RULE_FIELDS` | The `rules-fields` item's `norm/mode`, when present, is one of "strict", "default". |
+| · `4.4` | `SOFT_INVALID_RULE_FIELDS` | The `rules-fields` item's `norm/rank`, when present, is null or a string. |
+| · `4.5a` | `SOFT_INVALID_ALTERABLE` | The `rules-fields` item's `norm/alterable`, when present, is an array of strings. |
+| · `4.5b` | `SOFT_INVALID_ALTERABLE` | The `rules-fields` item's `norm/alterable`, when it is an array of strings, is in strictly increasing code point order. |
+| · `4.6` | `SOFT_INVALID_RULE_FIELDS` | The `rules-fields` item's `norm/hard`, when present, is a Boolean. |
+| · `4.7a` | `SOFT_HARD_CONSTRAINT` | When the `rules-fields` item's `norm/hard` is true: the `rules-fields` item's `norm/mode`, when present, is one of "strict". |
+| · `4.7b` | `SOFT_HARD_CONSTRAINT` | When the `rules-fields` item's `norm/hard` is true: the `rules-fields` item's `norm/alterable`, when it is an array or an object, has at most 0 members. |
+| · `4.8` | `SOFT_STRICT_EXCEPTION` | When the `rules-fields` item's `norm/mode` is absent or is not "default": the `rules-fields` item's `norm/exception`, when present, is null. |
+| · `4.9a` | `SOFT_MISSING_EXCEPTION` | When the `rules-fields` item's `norm/mode` is "default": the `rules-fields` item's `norm`, when it is an object, has the key `exception`. |
+| · `4.9b` | `SOFT_MISSING_EXCEPTION` | When the `rules-fields` item's `norm/mode` is "default": the `rules-fields` item's `norm/exception`, when present, is an object with the keys `sufficient`, `necessary`, `factors` and no other key except `decided_by`. |
+| · `4.10` | `SOFT_INVALID_DECIDER` | When the `rules-fields` item's `norm/mode` is "default": the `rules-fields` item's `norm/exception/decided_by`, when present, is null or a string. |
+| · `4.11a` | `SOFT_MISSING_DECIDER` | When the `rules-fields` item's `norm/mode` is "default" and `/environment/vocabulary/soft/exception_decider` is absent: the `rules-fields` item's `norm/exception`, when it is an object, has the key `decided_by`. |
+| · `4.11b` | `SOFT_MISSING_DECIDER` | When the `rules-fields` item's `norm/mode` is "default" and `/environment/vocabulary/soft/exception_decider` is absent: the `rules-fields` item's `norm/exception/decided_by`, when present, is a string. |
+| · `4.12` | `SOFT_INVALID_DECIDER` | When the `rules-fields` item's `norm/mode` is "default" and the `rules-fields` item's `norm/exception/decided_by` is a string: the `rules-fields` item's `norm/exception/decided_by`, when present, is a string in the class `decider`. |
+| · `4.13a` | `SOFT_EXCEPTION_ARRAY` | When the `rules-fields` item's `norm/mode` is "default": the `rules-fields` item's `norm/exception/sufficient`, when present, is an array. |
+| · `sufficient` | group | Group `sufficient`, when the `rules-fields` item's `norm/mode` is "default": its item is each member of the `rules-fields` item's `norm/exception/sufficient`, in order; check `4.13b` runs on one item before the next item. |
+| · · `4.13b` | `SOFT_INVALID_INPUT` | For the `sufficient` item of the `rules-fields` item: W1's formula decoder accepts the item as one formula within its own node budget. |
+| · `4.13c` | `SOFT_EXCEPTION_ARRAY` | When the `rules-fields` item's `norm/mode` is "default": the `rules-fields` item's `norm/exception/necessary`, when present, is an array. |
+| · `necessary` | group | Group `necessary`, when the `rules-fields` item's `norm/mode` is "default": its item is each member of the `rules-fields` item's `norm/exception/necessary`, in order; check `4.13d` runs on one item before the next item. |
+| · · `4.13d` | `SOFT_INVALID_INPUT` | For the `necessary` item of the `rules-fields` item: W1's formula decoder accepts the item as one formula within its own node budget. |
+| · `4.14a` | `SOFT_INVALID_FACTORS` | When the `rules-fields` item's `norm/mode` is "default": the `rules-fields` item's `norm/exception/factors`, when present, is an array of strings. |
+| · `factors` | group | Group `factors`, when the `rules-fields` item's `norm/mode` is "default": its item is each member of the `rules-fields` item's `norm/exception/factors`, in order; check `4.14b` runs on one item before the next item. |
+| · · `4.14b` | `SOFT_INVALID_FACTORS` | The `factors` item, when it is a string, is at most 200 (MAX_FACTOR_BYTES) bytes long in UTF-8. |
 | **Phase 5, references** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
-| `instructions` | group | For each member of `/environment/vocabulary/predicates/*`, in order, all of the following for one member before the next member: |
-| `5.1` | `SOFT_UNKNOWN_PARTY` | the item's `instruction_of`, when present, equals one of the values at `/environment/vocabulary/soft/parties/*`. |
-| `outrank-refs` | group | For each member of `/environment/vocabulary/soft/outranks/*`, in order, all of the following for one member before the next member: |
-| `outrank-names` | group | For each member of `@/*`, in order, all of the following for one member before the next member: |
-| `5.2a` | `SOFT_UNKNOWN_RANK` | the item, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
-| `tie-refs` | group | For each member of `/environment/vocabulary/soft/ties/*`, in order, all of the following for one member before the next member: |
-| `tie-names` | group | For each member of `@/*`, in order, all of the following for one member before the next member: |
-| `5.2b` | `SOFT_UNKNOWN_RANK` | the item, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
-| `rule-names` | group | For each member of `/norms/*/norm/name`, in order, all of the following for one member before the next member: |
-| `5.3` | `SOFT_DUPLICATE_DECLARATION` | the item, when present, differs from the same value of every earlier item of this group. |
-| `rule-refs` | group | For each member of `/norms/*`, in order, all of the following for one member before the next member: |
-| `5.4` | `SOFT_INVALID_INPUT` | The predicate named by the item's `norm/predicate` is declared with `regulated`. |
-| `5.5` | `SOFT_UNKNOWN_RANK` | When the item's `norm/rank` is a string: the item's `norm/rank`, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
-| `alterable-refs` | group | For each member of `@/norm/alterable/*`, in order, all of the following for one member before the next member: |
-| `5.6` | `SOFT_UNKNOWN_PARTY` | the item, when present, equals one of the values at `/environment/vocabulary/soft/parties/*`. |
-| `5.7` | `SOFT_INVALID_INPUT` | The item's guard and carve-outs are well typed over the sorts of its predicate, in that order, and together have at most 10,000 nodes. |
-| `5.8a` | `SOFT_INVALID_INPUT` | Each condition of the item's exception, `sufficient` before `necessary`, is well typed over the sorts of its predicate, and the guard, the carve-outs and the conditions up to it together have at most 10,000 nodes. |
-| `5.8b` | `SOFT_INVALID_EXCEPTION_CONDITION` | No condition of the item's exception names a predicate that is declared with `regulated`, is defined, or starts with `soft__`. |
-| `over-refs` | group | For each member of `@/norm/over/*`, in order, all of the following for one member before the next member: |
-| `5.9a` | `SOFT_INVALID_INPUT` | the item, when present, equals one of the values at `/norms/*/norm/name`. |
-| `5.9b` | `SOFT_INVALID_INPUT` | The rule named by the item has the same `predicate` as the enclosing item's rule. |
+| `instructions` | group | Group `instructions`: its item is each member of `/environment/vocabulary/predicates`, in order; check `5.1` runs on one item before the next item. |
+| · `5.1` | `SOFT_UNKNOWN_PARTY` | The `instructions` item's `instruction_of`, when present, equals one of the values at `/environment/vocabulary/soft/parties/*`. |
+| `outrank-refs` | group | Group `outrank-refs`: its item is each member of `/environment/vocabulary/soft/outranks`, in order; check `5.2a` runs on one item before the next item. |
+| · `outrank-names` | group | Group `outrank-names`: its item is each member of the `outrank-refs` item, in order; check `5.2a` runs on one item before the next item. |
+| · · `5.2a` | `SOFT_UNKNOWN_RANK` | The `outrank-names` item, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
+| `tie-refs` | group | Group `tie-refs`: its item is each member of `/environment/vocabulary/soft/ties`, in order; check `5.2b` runs on one item before the next item. |
+| · `tie-names` | group | Group `tie-names`: its item is each member of the `tie-refs` item, in order; check `5.2b` runs on one item before the next item. |
+| · · `5.2b` | `SOFT_UNKNOWN_RANK` | The `tie-names` item, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
+| `rule-names` | group | Group `rule-names`: its item is each value at `/norms/*/norm/name`, in order; check `5.3` runs on one item before the next item. |
+| · `5.3` | `SOFT_DUPLICATE_DECLARATION` | The `rule-names` item, when present, differs from the value at the same place in every earlier `rule-names` item. |
+| `rule-refs` | group | Group `rule-refs`: its item is each member of `/norms`, in order; checks `5.4` to `5.9b` run on one item before the next item. |
+| · `5.4` | `SOFT_INVALID_INPUT` | For the `rule-refs` item: The predicate named by the item's `norm/predicate` is declared with `regulated`. |
+| · `5.5` | `SOFT_UNKNOWN_RANK` | When the `rule-refs` item's `norm/rank` is a string: the `rule-refs` item's `norm/rank`, when present, equals one of the values at `/environment/vocabulary/soft/ranks/*`. |
+| · `alterable-refs` | group | Group `alterable-refs`: its item is each member of the `rule-refs` item's `norm/alterable`, in order; check `5.6` runs on one item before the next item. |
+| · · `5.6` | `SOFT_UNKNOWN_PARTY` | The `alterable-refs` item, when present, equals one of the values at `/environment/vocabulary/soft/parties/*`. |
+| · `5.7` | `SOFT_INVALID_INPUT` | For the `rule-refs` item: The item's guard and carve-outs are well typed over the sorts of its predicate, in that order, and together have at most 10,000 nodes. |
+| · `5.8a` | `SOFT_INVALID_INPUT` | For the `rule-refs` item: Each condition of the item's exception, `sufficient` before `necessary`, is well typed over the sorts of its predicate, and the guard, the carve-outs and the conditions up to it together have at most 10,000 nodes. |
+| · `5.8b` | `SOFT_INVALID_EXCEPTION_CONDITION` | For the `rule-refs` item: No condition of the item's exception names a predicate that is declared with `regulated`, is defined, or starts with `soft__`. |
+| · `over-refs` | group | Group `over-refs`: its item is each member of the `rule-refs` item's `norm/over`, in order; checks `5.9a` and `5.9b` run on one item before the next item. |
+| · · `5.9a` | `SOFT_INVALID_INPUT` | The `over-refs` item, when present, equals one of the values at `/norms/*/norm/name`. |
+| · · `5.9b` | `SOFT_INVALID_INPUT` | For the `over-refs` item of the `rule-refs` item: The rule named by the item has the same `predicate` as the enclosing item's rule. |
 | **Phase 6, semantic** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
 | `6.1` | `SOFT_DEPENDENCY_CYCLE` | The outranking graph is acyclic. |
-| `tie-comparisons` | group | For each member of `/environment/vocabulary/soft/ties/*`, in order, all of the following for one member before the next member: |
-| `6.2` | `SOFT_TIE_AGAINST_ORDER` | Neither rank of the item outranks the other, directly or through other ranks. |
+| `tie-comparisons` | group | Group `tie-comparisons`: its item is each member of `/environment/vocabulary/soft/ties`, in order; check `6.2` runs on one item before the next item. |
+| · `6.2` | `SOFT_TIE_AGAINST_ORDER` | For the `tie-comparisons` item: Neither rank of the item outranks the other, directly or through other ranks. |
 | `6.3` | `SOFT_DUPLICATE_DECLARATION` | No two ties of `/environment/vocabulary/soft/ties` hold the same two ranks, in either order. |
 | `6.4a` | `SOFT_RESOURCE_LIMIT` | Every generated decision predicate name is at most 64 bytes long in UTF-8. |
 | `6.4b` | `SOFT_RESOURCE_LIMIT` | The declared predicates and the generated decision predicates are together at most 256. |

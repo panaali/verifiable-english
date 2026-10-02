@@ -395,8 +395,10 @@ spec table of soft-norms.md 8 uses them; no reader-facing surface changes.
 ### 3.1 Generated wordings
 
 A location is written in code font. An absolute one is written whole: `/environment/profiles`. Inside a group,
-`@` is "the item", `@/a/b` is "the item's `a/b`", `@1` is "the enclosing item" and `@1/a` is "the enclosing
-item's `a`". Below, `W` stands for the target so written.
+an item is named by the id of its group: `@` is "the `g` item", where `g` is the innermost group's id, `@/a/b`
+is "the `g` item's `a/b`", and `@1` and `@1/a` name the group one level out in the same way. Below, `W` stands
+for the target so written. (Revised after the wire review, Astra B and Fable B5: with "the item" and "the
+enclosing item", the sentences of 2.16b and 2.16c were the same words with two different groups.)
 
 | Kind | Wording pattern | The one reading |
 |---|---|---|
@@ -411,15 +413,15 @@ item's `a`". Below, `W` stands for the target so written.
 | `name` | `W, when present, is a string in the class <class>.` | A value that is not a string fails |
 | `name` on key | `The key of W is in the class <class>.` | The key under which W sits in its parent |
 | `sorted_unique` | `W, when it is an array of strings, is in strictly increasing code point order.` | Strictly increasing rules out repeats |
-| `unique_so_far` | `W, when present, differs from the same value of every earlier item of this group.` | Only earlier items are compared, so the second of two equal items fails and the first does not |
+| `unique_so_far` | `W, when present, differs from the value at the same place in every earlier `g` item.`, and inside a second group `… item of the same `g1` item.` | Only earlier items are compared, so the second of two equal items fails and the first does not; under an enclosing group, only items of the same enclosing item |
 | `declared_in` | `W, when present, equals one of the values at <pattern>.` | The set is read from the input, not from the contract |
 | `requires` | `W, when it is an object, has the key <key>.` / `W, when it is an array, contains <value>.` | |
 | `excludes` | `W, when it is an object, has no key <key>.` / `W, when it is an array, does not contain <value>.` | |
 | guard | `When <literal> and <literal>: ` before the sentence; literals read `<L> is present`, `<L> is absent`, `<L> is <value>`, `<L> is absent or is not <value>`, `<L> is <type>`, `<L> is absent or is not <type>` | When the guard does not hold the check is not run and does not fail |
-| group | `For each member of <pattern>, in order, all of the following for one member before the next member:` | Item-major order. "In order" is index order for an array and code point order of keys for an object |
+| group | `Group `g`, when <literals>: its item is each member of <W>, in order; checks <first> to <last> run on one item before the next item.`; `each value at <pattern>` when the pattern has a `*` before its last step; no `when` clause without a guard | Item-major order. "In order" is index order for an array and code point order of keys for an object. The checks named are every check of the group, so the group's end is stated. In the generated table a row inside a group starts with one `·` per enclosing group |
 | phase | `**Phase <n>, <name>.** No check of this phase runs unless every check of the earlier phases holds over the whole input.` | |
 | include | `The checks of phase <names> of <contract>, in their order, on W` then, with a view, ` as transformed by the view <view>: <says>`, where the `says` sentence closes the sentence, and without a view `.`; then, with `as`, the sentence `They are reported with code <code>.` | Without a view the included checks read the value at W. With a view they read the value that `says` states, and nothing else of W |
-| hook, classifier member | the check's `says`, written by hand | |
+| hook, classifier member | the check's `says`, written by hand; inside groups preceded by `For the `g` item of the `g1` item: ` | "The item" in a `says` sentence is the innermost group's item, which the lead names |
 
 A hook, a classifier member and a view have no parameters to generate a sentence from, so the contract carries a
 `says` sentence for each, and the lint refuses one without it. A view's sentence is the `says` of the include

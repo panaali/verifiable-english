@@ -163,11 +163,14 @@ def test_view_inner_path_and_recode():
 def test_locks_and_wordings():
     assert process(DIRECTORY) == []
     check = CONTRACTS["demo@0"]["phases"][1]["checks"][0]["checks"][2]
-    assert wording(check, inside=True) == (
-        "the item's `name`, when present, differs from the same value of every earlier item of this group.")
+    group = CONTRACTS["demo@0"]["phases"][1]["checks"][0]["id"]
+    assert wording(check, groups=(group,)) == (
+        f"The `{group}` item's `name`, when present, differs from the value at the same place in every "
+        f"earlier `{group}` item.")
     table = english_table(CONTRACTS["demo@0"], limits=LIMITS)
     assert "No check of this phase runs unless every check of the earlier phases holds" in table
-    assert "For each member of `/doc/items/*`, in order" in table
+    assert (f"Group `{group}`: its item is each member of `/doc/items`, in order; checks `2.1a` to `2.1d` "
+            "run on one item before the next item.") in table
 
 
 def test_engine_json_replays_hand_derived_cases():
