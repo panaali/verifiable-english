@@ -434,6 +434,68 @@ def test_rights_units_read_with_lean_defaults(lean, variant):
     assert row.get("error", row["status"]) == expected, row
 
 
+def _with_norm(line, **fields):
+    return {**line, "norm": {**line["norm"], **fields}}
+
+
+EXPLICIT_NULL_RIGHTS = {
+    # Review finding B (compose-s1-looprecheck2): `cites: null` on a right's line.
+    "line cites": r9_right([r9_line("strict", cites=None)]),
+    "line fan_out": r9_right([r9_line("strict", fan_out=None)]),
+    "line holder_slot": r9_right([r9_line("strict", holder_slot=None)]),
+    "line liberty": r9_right([r9_line("strict", liberty=None)]),
+    "right guard": r9_right([r9_line("strict")], guard=None),
+    **{f"norm {k}": r9_right([_with_norm(r9_line("strict"), **{k: None})])
+       for k in ("mode", "hard", "alterable", "rank", "exception")},
+}
+
+
+@pytest.mark.parametrize("variant", sorted(EXPLICIT_NULL_RIGHTS))
+def test_explicit_null_is_absent_in_rights_candidates(lean, variant):
+    """Lean's input has no null (`wire` omits it), so an explicit null is the field's default to Lean. Python's
+    regeneration reads the document the same way: the candidate is admitted by both, with the same answer, rather
+    than refused by Python alone (a `CheckerUnavailable` on the route)."""
+    raw = env_rights()
+    row = agreed(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9(raw, EXPLICIT_NULL_RIGHTS[variant])]})
+    assert row["status"] == "ok", row
+    assert row["sets"][0]["findings"] == ["SeparatedByDecisionOnly: rs9: 0, 1 (not certified)"]
+
+
+EXPLICIT_NULL_SOFT = [(i, k) for i in (0, 1) for k in ("mode", "hard", "alterable", "rank", "cites")
+                      if (i, k) != (1, "mode")]
+
+
+@pytest.mark.parametrize("index,field", EXPLICIT_NULL_SOFT)
+def test_explicit_null_is_absent_in_soft_contents(lean, index, field):
+    """Review finding B (compose-s1-looprecheck2): `mode: null` on a soft norm, and `hard`, `alterable`, `rank`
+    and a content's `cites` alike, in a candidate (strict 0, default 1) and in a fixed unit."""
+    raw = env_k()
+    document, _ = k1_document(raw)
+    content = document["reading_sets"][0]["readings"][index]["content"]
+    (content if field == "cites" else content["norm"])[field] = None
+    assert agreed(lean, raw, document)["status"] == "ok"
+    body = norm_object("be-kind", "help_required", True, "default")
+    fixed = {"norm": body, "cites": None} if field == "cites" else {"norm": {**body, field: None}}
+    if field == "mode":
+        fixed = {"norm": {**norm_object("be-kind", "help_required", True), "mode": None}}
+    document, _ = k1_document(raw, fixed_units=[("u0", fixed)])
+    assert agreed(lean, raw, document)["status"] == "ok"
+
+
+def test_explicit_null_on_the_norms_chain(lean):
+    """On the norms chain (W1's decoder) a null soft field is absent too: the answer is the one without it."""
+    raw = env_k(profiles=("norms@0", "readings@1", "relational-fol@0"))
+    document, _ = k1_document(raw)
+    for r in document["reading_sets"][0]["readings"]:
+        r["content"]["norm"].pop("mode", None)
+        r["content"]["norm"].pop("exception", None)
+    plain = agreed(lean, raw, document)
+    for r in document["reading_sets"][0]["readings"]:
+        r["content"]["norm"].update({"mode": None, "hard": None, "alterable": None, "rank": None})
+    assert agreed(lean, raw, document) == plain
+    assert not plain.get("error", "").startswith("fields do not match"), plain
+
+
 def test_other_kinds_go_to_the_lower_route(lean):
     raw = env_k()
     row = run(lean, [{"id": "e", "kind": "soft-elaborate", "environment": raw,
