@@ -72,5 +72,33 @@ Lean soft route rejects it. Neither validator may be edited in S0 to S3 (spec 7.
 follow both: it follows Lean (D3), so the Python engine reports 3.2 on a source that Python's legacy
 validator accepts. The gate report lists the case under `legacy_verdict_differences`.
 
-**Status: open.** The S3-pre row of the continuation gate (spec 9) requires that a reachable verdict
-difference is fixed outside this work; the `rights@0` difference is not fixed, so the row is not closed.
+The status of this re-run was **open**: the S3-pre row of the continuation gate (spec 9) requires that a
+reachable verdict difference is fixed outside this work.
+
+## The fix (2026-10-02, after the wire re-check): no legacy verdict difference remains
+
+The Lean rights route strips `rights@0` from the profiles before it runs the soft decoder
+(`lean/VE/Rights/Wire.lean`, `stripRights`), and the Lean soft route's registry does not have it. Python's
+`RightsEnvironment` passed `rights@0` through to the soft table instead, so Python's soft table had to admit
+it, and a soft source that listed it, without a `rights` block, was accepted by the soft route alone.
+
+Python's soft table now does what the Lean routes do (`ve/softnorms.py`, `LAYER_ROUTES`): check 3.2 refuses
+`rights@0` unless the caller is the rights route, which passes it in `layers` (`RightsEnvironment.LAYERS`).
+The refusal is `SOFT_UNSUPPORTED_PROFILE`, `UnsupportedProfile: Unsupported profile rights@0`, the Lean soft
+route's code and text. The rights route itself, its identities and its documents are unchanged (the rights
+tests and `conformance/rights_three_way.py` pass), and every other soft source is checked as before.
+
+| Profile added | Python `load_soft_document` | Lean route, both engines |
+|---|---|---|
+| `rights@0` | `SOFT_UNSUPPORTED_PROFILE`, `UnsupportedProfile: Unsupported profile rights@0` | 3.2, the same text |
+| `rights@0`, with its `rights` block | `SOFT_INVALID_INPUT`, `InvalidInput: invalid vocabulary` (1.5a) | 1.5a, the same text |
+
+The other five rows of the table above are unchanged: both legacy validators reject, and the codes differ on
+`speech-acts@0` and on the `unspecified` default under `norm-defaults@0`. Those are code differences, not
+verdict differences; the gate report lists them under `legacy_code_differences` for the DRI (plan 5.1,
+step 5). Tests: `tests/test_rights.py::test_soft_route_alone_refuses_rights_profile` and
+`tests/test_wire_contract_soft_lean.py::test_profiles_outside_the_lean_route_three_way`; the gate's tier L
+runs every row.
+
+**Status: closed.** No reachable legacy verdict difference is known; the gate reports
+`legacy_verdict_differences` empty.

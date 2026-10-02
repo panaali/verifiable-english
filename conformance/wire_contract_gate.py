@@ -36,8 +36,8 @@ BIN = ROOT / "lean/.lake/build/bin"
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
 EXAMPLES = ROOT / "ve/wire_contract/examples/soft-norms@0"
 EXPECTED_FIELDS = ("contract", "revision", "check", "phase", "code", "class", "path")
-# The profiles that Python's registry has and the Lean route's does not (s3-pre.md), with what Python's
-# legacy validator does on `env()` with the profile added: (code, text), or None when it accepts.
+# The profiles that Python's registry has and the Lean route's does not (s3-pre.md). Both legacy validators
+# reject a soft source that lists any of them; the codes differ on two.
 PYTHON_ONLY_PROFILES = ("alternatives@0", "norm-defaults@0", "reports@0", "rights@0", "risk@0",
                         "speech-acts@0")
 
@@ -150,9 +150,9 @@ def replay_sources():
 
 
 def legacy_difference_sources(contract):
-    """Inputs on which the two legacy validators are known to differ (s3-pre.md), with the record both
-    engines must report: every profile outside the Lean route's registry, on `env()` and on the base, and
-    the `unspecified` default under `norm-defaults@0`."""
+    """Inputs on which the two legacy validators differed or differ (s3-pre.md), with the record both
+    engines must report: every profile outside the Lean route's registry, on `env()` and on the base, the
+    `rights@0` source with its `rights` block, and the `unspecified` default under `norm-defaults@0`."""
     cases = []
     for profile in PYTHON_ONLY_PROFILES:
         for label, (raw, rules) in (("env", (env(), [])), ("base", multi_fault_base())):
@@ -162,6 +162,14 @@ def legacy_difference_sources(contract):
                         "phase": "profiles", "code": "SOFT_UNSUPPORTED_PROFILE", "class": "UnsupportedProfile",
                         "path": f"/environment/profiles/{index}"}
             cases.append((f"L:{profile}:{label}", raw, rules, expected))
+    # A whole rights source on the soft route: the `rights` block is refused first, at 1.5a, by both.
+    raw = env(profiles=("norms@0", "rights@0", "soft-norms@0"))
+    raw["vocabulary"]["rights"] = {"holders": ["assistant"], "bearers": ["assistant"], "protected": [],
+                                   "alters": {}}
+    cases.append(("L:rights@0:block", raw, [], {
+        "contract": contract["contract"], "revision": contract["revision"], "check": "1.5a",
+        "phase": "envelope", "code": "SOFT_INVALID_INPUT", "class": "InvalidInput",
+        "path": "/environment/vocabulary"}))
     raw = env(profiles=("norms@0", "norm-defaults@0", "soft-norms@0"))
     raw["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
     cases.append(("L:norm-defaults@0:unspecified", raw, [], {
