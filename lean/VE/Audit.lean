@@ -126,6 +126,7 @@ import VE.Readings.Lines
 import VE.Readings.Examples
 import VE.Readings.Wire
 import VE.Readings.Run
+import VE.WireContract.Engine
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3116,3 +3117,11 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.layerNames_sub
 #print axioms VE.Readings.Wire.author_valid
 #print axioms VE.Readings.Wire.readings_wire_separate_sound
+#print axioms VE.WireContract.run_clean_iff
+#print axioms VE.WireContract.run_fault_first
+#print axioms VE.WireContract.run_phase_major
+#print axioms VE.WireContract.expand_views
+#print axioms VE.WireContract.expandAll_views
+#print axioms VE.WireContract.instances_views
+#print axioms VE.WireContract.findSome_congr_reached
+#print axioms VE.WireContract.run_congr_reached

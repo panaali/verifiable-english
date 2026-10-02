@@ -19,10 +19,13 @@ from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument, load_soft_document
 from ve.soft_route import check_regenerated
 from tests.test_soft_norms_lean import env, norm, should, ranks
+from conformance.wire_contract import choose_combinations, first_fault
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
 RUST_FIXTURES = ROOT / "conformance/soft_norms_rust.json"
+# The accepted seeded trees `main` compares.
+TREES = 1000
 
 
 def generated(seed):
@@ -898,20 +901,13 @@ def multi_fault_cases(pairs=900, triples=600, seed=0):
 
     Every pair within one phase is kept; the other pairs and the triples are a
     deterministic sample. Yields (name, raw, rules, expected code)."""
-    faults = multi_faults()
-    rng = random.Random(seed)
-    combos = [c for c in combinations(faults, 2) if c[0][1] != c[1][1]]
-    same_phase = [c for c in combos if c[0][2][0] == c[1][2][0]]
-    other = [c for c in combos if c[0][2][0] != c[1][2][0]]
-    chosen = same_phase + rng.sample(other, min(pairs, len(other)))
-    three = [c for c in combinations(faults, 3) if len({f[1] for f in c}) == 3
-             and len({f[2][0] for f in c}) >= 2]
-    chosen += rng.sample(three, min(triples, len(three)))
-    for combo in chosen:
+    for combo in choose_combinations(multi_faults(), phase=lambda fault: fault[2][0],
+                                     footprint=lambda fault: (fault[1],),
+                                     pairs=pairs, triples=triples, seed=seed):
         raw, rules = multi_fault_base()
         for fault in combo:
             fault[4](raw, rules)
-        first = min(combo, key=lambda f: f[2])
+        first = first_fault(combo, position=lambda fault: fault[2])
         yield "+".join(f[0] for f in combo), raw, rules, first[3]
 
 
@@ -1072,14 +1068,43 @@ def _batches(cases, limit=8 << 20):
         yield "[" + ",".join(batch) + "]"
 
 
+def rejected_cases():
+    """The sources `compare_rejected` submits, in its order: the fixed rejections, the named sources of
+    `expected_rejections()`, then the generated block, rule, combined block and exception faults."""
+    return (rejected_sources() +
+            [(raw, rules) for _, raw, rules, _ in expected_rejections()] +
+            list(generated_invalid_soft_blocks()) +
+            list(generated_invalid_soft_rules()) +
+            list(combined_invalid_soft_blocks()) +
+            list(generated_invalid_exceptions()))
+
+
+def generated_trees(count=TREES):
+    """The seeded trees `main` examines, in seed order, until `count` are accepted: (seed, raw, rules,
+    the Python document or None when Python rejects the tree)."""
+    accepted, seed = 0, 0
+    while accepted < count:
+        raw, rules = generated(seed)
+        try:
+            soft = SoftNormDocument(SoftEnvironment(raw), rules)
+            accepted += 1
+        except Exception:
+            soft = None
+        yield seed, raw, rules, soft
+        seed += 1
+
+
+def exercised_sources():
+    """Every source this module's comparison (`main`) submits to a validator, labelled: the seeded trees,
+    the rejected cases and the near-limit cases. The wire gate replays each of them."""
+    return [*((f"tree:{seed}", raw, rules) for seed, raw, rules, _ in generated_trees()),
+            *((f"rejected:{i}", raw, rules) for i, (raw, rules) in enumerate(rejected_cases())),
+            *((f"near-limit:{name}", raw, rules) for name, raw, rules in near_limit_cases())]
+
+
 def compare_rejected():
     named = expected_rejections()
-    cases = (rejected_sources() +
-             [(raw, rules) for _, raw, rules, _ in named] +
-             list(generated_invalid_soft_blocks()) +
-             list(generated_invalid_soft_rules()) +
-             list(combined_invalid_soft_blocks()) +
-             list(generated_invalid_exceptions()))
+    cases = rejected_cases()
     expected = []
     for raw, rules in cases:
         try:
@@ -1167,14 +1192,13 @@ def main():
         return
     compared = 0
     seed = 0
-    while compared < 1000:
+    trees = generated_trees()
+    while compared < TREES:
         batch = []
-        while len(batch) < min(25, 1000 - compared):
-            raw, rules = generated(seed)
-            seed += 1
-            try:
-                soft = SoftNormDocument(SoftEnvironment(raw), rules)
-            except Exception:
+        while len(batch) < min(25, TREES - compared):
+            tree_seed, raw, rules, soft = next(trees)
+            seed = tree_seed + 1
+            if soft is None:
                 continue  # generate another accepted tree
             batch.append((raw, rules, soft))
         cases = [{"id": str(compared + i), "kind": "soft-elaborate",

@@ -1,0 +1,1474 @@
+{
+  "contract": "soft-norms@0",
+  "revision": 3,
+  "format": 1,
+  "status": "shadow",
+  "input": [
+    "environment",
+    "norms"
+  ],
+  "adapter": "soft_source",
+  "uses": [
+    "limits",
+    "names"
+  ],
+  "codes": {
+    "SOFT_MISSING_EXCEPTION": {
+      "class": "InvalidInput",
+      "summary": "missing exception"
+    },
+    "SOFT_INVALID_TIES_PAIR": {
+      "class": "InvalidInput",
+      "summary": "invalid ties pair"
+    },
+    "SOFT_INVALID_OUTRANKS_PAIR": {
+      "class": "InvalidInput",
+      "summary": "invalid outranks pair"
+    },
+    "SOFT_INVALID_BLOCK": {
+      "class": "InvalidInput",
+      "summary": "invalid block"
+    },
+    "SOFT_INVALID_OUTRANKING": {
+      "class": "InvalidInput",
+      "summary": "invalid outranking"
+    },
+    "SOFT_INVALID_DECIDER": {
+      "class": "InvalidInput",
+      "summary": "invalid decider"
+    },
+    "SOFT_MISSING_DECIDER": {
+      "class": "InvalidInput",
+      "summary": "missing decider"
+    },
+    "SOFT_STRICT_OUTRANKING_DECIDER": {
+      "class": "InvalidInput",
+      "summary": "strict outranking decider"
+    },
+    "SOFT_INVALID_NAME": {
+      "class": "InvalidInput",
+      "summary": "invalid name"
+    },
+    "SOFT_DUPLICATE_DECLARATION": {
+      "class": "DuplicateDeclaration",
+      "summary": "duplicate declaration"
+    },
+    "SOFT_UNKNOWN_RANK": {
+      "class": "InvalidInput",
+      "summary": "unknown rank"
+    },
+    "SOFT_TIE_AGAINST_ORDER": {
+      "class": "InvalidInput",
+      "summary": "tie against order"
+    },
+    "SOFT_DEPENDENCY_CYCLE": {
+      "class": "InvalidInput",
+      "summary": "dependency cycle"
+    },
+    "SOFT_UNKNOWN_PARTY": {
+      "class": "UnknownSymbol",
+      "summary": "unknown party"
+    },
+    "SOFT_STRICT_EXCEPTION": {
+      "class": "InvalidInput",
+      "summary": "strict exception"
+    },
+    "SOFT_EXCEPTION_ARRAY": {
+      "class": "InvalidInput",
+      "summary": "exception array"
+    },
+    "SOFT_INVALID_FACTORS": {
+      "class": "InvalidInput",
+      "summary": "invalid factors"
+    },
+    "SOFT_INVALID_ALTERABLE": {
+      "class": "InvalidInput",
+      "summary": "invalid alterable"
+    },
+    "SOFT_HARD_CONSTRAINT": {
+      "class": "InvalidInput",
+      "summary": "hard constraint"
+    },
+    "SOFT_INVALID_EXCEPTION_CONDITION": {
+      "class": "InvalidInput",
+      "summary": "invalid exception condition"
+    },
+    "SOFT_OVER_HARD": {
+      "class": "InvalidInput",
+      "summary": "over hard"
+    },
+    "SOFT_RESOURCE_LIMIT": {
+      "class": "ResourceLimit",
+      "summary": "resource limit"
+    },
+    "SOFT_UNSUPPORTED_PROFILE": {
+      "class": "UnsupportedProfile",
+      "summary": "unsupported profile"
+    },
+    "SOFT_INVALID_ARRAY": {
+      "class": "InvalidInput",
+      "summary": "invalid array"
+    },
+    "SOFT_INVALID_RULE_FIELDS": {
+      "class": "InvalidInput",
+      "summary": "invalid rule fields"
+    },
+    "SOFT_INVALID_INPUT": {
+      "class": "InvalidInput",
+      "summary": "invalid input"
+    }
+  },
+  "residual": "SOFT_INVALID_INPUT",
+  "phases": [
+    {
+      "name": "envelope",
+      "checks": [
+        {
+          "id": "1.1",
+          "kind": "exact_keys",
+          "at": "/environment",
+          "keys": [
+            "language",
+            "profiles",
+            "spec_revision",
+            "vocabulary"
+          ],
+          "code": "SOFT_INVALID_INPUT",
+          "text": "InvalidInput: invalid environment envelope"
+        },
+        {
+          "id": "1.2",
+          "kind": "const",
+          "at": "/environment/language",
+          "value": "ve.core@0.2",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: Unsupported language"
+        },
+        {
+          "id": "1.3",
+          "kind": "type",
+          "at": "/environment/profiles",
+          "type": {
+            "array_of": "string"
+          },
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: profiles must be a sorted unique array"
+        },
+        {
+          "id": "1.4",
+          "kind": "const",
+          "at": "/environment/spec_revision",
+          "value": "ve-v0.2-expand2-2026-09-25",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: Unsupported specification revision"
+        },
+        {
+          "id": "1.5a",
+          "kind": "keys",
+          "at": "/environment/vocabulary",
+          "required": [
+            "sorts",
+            "predicates",
+            "constants"
+          ],
+          "optional": [
+            "soft"
+          ],
+          "code": "SOFT_INVALID_INPUT",
+          "text": "InvalidInput: invalid vocabulary"
+        },
+        {
+          "id": "1.5b",
+          "kind": "type",
+          "at": "/environment/vocabulary/sorts",
+          "type": "object",
+          "code": "SOFT_INVALID_INPUT",
+          "text": "InvalidInput: invalid vocabulary"
+        },
+        {
+          "id": "1.5c",
+          "kind": "type",
+          "at": "/environment/vocabulary/predicates",
+          "type": "object",
+          "code": "SOFT_INVALID_INPUT",
+          "text": "InvalidInput: invalid vocabulary"
+        },
+        {
+          "id": "1.5d",
+          "kind": "type",
+          "at": "/environment/vocabulary/constants",
+          "type": "object",
+          "code": "SOFT_INVALID_INPUT",
+          "text": "InvalidInput: invalid vocabulary"
+        },
+        {
+          "id": "1.6",
+          "kind": "type",
+          "at": "/norms",
+          "type": "array",
+          "code": "SOFT_INVALID_INPUT",
+          "text": "InvalidInput: expected an array of norm objects"
+        },
+        {
+          "id": "1.7",
+          "kind": "max_items",
+          "at": "/norms",
+          "limit": "MAX_RULES",
+          "code": "SOFT_RESOURCE_LIMIT",
+          "text": "ResourceLimit: rules"
+        }
+      ]
+    },
+    {
+      "name": "declarations",
+      "checks": [
+        {
+          "id": "pred-name",
+          "each": "/environment/vocabulary/predicates/*",
+          "checks": [
+            {
+              "id": "2.1a",
+              "kind": "name",
+              "at": "@",
+              "on": "key",
+              "class": "not_soft_reserved",
+              "code": "SOFT_INVALID_NAME",
+              "text": "InvalidInput: invalid soft name {key}"
+            },
+            {
+              "id": "2.1b",
+              "kind": "name",
+              "at": "@",
+              "on": "key",
+              "class": "no_double_underscore",
+              "when": [
+                {
+                  "present": "@/regulated"
+                }
+              ],
+              "code": "SOFT_INVALID_NAME",
+              "text": "InvalidInput: invalid soft name {key}"
+            }
+          ]
+        },
+        {
+          "id": "pred-instruction",
+          "each": "/environment/vocabulary/predicates/*",
+          "checks": [
+            {
+              "id": "2.2a",
+              "kind": "type",
+              "at": "@/instruction_of",
+              "type": "string",
+              "code": "SOFT_INVALID_INPUT",
+              "text": "InvalidInput: instruction_of on {key}"
+            },
+            {
+              "id": "2.2b",
+              "kind": "excludes",
+              "at": "@",
+              "member": "regulated",
+              "when": [
+                {
+                  "present": "@/instruction_of"
+                }
+              ],
+              "code": "SOFT_INVALID_INPUT",
+              "text": "InvalidInput: instruction_of on {key}"
+            },
+            {
+              "id": "2.2c",
+              "kind": "excludes",
+              "at": "@",
+              "member": "defined",
+              "when": [
+                {
+                  "present": "@/instruction_of"
+                }
+              ],
+              "code": "SOFT_INVALID_INPUT",
+              "text": "InvalidInput: instruction_of on {key}"
+            }
+          ]
+        },
+        {
+          "id": "2.3",
+          "kind": "hook",
+          "at": "/environment",
+          "hook": "w1_declarations",
+          "returns": [
+            "message"
+          ],
+          "inherited": true,
+          "says": "W1's environment decoder accepts `/environment` with `instruction_of` removed from every predicate, `soft` removed from the vocabulary, and the profiles reduced to `norms@0`, `relational-fol@0` and those of `data@0`, `definitions@0`, `documents@1` and `time@0` that it lists.",
+          "code": "SOFT_INVALID_INPUT",
+          "text": "{message}"
+        },
+        {
+          "id": "2.4",
+          "kind": "keys",
+          "at": "/environment/vocabulary/soft",
+          "required": [
+            "outranking"
+          ],
+          "optional": [
+            "parties",
+            "ranks",
+            "outranks",
+            "ties",
+            "exception_decider"
+          ],
+          "code": "SOFT_INVALID_BLOCK",
+          "text": "InvalidInput: invalid soft block"
+        },
+        {
+          "id": "2.5",
+          "kind": "type",
+          "at": "/environment/vocabulary/soft/parties",
+          "type": "array",
+          "code": "SOFT_INVALID_ARRAY",
+          "text": "InvalidInput: parties must be an array"
+        },
+        {
+          "id": "2.6",
+          "kind": "max_items",
+          "at": "/environment/vocabulary/soft/parties",
+          "limit": "MAX_SOFT_PARTIES",
+          "code": "SOFT_RESOURCE_LIMIT",
+          "text": "ResourceLimit: parties"
+        },
+        {
+          "id": "parties",
+          "each": "/environment/vocabulary/soft/parties/*",
+          "checks": [
+            {
+              "id": "2.7a",
+              "kind": "name",
+              "class": "soft_name",
+              "code": "SOFT_INVALID_NAME",
+              "text": "InvalidInput: invalid soft name {value}"
+            },
+            {
+              "id": "2.7b",
+              "kind": "unique_so_far",
+              "code": "SOFT_DUPLICATE_DECLARATION",
+              "text": "DuplicateDeclaration: party {value}"
+            }
+          ]
+        },
+        {
+          "id": "2.8a",
+          "kind": "type",
+          "at": "/environment/vocabulary/soft/ranks",
+          "type": "array",
+          "code": "SOFT_INVALID_ARRAY",
+          "text": "InvalidInput: ranks must be an array"
+        },
+        {
+          "id": "2.8b",
+          "kind": "max_items",
+          "at": "/environment/vocabulary/soft/ranks",
+          "limit": "MAX_SOFT_RANKS",
+          "code": "SOFT_RESOURCE_LIMIT",
+          "text": "ResourceLimit: ranks"
+        },
+        {
+          "id": "ranks",
+          "each": "/environment/vocabulary/soft/ranks/*",
+          "checks": [
+            {
+              "id": "2.8c",
+              "kind": "name",
+              "class": "soft_name",
+              "code": "SOFT_INVALID_NAME",
+              "text": "InvalidInput: invalid soft name {value}"
+            },
+            {
+              "id": "2.8d",
+              "kind": "unique_so_far",
+              "code": "SOFT_DUPLICATE_DECLARATION",
+              "text": "DuplicateDeclaration: rank {value}"
+            }
+          ]
+        },
+        {
+          "id": "2.9a",
+          "kind": "keys",
+          "at": "/environment/vocabulary/soft/outranking",
+          "required": [
+            "mode"
+          ],
+          "optional": [
+            "decided_by"
+          ],
+          "code": "SOFT_INVALID_OUTRANKING",
+          "text": "InvalidInput: invalid outranking flag"
+        },
+        {
+          "id": "2.9b",
+          "kind": "enum",
+          "at": "/environment/vocabulary/soft/outranking/mode",
+          "values": [
+            "strict",
+            "holistic"
+          ],
+          "code": "SOFT_INVALID_OUTRANKING",
+          "text": "InvalidInput: invalid outranking flag"
+        },
+        {
+          "id": "2.10",
+          "kind": "excludes",
+          "at": "/environment/vocabulary/soft/outranking",
+          "member": "decided_by",
+          "when": [
+            {
+              "equals": [
+                "/environment/vocabulary/soft/outranking/mode",
+                "strict"
+              ]
+            }
+          ],
+          "code": "SOFT_STRICT_OUTRANKING_DECIDER",
+          "text": "InvalidInput: strict outranking has no decider"
+        },
+        {
+          "id": "2.11",
+          "kind": "type",
+          "at": "/environment/vocabulary/soft/outranking/decided_by",
+          "type": "string",
+          "code": "SOFT_INVALID_DECIDER",
+          "text": "InvalidInput: invalid decider for outranking"
+        },
+        {
+          "id": "2.12",
+          "kind": "requires",
+          "at": "/environment/vocabulary/soft/outranking",
+          "member": "decided_by",
+          "when": [
+            {
+              "equals": [
+                "/environment/vocabulary/soft/outranking/mode",
+                "holistic"
+              ]
+            }
+          ],
+          "code": "SOFT_MISSING_DECIDER",
+          "text": "MissingExceptionDecider: outranking"
+        },
+        {
+          "id": "2.13",
+          "kind": "name",
+          "at": "/environment/vocabulary/soft/outranking/decided_by",
+          "class": "decider",
+          "code": "SOFT_INVALID_DECIDER",
+          "text": "InvalidInput: invalid decider for outranking"
+        },
+        {
+          "id": "2.14",
+          "kind": "name",
+          "at": "/environment/vocabulary/soft/exception_decider",
+          "class": "decider",
+          "code": "SOFT_INVALID_DECIDER",
+          "text": "InvalidInput: invalid decider for exception"
+        },
+        {
+          "id": "2.15",
+          "kind": "type",
+          "at": "/environment/vocabulary/soft/outranks",
+          "type": "array",
+          "code": "SOFT_INVALID_ARRAY",
+          "text": "InvalidInput: outranks must be an array"
+        },
+        {
+          "id": "outranks",
+          "each": "/environment/vocabulary/soft/outranks/*",
+          "checks": [
+            {
+              "id": "2.16a",
+              "kind": "type",
+              "type": {
+                "tuple": [
+                  "string",
+                  "string"
+                ]
+              },
+              "code": "SOFT_INVALID_OUTRANKS_PAIR",
+              "text": "InvalidInput: invalid outranks pair"
+            },
+            {
+              "id": "outranks-pair",
+              "each": "@/*",
+              "checks": [
+                {
+                  "id": "2.16b",
+                  "kind": "unique_so_far",
+                  "code": "SOFT_INVALID_OUTRANKS_PAIR",
+                  "text": "InvalidInput: invalid outranks pair"
+                }
+              ]
+            },
+            {
+              "id": "2.16c",
+              "kind": "unique_so_far",
+              "code": "SOFT_INVALID_OUTRANKS_PAIR",
+              "text": "InvalidInput: invalid outranks pair"
+            }
+          ]
+        },
+        {
+          "id": "2.17a",
+          "kind": "type",
+          "at": "/environment/vocabulary/soft/ties",
+          "type": "array",
+          "code": "SOFT_INVALID_ARRAY",
+          "text": "InvalidInput: ties must be an array"
+        },
+        {
+          "id": "ties",
+          "each": "/environment/vocabulary/soft/ties/*",
+          "checks": [
+            {
+              "id": "2.17b",
+              "kind": "type",
+              "type": {
+                "tuple": [
+                  "string",
+                  "string"
+                ]
+              },
+              "code": "SOFT_INVALID_TIES_PAIR",
+              "text": "InvalidInput: invalid ties pair"
+            },
+            {
+              "id": "ties-pair",
+              "each": "@/*",
+              "checks": [
+                {
+                  "id": "2.17c",
+                  "kind": "unique_so_far",
+                  "code": "SOFT_INVALID_TIES_PAIR",
+                  "text": "InvalidInput: invalid ties pair"
+                }
+              ]
+            },
+            {
+              "id": "2.17d",
+              "kind": "unique_so_far",
+              "code": "SOFT_INVALID_TIES_PAIR",
+              "text": "InvalidInput: invalid ties pair"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "profiles",
+      "checks": [
+        {
+          "id": "3.1",
+          "kind": "sorted_unique",
+          "at": "/environment/profiles",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: profiles must be sorted and unique"
+        },
+        {
+          "id": "profile-items",
+          "each": "/environment/profiles/*",
+          "checks": [
+            {
+              "id": "3.2",
+              "kind": "hook",
+              "hook": "profile_registered",
+              "says": "The item is one of `closure@0`, `data@0`, `definitions@0`, `documents@1`, `nary@0`, `norms@0`, `order@0`, `relational-fol@0`, `soft-norms@0` and `time@0`.",
+              "code": "SOFT_UNSUPPORTED_PROFILE",
+              "text": "UnsupportedProfile: Unsupported profile {value}"
+            }
+          ]
+        },
+        {
+          "id": "3.3a",
+          "kind": "requires",
+          "at": "/environment/profiles",
+          "item": "relational-fol@0",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: Missing profile relational-fol@0"
+        },
+        {
+          "id": "3.3b",
+          "kind": "requires",
+          "at": "/environment/profiles",
+          "item": "soft-norms@0",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: soft-norms@0 is required"
+        },
+        {
+          "id": "3.3c",
+          "kind": "requires",
+          "at": "/environment/profiles",
+          "item": "norms@0",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: soft-norms@0 requires norms@0"
+        },
+        {
+          "id": "3.4a",
+          "kind": "excludes",
+          "at": "/environment/profiles",
+          "item": "closure@0",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: the norms route admits FOL documents only"
+        },
+        {
+          "id": "3.4b",
+          "kind": "excludes",
+          "at": "/environment/profiles",
+          "item": "nary@0",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: the norms route admits FOL documents only"
+        },
+        {
+          "id": "3.4c",
+          "kind": "excludes",
+          "at": "/environment/profiles",
+          "item": "order@0",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: the norms route admits FOL documents only"
+        },
+        {
+          "id": "3.5a",
+          "kind": "hook",
+          "at": "/environment/vocabulary/predicates",
+          "hook": "no_definitions",
+          "says": "No predicate has a definition.",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: norms route with definitions is not implemented"
+        },
+        {
+          "id": "3.5b",
+          "kind": "hook",
+          "at": "/environment/vocabulary/predicates",
+          "hook": "no_data_flags",
+          "says": "No predicate has a functional or total data flag.",
+          "code": "SOFT_UNSUPPORTED_PROFILE",
+          "text": "UnsupportedProfile: norms route with data flags is not implemented"
+        }
+      ]
+    },
+    {
+      "name": "rule-fields",
+      "checks": [
+        {
+          "id": "rules-fields",
+          "each": "/norms/*",
+          "checks": [
+            {
+              "id": "4.1a",
+              "kind": "exact_keys",
+              "at": "@",
+              "keys": [
+                "norm"
+              ],
+              "code": "SOFT_INVALID_INPUT",
+              "text": "InvalidInput: expected norm object"
+            },
+            {
+              "id": "4.1b",
+              "kind": "type",
+              "at": "@/norm",
+              "type": "object",
+              "code": "SOFT_INVALID_INPUT",
+              "text": "InvalidInput: expected norm object"
+            },
+            {
+              "id": "4.1c",
+              "kind": "keys",
+              "at": "@/norm",
+              "required": [
+                "name",
+                "predicate",
+                "sign",
+                "guard",
+                "unless",
+                "over"
+              ],
+              "optional": [
+                "mode",
+                "rank",
+                "alterable",
+                "exception",
+                "hard"
+              ],
+              "code": "SOFT_INVALID_INPUT",
+              "text": "InvalidInput: invalid norm fields"
+            },
+            {
+              "id": "4.2a",
+              "kind": "hook",
+              "at": "@/norm",
+              "hook": "w1_rule_fields",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "W1's rule decoder accepts the item's `norm` restricted to `name`, `predicate`, `sign`, `guard`, `unless` and `over`, its `name` is a rule name, and it has at most 8 carve-outs.",
+              "code": "SOFT_INVALID_INPUT",
+              "text": "{message}"
+            },
+            {
+              "id": "over-names",
+              "each": "@/norm/over/*",
+              "checks": [
+                {
+                  "id": "4.2b",
+                  "kind": "unique_so_far",
+                  "args": {
+                    "name": "@1/norm/name"
+                  },
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "InvalidInput: duplicate over {value} in rule {name}"
+                }
+              ]
+            },
+            {
+              "id": "4.3",
+              "kind": "enum",
+              "at": "@/norm/mode",
+              "values": [
+                "strict",
+                "default"
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_RULE_FIELDS",
+              "text": "InvalidInput: invalid mode for rule {name}"
+            },
+            {
+              "id": "4.4",
+              "kind": "type",
+              "at": "@/norm/rank",
+              "type": [
+                "null",
+                "string"
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_RULE_FIELDS",
+              "text": "InvalidInput: invalid soft fields for {name}"
+            },
+            {
+              "id": "4.5a",
+              "kind": "type",
+              "at": "@/norm/alterable",
+              "type": {
+                "array_of": "string"
+              },
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_ALTERABLE",
+              "text": "InvalidInput: alterable of rule {name} must be sorted and distinct"
+            },
+            {
+              "id": "4.5b",
+              "kind": "sorted_unique",
+              "at": "@/norm/alterable",
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_ALTERABLE",
+              "text": "InvalidInput: alterable of rule {name} must be sorted and distinct"
+            },
+            {
+              "id": "4.6",
+              "kind": "type",
+              "at": "@/norm/hard",
+              "type": "boolean",
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_RULE_FIELDS",
+              "text": "InvalidInput: hard of rule {name} must be Boolean"
+            },
+            {
+              "id": "4.7a",
+              "kind": "enum",
+              "at": "@/norm/mode",
+              "values": [
+                "strict"
+              ],
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/hard",
+                    true
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_HARD_CONSTRAINT",
+              "text": "HardConstraintAltered: rule {name}"
+            },
+            {
+              "id": "4.7b",
+              "kind": "max_items",
+              "at": "@/norm/alterable",
+              "limit": 0,
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/hard",
+                    true
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_HARD_CONSTRAINT",
+              "text": "HardConstraintAltered: rule {name}"
+            },
+            {
+              "id": "4.8",
+              "kind": "type",
+              "at": "@/norm/exception",
+              "type": "null",
+              "when": [
+                {
+                  "differs": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_STRICT_EXCEPTION",
+              "text": "InvalidInput: rule {name} is strict and declares an exception"
+            },
+            {
+              "id": "4.9a",
+              "kind": "requires",
+              "at": "@/norm",
+              "member": "exception",
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_MISSING_EXCEPTION",
+              "text": "InvalidInput: rule {name} needs an exception"
+            },
+            {
+              "id": "4.9b",
+              "kind": "keys",
+              "at": "@/norm/exception",
+              "required": [
+                "sufficient",
+                "necessary",
+                "factors"
+              ],
+              "optional": [
+                "decided_by"
+              ],
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_MISSING_EXCEPTION",
+              "text": "InvalidInput: rule {name} needs an exception"
+            },
+            {
+              "id": "4.10",
+              "kind": "type",
+              "at": "@/norm/exception/decided_by",
+              "type": [
+                "null",
+                "string"
+              ],
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_DECIDER",
+              "text": "InvalidInput: invalid decider for rule {name}"
+            },
+            {
+              "id": "4.11a",
+              "kind": "requires",
+              "at": "@/norm/exception",
+              "member": "decided_by",
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                },
+                {
+                  "absent": "/environment/vocabulary/soft/exception_decider"
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_MISSING_DECIDER",
+              "text": "MissingExceptionDecider: rule {name}"
+            },
+            {
+              "id": "4.11b",
+              "kind": "type",
+              "at": "@/norm/exception/decided_by",
+              "type": "string",
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                },
+                {
+                  "absent": "/environment/vocabulary/soft/exception_decider"
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_MISSING_DECIDER",
+              "text": "MissingExceptionDecider: rule {name}"
+            },
+            {
+              "id": "4.12",
+              "kind": "name",
+              "at": "@/norm/exception/decided_by",
+              "class": "decider",
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                },
+                {
+                  "is": [
+                    "@/norm/exception/decided_by",
+                    "string"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_DECIDER",
+              "text": "InvalidInput: invalid decider for rule {name}"
+            },
+            {
+              "id": "4.13a",
+              "kind": "type",
+              "at": "@/norm/exception/sufficient",
+              "type": "array",
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "code": "SOFT_EXCEPTION_ARRAY",
+              "text": "InvalidInput: exception sufficient must be an array"
+            },
+            {
+              "id": "sufficient",
+              "each": "@/norm/exception/sufficient/*",
+              "checks": [
+                {
+                  "id": "4.13b",
+                  "kind": "hook",
+                  "hook": "fol_formula",
+                  "returns": [
+                    "message"
+                  ],
+                  "inherited": true,
+                  "says": "W1's formula decoder accepts the item as one formula within its own node budget.",
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "{message}"
+                }
+              ],
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4.13c",
+              "kind": "type",
+              "at": "@/norm/exception/necessary",
+              "type": "array",
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "code": "SOFT_EXCEPTION_ARRAY",
+              "text": "InvalidInput: exception necessary must be an array"
+            },
+            {
+              "id": "necessary",
+              "each": "@/norm/exception/necessary/*",
+              "checks": [
+                {
+                  "id": "4.13d",
+                  "kind": "hook",
+                  "hook": "fol_formula",
+                  "returns": [
+                    "message"
+                  ],
+                  "inherited": true,
+                  "says": "W1's formula decoder accepts the item as one formula within its own node budget.",
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "{message}"
+                }
+              ],
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4.14a",
+              "kind": "type",
+              "at": "@/norm/exception/factors",
+              "type": {
+                "array_of": "string"
+              },
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_INVALID_FACTORS",
+              "text": "InvalidInput: invalid factors of rule {name}"
+            },
+            {
+              "id": "factors",
+              "each": "@/norm/exception/factors/*",
+              "checks": [
+                {
+                  "id": "4.14b",
+                  "kind": "max_bytes",
+                  "limit": "MAX_FACTOR_BYTES",
+                  "args": {
+                    "name": "@1/norm/name"
+                  },
+                  "code": "SOFT_INVALID_FACTORS",
+                  "text": "InvalidInput: invalid factors of rule {name}"
+                }
+              ],
+              "when": [
+                {
+                  "equals": [
+                    "@/norm/mode",
+                    "default"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "references",
+      "checks": [
+        {
+          "id": "instructions",
+          "each": "/environment/vocabulary/predicates/*",
+          "checks": [
+            {
+              "id": "5.1",
+              "kind": "declared_in",
+              "at": "@/instruction_of",
+              "set": "/environment/vocabulary/soft/parties/*",
+              "code": "SOFT_UNKNOWN_PARTY",
+              "text": "UnknownSymbol: party {value}"
+            }
+          ]
+        },
+        {
+          "id": "outrank-refs",
+          "each": "/environment/vocabulary/soft/outranks/*",
+          "checks": [
+            {
+              "id": "outrank-names",
+              "each": "@/*",
+              "checks": [
+                {
+                  "id": "5.2a",
+                  "kind": "declared_in",
+                  "set": "/environment/vocabulary/soft/ranks/*",
+                  "code": "SOFT_UNKNOWN_RANK",
+                  "text": "UnknownRank: {value}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tie-refs",
+          "each": "/environment/vocabulary/soft/ties/*",
+          "checks": [
+            {
+              "id": "tie-names",
+              "each": "@/*",
+              "checks": [
+                {
+                  "id": "5.2b",
+                  "kind": "declared_in",
+                  "set": "/environment/vocabulary/soft/ranks/*",
+                  "code": "SOFT_UNKNOWN_RANK",
+                  "text": "UnknownRank: {value}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rule-names",
+          "each": "/norms/*/norm/name",
+          "checks": [
+            {
+              "id": "5.3",
+              "kind": "unique_so_far",
+              "code": "SOFT_DUPLICATE_DECLARATION",
+              "text": "DuplicateDeclaration: rule {value}"
+            }
+          ]
+        },
+        {
+          "id": "rule-refs",
+          "each": "/norms/*",
+          "checks": [
+            {
+              "id": "5.4",
+              "kind": "hook",
+              "at": "@/norm/predicate",
+              "hook": "regulated_predicate",
+              "says": "The predicate named by the item's `norm/predicate` is declared with `regulated`.",
+              "code": "SOFT_INVALID_INPUT",
+              "text": "UnknownSymbol: regulated predicate {value}"
+            },
+            {
+              "id": "5.5",
+              "kind": "declared_in",
+              "at": "@/norm/rank",
+              "set": "/environment/vocabulary/soft/ranks/*",
+              "when": [
+                {
+                  "is": [
+                    "@/norm/rank",
+                    "string"
+                  ]
+                }
+              ],
+              "args": {
+                "name": "@/norm/name"
+              },
+              "code": "SOFT_UNKNOWN_RANK",
+              "text": "UnknownRank: rule {name}, {value}"
+            },
+            {
+              "id": "alterable-refs",
+              "each": "@/norm/alterable/*",
+              "checks": [
+                {
+                  "id": "5.6",
+                  "kind": "declared_in",
+                  "set": "/environment/vocabulary/soft/parties/*",
+                  "code": "SOFT_UNKNOWN_PARTY",
+                  "text": "UnknownSymbol: party {value}"
+                }
+              ]
+            },
+            {
+              "id": "rule-typing",
+              "kind": "classifier",
+              "classifier": "rule_typing",
+              "at": "@",
+              "emits": [
+                {
+                  "id": "5.7",
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "{message}",
+                  "returns": [
+                    "message"
+                  ],
+                  "inherited": true,
+                  "says": "The item's guard and carve-outs are well typed over the sorts of its predicate, in that order, and together have at most 10,000 nodes."
+                },
+                {
+                  "id": "5.8a",
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "{message}",
+                  "returns": [
+                    "message"
+                  ],
+                  "inherited": true,
+                  "says": "Each condition of the item's exception, `sufficient` before `necessary`, is well typed over the sorts of its predicate, and the guard, the carve-outs and the conditions up to it together have at most 10,000 nodes."
+                },
+                {
+                  "id": "5.8b",
+                  "code": "SOFT_INVALID_EXCEPTION_CONDITION",
+                  "text": "InvalidInput: exception condition of rule {detail}",
+                  "returns": [
+                    "detail"
+                  ],
+                  "says": "No condition of the item's exception names a predicate that is declared with `regulated`, is defined, or starts with `soft__`."
+                }
+              ]
+            },
+            {
+              "id": "over-refs",
+              "each": "@/norm/over/*",
+              "checks": [
+                {
+                  "id": "5.9a",
+                  "kind": "declared_in",
+                  "set": "/norms/*/norm/name",
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "UnknownRule: rule {value}"
+                },
+                {
+                  "id": "5.9b",
+                  "kind": "hook",
+                  "hook": "over_same_predicate",
+                  "returns": [
+                    "rule",
+                    "predicate",
+                    "parent_predicate"
+                  ],
+                  "says": "The rule named by the item has the same `predicate` as the enclosing item's rule.",
+                  "code": "SOFT_INVALID_INPUT",
+                  "text": "PrecedenceAcrossPredicates: rule {rule} on {predicate}, rule {value} on {parent_predicate}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "semantic",
+      "checks": [
+        {
+          "id": "6.1",
+          "kind": "hook",
+          "at": "/environment/vocabulary/soft/outranks",
+          "hook": "outranks_acyclic",
+          "returns": [
+            "detail"
+          ],
+          "says": "The outranking graph is acyclic.",
+          "code": "SOFT_DEPENDENCY_CYCLE",
+          "text": "DependencyCycle: {detail}"
+        },
+        {
+          "id": "tie-comparisons",
+          "each": "/environment/vocabulary/soft/ties/*",
+          "checks": [
+            {
+              "id": "6.2",
+              "kind": "hook",
+              "hook": "tie_not_comparable",
+              "args": {
+                "a": "@/0",
+                "b": "@/1"
+              },
+              "says": "Neither rank of the item outranks the other, directly or through other ranks.",
+              "code": "SOFT_TIE_AGAINST_ORDER",
+              "text": "TieAgainstOrder: {a}, {b}"
+            }
+          ]
+        },
+        {
+          "id": "6.3",
+          "kind": "hook",
+          "at": "/environment/vocabulary/soft/ties",
+          "hook": "ties_distinct_unordered",
+          "says": "No two ties of `/environment/vocabulary/soft/ties` hold the same two ranks, in either order.",
+          "code": "SOFT_DUPLICATE_DECLARATION",
+          "text": "DuplicateDeclaration: tie"
+        },
+        {
+          "id": "6.4a",
+          "kind": "hook",
+          "hook": "decision_names_fit",
+          "returns": [
+            "name"
+          ],
+          "says": "Every generated decision predicate name is at most 64 bytes long in UTF-8.",
+          "code": "SOFT_RESOURCE_LIMIT",
+          "text": "ResourceLimit: decision predicate {name}"
+        },
+        {
+          "id": "6.4b",
+          "kind": "hook",
+          "hook": "extended_vocabulary_fits",
+          "says": "The declared predicates and the generated decision predicates are together at most 256.",
+          "code": "SOFT_RESOURCE_LIMIT",
+          "text": "ResourceLimit: extended vocabulary"
+        },
+        {
+          "id": "soft-semantic",
+          "kind": "classifier",
+          "classifier": "soft_semantic",
+          "emits": [
+            {
+              "id": "6.5a",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: AST exceeds 10,000 nodes",
+              "says": "The base document stays within the W1 node budget."
+            },
+            {
+              "id": "6.5b",
+              "code": "SOFT_DEPENDENCY_CYCLE",
+              "text": "DependencyCycle: {detail}",
+              "says": "Author precedence is acyclic.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.6",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: precedence depth",
+              "says": "Precedence depth is at most sixteen."
+            },
+            {
+              "id": "6.7",
+              "code": "SOFT_DEPENDENCY_CYCLE",
+              "text": "DependencyCycle: {detail}",
+              "says": "The base rules are stratified.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.8",
+              "code": "SOFT_OVER_HARD",
+              "text": "SoftOverHard: {detail}",
+              "says": "No default rule takes precedence over a strict rule.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.9",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: derived carve-out{detail}",
+              "says": "Derived carve-outs stay within resource limits.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.10a",
+              "code": "SOFT_DEPENDENCY_CYCLE",
+              "text": "DependencyCycle: {detail}",
+              "says": "The softened rules are stratified.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.10b",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "{message}",
+              "says": "The softened rules satisfy W1 resource limits.",
+              "returns": [
+                "message"
+              ],
+              "inherited": true
+            },
+            {
+              "id": "6.11",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: generated soft premise",
+              "says": "Each generated soft premise stays within resource limits."
+            },
+            {
+              "id": "6.12",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: generated norm layer {detail}",
+              "says": "Each generated norm layer stays within resource limits.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.13",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: generated conflict target {detail}",
+              "says": "Each generated conflict target stays within resource limits.",
+              "returns": [
+                "detail"
+              ]
+            },
+            {
+              "id": "6.14",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: generated background",
+              "says": "The generated background stays within one budget."
+            },
+            {
+              "id": "6.15",
+              "code": "SOFT_RESOURCE_LIMIT",
+              "text": "ResourceLimit: generated norm layers",
+              "says": "The generated norm layers and the one-node conclusion of the smallest query together fit one checker's budget of 10,000 nodes."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
