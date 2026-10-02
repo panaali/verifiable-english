@@ -12,7 +12,7 @@ def report():
     python = json.loads((ROOT / "soft-norms-python-delta.json").read_text())
     gate = json.loads((ROOT / "soft-norms@0-gate.json").read_text())
     return {
-        "contract": "soft-norms@0", "revision": 1, "status": "shadow",
+        "contract": gate["contract"], "revision": gate["revision"], "status": "shadow",
         "public_diagnostic_changes": [],
         "python_legacy_sample": python["sample"],
         "python_legacy_text_deltas": python["text_deltas"],
@@ -21,13 +21,14 @@ def report():
         "three_way_disagreements": gate["mismatches"],
         "inherited_records": "text and args are language-specific until base contracts exist",
         "s3_pre": {
-            "verdict_difference": False,
-            "code_difference": "With norm-defaults@0 and an unspecified default, Python reports "
-                               "SOFT_UNSUPPORTED_PROFILE; Lean reports SOFT_INVALID_INPUT at 2.3.",
+            "status": gate["s3_pre"],
+            "verdict_differences": gate["legacy_verdict_differences"],
+            "code_differences": gate["legacy_code_differences"],
             "detail": "conformance/wire-contract/s3-pre.md",
         },
         "continuation_coverage_met": gate["coverage_met"],
-        "checks_without_first": gate["checks_without_first"],
+        "coverage_unmet": gate["coverage_unmet"],
+        "coverage_unmet_reasons": gate["coverage_unmet_reasons"],
     }
 
 
