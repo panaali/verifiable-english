@@ -12496,5 +12496,699 @@
   ],
   "unknown": [],
   "unknown_pairs": []
+ },
+ "unspecified": {
+  "actions": {
+   "a01": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a02": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a03": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a04": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a05": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a06": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a07": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a08": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a09": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a10": {
+    "conflict": "CONFLICT",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a11": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "SETTLED yes"
+   },
+   "a12": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "SETTLED yes"
+   },
+   "a13": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "SETTLED yes"
+   },
+   "a14": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "SETTLED yes"
+   },
+   "a15": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a16": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a17": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a18": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a19": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a20": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a21": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a22": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a23": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a24": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a25": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a26": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a27": {
+    "conflict": "none",
+    "permitted": "UNDECIDED",
+    "report_required": "UNDECIDED"
+   },
+   "a28": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a29": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a30": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   },
+   "a31": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "SETTLED yes"
+   },
+   "a32": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "SETTLED yes"
+   },
+   "a33": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "SETTLED yes"
+   },
+   "a34": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "SETTLED yes"
+   },
+   "a35": {
+    "conflict": "none",
+    "permitted": "SETTLED yes",
+    "report_required": "UNDECIDED"
+   },
+   "a36": {
+    "conflict": "none",
+    "permitted": "UNDECIDED",
+    "report_required": "UNDECIDED"
+   },
+   "a37": {
+    "conflict": "none",
+    "permitted": "UNDECIDED",
+    "report_required": "UNDECIDED"
+   },
+   "a38": {
+    "conflict": "none",
+    "permitted": "UNDECIDED",
+    "report_required": "UNDECIDED"
+   },
+   "a39": {
+    "conflict": "none",
+    "permitted": "SETTLED no",
+    "report_required": "UNDECIDED"
+   }
+  },
+  "changes": [
+   {
+    "action": "a01",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a02",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a03",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a04",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a05",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a06",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a07",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a08",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a09",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a10",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "⊥",
+     "need not": "⊥"
+    },
+    "predicate": "report_required",
+    "reason": "no reporting rule covers a10; under a deny or allow completion the permission conflict made every completed outcome a contradiction, but an admissible filling still answers either way"
+   },
+   {
+    "action": "a15",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a16",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a17",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a18",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a19",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a20",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a21",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a22",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a23",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a24",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a25",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a26",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a27",
+    "after": "UNDECIDED",
+    "before": {
+     "allow": "P",
+     "deny": "F"
+    },
+    "predicate": "permitted",
+    "reason": "no rule decides the action (NOT-COVERED), and the policy states no default"
+   },
+   {
+    "action": "a27",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a28",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a29",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a30",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a35",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a36",
+    "after": "UNDECIDED",
+    "before": {
+     "allow": "P",
+     "deny": "F"
+    },
+    "predicate": "permitted",
+    "reason": "no rule decides the action (NOT-COVERED), and the policy states no default"
+   },
+   {
+    "action": "a36",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a37",
+    "after": "UNDECIDED",
+    "before": {
+     "allow": "P",
+     "deny": "F"
+    },
+    "predicate": "permitted",
+    "reason": "no rule decides the action (NOT-COVERED), and the policy states no default"
+   },
+   {
+    "action": "a37",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a38",
+    "after": "UNDECIDED",
+    "before": {
+     "allow": "P",
+     "deny": "F"
+    },
+    "predicate": "permitted",
+    "reason": "no rule decides the action (NOT-COVERED), and the policy states no default"
+   },
+   {
+    "action": "a38",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   },
+   {
+    "action": "a39",
+    "after": "UNDECIDED",
+    "before": {
+     "must": "P",
+     "need not": "F"
+    },
+    "predicate": "report_required",
+    "reason": "rules 25 and 26 do not cover the action, and the policy states no default"
+   }
+  ],
+  "conflict": {
+   "action": "a10",
+   "kind": "settled",
+   "rules": [
+    3,
+    14
+   ],
+   "target": "permitted"
+  },
+  "environment_id": "aab1fcb52e1b3840e4216537a06efb9344c361237651ee7853acb76f8eed4549",
+  "gaps": {
+   "permitted": {
+    "lines": [
+     "completion: unspecified",
+     "gaps: reachable"
+    ],
+    "witness": "a27"
+   },
+   "report_required": {
+    "lines": [
+     "completion: unspecified",
+     "gaps: reachable"
+    ],
+    "witness": "a27"
+   }
+  },
+  "inherits_from": {
+   "permitted": [],
+   "report_required": []
+  },
+  "lean": {
+   "agree": 81,
+   "cases": 81,
+   "elaborate": "regenerated",
+   "mismatches": []
+  },
+  "not_one_finite_model": [
+   "a40",
+   "a41",
+   "a42"
+  ],
+  "records": [
+   "a01",
+   "a02",
+   "a03",
+   "a04",
+   "a05",
+   "a06",
+   "a07",
+   "a08",
+   "a09",
+   "a10",
+   "a11",
+   "a12",
+   "a13",
+   "a14",
+   "a15",
+   "a16",
+   "a17",
+   "a18",
+   "a19",
+   "a20",
+   "a21",
+   "a22",
+   "a23",
+   "a24",
+   "a25",
+   "a26",
+   "a27",
+   "a28",
+   "a29",
+   "a30",
+   "a31",
+   "a32",
+   "a33",
+   "a34",
+   "a35",
+   "a36",
+   "a37",
+   "a38",
+   "a39"
+  ],
+  "reporting_breaches": {
+   "settled": [
+    "a13"
+   ],
+   "undecided": [
+    "a01",
+    "a02",
+    "a04",
+    "a07",
+    "a15",
+    "a17",
+    "a19",
+    "a21",
+    "a23",
+    "a25",
+    "a29",
+    "a35"
+   ]
+  },
+  "seconds": 112.6,
+  "undecided": {
+   "permitted": [
+    "a27",
+    "a36",
+    "a37",
+    "a38"
+   ],
+   "report_required": [
+    "a01",
+    "a02",
+    "a03",
+    "a04",
+    "a05",
+    "a06",
+    "a07",
+    "a08",
+    "a09",
+    "a10",
+    "a15",
+    "a16",
+    "a17",
+    "a18",
+    "a19",
+    "a20",
+    "a21",
+    "a22",
+    "a23",
+    "a24",
+    "a25",
+    "a26",
+    "a27",
+    "a28",
+    "a29",
+    "a30",
+    "a35",
+    "a36",
+    "a37",
+    "a38",
+    "a39"
+   ]
+  }
  }
 }

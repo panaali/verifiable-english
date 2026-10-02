@@ -487,3 +487,8 @@ recorded in section 13, not made silently.
    Ext's changes in none of the 51 and in 3 of the 300 sampled records, which keep a clear action. Each status is
    counted on its own (loop recheck finding B): Ext's `permitted` changes in 9 sampled records, six of them with
    the same clear action. Lean and the reading agree on all 702 decisions. The answer key is unchanged; README OPEN states the assumption.
+7. **The `unspecified` completion is not used (after `norm-defaults@0` merged).** It is the faithful completion
+   for `permitted`, but `norm-defaults@0` does not yet combine with `alternatives@0` or `risk@0`: Python and
+   Lean's risk route reject the switched environment (a test checks both). The default stays allow, no verdict
+   changes, and README ("Why the default is not `unspecified`") records why and what the deny measurement of
+   item 6 suggests the switch would change. The answer key is unchanged.
