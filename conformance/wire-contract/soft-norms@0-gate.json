@@ -94,38 +94,21 @@
       ]
     }
   ],
-  "legacy_verdict_differences": [
-    {
-      "case": "L:rights@0:env",
-      "lean": [
-        "SOFT_UNSUPPORTED_PROFILE",
-        "UnsupportedProfile: Unsupported profile rights@0"
-      ],
-      "python": null
-    },
-    {
-      "case": "L:rights@0:base",
-      "lean": [
-        "SOFT_UNSUPPORTED_PROFILE",
-        "UnsupportedProfile: Unsupported profile rights@0"
-      ],
-      "python": null
-    }
-  ],
+  "legacy_verdict_differences": [],
   "mismatches": [],
-  "oracle": "fault catalogue: hand-written check and path per fault, table position from the contract",
+  "oracle": "fault catalogue: hand-written check, path and args per fault, text from the contract's template, table position from the contract; inherited text from each legacy validator",
   "residual": {
     "lean": 0,
     "python": 0
   },
   "revision": 2,
-  "s3_pre": "open: a reachable legacy verdict difference is not fixed (s3-pre.md)",
-  "text_delta_count": 232,
+  "s3_pre": "closed: no legacy verdict difference",
+  "text_delta_count": 234,
   "tiers": {
     "0": 165,
-    "A": 4287,
+    "A": 4280,
     "B": 200,
-    "legacy_differences": 13,
+    "legacy_differences": 14,
     "replayed": 1348
   }
 }

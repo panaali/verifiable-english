@@ -11,9 +11,9 @@ from pathlib import Path
 
 import pytest
 
-from conformance.wire_contract_gate import _applied
+from conformance.wire_contract_gate import _applied, record_problems
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
-                                              footprint, legacy_codes, overlaps, position)
+                                              footprint, legacy_codes, overlaps, position, rendered, route)
 from ve.softnorms_contract import REGISTRY
 from ve.wire_contract.engine import Fault, load, run
 
@@ -23,16 +23,17 @@ REPORT = Path(__file__).resolve().parents[1] / "conformance/wire-contract/soft-n
 FIELDS = ("contract", "revision", "check", "phase", "code", "class", "path")
 
 
-def python(faults):
+def python(faults, fields=FIELDS):
     outcome = run(CONTRACT, _applied(faults), registry=REGISTRY)
     assert isinstance(outcome, Fault)
-    return {key: outcome.record[key] for key in FIELDS}
+    return {key: outcome.record[key] for key in fields}
 
 
 @pytest.mark.parametrize("name", sorted(FAULTS))
 def test_each_fault_alone_gives_its_hand_written_record(name):
     fault = FAULTS[name]
-    assert python([fault]) == expected_record(CONTRACT, fault)
+    expected = expected_record(CONTRACT, fault)
+    assert python([fault], expected) == expected
     if name in legacy_codes():
         assert legacy_codes()[name] == expected_record(CONTRACT, fault)["code"]
 
@@ -64,7 +65,34 @@ def test_the_oracle_judges_the_check_not_only_the_code():
     combo = (FAULTS["r0-decider-type"], FAULTS["outranking-decider-type"])
     first = expected_first(CONTRACT, combo)
     assert first.name == "outranking-decider-type"
-    assert python(combo) == expected_record(CONTRACT, first)
+    expected = expected_record(CONTRACT, first)
+    assert python(combo, expected) == expected
+
+
+def test_the_oracle_fixes_text_and_args_apart_from_the_engines():
+    """Wire re-check (B): tier A judged `text` and `args` only by comparing the engines with each other, so an
+    argument error shared by both passed. The expected record now carries the catalogue's args and the text
+    rendered from the contract's template, and an inherited record is judged by the legacy text."""
+    for name in sorted(FAULTS):
+        member = route(CONTRACT, FAULTS[name].check)[1][-1][1]
+        expected = expected_record(CONTRACT, FAULTS[name])
+        assert ("text" in expected) == (not member.get("inherited")), name
+    expected = expected_record(CONTRACT, FAULTS["r3-over-predicate"])
+    assert expected["text"] == "PrecedenceAcrossPredicates: rule d3 on x_permitted, rule a0 on x_required"
+    good = run(CONTRACT, _applied([FAULTS["r3-over-predicate"]]), registry=REGISTRY).record
+    assert record_problems(good, expected, None) == []
+    # Both engines swapping two arguments, or rendering one wrongly, is now a mismatch.
+    swapped = {**good, "args": {**good["args"], "predicate": "x_required", "parent_predicate": "x_permitted"}}
+    assert record_problems(swapped, expected, None)
+    assert record_problems({**good, "text": good["text"] + "!"}, expected, None)
+    # An inherited record: its text must be the legacy validator's, with the one argument `message`.
+    inherited = run(CONTRACT, _applied([FAULTS["r0-guard"]]), registry=REGISTRY).record
+    legacy = ("SOFT_INVALID_INPUT", inherited["text"])
+    assert record_problems(inherited, expected_record(CONTRACT, FAULTS["r0-guard"]), legacy) == []
+    assert record_problems(inherited, expected_record(CONTRACT, FAULTS["r0-guard"]), (legacy[0], "other"))
+    assert record_problems({**inherited, "args": {}}, expected_record(CONTRACT, FAULTS["r0-guard"]), legacy)
+    with pytest.raises(ValueError):
+        rendered("ResourceLimit: decision predicate {name}", {})
 
 
 def test_stored_gate_report_has_no_mismatch_and_explains_every_gap():
