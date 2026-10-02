@@ -1,8 +1,13 @@
 # Wire contract: one ordered validation table for Python, Lean and Rust (PLAN)
 
-**Status:** plan only, 2026-10-02, branch `design/wire` from `main` at `c9a34582`. No code or proofs change with
-this document. It awaits the two plan reviews. It was written from reading the sources; nothing was built or run,
-and the `file:line` references below were collected by read-only sweeps and must be re-read at each step.
+**Status:** plan only, draft 2, 2026-10-02, branch `design/wire` from `main` at `c9a34582`. No code or proofs change
+with this document. Draft 2 applies, in one commit, the exact edits of the converged Fable/Astra design debate
+(`manage-agents/debates/design-wire/{fable,astra}.md`, CONVERGED after round 3; Sol at xhigh stood in for Astra, as
+`astra.md` records). Verdict: **BUILD (exact edits): S0 to S3 only, with S1c moved to S4**; S4 onward needs a
+separate decision (section 7). Section 11 maps each debate edit to its change here. The item-1 statement spec is
+[wire-contract.md](wire-contract.md); its statement review comes before S0 to S3 start. The plan was written from
+reading the sources; nothing was built or run, and the `file:line` references below were collected by read-only
+sweeps and must be re-read at each step.
 Inputs: ARCH-ROADMAP (P1 "versioned wire/profile contracts + codegen", the W6a, speech-acts and discourse known
 limitations, the LIMITS CONTRACT item), [assurance-manifest.md](assurance-manifest.md),
 [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md) (sections 2.3 and 5), [soft-norms.md](soft-norms.md)
@@ -15,12 +20,17 @@ section 8, `lean/VE/Route/frozen.py`, `tools/hooks/README.md`, `ve/backends/lean
    soft-norms validation table (soft-norms.md 8) made machine-readable and extended to every profile.
 2. **Tables are generated; engines are written once.** Each language gets one small generic engine that runs a
    table and returns the first failing check. The Lean and Rust tables are generated data files; Python reads the
-   JSON. Order, code, text, path and item iteration are therefore the same in all three by construction.
+   JSON. Table expansion (which checks run on which items, in which order) is therefore the same in all three by
+   construction, and so are the position, code, path and text of the reported check, conditional on every predicate
+   reached returning the same result in each (section 2.4). Two orders are outside that claim and are described
+   separately: the order inside a classifier set (T3, section 2.3) is test-enforced, and the fault order of the raw
+   JSON scanners (`json@0`, question 7) is open.
 3. **The contract decides the diagnostic, never the verdict.** The existing decoders and validators stay as they
    are and keep deciding accept or reject. On a rejection, the engine picks the diagnostic. Accept/reject and
    every identity are unchanged because the code that produces them is not touched.
 4. **Lean: only data is generated.** Generated Lean modules are table literals with no theorems. The engine, the
-   hooks and all proofs are hand-written. No existing Lean module is edited, so no soundness proof moves.
+   hooks and all proofs are hand-written. No existing Lean module is edited beyond added lines in the aggregation
+   files (3.2; `VE/Audit.lean` only if the optional lemmas are added, C4 in 5.2), so no soundness proof moves.
 5. **What "by construction" does not cover** is stated in section 2.4: checks that need semantics are hand-written
    predicates per language, and their agreement is tested, not generated.
 6. Migration is one contract at a time, soft-norms first (its table and multi-fault generator already exist), each
@@ -61,7 +71,8 @@ Three constraints shape the design:
   `Route.Run.route_rejects_before_checking`, the discourse rejection theorems). `partial` is a forbidden token.
 - **Codes are a compatibility surface.** Migration plan 2.3: no rejected cell may change its code without a
   recorded product decision, implemented in Python first. Diagnostic messages are a recorded class, changed in one
-  reviewed commit.
+  reviewed commit. This plan amends that wording to one reviewed switch commit per unit (about fourteen in all);
+  the amendment is recorded in 5.1, step 6.
 
 ## 2. Design
 
@@ -160,18 +171,27 @@ transformation (for example soft-norms 2.3, "the vocabulary without the soft blo
   that now live in message prefixes (`MissingPermissionDual`, `InvalidDate`, `UnitPrecision`, …) become codes.
 - `class` is the legacy `VEError` class. `VEError.code` keeps reporting the class, so existing callers and the
   support matrix keep their vocabulary; the fine code is new information, not a renaming.
-- `path` is an RFC 6901 pointer into the submitted input. No implementation reports one today.
+- `path` is an RFC 6901 pointer into the submitted input. No implementation reports one today. Under an `include`
+  with a `view` the checked value is a transformation of the input, so the inner pointer does not point into the
+  submitted input: there `path` is the include site's `at`, and the inner pointer goes in `args`.
 - `text` is the template with arguments substituted. Argument renderers are a closed set: `raw` (a string as is),
   `json` (canonical JSON of the value, cut at 80 bytes), `index`, `count`, `list` (sorted, joined by `, `). No
   language-native quoting (`{key!r}`, `{key:?}`, `compress`), which is a present source of text drift.
-- Texts are ASCII and may not contain a forbidden Lean token as a whole word (`partial`, `opaque`, `admit`,
-  `axiom`, `unsafe`, `extern`, …): `lean/audit.py` scans strings too, and the texts land in generated Lean files.
+- Texts are ASCII and may not contain, as a whole word, any token that `lean/audit.py` forbids: the audit scans
+  strings too, and the texts land in generated Lean files. The generator imports `FORBIDDEN` from `lean/audit.py`
+  (today `sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`,
+  `extern`) and keeps no list of its own.
 
-**What is by construction and what is not.** Given the same contract revision, two engines report the same record
-when (a) each engine implements the T1 kinds and the order rule correctly, and (b) every hook reached returns the
-same result in both. (a) is established once, independent of profiles (6.1; in Lean also by the lemmas of 3.2).
-(b) is per-hook hand-written code; it is tested (6.2, 6.3) and its failures are local: a disagreement is one named
-predicate on one input, not an ordering question spread over a decoder.
+**What is by construction and what is not.** "By construction" in this plan means two things only: table
+expansion (which checks run on which items, in which order), and the position, code, path and text of the reported
+check, conditional on equal predicate results. Given the same contract revision, two engines report the same record
+when (a) each engine implements the T1 kinds and the order rule correctly, and (b) every predicate reached (a hook,
+a classifier or a view) returns the same result in both. (a) is established once, independent of profiles (6.1; in
+Lean also by the optional lemmas of 3.2). (b) is per-hook hand-written code; it is tested (6.2, 6.3) and its
+failures are local: a disagreement is one named predicate on one input, not an ordering question spread over a
+decoder. Two orders are not by construction and are described separately: the order inside a T3 classifier set is
+the existing validator's and is test-enforced by the generator (6.2); the fault order of the raw JSON scanners is
+open (question 7).
 
 ### 2.5 How the contract meets the existing validators: an overlay
 
@@ -190,6 +210,14 @@ cannot evaluate (Rust has no soft-norms validation; after migration stage 5 Pyth
 A T1 fault found before the first deferred check is final and needs no other process: that is the IDE's fast path.
 Otherwise the diagnostic is requested from Lean. Both run the same table, so the answer is the same record.
 
+When Lean is not consulted or cannot answer (a standalone Rust binary, `wire.diagnose` unavailable), the outcome
+stays deferred, so that the public message does not silently depend on the deployment. A deferred outcome:
+
+- carries the contract, the revision, the deferred check id and the legacy text;
+- has no `check`, `code` or `path`, because the engine has not identified the first failing check;
+- is counted under the deferred share, never under residual (residual means the contract has no check for a legacy
+  rejection, 2.3; deferred means this language could not evaluate a hook).
+
 Emission:
 
 - Python: `VEError.to_dict()` gains `diagnostic` (the record above). `code` and `message` are kept. `message`
@@ -198,7 +226,7 @@ Emission:
 - Lean: a new executable `ve_diagnose` (a new `lean_exe`; `Main.lean` untouched) takes the same case JSON as the
   route and returns `{id, status: "fault" | "clean", diagnostic}`. Legacy runner rows stay byte-identical, so no
   assurance binding or response schema changes. One new manifest operation, `wire.diagnose`, with no verdict; if it
-  is unavailable the record is absent and the legacy text stands (a diagnostic is not a verdict).
+  is unavailable the deferred outcome above is reported with the legacy text (a diagnostic is not a verdict).
 - Rust: the `error` object gains `diagnostic`; `code` and `message` are kept until the same per-profile switch.
 
 ### 2.6 Versioning
@@ -235,22 +263,27 @@ the contract. `checker_build` changes with every build as today (migration plan 
    `lean/VE/Service/english_copy.py --check` precedent.
 3. **Frozen inventory.** Each generated module, the engine and the hooks are new entries in
    `frozen-sources.sha256` (the guard requires every `VE/**/*.lean` to be listed). `--write` rewrites the hash
-   lines of the generated modules in the same commit. Existing entries do not change in any migration step; the
-   gate for each step checks that the inventory diff is additions plus generated-table rehashes only.
+   lines of the generated modules in the same commit. Existing entries do not change in any migration step, with
+   the one exception of C4 (5.2): the `VE/Audit.lean` line in S1b, if the optional lemmas are added. The gate for
+   each step checks that the inventory diff is additions plus generated-table rehashes only, plus that exception.
 4. **Assurance manifest.** Table modules handle no JSON and need no entry. `Engine.lean` and `Hooks/*.lean` read
    JSON and are classified under `other_json` as "diagnostic only: no verdict depends on it". That claim is
    enforced: `tools/check_lean_imports.py` gets the rule that `VE.Contract.*` is imported only by
    `VE/Contract/*` and `DiagnoseMain.lean`. The trusted decoder count (16,985 lines) does not grow.
-5. **Forbidden tokens.** The generator refuses a contract whose ids or texts contain an audit token (2.4), so
-   `lean/audit.py` and the hook stay as they are.
-6. **Audit.** The engine lemmas (3.2) are added to `VE/Audit.lean` and `lean/axioms.txt`. Tables add no theorems.
+5. **Forbidden tokens.** The generator refuses a contract whose ids or texts contain an audit token (2.4); it
+   imports `FORBIDDEN` from `lean/audit.py` instead of keeping its own list, so `lean/audit.py` and the hook stay
+   as they are and the two cannot drift.
+6. **Audit.** The engine lemmas (3.2), if added, are recorded in `VE/Audit.lean` and `lean/axioms.txt`; this is
+   the reviewed append-only diff that C4 allows. Tables add no theorems.
 
 ### 3.2 Lean proofs
 
 Unchanged: every existing theorem, because no existing module is edited (`VE.lean`, `VE/Audit.lean`,
 `lakefile.toml` and the inventory gain entries only, the footprint of every feature so far).
 
-New, hand-written once, about the engine and for any table:
+New, hand-written once, about the engine and for any table. They are optional: if they cost more than planned,
+the engine corpus stands for Lean as well and the lemmas are recorded as open (section 8). Adding them is the one
+case in which an existing inventory line changes (`VE/Audit.lean`, C4):
 
 ```lean
 theorem run_clean_iff  : run t h j = none ↔ ∀ c ∈ instances t j, holds h j c
@@ -264,9 +297,11 @@ recursive on the table (no fuel problem: the table is a finite tree, arrays are 
 
 Not planned: a theorem relating a contract to its legacy decoder (`diagnose j = some _ ↔ decode j = .error _`).
 No decoder has a refinement theorem today, and this plan does not add one; both directions are tested (6.3).
-For **new** profiles the rule changes: the route's structural validation *is* `Engine.run` on the profile's
-table, and the hand-written decoder's proofs take `run … = none` as a hypothesis and use `run_clean_iff`. A new
-feature then has no hand-written phase list to keep in step in two languages.
+The same holds for new profiles: a contract is never on a verdict or identity path (0.3, 2.6). A new profile's
+route validates with its own hand-written decoder, as today, and the contract supplies its diagnostics (S10).
+Making `Engine.run` a route's structural validation would put the generated table, the generator and the contract
+JSON on the verdict path, against 0.3, 2.6 and the import rule of 3.1; it is not part of this plan and would need
+its own.
 
 ## 4. Scope
 
@@ -299,25 +334,41 @@ and returning several diagnostics at once (section 9, question 5).
    code, taken by the DRI, with a release note. Changes go to Python first where Python has an implementation.
 6. **Switch**: the public message becomes the contract text, the `diagnostic` record is emitted, the unit's test
    tolerance (last column of 5.3) is deleted and the spec's known-limitation paragraph is removed. One commit,
-   one revert.
+   one revert. **Recorded amendment to SEMANTICS-MIGRATION-PLAN** (stage 2, "Diagnostics", and its risk table):
+   that plan says message wording changes "land in one reviewed commit". Under this plan they land in one
+   reviewed switch commit per unit, about fourteen in all (5.3), each with its own delta report and release
+   note. Codes remain a zero-tolerance class and section 2.3 of that plan is unchanged.
 
 ### 5.2 Conservativity gates (every step)
 
-- **C1 identities.** No diff in any decoder, canonical serialiser, `to_dict` or digest function (a diff-scope
-  check on the step's file list: decoder files pinned in the manifest and existing inventory lines are untouched).
-  `conformance/identity.json`, the frozen baseline `conformance/baseline-2026-09/` and the v0 replay are
-  byte-identical on accepted inputs.
+- **C1 identities.** No diff in any decoder, canonical serialiser, identity serialisation (a `to_dict` whose
+  output is hashed or compared as an identity) or digest function (a diff-scope check on the step's file list:
+  decoder files pinned in the manifest and existing inventory lines are untouched, C4's exception apart).
+  `VEError.to_dict()` is diagnostic serialisation, not identity serialisation: it may gain the `diagnostic` field
+  of 2.5, and that is the only change to it this plan permits. `conformance/identity.json`, the frozen baseline
+  `conformance/baseline-2026-09/` and the v0 replay are byte-identical on accepted inputs.
 - **C2 accept/reject.** The baseline's outcome classes and the three-way suites are unchanged. On the generated
-  corpus: the legacy verdict of each implementation equals its pre-step snapshot; the engine reports `clean` on
-  every accepted input and a fault on every rejected one (zero tolerance both ways); residual count reported.
+  corpus: the legacy verdict of each implementation equals its pre-step snapshot; where an implementation
+  supports the unit and completes diagnosis, its engine reports `clean` on every accepted input and a fault on
+  every rejected one (zero tolerance both ways). A deferred outcome (2.5) is counted under the deferred share of
+  its language and not compared; an implementation that does not support the unit is not run on it. Residual
+  count reported; a deferred outcome is never a residual.
 - **C3 diagnostics.** The delta report is the complete list of public changes; any change outside it fails.
   The frozen golden `conformance/wire-contract/<unit>.golden.json` (first diagnostic of a fixed corpus) shows every
   later contract edit as a reviewable diff.
 - **C4 Lean.** `lake build`, `lean/audit.py`, `frozen.py` and the assurance-manifest test pass; the inventory diff
-  is additions and generated rehashes only.
+  is additions and generated rehashes only, with one exception in S1b. If the optional lemmas (3.2) are added,
+  C4 also allows a reviewed append-only diff to `VE/Audit.lean` (lines are only added: the new `import` and
+  `#print axioms` lines; no existing line is changed, moved or removed) together with the rehash of its inventory
+  line. `lean/audit.py` reads `#print axioms` from `VE/Audit.lean` alone and stays unchanged (3.1), so a separate
+  audit file is not an alternative. If the lemmas are dropped, no existing inventory line changes.
 
-### 5.3 Order of migration and what becomes uniform
+### 5.3 Order of migration and what becomes uniform, in the sense of 2.4
 
+"Uniform" has the limited meaning of 2.4: table expansion, and position, code, path and text conditional on equal
+predicate results. The order inside a T3 set is test-enforced, and raw JSON scanner order is open (row 2,
+question 7). A tolerance in the last column is removed only for implementations that support the unit and
+complete diagnosis: three-way comparisons cover non-deferred records, and deferred outcomes are counted (C2).
 "Changes" lists what may differ from today; verdicts and identities never do. Rows are in migration order.
 
 | # | Contract | Order taken from | Diagnostics that may change | Tolerance removed |
@@ -348,7 +399,8 @@ inherited check is one coarse hook whose text is language-specific (soft-norms 2
 - **Engine conformance corpus** `conformance/wire-contract/engine.json`: small synthetic contracts and inputs with
   expected records, covering every T1 kind, nested `each`, check-major against item-major, `when`, `include` with
   and without `as`, every argument renderer, key-order permutations, keys outside the BMP, empty arrays, absent
-  optional members. The three engines must return byte-identical records. This is the evidence for claim (a) of 2.4.
+  optional members. The three engines must return byte-identical records (Python and Lean in S0 to S3; Rust joins
+  in S4, section 7). This is the evidence for claim (a) of 2.4.
 - **Contract lint** (static): unique ids in increasing position; every code declared and used; placeholders match
   the kind's arguments; limits and name classes exist; every hook and classifier has at least one fault mutation;
   every code a spec lists has a check; no forbidden token; lock and revision in step.
@@ -370,10 +422,12 @@ One generic generator, `conformance/wire_contract.py`, replacing the per-profile
 - **Tier A, oracle**: all pairs inside one phase, a seeded sample of cross-phase pairs and of triples, pairs of the
   same check on two items (the earlier item must win), all pairs inside each T3 set. Faults are combined only when
   their footprints are disjoint. Expected record: the fault with the least position. Assert Python = Lean =
-  Rust (where the unit is supported) = expected, on the whole record.
+  Rust (where the unit is supported) = expected, on the whole record, for non-deferred records; deferred outcomes
+  are counted, not compared (C2).
 - **Tier B, agreement without an oracle**: random stacks of two to five mutations, dependent ones included, with
   key order shuffled. Assert the engines agree with each other, and that fault ⇔ the legacy validator rejects, in
-  each language. A disagreement is reduced by removing mutations one at a time and reported as a hook defect.
+  each language that completes diagnosis (C2). A disagreement is reduced by removing mutations one at a time and
+  reported as a hook defect.
 - **Tier C, conservativity**: on every case of A and B, the C1 and C2 checks of 5.2.
 - **Coverage, gated**: every check is the first diagnostic at least once and is masked by an earlier one at least
   once; every adjacent phase pair occurs; residual count is zero; the deferred share per language is reported.
@@ -387,27 +441,41 @@ One generic generator, `conformance/wire_contract.py`, replacing the per-profile
 
 ## 7. Steps and effort
 
-Engineer-days for an agent worker with review loops, as in earlier plans. Steps S1a to S1c run in parallel.
+Engineer-days for an agent worker with review loops, as in earlier plans. Steps S1a and S1b run in parallel.
+**Authorised by the design debate: S0 to S3 only.** S4 onward is a separate decision, taken after the
+continuation gate below.
 
 | Step | Content | Effort |
 |---|---|---|
 | S0 | meta-schema, `limits.json`, `names.json`, `tools/wire_contract.py` (validate, lint, `--write`, `--check`, spec tables, lock), hook and gate wiring | 3 d |
 | S1a | Python engine, `deferred`, `VEError.diagnostic` in shadow | 2 d |
-| S1b | Lean `Table`, `Engine`, the two lemmas, `ve_diagnose`, inventory, manifest and import-rule entries | 5–7 d (the lemmas are the uncertainty) |
-| S1c | Rust engine and generated tables module | 3 d |
-| S2 | engine corpus, generic generator with tiers 0, A, B, C and coverage, delta and golden reports | 4 d |
+| S1b | Lean `Table`, `Engine`, the two lemmas (optional; C4), `ve_diagnose`, inventory, manifest and import-rule entries | 5–7 d (the lemmas are the uncertainty) |
+| S2 | engine corpus, generic generator with tiers 0, A, B, C and coverage, delta and golden reports (Python and Lean) | 4 d |
+| S3-pre | **blocks S3:** run the inherited `norm-defaults@0` difference (`ve/softnorms.py:97` lists it among the inherited profiles; `Phases.lean:36` and soft-norms.md 2.3 do not) to ground with an input that reaches it. A reachable accept/reject difference is outside this plan's licence to change and is fixed separately, before the pilot is called conservative | 0.5 d |
 | S3 | pilot: `soft-norms@0` contract, hooks, T3 set, generated spec table; retire the hand-mirrored table check | 4 d |
-| S4 | base: `json@0` 1.5 d, `envelope@0.2` 2 d, `vocabulary@0.2` and layers 4 d, `formula@0.2` and `model@0.2` 3 d | 10–11 d |
+| S4 | Rust engine and generated tables module 3 d (S1c, moved here: Rust does not validate soft norms, so before S4 only the synthetic corpus would exercise it); base: `json@0` 1.5 d, `envelope@0.2` 2 d, `vocabulary@0.2` and layers 4 d, `formula@0.2` and `model@0.2` 3 d | 13–14 d |
 | S5 | `norms@0` 3 d, `norm-defaults@0` 2 d | 5 d |
 | S6 | `speech-acts@0` (numbered table for the spec, two-sided delta) | 4 d |
 | S7 | `alternatives@0` 2 d, `risk@0` 4 d | 6 d |
 | S8 | `rights@0` 2 d, `reports@0` 3 d, `ve-units@1` 3 d | 8 d |
 | S9 | `ve-document@1` 3 d, `ve-document@2` + `ve.discourse@1` 4 d | 7 d |
-| S10 | "contract first" rule for new profiles in PLAN-EXPAND2 and AGENTS.md; docs; remove dead prefix classifiers | 2 d |
+| S10 | "contract first" rule for new profiles in PLAN-EXPAND2 and AGENTS.md, for diagnostics only: a new profile ships its contract with its decoder, and the decoder still decides the verdict (3.2); docs; remove dead prefix classifiers | 2 d |
 
-About 63 to 66 engineer-days; about 6 calendar weeks with three workers once S2 is done. S0 to S3 (21 to 23
+About 64 to 67 engineer-days; about 6 calendar weeks with three workers once S2 is done. S0 to S3 (18.5 to 20.5
 days of effort, about 3 calendar weeks) is a complete, useful increment and the point to decide whether to
 continue (question 1).
+
+**Continuation gate after S3, reviewed by the DRI:**
+
+- the residual count is zero;
+- Tier 0 and Tier A are green in Python and Lean;
+- at least two thirds of the 67 soft-norms checks are expressed as T1 or T2 without a coarse `view` hook, with the
+  T1 and T2 counts reported separately (the threshold measures feasibility; agreement of T2 hooks remains evidence
+  from differential tests, not a construction);
+- step S3-pre is closed.
+
+If the gate fails, keep S2's generic multi-fault generator over the hand-mirrored tables and stop the migration.
+S4 onward needs a separate decision in either case.
 
 Dependencies on other roadmap items: LIMITS CONTRACT consumes `limits.json` and the `max_*` kinds (S0); the
 migration's `diagnostics.py` mapping reads classes from contracts after S4; the pre-commit hook gains the
@@ -458,9 +526,10 @@ migration's `diagnostics.py` mapping reads classes from contracts after S4; the 
 8. **`include` with a view.** Soft-norms 2.3 runs W1's declaration checks on a transformed vocabulary under a
    restricted profile list. If such views are common, `include` is less declarative than it looks and inherited
    checks stay coarse hooks. To be learned in S3 and S5.
-9. **Unverified reading in the pilot's area.** `ve/softnorms.py:97` lists `norm-defaults@0` among the inherited
-   profiles; `Phases.lean:36` and soft-norms.md 2.3 do not. This was seen by reading only. If it is reachable it is
-   an accept/reject difference, outside this plan's licence to change, and must be fixed separately before S3.
+9. **Unverified reading in the pilot's area: no longer a question.** `ve/softnorms.py:97` lists `norm-defaults@0`
+   among the inherited profiles; `Phases.lean:36` and soft-norms.md 2.3 do not. This was seen by reading only. It
+   is now the blocking step S3-pre (section 7): run it to ground before S3, and fix any reachable verdict
+   difference outside this plan. The continuation gate requires it closed.
 10. **Fine codes on the public surface.** The plan keeps `VEError.code` as the class and adds `diagnostic.code`.
     Promoting the fine code to `code` would be simpler for callers and would change every rejected cell of the
     support matrix once. Not proposed here; it needs its own product decision.
@@ -486,3 +555,24 @@ migration's `diagnostics.py` mapping reads classes from contracts after S4; the 
 - **Keep hand-mirrored tables with multi-fault tests, as soft norms does.** It works, and the pilot starts from it.
   It leaves two or three copies of each table to be kept in step by reading, which is the cost each feature has
   paid again; the Python and Lean soft-norms copies already show one difference found only by reading (question 9).
+  It is also the fallback if the continuation gate fails (section 7): S2's generic generator is kept over the
+  hand-mirrored tables.
+
+## 11. Debate response table (draft 2)
+
+Source: `manage-agents/debates/design-wire/{fable,astra}.md`, CONVERGED after round 3 (Sol at xhigh stood in for
+Astra in all three rounds, as `astra.md` records). Verdict: **BUILD (exact edits): S0 to S3 only, S1c moved to
+S4**, after one plan commit carrying edits a to h of Fable's round 3, which Astra's round 3 restates. No further
+plan review round unless an edit deviates from the list. This draft changes nothing else in the design.
+
+| Debate edit | Change in this draft |
+|---|---|
+| a. Limit "by construction" to table expansion, and to position, code, path and text conditional on equal predicate results; describe T3 order and raw JSON scanner order separately, as test-enforced or open | 0 (item 2); 2.4 ("What is by construction and what is not"); 5.3 heading and its first paragraph |
+| b. Scope C1 to identity serialisation; `VEError.to_dict()` may gain `diagnostic` | 5.2, C1 |
+| c. C4 allows additions, generated rehashes, and a reviewed append-only `VE/Audit.lean` diff with its rehash in S1b; the lemmas stay optional | 5.2, C4; 0 (item 4); 3.1 (items 3 and 6); 3.2 (lemmas marked optional); section 7, S1b |
+| d. C2 zero tolerance and the 5.3 tolerance removals apply only where an implementation supports the unit and completes diagnosis; a deferred outcome carries the contract, revision, deferred check id and legacy text, has no `check`, `code` or `path`, and is counted under the deferred share, never under residual | 2.5 (the deferred outcome; the Lean emission bullet); 5.2, C2; 5.3, first paragraph; 6.2, tiers A and B |
+| e. Run the inherited `norm-defaults@0` difference to ground before S3; fix any reachable verdict difference outside this plan | section 7, step S3-pre; question 9 |
+| f. Strike the last paragraph of 3.2; S10's "contract first" rule covers diagnostics only | 3.2: the new-profile rule (`Engine.run` as a route's structural validation) is struck and replaced by the statement that contracts stay off every verdict and identity path, for new profiles too; the paragraph's first two sentences (no refinement theorem; both directions tested) are kept. Section 7, S10 |
+| g. Under a `view`, `path` is the include site and the inner pointer goes in `args`; the generator imports `FORBIDDEN` from `lean/audit.py`; record the one-switch-commit-per-unit amendment to the migration plan | 2.4 (the `path` and text bullets); 3.1 (item 5); section 1 (third constraint) and 5.1, step 6 (the recorded amendment; SEMANTICS-MIGRATION-PLAN.md itself is not edited by this commit) |
+| h. After S3 the DRI reviews: residual count zero; Tier 0 and Tier A green in Python and Lean; at least two thirds of the 67 soft-norms checks as T1 or T2 without a coarse `view` hook, T1 and T2 reported separately; item e closed. If the gate fails, keep S2's generic multi-fault generator and stop migration. S4 onward needs a separate decision | section 7 (authorisation line, continuation gate); section 10, last bullet |
+| Scope: S1c moved to S4 | section 7 (S1c row removed, S4 row and totals); 6.1 (Python and Lean in S0 to S3) |
