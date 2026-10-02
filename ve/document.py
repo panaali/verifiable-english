@@ -463,7 +463,8 @@ def _load_document(raw: bytes, path: str | Path, lean):
                        and u["content"].get("fence") == u["id"]}:
         raise VEError("unbound VE fence")
     reading_sets = meta.get("reading_sets", [])
-    validate_reading_sets(env if rights_enabled else formula_env, reading_sets, unit_ids)
+    validate_reading_sets(env if rights_enabled else formula_env, reading_sets, unit_ids,
+                          source=source, unit_spans={u["id"]: u["span"] for u in compiled})
     active = active_reading_sets(reading_sets)
     couplings = meta.get("couplings", [])
     validate_couplings(env, couplings, reading_sets, unit_ids)

@@ -7,7 +7,7 @@ from ve.ast import formula_from_data
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.identity import meaning_id
-from ve.readings import validate_couplings, validate_reading_sets
+from ve.readings import source_word_text, validate_couplings, validate_reading_sets
 from ve.readings_english import coupling_sentence
 
 
@@ -56,3 +56,17 @@ def test_coupling_english_uses_sentence_numbers_and_closed_axis():
         "Sentences 1 and 2 are read with the same force, because of sentence 3.")
     coupling["axis"] = "history"
     assert "same label history" in coupling_sentence(coupling, sets, units)
+
+
+def test_source_word_is_a_byte_span_and_has_a_closed_vocabulary():
+    source = "SHALL MAY NOT shouldn’t".encode()
+    shall = [0, 5]
+    may_not = [6, 13]
+    curly = [14, len(source)]
+    assert source_word_text(source, shall, [0, len(source)]) == "shall"
+    assert source_word_text(source, may_not, [0, len(source)]) is None
+    assert source_word_text(source, curly, [0, len(source)]) == "shouldn't"
+    with pytest.raises(VEError, match="invalid source word span"):
+        source_word_text(source, [13, 15], [0, 13])
+    with pytest.raises(VEError, match="invalid source word span"):
+        source_word_text(source, [21, 22], [0, len(source)])
