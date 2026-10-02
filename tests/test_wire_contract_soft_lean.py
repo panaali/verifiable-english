@@ -135,11 +135,15 @@ def p7_source():
                    norm("b", "x_permitted", False, rank="z")]
 
 
+def fixture_sources():
+    """P1's two examples, P7, P17, then the named fixtures in the order of `sorted(FIXTURES)`."""
+    return [multi_fault_base(), (env(), []), p7_source(), with_faults("malformed-predicate"),
+            *[with_faults(*FIXTURES[name][0]) for name in sorted(FIXTURES)]]
+
+
 def test_fixtures_p1_to_p17(built):
     names = sorted(FIXTURES)
-    sources = [multi_fault_base(), (env(), []), p7_source(), with_faults("malformed-predicate"),
-               *[with_faults(*FIXTURES[name][0]) for name in names]]
-    rows = both(built, sources)
+    rows = both(built, fixture_sources())
     base, empty, p7, p17, *rest = rows
     for engine, legacy in (base, empty):  # P1: both examples are accepted, and the engine is clean
         assert legacy["status"] == "ok" and engine["outcome"] == "clean"
@@ -182,14 +186,9 @@ def test_adapter_rejects_other_case_kinds(built):
                      "error": "UnsupportedProfile: case kind evaluation has no wire contract input"}]
 
 
-def test_s3_pre_norm_defaults_profile(built):
-    """S3-pre (conformance/wire-contract/s3-pre.md): with `norm-defaults@0` among the profiles, which Python
-    passes to W1's decoding and Lean does not, both legacy validators reject every source. Both engines
-    report the Lean route's check, because the Python hooks use the Lean lists; Python's legacy code differs
-    only where its decoding admits an `unspecified` default."""
-    from ve.errors import VEError
-    from ve.softnorms import load_soft_document
-
+def s3_pre_sources():
+    """With `norm-defaults@0` among the profiles: the base, `env()`, `env()` without any `regulated`, and
+    `env()` with the `unspecified` default."""
     def with_profile(raw):
         raw["profiles"] = sorted(raw["profiles"] + ["norm-defaults@0"])
         return raw
@@ -201,7 +200,18 @@ def test_s3_pre_norm_defaults_profile(built):
     unspecified = with_profile(env())
     unspecified["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
     base_raw, base_rules = multi_fault_base()
-    sources = [(with_profile(base_raw), base_rules), (plain, []), (bare, []), (unspecified, [])]
+    return [(with_profile(base_raw), base_rules), (plain, []), (bare, []), (unspecified, [])]
+
+
+def test_s3_pre_norm_defaults_profile(built):
+    """S3-pre (conformance/wire-contract/s3-pre.md): with `norm-defaults@0` among the profiles, which Python
+    passes to W1's decoding and Lean does not, both legacy validators reject every source. Both engines
+    report the Lean route's check, because the Python hooks use the Lean lists; Python's legacy code differs
+    only where its decoding admits an `unspecified` default."""
+    from ve.errors import VEError
+    from ve.softnorms import load_soft_document
+
+    sources = s3_pre_sources()
     expected = [("SOFT_UNSUPPORTED_PROFILE", "3.2")] * 3 + [("SOFT_INVALID_INPUT", "2.3")]
     rows = both(built, sources)
     for (raw, rules), (engine, legacy), (lean_code, check) in zip(sources, rows, expected):

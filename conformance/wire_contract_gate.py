@@ -25,9 +25,9 @@ import random
 import re
 import subprocess
 
-from conformance.soft_norms import (combined_invalid_soft_blocks, generated, generated_invalid_soft_blocks,
-                                    generated_invalid_soft_rules, multi_fault_base, rejected_sources,
-                                    soft3_accepted, soft3_reproducers)
+from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, generated,
+                                    generated_invalid_soft_blocks, generated_invalid_soft_rules, multi_fault_base,
+                                    multi_fault_cases, rejected_sources, soft3_accepted, soft3_reproducers)
 from conformance.wire_contract import choose_combinations
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position)
@@ -176,6 +176,41 @@ def replay_sources():
     return sources
 
 
+def test_and_fixture_sources():
+    """The `soft-norms@0` inputs of the contract tests (`tests/test_*contract*`) and of the soft conformance
+    fixtures, each built by the code that builds it for its test: the base and the pairs and triples of
+    `multi_fault_cases()`, the fixtures P1 to P17 (8.3), the shadow cases, probes and admission sources of the
+    contract tests, the acceptance fixtures of soft-norms.md 10, and the sources of the Rust fixtures.
+    `tests/test_wire_gate_corpus.py` records the inputs the tests actually submit and fails if one is missing
+    from the gate's corpus. Imported here, not at the top: the test modules import this one."""
+    from tests.test_soft_norms_conformance import fixtures
+    from tests.test_softnorms_contract import CASES, admission_case
+    from tests.test_wire_contract_faults import SHARED_CODE_PAIR
+    from tests.test_wire_contract_precondition import probe_sources
+    from tests.test_wire_contract_soft_lean import fixture_sources, s3_pre_sources
+    from tests.test_wire_contract_three_way import admission_sources
+    from ve.softnorms_contract import soft_source
+    by_name = {fault.name: fault for fault in catalogue()}
+    pair = _applied([by_name[name] for name in SHARED_CODE_PAIR])
+    sources = [("base", *multi_fault_base()), ("shared-code-pair", pair["environment"], pair["norms"])]
+    sources += [("multi-fault:" + name, raw, rules) for name, raw, rules, _ in multi_fault_cases()]
+    sources += [(f"fixture:{i}", raw, rules) for i, (raw, rules) in enumerate(fixture_sources())]
+    sources += [("shadow:" + make.__name__, *make()[:2]) for make in CASES]
+    admission = soft_source(admission_case())
+    sources += [("admission", admission["environment"], admission["norms"])]
+    sources += [(f"admission:{i}", raw, rules) for i, (raw, rules) in enumerate(admission_sources())]
+    sources += [(f"probe:{i}", raw, rules) for i, (raw, rules) in enumerate(probe_sources())]
+    sources += [(f"s3-pre:{i}", raw, rules) for i, (raw, rules) in enumerate(s3_pre_sources())]
+    sources += [("acceptance:" + row[0], row[1], row[2]) for row in fixtures()]
+    sources += [("rust:" + row["id"], row["source"]["environment"], row["source"]["norms"])
+                for row in json.loads(RUST_FIXTURES.read_text())]
+    return sources
+
+
+def source_key(raw, norms):
+    return json.dumps([raw, norms], sort_keys=True)
+
+
 def legacy_difference_sources(contract):
     """Inputs on which the two legacy validators differed or differ (s3-pre.md), with the record both
     engines must report: every profile outside the Lean route's registry, on `env()` and on the base, the
@@ -281,16 +316,12 @@ def _python(contract, raw, norms):
     return legacy, outcome
 
 
-def report():
-    contract = load("soft-norms@0")
-    inherited = inherited_checks(contract)
-    if any(text != "{message}" for text in inherited_texts(contract)):
-        raise ValueError("an inherited check's text is not `{message}`: the oracle compares it with the legacy text")
+def gate_cases(contract):
+    """The gate's corpus. Each case: (tier, label, raw, norms, expected fields or None, the faults it
+    combines, Lean reads it)."""
     faults = catalogue()
-    codes = legacy_codes()
     prints = {fault.name: footprint(fault) for fault in faults}
     both = [fault for fault in faults if fault.readers == "both"]
-    # Each case: (tier, label, raw, norms, expected fields or None, the faults it combines, Lean reads it).
     cases = []
     for fault in faults:
         raw, norms = fault.source()
@@ -309,7 +340,6 @@ def report():
     # after it is `language` (1.2), which any source can carry.
     covered = {f.check for combo in combos for f in combo if f is not expected_first(contract, combo)}
     by_name = {fault.name: fault for fault in faults}
-    python_only = [fault for fault in faults if fault.readers == "python"]
     for fault in faults:
         if fault.check in covered and fault.readers == "both":
             continue
@@ -330,6 +360,24 @@ def report():
     cases += [("R", "R:" + label, raw, norms, None, (), True) for label, raw, norms in replay_sources()]
     differences = legacy_difference_sources(contract)
     cases += [("L", label, raw, norms, expected, (), True) for label, raw, norms, expected in differences]
+    # The tests' and fixtures' inputs that no other tier has, each once, replayed with the other corpora.
+    seen = {source_key(case[2], case[3]) for case in cases}
+    for label, raw, norms in test_and_fixture_sources():
+        if source_key(raw, norms) not in seen:
+            seen.add(source_key(raw, norms))
+            cases.append(("R", "R:test:" + label, raw, norms, None, (), True))
+    return cases
+
+
+def report():
+    contract = load("soft-norms@0")
+    inherited = inherited_checks(contract)
+    if any(text != "{message}" for text in inherited_texts(contract)):
+        raise ValueError("an inherited check's text is not `{message}`: the oracle compares it with the legacy text")
+    faults = catalogue()
+    codes = legacy_codes()
+    python_only = [fault for fault in faults if fault.readers == "python"]
+    cases = gate_cases(contract)
 
     lean_cases = [case for case in cases if case[6]]
     lean_engine = iter(_lean_rows("ve_diagnose", "soft-norms@0", [(c[2], c[3]) for c in lean_cases]))

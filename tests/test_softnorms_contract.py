@@ -211,15 +211,17 @@ def test_pilot_tier_inventory_matches_statement_spec():
     assert Counter(tiers.values()) == {"T1": 43, "T2": 8, "inherited": 3, "T3": 13}
 
 
-def test_admission_adapter_selects_active_norm_units():
-    source = env()
-    active = norm("a", "x_required", True)
-    quoted = norm("q", "x_required", True)
-    case = {"kind": "admission", "environment": source, "document": {"units": [
-        {"kind": "norm", "content": active},
-        {"kind": "quoted", "content": quoted},
+def admission_case():
+    """An admission case with one active norm unit, one quoted and one text unit."""
+    return {"kind": "admission", "environment": env(), "document": {"units": [
+        {"kind": "norm", "content": norm("a", "x_required", True)},
+        {"kind": "quoted", "content": norm("q", "x_required", True)},
         {"kind": "text", "content": {"text": "note"}}]}}
-    assert soft_source(case) == {"environment": source, "norms": [active]}
+
+
+def test_admission_adapter_selects_active_norm_units():
+    case = admission_case()
+    assert soft_source(case) == {"environment": env(), "norms": [norm("a", "x_required", True)]}
     assert diagnose(**soft_source(case)) is CLEAN
 
 
