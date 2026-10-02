@@ -377,6 +377,9 @@ def main() -> int:
                 raise RuntimeError("invalid test collection baseline")
             check_toolchains(result, env)
             check_python_project(result, env)
+            command(["uv", "run", "--frozen", "--no-sync", "python",
+                     "tools/wire_contract.py", "--check"], env=env,
+                    stage="Wire contract check")
             result["stages"].append("toolchains")
 
             command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
