@@ -4,9 +4,11 @@ The oracle is the fault catalogue (`conformance/wire_contract_faults.py`): each 
 path are written by hand, its table position is read from the contract, and a combination of faults with
 disjoint footprints expects the record of the fault of least position. No expectation, and no masking
 witness, is read from an engine's output. Tier 0 and tier A compare both engines' records with the expected
-fields (all but `text` and `args`), the engines with each other on the whole record (but `text` and `args`
-of inherited checks), each engine's code with its legacy validator's, and Lean's text with the Lean route's
-for the checks whose text is the contract's. Tier B and the replayed corpora check that the engines agree
+record: every field, with `text` rendered from the contract's template and the catalogue's hand-written
+`args`; for an inherited check, whose text is each language's own (section 6), `text` is that language's
+legacy text and `args` is `{"message": text}`. They also compare the engines with each other on the whole
+record (but `text` and `args` of inherited checks), each engine's code with its legacy validator's, and
+Lean's text with the Lean route's for the checks whose text is the contract's. Tier B and the replayed corpora check that the engines agree
 and that each reports a fault exactly when its legacy validator rejects.
 """
 
@@ -53,6 +55,22 @@ def inherited_checks(contract):
                 found.update(m["id"] for m in entry["emits"] if m.get("inherited"))
             elif entry.get("inherited"):
                 found.add(entry["id"])
+    for phase in contract["phases"]:
+        walk(phase["checks"])
+    return found
+
+
+def inherited_texts(contract):
+    """The templates of the inherited checks and members."""
+    found = []
+    def walk(entries):
+        for entry in entries:
+            if "each" in entry:
+                walk(entry["checks"])
+            elif entry.get("kind") == "classifier":
+                found.extend(m["text"] for m in entry["emits"] if m.get("inherited"))
+            elif entry.get("inherited"):
+                found.append(entry["text"])
     for phase in contract["phases"]:
         walk(phase["checks"])
     return found
@@ -160,7 +178,8 @@ def legacy_difference_sources(contract):
             index = raw["profiles"].index(profile)
             expected = {"contract": contract["contract"], "revision": contract["revision"], "check": "3.2",
                         "phase": "profiles", "code": "SOFT_UNSUPPORTED_PROFILE", "class": "UnsupportedProfile",
-                        "path": f"/environment/profiles/{index}"}
+                        "path": f"/environment/profiles/{index}",
+                        "text": f"UnsupportedProfile: Unsupported profile {profile}", "args": {"value": profile}}
             cases.append((f"L:{profile}:{label}", raw, rules, expected))
     # A whole rights source on the soft route: the `rights` block is refused first, at 1.5a, by both.
     raw = env(profiles=("norms@0", "rights@0", "soft-norms@0"))
@@ -169,13 +188,32 @@ def legacy_difference_sources(contract):
     cases.append(("L:rights@0:block", raw, [], {
         "contract": contract["contract"], "revision": contract["revision"], "check": "1.5a",
         "phase": "envelope", "code": "SOFT_INVALID_INPUT", "class": "InvalidInput",
-        "path": "/environment/vocabulary"}))
+        "path": "/environment/vocabulary", "text": "InvalidInput: invalid vocabulary", "args": {}}))
     raw = env(profiles=("norms@0", "norm-defaults@0", "soft-norms@0"))
     raw["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
     cases.append(("L:norm-defaults@0:unspecified", raw, [], {
         "contract": contract["contract"], "revision": contract["revision"], "check": "2.3",
         "phase": "declarations", "code": "SOFT_INVALID_INPUT", "class": "InvalidInput", "path": "/environment"}))
     return cases
+
+
+def record_problems(record, expected, legacy):
+    """How an engine's record differs from the expected record (8.3, tiers 0 and A): every field of
+    `expected`, `text` and `args` included. An expected record without `text` is an inherited check's: its
+    text is the language's own decoder text (section 6), which its legacy validator reports as `legacy`
+    (code, text), with the one argument `message`; `legacy` None skips that comparison (tier L, whose inputs
+    are those on which the two legacy validators differ)."""
+    if record is None:
+        return [f"expected {expected['check']} {expected['path']}, got clean"]
+    if any(record[key] != expected[key] for key in EXPECTED_FIELDS):
+        return [f"expected {expected['check']} {expected['path']}, got {record['check']} {record['path']}"]
+    if "text" in expected:
+        if (record["text"], record["args"]) != (expected["text"], expected["args"]):
+            return [f"text {record['text']!r}, args {record['args']}; expected {expected['text']!r}, "
+                    f"{expected['args']}"]
+    elif legacy is not None and (record["text"], record["args"]) != (legacy[1], {"message": legacy[1]}):
+        return [f"inherited text {record['text']!r}, args {record['args']}; legacy {legacy[1]!r}"]
+    return []
 
 
 def _lean_rows(binary, unit, cases):
@@ -207,6 +245,8 @@ def _python(contract, raw, norms):
 def report():
     contract = load("soft-norms@0")
     inherited = inherited_checks(contract)
+    if any(text != "{message}" for text in inherited_texts(contract)):
+        raise ValueError("an inherited check's text is not `{message}`: the oracle compares it with the legacy text")
     faults = catalogue()
     codes = legacy_codes()
     prints = {fault.name: footprint(fault) for fault in faults}
@@ -297,10 +337,9 @@ def report():
         elif lean_reads and (py is None) != (ln is None):
             problems.append("engines differ on fault or clean")
         if expected is not None:
-            for language, record, _ in languages:
-                if record is None or any(record[key] != expected[key] for key in EXPECTED_FIELDS):
-                    problems.append(f"{language}: expected {expected['check']} {expected['path']}, got "
-                                    f"{None if record is None else (record['check'], record['path'])}")
+            for language, record, legacy in languages:
+                problems += [f"{language}: {problem}"
+                             for problem in record_problems(record, expected, None if tier == "L" else legacy)]
             if (lean_reads and ln is not None and lean_legacy_result is not None
                     and expected["check"] not in inherited and ln["text"] != lean_legacy_result[1]):
                 problems.append(f"lean: text {ln['text']!r}, route {lean_legacy_result[1]!r}")
@@ -348,7 +387,8 @@ def report():
     verdict_open = bool(legacy_verdicts)
     return {
         "contract": contract["contract"], "revision": contract["revision"],
-        "oracle": "fault catalogue: hand-written check and path per fault, table position from the contract",
+        "oracle": ("fault catalogue: hand-written check, path and args per fault, text from the contract's "
+                   "template, table position from the contract; inherited text from each legacy validator"),
         "tiers": {"0": sizes["0"], "A": sizes["A"], "B": sizes["B"], "replayed": sizes["R"],
                   "legacy_differences": sizes["L"]},
         "residual": {language: residual[language] for language in ("python", "lean")},

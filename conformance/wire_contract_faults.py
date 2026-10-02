@@ -2,17 +2,19 @@
 
 Every fault records, by hand, the check that must be the first diagnostic when the fault alone is applied
 to its base source, the record's `path`, and, for a classifier member whose set section 6 orders by order
-keys, its key inside the set. The expected `code`, `class` and `phase` follow from the check by the
-contract. The oracle never runs an engine: a fault's table position is read from the contract's structure
+keys, its key inside the set; and, for a check that is not inherited, the record's `args` (`ARGS`), from
+which the expected `text` is rendered by the contract's template. The expected `code`, `class` and `phase`
+follow from the check by the contract. The oracle never runs an engine: a fault's table position is read from the contract's structure
 and the expected path (`position`), and a combination of faults with disjoint footprints expects the record
 of the fault of least position (`expected_first`).
 """
 
 import argparse
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import json
 from pathlib import Path
+import re
 from typing import Callable
 
 from conformance.soft_norms import (_doubled, _exception, multi_fault_base, multi_faults, norm,
@@ -123,6 +125,87 @@ def _multi_expected():
 
 
 KEYS = {f"r{i}-condition": (0, 2) for i in (0, 2, 3)} | {f"r{i}-guard": (0,) for i in range(4)}
+
+
+def _name(i):
+    """The location of the name of the base's rule `i`, which a record's `name` or `detail` may repeat."""
+    return ("norms", i, "norm", "name")
+
+
+NAMES = ("a0", "b1", "c2", "d3")
+
+
+def _expected_args():
+    """The `args` of each fault's expected record, written by hand from the contract's texts (2.7) and the
+    base, for every fault whose check is not inherited and whose text has a placeholder; a fault whose text
+    has none expects `{}`. Each entry also gives the locations it reads beyond those the fault writes (a
+    rule's name or predicate), so that no fault that changes them is combined with it (`footprint`)."""
+    args = {
+        "reserved-name": ({"key": "soft__a"}, ()),
+        "reserved-name-z": ({"key": "soft__z"}, ()),
+        "instruction-type": ({"key": "q"}, ()),
+        "party-name": ({"value": "Q!"}, ()),
+        "party-repeat": ({"value": "p"}, ()),
+        "rank-repeat": ({"value": "a"}, ()),
+        "profile-unknown": ({"value": "zz@0"}, ()),
+        "r1-strict-exception": ({"name": "b1"}, (_name(1),)),
+        "inherited-decider": ({"name": "c2"}, (_name(2),)),
+        "null-decider": ({"name": "c2"}, (_name(2),)),
+        "instruction-party": ({"value": "zz"}, ()),
+        "outranks-rank": ({"value": "z"}, ()),
+        "ties-rank": ({"value": "z"}, ()),
+        "duplicate-rule": ({"value": "b1"}, (_name(1),)),
+        "rank-cycle": ({"detail": "a, b"}, ()),
+        "tie-against-order": ({"a": "a", "b": "b"}, ()),
+        "decision-name": ({"name": "soft__excepted__" + "d" * 49}, ()),
+        "precedence-cycle": ({"detail": "a0, c2"}, (_name(0), _name(2))),
+        "soft-over-hard": ({"detail": "rule d3 over b1"}, (_name(3), _name(1))),
+        "derived-depth": ({"detail": " of rule c2"}, (_name(2),)),
+        "layer-nodes": ({"detail": "layer:norms:x_permitted"}, ()),
+        "dunder-regulated": ({"key": "a__b"}, ()),
+        "instruction-regulated": ({"key": "q"}, ()),
+        "instruction-defined": ({"key": "q"}, ()),
+        "rank-name": ({"value": "Bad!"}, ()),
+        "r1-alterable-shape": ({"name": "b1"}, (_name(1),)),
+        "r1-hard-alterable": ({"name": "b1"}, (_name(1),)),
+        "r0-no-exception": ({"name": "a0"}, (_name(0),)),
+        "r0-factors-shape": ({"name": "a0"}, (_name(0),)),
+        "r3-over-predicate": ({"rule": "d3", "predicate": "x_permitted", "value": "a0",
+                               "parent_predicate": "x_required"},
+                              (_name(3), _name(0), ("norms", 3, "norm", "predicate"),
+                               ("norms", 0, "norm", "predicate"))),
+        "long-decision-names": ({"name": "soft__excepted__" + "d" * 52}, ()),
+        "stratification": ({"detail": "x_permitted, x_required"}, ()),
+        "softened-cycle": ({"detail": "x_permitted, x_required"}, ()),
+        "soft4-target-doubling-11": ({"detail": "p10"}, ()),
+    }
+    for i, name in enumerate(NAMES):
+        args.update({
+            f"r{i}-over-repeat": ({"value": "a0", "name": name}, (_name(i),)),
+            f"r{i}-mode": ({"name": name}, (_name(i),)),
+            f"r{i}-rank-type": ({"name": name}, (_name(i),)),
+            f"r{i}-alterable": ({"name": name}, (_name(i),)),
+            f"r{i}-hard-type": ({"name": name}, (_name(i),)),
+            f"r{i}-rank": ({"name": name, "value": "z"}, (_name(i),)),
+            f"r{i}-party": ({"value": "zz"}, ()),
+            f"r{i}-predicate": ({"value": "u"}, ()),
+            f"r{i}-over": ({"value": "nosuch"}, ()),
+        })
+    for i in (0, 2, 3):
+        name = NAMES[i]
+        args.update({
+            f"r{i}-hard": ({"name": name}, (_name(i),)),
+            f"r{i}-exception": ({"name": name}, (_name(i),)),
+            f"r{i}-factors": ({"name": name}, (_name(i),)),
+            f"r{i}-condition": ({"detail": f"{name} mentions x_permitted"}, (_name(i),)),
+        })
+    for i in (0, 3):
+        args.update({f"r{i}-decider-type": ({"name": NAMES[i]}, (_name(i),)),
+                     f"r{i}-decider": ({"name": NAMES[i]}, (_name(i),))})
+    return args
+
+
+ARGS = _expected_args()
 
 
 def _replacing(apply, *paths):
@@ -313,7 +396,10 @@ def catalogue():
     for name, check, path, apply in _derived():
         faults.append(Fault(name, check, path, apply, frozenset({name}) | LABELS.get(name, frozenset()),
                             DERIVED_KEYS.get(name, ()), reads=READS.get(name, ())))
-    return faults + _reproducers() + _python_only()
+    faults += _reproducers() + _python_only()
+    # The locations each fault's expected `args` read join its footprint (`_expected_args`).
+    return [replace(fault, reads=fault.reads + ARGS[fault.name][1]) if fault.name in ARGS else fault
+            for fault in faults]
 
 
 def legacy_codes():
@@ -434,14 +520,33 @@ def expected_first(contract, combo):
     return min(combo, key=lambda fault: position(contract, fault))
 
 
+_PLACEHOLDER = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)(?::[a-z]+)?\}")
+
+
+def rendered(template, args):
+    """The text of a template (2.7) with rendered `args`, written here apart from the engines' renderer: each
+    placeholder is replaced by its argument, and the placeholders must be exactly the arguments."""
+    if "{{" in template or "}}" in template:
+        raise ValueError(f"the oracle does not render escaped braces: {template}")
+    names = {match[1] for match in _PLACEHOLDER.finditer(template)}
+    if names != set(args):
+        raise ValueError(f"template {template!r} has placeholders {sorted(names)}, args {sorted(args)}")
+    return _PLACEHOLDER.sub(lambda match: args[match[1]], template)
+
+
 def expected_record(contract, fault):
-    """The fields of the expected record that the catalogue determines (2.7): all but `text` and `args`."""
+    """The expected record (2.7). Every field is the catalogue's, except, for an inherited check, `text` and
+    `args`, which are each language's legacy text (section 6) and which the gate compares with it."""
     phase_index, steps = route(contract, fault.check)
     member = steps[-1][1]
     code = member["code"]
-    return {"contract": contract["contract"], "revision": contract["revision"], "check": fault.check,
-            "phase": contract["phases"][phase_index]["name"], "code": code,
-            "class": contract["codes"][code]["class"], "path": fault.path}
+    record = {"contract": contract["contract"], "revision": contract["revision"], "check": fault.check,
+              "phase": contract["phases"][phase_index]["name"], "code": code,
+              "class": contract["codes"][code]["class"], "path": fault.path}
+    if not member.get("inherited"):
+        args = dict(ARGS[fault.name][0]) if fault.name in ARGS else {}
+        record["text"], record["args"] = rendered(member["text"], args), args
+    return record
 
 
 def changed_paths(before, after, prefix=()):
