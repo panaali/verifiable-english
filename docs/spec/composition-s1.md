@@ -1263,6 +1263,13 @@ The four UDHR units `u067`, `u068`, `u071a`, `u071b` are admissible by closure i
 their unlock under S2b, and the rerun says where it falls. No coverage number is predicted, and the measured row
 replaces the plan's.
 
+**Measured** (2026-10-02, [composition-s1-measured.md](composition-s1-measured.md), `tools/readings_s1_pilot.py`):
+neither pilot is refused by the single-attachment check; the constitution's 7 strict/default force sets and the
+UDHR's 23 content-bearing sets (19 right sets, the 4 norm-candidate sets) are admitted in the document, every pair
+with one situation found by Python's search and checked by Lean, all with `outcome` probes; no unit changes status
+(S1 adds none); the 43 UDHR units blocked on `force_variants_in_one_reading_set` lose that blocker but stay
+UNFORMALISED until the translation re-encodes them; the UDHR loads in 141.7 s.
+
 ## 12. Statement review checklist (Astra + Fable, before S1's Lean)
 
 The re-review of draft 2 covers what the statement review changed and no more: `WellFormedDoc` in 8.2

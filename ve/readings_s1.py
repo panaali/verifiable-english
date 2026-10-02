@@ -1253,16 +1253,17 @@ def _probes(admission, s, i, j, base):
     return outcomes + (["holds"] if assertions else []) + selects + ([] if assertions else ["holds"])
 
 
-def search(environment, document, set_id, *, max_size=2):
+def search(environment, document, set_id, *, max_size=2, hints=(), admission=None):
     """For each ordered pair of candidates of the set, neither pending, a situation entry Python finds that
-    separates them, or None. The witness is either reading of the pair; tables of shared keys stay empty."""
+    separates them, or None. The witness is either reading of the pair; tables of shared keys stay empty.
+    `hints` are bases tried first (a pilot's recorded situation, re-expressed)."""
     from .model import FiniteModel
-    admission = Admission(environment, document)
+    admission = admission or Admission(environment, document)
     R = admission.doc.set_by_id(set_id)
     found = {}
     author = admission.senv.author_environment()
     bases = []
-    for wire_base in _bases(admission.senv, max_size):
+    for wire_base in [*hints, *_bases(admission.senv, max_size)]:
         try:
             bases.append((wire_base, FiniteModel._decode(author, {**wire_base, "complete": True},
                                                          _defer_model_id=True)))
@@ -1275,6 +1276,46 @@ def search(environment, document, set_id, *, max_size=2):
                 continue
             found[(x, y)] = found[(y, x)] = _search_pair(admission, set_id, x, y, bases)
     return {(R.candidates[x].id, R.candidates[y].id): entry for (x, y), entry in found.items()}
+
+
+def guard_base(admission, s, i):
+    """The base of a recorded force situation: one element of each sort, and every positive atom of the
+    candidate's rule guards true at the tuple of its arguments (the pilots' "every guard atom of the rule true,
+    every carve-out false")."""
+    author = admission.senv.author_environment()
+    domains = {sort: [_element(sort, 0, 1, whole=[_element(o, 0, 1) for o in author.model_sorts].count(
+        _element(sort, 0, 1)) > 1)] for sort in sorted(author.model_sorts)}
+    relations = {p: [] for p in sorted(author.predicates) if p not in author.definition_entries}
+    content = admission.candidate(s, i).content
+    rules = ([content.body] if content.kind == "norm" else
+             [line[k] for line in content.lines() for k in ("norm", "liberty", "recognition")
+              if type(line.get(k)) is dict])
+    for rule in rules:
+        decl = admission.senv.frame.predicates.get(rule.get("predicate") or "")
+        if decl is None:
+            continue
+        sorts = list(decl.arguments)
+        for atom in _positive_atoms(rule.get("guard", ["top"])):
+            name, args = atom
+            if name not in relations or any(type(a) is not list or a[0] != "var" or a[1] >= len(sorts)
+                                            for a in args):
+                continue
+            row = [domains[sorts[len(sorts) - 1 - a[1]]][0] for a in args]
+            if row not in relations[name]:
+                relations[name].append(row)
+    constants = {c: domains[author.constants[c].sort][0] for c in sorted(author.constants)
+                 if author.constants[c].sort in domains}
+    return {"domains": domains, "constants": constants, "relations": relations}
+
+
+def _positive_atoms(formula):
+    if type(formula) is not list or not formula:
+        return []
+    if formula[0] in ("unary", "binary"):
+        return [(formula[1], formula[2:])]
+    if formula[0] == "and":
+        return _positive_atoms(formula[1]) + _positive_atoms(formula[2])
+    return []
 
 
 def _search_pair(admission, s, x, y, bases):

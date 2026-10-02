@@ -673,6 +673,21 @@ def _content_bearing(doc):
     return row is not None and row.get("content_bearing") is True
 
 
+def _lower_route(doc):
+    """The environment and soft document of the lower route: under `readings@1`, without the profile."""
+    if "readings@1" not in doc["environment"].profiles:
+        return doc["environment"], doc["soft_document"]
+    data = doc["environment"].to_dict()
+    data["profiles"] = [p for p in data["profiles"] if p != "readings@1"]
+    return _environment(data), _lower_soft_document(doc)
+
+
+def _lower_rights_document(doc, lower_env):
+    from .rights import RightsDocument
+    return RightsDocument(lower_env, _rights_units(doc["meta"]["units"],
+                                                   _s1_attached(doc["environment"].to_dict(), doc["meta"])))
+
+
 def _lower_soft_document(doc):
     """The soft document the lower route checks: under `readings@1` the head strips the profile and hands every
     other case to the lower route (composition-s1.md 4.1), so its environment is the one without it."""
@@ -1153,13 +1168,17 @@ def _report(doc):
                      "narrowings": [n["id"] for n in doc["meta"].get("narrowings", [])],
                      **({"couplings": doc["meta"]["couplings"]}
                         if rights is not None and doc["meta"].get("couplings") else {})}
+        # Under readings@1 the graph is the lower route's case (composition-s1.md 4.1): its environment is the
+        # one without the profile, and the fixed units attached to an open set are not in it.
+        lower_env, lower_soft = _lower_route(doc)
         if rights is not None:
             from .rights_route import admit_rights_document
-            result["admission"] = admit_rights_document(doc["environment"], admission, rights)
+            lower_rights = (rights if lower_env is doc["environment"] else
+                            _lower_rights_document(doc, lower_env))
+            result["admission"] = admit_rights_document(lower_env, admission, lower_rights)
         elif soft is not None:
             from .soft_route import admit_soft_document
-            result["admission"] = admit_soft_document(doc["environment"], admission,
-                                                       soft_document=soft)
+            result["admission"] = admit_soft_document(lower_env, admission, soft_document=lower_soft)
         elif defaults is not None:
             # W1's admission on `fill U`, from the source environment (Lean
             # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
