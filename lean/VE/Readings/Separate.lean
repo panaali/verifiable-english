@@ -1224,4 +1224,98 @@ theorem separation_conservative {α : Type u} [DecidableEq α] (D : Doc) (s : St
         rw [separates_noKeys D s j i M F q v hi hF' hu hq hvj hvi]
         exact ⟨hoj, by rw [hoi]; simp⟩
 
+/-! ## Proofs: force -/
+
+
+theorem strictTwin_nodes (X : SoftDoc) (N : SoftNode) (hN : X.T.nodes = [N]) : (strictTwin X N).T.nodes = [strictOf N] := by
+  simp [strictTwin, hN]
+
+theorem switch_false (N : SoftNode) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (ha : N.alterable = []) (Y : SoftDoc) : ¬ (VE.SoftNorms.switchF Y N).denote S ρ := by
+  simp [VE.SoftNorms.switchF, VE.SoftNorms.switchIn, ha, VE.Norms.anyF_denote]
+
+theorem strictDecides_alone (X : SoftDoc) (N : SoftNode) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (hN : X.T.nodes = [N]) (hd : N.mode = .default) (p : String) (sign : Bool) :
+    ¬ VE.SoftNorms.StrictDecidesD X S ρ p sign := by
+  rintro ⟨M, hM, _, hs, _⟩
+  obtain ⟨hM, _⟩ := VE.SoftNorms.mem_rulesOn.mp hM
+  rw [hN, List.mem_singleton] at hM
+  subst hM
+  rw [hd] at hs; cases hs
+
+theorem eff_alone (X : SoftDoc) (N : SoftNode) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (hN : X.T.nodes = [N]) (hd : N.mode = .default) :
+    ∀ g, VE.SoftNorms.EffD X S ρ g N ↔ VE.SoftNorms.EligibleD X S ρ N
+  | 0 => Iff.rfl
+  | g + 1 => by
+    simp only [VE.SoftNorms.EffD]
+    refine ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
+    rintro ⟨M, hM, hi, _⟩
+    rw [hN, List.mem_singleton] at hM
+    subst hM
+    simp [VE.SoftNorms.Incompatible] at hi
+
+theorem applies_alone (X : SoftDoc) (N : SoftNode) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (hN : X.T.nodes = [N]) (hd : N.mode = .default) (ha : N.alterable = [])
+    (he : ¬ (exceptedF X N).denote S ρ) :
+    VE.SoftNorms.AppliesSoftD X S ρ N ↔ VE.SoftNorms.AppliesSoftD (strictTwin X N) S ρ (strictOf N) := by
+  simp only [VE.SoftNorms.AppliesSoftD, hd, strictOf]
+  rw [eff_alone X N S ρ hN hd]
+  simp only [VE.SoftNorms.EligibleD, VE.SoftNorms.LiveD, VE.SoftNorms.BlockedD]
+  have hs1 := switch_false N S ρ ha X
+  have hs2 := switch_false { N with mode := .strict, exception := none } S ρ ha (strictTwin X N)
+  have hb := strictDecides_alone X N S ρ hN hd
+  constructor
+  · rintro ⟨_, ⟨hg, hc, _, _⟩, _⟩
+    exact ⟨hg, hc, hs2, fun h => by cases h⟩
+  · rintro ⟨hg, hc, _, _⟩
+    refine ⟨hd, ⟨hg, hc, hs1, fun _ => he⟩, ?_⟩
+    rintro (h | h | ⟨_, _, _, h⟩ | ⟨_, _, _, h⟩) <;> exact hb _ _ h
+
+theorem yields_alone (X : SoftDoc) (N : SoftNode) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (hN : X.T.nodes = [N]) (hd : N.mode = .default) (ha : N.alterable = [])
+    (he : ¬ (exceptedF X N).denote S ρ) :
+    ∀ f, VE.SoftNorms.YieldsSoftD X S ρ f N ↔ VE.SoftNorms.YieldsSoftD (strictTwin X N) S ρ f (strictOf N)
+  | 0 => applies_alone X N S ρ hN hd ha he
+  | f + 1 => by
+    simp only [VE.SoftNorms.YieldsSoftD, VE.SoftNorms.children, VE.SoftNorms.mem_childrenIn_iff,
+      strictTwin_nodes X N hN, hN, List.mem_singleton]
+    rw [applies_alone X N S ρ hN hd ha he]
+    apply or_congr Iff.rfl
+    constructor
+    · rintro ⟨C, ⟨hC, _, ho⟩, hy⟩
+      rw [hC] at hy ho
+      exact ⟨strictOf N, ⟨rfl, rfl, ho⟩, (yields_alone X N S ρ hN hd ha he f).mp hy⟩
+    · rintro ⟨C, ⟨hC, _, ho⟩, hy⟩
+      rw [hC] at hy ho
+      exact ⟨N, ⟨rfl, rfl, ho⟩, (yields_alone X N S ρ hN hd ha he f).mpr hy⟩
+
+theorem decides_alone (X : SoftDoc) (N : SoftNode) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (hN : X.T.nodes = [N]) (hd : N.mode = .default) (ha : N.alterable = [])
+    (he : ¬ (exceptedF X N).denote S ρ) (p : String) (sign : Bool) :
+    VE.SoftNorms.DecidesSoftD X S ρ p sign ↔ VE.SoftNorms.DecidesSoftD (strictTwin X N) S ρ p sign := by
+  have hf : VE.SoftNorms.fuel (strictTwin X N) = VE.SoftNorms.fuel X := by
+    simp [VE.SoftNorms.fuel, strictTwin_nodes X N hN, hN]
+  simp only [VE.SoftNorms.DecidesSoftD, VE.SoftNorms.SelectsSoftD, VE.SoftNorms.mem_rulesOn, hf,
+    strictTwin_nodes X N hN, hN, List.mem_singleton, VE.SoftNorms.children, VE.SoftNorms.mem_childrenIn_iff]
+  constructor
+  · rintro ⟨M, ⟨hM, hp⟩, hs, hap, hn⟩
+    rw [hM] at hp hs hap hn
+    refine ⟨strictOf N, ⟨rfl, hp⟩, hs, (applies_alone X N S ρ hN hd ha he).mp hap, ?_⟩
+    rintro ⟨C, ⟨hC, _, ho⟩, hy⟩
+    rw [hC] at hy ho
+    exact hn ⟨N, ⟨rfl, rfl, ho⟩, (yields_alone X N S ρ hN hd ha he _).mpr hy⟩
+  · rintro ⟨M, ⟨hM, hp⟩, hs, hap, hn⟩
+    rw [hM] at hp hs hap hn
+    refine ⟨N, ⟨rfl, hp⟩, hs, (applies_alone X N S ρ hN hd ha he).mpr hap, ?_⟩
+    rintro ⟨C, ⟨hC, _, ho⟩, hy⟩
+    rw [hC] at hy ho
+    exact hn ⟨strictOf N, ⟨rfl, rfl, ho⟩, (yields_alone X N S ρ hN hd ha he _).mp hy⟩
+
+
+/-- The force axis is real exactly where the exception can apply: a default rule alone and its strict twin agree
+    wherever the rule's exception does not hold. -/
+theorem force_agrees_off_exception (X : SoftDoc) (h : WellFormedSoft X = true) (N : SoftNode)
+    (hN : X.T.nodes = [N]) (hd : N.mode = .default) (ha : N.alterable = []) (r : Regulated)
+    (hr : r ∈ X.T.regulated) (S : VE.Structure.{u}) (vs : List S.Carrier)
+    (he : ¬ (exceptedF X N).denote S (tupleVal vs)) :
+  ValueSoft X r S vs = ValueSoft (strictTwin X N) r S vs := by
+  unfold ValueSoft
+  rw [propext (decides_alone X N S _ hN hd ha he r.name true),
+    propext (decides_alone X N S _ hN hd ha he r.name false)]
+
 end VE.Readings
