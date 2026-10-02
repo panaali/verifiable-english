@@ -126,3 +126,75 @@ def test_admission_adapter_uses_active_norm_units():
     assert isinstance(python_bad, Fault)
     assert canonical_json(python_bad.record) == canonical_json(lean_bad["diagnostic"])
     assert lean_bad["diagnostic"]["check"] == "4.3"
+
+
+FORMS_BASE = {"doc": {"x": 1, "n": 1, "mode": "strict", "pair": ["a", 1], "tag": "t",
+                      "sub": {"tag": "s", "part": {"x": 1, "ys": []}},
+                      "plain": {"tag": "p", "part": {"x": 1, "ys": ["u"]}}}}
+
+
+def _forms(edit):
+    root = deepcopy(FORMS_BASE)
+    edit(root["doc"])
+    return root
+
+
+def _forms_record(check, phase, code, cls, path, text, args=None):
+    return canonical_json({"contract": "forms@0", "revision": 1, "check": check, "phase": phase,
+                           "code": code, "class": cls, "path": path, "text": text, "args": args or {}})
+
+
+def _guard_fault(check, path, text, args=None):
+    return _forms_record(check, "guards", "FORMS_SHAPE", "InvalidInput", path, text, args)
+
+
+# Hand-derived from forms@0 and mid@0 (conformance/wire-contract/contracts) by sections 2.3, 2.6 and 2.7:
+# every literal form with a case where it holds and one where it does not, the tuple type form, a template
+# with literal braces, a raw value holding U+0001, and the include frame of 2.7 under a view and without one.
+FORMS = {
+    "F1": (FORMS_BASE, "clean"),
+    "F2 present holds": (_forms(lambda d: d.update(y=1)), _guard_fault("f2", "/doc", "Forms: x and y")),
+    "F3 present fails, absent holds": (
+        _forms(lambda d: (d.update(y=1), d.pop("x"))), _guard_fault("f3", "/doc", "Forms: neither x nor z")),
+    "F3b absent holds, check holds": (_forms(lambda d: (d.pop("x"), d.update(z=0))), "clean"),
+    "F4 differs holds, braces": (
+        _forms(lambda d: d.update(n="s")),
+        _guard_fault("f4", "/doc/n", 'Forms: n is {"s"}', {"value": '"s"'})),
+    "F5 differs fails": (_forms(lambda d: d.update(n="s", mode="loose")), "clean"),
+    "F6 is_not holds, tuple fails": (
+        _forms(lambda d: d.update(pair=["a", "b"])),
+        _guard_fault("f5", "/doc/pair", 'Forms: pair ["a","b"]', {"value": '["a","b"]'})),
+    "F7 is_not and is fail": (_forms(lambda d: d.update(pair=["a", "b"], mode=True)), "clean"),
+    "F8 is holds, enum fails": (
+        _forms(lambda d: d.update(mode="other")),
+        _guard_fault("f6", "/doc/mode", 'Forms: mode "other"', {"value": '"other"'})),
+    "F9 equals holds, raw U+0001": (
+        _forms(lambda d: d.update(tag="a\x01b")),
+        _guard_fault("f7", "/doc/tag", "Forms: tag a\x01b", {"value": "a\x01b"})),
+    "F10 view then nested include": (
+        _forms(lambda d: d["sub"]["part"].update(ys=[7])),
+        _forms_record("n1/m2/b2", "nest", "FORMS_NEST", "UnsupportedProfile", "/doc/sub", "Inner: y 0",
+                      {"index": "0", "inner_path": "/part/ys/0"})),
+    "F11 nested include without view": (
+        _forms(lambda d: d["plain"]["part"].update(ys=[7])),
+        _forms_record("n2/m2/b2", "nest", "MID_INNER", "ResourceLimit", "/doc/plain/part/ys/0", "Inner: y 0",
+                      {"index": "0"})),
+    "F12 view, check of the middle contract": (
+        _forms(lambda d: d["sub"].update(tag=5)),
+        _forms_record("n1/m1", "nest", "FORMS_NEST", "UnsupportedProfile", "/doc/sub", "Mid: tag 5",
+                      {"value": "5", "inner_path": "/tag"})),
+    "F13 not an object": ({"doc": 3}, _guard_fault("f1", "/doc", "Forms: doc")),
+}
+
+
+def test_forms_corpus_spec_python_lean():
+    """Wire review (Astra A, Fable B2, B6): hand-derived records, Python and Lean, on the literal forms, the
+    tuple type form, literal braces, U+0001 and a viewed include over a nested include."""
+    labels = list(FORMS)
+    rows = _lean("forms@0", [FORMS[name][0] for name in labels], "corpus")
+    for name, row in zip(labels, rows):
+        root, expected = FORMS[name]
+        python = run(CONTRACTS["forms@0"], root, registry=_registry(), contracts=CONTRACTS,
+                     limits=LIMITS, names=NAMES)
+        lean = "clean" if row["outcome"] == "clean" else canonical_json(row["diagnostic"])
+        assert (_record(python), lean) == (expected, expected), name

@@ -96,3 +96,64 @@ def test_json_renderer_uses_full_control_escapes():
     record = run(table, {"doc": "a\n\t\"\\"}).record
     assert record["text"] == 'bad "a\\u000a\\u0009\\"\\\\"'
     assert record["args"] == {"value": '"a\\u000a\\u0009\\"\\\\"'}
+
+
+def _nested_tables(*, view):
+    """outer@0 includes mid@0 at /doc (with or without a view); mid@0 includes inner@0 at /part."""
+    inner = _table([{"name": "body", "checks": [
+        _check("b1", "type", "/x", type="integer", text="x {value:json}")]}], name="inner@0")
+    mid = _table([{"name": "body", "checks": [
+        {"id": "m1", "kind": "include", "contract": "inner@0", "phases": ["body"], "at": "/part",
+         "as": "MID"}]}],
+        name="mid@0", codes={"BAD": {"class": "InvalidInput", "summary": "Bad"},
+                             "MID": {"class": "ResourceLimit", "summary": "Mid"}})
+    include = {"id": "o1", "kind": "include", "contract": "mid@0", "phases": ["body"], "at": "/doc"}
+    if view:
+        include.update(view="same", says="The view gives the value itself.")
+    outer = _table([{"name": "main", "checks": [include]}], name="outer@0")
+    contracts = {"inner@0": inner, "mid@0": mid}
+    registry = Registry().register(views={"same": lambda value: value})
+    return outer, contracts, registry
+
+
+def test_view_site_then_nested_include_path():
+    """Wire review (Astra A): under a view, `path` is the view's site and `inner_path` holds the sites of the
+    includes inside the view, then the local pointer, as Lean's `Frame.enter` builds them."""
+    outer, contracts, registry = _nested_tables(view=True)
+    record = run(outer, {"doc": {"part": {"x": "s"}}}, registry=registry, contracts=contracts).record
+    assert record["check"] == "o1/m1/b1"
+    assert record["path"] == "/doc"
+    assert record["args"] == {"value": '"s"', "inner_path": "/part/x"}
+
+
+def test_nested_includes_without_view_concatenate_sites():
+    outer, contracts, registry = _nested_tables(view=False)
+    record = run(outer, {"doc": {"part": {"x": "s"}}}, registry=registry, contracts=contracts).record
+    assert record["path"] == "/doc/part/x"
+    assert record["args"] == {"value": '"s"'}
+
+
+def test_inner_as_code_takes_the_class_of_its_declaring_contract():
+    """`as` on an include inside an included contract is declared there, not in the contract that runs."""
+    outer, contracts, registry = _nested_tables(view=False)
+    record = run(outer, {"doc": {"part": {"x": "s"}}}, registry=registry, contracts=contracts).record
+    assert (record["code"], record["class"]) == ("MID", "ResourceLimit")
+
+
+def test_template_braces_and_control_characters_in_values():
+    """Wire review (Fable B2): `{{` and `}}` are literal braces, and a value holding U+0001 or U+0002 is
+    rendered as it is."""
+    table = _table([{"name": "p", "checks": [
+        _check("1", "type", "/doc", type="integer", text="{{{value}}} {{x}}")]}])
+    record = run(table, {"doc": "a\x01b\x02c"}).record
+    assert record["text"] == "{a\x01b\x02c} {x}"
+    assert record["args"] == {"value": "a\x01b\x02c"}
+
+
+def test_template_pieces_refuse_unbalanced_braces():
+    import pytest
+    from ve.wire_contract.engine import pieces
+    assert pieces("a {{b}} {c:json}") == [("lit", "a {b} "), ("arg", "c", "json")]
+    for bad in ("a { b", "a } b", "{x"):
+        with pytest.raises(ValueError):
+            pieces(bad)

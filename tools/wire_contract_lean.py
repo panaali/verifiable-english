@@ -1,7 +1,8 @@
 """Render format-1 contracts as data-only Lean table modules."""
 
 import json
-import re
+
+from ve.wire_contract.engine import pieces as split_template
 
 
 def q(value):
@@ -93,20 +94,10 @@ def name_class(cls):
     )) + "⟩"
 
 
-PLACEHOLDER = re.compile(r"\{([A-Za-z_][A-Za-z_0-9]*)(?::([A-Za-z]+))?\}")
-
-
 def pieces(template):
-    out = []
-    start = 0
-    for match in PLACEHOLDER.finditer(template):
-        if match.start() > start:
-            out.append(f".lit {q(template[start:match.start()])}")
-        out.append(f".arg {q(match[1])} .{match[2] or 'raw'}")
-        start = match.end()
-    if start < len(template):
-        out.append(f".lit {q(template[start:])}")
-    return seq(out)
+    """The template split as the Python engine splits it: `{{` and `}}` are literal braces."""
+    return seq(f".lit {q(p[1])}" if p[0] == "lit" else f".arg {q(p[1])} .{p[2]}"
+               for p in split_template(template))
 
 
 def kind(entry, limits, names):

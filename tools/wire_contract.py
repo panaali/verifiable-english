@@ -15,10 +15,14 @@ from tools.wire_contract_lean import module as lean_module, name_class as lean_n
 
 from lean.audit import FORBIDDEN
 from ve.wire import canonical_json, loads_json
-from ve.wire_contract.engine import CLEAN, Registry, run
+from ve.wire_contract.engine import CLEAN, Registry, pieces as split_template, run
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "ve/wire_contract"
+# The engine corpus (wire-contract.md 8.1) and its Lean namespaces: the three contracts of 8.1, then `mid@0`
+# and `forms@0`, which cover the literal forms, the tuple type form and a view over a nested include.
+CORPUS = (("inner@0", "Corpus.Inner"), ("demo@0", "Corpus.Demo"), ("defer@0", "Corpus.Defer"),
+          ("mid@0", "Corpus.Mid"), ("forms@0", "Corpus.Forms"))
 CLASSES = {"InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration",
            "UnboundVariable", "ShadowedVariable", "TypeMismatch", "InvalidModel",
            "UnsupportedProfile", "ResourceLimit"}
@@ -37,7 +41,6 @@ CHECK_COMMON = {"id", "kind", "at", "when", "code", "text", "args", "says"}
 RENDERERS = {"raw", "json", "index", "count", "list"}
 ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9.-]*\Z")
 PART = re.compile(r"[0-9]+|[^0-9]+")
-PLACEHOLDER = re.compile(r"\{([A-Za-z_][A-Za-z_0-9]*)(?::([A-Za-z]+))?\}")
 LOCATION = re.compile(r"(?:@(?:[0-9]+)?(?=/|$))?(?:/(?:[^*/~]|~[01])*)*\Z")
 PATTERN = re.compile(r"(?:@(?:[0-9]+)?(?=/|$))?(?:/(?:[^/~]|~[01])*)*\Z")
 
@@ -69,13 +72,11 @@ def generated_lean(contracts, limits, names):
         "SoftNorms", f"def table : VE.WireContract.Table :=\n  {lean_table(soft, contracts, limits, names)}\n",
         "ve/wire_contract/soft-norms@0.json", soft["revision"], _hash(soft), limits_hash, names_hash)
     corpus_dir = ROOT / "conformance/wire-contract/contracts"
-    corpus = {unit: loads_json((corpus_dir / f"{unit}.json").read_bytes())
-              for unit in ("inner@0", "demo@0", "defer@0")}
+    corpus = {unit: loads_json((corpus_dir / f"{unit}.json").read_bytes()) for unit, _ in CORPUS}
     corpus_limits = loads_json((corpus_dir / "limits.json").read_bytes())
     corpus_names = loads_json((corpus_dir / "names.json").read_bytes())
     sections = []
-    for unit, label in (("inner@0", "Corpus.Inner"), ("demo@0", "Corpus.Demo"),
-                        ("defer@0", "Corpus.Defer")):
+    for unit, label in CORPUS:
         c = corpus[unit]
         sections.append(f"namespace VE.WireContract.Tables.{label}\n"
                         f"def table : VE.WireContract.Table :=\n  {lean_table(c, corpus, corpus_limits, corpus_names)}\n"
@@ -313,15 +314,14 @@ def lint(contract, *, limits, names, known=None):
         if type(value) is not str or not value.isascii():
             issue("WC04", "non-ASCII template")
             return
-        cleared = value.replace("{{", "").replace("}}", "")
-        found = list(PLACEHOLDER.finditer(cleared))
-        if re.sub(PLACEHOLDER, "", cleared).count("{") or re.sub(PLACEHOLDER, "", cleared).count("}"):
+        try:
+            found = [p[1:] for p in split_template(value) if p[0] == "arg"]
+        except ValueError:
             issue("WC04", f"unbalanced template {entry['id']}")
+            return
         allowed = {"value", "key", "index", "count", "limit"} | set(entry.get("args", {})) | set(entry.get("returns", []))
         renderers = {}
-        for item in found:
-            name, renderer = item.groups()
-            renderer = renderer or "raw"
+        for name, renderer in found:
             if name not in allowed or renderer not in RENDERERS or (name in renderers and renderers[name] != renderer):
                 issue("WC04", f"invalid placeholder {entry['id']}:{name}")
             renderers[name] = renderer

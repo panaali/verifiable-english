@@ -1,0 +1,20 @@
+{
+  "contract":"forms@0","revision":1,"format":1,"status":"shadow",
+  "input":["doc"],"uses":["mid@0"],
+  "codes":{"FORMS_SHAPE":{"class":"InvalidInput","summary":"Invalid form"},"FORMS_NEST":{"class":"UnsupportedProfile","summary":"Nested value under the view"}},
+  "residual":"FORMS_SHAPE","phases":[
+    {"name":"guards","checks":[
+      {"id":"f1","kind":"type","at":"/doc","type":"object","code":"FORMS_SHAPE","text":"Forms: doc"},
+      {"id":"f2","kind":"excludes","at":"/doc","member":"y","when":[{"present":"/doc/x"}],"code":"FORMS_SHAPE","text":"Forms: x and y"},
+      {"id":"f3","kind":"requires","at":"/doc","member":"z","when":[{"absent":"/doc/x"}],"code":"FORMS_SHAPE","text":"Forms: neither x nor z"},
+      {"id":"f4","kind":"type","at":"/doc/n","type":"integer","when":[{"differs":["/doc/mode","loose"]}],"code":"FORMS_SHAPE","text":"Forms: n is {{{value:json}}}"},
+      {"id":"f5","kind":"type","at":"/doc/pair","type":{"tuple":["string","integer"]},"when":[{"is_not":["/doc/mode","boolean"]}],"code":"FORMS_SHAPE","text":"Forms: pair {value:json}"},
+      {"id":"f6","kind":"enum","at":"/doc/mode","values":["strict","loose",true],"when":[{"is":["/doc/pair",{"tuple":["string","integer"]}]}],"code":"FORMS_SHAPE","text":"Forms: mode {value:json}"},
+      {"id":"f7","kind":"const","at":"/doc/tag","value":"t","when":[{"equals":["/doc/mode","strict"]}],"code":"FORMS_SHAPE","text":"Forms: tag {value}"}
+    ]},
+    {"name":"nest","checks":[
+      {"id":"n1","kind":"include","contract":"mid@0","phases":["body"],"at":"/doc/sub","view":"same_view","says":"The view gives the value at W unchanged.","as":"FORMS_NEST"},
+      {"id":"n2","kind":"include","contract":"mid@0","phases":["body"],"at":"/doc/plain"}
+    ]}
+  ]
+}

@@ -14,7 +14,8 @@ from tools.wire_contract import english_table, process, wording
 
 
 DIRECTORY = Path(__file__).resolve().parents[1] / "conformance/wire-contract/contracts"
-CONTRACTS = {unit: load(unit, directory=DIRECTORY) for unit in ("demo@0", "inner@0", "defer@0")}
+CONTRACTS = {unit: load(unit, directory=DIRECTORY)
+             for unit in ("demo@0", "inner@0", "defer@0", "mid@0", "forms@0")}
 LIMITS = loads_json((DIRECTORY / "limits.json").read_bytes())
 NAMES = loads_json((DIRECTORY / "names.json").read_bytes())
 
@@ -30,7 +31,8 @@ def _registry():
                  4: ("4.3z", {})}).get(count)
     return Registry().register(
         hooks={"no_bad_name": no_bad_name}, classifiers={"demo_rules": demo_rules},
-        views={"part_view": lambda d: {"x": d["seed"] if type(d) is dict and "seed" in d else 0}})
+        views={"part_view": lambda d: {"x": d["seed"] if type(d) is dict and "seed" in d else 0},
+               "same_view": lambda d: d})
 
 
 def _run(unit, root, registry=None):
