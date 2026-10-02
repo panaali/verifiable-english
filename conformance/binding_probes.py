@@ -20,6 +20,10 @@ def _fixture(name):
     return json.loads((ROOT / f"conformance/{name}.json").read_text())
 
 
+def _soft_wire_root():
+    return json.loads((ROOT / "ve/wire_contract/examples/soft-norms@0/empty.json").read_text())
+
+
 def _python(env_json):
     from ve.environment import Environment
     return Environment(env_json)
@@ -152,6 +156,13 @@ def _surface():
 
 C, N = "ve_conformance", "ve_norms_route"
 BUILDERS = {
+    ("wire.diagnose", "ve_diagnose", "soft-norms@0", "soft-elaborate"):
+        lambda: {"id": "wire-soft", "kind": "soft-elaborate",
+                 "environment": _soft_wire_root()["environment"], "norms": []},
+    ("wire.diagnose", "ve_diagnose", "soft-norms@0", "admission"):
+        lambda: {"id": "wire-admission", "kind": "admission",
+                 "environment": _soft_wire_root()["environment"],
+                 "document": {"units": [], "graph": {"root": "leaf", "nodes": []}}},
     ("parse", C, "", None): lambda: _evaluate_case(_legacy(), "parse", source="true.\n"),
     ("parse", C, "order", "surface"): _surface,
     ("evaluate", C, "", None): lambda: _evaluate_case(_legacy(), "evaluate"),
