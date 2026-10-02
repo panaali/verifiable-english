@@ -1,0 +1,3802 @@
+{
+  "asserted_reading_set_units": [],
+  "audit_0600_note": "the 2026-10-02T0600Z audit of the previous run (its AUDIT.md) sampled 20 units (u074, u111, 14 READINGS, 4 LABELLED) and rejected three; the sample is stratified, so 17/20 is not a corpus rate",
+  "audit_0600_repairs": {
+    "u051": "Rejected 2026-10-02T0600Z (the avoiding duties applied only if the person is persecuted, so a person seeking asylum from threatened persecution fell outside the guard). Repaired: the guard is the base relation 'the person seeks or enjoys asylum from persecution' (suffered or threatened), a checked scope that does not require persecution to have occurred; the open term persecution gains the factor 'whether persecution that is only threatened counts'. Pending a fresh independent audit.",
+    "u054": "Rejected 2026-10-02T0600Z (both asserted readings turned a right to a nationality into an accomplished fact). Repaired: the asserted readings are dropped; the set holds an entitlement (each person must receive a nationality; the source names no bearer, so none is named) and a liberty (each person is permitted to have a nationality), as norm-defaults@0 companions with the completion unspecified. 'Some state must grant it' is not expressible: a norm cannot be an existential over bearers. Pending a fresh independent audit.",
+    "u111": "Rejected 2026-10-02T0600Z (the limitation reported zero limitation terms, so it constrained none of the rights). Repaired: the rights@0 limitation is dropped and the unit holds norm candidates over a limitation argument whose guard is the negation of the source's necessary conditions (determined by law; solely for the listed aims), so a limitation that misses a condition is settled (the person must be free of it) and one that meets them is UNDECIDED (the conditions are necessary, never sufficient). Four candidates: 'solely for the purpose of A and of B' as one or both of the two aims, or as both aims; 'shall' as strict (norm-defaults@0) or defeasible (soft-norms@0, completion 'deny' = not required). Pending a fresh independent audit."
+  },
+  "audit_0600_sample": [
+    "u074",
+    "u111",
+    "u110",
+    "u032",
+    "u022c",
+    "u017",
+    "u066",
+    "u029",
+    "u052",
+    "u049",
+    "u022b",
+    "u054",
+    "u051",
+    "u046",
+    "u112",
+    "u033a",
+    "u021",
+    "u040",
+    "u109",
+    "u056"
+  ],
+  "audit_0600_units_faithful": [
+    "u017",
+    "u021",
+    "u022b",
+    "u022c",
+    "u029",
+    "u032",
+    "u033a",
+    "u040",
+    "u046",
+    "u049",
+    "u052",
+    "u056",
+    "u066",
+    "u074",
+    "u109",
+    "u110",
+    "u112"
+  ],
+  "audit_0600_units_unfaithful": [
+    "u051",
+    "u054",
+    "u111"
+  ],
+  "audit_0930_units_faithful": [
+    "u023",
+    "u069",
+    "u104",
+    "u107",
+    "u074",
+    "u022a",
+    "u022b",
+    "u022c",
+    "u048",
+    "u066",
+    "u070",
+    "u073",
+    "u114",
+    "u111"
+  ],
+  "audit_0930_units_unfaithful_repaired": [
+    "u054",
+    "u039",
+    "u035",
+    "u032",
+    "u033a",
+    "u049"
+  ],
+  "audit_1001_repairs": {
+    "u033b": "Rejected 2026-09-30T1800Z (label: a negative 'avoid inciting discrimination' candidate dropped 'equal protection'). Repaired: one polarity, the positive duty 'protect equally against incitement to such discrimination' (65 bytes, the anaphor kept).",
+    "u041": "Rejected 2026-09-30T1800Z (weakened: both duties dropped 'in a public trial at which he has had all the guarantees necessary for his defence'). The whole clause (according to law, in a public trial, with all guarantees necessary for the defence) needs more than the 80 bytes of an act phrase, and carrying only part of it is the defect the audit found, so the unit leaves READINGS and is UNFORMALISED (other:act_phrase_grammar). The open term guarantees_necessary_for_defence stays declared. Its holder sort charged_person is dropped.",
+    "u046": "Rejected 2026-09-30T1800Z (weakened). Repaired: the act phrase is 'protect by law against such interference as well as attacks' (67 bytes), the source's own anaphor; 'such interference or attacks' is read from u045a and u045b in the reason (not a checked reference); 'or' is worded 'as well as'.",
+    "u063": "Not sampled; same defect class (the duties dropped 'alone as well as in association with others'). The duties now say 'alone as well as jointly with others' / 'alone as well as with others'. Pending a fresh audit."
+  },
+  "audit_1001_units_faithful": [
+    "u011",
+    "u034",
+    "u080",
+    "u095",
+    "u074",
+    "u111",
+    "u114",
+    "u022a",
+    "u022c",
+    "u048",
+    "u049",
+    "u066",
+    "u070",
+    "u073",
+    "u032",
+    "u033a"
+  ],
+  "audit_1001_units_unfaithful": [
+    "u041",
+    "u046",
+    "u077",
+    "u033b"
+  ],
+  "audit_1002_note": "the 2026-10-01T1800Z audit of the previous run (its AUDIT.md) sampled 20 units and rejected four; its sample is stratified, so 16/20 is not a corpus rate",
+  "audit_1002_repairs": {
+    "u035": "Rejected 2026-10-01T1800Z (the checked duty had no argument for the rights-violating act; prose holder). Repaired with norm-defaults@0: the duty ranges over (tribunal or State, act) and a guard 'the act violates a fundamental right granted to a person by the constitution or by law' carries the scope as checked structure; the bearer is named by a guard (a competent national tribunal, or a State that must ensure tribunals provide the remedy). The victim is not an argument (predicates have at most two); it is the person whose right the act violates, in the act phrase. Pending a fresh independent audit.",
+    "u039": "Rejected 2026-10-01T1800Z ('in full equality' unattached; no determination or charge argument). A repair with norm-defaults@0 (a guard on a determination argument) fits the scope but the duty 'give in full equality a fair public hearing by an independent impartial tribunal in the case' is 88 to 93 bytes, over the 80-byte act phrase; dropping 'in full equality' is the rejected defect. The unit is UNFORMALISED (other:act_phrase_grammar).",
+    "u051": "Rejected 2026-10-01T1800Z (strengthened and incomplete: the positive candidates required every bearer to grant asylum to every person and omitted seeking). Repaired with norm-defaults@0: no positive grant candidate; the reading set is a liberty (a person may seek and enjoy asylum from persecution in other countries) and the avoiding duty, bound on every State or on every bearer, whose act phrase says 'seeking as well as enjoying' and whose guard 'the person is seeking or enjoying asylum from persecution' carries 'from persecution' as a checked scope. Pending a fresh independent audit.",
+    "u077": "Rejected 2026-10-01T1800Z (no checked relation connected a bearer to the holder's country, so unrelated bearers were bound). Repaired with norm-defaults@0: the guard is a base relation between the bearer and the person; 'his country' is read two ways in the reading set (the country of which the person is a national, the country in which the person resides) because the source does not say. Pending a fresh independent audit."
+  },
+  "audit_1002_units_faithful": [
+    "u074",
+    "u111",
+    "u033a",
+    "u022a",
+    "u032",
+    "u112",
+    "u022c",
+    "u063",
+    "u049",
+    "u046",
+    "u033b",
+    "u029",
+    "u104",
+    "u069",
+    "u090",
+    "u109"
+  ],
+  "audit_1002_units_unfaithful": [
+    "u035",
+    "u039",
+    "u051",
+    "u077"
+  ],
+  "audit_pending_bytes": 1076,
+  "audit_repaired_units": [
+    "u029",
+    "u032",
+    "u033a",
+    "u033b",
+    "u035",
+    "u039",
+    "u041",
+    "u046",
+    "u049",
+    "u051",
+    "u054",
+    "u063",
+    "u077",
+    "u111"
+  ],
+  "audit_repairs_0930": {
+    "u029": "Same defect as the rejected units (found by the translator, not sampled): 'avoid refusing recognition' and 'recognise' are one duty. One polarity.",
+    "u032": "Rejected 2026-09-30 (labels: the two polarities were one duty). Repaired: one polarity, no polarity label; the act phrase keeps 'without any discrimination'.",
+    "u033a": "Rejected 2026-09-30 (labels and content: the negative candidate dropped 'equal protection'). Repaired: only the positive candidate 'protect equally against discrimination in violation of this Declaration'.",
+    "u046": "Same defect as the rejected units (not sampled): 'avoid denying protection by law' and 'protect by law' are one duty. One polarity. REJECTED AGAIN 2026-09-30T1800Z (weakened: protection against attacks upon honour and reputation absent); repaired 2026-10-01 below.",
+    "u049": "Rejected 2026-09-30 (labels: the positive candidate repeated the negative duty). Repaired: only the avoiding duty, plus the liberty reading.",
+    "u054": "Rejected 2026-09-30 (strengthened: every state must grant each person a nationality). Repaired: the claim candidates are dropped; the set holds the asserted readings 'each person has some nationality' and 'for each person some state grants a nationality'."
+  },
+  "audit_verified_covered_bytes": 1956,
+  "audit_verified_covered_percent": 17.92,
+  "audit_verified_units": [
+    "u001",
+    "u002",
+    "u011",
+    "u012",
+    "u014",
+    "u017",
+    "u021",
+    "u022a",
+    "u022b",
+    "u022c",
+    "u023",
+    "u026",
+    "u028",
+    "u029",
+    "u030",
+    "u032",
+    "u033a",
+    "u033b",
+    "u034",
+    "u036",
+    "u040",
+    "u046",
+    "u048",
+    "u049",
+    "u050",
+    "u052",
+    "u053",
+    "u056",
+    "u062",
+    "u063",
+    "u065",
+    "u066",
+    "u069",
+    "u070",
+    "u072",
+    "u073",
+    "u074",
+    "u080",
+    "u083",
+    "u088",
+    "u090",
+    "u095",
+    "u104",
+    "u107",
+    "u109",
+    "u110",
+    "u112",
+    "u113"
+  ],
+  "baseline": "ve-green-wire",
+  "bytes_accounted": 10916,
+  "bytes_accounted_percent": 100,
+  "bytes_by_status": {
+    "CHECKED": 57,
+    "LABELLED": 535,
+    "READINGS": 2440,
+    "UNFORMALISED": 7884
+  },
+  "checks": {
+    "byte_partition": "PASS (units partition all 10,916 bytes)",
+    "companion_documents": {
+      "u017.default": {
+        "coverage_bytes": {
+          "OPEN": 65
+        },
+        "norm_defaults_report": null,
+        "path": "readings/u017.default.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norms@0",
+          "relational-fol@0",
+          "soft-norms@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "default_exceptions": 1,
+          "holistic_overrides": 0,
+          "instruction_switches": 0,
+          "open_terms": 1,
+          "unresolved_reading_sets": 0,
+          "weighing_points": 0
+        }
+      },
+      "u017.strict": {
+        "coverage_bytes": {
+          "OPEN": 65
+        },
+        "norm_defaults_report": {
+          "act_in_brotherhood_required": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        },
+        "path": "readings/u017.strict.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 0,
+          "open_terms": 1,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u035.state_claim": {
+        "coverage_bytes": {
+          "OPEN": 168
+        },
+        "norm_defaults_report": {
+          "ensure_remedy_by_tribunals_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u035.state_claim.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 3,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u035.tribunal_claim": {
+        "coverage_bytes": {
+          "OPEN": 168
+        },
+        "norm_defaults_report": {
+          "provide_effective_remedy_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u035.tribunal_claim.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 3,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u051.anyone_avoid": {
+        "coverage_bytes": {
+          "OPEN": 92
+        },
+        "norm_defaults_report": {
+          "avoid_barring_asylum_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u051.anyone_avoid.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 1,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u051.liberty": {
+        "coverage_bytes": {
+          "OPEN": 92
+        },
+        "norm_defaults_report": {
+          "seek_asylum_from_persecution_permitted": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        },
+        "path": "readings/u051.liberty.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 0,
+          "open_terms": 1,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u051.state_avoid": {
+        "coverage_bytes": {
+          "OPEN": 92
+        },
+        "norm_defaults_report": {
+          "avoid_barring_asylum_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u051.state_avoid.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 1,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u052.invocation_barred": {
+        "coverage_bytes": {
+          "OPEN": 182
+        },
+        "norm_defaults_report": {
+          "invoke_asylum_right_in_case_permitted": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u052.invocation_barred.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 3,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u054.claim": {
+        "coverage_bytes": {
+          "CHECKED": 45
+        },
+        "norm_defaults_report": {
+          "receive_nationality_required": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        },
+        "path": "readings/u054.claim.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 0,
+          "open_terms": 0,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u054.liberty": {
+        "coverage_bytes": {
+          "CHECKED": 45
+        },
+        "norm_defaults_report": {
+          "have_nationality_permitted": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        },
+        "path": "readings/u054.liberty.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 0,
+          "open_terms": 0,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u061.claim": {
+        "coverage_bytes": {
+          "OPEN": 58
+        },
+        "norm_defaults_report": {
+          "protect_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u061.claim.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 1,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u074.prohibition": {
+        "coverage_bytes": {
+          "CHECKED": 57
+        },
+        "norm_defaults_report": {
+          "compel_association_membership_permitted": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        },
+        "path": "readings/u074.prohibition.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 0,
+          "open_terms": 0,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u077.nationality_country_claim": {
+        "coverage_bytes": {
+          "CHECKED": 77
+        },
+        "norm_defaults_report": {
+          "give_equal_access_to_public_service_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u077.nationality_country_claim.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 0,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u077.residence_country_claim": {
+        "coverage_bytes": {
+          "CHECKED": 77
+        },
+        "norm_defaults_report": {
+          "give_equal_access_to_public_service_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u077.residence_country_claim.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 0,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u110.duty": {
+        "coverage_bytes": {
+          "OPEN": 118
+        },
+        "norm_defaults_report": {
+          "perform_duties_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u110.duty.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 2,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u111.default_both_aims": {
+        "coverage_bytes": {
+          "OPEN": 337
+        },
+        "norm_defaults_report": null,
+        "path": "readings/u111.default_both_aims.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norms@0",
+          "relational-fol@0",
+          "soft-norms@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "default_exceptions": 1,
+          "holistic_overrides": 0,
+          "instruction_switches": 0,
+          "open_terms": 7,
+          "unresolved_reading_sets": 0,
+          "weighing_points": 0
+        }
+      },
+      "u111.default_listed_aims": {
+        "coverage_bytes": {
+          "OPEN": 337
+        },
+        "norm_defaults_report": null,
+        "path": "readings/u111.default_listed_aims.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norms@0",
+          "relational-fol@0",
+          "soft-norms@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "default_exceptions": 1,
+          "holistic_overrides": 0,
+          "instruction_switches": 0,
+          "open_terms": 7,
+          "unresolved_reading_sets": 0,
+          "weighing_points": 0
+        }
+      },
+      "u111.strict_both_aims": {
+        "coverage_bytes": {
+          "OPEN": 337
+        },
+        "norm_defaults_report": {
+          "be_free_of_limitation_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u111.strict_both_aims.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 7,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u111.strict_listed_aims": {
+        "coverage_bytes": {
+          "OPEN": 337
+        },
+        "norm_defaults_report": {
+          "be_free_of_limitation_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u111.strict_listed_aims.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 7,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u112.exercise_prohibited": {
+        "coverage_bytes": {
+          "OPEN": 121
+        },
+        "norm_defaults_report": {
+          "exercise_permitted": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u112.exercise_prohibited.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 2,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      },
+      "u114.interpretive_ban": {
+        "coverage_bytes": {
+          "OPEN": 225
+        },
+        "norm_defaults_report": {
+          "interpretation_permitted": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        },
+        "path": "readings/u114.interpretive_ban.ve.md",
+        "premises": "model",
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "residual": {
+          "assumptions": 0,
+          "bridge_leaves": 0,
+          "gaps": 1,
+          "open_terms": 2,
+          "ungrounded_defaults": 0,
+          "unresolved_reading_sets": 0
+        }
+      }
+    },
+    "document_check": "PASS",
+    "document_load": "PASS",
+    "english_vocabulary_lint": [
+      "/vocabulary/predicates/is_state/verbalisation: LOGICAL_WORD",
+      "/vocabulary/predicates/is_state/verbalisation: UNARY_MODIFIER"
+    ],
+    "norm_defaults_companions": "PASS: every norm-defaults@0 companion loads, checks (premises: model) and reports completion: unspecified; the status witnesses (witnesses.json) settle the case inside each guard and report UNDECIDED outside it",
+    "premises": {
+      "reason": "non-assertion reading elaboration pending",
+      "status": "UNKNOWN"
+    },
+    "reading_plan": {
+      "choice_count": 128,
+      "route": "UNKNOWN"
+    },
+    "reading_sets_validated_at_load": "PASS (each right candidate elaborated through the rights route; each ordered pair separated by a checked finite situation)",
+    "render": "PASS (rendered.md, readings-rendered.md)",
+    "rights_report": "UNKNOWN: per-choice rights elaboration pending",
+    "witnesses": "PASS: rule kept entails its conclusion under both completions with replayed certificates; dropping the rule loses it"
+  },
+  "claimed_covered_bytes": 3032,
+  "claimed_covered_bytes_previous_run": 3032,
+  "claimed_covered_bytes_previous_run_percent": 27.78,
+  "claimed_covered_percent": 27.78,
+  "coverage_tool": {
+    "accounted_bytes": 10916,
+    "bytes_by_kind": {
+      "attributed": 801,
+      "meta": 535,
+      "norm": 2025,
+      "right": 952,
+      "unformalised": 6603
+    },
+    "bytes_by_status": {
+      "CHECKED": 57,
+      "LABELLED": 535,
+      "OPEN": 2440,
+      "UNFORMALISED": 7884
+    },
+    "coverage_percent": 100,
+    "default_exceptions_by_decider": {},
+    "residual": {
+      "assumptions": 0,
+      "bar_terms": 0,
+      "bearer_readings": 14,
+      "bridge_leaves": 0,
+      "couplings": 0,
+      "default_exceptions": 0,
+      "force_readings": 0,
+      "holistic_overrides": 0,
+      "incident_readings": 6,
+      "instruction_switches": 0,
+      "limitation_deciders_unstated": 0,
+      "limitation_terms": 0,
+      "narrowings": 0,
+      "open_terms": 37,
+      "polarity_readings": 8,
+      "power_shadows": 0,
+      "rights_findings_pending": 1,
+      "unresolved_reading_sets": 25,
+      "weighing_points": 0
+    },
+    "residual_total": 91,
+    "rights_residual_labels": [],
+    "soft_background_labels": [],
+    "soft_residual_labels": [],
+    "soft_status": "CHECKED",
+    "source_bytes": 10916,
+    "unformalised_reasons": {
+      "attribution": 4,
+      "causation": 2,
+      "modality_belief": 2,
+      "norms": 7,
+      "other_act_phrase_grammar": 4,
+      "other_evaluative_open_claim": 2,
+      "other_force_variants_in_one_reading_set": 43,
+      "other_metaphorical_endowment": 1,
+      "other_right_lines_in_reading_sets": 4,
+      "time": 1
+    }
+  },
+  "covered_by_norm_defaults_companion_units": [
+    "u017",
+    "u035",
+    "u051",
+    "u052",
+    "u054",
+    "u061",
+    "u077",
+    "u110",
+    "u111",
+    "u112",
+    "u114",
+    "u074 (second companion)"
+  ],
+  "covered_by_rights_readings_bytes": 952,
+  "covered_by_rights_units": [
+    "u022a",
+    "u022b",
+    "u022c",
+    "u029",
+    "u032",
+    "u033a",
+    "u033b",
+    "u046",
+    "u048",
+    "u049",
+    "u063",
+    "u066",
+    "u070",
+    "u073"
+  ],
+  "document_id": "d76e7af4d6f24c7ba835beb59357e099e01d3229f26c01fbd75d49a1274ac106",
+  "features_merged_since_previous_baseline": [
+    "wire-contract codegen for soft-norms@0 (Python and Lean tables, shadow gate; merged 2026-10-02): plumbing, the soft-norms@0 language is unchanged for the translator",
+    "soft-norms@0 revision 3 and S3-pre: the soft route alone refuses a source that lists rights@0 (the rights route strips it); no effect on documents",
+    "S0 VE.Compose (stack contract, base-premise slot, dispatcher): Lean theorems only; docs/INTEGRATION-GAPS.md states the dispatcher is not called by document admission, so norm-defaults@0 still cannot be enabled with soft-norms@0 or rights@0 (ve/document.py: UnsupportedProfile 'norm-defaults@0 documents on the soft and rights routes await the Lean route')",
+    "use cases agent-policy (unspecified re-run) and asimov: documents, not language"
+  ],
+  "language_change_for_udhr": "none: no feature merged between ve-green-bluedot2 and ve-green-wire lets the translator express a unit it could not express before, so no unit changed status because of the language. Every change in this run is an audit repair (u054, u051, u111) made with features that were already merged; statuses of the other 127 units are those of the previous run.",
+  "language_findings": [
+    "force: a strict and a defeasible right candidate need different base predicates (the defeasible one adds its exception decision), so a reading set cannot hold both and no single checked situation separates them; force is therefore fixed strict for units without a weakening word, and the 43 'shall' and Articles 22-27 units stay UNFORMALISED",
+    "act phrases: at most 80 bytes, plain words only, no 'and', 'or', 'for', 'no', 'not', 'is', 'if', each slot once; lists are worded with 'as well as' and long clauses are shortened, with the full clause in the predicate description",
+    "size: at most 64 regulated predicates per environment; four readings per right (two polarities, two bearers) cost two predicates per right once the two bearer readings share predicates through an is_state guard",
+    "reading-set candidates must be whole right blocks: 'this right includes ...' (right_lines), limitations and bars cannot be candidates, so u067, u068, u071a, u071b stay blocked and Article 30's bar is not used",
+    "limitation and bar act on rights lines fixed in the document; here every line is a reading-set candidate, so a rights@0 limitation would have empty scope (limitation_terms 0) until per-choice elaboration exists: u111 therefore states its necessary conditions as norm candidates over a limitation argument (guards), which constrain no rights line; the link from a limitation to a particular right is not expressible",
+    "document reading sets cannot hold norm content, so u017, u052, u112, u114 keep companion documents for their norm candidates",
+    "load time: validating 14 right reading sets takes about 35 seconds per document load",
+    "entitlement without a bearer: a right whose source names no bearer (u054) can be a norm over the holder as the passive subject ('each person must receive a nationality') or a liberty; 'some state must grant it' needs an existential over bearers that a norm cannot state, and a right block would bind every state (the rejected strengthening)",
+    "prospective harm: 'asylum from persecution' includes threatened persecution, so the guard of u051 is the person's asylum seeking (a base relation whose description covers suffered or threatened persecution), not the person's being persecuted; whether the persecution is real stays the named open term persecution",
+    "necessary conditions: a prohibition guarded by the negation of the conditions (u111) settles every case that misses a condition and reports UNDECIDED for the cases that meet them, so 'only' limitations of this kind is never read as 'all' limitations of this kind are permitted",
+    "norm-defaults@0 and soft-norms@0 still cannot share a document: the two defeasible candidates of u111 (as that of u017) are soft-norms@0 companions with the declared completion 'deny' on an obligation-role predicate (= not required), so they invent no permission",
+    "norm-defaults@0 cannot be enabled together with soft-norms@0 or rights@0 (UnsupportedProfile: norm-defaults@0 documents on the soft and rights routes await the Lean route): the 14 right-block reading sets keep their declared 'deny' completions ('not required'), u074 keeps 'allow' in the main document, and the defeasible candidate of u017 keeps 'deny'; every norm candidate that can live in a norms@0 document is a companion with the completion unspecified",
+    "predicates have at most two arguments: a duty with a bearer, a beneficiary and a case (remedy for an act, hearing in a determination) must fold one of them into a sort, so the victim of u035 and the person of u039 are not arguments",
+    "act phrases are still at most 80 bytes in norm-defaults@0 documents: u039 ('give in full equality a fair public hearing by an independent impartial tribunal in the case', 88 to 93 bytes) cannot be stated without dropping a clause",
+    "norm candidates of a reading set hold no content in the main document (they are cited by meaning id from companion documents), so the main document's premise verdict stays UNKNOWN"
+  ],
+  "missing_feature_tally": {
+    "attribution": 4,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 7,
+    "other:act_phrase_grammar": 4,
+    "other:evaluative_open_claim": 2,
+    "other:force_variants_in_one_reading_set": 43,
+    "other:metaphorical_endowment": 1,
+    "other:right_lines_in_reading_sets": 4,
+    "time": 1
+  },
+  "missing_feature_tally_previous_run": {
+    "attribution": 4,
+    "causation": 2,
+    "modality/belief": 2,
+    "norms": 7,
+    "other:act_phrase_grammar": 4,
+    "other:evaluative_open_claim": 2,
+    "other:force_variants_in_one_reading_set": 43,
+    "other:metaphorical_endowment": 1,
+    "other:right_lines_in_reading_sets": 4,
+    "time": 1
+  },
+  "newly_covered_bytes": 0,
+  "no_invented_permissions": {
+    "claims": "every claim predicate is obligation-role with completion 'deny' (= not required); no permission predicate is used for a duty, so no prohibition makes anything permitted for anyone else. The state reading is the same duty guarded by is_state: for non-states its completion is 'not required', declared and not derived from the source (witnesses.json shows the rule decides every state under both completions and that dropping it loses the conclusion)",
+    "liberties": "the seven liberty predicates are permission-role with completion 'deny' (the tool requires some completion); in the liberty reading the rule is unconditional over the whole person sort, so the completion is never consulted (witnesses.json, both completions); in the other readings the predicate is mentioned by no rule. This stray declaration is flagged for the audit",
+    "polarity_repairs": "u029, u032, u033a, u033b, u046, u049 carry one duty (or the avoiding duty plus a liberty); no 'allow' reading of a prohibition was added",
+    "remaining_declared_completions_in_the_main_document": {
+      "also_declared_in_companions": {
+        "u017.default": "obligation:deny (soft-norms@0 companion)",
+        "u111.default_both_aims": "obligation:deny (soft-norms@0 companion; = not required)",
+        "u111.default_listed_aims": "obligation:deny (soft-norms@0 companion; = not required)"
+      },
+      "by_role_and_completion": {
+        "obligation:deny": 22,
+        "permission:allow": 1,
+        "permission:deny": 6
+      },
+      "note": "none of these completions is stated by the source; the rights@0 claim and liberty lines need some completion, and norm-defaults@0 is not available in a rights@0/soft-norms@0 document",
+      "predicates": 29
+    },
+    "u017_u052_u112_u114_u035_u051_u077_u054_u111": "every norm candidate is a norm-defaults@0 companion with completion 'unspecified' and its scope in guards; outside the guard VE reports UNDECIDED, not permitted and not forbidden (witnesses.json norm_defaults_status). The one exception is the defeasible candidate of u017 (soft-norms@0), which keeps the declared completion 'deny'",
+    "u041_u039": "UNFORMALISED: no norm predicate, no duty stated",
+    "u054_u111": "norm-defaults@0 companions with completion 'unspecified'; u111's defeasible candidates use an obligation-role predicate with completion 'deny' (= not required); no permission is declared for anyone",
+    "u074": "the main document still declares 'allow' (a rights/soft document cannot say 'unspecified'); readings/u074.prohibition.ve.md says 'unspecified' with gaps: none, and the migration audit (witnesses.json) certifies the declared 'allow' is never consulted and that switching it preserves meaning"
+  },
+  "norm_defaults": {
+    "companions": {
+      "u017.strict": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "act_in_brotherhood_required": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        }
+      },
+      "u035.state_claim": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "ensure_remedy_by_tribunals_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u035.tribunal_claim": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "provide_effective_remedy_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u051.anyone_avoid": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "avoid_barring_asylum_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u051.liberty": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "seek_asylum_from_persecution_permitted": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        }
+      },
+      "u051.state_avoid": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "avoid_barring_asylum_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u052.invocation_barred": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "invoke_asylum_right_in_case_permitted": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u054.claim": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "receive_nationality_required": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        }
+      },
+      "u054.liberty": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "have_nationality_permitted": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        }
+      },
+      "u061.claim": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "protect_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u074.prohibition": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "compel_association_membership_permitted": [
+            "completion: unspecified",
+            "gaps: none"
+          ]
+        }
+      },
+      "u077.nationality_country_claim": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "give_equal_access_to_public_service_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u077.residence_country_claim": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "give_equal_access_to_public_service_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u110.duty": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "perform_duties_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u111.strict_both_aims": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "be_free_of_limitation_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u111.strict_listed_aims": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "be_free_of_limitation_required": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u112.exercise_prohibited": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "exercise_permitted": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      },
+      "u114.interpretive_ban": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "relational-fol@0"
+        ],
+        "report": {
+          "interpretation_permitted": [
+            "completion: unspecified",
+            "gaps: reachable"
+          ]
+        }
+      }
+    },
+    "english_wordings_of_base_predicates": {
+      "u017.strict": {
+        "base_predicates": [],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": []
+      },
+      "u035.state_claim": {
+        "base_predicates": [
+          "violates_granted_fundamental_right"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "violates_granted_fundamental_right"
+        ],
+        "read_as_plain_english": []
+      },
+      "u035.tribunal_claim": {
+        "base_predicates": [
+          "is_competent",
+          "is_national",
+          "violates_granted_fundamental_right"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "violates_granted_fundamental_right"
+        ],
+        "read_as_plain_english": [
+          "is_competent",
+          "is_national"
+        ]
+      },
+      "u051.anyone_avoid": {
+        "base_predicates": [
+          "seeks_or_enjoys_asylum_from_persecution"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "seeks_or_enjoys_asylum_from_persecution"
+        ],
+        "read_as_plain_english": []
+      },
+      "u051.liberty": {
+        "base_predicates": [],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": []
+      },
+      "u051.state_avoid": {
+        "base_predicates": [
+          "seeks_or_enjoys_asylum_from_persecution"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "seeks_or_enjoys_asylum_from_persecution"
+        ],
+        "read_as_plain_english": []
+      },
+      "u052.invocation_barred": {
+        "base_predicates": [
+          "arises_from_acts_contrary_to_un",
+          "arises_from_non_political_crime"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "arises_from_acts_contrary_to_un",
+          "arises_from_non_political_crime"
+        ],
+        "read_as_plain_english": []
+      },
+      "u054.claim": {
+        "base_predicates": [],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": []
+      },
+      "u054.liberty": {
+        "base_predicates": [],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": []
+      },
+      "u061.claim": {
+        "base_predicates": [
+          "is_society",
+          "is_state"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "is_state"
+        ],
+        "read_as_plain_english": [
+          "is_society"
+        ]
+      },
+      "u074.prohibition": {
+        "base_predicates": [],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": []
+      },
+      "u077.nationality_country_claim": {
+        "base_predicates": [
+          "has_as_national"
+        ],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": [
+          "has_as_national"
+        ]
+      },
+      "u077.residence_country_claim": {
+        "base_predicates": [
+          "has_as_resident"
+        ],
+        "fall_back_to_the_quoted_identifier": [],
+        "read_as_plain_english": [
+          "has_as_resident"
+        ]
+      },
+      "u110.duty": {
+        "base_predicates": [
+          "is_sole_setting_of_full_development"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "is_sole_setting_of_full_development"
+        ],
+        "read_as_plain_english": []
+      },
+      "u111.strict_both_aims": {
+        "base_predicates": [
+          "is_determined_by_law",
+          "serves_any_other_purpose",
+          "serves_just_requirements",
+          "serves_recognition_of_rights_of_others"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "is_determined_by_law",
+          "serves_any_other_purpose",
+          "serves_just_requirements",
+          "serves_recognition_of_rights_of_others"
+        ],
+        "read_as_plain_english": []
+      },
+      "u111.strict_listed_aims": {
+        "base_predicates": [
+          "is_determined_by_law",
+          "serves_any_other_purpose",
+          "serves_just_requirements",
+          "serves_recognition_of_rights_of_others"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "is_determined_by_law",
+          "serves_any_other_purpose",
+          "serves_just_requirements",
+          "serves_recognition_of_rights_of_others"
+        ],
+        "read_as_plain_english": []
+      },
+      "u112.exercise_prohibited": {
+        "base_predicates": [
+          "exercise_contrary_to_un",
+          "exercise_of_declared_right"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "exercise_contrary_to_un",
+          "exercise_of_declared_right"
+        ],
+        "read_as_plain_english": []
+      },
+      "u114.interpretive_ban": {
+        "base_predicates": [
+          "implies_right_to_destroy_declared_rights"
+        ],
+        "fall_back_to_the_quoted_identifier": [
+          "implies_right_to_destroy_declared_rights"
+        ],
+        "read_as_plain_english": []
+      }
+    },
+    "main_document_blocked": "UnsupportedProfile: norm-defaults@0 documents on the soft and rights routes await the Lean route",
+    "profile": "norm-defaults@0",
+    "status_witnesses": {
+      "u017.strict": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "act_in_brotherhood_required",
+          "row": [
+            "h0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        }
+      ],
+      "u035.state_claim": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "ensure_remedy_by_tribunals_required",
+          "row": [
+            "s0",
+            "a0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "ensure_remedy_by_tribunals_required",
+          "row": [
+            "s0",
+            "a1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u035.tribunal_claim": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "provide_effective_remedy_required",
+          "row": [
+            "t0",
+            "a0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "provide_effective_remedy_required",
+          "row": [
+            "t1",
+            "a0"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "provide_effective_remedy_required",
+          "row": [
+            "t0",
+            "a1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u051.anyone_avoid": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "avoid_barring_asylum_required",
+          "row": [
+            "b0",
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "avoid_barring_asylum_required",
+          "row": [
+            "b1",
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "avoid_barring_asylum_required",
+          "row": [
+            "b0",
+            "p1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u051.liberty": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "seek_asylum_from_persecution_permitted",
+          "row": [
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        }
+      ],
+      "u051.state_avoid": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "avoid_barring_asylum_required",
+          "row": [
+            "s0",
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "avoid_barring_asylum_required",
+          "row": [
+            "s0",
+            "p1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u052.invocation_barred": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            false
+          ],
+          "predicate": "invoke_asylum_right_in_case_permitted",
+          "row": [
+            "p0",
+            "x0"
+          ],
+          "status": "SETTLED",
+          "value": false
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "invoke_asylum_right_in_case_permitted",
+          "row": [
+            "p0",
+            "x1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u054.claim": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "receive_nationality_required",
+          "row": [
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        }
+      ],
+      "u054.liberty": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "have_nationality_permitted",
+          "row": [
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        }
+      ],
+      "u061.claim": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "protect_required",
+          "row": [
+            "b0",
+            "f0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "protect_required",
+          "row": [
+            "b1",
+            "f0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "protect_required",
+          "row": [
+            "b2",
+            "f0"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u074.prohibition": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            false
+          ],
+          "predicate": "compel_association_membership_permitted",
+          "row": [
+            "a0",
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": false
+        }
+      ],
+      "u077.nationality_country_claim": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "give_equal_access_to_public_service_required",
+          "row": [
+            "c0",
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "give_equal_access_to_public_service_required",
+          "row": [
+            "c1",
+            "p0"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u077.residence_country_claim": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "give_equal_access_to_public_service_required",
+          "row": [
+            "c1",
+            "p0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "give_equal_access_to_public_service_required",
+          "row": [
+            "c0",
+            "p0"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u110.duty": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "perform_duties_required",
+          "row": [
+            "p0",
+            "m0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "perform_duties_required",
+          "row": [
+            "p0",
+            "m1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u111.strict_both_aims": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l0"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l1"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l2"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        },
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l3"
+          ],
+          "status": "SETTLED",
+          "value": true
+        }
+      ],
+      "u111.strict_listed_aims": [
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l0"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        },
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l1"
+          ],
+          "status": "SETTLED",
+          "value": true
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l2"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        },
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            true
+          ],
+          "predicate": "be_free_of_limitation_required",
+          "row": [
+            "p0",
+            "l3"
+          ],
+          "status": "SETTLED",
+          "value": true
+        }
+      ],
+      "u112.exercise_prohibited": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            false
+          ],
+          "predicate": "exercise_permitted",
+          "row": [
+            "e0"
+          ],
+          "status": "SETTLED",
+          "value": false
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "exercise_permitted",
+          "row": [
+            "e1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ],
+      "u114.interpretive_ban": [
+        {
+          "as_expected": true,
+          "evidence": "table3",
+          "expected": [
+            "SETTLED",
+            false
+          ],
+          "predicate": "interpretation_permitted",
+          "row": [
+            "i0"
+          ],
+          "status": "SETTLED",
+          "value": false
+        },
+        {
+          "as_expected": true,
+          "evidence": "witness",
+          "expected": [
+            "UNDECIDED",
+            null
+          ],
+          "predicate": "interpretation_permitted",
+          "row": [
+            "i1"
+          ],
+          "status": "UNDECIDED",
+          "value": null
+        }
+      ]
+    },
+    "u074_migration_audit": [
+      {
+        "certificate": {
+          "checker_version": "ve-tableau-checker@2",
+          "present": true,
+          "target": "reached:compel_association_membership_permitted"
+        },
+        "completion": "allow",
+        "default_reached": "none",
+        "predicate": "compel_association_membership_permitted",
+        "switched_gaps": "none"
+      }
+    ],
+    "ungrounded_defaults": "0 in the companions (no deny or allow is declared); the main document cannot be audited under the profile",
+    "unspecified_completion_predicates": {
+      "u017": [
+        "act_in_brotherhood_required"
+      ],
+      "u035": [
+        "ensure_remedy_by_tribunals_required",
+        "provide_effective_remedy_required"
+      ],
+      "u051": [
+        "avoid_barring_asylum_required",
+        "seek_asylum_from_persecution_permitted"
+      ],
+      "u052": [
+        "invoke_asylum_right_in_case_permitted"
+      ],
+      "u054": [
+        "have_nationality_permitted",
+        "receive_nationality_required"
+      ],
+      "u061": [
+        "protect_required"
+      ],
+      "u074": [
+        "compel_association_membership_permitted"
+      ],
+      "u077": [
+        "give_equal_access_to_public_service_required"
+      ],
+      "u110": [
+        "perform_duties_required"
+      ],
+      "u111": [
+        "be_free_of_limitation_required"
+      ],
+      "u112": [
+        "exercise_permitted"
+      ],
+      "u114": [
+        "interpretation_permitted"
+      ]
+    }
+  },
+  "old_boundary_aggregation": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "READINGS": 22,
+    "UNFORMALISED": 59
+  },
+  "old_to_new_units": {
+    "u001": [
+      "u001"
+    ],
+    "u002": [
+      "u002"
+    ],
+    "u003": [
+      "u003"
+    ],
+    "u004": [
+      "u004"
+    ],
+    "u005": [
+      "u005"
+    ],
+    "u006": [
+      "u006"
+    ],
+    "u007": [
+      "u007"
+    ],
+    "u008a": [
+      "u008a"
+    ],
+    "u008b": [
+      "u008b"
+    ],
+    "u009": [
+      "u009"
+    ],
+    "u010": [
+      "u010"
+    ],
+    "u011": [
+      "u011"
+    ],
+    "u012": [
+      "u012"
+    ],
+    "u013a": [
+      "u013a"
+    ],
+    "u013b": [
+      "u013ba",
+      "u013bb"
+    ],
+    "u014": [
+      "u014"
+    ],
+    "u015": [
+      "u015"
+    ],
+    "u016": [
+      "u016"
+    ],
+    "u017": [
+      "u017"
+    ],
+    "u018": [
+      "u018"
+    ],
+    "u019": [
+      "u019"
+    ],
+    "u020": [
+      "u020"
+    ],
+    "u021": [
+      "u021"
+    ],
+    "u022": [
+      "u022a",
+      "u022b",
+      "u022c"
+    ],
+    "u023": [
+      "u023"
+    ],
+    "u024": [
+      "u024"
+    ],
+    "u025": [
+      "u025"
+    ],
+    "u026": [
+      "u026"
+    ],
+    "u027": [
+      "u027"
+    ],
+    "u028": [
+      "u028"
+    ],
+    "u029": [
+      "u029"
+    ],
+    "u030": [
+      "u030"
+    ],
+    "u031": [
+      "u031"
+    ],
+    "u032": [
+      "u032"
+    ],
+    "u033": [
+      "u033a",
+      "u033b"
+    ],
+    "u034": [
+      "u034"
+    ],
+    "u035": [
+      "u035"
+    ],
+    "u036": [
+      "u036"
+    ],
+    "u037": [
+      "u037"
+    ],
+    "u038": [
+      "u038"
+    ],
+    "u039": [
+      "u039"
+    ],
+    "u040": [
+      "u040"
+    ],
+    "u041": [
+      "u041"
+    ],
+    "u042": [
+      "u042"
+    ],
+    "u043": [
+      "u043"
+    ],
+    "u044": [
+      "u044"
+    ],
+    "u045": [
+      "u045a",
+      "u045b"
+    ],
+    "u046": [
+      "u046"
+    ],
+    "u047": [
+      "u047"
+    ],
+    "u048": [
+      "u048"
+    ],
+    "u049": [
+      "u049"
+    ],
+    "u050": [
+      "u050"
+    ],
+    "u051": [
+      "u051"
+    ],
+    "u052": [
+      "u052"
+    ],
+    "u053": [
+      "u053"
+    ],
+    "u054": [
+      "u054"
+    ],
+    "u055": [
+      "u055"
+    ],
+    "u056": [
+      "u056"
+    ],
+    "u057": [
+      "u057"
+    ],
+    "u058": [
+      "u058"
+    ],
+    "u059": [
+      "u059"
+    ],
+    "u060": [
+      "u060"
+    ],
+    "u061": [
+      "u061"
+    ],
+    "u062": [
+      "u062"
+    ],
+    "u063": [
+      "u063"
+    ],
+    "u064": [
+      "u064"
+    ],
+    "u065": [
+      "u065"
+    ],
+    "u066": [
+      "u066"
+    ],
+    "u067": [
+      "u067"
+    ],
+    "u068": [
+      "u068"
+    ],
+    "u069": [
+      "u069"
+    ],
+    "u070": [
+      "u070"
+    ],
+    "u071": [
+      "u071a",
+      "u071b"
+    ],
+    "u072": [
+      "u072"
+    ],
+    "u073": [
+      "u073"
+    ],
+    "u074": [
+      "u074"
+    ],
+    "u075": [
+      "u075"
+    ],
+    "u076": [
+      "u076"
+    ],
+    "u077": [
+      "u077"
+    ],
+    "u078": [
+      "u078"
+    ],
+    "u079": [
+      "u079a",
+      "u079b"
+    ],
+    "u080": [
+      "u080"
+    ],
+    "u081": [
+      "u081"
+    ],
+    "u082": [
+      "u082"
+    ],
+    "u083": [
+      "u083"
+    ],
+    "u084": [
+      "u084a",
+      "u084b",
+      "u084c",
+      "u084d"
+    ],
+    "u085": [
+      "u085"
+    ],
+    "u086": [
+      "u086"
+    ],
+    "u087": [
+      "u087"
+    ],
+    "u088": [
+      "u088"
+    ],
+    "u089": [
+      "u089"
+    ],
+    "u090": [
+      "u090"
+    ],
+    "u091": [
+      "u091"
+    ],
+    "u092": [
+      "u092"
+    ],
+    "u093": [
+      "u093"
+    ],
+    "u094": [
+      "u094"
+    ],
+    "u095": [
+      "u095"
+    ],
+    "u096": [
+      "u096"
+    ],
+    "u097": [
+      "u097"
+    ],
+    "u098": [
+      "u098"
+    ],
+    "u099": [
+      "u099a",
+      "u099b"
+    ],
+    "u100": [
+      "u100a",
+      "u100b"
+    ],
+    "u101": [
+      "u101"
+    ],
+    "u102": [
+      "u102"
+    ],
+    "u103": [
+      "u103"
+    ],
+    "u104": [
+      "u104"
+    ],
+    "u105": [
+      "u105a",
+      "u105b",
+      "u105c"
+    ],
+    "u106": [
+      "u106"
+    ],
+    "u107": [
+      "u107"
+    ],
+    "u108": [
+      "u108"
+    ],
+    "u109": [
+      "u109"
+    ],
+    "u110": [
+      "u110"
+    ],
+    "u111": [
+      "u111"
+    ],
+    "u112": [
+      "u112"
+    ],
+    "u113": [
+      "u113"
+    ],
+    "u114": [
+      "u114"
+    ]
+  },
+  "old_unit_count": 116,
+  "open_term_deciders_changed_to_unstated": {
+    "adequate": "human_rights_interpreter",
+    "arbitrary": "applicable_court",
+    "equal_before_law": "applicable_court",
+    "essential": "human_rights_interpreter",
+    "fair": "applicable_court",
+    "genuine": "human_rights_interpreter",
+    "greatest_importance": "human_rights_interpreter",
+    "inalienable_rights": "human_rights_interpreter",
+    "inherent_dignity": "human_rights_interpreter",
+    "just": "human_rights_interpreter",
+    "justice": "human_rights_interpreter",
+    "natural_group_unit": "human_rights_interpreter",
+    "reasonable": "human_rights_interpreter",
+    "spirit_of_brotherhood": "human_rights_interpreter"
+  },
+  "open_terms": [
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "equal legal standing",
+        "equal legal protection",
+        "scope of comparators"
+      ],
+      "name": "equal_before_law",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "meaning of dignity",
+        "scope of inherence"
+      ],
+      "name": "inherent_dignity",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which rights",
+        "conditions on transfer or loss"
+      ],
+      "name": "inalienable_rights",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "essential for which end",
+        "degree of necessity"
+      ],
+      "name": "essential",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "comparison class",
+        "measure of importance"
+      ],
+      "name": "greatest_importance",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "meaning of natural",
+        "meaning of fundamental",
+        "what counts as family"
+      ],
+      "name": "natural_group_unit",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "legality",
+        "reasonableness",
+        "procedural safeguards"
+      ],
+      "name": "arbitrary",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "procedural fairness",
+        "public access",
+        "independence"
+      ],
+      "name": "fair",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "health needs",
+        "living conditions",
+        "resources"
+      ],
+      "name": "adequate",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "fairness criteria",
+        "comparison group"
+      ],
+      "name": "just",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "hours",
+        "work setting",
+        "health and rest"
+      ],
+      "name": "reasonable",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "authenticity of election or prosecution",
+        "procedural evidence"
+      ],
+      "name": "genuine",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "reciprocal conduct",
+        "meaning of brotherhood"
+      ],
+      "name": "spirit_of_brotherhood",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "meaning of justice in the Preamble",
+        "scope of the claimed foundation"
+      ],
+      "name": "justice",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which purposes and principles count",
+        "what makes an act contrary to them"
+      ],
+      "name": "contrary_to_un_purposes_and_principles",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what separates a political from a non-political crime",
+        "who classifies the crime"
+      ],
+      "name": "non_political_crime",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which items of the Declaration count as rights and freedoms"
+      ],
+      "name": "rights_and_freedoms_set_forth",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what it is to aim at the destruction of a right",
+        "whether purpose or effect decides"
+      ],
+      "name": "aimed_at_destruction_of_rights",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as discrimination",
+        "which distinctions are meant"
+      ],
+      "name": "discrimination",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes protection equal",
+        "the comparators"
+      ],
+      "name": "equal_protection_of_the_law",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes a remedy effective"
+      ],
+      "name": "effective",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which national tribunals are competent"
+      ],
+      "name": "competent",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which rights the constitution or law grants",
+        "which of them are fundamental"
+      ],
+      "name": "fundamental_rights_granted",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes a tribunal independent",
+        "what makes a tribunal impartial"
+      ],
+      "name": "independent_and_impartial",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which guarantees are necessary for a defence"
+      ],
+      "name": "guarantees_necessary_for_defence",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as persecution",
+        "whether persecution that is only threatened counts"
+      ],
+      "name": "persecution",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "who the comparators are for equality of the hearing",
+        "what full equality requires"
+      ],
+      "name": "full_equality",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what it is for a limitation to be determined by law"
+      ],
+      "name": "determined_by_law",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what due recognition and respect for the rights and freedoms of others requires"
+      ],
+      "name": "due_recognition_and_respect",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which requirements are just"
+      ],
+      "name": "just_requirements",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "whose morality",
+        "which requirements of morality"
+      ],
+      "name": "morality",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as public order"
+      ],
+      "name": "public_order",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as the general welfare"
+      ],
+      "name": "general_welfare",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what makes a society democratic"
+      ],
+      "name": "democratic_society",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as protection of the family",
+        "what society owes as distinct from the State"
+      ],
+      "name": "protection_of_the_family",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "which duties the community may require",
+        "who decides"
+      ],
+      "name": "duties_to_the_community",
+      "necessary": [],
+      "sufficient": []
+    },
+    {
+      "decided_by": "unstated",
+      "factors": [
+        "what counts as free and full development of a personality"
+      ],
+      "name": "free_and_full_development",
+      "necessary": [],
+      "sufficient": []
+    }
+  ],
+  "ordered_candidate_pairs_separated_by_a_checked_situation": 152,
+  "presupposition_check": "No heading or speaker marker presupposes a substantive claim; the labelled units are unchanged from the audited previous run (the 2026-10-02T0600Z audit sampled u021, u040, u109 and u056 and found them faithful). u060 (the family is the natural and fundamental group unit) stays UNFORMALISED as an evaluative claim.",
+  "previous_run": "run-20261002T0600Z (ve-green-bluedot2; prev1002/ holds its translation, units, metrics, summary and AUDIT.md); this translation is rebuilt from prev/ (the 2026-09-29T1800Z translation) with the changes stated in build.py",
+  "previous_run_audit_verified_covered_bytes": 1792,
+  "previous_run_old_boundary_aggregation": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "OPEN": 1,
+    "READINGS": 21,
+    "UNFORMALISED": 59
+  },
+  "previous_run_unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "OPEN": 1,
+    "READINGS": 24,
+    "UNFORMALISED": 70
+  },
+  "reading_sets": [
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u022a",
+      "unit": "u022a",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u022b",
+      "unit": "u022b",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        }
+      ],
+      "id": "rs_u022c",
+      "unit": "u022c",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u029",
+      "unit": "u029",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u032",
+      "unit": "u032",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u033a",
+      "unit": "u033a",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u033b",
+      "unit": "u033b",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        }
+      ],
+      "id": "rs_u046",
+      "unit": "u046",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u048",
+      "unit": "u048",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_claim",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u049",
+      "unit": "u049",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u063",
+      "unit": "u063",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u066",
+      "unit": "u066",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u070",
+      "unit": "u070",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "state_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "state",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_negative",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "negative"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "anyone_positive",
+          "kind": "right",
+          "labels": {
+            "bearer": "anyone",
+            "force": "strict",
+            "incident": "claim",
+            "polarity": "positive"
+          }
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "liberty",
+          "kind": "right",
+          "labels": {
+            "force": "strict",
+            "incident": "liberty"
+          }
+        }
+      ],
+      "id": "rs_u073",
+      "unit": "u073",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u017.strict.ve.md",
+          "content_in_document": false,
+          "id": "strict",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u017.default.ve.md",
+          "content_in_document": false,
+          "id": "default",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u017",
+      "unit": "u017",
+      "version": 3
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u052.invocation_barred.ve.md",
+          "content_in_document": false,
+          "id": "invocation_barred",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "case_excluded",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u052",
+      "unit": "u052",
+      "version": 4
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u112.exercise_prohibited.ve.md",
+          "content_in_document": false,
+          "id": "exercise_prohibited",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "exercise_unprotected",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u112",
+      "unit": "u112",
+      "version": 4
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u114.interpretive_ban.ve.md",
+          "content_in_document": false,
+          "id": "interpretive_ban",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": null,
+          "content_in_document": true,
+          "id": "no_implied_right",
+          "kind": "asserted",
+          "labels": null
+        }
+      ],
+      "id": "rs_u114",
+      "unit": "u114",
+      "version": 3
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u035.tribunal_claim.ve.md",
+          "content_in_document": false,
+          "id": "tribunal_claim",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u035.state_claim.ve.md",
+          "content_in_document": false,
+          "id": "state_claim",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u035",
+      "unit": "u035",
+      "version": 2
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u051.liberty.ve.md",
+          "content_in_document": false,
+          "id": "liberty",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u051.state_avoid.ve.md",
+          "content_in_document": false,
+          "id": "state_avoid",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u051.anyone_avoid.ve.md",
+          "content_in_document": false,
+          "id": "anyone_avoid",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u051",
+      "unit": "u051",
+      "version": 3
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u077.nationality_country_claim.ve.md",
+          "content_in_document": false,
+          "id": "nationality_country_claim",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u077.residence_country_claim.ve.md",
+          "content_in_document": false,
+          "id": "residence_country_claim",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u077",
+      "unit": "u077",
+      "version": 2
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u061.claim.ve.md",
+          "content_in_document": false,
+          "id": "claim",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u061",
+      "unit": "u061",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u110.duty.ve.md",
+          "content_in_document": false,
+          "id": "duty",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u110",
+      "unit": "u110",
+      "version": 1
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u054.claim.ve.md",
+          "content_in_document": false,
+          "id": "claim",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u054.liberty.ve.md",
+          "content_in_document": false,
+          "id": "liberty",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u054",
+      "unit": "u054",
+      "version": 2
+    },
+    {
+      "candidates": [
+        {
+          "companion": "readings/u111.strict_listed_aims.ve.md",
+          "content_in_document": false,
+          "id": "strict_listed_aims",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u111.strict_both_aims.ve.md",
+          "content_in_document": false,
+          "id": "strict_both_aims",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u111.default_listed_aims.ve.md",
+          "content_in_document": false,
+          "id": "default_listed_aims",
+          "kind": "norm",
+          "labels": null
+        },
+        {
+          "companion": "readings/u111.default_both_aims.ve.md",
+          "content_in_document": false,
+          "id": "default_both_aims",
+          "kind": "norm",
+          "labels": null
+        }
+      ],
+      "id": "rs_u111",
+      "unit": "u111",
+      "version": 2
+    }
+  ],
+  "right_candidates": 50,
+  "right_reading_sets": 14,
+  "source": {
+    "bytes": 10916,
+    "fetch_date_utc": "2026-09-27",
+    "path": "source/udhr.md",
+    "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a"
+  },
+  "source_id": "0874bda003b4533dc1ce92a2be1667cc3dd78df9f49a1817d9f0c94a6dbab3d5",
+  "statuses_dropped_by_repair": {
+    "u039": "READINGS -> UNFORMALISED (other:act_phrase_grammar) on 2026-10-02: the case scope now fits a guard, but 'give in full equality a fair public hearing by an independent impartial tribunal in the case' is 88 to 93 bytes; dropping 'in full equality' or the tribunal clause is the defect the audit found",
+    "u041": "READINGS -> UNFORMALISED (other:act_phrase_grammar) on 2026-10-01: no act phrase of 80 bytes holds 'according to law in a public trial at which ... all the guarantees necessary for his defence', and a shorter one was the rejected defect"
+  },
+  "statuses_kept_with_repaired_content": "u035, u051, u077 stay READINGS: their right-block candidates are replaced by norm-defaults@0 norm candidates with scope in guards (companions)",
+  "tool_residual": {
+    "assumptions": 0,
+    "bar_terms": 0,
+    "bearer_readings": 14,
+    "bridge_leaves": 0,
+    "couplings": 0,
+    "default_exceptions": 0,
+    "force_readings": 0,
+    "holistic_overrides": 0,
+    "incident_readings": 6,
+    "instruction_switches": 0,
+    "limitation_deciders_unstated": 0,
+    "limitation_terms": 0,
+    "narrowings": 0,
+    "open_terms": 37,
+    "polarity_readings": 8,
+    "power_shadows": 0,
+    "rights_findings_pending": 1,
+    "unresolved_reading_sets": 25,
+    "weighing_points": 0
+  },
+  "tool_status_bytes": {
+    "CHECKED": 57,
+    "LABELLED": 535,
+    "OPEN": 2440,
+    "UNFORMALISED": 7884
+  },
+  "unit_count": 130,
+  "unit_counts_by_status": {
+    "CHECKED": 1,
+    "LABELLED": 34,
+    "READINGS": 25,
+    "UNFORMALISED": 70
+  },
+  "unit_scale": "sentence or clause; coordinated regulated acts split; headings separate. Changes from the previous run: u022 split into u022a-c (three coordinated rights); u111a and u111b merged into u111 (one unit)",
+  "units_re_translated_this_run_pending_audit": [
+    "u051",
+    "u054",
+    "u111"
+  ],
+  "vocabulary_use": {
+    "predicate_limit": 256,
+    "predicates": 36,
+    "regulated_limit": 64,
+    "regulated_predicates": 29,
+    "sort_limit": 32,
+    "sorts": 5
+  }
+}

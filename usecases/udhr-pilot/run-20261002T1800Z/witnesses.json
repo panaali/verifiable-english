@@ -1,0 +1,1345 @@
+{
+  "norm_defaults_status": {
+    "u017.strict": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "act_in_brotherhood_required",
+        "row": [
+          "h0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u035.state_claim": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "ensure_remedy_by_tribunals_required",
+        "row": [
+          "s0",
+          "a0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "ensure_remedy_by_tribunals_required",
+        "row": [
+          "s0",
+          "a1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u035.tribunal_claim": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "provide_effective_remedy_required",
+        "row": [
+          "t0",
+          "a0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "provide_effective_remedy_required",
+        "row": [
+          "t1",
+          "a0"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "provide_effective_remedy_required",
+        "row": [
+          "t0",
+          "a1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u051.anyone_avoid": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "avoid_barring_asylum_required",
+        "row": [
+          "b0",
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "avoid_barring_asylum_required",
+        "row": [
+          "b1",
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "avoid_barring_asylum_required",
+        "row": [
+          "b0",
+          "p1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u051.liberty": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "seek_asylum_from_persecution_permitted",
+        "row": [
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u051.state_avoid": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "avoid_barring_asylum_required",
+        "row": [
+          "s0",
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "avoid_barring_asylum_required",
+        "row": [
+          "s0",
+          "p1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u052.invocation_barred": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "predicate": "invoke_asylum_right_in_case_permitted",
+        "row": [
+          "p0",
+          "x0"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "invoke_asylum_right_in_case_permitted",
+        "row": [
+          "p0",
+          "x1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u054.claim": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "receive_nationality_required",
+        "row": [
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u054.liberty": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "have_nationality_permitted",
+        "row": [
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u061.claim": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "protect_required",
+        "row": [
+          "b0",
+          "f0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "protect_required",
+        "row": [
+          "b1",
+          "f0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "protect_required",
+        "row": [
+          "b2",
+          "f0"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u074.prohibition": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "predicate": "compel_association_membership_permitted",
+        "row": [
+          "a0",
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": false
+      }
+    ],
+    "u077.nationality_country_claim": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "give_equal_access_to_public_service_required",
+        "row": [
+          "c0",
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "give_equal_access_to_public_service_required",
+        "row": [
+          "c1",
+          "p0"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u077.residence_country_claim": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "give_equal_access_to_public_service_required",
+        "row": [
+          "c1",
+          "p0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "give_equal_access_to_public_service_required",
+        "row": [
+          "c0",
+          "p0"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u110.duty": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "perform_duties_required",
+        "row": [
+          "p0",
+          "m0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "perform_duties_required",
+        "row": [
+          "p0",
+          "m1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u111.strict_both_aims": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l0"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l1"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l2"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l3"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u111.strict_listed_aims": [
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l0"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l1"
+        ],
+        "status": "SETTLED",
+        "value": true
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l2"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          true
+        ],
+        "predicate": "be_free_of_limitation_required",
+        "row": [
+          "p0",
+          "l3"
+        ],
+        "status": "SETTLED",
+        "value": true
+      }
+    ],
+    "u112.exercise_prohibited": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "predicate": "exercise_permitted",
+        "row": [
+          "e0"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "exercise_permitted",
+        "row": [
+          "e1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u114.interpretive_ban": [
+      {
+        "as_expected": true,
+        "evidence": "table3",
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "predicate": "interpretation_permitted",
+        "row": [
+          "i0"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "evidence": "witness",
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "predicate": "interpretation_permitted",
+        "row": [
+          "i1"
+        ],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ]
+  },
+  "rights_completions": {
+    "u022a": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u022b": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u022c": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u029": {
+      "anyone_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u032": {
+      "anyone_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u033a": {
+      "anyone_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u033b": {
+      "anyone_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u046": {
+      "anyone_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u048": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "liberty": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u049": {
+      "anyone_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "liberty": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_claim": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u063": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "liberty": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u066": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "liberty": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u070": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "liberty": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    },
+    "u073": {
+      "anyone_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "anyone_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "liberty": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_negative": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      },
+      "state_positive": {
+        "rule_dropped_completion_deny": {
+          "certificate_replayed": false,
+          "status": "NotFound"
+        },
+        "rule_kept_completion_allow": {
+          "certificate_replayed": true,
+          "status": "Found"
+        },
+        "rule_kept_completion_deny": {
+          "certificate_replayed": true,
+          "status": "Found"
+        }
+      }
+    }
+  },
+  "u074_migration_audit": [
+    {
+      "certificate": {
+        "checker_version": "ve-tableau-checker@2",
+        "present": true,
+        "target": "reached:compel_association_membership_permitted"
+      },
+      "completion": "allow",
+      "default_reached": "none",
+      "predicate": "compel_association_membership_permitted",
+      "switched_gaps": "none"
+    }
+  ]
+}
