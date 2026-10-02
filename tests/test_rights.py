@@ -1075,3 +1075,15 @@ def rights_env_without_profile():
     raw["profiles"].remove("rights@0")
     raw["vocabulary"].pop("rights")
     return raw
+
+
+def test_line_on_a_base_predicate_is_unknown_not_a_crash():
+    """Review finding B (compose-s1-loop), class: a right's line on a predicate that is not regulated (in S1, one
+    whose `regulated` is null, which reads as absent) raised `AttributeError` while the line environment was built,
+    before the line's decoder refuses it with `UnknownSymbol: regulated predicate`, as Lean's does."""
+    raw = rights_env()
+    raw["vocabulary"]["predicates"]["base_act"] = {"arguments": ["state", "person"], "description": "base"}
+    line = claim()
+    line["norm"]["predicate"] = "base_act"
+    with pytest.raises(VEError, match="UnknownSymbol: regulated predicate base_act"):
+        correlate(raw, [right([line])])
