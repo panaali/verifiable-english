@@ -88,6 +88,8 @@ CASES = [
     ("E17", _case(lambda d: (d["items"][0].update(tags=["y", "x"]),
                             d["items"][1].update(name="a"))),
      ("2.1c", "/doc/items/1/name", "Duplicate: a")),
+    ("E17b", _case(lambda d: d["items"][0].update(tags=["y", "x"])),
+     ("2.2a", "/doc/items/0/tags", "Shape: tags of a are not sorted")),
     ("E18", _case(lambda d: (d["items"][0].update(name="A"), d["items"][1].update(name="B"))),
      ("2.1b", "/doc/items/0/name", "Name: A")),
     ("E19", _case(lambda d: d["items"][0].update(name=7)),
@@ -193,3 +195,7 @@ def test_lock_detects_edit_and_requires_revision(tmp_path):
     path.write_text(json.dumps(value))
     assert process(directory, write=True) == []
     assert process(directory) == []
+    limits = directory / "limits.json"
+    limits.write_text('{"DEMO_MAX_ITEMS":2,"DEMO_MAX_TAGS":4}')
+    with pytest.raises(RuntimeError, match="limits.json"):
+        load("demo@0", directory=directory)

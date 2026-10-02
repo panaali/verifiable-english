@@ -640,6 +640,46 @@
     }
   },
   {
+    "id": "E17b",
+    "root": {
+      "doc": {
+        "items": [
+          {
+            "name": "a",
+            "tags": [
+              "y",
+              "x"
+            ]
+          },
+          {
+            "name": "b",
+            "tags": []
+          }
+        ],
+        "mode": "open",
+        "owner": "root",
+        "refs": [
+          "a"
+        ],
+        "table": {
+          "k": 1
+        },
+        "part": {
+          "x": 1,
+          "ys": [
+            "u"
+          ]
+        },
+        "seed": 7
+      }
+    },
+    "expected": {
+      "check": "2.2a",
+      "path": "/doc/items/0/tags",
+      "text": "Shape: tags of a are not sorted"
+    }
+  },
+  {
     "id": "E18",
     "root": {
       "doc": {

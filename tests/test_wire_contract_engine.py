@@ -75,3 +75,13 @@ def test_error_diagnostic_is_opt_in():
     assert error.to_dict() == {"code": "InvalidInput", "message": "old"}
     error.diagnostic = {"check": "1"}
     assert error.to_dict()["diagnostic"] == {"check": "1"}
+
+
+def test_strict_json_equality_tuple_array_and_outside_domain():
+    table = _table([{"name": "p", "checks": [
+        _check("1", "const", "/doc/flag", value=0),
+        _check("2", "type", "/doc/items", type={"tuple": ["integer", "string"]})]}])
+    assert run(table, {"doc": {"flag": False, "items": (1, "x")}}).record["check"] == "1"
+    assert run(table, {"doc": {"flag": 0, "items": (1, "x")}}) is CLEAN
+    assert run(table, {"doc": {"flag": 0, "items": (1, 2)}}).record["check"] == "2"
+    assert run(table, {"doc": {"flag": 0, "items": [1.0, "x"]}}) is CLEAN

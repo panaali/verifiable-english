@@ -82,7 +82,9 @@ def _place(loc):
         return "the item"
     match = re.fullmatch(r"@([0-9]*)(?:/(.*))?", loc)
     if match:
-        base = "the item" if int(match[1] or 0) == 0 else "the enclosing item"
+        level = int(match[1] or 0)
+        base = ("the item" if level == 0 else "the enclosing item" if level == 1
+                else f"the item {level} groups out")
         return base + ("'s `" + match[2] + "`" if match[2] else "")
     return f"`{loc}`"
 
@@ -407,6 +409,22 @@ def process(directory=DATA, *, write=False):
             contracts[value["contract"]] = value
         except Exception as exc:
             issue(path, "WC01", str(exc))
+    def dependencies(entries):
+        result = set()
+        for entry in entries:
+            if "each" in entry:
+                result.update(dependencies(entry["checks"]))
+            elif entry.get("kind") == "include":
+                result.add(entry["contract"])
+        return result
+    graph = {unit: set().union(*(dependencies(phase["checks"]) for phase in value["phases"]))
+             for unit, value in contracts.items()}
+    def cycle(start, current, seen):
+        return any(target == start or (target not in seen and cycle(start, target, seen | {target}))
+                   for target in graph.get(current, ()))
+    for unit in graph:
+        if cycle(unit, unit, {unit}):
+            issue(directory / f"{unit}.json", "WC09", "include cycle")
     for path in files:
         try:
             value = loads_json(path.read_bytes())
