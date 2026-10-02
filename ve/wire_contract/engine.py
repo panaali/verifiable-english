@@ -59,9 +59,12 @@ def load(unit: str, *, directory: Path = ROOT) -> dict:
     filename = f"{unit}.json"
     contract = loads_json((directory / filename).read_bytes())
     lock = loads_json((directory / "contracts.lock").read_bytes())
-    actual = hashlib.sha256(canonical_json(contract)).hexdigest()
-    if lock.get(filename) != {"revision": contract.get("revision"), "sha256": actual}:
-        raise RuntimeError(f"wire contract lock mismatch: {filename}")
+    for used in (filename, *(f"{name}.json" for name in contract.get("uses", []))):
+        value = contract if used == filename else loads_json((directory / used).read_bytes())
+        actual = hashlib.sha256(canonical_json(value)).hexdigest()
+        revision = value.get("revision", lock.get(used, {}).get("revision", 1))
+        if lock.get(used) != {"revision": revision, "sha256": actual}:
+            raise RuntimeError(f"wire contract lock mismatch: {used}")
     return contract
 
 
@@ -334,8 +337,8 @@ def run(contract, root, *, registry=None, contracts=None, limits=None, names=Non
         return CLEAN
     registry = registry or Registry()
     contracts = contracts or {}
-    limits = limits or {}
-    names = names or {}
+    limits = limits if limits is not None else loads_json((ROOT / "limits.json").read_bytes())
+    names = names if names is not None else loads_json((ROOT / "names.json").read_bytes())
     if type(root) is not dict:
         root = {}
     root = {name: root.get(name) for name in contract["input"]}
