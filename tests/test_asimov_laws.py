@@ -380,3 +380,34 @@ def test_followability_agrees_across_python_rust_and_source_reading(rust_binary)
     assert all(full == unranked for full, unranked, _, _ in python)
     assert any(unranked and not v2 for _, unranked, v2, _ in python)
     assert any(unranked and not separate for _, unranked, _, separate in python)
+
+
+def _unspecified_permission(data):
+    """The environment with `permitted` completed `unspecified` under norm-defaults@0."""
+    switched = json.loads(json.dumps(data))
+    switched["profiles"] = sorted({*switched["profiles"], "norm-defaults@0"})
+    switched["vocabulary"]["predicates"]["permitted"]["regulated"]["default"] = "unspecified"
+    return switched
+
+
+def test_permission_default_stays_allow_until_norm_defaults_combines_with_alternatives():
+    """The source grants no permission by default, so `allow` is not stated by it, but this case's
+    followability verdicts need alternatives@0, and norm-defaults@0 does not combine with it yet
+    (docs/spec/norm-defaults.md 3.3, integration gap). Python and Lean's alternatives route both
+    reject the switched environment, so the case keeps its default and README says why. When this
+    test fails, the combination exists: switch `permitted` to `unspecified` and re-run."""
+    from ve.alternatives import _BINARY
+    from ve.errors import UnsupportedProfile
+    data = load()[0]
+    assert "alternatives@0" in data["profiles"]
+    switched = _unspecified_permission(data)
+    with pytest.raises(UnsupportedProfile, match="alternatives@0 with norm-defaults@0 is not implemented"):
+        Environment(switched)
+    if not _BINARY.is_file():
+        pytest.skip("ve_alternatives_route is not built")
+    done = subprocess.run([str(_BINARY), "-"], capture_output=True, text=True, timeout=120, input=json.dumps(
+        [{"id": "switched", "kind": "alt-elaborate", "environment": switched, "norms": norms()}]))
+    (row,) = json.loads(done.stdout)
+    assert (row["status"], row["error"]) == ("error", "UnsupportedProfile: Unsupported profile norm-defaults@0")
+    readme = (ROOT / "README.md").read_text()
+    assert "## The completion defaults and `unspecified`" in readme
