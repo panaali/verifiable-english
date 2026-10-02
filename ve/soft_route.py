@@ -123,11 +123,17 @@ def admit_soft_document(environment, document, *, soft_document=None):
         active = [u["content"] for u in document["units"]
                   if u["kind"] == "norm" and type(u.get("content")) is dict
                   and "norm" in u["content"]]
-        if not isinstance(environment, SoftEnvironment):
-            # The whole source is checked in table order before either half is built.
-            check_soft_source(environment, active)
-        env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
-        soft_document = SoftNormDocument(env, active)
+        try:
+            if not isinstance(environment, SoftEnvironment):
+                # The whole source is checked in table order before either half is built.
+                check_soft_source(environment, active, submitted_soft_route=True)
+            env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
+            soft_document = SoftNormDocument(env, active)
+        except VEError as error:
+            if not isinstance(environment, SoftEnvironment):
+                from .softnorms_contract import public_rejection
+                raise public_rejection(environment, active, error)
+            raise
     else:
         env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
     elaborate_soft_document(soft_document)

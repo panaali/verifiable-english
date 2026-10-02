@@ -1,8 +1,11 @@
-"""Collect the shadow diagnostic deltas without changing public errors."""
+"""Collect every prospective public diagnostic delta on the gate corpus."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
+
+from ve.wire import canonical_json
 
 ROOT = Path(__file__).resolve().parents[1] / "conformance/wire-contract"
 OUTPUT = ROOT / "soft-norms@0-delta.json"
@@ -11,9 +14,12 @@ OUTPUT = ROOT / "soft-norms@0-delta.json"
 def report():
     python = json.loads((ROOT / "soft-norms-python-delta.json").read_text())
     gate = json.loads((ROOT / "soft-norms@0-gate.json").read_text())
+    contract = json.loads((ROOT.parents[1] / "ve/wire_contract/soft-norms@0.json").read_text())
     return {
-        "contract": gate["contract"], "revision": gate["revision"], "status": "shadow",
-        "public_diagnostic_changes": [],
+        "contract": gate["contract"], "revision": gate["revision"],
+        "status": contract["status"],
+        "contract_sha256": hashlib.sha256(canonical_json(contract)).hexdigest(),
+        "public_diagnostic_changes": gate["public_diagnostic_changes"],
         "python_legacy_sample": python["sample"],
         "python_legacy_text_deltas": python["text_deltas"],
         "python_legacy_code_disagreements": python["disagreements"],

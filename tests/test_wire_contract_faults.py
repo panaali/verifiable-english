@@ -18,6 +18,7 @@ from conformance.wire_contract_gate import (_applied, all_checks, feasibility, g
                                             shape_problems)
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, rendered, route)
+from ve.errors import VEError
 from ve.softnorms_contract import REGISTRY
 from ve.wire_contract.engine import CLEAN, Fault, load, run
 
@@ -191,6 +192,61 @@ def _broken(change):
     return gate_failures(value)
 
 
+def test_s4_pre_and_public_code_rule_are_gate_rows():
+    report = json.loads(REPORT.read_text())
+    inherited = wire_contract_gate.inherited_checks(CONTRACT)
+    assert sum(row["text_changes"] for row in report["public_diagnostic_changes"]
+               if row["check"] not in inherited) == report["text_delta_count"]
+    assert report["legacy_code_differences"] == []
+    assert report["public_code_differences"] == 0
+    assert _broken(lambda value: value.update(legacy_code_differences=[{"case": "L:speech-acts@0:env"}])) == [
+        "legacy code differences [{'case': 'L:speech-acts@0:env'}]"]
+    assert _broken(lambda value: value.update(public_code_differences=3)) == [
+        "public delta: 3 code differences"]
+    def before_s4_pre(value):
+        value["legacy_code_differences"] = [{"case": name} for name in (
+            "L:speech-acts@0:env", "L:speech-acts@0:base", "L:norm-defaults@0:unspecified")]
+        value["public_code_differences"] = 3
+    failures = _broken(before_s4_pre)
+    assert any("legacy code differences" in failure for failure in failures)
+    assert "public delta: 3 code differences" in failures
+
+
+def test_delta_check_detects_an_unregenerated_contract_text(tmp_path, monkeypatch):
+    from conformance import wire_contract_delta
+    directory = tmp_path / "conformance/wire-contract"
+    directory.mkdir(parents=True)
+    contract_path = tmp_path / "ve/wire_contract/soft-norms@0.json"
+    contract_path.parent.mkdir(parents=True)
+    contract_path.write_text(json.dumps({"status": "shadow", "text": "old"}))
+    source = wire_contract_delta.ROOT
+    for name in ("soft-norms-python-delta.json", "soft-norms@0-gate.json"):
+        (directory / name).write_bytes((source / name).read_bytes())
+    monkeypatch.setattr(wire_contract_delta, "ROOT", directory)
+    monkeypatch.setattr(wire_contract_delta, "OUTPUT", directory / "soft-norms@0-delta.json")
+    monkeypatch.setattr(sys, "argv", ["wire_contract_delta"])
+    assert wire_contract_delta.main() == 0
+    contract_path.write_text(json.dumps({"status": "shadow", "text": "changed"}))
+    monkeypatch.setattr(sys, "argv", ["wire_contract_delta", "--check"])
+    assert wire_contract_delta.main() == 1
+
+
+def test_public_gate_requires_exactly_the_measured_signatures(tmp_path, monkeypatch):
+    report = json.loads(REPORT.read_text())
+    assert report["status"] == "public"
+    signatures = json.loads(wire_contract_gate.SWITCH.read_text())
+    path = tmp_path / "switch.json"
+    monkeypatch.setattr(wire_contract_gate, "SWITCH", path)
+    missing = deepcopy(signatures)
+    missing["signed"].pop("4.1c")
+    path.write_text(json.dumps(missing))
+    assert "public delta: check 4.1c changes text in 210 cases and is not signed" in gate_failures(report)
+    extra = deepcopy(signatures)
+    extra["signed"]["1.1"] = "No measured change."
+    path.write_text(json.dumps(extra))
+    assert "public delta: signed check 1.1 has no text change" in gate_failures(report)
+
+
 def test_gate_fails_when_a_stated_summary_contradicts_its_data():
     """Wire loop final (B, B, C): `gate_failures` trusted the report's own summaries, so a report with a
     nonempty `coverage_unmet` and `coverage_met` true, one with legacy verdict differences under an S3-pre
@@ -342,7 +398,8 @@ def test_report_counts_deferrals_apart_from_residuals_and_refuses_a_row_without_
     monkeypatch.setattr(wire_contract_gate, "gate_cases",
                         lambda contract: [("R", "R:deferred", raw, norms, None, (), True)])
     monkeypatch.setattr(wire_contract_gate, "_python",
-                        lambda contract, raw, norms: (("SOFT_UNSUPPORTED_PROFILE", "m"), Deferred("1.2")))
+                        lambda contract, raw, norms: (("SOFT_UNSUPPORTED_PROFILE", "m"), Deferred("1.2"),
+                                                     VEError("m"), False))
     rows = {"ve_diagnose": {"status": "ok", "outcome": "deferred"},
             "ve_soft_norms_route": {"status": "error", "code": "SOFT_UNSUPPORTED_PROFILE", "error": "m"}}
     monkeypatch.setattr(wire_contract_gate, "_lean_rows", lambda binary, unit, cases: [rows[binary]] * len(cases))
