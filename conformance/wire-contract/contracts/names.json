@@ -1,0 +1,1 @@
+{"word":{"first":"a-z","rest":"a-z0-9_","max_bytes":8,"forbid_infix":["__"]}}
