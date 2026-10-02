@@ -443,8 +443,34 @@ def check_frozen(index: Index) -> list[str]:
     return errors
 
 
+def check_wire_contract(index: Index) -> list[str]:
+    """Run the wire generator on staged sources and generated output."""
+    watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
+               "ve/wire.py", "tools/wire_contract.py", "docs/spec/soft-norms-wire-table.md")
+    if not any(path.startswith(watched) for path in index.changed):
+        return []
+    names = [path for path in index.listing()
+             if path.startswith("ve/") or path in {
+                 "lean/audit.py", "tools/wire_contract.py",
+                 "docs/spec/soft-norms-wire-table.md"}]
+    for path, blob in index.read(names).items():
+        if blob is None:
+            continue
+        target = index.snapshot / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(blob)
+    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
+    done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
+                          cwd=index.snapshot, env=env, capture_output=True, text=True,
+                          timeout=30, check=False)
+    if done.returncode:
+        return [line for line in (done.stdout + done.stderr).splitlines() if line]
+    return []
+
+
 CHECKS = [("secrets", check_secrets), ("layer imports", check_layers),
-          ("Lean forbidden tokens", check_lean_tokens), ("frozen files", check_frozen)]
+          ("Lean forbidden tokens", check_lean_tokens), ("frozen files", check_frozen),
+          ("wire contract", check_wire_contract)]
 
 
 def main(argv: list[str]) -> int:
