@@ -1,0 +1,476 @@
+{
+  "defer@0": {
+    "E33": {
+      "args": {},
+      "check": "d1",
+      "class": "InvalidInput",
+      "code": "DEFER_SHAPE",
+      "contract": "defer@0",
+      "path": "/v",
+      "phase": "first",
+      "revision": 1,
+      "text": "Defer: v"
+    },
+    "E34": {
+      "args": {},
+      "check": "d3",
+      "class": "InvalidInput",
+      "code": "DEFER_SHAPE",
+      "contract": "defer@0",
+      "path": "/w",
+      "phase": "second",
+      "revision": 1,
+      "text": "Defer: w"
+    },
+    "E35": {
+      "args": {},
+      "check": "d2",
+      "class": "InvalidInput",
+      "code": "DEFER_SHAPE",
+      "contract": "defer@0",
+      "path": "",
+      "phase": "second",
+      "revision": 1,
+      "text": "Defer: lean only"
+    },
+    "E36": "clean"
+  },
+  "demo@0": {
+    "E1": "clean",
+    "E10": {
+      "args": {},
+      "check": "1.6",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: a closed document has a note"
+    },
+    "E11": {
+      "args": {},
+      "check": "1.7",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: an open document has no owner"
+    },
+    "E12": {
+      "args": {
+        "value": "admin"
+      },
+      "check": "1.8",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/owner",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: owner admin"
+    },
+    "E13": "clean",
+    "E14": {
+      "args": {},
+      "check": "1.9",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/refs",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: refs names self"
+    },
+    "E15": {
+      "args": {},
+      "check": "1.10",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/refs",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: a note needs the ref a"
+    },
+    "E16": {
+      "args": {
+        "name": "a"
+      },
+      "check": "2.1d",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/items/0/tags",
+      "phase": "items",
+      "revision": 1,
+      "text": "Shape: tags of a"
+    },
+    "E17": {
+      "args": {
+        "value": "a"
+      },
+      "check": "2.1c",
+      "class": "DuplicateDeclaration",
+      "code": "DEMO_DUPLICATE",
+      "contract": "demo@0",
+      "path": "/doc/items/1/name",
+      "phase": "items",
+      "revision": 1,
+      "text": "Duplicate: a"
+    },
+    "E18": {
+      "args": {
+        "value": "A"
+      },
+      "check": "2.1b",
+      "class": "InvalidInput",
+      "code": "DEMO_NAME",
+      "contract": "demo@0",
+      "path": "/doc/items/0/name",
+      "phase": "items",
+      "revision": 1,
+      "text": "Name: A"
+    },
+    "E19a": {
+      "args": {
+        "value": "7"
+      },
+      "check": "2.1b",
+      "class": "InvalidInput",
+      "code": "DEMO_NAME",
+      "contract": "demo@0",
+      "path": "/doc/items/0/name",
+      "phase": "items",
+      "revision": 1,
+      "text": "Name: 7"
+    },
+    "E19b": {
+      "args": {
+        "value": "a__b"
+      },
+      "check": "2.1b",
+      "class": "InvalidInput",
+      "code": "DEMO_NAME",
+      "contract": "demo@0",
+      "path": "/doc/items/0/name",
+      "phase": "items",
+      "revision": 1,
+      "text": "Name: a__b"
+    },
+    "E19c": {
+      "args": {
+        "value": "abcdefghi"
+      },
+      "check": "2.1b",
+      "class": "InvalidInput",
+      "code": "DEMO_NAME",
+      "contract": "demo@0",
+      "path": "/doc/items/0/name",
+      "phase": "items",
+      "revision": 1,
+      "text": "Name: abcdefghi"
+    },
+    "E20": {
+      "args": {
+        "name": "b",
+        "value": "long"
+      },
+      "check": "2.2b",
+      "class": "ResourceLimit",
+      "code": "DEMO_LIMIT",
+      "contract": "demo@0",
+      "path": "/doc/items/1/tags/0",
+      "phase": "items",
+      "revision": 1,
+      "text": "Limit: tag long of b"
+    },
+    "E21": {
+      "args": {
+        "key": "ｚ"
+      },
+      "check": "2.3a",
+      "class": "InvalidInput",
+      "code": "DEMO_NAME",
+      "contract": "demo@0",
+      "path": "/doc/table/ｚ",
+      "phase": "items",
+      "revision": 1,
+      "text": "Name: ｚ"
+    },
+    "E22": {
+      "args": {
+        "key": "k",
+        "value": "\"s\""
+      },
+      "check": "2.3b",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/table/k",
+      "phase": "items",
+      "revision": 1,
+      "text": "Shape: table entry k is \"s\""
+    },
+    "E23": {
+      "args": {
+        "key": "k",
+        "value": "\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..."
+      },
+      "check": "2.3b",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/table/k",
+      "phase": "items",
+      "revision": 1,
+      "text": "Shape: table entry k is \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..."
+    },
+    "E24": {
+      "args": {
+        "value": "c"
+      },
+      "check": "3.1",
+      "class": "UnknownSymbol",
+      "code": "DEMO_UNKNOWN",
+      "contract": "demo@0",
+      "path": "/doc/refs/1",
+      "phase": "references",
+      "revision": 1,
+      "text": "Unknown: c"
+    },
+    "E25": {
+      "args": {
+        "count": "5"
+      },
+      "check": "3.2",
+      "class": "ResourceLimit",
+      "code": "DEMO_LIMIT",
+      "contract": "demo@0",
+      "path": "",
+      "phase": "references",
+      "revision": 1,
+      "text": "Limit: 5 tags"
+    },
+    "E26": {
+      "args": {
+        "index": "1"
+      },
+      "check": "3.3/b2",
+      "class": "InvalidInput",
+      "code": "INNER_BAD",
+      "contract": "demo@0",
+      "path": "/doc/part/ys/1",
+      "phase": "references",
+      "revision": 1,
+      "text": "Inner: y 1"
+    },
+    "E27": {
+      "args": {
+        "inner_path": "/x",
+        "value": "\"s\""
+      },
+      "check": "3.4/b1",
+      "class": "InvalidInput",
+      "code": "DEMO_SEMANTIC",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "references",
+      "revision": 1,
+      "text": "Inner: x is \"s\""
+    },
+    "E28": {
+      "args": {
+        "names": "bad, z"
+      },
+      "check": "4.1",
+      "class": "InvalidInput",
+      "code": "DEMO_SEMANTIC",
+      "contract": "demo@0",
+      "path": "",
+      "phase": "semantic",
+      "revision": 1,
+      "text": "Semantic: bad, z"
+    },
+    "E29a": {
+      "args": {
+        "n": "3"
+      },
+      "check": "4.3a",
+      "class": "InvalidInput",
+      "code": "DEMO_SEMANTIC",
+      "contract": "demo@0",
+      "path": "",
+      "phase": "semantic",
+      "revision": 1,
+      "text": "Semantic: first 3"
+    },
+    "E29b": {
+      "args": {},
+      "check": "4.3b",
+      "class": "InvalidInput",
+      "code": "DEMO_SEMANTIC",
+      "contract": "demo@0",
+      "path": "",
+      "phase": "semantic",
+      "revision": 1,
+      "text": "Semantic: second"
+    },
+    "E3": {
+      "args": {
+        "value": "\"shut\""
+      },
+      "check": "1.4",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/mode",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: mode \"shut\""
+    },
+    "E30": "clean",
+    "E31": "clean",
+    "E32": "clean",
+    "E4": {
+      "args": {},
+      "check": "1.1",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: document"
+    },
+    "E5": {
+      "args": {},
+      "check": "1.1",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: document"
+    },
+    "E6a": {
+      "args": {},
+      "check": "1.1",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: document"
+    },
+    "E6b": {
+      "args": {},
+      "check": "1.1",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: document"
+    },
+    "E7": {
+      "args": {},
+      "check": "1.2",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/items",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: items"
+    },
+    "E8": {
+      "args": {
+        "count": "4",
+        "limit": "3"
+      },
+      "check": "1.3",
+      "class": "ResourceLimit",
+      "code": "DEMO_LIMIT",
+      "contract": "demo@0",
+      "path": "/doc/items",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Limit: 4 items, at most 3"
+    },
+    "E9": {
+      "args": {},
+      "check": "1.5",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/refs",
+      "phase": "shape",
+      "revision": 1,
+      "text": "Shape: refs"
+    },
+    "X1": {
+      "args": {
+        "key": "a/b~"
+      },
+      "check": "2.3a",
+      "class": "InvalidInput",
+      "code": "DEMO_NAME",
+      "contract": "demo@0",
+      "path": "/doc/table/a~1b~0",
+      "phase": "items",
+      "revision": 1,
+      "text": "Name: a/b~"
+    },
+    "X2": {
+      "args": {
+        "index": "1"
+      },
+      "check": "2.1a",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/items/1",
+      "phase": "items",
+      "revision": 1,
+      "text": "Shape: item 1"
+    },
+    "X3": {
+      "args": {
+        "name": "a"
+      },
+      "check": "2.2a",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/items/0/tags",
+      "phase": "items",
+      "revision": 1,
+      "text": "Shape: tags of a are not sorted"
+    },
+    "X4": {
+      "args": {
+        "name": "a"
+      },
+      "check": "2.2a",
+      "class": "InvalidInput",
+      "code": "DEMO_SHAPE",
+      "contract": "demo@0",
+      "path": "/doc/items/0/tags",
+      "phase": "items",
+      "revision": 1,
+      "text": "Shape: tags of a are not sorted"
+    }
+  },
+  "python_deferred": {
+    "E34": "d2",
+    "E35": "d2",
+    "E36": "d2"
+  },
+  "source": "docs/spec/wire-contract.md 8.1"
+}
