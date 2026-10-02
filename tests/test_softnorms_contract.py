@@ -1,0 +1,180 @@
+"""Shadow pilot checks: the existing soft validator still owns the verdict."""
+
+from copy import deepcopy
+from pathlib import Path
+import re
+from collections import Counter
+import ast
+
+import pytest
+
+from conformance.soft_norms import generated
+from tests.test_soft_norms_lean import env, norm, ranks, should
+from ve.errors import VEError
+from ve.softnorms import load_soft_document
+from ve.softnorms_contract import REGISTRY, soft_source
+from ve.wire import loads_json
+from ve.wire_contract.engine import CLEAN, Fault, load, run
+from tools.wire_contract import process
+
+
+DIRECTORY = Path(__file__).resolve().parents[1] / "ve/wire_contract"
+CONTRACT = load("soft-norms@0")
+LIMITS = loads_json((DIRECTORY / "limits.json").read_bytes())
+NAMES = loads_json((DIRECTORY / "names.json").read_bytes())
+
+
+def diagnose(environment, norms):
+    return run(CONTRACT, {"environment": environment, "norms": norms}, registry=REGISTRY,
+               limits=LIMITS, names=NAMES)
+
+
+def _bad_language():
+    value = env()
+    value["language"] = "wrong"
+    return value, [], "1.2"
+
+
+def _bad_party():
+    return env({"parties": ["Bad"], "outranking": {"mode": "strict"}}), [], "2.7a"
+
+
+def _bad_profiles():
+    value = env()
+    value["profiles"].reverse()
+    return value, [], "3.1"
+
+
+def _hard_default():
+    return env(), [should("a", "x_required", True, hard=True)], "4.7a"
+
+
+def _unknown_rank():
+    value = env(ranks(["high", "low"]))
+    value["vocabulary"]["soft"]["outranks"] = [["high", "unknown"]]
+    return value, [], "5.2a"
+
+
+def _duplicate_rule():
+    return env(), [norm("a", "x_required", True), norm("a", "x_required", True)], "5.3"
+
+
+def _bad_guard():
+    return env(), [norm("a", "x_required", True,
+                        guard=["unary", "missing", ["var", 0]])], "5.7"
+
+
+def _tie_against_order():
+    value = env(ranks(["high", "low"]))
+    value["vocabulary"]["soft"]["ties"] = [["high", "low"]]
+    return value, [norm("a", "x_required", True)], "6.2"
+
+
+def _over_hard():
+    return env(), [norm("h", "x_required", True),
+                   should("s", "x_required", True, over=["h"])], "6.8"
+
+
+CASES = [_bad_language, _bad_party, _bad_profiles, _hard_default,
+         _unknown_rank, _duplicate_rule, _bad_guard, _tie_against_order, _over_hard]
+
+
+@pytest.mark.parametrize("make", CASES, ids=lambda fn: fn.__name__)
+def test_shadow_fault_agrees_with_legacy_rejection(make):
+    environment, norms, expected = make()
+    with pytest.raises(VEError) as error:
+        load_soft_document(deepcopy(environment), deepcopy(norms))
+    outcome = diagnose(environment, norms)
+    assert isinstance(outcome, Fault)
+    assert outcome.record["check"] == expected
+    assert outcome.record["code"] == error.value.code
+    assert CONTRACT["status"] == "shadow"
+    assert error.value.diagnostic is None
+
+
+def test_valid_examples_are_clean_and_accepted():
+    for path in sorted((DIRECTORY / "examples/soft-norms@0").glob("*.json")):
+        source = loads_json(path.read_bytes())
+        load_soft_document(deepcopy(source["environment"]), deepcopy(source["norms"]))
+        assert diagnose(source["environment"], source["norms"]) is CLEAN
+
+
+def test_norm_defaults_inherited_hook_keeps_legacy_text_in_shadow():
+    source = env(profiles=("norms@0", "norm-defaults@0", "soft-norms@0"))
+    with pytest.raises(VEError) as legacy:
+        load_soft_document(deepcopy(source), [])
+    outcome = diagnose(source, [])
+    assert isinstance(outcome, Fault)
+    assert outcome.record["check"] == "6.10c"
+    assert outcome.record["code"] == "SOFT_INVALID_INPUT"
+    assert outcome.record["text"] == str(legacy.value)
+    assert legacy.value.code == "SOFT_UNSUPPORTED_PROFILE"
+
+
+def test_generated_wordings_and_lock_are_current():
+    assert process(DIRECTORY) == []
+
+
+def test_pilot_tier_inventory_matches_statement_spec():
+    tiers = {}
+    strength = {"T1": 0, "T2": 1, "inherited": 2, "T3": 3}
+    def walk(entries):
+        for entry in entries:
+            if "each" in entry:
+                walk(entry["checks"])
+            elif entry["kind"] == "classifier":
+                for member in entry["emits"]:
+                    tiers[re.match(r"\d+\.\d+", member["id"])[0]] = "T3"
+            else:
+                number = re.match(r"\d+\.\d+", entry["id"])[0]
+                tier = ("inherited" if entry.get("inherited") else
+                        "T2" if entry["kind"] == "hook" else "T1")
+                tiers[number] = max(tiers.get(number, "T1"), tier, key=strength.get)
+    for phase in CONTRACT["phases"]:
+        walk(phase["checks"])
+    assert len(tiers) == 67
+    assert Counter(tiers.values()) == {"T1": 43, "T2": 8, "inherited": 3, "T3": 13}
+
+
+def test_admission_adapter_selects_active_norm_units():
+    source = env()
+    active = norm("a", "x_required", True)
+    quoted = norm("q", "x_required", True)
+    case = {"kind": "admission", "environment": source, "document": {"units": [
+        {"kind": "norm", "content": active},
+        {"kind": "quoted", "content": quoted},
+        {"kind": "text", "content": {"text": "note"}}]}}
+    assert soft_source(case) == {"environment": source, "norms": [active]}
+    assert diagnose(**soft_source(case)) is CLEAN
+
+
+def test_diagnostic_modules_stay_off_verdict_import_paths():
+    root = DIRECTORY.parent
+    for path in root.rglob("*.py"):
+        if "wire_contract" in path.parts or path.name == "softnorms_contract.py":
+            continue
+        tree = ast.parse(path.read_text())
+        imports = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imports.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imports.append(node.module)
+        assert all(not name.startswith(("ve.wire_contract", "ve.softnorms_contract"))
+                   for name in imports), path
+
+
+def test_seeded_soft_sources_keep_verdict_and_code_agreement():
+    for seed in range(50):
+        environment, norms = generated(seed)
+        try:
+            load_soft_document(deepcopy(environment), deepcopy(norms))
+            code = None
+        except VEError as error:
+            code = error.code
+        outcome = diagnose(environment, norms)
+        if code is None:
+            assert outcome is CLEAN, seed
+        else:
+            assert isinstance(outcome, Fault), seed
+            assert outcome.record["code"] == code, seed

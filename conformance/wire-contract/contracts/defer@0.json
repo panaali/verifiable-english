@@ -1,0 +1,12 @@
+{
+  "contract":"defer@0","revision":1,"format":1,"status":"shadow",
+  "input":["v","w","note"],"uses":[],
+  "codes":{"DEFER_SHAPE":{"class":"InvalidInput","summary":"Invalid deferred example"},"DEFER_INVALID_INPUT":{"class":"InvalidInput","summary":"Unexplained rejection"}},
+  "residual":"DEFER_INVALID_INPUT","phases":[
+    {"name":"first","checks":[{"id":"d1","kind":"type","at":"/v","type":"integer","code":"DEFER_SHAPE","text":"Defer: v"}]},
+    {"name":"second","checks":[
+      {"id":"d2","kind":"hook","hook":"lean_only","code":"DEFER_SHAPE","text":"Defer: lean only","says":"`/note` is not the string `lean`."},
+      {"id":"d3","kind":"type","at":"/w","type":"integer","code":"DEFER_SHAPE","text":"Defer: w"}
+    ]}
+  ]
+}

@@ -18,6 +18,7 @@ no builds. A typical commit takes well under a second;
 | layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean` (Python: the whole file; Lean: the header, which must be in the plain layout below); a staged `lean/**/*.lean` header outside the plain layout, or one the pinned toolchain's `lean --deps` reads differently; a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged | the staged `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py` and ledgers `tools/layer-exceptions.json`, `tools/lean-layer-exceptions.json` |
 | Lean forbidden tokens | In staged files under `lean/`: every whole word the staged `lean/audit.py` forbids (today `sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`, `extern`), in comments and strings too, as the audit does. In other staged `.lean` files: `sorry`, `sorryAx`, `admit` or `axiom` in code | the staged `lean/audit.py` |
 | frozen files | A staged change to a file listed in `lean/VE/Route/frozen-sources.sha256` unless the staged inventory records the staged file's SHA-256; a deleted file that is still listed; a new `lean/VE/**/*.lean` module that is not listed; a changed `lean/Main.lean` that no longer matches `MAIN_BASE` in `lean/VE/Route/frozen.py`. A staged inventory or `frozen.py` re-checks every entry | `lean/VE/Route/frozen.py` rules |
+| wire contract | When wire contract sources or the generated English table change, `tools/wire_contract.py --check` must pass on a staged snapshot | staged `ve/`, `tools/wire_contract.py`, `lean/audit.py`, and `docs/spec/soft-norms-wire-table.md` |
 
 A Lean header is in the plain layout when it is one `import A.B.C` per line at
 column 0 (ASCII name parts, nothing else on the line), with only blank lines,
@@ -60,7 +61,7 @@ instead where possible, as `tests/test_precommit_hook.py` does.
 - `VE_SKIP_HOOKS=1 git commit ...` skips this hook and prints a warning.
 
 Only part of what a bypass skips is checked again before a merge. The gate
-(`tools/gate.py`) runs `lean/audit.py`, which covers the Lean forbidden tokens,
+(`tools/gate.py`) runs `lean/audit.py` and the wire contract check, which cover the Lean forbidden tokens and wire table respectively,
 and the test suite, which runs `lean/VE/Route/frozen.py`. **Nothing downstream
 scans for secrets**, and the layer checkers (`tools/check_python_layers.py`,
 `tools/check_lean_imports.py`, `tools/check_rust_deps.py`) run only from
@@ -92,5 +93,5 @@ Uninstall with `git config --unset core.hooksPath` (add `--worktree` for the
 trial install). Setting `core.hooksPath` hides hooks in `.git/hooks/`; there are
 none apart from Git's samples today.
 
-The hook needs `python3` (3.11 or later, standard library only) and `git` on
+The hook needs `python3` (3.11 or later) and `git` on
 `PATH`; `elan` (or the pinned `lean`) on `PATH` adds the `lean --deps` check.
