@@ -1,0 +1,61 @@
+{
+  "contract":"demo@0","revision":1,"format":1,"status":"shadow","input":["doc"],
+  "uses":["limits","names","inner@0"],
+  "codes":{
+    "DEMO_SHAPE":{"class":"InvalidInput","summary":"Invalid document shape"},
+    "DEMO_NAME":{"class":"InvalidInput","summary":"Invalid name"},
+    "DEMO_SEMANTIC":{"class":"InvalidInput","summary":"Invalid semantic condition"},
+    "DEMO_INVALID_INPUT":{"class":"InvalidInput","summary":"Unexplained rejection"},
+    "DEMO_DUPLICATE":{"class":"DuplicateDeclaration","summary":"Repeated name"},
+    "DEMO_UNKNOWN":{"class":"UnknownSymbol","summary":"Unknown reference"},
+    "DEMO_LIMIT":{"class":"ResourceLimit","summary":"Resource bound"}
+  },
+  "residual":"DEMO_INVALID_INPUT",
+  "phases":[
+    {"name":"shape","checks":[
+      {"id":"1.1","kind":"keys","at":"/doc","required":["items","mode","refs"],"optional":["note","owner","part","seed","table"],"code":"DEMO_SHAPE","text":"Shape: document"},
+      {"id":"1.2","kind":"type","at":"/doc/items","type":"array","code":"DEMO_SHAPE","text":"Shape: items"},
+      {"id":"1.3","kind":"max_items","at":"/doc/items","limit":"DEMO_MAX_ITEMS","code":"DEMO_LIMIT","text":"Limit: {count} items, at most {limit}"},
+      {"id":"1.4","kind":"enum","at":"/doc/mode","values":["open","closed"],"code":"DEMO_SHAPE","text":"Shape: mode {value:json}"},
+      {"id":"1.5","kind":"type","at":"/doc/refs","type":{"array_of":"string"},"code":"DEMO_SHAPE","text":"Shape: refs"},
+      {"id":"1.6","kind":"excludes","at":"/doc","member":"note","when":[{"equals":["/doc/mode","closed"]}],"code":"DEMO_SHAPE","text":"Shape: a closed document has a note"},
+      {"id":"1.7","kind":"requires","at":"/doc","member":"owner","when":[{"equals":["/doc/mode","open"]}],"code":"DEMO_SHAPE","text":"Shape: an open document has no owner"},
+      {"id":"1.8","kind":"const","at":"/doc/owner","value":"root","code":"DEMO_SHAPE","text":"Shape: owner {value}"},
+      {"id":"1.9","kind":"excludes","at":"/doc/refs","item":"self","code":"DEMO_SHAPE","text":"Shape: refs names self"},
+      {"id":"1.10","kind":"requires","at":"/doc/refs","item":"a","when":[{"is":["/doc/note","string"]}],"code":"DEMO_SHAPE","text":"Shape: a note needs the ref a"}
+    ]},
+    {"name":"items","checks":[
+      {"id":"items1","each":"/doc/items/*","checks":[
+        {"id":"2.1a","kind":"exact_keys","at":"@","keys":["name","tags"],"code":"DEMO_SHAPE","text":"Shape: item {index}"},
+        {"id":"2.1b","kind":"name","at":"@/name","class":"word","code":"DEMO_NAME","text":"Name: {value}"},
+        {"id":"2.1c","kind":"unique_so_far","at":"@/name","code":"DEMO_DUPLICATE","text":"Duplicate: {value}"},
+        {"id":"2.1d","kind":"type","at":"@/tags","type":{"array_of":"string"},"args":{"name":"@/name"},"code":"DEMO_SHAPE","text":"Shape: tags of {name}"}
+      ]},
+      {"id":"items2","each":"/doc/items/*","checks":[
+        {"id":"2.2a","kind":"sorted_unique","at":"@/tags","args":{"name":"@/name"},"code":"DEMO_SHAPE","text":"Shape: tags of {name} are not sorted"},
+        {"id":"tags","each":"@/tags/*","checks":[
+          {"id":"2.2b","kind":"max_bytes","at":"@","limit":2,"args":{"name":"@1/name"},"code":"DEMO_LIMIT","text":"Limit: tag {value} of {name}"}
+        ]}
+      ]},
+      {"id":"table","each":"/doc/table/*","checks":[
+        {"id":"2.3a","kind":"name","at":"@","on":"key","class":"word","code":"DEMO_NAME","text":"Name: {key}"},
+        {"id":"2.3b","kind":"type","at":"@","type":"integer","code":"DEMO_SHAPE","text":"Shape: table entry {key} is {value:json}"}
+      ]}
+    ]},
+    {"name":"references","checks":[
+      {"id":"refs","each":"/doc/refs/*","checks":[
+        {"id":"3.1","kind":"declared_in","at":"@","set":"/doc/items/*/name","code":"DEMO_UNKNOWN","text":"Unknown: {value}"}
+      ]},
+      {"id":"3.2","kind":"max_count","of":"/doc/items/*/tags/*","limit":"DEMO_MAX_TAGS","code":"DEMO_LIMIT","text":"Limit: {count} tags"},
+      {"id":"3.3","kind":"include","contract":"inner@0","phases":["body"],"at":"/doc/part"},
+      {"id":"3.4","kind":"include","contract":"inner@0","phases":["body"],"at":"/doc","view":"part_view","says":"The view gives an object whose only member `x` is the `seed` of W, or 0 when W is not an object with a `seed`.","as":"DEMO_SEMANTIC"}
+    ]},
+    {"name":"semantic","checks":[
+      {"id":"4.1","kind":"hook","hook":"no_bad_name","returns":["names"],"code":"DEMO_SEMANTIC","text":"Semantic: {names:list}","says":"No value at `/doc/items/*/name` is the string `bad`."},
+      {"id":"4.3","kind":"classifier","classifier":"demo_rules","emits":[
+        {"id":"4.3a","code":"DEMO_SEMANTIC","text":"Semantic: first {n:count}","returns":["n"],"says":"`/doc/refs` does not have exactly 3 elements."},
+        {"id":"4.3b","code":"DEMO_SEMANTIC","text":"Semantic: second","says":"`/doc/refs` does not have exactly 2 elements."}
+      ]}
+    ]}
+  ]
+}
