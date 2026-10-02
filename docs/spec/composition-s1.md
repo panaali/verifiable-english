@@ -10,8 +10,11 @@
 > the converged statement review of draft 1 (`manage-agents/debates/compose-s1-spec/{astra,fable}.md`, verdict FIX,
 > CONVERGED after round 3, the Astra seat again held by Sol xhigh) and nothing else: Fable's six edits and the Astra
 > seat's refusal of a fixed unit attached to two sets, each listed in the change log. No design question is
-> reopened. The changed statements, admission rules, wording and fixtures are under re-review (12), and the build
-> opens when it passes. **Frozen inputs**:
+> reopened. A verification of draft 2 against that review (`manage-agents/compose-s1-p3ver1.final.md`) found the
+> seven corrections present, nothing else changed in substance, and one of them overstated: 4.5 said that
+> `separates` enforces all of step 1, and `situationWF` does not test the base's validity. That claim is now
+> qualified; no definition or theorem statement changes (change log). The changed statements, admission rules,
+> wording and fixtures are under re-review (12), and the build opens when it passes. **Frozen inputs**:
 > composition.md draft 3 (the stack contract, `dispatch`, the slot, `Content`, the wordings E1 to E21 and the
 > diagnostics texts of its section 8) and `lean/VE/Compose/{Slot,Dispatch,Content}.lean` as merged; this file
 > instantiates them and changes none. Sections 1, 4 and 8 are the statements under review; section 13 lists every
@@ -423,9 +426,13 @@ the pair:
    every table, the shared tables each reading reads and the decisions, is typed over the base's domains by the
    key's sorts; the probe names a regulated predicate, a kind of 1.6 and a typed tuple. A reading reads the shared
    tables of the keys its own document generates, and no other. A situation that fails this step is refused with
-   section 7's texts and separates nothing. `separates` checks the step itself (`situationWF`, 8.3), and the
-   decoder refuses such a situation, so a malformed table can never make the other side's failure count as a
-   separation (K21).
+   section 7's texts and separates nothing. The decoder checks the whole step. `separates` checks its conditions
+   on keys, tables and the probe itself (`situationWF`, 8.3), so a malformed table can never make the other
+   side's failure count as a separation (K21). It tests neither the id nor the condition on the base, that it is
+   valid over the author's vocabulary: a finite model in Lean gives a table for every predicate name, so that
+   validity is not a Boolean check on it. It is the proof the decoder supplies for the base it builds
+   (`SeparateReplay.valid`, 8.4) and the hypothesis `valid` of `separates_sound`; on a base that is not valid
+   `separates` may answer true, and the answer certifies nothing (8.3, notes).
 2. **The witness.** `a`'s document with the base, the shared tables and the decisions is admissible (the
    regenerated base background, the exception and coherence premises, the limitation premises), else
    `distinguishing model violates a generated premise`. The probe has the recorded value there.
@@ -871,9 +878,10 @@ def tablesFor {α : Type u} (D : Doc) (s : String) (i : Nat) (T : List (GenKey �
 /-- The tables of T as relations: the table of key k, empty when T has none. -/
 def tablesOf {α : Type u} (T : List (GenKey × List (List α))) : Tables α :=
   fun k vs => ∃ t ∈ T, t.1 = k ∧ vs ∈ t.2
-/-- 4.5 step 1 without the id, i the witness: no key listed twice; every shared key owned by neither reading and
-    generated in i's or in j's document; every decision key owned by i and generated in i's document; the tables
-    each reading reads typed over the base; the probe typed. -/
+/-- 4.5 step 1 without the id and without the base's validity over the author's vocabulary (the hypothesis
+    `valid` of `separates_sound`), i the witness: no key listed twice; every shared key owned by neither reading
+    and generated in i's or in j's document; every decision key owned by i and generated in i's document; the
+    tables each reading reads typed over the base; the probe typed. -/
 def situationWF {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) : Bool :=
   decide (((σ.fixed ++ σ.decisions).map (·.1)).Nodup) &&
   σ.fixed.all (fun t => !owned D s i t.1 && !owned D s j t.1 &&
@@ -883,7 +891,8 @@ def situationWF {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat
   tablesTyped (one D s j).1 σ.base (tablesFor D s j σ.fixed) &&
   probeTyped (one D s i).1 σ.base σ.probe
 
-/-- i is the witness. False on a situation that fails 4.5 step 1, and when the bound is exceeded. -/
+/-- i is the witness. False on a situation that fails `situationWF`, and when the bound is exceeded. It does not
+    test whether the base is valid over the author's vocabulary: `separates_sound` takes that as `valid`. -/
 def separates {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) : Bool :=
   situationWF D s i j σ &&
   sideValid D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) &&
@@ -985,7 +994,15 @@ a base carrying a tuple on one reading's generated predicate would be admissible
 `Separated` would hold of K2's pair, and `decision_only_sound` would be false on K1 (K2b). In `separates_sound`
 the hypothesis `valid` supplies that conjunct (`FiniteModel.Valid` is `asStructure.Admissible`), and it is the
 author's vocabulary only: validity of each side's model over its own base vocabulary follows from it, from
-`tablesTyped` and from the freshness of generated names that `chainWF` checks. The conclusion is about the shown
+`tablesTyped` and from the freshness of generated names that `chainWF` checks. `valid` is a hypothesis and not a
+conjunct of `situationWF`: `FiniteModel.relations` gives a table for every predicate name, so validity over an
+environment is not a Boolean check on a `FiniteModel`, and the decoder proves it of the base it builds from the
+listed relations, as the existing model decoder does (`decodeModel_valid`, `lean/VE/ModelProofs.lean`).
+`separates` therefore enforces step 1 of 4.5 without the id and without that validity. Nothing in `situationWF`,
+`sideValid` or `observe` reads a table on a predicate that neither reading's document declares, so K1's σ with one
+true tuple on such a predicate added to its base is answered true as K1's σ is, although `Achieves` is false of
+both readings on that base. `separates = true` certifies a separation only together with `valid`, which is what
+`separates_sound` states and what `SeparateReplay` carries. The conclusion is about the shown
 base and the shown shared tables (`tablesOf σ.fixed`), which is what composition.md 2.1 says a checked separation
 proves: the witness reaches the recorded value there and the other reading cannot. `Separated` is its corollary
 `separates_separated`. `situationWF` makes both sides read one list of well-typed shared tables, each key once:
@@ -1013,8 +1030,10 @@ structure SeparateReplay where
   hw : (candidate D set witness).bind (·.content) ≠ none
   ho : (candidate D set other).bind (·.content) ≠ none
   σ : Situation VE.Bridge.Entity
+  /-- 4.5 step 1, the base: valid over the author's vocabulary. `separates` does not test it. -/
   valid : σ.base.Valid (authorEnv D)
-  /-- 4.5 step 1: the decoder refuses a malformed situation with section 7's texts. -/
+  /-- 4.5 step 1, the keys, the tables and the probe: the decoder refuses a malformed situation with section 7's
+      texts. -/
   shape : situationWF D set witness other σ = true
 def replaySeparate (j : Lean.Json) : Except String SeparateReplay
 theorem readings_wire_separate_sound (j : Lean.Json) (r : SeparateReplay) (h : replaySeparate j = .ok r)
@@ -1026,7 +1045,9 @@ end VE.Readings.Wire
 
 `Separated r.D r.set r.witness r.other` follows by `separates_separated`. The decoder checks 4.5 step 1 before it
 answers: a situation that fails it is `InvalidInput` with section 7's text, on both case kinds below, and is never
-answered `separated: false`.
+answered `separated: false`. It checks the whole step: the id, the base's validity (the field `valid`) and
+`situationWF` (the field `shape`). `separates` by itself tests only the last (4.5), so the theorem needs `r.valid`
+as well as `hs`.
 
 Case kinds on `ve_readings_route`:
 
@@ -1095,7 +1116,7 @@ relational-fol@0, soft-norms@0` unless said. Rules: `S` is the strict rule `no-d
 |---|---|---|
 | K1 | `rs1`; σ = (`m0`, fixed none, witness 1, decisions `excepted no-deception` = {(a, u)}, `q0`, false) | `ownedKeys` 0 = `[]`, 1 = `[excepted no-deception]`; `separates … 1 0 σ = true`; with witness 0, no decision, value true: `false` (the default reading reaches true with the empty table); `decisionOnly D rs1 0 1 = some (excepted no-deception)`; finding `SeparatedByDecisionOnly: rs1: 0, 1` |
 | K2 | `Df` with `necessary: [⊥]` | K1's σ: `distinguishing model violates a generated premise`; the same base, witness 1, no decision, value true: `distinguishing model does not separate readings`; no probe of `probesOf` separates the pair on `m0` |
-| K2b | K2's set; as the base of a situation, `m0` with one more relation: `soft__excepted__no_deception` = {(a, u)}, the default document's generated exception predicate | through the wire, `InvalidInput: invalid situation <id>`: the base lists a predicate outside the author's base vocabulary. In Lean, an `example` that this structure is not `Admissible (authorEnv D)`, so that `Achieves` is false of both candidates on it, for every `F`, probe and value, and the base witnesses no `Separated`. Without the admissibility conjunct it would separate the pair: the default document overrides the predicate with its own table, and the strict document inherits a true tuple on a predicate it does not declare. The fixture does not ask for a proof that K2's pair is inseparable on every base (8.5) |
+| K2b | K2's set; as the base of a situation, `m0` with one more relation: `soft__excepted__no_deception` = {(a, u)}, the default document's generated exception predicate | through the wire, `InvalidInput: invalid situation <id>`: the base lists a predicate outside the author's base vocabulary. In Lean, an `example` that this structure is not `Admissible (authorEnv D)`, so that `Achieves` is false of both candidates on it, for every `F`, probe and value, and the base witnesses no `Separated`. Without the admissibility conjunct it would separate the pair: the default document overrides the predicate with its own table, and the strict document inherits a true tuple on a predicate it does not declare. The fixture does not ask for a proof that K2's pair is inseparable on every base (8.5), nor for an answer of `separates` on this base: `separates` does not test the base's validity (4.5 step 1), which the wire refusal and the `example` cover |
 | K3 | {`S` named `no-deception-a`, `S` named `no-deception-b`} | for every probe of `probesOf` and both values, `separates = false` in both directions; `observeAll` equal. Both default: with witness 0, `excepted no-deception-a` = {(a, u)}, `q0`, false: `false` (the other reading empties `avoid_required` with its own table). The `selects norm avoid_required (a, u)` probe has the same value under both |
 | K4 | {`S` named `avoid-x`, strict `help-x` on `+help_required`}; σ = (`m0`, witness 0, `q0`, true) | `separates = true`; `actOnly = some (avoid_required, help_required)`; finding `SeparatedByActOnly: rs1: 0, 1` |
 | K5 | K1 with a fixed default rule `be-kind` on `+help_required`; σ = K1's with fixed `excepted be-kind` = {(a, u)} | `excepted be-kind` is shared for both candidates and owned by neither; `separates = true`; `cells … 0 = 0`, `cells … 1 = 1`: the fixed table is not enumerated. The same table under `decisions`: `InvalidInput: situation <id> decides excepted be-kind, which reading default does not own`. The finding of K1 still holds (`be-kind` is on another act) |
@@ -1192,7 +1213,9 @@ The re-review of draft 2 covers what the statement review changed and no more: `
 (`singlyAttached`, the fixed-name conjunct of `distinctAcrossSets_spec`) with 4.2 and 4.3; 8.3 and 8.4 (`Achieves`,
 `AchievesQuiet`, `situationWF`, `separates`, `separates_sound`, `separation_conservative`'s hypotheses,
 `readings_wire_separate_sound`); the rows of E22 and E23 with H4; pending candidates in 1.2; fixtures K2b, K20
-and K21 and K8's added case; and the choices of 13.21.
+and K21 and K8's added case; and the choices of 13.21. It also covers the one claim the verification of draft 2
+corrected: how much of 4.5 step 1 `separates` enforces (4.5 step 1, the docstrings of `situationWF`, `separates`
+and `SeparateReplay`, the notes of 8.3 and 8.4).
 
 1. The frozen inputs: nothing of composition.md or `lean/VE/Compose/*` is changed; `dispatch` is used as defined;
    `Content` and `Content.declared` are S0's.
@@ -1203,8 +1226,9 @@ and K21 and K8's added case; and the choices of 13.21.
 4. Probes (1.6, 8.3): the key (kind, predicate, tuple) against `ve/readings.py`; no rule name; `Observes` on the
    expansion; the value `none` at a collision.
 5. `Achieves`, `Separated`, `separates` and `separates_sound`: admissibility of the base over the author's
-   vocabulary; step 1 inside `separates`; the conclusion on the shown base and shared tables; the witness; the
-   bound; why the other side's negation is exhausted by `assignments`.
+   vocabulary; step 1's conditions on keys, tables and the probe inside `separates`, and the base's validity as
+   the hypothesis `valid`; the conclusion on the shown base and shared tables; the witness; the bound; why the
+   other side's negation is exhausted by `assignments`.
 6. `separation_conservative` against today's comparison, and its difference at a collision (13.19).
 7. `force_agrees_off_exception` as the plan states it; `decisionOnly` and `decision_only_sound`; that E15 claims
    no more.
@@ -1283,8 +1307,10 @@ Each is a point where the plan left a reading open; the review may overturn any 
     overturn any of them.
     - A name that two fixed units declare is refused with the chain's own `DuplicateDeclaration` text (4.3), so
       the correction adds no text.
-    - Step 1 of 4.5 is one function, `situationWF`, which `separates` calls first and `SeparateReplay` carries as
-      a field.
+    - Step 1 of 4.5, apart from the id and the base's validity, is one function, `situationWF`, which `separates`
+      calls first and `SeparateReplay` carries as a field. The base's validity stays the proof `valid`, as the
+      joint position has it (the `valid` hypothesis of `separates_sound` supplies the admissibility conjunct): it
+      is not a Boolean check on a `FiniteModel`, so it is not added to `situationWF`.
     - `separation_conservative` takes step 1 for its list of shared tables as hypotheses; without them the
       statement is false of a list that `separates` now refuses.
     - K21 has three cases: an ungenerated key, a repeated key, and the review's own case of an ill-typed table on
@@ -1298,3 +1324,4 @@ Each is a point where the plan left a reading open; the review may overturn any 
 |---|---|---|
 | 2026-10-02 | Draft 1 | First statement specification of stage S1, from plan draft 2 through the pointer plan's draft 2: candidates as contents on three chains; fixed units, attached units and a candidate's document; source keys, shared and owned; situations with a witness, a probe and a value; `Achieves`, `Separated`, the executable `separates` with its bound; admission in four checks; two findings with checkable criteria; labels and couplings on every chain; the slots of E5, E14, E15, E16, E19, E21 and the sentences E22 to E24; the wire of a situation; diagnostics; the Lean statements `separates_sound`, `observe_sound`, `separation_conservative`, `force_agrees_off_exception`, `decision_only_sound`, `one_formula_only` and the chain lemmas; fixtures F1 to F6, F15, F19, F20, F22 in S1's share, K1 to K19, the differential, the pilots, the English; the measured unlock; twenty resolved choices. No code, Lean or frozen contract changes. |
 | 2026-10-02 | Draft 2 | The converged statement review of draft 1 applied (`manage-agents/debates/compose-s1-spec`, verdict FIX, CONVERGED after round 3), nothing else, and no design question reopened. **(1) Admissibility** (Fable 1, Astra 1): `Achieves` and `AchievesQuiet` require `B.Admissible (authorEnv D)`; `authorEnv` moved above them; 1.6; fixture K2b. **(2) Soundness on the shown base** (Fable 2): `separates_sound` and `readings_wire_separate_sound` conclude that the witness achieves the recorded value and the other reading cannot, on the shown base and `tablesOf σ.fixed`; `Separated` is the corollary `separates_separated`; 5.1. **(3) Step 1 of 4.5 enforced** (Fable 3): `situationWF` (keys once, generated-key membership, typing of both readings' shared tables, the probe) is the first conjunct of `separates` and a field of `SeparateReplay`; the decoder refuses a malformed situation; `separation_conservative` takes step 1 as hypotheses; section 7's row; fixture K21. **(4) E22 and E23** (Fable 4): both shown only when no rule takes precedence over the twin; E23 only when the other default rule is one step 2 blocks and outranking is strict; E23's "one reading" cell corrected; the wordings unchanged; H4's negative cases. **(5) Fixed names** (Fable 5): names declared by fixed units are distinct across the whole document (4.3, the last conjunct of `distinctAcrossSets_spec`, `Item.names`), with the chain's own text; K8's added case. **(6) Pending** (Fable 6): a quantity, composite or bar candidate is pending in every check of S1 (1.2, 3, 4.1, 4.5, 13.16). **(7) Single attachment** (Astra 2): `WellFormedDoc` gains `singlyAttached` with `singlyAttached_spec`, checked after closure and before `free D` and every `one D s i` (4.1, 4.2); the new text `UnsupportedProfile: readings@1 fixed unit <u> depends on reading sets <s> and <t>`; 13.4; fixture K20; 9.1, 9.3 and section 11 report any pilot document the check refuses, which has not been checked. Also: the status note, the re-review scope in 12, resolved choice 21. No code, Lean or frozen contract changes. |
+| 2026-10-02 | Draft 2, verification fix | The verification of draft 2 against the joint position (`manage-agents/compose-s1-p3ver1.final.md`: the seven corrections present, no unrelated substantive change, one correction incomplete) applied, nothing else. **Correction (3) qualified**: 4.5 step 1 claimed that `separates` checks the whole step, a base valid over the author's vocabulary included, and `situationWF` never tests that validity, so `separates` can answer true on K1's σ with a true tuple on an undeclared predicate added to its base. Of the verifier's two remedies the claim is qualified and `situationWF` is left as it is: validity over an environment is not a Boolean check on a `FiniteModel`, and the joint position keeps it as the hypothesis `valid` of `separates_sound`. Changed: 4.5 step 1 (the decoder checks the whole step; `separates` checks the conditions on keys, tables and the probe; the id and the base's validity are the decoder's, and `separates = true` certifies a separation only with `valid`); the docstrings of `situationWF`, `separates` and `SeparateReplay`'s two fields; the notes of 8.3 and 8.4; K2b's last sentence; 12 (scope and item 5); 13.21's second bullet; the status note. No definition, theorem statement, admission rule, diagnostic text, wording or expected fixture value changes. No code, Lean or frozen contract changes. |

@@ -55,6 +55,14 @@ attached to two sets) and none to this file: the design, the table above and eve
 2 applies them and lists each in its change log. The S1 Lean build stays closed until the re-review of the changed
 statements, admission rules, wording and fixtures passes (spec section 12).
 
+Verification of spec draft 2 against that joint position (`manage-agents/compose-s1-p3ver1.final.md`): the seven
+corrections are present and nothing else changed in substance, and one correction was incomplete. Spec 4.5 claimed
+that `separates` enforces all of step 1, a base valid over the author's vocabulary included, and `situationWF`
+never tests that validity. The spec now qualifies the claim: `separates` checks step 1's conditions on keys, tables
+and the probe, and the base's validity stays the decoder's proof and the hypothesis `valid` of `separates_sound`,
+as the joint position has it. No definition or theorem statement of the spec changes, and nothing in this file's
+design, table or pointers. The build stays closed as above.
+
 ## Change log
 
 | Revision | Changes |
@@ -62,3 +70,4 @@ statements, admission rules, wording and fixtures passes (spec section 12).
 | Draft 1 (commit `3a99ed1e`) | The pointer: item 1 is stage S1 of composition-PLAN.md. |
 | Draft 2 (2026-10-02) | The converged design debate applied, nothing else: the status note, the table of the converged edits that bind S1 with their places in the parent plan and in the spec, the process line. The pointer paragraph is unchanged. No statement, fixture or stage of the parent plan changed. Design only. |
 | Draft 2, review note (2026-10-02) | The outcome of the statement review of spec draft 1 recorded under Process: FIX, applied in spec draft 2, re-review pending. The joint position asks no edit of this file, and none is made beyond this record: no pointer, edit, stage or design point changed. |
+| Draft 2, verification note (2026-10-02) | The outcome of the verification of spec draft 2 recorded under Process: one correction incomplete (the spec's claim that `separates` enforces all of 4.5 step 1, base validity included), qualified in the spec with no statement changed. No edit of this file beyond this record: no pointer, edit, stage or design point changed. |
