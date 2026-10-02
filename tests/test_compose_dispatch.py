@@ -246,6 +246,17 @@ def test_s1_wrapper_profile_gate():
         checker_family(["alternatives@0", "norms@0", "readings@1", "relational-fol@0"])
 
 
+def test_s1_wrapper_matches_spec_rows_without_other_wrappers():
+    for number, listed, expected, _removals in _spec_rows():
+        if "readings@1" not in listed or set(listed) & {"ve.discourse@1", "right-clauses@0"}:
+            continue
+        outcome = _outcome(list(listed))
+        if expected[0] == "ok":
+            assert outcome == "ok", number
+        else:
+            assert outcome == expected[1], number
+
+
 @pytest.mark.parametrize("n,profiles,expected,removals", _spec_rows(), ids=[f"D{n}" for n, *_ in _spec_rows()])
 def test_row_on_python(n, profiles, expected, removals):
     profiles = list(profiles)
