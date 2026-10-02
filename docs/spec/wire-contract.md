@@ -528,6 +528,12 @@ neither a `VEError` nor a verdict.
 
 ## 5. Lean: definitions and the exact statements
 
+**Namespace as built.** The modules live in `lean/VE/WireContract/` and the namespace is `VE.WireContract`;
+wherever sections 5 and 7 write `VE.Contract` (a path, a module, a namespace or a qualified name), the build
+reads `VE.WireContract`. The statements of 5.3 are built with the formulas shown, so their qualified names are
+`VE.WireContract.run_clean_iff`, `VE.WireContract.run_fault_first`, `VE.WireContract.run_phase_major` and
+`VE.WireContract.run_congr_reached` (section 14, C1).
+
 **Files.** `lean/VE/Contract/Table.lean` (the data types; no JSON, no theorems), `Engine.lean` (pointers,
 expansion, evaluation, `run`, the theorems), `Diagnose.lean` (the unit registry and the runner),
 `Hooks/SoftNorms.lean` and `Hooks/Corpus.lean` (hand-written hooks, views and adapters),
@@ -1531,3 +1537,26 @@ else in the design.
 | Minor. 2.9 (B) said views "reached"; the theorem needs views equal everywhere | 2.9 (B); section 12, R19 |
 | Start of the build: no stage starts before the commit (Fable withdrew "S0, S1a and S1b may start now" in round 2) | the status paragraph |
 | Plan wording synchronised with A1 and A2 | plan draft 3: its status paragraph, 2.1 (the reader and the excerpt's include), 2.3 (the `says` of a view) and its section 12 |
+
+## 14. Wire review response (2026-10-02)
+
+Source: `manage-agents/wire-review-astra.final.md` and `manage-agents/reviews/wire-review-fable.md`, both FIX,
+on branch `wire/integrate` at `8cb69fda`. Each finding was treated as a class and fixed with a regression test;
+the commits are listed in the branch history. The pilot contract is at revision 2.
+
+| Finding | Change |
+|---|---|
+| Astra A, Fable B4: a viewed include over a nested include gave Python `path` `/doc/part`, `inner_path` `/x` | the Python engine keeps Lean's frame (`Frame.enter`): under a view, `path` is the view's site and `inner_path` the sites inside the view and the local pointer; an inner `as` takes the class of its declaring contract. Corpus contracts `mid@0` and `forms@0` run the case in both engines |
+| Fable B2, C: `{{` and `}}` by sentinel characters; the Lean generator ignored them | one template split (`engine.pieces`) for the engine, the Lean generator and the lint |
+| Fable A1: Python 6.10c against Lean 3.2 on `norm-defaults@0` | the Python hooks 2.3 and 3.2 use the Lean route's lists, compared with the Lean sources by a test. The registries differ on six profiles; on `rights@0` Python's legacy validator accepts and the Lean route rejects, a legacy verdict difference, so S3-pre (section 9) is open (`conformance/wire-contract/s3-pre.md`) |
+| Fable B1: 6.4a names differ | the Python hook goes prefix by prefix, as both legacy validators |
+| Fable B3: 6.4a and 6.4b carry an `at` the table of section 6 does not | removed (revision 2); `path` is `""` |
+| Astra B, Fable B4: the nested-view lint rule was dead; the WC08 catalogue clause was absent | WC09 searches the included phases, through further includes; WC08 reads the index of the fault catalogue. A member with no known reaching input may be declared unreached with its reason (`conformance/wire_contract_faults.py`, `UNREACHED`: 6.10c); the gate reports it as uncovered. The fixtures L1 to L13 and L15 of 8.2 are now tests |
+| Astra B, Fable B5: the flat English table gave 2.16b and 2.16c, and 2.17c and 2.17d, one sentence each; raw `@/*`; vague sentences | 3.1 is revised: items are named by their group's id, a group's sentence names the checks it covers, rows inside a group are marked; the hand-written sentences of 2.3, 3.2, 4.2a, 4.13b, 4.13d, 5.4, 5.7, 5.8a, 5.8b, 5.9b, 6.2, 6.3, 6.4a, 6.4b and 6.15 are made exact |
+| Astra B, Fable B6: tiers 0 and A checked codes; the masking oracle read Lean's result; two accepted inputs replayed; feasibility hard-coded; E40, E41 untested; the 8.1 coverage rule unmet | the gate's oracle is the fault catalogue: a hand-written check and path per fault, positions read from the contract, and the record fields `contract` to `path` compared in both engines; Lean's text is compared with the route's for checks that are not inherited. The replay has 1,348 sources. Feasibility is computed. E40 and E41 run against `ve_diagnose`. The corpus gains `mid@0` and `forms@0`, and a test measures the 8.1 coverage rule |
+| Astra B: coverage openly unmet | witnesses were found for 6.10a (a holistic collision puts a cycle into `T′`), 5.8a on a later condition and 4.11b (in Python only: a `null` the wire readers refuse). Two gaps remain and are reported with their reasons: 1.1 cannot be masked, because it is the first instance of the table, so the masking clause of 8.3 needs the statement edit "every check after the first instance"; and no input is known that reaches 6.10c, the fallback member of `soft_semantic` |
+| Astra C, Fable C: theorems in `VE.WireContract`, the spec says `VE.Contract` | section 5 records the namespace as built and the qualified names; the statements' formulas are those of 5.3 |
+| Fable C: `soft_semantic` rule 12 tested a message prefix; adapters differed on a missing `kind` or `norms` | rule 12 tests the class `ResourceLimit`; the Python adapter gives `null` for a missing member and refuses a case without a known kind, as Lean's |
+
+Open for the DRI: the `rights@0` legacy verdict difference (S3-pre), the statement edit for 1.1's masking
+witness, and whether 6.10c stays a member with no known reaching input.
