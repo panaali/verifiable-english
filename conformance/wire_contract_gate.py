@@ -23,11 +23,15 @@ import json
 from pathlib import Path
 import random
 import re
+import os
 import subprocess
+import sys
+import tempfile
 
-from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, generated,
-                                    generated_invalid_soft_blocks, generated_invalid_soft_rules, multi_fault_base,
-                                    multi_fault_cases, rejected_sources, soft3_accepted, soft3_reproducers)
+from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, exercised_sources,
+                                    generated, generated_invalid_soft_blocks, generated_invalid_soft_rules,
+                                    multi_fault_base, multi_fault_cases, rejected_sources, soft3_accepted,
+                                    soft3_reproducers)
 from conformance.wire_contract import choose_combinations
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position)
@@ -40,6 +44,10 @@ from ve.wire_contract.engine import Deferred, Fault, load, run
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
+# The tests' `soft-norms@0` inputs that no other source of the corpus builds, as `tests/contract_input_recorder.py`
+# records them from the test files of `RECORDED_TESTS` (`--record-test-inputs` rewrites the file).
+TEST_INPUTS = ROOT / "conformance/wire-contract/soft-norms@0-test-inputs.json"
+RECORDED_TESTS = ("tests/test_*contract*", "tests/test_soft*")
 EXAMPLES = ROOT / "ve/wire_contract/examples/soft-norms@0"
 EXPECTED_FIELDS = ("contract", "revision", "check", "phase", "code", "class", "path")
 # The fault record's members (2.7; `contract.schema.json`, `$defs/fault`, closed to others).
@@ -176,13 +184,16 @@ def replay_sources():
     return sources
 
 
-def test_and_fixture_sources():
-    """The `soft-norms@0` inputs of the contract tests (`tests/test_*contract*`) and of the soft conformance
-    fixtures, each built by the code that builds it for its test: the base and the pairs and triples of
-    `multi_fault_cases()`, the fixtures P1 to P17 (8.3), the shadow cases, probes and admission sources of the
-    contract tests, the acceptance fixtures of soft-norms.md 10, and the sources of the Rust fixtures.
-    `tests/test_wire_gate_corpus.py` records the inputs the tests actually submit and fails if one is missing
-    from the gate's corpus. Imported here, not at the top: the test modules import this one."""
+def test_and_fixture_sources(recorded=True):
+    """The `soft-norms@0` inputs of the contract tests (`tests/test_*contract*`), of the soft conformance
+    fixtures and of the soft conformance module, each built by the code that builds it for its test: the base
+    and the pairs and triples of `multi_fault_cases()`, the fixtures P1 to P17 (8.3), the shadow cases, probes
+    and admission sources of the contract tests, the acceptance fixtures of soft-norms.md 10, the sources of
+    the Rust fixtures, and every source `conformance/soft_norms.py` submits (`exercised_sources()`: its 1,000
+    accepted trees and the seeds between them, its rejected cases with `expected_rejections()` and
+    `generated_invalid_exceptions()`, and its near-limit cases). `tests/test_wire_gate_corpus.py` records the
+    inputs the tests and that module actually submit and fails if one is missing from the gate's corpus.
+    Imported here, not at the top: the test modules import this one."""
     from tests.test_soft_norms_conformance import fixtures
     from tests.test_softnorms_contract import CASES, admission_case
     from tests.test_wire_contract_faults import SHARED_CODE_PAIR
@@ -204,7 +215,52 @@ def test_and_fixture_sources():
     sources += [("acceptance:" + row[0], row[1], row[2]) for row in fixtures()]
     sources += [("rust:" + row["id"], row["source"]["environment"], row["source"]["norms"])
                 for row in json.loads(RUST_FIXTURES.read_text())]
+    sources += [("conformance:" + label, raw, rules) for label, raw, rules in exercised_sources()]
+    if recorded:
+        sources += [("recorded:" + label, raw, rules) for label, raw, rules in json.loads(TEST_INPUTS.read_text())]
     return sources
+
+
+def record_test_inputs(output):
+    """Run the test files of `RECORDED_TESTS` under `tests/contract_input_recorder.py`, which writes to
+    `output` each `soft-norms@0` input they, or the soft conformance module they run, hand to an engine or a
+    legacy validator: `[test id, environment, norms]`. Returns the pytest process."""
+    files = sorted({path for pattern in RECORDED_TESTS for path in ROOT.glob(pattern)})
+    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_NATIVE_PREBUILT": "1",
+                   "PYTHONPATH": str(ROOT)}
+    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
+                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *map(str, files)],
+                          cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
+
+
+def write_test_inputs():
+    """Rewrite `TEST_INPUTS`: the recorded test inputs that the rest of the corpus does not hold."""
+    with tempfile.TemporaryDirectory() as directory:
+        output = Path(directory) / "inputs.json"
+        result = record_test_inputs(output)
+        if result.returncode != 0:
+            raise RuntimeError(result.stdout[-4000:] + result.stderr[-4000:])
+        recorded = json.loads(output.read_text())
+    seen = {source_key(case[2], case[3]) for case in gate_cases(load("soft-norms@0"), recorded=False)}
+    rows = []
+    for label, raw, norms in recorded:
+        if source_key(raw, norms) not in seen:
+            seen.add(source_key(raw, norms))
+            rows.append([label, raw, norms])
+    TEST_INPUTS.write_text(json.dumps(rows, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+    return len(rows)
+
+
+def carries_null(value):
+    """Whether a JSON value holds a `null`: only the in-process API carries one, and the wire readers refuse
+    it before diagnosis, so Lean reads no source that does."""
+    if value is None:
+        return True
+    if type(value) is dict:
+        return any(carries_null(item) for item in value.values())
+    if type(value) is list:
+        return any(carries_null(item) for item in value)
+    return False
 
 
 def source_key(raw, norms):
@@ -290,11 +346,26 @@ def record_problems(record, expected, legacy):
     return []
 
 
+def _lean_batches(cases, count=100, limit=8 << 20):
+    """Consecutive slices of `cases`, each of at most `count` cases and `limit` bytes of JSON unless a
+    single case is larger (the executables refuse a package over 16 MiB; a near-limit source is up to
+    0.5 MiB)."""
+    batch, size = [], 0
+    for case in cases:
+        encoded = len(json.dumps(case))
+        if batch and (len(batch) == count or size + encoded > limit):
+            yield batch
+            batch, size = [], 0
+        batch.append(case)
+        size += encoded
+    if batch:
+        yield batch
+
+
 def _lean_rows(binary, unit, cases):
     rows = []
-    for start in range(0, len(cases), 100):
-        batch = [{"id": str(start + i), "kind": "soft-elaborate", "environment": raw, "norms": norms}
-                 for i, (raw, norms) in enumerate(cases[start:start + 100])]
+    for batch in _lean_batches([{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": norms}
+                                for i, (raw, norms) in enumerate(cases)]):
         result = subprocess.run([str(BIN / binary), *([unit] if unit else []), "-"],
                                 input=json.dumps(batch), text=True, capture_output=True, timeout=600)
         if result.returncode not in (0, 1):
@@ -316,9 +387,9 @@ def _python(contract, raw, norms):
     return legacy, outcome
 
 
-def gate_cases(contract):
+def gate_cases(contract, recorded=True):
     """The gate's corpus. Each case: (tier, label, raw, norms, expected fields or None, the faults it
-    combines, Lean reads it)."""
+    combines, Lean reads it). `recorded` False leaves out the recorded test inputs of `TEST_INPUTS`."""
     faults = catalogue()
     prints = {fault.name: footprint(fault) for fault in faults}
     both = [fault for fault in faults if fault.readers == "both"]
@@ -362,10 +433,10 @@ def gate_cases(contract):
     cases += [("L", label, raw, norms, expected, (), True) for label, raw, norms, expected in differences]
     # The tests' and fixtures' inputs that no other tier has, each once, replayed with the other corpora.
     seen = {source_key(case[2], case[3]) for case in cases}
-    for label, raw, norms in test_and_fixture_sources():
+    for label, raw, norms in test_and_fixture_sources(recorded):
         if source_key(raw, norms) not in seen:
             seen.add(source_key(raw, norms))
-            cases.append(("R", "R:test:" + label, raw, norms, None, (), True))
+            cases.append(("R", "R:test:" + label, raw, norms, None, (), not carries_null([raw, norms])))
     return cases
 
 
@@ -595,7 +666,10 @@ def _feasibility_failures(feasible):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--record-test-inputs", action="store_true")
     args = parser.parse_args()
+    if args.record_test_inputs:
+        print(f"{write_test_inputs()} recorded test inputs written to {TEST_INPUTS.relative_to(ROOT)}")
     value = report()
     rendered = json.dumps(value, indent=2, sort_keys=True) + "\n"
     if args.check:

@@ -94,12 +94,12 @@
   },
   "revision": 3,
   "s3_pre": "closed: no legacy verdict difference",
-  "text_delta_count": 282,
+  "text_delta_count": 303,
   "tiers": {
     "0": 165,
     "A": 4280,
     "B": 200,
     "legacy_differences": 14,
-    "replayed": 2809
+    "replayed": 3917
   }
 }
