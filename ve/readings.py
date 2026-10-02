@@ -11,9 +11,54 @@ from itertools import product
 from .assurance import semantic_entry
 from .admission import _check_kind, token
 from .ast import formula_from_data
-from .errors import UnsupportedProfile, VEError
+from .errors import CheckerUnavailable, UnsupportedProfile, VEError
 from .identity import meaning_id
 from .readings_english import SOURCE_WORDS
+
+
+S1_CONTENT_KINDS = frozenset({"norm", "right", "right_lines", "limitation"})
+
+
+def s1_content_kind(content):
+    """Classify only contents S1 elaborates; other W2 kinds stay pending."""
+    if type(content) is not dict:
+        return None
+    keys = set(content)
+    if keys == {"norm", "cites"}:
+        return "norm"
+    if len(keys) == 1:
+        key = next(iter(keys))
+        return key if key in S1_CONTENT_KINDS or key == "bar" else None
+    return None
+
+
+def s1_content_meaning_id(env, set_id, reading):
+    """Give a content-bearing candidate the identity of the same fixed unit.
+
+    This checks the content's profile and kind. Whole-document elaboration and
+    separation still require the regenerated S1 route.
+    """
+    content = reading["content"]
+    content_kind = s1_content_kind(content)
+    if content_kind is None:
+        return None
+    if content_kind == "bar":
+        raise UnsupportedProfile("UnsupportedProfile: readings@1 bar candidate content is not implemented")
+    name = reading["id"]
+    if reading["kind"] != content_kind:
+        raise VEError(f"InvalidInput: reading {set_id}:{name} has kind {reading['kind']} "
+                      f"and content of kind {content_kind}")
+    needs = "norms@0" if content_kind == "norm" else "rights@0"
+    if needs not in env.profiles:
+        raise UnsupportedProfile(
+            f"UnsupportedProfile: reading {set_id}:{name} of kind {content_kind} requires {needs}")
+    from .document import _content
+    canonical, mid = _content(env, {"kind": content_kind, "content": content}, {},
+                              rights="rights@0" in env.profiles)
+    if mid is None:
+        from .norms import NormDocument, norm_meaning_id
+        mid = norm_meaning_id(env, NormDocument._decode(canonical))
+    return mid
 
 
 def source_word_text(source: bytes, span, unit_span):
@@ -87,7 +132,7 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
         required = {"id", "unit", "version", "status", "readings"}
         optional = {"signature", "rejected_history", "models"}
         if "readings@1" in env.profiles:
-            optional.add("source_word")
+            optional.update(("source_word", "situations"))
         if type(item) is not dict or not required <= set(item) or set(item) - required - optional:
             raise VEError("invalid reading set")
         if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1:
@@ -109,6 +154,9 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
         readings = item["readings"]
         if type(readings) is not list or not 1 <= len(readings) <= 64:
             raise VEError("reading sets hold 1 to 64 readings")
+        s1_bearing = "readings@1" in env.profiles and any(
+            type(r) is dict and s1_content_kind(r.get("content")) in S1_CONTENT_KINDS
+            for r in readings)
         if item["status"] == "authored" and (len(readings) != 1 or not token(item.get("signature"))):
             raise VEError("authored reading needs one signed choice")
         if item["status"] == "open" and "signature" in item:
@@ -130,14 +178,19 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             if not token(reading["id"]) or reading["id"] in ids:
                 raise VEError("duplicate or invalid reading id")
             ids.add(reading["id"])
-            if not (rights_enabled and reading["kind"] in
+            if "readings@1" in env.profiles and s1_content_kind(reading["content"]) == "bar":
+                s1_content_meaning_id(env, item["id"], reading)
+            if not (s1_bearing and s1_content_kind(reading["content"]) in S1_CONTENT_KINDS
+                    or rights_enabled and reading["kind"] in
                     ("right", "right_lines", "limitation", "bar")):
                 _check_kind(reading["kind"])
             if not token(reading["meaning_id"]):
                 raise VEError("invalid reading meaning id")
             if reading["content"] is not None:
                 content = reading["content"]
-                if rights_enabled and type(content) is dict and set(content) == {"right"}:
+                if s1_bearing and s1_content_kind(content) in S1_CONTENT_KINDS:
+                    content_id = s1_content_meaning_id(env, item["id"], reading)
+                elif rights_enabled and type(content) is dict and set(content) == {"right"}:
                     from .rights import RightsDocument
                     RightsDocument(env, [{"source_units": sorted(unit_ids)}, content])
                     content_id = rights_meaning_id(env, content)
@@ -158,6 +211,16 @@ def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None
             if not all(token(v) for v in admission["distinguishing_models"].values()):
                 raise VEError("invalid distinguishing model id")
             model_ids.update(admission["distinguishing_models"].values())
+        if s1_bearing:
+            situations = item.get("situations")
+            if (type(situations) is not dict or "models" in item
+                    or any(not token(name) for name in situations)):
+                raise VEError("InvalidInput: invalid situation set")
+            # A content-bearing set cannot be accepted by Python's old
+            # per-reading model comparison. The S1 Lean replay must check the
+            # common base, shared decisions and every completion of the other
+            # reading before this metadata can become an admission claim.
+            raise CheckerUnavailable("CheckerUnavailable: readings@1 content separation awaits Lean replay")
         models = item.get("models", {})
         if type(models) is not dict or set(models) != model_ids:
             raise VEError("distinguishing models must be supplied by id")
