@@ -1,6 +1,7 @@
 import VE.Json
 import VE.WireContract.Engine
 import VE.WireContract.Hooks.Corpus
+import VE.WireContract.Hooks.SoftNorms
 
 /-! The `ve_diagnose` runner (docs/spec/wire-contract.md 4.2): the registry of
 contracts and the rows it prints.
@@ -31,7 +32,8 @@ def caseRoot (input : List String) (case : Json) : Except String Json :=
 def units : List (String × Registered) :=
   [("inner@0", ⟨Tables.Corpus.Inner.table, Hooks.Corpus.hooks, caseRoot ["x", "ys"]⟩),
    ("demo@0", ⟨Tables.Corpus.Demo.table, Hooks.Corpus.hooks, caseRoot ["doc"]⟩),
-   ("defer@0", ⟨Tables.Corpus.Defer.table, Hooks.Corpus.hooks, caseRoot ["v", "w", "note"]⟩)]
+   ("defer@0", ⟨Tables.Corpus.Defer.table, Hooks.Corpus.hooks, caseRoot ["v", "w", "note"]⟩),
+   ("soft-norms@0", ⟨Tables.SoftNorms.table, Hooks.SoftNorms.hooks, Hooks.SoftNorms.adapter⟩)]
 
 /-- One row: `fault` with the record of the first instance that does not hold, or `clean`. -/
 def diagnoseCase (u : Registered) (case : Json) : Json :=
