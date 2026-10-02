@@ -120,6 +120,23 @@ def two_acts(rng):
     return env_k(profiles), {"units": [unit("u1")], "reading_sets": [reading_set("rs1", "u1", candidates)]}, None
 
 
+def decoded_variant(rng, line):
+    """`line` as written differently, decoded the same by Lean (`decodeLine`): an empty `cites` or `fan_out`, a
+    strict norm's soft fields at their defaults, the keys in another order."""
+    line = copy.deepcopy(line)
+    if rng.random() < 0.3:
+        line["cites"] = {}
+    if rng.random() < 0.2:
+        line["fan_out"] = {}
+    if line["norm"].get("mode", "strict") == "strict":
+        for key, value in (("mode", "strict"), ("alterable", []), ("hard", False), ("rank", None)):
+            if rng.random() < 0.2:
+                line["norm"][key] = value
+    if rng.random() < 0.3:
+        line = dict(reversed(list(line.items())))
+    return line
+
+
 def rights(rng):
     arbitrary = ["binary", "arbitrary_arrest", ["var", 1], ["var", 0]]
 
@@ -128,13 +145,28 @@ def rights(rng):
             {"kind": "claim", "norm": norm_object("no-arbitrary-arrest", "arrest_permitted", False, mode,
                                                   guard=arbitrary)}]}}
     candidates = [reading("strict", claim("strict"), "right"), reading("default", claim("default"), "right")]
+    for r in candidates:
+        # Lean's decoder defaults, written or not (an absent guard is `top`, an empty `fan_out` none).
+        right = r["content"]["right"]
+        if rng.random() < 0.3:
+            del right["guard"]
+        right["lines"] = [decoded_variant(rng, line) for line in right["lines"]]
     units = [unit("u9", kind="right")]
     if rng.random() < 0.6:
         conditions = [{"name": "determined_by_law", "role": rng.choice(["necessary", "sufficient"]),
                        "decided_by": None, "verbalisation": "the limitation is determined by law"}]
-        units.append(unit("u29", {"limitation": {"name": "l29", "scope": "all", "kinds": "all",
-                                                 "decided_by": "unstated", "factors": [],
-                                                 "conditions": conditions}}, "limitation"))
+        if rng.random() < 0.5:
+            del conditions[0]["decided_by"]
+        limitation = {"name": "l29", "scope": "all", "kinds": "all", "decided_by": "unstated", "factors": [],
+                      "conditions": conditions}
+        if rng.random() < 0.2:
+            del limitation["decided_by"]  # MissingExceptionDecider, from both
+        units.append(unit("u29", {"limitation": limitation}, "limitation"))
+    if rng.random() < 0.3:
+        bar = {"name": "b30", "reading": rng.choice(["rule", "query"])}
+        if rng.random() < 0.5:
+            bar["decided_by"] = rng.choice(["unstated", None])
+        units.append(unit("u30", {"bar": bar}, "bar"))
     rng.shuffle(units)
     return env_rights(), {"units": units, "reading_sets": [reading_set("rs9", "u9", candidates)]}, None
 
@@ -170,8 +202,10 @@ def faulty(rng):
         raw = env_k(("norm-defaults@0", *SOFT_PROFILES))
     elif fault == "line-order":
         raw, document, _ = rights(random.Random(rng.random()))
+        # The repeated line as written may differ from the first; Lean compares them decoded.
         line = document["reading_sets"][0]["readings"][0]["content"]["right"]["lines"][0]
-        document["reading_sets"][0]["readings"][0]["content"]["right"]["lines"].append(copy.deepcopy(line))
+        document["reading_sets"][0]["readings"][0]["content"]["right"]["lines"].append(
+            decoded_variant(rng, copy.deepcopy(line)))
     return raw, document, fault
 
 
