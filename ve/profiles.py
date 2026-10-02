@@ -56,7 +56,7 @@ def checker_family(profiles):
         family = checker_family(base)
         if "norms@0" not in base:
             raise UnsupportedProfile("UnsupportedProfile: readings@1 requires norms@0")
-        for outside in ("reports@0", "speech-acts@0", "alternatives@0", "risk@0"):
+        for outside in ("risk@0", "alternatives@0", "speech-acts@0", "reports@0"):
             if outside in base:
                 raise UnsupportedProfile(f"UnsupportedProfile: readings@1 with {outside}")
         return family
