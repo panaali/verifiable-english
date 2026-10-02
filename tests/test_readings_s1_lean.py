@@ -102,13 +102,18 @@ Q0 = {"outcome": {"predicate": "avoid_required", "tuple": ["a", "u"]}}
 EXCEPTED = {"key": {"excepted": "no-deception"}, "tuples": [["a", "u"]]}
 
 
+def kind_of(content):
+    """The kind of a unit whose content is in force: `asserted` for a formula, else the content's block."""
+    return "asserted" if type(content) is list else next(k for k in content if k != "cites")
+
+
 def k1_document(raw, *, situation=None, fixed_units=(), extra_sets=()):
     sigma = situation or entry(M0, "default", Q0, False, decisions=[EXCEPTED])
     sid = situation_id(raw, sigma)
     rs1 = reading_set("rs1", "u1", [
         reading("strict", norm("no-deception", "avoid_required", True), {"default": sid}),
         reading("default", norm("no-deception", "avoid_required", True, "default"), {"strict": sid})], {sid: sigma})
-    units = [{"id": "u1"}] + [{"id": u, "content": c} for u, c in fixed_units] + \
+    units = [{"id": "u1"}] + [{"id": u, "kind": kind_of(c), "content": c} for u, c in fixed_units] + \
         [{"id": s["unit"]} for s in extra_sets]
     return {"units": units, "reading_sets": [rs1, *extra_sets]}, sid
 
@@ -222,6 +227,45 @@ def test_a_third_reading_never_witnesses_a_pair(lean):
     assert row == {"id": "v", "status": "error", "error": "distinguishing model does not separate readings"}
 
 
+def test_unit_kinds_decide_what_is_in_force(lean):
+    """Review finding B (compose-s1, Fable 3): a unit's kind travels to Lean. A quoted norm, a formula of another
+    kind than `asserted` and a composite-kind candidate are not in force, as in Python's W2 loader."""
+    raw = env_k()
+    never = norm("never-avoid", "avoid_required", False)
+    k6 = entry(M0, "default", Q0, False)
+    # K6: the fixed strict rule decides under the default reading.
+    document, _ = k1_document(raw, situation=k6, fixed_units=[("u0", never)])
+    assert validate(lean, raw, document)["status"] == "ok"
+    # The same rule quoted (a composite kind) is no rule of the document: the default reading reaches true.
+    document["units"][1]["kind"] = ["attributed", "author", "says", "norm"]
+    assert validate(lean, raw, document)["error"] == "distinguishing model does not separate readings"
+    document["units"][1]["kind"] = "example"
+    assert validate(lean, raw, document)["error"] == "distinguishing model does not separate readings"
+    # A formula unit is asserted only with kind `asserted` (K12's pair, recorded with `holds`).
+    asks_all = ["forall", "agent", ["forall", "user", ["binary", "asks", ["var", 1], ["var", 0]]]]
+    sigma = entry(M0, "strict", "holds", True)
+    sid = situation_id(raw, sigma)
+    rs1 = reading_set("rs1", "u1", [reading("assert", asks_all, {"strict": sid}, kind="asserted"),
+                                    reading("strict", norm("no-deception", "avoid_required", True),
+                                            {"assert": sid})], {sid: sigma})
+    for kind, expected in (("question", "ok"), ("asserted", "error")):
+        units = [{"id": "u1"}, {"id": "u0", "kind": kind, "content": ["bottom"]}]
+        row = validate(lean, raw, {"units": units, "reading_sets": [rs1]})
+        assert row["status"] == expected, (kind, row)
+    # A formula candidate of a composite kind is pending: its pair needs no situation.
+    hedged = reading("hedged", asks_all, {"strict": "any-token"}, kind=["hedged", "probably", "asserted"])
+    rs1 = reading_set("rs1", "u1", [reading("strict", norm("no-deception", "avoid_required", True),
+                                            {"hedged": "any-token"}), hedged], {})
+    row = validate(lean, raw, {"units": [{"id": "u1"}], "reading_sets": [rs1]})
+    assert row["status"] == "ok", row
+    assert row["sets"][0]["candidates"][1] == {"id": "hedged", "index": 1, "pending": True}
+    assert row["sets"][0]["pairs"] == []
+    # A unit with content and no kind is refused rather than guessed.
+    document, _ = k1_document(raw, fixed_units=[("u0", never)])
+    del document["units"][1]["kind"]
+    assert validate(lean, raw, document)["error"] == "InvalidInput: unit kind is required"
+
+
 def test_k18_norm_defaults_abstention(lean):
     raw = env_k(profiles=("norm-defaults@0", *SOFT_PROFILES))
     document, _ = k1_document(raw)
@@ -251,7 +295,7 @@ def test_k19_rights_candidates_under_a_fixed_limitation(lean):
     rs9 = reading_set("rs9", "u9", [reading("strict", claim("strict"), {"default": sid}, kind="right"),
                                     reading("default", claim("default"), {"strict": sid}, kind="right")],
                       {sid: sigma})
-    row = validate(lean, raw, {"units": [{"id": "u9"}, {"id": "u29", "content": l29}], "reading_sets": [rs9]})
+    row = validate(lean, raw, {"units": [{"id": "u9"}, {"id": "u29", "kind": "limitation", "content": l29}], "reading_sets": [rs9]})
     assert row["status"] == "ok", row
     [rs] = row["sets"]
     strict, default = rs["candidates"]

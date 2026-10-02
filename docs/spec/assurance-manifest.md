@@ -177,8 +177,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/NormDefaults/Wire.lean` | 377 | 377 | 1–377 | `b823854df575…` |
 | `lean/VE/NormDefaults/Replay.lean` | 371 | 371 | 1–371 | `46be075c8793…` |
 | `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
-| `lean/VE/Readings/Wire.lean` | 623 | 623 | 1–623 | `62b1993e43c2…` |
-| **total** | | **17,608** | | |
+| `lean/VE/Readings/Wire.lean` | 650 | 650 | 1–650 | `a52b47e4cd01…` |
+| **total** | | **17,635** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
