@@ -85,3 +85,11 @@ def test_strict_json_equality_tuple_array_and_outside_domain():
     assert run(table, {"doc": {"flag": 0, "items": (1, "x")}}) is CLEAN
     assert run(table, {"doc": {"flag": 0, "items": (1, 2)}}).record["check"] == "2"
     assert run(table, {"doc": {"flag": 0, "items": [1.0, "x"]}}) is CLEAN
+
+
+def test_json_renderer_uses_full_control_escapes():
+    table = _table([{"name": "p", "checks": [
+        _check("1", "type", "/doc", type="integer", text="bad {value:json}")]}])
+    record = run(table, {"doc": "a\n\t\"\\"}).record
+    assert record["text"] == 'bad "a\\u000a\\u0009\\"\\\\"'
+    assert record["args"] == {"value": '"a\\u000a\\u0009\\"\\\\"'}
