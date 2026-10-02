@@ -218,7 +218,9 @@
       "lean/VE/Norms/Plain.lean":"stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
       "lean/VE/Service/TypingDiagnostic.lean": "stage-2 diagnostic glue: names a typing rejection the proved decoder already made with Python's code and message; never accepts",
       "lean/VE/Service/Standalone.lean": "stage-2 service modes environment, model, check, identity and parse: wrap the pinned family decoders and surface parsers and recompute identities; reached from the Python adapters in ve/backends (validation, typing, parse), which the manifest's one-shot bindings do not yet describe",
-      "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)"
+      "lean/VE/WireContract/Engine.lean": "diagnostic only: no verdict depends on it. The wire contract engine reads the submitted case JSON to choose the first failing check of a rejection that the legacy validator already decided (docs/spec/wire-contract.md 2.8, 7.2); imported only by VE.WireContract.*, DiagnoseMain and VE.Audit (tools/check_lean_imports.py)",
+      "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
+      "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)"
     }
   },
   "plan_operations": {
