@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 
+from ve.readings_s1 import wire
 from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 
@@ -38,7 +39,8 @@ def lean():
 
 
 def run(executable, cases):
-    result = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
+    # The restricted Lean JSON input has no null: an absent value is omitted, as `ve/readings_route.py` sends it.
+    result = subprocess.run([str(executable), "-"], input=json.dumps(wire(cases)), text=True,
                             capture_output=True, timeout=180)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
@@ -61,7 +63,7 @@ def env_rights():
                   "journalist": {"arguments": ["person"], "description": "base"}}
     raw = environment(predicates, sorts=("state", "person")).to_dict()
     raw["profiles"] = sorted({"norms@0", "readings@1", "relational-fol@0", "rights@0", "soft-norms@0"})
-    raw["vocabulary"]["rights"] = {"holders": ["person"], "bearers": ["state", "person"]}
+    raw["vocabulary"]["rights"] = {"holders": ["person"], "bearers": ["state", "person"], "protected": [], "alters": {}}
     return raw
 
 
@@ -278,7 +280,7 @@ def test_k19_rights_candidates_under_a_fixed_limitation(lean):
     arbitrary = ["binary", "arbitrary_arrest", ["var", 1], ["var", 0]]
 
     def claim(mode):
-        return {"right": {"name": "r9", "holder": "person", "lines": [
+        return {"right": {"name": "r9", "holder": "person", "guard": ["top"], "lines": [
             {"kind": "claim", "norm": norm_object("no-arbitrary-arrest", "arrest_permitted", False, mode,
                                                   guard=arbitrary)}]}}
     base = {"domains": {"state": ["texas"], "person": ["ann", "bob"]}, "constants": {},
@@ -288,9 +290,9 @@ def test_k19_rights_candidates_under_a_fixed_limitation(lean):
     sid = situation_id(raw, sigma)
     l29 = {"limitation": {"name": "l29", "scope": "all", "kinds": "all", "decided_by": "unstated", "factors": [],
                           "conditions": [
-                              {"name": "determined_by_law", "role": "necessary",
+                              {"name": "determined_by_law", "role": "necessary", "decided_by": None,
                                "verbalisation": "the limitation is determined by law"},
-                              {"name": "solely_for_permitted_purpose", "role": "necessary",
+                              {"name": "solely_for_permitted_purpose", "role": "necessary", "decided_by": None,
                                "verbalisation": "the limitation is solely for a permitted purpose"}]}}
     rs9 = reading_set("rs9", "u9", [reading("strict", claim("strict"), {"default": sid}, kind="right"),
                                     reading("default", claim("default"), {"strict": sid}, kind="right")],
@@ -328,9 +330,10 @@ def test_line_order_lists_each_line_once(lean):
 
     def rs9(strict_lines):
         return reading_set("rs9", "u9", [
-            reading("strict", {"right": {"name": "r9", "holder": "person", "lines": strict_lines}},
+            reading("strict", {"right": {"name": "r9", "holder": "person", "guard": ["top"], "lines": strict_lines}},
                     {"default": sid}, kind="right"),
-            reading("default", {"right": {"name": "r9", "holder": "person", "lines": [line("default")]}},
+            reading("default", {"right": {"name": "r9", "holder": "person", "guard": ["top"],
+                                         "lines": [line("default")]}},
                     {"strict": sid}, kind="right")], {sid: sigma})
 
     row = validate(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9([line("strict")])]})
