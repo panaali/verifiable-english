@@ -96,6 +96,12 @@ _W1_FIELDS = ('name', 'predicate', 'sign', 'guard', 'unless', 'over')
 _SOFT_FIELDS = ('mode', 'rank', 'alterable', 'exception', 'hard')
 _INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'norm-defaults@0', 'time@0')
 _CHECKER_PROFILES = ('closure@0', 'nary@0', 'order@0')
+# Statement layers with their own route over a soft source. The Lean rights route
+# strips `rights@0` before the soft decoder (`Rights/Wire.lean`), and the Lean soft
+# route's registry does not have it, so check 3.2 refuses it unless that route is
+# the caller (`check_soft_source(layers=...)`); a soft source that lists it is
+# never accepted by the soft route alone (S3-pre).
+LAYER_ROUTES = frozenset({'rights@0'})
 SOFT_PROFILE = 'soft-norms@0'
 
 
@@ -263,14 +269,14 @@ def _declarations(data, generated):
 
 # Phase 3: profiles.
 
-def _profiles(data, env):
+def _profiles(data, env, layers=frozenset()):
     profiles = data['profiles']
     fail = lambda message: _fault('SOFT_UNSUPPORTED_PROFILE', f'UnsupportedProfile: {message}',
                                   UnsupportedProfile)
     if profiles != sorted(set(profiles)):
         raise fail('profiles must be sorted and unique')
     for profile in profiles:
-        if profile not in profile_registry.BY_NAME:
+        if profile not in profile_registry.BY_NAME or (profile in LAYER_ROUTES and profile not in layers):
             raise fail(f'Unsupported profile {profile}')
     if profile_registry.BASE not in profiles:
         raise fail(f'Missing profile {profile_registry.BASE}')
@@ -474,16 +480,17 @@ def _rank_semantics(ctx):
     return above
 
 
-def check_soft_source(environment, norms=None, *, generated=False):
+def check_soft_source(environment, norms=None, *, generated=False, layers=frozenset()):
     """Phases 1 to 5 and the rank checks of phase 6 over one soft source.
 
     Raises the first failing check of the table with its code. A caller that
     holds the raw environment and norms together runs this before building
     `SoftEnvironment`, so an environment fault never masks an earlier-phase
-    fault in a rule."""
+    fault in a rule. `layers` are the statement layers of `LAYER_ROUTES` whose
+    own route is checking the source (`RightsEnvironment` passes `rights@0`)."""
     _envelope(environment, norms)
     ctx = _declarations(environment, generated)
-    _profiles(environment, ctx.env)
+    _profiles(environment, ctx.env, layers)
     rules = [_rule_fields(unit, ctx.exception_decider) for unit in (norms or ())]
     _environment_references(ctx)
     _document_references(ctx.env, ctx.parties, ctx.ranks, rules)
@@ -504,6 +511,9 @@ class SoftEnvironment(Environment):
     original soft metadata is restored in to_dict, so canonical identity binds
     it without changing the bytes of environments that lack the profile.
     """
+    # The statement layers of `LAYER_ROUTES` whose route builds this class.
+    LAYERS = frozenset()
+
     def __init__(self, data, *, generated=False):
         try:
             self._init_soft(data, generated=generated)
@@ -512,7 +522,7 @@ class SoftEnvironment(Environment):
             raise
 
     def _init_soft(self, data, *, generated=False):
-        ctx, _, above = check_soft_source(data, generated=generated)
+        ctx, _, above = check_soft_source(data, generated=generated, layers=self.LAYERS)
         raw = deepcopy(data)
         vocab = raw['vocabulary']
         has_block = 'soft' in vocab

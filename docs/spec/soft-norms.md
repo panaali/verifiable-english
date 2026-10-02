@@ -725,6 +725,10 @@ facts the environment did not attribute; the report states both limits next to t
 
 ## 8. Diagnostics
 
+The format-1 shadow contract's check wordings are generated in
+[soft-norms-wire-table.md](soft-norms-wire-table.md). Each sentence there fixes the
+target, absent-value behavior, guard and expansion order of its check.
+
 Soft rejection responses carry a stable `code` alongside the human-readable `error`.
 Python soft validation exceptions expose the same value as `VEError.code` and in
 `VEError.to_dict()`. The code, rather than message wording or embedded names, is

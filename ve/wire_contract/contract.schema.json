@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VE wire contract format 1",
+  "$defs": {
+    "code": {"type": "object", "required": ["class", "summary"], "additionalProperties": false,
+      "properties": {"class": {"enum": ["InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration", "UnboundVariable", "ShadowedVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile", "ResourceLimit"]}, "summary": {"type": "string"}}},
+    "check": {"type": "object", "required": ["id", "kind", "code", "text"],
+      "properties": {"id": {"type": "string"}, "kind": {"type": "string"}, "code": {"type": "string"}, "text": {"type": "string"}, "at": {"type": "string"}, "when": {"type": "array"}, "args": {"type": "object"}, "says": {"type": "string"}}},
+    "group": {"type": "object", "required": ["id", "each", "checks"], "additionalProperties": false,
+      "properties": {"id": {"type": "string"}, "each": {"type": "string"}, "when": {"type": "array"}, "checks": {"type": "array", "items": {"$ref": "#/$defs/entry"}}}},
+    "include": {"type": "object", "required": ["id", "kind", "contract", "phases"], "additionalProperties": false,
+      "properties": {"id": {"type": "string"}, "kind": {"const": "include"}, "contract": {"type": "string"}, "phases": {"type": "array", "items": {"type": "string"}}, "at": {"type": "string"}, "view": {"type": "string"}, "says": {"type": "string"}, "as": {"type": "string"}}},
+    "entry": {"oneOf": [{"$ref": "#/$defs/check"}, {"$ref": "#/$defs/group"}, {"$ref": "#/$defs/include"}]},
+    "fault": {"type": "object", "required": ["contract", "revision", "check", "phase", "code", "class", "path", "text", "args"], "additionalProperties": false,
+      "properties": {"contract": {"type": "string"}, "revision": {"type": "integer"}, "check": {"type": "string"}, "phase": {"type": "string"}, "code": {"type": "string"}, "class": {"type": "string"}, "path": {"type": "string"}, "text": {"type": "string"}, "args": {"type": "object"}}},
+    "deferred": {"type": "object", "required": ["contract", "revision", "deferred", "text"], "additionalProperties": false,
+      "properties": {"contract": {"type": "string"}, "revision": {"type": "integer"}, "deferred": {"type": "string"}, "text": {"type": "string"}}}
+  },
+  "oneOf": [
+    {"type": "object", "required": ["contract", "revision", "format", "status", "input", "uses", "codes", "residual", "phases"], "additionalProperties": false,
+      "properties": {"contract": {"type": "string"}, "revision": {"type": "integer", "minimum": 1}, "format": {"const": 1}, "status": {"enum": ["shadow", "public"]}, "input": {"type": "array", "items": {"type": "string"}}, "adapter": {"type": "string"}, "uses": {"type": "array", "items": {"type": "string"}}, "codes": {"type": "object", "additionalProperties": {"$ref": "#/$defs/code"}}, "residual": {"type": "string"}, "phases": {"type": "array", "items": {"type": "object", "required": ["name", "checks"], "additionalProperties": false, "properties": {"name": {"type": "string"}, "checks": {"type": "array", "items": {"$ref": "#/$defs/entry"}}}}}}},
+    {"$ref": "#/$defs/fault"},
+    {"$ref": "#/$defs/deferred"},
+    {"type": "object", "minProperties": 1, "patternProperties": {"^[A-Z][A-Z0-9_]*$": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+    {"type": "object", "minProperties": 1, "patternProperties": {"^[a-z][a-z0-9_]*$": {"type": "object", "additionalProperties": false, "properties": {"first": {"type": "string"}, "rest": {"type": "string"}, "min_bytes": {"type": "integer", "minimum": 0}, "max_bytes": {"type": "integer", "minimum": 0}, "forbid_prefix": {"type": "array", "items": {"type": "string"}}, "forbid_infix": {"type": "array", "items": {"type": "string"}}, "enum": {"type": "array", "items": {"type": "string"}}}}}, "additionalProperties": false}
+  ]
+}

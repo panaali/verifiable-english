@@ -1,0 +1,202 @@
+{
+  "contract": "soft-norms@0",
+  "fixtures": {
+    "P10": {
+      "args": {},
+      "check": "2.12",
+      "class": "InvalidInput",
+      "code": "SOFT_MISSING_DECIDER",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/outranking",
+      "phase": "declarations",
+      "revision": 3,
+      "text": "MissingExceptionDecider: outranking"
+    },
+    "P11": {
+      "args": {
+        "name": "c2"
+      },
+      "check": "4.11a",
+      "class": "InvalidInput",
+      "code": "SOFT_MISSING_DECIDER",
+      "contract": "soft-norms@0",
+      "path": "/norms/2/norm/exception",
+      "phase": "rule-fields",
+      "revision": 3,
+      "text": "MissingExceptionDecider: rule c2"
+    },
+    "P12": {
+      "args": {
+        "name": "b1"
+      },
+      "check": "4.8",
+      "class": "InvalidInput",
+      "code": "SOFT_STRICT_EXCEPTION",
+      "contract": "soft-norms@0",
+      "path": "/norms/1/norm/exception",
+      "phase": "rule-fields",
+      "revision": 3,
+      "text": "InvalidInput: rule b1 is strict and declares an exception"
+    },
+    "P13": {
+      "args": {
+        "value": "b1"
+      },
+      "check": "5.3",
+      "class": "DuplicateDeclaration",
+      "code": "SOFT_DUPLICATE_DECLARATION",
+      "contract": "soft-norms@0",
+      "path": "/norms/3/norm/name",
+      "phase": "references",
+      "revision": 3,
+      "text": "DuplicateDeclaration: rule b1"
+    },
+    "P14": {
+      "args": {
+        "detail": "a, b"
+      },
+      "check": "6.1",
+      "class": "InvalidInput",
+      "code": "SOFT_DEPENDENCY_CYCLE",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/outranks",
+      "phase": "semantic",
+      "revision": 3,
+      "text": "DependencyCycle: a, b"
+    },
+    "P15": {
+      "args": {
+        "detail": "rule d3 over b1"
+      },
+      "check": "6.8",
+      "class": "InvalidInput",
+      "code": "SOFT_OVER_HARD",
+      "contract": "soft-norms@0",
+      "path": "",
+      "phase": "semantic",
+      "revision": 3,
+      "text": "SoftOverHard: rule d3 over b1"
+    },
+    "P16": {
+      "args": {
+        "detail": "a0, c2"
+      },
+      "check": "6.5b",
+      "class": "InvalidInput",
+      "code": "SOFT_DEPENDENCY_CYCLE",
+      "contract": "soft-norms@0",
+      "path": "",
+      "phase": "semantic",
+      "revision": 3,
+      "text": "DependencyCycle: a0, c2"
+    },
+    "P17": {
+      "check": "2.3",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_INPUT",
+      "inherited_text": "language-specific",
+      "path": "/environment",
+      "phase": "declarations"
+    },
+    "P1a": "clean",
+    "P1b": "clean",
+    "P2": {
+      "args": {
+        "value": "Q!"
+      },
+      "check": "2.7a",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_NAME",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/parties/1",
+      "phase": "declarations",
+      "revision": 3,
+      "text": "InvalidInput: invalid soft name Q!"
+    },
+    "P3": {
+      "args": {
+        "value": "p"
+      },
+      "check": "2.7b",
+      "class": "DuplicateDeclaration",
+      "code": "SOFT_DUPLICATE_DECLARATION",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/parties/2",
+      "phase": "declarations",
+      "revision": 3,
+      "text": "DuplicateDeclaration: party p"
+    },
+    "P4": {
+      "args": {},
+      "check": "1.2",
+      "class": "UnsupportedProfile",
+      "code": "SOFT_UNSUPPORTED_PROFILE",
+      "contract": "soft-norms@0",
+      "path": "/environment/language",
+      "phase": "envelope",
+      "revision": 3,
+      "text": "UnsupportedProfile: Unsupported language"
+    },
+    "P5": {
+      "args": {},
+      "check": "2.5",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_ARRAY",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/parties",
+      "phase": "declarations",
+      "revision": 3,
+      "text": "InvalidInput: parties must be an array"
+    },
+    "P6": {
+      "args": {
+        "name": "a0"
+      },
+      "check": "4.6",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_RULE_FIELDS",
+      "contract": "soft-norms@0",
+      "path": "/norms/0/norm/hard",
+      "phase": "rule-fields",
+      "revision": 3,
+      "text": "InvalidInput: hard of rule a0 must be Boolean"
+    },
+    "P7": {
+      "args": {
+        "name": "a"
+      },
+      "check": "4.14b",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_FACTORS",
+      "contract": "soft-norms@0",
+      "path": "/norms/0/norm/exception/factors/0",
+      "phase": "rule-fields",
+      "revision": 3,
+      "text": "InvalidInput: invalid factors of rule a"
+    },
+    "P8": {
+      "args": {},
+      "check": "2.16b",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_OUTRANKS_PAIR",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/outranks/1/1",
+      "phase": "declarations",
+      "revision": 3,
+      "text": "InvalidInput: invalid outranks pair"
+    },
+    "P9": {
+      "args": {},
+      "check": "2.17d",
+      "class": "InvalidInput",
+      "code": "SOFT_INVALID_TIES_PAIR",
+      "contract": "soft-norms@0",
+      "path": "/environment/vocabulary/soft/ties/1",
+      "phase": "declarations",
+      "revision": 3,
+      "text": "InvalidInput: invalid ties pair"
+    }
+  },
+  "revision": 3,
+  "source": "docs/spec/wire-contract.md 8.3"
+}

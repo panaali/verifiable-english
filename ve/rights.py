@@ -42,6 +42,8 @@ def _unique(values, kind):
 class RightsEnvironment(SoftEnvironment):
     """Validate and bind the rights block without changing older identities."""
 
+    LAYERS = frozenset({"rights@0"})
+
     def __init__(self, data):
         if type(data) is not dict or "rights@0" not in data.get("profiles", []):
             raise UnsupportedProfile("rights@0 is required")

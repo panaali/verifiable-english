@@ -1,0 +1,9 @@
+{
+  "contract":"mid@0","revision":1,"format":1,"status":"shadow",
+  "input":["tag","part"],"uses":["inner@0"],
+  "codes":{"MID_BAD":{"class":"InvalidInput","summary":"Invalid middle value"},"MID_INNER":{"class":"ResourceLimit","summary":"Inner value reported by the middle contract"}},
+  "residual":"MID_BAD","phases":[{"name":"body","checks":[
+    {"id":"m1","kind":"type","at":"/tag","type":"string","code":"MID_BAD","text":"Mid: tag {value:json}"},
+    {"id":"m2","kind":"include","contract":"inner@0","phases":["body"],"at":"/part","as":"MID_INNER"}
+  ]}]
+}
