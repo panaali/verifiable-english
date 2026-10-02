@@ -40,7 +40,7 @@ from tests.test_soft_norms_lean import env
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
 from ve.softnorms_contract import REGISTRY
-from ve.wire_contract.engine import Deferred, Fault, load, run
+from ve.wire_contract.engine import Deferred, Fault, load, overlay, run
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
@@ -494,10 +494,28 @@ def report():
     phase_pairs = set()
     mismatches, legacy_verdicts, legacy_code_deltas = [], [], []
     text_deltas = Counter()
+    public_changes = {}
+    public_code_differences = 0
     for tier, label, raw, norms, expected, combo, lean_reads in cases:
         sizes[tier] += 1
         python_legacy, python_outcome = _python(contract, raw, norms)
         py = python_outcome.record if isinstance(python_outcome, Fault) else None
+        if python_legacy is not None:
+            legacy_error = VEError(python_legacy[1])
+            legacy_error.code = python_legacy[0]
+            reported = overlay(contract, legacy_error, python_outcome)
+            check = reported.get("check", "deferred")
+            text_changed = reported["text"] != python_legacy[1]
+            code_changed = "code" in reported and reported["code"] != python_legacy[0]
+            public_code_differences += code_changed
+            if text_changed or code_changed:
+                entry = public_changes.setdefault(check, {
+                    "check": check, "text_changes": 0, "code_differences": 0,
+                    "example": {"case": label, "legacy_code": python_legacy[0],
+                                "legacy_text": python_legacy[1], "record_code": reported.get("code"),
+                                "record_text": reported["text"]}})
+                entry["text_changes"] += text_changed
+                entry["code_differences"] += code_changed
         problems = []
         # 2.8: a deferred outcome counts under the deferred share of its language, never as residual.
         deferring = {"python": isinstance(python_outcome, Deferred), "lean": False}
@@ -604,6 +622,9 @@ def report():
         "coverage_unmet_reasons": {check: reasons[check] for check in checks if check in reasons},
         "coverage_met": not (unmet["first"] or unmet["masked"] or unmet["adjacent_phase_pairs"]),
         "text_delta_count": sum(text_deltas.values()),
+        "public_diagnostic_changes": [public_changes[check] for check in
+                                      [*checks, "residual", "deferred"] if check in public_changes],
+        "public_code_differences": public_code_differences,
         "mismatches": mismatches,
     }
 
@@ -636,6 +657,12 @@ def gate_failures(value):
         failures.append(f"S3-pre: legacy verdict differences {differences!r}")
     if not isinstance(value["s3_pre"], str) or not value["s3_pre"].startswith("closed"):
         failures.append(f"S3-pre {value['s3_pre']!r}")
+    code_differences = value["legacy_code_differences"]
+    if not isinstance(code_differences, list) or code_differences:
+        failures.append(f"legacy code differences {code_differences!r}")
+    public_code_differences = value["public_code_differences"]
+    if not _count(public_code_differences) or public_code_differences:
+        failures.append(f"public delta: {public_code_differences} code differences")
     return failures
 
 
