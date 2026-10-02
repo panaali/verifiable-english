@@ -1140,4 +1140,88 @@ theorem separates_separated {α : Type u} [DecidableEq α] (D : Doc) (hD : WellF
   ⟨σ.base.asStructure, tablesOf σ.fixed, σ.probe, σ.value,
     Or.inl (separates_sound D hD s i j hi hj σ valid h)⟩
 
+/-! ## Proofs: conservativity -/
+
+theorem probesOf_typed {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
+    (q : Probe α) (hq : q ∈ probesOf D M) : probeTyped (one D s i).1 M q = true := by
+  have hr := (keepsFrame_one D s i).regulated
+  simp only [probesOf, List.mem_append, List.mem_flatMap, List.mem_map] at hq
+  rcases hq with ⟨p, hp, vs, hvs, rfl⟩ | ⟨k, hk, p, hp, vs, hvs, rfl⟩
+  · simp only [probeTyped, hr, Bool.and_eq_true, List.any_eq_true, beq_iff_eq]
+    rw [VE.SoftNorms.mem_dedup] at hp
+    obtain ⟨r, hr', rfl⟩ := List.mem_map.mp hp
+    exact ⟨⟨r, hr', rfl⟩, (typedTuple_iff M _ vs).mpr ((mem_tuplesOf M _ vs).mp hvs)⟩
+  · simp only [probeTyped, hr, Bool.and_eq_true, List.any_eq_true, beq_iff_eq, List.contains_iff_mem]
+    rw [VE.SoftNorms.mem_dedup] at hp
+    obtain ⟨r, hr', rfl⟩ := List.mem_map.mp hp
+    exact ⟨⟨hk, r, hr', rfl⟩, (typedTuple_iff M _ vs).mpr ((mem_tuplesOf M _ vs).mp hvs)⟩
+
+theorem cells_nil {α : Type u} [DecidableEq α] {D : Doc} {s : String} {j : Nat} (M : VE.FiniteModel α)
+    (h : ownedKeys D s j = []) : cells D s j M = 0 := by
+  simp [cells, h]
+
+theorem assignments_nil {α : Type u} [DecidableEq α] {D : Doc} {s : String} {j : Nat} (M : VE.FiniteModel α)
+    (h : ownedKeys D s j = []) : assignments D s j M = [[]] := by
+  simp [assignments, h]
+
+theorem separates_noKeys {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat)
+    (M : VE.FiniteModel α) (F : List (GenKey × List (List α))) (q : Probe α) (v : Bool)
+    (hj : ownedKeys D s j = [])
+    (hF : ∀ t ∈ F, owned D s i t.1 = false ∧ owned D s j t.1 = false ∧
+      ((genKeys (one D s i).1).any (·.1 == t.1) || (genKeys (one D s j).1).any (·.1 == t.1)) = true)
+    (hu : (F.map (·.1)).Nodup) (hq : q ∈ probesOf D M)
+    (hvi : sideValid D s i M (tablesFor D s i F) = true) (hvj : sideValid D s j M (tablesFor D s j F) = true) :
+    separates D s i j ⟨M, F, [], q, v⟩ = true ↔
+      sideValue D s i M (tablesFor D s i F) q = some v ∧ sideValue D s j M (tablesFor D s j F) q ≠ some v := by
+  have hti : tablesTyped (one D s i).1 M (tablesFor D s i F) = true := by
+    simp only [sideValid, Bool.and_eq_true] at hvi; exact hvi.1
+  have htj : tablesTyped (one D s j).1 M (tablesFor D s j F) = true := by
+    simp only [sideValid, Bool.and_eq_true] at hvj; exact hvj.1
+  have hwf : situationWF D s i j ⟨M, F, [], q, v⟩ = true := by
+    simp only [situationWF, List.append_nil, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true,
+      List.not_mem_nil, false_implies, implies_true, and_true, Bool.not_eq_true']
+    refine ⟨⟨⟨⟨hu, fun t ht => ⟨⟨(hF t ht).1, (hF t ht).2.1⟩, by simpa using (hF t ht).2.2⟩⟩, hti⟩, htj⟩,
+      probesOf_typed D s i M q hq⟩
+  simp only [separates, hwf, List.append_nil, hvi, hvj, cells_nil M hj, assignments_nil M hj, Bool.true_and,
+    List.all_cons, List.all_nil, Bool.and_true, beq_iff_eq, Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true']
+  simp [maxCells]
+
+theorem separation_conservative {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat)
+    (M : VE.FiniteModel α) (F : List (GenKey × List (List α)))
+    (hi : ownedKeys D s i = []) (hj : ownedKeys D s j = [])
+    (hF : ∀ t ∈ F, owned D s i t.1 = false ∧ owned D s j t.1 = false ∧
+      ((genKeys (one D s i).1).any (·.1 == t.1) || (genKeys (one D s j).1).any (·.1 == t.1)) = true)
+    (hu : (F.map (·.1)).Nodup)
+    (hvi : sideValid D s i M (tablesFor D s i F) = true) (hvj : sideValid D s j M (tablesFor D s j F) = true) :
+  (∃ q ∈ probesOf D M, ∃ v, separates D s i j ⟨M, F, [], q, v⟩ = true ∨ separates D s j i ⟨M, F, [], q, v⟩ = true) ↔
+    observeAll D s i M F ≠ observeAll D s j M F := by
+  have hF' : ∀ t ∈ F, owned D s j t.1 = false ∧ owned D s i t.1 = false ∧
+      ((genKeys (one D s j).1).any (·.1 == t.1) || (genKeys (one D s i).1).any (·.1 == t.1)) = true := by
+    intro t ht
+    obtain ⟨h1, h2, h3⟩ := hF t ht
+    exact ⟨h2, h1, by rw [Bool.or_comm]; exact h3⟩
+  simp only [observeAll, ne_eq, List.map_inj_left]
+  constructor
+  · rintro ⟨q, hq, v, h | h⟩ hall
+    · rw [separates_noKeys D s i j M F q v hj hF hu hq hvi hvj] at h
+      exact h.2 (hall q hq ▸ h.1)
+    · rw [separates_noKeys D s j i M F q v hi hF' hu hq hvj hvi] at h
+      exact h.2 ((hall q hq).symm ▸ h.1)
+  · intro hn
+    obtain ⟨q, hq, hne⟩ : ∃ q ∈ probesOf D M,
+        sideValue D s i M (tablesFor D s i F) q ≠ sideValue D s j M (tablesFor D s j F) q :=
+      Classical.byContradiction fun hc => hn (fun q hq => Classical.byContradiction fun hne => hc ⟨q, hq, hne⟩)
+    cases hoi : sideValue D s i M (tablesFor D s i F) q with
+    | some v =>
+      refine ⟨q, hq, v, Or.inl ?_⟩
+      rw [separates_noKeys D s i j M F q v hj hF hu hq hvi hvj]
+      exact ⟨hoi, fun e => hne (hoi.trans e.symm)⟩
+    | none =>
+      cases hoj : sideValue D s j M (tablesFor D s j F) q with
+      | none => exact absurd (hoi.trans hoj.symm) hne
+      | some v =>
+        refine ⟨q, hq, v, Or.inr ?_⟩
+        rw [separates_noKeys D s j i M F q v hi hF' hu hq hvj hvi]
+        exact ⟨hoj, by rw [hoi]; simp⟩
+
 end VE.Readings
