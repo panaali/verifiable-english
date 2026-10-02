@@ -11,6 +11,7 @@ import pytest
 from conformance.soft_norms import generated
 from tests.test_soft_norms_lean import env, norm, ranks, should
 from ve.errors import UnsupportedProfile, VEError
+from ve import softnorms as soft
 from ve.softnorms import load_soft_document
 from ve.softnorms_contract import INHERITED_PROFILES, REGISTRY, ROUTE_PROFILES, soft_source
 from ve.wire import loads_json
@@ -127,10 +128,34 @@ def test_norm_defaults_with_unspecified_default_fails_check_2_3():
     with pytest.raises(VEError) as legacy:
         load_soft_document(deepcopy(source), [])
     assert legacy.value.code == "SOFT_INVALID_INPUT"
-    assert str(legacy.value) == "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    # The source lists the profile, so W1's "requires norm-defaults@0" would be false of it (Fable B2).
+    fill = "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+    assert str(legacy.value) == fill
     outcome = diagnose(source, [])
-    assert (outcome.record["check"], outcome.record["code"], outcome.record["path"]) == (
-        "2.3", "SOFT_INVALID_INPUT", "/environment")
+    assert (outcome.record["check"], outcome.record["code"], outcome.record["path"], outcome.record["text"]) == (
+        "2.3", "SOFT_INVALID_INPUT", "/environment", fill)
+
+
+def test_unspecified_default_without_norm_defaults_names_the_profile():
+    """Without `norm-defaults@0` among the source's profiles, W1's text is true and stays."""
+    source = env()
+    source["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
+    text = "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    with pytest.raises(VEError) as legacy:
+        load_soft_document(deepcopy(source), [])
+    assert (legacy.value.code, str(legacy.value)) == ("SOFT_INVALID_INPUT", text)
+    assert diagnose(source, []).record["text"] == text
+
+
+@pytest.mark.parametrize("profile", sorted(soft._DROPPED_PROFILE_TEXTS))
+def test_no_soft_route_text_names_a_listed_profile_as_missing(profile):
+    """The class of Fable B2: every profile the soft route removes before W1 has its W1 remedy text
+    restated, and the restated text is what both the legacy validator and the 2.3 hook give."""
+    assert profile in soft._INHERITED_PROFILES and profile not in soft._SOFT_ROUTE_INHERITED_PROFILES
+    assert set(soft._INHERITED_PROFILES) - set(soft._SOFT_ROUTE_INHERITED_PROFILES) == set(
+        soft._DROPPED_PROFILE_TEXTS)
+    text, restated = soft._DROPPED_PROFILE_TEXTS[profile]
+    assert profile in text and "requires" in text and "requires" not in restated
 
 
 def test_hook_lists_are_the_lean_route_lists():

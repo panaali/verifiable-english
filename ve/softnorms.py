@@ -98,6 +98,14 @@ _SOFT_FIELDS = ('mode', 'rank', 'alterable', 'exception', 'hard')
 # completions. A submitted soft source uses the narrower Lean soft-route list.
 _INHERITED_PROFILES = ('data@0', 'definitions@0', 'documents@1', 'norm-defaults@0', 'time@0')
 _SOFT_ROUTE_INHERITED_PROFILES = tuple(p for p in _INHERITED_PROFILES if p != 'norm-defaults@0')
+# W1's text that names a profile as the remedy, for each profile the soft route removes before W1. A
+# submitted source that lists the profile already has the remedy, so its rejection keeps the route's
+# own text instead: the one Python gave it before S4-pre aligned the code.
+_DROPPED_PROFILE_TEXTS = {
+    'norm-defaults@0': ('UnsupportedProfile: unspecified completion requires norm-defaults@0',
+                        'UnsupportedProfile: norm-defaults@0 documents are checked through fill '
+                        '(ve.norm_defaults)'),
+}
 _CHECKER_PROFILES = ('closure@0', 'nary@0', 'order@0')
 # Statement layers with their own route over a soft source. The Lean rights route
 # strips `rights@0` before the soft decoder (`Rights/Wire.lean`), and the Lean soft
@@ -122,6 +130,18 @@ def _inherited(call, *args, code='SOFT_INVALID_INPUT'):
     except VEError as exc:
         exc.code = code
         exc.soft_checked = True
+        raise
+
+
+def soft_route_environment(stripped, listed):
+    """W1 over `stripped`, the source with only the profiles the soft route passes on; `listed` is the
+    source's own profile list. A W1 text naming a removed profile that `listed` has is restated."""
+    try:
+        return Environment(stripped)
+    except VEError as exc:
+        for profile, (text, restated) in _DROPPED_PROFILE_TEXTS.items():
+            if profile in listed and profile not in stripped['profiles'] and str(exc) == text:
+                raise type(exc)(restated, span=exc.span, path=exc.path) from None
         raise
 
 
@@ -243,7 +263,7 @@ def _declarations(data, generated, *, submitted_soft_route=False):
         'predicates': {name: ({k: v for k, v in entry.items() if k != 'instruction_of'}
                               if type(entry) is dict else entry)
                        for name, entry in vocab['predicates'].items()}}}
-    env = _inherited(Environment, stripped)
+    env = _inherited(soft_route_environment, stripped, data['profiles'])
     if 'soft' not in vocab:
         return _Context(env, (), (), (), (), None, instructions)
     block = vocab['soft']

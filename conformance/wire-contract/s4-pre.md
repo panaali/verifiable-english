@@ -21,9 +21,22 @@ Lean's `inheritedProfiles` was `norm-defaults@0`. Python omits it when validatin
 a submitted source on the standalone soft route. An `unspecified` default under
 that profile therefore fails the inherited declaration check with
 `SOFT_INVALID_INPUT` in both languages. The inherited texts remain
-language-specific: Python says `UnsupportedProfile: unspecified
-completion requires norm-defaults@0`; Lean says `InvalidInput: invalid
-regulated role or default for x_required` on the recorded input.
+language-specific: Python says `UnsupportedProfile: norm-defaults@0
+documents are checked through fill (ve.norm_defaults)`; Lean says
+`InvalidInput: invalid regulated role or default for x_required` on the
+recorded input.
+
+W1's own text for this fault, `UnsupportedProfile: unspecified completion
+requires norm-defaults@0`, names the profile as the remedy. It is true of a
+source that does not list `norm-defaults@0`, and is kept there. A source that
+lists it has the remedy already, so the first S4-pre commit made its message
+false of its input (Fable, wire-s4 review, B2). The follow-up keeps the code
+and restores the text Python gave before S4-pre: `soft_route_environment` in
+`ve/softnorms.py` restates W1's text for each profile the soft route removes
+before W1 that the source lists, and the 2.3 hook in `ve/softnorms_contract.py`
+calls the same function, so the record's text and the legacy text stay equal.
+`norm-defaults@0` is the only profile the soft route removes from Python's
+inherited list; a test fails if another is removed without a restated text.
 
 The full suite exposed a separate consumer: `norm_defaults.UnspecifiedSoftDocument`
 constructs placeholder completions through `SoftEnvironment`. That route still
@@ -42,7 +55,11 @@ Exactly three of 8,576 rows changed, all still rejected:
 |---|---|---|
 | `L:speech-acts@0:env` | `SOFT_INVALID_INPUT`; `Incorrect fields (missing=['speech_acts'], unknown=[])` | `SOFT_UNSUPPORTED_PROFILE`; `UnsupportedProfile: Unsupported profile speech-acts@0` |
 | `L:speech-acts@0:base` | same | same as the row above |
-| `L:norm-defaults@0:unspecified` | `SOFT_UNSUPPORTED_PROFILE`; `UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)` | `SOFT_INVALID_INPUT`; `UnsupportedProfile: unspecified completion requires norm-defaults@0` |
+| `L:norm-defaults@0:unspecified` | `SOFT_UNSUPPORTED_PROFILE`; `UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)` | `SOFT_INVALID_INPUT`; the same text (see above) |
 
-Every other corpus row kept its verdict, code, and text. No Lean decoder or
+Every other corpus row kept its verdict, code, and text. With the follow-up,
+the S4-pre changes are three codes and two texts: both `speech-acts@0` rows
+change code and text, and the `norm-defaults@0` row changes its code only. The
+gate report regenerated after the follow-up is byte-identical: the record's
+text and the legacy text changed together, so no public text change appeared. No Lean decoder or
 route row was edited. The switch gate requires `legacy_code_differences` empty.
