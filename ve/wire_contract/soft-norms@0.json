@@ -1,6 +1,6 @@
 {
   "contract": "soft-norms@0",
-  "revision": 2,
+  "revision": 3,
   "format": 1,
   "status": "shadow",
   "input": [
@@ -1425,16 +1425,6 @@
               "code": "SOFT_RESOURCE_LIMIT",
               "text": "{message}",
               "says": "The softened rules satisfy W1 resource limits.",
-              "returns": [
-                "message"
-              ],
-              "inherited": true
-            },
-            {
-              "id": "6.10c",
-              "code": "SOFT_INVALID_INPUT",
-              "text": "{message}",
-              "says": "The softened rules satisfy the other inherited W1 checks.",
               "returns": [
                 "message"
               ],

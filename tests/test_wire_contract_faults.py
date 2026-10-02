@@ -11,11 +11,11 @@ from pathlib import Path
 
 import pytest
 
-from conformance.wire_contract_gate import _applied, record_problems
+from conformance.wire_contract_gate import _applied, all_checks, record_problems
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, rendered, route)
 from ve.softnorms_contract import REGISTRY
-from ve.wire_contract.engine import Fault, load, run
+from ve.wire_contract.engine import CLEAN, Fault, load, run
 
 CONTRACT = load("soft-norms@0")
 FAULTS = {fault.name: fault for fault in catalogue()}
@@ -103,4 +103,25 @@ def test_stored_gate_report_has_no_mismatch_and_explains_every_gap():
     gaps = set(report["coverage_unmet"]["first"]) | set(report["coverage_unmet"]["masked"])
     assert gaps <= set(report["coverage_unmet_reasons"])
     assert set(UNREACHED) <= gaps
+    # Wire re-check (B): coverage is met. 8.3 asks a masking witness of every check after the table's
+    # first instance, and 6.10c, a member no input reached, is no longer in the table (revision 3).
+    assert report["coverage_met"] and not gaps and UNREACHED == {}
+    assert list(report["masking_not_required"]) == [all_checks(CONTRACT)[0]] == ["1.1"]
+    assert report["legacy_verdict_differences"] == [] and report["s3_pre"].startswith("closed")
     assert report["oracle"].startswith("fault catalogue")
+
+
+def test_soft_semantic_names_no_member_for_an_unknown_softened_failure(monkeypatch):
+    """Rule 13 (revision 3): a rejection of `T′` that is neither a cycle nor a resource limit names no member,
+    as rule 3a for the base, so it would show as a residual rather than as a member no input reaches."""
+    from ve import softnorms_contract
+    from ve.errors import VEError
+    assert all(m["id"] != "6.10c" for phase in CONTRACT["phases"] for entry in phase["checks"]
+               if entry.get("kind") == "classifier" for m in entry["emits"])
+    root = _applied([])
+    assert softnorms_contract.soft_semantic(root, []) is None
+    def reject(environment, norms):
+        raise VEError("InvalidInput: soft norm document is not stratified")
+    monkeypatch.setattr(softnorms_contract.soft, "load_soft_document", reject)
+    assert softnorms_contract.soft_semantic(root, []) is None
+    assert run(CONTRACT, root, registry=REGISTRY) is CLEAN

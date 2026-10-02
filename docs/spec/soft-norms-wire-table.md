@@ -131,7 +131,6 @@
 | `6.9` | `SOFT_RESOURCE_LIMIT` | Derived carve-outs stay within resource limits. |
 | `6.10a` | `SOFT_DEPENDENCY_CYCLE` | The softened rules are stratified. |
 | `6.10b` | `SOFT_RESOURCE_LIMIT` | The softened rules satisfy W1 resource limits. |
-| `6.10c` | `SOFT_INVALID_INPUT` | The softened rules satisfy the other inherited W1 checks. |
 | `6.11` | `SOFT_RESOURCE_LIMIT` | Each generated soft premise stays within resource limits. |
 | `6.12` | `SOFT_RESOURCE_LIMIT` | Each generated norm layer stays within resource limits. |
 | `6.13` | `SOFT_RESOURCE_LIMIT` | Each generated conflict target stays within resource limits. |

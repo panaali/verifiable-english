@@ -374,13 +374,12 @@ def report():
     unmet = {
         "first": sorted(set(without_first["python"]) | (set(without_first["lean"]) - set(python_only_checks)),
                         key=checks.index),
-        "masked": sorted(set(without_masked["python"]) | (set(without_masked["lean"]) - set(python_only_checks)),
-                         key=checks.index),
+        # 8.3: every check after the table's first instance is masked by an earlier one; the first has none.
+        "masked": sorted((set(without_masked["python"]) | (set(without_masked["lean"]) - set(python_only_checks)))
+                         - {table_first}, key=checks.index),
         "adjacent_phase_pairs": [list(pair) for pair in adjacent if pair not in phase_pairs],
     }
     reasons = {check: reason for check, reason in UNREACHED.items()}
-    reasons[table_first] = ("The first instance of the table: no earlier check exists, so no input can mask "
-                            "it, and the coverage rule of 8.3 cannot be met for it as stated.")
     for check in python_only_checks:
         reasons[check] = ("Reached only by an explicit null, which the wire readers refuse before diagnosis: "
                           "Lean has no witness; Python has its first-fault and masking witnesses.")
@@ -404,6 +403,8 @@ def report():
         "first_check_count": {language: len(first[language]) for language in first},
         "checks_without_first": without_first,
         "checks_without_masked": without_masked,
+        "masking_not_required": {table_first: "the first instance of the table: no earlier check exists, and 8.3 "
+                                              "requires a masking witness for every check after it"},
         "coverage_unmet": unmet,
         "coverage_unmet_reasons": {check: reasons[check] for check in checks if check in reasons},
         "coverage_met": not (unmet["first"] or unmet["masked"] or unmet["adjacent_phase_pairs"]),

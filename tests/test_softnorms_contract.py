@@ -113,7 +113,7 @@ def test_profiles_outside_the_lean_route_fail_check_3_2(profile):
     outcome = diagnose(source, [])
     index = PYTHON_ONLY_PROFILES[profile]
     assert outcome.record == {
-        "contract": "soft-norms@0", "revision": 2, "check": "3.2", "phase": "profiles",
+        "contract": "soft-norms@0", "revision": 3, "check": "3.2", "phase": "profiles",
         "code": "SOFT_UNSUPPORTED_PROFILE", "class": "UnsupportedProfile",
         "path": f"/environment/profiles/{index}", "text": f"UnsupportedProfile: Unsupported profile {profile}",
         "args": {"value": profile}}

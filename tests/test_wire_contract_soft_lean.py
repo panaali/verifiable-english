@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
 S = "/environment/vocabulary/soft"
 # Checks and classifier members whose text is the inherited decoder's (spec 2.5, rule 5).
-INHERITED = {"2.3", "4.2a", "4.13b", "4.13d", "5.7", "5.8a", "6.10b", "6.10c"}
+INHERITED = {"2.3", "4.2a", "4.13b", "4.13d", "5.7", "5.8a", "6.10b"}
 
 
 @pytest.fixture(scope="module")
@@ -74,7 +74,7 @@ def with_faults(*names):
 
 
 def record(check, phase, code, cls, path, text, args=None):
-    return {"contract": "soft-norms@0", "revision": 2, "check": check, "phase": phase, "code": code,
+    return {"contract": "soft-norms@0", "revision": 3, "check": check, "phase": phase, "code": code,
             "class": cls, "path": path, "text": text, "args": args or {}}
 
 
