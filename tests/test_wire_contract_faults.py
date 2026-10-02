@@ -148,8 +148,11 @@ def test_gate_fails_below_the_feasibility_threshold(monkeypatch, tmp_path, capsy
         change(value)
         return gate_failures(value)
     def at(n1, n2, **rest):
+        """`n1` and `n2` moved, the coarse count taking up the difference so the tiers still partition 67."""
         def change(value):
-            value["feasibility"].update({"n1": n1, "n2": n2, "total": n1 + n2, "met": n1 + n2 >= 45, **rest})
+            coarse = 67 - value["feasibility"]["t3"] - n1 - n2
+            value["feasibility"].update({"n1": n1, "n2": n2, "coarse": coarse, "total": n1 + n2,
+                                         "met": n1 + n2 >= 45, **rest})
         return change
     assert broken(at(36, 8))
     assert broken(at(37, 8)) == []
@@ -176,6 +179,76 @@ def test_gate_fails_below_the_feasibility_threshold(monkeypatch, tmp_path, capsy
     monkeypatch.setattr(wire_contract_gate, "report", lambda: deepcopy(stored))
     path.write_text(json.dumps(stored, indent=2, sort_keys=True) + "\n")
     assert not wire_contract_gate.main()
+
+
+def _broken(change):
+    value = json.loads(REPORT.read_text())
+    change(value)
+    return gate_failures(value)
+
+
+def test_gate_fails_when_a_stated_summary_contradicts_its_data():
+    """Wire loop final (B, B, C): `gate_failures` trusted the report's own summaries, so a report with a
+    nonempty `coverage_unmet` and `coverage_met` true, one with legacy verdict differences under an S3-pre
+    "closed", and one whose feasibility counts exceed the 67 numbered checks all passed. Each summary is now
+    judged from the data it summarizes, and must also agree with it."""
+    assert _broken(lambda value: None) == []
+    # Coverage: an unmet row fails whatever `coverage_met` says; so does a gap the unmet lists omit.
+    for row, gap in (("first", ["2.5"]), ("masked", ["2.5"]), ("adjacent_phase_pairs", [[0, 1]])):
+        assert _broken(lambda value: value["coverage_unmet"].update({row: gap})), row
+    assert _broken(lambda value: value["coverage_unmet"].pop("masked"))
+    assert _broken(lambda value: value.update(coverage_met=1))
+    assert _broken(lambda value: value["checks_without_first"].update(python=["2.5"]))
+    assert _broken(lambda value: value["checks_without_masked"].update(python=["1.1", "2.5"]))
+    assert _broken(lambda value: value["checks_without_first"].update(lean=["4.11b", "2.5"]))
+    assert _broken(lambda value: value["first_check_count"].update(python=104))
+    assert _broken(lambda value: value["masking_not_required"].update({"2.5": "x"}))
+    assert _broken(lambda value: value.update(all_check_count=104))
+    # A Lean-only gap that the reasons explain is the report's one accepted gap (4.11b, an explicit null).
+    assert _broken(lambda value: value["coverage_unmet_reasons"].clear())
+    # S3-pre: a recorded legacy verdict difference fails under any stated `s3_pre`; so does a run without
+    # the legacy difference inputs.
+    difference = {"case": "L:x", "python": None, "lean": ["SOFT_UNSUPPORTED_PROFILE", "x"]}
+    assert _broken(lambda value: value["legacy_verdict_differences"].append(difference))
+    assert _broken(lambda value: value["tiers"].update(legacy_differences=0))
+    assert _broken(lambda value: value.update(s3_pre=None))
+    # Feasibility: counts above the 67 checks, negative, or not integers fail, with a self-consistent
+    # `total` and `met`.
+    def counts(**change):
+        def apply(value):
+            value["feasibility"].update(change)
+            feasible = value["feasibility"]
+            if all(type(feasible[part]) is int for part in ("n1", "n2")):
+                feasible.update(total=feasible["n1"] + feasible["n2"])
+        return apply
+    assert _broken(counts(n1=60, n2=10))
+    assert _broken(counts(n1=43, n2=8, coarse=10))
+    assert _broken(counts(n1=59, n2=8, coarse=-3, t3=3))
+    assert _broken(counts(n1=43.0))
+    assert _broken(counts(met=1))
+    assert _broken(counts(n1=True))
+    # The other required rows, against values that compare equal to zero without being the count zero.
+    assert _broken(lambda value: value["residual"].update(lean=False))
+    assert _broken(lambda value: value["tiers"].update(B=0))
+
+
+def test_record_members_have_the_schema_types_on_every_tier():
+    """Wire loop final (C): Tier B and replay records were checked only for their member names, so a
+    non-string `text` both engines produced passed. Each member now has its type from the fault schema
+    (`$defs/fault`), on records with and without an expected record."""
+    schema = json.loads((Path(wire_contract_gate.ROOT) / "ve/wire_contract/contract.schema.json").read_text())
+    types = {name: member["type"] for name, member in schema["$defs"]["fault"]["properties"].items()}
+    assert wire_contract_gate.RECORD_TYPES == types
+    good = run(CONTRACT, _applied([FAULTS["r3-over-predicate"]]), registry=REGISTRY).record
+    expected = expected_record(CONTRACT, FAULTS["r3-over-predicate"])
+    wrong = {"string": [None, 5, ["x"], {"x": 1}], "integer": ["3", 3.0, True, None], "object": [[], "x", None]}
+    for name, kind in types.items():
+        for bad in wrong[kind]:
+            record = {**good, name: bad}
+            assert shape_problems(record), (name, bad)
+            assert record_problems(record, expected, None), (name, bad)
+    inherited = run(CONTRACT, _applied([FAULTS["r0-guard"]]), registry=REGISTRY).record
+    assert shape_problems({**inherited, "text": 7}) and shape_problems({**inherited, "text": None})
 
 
 def test_soft_semantic_names_no_member_for_an_unknown_softened_failure(monkeypatch):
