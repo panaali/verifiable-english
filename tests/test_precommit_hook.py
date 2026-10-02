@@ -118,6 +118,18 @@ def test_nothing_staged_passes(staging):
     passes(staging)
 
 
+def test_wire_contract_checks_staged_generated_table(staging):
+    path = "docs/spec/soft-norms-wire-table.md"
+    staging.stage(path, staging.head(path) + b"\nChanged after generation.\n")
+    rejects(staging, "wire contract check failed", "WC11")
+
+
+def test_wire_contract_accepts_staged_equivalent_json(staging):
+    path = "ve/wire_contract/limits.json"
+    staging.stage(path, staging.head(path) + b"\n")
+    passes(staging)
+
+
 SECRETS = {
     "AWS access key id": lambda: "AKIA" + "Q7" * 8,
     "GitHub token": lambda: "ghp_" + "a1B2" * 9,
