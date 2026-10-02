@@ -349,6 +349,14 @@ theorem decisionOnly_spec (D : Doc) (s : String) (i j : Nat) (k : GenKey) (h : d
     · cases h
   · cases h
 
+/-- Achieves, with the table of k₀ empty. -/
+def AchievesQuiet (D : Doc) (s : String) (j : Nat) (k₀ : GenKey) (B : VE.Structure.{u}) (F : Tables B.Carrier)
+    (q : Probe B.Carrier) (v : Bool) : Prop :=
+  B.Admissible (authorEnv D) ∧
+  ∃ G : Tables B.Carrier, (∀ k, owned D s j k = false → ∀ vs, G k vs ↔ F k vs) ∧ (∀ vs, ¬ G k₀ vs) ∧
+    BaseAdmissibleR (one D s j).1 (withTables (one D s j).1 B G) ∧
+    Observes (one D s j).1 (one D s j).2 (withTables (one D s j).1 B G) q v
+
 /-- The acts a content regulates in a document, first occurrence kept. -/
 def contentActs (C : SoftDoc) (c : Content) : List String :=
   let linePreds := fun (S : VE.Rights.SourceLine) =>
