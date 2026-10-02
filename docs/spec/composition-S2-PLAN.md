@@ -1,0 +1,2 @@
+# Composition stage S2 (pointer plan)
+Item 1 of THIS plan is the next stage after S1 (S2a, soft norms first) of docs/spec/composition-PLAN.md (the next stage after S0 in that plan's stage order, which is merged on main with docs/spec/composition.md). Apply that plan's S2a section, its fixtures and open questions; S0 and S1 statements are frozen inputs. Measure the unlock on the constitution and UDHR pilot units the plan names for S2a.
