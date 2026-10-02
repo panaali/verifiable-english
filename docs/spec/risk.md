@@ -151,7 +151,7 @@ Every harm constant of the policy is a harm of every decision. The regenerated t
   `RiskUnestimated: <quantity>` when a condition mentions it.
 - **Cells.** A cell is a pair (alternative, harm). A cell's **sources** (plan 2.2) are at most one sufficient
   condition `S` and at most one necessary condition `N`:
-  - a sufficient condition (`leads to … if C`) gives `S = C`, a necessary one (`cannot lead to … unless C`) gives
+  - a sufficient condition (`If C, … leads to …`) gives `S = C`, a necessary one (`cannot lead to … unless C`) gives
     `N = C`, and an exact one (`leads to … exactly when C`) gives both;
   - a stated `leads to` gives `S = ⊤`, a stated `cannot lead to` gives `N = ⊥`, and a stated `might lead to` gives
     neither: it is a consistency assertion (4.4).
@@ -194,7 +194,7 @@ passed L with a critical answer in C and is re-tested by W8 (item 8).
 | c2 | `<action> cannot lead to <harm>` | guards; record statements | They rule it out: it happens in no case they allow. | `¬might(a, h)` | frozen (16/16, 16/16) |
 | c3a | `<action> leads to <harm>` | guards; record statements | The harm happens in every case they allow. Not "tends to". | `leads_to(a, h)` | frozen (12/12, 12/12); `leads to` stays (rule 3) |
 | c4 | `<action> might not lead to <harm>` | guards | Some case they allow avoids the harm. | `¬leads_to(a, h)` | frozen (16/16, 16/16) |
-| c5 | `<action> leads to <harm> if <condition>` | record conditions only | Sufficient condition: the harm happens in every case they allow in which the condition holds. | `S = C` | **pending wording** (L 15/16 with one critical answer) |
+| c5 | `If <condition>, <action> leads to <harm>` | record conditions only | Sufficient condition: the harm happens in every case they allow in which the condition holds. | `S = C` | frozen (probe 2: L 16/16, C 16/16) |
 | c6 | `<action> cannot lead to <harm> unless <condition>` | record conditions only | Necessary condition: the harm happens in no case they allow in which the condition does not hold. | `N = C` | frozen (12/12, 12/12) |
 | c7 | `<action> leads to <harm> exactly when <condition>` | record conditions only | Both. | `S = N = C` | frozen (16/16, 16/16) |
 | c8 | `<harm> is <class>` / `<harm> is <class> or worse` | guards | The harm's severity class; the harm is `<class>` or more severe than `<class>`. | `class(h, c)` / `or_worse(h, c)` | frozen (16/16, 16/16) |
@@ -213,19 +213,20 @@ must have a class. This matters only in document-level structures with unclassif
 a record every harm has a class, and the paraphrase agrees with draft 1's shorter one and with the legend line
 (2.4). The wording and the legend line are the probed ones, so c9 stays frozen.
 
-**c5 is pending.** The semantics of a sufficient source (`S = C`, 1.4) is among the statements under review, but its
-English wording is not. The failure seen was one Haiku answer that read "leads to X if C" as "only if": "the
-condition for the outage is not met" (probe, c5-1). The reviewers' replacement is **"If `<condition>`, `<action>`
-leads to `<harm>`."** It puts the condition first, which targets the "only if" reading, and keeps the frozen verb
-`leads to` (rule 3), in parallel with c6 and c7. Until it passes the single re-probe of plan 2.6 rule 4 with new
-sealed items, three things hold:
+**c5 is frozen in its replacement wording.** The semantics of a sufficient source (`S = C`, 1.4) was frozen with
+the other statements; the first probe's wording `<action> leads to <harm> if <condition>` was not. The failure seen
+was one Haiku answer that read "leads to X if C" as "only if": "the condition for the outage is not met" (probe,
+c5-1). The reviewers' replacement, **"If `<condition>`, `<action>` leads to `<harm>`."**, puts the condition first,
+which targets the "only if" reading, and keeps the frozen verb `leads to` (rule 3). The single re-probe of plan 2.6
+rule 4 (`experiments/authoring-gates/risk-wording-probe-2`, sealed seed 1614966022; proxy readers, human
+readability unmeasured) gave L 16/16 and C 16/16 with no critical answer, so it is frozen as written (rule 2) and
+is not legend-dependent. Therefore:
 
-- the surface does not register c5's wording for input;
-- a record carries a sufficient condition as `"form": "sufficient"` in JSON, and the W8 condition form (item 8)
-  writes it;
-- reports render it in the current wording followed by `(wording pending)`.
-
-If the replacement also fails, only this construct stays out of the English surface (rule 4).
+- the surface registers the wording for record statements only (2.3), with one reading, `"form": "sufficient"`;
+- the first probe's trailing form `<action> leads to <harm> if <condition>` is rejected with the rewrite "If
+  `<condition>`, `<action>` leads to `<harm>`.", and so is the form with `then` (`if …, then …` is the core
+  surface's implication);
+- reports render it in this wording, with no `(wording pending)` marker (2.4).
 
 **Observations** (they change no status). c11 and c12 carry their risk meaning only through the legend: in C they
 scored 0/16 and 1/8 with no critical answer, and most answers chose "The text does not say" (probe, Notes). c10 is
@@ -302,7 +303,7 @@ it; the literal word "chooser" is kept where the probe used it.
 "<action> might not lead to <harm>" means some case they allow avoids the harm.                                     always
 "<action> cannot lead to <harm> unless <condition>" means the harm happens in no case they allow in which the condition does not hold.   a shown record has a necessary condition
 "<action> leads to <harm> exactly when <condition>" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold.   an exact condition
-"<action> leads to <harm> if <condition>" means the harm happens in every case they allow in which the condition holds. (wording pending)   a sufficient condition
+"If <condition>, <action> leads to <harm>" means the harm happens in every case they allow in which the condition holds.   a sufficient condition
 An unexamined outcome counts as possible.                                                                           unexamined: possible
 An unexamined <c> or <c′> outcome counts as possible; <decider> rules out other unexamined outcomes.                ruled_out_by (with always_possible; "<decider>" is "the deciding <chooser>" for "chooser")
 Severity, from most to least severe: <c₁>, <c₂>, …, <cₙ>. Severity is set by <decider>.                             the closed order is a chain
@@ -849,6 +850,10 @@ with alt's diagnosis when there are none, the report lines (5.2) and `conditiona
 also a document DILEMMA witness only when the policy's conflict status is CONFLICT-FREE (alt 4.7). Once the ARCH-ROADMAP
 P1 `unspecified` default lands, an alternative decided by it will be UNDECIDED and not clear. Until then
 `default_decided` lists the alternatives whose status came from the completion default (plan 11).
+
+The 2026-10-01 merge retains this as an integration gap: `risk@0` with `norm-defaults@0` is rejected during profile
+validation. The risk route has no `Fill_T` replay or UNDECIDED decision row yet. See norm-defaults 3.3 for the
+required sequencing and cross-route fixtures.
 
 ### 4.9 Point estimates and margins
 
@@ -1698,7 +1703,7 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
 | # | Environment, rules | Record, log or structure | Scope |
 |---|---|---|---|
 | k1 | `cell-env` | `Dx` with E1 `peak_memory` 6–12 GB, E2 `free_memory` 8–10 GB, and the necessary condition "acting cannot lead to a server outage unless the peak memory is greater than the free memory" | cell (`act`, `server_outage`) |
-| k2 | `cell-env` | (i) E1 11–12 GB, E2 8–10 GB, and the sufficient condition "acting leads to a server outage if the peak memory is greater than the free memory"; (ii) E1 6–8 GB, E2 8–10 GB, and the necessary form of (i) | cell |
+| k2 | `cell-env` | (i) E1 11–12 GB, E2 8–10 GB, and the sufficient condition "if the peak memory is greater than the free memory, acting leads to a server outage"; (ii) E1 6–8 GB, E2 8–10 GB, and the necessary form of (i) | cell |
 | k3 | `cell-env` | E1 6–12 GB and the necessary condition "acting cannot lead to a server outage unless both the peak memory is greater than 8 GB and the peak memory is less than 11 GB" | record |
 | k4 | `cell-env` | E1 6–12 GB, E2 8–10 GB, the setting `memory_limit` 7 GB of `act`, and the exact condition "acting leads to a job failure exactly when both the peak memory is greater than the memory limit and the free memory is greater than the memory limit" | record; cell |
 | k5 | `cell-env` | dimensionless `q` from 0 through 1, and the exact condition on (`act`, `job_failure`) `["eq", ["scale", "dimensionless", "2", ["quantity", "q"]], ["decimal", "dimensionless", "1"]]`; the same with `not` around it | record; the Lean statement |
@@ -1720,7 +1725,7 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
 | k21 | `asimov-risk` A2 | record: `rescue_p`, `rescue_q`, `nothing` (inaction); statements: rescue_p might lead to p_death, rescue_p leads to q_injury, rescue_q leads to p_death, rescue_q cannot lead to q_injury, nothing leads to p_death, nothing leads to q_injury. Rule sets {1, 2x, 3} and {1, 3} | decision report |
 | k22 | `law3`: `asimov-risk` with classes `severe` > `minor` (annotator), harm constants `destruction` "the robot's destruction" (severe) and `damage` "the robot's damage" (minor), `unexamined: "possible"` | (a) alternatives `fire` ("the fire rescue"), `water` ("the water rescue"), `nothing` (inaction); facts `lawful(fire)`, `lawful(water)`; statements: fire might lead to destruction, fire cannot lead to damage, water might lead to damage, water cannot lead to destruction, nothing cannot lead to destruction, nothing cannot lead to damage. Rule sets {L, P3} and {L}. (b) (a) plus `combined` ("the combined rescue"), lawful, which might lead to destruction and might lead to damage; rule sets {L, PS} | decision report |
 | k23 | all | every existing fixture, identity, certificate and wire hash; `agent-ops` with and without the risk block; 300 random P2-only records; 300 random P2-only structures with unclassified harm elements | identity; property |
-| k24 | `cell-env` | dimensionless `q` 0–10, one cell each: (a) only "acting leads to a job failure if q is greater than 5"; (b) only "acting cannot lead to a job failure unless q is at least 0"; (c) only the statement "acting might lead to a job failure"; (d) the statement "acting leads to a job failure" and "acting cannot lead to a job failure unless q is greater than 5"; (e) "… if q is greater than 5" and "… if q is less than 2" on one cell | cell; record |
+| k24 | `cell-env` | dimensionless `q` 0–10, one cell each: (a) only "if q is greater than 5, acting leads to a job failure"; (b) only "acting cannot lead to a job failure unless q is at least 0"; (c) only the statement "acting might lead to a job failure"; (d) the statement "acting leads to a job failure" and "acting cannot lead to a job failure unless q is greater than 5"; (e) "if q is greater than 5, …" and "if q is less than 2, …" on one cell | cell; record |
 | k25 | `cell-env` | the necessary condition "acting cannot lead to a job failure unless it is not the case that q equals 5" with dimensionless `q` from 3 through 7, from 6 through 7, and exactly 5; and the rewrite "unless either q is less than 5 or q is greater than 5" for each | cell; record |
 | k26 | (a) `asimov-risk` A1 whose risk block names `harm` as the severity sort; (b) A1 as defined | none | environment |
 | k27 | `cell-env` | (a) dimensionless `q` 6–8 and `r` 2–4, with sufficient "q is greater than 5" and necessary "r is less than 5" on (`act`, `job_failure`), margins of `r`'s upper bound; (b) dimensionless point estimate `q` = 5 and the necessary condition "acting cannot lead to a job failure unless either q is less than 3 or q is greater than 7", margins of both endpoints; (c) `agent-ops` D17, margins of E2's lower bound | margins |
@@ -1742,8 +1747,8 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
 ### 8.2 Expected results
 
 - **(k1)** `might`, witness (peak 12 GB, free 8 GB): `fmax(peak − free) = 12 − 8 = 4 > 0`.
-- **(k2)** (i) certain (`leads to`): `fmin(peak − free) = 11 − 10 = 1 > 0`; the sufficient condition renders with
-  `(wording pending)`. (ii) ruled out: `fmax(peak − free) = 8 − 8 = 0`, not greater than 0.
+- **(k2)** (i) certain (`leads to`): `fmin(peak − free) = 11 − 10 = 1 > 0`; the sufficient condition renders in
+  c5's frozen wording, with its legend line (2.4). (ii) ruled out: `fmax(peak − free) = 8 − 8 = 0`, not greater than 0.
 - **(k3)** `RiskConditionShared: peak_memory`, with the two rewrites; the second is labelled a change of model.
 - **(k4)** Accepted: the point `memory_limit` occurs in two atoms, and `peak_memory` and `free_memory` once each. The
   cell is `might` (`fmax`: 12 > 7 and 10 > 7), not certain (`fmin`: 6 > 7 fails), with witness (peak 12, free 10,
@@ -1841,8 +1846,9 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
   recomputed hashes, the first two would be `AlteredEntry: E1`.
 - **(k18)** `RequiredAlternativeMissing: run_limited (with run)`.
 - **(k19)**
-  - Exactly one derivation per accepted wording, and each paraphrase as in 2.1 and 2.2. c5's wording is not
-    registered, and its rendering carries `(wording pending)`.
+  - Exactly one derivation per accepted wording, and each paraphrase as in 2.1 and 2.2. c5's frozen wording
+    parses, renders and round-trips, with no `(wording pending)`; its first-probe trailing form is rejected with
+    the rewrite to the frozen form.
   - Rejections with their rewrites: `may lead to` → `might lead to`; `does not lead to` → both rewrites;
     `is safer than` → `has a less severe worst case than`; the `every … cannot` sentence → both scoped rewrites;
     `certainly leads to` → `leads to`; `prevents` → `might prevent`; `might not lead to` as a record statement →
@@ -1889,8 +1895,8 @@ hash that depends on it, is recomputed. A record that a fixture changes gets its
   - (c) `might`, not certain, and `might not lead to` holds, witnessed by a case without the harm (`S = ⊥`).
   - (d) `RiskInconsistent: act/job_failure`, case q 0 (the witness of `⊤ ∧ q − 5 ≤ 0`: the minimising endpoint of
     `q − 5`).
-  - (e) `RiskTwoSources: act/job_failure sufficient`, with the rewrite "acting leads to a job failure if either q is
-    greater than 5 or q is less than 2".
+  - (e) `RiskTwoSources: act/job_failure sufficient`, with the rewrite "if either q is greater than 5 or q is less
+    than 2, acting leads to a job failure".
 - **(k25)** The necessary condition is the one atom `q − 5 ≠ 0`. With q 3–7 it is possible but not certain
   (`fmin = −2`, `fmax = 2`). With q 6–7 it is certain (`fmin = 1 > 0`). With q exactly 5 it is impossible. So the
   cell is `might` in the first two boxes and `cannot` in the third, and never certain (`S = ⊥`). The rewrite is
@@ -2052,9 +2058,9 @@ under the unchanged allowlist; untrusted: the Python shape check and surface, re
 4. **Margins** (4.9): full validation, without re-admission, of perturbed records; the candidate set and the
    candidate limit on the original record; `status_piecewise_constant`; the per-kind record-level scans; and the
    decision on Q-margin-proof (11.11) (plan 12 item 1).
-5. **The probe statuses** (2.1, 2.2): what is frozen, c5 pending with its semantics frozen and its wording not,
-   c10 legend-dependent, and the c11/c12 observation. The reviewers' c5 replacement, "If `<condition>`, `<action>`
-   leads to `<harm>`.", is probed once with new sealed items (plan 2.6 rule 4).
+5. **The probe statuses** (2.1, 2.2): what is frozen, c10 legend-dependent, and the c11/c12 observation. The
+   reviewers' c5 replacement, "If `<condition>`, `<action>` leads to `<harm>`.", was probed once with new sealed
+   items (plan 2.6 rule 4; `risk-wording-probe-2`) and is frozen as written.
 6. **The block and the generated vocabulary** (1.1, 1.2, 4.1): freshness, reserved names, `outcomes: signed`, and the
    kinds and requirements added to make the plan's requirements checkable (11.6).
 7. **The slot premises** (4.6): the full order table, `class` functional and not total, `compatFacts`,
@@ -2115,9 +2121,9 @@ Each is a point where the plan left a reading open. The review may overturn any 
     the prefix. `verdict_ignores_outcomes` then holds with equal diagnostics, not only equal verdict kinds.
 17. **Condition wordings are record-only** (2.3). Inside a rule, `unless` is W1's carve-out and `if` the guard, which
     keeps each rule sentence to one reading while policy-level conditions stay OPEN (Q-templates).
-18. **c5 pending** (2.1): the semantics is frozen and the wording is not. JSON carries the sufficient form, and the
-    rendering is marked until the replacement passes its re-probe. `certainly leads to` is not registered, because
-    c3a passed.
+18. **c5 frozen in its replacement wording** (2.1): "If `<condition>`, `<action>` leads to `<harm>`." passed its
+    re-probe (L 16/16, C 16/16), so it is registered for records and rendered unmarked; the first probe's trailing
+    form is rejected with that rewrite. `certainly leads to` is not registered, because c3a passed.
 19. **Every harm constant is a harm of every decision**, so the cell table is complete (E3 by construction) and no
     harm can be dropped from consideration.
 20. **Quantities are log-level names with W6 tags** and never enter `E` or a norm guard. Only the tags come from the
@@ -2155,7 +2161,7 @@ proposed joint position.
 | F1.7(d) | `["quantity", name]` is a risk-local node with its quantity's tag | 3.2 |
 | F1.7(e) | k20 gives the record under {1, 2x, 3} | 8.2 |
 | A1 joint, A2 joint, F2 (conceded), F2 joint 6: plan sync | The plan's trust lines, margin admission and certification, and k25's `point_estimates` line | plan 7.4, 8.1, 8.2, 8.3, 12, 13; k25 |
-| A1 joint, A3, F2.2, F3.4: the c5 replacement | "If `<condition>`, `<action>` leads to `<harm>`.", probed once with new sealed items; c5 stays pending until then | 2.1, 10, 11.18; plan 12 item 1a |
+| A1 joint, A3, F2.2, F3.4: the c5 replacement | "If `<condition>`, `<action>` leads to `<harm>`.", probed once with new sealed items; c5 stayed pending until then (frozen 2026-09-30, `risk-wording-probe-2`) | 2.1, 10, 11.18; plan 12 item 1a |
 
 Details settled while applying these edits, not debated:
 
@@ -2202,3 +2208,4 @@ Details settled while applying these edits, not debated:
 | 2026-09-29 | Draft 1 | Item-1 statement specification of stage A from plan draft 2 and the probe results. It covers the `risk` block and the generated vocabulary `E_risk` with a fresh severity sort; decision records, the box, sources, completion and completed cases; the wordings with their probe statuses (c5 pending, c10 legend-dependent); the risk paraphrases of alt's words, `might prevent` and `excludes`; rejected wordings and scope rules; the legend; the wire forms of the block, conditions, the log and the record, and identity; `WellFormedRisk`; normal form, separability, unit coefficients, the endpoint table and the canonical witness; record validation, regeneration and the decision model; `class` functional and not total, `or_worse`, `less_worst` and inlining; the slot premises, `BaseAdmissibleRisk`, `compatFacts`, model expansion and conservativity; the policy checks; the decision report; point estimates and certified margins; the log and the audit (Q1 to Q3, PROCEDURE BREACH); diagnostics; every item-2 theorem as a statement; fixtures k1–k32 and kC1 with definitions separated from expected results; limits and trust; the review checklist; resolved choices. Spec only: no code, Lean or frozen contract changed. |
 | 2026-09-29 | Draft 2 | Applies the converged statement review (FIX), mapped in section 12: normal forms as a typed invariant (`NormLinForm`, `normalize_normal`, `normalize_eval`); record admission (`admitDecision`, sequence number from the decision entry, per-citation order Hindsight, Missing, Altered, Withdrawn, `EstimateProvenance … recorded` before matching) split from validation, with `admitDecision_sound` and the wire conjuncts; decision-model constants and the validity check (`RiskConstant`, V10); `RiskSettingTwice`; the margin-candidate limit outside `outcomeAt` (`marginLimit`); per-kind record-level scans (`scanInvalid`, `scanConflict`); standalone supersession scoped to the supplied entries (`WithdrawnEntry`, a non-claim); the corrected scope rewrite with both formulas; c9's paraphrase with the classified witness; `snapshot_no_hindsight` with `x.seq`; Q3's "measured or set"; the risk-local `quantity` node; k9(b), k15, k16, k17, k20, k25 and k31 corrected; fixtures k33–k39; the c5 replacement for its re-probe. No frozen contract, hash or existing theorem statement changed. |
 | 2026-09-29 | Draft 3 | Applies the two findings of the bounded re-check p3ver1 (FAIL), mapped in 12.2. First, fixture k40: an invalid value (a policy assertion unit that fails, then holds again) before a later conflict in one direction, with V11 naming a failing unit by its label. Second, the decision model's constant table gains entries for the chooser's and the alternatives' names, and signed rows resolve through them; V1 extends `RiskConstant` to class names and to clashes between record-local names; `RiskFact` covers an argument that names no entry; k35 states the table. No other design change; no frozen contract, hash or existing theorem statement changed. |
+| 2026-09-30 | c5 frozen | `risk-wording-probe-2` (L 16/16, C 16/16, no critical answer, not legend-dependent) froze c5 as "If `<condition>`, `<action>` leads to `<harm>`." (plan 2.6 rule 2). The 2.1 row and the 2.4 legend line use it; the surface registers it for record statements, renders it, and rejects the first probe's trailing `… leads to … if …` with that rewrite; the `(wording pending)` markers are removed, and the k2, k19 and k24 texts use the frozen form. The semantics (`S = C`) is unchanged. |

@@ -87,13 +87,15 @@ def _split(raw: bytes):
         raise VEError("unsupported document format")
     allowed = {"format", "environment", "units", "open_terms", "reading_sets",
                "narrowings", "couplings", "weights", "graph", "lemmas",
-               "contexts", "assessments", "bridges", "scoped"}
+               "contexts", "assessments", "bridges", "scoped", "completions"}
     if meta["format"] == "ve-document@2":
         allowed.add("discourse")
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     if "couplings" in meta and "rights@0" not in meta.get("environment", {}).get("profiles", []):
         raise VEError("UnsupportedProfile: rights@0 is required for couplings")
+    if "completions" in meta and "norm-defaults@0" not in meta.get("environment", {}).get("profiles", []):
+        raise VEError("UnsupportedProfile: norm-defaults@0 is required for completions")
     return meta, *_body(body)
 
 
@@ -325,6 +327,12 @@ def _load_document(raw: bytes, path: str | Path, lean):
     environment_data = base_environment(meta)
     rights_enabled = "rights@0" in environment_data.get("profiles", [])
     soft_enabled = "soft-norms@0" in environment_data.get("profiles", [])
+    defaults_enabled = "norm-defaults@0" in environment_data.get("profiles", [])
+    if defaults_enabled and soft_enabled:
+        # The soft and rights document routes are checked by Lean, which has no
+        # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
+        raise VEError("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
+                      "routes await the Lean route")
     if soft_enabled and not rights_enabled:
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
@@ -522,6 +530,13 @@ def _load_document(raw: bytes, path: str | Path, lean):
     norms = (NormDocument(env, selected_norms)
              if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
              else None)
+    norm_defaults = None
+    if defaults_enabled:
+        # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
+        from .norm_defaults import UnspecifiedDocument, validate_completions
+        norm_defaults = UnspecifiedDocument(env, selected_norms)
+        validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
+        norms = None
     if "lemmas" in meta and type(meta["lemmas"]) is not list:
         raise VEError("lemmas must be a list")
     for u in compiled:
@@ -538,6 +553,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     doc = {"meta": meta, "environment": env, "source": source, "source_id": sid,
            "document_id": document_id, "directory": Path(path).parent,
            "units": compiled, "norms": norms, "soft_document": soft_document,
+           "norm_defaults": norm_defaults,
            "reports": reports, "rights_document": rights_document,
            "reading_plan": plan_choices(active if couplings else
                                         [r for r in active if r["status"] == "open"],
@@ -563,7 +579,21 @@ def _fixed_premises(doc, sets):
     if doc["norms"] is not None and not _unresolved_norm_reading(sets):
         fixed.extend(formula_to_data(doc["environment"], formula)
                      for _, formula in doc["norms"].premises())
+    defaults = doc.get("norm_defaults")
+    if defaults is not None and not _unresolved_norm_reading(sets):
+        # The filled layers and Fill_T, over E‴ (`_checking_environment`).
+        fixed.extend(formula_to_data(defaults.filled.env, formula)
+                     for _, formula in (*defaults.filled.premises(), *defaults.fill_premises))
     return fixed
+
+
+def _checking_environment(doc):
+    """The vocabulary in which a document's fixed premises and readings are checked."""
+    if doc.get("soft_document") is not None:
+        return doc["soft_document"].extended_env
+    if doc.get("norm_defaults") is not None:
+        return doc["norm_defaults"].filled.env
+    return doc["environment"]
 
 
 def _unresolved_norm_reading(sets):
@@ -614,6 +644,18 @@ def _rights_report(doc):
         return None
     from .rights_route import report_rights
     return report_rights(doc["environment"], _rights_source_units(doc), rights)
+
+
+def coverage_defaults(doc):
+    """norm-defaults 3.2 lines for a document (a translation over source prose):
+    gap and default-reached evidence from a small-model search or a certificate,
+    and grounding against the `completions` block. Computed once per document."""
+    if "_norm_defaults_report" not in doc:
+        from .norm_defaults import report
+        doc["_norm_defaults_report"] = report(
+            doc["norm_defaults"], prove=True, search_domain_size=2, translation=True,
+            completions=doc["meta"].get("completions", {}))
+    return doc["_norm_defaults_report"]
 
 
 def coverage(doc, scoped=None, rights_report=None):
@@ -761,6 +803,14 @@ def coverage(doc, scoped=None, rights_report=None):
         else:
             residual["unlicensed_limitations"] = len(rights_report["unlicensed_limitations"])
             residual["distinction_hits"] = sum(len(row["hits"]) for row in rights_report["distinction"])
+    defaults_lines = None
+    if doc.get("norm_defaults") is not None:
+        # norm-defaults 3.2: a gap is no open term and changes no unit status.
+        from .norm_defaults import gaps_residual
+        defaults_lines = coverage_defaults(doc)
+        gaps = gaps_residual(defaults_lines)
+        residual["gaps"] = len(gaps["gaps"])
+        residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
     soft_open = ("default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points",
                  "limitation_terms", "bar_terms")
     return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
@@ -769,6 +819,11 @@ def coverage(doc, scoped=None, rights_report=None):
             "residual": residual, "residual_total": sum(residual.values()),
             **({"residual_lines": lines} if lines else {}),
             **({"alternatives": alternatives} if alternatives is not None else {}),
+            **({"norm_defaults": {
+                "gaps": gaps_residual(defaults_lines)["gaps"],
+                "findings": [line.grounding for line in defaults_lines
+                             if line.grounding.startswith("UngroundedDefault")]}}
+               if defaults_lines is not None else {}),
             **({"soft_status": "OPEN" if any(residual.get(key) for key in soft_open) else "CHECKED",
                 "default_exceptions_by_decider": by_decider,
                 "soft_residual_labels": [*sorted(soft.extended_env.decision_names), *open_pairs],
@@ -935,7 +990,7 @@ def _report(doc):
             if status == "model":
                 result["status"] = statuses["document_status"]
         return result
-    env = soft.extended_env if soft is not None else doc["environment"]
+    env = _checking_environment(doc)
     if env.unit_schema is not None:
         return _check_quantity_document(doc, active_reading_sets(doc["meta"].get("reading_sets", [])))
     fixed, active = _fixed_and_active(doc)
@@ -969,6 +1024,16 @@ def _report(doc):
             result["rights"]["report_status"] = "UNKNOWN: per-choice rights elaboration pending"
         else:
             result["rights"]["report"] = rights_report
+    defaults = doc.get("norm_defaults")
+    if defaults is not None:
+        lines = coverage_defaults(doc)
+        result["norm_defaults"] = {
+            "environment_id": doc["environment"].environment_id,
+            "filled_environment_id": defaults.filled.env.environment_id,
+            "fill_hash": defaults.fill_hash,
+            "unsaid_predicates": [f"unsaid__{p}" for p in defaults.unspec],
+            "background_labels": [label for label, _ in defaults.fill_premises],
+            "report": {line.predicate: list(line.lines()) for line in lines}}
     if "graph" in doc["meta"] and joint_pending:
         result["admission"] = {"status": "UNKNOWN",
                                "reason": "discourse citation and report extension pending"}
@@ -1016,6 +1081,10 @@ def _report(doc):
             from .soft_route import admit_soft_document
             result["admission"] = admit_soft_document(doc["environment"], admission,
                                                        soft_document=soft)
+        elif defaults is not None:
+            # W1's admission on `fill U`, from the source environment (Lean
+            # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
+            result["admission"] = admit_document(doc["environment"], admission)
         else:
             result["admission"] = admit_document(env, admission)
         if joint is not None:
@@ -1260,7 +1329,7 @@ def main(argv=None):
                     sets = [{**r, "readings": [c for c in r["readings"] if c["id"] in narrowing["keeps"]]}
                             if (r["id"], r["version"]) == (narrowing["set"], narrowing["version"]) else r
                             for r in sets]
-            data = check_readings(doc["environment"], sets, conclusion,
+            data = check_readings(_checking_environment(doc), sets, conclusion,
                                   fixed=_fixed_premises(doc, sets),
                                   joint_choices=joint,
                                   couplings=doc["meta"].get("couplings", []))

@@ -1,0 +1,418 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "alternatives@0",
+    "norms@0",
+    "relational-fol@0",
+    "risk@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {
+      "robot": {
+        "description": "robot"
+      },
+      "action": {
+        "description": "action"
+      },
+      "harm": {
+        "description": "harm"
+      }
+    },
+    "predicates": {
+      "available": {
+        "arguments": [
+          "action",
+          "robot"
+        ],
+        "description": "{0} is available to {1}",
+        "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+        "arguments": [
+          "action",
+          "harm"
+        ],
+        "description": "{0} leads to {1}",
+        "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is inaction",
+        "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is taken",
+        "verbalisation": "{0} is taken"
+      },
+      "harms_human": {
+        "arguments": [
+          "harm"
+        ],
+        "description": "The outcome harms a human being, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is a harm to a human being"
+      },
+      "harms_humanity": {
+        "arguments": [
+          "harm"
+        ],
+        "description": "The outcome harms humanity, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is a harm to humanity"
+      },
+      "harm_to": {
+        "arguments": [
+          "harm",
+          "robot"
+        ],
+        "description": "The outcome threatens the continued existence of the robot, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is a harm to {1}"
+      },
+      "injures_human": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures a human being, as judged by the Asimov case annotator",
+        "verbalisation": "{0} injures a human being"
+      },
+      "injures_humanity": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures humanity, as judged by the Asimov case annotator",
+        "verbalisation": "{0} injures humanity"
+      },
+      "ordered": {
+        "arguments": [
+          "action"
+        ],
+        "description": "A qualified human being ordered this action, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is ordered"
+      },
+      "protects_robot": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
+        "verbalisation": "{0} is protective"
+      },
+      "ordered_before": {
+        "arguments": [
+          "action",
+          "action"
+        ],
+        "description": "The order for the first action was given before the order for the second, as judged by the Asimov case annotator",
+        "verbalisation": "{0} was ordered before {1}"
+      },
+      "outranks": {
+        "arguments": [
+          "action",
+          "action"
+        ],
+        "description": "The order for the first action comes from someone with more authority than the order for the second, as judged by the Asimov case annotator",
+        "verbalisation": "the order for {0} comes from someone with more authority than the order for {1}"
+      },
+      "breaks_first_law": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures a human being or allows an avoidable harm to a human being to happen, as derived by the First Law rules",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "breaks_zeroth_law": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action injures humanity or allows an avoidable harm to humanity to happen, as derived by the Zeroth Law rules",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "has_lawful_option": {
+        "arguments": [
+          "robot"
+        ],
+        "description": "Some action available to the robot breaks neither the First nor the Zeroth Law, as derived by the lawful-option rule",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "lawfully_avoidable_threat": {
+        "arguments": [
+          "harm",
+          "robot"
+        ],
+        "description": "The outcome threatens the continued existence of the robot, and some permitted action available to the robot does not lead to it, as derived by the Law 3 threat rule",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "permitted": {
+        "arguments": [
+          "action"
+        ],
+        "description": "permission",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} be performed"
+        }
+      },
+      "required": {
+        "arguments": [
+          "action"
+        ],
+        "description": "obligation",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be performed",
+          "permission": "permitted"
+        }
+      },
+      "prevent_required": {
+        "arguments": [
+          "robot",
+          "harm"
+        ],
+        "description": "prevention",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} prevent {1}"
+        }
+      },
+      "lawful_action": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "candidate_action": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action breaks no law, or no competing action is lawful and the action keeps the Zeroth Law, as derived by addition rules 15 and 16 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "possibly_harmful": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action might lead to a harm to a human being, or nobody ordered it and it might lead to a harm to its robot, as derived by addition rules 17 and 25 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "valid_order": {
+        "arguments": [
+          "action"
+        ],
+        "description": "The action is ordered, breaks no law and is not forbidden by the precaution of rule 18, as derived by addition rule 20 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "prevails_over": {
+        "arguments": [
+          "action",
+          "action"
+        ],
+        "description": "The order for the first action prevails over the order for the second, a competing action, as derived by addition rules 21 and 22 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "overridden_order": {
+        "arguments": [
+          "action"
+        ],
+        "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "own_robot_harm": {
+        "arguments": [
+          "action",
+          "harm"
+        ],
+        "description": "The harm is a harm to the robot that can take the action, as derived by addition rule 26 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "competes_with": {
+        "arguments": [
+          "action",
+          "action"
+        ],
+        "description": "The two actions are available to the same robot (an action competes with itself), as derived by addition rule 27 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "less_severe_competitor": {
+        "arguments": [
+          "action",
+          "action"
+        ],
+        "description": "The first action competes with the second and has a less severe worst case, as derived by addition rule 28 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      },
+      "beaten_by_a_candidate": {
+        "arguments": [
+          "action"
+        ],
+        "description": "A candidate action of the same robot has a less severe worst case than the action, as derived by addition rule 29 (authored, not Asimov's)",
+        "regulated": {
+          "role": "plain",
+          "default": "deny"
+        }
+      }
+    },
+    "constants": {
+      "humanity_harm": {
+        "sort": "harm",
+        "description": "a harm to humanity"
+      },
+      "death_1": {
+        "sort": "harm",
+        "description": "the first person's death"
+      },
+      "death_2": {
+        "sort": "harm",
+        "description": "the second person's death"
+      },
+      "death_3": {
+        "sort": "harm",
+        "description": "the third person's death"
+      },
+      "injury_1": {
+        "sort": "harm",
+        "description": "a person's injury"
+      },
+      "property_damage": {
+        "sort": "harm",
+        "description": "property damage"
+      },
+      "robot_destroyed": {
+        "sort": "harm",
+        "description": "the robot's destruction"
+      },
+      "robot_damaged": {
+        "sort": "harm",
+        "description": "damage to the robot"
+      }
+    }
+  },
+  "alternatives": {
+    "chooser": "robot",
+    "action": "action",
+    "harm": "harm",
+    "available": "available",
+    "leads_to": "leads_to",
+    "outcomes": "signed",
+    "decided_by": "Asimov case annotator",
+    "performed": {
+      "permission": "permitted",
+      "obligation": "required"
+    },
+    "inaction": "inaction",
+    "taken": "taken",
+    "fulfilments": [
+      {
+        "obligation": "prevent_required",
+        "body": "avoids"
+      }
+    ]
+  },
+  "risk": {
+    "severity": {
+      "sort": "severity",
+      "classes": [
+        "catastrophic",
+        "fatal",
+        "injuring",
+        "damaging"
+      ],
+      "more_severe": [
+        [
+          "catastrophic",
+          "fatal"
+        ],
+        [
+          "fatal",
+          "injuring"
+        ],
+        [
+          "injuring",
+          "damaging"
+        ]
+      ],
+      "unranked": [],
+      "decided_by": "the Asimov extension author"
+    },
+    "harm_classes": [
+      [
+        "humanity_harm",
+        "catastrophic"
+      ],
+      [
+        "death_1",
+        "fatal"
+      ],
+      [
+        "death_2",
+        "fatal"
+      ],
+      [
+        "death_3",
+        "fatal"
+      ],
+      [
+        "injury_1",
+        "injuring"
+      ],
+      [
+        "property_damage",
+        "damaging"
+      ],
+      [
+        "robot_destroyed",
+        "damaging"
+      ],
+      [
+        "robot_damaged",
+        "damaging"
+      ]
+    ],
+    "unexamined": "possible"
+  }
+}
