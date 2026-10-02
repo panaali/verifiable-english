@@ -6,12 +6,16 @@ its hand-written check and path in the Python engine, positions order as section
 footprints keep interacting faults apart, and a combination is judged by its check, not only its code.
 """
 
+from copy import deepcopy
 import json
 from pathlib import Path
+import sys
 
 import pytest
 
-from conformance.wire_contract_gate import _applied, all_checks, record_problems
+from conformance import wire_contract_gate
+from conformance.wire_contract_gate import (_applied, all_checks, feasibility, gate_failures, record_problems,
+                                            shape_problems)
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, rendered, route)
 from ve.softnorms_contract import REGISTRY
@@ -109,6 +113,69 @@ def test_stored_gate_report_has_no_mismatch_and_explains_every_gap():
     assert list(report["masking_not_required"]) == [all_checks(CONTRACT)[0]] == ["1.1"]
     assert report["legacy_verdict_differences"] == [] and report["s3_pre"].startswith("closed")
     assert report["oracle"].startswith("fault catalogue")
+
+
+def test_record_shape_is_closed_on_every_tier():
+    """Wire re-check 2 (C): `record_problems` read only the expected fields, so an extra top-level field,
+    identical in both engines, passed the whole-record comparison. The fault record's members are the
+    schema's closed set (2.7), checked on every record, with or without an expected record."""
+    schema = json.loads((Path(wire_contract_gate.ROOT) / "ve/wire_contract/contract.schema.json").read_text())
+    fault = schema["$defs"]["fault"]
+    assert set(fault["required"]) == set(fault["properties"]) == wire_contract_gate.RECORD_FIELDS
+    assert fault["additionalProperties"] is False
+    good = run(CONTRACT, _applied([FAULTS["r3-over-predicate"]]), registry=REGISTRY).record
+    expected = expected_record(CONTRACT, FAULTS["r3-over-predicate"])
+    assert shape_problems(good) == [] and record_problems(good, expected, None) == []
+    for bad in ({**good, "hint": "x"}, {key: value for key, value in good.items() if key != "args"},
+                {**good, "args": []}, [good]):
+        assert shape_problems(bad), bad
+        assert record_problems(bad, expected, None), bad
+    inherited = run(CONTRACT, _applied([FAULTS["r0-guard"]]), registry=REGISTRY).record
+    legacy = ("SOFT_INVALID_INPUT", inherited["text"])
+    assert record_problems({**inherited, "severity": 1}, expected_record(CONTRACT, FAULTS["r0-guard"]), legacy)
+
+
+def test_gate_fails_below_the_feasibility_threshold(monkeypatch, tmp_path, capsys):
+    """Wire re-check 2 (B): the gate's exit ignored feasibility, so a report with `n1 + n2` = 44 that matched
+    the stored one passed. Every required row of spec 9 now fails the gate, judged from `n1` and `n2`
+    against the spec's 45 of 67, not from the report's own `met` or `threshold`."""
+    stored = json.loads(REPORT.read_text())
+    assert stored["feasibility"] == feasibility(CONTRACT)
+    assert gate_failures(stored) == []
+    assert stored["feasibility"]["of"] == 67 and stored["feasibility"]["threshold"] == 45
+    def broken(change):
+        value = deepcopy(stored)
+        change(value)
+        return gate_failures(value)
+    def at(n1, n2, **rest):
+        def change(value):
+            value["feasibility"].update({"n1": n1, "n2": n2, "total": n1 + n2, "met": n1 + n2 >= 45, **rest})
+        return change
+    assert broken(at(36, 8))
+    assert broken(at(37, 8)) == []
+    assert broken(at(36, 8, met=True))                # the report's own verdict is not trusted
+    assert broken(at(36, 8, threshold=44, met=True))  # nor its threshold
+    assert broken(at(43, 8, of=60))                   # a table that lost numbered checks
+    assert broken(at(43, 8, total=60))                # a total that is not n1 + n2
+    # The other required rows, each alone.
+    assert broken(lambda value: value.update(mismatches=[{"case": "x", "problems": ["p"]}]))
+    assert broken(lambda value: value["residual"].update(lean=1))
+    assert broken(lambda value: value["residual"].pop("python"))
+    assert broken(lambda value: value.update(coverage_met=False))
+    assert broken(lambda value: value.update(s3_pre="open: x"))
+    # The probe of the finding: `--check` with a report at 44 that matches the stored one exits non-zero.
+    value = deepcopy(stored)
+    at(36, 8)(value)
+    path = tmp_path / "gate.json"
+    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
+    monkeypatch.setattr(wire_contract_gate, "report", lambda: deepcopy(value))
+    monkeypatch.setattr(wire_contract_gate, "REPORT", path)
+    monkeypatch.setattr(sys, "argv", ["wire_contract_gate", "--check"])
+    assert wire_contract_gate.main()
+    assert "below 45" in capsys.readouterr().out
+    monkeypatch.setattr(wire_contract_gate, "report", lambda: deepcopy(stored))
+    path.write_text(json.dumps(stored, indent=2, sort_keys=True) + "\n")
+    assert not wire_contract_gate.main()
 
 
 def test_soft_semantic_names_no_member_for_an_unknown_softened_failure(monkeypatch):
