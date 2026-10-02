@@ -19,6 +19,7 @@ from ve.model import FiniteModel
 from ve.softnorms import SoftEnvironment, SoftNormDocument, load_soft_document
 from ve.soft_route import check_regenerated
 from tests.test_soft_norms_lean import env, norm, should, ranks
+from conformance.wire_contract import choose_combinations, first_fault
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
@@ -898,20 +899,13 @@ def multi_fault_cases(pairs=900, triples=600, seed=0):
 
     Every pair within one phase is kept; the other pairs and the triples are a
     deterministic sample. Yields (name, raw, rules, expected code)."""
-    faults = multi_faults()
-    rng = random.Random(seed)
-    combos = [c for c in combinations(faults, 2) if c[0][1] != c[1][1]]
-    same_phase = [c for c in combos if c[0][2][0] == c[1][2][0]]
-    other = [c for c in combos if c[0][2][0] != c[1][2][0]]
-    chosen = same_phase + rng.sample(other, min(pairs, len(other)))
-    three = [c for c in combinations(faults, 3) if len({f[1] for f in c}) == 3
-             and len({f[2][0] for f in c}) >= 2]
-    chosen += rng.sample(three, min(triples, len(three)))
-    for combo in chosen:
+    for combo in choose_combinations(multi_faults(), phase=lambda fault: fault[2][0],
+                                     footprint=lambda fault: (fault[1],),
+                                     pairs=pairs, triples=triples, seed=seed):
         raw, rules = multi_fault_base()
         for fault in combo:
             fault[4](raw, rules)
-        first = min(combo, key=lambda f: f[2])
+        first = first_fault(combo, position=lambda fault: fault[2])
         yield "+".join(f[0] for f in combo), raw, rules, first[3]
 
 

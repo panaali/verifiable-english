@@ -99,6 +99,18 @@ def test_valid_examples_are_clean_and_accepted():
         assert diagnose(source["environment"], source["norms"]) is CLEAN
 
 
+def test_norm_defaults_inherited_hook_keeps_legacy_text_in_shadow():
+    source = env(profiles=("norms@0", "norm-defaults@0", "soft-norms@0"))
+    with pytest.raises(VEError) as legacy:
+        load_soft_document(deepcopy(source), [])
+    outcome = diagnose(source, [])
+    assert isinstance(outcome, Fault)
+    assert outcome.record["check"] == "6.10c"
+    assert outcome.record["code"] == "SOFT_INVALID_INPUT"
+    assert outcome.record["text"] == str(legacy.value)
+    assert legacy.value.code == "SOFT_UNSUPPORTED_PROFILE"
+
+
 def test_generated_wordings_and_lock_are_current():
     assert process(DIRECTORY) == []
 
