@@ -1,16 +1,19 @@
 # Composition stage S2: superposed verdicts across readings (`readings@1`, part B), milestone S2a
 
-> Status: item-1 specification, draft 2 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
+> Status: item-1 specification, draft 3 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
 > draft 2 (its sections 2.1, 2.3, 2.5 and 2.6, its S2 section, its fixtures and its open questions 1, 2, 5, 6, 9, 13
-> and 16) through the pointer plan [composition-S2-PLAN.md](composition-S2-PLAN.md) draft 3, which records the
+> and 16) through the pointer plan [composition-S2-PLAN.md](composition-S2-PLAN.md) draft 4, which records the
 > converged Astra + Fable design debate (`manage-agents/debates/design-compose-s2/{astra,fable}.md`, CONVERGED after
 > round 3; the Astra seat was held by Sol xhigh as the recorded cross-family stand-in) and the edits of it that bind
-> S2. Draft 2 applies the converged Astra + Fable statement review of draft 1
+> S2. Draft 2 applied the converged Astra + Fable statement review of draft 1
 > (`manage-agents/debates/compose-s2-spec/{astra,fable}.md`, CONVERGED after round 2 on FIX: five corrections, listed
-> in the change log; the Astra seat's round 1 is recorded as held by Sol xhigh) and nothing else. It is the statement
-> under the Astra + Fable item-1 review that gates S2's Lean (PLAN-EXPAND2 rule 10): a draft alone opens nothing, and
-> the converged process is one confirmation round on draft 2, scoped to the edited passages, whose PASS opens the
-> build. Its item is **S2a**: superposition on the soft and norms chains, the enumerated fallback on
+> in the change log; the Astra seat's round 1 is recorded as held by Sol xhigh) and nothing else. Draft 3 applies the
+> three wording corrections of the confirmation round on draft 2 (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on
+> three statement-level claims, 1.1's route order, 7's decoder claim and M17(a), with every definition confirmed as
+> the requested repair) and nothing else: no definition, theorem statement or fixture value changed. It is the
+> statement under the Astra + Fable item-1 review that gates S2's Lean (PLAN-EXPAND2 rule 10): a draft alone opens
+> nothing, and the build opens on the PASS of the confirmation round on draft 3, scoped to the three edited passages.
+> Its item is **S2a**: superposition on the soft and norms chains, the enumerated fallback on
 > every chain; section 12 says what S2b inherits and does not specify it. **Frozen inputs**: composition.md draft 3
 > (the stack contract, `dispatch`, the slot, `gate`, the labelled slot, `Content`, the wordings E1 to E21, the label
 > families of its 1.5 and the texts of its section 8) and `lean/VE/Compose/{Slot,Dispatch,Content}.lean` as merged;
@@ -82,9 +85,14 @@ enumerated    otherwise: the rights chain (until S2b), or not      every compati
 On the norms chain the superposed document is checked as the soft document with the empty `soft` block, every rule
 strict, as S1 checks a candidate's document there (S1 13.6): the slot theorems are stated for the soft route.
 
-The row is chosen after the couplings and narrowings are decoded with today's texts and before anything of 1.2 to
-1.9 is computed (4.1): a W2 document keeps today's coupled choices, its on-request narrowing and its budget, and
-never sees `choiceCore D`, `ReadingsUnsatisfiable` or `DeadReading` (4.7, fixture M18).
+The row is chosen after the couplings and narrowings are decoded with today's texts (4.1 step 1). The first three
+rows are decided from the decoded document alone, and W2 returns there: a W2 document keeps today's coupled choices,
+its on-request narrowing and its budget, and never sees `choiceCore D`, `ReadingsUnsatisfiable` or `DeadReading`
+(4.7, fixture M18); no narrowing becomes a premise, no finding is computed and nothing of 1.2 to 1.9 is built for
+it. Choosing between the last two rows computes exactly what `superposable D` reads (1.8: `supReady D`,
+`uniformPrecedence D`, `sup D` of 1.4 and the chain's well-formedness on it) and nothing else of 1.2 to 1.9:
+`ReadingsNotSuperposable` is that choice's own outcome when `superposable D` is false, and `choiceCore D`,
+`DeadReading` and `Choice_D` are computed only after the route is chosen (4.1 steps 3 and 4).
 
 ### 1.2 Choices
 
@@ -254,10 +262,14 @@ superposable D         supReady D, uniformPrecedence D, and sup D passes the cha
                        assertion in force typed (S1's sideWF on sup D)
 ```
 
-The coupling and narrowing conjuncts of `supReady` are the Lean counterpart of today's texts `invalid coupling`,
-`invalid coupling set`, `CouplingLabelMissing`, `invalid narrowing` and `narrowing must keep named readings` (7),
-which the decoder checks before the route is chosen (4.1 step 1); a narrowing on a non-active version is not in force
-and adds no conjunct (1.2, 14.17). They are what `encodes_unique` needs: `couplingHolds` is false on a missing label
+The coupling and narrowing conjuncts of `supReady` are the Lean counterpart of the shape part of today's checks
+under the texts `invalid coupling`, `invalid coupling set`, `CouplingLabelMissing` (its per-set form: a coupled
+candidate without the axis label), `invalid narrowing` and `narrowing must keep named readings` (7), which the
+decoder runs before the route is chosen (4.1 step 1); a narrowing on a non-active version is not in force and adds
+no conjunct (1.2, 14.17). They are not the whole of those checks: `validate_couplings` also refuses a coupling whose
+sets share no label value on the axis (its second `CouplingLabelMissing`), a coupling that admits no choice
+(`CouplingUnsatisfiable`) and its field and count checks, none of which has a conjunct (7). They are what
+`encodes_unique` needs: `couplingHolds` is false on a missing label
 where `couplingPremises` adds no premise, and both read a coupling's set by id, so a reference to a non-active
 version would be read as the active set that Python refuses; with the conjuncts every slot-admissible base of `sup D`
 encodes a compatible choice (8.4, fixture M17). `superposable`, `SupReplay.sp` and the `hr` of `choices_spec`,
@@ -420,24 +432,30 @@ After S1's admission (its 4.1, unchanged, through the separation check and coupl
 
 1. Decodes the couplings and narrowings with today's texts (lifting S1's limitation of 4.1: Lean now reads both, with
    W2's and rights 3.3's checks and texts, 7; a narrowing not in force is recorded, 6). `supReady D` is the Lean
-   counterpart of those checks on the decoded document (1.8). A document with couplings that today's
-   `validate_couplings` refuses keeps today's `CouplingUnsatisfiable: <ids>`. Nothing of 1.2 to 1.9 is computed here.
-2. Chooses the route of 1.1. W2 ends here with its route verbatim: today's `coupled_choices` over the couplings, a
-   recorded narrowing applied only on request (`--narrowing`, `ve/document.py`), today's budget; no `choiceCore D`,
-   no `ReadingsUnsatisfiable`, no `DeadReading` (4.7, fixture M18). Pending ends here; the abstention is S1's.
+   counterpart of the shape part of those checks on the decoded document (1.8, 7). A document with couplings that
+   today's `validate_couplings` refuses keeps today's `CouplingUnsatisfiable: <ids>`. Nothing of 1.2 to 1.9 is
+   computed here.
+2. Chooses the route of 1.1. The first three rows are decided from the decoded document alone. W2 ends here with its
+   route verbatim: today's `coupled_choices` over the couplings, a recorded narrowing applied only on request
+   (`--narrowing`, `ve/document.py`), today's budget; no `choiceCore D`, no `ReadingsUnsatisfiable`, no
+   `DeadReading` (4.7, fixture M18). Pending ends here; the abstention is S1's. For a document on none of the first
+   three rows, `superposable D` decides between the last two (1.8): `supReady D`, `uniformPrecedence D`, `sup D` (1.4)
+   and the chain's well-formedness on it are computed here and nothing else of 1.2 to 1.9; when it is false, the
+   finding `ReadingsNotSuperposable` with its cause (1.8, 7) and the enumerated route.
 3. On the superposed and enumerated routes: computes `choiceCore D` (1.6). If Python's search finds no compatible
    choice, Lean checks a certificate of `⊥` from `choiceCore D`: `ReadingsUnsatisfiable: <ids>` (7); without the
    certificate, `UNKNOWN`. Dead readings are certified here (`DeadReading`, 1.9).
-4. Superposed: builds `sup D` (1.4), checks `superposable D` (1.8), builds `Choice_D` (1.6) and hands `sup D` with
+4. Superposed (`superposable D = true` at step 2): builds `Choice_D` (1.6) on `sup D` and hands `sup D` with
    `slotP D` to the route `dispatch` names for the list without `readings@1` (`soft`, or `norms` checked as 1.1
    says), which runs its checks relative to the slot (composition.md 4.3): conflict-freedom certified or witnessed,
    the premise models, certificates and countermodels for queries, with the atoms of a named reading appended to
    the slot (1.9). Every regenerated formula is bound to the document hash.
-5. Enumerated: enumerates the compatible complete choices in canonical order, stopping past 64; for each, checks
+5. Enumerated (the rights chain, or `superposable D = false` at step 2): enumerates the compatible complete choices
+   in canonical order, stopping past 64; for each, checks
    `choiceDoc D c` with the lower route (`readings-choice`), refusing the document when a choice's document fails
    the chain's well-formedness (7); combines the verdicts (4.6).
-6. Reports (6). Findings (`DeadReading`, `ReadingsNotSuperposable`) are computed in steps 3 and 4 and never change a
-   verdict; neither reaches a W2 document.
+6. Reports (6). Findings (`ReadingsNotSuperposable` at step 2, `DeadReading` at step 3) never change a verdict;
+   neither reaches a W2, pending or abstaining document.
 
 ### 4.2 The elaboration, regenerated
 
@@ -597,7 +615,7 @@ In the order of 4.1. Texts in the first table are composition.md 8's or today's,
 | `DeadReading: <set>:<i>` | 1.9; on the superposed and enumerated routes only (4.1 step 3) | finding |
 | `CouplingUnsatisfiable: <ids>` | today's check of `validate_couplings`, unchanged, on every route | error |
 | `UNKNOWN (not ALL: countermodel under <choice>)` | NONE beyond 64 choices (plan 2.5) | status |
-| `invalid coupling`, `invalid coupling set`, `CouplingLabelMissing: <id>, <set>`, `ResourceLimit: couplings`, `invalid narrowing`, `narrowing must keep named readings`, `narrowing cites unknown reading set version` | W2's and rights 3.3's texts; Python first, Lean's decoder with the same texts (a difference is `CheckerUnavailable`), before the route is chosen (4.1 step 1). The coupling and narrowing conjuncts of `supReady` (1.8, 8.3) are the Lean counterpart of these checks on the decoded document: every theorem whose hypotheses include `supReady` admits only documents these texts admit (M17) | error |
+| `invalid coupling`, `invalid coupling set`, `CouplingLabelMissing: <id>, <set>`, `ResourceLimit: couplings`, `invalid narrowing`, `narrowing must keep named readings`, `narrowing cites unknown reading set version` | W2's and rights 3.3's texts; Python first, Lean's decoder with the same texts (a difference is `CheckerUnavailable`), before the route is chosen (4.1 step 1). The coupling and narrowing conjuncts of `supReady` (1.8, 8.3) are the Lean counterpart of the shape part of these checks on the decoded document, and of that part only: at least two sets, none twice, each an open set at its active version, every candidate of which is labelled on the axis; every narrowing in force keeping at least one candidate, all of its set; distinct ids. A `Doc` that fails a conjunct is one these texts refuse (M17 a to c). The converse is not claimed: `validate_couplings` also refuses a coupling whose sets share no label value on the axis (its second `CouplingLabelMissing: <id>, <first set>`), a coupling admitting no choice (`CouplingUnsatisfiable`, above) and its field and count checks, and `supReady` carries none of these. Two active sets whose candidates are labelled A and B exclusively on the axis have `supReady D = true` and are refused by Python with `CouplingLabelMissing`; the theorems of 8.4 are stated for the Lean value and hold of it (no choice is compatible and no base is slot-admissible), and the route never reaches it | error |
 
 New in S2a:
 
@@ -675,8 +693,9 @@ def labelOf (a : Candidate) (axis : String) : Option String := (a.labels.find? (
 /-- The open set a narrowing is in force on: its set at the active version. -/
 def inForce (D : Doc) (N : Narrowing) : Option ReadingSet :=
   D.sets.find? (fun R => R.id == N.set && R.version == N.version)
-/-- The shape of a coupling as today's `validate_couplings` requires it (7): at least two sets, none twice, each an
-    open set at its active version, every candidate of which is labelled on the axis. -/
+/-- The shape part of what today's `validate_couplings` requires (7; not its shared-value or satisfiability checks):
+    at least two sets, none twice, each an open set at its active version, every candidate of which is labelled on
+    the axis. -/
 def couplingShape (D : Doc) (K : Coupling) : Bool :=
   decide (2 ≤ K.sets.length) && decide (K.sets.map (·.1)).Nodup &&
     K.sets.all (fun x => D.sets.any (fun R => R.id == x.1 && R.version == x.2 &&
@@ -688,7 +707,8 @@ def narrowingShape (D : Doc) (N : Narrowing) : Bool :=
   | some R => !N.keeps.isEmpty && N.keeps.all (fun x => R.candidates.any (·.id == x))
   | none => true
 /-- 1.1 row 2 and 1.8: distinct set ids, every open set with a candidate, every candidate with content; the couplings
-    and narrowings in today's shape, with distinct ids. The Lean counterpart of the decoder texts of 7. -/
+    and narrowings in today's shape, with distinct ids. The Lean counterpart of the shape part of the decoder
+    checks of 7, and of that part only. -/
 def supReady (D : Doc) : Bool :=
   decide (D.sets.map (·.id)).Nodup &&
     D.sets.all (fun R => !R.candidates.isEmpty && R.candidates.all (·.content.isSome)) &&
@@ -927,9 +947,9 @@ because S2a never reaches a rights content (chain ≠ rights). `owners` is execu
 applied to author names: `qName` finds the declaring set and the candidate the choice takes there, so that under
 every choice the name map of an interface name lands on the chosen copy (M1: `nameMap D [(rs1, 1)]` sends
 `soft__excepted__no_deception` to `ex₂`, and `nameMap D [(rs1, 0)]` is the identity because candidate 0's rule is
-strict and has no key). `supReady`'s coupling and narrowing conjuncts mirror `validate_couplings` and
-`validate_narrowings` on the decoded document (7): without them `couplingHolds` and `couplingPremises` disagree on a
-missing label, and both would read a stale reference as the active set. `quietShared` takes every key that is not fixed-generated and
+strict and has no key). `supReady`'s coupling and narrowing conjuncts mirror the shape checks of `validate_couplings`
+and `validate_narrowings` on the decoded document and no other check of theirs (7): without them `couplingHolds` and
+`couplingPremises` disagree on a missing label, and both would read a stale reference as the active set. `quietShared` takes every key that is not fixed-generated and
 whose owners are not one single candidate, that is: several owners, or an owner that is a pair of candidates.
 `keyLabel` writes S1's six key forms in colon form; only the outweighs form is reachable in S2a. `superposable` runs the chain's well-formedness
 on `sup D` (S1's `sideWF`), which is what makes `sup_wellFormed` definitional: a theorem deriving it from the
@@ -1225,7 +1245,7 @@ predicate `asks(agent, user)`; obligations `avoid_required`, `help_required`, de
 | M14 | K9: fixed strict `except-x` on `−avoid_required`, guard `asks`, over `[no-deception]`, with `rs1` = {`S`, `Df`} | `copies D "no-deception" = [rd-1-no-deception, rd-2-no-deception]`, `except-x`'s over in `sup D` names both; `uniformPrecedence D = true` (both twins have over `[]`); on `m1` under either choice the outcome at (a, u) is `some false` in `sup D` and in the choice's document (`except-x` selects, the twin yields through it); `superposable D = true` |
 | M15 | the empty structure `E∅` (Carrier `Empty`) over K, and M1's document | `example`: `BaseAdmissibleR (choiceDoc D [(rs1, 0)]).1 E∅`; no `S'` with `ChoiceExtension D E∅ S'` is admissible for `(sup D).1.soft.E` (nothing denotes `ve__here`); `adjoinOne E∅` has one element, is `BaseAdmissibleR` for the choice's document (`adjoin_baseAdmissibleP` at `rights_is_slot`), and `base_up` applies to it; `ConflictFree` of any soft document holds of `E∅` (no typed tuple) |
 | M16 | M1 with `Df` and `S` renamed to a 45-byte rule name | own names stay within `MAX_IDENTIFIER_BYTES` (16 + 45 bytes for the decision predicate) and `sup D`'s `soft__excepted__rd_2_…` does not (66 bytes): `sideWF D (sup D) = false` with the chain's own text for that limit, `ReadingsNotSuperposable: rs1` with that cause, the enumerated route over 2 choices |
-| M17 | the shape of couplings and narrowings (1.8, 7), on M6's document: (a) `rs1` and `rs2` without `force` labels, coupling `c1` on `force`; (b) M6 with a second coupling also named `c1`; (c) M6 with `c1` naming `rs2@2` while `rs2` is active at version 1; (d) M6 with `rs2` re-recorded at version 2 (the same two candidates; `c1` names `rs2@2`) plus a narrowing `n0` on `rs2@1` keeping the strict candidate's id | (a) Python and Lean's decoder: `CouplingLabelMissing: c1, rs1`; on the `Doc` as a Lean value `supReady D = false` (`couplingShape` fails), so no theorem of 8.4 applies to it, and what the conjunct excludes is visible: `couplingHolds D c c1 = false` for every one of the four complete choices while `couplingPremises D = []`, so a slot-admissible base of `sup D` would encode a complete choice that is not `Compatible` (`encodes_unique` would be false without the conjunct). (b) `invalid coupling`; `supReady D = false` (ids not `Nodup`). (c) `invalid coupling set`; `supReady D = false` (`rs2@2` is no open set at its active version), where `couplingHolds` and `couplingPremises` alone would have read `rs2` at version 1. (d) admitted by Python (`rs2@1` is a recorded version) and by Lean; `n0` is not in force (`inForce D n0 = none`: `D.sets` holds `rs2` at version 2), `narrowingShape D n0 = true`, `supReady D = true`, no `narrowing:n0` label, `choices D` as M6's, `n0` listed under `narrowings_stale` (6); stale narrowings stay inactive |
+| M17 | the shape of couplings and narrowings (1.8, 7), on M6's document: (a) `rs1` and `rs2` without `force` labels, coupling `c1` on `force`; (b) M6 with a second coupling also named `c1`; (c) M6 with `c1` naming `rs2@2` while `rs2` is active at version 1; (d) M6 with `rs2` re-recorded at version 2 (the same two candidates; `c1` names `rs2@2`) plus a narrowing `n0` on `rs2@1` keeping the strict candidate's id | (a) Python and Lean's decoder: `CouplingLabelMissing: c1, rs1`; on the `Doc` as a Lean value `supReady D = false` (`couplingShape` fails), so no theorem of 8.4 that assumes `supReady` or `superposable` (`hr`, `hs`, `SupReplay.sp`) applies to it (`encodes_atoms`, which assumes neither, does), and what the conjunct excludes is visible: `couplingHolds D c c1 = false` for every one of the four complete choices while `couplingPremises D = []`, so a slot-admissible base of `sup D` would encode a complete choice that is not `Compatible` (`encodes_unique` would be false without the conjunct). (b) `invalid coupling`; `supReady D = false` (ids not `Nodup`). (c) `invalid coupling set`; `supReady D = false` (`rs2@2` is no open set at its active version), where `couplingHolds` and `couplingPremises` alone would have read `rs2` at version 1. (d) admitted by Python (`rs2@1` is a recorded version) and by Lean; `n0` is not in force (`inForce D n0 = none`: `D.sets` holds `rs2` at version 2), `narrowingShape D n0 = true`, `supReady D = true`, no `narrowing:n0` label, `choices D` as M6's, `n0` listed under `narrowings_stale` (6); stale narrowings stay inactive |
 | M18 | two formula sets, no content-bearing set: `rs1` on `u1` = {0: assertion `∀agent ∀user. asks`, label `force` A; 1: assertion `∀agent ∀user. ¬asks`, label `force` B}, `rs2` on `u2` the same two assertions with labels A, B; coupling `c1` on `force` over `[rs1@1, rs2@1]`; narrowing `n1` (set `rs1`, version 1, keeps the A candidate), narrowing `n2` (set `rs2`, version 1, keeps the B candidate) | route `w2` (1.1 row 1, chosen at 4.1 step 2): W2's `coupled-choices` route over the two compatible choices A/A and B/B, with today's `models`, verdicts byte-identical to today's; `sup D` not built, `choiceCore D` not computed; no `ReadingsUnsatisfiable`, no `DeadReading`; `CouplingUnsatisfiable` not raised (today's `validate_couplings` finds A/A). Under `--narrowing n1` today's one-choice answer (A/A) with `narrowing: narrowing:n1`, under `--narrowing n2` likewise (B/B), unchanged (F20). As a Lean value: `supReady D = true`, `choices D = []` and `unsatCheck` would accept a certificate of `⊥` from `choiceCore D` (= `[coupling:c1, narrowing:n1, narrowing:n2]`): the refusal draft 1 raised and the route order now never reaches |
 
 ### 9.3 Differential, shadow and pilots
@@ -1423,3 +1443,4 @@ any of them.
 |---|---|---|
 | 2026-10-02 | Draft 1 | First statement specification of stage S2's item 1 (S2a), from plan draft 2 through the pointer plan's draft 2: the four routes of a `readings@1` document; choices, compatibility and `choiceDoc`; the choice vocabulary and atoms; `sup D` with gating, qualification and A1's copy mapping; owners and the labelled `Choice_D`; the name map and the pulled structure; the superposability condition with its three causes; the evidence forms and two findings; the slots of E4, E7, E8, E10, E12, E13, E17 and the sentences E26 to E29; the case kinds; the semantics with both directions of model correspondence, the empty situation, the verdict table and the enumerated route; the report and diagnostics; the Lean statements `sup_no_sets`, `sup_wellFormed`, `choice_wellFormed`, `asserted_shared`, `slot_wellFormed`, `slot_wellLabelled`, `encodes_unique`, `encodes_atoms`, `superpose_faithful`, `base_down`, `superpose_situation`, `base_up`, `superpose_conflict_iff`, `superpose_conflict_free`, `superpose_conflict_witness`, `superpose_all`, `superpose_all_base`, `superpose_countermodel`, `dead_sound`, `unsat_sound`, `superpose_assertions`, `choices_spec`, the lifting lemma of composition.md 9.5 and two wire theorems; fixtures F2, F3, F18 and F20 in S2a's share, M1 to M16, the differential, the shadow test with M8's mutation check, the pilots, the English; the measured unlock; what S2b inherits; seventeen resolved choices, three of them repairs of the plan's sketch (14.3, 14.4, 14.6). No code, Lean or frozen contract changes. |
 | 2026-10-02 | Draft 2 | The converged Astra + Fable statement review of draft 1 applied (`manage-agents/debates/compose-s2-spec/{astra,fable}.md`, CONVERGED after round 2 on FIX) and nothing else, five corrections: (1) the route of 1.1 is chosen after the decoders run with today's texts and before `choiceCore D`, the `⊥` check and `DeadReading`, which now run only on the superposed and enumerated routes; W2 keeps its verdicts, `CouplingUnsatisfiable`, its on-request narrowing and its budget verbatim (1.1, 1.2, 1.9, 4.1, 4.7, 7, 14.17; F20 extended; fixture M18, the coupled formula-only document with two recorded narrowings that draft 1 would have refused). (2) `supReady` gains the shape of the couplings and narrowings that today's `validate_couplings` and `validate_narrowings` require (`couplingShape`, `narrowingShape`: active references, a label on every coupled candidate, distinct coupling ids and narrowing ids, non-empty keeps of the set's own candidates for a narrowing in force; a stale narrowing stays inactive), named in 7 as the Lean counterpart of their texts and carried by `superposable`, `SupReplay.sp` and the `hr` of `choices_spec`, `dead_sound` and `unsat_sound`; this is what `encodes_unique` and the theorems on it need (1.8, 8.3, 8.4's note; fixture M17 a to d). (3) `origin` is defined on the names of `sup D` and used by `owners` there; `qName` goes through the set that declares the name and the candidate the choice takes in it, so the name map of an interface name lands on the chosen copy (1.5, 1.7, 8.3; M1's expected map retained and spelled out). (4) M8's mutation check names the one copy that is a child of `base-x` and the leak through `stop-x` under choice 0. (5) 8.1 and 13.1 say which S1 files receive additive integration (`Wire.lean`, `Run.lean`) with no S1 definition, statement or case kind changed. No statement of S0 or S1 changed; no design change. The converged process: one confirmation round on the edited passages opens the build. |
+| 2026-10-02 | Draft 3 | The confirmation round on draft 2 applied (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on three statement-level wording claims, every definition confirmed as the requested repair, no unrelated change found) and nothing else, three corrections: (1) 1.1 and 4.1 say what choosing the route computes: the first three rows are decided from the decoded document alone, and W2 returns before any narrowing becomes a premise, before `choiceCore D` and before any finding; choosing between the superposed and enumerated rows computes `superposable D`, and so `sup D`, and nothing else of 1.2 to 1.9 (1.1; 4.1 steps 1, 2, 4, 5 and 6). (2) The decoder claim of 7 is limited to the shape invariants `supReady` enforces: a `Doc` that fails a conjunct is one today's texts refuse, and not conversely, since `validate_couplings` also refuses an empty label intersection (its second `CouplingLabelMissing`), an unsatisfiable coupling and its field and count checks (7; 1.8; 8.3's docstrings and note). (3) M17(a) says that no theorem of 8.4 assuming `supReady` or `superposable` applies to the document, not that no theorem of 8.4 does (`encodes_atoms` assumes neither). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 3, scoped to these passages. |
