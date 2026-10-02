@@ -1,17 +1,20 @@
 # Wire contracts (`ve/wire_contract`): statement specification for steps S0 to S3
 
-> Status: statement specification, draft 1 (2026-10-02). This is the item-1 statement spec of
-> [wire-contract-PLAN.md](wire-contract-PLAN.md) draft 2, which applies the converged design debate
+> Status: statement specification, draft 2 (2026-10-02). This is the item-1 statement spec of
+> [wire-contract-PLAN.md](wire-contract-PLAN.md) draft 3, which applies the converged design debate
 > (`manage-agents/debates/design-wire/{fable,astra}.md`: BUILD with exact edits, S0 to S3 only, S1c moved to S4).
 > It covers the authorised steps only: the contract format and tooling (S0), the Python and Lean engines (S1a,
-> S1b), the engine corpus and the generic fault generator (S2), and the `soft-norms@0` pilot (S3). This is the
-> statement under review: the Astra + Fable statement review of this draft decides whether S0 to S3 start, and a
-> new draft alone opens nothing. Theorem statements and fixtures are implementation obligations, not claims of
-> completed proofs or tests. Nothing was built or run for this draft: the Lean of section 5 has not been compiled,
-> the expected records of section 8 were derived by hand, and the `file:line` references were read on branch
-> `design/wire` at `f1ccba52` and must be re-read at each step. Nothing here changes a verdict, an identity, a
-> frozen contract, an existing theorem statement or a checker function. Section 12 lists where this draft is more
-> exact than the plan or departs from it.
+> S1b), the engine corpus and the generic fault generator (S2), and the `soft-norms@0` pilot (S3). The Astra +
+> Fable statement review of draft 1 (`manage-agents/debates/wire-spec/{fable,astra}.md`; Sol at xhigh stood in for
+> Astra, as `astra.md` records) returned **FIX with exact edits**. Draft 2 applies those edits, in one commit with
+> the plan, and changes nothing else; section 13 maps each edit to its change here. By that review S0 to S3 start
+> once the edits have landed as listed, with no further review round; an edit that deviates from the list reopens
+> the review, and no stage starts earlier. Theorem statements and fixtures are implementation obligations, not
+> claims of completed proofs or tests. Nothing was built or run for this draft: the Lean of section 5 has not been
+> compiled, the expected records of section 8 were derived by hand, and the `file:line` references were read on
+> branch `design/wire` at `f1ccba52` (those added by draft 2 at `0d0a1022`) and must be re-read at each step.
+> Nothing here changes a verdict, an identity, a frozen contract, an existing theorem statement or a checker
+> function. Section 12 lists where this draft is more exact than the plan or departs from it.
 
 ## 0. Scope, one paragraph
 
@@ -27,7 +30,7 @@ unit wait for a separate decision after the continuation gate (section 9).
 In this specification: the decisions (1), the definitions (2), the English, one reading per check (3), the
 diagnostics (4), the Lean definitions and exact statements (5), the pilot contract (6), generated artefacts and
 gates (7), the acceptance fixtures (8), the continuation gate's metrics (9), limits (10), the statement review
-checklist (11), and the choices this draft resolves (12).
+checklist (11), the choices this draft resolves (12), and the statement review's edits (13).
 
 ## 1. Decisions
 
@@ -116,6 +119,7 @@ A contract has these members, and no others:
 | `residual` | the code of the residual record (2.8), declared in `codes` |
 | `phases` | an ordered list of `{"name": N, "checks": [entry, …]}` |
 
+A contract, `limits.json` and `names.json` are read with `ve.wire.loads_json`; a file it refuses is `WC01`.
 The SHA-256 in the lock is over `ve.wire.canonical_json` of the parsed file. `limits.json` holds every value a
 contract names; where `ve/limits.py` has a constant of the same name the two must be equal, and
 `tests/test_wire_contract.py` checks it. `ve/limits.py` stays the value the validators read.
@@ -128,17 +132,21 @@ A phase's `checks` list holds **entries**. An entry is one of:
 |---|---|
 | check | `{"id", "kind", "at"?, "when"?, "code", "text", "args"?, "says"?, …the kind's parameters}` |
 | group | `{"id", "each": pattern, "when"?, "checks": [entry, …]}` |
-| include | `{"id", "kind": "include", "contract", "phases": [names], "at"?, "view"?, "as"?}` |
+| include | `{"id", "kind": "include", "contract", "phases": [names], "at"?, "view"?, "says"?, "as"?}` |
 
 - `id`: letters, digits, `.` and `-`, starting with a letter or digit; unique in the contract; never `residual`.
   The ids of checks and of classifier members (2.5) must increase in table order. Ids are compared part by part
   between dots; a part is split into runs of digits and runs of other characters, and runs are compared in turn,
   digits as numbers and the others as strings, a part that is a prefix of another coming first
-  (`2.7 < 2.7a < 2.7b < 2.8 < 2.16`, `b1 < b2`). Group, include and classifier entry ids need only be unique.
+  (`2.7 < 2.7a < 2.7b < 2.8 < 2.16`, `b1 < b2`). Where a comparison sets a run of digits against a run of other
+  characters (`2.a` against `2.7`, `b1` against `1b`), the order is not defined, and the lint refuses a contract
+  in which any two of those ids compare so. Group, include and classifier entry ids need only be unique.
 - `at`: a location. Its default is `@` inside a group and the root outside one. It is the check's **target**.
 - `each`: a pattern. The group's **items** are its matches, in order. Groups nest.
 - `when`: a **guard**, a list of literals that must all hold. An entry whose guard does not hold contributes
   nothing. A group's guard is evaluated once, before its items, in the context that encloses the group.
+- `says` on an include: the sentence of its view (3.1). It is required when `view` is present and refused
+  otherwise: a `view` without `says` is `WC08`, and `says` without a `view` is `WC01`.
 
 | Literal | Holds when |
 |---|---|
@@ -149,7 +157,13 @@ A phase's `checks` list holds **entries**. An entry is one of:
 | `{"is": [L, T]}` | `L` resolves to a value of type `T` |
 | `{"is_not": [L, T]}` | `L` is absent, or resolves to a value not of type `T` |
 
-A literal value `v` (here and in `const`, `enum`, `item`) is a scalar: `null`, a Boolean, an integer or a string.
+A literal value `v` (here and in `const`, `enum`, `item`) is a scalar: a Boolean, an integer or a string; `null`
+is written as the type form `"null"`. That is: "`L` is `null`" is `{"is": [L, "null"]}`, "`L` is not `null`" is
+`{"is_not": [L, "null"]}`, and a `const` of `null` is a `type` check with `"null"`. An `enum` that would admit
+`null` beside other values is the `enum` over the other values under the guard `{"is_not": [L, "null"]}`, with
+`L` the check's target. `requires` and `excludes` have no `null` item. Only the literal is excluded: `null`
+stays a value an engine reads (2.1) and a type form (below). A `null` literal, if a later unit needs one, is a
+change of `format` with its own statement review.
 
 A **type** `T` is one form or a list of forms, any of which may match:
 
@@ -191,6 +205,9 @@ One kind has no target and so no absent case:
 | `max_count` (`of`: pattern, `limit`) | `of` has more than `limit` matches | `concrete(at)` | `count`, `limit` |
 
 - `limit` is a name in `limits.json` or a non-negative integer.
+- `"on": "key"` needs a target whose pointer has a last token. On the empty pointer the check is not defined, and
+  the lint refuses it wherever the target's pointer can be empty: `at` has no step, and its base is the root, or
+  is a group whose `each`, read in the same way, has no step.
 - `unique_so_far` is allowed only inside a group and its `at` must be relative to `@`. "The same location" is
   `at` evaluated with the earlier item in place of the current one; an earlier item where it is absent is not
   equal to anything.
@@ -215,7 +232,7 @@ reports; the code decides only whether the check holds.
 |---|---|---|
 | hook (T2) | `{"kind": "hook", "hook": NAME, "returns"?: [names], "inherited"?: true}` | a function of the root and the enclosing items that returns `ok` or `fail(args)`, where `args` gives each name in `returns` a JSON value |
 | classifier (T3) | `{"kind": "classifier", "classifier": NAME, "emits": [member, …]}`; a member is `{"id", "code", "text", "returns"?, "inherited"?, "says"}` | a function of the root and the enclosing items that returns `ok` or `fail(member id, args)` |
-| view | named by an `include` | a total function from a value to a value |
+| view | named by an `include`, which carries its `says` (2.3) | a total function from a value to a value |
 | adapter | named by the contract | a function from a route case to the root |
 
 Rules, for every language:
@@ -256,8 +273,12 @@ reads, the enclosing items (innermost first), the earlier items of the innermost
   value at `at`, or the view of that value. Inside a scope there are no enclosing items.
 
 The **position** of an instance is the list (phase index, entry index, item index, sub-entry index, item index,
-…) down to the check. The instance list is in strictly increasing lexicographic order of position. A classifier
-member's position is its instance's position followed by its index in `emits`. The fault generator (8.3)
+…) down to the check. The instance list is in strictly increasing lexicographic order of position. A fault for
+a classifier member has the position of the member's instance followed by the fault's **order key** inside the
+set. An order key is a list of numbers, compared like a position, a list that is a prefix of another coming
+first. The fault catalogue (8.3) records the key with the fault; where it records none, the key is the one
+number that is the member's index in `emits`. Where a validator does not report in the order of `emits`, the
+keys of its set are stated where the contract is specified (section 6, `rule_typing`). The fault generator (8.3)
 computes expected diagnostics from positions.
 
 **The one order rule.** The engine evaluates the instances in list order and reports the first that does not
@@ -287,7 +308,9 @@ hold. Three consequences, all of which soft-norms.md 8 states in words today:
 | `args` | an object: each placeholder of the template with its rendered string, plus `inner_path` under a view |
 
 **Templates.** A template is ASCII. A placeholder is `{name}` or `{name:renderer}`; `{{` and `}}` are literal
-braces. A placeholder names one of:
+braces. A name may occur more than once in a template, but under one renderer only: `args` holds one string for
+each name, so the lint refuses a template that uses one name under two renderers (`{name}` and `{name:raw}` are
+the same renderer). A placeholder names one of:
 
 | Argument | Value |
 |---|---|
@@ -349,9 +372,11 @@ By construction, given the same contract revision:
 
 - **(A) Expansion.** The instance list is a function of the table, the views and the root (2.6). Two engines
   that implement 2.1 to 2.6 produce the same list.
-- **(B) The record, conditional on equal predicate results.** If every hook, classifier and view that is reached
-  returns the same result in two engines, they report the same record: same position, code, path and text. In
-  Lean this is `run_congr_reached` (5.3). For Python it is evidence from the engine corpus (8.1).
+- **(B) The record, conditional on equal predicate results.** If two engines have the same views, equal on every
+  value and not only where a view is reached, and every hook and classifier that is reached returns the same
+  result in both, they report the same record: same position, code, path and text. In Lean this is
+  `run_congr_reached` (5.3), whose hypothesis on views is equality on every name and value. For Python it is
+  evidence from the engine corpus (8.1).
 
 Tested, not constructed:
 
@@ -393,12 +418,13 @@ item's `a`". Below, `W` stands for the target so written.
 | guard | `When <literal> and <literal>: ` before the sentence; literals read `<L> is present`, `<L> is absent`, `<L> is <value>`, `<L> is absent or is not <value>`, `<L> is <type>`, `<L> is absent or is not <type>` | When the guard does not hold the check is not run and does not fail |
 | group | `For each member of <pattern>, in order, all of the following for one member before the next member:` | Item-major order. "In order" is index order for an array and code point order of keys for an object |
 | phase | `**Phase <n>, <name>.** No check of this phase runs unless every check of the earlier phases holds over the whole input.` | |
-| include | `The checks of phase <names> of <contract>, in their order, on W` then, as they apply, `as transformed by the view <view>` and `reported with code <code>`. | |
+| include | `The checks of phase <names> of <contract>, in their order, on W` then, with a view, ` as transformed by the view <view>: <says>`, where the `says` sentence closes the sentence, and without a view `.`; then, with `as`, the sentence `They are reported with code <code>.` | Without a view the included checks read the value at W. With a view they read the value that `says` states, and nothing else of W |
 | hook, classifier member | the check's `says`, written by hand | |
 
 A hook, a classifier member and a view have no parameters to generate a sentence from, so the contract carries a
-`says` sentence for each, and the lint refuses one without it. A `says` sentence states what must hold, in the
-present tense, with one reading, and its review is part of the contract's review.
+`says` sentence for each, and the lint refuses one without it. A view's sentence is the `says` of the include
+that names it (2.3). A `says` sentence states what must hold, in the present tense, with one reading, and its
+review is part of the contract's review; for a view, `says` states the value the included checks read.
 
 ### 3.2 Wordings this replaces, and why
 
@@ -483,14 +509,14 @@ finding, `<file>: <code>: <detail>`.
 
 | Code | Refuses |
 |---|---|
-| `WC01` | a file that does not have the shape of 2.2 to 2.5 (`contract.schema.json`) |
-| `WC02` | a repeated id; an id with a character outside 2.3 or equal to `residual`; check and member ids that do not increase in table order |
+| `WC01` | a file that `ve.wire.loads_json` refuses (2.2; for example a `null`, a negative or fractional number, or a repeated key); a file that does not have the shape of 2.2 to 2.5 (`contract.schema.json`), which includes `says` on an include without a `view` |
+| `WC02` | a repeated id; an id with a character outside 2.3 or equal to `residual`; check and member ids that do not increase in table order; two check or member ids whose comparison sets a run of digits against a run of other characters (2.3) |
 | `WC03` | a code that is used and not declared, or declared and not used (the `residual` code counts as used); a class outside the list of 2.2 |
-| `WC04` | a placeholder that names no argument of 2.7 for that check; an entry of `args` or `returns` that no placeholder uses; an unknown renderer; an argument location with `*`; a template that is not ASCII or has unbalanced braces |
-| `WC05` | an unknown limit or lexical class; a negative limit; a class or character set that 2.4 does not allow |
-| `WC06` | `@n` with fewer than `n + 1` enclosing groups; `unique_so_far` outside a group or with an `at` not relative to `@`; an `at` with `*`; a literal value that is not a scalar |
+| `WC04` | a placeholder that names no argument of 2.7 for that check; an entry of `args` or `returns` that no placeholder uses; an unknown renderer; one argument name under two renderers in one template; an argument location with `*`; a template that is not ASCII or has unbalanced braces |
+| `WC05` | an unknown limit or lexical class; a class or character set that 2.4 does not allow (a negative limit is refused by the reader, as `WC01`) |
+| `WC06` | `@n` with fewer than `n + 1` enclosing groups; `unique_so_far` outside a group or with an `at` not relative to `@`; an `at` with `*`; `"on": "key"` on a target whose pointer can be empty (2.4); a literal value that is not a scalar |
 | `WC07` | a string bound for a generated Lean file that contains a token of `lean/audit.py`'s `FORBIDDEN` as a whole word |
-| `WC08` | a hook, classifier member or view without `says`; an `inherited` one whose `returns` is not `["message"]` or whose `text` is not `{message}`; a hook or member with no fault in the fault catalogue (8.3) |
+| `WC08` | a hook, a classifier member or an include with a `view`, without `says`; an `inherited` hook or member whose `returns` is not `["message"]` or whose `text` is not `{message}`; a hook or member with no fault in the fault catalogue (8.3) |
 | `WC09` | an include of an unknown contract or phase, or of a contract missing from `uses`; an include cycle; an include with a `view` inside an included phase; an `as` code that is not declared |
 | `WC10` | a file whose hash differs from the lock; changed content with an unchanged revision; fewer than two examples; an example on which the Python engine does not report `clean` |
 | `WC11` | a generated file that differs from regeneration |
@@ -529,8 +555,8 @@ structure Pattern where
   base : Base
   steps : List Step
 
-inductive Value where                  -- a scalar literal of a contract (2.3)
-  | null | bool (b : Bool) | int (n : Nat) | str (s : String)
+inductive Value where                  -- a scalar literal of a contract (2.3); it has no `null`
+  | bool (b : Bool) | int (n : Nat) | str (s : String)
 
 inductive Atom where
   | null | boolean | integer | string | array | object
@@ -761,11 +787,11 @@ theorem run_phase_major (t : Table) (ps qs : List Phase) (h : Hooks) (j : Json)
 
 /-- Claim (B) of 2.9: two hook sets with the same views, which agree on every instance that is reached,
     give the same result. Hooks after the first instance that does not hold are never consulted. -/
-theorem run_congr_reached (t : Table) (h h' : Hooks) (j : Json)
-    (hv : ∀ name v, h.view name v = h'.view name v)
+theorem run_congr_reached (t : Table) (h g : Hooks) (j : Json)
+    (hv : ∀ name v, h.view name v = g.view name v)
     (hr : ∀ pre i post, instances t h j = pre ++ i :: post →
-            (∀ b ∈ pre, eval h b = none) → eval h i = eval h' i) :
-    run t h j = run t h' j
+            (∀ b ∈ pre, eval h b = none) → eval h i = eval g i) :
+    run t h j = run t g j
 
 end VE.Contract
 ```
@@ -972,7 +998,7 @@ Phase 6, `semantic`:
 | · 6.10a | `T′` is stratified | `SOFT_DEPENDENCY_CYCLE` | `DependencyCycle: {detail}` |
 | · 6.10b | `T′` within W1's resource limits; inherited | `SOFT_RESOURCE_LIMIT` | `{message}` |
 | · 6.10c | `T′` passes W1's other checks; inherited | `SOFT_INVALID_INPUT` | `{message}` |
-| · 6.11 | each generated soft premise within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated soft premise{detail}` |
+| · 6.11 | each generated soft premise within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated soft premise` |
 | · 6.12 | each generated norm layer within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated norm layer {detail}` |
 | · 6.13 | each conflict target within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated conflict target {detail}` |
 | · 6.14 | `background′` within one budget | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated background` |
@@ -987,19 +1013,37 @@ has held, so input cannot steer the mapping.
   fails, member 5.7 with its message. Otherwise `Phases.ruleReferences` on the rule as it is; a failure with code
   `SOFT_INVALID_EXCEPTION_CONDITION` is member 5.8b, any other failure is member 5.8a. Python: the same with
   `_rule_references` and the rule's `conditions` emptied.
+
+  **Order inside the set.** Both validators type the guard and the carve-outs first. They then take the
+  exception's conditions one at a time, `sufficient` before `necessary`, and each condition is typed and then
+  screened before the next one is read (`Phases.lean:305–313`, `softnorms.py:422–429`). So 5.8a and 5.8b
+  alternate condition by condition: a 5.8b fault on an earlier condition comes before a 5.8a fault on a later
+  one, and the index in `emits` alone would give the oracle the wrong answer for that pair. In the fault
+  catalogue a fault for 5.8a or 5.8b therefore carries the order key of 2.6: (the condition's index, the
+  member's index in `emits`), where the conditions of a rule are counted from 0 through `sufficient` and then
+  `necessary`, and the members' indices are 1 for 5.8a and 2 for 5.8b. A fault for 5.7 keeps the default key,
+  (0), which comes before every key of 5.8a and 5.8b.
 - `soft_semantic`. Let `m` be the message with which the legacy validator rejects (`validateSoft`; in Python the
   construction of `SoftNormDocument`). The first rule that applies decides. The table is the Lean classifier,
-  with Lean's texts. The Python classifier applies the same thirteen rules to the Python validator's exception,
-  with two differences that follow from Python's texts: where a rule tests for the leading `ResourceLimit: ` it
-  tests for the exception class `ResourceLimit`, and in rules 1 and 2 it tests Python's W1 texts, which have no
-  leading class (`AST exceeds 10,000 nodes`, `precedence depth`; `ve/ast.py:212`, `ve/norms.py:252`). That the
-  two classifiers name the same member is tested (tiers 0 and A), not constructed.
+  with Lean's texts. The Python classifier applies the same rules to the Python validator's exception, with
+  three differences that follow from Python's texts:
+  - where a rule tests for the leading `ResourceLimit: ` it tests for the exception class `ResourceLimit`;
+  - in rules 1 and 2 it tests Python's W1 texts, which have no leading class (`AST exceeds 10,000 nodes`,
+    `precedence depth`; `ve/ast.py:212`, `ve/norms.py:252`);
+  - before rule 5 it has one more rule: `m` is exactly `ResourceLimit: derived carve-out`: member 6.10b. Python
+    gives that text, which names no rule, to a `ResourceLimit` that `SoftenedNormDocument` raises, and that is
+    W1's limits on `T′` (`softnorms.py:949–952`). Lean reports the same case from `validateW1 (soften D)`, by
+    rule 12. Python's rule 5 is then reached only by a text that goes on to name a rule
+    (`ResourceLimit: derived carve-out of rule <name>`), which is the text of 6.9 in both validators.
+
+  That the two classifiers name the same member is tested (tiers 0 and A), not constructed.
 
 | # | Condition | Member |
 |---|---|---|
 | 1 | W1's check of the base document (`checkW1 D.base`; Python `NormDocument` on the core rules) fails with `m`, and `m` is `ResourceLimit: AST exceeds 10,000 nodes` | 6.5a |
 | 2 | the same, and `m` is `ResourceLimit: precedence depth` | 6.6 |
 | 3 | the same, and `m` begins `DependencyCycle: `: 6.5b if the author precedence graph is cyclic, otherwise 6.7 | 6.5b, 6.7 |
+| 3a | the same, with any other `m` | no member: the classifier returns `ok`, so the rejection shows as a residual (2.8) and is not attributed to `T′` by rules 12 and 13 |
 | 4 | `m` begins `SoftOverHard: ` | 6.8 |
 | 5 | `m` begins `ResourceLimit: derived carve-out` | 6.9 |
 | 6 | `m` begins `ResourceLimit: generated soft premise` | 6.11 |
@@ -1014,14 +1058,14 @@ has held, so input cannot steer the mapping.
 **Expected entries of the delta report**, from reading the two validators; none was run. Each is decided at plan
 5.1 step 5, not here.
 
-| Check | Python today | Lean today and the contract |
-|---|---|---|
-| 2.7a, 2.8c, a name that is not a string | Python's `str` of the value | compact JSON of the value |
-| 4.1c | `InvalidInput: invalid norm fields [<sorted keys>]` | `InvalidInput: invalid norm fields` |
-| 6.5a, 6.6 | `AST exceeds 10,000 nodes`, `precedence depth`: W1's Python texts carry the class in the exception, not in the message | `ResourceLimit: AST exceeds 10,000 nodes`, `ResourceLimit: precedence depth` |
-| 6.9 | also `ResourceLimit: derived carve-out` without a rule (`softnorms.py:952`) | always names the rule |
-| 6.11 | `ResourceLimit: generated soft premise <label>` | no label |
-| 2.3, 4.2a, 4.13b, 4.13d, 5.7, 5.8a, 6.10b, 6.10c | the inherited decoder's own text | the inherited decoder's own text; these stay language-specific until plan S4 and S5 |
+| Check | Python today | Lean today | The contract |
+|---|---|---|---|
+| 2.7a, 2.8c, a name that is not a string | Python's `str` of the value | compact JSON of the value, whole (`value.compress`, `Phases.lean:89`) | compact JSON of the value, cut at 80 bytes with `...` added (2.7: `raw` renders a value that is not a string as `json`). Python's text changes; Lean's changes where the compact JSON is longer than 80 bytes |
+| 4.1c | `InvalidInput: invalid norm fields [<sorted keys>]` | `InvalidInput: invalid norm fields` | Lean's text |
+| 6.5a, 6.6 | `AST exceeds 10,000 nodes`, `precedence depth`: W1's Python texts carry the class in the exception, not in the message | `ResourceLimit: AST exceeds 10,000 nodes`, `ResourceLimit: precedence depth` | Lean's texts |
+| 6.10b, W1's limits on `T′` | `ResourceLimit: derived carve-out`, which names no rule: `softnorms.py:949–952` rewords the `ResourceLimit` that `SoftenedNormDocument` raises, and W1's own text is lost | W1's own text, from `validateW1 (soften D)` | inherited: each language's text, as in the last row. This is not an entry for 6.9, whose text names the rule in both validators (`ResourceLimit: derived carve-out of rule <name>`) and does not change |
+| 6.11 | `ResourceLimit: generated soft premise <label>` | `ResourceLimit: generated soft premise` | Lean's text; Python's label is lost |
+| 2.3, 4.2a, 4.13b, 4.13d, 5.7, 5.8a, 6.10b, 6.10c | the inherited decoder's own text | the inherited decoder's own text | each language's text; these stay language-specific until plan S4 and S5 |
 
 **Planned tiers, for the gate of section 9.** A numbered check of soft-norms.md 8 counts by its weakest
 sub-entry, in the order T3, inherited hook, T2, T1.
@@ -1157,7 +1201,7 @@ phase `body`:
 | | · 3.1 | `declared_in`: `/doc/items/*/name` | `DEMO_UNKNOWN` | `Unknown: {value}` |
 | | 3.2 | `max_count` of `/doc/items/*/tags/*`: `DEMO_MAX_TAGS` | `DEMO_LIMIT` | `Limit: {count} tags` |
 | | 3.3 | include `inner@0`, phase `body`, at `/doc/part` | | |
-| | 3.4 | include `inner@0`, phase `body`, at `/doc`, view `part_view`, as `DEMO_SEMANTIC` | | |
+| | 3.4 | include `inner@0`, phase `body`, at `/doc`, view `part_view`, with the `says` below, as `DEMO_SEMANTIC` | | |
 | `semantic` | 4.1 | hook `no_bad_name`, returns `names` | `DEMO_SEMANTIC` | `Semantic: {names:list}` |
 | | 4.3 | classifier `demo_rules`, emits 4.3a (returns `n`) and 4.3b | `DEMO_SEMANTIC` | `Semantic: first {n:count}`; `Semantic: second` |
 
@@ -1169,6 +1213,21 @@ phase `body`:
 | `first` | d1 | `type` `/v`: integer | `Defer: v` |
 | `second` | d2 | hook `lean_only` | `Defer: lean only` |
 | | d3 | `type` `/w`: integer | `Defer: w` |
+
+The `says` sentences of the corpus contracts, so that the fixture files are determined. Each string is exactly as
+shown, backticks included. In the sentence of 3.4, `W` is the letter as written; it stands for the include's
+target, as in 3.1, which here is `/doc`.
+
+```json
+{"3.4":  "The view gives an object whose only member `x` is the `seed` of W, or 0 when W is not an object with a `seed`.",
+ "4.1":  "No value at `/doc/items/*/name` is the string `bad`.",
+ "4.3a": "`/doc/refs` does not have exactly 3 elements.",
+ "4.3b": "`/doc/refs` does not have exactly 2 elements.",
+ "d2":   "`/note` is not the string `lean`."}
+```
+
+3.4, 4.1, 4.3a and 4.3b are in `demo@0` and d2 is in `defer@0`. `inner@0` has no hook, classifier or view, and
+so no `says`.
 
 The corpus hooks, implemented in `Hooks/Corpus.lean` and in the Python test harness:
 
@@ -1259,13 +1318,14 @@ the first table of 2.4. The lemma-free evidence for claim (A) is this corpus; it
 | L5 | `max_items` with limit `DEMO_NONE` | `WC05` |
 | L6 | 2.2b's argument written `@2/name` | `WC06` |
 | L7 | a text containing the word `partial`; and one containing `sorry` | `WC07` for both (the second is on the audit's list and was not on the plan's) |
-| L8 | hook 4.1 without `says` | `WC08` |
+| L8 | hook 4.1 without `says`; and, separately, include 3.4 without `says` | `WC08` for both |
 | L9 | include 3.4 moved into `inner@0`'s phase `body` | `WC09` |
 | L10 | a changed text with the lock and revision unchanged | `WC10` |
 | L11 | a hand edit of `Tables/Corpus.lean`; the mutation of 7.4 | `WC11` |
 | L12 | a clean tree | `--check` exits 0 and prints nothing |
 | L13 | `--write` after raising a revision | exactly the generated files, the lock and the generated modules' inventory lines change |
 | L14 | a module `VE.SoftNorms.Run` importing `VE.Contract.Engine` | `tools/check_lean_imports.py` fails (7.3) |
+| L15 | `demo@0` with check 1.8's `const` given the value `null` | `WC01`: `ve.wire.loads_json` refuses the file (2.2) |
 
 ### 8.3 The pilot (`soft-norms@0`)
 
@@ -1306,8 +1366,8 @@ for a combination it is the code of the fault with the least table position.
 
 | Tier | Assertion |
 |---|---|
-| 0 | every fault of the catalogue, alone, gives its own check as the first diagnostic in Python and in Lean, and both legacy validators reject. The catalogue has every fault of `multi_faults()` and, for each T1 check, the mutations derived from its kind |
-| A | all pairs within a phase, a seeded sample of cross-phase pairs and of triples, pairs of one check on two items, all pairs inside each classifier set; only faults with disjoint footprints are combined. Expected: the fault of least position. Python = Lean = expected, on the whole record, except `text` and `args` of inherited records |
+| 0 | every fault of the catalogue, alone, gives its own check as the first diagnostic in Python and in Lean, and both legacy validators reject. The catalogue has every fault of `multi_faults()` and, for each T1 check, the mutations derived from its kind. A fault for a classifier member records its order key (2.6) wherever section 6 states one for its set; otherwise the key is the member's index in `emits` |
+| A | all pairs within a phase, a seeded sample of cross-phase pairs and of triples, pairs of one check on two items, all pairs inside each classifier set; only faults with disjoint footprints are combined. Expected: the fault of least position, which inside a classifier set is decided by the order keys (2.6). Python = Lean = expected, on the whole record, except `text` and `args` of inherited records |
 | B | seeded stacks of two to five mutations with key order shuffled. The two engines agree, and in each language the engine reports a fault exactly when the legacy validator rejects |
 | C | on every case of A and B: gates C1 and C2 |
 | coverage | every check is the first diagnostic at least once and is masked by an earlier one at least once; every adjacent phase pair occurs; the residual count and the deferred share are reported |
@@ -1399,7 +1459,7 @@ or change; the plan is synchronised afterwards.
 | # | Choice | Relative to the plan |
 |---|---|---|
 | R1 | `run` is defined as the first failing instance, so `run_clean_iff` and `run_fault_first` are immediate; `eval` replaces `holds` and `diagnosticOf`; a list split replaces the index; `run_phase_major` and `run_congr_reached` are added | plan 3.2 gave two schemata and estimated the lemmas as the main uncertainty of S1b; with this definition they are small |
-| R2 | Guards are conjunctions of six literal forms; type forms are not recursive; contract literals are scalars | plan 2.3 named `when` and `type` without a grammar |
+| R2 | Guards are conjunctions of six literal forms; type forms are not recursive; contract literals are scalars: a Boolean, an integer or a string, and never `null` (R16) | plan 2.3 named `when` and `type` without a grammar |
 | R3 | An absent target holds, for every T1 kind with a target | not stated in the plan |
 | R4 | The kind list is the plan's. `requires` and `excludes` take `member` or `item`; `name` takes `"on": "key"`; a limit may be a numeral | plan 2.3 |
 | R5 | Includes are resolved to scopes before any engine runs; views are total and applied at expansion; a viewed include may not sit inside an included phase | plan 2.3 and question 8; the pilot uses no include, because no base contract exists before S4 |
@@ -1413,16 +1473,59 @@ or change; the plan is synchronised afterwards.
 | R13 | Constants such as the specification revision (1.4) are literals in the contract; a new revision of the spec is a contract revision | not stated in the plan |
 | R14 | Record `args` hold rendered strings, not JSON values | plan 2.4's example |
 | R15 | The pilot's Python hooks live in a new module `ve/softnorms_contract.py`, and in S0 to S3 no production path calls the engine | plan 3 put Python hooks "in the profile modules"; a new module leaves `ve/softnorms.py` without a diff |
+| R16 | Contract files, `limits.json` and `names.json` are read with `ve.wire.loads_json`, so a contract has no `null` literal; `null` is tested with the type form | not stated in the plan before its draft 3, which now says it in 2.1 |
+| R17 | An include with a `view` carries a `says` sentence, which the generated wording uses and the lint requires | the plan's excerpt in 2.1 had a viewed include without one; plan draft 3 adds it there and in 2.3 |
+| R18 | A fault for a classifier member is ordered inside its set by an order key that the fault catalogue records; the index in `emits` is the default. `rule_typing` states its keys | plan 2.2 and 6.2 give the position tuple and "the fault with the least position" only; the order inside a T3 set stays test-enforced, as plan 2.3 says |
+| R19 | Claim (B) asks for views that are equal on every value, as `run_congr_reached` does | plan 2.4 (b) says "every predicate reached (a hook, a classifier or a view)"; the plan is not edited for this |
+
+The statement review of draft 1 changed none of R1 to R15 and fixed R16 to R19 (section 13). As that review
+asked, the plan's draft 3 is synchronised with R16 and R17 only.
 
 Open, for the review or the build to settle:
 
 1. **`raw` is uncut.** A long name is repeated whole in the text, as today. Cutting it would change today's
-   texts.
-2. **6.11 and 6.9.** The contract takes Lean's texts. Keeping Python's label on 6.11 needs a Lean hook that
-   recomputes the label beside frozen code.
+   texts. This holds for a string only: a value that is not a string is rendered as `json` and cut, which is
+   the Lean delta entry for 2.7a and 2.8c in section 6.
+2. **6.11 and 6.9: closed by the statement review.** 6.11's template has no placeholder: the contract takes
+   Lean's text, and Python's lost label is an entry of the delta report (section 6). 6.9's text names the rule
+   in both validators; Python's text without a rule belongs to 6.10b (section 6, `soft_semantic`).
 3. **3.5 as hooks.** "No W3 definition" and "no W5 data flag" could be T1 checks on the raw predicate entries if
    the raw and decoded conditions are shown equal; they are hooks here because that was not checked.
 4. **The plain-language sentences of 3.3** have not been shown to a reader. They are fixed here so that every
    surface uses the same words; W8's fidelity gate may change them.
 5. **A viewed include's `path`.** It is the include site, as the debate fixed. Whether an IDE can place a
    diagnostic usefully from `inner_path` is not known before S5.
+
+## 13. Statement review response table (draft 2)
+
+Source: `manage-agents/debates/wire-spec/{fable,astra}.md` (Sol at xhigh stood in for Astra in all three rounds,
+as `astra.md` records). Verdict: **FIX, by statement edits only**, in one spec and plan commit, after which S0 to
+S3 start with no further round if the edits land as listed. The joint position is Fable's round 3, which Astra's
+round 3 accepts and which the DRI ruling in `fable.md` adopts: A1 (the `null` literal is removed; Astra's
+alternative, a second parser and encoder that admit `null`, is not adopted), A2 as in Fable's round 2, and F1 to
+F4 with the four minor edits of Fable's round 1. No frozen validator changes, and this draft changes nothing
+else in the design.
+
+| Review edit | Change in this draft |
+|---|---|
+| A1. A literal is a Boolean, an integer or a string; `null` is written as the type form `"null"`. Only the literal goes: the runtime value `null` and the type form stay (Astra's round 3) | 2.3, the literal sentence and the sentences after it, which also state what replaces an `enum` over `null` and that `requires` and `excludes` have no `null` item (Fable's round 3, point 2; Astra's round 3); 2.1 is unchanged; section 12, R2 and R16 |
+| A1. `Value` loses its `null` constructor; `Atom.null` stays | 5.1 |
+| A1. "A contract, `limits.json` and `names.json` are read with `ve.wire.loads_json`; a file it refuses is `WC01`." | 2.2; 4.3, `WC01`. As a consequence a negative limit is refused by the reader, so that clause leaves `WC05` |
+| A1. Fixture L15: `const` with the value `null` gives `WC01` | 8.2, L15 |
+| A1. "A `null` literal, if a later unit needs one, is a change of `format` with its own statement review." | 2.3, last sentence of the literal paragraph |
+| A2. The include form gains `"says"?`, required when `view` is present and refused otherwise | 2.3, the entry table and the `says` bullet; 2.5, the view row |
+| A2. "For a view, `says` states the value the included checks read" | 3.1, the paragraph after the table |
+| A2. The 3.1 include row reads `as transformed by the view <view>: <says>` | 3.1, include row. Because the `says` sentence now closes the sentence, the `as` clause became a sentence of its own, `They are reported with code <code>.` |
+| A2. `WC08`: "a hook, a classifier member or an include with a `view`, without `says`" | 4.3, `WC08`; `says` without a `view` is a shape error, `WC01` |
+| A2. Corpus 3.4 carries its `says`; 8.1 states the `says` of 4.1, 4.3a, 4.3b and d2 | 8.1, the 3.4 row and the block of `says` sentences. The sentence of 3.4 is the review's; the other four were written for this draft from the hooks' behaviour table |
+| A2. L8 adds: include 3.4 without `says` gives `WC08` | 8.2, L8 |
+| F1. `soft_semantic`: Python's `ResourceLimit: derived carve-out` without a rule is W1's limits on `T′` (`softnorms.py:949–952`), member 6.10b, not 6.9 | section 6: the third Python difference; the delta table's 6.9 row is replaced by a 6.10b row; section 12, open point 2 |
+| F2. 6.11's template is `ResourceLimit: generated soft premise`, without a placeholder (`Soften.lean:650–653`); Python's lost label is a delta entry | section 6: the 6.11 row and the delta table; section 12, open point 2 closed |
+| F3. `rule_typing` types and then screens each condition before the next (`Phases.lean:305–313`, `softnorms.py:422–429`); a catalogue fault for a classifier member carries its order key inside the set, defaulting to the index in `emits` | 2.6, the position sentences; section 6, "Order inside the set"; 8.3, tiers 0 and A; section 12, R18 |
+| F4. `soft_semantic` rule 3a: a base-W1 failure with any other message names no member and shows as a residual | section 6, rule 3a |
+| Minor. `h'` in `run_congr_reached` is renamed `g` | 5.3 |
+| Minor. `raw` on a value that is not a string is cut at 80 bytes, and `Phases.lean:89` prints it whole: a Lean delta entry for 2.7a and 2.8c | section 6: the delta table has a column for Lean today; section 12, open point 1 |
+| Minor. The lint refuses three cases that were not defined: `"on": "key"` on an empty pointer, one argument name under two renderers, an id comparison of a digit run with a letter run | 2.4 and `WC06`; 2.7 and `WC04`; 2.3 and `WC02` |
+| Minor. 2.9 (B) said views "reached"; the theorem needs views equal everywhere | 2.9 (B); section 12, R19 |
+| Start of the build: no stage starts before the commit (Fable withdrew "S0, S1a and S1b may start now" in round 2) | the status paragraph |
+| Plan wording synchronised with A1 and A2 | plan draft 3: its status paragraph, 2.1 (the reader and the excerpt's include), 2.3 (the `says` of a view) and its section 12 |
