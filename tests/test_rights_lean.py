@@ -674,3 +674,29 @@ def test_rights_and_speech_acts_do_not_combine(lean):
     for executable in (lean, SPEECH):
         for row in run(executable, cases):
             assert row["status"] == "error" and row["error"].startswith("UnsupportedProfile:"), row
+
+
+def test_block_without_protected_or_alters_is_read_as_lean_reads_it(lean):
+    """Review finding B (compose-s1-loop), class: Lean's `decodeRightsBlock` requires `holders` and `bearers` and
+    reads an absent `protected` or `alters` as empty (this file's `BLOCK` has neither); Python's rights environment
+    required both, so `vocabulary.rights.protected: null`, which the S1 route reads as absent, was `ok` for Lean and
+    refused by Python. Python now reads the block as Lean does, keeping it as written: the same identity, the same
+    elaboration, and the same refusal of a block without `holders` or with another field."""
+    from ve.rights import RightsEnvironment, correlate
+    from ve.errors import VEError
+    from ve.readings_s1 import lean_defaults
+    from ve.rights_route import expected_environment_prime
+    for block in (BLOCK, {**BLOCK, "protected": []}, {**BLOCK, "alters": {}}):
+        raw = env(ARREST, rights=block)
+        row = elaborate(lean, raw, GAMMA)
+        environment = RightsEnvironment(raw)
+        assert environment.to_dict() == raw
+        assert environment.environment_id == digest(f"ve-environment-{environment.identity_version}\n", raw)
+        rights = correlate(raw, [lean_defaults(unit) for unit in GAMMA])
+        assert expected_environment_prime(rights) == row["environment_prime"]
+    for block in ({"bearers": ["state"]}, {**BLOCK, "other": []}):
+        raw = env(ARREST, rights=block)
+        [row] = run(lean, [{"id": "e", "kind": "rights-elaborate", "environment": raw, "document": GAMMA}])
+        assert row["error"] == "InvalidInput: invalid rights block"
+        with pytest.raises(VEError, match="^InvalidInput: invalid rights block$"):
+            RightsEnvironment(raw)
