@@ -1,6 +1,6 @@
 {
   "contract": "soft-norms@0",
-  "revision": 1,
+  "revision": 2,
   "format": 1,
   "status": "shadow",
   "input": [
@@ -300,7 +300,7 @@
             "message"
           ],
           "inherited": true,
-          "says": "The inherited W1 declarations accept the transformed environment.",
+          "says": "W1's environment decoder accepts `/environment` with `instruction_of` removed from every predicate, `soft` removed from the vocabulary, and the profiles reduced to `norms@0`, `relational-fol@0` and those of `data@0`, `definitions@0`, `documents@1` and `time@0` that it lists.",
           "code": "SOFT_INVALID_INPUT",
           "text": "{message}"
         },
@@ -579,7 +579,7 @@
               "id": "3.2",
               "kind": "hook",
               "hook": "profile_registered",
-              "says": "The item is a registered profile.",
+              "says": "The item is one of `closure@0`, `data@0`, `definitions@0`, `documents@1`, `nary@0`, `norms@0`, `order@0`, `relational-fol@0`, `soft-norms@0` and `time@0`.",
               "code": "SOFT_UNSUPPORTED_PROFILE",
               "text": "UnsupportedProfile: Unsupported profile {value}"
             }
@@ -709,7 +709,7 @@
                 "message"
               ],
               "inherited": true,
-              "says": "The inherited W1 rule fields are valid.",
+              "says": "W1's rule decoder accepts the item's `norm` restricted to `name`, `predicate`, `sign`, `guard`, `unless` and `over`, its `name` is a rule name, and it has at most 8 carve-outs.",
               "code": "SOFT_INVALID_INPUT",
               "text": "{message}"
             },
@@ -1013,7 +1013,7 @@
                     "message"
                   ],
                   "inherited": true,
-                  "says": "The inherited FOL formula decoder accepts the item.",
+                  "says": "W1's formula decoder accepts the item as one formula within its own node budget.",
                   "code": "SOFT_INVALID_INPUT",
                   "text": "{message}"
                 }
@@ -1055,7 +1055,7 @@
                     "message"
                   ],
                   "inherited": true,
-                  "says": "The inherited FOL formula decoder accepts the item.",
+                  "says": "W1's formula decoder accepts the item as one formula within its own node budget.",
                   "code": "SOFT_INVALID_INPUT",
                   "text": "{message}"
                 }
@@ -1194,7 +1194,7 @@
               "kind": "hook",
               "at": "@/norm/predicate",
               "hook": "regulated_predicate",
-              "says": "The rule names a regulated predicate.",
+              "says": "The predicate named by the item's `norm/predicate` is declared with `regulated`.",
               "code": "SOFT_INVALID_INPUT",
               "text": "UnknownSymbol: regulated predicate {value}"
             },
@@ -1244,7 +1244,7 @@
                     "message"
                   ],
                   "inherited": true,
-                  "says": "The inherited W1 rule guard and carve-outs are typed."
+                  "says": "The item's guard and carve-outs are well typed over the sorts of its predicate, in that order, and together have at most 10,000 nodes."
                 },
                 {
                   "id": "5.8a",
@@ -1254,7 +1254,7 @@
                     "message"
                   ],
                   "inherited": true,
-                  "says": "The inherited W1 exception conditions are typed."
+                  "says": "Each condition of the item's exception, `sufficient` before `necessary`, is well typed over the sorts of its predicate, and the guard, the carve-outs and the conditions up to it together have at most 10,000 nodes."
                 },
                 {
                   "id": "5.8b",
@@ -1263,7 +1263,7 @@
                   "returns": [
                     "detail"
                   ],
-                  "says": "No exception condition mentions a regulated, defined, or reserved soft predicate."
+                  "says": "No condition of the item's exception names a predicate that is declared with `regulated`, is defined, or starts with `soft__`."
                 }
               ]
             },
@@ -1287,7 +1287,7 @@
                     "predicate",
                     "parent_predicate"
                   ],
-                  "says": "The referenced parent rule regulates the same predicate.",
+                  "says": "The rule named by the item has the same `predicate` as the enclosing item's rule.",
                   "code": "SOFT_INVALID_INPUT",
                   "text": "PrecedenceAcrossPredicates: rule {rule} on {predicate}, rule {value} on {parent_predicate}"
                 }
@@ -1324,7 +1324,7 @@
                 "a": "@/0",
                 "b": "@/1"
               },
-              "says": "The tied ranks are not ordered by outranking.",
+              "says": "Neither rank of the item outranks the other, directly or through other ranks.",
               "code": "SOFT_TIE_AGAINST_ORDER",
               "text": "TieAgainstOrder: {a}, {b}"
             }
@@ -1335,28 +1335,26 @@
           "kind": "hook",
           "at": "/environment/vocabulary/soft/ties",
           "hook": "ties_distinct_unordered",
-          "says": "No unordered tie is repeated.",
+          "says": "No two ties of `/environment/vocabulary/soft/ties` hold the same two ranks, in either order.",
           "code": "SOFT_DUPLICATE_DECLARATION",
           "text": "DuplicateDeclaration: tie"
         },
         {
           "id": "6.4a",
           "kind": "hook",
-          "at": "/environment/vocabulary/soft",
           "hook": "decision_names_fit",
           "returns": [
             "name"
           ],
-          "says": "Generated decision names fit the identifier limit.",
+          "says": "Every generated decision predicate name is at most 64 bytes long in UTF-8.",
           "code": "SOFT_RESOURCE_LIMIT",
           "text": "ResourceLimit: decision predicate {name}"
         },
         {
           "id": "6.4b",
           "kind": "hook",
-          "at": "/environment/vocabulary/soft",
           "hook": "extended_vocabulary_fits",
-          "says": "The extended vocabulary stays within resource limits.",
+          "says": "The declared predicates and the generated decision predicates are together at most 256.",
           "code": "SOFT_RESOURCE_LIMIT",
           "text": "ResourceLimit: extended vocabulary"
         },
@@ -1476,7 +1474,7 @@
               "id": "6.15",
               "code": "SOFT_RESOURCE_LIMIT",
               "text": "ResourceLimit: generated norm layers",
-              "says": "The layers and top stay within one budget."
+              "says": "The generated norm layers and the one-node conclusion of the smallest query together fit one checker's budget of 10,000 nodes."
             }
           ]
         }
