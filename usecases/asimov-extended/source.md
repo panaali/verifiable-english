@@ -6,7 +6,7 @@ Rules 1–13 in [base.ve](base.ve) translate the Three Laws and the Zeroth Law
 exactly as the merged v2 use case does. Its [source text](../asimov-laws/source.md)
 pins the wording: Isaac Asimov, "Runaround", *Astounding Science Fiction*
 (March 1942), p. 100, and the Zeroth Law from *Robots and Empire* (1985).
-No file under `usecases/asimov-laws/` is changed. `base.ve` is v2's `rules.ve`
+The extension changes no rule, environment or manifest under `usecases/asimov-laws/`. `base.ve` is v2's `rules.ve`
 with one forced rewording: a risk environment rejects the bare word
 `prevents`, so rules 9 and 13 say `might prevent`. The meaning of the word
 does not change (risk.md 2.2).
@@ -16,6 +16,10 @@ not Asimov's. An action that no rule forbids may be performed. An action is
 not required unless a rule requires it, and a derived name is false unless a
 rule derives it. The source grants no permission by default. Most v2 verdicts,
 P9's among them, rest on that default (README, "The permission default").
+The `unspecified` completion (`norm-defaults@0`) would state the source's
+silence instead, but it does not yet combine with `alternatives@0` and
+`risk@0`, so the default stays (README, "Why the default is not
+`unspecified`").
 
 ## The additions (authored, not Asimov's)
 
