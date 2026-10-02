@@ -409,12 +409,8 @@ def legacy_codes():
 
 # Members for which no input is known that reaches them, each with the reason. The `WC08` catalogue clause
 # accepts a member declared here, and the gate reports it as uncovered: a declaration is not a witness.
-UNREACHED = {
-    "6.10c": "The fallback member of `soft_semantic`: W1's checks of T' other than its resource limits "
-             "(6.10b) and its stratification (6.10a). T' is well typed by construction, 6.9 bounds its "
-             "carve-out counts before W1 runs, and its new names are fresh by 2.1a and 6.4a. Seeded searches "
-             "over 10,000 small documents (2026-10-02) reached 6.10a and never 6.10c.",
-}
+# None is declared: 6.10c, the one there was, is no longer a member (revision 3; wire-contract.md 6, rule 13).
+UNREACHED = {}
 
 
 def catalogue_checks():

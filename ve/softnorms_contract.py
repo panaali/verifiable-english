@@ -278,7 +278,8 @@ def soft_semantic(root, items):
         # it also covers Python's extra rule, the text `ResourceLimit: derived carve-out` alone.
         if isinstance(exc, ResourceLimit):
             return "6.10b", {"message": message}
-        return "6.10c", {"message": message}
+        # Rule 13: any other message names no member (revision 3), as rule 3a for the base, and shows as a
+        # residual. No input is known that reaches it: W1 on T′ fails only on its limits or strata.
     return None
 
 

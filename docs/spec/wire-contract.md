@@ -1005,7 +1005,6 @@ Phase 6, `semantic`:
 | · 6.9 | derived carve-outs within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: derived carve-out{detail}` |
 | · 6.10a | `T′` is stratified | `SOFT_DEPENDENCY_CYCLE` | `DependencyCycle: {detail}` |
 | · 6.10b | `T′` within W1's resource limits; inherited | `SOFT_RESOURCE_LIMIT` | `{message}` |
-| · 6.10c | `T′` passes W1's other checks; inherited | `SOFT_INVALID_INPUT` | `{message}` |
 | · 6.11 | each generated soft premise within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated soft premise` |
 | · 6.12 | each generated norm layer within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated norm layer {detail}` |
 | · 6.13 | each conflict target within the limits | `SOFT_RESOURCE_LIMIT` | `ResourceLimit: generated conflict target {detail}` |
@@ -1051,7 +1050,7 @@ has held, so input cannot steer the mapping.
 | 1 | W1's check of the base document (`checkW1 D.base`; Python `NormDocument` on the core rules) fails with `m`, and `m` is `ResourceLimit: AST exceeds 10,000 nodes` | 6.5a |
 | 2 | the same, and `m` is `ResourceLimit: precedence depth` | 6.6 |
 | 3 | the same, and `m` begins `DependencyCycle: `: 6.5b if the author precedence graph is cyclic, otherwise 6.7 | 6.5b, 6.7 |
-| 3a | the same, with any other `m` | no member: the classifier returns `ok`, so the rejection shows as a residual (2.8) and is not attributed to `T′` by rules 12 and 13 |
+| 3a | the same, with any other `m` | no member: the classifier returns `ok`, so the rejection shows as a residual (2.8) and is not attributed to `T′` by rules 11 to 13 |
 | 4 | `m` begins `SoftOverHard: ` | 6.8 |
 | 5 | `m` begins `ResourceLimit: derived carve-out` | 6.9 |
 | 6 | `m` begins `ResourceLimit: generated soft premise` | 6.11 |
@@ -1061,7 +1060,7 @@ has held, so input cannot steer the mapping.
 | 10 | `m` is `ResourceLimit: generated background` | 6.14 |
 | 11 | `m` begins `DependencyCycle: ` | 6.10a |
 | 12 | `m` begins `ResourceLimit: ` | 6.10b |
-| 13 | anything else | 6.10c |
+| 13 | anything else | no member, as rule 3a: the classifier returns `ok` and the rejection shows as a residual (revision 3; until revision 2 the fallback member 6.10c, "`T′` passes W1's other checks", which no input was found to reach: W1 on `T′` fails only on its limits, rule 12, or its strata, rule 11) |
 
 **Expected entries of the delta report**, from reading the two validators; none was run. Each is decided at plan
 5.1 step 5, not here.
@@ -1073,7 +1072,7 @@ has held, so input cannot steer the mapping.
 | 6.5a, 6.6 | `AST exceeds 10,000 nodes`, `precedence depth`: W1's Python texts carry the class in the exception, not in the message | `ResourceLimit: AST exceeds 10,000 nodes`, `ResourceLimit: precedence depth` | Lean's texts |
 | 6.10b, W1's limits on `T′` | `ResourceLimit: derived carve-out`, which names no rule: `softnorms.py:949–952` rewords the `ResourceLimit` that `SoftenedNormDocument` raises, and W1's own text is lost | W1's own text, from `validateW1 (soften D)` | inherited: each language's text, as in the last row. This is not an entry for 6.9, whose text names the rule in both validators (`ResourceLimit: derived carve-out of rule <name>`) and does not change |
 | 6.11 | `ResourceLimit: generated soft premise <label>` | `ResourceLimit: generated soft premise` | Lean's text; Python's label is lost |
-| 2.3, 4.2a, 4.13b, 4.13d, 5.7, 5.8a, 6.10b, 6.10c | the inherited decoder's own text | the inherited decoder's own text | each language's text; these stay language-specific until plan S4 and S5 |
+| 2.3, 4.2a, 4.13b, 4.13d, 5.7, 5.8a, 6.10b | the inherited decoder's own text | the inherited decoder's own text | each language's text; these stay language-specific until plan S4 and S5 |
 
 **Planned tiers, for the gate of section 9.** A numbered check of soft-norms.md 8 counts by its weakest
 sub-entry, in the order T3, inherited hook, T2, T1.
@@ -1378,7 +1377,7 @@ for a combination it is the code of the fault with the least table position.
 | A | all pairs within a phase, a seeded sample of cross-phase pairs and of triples, pairs of one check on two items, all pairs inside each classifier set; only faults with disjoint footprints are combined. Expected: the fault of least position, which inside a classifier set is decided by the order keys (2.6). Python = Lean = expected, on the whole record, except `text` and `args` of inherited records |
 | B | seeded stacks of two to five mutations with key order shuffled. The two engines agree, and in each language the engine reports a fault exactly when the legacy validator rejects |
 | C | on every case of A and B: gates C1 and C2 |
-| coverage | every check is the first diagnostic at least once and is masked by an earlier one at least once; every adjacent phase pair occurs; the residual count and the deferred share are reported |
+| coverage | every check is the first diagnostic at least once; every check after the table's first instance is masked by an earlier one at least once (the first instance has no earlier check); every adjacent phase pair occurs; the residual count and the deferred share are reported |
 
 Each T2 hook is also compared between Python and Lean on every Tier 0 to B input at which it is reached. The
 existing corpora (the soft conformance fixtures, the stage-0 baseline's rejection cells, the use-case documents)
@@ -1402,7 +1401,7 @@ After S3 the DRI reviews one report, `conformance/wire-contract/soft-norms@0-gat
 | Metric | Definition | Required |
 |---|---|---|
 | residual count | cases of tiers 0, A, B and the replayed corpora in which a legacy validator rejects and that language's engine reports `clean`; per language | 0 |
-| Tier 0, Tier A | as 8.3, in Python and in Lean | green |
+| Tier 0, Tier A | as 8.3, in Python and in Lean; the expected record is the fault catalogue's on every field, `text` rendered from the contract's template with the catalogue's `args`, and an inherited record's `text` is its language's legacy text | green |
 | `n1` | numbered checks of soft-norms.md 8 whose every sub-entry is T1 | reported |
 | `n2` | numbered checks whose weakest sub-entry is a T2 hook that is not inherited | reported |
 | feasibility | `n1 + n2`, out of 67 | at least 45 |
@@ -1558,5 +1557,18 @@ the commits are listed in the branch history. The pilot contract is at revision 
 | Astra C, Fable C: theorems in `VE.WireContract`, the spec says `VE.Contract` | section 5 records the namespace as built and the qualified names; the statements' formulas are those of 5.3 |
 | Fable C: `soft_semantic` rule 12 tested a message prefix; adapters differed on a missing `kind` or `norms` | rule 12 tests the class `ResourceLimit`; the Python adapter gives `null` for a missing member and refuses a case without a known kind, as Lean's |
 
-Open for the DRI: the `rights@0` legacy verdict difference (S3-pre), the statement edit for 1.1's masking
-witness, and whether 6.10c stays a member with no known reaching input.
+Open for the DRI, then: the `rights@0` legacy verdict difference (S3-pre), the statement edit for 1.1's masking
+witness, and whether 6.10c stays a member with no known reaching input. All three are settled in section 15.
+
+## 15. Wire re-check response (2026-10-02)
+
+Source: `manage-agents/wire-looprecheck1.final.md`, FIX, on branch `wire/integrate` at `ff3c92fd`. Each
+finding was treated as a class and fixed with a regression test; the commits are listed in the branch
+history. The pilot contract is at revision 3. The gate (`soft-norms@0-gate.json`) runs 6,007 cases with no
+mismatch and residual 0 in both languages, coverage met, and S3-pre closed; it exits 0.
+
+| Finding | Change |
+|---|---|
+| A: the `rights@0` legacy verdict difference (Python's soft route accepts, the Lean route rejects at 3.2); S3-pre open | fixed outside the wire work, in Python's soft table, as S3-pre requires: the Lean rights route strips `rights@0` before the soft decoder, so Python's check 3.2 refuses `rights@0` unless its route is the caller (`ve/softnorms.py`, `LAYER_ROUTES`; `RightsEnvironment.LAYERS`), with the Lean route's code and text. Both legacy validators now reject every profile outside the Lean route's registry; tier L adds a whole rights source; `s3-pre.md` records the fix. The code differences on `speech-acts@0` and on `unspecified` under `norm-defaults@0` remain, reported, for plan 5.1 step 5 |
+| B: coverage unmet: no first-fault witness for 6.10c, no masking witness for 1.1 and 6.10c | 8.3's masking clause is stated for every check after the table's first instance (1.1 has no earlier check); 6.10c, the fallback member of `soft_semantic` that no input reached, is removed (revision 3): `soft_semantic` rule 13 now names no member, as rule 3a, so such a rejection would show as a residual, which the gate requires to be 0. `UNREACHED` is empty |
+| B: tier A had no independent expected `text` or `args` | the catalogue carries hand-written `args` for every fault of a check that is not inherited, with the locations they read in the fault's footprint; the oracle renders the expected `text` from the contract's template itself; an inherited record's `text` must be its language's legacy text, with `args` `{"message": text}`. `record_problems` in the gate holds the comparison |

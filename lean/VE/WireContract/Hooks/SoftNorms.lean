@@ -166,7 +166,8 @@ def semanticMember (D : SoftDoc) (m : String) : ClassifierResult :=
   else if m == "ResourceLimit: generated background" then .fail "6.14" []
   else if m.startsWith "DependencyCycle: " then .fail "6.10a" (detail "DependencyCycle: ")
   else if m.startsWith "ResourceLimit: " then .fail "6.10b" (message m)
-  else .fail "6.10c" (message m)
+  -- rule 13: any other message names no member (revision 3) and shows as a residual, as rule 3a
+  else .ok
 
 def classifier : String → Json → List Pointer → ClassifierResult
   -- 5.7 and 5.8 for one rule: `Phases.ruleReferences` on the rule without its exception, then on the rule
