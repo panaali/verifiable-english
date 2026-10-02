@@ -1,6 +1,6 @@
 # Composition stage S2 (pointer plan)
 
-> Status: planning draft 4 (2026-10-02), pointer only: no code, Lean or frozen contract changes. Draft 2 applied the
+> Status: planning draft 5 (2026-10-02), pointer only: no code, Lean or frozen contract changes. Draft 2 applied the
 > converged Astra + Fable design debate recorded in `manage-agents/debates/design-compose-s2/{astra,fable}.md` and
 > nothing else. Both files end `STATUS: CONVERGED` after round 3; the Astra seat was held in all three rounds by Sol
 > xhigh as the recorded cross-family stand-in. The debate's question (`TOPIC.md`) is the parent plan,
@@ -10,13 +10,16 @@
 > applied (`debates/design-compose`, `debates/design-compose-s1`). Every converged edit is already in the parent
 > plan's draft 2, whose section 10 maps each edit to its change. This file therefore restates no edit: the table
 > below lists which converged edits bind stage S2 and where each one sits. The statement specification of S2's
-> item 1, milestone S2a, is [composition-s2.md](composition-s2.md), now at draft 3: draft 3 of this file recorded the
+> item 1, milestone S2a, is [composition-s2.md](composition-s2.md), now at draft 4: draft 3 of this file recorded the
 > converged Astra + Fable statement review of the spec's draft 1
 > (`manage-agents/debates/compose-s2-spec/{astra,fable}.md`, CONVERGED after round 2 on FIX with five corrections, all
 > applied in the spec's draft 2 and listed in its change log; the Astra seat's round 1 is recorded as held by Sol
 > xhigh) and synchronized the references below to the spec's draft 2; draft 4 records the confirmation round on the
 > spec's draft 2 (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on three statement-level wording claims, every
-> definition confirmed, no unrelated change found; all three applied in the spec's draft 3) and points at draft 3.
+> definition confirmed, no unrelated change found; all three applied in the spec's draft 3) and points at draft 3;
+> draft 5 records the confirmation round on the spec's draft 3 (`manage-agents/compose-s2-p3ver2.final.md`: two of
+> the three corrections confirmed, FAIL on one statement-level claim that the route-order repair introduced,
+> `superposable D` evaluated on the rights chain; applied in the spec's draft 4) and points at draft 4.
 > The parenthesis "(the next stage after S0 …)" in
 > the pointer paragraph below is carried over from the S1 pointer and is not edited: item 1 is S2a, the stage after
 > S1 in the parent plan's order (S0, S1, S2a, S2b).
@@ -77,11 +80,20 @@ corrected in the spec's draft 3 with no definition, theorem statement or fixture
 route is chosen before anything of its 1.2 to 1.9 is computed, while choosing the superposed row reads
 `superposable` and so builds `sup D`: it now says that W2 returns before any narrowing becomes a premise, before
 `choiceCore D` and before any finding, and that choosing between the superposed and enumerated rows computes
-`superposable D` and nothing else (spec 1.1, 4.1). Spec 7 said that every theorem assuming `supReady` admits only
-documents today's texts admit, while `validate_couplings` also refuses an empty label intersection and an
-unsatisfiable coupling: the claim is now limited to the shape invariants `supReady` enforces (spec 7, 1.8, 8.3).
+`superposable D` and nothing else, on the soft and norms chains (spec 1.1, 4.1). Spec 7 said that every theorem
+assuming `supReady` admits only documents today's texts admit, while `validate_couplings` also refuses an empty
+label intersection and an unsatisfiable coupling: the claim is now limited to the shape invariants `supReady`
+enforces (spec 7, 1.8, 8.3).
 Fixture M17(a) said no theorem of spec 8.4 applies to a document failing `supReady`, while `encodes_atoms` assumes
 neither `supReady` nor `superposable`: it now says no theorem assuming them does.
+
+The confirmation round on the spec's draft 3 (`manage-agents/compose-s2-p3ver2.final.md`) confirmed the corrections
+to spec 7 and M17(a) and returned FAIL on the route-order repair, which had every document outside the first three
+rows compute `superposable D`: that reached the rights chain, whose fallback spec 1.1's table makes unconditional
+and whose superposition is S2b's. The spec's draft 4 says that a rights document takes the enumerated row
+unconditionally (until S2b), with nothing of its 1.2 to 1.9 computed, `superposable D` not evaluated and no
+`ReadingsNotSuperposable` (spec 1.1, 4.1 step 2; fixture M12), and that computing `superposable D` is the soft and
+norms chains' alone. No definition, theorem statement or fixture value changed.
 
 ## Process
 
@@ -90,8 +102,9 @@ review (PLAN-EXPAND2 rule 10) before any S2 Lean starts; a draft alone opens not
 `superpose_faithful` first (the parent plan's order: F21's shape for rights, and in S2a the leak of fixture M8), then
 the lifting lemma behind `superpose_all`. The review of draft 1 converged on FIX (above); the confirmation round on
 the spec's draft 2, scoped to the edited passages, returned FAIL on three wording claims (above), applied in the
-spec's draft 3; the S2a build gate opens on the PASS of the confirmation round on draft 3, scoped to the three
-edited passages. S0's statements ([composition.md](composition.md) sections 4, 5 and 9,
+spec's draft 3; the confirmation round on draft 3 returned FAIL on one wording claim (above), applied in the spec's
+draft 4; the S2a build gate opens on the PASS of the confirmation round on draft 4, scoped to the edited passages.
+S0's statements ([composition.md](composition.md) sections 4, 5 and 9,
 `lean/VE/Compose/*` as merged) and S1's ([composition-s1.md](composition-s1.md) draft 2 with its review, recheck and
 loop fixes, `lean/VE/Readings/{Doc,Separate,Lines,Wire,Run}.lean` as merged at `119e2f8a`) are frozen inputs: the
 spec instantiates them and changes no statement of them; `lean/VE/Compose/Adjoin.lean` is new, and `Wire.lean` and
@@ -107,3 +120,4 @@ plan names for S2a (its section 6, row S2a; spec section 11), and the measured f
 | Draft 2 (2026-10-02) | The converged design debate applied, nothing else: the status note, the table of the converged edits that bind S2 with their places in the parent plan and in the spec, the two flagged precisions and the three repairs the statement spec makes, the process line. The pointer paragraph is unchanged. No statement, fixture or stage of the parent plan changed. Design only. |
 | Draft 3 (2026-10-02) | The converged statement review of the spec's draft 1 recorded (`debates/compose-s2-spec`, CONVERGED after round 2 on FIX, five corrections) and the references synchronized to the spec's draft 2: the status note; edit 7's row (the route order, fixtures M18 and F20) and A1's row (resolved choice 14.3, not 13.3); the paragraph on the five corrections; the process line (one confirmation round on draft 2; `Wire.lean` and `Run.lean` additive, `Adjoin.lean` new); the cross-reference to the spec's sections 13 and 14. The pointer paragraph is unchanged. No statement, fixture or stage of the parent plan changed. |
 | Draft 4 (2026-10-02) | The confirmation round on the spec's draft 2 recorded (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on three statement-level wording claims, every definition confirmed) and the references synchronized to the spec's draft 3: the status note; the paragraph on the three corrections (spec 1.1 and 4.1 on what choosing the route computes, spec 7 on the shape invariants `supReady` enforces, fixture M17(a) on which theorems assume `supReady` or `superposable`); the process line (the build gate opens on the PASS of the confirmation round on draft 3). The pointer paragraph is unchanged. No statement, fixture or stage of the parent plan changed. |
+| Draft 5 (2026-10-02) | The confirmation round on the spec's draft 3 recorded (`manage-agents/compose-s2-p3ver2.final.md`: two corrections confirmed, FAIL on one statement-level claim introduced by the route-order repair, no definition, theorem statement or fixture value changed) and the references synchronized to the spec's draft 4: the status note; the summary of the route-order correction restricted to the soft and norms chains and the paragraph on the one correction (a rights document takes the enumerated row unconditionally, `superposable D` not evaluated, no finding; spec 1.1, 4.1 step 2, fixture M12); the process line (the build gate opens on the PASS of the confirmation round on draft 4). The pointer paragraph is unchanged. No statement, fixture or stage of the parent plan changed. |
