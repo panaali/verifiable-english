@@ -1,13 +1,15 @@
 # Wire contract: one ordered validation table for Python, Lean and Rust (PLAN)
 
-**Status:** plan only, draft 2, 2026-10-02, branch `design/wire` from `main` at `c9a34582`. No code or proofs change
-with this document. Draft 2 applies, in one commit, the exact edits of the converged Fable/Astra design debate
+**Status:** plan only, draft 3, 2026-10-02, branch `design/wire` from `main` at `c9a34582`. No code or proofs change
+with this document. Draft 2 applied, in one commit, the exact edits of the converged Fable/Astra design debate
 (`manage-agents/debates/design-wire/{fable,astra}.md`, CONVERGED after round 3; Sol at xhigh stood in for Astra, as
 `astra.md` records). Verdict: **BUILD (exact edits): S0 to S3 only, with S1c moved to S4**; S4 onward needs a
 separate decision (section 7). Section 11 maps each debate edit to its change here. The item-1 statement spec is
-[wire-contract.md](wire-contract.md); its statement review comes before S0 to S3 start. The plan was written from
-reading the sources; nothing was built or run, and the `file:line` references below were collected by read-only
-sweeps and must be re-read at each step.
+[wire-contract.md](wire-contract.md); its statement review comes before S0 to S3 start. That review
+(`manage-agents/debates/wire-spec/{fable,astra}.md`) returned **FIX with exact edits**; statement spec draft 2
+applies them, and draft 3 of this plan synchronises its wording with the two that touch it (section 12), in the
+same commit. S0 to S3 start after that commit. The plan was written from reading the sources; nothing was built or
+run, and the `file:line` references below were collected by read-only sweeps and must be re-read at each step.
 Inputs: ARCH-ROADMAP (P1 "versioned wire/profile contracts + codegen", the W6a, speech-acts and discourse known
 limitations, the LIMITS CONTRACT item), [assurance-manifest.md](assurance-manifest.md),
 [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md) (sections 2.3 and 5), [soft-norms.md](soft-norms.md)
@@ -91,7 +93,11 @@ ve/wire_contract/
 
 The files ship inside the package, as `ve/assurance-manifest.json` and `ve/backends/lean_service_schema/` do.
 JSON is chosen because all three languages already read it with their own restricted readers and Lean has no
-package dependencies. This extends the mig1 pattern (one source of truth for response shapes, a second
+package dependencies. A contract, `limits.json` and `names.json` are read with `ve.wire.loads_json`, the
+restricted reader, and hashed for the lock with `ve.wire.canonical_json`. That reader refuses `null`, so a
+contract has no `null` literal: a check against `null` is written with the type form `"null"`, and a `null`
+literal, if a later unit needs one, is a change of the contract format with its own statement review (statement
+spec 2.2, 2.3). This extends the mig1 pattern (one source of truth for response shapes, a second
 implementation that must agree on genuine and mutated inputs) from responses to inputs; the response schemas stay
 as they are. JSON Schema itself is not used for the checks: it fixes neither codes nor a cross-item order, and
 "no check of a phase runs before every earlier phase has passed over the whole source" cannot be said in it.
@@ -112,7 +118,8 @@ for a named entry of `limits.json`, where today the 256 is a literal in both val
      "code": "SOFT_RESOURCE_LIMIT", "text": "ResourceLimit: rules"}]},
   {"name": "declarations", "checks": [
     {"id": "2.3", "kind": "include", "contract": "norms@0", "phases": ["declarations"],
-     "view": "w1_environment", "as": "SOFT_INVALID_INPUT"},
+     "view": "w1_environment", "as": "SOFT_INVALID_INPUT",
+     "says": "The view gives the vocabulary without the soft block, under the inherited profiles."},
     {"id": "2.7", "each": "/environment/vocabulary/soft/parties/*", "checks": [
       {"id": "2.7a", "kind": "name", "class": "soft_name",
        "code": "SOFT_INVALID_NAME", "text": "InvalidInput: invalid soft name {value}"},
@@ -158,6 +165,8 @@ Hook rules: a hook reads the input and, for an `each`, the current item; it retu
 string arguments; it never throws a diagnostic and never sees other checks. A hook may assume every earlier check
 passed, and is only required to agree across languages on such inputs. `view` names a hand-written JSON
 transformation (for example soft-norms 2.3, "the vocabulary without the soft block, under the inherited profiles").
+An `include` with a `view` carries a `says` sentence that states the value the included checks read; the
+generated wording uses it and the lint refuses a viewed include without one (statement spec 2.3, 3.1).
 
 ### 2.4 The diagnostic record, codes and texts
 
@@ -576,3 +585,19 @@ plan review round unless an edit deviates from the list. This draft changes noth
 | g. Under a `view`, `path` is the include site and the inner pointer goes in `args`; the generator imports `FORBIDDEN` from `lean/audit.py`; record the one-switch-commit-per-unit amendment to the migration plan | 2.4 (the `path` and text bullets); 3.1 (item 5); section 1 (third constraint) and 5.1, step 6 (the recorded amendment; SEMANTICS-MIGRATION-PLAN.md itself is not edited by this commit) |
 | h. After S3 the DRI reviews: residual count zero; Tier 0 and Tier A green in Python and Lean; at least two thirds of the 67 soft-norms checks as T1 or T2 without a coarse `view` hook, T1 and T2 reported separately; item e closed. If the gate fails, keep S2's generic multi-fault generator and stop migration. S4 onward needs a separate decision | section 7 (authorisation line, continuation gate); section 10, last bullet |
 | Scope: S1c moved to S4 | section 7 (S1c row removed, S4 row and totals); 6.1 (Python and Lean in S0 to S3) |
+
+## 12. Statement review response table (draft 3)
+
+Source: `manage-agents/debates/wire-spec/{fable,astra}.md` (Sol at xhigh stood in for Astra in all three rounds,
+as `astra.md` records). Verdict on the item-1 statement spec: **FIX, by statement edits only**, in one spec and
+plan commit, after which S0 to S3 start with no further round if the edits land as listed. The joint position is
+Fable's round 3, which Astra's round 3 accepts and which the DRI ruling in `fable.md` adopts. The edits are
+applied in [wire-contract.md](wire-contract.md) draft 2, whose section 13 maps each one. The review asks this
+plan only to synchronise its wording with A1 and A2; this draft changes nothing else, and no design decision of
+section 11 moves.
+
+| Review edit | Change in this draft |
+|---|---|
+| A1. Contract files are read with `ve.wire.loads_json`; a contract has no `null` literal, and `null` is written as the type form `"null"`. A `null` literal would be a change of format with its own statement review | 2.1, the paragraph after the file list |
+| A2. An include with a `view` carries `says`; the generated wording uses it and the lint requires it | 2.1, the excerpt's include 2.3; 2.3, the hook rules |
+| F1 to F4 and the four minor edits (section 6 of the statement spec, a renamed variable in one Lean statement, three lint refusals and the prose of claim (B)) | none here. Where the statement spec is now more exact than this plan, its section 12 records it (R18: the order key of a fault inside a classifier set, against 2.2 and 6.2; R19: views equal on every value, against 2.4 (b)) |
