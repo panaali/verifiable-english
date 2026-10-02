@@ -15,6 +15,26 @@ from .errors import UnsupportedProfile, VEError
 from .identity import meaning_id
 
 
+SOURCE_WORDS = frozenset({"shall", "shall not", "should", "should not", "shouldn't",
+                          "must", "must not", "always", "never"})
+
+
+def source_word_text(source: bytes, span, unit_span):
+    """Read a source-word byte span; unknown words omit E14, invalid spans fail."""
+    if (type(source) is not bytes or type(span) is not list or len(span) != 2
+            or any(type(n) is not int for n in span)
+            or type(unit_span) is not list or len(unit_span) != 2
+            or not unit_span[0] <= span[0] < span[1] <= unit_span[1]):
+        raise VEError("InvalidInput: invalid source word span")
+    try:
+        word = source[span[0]:span[1]].decode("utf-8")
+    except UnicodeDecodeError:
+        raise VEError("InvalidInput: invalid source word span") from None
+    word = word.translate(str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"))
+    word = word.replace("\u2019", "'")
+    return word if word in SOURCE_WORDS else None
+
+
 def rights_meaning_id(env, content):
     """Bind one rights candidate to its source environment and exact AST."""
     from .softnorms import soft_digest
@@ -60,7 +80,7 @@ def _right_situation(env, content, wire, unit_ids=()):
     return model.model_id, (tuple(outcomes), tuple(sorted(selected)))
 
 
-def validate_reading_sets(env, values, unit_ids):
+def validate_reading_sets(env, values, unit_ids, *, source=None, unit_spans=None):
     if type(values) is not list:
         raise VEError("reading_sets must be a list")
     seen = set()
@@ -68,7 +88,10 @@ def validate_reading_sets(env, values, unit_ids):
     units = {}
     for item in values:
         required = {"id", "unit", "version", "status", "readings"}
-        if type(item) is not dict or not required <= set(item) or set(item) - required - {"signature", "rejected_history", "models"}:
+        optional = {"signature", "rejected_history", "models"}
+        if "readings@1" in env.profiles:
+            optional.add("source_word")
+        if type(item) is not dict or not required <= set(item) or set(item) - required - optional:
             raise VEError("invalid reading set")
         if not token(item["id"]) or type(item["version"]) is not int or item["version"] < 1:
             raise VEError("invalid or duplicate reading set version")
@@ -83,6 +106,9 @@ def validate_reading_sets(env, values, unit_ids):
             raise VEError("one reading set per source unit; versions must keep their unit")
         owners[item["id"]] = item["unit"]
         units[item["unit"]] = item["id"]
+        if "source_word" in item:
+            source_word_text(source, item["source_word"],
+                             None if unit_spans is None else unit_spans.get(item["unit"]))
         readings = item["readings"]
         if type(readings) is not list or not 1 <= len(readings) <= 64:
             raise VEError("reading sets hold 1 to 64 readings")
