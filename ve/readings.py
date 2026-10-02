@@ -93,10 +93,11 @@ def validate_reading_sets(env, values, unit_ids):
         ids = set()
         model_ids = set()
         rights_enabled = "rights@0" in env.profiles
+        labels_enabled = rights_enabled or "readings@1" in env.profiles
         for reading in readings:
             required_reading = {"id", "kind", "meaning_id", "content", "admission"}
             if (type(reading) is not dict or not required_reading <= set(reading) or
-                    set(reading) - required_reading - ({"labels"} if rights_enabled else set())):
+                    set(reading) - required_reading - ({"labels"} if labels_enabled else set())):
                 raise VEError("invalid reading")
             if "labels" in reading:
                 labels = reading["labels"]
@@ -195,7 +196,7 @@ def active_reading_sets(sets):
 def validate_couplings(env, couplings, sets, unit_ids):
     if type(couplings) is not list:
         raise VEError("invalid couplings")
-    if couplings and "rights@0" not in env.profiles:
+    if couplings and not {"rights@0", "readings@1"}.intersection(env.profiles):
         raise VEError("UnsupportedProfile: rights@0 is required for couplings")
     if len(couplings) > 8:
         # 11: at most eight couplings, as on the Lean rights route.
