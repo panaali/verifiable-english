@@ -242,3 +242,29 @@ def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 1
             or any(r.get("status") not in ("ok", "error") for r in rows)):
         raise CheckerUnavailable("ve_norm_defaults_route returned an invalid response")
     return rows
+
+
+def run_readings_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
+    """Transport cases to `ve_readings_route` (composition-s1.md 8.4): one row per case, in order.
+
+    A row with `status: error` is Lean's rejection of that case. A route that cannot start, does
+    not answer in time, or answers with the wrong shape or an exit status that disagrees with its
+    rows is `CheckerUnavailable`, never a rejection."""
+    try:
+        completed = subprocess.run([str(executable), "-"], input=json.dumps(cases, ensure_ascii=False),
+                                   text=True, capture_output=True, timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable("ve_readings_route is unavailable") from exc
+    if completed.returncode not in (0, 1):
+        raise CheckerUnavailable("ve_readings_route failed")
+    try:
+        rows = json.loads(completed.stdout)
+    except ValueError as exc:
+        raise CheckerUnavailable("ve_readings_route returned invalid JSON") from exc
+    if (type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows)
+            or any(r.get("status") not in ("ok", "error") for r in rows)
+            or any(r["status"] == "error" and type(r.get("error")) is not str for r in rows)
+            or any(r["status"] == "ok" and not _same(r.get("id"), c.get("id")) for r, c in zip(rows, cases))
+            or (completed.returncode == 1) != any(r["status"] == "error" for r in rows)):
+        raise CheckerUnavailable("ve_readings_route returned an invalid response")
+    return rows
