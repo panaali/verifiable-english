@@ -1,0 +1,58 @@
+{
+  "u0052.s01": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "963bf7a7ccea2f8332055390a9584d825749e388fc736019a1d2df552ef379e8",
+    "default_model_id": "10dd9cad83768c358cd418216f5d4c625d21498496a1dbab63a1ada47308f018",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  },
+  "u0036.s05": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "7598b7e4da388798919bc227455a6dd6984381c26c0bfcd8565aab4cd4d52f2e",
+    "default_model_id": "37dd3c483e61fb079338e5017e9073901a62c4dd51391d01130c98e13534fa63",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  },
+  "u0156.s03": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "963bf7a7ccea2f8332055390a9584d825749e388fc736019a1d2df552ef379e8",
+    "default_model_id": "5083f326af6d5a09f475f7d73a3818924916bfa8f31a1dd16a540f0e7fa17045",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  },
+  "u0125.s04.p2": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "963bf7a7ccea2f8332055390a9584d825749e388fc736019a1d2df552ef379e8",
+    "default_model_id": "10942ba919387192ca73a6ae5690db6c92ccbf5c0666823ae43e5e0b402cb01f",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  },
+  "u0263.s04.p2": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "e03d47fc37509cd7f877052763e3948e4e2d45069288e1b1f9388b4d4bfad819",
+    "default_model_id": "1a4737b249b42e2c82786231931c1102b7a8fa444ae7c811a669b7ca575c34c8",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  },
+  "u0078.s01": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "839b56b1bfe7eeba69aa6f23f336d7be4a3ee3bbdecc909b2a6e4155e1ea6815",
+    "default_model_id": "7b8cfd462741601502dbb1460f11caafb6430c35a2a50b297fc7447635e33389",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  },
+  "u0168.s01": {
+    "situation": "one situation of each sort; every guard atom of the rule true, every carve-out false",
+    "strict_reading_outcome": "required",
+    "default_reading_outcome_when_exception_applies": "not required",
+    "strict_model_id": "cb378343ab7130dfe8364d491d043444fe1e990249cc22516fed0116a117880c",
+    "default_model_id": "48c693e5fef4398527bdb14db434735757a40b0580ef8e507d41fd6deaa08e04",
+    "note": "computed by finish.py with VE’s evaluator on the duty form of the soft environment; not admitted by the document check"
+  }
+}
