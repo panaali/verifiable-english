@@ -312,3 +312,45 @@ def test_only_an_allowed_gap_of_8_3_exempts_a_missing_witness(monkeypatch, tmp_p
         monkeypatch.setattr(wire_contract_gate, "SPEC", spec)
         with pytest.raises(ValueError):
             wire_contract_gate.allowed_gaps()
+
+
+def test_gate_judges_the_deferred_share_from_the_deferred_counts():
+    """Wire2 loop (C): a report with no Lean deferral and `deferred_share.lean` 0.75 passed. Each share must
+    be its language's deferred count over the cases run; each count is a non-negative integer within the
+    cases, and Lean's is 0 (2.8: the Lean engine never defers)."""
+    stored = json.loads(REPORT.read_text())
+    cases = sum(stored["tiers"].values())
+    assert stored["deferred"] == {"python": 0, "lean": 0} and stored["deferred_share"] == {"python": 0, "lean": 0}
+    assert _broken(lambda value: value["deferred_share"].update(lean=0.75))   # the finding's probe
+    assert _broken(lambda value: value["deferred_share"].update(python=0.5))
+    assert _broken(lambda value: value["deferred_share"].update(python=False))
+    assert _broken(lambda value: value["deferred_share"].pop("lean"))
+    # A Python deferral is reported, not refused, when its share agrees with its count.
+    assert _broken(lambda value: value["deferred"].update(python=3)) != []
+    assert _broken(lambda value: (value["deferred"].update(python=3),
+                                  value["deferred_share"].update(python=3 / cases))) == []
+    assert _broken(lambda value: (value["deferred"].update(lean=1), value["deferred_share"].update(lean=1 / cases)))
+    for bad in (-1, True, 1.0, None, cases + 1):
+        assert _broken(lambda value: value["deferred"].update(python=bad)), bad
+
+
+def test_report_counts_deferrals_apart_from_residuals_and_refuses_a_row_without_outcome(monkeypatch):
+    """A deferred outcome counts under its language's deferred share and never as residual (2.8), and a
+    `ve_diagnose` row with no outcome (an adapter or reader error) is a mismatch, not a clean outcome."""
+    from ve.wire_contract.engine import Deferred
+    raw, norms = _applied([FAULTS["language"]])["environment"], _applied([FAULTS["language"]])["norms"]
+    monkeypatch.setattr(wire_contract_gate, "gate_cases",
+                        lambda contract: [("R", "R:deferred", raw, norms, None, (), True)])
+    monkeypatch.setattr(wire_contract_gate, "_python",
+                        lambda contract, raw, norms: (("SOFT_UNSUPPORTED_PROFILE", "m"), Deferred("1.2")))
+    rows = {"ve_diagnose": {"status": "ok", "outcome": "deferred"},
+            "ve_soft_norms_route": {"status": "error", "code": "SOFT_UNSUPPORTED_PROFILE", "error": "m"}}
+    monkeypatch.setattr(wire_contract_gate, "_lean_rows", lambda binary, unit, cases: [rows[binary]] * len(cases))
+    value = wire_contract_gate.report()
+    assert value["deferred"] == {"python": 1, "lean": 1} and value["residual"] == {"python": 0, "lean": 0}
+    assert value["deferred_share"] == {"python": 1.0, "lean": 1.0}
+    assert any("never defers" in failure for failure in gate_failures(value))
+    rows["ve_diagnose"] = {"status": "error", "error": "ResourceLimit: JSON depth exceeds 256"}
+    value = wire_contract_gate.report()
+    assert any("without an outcome" in problem for problem in value["mismatches"][0]["problems"])
+    assert value["deferred"]["lean"] == 0 and value["residual"]["lean"] == 1
