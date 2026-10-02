@@ -109,4 +109,3 @@ Rule 1 as sealed (README, Scoring; the first probe's allowance): c5 passes when,
 | c5r-4 | L | haiku | haiku-r2-L-02 | - | - | b | unparseable |  |
 | c5r-4 | L | sol | sol-r1-L-02 | - | - | b | unparseable |  |
 | c5r-4 | L | sol | sol-r2-L-03 | - | - | b | unparseable |  |
-

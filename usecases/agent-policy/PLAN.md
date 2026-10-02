@@ -544,6 +544,11 @@ use case is written or computed, not what the key expects.
 12. **Section 1, sources.** `sources.md` pins the pages with their SHA-256. The Codex `docs/sandbox.md` now only
     links to other pages, so the linked sandboxing page is pinned too. The Cedar authorization page, which states
     "forbid overrides permit", replaces the documentation home page.
+13. **Sections 3.2 and 8, item 4: the `unspecified` default (after `norm-defaults@0` merged).** The case now
+    also ships `environment.unspecified.json` (both defaults `unspecified`), its flag-free Lean copy and
+    `unspecified.py`. With it, `permitted` is UNDECIDED exactly on a27, a36, a37 and a38, and `report_required`
+    on every complete record that rules 25 and 26 do not cover; no verdict and no rule-decided outcome changes
+    (README, "With the default `unspecified`"). The answer key is unchanged.
 
 ## 13. Implementation steps and files (for the implementation round, not this commit)
 

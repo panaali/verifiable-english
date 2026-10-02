@@ -1,0 +1,32 @@
+## levels-cbrn | always | 1.2, 2.2.1, table 2.2.1.a: the CBRN TCL and CBRN uplift level 1
+"cbrn_uplift_tcl" is tracked. "cbrn_uplift_tcl" is misuse. "cbrn_uplift_tcl" concerns cbrn. "cbrn_uplift_level_1" is critical. "cbrn_uplift_level_1" is misuse. "cbrn_uplift_level_1" concerns cbrn. "cbrn_uplift_level_1" recommends "security_level_2_plus".
+## levels-cyber | always | table 2.2.2.a: Cyber uplift level 1
+"cyber_uplift_level_1" is critical. "cyber_uplift_level_1" is misuse. "cyber_uplift_level_1" concerns cyber. "cyber_uplift_level_1" recommends "security_level_2_plus".
+## levels-manipulation | always | table 2.2.3.a: Harmful manipulation level 1 (exploratory)
+"harmful_manipulation_level_1" is critical. "harmful_manipulation_level_1" is misuse. "harmful_manipulation_level_1" concerns "harmful_manipulation". "harmful_manipulation_level_1" recommends "security_level_2_plus".
+## levels-stealth | always | 3.2.1: the Stealth and Situational Awareness TCL
+"stealth_and_situational_awareness_tcl" is tracked. "stealth_and_situational_awareness_tcl" is classified as "ml_rd_and_misalignment". "stealth_and_situational_awareness_tcl" concerns "ml_rd_and_misalignment_domain".
+## levels-ml-rd-acceleration | always | table 3.2.2.a: ML R&D acceleration level 1
+"ml_rd_acceleration_level_1" is critical. "ml_rd_acceleration_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_acceleration_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_acceleration_level_1" recommends "security_level_3".
+## levels-ml-rd-automation | always | table 3.2.2.a: ML R&D automation level 1 ("We recommend Security level 4")
+"ml_rd_automation_level_1" is critical. "ml_rd_automation_level_1" is classified as "ml_rd_and_misalignment". "ml_rd_automation_level_1" concerns "ml_rd_and_misalignment_domain". "ml_rd_automation_level_1" recommends "security_level_4".
+## measures-sl2plus | always | 2.1.1 "Security Level 2+ ... with additional security measures designed to address risks from insider threats"
+"security_level_2_plus" includes "insider_threat_measures". "insider_threat_measures" addresses insiders.
+## closure-misuse-ccls | always | 1.2 "For misuse risk, we define CCLs in the following risk domains": CBRN, cyber and harmful manipulation
+For every level that is critical and that is misuse, at least one of the following holds: (a) that level concerns cbrn; (b) either that level concerns cyber or that level concerns "harmful_manipulation", or both.
+## closure-ccl-kinds | always | 1.2 "We identify CCLs for two kinds of risks: misuse risk and risks related to machine learning R&D and misalignment"
+For every level that is critical, either that level is misuse or that level is classified as "ml_rd_and_misalignment", or both.
+## closure-tcls | always | 1.2 "We identify TCLs for CBRN risk, as well as ML R&D and misalignment risks"
+For every level that is tracked, either that level concerns cbrn or that level concerns "ml_rd_and_misalignment_domain", or both.
+## tcl-not-ccl | always | Glossary "Tracked Capability Levels (TCLs): are capability thresholds which capture a lower level of risks than our CCLs" ("significant but not severe" against "severe")
+For every level that is tracked, it is not the case that that level is critical.
+## bridge-one-domain | always | 1.3.1 "For each of the four identified domains, we have developed specific scenarios and T/CCLs": no level belongs to two of the four domains (a bridge the text implies by its section structure but does not state)
+For every level that concerns cbrn, it is not the case that that level concerns cyber. For every level that concerns cbrn, it is not the case that that level concerns "harmful_manipulation". For every level that concerns cbrn, it is not the case that that level concerns "ml_rd_and_misalignment_domain". For every level that concerns cyber, it is not the case that that level concerns "harmful_manipulation". For every level that concerns cyber, it is not the case that that level concerns "ml_rd_and_misalignment_domain". For every level that concerns "harmful_manipulation", it is not the case that that level concerns "ml_rd_and_misalignment_domain".
+## activities-internal-external | always | Glossary "External Deployments: represent model releases to entities outside of Google" against "Internal Deployments: represent model releases restricted to Google employees"
+For every proposal that is internal, it is not the case that that proposal is external.
+## activities-development | always | 1.3.5 "further development or deployment": further development is not a deployment
+For every proposal that is classified as "further_development", it is not the case that that proposal is internal. For every proposal that is classified as "further_development", it is not the case that that proposal is external.
+## activities-high-risk | always | Glossary "High-Risk Internal Deployments: represent model releases restricted to Google employees for use cases with the potential to enable severe threat scenarios"
+For every proposal that is classified as "high_risk", that proposal is internal.
+## activities-low-risk | always | Glossary "External Deployments ... can include both low-risk external deployments as well as general purpose releases to the broader public"
+For every proposal that is classified as "low_risk", that proposal is external.
