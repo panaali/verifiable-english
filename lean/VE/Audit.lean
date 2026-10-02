@@ -123,6 +123,8 @@ import VE.NormDefaults.Run
 import VE.Readings.Doc
 import VE.Readings.Separate
 import VE.Readings.Examples
+import VE.Readings.Wire
+import VE.Readings.Run
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3070,3 +3072,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.force_agrees_off_exception
 #print axioms VE.Readings.Examples.k2b_not_admissible
 #print axioms VE.Readings.Examples.k2b_achieves_neither
+#print axioms VE.Readings.Wire.layerNames_sub
+#print axioms VE.Readings.Wire.author_valid
+#print axioms VE.Readings.Wire.readings_wire_separate_sound
