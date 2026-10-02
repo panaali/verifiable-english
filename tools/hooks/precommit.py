@@ -446,12 +446,16 @@ def check_frozen(index: Index) -> list[str]:
 def check_wire_contract(index: Index) -> list[str]:
     """Run the wire generator on staged sources and generated output."""
     watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
-               "ve/wire.py", "tools/wire_contract.py", "docs/spec/soft-norms-wire-table.md")
+               "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
+               "docs/spec/soft-norms-wire-table.md", "lean/VE/WireContract/",
+               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/")
     if not any(path.startswith(watched) for path in index.changed):
         return []
     names = [path for path in index.listing()
-             if path.startswith("ve/") or path in {
-                 "lean/audit.py", "tools/wire_contract.py",
+             if path.startswith(("ve/", "conformance/wire-contract/contracts/",
+                                 "lean/VE/WireContract/")) or path in {
+                 "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
+                 "lean/VE/Route/frozen-sources.sha256",
                  "docs/spec/soft-norms-wire-table.md"}]
     for path, blob in index.read(names).items():
         if blob is None:

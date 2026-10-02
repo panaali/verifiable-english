@@ -205,9 +205,8 @@ def adapter (case : Json) : Except String Json :=
   | .str "admission" => match VE.Norms.Admission.splitDocument (case.getObjValD "document") with
     | .ok (_, active, _) => .ok (root active)
     | .error _ => .ok (root .null)
-  | .str kind =>
-    if kind.startsWith "soft-" then .ok (root (case.getObjValD "norms"))
-    else .error s!"UnsupportedProfile: case kind {kind} has no wire contract input"
+  | .str "soft-elaborate" => .ok (root (case.getObjValD "norms"))
+  | .str kind => .error s!"UnsupportedProfile: case kind {kind} has no wire contract input"
   | kind => .error s!"UnsupportedProfile: case kind {kind.compress} has no wire contract input"
 
 /-- The names this module registers. -/
