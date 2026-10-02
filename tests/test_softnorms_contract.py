@@ -173,6 +173,23 @@ def test_generated_wordings_and_lock_are_current():
     assert process(DIRECTORY) == []
 
 
+def test_english_table_marks_group_scope():
+    """Wire review (Astra B, Fable B5): rows inside a group are marked, a group names the checks it covers,
+    every item is named by its group, and no raw pattern such as `@/*` is printed."""
+    table = (DIRECTORY.parents[1] / "docs/spec/soft-norms-wire-table.md").read_text()
+    rows = {line.split(" | ")[0].strip("| ·`"): line for line in table.splitlines() if line.startswith("|")}
+    assert rows["2.16b"].startswith("| · · `2.16b`") and rows["2.16c"].startswith("| · `2.16c`")
+    sentence = lambda check: rows[check].rstrip(" |").split(" | ")[-1]
+    assert sentence("2.16b") != sentence("2.16c")
+    assert "every earlier `outranks-pair` item of the same `outranks` item" in rows["2.16b"]
+    assert "every earlier `outranks` item." in rows["2.16c"]
+    assert sentence("2.17c") != sentence("2.17d")
+    assert "checks `2.16a` to `2.16c` run on one item before the next item" in rows["outranks"]
+    assert "`@" not in table and "this group" not in table
+    for check in ("3.2", "4.13b", "5.7", "5.9b", "6.2"):
+        assert sentence(check).startswith("For the `"), check
+
+
 def test_pilot_tier_inventory_matches_statement_spec():
     tiers = {}
     strength = {"T1": 0, "T2": 1, "inherited": 2, "T3": 3}
