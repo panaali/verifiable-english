@@ -1,0 +1,926 @@
+{
+ "seed": 20261003,
+ "model": "claude-sonnet-5-5",
+ "flags": [
+  "-p",
+  "--model",
+  "claude-sonnet-5-5",
+  "--tools",
+  "",
+  "--strict-mcp-config",
+  "--disable-slash-commands",
+  "--output-format",
+  "json",
+  "--verbose"
+ ],
+ "order": [
+  {
+   "kind": "reading",
+   "item": "R29",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W11",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R27",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R11",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R05",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R15",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W10",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R28",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R09",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W04",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R08",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R10",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R06",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R11",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W11",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R26",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R12",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W12",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R01",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R26",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R01",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R22",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R26",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R30",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W01",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R15",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R20",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R26",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R11",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W15",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R28",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R20",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R06",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R24",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W03",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R13",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R11",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R23",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W10",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W13",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R18",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R03",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R27",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R09",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W06",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R20",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R15",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R25",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R02",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R13",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R19",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W13",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R17",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R22",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R08",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R04",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R17",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W05",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R25",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R19",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R06",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R20",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W06",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R27",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R09",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R13",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R10",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R16",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R23",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R28",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W01",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R18",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R13",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R02",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R15",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R03",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W14",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R08",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R08",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R01",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R23",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W15",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R13",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R07",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R30",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R27",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R17",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R28",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R17",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R29",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R04",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R07",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W08",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R25",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R07",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R25",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R10",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R06",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R21",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R12",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W09",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R16",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R05",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W08",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W12",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R14",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R10",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R09",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R26",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R24",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R22",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R18",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R10",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R26",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W02",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R03",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R07",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R27",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R29",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R11",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W05",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R10",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W09",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R23",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R22",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R27",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R16",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R11",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R16",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R03",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R21",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R21",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R19",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R14",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W14",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R30",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R13",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R04",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W02",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R09",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R08",
+   "condition": "EN",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R24",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R29",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R02",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R04",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R19",
+   "condition": "VE-L",
+   "session": "s1"
+  },
+  {
+   "kind": "writing",
+   "task": "W03",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R24",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R08",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "writing",
+   "task": "W04",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R18",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R30",
+   "condition": "VE-C",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R09",
+   "condition": "EN",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R21",
+   "condition": "VE-C",
+   "session": "s1"
+  },
+  {
+   "kind": "reading",
+   "item": "R01",
+   "condition": "VE-L",
+   "session": "s2"
+  },
+  {
+   "kind": "reading",
+   "item": "R02",
+   "condition": "VE-C",
+   "session": "s2"
+  }
+ ]
+}
