@@ -353,3 +353,27 @@ def test_m6_coupling_slot_agrees_in_three_evaluators(lean):
         assert lean_row["valid"] is expected and all(python_values) is expected
         if not expected:
             assert lean_row["first_failing"] == "coupling:c1"
+
+
+def test_m8_precedence_leak_forces_enumeration(lean):
+    """The fixed child cannot be run against both candidate copies at once."""
+    from ve.readings_route import elaborate, validate
+
+    raw = env_k()
+    base = {**M0, "relations": {"asks": [["a", "u"]]}}
+    sigma = entry(base, "b", Q0, False)
+    sid = situation_id(raw, sigma)
+    guard = ("binary", "asks", ["var", 1], ["var", 0])
+    reading_set_ = reading_set("rs1", "u1", [
+        reading("a", norm("waive-x", "avoid_required", False, guard=guard), {"b": sid}),
+        reading("b", norm("waive-x", "avoid_required", False,
+                          over=("base-x",), guard=guard), {"a": sid})], {sid: sigma})
+    units = [{"id": "u0", "kind": "norm", "content": norm("base-x", "avoid_required", True)},
+             {"id": "u1"},
+             {"id": "u3", "kind": "norm", "content": norm("stop-x", "avoid_required", False,
+                                                         over=("waive-x",))}]
+    assert validate(raw, units, [reading_set_], executable=lean)["status"] == "ok"
+    checked = elaborate(raw, units, [reading_set_], executable=lean)
+    assert checked == {"route": "enumerated", "finding": {
+        "text": "ReadingsNotSuperposable: rs1", "cause": "precedence under waive-x"},
+        "choice_count": 2, "choices": [[['rs1', 0]], [['rs1', 1]]], "narrowings_stale": []}
