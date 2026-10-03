@@ -274,6 +274,7 @@ class Superposed(_Route):
             if row["verdict"] != "CONFLICT":
                 raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict witness Python's "
                                          "search found on the superposed document")
+            self._shadow(data, A, target=(target, sorts, formula))
             kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
             selected = None
             if target in self.soft.elaborated.order:
@@ -324,11 +325,51 @@ class Superposed(_Route):
                 if row["valid"] is not True or row["conclusion_value"] is not False:
                     raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the model Python's search "
                                              f"found on the superposed document ({row.get('first_failing')})")
+                self._shadow(data, A, gamma, conclusion)
                 result = {"choice": row["choice"], "model": data}
         self._models[key] = result
         return result
 
     MAX_LIFTS = 16
+
+    def _shadow(self, data, A=(), gamma=(), conclusion=None, target=None):
+        """Rust evaluates the Python-generated formulas of `sup D` on a model shown, untrusted (4.2, 10): the slot
+        with the assumed atoms, the assertions and Γ and the conclusion read on the base through the outcome
+        substitution, and a witness's target closed existentially. Its values must be the ones Lean's check
+        established; a difference is `CheckerUnavailable`, never a verdict."""
+        from .ast import Exists, _to_data, formula_from_data
+        from .backends.rust_jsonl import run
+        from .norms import _bind
+        environment = self.base.to_dict()
+        environment["profiles"] = ["relational-fol@0"]
+        for key in ("soft", "rights"):
+            environment["vocabulary"].pop(key, None)
+
+        def base(asts):
+            return [_to_data(self.soft.elaborated._expand(formula_from_data(self.ext, ast, _generated=True), ""))
+                    for ast in asts]
+
+        case = {"id": "readings-s2-shadow", "kind": "readings-superposed-evaluate", "untrusted": True,
+                "environment": environment, "model": data,
+                "slot": [ast for _, ast in self.slot] + self._atoms(A),
+                "assertions": base(self.assertions + list(gamma)),
+                "conflict_targets": [], "conclusions": base([conclusion]) if conclusion is not None else []}
+        if target is not None:
+            name, sorts, formula = target
+            case["conflict_targets"] = [_to_data(_bind(formula, sorts, Exists))]
+        try:
+            record = run(case, timeout=60.0)
+        except VEError as exc:
+            raise CheckerUnavailable(f"ReadingsConformance: Rust did not evaluate the model shown: "
+                                     f"{getattr(exc, 'message', exc)}") from None
+        values = record.get("values") or {}
+        expected = {"slot": [True] * len(case["slot"]),
+                    "assertions": [True] * len(case["assertions"]) if target is None else values.get("assertions"),
+                    "conflict_targets": [True] * len(case["conflict_targets"]),
+                    "conclusions": [False] * len(case["conclusions"])}
+        if record.get("untrusted") is not True or any(values.get(k) != v for k, v in expected.items()):
+            raise CheckerUnavailable("ReadingsConformance: Rust's untrusted evaluation differs from Lean's on a "
+                                     "model of the superposed document")
 
     def _lifted(self, A, gamma, conclusion):
         from .ast import Bottom, formula_from_data
@@ -351,6 +392,7 @@ class Superposed(_Route):
             row = self.lean("readings-model", assumed=[list(x) for x in A], premises=list(gamma),
                             conclusion=conclusion, model=data)
             if row["valid"] is True and row["conclusion_value"] is False:
+                self._shadow(data, A, gamma, conclusion)
                 return {"choice": row["choice"], "model": data}
         return None
 
