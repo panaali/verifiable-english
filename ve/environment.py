@@ -44,9 +44,8 @@ def _string_array(value) -> bool:
 
 
 def route_kind(data) -> str:
-    """The Lean route that decodes a route envelope (any language but a frozen
-    envelope's, as Lean's `isLegacy`): by its profiles when they are an array of
-    strings, else by the blocks it carries. "speech", "alternatives" and "risk"
+    """The Lean route that decodes a route envelope: by its profiles when they
+    are an array of strings, else by the blocks it carries. "speech", "alternatives" and "risk"
     read the profiles before the envelope; "reports", "quantity" and "envelope"
     (`VE.Route.Gate.decodeEnvelope`) read the field set first."""
     if _string_array(data.get("profiles")):
@@ -347,11 +346,17 @@ class Environment:
     def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
-        # Lean's decoders read a language that names no frozen envelope as the
-        # route's (VE.Service.Standalone.isLegacy): the route's fields, in the
-        # order of the route that decodes the envelope (`route_kind`).
+        # Lean's decoders read a language that is not a string, or absent, as
+        # the route's (VE.Service.Standalone.isLegacy): the route's fields, in
+        # the order of the route that decodes the envelope (`route_kind`). So is
+        # any other language on an envelope a block route decodes, as those read
+        # the profiles and the block before the language; elsewhere an unknown
+        # language is the frozen v0 decoder's (conformance/validation.json).
         closure = language == CLOSURE_LANGUAGE
-        route = type(data) is dict and not (type(language) is str and language in (LANGUAGE, CLOSURE_LANGUAGE))
+        route = type(data) is dict and (
+            type(language) is not str or language == profile_registry.LANGUAGE
+            or (language not in (LANGUAGE, CLOSURE_LANGUAGE)
+                and route_kind(data) in ("speech", "alternatives", "risk")))
         modern = route or closure
         kind = route_kind(data) if route else None
         extended = type(data) is dict and ("unit_schema" in data or "units" in data)
@@ -384,8 +389,7 @@ class Environment:
         if route and type(language) is not str:
             raise VEError("String expected")
         if route and language != profile_registry.LANGUAGE:
-            raise UnsupportedProfile("quantity route requires ve-units@1 on ve.core@0.2" if kind == "quantity"
-                                     else "Unsupported language")
+            raise UnsupportedProfile("Unsupported language")  # VE.Route.Gate.decodeEnvelope
         order = False
         if route:
             if kind == "quantity":
