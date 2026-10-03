@@ -729,12 +729,14 @@ The format-1 public contract's check wordings are generated in
 [soft-norms-wire-table.md](soft-norms-wire-table.md). Each sentence there fixes the
 target, absent-value behavior, guard and expansion order of its check.
 
-**The public record.** When soft-route admission rejects a submitted source, the error carries the contract's
-record, in its member `diagnostic`. The contract is the wire contract `soft-norms@0`
-([soft-norms-wire-table.md](soft-norms-wire-table.md); [wire-contract.md](wire-contract.md) 2.7). When a check
-of the table fails, the record names the first one that fails and the message is that check's text; otherwise
-the message is the validator's. The checks, their order and their codes are those of this section. The
-contract chooses the message only: the validator decides, as before, whether the source is rejected.
+**The public record.** When soft-route admission rejects a submitted source while it validates that source,
+the error carries the contract's record, in its member `diagnostic`. The contract is the wire contract
+`soft-norms@0` ([soft-norms-wire-table.md](soft-norms-wire-table.md); [wire-contract.md](wire-contract.md)
+2.7). When a check of the table fails, the record names the first one that fails and the message is that
+check's text; otherwise the message is the validator's. The checks, their order and their codes are those of
+this section. The contract chooses the message only: the validator decides, as before, whether the source is
+rejected. An error raised after that validation, while the norms are elaborated or the document is admitted,
+has no record, and its message is as before.
 
 Soft rejection responses carry a stable `code` alongside the human-readable `error`.
 Python soft validation exceptions expose the same value as `VEError.code` and in
