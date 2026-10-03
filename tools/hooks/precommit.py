@@ -443,22 +443,26 @@ def check_frozen(index: Index) -> list[str]:
     return errors
 
 
+# The generated English table and the fault catalogue index of every shipped unit, and the modules of their
+# registries and legacy validators (`UNITS` and `unit_paths` in tools/wire_contract.py).
+WIRE_UNIT_PATHS = re.compile(r"(?:docs/spec/[a-z0-9-]+-wire-table\.md"
+                             r"|conformance/wire-contract/[a-z0-9-]+@[0-9]+-catalogue\.json)\Z")
+
+
 def check_wire_contract(index: Index) -> list[str]:
     """Run the wire generator on staged sources and generated output."""
     watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
+               "ve/norms_contract.py", "ve/norms.py", "ve/norm_defaults_contract.py", "ve/norm_defaults.py",
                "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
-               "docs/spec/soft-norms-wire-table.md", "lean/VE/WireContract/",
-               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/",
-               "conformance/wire-contract/soft-norms@0-catalogue.json")
-    if not any(path.startswith(watched) for path in index.changed):
+               "lean/VE/WireContract/",
+               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/")
+    if not any(path.startswith(watched) or WIRE_UNIT_PATHS.match(path) for path in index.changed):
         return []
     names = [path for path in index.listing()
              if path.startswith(("ve/", "conformance/wire-contract/contracts/",
-                                 "lean/VE/WireContract/")) or path in {
+                                 "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                  "lean/VE/Route/frozen-sources.sha256",
-                 "docs/spec/soft-norms-wire-table.md",
-                 "conformance/wire-contract/soft-norms@0-catalogue.json",
                  "conformance/wire-contract/engine-golden.json"}]
     for path, blob in index.read(names).items():
         if blob is None:
