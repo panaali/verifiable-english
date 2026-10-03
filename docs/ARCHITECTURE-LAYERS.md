@@ -26,15 +26,21 @@ checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
 root, `ast`, `environment`, `model`, `wire`; profile: `eval`, `route`, `search`,
 `order`, `units`, `risk`, `readings`, `discourse`; surface: `surface`) and rejects
 outward paths except the exact edges in
-[`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). It
-tokenizes as rustc does (nested comments, raw strings, Unicode identifiers after
-NFC) and resolves every path in its own scope: `crate::`, `super::`, `self::` and
-names bound by `use` (aliases such as `use crate as root` included), through
-re-exports (the crate root's imports, a module's own and `pub use` items, at any
-inline-module depth, chained, failing closed on globs) to every module they may
-name. The crate root's own items count as kernel. It rejects `#[path]`,
-`#[macro_use]`, `#[macro_export]` (also under `cfg_attr`), `include!` (also
-renamed), `extern crate self` and macro metavariables after `::`.
+[`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). This
+module check is a stopgap until the crate split, after which cargo enforces the
+boundary, so it does not re-implement Rust's name resolution: it is fail-closed
+on a strict subset. It tokenizes as rustc does (nested comments, raw strings,
+decoded string escapes, Unicode identifiers after NFC) and accepts plain
+`crate::<module>::...` paths (also through `super::` reaching the root), ordinary
+`mod` declarations, and `lib.rs`'s top-level `use` items as the only re-exporting
+facade, each naming a module directly, so `crate::<name>` resolves in one hop.
+The crate root's own items count as kernel. Every form that could hide a
+dependency is rejected with a message naming the plain form: aliases and globs
+of the crate root, re-exports anywhere else, facade chains and module globs,
+inline modules named like an imported name or a crate module, crate paths in
+attribute or macro strings and in macro definitions, `#[path]`, `#[macro_use]`,
+`#[macro_export]` (also under `cfg_attr`), `include!` (also renamed),
+`extern crate self`, macros 2.0 and macro metavariables after `::`.
 The stage-1 Lean service and its Python adapter are tool-layer modules. This
 classification checks their imports and selects their consumers; the service is
 still outside the `ve` command path, as described in
