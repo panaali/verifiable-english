@@ -114,6 +114,11 @@ Lean route would not be validating the same thing:
   `ve_norm_defaults_route` without the profile is the W1 decoder, which accepts where `UnspecifiedDocument`
   refuses; the check is not in the table (12, R3).
 - the environment has a member `unit_schema` or `units` (the quantity route, `ve/admission.py:504–507`).
+- for an `admission` case: the document is not an object with a `units` array. Every route requires both
+  before it selects `active` (`w2._fields`, `w2._array`), so no route builds a source from it.
+
+"Listed" reads the environment as both adapters do: a member that is not a string is outside the profiles above,
+and an environment that is not an object, or whose `profiles` is not an array, lists no profile.
 
 A source inside the domain need not reach a call site. An environment that does not decode (1.1), or that
 lacks `norms@0` (2.1), is in the domain of `norms@0`: both legacy validators refuse it, and both engines and
@@ -794,8 +799,8 @@ both units are the same functions by name.
 and a `#guard` that every hook, classifier and view name occurring in the unit's generated table is one it
 registers (`Hooks/SoftNorms.lean:214–219`). `Hooks/NormDefaults.lean` imports `Hooks/Norms.lean` and reuses its
 `predicate` and `classifier` for the included names. Both import the frozen modules they call read-only
-(`VE.Norms.Wire`, `VE.Norms.Tree`, `VE.NormDefaults.Wire`, `VE.NormDefaults.Tree`, `VE.Route.Wire`,
-`VE.Route.Gate`, `VE.Route`); none of those is edited.
+(`VE.Norms.Wire`, `VE.Norms.Tree`, `VE.NormDefaults.Wire`, `VE.NormDefaults.Tree`, `VE.NormDefaults.Admission`
+for `fillLabelled`, `VE.Route.Wire`, `VE.Route.Gate`, `VE.Route`); none of those is edited.
 
 `Hooks/Norms.lean` also holds the two walks of 2.5: the syntax decoder, which is `budgetFormula` and
 `budgetTerm` except in name positions, and the typing walk, which counts each node before it checks it. Both
@@ -822,8 +827,11 @@ review decides.
   rehashes. `Diagnose.lean` is the exception of 5.3.
 - **Assurance manifest.** The `wire.diagnose` binding gains two modes, `norms@0` with kinds `norms-elaborate`,
   `norms-conflict`, `norms-certificate` and `admission`, and `norm-defaults@0` with the `norm-defaults-` kinds
-  and `admission`, each dispatching to `Diagnose.lean` and its hooks module; the two hooks modules are classified
-  under `other_json` as "diagnostic only: no verdict depends on it". Nothing else of the manifest changes: the
+  and `admission`, each dispatching to `Diagnose.lean` and its hooks module. `Hooks/Norms.lean` reads JSON and
+  is classified under `other_json` as "diagnostic only: no verdict depends on it"; `Hooks/NormDefaults.lean`
+  reads no JSON member itself (it reads the root through `Hooks/Norms.lean`'s accessors), so the manifest's rule
+  for `other_json`, a file that reads or builds JSON, does not list it; it is named in the `norm-defaults@0`
+  mode's `dispatch`. Nothing else of the manifest changes: the
   call sites start no Lean process, and the pinned decoder total does not grow.
 - **Layers.** `ve.norms_contract` is Python layer 2 beside `ve.norms`; `ve.norm_defaults_contract` is layer 4
   beside `ve.norm_defaults` and `ve.norm_defaults_route` (`tools/layer_policy.py:17–28`).
@@ -1332,3 +1340,23 @@ Where an edit left the wording, or a consequence, to this draft, the choice is l
 Order, as the review fixed it: the build may start with S5.0 once both documents carry these edits (Fable,
 round 3: "PASS once …"; Astra, round 3: "the agreed statement edits authorize the subsequent build once
 applied"). S5-pre stays a separate condition of each switch.
+
+## 14. Build review response (integration)
+
+Source: `manage-agents/wire-s5-review-astra.final.md` and `manage-agents/reviews/wire-s5-review-fable.md`, both
+**FIX**. Every finding of class B is fixed on `wire-s5/integrate`; no contract, theorem, legacy validator or
+frozen pilot file changed, and both contracts stay in shadow.
+
+| Finding | Fix | Where |
+|---|---|---|
+| Fable B: the call sites and `public_rejection` landed in shadow | the two routes are main's again and neither contract module defines `public_rejection` (7.2 gives both to the switch commit, which restores them from 0e628294); the import scan admits a unit's call site only at `public` | 7.2; `tests/test_softnorms_contract.py`, `tests/test_wire_contract_s5_admission.py` |
+| Astra B, Fable B: the adapters disagree on the domain | one rule in both languages: a profile that is not a string is outside; an admission document without a `units` array is outside; only an object environment with an array `profiles` lists a profile | 2.2; `test_both_adapters_share_one_domain` |
+| Astra B: the corpus omits the S5 contract tests | both units record the globs of 7.1; the Lean fixture test's D8, D12 and D13 are in the corpus | 7.1, 8.7; `tests/test_wire_gate_corpus.py` |
+| Astra B: G12 does not compare the error | `<unit>-call-snapshot.json`, taken in shadow; G12 compares type, `code`, message and no record with it, and the gate checks Z8 against it at every status | 8.4 (G12), 8.5 (Z8); `test_g12_compares_the_call_with_its_snapshot_before_the_switch` |
+| Astra B: L8 at sample scope | `tests/wire_contract_l8.lean` compares the two decoders on every eligible guard and carve-out of both corpora, each from its running count | 8.6 (L8) |
+| Fable C: N32 in the Lean fixture test; 5.2 and 5.4 drift | N32 is `["var", true]` and Lean reads it; 5.2 lists `VE.NormDefaults.Admission`; 5.4 says why `Hooks/NormDefaults.lean` is not under `other_json` | 5.2, 5.4 |
+
+Found on the way and recorded in `conformance/wire-contract/s5-pre.md`, not fixed (outside 7.2's scope): an
+environment whose `profiles` is a number or a Boolean makes Python's environment decoder raise `TypeError` where
+Lean rejects at 1.1; the gates list such cases under `legacy_crashes`. Not done: Fable's wording of
+`norm-defaults@0`'s 5.1 sentence, which is a contract text and so a new revision for the statement review.
