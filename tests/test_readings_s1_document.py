@@ -93,7 +93,7 @@ def test_h1_g4_e14_with_e25_on_k1(tmp_path):
     assert readings["findings"] == {"SeparatedByDecisionOnly": 1, "SeparatedByActOnly": 0}
     assert readings["sets"][0]["not_certified"] == ["SeparatedByDecisionOnly: rs1: 0, 1 (not certified)"]
     assert readings["separations"] == {"outcome": 1, "selects": 0, "holds": 0}
-    assert "Lean does not decode them" in readings["checked_by"]["python"]
+    assert "S2 route and restrictions" in readings["checked_by"]["lean"]
     residual = report["coverage"]["residual"]
     assert (residual["separations"], residual["readings_findings"], residual["pending_candidates"]) == (1, 1, 0)
 
