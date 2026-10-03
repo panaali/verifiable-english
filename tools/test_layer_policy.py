@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import unittest
 from unittest.mock import patch
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 import io
+import json
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
@@ -374,8 +375,59 @@ class LayerSelectionTests(unittest.TestCase):
                 core.write_text('[package]\nname = "ve-core"\n' + declaration)
                 error = io.StringIO()
                 with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stderr(error):
-                    self.assertEqual(check_rust_deps.main(), 1)
+                    self.assertEqual(check_rust_deps.main(["--crates-only"]), 1)
                 self.assertIn("outward crate dependency: ve-core -> ve", error.getvalue())
+
+    def test_rust_module_ledger_matches_the_tree(self):
+        source = check_rust_deps.WORKSPACE / "ve-core/src"
+        edges, unmapped = check_rust_deps.module_edges("ve-core", source, check_rust_deps.MODULE_GROUPS["ve-core"])
+        self.assertEqual(unmapped, [])
+        self.assertEqual(edges, set(json.loads(check_rust_deps.MODULE_LEDGER.read_text())))
+        self.assertEqual(edges, {"ve-core: environment -> route", "ve-core: model -> eval",
+                                 "ve-core: wire -> surface"})
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(check_rust_deps.main(), 0)
+        self.assertIn("module graph kept (3 reviewed legacy edges)", output.getvalue())
+
+    def test_outward_rust_module_imports_are_rejected(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "Cargo.toml").write_text('[workspace]\nmembers = ["ve-core", "ve"]\n')
+            for crate in ("ve", "ve-core"):
+                (root / crate / "src/nested").mkdir(parents=True)
+                (root / crate / "Cargo.toml").write_text(f'[package]\nname = "{crate}"\n')
+            source = root / "ve-core/src"
+            (source / "lib.rs").write_text("mod ast;\nmod eval;\nmod surface;\nmod wire;\nmod model;\n"
+                                           "pub use eval::{evaluate as run, Evaluation};\n"
+                                           "pub use surface::parse;\n")
+            (source / "eval.rs").write_text("use crate::{Error, ast::Formula};\n")
+            (source / "surface.rs").write_text("use crate::eval::Evaluation;\n")
+            (source / "ast.rs").write_text('// crate::surface::parse\nconst S: &str = "crate::surface";\n'
+                                           "use crate::{Error, MAX_DEPTH};\n")
+            (source / "wire.rs").write_text("use crate::{\n    Error,\n    run as evaluate,\n};\n"
+                                            "fn f() { crate::surface::formula_record(1); }\n")
+            (source / "model.rs").write_text("use super::parse;\nmod tests {\n    use super::*;\n}\n")
+            (source / "extra.rs").write_text("")
+            (source / "nested/inner.rs").write_text("")
+            ledger = root / "exceptions.json"
+            ledger.write_text(json.dumps({"ve-core: ast -> surface": "planted stale key"}))
+            error = io.StringIO()
+            with (patch.object(check_rust_deps, "WORKSPACE", root),
+                  patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
+                self.assertEqual(check_rust_deps.main(), 1)
+            self.assertEqual(sorted(error.getvalue().splitlines()), [
+                "new outward Rust module import: ve-core: model -> surface",
+                "new outward Rust module import: ve-core: wire -> eval",
+                "new outward Rust module import: ve-core: wire -> surface",
+                "stale Rust module exception: ve-core: ast -> surface",
+                "unmapped Rust module: ve-core: extra",
+                "unmapped Rust module: ve-core: nested/inner.rs",
+            ])
+            error = io.StringIO()
+            with (patch.object(check_rust_deps, "WORKSPACE", root),
+                  patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
+                self.assertEqual(check_rust_deps.main(["--crates-only"]), 0, error.getvalue())
 
 
 if __name__ == "__main__":
