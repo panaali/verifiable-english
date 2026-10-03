@@ -313,9 +313,9 @@ def test_m9_cycle_enumerated_all(tmp_path):
     assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
 
 
-def _claim(mode):
-    return {"right": {"name": "r9", "holder": "person", "guard": ["top"], "lines": [
-        {"kind": "claim", "norm": norm_object("no-arbitrary-arrest", "arrest_permitted", False, mode,
+def _claim(mode, right="r9", rule="no-arbitrary-arrest"):
+    return {"right": {"name": right, "holder": "person", "guard": ["top"], "lines": [
+        {"kind": "claim", "norm": norm_object(rule, "arrest_permitted", False, mode,
                                               guard=["binary", "arbitrary_arrest", ["var", 1], ["var", 0]])}]}}
 
 
@@ -645,3 +645,40 @@ def test_review_a_class_every_reading_wordings_need_no_assumption(tmp_path):
     wording = S2Wording(doc, route)
     lines = wording.query(every("avoid_required"), route.entailment(every("avoid_required"), assumed=[("rs1", 1)]))
     assert len(lines) == 1 and lines[0].startswith("Read sentence 1 as *should*: the conclusion does not follow.")
+
+
+def test_review_b_dead_readings_null_when_certification_cannot_finish(tmp_path, monkeypatch):
+    """The finding's case: M6 with its narrowing under proof-budget exhaustion (`max_steps=0`) reports
+    `dead_readings` null, never `[]`, and `rs2:1` is not `dead` without its certificate."""
+    from ve import readings_verdicts
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u2"]}
+    path = _m6(tmp_path, [narrowing])
+    monkeypatch.setitem(readings_verdicts.BUDGET, "max_steps", 0)
+    route = verdicts(path)
+    assert route.dead_readings() is None and route.report_fields()["dead_readings"] is None
+    statuses = {(c["set"], c["index"]): c["status"] for c in route.candidate_premises()}
+    assert statuses[("rs2", 1)] == "UNKNOWN"
+
+
+def test_review_b_enumerated_dead_readings_null_when_certification_cannot_finish(tmp_path, monkeypatch):
+    """The same class on the enumerated route: a candidate no compatible choice takes is `dead` only with its
+    certificate; under proof-budget exhaustion the list is null and the candidate UNKNOWN."""
+    from ve import readings_verdicts
+    claims = {k: [("strict", _claim("strict", f"r{k}", f"no-arrest-{k}"), "right", {"force": "strict"}),
+                  ("default", _claim("default", f"r{k}", f"no-arrest-{k}"), "right", {"force": "default"})]
+              for k in (8, 9)}
+    coupling = {"id": "c1", "axis": "force", "sets": [{"set": "rs8", "version": 1}, {"set": "rs9", "version": 1}],
+                "by": "reviewer", "reason_spans": ["u8"]}
+    narrowing = {"id": "n1", "set": "rs8", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u8"]}
+    path = s2_document(tmp_path, [("set", "rs8", "u8", claims[8]), ("set", "rs9", "u9", claims[9])],
+                       raw=env_rights(), couplings=[coupling], narrowings=[narrowing])
+    route = verdicts(path)
+    assert route.route == "enumerated" and route.dead_readings() == [
+        {"set": "rs9", "index": 1, "finding": "DeadReading: rs9:1"}]
+    monkeypatch.setitem(readings_verdicts.BUDGET, "max_steps", 0)
+    route = verdicts(path)
+    assert route.dead_readings() is None and route.report_fields()["dead_readings"] is None
+    statuses = {(c["set"], c["index"]): c["status"] for c in route.premises()["candidates"]}
+    assert statuses[("rs9", 1)] == "UNKNOWN" and statuses[("rs8", 1)] == "narrowed"
