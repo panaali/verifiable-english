@@ -200,3 +200,37 @@ def test_the_precommit_wire_check_waits_the_setting_else_30_seconds(monkeypatch)
         monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", text)
         with pytest.raises(ValueError, match="VE_PRECOMMIT_TIMEOUT"):
             precommit.check_timeout()
+
+
+def reachable_test_modules() -> list[str]:
+    """The test modules that code outside tests/ imports (`tests.NAME`), and those they import in turn."""
+    def imported(path):
+        for node in ast.walk(ast.parse(path.read_text(), str(path))):
+            if isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
+                if node.module.startswith("tests."):
+                    yield node.module.split(".")[1]
+                elif node.module == "tests":
+                    yield from (alias.name for alias in node.names)
+    todo = [name for directory in ("conformance", "tools", "usecases", "ve")
+            for path in (ROOT / directory).rglob("*.py") if "__pycache__" not in path.parts
+            for name in imported(path)]
+    seen = set()
+    while todo:
+        name = todo.pop()
+        if name not in seen and (ROOT / "tests" / f"{name}.py").exists():
+            seen.add(name)
+            todo.extend(imported(ROOT / "tests" / f"{name}.py"))
+    return sorted(seen)
+
+
+def test_test_modules_other_code_imports_load_outside_pytest():
+    """Only pytest puts tests/ on the path: a test module the harness imports as `tests.NAME`
+    imports the hang guard as `tests.subprocesses` (a bare `subprocesses` broke
+    conformance/soft_norms.py, and so the gate corpus, outside pytest)."""
+    modules = reachable_test_modules()
+    assert {"subprocesses", "test_soft_norms_lean", "test_wire_contract_lean"} <= set(modules)
+    code = "import importlib, sys\nfor name in sys.argv[1:]:\n    importlib.import_module('tests.' + name)\n"
+    env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH"}
+    result = subprocess.run([sys.executable, "-c", code, *modules], cwd=ROOT, env=env,
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode == 0, result.stderr

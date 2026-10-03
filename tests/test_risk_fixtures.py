@@ -17,7 +17,7 @@ import pytest
 
 from conformance.risk import (Log, agent_ops, agent_ops_rules, asimov_risk, asimov_rules, cell_env, dec, decision_17,
                               estimate, log_l17, q, record, statement)
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_risk_lean_route import (A1, A1_ALTS, A1_STATEMENTS, A2, A2_ALTS, A2_STATEMENTS, BIN, decide, dimless,
                                         leads, might, one, policy_of, rule_, run, statuses)
 from ve.ast import Not, _Decoder

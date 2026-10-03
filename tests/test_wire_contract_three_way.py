@@ -9,7 +9,7 @@ import pytest
 
 from conformance.soft_norms import multi_fault_base
 from conformance.wire_contract_golden import reports as golden_reports
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_wire_contract_corpus import CONTRACTS, LIMITS, NAMES, _registry
 from tests.test_wire_contract_lean import DEFER, DEMO
 from tests.test_wire_contract_soft_lean import FIXTURES, INHERITED, fixture_sources

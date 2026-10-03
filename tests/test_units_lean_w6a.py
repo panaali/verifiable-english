@@ -12,7 +12,7 @@ import subprocess
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_w6a_review_regressions import (COLLIDING_UNITS, IDENTITY_VARIANTS, label, money,
                                                raw_environment)
 from ve import ast

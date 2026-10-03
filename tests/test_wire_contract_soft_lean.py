@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from conformance.soft_norms import multi_fault_base, multi_fault_cases, multi_faults
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import env, norm
 from ve.wire import canonical_json
 

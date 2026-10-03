@@ -606,7 +606,7 @@ def test_k15_audit_hindsight(ops):
 # ---------------------------------------------------------------------------- Asimov, law 3, unranked, decision 18
 
 from conformance.risk import asimov_risk, asimov_rules  # noqa: E402
-from subprocesses import HANG_TIMEOUT  # noqa: E402
+from tests.subprocesses import HANG_TIMEOUT  # noqa: E402
 
 A1 = {"death": ("the person's death", "fatal"), "bruising": ("the person's bruising", "injuring")}
 A2 = {"p_death": ("P's death", "fatal"), "q_injury": ("Q's injury", "injuring")}
