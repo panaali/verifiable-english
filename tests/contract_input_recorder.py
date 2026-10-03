@@ -27,7 +27,13 @@ def _from_tests():
     return caller.parent == TESTS or caller == SOFT_CONFORMANCE
 
 
-def _record(environment, norms):
+# The unit whose inputs are recorded (`VE_CONTRACT_UNIT`, the pilot by default; wire-contract-s5.md 7.1).
+UNIT = os.environ.get("VE_CONTRACT_UNIT", "soft-norms@0")
+
+
+def _record(environment, norms, unit="soft-norms@0"):
+    if unit != UNIT:
+        return
     key = json.dumps([environment, norms], sort_keys=True, default=repr)
     _RECORDED.setdefault(key, os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0])
 
