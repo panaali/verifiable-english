@@ -38,6 +38,7 @@ import VE.Readings.BaseUp
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
 import VE.Readings.SupFree
+import VE.Readings.SupAll
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
