@@ -211,3 +211,53 @@ def test_m4_countermodel_under_should(lean):
     assert holds["valid"] is True and holds["conclusion_value"] is True
     # The model encodes choice 1, so the assumed atom of candidate 0 fails.
     assert wrong_reading["valid"] is False and wrong_reading["first_failing"] == "readings:rs1:0"
+
+
+def test_m4_countermodel_outcome_agrees_in_three_evaluators(lean):
+    from copy import deepcopy
+
+    from ve.ast import _to_data, formula_from_data
+    from ve.backends.dispatch import pinned
+    from ve.backends.rust_jsonl import run as rust_run
+    from ve.environment import Environment
+    from ve.evaluate import evaluate
+    from ve.model import FiniteModel
+    from ve.readings_s1 import Document, S1Environment
+    from ve.readings_sup import choice_vocabulary, superposed_contents
+    from ve.softnorms import SoftEnvironment, SoftNormDocument
+
+    raw = env_k()
+    document = k1_document(raw, fixed_units=[("u0", norm("help-x", "help_required", True))])[0]
+    source = Document(S1Environment(raw), document)
+    vocabulary = choice_vocabulary(source.sets)
+    frame = deepcopy(source.senv.soft_frame().to_dict())
+    for sort in vocabulary["sorts"]:
+        frame["vocabulary"]["sorts"][sort] = {"description": sort}
+    for name, sort in vocabulary["constants"].items():
+        frame["vocabulary"]["constants"][name] = {"sort": sort, "description": name}
+    for name, sorts in vocabulary["predicates"].items():
+        frame["vocabulary"]["predicates"][name] = {"arguments": sorts, "description": name}
+    soft = SoftNormDocument(SoftEnvironment(frame, generated=True),
+                            [c.raw for c in superposed_contents(source) if c.kind == "norm"])
+    base_outcome = _to_data(soft.elaborated.outcome("avoid_required", base=True))
+    conclusion = ["forall", "agent", ["forall", "user", base_outcome]]
+    shared = ["forall", "agent", ["forall", "user",
+              ["binary", "avoid_required", ["var", 1], ["var", 0]]]]
+    shown = model(True, True)
+    [lean_row] = run(lean, [case("readings-model", raw, document, model=shown,
+                                assumed=[["rs1", 1]], conclusion=shared)])
+    shadow = {**raw, "profiles": ["relational-fol@0"], "vocabulary": {
+        "sorts": frame["vocabulary"]["sorts"], "constants": frame["vocabulary"]["constants"],
+        "predicates": {"asks": raw["vocabulary"]["predicates"]["asks"],
+                       BIT: frame["vocabulary"]["predicates"][BIT],
+                       EX2: {"arguments": ["agent", "user"], "description": "exception"}}}}
+    environment = Environment(shadow)
+    with pinned("python"):
+        python_model = FiniteModel.from_dict(environment, shown)
+        python_value = evaluate(environment, formula_from_data(environment, conclusion),
+                                python_model, trace=False).value
+    rust = rust_run({"id": "m4", "kind": "readings-superposed-evaluate", "untrusted": True,
+                     "environment": shadow, "model": shown, "slot": [], "assertions": [],
+                     "conflict_targets": [], "conclusions": [conclusion]})
+    assert lean_row["valid"] is True and lean_row["conclusion_value"] is False
+    assert python_value is False and rust["values"]["conclusions"] == [False]
