@@ -8,6 +8,11 @@ checker rejects; where a checker's first failure is a type check, Python's
 diagnostic class and text are Lean's; and the Python and Lean authorities
 agree. The first failing example was `profiles` a number or a Boolean, which
 raised `TypeError` in `Environment`.
+
+env-profiles-looprecheck1 extended the class: each block route is compared on
+every field of its envelope, every nested value of each fixture is replaced by
+each kind, and the rights and reports blocks are compared with their Lean
+routes field by field.
 """
 from __future__ import annotations
 
@@ -49,6 +54,7 @@ TYPE_DIAGNOSTICS = {
     ("UnsupportedProfile", "profiles must be a sorted unique array"),
     ("InvalidInput", "InvalidInput: speech_acts block"), ("InvalidInput", "InvalidInput: alternatives.block"),
     ("InvalidInput", "InvalidInput: risk.block"), ("InvalidInput", "units must be an object"),
+    ("InvalidInput", "InvalidInput: environment vocabulary"),
 }
 
 
@@ -244,17 +250,195 @@ def test_type_diagnostics_are_leans(monkeypatch, base, field, data):
     """Every Lean decoder rejects; when Lean's or Python's first failure is a
     type check, the two diagnostics are equal in class and text. Lean's
     `environment` mode is compared on the envelopes it decodes; each block
-    route on its own block's fields."""
+    route on every field of its envelope, the common ones included
+    (env-profiles-looprecheck1: `language` 7 on an extended envelope, the
+    quantity route's `profiles` and the speech route's `vocabulary`)."""
     monkeypatch.setenv("VE_AUTHORITY", "python")
     python = pair(outcome(lambda: Environment(data)))
     if base in ENVELOPES:
         lean = pair(lean_environment_mode(data))
-    elif field in BLOCKS[base]:
-        lean = pair(lean_block_route(base, data))
     else:
-        return
+        lean = pair(lean_block_route(base, data))
     if python in TYPE_DIAGNOSTICS or lean in TYPE_DIAGNOSTICS:
         assert python == lean
+
+
+@pytest.mark.parametrize("base, field, value, expected", [
+    *[(base, "language", 7, "String expected") for base in ("speech", "alternatives", "risk", "w6", "risk-units")],
+    ("w6", "profiles", 7, "array expected"), ("w6", "profiles", True, "array expected"),
+    ("w6", "profiles", [[]], "String expected"),
+    ("speech", "vocabulary", 7, "InvalidInput: environment vocabulary"),
+    ("speech", "vocabulary", {}, "InvalidInput: environment vocabulary"),
+])
+def test_looprecheck1_examples_have_the_routes_diagnostics(monkeypatch, base, field, value, expected):
+    """env-profiles-looprecheck1's failing examples, without Lean: the route
+    that decodes each envelope gives these texts (checked against Lean above)."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    data = BASES[base]()
+    data[field] = value
+    assert pair(outcome(lambda: Environment(data))) == ("InvalidInput", expected)
+
+
+def _reports():
+    return {"language": "ve.core@0.2", "profiles": ["documents@1", "relational-fol@0", "reports@0"],
+            "spec_revision": pm.SPEC_REVISION,
+            "vocabulary": {"reports": {"holders": ["person", "text"], "evidence": "evidence"},
+                           "sorts": {s: {"description": s} for s in ("person", "text", "evidence")},
+                           "predicates": {"safe": {"arguments": ["person"], "description": "safe"}},
+                           "constants": {"article": {"sort": "text", "description": "article"},
+                                         "e1": {"sort": "evidence", "description": "evidence"}}}}
+
+
+def _rights():
+    from tests.test_rights import rights_env
+    return rights_env()
+
+
+# Fixtures whose nested blocks the top-level matrix does not reach.
+NESTED_BASES = {**BASES, "rights": _rights, "reports": _reports,
+                "layers": lambda: pm.raw_environment(("data@0", "definitions@0", "documents@1", "norms@0")),
+                "nary": lambda: pm.raw_environment(("closure@0", "nary@0"))}
+NESTED_KINDS = {"number": 7, "boolean": True, "string": "x", "array": [], "object": {},
+                "array-of-numbers": [1], "array-of-arrays": [[]], "array-of-objects": [{}],
+                "object-of-arrays": {"k": []}}
+
+
+def _paths(value, prefix=()):
+    if prefix:
+        yield prefix
+    if type(value) is dict:
+        for key, item in value.items():
+            yield from _paths(item, (*prefix, key))
+    elif type(value) is list:
+        for index, item in enumerate(value):
+            yield from _paths(item, (*prefix, index))
+
+
+def _replaced(data, path, value):
+    target = data
+    for step in path[:-1]:
+        target = target[step]
+    target[path[-1]] = deepcopy(value)
+    return data
+
+
+@pytest.mark.parametrize("base", sorted(NESTED_BASES))
+def test_every_nested_value_of_every_kind_raises_only_diagnostics(monkeypatch, base):
+    """Every value at every depth of each fixture, replaced by a value of each
+    JSON kind: the environment decoders and the document identities raise only
+    `VEError`. The first failing examples (env-profiles-looprecheck1) were
+    `vocabulary.rights.holders` `[[]]`, which raised `TypeError` in
+    `RightsEnvironment` and `stored_identities`; the class also held the
+    reports block's `holders` and a definition body's predicate name."""
+    from ve.document import stored_identities
+    from ve.readings_s1 import S1Environment
+    from ve.rights import RightsEnvironment
+    from ve.softnorms import SoftEnvironment
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+
+    def identities(data):
+        front = {"format": "ve-document@1", "environment": data, "units": []}
+        return stored_identities(b"---\n" + json.dumps(front).encode() + b"\n---\nText.\n")
+
+    crashes = []
+    for path in _paths(NESTED_BASES[base]()):
+        for kind, value in NESTED_KINDS.items():
+            data = _replaced(NESTED_BASES[base](), path, value)
+            for entry in (Environment, SoftEnvironment, RightsEnvironment, S1Environment, identities):
+                try:
+                    entry(deepcopy(data))
+                except VEError:
+                    pass
+                except Exception as exc:  # noqa: BLE001 - an uncaught exception is the defect under test
+                    crashes.append(f"{'/'.join(map(str, path))} {kind} {getattr(entry, '__name__', entry)}: "
+                                   f"{type(exc).__name__}: {exc}")
+    assert crashes == []
+
+
+def _same_diagnostic(diagnostic):
+    """Code and message, the message without a leading `<code>: ` (Lean's
+    checker texts carry it, Python's `DuplicateDeclaration` does not)."""
+    code, message = pair(diagnostic)
+    return code, message.removeprefix(f"{code}: ")
+
+
+BLOCK_KINDS = {**NESTED_KINDS, "mixed-array": ["person", 1], "unknown": ["nobody"], "duplicate": ["person", "person"]}
+
+
+def _rights_cases():
+    for key in ("holders", "bearers", "protected", "alters"):
+        for kind, value in BLOCK_KINDS.items():
+            if key == "protected" and kind == "duplicate":
+                continue  # Python refuses a repeated name, Lean checks each (a separate open question)
+            yield f"{key}-{kind}", ("vocabulary", "rights", key), value
+    for key in ("holder_slot", "status", "recognition"):
+        for kind, value in BLOCK_KINDS.items():
+            yield f"alters.{key}-{kind}", ("vocabulary", "rights", "alters", "person_may_act", key), value
+    for kind, value in BLOCK_KINDS.items():
+        yield f"alters-entry-{kind}", ("vocabulary", "rights", "alters", "person_may_act"), value
+
+
+def _block_matrix(binary, case, base, cases):
+    """Python's diagnostic and the Lean route's for each case of a nested block."""
+    if not (BIN / binary).exists():
+        pytest.skip(f"{binary} has not been built")
+    names, python, batch = [], [], []
+    for name, path, value in cases:
+        data = base()
+        if path[-2] == "person_may_act":
+            data["vocabulary"]["rights"]["alters"] = {"person_may_act": {"holder_slot": 0, "status": "person_may_act"}}
+        _replaced(data, path, value)
+        names.append(name)
+        try:
+            case["build"](deepcopy(data))
+            python.append(("ok", ""))  # an empty `protected` or `alters` is valid
+        except VEError as exc:
+            python.append(_same_diagnostic(exc.to_dict()))
+        batch.append({"id": name, "environment": data, **case["row"]})
+    done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch), text=True, capture_output=True,
+                          timeout=600)
+    assert done.returncode in (0, 1), done.stderr[-2000:]
+    rows = json.loads(done.stdout)
+    assert [row["id"] for row in rows] == names
+    lean = [_same_diagnostic(checker_error(row["error"]).to_dict()) if row["status"] == "error" else ("ok", "")
+            for row in rows]
+    return [(name, p, q) for name, p, q in zip(names, python, lean) if p != q]
+
+
+def test_rights_block_diagnostics_are_leans(monkeypatch):
+    """Each field of the rights block and of an `alters` entry, as each JSON
+    kind: Python's `RightsEnvironment` rejects with `ve_rights_route`'s
+    diagnostic (`decodeRightsBlock`'s types before the soft environment, then
+    `checkBlock`'s order). The first failing example was `holders` `[[]]`."""
+    from ve.rights import RightsEnvironment
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    case = {"build": RightsEnvironment, "row": {"kind": "rights-elaborate", "document": []}}
+    assert _block_matrix("ve_rights_route", case, _rights, list(_rights_cases())) == []
+
+
+def test_reports_block_diagnostics_are_leans(monkeypatch):
+    """The reports block's `holders` and `evidence` as each JSON kind: Python's
+    `Environment` rejects with `ve_reports_route`'s diagnostic (the block's
+    types before the vocabulary; `holders` 1 to 8 distinct, then declared)."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    cases = [(f"{key}-{kind}", ("vocabulary", "reports", key), value)
+             for key in ("holders", "evidence") for kind, value in BLOCK_KINDS.items()]
+    case = {"build": Environment, "row": {"kind": "reports-elaborate", "document": {"units": []}}}
+    assert _block_matrix("ve_reports_route", case, _reports, cases) == []
+
+
+@pytest.mark.parametrize("value", [[], {}, ["x"], {"k": []}])
+def test_definition_body_with_a_non_string_name_is_rejected_by_both(monkeypatch, value):
+    """A definition body whose predicate name is not a string raised
+    `TypeError` while its dependencies were collected; Python and Lean both
+    reject it now."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    data = pm.raw_environment(("definitions@0",))
+    data["vocabulary"]["predicates"]["derived"]["defined"]["body"][1] = value
+    assert pair(outcome(lambda: Environment(data))) == (
+        "InvalidInput", "Definition derived: the body is not a typed formula over the symbols below it")
+    if (BIN / "ve_service").exists():
+        lean_environment_mode(data)  # fails the test unless Lean rejects too
 
 
 LEAN_ROUTES = {
@@ -307,6 +491,40 @@ def test_rust_rejects_every_wrong_type_without_crashing(rust_executable):
         done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps([case]),
                               capture_output=True, text=True, timeout=60)
         assert done.returncode == 2 and "null" in done.stderr.lower(), (case["id"], done.stderr)
+
+
+@pytest.mark.parametrize("binary", sorted(LEAN_ROUTES))
+def test_every_lean_route_reads_every_nested_value_without_panicking(binary):
+    """The nested matrix above on each Lean route: one row per case, each a
+    result or a rejection, and no panic."""
+    if not (BIN / binary).exists():
+        pytest.skip(f"{binary} has not been built")
+    batch = [{"id": f"{base}-{'/'.join(map(str, path))}-{kind}",
+              "environment": _replaced(NESTED_BASES[base](), path, value), **LEAN_ROUTES[binary]}
+             for base in sorted(NESTED_BASES) for path in _paths(NESTED_BASES[base]())
+             for kind, value in NESTED_KINDS.items()]
+    done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
+                          timeout=600)
+    assert done.returncode in (0, 1) and b"PANIC" not in done.stderr, done.stderr[-2000:]
+    rows = json.loads(done.stdout)
+    assert [row["id"] for row in rows] == [case["id"] for case in batch]
+    assert {row["status"] for row in rows} <= {"ok", "error"}
+
+
+def test_rust_reads_every_nested_value_of_every_kind_without_crashing(rust_executable):
+    """The nested matrix above on Rust's environment decoder: one row per case,
+    each a verdict or a diagnostic, and no panic (some replacements, such as a
+    description `"x"`, are valid)."""
+    cases = [{"id": f"{base}-{'/'.join(map(str, path))}-{kind}", "kind": "check", "ast": ["top"],
+              "environment": _replaced(NESTED_BASES[base](), path, value)}
+             for base in sorted(NESTED_BASES) for path in _paths(NESTED_BASES[base]())
+             for kind, value in NESTED_KINDS.items()]
+    done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps(cases),
+                          capture_output=True, text=True, timeout=600)
+    assert done.returncode in (0, 1) and "panicked" not in done.stderr, done.stderr[-2000:]
+    rows = json.loads(done.stdout)
+    assert [row["id"] for row in rows] == [case["id"] for case in cases]
+    assert {row["status"] for row in rows} <= {"ok", "error"}
 
 
 @pytest.fixture(scope="module")
