@@ -1,6 +1,7 @@
 {
   "continuation_coverage_met": true,
   "contract": "soft-norms@0",
+  "contract_sha256": "050c739ee1456fdb10232c3fb22bc23d3740ed2e1f332c1ff112530541900487",
   "coverage_unmet": {
     "adjacent_phase_pairs": [],
     "first": [],
@@ -10,7 +11,92 @@
     "4.11b": "Reached only by an explicit null, which the wire readers refuse before diagnosis: Lean has no witness; Python has its first-fault and masking witnesses."
   },
   "inherited_records": "text and args are language-specific until base contracts exist",
-  "public_diagnostic_changes": [],
+  "public_diagnostic_changes": [
+    {
+      "check": "2.7a",
+      "code_differences": 0,
+      "example": {
+        "case": "R:block:3",
+        "legacy_code": "SOFT_INVALID_NAME",
+        "legacy_text": "InvalidInput: invalid soft name False",
+        "record_code": "SOFT_INVALID_NAME",
+        "record_text": "InvalidInput: invalid soft name false"
+      },
+      "text_changes": 138
+    },
+    {
+      "check": "2.8c",
+      "code_differences": 0,
+      "example": {
+        "case": "R:block:12",
+        "legacy_code": "SOFT_INVALID_NAME",
+        "legacy_text": "InvalidInput: invalid soft name False",
+        "record_code": "SOFT_INVALID_NAME",
+        "record_text": "InvalidInput: invalid soft name false"
+      },
+      "text_changes": 102
+    },
+    {
+      "check": "3.2",
+      "code_differences": 0,
+      "example": {
+        "case": "L:alternatives@0:env",
+        "legacy_code": "SOFT_UNSUPPORTED_PROFILE",
+        "legacy_text": "alternatives@0 with soft-norms@0",
+        "record_code": "SOFT_UNSUPPORTED_PROFILE",
+        "record_text": "UnsupportedProfile: Unsupported profile alternatives@0"
+      },
+      "text_changes": 10
+    },
+    {
+      "check": "4.1c",
+      "code_differences": 0,
+      "example": {
+        "case": "0:r0-field",
+        "legacy_code": "SOFT_INVALID_INPUT",
+        "legacy_text": "InvalidInput: invalid norm fields ['exception', 'extra', 'guard', 'mode', 'name', 'over', 'predicate', 'rank', 'sign', 'unless']",
+        "record_code": "SOFT_INVALID_INPUT",
+        "record_text": "InvalidInput: invalid norm fields"
+      },
+      "text_changes": 210
+    },
+    {
+      "check": "6.5a",
+      "code_differences": 0,
+      "example": {
+        "case": "0:document-nodes",
+        "legacy_code": "SOFT_RESOURCE_LIMIT",
+        "legacy_text": "AST exceeds 10,000 nodes",
+        "record_code": "SOFT_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: AST exceeds 10,000 nodes"
+      },
+      "text_changes": 20
+    },
+    {
+      "check": "6.6",
+      "code_differences": 0,
+      "example": {
+        "case": "0:precedence-depth",
+        "legacy_code": "SOFT_RESOURCE_LIMIT",
+        "legacy_text": "precedence depth",
+        "record_code": "SOFT_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: precedence depth"
+      },
+      "text_changes": 2
+    },
+    {
+      "check": "6.11",
+      "code_differences": 0,
+      "example": {
+        "case": "0:premise-depth",
+        "legacy_code": "SOFT_RESOURCE_LIMIT",
+        "legacy_text": "ResourceLimit: generated soft premise soft:exception:a0:sufficient:0",
+        "record_code": "SOFT_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: generated soft premise"
+      },
+      "text_changes": 16
+    }
+  ],
   "python_legacy_code_disagreements": [],
   "python_legacy_sample": "seed 0, first 2000 generic pair/triple cases",
   "python_legacy_text_deltas": {
@@ -33,48 +119,14 @@
       "legacy": "AST exceeds 10,000 nodes"
     }
   },
-  "revision": 3,
+  "revision": 4,
   "s3_pre": {
-    "code_differences": [
-      {
-        "case": "L:speech-acts@0:env",
-        "lean": [
-          "SOFT_UNSUPPORTED_PROFILE",
-          "UnsupportedProfile: Unsupported profile speech-acts@0"
-        ],
-        "python": [
-          "SOFT_INVALID_INPUT",
-          "Incorrect fields (missing=['speech_acts'], unknown=[])"
-        ]
-      },
-      {
-        "case": "L:speech-acts@0:base",
-        "lean": [
-          "SOFT_UNSUPPORTED_PROFILE",
-          "UnsupportedProfile: Unsupported profile speech-acts@0"
-        ],
-        "python": [
-          "SOFT_INVALID_INPUT",
-          "Incorrect fields (missing=['speech_acts'], unknown=[])"
-        ]
-      },
-      {
-        "case": "L:norm-defaults@0:unspecified",
-        "lean": [
-          "SOFT_INVALID_INPUT",
-          "InvalidInput: invalid regulated role or default for x_required"
-        ],
-        "python": [
-          "SOFT_UNSUPPORTED_PROFILE",
-          "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
-        ]
-      }
-    ],
+    "code_differences": [],
     "detail": "conformance/wire-contract/s3-pre.md",
     "status": "closed: no legacy verdict difference",
     "verdict_differences": []
   },
-  "status": "shadow",
-  "three_way_cases": 6007,
+  "status": "public",
+  "three_way_cases": 8796,
   "three_way_disagreements": []
 }

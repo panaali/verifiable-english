@@ -1,27 +1,51 @@
-"""Python predicates for the shadow soft-norms wire table.
+"""Python predicates and public rejection boundary for the soft-norms wire table.
 
-This module calls the existing validator read-only. It is imported only by
-diagnostic tools and tests; no acceptance or identity path imports it.
+The diagnostic engine observes a source only after the legacy validator rejects
+it. It never decides acceptance or identity.
 """
 
+from copy import deepcopy
 from dataclasses import replace
+from functools import lru_cache
 import json
 
 from ve import profiles
-from ve.environment import Environment
 from ve.errors import ResourceLimit, UnsupportedProfile, VEError
 from ve.limits import MAX_IDENTIFIER_BYTES, MAX_PREDICATES
 from ve import softnorms as soft
-from ve.wire_contract.engine import Registry
+from ve.wire_contract.engine import Registry, load, overlay, run
+
+
+@lru_cache(maxsize=1)
+def _locked_contract():
+    return load("soft-norms@0")
+
+
+def public_rejection(environment, norms, error: VEError, *, contract=None, registry=None) -> VEError:
+    """Attach the public record to a legacy rejection without replacing the error."""
+    if error.diagnostic is not None:
+        return error
+    try:
+        active_contract = _locked_contract() if contract is None else contract
+        if active_contract["status"] != "public":
+            return error
+        root = {"environment": deepcopy(environment), "norms": deepcopy(norms)}
+        outcome = run(active_contract, root, registry=REGISTRY if registry is None else registry)
+        record = overlay(active_contract, error, outcome)
+    except Exception:
+        return error
+    error.diagnostic = record
+    error.message = record["text"]
+    error.args = (record["text"],)
+    return error
 
 
 # The Lean engine is the specification (wire-contract.md D3) and every hook must agree with it on the
 # inputs where it is reached (2.5, rule 2). Two lists differ between `ve/softnorms.py` and the Lean
 # route, so the hooks below use Lean's, and a test compares them with the Lean sources:
-# the profiles that phase 2 passes on to W1's decoding (`Phases.inheritedProfiles`; Python's
-# `_INHERITED_PROFILES` adds `norm-defaults@0`), and the registry of check 3.2 (`VE.Route.Gate.registry`
-# with `soft-norms@0`; Python's `profiles.BY_NAME` adds six statement layers). Where the two legacy
-# validators therefore differ, conformance/wire-contract/s3-pre.md records the inputs.
+# the profiles that phase 2 passes on to W1's decoding (`Phases.inheritedProfiles`) and the
+# registry of check 3.2 (`VE.Route.Gate.registry` with `soft-norms@0`). Python's legacy
+# registry adds six statement layers; S3-pre and S4-pre record the resulting comparisons.
 INHERITED_PROFILES = ("data@0", "definitions@0", "documents@1", "time@0")
 ROUTE_PROFILES = frozenset({"closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norms@0",
                             "order@0", profiles.BASE, "time@0", soft.SOFT_PROFILE})
@@ -76,7 +100,7 @@ def w1_declarations(root, items):
         "predicates": {name: ({k: v for k, v in entry.items() if k != "instruction_of"}
                              if type(entry) is dict else entry)
                        for name, entry in vocabulary["predicates"].items()}}}
-    return _failure(lambda: Environment(stripped))
+    return _failure(lambda: soft.soft_route_environment(stripped, data["profiles"]))
 
 
 def profile_registered(root, items):
