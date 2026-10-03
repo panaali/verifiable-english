@@ -39,6 +39,7 @@ import VE.Readings.UpPremises
 import VE.Readings.UpSlot
 import VE.Readings.SupFree
 import VE.Readings.SupAll
+import VE.Readings.SupWireSound
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
