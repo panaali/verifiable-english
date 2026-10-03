@@ -3,7 +3,7 @@
 **Status:** S0 deliverable of [english-lean-PLAN.md](english-lean-PLAN.md) section 5, **partial**, 2026-10-03,
 branch `english-lean/py`. Every figure below was measured by a committed tool on this branch; the raw data is
 `conformance/english-lean/s0-report.json`. Nothing here changes a verdict, an identity, a public code or a
-frozen file. Items that S0 still owes are listed in section 8.
+frozen file. Items that S0 still owes are listed in section 10.
 
 Tools (no model calls; none is on an admission path):
 
@@ -14,6 +14,7 @@ Tools (no model calls; none is on an admission path):
 | `conformance/english_lean_corpus.py` | the engine corpus `conformance/english-lean/engine.json` (spec 8.1 to 8.3, 8.7) | `uv run python -m conformance.english_lean_corpus` |
 | `conformance/english_lean_lexer.py` | Python reference of the draft lexer (spec 2.2), fixtures `conformance/english-lean/lexer.json` (8.4) | `tests/test_english_lean_lexer.py` |
 | `conformance/english_lean_tokens.py` | Python's Lark grammar converted to word tokens and read by the reference engine: verdict parity, steps | `uv run python -m conformance.english_lean_tokens --per-configuration 60` |
+| `conformance/english_lean_rejections.py` | the hand parser's rejection sites, classified, with probes read three ways | `uv run python -m conformance.english_lean_rejections` |
 | `conformance/english_lean_lexicon.py` | Python's lexicon export and identity, a reference of `Lexicon.valid`, fixtures `conformance/english-lean/lexicon.json` (8.5) | `uv run python -m conformance.english_lean_lexicon` |
 
 ## 1. Python's generated grammar, per configuration
@@ -58,7 +59,7 @@ Findings.
   (reviewed overlays). The one terminal the lexer refuses is `.`, the terminator, which W4 keeps out of the
   sentence grammar.
 - **Sizes differ from plan 1.2's static count** (82 alternatives over 20 nonterminals) because Lark's
-  expansion of `?`, `*` and inlined rules adds rules and nonterminals. The tree correspondence (sections 7 and 8)
+  expansion of `?`, `*` and inlined rules adds rules and nonterminals. The tree correspondence (sections 7 and 10)
   must map them.
 
 ## 2. Synthetic limit environments
@@ -125,7 +126,7 @@ sentences too.
   original. Spec O1 prescribes, for a non-empty class, a `glued` flag on `punct` before S2. **For the DRI:**
   either add the flag (Lean then rejects these mutants as Python does), or record the widening as an
   accepted product difference under SEMANTICS-MIGRATION-PLAN 2.3. No hyphenated word occurred in the
-  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 8) must
+  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 10) must
   include declared wordings with hyphens.
 - **Whitespace (O3):** the reference lexer uses the 29 code points of Python's `str.isspace`, which is what
   `_normalise_english_source` collapses (Lean's `Char.isWhitespace` has 4 of them). The list is a literal in
@@ -234,7 +235,104 @@ Findings.
   on the one constructed ambiguity; S2's comparison applies the same conversion rules to the Lean grammar's
   derivations.
 
-## 8. What S0 still owes
+## 8. The hand parser's rejection sites
+
+`conformance/english_lean_rejections.py` lists every rejection site of `EnglishParser` and of
+`_parse_english_document_uncached`: 38 `self.error` calls (one of which emits the six messages of
+`_RISK_REJECTED`) and 5 `raise` statements, plus the helpers `need` (22 call sites) and `space` (11). The
+plan's static count of 49 is close to 38 + 5 + 6; this table is the reference from now on, and a test
+fails when a new `self.error` message is not in it. Classes: **G** no derivation (Lean `none`; Python's
+message stays a diagnostic), **S** one derivation whose meaning is a declared rejection, **A** subsumed by
+`many`, **B** a blocked wording whose advice fires only when no atom matched (Lean `none`), **L** lexer,
+**R** resource limit, **X** outside the reader.
+
+| Site (message start) | Calls | Class | Lean outcome or code | Evidence |
+|---|---|---|---|---|
+| `Expected {text!r} here` (`need`) | 22 | G | none | |
+| `Expected a space between these words.` (`space`) | 11 | G | none | over tokens this is the O1 class (section 4) |
+| `This name is already in scope.` | 1 | S | `shadowedName` | probes p1, p2 |
+| `Expected a declared sort noun` | 1 | G | none | |
+| `The … of a term requires functional and total declarations.` | 2 | G | none | attribute rules exist only for functional total relations |
+| `String-valued attribute properties require data stage 2.` | 1 | G | none | property rules exclude `$string` |
+| `The vocabulary gives this clause more than one meaning.` | 1 | A | `many` | two templates on one span |
+| `A condition wording …` (`_RISK_CONDITION_IN_RULE`) | 1 | B | none | to confirm on risk@0 texts in S3 |
+| `Phrase … extends existing wording` | 1 | G | none | probe p11; stays a shadow item (plan 7.3) |
+| `Arithmetic term exceeds 64 nesting levels.` | 1 | R | `nestingLimit` | |
+| `Expected an integer term such as [n + 1].`, `Expected an integer term.`, `Unexpected text in an integer term.` | 3 | G | none | |
+| `A scaling coefficient must be an integer numeral.` | 1 | S | **no code in the draft list** | probe p7: `Api costs [budget * limit].` has one derivation |
+| `_RISK_REJECTED` (6 messages) | 1 | B | none | `unknown_atom` |
+| six alternatives@0 advice messages | 6 | B | none | `unknown_atom` |
+| `Unknown English phrase …` | 1 | G, or S | none; `unboundReference`; `pronounUnresolved` | S for a reference form the grammar derives but scope does not bind (p3, p4) and for `it` outside the first slot (p5) |
+| `Expected a constant name or a definite reference …` | 1 | G, or S | none; `unboundReference` | as above |
+| `Another action needs a rule on an action as its reference.` | 1 | S | `unboundReference` | probe p13 |
+| `The chooser has no antecedent …` | 1 | S | `unboundReference` | probe p14 |
+| `The excluded action must be an action in scope.` | 1 | S | `sortMismatch` | not probed |
+| `Choose whether no available action might lead to the harm …` (`_RISK_EVERY_CANNOT`) | 1 | S | `blockedWording risk-every-cannot` | not probed |
+| `This statement exceeds the 64-level nesting limit.` | 1 | R | `nestingLimit` | |
+| `This document exceeds the 10000-node limit.` | 1 | L | `textTooLong` | a formula node consumes at least one character |
+| `The referent of it is incomplete.` | 1 | S | `pronounUnresolved` | probe p6 |
+| `Plural or possessive reference needs …` | 1 | B | none | probe p12 |
+| `Expected a or an before …` | 3 | G | none | |
+| `The source and destination of a step must have the same sort.` | 1 | S | `sortMismatch` | probe p9 |
+| `Use an explicit for every clause for negation.` | 1 | S | `blockedWording natural-negation` | probe p10 |
+| `Expected a uniquely declared ownership clause.` | 1 | G | none | |
+| `Write at least one statement ending with a period.` | 1 | L | `emptyDocument` | |
+| `English source exceeds 65536 bytes` | 1 | L | `sourceTooLong` | |
+| `English input must be UTF-8.`; `source must be str or bytes` | 2 | X | — | the service receives a JSON string |
+
+Each probe sentence (`conformance/english-lean/rejections-report.json`) is read three ways: Python's parser,
+Python's own Earley grammar, and that grammar over word tokens. For every S probe Python rejects while both
+grammars give one derivation; for every G and B probe the token grammar gives none. All 14 probes agree.
+
+Findings for the tier B lists of spec 4.2 and 5.8.
+
+- **`Reject` needs one more code**: a scaling coefficient that is not a numeral (`[budget * limit]`) has one
+  derivation, and Python rejects it as a side condition. Proposed: `coefficientNotNumeral`, text
+  `Sentence {i} multiplies by something that is not a number.`
+- **`blockedWording` ids:** `natural-negation` (`Every deployed service is not reviewed.`) and
+  `risk-every-cannot`. Every other blocked wording fires only when nothing parses, so it is `none` with
+  Python's advice as the diagnostic.
+- **Python reports several side conditions as unknown phrases:** an unbound `that service`, an unbound label
+  and an `it` in a later slot all reach `Unknown English phrase` in Python. Both sides reject, in mapped
+  classes (`SyntaxError`), so the public code does not change.
+- **A sentence-initial label:** Python lowers the first letter of `S1 is reviewed.` (its initial fold
+  matches `[A-Z][A-Za-z]*`), so its Earley grammar has no derivation; the token grammar reads the label and
+  rejects with `unboundReference` (spec e17). Both reject; the classes map.
+
+## 9. The lint codes, sorted (plan 2.4)
+
+The 18 codes of the vocabulary lint (`ve/printer.py`, `ve/english.py`), each in one of the plan's three
+classes. **Subsumed:** a violation can only add derivations, which the per-sentence check reports as `many`
+or `none`. **Ported:** a violation could let the selection change a formula, so `Lexicon.valid` holds it.
+**Retained:** reader protection; one reading is unaffected, but a reader could misread the wording. This is
+a proposal from reading the checks; the DRI decides the retained class (plan 2.4, S7).
+
+| Code | Checks | Class | Where it lives in Lean |
+|---|---|---|---|
+| `DUPLICATE_TEMPLATE` | two predicates declare one wording (also a risk wording reused) | ported | V4 |
+| `SORT_COLLISION` | two sorts share a noun | ported | V4 (nouns) |
+| `NEGATIVE_NOT_NEGATION` | a declared negative is not `negative_template` of the positive | ported | V5 |
+| `NEGATIVE_WITHOUT_POSITIVE` | a negative whose positive was not accepted | ported | V5 (the negative of a fallback is never declared) |
+| `TEMPLATE_SHAPE` | holes, in order, subject first and object last | ported in part | V3 covers the holes; the order rule is retained |
+| `SORT_NOUN` | a wording contains a sort noun | subsumed | |
+| `PHRASE_SYNTAX` | lower-case ASCII words only | subsumed | the ASCII part is O5's decision |
+| `VARIABLE_TOKEN` | a word shaped like a variable (`x1`, `S1`) | subsumed | an `S1`-shaped word lexes as a label, which a wording rule cannot hold as a word; an `x1` overlap is a per-sentence ambiguity |
+| `UNARY_MODIFIER` | a unary wording with more than one complement word | subsumed | |
+| `ENGLISH_STRUCTURE_WORD` | a word of the fixed rules (`classified`, `named`, comparison words, …) | subsumed | a wording that spoofs another symbol's fallback fails V4 from that symbol's side |
+| `TEMPLATE_LENGTH` | at most 80 characters and 8 words | retained | style and size |
+| `LOGICAL_WORD` | `and`, `or`, `not`, `every`, `if`, … inside a wording | retained | ambiguity is subsumed, but a positive wording that reads as a negation is not |
+| `SYMBOL_COLLISION` | a wording contains another symbol's name or head | retained | |
+| `NEGATED_HEAD` | `un-`/`non-` plus another predicate's head | retained | |
+| `BINARY_AUXILIARY` | a binary wording starts with an auxiliary (passive) | retained | direction |
+| `BINARY_CONVERSE` | a binary wording ends with `by`, `to`, `of`, … | retained | direction |
+| `BINARY_VERB` | a binary wording does not start with a present-tense verb | retained | |
+| `IDIOM_UNRELATED` | a fixed idiom not anchored in the predicate's name or description | retained | |
+
+Totals: 4 ported and 1 in part, 5 subsumed, 8 retained plus the order rule of `TEMPLATE_SHAPE`. The
+retained checks stay a trusted Python check (plan section 6, `python:vocabulary-lint`) until the DRI
+decides. Section 6 found no corpus lexicon that a ported condition refuses.
+
+## 10. What S0 still owes
 
 | Item (plan section 5) | State |
 |---|---|
@@ -245,8 +343,8 @@ Findings.
 | Character-versus-token probes | partly: spacing mutants (section 4); hyphenated wordings and word-split mutants are not yet measured |
 | Sealing the shadow corpus with hashes | not done |
 | The tree correspondence (Lark ↔ Lean derivations) | first cut: verdict parity under the conversion of section 7; formulas and witness multiplicity wait for S2's actions |
-| Classification of the 49 rejection sites; blocked-wording ids | not done |
+| Classification of the 49 rejection sites; blocked-wording ids | done (section 8); one new `Reject` code proposed |
 | Lexicon validity of Python's selections | done (section 6); one V1 finding for the DRI |
-| Sort of every lint code into subsumed, ported, retained | not done |
+| Sort of every lint code into subsumed, ported, retained | proposed (section 9); the DRI decides the retained class |
 | Earley time per sentence | not done (the machine was too loaded for wall-clock figures); section 7 gives reference-engine steps and CPU time instead |
 | G4 volume and coverage targets | not done |
