@@ -109,7 +109,6 @@ def require_fields(value, fields, *, path="", error=VEError):
 
 
 def formula_tag_arity(tag: str) -> int | None:
-    """The surface registry owns formula tags on every routed wire version."""
-    from .surface.registry import by_tag
-    record = by_tag(tag)
-    return None if record is None else record.wire_arity
+    """The kernel's formula tag table owns formula tags on every routed wire version."""
+    from .ast import WIRE_ARITY  # ast imports this module
+    return WIRE_ARITY.get(tag)
