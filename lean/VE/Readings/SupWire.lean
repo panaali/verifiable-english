@@ -143,15 +143,26 @@ def admitS2 (environment document : Json) : Except String Admitted2 := do
 
 /-! ## A superposed document -/
 
-/-- The decoded document of a superposed case: S1's admission with couplings and narrowings decoded (4.1 step 1). -/
+/-- The decoded document of a superposed case: S1's admission with couplings and narrowings decoded (4.1 step 1),
+    a compatible choice found (4.1 step 3: never a verdict over no reading) and the soft check of every compatible
+    choice's document passed (DRI ruling 5). -/
 structure SupReplay where
   D : Doc
   wf : WellFormedDoc D = true
   soft : D.chain ≠ .rights
   sp : superposable D = true
+  sat : (choices D).isEmpty = false
+  checked : choicesSoftChecked D = true
 
+/-- The superposed route's admission of a case: `ReadingsUnsatisfiable` when no choice is compatible, the chain's
+    diagnostic under the first choice whose document fails the soft check, `ResourceLimit` past `maxChoiceChecks`
+    choices; a document that is not superposable is the enumerated route's. -/
 def supReplayOf (b : Admitted2) : Except String SupReplay :=
-  if h : b.D.chain ≠ .rights ∧ superposable b.D = true then pure ⟨b.D, b.wf, h.1, h.2⟩
+  if h : b.D.chain ≠ .rights ∧ superposable b.D = true then
+    if hs : (choices b.D).isEmpty = false then
+      if hc : choicesSoftChecked b.D = true then pure ⟨b.D, b.wf, h.1, h.2, hs, hc⟩
+      else throw ((superposedCheckText b.D).getD checkBudgetText)
+    else throw (unsatText b.D)
   else match notSuperposable b.D with
     | some (sets, cause) => throw s!"{notSuperposableText sets} ({cause}); use readings-choice"
     | none => throw "UnsupportedProfile: superposition of a rights document is S2b; use readings-choice"
@@ -332,11 +343,12 @@ structure ModelReplay extends SupReplay where
 def replayModel (j : Lean.Json) : Except String ModelReplay := do
   let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
   let _ ← supReplayOf b
-  if hs : b.D.chain ≠ .rights ∧ superposable b.D = true then
+  if hs : b.D.chain ≠ .rights ∧ superposable b.D = true ∧ (choices b.D).isEmpty = false ∧
+      choicesSoftChecked b.D = true then
     let A ← decodeChoice (j.getObjValD "assumed")
     let ⟨(Γ, φ), hΓ, hφ⟩ ← decodeShared b.D (j.getObjValD "premises") (j.getObjValD "conclusion")
-    let ⟨M, valid⟩ ← decodeSupModel b.a.re b.D ⟨b.wf, hs.1, hs.2⟩ (by rw [b.frame]; rfl) (← j.getObjVal? "model")
-    pure ⟨⟨b.D, b.wf, hs.1, hs.2⟩, A, Γ, φ, hΓ, hφ, M, valid⟩
+    let ⟨M, valid⟩ ← decodeSupModel b.a.re b.D ⟨b.wf, hs.1, hs.2.1⟩ (by rw [b.frame]; rfl) (← j.getObjVal? "model")
+    pure ⟨⟨b.D, b.wf, hs.1, hs.2.1, hs.2.2.1, hs.2.2.2⟩, A, Γ, φ, hΓ, hφ, M, valid⟩
   else throw "InvalidInput: readings document is not superposable"
 
 end VE.Readings.Wire

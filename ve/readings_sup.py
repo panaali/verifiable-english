@@ -497,8 +497,55 @@ def choice_slot(doc, couplings=(), narrowings=()):
 
 
 def unsatisfiable_ids(sets, couplings=(), narrowings=()):
-    """The diagnostic's restriction ids, if bottom is later certified by Lean."""
+    """The ids of `ReadingsUnsatisfiable: <ids>` (7): the couplings and the narrowings in force, sorted."""
     active = {(reading_set.id, reading_set.version) for reading_set in sets}
     return ", ".join(sorted([item["id"] for item in couplings] +
                             [item["id"] for item in narrowings
                              if (item["set"], item["version"]) in active]))
+
+
+# DRI ruling 5 (2026-10-03): the superposed route runs the chain's check on every compatible choice's document, up to
+# this many choices (Lean's `maxChoiceChecks`); past them the superposed verdict kinds refuse with CHECK_BUDGET_TEXT.
+MAX_CHOICE_CHECKS = 1024
+CHECK_BUDGET_TEXT = f"ResourceLimit: more than {MAX_CHOICE_CHECKS} readings to check"
+
+
+def choice_text(sets, choice) -> str:
+    """A choice as section 7 writes it: `<set>@<v>:<i>` in source order."""
+    return ", ".join(f"{R.id}@{R.version}:{choice[R.id]}" for R in sets)
+
+
+def choice_chain_text(doc, choice):
+    """The chain's diagnostic of a compatible choice's document with the choice, or None (Lean's
+    `choiceChainText`)."""
+    from .readings_s1 import Side
+    text = Side(doc.senv, choice_contents(doc, choice), doc.unit_ids).chain_text()
+    return None if text is None else f"{text} under {choice_text(doc.sets, choice)}"
+
+
+def route_refusal(doc, route, couplings=(), narrowings=()):
+    """4.1 steps 3 and 5 on the superposed and enumerated routes (Lean's `routeRefusal`): `ReadingsUnsatisfiable`
+    when no choice is compatible, else the chain's diagnostic under the first compatible choice whose document the
+    chain refuses, among every choice up to the route's budget (MAX_CHOICE_CHECKS superposed, 64 enumerated)."""
+    sets = doc.sets
+    if route not in ("superposed", "enumerated"):
+        return None
+    found, _ = choices(sets, couplings, narrowings, limit=0)
+    if not found:
+        return "ReadingsUnsatisfiable: " + unsatisfiable_ids(sets, couplings, narrowings)
+    budget = MAX_CHOICE_CHECKS if route == "superposed" else MAX_CHOICES
+    checked, over = choices(sets, couplings, narrowings, limit=budget)
+    if over:
+        return None
+    for choice in checked:
+        text = choice_chain_text(doc, choice)
+        if text is not None:
+            return text
+    return None
+
+
+def choices_checked(sets, route, couplings=(), narrowings=()):
+    """The `choices_checked` field of `readings-elaborate`: how many compatible choices' documents were checked."""
+    budget = MAX_CHOICE_CHECKS if route == "superposed" else MAX_CHOICES
+    found, over = choices(sets, couplings, narrowings, limit=budget)
+    return f"over {budget}" if over else len(found)

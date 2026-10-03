@@ -376,4 +376,103 @@ def test_m8_precedence_leak_forces_enumeration(lean):
     checked = elaborate(raw, units, [reading_set_], executable=lean)
     assert checked == {"route": "enumerated", "finding": {
         "text": "ReadingsNotSuperposable: rs1", "cause": "precedence under waive-x"},
-        "choice_count": 2, "choices": [[['rs1', 0]], [['rs1', 1]]], "narrowings_stale": []}
+        "choice_count": 2, "choices": [[['rs1', 0]], [['rs1', 1]]], "choices_checked": 2, "narrowings_stale": []}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Review A1 (2026-10-03): no verdict over no reading (4.1 step 3)
+
+EXPAND_CLOSE = {**CLOSE, "trace": {"rule": "expand", "at": 2, "children": [{"rule": "close"}]}}
+
+
+def _both_narrowed(raw):
+    """K1 with two narrowings in force on `rs1`, one keeping each candidate: no choice is compatible, and the slot
+    holds `narrowing:keep-strict` = ¬b beside `narrowing:keep-default` = b."""
+    document = k1(raw)
+    document["units"].append({"id": "u2", "kind": "asserted", "content": ["top"]})
+    document["narrowings"] = [
+        {"id": "keep-strict", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer", "reason_spans": ["u2"]},
+        {"id": "keep-default", "set": "rs1", "version": 1, "keeps": ["default"], "by": "reviewer",
+         "reason_spans": ["u2"]}]
+    return document
+
+
+def test_a1_unsatisfiable_readings_refused_before_any_verdict(lean):
+    from ve.errors import VEError
+    from ve.readings_route import elaborate
+
+    raw = env_k()
+    document = _both_narrowed(raw)
+    text = "ReadingsUnsatisfiable: keep-default, keep-strict"
+    certs = {"avoid_required": EXPAND_CLOSE, "help_required": EXPAND_CLOSE}
+    rows = run(lean, [case("readings-elaborate", raw, document),
+                      case("readings-certificate", raw, document, premises=[], conclusion=None,
+                           conflict_certificates=certs, certificate=EXPAND_CLOSE),
+                      case("readings-certificate", raw, document, premises=[], conclusion=SOME_ASKS,
+                           conflict_certificates=certs, certificate=EXPAND_CLOSE),
+                      case("readings-conflict", raw, document, conflict_certificates=certs),
+                      case("readings-model", raw, document, model=model(True, True))])
+    # Before the fix the certificate kinds accepted ⊥ with `conflict_free: true` over the inconsistent slot.
+    assert all(row["status"] == "error" and row["error"] == text for row in rows), rows
+    try:
+        elaborate(raw, document["units"], document["reading_sets"], narrowings=document["narrowings"],
+                  executable=lean)
+    except VEError as exc:
+        assert str(exc.message if hasattr(exc, "message") else exc) == text
+    else:
+        raise AssertionError("Python's elaboration admitted a document with no compatible choice")
+
+
+def test_a1_one_narrowing_keeps_the_route(lean):
+    raw = env_k()
+    document = _both_narrowed(raw)
+    document["narrowings"] = document["narrowings"][:1]
+    [row] = run(lean, [case("readings-elaborate", raw, document)])
+    assert row["status"] == "ok" and row["choices"] == [[["rs1", 0]]] and row["choices_checked"] == 1, row
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Review B1 / DRI ruling 5: the soft check of every compatible choice's document, run by the route
+
+
+def test_ruling5_every_choice_document_checked(lean):
+    from ve.readings_route import elaborate
+
+    raw = env_k()
+    document = k1(raw)
+    [row] = run(lean, [case("readings-elaborate", raw, document)])
+    assert row["route"] == "superposed" and row["choices_checked"] == 2
+    checked = elaborate(raw, document["units"], document["reading_sets"], executable=lean)
+    assert checked["choices_checked"] == 2
+
+
+def test_ruling5_diagnostic_names_the_choice(monkeypatch):
+    """A choice whose document the chain refuses is the chain's text under the choice, in source order (7)."""
+    from ve import readings_s1
+    from ve.readings_s1 import Document, S1Environment
+    from ve.readings_sup import CHECK_BUDGET_TEXT, route_refusal
+
+    raw = env_k()
+    source = Document(S1Environment(raw), k1(raw))
+    assert route_refusal(source, "superposed") is None
+    calls = []
+
+    def refuse(side):
+        calls.append(side)
+        return "ResourceLimit: generated background" if len(calls) == 2 else None
+
+    monkeypatch.setattr(readings_s1.Side, "chain_text", refuse)
+    assert route_refusal(source, "superposed") == "ResourceLimit: generated background under rs1@1:1"
+    assert CHECK_BUDGET_TEXT == "ResourceLimit: more than 1024 readings to check"
+
+
+def test_ruling5_over_budget_refuses_superposed_kinds(monkeypatch):
+    """Past the budget no choice is checked, and the superposed verdict kinds would claim more than the check."""
+    from ve import readings_sup
+    from ve.readings_s1 import Document, S1Environment
+
+    raw = env_k()
+    source = Document(S1Environment(raw), k1(raw))
+    monkeypatch.setattr(readings_sup, "MAX_CHOICE_CHECKS", 1)
+    assert readings_sup.choices_checked(source.sets, "superposed") == "over 1"
+    assert readings_sup.route_refusal(source, "superposed") is None

@@ -253,17 +253,17 @@ theorem index_of_mem {c : Choice} (hn : (c.map (·.1)).Nodup) {x : String × Nat
       rw [List.find?_cons_of_neg (by simpa using hne)]
       exact this
 
-theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).length ≤ maxChoices) (c : Choice) :
-    c ∈ choices D ↔ Compatible D c := by
+/-- Every choice the search returns is compatible, whatever its cut. -/
+theorem compatible_of_mem_search (D : Doc) (b : Nat) (c : Choice) (h : c ∈ search D D.sets [] b) :
+    Compatible D c := by
+  rw [search_eq] at h
+  exact ((mem_allFrom D D.sets [] c).mp (List.mem_of_mem_take h)).1
+
+theorem mem_allFrom_sets (D : Doc) (hr : supReady D = true) (c : Choice) :
+    c ∈ allFrom D D.sets [] ↔ Compatible D c := by
   simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr
   have hn := hr.1.1.1.1.1.1.1
-  have heq : choices D = allFrom D D.sets [] := by
-    rw [choices, search_eq]
-    rw [choices, search_eq] at hle
-    apply List.take_of_length_le
-    simp only [List.length_take] at hle
-    omega
-  rw [heq, mem_allFrom, Compatible]
+  rw [mem_allFrom, Compatible]
   constructor
   · exact fun h => h.1
   · intro hc
@@ -295,6 +295,60 @@ theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).lengt
           simpa using hh
         · simp [hid]
       · rfl
+
+/-- Below its cut the search lists exactly the compatible choices. -/
+theorem search_spec (D : Doc) (hr : supReady D = true) (b : Nat) (hlt : (search D D.sets [] b).length < b)
+    (c : Choice) : c ∈ search D D.sets [] b ↔ Compatible D c := by
+  have heq : search D D.sets [] b = allFrom D D.sets [] := by
+    rw [search_eq] at hlt ⊢
+    apply List.take_of_length_le
+    simp only [List.length_take] at hlt
+    omega
+  rw [heq]
+  exact mem_allFrom_sets D hr c
+
+theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).length ≤ maxChoices) (c : Choice) :
+    c ∈ choices D ↔ Compatible D c :=
+  search_spec D hr (maxChoices + 1) (by simp only [choices] at hle; omega) c
+
+/-- 1.2: a document whose search finds a choice has a compatible choice. -/
+theorem exists_compatible_of_choices (D : Doc) (h : (choices D).isEmpty = false) : ∃ c, Compatible D c := by
+  cases hc : choices D with
+  | nil => rw [hc] at h; cases h
+  | cons c _ =>
+    have hm : c ∈ choices D := by rw [hc]; exact List.mem_cons_self
+    exact ⟨c, compatible_of_mem_search D _ c hm⟩
+
+/-- 1.2, 4.1 step 3: a document whose search finds no choice has none (`ReadingsUnsatisfiable`, 7). -/
+theorem no_compatible_of_choices (D : Doc) (hr : supReady D = true) (h : (choices D).isEmpty = true) :
+    ¬ ∃ c, Compatible D c := by
+  rintro ⟨c, hc⟩
+  have hnil : choices D = [] := List.isEmpty_iff.mp h
+  have := (choices_spec D hr (by rw [hnil]; simp [maxChoices]) c).mpr hc
+  rw [hnil] at this
+  cases this
+
+/-! ### The checked choices (DRI ruling 5 of 2026-10-03)
+
+The superposed route runs the soft check on the document of every compatible choice, up to `maxChoiceChecks`
+choices; `choice_wellFormed` takes the check's success as its hypothesis (`ChoiceWF.lean`), and the replays of the
+superposed case kinds carry it (`SupReplay.checked`). -/
+
+def maxChoiceChecks : Nat := 1024
+/-- The compatible choices whose documents the superposed route checks, cut after `maxChoiceChecks + 1`. -/
+def checkedChoices (D : Doc) : List Choice := search D D.sets [] (maxChoiceChecks + 1)
+/-- The runtime check: at most `maxChoiceChecks` compatible choices, each of whose soft documents passes the soft
+    check (`WellFormedSoft`, its size limits on generated formulas included). -/
+def choicesSoftChecked (D : Doc) : Bool :=
+  decide ((checkedChoices D).length ≤ maxChoiceChecks) &&
+    (checkedChoices D).all (fun c => VE.SoftNorms.WellFormedSoft (choiceDoc D c).1.soft)
+
+theorem choicesSoftChecked_spec (D : Doc) (hr : supReady D = true) (hw : choicesSoftChecked D = true) (c : Choice)
+    (hc : Compatible D c) : VE.SoftNorms.WellFormedSoft (choiceDoc D c).1.soft = true := by
+  simp only [choicesSoftChecked, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true] at hw
+  have hlt : (search D D.sets [] (maxChoiceChecks + 1)).length < maxChoiceChecks + 1 := by
+    have := hw.1; simp only [checkedChoices] at this; omega
+  exact hw.2 c ((search_spec D hr _ hlt c).mpr hc)
 
 /-! ## The choice vocabulary and the atoms (1.3) -/
 
