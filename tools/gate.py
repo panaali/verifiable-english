@@ -23,6 +23,9 @@ from tools import rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
+# The suite as the gate runs it; tools/gate_collection.py collects with the same arguments.
+PYTEST_ARGS = ("-q", "-p", "hypothesis.extra.pytestplugin", "-p", "tools.gate_pytest",
+               "-o", "addopts=-ra", "-m", "not live", "tests")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
                    "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
@@ -436,9 +439,7 @@ def main() -> int:
                 "VE_RUST_BINARY": str(rust_binary)})
             try:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         "-q", "-p", "hypothesis.extra.pytestplugin",
-                         "-p", "tools.gate_pytest", "-o", "addopts=-ra",
-                         "-m", "not live", "tests"], env=pytest_env, stage="Python suite")
+                         *PYTEST_ARGS], env=pytest_env, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
