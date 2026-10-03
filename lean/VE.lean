@@ -19,6 +19,9 @@ import VE.Readings.Children
 import VE.Readings.Live
 import VE.Readings.Faithful
 import VE.Readings.Superpose
+import VE.Readings.Strings
+import VE.Readings.SupSlot
+import VE.Readings.Labels
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
