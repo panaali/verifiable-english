@@ -247,7 +247,7 @@ class Superposed(_Route):
         return result
 
     def _witness(self, A, premises, missing):
-        from .ast import Not, _Checker
+        from .ast import Not
         from .evaluate import _Evaluator, _Exhausted
         from .norms import _bind
         from .search import find_countermodel
@@ -258,7 +258,6 @@ class Superposed(_Route):
             if found.status != "Found":
                 continue
             model = found.model
-            _Checker(self.base, generated=True).formula(formula, tuple(reversed(sorts)))
             evaluator = _Evaluator(self.base, model, BUDGET["max_evaluations"], trace=False)
             try:
                 values = next((values for values in product(*(model.domains[s] for s in sorts))
@@ -901,7 +900,7 @@ class _ChoiceDocument:
 
     def _witness(self):
         """A finite base model where some conflict target holds, with its tuple (Python's search, untrusted)."""
-        from .ast import Not, _Checker
+        from .ast import Not
         from .evaluate import _Evaluator, _Exhausted
         from .norms import _bind
         from .search import find_countermodel
@@ -914,7 +913,6 @@ class _ChoiceDocument:
             if found.status != "Found":
                 continue
             model = found.model
-            _Checker(base, generated=True).formula(formula, tuple(reversed(sorts)))
             evaluator = _Evaluator(base, model, BUDGET["max_evaluations"], trace=False)
             try:
                 values = next((values for values in product(*(model.domains[s] for s in sorts))
