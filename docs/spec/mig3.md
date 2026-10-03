@@ -1,7 +1,7 @@
 # Semantics migration, stage 3: shadow mode (statement specification)
 
-> Status: statement specification, draft 2 (2026-10-03), branch `design/mig3` from `main` at `a093a14d`. This is
-> the item-1 statement spec of [mig3-PLAN.md](mig3-PLAN.md) draft 3 (the **plan**). Item 1 is Stage 3 of
+> Status: statement specification, draft 3 (2026-10-03), branch `design/mig3` from `main` at `a093a14d`. This is
+> the item-1 statement spec of [mig3-PLAN.md](mig3-PLAN.md) draft 4 (the **plan**). Item 1 is Stage 3 of
 > [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md), revision 3 (the **base plan**): its section "Stage 3:
 > shadow mode" with Gate 3, and the parts of its sections 4 and 5 that Stage 3 names. **No design debate was held
 > on this stage.** The directory `manage-agents/debates/design-mig3/` that the pipeline step names does not exist,
@@ -11,12 +11,14 @@
 > (`manage-agents/debates/mig3-spec/`, Astra + Fable, three rounds, 2026-10-03). Both reviewers' verdict was FIX;
 > the DRI's ruling (`DRI-RULING.md` there) applies the union of both reviewers' corrections with Astra's three
 > round-3 refinements. Draft 2 applies that ruling and nothing else; section 13 lists each correction and where it
-> landed. Both reviewers verify the corrective diff before M3.1 starts (plan, section 6). Section 12 lists the
-> choices the base plan does not fix and the open questions. Fixtures are implementation obligations, not claims
-> of completed tests. Nothing was built or run for this draft. Every `file:line` reference was read at `eb96d5ed`
-> and must be re-read at each step; every number quoted from another document is that document's. Nothing here
-> changes a verdict, an identity, a code, a frozen contract, a default authority, a Lean file or a theorem
-> statement.
+> landed. Both reviewers verify the corrective diff before M3.1 starts (plan, section 6). **The verification of
+> draft 2's diff** (`manage-agents/mig3-p3ver1.final.md`, 2026-10-03) found two of the ruling's corrections
+> incomplete and two overshot; draft 3 applies those four findings and nothing else (section 14). Section 12
+> lists the choices the base plan does not fix and the open questions. Fixtures are implementation obligations,
+> not claims of completed tests. Nothing was built or run for this draft. Every `file:line` reference was read at
+> `eb96d5ed` and must be re-read at each step; every number quoted from another document is that document's.
+> Nothing here changes a verdict, an identity, a code, a frozen contract, a default authority, a Lean file or a
+> theorem statement.
 
 ## 0. Scope, one paragraph
 
@@ -34,7 +36,7 @@ states. The switch of the default (Stage 4) is not specified here.
 In this specification: the decisions (1), the definitions (2), the English, one reading each (3), the diagnostics
 (4), the Lean statements relied on (5), where the code stands against the base plan (6), the files and gates of
 the build (7), the acceptance fixtures (8), Gate 3 (9), limits (10), the statement review checklist (11), the
-choices this specification resolves with the open questions (12), and the changes of draft 2 (13).
+choices this specification resolves with the open questions (12), the changes of draft 2 (13) and of draft 3 (14).
 
 ## 1. Decisions
 
@@ -49,7 +51,7 @@ choices this specification resolves with the open questions (12), and the change
 | D7 | A run is one corpus at one commit of `main`, registered before it starts; every worker process registers before its first shadow call and leaves a finalized tally. The corpora are the base plan's list, in a registry with floors from calibration runs | 2.7, 2.8, 2.9 |
 | D8 | A day is clean when every corpus has a complete run in its nightly, every class-A operation was compared, every commit since the previous nightly that needs a merge run has one, and no registered run of the day has a zero-tolerance record, a completion failure or a recorder fault. A day is certified only after it has ended and every registered run of it has finished | 2.10 |
 | D9 | Every zero-tolerance record, every unavailable call and every recorder fault is a finding with one cause. The causes `python`, `glue` and `spec` carry the base plan's triage rule word for word | 2.11 |
-| D10 | The count of clean days goes back to zero at the merge of a fix of adapter, glue, decoder or Rust code, however the fault was found. Every other change under `ve/` or to the candidate surface is classed by the DRI, file by file, with a reason, before the gate can be met | 2.12 |
+| D10 | The count of clean days goes back to zero at the merge of a fix of adapter, glue, decoder or Rust code, however the fault was found. Every change under `ve/` or to the candidate surface, such a fix included, is classed by the DRI, file by file, with a reason, before the gate can be met | 2.12 |
 | D11 | Gate 3 is a statement about one day and that day's nightly commit | 2.12, 9 |
 | D12 | No file under `lean/` or `rust/` changes, and no Lean statement is added | 5, 7 |
 
@@ -184,9 +186,11 @@ a dataclass, and dictionaries, lists and tuples member by member, a tuple as a l
 
 The **error record** of a raised exception `e` is `e.to_dict()` where `e` has one: for a `VEError`, `code` and
 `message`, with `path`, `span` and `diagnostic` when they are set (`ve/errors.py:22–30`), and `generator` for an
-`InvalidModel` (lines 69–73). Otherwise it is `{"code": c, "message": str(e)}`, where `c` is the name of `e`'s
-type. That is the record the baseline compares (`tests/probe_matrix.py:137–143`); today's shadow path keeps
-`code` and `message` only (`dispatch.py:177–178`), and the build changes that.
+`InvalidModel` (lines 69–73). Otherwise it is `{"code": c, "message": str(e)}`, where `c` is `e.code` when `e`
+has a member `code`, and the name of `e`'s type when it has none: today's fallback, retained
+(`dispatch.py:177–178, 188–189`). For a `VEError` that is the record the baseline compares
+(`tests/probe_matrix.py:137–140`); today's shadow path keeps `code` and `message` only, for a `VEError` too
+(`dispatch.py:177–178`), and the build changes that.
 
 The **comparison projection** is applied to both records before they are compared:
 
@@ -574,15 +578,18 @@ The classing file is `conformance/shadow/changes.json`: a list of entries `{"com
 "files", "signed"}`. `files` has one line `{"path", "class", "reason"}` for each changed file of the classed
 paths, and no other: `--check` compares the paths with `git diff --name-only`. A file's `class` is `restart` or
 `no-restart`; the entry's `class` is `restart` when any of its files is, and `no-restart` otherwise. Every commit
-that needs classing and is not a restart event by (a) has an entry. The DRI classes each file by this rule:
+that needs classing has an entry, a restart event by (a) among them: in its entry, the file that carries the
+fix is classed `restart`. The DRI classes each file by this rule:
 
 - `restart`: the change fixes adapter, glue, decoder or Rust code, however the fault was found (by shadow, by a
-  test, by reading), or otherwise changes what a candidate answers on some input. Such a change is `restart`
-  wherever the file lies: a fix in `ve/wire.py` that changes what an adapter sends to Lean is one.
-- `no-restart`: the change is not such a fix and changes no candidate's answer: a change to retained Python
-  only (the English surface, a renderer, a Python body of a class-A operation), a comment, a test hook. The
-  reason says what the change is and why no candidate is affected. For a file on the candidate surface the
-  reason must say why none of that file's candidate code changed.
+  test, by reading). Such a fix is `restart` wherever the file lies: a fix in `ve/wire.py` that changes what an
+  adapter sends to Lean is one. A change that is not such a fix may also be classed `restart`; that is the
+  DRI's choice (questions 2 and 10), and the reason says why.
+- `no-restart`: the change is not such a fix: a change to retained Python only (the English surface, a
+  renderer, a Python body of a class-A operation), a comment, a test hook; or a change to candidate code that
+  fixes no fault (an input newly routed to Lean, for one), when the DRI so decides. The reason says what the
+  change is and why it fixes nothing of a candidate. For a file on the candidate surface the reason must also
+  say what of that file's candidate code changed, or that none did.
 
 `no-restart` never means "shadow did not find it".
 
@@ -664,7 +671,8 @@ The reasons of a day that is not clean, one line each:
 
 The reasons of a day that is not final: `the day has not ended`; `the run <run> has not finished`.
 
-The reasons of a restart: `it fixes finding <id> (<cause>)`, or `the DRI classed <path> as a restart: <reason>`.
+The reasons of a restart: `it fixes finding <id> (<cause>)`, or `the DRI classed <path> as a restart: <reason>`;
+the first where both hold.
 
 The reasons of a gate that is not met: `the count is <k>, and 14 are needed`; `finding <id> is open`;
 `commit <c> changes a classed path and is not classed`.
@@ -680,7 +688,7 @@ and has two readings.
 | "Zero divergences." | no record of any class; or none in a zero-tolerance class | "No compared call differed in a zero-tolerance class. <n> compared calls differed in message text only." |
 | "Lean and Python agree." | on every input, or on the compared calls of the corpora; and Lean alone, or Lean with Rust inside the adapter | "On <n> compared calls, the result under Lean authority equals Python's result after the comparison projection." |
 | "on real traffic (suite, use cases, pilots, web app)" (the plan's pointer) | calls from people who use a deployed program; or the corpora of the base plan, among them the web app's API tests | "Every corpus of the registry runs in shadow. No call from a person using a deployed program is among them." |
-| "Any adapter or glue fix restarts the clock." | any change to adapter or glue code; or a change that fixes a finding | "The count goes back to zero when a fix of adapter, Lean glue, Lean decoder or Rust code is merged, however the fault was found. Every other change under `ve/` or to the candidate surface is classed by the DRI, file by file, with a reason." |
+| "Any adapter or glue fix restarts the clock." | any change to adapter or glue code; or a change that fixes a finding | "The count goes back to zero when a fix of adapter, Lean glue, Lean decoder or Rust code is merged, however the fault was found. Every change under `ve/` or to the candidate surface, such a fix included, is classed by the DRI, file by file, with a reason." |
 | "14 consecutive days" | 14 nightly runs, whenever they happen; or 14 UTC calendar days with none between them | "14 UTC days in a row, each with its own nightly." |
 | "The completion rate is 100%." | every call completed; or every call that Python completed also completed on the backend with the same outcome | the sentence for completion |
 | "a Python deviant", "a Lean deviant" | the side whose result differs from the other's, which is both sides; or the side that is wrong against the specification | "Cause: python" means that Python's result was wrong against the specification and Python was fixed. "Cause: glue" means the same of the Lean glue or a Lean decoder |
@@ -907,7 +915,7 @@ Both sides return; the operation is `evaluate` unless the row names one.
 | C10 | a member `foo` with two values; then a member `foo` on one side only | `["schema"]`, both times |
 | C11 | `status` and `message` | `["budget-outcome", "diagnostic-message", "verdict"]` |
 | C12 | the projection of every output of the baseline, by shadow's function and by `baseline_projection` | equal on every cell |
-| C13 | both sides raise `InvalidModel`, with the same `code` and `message`, and the records differ in `generator` only; then in `span.line` only; then in `path` only; then in `message` only | `["diagnostic-code"]`; `["schema"]`; `["schema"]`; `["diagnostic-message"]` |
+| C13 | both sides raise `InvalidModel`, with the same `code` and `message`, and the records differ in `generator` only; then in `span.line` only; then in `path` only; then in `message` only; then both sides raise a `VEError` whose `diagnostic` is a public record (`ve/softnorms_contract.py:37`) and the records differ in `diagnostic.text` only; then `diagnostic` is set on one side only | `["diagnostic-code"]`; `["schema"]`; `["schema"]`; `["diagnostic-message"]`; `["schema"]`; `["schema"]` |
 
 ### 8.3 Records, tallies and runs
 
@@ -944,13 +952,13 @@ every day is clean, no commit changes a classed path, every commit that needs a 
 | G4 | on day 7 a merge run has one zero-tolerance record | day 7 is not clean; the count on day 14 is 7 |
 | G5 | on day 7 one record with class `["diagnostic-message"]` | day 7 is clean; the count on day 14 is 14 |
 | G6 | on day 7 one completion failure; then, in its place, one `unavailable` record with `sides` `["python"]` and a closed entry; then one with `sides` `["backend", "python"]` and a closed entry; then the last with its entry open | not clean, and the count on day 14 is 7; clean, and the gate is met; clean, and the gate is met; clean, and `finding <id> is open`, exit 1 |
-| G7 | the fix of a finding with cause `adapter` is merged on day 5: after n(5); then before n(5) | the count on day 14 is 9; then 10 |
+| G7 | the fix of a finding with cause `adapter` is merged on day 5, with its entry (the fixed file classed `restart`): after n(5); then before n(5); then after n(5) with no entry | the count on day 14 is 9; then 10; then 9, and also `commit <c> changes a classed path and is not classed` |
 | G8 | a commit before n(9) changes one file of the candidate surface, in turn: `lean/VE/Service/Graph.lean`; `ve/parser.py`; `lean/VE/Bridge.lean`. Each with no entry in `changes.json`; with the file classed `no-restart`; with the file classed `restart` | with no entry: `commit <c> changes a classed path and is not classed`, exit 1, for all three; with `no-restart`: the gate is met, for all three (the tool does not judge the reason, limit 14); with `restart`: the count on day 14 is 6, for all three |
 | G8a | a commit before n(9) changes `ve/wire.py`, a fix of the canonical JSON of the payload the Lean adapters send (candidate-affecting, off the surface): with no entry; then classed `restart` with that reason | `commit <c> changes a classed path and is not classed`, exit 1; the count on day 14 is 6, and the restart's reason is `the DRI classed ve/wire.py as a restart: <reason>` |
 | G8b | a commit before n(9) changes `ve/english.py`, a Python-only fix (the English surface stays Python, base plan 2.3): with no entry; then classed `no-restart` with that reason | `commit <c> changes a classed path and is not classed`, exit 1; the gate is met, and the entry is listed in the report's classed changes with its reason |
 | G8c | a commit before n(9) changes `ve/wire.py` and `ve/english.py`; its entry has a line for `ve/wire.py` only; then lines for both and a third for `ve/printer.py` | exit 2, `changes entry <commit> does not match its diff: ve/english.py`; exit 2, naming `ve/printer.py` |
 | G9 | a finding of day 0 has an entry with no cause | `finding <id> is open`; exit 1 |
-| G10 | the fix of a finding with cause `python` is merged on day 10 | the count on day 14 is 14 |
+| G10 | the fix of a finding with cause `python` is merged on day 10, with its entry (the fixed file classed `no-restart`) | the count on day 14 is 14 |
 | G11 | the ledger entry of day 3 says `clean` and one of its run rows has `zero_tolerance` 1 | exit 2, with the line of 4.3 |
 | G12 | day 7 has no nightly | day 7 is not clean; the count on day 14 is 7 |
 | G13 | on day 7 the operation `distinguishing_model` has `compared` 0 in the nightly | day 7 is not covered, with the second reason of 3.1 |
@@ -961,7 +969,7 @@ every day is clean, no commit changes a classed path, every commit that needs a 
 | G18 | `day 7` is run at 23:00Z on day 7; then on day 8 while a registered run that started on day 7 has no `finished`; then after that run finished | `7 is not final: the day has not ended`, exit 2, no entry; `7 is not final: the run <run> has not finished`, exit 2, no entry; the entry is written, with `written` after both |
 | G19 | the ledger entry of day 3 has `written` at 20:00Z on day 3; then `written` on day 4 but before the `finished` of one of its runs | `--check` exits 2 both times, naming the entry and `written` |
 | G20 | on day 7, after the nightly, a second set of nightly runs starts at a later commit, and one of them has a zero-tolerance record | n(7) is the first set's commit and day 7 is covered by it; day 7 is not clean (the later run is a registered run of day 7); the count on day 14 is 7 |
-| G21 | the fix of a finding with cause `spec` is merged on day 5 after n(5): the side changed to match the note is the glue; then it is Python | the count on day 14 is 9; then 14 |
+| G21 | the fix of a finding with cause `spec` is merged on day 5 after n(5), with its entry: the side changed to match the note is the glue (its file classed `restart`); then it is Python (its file classed `no-restart`) | the count on day 14 is 9; then 14 |
 
 ### 8.5 Conservativity
 
@@ -1097,7 +1105,7 @@ it; the statement review (section 13) confirmed each or corrected it as the rows
 | R1 | Records have a `kind`. An unanswered call is a record of the kind `unavailable`, not an eleventh class | the plan names ten classes and asks, in its section 4, that every `CheckerUnavailable` be triaged |
 | R2 | A completion failure leaves its day not clean, whatever its triage says | Gate 3 asks for a completion rate of 100% "over the accepted workload" and does not say per day |
 | R3 | A day that is not covered is not clean and ends the run of days | the plan says "14 consecutive days" |
-| R4 | Restart events are the fixes of adapter, glue, decoder or Rust code, however the fault was found: the fix commits of findings with those causes (and of `spec` findings whose changed side is one of them), and any file the DRI classes `restart`. Every other change under `ve/` or to the candidate surface is classed by the DRI, file by file; a commit that is not classed blocks the gate | the plan says "Any adapter or glue fix" and names no Rust fix and no change that is not a fix |
+| R4 | Restart events are the fixes of adapter, glue, decoder or Rust code, however the fault was found: the fix commits of findings with those causes (and of `spec` findings whose changed side is one of them), and any file the DRI classes `restart`. Every change under `ve/` or to the candidate surface, such a fix included, is classed by the DRI, file by file; a change that is not such a fix is classed at the DRI's discretion; a commit that is not classed blocks the gate | the plan says "Any adapter or glue fix" and names no Rust fix and no change that is not a fix |
 | R5 | The candidate surface is `ve/backends/`, the `ve/` modules with an `execute` call or a Lean-only handoff, `lean/VE/Service/`, `lean/Serve.lean`, `lean/checkers.lock` and the manifest's `lean_decoders`; the classed paths add the rest of `ve/` | not in the plan. The lock file stands for every change to the two checker binaries |
 | R6 | An error record is the exception's `to_dict()` where it has one: the whole public record, as the baseline compares it | the plan names the classes `diagnostic-code` and `diagnostic-message`; its section 5 excludes nothing else |
 | R7 | One side returning and the other raising is `verdict` and `schema`, with `budget-outcome` for `ResourceLimit` | not in the plan; today's code gives `schema` |
@@ -1164,8 +1172,8 @@ before the first nightly, not before the build.
     map 5.1) raises the same question through `checkers.lock`.
 11. **Changes to Python's class-A bodies** (resolved by the statement review). Every changed file under `ve/`
     carries a class line (2.12), so such a change is classed `no-restart` with its reason and listed in the
-    report, or `restart` when it affects a candidate. The base plan's section 6 forbids new Python semantics
-    since stage 2, and B1 holds the baseline.
+    report, or `restart` when it fixes code that a candidate runs (limit 4) or when the DRI so decides. The
+    base plan's section 6 forbids new Python semantics since stage 2, and B1 holds the baseline.
 12. **Not read, not measured.** The corpus commands; the floors; the size of the records, above all of the
     `lean-only` ones, which are written for every call; how long a nightly takes; whether the suite passes with
     `VE_AUTHORITY=shadow` set for the whole run (Z1); which tests inject a backend fault without choosing an
@@ -1205,3 +1213,18 @@ verify this diff before M3.1 starts.
 | 15 | `run.json` records the `ve-webapp` commit (Fable, minor) | 2.8 (`webapp_commit`) |
 | 16 | A `lean-only` record is one per case for the batch handoffs (Fable, minor) | 2.2; 2.6; 7.1; fixture S18 |
 | 17 | Questions 2, 3 and 6 go to the DRI before the first nightly, not before the build (both reviewers; the ruling) | 12 (preamble, questions 2, 3, 6); plan 6 and 8 |
+
+## 14. Changes of draft 3 (the verification of draft 2 applied)
+
+The verification of draft 2's diff is `manage-agents/mig3-p3ver1.final.md` (2026-10-03, read-only, verdict FAIL):
+two of the ruling's corrections had landed incompletely and two had been applied more strongly than ruled. Each
+row is one finding and where its correction landed. No row changes a frozen contract, a quoted Lean statement, a
+verdict, an identity, a code or a default; the §5 block is byte for byte draft 1's. No design choice is added:
+rows 1 and 2 complete section 13's rows 14 and 2; rows 3 and 4 take back what those rows overshot.
+
+| # | Finding | Where the correction landed |
+|---|---|---|
+| 1 | 2.12 exempted a restart event by (a) from a `changes.json` entry; the ruling requires a class line for every changed file under `ve/`, those commits' files included | 2.12 ("Every commit that needs classing has an entry"; the file that carries the fix is `restart`); D10, 3.2 and R4 ("every change …, such a fix included"); 3.1 (which restart reason is printed when both hold); fixtures G7 (third case), G10, G21 (entries); plan 2 and 7 |
+| 2 | C13 lacked the fixture where only `diagnostic` differs | fixture C13: `diagnostic.text` differs; `diagnostic` set on one side only |
+| 3 | 2.4 made the fallback for an exception without `to_dict()` the type name alone, discarding an existing `e.code`; the correction retained today's fallback | 2.4: `e.code` where `e` has one, else the type name (`dispatch.py:177–178, 188–189`) |
+| 4 | 2.12's `restart` rule also mandated a restart for any change that affects a candidate's answer, a non-fix included; the ruling mandates restart for fixes and leaves the other changes to the DRI's class (question 2) | 2.12 (`restart`: fixes, and a non-fix at the DRI's choice; `no-restart`: a non-fix, a candidate change that fixes no fault among them, with the reason); R4; question 11 |

@@ -1,11 +1,13 @@
 # Migration stage 3: shadow mode (PLAN)
 
-**Status:** plan only, draft 3, 2026-10-03, branch `design/mig3` from `main` at `a093a14d`. No code or proofs
+**Status:** plan only, draft 4, 2026-10-03, branch `design/mig3` from `main` at `a093a14d`. No code or proofs
 change with this document. Draft 3 applies the statement review of the statement spec and of this plan
 (`manage-agents/debates/mig3-spec/`, Astra + Fable, three rounds; both verdicts FIX; the DRI ruling of
 2026-10-03 applies the union of both reviewers' corrections with Astra's three round-3 refinements). The
-statement spec's section 13 lists each correction; section 9 below lists what changed in this plan. Draft 1
-(`eb96d5ed`) was a pointer of one paragraph:
+statement spec's section 13 lists each correction. Draft 4 applies the verification of that corrective diff
+(`manage-agents/mig3-p3ver1.final.md`, 2026-10-03, verdict FAIL: four findings, two corrections incomplete and
+two overshot); the statement spec's section 14 lists them, and section 9 below lists what changed in this plan.
+Draft 1 (`eb96d5ed`) was a pointer of one paragraph:
 
 > Item 1 of THIS plan is Stage 3 (shadow mode) of docs/spec/SEMANTICS-MIGRATION-PLAN.md: run every class-A
 > operation under both authorities on real traffic (suite, use cases, pilots, web app) and record every
@@ -13,9 +15,9 @@ statement spec's section 13 lists each correction; section 9 below lists what ch
 > (docs/spec/stage2-progress.md). Inputs: docs/TRUST-MAP.md on branch docs/trust-map (24 of 26 operations still
 > default to Python). Apply that plan's Stage 3 section exactly; honest open questions.
 
-Draft 2 wrote the plan out and changed nothing of the pointer's intent; draft 3 changes nothing of it either.
-[SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md), revision 3, is the **base plan**. The item-1
-statement spec is [mig3.md](mig3.md) (the **statement spec**), now draft 2; its statement review is done, and
+Draft 2 wrote the plan out and changed nothing of the pointer's intent; drafts 3 and 4 change nothing of it
+either. [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md), revision 3, is the **base plan**. The item-1
+statement spec is [mig3.md](mig3.md) (the **statement spec**), now draft 3; its statement review is done, and
 both reviewers verify the corrective diff before the first build step (section 6, M3.0b).
 
 **What the debate files are.** The pipeline step asked for "the converged edits in
@@ -28,7 +30,8 @@ revision 3 of the base plan (its section 8, change log of 2026-09-27). Section 3
 it binds Stage 3; no design choice of that debate is reopened or added to. Everything in this plan and in the
 statement spec that the base plan does not fix is marked as a choice of this draft (statement spec, section 12)
 and went to the statement review (`manage-agents/debates/mig3-spec/`), the first review of this stage; its
-corrections are applied in statement spec draft 2 and in this draft.
+corrections are applied in statement spec draft 2 and plan draft 3, and the verification's four findings in
+statement spec draft 3 and this draft.
 
 The plan was written from reading the sources at `eb96d5ed`, and `docs/TRUST-MAP.md` in the worktree of branch
 `docs/trust-map`. Nothing was built or run, and every `file:line` reference must be re-read at each step.
@@ -92,8 +95,8 @@ The statement spec fixes every detail; this section is the plan-level summary.
   Python deviant is fixed with a new conformance case; a Lean glue or decoder deviant with statement review; a
   spec ambiguity gets a spec note and a fixture (statement spec 2.11).
 - **The count** of clean days in a row goes back to zero at the merge of a fix of adapter, glue, decoder or
-  Rust code, however the fault was found. Every other change under `ve/` or to the candidate surface is classed
-  by the DRI, file by file, with a reason, before the gate can be met (statement spec 2.12).
+  Rust code, however the fault was found. Every change under `ve/` or to the candidate surface, such a fix
+  included, is classed by the DRI, file by file, with a reason, before the gate can be met (statement spec 2.12).
 - **Gate 3** is met on a day when the count is at least 14, every finding is closed and the reports are
   attached. It allows Stage 4 to be specified; it switches nothing (statement spec, section 9).
 
@@ -141,8 +144,8 @@ unchanged (fixture Z5).
 
 | Step | Content | Effort |
 |---|---|---|
-| M3.0 | statement review of the statement spec and this plan (Astra + Fable): done, `manage-agents/debates/mig3-spec/`, verdict FIX, the DRI ruling applied in statement spec draft 2 and this draft | review (done) |
-| M3.0b | both reviewers verify the corrective diff (statement spec draft 1 to draft 2, this plan draft 2 to draft 3) by diff, with no new round; M3.1 starts after that | review |
+| M3.0 | statement review of the statement spec and this plan (Astra + Fable): done, `manage-agents/debates/mig3-spec/`, verdict FIX, the DRI ruling applied in statement spec draft 2 and plan draft 3 | review (done) |
+| M3.0b | both reviewers verify the corrective diff by diff, with no new round. Done once for statement spec draft 1 to draft 2 (plan draft 2 to draft 3): verdict FAIL, four findings (`manage-agents/mig3-p3ver1.final.md`), applied in statement spec draft 3 and this draft. Repeated on that diff (statement spec draft 2 to draft 3, this plan draft 3 to draft 4); M3.1 starts after a pass | review |
 | M3.1 | the recorder: the guarded shadow call with the candidate `lean=` only under `pinned("lean")`, the projection, the `to_dict()` error record, the classes, the record kinds, registration and final tallies (`ve/backends/dispatch.py`); fixtures S (S16, S20 among them), C (C13 among them) and most of L | 2 d |
 | M3.2 | the call sites: payloads that determine the input (nine sites), `note_uncompared` (14 branches), the `lean-only` record, one per case; fixtures L2, L9, L10, L12, L13, S18 | 1–2 d |
 | M3.3 | the corpora: the registry and `tools/shadow_run.py`; one calibration run of each corpus (manual, not registered, complete in every condition but the floors); the calibration commit, reviewed, that writes each corpus's command, floors and calibration run into the registry. No run is registered before it | 1–2 d |
@@ -164,7 +167,7 @@ Lean worker of the build has no work item beyond B4.
 | A worker's evidence is missing and the rest looks fine | every worker registers before its first shadow call and must leave a final tally that matches its records; a worker killed before that, or one whose writes all fail, makes its run incomplete, however far the other workers exceed the floors |
 | A day is certified before its runs end | the ledger entry is written only after the day has ended and every registered run of it has finished; `--check` rejects an entry written earlier |
 | A wording entry or the projection hides a real difference | the projection drops two member names and nothing else; a wording entry matches two exact strings at one structural path of one operation, at a diagnostic-text or graph-proof location only, and is added only by a reviewed commit; `--check` rejects every other location |
-| The count survives a change to the code it is about | every commit that changes a file under `ve/`, the glue, a decoder or the pinned binaries is found from the history and must be a restart or carry the DRI's class and reason for each changed file; one without blocks the gate. A fix of candidate code restarts wherever it lives and however it was found |
+| The count survives a change to the code it is about | every commit that changes a file under `ve/`, the glue, a decoder or the pinned binaries is found from the history and must carry the DRI's class and reason for each changed file, a fix commit too; one without blocks the gate. A fix of candidate code restarts wherever it lives and however it was found |
 | Timeouts under load cost days | recorded as findings with the cause `operational`; the choice of limit and of worker count is section 8, question 3 |
 | The 14 days never complete while expansion work changes the glue | section 8, questions 2 and 10: the DRI orders the work |
 | Agreement is taken for correctness | statement spec, limit 1: shadow shows that two programs agree on the corpora and proves nothing |
@@ -206,7 +209,7 @@ build:
 11. **Not read, not measured:** the corpus commands, the floors, the size of the records, the length of a
     nightly, and whether the suite passes with `shadow` set for the whole run.
 
-## 9. Debate response table (draft 3)
+## 9. Debate response table (draft 4)
 
 There is no design debate on this stage to respond to (status paragraph). The base plan's debate is answered
 in the base plan's own section 8; section 3 above restates its edits for Stage 3 and changes none of them. The
@@ -218,3 +221,4 @@ statement review is answered here and in the statement spec's section 13.
 | the pointer of draft 1 | written out as sections 0 to 8 (draft 2); its "real traffic" is read as the base plan's corpora (section 8, question 5) |
 | the base plan's Stage 3, Gate 3, section 4 (completion rate, budget boundaries) and section 5 (comparison projection) | applied as written; each operational choice the base plan leaves open is listed in the statement spec, section 12 (R1 to R22) |
 | `manage-agents/debates/mig3-spec/` (statement review; DRI ruling of 2026-10-03: the union of both reviewers' corrections with Astra's three round-3 refinements) | applied in full in statement spec draft 2 (its section 13, 17 rows). In this plan: the status paragraphs; section 0 item 3 (what the code cannot do today); section 1 (the shadow path's candidate); section 2 (the candidate is `lean=` run at `lean`, the error record and the wording allowlist, final tallies, calibration floors, merge coverage and day finality in a clean day, the restart and classing rule); section 4 (limit renumbered); section 6 (M3.0 done, M3.0b the diff check, M3.1 to M3.6 amended); section 7 (two risks added, three amended); section 8 (questions 1, 2, 3 and 6). No design choice is added |
+| `manage-agents/mig3-p3ver1.final.md` (verification of the corrective diff, 2026-10-03; FAIL, four findings) | applied in full in statement spec draft 3 (its section 14): a restart event by (a) has a `changes.json` entry too; the `diagnostic`-only cases of C13; the error record's fallback keeps `e.code`; the `restart` class is mandatory for fixes only, a non-fix being the DRI's class. In this plan: the status paragraphs; section 2 (every change classed, a fix included); section 6 (M3.0b); section 7 (the classing risk). No design choice is added |
