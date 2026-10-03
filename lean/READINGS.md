@@ -181,7 +181,7 @@ listed in `VE/Route/frozen-sources.sha256`).
 | `ChoiceWF.lean` | `choice_sideWF_of_soft`; `choice_wellFormed` with the route's soft check of every choice as its hypothesis (DRI ruling 5) |
 | `Route.lean` | the route of 1.1, `supCertificateCheck`, `supModelCheck`, the refusals of 4.1 steps 3 and 5 (`routeRefusal`, `unsatText`, `superposedCheckText`, `enumeratedCheckText`), the regenerated elaboration (`elaborateFields`) |
 | `SupWire.lean` | 8.5's structures and decoders: couplings and narrowings (W2's texts), `admitS2`, `replaySup`, `decodeChoice`, `supVocabulary`, `decodeSupModel`, `replayCertificate`, `replayModel` |
-| `SupWireSound.lean` | `readings_wire_all_sound`, `readings_wire_model_sound`, `readings_wire_satisfiable`, `readings_wire_choice_wellFormed` |
+| `SupWireSound.lean` | `readings_wire_all_sound`, `readings_wire_model_sound`, `readings_wire_satisfiable`, `readings_wire_assumed_taken`, `readings_wire_choice_wellFormed` |
 | `SupRun.lean` | the case kinds of section 3 (`Run.lean` dispatches to them) |
 | `Examples.lean` | `#guard`s and theorems on M1, M16, M19 (KH, KB), M20; `MU` (two narrowings keeping no choice, review A1) and `MB` (past `maxChoiceChecks`) |
 
@@ -193,7 +193,8 @@ Proved as stated (draft 5): `sup_no_sets`, `sup_wellFormed`, `asserted_shared` (
 `superpose_conflict_witness`, `superpose_all`, `superpose_all_base`, `superpose_countermodel`, `dead_sound`,
 `unsat_sound`, `superpose_assertions` (with `ChoiceExtension` of finding 5), `readings_wire_all_sound`,
 `readings_wire_model_sound`; and, added by the review of 2026-10-03, `readings_wire_satisfiable` (a replayed
-superposed case has a compatible choice) and `readings_wire_choice_wellFormed`. `base_down`, `base_up`, `superpose_conflict_free` and `superpose_assertions` use
+superposed case has a compatible choice), `readings_wire_assumed_taken` (its named readings are taken by one) and
+`readings_wire_choice_wellFormed`. `base_down`, `base_up`, `superpose_conflict_free` and `superpose_assertions` use
 `choiceFresh` (DRI ruling 1) through `hs` or `hr`; `Examples.lean` keeps the M19 counterexamples without it.
 
 `choice_wellFormed` is proved with one more hypothesis, by DRI ruling 5: `(hw : choicesSoftChecked D = true)`, the
@@ -233,7 +234,10 @@ review A1 and DRI ruling 5), a document whose couplings and narrowings in force 
 compatible choice whose document fails the chain's check (`<chain diagnostic> under <set>@<v>:<i>, ...`; on the
 superposed route the soft check of every compatible choice, on the enumerated route the chain's check of each of the
 at most 64 choices it checks); past 1024 compatible choices the superposed kinds refuse with
-`ResourceLimit: more than 1024 readings to check`. `readings-elaborate` otherwise reports the route, `readings-dead`
+`ResourceLimit: more than 1024 readings to check`; and `readings-certificate`, `readings-conflict` and
+`readings-model` refuse named readings (`assumed`) that no compatible choice takes, whose every verdict would be
+vacuous (`ReadingsUnsatisfiable: no compatible reading takes <set>@<v>:<i>, ...`; `takenBy`,
+`readings_wire_assumed_taken`). `readings-elaborate` otherwise reports the route, `readings-dead`
 asks `supReady`, and `readings-choice` runs on any admitted document.
 
 * `readings-elaborate`: `route` (`w2`, `pending`, `abstention`, `superposed`, `enumerated`); for `superposed`,

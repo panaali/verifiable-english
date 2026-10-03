@@ -504,3 +504,37 @@ def test_n8_e8_gated_on_the_quiet_label_of_m1(tmp_path):
     lines = wording.provided(["readings:rs1@1:1:quiet"])
     assert lines == [PROVIDED, QUIET]
     _one_derivation(lines, wording)
+
+
+def test_ruling4_class_base_environments_set_readings_aside():
+    """The class of DRI ruling 4's bug: every conversion to a base vocabulary that drops `norms@0` keeps no
+    `readings@1` (kept alone, it read as `readings@1 requires norms@0`, false of the document)."""
+    from ve.norms import NormDocument
+    from ve.softnorms import SoftEnvironment, SoftNormDocument
+    soft = SoftNormDocument(SoftEnvironment(env_k()), [norm("a", "avoid_required", True)])
+    assert "readings@1" not in soft.elaborated.base_environment().profiles
+    plain = env_k(profiles=("norms@0", "readings@1", "relational-fol@0"))
+    assert "readings@1" not in NormDocument(_environment(plain), [norm("a", "avoid_required", True)]) \
+        .base_environment().profiles
+
+
+def test_a1_class_named_reading_no_choice_takes_is_refused(tmp_path):
+    """Review A1's class: a certificate under named readings that no compatible choice takes (here the candidate
+    the narrowing drops) would be vacuous; Lean and Python refuse it instead of a verdict."""
+    from ve.readings_route import run_lean
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u2"]}
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u2", ["top"]), ("fixed", "u0", HELP_X)],
+                       narrowings=[narrowing])
+    _, route, _ = _wording(path)
+    text = "ReadingsUnsatisfiable: no compatible reading takes rs1@1:1"
+    with pytest.raises(VEError) as caught:
+        route.entailment(every("avoid_required"), assumed=[("rs1", 1)])
+    assert caught.value.message == text
+    close = {"checker_version": "ve-tableau-checker@2", "environment_id": "-", "premise_meaning_ids": [],
+             "conclusion_meaning_id": "-", "trace": {"rule": "close"}}
+    rows = run_lean([{"id": k, "kind": k, "environment": route.environment, "document": route.document,
+                      "assumed": [["rs1", 1]], "premises": [], "conclusion": None, "certificate": close,
+                      "conflict_certificates": {}} for k in ("readings-certificate", "readings-conflict")])
+    assert [row.get("error") for row in rows] == [text, text], rows
+    assert route.entailment(every("avoid_required"), assumed=[("rs1", 0)])["verdict"] == "ALL"

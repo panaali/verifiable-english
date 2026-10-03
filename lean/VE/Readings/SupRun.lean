@@ -59,6 +59,7 @@ def runConflict (id : String) (j : Json) : Except String Json := do
   let r ← supReplayOf b
   let D := r.D
   let ⟨A, _⟩ ← decodeAssumed D (j.getObjValD "assumed")
+  unless takenBy D A do throw (untakenText D A)
   let X := correlate (sup D).1
   let w := j.getObjValD "witness"
   if (j.getObjVal? "witness").toBool then
@@ -93,6 +94,9 @@ def runCertificate (id : String) (j : Json) : Except String Json := do
 
 def runModel (id : String) (j : Json) : Except String Json := do
   let r ← replayModel j
+  unless r.assumed.all (fun x => (candidate r.D x.1 x.2).isSome) && takenBy r.D r.assumed do
+    throw (if r.assumed.all (fun x => (candidate r.D x.1 x.2).isSome) then untakenText r.D r.assumed
+           else "InvalidInput: assumed reading is no candidate")
   let X := correlate (sup r.D).1
   let valid := supModelCheck r.D r.assumed r.Γ r.M
   let value := (VE.SoftNorms.circ X r.φ).eval r.M []

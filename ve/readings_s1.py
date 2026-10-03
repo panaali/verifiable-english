@@ -115,7 +115,7 @@ class S1Environment:
         data["vocabulary"]["predicates"] = {
             name: {k: v for k, v in decl.items() if k != "instruction_of"}
             for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
-        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0")]
+        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0", "readings@1")]
         return Environment(data)
 
     def situation_id(self, entry):
