@@ -255,6 +255,11 @@ def test_admission_adapter_selects_active_norm_units():
 # of `ve/` imports one of them, or `ve.wire_contract`, except the one call site of each public unit.
 CONTRACT_MODULES = {"softnorms_contract.py", "norms_contract.py", "norm_defaults_contract.py"}
 DIAGNOSTIC_MODULES = ("ve.softnorms_contract", "ve.norms_contract", "ve.norm_defaults_contract", "ve.wire_contract")
+# The call site of each unit after the pilot (2.8). It is added by the unit's switch commit (7.2): while the
+# unit's contract is in shadow, its route imports no diagnostic module.
+UNIT_CALL_SITES = {"norms@0": ("norm_admission.py", "norms_contract", "_admit_norm_document_python"),
+                   "norm-defaults@0": ("norm_defaults_route.py", "norm_defaults_contract",
+                                       "admit_norm_defaults_document")}
 
 
 def _diagnostic_import_boundary(overrides=None):
@@ -262,9 +267,9 @@ def _diagnostic_import_boundary(overrides=None):
     root = DIRECTORY.parent
     overrides = overrides or {}
     routes = {}
-    allowed = {"soft_route.py": ("softnorms_contract", "admit_soft_document"),
-               "norm_admission.py": ("norms_contract", "_admit_norm_document_python"),
-               "norm_defaults_route.py": ("norm_defaults_contract", "admit_norm_defaults_document")}
+    allowed = {"soft_route.py": ("softnorms_contract", "admit_soft_document")}
+    allowed.update({path: (module, function) for unit, (path, module, function) in UNIT_CALL_SITES.items()
+                    if load(unit)["status"] == "public"})
     for path in root.rglob("*.py"):
         if "wire_contract" in path.parts or path.name in CONTRACT_MODULES:
             continue
@@ -327,15 +332,19 @@ def test_diagnostic_modules_stay_off_verdict_import_paths():
         _diagnostic_import_boundary({route: route.read_text().replace(
             "raise public_rejection(environment, active, error)",
             "diagnosed = public_rejection(environment, active, error)\n                raise diagnosed")})
-    norms = root / "norm_admission.py"
     defaults = root / "norm_defaults_route.py"
-    with pytest.raises(AssertionError):
-        _diagnostic_import_boundary({norms: norms.read_text().replace(
-            "raise public_rejection(env.to_dict(), active, error)",
-            "public_rejection(env.to_dict(), active, error)\n        raise error")})
     with pytest.raises(AssertionError):
         _diagnostic_import_boundary({defaults: defaults.read_text() +
                                      "\nfrom .norms_contract import legacy_validation\n"})
+    # Fable review B: the handler of a unit in shadow is the switch commit's (7.2), not the shadow commit's.
+    norms = root / "norm_admission.py"
+    statement = "    norms = NormDocument(env, active)\n"
+    assert load("norms@0")["status"] == "shadow" and norms.read_text().count(statement) == 1
+    with pytest.raises(AssertionError):
+        _diagnostic_import_boundary({norms: norms.read_text().replace(statement, (
+            "    try:\n        norms = NormDocument(env, active)\n    except VEError as error:\n"
+            "        from .norms_contract import public_rejection\n"
+            "        raise public_rejection(env.to_dict(), active, error)\n"))})
 
 
 def test_seeded_soft_sources_keep_verdict_and_code_agreement():

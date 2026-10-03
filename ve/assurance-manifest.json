@@ -52,8 +52,6 @@
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
-    "ve/norms_contract.py:public_rejection": "diagnosis runs only after the legacy norms validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
-    "ve/norm_defaults_contract.py:public_rejection": "diagnosis runs only after the legacy norm-defaults validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
