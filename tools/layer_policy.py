@@ -113,6 +113,8 @@ def lean_layer(module: str) -> int | None:
         return 5  # aggregation and audit targets
     if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
+    if module in {"VE.Norms.FlaggedSpec"}:
+        return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module.startswith("VE.English.") or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",

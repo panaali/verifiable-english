@@ -196,6 +196,7 @@
       "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
       "lean/VE/Discourse/Theorems.lean": "lean:discourse-wire: statements about the discourse wire decoder (getObjValD_ok) and the profile adapter; no runtime JSON handling",
       "lean/VE/Audit.lean": "audit manifest only: #print axioms of theorem names containing a JSON accessor name (VE.Discourse.getObjValD_ok); no JSON handling",
+      "lean/VE/Norms/FlaggedSpec.lean": "statements about the norms conflict replay and Norms.Run.runCase answers (getObjValD of the case and the verdict field) and decoder rejection lemmas; no runtime JSON handling",
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
