@@ -572,3 +572,76 @@ def test_rust_shadow_evaluates_every_model_shown(tmp_path, monkeypatch):
     _, route, _ = _wording(path)
     with pytest.raises(CheckerUnavailable, match="Rust's untrusted evaluation differs"):
         route.premises()
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# compose-s2 looprecheck1: review A (named readings keep their restriction in English), review B (the enumerated
+# route's evidence is replayed by Lean on the regenerated choice documents) and review B (an absence that cannot be
+# certified is not reported as none).
+
+REL = lambda p: ["binary", p, ["var", 1], ["var", 0]]  # noqa: E731
+
+
+def _m9(tmp_path, raw=None, name="m9.ve.md"):
+    return s2_document(tmp_path, [
+        ("fixed", "u0", norm("f-warn", "warn_required", True, guard=ASKS)),
+        ("set", "rs1", "u1", [("a", norm("r-a", "avoid_required", True, guard=REL("help_required")), "norm", None),
+                              ("b", norm("r-b", "help_required", True, guard=REL("warn_required")), "norm", None)]),
+        ("set", "rs2", "u2", [("c", norm("r-c", "warn_required", True, guard=REL("avoid_required")), "norm", None),
+                              ("d", norm("r-d", "warn_required", True), "norm", None)])], raw=raw or _k9(), name=name)
+
+
+def _cli(path, conclusion, *under):
+    from ve.document import main
+    phi = Path(path).with_suffix(".phi.json")
+    phi.write_text(json.dumps(conclusion))
+    args = ["readings", str(path), "--conclusion", str(phi)]
+    for item in under:
+        args += ["--under", item]
+    assert main(args) == 0
+    return json.loads(_cli.capsys.readouterr().out)
+
+
+def test_review_a_named_readings_keep_their_restriction_in_english(tmp_path, capsys):
+    """The finding's case: on M9 the unguarded `warn_required` query is SOME; under `rs2:1` it follows (every choice
+    taking *d*), under `rs2:0` it follows under none. Neither result may be worded over every reading."""
+    _cli.capsys = capsys
+    path = _m9(tmp_path)
+    phi = every("warn_required")
+    assert _cli(path, phi)["verdict"] == "SOME"
+    under_d = _cli(path, phi, "rs2:1")
+    assert under_d["verdict"] == "ALL" and under_d["assumed"] == [["rs2", 1]]
+    warn = "*For every agent, for every user, that agent must warn that user.*"
+    assert under_d["english"] == [f"Read sentence 3 as reading 2: the conclusion follows: {warn}"]
+    under_c = _cli(path, phi, "rs2:0")
+    assert under_c["verdict"] == "NONE" and under_c["assumed"] == [["rs2", 0]]
+    assert len(under_c["english"]) == 2 and not any(line.startswith("Under ") for line in under_c["english"])
+    assert all(line.startswith("Read sentence 2 as ") and " and sentence 3 as reading 1: the conclusion does not follow."
+               in line for line in under_c["english"])
+    _, route, wording = _wording(path)
+    for data in (under_d, under_c):
+        assert wording.query(phi, route.entailment(phi, assumed=data["assumed"])) == data["english"]
+        _one_derivation(data["english"], wording)
+
+
+def test_review_a_class_every_reading_wordings_need_no_assumption(tmp_path):
+    """The class: E10, E26, E27 and E28 claim every reading; a verdict carrying `assumed` gets E12 lines only, on
+    either route, and the enumerated route refuses readings no compatible choice takes as the superposed one does."""
+    from ve.readings_route import S2Wording
+    path = _m9(tmp_path)
+    doc, route, wording = _wording(path)
+    phi = every("warn_required", guard=ASKS)
+    data = route.entailment(phi, assumed=[("rs1", 0), ("rs2", 1)])
+    assert data["verdict"] == "ALL" and data["assumed"] == [["rs1", 0], ["rs2", 1]]
+    assert wording.query(phi, data) == [
+        "Read sentence 2 as reading 1 and sentence 3 as reading 2: the conclusion follows: *For every agent, for every user that "
+        "that agent has the recorded relation \"asks\" to, that agent must warn that user.*"]
+    with pytest.raises(VEError) as caught:
+        route.entailment(phi, assumed=[("rs1", 7)])
+    assert caught.value.message == "ReadingsUnsatisfiable: no compatible reading takes rs1@1:7"
+    # Superposed (M4): under a named reading the certificate's sentence names it; NOT ALL is its countermodel's E12.
+    m4 = s2_document(tmp_path / "m4", [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)])
+    doc, route, _ = _wording(m4)
+    wording = S2Wording(doc, route)
+    lines = wording.query(every("avoid_required"), route.entailment(every("avoid_required"), assumed=[("rs1", 1)]))
+    assert len(lines) == 1 and lines[0].startswith("Read sentence 1 as *should*: the conclusion does not follow.")

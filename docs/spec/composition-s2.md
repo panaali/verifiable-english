@@ -398,13 +398,15 @@ R6  the sentences of this document cannot all be true together.                 
 5. UNKNOWN beyond 64: E28, with the E12 of the countermodel found (plan 2.5: "not ALL: countermodel under <choice>").
 6. A dead reading: E17. A set that is not superposed: E29 under the document's readings.
 7. The enumerated route uses the same sentences: E10 (E26) when every compatible choice gives the result, E12 per
-   choice otherwise. Nothing in the English says which route produced a verdict; the report's `route` field does (6).
+   choice otherwise; under named readings, item 2's E12 for ALL and the E12 lines alone for NONE. Nothing in the
+   English says which route produced a verdict; the report's `route` field does (6).
 
 ### 2.4 Non-wordings, beyond composition.md 2.2
 
 - E10 or E26 for a model-based result, or E12 naming fewer sentences than the complete choice a model encodes.
 - "under every reading" when any compatible choice was not checked (the enumeration budget) or when the conflict
   status under the named readings is not CONFLICT-FREE (4.5).
+- E10, E26, E27 or E28 for a result under named readings, on either route: each speaks of every reading.
 - E17 for a candidate a narrowing drops: that candidate is shown under its narrowing by E7.
 - Any qualified rule name (`rd-`), bit predicate, `ve__here` or generated decision predicate; a rule of a candidate
   is named as the author named it, with its reading (6).
@@ -567,6 +569,11 @@ with one of each, UNKNOWN otherwise with the first UNKNOWN choice named. Beyond 
 (`budget: {max_choices: 64}`, `units`), E28. A compatible choice whose document fails the chain's well-formedness is
 an error (7): the choices together are not a document, and the route does not report around it.
 
+As built (compose-s2 looprecheck1 review A): under named readings (`--under`) the combination runs over the compatible
+choices that take them, every result keeps `assumed`, readings no compatible choice takes are
+`ReadingsUnsatisfiable` as on the superposed route (7), and the English names the readings (2.3 item 2): ALL is
+E12 with R2 naming exactly the candidates of `A`, NONE is the E12 lines alone, never E27.
+
 ### 4.7 Conservativity
 
 - `readings@1` off: nothing here is reachable; identities, statuses and verdicts byte-identical (plan F20).
@@ -682,7 +689,7 @@ New in S2a:
 | `InvalidInput: name <n> begins with ve__` | S1's text, unchanged, for a frame constant `ve__here` or a frame predicate `ve__bit__<n>__<j>`: the decoders refuse it before the route is chosen (4.1 step 1); `choiceFresh`, a conjunct of `supReady` (1.8), is its Lean counterpart on a `Doc` value (DRI ruling 1; fixture M19) | error |
 | `ResourceLimit: decision predicate <name>` | the soft decoder's text, unchanged, for a generated decision predicate beyond `MAX_IDENTIFIER_BYTES`: on `sup D` it is the cause of `ReadingsNotSuperposable` (1.8, M16), on a candidate's or a choice's document the chain's error; Lean's `chainWF` carries it as `namesFit` (DRI ruling 2) | finding on `sup D`, error otherwise |
 | `<chain diagnostic> under <set>@<v>:<i>[, <set>@<v>:<i>]*` | 4.6: a compatible choice whose document the chain refuses, the choice written in source order; as built (DRI ruling 5) on the superposed route too, for the soft check of every compatible choice's document (4.1 step 3) | error |
-| `ReadingsUnsatisfiable: no compatible reading takes <set>@<v>:<i>[, <set>@<v>:<i>]*` | as built (review A1's class): a case or query under named readings (`assumed`) that no compatible choice takes, whose every verdict would be vacuous (`takenBy`, `CertificateReplay.taken`, `readings_wire_assumed_taken`) | error |
+| `ReadingsUnsatisfiable: no compatible reading takes <set>@<v>:<i>[, <set>@<v>:<i>]*` | as built (review A1's class): a case or query under named readings (`assumed`) that no compatible choice takes, whose every verdict would be vacuous (`takenBy`, `CertificateReplay.taken`, `readings_wire_assumed_taken`); on the enumerated route too (compose-s2 looprecheck1) | error |
 | `ResourceLimit: more than 1024 readings to check` | DRI ruling 5: the superposed case kinds past 1024 compatible choices, whose documents the route has not checked; `readings-elaborate` reports `choices_checked: "over 1024"` and every superposed verdict is UNKNOWN with this reason | error of the verdict kinds |
 | `CheckerUnavailable` | 4.2: Python's `readings-elaborate` differs from Lean's | error, never a verdict |
 

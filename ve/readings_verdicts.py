@@ -559,7 +559,8 @@ class Superposed(_Route):
         CONFLICT-FREE: otherwise `UNKNOWN (conflict status: <status>)` (14.8)."""
         from .readings_sup import CHECK_BUDGET_TEXT
         if not self.checked:
-            return {"verdict": "UNKNOWN", "route": "superposed", "reason": CHECK_BUDGET_TEXT}
+            return {"verdict": "UNKNOWN", "route": "superposed", "reason": CHECK_BUDGET_TEXT,
+                    **({"assumed": [list(x) for x in assumed]} if assumed is not None else {})}
         if assumed is not None:
             A = [tuple(x) for x in assumed]
             if not self.taken(A):
@@ -742,23 +743,28 @@ class Enumerated(_Route):
 
     def entailment(self, conclusion_ast, premises=(), assumed=None):
         """ALL, SOME, NONE or UNKNOWN combined over the compatible choices (4.6); with `assumed`, over the choices
-        that take the named candidates."""
+        that take the named candidates, and every result keeps `assumed` (review A of compose-s2 looprecheck1): ALL
+        under `A` is the claim of a certificate under `A` on the superposed route, never one over every reading."""
+        A = [tuple(x) for x in (assumed or ())]
+        named = {"assumed": [list(x) for x in A]} if assumed is not None else {}
         if self.choices is None:
-            return {"verdict": "UNKNOWN", **self.over_budget()}
-        chosen = [c for c in self.choices if all(c.get(s) == i for s, i in (assumed or ()))]
+            return {"verdict": "UNKNOWN", **self.over_budget(), **named}
+        chosen = [c for c in self.choices if all(c.get(s) == i for s, i in A)]
         if not chosen:
-            raise VEError("InvalidInput: no compatible choice takes the named readings")
+            # Review A1's class: every verdict under readings no compatible choice takes would be vacuous.
+            raise VEError(self.untaken_text(A))
         rows = [(self.choice_json(c), self._choice(c).entailment(conclusion_ast, premises)) for c in chosen]
         proofs = [{"choice": c, **r} for c, r in rows if r["outcome"] == "proof"]
         counters = [{"choice": c, **r} for c, r in rows if r["outcome"] == "countermodel"]
         unknown = [c for c, r in rows if r["outcome"] == "unknown"]
         if len(proofs) == len(rows):
-            return {"verdict": "ALL", "route": "enumerated", "evidence": "certificates", "proofs": proofs}
+            return {"verdict": "ALL", "route": "enumerated", "evidence": "certificates", "proofs": proofs, **named}
         if len(counters) == len(rows):
-            return {"verdict": "NONE", "route": "enumerated", "countermodels": counters}
+            return {"verdict": "NONE", "route": "enumerated", "countermodels": counters, **named}
         if proofs and counters:
-            return {"verdict": "SOME", "route": "enumerated", "proof": proofs[0], "countermodel": counters[0]}
-        return {"verdict": "UNKNOWN", "route": "enumerated", "choice": unknown[0]}
+            return {"verdict": "SOME", "route": "enumerated", "proof": proofs[0], "countermodel": counters[0],
+                    **named}
+        return {"verdict": "UNKNOWN", "route": "enumerated", "choice": unknown[0], **named}
 
     def report_fields(self):
         conflict = self.conflict(())
