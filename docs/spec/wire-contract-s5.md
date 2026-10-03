@@ -976,7 +976,7 @@ below, at most 13 levels.
 |---|---|---|
 | N1 | none; and the second example | clean; both legacy validators accept |
 | N2 | `profiles` `["relational-fol@0"]` and every `regulated` member removed | 2.1, `/environment/profiles`, `UnsupportedProfile: norms@0 is required` |
-| N3 | 257 rules: B's three and 254 copies of unit 0 named `r3` to `r256` | 2.2, `/norms`, `ResourceLimit: rules`; `args` `count` `257`, `limit` `256` |
+| N3 | 257 rules: B's three and 254 copies of unit 0 named `r3` to `r256` | 2.2, `/norms`, `ResourceLimit: rules`; `args` `{}` (the message template uses no variables) |
 | N4 | unit 1 gains a member `extra` with the value `1` | 3.1, `/norms/1`, `InvalidInput: expected norm object` |
 | N5 | unit 0's `norm` is `[]` | 3.2, `/norms/0/norm`, the same text |
 | N6 | unit 2's `norm` lacks `over` | 3.3, `/norms/2/norm`, `InvalidInput: invalid norm fields` |
@@ -990,7 +990,7 @@ below, at most 13 levels.
 | N14 | struck by the statement review: its environment lists `norm-defaults@0`, which is outside this unit's domain (2.2) | none; 4.3 is witnessed by D4 as `w1/4.3` (gap G3 of 8.4). The number stays vacant |
 | N15 | unit 0's `predicate` is `"c"` | 4.4, `/norms/0/norm/predicate`, `UnknownSymbol: regulated predicate c` |
 | N16 | unit 1's `sign` is `"no"` | 4.5, `/norms/1/norm/sign`, `InvalidInput: invalid sign or too many carve-outs` |
-| N17 | unit 1's `unless` has nine copies of its carve-out | 4.6, `/norms/1/norm/unless`, the same text; `args` `count` `9`, `limit` `8` |
+| N17 | unit 1's `unless` has nine copies of its carve-out | 4.6, `/norms/1/norm/unless`, the same text; `args` `{}` (the message template uses no variables) |
 | N18 | unit 0's `guard` is `["binary", "c", ["var", 0], ["var", 0]]` | 4.7a, `/norms/0`, class `TypeMismatch` |
 | N19 | unit 0's `guard` is `["unary", "d", ["var", 0]]` | 4.7b, `/norms/0`, class `UnknownSymbol` |
 | N20 | unit 0's `guard` is `["unary", "c", ["var", 1]]` | 4.7c, `/norms/0`, class `UnboundVariable` |
@@ -1005,7 +1005,7 @@ below, at most 13 levels.
 | N29 | N12 with N15 | 4.1, `/norms/0/norm/name` (table order inside the item) |
 | N30 | N7 with N16 | 3.4, `/norms/1/norm/unless` (phase 3 before phase 4, on the same item) |
 | N31 | unit 1's `unless` is `[["unary", "c", ["var", 0]], ["unary", "d", ["var", 0]]]` | 4.7b, `/norms/1`, class `UnknownSymbol` (the second carve-out; the first is typed) |
-| N32 | unit 0's `guard` is `["unary", "c", ["var", -1]]` | 3.8b, `/norms/0/norm/guard`, class `SyntaxError`; Python's legacy class is `UnboundVariable` (exempt, 2.12) |
+| N32 | unit 0's `guard` is `["unary", "c", ["var", true]]` | 3.8b, `/norms/0/norm/guard`, class `SyntaxError`; Python's legacy class is `UnboundVariable` (exempt, 2.12). A negative index is outside the Lean JSON reader's integer domain, so this Boolean index exercises the same rejection in all three readers. |
 | N33 | unit 0's `guard` is `["unary", 7, ["var", 0]]` | 4.7b, `/norms/0`, class `UnknownSymbol` (3.8 does not examine the name; Python's text is `Unknown predicate 7`) |
 | N34 | unit 0's `guard` is `["eq", ["const", 5], ["var", 0]]` | 4.7b, `/norms/0`, class `UnknownSymbol` (`Unknown constant 5`) |
 | N35 | unit 0's `guard` is `["forall", 5, ["top"]]` | 4.7b, `/norms/0`, class `UnknownSymbol` (`Unknown binder sort 5`) |
@@ -1306,7 +1306,7 @@ R6; they are, in the form J2′ gives them. Nothing was run for this draft.
 | J9 | row 4.1 of section 6 lists the strings that `repr` prints otherwise | 6 (the two rows of 4.1; the row of unchanged texts) |
 | J10 | at a non-first-order tag Python's message is `invalid indexed formula`; section 6 has the row and no longer says that every inherited text stays | 2.5 (row 3.8); 6 (the row of 3.8b and 3.9b; the paragraph under the table); 10, item 5 |
 | D3 | the duplicate-name example of 3.2 is D3 | 3.2 |
-| Fixtures | `["var", -1]` (3.8b); `["unary", 7, ["var", 0]]` (4.7b); the paired formula of the order dispute, in both orders (b, then a) | 8.1 (N32, N33, N36, N37) |
+| Fixtures | `["var", true]` (3.8b; an integer below zero cannot reach the Lean JSON reader); `["unary", 7, ["var", 0]]` (4.7b); the paired formula of the order dispute, in both orders (b, then a) | 8.1 (N32, N33, N36, N37) |
 | Typing order (Fable, round 1) | a rule both ill typed and over 10,000 nodes: a catalogue fault, decided by Python's order | 8.1 (N39; the closing sentence); 2.13 |
 
 The plan's part of each edit is in its section 10.
