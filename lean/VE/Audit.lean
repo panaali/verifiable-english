@@ -134,6 +134,7 @@ import VE.Readings.SoftFacts
 import VE.Readings.Shape
 import VE.Readings.ChoiceFacts
 import VE.Readings.Children
+import VE.Readings.Live
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3360,3 +3361,28 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.child_fwd
 #print axioms VE.Readings.choice_index
 #print axioms VE.Readings.sibling
+#print axioms VE.Readings.noRights_parts
+#print axioms VE.Readings.genKeys_soft
+#print axioms VE.Readings.excepted_key_mem
+#print axioms VE.Readings.off_key_mem
+#print axioms VE.Readings.choice_nodeFacts
+#print axioms VE.Readings.sup_softValid
+#print axioms VE.Readings.sup_name_inj
+#print axioms VE.Readings.nameMap_excepted
+#print axioms VE.Readings.nameMap_off
+#print axioms VE.Readings.nameMap_of_outweighs
+#print axioms VE.Readings.nameMap_frame
+#print axioms VE.Readings.nameMap_outweighs
+#print axioms VE.Readings.choice_correlate
+#print axioms VE.Readings.sup_correlate
+#print axioms VE.Readings.choiceEnvFull_pred
+#print axioms VE.Readings.choiceEnvFull_decision
+#print axioms VE.Readings.choiceEnvFull_frame
+#print axioms VE.Readings.pull_frame
+#print axioms VE.Readings.pull_excepted
+#print axioms VE.Readings.pull_off
+#print axioms VE.Readings.pull_outweighs
+#print axioms VE.Readings.atom_congr
+#print axioms VE.Readings.pattern_rho
+#print axioms VE.Readings.pull_denote_frame
+#print axioms VE.Readings.live_corr
