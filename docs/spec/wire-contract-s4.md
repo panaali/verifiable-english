@@ -878,3 +878,12 @@ Two points remain for the DRI, outside this work:
   model calls, so the Astra and Fable reading of the measured delta came after the switch commit, in the two
   reviews above, instead of before it. That exception is recorded here; the gate's status is that both
   reviewers have read the delta, after the switch, and asked for the fixes of this section.
+
+## 16. DRI countersignature (2026-10-03)
+
+The DRI (orchestrator) has read the seven `signed` sentences in `conformance/wire-contract/soft-norms@0-switch.json`
+(2.7a, 2.8c, 3.2, 4.1c, 6.5a, 6.6, 6.11) against the measured delta (8,796 cases, 498 text changes, zero
+mismatches, no accept/reject, identity or code change outside the disclosed S4-pre rows) and countersigns all
+seven. 4.1c and 6.11 make two rejection messages less detailed in exchange for one uniform contract text; this is
+accepted. The section 9 exception (reviewers read the delta after the switch commit, then required the fixes of
+section 15, which are done) is accepted and closes Fable B4 and Astra C.
