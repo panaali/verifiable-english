@@ -579,6 +579,11 @@ def _load_document(raw: bytes, path: str | Path, lean):
             raise VEError("asserted unit needs content or a reading set")
     narrowings = meta.get("narrowings", [])
     validate_narrowings(narrowings, reading_sets, unit_ids)
+    readings_s2 = None
+    if s1_content:
+        from .readings_route import elaborate as elaborate_s2
+        readings_s2 = elaborate_s2(env.to_dict(), compiled, reading_sets,
+                                    couplings=couplings, narrowings=narrowings)
     weights = meta.get("weights", [])
     if type(weights) is not list or any(type(w) is not dict or set(w) != {"set", "by", "values"} for w in weights):
         raise VEError("invalid removable reading weights")
@@ -590,6 +595,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
            "norm_defaults": norm_defaults,
            "reports": reports, "rights_document": rights_document,
            "readings_s1": readings_s1,
+           "readings_s2": readings_s2,
            "reading_plan": plan_choices(active if couplings else
                                         [r for r in active if r["status"] == "open"],
                                         couplings=couplings)}

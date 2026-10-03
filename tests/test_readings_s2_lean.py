@@ -57,6 +57,17 @@ def test_m1_elaboration(lean):
     assert rules[1]["guard"] == ["and", ["top"], ["unary", BIT, ["const", "ve__here"]]]
 
 
+def test_python_and_lean_agree_on_m1_route_choices_and_vocabulary(lean):
+    from ve.readings_route import elaborate
+
+    raw = env_k()
+    document = k1(raw)
+    row = elaborate(raw, document["units"], document["reading_sets"], executable=lean)
+    assert row["route"] == "superposed"
+    assert row["choices"] == [[["rs1", 0]], [["rs1", 1]]]
+    assert row["slot"][0]["label"] == QUIET
+
+
 def test_m2_models_encode_one_choice_and_the_quiet_premise(lean):
     raw = env_k()
     document = k1(raw)
@@ -70,6 +81,41 @@ def test_m2_models_encode_one_choice_and_the_quiet_premise(lean):
     assert b2["valid"] is False and b2["first_failing"] == QUIET, b2
     # The default conclusion is the premise model's ⊥.
     assert b1["conclusion_value"] is False
+
+
+def test_m2_slot_is_the_same_in_lean_python_and_rust(lean):
+    """The three evaluators agree on M2's admitted bases and rejected quiet-premise base."""
+    from ve.ast import formula_from_data
+    from ve.backends.dispatch import pinned
+    from ve.backends.rust_jsonl import run as rust_run
+    from ve.environment import Environment
+    from ve.evaluate import evaluate
+    from ve.model import FiniteModel
+    from ve.readings_route import elaborate
+
+    raw = env_k()
+    document = k1(raw)
+    slot = elaborate(raw, document["units"], document["reading_sets"], executable=lean)["slot"][0]["ast"]
+    shadow_environment = {**raw, "profiles": ["relational-fol@0"], "vocabulary": {
+        "sorts": {**raw["vocabulary"]["sorts"], "ve__reading": {"description": "reading"}},
+        "constants": {"ve__here": {"sort": "ve__reading", "description": "here"}},
+        "predicates": {"asks": raw["vocabulary"]["predicates"]["asks"],
+                       BIT: {"arguments": ["ve__reading"], "description": "choice"},
+                       EX2: {"arguments": ["agent", "user"], "description": "exception"}}}}
+    environment = Environment(shadow_environment)
+    formula = formula_from_data(environment, slot)
+    for bit, excepted, expected in [(False, False, True), (True, True, True), (False, True, False)]:
+        shown = model(bit, excepted)
+        [checked] = run(lean, [case("readings-model", raw, document, model=shown)])
+        with pinned("python"):
+            python_model = FiniteModel.from_dict(environment, shown)
+            python_value = evaluate(environment, formula, python_model, trace=False).value
+        rust = rust_run({"id": "m2", "kind": "readings-superposed-evaluate", "untrusted": True,
+                         "environment": shadow_environment, "model": shown, "slot": [slot],
+                         "assertions": [], "conflict_targets": [], "conclusions": []})
+        assert rust["untrusted"] is True and rust["values"]["slot"] == [expected]
+        assert python_value is expected
+        assert checked["valid"] is expected
 
 
 def test_m3_conflict_witness_names_the_choice(lean):
@@ -144,6 +190,9 @@ def test_m16_generated_name_over_64_bytes_in_sup_only(lean):
     assert elaborated["route"] == "enumerated", elaborated
     assert elaborated["finding"] == {"text": "ReadingsNotSuperposable: rs1",
                                      "cause": "ResourceLimit: decision predicate soft__excepted__rd_2_" + name}
+    from ve.readings_route import elaborate
+    checked = elaborate(raw, document["units"], document["reading_sets"], executable=lean)
+    assert checked["route"] == "enumerated" and checked["finding"] == elaborated["finding"]
 
 
 def test_m4_countermodel_under_should(lean):
