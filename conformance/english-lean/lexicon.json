@@ -1,0 +1,55 @@
+{
+  "format": "ve.english-lean-lexicon-corpus@1",
+  "spec": "docs/spec/english-lean.md, section 8.5 (draft 2)",
+  "notes": [
+    "Expected results are copied from the specification. `F` is examples/fluent/environment.json; `F2` is F with one more predicate `audited` on `service`, declared with the wording `{0} is reviewed`.",
+    "A case's lexicon is `LF` with its `edits` applied in order: `set` [field, symbol, value], `remove` [field, symbol], `add` [field, symbol, value]. `conditions` is the set of failing conditions, empty for a valid lexicon."
+  ],
+  "environments": {
+    "F": {"path": "examples/fluent/environment.json"},
+    "F2": {"path": "examples/fluent/environment.json",
+           "add_predicates": {"audited": {"arguments": ["service"], "description": "Recorded as audited.",
+                                          "verbalisation": "{0} is reviewed"}}}
+  },
+  "LF": {
+    "nouns": [["person", "person"], ["service", "service"]],
+    "letters": [["person", "P"], ["service", "S"]],
+    "wordings": [["deployed", "{0} is deployed"], ["owns", "{0} owns {1}"], ["reviewed", "{0} is reviewed"]],
+    "negatives": [["owns", "{0} does not own {1}"], ["reviewed", "{0} is not reviewed"]],
+    "aliases": [],
+    "spellings": [["alice", "alice"], ["legacy", "legacy"]]
+  },
+  "cases": [
+    {"id": "v1", "env": "F", "edits": [], "conditions": []},
+    {"id": "v2", "env": "F", "edits": [{"set": ["wordings", "owns", "{0} has the recorded relation \"owns\" to {1}"]},
+                                       {"remove": ["negatives", "owns"]}], "conditions": []},
+    {"id": "v3", "env": "F", "edits": [{"set": ["wordings", "owns", "{0} has the recorded relation \"owns\" to {1}"]}],
+     "conditions": ["V5"]},
+    {"id": "v4", "env": "F", "edits": [{"set": ["wordings", "reviewed", "{0} is checked"]}], "conditions": ["V2", "V5"]},
+    {"id": "v5", "env": "F", "edits": [{"set": ["wordings", "owns", "{0} owns"]}], "conditions": ["V2", "V3", "V5"]},
+    {"id": "v6", "env": "F", "edits": [{"set": ["negatives", "reviewed", "{0} is reviewed"]}], "conditions": ["V2", "V5"]},
+    {"id": "v7a", "env": "F", "edits": [{"remove": ["spellings", "legacy"]}], "conditions": ["V1"]},
+    {"id": "v7b", "env": "F", "edits": [{"add": ["spellings", "bob", "bob"]}], "conditions": ["V1"]},
+    {"id": "v8", "env": "F2", "edits": [{"add": ["wordings", "audited", "{0} is classified as \"audited\""]}],
+     "conditions": ["V4"]},
+    {"id": "v9", "env": "F2", "edits": [{"set": ["wordings", "reviewed", "{0} is classified as \"reviewed\""]},
+                                        {"remove": ["negatives", "reviewed"]},
+                                        {"add": ["wordings", "audited", "{0} is reviewed"]}],
+     "conditions": ["V4"]},
+    {"id": "v10", "env": "F2", "edits": [{"set": ["wordings", "reviewed", "{0} is classified as \"reviewed\""]},
+                                         {"remove": ["negatives", "reviewed"]},
+                                         {"add": ["wordings", "audited", "{0} is classified as \"audited\""]}],
+     "conditions": []},
+    {"id": "v11", "env": "F2", "edits": [{"set": ["wordings", "reviewed", "{0} is  Reviewed"]},
+                                         {"remove": ["negatives", "reviewed"]},
+                                         {"add": ["wordings", "audited", "{0} is classified as \"audited\""]}],
+     "conditions": ["V2", "V4"]}
+  ],
+  "negative_templates": [
+    {"wording": "{0} is deployed", "arity": 1, "expected": "{0} is not deployed"},
+    {"wording": "{0} owns {1}", "arity": 2, "expected": "{0} does not own {1}"},
+    {"wording": "{0} has a parent {1}", "arity": 2, "expected": "{0} does not have a parent {1}"},
+    {"wording": "{0} carries {1}", "arity": 2, "expected": "{0} does not carry {1}"},
+    {"wording": "{0} glass {1}", "arity": 2, "expected": null}
+  ]
+}

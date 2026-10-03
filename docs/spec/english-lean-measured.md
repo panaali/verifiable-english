@@ -3,7 +3,7 @@
 **Status:** S0 deliverable of [english-lean-PLAN.md](english-lean-PLAN.md) section 5, **partial**, 2026-10-03,
 branch `english-lean/py`. Every figure below was measured by a committed tool on this branch; the raw data is
 `conformance/english-lean/s0-report.json`. Nothing here changes a verdict, an identity, a public code or a
-frozen file. Items that S0 still owes are listed in section 6.
+frozen file. Items that S0 still owes are listed in section 7.
 
 Tools (no model calls; none is on an admission path):
 
@@ -13,6 +13,7 @@ Tools (no model calls; none is on an admission path):
 | `conformance/english_lean_engine.py` | Python reference of the item-1 engine (spec 2.4 to 2.8, 5.2 to 5.7) and the English matching (5.8) | imported by the next two |
 | `conformance/english_lean_corpus.py` | the engine corpus `conformance/english-lean/engine.json` (spec 8.1 to 8.3, 8.7) | `uv run python -m conformance.english_lean_corpus` |
 | `conformance/english_lean_lexer.py` | Python reference of the draft lexer (spec 2.2), fixtures `conformance/english-lean/lexer.json` (8.4) | `tests/test_english_lean_lexer.py` |
+| `conformance/english_lean_lexicon.py` | Python's lexicon export and identity, a reference of `Lexicon.valid`, fixtures `conformance/english-lean/lexicon.json` (8.5) | `uv run python -m conformance.english_lean_lexicon` |
 
 ## 1. Python's generated grammar, per configuration
 
@@ -56,7 +57,7 @@ Findings.
   (reviewed overlays). The one terminal the lexer refuses is `.`, the terminator, which W4 keeps out of the
   sentence grammar.
 - **Sizes differ from plan 1.2's static count** (82 alternatives over 20 nonterminals) because Lark's
-  expansion of `?`, `*` and inlined rules adds rules and nonterminals. The tree correspondence (section 6)
+  expansion of `?`, `*` and inlined rules adds rules and nonterminals. The tree correspondence (section 7)
   must map them.
 
 ## 2. Synthetic limit environments
@@ -123,7 +124,7 @@ sentences too.
   original. Spec O1 prescribes, for a non-empty class, a `glued` flag on `punct` before S2. **For the DRI:**
   either add the flag (Lean then rejects these mutants as Python does), or record the widening as an
   accepted product difference under SEMANTICS-MIGRATION-PLAN 2.3. No hyphenated word occurred in the
-  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 6) must
+  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 7) must
   include declared wordings with hyphens.
 - **Whitespace (O3):** the reference lexer uses the 29 code points of Python's `str.isspace`, which is what
   `_normalise_english_source` collapses (Lean's `Char.isWhitespace` has 4 of them). The list is a literal in
@@ -154,7 +155,32 @@ suffix member):
 A mutation check (keeping one member fewer than the cap) fails g5, g9 and g20, so the corpus detects a broken
 cap invariant. These step counts are for the Python reference; S1a measures Lean's.
 
-## 6. What S0 still owes
+## 6. Python's selected lexicon against `Lexicon.valid`
+
+`conformance/english_lean_lexicon.py` exports Python's `EnglishVocabulary` as the `Lexicon` of spec 5.8 and
+identifies it under `ve-english-lexicon-v1`. Its reference of `Lexicon.valid` (V1 to V5, spec 2.9) passes
+the fixtures v1 to v12 (`conformance/english-lean/lexicon.json`), and Python selects exactly `LF` for `F`.
+Over 39 environments (the 17 round-trip configurations and 22 use-case environments, with their overlays;
+`conformance/english-lean/lexicon-report.json`):
+
+- **38 are valid.** No V2 to V5 failure: Python's producer never selects a dishonest wording, a misshapen
+  one, a cross-symbol duplicate or a wrong-polarity negative on the corpus.
+- **One fails V1: `usecases/asimov-extended` (risk@0).** risk@0 generates five predicates
+  (`ve/environment.py`), and Python's vocabulary gives a wording to four. `risk__more_severe` has none, so
+  under the literal V1 ("exactly one entry for each … predicate … including the symbols a profile block
+  generates") every text of that environment would be refused as `invalidGrammar lexicon`. **For the DRI:**
+  either V1 exempts profile-generated symbols that have no English form (a tier B wording change of 2.9),
+  or S3 adds a fixed wording for `risk__more_severe` (a change of the English surface, through the delta
+  process). Until then the shadow comparison must list this environment.
+- **`wordingKey`:** spec 2.9's port (fold of 5.8, whitespace and hyphen runs) equals Python's
+  `wording_key` on every selected wording of the corpus. They differ outside ASCII: Python uses
+  `str.casefold` (`Groß` gives `gross`), the Lean fold leaves `ß`. No corpus wording has such a letter; O5's
+  decision (ASCII-only wordings in `valid`) would remove the difference.
+- **V4 versus Python on undeclared names:** Python's duplicate check also counts the mechanical wording of an
+  undeclared predicate (`template_owners`, `english.py:259–263`); V4 names declared, alias and profile
+  wordings only. No corpus environment exercises the difference; the lexicon mutation replay should.
+
+## 7. What S0 still owes
 
 | Item (plan section 5) | State |
 |---|---|
