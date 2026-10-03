@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from ve.wire import canonical_json
 
 ROOT = Path(__file__).resolve().parents[1]

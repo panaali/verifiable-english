@@ -3,7 +3,7 @@
 import json
 import subprocess
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import LEAN, env, should
 from ve.errors import VEError
 from ve.softnorms import load_soft_document

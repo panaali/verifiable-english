@@ -1931,6 +1931,7 @@
   "tests/test_hang_guards.py::test_each_lean_runner_caller_waits_the_setting_else_its_default[risk route]",
   "tests/test_hang_guards.py::test_each_lean_runner_caller_waits_the_setting_else_its_default[soft route]",
   "tests/test_hang_guards.py::test_no_wait_the_suite_reaches_is_shorter_than_the_hang_guard",
+  "tests/test_hang_guards.py::test_test_modules_other_code_imports_load_outside_pytest",
   "tests/test_hang_guards.py::test_the_guard_sees_a_product_constant_wait",
   "tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[annotated keyword-only default]",
   "tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[fault deadline]",

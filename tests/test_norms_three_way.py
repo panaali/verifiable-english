@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 
 from tools import rust_build
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
