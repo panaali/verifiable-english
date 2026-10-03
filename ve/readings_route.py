@@ -49,7 +49,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
     [row] = run_lean([{"id": "readings-s2", "kind": "readings-elaborate",
-                       "environment": environment, "document": document}], executable=executable)
+                       "environment": environment, "document": document}], executable=executable,
+                     timeout=300)
     if row["status"] == "error":
         raise VEError(row["error"])
     senv = S1Environment(environment)
@@ -117,8 +118,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def run_lean(cases, *, executable=LEAN_ROUTE):
-    return run_readings_cases(executable, wire(cases))
+def run_lean(cases, *, executable=LEAN_ROUTE, timeout=120):
+    return run_readings_cases(executable, wire(cases), timeout=timeout)
 
 
 def _message(exc):
@@ -185,7 +186,7 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=Tr
     # One normalised input (`wire`: an explicit null is an absent field) for Lean and Python alike.
     environment, document = wire(environment), wire(document_wire(units, reading_sets))
     case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
-    rows = run_lean([case], executable=executable)
+    rows = run_lean([case], executable=executable, timeout=300)
     row = rows[0]
     if row["status"] == "ok" and (type(row.get("content_bearing")) is not bool or
                                   row["content_bearing"] and type(row.get("sets")) is not list):
