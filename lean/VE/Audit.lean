@@ -133,6 +133,7 @@ import VE.Readings.Names
 import VE.Readings.SoftFacts
 import VE.Readings.Shape
 import VE.Readings.ChoiceFacts
+import VE.Readings.Children
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3342,3 +3343,18 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.fmap_inj
 #print axioms VE.Readings.mem_buildNodes_choice
 #print axioms VE.Readings.choice_names_nodup
+#print axioms VE.Readings.build_names_reserved
+#print axioms VE.Readings.build_over
+#print axioms VE.Readings.choice_home
+#print axioms VE.Readings.choice_over
+#print axioms VE.Readings.mem_copies
+#print axioms VE.Readings.copies_plain
+#print axioms VE.Readings.interface_declared
+#print axioms VE.Readings.copies_iface
+#print axioms VE.Readings.mem_fmap_over
+#print axioms VE.Readings.fmap_name_cases
+#print axioms VE.Readings.child_back
+#print axioms VE.Readings.mem_build_nodes
+#print axioms VE.Readings.no_set_declares
+#print axioms VE.Readings.mem_one_nodes
+#print axioms VE.Readings.child_fwd
