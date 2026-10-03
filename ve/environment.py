@@ -329,14 +329,13 @@ class Environment:
     def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
-        if type(data) is dict and "language" in data and type(language) is not str:
-            # Lean's environment decoder reads a language that names no frozen
-            # envelope as the route's: its field set, then the language as a string.
-            require_fields(data, {"language", "profiles", "spec_revision", "vocabulary"})
-            raise VEError("String expected")
-        modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
+        # Lean's decoders read a language that names no frozen envelope as the
+        # route's: the route's field set (with its profile blocks and W6 fields),
+        # then the language as a string.
+        untyped = type(data) is dict and "language" in data and type(language) is not str
+        modern = untyped or language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
         closure = language == CLOSURE_LANGUAGE
-        route = language == profile_registry.LANGUAGE
+        route = untyped or language == profile_registry.LANGUAGE
         extended = type(data) is dict and ("unit_schema" in data or "units" in data)
         if extended and (not route or "unit_schema" not in data or "units" not in data):
             raise UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
@@ -352,9 +351,22 @@ class Environment:
                        | ({"alternatives"} if has_alternatives else set())
                        | ({"risk"} if has_risk else set())
                        | ({"unit_schema", "units"} if extended else set()))
+        if untyped:
+            raise VEError("String expected")
         order = False
         if route:
+            if extended and "risk" not in data:
+                # The quantity route (VE.Time.Wire.decodeEnvironment) reads the
+                # profiles with `strings`; the risk route as the gate does.
+                if type(data["profiles"]) is not list:
+                    raise VEError("array expected")
+                if not _string_array(data["profiles"]):
+                    raise VEError("String expected")
             family = profile_registry.checker_family(data["profiles"])
+            if has_speech and (type(data["vocabulary"]) is not dict
+                               or type(data["vocabulary"].get("predicates")) is not dict):
+                # VE.SpeechActs.Wire.predicatesOf, read after the profile gate.
+                raise VEError("InvalidInput: environment vocabulary")
             # Every top-level field's type is checked before its value is used,
             # with the diagnostics of Lean's decoders (VE.Route.Gate.decodeEnvelope).
             if type(data["spec_revision"]) is not str:
@@ -405,6 +417,13 @@ class Environment:
         require_fields(vocab, {"sorts", "predicates", "constants"} |
                        ({"reports"} if route and "reports@0" in data["profiles"] else set()),
                        path="/vocabulary")
+        if route and "reports@0" in data["profiles"]:
+            # VE.Attribution.Wire reads the block's fields and types before the vocabulary.
+            require_fields(vocab["reports"], {"holders", "evidence"}, path="/vocabulary/reports")
+            if type(vocab["reports"]["holders"]) is not list:
+                raise VEError("array expected")
+            if not _string_array(vocab["reports"]["holders"]) or type(vocab["reports"]["evidence"]) is not str:
+                raise VEError("String expected")
         for kind in ("sorts", "predicates", "constants"):
             if type(vocab[kind]) is not dict:
                 raise VEError(f"{kind} must be an object")
@@ -571,12 +590,12 @@ class Environment:
             })
         reports = None
         if route and "reports@0" in data["profiles"]:
-            raw_reports = vocab["reports"]
-            require_fields(raw_reports, {"holders", "evidence"}, path="/vocabulary/reports")
-            holders, evidence = raw_reports["holders"], raw_reports["evidence"]
-            if (type(holders) is not list or not 1 <= len(holders) <= 8
-                    or len(set(holders)) != len(holders) or any(h not in sorts for h in holders)):
-                raise UnknownSymbol("holder sort")
+            holders, evidence = vocab["reports"]["holders"], vocab["reports"]["evidence"]
+            if not 1 <= len(holders) <= 8 or len(set(holders)) != len(holders):
+                raise VEError("InvalidInput: holders must be 1 to 8 distinct sorts")
+            for holder in holders:
+                if holder not in sorts:
+                    raise UnknownSymbol(f"holder sort {holder}")
             if type(evidence) is not str or evidence not in sorts:
                 raise UnknownSymbol("evidence sort")
             if any(c.get("sort") in holders and type(c.get("verbalisation")) is str and
