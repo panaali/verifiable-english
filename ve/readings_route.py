@@ -283,13 +283,21 @@ def report(doc):
     result = {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
             "pending_candidates": pending,
             "couplings": len({item["axis"] for item in doc["meta"].get("couplings", [])}),
-            "route": s2["route"], "status": "UNKNOWN: superposition pending"}
+            "route": s2["route"]}
+    from .readings_verdicts import context
+    route = context(doc)
     if s2["route"] in ("superposed", "enumerated"):
-        result.update(choice_count=s2["choice_count"], narrowings_stale=s2["narrowings_stale"],
+        result.update(choice_count=s2["choice_count"], choices_checked=s2["choices_checked"],
+                      narrowings_stale=s2["narrowings_stale"],
                       reading_premises=[entry["label"] for entry in s2.get("slot", [])],
-                      dead_readings=[], not_superposable=s2["finding"])
+                      not_superposable=s2["finding"])
         if "sizes" in s2:
             result["sizes"] = s2["sizes"]
+    if route is not None:
+        # `status`, `conflict` and `dead_readings` (6): each from checked evidence; `dead_readings` is null when
+        # the compatible choices were too many to enumerate, never an unchecked empty list.
+        result.update(route.report_fields())
+        result["english"] = report_english(doc, route)
     return result
 
 
@@ -578,3 +586,12 @@ def _precedence_related(rules, name):
 
 __all__ = ["Admission", "CHECKED_BY", "Wording", "document_wire", "report", "rights_findings", "run_lean",
            "rust_check", "separate_many", "validate"]
+
+
+def report_english(doc, route):
+    """The English of 2.3 for the verdicts across readings of the report (filled in below)."""
+    return []
+
+
+def query_english(doc, conclusion, data):
+    return []

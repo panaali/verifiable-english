@@ -406,12 +406,11 @@ def _quiet_formula(sets, name, sorts, owners):
     return formula
 
 
-def superposed_elaboration(doc, couplings=(), narrowings=()):
-    """Regenerate the S2a labelled slot and sizes, including decision-table quiescence.
-
-    Decision names and colliding pairs come from Python's soft elaborator on
-    the transformed document; their ownership comes from the source positions.
-    """
+def superposed_document(doc):
+    """`sup D` as Python's soft elaborator reads it (1.4): the frame extended by the choice vocabulary, the
+    transformed contents in source order, and the soft document of their rules, every gated assertion typed over
+    its complete vocabulary. Raises the chain's diagnostic when `sup D` is not well-formed."""
+    from .ast import formula_from_data
     from .softnorms import SoftEnvironment, SoftNormDocument
 
     vocabulary = choice_vocabulary(doc.sets)
@@ -425,10 +424,20 @@ def superposed_elaboration(doc, couplings=(), narrowings=()):
     contents = superposed_contents(doc)
     soft = SoftNormDocument(SoftEnvironment(frame, generated=True),
                             [content.raw for content in contents if content.kind == "norm"])
-    from .ast import formula_from_data
     for content in contents:
         if content.kind == "assertion":
             formula_from_data(soft.extended_env, content.body, _generated=True)
+    return frame, contents, soft
+
+
+def superposed_elaboration(doc, couplings=(), narrowings=()):
+    """Regenerate the S2a labelled slot and sizes, including decision-table quiescence.
+
+    Decision names and colliding pairs come from Python's soft elaborator on
+    the transformed document; their ownership comes from the source positions.
+    """
+    vocabulary = choice_vocabulary(doc.sets)
+    frame, _, soft = superposed_document(doc)
     origin = {}
     for m, reading_set in enumerate(doc.sets):
         for i, candidate in enumerate(reading_set.candidates):

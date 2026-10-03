@@ -1,6 +1,6 @@
 """S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by
 Lean with Python's and Rust's agreement, situations found by Python's search and checked by Lean, the section 6
-report, the verdict `superposition pending`, and the English of 2.3 rendered from checked data only.
+report, the premise verdict across readings that S2a gives it, and the English of 2.3 rendered from checked data only.
 
 Review findings B (Astra 4, Fable 4 and 5) and A (Fable 1): each wording below is a regression of "E14 to E24 are
 never rendered from checked data"; E25 replaces E15 while `decision_only_sound` is unproved (DRI ruling 2).
@@ -78,7 +78,11 @@ def rendered(path):
 def test_h1_g4_e14_with_e25_on_k1(tmp_path):
     path = s1_document(tmp_path, [strict(), default()])
     report = check_document(path)
-    assert report["premises"] == {"status": "UNKNOWN", "reason": "superposition pending"}
+    # S2a gives the content-bearing document its premise verdict across readings (composition-s2.md 4.5): a model
+    # Lean checked on the superposed document, naming the reading it encodes.
+    premises = report["premises"]
+    assert (premises["status"], premises["route"]) == ("model", "superposed")
+    assert [c["status"] for c in premises["candidates"]] == ["model", "model"]
     [pair] = report["readings"]["sets"][0]["pairs"]
     assert pair["wording"] == "E14"
     assert pair["text"] == (
