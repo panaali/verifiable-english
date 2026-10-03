@@ -132,6 +132,7 @@ import VE.Readings.Simulate
 import VE.Readings.Names
 import VE.Readings.SoftFacts
 import VE.Readings.Shape
+import VE.Readings.ChoiceFacts
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3294,3 +3295,16 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.candJunk_le
 #print axioms VE.Readings.choiceJunk_le
 #print axioms VE.Readings.choiceDoc_noRights
+#print axioms VE.Readings.qName_chosenAt
+#print axioms VE.Readings.gateContent_norm
+#print axioms VE.Readings.choiceDoc_eq
+#print axioms VE.Readings.mem_normsOf
+#print axioms VE.Readings.mem_choiceNodes
+#print axioms VE.Readings.sets_eq
+#print axioms VE.Readings.mem_candNodes
+#print axioms VE.Readings.mem_supNodesAux
+#print axioms VE.Readings.mem_supNodes
+#print axioms VE.Readings.nodeFacts_of_home
+#print axioms VE.Readings.attached_set
+#print axioms VE.Readings.wellFormedDoc_parts
+#print axioms VE.Readings.home_exists
