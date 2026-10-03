@@ -9,8 +9,8 @@ public reexport facade, not an architectural dependency source.
 
 | Layer | Python `ve` modules | Lean modules | Rust |
 |---|---|---|---|
-| 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire`, `wire_contract` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` (one crate currently contains kernel, profile and surface code) |
-| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `softnorms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`order`, `route`, `eval`, `search`); intra-crate module groups are checked by `tools/check_rust_deps.py` |
+| 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire`, `wire_contract` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` crate root and `ast`, `environment`, `model`, `wire`, `semantics`, `graph` (one crate holds all three groups until the crate split) |
+| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `softnorms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`, `discourse`); intra-crate module groups are checked by `tools/check_rust_deps.py` |
 | 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `readings_english`, `report_english`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
 | 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_defaults`, `norm_defaults_english`, `norm_defaults_route`, `norm_strict`, `openterms`, `propose`, `readings`, `readings_route`, `readings_s1`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
@@ -42,6 +42,12 @@ inline modules named like an imported name or a crate module, crate paths in
 attribute or macro strings and in macro definitions, `#[path]`, `#[macro_use]`,
 `#[macro_export]` (also under `cfg_attr`), `include!` (also renamed),
 `extern crate self`, macros 2.0 and macro metavariables after `::`.
+Rust's `units`, `risk`, `readings` and `discourse` are profile modules, as in
+Lean (`VE.Risk.*`, `VE.Route.Readings` and the `VE.Discourse.*` checks are
+layer 2). Python files the same duties differently: `ve.units` is a profile
+module but `ve.risk`, `ve.readings` and `ve.discourse` are layer-4 route
+modules. This cross-language mismatch is recorded, not resolved
+([plan 2](ARCHITECTURE-LAYERS-PLAN2.md), open question 9).
 The stage-1 Lean service and its Python adapter are tool-layer modules. This
 classification checks their imports and selects their consumers; the service is
 still outside the `ve` command path, as described in

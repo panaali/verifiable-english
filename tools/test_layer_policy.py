@@ -633,6 +633,15 @@ class LayerSelectionTests(unittest.TestCase):
             self.assertEqual(check_rust_deps.main(), 0)
         self.assertIn("module graph kept (0 reviewed legacy edges)", output.getvalue())
 
+    def test_rust_module_groups_match_the_layer_table(self):
+        # docs/ARCHITECTURE-LAYERS.md: units, risk, readings and discourse are profile modules, as
+        # in Lean (Python files risk, readings and discourse at layer 4, a recorded mismatch).
+        self.assertEqual(check_rust_deps.MODULE_GROUPS["ve-core"], {
+            **dict.fromkeys(("lib", "ast", "environment", "model", "wire", "semantics", "graph"), 1),
+            **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings", "discourse"), 2),
+            "surface": 3,
+        })
+
     def test_outward_rust_module_imports_are_rejected(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
