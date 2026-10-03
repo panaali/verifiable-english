@@ -1032,8 +1032,10 @@ diagnostic from Python and Lean on 200 generated graphs (P0's differential exten
 `tupleVal_typed`, `elaborate_iff_at`, `elaborate_iff`, `elab_completion`, `prefix_satisfaction`, `subst_sound`,
 `precedence_acyclic`, `conflictFree_expands`, `conflictFree_expands_document`, `conflictFree_expands_all`,
 `conflictFree_prefix`, `norms_route_acceptance`, `norms_route_countermodel`, `conflict_witness_sound`,
-`conflict_pair_witness_sound`, `norms_wire_acceptance`, `norms_wire_conflict_sound`,
-`cedar_decision` audited (`lean/audit.py`: allowlist unchanged, no `sorry`); `conflict_smallModel` when claimed;
+`conflict_pair_witness_sound`, `norms_wire_acceptance`, `norms_wire_conflict_sound` (implemented as
+`Flagged.norms_flagged_conflict_sound` with `FlaggedSpec.norms_flagged_conflict_free` and, from the public entry,
+`FlaggedSpec.norms_wire_conflict_free`; the legacy `Replay.norms_wire_conflict_sound` covers only documents without
+flags or definitions and no executable calls it), `cedar_decision` audited (`lean/audit.py`: allowlist unchanged, no `sorry`); `conflict_smallModel` when claimed;
 `lean/NORMS.md` lists each in plain words; `lean/METATHEORY.md` gains the `Norms` section; frozen-source hashes of
 the v0, closure, order and Route files unchanged.
 Lean executable guards instantiate 10.1(m–u), including actual `Layer` values for (c), arbitrary invalid lower
@@ -1174,6 +1176,10 @@ target's result; document CONFLICT-FREE requires all targets. Compose the comple
 `conflictFree_expands_all` and `norms_route_acceptance` to obtain the base-vocabulary report conclusion.
 The proof follows decoder soundness → exact regeneration → binding equality → leaf admission → checker
 soundness → document iff; the theorem over already-decoded formulas in 6.2 cannot replace this chain.
+(Implemented as `Flagged.norms_flagged_conflict_sound` and `FlaggedSpec.norms_flagged_conflict_free` for the
+CONFLICT-FREE half and `Flagged.norms_flagged_witness_sound` for the CONFLICT half; with `data@0` flags the
+conclusion ranges over base-admissible structures that also satisfy the regenerated flag premises.
+`FlaggedSpec.norms_wire_conflict_free` and `norms_wire_conflict_refuted` state both halves from `Norms.Run.runCase`.)
 
 ### 11.5 Limits
 
