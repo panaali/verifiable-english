@@ -6,7 +6,9 @@ from unittest.mock import patch
 from contextlib import redirect_stderr, redirect_stdout
 import io
 import json
+import os
 from pathlib import Path
+import shutil
 import subprocess
 from tempfile import TemporaryDirectory
 import sys
@@ -71,13 +73,65 @@ RUST_MODULE_CASES = {
         "    #[test]\n    fn t() { assert_eq!(g(), 1); }\n}\n",
         "pub fn h() -> u8 { 2 }\nmod tests {\n    use super::*;\n    pub fn k() -> u8 { h() }\n}\n",
         SURFACE_RS, set()),
+    # Names bound by `use` items are path heads too, and identifiers are Unicode, compared after NFC.
+    "crate alias": ("", "use crate as root;\npub fn f() -> u8 { root::surface::parse() }\n", "", SURFACE_RS,
+                    {"ast -> surface"}),
+    "super self alias": ("", "use super::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
+                         SURFACE_RS, {"ast -> surface"}),
+    "crate self alias": ("", "use crate::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
+                         SURFACE_RS, {"ast -> surface"}),
+    "Unicode re-export": ("pub use surface::parse as 読む;\n", "pub fn f() -> u8 { crate::読む() }\n", "",
+                          SURFACE_RS, {"ast -> surface"}),
+    "NFD identifier names the NFC re-export": (
+        "pub use surface::parse as café;\n", "pub fn f() -> u8 { crate::café() }\n", "", SURFACE_RS,
+        {"ast -> surface"}),
+    "chained local aliases": (
+        "", "use crate as root;\nuse root::surface as syntax;\npub fn f() -> u8 { syntax::parse() }\n", "",
+        SURFACE_RS, {"ast -> surface"}),
+    "re-export through a private alias": (
+        "", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n", "use crate as root;\npub use root::surface::parse;\n",
+        SURFACE_RS, {"ast -> eval", "ast -> surface", "eval -> surface"}),
+    "nested block comment ends where rustc ends it": (
+        "", '/* /* */ " */\npub fn f() -> u8 { crate::surface::parse() } // "\n', "", SURFACE_RS,
+        {"ast -> surface"}),
+    # Re-exports at any inline-module depth, and globs of the crate root.
+    "nested inline root re-export": (
+        "pub mod api { pub mod nested { pub use super::super::surface::parse; } }\n",
+        "pub fn f() -> u8 { crate::api::nested::parse() }\n", "", SURFACE_RS, {"ast -> surface"}),
+    "root glob inside an inline root module": (
+        "pub mod api { pub use crate::*; }\n", "pub fn f() -> u8 { crate::api::surface::parse() }\n", "",
+        SURFACE_RS, {"ast -> surface"}),
+    "nested inline re-export in a profile module": (
+        "", "pub fn f() -> u8 { crate::eval::api::nested::parse::<u8>() }\n",
+        "pub mod api { pub mod nested { pub use super::super::super::surface::parse; } }\n", SURFACE_RS,
+        {"ast -> eval", "ast -> surface", "eval -> surface"}),
+    "root glob re-exported by a profile module": (
+        "", "pub fn f() -> u8 { crate::eval::surface::parse::<u8>() }\n", "pub use crate::*;\n", SURFACE_RS,
+        {"ast -> eval", "ast -> surface", "eval -> surface"}),
+    # The root's own items are kernel, including what its macros expand to.
+    "root item calls the surface": ("pub fn helper() -> u8 { surface::parse() }\n",
+                                    "pub fn f() -> u8 { crate::helper() }\n", "", SURFACE_RS, {"lib -> surface"}),
+    "root macro names the surface": (
+        "macro_rules! parsed { () => { $crate::surface::parse::<u8>() }; }\npub fn g() -> u8 { parsed!() }\n",
+        "", "", SURFACE_RS, {"lib -> surface"}),
 }
+RUST_UNSUPPORTED_CASES = (
+    ('#[path = "surface.rs"]\nmod other;\n', SURFACE_RS, "#[path"),
+    ('#[cfg_attr(all(), path = "surface.rs")]\nmod other;\n', SURFACE_RS, "#[path"),
+    ("", SURFACE_RS + "#[macro_export]\nmacro_rules! parsed { () => { 0u8 }; }\n", "#[macro_export"),
+    ("#[macro_use]\nmod macros {}\n", SURFACE_RS, "#[macro_use"),
+    ('include!("surface.rs");\n', "", "include!"),
+    ('use std::include as source;\nsource!("surface.rs");\n', "", "include!"),
+    ("extern crate self as fixture;\n", SURFACE_RS, "extern crate self"),
+    ("macro_rules! call { ($m:ident) => { $crate::$m::parse::<u8>() }; }\npub fn g() -> u8 { call!(surface) }\n",
+     SURFACE_RS, "::$"),
+)
 
 
-def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str) -> Path:
+def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str, name: str = "fixture") -> Path:
     source = root / "src"
     source.mkdir(parents=True)
-    (root / "Cargo.toml").write_text('[package]\nname = "fixture"\nversion = "0.0.0"\nedition = "2024"\n'
+    (root / "Cargo.toml").write_text(f'[package]\nname = "{name}"\nversion = "0.0.0"\nedition = "2024"\n'
                                      "[lib]\npath = \"src/lib.rs\"\n")
     (source / "lib.rs").write_text("#![allow(dead_code, unused_imports)]\nmod ast;\nmod eval;\n"
                                    "mod surface;\n" + lib)
@@ -499,19 +553,40 @@ class LayerSelectionTests(unittest.TestCase):
 
     def test_unsupported_rust_module_constructs_fail_closed(self):
         groups = check_rust_deps.MODULE_GROUPS["ve-core"]
-        for lib, surface, construct in (
-            ('#[path = "surface.rs"]\nmod other;\n', SURFACE_RS, "#[path"),
-            ("", SURFACE_RS + "#[macro_export]\nmacro_rules! parsed { () => { 0u8 }; }\n", "#[macro_export"),
-            ("#[macro_use]\nmod macros {}\n", SURFACE_RS, "#[macro_use"),
-            ('include!("surface.rs");\n', "", "include!"),
-            ("extern crate self as fixture;\n", SURFACE_RS, "extern crate self"),
-        ):
-            with self.subTest(construct), TemporaryDirectory() as directory:
+        for lib, surface, construct in RUST_UNSUPPORTED_CASES:
+            with self.subTest(lib), TemporaryDirectory() as directory:
                 source = rust_module_fixture(Path(directory), lib, "", "", surface)
                 _, errors = check_rust_deps.module_edges("ve-core", source, groups)
                 self.assertEqual(len(errors), 1, errors)
                 self.assertTrue(errors[0].startswith("unsupported Rust construct: ve-core: "), errors)
                 self.assertIn(repr(construct), errors[0])
+        with TemporaryDirectory() as directory:  # rustc rejects a no-break space between tokens
+            source = rust_module_fixture(Path(directory), "pub fn g()\u00a0{}\n", "", "", SURFACE_RS)
+            _, errors = check_rust_deps.module_edges("ve-core", source, groups)
+            self.assertEqual(errors, ["unsupported Rust construct: ve-core: lib: '\\xa0'"])
+
+    def test_rust_tokens_follow_rustc(self):
+        text = ('/* a /* b */ crate::x */ r##"crate::y"#"## b\'"\' \'\\u{22}\' \'a r#crate1::café '
+                "cafe\u0301 c\"z\" x.0 1u8")
+        self.assertEqual([token.text for token in check_rust_deps.tokens(text)],
+                         ["crate1", "::", "café", "café", "x", "."])
+        self.assertTrue(check_rust_deps.tokens("r#crate1")[0].raw)
+
+    @unittest.skipUnless(shutil.which("cargo"), "cargo is not installed")
+    def test_rust_module_fixtures_compile(self):
+        """Every module-check fixture is real Rust: `cargo check` accepts all of them."""
+        fixtures = [(lib, ast, eval_, surface) for lib, ast, eval_, surface, _ in RUST_MODULE_CASES.values()]
+        fixtures += [(lib, "", "", surface) for lib, surface, _ in RUST_UNSUPPORTED_CASES]
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            members = [f"f{index}" for index in range(len(fixtures))]
+            (root / "Cargo.toml").write_text(f"[workspace]\nresolver = \"3\"\nmembers = {json.dumps(members)}\n")
+            for member, (lib, ast, eval_, surface) in zip(members, fixtures):
+                rust_module_fixture(root / member, lib, ast, eval_, surface, name=f"fixture-{member}")
+            result = subprocess.run(["cargo", "check", "--offline", "--quiet", "--workspace"], cwd=root,
+                                    capture_output=True, text=True, env={**os.environ, "CARGO_TARGET_DIR":
+                                                                         str(root / "target")})
+            self.assertEqual(result.returncode, 0, result.stderr)
 
 
 class RustOutputDiffTests(unittest.TestCase):
