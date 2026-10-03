@@ -52,6 +52,8 @@
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
     "ve/softnorms_contract.py:public_rejection": "diagnosis runs only after the legacy soft validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
+    "ve/norms_contract.py:public_rejection": "diagnosis runs only after the legacy norms validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
+    "ve/norm_defaults_contract.py:public_rejection": "diagnosis runs only after the legacy norm-defaults validator rejects; a diagnosis failure returns the same error, leaving its verdict, code and original text intact",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
@@ -984,7 +986,15 @@
         {"executable": "ve_diagnose", "mode": "soft-norms@0",
          "kinds": ["soft-elaborate", "admission"],
          "response": {"outcome": "string"},
-         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean"]}
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean"]},
+        {"executable": "ve_diagnose", "mode": "norms@0",
+         "kinds": ["norms-elaborate", "norms-conflict", "norms-certificate", "admission"],
+         "response": {"outcome": "string"},
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/Norms.lean"]},
+        {"executable": "ve_diagnose", "mode": "norm-defaults@0",
+         "kinds": ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-certificate", "admission"],
+         "response": {"outcome": "string"},
+         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/NormDefaults.lean", "lean/VE/WireContract/Hooks/Norms.lean"]}
       ], "planned_modes": [], "theorems": [], "planned_theorems": [], "decoders": []},
       "rust": null,
       "lean_call_sites": [],

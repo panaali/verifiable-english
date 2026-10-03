@@ -89,6 +89,7 @@ def predicate (name : String) (root : Json) (items : List Pointer) : HookResult 
 def hooks : Hooks := ⟨predicate, Hooks.Norms.classifier, Hooks.Norms.view⟩
 
 /-- The adapter `norm_defaults_source` (spec 2.2): the kinds beginning `norm-defaults-` and `admission`, with
+    manifest bindings "norm-defaults-elaborate", "norm-defaults-conflict" and "norm-defaults-certificate".
     `norm-defaults@0` listed. -/
 def adapter (case : Json) : Except String Json :=
   Hooks.Norms.sourceAdapter (fun k => k.startsWith "norm-defaults-")
