@@ -93,11 +93,7 @@ def _admit_norm_document_python(environment, document):
         raise VEError("duplicate unit id")
     if any(a.stop > b.start for a, b in zip(units, units[1:])):
         raise VEError("unit spans must be sorted and non-overlapping")
-    try:
-        norms = NormDocument(env, active)
-    except VEError as error:
-        from .norms_contract import public_rejection
-        raise public_rejection(env.to_dict(), active, error)
+    norms = NormDocument(env, active)
     for content in quoted:
         _check_quoted(env, content)
     # Let the existing W2 decoder validate every non-unit source component.

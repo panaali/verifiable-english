@@ -1,90 +1,85 @@
-"""Admission boundary checks for the two S5 units (wire-contract-s5.md 8.3).
+"""Admission boundary checks for the two S5 units in shadow (wire-contract-s5.md 2.6, 7.2, 8.3).
 
-The committed contracts remain in shadow until S5-pre and the signed delta close.
-Tests inject a public copy to exercise the already wired rejection path.
+The committed contracts remain in shadow until S5-pre and the signed delta close. While a unit is in shadow its
+contract module has no `public_rejection` and its route has no handler (7.2: both are the switch commit's), so
+no output of the call depends on the contract (2.6): the call raises the legacy error as it is, and imports no
+diagnostic module.
 """
-from copy import deepcopy
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
-from tests.test_wire_contract_s5_lean import document, s1, s16
-from tests.test_norms_contract import FIXTURES as NORM_FIXTURES
 from tests.test_norm_defaults_contract import FIXTURES as DEFAULT_FIXTURES
+from tests.test_norms_contract import FIXTURES as NORM_FIXTURES
+from tests.test_wire_contract_s5_lean import document, s1, s16
+from ve import norm_defaults_contract, norms_contract
 from ve.errors import VEError
 from ve.norm_admission import _admit_norm_document_python
 from ve.norm_defaults_route import admit_norm_defaults_document
 from ve.wire_contract.engine import load
 
-
-@pytest.mark.parametrize("unit,source,call,contract_module", [
-    ("norms@0", s1, _admit_norm_document_python, "ve.norms_contract"),
-    ("norm-defaults@0", s16, admit_norm_defaults_document, "ve.norm_defaults_contract"),
-])
-def test_admission_rejection_uses_the_first_contract_fault(monkeypatch, unit, source, call, contract_module):
-    module = __import__(contract_module, fromlist=["_locked_contract"])
-    contract = deepcopy(load(unit))
-    contract["status"] = "public"
-    monkeypatch.setattr(module, "_locked_contract", lambda: contract)
-    environment, norms = source()
-    before = deepcopy((environment, norms))
-    with pytest.raises(VEError) as caught:
-        call(environment, document(norms))
-    error = caught.value
-    assert (environment, norms) == before
-    assert error.diagnostic == {
-        "contract": unit, "revision": contract["revision"], "check": "4.2" if unit == "norms@0" else "w1/4.2",
-        "phase": "rules" if unit == "norms@0" else "norms", "code": "NORMS_DUPLICATE_DECLARATION",
-        "class": "DuplicateDeclaration", "path": "/norms/2/norm/name",
-        "text": "DuplicateDeclaration: rule a0", "args": {"value": "a0"},
-    }
-    assert error.message == str(error) == error.diagnostic["text"]
+ROOT = Path(__file__).resolve().parents[1]
+UNITS = {"norms@0": (norms_contract, _admit_norm_document_python, s1),
+         "norm-defaults@0": (norm_defaults_contract, admit_norm_defaults_document, s16)}
+DIAGNOSTIC_MODULES = ("ve.norms_contract", "ve.norm_defaults_contract", "ve.softnorms_contract", "ve.wire_contract")
 
 
-@pytest.mark.parametrize("unit,source,call", [
-    ("norms@0", s1, _admit_norm_document_python),
-    ("norm-defaults@0", s16, admit_norm_defaults_document),
-])
-def test_shadow_admission_retains_legacy_error(unit, source, call):
+@pytest.mark.parametrize("unit", sorted(UNITS))
+def test_shadow_contract_module_has_no_public_boundary(unit):
+    """Fable review B: `public_rejection` and the call site's handler belong to the switch commit (7.2)."""
+    module = UNITS[unit][0]
     assert load(unit)["status"] == "shadow"
-    environment, norms = source()
+    assert not hasattr(module, "public_rejection")
+    assert "public_rejection" not in Path(module.__file__).read_text()
+
+
+@pytest.mark.parametrize("unit,fixture", [("norms@0", None), ("norms@0", "N3"), ("norms@0", "N7"),
+                                          ("norm-defaults@0", None), ("norm-defaults@0", "D10")])
+def test_shadow_admission_retains_legacy_error(unit, fixture):
+    """S1 and S16, and the fixtures N3, N7 and D10, through the call: the error is the legacy validator's, with
+    its type, code and text, and no record."""
+    module, call, source = UNITS[unit]
+    fixtures = NORM_FIXTURES if unit == "norms@0" else DEFAULT_FIXTURES
+    environment, norms = source() if fixture is None else fixtures[fixture][0]()
+    with pytest.raises(VEError) as legacy:
+        module.legacy_validation(json.loads(json.dumps(environment)), json.loads(json.dumps(norms)))
     with pytest.raises(VEError) as caught:
         call(environment, document(norms))
     assert caught.value.diagnostic is None
-    assert str(caught.value) == "rule a0"
+    assert (type(caught.value), caught.value.code, str(caught.value)) == \
+        (type(legacy.value), legacy.value.code, str(legacy.value))
 
 
-@pytest.mark.parametrize("unit,source,call,contract_module", [
-    ("norms@0", s1, _admit_norm_document_python, "ve.norms_contract"),
-    ("norm-defaults@0", s16, admit_norm_defaults_document, "ve.norm_defaults_contract"),
-])
-def test_admission_checks_units_before_the_diagnostic_handler(monkeypatch, unit, source, call, contract_module):
-    module = __import__(contract_module, fromlist=["_locked_contract"])
-    contract = deepcopy(load(unit))
-    contract["status"] = "public"
-    monkeypatch.setattr(module, "_locked_contract", lambda: contract)
-    environment, norms = source()
-    submitted = document(norms)
-    submitted["units"][2].pop("span")
-    with pytest.raises(VEError) as caught:
-        call(environment, submitted)
-    assert caught.value.diagnostic is None
+PROBE = """
+import json, sys
+from ve.admission import admit_document
+from ve.errors import VEError
+outcomes = []
+for environment, document in json.loads(sys.stdin.read()):
+    try:
+        admit_document(environment, document)
+        outcomes.append("accepted")
+    except VEError:
+        outcomes.append("rejected")
+print(json.dumps([outcomes, sorted(name for name in sys.modules if name.startswith(%r))]))
+"""
 
 
-@pytest.mark.parametrize("fixture,unit,source,call,contract_module,check,phase", [
-    ("N3", "norms@0", NORM_FIXTURES, _admit_norm_document_python, "ve.norms_contract", "2.2", "profiles"),
-    ("N7", "norms@0", NORM_FIXTURES, _admit_norm_document_python, "ve.norms_contract", "3.4", "rule-shape"),
-    ("D10", "norm-defaults@0", DEFAULT_FIXTURES, admit_norm_defaults_document,
-     "ve.norm_defaults_contract", "6.2", "fill"),
-])
-def test_spec_fixture_reaches_admission_record(monkeypatch, fixture, unit, source, call, contract_module,
-                                               check, phase):
-    module = __import__(contract_module, fromlist=["_locked_contract"])
-    contract = deepcopy(load(unit))
-    contract["status"] = "public"
-    monkeypatch.setattr(module, "_locked_contract", lambda: contract)
-    environment, norms = source[fixture][0]()
-    with pytest.raises(VEError) as caught:
-        call(environment, document(norms))
-    assert caught.value.diagnostic["check"] == check
-    assert caught.value.diagnostic["phase"] == phase
-    assert caught.value.message == str(caught.value) == caught.value.diagnostic["text"]
+def test_shadow_calls_import_no_diagnostic_module():
+    """V2 (S7), and in shadow more: neither an accepted nor a rejected call imports a contract module or the
+    engine. The accepted call is S7's, on `tests/test_norm_admission.py::source()`."""
+    from tests.test_norm_admission import source
+    env, accepted = source()
+    cases = [[env.to_dict(), accepted]] + [[environment, document(norms)] for environment, norms in (s1(), s16())]
+    expected = ["accepted", "rejected", "rejected"]
+    probe = PROBE % ("ve.",)
+    result = subprocess.run([sys.executable, "-c", probe], input=json.dumps(cases), cwd=ROOT, text=True,
+                            capture_output=True, timeout=600, env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert result.returncode == 0, result.stderr
+    outcomes, modules = json.loads(result.stdout)
+    assert outcomes == expected
+    assert not [name for name in modules if any(name == m or name.startswith(m + ".") for m in DIAGNOSTIC_MODULES)]
