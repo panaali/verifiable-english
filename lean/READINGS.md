@@ -216,8 +216,11 @@ the finite-model wire form (`{"complete", "domains", "constants", "relations"}`,
 `complete`) over `sup D`'s base vocabulary: the frame's sorts and `ve__reading`, its constants and `ve__here`, the
 decision predicates of `sup D`, the bits `ve__bit__<m+1>__<j>`, and the frame's base predicates. A formula is the
 AST wire form over `sharedEnv D`. A certificate is the tableau certificate wire form (the checker replays the trace;
-the binding fields are not compared). A document that is not superposable is refused by every kind but
-`readings-elaborate` with `InvalidInput: readings document is not superposable`.
+the binding fields are not compared). `readings-conflict`, `readings-certificate` and `readings-model` refuse a
+document that is not superposable with `ReadingsNotSuperposable: <sets> (<cause>); use readings-choice` (on the
+rights chain `UnsupportedProfile: superposition of a rights document is S2b; use readings-choice`);
+`readings-elaborate` reports the route instead, `readings-dead` asks `supReady`, and `readings-choice` runs on any
+admitted document.
 
 * `readings-elaborate`: `route` (`w2`, `pending`, `abstention`, `superposed`, `enumerated`); for `superposed`,
   `finding` null, `narrowings_stale`, `vocabulary`, `units` (the units of `sup D` with `set`, `unit`, `version`,
