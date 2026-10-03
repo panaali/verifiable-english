@@ -21,6 +21,7 @@ import importlib
 import importlib.util
 import io
 import json
+import math
 import multiprocessing
 import os
 from pathlib import Path, PurePosixPath
@@ -449,6 +450,25 @@ WIRE_UNIT_PATHS = re.compile(r"(?:docs/spec/[a-z0-9-]+-wire-table\.md"
                              r"|conformance/wire-contract/[a-z0-9-]+@[0-9]+-catalogue\.json)\Z")
 
 
+WIRE_CHECK_TIMEOUT = 30.0
+
+
+def check_timeout() -> float:
+    """The wall-clock wait for the wire generator's check: `VE_PRECOMMIT_TIMEOUT` when set (the
+    test suite raises it to its hang guard, so machine load cannot fail a test), else 30 s. A guard
+    against a hung check only; a value that is not a positive finite number of seconds blocks."""
+    text = os.environ.get("VE_PRECOMMIT_TIMEOUT")
+    if text is None:
+        return WIRE_CHECK_TIMEOUT
+    try:
+        seconds = float(text)
+    except ValueError:
+        seconds = math.nan
+    if not (math.isfinite(seconds) and seconds > 0):
+        raise ValueError(f"VE_PRECOMMIT_TIMEOUT must be a positive number of seconds, not {text!r}")
+    return seconds
+
+
 def check_wire_contract(index: Index) -> list[str]:
     """Run the wire generator on staged sources and generated output."""
     watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
@@ -473,7 +493,7 @@ def check_wire_contract(index: Index) -> list[str]:
     env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
-                          timeout=30, check=False)
+                          timeout=check_timeout(), check=False)
     if done.returncode:
         return [line for line in (done.stdout + done.stderr).splitlines() if line]
     return []
