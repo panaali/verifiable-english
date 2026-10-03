@@ -125,9 +125,13 @@ sentences too.
   not a change of formula: the tokens, and so the derivations and meanings, are those of the accepted
   original. Spec O1 prescribes, for a non-empty class, a `glued` flag on `punct` before S2. **For the DRI:**
   either add the flag (Lean then rejects these mutants as Python does), or record the widening as an
-  accepted product difference under SEMANTICS-MIGRATION-PLAN 2.3. No hyphenated word occurred in the
-  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 10) must
-  include declared wordings with hyphens.
+  accepted product difference under SEMANTICS-MIGRATION-PLAN 2.3.
+- **The hyphen case of O1 is not empty either.** The ordinary lint refuses hyphens (`PHRASE_SYNTAX`), and no
+  committed overlay has one, so the rendered corpus has none. An accepted suggested overlay from the proposal
+  workflow does admit `{0} is non-compliant`: Python reads `Legacy is non-compliant.` and rejects
+  `Legacy is non - compliant.` and `Legacy is non -compliant.`, which lex to the same tokens
+  (`tests/test_english_lean_s0.py`). Here too Lean would widen acceptance with the same formula. The same
+  decision covers both cases.
 - **Whitespace (O3):** the reference lexer uses the 29 code points of Python's `str.isspace`, which is what
   `_normalise_english_source` collapses (Lean's `Char.isWhitespace` has 4 of them). The list is a literal in
   `conformance/english_lean_lexer.py`, tested against `str.isspace` over all of Unicode. The Lean lexer must
@@ -340,7 +344,7 @@ decides. Section 6 found no corpus lexicon that a ported condition refuses.
 | No empty rule, no left recursion | done (section 1) |
 | Regex terminals that are not word sequences | done (section 1) |
 | Token-length histogram | done on rendered texts (section 3); the use-case documents and pilots are not yet included |
-| Character-versus-token probes | partly: spacing mutants (section 4); hyphenated wordings and word-split mutants are not yet measured |
+| Character-versus-token probes | done for spacing around punctuation and hyphens (section 4); word-split mutants belong to the reverse corpus (S2) |
 | Sealing the shadow corpus with hashes | not done |
 | The tree correspondence (Lark ↔ Lean derivations) | first cut: verdict parity under the conversion of section 7; formulas and witness multiplicity wait for S2's actions |
 | Classification of the 49 rejection sites; blocked-wording ids | done (section 8); one new `Reject` code proposed |
