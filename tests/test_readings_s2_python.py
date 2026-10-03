@@ -6,9 +6,11 @@ from ve.readings_sup import (bits_of, choice_atom, choice_contents, choice_core,
                              choices, copies, pattern, sup_ready, superposed_contents,
                              uniform_precedence, unsatisfiable_ids)
 from ve.readings_s1 import Candidate as S1Candidate, Content, Document, ReadingSet
-from ve.readings_s2_english import (OVER_BUDGET, QUIET, dead_reading, every_result,
-                                    named_result, none_result, not_superposed,
-                                    result_sentence)
+import pytest
+
+from ve.errors import VEError
+from ve.readings_s2_english import (OVER_BUDGET, QUIET, S2A, TEMPLATES, Slots, dead_reading, derivations,
+                                    every_result, gated, named_result, none_result, not_superposed)
 
 
 @dataclass
@@ -122,16 +124,69 @@ def test_uniform_precedence_catches_m8_leak_and_shape_rejects_m17():
     assert not sup_ready(doc.sets, [coupling])
 
 
-def test_closed_s2_english_instances():
-    follows = result_sentence("follows", conclusion="*Every agent must help each user.*")
-    assert every_result(1, "follows", conclusion="*Every agent must help each user.*") == (
-        "Under every reading of the open sentence, the conclusion follows: *Every agent must help each user.*")
-    assert named_result([(1, "*must*"), (2, "*should*")],
-                        result_sentence("conflict_free")) == (
+SLOTS = Slots(numbers={"1", "2", "3"}, readings={"*must*", "*should*", "reading 1", "reading 2"},
+              conclusions={"*For every agent, for every user, that agent must help that user.*"},
+              situations={"a is an agent; u is a user"})
+
+
+def test_closed_s2_english_instances_pass_the_gate():
+    """Each S2a sentence is built from its registered template and admitted by the all-derivations gate (W7)."""
+    conclusion = "*For every agent, for every user, that agent must help that user.*"
+    assert every_result(1, "follows", SLOTS, conclusion=conclusion) == (
+        "Under every reading of the open sentence, the conclusion follows: " + conclusion)
+    assert named_result([(1, "*must*"), (2, "*should*")], "conflict_free", SLOTS) == (
         "Read sentence 1 as *must* and sentence 2 as *should*: "
         "no two rules on the same act contradict each other.")
-    assert none_result(3) == "Under no reading of the 3 open sentences does the conclusion follow."
-    assert not_superposed("sentences 1 and 2") == (
+    assert none_result(3, SLOTS) == "Under no reading of the 3 open sentences does the conclusion follow."
+    assert not_superposed([1, 2], SLOTS) == (
         "The readings of sentences 1 and 2 were checked one way at a time, not together.")
-    assert dead_reading(2, "*should*").endswith("sentence 2 as *should*.")
-    assert "may not" not in " ".join((follows, QUIET, OVER_BUDGET))
+    assert dead_reading(2, "*should*", SLOTS).endswith("sentence 2 as *should*.")
+    assert "may not" not in " ".join((QUIET, OVER_BUDGET))
+    for text, name in ((QUIET, "E8"), (OVER_BUDGET, "E28")):
+        assert [d[0] for d in derivations(text, SLOTS)] == [name]
+
+
+def test_every_s2a_instance_has_one_derivation():
+    """Instances of every S2a template, over every result sentence where it takes one, each read by exactly one
+    registered template, its own (W7's gate over S2a's registrations and S1's)."""
+    from ve.readings_s2_english import (excludes, independent, narrowed, one_reading, over_budget, provided,
+                                        quiet, requires, result_sentence)
+    conclusion, situation = next(iter(SLOTS.conclusions)), next(iter(SLOTS.situations))
+    kinds = ("conflict_free", "follows", "countermodel", "conflict", "premise_model", "inconsistent")
+    built = [provided(SLOTS), one_reading(1, 2, SLOTS), quiet(SLOTS), over_budget(SLOTS),
+             narrowed(1, "*should*", [2, 3], SLOTS), independent(2, SLOTS), dead_reading(1, "reading 2", SLOTS),
+             none_result(2, SLOTS), not_superposed([1], SLOTS), requires((1, "*must*"), (2, "reading 1"), SLOTS),
+             excludes((1, "*must*"), (2, "reading 1"), SLOTS)]
+    for kind in kinds:
+        built.append(named_result([(1, "*must*"), (3, "reading 2")], kind, SLOTS, conclusion=conclusion,
+                                  situation=situation))
+        if kind in ("conflict_free", "follows", "inconsistent"):
+            built += [every_result(1, kind, SLOTS, conclusion=conclusion),
+                      every_result(2, kind, SLOTS, conclusion=conclusion)]
+    for text in built:
+        assert len(derivations(text, SLOTS)) == 1, text
+    assert result_sentence("follows", conclusion=conclusion).startswith("the conclusion follows: ")
+
+
+def test_the_gate_refuses_a_second_derivation():
+    """A reading name that could also be read as two named readings gives E12 two derivations: refused."""
+    ambiguous = Slots(numbers={"1", "2"}, readings={"*must*", "*should*", "*must* and sentence 2 as *should*"})
+    text = "Read sentence 1 as *must* and sentence 2 as *should*: no two rules on the same act contradict each other."
+    assert len(derivations(text, ambiguous)) == 2
+    with pytest.raises(VEError, match="has 2 derivations"):
+        gated("E12", text, ambiguous)
+    with pytest.raises(VEError, match="has 0 derivations"):
+        gated("E12", "Read sentence 9 as *must*: no two rules on the same act contradict each other.", SLOTS)
+
+
+def test_g5_e11_is_not_a_wording():
+    """The lifting lemma holds (4.4), so E11 is never shown: it has no derivation (G5)."""
+    text = "Under every reading with at least one individual, no two rules on the same act contradict each other."
+    assert derivations(text, SLOTS) == []
+
+
+def test_g6_g9_generated_names_and_may_not_refused():
+    for text in ("Read sentence 1 as *must*: the conclusion follows: *ve__here*",
+                 "This does not depend on how sentence 1 is read. may not"):
+        with pytest.raises(VEError, match="generated name or `may not`"):
+            gated("E12", text, SLOTS)

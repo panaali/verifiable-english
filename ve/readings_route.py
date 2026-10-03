@@ -588,10 +588,296 @@ __all__ = ["Admission", "CHECKED_BY", "Wording", "document_wire", "report", "rig
            "rust_check", "separate_many", "validate"]
 
 
+
+# ---------------------------------------------------------------------------------------------------------------
+# The English of S2a (composition-s2.md 2.3), from checked verdicts only, every sentence through W7's gate
+
+
 def report_english(doc, route):
-    """The English of 2.3 for the verdicts across readings of the report (filled in below)."""
-    return []
+    """The sentences of 2.3 for the report's verdicts across readings: the conflict status, the premise status, the
+    dead readings and the finding of 1.8."""
+    from .readings_verdicts import Enumerated, Superposed
+    if not isinstance(route, (Superposed, Enumerated)):
+        return []
+    return S2Wording(doc, route).report()
 
 
 def query_english(doc, conclusion, data):
-    return []
+    """The sentences of 2.3 for one ALL, SOME or NONE query across readings."""
+    from .readings_verdicts import Enumerated, Superposed, context
+    route = context(doc)
+    if not isinstance(route, (Superposed, Enumerated)):
+        return []
+    return S2Wording(doc, route).query(conclusion, data)
+
+
+class S2Wording:
+    """2.1's slots on one document: sentence numbers, reading names, conclusions and pulled situations."""
+
+    def __init__(self, doc, route):
+        from . import readings_s2_english as E
+        self.E = E
+        self.doc, self.route = doc, route
+        self.s1 = Wording(doc)
+        self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
+        self.sets = route.sets
+        self.set_number = {R.id: self.numbers[R.unit] for R in self.sets}
+        self.names = {R.id: self.s1.reading_names(R.id) for R in self.sets}
+        self.slots = E.Slots(numbers={str(n) for n in self.numbers.values()},
+                             readings={name for names in self.names.values() for name in names})
+        senv = self.s1.admission.senv
+        self.frame = senv.frame
+        self.author = set(senv.author_environment().predicates)
+        self.decisions = self._decision_names()
+
+    # -- slots
+
+    def readings(self, choice):
+        """[(sentence number, reading name)] for a choice or assumed list, in source order."""
+        chosen = {s: i for s, i in choice}
+        return [(self.set_number[R.id], self.names[R.id][chosen[R.id]]) for R in self.sets if R.id in chosen]
+
+    def conclusion(self, ast):
+        """`<conclusion>`: the conclusion's canonical sentence on the existing English surface, in italics; it is
+        read back by that surface's all-derivations parser to the conclusion itself before it is shown."""
+        from .ast import Document as Formulas, formula_from_data
+        from .english import parse_english
+        from .printer import render
+        formula = formula_from_data(self.frame, ast)
+        text = render(Formulas((formula,)), self.frame, "ve_english").strip()
+        if parse_english(self.frame, text).formulas != (formula,):
+            raise VEError("InvalidInput: the conclusion's sentence does not read back to the conclusion")
+        slot = f"*{text}*"
+        self.slots.conclusions.add(slot)
+        return slot
+
+    def _decision_names(self):
+        """Every decision predicate a rule of the document or of a candidate generates, with what it decides:
+        (kind, rule name, party or ranks, owner (set, index) or None)."""
+        from .readings_sup import position, qualify
+        out = {}
+
+        def add(rule, owner, name):
+            root = name.replace("-", "_")
+            if rule.get("mode", "strict") == "default":
+                out[f"soft__excepted__{root}"] = ("excepted", rule, None, owner)
+            for party in rule.get("alterable", []):
+                out[f"soft__off__{root}__{party}"] = ("off", rule, party, owner)
+
+        source = self.route.source
+        for _, content in source.fixed_units():
+            if content.kind == "norm":
+                add(content.body, None, content.body["name"])
+        for R in self.sets:
+            for i, a in enumerate(R.candidates):
+                if a.content is not None and a.content.kind == "norm":
+                    rule = a.content.body
+                    add(rule, (R.id, i), rule["name"])
+                    add(rule, (R.id, i), qualify(position(self.sets, R.id, i), rule["name"]))
+        return out
+
+    def situation(self, data, choice):
+        """`<situation>` (2.1): the pulled situation of a model of the reading `choice` names: the elements by
+        sort, the author's base facts, and each decision as a supposition attributed to who decides; no choice
+        vocabulary and no generated name."""
+        words = self.s1.words
+        facts = []
+        for sort in sorted(data["domains"]):
+            if sort == "ve__reading":
+                continue
+            noun = words.sorts[sort]
+            for name in sorted(data["domains"][sort]):
+                facts.append(f"{name} is {_article(noun)} {noun}")
+        relations = data.get("relations", {})
+        for predicate in sorted(relations):
+            if predicate in self.author:
+                for row in sorted(relations[predicate]):
+                    facts.append(words.predicates[predicate].format(*row))
+        chosen = {(s, i) for s, i in choice}
+        for predicate in sorted(relations):
+            for row in sorted(relations[predicate]):
+                phrase = self._decision(predicate, row, chosen)
+                if phrase is not None:
+                    facts.append("suppose " + phrase)
+        text = "; ".join(facts) if facts else "nothing exists"
+        self.slots.situations.add(text)
+        return text
+
+    def _decision(self, predicate, row, chosen):
+        subject = _series(list(row))
+        soft = getattr(self.frame, "soft", None) or {}
+        if predicate.startswith("soft__outweighs__"):
+            _, _, low, high, _ = predicate.split("__", 4)
+            outranking = soft.get("outranking", {})
+            return f"{self.s1.decider(outranking.get('decided_by'))} decides that {low} outweighs {high} for {subject}"
+        entry = self.decisions.get(predicate)
+        if entry is None:
+            return None
+        kind, rule, party, owner = entry
+        own = owner is not None
+        if own and owner not in chosen:
+            return None  # an unchosen reading's table is empty (quiescence); never shown
+        sentence = "this sentence" if own else f"sentence {self.s1.rule_unit(rule['name'])}"
+        if kind == "off":
+            return f"{party} has turned {sentence} off for {subject}"
+        decided = (rule.get("exception") or {}).get("decided_by") or soft.get("exception_decider")
+        target = "the exception" if own else f"the exception to {sentence}"
+        return f"{self.s1.decider(decided)} decides {target} applies to {subject}"
+
+    def classification(self, conflict):
+        """The lower route's classification line of a witness (R4 follows it), each rule of a candidate named as
+        the author named it with ` under <set>@<v>:<i>` (6)."""
+        sorts, values = conflict.get("sorts", []), conflict["tuple"]
+        setting = ", ".join(f"{sort} {value}" for sort, value in zip(sorts, values))
+        target = conflict["target"]
+        kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
+        rules = conflict.get("selected")
+        if not rules:
+            return f"CONFLICT: {kind} at {setting}"
+        return (f"CONFLICT: {kind} at {setting}: " +
+                "; ".join(f"rule {self._rule_name(name)} {verb}" for name, verb in rules))
+
+    def _rule_name(self, name):
+        versions = {R.id: R.version for R in self.sets}
+        for entry in self.route.row.get("names", []):
+            for candidate in entry["candidates"]:
+                for original, qualified in candidate["names"]:
+                    if qualified == name:
+                        return f"{original} under {entry['set']}@{versions[entry['set']]}:{candidate['index']}"
+        return name
+
+    # -- E3's lines (2.3 item 1)
+
+    def provided(self, used):
+        E, lines = self.E, []
+        quiet = False
+        for label in used:
+            if label.endswith(":one"):
+                set_id = label.split(":", 1)[1].rsplit("@", 1)[0]
+                R = next(R for R in self.sets if R.id == set_id)
+                lines.append(E.one_reading(self.set_number[set_id], len(R.candidates), self.slots))
+            elif label.endswith(":quiet") or label.startswith("readings:quiet:"):
+                quiet = True
+            elif label.startswith("coupling:"):
+                from .readings_english import coupling_sentence
+                coupling = next(c for c in self.route.couplings if c["id"] == label.split(":", 1)[1])
+                sets = {R.id: {"unit": R.unit} for R in self.sets}
+                lines.append(E.gated("E5", coupling_sentence(coupling, sets, self.doc["units"]), self.slots))
+            elif label.startswith("narrowing:"):
+                narrowing = next(n for n in self.route.narrowings if n["id"] == label.split(":", 1)[1])
+                R = next(R for R in self.sets if (R.id, R.version) == (narrowing["set"], narrowing["version"]))
+                cited = [self.numbers[u] for u in narrowing["reason_spans"]]
+                for i, a in enumerate(R.candidates):
+                    if a.id not in narrowing["keeps"]:
+                        lines.append(E.narrowed(self.set_number[R.id], self.names[R.id][i], cited, self.slots))
+        if quiet:
+            lines.append(E.quiet(self.slots))
+        return ([E.provided(self.slots)] + lines) if lines else []
+
+    def independent(self, mentions):
+        return [self.E.independent(self.set_number[R.id], self.slots) for R in self.sets if R.id not in mentions]
+
+    def _mentions(self, used):
+        from .readings_sup import bit_name, bits_of
+        asts = {entry["label"]: entry["ast"] for entry in self.route.row.get("slot", [])}
+        out = []
+        for position, R in enumerate(self.sets, 1):
+            bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
+            if any(bits & _predicates(asts.get(label, [])) for label in used):
+                out.append(R.id)
+        return out
+
+    # -- the report (2.3 items 1, 3 and 6)
+
+    def report(self):
+        E, route, lines = self.E, self.route, []
+        k = len(self.sets)
+        finding = route.row.get("finding")
+        if finding is not None:
+            sets = finding["text"].split(": ", 1)[1].split(", ")
+            lines.append(E.not_superposed([self.set_number[s] for s in sets], self.slots))
+        conflict = route.conflict(())
+        if conflict["status"] == "CONFLICT-FREE":
+            lines.append(E.every_result(k, "conflict_free", self.slots))
+            used = conflict.get("reading_premises_used", [])
+            lines += self.provided(used)
+            lines += self.independent(self._mentions(used))
+        elif conflict["status"] == "CONFLICT" and "model" in conflict:
+            lines.append(E.named_result(self.readings(conflict["choice"]), "conflict", self.slots,
+                                        situation=self.situation(conflict["model"], conflict["choice"])))
+            lines.append(self.classification(conflict))
+        elif conflict["status"] == "CONFLICT":
+            for witness in conflict.get("witnesses", []):
+                lines.append(E.named_result(self.readings(witness["choice"]), "conflict", self.slots,
+                                            situation=self.situation(witness["model"], witness["choice"])))
+                if witness.get("status_text"):
+                    lines.append(witness["status_text"])
+        premises = route.premises()
+        if premises["status"] == "model" and "model" in premises:
+            lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
+                                        situation=self.situation(premises["model"], premises["choice"])))
+        elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
+            lines.append(E.every_result(k, "inconsistent", self.slots))
+        for dead in route.dead_readings() or []:
+            lines.append(E.dead_reading(self.set_number[dead["set"]], self.names[dead["set"]][dead["index"]],
+                                        self.slots))
+        return lines
+
+    # -- a query (2.3 items 1, 2, 4, 5 and 7)
+
+    def query(self, conclusion_ast, data):
+        E, lines = self.E, []
+        k = len(self.sets)
+        verdict = data["verdict"]
+        slot = self.conclusion(conclusion_ast)
+        if verdict == "ALL" and data.get("evidence") == "certificate":
+            used = data.get("reading_premises_used", [])
+            if data.get("assumed"):
+                lines.append(E.named_result(self.readings(data["assumed"]), "follows", self.slots, conclusion=slot))
+            else:
+                lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
+            lines += self.provided(used)
+            lines += self.independent(set(self._mentions(used)) | {s for s, _ in data.get("assumed", [])})
+        elif verdict == "ALL":
+            lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
+        elif verdict == "SOME":
+            lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
+                                        conclusion=slot))
+            lines.append(self._countermodel(data["countermodel"]))
+        elif verdict == "NOT ALL":
+            lines.append(self._countermodel(data["countermodel"]))
+        elif verdict == "NONE":
+            if k >= 2:
+                lines.append(E.none_result(k, self.slots))
+            lines += [self._countermodel(c) for c in data["countermodels"]]
+        elif verdict == "UNKNOWN" and "countermodel" in data and data.get("budget") == {"max_choices": 64}:
+            lines.append(E.over_budget(self.slots))
+            lines.append(self._countermodel(data["countermodel"]))
+        return lines
+
+    def _countermodel(self, counter):
+        model = counter.get("model")
+        if model is None:
+            raise VEError("InvalidInput: a countermodel's wording needs its checked model")
+        return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
+                                   situation=self.situation(model, counter["choice"]))
+
+
+def _series(values):
+    values = list(values)
+    if len(values) == 1:
+        return values[0]
+    if len(values) == 2:
+        return f"{values[0]} and {values[1]}"
+    return ", ".join(values[:-1]) + " and " + values[-1]
+
+
+def _predicates(ast):
+    out, stack = set(), [ast]
+    while stack:
+        node = stack.pop()
+        if type(node) is list and node:
+            if node[0] in ("unary", "binary") and type(node[1]) is str:
+                out.add(node[1])
+            stack.extend(item for item in node[1:] if type(item) is list)
+    return out
