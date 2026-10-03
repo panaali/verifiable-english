@@ -28,6 +28,7 @@ import VE.Readings.Assertions
 import VE.Readings.Route
 import VE.Readings.SupWire
 import VE.Readings.SupRun
+import VE.Readings.ChoiceValid
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
