@@ -158,6 +158,7 @@ import VE.Readings.UpSlot
 import VE.Readings.SupFree
 import VE.Readings.SupAll
 import VE.Readings.SupWireSound
+import VE.Readings.ChoiceWF
 import VE.WireContract.Engine
 
 #print axioms Iceberg.mul_sub
@@ -3777,3 +3778,5 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.limLabelled_nil
 #print axioms VE.Readings.upB_slot
 #print axioms VE.Readings.base_up
+#print axioms VE.Readings.home_chainWF
+#print axioms VE.Readings.choice_sideWF_of_soft
