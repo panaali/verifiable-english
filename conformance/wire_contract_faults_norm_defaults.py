@@ -14,7 +14,8 @@ import sys
 
 from conformance import wire_contract_faults_norms as norms_faults
 from conformance.wire_contract_faults import Fault, _replacing, _set_at
-from conformance.wire_contract_faults_norms import ATOM, BUDGET, balanced, class_exempt, own_text
+from conformance.wire_contract_faults_norms import (ATOM, BUDGET, balanced, call_problems, class_exempt,
+                                                   own_text)
 from ve.errors import VEError
 from ve.norm_defaults_contract import REGISTRY, legacy_validation
 from ve.norms_contract import in_domain
@@ -132,11 +133,6 @@ def handler_reaching(raw, norms):
             and all(type(unit) is dict and "norm" in unit for unit in norms))
 
 
-def call_problems(label, raw, norms, legacy_error, reported, reaching):
-    """Tier P, the call (2.11; 8.4, G2 and G12), filled in by the switch commit."""
-    return []
-
-
 def _mutations(rng, raw, norms):
     raw, norms = norms_faults._mutations(rng, raw, norms)
     if rng.randrange(4) == 0:
@@ -210,4 +206,4 @@ def test_and_fixture_sources():
     return [(f"fixture:{label}", raw, norms) for label, raw, norms in fixture_sources()]
 
 
-__all__ = ["class_exempt", "own_text", "legacy_validation", "REGISTRY"]
+__all__ = ["call_problems", "class_exempt", "own_text", "legacy_validation", "REGISTRY"]
