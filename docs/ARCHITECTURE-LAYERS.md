@@ -94,7 +94,7 @@ wire directly, with `VE.Norms.Run` importing `VE.Route.Run` explicitly.
 
 | Language | Current outward edges (exact exceptions) |
 |---|---|
-| Python | `ve.ast -> ve.surface.nary`, `ve.ast -> ve.surface.registry`, `ve.assist.cli -> ve_experiments.assist_haiku`, `ve.closure -> ve.surface.registry`, `ve.english -> ve.argument`, `ve.environment -> ve.definitions`, `ve.environment -> ve.profiles`, `ve.evaluate -> ve.surface.registry`, `ve.model -> ve.background`, `ve.model -> ve.definitions`, `ve.model -> ve.evaluate`, `ve.norms -> ve.search`, `ve.wire -> ve.surface.registry` |
+| Python | `ve.ast -> ve.surface.nary`, `ve.ast -> ve.surface.registry`, `ve.assist.cli -> ve_experiments.assist_haiku`, `ve.closure -> ve.surface.registry`, `ve.english -> ve.argument`, `ve.environment -> ve.definitions`, `ve.environment -> ve.profiles`, `ve.model -> ve.background`, `ve.model -> ve.definitions`, `ve.model -> ve.evaluate`, `ve.norms -> ve.search`, `ve.wire -> ve.surface.registry` |
 | Lean | `VE.Bridge -> VE.Surface`, `VE.TableauExtendedRules -> VE.Closure.Congruence`, `VE.RoundTrip -> VE.LexicalProofs`, `VE.CertificateWire -> VE.Closure.Bridge`, `VE.TableauExtendedInduction -> VE.Closure.Induction`, `VE.TableauExtended -> VE.Closure.Substitution`, `VE.TableauExtendedExtra -> VE.Closure.PathRules`, `VE.Order.WireGate -> VE.Order.Surface`, `VE.Core.Bridge -> VE.Route.Gate`, `VE.Core.Conservativity -> VE.Closure.Consequence`, `VE.Core.RoundTrip -> VE.Core.Surface`, `VE.Closure.RoundTrip -> VE.Closure.Surface`, `VE.Core.Route -> VE.Route.Checker`, `VE.Core.Route -> VE.Route.Gate`, `VE.Core.Route -> VE.Route.Route`, `VE.Core.Wire -> VE.Route.Wire` |
 | Rust | None at the crate boundary; inside `ve-core`: `environment -> route`, `model -> eval`, `wire -> surface` |
 

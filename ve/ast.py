@@ -247,11 +247,6 @@ class _Checker:
         if depth > MAX_DEPTH:
             raise ResourceLimit("Formula exceeds 64 nesting levels")
         kind = type(node)
-        from .surface.registry import by_node
-        record = by_node(node)
-        if record is not None and record.typecheck_hook is not None:
-            record.typecheck_hook(self, node, context, depth)
-            return
         if kind in (Top, Bottom):
             return
         if kind in (Unary, Binary, Atom):
@@ -400,8 +395,6 @@ def _to_data(node):
     kind = type(node)
     from .surface.registry import by_node
     record = by_node(node)
-    if record is not None and record.wire_encoder is not None:
-        return record.wire_encoder(node, _to_data)
     if kind is Var:
         return ["var", node.index]
     if kind is Const:
@@ -480,8 +473,6 @@ class _Decoder:
         if arity is None or len(data) != arity:
             raise SyntaxError(f"Unknown AST tag or incorrect arity: {tag!r}")
         record = by_tag(tag)
-        if record is not None and record.wire_decoder is not None:
-            return record.wire_decoder(data, self.decode, depth)
         if tag == "var":
             if type(data[1]) is not int or not 0 <= data[1] <= MAX_INDEX:
                 raise UnboundVariable("Invalid variable index")
