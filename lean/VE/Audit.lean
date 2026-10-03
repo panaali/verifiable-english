@@ -131,6 +131,7 @@ import VE.Readings.Choice
 import VE.Readings.Simulate
 import VE.Readings.Names
 import VE.Readings.SoftFacts
+import VE.Readings.Shape
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3267,3 +3268,29 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.checkSoft_parts
 #print axioms VE.Readings.checkSoftEnv_names
 #print axioms VE.Readings.checkSoftRule_parties
+#print axioms VE.Readings.place_soft_E
+#print axioms VE.Readings.place_soft_lits
+#print axioms VE.Readings.place_soft_soft
+#print axioms VE.Readings.place_regulated
+#print axioms VE.Readings.place_definitions
+#print axioms VE.Readings.place_nodes
+#print axioms VE.Readings.place_junk
+#print axioms VE.Readings.copyContent_norms
+#print axioms VE.Readings.copyContent_contrib
+#print axioms VE.Readings.gateContent_contrib
+#print axioms VE.Readings.Grows.refl
+#print axioms VE.Readings.Grows.trans
+#print axioms VE.Readings.grows_place
+#print axioms VE.Readings.grows_bar
+#print axioms VE.Readings.build_grows
+#print axioms VE.Readings.build_shape
+#print axioms VE.Readings.sup_eq
+#print axioms VE.Readings.sup_inner_grows
+#print axioms VE.Readings.sup_grows
+#print axioms VE.Readings.sup_shape
+#print axioms VE.Readings.noRights_junk
+#print axioms VE.Readings.supFrame_junk
+#print axioms VE.Readings.le_sum_of_mem_nat
+#print axioms VE.Readings.candJunk_le
+#print axioms VE.Readings.choiceJunk_le
+#print axioms VE.Readings.choiceDoc_noRights
