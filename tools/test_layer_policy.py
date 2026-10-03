@@ -108,6 +108,17 @@ RUST_MODULE_CASES = {
     "root glob re-exported by a profile module": (
         "", "pub fn f() -> u8 { crate::eval::surface::parse::<u8>() }\n", "pub use crate::*;\n", SURFACE_RS,
         {"ast -> eval", "ast -> surface", "eval -> surface"}),
+    "range to a surface item": (
+        "", "pub fn f() -> core::ops::RangeTo<u8> { ..crate::surface::parse() }\n", "", SURFACE_RS,
+        {"ast -> surface"}),
+    # A proc-macro attribute may expand a string into a path; a builtin attribute's text names nothing.
+    "serde path argument": (
+        "", '#[derive(serde::Serialize)]\npub struct S {\n    #[serde(serialize_with = "crate::surface::write")]\n'
+        "    f: u8,\n}\n", "",
+        SURFACE_RS + "pub fn write<S: serde::Serializer>(v: &u8, s: S) -> Result<S::Ok, S::Error> {\n"
+        "    s.serialize_u8(*v)\n}\n", {"ast -> surface"}),
+    "builtin attribute text": ("", '#[deprecated(note = "crate::surface::parse")]\npub fn g() {}\n', "",
+                               SURFACE_RS, set()),
     # The root's own items are kernel, including what its macros expand to.
     "root item calls the surface": ("pub fn helper() -> u8 { surface::parse() }\n",
                                     "pub fn f() -> u8 { crate::helper() }\n", "", SURFACE_RS, {"lib -> surface"}),
@@ -131,12 +142,13 @@ RUST_UNSUPPORTED_CASES = (
 def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str, name: str = "fixture") -> Path:
     source = root / "src"
     source.mkdir(parents=True)
+    serde = '[dependencies]\nserde = { version = "1", features = ["derive"] }\n' if "serde" in ast + surface else ""
     (root / "Cargo.toml").write_text(f'[package]\nname = "{name}"\nversion = "0.0.0"\nedition = "2024"\n'
-                                     "[lib]\npath = \"src/lib.rs\"\n")
+                                     '[lib]\npath = "src/lib.rs"\n' + serde)
     (source / "lib.rs").write_text("#![allow(dead_code, unused_imports)]\nmod ast;\nmod eval;\n"
                                    "mod surface;\n" + lib)
-    for name, text in (("ast", ast), ("eval", eval_), ("surface", surface)):
-        (source / f"{name}.rs").write_text(text)
+    for module, text in (("ast", ast), ("eval", eval_), ("surface", surface)):
+        (source / f"{module}.rs").write_text(text)
     return source
 
 
@@ -568,8 +580,9 @@ class LayerSelectionTests(unittest.TestCase):
     def test_rust_tokens_follow_rustc(self):
         text = ('/* a /* b */ crate::x */ r##"crate::y"#"## b\'"\' \'\\u{22}\' \'a r#crate1::café '
                 "cafe\u0301 c\"z\" x.0 1u8")
-        self.assertEqual([token.text for token in check_rust_deps.tokens(text)],
-                         ["crate1", "::", "café", "café", "x", "."])
+        self.assertEqual([(token.kind, token.text) for token in check_rust_deps.tokens(text)],
+                         [("string", 'crate::y"#'), ("ident", "crate1"), ("::", "::"), ("ident", "café"),
+                          ("ident", "café"), ("string", "z"), ("ident", "x"), ("punct", ".")])
         self.assertTrue(check_rust_deps.tokens("r#crate1")[0].raw)
 
     @unittest.skipUnless(shutil.which("cargo"), "cargo is not installed")
