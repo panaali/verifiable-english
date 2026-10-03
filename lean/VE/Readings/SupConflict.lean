@@ -4,7 +4,7 @@ import VE.Readings.Situation
 `superpose_conflict_iff`).
 
 W1's conflict formulas are read on a base through the outcome substitution; on a document whose softened form is
-`Valid` they are the decisions of the canonical interpretation (`conflict_canon'`, `outcome_canon'`, the forms of
+`Valid` they are the decisions of the canonical interpretation (`conflict_canon_valid`, `outcome_canon_valid`, the forms of
 `VE.SoftNorms.conflict_canon` and `outcome_canon` that ask only `Valid` of the softened document, since a reading's
 document is not known to pass the chain's size limits). On a base of `sup D` that encodes `c`, the decisions of the
 two canonical interpretations agree (`superpose_faithful`'s simulation, then Lemma K), so each conflict formula of one
@@ -21,7 +21,7 @@ variable {Z : SoftDoc} (hv : VE.Norms.Valid (soften Z)) (B : VE.Structure.{u})
   (hc : ConstantsTyped (soften Z) B)
 include hv hc
 
-theorem conflict_canon' {r : Regulated} (hr : r ∈ Z.T.regulated) (vs : List B.Carrier)
+theorem conflict_canon_valid {r : Regulated} (hr : r ∈ Z.T.regulated) (vs : List B.Carrier)
     (hvs : VE.TupleTyped B r.sorts vs) :
     (VE.Norms.conflict (soften Z) r).denote B (tupleVal vs) ↔
       DecidesSoftD Z (canon (soften Z) B) (tupleVal vs) r.name true ∧
@@ -34,7 +34,7 @@ theorem conflict_canon' {r : Regulated} (hr : r ∈ Z.T.regulated) (vs : List B.
     VE.SoftNorms.canon_subst hv B hc _ _ _ (VE.Norms.decides_wellFormed hT false) _ hρ,
     VE.Norms.decides_denote, VE.Norms.decides_denote, VE.SoftNorms.decidesD_soften, VE.SoftNorms.decidesD_soften]
 
-theorem outcome_canon' {r : Regulated} (hr : r ∈ Z.T.regulated) (vs : List B.Carrier)
+theorem outcome_canon_valid {r : Regulated} (hr : r ∈ Z.T.regulated) (vs : List B.Carrier)
     (hvs : VE.TupleTyped B r.sorts vs) :
     (VE.Norms.outcomeBase (soften Z) r.name).denote B (tupleVal vs) ↔
       (if r.allowByDefault then ¬ DecidesSoftD Z (canon (soften Z) B) (tupleVal vs) r.name false
@@ -84,8 +84,8 @@ theorem outcomeBase_iff (n : String) (vs : List B.Carrier)
     have hr := List.mem_of_find?_eq_some hf
     have hn : r.name = n := by simpa using List.find?_some hf
     subst hn
-    rw [outcome_canon' (sup_valid hh) B hcB (by rw [regs_eq c]; exact hr) vs (hvs r hf),
-      outcome_canon' (choice_valid hh hc) (pull D c B) (constantsTyped_pull hh B hcB) hr vs
+    rw [outcome_canon_valid (sup_valid hh) B hcB (by rw [regs_eq c]; exact hr) vs (hvs r hf),
+      outcome_canon_valid (choice_valid hh hc) (pull D c B) (constantsTyped_pull hh B hcB) hr vs
         ((VE.Route.Examples.tupleTyped_relation B _ _ vs).mpr (hvs r hf))]
     simp only [decides_iff hh hc B hcB he hr vs]
 
@@ -109,8 +109,8 @@ theorem superpose_conflict_iff (D : Doc) (h : WellFormedDoc D = true) (hch : D.c
       ((VE.Norms.conflict (soften (sup D).1.soft) r).denote B (tupleVal vs) ↔
         (VE.Norms.conflict (soften (choiceDoc D c).1.soft) r).denote (pull D c B) (tupleVal vs)) := by
     intro r hr vs hvs
-    rw [conflict_canon' (sup_valid hh) B hcB (by rw [regs_eq c]; exact hr) vs hvs,
-      conflict_canon' hvY (pull D c B) hcY hr vs ((VE.Route.Examples.tupleTyped_relation B _ _ vs).mpr hvs), decides_iff hh hc B hcB he hr vs true,
+    rw [conflict_canon_valid (sup_valid hh) B hcB (by rw [regs_eq c]; exact hr) vs hvs,
+      conflict_canon_valid hvY (pull D c B) hcY hr vs ((VE.Route.Examples.tupleTyped_relation B _ _ vs).mpr hvs), decides_iff hh hc B hcB he hr vs true,
       decides_iff hh hc B hcB he hr vs false]
   have hpair : ∀ pr ∈ VE.Norms.pairs (soften (choiceDoc D c).1.soft).T, ∀ vs : List B.Carrier,
       VE.TupleTyped B pr.sorts vs →

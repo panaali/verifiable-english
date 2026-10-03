@@ -471,7 +471,7 @@ end Typed
 
 /-! ## Orders and layer names -/
 
-theorem idxOf_getElem' : ∀ (l : List String), l.Nodup → ∀ (k : Nat) (h : k < l.length), l.idxOf l[k] = k
+theorem idxOf_getElem_nodup : ∀ (l : List String), l.Nodup → ∀ (k : Nat) (h : k < l.length), l.idxOf l[k] = k
   | [], _, _, h => by simp at h
   | a :: l, hn, k, h => by
     rw [List.nodup_cons] at hn
@@ -482,14 +482,14 @@ theorem idxOf_getElem' : ∀ (l : List String), l.Nodup → ∀ (k : Nat) (h : k
       have hne : a ≠ l[k] := fun e => hn.1 (e ▸ List.getElem_mem hk)
       simp only [List.getElem_cons_succ]
       have hb : (a == l[k]) = false := by simpa using hne
-      rw [List.idxOf_cons, hb, idxOf_getElem' l hn.2 k hk]
+      rw [List.idxOf_cons, hb, idxOf_getElem_nodup l hn.2 k hk]
       rfl
 
 theorem not_mem_drop_of_idxOf {l : List String} (hn : l.Nodup) {k : Nat} {x : String} (hx : l.idxOf x < k) :
     x ∉ l.drop k := by
   intro hm
   obtain ⟨j, hj, he⟩ := List.mem_drop_iff_getElem.mp hm
-  have := idxOf_getElem' l hn (k + j) (by omega)
+  have := idxOf_getElem_nodup l hn (k + j) (by omega)
   rw [he] at this
   omega
 
@@ -664,7 +664,7 @@ theorem choice_typed : ∀ (k : Nat) (q : VE.Norms.Sym), (VE.Norms.syms (soften 
   have hklt : k < o.length := (List.getElem?_eq_some_iff.mp hko).1
   have hidx : o.idxOf q.name = k := by
     have he : o[k] = q.name := (List.getElem?_eq_some_iff.mp hko).2
-    rw [← he]; exact idxOf_getElem' o hon k hklt
+    rw [← he]; exact idxOf_getElem_nodup o hon k hklt
   -- the formula over the complete vocabulary, and the node of q in the stratum graph
   have hfull : φ.WellFormed (envPrime (choiceDoc D c).1.soft) q.sorts.reverse ∧
       ∃ n ∈ VE.Norms.stratumNodes (soften (choiceDoc D c).1.soft).T, n.name = q.name ∧ ∀ p ∈ preds φ, p ∈ n.mentions := by

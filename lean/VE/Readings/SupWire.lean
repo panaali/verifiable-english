@@ -180,7 +180,7 @@ def supVocabulary (re : ReadingsEnvironment) (D : Doc) : VE.Bridge.Vocabulary :=
     predicates := decisions (sup D).1.soft ++ bitDecls D ++
       re.se.ne.rv.vocabulary.predicates.filter (fun p => !(VE.Norms.layerNames (soften (sup D).1.soft).T).contains p.1) }
 
-theorem lookup_append' {α : Type} (a b : List (String × α)) (k : String) :
+theorem lookup_append_right {α : Type} (a b : List (String × α)) (k : String) :
     VE.Bridge.lookup (a ++ b) k = (VE.Bridge.lookup a k).or (VE.Bridge.lookup b k) := by
   simp only [VE.Bridge.lookup, List.find?_append]
   cases a.find? (fun x => x.1 == k) <;> rfl
@@ -218,7 +218,7 @@ theorem supModel_valid (re : ReadingsEnvironment) (D : Doc) (hh : Hyps D)
   · obtain ⟨ss, hss, ht⟩ := h.2 p vs hp
     refine ⟨ss, ?_, ht⟩
     change VE.Bridge.lookup (decisions (sup D).1.soft ++ bitDecls D ++ _) p = some ss at hss
-    rw [lookup_append', lookup_append'] at hss
+    rw [lookup_append_right, lookup_append_right] at hss
     cases hd : VE.Bridge.lookup (decisions (sup D).1.soft) p with
     | some ss' =>
       rw [hd] at hss
