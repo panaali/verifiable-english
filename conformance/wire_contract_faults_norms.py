@@ -23,8 +23,8 @@ UNIT = "norms@0"
 LEAN_ROUTE = "ve_norms_route"
 CASE_KIND = "norms-elaborate"
 FEASIBILITY_OF = 24
-RECORDED_TESTS = ("tests/test_norms_contract*", "tests/test_norm_admission.py", "tests/test_norms.py",
-                  "tests/test_norms_three_way.py")
+# 7.1: the test files whose inputs the corpus must hold, the globs of every unit after the pilot.
+RECORDED_TESTS = ("tests/test_norm*", "tests/test_*contract*")
 # 8.4's allowed coverage gaps for this unit: G1 as the pilot's; G2 applies to no check of this unit; G3 to
 # 4.3, whose guard names `norm-defaults@0`, outside this unit's domain.
 GAP_APPLIES = {"G1": lambda faults: {f.check for f in faults} - {f.check for f in faults if f.readers != "python"},
@@ -222,10 +222,27 @@ def document_of(norms):
                       for i, unit in enumerate(norms)], "graph": {"root": "r", "nodes": []}}
 
 
-def call_problems(label, raw, norms, legacy_error, reported, reaching):
+def raised_error(error):
+    """The error of a call as the snapshot of Z8 holds it: its type, `code` and message, and a fourth member
+    only when it carries a record."""
+    return [type(error).__name__, error.code, str(error)] + (["record"] if error.diagnostic is not None else [])
+
+
+def call_outcome(raw, norms):
+    """The call on D(N) under the Python authority: `None` when it accepts, else `raised_error` of its error."""
+    from ve.admission import admit_document
+    try:
+        admit_document(deepcopy(raw), document_of(norms))
+    except VEError as raised:
+        return raised_error(raised)
+    return None
+
+
+def call_problems(label, raw, norms, legacy_error, reported, reaching, snapshot):
     """Tier P, the call on D(N) under the Python authority (8.4): on a handler-reaching case it raises the
-    legacy error with the record's text and the record (G2); on any other rejected case it raises an error
-    without a record (G12)."""
+    legacy error with the record's text and the record (G2); on any other rejected case it raises the error
+    of `snapshot`, the call's error before the switch commit (`<unit>-call-snapshot.json`): the same type,
+    `code` and message, and no record (G12, Z8)."""
     from ve.admission import admit_document
     if type(norms) is not list or not all(type(unit) is dict for unit in norms):
         return []
@@ -238,6 +255,10 @@ def call_problems(label, raw, norms, legacy_error, reported, reaching):
                 return [f"{label}: call error differs from the legacy error and record"]
         elif raised.diagnostic is not None:
             return [f"{label}: an error raised before the statement carries a record"]
+        elif snapshot is None:
+            return [f"{label}: no snapshot of the call before the switch"]
+        elif raised_error(raised) != snapshot:
+            return [f"{label}: call raised {raised_error(raised)}, before the switch {snapshot}"]
         return []
     return [f"{label}: call accepted a rejected source"]
 

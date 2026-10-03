@@ -16,7 +16,7 @@
   "coverage_unmet_reasons": {
     "w1/2.1": "The including unit's environment decoder requires the profile this check requires, so the check is never the first fault under this unit; it is witnessed in the included unit's own gate."
   },
-  "handler_reaching_cases": 1359,
+  "handler_reaching_cases": 1362,
   "inherited_records": "text and args are language-specific until base contracts exist",
   "lean_route_changes": [
     {
@@ -323,7 +323,7 @@
         "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
         "record_text": "ResourceLimit: unspecified name length"
       },
-      "text_changes": 3
+      "text_changes": 5
     },
     {
       "check": "6.1",
@@ -4382,6 +4382,7 @@
       }
     ],
     "detail": "conformance/wire-contract/s5-pre.md",
+    "python_crashes": [],
     "status": "open: a legacy verdict difference is not fixed (s5-pre.md)",
     "verdict_differences": [
       {
@@ -4435,8 +4436,8 @@
     ]
   },
   "status": "shadow",
-  "text_delta_count": 261,
-  "three_way_cases": 3024,
+  "text_delta_count": 263,
+  "three_way_cases": 3028,
   "three_way_disagreements": [
     {
       "case": "0:fill-premise",

@@ -380,8 +380,50 @@ def test_gate_rows_of_a_new_unit_judge_its_report(monkeypatch):
     failures = gate.gate_failures(value)
     assert "norms@0: coverage: 2.1 has no first-fault witness" in failures
     assert not any("4.3 has no first-fault witness" in failure for failure in failures)  # gap G3
+    # Z8: every tier-0 case that does not reach the statement raises its snapshot's error (the stored one).
+    assert value["call_snapshot_cases"] > 0 and value["call_snapshot_difference_count"] == 0
+    assert not any("Z8" in failure for failure in failures)
     value["public_class_differences"] = 2
     value["legacy_verdict_differences"] = [{"case": "x", "python": None, "lean": ["InvalidInput", "t"]}]
     failures = gate.gate_failures(value)
     assert "norms@0: public delta: 2 class differences" in failures
     assert "norms@0: legacy verdict differences ['x']" in failures
+    # A call that differs from the snapshot, and a snapshot missing, fail the gate.
+    monkeypatch.setattr(gate, "call_snapshot", lambda unit: {})
+    value = gate.report("norms@0", lean=False)
+    assert value["call_snapshot_difference_count"] == value["call_snapshot_cases"] > 0
+    assert any(failure.startswith("norms@0: Z8: ") for failure in gate.gate_failures(value))
+
+
+def test_g12_compares_the_call_with_its_snapshot_before_the_switch(monkeypatch):
+    """Astra review B (G12 checked only that the error had no record): on a rejected case that does not reach
+    the statement of 2.8, the call must raise the snapshot's type, `code` and message, with no record. An
+    unrelated `ResourceLimit` with another message, the same class with another message, another class with
+    the same message, a record, an accepted call and a missing snapshot are each a problem."""
+    from conformance.wire_contract_faults_norms import call_outcome, call_problems, handler_reaching
+    from ve.errors import ResourceLimit
+    raw, norms = FIXTURES["N2"][0]()  # the profile is missing: the dispatch refuses before the statement
+    error = legacy(raw, norms)
+    assert error is not None and not handler_reaching(raw, norms)
+    snapshot = call_outcome(raw, norms)
+    assert snapshot is not None and len(snapshot) == 3
+    assert call_problems("N2", raw, norms, error, {}, False, snapshot) == []
+    assert call_problems("N2", raw, norms, error, {}, False, None) == ["N2: no snapshot of the call before the switch"]
+    real = __import__("ve.admission", fromlist=["admit_document"]).admit_document
+
+    def raising(make):
+        def admit(environment, document):
+            raise make()
+        return admit
+
+    with_record = VEError(snapshot[2])
+    with_record.code, with_record.diagnostic = snapshot[1], {"check": "2.1"}
+    for name, admit in (("unrelated", raising(lambda: ResourceLimit("ResourceLimit: other"))),
+                        ("message", raising(lambda: type(error)(snapshot[2] + "!"))),
+                        ("class", raising(lambda: VEError(snapshot[2]))),
+                        ("record", raising(lambda: with_record)),
+                        ("accepted", lambda environment, document: None)):
+        monkeypatch.setattr("ve.admission.admit_document", admit)
+        assert call_problems("N2", raw, norms, error, {}, False, snapshot), name
+    monkeypatch.setattr("ve.admission.admit_document", real)
+    assert call_problems("N2", raw, norms, error, {}, False, snapshot) == []
