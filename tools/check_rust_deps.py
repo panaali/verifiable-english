@@ -8,7 +8,9 @@ stale keys as the other ledgers do. The source is tokenized as rustc reads it
 (nested block comments, raw strings, Unicode identifiers compared after NFC,
 raw identifiers). A path resolves in the scope it is written in: `crate::`,
 `super::` and `self::` paths, and paths through any name a `use` item binds
-(`use crate as root`, `use super::{self as up}`, chained aliases). Every
+(`use crate as root`, `use super::{self as up}`, chained aliases), and the
+strings of any attribute but a builtin one, which a proc macro may expand
+into a path (`#[serde(with = "crate::surface::f")]`). Every
 module's `use` items are re-exports others may name: the crate root's (and,
 from inside, a module's own) private ones and every module's `pub` ones,
 including module aliases and globs, at any inline-module depth, chained. Where
@@ -42,13 +44,14 @@ MODULE_GROUPS = {"ve-core": {
     **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings", "discourse"), 2),
     "surface": 3,
 }}
-# What rustc skips between tokens (Pattern_White_Space, line comments), and the literals,
-# lifetimes and numbers no path is inside. A raw string ends at a quote with as many `#`.
+# What rustc skips between tokens (Pattern_White_Space, line comments), string literals
+# (kept as tokens: a proc-macro attribute may expand one into a path), and the other
+# literals, lifetimes and numbers. A raw string ends at a quote with as many `#`.
 SKIPPED = re.compile(r"""
     [\t\n\x0b\x0c\r\x20\x85‎‏  ]+
   | //[^\n]*
   | [bc]?r(?P<hashes>\#*)"
-  | [bc]?"(?:\\.|[^"\\])*"
+  | [bc]?"(?P<string>(?:\\.|[^"\\])*)"
   | b?'(?:\\(?:u\{[^}']*\}|x[0-9A-Fa-f]{2}|.)|[^'\\\n\r\t])'
   | '(?:r\#)?[^\W\d]\w*
   | \d\w*
@@ -60,10 +63,13 @@ MOVING_ATTRIBUTES = {"path", "macro_use", "macro_export"}
 KEYWORDS = set("""as async await become box break const continue do dyn else enum extern false final fn for
 gen if impl in let loop macro match mod move mut override priv pub ref return static struct trait true try
 type typeof unsafe unsized use virtual where while yield""".split())
+# Builtin attributes whose arguments are lints, configuration predicates, layouts or text.
+BUILTIN_ATTRIBUTES = {"allow", "warn", "deny", "forbid", "expect", "cfg", "doc", "repr", "inline", "must_use",
+                      "deprecated", "test", "ignore", "should_panic", "non_exhaustive", "cold", "track_caller"}
 
 
 class Token(NamedTuple):
-    kind: str  # "ident" (NFC, without `r#`), "::", "punct", or "invalid" (rejected by rustc)
+    kind: str  # "ident" (NFC, without `r#`), "::", "punct", "string" (contents), or "invalid" (rejected by rustc)
     text: str
     raw: bool = False
 
@@ -130,7 +136,7 @@ def identifier(text: str, position: int) -> tuple[str, bool, int] | None:
 
 
 def tokens(text: str) -> list[Token]:
-    """The tokens rustc reads that a path can consist of or end at."""
+    """The tokens rustc reads that a path can consist of or end at, and string literals."""
     found: list[Token] = []
     position = 0
     while position < len(text):
@@ -146,9 +152,13 @@ def tokens(text: str) -> list[Token]:
         match = SKIPPED.match(text, position)
         if match is not None:
             position = match.end()
-            if match["hashes"] is not None:
+            if match["string"] is not None:
+                found.append(Token("string", match["string"]))
+            elif match["hashes"] is not None:
                 close = text.find('"' + match["hashes"], position)
-                position = len(text) if close < 0 else close + 1 + len(match["hashes"])
+                end = len(text) if close < 0 else close
+                found.append(Token("string", text[position:end]))
+                position = min(len(text), end + 1 + len(match["hashes"]))
             continue
         name = identifier(text, position)
         if name is not None:
@@ -300,15 +310,22 @@ def parse_module(module: str, text: str) -> Module:
     def depth(index: int) -> int:
         return sum(start < index < end for start, end in spans)
 
-    # A one-word path inside an attribute that is not a macro call (`derive(Clone)`, `allow(x)`,
-    # `cfg(test)`) names a builtin, a lint or an extern proc macro, never a crate item.
-    attribute = set()
+    # Inside a builtin attribute, a one-word path that is not a macro call (`allow(x)`, `cfg(test)`)
+    # and a string (`doc = "..."`) name nothing. Any other attribute may be a proc macro that turns
+    # a string into a path (`serde(with = "crate::surface::f")`), so its strings are read as code.
+    builtin, macro_strings = set(), []
     for index in range(len(stream)):
         start = index + 1 + at(stream, index + 1, "!")
         if at(stream, index, "#") and at(stream, start, "["):
-            attribute.update(range(start, closing(stream, start, "[", "]")))
+            end = closing(stream, start, "[", "]")
+            name = stream[start + 1] if start + 1 < len(stream) else Token("punct", "]")
+            if (name.kind == "ident" and not name.raw and name.text in BUILTIN_ATTRIBUTES
+                    and not at(stream, start + 2, "::")):
+                builtin.update(range(start, end))
+            else:
+                macro_strings += [item for item in range(start, end) if stream[item].kind == "string"]
 
-    bindings, uses, paths, problems, consumed = [], [], [], unsupported(stream), set()
+    bindings, uses, problems, consumed = [], [], unsupported(stream), set()
     for index in range(len(stream)):
         if not keyword(stream, index, "use") or at(stream, index + 1, "<"):  # `use<'a>` captures lifetimes
             continue
@@ -326,16 +343,27 @@ def parse_module(module: str, text: str) -> Module:
                 path = path[:-1]
             if name != "_" and path:
                 bindings += [(name, target, visible) for target in anchor(path, module, depth(index), True)]
-    for index, token in enumerate(stream):
-        if (token.kind != "ident" or index in consumed or index in declared or keyword_at(stream, index)
-                or at(stream, index - 1, "::") or at(stream, index - 1, ".")):
-            continue
-        found, end = use_tree(stream, index)
-        if index in attribute and end == index + 1 and not at(stream, end, "!"):
-            continue
-        for path, _ in found:
-            paths += anchor(path, module, depth(index), False)
+    paths = [anchored for index, path in written_paths(stream, consumed | declared, builtin)
+             for anchored in anchor(path, module, depth(index), False)]
+    for index in macro_strings:
+        paths += [anchored for _, path in written_paths(tokens(stream[index].text), set(), set())
+                  for anchored in anchor(path, module, depth(index), False)]
     return Module(bindings, inline, uses, paths, list(dict.fromkeys(problems)))
+
+
+def written_paths(stream: list[Token], skipped: set[int], builtin: set[int]) -> list[tuple[int, list[str]]]:
+    """Every path (and the index it starts at) outside `skipped` that is not a field or method name."""
+    found = []
+    for index, token in enumerate(stream):
+        field = at(stream, index - 1, ".") and not at(stream, index - 2, ".")  # `..x` is a range
+        if (token.kind != "ident" or index in skipped or keyword_at(stream, index)
+                or at(stream, index - 1, "::") or field):
+            continue
+        paths, end = use_tree(stream, index)
+        if index in builtin and end == index + 1 and not at(stream, end, "!"):
+            continue
+        found += [(index, path) for path, _ in paths]
+    return found
 
 
 def resolve(path: list[str], modules: dict[str, Module], viewer: str, seen: frozenset = frozenset()) -> set[str]:
