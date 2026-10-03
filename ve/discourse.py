@@ -1343,8 +1343,8 @@ def lean_admission(raw, directory):
         raise VEError("InvalidInput: the document is not UTF-8 text") from None
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
-    from .backends.lean import run_discourse_case
-    returncode, stdout, stderr = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
+    from .backends.lean import configured_timeout, run_discourse_case
+    returncode, stdout, stderr = run_discourse_case(executable, case, timeout=configured_timeout(_ROUTE_TIMEOUT))
     try:
         rows = json.loads(stdout)
     except ValueError:
