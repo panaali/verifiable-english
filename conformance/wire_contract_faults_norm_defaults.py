@@ -197,7 +197,8 @@ def legacy_difference_sources(contract):
                                             "functional": True}
     norms[0]["norm"]["guard"] = ["exists", "assistant", ["binary", "c", ["var", 1], ["var", 0]]]
     norms[1]["norm"]["unless"] = []
-    return [("L:data-flag", raw, norms, None)]
+    return [("L:data-flag", raw, norms, None),
+            ("L:constant-verbalisation", *norms_faults.verbalised(base()), None)]
 
 
 def test_and_fixture_sources():

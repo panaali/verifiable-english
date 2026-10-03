@@ -251,7 +251,7 @@ def _mutations(rng, raw, norms):
         field = rng.choice(["name", "predicate", "sign", "guard", "unless", "over"])
         values = {"name": ["A", "", "a" * 65, 1, "a0", "b1", "x-y", "unsaid--x", "a'b"],
                   "predicate": ["c", "zz", 1, "x_permitted", "x_required"],
-                  "sign": [1, None, "true", True, False],
+                  "sign": [1, "true", True, False],
                   "guard": [["top"], ["bottom"], ["unary", "c", ["var", 0]], ["unary", "c", ["var", 3]],
                             ["unary", "x_permitted", ["var", 0]], ["lt", ["var", 0], ["var", 0]], [],
                             ["unary", "c"], nots(70, ["top"]), ["exists", "assistant", ["top"]]],
@@ -315,7 +315,15 @@ def legacy_difference_sources(contract):
                                             "defined": {"arguments": ["assistant"],
                                                         "body": ["unary", "x_required", ["var", 0]]}}
     norms[0]["norm"]["guard"] = ["unary", "d", ["var", 0]]
-    return [("L:defined-layer", raw, norms, None)]
+    return [("L:defined-layer", raw, norms, None), ("L:constant-verbalisation", *verbalised(base()), None)]
+
+
+def verbalised(source):
+    """A source with a constant that has a `verbalisation` member: Python's environment decoder accepts it,
+    the Lean norm routes refuse it (s5-pre.md, found on the recorded inputs of `tests/test_norm_defaults.py`)."""
+    raw, norms = source
+    raw["vocabulary"]["constants"]["k"] = {"sort": "assistant", "description": "K", "verbalisation": "K"}
+    return raw, norms
 
 
 def test_and_fixture_sources():

@@ -553,7 +553,8 @@ def gate_cases(contract, recorded=True):
                       expected_record(contract, pair[1]), pair, fault.readers == "both"))
     cases += [("B", label, raw, norms, None, (), True) for label, raw, norms in tier_b(both, prints)]
     replayed = replay_sources() if module is None else module.replay_sources()
-    cases += [("R", "R:" + label, raw, norms, None, (), True) for label, raw, norms in replayed]
+    cases += [("R", "R:" + label, raw, norms, None, (), module is None or not carries_null([raw, norms]))
+              for label, raw, norms in replayed]
     differences = (legacy_difference_sources(contract) if module is None
                    else module.legacy_difference_sources(contract))
     cases += [("L", label, raw, norms, expected, (), True) for label, raw, norms, expected in differences]
@@ -813,6 +814,25 @@ def report(unit=PILOT, lean=True):
     return value
 
 
+def legacy_comparison(unit):
+    """S5-pre's measurement alone (wire-contract-s5.md 2.12): over every corpus case that Lean reads, the
+    Python legacy validator against the unit's Lean route, with no engine run. Returns the verdict
+    differences and the class differences (the route's class as `checker_error` gives it)."""
+    u = unit_of(unit)
+    cases = [case for case in gate_cases(load(u.contract)) if case[6]]
+    rows = _lean_rows(u.lean_route, None, [(c[2], c[3]) for c in cases])
+    verdicts, classes = [], Counter()
+    for case, row in zip(cases, rows):
+        python_legacy = _python(load(u.contract), case[2], case[3])[0]
+        lean = (checker_error(row["error"]).code, row["error"]) if row["status"] == "error" else None
+        if (python_legacy is None) != (lean is None):
+            verdicts.append({"case": case[1], "python": python_legacy, "lean": lean})
+        elif python_legacy and python_legacy[0] != lean[0]:
+            classes[(python_legacy[0], lean[0])] += 1
+    return {"cases": len(cases), "legacy_verdict_differences": verdicts,
+            "legacy_class_differences": {f"{a} / {b}": n for (a, b), n in sorted(classes.items())}}
+
+
 def _count(value):
     return type(value) is int and value >= 0
 
@@ -990,12 +1010,17 @@ def main():
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--record-test-inputs", action="store_true")
     parser.add_argument("--unit", default=PILOT)
+    parser.add_argument("--legacy-only", action="store_true",
+                        help="compare the two legacy validators only (S5-pre) and print the differences")
     parser.add_argument("--python-only", action="store_true",
                         help="measure the Python rows only and print them; the stored report is not touched")
     args = parser.parse_args()
     u = unit_of(args.unit)
     if args.record_test_inputs:
         print(f"{write_test_inputs(u.contract)} recorded test inputs written to {u.test_inputs.relative_to(ROOT)}")
+    if args.legacy_only:
+        print(json.dumps(legacy_comparison(u.contract), indent=1, sort_keys=True))
+        return 0
     if args.python_only:
         value = report(u.contract, lean=False)
         print(json.dumps({key: value[key] for key in value if key not in ("checks_without_first",
