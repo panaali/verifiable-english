@@ -20,8 +20,8 @@
 
 After S0 to S3 the contract `soft-norms@0` runs in shadow: both engines compute the record of every rejection,
 the gate compares them on 8,576 inputs, and no output of any program has changed. Item 1 makes the contract
-**public** in the one place where Python rejects a submitted soft source on the soft route: the error then
-carries the contract's record. When a check of the table fails, the record names the first one that fails and
+**public** in the one place where Python's validation of a submitted soft source on the soft route rejects
+it: the error then carries the contract's record. When a check of the table fails, the record names the first one that fails and
 the message is that check's text; otherwise the message is the validator's. The legacy validators still decide,
 alone, whether a source is accepted. Lean's route rows are frozen and do not change; `ve_diagnose` already prints
 the record. Before the switch, the list of messages that will change is measured on the gate's whole corpus and
@@ -166,7 +166,7 @@ and passes both forms; `soft_route.py` imports relatively.
 
 | Entry point | After the switch |
 |---|---|
-| `ve.soft_route.admit_soft_document(environment, document)` with a submitted environment; reached from `ve.admission` when the environment lists `soft-norms@0` (`admission.py:499–502`). This is the adapter's case kind `admission` | **public**: the error carries the reported record (2.3) |
+| `ve.soft_route.admit_soft_document(environment, document)` with a submitted environment; reached from `ve.admission` when the environment lists `soft-norms@0` (`admission.py:499–502`). This is the adapter's case kind `admission` | **public**: an error of the validation of 2.4 carries the reported record (2.3); a later error of the same call has none |
 
 Not switched; each keeps today's message and has no record:
 
@@ -315,7 +315,7 @@ and has two readings.
 |---|---|---|
 | "The contract is switched to enforcing." | the contract decides whether an input is rejected; or it chooses the message of a rejection | "The contract is public: when the validator rejects a source, the contract chooses the message. It never decides whether a source is rejected." |
 | "The diagnostics become uniform." | every program prints the same message for every input; or Python's message is the contract's text | "On every corpus case that Lean reads, Python's message is the text of the record that Lean's `ve_diagnose` gives for the same source, except on inherited checks." |
-| "Rejections of soft sources carry the record." | every rejection, through every entry point; or the one of 2.4 | "A rejection raised by soft-route admission of a submitted source carries the contract's record, one of the three of 2.3." |
+| "Rejections of soft sources carry the record." | every rejection, through every entry point; or the one of 2.4 | "A rejection raised while soft-route admission validates a submitted source carries the contract's record, one of the three of 2.3. A later error of the same call has none." |
 | "`code` is unchanged." | the error's `code`; or the record's | "The error's `code` is the legacy validator's, as today. The record's `code` is the contract's. On the corpus they are equal." |
 | "The message changes to the contract's text." | every message becomes different; or the message is now taken from the contract and is often the same words | "The message is the record's text. For most rejections these are the words the validator printed before; the delta report lists the checks for which they differ." |
 | "The delta report is complete." | no other message can change; or no other message changes on the corpus | "Every message change on the gate's corpus is in the report." |
@@ -324,23 +324,33 @@ and has two readings.
 
 The `release_note` of the signing file is this text, with the list filled from `signed`:
 
-> When `ve` rejects a soft-norm source at admission, the error now has one more member, `diagnostic`: the error
-> carries the contract's record. When a check of the table fails, the record names the first one that fails and
-> the message is that check's text; otherwise the message is the validator's. The table is
-> `docs/spec/soft-norms-wire-table.md`; "first" is its order from top to bottom. With the check, the record gives
-> the place in the input and a code. For most rejections the message is the same as before. It is a different
-> message for these checks: ⟨for each signed check: its id, and its sentence from `signed`⟩. Whether a source is
-> accepted or rejected has not changed. The error's `code` has not changed. Other ways of submitting a soft
-> source (a document check, the rights route, English input) report as before.
+> When soft-route admission in `ve` rejects a submitted soft-norm source while it validates that source, the
+> error now has one more member, `diagnostic`: the error carries the contract's record. When a check of the table
+> fails, the record names the first one that fails and the message is that check's text; otherwise the message
+> is the validator's. The table is `docs/spec/soft-norms-wire-table.md`; "first" is its order from top to
+> bottom. With the check, the record gives the place in the input and a code. For most rejections the message
+> is the same as before. It is a different message for these checks. ⟨for each signed check, in table order:
+> its id, a colon, a space, and its sentence from `signed`, the entries separated by a space⟩ Whether a source
+> is accepted or rejected has not changed. The public switch does not change the error's `code`. An error
+> raised after that validation, while the norms are elaborated or the document is admitted, has no record, and
+> its message is as before. Other ways of submitting a soft source (a document check, the rights route, English
+> input) report as before. Before the switch, S4-pre changed the code of two kinds of rejected source, so that
+> Python's code is the Lean route's: an otherwise valid source that lists `speech-acts@0` now has the code
+> `SOFT_UNSUPPORTED_PROFILE` and the message `UnsupportedProfile: Unsupported profile speech-acts@0`, instead
+> of `SOFT_INVALID_INPUT` and a message about incorrect fields; an otherwise valid source that lists
+> `norm-defaults@0` and declares an `unspecified` default now has the code `SOFT_INVALID_INPUT` instead of
+> `SOFT_UNSUPPORTED_PROFILE`, with the same message.
 
 ### 3.4 The paragraph added to soft-norms.md, section 8
 
-> **The public record.** When soft-route admission rejects a submitted source, the error carries the contract's
-> record, in its member `diagnostic`. The contract is the wire contract `soft-norms@0`
-> ([soft-norms-wire-table.md](soft-norms-wire-table.md); [wire-contract.md](wire-contract.md) 2.7). When a check
-> of the table fails, the record names the first one that fails and the message is that check's text; otherwise
-> the message is the validator's. The checks, their order and their codes are those of this section. The
-> contract chooses the message only: the validator decides, as before, whether the source is rejected.
+> **The public record.** When soft-route admission rejects a submitted source while it validates that source,
+> the error carries the contract's record, in its member `diagnostic`. The contract is the wire contract
+> `soft-norms@0` ([soft-norms-wire-table.md](soft-norms-wire-table.md); [wire-contract.md](wire-contract.md)
+> 2.7). When a check of the table fails, the record names the first one that fails and the message is that
+> check's text; otherwise the message is the validator's. The checks, their order and their codes are those of
+> this section. The contract chooses the message only: the validator decides, as before, whether the source is
+> rejected. An error raised after that validation, while the norms are elaborated or the document is admitted,
+> has no record, and its message is as before.
 
 ## 4. Diagnostics
 
@@ -690,7 +700,8 @@ A row that fails after the switch commit is handled by a revert of the commit, o
 
 1. **No verdict and no identity.** The engine runs inside the handler of a rejection and returns the error it
    was given. That is a tested property of one call site (V1), not a theorem.
-2. **One entry point.** Only soft-route admission of a submitted source is public. The entry points of 2.5 keep
+2. **One entry point.** Only the validation of a submitted source in soft-route admission is public; an error
+   raised later in the same call, by elaboration or by the admission row, is not (2.4). The entry points of 2.5 keep
    today's messages, so two entry points can word the same fault differently until their own rows.
 3. **The delta is complete on the corpus.** An input outside the gate's corpus can show a message change that
    no list contains, a code that differs from its record's, a residual record, or an error without a record.
@@ -839,3 +850,31 @@ differences, errors without a record, source mutations or boundary differences. 
 remained the same. `lake build`, `lean/audit.py`, and `VE/Route/frozen.py` passed. Only the generated Lean table
 and its inventory hash changed; no handwritten Lean statement or Rust file changed for item 1. The final suite
 result and switch commit are recorded in the implementation report to the user.
+
+## 15. Review response: the item-1 switch (2026-10-03)
+
+Sources: `manage-agents/wire-s4-review-astra.final.md` and `manage-agents/reviews/wire-s4-review-fable.md`, both
+FIX, with no A finding. Each B finding was fixed as a class, with a regression test:
+
+| Finding | Fix |
+|---|---|
+| Fable B1: 2.8c was predicted (section 6) but unmeasured, because ranks were mutated only to an integer | The block mutations give parties and ranks each a Boolean, an array and an object item. 2.8c changes text in 102 cases and is signed; 2.7a counts 138. A test requires every kind in both lists and both checks measured and signed |
+| Fable B2: S4-pre made the `norm-defaults@0` row's text name a profile the source lists as missing | The soft route restates W1's remedy text for each profile it removes before W1 that the source lists, in the validator and the 2.3 hook through one function (`soft_route_environment`); the row keeps its S4-pre code and the text it had before S4-pre ([s4-pre.md](../../conformance/wire-contract/s4-pre.md)). A test fails if the soft route removes another profile without a restated text |
+| Fable B3: G6 hand-set the report's summary fields | G6 runs `report()` over tier L with the real engine and Lean binaries, Python's legacy values on the three inputs of 2.8 replaced by those before S4-pre, in the test only |
+| Fable B4 (release note), Astra B1, Astra B2 | 3.3 and 3.4 limit the record to errors of the source's validation and say that a later error of the same call has none; 3.3 scopes the unchanged `code` to the public switch, discloses S4-pre's two code changes, keeps the quotes around "first", and lists each signed sentence itself. The release note is generated from 3.3 and `signed`, and a test compares both it and the paragraph of `soft-norms.md` with this file. Section 0, 2.5, 3.2 and limit 2 of section 10 say the same |
+
+At this response the gate runs 8,796 cases (tier R gains the new mutations, their combinations and one
+recorded test input) with zero mismatches, residuals, deferred outcomes, legacy code differences, record and
+code differences, errors without a record, source changes or boundary differences; the text changes are 498,
+in seven signed checks.
+
+Two points remain for the DRI, outside this work:
+
+- **The signatures (Fable B4).** The seven sentences of `signed` were written by the implementer, and the
+  switch commit came before the reviewers' reading of the measured delta that section 9 asks for. Fable's
+  reading accepts the six earlier sentences subject to B1, which added 2.8c. The DRI's countersignature of the
+  seven is still to be given.
+- **The review gate of section 9 (Astra, C).** The implementation ran under a user instruction that forbade
+  model calls, so the Astra and Fable reading of the measured delta came after the switch commit, in the two
+  reviews above, instead of before it. That exception is recorded here; the gate's status is that both
+  reviewers have read the delta, after the switch, and asked for the fixes of this section.

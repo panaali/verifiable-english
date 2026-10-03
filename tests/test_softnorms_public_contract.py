@@ -19,6 +19,23 @@ from ve.wire_contract.engine import Registry, load
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = load("soft-norms@0")
+SPEC = ROOT / "docs/spec/wire-contract-s4.md"
+SWITCH = ROOT / "conformance/wire-contract/soft-norms@0-switch.json"
+
+
+def spec_quote(heading):
+    """The block quote under the spec's heading `### heading`, its lines joined by spaces."""
+    body = SPEC.read_text().split(f"\n### {heading}\n", 1)[1].split("\n#", 1)[0]
+    return " ".join(line[2:] for line in body.splitlines() if line.startswith("> "))
+
+
+def release_note(signed):
+    """Spec 3.3: its text, with the placeholder replaced by each signed check, in table order, as `id: sentence`."""
+    from conformance.wire_contract_gate import all_checks
+    before, rest = spec_quote("3.3 The release note").split("⟨", 1)
+    order = all_checks(CONTRACT)
+    return before + " ".join(f"{check}: {signed[check]}" for check in sorted(signed, key=order.index)) \
+        + rest.split("⟩", 1)[1]
 
 
 def document(norms):
@@ -168,3 +185,26 @@ def test_new_entry_paths_have_distinct_corpus_inputs():
     assert public_rejection(raw, norms, error) is error
     assert error.code == "InvalidInput"
     assert error.diagnostic["text"] == str(error) == "InvalidInput: invalid soft name T!"
+
+
+def test_release_note_is_the_spec_text_with_the_signed_sentences():
+    """Astra B1 and B2, Fable B4: the release note is spec 3.3 word for word, with the `signed` sentences
+    themselves. It limits the record to errors of the source's validation, scopes the unchanged `code` to the
+    switch, and discloses S4-pre's code changes."""
+    switch = json.loads(SWITCH.read_text())
+    assert (switch["contract"], switch["revision"]) == (CONTRACT["contract"], CONTRACT["revision"])
+    note = switch["release_note"]
+    assert note == release_note(switch["signed"])
+    for check, sentence in switch["signed"].items():
+        assert f"{check}: {sentence}" in note
+    assert '"first" is its order' in note
+    assert "while it validates that source" in note and "has no record" in note
+    assert "The public switch does not change the error's `code`." in note
+    assert "The error's `code` has not changed" not in note
+    assert "speech-acts@0" in note and "norm-defaults@0" in note
+
+
+def test_soft_norms_paragraph_is_spec_3_4():
+    text = (ROOT / "docs/spec/soft-norms.md").read_text()
+    paragraph = text[text.index("**The public record.**"):].split("\n\n", 1)[0]
+    assert " ".join(paragraph.splitlines()) == spec_quote("3.4 The paragraph added to soft-norms.md, section 8")
