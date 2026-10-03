@@ -17,6 +17,7 @@ routes field by field.
 from __future__ import annotations
 
 from copy import deepcopy
+import itertools
 import json
 import os
 from pathlib import Path
@@ -40,12 +41,6 @@ ELEMENTS = {"array-of-numbers": [1], "array-of-booleans": [True], "array-of-arra
             "array-of-objects": [{}], "mixed-array": ["relational-fol@0", 1]}
 FIELDS = ("language", "profile", "profiles", "spec_revision", "vocabulary",
           "speech_acts", "alternatives", "risk", "unit_schema", "units")
-# The envelopes Lean's `environment` mode decodes, and the profile blocks each
-# block route decodes (the type diagnostics are compared on these fields).
-ENVELOPES = ("route", "v0", "closure", "order")
-BLOCKS = {"speech": ("speech_acts",), "alternatives": ("alternatives",),
-          "risk": ("alternatives", "risk"), "w6": ("unit_schema", "units"),
-          "risk-units": ("alternatives", "risk", "unit_schema", "units")}
 # Lean's type diagnostics (`Json.getStr?`, `getArr?`, `getObj?`, `profilesOf`
 # and the block decoders), as Python's `VEError.to_dict()` reads them.
 TYPE_DIAGNOSTICS = {
@@ -122,10 +117,20 @@ def _legacy(kind):
     return raw
 
 
+def _reports():
+    return {"language": "ve.core@0.2", "profiles": ["documents@1", "relational-fol@0", "reports@0"],
+            "spec_revision": pm.SPEC_REVISION,
+            "vocabulary": {"reports": {"holders": ["person", "text"], "evidence": "evidence"},
+                           "sorts": {s: {"description": s} for s in ("person", "text", "evidence")},
+                           "predicates": {"safe": {"arguments": ["person"], "description": "safe"}},
+                           "constants": {"article": {"sort": "text", "description": "article"},
+                                         "e1": {"sort": "evidence", "description": "evidence"}}}}
+
+
 BASES = {"route": lambda: pm.raw_environment(()), "v0": lambda: _legacy("v0"),
          "closure": lambda: _legacy("closure"), "order": lambda: _legacy("order"),
          "speech": _speech, "alternatives": _alternatives, "risk": lambda: _alternatives(risk=True),
-         "w6": _w6, "risk-units": agent_ops}
+         "w6": _w6, "risk-units": agent_ops, "reports": _reports}
 
 
 def wrong_typed():
@@ -221,46 +226,142 @@ def lean_environment_mode(data):
     return outcome(lambda: lean_runner.run("environment", [{"id": "e", "environment": data}]))
 
 
-def lean_block_route(base, data):
-    """The diagnostic of the Lean route that decodes `base`'s profile block."""
-    binary, case = {
-        "speech": ("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}}),
-        "alternatives": ("ve_alternatives_route", {"kind": "alt-validate", "norms": []}),
-        "risk": ("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}}),
-        "w6": ("ve_quantity", {"kind": "document", "document": {"units": []}}),
-        "risk-units": ("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}}),
-    }[base]
-    if not (BIN / binary).exists():
-        pytest.skip(f"{binary} has not been built")
+# The Lean decoder of each route and a case that reaches its environment decoder.
+ROUTE_CASES = {
+    "speech": ("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}}),
+    "alternatives": ("ve_alternatives_route", {"kind": "alt-validate", "norms": []}),
+    "risk": ("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}}),
+    "quantity": ("ve_quantity", {"kind": "document", "document": {"units": []}}),
+    "reports": ("ve_reports_route", {"kind": "reports-elaborate", "document": {"units": []}}),
+}
+
+
+def lean_route(data):
+    """The Lean route that decodes an environment, read from the environment
+    itself (a mutated envelope may no longer say which base it came from):
+    a frozen envelope's language (`isLegacy`) and every envelope no block route
+    takes go to the `environment` mode ("envelope"); otherwise the profiles
+    choose when they are an array of strings (risk@0, alternatives@0,
+    speech-acts@0, reports@0, in that order), else the blocks the envelope
+    carries (risk, alternatives, speech_acts); then the W6 fields choose the
+    quantity route."""
+    if data.get("language") in ("ve.core@0", "ve.core@0.1"):
+        return "envelope"
+    profiles = data.get("profiles")
+    if type(profiles) is list and all(type(p) is str for p in profiles):
+        chosen = [route for profile, route in (("risk@0", "risk"), ("alternatives@0", "alternatives"),
+                                               ("speech-acts@0", "speech"), ("reports@0", "reports"))
+                  if profile in profiles]
+    else:
+        chosen = [route for block, route in (("risk", "risk"), ("alternatives", "alternatives"),
+                                             ("speech_acts", "speech")) if block in data]
+    if chosen:
+        return chosen[0]
+    return "quantity" if {"unit_schema", "units"} & set(data) else "envelope"
+
+
+def lean_route_rows(route, environments):
+    """The diagnostic `(code, message)` (or `("ok", "")`) of Lean's `route`
+    decoder for each environment, in one batch (none may be JSON null)."""
+    if route == "envelope":
+        from ve.backends.lean_service import LeanServicePool
+        pool = LeanServicePool()
+        try:
+            rows = pool.run("environment", [{"id": str(i), "environment": e} for i, e in enumerate(environments)])
+        finally:
+            pool.close()
+    else:
+        binary, case = ROUTE_CASES[route]
+        if not (BIN / binary).exists():
+            pytest.skip(f"{binary} has not been built")
+        batch = [{"id": str(i), "environment": e, **case} for i, e in enumerate(environments)]
+        done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch), text=True,
+                              capture_output=True, timeout=1200)
+        assert done.returncode in (0, 1) and "PANIC" not in done.stderr, done.stderr[-2000:]
+        rows = json.loads(done.stdout)
+    assert [row["id"] for row in rows] == [str(i) for i in range(len(environments))]
+    return [pair(checker_error(row["error"]).to_dict()) if row["status"] == "error" else ("ok", "")
+            for row in rows]
+
+
+def lean_diagnostic(data):
+    """The diagnostic of the Lean route that decodes `data`."""
     try:
-        payload = canonical_json([{"id": "c", "environment": data, **case}])
+        canonical_json(data)
     except VEError as exc:
         # Not on the restricted wire (null): no Lean runner can read it.
-        return {"code": exc.code, "message": "not on the restricted wire"}
-    done = subprocess.run([str(BIN / binary), "-"], input=payload, capture_output=True, timeout=600)
-    assert done.returncode in (0, 1), done.stderr
-    [row] = json.loads(done.stdout)
-    assert row["status"] == "error", row
-    return checker_error(row["error"]).to_dict()
+        return exc.code, "not on the restricted wire"
+    [row] = lean_route_rows(lean_route(data), [data])
+    return row
 
 
 @lean_service
 @pytest.mark.parametrize("base, field, data", CASES)
 def test_type_diagnostics_are_leans(monkeypatch, base, field, data):
     """Every Lean decoder rejects; when Lean's or Python's first failure is a
-    type check, the two diagnostics are equal in class and text. Lean's
-    `environment` mode is compared on the envelopes it decodes; each block
-    route on every field of its envelope, the common ones included
-    (env-profiles-looprecheck1: `language` 7 on an extended envelope, the
-    quantity route's `profiles` and the speech route's `vocabulary`)."""
+    type check, the two diagnostics are equal in class and text. Each envelope
+    is compared with the Lean route that decodes it (`lean_route`) on every
+    field, the common ones included (env-profiles-looprecheck1: `language` 7 on
+    an extended envelope, the quantity route's `profiles` and the speech
+    route's `vocabulary`; env-profiles-directive3: the reports route's
+    `vocabulary`)."""
     monkeypatch.setenv("VE_AUTHORITY", "python")
     python = pair(outcome(lambda: Environment(data)))
-    if base in ENVELOPES:
-        lean = pair(lean_environment_mode(data))
-    else:
-        lean = pair(lean_block_route(base, data))
+    lean = lean_diagnostic(data)
+    assert lean[0] != "ok", (lean_route(data), data)
     if python in TYPE_DIAGNOSTICS or lean in TYPE_DIAGNOSTICS:
-        assert python == lean
+        assert python == lean, lean_route(data)
+
+
+# Pairs of fields, each replaced by a value of each kind or removed: a check
+# Python reads in a different order from the route that decodes the envelope
+# shows as two different first diagnostics (env-profiles-directive3).
+PAIR_KINDS = {**{kind: value for kind, value in KINDS.items() if kind != "null"}, "missing": None}
+
+
+def _paired(base):
+    for first, second in itertools.combinations(FIELDS, 2):
+        for (kind1, value1), (kind2, value2) in itertools.product(PAIR_KINDS.items(), repeat=2):
+            data = BASES[base]()
+            for field, kind, value in ((first, kind1, value1), (second, kind2, value2)):
+                if kind == "missing":
+                    data.pop(field, None)
+                else:
+                    data[field] = deepcopy(value)
+            if data != BASES[base]():
+                yield f"{first}={kind1},{second}={kind2}", data
+
+
+@lean_service
+@pytest.mark.parametrize("base", sorted(BASES))
+def test_pairs_of_wrong_typed_fields_have_the_routes_diagnostics(monkeypatch, base):
+    """Every pair of top-level fields of every envelope, each a value of each
+    JSON kind or absent: Python's first diagnostic is the Lean route's when
+    either is a type diagnostic. The first failing examples
+    (env-profiles-directive3) were `language` 7 with `profiles` 7 on the speech
+    and alternatives envelopes, where Python reported the language before the
+    profiles the block routes read first."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    cases = list(_paired(base))
+    python = {}
+    by_route = {}
+    for name, data in cases:
+        try:
+            Environment(deepcopy(data))
+            python[name] = ("ok", "")
+        except VEError as exc:
+            python[name] = pair(exc.to_dict())
+        by_route.setdefault(lean_route(data), []).append((name, data))
+    lean = {}
+    for route, routed in by_route.items():
+        lean.update(zip([name for name, _ in routed], lean_route_rows(route, [data for _, data in routed])))
+    accepted = [name for name, _ in cases if "ok" in (python[name][0], lean[name][0])
+                and python[name] != lean[name]]
+    differing = [(name, python[name], lean[name]) for name, _ in cases
+                 if (python[name] in TYPE_DIAGNOSTICS or lean[name] in TYPE_DIAGNOSTICS)
+                 and python[name] != lean[name]]
+    assert accepted == []
+    assert differing == [], "\n".join(map(str, differing[:60]))
 
 
 @pytest.mark.parametrize("base, field, value, expected", [
@@ -279,14 +380,21 @@ def test_looprecheck1_examples_have_the_routes_diagnostics(monkeypatch, base, fi
     assert pair(outcome(lambda: Environment(data))) == ("InvalidInput", expected)
 
 
-def _reports():
-    return {"language": "ve.core@0.2", "profiles": ["documents@1", "relational-fol@0", "reports@0"],
-            "spec_revision": pm.SPEC_REVISION,
-            "vocabulary": {"reports": {"holders": ["person", "text"], "evidence": "evidence"},
-                           "sorts": {s: {"description": s} for s in ("person", "text", "evidence")},
-                           "predicates": {"safe": {"arguments": ["person"], "description": "safe"}},
-                           "constants": {"article": {"sort": "text", "description": "article"},
-                                         "e1": {"sort": "evidence", "description": "evidence"}}}}
+@pytest.mark.parametrize("base, changes, expected", [
+    *[("reports", {"vocabulary": value}, ("UnsupportedProfile", "reports@0 needs a reports block"))
+      for value in (7, True, [], "x")],
+    *[(base, {"language": 7, "profiles": 7}, ("UnsupportedProfile", "profiles must be a sorted unique array"))
+      for base in ("speech", "alternatives", "risk", "risk-units")],
+])
+def test_directive3_examples_have_the_routes_diagnostics(monkeypatch, base, changes, expected):
+    """env-profiles-directive3's failing examples, without Lean: a reports
+    envelope whose vocabulary is not an object has no reports block
+    (VE.Attribution.Wire reads the block first), and the block routes read
+    the profiles before the language (checked against Lean above)."""
+    monkeypatch.setenv("VE_AUTHORITY", "python")
+    data = BASES[base]()
+    data.update(changes)
+    assert pair(outcome(lambda: Environment(data))) == expected
 
 
 def _rights():
@@ -295,7 +403,7 @@ def _rights():
 
 
 # Fixtures whose nested blocks the top-level matrix does not reach.
-NESTED_BASES = {**BASES, "rights": _rights, "reports": _reports,
+NESTED_BASES = {**BASES, "rights": _rights,
                 "layers": lambda: pm.raw_environment(("data@0", "definitions@0", "documents@1", "norms@0")),
                 "nary": lambda: pm.raw_environment(("closure@0", "nary@0"))}
 NESTED_KINDS = {"number": 7, "boolean": True, "string": "x", "array": [], "object": {},
@@ -369,7 +477,10 @@ def _rights_cases():
     for key in ("holders", "bearers", "protected", "alters"):
         for kind, value in BLOCK_KINDS.items():
             if key == "protected" and kind == "duplicate":
-                continue  # Python refuses a repeated name, Lean checks each (a separate open question)
+                # Python refuses a repeated name, Lean checks each: a separate DRI
+                # decision, logged in ARCH-ROADMAP (manage-agents/ARCH-ROADMAP.md),
+                # so not compared here.
+                continue
             yield f"{key}-{kind}", ("vocabulary", "rights", key), value
     for key in ("holder_slot", "status", "recognition"):
         for kind, value in BLOCK_KINDS.items():
