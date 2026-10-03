@@ -5,12 +5,14 @@ mod ast;
 mod discourse;
 mod environment;
 mod eval;
+mod graph;
 mod model;
 mod order;
 mod readings;
 mod route;
 mod risk;
 mod search;
+mod semantics;
 mod surface;
 mod units;
 mod wire;
@@ -22,10 +24,11 @@ pub use environment::Environment;
 #[doc(hidden)]
 pub use eval::EvaluationKernel;
 pub use eval::{Evaluation, TracedEvaluation, evaluate, evaluate_formula, evaluate_traced};
+pub use graph::dependency_order;
 pub use model::FiniteModel;
 pub use order::order_case;
 pub use readings::readings_evaluate_case;
-pub use route::{check_label, check_reading_binding, dependency_order, label_is_canonical};
+pub use route::{check_label, check_reading_binding, label_is_canonical};
 pub use risk::{Range as RiskRange, evaluate_risk_condition, regenerate_risk_cells};
 pub use search::{
     CountermodelCheck, CountermodelProblem, SearchBounds, SearchResult,

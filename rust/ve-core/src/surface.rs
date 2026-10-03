@@ -10,6 +10,7 @@ pub(crate) struct SurfaceRecord {
     pub strict_form: &'static str,
     #[allow(dead_code)] // Rust evaluates elaborated documents; Python owns English admission.
     pub english_keywords: &'static [&'static str],
+    #[allow(dead_code)] // The kernel decodes with `wire::FORMULA_ARITY`; a test keeps them equal.
     pub wire_arity: usize,
 }
 
@@ -512,4 +513,15 @@ pub fn print_document(doc: &Document) -> Result<String> {
         text.push_str(&line);
     }
     Ok(text)
+}
+
+#[cfg(test)]
+mod arity_tests {
+    use super::*;
+
+    #[test]
+    fn records_repeat_the_kernel_wire_arities() {
+        let records: Vec<_> = RECORDS.iter().map(|r| (r.wire_tag, r.wire_arity)).collect();
+        assert_eq!(records, crate::wire::FORMULA_ARITY);
+    }
 }
