@@ -538,3 +538,37 @@ def test_a1_class_named_reading_no_choice_takes_is_refused(tmp_path):
                       "conflict_certificates": {}} for k in ("readings-certificate", "readings-conflict")])
     assert [row.get("error") for row in rows] == [text, text], rows
     assert route.entailment(every("avoid_required"), assumed=[("rs1", 0)])["verdict"] == "ALL"
+
+
+def test_rust_shadow_evaluates_every_model_shown(tmp_path, monkeypatch):
+    """4.2 and 10: Rust evaluates the formulas of `sup D` on every model shown, untrusted; its values must be the
+    ones Lean's check established, or the verdict is `CheckerUnavailable`."""
+    from ve.backends import rust_jsonl
+    from ve.errors import CheckerUnavailable
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", NEVER_AVOID)])
+    seen = []
+    real = rust_jsonl.run
+
+    def spy(case, **kwargs):
+        record = real(case, **kwargs)
+        if case.get("kind") == "readings-superposed-evaluate":
+            seen.append((case, record))
+        return record
+
+    monkeypatch.setattr(rust_jsonl, "run", spy)
+    _, route, _ = _wording(path)
+    assert route.conflict(())["status"] == "CONFLICT" and route.premises()["status"] == "model"
+    assert seen and all(record["untrusted"] is True for _, record in seen)
+    witness = next(record for case, record in seen if case["conflict_targets"])
+    assert witness["values"]["conflict_targets"] == [True] and all(witness["values"]["slot"])
+
+    def lying(case, **kwargs):
+        record = real(case, **kwargs)
+        if case.get("kind") == "readings-superposed-evaluate":
+            record["values"]["slot"] = [False] * len(record["values"]["slot"])
+        return record
+
+    monkeypatch.setattr(rust_jsonl, "run", lying)
+    _, route, _ = _wording(path)
+    with pytest.raises(CheckerUnavailable, match="Rust's untrusted evaluation differs"):
+        route.premises()
