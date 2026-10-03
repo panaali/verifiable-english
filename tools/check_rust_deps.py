@@ -23,7 +23,10 @@ dependency is rejected with a message naming the plain form: aliases and globs
 of the crate root, re-exports outside `lib.rs`'s top level, facade re-export
 chains and module globs, inline modules named like an imported name or a crate
 module, crate paths in attribute or macro strings (escapes decoded) and in
-macro definitions, `#[path]`, `#[macro_use]`, `#[macro_export]`, `include!`,
+macro definitions, macro transcribers that join a substitution (`$x`, `$(...)`)
+to a path token or one repetition to the next (`$root::surface`, `crate $($t)*`,
+`$($t)*`), or substitute into a `use`, a `mod` name, a macro name or an
+attribute, `#[path]`, `#[macro_use]`, `#[macro_export]`, `include!`,
 `extern crate self`, macros 2.0, a macro metavariable after `::` and characters
 rustc rejects outside literals.
 """
@@ -92,6 +95,9 @@ RULES = {
     "string path": "a crate path inside an attribute or macro string; " + PLAIN + " outside strings",
     "macro path": "a crate path inside a macro definition, which resolves where the macro is called; call a "
                   "function instead and " + PLAIN,
+    "macro construction": "a macro that joins substituted tokens into a path, or substitutes into a `use`, a "
+                          "module name, a macro name or an attribute, builds names this check cannot see; call "
+                          "a function instead and " + PLAIN,
 }
 
 
@@ -353,6 +359,99 @@ def moving(stream: list[Token]) -> list[tuple[str, str]]:
     return found
 
 
+def transcribers(stream: list[Token], opening: int, close: int) -> list[tuple[int, int]]:
+    """The (start, end) of each rule's transcriber in the macro_rules body stream[opening:close + 1].
+
+    A body that is not a sequence of `(matcher) => {transcriber};` is read as
+    one transcriber from where the sequence breaks (fail closed).
+    """
+    found, index = [], opening + 1
+    while index < close:
+        matcher_end = group_end(stream, index)
+        start = matcher_end + 3
+        stop = group_end(stream, start)
+        if matcher_end == index or not (at(stream, matcher_end + 1, "=") and at(stream, matcher_end + 2, ">")) \
+                or stop == start:
+            return found + [(index, close)]
+        found.append((start + 1, min(stop, close)))
+        index = stop + 1 + at(stream, stop + 1, ";")
+    return found
+
+
+def transcriber_items(stream: list[Token], start: int, end: int) -> list[tuple[str, int, int]]:
+    """The items of stream[start:end] as (kind, first index, end index): "sub" for `$name`, `$crate`, `$$`
+    and `${...}`, "rep" for `$(...) separator? operator`, "group" for a delimited group, else "token"."""
+    items, index = [], start
+    while index < end:
+        if at(stream, index, "$") and index + 1 < end:
+            if at(stream, index + 1, "("):
+                after = closing(stream, index + 1, "(", ")") + 1
+                after += not any(at(stream, after, operator) for operator in "*+?")  # a separator
+                items.append(("rep", index, min(after + 1, end)))
+                index = after + 1
+                continue
+            if at(stream, index + 1, "{") or at(stream, index + 1, "$") or stream[index + 1].kind == "ident":
+                items.append(("sub", index, min(group_end(stream, index + 1) + 1, end)))
+                index = items[-1][2]
+                continue
+        stop = min(group_end(stream, index) + 1, end)
+        items.append(("group" if stop > index + 1 else "token", index, stop))
+        index = stop
+    return items
+
+
+def path_capable(stream: list[Token], item: tuple[str, int, int]) -> bool:
+    """Whether the item can be or hold a path segment or `::` (every substitution can)."""
+    kind, index, _ = item
+    return kind in {"sub", "rep"} or kind == "token" and (
+        stream[index].kind == "::" or stream[index].kind == "ident" and not keyword_at(stream, index))
+
+
+def constructs(stream: list[Token], start: int, end: int) -> bool:
+    """Whether the transcriber stream[start:end] builds a name this check cannot see when it expands.
+
+    Paths are runs of segments and `::`, so a substitution next to a segment,
+    `::` or another substitution (`$root::surface`, `crate $($t)*`), a
+    repetition that joins its iterations (`$($t)*`, separator `::`), and a
+    substitution in a `use` item, a `mod` name, a macro name (`$m!`) or an
+    attribute (`#[$a]`) are constructions. Paths do not cross delimiters.
+    """
+    items = transcriber_items(stream, start, end)
+    for position, (kind, index, stop) in enumerate(items):
+        following = items[position + 1] if position + 1 < len(items) else None
+        substituted = kind in {"sub", "rep"}
+        if following is not None:
+            joined = substituted or following[0] in {"sub", "rep"}
+            if joined and path_capable(stream, items[position]) and path_capable(stream, following):
+                return True
+            if substituted and at(stream, following[1], "!"):
+                return True
+            if keyword(stream, index, "mod") and following[0] in {"sub", "rep"}:
+                return True
+        if keyword(stream, index, "use") and not at(stream, index + 1, "<"):
+            semicolon = next((item[1] for item in items[position:] if at(stream, item[1], ";")), end)
+            if any(at(stream, token, "$") for token in range(index, semicolon)):
+                return True
+        if at(stream, index, "#"):
+            bracket = index + 1 + at(stream, index + 1, "!")
+            if at(stream, bracket, "[") and any(at(stream, token, "$")
+                                                for token in range(bracket, group_end(stream, bracket))):
+                return True
+        if kind == "group" and constructs(stream, index + 1, stop - 1):
+            return True
+        if kind == "rep":
+            close = closing(stream, index + 1, "(", ")")
+            inner = transcriber_items(stream, index + 2, close)
+            separator = close + 1 if stop - close == 3 else None
+            if constructs(stream, index + 2, close):
+                return True
+            if separator is not None and path_capable(stream, ("token", separator, separator + 1)):
+                return True
+            if separator is None and inner and path_capable(stream, inner[-1]) and path_capable(stream, inner[0]):
+                return True
+    return False
+
+
 def written_paths(stream: list[Token], skipped: set[int], builtin: set[int]) -> list[tuple[int, list[str]]]:
     """Every path (and the index it starts at) outside `skipped` that is not a field or method name."""
     found = []
@@ -406,11 +505,13 @@ def parse_module(module: str, text: str, crate_modules: set[str]) -> Module:
             else:
                 attribute_strings += [item for item in range(start, end) if stream[item].kind == "string"]
         elif keyword(stream, index, "macro_rules") and at(stream, index + 1, "!"):
-            body = range(index + 3, group_end(stream, index + 3))
+            close = group_end(stream, index + 3)
+            name = stream[index + 2].text if index + 2 < len(stream) else ""
             if any(stream[item].kind == "ident" and stream[item].text in {"crate", "super", "self"}
-                   and (at(stream, item + 1, "::") or at(stream, item - 1, "$")) for item in body):
-                name = stream[index + 2].text if index + 2 < len(stream) else ""
+                   and (at(stream, item + 1, "::") or at(stream, item - 1, "$")) for item in range(index + 3, close)):
                 problems.append((f"macro_rules! {name}", "macro path"))
+            elif any(constructs(stream, start, stop) for start, stop in transcribers(stream, index + 3, close)):
+                problems.append((f"macro_rules! {name}", "macro construction"))
         elif stream[index].kind == "ident" and not keyword_at(stream, index) and at(stream, index + 1, "!"):
             macro_strings += [item for item in range(index + 2, group_end(stream, index + 2))
                               if stream[item].kind == "string"]
