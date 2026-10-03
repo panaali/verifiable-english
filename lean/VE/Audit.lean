@@ -135,6 +135,7 @@ import VE.Readings.Shape
 import VE.Readings.ChoiceFacts
 import VE.Readings.Children
 import VE.Readings.Live
+import VE.Readings.Faithful
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3386,3 +3387,19 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.pattern_rho
 #print axioms VE.Readings.pull_denote_frame
 #print axioms VE.Readings.live_corr
+#print axioms VE.Readings.dead_extra
+#print axioms VE.Readings.mem_outweighsTriples
+#print axioms VE.Readings.soft_eq
+#print axioms VE.Readings.regs_eq
+#print axioms VE.Readings.dualPerm_eq
+#print axioms VE.Readings.incompatible_self
+#print axioms VE.Readings.act_choice_eq
+#print axioms VE.Readings.outweighs_triple
+#print axioms VE.Readings.outweighs_corr
+#print axioms VE.Readings.filter_length_le_imp
+#print axioms VE.Readings.filter_length_lt
+#print axioms VE.Readings.choice_ranked
+#print axioms VE.Readings.nodup_map_on
+#print axioms VE.Readings.choice_fuel_le
+#print axioms VE.Readings.faithful_sim
+#print axioms VE.Readings.superpose_faithful
