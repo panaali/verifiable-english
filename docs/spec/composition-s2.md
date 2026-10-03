@@ -658,7 +658,8 @@ model encodes, and per candidate `model`, `dead`, `narrowed` for a candidate a n
 `INCONSISTENT` or `UNKNOWN`), or the pending row's UNKNOWN; the `readings` block adds `choices_checked`, `conflict`
 (the status under every reading with its evidence form, and its `conditional_on`), `status` (its line),
 `dead_readings` (each certified by `readings-dead`; `null` when the compatible choices were too many to enumerate,
-never an unchecked empty list) and `english` (2.3's sentences, each through the gate of 2). `ve document readings
+or when the prover cannot certify a candidate no compatible choice takes within its budget, never an unchecked or
+incomplete list; such a candidate's premise status is UNKNOWN, `dead` only with its certificate, on both routes) and `english` (2.3's sentences, each through the gate of 2). `ve document readings
 --conclusion` answers ALL, SOME or NONE across readings (`--under <set>:<i>` names readings), with its English.
 
 `conditional_on`: `soft:coherence:*` of `sup D`, then the slot labels used, verbatim, in slot order (composition.md 3).

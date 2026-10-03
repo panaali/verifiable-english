@@ -505,34 +505,11 @@ class Superposed(_Route):
     def dead_readings(self):
         """`DeadReading: <set>:<i>` for every candidate no compatible choice takes and no narrowing in force drops,
         each with a certificate of ¬χ from `choiceCore D` checked by `readings-dead` (1.9, 14.7). None when the
-        compatible choices exceed the checked budget (not computed)."""
-        if "_dead" in self.__dict__:
-            return self._dead
-        from .entailment import prove_entailment
-        from .readings_sup import choice_core
-        if self.all_choices is None:
-            self._dead = None
-            return None
-        taken = {(R.id, choice[R.id]) for choice in self.all_choices for R in self.sets}
-        env = self._core_environment()
-        core = self._formulas(env, [ast for _, ast in choice_core(self.sets, self.couplings, self.narrowings)])
-        dead = []
-        for s, i in self.candidates():
-            if (s, i) in taken or self.dropped(s, i) is not None:
-                continue
-            from .ast import Not, formula_from_data
-            from .readings_sup import choice_atom
-            atom = formula_from_data(env, choice_atom(self.sets, s, i), _generated=True)
-            proof = prove_entailment(env, core, Not(atom), max_steps=BUDGET["max_steps"])
-            if proof.status != "Found":
-                continue
-            row = self.lean("readings-dead", set=s, index=i, certificate=proof.certificate)
-            if row["accepted"] is not True or row["finding"] != f"DeadReading: {s}:{i}":
-                raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's "
-                                         "prover certified")
-            dead.append({"set": s, "index": i, "finding": row["finding"]})
-        self._dead = dead
-        return dead
+        compatible choices exceed the checked budget, or when a certificate cannot be found within the budget
+        (`_dead_readings`)."""
+        if "_dead" not in self.__dict__:
+            self._dead = _dead_readings(self, self.all_choices)
+        return self._dead
 
     def _core_environment(self):
         """The choice vocabulary alone, with no generated Background: `deadCheck` replays a certificate over the
@@ -630,6 +607,37 @@ class Superposed(_Route):
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 
+def _dead_readings(route, pool):
+    """The dead readings of 1.9 over the compatible choices `pool` (exact, or None when not enumerated): every
+    candidate no choice of `pool` takes and no narrowing in force drops, each certified by `readings-dead`. A
+    candidate whose certificate the prover cannot find within the budget makes the list incomplete, so the answer
+    is None, never a list that silently leaves it out (review B of compose-s2 looprecheck1): an empty list says
+    that no candidate is dead."""
+    from .ast import Not, formula_from_data
+    from .entailment import prove_entailment
+    from .readings_sup import choice_atom, choice_core
+    if pool is None:
+        return None
+    taken = {(R.id, choice[R.id]) for choice in pool for R in route.sets}
+    env = Superposed._core_environment(route)
+    core = [formula_from_data(env, ast, _generated=True)
+            for _, ast in choice_core(route.sets, route.couplings, route.narrowings)]
+    dead = []
+    for s, i in route.candidates():
+        if (s, i) in taken or route.dropped(s, i) is not None:
+            continue
+        atom = formula_from_data(env, choice_atom(route.sets, s, i), _generated=True)
+        proof = prove_entailment(env, core, Not(atom), max_steps=BUDGET["max_steps"])
+        if proof.status != "Found":
+            return None
+        row = route.lean("readings-dead", set=s, index=i, certificate=proof.certificate)
+        if row["accepted"] is not True or row["finding"] != f"DeadReading: {s}:{i}":
+            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's "
+                                     "prover certified")
+        dead.append({"set": s, "index": i, "finding": row["finding"]})
+    return dead
+
+
 def _predicates(ast):
     out, stack = set(), [ast]
     while stack:
@@ -692,49 +700,33 @@ class Enumerated(_Route):
             model = self._choice(dict(result["choice"])).premise_model()
             if model is not None:
                 result["model"] = model
+        dead = {(d["set"], d["index"]) for d in (self.dead_readings() or [])}
         candidates = []
         for s, i in self.candidates():
             taking = [r["status"] for c, r in rows if [s, i] in c]
             narrowing = self.dropped(s, i)
-            status = ("narrowed" if narrowing is not None else "dead" if not taking else
-                      "model" if "model" in taking else
-                      "INCONSISTENT" if all(t == "INCONSISTENT" for t in taking) else "UNKNOWN")
-            candidates.append({"set": s, "index": i, "status": status,
-                               **({"narrowing": narrowing} if narrowing is not None else {})})
+            entry = {"set": s, "index": i}
+            if narrowing is not None:
+                entry.update(status="narrowed", narrowing=narrowing)
+            elif (s, i) in dead:
+                entry.update(status="dead")
+            elif not taking:
+                # `dead` only with its certificate (review B): an absence the prover could not certify is UNKNOWN.
+                entry.update(status="UNKNOWN", reason=self.untaken_text([(s, i)]))
+            else:
+                entry.update(status="model" if "model" in taking else
+                             "INCONSISTENT" if all(t == "INCONSISTENT" for t in taking) else "UNKNOWN")
+            candidates.append(entry)
         result["candidates"] = candidates
         return result
 
     def dead_readings(self):
         """On the enumerated route a candidate no compatible choice takes is found by the enumeration itself; the
         finding is still certified by `readings-dead` (1.9), on the soft and norms chains and the rights chain
-        alike, since `choiceCore D` is over the bits alone."""
-        if "_dead" in self.__dict__:
-            return self._dead
-        if self.choices is None:
-            self._dead = None
-            return None
-        from .ast import Not, formula_from_data
-        from .entailment import prove_entailment
-        from .readings_sup import choice_atom, choice_core
-        taken = {(R.id, choice[R.id]) for choice in self.choices for R in self.sets}
-        dead = []
-        env = Superposed._core_environment(self)
-        core = [formula_from_data(env, ast, _generated=True)
-                for _, ast in choice_core(self.sets, self.couplings, self.narrowings)]
-        for s, i in self.candidates():
-            if (s, i) in taken or self.dropped(s, i) is not None:
-                continue
-            atom = formula_from_data(env, choice_atom(self.sets, s, i), _generated=True)
-            proof = prove_entailment(env, core, Not(atom), max_steps=BUDGET["max_steps"])
-            if proof.status != "Found":
-                continue
-            row = self.lean("readings-dead", set=s, index=i, certificate=proof.certificate)
-            if row["accepted"] is not True or row["finding"] != f"DeadReading: {s}:{i}":
-                raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's "
-                                         "prover certified")
-            dead.append({"set": s, "index": i, "finding": row["finding"]})
-        self._dead = dead
-        return dead
+        alike, since `choiceCore D` is over the bits alone. None as on the superposed route (`_dead_readings`)."""
+        if "_dead" not in self.__dict__:
+            self._dead = _dead_readings(self, self.choices)
+        return self._dead
 
     @property
     def base(self):
