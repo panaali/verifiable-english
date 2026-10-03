@@ -25,6 +25,9 @@ import VE.Readings.Labels
 import VE.Readings.SupEnv
 import VE.Readings.Asserted
 import VE.Readings.Assertions
+import VE.Readings.Route
+import VE.Readings.SupWire
+import VE.Readings.SupRun
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
