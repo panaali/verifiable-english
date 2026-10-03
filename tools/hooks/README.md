@@ -9,8 +9,11 @@ a temporary snapshot of the index together with the staged directory and `.py`
 layout that Python import resolution consults. The working tree is never read,
 so a verdict depends only on what the commit would record. It runs no tests and
 no builds. A typical commit takes well under a second;
-`tests/test_precommit_hook.py` holds a 1,765-path, 18 MB staged change to under
-10 s. Run `tools/hooks/pre-commit --timings` to see per-check times.
+`tests/test_precommit_hook.py` holds the hook's own work on a 1,882-path, 21 MB
+staged change to under 10 CPU seconds; `lean --deps` adds at most its budget
+(below) and two 2 s toolchain probes. `VE_PRECOMMIT_TIMEOUT` replaces all of the hook's
+wall-clock waits (the test suite sets it to its hang guard). Run
+`tools/hooks/pre-commit --timings` to see per-check times.
 
 | Check | What it rejects | Source of truth |
 | --- | --- | --- |
