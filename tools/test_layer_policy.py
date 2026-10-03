@@ -26,6 +26,64 @@ import select_tests
 
 from select_tests import select
 
+# Each case is a compilable ve-core-shaped crate (`cargo check` accepts it): extra lib.rs
+# items, then the ast.rs (kernel), eval.rs (profile) and surface.rs bodies, and the outward
+# edges the module check must report.
+SURFACE_RS = "pub fn parse<T: Default>() -> T { T::default() }\npub struct Node;\n"
+RUST_MODULE_CASES = {
+    "turbofish": ("", "pub fn f() -> u8 { crate::surface::parse::<u8>() }\n", "", SURFACE_RS,
+                  {"ast -> surface"}),
+    "turbofish in a use-free call chain": (
+        "", "pub fn f() -> Vec<u8> { crate::surface::parse::<Vec<u8>>() }\n", "", SURFACE_RS,
+        {"ast -> surface"}),
+    "crate-prefixed root re-export": ("pub use crate::surface::parse;\n",
+                                      "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
+                                      {"ast -> surface"}),
+    "self-prefixed aliased root re-export": ("pub use self::surface::parse as read;\n",
+                                             "use crate::read;\npub fn f() -> u8 { read() }\n", "",
+                                             SURFACE_RS, {"ast -> surface"}),
+    "private root import": ("use surface::parse;\n", "pub fn f() -> u8 { crate::parse() }\n", "",
+                            SURFACE_RS, {"ast -> surface"}),
+    "module alias": ("pub(crate) use surface as syntax;\n", "pub fn f() -> u8 { crate::syntax::parse() }\n",
+                     "", SURFACE_RS, {"ast -> surface"}),
+    "root glob": ("pub use surface::*;\n", "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
+                  {"ast -> surface"}),
+    "chained module re-export": ("", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n",
+                                 "pub use crate::surface::parse;\n", SURFACE_RS,
+                                 {"ast -> eval", "ast -> surface", "eval -> surface"}),
+    "module glob re-export": ("", "use crate::eval::parse;\npub fn f() -> u8 { parse() }\n",
+                              "pub use crate::surface::*;\n", SURFACE_RS,
+                              {"ast -> eval", "ast -> surface", "eval -> surface"}),
+    "re-export inside an inline root module": (
+        "pub mod api { pub use crate::surface::parse; }\n", "pub fn f() -> u8 { crate::api::parse() }\n",
+        "", SURFACE_RS, {"ast -> surface"}),
+    "raw identifier": ("", "pub fn f() -> u8 { crate::r#surface::parse() }\n", "", SURFACE_RS,
+                       {"ast -> surface"}),
+    "super from a nested module": (
+        "", "mod inner {\n    pub fn f() -> u8 { super::super::surface::parse() }\n}\n", "", SURFACE_RS,
+        {"ast -> surface"}),
+    "root glob import": ("", "use crate::*;\npub fn f() -> u8 { surface::parse() }\n", "", SURFACE_RS,
+                         {"ast -> eval", "ast -> surface"}),
+    "nested super stays in the file": (
+        "pub use surface::parse;\n",
+        "pub fn g() -> u8 { 1 }\n#[cfg(test)]\nmod tests {\n    use super::*;\n"
+        "    #[test]\n    fn t() { assert_eq!(g(), 1); }\n}\n",
+        "pub fn h() -> u8 { 2 }\nmod tests {\n    use super::*;\n    pub fn k() -> u8 { h() }\n}\n",
+        SURFACE_RS, set()),
+}
+
+
+def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str) -> Path:
+    source = root / "src"
+    source.mkdir(parents=True)
+    (root / "Cargo.toml").write_text('[package]\nname = "fixture"\nversion = "0.0.0"\nedition = "2024"\n'
+                                     "[lib]\npath = \"src/lib.rs\"\n")
+    (source / "lib.rs").write_text("#![allow(dead_code, unused_imports)]\nmod ast;\nmod eval;\n"
+                                   "mod surface;\n" + lib)
+    for name, text in (("ast", ast), ("eval", eval_), ("surface", surface)):
+        (source / f"{name}.rs").write_text(text)
+    return source
+
 
 class LayerSelectionTests(unittest.TestCase):
     def test_app_change_keeps_cross_cutting_tests_and_app_consumer(self):
@@ -380,8 +438,8 @@ class LayerSelectionTests(unittest.TestCase):
 
     def test_rust_module_ledger_matches_the_tree(self):
         source = check_rust_deps.WORKSPACE / "ve-core/src"
-        edges, unmapped = check_rust_deps.module_edges("ve-core", source, check_rust_deps.MODULE_GROUPS["ve-core"])
-        self.assertEqual(unmapped, [])
+        edges, errors = check_rust_deps.module_edges("ve-core", source, check_rust_deps.MODULE_GROUPS["ve-core"])
+        self.assertEqual(errors, [])
         self.assertEqual(edges, set(json.loads(check_rust_deps.MODULE_LEDGER.read_text())))
         self.assertEqual(edges, {"ve-core: environment -> route", "ve-core: model -> eval",
                                  "ve-core: wire -> surface"})
@@ -428,6 +486,31 @@ class LayerSelectionTests(unittest.TestCase):
             with (patch.object(check_rust_deps, "WORKSPACE", root),
                   patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
                 self.assertEqual(check_rust_deps.main(["--crates-only"]), 0, error.getvalue())
+
+    def test_rust_module_paths_resolve_generics_and_reexports(self):
+        groups = check_rust_deps.MODULE_GROUPS["ve-core"]
+        for name, (lib, ast, eval_, surface, expected) in RUST_MODULE_CASES.items():
+            with self.subTest(name), TemporaryDirectory() as directory:
+                source = rust_module_fixture(Path(directory), lib, ast, eval_, surface)
+                edges, errors = check_rust_deps.module_edges("ve-core", source, groups)
+                self.assertEqual(errors, [])
+                self.assertEqual(edges, {f"ve-core: {edge}" for edge in expected})
+
+    def test_unsupported_rust_module_constructs_fail_closed(self):
+        groups = check_rust_deps.MODULE_GROUPS["ve-core"]
+        for lib, surface, construct in (
+            ('#[path = "surface.rs"]\nmod other;\n', SURFACE_RS, "#[path"),
+            ("", SURFACE_RS + "#[macro_export]\nmacro_rules! parsed { () => { 0u8 }; }\n", "#[macro_export"),
+            ("#[macro_use]\nmod macros {}\n", SURFACE_RS, "#[macro_use"),
+            ('include!("surface.rs");\n', "", "include!"),
+            ("extern crate self as fixture;\n", SURFACE_RS, "extern crate self"),
+        ):
+            with self.subTest(construct), TemporaryDirectory() as directory:
+                source = rust_module_fixture(Path(directory), lib, "", "", surface)
+                _, errors = check_rust_deps.module_edges("ve-core", source, groups)
+                self.assertEqual(len(errors), 1, errors)
+                self.assertTrue(errors[0].startswith("unsupported Rust construct: ve-core: "), errors)
+                self.assertIn(repr(construct), errors[0])
 
 
 if __name__ == "__main__":
