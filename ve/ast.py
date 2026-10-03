@@ -332,8 +332,9 @@ _LEAN_TYPED_LIMIT = 1 << 16
 @semantic_entry("typing")
 def check_formula(env: Environment, formula: Formula) -> Formula:
     """Check a closed formula. Open formulas are never accepted as claims."""
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     if authority_for("typing") == "python" or not _typing_in_scope(env):
+        note_uncompared("typing", "typing-scope")
         _Checker(env).formula(formula)
         return formula
     from .backends.lean_runner import run
@@ -368,8 +369,9 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
 def check_document(env: Environment, document: Document) -> Document:
     if type(document) is not Document or not document.formulas:
         raise SyntaxError("A document must contain at least one formula")
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     if authority_for("typing") == "python" or not _typing_in_scope(env):
+        note_uncompared("typing", "typing-scope")
         checker = _Checker(env)
         for formula in document.formulas:
             checker.formula(formula)

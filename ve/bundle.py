@@ -135,7 +135,7 @@ def check_bundle(data, *, lean_executable=None):
     verdict (`bundle_sound`); the report (leaves, reading choices, English) is
     built by the Python walk, which also names a rejection both make.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
 
     def python():
         return _check_bundle_python(data, lean_executable=lean_executable)
@@ -144,8 +144,9 @@ def check_bundle(data, *, lean_executable=None):
         return python()
     mode = _lean_bundle_mode(data)
     if mode is None:
+        note_uncompared("bundle", "bundle-scope")
         return python()
-    return execute("bundle", {"kind": "bundle"}, python,
+    return execute("bundle", {"bundle": data, "lean_executable": lean_executable}, python,
                    lean=lambda: _explicit_lean(_check_bundle_lean(data, mode), data, lean_executable))
 
 

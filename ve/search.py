@@ -226,7 +226,9 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
             raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
         return result
 
-    return execute("countermodel_check", case, python, lean=lean, rust=rust)
+    # The Rust case drops scopes that constrain no model; the payload names the environment itself.
+    return execute("countermodel_check", {"environment_id": env.environment_id, **case}, python,
+                   lean=lean, rust=rust)
 
 
 def _used_predicates(*formulas: Any) -> frozenset[str]:
@@ -734,7 +736,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                                   meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
                                   semantic_nonvacuity)
 
-    return execute("countermodel_search", case, python, lean=rust, rust=rust)
+    return execute("countermodel_search", {"environment_id": env.environment_id, **case}, python,
+                   lean=rust, rust=rust)
 
 
 def _find_distinguishing_model_python(env: Any, a: Any, b: Any, *, max_domain_size: int = 2,
@@ -898,4 +901,5 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
                                   meaning_id(env, nonvacuous_for) if nonvacuous_for is not None else None,
                                   semantic_nonvacuity)
 
-    return execute("distinguishing_model", case, python, lean=rust, rust=rust)
+    return execute("distinguishing_model", {"environment_id": env.environment_id, **case}, python,
+                   lean=rust, rust=rust)

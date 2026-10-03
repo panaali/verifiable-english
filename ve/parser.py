@@ -374,14 +374,16 @@ def parse_with_metadata(env: Any, source: str | bytes) -> ParseResult:
     metadata, names a rejection both make, and its document must be Lean's
     (the same AST and, where Lean prints, the same canonical text).
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
 
     def python():
         return _parse_python(env, source)
 
     if authority_for("parse") in ("python", "rust-experimental") or not _lean_parse_scope(env):
+        note_uncompared("parse", "parse-scope")
         return python()
-    return execute("parse", {"kind": "parse"}, python, lean=lambda: _parse_lean(env, source, python))
+    return execute("parse", {"environment": env, "source": source}, python,
+                   lean=lambda: _parse_lean(env, source, python))
 
 
 def _parse_lean(env: Any, source: str | bytes, python) -> ParseResult:

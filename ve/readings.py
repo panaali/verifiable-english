@@ -454,7 +454,7 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     and Lean's `readings` mode must confirm an ALL, NONE or SOME verdict from
     its evidence (`lean/VE/Service/Readings.lean`).
     """
-    from .backends.dispatch import authority_for, composed, execute
+    from .backends.dispatch import authority_for, composed, execute, note_uncompared
     options = {"max_steps": max_steps, "max_domain_size": max_domain_size, "max_models": max_models,
                "max_evaluations": max_evaluations, "fixed": fixed, "joint_choices": joint_choices,
                "couplings": couplings}
@@ -463,20 +463,22 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
         return _check_readings_python(env, sets, conclusion_ast, **options)
 
     if authority_for("readings") in ("python", "rust-experimental") or not _lean_readings_scope(env):
+        note_uncompared("readings", "readings-scope")
         return python()
+    payload = {"environment": env, "sets": sets, "conclusion": conclusion_ast, **options}
     if couplings:
         # Coupled choices (docs/spec/rights-PLAN.md) have no Lean interface yet:
         # every per-choice certificate and model is checked on the backend, and
         # the coupled enumeration and its verdict stay Python's (trusted,
         # narrowed; a recorded gap).
-        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
+        return execute("readings", payload, python, lean=composed("lean", python))
     if joint_choices is not None:
         # Discourse joint choices (docs/spec/discourse.md) have no Lean
         # interface yet either: each choice's certificate and model is checked
         # on the backend, and the joint enumeration and its verdict stay
         # Python's (a recorded gap, as for couplings).
-        return execute("readings", {"kind": "readings"}, python, lean=composed("lean", python))
-    return execute("readings", {"kind": "readings"}, python,
+        return execute("readings", payload, python, lean=composed("lean", python))
+    return execute("readings", payload, python,
                    lean=lambda: _check_readings_lean(env, sets, conclusion_ast, options))
 
 

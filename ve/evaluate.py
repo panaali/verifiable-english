@@ -272,4 +272,5 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
             raise CheckerUnavailable("CheckerUnavailable: Lean and Rust evaluation disagree")
         return result
 
-    return execute("evaluate", case, python, lean=lean, rust=rust)
+    # The Rust case drops scopes that constrain no model; the payload names the environment itself.
+    return execute("evaluate", {"environment_id": env.environment_id, **case}, python, lean=lean, rust=rust)

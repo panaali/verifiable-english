@@ -292,7 +292,7 @@ class Environment:
     @semantic_entry("environment")
     def __init__(self, data, *, _generated_reports=False):
         """Decode and validate an environment under the selected authority."""
-        from .backends.dispatch import authority_for, execute
+        from .backends.dispatch import authority_for, execute, note_uncompared
 
         def python():
             self._decode(data, _generated_reports=_generated_reports)
@@ -301,15 +301,17 @@ class Environment:
         # rust-experimental covers evaluation and search only; environments
         # keep the Python decoder there, as before any adapter existed.
         if _generated_reports or authority_for("environment_validation") in ("python", "rust-experimental"):
+            note_uncompared("environment_validation", "environment-generated-reports")
             python()
             return
         from .backends.validation import environment_in_scope, validated_environment
         if not environment_in_scope(data):
             # Statement-layer and legacy envelopes are validated by their own
             # routes; Lean's environment mode does not take them.
+            note_uncompared("environment_validation", "environment-scope")
             python()
             return
-        execute("environment_validation", {"kind": "environment"}, python,
+        execute("environment_validation", {"environment": data}, python,
                 lean=lambda: validated_environment(self, data, python))
 
     def _decode(self, data, *, _generated_reports=False):

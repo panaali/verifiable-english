@@ -678,15 +678,17 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
     replays with labelled generated premises belong to the retained proof
     generator and stay Python's.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     args = (env, premises, conclusion, certificate)
     options = {"max_steps": max_steps, "_background": _background,
                "_generated_premises": _generated_premises}
     if (authority_for("certificate_replay") == "python" or not _background
             or _generated_premises is not None):
+        note_uncompared("certificate_replay", lambda: (
+            "certificate-self-replay" if not _background else "certificate-generated-premises"))
         return _check_certificate_python(*args, **options)
-    payload = {"environment_id": getattr(env, "environment_id", None),
-               "certificate": certificate if type(certificate) is dict else None}
+    payload = {"environment": env, "premises": premises, "conclusion": conclusion,
+               "certificate": certificate, "max_steps": max_steps}
     return execute("certificate_replay", payload,
                    lambda: _check_certificate_python(*args, **options),
                    lean=lambda: _check_certificate_lean(env, premises, conclusion, certificate, max_steps))

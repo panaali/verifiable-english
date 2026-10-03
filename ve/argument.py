@@ -568,7 +568,7 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
     composition additionally needs Lean's `graph` report for the root, whose
     projection must be the record's composition exactly.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     options = {"search": search, "max_proof_steps": max_proof_steps, "max_domain_size": max_domain_size,
                "max_models": max_models, "max_evaluations": max_evaluations,
                "lean_executable": lean_executable}
@@ -577,8 +577,10 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
         return _check_argument_python(graph, **options)
 
     if authority_for("graph") in ("python", "rust-experimental") or not _lean_graph_scope(graph):
+        note_uncompared("graph", "graph-scope")
         return python()
-    return execute("graph", {"kind": "graph"}, python, lean=lambda: _check_argument_lean(graph, options))
+    return execute("graph", {"graph": graph, **options}, python,
+                   lean=lambda: _check_argument_lean(graph, options))
 
 
 def _check_argument_lean(graph, options):

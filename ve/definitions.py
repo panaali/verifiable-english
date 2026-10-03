@@ -96,7 +96,7 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
     ``entries`` contains identity-bound body payloads from the vocabulary.
     Under a backend authority Lean validates and orders them (`_compile_lean`).
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     from .backends.validation import model_in_scope
 
     def python():
@@ -104,8 +104,10 @@ def compile_definitions(env: Environment, entries: dict[str, dict], *,
 
     if authority_for("definitions_elaboration") in ("python", "rust-experimental") \
             or not model_in_scope(env):
+        note_uncompared("definitions_elaboration", "definitions-scope")
         return python()
-    return execute("definitions_elaboration", {"environment_id": env.environment_id, "version": version},
+    return execute("definitions_elaboration",
+                   {"environment_id": env.environment_id, "entries": entries, "version": version},
                    python, lean=lambda: _compile_lean(env, entries, version, python))
 
 

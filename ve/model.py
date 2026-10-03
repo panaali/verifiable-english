@@ -78,7 +78,7 @@ class FiniteModel:
         `model_id` an existing `FiniteModel` claims; each must be the
         recomputed identity.
         """
-        from .backends.dispatch import authority_for, execute
+        from .backends.dispatch import authority_for, execute, note_uncompared
 
         def python():
             if _claimed is not None and _claimed["environment_id"] != env.environment_id:
@@ -91,11 +91,13 @@ class FiniteModel:
         # rust-experimental covers evaluation and search only; its witnesses
         # keep the Python decoder, as before any adapter existed.
         if _defer_model_id or authority_for("model_validation") in ("python", "rust-experimental"):
+            note_uncompared("model_validation", "model-deferred-id")
             return python()
         from .backends.validation import model_in_scope, validated_model
         if not model_in_scope(env):
+            note_uncompared("model_validation", "model-scope")
             return python()
-        return execute("model_validation", {"kind": "model"}, python,
+        return execute("model_validation", {"environment": env, "model": wire, "claimed": _claimed}, python,
                        lean=lambda: validated_model(env, wire, python, claimed=_claimed))
 
     @classmethod

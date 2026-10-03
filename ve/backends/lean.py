@@ -25,11 +25,29 @@ import subprocess
 import json
 import sys
 
+from functools import wraps
+
 from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
+from .dispatch import lean_only
 
 
+def _handoff(batch: bool = False, rows=None):
+    """A function that hands cases to a statement-layer route with no Python
+    implementation: at `VE_AUTHORITY=shadow` it writes one `lean-only` record
+    per case (docs/spec/mig3.md 2.6) and otherwise changes nothing."""
+    def wrap(function):
+        @wraps(function)
+        def handoff(executable, cases, **options):
+            return lean_only(executable, cases if batch else [cases],
+                             lambda: function(executable, cases, **options),
+                             rows or (lambda result: result if batch else [result]))
+        return handoff
+    return wrap
+
+
+@_handoff()
 def run_soft_case(executable, case):
     """Transport one soft route case through the shared Lean process boundary."""
     try:
@@ -169,6 +187,7 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     return rows
 
 
+@_handoff()
 def run_alternatives_case(executable, case: dict, *, timeout: float) -> dict:
     """Transport a raw alternatives case to its dedicated Lean runner."""
     try:
@@ -191,6 +210,8 @@ def run_alternatives_case(executable, case: dict, *, timeout: float) -> dict:
     return rows[0]
 
 
+@_handoff(rows=lambda result: [{"returncode": result[0], "stdout": result[1].decode("utf-8", "replace"),
+                             "stderr": result[2].decode("utf-8", "replace")}])
 def run_discourse_case(executable, case: dict, *, timeout: float):
     """Transport one discourse case to `ve_discourse_route`: its exit status, stdout and stderr
     bytes. The caller (`ve/discourse.py` `lean_admission`) checks the answer; a route that cannot
@@ -203,6 +224,7 @@ def run_discourse_case(executable, case: dict, *, timeout: float):
     return proc.returncode, proc.stdout, proc.stderr
 
 
+@_handoff()
 def run_reports_case(executable, case: dict, *, timeout: float) -> dict:
     """Transport one reports case through the shared Lean process boundary."""
     try:
@@ -225,6 +247,7 @@ def run_reports_case(executable, case: dict, *, timeout: float) -> dict:
     return rows[0]
 
 
+@_handoff(batch=True)
 def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
     """Transport cases to `ve_norm_defaults_route`: one row per case, in order. A row with
     `status: error` is Lean's rejection of that case; a route that cannot start, does not
@@ -244,6 +267,7 @@ def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 1
     return rows
 
 
+@_handoff(batch=True)
 def run_readings_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
     """Transport cases to `ve_readings_route` (composition-s1.md 8.4): one row per case, in order.
 

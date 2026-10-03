@@ -436,7 +436,7 @@ def _claim_json(env, claim):
 @semantic_entry("admission")
 def admit_document(environment, document) -> dict:
     """Admit a document under the selected checker authority."""
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     from .backends.lean_runner import run
     from .backends.lean_service import CheckerUnavailable
 
@@ -446,6 +446,7 @@ def admit_document(environment, document) -> dict:
     if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
             "soft-norms@0" in environment.get("profiles", [])):
         # The soft route is Lean's (soft_route.admit_soft_document runs it).
+        note_uncompared("admission", "admission-soft")
         return _admit_document_python(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
     case = {"id": "admission", "kind": "admission", "environment": env.to_dict(),

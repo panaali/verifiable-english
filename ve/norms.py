@@ -336,8 +336,9 @@ class NormDocument:
     def elaborate(self, predicate):
         """The generated layer premise of `predicate`, from the selected authority."""
         self._require_completion()
-        from .backends.dispatch import authority_for, execute
+        from .backends.dispatch import authority_for, execute, note_uncompared
         if authority_for("norms_elaborate") == "python" or not _lean_route(self):
+            note_uncompared("norms_elaborate", "norms-route")
             return self._elaborate_python(predicate)
 
         def lean():
@@ -363,8 +364,9 @@ class NormDocument:
     def premises(self):
         """The labelled layer premises in layer order, from the selected authority."""
         self._require_completion()
-        from .backends.dispatch import authority_for, execute
+        from .backends.dispatch import authority_for, execute, note_uncompared
         if authority_for("norms_elaborate") == "python" or not _lean_route(self):
+            note_uncompared("norms_elaborate", "norms-route")
             return self._premises_python()
 
         def lean():
@@ -502,11 +504,12 @@ def check_norm_entailment_certificate(document: NormDocument, premises, conclusi
     """Replay the same ordered premise list used by `norms-certificate`."""
     if not isinstance(document, NormDocument):
         raise VEError("UnsupportedProfile: soft rules require the soft route")
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     if authority_for("norms_certificate") == "python" or not _lean_route(document):
+        note_uncompared("norms_certificate", "norms-route")
         return _norm_certificate_python(document, premises, conclusion, certificate)
-    payload = {"document_hash": document.document_hash,
-               "certificate": certificate if type(certificate) is dict else None}
+    payload = {"document_hash": document.document_hash, "premises": premises,
+               "conclusion": conclusion, "certificate": certificate}
     return execute("norms_certificate", payload,
                    lambda: _norm_certificate_python(document, premises, conclusion, certificate),
                    lean=lambda: _norm_certificate_lean(document, premises, conclusion, certificate))
@@ -600,12 +603,13 @@ def check_conflict(document: NormDocument, *, model=None, certificates=None,
         raise VEError("UnsupportedProfile: soft rules require the soft route")
     document._require_completion()
     _reject_filling(document, model)
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     options = {"model": model, "certificates": certificates, "max_evaluations": max_evaluations,
                "prove": prove, "tableau_steps": tableau_steps}
     if authority_for("norms_conflict") == "python" or not _lean_route(document):
+        note_uncompared("norms_conflict", "norms-route")
         return _check_conflict_python(document, **options)
-    return execute("norms_conflict", {"document_hash": document.document_hash, "prove": prove},
+    return execute("norms_conflict", {"document_hash": document.document_hash, **options},
                    lambda: _check_conflict_python(document, **options),
                    lean=lambda: _check_conflict_lean(document, **options))
 

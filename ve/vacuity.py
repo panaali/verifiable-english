@@ -24,7 +24,7 @@ def premise_status(env, premises, *, max_proof_steps=10_000, max_domain_size=2,
     def run():
         return _premise_status(env, premises, **budgets)
 
-    payload = {"environment_id": getattr(env, "environment_id", None), **budgets}
+    payload = {"environment": env, "premises": premises, **budgets}
     return execute("premise_status", payload, run, lean=composed("lean", run),
                    rust=composed("rust-experimental", run))
 

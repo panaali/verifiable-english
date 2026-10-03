@@ -254,17 +254,20 @@ def validate_background(env, model) -> None:
     without an identity (`_defer_model_id`) and environments outside Lean's
     model mode keep the Python checks.
     """
-    from .backends.dispatch import authority_for, execute
+    from .backends.dispatch import authority_for, execute, note_uncompared
     from .backends.validation import model_in_scope, validated_model
     if (authority_for("model_validation") in ("python", "rust-experimental") or not model_in_scope(env)
             or getattr(env, "soft_premises", ()) or not getattr(model, "model_id", "")):
+        note_uncompared("model_validation", lambda: (
+            "background-scope" if not model_in_scope(env) else
+            "background-soft" if getattr(env, "soft_premises", ()) else "background-no-model-id"))
         return _validate_background_python(env, model)
 
     def python():
         _validate_background_python(env, model)
         return model
 
-    execute("model_validation", {"kind": "model"}, python,
+    execute("model_validation", {"environment": env, "background_of": model, "model_id": model.model_id}, python,
             lean=lambda: validated_model(env, model.to_dict(), python))
 
 

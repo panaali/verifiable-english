@@ -188,7 +188,7 @@ def compare(env, a: Formula, b: Formula, budgets: Budgets | dict | None = None) 
     def run():
         return _compare(env, a, b, budgets)
 
-    payload = {"environment_id": getattr(env, "environment_id", None), **asdict(budgets)}
+    payload = {"environment": env, "a": a, "b": b, **asdict(budgets)}
     return execute("compare", payload, run, lean=composed("lean", run),
                    rust=composed("rust-experimental", run))
 
