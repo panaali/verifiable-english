@@ -414,12 +414,15 @@ R6  the sentences of this document cannot all be true together.                 
 
 ### 2.5 Examples
 
-On fixture M4 (9.2): E26 with R2, "Under every reading of the open sentence, the conclusion follows: *Every agent
-must help each user.*" followed by E13, "This does not depend on how sentence 1 is read." On M4's second conclusion
-(SOME): "Read sentence 1 as *must*: the conclusion follows: *Every agent must avoid deceiving each user.*" and "Read
-sentence 1 as *should*: the conclusion does not follow. It fails here: a is an agent; u is a user; suppose the decider
-decides the exception applies to a and u." On M3: "Read sentence 1 as *must*: two rules contradict each other here: a
-is an agent; u is a user." On M5: E26 with R2, then E3 and E7, "Sentence 1 is not read as *should*, because of
+On fixture M4 (9.2): E26 with R2, "Under every reading of the open sentence, the conclusion follows: *For every
+agent, for every user, that agent must help that user.*" followed by E13, "This does not depend on how sentence 1 is
+read." On M4's second conclusion (SOME): "Read sentence 1 as *must*: the conclusion follows: *For every agent, for
+every user, that agent must avoid deceiving that user.*" and "Read sentence 1 as *should*: the conclusion does not
+follow. It fails here: a is an agent; u is a user; suppose the decider decides the exception applies to a and u." (As
+built, `<conclusion>` is the existing English surface's sentence of the formula, read back by its all-derivations
+parser; draft 5's *Every agent must help each user.* was the rule surface, which does not render a formula; and the
+element names of `<situation>` are the checked model's.) On M3: "Read sentence 1 as *must*: two rules contradict
+each other here: a is an agent; u is a user." On M5: E26 with R2, then E3 and E7, "Sentence 1 is not read as *should*, because of
 sentence 2." On M6 with its narrowing: E17, "No compatible way of reading the open sentences reads sentence 2 as
 *should*." On M9: E29, "The readings of sentences 1 and 2 were checked one way at a time, not together."
 
@@ -474,9 +477,16 @@ After S1's admission (its 4.1, unchanged, through the separation check and coupl
    `superposable D` decides between the last two rows (1.8): `supReady D`, `uniformPrecedence D`, `sup D` (1.4)
    and the chain's well-formedness on it are computed here and nothing else of 1.2 to 1.9; when it is false, the
    finding `ReadingsNotSuperposable` with its cause (1.8, 7) and the enumerated route.
-3. On the superposed and enumerated routes: computes `choiceCore D` (1.6). If Python's search finds no compatible
-   choice, Lean checks a certificate of `⊥` from `choiceCore D`: `ReadingsUnsatisfiable: <ids>` (7); without the
-   certificate, `UNKNOWN`. Dead readings are certified here (`DeadReading`, 1.9).
+3. On the superposed and enumerated routes: computes `choiceCore D` (1.6). If no choice is compatible, the document
+   is refused with `ReadingsUnsatisfiable: <ids>` (7) before any verdict. As built (review A1 of 2026-10-03), Lean
+   decides it with its own exhaustive search (`choices D = []`, sound by `no_compatible_of_choices`) in
+   `readings-elaborate` and in the replay of every superposed case kind (`SupReplay.sat`), and Python's search must
+   agree; `readings-dead` still checks a certificate of `⊥` from `choiceCore D`. Dead readings are certified here
+   (`DeadReading`, 1.9). Before any verdict the route also checks every compatible choice's document (DRI ruling 5):
+   on the superposed route the soft check of each, up to 1024 compatible choices (`choicesSoftChecked`; past them
+   the superposed case kinds refuse with `ResourceLimit: more than 1024 readings to check`), on the enumerated route
+   the chain's check of each of the at most 64 it enumerates; a choice whose document fails is the chain's
+   diagnostic under the choice (7).
 4. Superposed (`superposable D = true` at step 2): builds `Choice_D` (1.6) on `sup D` and hands `sup D` with
    `slotP D` to the route `dispatch` names for the list without `readings@1` (`soft`, or `norms` checked as 1.1
    says), which runs its checks relative to the slot (composition.md 4.3): conflict-freedom certified or witnessed,
@@ -594,7 +604,13 @@ pending` (S1 4.8) until S2b.
 ### 4.10 `norm-defaults@0`
 
 Composition.md 6 asks each stage to state the `fill` instance for the routes it sits on. S2a's is: not built; S1's
-abstention `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` stays. The instance is the
+abstention `UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented` stays. DRI ruling 4 (2026-10-03,
+the constitution pilot of run 20261003T0600Z) requires that the abstention, or W2's route, is what such a document
+reaches: the frame of a `norm-defaults@0` environment is read with each `unspecified` completion as the placeholder
+`deny` (norm-defaults 2.3's E‴; Lean `placeholderFrame`, Python's S1 environment), so a content-bearing set reaches
+the abstention instead of a decoder text, and a document whose sets have no content (the pilot's main translation
+with `readings@1` added) is W2's, answering as without the profile; the filled document's base environment sets
+`readings@1` aside with `norms@0`. The pilot's case is the fixture `tests/data/readings_s2/constitution-nd-readings.ve.md`. The instance is the
 plan's (2.9, open question 13): `fill` runs on `sup D`'s tree last; `unsaid__p` is per predicate and shared by every
 candidate, so it has no owner and no quiescence premise; `Fill_T` joins the slot after `Choice_D`. The constitution's
 main translation uses the profile (composition-s1-measured.md), so the pilot of section 11 runs on the document S1's
@@ -630,6 +646,14 @@ per verdict its evidence form, the choice or choices named and the `readings:` l
 W2's structural validation of sets stays Python's (S1 4.1). Residual lines: `reading_premises`, `dead_readings`
 (composition.md 7), `slot_premises_used` by family.
 
+As built (review of 2026-10-03): `ve document check` reports `premises` from 4.5 or 4.6 (with `route`, the choice a
+model encodes, and per candidate `model`, `dead`, `narrowed` for a candidate a narrowing in force drops,
+`INCONSISTENT` or `UNKNOWN`), or the pending row's UNKNOWN; the `readings` block adds `choices_checked`, `conflict`
+(the status under every reading with its evidence form, and its `conditional_on`), `status` (its line),
+`dead_readings` (each certified by `readings-dead`; `null` when the compatible choices were too many to enumerate,
+never an unchecked empty list) and `english` (2.3's sentences, each through the gate of 2). `ve document readings
+--conclusion` answers ALL, SOME or NONE across readings (`--under <set>:<i>` names readings), with its English.
+
 `conditional_on`: `soft:coherence:*` of `sup D`, then the slot labels used, verbatim, in slot order (composition.md 3).
 A coherence label of `sup D` names rule names as `sup D` has them; the report's `names` table maps each qualified name
 to its set, version, index and author name, so a reader of the JSON can resolve it. Status text: the lower route's
@@ -657,7 +681,8 @@ New in S2a:
 | `UNKNOWN (conflict status: <status>)` | 4.5: an entailment asked under readings whose conflict status is not CONFLICT-FREE | status |
 | `InvalidInput: name <n> begins with ve__` | S1's text, unchanged, for a frame constant `ve__here` or a frame predicate `ve__bit__<n>__<j>`: the decoders refuse it before the route is chosen (4.1 step 1); `choiceFresh`, a conjunct of `supReady` (1.8), is its Lean counterpart on a `Doc` value (DRI ruling 1; fixture M19) | error |
 | `ResourceLimit: decision predicate <name>` | the soft decoder's text, unchanged, for a generated decision predicate beyond `MAX_IDENTIFIER_BYTES`: on `sup D` it is the cause of `ReadingsNotSuperposable` (1.8, M16), on a candidate's or a choice's document the chain's error; Lean's `chainWF` carries it as `namesFit` (DRI ruling 2) | finding on `sup D`, error otherwise |
-| `<chain diagnostic> under <set>@<v>:<i>[, <set>@<v>:<i>]*` | 4.6: a compatible choice whose document the chain refuses, the choice written in source order | error |
+| `<chain diagnostic> under <set>@<v>:<i>[, <set>@<v>:<i>]*` | 4.6: a compatible choice whose document the chain refuses, the choice written in source order; as built (DRI ruling 5) on the superposed route too, for the soft check of every compatible choice's document (4.1 step 3) | error |
+| `ResourceLimit: more than 1024 readings to check` | DRI ruling 5: the superposed case kinds past 1024 compatible choices, whose documents the route has not checked; `readings-elaborate` reports `choices_checked: "over 1024"` and every superposed verdict is UNKNOWN with this reason | error of the verdict kinds |
 | `CheckerUnavailable` | 4.2: Python's `readings-elaborate` differs from Lean's | error, never a verdict |
 
 Unchanged: S1's texts; every W1, soft, rights and P0 text; `dispatch`'s texts; W2's budget shape for UNKNOWN.
@@ -805,6 +830,16 @@ def maxChoices : Nat := 64
 def choices (D : Doc) : List Choice
 theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).length ≤ maxChoices) (c : Choice) :
   c ∈ choices D ↔ Compatible D c
+/-- 4.1 step 3 as built (review A1 of 2026-10-03): Lean decides that no choice is compatible by its own search. -/
+theorem exists_compatible_of_choices (D : Doc) (h : (choices D).isEmpty = false) : ∃ c, Compatible D c
+theorem no_compatible_of_choices (D : Doc) (hr : supReady D = true) (h : (choices D).isEmpty = true) :
+  ¬ ∃ c, Compatible D c
+/-- DRI ruling 5 (2026-10-03): the route's soft check of every compatible choice's document, up to maxChoiceChecks. -/
+def maxChoiceChecks : Nat := 1024
+def checkedChoices (D : Doc) : List Choice      -- the compatible choices, cut after maxChoiceChecks + 1
+def choicesSoftChecked (D : Doc) : Bool :=
+  decide ((checkedChoices D).length ≤ maxChoiceChecks) &&
+    (checkedChoices D).all (fun c => VE.SoftNorms.WellFormedSoft (choiceDoc D c).1.soft)
 
 /-! ## The choice vocabulary and the atoms (1.3) -/
 
@@ -1037,9 +1072,11 @@ theorem sup_no_sets (D : Doc) (h : D.sets = []) :
 theorem sup_wellFormed (D : Doc) (hs : superposable D = true) :
   chainWF D.chain (sup D).1 = true ∧ WellFormedSoft (correlate (sup D).1) = true
 /-- Needs the cross-set check of S1 4.3, a conjunct of WellFormedDoc: without it two chosen candidates could declare
-    one name. -/
+    one name. By DRI ruling 5 (2026-10-03) the soft check of the choice's document is the route's runtime check
+    `choicesSoftChecked`, discharged by the replays (`SupReplay.checked`); the unconditional statement is a
+    follow-up item and is not claimed. -/
 theorem choice_wellFormed (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights) (hs : superposable D = true)
-    (c : Choice) (hc : Compatible D c) : sideWF D (choiceDoc D c) = true
+    (hw : choicesSoftChecked D = true) (c : Choice) (hc : Compatible D c) : sideWF D (choiceDoc D c) = true
 theorem asserted_shared (D : Doc) (h : WellFormedDoc D = true) (hr : supReady D = true) (c : Choice)
     (hc : Compatible D c) :
   ∀ a ∈ (choiceDoc D c).2, a.WellFormed (sharedEnv D) []
@@ -1202,7 +1239,8 @@ structure, because the author's formulas mention no choice symbol (S1's reserved
 `choiceFresh` (DRI ruling 1): without it each is false of a frame that declares the choice vocabulary (M19). `choice_wellFormed`'s size part is the one proof risk the review should
 weigh: every check of the chain's well-formedness on a choice's document is a check on a sub-tree of `sup D`'s with
 shorter names and smaller unfolded carve-outs, but the limits are counted on the whole document and the argument
-must be made for each (13.5).
+must be made for each (13.5). As built (DRI ruling 5), the route runs that check on every compatible choice's
+document at runtime (`choicesSoftChecked`, up to 1024 choices) and `choice_wellFormed` takes its success as `hw`.
 
 ### 8.5 `Route.lean`, `Wire.lean`, `Run.lean`
 
@@ -1214,7 +1252,12 @@ structure SupReplay where
   wf : WellFormedDoc D = true
   soft : D.chain ≠ .rights
   sp : superposable D = true
+  sat : (choices D).isEmpty = false               -- 4.1 step 3: never a verdict over no reading (review A1)
+  checked : choicesSoftChecked D = true           -- DRI ruling 5: every compatible choice's document checked
 def replaySup (j : Lean.Json) : Except String SupReplay
+theorem readings_wire_satisfiable (j : Lean.Json) (r : SupReplay) (h : replaySup j = .ok r) : ∃ c, Compatible r.D c
+theorem readings_wire_choice_wellFormed (j : Lean.Json) (r : SupReplay) (h : replaySup j = .ok r) :
+    ∀ c, Compatible r.D c → sideWF r.D (choiceDoc r.D c) = true
 structure CertificateReplay extends SupReplay where
   assumed : Choice
   hA : ∀ x ∈ assumed, (candidate D x.1 x.2).isSome
@@ -1362,8 +1405,10 @@ plan's open question 5 (a per-component split) is the next design if `MAX_NODES`
 Regeneration: `sup D`, `Choice_D`, the name map, the compatible choices and every formula evaluated are recomputed
 from the decoded document at every trusted site and bound to the chain's document hash (4.2). Python: `ve/readings_sup.py`
 regenerates `readings-elaborate`; `ve/readings_route.py` compares it with Lean's byte for byte on every load
-(`CheckerUnavailable` on a difference), searches for certificates and models on `sup D` with the existing prover and
-model search over the regenerated premise lists, enumerates compatible choices with today's `coupled_choices`
+(`CheckerUnavailable` on a difference); `ve/readings_verdicts.py` searches for certificates and models on `sup D` with
+the existing prover and model search over the regenerated premise lists (a model first on a compatible choice's own
+document, lifted to `sup D` as `base_up` builds it, then on `sup D`; the slot labels a certificate uses are the
+ones it still needs when each is replaced by `⊤` in turn), enumerates compatible choices with today's `coupled_choices`
 extended by the narrowings in force, and renders section 2 (`Wording`); `ve/document.py` replaces its
 `superposition pending` branch by the verdicts of 4.5 and 4.6 and the UNKNOWN of 1.1. Rust: no elaboration; it
 evaluates the Python-generated slot premises, assertions, conflict targets and conclusions of `sup D` on every model
@@ -1514,3 +1559,4 @@ any of them.
 | 2026-10-03 | Draft 5, finding 4 | The S2a Lean build found `asserted_shared` false as stated: its only hypotheses are `WellFormedDoc` and compatibility, and S1's documents read sets and units by id, so with two open sets under one id (or two units under one id) an assertion is checked only beside another set's or unit's rules (fixture M20, a formal counterexample in `Examples.lean`). Applied, pending the DRI's confirmation: `supReady` gains `unitsDistinct` (the Lean counterpart of today's `duplicate or invalid unit id`), and `asserted_shared` gains `(hr : supReady D = true)`, which carries the distinct set and unit ids; every theorem that uses it has `hs` and so `hr`. |
 | 2026-10-03 | Draft 5, finding 5 | The S2a Lean build found `superpose_assertions` false with `ChoiceExtension` as written: it let `S'` reinterpret every predicate whose name begins `ve__bit__`, while `choiceFresh` (a decidable conjunct) keeps only the bits of `bitDecls D` out of the frame, so a frame predicate `ve__bit__9__9` used by a fixed assertion could be set true in `S'` and false in `S`. Applied, pending the DRI's confirmation: `ChoiceExtension` reinterprets exactly the choice vocabulary of `D` (the sort, `ve__here`, the names of `bitDecls D`), which is what its docstring says; `base_up`'s statement is unchanged and its witness reinterprets only those names. |
 | 2026-10-03 | Draft 5, finding 6 | The S2a Lean build found `base_up` ill-typed as written: `B` was quantified over every structure, so the conjunct `(pull D c B).relation p vs ↔ B₀.relation p vs` compared relations over two unrelated carriers (`ChoiceExtension` fixes `B`'s carrier only in a proof, not in the statement's typing). Applied, pending the DRI's confirmation: the extension is `{ B₀ with relation := R, domain := dom, constant := k }`, quantified by `R`, `dom` and `k`, which is what `ChoiceExtension` already required of it; nothing else in the statement changes. |
+| 2026-10-03 | Draft 5, review fixes | The Astra and Fable reviews of the S2a integration (`manage-agents/compose-s2-review-astra.final.md`, `reviews/compose-s2-review-fable.md`) applied to the as-built text, no statement of 8.4 weakened. A1: a document whose couplings and narrowings in force admit no compatible choice was accepted by the superposed case kinds over an inconsistent slot; Lean now decides it by its own search (`exists_compatible_of_choices`, `no_compatible_of_choices`), `SupReplay` carries `sat`, and the route refuses with `ReadingsUnsatisfiable` before any verdict (4.1 step 3, 8.3, 8.5, `readings_wire_satisfiable`). B1 (both) and DRI ruling 5: `choice_wellFormed` gains `(hw : choicesSoftChecked D = true)`, the route's runtime soft check of every compatible choice's document (up to 1024), carried by `SupReplay.checked` (`readings_wire_choice_wellFormed`), with the chain's text under the choice or `ResourceLimit: more than 1024 readings to check` (4.1, 7, 8.3, 8.4, 8.5). B2 (Astra) / B3 (Fable) and DRI ruling 4: the abstention of 4.10, or W2's route, is reached beside `norm-defaults@0` (the frame's placeholder `deny`), with the pilot's fixture. B3 (Astra) and B2 (Fable): the verdicts across readings, the report and `dead_readings` from checked evidence (6). B4 (Astra): the English of 2 registered and gated with all derivations; 2.5's `<conclusion>` is the existing English surface's sentence. |
