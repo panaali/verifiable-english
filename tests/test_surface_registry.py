@@ -32,6 +32,19 @@ def test_keywords_cover_statement_initial_literals():
         assert dispatch(keyword + "x")[0] == keyword
 
 
+def test_surface_record_fields():
+    # The kernel never consults a registered evaluator, typing or wire hook, so
+    # the record has no such slots (docs/ARCHITECTURE-LAYERS-PLAN2.md P1).
+    from dataclasses import fields
+    from ve.argument import _checker_build
+    assert [field.name for field in fields(SurfaceRecord)] == [
+        "wire_tag", "strict_form", "english_keywords", "fluent_form", "grammar_production",
+        "traversal_hooks", "witness_renderer", "node_type", "wire_arity", "parser_hook",
+        "strict_parser_hook", "printer_hook", "fluent_hook", "english_renderer", "grammar_hook",
+        "derivation_hook", "strict_grammar_hook", "fol_import_hook", "fol_export_hook", "profiles"]
+    assert re.fullmatch(r"[0-9a-f]{64}", _checker_build())
+
+
 def test_duplicate_keyword_refused():
     with pytest.raises(ValueError, match="Duplicate English keyword"):
         register(SurfaceRecord("test-duplicate", "", ("both ",), "", ""))
