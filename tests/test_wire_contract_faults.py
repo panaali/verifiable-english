@@ -411,3 +411,24 @@ def test_report_counts_deferrals_apart_from_residuals_and_refuses_a_row_without_
     value = wire_contract_gate.report()
     assert any("without an outcome" in problem for problem in value["mismatches"][0]["problems"])
     assert value["deferred"]["lean"] == 0 and value["residual"]["lean"] == 1
+
+
+def test_every_non_string_name_class_is_measured_and_signed():
+    """Fable B1: checks 2.7a and 2.8c spell a name that is not a string as compact JSON, Python's legacy
+    validator as Python's value. For each name list the corpus mutates an item to a Boolean, an array and an
+    object, whose two spellings differ, and to an integer, whose spellings agree; so each check's text
+    change is measured on the whole corpus and signed."""
+    from conformance.soft_norms import generated_invalid_soft_blocks
+    kinds = {"parties": set(), "ranks": set()}
+    for raw, _ in generated_invalid_soft_blocks():
+        block = raw["vocabulary"].get("soft")
+        for field in kinds:
+            values = block.get(field) if type(block) is dict else None
+            if type(values) is list and values and type(values[0]) is not str:
+                kinds[field].add(type(values[0]).__name__)
+    assert kinds["parties"] >= {"bool", "list", "dict"} and kinds["ranks"] >= {"bool", "list", "dict", "int"}
+    report = json.loads(REPORT.read_text())
+    measured = {row["check"]: row["text_changes"] for row in report["public_diagnostic_changes"]}
+    signed = json.loads(wire_contract_gate.SWITCH.read_text())["signed"]
+    for check in ("2.7a", "2.8c"):
+        assert measured.get(check, 0) > 0 and check in signed

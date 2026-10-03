@@ -22,7 +22,19 @@
         "record_code": "SOFT_INVALID_NAME",
         "record_text": "InvalidInput: invalid soft name false"
       },
-      "text_changes": 43
+      "text_changes": 138
+    },
+    {
+      "check": "2.8c",
+      "code_differences": 0,
+      "example": {
+        "case": "R:block:12",
+        "legacy_code": "SOFT_INVALID_NAME",
+        "legacy_text": "InvalidInput: invalid soft name False",
+        "record_code": "SOFT_INVALID_NAME",
+        "record_text": "InvalidInput: invalid soft name false"
+      },
+      "text_changes": 102
     },
     {
       "check": "3.2",
@@ -115,6 +127,6 @@
     "verdict_differences": []
   },
   "status": "public",
-  "three_way_cases": 8578,
+  "three_way_cases": 8796,
   "three_way_disagreements": []
 }
