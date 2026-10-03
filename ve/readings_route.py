@@ -21,12 +21,85 @@ from .readings_s1 import Admission, answer, wire
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_readings_route"
 
 
-def document_wire(units, reading_sets):
+def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     """The document as `ve_readings_route` reads it: every unit with its kind (1.2), content when it has one."""
-    return {"units": [{"id": unit["id"], "kind": unit["kind"],
-                       **({"content": unit["content"]} if unit.get("content") is not None else {})}
-                      for unit in units],
-            "reading_sets": reading_sets}
+    document = {"units": [{"id": unit["id"],
+                           **({"kind": unit["kind"]} if unit.get("kind") is not None else {}),
+                           **({"content": unit["content"]} if unit.get("content") is not None else {})}
+                          for unit in units], "reading_sets": reading_sets}
+    if couplings:
+        document["couplings"] = list(couplings)
+    if narrowings:
+        document["narrowings"] = list(narrowings)
+    return document
+
+
+def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), executable=LEAN_ROUTE):
+    """Ask the S2 Lean route to regenerate the admitted document's reading route.
+
+    The choice search is independently repeated in Python. A disagreement is an
+    operational failure, never a reading verdict. The S1 admission has already
+    checked the content and the W2 validators have checked the restrictions.
+    """
+    from .readings_s1 import Document, S1Environment
+    from .readings_sup import (choice_slot, choices, choice_vocabulary, name_map,
+                               superposed_units, uniform_precedence)
+
+    environment = wire(environment)
+    document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
+    [row] = run_lean([{"id": "readings-s2", "kind": "readings-elaborate",
+                       "environment": environment, "document": document}], executable=executable)
+    if row["status"] == "error":
+        raise VEError(row["error"])
+    senv = S1Environment(environment)
+    source = Document(senv, document)
+    sets = source.sets
+    content_bearing = any(a.content is not None and a.content.kind != "assertion"
+                          for reading_set in sets for a in reading_set.candidates)
+    if not content_bearing:
+        expected_route = "w2"
+    elif any(a.content is None for reading_set in sets for a in reading_set.candidates):
+        expected_route = "pending"
+    elif "norm-defaults@0" in senv.profiles:
+        expected_route = "abstention"
+    elif senv.chain == "rights":
+        expected_route = "enumerated"
+    else:
+        expected_route = None
+    if expected_route is not None and row.get("route") != expected_route:
+        raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 route")
+    if (expected_route is None and not uniform_precedence(source) and
+            (row.get("route") != "enumerated" or
+             not (row.get("finding") or {}).get("cause", "").startswith("precedence under "))):
+        raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 precedence")
+    if row.get("route") in ("superposed", "enumerated"):
+        found, over = choices(sets, couplings, narrowings)
+        expected = {"choice_count": "over 64" if over else len(found),
+                    "choices": "over" if over else [[[s.id, c[s.id]] for s in sets] for c in found],
+                    "narrowings_stale": [n["id"] for n in narrowings if
+                                          not any((s.id, s.version) == (n["set"], n["version"])
+                                                  for s in sets)]}
+        if any(row.get(key) != value for key, value in expected.items()):
+            raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 choices")
+        if row["route"] == "superposed":
+            vocabulary = choice_vocabulary(sets)
+            expected_vocabulary = {"sorts": vocabulary["sorts"], "constants": vocabulary["constants"],
+                                   "predicates": [{"name": name, "arguments": arguments}
+                                                  for name, arguments in vocabulary["predicates"].items()]}
+            if row.get("vocabulary") != expected_vocabulary:
+                raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 vocabulary")
+            if row.get("units") != superposed_units(source):
+                raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 units")
+            if row.get("names") != name_map(source):
+                raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 names")
+            try:
+                python_slot = choice_slot(source, couplings, narrowings)
+            except VEError as exc:
+                raise CheckerUnavailable(f"ReadingsConformance: Python could not regenerate the S2 slot: "
+                                         f"{_message(exc)}") from None
+            if row.get("slot") != [{"label": label, "ast": formula} for label, formula in python_slot]:
+                raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 slot")
+    return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
 def run_lean(cases, *, executable=LEAN_ROUTE):
@@ -132,9 +205,9 @@ def separate_many(environment, units, reading_sets, queries, *, executable=LEAN_
 
 CHECKED_BY = {
     "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): "
-            "ve_readings_route readings-validate",
-    "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: "
-              "Lean does not decode them); Python's regeneration of Lean's answer, byte for byte",
+            "ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+    "python": "W2 structure of the reading sets and regeneration of S1 admission; "
+              "S2 choices and choice vocabulary compared with Lean",
     "rust": "untrusted evaluation of every recorded situation (10)",
     "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"}
 
@@ -172,10 +245,18 @@ def report(doc):
                                     for c in entry["candidates"]],
                      "pairs": pairs, "findings": entry["findings"],
                      "not_certified": [f for f in entry["findings"] if f.endswith("(not certified)")]})
-    return {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
+    s2 = doc.get("readings_s2") or {"route": "pending"}
+    result = {"checked_by": CHECKED_BY, "sets": sets, "separations": separations, "findings": findings,
             "pending_candidates": pending,
             "couplings": len({item["axis"] for item in doc["meta"].get("couplings", [])}),
-            "status": "UNKNOWN: superposition pending"}
+            "route": s2["route"], "status": "UNKNOWN: superposition pending"}
+    if s2["route"] in ("superposed", "enumerated"):
+        result.update(choice_count=s2["choice_count"], narrowings_stale=s2["narrowings_stale"],
+                      reading_premises=[entry["label"] for entry in s2.get("slot", [])],
+                      dead_readings=[], not_superposable=s2["finding"])
+        if "sizes" in s2:
+            result["sizes"] = s2["sizes"]
+    return result
 
 
 class Wording:
