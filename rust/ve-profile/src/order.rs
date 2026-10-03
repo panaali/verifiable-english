@@ -1,10 +1,13 @@
 //! Independent order@0 AST and finite-model route. Proof certificates remain on
 //! the Lean route; this evaluator cannot certify entailment.
-use crate::{Environment, Error, Result, digest, error};
 use crate::search::{domain_sizes, increment as odometer, next_combination};
 use num_bigint::BigInt;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
+use ve_kernel::{
+    Environment, Error, Result, digest,
+    internal::{EnvironmentInternals, error},
+};
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 enum Cell {
@@ -69,7 +72,7 @@ fn term_sort(
                 .ok_or_else(|| Error::new("UnboundVariable", "unbound index"))
         }
         ("const", 2) => env
-            .constants
+            .constants()
             .get(a[1].as_str().unwrap_or(""))
             .cloned()
             .ok_or_else(|| Error::new("UnknownSymbol", "unknown constant")),
@@ -112,7 +115,7 @@ fn formula_check(
         ("unary", 3) | ("binary", 4) => {
             let p = a[1].as_str().unwrap_or("");
             let sig = env
-                .predicates
+                .predicates()
                 .get(p)
                 .ok_or_else(|| Error::new("UnknownSymbol", "unknown predicate"))?;
             if sig.len() != a.len() - 2 {
@@ -140,7 +143,7 @@ fn formula_check(
         }
         ("forall" | "exists", 3) => {
             let sort = a[1].as_str().unwrap_or("");
-            if !env.sorts.contains(sort) {
+            if !env.sorts().contains(sort) {
                 return error("UnknownSymbol", "unknown binder sort");
             }
             let mut next = vec![sort.to_owned()];
@@ -196,12 +199,12 @@ impl Model {
             .and_then(Value::as_object)
             .ok_or_else(|| Error::new("InvalidModel", "relations required"))?;
         if ds.keys().cloned().collect::<BTreeSet<_>>() != env.model_sorts()
-            || cs.keys().ne(env.constants.keys())
-            || rs.keys().ne(env.predicates.keys())
+            || cs.keys().ne(env.constants().keys())
+            || rs.keys().ne(env.predicates().keys())
         {
             return error("InvalidModel", "model declarations differ");
         }
-        crate::model::model_limits(ds, rs)?;
+        ve_kernel::internal::model_limits(ds, rs)?;
         let mut domains = BTreeMap::new();
         for (s, raw) in ds {
             let mut vals = Vec::new();
@@ -209,7 +212,7 @@ impl Model {
                 let name = x
                     .as_str()
                     .ok_or_else(|| Error::new("InvalidModel", "entity string required"))?;
-                crate::environment::identifier(name, "InvalidModel")?;
+                ve_kernel::internal::identifier(name, "InvalidModel")?;
                 vals.push(name.to_owned());
             }
             if vals.len() > 1000 {
@@ -223,10 +226,10 @@ impl Model {
         }
         let mut constants = BTreeMap::new();
         for (name, raw) in cs {
-            constants.insert(name.clone(), cell(raw, &env.constants[name], &domains)?);
+            constants.insert(name.clone(), cell(raw, &env.constants()[name], &domains)?);
         }
         let mut literal_values = BTreeSet::new();
-        for (name, sort) in &env.constants {
+        for (name, sort) in env.constants() {
             if sort == "$string" && !literal_values.insert(&constants[name]) {
                 return error(
                     "InvalidModel",
@@ -237,7 +240,7 @@ impl Model {
         let mut relations = BTreeMap::new();
         let mut count = 0;
         for (name, raw) in rs {
-            let sig = &env.predicates[name];
+            let sig = &env.predicates()[name];
             let mut rows = BTreeSet::new();
             for row in array(raw)? {
                 let a = array(row)?;
@@ -686,12 +689,12 @@ impl Parser<'_> {
                 self.expect("there exists ")?;
             }
             let sort = self.ident()?;
-            if !self.env.sorts.contains(&sort) {
+            if !self.env.sorts().contains(&sort) {
                 return error("UnknownSymbol", "unknown binder sort");
             }
             self.expect(" ")?;
             let name = self.ident()?;
-            if crate::environment::RESERVED.contains(&name.as_str())
+            if ve_kernel::internal::RESERVED.contains(&name.as_str())
                 || self.env.schema_name(&name)
                 || self.names.contains(&name)
             {
@@ -751,7 +754,7 @@ impl Parser<'_> {
     }
 }
 fn parse_source(env: &Environment, source: &str) -> Result<Value> {
-    if source.len() > crate::MAX_SOURCE_BYTES {
+    if source.len() > ve_kernel::MAX_SOURCE_BYTES {
         return error("ResourceLimit", "source limit");
     }
     if !source.is_ascii() {
@@ -807,8 +810,8 @@ pub fn order_case(v: &Value) -> Result<Value> {
         let model = Model::decode(&env,
             v.get("model").ok_or_else(|| Error::new("InvalidInput", "model missing"))?)?;
         let maximum = v.get("max_evaluations").and_then(Value::as_u64)
-            .unwrap_or(crate::MAX_EVALUATIONS);
-        if maximum > crate::MAX_EVALUATIONS {
+            .unwrap_or(ve_kernel::MAX_EVALUATIONS);
+        if maximum > ve_kernel::MAX_EVALUATIONS {
             return error("ResourceLimit", "evaluation budget exceeds v0 limit");
         }
         if trace {
@@ -873,7 +876,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
         let conclusion = v
             .get("conclusion")
             .ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
-        crate::ast::ast_limit(premises.iter().chain([conclusion]))?;
+        ve_kernel::internal::ast_limit(premises.iter().chain([conclusion]))?;
         let mut nodes = 0;
         for premise in premises {
             formula_check(&env, premise, &[], 1, &mut nodes)?;
@@ -887,13 +890,13 @@ pub fn order_case(v: &Value) -> Result<Value> {
         let mut work = 0;
         let mut valid = true;
         for premise in premises {
-            if !eval(premise, &model, &[], &mut work, crate::MAX_EVALUATIONS)? {
+            if !eval(premise, &model, &[], &mut work, ve_kernel::MAX_EVALUATIONS)? {
                 valid = false;
                 break;
             }
         }
         if valid {
-            valid = !eval(conclusion, &model, &[], &mut work, crate::MAX_EVALUATIONS)?;
+            valid = !eval(conclusion, &model, &[], &mut work, ve_kernel::MAX_EVALUATIONS)?;
         }
         return Ok(
             json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","valid":valid}),
@@ -943,7 +946,7 @@ pub fn order_case(v: &Value) -> Result<Value> {
     if formulas.is_empty() {
         return error("SyntaxError", "empty document");
     }
-    crate::ast::ast_limit(formulas)?;
+    ve_kernel::internal::ast_limit(formulas)?;
     let mut nodes = 0;
     for f in formulas {
         formula_check(&env, f, &[], 1, &mut nodes)?;
@@ -959,25 +962,25 @@ pub fn order_case(v: &Value) -> Result<Value> {
         .iter()
         .map(|f| format!("{}.\n", print_formula(f, &[], &mut 0)))
         .collect::<String>();
-    if canonical.len() > crate::MAX_SOURCE_BYTES {
+    if canonical.len() > ve_kernel::MAX_SOURCE_BYTES {
         return error("ResourceLimit", "canonical source limit");
     }
     let mut out = json!({"id":v.get("id").cloned().unwrap_or(json!("")),"status":"ok","ast":ast,
         "canonical":canonical,"environment_id":env.environment_id(),"meaning_id":meaning(ast)?,"formula_meaning_ids":ids});
     out["canonical_environment"] =
-        json!(String::from_utf8(crate::canonical_json(&env.to_value())?).unwrap());
-    out["canonical_ast"] = json!(String::from_utf8(crate::canonical_json(ast)?).unwrap());
+        json!(String::from_utf8(ve_kernel::canonical_json(&env.to_value())?).unwrap());
+    out["canonical_ast"] = json!(String::from_utf8(ve_kernel::canonical_json(ast)?).unwrap());
     if let Some(raw) = v.get("model") {
         let model = Model::decode(&env, raw)?;
         let mut values = Vec::new();
         for f in formulas {
             let mut work = 0;
-            values.push(eval(f, &model, &[], &mut work, crate::MAX_EVALUATIONS)?);
+            values.push(eval(f, &model, &[], &mut work, ve_kernel::MAX_EVALUATIONS)?);
         }
         out["value"] = json!(values.iter().all(|x| *x));
         out["values"] = json!(values);
         out["canonical_model"] =
-            json!(String::from_utf8(crate::canonical_json(&model.canonical)?).unwrap());
+            json!(String::from_utf8(ve_kernel::canonical_json(&model.canonical)?).unwrap());
         out["model_id"] = json!(digest(
             &format!("ve-model-{}\n", env.identity_version()),
             &json!({"environment_id":env.environment_id(),"model":model.canonical})
@@ -1067,9 +1070,9 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
                 used: &BTreeSet<String>,
                 visit: &mut dyn FnMut(Model) -> Result<bool>) -> Result<()> {
     let sorts: Vec<String> = env.model_sorts().into_iter().collect();
-    let int_constants: Vec<&String> = env.constants.iter()
+    let int_constants: Vec<&String> = env.constants().iter()
         .filter(|(_, sort)| *sort == "$int").map(|(name, _)| name).collect();
-    let object_constants: Vec<&String> = env.constants.iter()
+    let object_constants: Vec<&String> = env.constants().iter()
         .filter(|(_, sort)| *sort != "$int").map(|(name, _)| name).collect();
     let ints: BTreeSet<String> = int_constants.iter().map(|c| (*c).clone()).collect();
     let mut arguments = Vec::new();
@@ -1087,15 +1090,15 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
     let values = by_magnitude(values);
     let minima: Vec<usize> = sorts.iter().map(|sort| {
         let mut least = minimum;
-        if object_constants.iter().any(|c| &env.constants[*c] == sort) {
+        if object_constants.iter().any(|c| &env.constants()[*c] == sort) {
             least = least.max(1);
         }
         if sort == "$string" {
-            least = least.max(env.constants.values().filter(|s| *s == "$string").count());
+            least = least.max(env.constants().values().filter(|s| *s == "$string").count());
         }
         least
     }).collect();
-    let relation_names: Vec<&String> = env.predicates.keys().filter(|p| !env.is_defined(p)).collect();
+    let relation_names: Vec<&String> = env.predicates().keys().filter(|p| !env.is_defined(p)).collect();
     for sizes in domain_sizes(&minima, maximum) {
         let domains: BTreeMap<&String, Vec<String>> = sorts.iter().zip(&sizes)
             .map(|(sort, n)| (sort, (0..*n).map(|i| format!("e{i}")).collect())).collect();
@@ -1111,13 +1114,13 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
                     |d| d.iter().map(|e| json!(e)).collect()) }
             };
             let possible: usize = used.iter()
-                .map(|p| env.predicates[p].iter().map(|s| pool(s).len()).product::<usize>()).sum();
+                .map(|p| env.predicates()[p].iter().map(|s| pool(s).len()).product::<usize>()).sum();
             if possible > 100_000 {
                 return error("ResourceLimit", SEARCH_SPACE);
             }
             let mut atoms: Vec<(&String, Vec<Value>)> = Vec::new();
             for p in used {
-                let pools: Vec<Vec<Value>> = env.predicates[p].iter().map(|s| pool(s)).collect();
+                let pools: Vec<Vec<Value>> = env.predicates()[p].iter().map(|s| pool(s)).collect();
                 if pools.iter().any(Vec::is_empty) { continue; }
                 let limits: Vec<usize> = pools.iter().map(Vec::len).collect();
                 let mut row = vec![0; pools.len()];
@@ -1127,7 +1130,7 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
                 }
             }
             let choice_limits: Vec<usize> = object_constants.iter()
-                .map(|c| domains[&env.constants[*c]].len()).collect();
+                .map(|c| domains[&env.constants()[*c]].len()).collect();
             let choosable = choice_limits.iter().all(|n| *n > 0);
             for size in 0..=atoms.len() {
                 let mut subset: Vec<usize> = (0..size).collect();
@@ -1144,7 +1147,7 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
                             .map(|(c, n)| (int_constants.iter().find(|x| **x == c).copied()
                                 .expect("integer constant"), json!(n.to_string()))).collect();
                         for (c, i) in object_constants.iter().zip(&choice) {
-                            constants.insert(c, json!(domains[&env.constants[*c]][*i]));
+                            constants.insert(c, json!(domains[&env.constants()[*c]][*i]));
                         }
                         let raw = json!({"complete":true,"domains":domains,
                             "constants":constants,"relations":relations});
@@ -1310,18 +1313,18 @@ fn order_search(env: &Environment, v: &Value, pair: Option<(&Value, &Value)>) ->
     let maximum_size = usize::try_from(number(v, "max_domain_size", 2)?)
         .map_err(|_| Error::new("ResourceLimit", "domain bound overflow"))?;
     let max_models = number(v, "max_models", 10_000)?;
-    let max_evaluations = number(v, "max_evaluations", crate::MAX_EVALUATIONS)?;
+    let max_evaluations = number(v, "max_evaluations", ve_kernel::MAX_EVALUATIONS)?;
     let minimum = usize::try_from(number(v, "min_domain_size", 0)?)
         .map_err(|_| Error::new("ResourceLimit", "minimum domain bound overflow"))?
         .max(usize::from(v.get("nonempty_domains") == Some(&json!(true))));
-    if maximum_size > 1000 || max_evaluations > crate::MAX_EVALUATIONS || minimum > maximum_size {
+    if maximum_size > 1000 || max_evaluations > ve_kernel::MAX_EVALUATIONS || minimum > maximum_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
     let mut formulas: Vec<&Value> = match pair {
         Some((a, b)) => vec![a, b],
         None => premises.iter().chain(conclusion).collect(),
     };
-    crate::ast::ast_limit(formulas.iter().copied())?;
+    ve_kernel::internal::ast_limit(formulas.iter().copied())?;
     let mut nodes = 0;
     for f in &formulas {
         formula_check(env, f, &[], 1, &mut nodes)?;
@@ -1417,13 +1420,13 @@ fn order_search(env: &Environment, v: &Value, pair: Option<(&Value, &Value)>) ->
 fn order_countermodel_check(env: &Environment, v: &Value) -> Result<Value> {
     let premises = array(v.get("premises").ok_or_else(|| Error::new("InvalidInput", "premises missing"))?)?;
     let conclusion = v.get("conclusion").ok_or_else(|| Error::new("InvalidInput", "conclusion missing"))?;
-    crate::ast::ast_limit(premises.iter().chain([conclusion]))?;
+    ve_kernel::internal::ast_limit(premises.iter().chain([conclusion]))?;
     let mut nodes = 0;
     for f in premises.iter().chain([conclusion]) {
         formula_check(env, f, &[], 1, &mut nodes)?;
     }
     let model = Model::decode(env, v.get("model").ok_or_else(|| Error::new("InvalidInput", "model missing"))?)?;
-    let maximum = number(v, "max_evaluations", crate::MAX_EVALUATIONS)?;
+    let maximum = number(v, "max_evaluations", ve_kernel::MAX_EVALUATIONS)?;
     let (status, values, conclusion_value, work) = countermodel_values(premises, conclusion, &model, maximum)?;
     let meaning = |a: &Value| digest(&format!("ve-meaning-{}\n", env.identity_version()),
                                       &json!({"environment_id":env.environment_id(),"ast":a}));
