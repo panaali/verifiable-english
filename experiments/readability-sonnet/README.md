@@ -4,8 +4,35 @@ This directory holds a small usability eval for Verifiable English. Claude Sonne
 who has had **no training** in VE. It has 30 reading items and 15 writing tasks. Every reading key and every writing
 score comes from VE's own checker, not from a person's judgment.
 
-**Status: built, not sealed, not run.** No model was called to build it. Results must be labelled
-"proxy: Claude Sonnet 5.5, upper bound for careful readers".
+**Status: sealed before any run.** No model was called to build it. Results must be labelled
+"proxy: Claude Sonnet 5.5, upper bound for careful readers". [MANIFEST.sha256](MANIFEST.sha256) lists the SHA-256
+of every sealed file; none of them is edited after the seal commit. Run records go under `runs/`, and results go in
+`RESULTS.md`; neither is sealed.
+
+## Drops (applied before the seal)
+
+An independent pre-run check (`manage-agents/readability-check.final.md`) reran every key and asked for these drops:
+
+- **W07** (risk, sufficient condition). The scorer compares the condition as text, so a correct paraphrase can never
+  score `correct` and a wrong condition can never count as silent-wrong. The legend line "Comparison: <quantity> is
+  greater than <quantity>" was written by the builder, not VE. `writing_spec.DROPPED` keeps the definition, and no
+  context is built.
+- **The VE-C condition of R05, R12 and R14.** Their keys come only from a legend line (the declared default), so
+  in VE-C the text decides nothing. R05's VE-C was byte-identical to R04's, which has a different key.
+  `build.DROPPED_CONDITIONS` removes the condition, and their VE-L condition is kept.
+
+After the drops there are 30 reading items: 30 in VE-L, 27 in VE-C and 7 in EN. Each is answered by 2 sessions, so
+there are 128 reading sessions. There are 14 writing tasks, and 28 writing sessions. Wherever the counts below say 15
+tasks or 30 VE-C items, they describe the build before the drops. The rebuild after the drops changed nothing else:
+every other context file is byte-identical to commit `2299dcc8`.
+
+The check also listed minor issues that are not drops. They are left unchanged, so the scorer is the one that was
+reviewed:
+
+- `score.py` counts two unparsed answers as agreeing.
+- `score.py` scores a DNS answer to R07 (key CONFLICT) as critical.
+
+RESULTS.md reports whether either case occurred.
 
 ## The rule: only what a human user would get
 
@@ -60,14 +87,26 @@ These details implement the design above and were fixed before any session ran.
 
 ### Sessions
 
-- **Model and setup.** Model `claude-sonnet-5-5`. Every session is fresh, with no system prompt, no tools and no
-  memory.
+- **Model and setup.** Model `claude-sonnet-5-5`, run by [run.py](run.py):
+  - The command is `claude -p --model claude-sonnet-5-5 --tools "" --strict-mcp-config --disable-slash-commands
+    --output-format json --verbose`, with `CLAUDE_CONFIG_DIR` from `pick-claude-account.sh`.
+  - Each session runs in its own empty temporary directory under `/tmp`, outside the repo.
+  - **Correction to the line written at build time.** The session is not free of any system prompt: it has Claude
+    Code's default one. What it lacks is any CLAUDE.md (no account config has one, and the directory is empty),
+    memory content, tools, MCP servers and skills. The init record of every call is stored as proof.
+  - **One item per session.** The orchestrator allowed up to 6 items per session, never two from the same excerpt.
+    One item per session meets that, and it keeps each session's input byte-identical to one sealed file.
+  - **Order.** All sessions are shuffled with `random.Random(20261003)`. `runs/order.json` records the order.
 - **Reading.** For each item and each of its conditions, two separate sessions (`s1`, `s2`) each receive
-  `contexts/<item>/<condition>.txt` as their only user message. That means 30 × 2 VE-L, 30 × 2 VE-C and 7 × 2 EN
-  sessions, 134 in all. The reply must contain `ANSWER: <letter>` and `REASON: <one sentence>`. A reply without a
+  `contexts/<item>/<condition>.txt` as their only user message. That means 30 × 2 VE-L, 27 × 2 VE-C and 7 × 2 EN
+  sessions, 128 in all (see "Drops"). The reply must contain `ANSWER: <letter>` and `REASON: <one sentence>`. A reply without a
   parseable letter counts as wrong and not critical, and is reported as unparsed.
 - **Writing.** Each task gets two sessions (`s1`, `s2`). A session starts with `contexts/<task>/attempt1.txt`.
   - The scorer reads the `SENTENCE:` line and runs `score.py check <task> "<sentence>"`.
+    - A reply with no `SENTENCE:` line is scored as the empty sentence.
+    - A wrapper around the whole sentence (backticks, quotes or `**`) is removed first, because a person would not
+      type it into the editor.
+    - Later turns resume the same conversation (`--resume`) with the same account and directory.
   - If the outcome is `correct`, the session stops.
   - Otherwise, up to three attempts in total, the next user message in the same conversation is
     `contexts/<task>/retry.txt` with `{ve_message}` set to the `ve_message` that `check` printed and `{attempt}` set
@@ -106,7 +145,7 @@ These details implement the design above and were fixed before any session ran.
 
 ### Writing metric definitions
 
-- **Unit.** The unit is a task × session (15 × 2 = 30). Each attempt is rescored mechanically.
+- **Unit.** The unit is a task × session (14 × 2 = 28 after the drop of W07). Each attempt is rescored mechanically.
 - **Outcomes per attempt.** Each attempt gets one of these outcomes:
 
   | Outcome | Meaning |
@@ -147,7 +186,7 @@ These details implement the design above and were fixed before any session ran.
 ### Pass bars
 
 Each bar is judged met or not met on its point estimate, and its Wilson 95% interval is shown beside it. With 60
-VE-L responses, the critical-misreading bar (≤ 2%) allows at most one critical misreading. Even with zero, the upper
+VE-L responses (VE-L keeps all 30 items), the critical-misreading bar (≤ 2%) allows at most one critical misreading. Even with zero, the upper
 bound of the interval is 6.0%. The sample cannot show that the true rate is below 2%.
 
 ## Files
@@ -160,6 +199,9 @@ bound of the interval is 6.0%. The sample cannot show that the true rate is belo
 | `contexts/W??/attempt1.txt`, `retry.txt` | The exact first message of each writing session, and the retry template. |
 | [score.py](score.py) | Mechanical scoring: `check` (one writing attempt) and `report` (metrics, Wilson intervals, pass bars). |
 | [build.py](build.py), [items_spec.py](items_spec.py), [writing_spec.py](writing_spec.py), [vekit.py](vekit.py) | The builder, the item and task specs (written before any run), and the shared VE calls. |
+| [run.py](run.py) | The session runner (the protocol is in its docstring). It writes `runs/` (not sealed): one record per session with the raw reply, the CLI result and init record, and every writing turn's check. It also writes `runs/reading.jsonl` and `runs/writing.jsonl` for `score.py report`. |
+| [results.py](results.py) | Writes `RESULTS.md` from `runs/`. It uses score.py's metrics and bars, and adds every answer and attempt, the 3 hardest constructs (ranking rule in its docstring) and the flagged scorer cases. |
+| [MANIFEST.sha256](MANIFEST.sha256) | `sha256sum` of every sealed file, paths relative to this directory. Check with `sha256sum -c MANIFEST.sha256` here. |
 | [ve_key.py](ve_key.py) | `uv run python experiments/readability-sonnet/ve_key.py R07` recomputes one item's key and prints the VE verdict. |
 | `sources/R23–R25/speech.ve.md` | The `ve-document@2` files the speech-act items were checked with (`python -m ve speech-acts`). |
 
@@ -314,7 +356,7 @@ The other 23 items are VE-only, and each has a reason in `en_note`:
 | W04 | rules | obligation | Whenever the agent deletes a file, it must report that file to the user. | Rule 1. Every agent must report each file to the user, if that agent deletes that file. |
 | W05 | rules | precedence, prohibition | Add a second rule to the existing rule: even inside the workspace, the agent must not read confidential files. The new rule should win over rule 1. | Rule 2 (exception to rule 1). Every agent must not read each file, if that file is confidential. |
 | W06 | risk | might/cannot risk | Asking the user can never cause data loss. | asking the user cannot lead to data loss. |
-| W07 | risk | might/cannot risk, conditions | If the job's peak memory exceeds the free memory of the server, running the job causes a server outage. | If the peak memory of the job is greater than the free memory of the server, running the job leads to a server outage. |
+| W07 (dropped) | risk | might/cannot risk, conditions | If the job's peak memory exceeds the free memory of the server, running the job causes a server outage. | If the peak memory of the job is greater than the free memory of the server, running the job leads to a server outage. |
 | W08 | formulas | universal, relative clause, conjunction | Anyone who was born in the United States and is subject to its jurisdiction is a citizen of the United States. | Every person who was born in the United States and is subject to the jurisdiction of the United States is a citizen of the United States. |
 | W09 | formulas | universal, binary relation, negation | No state denies the equal protection of the laws to a person who is within its jurisdiction. | For every state, for every person who is within the jurisdiction of that state, it is not the case that that state denies the equal protection of the laws to that person. |
 | W10 | formulas | universal, relative clause | Everyone who has a noncitizen parent domiciled in the United States is subject to US jurisdiction. | Every person who has a noncitizen parent domiciled in the United States is subject to US jurisdiction. |

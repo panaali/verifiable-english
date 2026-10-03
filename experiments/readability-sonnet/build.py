@@ -628,6 +628,13 @@ def reading_prompt(text, legend, question, options):
     return "\n".join(parts) + "\n"
 
 
+# Dropped by the pre-run check (manage-agents/readability-check.final.md): in
+# these VE-C contexts the text alone decides nothing, because the key comes
+# only from a legend line (R05's VE-C is byte-identical to R04's, which has
+# another key). Their VE-L condition is kept.
+DROPPED_CONDITIONS = {"R05": {"VE-C"}, "R12": {"VE-C"}, "R14": {"VE-C"}}
+
+
 def build_reading():
     out = []
     for item in ITEMS:
@@ -656,7 +663,8 @@ def build_reading():
             "legend_dependent": r["legend_dependent"],
             "en_text": en, "en_source": item.get("en_source") if en else None,
             "en_note": None if en else item.get("en_note"),
-            "conditions": ["VE-L", "VE-C"] + (["EN"] if en else []),
+            "conditions": [c for c in ["VE-L", "VE-C"] + (["EN"] if en else [])
+                           if c not in DROPPED_CONDITIONS.get(item["id"], ())],
             "world_knowledge": item.get("world_knowledge"),
             "ve_command": f"uv run python experiments/readability-sonnet/ve_key.py {item['id']}",
             "ve_output": json.dumps({"label": r["label"], "verdict": r["verdict"]}, sort_keys=True, default=str),
@@ -665,7 +673,8 @@ def build_reading():
         ctx = HERE / "contexts" / item["id"]
         ctx.mkdir(parents=True, exist_ok=True)
         (ctx / "VE-L.txt").write_text(reading_prompt(r["ve_text"], r["legend"], item["question"], options))
-        (ctx / "VE-C.txt").write_text(reading_prompt(r["ve_text"], None, item["question"], options))
+        if "VE-C" in record["conditions"]:
+            (ctx / "VE-C.txt").write_text(reading_prompt(r["ve_text"], None, item["question"], options))
         if en:
             (ctx / "EN.txt").write_text(reading_prompt(en, None, item["question"], options))
         print(item["id"], r["label"], key[0]["letter"], flush=True)

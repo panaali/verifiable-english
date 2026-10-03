@@ -210,6 +210,13 @@ TASKS = [
 ]
 
 
+# Dropped by the pre-run check (manage-agents/readability-check.final.md): the
+# condition is compared as text, so no paraphrase can score correct and no wrong
+# condition can count as silent-wrong; the "Comparison:" legend line is the
+# builder's, not VE's. The definition stays for the record; no context is built.
+DROPPED = {"W07"}
+
+
 def task_by_id(task_id):
     return next(t for t in TASKS if t["id"] == task_id)
 
@@ -324,6 +331,8 @@ def prompt(task):
 def build(out_dir):
     records = []
     for task in TASKS:
+        if task["id"] in DROPPED:
+            continue
         gold_check = score(task, gold_surface(task))
         assert gold_check["outcome"] == "correct", (task["id"], gold_check)
         ex = examples(task)

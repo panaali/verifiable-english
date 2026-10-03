@@ -270,8 +270,7 @@
    "en_source": null,
    "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
    "conditions": [
-    "VE-L",
-    "VE-C"
+    "VE-L"
    ],
    "world_knowledge": "Same situation as R04 under the deny completion: the answer comes from the 'By default' legend sentence, which only VE-L shows.",
    "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R05",
@@ -659,8 +658,7 @@
    "en_source": null,
    "en_note": "The permission comes from the environment's allow completion, which the Asimov README calls a modeling choice that Asimov's text does not give; the source text does not decide this, so the item is VE-only.",
    "conditions": [
-    "VE-L",
-    "VE-C"
+    "VE-L"
    ],
    "world_knowledge": null,
    "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R12",
@@ -772,8 +770,7 @@
    "en_source": null,
    "en_note": "Block f12-u's header cites FSF section 2.1.2 step 2 but quotes no sentence, and the FSF PDF is not committed (licence); there is no source text for the excerpt, so the item is VE-only.",
    "conditions": [
-    "VE-L",
-    "VE-C"
+    "VE-L"
    ],
    "world_knowledge": "A reader may take governance approval as permission; the rule is only silent there and the declared completion forbids proceeding.",
    "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R14",
