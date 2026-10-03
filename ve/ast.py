@@ -159,6 +159,20 @@ class Le:
 
 Formula: TypeAlias = Top | Bottom | Unary | Binary | Atom | Eq | Not | And | Or | Implies | Forall | Exists | Reach | Lt | Le
 
+# The kernel owns its formula wire tags and arities (tag included); a surface
+# record that names a node type or arity must agree (ve.surface.registry.register).
+WIRE_TAGS: dict[type, str] = {
+    Top: "top", Bottom: "bottom", Unary: "unary", Binary: "binary", Atom: "atom", Eq: "eq",
+    Lt: "lt", Le: "le", Not: "not", And: "and", Or: "or", Implies: "implies",
+    Forall: "forall", Exists: "exists", Reach: "reach",
+}
+NODE_TYPES: dict[str, type] = {tag: kind for kind, tag in WIRE_TAGS.items()}
+WIRE_ARITY: dict[str, int] = {
+    "top": 1, "bottom": 1, "not": 2,
+    **dict.fromkeys(("unary", "eq", "lt", "le", "and", "or", "implies", "forall", "exists", "atom"), 3),
+    "binary": 4, "reach": 5,
+}
+
 INT_SORT = "$int"
 MAX_NUMERAL_CHARS = 40
 _DECIMAL = re.compile(r"-?(?:0|[1-9][0-9]*)\Z", re.ASCII)
@@ -393,8 +407,6 @@ def check_document(env: Environment, document: Document) -> Document:
 
 def _to_data(node):
     kind = type(node)
-    from .surface.registry import by_node
-    record = by_node(node)
     if kind is Var:
         return ["var", node.index]
     if kind is Const:
@@ -424,8 +436,8 @@ def _to_data(node):
     if kind is Not:
         return ["not", _to_data(node.body)]
     if kind in (And, Or, Implies):
-        return [record.wire_tag, _to_data(node.left), _to_data(node.right)]
-    return [record.wire_tag, node.sort, _to_data(node.body)]
+        return [WIRE_TAGS[kind], _to_data(node.left), _to_data(node.right)]
+    return [WIRE_TAGS[kind], node.sort, _to_data(node.body)]
 
 
 def _typed(env: Environment, formula: Formula, generated: bool) -> None:
@@ -466,13 +478,11 @@ class _Decoder:
         if type(data) is not list or not data or type(data[0]) is not str:
             raise SyntaxError("AST nodes must be nonempty tagged JSON arrays")
         tag = data[0]
-        from .surface.registry import by_tag
         from .wire import formula_tag_arity
         arity = ({"var": 2, "const": 2, "num": 2, "add": 3, "scale": 3}.get(tag)
                  if term else formula_tag_arity(tag))
         if arity is None or len(data) != arity:
             raise SyntaxError(f"Unknown AST tag or incorrect arity: {tag!r}")
-        record = by_tag(tag)
         if tag == "var":
             if type(data[1]) is not int or not 0 <= data[1] <= MAX_INDEX:
                 raise UnboundVariable("Invalid variable index")
@@ -515,9 +525,9 @@ class _Decoder:
         if tag == "not":
             return Not(self.decode(data[1], depth + 1))
         if tag in ("and", "or", "implies"):
-            return record.node_type(
+            return NODE_TYPES[tag](
                 self.decode(data[1], depth + 1), self.decode(data[2], depth + 1))
-        return record.node_type(data[1], self.decode(data[2], depth + 1))
+        return NODE_TYPES[tag](data[1], self.decode(data[2], depth + 1))
 
 
 @semantic_entry("typing")
