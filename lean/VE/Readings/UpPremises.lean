@@ -81,7 +81,7 @@ theorem extra_unnamed {P : SoftNode} (hP : P ∈ (sup D).1.soft.T.nodes)
 end Extra
 
 /-- The exception of a rule's image, from the image's side. -/
-theorem fmap_exception' {D : Doc} (hh : Hyps D) (c : Choice) (B : VE.Structure.{u}) (he : Encodes D c B)
+theorem fmap_exception_up {D : Doc} (hh : Hyps D) (c : Choice) (B : VE.Structure.{u}) (he : Encodes D c B)
     {N : SoftNode} (hN : N ∈ (choiceDoc D c).1.soft.T.nodes) {e : VE.SoftNorms.Exception}
     (hex : N.exception = some e) :
     ∃ e', (fmap D c N).exception = some e' ∧ e'.necessary = e.necessary ∧
@@ -136,7 +136,7 @@ theorem upB_exc : Sat (upB D c B₀ e) (VE.SoftNorms.excPremises (sup D).1.soft)
       cases hex : N.exception with
       | none => rw [hmode, hm, fmap_exception_none hh c hN hex] at ha; cases ha
       | some ex =>
-        obtain ⟨e', hex', hnec, hsuf⟩ := fmap_exception' hh c _ henc hN hex
+        obtain ⟨e', hex', hnec, hsuf⟩ := fmap_exception_up hh c _ henc hN hex
         rw [hmode, hm, hex'] at ha
         have hYp : ∀ a' ∈ VE.SoftNorms.excPremisesOf (choiceDoc D c).1.soft N, a'.denote B₀ [] :=
           fun a' h' => hY a' (List.mem_flatMap.mpr ⟨_, hN, h'⟩)

@@ -305,7 +305,7 @@ theorem shared_outweighs {D : Doc} {k : GenKey}
 theorem readings_head (A B : String) : (("readings:" ++ A) ++ B).data.head? = some 'r' := by
   simp [String.data_append]
 
-theorem readings_head' (A : String) : ("readings:quiet:" ++ A).data.head? = some 'r' := by
+theorem readings_quiet_head (A : String) : ("readings:quiet:" ++ A).data.head? = some 'r' := by
   simp [String.data_append]
 
 theorem readings_head₂ (A B C D : String) : (((("readings:" ++ A) ++ B) ++ C) ++ D).data.head? = some 'r' := by
@@ -391,7 +391,7 @@ theorem slot_wellLabelled (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain 
   have hdr2 : ∀ x ∈ (quietOwn D).map (·.1), x.data.head? = some 'r' := by
     intro x hx; obtain ⟨m, hm, i, rfl⟩ := hown x hx; exact readings_head₂ _ _ _ _
   have hdr3 : ∀ x ∈ (quietShared D).map (·.1), x.data.head? = some 'r' := by
-    intro x hx; obtain ⟨_, _, _, _, _, _, _, _, rfl⟩ := hsh x hx; exact readings_head' _
+    intro x hx; obtain ⟨_, _, _, _, _, _, _, _, rfl⟩ := hsh x hx; exact readings_quiet_head _
   have hdc : ∀ x ∈ (couplingPremises D).map (·.1), x.data.head? = some 'c' := by
     intro x hx; obtain ⟨K, _, rfl⟩ := hcp x hx; exact coupling_head _
   have hdn : ∀ x ∈ (narrowingPremises D).map (·.1), x.data.head? = some 'n' := by
