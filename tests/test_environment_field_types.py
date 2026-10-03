@@ -23,6 +23,7 @@ from ve.backends.diagnostics import checker_error
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.wire import canonical_json
+from conformance.risk import agent_ops
 from tests import probe_matrix as pm
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,7 +39,8 @@ FIELDS = ("language", "profile", "profiles", "spec_revision", "vocabulary",
 # block route decodes (the type diagnostics are compared on these fields).
 ENVELOPES = ("route", "v0", "closure", "order")
 BLOCKS = {"speech": ("speech_acts",), "alternatives": ("alternatives",),
-          "risk": ("alternatives", "risk"), "w6": ("unit_schema", "units")}
+          "risk": ("alternatives", "risk"), "w6": ("unit_schema", "units"),
+          "risk-units": ("alternatives", "risk", "unit_schema", "units")}
 # Lean's type diagnostics (`Json.getStr?`, `getArr?`, `getObj?`, `profilesOf`
 # and the block decoders), as Python's `VEError.to_dict()` reads them.
 TYPE_DIAGNOSTICS = {
@@ -117,7 +119,7 @@ def _legacy(kind):
 BASES = {"route": lambda: pm.raw_environment(()), "v0": lambda: _legacy("v0"),
          "closure": lambda: _legacy("closure"), "order": lambda: _legacy("order"),
          "speech": _speech, "alternatives": _alternatives, "risk": lambda: _alternatives(risk=True),
-         "w6": _w6}
+         "w6": _w6, "risk-units": agent_ops}
 
 
 def wrong_typed():
@@ -218,8 +220,9 @@ def lean_block_route(base, data):
     binary, case = {
         "speech": ("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}}),
         "alternatives": ("ve_alternatives_route", {"kind": "alt-validate", "norms": []}),
-        "risk": ("ve_risk_route", {"kind": "risk-elaborate", "norms": []}),
+        "risk": ("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}}),
         "w6": ("ve_quantity", {"kind": "document", "document": {"units": []}}),
+        "risk-units": ("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}}),
     }[base]
     if not (BIN / binary).exists():
         pytest.skip(f"{binary} has not been built")
@@ -263,7 +266,7 @@ LEAN_ROUTES = {
     "ve_reports_route": {"kind": "reports-elaborate", "document": {"units": []}},
     "ve_speech_acts_route": {"kind": "speech-elaborate", "document": {"units": []}},
     "ve_alternatives_route": {"kind": "alt-validate", "norms": []},
-    "ve_risk_route": {"kind": "risk-elaborate", "norms": []},
+    "ve_risk_route": {"kind": "risk-elaborate", "document": {"norms": []}},
     "ve_quantity": {"kind": "document", "document": {"units": []}},
     "ve_conformance": {"kind": "check", "ast": ["top"]},
 }

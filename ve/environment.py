@@ -388,8 +388,10 @@ class Environment:
         vocab = data["vocabulary"]
         if extended:
             from .units import validate_units
-            if type(data["unit_schema"]) is not str:
-                raise VEError("String expected")  # VE.Time.Wire.decodeEnvironment
+            if type(data["unit_schema"]) is not str and "risk@0" not in data["profiles"]:
+                # VE.Time.Wire.decodeEnvironment; the risk route compares the
+                # value (VE.Risk.Wire), which validate_units does.
+                raise VEError("String expected")
             checked_units = validate_units(data["unit_schema"], data["units"])
             units = {tag: MappingProxyType({"scale": record["scale"],
                                           "display": MappingProxyType(dict(record["display"]))})
