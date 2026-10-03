@@ -46,7 +46,7 @@ def _used(certificate, count):
 
 def _literal(formula):
     from .ast import Binary, Bottom, Not, Top, Unary
-    inner = formula.formula if isinstance(formula, Not) else formula
+    inner = formula.body if isinstance(formula, Not) else formula
     return isinstance(inner, (Unary, Binary, Top, Bottom))
 
 
@@ -162,20 +162,34 @@ class Superposed(_Route):
         return (self._formulas(self.ext, [ast for _, ast in self.slot] + self._atoms(A)) + self.layers +
                 self._formulas(self.ext, self.assertions + list(gamma)))
 
-    def _labels(self, A, certificate, env, count_before):
-        """The slot labels a certificate uses (composition.md 2.1's label rule reads them), with the coherence
-        labels of the background it uses."""
+    def _prove(self, env, slot, rest, conclusion):
+        """A certificate of `conclusion` from slot ++ rest (the prover prepends the Background), and the slot labels
+        it needs: each slot premise is replaced by ⊤ in turn and dropped when a proof remains. The certificate
+        returned is one that never expands a dropped premise, so it checks against the full list as well."""
+        from .ast import Top
+        from .entailment import prove_entailment
+        proof = prove_entailment(env, slot + rest, conclusion, max_steps=BUDGET["max_steps"])
+        if proof.status != "Found":
+            return None, []
+        current = list(slot)
+        for k in range(len(slot)):
+            trial = current[:k] + [Top()] + current[k + 1:]
+            again = prove_entailment(env, trial + rest, conclusion, max_steps=BUDGET["max_steps"])
+            if again.status == "Found":
+                current, proof = trial, again
+        used = [label for k, (label, _) in enumerate(self.slot) if not isinstance(current[k], Top)
+                or isinstance(slot[k], Top)]
+        return proof.certificate, used
+
+    def _coherence(self, certificate, env):
+        """The coherence labels of the Background a certificate expands, or that are literals (a literal is closed
+        against without an `expand`): an over-approximation, never an omission."""
         from .background import background
         prefix = [p.formula for p in background(env)]
-        offset = len(prefix)
-        slot = self._formulas(env, [ast for _, ast in self.slot])
-        used = _used(certificate, offset + len(slot) + len(A) + count_before)
-        labels = [label for k, (label, _) in enumerate(self.slot)
-                  if offset + k in used or _literal(slot[k])]
-        coherence = [label for label, formula in getattr(env, "soft_premises", ())
-                     if label.startswith("soft:coherence:") and any(
-                         prefix[k] is formula or prefix[k] == formula for k in used if k < offset)]
-        return coherence, labels
+        used = _used(certificate, len(prefix))
+        return [label for label, formula in getattr(env, "soft_premises", ())
+                if label.startswith("soft:coherence:") and any(
+                    prefix[k] == formula and (k in used or _literal(formula)) for k in range(len(prefix)))]
 
     def conflict(self, A=()):
         """The conflict status under the atoms of `A` (4.5): certificates for every target over
@@ -191,12 +205,15 @@ class Superposed(_Route):
             result = {"status": "UNKNOWN", "reason": CHECK_BUDGET_TEXT}
             self._conflicts[key] = result
             return result
-        premises = self._formulas(self.base, [ast for _, ast in self.slot] + self._atoms(A))
-        certificates, missing = {}, None
+        slot = self._formulas(self.base, [ast for _, ast in self.slot])
+        atoms = self._formulas(self.base, self._atoms(A))
+        premises = slot + atoms
+        certificates, missing, needed = {}, None, set()
         for target, sorts, formula in self.soft.elaborated.conflict_targets():
-            proof = prove_entailment(self.base, premises, _bind(Not(formula), sorts), max_steps=BUDGET["max_steps"])
-            if proof.status == "Found":
-                certificates[target] = proof.certificate
+            certificate, used = self._prove(self.base, slot, atoms, _bind(Not(formula), sorts))
+            if certificate is not None:
+                certificates[target] = certificate
+                needed.update(used)
             elif missing is None:
                 missing = target
         assumed = [list(x) for x in A]
@@ -205,13 +222,10 @@ class Superposed(_Route):
             if row["verdict"] != "CONFLICT-FREE":
                 raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict certificates "
                                          "Python's prover found on the superposed document")
-            coherence, labels = set(), set()
+            coherence = set()
             for certificate in certificates.values():
-                c, l_ = self._labels(A, certificate, self.base, 0)
-                coherence.update(c)
-                labels.update(l_)
-            slot_order = [label for label, _ in self.slot]
-            used = [label for label in slot_order if label in labels]
+                coherence.update(self._coherence(certificate, self.base))
+            used = [label for label, _ in self.slot if label in needed]
             coh = [label for label, _ in self.soft.extended_env.soft_premises if label in coherence]
             result = {"status": "CONFLICT-FREE", "evidence": "certificates", "assumed": assumed,
                       "certificates": certificates, "conditional_on": coh + used, "reading_premises_used": used,
@@ -251,8 +265,16 @@ class Superposed(_Route):
                 raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict witness Python's "
                                          "search found on the superposed document")
             kind = f"pair conflict on {target}" if "->" in target else f"strict collision on {target}"
+            selected = None
+            if target in self.soft.elaborated.order:
+                role = self.soft.elaborated.env.predicates[target].regulated.role
+                pos = "permits" if role == "permission" else "requires" if role == "obligation" else "affirms"
+                neg = "forbids" if role == "permission" else "releases" if role == "obligation" else "denies"
+                selected = [(rule.name, pos if rule.sign else neg)
+                            for rule in self.soft.elaborated.selected_rules(target, model, values)]
             return {"status": "CONFLICT", "evidence": "witness", "assumed": [list(x) for x in A],
-                    "target": target, "tuple": list(values), "choice": row["choice"], "model": data,
+                    "target": target, "sorts": list(sorts), "tuple": list(values), "choice": row["choice"],
+                    "model": data, "selected": selected,
                     "status_text": f"CONFLICT: {kind} at {', '.join(values)} under "
                                    f"{self.choice_text(row['choice'])}"}
         return {"status": "UNKNOWN", "assumed": [list(x) for x in A],
@@ -270,14 +292,16 @@ class Superposed(_Route):
 
     def model(self, A=(), gamma=(), conclusion=None):
         """A checked model of the premises under `A` (with `conclusion` false when given): its encoded choice and
-        the model, or None within the budget."""
+        the model, or None within the budget. The search runs first on the documents of compatible choices that
+        take `A` (smaller vocabularies), each model found there lifted to `sup D` as `base_up` builds it; then on
+        `sup D` itself. Lean checks the model on `sup D` either way."""
         from .ast import Bottom, formula_from_data
         from .search import find_countermodel
         key = (tuple(tuple(x) for x in A), repr(gamma), repr(conclusion))
         if key in self._models:
             return self._models[key]
-        result = None
-        if self.checked:
+        result = self._lifted(A, gamma, conclusion) if self.checked else None
+        if result is None and self.checked:
             phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
             found = find_countermodel(self.ext, self._full(A, gamma), phi,
                                       max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
@@ -293,6 +317,56 @@ class Superposed(_Route):
         self._models[key] = result
         return result
 
+    MAX_LIFTS = 16
+
+    def _lifted(self, A, gamma, conclusion):
+        from .ast import Bottom, formula_from_data
+        from .search import check_countermodel, find_countermodel
+        pool = self.all_choices if self.all_choices is not None else self.choices
+        if pool is None:
+            from .readings_sup import choices
+            pool, _ = choices(self.sets, self.couplings, self.narrowings, limit=self.MAX_LIFTS)
+        taking = [c for c in pool if all(c.get(s) == i for s, i in A)][:self.MAX_LIFTS]
+        for choice in taking:
+            own = _ChoiceDocument(self, choice)
+            premises = own._all(gamma)
+            phi = Bottom() if conclusion is None else formula_from_data(own.env, conclusion, _generated=True)
+            found = find_countermodel(own.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
+                                      max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
+            if found.status != "Found" or not check_countermodel(own.env, premises, phi, found.model,
+                                                                 max_evaluations=BUDGET["max_evaluations"]).valid:
+                continue
+            data = self._lift(choice, found.model.to_dict(), own)
+            row = self.lean("readings-model", assumed=[list(x) for x in A], premises=list(gamma),
+                            conclusion=conclusion, model=data)
+            if row["valid"] is True and row["conclusion_value"] is False:
+                return {"choice": row["choice"], "model": data}
+        return None
+
+    def _lift(self, choice, data, own):
+        """`base_up` (4.3) on a model of a choice's document: the bits spell the choice, `ve__here` is one element
+        of `ve__reading`, the chosen candidates' decision tables move to their names in `sup D`, every other
+        decision table of `sup D` is empty, and the regulated tables are dropped (the outcome substitution)."""
+        from .readings_sup import HERE, READING_SORT, bit_name, bits_of
+        rename = {}
+        for entry in self.row.get("names", []):
+            for candidate in entry["candidates"]:
+                if choice.get(entry["set"]) == candidate["index"]:
+                    rename.update({original: qualified for original, qualified in candidate["names"]})
+        regulated = {name for name, decl in own.env.predicates.items() if decl.regulated is not None}
+        relations = {name: [] for name in self.base.predicates}
+        for name, rows in data["relations"].items():
+            if name in regulated:
+                continue
+            target = rename.get(name, name)
+            if target in relations:
+                relations[target] = rows
+        for position, R in enumerate(self.sets, 1):
+            for j in range(bits_of(len(R.candidates))):
+                relations[bit_name(position, j)] = [["here"]] if choice[R.id] >> j & 1 else []
+        return {"complete": True, "domains": {**data["domains"], READING_SORT: ["here"]},
+                "constants": {**data.get("constants", {}), HERE: "here"}, "relations": relations}
+
     def certificate(self, A=(), gamma=(), conclusion=None):
         """A certificate of `conclusion` (⊥ when None) under `A`, checked by `readings-certificate`; only when the
         conflict status under `A` is CONFLICT-FREE (4.5, 14.8). None within the budget."""
@@ -302,18 +376,17 @@ class Superposed(_Route):
         if conflict["status"] != "CONFLICT-FREE":
             return None
         phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
-        proof = prove_entailment(self.ext, self._full(A, gamma), phi, max_steps=BUDGET["max_steps"])
-        if proof.status != "Found":
+        full = self._full(A, gamma)
+        certificate, used = self._prove(self.ext, full[:len(self.slot)], full[len(self.slot):], phi)
+        if certificate is None:
             return None
         row = self.lean("readings-certificate", assumed=[list(x) for x in A], premises=list(gamma),
                         conclusion=conclusion, conflict_certificates=conflict["certificates"],
-                        certificate=proof.certificate)
+                        certificate=certificate)
         if row["accepted"] is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the certificate Python's prover "
                                      "found on the superposed document")
-        coherence, labels = self._labels(A, proof.certificate, self.ext, 0)
-        used = [label for label, _ in self.slot if label in labels]
-        return {"certificate": proof.certificate, "assumed": [list(x) for x in A],
+        return {"certificate": certificate, "assumed": [list(x) for x in A],
                 "reading_premises_used": used, "mentions": self._mentions(A, used),
                 "conditional_on": list(dict.fromkeys(conflict["conditional_on"] + used))}
 
@@ -337,7 +410,8 @@ class Superposed(_Route):
             return {"status": "UNKNOWN", "route": "superposed", "reason": CHECK_BUDGET_TEXT}
         found = self.model(())
         if found is not None:
-            result = {"status": "model", "route": "superposed", "evidence": "model", "choice": found["choice"]}
+            result = {"status": "model", "route": "superposed", "evidence": "model", "choice": found["choice"],
+                      "model": found["model"]}
         else:
             proof = self.certificate((), (), None)
             if proof is not None:
@@ -447,7 +521,7 @@ class Superposed(_Route):
             found = self.model(A, premises, conclusion_ast)
             if found is not None:
                 return {"verdict": "NOT ALL", "route": "superposed", "assumed": [list(x) for x in A],
-                        "countermodel": {"choice": found["choice"]}}
+                        "countermodel": found}
             return {"verdict": "UNKNOWN", "route": "superposed", "assumed": [list(x) for x in A],
                     "budget": dict(BUDGET)}
         conflict = self.conflict(())
@@ -465,14 +539,14 @@ class Superposed(_Route):
             if found is not None:
                 return {"verdict": "UNKNOWN", "route": "superposed", "budget": {"max_choices": 64},
                         "status": f"UNKNOWN (not ALL: countermodel under {self.choice_text(found['choice'])})",
-                        "countermodel": {"choice": found["choice"]}}
+                        "countermodel": found}
             return {"verdict": "UNKNOWN", "route": "superposed", "budget": {"max_choices": 64}}
         proofs, counters, unknown = [], [], []
         for choice in self.choices:
             A = [(R.id, choice[R.id]) for R in self.sets]
             found = self.model(A, premises, conclusion_ast)
             if found is not None:
-                counters.append({"choice": found["choice"]})
+                counters.append(found)
                 continue
             proof = self.certificate(A, premises, conclusion_ast)
             if proof is not None:
@@ -493,7 +567,8 @@ class Superposed(_Route):
         dead = self.dead_readings()
         return {"status": conflict["status_text"] if "status_text" in conflict else
                 f"UNKNOWN: {conflict.get('reason', '')}",
-                "conflict": {key: value for key, value in conflict.items() if key not in ("certificates", "model")},
+                "conflict": {key: value for key, value in conflict.items()
+                             if key not in ("certificates", "model", "selected")},
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 
@@ -541,7 +616,9 @@ class Enumerated(_Route):
         return {"status": status, "route": "enumerated",
                 "status_text": (f"CONFLICT under {self.choice_text(conflicts[0][0])}" if conflicts else
                                 "UNKNOWN: a reading's conflict status is not certified"),
-                "choices": [{"choice": c, "status": r["verdict"]} for c, r in rows]}
+                "choices": [{"choice": c, "status": r["verdict"]} for c, r in rows],
+                "witnesses": [{"choice": c, "model": r["model"], "status_text": r["status_text"]}
+                              for c, r in conflicts]}
 
     def premises(self):
         if self.choices is None:
@@ -554,6 +631,9 @@ class Enumerated(_Route):
                   "choices": [{"choice": c, "status": r["status"]} for c, r in rows]}
         if overall == "model":
             result["choice"] = next(c for c, r in rows if r["status"] == "model")
+            model = self._choice(dict(result["choice"])).premise_model()
+            if model is not None:
+                result["model"] = model
         candidates = []
         for s, i in self.candidates():
             taking = [r["status"] for c, r in rows if [s, i] in c]
@@ -627,7 +707,7 @@ class Enumerated(_Route):
         conflict = self.conflict(())
         dead = self.dead_readings()
         return {"status": conflict["status_text"],
-                "conflict": {key: value for key, value in conflict.items() if key != "status_text"},
+                "conflict": {key: value for key, value in conflict.items() if key not in ("status_text", "witnesses")},
                 "dead_readings": None if dead is None else [d["finding"] for d in dead]}
 
 
@@ -685,6 +765,18 @@ class _ChoiceDocument:
                               max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
                               max_evaluations=BUDGET["max_evaluations"])
 
+    def premise_model(self):
+        """The model behind a `model` premise status, found again and checked, for the wording (R5)."""
+        from .ast import Bottom
+        from .search import check_countermodel, find_countermodel
+        premises = self._all()
+        found = find_countermodel(self.env, premises, Bottom(), max_domain_size=BUDGET["max_domain_size"],
+                                  max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
+        if found.status == "Found" and check_countermodel(self.env, premises, Bottom(), found.model,
+                                                          max_evaluations=BUDGET["max_evaluations"]).valid:
+            return found.model.to_dict()
+        return None
+
     def conflict(self):
         """The lower route's conflict check on the choice's document, with Python's packages, run by Lean's
         `readings-choice` on the document Lean builds for the choice."""
@@ -719,7 +811,7 @@ class _ChoiceDocument:
                 raise CheckerUnavailable("ReadingsConformance: the lower route does not confirm the conflict "
                                          "witness Python's search found on a reading's document")
             return {"verdict": "CONFLICT", "target": witness["target"], "tuple": witness["tuple"],
-                    "status_text": answer.get("status_text")}
+                    "model": witness["model"], "status_text": answer.get("status_text")}
         return {"verdict": "UNKNOWN", "status_text": answer.get("status_text")}
 
     def _conflict_base(self):
@@ -792,7 +884,7 @@ class _ChoiceDocument:
                                   max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
         if found.status == "Found" and check_countermodel(self.env, premises, phi, found.model,
                                                           max_evaluations=BUDGET["max_evaluations"]).valid:
-            return {"outcome": "countermodel", "model_id": found.model.model_id}
+            return {"outcome": "countermodel", "model_id": found.model.model_id, "model": found.model.to_dict()}
         return {"outcome": "unknown"}
 
 

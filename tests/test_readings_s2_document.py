@@ -346,3 +346,161 @@ def test_readings_command_across_readings(tmp_path, capsys):
     assert json.loads(capsys.readouterr().out)["verdict"] == "ALL"
     with pytest.raises(VEError, match="--narrowing applies to W2's route"):
         main(["readings", str(path), "--conclusion", str(conclusion), "--narrowing", "n1"])
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The English of 2.3 through W7's gate (review B4): 9.4's N1 to N8 on checked evidence, G5, G6, G9
+
+def _wording(path):
+    from ve.readings_route import S2Wording
+    from ve.readings_verdicts import context
+    doc = load_document(path)
+    return doc, context(doc), S2Wording(doc, context(doc))
+
+
+def _query(path, conclusion, **options):
+    """The verdict and its English, with the wording whose closed slot classes produced it."""
+    doc, route, wording = _wording(path)
+    data = route.entailment(conclusion, **options)
+    return data, wording.query(conclusion, data), wording
+
+
+def _report(path):
+    """The report's English (2.3), as `check_document` shows it, with the wording that produced it."""
+    doc, route, wording = _wording(path)
+    lines = wording.report()
+    assert check_document(path)["readings"]["english"] == lines
+    return lines, wording
+
+
+def _one_derivation(lines, wording):
+    from ve.readings_s2_english import derivations
+    for line in lines:
+        if line.startswith("CONFLICT"):
+            continue  # the lower route's classification line, not an S2a wording (2.1 R4)
+        assert len(derivations(line, wording.slots)) == 1, line
+        assert not any(x in line for x in ("ve__", "rd-", "soft__", "rights__", "may not")), line  # G6, G9
+
+
+HELP_ALL = "*For every agent, for every user, that agent must help that user.*"
+AVOID_ALL = "*For every agent, for every user, that agent must avoid deceiving that user.*"
+
+
+def test_n1_e26_and_e13_on_m4(tmp_path):
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)])
+    data, lines, wording = _query(path, every("help_required"))
+    assert data["verdict"] == "ALL"
+    assert lines == [f"Under every reading of the open sentence, the conclusion follows: {HELP_ALL}",
+                     "This does not depend on how sentence 1 is read."]
+    _one_derivation(lines, wording)
+
+
+def test_n2_e12_lines_on_m4_some(tmp_path):
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)])
+    data, lines, wording = _query(path, every("avoid_required"))
+    assert data["verdict"] == "SOME"
+    proof, counter = lines
+    assert proof == f"Read sentence 1 as *must*: the conclusion follows: {AVOID_ALL}"
+    assert counter.startswith("Read sentence 1 as *should*: the conclusion does not follow. It fails here: ")
+    # The decision is supposed and attributed, never stated as a fact of the situation.
+    assert "suppose the decider decides the exception applies to " in counter
+    assert counter.count("exception") == 1
+    _one_derivation(lines, wording)
+
+
+def test_n3_e12_r4_and_classification_on_m3(tmp_path):
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", NEVER_AVOID)])
+    lines, wording = _report(path)
+    witness = next(k for k, line in enumerate(lines) if "two rules contradict each other here" in line)
+    assert lines[witness].startswith("Read sentence 1 as *must*: two rules contradict each other here: ")
+    assert lines[witness + 1].startswith("CONFLICT: strict collision on avoid_required at ")
+    assert "rule no-deception under rs1@1:0 requires" in lines[witness + 1]
+    assert "rule never-avoid releases" in lines[witness + 1]
+    _one_derivation(lines, wording)
+
+
+def test_n4_e26_e3_e7_on_m5(tmp_path):
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u2"]}
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u2", ["top"]), ("fixed", "u0", HELP_X)],
+                       narrowings=[narrowing])
+    data, lines, wording = _query(path, every("avoid_required"))
+    assert data["verdict"] == "ALL" and data["reading_premises_used"] == ["narrowing:n1"]
+    assert lines == [f"Under every reading of the open sentence, the conclusion follows: {AVOID_ALL}",
+                     "This holds provided that:", "Sentence 1 is not read as *should*, because of sentence 2."]
+    _one_derivation(lines, wording)
+
+
+def test_n5_e17_on_m6_with_n1(tmp_path):
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u2"]}
+    path = _m6(tmp_path, [narrowing])
+    lines, wording = _report(path)
+    assert "No compatible way of reading the open sentences reads sentence 2 as *should*." in lines
+    # Candidate 1 of rs1 is dropped by the narrowing: nothing for it beyond E7.
+    assert not any("sentence 1 as *should*" in line for line in lines)
+    _one_derivation(lines, wording)
+
+
+def test_n6_e27_none_over_three_choices(tmp_path):
+    asserted = ("assert", ["forall", "agent", ["forall", "user", ASKS]], "asserted", {"force": "y"})
+    kind_s = ("strict", norm("be-kind", "help_required", True), "norm", {"force": "x"})
+    kind_d = ("default", norm("be-kind", "help_required", True, "default"), "norm", {"force": "y"})
+    coupling = {"id": "c1", "axis": "force", "sets": [{"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}],
+                "by": "reviewer", "reason_spans": ["u1"]}
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [(*S[:3], {"force": "x"}), (*DF[:3], {"force": "x"}),
+                                                        asserted]),
+                                  ("set", "rs2", "u2", [kind_s, kind_d])], couplings=[coupling])
+    doc, route, wording = _wording(path)
+    assert len(route.choices) == 3
+    nobody_asks = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
+    data, lines, wording = _query(path, nobody_asks)
+    assert data["verdict"] == "NONE" and len(data["countermodels"]) == 3
+    assert lines[0] == "Under no reading of the 2 open sentences does the conclusion follow."
+    assert len(lines) == 4 and all(line.startswith("Read sentence 1 as ") for line in lines[1:])
+    _one_derivation(lines, wording)
+
+
+def test_n6_e28_over_64_choices(tmp_path):
+    items = []
+    for k in range(7):
+        name = f"rule-{k}"
+        items.append(("set", f"rs{k}", f"u{k}", [("strict", norm(name, "avoid_required", True), "norm", None),
+                                                 ("default", norm(name, "avoid_required", True, "default"),
+                                                  "norm", None)]))
+    path = s2_document(tmp_path, items)
+    doc, route, wording = _wording(path)
+    assert route.choices is None and route.row["choice_count"] == "over 64" and route.row["choices_checked"] == 128
+    data, lines, wording = _query(path, every("help_required"))
+    assert data["verdict"] == "UNKNOWN" and data["status"].startswith("UNKNOWN (not ALL: countermodel under ")
+    assert lines[0] == "VE did not check every way of reading the open sentences: there are more than 64."
+    assert lines[1].startswith("Read sentence 1 as ") and "the conclusion does not follow" in lines[1]
+    _one_derivation(lines, wording)
+
+
+def test_n7_e29_on_m9(tmp_path):
+    rel = lambda p: ["binary", p, ["var", 1], ["var", 0]]  # noqa: E731
+    path = s2_document(tmp_path, [
+        ("set", "rs1", "u1", [("a", norm("r-a", "avoid_required", True, guard=rel("help_required")), "norm", None),
+                              ("b", norm("r-b", "help_required", True, guard=rel("warn_required")), "norm", None)]),
+        ("set", "rs2", "u2", [("c", norm("r-c", "warn_required", True, guard=rel("avoid_required")), "norm", None),
+                              ("d", norm("r-d", "warn_required", True), "norm", None)]),
+        ("fixed", "u0", norm("f-warn", "warn_required", True, guard=ASKS))], raw=_k9())
+    lines, wording = _report(path)
+    assert lines[0] == "The readings of sentences 1 and 2 were checked one way at a time, not together."
+    assert lines[1] == "Under every reading of the 2 open sentences, no two rules on the same act contradict each other."
+    data, query, wording_q = _query(path, every("warn_required", guard=ASKS))
+    assert data["verdict"] == "ALL" and query == [
+        "Under every reading of the 2 open sentences, the conclusion follows: *For every agent, for every user "
+        "that that agent has the recorded relation \"asks\" to, that agent must warn that user.*"]
+    _one_derivation(lines, wording)
+    _one_derivation(query, wording_q)
+
+
+def test_n8_e8_gated_on_the_quiet_label_of_m1(tmp_path):
+    from ve.readings_s2_english import PROVIDED, QUIET
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF])])
+    _, _, wording = _wording(path)
+    lines = wording.provided(["readings:rs1@1:1:quiet"])
+    assert lines == [PROVIDED, QUIET]
+    _one_derivation(lines, wording)
