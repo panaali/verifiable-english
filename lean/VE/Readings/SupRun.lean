@@ -20,7 +20,10 @@ import VE.Compose.Dispatch
   and a certificate of `⊥` (`ReadingsUnsatisfiable`).
 * `readings-choice`: `choice` and `inner` (a case of the lower route without environment or document): Lean checks
   `compatible D c`, builds `choiceDoc D c`'s units and runs the lower route on them; the answer is the inner answer
-  with the chain's document hash of `choiceDoc D c`. -/
+  with the chain's document hash of `choiceDoc D c`. For the evidence kinds (the chain's `*-certificate` and
+  `choice-model`) the inner premises are the regenerated assertions of `choiceDoc D c` followed by the case's own;
+  `choice-model` checks a base model on the chain's regenerated document (`soft_choice_model_sound`,
+  `rights_choice_model_sound`, `norms_choice_model_sound`). -/
 namespace VE.Readings.Run
 open Lean
 open VE.Readings
@@ -146,6 +149,151 @@ def choiceHash (b : Admitted2) (units : List Json) : Except String String :=
   | .soft => VE.SoftNorms.Wire.softDocumentHash b.a.re.lower b.a.re.lowerJson (Json.arr units.toArray)
   | .norms => VE.Norms.Replay.documentHash b.a.re.lower b.a.re.lowerJson (Json.arr units.toArray)
 
+/-- The assertions in force of `choiceDoc D c` in source order, as written: the fixed assertion units and the
+    asserted candidates the choice takes (`(choiceDoc D c).2`). -/
+def choiceAssertionJsons (itemsJ : List ItemJ) (c : Choice) : List Json :=
+  itemsJ.flatMap (fun it => match it with
+    | .fixed _ j => if j matches .arr _ then [j] else []
+    | .bar _ _ => []
+    | .set R => match c.index R.id with
+      | some i => match R.readings[i]? with
+        | some r => if r.content matches .arr _ then [r.content] else []
+        | none => []
+      | none => [])
+
+/-! ### A model of a choice's document (review B of compose-s2 looprecheck1)
+
+The enumerated route's evidence is replayed on the chain's document Lean regenerates from the choice's units: a
+certificate by the lower route's own certificate kind, a model by `choice-model` below. Either way the premises are
+the regenerated assertions of `choiceDoc D c` followed by the case's `premises`, so the evidence cannot leave an
+assertion out. A model is a base model of the chain's decoder (the lower route's conflict-witness form); it is
+checked against the chain's base Background (`Lim_D` included on the rights chain) and every premise read through
+the outcome substitution, and the conclusion is read the same way. -/
+
+/-- The checked facts of a model of the soft chain's document. -/
+structure SoftChoiceModel where
+  src : VE.SoftNorms.Wire.SoftSource
+  M : VE.FiniteModel VE.Bridge.Entity
+  valid : M.Valid (envAt (soften src.D) 0)
+  Γ : List VE.Formula
+  φ : VE.Formula
+
+def SoftChoiceModel.check (r : SoftChoiceModel) : Bool :=
+  VE.SoftNorms.backgroundValid' r.src.D r.M && r.Γ.all (fun a => (VE.SoftNorms.circ r.src.D a).eval r.M [])
+def SoftChoiceModel.value (r : SoftChoiceModel) : Bool := (VE.SoftNorms.circ r.src.D r.φ).eval r.M []
+
+/-- A passing soft model is a coherent base situation of the document where every premise holds and the conclusion
+    fails, each read through the outcome substitution. -/
+theorem soft_choice_model_sound (r : SoftChoiceModel) (hm : r.check = true) (hn : r.value = false) :
+    VE.SoftNorms.BaseAdmissible' r.src.D r.M.asStructure ∧
+    (∀ a ∈ r.Γ, (VE.SoftNorms.circ r.src.D a).denote r.M.asStructure []) ∧
+    ¬ (VE.SoftNorms.circ r.src.D r.φ).denote r.M.asStructure [] := by
+  simp only [SoftChoiceModel.check, Bool.and_eq_true, List.all_eq_true] at hm
+  refine ⟨VE.SoftNorms.baseAdmissiblePrime_of_valid _ _ r.valid hm.1,
+    fun a ha => (VE.eval_iff_denote r.M [] _).mp (hm.2 a ha), fun h => ?_⟩
+  rw [← VE.eval_iff_denote] at h
+  simp only [SoftChoiceModel.value] at hn
+  rw [h] at hn; cases hn
+
+/-- The checked facts of a model of the rights chain's document. -/
+structure RightsChoiceModel where
+  src : VE.Rights.Wire.RightsSource
+  M : VE.FiniteModel VE.Bridge.Entity
+  valid : M.Valid (envAt (soften (correlate src.D)) 0)
+  Γ : List VE.Formula
+  φ : VE.Formula
+
+def RightsChoiceModel.check (r : RightsChoiceModel) : Bool :=
+  VE.Rights.backgroundValidR r.src.D r.M &&
+    r.Γ.all (fun a => (VE.SoftNorms.circ (correlate r.src.D) a).eval r.M [])
+def RightsChoiceModel.value (r : RightsChoiceModel) : Bool := (VE.SoftNorms.circ (correlate r.src.D) r.φ).eval r.M []
+
+/-- A passing rights model is a rights-admissible base situation (`Lim_D` included) where every premise holds and
+    the conclusion fails, each read through the outcome substitution. -/
+theorem rights_choice_model_sound (r : RightsChoiceModel) (hm : r.check = true) (hn : r.value = false) :
+    VE.Rights.BaseAdmissibleR r.src.D r.M.asStructure ∧
+    (∀ a ∈ r.Γ, (VE.SoftNorms.circ (correlate r.src.D) a).denote r.M.asStructure []) ∧
+    ¬ (VE.SoftNorms.circ (correlate r.src.D) r.φ).denote r.M.asStructure [] := by
+  simp only [RightsChoiceModel.check, Bool.and_eq_true, List.all_eq_true] at hm
+  refine ⟨VE.Rights.baseAdmissibleR_of_valid _ _ r.valid hm.1,
+    fun a ha => (VE.eval_iff_denote r.M [] _).mp (hm.2 a ha), fun h => ?_⟩
+  rw [← VE.eval_iff_denote] at h
+  simp only [RightsChoiceModel.value] at hn
+  rw [h] at hn; cases hn
+
+/-- The checked facts of a model of the norms chain's document. -/
+structure NormsChoiceModel where
+  src : VE.Norms.Wire.Source
+  M : VE.FiniteModel VE.Bridge.Entity
+  valid : M.Valid (envAt src.D 0)
+  Γ : List VE.Formula
+  φ : VE.Formula
+
+def NormsChoiceModel.check (r : NormsChoiceModel) : Bool :=
+  VE.Norms.backgroundValid r.src.D r.M && r.Γ.all (fun a => (VE.Norms.subst r.src.D.T (size r.src.D) a).eval r.M [])
+def NormsChoiceModel.value (r : NormsChoiceModel) : Bool := (VE.Norms.subst r.src.D.T (size r.src.D) r.φ).eval r.M []
+
+/-- A passing norms model is a base-admissible situation where every premise holds and the conclusion fails, each
+    read through the outcome substitution. -/
+theorem norms_choice_model_sound (r : NormsChoiceModel) (hm : r.check = true) (hn : r.value = false) :
+    VE.Norms.BaseAdmissible r.src.D r.M.asStructure ∧
+    (∀ a ∈ r.Γ, (VE.Norms.subst r.src.D.T (size r.src.D) a).denote r.M.asStructure []) ∧
+    ¬ (VE.Norms.subst r.src.D.T (size r.src.D) r.φ).denote r.M.asStructure [] := by
+  simp only [NormsChoiceModel.check, Bool.and_eq_true, List.all_eq_true] at hm
+  refine ⟨VE.Norms.baseAdmissible_of_valid _ _ r.valid hm.1,
+    fun a ha => (VE.eval_iff_denote r.M [] _).mp (hm.2 a ha), fun h => ?_⟩
+  rw [← VE.eval_iff_denote] at h
+  simp only [NormsChoiceModel.value] at hn
+  rw [h] at hn; cases hn
+
+/-- The premises (the regenerated assertions, then the case's) and the conclusion (`⊥` when absent), over `E`. -/
+def choiceFormulas (E : VE.Environment) (inner : Json) : Except String (List VE.Formula × VE.Formula) := do
+  let Γ ← VE.Route.Wire.decodeFormulas E (inner.getObjValD "premises")
+  let φ ← match inner.getObjValD "conclusion" with
+    | .null => pure .bottom
+    | j => VE.Route.Wire.decodeClosed E j
+  pure (Γ, φ)
+
+def modelAnswer (id : String) (valid value : Bool) (values : List Bool) (assertions : Nat) : Json :=
+  okWith id [("valid", .bool valid), ("conclusion_value", .bool value),
+    ("first_failing", match values.findIdx? (! ·) with | some k => toJson k | none => .null),
+    ("assertions", toJson assertions)]
+
+/-- `choice-model` on the lower case Lean built for the choice: the chain's decoder regenerates the document. -/
+def choiceModel (chain : Chain) (id : String) (lowerCase : Json) (assertions : Nat) : Except String Json := do
+  let environment ← lowerCase.getObjVal? "environment"
+  match chain with
+  | .soft =>
+    let src ← VE.SoftNorms.Wire.decodeSoftSource environment (lowerCase.getObjValD "norms")
+    let ⟨M, valid⟩ ← VE.SoftNorms.Wire.decodeModel src lowerCase
+    let (Γ, φ) ← choiceFormulas (envAt (soften src.D) (size (soften src.D))) lowerCase
+    let r : SoftChoiceModel := ⟨src, M, valid, Γ, φ⟩
+    pure (modelAnswer id r.check r.value (Γ.map (fun a => (VE.SoftNorms.circ src.D a).eval M [])) assertions)
+  | .rights =>
+    let src ← VE.Rights.Wire.decodeRightsSource environment (lowerCase.getObjValD "document")
+    let ⟨M, valid⟩ ← VE.Rights.Wire.decodeModelR src lowerCase
+    let X := correlate src.D
+    let (Γ, φ) ← choiceFormulas (envAt (soften X) (size (soften X))) lowerCase
+    let r : RightsChoiceModel := ⟨src, M, valid, Γ, φ⟩
+    pure (modelAnswer id r.check r.value (Γ.map (fun a => (VE.SoftNorms.circ X a).eval M [])) assertions)
+  | .norms =>
+    let src ← VE.Norms.Wire.decodeSource environment (lowerCase.getObjValD "norms")
+    unless src.D.T.definitions.isEmpty do
+      throw "UnsupportedProfile: a model of a reading's document with definitions is not implemented"
+    let v := VE.Norms.Replay.baseModelVocabulary src.ne src.D
+    let data ← VE.Bridge.decodeModelData v (← lowerCase.getObjVal? "model")
+    if hv : data.valid v = true then
+      let M := data.toModel
+      let (Γ, φ) ← choiceFormulas (envAt src.D (size src.D)) lowerCase
+      let r : NormsChoiceModel :=
+        ⟨src, M, VE.Norms.Replay.baseModel_valid src.ne src.D src.env M (VE.Bridge.modelData_valid data v hv), Γ, φ⟩
+      pure (modelAnswer id r.check r.value (Γ.map (fun a => (VE.Norms.subst src.D.T (size src.D) a).eval M []))
+        assertions)
+    else throw "model is not semantically admissible"
+
+/-- The inner kinds whose premises are the regenerated assertions followed by the case's own. -/
+def evidenceKinds : List String := ["soft-certificate", "norms-certificate", "rights-certificate", "choice-model"]
+
 /-- `lower` runs a case of the lower route named by `dispatch` (`Run.lean` supplies the runners). -/
 def runChoice (lower : List String → Json → Json) (id : String) (j : Json) : Except String Json := do
   let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
@@ -153,13 +301,27 @@ def runChoice (lower : List String → Json → Json) (id : String) (j : Json) :
   unless compatible b.D c do throw "InvalidInput: the choice is not a compatible complete choice"
   let units := choiceJsons b.a.doc.itemsJ c
   let inner := j.getObjValD "inner"
+  let kind := match inner.getObjValD "kind" with | .str k => k | _ => ""
+  let assertions := choiceAssertionJsons b.a.doc.itemsJ c
+  let inner ← if evidenceKinds.contains kind then do
+      let own ← match inner.getObjValD "premises" with
+        | .null => pure []
+        | .arr xs => pure xs.toList
+        | _ => throw "InvalidInput: premises must be an array"
+      pure (inner.setObjVal! "premises" (Json.arr (assertions ++ own).toArray))
+    else pure inner
   let lowerCase := match b.a.re.chain with
     | .rights => (inner.setObjVal! "environment" b.a.re.lowerJson).setObjVal! "document"
         (Json.arr ((Json.mkObj [("source_units", toJson b.a.doc.units)] :: units).toArray))
     | _ => (inner.setObjVal! "environment" b.a.re.lowerJson).setObjVal! "norms" (Json.arr units.toArray)
   let lowerCase := lowerCase.setObjVal! "id" (.str id)
-  let answer := lower b.a.re.lower lowerCase
-  pure (okWith id [("choice", choiceJson c), ("document_hash", .str (← choiceHash b units)), ("inner", answer)])
+  let answer := if kind == "choice-model" then
+      match choiceModel b.a.re.chain id lowerCase assertions.length with
+      | .ok a => a
+      | .error e => Json.mkObj [("id", .str id), ("status", .str "error"), ("error", .str e)]
+    else lower b.a.re.lower lowerCase
+  pure (okWith id [("choice", choiceJson c), ("document_hash", .str (← choiceHash b units)),
+    ("assertions", toJson assertions.length), ("inner", answer)])
 
 /-! ## Dispatch -/
 

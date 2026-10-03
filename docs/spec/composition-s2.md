@@ -449,7 +449,10 @@ them. Case kinds on `ve_readings_route`, beside S1's `readings-validate` and `re
 - `readings-dead`: a set, an index and a certificate of `¬χ` from `choiceCore D`; or no index and a certificate of `⊥`.
 - `readings-choice`: a complete choice and an inner case of the lower route's kinds; Lean checks `compatible D c`,
   builds `choiceDoc D c` and runs the lower route's logic for the inner kind on it; the answer is the inner answer
-  with the chain's document hash of `choiceDoc D c`.
+  with the chain's document hash of `choiceDoc D c`. As built (compose-s2 looprecheck1 review B): for the evidence
+  kinds, the chain's certificate kind and `choice-model` (a base model of the chain's document, checked against its
+  base Background and the premises read through the outcome substitution), the inner premises are the regenerated
+  assertions of `choiceDoc D c` followed by the case's own (`lean/READINGS.md`).
 - Every other kind: `readings@1` is stripped and the case is run by the lower route's logic unchanged (S1 8.4).
 
 Identity. S2a adds no identity. `sup D`, `Choice_D`, the name map and every compatible choice are regenerated from the
@@ -569,10 +572,13 @@ with one of each, UNKNOWN otherwise with the first UNKNOWN choice named. Beyond 
 (`budget: {max_choices: 64}`, `units`), E28. A compatible choice whose document fails the chain's well-formedness is
 an error (7): the choices together are not a document, and the route does not report around it.
 
-As built (compose-s2 looprecheck1 review A): under named readings (`--under`) the combination runs over the compatible
-choices that take them, every result keeps `assumed`, readings no compatible choice takes are
-`ReadingsUnsatisfiable` as on the superposed route (7), and the English names the readings (2.3 item 2): ALL is
-E12 with R2 naming exactly the candidates of `A`, NONE is the E12 lines alone, never E27.
+As built (compose-s2 looprecheck1): every certificate and model a choice's verdict rests on (entailment, premise
+status, the model shown) is replayed by Lean through `readings-choice` on the document it regenerates for the
+choice, before the verdicts are combined; a refusal of evidence Python's own check accepted is `CheckerUnavailable`
+(review B). Under named readings (`--under`) the combination runs over the compatible choices that take them, every
+result keeps `assumed`, readings no compatible choice takes are `ReadingsUnsatisfiable` as on the superposed route
+(7), and the English names the readings (2.3 item 2): ALL is E12 with R2 naming exactly the candidates of `A`,
+NONE is the E12 lines alone, never E27 (review A).
 
 ### 4.7 Conservativity
 
