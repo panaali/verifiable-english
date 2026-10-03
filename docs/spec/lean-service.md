@@ -158,7 +158,9 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 - Each request carries a fresh nonce id; a response with another id or mode, a result not bound to its
   case (position or digest), a request error not bound to the request's mode and case digests, a
   malformed or short response, a
-  timeout (5 s interactive default, 60 s for batch callers), a crash, end of output or a bad handshake is an
+  timeout (5 s interactive default, 60 s for batch callers; 30 s to start; `VE_LEAN_SERVICE_TIMEOUT` and
+  `VE_LEAN_SERVICE_STARTUP_TIMEOUT` replace the 5 s and 30 s defaults, and the test suite sets them to its
+  hang guard `tests/subprocesses.py` `HANG_TIMEOUT`), a crash, end of output or a bad handshake is an
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
   fallback to Python. Cancellation is out of band only (the kill).
