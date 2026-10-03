@@ -28,7 +28,8 @@ from ve.wire_contract.engine import load
 ROOT = Path(__file__).resolve().parents[1]
 GOLDEN = ROOT / "conformance/wire-contract/soft-norms@0-golden.json"
 # The test files that submit `soft-norms@0` inputs; each must record at least one.
-SUBMITTING = {"test_softnorms_contract.py", "test_wire_contract_faults.py", "test_wire_contract_precondition.py",
+SUBMITTING = {"test_softnorms_contract.py", "test_softnorms_public_contract.py",
+              "test_wire_contract_faults.py", "test_wire_contract_precondition.py",
               "test_wire_contract_soft_lean.py", "test_wire_contract_three_way.py",
               "test_soft_norms_conformance.py", "test_soft_norms_lean.py", "test_soft_review_regressions.py"}
 # The conformance module's functions that build no source of their own: the comparisons that run the
