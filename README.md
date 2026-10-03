@@ -21,8 +21,8 @@ missing test IDs, a dirty or changing worktree, or failed stages. Expected test
 IDs are pinned in `tools/gate-collection.json`; regenerate that file after
 intentional test changes with `uv run python tools/gate_collection.py --write`
 (after `lake build`), which collects with the gate's own pytest arguments and
-`tools.gate_pytest` and lists every added and removed ID with the commit that
-changed it. `tests/test_gate_collection.py` fails, naming that commit or merge,
+`tools.gate_pytest` and lists every added and removed ID with the first-parent
+commit that changed it, found by collecting the ID's file at each first-parent commit. `tests/test_gate_collection.py` fails, naming that commit or merge,
 whenever the collection and the pinned file differ. Optional backend
 and fixture skips are listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;
 use `--output PATH` to retain a particular gate record. The package requires
