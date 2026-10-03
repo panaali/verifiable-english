@@ -361,7 +361,7 @@ theorem sibling {D : Doc} (hh : Hyps D) {c : Choice} (hc : Compatible D c) {N : 
     have hr := hh.ready
     obtain ⟨ci, hci⟩ : ∃ ci, D.sets[m'].candidates[i].content = some ci := by
       simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
-      have := (hr.1.1.1.1.1.2 _ (List.getElem_mem hm'))
+      have := (hr.1.1.1.1.1.1.2 _ (List.getElem_mem hm'))
       exact Option.isSome_iff_exists.mp (this.2 _ (List.getElem_mem hilt))
     have hdi : ("rule", N'.name) ∈ ci.declared := by
       have := (List.mem_filter.mp hif).2

@@ -54,14 +54,25 @@ def bitDecls (D : Doc) : List (String × List String) :=
     document keeps (fixtures KH and KB of 9.2). -/
 def choiceFresh (D : Doc) : Bool :=
   D.frame.soft.E.constants "ve__here" == none && (bitDecls D).all (fun d => D.frame.soft.E.predicates d.1 == none)
+/-- The unit an item stands for: a fixed unit's or a bar's id, or the unit an open set reads. -/
+def itemUnit : Item → String
+  | .fixed u _ _ => u
+  | .bar u _ => u
+  | .set R => R.unit
+/-- Every item stands for its own unit (1.8): today's decoders refuse a repeated unit id (`duplicate or invalid
+    unit id`), and S1's attachment is computed per unit id, so a repeated id would attach an assertion unit to a set
+    through another unit of the same id. -/
+def unitsDistinct (D : Doc) : Bool := decide (D.items.map itemUnit).Nodup
 /-- 1.1 row 2 and 1.8: distinct set ids, every open set with a candidate, every candidate with content; the couplings
-    and narrowings in today's shape, with distinct ids; the frame free of the choice vocabulary (`choiceFresh`). The
-    Lean counterpart of the shape part of the decoder checks of 7, and of that part only. -/
+    and narrowings in today's shape, with distinct ids; the frame free of the choice vocabulary (`choiceFresh`);
+    every item a unit of its own (`unitsDistinct`). The Lean counterpart of the shape part of the decoder checks
+    of 7, and of that part only. -/
 def supReady (D : Doc) : Bool :=
   decide (D.sets.map (·.id)).Nodup &&
     D.sets.all (fun R => !R.candidates.isEmpty && R.candidates.all (·.content.isSome)) &&
     decide (D.couplings.map (·.id)).Nodup && D.couplings.all (couplingShape D) &&
-    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D) && choiceFresh D
+    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D) && choiceFresh D &&
+    unitsDistinct D
 def complete (D : Doc) (c : Choice) : Bool :=
   c.map (·.1) == D.sets.map (·.id) && c.all (fun x => (candidate D x.1 x.2).isSome)
 /-- Consecutive sets of the coupling take candidates with one label on the axis. -/
@@ -245,7 +256,7 @@ theorem index_of_mem {c : Choice} (hn : (c.map (·.1)).Nodup) {x : String × Nat
 theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).length ≤ maxChoices) (c : Choice) :
     c ∈ choices D ↔ Compatible D c := by
   simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr
-  have hn := hr.1.1.1.1.1.1
+  have hn := hr.1.1.1.1.1.1.1
   have heq : choices D = allFrom D D.sets [] := by
     rw [choices, search_eq]
     rw [choices, search_eq] at hle
