@@ -241,3 +241,7 @@ the Python and Rust arity tables are reviewed together; `conformance/wire.json` 
 11. **Risk block cycle check** (P15): a local Python reimplementation would avoid the slot but would let
     Python decide a check that is Lean's under `VE_AUTHORITY=lean`; the slot keeps the authority.
 12. **P17** is alignment only; skip it if the kernel should stay minimal.
+
+
+## DRI ruling on R0 scope (orchestrator, 2026-10-03)
+R0 (`tools/check_rust_deps.py`) is a lint against ACCIDENTAL layering violations in our own Rust code, not a defence against deliberately crafted evasion. Imports or attributes produced by declarative macro substitution (e.g. a macro that expands `use` or `#[path]` from its arguments) are out of R0's scope and recorded here as a known limitation. Enforcement against every form, macros included, comes from the crate split (R1-R3), after which cargo's crate graph is the boundary; R1-R3 are therefore scheduled as the next layers batch.
