@@ -22,6 +22,7 @@ except ModuleNotFoundError:
 import check_python_layers
 import check_rust_deps
 import layer_policy
+import rust_output_diff
 import select_tests
 
 from select_tests import select
@@ -511,6 +512,61 @@ class LayerSelectionTests(unittest.TestCase):
                 self.assertEqual(len(errors), 1, errors)
                 self.assertTrue(errors[0].startswith("unsupported Rust construct: ve-core: "), errors)
                 self.assertIn(repr(construct), errors[0])
+
+
+class RustOutputDiffTests(unittest.TestCase):
+    def compare(self, baseline_body: str, new_body: str, work=None) -> tuple[int, str]:
+        with TemporaryDirectory() as directory:
+            binaries = []
+            for name, body in (("baseline", baseline_body), ("new", new_body)):
+                path = Path(directory) / name
+                path.write_text("#!/bin/sh\n" + body)
+                path.chmod(0o755)
+                binaries.append(path)
+            output, error = io.StringIO(), io.StringIO()
+            work = [rust_output_diff.Invocation("parse", "case", ())] if work is None else work
+            with (patch.object(rust_output_diff, "TIMEOUT", 1),
+                  patch.object(rust_output_diff, "invocations", lambda folder: work),
+                  patch.object(rust_output_diff.rust_build, "pinned_digests",
+                               lambda: [rust_output_diff.rust_build.digest(binaries[0])]),
+                  redirect_stdout(output), redirect_stderr(error)):
+                code = rust_output_diff.compare(*binaries)
+            return code, output.getvalue() + error.getvalue()
+
+    def test_any_timeout_invalidates_the_differential(self):
+        for name, baseline, new in (
+            ("different partial output", "echo old\nexec sleep 5\n", "echo new\nexec sleep 5\n"),
+            ("same partial output", "echo same\nexec sleep 5\n", "echo same\nexec sleep 5\n"),
+            ("only the new binary", "echo same\n", "echo same\nexec sleep 5\n"),
+            ("only the baseline", "echo same\nexec sleep 5\n", "echo same\n"),
+        ):
+            with self.subTest(name):
+                code, report = self.compare(baseline, new)
+                self.assertEqual(code, 1, report)
+                self.assertIn("INVALID differential", report)
+                self.assertIn("parse case:", report)
+                self.assertIn("timed out after 1 s", report)
+
+    def test_timed_out_runs_keep_their_partial_output(self):
+        code, report = self.compare("echo old\nexec sleep 5\n", "echo new\nexec sleep 5\n")
+        self.assertIn("parse case: stdout differ", report)
+        invocation = rust_output_diff.Invocation("parse", "case", ())
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "slow"
+            path.write_text("#!/bin/sh\necho partial\necho warning >&2\nexec sleep 5\n")
+            path.chmod(0o755)
+            with patch.object(rust_output_diff, "TIMEOUT", 1):
+                self.assertEqual(rust_output_diff.run(path, invocation), ("timeout", b"partial\n", b"warning\n"))
+
+    def test_empty_invocation_list_is_invalid(self):
+        code, report = self.compare("echo same\n", "echo same\n", work=[])
+        self.assertEqual(code, 1, report)
+        self.assertIn("INVALID differential: no invocations", report)
+
+    def test_equal_completed_runs_pass(self):
+        code, report = self.compare("echo same\n", "echo same\n")
+        self.assertEqual(code, 0, report)
+        self.assertIn("1 invocations, 0 differences, 0 timed out", report)
 
 
 if __name__ == "__main__":

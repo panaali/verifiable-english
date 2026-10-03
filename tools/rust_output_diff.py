@@ -17,7 +17,9 @@ input, and `parse`, `format`, `evaluate`, `countermodel` and
 `check-countermodel` over the sources, environments and models of the
 source-bearing corpora and `examples/`. A clean run is evidence of equivalence
 over these exercised inputs only, alongside the dependency argument and the
-required suites; it is not a proof independent of input coverage.
+required suites; it is not a proof independent of input coverage. A run that
+times out (either binary, any invocation) or an empty invocation list makes the
+differential invalid (exit 1): partial output is not evidence of equal output.
 """
 from __future__ import annotations
 
@@ -115,11 +117,12 @@ def invocations(scratch: Path) -> list[Invocation]:
 
 
 def run(binary: Path, invocation: Invocation) -> tuple[int | str, bytes, bytes]:
+    """Exit code, stdout and stderr; a timed-out run keeps its partial output under the code "timeout"."""
     try:
         done = subprocess.run([str(binary), *invocation.args], input=invocation.stdin, capture_output=True,
                               cwd=ROOT, timeout=TIMEOUT, check=False)
-    except subprocess.TimeoutExpired:
-        return "timeout", b"", b""
+    except subprocess.TimeoutExpired as expired:
+        return "timeout", expired.stdout or b"", expired.stderr or b""
     return done.returncode, done.stdout, done.stderr
 
 
@@ -156,21 +159,25 @@ def compare(baseline: Path, new: Path) -> int:
         with ThreadPoolExecutor(max_workers=min(8, os.cpu_count() or 1)) as pool:
             results = list(pool.map(both, work))
     counts = Counter(invocation.command for invocation in work)
-    differences = []
+    differences, timeouts = [], []
     for invocation, old, fresh in results:
         parts = [part for part, a, b in zip(("exit code", "stdout", "stderr"), old, fresh) if a != b]
         if parts:
             differences.append(f"{invocation.command} {invocation.label}: {', '.join(parts)} differ")
+        sides = [side for side, result in (("baseline", old), ("new", fresh)) if result[0] == "timeout"]
+        if sides:
+            timeouts.append(f"{invocation.command} {invocation.label}: {' and '.join(sides)} timed out "
+                            f"after {TIMEOUT} s")
     print(f"baseline {old_digest}\nnew      {new_digest} "
           f"({'pinned' if new_digest in rust_build.pinned_digests() else 'NOT pinned'})")
     print(", ".join(f"{name} {count}" for name, count in sorted(counts.items())))
-    timeouts = sum(old[0] == "timeout" for _, old, _ in results)
-    if timeouts:
-        print(f"{timeouts} baseline invocations timed out after {TIMEOUT} s (compared as such)")
-    for line in differences[:50]:
+    for line in (timeouts + differences)[:50]:
         print(line, file=sys.stderr)
-    print(f"{len(work)} invocations, {len(differences)} differences")
-    return 1 if differences else 0
+    print(f"{len(work)} invocations, {len(differences)} differences, {len(timeouts)} timed out")
+    if timeouts or not work:
+        print("INVALID differential: " + (f"{len(timeouts)} invocations timed out, so their output was not "
+                                          "compared in full" if timeouts else "no invocations"), file=sys.stderr)
+    return 1 if differences or timeouts or not work else 0
 
 
 def main(argv: list[str]) -> int:
