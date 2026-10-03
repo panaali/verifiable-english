@@ -34,6 +34,8 @@ from ve.parser import parse, canonicalize
 from ve.printer import print_formula
 from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
 from ve.admission import validate_label, admit_document
+# The comparison projection: one definition, shared with shadow (docs/spec/mig3.md 2.4).
+from ve.backends.dispatch import baseline_projection  # noqa: F401
 from ve.bundle import check_bundle
 from ve.norms import NormDocument, check_conflict, check_norm_entailment_certificate, prove_norm_entailment
 from ve.norm_admission import admit_norm_document
@@ -141,16 +143,6 @@ def outcome(call, *, expected=()):
     except expected as exc:
         code = type(exc).__name__
         return {"cell": "R", "status": code, "output": {"code": code, "message": str(exc)}}
-
-
-def baseline_projection(value):
-    """Omit only checker-build-derived diagnostic identities from the oracle."""
-    if isinstance(value, dict):
-        return {key: baseline_projection(item) for key, item in value.items()
-                if key not in {"checker_build", "record_id"}}
-    if isinstance(value, list):
-        return [baseline_projection(item) for item in value]
-    return value
 
 
 def runtime_sha256():
