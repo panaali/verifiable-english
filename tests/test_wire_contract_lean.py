@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.wire import canonical_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +42,7 @@ def lean():
 
 
 def call(unit, text):
-    return subprocess.run([str(LEAN), unit, "-"], input=text, text=True, capture_output=True, timeout=120)
+    return subprocess.run([str(LEAN), unit, "-"], input=text, text=True, capture_output=True, timeout=HANG_TIMEOUT)
 
 
 def diagnose(unit, roots):
@@ -249,7 +250,7 @@ def test_runner_errors(lean):
     unknown = call("nope@0", "[]")
     assert unknown.returncode == 2
     assert unknown.stderr.strip() == "UnsupportedProfile: no wire contract nope@0"
-    usage = subprocess.run([str(LEAN)], capture_output=True, text=True, timeout=60)
+    usage = subprocess.run([str(LEAN)], capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert usage.returncode == 2
     malformed = call("demo@0", '[{"id": "ok", "doc": null}]')
     assert malformed.returncode == 2 and malformed.stdout == ""
