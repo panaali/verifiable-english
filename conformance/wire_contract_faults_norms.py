@@ -216,9 +216,30 @@ def own_text(record):
     return record["check"].rsplit("/", 1)[-1] in ("3.8b", "3.9b") and record["text"] == "invalid indexed formula"
 
 
+def document_of(norms):
+    """D(N) of 8: one unit of kind `norm` per norm object, then an empty graph."""
+    return {"units": [{"id": f"u{i}", "span": [i, i + 1], "kind": "norm", "content": deepcopy(unit)}
+                      for i, unit in enumerate(norms)], "graph": {"root": "r", "nodes": []}}
+
+
 def call_problems(label, raw, norms, legacy_error, reported, reaching):
-    """Tier P, the call (2.11; 8.4, G2 and G12), filled in by the switch commit."""
-    return []
+    """Tier P, the call on D(N) under the Python authority (8.4): on a handler-reaching case it raises the
+    legacy error with the record's text and the record (G2); on any other rejected case it raises an error
+    without a record (G12)."""
+    from ve.admission import admit_document
+    if type(norms) is not list or not all(type(unit) is dict for unit in norms):
+        return []
+    try:
+        admit_document(deepcopy(raw), document_of(norms))
+    except VEError as raised:
+        if reaching:
+            expected = {**legacy_error.to_dict(), "message": reported["text"], "diagnostic": reported}
+            if type(raised) is not type(legacy_error) or raised.to_dict() != expected:
+                return [f"{label}: call error differs from the legacy error and record"]
+        elif raised.diagnostic is not None:
+            return [f"{label}: an error raised before the statement carries a record"]
+        return []
+    return [f"{label}: call accepted a rejected source"]
 
 
 def _mutations(rng, raw, norms):
