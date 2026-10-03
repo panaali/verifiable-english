@@ -36,7 +36,7 @@ def lean():
         if lake is None:
             pytest.skip("lake is required for ve_diagnose")
         built = subprocess.run([lake, "build", "ve_diagnose"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
+                               text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 

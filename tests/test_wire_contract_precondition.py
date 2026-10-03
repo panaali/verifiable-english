@@ -3,6 +3,7 @@
 import json
 import subprocess
 
+from subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import LEAN, env, should
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
@@ -27,7 +28,7 @@ def test_norm_defaults_profile_rejects_on_both_soft_routes():
         cases.append({"id": f"norm-defaults-reach-{index}", "kind": "soft-elaborate",
                       "environment": environment, "norms": norms})
     result = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=180, check=False)
+                            capture_output=True, timeout=HANG_TIMEOUT, check=False)
     assert result.returncode == 1, result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

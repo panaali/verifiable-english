@@ -7,7 +7,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 
-ROOT =Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
 FIXTURE = ROOT / "usecases" / "news-article" / "w6a-quantity-fixtures.json"
 pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build Lean route runner first")

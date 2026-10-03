@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.ast import formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -36,14 +37,14 @@ def lean():
         if lake is None:
             pytest.skip("lake is required for the soft-norms Lean route")
         built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
+                               text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 
 
 def run(executable, cases):
     result = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=180)
+                            capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

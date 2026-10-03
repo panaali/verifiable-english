@@ -44,7 +44,7 @@ def rust_binary():
     env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           env=env, capture_output=True, text=True, timeout=600)
+                           env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return ROOT / "rust/target/release/ve"
 

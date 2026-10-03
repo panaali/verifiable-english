@@ -25,6 +25,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.norm_defaults import UnspecifiedDocument
@@ -58,7 +59,7 @@ def diagnose():
 
 def run(executable, args, cases):
     result = subprocess.run([str(executable), *args, "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=1200)
+                            capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -443,7 +444,7 @@ def test_l5_outside_the_domain(diagnose):
              {"id": "closure", "kind": "norms-elaborate", "environment": closure, "norms": norms},
              {"id": "defaults", "kind": "norms-elaborate", "environment": defaults, "norms": norms}]
     result = subprocess.run([str(diagnose), "norms@0", "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=600)
+                            capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 1, result.stderr
     error = "UnsupportedProfile: the case is outside the unit's domain"
     assert json.loads(result.stdout) == [{"id": c["id"], "status": "error", "error": error} for c in cases]

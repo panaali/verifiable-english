@@ -9,6 +9,7 @@ import pytest
 
 from conformance.soft_norms import multi_fault_base
 from conformance.wire_contract_golden import reports as golden_reports
+from subprocesses import HANG_TIMEOUT
 from tests.test_wire_contract_corpus import CONTRACTS, LIMITS, NAMES, _registry
 from tests.test_wire_contract_lean import DEFER, DEMO
 from tests.test_wire_contract_soft_lean import FIXTURES, INHERITED, fixture_sources
@@ -27,7 +28,7 @@ def _lean(unit, roots, kind):
     assert LEAN.exists(), "build ve_diagnose before running three-way conformance"
     cases = [{"id": str(i), "kind": kind, **root} for i, root in enumerate(roots)]
     result = subprocess.run([str(LEAN), unit, "-"], input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=600)
+                            text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -175,7 +176,7 @@ def test_admission_adapter_uses_active_norm_units():
     submitted = {"id": "admission", "kind": "admission", **case}
     legacy = subprocess.run([str(Path(__file__).resolve().parents[1] /
                                  "lean/.lake/build/bin/ve_soft_norms_route"), "-"],
-                            input=json.dumps([submitted]), text=True, capture_output=True, timeout=180)
+                            input=json.dumps([submitted]), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert json.loads(legacy.stdout)[0]["status"] == "ok"
     bad = deepcopy(case)
     bad["document"]["units"][0]["content"] = bad_rules[0]
