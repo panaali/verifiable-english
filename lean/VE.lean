@@ -17,6 +17,7 @@ import VE.Readings.Shape
 import VE.Readings.ChoiceFacts
 import VE.Readings.Children
 import VE.Readings.Live
+import VE.Readings.Faithful
 import VE.Readings.Superpose
 import VE.Readings.Examples
 import VE.Checks
