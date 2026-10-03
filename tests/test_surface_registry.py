@@ -72,6 +72,26 @@ def test_registered_wire_tags_match_the_kernel_tables():
         register(SurfaceRecord("and", "", (), "", "", node_type=ast.And, wire_arity=3))
 
 
+@pytest.mark.parametrize("authority", ["lean", "shadow", "rust-experimental"])
+def test_malformed_formulas_keep_their_attribute_error(monkeypatch, authority):
+    # Before P2 a non-node reached by _to_data failed the registry lookup with
+    # AttributeError under every non-Python typing authority; the kernel tables
+    # keep that (review of layers2-b1, finding C), at every formula position.
+    import json
+    from ve import ast
+    from ve.environment import Environment
+    env = Environment.from_dict(json.load(open("examples/environment.json")))
+    monkeypatch.setenv("VE_AUTHORITY", authority)
+    for formula in (ast.And(ast.Top(), None), ast.Or(ast.Top(), "x"), ast.Implies(ast.Top(), 1),
+                    ast.Not(5), ast.Forall("s", None), ast.Exists("s", ast.Not(None)), None, object()):
+        for check in (ast.check_formula, ast.formula_to_data,
+                      lambda env, formula: ast.check_document(env, ast.Document((formula,)))):
+            with pytest.raises(AttributeError, match="is not a formula node"):
+                check(env, formula)
+        with pytest.raises(AttributeError, match="is not a formula node"):
+            ast._to_data(formula)
+
+
 def test_duplicate_keyword_refused():
     with pytest.raises(ValueError, match="Duplicate English keyword"):
         register(SurfaceRecord("test-duplicate", "", ("both ",), "", ""))

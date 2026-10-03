@@ -437,6 +437,10 @@ def _to_data(node):
         return ["not", _to_data(node.body)]
     if kind in (And, Or, Implies):
         return [WIRE_TAGS[kind], _to_data(node.left), _to_data(node.right)]
+    if kind not in (Forall, Exists):
+        # A non-node is rejected with AttributeError, as the registry lookup this
+        # table replaced did (`by_node(...)` was None); not a KeyError.
+        raise AttributeError(f"{kind.__name__!r} object is not a formula node and has no wire tag")
     return [WIRE_TAGS[kind], node.sort, _to_data(node.body)]
 
 
