@@ -453,15 +453,16 @@ class Wording:
                 lines += self.e22_e23(set_id, strict, default)
                 if self.admission.decision_only(set_id, strict, default) is not None:
                     lines.append(E.decision_only_sentence(who))
-                return "E14", " ".join(lines)
+                return "E14", _s1_gated("E14", " ".join(lines))
             text = E.outcome_pair_sentence(self.situation_text(set_id, i, situation), names[i], names[j], role,
                                            row[0], value, other_admissible=facts["other_admissible"],
                                            other_value=facts.get("other_value"))
-            return "E19", text
+            return "E19", _s1_gated("E19", text)
         if probe == "holds" and all(R.candidates[k].content.kind == "assertion" for k in (i, j)):
             true, false = (names[i], names[j]) if value else (names[j], names[i])
-            return "E21", E.assertion_pair_sentence(self.situation_text(set_id, i, situation), true, false)
-        return "E24", E.E24
+            return "E21", _s1_gated("E19", E.assertion_pair_sentence(self.situation_text(set_id, i, situation),
+                                                                     true, false))
+        return "E24", _s1_gated("E24", E.E24)
 
     def twins(self, set_id, i, j):
         """(strict index, default index) when the pair is force twins (1.7), else None."""
@@ -531,7 +532,7 @@ class Wording:
                 if finding.startswith("SeparatedByActOnly:"):
                     i, j = (int(x) for x in finding.split(":", 2)[2].split(","))
                     acts = [self.act_phrase(entry["set"], k) for k in (i, j)]
-                    lines.append(E.act_only_sentence(*acts))
+                    lines.append(_s1_gated("E16", E.act_only_sentence(*acts)))
         return lines
 
     def act_phrase(self, set_id, k):
@@ -541,6 +542,17 @@ class Wording:
         [act] = content_acts(side, content)
         phrase = side.soft.env.predicates[act].regulated.act or act
         return " ".join(word for word in phrase.split() if not (word.startswith("{") and word.endswith("}")))
+
+
+def _s1_gated(lead, text):
+    """S1's report sentences read against every registered wording, S2a's included (2.2 and composition.md 2): the
+    sentence has exactly one derivation, by its own lead (E19 to E21 share one lead), so no sentence of S1 can be
+    read as one of S2a's. Their own slots are S1's (composition-s1.md 2.1) and are read as any text here."""
+    from .readings_s2_english import Slots, derivations
+    found = derivations(text, Slots())
+    if len(found) != 1 or found[0][0] != lead:
+        raise VEError(f"InvalidInput: S1 wording {lead} has {len(found)} derivations: {text}")
+    return text
 
 
 def _article(noun):
