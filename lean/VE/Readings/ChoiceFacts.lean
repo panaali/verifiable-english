@@ -474,11 +474,13 @@ theorem fmap_frame {D : Doc} (hh : Hyps D) (c : Choice) {N : SoftNode} (hN : N �
 /-- A fixed rule lies, as a placed rule, in a document S1 checked. -/
 theorem fixed_home {D : Doc} (hh : Hyps D) {u : String} {N : SoftNode} {cs : List (String × List String)}
     (hu : Item.fixed u (.norm N) cs ∈ D.items) :
-    ∃ keep pick, sideWF D (build D keep pick) = true ∧ N ∈ D.items.flatMap (buildNodes keep pick) := by
+    ∃ keep pick, (∀ R a, pick R = some a → a ∈ R.candidates) ∧ sideWF D (build D keep pick) = true ∧
+      N ∈ D.items.flatMap (buildNodes keep pick) := by
   obtain ⟨_, _, _, hsa, hfree, hone⟩ := wellFormedDoc_parts hh.wf
   have hr := hh.ready
   cases hat : attached D u with
-  | nil => exact ⟨_, _, hfree, List.mem_flatMap.mpr ⟨_, hu, by simp [buildNodes, hat, normsOf]⟩⟩
+  | nil => exact ⟨fun u => (attached D u).isEmpty, fun _ => none, (fun R a h => by cases h), hfree,
+      List.mem_flatMap.mpr ⟨_, hu, by simp [buildNodes, hat, normsOf]⟩⟩
   | cons t rest =>
     have hA : Attached D u t := (attached_iff D u t).mp (by rw [hat]; simp)
     obtain ⟨R, hR, rfl⟩ := attached_set hA
@@ -496,7 +498,11 @@ theorem fixed_home {D : Doc} (hh : Hyps D) {u : String} {N : SoftNode} {cs : Lis
       rcases hone R hR 0 hne with h' | h'
       · rw [Option.isNone_iff_eq_none] at h'; rw [h'] at hcont; cases hcont
       · exact h'
-    refine ⟨_, _, hw, List.mem_flatMap.mpr ⟨_, hu, ?_⟩⟩
+    refine ⟨_, _, fun R' a h => ?_, hw, List.mem_flatMap.mpr ⟨_, hu, ?_⟩⟩
+    · simp only at h
+      split at h
+      · exact List.mem_of_getElem? h
+      · cases h
     have hall : (attached D u).all (· == R.id) = true := by
       have := (singlyAttached_spec D).mp hsa
       rw [List.all_eq_true]
@@ -509,7 +515,7 @@ theorem fixed_home {D : Doc} (hh : Hyps D) {u : String} {N : SoftNode} {cs : Lis
 theorem fixed_not_frame {D : Doc} (hh : Hyps D) {u : String} {N : SoftNode} {cs : List (String × List String)}
     (hu : Item.fixed u (.norm N) cs ∈ D.items) : N ∉ D.frame.soft.T.nodes := by
   intro hN
-  obtain ⟨keep, pick, hw, hm⟩ := fixed_home hh hu
+  obtain ⟨keep, pick, _, hw, hm⟩ := fixed_home hh hu
   exact (build_names D hh.chain keep pick hw).2 N hN N hm rfl
 
 theorem fmap_fixed {D : Doc} (hh : Hyps D) (c : Choice) {u : String} {N : SoftNode} {cs : List (String × List String)}
@@ -560,7 +566,7 @@ theorem choice_name_inj {D : Doc} (hh : Hyps D) (c : Choice) {N N' : SoftNode}
     intro F M hF hM hMf
     rcases (mem_choiceNodes D c M).mp hM with hf | ⟨u, cs, hu⟩ | ⟨m, hm, i, a, hi, ha, hc⟩
     · exact absurd hf hMf
-    · obtain ⟨keep, pick, hw, hmem⟩ := fixed_home hh hu
+    · obtain ⟨keep, pick, _, hw, hmem⟩ := fixed_home hh hu
       exact (build_names D hh.chain keep pick hw).2 F hF M hmem
     · exact (build_names D hh.chain _ _ (one_wf hh hm ha hc)).2 F hF M (one_has hm ha hc)
   by_cases hf : N ∈ D.frame.soft.T.nodes <;> by_cases hf' : N' ∈ D.frame.soft.T.nodes
@@ -755,7 +761,7 @@ theorem choice_names_nodup {D : Doc} (hh : Hyps D) (c : Choice) :
     obtain ⟨M, hM, rfl⟩ := hn'
     obtain ⟨it, hit, hM⟩ := List.mem_flatMap.mp hM
     rcases mem_buildNodes_choice hM with ⟨u, cs, rfl⟩ | ⟨R, a, rfl, hpa, hc⟩
-    · obtain ⟨keep, pick, hw, hm⟩ := fixed_home hh hit
+    · obtain ⟨keep, pick, _, hw, hm⟩ := fixed_home hh hit
       exact (build_names D hh.chain keep pick hw).2 F hF M hm he
     · obtain ⟨m, hm, rfl⟩ := mem_sets_getElem (mem_sets.mpr hit)
       simp only [pickC, Option.bind_eq_some_iff] at hpa
