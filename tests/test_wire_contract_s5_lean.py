@@ -227,7 +227,7 @@ NORMS = [
     ("N30", both(set_rule(1, unless={}), set_rule(1, sign="no")), "3.4", "/norms/1/norm/unless", "InvalidInput",
      "InvalidInput: unless and over must be arrays"),
     ("N31", set_rule(1, unless=[ATOM, ["unary", "d", ["var", 0]]]), "4.7b", "/norms/1", "UnknownSymbol", None),
-    ("N32", set_rule(0, guard=["unary", "c", ["var", -1]]), "3.8b", "/norms/0/norm/guard", "SyntaxError", None),
+    ("N32", set_rule(0, guard=["unary", "c", ["var", True]]), "3.8b", "/norms/0/norm/guard", "SyntaxError", None),
     ("N33", set_rule(0, guard=["unary", 7, ["var", 0]]), "4.7b", "/norms/0", "UnknownSymbol", None),
     ("N34", set_rule(0, guard=["eq", ["const", 5], ["var", 0]]), "4.7b", "/norms/0", "UnknownSymbol", None),
     ("N35", set_rule(0, guard=["forall", 5, ["top"]]), "4.7b", "/norms/0", "UnknownSymbol", None),
@@ -241,9 +241,9 @@ NORMS[5] = ("N5", lambda e, r: r[0].update({"norm": []}), "3.2", "/norms/0/norm"
             "InvalidInput: expected norm object")
 # 2.12: the record's class is not Python's legacy code on these, by the listed exemptions.
 EXEMPT = {"N32", "N36", "N40"}
-# Not a case that Lean reads: the restricted JSON reader of every Lean executable refuses a negative integer
-# (`lean/VE/Json.lean`), so N32's record is the Python engine's alone.
-LEAN_UNREADABLE = {"N32"}
+# Every fixture is a case that Lean reads: N32's index is the Boolean of the spec (4098ed1c), not the negative
+# integer the restricted JSON reader refuses (`lean/VE/Json.lean`).
+LEAN_UNREADABLE = set()
 
 
 def d6(e, r):
@@ -449,6 +449,84 @@ def test_l5_outside_the_domain(diagnose):
     assert rows[:2] == [{"id": c["id"], "status": "error", "error": error} for c in cases[:2]]
     assert rows[2] == {"id": "kind", "status": "error",
                        "error": "UnsupportedProfile: case kind norms-elaborate has no wire contract input"}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 8.6, L8 over the corpus (Astra review B: the `#guard`s of `Hooks/Norms.lean` check 17 samples at three
+# counts; L8 asks for every eligible guard and carve-out of the corpus, from its running count).
+
+# The name position of each tag that has one: the syntax walk reads a value there that is not a string as
+# `sentinel`, where `budgetFormula` refuses the node, so such a formula is not L8's.
+NAME_AT = frozenset({"unary", "binary", "forall", "exists", "const"})
+
+
+def names_are_strings(node):
+    if type(node) is not list:
+        return True
+    if node and node[0] in NAME_AT and len(node) > 1 and type(node[1]) is not str:
+        return False
+    return all(names_are_strings(child) for child in node[1:])
+
+
+def l8_rules(cases):
+    """Each rule of the corpus cases that Lean reads, as its guard and then its carve-outs, up to the first
+    formula with a name that is not a string; once each."""
+    rules = set()
+    for case in cases:
+        if not case[6] or type(case[3]) is not list:
+            continue
+        for unit in case[3]:
+            rule = unit.get("norm") if type(unit) is dict else None
+            if type(rule) is not dict or "guard" not in rule:
+                continue
+            formulas = [rule["guard"]] + (rule["unless"] if type(rule.get("unless")) is list else [])
+            prefix = []
+            for formula in formulas:
+                if not names_are_strings(formula):
+                    break
+                prefix.append(formula)
+            if prefix:
+                rules.add(json.dumps(prefix, separators=(",", ":")))
+    return sorted(rules)
+
+
+def l8(lines):
+    lake = shutil.which("lake")
+    if lake is None:
+        pytest.skip("lake is required for L8")
+    binary("ve_diagnose")  # the hooks module is built
+    result = subprocess.run([lake, "env", "lean", "--run", str(ROOT / "tests/wire_contract_l8.lean")],
+                            cwd=ROOT / "lean", input="\n".join(lines) + "\n", text=True, capture_output=True,
+                            timeout=3000)
+    assert result.returncode == 0, result.stdout[-4000:] + result.stderr[-4000:]
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    assert len(rows) == len(lines)
+    return rows
+
+
+def test_l8_harness_reports_a_difference():
+    """The comparison is not vacuous: a name that is not a string is read by the walk and refused by
+    `budgetFormula`, and a later carve-out is read from the count the earlier formulas leave."""
+    rows = l8([json.dumps([["unary", 7, ["var", 0]]]), json.dumps([["top"], nots(64, ["top"])]),
+               json.dumps([balanced(1667), balanced(1667), balanced(1)])])
+    assert rows[0]["differ"] is not None and rows[0]["compared"] == 1
+    assert rows[1] == {"compared": 2, "failed": True, "differ": None}  # 1 + 65 nodes: depth over 64
+    assert rows[2] == {"compared": 3, "failed": True, "differ": None}  # 5,000 + 5,000 + 2 nodes: over the budget
+
+
+def test_l8_syntax_walk_is_budget_formula_on_the_corpus():
+    """Every guard and carve-out of both units' corpora whose name positions hold strings, from its running
+    count: the same formula and count, or a failure with the same text."""
+    from conformance.wire_contract_gate import gate_cases
+    from ve.wire_contract.engine import load
+    rules = sorted(set(l8_rules(gate_cases(load("norms@0")))) | set(l8_rules(gate_cases(load("norm-defaults@0")))))
+    rows = l8(rules)
+    differ = [(rule[:200], row["differ"]) for rule, row in zip(rules, rows) if row.get("differ") is not None]
+    assert differ == []
+    compared = sum(row["compared"] for row in rows)
+    failed = sum(row["failed"] for row in rows)
+    # On the corpus of this commit: 2,218 rules, 3,115 formulas, 21 of them refused by both with one text.
+    assert len(rules) > 2000 and compared > len(rules) and failed > 10, (len(rules), compared, failed)
 
 
 # ---------------------------------------------------------------------------------------------------------------
