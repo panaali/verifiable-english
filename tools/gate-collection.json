@@ -3531,6 +3531,7 @@
   "tests/test_readings_s2_lean.py::test_m3_conflict_witness_names_the_choice",
   "tests/test_readings_s2_lean.py::test_m4_countermodel_outcome_agrees_in_three_evaluators",
   "tests/test_readings_s2_lean.py::test_m4_countermodel_under_should",
+  "tests/test_readings_s2_lean.py::test_m5_narrowing_slot_and_choice_match_python",
   "tests/test_readings_s2_lean.py::test_python_and_lean_agree_on_m1_route_choices_and_vocabulary",
   "tests/test_readings_s2_python.py::test_binary_patterns_and_unused_code_match_m7",
   "tests/test_readings_s2_python.py::test_closed_s2_english_instances",

@@ -261,3 +261,20 @@ def test_m4_countermodel_outcome_agrees_in_three_evaluators(lean):
                      "conflict_targets": [], "conclusions": [conclusion]})
     assert lean_row["valid"] is True and lean_row["conclusion_value"] is False
     assert python_value is False and rust["values"]["conclusions"] == [False]
+
+
+def test_m5_narrowing_slot_and_choice_match_python(lean):
+    from ve.readings_route import elaborate
+
+    raw = env_k()
+    document = k1(raw)
+    document["units"].append({"id": "u2", "kind": "asserted", "content": ["top"]})
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"],
+                 "by": "reviewer", "reason_spans": ["u2"]}
+    [lean_row] = run(lean, [case("readings-elaborate", raw,
+                                {**document, "narrowings": [narrowing]})])
+    checked = elaborate(raw, document["units"], document["reading_sets"],
+                        narrowings=[narrowing], executable=lean)
+    assert checked == {key: value for key, value in lean_row.items() if key not in ("id", "status")}
+    assert checked["route"] == "superposed" and checked["choices"] == [[["rs1", 0]]]
+    assert [part["label"] for part in checked["slot"]] == [QUIET, "narrowing:n1"]
