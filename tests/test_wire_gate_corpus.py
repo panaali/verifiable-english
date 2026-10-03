@@ -12,15 +12,18 @@ even before a test runs it. This file's name matches neither glob, so it does no
 """
 
 from functools import lru_cache
+import importlib
 import inspect
 import json
 from pathlib import Path
+
+import pytest
 
 from conformance import soft_norms
 from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, generated_invalid_soft_blocks,
                                     generated_invalid_soft_rules, rejected_sources, soft3_reproducers)
 from conformance.wire_contract_gate import (EXAMPLES, RECORDED_TESTS, TEST_INPUTS, gate_cases,
-                                            record_test_inputs, source_key)
+                                            record_test_inputs, source_key, unit_of)
 from tests.test_soft_norms_conformance import fixtures
 from tests.test_wire_contract_soft_lean import fixture_sources
 from ve.wire_contract.engine import load
@@ -125,3 +128,53 @@ def test_gate_corpus_holds_every_soft_conformance_fixture():
                for name, rows in sources.items()}
     assert all(rows for rows in sources.values())
     assert missing == {name: [] for name in sources}
+
+
+# wire-contract-s5.md 8.7: the same three tests for each unit after the pilot. Each unit's fault catalogue module
+# names its recorded test files (`RECORDED_TESTS`), builds its conformance scripts' sources
+# (`conformance_sources`) and its examples; its test module holds its fixtures (`fixture_sources`).
+UNITS = ("norms@0", "norm-defaults@0")
+UNIT_SUBMITTING = {"norms@0": {"test_norms_contract.py", "test_norm_admission.py", "test_norms.py",
+                               "test_norms_three_way.py"},
+                   "norm-defaults@0": {"test_norm_defaults_contract.py", "test_norm_defaults.py",
+                                       "test_norm_defaults_three_way.py", "test_norm_defaults_differential.py"}}
+UNIT_TESTS = {"norms@0": "tests.test_norms_contract", "norm-defaults@0": "tests.test_norm_defaults_contract"}
+
+
+@lru_cache(maxsize=None)
+def unit_corpus(unit):
+    return frozenset(source_key(case[2], case[3]) for case in gate_cases(load(unit)))
+
+
+@pytest.mark.parametrize("unit", UNITS)
+def test_unit_gate_corpus_holds_every_recorded_test_input(unit, tmp_path):
+    """A missing input is a test input no source of the unit's corpus builds: `python -m
+    conformance.wire_contract_gate --unit <unit> --record-test-inputs` records it into the unit's test inputs."""
+    output = tmp_path / "inputs.json"
+    result = record_test_inputs(output, unit)
+    assert result.returncode == 0 and " skipped" not in result.stdout, result.stdout[-4000:] + result.stderr[-4000:]
+    recorded = json.loads(output.read_text())
+    assert UNIT_SUBMITTING[unit] <= {Path(label.split("::")[0]).name for label, _, _ in recorded}
+    submitted = {source_key(raw, norms) for label, raw, norms in recorded}
+    gate = unit_corpus(unit)
+    assert sorted({label for label, raw, norms in recorded if source_key(raw, norms) not in gate}) == []
+    stored = json.loads(unit_of(unit).test_inputs.read_text())
+    others = {source_key(case[2], case[3]) for case in gate_cases(load(unit), recorded=False)}
+    assert {source_key(raw, norms) for _, raw, norms in stored} <= submitted - others
+
+
+@pytest.mark.parametrize("unit", UNITS)
+def test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts(unit):
+    sources = unit_of(unit).module.conformance_sources()
+    gate = unit_corpus(unit)
+    assert sources and [label for label, raw, norms in sources if source_key(raw, norms) not in gate] == []
+
+
+@pytest.mark.parametrize("unit", UNITS)
+def test_unit_gate_corpus_holds_every_fixture(unit):
+    """The fixtures of the unit's statement spec that its tests build, and its examples."""
+    module = unit_of(unit).module
+    sources = importlib.import_module(UNIT_TESTS[unit]).fixture_sources() + module.example_sources()
+    gate = unit_corpus(unit)
+    assert len(module.example_sources()) >= 2
+    assert [label for label, raw, norms in sources if source_key(raw, norms) not in gate] == []

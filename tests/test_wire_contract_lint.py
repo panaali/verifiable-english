@@ -180,9 +180,11 @@ def shipped_copy(tmp_path, monkeypatch):
     """A copy of every file `process` reads or writes for the shipped contracts, with the tool pointed at it."""
     for relative in ("ve/wire_contract", "conformance/wire-contract/contracts", "lean/VE/WireContract"):
         shutil.copytree(ROOT / relative, tmp_path / relative, ignore=shutil.ignore_patterns("__pycache__"))
-    for relative in ("lean/VE/Route/frozen-sources.sha256", "docs/spec/soft-norms-wire-table.md",
-                     "conformance/wire-contract/engine-golden.json",
-                     "conformance/wire-contract/soft-norms@0-catalogue.json"):
+    shipped = [str(path.relative_to(ROOT)) for pattern in ("docs/spec/*-wire-table.md",
+                                                           "conformance/wire-contract/*-catalogue.json")
+               for path in sorted(ROOT.glob(pattern))]
+    for relative in ("lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/engine-golden.json",
+                     *shipped):
         (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / relative, tmp_path / relative)
     monkeypatch.setattr(wire_tool, "ROOT", tmp_path)
