@@ -261,7 +261,10 @@ def _diagnostic_import_boundary(overrides=None):
     """Resolve relative and package imports, then pin the one production call shape."""
     root = DIRECTORY.parent
     overrides = overrides or {}
-    route_tree = None
+    routes = {}
+    allowed = {"soft_route.py": ("softnorms_contract", "admit_soft_document"),
+               "norm_admission.py": ("norms_contract", "_admit_norm_document_python"),
+               "norm_defaults_route.py": ("norm_defaults_contract", "admit_norm_defaults_document")}
     for path in root.rglob("*.py"):
         if "wire_contract" in path.parts or path.name in CONTRACT_MODULES:
             continue
@@ -278,33 +281,34 @@ def _diagnostic_import_boundary(overrides=None):
                 imports.extend((module + "." + alias.name, node) for alias in node.names)
         diagnostic = [(name, node) for name, node in imports if name and
                       any(name == module or name.startswith(module + ".") for module in DIAGNOSTIC_MODULES)]
-        if path.name == "soft_route.py":
-            route_tree = tree
-            target = [node for name, node in diagnostic if name == "ve.softnorms_contract"]
+        if path.name in allowed:
+            module, function_name = allowed[path.name]
+            routes[path.name] = tree
+            target = [node for name, node in diagnostic if name == "ve." + module]
             assert len({id(node) for node in target}) == 1
-            assert all(not name.startswith("ve.wire_contract") for name, _ in diagnostic)
+            assert all(name.startswith("ve." + module) for name, _ in diagnostic)
             imported = target[0]
             assert isinstance(imported, ast.ImportFrom)
-            assert imported.module == "softnorms_contract" and imported.level == 1
+            assert imported.module == module and imported.level == 1
             assert [alias.name for alias in imported.names] == ["public_rejection"]
+            function = next(node for node in tree.body if isinstance(node, ast.FunctionDef)
+                            and node.name == function_name)
+            handlers = [node for node in ast.walk(function) if isinstance(node, ast.ExceptHandler)
+                        and isinstance(node.type, ast.Name) and node.type.id == "VEError"]
+            assert len(handlers) == 1
+            handler = handlers[0]
+            imports = [node for node in ast.walk(handler) if isinstance(node, ast.ImportFrom)
+                       and node.module == module]
+            calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call)
+                     and isinstance(node.func, ast.Name) and node.func.id == "public_rejection"]
+            raises = [node for node in ast.walk(handler) if isinstance(node, ast.Raise)
+                      and isinstance(node.exc, ast.Call) and isinstance(node.exc.func, ast.Name)
+                      and node.exc.func.id == "public_rejection"]
+            assert len(imports) == len(calls) == len(raises) == 1
+            assert calls[0] is raises[0].exc
         else:
             assert not diagnostic, path
-    assert route_tree is not None
-    function = next(node for node in route_tree.body if isinstance(node, ast.FunctionDef)
-                    and node.name == "admit_soft_document")
-    handlers = [node for node in ast.walk(function) if isinstance(node, ast.ExceptHandler)
-                and isinstance(node.type, ast.Name) and node.type.id == "VEError"]
-    assert len(handlers) == 1
-    handler = handlers[0]
-    imports = [node for node in ast.walk(handler) if isinstance(node, ast.ImportFrom)
-               and node.module == "softnorms_contract"]
-    calls = [node for node in ast.walk(route_tree) if isinstance(node, ast.Call)
-             and isinstance(node.func, ast.Name) and node.func.id == "public_rejection"]
-    raises = [node for node in ast.walk(handler) if isinstance(node, ast.Raise)
-              and isinstance(node.exc, ast.Call) and isinstance(node.exc.func, ast.Name)
-              and node.exc.func.id == "public_rejection"]
-    assert len(imports) == len(calls) == len(raises) == 1
-    assert calls[0] is raises[0].exc
+    assert set(routes) == set(allowed)
 
 
 def test_diagnostic_modules_stay_off_verdict_import_paths():
@@ -323,6 +327,15 @@ def test_diagnostic_modules_stay_off_verdict_import_paths():
         _diagnostic_import_boundary({route: route.read_text().replace(
             "raise public_rejection(environment, active, error)",
             "diagnosed = public_rejection(environment, active, error)\n                raise diagnosed")})
+    norms = root / "norm_admission.py"
+    defaults = root / "norm_defaults_route.py"
+    with pytest.raises(AssertionError):
+        _diagnostic_import_boundary({norms: norms.read_text().replace(
+            "raise public_rejection(env.to_dict(), active, error)",
+            "public_rejection(env.to_dict(), active, error)\n        raise error")})
+    with pytest.raises(AssertionError):
+        _diagnostic_import_boundary({defaults: defaults.read_text() +
+                                     "\nfrom .norms_contract import legacy_validation\n"})
 
 
 def test_seeded_soft_sources_keep_verdict_and_code_agreement():
