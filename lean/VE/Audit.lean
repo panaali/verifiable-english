@@ -130,6 +130,7 @@ import VE.Readings.Run
 import VE.Readings.Choice
 import VE.Readings.Simulate
 import VE.Readings.Names
+import VE.Readings.SoftFacts
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3245,3 +3246,24 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.utf8ByteSize_go_append
 #print axioms VE.Readings.mapAux_data
 #print axioms VE.Readings.map_data
+#print axioms VE.Readings.splitOnAux_length
+#print axioms VE.Readings.utf8GetAux_ascii
+#print axioms VE.Readings.utf8ByteSize_go_ascii
+#print axioms VE.Readings.splitOn_dunder
+#print axioms VE.Readings.ascii_size
+#print axioms VE.Readings.validSoftName_data
+#print axioms VE.Readings.ruleName_no_underscore
+#print axioms VE.Readings.ruleKey_data
+#print axioms VE.Readings.keyChar_inj
+#print axioms VE.Readings.map_keyChar_inj
+#print axioms VE.Readings.ruleKey_inj
+#print axioms VE.Readings.exceptedName_inj
+#print axioms VE.Readings.split_dunder
+#print axioms VE.Readings.offName_inj
+#print axioms VE.Readings.exceptedName_ne_offName
+#print axioms VE.Readings.exceptedName_ne_outweighsName
+#print axioms VE.Readings.offName_ne_outweighsName
+#print axioms VE.Readings.wellFormedSoft_check
+#print axioms VE.Readings.checkSoft_parts
+#print axioms VE.Readings.checkSoftEnv_names
+#print axioms VE.Readings.checkSoftRule_parties
