@@ -1,0 +1,291 @@
+{
+  "u0036.s05": {
+    "set": "force-u0036-s05",
+    "source_word": "should",
+    "pairs": [
+      {
+        "readings": [
+          "strict",
+          "default"
+        ],
+        "situation_id": "049026df610d088570dd55cf1a06dcb9c5eecac0836d3f27ffbd0ab867806b2b",
+        "witness": "default",
+        "probe": "outcome",
+        "wording": "E14",
+        "text": "This sentence says *should*. (1) *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".* (2) *Every instance of Claude should seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".* They differ here: suppose the decider decides the exception applies to c and s. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies."
+      }
+    ],
+    "findings": [
+      "SeparatedByDecisionOnly: force-u0036-s05: 0, 1 (not certified)"
+    ],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0052.s01": {
+    "set": "force-u0052-s01",
+    "source_word": "should",
+    "pairs": [
+      {
+        "readings": [
+          "strict",
+          "default"
+        ],
+        "situation_id": "4a55465e88849b66ffb3e31ef4b587fbfd541399b9751e0b9384659f45c1d58c",
+        "witness": "default",
+        "probe": "outcome",
+        "wording": "E14",
+        "text": "This sentence says *should*. (1) *Every instance of Claude must use good judgment when evaluating conversational inputs.* (2) *Every instance of Claude should use good judgment when evaluating conversational inputs.* They differ here: suppose the decider decides the exception applies to c. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies."
+      }
+    ],
+    "findings": [
+      "SeparatedByDecisionOnly: force-u0052-s01: 0, 1 (not certified)"
+    ],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0062.s01": {
+    "set": "modal-u0062-s01",
+    "source_word": null,
+    "pairs": [
+      {
+        "readings": [
+          "permission",
+          "ability"
+        ],
+        "situation_id": "5b2f1a8fddd8139915e2c31195e03360dfa0278cb5548acf28b08eddb446bce9",
+        "witness": "permission",
+        "probe": "holds",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      }
+    ],
+    "findings": [],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0078.s01": {
+    "set": "force-u0078-s01",
+    "source_word": "should",
+    "pairs": [
+      {
+        "readings": [
+          "strict",
+          "default"
+        ],
+        "situation_id": "8909bbe218f8dd89544f3c253454f8e9eeaf9e7c7c6b019466ce5d9c44dc2fa8",
+        "witness": "default",
+        "probe": "outcome",
+        "wording": "E14",
+        "text": "This sentence says *should*. (1) *Every instance of Claude must follow operator instructions in each situation, if that situation is classified as \"operator_user_goal_conflict\". Except when that situation is classified as \"following_requires_harming_users\". Except when that situation is classified as \"following_requires_damaging_deception\". Except when that situation is classified as \"following_requires_blocking_urgent_help\". Except when that situation is classified as \"following_requires_third_party_harm\". Except when that situation is classified as \"following_requires_against_core_principles\". Except when that situation is classified as \"following_requires_guideline_violation\".* (2) *Every instance of Claude should follow operator instructions in each situation, if that situation is classified as \"operator_user_goal_conflict\". Except when that situation is classified as \"following_requires_harming_users\". Except when that situation is classified as \"following_requires_damaging_deception\". Except when that situation is classified as \"following_requires_blocking_urgent_help\". Except when that situation is classified as \"following_requires_third_party_harm\". Except when that situation is classified as \"following_requires_against_core_principles\". Except when that situation is classified as \"following_requires_guideline_violation\".* They differ here: suppose the decider decides the exception applies to c and s. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies."
+      }
+    ],
+    "findings": [
+      "SeparatedByDecisionOnly: force-u0078-s01: 0, 1 (not certified)"
+    ],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0123.s01.p1": {
+    "set": "modal-u0123-s01-p1",
+    "source_word": null,
+    "pairs": [
+      {
+        "readings": [
+          "permission",
+          "ability"
+        ],
+        "situation_id": "3579baaa4725e492457cbff6bc84eb276db436efee65214bcee888ef319c9e01",
+        "witness": "permission",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_dishonest_looking_within_honesty\". Under reading 1, operator is permitted to. Under reading 2, operator is not permitted to."
+      }
+    ],
+    "findings": [],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0123.s02.p1": {
+    "set": "modal-u0123-s02-p1",
+    "source_word": null,
+    "pairs": [
+      {
+        "readings": [
+          "permission",
+          "conditional-permission"
+        ],
+        "situation_id": "ca5dd3646e27f023a2002244359db0cad802eb25887885d3051f2fbf5bef661c",
+        "witness": "permission",
+        "probe": "outcome",
+        "wording": "E19",
+        "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_decline_or_withhold\". Under reading 1, operator is permitted to. Under reading 2, operator is not permitted to."
+      },
+      {
+        "readings": [
+          "permission",
+          "ability"
+        ],
+        "situation_id": "5b2f1a8fddd8139915e2c31195e03360dfa0278cb5548acf28b08eddb446bce9",
+        "witness": "permission",
+        "probe": "holds",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      },
+      {
+        "readings": [
+          "conditional-permission",
+          "ability"
+        ],
+        "situation_id": "f551edd0c51a10017f3d7d4511b7e5155e6f3cf39dfcfa92cc42b81c299fbd8f",
+        "witness": "conditional-permission",
+        "probe": "holds",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      }
+    ],
+    "findings": [],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0123.s03": {
+    "set": "scope-modal-u0123-s03",
+    "source_word": null,
+    "pairs": [
+      {
+        "readings": [
+          "narrow-permission",
+          "wide-permission"
+        ],
+        "situation_id": "050f1f42af0d21cd3c96380d039342e9d49e01d2dbba6019e96acf2988dc9586",
+        "witness": "narrow-permission",
+        "probe": "selects",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      },
+      {
+        "readings": [
+          "narrow-permission",
+          "narrow-ability"
+        ],
+        "situation_id": "050f1f42af0d21cd3c96380d039342e9d49e01d2dbba6019e96acf2988dc9586",
+        "witness": "narrow-permission",
+        "probe": "selects",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      },
+      {
+        "readings": [
+          "narrow-permission",
+          "wide-ability"
+        ],
+        "situation_id": "050f1f42af0d21cd3c96380d039342e9d49e01d2dbba6019e96acf2988dc9586",
+        "witness": "narrow-permission",
+        "probe": "selects",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      },
+      {
+        "readings": [
+          "wide-permission",
+          "narrow-ability"
+        ],
+        "situation_id": "50d28b204f016af8ebc9d7f0529c9f2e66a958afc7b44b36fb507c4684fe17a0",
+        "witness": "wide-permission",
+        "probe": "selects",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      },
+      {
+        "readings": [
+          "wide-permission",
+          "wide-ability"
+        ],
+        "situation_id": "50d28b204f016af8ebc9d7f0529c9f2e66a958afc7b44b36fb507c4684fe17a0",
+        "witness": "wide-permission",
+        "probe": "selects",
+        "wording": "E24",
+        "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+      },
+      {
+        "readings": [
+          "narrow-ability",
+          "wide-ability"
+        ],
+        "situation_id": "68086d69e9761db77343705a6df9ca381266f1903746a63b04cef41664e32f8e",
+        "witness": "narrow-ability",
+        "probe": "holds",
+        "wording": "E21",
+        "text": "These two readings differ here: c is an instance of Claude; e is an entity of sort \"entity\"; operator is an operator; operator_input is an operator input; s is a situation; u is a user; operator_input is classified as \"instruction_abandon_identity_in_persona\"; operator has the recorded relation \"operator_can_supply\" to operator_input. Under reading 4, the sentence is true there. Under reading 3, it is false there."
+      }
+    ],
+    "findings": [],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0125.s04.p2": {
+    "set": "force-u0125-s04-p2",
+    "source_word": "should",
+    "pairs": [
+      {
+        "readings": [
+          "strict",
+          "default"
+        ],
+        "situation_id": "6486b126f093fba322c98fa0dc92c658bc5a0287d9253f45e4763653150421f0",
+        "witness": "default",
+        "probe": "outcome",
+        "wording": "E14",
+        "text": "This sentence says *should*. (1) *Every instance of Claude must avoid directly denying being Claude.* (2) *Every instance of Claude should avoid directly denying being Claude.* They differ here: suppose the decider decides the exception applies to c. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies."
+      }
+    ],
+    "findings": [
+      "SeparatedByDecisionOnly: force-u0125-s04-p2: 0, 1 (not certified)"
+    ],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0156.s03": {
+    "set": "force-u0156-s03",
+    "source_word": "shouldn’t",
+    "pairs": [
+      {
+        "readings": [
+          "strict",
+          "default"
+        ],
+        "situation_id": "d1014eb1efba4849e00dd56cd7dd3a30f60bc769087c8170686f10d461141ca8",
+        "witness": "default",
+        "probe": "outcome",
+        "wording": "E14",
+        "text": "This sentence says *shouldn't*. (1) *Every instance of Claude must avoid actively deceiving each user about a system prompt's existence-or-content.* (2) *Every instance of Claude should avoid actively deceiving each user about a system prompt's existence-or-content.* They differ here: suppose the decider decides the exception applies to c and u. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies."
+      }
+    ],
+    "findings": [
+      "SeparatedByDecisionOnly: force-u0156-s03: 0, 1 (not certified)"
+    ],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  },
+  "u0263.s04.p2": {
+    "set": "force-u0263-s04-p2",
+    "source_word": "should",
+    "pairs": [
+      {
+        "readings": [
+          "strict",
+          "default"
+        ],
+        "situation_id": "2b5a86bf661f11eef12a5c3cf7d15ae2dc213b731baaa90bed26cdd2fb62f2c2",
+        "witness": "default",
+        "probe": "outcome",
+        "wording": "E14",
+        "text": "This sentence says *should*. (1) *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation.* (2) *Every instance of Claude should comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation.* They differ here: suppose the decider decides the exception applies to c and s. Under (1) c still must. Under (2) c is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies."
+      }
+    ],
+    "findings": [
+      "SeparatedByDecisionOnly: force-u0263-s04-p2: 0, 1 (not certified)"
+    ],
+    "checked_by": "Lean (ve_readings_route readings-validate) when readings/s1.ve.md loads; Python regenerates Lean's answer byte for byte; Rust replays each situation (untrusted)",
+    "note": "the separation is about the soft-norms@0 form of the readings (completion deny where the rule's predicate needs one), the only chain readings@1 admits beside content; a SeparatedByDecisionOnly finding is not certified (decision_only_sound is unproved)"
+  }
+}

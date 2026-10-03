@@ -1,0 +1,59 @@
+{
+  "source_bytes": 184893,
+  "accounted_bytes": 184893,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+    "meta": 349,
+    "unformalised": 180812,
+    "attributed": 634,
+    "norm": 3031,
+    "asserted": 67
+  },
+  "bytes_by_status": {
+    "LABELLED": 349,
+    "UNFORMALISED": 181446,
+    "OPEN": 3076,
+    "CHECKED": 22
+  },
+  "unformalised_reasons": {
+    "other.discourse": 81,
+    "quantities": 119,
+    "norms": 669,
+    "causation": 76,
+    "time": 9,
+    "counting": 31,
+    "defaults": 50,
+    "modality_belief": 24,
+    "other.open-list": 1,
+    "attribution": 12
+  },
+  "residual": {
+    "open_terms": 42,
+    "assumptions": 21,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 11,
+    "gaps": 15,
+    "ungrounded_defaults": 0
+  },
+  "residual_total": 89,
+  "norm_defaults": {
+    "gaps": [
+      "clarification_required",
+      "csam_generation_permitted_for_claude",
+      "cyberweapon_creation_permitted",
+      "denial_of_being_claude_permitted",
+      "exploit_instruction_compliance_required",
+      "firmness_required",
+      "humanity_attack_participation_permitted",
+      "illegitimate_control_involvement_permitted",
+      "infrastructure_uplift_permitted",
+      "judgment_use_required",
+      "operator_input_permitted",
+      "operator_instruction_following_required",
+      "oversight_undermining_permitted",
+      "system_prompt_deception_permitted",
+      "weapons_uplift_permitted"
+    ],
+    "findings": []
+  }
+}
