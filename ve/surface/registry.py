@@ -42,6 +42,10 @@ def register(record: SurfaceRecord) -> None:
         raise ValueError(f"Duplicate wire tag {record.wire_tag}")
     if record.node_type is not None and record.node_type in _by_type:
         raise ValueError(f"Duplicate surface constructor {record.node_type.__name__}")
+    if (record.node_type is not None or record.wire_arity is not None) and (
+            (record.node_type, record.wire_arity)
+            != (ast.NODE_TYPES.get(record.wire_tag), ast.WIRE_ARITY.get(record.wire_tag))):
+        raise ValueError(f"Surface record {record.wire_tag!r} disagrees with the kernel wire tables")
     if type(record.profiles) is not tuple or record.profiles != tuple(sorted(set(record.profiles))):
         raise ValueError("Surface profiles must be sorted and unique")
     if record.traversal_hooks is not None and type(record.traversal_hooks) is not dict:

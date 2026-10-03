@@ -45,6 +45,33 @@ def test_surface_record_fields():
     assert re.fullmatch(r"[0-9a-f]{64}", _checker_build())
 
 
+def test_registered_wire_tags_match_the_kernel_tables():
+    # Every record naming a node type or wire arity, including tags registered
+    # beyond ve.surface.registry's own, agrees with ve.ast's tables, and every
+    # kernel tag is registered (docs/ARCHITECTURE-LAYERS-PLAN2.md P2).
+    from ve import ast
+    from ve.surface.registry import records
+    from ve.wire import formula_tag_arity
+    typed = {r.wire_tag: (r.node_type, r.wire_arity) for r in records()
+             if r.node_type is not None or r.wire_arity is not None}
+    assert typed == {tag: (ast.NODE_TYPES[tag], ast.WIRE_ARITY[tag]) for tag in ast.WIRE_ARITY}
+    assert ast.WIRE_TAGS == {kind: tag for tag, kind in ast.NODE_TYPES.items()}
+    assert len(typed) == 15
+    assert {tag: formula_tag_arity(tag) for tag in typed} == ast.WIRE_ARITY
+    assert formula_tag_arity("var") is None and formula_tag_arity("norm") is None
+    class FutureNode:
+        pass
+
+    for tag, wrong in (("future-tag", dict(wire_arity=3)), ("future-node", dict(node_type=FutureNode)),
+                       ("and", dict(node_type=ast.And, wire_arity=4)), ("and", dict(wire_arity=3)),
+                       ("and", dict(node_type=ast.And))):
+        from ve.surface import registry
+        registry._records.pop("and"); registry._by_type.pop(ast.And)  # restored by the fixture
+        with pytest.raises(ValueError, match="disagrees with the kernel wire tables"):
+            register(SurfaceRecord(tag, "", (), "", "", **wrong))
+        register(SurfaceRecord("and", "", (), "", "", node_type=ast.And, wire_arity=3))
+
+
 def test_duplicate_keyword_refused():
     with pytest.raises(ValueError, match="Duplicate English keyword"):
         register(SurfaceRecord("test-duplicate", "", ("both ",), "", ""))
