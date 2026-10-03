@@ -14,6 +14,7 @@ import VE.Readings.Simulate
 import VE.Readings.Names
 import VE.Readings.SoftFacts
 import VE.Readings.Shape
+import VE.Readings.ChoiceFacts
 import VE.Readings.Superpose
 import VE.Readings.Examples
 import VE.Checks
