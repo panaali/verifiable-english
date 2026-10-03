@@ -99,6 +99,10 @@ RUST_MODULE_CASES = {
     "root glob in a root inline module": (
         "mod tests {\n    use super::*;\n    pub fn t() -> u8 { surface::parse() }\n}\n", "", "", SURFACE_RS,
         {"lib -> surface"}),
+    # A macro that keeps each substitution apart from path tokens builds no path; its call writes them.
+    "path passed whole to a macro": (
+        "", "macro_rules! twice {\n    ($e:expr) => { $e + $e };\n}\n"
+        "pub fn f() -> u8 { twice!(crate::surface::parse::<u8>()) }\n", "", SURFACE_RS, {"ast -> surface"}),
     "self path after a root glob in a root inline module": (
         "mod tests {\n    use super::*;\n    pub fn t() -> u8 { self::surface::parse() }\n}\n", "", "",
         SURFACE_RS, {"lib -> surface"}),
@@ -218,6 +222,39 @@ RUST_REJECTED_CASES = {
     "metavariable after ::": (
         "macro_rules! call { ($m:ident) => { $crate::$m::parse::<u8>() }; }\npub fn g() -> u8 { call!(surface) }\n",
         "", "", SURFACE_RS, "lib", "::$", "moving"),
+    # Paths, imports and names a macro builds from substituted tokens (looprecheck1 B).
+    "substituted path head": (
+        "", "macro_rules! call {\n    ($root:ident) => { $root::surface::parse::<u8>() };\n}\n"
+        "pub fn f() -> u8 { call!(crate) }\n", "", SURFACE_RS, "ast", "macro_rules! call", "macro construction"),
+    "substituted root alias": (
+        "", "macro_rules! call {\n    ($root:ident) => { use $root as root; };\n}\ncall!(crate);\n"
+        "pub fn f() -> u8 { root::surface::parse() }\n", "", SURFACE_RS, "ast", "macro_rules! call",
+        "macro construction"),
+    "substituted import": (
+        "", "macro_rules! call {\n    ($root:ident) => { use $root::surface::parse; };\n}\ncall!(crate);\n"
+        "pub fn f() -> u8 { parse() }\n", "", SURFACE_RS, "ast", "macro_rules! call", "macro construction"),
+    "path pasted from token trees": (
+        "", "macro_rules! call {\n    ($($t:tt),*) => { $($t)* };\n}\n"
+        "pub fn f() -> u8 { call!(crate, ::, surface, ::, parse)() }\n", "", SURFACE_RS, "ast",
+        "macro_rules! call", "macro construction"),
+    "literal crate before a substitution": (
+        "", "macro_rules! call {\n    ($($t:tt)*) => { crate $($t)* };\n}\n"
+        "pub fn f() -> u8 { call!(::surface::parse)() }\n", "", SURFACE_RS, "ast", "macro_rules! call",
+        "macro construction"),
+    "repetition separated by ::": (
+        "", "macro_rules! call {\n    ($($s:ident)*) => { $($s)::*() };\n}\n"
+        "pub fn f() -> u8 { call!(crate surface parse) }\n", "", SURFACE_RS, "ast", "macro_rules! call",
+        "macro construction"),
+    "substituted module name": (
+        "pub use surface::parse;\nmacro_rules! module {\n    ($name:ident) => { pub mod $name { pub fn f() {} } };\n}\n"
+        "module!(parse);\n", "", "", SURFACE_RS, "lib", "macro_rules! module", "macro construction"),
+    "substituted macro name": (
+        'macro_rules! call {\n    ($m:ident) => { $m!("surface.rs"); };\n}\ncall!(include);\n', "", "", "",
+        "lib", "macro_rules! call", "macro construction"),
+    "substituted attribute": (
+        'macro_rules! attributed {\n    ($($a:tt)*) => { #[$($a)*] mod other; };\n}\n'
+        'attributed!(path = "surface.rs");\n', "", "", SURFACE_RS, "lib", "macro_rules! attributed",
+        "macro construction"),
 }
 
 
