@@ -263,8 +263,8 @@ supReady D             every open set has a candidate, every candidate has conte
                        distinct; every coupling names at least two sets, none twice, each an open set at its active
                        version, every candidate of which carries a label on the coupling's axis; narrowing ids
                        distinct; every narrowing in force keeps at least one candidate and only candidates of its set;
-                       and the frame declares neither the constant ve__here nor a bit predicate of the choice
-                       vocabulary (choiceFresh, 1.3)
+                       the frame declares neither the constant ve__here nor a bit predicate of the choice
+                       vocabulary (choiceFresh, 1.3); and every item stands for a unit of its own (unitsDistinct)
 uniformPrecedence D    for every fixed rule X and interface rule name n in X.over: every candidate of that set gives
                        its rule n the same `over` list, as a set
 superposable D         supReady D, uniformPrecedence D, and sup D passes the chain's well-formedness with every
@@ -295,6 +295,11 @@ with S1's text `InvalidInput: name <n> begins with ve__` (Python and Lean alike,
 the constant `ve__here` and the names of `bitDecls D` are looked up in the frame's environment. A decoded document
 always satisfies it; Python's `sup_ready` carries the same conjunct and refuses a document failing it with the
 decoder's text (DRI ruling 1 of 2026-10-03).
+
+`unitsDistinct` (no two items carry one unit id) is the Lean counterpart of today's `duplicate or invalid unit id`:
+S1's attachment is computed per unit id and `one D s i` reads a set by its id, so with a repeated unit id or set id
+an assertion would be checked only beside another unit's or set's rules, and `asserted_shared` would be false
+(fixture M20; finding 4 of the S2a Lean build, 2026-10-03, pending the DRI's confirmation).
 
 Uniform precedence is the condition A1's copy mapping needs. A fixed rule `X` whose `over` names `n` is, after the
 mapping, a child of every copy of `n`. An unchosen copy has a false guard and never applies, but W1's `yields` is
@@ -750,6 +755,12 @@ def bitDecls (D : Doc) : List (String × List String) :=
     ruling 1); the wire decoders refuse every `ve__` name, so a decoded document always satisfies it. -/
 def choiceFresh (D : Doc) : Bool :=
   D.frame.soft.E.constants "ve__here" == none && (bitDecls D).all (fun d => D.frame.soft.E.predicates d.1 == none)
+def itemUnit : Item → String
+  | .fixed u _ _ => u
+  | .bar u _ => u
+  | .set R => R.unit
+/-- Every item stands for its own unit, as today's decoders require (1.8). -/
+def unitsDistinct (D : Doc) : Bool := decide (D.items.map itemUnit).Nodup
 /-- 1.1 row 2 and 1.8: distinct set ids, every open set with a candidate, every candidate with content; the couplings
     and narrowings in today's shape, with distinct ids; the frame free of the choice vocabulary. The Lean
     counterpart of the shape part of the decoder checks of 7, and of that part only. -/
@@ -757,7 +768,8 @@ def supReady (D : Doc) : Bool :=
   decide (D.sets.map (·.id)).Nodup &&
     D.sets.all (fun R => !R.candidates.isEmpty && R.candidates.all (·.content.isSome)) &&
     decide (D.couplings.map (·.id)).Nodup && D.couplings.all (couplingShape D) &&
-    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D) && choiceFresh D
+    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D) && choiceFresh D &&
+    unitsDistinct D
 def complete (D : Doc) (c : Choice) : Bool :=
   c.map (·.1) == D.sets.map (·.id) && c.all (fun x => (candidate D x.1 x.2).isSome)
 /-- Consecutive sets of the coupling take candidates with one label on the axis. -/
@@ -1020,7 +1032,8 @@ theorem sup_wellFormed (D : Doc) (hs : superposable D = true) :
     one name. -/
 theorem choice_wellFormed (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights) (hs : superposable D = true)
     (c : Choice) (hc : Compatible D c) : sideWF D (choiceDoc D c) = true
-theorem asserted_shared (D : Doc) (h : WellFormedDoc D = true) (c : Choice) (hc : Compatible D c) :
+theorem asserted_shared (D : Doc) (h : WellFormedDoc D = true) (hr : supReady D = true) (c : Choice)
+    (hc : Compatible D c) :
   ∀ a ∈ (choiceDoc D c).2, a.WellFormed (sharedEnv D) []
 theorem slot_wellFormed (D) (h) (hch) (hs) (A : Choice) (hA : ∀ x ∈ A, (candidate D x.1 x.2).isSome) :
   SlotWellFormed (correlate (sup D).1) (slotUnder D A)
@@ -1287,6 +1300,7 @@ predicate `asks(agent, user)`; obligations `avoid_required`, `help_required`, de
 | M17 | the shape of couplings and narrowings (1.8, 7), on M6's document: (a) `rs1` and `rs2` without `force` labels, coupling `c1` on `force`; (b) M6 with a second coupling also named `c1`; (c) M6 with `c1` naming `rs2@2` while `rs2` is active at version 1; (d) M6 with `rs2` re-recorded at version 2 (the same two candidates; `c1` names `rs2@2`) plus a narrowing `n0` on `rs2@1` keeping the strict candidate's id | (a) Python and Lean's decoder: `CouplingLabelMissing: c1, rs1`; on the `Doc` as a Lean value `supReady D = false` (`couplingShape` fails), so no theorem of 8.4 that assumes `supReady` or `superposable` (`hr`, `hs`, `SupReplay.sp`) applies to it (`encodes_atoms`, which assumes neither, does), and what the conjunct excludes is visible: `couplingHolds D c c1 = false` for every one of the four complete choices while `couplingPremises D = []`, so a slot-admissible base of `sup D` would encode a complete choice that is not `Compatible` (`encodes_unique` would be false without the conjunct). (b) `invalid coupling`; `supReady D = false` (ids not `Nodup`). (c) `invalid coupling set`; `supReady D = false` (`rs2@2` is no open set at its active version), where `couplingHolds` and `couplingPremises` alone would have read `rs2` at version 1. (d) admitted by Python (`rs2@1` is a recorded version) and by Lean; `n0` is not in force (`inForce D n0 = none`: `D.sets` holds `rs2` at version 2), `narrowingShape D n0 = true`, `supReady D = true`, no `narrowing:n0` label, `choices D` as M6's, `n0` listed under `narrowings_stale` (6); stale narrowings stay inactive |
 | M18 | two formula sets, no content-bearing set: `rs1` on `u1` = {0: assertion `∀agent ∀user. asks`, label `force` A; 1: assertion `∀agent ∀user. ¬asks`, label `force` B}, `rs2` on `u2` the same two assertions with labels A, B; coupling `c1` on `force` over `[rs1@1, rs2@1]`; narrowing `n1` (set `rs1`, version 1, keeps the A candidate), narrowing `n2` (set `rs2`, version 1, keeps the B candidate) | route `w2` (1.1 row 1, chosen at 4.1 step 2): W2's `coupled-choices` route over the two compatible choices A/A and B/B, with today's `models`, verdicts byte-identical to today's; `sup D` not built, `choiceCore D` not computed; no `ReadingsUnsatisfiable`, no `DeadReading`; `CouplingUnsatisfiable` not raised (today's `validate_couplings` finds A/A). Under `--narrowing n1` today's one-choice answer (A/A) with `narrowing: narrowing:n1`, under `--narrowing n2` likewise (B/B), unchanged (F20). As a Lean value: `supReady D = true`, `choices D = []` and `unsatCheck` would accept a certificate of `⊥` from `choiceCore D` (= `[coupling:c1, narrowing:n1, narrowing:n2]`): the refusal draft 1 raised and the route order now never reaches |
 | M19 | the frame declares the choice vocabulary (DRI ruling 1): `KH`, M1's frame with the constant `ve__here : agent` and `rs1` = {0: assertion `⊤`, 1: assertion `⊥`}; `KB`, M1's frame with `ve__here : agent` and the predicate `ve__bit__1__0(agent)`, and `rs1` = {0: assertion `ve__bit__1__0(ve__here)`, 1: its negation} | both refused by the wire decoders with `InvalidInput: name ve__here begins with ve__` (Python and Lean); as Lean values `WellFormedDoc` holds (it cannot see the names), `choiceFresh` and so `supReady` and `superposable` are false, and no theorem of 8.4 applies. What the conjunct excludes is formal: on `KH` a slot-admissible base of `sup D` encoding `[(rs1, 0)]` whose `ve__here` is no agent pulls to a structure that is not admissible for the choice's document (`base_down` would fail), and on `KB` the gated assertions `¬b → b` and `b → ¬b` have no model while every structure satisfies one candidate (`superpose_assertions` would fail) |
+| M20 | two open sets under one id `s`: `u1` = {0: assertion `∀agent ∀user. soft__excepted__no_deception`, 1: assertion `⊤`}, `u2` = {0: `Df`, 1: `S`} (finding 4) | `WellFormedDoc` holds (S1 checks candidate 0 of `u1` beside `Df`, whose decision predicate types the assertion); `supReady D = false` (set ids not distinct); for the choice `[(s, 0), (s, 0)]`, compatible, `(choiceDoc D c).2` is that assertion and it is not typed over `sharedEnv D`: the statement of `asserted_shared` without `hr` is false here. The same holds of a fixed assertion unit that shares its id with a norm unit attached to a set (`unitsDistinct`) |
 
 ### 9.3 Differential, shadow and pilots
 
@@ -1486,3 +1500,4 @@ any of them.
 | 2026-10-02 | Draft 3 | The confirmation round on draft 2 applied (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on three statement-level wording claims, every definition confirmed as the requested repair, no unrelated change found) and nothing else, three corrections: (1) 1.1 and 4.1 say what choosing the route computes: the first three rows are decided from the decoded document alone, and W2 returns before any narrowing becomes a premise, before `choiceCore D` and before any finding; choosing between the superposed and enumerated rows computes `superposable D`, and so `sup D`, and nothing else of 1.2 to 1.9 (1.1; 4.1 steps 1, 2, 4, 5 and 6). (2) The decoder claim of 7 is limited to the shape invariants `supReady` enforces: a `Doc` that fails a conjunct is one today's texts refuse, and not conversely, since `validate_couplings` also refuses an empty label intersection (its second `CouplingLabelMissing`), an unsatisfiable coupling and its field and count checks (7; 1.8; 8.3's docstrings and note). (3) M17(a) says that no theorem of 8.4 assuming `supReady` or `superposable` applies to the document, not that no theorem of 8.4 does (`encodes_atoms` assumes neither). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 3, scoped to these passages. |
 | 2026-10-02 | Draft 4 | The confirmation round on draft 3 applied (`manage-agents/compose-s2-p3ver2.final.md`: 7's decoder correction and M17(a) confirmed; FAIL on one statement-level claim introduced by draft 3's route-order repair; definitions, theorem statements and fixture values found unchanged, no unrelated change found) and nothing else, one correction: 1.1 and 4.1 step 2 said that every document on none of the first three rows computes `superposable D` to choose between the superposed and enumerated rows, which reached the rights chain, whose fallback 1.1's table makes unconditional and whose `sup D` is S2b's (12); they now say that a rights document takes the enumerated row unconditionally (until S2b) with nothing of 1.2 to 1.9 computed, `superposable D` not evaluated and no `ReadingsNotSuperposable` (fixture M12), and that computing `superposable D`, and so `sup D`, is the soft and norms chains' alone (1.1; 4.1 steps 2 and 6). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 4, scoped to these passages. |
 | 2026-10-03 | Draft 5 | The DRI rulings on the S2a Lean report (`manage-agents/compose-s2-dri-note.md`) applied and nothing else. (1) The frame can declare the choice vocabulary: `supReady` gains the decidable conjunct `choiceFresh` (the frame declares neither `ve__here` nor a bit predicate of `bitDecls D`; `bitsOf`, `bitName`, `setSize` and `bitDecls` move ahead of it in 8.3), Python's `sup_ready` the same conjunct with the decoders' text `InvalidInput: name <n> begins with ve__` (1.8, 7); `base_down`, `base_up`, `superpose_conflict_free` and `superpose_assertions` are to be proved in this form, their statements unchanged since their `hs` or `hr` carries the conjunct (8.4's note); the two Lean counterexamples of the report become the rejection fixture M19. (2) M16: Lean is the authority, so S1's `chainWF` on the soft chain gains `namesFit` (every generated decision predicate within `MAX_IDENTIFIER_BYTES`), with the soft decoder's text in `Wire.chainText`; M16 holds as specified, and 8.1 records this one change of an S1 definition (1.8, 7, 8.1, M16). (3) Every remaining 8.4 theorem and 8.5 are required for S2a; the wire shape of 8.5 is recorded in `lean/READINGS.md`. No other definition, theorem statement or fixture value changed. |
+| 2026-10-03 | Draft 5, finding 4 | The S2a Lean build found `asserted_shared` false as stated: its only hypotheses are `WellFormedDoc` and compatibility, and S1's documents read sets and units by id, so with two open sets under one id (or two units under one id) an assertion is checked only beside another set's or unit's rules (fixture M20, a formal counterexample in `Examples.lean`). Applied, pending the DRI's confirmation: `supReady` gains `unitsDistinct` (the Lean counterpart of today's `duplicate or invalid unit id`), and `asserted_shared` gains `(hr : supReady D = true)`, which carries the distinct set and unit ids; every theorem that uses it has `hs` and so `hr`. |

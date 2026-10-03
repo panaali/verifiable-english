@@ -628,4 +628,26 @@ theorem kb_superpose_assertions_fails :
   · exact (h2 hb) hb
   · exact hb (h1 hb)
 
+/-! ## M20: `asserted_shared` needs distinct set ids (reported against 8.4)
+
+Two open sets under one id: `choiceDoc D c` and `one D s i` read a set by its id, so both pick index `i` in both
+sets, and S1's check of candidate 0 of the first set types its assertion beside the second set's default rule. The
+assertion mentions that rule's decision predicate, which `sharedEnv D` does not declare: the statement of 8.4 without
+`supReady` is false here, and `asserted_shared` is proved with it (`Asserted.lean`). -/
+
+def phiEx : VE.Formula := .all "agent" (.all "user" (.binary "soft__excepted__no_deception" (.var 1) (.var 0)))
+def M20 : Doc := docK [.set ⟨"s", "u1", 1, [⟨"a", some (.assertion phiEx), [], []⟩, ⟨"b", some (.assertion .top), [], []⟩]⟩,
+  .set ⟨"s", "u2", 1, [cand "default" Df, cand "strict" S]⟩]
+#guard WellFormedDoc M20 && compatible M20 [("s", 0), ("s", 0)] && !supReady M20
+#guard (choiceDoc M20 [("s", 0), ("s", 0)]).2 == [phiEx] && !phiEx.check (sharedEnv M20) []
+
+theorem m20_choice : (choiceDoc M20 [("s", 0), ("s", 0)]).2 = [phiEx] := by decide
+theorem m20_unchecked : phiEx.check (sharedEnv M20) [] = false := by decide
+
+theorem m20_asserted_shared_fails : ¬ ∀ a ∈ (choiceDoc M20 [("s", 0), ("s", 0)]).2, a.WellFormed (sharedEnv M20) [] := by
+  intro h
+  have := (VE.check_iff_wellFormed _ _ _).mpr (h phiEx (by rw [m20_choice]; simp))
+  rw [m20_unchecked] at this
+  cases this
+
 end VE.Readings.Examples

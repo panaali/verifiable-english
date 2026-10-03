@@ -162,6 +162,60 @@ theorem nextn_ascii (s : String) (A : List Char) (hA : AsciiL A) (rest : List Ch
     rw [this]
     simp [String.Pos.ext_iff]; omega
 
+/-- `substrEq` holds over a common prefix of one-byte characters. -/
+theorem substrEq_of_prefix (s p : String) (hp : AsciiL p.data) : ∀ (B A rest : List Char),
+    s.data = A ++ B ++ rest → p.data = A ++ B →
+    String.substrEq s ⟨A.length⟩ p ⟨A.length⟩ B.length = true
+  | [], A, rest, hs, hpd => by
+    unfold String.substrEq
+    simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_nil, Nat.add_zero]
+    have hA : AsciiL A := by rw [hpd] at hp; simpa using hp
+    refine ⟨⟨?_, ?_⟩, ?_⟩
+    · rw [endPos_data, hs, utf8ByteSize_go_append, utf8ByteSize_go_append, utf8ByteSize_go_ascii A hA]; omega
+    · rw [endPos_data, hpd, List.append_nil, utf8ByteSize_go_ascii A hA]; exact Nat.le_refl _
+    · unfold_substrEq_loop
+      rw [dif_neg (by simp)]
+  | b :: B, A, rest, hs, hpd => by
+    have hA : AsciiL A := asciiL_of_append_left (hpd ▸ hp)
+    have hb : b.utf8Size = 1 := hp b (by rw [hpd]; simp)
+    have hB : AsciiL B := fun c hc => hp c (by rw [hpd]; simp [hc])
+    have ih := substrEq_of_prefix s p hp B (A ++ [b]) rest (by rw [hs]; simp) (by rw [hpd]; simp)
+    have hgs : s.get ⟨A.length⟩ = b := get_prefix s A hA b (B ++ rest) (by rw [hs]; simp)
+    have hgp : p.get ⟨A.length⟩ = b := get_prefix p A hA b B hpd
+    revert ih
+    unfold String.substrEq
+    simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_singleton, List.length_cons]
+    intro ⟨⟨g1, g2⟩, hl⟩
+    refine ⟨⟨by omega, by omega⟩, ?_⟩
+    unfold_substrEq_loop
+    rw [dif_pos (show A.length < A.length + (B.length + 1) by omega)]
+    simp only [hgs, hgp, beq_self_eq_true, Bool.true_and]
+    have e1 : (⟨A.length⟩ : String.Pos) + b = ⟨A.length + 1⟩ := by simp [String.Pos.ext_iff, hb]
+    have e2 : (⟨A.length + (B.length + 1)⟩ : String.Pos) = ⟨A.length + 1 + B.length⟩ := by
+      simp only [String.Pos.mk.injEq]; omega
+    rw [e1, e2]
+    exact hl
+
+/-- A string starts with any ASCII prefix it is built from. -/
+theorem startsWith_append_ascii (p t : String) (hp : AsciiL p.data) : (p ++ t).startsWith p = true := by
+  unfold String.startsWith
+  change Substring.beq _ _ = true
+  unfold Substring.beq
+  simp only [Bool.and_eq_true, beq_iff_eq]
+  have hd : (p ++ t).data = p.data ++ t.data := String.data_append p t
+  have hn := nextn_ascii (p ++ t) p.data hp t.data hd p.data.length 0 (by omega)
+  simp only [Nat.zero_add] at hn
+  have hlen : p.length = p.data.length := rfl
+  have hb : ((p ++ t).toSubstring.take p.length).bsize = p.data.length := by
+    show ((0 : String.Pos) + (p ++ t).toSubstring.nextn p.length 0).byteIdx - (0 : String.Pos).byteIdx = _
+    have hn2 : (p ++ t).toSubstring.nextn p.data.length 0 = ⟨p.data.length⟩ := hn
+    rw [hlen, hn2]
+    simp
+  refine ⟨by rw [hb, toSubstring_bsize_ascii p hp], ?_⟩
+  rw [hb]
+  have := substrEq_of_prefix (p ++ t) p hp p.data [] t.data (by rw [hd]; simp) (by simp)
+  simpa using this
+
 theorem extract_go₂_all : ∀ (l : List Char) (i : Nat), String.extract.go₂ l ⟨i⟩ ⟨i + String.utf8ByteSize.go l⟩ = l
   | [], _ => rfl
   | c :: l, i => by

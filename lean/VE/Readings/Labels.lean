@@ -451,7 +451,7 @@ theorem slot_wellLabelled (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain 
     exact inj_of_nodup_map hk hgm hgm' (hk1.trans hk1'.symm)
   have n4 : ((couplingPremises D).map (·.1)).Nodup := by
     have hci : (D.couplings.map (·.id)).Nodup := by
-      simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr; exact hr.1.1.1.1.2
+      simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr; exact hr.1.1.1.1.1.2
     simp only [couplingPremises, List.map_filterMap]
     apply nodup_filterMap (nodup_of_map hci)
     intro K hK K' hK' b h1 h2
@@ -460,7 +460,7 @@ theorem slot_wellLabelled (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain 
     exact inj_of_nodup_map hci hK hK' (append_left_inj (h1.trans h2.symm))
   have n5 : ((narrowingPremises D).map (·.1)).Nodup := by
     have hni : (D.narrowings.map (·.id)).Nodup := by
-      simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr; exact hr.1.1.2
+      simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr; exact hr.1.1.1.2
     simp only [narrowingPremises, List.map_filterMap]
     apply nodup_filterMap (nodup_of_map hni)
     intro N hN N' hN' b h1 h2
