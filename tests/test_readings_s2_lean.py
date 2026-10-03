@@ -144,3 +144,21 @@ def test_m16_generated_name_over_64_bytes_in_sup_only(lean):
     assert elaborated["route"] == "enumerated", elaborated
     assert elaborated["finding"] == {"text": "ReadingsNotSuperposable: rs1",
                                      "cause": "ResourceLimit: decision predicate soft__excepted__rd_2_" + name}
+
+
+def test_m4_countermodel_under_should(lean):
+    """M4's model part: B1 of M2 under [(rs1, 1)] is the countermodel to φ′ (SOME), and satisfies φ."""
+    raw = env_k()
+    document = k1_document(raw, fixed_units=[("u0", norm("help-x", "help_required", True))])[0]
+    every = lambda p: ["forall", "agent", ["forall", "user", ["binary", p, ["var", 1], ["var", 0]]]]  # noqa: E731
+    rows = run(lean, [case("readings-model", raw, document, model=model(True, True), assumed=[["rs1", 1]],
+                           conclusion=every("avoid_required")),
+                      case("readings-model", raw, document, model=model(True, True), assumed=[["rs1", 1]],
+                           conclusion=every("help_required")),
+                      case("readings-model", raw, document, model=model(True, True), assumed=[["rs1", 0]],
+                           conclusion=every("avoid_required"))])
+    counter, holds, wrong_reading = rows
+    assert counter["valid"] is True and counter["conclusion_value"] is False and counter["choice"] == [["rs1", 1]]
+    assert holds["valid"] is True and holds["conclusion_value"] is True
+    # The model encodes choice 1, so the assumed atom of candidate 0 fails.
+    assert wrong_reading["valid"] is False and wrong_reading["first_failing"] == "readings:rs1:0"
