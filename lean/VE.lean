@@ -24,6 +24,7 @@ import VE.Readings.SupSlot
 import VE.Readings.Labels
 import VE.Readings.SupEnv
 import VE.Readings.Asserted
+import VE.Readings.Assertions
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks

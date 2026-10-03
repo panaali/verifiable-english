@@ -539,11 +539,11 @@ def pull (D : Doc) (c : Choice) (S : VE.Structure.{u}) : VE.Structure.{u} :=
   { S with relation := fun p vs => (choiceEnvFull D c).predicates p ≠ none ∧ S.relation (nameMap D c p) vs }
 def Encodes (D : Doc) (c : Choice) (S : VE.Structure.{u}) : Prop :=
   ∀ R ∈ D.sets, ∀ i, i < R.candidates.length → ((choiceAtom D R.id i).denote S [] ↔ (R.id, i) ∈ c)
-/-- S' is S with only the choice vocabulary reinterpreted. -/
+/-- S' is S with only the choice vocabulary of D reinterpreted: its sort, its constant and its bit predicates. -/
 def ChoiceExtension (D : Doc) (S S' : VE.Structure.{u}) : Prop :=
   ∃ (R : String → List S.Carrier → Prop) (dom : String → S.Carrier → Prop) (k : String → Option S.Carrier),
     S' = { S with relation := R, domain := dom, constant := k } ∧
-    (∀ p, ¬ p.startsWith "ve__bit__" → ∀ vs, R p vs ↔ S.relation p vs) ∧
+    (∀ p, p ∉ (bitDecls D).map (·.1) → ∀ vs, R p vs ↔ S.relation p vs) ∧
     (∀ σ, σ ≠ "ve__reading" → dom σ = S.domain σ) ∧ (∀ x, x ≠ "ve__here" → k x = S.constant x)
 /-- The complete vocabulary every reading shares: the author's, the regulated and defined predicates, and the
     decision predicates of the fixed units that depend on no open set. -/
