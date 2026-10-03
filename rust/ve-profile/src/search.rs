@@ -1,6 +1,9 @@
-use crate::{
-    Document, Environment, FiniteModel, Formula, MAX_EVALUATIONS, Result, error,
-    semantics::{Evaluator, compatible},
+use ve_kernel::{
+    Document, Environment, FiniteModel, Formula, MAX_EVALUATIONS, Result,
+    internal::{
+        DocumentInternals, EnvironmentInternals, Evaluator, FiniteModelInternals, FormulaInternals,
+        compatible, error,
+    },
 };
 use serde::Serialize;
 use serde_json::{Value, json};
@@ -51,10 +54,10 @@ impl CountermodelProblem {
                 Ok(v) => {
                     values.push(v);
                     if !v {
-                        return Ok(("NotCountermodel", values, None, ev.work));
+                        return Ok(("NotCountermodel", values, None, ev.work()));
                     }
                 }
-                Err(_) => return Ok(("ResourceLimit", values, None, ev.work)),
+                Err(_) => return Ok(("ResourceLimit", values, None, ev.work())),
             }
         }
         ev.clear_closures();
@@ -63,9 +66,9 @@ impl CountermodelProblem {
                 if v { "NotCountermodel" } else { "Valid" },
                 values,
                 Some(v),
-                ev.work,
+                ev.work(),
             )),
-            Err(_) => Ok(("ResourceLimit", values, None, ev.work)),
+            Err(_) => Ok(("ResourceLimit", values, None, ev.work())),
         }
     }
     /// Independently check a witness and bind it to the exact ordered inference.
@@ -201,9 +204,9 @@ impl<'a> Models<'a> {
             .iter()
             .map(|s| {
                 if s == "$string" {
-                    env.constants.values().filter(|t| *t == s).count()
+                    env.constants().values().filter(|t| *t == s).count()
                 } else {
-                    usize::from(env.constants.values().any(|t| t == s))
+                    usize::from(env.constants().values().any(|t| t == s))
                 }.max(minimum)
             })
             .collect();
@@ -214,13 +217,13 @@ impl<'a> Models<'a> {
         if let Some(formula) = guard {
             formula.predicates(&mut used);
         }
-        for (name, (functional, total)) in &env.predicate_flags {
+        for (name, (functional, total)) in env.predicate_flags() {
             if *functional || *total {
                 used.insert(name.clone());
             }
         }
         // A defined predicate's table is computed; search its base dependencies.
-        for (name, _, body) in env.definitions.iter().rev() {
+        for (name, _, body) in env.definitions().iter().rev() {
             if used.contains(name) {
                 body.predicates(&mut used);
             }
@@ -230,7 +233,7 @@ impl<'a> Models<'a> {
         Self {
             env,
             sorts,
-            names: env.constants.keys().cloned().collect(),
+            names: env.constants().keys().cloned().collect(),
             used,
             done: sizes.is_empty(),
             sizes,
@@ -248,14 +251,14 @@ impl<'a> Models<'a> {
             .map(|(s, n)| (s.clone(), (0..*n).map(|i| format!("e{i}")).collect()))
             .collect();
         let count: usize = self.used.iter()
-            .map(|p| self.env.predicates[p].iter().map(|s| self.domains[s].len()).product::<usize>())
+            .map(|p| self.env.predicates()[p].iter().map(|s| self.domains[s].len()).product::<usize>())
             .sum();
         if count > 100_000 {
             return error("ResourceLimit", "used relation atom space exceeds 100,000");
         }
         self.atoms.clear();
         for p in &self.used {
-            let sig = &self.env.predicates[p];
+            let sig = &self.env.predicates()[p];
             let limits: Vec<_> = sig.iter().map(|s| self.domains[s].len()).collect();
             if limits.contains(&0) { continue; }
             let mut indices = vec![0; sig.len()];
@@ -266,13 +269,13 @@ impl<'a> Models<'a> {
             }
         }
         self.subset.clear();
-        self.choice_limits = self.names.iter().map(|n| self.domains[&self.env.constants[n]].len()).collect();
+        self.choice_limits = self.names.iter().map(|n| self.domains[&self.env.constants()[n]].len()).collect();
         self.choices = vec![0; self.names.len()];
         self.ready = true;
         Ok(())
     }
     fn relations(&self) -> BTreeMap<String, Vec<Vec<String>>> {
-        let mut relations: BTreeMap<_, Vec<Vec<String>>> = self.env.predicates.keys()
+        let mut relations: BTreeMap<_, Vec<Vec<String>>> = self.env.predicates().keys()
             .filter(|p| !self.env.is_defined(p)).map(|p| (p.clone(), Vec::new())).collect();
         for index in &self.subset {
             let (p, row) = &self.atoms[*index];
@@ -282,17 +285,17 @@ impl<'a> Models<'a> {
     }
     /// Python `_relation_assignments`' filters: permission pairs and data flags.
     fn candidate(&self, relations: &BTreeMap<String, Vec<Vec<String>>>) -> bool {
-        for (required, permitted) in &self.env.profile_pairs {
+        for (required, permitted) in self.env.profile_pairs() {
             if relations[required].iter().any(|row| !relations[permitted].contains(row)) {
                 return false;
             }
         }
-        for (name, (functional, total)) in &self.env.predicate_flags {
+        for (name, (functional, total)) in self.env.predicate_flags() {
             if !(*functional || *total) || self.env.is_defined(name) { continue; }
             let rows = &relations[name];
             let sources: BTreeSet<&String> = rows.iter().map(|row| &row[0]).collect();
             if *functional && sources.len() != rows.len() { return false; }
-            let domain = &self.domains[&self.env.predicates[name][0]];
+            let domain = &self.domains[&self.env.predicates()[name][0]];
             if *total && (sources.len() != domain.len()
                           || domain.iter().any(|e| !sources.contains(e))) {
                 return false;
@@ -328,7 +331,7 @@ impl<'a> Models<'a> {
             }
             let relations = self.relations();
             let constants: BTreeMap<_, _> = self.names.iter().zip(&self.choices)
-                .map(|(n, i)| (n, self.domains[&self.env.constants[n]][*i].clone()))
+                .map(|(n, i)| (n, self.domains[&self.env.constants()[n]][*i].clone()))
                 .collect();
             let model = FiniteModel::from_value(
                 self.env,
@@ -418,7 +421,7 @@ fn nonvacuous(model: &FiniteModel, formula: &Formula, maximum: u64,
                 path.pop();
             }
             Formula::Forall(sort, body) | Formula::Exists(sort, body) => {
-                let domain = &model.domains[sort];
+                let domain = &model.domains()[sort];
                 if domain.is_empty() { *ok = false; }
                 for entity in 0..domain.len() {
                     bindings.push(entity); path.push(0);
@@ -437,7 +440,7 @@ fn nonvacuous(model: &FiniteModel, formula: &Formula, maximum: u64,
     let mut hits = BTreeMap::new();
     let result = walk(formula, model, &mut evaluator, &mut Vec::new(), &mut Vec::new(),
                       false, false, semantic, &mut ok, &mut hits);
-    (ok && hits.values().all(|v| *v) && result.is_ok(), evaluator.work, result.is_err())
+    (ok && hits.values().all(|v| *v) && result.is_ok(), evaluator.work(), result.is_err())
 }
 /// Exhaustive bounded search modulo the extensions of predicates absent from
 /// the formulas. Unused predicates have empty extensions in every witness.
@@ -600,7 +603,7 @@ pub fn find_distinguishing_model_with_nonvacuity(
             left.clone()
         };
         result.models_checked += 1;
-        result.evaluations += evaluator.work;
+        result.evaluations += evaluator.work();
         match (left, right) {
             (Ok(a), Ok(b)) if a != b => {
                 result.status = "Found";

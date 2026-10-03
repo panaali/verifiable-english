@@ -24,10 +24,10 @@ pub struct Explanation {
     pub children: Vec<Explanation>,
 }
 
-pub(crate) struct Evaluator<'a> {
-    pub model: &'a FiniteModel,
-    pub maximum: u64,
-    pub work: u64,
+pub struct Evaluator<'a> {
+    pub(crate) model: &'a FiniteModel,
+    pub(crate) maximum: u64,
+    pub(crate) work: u64,
     // Structural edge identity plus the entire captured context. Never shared
     // between models; plus/star reuse the same positive closure, without seeding
     // diagonal edges. Borrowing avoids cloning nested edge ASTs into the cache.
@@ -42,10 +42,13 @@ impl<'a> Evaluator<'a> {
             closures: HashMap::new(),
         }
     }
+    pub fn work(&self) -> u64 {
+        self.work
+    }
     pub fn clear_closures(&mut self) {
         self.closures.clear();
     }
-    pub(crate) fn tick(&mut self) -> Result<()> {
+    pub fn tick(&mut self) -> Result<()> {
         if self.work >= self.maximum {
             return error("ResourceLimit", "evaluation budget exhausted");
         }
@@ -160,7 +163,7 @@ impl<'a> Evaluator<'a> {
         }
     }
 
-    pub(crate) fn traced_formula(&mut self, f: &'a Formula, bindings: &mut Vec<usize>,
+    pub fn traced_formula(&mut self, f: &'a Formula, bindings: &mut Vec<usize>,
                       context: &mut Vec<(String, usize)>) -> Result<(bool, Explanation)> {
         // The atomic and Reach paths use the ordinary evaluator. This retains
         // exactly its ticks, closure cache, and short circuit behavior.

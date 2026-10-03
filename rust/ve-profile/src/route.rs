@@ -1,6 +1,6 @@
 //! ve.core@0.2 route helpers mirrored from `lean/VE/Route` and `ve/admission.py`,
 //! `ve/background.py`: the claim-label grammar (the dependency-DAG order is kernel `graph`).
-use crate::{Error, Formula, Result, error};
+use ve_kernel::{Error, Formula, Result, internal::error};
 
 const GENERATORS: [&str; 4] = ["flags", "definitions", "literals", "profile"];
 

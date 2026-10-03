@@ -1,6 +1,6 @@
-use crate::{
-    Document, Error, FiniteModel, Formula, Result,
-    semantics::{Evaluator, Explanation, compatible},
+use ve_kernel::{
+    Document, Error, Explanation, FiniteModel, Formula, Result,
+    internal::{Evaluator, compatible},
 };
 use serde::Serialize;
 
@@ -51,7 +51,7 @@ fn run_formulas(model: &FiniteModel, formulas: &[Formula], maximum: u64) -> Eval
             None => "ResourceLimit",
         },
         value: result,
-        evaluations: ev.work,
+        evaluations: ev.work(),
     }
 }
 
@@ -125,7 +125,7 @@ pub fn evaluate_traced(doc: &Document, model: &FiniteModel, maximum: u64,
         kind: if value.is_some() { "document" } else { "resource_limit" },
         value, bindings: vec![], detail, children,
     };
-    Ok(TracedEvaluation { status, value, evaluations: ev.work, explanation })
+    Ok(TracedEvaluation { status, value, evaluations: ev.work(), explanation })
 }
 pub fn evaluate_formula(
     doc: &Document,
