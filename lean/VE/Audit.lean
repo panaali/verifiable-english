@@ -3358,3 +3358,5 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.no_set_declares
 #print axioms VE.Readings.mem_one_nodes
 #print axioms VE.Readings.child_fwd
+#print axioms VE.Readings.choice_index
+#print axioms VE.Readings.sibling

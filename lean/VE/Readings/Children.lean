@@ -298,4 +298,134 @@ theorem child_fwd {D : Doc} (hh : Hyps D) (c : Choice) {N C : SoftNode} (hN : N 
         · exact sets_declare_disjoint hh.nodup hh.da hm' hm hmm
             (candidate_declares hm' ha' hc' (x := ("rule", C.name)) (by simp [Content.declared])) hdecl hn
 
+/-! ## The sibling condition -/
+
+/-- A compatible choice takes one candidate in every open set. -/
+theorem choice_index {D : Doc} (hh : Hyps D) {c : Choice} (hc : Compatible D c) {m : Nat} (hm : m < D.sets.length) :
+    ∃ i, c.index D.sets[m].id = some i ∧ i < D.sets[m].candidates.length := by
+  have hcm : complete D c = true := by
+    simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
+  have hmap := complete_map hcm
+  have hcn : (c.map (·.1)).Nodup := hmap ▸ hh.nodup
+  have hlen : c.length = D.sets.length := by simpa using congrArg List.length hmap
+  have hcm' : m < c.length := hlen ▸ hm
+  have hfst : c[m].1 = D.sets[m].id := by
+    have := congrArg (·[m]?) hmap
+    simpa [List.getElem?_eq_getElem hcm', List.getElem?_eq_getElem hm] using this
+  have hidx := index_of_mem hcn (List.getElem_mem hcm')
+  rw [hfst] at hidx
+  refine ⟨c[m].2, hidx, ?_⟩
+  obtain ⟨m', hf, hi⟩ := candidate_isSome (complete_mem hcm (List.getElem_mem hcm'))
+  rw [hfst, findIdx_of_nodup hh.nodup hm] at hf
+  cases hf
+  rw [← setSize_eq hm]; exact hi
+
+theorem sibling {D : Doc} (hh : Hyps D) {c : Choice} (hc : Compatible D c) {N : SoftNode}
+    (hN : N ∈ (choiceDoc D c).1.soft.T.nodes) {C : SoftNode}
+    (hC : C ∈ VE.SoftNorms.childrenIn (sup D).1.soft.T.nodes (fmap D c N))
+    (hext : ∀ N' ∈ (choiceDoc D c).1.soft.T.nodes, fmap D c N' ≠ C) {G : SoftNode}
+    (hG : G ∈ VE.SoftNorms.childrenIn (sup D).1.soft.T.nodes C) :
+    ∃ N'' ∈ VE.SoftNorms.childrenIn (choiceDoc D c).1.soft.T.nodes N,
+      G ∈ VE.SoftNorms.childrenIn (sup D).1.soft.T.nodes (fmap D c N'') := by
+  rw [VE.SoftNorms.mem_childrenIn_iff] at hC hG
+  obtain ⟨hCX, hCp, hCo⟩ := hC
+  obtain ⟨hGX, hGp, hGo⟩ := hG
+  have hic := (interfaceClosed_spec D).mp (wellFormedDoc_parts hh.wf).2.2.1
+  -- C is an unchosen copy
+  rcases (mem_supNodes D C).mp hCX with hf | ⟨u, F, cs, hu, rfl⟩ | ⟨m', hm', i', a', N', ha', hc', rfl⟩
+  · exact absurd (fmap_frame hh c hf) (hext C ((mem_choiceNodes D c C).mpr (Or.inl hf)))
+  · exact absurd (fmap_fixed hh c hu) (hext F ((mem_choiceNodes D c F).mpr (Or.inr (Or.inl ⟨u, cs, hu⟩))))
+  obtain ⟨i, hi, hilt⟩ := choice_index hh hc hm'
+  have hii : i' ≠ i := by
+    rintro rfl
+    exact hext N' ((mem_choiceNodes D c N').mpr (Or.inr (Or.inr ⟨m', hm', i', a', hi, ha', hc'⟩)))
+      (fmap_chosen hh c hm' hi ha' hc')
+  have hdecl : ("rule", N'.name) ∈ declaredBy D.sets[m'] := candidate_declares hm' ha' hc' (by simp [Content.declared])
+  -- G is a fixed rule over the interface name
+  rcases (mem_supNodes D G).mp hGX with hf | ⟨u, F, cs, hu, rfl⟩ | ⟨m'', hm'', i'', a'', N'', ha'', hc'', rfl⟩
+  · exfalso
+    have := (choice_over hh c ((mem_choiceNodes D c G).mpr (Or.inl hf)) hGo).1
+    rw [show (gateNorm D m' i' N').name = qualify _ _ from rfl, reservedName_qualify] at this; cases this
+  · have hFY : F ∈ (choiceDoc D c).1.soft.T.nodes := (mem_choiceNodes D c F).mpr (Or.inr (Or.inl ⟨u, cs, hu⟩))
+    have hFo : N'.name ∈ F.over := by
+      simp only [copyOver, List.mem_flatMap] at hGo
+      obtain ⟨x, hx, hy⟩ := hGo
+      rcases mem_copies hy with he | ⟨k, he⟩
+      · have := (choice_over hh c hFY hx).1
+        rw [← he, show (gateNorm D m' i' N').name = qualify _ _ from rfl, reservedName_qualify] at this; cases this
+      · rw [(qualify_inj he).2]; exact hx
+    have hif : ("rule", N'.name) ∈ interfaceOf D.sets[m'] :=
+      hic u _ cs hu ("rule", N'.name) (by simp [uses, nodeUses, hFo]) _ (List.getElem_mem hm') hdecl
+    -- the chosen candidate's rule of that name
+    have hai : D.sets[m'].candidates[i]? = some D.sets[m'].candidates[i] := List.getElem?_eq_getElem hilt
+    have hr := hh.ready
+    obtain ⟨ci, hci⟩ : ∃ ci, D.sets[m'].candidates[i].content = some ci := by
+      simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
+      have := (hr.1.1.1.1.2 _ (List.getElem_mem hm'))
+      exact Option.isSome_iff_exists.mp (this.2 _ (List.getElem_mem hilt))
+    have hdi : ("rule", N'.name) ∈ ci.declared := by
+      have := (List.mem_filter.mp hif).2
+      simp only [List.all_eq_true] at this
+      have := this _ (List.getElem_mem hilt)
+      simpa [hci] using this
+    obtain ⟨Nc, rfl, hNc⟩ := declared_rule_norm
+      ((contrib_zero D hh.noRights).2 _ (List.getElem_mem hm') _ (List.getElem_mem hilt) _ hci) hdi
+    have hNcY : Nc ∈ (choiceDoc D c).1.soft.T.nodes :=
+      (mem_choiceNodes D c Nc).mpr (Or.inr (Or.inr ⟨m', hm', i, _, hi, hai, hci⟩))
+    -- uniform precedence: the copies carry one `over` list
+    have hsp := hh.sp
+    simp only [superposable, Bool.and_eq_true] at hsp
+    have hup := (uniformPrecedence_spec D).mp hsp.1.2 u (.norm F) cs hu F rfl N'.name hFo D.sets[m']
+      (List.getElem_mem hm') hif a' (List.mem_of_getElem? ha') D.sets[m'].candidates[i] (List.getElem_mem hilt)
+      N' Nc (by simp [hc', ruleNamed]) (by simp [hci, ruleNamed, hNc])
+    have h1 : (fmap D c N).name ∈ Nc.over := (hup _).mp hCo
+    have h2 : N.name ∈ Nc.over := by
+      rcases fmap_name_cases hh c hN with ⟨_, hn⟩ | ⟨k, hn⟩
+      · rw [hn] at h1; exact h1
+      · rw [hn] at h1
+        have := (choice_over hh c hNcY h1).1
+        rw [reservedName_qualify] at this; cases this
+    -- the fixed rule's entry resolves to the chosen rule in its document: one predicate
+    have hA : Attached D u D.sets[m'].id :=
+      .direct hu ("rule", N'.name) (by simp [uses, nodeUses, hFo]) _ (List.getElem_mem hm') rfl hdecl
+    have hall : (attached D u).all (· == D.sets[m'].id) = true := by
+      have := (singlyAttached_spec D).mp (wellFormedDoc_parts hh.wf).2.2.2.1
+      rw [List.all_eq_true]
+      intro t' ht'
+      have := this u _ t' hA ((attached_iff D u t').mp ht')
+      simp [this]
+    have hFhome : F ∈ (one D D.sets[m'].id i).1.soft.T.nodes := by
+      rw [one, (build_shape D _ _).nodes]
+      apply List.mem_append_right
+      exact List.mem_flatMap.mpr ⟨_, hu, by simp [buildNodes, hall, normsOf]⟩
+    obtain ⟨_, _, M', hM', hn', hp'⟩ := build_over hh (fun u => (attached D u).all (· == D.sets[m'].id))
+      (fun R => if R.id == D.sets[m'].id then R.candidates[i]? else none)
+      (fun R a h => by simp only at h; split at h; exact List.mem_of_getElem? h; cases h) (one_wf hh hm' hai hci)
+      hFhome hFo
+    have hMc : M' = Nc := by
+      rcases mem_one_nodes hh hm' hM' with h | h | ⟨a3, ha3, hc3⟩
+      · exact absurd (hn' ▸ hdecl) (no_set_declares hh (Or.inl h) _ (List.getElem_mem hm'))
+      · exact absurd (hn' ▸ hdecl) (no_set_declares hh (Or.inr h) _ (List.getElem_mem hm'))
+      · rw [hai] at ha3; cases ha3; rw [hci] at hc3; cases hc3; rfl
+    rw [hMc] at hp'
+    have hNp : (fmap D c N).pred = N.pred := (fmap_fields hh c hN).1
+    have hpred : Nc.pred = N.pred := by
+      rw [hp', ← hNp, ← hCp]
+      exact hGp
+    refine ⟨Nc, (VE.SoftNorms.mem_childrenIn_iff).mpr ⟨hNcY, hpred, h2⟩, ?_⟩
+    rw [VE.SoftNorms.mem_childrenIn_iff, fmap_chosen hh c hm' hi hai hci]
+    refine ⟨hGX, hp'.symm, ?_⟩
+    simp only [copyOver, List.mem_flatMap]
+    refine ⟨N'.name, hFo, ?_⟩
+    rw [copies_iface hh hm' hif]
+    refine List.mem_map.mpr ⟨i, List.mem_range.mpr (by rw [setSize_eq hm']; exact hilt), ?_⟩
+    simp [gateNorm, hNc]
+  · exfalso
+    have hGo' : (gateNorm D m' i' N').name ∈ N''.over := hGo
+    obtain ⟨hr, _, _⟩ := build_over hh (fun u => (attached D u).all (· == D.sets[m''].id))
+      (fun R => if R.id == D.sets[m''].id then R.candidates[i'']? else none)
+      (fun R a h => by simp only at h; split at h; exact List.mem_of_getElem? h; cases h) (one_wf hh hm'' ha'' hc'')
+      (by rw [(build_shape D _ _).nodes]; exact List.mem_append_right _ (one_has hm'' ha'' hc'')) hGo'
+    rw [show (gateNorm D m' i' N').name = qualify _ _ from rfl, reservedName_qualify] at hr; cases hr
+
 end VE.Readings
