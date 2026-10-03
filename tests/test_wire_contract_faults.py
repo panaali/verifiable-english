@@ -18,9 +18,10 @@ from conformance.wire_contract_gate import (_applied, all_checks, feasibility, g
                                             shape_problems)
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, rendered, route)
-from ve.errors import VEError
+from ve.errors import UnsupportedProfile, VEError
 from ve.softnorms_contract import REGISTRY
 from ve.wire_contract.engine import CLEAN, Fault, load, run
+from tests.test_wire_contract_soft_lean import built  # noqa: F401  (fixture: the Lean binaries)
 
 CONTRACT = load("soft-norms@0")
 FAULTS = {fault.name: fault for fault in catalogue()}
@@ -203,13 +204,6 @@ def test_s4_pre_and_public_code_rule_are_gate_rows():
         "legacy code differences [{'case': 'L:speech-acts@0:env'}]"]
     assert _broken(lambda value: value.update(public_code_differences=3)) == [
         "public delta: 3 code differences"]
-    def before_s4_pre(value):
-        value["legacy_code_differences"] = [{"case": name} for name in (
-            "L:speech-acts@0:env", "L:speech-acts@0:base", "L:norm-defaults@0:unspecified")]
-        value["public_code_differences"] = 3
-    failures = _broken(before_s4_pre)
-    assert any("legacy code differences" in failure for failure in failures)
-    assert "public delta: 3 code differences" in failures
 
 
 def test_delta_check_detects_an_unregenerated_contract_text(tmp_path, monkeypatch):
@@ -432,3 +426,57 @@ def test_every_non_string_name_class_is_measured_and_signed():
     signed = json.loads(wire_contract_gate.SWITCH.read_text())["signed"]
     for check in ("2.7a", "2.8c"):
         assert measured.get(check, 0) > 0 and check in signed
+
+
+# Python's legacy code and text on the three inputs of spec 2.8 before S4-pre (its table; s4-pre.md).
+BEFORE_S4_PRE = {
+    "L:speech-acts@0:env": (VEError, "SOFT_INVALID_INPUT", "Incorrect fields (missing=['speech_acts'], unknown=[])"),
+    "L:speech-acts@0:base": (VEError, "SOFT_INVALID_INPUT", "Incorrect fields (missing=['speech_acts'], unknown=[])"),
+    "L:norm-defaults@0:unspecified": (
+        UnsupportedProfile, "SOFT_UNSUPPORTED_PROFILE",
+        "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"),
+}
+
+
+@pytest.mark.parametrize("injected", [False, True])
+def test_g6_measurement_finds_the_legacy_code_differences_before_s4_pre(built, monkeypatch, injected):
+    """Fixture G6 (Fable B3): the gate's own measurement, over tier L with the real engines and the real Lean
+    binaries, with Python's legacy code and text on the three inputs of 2.8 replaced, in the test only, by
+    the values before S4-pre. It reports those three inputs as legacy code differences and counts three
+    public code differences, and the gate fails on both rows; without the replacement both are empty. The
+    contract is read as `shadow`, as at the measurement commit."""
+    shadow = {**load("soft-norms@0"), "status": "shadow"}
+    monkeypatch.setattr(wire_contract_gate, "load", lambda name: shadow)
+    cases = [("L", label, raw, norms, expected, (), True)
+             for label, raw, norms, expected in wire_contract_gate.legacy_difference_sources(shadow)]
+    assert set(BEFORE_S4_PRE) <= {case[1] for case in cases}
+    replaced = {wire_contract_gate.source_key(case[2], case[3]): BEFORE_S4_PRE[case[1]]
+                for case in cases if case[1] in BEFORE_S4_PRE}
+    measured = wire_contract_gate._python
+
+    def python(contract, raw, norms):
+        legacy, outcome, error, modified = measured(contract, raw, norms)
+        before = replaced.get(wire_contract_gate.source_key(raw, norms)) if injected else None
+        if before is None:
+            return legacy, outcome, error, modified
+        kind, code, text = before
+        error = kind(text)
+        error.code = code
+        return (code, text), outcome, error, modified
+
+    monkeypatch.setattr(wire_contract_gate, "gate_cases", lambda contract: cases)
+    monkeypatch.setattr(wire_contract_gate, "_python", python)
+    value = wire_contract_gate.report()
+    failures = gate_failures(value)
+    assert value["mismatches"] == []
+    if not injected:
+        assert value["legacy_code_differences"] == [] and value["public_code_differences"] == 0
+        assert not any("code differences" in failure for failure in failures)
+        return
+    differences = value["legacy_code_differences"]
+    assert [row["case"] for row in differences] == [case[1] for case in cases if case[1] in BEFORE_S4_PRE]
+    for row in differences:
+        assert tuple(row["python"]) == BEFORE_S4_PRE[row["case"]][1:] and row["lean"][0] != row["python"][0]
+    assert value["public_code_differences"] == 3
+    assert f"legacy code differences {differences!r}" in failures
+    assert "public delta: 3 code differences" in failures
