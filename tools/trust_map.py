@@ -1,0 +1,563 @@
+#!/usr/bin/env python3
+"""Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
+
+Every Lean declaration under `lean/` gets one class of docs/TRUST-MAP.md section 2:
+
+* `K` core logic, `S` a feature's intended meaning: trusted by definition;
+* `D` decoders and encoders, `G` glue, each with a group: `[V]` verdict-bearing, `[R]` reject-only
+  or diagnostic, `[I]` identity and provenance; trusted unless tied to K or S by a theorem;
+* `C` checked executables, `P` proofs and proof helpers, `T` tests and checks: not trusted.
+
+Theorems are `P`, and `example` and `#guard`-style commands are `T`, by their kind. Every other
+declaration takes its class from the side table `tools/trust-classes.json` (open question 11 of
+the plan: a side table changes no Lean file hash). A table entry may name the theorems that tie a
+D or G declaration (`{"class": "D[V]", "tied": [theorem, ...]}`); each such theorem must be in
+`lean/statements.txt` (bundle ST) and its statement must mention the declaration.
+
+A declaration's lines run from its docstring (or first attribute line) to the line before the
+next declaration or structural command, as in the trust map's method (section 9). Namespace,
+section, `open`, `import` and similar lines, module comments and lines before the first
+declaration are `o`.
+
+The trusted count is K + S + untied D[V] + untied G[V] + unclassified declarations: a declaration
+that is not in the side table is counted as untied [V], so new code is trusted until classified.
+
+    python3 tools/trust_map.py            # per-file counts against docs/trust-baseline.json
+    python3 tools/trust_map.py --check    # exit 1 if K, S or untied [V] grew without a signed entry
+    python3 tools/trust_map.py --write    # rewrite the baseline from the current tree
+
+Growth of K, S or untied [V] (unclassified included) over the baseline fails `--check` unless the
+baseline's `signed` list allows it: each entry is `{"change", "signed", "allow": {"K": n, "S": n,
+"V": n}}`, a note signed by the DRI. `--write` moves the signed entries into `history`.
+
+`--seed TRUST-MAP.md` rebuilds the side table: every declaration is classified by the rules in
+`seed_module`, constrained to the classes that the trust map's section 11 row for its module
+records, and the section 11 counts are kept in the baseline next to the measured ones.
+"""
+from __future__ import annotations
+
+import argparse
+from collections import Counter, defaultdict
+from dataclasses import dataclass
+import json
+from pathlib import Path
+import re
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+LEAN = ROOT / "lean"
+TABLE = ROOT / "tools/trust-classes.json"
+BASELINE = ROOT / "docs/trust-baseline.json"
+STATEMENTS = LEAN / "statements.txt"
+
+sys.path.insert(0, str(LEAN))
+from audit import code_only  # noqa: E402
+
+COLUMNS = ("K", "S", "D", "G", "C", "P", "T", "o")
+CLASSES = ("K", "S", "C", "P", "T", *(f"{c}[{g}]" for c in "DG" for g in "VRI"))
+GROUPS = ("V", "R", "I")
+
+DECL = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable|nonrec|partial|unsafe|scoped|local)\s+)*"
+    r"(?P<kind>class\s+inductive|deriving\s+instance|def|abbrev|structure|inductive|class|instance|theorem|"
+    r"lemma|example|opaque|axiom|macro_rules|macro|syntax|notation|infixl|infixr|infix|prefix|postfix|elab)"
+    r"\b(?P<rest>.*)$")
+COMMAND = re.compile(r"^\s*#(?:guard_msgs|guard|eval|print|check|reduce|synth)\b")
+STRUCTURAL = re.compile(r"^\s*(?:namespace|end|section|noncomputable\s+section|open|variable|universe|"
+                        r"set_option|import|attribute|mutual|export)\b")
+PREFIX = re.compile(r"^\s*(?:@\[[^\]]*\]\s*)+$|^\s*(?:set_option|open)\b.*\bin\s*$")
+
+
+@dataclass
+class Decl:
+    name: str | None
+    kind: str
+    start: int  # 1-based, inclusive
+    end: int  # inclusive
+
+    @property
+    def lines(self) -> int:
+        return self.end - self.start + 1
+
+
+def doc_starts(text: str) -> dict[int, int]:
+    """Map the last line of each `/-- ... -/` docstring to its first line (both 1-based)."""
+    found, i, depth, start, quoted = {}, 0, 0, None, False
+    while i < len(text):
+        pair = text[i:i + 2]
+        if depth:
+            if pair == "/-":
+                depth, i = depth + 1, i + 2
+                continue
+            if pair == "-/":
+                depth, i = depth - 1, i + 2
+                if depth == 0 and start is not None:
+                    found[text.count("\n", 0, i) + 1] = start
+                continue
+        elif quoted:
+            if text[i] == "\\":
+                i += 2
+                continue
+            quoted = text[i] != '"'
+        elif pair == "--":
+            end = text.find("\n", i)
+            i = len(text) if end < 0 else end
+            continue
+        elif pair == "/-":
+            start = text.count("\n", 0, i) + 1 if text.startswith("/--", i) else None
+            depth, i = 1, i + 2
+            continue
+        elif text[i] == '"':
+            quoted = True
+        i += 1
+    return found
+
+
+def item_name(kind: str, rest: str, scopes: list[str]) -> str | None:
+    kind = " ".join(kind.split())
+    if kind == "example":
+        return None
+    words = rest.split()
+    if kind in {"def", "abbrev", "structure", "inductive", "class", "class inductive", "theorem", "lemma",
+                "opaque", "axiom"} and words:
+        base = words[0]
+    elif kind == "instance" and words and not words[0].startswith((":", "(", "[", "{", "⦃")) \
+            and not words[0].startswith("priority"):
+        base = words[0]
+    else:
+        signature = re.split(r"\s(?:where|:=)(?:\s|$)", " " + rest.strip())[0].strip()
+        return f"{kind}:{' '.join(signature.removeprefix(':').split())}"
+    if base.startswith("_root_."):
+        return base.removeprefix("_root_.")
+    return ".".join([s for s in scopes if s] + [base])
+
+
+def scan(path: Path) -> tuple[list[Decl], int]:
+    """The declarations of one Lean file and its line count."""
+    text = path.read_text()
+    code = code_only(text).splitlines()
+    docs = doc_starts(text)
+    total = len(text.splitlines())
+    scopes: list[str] = []
+    starts: list[tuple[int, str, str | None]] = []  # (line, kind, name)
+    boundaries: set[int] = set()
+    pending: int | None = None
+    for number, line in enumerate(code, 1):
+        if not line.strip():
+            continue
+        if PREFIX.match(line):
+            pending = pending or number
+            continue
+        decl = DECL.match(line)
+        command = COMMAND.match(line)
+        if decl or command:
+            start = pending or number
+            start = docs.get(start - 1, start)
+            if decl:
+                kind = " ".join(decl["kind"].split())
+                starts.append((start, kind, item_name(kind, decl["rest"], scopes)))
+            else:
+                starts.append((start, "command", None))
+            pending = None
+            continue
+        pending = None
+        structural = STRUCTURAL.match(line)
+        if structural:
+            boundaries.add(number)
+            namespace = re.match(r"\s*namespace\s+(\S+)", line)
+            if namespace:
+                scopes.append(namespace[1])
+            elif re.match(r"\s*(?:noncomputable\s+)?section\b", line):
+                scopes.append("")
+            elif re.match(r"\s*end(?:\s|$)", line) and scopes:
+                scopes.pop()
+    # A module docstring or comment block at top level also ends the declaration before it.
+    for number, line in enumerate(text.splitlines(), 1):
+        if re.match(r"/-(?!-)", line):
+            boundaries.add(number)
+    stops = sorted({s for s, _, _ in starts} | boundaries | {total + 1})
+    decls = []
+    for start, kind, name in starts:
+        following = next(stop for stop in stops if stop > start)
+        decls.append(Decl(name, kind, start, following - 1))
+    return decls, total
+
+
+def sources(root: Path = ROOT) -> list[Path]:
+    lean = root / "lean"
+    return [p for p in sorted(lean.rglob("*.lean")) if ".lake" not in p.relative_to(lean).parts]
+
+
+def module_key(path: Path, root: Path = ROOT) -> str:
+    return path.relative_to(root / "lean").as_posix()
+
+
+def load_table(path: Path = TABLE) -> dict[str, dict[str, object]]:
+    data = json.loads(path.read_text())
+    table: dict[str, dict[str, object]] = {}
+    for module, classes in data["modules"].items():
+        entries = table.setdefault(module, {})
+        for cls, names in classes.items():
+            if cls not in CLASSES:
+                raise ValueError(f"{path.name}: {module}: unknown class {cls}")
+            for name in names:
+                entry: object = cls
+                if isinstance(name, dict):
+                    entry, name = {"class": cls, "tied": list(name["tied"])}, name["name"]
+                if name in entries:
+                    raise ValueError(f"{path.name}: {module}: {name} is listed twice")
+                entries[name] = entry
+    return table
+
+
+def statements(path: Path = STATEMENTS) -> dict[str, str]:
+    """`theorem name` headers of lean/statements.txt and the statement text under each."""
+    found, name, body = {}, None, []
+    if not path.is_file():
+        return found
+    for line in path.read_text().splitlines():
+        if line.startswith("theorem "):
+            if name:
+                found[name] = "\n".join(body)
+            name, body = line.removeprefix("theorem ").strip(), []
+        elif name is not None:
+            body.append(line)
+    if name:
+        found[name] = "\n".join(body)
+    return found
+
+
+def classify(module: str, decl: Decl, table: dict, proved: dict[str, str]) -> tuple[str, bool, list[str]]:
+    """(class, tied, problems) of one declaration."""
+    if decl.kind in {"theorem", "lemma"}:
+        return "P", False, []
+    if decl.kind in {"example", "command"}:
+        return "T", False, []
+    entry = table.get(module, {}).get(decl.name)
+    if entry is None:
+        return "?", False, []
+    if isinstance(entry, str):
+        return entry, False, []
+    cls, problems = entry["class"], []
+    if cls[0] not in "DG":
+        problems.append(f"{module}: {decl.name}: only D and G declarations can be tied")
+    short = decl.name.rsplit(".", 1)[-1]
+    for theorem in entry["tied"]:
+        statement = proved.get(theorem)
+        if statement is None:
+            problems.append(f"{module}: {decl.name}: tying theorem {theorem} is not in {STATEMENTS.name}")
+        elif not re.search(rf"(?<![\w.']){re.escape(short)}(?![\w'])|\.{re.escape(short)}(?![\w'])", statement):
+            problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {short}")
+    return cls, not problems, problems
+
+
+def empty_counts() -> dict[str, int]:
+    return {**{c: 0 for c in COLUMNS}, **{f"{c}[{g}]": 0 for c in "DG" for g in GROUPS},
+            "tied": 0, "unclassified": 0, "trusted": 0, "lines": 0}
+
+
+def measure(root: Path = ROOT, table_path: Path = TABLE,
+            statements_path: Path = STATEMENTS) -> tuple[dict[str, dict[str, int]], list[str]]:
+    """Per-file counts and the problems found (unknown table entries, unverified ties)."""
+    table = load_table(table_path)
+    proved = statements(statements_path)
+    files, problems, seen = {}, [], defaultdict(set)
+    for path in sources(root):
+        module = module_key(path, root)
+        decls, total = scan(path)
+        counts = empty_counts()
+        counts["lines"] = total
+        covered = 0
+        for decl in decls:
+            cls, tied, issues = classify(module, decl, table, proved)
+            problems += issues
+            if decl.name is not None:
+                seen[module].add(decl.name)
+            covered += decl.lines
+            if cls == "?":
+                counts["unclassified"] += decl.lines
+                counts["trusted"] += decl.lines
+                continue
+            counts[cls[0]] += decl.lines
+            if cls[0] in "DG":
+                counts[cls] += decl.lines
+                if tied:
+                    counts["tied"] += decl.lines
+                elif cls.endswith("[V]"):
+                    counts["trusted"] += decl.lines
+            elif cls in {"K", "S"}:
+                counts["trusted"] += decl.lines
+        counts["o"] = total - covered
+        files[module] = counts
+    for module, entries in table.items():
+        for name in sorted(set(entries) - seen.get(module, set())):
+            problems.append(f"{TABLE.name}: {module}: {name} is not a declaration of that file")
+    return files, problems
+
+
+def totals(files: dict[str, dict[str, int]]) -> dict[str, int]:
+    out = empty_counts()
+    for counts in files.values():
+        for key, value in counts.items():
+            out[key] += value
+    return out
+
+
+def budget(counts: dict[str, int]) -> dict[str, int]:
+    """The three budget quantities: K, S and untied [V] (unclassified counted as [V])."""
+    return {"K": counts["K"], "S": counts["S"], "V": counts["trusted"] - counts["K"] - counts["S"]}
+
+
+def check(files: dict[str, dict[str, int]], baseline: dict) -> list[str]:
+    now = budget(totals(files))
+    before = budget(baseline["totals"])
+    allowed = Counter()
+    for entry in baseline.get("signed", []):
+        if not entry.get("signed"):
+            return [f"signed entry {entry.get('change')!r} has no signature"]
+        allowed.update(entry.get("allow", {}))
+    failures = []
+    for key in ("K", "S", "V"):
+        if now[key] > before[key] + allowed[key]:
+            grown = sorted(((counts_v - budget(baseline["files"].get(m, empty_counts()))[key], m)
+                            for m, c in files.items()
+                            if (counts_v := budget(c)[key]) > budget(baseline["files"].get(m, empty_counts()))[key]),
+                           reverse=True)
+            where = ", ".join(f"{m} +{d}" for d, m in grown[:8])
+            failures.append(f"{key} grew from {before[key]} to {now[key]} (signed allowance {allowed[key]}): {where}")
+    return failures
+
+
+def write_baseline(files: dict[str, dict[str, int]], path: Path = BASELINE, section11: dict | None = None) -> None:
+    old = json.loads(path.read_text()) if path.is_file() else {}
+    history = old.get("history", [])
+    for entry in old.get("signed", []):
+        history.append({**entry, "rebaselined_from": budget(old["totals"])})
+    data = {
+        "comment": "Generated by tools/trust_map.py --write; see docs/CONSOLIDATION-PLAN.md step 0.",
+        "totals": totals(files),
+        "budget": budget(totals(files)),
+        "signed": [],
+        "history": history,
+        "section11": section11 if section11 is not None else old.get("section11", {}),
+        "files": files,
+    }
+    path.write_text(json.dumps(data, indent=1, sort_keys=False, ensure_ascii=False) + "\n")
+
+
+# Seeding the side table from the trust map ------------------------------------------------------
+
+def parse_section11(text: str) -> dict[str, dict[str, int]]:
+    """Per-module class counts of TRUST-MAP.md section 11, keyed by the path under lean/."""
+    body = text.split("## 11. Per-module line counts", 1)[1]
+    rows: dict[str, dict[str, int]] = {}
+    group = ""
+    for line in body.splitlines():
+        if line.startswith("**"):
+            group = line
+            continue
+        if not line.startswith("| ") or line.startswith("| Module") or line.startswith("|---"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        name, values = cells[0], cells[1:]
+        if "Top-level" in group:
+            tot, g, t, o = values[:4]
+            values = [tot, "–", "–", "–", g, "–", "–", t, o]
+        if len(values) < 9:
+            continue
+
+        def numbers(index: int) -> list[int]:
+            parts = values[index].split("/")
+            return [0 if p.strip() in {"–", ""} else int(p.strip().replace(",", "")) for p in parts]
+
+        def add(module: str, which: int) -> None:
+            row = {}
+            for i, column in enumerate(("lines", *COLUMNS), 0):
+                parts = numbers(i)
+                row[column] = parts[min(which, len(parts) - 1)]
+            rows[module] = row
+
+        if "Closure/ and Core/" in group:
+            label = re.sub(r"\s*\(each\)", "", name)
+            if label.startswith(("Core/",)):
+                add(label + ".lean", 0)
+            elif label.startswith("Closure/"):
+                add(label + ".lean", 0)
+            else:
+                add(f"VE/Closure/{label}.lean", 0)
+                add(f"VE/Core/{label}.lean", 1)
+            continue
+        if "Top-level" in group:
+            add(f"{name}.lean", 0)
+            continue
+        if group.startswith("**VE/ (kernel)"):
+            add(f"VE/{name}.lean", 0)
+            continue
+        add(f"VE/{name}.lean", 0)
+    fixed = {}
+    for module, row in rows.items():
+        if module.startswith("Core/") or module.startswith("Closure/"):
+            module = "VE/" + module
+        # Rows that cover several files: each file gets the row, marked as shared.
+        if " + " in module:
+            stem = module.rsplit("/", 1)[0]
+            for part in module.removesuffix(".lean").rsplit("/", 1)[1].split(" + "):
+                fixed[f"{stem}/{part}.lean"] = {**row, "shared": 1}
+        elif module.endswith("/*.lean"):
+            for path in sorted((LEAN / module.removesuffix("*.lean")).glob("*.lean")):
+                fixed[path.relative_to(LEAN).as_posix()] = {**row, "shared": 1}
+        elif "`*Main`" in module:
+            for path in sorted(LEAN.glob("*Main.lean")):
+                if path.name != "RiskEvalMain.lean":
+                    fixed[path.name] = {**row, "shared": 1}
+        else:
+            fixed[module] = row
+    return fixed
+
+
+SEED_RULES: list[tuple[str, str]] = [
+    # (class, regular expression on the last name component); first allowed match wins.
+    ("D", r"(?i)sha256|digest|hash|canon|^enc|^dec|decode|encode|json|parse|print|render|^pp|repr|lex|token|"
+          r"^field|^str|strings|^read|^write|show|format|wire|text|quote|escape|utf|char"),
+    ("G", r"(?i)^run|^main|dispatch|case|route|report|serve|handle|usage|envelope|answer|reply|output|"
+          r"^max|limit|budget|^mode|kinds?$|protocol|request|response|service|handshake|status"),
+    ("C", r"(?i)check|replay|^eval|evaluate|^elab|elaborate|verify|valid|admit|refute|search|count|"
+          r"inline|soften|correlate|lower|fill|derive|witness|tableau|closed|step|close|expand|subst"),
+    ("K", r"(?i)^formula$|denote|entails|^structure$|^env|^term|^sort|^model|holds|^sat$|admissible|^atom|"
+          r"^pred|^var|^value$|^interp"),
+    ("S", r"(?i)intended|conflict|followable|^value|permitted|required|forbidden|meaning|semantic|^sat|"
+          r"holds|admissible|^acc|right|duty|norm|risk|status|outcome"),
+]
+IDENTITY = re.compile(r"(?i)sha256|digest|hash|nonce|identity|^id$|Id$|binding|canon")
+REJECT = re.compile(r"(?i)diagnos|error|message|lint|usage|explain|reject|warn|limit|^max|fault|hint|"
+                    r"rejection|unsupported|invalid")
+
+
+def group_of(cls: str, short: str) -> str:
+    if cls in {"D", "G"}:
+        return f"{cls}[{'I' if IDENTITY.search(short) else 'R' if REJECT.search(short) else 'V'}]"
+    return cls
+
+
+def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None) -> dict[str, str]:
+    """Seeded classes of the named non-theorem declarations of one file.
+
+    The classes a file may use are those its section 11 row records (a file without a row gets
+    G, so it counts as trusted). Inside that set a declaration takes the first class whose name
+    rule matches (`SEED_RULES`) while that class has room left in the row; the rest fill the
+    classes with the most room left, largest declaration first.
+    """
+    sizes: dict[str, int] = {}
+    kinds: dict[str, str] = {}
+    for decl in decls:
+        if decl.kind in {"theorem", "lemma", "example", "command"} or decl.name is None:
+            continue
+        sizes[decl.name] = sizes.get(decl.name, 0) + decl.lines
+        kinds.setdefault(decl.name, decl.kind)
+    short = {name: name.rsplit(".", 1)[-1].split(":", 1)[-1] for name in sizes}
+    if row is None:
+        return {name: group_of("G", short[name]) for name in sizes}
+    allowed = [c for c in ("K", "S", "D", "G", "C") if row.get(c, 0) > 0]
+    test_module = re.search(r"Examples|Checks|ResponseDecode|RiskEvalMain", module) is not None
+    out: dict[str, str] = {}
+    if row.get("T", 0) > 0 and test_module:
+        for name in sizes:
+            if kinds[name] not in {"structure", "inductive"} or not allowed:
+                out[name] = "T"
+    rest = [name for name in sizes if name not in out]
+    if not allowed:
+        fill = "T" if row.get("T", 0) > row.get("P", 0) else "P"
+        return {**out, **{name: fill for name in rest}}
+    if len(allowed) == 1:
+        return {**out, **{name: group_of(allowed[0], short[name]) for name in rest}}
+    room = Counter({c: row[c] for c in allowed})
+    chosen: dict[str, str] = {}
+    for name in sorted(rest, key=lambda n: -sizes[n]):
+        for c, pattern in SEED_RULES:
+            if c in allowed and re.search(pattern, short[name]) and room[c] >= sizes[name] / 2:
+                chosen[name] = c
+                room[c] -= sizes[name]
+                break
+    for name in sorted(rest, key=lambda n: -sizes[n]):
+        if name not in chosen:
+            c = max(allowed, key=lambda c: room[c])
+            chosen[name] = c
+            room[c] -= sizes[name]
+    return {**out, **{name: group_of(c, short[name]) for name, c in chosen.items()}}
+
+
+def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE) -> dict[str, dict[str, int]]:
+    section11 = parse_section11(trust_map.read_text())
+    modules: dict[str, dict[str, list[str]]] = {}
+    for path in sources(root):
+        module = module_key(path, root)
+        decls, _ = scan(path)
+        classes: dict[str, list[str]] = defaultdict(list)
+        for name, cls in seed_module(module, decls, section11.get(module)).items():
+            classes[cls].append(name)
+        if classes:
+            modules[module] = {c: sorted(classes[c]) for c in CLASSES if classes.get(c)}
+    table_path.write_text(json.dumps({
+        "comment": ("Trust classes of Lean declarations (docs/TRUST-MAP.md section 2), read by "
+                    "tools/trust_map.py. Seeded by `tools/trust_map.py --seed` from the trust map's "
+                    "section 11 module rows and name rules; correct entries by hand. A tie is "
+                    "written {\"name\": ..., \"tied\": [theorem, ...]}."),
+        "modules": modules}, indent=1, ensure_ascii=False) + "\n")
+    return section11
+
+
+def report(files: dict[str, dict[str, int]], baseline: dict | None) -> None:
+    now = totals(files)
+    print("class lines: " + ", ".join(f"{c} {now[c]}" for c in COLUMNS))
+    print("D/G groups: " + ", ".join(f"{k} {now[k]}" for k in now if "[" in k))
+    print(f"tied {now['tied']}, unclassified {now['unclassified']}, trusted {now['trusted']} "
+          f"(K + S + untied [V] + unclassified), {now['lines']} lines in {len(files)} files")
+    if baseline:
+        before = baseline["totals"]
+        print("against the baseline: " + ", ".join(
+            f"{k} {now[k] - before.get(k, 0):+d}" for k in ("K", "S", "D", "G", "tied", "unclassified", "trusted")))
+        changed = [(m, now_c["trusted"] - baseline["files"].get(m, empty_counts())["trusted"])
+                   for m, now_c in files.items()]
+        changed += [(m, -c["trusted"]) for m, c in baseline["files"].items() if m not in files]
+        for module, delta in sorted((x for x in changed if x[1]), key=lambda x: -abs(x[1]))[:20]:
+            print(f"  {module}: trusted {delta:+d}")
+
+
+def main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--check", action="store_true", help="fail if K, S or untied [V] grew without a signed entry")
+    parser.add_argument("--write", action="store_true", help="rewrite docs/trust-baseline.json")
+    parser.add_argument("--seed", type=Path, metavar="TRUST-MAP.md", help="rebuild tools/trust-classes.json")
+    parser.add_argument("--root", type=Path, default=ROOT)
+    args = parser.parse_args(argv)
+    root = args.root.resolve()
+    table_path = root / TABLE.relative_to(ROOT)
+    baseline_path = root / BASELINE.relative_to(ROOT)
+    statements_path = root / STATEMENTS.relative_to(ROOT)
+    section11 = seed(args.seed, root, table_path) if args.seed else None
+    files, problems = measure(root, table_path, statements_path)
+    for problem in problems:
+        print(problem, file=sys.stderr)
+    baseline = json.loads(baseline_path.read_text()) if baseline_path.is_file() else None
+    report(files, None if args.write else baseline)
+    if problems:
+        return 1
+    if args.write or args.seed:
+        write_baseline(files, baseline_path, section11)
+        print(f"wrote {baseline_path.relative_to(root)}")
+        return 0
+    if args.check:
+        if baseline is None:
+            print(f"no baseline at {baseline_path}; run --write first", file=sys.stderr)
+            return 2
+        failures = check(files, baseline)
+        for failure in failures:
+            print(f"BUDGET: {failure}", file=sys.stderr)
+        if failures:
+            return 1
+        print("PASS: K, S and untied [V] within the baseline and its signed allowances")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
