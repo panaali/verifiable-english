@@ -25,11 +25,16 @@ split is separate Rust kernel, profile and surface crates. Until then the same
 checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
 root, `ast`, `environment`, `model`, `wire`; profile: `eval`, `route`, `search`,
 `order`, `units`, `risk`, `readings`, `discourse`; surface: `surface`) and rejects
-outward `crate::` and `super::` paths, resolving re-exported names (from the crate
-root or a module's `pub use`, chained, failing closed on globs) to every module
-they may name and rejecting `#[path]`, `#[macro_use]`, `#[macro_export]`,
-`include!` and `extern crate self`, except the exact edges in
-[`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json).
+outward paths except the exact edges in
+[`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). It
+tokenizes as rustc does (nested comments, raw strings, Unicode identifiers after
+NFC) and resolves every path in its own scope: `crate::`, `super::`, `self::` and
+names bound by `use` (aliases such as `use crate as root` included), through
+re-exports (the crate root's imports, a module's own and `pub use` items, at any
+inline-module depth, chained, failing closed on globs) to every module they may
+name. The crate root's own items count as kernel. It rejects `#[path]`,
+`#[macro_use]`, `#[macro_export]` (also under `cfg_attr`), `include!` (also
+renamed), `extern crate self` and macro metavariables after `::`.
 The stage-1 Lean service and its Python adapter are tool-layer modules. This
 classification checks their imports and selects their consumers; the service is
 still outside the `ve` command path, as described in
