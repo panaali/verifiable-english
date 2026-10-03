@@ -429,9 +429,12 @@ def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
       | .ok () => none
     | .soft =>
       if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
-      else match VE.SoftNorms.validateSoft X.1.soft with
-        | .error e => some e
-        | .ok () => none
+      -- 6.4 before the semantic checks, as `decodeSoftSource` runs `primeVocabulary` (`namesFit`).
+      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) with
+        | some n => some s!"ResourceLimit: decision predicate {n}"
+        | none => match VE.SoftNorms.validateSoft X.1.soft with
+          | .error e => some e
+          | .ok () => none
     | .norms =>
       if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
       else if !allStrict X.1 then some "InvalidInput: invalid norm fields"

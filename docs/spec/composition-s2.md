@@ -1,6 +1,7 @@
 # Composition stage S2: superposed verdicts across readings (`readings@1`, part B), milestone S2a
 
-> Status: item-1 specification, draft 4 (2026-10-02), written from [composition-PLAN.md](composition-PLAN.md)
+> Status: item-1 specification, draft 5 (2026-10-03: the DRI rulings on the S2a Lean report applied, see the
+> change log), written from [composition-PLAN.md](composition-PLAN.md)
 > draft 2 (its sections 2.1, 2.3, 2.5 and 2.6, its S2 section, its fixtures and its open questions 1, 2, 5, 6, 9, 13
 > and 16) through the pointer plan [composition-S2-PLAN.md](composition-S2-PLAN.md) draft 5, which records the
 > converged Astra + Fable design debate (`manage-agents/debates/design-compose-s2/{astra,fable}.md`, CONVERGED after
@@ -261,7 +262,9 @@ supReady D             every open set has a candidate, every candidate has conte
                        the couplings and narrowings have the shape today's decoders require (7): coupling ids
                        distinct; every coupling names at least two sets, none twice, each an open set at its active
                        version, every candidate of which carries a label on the coupling's axis; narrowing ids
-                       distinct; every narrowing in force keeps at least one candidate and only candidates of its set
+                       distinct; every narrowing in force keeps at least one candidate and only candidates of its set;
+                       the frame declares neither the constant ve__here nor a bit predicate of the choice
+                       vocabulary (choiceFresh, 1.3); and every item stands for a unit of its own (unitsDistinct)
 uniformPrecedence D    for every fixed rule X and interface rule name n in X.over: every candidate of that set gives
                        its rule n the same `over` list, as a set
 superposable D         supReady D, uniformPrecedence D, and sup D passes the chain's well-formedness with every
@@ -279,7 +282,24 @@ sets share no label value on the axis (its second `CouplingLabelMissing`), a cou
 where `couplingPremises` adds no premise, and both read a coupling's set by id, so a reference to a non-active
 version would be read as the active set that Python refuses; with the conjuncts every slot-admissible base of `sup D`
 encodes a compatible choice (8.4, fixture M17). `superposable`, `SupReplay.sp` and the `hr` of `choices_spec`,
-`dead_sound` and `unsat_sound` carry them.
+`dead_sound`, `unsat_sound` and `superpose_assertions` carry them.
+
+The last conjunct, `choiceFresh`, is the Lean counterpart of S1's reserved names (S1 1.8) on the frame's constants
+and base predicates: `VE.Environment` lists constants and predicates as functions, so `WellFormedDoc` cannot see a
+frame that declares `ve__here` or a predicate `ve__bit__<n>__<j>`, while the wire decoders refuse every such name
+with S1's text `InvalidInput: name <n> begins with ve__` (Python and Lean alike, before the route is chosen). On a
+`Doc` built as a Lean value the conjunct is what `base_down`, `base_up`, `superpose_conflict_free` and
+`superpose_assertions` need: `choiceEnv` overrides a frame declaration of the choice vocabulary in `sup D`, while
+`choiceDoc D c` keeps it, so a slot-admissible base of `sup D` could interpret `ve__here` outside the frame's sort
+(fixture M19, `KH`), and an assertion candidate could mention the very bit that gates it (M19, `KB`). It is decidable:
+the constant `ve__here` and the names of `bitDecls D` are looked up in the frame's environment. A decoded document
+always satisfies it; Python's `sup_ready` carries the same conjunct and refuses a document failing it with the
+decoder's text (DRI ruling 1 of 2026-10-03).
+
+`unitsDistinct` (no two items carry one unit id) is the Lean counterpart of today's `duplicate or invalid unit id`:
+S1's attachment is computed per unit id and `one D s i` reads a set by its id, so with a repeated unit id or set id
+an assertion would be checked only beside another unit's or set's rules, and `asserted_shared` would be false
+(fixture M20; finding 4 of the S2a Lean build, 2026-10-03, pending the DRI's confirmation).
 
 Uniform precedence is the condition A1's copy mapping needs. A fixed rule `X` whose `over` names `n` is, after the
 mapping, a child of every copy of `n`. An unchosen copy has a false guard and never applies, but W1's `yields` is
@@ -292,7 +312,11 @@ once over the open sets; when it fails the document is not superposed and the en
 finding `ReadingsNotSuperposable: <set>` (7). The other two causes of that finding are the plan's: the dependency
 order of norms 4.1(4) fails on `sup D` while every candidate's document stratifies (two candidates read each other's
 predicates in their guards), and a size limit of the chain reached by `sup D` and by no candidate's document (plan
-open question 5: a qualified name, the predicate count, the unfolded carve-outs).
+open question 5: a qualified name, the predicate count, the unfolded carve-outs). The limit on a qualified name is
+the chain's own: every generated decision predicate within `MAX_IDENTIFIER_BYTES` (64 bytes), which the soft
+decoder enforces on every soft document (`ResourceLimit: decision predicate <name>`, soft-norms 6.4) and which S1's
+`chainWF` on the soft chain carries as `namesFit` (DRI ruling 2 of 2026-10-03; fixture M16), so `sideWF D (sup D)`
+is false exactly when Python's chain check refuses `sup D` for it.
 
 ### 1.9 Verdicts, evidence and findings
 
@@ -631,6 +655,8 @@ New in S2a:
 |---|---|---|
 | `ReadingsUnsatisfiable: <ids>` | 4.1 step 3, on the superposed and enumerated routes only: the couplings and narrowings in force admit no compatible choice, certified by `⊥` from `choiceCore D`; `<ids>` the ids of those couplings and narrowings, sorted. Never on W2's route, where a recorded narrowing is applied only on request (M18) | error |
 | `UNKNOWN (conflict status: <status>)` | 4.5: an entailment asked under readings whose conflict status is not CONFLICT-FREE | status |
+| `InvalidInput: name <n> begins with ve__` | S1's text, unchanged, for a frame constant `ve__here` or a frame predicate `ve__bit__<n>__<j>`: the decoders refuse it before the route is chosen (4.1 step 1); `choiceFresh`, a conjunct of `supReady` (1.8), is its Lean counterpart on a `Doc` value (DRI ruling 1; fixture M19) | error |
+| `ResourceLimit: decision predicate <name>` | the soft decoder's text, unchanged, for a generated decision predicate beyond `MAX_IDENTIFIER_BYTES`: on `sup D` it is the cause of `ReadingsNotSuperposable` (1.8, M16), on a candidate's or a choice's document the chain's error; Lean's `chainWF` carries it as `namesFit` (DRI ruling 2) | finding on `sup D`, error otherwise |
 | `<chain diagnostic> under <set>@<v>:<i>[, <set>@<v>:<i>]*` | 4.6: a compatible choice whose document the chain refuses, the choice written in source order | error |
 | `CheckerUnavailable` | 4.2: Python's `readings-elaborate` differs from Lean's | error, never a verdict |
 
@@ -645,14 +671,26 @@ and `Content.lean` untouched), `lean/VE/Readings/Choice.lean` (8.3), `Superpose.
 additions to `Wire.lean` and `Run.lean` (8.5), `Examples.lean` (the `#guard` fixtures of 9.2), `lean/READINGS.md`
 extended. The target `ve_readings_route` gains the case kinds of section 3. `VE.lean` and `VE/Audit.lean` gain
 imports and audit entries; the audit allowlist is unchanged. Frozen `Norms/*`, `SoftNorms/*`, `Rights/*`, `Route/*`,
-`Discourse/*` and `Compose/{Slot,Dispatch,Content}.lean` are untouched. Of S1's five files, `Doc.lean`,
-`Separate.lean` and `Lines.lean` are untouched; `Wire.lean` and `Run.lean` receive S2a's additions only (the
-structures, decoders and theorems of 8.5 and the case kinds of section 3): no existing S1 definition, statement or
-case kind changes, every S1 statement is used as merged, and S1's case kinds (`readings-validate`,
-`readings-separate`) answer byte-identically (F20). The blocks are statement schemata: binders shown once are
+`Discourse/*` and `Compose/{Slot,Dispatch,Content}.lean` are untouched. Of S1's five files, `Separate.lean` and
+`Lines.lean` are untouched; `Wire.lean` and `Run.lean` receive S2a's additions (the structures, decoders and
+theorems of 8.5 and the case kinds of section 3), and one change of an S1 definition is made by DRI ruling 2 of
+2026-10-03: `chainWF` on the soft chain (`Doc.lean`) gains the conjunct `namesFit` (every generated decision
+predicate within `MAX_IDENTIFIER_BYTES`), and `Wire.chainText` reports its failure with the soft decoder's text
+`ResourceLimit: decision predicate <name>` before `validateSoft`, as `decodeSoftSource` orders them. That is the
+limit Python's chain check already enforces on every soft document, so the change refuses in Lean exactly the
+documents Python refuses for it (S1's `readings-validate` included); no S1 theorem statement changes, every S1
+statement is used as merged, and S1's case kinds answer byte-identically on every document Python admits (F20). The blocks are statement schemata: binders shown once are
 repeated where a later statement abbreviates them;
 `(D) (h) (hch) (hs)` abbreviates `(D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
 (hs : superposable D = true)`.
+
+As built (2026-10-03), the statements of 8.3 to 8.5 are where these blocks put them, with their proofs spread over
+helper files of `lean/VE/Readings/` that `lean/READINGS.md` lists (`SupSlot`, `Labels`, `SupEnv`, `Asserted`,
+`Assertions`, `ChoiceValid`, `ChoiceTyped`, `Situation`, `SupConflict`, `BaseDown`, `SupWitness`, `BaseUp`,
+`UpPremises`, `UpSlot`, `SupFree`, `SupAll`, `ChoiceWF`, `Strings`); 8.5 is `Route.lean` (the route of 1.1 and the
+regenerated elaboration), `SupWire.lean` (its structures and decoders, namespace `VE.Readings.Wire`),
+`SupWireSound.lean` (its two theorems, which need `superpose_all` and so cannot sit in `Wire.lean` below it) and
+`SupRun.lean` (the case kinds), which `Run.lean` dispatches to.
 
 ### 8.2 `Compose/Adjoin.lean` (composition.md 9.5, verbatim)
 
@@ -714,14 +752,32 @@ def narrowingShape (D : Doc) (N : Narrowing) : Bool :=
   match inForce D N with
   | some R => !N.keeps.isEmpty && N.keeps.all (fun x => R.candidates.any (·.id == x))
   | none => true
+/-- ⌈log₂ k⌉: the least b with k ≤ 2^b. -/
+def bitsOf (k : Nat) : Nat := ((List.range (k + 1)).find? (fun b => k ≤ 2 ^ b)).getD k
+def bitName (n j : Nat) : String := "ve__bit__" ++ toString n ++ "__" ++ toString j
+def setSize (D : Doc) (m : Nat) : Nat := (D.sets[m]?.map (·.candidates.length)).getD 0
+def bitDecls (D : Doc) : List (String × List String) :=
+  (List.range D.sets.length).flatMap (fun m =>
+    (List.range (bitsOf (setSize D m))).map (fun j => (bitName (m + 1) j, ["ve__reading"])))
+/-- The frame declares neither the constant `ve__here` nor a bit predicate of the choice vocabulary (1.8, DRI
+    ruling 1); the wire decoders refuse every `ve__` name, so a decoded document always satisfies it. -/
+def choiceFresh (D : Doc) : Bool :=
+  D.frame.soft.E.constants "ve__here" == none && (bitDecls D).all (fun d => D.frame.soft.E.predicates d.1 == none)
+def itemUnit : Item → String
+  | .fixed u _ _ => u
+  | .bar u _ => u
+  | .set R => R.unit
+/-- Every item stands for its own unit, as today's decoders require (1.8). -/
+def unitsDistinct (D : Doc) : Bool := decide (D.items.map itemUnit).Nodup
 /-- 1.1 row 2 and 1.8: distinct set ids, every open set with a candidate, every candidate with content; the couplings
-    and narrowings in today's shape, with distinct ids. The Lean counterpart of the shape part of the decoder
-    checks of 7, and of that part only. -/
+    and narrowings in today's shape, with distinct ids; the frame free of the choice vocabulary. The Lean
+    counterpart of the shape part of the decoder checks of 7, and of that part only. -/
 def supReady (D : Doc) : Bool :=
   decide (D.sets.map (·.id)).Nodup &&
     D.sets.all (fun R => !R.candidates.isEmpty && R.candidates.all (·.content.isSome)) &&
     decide (D.couplings.map (·.id)).Nodup && D.couplings.all (couplingShape D) &&
-    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D)
+    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D) && choiceFresh D &&
+    unitsDistinct D
 def complete (D : Doc) (c : Choice) : Bool :=
   c.map (·.1) == D.sets.map (·.id) && c.all (fun x => (candidate D x.1 x.2).isSome)
 /-- Consecutive sets of the coupling take candidates with one label on the axis. -/
@@ -752,9 +808,6 @@ theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).lengt
 
 /-! ## The choice vocabulary and the atoms (1.3) -/
 
-/-- ⌈log₂ k⌉: the least b with k ≤ 2^b. -/
-def bitsOf (k : Nat) : Nat := ((List.range (k + 1)).find? (fun b => k ≤ 2 ^ b)).getD k
-def bitName (n j : Nat) : String := "ve__bit__" ++ toString n ++ "__" ++ toString j
 def here : VE.Term := .const "ve__here"
 def conj : List VE.Formula → VE.Formula
   | [] => .top
@@ -768,16 +821,12 @@ def lit (n j : Nat) (b : Bool) : VE.Formula :=
   if b then .unary (bitName n j) here else .not (.unary (bitName n j) here)
 /-- The pattern of the n-th set (1-based) with k candidates spelling i. -/
 def pattern (n k i : Nat) : VE.Formula := conj ((List.range (bitsOf k)).map (fun j => lit n j (i.testBit j)))
-def setSize (D : Doc) (m : Nat) : Nat := (D.sets[m]?.map (·.candidates.length)).getD 0
 /-- χ_{s,i}; ⊥ when s is no open set or i is no candidate of it. (`atom` is W1's predicate atom; this is the choice's.) -/
 def choiceAtom (D : Doc) (s : String) (i : Nat) : VE.Formula :=
   match D.sets.findIdx? (·.id == s) with
   | some m => if i < setSize D m then pattern (m + 1) (setSize D m) i else .bottom
   | none => .bottom
 def atoms (D : Doc) (A : Choice) : List VE.Formula := A.map (fun x => choiceAtom D x.1 x.2)
-def bitDecls (D : Doc) : List (String × List String) :=
-  (List.range D.sets.length).flatMap (fun m =>
-    (List.range (bitsOf (setSize D m))).map (fun j => (bitName (m + 1) j, ["ve__reading"])))
 def choiceEnv (D : Doc) (E : VE.Environment) : VE.Environment :=
   if D.sets.isEmpty then E else
   { sorts := E.sorts ++ ["ve__reading"],
@@ -932,11 +981,11 @@ def pull (D : Doc) (c : Choice) (S : VE.Structure.{u}) : VE.Structure.{u} :=
   { S with relation := fun p vs => (choiceEnvFull D c).predicates p ≠ none ∧ S.relation (nameMap D c p) vs }
 def Encodes (D : Doc) (c : Choice) (S : VE.Structure.{u}) : Prop :=
   ∀ R ∈ D.sets, ∀ i, i < R.candidates.length → ((choiceAtom D R.id i).denote S [] ↔ (R.id, i) ∈ c)
-/-- S' is S with only the choice vocabulary reinterpreted. -/
+/-- S' is S with only the choice vocabulary of D reinterpreted: its sort, its constant and its bit predicates. -/
 def ChoiceExtension (D : Doc) (S S' : VE.Structure.{u}) : Prop :=
   ∃ (R : String → List S.Carrier → Prop) (dom : String → S.Carrier → Prop) (k : String → Option S.Carrier),
     S' = { S with relation := R, domain := dom, constant := k } ∧
-    (∀ p, ¬ p.startsWith "ve__bit__" → ∀ vs, R p vs ↔ S.relation p vs) ∧
+    (∀ p, p ∉ (bitDecls D).map (·.1) → ∀ vs, R p vs ↔ S.relation p vs) ∧
     (∀ σ, σ ≠ "ve__reading" → dom σ = S.domain σ) ∧ (∀ x, x ≠ "ve__here" → k x = S.constant x)
 /-- The complete vocabulary every reading shares: the author's, the regulated and defined predicates, and the
     decision predicates of the fixed units that depend on no open set. -/
@@ -991,7 +1040,8 @@ theorem sup_wellFormed (D : Doc) (hs : superposable D = true) :
     one name. -/
 theorem choice_wellFormed (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights) (hs : superposable D = true)
     (c : Choice) (hc : Compatible D c) : sideWF D (choiceDoc D c) = true
-theorem asserted_shared (D : Doc) (h : WellFormedDoc D = true) (c : Choice) (hc : Compatible D c) :
+theorem asserted_shared (D : Doc) (h : WellFormedDoc D = true) (hr : supReady D = true) (c : Choice)
+    (hc : Compatible D c) :
   ∀ a ∈ (choiceDoc D c).2, a.WellFormed (sharedEnv D) []
 theorem slot_wellFormed (D) (h) (hch) (hs) (A : Choice) (hA : ∀ x ∈ A, (candidate D x.1 x.2).isSome) :
   SlotWellFormed (correlate (sup D).1) (slotUnder D A)
@@ -1032,9 +1082,12 @@ theorem superpose_situation (D) (h) (hch) (hs) (c) (hc : Compatible D c) (B : VE
 /-- Bases correspond, upward; the extension pulls back to the structure it came from. -/
 theorem base_up (D) (h) (hch) (hs) (c) (hc : Compatible D c) (B₀ : VE.Structure.{u}) (hne : Nonempty B₀.Carrier)
     (hB : BaseAdmissibleR (choiceDoc D c).1 B₀) :
-  ∃ (R : String → List B₀.Carrier → Prop) (B : VE.Structure.{u}),
-    ChoiceExtension D { B₀ with relation := R } B ∧ BaseAdmissibleP (correlate (sup D).1) (slotP D) B ∧
-    Encodes D c B ∧ ∀ p vs, (pull D c B).relation p vs ↔ B₀.relation p vs
+  ∃ (R : String → List B₀.Carrier → Prop) (dom : String → B₀.Carrier → Prop) (k : String → Option B₀.Carrier),
+    ChoiceExtension D { B₀ with relation := R } { B₀ with relation := R, domain := dom, constant := k } ∧
+    BaseAdmissibleP (correlate (sup D).1) (slotP D) { B₀ with relation := R, domain := dom, constant := k } ∧
+    Encodes D c { B₀ with relation := R, domain := dom, constant := k } ∧
+    ∀ p (vs : List B₀.Carrier), (pull D c { B₀ with relation := R, domain := dom, constant := k }).relation p vs ↔
+      B₀.relation p vs                                                     -- finding 6: the extension over B₀'s carrier
 
 /-! ## Conflict-freedom under every reading, in one check (4.4: no non-emptiness hypothesis on either side) -/
 
@@ -1143,8 +1196,10 @@ with `A` is the plan's at `A = []`; `A` is what lets a named reading be certifie
 conflict (4.5). `dead_sound` and `unsat_sound` need no chain: `choiceCore D` is propositional over the bits, and a
 compatible choice gives a one-element admissible structure of the level-0 vocabulary that satisfies it with the
 atom true. `superpose_assertions` drops the plan's admissibility hypothesis on `S`: the equivalence holds for any
-structure, because the author's formulas mention no choice symbol (S1's reserved names) and the choice vocabulary
-is the only difference between `S` and `S'`. `choice_wellFormed`'s size part is the one proof risk the review should
+structure, because the author's formulas mention no choice symbol (S1's reserved names, and on a `Doc` value
+`choiceFresh` in `supReady`) and the choice vocabulary is the only difference between `S` and `S'`. `base_down`,
+`base_up`, `superpose_conflict_free` and `superpose_assertions` hold in this form because `supReady` carries
+`choiceFresh` (DRI ruling 1): without it each is false of a frame that declares the choice vocabulary (M19). `choice_wellFormed`'s size part is the one proof risk the review should
 weigh: every check of the chain's well-formedness on a choice's document is a check on a sub-tree of `sup D`'s with
 shorter names and smaller unfolded carve-outs, but the limits are counted on the whole document and the argument
 must be made for each (13.5).
@@ -1252,9 +1307,11 @@ predicate `asks(agent, user)`; obligations `avoid_required`, `help_required`, de
 | M13 | K15 ({`S`, `content: null`}) | route `pending`: every verdict across readings UNKNOWN, reason `non-assertion reading elaboration pending`; S1's report unchanged |
 | M14 | K9: fixed strict `except-x` on `−avoid_required`, guard `asks`, over `[no-deception]`, with `rs1` = {`S`, `Df`} | `copies D "no-deception" = [rd-1-no-deception, rd-2-no-deception]`, `except-x`'s over in `sup D` names both; `uniformPrecedence D = true` (both twins have over `[]`); on `m1` under either choice the outcome at (a, u) is `some false` in `sup D` and in the choice's document (`except-x` selects, the twin yields through it); `superposable D = true` |
 | M15 | the empty structure `E∅` (Carrier `Empty`) over K, and M1's document | `example`: `BaseAdmissibleR (choiceDoc D [(rs1, 0)]).1 E∅`; no `S'` with `ChoiceExtension D E∅ S'` is admissible for `(sup D).1.soft.E` (nothing denotes `ve__here`); `adjoinOne E∅` has one element, is `BaseAdmissibleR` for the choice's document (`adjoin_baseAdmissibleP` at `rights_is_slot`), and `base_up` applies to it; `ConflictFree` of any soft document holds of `E∅` (no typed tuple) |
-| M16 | M1 with `Df` and `S` renamed to a 45-byte rule name | own names stay within `MAX_IDENTIFIER_BYTES` (16 + 45 bytes for the decision predicate) and `sup D`'s `soft__excepted__rd_2_…` does not (66 bytes): `sideWF D (sup D) = false` with the chain's own text for that limit, `ReadingsNotSuperposable: rs1` with that cause, the enumerated route over 2 choices |
+| M16 | M1 with `Df` and `S` renamed to a 45-byte rule name | own names stay within `MAX_IDENTIFIER_BYTES` (16 + 45 bytes for the decision predicate) and `sup D`'s `soft__excepted__rd_2_…` does not (66 bytes): `sideWF D (sup D) = false` with the chain's own text for that limit, `ReadingsNotSuperposable: rs1` with that cause, the enumerated route over 2 choices. Lean's `chainWF` carries the limit as `namesFit` (DRI ruling 2), and `Wire.chainText` gives `ResourceLimit: decision predicate soft__excepted__rd_2_<name>` |
 | M17 | the shape of couplings and narrowings (1.8, 7), on M6's document: (a) `rs1` and `rs2` without `force` labels, coupling `c1` on `force`; (b) M6 with a second coupling also named `c1`; (c) M6 with `c1` naming `rs2@2` while `rs2` is active at version 1; (d) M6 with `rs2` re-recorded at version 2 (the same two candidates; `c1` names `rs2@2`) plus a narrowing `n0` on `rs2@1` keeping the strict candidate's id | (a) Python and Lean's decoder: `CouplingLabelMissing: c1, rs1`; on the `Doc` as a Lean value `supReady D = false` (`couplingShape` fails), so no theorem of 8.4 that assumes `supReady` or `superposable` (`hr`, `hs`, `SupReplay.sp`) applies to it (`encodes_atoms`, which assumes neither, does), and what the conjunct excludes is visible: `couplingHolds D c c1 = false` for every one of the four complete choices while `couplingPremises D = []`, so a slot-admissible base of `sup D` would encode a complete choice that is not `Compatible` (`encodes_unique` would be false without the conjunct). (b) `invalid coupling`; `supReady D = false` (ids not `Nodup`). (c) `invalid coupling set`; `supReady D = false` (`rs2@2` is no open set at its active version), where `couplingHolds` and `couplingPremises` alone would have read `rs2` at version 1. (d) admitted by Python (`rs2@1` is a recorded version) and by Lean; `n0` is not in force (`inForce D n0 = none`: `D.sets` holds `rs2` at version 2), `narrowingShape D n0 = true`, `supReady D = true`, no `narrowing:n0` label, `choices D` as M6's, `n0` listed under `narrowings_stale` (6); stale narrowings stay inactive |
 | M18 | two formula sets, no content-bearing set: `rs1` on `u1` = {0: assertion `∀agent ∀user. asks`, label `force` A; 1: assertion `∀agent ∀user. ¬asks`, label `force` B}, `rs2` on `u2` the same two assertions with labels A, B; coupling `c1` on `force` over `[rs1@1, rs2@1]`; narrowing `n1` (set `rs1`, version 1, keeps the A candidate), narrowing `n2` (set `rs2`, version 1, keeps the B candidate) | route `w2` (1.1 row 1, chosen at 4.1 step 2): W2's `coupled-choices` route over the two compatible choices A/A and B/B, with today's `models`, verdicts byte-identical to today's; `sup D` not built, `choiceCore D` not computed; no `ReadingsUnsatisfiable`, no `DeadReading`; `CouplingUnsatisfiable` not raised (today's `validate_couplings` finds A/A). Under `--narrowing n1` today's one-choice answer (A/A) with `narrowing: narrowing:n1`, under `--narrowing n2` likewise (B/B), unchanged (F20). As a Lean value: `supReady D = true`, `choices D = []` and `unsatCheck` would accept a certificate of `⊥` from `choiceCore D` (= `[coupling:c1, narrowing:n1, narrowing:n2]`): the refusal draft 1 raised and the route order now never reaches |
+| M19 | the frame declares the choice vocabulary (DRI ruling 1): `KH`, M1's frame with the constant `ve__here : agent` and `rs1` = {0: assertion `⊤`, 1: assertion `⊥`}; `KB`, M1's frame with `ve__here : agent` and the predicate `ve__bit__1__0(agent)`, and `rs1` = {0: assertion `ve__bit__1__0(ve__here)`, 1: its negation} | both refused by the wire decoders with `InvalidInput: name ve__here begins with ve__` (Python and Lean); as Lean values `WellFormedDoc` holds (it cannot see the names), `choiceFresh` and so `supReady` and `superposable` are false, and no theorem of 8.4 applies. What the conjunct excludes is formal: on `KH` a slot-admissible base of `sup D` encoding `[(rs1, 0)]` whose `ve__here` is no agent pulls to a structure that is not admissible for the choice's document (`base_down` would fail), and on `KB` the gated assertions `¬b → b` and `b → ¬b` have no model while every structure satisfies one candidate (`superpose_assertions` would fail) |
+| M20 | two open sets under one id `s`: `u1` = {0: assertion `∀agent ∀user. soft__excepted__no_deception`, 1: assertion `⊤`}, `u2` = {0: `Df`, 1: `S`} (finding 4) | `WellFormedDoc` holds (S1 checks candidate 0 of `u1` beside `Df`, whose decision predicate types the assertion); `supReady D = false` (set ids not distinct); for the choice `[(s, 0), (s, 0)]`, compatible, `(choiceDoc D c).2` is that assertion and it is not typed over `sharedEnv D`: the statement of `asserted_shared` without `hr` is false here. The same holds of a fixed assertion unit that shares its id with a norm unit attached to a set (`unitsDistinct`) |
 
 ### 9.3 Differential, shadow and pilots
 
@@ -1453,3 +1510,7 @@ any of them.
 | 2026-10-02 | Draft 2 | The converged Astra + Fable statement review of draft 1 applied (`manage-agents/debates/compose-s2-spec/{astra,fable}.md`, CONVERGED after round 2 on FIX) and nothing else, five corrections: (1) the route of 1.1 is chosen after the decoders run with today's texts and before `choiceCore D`, the `⊥` check and `DeadReading`, which now run only on the superposed and enumerated routes; W2 keeps its verdicts, `CouplingUnsatisfiable`, its on-request narrowing and its budget verbatim (1.1, 1.2, 1.9, 4.1, 4.7, 7, 14.17; F20 extended; fixture M18, the coupled formula-only document with two recorded narrowings that draft 1 would have refused). (2) `supReady` gains the shape of the couplings and narrowings that today's `validate_couplings` and `validate_narrowings` require (`couplingShape`, `narrowingShape`: active references, a label on every coupled candidate, distinct coupling ids and narrowing ids, non-empty keeps of the set's own candidates for a narrowing in force; a stale narrowing stays inactive), named in 7 as the Lean counterpart of their texts and carried by `superposable`, `SupReplay.sp` and the `hr` of `choices_spec`, `dead_sound` and `unsat_sound`; this is what `encodes_unique` and the theorems on it need (1.8, 8.3, 8.4's note; fixture M17 a to d). (3) `origin` is defined on the names of `sup D` and used by `owners` there; `qName` goes through the set that declares the name and the candidate the choice takes in it, so the name map of an interface name lands on the chosen copy (1.5, 1.7, 8.3; M1's expected map retained and spelled out). (4) M8's mutation check names the one copy that is a child of `base-x` and the leak through `stop-x` under choice 0. (5) 8.1 and 13.1 say which S1 files receive additive integration (`Wire.lean`, `Run.lean`) with no S1 definition, statement or case kind changed. No statement of S0 or S1 changed; no design change. The converged process: one confirmation round on the edited passages opens the build. |
 | 2026-10-02 | Draft 3 | The confirmation round on draft 2 applied (`manage-agents/compose-s2-p3ver1.final.md`: FAIL on three statement-level wording claims, every definition confirmed as the requested repair, no unrelated change found) and nothing else, three corrections: (1) 1.1 and 4.1 say what choosing the route computes: the first three rows are decided from the decoded document alone, and W2 returns before any narrowing becomes a premise, before `choiceCore D` and before any finding; choosing between the superposed and enumerated rows computes `superposable D`, and so `sup D`, and nothing else of 1.2 to 1.9 (1.1; 4.1 steps 1, 2, 4, 5 and 6). (2) The decoder claim of 7 is limited to the shape invariants `supReady` enforces: a `Doc` that fails a conjunct is one today's texts refuse, and not conversely, since `validate_couplings` also refuses an empty label intersection (its second `CouplingLabelMissing`), an unsatisfiable coupling and its field and count checks (7; 1.8; 8.3's docstrings and note). (3) M17(a) says that no theorem of 8.4 assuming `supReady` or `superposable` applies to the document, not that no theorem of 8.4 does (`encodes_atoms` assumes neither). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 3, scoped to these passages. |
 | 2026-10-02 | Draft 4 | The confirmation round on draft 3 applied (`manage-agents/compose-s2-p3ver2.final.md`: 7's decoder correction and M17(a) confirmed; FAIL on one statement-level claim introduced by draft 3's route-order repair; definitions, theorem statements and fixture values found unchanged, no unrelated change found) and nothing else, one correction: 1.1 and 4.1 step 2 said that every document on none of the first three rows computes `superposable D` to choose between the superposed and enumerated rows, which reached the rights chain, whose fallback 1.1's table makes unconditional and whose `sup D` is S2b's (12); they now say that a rights document takes the enumerated row unconditionally (until S2b) with nothing of 1.2 to 1.9 computed, `superposable D` not evaluated and no `ReadingsNotSuperposable` (fixture M12), and that computing `superposable D`, and so `sup D`, is the soft and norms chains' alone (1.1; 4.1 steps 2 and 6). No definition, theorem statement or fixture value changed; no design change. The build opens on the PASS of the confirmation round on draft 4, scoped to these passages. |
+| 2026-10-03 | Draft 5 | The DRI rulings on the S2a Lean report (`manage-agents/compose-s2-dri-note.md`) applied and nothing else. (1) The frame can declare the choice vocabulary: `supReady` gains the decidable conjunct `choiceFresh` (the frame declares neither `ve__here` nor a bit predicate of `bitDecls D`; `bitsOf`, `bitName`, `setSize` and `bitDecls` move ahead of it in 8.3), Python's `sup_ready` the same conjunct with the decoders' text `InvalidInput: name <n> begins with ve__` (1.8, 7); `base_down`, `base_up`, `superpose_conflict_free` and `superpose_assertions` are to be proved in this form, their statements unchanged since their `hs` or `hr` carries the conjunct (8.4's note); the two Lean counterexamples of the report become the rejection fixture M19. (2) M16: Lean is the authority, so S1's `chainWF` on the soft chain gains `namesFit` (every generated decision predicate within `MAX_IDENTIFIER_BYTES`), with the soft decoder's text in `Wire.chainText`; M16 holds as specified, and 8.1 records this one change of an S1 definition (1.8, 7, 8.1, M16). (3) Every remaining 8.4 theorem and 8.5 are required for S2a; the wire shape of 8.5 is recorded in `lean/READINGS.md`. No other definition, theorem statement or fixture value changed. |
+| 2026-10-03 | Draft 5, finding 4 | The S2a Lean build found `asserted_shared` false as stated: its only hypotheses are `WellFormedDoc` and compatibility, and S1's documents read sets and units by id, so with two open sets under one id (or two units under one id) an assertion is checked only beside another set's or unit's rules (fixture M20, a formal counterexample in `Examples.lean`). Applied, pending the DRI's confirmation: `supReady` gains `unitsDistinct` (the Lean counterpart of today's `duplicate or invalid unit id`), and `asserted_shared` gains `(hr : supReady D = true)`, which carries the distinct set and unit ids; every theorem that uses it has `hs` and so `hr`. |
+| 2026-10-03 | Draft 5, finding 5 | The S2a Lean build found `superpose_assertions` false with `ChoiceExtension` as written: it let `S'` reinterpret every predicate whose name begins `ve__bit__`, while `choiceFresh` (a decidable conjunct) keeps only the bits of `bitDecls D` out of the frame, so a frame predicate `ve__bit__9__9` used by a fixed assertion could be set true in `S'` and false in `S`. Applied, pending the DRI's confirmation: `ChoiceExtension` reinterprets exactly the choice vocabulary of `D` (the sort, `ve__here`, the names of `bitDecls D`), which is what its docstring says; `base_up`'s statement is unchanged and its witness reinterprets only those names. |
+| 2026-10-03 | Draft 5, finding 6 | The S2a Lean build found `base_up` ill-typed as written: `B` was quantified over every structure, so the conjunct `(pull D c B).relation p vs ↔ B₀.relation p vs` compared relations over two unrelated carriers (`ChoiceExtension` fixes `B`'s carrier only in a proof, not in the statement's typing). Applied, pending the DRI's confirmation: the extension is `{ B₀ with relation := R, domain := dom, constant := k }`, quantified by `R`, `dom` and `k`, which is what `ChoiceExtension` already required of it; nothing else in the statement changes. |
