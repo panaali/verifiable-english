@@ -37,13 +37,14 @@ def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
 def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), executable=LEAN_ROUTE):
     """Ask the S2 Lean route to regenerate the admitted document's reading route.
 
-    The choice search is independently repeated in Python. A disagreement is an
-    operational failure, never a reading verdict. The S1 admission has already
-    checked the content and the W2 validators have checked the restrictions.
+    The choice search and the generated vocabulary, units, names and slot are
+    independently repeated in Python. A disagreement is an operational failure,
+    never a reading verdict. S1 has already admitted the content and the W2
+    validators have checked the restrictions.
     """
     from .readings_s1 import Document, S1Environment
-    from .readings_sup import (choice_slot, choices, choice_vocabulary, name_map,
-                               superposed_units, uniform_precedence)
+    from .readings_sup import (choices, choice_vocabulary, first_nonuniform, name_map,
+                               sup_ready, superposed_elaboration, superposed_units)
 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
@@ -66,11 +67,27 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
         expected_route = "enumerated"
     else:
         expected_route = None
-    if expected_route is not None and row.get("route") != expected_route:
+    regenerated = None
+    cause = None
+    expected_text = None
+    if expected_route is None:
+        if not sup_ready(sets, couplings, narrowings, doc=source):
+            expected_route, cause = "enumerated", "the shape of the reading sets"
+        elif (first := first_nonuniform(source)) is not None:
+            expected_route, cause = "enumerated", f"precedence under {first[1]}"
+            expected_text = f"ReadingsNotSuperposable: {first[0]}"
+        else:
+            try:
+                regenerated = superposed_elaboration(source, couplings, narrowings)
+            except (VEError, SyntaxError) as exc:
+                expected_route, cause = "enumerated", _message(exc)
+            else:
+                expected_route = "superposed"
+    if row.get("route") != expected_route:
         raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 route")
-    if (expected_route is None and not uniform_precedence(source) and
-            (row.get("route") != "enumerated" or
-             not (row.get("finding") or {}).get("cause", "").startswith("precedence under "))):
+    if cause is not None and (row.get("finding") or {}).get("cause") != cause:
+        raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 finding")
+    if expected_text is not None and (row.get("finding") or {}).get("text") != expected_text:
         raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 precedence")
     if row.get("route") in ("superposed", "enumerated"):
         found, over = choices(sets, couplings, narrowings)
@@ -92,13 +109,11 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 units")
             if row.get("names") != name_map(source):
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 names")
-            try:
-                python_slot = choice_slot(source, couplings, narrowings)
-            except VEError as exc:
-                raise CheckerUnavailable(f"ReadingsConformance: Python could not regenerate the S2 slot: "
-                                         f"{_message(exc)}") from None
+            python_slot, python_sizes = regenerated
             if row.get("slot") != [{"label": label, "ast": formula} for label, formula in python_slot]:
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 slot")
+            if row.get("sizes") != python_sizes:
+                raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 sizes")
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
@@ -207,7 +222,7 @@ CHECKED_BY = {
     "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): "
             "ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
     "python": "W2 structure of the reading sets and regeneration of S1 admission; "
-              "S2 choices and choice vocabulary compared with Lean",
+              "S2 choices, units, names, slot and sizes compared with Lean",
     "rust": "untrusted evaluation of every recorded situation (10)",
     "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"}
 
