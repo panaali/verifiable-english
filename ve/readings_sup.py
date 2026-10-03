@@ -72,13 +72,21 @@ def choice_vocabulary(sets) -> dict:
                            for bit in range(bits_of(len(reading_set.candidates)))}}
 
 
-def sup_ready(sets, couplings=(), narrowings=()) -> bool:
+def sup_ready(sets, couplings=(), narrowings=(), *, doc=None) -> bool:
     """The shape conjuncts of S2 1.8, including the active-version checks.
 
     The decoder has further checks, notably a shared coupling label value.
     This predicate deliberately mirrors only ``supReady`` in the spec.
     """
     ids = [reading_set.id for reading_set in sets]
+    if doc is not None:
+        units = [item[1] if item[0] != "set" else item[2].unit for item in doc.items]
+        if len(units) != len(set(units)):
+            return False
+        frame = doc.senv.frame_data["vocabulary"]
+        if HERE in frame.get("constants", {}) or any(
+                bit in frame.get("predicates", {}) for bit in choice_vocabulary(sets)["predicates"]):
+            return False
     if len(ids) != len(set(ids)) or any(
             not reading_set.candidates or any(a.content is None for a in reading_set.candidates)
             for reading_set in sets):
@@ -130,8 +138,8 @@ def copies(doc, name: str) -> list[str]:
     return [name]
 
 
-def uniform_precedence(doc) -> bool:
-    """S2 1.8's protection against an unchosen copy yielding to a fixed child."""
+def first_nonuniform(doc):
+    """The first fixed child and interface rule with unlike candidate parents."""
     for _, fixed in doc.fixed_units():
         if fixed.kind != "norm":
             continue
@@ -143,8 +151,13 @@ def uniform_precedence(doc) -> bool:
                            if a.content is not None and a.content.kind == "norm"
                            and a.content.body.get("name") == name]
                 if len(parents) != len(reading_set.candidates) or len(set(parents)) != 1:
-                    return False
-    return True
+                    return reading_set.id, name
+    return None
+
+
+def uniform_precedence(doc) -> bool:
+    """S2 1.8's protection against an unchosen copy yielding to a fixed child."""
+    return first_nonuniform(doc) is None
 
 
 def choice_contents(doc, choice):
@@ -393,8 +406,8 @@ def _quiet_formula(sets, name, sorts, owners):
     return formula
 
 
-def choice_slot(doc, couplings=(), narrowings=()):
-    """Regenerate the full S2a labelled slot, including decision-table quiescence.
+def superposed_elaboration(doc, couplings=(), narrowings=()):
+    """Regenerate the S2a labelled slot and sizes, including decision-table quiescence.
 
     Decision names and colliding pairs come from Python's soft elaborator on
     the transformed document; their ownership comes from the source positions.
@@ -409,9 +422,13 @@ def choice_slot(doc, couplings=(), narrowings=()):
         frame["vocabulary"]["constants"][name] = {"sort": sort, "description": name}
     for name, sorts in vocabulary["predicates"].items():
         frame["vocabulary"]["predicates"][name] = {"arguments": sorts, "description": name}
+    contents = superposed_contents(doc)
     soft = SoftNormDocument(SoftEnvironment(frame, generated=True),
-                            [content.raw for content in superposed_contents(doc)
-                             if content.kind == "norm"])
+                            [content.raw for content in contents if content.kind == "norm"])
+    from .ast import formula_from_data
+    for content in contents:
+        if content.kind == "assertion":
+            formula_from_data(soft.extended_env, content.body, _generated=True)
     origin = {}
     for m, reading_set in enumerate(doc.sets):
         for i, candidate in enumerate(reading_set.candidates):
@@ -459,7 +476,24 @@ def choice_slot(doc, couplings=(), narrowings=()):
             _, _, low, high, act = name.split("__", 4)
             labelled.append((f"readings:quiet:outweighs:{act}:{low}:{high}",
                              _quiet_formula(doc.sets, name, sorts, owners)))
-    return labelled + coupling_premises(doc.sets, couplings) + narrowing_premises(doc.sets, narrowings)
+    labelled += coupling_premises(doc.sets, couplings) + narrowing_premises(doc.sets, narrowings)
+
+    def nodes(tree):
+        return 1 + sum(nodes(item) for item in tree if type(item) is list)
+
+    sizes = {"sorts": len(frame["vocabulary"]["sorts"]),
+             "predicates": (len(doc.senv.frame_data["vocabulary"]["predicates"]) +
+                            len(vocabulary["predicates"]) + len(soft.decisions)),
+             "nodes": sum(nodes(rule["norm"]["guard"]) +
+                          sum(nodes(unless) for unless in rule["norm"]["unless"])
+                          for rule in (r.to_dict() for r in soft.elaborated.rules)),
+             "limits": {"sorts": 32, "predicates": 256, "nodes": 10000}}
+    return labelled, sizes
+
+
+def choice_slot(doc, couplings=(), narrowings=()):
+    """The full S2a labelled slot independently regenerated in Python."""
+    return superposed_elaboration(doc, couplings, narrowings)[0]
 
 
 def unsatisfiable_ids(sets, couplings=(), narrowings=()):
