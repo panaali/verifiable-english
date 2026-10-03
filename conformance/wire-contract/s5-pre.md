@@ -45,6 +45,21 @@ class found under `norms@0`, reached here by inputs the tests already submit.
 The second candidate of 2.12 (a document that the decoder accepts and that
 `norms-elaborate` then rejects) has no case on either corpus.
 
+## Found while aligning the two adapters' domain: a Python crash
+
+An environment whose `profiles` is a number or a Boolean is inside the domain of
+`norms@0` (2.2: an environment that does not decode is in the domain). Python's
+environment decoder raises `TypeError` on it (`"speech-acts@0" in
+data.get("profiles", [])`, `ve/environment.py:327`), not a `VEError`, so the
+Python legacy validator neither accepts nor rejects, and the call
+`admit_document` raises `TypeError`; the Lean route rejects, and `ve_diagnose`
+reports 1.1. `ve/environment.py` is outside item 1's diff scope (7.2), so the
+crash is recorded here, not fixed, and pinned by
+`tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain`
+(the expectation `crash`). The gate's corpus holds no such source: the gate's
+Python column reads only a `VEError`. Under `norm-defaults@0` the same
+environment lists no profile and is outside the domain.
+
 ## Class differences (recorded, not S5-pre's)
 
 On the cases both validators reject, the Python class and the class that

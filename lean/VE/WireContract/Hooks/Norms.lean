@@ -385,7 +385,8 @@ def domainProfiles : List String :=
   ["data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "time@0"]
 
 /-- The norm objects of an `admission` case: the `content` of each unit whose `kind` is `norm` and whose
-    `content` is an object with a member `norm`, in document order (`null` when `units` is not an array). -/
+    `content` is an object with a member `norm`, in document order; `null`, outside the domain, when the
+    document is not an object with a `units` array (Python's `active_norms` gives `None`). -/
 def activeNorms (document : Json) : Json :=
   match document.getObjValD "units" with
   | .arr us => .arr (us.filterMap fun u =>
@@ -396,8 +397,9 @@ def activeNorms (document : Json) : Json :=
 
 def outsideDomain : String := "UnsupportedProfile: the case is outside the unit's domain"
 
-/-- The domain conditions of 2.2 shared by both units: `norms` an array of objects, every listed profile in
-    `domainProfiles`, and no quantity schema. -/
+/-- The domain conditions of 2.2 shared by both units: `norms` an array of objects, every member of an array
+    `profiles` a string in `domainProfiles` (a member that is not a string is outside it, as in Python's
+    `in_domain`), and no quantity schema. -/
 def inSharedDomain (environment norms : Json) : Bool :=
   let objects := match norms with
     | .arr xs => xs.all fun x => match x with
@@ -407,7 +409,7 @@ def inSharedDomain (environment norms : Json) : Bool :=
   let listed := match environment.getObjValD "profiles" with
     | .arr ps => ps.all fun p => match p with
       | .str s => domainProfiles.contains s
-      | _ => true
+      | _ => false
     | _ => true
   objects && listed && !(environment.getObjVal? "unit_schema").isOk &&
     !(environment.getObjVal? "units").isOk

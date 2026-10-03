@@ -449,3 +449,134 @@ def test_l5_outside_the_domain(diagnose):
     assert rows[:2] == [{"id": c["id"], "status": "error", "error": error} for c in cases[:2]]
     assert rows[2] == {"id": "kind", "status": "error",
                        "error": "UnsupportedProfile: case kind norms-elaborate has no wire contract input"}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 2.2: one domain, and one root, for both adapters (Astra and Fable reviews, B: a missing admission document
+# was an empty source in Python and outside the domain in Lean; a profile that is not a string was outside
+# the domain in Python and inside it in Lean; a `profiles` that is not an array was inside `norm-defaults@0`'s
+# domain in Python and outside it in Lean; `units` that is not an array was `[]` or a `TypeError` in Python).
+
+OUTSIDE = "UnsupportedProfile: the case is outside the unit's domain"
+
+
+def _with(base, change, kind):
+    environment, norms = base()
+    case = {"id": "", "kind": kind, "environment": environment, "norms": norms}
+    change(case)
+    return case
+
+
+def _admission(base, document_value):
+    environment, _ = base()
+    case = {"id": "", "kind": "admission", "environment": environment}
+    if document_value is not None:
+        case["document"] = document_value
+    return case
+
+
+def _profiles(value):
+    def change(case):
+        case["environment"]["profiles"] = value(case["environment"]["profiles"])
+    return change
+
+
+def adapter_cases(unit):
+    """(id, case, expected): `outside` for the domain's refusal, `kind` for a kind without input, `in` for a
+    case whose root both engines diagnose, and `crash` for one inside the domain on which Python's environment
+    decoder raises `TypeError`, not a `VEError` (`profiles` a number or a Boolean; `ve/environment.py:327`, frozen
+    in item 1), where Lean's 1.1 rejects: an S5-pre candidate (s5-pre.md)."""
+    base, kind = (base_b, "norms-elaborate") if unit == "norms@0" else (base_u, "norm-defaults-elaborate")
+    environment, norms = base()
+    mixed = {"units": [7, "x", {"kind": "norm", "content": norms[0]}, {"kind": "quoted", "content": norms[1]},
+                       {"kind": "norm", "content": {"text": "t"}}], "graph": {"root": "r", "nodes": []}}
+    other = "norm-defaults@0" if unit == "norms@0" else "norms@0"
+    rows = [
+        ("profile-not-a-string", _with(base, _profiles(lambda p: p + [7]), kind), "outside"),
+        ("profile-object", _with(base, _profiles(lambda p: [{"p": "norms@0"}] + p), kind), "outside"),
+        ("profiles-string", _with(base, _profiles(lambda p: " ".join(p)), kind),
+         "in" if unit == "norms@0" else "outside"),
+        ("profiles-number", _with(base, _profiles(lambda p: 7), kind), "crash" if unit == "norms@0" else "outside"),
+        ("profiles-boolean", _with(base, _profiles(lambda p: True), kind),
+         "crash" if unit == "norms@0" else "outside"),
+        ("profiles-missing", _with(base, lambda c: c["environment"].pop("profiles"), kind),
+         "in" if unit == "norms@0" else "outside"),
+        ("environment-number", _with(base, lambda c: c.update(environment=7), kind),
+         "in" if unit == "norms@0" else "outside"),
+        ("environment-array", _with(base, lambda c: c.update(environment=[environment]), kind),
+         "in" if unit == "norms@0" else "outside"),
+        ("environment-missing", _with(base, lambda c: c.pop("environment"), kind),
+         "in" if unit == "norms@0" else "outside"),
+        ("other-unit", _with(base, _profiles(lambda p: sorted(set(p) ^ {"norm-defaults@0"})), kind), "outside"),
+        ("quantity", _with(base, lambda c: c["environment"].update(unit_schema={}), kind), "outside"),
+        ("norms-string", _with(base, lambda c: c.update(norms="x"), kind), "outside"),
+        ("norms-member", _with(base, lambda c: c["norms"].append(7), kind), "outside"),
+        ("norms-missing", _with(base, lambda c: c.pop("norms"), kind), "outside"),
+        ("admission-no-document", _admission(base, None), "outside"),
+        ("admission-document-string", _admission(base, "x"), "outside"),
+        ("admission-no-units", _admission(base, {"graph": {"root": "r", "nodes": []}}), "outside"),
+        ("admission-units-string", _admission(base, {"units": "xy"}), "outside"),
+        ("admission-units-number", _admission(base, {"units": 7}), "outside"),
+        ("admission-units-object", _admission(base, {"units": {"kind": "norm", "content": norms[0]}}), "outside"),
+        ("admission-mixed-units", _admission(base, mixed), "in"),
+        ("admission-s1", _admission(base, document(norms)), "in"),
+        ("kind-number", _with(base, lambda c: c.update(kind=7), kind), "kind"),
+        ("kind-object", _with(base, lambda c: c.update(kind={"a": [1]}), kind), "kind"),
+        ("kind-missing", _with(base, lambda c: c.pop("kind"), kind), "kind"),
+        ("kind-other-unit", _with(base, lambda c: c.update(
+            kind="norm-defaults-elaborate" if unit == "norms@0" else "norms-elaborate"), kind), "kind"),
+        ("kind-soft", _with(base, lambda c: c.update(kind="soft-elaborate"), kind), "kind"),
+    ]
+    assert other  # both units are listed above by their kinds and profiles
+    return [(name, {**case, "id": name}, expected) for name, case, expected in rows]
+
+
+def python_adapter_row(unit, case):
+    """The Python adapter, then the Python engine, as one `ve_diagnose` row without its record's text."""
+    from ve.errors import UnsupportedProfile
+    from ve.norm_defaults_contract import REGISTRY as DEFAULTS
+    from ve.norms_contract import REGISTRY as NORMS
+    from ve.wire_contract.engine import Fault, load
+    from ve.wire_contract.engine import run as engine_run
+    registry = NORMS if unit == "norms@0" else DEFAULTS
+    contract = load(unit)
+    try:
+        root = registry.adapters[contract["adapter"]](copy.deepcopy(case))
+    except UnsupportedProfile as error:
+        return {"id": case["id"], "status": "error", "error": str(error)}
+    try:
+        outcome = engine_run(contract, root, registry=registry)
+    except TypeError:
+        return {"id": case["id"], "status": "crash"}
+    if isinstance(outcome, Fault):
+        return {"id": case["id"], "status": "ok", "outcome": "fault",
+                "at": [outcome.record["check"], outcome.record["path"]]}
+    return {"id": case["id"], "status": "ok", "outcome": "clean"}
+
+
+def lean_adapter_row(row):
+    if row.get("outcome") == "fault":
+        record = row.pop("diagnostic")
+        row["at"] = [record["check"], record["path"]]
+    return row
+
+
+@pytest.mark.parametrize("unit", sorted(UNITS))
+def test_both_adapters_share_one_domain(diagnose, unit):
+    cases = adapter_cases(unit)
+    lean = [lean_adapter_row(row) for row in run(diagnose, [unit], [case for _, case, _ in cases])]
+    python = [python_adapter_row(unit, case) for _, case, _ in cases]
+    crashes = {name for name, _, expected in cases if expected == "crash"}
+    assert [row for row in python if row["id"] not in crashes] == [row for row in lean if row["id"] not in crashes]
+    for (name, case, expected), row, lean_row in zip(cases, python, lean):
+        if expected == "crash":
+            assert row == {"id": name, "status": "crash"}
+            assert lean_row == {"id": name, "status": "ok", "outcome": "fault", "at": ["1.1", "/environment"]}
+            with pytest.raises(TypeError):
+                legacy_norms(case["environment"], case["norms"])
+        elif expected == "outside":
+            assert row == {"id": name, "status": "error", "error": OUTSIDE}
+        elif expected == "kind":
+            assert row["status"] == "error" and row["error"].endswith("has no wire contract input"), row
+        else:
+            assert row["status"] == "ok", row

@@ -29,34 +29,37 @@ def legacy_validation(environment, norms):
 
 def active_norms(document):
     """The norm objects a route validates: the `content` of each unit of kind `norm` whose `content` is an
-    object with a member `norm`, in document order (`ve/norm_admission.py`)."""
-    units = document.get("units", []) if type(document) is dict else []
+    object with a member `norm`, in document order (`ve/norm_admission.py`). `None` when the document is not
+    an object with a `units` array, from which no route builds a source (`w2._fields`, `w2._array`), as the
+    Lean adapter's `activeNorms` gives `null`."""
+    units = document.get("units") if type(document) is dict else None
+    if type(units) is not list:
+        return None
     return [unit["content"] for unit in units
             if type(unit) is dict and unit.get("kind") == "norm"
             and type(unit.get("content")) is dict and "norm" in unit["content"]]
 
 
 def in_domain(environment, norms, *, defaults):
-    """Whether a source is in the domain of `norms@0` (`defaults` False) or of `norm-defaults@0` (2.2)."""
+    """Whether a source is in the domain of `norms@0` (`defaults` False) or of `norm-defaults@0` (2.2), as
+    the Lean adapters decide it: `norms` an array of objects; no quantity schema; every member of an array
+    `profiles` a string among `DOMAIN_PROFILES`; and `norm-defaults@0` listed exactly under that unit, where
+    an environment that is not an object, or whose `profiles` is not an array, lists nothing."""
     if type(norms) is not list or any(type(unit) is not dict for unit in norms):
         return False
-    if type(environment) is dict:
-        if "unit_schema" in environment or "units" in environment:
-            return False
-        listed = environment.get("profiles")
-        if type(listed) is list:
-            if any(type(p) is not str or p not in DOMAIN_PROFILES for p in listed):
-                return False
-            if ("norm-defaults@0" in listed) != defaults:
-                return False
-    return True
+    listed = environment.get("profiles") if type(environment) is dict else None
+    if type(environment) is dict and ("unit_schema" in environment or "units" in environment):
+        return False
+    if type(listed) is list and any(type(p) is not str or p not in DOMAIN_PROFILES for p in listed):
+        return False
+    return (type(listed) is list and "norm-defaults@0" in listed) == defaults
 
 
 def source(case, *, kinds, defaults):
     """The root of a case whose kind `kinds` accepts, or of an `admission` case, as the Lean adapter builds
     it: a member the case lacks is `null`; any other kind has no wire contract input, and a source outside
     the unit's domain is refused (2.2)."""
-    kind = case.get("kind")
+    kind = case.get("kind") if type(case) is dict else None
     if kind == "admission":
         root = {"environment": case.get("environment"), "norms": active_norms(case.get("document"))}
     elif type(kind) is str and kinds(kind):
