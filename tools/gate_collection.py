@@ -5,8 +5,10 @@ Run from the checkout after `lake build`:
     uv run python tools/gate_collection.py --check
     uv run python tools/gate_collection.py --write
 Both collect with the gate's pytest arguments and its event plugin. Every
-differing ID is reported with the first-parent commit that last changed its
-test's name in its file, which on main is the merge that brought it in.
+differing ID is reported with the first-parent commit after which the gate's
+collection of its file has it as it is now (present or absent), found by
+collecting that file at each first-parent commit; on main that is the merge
+that changed it.
 """
 from __future__ import annotations
 
@@ -15,6 +17,7 @@ from collections import defaultdict
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -25,29 +28,49 @@ from tools.gate import COLLECTION, PYTEST_ARGS  # noqa: E402
 
 # Variables the collection inherits; pytest options and plugins never do.
 INHERITED = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR")
-# Bounds the git lookups for a large difference; the rest are named by count.
-ATTRIBUTED = 200
+# The gate's event plugin, loaded under a name no collected tree's own `tools` shadows.
+PLUGIN = Path(__file__).with_name("gate_pytest.py")
+PLUGIN_NAME = "ve_gate_collection_events"
+# A past tree is collected without these on PATH, so a conftest from before
+# VE_NATIVE_PREBUILT fails its build instead of building in a temporary tree.
+TOOLCHAINS = ("lake", "lean", "elan", "cargo", "rustc", "rustup")
+# Bounds the first-parent commits collected for a difference; older changes are not named.
+SCANNED = 200
 
 
 class CollectionError(RuntimeError):
     """The collection itself is incomplete, so no baseline may be taken from it."""
 
 
-def collect(root: Path = ROOT, *, prebuilt: bool = False) -> list[str]:
-    """The IDs the gate's plugin records as collected, in collection order."""
+def _collection(root: Path, targets: list[str], *, prebuilt: bool,
+                toolchains: bool = True) -> tuple[dict | None, subprocess.CompletedProcess]:
+    """The plugin's events for the gate's collection of `targets` in `root`, and the run."""
     with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
         output = Path(directory) / "events.json"
+        shutil.copyfile(PLUGIN, Path(directory) / f"{PLUGIN_NAME}.py")
         env = {name: os.environ[name] for name in INHERITED if name in os.environ}
         env.update(PYTEST_DISABLE_PLUGIN_AUTOLOAD="1", VE_GATE_PYTEST_RESULT=str(output),
-                   PYTHONPATH=str(ROOT))
+                   PYTHONPATH=os.pathsep.join((directory, str(root))), PYTHONDONTWRITEBYTECODE="1")
         if prebuilt:
             # Inside a running suite, whose session holds the shared build lock.
             env["VE_NATIVE_PREBUILT"] = "1"
+        if not toolchains:
+            env["PATH"] = os.pathsep.join(
+                entry for entry in env.get("PATH", "").split(os.pathsep)
+                if entry and not any((Path(entry) / tool).exists() for tool in TOOLCHAINS))
         args = list(PYTEST_ARGS)
-        args.insert(args.index("tests"), "--collect-only")
+        args[args.index("tools.gate_pytest")] = PLUGIN_NAME
+        at = args.index("tests")
+        args[at:at + 1] = ["--collect-only", *targets]
         run = subprocess.run([sys.executable, "-m", "pytest", *args], cwd=root, env=env,
                              text=True, capture_output=True)
         events = json.loads(output.read_text()) if output.exists() else None
+    return events, run
+
+
+def collect(root: Path = ROOT, *, prebuilt: bool = False) -> list[str]:
+    """The IDs the gate's plugin records as collected, in collection order."""
+    events, run = _collection(root, ["tests"], prebuilt=prebuilt)
     if events and events["collection_reports"]:
         # A module skipped or broken at collection drops its IDs without a trace.
         raise CollectionError("collection reports: " + json.dumps(events["collection_reports"])[:4000])
@@ -59,28 +82,98 @@ def collect(root: Path = ROOT, *, prebuilt: bool = False) -> list[str]:
     return events["collected"]
 
 
-def introduced_by(nodeid: str, root: Path = ROOT) -> str:
-    """The newest first-parent commit changing how often the test's name occurs in its file."""
-    path, *_, test = nodeid.split("::")
-    name = test.split("[", 1)[0]
-    found = subprocess.run(["git", "log", "--first-parent", "-1", "-S", name,
-                            "--format=%h %s", "HEAD", "--", path],
+def _file(nodeid: str) -> str:
+    return nodeid.split("::", 1)[0]
+
+
+def _collected_at(commit: str, files: set[str], tree: Path, index: Path,
+                  root: Path) -> tuple[set[str], set[str]]:
+    """(IDs collected from `files` at `commit`, those of `files` whose collection failed).
+
+    A file the commit lacks has no IDs. The tree is checked out with its own
+    index, so the repository's worktrees and index are never touched.
+    """
+    checkout = subprocess.run(["git", f"--work-tree={tree}", "read-tree", "--reset", "-u", commit],
+                              cwd=root, env={**os.environ, "GIT_INDEX_FILE": str(index)},
+                              capture_output=True)
+    if checkout.returncode != 0:
+        return set(), set(files)
+    present = sorted(name for name in files if (tree / name).is_file())
+    if not present:
+        return set(), set()
+    events, run = _collection(tree, present, prebuilt=True, toolchains=False)
+    # A file skipped or broken at collection has unknown IDs, not none, and so
+    # has every file when the session itself failed.
+    failed = {_file(item["nodeid"]) for item in events["collection_reports"]} if events else set()
+    if (events is None or not failed <= set(present)
+            or run.returncode not in (0, 5) + ((1, 2) if failed else ())):
+        return set(), set(present)
+    return set(events["collected"]), failed
+
+
+def describe(commit: str, root: Path = ROOT) -> str:
+    found = subprocess.run(["git", "log", "-1", "--format=%h %s", commit],
                            cwd=root, text=True, capture_output=True)
-    if found.returncode == 0 and found.stdout.strip():
-        return found.stdout.strip()
-    return "no commit (an uncommitted change, or history git cannot read)"
+    return found.stdout.strip() or commit[:8]
 
 
-def attributed(ids: list[str], root: Path = ROOT) -> dict[str, list[str]]:
-    groups: dict[str, list[str]] = defaultdict(list)
-    commits: dict[tuple[str, str], str] = {}
-    for nodeid in ids:
-        path, *_, test = nodeid.split("::")
-        key = (path, test.split("[", 1)[0])
-        if key not in commits:
-            commits[key] = introduced_by(nodeid, root) if len(commits) < ATTRIBUTED else "not looked up"
-        groups[commits[key]].append(nodeid)
-    return dict(groups)
+def introduced_by(added: list[str], removed: list[str], root: Path = ROOT) -> dict[str, str]:
+    """For each ID, the newest first-parent commit after which the gate's collection
+    of its file has it as it is now: present for `added`, absent for `removed`.
+
+    Its file is collected at each first-parent commit from HEAD back, so a
+    changed parameter, a renamed class, or IDs from data or a conftest are
+    named by the commit that changed them, not by the one that added the test.
+    """
+    now = dict.fromkeys(added, True) | dict.fromkeys(removed, False)
+    history = subprocess.run(["git", "rev-list", "--first-parent", f"--max-count={SCANNED + 1}",
+                              "HEAD"], cwd=root, text=True, capture_output=True)
+    commits = history.stdout.split() if history.returncode == 0 else []
+    if not commits:
+        return dict.fromkeys(now, "no commit (history git cannot read)")
+    found: dict[str, str] = {}
+    newer = "no commit (an uncommitted change)"
+    with tempfile.TemporaryDirectory(prefix="ve-gate-history-") as directory:
+        tree, index = Path(directory) / "tree", Path(directory) / "index"
+        tree.mkdir()
+        for position, commit in enumerate(commits):
+            pending = [nodeid for nodeid in now if nodeid not in found]
+            if not pending:
+                break
+            if position == SCANNED:
+                found.update(dict.fromkeys(
+                    pending, f"no commit in the newest {SCANNED} first-parent commits"))
+                break
+            collected, failed = _collected_at(commit, {_file(nodeid) for nodeid in pending},
+                                              tree, index, root)
+            for nodeid in pending:
+                if _file(nodeid) in failed:
+                    found[nodeid] = (f"no commit found ({describe(commit, root)} "
+                                     "could not be collected)")
+                elif (nodeid in collected) != now[nodeid]:
+                    found[nodeid] = newer
+            newer = describe(commit, root)
+    shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
+                             cwd=root, text=True, capture_output=True).stdout.strip() != "false"
+    for nodeid in now:
+        if nodeid not in found:
+            # As now at the root commit: it brought the ID in, or the ID was never
+            # collected. A shallow clone's oldest commit is not the root.
+            found[nodeid] = ("no commit in the shallow clone's history" if shallow else
+                             newer if now[nodeid] else
+                             "no commit (never collected on first-parent history)")
+    return found
+
+
+def attributed(added: list[str], removed: list[str],
+               root: Path = ROOT) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    """The added and the removed IDs, each grouped by the commit that changed them."""
+    commits = introduced_by(added, removed, root)
+    groups: tuple[dict[str, list[str]], ...] = (defaultdict(list), defaultdict(list))
+    for group, ids in zip(groups, (added, removed)):
+        for nodeid in ids:
+            group[commits[nodeid]].append(nodeid)
+    return dict(groups[0]), dict(groups[1])
 
 
 def difference(expected: list[str], collected: list[str]) -> tuple[list[str], list[str]]:
@@ -91,8 +184,9 @@ def difference(expected: list[str], collected: list[str]) -> tuple[list[str], li
 def report(added: list[str], removed: list[str], root: Path = ROOT, *, sample: int | None = 5) -> str:
     lines = [f"{COLLECTION.relative_to(ROOT)} differs from the gate's collection: "
              f"{len(added)} collected but not pinned, {len(removed)} pinned but not collected."]
-    for title, ids in (("Collected but not pinned", added), ("Pinned but not collected", removed)):
-        for commit, group in attributed(ids, root).items():
+    for title, groups in zip(("Collected but not pinned", "Pinned but not collected"),
+                             attributed(added, removed, root)):
+        for commit, group in groups.items():
             lines.append(f"{title}, from {commit}: {len(group)}")
             shown = group if sample is None else group[:sample]
             lines.extend(f"  {nodeid}" for nodeid in shown)
