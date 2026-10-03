@@ -190,3 +190,17 @@ def test_g6_g9_generated_names_and_may_not_refused():
                  "This does not depend on how sentence 1 is read. may not"):
         with pytest.raises(VEError, match="generated name or `may not`"):
             gated("E12", text, SLOTS)
+
+
+def test_s1_report_sentences_keep_their_own_lead():
+    """The class of review B4: S1's report sentences go through the same registry, each read by its own lead only,
+    so no S1 sentence can be read as one of S2a's (and none of S2a's as one of S1's)."""
+    from ve.readings_english import E24, act_only_sentence, assertion_pair_sentence, outcome_pair_sentence
+    from ve.readings_route import _s1_gated
+    _s1_gated("E24", E24)
+    _s1_gated("E16", act_only_sentence("avoid deceiving", "help"))
+    _s1_gated("E19", assertion_pair_sentence("a is an agent", "*must*", "*should*"))
+    _s1_gated("E19", outcome_pair_sentence("a is an agent", "*must*", "*should*", "obligation", "a", True,
+                                           other_admissible=False))
+    with pytest.raises(VEError, match="S1 wording E19 has 0 derivations"):
+        _s1_gated("E19", "This does not depend on how sentence 1 is read.")
