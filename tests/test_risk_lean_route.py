@@ -19,7 +19,7 @@ pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not b
 
 def run(*cases):
     out = subprocess.run([str(BIN), "-"], input=json.dumps(list(cases)), text=True, capture_output=True,
-                         check=False, timeout=600)
+                         check=False, timeout=HANG_TIMEOUT)
     return json.loads(out.stdout)
 
 
@@ -606,6 +606,7 @@ def test_k15_audit_hindsight(ops):
 # ---------------------------------------------------------------------------- Asimov, law 3, unranked, decision 18
 
 from conformance.risk import asimov_risk, asimov_rules  # noqa: E402
+from subprocesses import HANG_TIMEOUT  # noqa: E402
 
 A1 = {"death": ("the person's death", "fatal"), "bruising": ("the person's bruising", "injuring")}
 A2 = {"p_death": ("P's death", "fatal"), "q_injury": ("Q's injury", "injuring")}

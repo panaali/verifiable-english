@@ -7,7 +7,7 @@ import subprocess
 
 from subprocesses import HANG_TIMEOUT
 
-ROOT =Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _truth(tree, valuation):

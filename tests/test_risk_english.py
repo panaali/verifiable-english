@@ -20,6 +20,7 @@ import pytest
 
 from conformance.risk import (Log, agent_ops, agent_ops_rules, asimov_risk, cell_env, condition, estimate, gt, q,
                               record)
+from subprocesses import HANG_TIMEOUT
 from ve import ast
 from ve.ast import formula_to_data
 from ve.english import EnglishVocabulary, parse_english_with_metadata, render_english
@@ -325,7 +326,8 @@ def test_k29_bare_prevents_is_rejected_with_its_rewrite():
 # ---------------------------------------------------------------------------- the paraphrases (Lean's legend)
 
 def _lean(case):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps([case]), text=True, capture_output=True, timeout=300)
+    out = subprocess.run([str(BIN), "-"], input=json.dumps([case]), text=True, capture_output=True,
+                         timeout=HANG_TIMEOUT)
     return json.loads(out.stdout)[0]
 
 

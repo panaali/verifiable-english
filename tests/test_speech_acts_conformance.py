@@ -34,7 +34,7 @@ def rust():
         if cargo is None:
             pytest.skip("cargo is required for speech-act FOL conformance")
         built = subprocess.run([cargo, "build", "-p", "ve"], cwd=ROOT / "rust", env=rust_build.cargo_env(),
-                               capture_output=True, text=True, timeout=600)
+                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return executable
 

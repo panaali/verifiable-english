@@ -10,6 +10,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tests.test_units_lean_w6a import LEAN, lean, rust
 from tests.test_w6a_review_regressions import money, named, raw_environment
 from ve.admission import admit_document
@@ -223,7 +224,7 @@ def news_document():
 
 def test_news_document_is_regenerated_deterministically():
     process = subprocess.run([str(ROOT / ".venv" / "bin" / "python"),
-                              str(NEWS / "build_w6a_document.py"), "--check"], timeout=600)
+                              str(NEWS / "build_w6a_document.py"), "--check"], timeout=HANG_TIMEOUT)
     assert process.returncode == 0, "rerun usecases/news-article/build_w6a_document.py"
 
 

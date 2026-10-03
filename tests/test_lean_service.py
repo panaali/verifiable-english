@@ -42,7 +42,7 @@ def service_executable():
     return BIN / "ve_service"
 
 
-def raw_session(executable, lines: bytes, timeout=120):
+def raw_session(executable, lines: bytes, timeout=HANG_TIMEOUT):
     proc = subprocess.run([str(executable)], input=lines, capture_output=True, timeout=timeout)
     assert proc.returncode == 0, proc.stderr
     out = proc.stdout.split(b"\n")
@@ -52,7 +52,7 @@ def raw_session(executable, lines: bytes, timeout=120):
 
 def test_english_mode_is_the_generated_copy_of_the_english_runner():
     result = subprocess.run([sys.executable, "VE/Service/english_copy.py", "--check"], cwd=ROOT / "lean",
-                            capture_output=True, text=True, timeout=60)
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout + result.stderr
 
 
@@ -335,7 +335,7 @@ def test_killed_process_is_replaced_between_requests(service_executable):
 
 
 def test_kill_during_a_batch_retries_once_on_a_fresh_process(service_executable, monkeypatch):
-    with LeanService(service_executable, timeout=120, batch_cases=4096,
+    with LeanService(service_executable, timeout=HANG_TIMEOUT, batch_cases=4096,
                      batch_bytes=16 << 20) as service:
         first = service.pid
         write = service._write_all

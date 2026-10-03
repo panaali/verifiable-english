@@ -11,6 +11,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve import ast
 from ve.environment import Environment
 from ve.evaluate import evaluate
@@ -98,7 +99,7 @@ def test_consequences_are_certified_from_cited_cases():
     if not LEAN.exists():
         pytest.skip("build the Lean ve_quantity runner first")
     process = subprocess.run([str(LEAN), "-"], input=json.dumps(lean_cases), text=True,
-                             capture_output=True, timeout=600)
+                             capture_output=True, timeout=HANG_TIMEOUT)
     results = json.loads(process.stdout)
     assert [r["id"] for r in results] == [c["id"] for c in data["consequences"]]
     assert all(r["status"] == "ok" and r["valid"] is True for r in results), results
@@ -112,6 +113,6 @@ def test_lean_admits_every_case_with_the_model():
               "quantity": quantity(item["formula"]), "model": data["model"]}
              for item in data["cases"] + data["consequences"]]
     process = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=600)
+                             capture_output=True, timeout=HANG_TIMEOUT)
     results = json.loads(process.stdout)
     assert all(r["status"] == "ok" and r["value"] is True for r in results), results

@@ -34,7 +34,7 @@ pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_qua
 
 def lean(cases):
     process = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=600)
+                             capture_output=True, timeout=HANG_TIMEOUT)
     assert process.returncode in (0, 1), process.stderr[:500]
     results = json.loads(process.stdout)
     assert len(results) == len(cases)
@@ -43,7 +43,7 @@ def lean(cases):
 
 def rust(cases):
     process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=600)
+                             capture_output=True, timeout=HANG_TIMEOUT)
     assert process.returncode in (0, 1), process.stderr[:500]
     return json.loads(process.stdout)
 

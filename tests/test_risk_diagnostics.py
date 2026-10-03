@@ -167,7 +167,7 @@ def _python(raw):
 def _lean(raws):
     cases = [{"id": str(i), "kind": "risk-elaborate", "environment": raw, "document": {"norms": []}}
              for i, raw in enumerate(raws)]
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=600)
+    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert out.returncode in (0, 1), out.stderr
     return [row["error"] if row["status"] == "error" else "ok" for row in json.loads(out.stdout)]
 

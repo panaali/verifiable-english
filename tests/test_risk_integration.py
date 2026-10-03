@@ -216,9 +216,9 @@ def test_random_records_lean_and_rust_regenerate_the_same_cells():
                                     "classes": dict(env["risk"]["harm_classes"]), "always_possible": [],
                                     "unexamined": "possible", "cells": list(sides.values())}})
     lean = json.loads(subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                                     capture_output=True, timeout=500).stdout)
+                                     capture_output=True, timeout=HANG_TIMEOUT).stdout)
     rust = json.loads(subprocess.run([str(RUST), "conformance"], input=json.dumps(prepared), text=True,
-                                     capture_output=True, timeout=500).stdout)
+                                     capture_output=True, timeout=HANG_TIMEOUT).stdout)
     kinds = {"ok": 0, "error": 0}
     for case, l, r in zip(cases, lean, rust):
         kinds[l["status"]] += 1

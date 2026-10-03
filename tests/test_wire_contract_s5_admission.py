@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tests.test_norm_defaults_contract import FIXTURES as DEFAULT_FIXTURES
 from tests.test_norms_contract import FIXTURES as NORM_FIXTURES
 from tests.test_wire_contract_s5_lean import document, s1, s16
@@ -78,7 +79,7 @@ def test_shadow_calls_import_no_diagnostic_module():
     expected = ["accepted", "rejected", "rejected"]
     probe = PROBE % ("ve.",)
     result = subprocess.run([sys.executable, "-c", probe], input=json.dumps(cases), cwd=ROOT, text=True,
-                            capture_output=True, timeout=600, env={**os.environ, "PYTHONPATH": str(ROOT)})
+                            capture_output=True, timeout=HANG_TIMEOUT, env={**os.environ, "PYTHONPATH": str(ROOT)})
     assert result.returncode == 0, result.stderr
     outcomes, modules = json.loads(result.stdout)
     assert outcomes == expected

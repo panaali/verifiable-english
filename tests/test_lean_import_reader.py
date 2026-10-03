@@ -24,6 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from check_lean_imports import HeaderError, imports, lean_disagreements, pinned_lean  # noqa: E402
 
+from subprocesses import HANG_TIMEOUT  # noqa: E402
+
 REJECT = "reject"
 # precommit-loop.final.md B: Lean reads VE.Surface after the comment `/-/-/`.
 STACKED = ["/-/-/import VE.Surface\n", "import VE.Core.Bridge /-/-/import VE.Surface\n"]
@@ -150,7 +152,7 @@ def lean_reads(tmp_path_factory):
         files.append(folder / f"case{number}.lean")
         files[-1].write_bytes(source.encode())
     result = subprocess.run([lean, "--run", str(ROOT / "tools/lean_header_imports.lean"), *map(str, files)],
-                            cwd=ROOT / "lean", capture_output=True, text=True, timeout=300, check=False)
+                            cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT, check=False)
     assert result.returncode == 0, result.stdout + result.stderr
     verdicts = [json.loads(line) for line in result.stdout.splitlines()]
     assert len(verdicts) == len(sources)
