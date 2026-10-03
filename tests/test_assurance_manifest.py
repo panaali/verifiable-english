@@ -499,6 +499,9 @@ def test_no_other_mode_accepts_an_operations_probe(lean_bin):
         modes.setdefault(executable, set()).add(mode)
     for (op_id, executable, mode, kind), case in probes().items():
         for other in sorted(modes[executable] - {mode}):
+            if (op_id, executable, other, kind) in probes():
+                # A shared kind such as admission has a declared binding in both modes.
+                continue
             proc = subprocess.run([str(lean_bin / executable), *([other] if other else [])],
                                   input=json.dumps([case]), capture_output=True, text=True, timeout=600)
             row = json.loads(proc.stdout)[0]
