@@ -91,6 +91,59 @@ theorem one_assertion_eq {D : Doc} (hn : (D.sets.map (·.id)).Nodup) (hic : inte
     · cases ha'
   · intro R' _ a' ha'; cases ha'
 
+theorem fixed_attached_nil {D : Doc} (hr : supReady D = true) {u : String} {φ : VE.Formula}
+    {cs : List (String × List String)} (hit : Item.fixed u (.assertion φ) cs ∈ D.items) : attached D u = [] := by
+  cases hl : attached D u with
+  | nil => rfl
+  | cons t l =>
+    have hA := (attached_iff D u t).mp (by rw [hl]; simp)
+    have hud : (D.items.map itemUnit).Nodup := by
+      simp only [supReady, unitsDistinct, Bool.and_eq_true, decide_eq_true_eq] at hr; exact hr.2
+    exfalso
+    cases hA with
+    | direct hu n hn' =>
+      have he := inj_of_nodup_map hud hu hit rfl
+      simp only [Item.fixed.injEq] at he
+      obtain ⟨_, rfl, _⟩ := he
+      simp [uses] at hn'
+    | step hu _ n hn' =>
+      have he := inj_of_nodup_map hud hu hit rfl
+      simp only [Item.fixed.injEq] at he
+      obtain ⟨_, rfl, _⟩ := he
+      simp [uses] at hn'
+
+/-- A fixed assertion is typed over the shared vocabulary. -/
+theorem fixed_assertion_shared {D : Doc} (h : WellFormedDoc D = true) (hr : supReady D = true) {u : String}
+    {φ : VE.Formula} {cs : List (String × List String)} (hit : Item.fixed u (.assertion φ) cs ∈ D.items) :
+    φ.WellFormed (sharedEnv D) [] := by
+  obtain ⟨_, _, _, _, hfree, _⟩ := wellFormedDoc_parts h
+  apply (VE.check_iff_wellFormed _ _ _).mp
+  have hmem : φ ∈ (free D).2 := by
+    rw [free, build_snd]
+    refine List.mem_flatMap.mpr ⟨_, hit, ?_⟩
+    simp [buildAsserted, fixed_attached_nil hr hit, asserted]
+  simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hfree
+  exact hfree.2 φ hmem
+
+/-- An assertion candidate is typed over the shared vocabulary. -/
+theorem cand_assertion_shared {D : Doc} (h : WellFormedDoc D = true) (hr : supReady D = true) {R : ReadingSet}
+    (hR : R ∈ D.sets) {i : Nat} {a : Candidate} (ha : R.candidates[i]? = some a) {φ : VE.Formula}
+    (hc : a.content = some (.assertion φ)) : φ.WellFormed (sharedEnv D) [] := by
+  have hn := supReady_nodup hr
+  obtain ⟨_, _, hic, _, _, hone⟩ := wellFormedDoc_parts h
+  apply (VE.check_iff_wellFormed _ _ _).mp
+  have hlt : i < R.candidates.length := (List.getElem?_eq_some_iff.mp ha).1
+  rcases hone R hR i hlt with hnone | hw
+  · rw [ha] at hnone; simp [hc] at hnone
+  · have hmem : φ ∈ (one D R.id i).2 := by
+      rw [one, build_snd]
+      refine List.mem_flatMap.mpr ⟨_, mem_sets.mp hR, ?_⟩
+      simp [buildAsserted, ha, hc, asserted]
+    simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hw
+    have := hw.2 φ hmem
+    rw [one_assertion_eq hn hic hR ha hc] at this
+    exact this
+
 /-- 1.7 and 8.4: every assertion in force of a compatible choice's document is typed over the shared vocabulary.
     Stated with `supReady` (set and unit ids distinct): the statement of 8.4 without it is false of a document
     with two open sets under one id (fixture M20). -/
