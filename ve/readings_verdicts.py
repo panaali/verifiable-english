@@ -105,6 +105,12 @@ class _Route:
     def report_fields(self):
         return {}
 
+    def untaken_text(self, A):
+        """Lean's `untakenText`: the named readings, as given, that no compatible choice takes."""
+        versions = {R.id: R.version for R in self.sets}
+        return "ReadingsUnsatisfiable: no compatible reading takes " + ", ".join(
+            f"{s}@{versions[s]}:{i}" if s in versions else f"{s}:{i}" for s, i in A)
+
 
 class Pending(_Route):
     """1.1 row 2: a pending candidate; every verdict across readings is UNKNOWN with today's reason."""
@@ -146,6 +152,10 @@ class Superposed(_Route):
         self.all_choices = None if over else found
         self._conflicts = {}
         self._models = {}
+
+    def taken(self, A):
+        """Some compatible choice takes every candidate of `A` (Lean's `takenBy`; exact while `checked`)."""
+        return self.all_choices is not None and any(all(c.get(s) == i for s, i in A) for c in self.all_choices)
 
     # -- premise lists in Lean's order (8.4 `supCertificateCheck`, `supModelCheck`, `slotConflictFreeCheck`)
 
@@ -201,8 +211,8 @@ class Superposed(_Route):
         key = tuple(tuple(x) for x in A)
         if key in self._conflicts:
             return self._conflicts[key]
-        if not self.checked:
-            result = {"status": "UNKNOWN", "reason": CHECK_BUDGET_TEXT}
+        if not self.checked or (A and not self.taken(A)):
+            result = {"status": "UNKNOWN", "reason": CHECK_BUDGET_TEXT if not self.checked else self.untaken_text(A)}
             self._conflicts[key] = result
             return result
         slot = self._formulas(self.base, [ast for _, ast in self.slot])
@@ -300,8 +310,9 @@ class Superposed(_Route):
         key = (tuple(tuple(x) for x in A), repr(gamma), repr(conclusion))
         if key in self._models:
             return self._models[key]
-        result = self._lifted(A, gamma, conclusion) if self.checked else None
-        if result is None and self.checked:
+        usable = self.checked and (not A or self.taken(A))
+        result = self._lifted(A, gamma, conclusion) if usable else None
+        if result is None and usable:
             phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
             found = find_countermodel(self.ext, self._full(A, gamma), phi,
                                       max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
@@ -437,6 +448,8 @@ class Superposed(_Route):
                 entry.update(status="narrowed", narrowing=narrowing)
             elif (s, i) in dead:
                 entry.update(status="dead")
+            elif not self.taken([(s, i)]):
+                entry.update(status="UNKNOWN", reason=self.untaken_text([(s, i)]))
             else:
                 found = self.model([(s, i)])
                 if found is not None:
@@ -508,6 +521,9 @@ class Superposed(_Route):
             return {"verdict": "UNKNOWN", "route": "superposed", "reason": CHECK_BUDGET_TEXT}
         if assumed is not None:
             A = [tuple(x) for x in assumed]
+            if not self.taken(A):
+                # Review A1's class: every verdict under readings no compatible choice takes would be vacuous.
+                raise VEError(self.untaken_text(A))
             conflict = self.conflict(A)
             if conflict["status"] != "CONFLICT-FREE":
                 return {"verdict": "UNKNOWN", "route": "superposed", "assumed": [list(x) for x in A],
@@ -821,7 +837,7 @@ class _ChoiceDocument:
         from .ast import _to_data, formula_from_data
         from .environment import Environment
         data = self.soft.extended_env.to_dict()
-        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0")]
+        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0", "readings@1")]
         data["vocabulary"].pop("soft", None)
         data["vocabulary"].pop("rights", None)
         data["vocabulary"]["predicates"] = {n: {k: v for k, v in e.items() if k != "instruction_of"}

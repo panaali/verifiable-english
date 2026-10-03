@@ -297,6 +297,7 @@ structure CertificateReplay extends SupReplay where
   hφ : φ.WellFormed (sharedEnv D) []
   conflictCerts : List (Option VE.Tableau.Certificate)
   cert : VE.Tableau.Certificate
+  taken : takenBy D assumed = true
 
 def decodeAssumed (D : Doc) (j : Json) : Except String { A : Choice // ∀ x ∈ A, (candidate D x.1 x.2).isSome } := do
   let A ← decodeChoice j
@@ -329,7 +330,10 @@ def replayCertificate (j : Lean.Json) : Except String CertificateReplay := do
   let ⟨A, hA⟩ ← decodeAssumed r.D (j.getObjValD "assumed")
   let ⟨(Γ, φ), hΓ, hφ⟩ ← decodeShared r.D (j.getObjValD "premises") (j.getObjValD "conclusion")
   let cert ← VE.CertificateWire.decodeCertificate (← j.getObjVal? "certificate")
-  pure ⟨r, A, hA, Γ, φ, hΓ, hφ, decodeConflictCerts r.D (j.getObjValD "conflict_certificates"), cert⟩
+  -- A named reading no compatible choice takes would make every certificate under it vacuous (review A1's class).
+  if ht : takenBy r.D A = true then
+    pure ⟨r, A, hA, Γ, φ, hΓ, hφ, decodeConflictCerts r.D (j.getObjValD "conflict_certificates"), cert, ht⟩
+  else throw (untakenText r.D A)
 
 structure ModelReplay extends SupReplay where
   assumed : Choice

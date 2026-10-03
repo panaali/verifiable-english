@@ -37,6 +37,12 @@ theorem readings_wire_model_sound (j : Lean.Json) (r : ModelReplay) (_h : replay
       ¬ r.φ.denote (expand (choiceDoc r.D c).1 (pull r.D c r.M.asStructure)) [] :=
   superpose_countermodel r.D r.wf r.soft r.sp r.assumed r.Γ r.φ r.hΓ r.hφ r.M r.valid hm hn
 
+/-- Review A1's class: the named readings of a replayed certificate case are taken by a compatible choice, so its
+    verdict is not vacuous. -/
+theorem readings_wire_assumed_taken (j : Lean.Json) (r : CertificateReplay) (_h : replayCertificate j = .ok r) :
+    ∃ c, Compatible r.D c ∧ ∀ x ∈ r.assumed, x ∈ c :=
+  exists_taking r.D r.assumed r.taken
+
 /-- 4.1 step 3: a replayed superposed document has a compatible reading, so no verdict is over no reading. -/
 theorem readings_wire_satisfiable (j : Lean.Json) (r : SupReplay) (_h : replaySup j = .ok r) :
     ∃ c, Compatible r.D c :=

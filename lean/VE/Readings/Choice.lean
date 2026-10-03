@@ -343,6 +343,15 @@ def choicesSoftChecked (D : Doc) : Bool :=
   decide ((checkedChoices D).length ≤ maxChoiceChecks) &&
     (checkedChoices D).all (fun c => VE.SoftNorms.WellFormedSoft (choiceDoc D c).1.soft)
 
+/-- Some checked compatible choice takes every candidate of `A` (a named reading is not vacuous). -/
+def takenBy (D : Doc) (A : Choice) : Bool := (checkedChoices D).any (fun c => A.all (fun x => c.contains x))
+
+theorem exists_taking (D : Doc) (A : Choice) (h : takenBy D A = true) :
+    ∃ c, Compatible D c ∧ ∀ x ∈ A, x ∈ c := by
+  simp only [takenBy, List.any_eq_true, List.all_eq_true, List.contains_iff_mem] at h
+  obtain ⟨c, hc, hA⟩ := h
+  exact ⟨c, compatible_of_mem_search D _ c hc, fun x hx => hA x hx⟩
+
 theorem choicesSoftChecked_spec (D : Doc) (hr : supReady D = true) (hw : choicesSoftChecked D = true) (c : Choice)
     (hc : Compatible D c) : VE.SoftNorms.WellFormedSoft (choiceDoc D c).1.soft = true := by
   simp only [choicesSoftChecked, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true] at hw

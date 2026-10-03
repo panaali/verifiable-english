@@ -138,6 +138,10 @@ def superposedCheckText (D : Doc) : Option String :=
 
 def checkBudgetText : String := s!"ResourceLimit: more than {maxChoiceChecks} readings to check"
 
+/-- A named reading no compatible choice takes (review A1's class): every verdict under it would be vacuous. -/
+def untakenText (D : Doc) (A : Choice) : String :=
+  "ReadingsUnsatisfiable: no compatible reading takes " ++ choiceText D A
+
 /-- 4.1 step 5 on the enumerated route: the first of the (at most 64) compatible choices whose document the chain
     refuses. -/
 def enumeratedCheckText (D : Doc) : Option String :=
