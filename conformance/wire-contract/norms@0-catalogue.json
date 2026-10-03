@@ -1,0 +1,104 @@
+{
+  "contract": "norms@0",
+  "faults": {
+    "1.1": [
+      "environment-defined",
+      "environment-language"
+    ],
+    "2.1": [
+      "profile-missing"
+    ],
+    "2.2": [
+      "rules-limit"
+    ],
+    "3.1": [
+      "unit-field"
+    ],
+    "3.2": [
+      "norm-shape"
+    ],
+    "3.3": [
+      "norm-fields"
+    ],
+    "3.4": [
+      "unless-shape"
+    ],
+    "3.5": [
+      "over-shape"
+    ],
+    "3.6": [
+      "predicate-type"
+    ],
+    "3.7": [
+      "over-item"
+    ],
+    "3.8a": [
+      "guard-depth",
+      "guard-depth-first"
+    ],
+    "3.8b": [
+      "guard-index",
+      "guard-reach-first",
+      "guard-shape"
+    ],
+    "3.9a": [
+      "carve-out-depth"
+    ],
+    "3.9b": [
+      "carve-out-shape"
+    ],
+    "4.1": [
+      "name-class"
+    ],
+    "4.2": [
+      "name-repeat"
+    ],
+    "4.4": [
+      "predicate-unregulated"
+    ],
+    "4.5": [
+      "sign-type"
+    ],
+    "4.6": [
+      "carve-out-limit"
+    ],
+    "4.7a": [
+      "guard-arity"
+    ],
+    "4.7b": [
+      "carve-out-predicate",
+      "guard-constant",
+      "guard-predicate",
+      "guard-predicate-name",
+      "guard-sort"
+    ],
+    "4.7c": [
+      "guard-scope"
+    ],
+    "4.7d": [
+      "nodes-before-type",
+      "rules-nodes"
+    ],
+    "4.7e": [
+      "guard-string-binder"
+    ],
+    "5.1": [
+      "over-unknown"
+    ],
+    "5.2": [
+      "over-predicate"
+    ],
+    "6.1": [
+      "precedence-cycle"
+    ],
+    "6.2": [
+      "precedence-depth"
+    ],
+    "6.3": [
+      "layer-cycle"
+    ]
+  },
+  "unreached": {
+    "4.3": "No source of the unit's domain fails the check. It is in the table because the including unit runs it, and it is witnessed in that unit's gate, as `w1/4.3` (D4)."
+  }
+}

@@ -354,7 +354,12 @@ def write_test_inputs(unit=PILOT):
         if source_key(raw, norms) not in seen:
             seen.add(source_key(raw, norms))
             rows.append([label, raw, norms])
-    u.test_inputs.write_text(json.dumps(rows, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+    if u.module is None:
+        u.test_inputs.write_text(json.dumps(rows, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+    else:
+        # One row per line: a unit's recorded formulas nest deeply, and indentation would multiply their size.
+        u.test_inputs.write_text("[\n" + ",\n".join(json.dumps(row, sort_keys=True, ensure_ascii=False,
+                                                                separators=(",", ":")) for row in rows) + "\n]\n")
     return len(rows)
 
 
@@ -567,7 +572,9 @@ def gate_cases(contract, recorded=True):
     return cases
 
 
-def report(unit=PILOT):
+def report(unit=PILOT, lean=True):
+    """The gate's report. `lean` False runs no Lean binary: every case is read as one Lean does not read,
+    so only the Python rows are measured (a unit whose Lean hooks are not built yet; never stored)."""
     u = unit_of(unit)
     module = u.module
     contract = load(u.contract)
@@ -579,6 +586,8 @@ def report(unit=PILOT):
     lean_exempt = exempt_gaps("lean", u.contract)
     python_exempt = exempt_gaps("python", u.contract)
     cases = gate_cases(contract)
+    if not lean:
+        cases = [case[:6] + (False,) for case in cases]
 
     lean_cases = [case for case in cases if case[6]]
     lean_engine = iter(_lean_rows("ve_diagnose", u.contract, [(c[2], c[3]) for c in lean_cases]))
@@ -709,6 +718,8 @@ def report(unit=PILOT):
         if expected is not None:
             for language, record, legacy in languages:
                 compared = None if tier == "L" or (module is not None and language == "lean") else legacy
+                if module is not None and record is not None and module.own_text(record):
+                    compared = None  # J10: an inherited member's own text, not the decoder's
                 problems += [f"{language}: {problem}" for problem in record_problems(record, expected, compared)]
             if (module is None and lean_reads and ln is not None and lean_legacy_result is not None
                     and expected["check"] not in inherited and ln["text"] != lean_legacy_result[1]):
@@ -979,10 +990,18 @@ def main():
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--record-test-inputs", action="store_true")
     parser.add_argument("--unit", default=PILOT)
+    parser.add_argument("--python-only", action="store_true",
+                        help="measure the Python rows only and print them; the stored report is not touched")
     args = parser.parse_args()
     u = unit_of(args.unit)
     if args.record_test_inputs:
         print(f"{write_test_inputs(u.contract)} recorded test inputs written to {u.test_inputs.relative_to(ROOT)}")
+    if args.python_only:
+        value = report(u.contract, lean=False)
+        print(json.dumps({key: value[key] for key in value if key not in ("checks_without_first",
+                                                                         "checks_without_masked")},
+                         indent=1, sort_keys=True))
+        return 0
     value = report() if u.contract == PILOT else report(u.contract)
     rendered = json.dumps(value, indent=2, sort_keys=True) + "\n"
     if args.check:
