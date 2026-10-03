@@ -29,3 +29,27 @@ def test_attribute_product_is_factored_into_a_sum():
         'sorts': {'service': {'description': 'S.'}, 'shade': {'description': 'H.'}},
         'predicates': predicates, 'constants': {}}})
     assert S.attribute_product(env) == {'pairs': 12, 'relations': 3, 'properties': 4, 'factored_rules': 7}
+
+
+def test_o1_spaced_hyphen_lexes_like_the_wording_and_python_rejects_it():
+    """Spec O1, measured: the draft tokens do not record adjacency (english-lean-measured.md section 4)."""
+    import json
+    import warnings
+    import pytest
+    from ve.english import parse_english
+    from ve.errors import VEError
+    from conformance import english_lean_lexer as LX
+    data = json.loads((S.ROOT / 'examples/fluent/environment.json').read_text())
+    data['vocabulary']['predicates']['noncompliant'] = {'arguments': ['service'],
+                                                        'description': 'Recorded as non-compliant.'}
+    env = Environment(data)
+    overlay = {'format': 've.english-vocabulary@1', 'environment_id': env.environment_id, 'sorts': {},
+               'predicates': {'noncompliant': {'verbalisation': '{0} is non-compliant', 'suggested': True}}}
+    options = {'vocabulary': overlay, 'accept_suggested_vocabulary': True}
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        assert parse_english(env, 'Legacy is non-compliant.', **options)
+        for spaced in ('Legacy is non - compliant.', 'Legacy is non -compliant.'):
+            assert LX.lex(spaced) == LX.lex('Legacy is non-compliant.')
+            with pytest.raises(VEError):
+                parse_english(env, spaced, **options)
