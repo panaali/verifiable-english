@@ -355,4 +355,5 @@ decides. Section 6 found no corpus lexicon that a ported condition refuses.
 | Lexicon validity of Python's selections | done (section 6); one V1 finding for the DRI |
 | Sort of every lint code into subsumed, ported, retained | proposed (section 9); the DRI decides the retained class |
 | Earley time per sentence | done as CPU time (section 7); wall-clock figures wait for an unloaded machine |
-| G4 volume and coverage targets | not done |
+| G4 volume and coverage targets | proposed, for the DRI: each night, fresh seeds for all 17 configurations at the committed volume (85,000 round-trip ASTs, 12,750 Earley texts, 850 documents); 5,000 reverse-corpus texts sampled from the `english.grammar` export, each with its spacing and word-split mutants; every fixed rule tag derived at least 10 times and every lexical rule family of every configuration at least once; zero undispositioned differences on 14 consecutive days |
+| Token lengths of the use-case documents and pilots | not done: their English is embedded in Markdown; S2's harness reads them through the seal |
