@@ -841,17 +841,19 @@ class S2Wording:
         E, lines = self.E, []
         k = len(self.sets)
         verdict = data["verdict"]
+        # Review A of compose-s2 looprecheck1: a result under named readings is worded under exactly those readings
+        # (2.3 item 2, on either route); E10, E26, E27 and E28 speak of every reading and never word one.
+        assumed = data.get("assumed") or []
         slot = self.conclusion(conclusion_ast)
-        if verdict == "ALL" and data.get("evidence") == "certificate":
-            used = data.get("reading_premises_used", [])
-            if data.get("assumed"):
-                lines.append(E.named_result(self.readings(data["assumed"]), "follows", self.slots, conclusion=slot))
+        if verdict == "ALL":
+            if assumed:
+                lines.append(E.named_result(self.readings(assumed), "follows", self.slots, conclusion=slot))
             else:
                 lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
-            lines += self.provided(used)
-            lines += self.independent(set(self._mentions(used)) | {s for s, _ in data.get("assumed", [])})
-        elif verdict == "ALL":
-            lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
+            if data.get("evidence") == "certificate":
+                used = data.get("reading_premises_used", [])
+                lines += self.provided(used)
+                lines += self.independent(set(self._mentions(used)) | {s for s, _ in assumed})
         elif verdict == "SOME":
             lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
                                         conclusion=slot))
@@ -859,10 +861,11 @@ class S2Wording:
         elif verdict == "NOT ALL":
             lines.append(self._countermodel(data["countermodel"]))
         elif verdict == "NONE":
-            if k >= 2:
+            if k >= 2 and not assumed:
                 lines.append(E.none_result(k, self.slots))
             lines += [self._countermodel(c) for c in data["countermodels"]]
-        elif verdict == "UNKNOWN" and "countermodel" in data and data.get("budget") == {"max_choices": 64}:
+        elif verdict == "UNKNOWN" and "countermodel" in data and data.get("budget") == {"max_choices": 64} \
+                and not assumed:
             lines.append(E.over_budget(self.slots))
             lines.append(self._countermodel(data["countermodel"]))
         return lines
