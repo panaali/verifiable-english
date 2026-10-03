@@ -268,12 +268,12 @@ theorem home_exists (D : Doc) (h : WellFormedDoc D = true) (hr : supReady D = tr
       obtain ⟨R, hR, rfl⟩ := attached_set hA
       have hne : 0 < R.candidates.length := by
         simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
-        have := hr.1.1.1.1.2 R hR
+        have := hr.1.1.1.1.1.2 R hR
         simp only [Bool.not_eq_true', List.isEmpty_eq_false_iff] at this
         exact List.length_pos_iff.mpr this.1
       have hcont : (R.candidates[0]?.bind (·.content)).isSome = true := by
         simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
-        have := (hr.1.1.1.1.2 R hR)
+        have := (hr.1.1.1.1.1.2 R hR)
         rw [List.getElem?_eq_getElem hne]
         exact this.2 _ (List.getElem_mem hne)
       have hw : sideWF D (one D R.id 0) = true := by
@@ -418,7 +418,7 @@ theorem Hyps.noRights {D : Doc} (hh : Hyps D) : noRights (sup D).1 = true := by
   have := (sup_wellFormed D hh.sp).1
   cases hd : D.chain with
   | rights => exact absurd hd hh.chain
-  | soft => rw [hd] at this; simp only [chainWF, Bool.and_eq_true] at this; exact this.1
+  | soft => rw [hd] at this; simp only [chainWF, Bool.and_eq_true] at this; exact this.1.1
   | norms => rw [hd] at this; simp only [chainWF, Bool.and_eq_true] at this; exact this.1.1
 theorem Hyps.da {D : Doc} (hh : Hyps D) : distinctAcrossSets D = true := (wellFormedDoc_parts hh.wf).2.1
 
@@ -486,12 +486,12 @@ theorem fixed_home {D : Doc} (hh : Hyps D) {u : String} {N : SoftNode} {cs : Lis
     obtain ⟨R, hR, rfl⟩ := attached_set hA
     have hne : 0 < R.candidates.length := by
       simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
-      have := hr.1.1.1.1.2 R hR
+      have := hr.1.1.1.1.1.2 R hR
       simp only [Bool.not_eq_true', List.isEmpty_eq_false_iff] at this
       exact List.length_pos_iff.mpr this.1
     have hcont : (R.candidates[0]?.bind (·.content)).isSome = true := by
       simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
-      have := (hr.1.1.1.1.2 R hR)
+      have := (hr.1.1.1.1.1.2 R hR)
       rw [List.getElem?_eq_getElem hne]
       exact this.2 _ (List.getElem_mem hne)
     have hw : sideWF D (one D R.id 0) = true := by

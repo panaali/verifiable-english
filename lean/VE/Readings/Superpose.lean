@@ -279,7 +279,7 @@ theorem ids_inj {D : Doc} (hn : (D.sets.map (·.id)).Nodup) {m m' : Nat} (hm : m
 
 theorem supReady_nodup {D : Doc} (hr : supReady D = true) : (D.sets.map (·.id)).Nodup := by
   simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr
-  exact hr.1.1.1.1.1
+  exact hr.1.1.1.1.1.1
 
 theorem superposable_supReady {D : Doc} (hs : superposable D = true) : supReady D = true := by
   simp only [superposable, Bool.and_eq_true] at hs
@@ -356,7 +356,7 @@ theorem encodes_unique (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠
     simp [List.getElem?_eq_getElem this]
   have hshape : ∀ K ∈ D.couplings, couplingShape D K = true := by
     simp only [supReady, Bool.and_eq_true, List.all_eq_true] at hr
-    exact hr.1.1.2
+    exact hr.1.1.1.2
   have hcoup : ∀ K ∈ D.couplings, couplingHolds D c K = true := by
     intro K hK
     have hsh := hshape K hK
