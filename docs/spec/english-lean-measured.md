@@ -15,6 +15,7 @@ Tools (no model calls; none is on an admission path):
 | `conformance/english_lean_lexer.py` | Python reference of the draft lexer (spec 2.2), fixtures `conformance/english-lean/lexer.json` (8.4) | `tests/test_english_lean_lexer.py` |
 | `conformance/english_lean_tokens.py` | Python's Lark grammar converted to word tokens and read by the reference engine: verdict parity, steps | `uv run python -m conformance.english_lean_tokens --per-configuration 60` |
 | `conformance/english_lean_rejections.py` | the hand parser's rejection sites, classified, with probes read three ways | `uv run python -m conformance.english_lean_rejections` |
+| `conformance/english_lean_seal.py` | the shadow-corpus seal: SHA-256 of every corpus source, the generator digests, the pilot pins | `uv run python -m conformance.english_lean_seal [--check]` |
 | `conformance/english_lean_lexicon.py` | Python's lexicon export and identity, a reference of `Lexicon.valid`, fixtures `conformance/english-lean/lexicon.json` (8.5) | `uv run python -m conformance.english_lean_lexicon` |
 
 ## 1. Python's generated grammar, per configuration
@@ -345,7 +346,7 @@ decides. Section 6 found no corpus lexicon that a ported condition refuses.
 | Regex terminals that are not word sequences | done (section 1) |
 | Token-length histogram | done on rendered texts (section 3); the use-case documents and pilots are not yet included |
 | Character-versus-token probes | done for spacing around punctuation and hyphens (section 4); word-split mutants belong to the reverse corpus (S2) |
-| Sealing the shadow corpus with hashes | not done |
+| Sealing the shadow corpus with hashes | done: `conformance/english-lean/corpus-seal.json` (79 sources: 36 entry-point callers, 43 corpus files; 17 generated streams by their recorded digests, the mixed and natural-view streams; 10 pilot documents by their `PROFILE-GOLDEN.json` pins); `--check` reports drift for the S2 harness |
 | The tree correspondence (Lark ↔ Lean derivations) | first cut: verdict parity under the conversion of section 7; formulas and witness multiplicity wait for S2's actions |
 | Classification of the 49 rejection sites; blocked-wording ids | done (section 8); one new `Reject` code proposed |
 | Lexicon validity of Python's selections | done (section 6); one V1 finding for the DRI |
