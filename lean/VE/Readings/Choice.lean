@@ -39,14 +39,29 @@ def narrowingShape (D : Doc) (N : Narrowing) : Bool :=
   match inForce D N with
   | some R => !N.keeps.isEmpty && N.keeps.all (fun x => R.candidates.any (·.id == x))
   | none => true
+/-- ⌈log₂ k⌉: the least b with k ≤ 2^b. -/
+def bitsOf (k : Nat) : Nat := ((List.range (k + 1)).find? (fun b => k ≤ 2 ^ b)).getD k
+def bitName (n j : Nat) : String := "ve__bit__" ++ toString n ++ "__" ++ toString j
+def setSize (D : Doc) (m : Nat) : Nat := (D.sets[m]?.map (·.candidates.length)).getD 0
+/-- The bit predicates of the choice vocabulary (1.3), sets in source order, bits ascending. -/
+def bitDecls (D : Doc) : List (String × List String) :=
+  (List.range D.sets.length).flatMap (fun m =>
+    (List.range (bitsOf (setSize D m))).map (fun j => (bitName (m + 1) j, ["ve__reading"])))
+/-- The frame declares neither the constant `ve__here` nor a bit predicate of the choice vocabulary (1.8, DRI
+    ruling 1). `VE.Environment` lists constants and predicates as functions, so `WellFormedDoc` cannot see these
+    names; the wire decoders refuse every `ve__` name (S1 1.8), and this conjunct carries that refusal to a `Doc`
+    built as a Lean value. Without it `choiceEnv` would override a frame declaration in `sup D` that the choice's
+    document keeps (fixtures KH and KB of 9.2). -/
+def choiceFresh (D : Doc) : Bool :=
+  D.frame.soft.E.constants "ve__here" == none && (bitDecls D).all (fun d => D.frame.soft.E.predicates d.1 == none)
 /-- 1.1 row 2 and 1.8: distinct set ids, every open set with a candidate, every candidate with content; the couplings
-    and narrowings in today's shape, with distinct ids. The Lean counterpart of the shape part of the decoder
-    checks of 7, and of that part only. -/
+    and narrowings in today's shape, with distinct ids; the frame free of the choice vocabulary (`choiceFresh`). The
+    Lean counterpart of the shape part of the decoder checks of 7, and of that part only. -/
 def supReady (D : Doc) : Bool :=
   decide (D.sets.map (·.id)).Nodup &&
     D.sets.all (fun R => !R.candidates.isEmpty && R.candidates.all (·.content.isSome)) &&
     decide (D.couplings.map (·.id)).Nodup && D.couplings.all (couplingShape D) &&
-    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D)
+    decide (D.narrowings.map (·.id)).Nodup && D.narrowings.all (narrowingShape D) && choiceFresh D
 def complete (D : Doc) (c : Choice) : Bool :=
   c.map (·.1) == D.sets.map (·.id) && c.all (fun x => (candidate D x.1 x.2).isSome)
 /-- Consecutive sets of the coupling take candidates with one label on the axis. -/
@@ -230,7 +245,7 @@ theorem index_of_mem {c : Choice} (hn : (c.map (·.1)).Nodup) {x : String × Nat
 theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).length ≤ maxChoices) (c : Choice) :
     c ∈ choices D ↔ Compatible D c := by
   simp only [supReady, Bool.and_eq_true, decide_eq_true_eq] at hr
-  have hn := hr.1.1.1.1.1
+  have hn := hr.1.1.1.1.1.1
   have heq : choices D = allFrom D D.sets [] := by
     rw [choices, search_eq]
     rw [choices, search_eq] at hle
@@ -272,9 +287,6 @@ theorem choices_spec (D : Doc) (hr : supReady D = true) (hle : (choices D).lengt
 
 /-! ## The choice vocabulary and the atoms (1.3) -/
 
-/-- ⌈log₂ k⌉: the least b with k ≤ 2^b. -/
-def bitsOf (k : Nat) : Nat := ((List.range (k + 1)).find? (fun b => k ≤ 2 ^ b)).getD k
-def bitName (n j : Nat) : String := "ve__bit__" ++ toString n ++ "__" ++ toString j
 def here : VE.Term := .const "ve__here"
 def conj : List VE.Formula → VE.Formula
   | [] => .top
@@ -288,16 +300,12 @@ def lit (n j : Nat) (b : Bool) : VE.Formula :=
   if b then .unary (bitName n j) here else .not (.unary (bitName n j) here)
 /-- The pattern of the n-th set (1-based) with k candidates spelling i. -/
 def pattern (n k i : Nat) : VE.Formula := conj ((List.range (bitsOf k)).map (fun j => lit n j (i.testBit j)))
-def setSize (D : Doc) (m : Nat) : Nat := (D.sets[m]?.map (·.candidates.length)).getD 0
 /-- χ_{s,i}; ⊥ when s is no open set or i is no candidate of it. (`atom` is W1's predicate atom; this is the choice's.) -/
 def choiceAtom (D : Doc) (s : String) (i : Nat) : VE.Formula :=
   match D.sets.findIdx? (·.id == s) with
   | some m => if i < setSize D m then pattern (m + 1) (setSize D m) i else .bottom
   | none => .bottom
 def atoms (D : Doc) (A : Choice) : List VE.Formula := A.map (fun x => choiceAtom D x.1 x.2)
-def bitDecls (D : Doc) : List (String × List String) :=
-  (List.range D.sets.length).flatMap (fun m =>
-    (List.range (bitsOf (setSize D m))).map (fun j => (bitName (m + 1) j, ["ve__reading"])))
 def choiceEnv (D : Doc) (E : VE.Environment) : VE.Environment :=
   if D.sets.isEmpty then E else
   { sorts := E.sorts ++ ["ve__reading"],

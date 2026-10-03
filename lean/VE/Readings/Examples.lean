@@ -1,5 +1,6 @@
 import VE.Readings.Lines
 import VE.Readings.Superpose
+import VE.Readings.Wire
 import VE.Rights.Examples
 
 /-! The item-1 fixtures of docs/spec/composition-s1.md 9.2 on one small document, as build-time checks (`#guard`:
@@ -480,12 +481,12 @@ def M10b : Doc := docK [.set ⟨"rs1", "u1", 1, [cand "strict" S, cand "default"
 def name45 : String := "n" ++ String.mk (List.replicate 44 'x')
 def M16 : Doc := docK [.set ⟨"rs1", "u1", 1, [cand "strict" { S with name := name45 }, cand "default" { Df with name := name45 }]⟩]
 #guard name45.length == 45 && WellFormedDoc M16
--- 9.2 expects `sideWF M16 (sup M16) = false` (the 64-byte identifier limit, which Python's environment check
--- enforces on the 66-byte decision predicate of `sup D`). Lean's chain check has no byte limit on generated
--- names, so `superposable M16` is true here: reported against M16 and 1.8, not changed.
-#guard supReady M16 && uniformPrecedence M16 && sideWF M16 (sup M16)
+-- The chain's check enforces `MAX_IDENTIFIER_BYTES` on generated decision predicates (`namesFit`, DRI ruling 2):
+-- the candidate's own predicate has 61 bytes and passes, `sup D`'s has 66 and fails with the chain's own text.
 #guard (genKeys (sup M16).1).map (·.2.1.utf8ByteSize) == [66] && (genKeys (one M16 "rs1" 1).1).map (·.2.1.utf8ByteSize) == [61]
-#guard (choices M16).length == 2
+#guard supReady M16 && uniformPrecedence M16 && !sideWF M16 (sup M16) && !superposable M16
+#guard Wire.chainText .soft (sup M16) == some ("ResourceLimit: decision predicate soft__excepted__rd_2_" ++ name45)
+#guard (choices M16).length == 2 && (choices M16).all (fun c => sideWF M16 (choiceDoc M16 c))
 
 /-! ## M17: the shape of couplings and narrowings -/
 
@@ -512,22 +513,25 @@ def M18 : Doc := ⟨.soft, frameK, [.set (formulaSet "rs1" "u1"), .set (formulaS
 #guard (onePremises M18 ++ couplingPremises M18 ++ narrowingPremises M18).map (·.1) ==
   ["coupling:c1", "narrowing:n1", "narrowing:n2"]
 
-/-! ## Statements of 8.4 that are false of some `Doc` values (reported against the spec)
+/-! ## M19: the frame declares the choice vocabulary (rejection fixtures, DRI ruling 1)
 
-**The choice vocabulary in the frame.** `VE.Environment` lists its constants and predicates as functions, so
-`WellFormedDoc` cannot see a frame that declares the constant `ve__here` or a bit predicate (S1 left those names to
-the wire decoder, 1.8). `superposable` does not see it either: `choiceEnv` overrides the frame's declaration in
-`sup D`, while `choiceDoc D c` keeps it. `KH` is a formula-only set in a frame that declares `ve__here : agent`; `MH`
-is a slot-admissible base of `sup KH` encoding the choice `[(rs1, 0)]` whose `ve__here` is no agent, so its pull is
-not admissible for the choice's document: `base_down` as stated fails on it (`kh_base_down_fails`). A frame
-predicate named `ve__bit__1__0` breaks `base_up` and `superpose_conflict_free` in the same way. -/
+`VE.Environment` lists its constants and predicates as functions, so `WellFormedDoc` cannot see a frame that
+declares the constant `ve__here` or a bit predicate (S1 leaves those names to the wire decoder, 1.8), and
+`choiceEnv` overrides the frame's declaration in `sup D` while `choiceDoc D c` keeps it. `supReady` therefore carries
+`choiceFresh`, and both documents below are refused by it, so no theorem of 8.4 applies to them. What the conjunct
+excludes is visible: `KH` is a formula-only set in a frame that declares `ve__here : agent`; `MH` is a slot-admissible
+base of `sup KH` encoding the choice `[(rs1, 0)]` whose `ve__here` is no agent, so its pull is not admissible for the
+choice's document (`kh_base_down_fails`): `base_down` would be false without the conjunct. A frame predicate named
+`ve__bit__1__0` breaks `base_up` and `superpose_conflict_free` in the same way. -/
 
 def frameH : VE.Rights.RightsDoc :=
   { frameK with soft := { frameK.soft with E := { frameK.soft.E with
       constants := fun x => if x == "ve__here" then some "agent" else none } } }
 def rsF : ReadingSet := ⟨"rs1", "u1", 1, [⟨"a", some (.assertion .top), [], []⟩, ⟨"b", some (.assertion .bottom), [], []⟩]⟩
 def KH : Doc := docK [.set rsF] .soft frameH
-#guard WellFormedDoc KH && superposable KH && compatible KH [("rs1", 0)]
+#guard WellFormedDoc KH && !choiceFresh KH && !supReady KH && !superposable KH && compatible KH [("rs1", 0)]
+-- without the conjunct the rest of `superposable` holds
+#guard uniformPrecedence KH && sideWF KH (sup KH)
 def MH : VE.FiniteModel String where
   domains s := match s with | "agent" => ["a"] | "user" => ["u"] | "ve__reading" => ["e"] | _ => []
   constants x := if x == "ve__here" then some "e" else none
@@ -578,10 +582,11 @@ theorem kh_base_down_fails :
   subst hv
   exact absurd hd (by decide)
 
-/-! The same gap breaks `superpose_assertions`: in a frame that declares `ve__bit__1__0` over agents and `ve__here`
-as an agent, the assertion candidates `ve__bit__1__0(ve__here)` and its negation are admitted, but `sup KB` gates
-them with the very bit they mention, so no reinterpretation of the choice vocabulary satisfies both gated
-assertions while every structure satisfies one candidate (`kb_superpose_assertions_fails`). -/
+/-! The same gap would break `superpose_assertions`: in a frame that declares `ve__bit__1__0` over agents and
+`ve__here` as an agent, the assertion candidates `ve__bit__1__0(ve__here)` and its negation are admitted, but `sup KB`
+gates them with the very bit they mention, so no reinterpretation of the choice vocabulary satisfies both gated
+assertions while every structure satisfies one candidate (`kb_superpose_assertions_fails`). `supReady KB` is false,
+so `superpose_assertions` (whose `hr` is `supReady`) does not apply to it. -/
 
 def frameB : VE.Rights.RightsDoc :=
   { frameK with soft := { frameK.soft with E := { frameK.soft.E with
@@ -590,7 +595,7 @@ def frameB : VE.Rights.RightsDoc :=
 def bH : VE.Formula := .unary "ve__bit__1__0" (.const "ve__here")
 def rsB : ReadingSet := ⟨"rs1", "u1", 1, [⟨"a", some (.assertion bH), [], []⟩, ⟨"b", some (.assertion (.not bH)), [], []⟩]⟩
 def KB : Doc := docK [.set rsB] .soft frameB
-#guard WellFormedDoc KB && supReady KB && superposable KB
+#guard WellFormedDoc KB && !choiceFresh KB && !supReady KB && !superposable KB
 
 theorem kb_sup_assertions : (sup KB).2 = [.implies (.not bH) bH, .implies bH (.not bH)] := by decide
 theorem kb_choice : choicePremises KB = [] := by decide
