@@ -410,10 +410,12 @@ class Environment:
                      for tag, record in checked_units.items()}
         else:
             units = None
+        if route and "reports@0" in data["profiles"] and (type(vocab) is not dict or "reports" not in vocab):
+            # VE.Attribution.Wire.decodeEnvironment reads the block from the
+            # vocabulary (`getObjVal?`, which fails on any other value) first.
+            raise UnsupportedProfile("reports@0 needs a reports block")
         if type(vocab) is not dict:
             raise VEError("object expected")
-        if route and "reports@0" in data["profiles"] and "reports" not in vocab:
-            raise UnsupportedProfile("reports@0 needs a reports block")
         require_fields(vocab, {"sorts", "predicates", "constants"} |
                        ({"reports"} if route and "reports@0" in data["profiles"] else set()),
                        path="/vocabulary")
