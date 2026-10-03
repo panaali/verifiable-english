@@ -330,7 +330,8 @@ def check_layers(index: Index) -> list[str]:
             except reader.HeaderError as error:
                 errors.append(f"{path}: Lean header {error}")
         # The pinned toolchain's own header parser must agree with the plain-layout reading.
-        command = reader.pinned_lean((blobs[LEAN_TOOLCHAIN] or b"").decode()) if read else None
+        command = (reader.pinned_lean((blobs[LEAN_TOOLCHAIN] or b"").decode(),
+                                      wait=configured_wait(reader.PROBE_WAIT)) if read else None)
         if command is None:
             NOTES.append("lean --deps: pinned toolchain unavailable; plain-layout grammar only")
         else:
@@ -339,7 +340,8 @@ def check_layers(index: Index) -> list[str]:
             for number, path in enumerate(read):
                 files[path] = (folder / f"{number}.lean", read[path])
                 files[path][0].write_bytes(blobs[path])
-            wrong, checked = reader.lean_disagreements(command, files)
+            wrong, checked = reader.lean_disagreements(command, files,
+                                                       budget=configured_wait(reader.ORACLE_BUDGET))
             NOTES.append(f"lean --deps confirmed or refuted {checked} of {len(files)} staged Lean headers")
             for path, message in sorted(wrong.items()):
                 errors.append(f"{path}: Lean header: {message}; {reader.PLAIN_LAYOUT}")
@@ -453,13 +455,14 @@ WIRE_UNIT_PATHS = re.compile(r"(?:docs/spec/[a-z0-9-]+-wire-table\.md"
 WIRE_CHECK_TIMEOUT = 30.0
 
 
-def check_timeout() -> float:
-    """The wall-clock wait for the wire generator's check: `VE_PRECOMMIT_TIMEOUT` when set (the
-    test suite raises it to its hang guard, so machine load cannot fail a test), else 30 s. A guard
-    against a hung check only; a value that is not a positive finite number of seconds blocks."""
+def configured_wait(default: float) -> float:
+    """A wall-clock wait of the hook whose default is `default` (the wire check's 30 s, the staged
+    `lean --deps` budget and toolchain probes): `VE_PRECOMMIT_TIMEOUT` when set (the test suite
+    raises it to its hang guard, so machine load cannot change a test's outcome), else `default`.
+    A value that is not a positive finite number of seconds blocks."""
     text = os.environ.get("VE_PRECOMMIT_TIMEOUT")
     if text is None:
-        return WIRE_CHECK_TIMEOUT
+        return default
     try:
         seconds = float(text)
     except ValueError:
@@ -493,7 +496,7 @@ def check_wire_contract(index: Index) -> list[str]:
     env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
-                          timeout=check_timeout(), check=False)
+                          timeout=configured_wait(WIRE_CHECK_TIMEOUT), check=False)
     if done.returncode:
         return [line for line in (done.stdout + done.stderr).splitlines() if line]
     return []

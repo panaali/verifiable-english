@@ -13,6 +13,7 @@ import tomllib
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tools import gate
 
 
@@ -478,27 +479,31 @@ def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
 def test_terminated_gate_cannot_leave_old_pass_record(tmp_path):
     output = tmp_path / "record.json"
     output.write_text('{"status":"passed"}')
+    started = tmp_path / "started"
     # The handler lets the gate's cleanup remove its scratch directory; the
-    # record must already be failed before the signal arrives.
-    script = ("import signal, sys, time\nfrom tools import gate\n"
+    # record must already be failed when the first work starts (an event, not
+    # an interval: under load the child can take any time to get there).
+    script = ("import signal, sys, time\nfrom pathlib import Path\nfrom tools import gate\n"
               "signal.signal(signal.SIGTERM, lambda *args: sys.exit(1))\n"
-              "gate.command = lambda *args, **kwargs: time.sleep(30)\n"
+              "started = Path(sys.argv[2])\n"
+              "def work(*args, **kwargs):\n"
+              "    started.touch()\n"
+              f"    time.sleep({HANG_TIMEOUT})\n"
+              "gate.command = work\n"
               "sys.argv = ['gate.py', '--output', sys.argv[1]]\n"
               "gate.main()\n")
-    process = subprocess.Popen([sys.executable, "-c", script, str(output)],
+    process = subprocess.Popen([sys.executable, "-c", script, str(output), str(started)],
                                cwd=gate.ROOT, stdout=subprocess.DEVNULL,
                                stderr=subprocess.DEVNULL)
     try:
-        deadline = time.monotonic() + 5
-        while time.monotonic() < deadline:
-            if json.loads(output.read_text()).get("status") == "failed":
-                break
+        deadline = time.monotonic() + HANG_TIMEOUT
+        while not started.exists() and process.poll() is None and time.monotonic() < deadline:
             time.sleep(0.02)
-        else:
-            pytest.fail("gate did not reset the record before work")
+        assert started.exists(), "the gate never started work"
+        assert json.loads(output.read_text())["status"] == "failed", "gate did not reset the record before work"
     finally:
         process.send_signal(signal.SIGTERM)
-        process.wait(timeout=5)
+        process.wait(timeout=HANG_TIMEOUT)
     assert json.loads(output.read_text())["status"] == "failed"
 
 
