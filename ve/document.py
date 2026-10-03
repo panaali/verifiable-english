@@ -1225,8 +1225,10 @@ def _report(doc):
         result["premises"] = {"status": "UNKNOWN",
                               "reason": "alternatives premise satisfiability requires the alternatives route"}
     elif _content_bearing(doc):
-        # composition-s1.md 4.8: S1 adds no verdict; a result that depends on a content-bearing set waits for S2.
-        result["premises"] = {"status": "UNKNOWN", "reason": "superposition pending"}
+        # composition-s2.md 1.1, 4.5 and 4.6: the premises across readings on the superposed or the enumerated
+        # route, each verdict from evidence Lean checked; the pending row keeps today's UNKNOWN.
+        from .readings_verdicts import context
+        result["premises"] = context(doc).premises()
     elif _unresolved_norm_reading(active):
         result["premises"] = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
     elif joint_pending or (joint is not None and joint["constraints"] and joint_formula is None):
@@ -1413,6 +1415,8 @@ def main(argv=None):
         sub.add_parser(name).add_argument("path")
     sub.choices["readings"].add_argument("--conclusion", help="formula AST JSON file to classify")
     sub.choices["readings"].add_argument("--narrowing", help="apply a recorded narrowing by id")
+    sub.choices["readings"].add_argument("--under", action="append", metavar="SET:INDEX",
+                                         help="a named reading of a content-bearing set (composition-s2.md 4.5)")
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
@@ -1423,8 +1427,32 @@ def main(argv=None):
         doc = load_document(args.path)
         if args.command == "coverage":
             data = coverage(doc)
+        elif args.under and not args.conclusion:
+            raise VEError("--under requires --conclusion")
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
+            if _content_bearing(doc):
+                # composition-s2.md 4.5 and 4.6: ALL, SOME or NONE across the readings of a content-bearing
+                # document. Every narrowing in force is already a premise there (1.2); `--narrowing` is W2's.
+                if args.narrowing:
+                    raise VEError("--narrowing applies to W2's route; on the superposed and enumerated routes "
+                                  "every narrowing in force is a premise")
+                from .readings_verdicts import context
+                from .readings_route import query_english
+                assumed = None
+                if args.under:
+                    assumed = []
+                    for item in args.under:
+                        set_id, _, index = item.rpartition(":")
+                        if not set_id or not index.isdigit():
+                            raise VEError("--under takes SET:INDEX")
+                        assumed.append((set_id, int(index)))
+                data = context(doc).entailment(conclusion, assumed=assumed)
+                data["english"] = query_english(doc, conclusion, data)
+                print(json.dumps(data, ensure_ascii=False, indent=2))
+                return 0
+            if args.under:
+                raise VEError("--under names readings of a content-bearing set (composition-s2.md 4.5)")
             active = active_reading_sets(doc["meta"].get("reading_sets", []))
             sets = [{**r, "readings": [{**c, "original_index": i}
                                       for i, c in enumerate(r["readings"])]} for r in active]
