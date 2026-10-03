@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import Log, cell_env, condition, dec, estimate, gt, q, record
+from subprocesses import HANG_TIMEOUT
 from ve.risk import run_case
 
 
@@ -20,14 +21,14 @@ RUST = ROOT / "rust/target/release/ve"
 
 def _direct_lean(case):
     completed = subprocess.run([str(LEAN), "-"], input=json.dumps([case]),
-                               text=True, capture_output=True, timeout=60)
+                               text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert completed.returncode in (0, 1), completed.stderr
     return json.loads(completed.stdout)[0]
 
 
 def _rust(case):
     completed = subprocess.run([str(RUST), "conformance"], input=json.dumps([case]),
-                               text=True, capture_output=True, timeout=60)
+                               text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert completed.returncode == 0, completed.stderr
     return json.loads(completed.stdout)[0]
 
@@ -115,7 +116,7 @@ def test_same_condition_after_normalisation_three_way(sufficient, necessary, exp
                            "cells": [{"action": "act", "harm": "server_outage",
                                       "sufficient": sufficient, "necessary": necessary}]}}
     completed = subprocess.run([str(RUST), "conformance"], input=json.dumps([prepared]),
-                               text=True, capture_output=True, timeout=60)
+                               text=True, capture_output=True, timeout=HANG_TIMEOUT)
     rust = json.loads(completed.stdout)[0]
     if isinstance(expected, str):
         assert lean["status"] == "error" and lean["error"].startswith(expected), lean

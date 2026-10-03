@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment
@@ -735,7 +736,7 @@ def test_rust_report_witness_replays_in_lean(lean):
     payloads = [ReportsDocument(Environment(E0()), d["contexts"], d["assessments"], d["units"])
                 .search_payload(conclusion) for d, conclusion in cases]
     searched = subprocess.run([str(binary), "conformance", "-"], input=json.dumps(payloads),
-                              capture_output=True, text=True, timeout=120)
+                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert searched.returncode == 0, searched.stderr
     witnesses = json.loads(searched.stdout)
     for (d, conclusion), payload, witness in zip(cases, payloads, witnesses, strict=True):
