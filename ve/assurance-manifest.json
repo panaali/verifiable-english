@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 17981,
+    "total_lines": 17993,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -187,9 +187,9 @@
       {"file": "lean/VE/Readings/Wire.lean", "lines": 654, "sha256": "80b768cc0877f8880b40c1c1cd988500461e180fc1d3b01062e9861f200d1d65",
        "ranges": [[1, 654]], "declarations": ["decodeEnvironment", "decodeContent", "decodeReading", "decodeSet", "decodeDocument", "decodeKey", "decodeTables", "decodeProbe", "decodeSituation", "admitReadings", "replayPair", "replaySeparate"],
        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first; the full file is pinned conservatively"},
-      {"file": "lean/VE/Readings/SupWire.lean", "lines": 342, "sha256": "f090c9b0af4c1ecfb2b5192ea03dc2b3f499b2aab75448e7c9c1b861529679e3",
-       "ranges": [[1, 342]], "declarations": ["decodeCouplings", "decodeNarrowings", "admitS2", "supReplayOf", "replaySup", "decodeChoice", "decodeSupModel", "decodeAssumed", "decodeShared", "decodeConflictCerts", "replayCertificate", "replayModel"],
-       "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound; the full file is pinned conservatively"}
+      {"file": "lean/VE/Readings/SupWire.lean", "lines": 354, "sha256": "29a77a6c985decb9477e9ab743551e3e23a93480fadad495d5b30101e1475e7f",
+       "ranges": [[1, 354]], "declarations": ["decodeCouplings", "decodeNarrowings", "admitS2", "supReplayOf", "replaySup", "decodeChoice", "decodeSupModel", "decodeAssumed", "decodeShared", "decodeConflictCerts", "replayCertificate", "replayModel"],
+       "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",

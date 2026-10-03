@@ -3780,3 +3780,12 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.base_up
 #print axioms VE.Readings.home_chainWF
 #print axioms VE.Readings.choice_sideWF_of_soft
+#print axioms VE.Readings.compatible_of_mem_search
+#print axioms VE.Readings.mem_allFrom_sets
+#print axioms VE.Readings.search_spec
+#print axioms VE.Readings.exists_compatible_of_choices
+#print axioms VE.Readings.no_compatible_of_choices
+#print axioms VE.Readings.choicesSoftChecked_spec
+#print axioms VE.Readings.choice_wellFormed
+#print axioms VE.Readings.Wire.readings_wire_satisfiable
+#print axioms VE.Readings.Wire.readings_wire_choice_wellFormed

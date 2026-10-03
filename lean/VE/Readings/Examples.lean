@@ -1,6 +1,7 @@
 import VE.Readings.Lines
 import VE.Readings.Superpose
 import VE.Readings.Wire
+import VE.Readings.Route
 import VE.Rights.Examples
 
 /-! The item-1 fixtures of docs/spec/composition-s1.md 9.2 on one small document, as build-time checks (`#guard`:
@@ -403,6 +404,32 @@ def b2 : VE.Formula := bit 2 0
 -- with `n1` no compatible choice takes candidate 1 of `rs2` (DeadReading: rs2:1), and none is dropped by a premise
 -- on it: its atom is refuted from the coupling and the narrowing together
 #guard choiceCore (M6 [n1]) == [.and (.not (.and (.not b1) b2)) (.not (.and b1 (.not b2))), .not b1]
+
+/-! ## No compatible choice (4.1 step 3; review A1 of 2026-10-03)
+
+Two narrowings in force on `rs1`, one keeping `S`, the other `Df`: no choice is compatible, the slot is
+inconsistent (`¬b` and `b`), and before any verdict the route refuses the document with `ReadingsUnsatisfiable`,
+so no certificate over the inconsistent slot is ever accepted (`SupReplay.sat`). -/
+
+def nS : Narrowing := ⟨"keep-strict", "rs1", 1, ["strict"]⟩
+def nD : Narrowing := ⟨"keep-default", "rs1", 1, ["default"]⟩
+def MU : Doc := ⟨.soft, frameK, [.set rs1, .fixed "u2" (.assertion .top) []], [], [nS, nD]⟩
+#guard supReady MU && superposable MU && choices MU == []
+#guard (choiceLabelled MU).map (·.1) == ["readings:rs1@1:1:quiet", "narrowing:keep-strict", "narrowing:keep-default"]
+#guard routeOf false MU == .superposed &&
+  routeRefusal false MU == some "ReadingsUnsatisfiable: keep-default, keep-strict"
+#guard routeRefusal false K1 == none && routeRefusal false (M6) == none
+
+/-! ## The checked choices (DRI ruling 5)
+
+The superposed route runs the soft check on every compatible choice's document, up to `maxChoiceChecks` choices;
+past them the check is not run, `choicesSoftChecked` is false and the superposed kinds refuse. -/
+
+#guard checkedChoices K1 == choices K1 && choicesSoftChecked K1 && choicesSoftChecked (M6) && choicesSoftChecked M5
+def binarySet (k : Nat) : Item :=
+  .set ⟨s!"s{k}", s!"v{k}", 1, [⟨"a", some (.assertion .top), [], []⟩, ⟨"b", some (.assertion .bottom), [], []⟩]⟩
+def MB : Doc := docK ((List.range 11).map binarySet)
+#guard (checkedChoices MB).length == maxChoiceChecks + 1 && !choicesSoftChecked MB && superposedCheckText MB == none
 
 /-! ## M7: three candidates, two bits -/
 

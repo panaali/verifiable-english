@@ -43,18 +43,21 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     validators have checked the restrictions.
     """
     from .readings_s1 import Document, S1Environment
-    from .readings_sup import (choices, choice_vocabulary, first_nonuniform, name_map,
-                               sup_ready, superposed_elaboration, superposed_units)
+    from .readings_sup import (choices, choice_vocabulary, choices_checked, first_nonuniform, name_map,
+                               route_refusal, sup_ready, superposed_elaboration, superposed_units)
 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
     [row] = run_lean([{"id": "readings-s2", "kind": "readings-elaborate",
                        "environment": environment, "document": document}], executable=executable,
                      timeout=300)
-    if row["status"] == "error":
-        raise VEError(row["error"])
-    senv = S1Environment(environment)
-    source = Document(senv, document)
+    try:
+        senv = S1Environment(environment)
+        source = Document(senv, document)
+    except VEError:
+        if row["status"] == "error":
+            raise VEError(row["error"]) from None
+        raise
     sets = source.sets
     content_bearing = any(a.content is not None and a.content.kind != "assertion"
                           for reading_set in sets for a in reading_set.candidates)
@@ -84,6 +87,20 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
                 expected_route, cause = "enumerated", _message(exc)
             else:
                 expected_route = "superposed"
+    # 4.1 steps 3 and 5: before any verdict, no compatible choice is `ReadingsUnsatisfiable` and a compatible choice
+    # whose document the chain refuses is that diagnostic under the choice (DRI ruling 5). Lean must refuse exactly
+    # these documents, with these texts.
+    refusal = route_refusal(source, expected_route, couplings, narrowings)
+    if row["status"] == "error":
+        routed = row["error"].startswith("ReadingsUnsatisfiable: ") or " under " in row["error"]
+        if refusal is not None or routed:
+            if row["error"] != refusal:
+                raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 refusal: "
+                                         f"Lean {row['error']}, Python {refusal or 'none'}")
+        raise VEError(row["error"])
+    if refusal is not None:
+        raise CheckerUnavailable(f"ReadingsConformance: Python and Lean differ on the S2 refusal: Lean none, "
+                                 f"Python {refusal}")
     if row.get("route") != expected_route:
         raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 route")
     if cause is not None and (row.get("finding") or {}).get("cause") != cause:
@@ -94,6 +111,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
         found, over = choices(sets, couplings, narrowings)
         expected = {"choice_count": "over 64" if over else len(found),
                     "choices": "over" if over else [[[s.id, c[s.id]] for s in sets] for c in found],
+                    "choices_checked": choices_checked(sets, row["route"], couplings, narrowings),
                     "narrowings_stale": [n["id"] for n in narrowings if
                                           not any((s.id, s.version) == (n["set"], n["version"])
                                                   for s in sets)]}

@@ -1,13 +1,15 @@
 import VE.Readings.SupAll
 
-/-! `choice_wellFormed` (docs/spec/composition-s2.md 8.4) up to the soft check of the choice's document.
+/-! `choice_wellFormed` (docs/spec/composition-s2.md 8.4) with the route's soft check of every choice as its
+hypothesis (DRI ruling 5 of 2026-10-03).
 
 Every conjunct of `sideWF D (choiceDoc D c)` except `WellFormedSoft` of the choice's soft document holds: it has no
 rights content, its generated names fit (each is a name of the document S1 checked the rule in, or of `sup D`), on
 the norms chain every rule is strict and unswitchable (as in its home document), and its assertions are typed over
 its complete vocabulary (`asserted_shared`). The soft check itself counts the generated formulas against the
-chain's size limits on the whole document; it is not derived here. What every other theorem of 8.4 uses of it,
-that W1 reads the softened document as valid, is `choice_valid`. -/
+chain's size limits on the whole document; it is not derived here, and the route runs it on every compatible
+choice instead (`choicesSoftChecked`, Choice.lean). What every other theorem of 8.4 uses of it, that W1 reads the
+softened document as valid, is `choice_valid`. -/
 namespace VE.Readings
 open VE.Norms (envAt size)
 open VE.SoftNorms (soften decisionNames)
@@ -63,5 +65,14 @@ theorem choice_sideWF_of_soft (D : Doc) (h : WellFormedDoc D = true) (hch : D.ch
   · apply (VE.check_iff_wellFormed _ _ _).mpr
     rw [choice_correlate hh c]
     exact shared_liftY hh c (asserted_shared D h hh.ready c hc a ha)
+
+/-- `choice_wellFormed` (8.4) under DRI ruling 5: the route runs the soft check on every compatible choice's
+    document (`choicesSoftChecked`), and its success is the hypothesis here. The replays of the superposed case kinds
+    discharge it (`SupReplay.checked`, `readings_wire_choice_wellFormed`). The unconditional statement, the soft
+    check derived from `sup D`'s, is not claimed. -/
+theorem choice_wellFormed (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
+    (hs : superposable D = true) (hw : choicesSoftChecked D = true) (c : Choice) (hc : Compatible D c) :
+    sideWF D (choiceDoc D c) = true :=
+  choice_sideWF_of_soft D h hch hs c hc (choicesSoftChecked_spec D (superposable_supReady hs) hw c hc)
 
 end VE.Readings

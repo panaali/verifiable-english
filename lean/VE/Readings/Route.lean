@@ -108,6 +108,55 @@ def notSuperposableText (sets : String) : String := s!"ReadingsNotSuperposable: 
 def staleNarrowings (D : Doc) : List String :=
   (D.narrowings.filter (fun N => (inForce D N).isNone)).map (·.id)
 
+/-! ## The refusals of 4.1 steps 3 and 5 -/
+
+/-- The ids of the couplings and of the narrowings in force (7, `ReadingsUnsatisfiable`), sorted. -/
+def restrictionIds (D : Doc) : List String :=
+  VE.Route.sortStrings (D.couplings.map (·.id) ++ (D.narrowings.filter (fun N => (inForce D N).isSome)).map (·.id))
+
+/-- 4.1 step 3: no choice is compatible with the couplings and narrowings in force (`no_compatible_of_choices`). -/
+def unsatText (D : Doc) : String := "ReadingsUnsatisfiable: " ++ ", ".intercalate (restrictionIds D)
+
+/-- A choice as 7 writes it: `<set>@<v>:<i>` in source order, comma-separated. -/
+def choiceText (D : Doc) (c : Choice) : String :=
+  ", ".intercalate (c.map (fun x => match D.sets.find? (·.id == x.1) with
+    | some R => s!"{x.1}@{R.version}:{x.2}"
+    | none => s!"{x.1}:{x.2}"))
+
+/-- The chain's diagnostic of a choice's document, with the choice (7). -/
+def choiceChainText (D : Doc) (c : Choice) : Option String :=
+  (Wire.chainText D.chain (choiceDoc D c)).map (· ++ " under " ++ choiceText D c)
+
+/-- DRI ruling 5 on the superposed route: the first compatible choice whose soft document fails the soft check, with
+    the chain's text; `none` when every checked choice passes or the choices exceed `maxChoiceChecks` (then the
+    verdict kinds refuse with `checkBudgetText`). -/
+def superposedCheckText (D : Doc) : Option String :=
+  if (checkedChoices D).length ≤ maxChoiceChecks then
+    ((checkedChoices D).find? (fun c => !VE.SoftNorms.WellFormedSoft (choiceDoc D c).1.soft)).map (fun c =>
+      (choiceChainText D c).getD ("InvalidInput: soft norm document is not well-formed under " ++ choiceText D c))
+  else none
+
+def checkBudgetText : String := s!"ResourceLimit: more than {maxChoiceChecks} readings to check"
+
+/-- 4.1 step 5 on the enumerated route: the first of the (at most 64) compatible choices whose document the chain
+    refuses. -/
+def enumeratedCheckText (D : Doc) : Option String :=
+  if (choices D).length ≤ maxChoices then (choices D).findSome? (choiceChainText D) else none
+
+/-- The refusal of 4.1 steps 3 and 5 on the superposed and enumerated routes, before any verdict. -/
+def routeRefusal (normDefaults : Bool) (D : Doc) : Option String :=
+  match routeOf normDefaults D with
+  | .superposed => if (choices D).isEmpty then some (unsatText D) else superposedCheckText D
+  | .enumerated => if (choices D).isEmpty then some (unsatText D) else enumeratedCheckText D
+  | _ => none
+
+/-- How many choices' documents were checked (6): every compatible choice up to the route's budget, or `over`. -/
+def checkedJson (route : Route) (D : Doc) : Json :=
+  match route with
+  | .superposed => if (checkedChoices D).length ≤ maxChoiceChecks then toJson (checkedChoices D).length
+                   else .str s!"over {maxChoiceChecks}"
+  | _ => if (choices D).length ≤ maxChoices then toJson (choices D).length else .str s!"over {maxChoices}"
+
 /-! ## The regenerated answer -/
 
 def enc (a : VE.Formula) : Json := VE.Route.Wire.encodeFormula a
@@ -198,11 +247,13 @@ def elaborateFields (normDefaults : Bool) (basePredicates : Nat) (D : Doc) : Lis
   | .superposed =>
     head ++ [("finding", .null), ("narrowings_stale", toJson (staleNarrowings D)),
       ("vocabulary", vocabularyJson D), ("units", Json.arr (supUnits D).toArray), ("slot", slotJson D),
-      ("names", nameMapJson D)] ++ choicesJson D ++ [("sizes", sizesJson D basePredicates)]
+      ("names", nameMapJson D)] ++ choicesJson D ++ [("choices_checked", checkedJson route D),
+      ("sizes", sizesJson D basePredicates)]
   | .enumerated =>
     head ++ [("finding", match notSuperposable D with
         | some (sets, cause) => Json.mkObj [("text", .str (notSuperposableText sets)), ("cause", .str cause)]
         | none => .null),
-      ("narrowings_stale", toJson (staleNarrowings D))] ++ choicesJson D
+      ("narrowings_stale", toJson (staleNarrowings D))] ++ choicesJson D ++
+      [("choices_checked", checkedJson route D)]
 
 end VE.Readings

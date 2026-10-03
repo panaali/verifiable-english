@@ -5,7 +5,9 @@ import VE.Compose.Dispatch
 (with `readings@1`) and the document of `SupWire.lean`.
 
 * `readings-elaborate`: the route of 1.1 and, past the first three rows, the regenerated elaboration
-  (`Route.elaborateFields`).
+  (`Route.elaborateFields`); on the superposed and enumerated routes `ReadingsUnsatisfiable` when no choice is
+  compatible and the chain's diagnostic under the first compatible choice whose document fails (`routeRefusal`).
+  The superposed kinds below refuse the same documents (`supReplayOf`), and past `maxChoiceChecks` choices.
 * `readings-conflict`: `assumed` (a choice, default `[]`) and either `conflict_certificates` (target → certificate
   over `Background_base′ ++ slotP D ++ atoms`) → `CONFLICT-FREE` or `UNKNOWN`, or `witness` (`model`, `target`,
   `tuple`) → `CONFLICT` with the choice the model encodes.
@@ -46,6 +48,8 @@ def firstFailing {α : Type} [DecidableEq α] (D : Doc) (A : Choice) (M : VE.Fin
 def runElaborate (id : String) (j : Json) : Except String Json := do
   let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
   let nd := b.a.re.lower.contains "norm-defaults@0"
+  -- 4.1 steps 3 and 5: no verdict over no reading, and no reading whose document the chain refuses.
+  if let some e := routeRefusal nd b.D then throw e
   pure (okWith id (elaborateFields nd b.a.re.se.ne.rv.vocabulary.predicates.length b.D))
 
 /-! ## `readings-conflict` -/
@@ -97,10 +101,6 @@ def runModel (id : String) (j : Json) : Except String Json := do
     ("assumed", choiceJson r.assumed), ("choice", choiceJson (encodedChoice r.D r.M))])
 
 /-! ## `readings-dead` -/
-
-/-- The ids of the couplings and of the narrowings in force (7, `ReadingsUnsatisfiable`), sorted. -/
-def restrictionIds (D : Doc) : List String :=
-  VE.Route.sortStrings (D.couplings.map (·.id) ++ (D.narrowings.filter (fun N => (inForce D N).isSome)).map (·.id))
 
 def runDead (id : String) (j : Json) : Except String Json := do
   let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
