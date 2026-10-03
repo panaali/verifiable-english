@@ -36,6 +36,22 @@ def stripReadings (environment : Json) : Except String Json := do
   let profiles ← strings (← environment.getObjVal? "profiles")
   pure (environment.setObjVal! "profiles" (toJson (profiles.filter (· != readingsProfile))))
 
+/-- The frame of a `norm-defaults@0` environment (DRI ruling 4 of 2026-10-03): each `unspecified` completion read as
+    the placeholder `deny`, as norm-defaults 2.3's E‴ reads it, so that the frame decodes without the profile. The
+    frame is read only for content, and content beside `norm-defaults@0` is the abstention of 1.1, so the
+    placeholder decides no answer: it lets that abstention, or a document without content, be reached instead of a
+    decoder text that is false of the document. -/
+def placeholderFrame (environment : Json) : Json :=
+  match environment.getObjVal? "vocabulary" >>= (·.getObjVal? "predicates") >>= fields with
+  | .ok kvs =>
+    let preds := kvs.map (fun (p, e) => match e.getObjVal? "regulated" with
+      | .ok r => if r.getObjValD "default" == .str "unspecified" then
+          (p, e.setObjVal! "regulated" (r.setObjVal! "default" (.str "deny"))) else (p, e)
+      | .error _ => (p, e))
+    environment.setObjVal! "vocabulary" ((environment.getObjValD "vocabulary").setObjVal! "predicates"
+      (Json.mkObj preds))
+  | _ => environment
+
 def emptySoft : VE.SoftNorms.SoftEnv := ⟨[], [], [], [], .strict, none, none, [], []⟩
 def emptyRights : VE.Rights.RightsEnv := ⟨[], [], [], []⟩
 
@@ -61,8 +77,10 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .error e => throw e
   let lowerJson ← stripReadings environment
   let lower := profiles.filter (· != readingsProfile)
-  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it.
-  let frameJson := lowerJson.setObjVal! "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
+  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it, its
+  -- `unspecified` completions read as the placeholder `deny` (DRI ruling 4).
+  let frameJson := (if lower.contains "norm-defaults@0" then placeholderFrame lowerJson else lowerJson).setObjVal!
+    "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
   match chainOf profiles with
   | .rights =>
     let re ← VE.Rights.Wire.decodeRightsEnvironment frameJson
