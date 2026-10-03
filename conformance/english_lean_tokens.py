@@ -176,6 +176,7 @@ def parity(per_configuration: int) -> dict:
     rows = []
     differences = []
     steps_all = []
+    earley_all: list[float] = []
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
         for offset, (name, env, options) in enumerate(configurations()):
@@ -184,6 +185,9 @@ def parity(per_configuration: int) -> dict:
             verdicts = Counter()
             steps = []
             seconds = 0.0
+            earley_cpu = []
+            from ve.surface.unambiguity import _parser
+            earley = _parser(english_lark_grammar(env, **options))
             for formula, text in _texts(name, env, options, per_configuration, offset):
                 (w,) = LX.lex(text)
                 stats = E.ParseStats()
@@ -191,6 +195,9 @@ def parity(per_configuration: int) -> dict:
                 ts = E.parse(G, E.terminal_accepts, 2, None, w, stats)
                 seconds += time.process_time() - started
                 verdict = ('zero', 'one', 'many')[len(ts)]
+                started = time.process_time()
+                earley.parse(text[0].lower() + text[1:])
+                earley_cpu.append(time.process_time() - started)
                 verdicts[verdict] += 1
                 steps.append((stats.steps, len(w)))
                 if verdict != 'one':
@@ -200,11 +207,18 @@ def parity(per_configuration: int) -> dict:
             rows.append({'configuration': name, **record, 'rank_depth': max(G.rank),
                          'verdicts': dict(verdicts), 'max_steps': max(s for s, _ in steps),
                          'max_tokens': max(n for _, n in steps),
-                         'cpu_seconds': round(seconds, 3)})
+                         'cpu_seconds': round(seconds, 3),
+                         'earley_cpu_seconds': round(sum(earley_cpu), 3),
+                         'earley_cpu_ms_max': round(1000 * max(earley_cpu), 1)})
+            earley_all.extend(earley_cpu)
     steps_sorted = sorted(s for s, _ in steps_all)
     q = lambda p: steps_sorted[min(len(steps_sorted) - 1, int(p * len(steps_sorted)))]
     longest = max(steps_all, key=lambda x: x[1])
+    ems = sorted(1000 * x for x in earley_all)
+    eq = lambda p: round(ems[min(len(ems) - 1, int(p * len(ems)))], 2)
     return {'format': 've.english-lean-tokens@1', 'per_configuration': per_configuration,
+            'earley_cpu_ms': {'p50': eq(0.5), 'p95': eq(0.95), 'p99': eq(0.99), 'max': round(ems[-1], 2),
+                              'note': 'CPU time of the Lark Earley parse alone (process_time), one sentence each'},
             'configurations': rows, 'differences': differences,
             'steps': {'p50': q(0.5), 'p95': q(0.95), 'p99': q(0.99), 'max': steps_sorted[-1],
                       'at_longest_sentence': {'tokens': longest[1], 'steps': longest[0]}}}
@@ -248,6 +262,7 @@ def main(argv: list[str] | None = None) -> int:
     report['ambiguity_probe'] = ambiguity_probe()
     args.output.write_text(json.dumps(report, indent=1, sort_keys=True, ensure_ascii=False) + '\n')
     print(json.dumps({'differences': len(report['differences']), 'steps': report['steps'],
+                      'earley_cpu_ms': report['earley_cpu_ms'],
                       'ambiguity_probe': [(x['python'], x['tokens']) for x in report['ambiguity_probe']]}))
     return 0
 

@@ -235,6 +235,9 @@ Findings.
 - **Right-hand sides grow over tokens:** the longest is 28 symbols (the split-`if` listing, spec O10).
 - **CPU time:** 37 s for the 1,020 sentences in the Python reference (about 36 ms per sentence, unoptimised
   Python). This is not a Lean latency estimate.
+- **Earley time per sentence** (plan S0), as CPU time of Python's audit parser alone (Lark Earley,
+  `dynamic_complete`, explicit ambiguity; `process_time`, because the machine's load made wall-clock figures
+  meaningless): p50 12.3 ms, p95 43.4 ms, p99 67.0 ms, max 108.3 ms over the same 1,020 sentences.
 - **What this is not:** a comparison of formulas (the converted grammar has no actions), the full sealed
   corpus, or the reverse corpus. It shows that the conversion keeps verdicts on Python's own renderings and
   on the one constructed ambiguity; S2's comparison applies the same conversion rules to the Lean grammar's
@@ -351,5 +354,5 @@ decides. Section 6 found no corpus lexicon that a ported condition refuses.
 | Classification of the 49 rejection sites; blocked-wording ids | done (section 8); one new `Reject` code proposed |
 | Lexicon validity of Python's selections | done (section 6); one V1 finding for the DRI |
 | Sort of every lint code into subsumed, ported, retained | proposed (section 9); the DRI decides the retained class |
-| Earley time per sentence | not done (the machine was too loaded for wall-clock figures); section 7 gives reference-engine steps and CPU time instead |
+| Earley time per sentence | done as CPU time (section 7); wall-clock figures wait for an unloaded machine |
 | G4 volume and coverage targets | not done |
