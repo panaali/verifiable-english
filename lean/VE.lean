@@ -30,6 +30,7 @@ import VE.Readings.SupWire
 import VE.Readings.SupRun
 import VE.Readings.ChoiceValid
 import VE.Readings.ChoiceTyped
+import VE.Readings.Situation
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
