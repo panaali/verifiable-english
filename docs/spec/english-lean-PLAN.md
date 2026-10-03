@@ -1,11 +1,17 @@
 # English in Lean: the grammar as data, one proved all-derivations parser (PLAN)
 
-**Status:** plan only, draft 1, 2026-10-03, branch `design/english-lean` from `main` at `a093a14d`. No code or
+**Status:** plan only, draft 2, 2026-10-03, branch `design/english-lean` from `main` at `a093a14d`. No code or
 proofs change with this document. It was written from reading the sources; **nothing was built or run** (this
-session could execute neither Python nor Lean). Every number below is either a figure from a committed report
-(cited) or a count made by reading the source (marked *static*). Stage S0 replaces the static counts by measured
-ones. `file:line` references were read on 2026-10-03 and must be re-read at each step. The plan has not yet had its
-two frontier reviews; S1 starts after them.
+session could execute neither Python nor Lean). Every number below is a figure from a committed report (cited), a
+count made by reading the source (marked *static*), or a figure from the review's read-only probe (marked
+*probe*). Stage S0 replaces the static and probe figures by measured ones. `file:line` references were read on
+2026-10-03 and must be re-read at each step.
+
+Draft 1 had its two frontier reviews on 2026-10-03 (`manage-agents/debates/design-english-lean/{fable,astra}.md`,
+converged after round 3). The verdict: the architecture stands; revise to draft 2, then build through the staged
+gates. Draft 2 applies the converged edits, which section 9 lists, and makes no other change. The DRI checks the
+text against that list; there is no second full review. S0 and S1a start on draft 2. The item-1 statement spec is
+[english-lean.md](english-lean.md); its statements are reviewed before any S1b proof work.
 
 Inputs: the lead's decision of 2026-10-03 (the one-reading guarantee must be Lean-checked, reversing
 [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md) 1.3 and the "English surface: stays Python by decision"
@@ -47,8 +53,10 @@ derivations (`VE.Discourse.mem_derivs`). The changes:
    object slot.
 5. **The lexer moves into Lean and the grammar is over word tokens.** Regex terminals disappear; a multi-word
    wording is a sequence of word tokens, so ambiguity inside a wording becomes visible to the parser.
-6. **The selected lexicon is input data that Lean validates by a small relation.** The 300-line vocabulary lint
-   then only chooses between honest wordings, and leaves the trusted base.
+6. **The selected lexicon is input data that Lean validates and identifies.** The one-reading guarantee is stated
+   for that validated, identified lexicon. Choosing among honest wordings is not meaning-neutral, so the
+   vocabulary lint does not simply leave the trusted base: its meaning-relevant checks move into the Lean
+   relation, and the rest stay a Python check until the DRI decides (2.4).
 7. **The render round trip is checked per rendered text**, for every profile, by the same reader. It holds by
    construction and needs no renderer proof. Universal renderer theorems remain for the core fragment.
 8. **Order of work: formula-level English first (S0–S5), then the statement layers one at a time (S6).** The
@@ -96,19 +104,20 @@ Gaps in this enforcement:
 |---|---|---|
 | Fixed productions, base | 82 alternatives over 20 nonterminals | `english_lark_grammar` |
 | `order@0` | 9 integer-term alternatives, 5 comparison clauses | same; `_COMPARISONS` |
-| `data@0` attribute sugar | 2 clause schemas per functional total relation | same |
+| `data@0` attribute sugar | per functional total binary relation: 1 alternative (`the R of t is t`), and 1 more per unary predicate on its value sort (`the R of t is P`, :1907–:1912). The second is a product | same |
 | `alternatives@0` guards | about 10 alternatives, 1 extra reference form | same |
 | Natural clauses (`some`, `no`, `every ADJ NOUN`) | 14 alternatives | `_natural_grammar` (:1972) |
 | Risk wordings | 4 fixed wordings, 2 fixed negatives | `EnglishVocabulary` |
 | Per predicate | up to 3 rules per wording (clause, subject relative, object relative), for the positive wording, the validated negative and input aliases | generated |
 | Per constant, per sort | up to 3 spellings; 1 noun (10 declaration and 10 reference forms through fixed rules) | generated |
-| Bounds | `MAX_PREDICATES` 256, `MAX_SORTS` 32: at most about 1,600 wording rules | `ve/limits.py` |
+| Bounds | `MAX_PREDICATES` 256, `MAX_SORTS` 32: at most about 1,600 wording rules. The attribute-property product is not linear: it peaks at 128 × 128 = 16,384 alternatives (*probe*: a validated `data@0` environment with 128 functional total relations and 128 compatible properties gave 16,384 such alternatives and 16,771 atom alternatives in all) | `ve/limits.py`; review, Astra round 1 |
 | Vocabulary policy | 13 unary and 25 binary idioms, 9 complement and active-phrase patterns, about 18 lint codes | `english_vocabulary.py`, `printer.py`, `english.py` |
 | Advisory lexicon | 72,780 OEWN entries, used only by `ve propose`, never by the parser | `ve/lexicon/` |
 
 The largest committed environment has 48 `verbalisation` entries (`usecases/eligibility`, *static*). The grammar
 has no empty production once `?` and `*` are expanded, and no left recursion (*static*; lists and guards are
-right-recursive or fixed-arity).
+right-recursive or fixed-arity). No committed environment comes near the attribute-property product, so counts on
+the corpus would not show it. S0 therefore also measures synthetic limit environments (section 5).
 
 Three neighbours are out of scope. `ve/parser.py` is the strict surface: deterministic, already decided by Lean in
 `parse` mode except the `definitions@0` sugar, which is a recorded gap. `ve/grammar.py` exports strict grammars for
@@ -207,6 +216,7 @@ sentence, and any Lean timing for this design. These are S0 and S1a deliverables
 | D. Certify each environment's grammar as LR(k) or LL(k) | reject | wordings share prefixes and have term holes, so conflicts are routine; a verified table construction is heavier than A |
 | E. An untrusted fast parser emits a chart, Lean checks its closure | reject | the closure check costs as much as parsing and its proof is the completeness proof of A |
 | F. CYK over a normal form | reject | the normal-form transformation must be proved to preserve derivation counts, and cubic time is unconditional |
+| H. Span-length-ordered table | hold in reserve, before G | fills entries by increasing span length, so it needs only "no empty rule, no unit cycle" and admits left recursion; the cap invariant and the statements of 3.2 are unchanged. The first fallback if a wording needs left recursion |
 | G. Verified Earley | hold in reserve | needed only if left recursion or empty rules become necessary; the proof is far larger |
 
 ### 2.2 Architecture
@@ -223,8 +233,17 @@ grammar = fixed rules (generated table literals) + rules instantiated from the v
   rank, it fills a table entry with the derivations of that nonterminal starting at that position, at most `cap`
   per end position. Because no rule is empty, every symbol after the first reads rows already filled; because the
   rank decreases to a leading nonterminal, the first symbol reads entries already filled in the same row. The
-  function is total by structural recursion on the row and the rule list, with no fuel. Rules are indexed by their
-  first word, so a keyword-led rule costs nothing at positions where its keyword is absent.
+  function is total by structural recursion on the row and the rule list, with no fuel.
+  - *Cap invariant.* Every entry is either complete (it holds every derivation of its nonterminal over its span)
+    or holds exactly `cap` trees. Truncation to `cap` preserves this. `parse_complete` is proved from it (3.2).
+  - *Rule-suffix memoisation.* A second table holds, for each rule suffix and start position, up to `cap` matches
+    of that suffix per end position, under the same invariant. A suffix is then matched once per start position,
+    not once per way of splitting the span. Without this the cost is not cubic: a cap on complete entries does
+    not bound the enumeration of splits across a long right-hand side.
+  - *Shared witnesses.* A stored tree refers to the stored trees of its parts. Nothing is copied.
+  - *Indexing.* A keyword-led rule is indexed by its first word. Predicate wording rules start with a term hole
+    (`english.py:1915–:1922`), so first-word indexing does not reach the bulk of the grammar. Indexing a hole-led
+    rule by the first terminal after the hole is an optimisation that S1a measures. No cost claim rests on it.
 - **Three verdicts with witnesses.** With `cap = 2` the result is none, one tree, or two distinct trees. The two
   trees are re-checked by the checking function, so an "ambiguous" verdict is self-certifying and gives the editor
   the pair that Python prints today.
@@ -255,21 +274,43 @@ Extensions the plain model needs, all listed in 1.3: a terminal-matching relatio
 terminal classes; one compiled feature (slot sort); side conditions in meanings; threaded document state. Nothing
 found needs context-sensitive rules.
 
-### 2.4 The lexicon leaves the trusted base
+**One product is factored.** Python's grammar has one alternative for each pair of a functional total relation and
+a unary predicate on its value sort (1.2). Lean's grammar has one rule per relation, over a property nonterminal
+of the value sort, and one rule per unary predicate under the nonterminal of its sort. Each pair still has exactly
+one derivation, and the size is the sum of the two counts, not their product. The correspondence is part of the
+tree correspondence of section 4, and S0 measures it on synthetic limit environments. If the factoring turns out
+not to be one-to-one, the DRI reviews a new resource limit instead.
+
+### 2.4 The lexicon: validated and identified, not yet out of the trusted base
 
 Python's `EnglishVocabulary` decides, per symbol, whether the declared wording passes the lint or is replaced by
-the quoted fallback (`is classified as "name"`). That policy is long and special-cased. It affects which sentences
-are convenient to write, not whether a reading is unique, because uniqueness is decided per sentence. So:
+the quoted fallback (`is classified as "name"`). That policy is long and special-cased. Draft 1 said that it only
+affects which sentences are convenient to write. **That claim is withdrawn.** Choosing among honest wordings is
+not meaning-neutral. When two predicates declare the same template, Python demotes both to the fallback
+(`english.py:263`, `:368`); a producer free to keep the template for either one would make the same text read
+uniquely as `P(a, b)` under one lexicon and as `Q(a, b)` under another. A negative wording is admitted today only
+if it equals `negative_template` of the positive one (`english.py:384`, `english_vocabulary.py:58`). So:
 
 - Python (or anyone) proposes the selected lexicon. It is sent with the request and bound to an identity.
-- Lean checks `Lexicon.valid`: every selected wording is the wording declared in the environment or overlay, the
-  wording fixed by a profile block, the mechanical wording of a bare identifier, or the quoted fallback; arities
-  and holes match the declaration.
-- A producer can therefore only choose among honest wordings of the same symbol. The legend already shows the
-  selected wording per symbol; it remains the reader's reference.
+- Lean checks `Lexicon.valid`, three conditions:
+  1. every selected wording is the wording declared in the environment or overlay, the wording fixed by a profile
+     block, the mechanical wording of a bare identifier, or the quoted fallback; arities and holes match the
+     declaration;
+  2. no selected wording, negative or alias equals, by `wording_key`, a declared wording, negative, alias or
+     profile wording of another symbol;
+  3. a selected negative equals a Lean `negativeTemplate` of the selected wording (a port of
+     `negative_template`, listed in section 6).
+- **The guarantee is per validated, identified lexicon.** Lean proves P1 for a fixed lexicon (3.5). It does not
+  prove that two valid lexicons give a text the same reading: sort nouns and constant spellings are selected too.
+  Only a proved theorem that quantifies over two valid lexicons would restore draft 1's claim. None is scheduled.
+- **S0 sorts every lint code** into one of three classes: subsumed by per-sentence uniqueness; meaning-relevant,
+  and ported into `valid`; or reader protection, which stays a retained Python check until the DRI decides.
+  Retiring `EnglishParser` (S7) is gated on that decision.
+- **Lexicon mutation replay is an empirical gate** (section 5): under a changed valid lexicon a corpus text may
+  lose its reading, but it must never get a different formula. This is evidence, not proof.
 
-Declared templates remain trusted semantic declarations, as today: Lean cannot tell that `disowns` was declared to
-mean `owns`.
+The legend already shows the selected wording per symbol; it remains the reader's reference. Declared templates
+remain trusted semantic declarations, as today: Lean cannot tell that `disowns` was declared to mean `owns`.
 
 ### 2.5 Statement layers and display text
 
@@ -347,6 +388,15 @@ contract: completeness within the budget, an explicit resource outcome outside i
 a reject-everything parser. `parse_sound` and `decide_many` hold because `parse` re-checks each returned tree with
 `Tree.derives`; they do not depend on the table invariant. **The one hard theorem is `parse_complete`.**
 
+`parse_complete` is proved from the **cap invariant** of the table (2.2): every entry, for a nonterminal or for a
+rule suffix, is a duplicate-free list of derivations of its span, and it is either complete or of length exactly
+`cap`. An entry shorter than `cap` is therefore complete, which is the hypothesis `ts.length < cap`.
+
+**Cost.** With rule-suffix memoisation and shared witnesses, a sentence of `n` tokens over a grammar whose
+right-hand sides have total length `|G|` takes at most a constant times `|G| · n³ · cap²` steps, and the tables
+hold at most `|G| · n² · cap` references. Without the memoisation neither bound holds. These are bounds on the
+specified algorithm; S1a measures steps, peak memory and latency (section 5).
+
 ### 3.3 Meaning and its totality (`Meaning.lean`, `VE/EnglishGrammar/Actions.lean`)
 
 ```lean
@@ -373,36 +423,53 @@ internal reason. It either denotes a formula or is rejected with a declared code
 ### 3.4 The one-reading decision (`Reading.lean`)
 
 ```lean
-def OneReading (G) (ty) (acts) (st : DState) (w : List Tok) (A : Formula) : Prop :=
-  ∃ t, Derives G S w t ∧ (∀ u, Derives G S w u → u = t) ∧ ∃ c st2, meaning G ty acts st t = .ok (A, c, st2)
+/-- One derivation, and its complete result: the formula, the conclusion mark and the successor state. -/
+def OneReading (G) (ty) (acts) (st : DState) (w : List Tok) (A : Formula) (c : Bool) (st2 : DState) : Prop :=
+  ∃ t, Derives G S w t ∧ (∀ u, Derives G S w u → u = t) ∧ meaning G ty acts st t = .ok (A, c, st2)
+
+/-- A document: its sentences read in order, the state threaded. Every formula and mark is exposed. -/
+def DocOneReading (G) (ty) (acts) : DState → List (List Tok) → List (Formula × Bool) → DState → Prop
+  | st, [], [], st2 => st2 = st
+  | st, w :: ws, (A, c) :: rs, st2 =>
+      ∃ st1, OneReading G ty acts st w A c st1 ∧ DocOneReading G ty acts st1 ws rs st2
+  | _, _, _, _ => False
 
 inductive Outcome where
   | ok (A : Formula) (conclusion : Bool) | noDerivation | ambiguous (t u : Tree) | rejected (r : Reject) | budget
 def readSentence (G) (ty) (acts) (st : DState) (b : Nat) (w : Array Tok) : Outcome × DState
+def readDocument (G) (ty) (acts) (st : DState) (b : Nat) (ws : List (Array Tok)) : DocOutcome × DState
 
 theorem read_sound    : G.wf = true → G.typed ty acts = true →
-    (readSentence G ty acts st b w).1 = .ok A c → OneReading G ty acts st w.toList A
-theorem read_complete : G.wf = true → G.typed ty acts = true → OneReading G ty acts st w.toList A →
-    (∃ c, (readSentence G ty acts st b w).1 = .ok A c) ∨ (readSentence G ty acts st b w).1 = .budget
+    readSentence G ty acts st b w = (.ok A c, st2) → OneReading G ty acts st w.toList A c st2
+theorem read_complete : G.wf = true → G.typed ty acts = true → OneReading G ty acts st w.toList A c st2 →
+    readSentence G ty acts st b w = (.ok A c, st2) ∨ (readSentence G ty acts st b w).1 = .budget
+theorem doc_sound     : G.wf = true → G.typed ty acts = true →
+    readDocument G ty acts st b ws = (.ok rs, st2) → DocOneReading G ty acts st (ws.map (·.toList)) rs st2
+theorem doc_complete  : G.wf = true → G.typed ty acts = true →
+    DocOneReading G ty acts st (ws.map (·.toList)) rs st2 →
+    readDocument G ty acts st b ws = (.ok rs, st2) ∨ ∃ i, (readDocument G ty acts st b ws).1 = .stopped i .budget
 
-/-- Translation mode: the meanings of all derivations, when the list is below the cap. -/
+/-- Translation mode: the complete results of all derivations, when the list is below the cap. -/
 theorem readings_exact : G.wf = true → G.typed ty acts = true → parse G cap b w = some ts → ts.length < cap →
-    (A ∈ readingSet G ty acts st ts ↔
-       ∃ t c st2, Derives G S w.toList t ∧ meaning G ty acts st t = .ok (A, c, st2))
-theorem one_reading_single : OneReading G ty acts st w A →
-    (∃ t c st2, Derives G S w t ∧ meaning G ty acts st t = .ok (B, c, st2)) → B = A
+    (r ∈ readingSet G ty acts st ts ↔ ∃ t, Derives G S w.toList t ∧ meaning G ty acts st t = .ok r)
+theorem one_reading_single : OneReading G ty acts st w A c st2 →
+    Derives G S w t → meaning G ty acts st t = .ok (B, d, st3) → B = A ∧ d = c ∧ st3 = st2
 ```
 
-`one_reading_single` is the link asked for in the direction: one derivation implies a one-element meaning set. The
-converse is false, which is why authoring keeps the stricter criterion (section 0, change 2). When the list reaches
-the cap, translation mode reports an incomplete set, never a complete one.
+`OneReading` no longer hides the conclusion mark and the successor state behind an existential, and
+`DocOneReading` is the fold that the document theorems are stated against: formulas, marks and state transitions
+all correspond. `one_reading_single` is the link asked for in the direction: one derivation implies a one-element
+meaning set. The converse is false, which is why authoring keeps the stricter criterion (section 0, change 2).
+When the list reaches the cap, translation mode reports an incomplete set, never a complete one.
 
 ### 3.5 The English instance, the render round trip, conservativity (`VE/EnglishGrammar/*`)
 
 ```lean
 structure Lexicon where …     -- per sort: noun, letter; per predicate: wording, negative, aliases;
                               -- per constant: spellings
-def Lexicon.valid (E : Environment) (O : Overlay) (L : Lexicon) : Bool          -- section 2.4
+def wordingKey : String → String                                                -- port of `wording_key`
+def negativeTemplate (wording : String) (arity : Nat) : Option String           -- port of `negative_template`
+def Lexicon.valid (E : Environment) (O : Overlay) (L : Lexicon) : Bool          -- section 2.4, conditions 1 to 3
 def fixedRules (profiles : List String) : Array Rule                            -- generated table literals
 def lexRules (E : Environment) (L : Lexicon) : Array Rule                       -- wordings, nouns, spellings
 def grammar (E : Environment) (L : Lexicon) : Grammar
@@ -410,30 +477,54 @@ def lex : String → Except Reject (Array (Array Tok))                          
 def read (E) (O) (L) (b : Nat) (s : String) : DocOutcome
   -- checks Lexicon.valid, wf and typed (else `invalidGrammar`), folds readSentence, then `Formula.check`
 
-def EnglishOneReading (E) (L) (s : String) (As : List Formula) : Prop :=
-  ∃ sents, lex s = .ok sents ∧ DocOneReading (grammar E L) sents As ∧ ∀ A ∈ As, A.check E [] = true
+/-- `rs` lists each sentence's formula with its conclusion mark. The lexicon's validity is part of the claim. -/
+def EnglishOneReading (E) (O) (L) (s : String) (rs : List (Formula × Bool)) : Prop :=
+  L.valid E O = true ∧
+  ∃ sents st2, lex s = .ok sents ∧
+    DocOneReading (grammar E L) ty acts DState.init (sents.toList.map (·.toList)) rs st2 ∧
+    ∀ r ∈ rs, r.1.check E [] = true
 
-theorem read_ok : read E O L b s = .ok As marks → EnglishOneReading E L s As
+theorem read_ok : read E O L b s = .ok rs → EnglishOneReading E O L s rs
 
-def checkRendering (E) (O) (L) (b : Nat) (As : List Formula) (s : String) : Bool   -- `read … s` returns exactly `As`
-theorem checked_rendering : checkRendering E O L b As s = true → EnglishOneReading E L s As
+/-- P1, for one validated, identified lexicon. It says nothing about a second lexicon. -/
+theorem english_reading_unique : EnglishOneReading E O L s rs → EnglishOneReading E O L s rs2 → rs = rs2
 
-/-- Adding rules (a profile, a predicate, a wording) never changes an accepted sentence's formula:
-the sentence keeps its reading or becomes visibly ambiguous. -/
-theorem extension_safe : Embeds G G2 → OneReading G ty acts st w A →
-    OneReading G2 ty2 acts st w A ∨ ∃ t u, Derives G2 S w t ∧ Derives G2 S w u ∧ t ≠ u
+def checkRendering (E) (O) (L) (b : Nat) (rs : List (Formula × Bool)) (s : String) : Bool
+  -- `read … s` returns exactly `.ok rs`: the formulas and the marks
+theorem checked_rendering : checkRendering E O L b rs s = true → EnglishOneReading E O L s rs
+
+/-- An embedding of `G` into `G2` (start symbols `S`, `S2`): a map on trees that is injective, preserves
+yields, and preserves every successful meaning under the same initial state: the formula, the conclusion
+mark and the successor state. An injective rule map that preserves both sides of each rule, its action
+and its types induces one. -/
+structure Embeds (G G2) (ty ty2) (acts acts2) (emb : Tree → Tree) : Prop where
+  derives   : Derives G S w t → Derives G2 S2 w (emb t)
+  injective : emb t = emb u → t = u
+  meaning   : Derives G S w t → meaning G ty acts st t = .ok r → meaning G2 ty2 acts2 st (emb t) = .ok r
+
+/-- Adding rules (a profile, a predicate, a wording) never changes an accepted sentence's reading:
+the sentence keeps its formula, mark and successor state, or becomes visibly ambiguous. -/
+theorem extension_safe : Embeds G G2 ty ty2 acts acts2 emb → OneReading G ty acts st w A c st2 →
+    OneReading G2 ty2 acts2 st w A c st2 ∨ ∃ t u, Derives G2 S2 w t ∧ Derives G2 S2 w u ∧ t ≠ u
 ```
 
 - **Render round trip.** `checked_rendering` is the theorem: any text that passes the check has exactly one
-  derivation, and that derivation means the rendered formulas. It follows directly from `read_ok`. It covers every
-  profile and both renderers (Python's `render_english` today, a Lean renderer later), because the renderer is an
+  derivation, and that derivation means the rendered formulas, with their marks. It follows directly from
+  `read_ok`. It covers every profile and both renderers (Python's `render_english` today, a Lean renderer later), because the renderer is an
   untrusted producer. It does **not** say the renderer always succeeds; today that is also a run-time failure
   ("No writable English form passed the one-reading check").
 - **Conservativity** has three parts, and only the first is a theorem:
-  1. `extension_safe` (Lean): growth of the grammar cannot silently change a meaning.
+  1. `extension_safe` (Lean): growth of the grammar cannot silently change a meaning. Its premise is semantic,
+     not only syntactic: `Embeds` must preserve types, actions and successful meanings, with `ty2` and `acts2`
+     tied to `ty` and `acts` by the embedding. **Reselecting vocabulary is not an extension.** When an added
+     declaration makes the producer select a different wording for an existing symbol, the old rule is gone, no
+     embedding exists, and the theorem says nothing. That case is covered only by the mutation replay gate.
   2. Replay gate (executed, sections 5 and 6): every sealed corpus item that Python accepts today gets the same
      formulas, canonical text and identities from Lean; every item rejected today is rejected, in the mapped class.
+     This is measured compatibility on the corpus, not universal conservativity.
   3. By construction: no existing Lean module, wire form, canonical text or identity is edited.
+- **P1 and the lexicon.** `english_reading_unique` is P1 of the verification contract for a fixed, validated
+  lexicon. Independence from the choice of lexicon is not claimed (2.4).
 - **Lexer.** `lex` is a definition, so string-level determinism is immediate. No lexer theorem is needed for the
   statements above. A lexing round trip for renderer output is needed only for 3.6.
 
@@ -451,6 +542,10 @@ static tier to more constructs remains optional work whose absence no longer wea
   `invalidGrammar`), formulas in wire form, canonical strict text, conclusion marks, the derivation as rule tags
   with token spans, and for `many` the two witness trees. The service caches the instantiated grammar by
   environment and lexicon identity. A second mode, `english.grammar`, exports the instantiated grammar as JSON.
+- **Evidence is bound to what was decided.** Every response carries the identities of the exact source, the
+  environment, the overlay, the selected lexicon, the grammar tables and the action library version. The service
+  computes them from the request it decided; it does not echo the caller's. A record that cites a reading cites
+  all six, and a change to any of them invalidates it.
 - **Shadow, then authority**, through the existing dispatch (`ve/backends/dispatch.py`, `VE_AUTHORITY_OVERRIDES`).
   In shadow, Python's result is returned and every difference is logged. Under Lean authority Python follows the
   `_parse_lean` precedent: Lean decides acceptance; Python's own reading must equal Lean's formulas and canonical
@@ -460,30 +555,40 @@ static tier to more constructs remains optional work whose absence no longer wea
   rephrasing flows. The `many` witnesses and translation-mode sets give the IDE exact alternatives to phrase.
 - **Python's grammar is generated from Lean's.** After S5 the Lark grammar used for editor diagnostics and
   constrained decoding is a mechanical conversion of the `english.grammar` export, and the `grammar_hook`s are
-  deleted. Before that, S2 adds a structural parity check: for each corpus environment, Python's generated grammar
-  and Lean's are compared as rule sets after a mechanical word-level translation. Equal rule sets give evidence of
-  equal languages that does not depend on sampling sentences.
-- **Lexicon identity.** Records gain a `lexicon_id` as an additive field. No existing identity changes; S0
-  confirms this against the wire freeze.
+  deleted.
+- **Parity before that is derivation parity, not rule-set equality.** The acceptance criterion counts
+  derivations, and the factoring of 2.3 makes the two rule sets differ on purpose. S0 defines the **tree
+  correspondence** between a Lark derivation and a Lean derivation: how EBNF expansion (`?`, `*`, `+`, inlined
+  rules), duplicate productions, overlapping terminals, phrase terminals split into word tokens, and the
+  factoring of 2.3 map one to the other. S2 then compares, for each corpus text: the verdict (zero, one or many),
+  the formulas, and the witness multiplicity. Equal languages alone do not establish that rejections agree.
+  Adversarial lexical cases are part of the corpus. A change that cannot be avoided goes through the delta
+  process of section 5.
+- **Identities.** Records gain a `lexicon_id`, a grammar-table identity and the action library version as
+  additive fields. No existing identity changes; S0 confirms this against the wire freeze.
 
 ## 5. Migration: stages, gates, budgets
 
 | Stage | Content | Gate | Effort |
 |---|---|---|---|
-| S0 Measure and seal | run the inventory (below); seal the corpus; baseline timings | G0: formula-level English fits the model with only the extensions of 2.3, or the misfits are reviewed | 4–5 d |
-| S1a Prototype | executable `parse` on tokens, no proofs; timing on the corpus and on synthetic worst cases | G1a: budgets below are met, or the table strategy changes before any proof is written | 4 d |
-| S1b Generic proofs | 3.1–3.4 theorems; audit, frozen-inventory and layer entries | G1b: audit clean, standard axioms only | 2–3 w |
-| S2 English instance | lexer, fixed-rule JSON and generator, `lexRules`, actions, `english.read`, shadow wiring; base constructs, contractions, validated negatives, coordination, closure, natural clauses | G2: grammar parity on every corpus environment; zero unexplained differences on the sealed corpus | 2–3 w |
+| S0 Measure and seal | run the inventory (below), including synthetic limit environments, the tree correspondence and the lint-code sort; seal the corpus; baseline timings | G0: formula-level English fits the model with only the extensions of 2.3, or the misfits are reviewed; the grammar-size ceiling is set from measurement | 4–5 d |
+| S1a Prototype | executable `parse` on tokens with rule-suffix memoisation and shared witnesses, no proofs; steps, peak memory and latency on ordinary inputs, long failing prefixes and highly ambiguous inputs, on the corpus and at limit sizes | G1a, a pass gate: every budget below is met, or a revision of the budgets or of the strategy is reviewed and then passes measurement. No proof is written before it passes | 4 d |
+| S1b Generic proofs | 3.1–3.4 theorems, after the statement review; audit, frozen-inventory and layer entries | G1b: audit clean, standard axioms only | 2–3 w |
+| S2 English instance | lexer, fixed-rule JSON and generator, `lexRules`, `Lexicon.valid`, actions, `english.read`, shadow wiring; base constructs, contractions, validated negatives, coordination, closure, natural clauses | G2: derivation parity on every corpus text under the tree correspondence (verdict, formulas, witness multiplicity); the reverse corpus and the lexicon mutation replay clean; zero unexplained differences on the sealed corpus | 2–3 w |
 | S3 Formula-level profiles | `order@0`, `data@0` sugar, alternatives guards, risk wordings and blocked forms, modal atoms | G3: as G2, per profile, with a delta report | 1–1.5 w |
-| S4 Shadow | default-on shadow; nightly generators | G4: 14 consecutive clean days; every difference dispositioned | 1 w + window |
-| S5 Authority | `english.admission` authority becomes Lean; renderer outputs checked by Lean; Lark leaves the admission path; Python's grammar generated from Lean's | G5: support-matrix diff empty for S and R cells; manifest and trust rows updated | 3–5 d |
+| S4 Shadow | default-on shadow; nightly generators with fresh seeds | G4: 14 consecutive clean days, and the fresh-seed volume and coverage targets met; zero undispositioned differences | 1 w + window |
+| S5 Authority | `english.admission` authority becomes Lean; renderer outputs checked by Lean; Lark leaves the admission path and stays a logged, non-authoritative comparator until S7; Python's grammar generated from Lean's | G5: support-matrix diff empty for S and R cells; manifest and trust rows updated | 3–5 d |
 | S6 Statement layers | one layer per step, in the order of 1.4 | per layer: delta report reviewed; changed rejections decided by the DRI | about 1 w each |
-| S7 Later, each a separate decision | static tier (3.6); meaning-set criterion for authoring; retiring `EnglishParser`; display-only text; P1–P3 for the strict surface on the same engine | — | — |
+| S7 Later, each a separate decision | static tier (3.6); meaning-set criterion for authoring; retiring `EnglishParser` (gated on the DRI's decision on the reader-protection lint class, 2.4); retiring the Lark comparator; a two-lexicon theorem; display-only text; P1–P3 for the strict surface on the same engine | — | — |
 
 **S0 inventory deliverable** (`docs/spec/english-lean-measured.md`): per corpus environment, the number of rules,
-nonterminals and the longest right-hand side; the token-length histogram of corpus sentences; confirmation that
-the expanded grammar has no empty rule and no left recursion; every regex terminal that is not a word sequence;
-the classification of the 49 rejection sites; Earley time per sentence; and character-versus-token probes (7.2).
+nonterminals and the longest right-hand side; the same for **synthetic limit environments** (256 predicates,
+across the profiles and across declaration shapes: unary, binary, functional total, integer slots), before and
+after the factoring of 2.3; the token-length histogram of corpus sentences; confirmation that the expanded grammar
+has no empty rule and no left recursion; every regex terminal that is not a word sequence; the **tree
+correspondence** of section 4, written out; the classification of the 49 rejection sites; the **sort of every
+lint code** into the three classes of 2.4; Earley time per sentence; character-versus-token probes (7.2); and the
+G4 volume and coverage targets.
 
 **Shadow corpus (sealed with hashes in S0).** Every English text in the test suite (the 37 files of 1.6); the
 conformance generators (85,000 round-trip ASTs with their renderings, 12,750 Earley texts, 850 documents, 6,757
@@ -491,6 +596,18 @@ mixed texts, 1,220 natural statements); every use-case document and rendering; t
 `bench/PROFILE-GOLDEN.json` (they live in sibling checkouts, so S0 copies or pins them); the rejection fixtures,
 including the constructed two-derivation cases of `tests/test_english_unambiguity.py`. The existing 85,000-pair
 Python–W7 differential gains the new reader as a third arm: on the 57,765 core texts all three must agree.
+
+**Reverse corpus.** The items above are almost all Python renderings or Python-accepted fixtures, so they test
+one direction: what Python accepts, Lean accepts. The unsafe direction is a text that Lean accepts and Python
+rejects (7.2). From S2, when the `english.grammar` export exists, the corpus therefore gains texts **sampled from
+Lean's exported grammar**, each with spacing mutants and word-split mutants, and each is compared against both the
+hand parser and Lark. G4 draws them with fresh seeds. After S5 Lark stays in this role, as a logged comparator
+with no authority, until S7.
+
+**Lexicon mutation replay.** For each corpus environment, the selected lexicon is mutated to other valid
+lexicons (one symbol at a time moved to another honest wording) and the corpus texts are read again. A text may
+lose its reading. It must never get a different formula. This is an empirical gate of G2 and G3; it is not a
+theorem (2.4).
 
 **Comparison rule.** Accepted by both: equal formulas (wire form), equal canonical strict text, equal document
 identity, equal conclusion marks. Rejected by both: classes map as `AmbiguousDerivation` ↔ `many`; `SyntaxError` ↔
@@ -505,14 +622,19 @@ with a release note, so that shadow stays exact).
 |---|---|---|
 | Document size | 64 KiB source, 10,000 normalised characters | today's limits, unchanged |
 | Sentence length | no separate cap below the document limit; 150 tokens is the design point | longest admitted sentence on record |
-| Grammar size | at most 8,192 rules after instantiation; fixed part at most 400 | 256 predicates × 6 plus constants plus fixed |
+| Grammar size | no ceiling is fixed in this draft: draft 1's 8,192 excluded an environment that is valid today (1.2). S0 measures the expanded size on synthetic limit environments, with the factoring of 2.3 as the default, and sets the ceiling from that; fixed part at most 400 | measurement in S0; without the factoring the DRI reviews a new limit |
 | Work budget | a deterministic step count, set in S1a at 10× the largest corpus need | replaces the 30-second wall clock |
 | Latency, warm service | corpus sentence p95 ≤ 20 ms; 150-token sentence ≤ 50 ms; BlueDot document ≤ 1 s | Python today: 95 ms and 1.04 s |
 | Grammar instantiation | ≤ 100 ms per environment, cached by identity | one-shot Lean medians of 47–152 ms |
 | Lean build | generated rule modules add ≤ 60 s to `lake build` | to be measured in S2 |
 
-Stop rule at G1a: if the prototype misses a latency budget by more than 5× on the corpus, add first-token and
-left-corner filtering and re-measure; if it still misses, stop and re-plan with option G before proving anything.
+**G1a is a pass gate.** S1a measures deterministic steps, peak memory and latency, on ordinary inputs, on long
+failing prefixes and on highly ambiguous inputs, on the corpus and on the synthetic limit environments. Any missed
+budget, by any factor, means optimise (first-token and left-corner filtering, indexing of hole-led rules) and
+measure again. Proof work starts only when every budget is met, or when a revision of the budgets or of the
+strategy has been reviewed and then passes measurement. A miss by more than 5× is the threshold for escalation:
+investigate, and re-plan with option H or G before proving anything. The threshold decides escalation, never
+acceptance.
 
 ## 6. Trusted base and the trust map
 
@@ -522,7 +644,8 @@ left-corner filtering and re-measure; if it still misses, stop and re-plan with 
 |---|---|---|
 | `Tree.derives`, `Grammar`, `Terminal.accepts` | about 80 lines | definition: what a derivation is |
 | Fixed rules (generated table literals; JSON source) | 150–250 rules, formula level | data |
-| `lexRules`, `Lexicon.valid` | about 200 lines | definition: how wordings become rules |
+| `lexRules`, `Lexicon.valid`, `wordingKey`, `negativeTemplate` (with the idiom and irregular-verb tables it reads) | about 300 lines; S0 re-estimates after the lint sort | definition: how wordings become rules, and which selections are valid |
+| Lint checks that S0 classes as reader protection | a part of the 300-line lint; S0 measures it | retained Python check, trusted until the DRI decides |
 | `lex` | about 150 lines | definition: what the tokens of a text are |
 | Action library, `meaning` | 70–90 actions, about 600 lines | definition: what a derivation means |
 | Theorem statements of 3.2–3.5 | — | reviewed statements |
@@ -530,21 +653,28 @@ left-corner filtering and re-measure; if it still misses, stop and re-plan with 
 | Declared templates; the reader's understanding of them | — | unchanged: semantic declarations |
 
 **No longer trusted for this claim:** `EnglishParser` (about 750 lines), source normalisation, `english_lark_grammar`
-and the hooks, the vocabulary lint (about 300 lines plus the printer lint), the audit and registry modules, Lark's
-Earley implementation, Python's `re`, and the parser implementation in Lean (it is proved). The base goes from
-roughly 2,000 lines of Python (*static*) plus a third-party parser and regex engine to roughly 1,000 lines of Lean
-definitions and 150–250 rules of data, with one proved parser.
+and the hooks, the audit and registry modules, Lark's Earley implementation, Python's `re`, and the parser
+implementation in Lean (it is proved). **The vocabulary lint is not in this list** (about 300 lines plus the
+printer lint): the checks S0 classes as meaning-relevant become Lean definitions in `valid`, the checks it classes
+as reader protection stay trusted Python, and only the checks it classes as subsumed leave the base. The base goes
+from roughly 2,000 lines of Python (*static*) plus a third-party parser and regex engine to roughly 1,100 lines of
+Lean definitions and 150–250 rules of data, with one proved parser, plus the retained lint checks. S0 re-estimates
+these figures after the lint sort. The claim itself is narrower than draft 1 stated: it is "one reading under this
+validated, identified lexicon".
 
 **Rows for the trust map** (to add when `docs/TRUST-MAP.md` lands; until then they go in the assurance manifest):
 
 - `english.admission`: authority `python` → `lean` at S5. `trusted` changes from `python:implementation`,
   `python:surface` to `lean:kernel`, `lean:compiler`, `lean:decoders`, `lean:runner-glue`,
-  `lean:english-definitions` (lexer, rules, actions) and `python:backend-adapter`.
+  `lean:english-definitions` (lexer, rules, actions, lexicon validity), `python:backend-adapter`, and
+  `python:vocabulary-lint` for the retained reader-protection checks, until the DRI retires them.
 - `assurance` stays `experimental` until the 3.2–3.5 theorems are in the audit inventory. After that the
-  one-reading claim may be labelled as proved **relative to the grammar definitions**. Until then records say
-  "Lean-executed, uniqueness proof pending", never "Lean-verified".
+  one-reading claim may be labelled as proved **relative to the grammar definitions and to the identified
+  lexicon**. Until then records say "Lean-executed, uniqueness proof pending", never "Lean-verified".
 - New row, definitions: the English grammar data and action library, with their identities in a lock file.
-- New row, producers: vocabulary policy, renderer, Python parser. Untrusted; outputs checked by Lean.
+- New row, producers: vocabulary selection, renderer, Python parser. Untrusted; outputs checked by Lean
+  (`Lexicon.valid`, `checkRendering`, comparison). The retained lint checks are not in this row.
+- New row, comparator: Lark after S5. Logged, no authority, retired at S7.
 - Unchanged rows: intent and source fidelity; templates as declarations; display of text not yet covered (1.4,
   last row), which keeps the label of trusted display.
 - Statement layers keep their current rows until their S6 step.
@@ -558,7 +688,8 @@ definitions and 150–250 rules of data, with one proved parser.
 2. **Characters versus tokens.** Lark's scannerless matching can split inside words; a word lexer cannot. Texts
    may exist that Python rejects as ambiguous and Lean accepts, or the reverse. S0 probes for them; each class
    needs a decision. The token-level definition is the principled one, but changing a rejection is a product
-   decision.
+   decision. The sealed corpus of draft 1 sampled this direction only through a few rejection fixtures; the
+   reverse corpus (section 5) is the systematic test.
 3. **Procedural rejections with no grammatical counterpart.** The "extends existing wording" check, ordered
    commitment to a keyword, and some blocked wordings reject texts that the generated grammar may derive. Each
    becomes a side condition, a rule change, or an accepted difference. The count is unknown until S0.
@@ -570,9 +701,11 @@ definitions and 150–250 rules of data, with one proved parser.
 6. **Well-formedness of instantiated grammars is checked at run time**, not proved for all environments. A lexicon
    that makes the grammar ill-formed is rejected as `invalidGrammar`. A theorem that `lexRules` preserves
    well-formedness is desirable and not scheduled.
-7. **Performance is unmeasured.** The worst case of the table parser is cubic in sentence length. The design
-   relies on keyword-led rules and first-word indexing. A deterministic budget may reject a pathological document
-   that Python's 30-second limit would accept.
+7. **Performance is unmeasured.** The worst case of the table parser is cubic in sentence length only with
+   rule-suffix memoisation and shared witnesses (3.2); a cap on complete entries alone does not give it. The
+   design cannot rely on first-word indexing: the bulk of the grammar is hole-led wording rules. Steps and peak
+   memory are as unmeasured as latency, and all three are measured at limit sizes as well as on the corpus
+   (G1a). A deterministic budget may reject a pathological document that Python's 30-second limit would accept.
 8. **Statement layers will show real differences.** Several have no whole-sentence check today; `report_english`
    treats an ambiguous embedded statement as no derivation. Moving them onto the engine will reject some texts
    accepted today. That is the point of the lead's decision, but each case needs review and a release note.
@@ -593,6 +726,14 @@ definitions and 150–250 rules of data, with one proved parser.
     the generic engine is possible and not planned.
 16. **Zero-training English is not solved by this.** Arbitrary English still has zero derivations. The plan gives
     the IDE exact witness pairs and reading sets to drive rephrasing; coverage remains the catalogue's job.
+17. **The guarantee is per lexicon.** One reading is proved for a validated, identified lexicon. Whether two valid
+    lexicons can give one text two different formulas is tested by mutation replay and not proved. Part of the
+    vocabulary lint stays trusted Python until S0's sort and the DRI's decision (2.4).
+18. **Grammar size is not linear in the vocabulary.** The attribute-property product reaches 16,384 alternatives
+    in an environment that is valid today (1.2). The factoring of 2.3 is the default answer; it changes the
+    shape of derivations, so it depends on the tree correspondence being one-to-one. Other products may exist in
+    profile combinations that no committed environment exercises; S0's synthetic limit environments look for
+    them.
 
 ## 8. Effort and order
 
@@ -603,4 +744,39 @@ largest uncertainty; the largest unknown in scope is the number of differences S
 
 Hard Lean (S1b, actions) goes to the Lean implementer; Python, generator and harness work to the Python
 implementer; the theorem statements of section 3 get a statement review before S1b starts, as the wire-contract
-statement spec did.
+statement spec did. They are written out in [english-lean.md](english-lean.md). S1b also waits for G1a.
+
+## 9. Review response (draft 2)
+
+The review of draft 1 (`manage-agents/debates/design-english-lean/{fable,astra}.md`) converged after round 3.
+Both reviewers keep the architecture. Fable's label is "BUILD, staged"; Astra's is "REVISE to draft 2, then BUILD
+through the staged gates"; they differ in name only. The joint position is Fable's list of eight edits (round 3)
+with Astra's three qualifications (round 3); where the two texts differ, Astra's governs. The edits that change
+what S0 measures (1, 3, 4 and the lint sort of 6) had to enter before S0; the rest before S1b. All are in this
+draft.
+
+| # | Converged edit | Where applied |
+|---|---|---|
+| 1 | **Size.** Drop the 8,192 ceiling. S0 measures the expanded size on synthetic limit environments across profiles and declaration shapes. Default: factor the attribute-property product (`english.py:1907`) into one rule per relation over a per-sort property nonterminal, derivations one-to-one; otherwise the DRI reviews a new limit | 1.2 (two rows, last paragraph), 2.3, section 5 (S0 row, inventory, budget table), 7.18 |
+| 2 | **Cost.** State the cap invariant. Specify rule-suffix memoisation and shared witnesses before claiming cubic cost. S1a measures steps, peak memory and latency on ordinary, failing-prefix and ambiguous inputs at limit sizes. Hole-led indexing is an optimisation to measure | 2.2, 3.2, section 5 (S1a row), 7.7 |
+| 2a | **G1a stays a pass gate** (Astra, qualification 3). Any miss means optimise and measure again. Proof work starts only when the budgets are met, or a reviewed revision of budgets or strategy passes measurement. The 5× threshold decides escalation, not acceptance | section 5 (S1a row, G1a paragraph), section 8 |
+| 3 | **Parity.** Define the tree correspondence (EBNF expansion, duplicate productions, overlapping terminals, phrase splitting, the factoring of edit 1). Compare verdicts, formulas and witness multiplicity, not rule sets | section 4, section 5 (S0 inventory, G2) |
+| 4 | **Reverse corpus.** Texts sampled from Lean's exported grammar, with spacing and word-split mutants, against the hand parser and Lark. Lark stays a logged comparator until S7 | section 5 (reverse corpus, S5 and S7 rows), section 6, 7.2 |
+| 5 | **`extension_safe`.** `Embeds` is an injective, yield-preserving tree embedding that preserves actions, types and successful meanings under the same state: formulas, conclusion marks and successor state (Astra, qualification 2). Vocabulary reselection is not an extension | 3.5 |
+| 6 | **Lexicon.** `valid` adds cross-symbol `wording_key` distinctness and equality with a Lean `negativeTemplate`. S0 sorts each lint code: subsumed, ported, or retained Python check. P1 is stated, scoped to the validated, identified lexicon. Mutation replay is an empirical gate (Astra, qualification 1). The unconditional claim that selection is meaning-neutral is removed; only a proved two-lexicon theorem restores it | section 0 (change 6), 2.4, 3.5, section 5 (mutation replay, S0 inventory, G2, S7 row), section 6, 7.17 |
+| 7 | **Contract.** `DocOneReading` is a fold over `DState`. `read_ok` and `checkRendering` conclude formulas and marks. `EnglishOneReading` includes `Lexicon.valid`. Evidence binds source, environment, overlay, lexicon, and grammar and action versions | 3.4, 3.5, section 4 |
+| 8 | **Options, shadow.** Add option H (span-ordered table) before G. G4 gains a fresh-seed volume and coverage gate with zero undispositioned differences | 2.1, section 5 (S4 row, S0 inventory) |
+
+Two notes for the DRI's check.
+
+- **Edit 8 is the one place where the two final texts differ.** Fable's round 3 writes "G4 becomes a fresh-seed
+  volume and coverage gate". Astra's round 3 writes "retain the existing grammar-family choice and shadow
+  duration; I withdraw changing either as a prerequisite". Astra's text governs. So the chosen parser is
+  unchanged and H is only listed in reserve, and G4 keeps the 14-day window and adds the volume and coverage
+  targets to it. Neither part of edit 8 blocks S0, S1a or S1b.
+- **Corpus conservativity is described as measured evidence** (Astra, rounds 1 and 2): 3.5 says so. The separate
+  statement-layer gates of S6 are unchanged.
+
+Not changed: sections 1.1, 1.3 to 1.6, 2.5, 3.1, 3.3, 3.6, the other risks of section 7, the effort estimates of
+section 8, and every figure taken from a committed report. The statement spec may sharpen a statement of section 3
+(a name, a hypothesis that is not needed); it lists each such change, and the statement review decides it.
