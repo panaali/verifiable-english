@@ -264,4 +264,13 @@ asks `supReady`, and `readings-choice` runs on any admitted document.
   `⊥` answers `ReadingsUnsatisfiable: <coupling and narrowing ids>`.
 * `readings-choice`: `choice` (a compatible complete choice) and `inner` (a case of the lower route without
   environment or document); Lean runs the lower route on `choiceDoc D c`'s units and answers `choice`,
-  `document_hash` (the chain's hash of that document) and `inner`.
+  `document_hash` (the chain's hash of that document), `assertions` (how many assertions `choiceDoc D c` has in
+  force) and `inner`. For the evidence kinds (the chain's `soft-certificate`, `norms-certificate` or
+  `rights-certificate`, and `choice-model`) the inner `premises` are the regenerated assertions in source order
+  (`choiceAssertionJsons`) followed by the case's own, so evidence cannot leave an assertion out (compose-s2
+  looprecheck1 review B). `choice-model` takes `premises`, optional `conclusion` (default `⊥`) and a base `model` in
+  the chain decoder's form (soft `decodeModel`, rights `decodeModelR`, norms `baseModelVocabulary`, no
+  definitions), and answers `valid` (the chain's base Background, `Lim_D` included on the rights chain, and every
+  premise read through the outcome substitution), `conclusion_value`, `first_failing` (the first failing premise's
+  index, else null) and `assertions`. `valid: true` with `conclusion_value: false` is `soft_choice_model_sound`,
+  `rights_choice_model_sound` or `norms_choice_model_sound`.

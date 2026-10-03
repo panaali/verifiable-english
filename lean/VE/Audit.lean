@@ -3791,3 +3791,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.readings_wire_assumed_taken
 #print axioms VE.Readings.exists_taking
 #print axioms VE.Readings.Wire.readings_wire_choice_wellFormed
+#print axioms VE.Readings.Run.soft_choice_model_sound
+#print axioms VE.Readings.Run.rights_choice_model_sound
+#print axioms VE.Readings.Run.norms_choice_model_sound

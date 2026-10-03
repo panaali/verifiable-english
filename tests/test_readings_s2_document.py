@@ -647,6 +647,131 @@ def test_review_a_class_every_reading_wordings_need_no_assumption(tmp_path):
     assert len(lines) == 1 and lines[0].startswith("Read sentence 1 as *should*: the conclusion does not follow.")
 
 
+def _lean_spy(monkeypatch):
+    from ve import readings_route
+    seen, real = [], readings_route.run_lean
+
+    def spy(cases, **kwargs):
+        rows = real(cases, **kwargs)
+        seen.extend(zip(cases, rows))
+        return rows
+
+    monkeypatch.setattr(readings_route, "run_lean", spy)
+    return seen
+
+
+def _inner_kinds(seen):
+    return [(tuple(map(tuple, case["choice"])), case["inner"]["kind"]) for case, _ in seen
+            if case["kind"] == "readings-choice"]
+
+
+def test_review_b_enumerated_evidence_is_replayed_by_lean(tmp_path, monkeypatch):
+    """The finding's case: M9's ALL is combined only from certificates Lean's soft route accepted on each choice's
+    regenerated document, and SOME's countermodel from a model Lean's `choice-model` checked there."""
+    path = _m9(tmp_path)
+    route = verdicts(path)
+    seen = _lean_spy(monkeypatch)
+    assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
+    choices = [tuple((R.id, c[R.id]) for R in route.sets) for c in route.choices]
+    assert _inner_kinds(seen) == [(c, "soft-certificate") for c in choices]
+    assert all(row["inner"]["valid"] is True for _, row in seen)
+    seen.clear()
+    some = route.entailment(every("warn_required"))
+    assert some["verdict"] == "SOME"
+    models = [row["inner"] for case, row in seen if case["inner"]["kind"] == "choice-model"]
+    assert models and all(m["valid"] is True and m["conclusion_value"] is False for m in models)
+    assert tuple(map(tuple, some["countermodel"]["choice"])) in {c for c, k in _inner_kinds(seen)
+                                                                 if k == "choice-model"}
+
+
+@pytest.mark.parametrize("kind", ["soft-certificate", "choice-model"])
+def test_review_b_lean_refusal_of_enumerated_evidence_is_unavailable(tmp_path, monkeypatch, kind):
+    from ve import readings_route
+    from ve.errors import CheckerUnavailable
+    path = _m9(tmp_path)
+    route = verdicts(path)
+    real = readings_route.run_lean
+
+    def refusing(cases, **kwargs):
+        rows = real(cases, **kwargs)
+        for case, row in zip(cases, rows):
+            if case["kind"] == "readings-choice" and case["inner"]["kind"] == kind:
+                row["inner"].update(valid=False)
+        return rows
+
+    monkeypatch.setattr(readings_route, "run_lean", refusing)
+    with pytest.raises(CheckerUnavailable, match="ReadingsConformance"):
+        route.entailment(every("warn_required", guard=ASKS) if kind == "soft-certificate" else every("warn_required"))
+
+
+def test_review_b_lean_supplies_the_choice_documents_assertions(tmp_path):
+    """Lean prepends the regenerated assertions of `choiceDoc D c`: a model that falsifies a fixed assertion fails
+    `choice-model` though the case sends no premise, and a certificate that needs the assertion is accepted."""
+    from ve.ast import _to_data
+    every_asks = ["forall", "agent", ["forall", "user", ASKS]]
+    path = s2_document(tmp_path, [("fixed", "ua", every_asks), *[
+        item for item in [("fixed", "u0", norm("f-warn", "warn_required", True, guard=ASKS)),
+                          ("set", "rs1", "u1", [("a", norm("r-a", "avoid_required", True, guard=REL("help_required")),
+                                                 "norm", None),
+                                                ("b", norm("r-b", "help_required", True, guard=REL("warn_required")),
+                                                 "norm", None)]),
+                          ("set", "rs2", "u2", [("c", norm("r-c", "warn_required", True, guard=REL("avoid_required")),
+                                                 "norm", None),
+                                                ("d", norm("r-d", "warn_required", True), "norm", None)])]]],
+                       raw=_k9())
+    route = verdicts(path)
+    assert route.route == "enumerated"
+    choice = route.choices[0]
+    own = route._choice(choice)
+    phi = every("warn_required")
+    proof = own.certified(phi)
+    assert proof is not None and proof["valid"] is True
+    model = {"complete": True, "domains": {"agent": ["a"], "user": ["u"]}, "constants": {},
+             "relations": {name: [] for name in own.soft.elaborated.base_environment().predicates}}
+    row = route.lean("readings-choice", choice=route.choice_json(choice),
+                     inner={"kind": "choice-model", "premises": [], "conclusion": None, "model": model})
+    assert row["assertions"] == 1 and row["inner"]["assertions"] == 1
+    assert row["inner"]["valid"] is False and row["inner"]["first_failing"] == 0, row
+    model["relations"]["asks"] = [["a", "u"]]
+    row = route.lean("readings-choice", choice=route.choice_json(choice),
+                     inner={"kind": "choice-model", "premises": [], "conclusion": _to_data(own._phi(phi)),
+                            "model": model})
+    assert row["inner"]["valid"] is True and row["inner"]["conclusion_value"] is True, row
+
+
+def test_review_b_rights_and_norms_chains_replay_models_and_certificates(tmp_path, monkeypatch):
+    """The class on the other chains: the rights chain's premise models (M12) and the norms chain's enumerated
+    verdicts are checked by Lean's `choice-model` and the chain's certificate kind."""
+    seen = _lean_spy(monkeypatch)
+    path = s2_document(tmp_path, [("set", "rs9", "u9", [("strict", _claim("strict"), "right", None),
+                                                        ("default", _claim("default"), "right", None)])],
+                       raw=env_rights())
+    route = verdicts(path)
+    premises = route.premises()
+    assert premises["status"] == "model" and premises["model"]["domains"]
+    assert {k for _, k in _inner_kinds(seen)} >= {"choice-model"}
+    arrested = ["forall", "state", ["forall", "person", ["implies", ["binary", "arbitrary_arrest", ["var", 1],
+                                                                      ["var", 0]],
+                                                         ["not", ["binary", "arrest_permitted", ["var", 1],
+                                                                  ["var", 0]]]]]]
+    seen.clear()
+    data = route.entailment(arrested)
+    # Under *must* the claim refuses every arbitrary arrest; under *should* an exception may apply.
+    assert data["verdict"] == "SOME" and data["proof"]["choice"] == [["rs9", 0]], data
+    assert {k for _, k in _inner_kinds(seen)} == {"rights-certificate", "choice-model"}
+    assert all(row["inner"].get("valid") is True for case, row in seen if case["kind"] == "readings-choice")
+    # The norms chain: M9 without soft-norms@0 is not superposable either (its precedence cycle).
+    norms_raw = _k9()
+    norms_raw["profiles"] = ["norms@0", "readings@1", "relational-fol@0"]
+    seen.clear()
+    route = verdicts(_m9(tmp_path / "norms", raw=norms_raw))
+    assert route.route == "enumerated"
+    assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
+    assert route.entailment(every("warn_required"))["verdict"] == "SOME"
+    assert route.premises()["status"] == "model"
+    assert {k for _, k in _inner_kinds(seen)} == {"norms-certificate", "choice-model"}
+
+
 def test_review_b_dead_readings_null_when_certification_cannot_finish(tmp_path, monkeypatch):
     """The finding's case: M6 with its narrowing under proof-budget exhaustion (`max_steps=0`) reports
     `dead_readings` null, never `[]`, and `rs2:1` is not `dead` without its certificate."""

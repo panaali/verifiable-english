@@ -3,9 +3,11 @@
 Python's prover and model search are untrusted generators. On the superposed route every certificate and model they
 find on `sup D` is checked by Lean's readings route (`readings-conflict`, `readings-certificate`, `readings-model`,
 `readings-dead`) before a verdict is reported; on the enumerated route each compatible choice's own document is checked
-as an ordinary document of the lower route, its conflict status through `readings-choice`. A Lean refusal of
-evidence that Python's own check accepted is `CheckerUnavailable`, never a verdict; an exhausted search budget is
-UNKNOWN, which asserts nothing. Nothing here is computed for W2's, the pending or the abstaining route (1.1).
+as an ordinary document of the lower route through `readings-choice`, on the document Lean regenerates for the
+choice: its conflict status, every certificate (the chain's certificate kind) and every model (`choice-model`). A Lean
+refusal of evidence that Python's own check accepted is `CheckerUnavailable`, never a verdict; an exhausted search
+budget is UNKNOWN, which asserts nothing, and an absence that cannot be certified is reported as not computed.
+Nothing here is computed for W2's, the pending or the abstaining route (1.1).
 """
 from __future__ import annotations
 
@@ -380,7 +382,7 @@ class Superposed(_Route):
         taking = [c for c in pool if all(c.get(s) == i for s, i in A)][:self.MAX_LIFTS]
         for choice in taking:
             own = _ChoiceDocument(self, choice)
-            premises = own._all(gamma)
+            premises = own._all(gamma) + own.searched
             phi = Bottom() if conclusion is None else formula_from_data(own.env, conclusion, _generated=True)
             found = find_countermodel(own.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
                                       max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
@@ -696,10 +698,7 @@ class Enumerated(_Route):
         result = {"status": overall, "route": "enumerated", "evidence": "per choice",
                   "choices": [{"choice": c, "status": r["status"]} for c, r in rows]}
         if overall == "model":
-            result["choice"] = next(c for c, r in rows if r["status"] == "model")
-            model = self._choice(dict(result["choice"])).premise_model()
-            if model is not None:
-                result["model"] = model
+            result["choice"], result["model"] = next((c, r["model"]) for c, r in rows if r["status"] == "model")
         dead = {(d["set"], d["index"]) for d in (self.dead_readings() or [])}
         candidates = []
         for s, i in self.candidates():
@@ -785,52 +784,122 @@ class _ChoiceDocument:
         self.side = Side(senv, contents, route.source.unit_ids)
         if self.chain != "norms":
             self.side._elaborate()
+        # The layer premises in the lower route's certificate order: its Background (the soft premises, and `Lim_D`
+        # on the rights chain, are the environment's, which the prover prepends) ++ these ++ assertions ++ Γ.
         if self.chain == "soft":
             from .softnorms import SoftEnvironment
             self.lower_env = SoftEnvironment(lower)
             self.soft = self.side.soft
             self.env = self.soft.extended_env
-            self.premises_ = ([f for _, f in self.soft.elaborated.premises()] +
-                              [f for _, f in self.soft.extended_env.soft_premises])
+            self.layers = [f for _, f in self.soft.elaborated.premises()]
+            self.searched = [f for _, f in self.soft.extended_env.soft_premises]
         elif self.chain == "norms":
             from .environment import Environment
             from .norms import NormDocument
             self.lower_env = Environment(lower)
             self.norms = NormDocument(self.lower_env, [c.raw for c in contents if c.kind == "norm"])
             self.env = self.lower_env
-            self.premises_ = [f for _, f in self.norms.premises()]
+            self.layers = [f for _, f in self.norms.premises()]
+            self.searched = []
         else:
             from .document import _environment
             self.lower_env = _environment(lower)
             self.rights = self.side.rights
             self.soft = self.rights.soft_document
             self.env = self.soft.extended_env
-            self.premises_ = ([f for _, f in self.soft.elaborated.premises()] +
-                              [f for _, f in self.soft.extended_env.soft_premises] +
-                              [f for _, f in self.rights.limitation_premises])
+            self.layers = [f for _, f in self.soft.elaborated.premises()]
+            self.searched = ([f for _, f in self.soft.extended_env.soft_premises] +
+                             [f for _, f in self.rights.limitation_premises])
 
     def _all(self, gamma=()):
         from .ast import formula_from_data
-        return self.premises_ + [formula_from_data(self.env, ast, _generated=True)
-                                 for ast in self.assertions + list(gamma)]
+        return self.layers + [formula_from_data(self.env, ast, _generated=True)
+                              for ast in self.assertions + list(gamma)]
+
+    def _phi(self, conclusion_ast):
+        from .ast import Bottom, formula_from_data
+        return Bottom() if conclusion_ast is None else formula_from_data(self.env, conclusion_ast, _generated=True)
+
+    def certified(self, conclusion_ast, gamma=(), max_steps=None):
+        """A certificate of `conclusion_ast` (⊥ when None) from the choice's document and Γ: Python's prover finds
+        it (untrusted), and the lower route's own certificate kind accepts it on the document Lean regenerates for
+        the choice, its assertions included (`readings-choice`). The Lean answer, or None within the budget."""
+        from .ast import _to_data
+        from .entailment import check_entailment_certificate, prove_entailment
+        steps = BUDGET["max_steps"] if max_steps is None else max_steps
+        premises, phi = self._all(gamma), self._phi(conclusion_ast)
+        proof = prove_entailment(self.env, premises, phi, max_steps=steps)
+        if proof.status != "Found" or not check_entailment_certificate(self.env, premises, phi, proof.certificate,
+                                                                       max_steps=steps).valid:
+            return None
+        answer = self._inner({"kind": f"{self.chain}-certificate", "premises": list(gamma),
+                              "conclusion": _to_data(phi), "certificate": self._bound(proof.certificate, premises,
+                                                                                       phi)})
+        if answer.get("valid") is not True:
+            raise CheckerUnavailable("ReadingsConformance: the lower route does not accept the certificate Python's "
+                                     "prover found on a reading's document")
+        return answer
+
+    def _bound(self, certificate, premises, phi):
+        """The certificate as the lower route binds it. The rights route binds `E″′` (the source environment's
+        profiles and rights block with the generated declarations, `expected_environment_prime`), which no Python
+        environment decodes, so the bindings are recomputed over it: the trace is unchanged, and Lean checks it
+        against the premises it regenerates."""
+        if self.chain != "rights":
+            return certificate
+        from .ast import formula_to_data
+        from .background import background
+        from .rights_route import expected_environment_prime
+        from .wire import digest
+        prime = expected_environment_prime(self.rights)
+        version = "v0.2:" + ",".join(prime["profiles"])
+        environment_id = digest(f"ve-environment-{version}\n", prime)
+
+        def meaning(formula):
+            return digest(f"ve-meaning-{version}\n", {"environment_id": environment_id,
+                                                      "ast": formula_to_data(self.env, formula, _generated=True)})
+        listed = [premise.formula for premise in background(self.env)] + list(premises)
+        return {**certificate, "environment_id": environment_id,
+                "premise_meaning_ids": [meaning(f) for f in listed], "conclusion_meaning_id": meaning(phi)}
+
+    def model(self, conclusion_ast, gamma=()):
+        """A model of the choice's document and Γ with `conclusion_ast` false (any model when None): Python's search
+        finds it (untrusted), and Lean's `choice-model` checks its base on the chain's document regenerated for the
+        choice, its assertions included. The complete model, or None within the budget."""
+        from .search import check_countermodel, find_countermodel
+        # The Background's soft and limitation premises are searched as premises too, so that the search
+        # interprets the predicates only they use (it fixes unused predicates empty).
+        premises, phi = self._all(gamma) + self.searched, self._phi(conclusion_ast)
+        found = find_countermodel(self.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
+                                  max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
+        if found.status != "Found" or not check_countermodel(self.env, premises, phi, found.model,
+                                                             max_evaluations=BUDGET["max_evaluations"]).valid:
+            return None
+        data = found.model.to_dict()
+        answer = self._inner({"kind": "choice-model", "premises": list(gamma), "conclusion": conclusion_ast,
+                              "model": self._base_model(data)})
+        if answer.get("valid") is not True or answer.get("conclusion_value") is not False:
+            raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the model Python's search found on "
+                                     f"a reading's document ({answer.get('first_failing')})")
+        return data
+
+    def _base_model(self, data):
+        """The model's base, the chain decoder's form: the regulated (layer) tables are the outcome substitution's."""
+        document = self.norms if self.chain == "norms" else self.soft.elaborated
+        keep = document.base_environment().predicates
+        return {**data, "relations": {name: rows for name, rows in data["relations"].items() if name in keep}}
 
     def premises(self):
-        from .vacuity import premise_status
-        return premise_status(self.env, self._all(), max_proof_steps=BUDGET["max_steps"],
-                              max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
-                              max_evaluations=BUDGET["max_evaluations"])
-
-    def premise_model(self):
-        """The model behind a `model` premise status, found again and checked, for the wording (R5)."""
-        from .ast import Bottom
-        from .search import check_countermodel, find_countermodel
-        premises = self._all()
-        found = find_countermodel(self.env, premises, Bottom(), max_domain_size=BUDGET["max_domain_size"],
-                                  max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
-        if found.status == "Found" and check_countermodel(self.env, premises, Bottom(), found.model,
-                                                          max_evaluations=BUDGET["max_evaluations"]).valid:
-            return found.model.to_dict()
-        return None
+        """`INCONSISTENT` (a certificate of ⊥), `model` (with the model, for the wording R5) or `UNKNOWN`, each
+        checked by Lean as `certified` and `model` say; the quick proof first, as `premise_status` orders them."""
+        if self.certified(None, max_steps=min(BUDGET["max_steps"], 128)) is not None:
+            return {"status": "INCONSISTENT"}
+        found = self.model(None)
+        if found is not None:
+            return {"status": "model", "model": found}
+        if BUDGET["max_steps"] > 128 and self.certified(None) is not None:
+            return {"status": "INCONSISTENT"}
+        return {"status": "UNKNOWN", "budget": dict(BUDGET)}
 
     def conflict(self):
         """The lower route's conflict check on the choice's document, with Python's packages, run by Lean's
@@ -923,22 +992,14 @@ class _ChoiceDocument:
         return None
 
     def entailment(self, conclusion_ast, gamma=()):
-        """A replayed certificate or a checked countermodel of the choice's document, as an ordinary document's
-        query gets them (`ve document readings`), or unknown within the budget."""
-        from .ast import formula_from_data
-        from .entailment import check_entailment_certificate, prove_entailment
-        from .search import check_countermodel, find_countermodel
-        premises = self._all(gamma)
-        phi = formula_from_data(self.env, conclusion_ast, _generated=True)
-        proof = prove_entailment(self.env, premises, phi, max_steps=BUDGET["max_steps"])
-        if proof.status == "Found" and check_entailment_certificate(self.env, premises, phi, proof.certificate,
-                                                                    max_steps=BUDGET["max_steps"]).valid:
-            return {"outcome": "proof"}
-        found = find_countermodel(self.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
-                                  max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
-        if found.status == "Found" and check_countermodel(self.env, premises, phi, found.model,
-                                                          max_evaluations=BUDGET["max_evaluations"]).valid:
-            return {"outcome": "countermodel", "model_id": found.model.model_id, "model": found.model.to_dict()}
+        """A certificate or a countermodel of the choice's document, each replayed by Lean on the document it
+        regenerates for the choice (`certified`, `model`), or unknown within the budget."""
+        answer = self.certified(conclusion_ast, gamma)
+        if answer is not None:
+            return {"outcome": "proof", "conditional_on": answer.get("conditional_on", [])}
+        found = self.model(conclusion_ast, gamma)
+        if found is not None:
+            return {"outcome": "countermodel", "model": found}
         return {"outcome": "unknown"}
 
 
