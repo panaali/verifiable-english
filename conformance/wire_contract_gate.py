@@ -935,7 +935,13 @@ def _coverage_failures(value):
     rows = ("first", "masked", "adjacent_phase_pairs")
     if not isinstance(unmet, dict) or set(unmet) != set(rows) or any(type(unmet[row]) is not list for row in rows):
         return [f"coverage unmet is malformed: {unmet!r}"]
-    if any(unmet[row] for row in rows):
+    if value["contract"] != PILOT:
+        # wire-contract-s5.md 4.4: one line per check that lacks a first-fault witness.
+        failures += [f"{value['contract']}: coverage: {check} has no first-fault witness" for check in unmet["first"]]
+        if unmet["masked"] or unmet["adjacent_phase_pairs"]:
+            failures.append(f"{value['contract']}: coverage unmet: masked {unmet['masked']}, "
+                            f"adjacent phase pairs {unmet['adjacent_phase_pairs']}")
+    elif any(unmet[row] for row in rows):
         failures.append(f"coverage unmet: {unmet}")
     if value["coverage_met"] is not True:
         failures.append(f"coverage_met {value['coverage_met']!r}")
