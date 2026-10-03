@@ -684,6 +684,14 @@ repeated where a later statement abbreviates them;
 `(D) (h) (hch) (hs)` abbreviates `(D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
 (hs : superposable D = true)`.
 
+As built (2026-10-03), the statements of 8.3 to 8.5 are where these blocks put them, with their proofs spread over
+helper files of `lean/VE/Readings/` that `lean/READINGS.md` lists (`SupSlot`, `Labels`, `SupEnv`, `Asserted`,
+`Assertions`, `ChoiceValid`, `ChoiceTyped`, `Situation`, `SupConflict`, `BaseDown`, `SupWitness`, `BaseUp`,
+`UpPremises`, `UpSlot`, `SupFree`, `SupAll`, `ChoiceWF`, `Strings`); 8.5 is `Route.lean` (the route of 1.1 and the
+regenerated elaboration), `SupWire.lean` (its structures and decoders, namespace `VE.Readings.Wire`),
+`SupWireSound.lean` (its two theorems, which need `superpose_all` and so cannot sit in `Wire.lean` below it) and
+`SupRun.lean` (the case kinds), which `Run.lean` dispatches to.
+
 ### 8.2 `Compose/Adjoin.lean` (composition.md 9.5, verbatim)
 
 ```lean
@@ -1074,9 +1082,12 @@ theorem superpose_situation (D) (h) (hch) (hs) (c) (hc : Compatible D c) (B : VE
 /-- Bases correspond, upward; the extension pulls back to the structure it came from. -/
 theorem base_up (D) (h) (hch) (hs) (c) (hc : Compatible D c) (B₀ : VE.Structure.{u}) (hne : Nonempty B₀.Carrier)
     (hB : BaseAdmissibleR (choiceDoc D c).1 B₀) :
-  ∃ (R : String → List B₀.Carrier → Prop) (B : VE.Structure.{u}),
-    ChoiceExtension D { B₀ with relation := R } B ∧ BaseAdmissibleP (correlate (sup D).1) (slotP D) B ∧
-    Encodes D c B ∧ ∀ p vs, (pull D c B).relation p vs ↔ B₀.relation p vs
+  ∃ (R : String → List B₀.Carrier → Prop) (dom : String → B₀.Carrier → Prop) (k : String → Option B₀.Carrier),
+    ChoiceExtension D { B₀ with relation := R } { B₀ with relation := R, domain := dom, constant := k } ∧
+    BaseAdmissibleP (correlate (sup D).1) (slotP D) { B₀ with relation := R, domain := dom, constant := k } ∧
+    Encodes D c { B₀ with relation := R, domain := dom, constant := k } ∧
+    ∀ p (vs : List B₀.Carrier), (pull D c { B₀ with relation := R, domain := dom, constant := k }).relation p vs ↔
+      B₀.relation p vs                                                     -- finding 6: the extension over B₀'s carrier
 
 /-! ## Conflict-freedom under every reading, in one check (4.4: no non-emptiness hypothesis on either side) -/
 
@@ -1502,3 +1513,4 @@ any of them.
 | 2026-10-03 | Draft 5 | The DRI rulings on the S2a Lean report (`manage-agents/compose-s2-dri-note.md`) applied and nothing else. (1) The frame can declare the choice vocabulary: `supReady` gains the decidable conjunct `choiceFresh` (the frame declares neither `ve__here` nor a bit predicate of `bitDecls D`; `bitsOf`, `bitName`, `setSize` and `bitDecls` move ahead of it in 8.3), Python's `sup_ready` the same conjunct with the decoders' text `InvalidInput: name <n> begins with ve__` (1.8, 7); `base_down`, `base_up`, `superpose_conflict_free` and `superpose_assertions` are to be proved in this form, their statements unchanged since their `hs` or `hr` carries the conjunct (8.4's note); the two Lean counterexamples of the report become the rejection fixture M19. (2) M16: Lean is the authority, so S1's `chainWF` on the soft chain gains `namesFit` (every generated decision predicate within `MAX_IDENTIFIER_BYTES`), with the soft decoder's text in `Wire.chainText`; M16 holds as specified, and 8.1 records this one change of an S1 definition (1.8, 7, 8.1, M16). (3) Every remaining 8.4 theorem and 8.5 are required for S2a; the wire shape of 8.5 is recorded in `lean/READINGS.md`. No other definition, theorem statement or fixture value changed. |
 | 2026-10-03 | Draft 5, finding 4 | The S2a Lean build found `asserted_shared` false as stated: its only hypotheses are `WellFormedDoc` and compatibility, and S1's documents read sets and units by id, so with two open sets under one id (or two units under one id) an assertion is checked only beside another set's or unit's rules (fixture M20, a formal counterexample in `Examples.lean`). Applied, pending the DRI's confirmation: `supReady` gains `unitsDistinct` (the Lean counterpart of today's `duplicate or invalid unit id`), and `asserted_shared` gains `(hr : supReady D = true)`, which carries the distinct set and unit ids; every theorem that uses it has `hs` and so `hr`. |
 | 2026-10-03 | Draft 5, finding 5 | The S2a Lean build found `superpose_assertions` false with `ChoiceExtension` as written: it let `S'` reinterpret every predicate whose name begins `ve__bit__`, while `choiceFresh` (a decidable conjunct) keeps only the bits of `bitDecls D` out of the frame, so a frame predicate `ve__bit__9__9` used by a fixed assertion could be set true in `S'` and false in `S`. Applied, pending the DRI's confirmation: `ChoiceExtension` reinterprets exactly the choice vocabulary of `D` (the sort, `ve__here`, the names of `bitDecls D`), which is what its docstring says; `base_up`'s statement is unchanged and its witness reinterprets only those names. |
+| 2026-10-03 | Draft 5, finding 6 | The S2a Lean build found `base_up` ill-typed as written: `B` was quantified over every structure, so the conjunct `(pull D c B).relation p vs ↔ B₀.relation p vs` compared relations over two unrelated carriers (`ChoiceExtension` fixes `B`'s carrier only in a proof, not in the statement's typing). Applied, pending the DRI's confirmation: the extension is `{ B₀ with relation := R, domain := dom, constant := k }`, quantified by `R`, `dom` and `k`, which is what `ChoiceExtension` already required of it; nothing else in the statement changes. |
