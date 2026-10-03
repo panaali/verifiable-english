@@ -26,6 +26,9 @@ Snapshot: **2026-09-27**, repository baseline `9db5a20` (`ve-integration` / this
 | **VE documentation website (D)** — [docs/](docs), especially [tutorial](docs/onboarding/ve-tutorial.html); **authoring** | **Unmeasured**, including C/L/O/R/U bytes and units. No whole-site VE coverage report. | Uncounted; **estimated candidate gaps**: explanatory definitions, cross-references, anaphora, instructions/questions, examples and their relation to claims. |
 | **Textbooks (T; future)** — no source selected; **authoring / translation**, depending on ownership | **Unmeasured**, including C/L/O/R/U bytes and units; no corpus denominator. | Uncounted; **estimated candidate gaps**: sustained discourse, definitions/citations, mathematics, quantities/units and evidence. |
 
+### Readability (zero-training) evidence
+Readability eval 2026-10-03 (Claude Sonnet 5.5 as proxy reader/writer with only what a human gets; pre-registered bars): reading 98% with or without editor legends vs 93% plain English on the same items; critical misreadings 1.7%; writing 0 silent wrong meanings, 100% correct within 3 attempts using VE's own error messages, 75% first-try parse. Upper bound for careful readers; small samples. Writing-side grammar gaps listed in ARCH-ROADMAP.
+
 ### Use-case backlog (added 2026-09-29, lead-approved; order = orchestrator's recommendation)
 
 | # | Use case | Why it matters | Needs | Status |
