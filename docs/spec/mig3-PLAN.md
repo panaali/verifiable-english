@@ -1,0 +1,2 @@
+# Migration stage 3 (pointer plan)
+Item 1 of THIS plan is Stage 3 (shadow mode) of docs/spec/SEMANTICS-MIGRATION-PLAN.md: run every class-A operation under both authorities on real traffic (suite, use cases, pilots, web app) and record every difference; the 14-consecutive-clean-days gate and its measurement as the plan states. Gate 2 is met (docs/spec/stage2-progress.md). Inputs: docs/TRUST-MAP.md on branch docs/trust-map (24 of 26 operations still default to Python). Apply that plan's Stage 3 section exactly; honest open questions.
