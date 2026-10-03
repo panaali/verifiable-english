@@ -278,3 +278,78 @@ def test_m5_narrowing_slot_and_choice_match_python(lean):
     assert checked == {key: value for key, value in lean_row.items() if key not in ("id", "status")}
     assert checked["route"] == "superposed" and checked["choices"] == [[["rs1", 0]]]
     assert [part["label"] for part in checked["slot"]] == [QUIET, "narrowing:n1"]
+
+
+def test_m6_coupling_slot_agrees_in_three_evaluators(lean):
+    """The coupled M6 choices and its distinguishing forbidden bit pair agree at all three sites."""
+    from ve.ast import formula_from_data
+    from ve.backends.dispatch import pinned
+    from ve.backends.rust_jsonl import run as rust_run
+    from ve.environment import Environment
+    from ve.evaluate import evaluate
+    from ve.model import FiniteModel
+    from ve.readings_route import elaborate
+
+    raw = env_k()
+    document = k1(raw)
+    for candidate, force in zip(document["reading_sets"][0]["readings"], ("strict", "default")):
+        candidate["labels"] = {"force": force}
+    probe = {"outcome": {"predicate": "help_required", "tuple": ["a", "u"]}}
+    sigma = entry(M0, "default", probe, False,
+                  decisions=[{"key": {"excepted": "be-kind"}, "tuples": [["a", "u"]]}])
+    sid = situation_id(raw, sigma)
+    second = reading_set("rs2", "u2", [
+        reading("strict", norm("be-kind", "help_required", True), {"default": sid}),
+        reading("default", norm("be-kind", "help_required", True, "default"), {"strict": sid})],
+        {sid: sigma})
+    for candidate, force in zip(second["readings"], ("strict", "default")):
+        candidate["labels"] = {"force": force}
+    document["units"].append({"id": "u2"})
+    document["reading_sets"].append(second)
+    coupling = {"id": "c1", "axis": "force", "sets": [
+        {"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}],
+        "by": "reviewer", "reason_spans": ["u1"]}
+    checked = elaborate(raw, document["units"], document["reading_sets"],
+                        couplings=[coupling], executable=lean)
+    assert checked["route"] == "superposed"
+    assert checked["choices"] == [[['rs1', 0], ['rs2', 0]], [['rs1', 1], ['rs2', 1]]]
+    assert [part["label"] for part in checked["slot"]] == [
+        QUIET, "readings:rs2@1:1:quiet", "coupling:c1"]
+
+    second_bit = "ve__bit__2__0"
+    second_exception = "soft__excepted__rd_4_be_kind"
+    vocabulary = checked["vocabulary"]
+    shadow = {**raw, "profiles": ["relational-fol@0"], "vocabulary": {
+        "sorts": {**raw["vocabulary"]["sorts"],
+                  **{sort: {"description": sort} for sort in vocabulary["sorts"]}},
+        "constants": {name: {"sort": sort, "description": name}
+                      for name, sort in vocabulary["constants"].items()},
+        "predicates": {"asks": raw["vocabulary"]["predicates"]["asks"],
+                       **{part["name"]: {"arguments": part["arguments"], "description": part["name"]}
+                          for part in vocabulary["predicates"]},
+                       EX2: {"arguments": ["agent", "user"], "description": EX2},
+                       second_exception: {"arguments": ["agent", "user"], "description": second_exception}}}}
+    environment = Environment(shadow)
+    slot = [part["ast"] for part in checked["slot"]]
+    for first, second_bit_value, expected in ((False, False, True), (True, True, True),
+                                               (False, True, False)):
+        shown = {"complete": True,
+                 "domains": {"agent": ["a"], "user": ["u"], "ve__reading": ["e"]},
+                 "constants": {"ve__here": "e"},
+                 "relations": {"asks": [], BIT: [["e"]] if first else [],
+                               second_bit: [["e"]] if second_bit_value else [],
+                               EX2: [["a", "u"]] if first else [],
+                               second_exception: [["a", "u"]] if second_bit_value else []}}
+        [lean_row] = run(lean, [case("readings-model", raw,
+                                    {**document, "couplings": [coupling]}, model=shown)])
+        with pinned("python"):
+            python_model = FiniteModel.from_dict(environment, shown)
+            python_values = [evaluate(environment, formula_from_data(environment, formula),
+                                      python_model, trace=False).value for formula in slot]
+        rust = rust_run({"id": "m6", "kind": "readings-superposed-evaluate", "untrusted": True,
+                         "environment": shadow, "model": shown, "slot": slot,
+                         "assertions": [], "conflict_targets": [], "conclusions": []})
+        assert python_values == rust["values"]["slot"]
+        assert lean_row["valid"] is expected and all(python_values) is expected
+        if not expected:
+            assert lean_row["first_failing"] == "coupling:c1"
