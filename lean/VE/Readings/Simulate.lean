@@ -42,49 +42,51 @@ theorem yields_mono_le {k k' : Nat} (hk : k ≤ k') (N : SoftNode) (h : YieldsSo
   | step _ ih => exact yields_mono D S ρ _ N ih
 
 /-- Along a rank that decreases from a node to its children, fuel past the rank changes nothing. -/
-theorem strictYields_stable (r : SoftNode → Nat) (hr : ∀ N C, C ∈ children D N → r C < r N) :
-    ∀ (k : Nat) (N : SoftNode), r N ≤ k → (StrictYieldsD D S ρ (k + 1) N ↔ StrictYieldsD D S ρ k N)
-  | 0, N, _ => by
+theorem strictYields_stable (r : SoftNode → Nat) (hr : ∀ N ∈ D.T.nodes, ∀ C ∈ children D N, r C < r N) :
+    ∀ (k : Nat) (N : SoftNode), N ∈ D.T.nodes → r N ≤ k → (StrictYieldsD D S ρ (k + 1) N ↔ StrictYieldsD D S ρ k N)
+  | 0, N, hm, _ => by
     constructor
     · rintro (h | ⟨C, hC, _⟩)
       · exact h
-      · have := hr N C hC; omega
+      · have := hr N hm C hC; omega
     · exact strictYields_mono D S ρ 0 N
-  | k + 1, N, hN => by
+  | k + 1, N, hm, hN => by
     constructor
     · rintro (h | ⟨C, hC, hy⟩)
       · exact Or.inl h
-      · exact Or.inr ⟨C, hC, (strictYields_stable r hr k C (by have := hr N C hC; omega)).mp hy⟩
+      · exact Or.inr ⟨C, hC, (strictYields_stable r hr k C (VE.SoftNorms.mem_childrenIn_iff.mp hC).1
+          (by have := hr N hm C hC; omega)).mp hy⟩
     · exact strictYields_mono D S ρ (k + 1) N
 
-theorem yields_stable (r : SoftNode → Nat) (hr : ∀ N C, C ∈ children D N → r C < r N) :
-    ∀ (k : Nat) (N : SoftNode), r N ≤ k → (YieldsSoftD D S ρ (k + 1) N ↔ YieldsSoftD D S ρ k N)
-  | 0, N, _ => by
+theorem yields_stable (r : SoftNode → Nat) (hr : ∀ N ∈ D.T.nodes, ∀ C ∈ children D N, r C < r N) :
+    ∀ (k : Nat) (N : SoftNode), N ∈ D.T.nodes → r N ≤ k → (YieldsSoftD D S ρ (k + 1) N ↔ YieldsSoftD D S ρ k N)
+  | 0, N, hm, _ => by
     constructor
     · rintro (h | ⟨C, hC, _⟩)
       · exact h
-      · have := hr N C hC; omega
+      · have := hr N hm C hC; omega
     · exact yields_mono D S ρ 0 N
-  | k + 1, N, hN => by
+  | k + 1, N, hm, hN => by
     constructor
     · rintro (h | ⟨C, hC, hy⟩)
       · exact Or.inl h
-      · exact Or.inr ⟨C, hC, (yields_stable r hr k C (by have := hr N C hC; omega)).mp hy⟩
+      · exact Or.inr ⟨C, hC, (yields_stable r hr k C (VE.SoftNorms.mem_childrenIn_iff.mp hC).1
+          (by have := hr N hm C hC; omega)).mp hy⟩
     · exact yields_mono D S ρ (k + 1) N
 
-theorem strictYields_stable_le (r : SoftNode → Nat) (hr : ∀ N C, C ∈ children D N → r C < r N)
-    {k k' : Nat} (N : SoftNode) (hk : r N ≤ k) (hk' : k ≤ k') :
+theorem strictYields_stable_le (r : SoftNode → Nat) (hr : ∀ N ∈ D.T.nodes, ∀ C ∈ children D N, r C < r N)
+    {k k' : Nat} (N : SoftNode) (hm : N ∈ D.T.nodes) (hk : r N ≤ k) (hk' : k ≤ k') :
     StrictYieldsD D S ρ k' N ↔ StrictYieldsD D S ρ k N := by
   induction hk' with
   | refl => exact Iff.rfl
-  | step hle ih => exact (strictYields_stable D S ρ r hr _ N (Nat.le_trans hk hle)).trans ih
+  | step hle ih => exact (strictYields_stable D S ρ r hr _ N hm (Nat.le_trans hk hle)).trans ih
 
-theorem yields_stable_le (r : SoftNode → Nat) (hr : ∀ N C, C ∈ children D N → r C < r N)
-    {k k' : Nat} (N : SoftNode) (hk : r N ≤ k) (hk' : k ≤ k') :
+theorem yields_stable_le (r : SoftNode → Nat) (hr : ∀ N ∈ D.T.nodes, ∀ C ∈ children D N, r C < r N)
+    {k k' : Nat} (N : SoftNode) (hm : N ∈ D.T.nodes) (hk : r N ≤ k) (hk' : k ≤ k') :
     YieldsSoftD D S ρ k' N ↔ YieldsSoftD D S ρ k N := by
   induction hk' with
   | refl => exact Iff.rfl
-  | step hle ih => exact (yields_stable D S ρ r hr _ N (Nat.le_trans hk hle)).trans ih
+  | step hle ih => exact (yields_stable D S ρ r hr _ N hm (Nat.le_trans hk hle)).trans ih
 
 end Stable
 
@@ -109,13 +111,15 @@ structure Sim (X Y : SoftDoc) (f : SoftNode → SoftNode) (S : VE.Structure.{u})
   childFwd : ∀ N ∈ Y.T.nodes, ∀ C ∈ children Y N, f C ∈ children X (f N)
   childBack : ∀ N ∈ Y.T.nodes, ∀ C ∈ Y.T.nodes, f C ∈ children X (f N) → C ∈ children Y N
   sibling : ∀ N ∈ Y.T.nodes, ∀ C ∈ children X (f N), (∀ N' ∈ Y.T.nodes, f N' ≠ C) →
-    ∃ N'' ∈ children Y N, ∀ G ∈ children X C, G ∈ children X (f N'')
+    ∀ G ∈ children X C, ∃ N'' ∈ children Y N, G ∈ children X (f N'')
   outweighs : ∀ M ∈ Y.T.nodes, ∀ N ∈ Y.T.nodes, Incompatible Y M N = true → M.mode = .default →
-    N.mode = .default → Comparable Y M N = true →
-    (OutweighsD X S ρ (act Y N) (rk N) (rk M) ↔ OutweighsD Y { S with relation := R' } ρ (act Y N) (rk N) (rk M)) ∧
-    (OutweighsD X S ρ (act Y N) (rk M) (rk N) ↔ OutweighsD Y { S with relation := R' } ρ (act Y N) (rk M) (rk N))
+    N.mode = .default → Y.soft.outranking = .holistic →
+    (higher Y M N = true →
+      (OutweighsD X S ρ (act Y N) (rk N) (rk M) ↔ OutweighsD Y { S with relation := R' } ρ (act Y N) (rk N) (rk M))) ∧
+    (higher Y N M = true →
+      (OutweighsD X S ρ (act Y N) (rk M) (rk N) ↔ OutweighsD Y { S with relation := R' } ρ (act Y N) (rk M) (rk N)))
   /-- A rank on `Y` decreasing along children, bounded by `Y`'s fuel. -/
-  ranked : ∃ r : SoftNode → Nat, (∀ N C, C ∈ children Y N → r C < r N) ∧ ∀ N ∈ Y.T.nodes, r N ≤ fuel Y
+  ranked : ∃ r : SoftNode → Nat, (∀ N ∈ Y.T.nodes, ∀ C ∈ children Y N, r C < r N) ∧ ∀ N ∈ Y.T.nodes, r N ≤ fuel Y
   fuelLe : fuel Y ≤ fuel X
 
 section Sim
@@ -138,15 +142,13 @@ theorem sim_strictYields : ∀ (k : Nat) (N : SoftNode), N ∈ Y.T.nodes →
       · obtain ⟨C', hC', rfl⟩ := him
         exact ⟨C', hs.childBack N hN C' hC' hC, (sim_strictYields k C' hC').mp hy⟩
       · have hext : ∀ N' ∈ Y.T.nodes, f N' ≠ C := fun N' hN' he => him ⟨N', hN', he⟩
-        obtain ⟨N'', hN'', hsub⟩ := hs.sibling N hN C hC hext
-        have hN''m := children_mem hN''
-        refine ⟨N'', hN'', (sim_strictYields k N'' hN''m).mp ?_⟩
         cases k with
         | zero => exact absurd hy.2 (hs.dead C (children_mem hC) hext)
         | succ j =>
           rcases hy with hy | ⟨G, hG, hy⟩
           · exact absurd hy.2 (hs.dead C (children_mem hC) hext)
-          · exact Or.inr ⟨G, hsub G hG, hy⟩
+          · obtain ⟨N'', hN'', hGN⟩ := hs.sibling N hN C hC hext G hG
+            exact ⟨N'', hN'', (sim_strictYields (j + 1) N'' (children_mem hN'')).mp (Or.inr ⟨G, hGN, hy⟩)⟩
     · rintro ⟨C', hC', hy⟩
       exact ⟨f C', hs.childFwd N hN C' hC', (sim_strictYields k C' (children_mem hC')).mpr hy⟩
 
@@ -162,14 +164,13 @@ theorem sim_strictSelects (k : Nat) (N : SoftNode) (hN : N ∈ Y.T.nodes) :
     · obtain ⟨C', hC', rfl⟩ := him
       exact ⟨C', hs.childBack N hN C' hC' hC, (sim_strictYields hs k C' hC').mp hy⟩
     · have hext : ∀ N' ∈ Y.T.nodes, f N' ≠ C := fun N' hN' he => him ⟨N', hN', he⟩
-      obtain ⟨N'', hN'', hsub⟩ := hs.sibling N hN C hC hext
-      refine ⟨N'', hN'', (sim_strictYields hs k N'' (children_mem hN'')).mp ?_⟩
       cases k with
       | zero => exact absurd hy.2 (hs.dead C (children_mem hC) hext)
       | succ j =>
         rcases hy with hy | ⟨G, hG, hy⟩
         · exact absurd hy.2 (hs.dead C (children_mem hC) hext)
-        · exact Or.inr ⟨G, hsub G hG, hy⟩
+        · obtain ⟨N'', hN'', hGN⟩ := hs.sibling N hN C hC hext G hG
+          exact ⟨N'', hN'', (sim_strictYields hs (j + 1) N'' (children_mem hN'')).mp (Or.inr ⟨G, hGN, hy⟩)⟩
   · rintro ⟨C', hC', hy⟩
     exact ⟨f C', hs.childFwd N hN C' hC', (sim_strictYields hs k C' (children_mem hC')).mpr hy⟩
 
@@ -211,7 +212,7 @@ theorem sim_strictSelects_fuel (N : SoftNode) (hN : N ∈ Y.T.nodes) :
   apply and_congr_right; intro _; apply and_congr_right; intro _
   apply not_congr
   exact exists_congr fun C => and_congr_right fun hC =>
-    strictYields_stable_le Y { S with relation := R' } ρ r hr C (hb C (children_mem hC)) hs.fuelLe
+    strictYields_stable_le Y { S with relation := R' } ρ r hr C (children_mem hC) (hb C (children_mem hC)) hs.fuelLe
 
 theorem sim_strictDecides (p : String) (sign : Bool) :
     StrictDecidesD X S ρ p sign ↔ StrictDecidesD Y { S with relation := R' } ρ p sign := by
@@ -257,27 +258,27 @@ theorem sim_domWith (effX : SoftNode → Prop) (effY : SoftNode → Prop)
       rw [sim_incompatible hs M' N hM' hN] at hinc
       rw [sim_comparable hs M' N hM' hN] at hcmp
       rw [hs.mode M' hM'] at hmd
-      have ho := hs.outweighs M' hM' N hN hinc hmd hNd hcmp
+      have ho := hs.outweighs M' hM' N hN hinc hmd hNd
       refine ⟨M', hM', hinc, hmd, hcmp, ?_⟩
       rw [sim_higher hs M' N hM' hN, sim_higher hs N M' hN hM', sim_act hs N hN, sim_rk hs N hN,
         sim_rk hs M' hM', hs.soft] at hb
       rcases hb with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4⟩
-      · exact Or.inl ⟨h1, (he M' hM').mp h2, fun hh => fun ho' => h3 hh (ho.1.mpr ho')⟩
-      · exact Or.inr ⟨h1, h2, (sim_eligible hs M' hM').mp h3, ho.2.mp h4⟩
+      · exact Or.inl ⟨h1, (he M' hM').mp h2, fun hh => fun ho' => h3 hh (((ho hh).1 h1).mpr ho')⟩
+      · exact Or.inr ⟨h1, h2, (sim_eligible hs M' hM').mp h3, ((ho h1).2 h2).mp h4⟩
     · exfalso
       have hext : ∀ N' ∈ Y.T.nodes, f N' ≠ M := fun N' hN' e => him ⟨N', hN', e⟩
       rcases hb with ⟨_, h2, _⟩ | ⟨_, _, h3, _⟩
       · exact sim_eligible_extra hs M hM hext (hX M h2)
       · exact sim_eligible_extra hs M hM hext h3
   · rintro ⟨M', hM', hinc, hmd, hcmp, hb⟩
-    have ho := hs.outweighs M' hM' N hN hinc hmd hNd hcmp
+    have ho := hs.outweighs M' hM' N hN hinc hmd hNd
     refine ⟨f M', hs.mem M' hM', by rw [sim_incompatible hs M' N hM' hN]; exact hinc,
       by rw [hs.mode M' hM']; exact hmd, by rw [sim_comparable hs M' N hM' hN]; exact hcmp, ?_⟩
     rw [sim_higher hs M' N hM' hN, sim_higher hs N M' hN hM', sim_act hs N hN, sim_rk hs N hN,
       sim_rk hs M' hM', hs.soft]
     rcases hb with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4⟩
-    · exact Or.inl ⟨h1, (he M' hM').mpr h2, fun hh => fun ho' => h3 hh (ho.1.mp ho')⟩
-    · exact Or.inr ⟨h1, h2, (sim_eligible hs M' hM').mpr h3, ho.2.mpr h4⟩
+    · exact Or.inl ⟨h1, (he M' hM').mpr h2, fun hh => fun ho' => h3 hh (((ho hh).1 h1).mp ho')⟩
+    · exact Or.inr ⟨h1, h2, (sim_eligible hs M' hM').mpr h3, ((ho h1).2 h2).mpr h4⟩
 
 theorem sim_eff : ∀ (g : Nat) (N : SoftNode), N ∈ Y.T.nodes →
     (EffD X S ρ g (f N) ↔ EffD Y { S with relation := R' } ρ g N)
@@ -321,14 +322,13 @@ theorem sim_yields : ∀ (k : Nat) (N : SoftNode), N ∈ Y.T.nodes →
       · obtain ⟨C', hC', rfl⟩ := him
         exact ⟨C', hs.childBack N hN C' hC' hC, (sim_yields k C' hC').mp hy⟩
       · have hext : ∀ N' ∈ Y.T.nodes, f N' ≠ C := fun N' hN' he => him ⟨N', hN', he⟩
-        obtain ⟨N'', hN'', hsub⟩ := hs.sibling N hN C hC hext
-        refine ⟨N'', hN'', (sim_yields k N'' (children_mem hN'')).mp ?_⟩
         cases k with
         | zero => exact absurd hy (sim_applies_extra hs C (children_mem hC) hext)
         | succ j =>
           rcases hy with hy | ⟨G, hG, hy⟩
           · exact absurd hy (sim_applies_extra hs C (children_mem hC) hext)
-          · exact Or.inr ⟨G, hsub G hG, hy⟩
+          · obtain ⟨N'', hN'', hGN⟩ := hs.sibling N hN C hC hext G hG
+            exact ⟨N'', hN'', (sim_yields (j + 1) N'' (children_mem hN'')).mp (Or.inr ⟨G, hGN, hy⟩)⟩
     · rintro ⟨C', hC', hy⟩
       exact ⟨f C', hs.childFwd N hN C' hC', (sim_yields k C' (children_mem hC')).mpr hy⟩
 
@@ -344,24 +344,24 @@ theorem sim_selects_fuel (N : SoftNode) (hN : N ∈ Y.T.nodes) :
     by_cases him : ∃ C' ∈ Y.T.nodes, f C' = C
     · obtain ⟨C', hC', rfl⟩ := him
       have hC'' := hs.childBack N hN C' hC' hC
-      exact ⟨C', hC'', (yields_stable_le Y { S with relation := R' } ρ r hr C' (hb C' hC') hs.fuelLe).mp
+      exact ⟨C', hC'', (yields_stable_le Y { S with relation := R' } ρ r hr C' hC' (hb C' hC') hs.fuelLe).mp
         ((sim_yields hs _ C' hC').mp hy)⟩
     · have hext : ∀ N' ∈ Y.T.nodes, f N' ≠ C := fun N' hN' he => him ⟨N', hN', he⟩
-      obtain ⟨N'', hN'', hsub⟩ := hs.sibling N hN C hC hext
-      have hN''m := children_mem hN''
-      refine ⟨N'', hN'', (yields_stable_le Y { S with relation := R' } ρ r hr N'' (hb N'' hN''m) hs.fuelLe).mp
-        ((sim_yields hs _ N'' hN''m).mp ?_)⟩
       cases hk : fuel X with
       | zero => rw [hk] at hy; exact absurd hy (sim_applies_extra hs C (children_mem hC) hext)
       | succ j =>
         rw [hk] at hy
         rcases hy with hy | ⟨G, hG, hy⟩
         · exact absurd hy (sim_applies_extra hs C (children_mem hC) hext)
-        · exact Or.inr ⟨G, hsub G hG, hy⟩
+        · obtain ⟨N'', hN'', hGN⟩ := hs.sibling N hN C hC hext G hG
+          have hN''m := children_mem hN''
+          refine ⟨N'', hN'', (yields_stable_le Y { S with relation := R' } ρ r hr N'' hN''m (hb N'' hN''m)
+            hs.fuelLe).mp ((sim_yields hs _ N'' hN''m).mp ?_)⟩
+          rw [hk]; exact Or.inr ⟨G, hGN, hy⟩
   · rintro ⟨C', hC', hy⟩
     have hC'm := children_mem hC'
     exact ⟨f C', hs.childFwd N hN C' hC', (sim_yields hs _ C' hC'm).mpr
-      ((yields_stable_le Y { S with relation := R' } ρ r hr C' (hb C' hC'm) hs.fuelLe).mpr hy)⟩
+      ((yields_stable_le Y { S with relation := R' } ρ r hr C' hC'm (hb C' hC'm) hs.fuelLe).mpr hy)⟩
 
 theorem sim_decides (p : String) (sign : Bool) :
     DecidesSoftD X S ρ p sign ↔ DecidesSoftD Y { S with relation := R' } ρ p sign := by

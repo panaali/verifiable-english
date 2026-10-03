@@ -129,6 +129,7 @@ import VE.Readings.Wire
 import VE.Readings.Run
 import VE.Readings.Choice
 import VE.Readings.Simulate
+import VE.Readings.Names
 import VE.Readings.Superpose
 import VE.WireContract.Engine
 
@@ -3235,3 +3236,12 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.sim_selects_fuel
 #print axioms VE.Readings.sim_decides
 #print axioms VE.Readings.value_sim
+#print axioms VE.Readings.rd_startsWith
+#print axioms VE.Readings.reservedName_qualify
+#print axioms VE.Readings.qualify_ne
+#print axioms VE.Readings.pos_add_char
+#print axioms VE.Readings.utf8GetAux_append
+#print axioms VE.Readings.utf8SetAux_append
+#print axioms VE.Readings.utf8ByteSize_go_append
+#print axioms VE.Readings.mapAux_data
+#print axioms VE.Readings.map_data
