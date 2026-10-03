@@ -29,9 +29,8 @@ RECORDED_TESTS = ("tests/test_norms_contract*", "tests/test_norm_admission.py", 
 # 4.3, whose guard names `norm-defaults@0`, outside this unit's domain.
 GAP_APPLIES = {"G1": lambda faults: {f.check for f in faults} - {f.check for f in faults if f.readers != "python"},
                "G2": lambda faults: set(), "G3": lambda faults: {"4.3"}}
-# 4.3 under gap G3 until `norm-defaults@0`'s catalogue holds its fault, `w1/4.3` (4.4).
-UNREACHED = {"4.3": "No source of the unit's domain fails the check. It is in the table because the including "
-                    "unit runs it, and it is witnessed in that unit's gate, as `w1/4.3` (D4)."}
+# 4.3 has no fault here (gap G3): `norm-defaults@0`'s catalogue holds it, as `w1/4.3` (4.4).
+UNREACHED = {}
 WHOLE_SOURCE_PARTNER = "environment-defined"
 N = ("norms",)
 P = ("environment", "vocabulary", "predicates")

@@ -491,9 +491,40 @@ def _pattern_tokens(pattern, items):
     return pattern.split("/")[1:] if pattern else []
 
 
+def _include(contract, include_id):
+    """The include entry of `contract` with the id `include_id`, its phase index and its own index there."""
+    for phase_index, phase in enumerate(contract["phases"]):
+        for index, entry in enumerate(phase["checks"]):
+            if entry.get("kind") == "include" and entry["id"] == include_id:
+                return phase_index, index, entry
+    raise KeyError(include_id)
+
+
+def owner(contract, check):
+    """The contract that declares `check`: the included one for an include path (`w1/4.2`)."""
+    if "/" not in check:
+        return contract
+    from ve.wire_contract.engine import load
+    return load(_include(contract, check.split("/", 1)[0])[2]["contract"])
+
+
 def route(contract, check):
     """The phase index and the entries from the phase down to `check`: [(index, entry), …] and, for a
-    classifier member, its index in `emits` last."""
+    classifier member, its index in `emits` last. For an included check (`w1/4.2`, an include at the root
+    without `at`), the include entry, then the included phase's position among the phases it includes,
+    then the entries inside it."""
+    if "/" in check:
+        head, tail = check.split("/", 1)
+        phase_index, index, entry = _include(contract, head)
+        inner = owner(contract, check)
+        included = [phase for phase in inner["phases"] if phase["name"] in entry["phases"]]
+        for ordinal, phase in enumerate(included):
+            try:
+                _, steps = route({"phases": [phase]}, tail)
+            except KeyError:
+                continue
+            return phase_index, [(index, entry), (ordinal, {"phase": phase["name"]})] + steps
+        raise KeyError(check)
     def find(entries):
         for index, entry in enumerate(entries):
             if "each" in entry:
@@ -567,7 +598,7 @@ def expected_record(contract, fault):
     code = member["code"]
     record = {"contract": contract["contract"], "revision": contract["revision"], "check": fault.check,
               "phase": contract["phases"][phase_index]["name"], "code": code,
-              "class": contract["codes"][code]["class"], "path": fault.path}
+              "class": owner(contract, fault.check)["codes"][code]["class"], "path": fault.path}
     if not member.get("inherited"):
         args = (dict(fault.args) if fault.args is not None else
                 dict(ARGS[fault.name][0]) if fault.name in ARGS else {})

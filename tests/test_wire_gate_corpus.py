@@ -133,10 +133,12 @@ def test_gate_corpus_holds_every_soft_conformance_fixture():
 # wire-contract-s5.md 8.7: the same three tests for each unit after the pilot. Each unit's fault catalogue module
 # names its recorded test files (`RECORDED_TESTS`), builds its conformance scripts' sources
 # (`conformance_sources`) and its examples; its test module holds its fixtures (`fixture_sources`).
-UNITS = ("norms@0",)
+UNITS = ("norms@0", "norm-defaults@0")
 UNIT_SUBMITTING = {"norms@0": {"test_norms_contract.py", "test_norm_admission.py", "test_norms.py",
-                               "test_norms_three_way.py"}}
-UNIT_TESTS = {"norms@0": "tests.test_norms_contract"}
+                               "test_norms_three_way.py"},
+                   "norm-defaults@0": {"test_norm_defaults_contract.py", "test_norm_defaults.py",
+                                       "test_norm_defaults_three_way.py", "test_norm_defaults_differential.py"}}
+UNIT_TESTS = {"norms@0": "tests.test_norms_contract", "norm-defaults@0": "tests.test_norm_defaults_contract"}
 
 
 @lru_cache(maxsize=None)

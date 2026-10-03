@@ -53,13 +53,13 @@ def in_domain(environment, norms, *, defaults):
 
 
 def source(case, *, kinds, defaults):
-    """The root of a case of one of `kinds` or of an `admission` case, as the Lean adapter builds it: a
-    member the case lacks is `null`; any other kind has no wire contract input, and a source outside the
-    unit's domain is refused (2.2)."""
+    """The root of a case whose kind `kinds` accepts, or of an `admission` case, as the Lean adapter builds
+    it: a member the case lacks is `null`; any other kind has no wire contract input, and a source outside
+    the unit's domain is refused (2.2)."""
     kind = case.get("kind")
     if kind == "admission":
         root = {"environment": case.get("environment"), "norms": active_norms(case.get("document"))}
-    elif kind in kinds:
+    elif type(kind) is str and kinds(kind):
         root = {"environment": case.get("environment"), "norms": case.get("norms")}
     else:
         shown = kind if type(kind) is str else json.dumps(kind, separators=(",", ":"))
@@ -70,7 +70,7 @@ def source(case, *, kinds, defaults):
 
 
 def norm_source(case):
-    return source(case, kinds=NORM_KINDS, defaults=False)
+    return source(case, kinds=NORM_KINDS.__contains__, defaults=False)
 
 
 def _item(root, path):

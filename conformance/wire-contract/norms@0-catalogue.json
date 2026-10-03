@@ -98,7 +98,5 @@
       "layer-cycle"
     ]
   },
-  "unreached": {
-    "4.3": "No source of the unit's domain fails the check. It is in the table because the including unit runs it, and it is witnessed in that unit's gate, as `w1/4.3` (D4)."
-  }
+  "unreached": {}
 }
