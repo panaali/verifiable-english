@@ -33,12 +33,23 @@ from select_tests import select
 # items, then the ast.rs (kernel), eval.rs (profile) and surface.rs bodies, and the outward
 # edges the module check must report.
 SURFACE_RS = "pub fn parse<T: Default>() -> T { T::default() }\npub struct Node;\n"
+WRITE_RS = (SURFACE_RS + "pub fn write<S: serde::Serializer>(v: &u8, s: S) -> Result<S::Ok, S::Error> {\n"
+            "    s.serialize_u8(*v)\n}\n")
+
+
+def serde_field(argument: str) -> str:
+    """A struct whose field serde serializes through `argument` (a string literal as written)."""
+    return (f"#[derive(serde::Serialize)]\npub struct S {{\n    #[serde(serialize_with = {argument})]\n"
+            "    f: u8,\n}\n")
+
+
 RUST_MODULE_CASES = {
     "turbofish": ("", "pub fn f() -> u8 { crate::surface::parse::<u8>() }\n", "", SURFACE_RS,
                   {"ast -> surface"}),
     "turbofish in a use-free call chain": (
         "", "pub fn f() -> Vec<u8> { crate::surface::parse::<Vec<u8>>() }\n", "", SURFACE_RS,
         {"ast -> surface"}),
+    # lib.rs's top-level `use` items are the facade: one hop from a name to the module it names.
     "crate-prefixed root re-export": ("pub use crate::surface::parse;\n",
                                       "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
                                       {"ast -> surface"}),
@@ -49,100 +60,171 @@ RUST_MODULE_CASES = {
                             SURFACE_RS, {"ast -> surface"}),
     "module alias": ("pub(crate) use surface as syntax;\n", "pub fn f() -> u8 { crate::syntax::parse() }\n",
                      "", SURFACE_RS, {"ast -> surface"}),
-    "root glob": ("pub use surface::*;\n", "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
-                  {"ast -> surface"}),
-    "chained module re-export": ("", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n",
-                                 "pub use crate::surface::parse;\n", SURFACE_RS,
-                                 {"ast -> eval", "ast -> surface", "eval -> surface"}),
-    "module glob re-export": ("", "use crate::eval::parse;\npub fn f() -> u8 { parse() }\n",
-                              "pub use crate::surface::*;\n", SURFACE_RS,
-                              {"ast -> eval", "ast -> surface", "eval -> surface"}),
-    "re-export inside an inline root module": (
-        "pub mod api { pub use crate::surface::parse; }\n", "pub fn f() -> u8 { crate::api::parse() }\n",
-        "", SURFACE_RS, {"ast -> surface"}),
+    "re-export named from the top of a module": ("pub use surface::parse;\n",
+                                                 "pub fn f() -> u8 { super::parse() }\n", "", SURFACE_RS,
+                                                 {"ast -> surface"}),
     "raw identifier": ("", "pub fn f() -> u8 { crate::r#surface::parse() }\n", "", SURFACE_RS,
                        {"ast -> surface"}),
     "super from a nested module": (
         "", "mod inner {\n    pub fn f() -> u8 { super::super::surface::parse() }\n}\n", "", SURFACE_RS,
         {"ast -> surface"}),
-    "root glob import": ("", "use crate::*;\npub fn f() -> u8 { surface::parse() }\n", "", SURFACE_RS,
-                         {"ast -> eval", "ast -> surface"}),
     "nested super stays in the file": (
         "pub use surface::parse;\n",
         "pub fn g() -> u8 { 1 }\n#[cfg(test)]\nmod tests {\n    use super::*;\n"
         "    #[test]\n    fn t() { assert_eq!(g(), 1); }\n}\n",
         "pub fn h() -> u8 { 2 }\nmod tests {\n    use super::*;\n    pub fn k() -> u8 { h() }\n}\n",
         SURFACE_RS, set()),
-    # Names bound by `use` items are path heads too, and identifiers are Unicode, compared after NFC.
-    "crate alias": ("", "use crate as root;\npub fn f() -> u8 { root::surface::parse() }\n", "", SURFACE_RS,
-                    {"ast -> surface"}),
-    "super self alias": ("", "use super::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
-                         SURFACE_RS, {"ast -> surface"}),
-    "crate self alias": ("", "use crate::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
-                         SURFACE_RS, {"ast -> surface"}),
+    # Identifiers are Unicode, compared after NFC.
     "Unicode re-export": ("pub use surface::parse as 読む;\n", "pub fn f() -> u8 { crate::読む() }\n", "",
                           SURFACE_RS, {"ast -> surface"}),
     "NFD identifier names the NFC re-export": (
-        "pub use surface::parse as café;\n", "pub fn f() -> u8 { crate::café() }\n", "", SURFACE_RS,
+        "pub use surface::parse as café;\n", "pub fn f() -> u8 { crate::café() }\n", "", SURFACE_RS,
         {"ast -> surface"}),
-    "chained local aliases": (
-        "", "use crate as root;\nuse root::surface as syntax;\npub fn f() -> u8 { syntax::parse() }\n", "",
-        SURFACE_RS, {"ast -> surface"}),
-    "re-export through a private alias": (
-        "", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n", "use crate as root;\npub use root::surface::parse;\n",
-        SURFACE_RS, {"ast -> eval", "ast -> surface", "eval -> surface"}),
     "nested block comment ends where rustc ends it": (
         "", '/* /* */ " */\npub fn f() -> u8 { crate::surface::parse() } // "\n', "", SURFACE_RS,
         {"ast -> surface"}),
-    # Re-exports at any inline-module depth, and globs of the crate root.
-    "nested inline root re-export": (
-        "pub mod api { pub mod nested { pub use super::super::surface::parse; } }\n",
-        "pub fn f() -> u8 { crate::api::nested::parse() }\n", "", SURFACE_RS, {"ast -> surface"}),
-    "root glob inside an inline root module": (
-        "pub mod api { pub use crate::*; }\n", "pub fn f() -> u8 { crate::api::surface::parse() }\n", "",
-        SURFACE_RS, {"ast -> surface"}),
-    "nested inline re-export in a profile module": (
-        "", "pub fn f() -> u8 { crate::eval::api::nested::parse::<u8>() }\n",
-        "pub mod api { pub mod nested { pub use super::super::super::surface::parse; } }\n", SURFACE_RS,
-        {"ast -> eval", "ast -> surface", "eval -> surface"}),
-    "root glob re-exported by a profile module": (
-        "", "pub fn f() -> u8 { crate::eval::surface::parse::<u8>() }\n", "pub use crate::*;\n", SURFACE_RS,
-        {"ast -> eval", "ast -> surface", "eval -> surface"}),
     "range to a surface item": (
         "", "pub fn f() -> core::ops::RangeTo<u8> { ..crate::surface::parse() }\n", "", SURFACE_RS,
         {"ast -> surface"}),
-    # A proc-macro attribute may expand a string into a path; a builtin attribute's text names nothing.
-    "serde path argument": (
-        "", '#[derive(serde::Serialize)]\npub struct S {\n    #[serde(serialize_with = "crate::surface::write")]\n'
-        "    f: u8,\n}\n", "",
-        SURFACE_RS + "pub fn write<S: serde::Serializer>(v: &u8, s: S) -> Result<S::Ok, S::Error> {\n"
-        "    s.serialize_u8(*v)\n}\n", {"ast -> surface"}),
+    # A builtin attribute's text names nothing; another attribute's string is read as code.
     "builtin attribute text": ("", '#[deprecated(note = "crate::surface::parse")]\npub fn g() {}\n', "",
                                SURFACE_RS, set()),
-    # The root's own items are kernel, including what its macros expand to.
+    "imported serde function": ("", "use crate::surface::write;\n" + serde_field('"write"'), "", WRITE_RS,
+                                {"ast -> surface"}),
+    "root serde function named through the facade": ("use surface::write;\n" + serde_field('"\\x77rite"'),
+                                                      "", "", WRITE_RS, {"lib -> surface"}),
+    # The root's own items are kernel, and every path in lib.rs is read from the root.
     "root item calls the surface": ("pub fn helper() -> u8 { surface::parse() }\n",
                                     "pub fn f() -> u8 { crate::helper() }\n", "", SURFACE_RS, {"lib -> surface"}),
+    "root glob in a root inline module": (
+        "mod tests {\n    use super::*;\n    pub fn t() -> u8 { surface::parse() }\n}\n", "", "", SURFACE_RS,
+        {"lib -> surface"}),
+    "self path after a root glob in a root inline module": (
+        "mod tests {\n    use super::*;\n    pub fn t() -> u8 { self::surface::parse() }\n}\n", "", "",
+        SURFACE_RS, {"lib -> surface"}),
+}
+# Forms that could hide a cross-module dependency: each case names the module, the construct and
+# the RULES key of the message it must be rejected with.
+RUST_REJECTED_CASES = {
+    # An inline module may not reuse an imported name or a crate module's name (loop final B1).
+    "inline root module shadows a re-export": (
+        "pub use surface::parse;\npub mod parse {}\n", "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
+        "lib", "mod parse", "shadowing module"),
+    "nested inline root module shadows a re-export": (
+        "pub use surface::parse;\npub mod api {\n    pub mod parse {}\n}\n",
+        "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS, "lib", "mod parse", "shadowing module"),
+    "inline module shadows a local import": (
+        "", "use crate::surface::parse;\nmod parse {}\npub fn f() -> u8 { parse() }\n", "", SURFACE_RS,
+        "ast", "mod parse", "shadowing module"),
+    "inline module named like a crate module": ("", "", "mod surface {}\n", SURFACE_RS, "eval", "mod surface",
+                                                "shadowing module"),
+    # Aliases of the crate root, however they are reached or repeated (loop final B2).
+    "repeated root alias": ("pub use crate as root;\n",
+                            "pub fn f() -> u8 { crate::root::root::surface::parse() }\n", "", SURFACE_RS,
+                            "lib", "use crate as root", "crate alias"),
+    "crate alias": ("", "use crate as root;\npub fn f() -> u8 { root::surface::parse() }\n", "", SURFACE_RS,
+                    "ast", "use crate as root", "crate alias"),
+    "super self alias": ("", "use super::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
+                         SURFACE_RS, "ast", "use super::self as root", "crate alias"),
+    "crate self alias": ("", "use crate::{self as root};\npub fn f() -> u8 { root::surface::parse() }\n", "",
+                         SURFACE_RS, "ast", "use crate::self as root", "crate alias"),
+    "root alias from an inline module": (
+        "", "mod inner {\n    use super::super::{self as root};\n"
+        "    pub fn f() -> u8 { root::surface::parse() }\n}\n", "", SURFACE_RS,
+        "ast", "use super::super::self as root", "crate alias"),
+    "root alias in a root inline module": (
+        "mod inner {\n    use crate::{self as root};\n    pub fn f() -> u8 { root::surface::parse() }\n}\n",
+        "", "", SURFACE_RS, "lib", "use crate::self as root", "crate alias"),
+    "chained local aliases": (
+        "", "use crate as root;\nuse root::surface as syntax;\npub fn f() -> u8 { syntax::parse() }\n", "",
+        SURFACE_RS, "ast", "use crate as root", "crate alias"),
+    # Globs of the crate root outside lib.rs.
+    "root glob import": ("", "use crate::*;\npub fn f() -> u8 { surface::parse() }\n", "", SURFACE_RS,
+                         "ast", "use crate::*", "crate glob"),
+    "super glob at a module's top level": ("", "use super::*;\npub fn f() -> u8 { surface::parse() }\n", "",
+                                           SURFACE_RS, "ast", "use super::*", "crate glob"),
+    # Re-exports only at lib.rs's top level, one hop, no module globs.
+    "chained module re-export": ("", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n",
+                                 "pub use crate::surface::parse;\n", SURFACE_RS,
+                                 "eval", "use crate::surface::parse", "re-export"),
+    "crate-visible module re-export": ("", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n",
+                                       "pub(crate) use crate::surface::parse;\n", SURFACE_RS,
+                                       "eval", "use crate::surface::parse", "re-export"),
+    "module glob re-export": ("", "use crate::eval::parse;\npub fn f() -> u8 { parse() }\n",
+                              "pub use crate::surface::*;\n", SURFACE_RS, "eval", "use crate::surface::*",
+                              "re-export"),
+    "re-export through a private alias": (
+        "", "pub fn f() -> u8 { crate::eval::parse::<u8>() }\n", "use crate as root;\npub use root::surface::parse;\n",
+        SURFACE_RS, "eval", "use crate as root", "crate alias"),
+    "re-export inside an inline root module": (
+        "pub mod api { pub use crate::surface::parse; }\n", "pub fn f() -> u8 { crate::api::parse() }\n",
+        "", SURFACE_RS, "lib", "use crate::surface::parse", "re-export"),
+    "nested inline root re-export": (
+        "pub mod api { pub mod nested { pub use super::super::surface::parse; } }\n",
+        "pub fn f() -> u8 { crate::api::nested::parse() }\n", "", SURFACE_RS,
+        "lib", "use super::super::surface::parse", "re-export"),
+    "root glob inside an inline root module": (
+        "pub mod api { pub use crate::*; }\n", "pub fn f() -> u8 { crate::api::surface::parse() }\n", "",
+        SURFACE_RS, "lib", "use crate::*", "re-export"),
+    "nested inline re-export in a profile module": (
+        "", "pub fn f() -> u8 { crate::eval::api::nested::parse::<u8>() }\n",
+        "pub mod api { pub mod nested { pub use super::super::super::surface::parse; } }\n", SURFACE_RS,
+        "eval", "use super::super::super::surface::parse", "re-export"),
+    "root glob re-exported by a profile module": (
+        "", "pub fn f() -> u8 { crate::eval::surface::parse::<u8>() }\n", "pub use crate::*;\n", SURFACE_RS,
+        "eval", "use crate::*", "re-export"),
+    "facade module glob": ("pub use surface::*;\n", "pub fn f() -> u8 { crate::parse() }\n", "", SURFACE_RS,
+                           "lib", "use surface::*", "facade glob"),
+    "facade chain": ("use surface as syntax;\npub use syntax::parse;\n", "pub fn f() -> u8 { crate::parse() }\n",
+                     "", SURFACE_RS, "lib", "use syntax::parse", "facade chain"),
+    # Crate paths in attribute and macro strings, after decoding escapes (loop final B3).
+    "escaped attribute string": ("", serde_field('"crate::\\x73urface::write"'), "", WRITE_RS,
+                                 "ast", "crate::surface::write", "string path"),
+    "escaped crate keyword in an attribute string": ("", serde_field('"\\x63rate::surface::write"'), "",
+                                                     WRITE_RS, "ast", "crate::surface::write", "string path"),
+    "Unicode escape in an attribute string": ("", serde_field('"crate::\\u{73}urface::write"'), "", WRITE_RS,
+                                              "ast", "crate::surface::write", "string path"),
+    "line continuation in an attribute string": ("", serde_field('"crate::\\\n        surface::write"'), "",
+                                                 WRITE_RS, "ast", "crate::surface::write", "string path"),
+    "raw attribute string": ("", serde_field('r#"crate::surface::write"#'), "", WRITE_RS,
+                             "ast", "crate::surface::write", "string path"),
+    "super in an attribute string": ("", serde_field('"super::surface::write"'), "", WRITE_RS,
+                                     "ast", "super::surface::write", "string path"),
+    "module head in a root attribute string": (serde_field('"surface::write"'), "", "", WRITE_RS,
+                                               "lib", "surface::write", "string path"),
+    "serde path argument": ("", serde_field('"crate::surface::write"'), "", WRITE_RS,
+                            "ast", "crate::surface::write", "string path"),
+    "crate path in a macro string": ("", 'pub fn g() -> &\'static str { concat!("crate::surface::parse") }\n', "",
+                                     SURFACE_RS, "ast", "crate::surface::parse", "string path"),
+    # Crate paths in macro definitions resolve where the macro is called.
     "root macro names the surface": (
         "macro_rules! parsed { () => { $crate::surface::parse::<u8>() }; }\npub fn g() -> u8 { parsed!() }\n",
-        "", "", SURFACE_RS, {"lib -> surface"}),
+        "", "", SURFACE_RS, "lib", "macro_rules! parsed", "macro path"),
+    "root macro names the root through super": (
+        "macro_rules! parsed { () => { super::parse::<u8>() }; }\npub use surface::parse;\n", "", "", SURFACE_RS,
+        "lib", "macro_rules! parsed", "macro path"),
+    # Constructs that move code or names.
+    "path attribute": ('#[path = "surface.rs"]\nmod other;\n', "", "", SURFACE_RS, "lib", "#[path", "moving"),
+    "path under cfg_attr": ('#[cfg_attr(all(), path = "surface.rs")]\nmod other;\n', "", "", SURFACE_RS,
+                            "lib", "#[path", "moving"),
+    "macro_export": ("", "", "", SURFACE_RS + "#[macro_export]\nmacro_rules! parsed { () => { 0u8 }; }\n",
+                     "surface", "#[macro_export", "moving"),
+    "macro_use": ("#[macro_use]\nmod macros {}\n", "", "", SURFACE_RS, "lib", "#[macro_use", "moving"),
+    "include": ('include!("surface.rs");\n', "", "", "", "lib", "include!", "moving"),
+    "renamed include": ('use std::include as source;\nsource!("surface.rs");\n', "", "", "", "lib", "include!",
+                        "moving"),
+    "extern crate self": ("extern crate self as fixture;\n", "", "", SURFACE_RS, "lib", "extern crate self",
+                          "moving"),
+    "metavariable after ::": (
+        "macro_rules! call { ($m:ident) => { $crate::$m::parse::<u8>() }; }\npub fn g() -> u8 { call!(surface) }\n",
+        "", "", SURFACE_RS, "lib", "::$", "moving"),
 }
-RUST_UNSUPPORTED_CASES = (
-    ('#[path = "surface.rs"]\nmod other;\n', SURFACE_RS, "#[path"),
-    ('#[cfg_attr(all(), path = "surface.rs")]\nmod other;\n', SURFACE_RS, "#[path"),
-    ("", SURFACE_RS + "#[macro_export]\nmacro_rules! parsed { () => { 0u8 }; }\n", "#[macro_export"),
-    ("#[macro_use]\nmod macros {}\n", SURFACE_RS, "#[macro_use"),
-    ('include!("surface.rs");\n', "", "include!"),
-    ('use std::include as source;\nsource!("surface.rs");\n', "", "include!"),
-    ("extern crate self as fixture;\n", SURFACE_RS, "extern crate self"),
-    ("macro_rules! call { ($m:ident) => { $crate::$m::parse::<u8>() }; }\npub fn g() -> u8 { call!(surface) }\n",
-     SURFACE_RS, "::$"),
-)
 
 
 def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str, name: str = "fixture") -> Path:
     source = root / "src"
     source.mkdir(parents=True)
-    serde = '[dependencies]\nserde = { version = "1", features = ["derive"] }\n' if "serde" in ast + surface else ""
+    serde = '[dependencies]\nserde = { version = "1", features = ["derive"] }\n' if "serde" in lib + ast + surface else ""
     (root / "Cargo.toml").write_text(f'[package]\nname = "{name}"\nversion = "0.0.0"\nedition = "2024"\n'
                                      '[lib]\npath = "src/lib.rs"\n' + serde)
     (source / "lib.rs").write_text("#![allow(dead_code, unused_imports)]\nmod ast;\nmod eval;\n"
@@ -563,19 +645,27 @@ class LayerSelectionTests(unittest.TestCase):
                 self.assertEqual(errors, [])
                 self.assertEqual(edges, {f"ve-core: {edge}" for edge in expected})
 
-    def test_unsupported_rust_module_constructs_fail_closed(self):
+    def test_rust_module_forms_outside_the_strict_subset_are_rejected(self):
+        """R0 is fail-closed: every form that could hide a dependency is rejected naming the plain form."""
         groups = check_rust_deps.MODULE_GROUPS["ve-core"]
-        for lib, surface, construct in RUST_UNSUPPORTED_CASES:
-            with self.subTest(lib), TemporaryDirectory() as directory:
-                source = rust_module_fixture(Path(directory), lib, "", "", surface)
+        for name, (lib, ast, eval_, surface, module, construct, rule) in RUST_REJECTED_CASES.items():
+            with self.subTest(name), TemporaryDirectory() as directory:
+                source = rust_module_fixture(Path(directory), lib, ast, eval_, surface)
                 _, errors = check_rust_deps.module_edges("ve-core", source, groups)
-                self.assertEqual(len(errors), 1, errors)
-                self.assertTrue(errors[0].startswith("unsupported Rust construct: ve-core: "), errors)
-                self.assertIn(repr(construct), errors[0])
+                self.assertIn(f"unsupported Rust construct: ve-core: {module}: {construct!r}: "
+                              f"{check_rust_deps.RULES[rule]}", errors)
+                self.assertTrue(all(error.startswith("unsupported Rust construct: ve-core: ") for error in errors),
+                                errors)
+        invalid = check_rust_deps.RULES["invalid"]
         with TemporaryDirectory() as directory:  # rustc rejects a no-break space between tokens
             source = rust_module_fixture(Path(directory), "pub fn g()\u00a0{}\n", "", "", SURFACE_RS)
             _, errors = check_rust_deps.module_edges("ve-core", source, groups)
-            self.assertEqual(errors, ["unsupported Rust construct: ve-core: lib: '\\xa0'"])
+            self.assertEqual(errors, [f"unsupported Rust construct: ve-core: lib: '\\xa0': {invalid}"])
+        with TemporaryDirectory() as directory:  # and an escape no cooked string holds
+            literal = r'"crate::\q"'
+            source = rust_module_fixture(Path(directory), f"const S: &str = {literal};\n", "", "", SURFACE_RS)
+            _, errors = check_rust_deps.module_edges("ve-core", source, groups)
+            self.assertEqual(errors, [f"unsupported Rust construct: ve-core: lib: {literal!r}: {invalid}"])
 
     def test_rust_tokens_follow_rustc(self):
         text = ('/* a /* b */ crate::x */ r##"crate::y"#"## b\'"\' \'\\u{22}\' \'a r#crate1::café '
@@ -584,12 +674,19 @@ class LayerSelectionTests(unittest.TestCase):
                          [("string", 'crate::y"#'), ("ident", "crate1"), ("::", "::"), ("ident", "café"),
                           ("ident", "café"), ("string", "z"), ("ident", "x"), ("punct", ".")])
         self.assertTrue(check_rust_deps.tokens("r#crate1")[0].raw)
+        # Cooked strings are decoded as rustc decodes them (line continuations skip whitespace);
+        # raw strings are not, and an escape rustc rejects makes the literal invalid.
+        cooked = '"\\x63rate:\\u{3_a}\\\n   \\tx\\\\\\"\\0\\\'" r"\\x63"'
+        self.assertEqual([(token.kind, token.text) for token in check_rust_deps.tokens(cooked)],
+                         [("string", "crate::\tx\\\"\0'"), ("string", r"\x63")])
+        for literal in (r'"\q"', r'"\u{110000}"', r'"\u{d800}"', r'"\x6"', r'"\u{1234567}"', r'"\u{_1}"'):
+            self.assertEqual(check_rust_deps.tokens(literal)[0].kind, "invalid", literal)
 
     @unittest.skipUnless(shutil.which("cargo"), "cargo is not installed")
     def test_rust_module_fixtures_compile(self):
         """Every module-check fixture is real Rust: `cargo check` accepts all of them."""
         fixtures = [(lib, ast, eval_, surface) for lib, ast, eval_, surface, _ in RUST_MODULE_CASES.values()]
-        fixtures += [(lib, "", "", surface) for lib, surface, _ in RUST_UNSUPPORTED_CASES]
+        fixtures += [case[:4] for case in RUST_REJECTED_CASES.values()]
         with TemporaryDirectory() as directory:
             root = Path(directory)
             members = [f"f{index}" for index in range(len(fixtures))]

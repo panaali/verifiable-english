@@ -4,24 +4,28 @@ Inside a crate listed in MODULE_GROUPS, every `src/*.rs` module is also
 assigned a group (1 kernel, 2 profile, 3 surface) and every path it writes, in
 `use` trees and inline (generic arguments such as `parse::<u8>()` end a path),
 must point inward unless the exact edge is in MODULE_LEDGER, which rejects
-stale keys as the other ledgers do. The source is tokenized as rustc reads it
-(nested block comments, raw strings, Unicode identifiers compared after NFC,
-raw identifiers). A path resolves in the scope it is written in: `crate::`,
-`super::` and `self::` paths, and paths through any name a `use` item binds
-(`use crate as root`, `use super::{self as up}`, chained aliases), and the
-strings of any attribute but a builtin one, which a proc macro may expand
-into a path (`#[serde(with = "crate::surface::f")]`). Every
-module's `use` items are re-exports others may name: the crate root's (and,
-from inside, a module's own) private ones and every module's `pub` ones,
-including module aliases and globs, at any inline-module depth, chained. Where
-resolution is ambiguous it fails closed (adds edges). `#[path]`,
-`#[macro_use]`, `#[macro_export]` (also under `cfg_attr`), `include!` (also
-renamed), `extern crate self`, a macro metavariable after `::` and characters
-rustc rejects outside literals are refused, because they move code or names
-past this resolution. `lib.rs` is the crate's declaring and re-exporting
-facade (like `ve/__init__.py`): its `use` items count where they are named,
-and its own items (`Error`, `Result`, `MAX_*`, `error`) and the paths inside
-them are kernel.
+stale keys as the other ledgers do.
+
+This is a stopgap until the crate split (plan R1-R3), after which cargo
+enforces the boundary, so it does not re-implement Rust's name resolution. It
+is fail-closed on a strict subset whose dependencies can be read off the
+source: paths `crate::<module>::...` (also `super::` reaching the crate root,
+raw identifiers, Unicode identifiers compared after NFC; the source is
+tokenized as rustc reads it), ordinary `mod` declarations, and `lib.rs`'s
+top-level `use` items as the one re-exporting facade (like `ve/__init__.py`),
+each naming a crate module directly (`pub use surface::parse;`,
+`pub use risk::{Range as RiskRange};`), so `crate::<name>` resolves in one hop.
+A path written in another module that does not start at the crate root names
+that module's own items or its imports, which count where the `use` is
+written. `lib.rs`'s own items (`Error`, `Result`, `MAX_*`, `error`) and the
+paths inside them are kernel. Every form that could hide a cross-module
+dependency is rejected with a message naming the plain form: aliases and globs
+of the crate root, re-exports outside `lib.rs`'s top level, facade re-export
+chains and module globs, inline modules named like an imported name or a crate
+module, crate paths in attribute or macro strings (escapes decoded) and in
+macro definitions, `#[path]`, `#[macro_use]`, `#[macro_export]`, `include!`,
+`extern crate self`, macros 2.0, a macro metavariable after `::` and characters
+rustc rejects outside literals.
 """
 from __future__ import annotations
 
@@ -45,10 +49,10 @@ MODULE_GROUPS = {"ve-core": {
     "surface": 3,
 }}
 # What rustc skips between tokens (Pattern_White_Space, line comments), string literals
-# (kept as tokens: a proc-macro attribute may expand one into a path), and the other
+# (kept as tokens, escapes decoded: a proc macro may expand one into a path), and the other
 # literals, lifetimes and numbers. A raw string ends at a quote with as many `#`.
 SKIPPED = re.compile(r"""
-    [\t\n\x0b\x0c\r\x20\x85‎‏  ]+
+    [\t\n\x0b\x0c\r\x20\x85‎‏  ]+
   | //[^\n]*
   | [bc]?r(?P<hashes>\#*)"
   | [bc]?"(?P<string>(?:\\.|[^"\\])*)"
@@ -57,7 +61,11 @@ SKIPPED = re.compile(r"""
   | \d\w*
 """, re.S | re.X)
 BLOCK = re.compile(r"/\*|\*/")
-# Attributes that load another file as a module or move macro names past path resolution.
+# The escapes of a cooked string literal; a line continuation skips the following whitespace.
+ESCAPE = re.compile(r"""\\(?:x(?P<byte>[0-9A-Fa-f]{2})|u\{(?P<unicode>[0-9A-Fa-f][0-9A-Fa-f_]*)\}
+                        |(?P<simple>[nrt\\0'"])|\n[\t\n\r\x20]*)""", re.X)
+SIMPLE_ESCAPES = {"n": "\n", "r": "\r", "t": "\t", "\\": "\\", "0": "\0", "'": "'", '"': '"'}
+# Attributes that load another file as a module or move macro names past this check.
 MOVING_ATTRIBUTES = {"path", "macro_use", "macro_export"}
 # Strict and reserved keywords other than the path keywords: never the head of a path.
 KEYWORDS = set("""as async await become box break const continue do dyn else enum extern false final fn for
@@ -66,10 +74,29 @@ type typeof unsafe unsized use virtual where while yield""".split())
 # Builtin attributes whose arguments are lints, configuration predicates, layouts or text.
 BUILTIN_ATTRIBUTES = {"allow", "warn", "deny", "forbid", "expect", "cfg", "doc", "repr", "inline", "must_use",
                       "deprecated", "test", "ignore", "should_panic", "non_exhaustive", "cold", "track_caller"}
+PLAIN = "write plain `crate::<module>::...` paths (`use crate::<module>::item;`)"
+RULES = {
+    "invalid": "a character rustc rejects outside literals",
+    "moving": "moves code or names past this check; declare modules with plain `mod name;` and " + PLAIN,
+    "macro 2.0": "macros 2.0 resolve names past this check; use `macro_rules!` without crate paths",
+    "crate alias": "binds the crate root to a name, so later paths can name modules without `crate::`; " + PLAIN,
+    "crate glob": "a glob of the crate root imports every module and re-export unnamed; " + PLAIN,
+    "re-export": "re-exports are allowed only at the top level of lib.rs (the facade); " + PLAIN
+                 + " where the item is used",
+    "facade chain": "a lib.rs re-export through another lib.rs name; re-export from the defining module "
+                    "(`pub use <module>::item;`)",
+    "facade glob": "a lib.rs glob of a crate module re-exports names this check cannot see; list them "
+                   "(`pub use <module>::{a, b};`)",
+    "beyond root": "`super` beyond the crate root",
+    "shadowing module": "an inline module named like an imported name or a crate module; rename it",
+    "string path": "a crate path inside an attribute or macro string; " + PLAIN + " outside strings",
+    "macro path": "a crate path inside a macro definition, which resolves where the macro is called; call a "
+                  "function instead and " + PLAIN,
+}
 
 
 class Token(NamedTuple):
-    kind: str  # "ident" (NFC, without `r#`), "::", "punct", "string" (contents), or "invalid" (rejected by rustc)
+    kind: str  # "ident" (NFC, without `r#`), "::", "punct", "string" (decoded contents), or "invalid"
     text: str
     raw: bool = False
 
@@ -135,6 +162,28 @@ def identifier(text: str, position: int) -> tuple[str, bool, int] | None:
     return None
 
 
+def cooked(text: str) -> str | None:
+    """The value of a cooked string literal's contents, or None for an escape rustc rejects."""
+    found, position = [], 0
+    while (backslash := text.find("\\", position)) >= 0:
+        found.append(text[position:backslash])
+        match = ESCAPE.match(text, backslash)
+        if match is None:
+            return None
+        if match["byte"] is not None:
+            found.append(chr(int(match["byte"], 16)))
+        elif match["unicode"] is not None:
+            digits = match["unicode"].replace("_", "")
+            value = int(digits, 16) if len(digits) <= 6 else -1
+            if not (0 <= value <= 0x10FFFF and not 0xD800 <= value <= 0xDFFF):
+                return None
+            found.append(chr(value))
+        elif match["simple"] is not None:
+            found.append(SIMPLE_ESCAPES[match["simple"]])
+        position = match.end()
+    return "".join(found) + text[position:]
+
+
 def tokens(text: str) -> list[Token]:
     """The tokens rustc reads that a path can consist of or end at, and string literals."""
     found: list[Token] = []
@@ -153,7 +202,8 @@ def tokens(text: str) -> list[Token]:
         if match is not None:
             position = match.end()
             if match["string"] is not None:
-                found.append(Token("string", match["string"]))
+                value = cooked(match["string"])
+                found.append(Token("string", value) if value is not None else Token("invalid", match[0]))
             elif match["hashes"] is not None:
                 close = text.find('"' + match["hashes"], position)
                 end = len(text) if close < 0 else close
@@ -221,35 +271,32 @@ def use_tree(stream: list[Token], position: int) -> tuple[list[tuple[list[str], 
     return [([name], None)], position
 
 
-def anchor(path: list[str], module: str, depth: int, in_use: bool) -> list[list[str]]:
-    """The crate-relative paths a path written in `module`, `depth` inline modules deep, may stand for.
+def crate_relative(path: list[str], module: str, depth: int) -> list[str] | None:
+    """The crate-root-relative form of a path written in `module`, `depth` inline modules deep.
 
-    Each `super` leaves one enclosing inline `mod`; leaving the file's top level
-    reaches the crate root. A path that stays inside the file becomes
-    `[module, ...]`, whose inline module names `member` skips (the crate root's
-    inline modules are the root's own scope). Any other head is a name in the
-    module's scope; a `use` path is also read from the crate root (fail closed,
-    as in edition 2015). An extern (`::`) or `Self` path names nothing here.
+    Each `super` leaves one enclosing inline `mod`, and leaving the file's top
+    level reaches the crate root (one more is an error, returned as `["super"]`).
+    None means a name local to the file (its own items and imports) or extern
+    (`::`, `Self`). Every path in lib.rs is read from the crate root, at any
+    inline depth (fail closed: its inline modules may glob the root).
     """
     head, rest = path[0], path[1:]
-    if head in {"::", "Self"}:
-        return []
     if head == "crate":
-        return [rest]
+        return rest
     if head in {"super", "self"}:
         ups = int(head == "super")
         while rest and rest[0] == "super":
             rest, ups = rest[1:], ups + 1
-        return [rest] if module == "lib" or ups > depth else [[module, *rest]]
-    return [path] if module == "lib" else [[module, *path], *([path] if in_use else [])]
+        outside = depth + (module != "lib")  # how many `super` reach the crate root
+        return rest if ups == outside or module == "lib" and ups < outside else ["super"] if ups > outside else None
+    return path if module == "lib" and head not in {"::", "Self"} else None
 
 
 class Module(NamedTuple):
-    bindings: list[tuple[str, list[str], bool]]  # name (`*` for a glob), crate-relative target, `pub`
-    inline: set[str]  # inline `mod name { ... }` blocks, whose items count as the file's own
-    uses: list[list[str]]  # crate-relative paths of the `use` items
-    paths: list[list[str]]  # crate-relative paths written anywhere else
-    unsupported: list[str]
+    facade: list[tuple[str, list[str], bool, str]]  # lib.rs's top-level `use` leaves: name, root-relative
+    # target, glob, spelling
+    paths: list[list[str]]  # root-relative paths it depends on (lib.rs: outside its facade)
+    unsupported: list[tuple[str, str]]  # (construct, RULES key)
 
 
 def public(stream: list[Token], position: int) -> bool:
@@ -276,79 +323,34 @@ def closing(stream: list[Token], position: int, opening: str, close: str) -> int
     return len(stream)
 
 
-def unsupported(stream: list[Token]) -> list[str]:
-    """The constructs that move code or names past path resolution, in order of appearance."""
+def group_end(stream: list[Token], position: int) -> int:
+    """The index closing the delimited group that opens at stream[position], or position if none opens."""
+    for opening, close in ("()", "[]", "{}"):
+        if at(stream, position, opening):
+            return closing(stream, position, opening, close)
+    return position
+
+
+def moving(stream: list[Token]) -> list[tuple[str, str]]:
+    """The constructs that move code or names past this check, in order of appearance."""
     found = []
     for index, token in enumerate(stream):
         if token.kind == "invalid":
-            found.append(token.text)
+            found.append((token.text, "invalid"))
         elif at(stream, index, "#"):
             start = index + 1 + at(stream, index + 1, "!")
             if at(stream, start, "["):
                 names = {item.text for item in stream[start:closing(stream, start, "[", "]")] if item.kind == "ident"}
-                found += [f"#[{name}" for name in sorted(names & MOVING_ATTRIBUTES)]
+                found += [(f"#[{name}", "moving") for name in sorted(names & MOVING_ATTRIBUTES)]
         elif token.kind == "ident" and token.text == "include" and at(stream, index + 1, "!"):
-            found.append("include!")
+            found.append(("include!", "moving"))
         elif keyword(stream, index, "extern") and keyword(stream, index + 1, "crate") and keyword(stream, index + 2, "self"):
-            found.append("extern crate self")
+            found.append(("extern crate self", "moving"))
         elif token.kind == "::" and at(stream, index + 1, "$"):
-            found.append("::$")
+            found.append(("::$", "moving"))
+        elif keyword(stream, index, "macro") and index + 1 < len(stream) and stream[index + 1].kind == "ident":
+            found.append((f"macro {stream[index + 1].text}", "macro 2.0"))
     return found
-
-
-def parse_module(module: str, text: str) -> Module:
-    """One file's `use` bindings, inline modules, written paths and unsupported constructs."""
-    stream = tokens(text)
-    spans, inline, declared = [], set(), set()
-    for index in range(len(stream)):
-        if keyword(stream, index, "mod") and index + 1 < len(stream) and stream[index + 1].kind == "ident":
-            declared.add(index + 1)
-            if at(stream, index + 2, "{"):
-                spans.append((index, closing(stream, index + 2, "{", "}")))
-                inline.add(stream[index + 1].text)
-
-    def depth(index: int) -> int:
-        return sum(start < index < end for start, end in spans)
-
-    # Inside a builtin attribute, a one-word path that is not a macro call (`allow(x)`, `cfg(test)`)
-    # and a string (`doc = "..."`) name nothing. Any other attribute may be a proc macro that turns
-    # a string into a path (`serde(with = "crate::surface::f")`), so its strings are read as code.
-    builtin, macro_strings = set(), []
-    for index in range(len(stream)):
-        start = index + 1 + at(stream, index + 1, "!")
-        if at(stream, index, "#") and at(stream, start, "["):
-            end = closing(stream, start, "[", "]")
-            name = stream[start + 1] if start + 1 < len(stream) else Token("punct", "]")
-            if (name.kind == "ident" and not name.raw and name.text in BUILTIN_ATTRIBUTES
-                    and not at(stream, start + 2, "::")):
-                builtin.update(range(start, end))
-            else:
-                macro_strings += [item for item in range(start, end) if stream[item].kind == "string"]
-
-    bindings, uses, problems, consumed = [], [], unsupported(stream), set()
-    for index in range(len(stream)):
-        if not keyword(stream, index, "use") or at(stream, index + 1, "<"):  # `use<'a>` captures lifetimes
-            continue
-        found, end = use_tree(stream, index + 1)
-        consumed.update(range(index, end))
-        visible = public(stream, index)
-        for path, alias in found:
-            uses += anchor(path, module, depth(index), True)
-            if path[-1] == "include":
-                problems.append("include!")
-            if len(path) > 1 and path[-1] == "self":
-                path = path[:-1]
-            name = alias or path[-1]
-            if name == "*":
-                path = path[:-1]
-            if name != "_" and path:
-                bindings += [(name, target, visible) for target in anchor(path, module, depth(index), True)]
-    paths = [anchored for index, path in written_paths(stream, consumed | declared, builtin)
-             for anchored in anchor(path, module, depth(index), False)]
-    for index in macro_strings:
-        paths += [anchored for _, path in written_paths(tokens(stream[index].text), set(), set())
-                  for anchored in anchor(path, module, depth(index), False)]
-    return Module(bindings, inline, uses, paths, list(dict.fromkeys(problems)))
 
 
 def written_paths(stream: list[Token], skipped: set[int], builtin: set[int]) -> list[tuple[int, list[str]]]:
@@ -366,67 +368,136 @@ def written_paths(stream: list[Token], skipped: set[int], builtin: set[int]) -> 
     return found
 
 
-def resolve(path: list[str], modules: dict[str, Module], viewer: str, seen: frozenset = frozenset()) -> set[str]:
-    """The crate modules a crate-relative path, written in module `viewer`, may depend on."""
-    if not path or path[0] in {"::", "crate", "super", "self", "Self"}:
-        return set()
-    head = path[0]
-    if head == "*":
-        return set(modules)
-    if head in modules and head != "lib":
-        return {head} | member(head, path[1:], modules, viewer, seen)
-    return {"lib"} | member("lib", path, modules, viewer, seen)
+def spelled(path: list[str], alias: str | None = None) -> str:
+    return "use " + "::".join(path).replace("::::", "::") + (f" as {alias}" if alias else "")
 
 
-def member(module: str, path: list[str], modules: dict[str, Module], viewer: str, seen: frozenset) -> set[str]:
-    """The modules `module::path` may resolve through, following `module`'s `use` bindings.
+def parse_module(module: str, text: str, crate_modules: set[str]) -> Module:
+    """One file's facade (lib.rs), root-relative paths and unsupported constructs."""
+    stream = tokens(text)
+    problems = moving(stream)
+    spans, inline, declared, level, braces = [], [], set(), [], 0
+    for index in range(len(stream)):
+        braces -= at(stream, index, "}")
+        level.append(braces)
+        braces += at(stream, index, "{")
+        if keyword(stream, index, "mod") and index + 1 < len(stream) and stream[index + 1].kind == "ident":
+            declared.add(index + 1)
+            if at(stream, index + 2, "{"):
+                spans.append((index, closing(stream, index + 2, "{", "}")))
+                inline.append(stream[index + 1].text)
 
-    The viewer sees its own private bindings and the crate root's (every module
-    is the root's descendant); other modules show only `pub` ones. A binding's
-    target was written in `module`, so it resolves with `module` as viewer. The
-    crate root also names its child modules.
-    """
-    while path and path[0] in modules[module].inline:
-        path = path[1:]
-    if not path:
-        return set()
-    private = module in {viewer, "lib"}
-    if (module, path[0], private) in seen:
-        return set()
-    seen = seen | {(module, path[0], private)}
-    visible = [(name, target) for name, target, pub in modules[module].bindings if pub or private]
-    if path[0] == "*":
-        if module == "lib":
-            return set(modules)
-        targets = [target for _, target in visible]
-    else:
-        targets = ([[*target, *path[1:]] for name, target in visible if name == path[0]]
-                   + [[*target, *path] for name, target in visible if name == "*"])
-    found = set()
-    if module == "lib" and path[0] in modules and path[0] != "lib":
-        found |= resolve(path, modules, viewer, seen)
-    for target in targets:
-        found |= resolve(target, modules, module, seen)
-    return found
+    def depth(index: int) -> int:
+        return sum(start < index < end for start, end in spans)
+
+    # Inside a builtin attribute, a one-word path that is not a macro call (`allow(x)`, `cfg(test)`)
+    # and a string (`doc = "..."`) name nothing. Any other attribute may be a proc macro that turns
+    # a string into a path (`serde(with = "f")`), so its strings are read as code, and a macro call
+    # may do the same; neither may hold a crate path.
+    builtin, attribute_strings, macro_strings = set(), [], []
+    for index in range(len(stream)):
+        start = index + 1 + at(stream, index + 1, "!")
+        if at(stream, index, "#") and at(stream, start, "["):
+            end = closing(stream, start, "[", "]")
+            name = stream[start + 1] if start + 1 < len(stream) else Token("punct", "]")
+            if (name.kind == "ident" and not name.raw and name.text in BUILTIN_ATTRIBUTES
+                    and not at(stream, start + 2, "::")):
+                builtin.update(range(start, end))
+            else:
+                attribute_strings += [item for item in range(start, end) if stream[item].kind == "string"]
+        elif keyword(stream, index, "macro_rules") and at(stream, index + 1, "!"):
+            body = range(index + 3, group_end(stream, index + 3))
+            if any(stream[item].kind == "ident" and stream[item].text in {"crate", "super", "self"}
+                   and (at(stream, item + 1, "::") or at(stream, item - 1, "$")) for item in body):
+                name = stream[index + 2].text if index + 2 < len(stream) else ""
+                problems.append((f"macro_rules! {name}", "macro path"))
+        elif stream[index].kind == "ident" and not keyword_at(stream, index) and at(stream, index + 1, "!"):
+            macro_strings += [item for item in range(index + 2, group_end(stream, index + 2))
+                              if stream[item].kind == "string"]
+
+    leaves, consumed = [], set()  # (use index, path, alias, public)
+    for index in range(len(stream)):
+        if not keyword(stream, index, "use") or at(stream, index + 1, "<"):  # `use<'a>` captures lifetimes
+            continue
+        found, end = use_tree(stream, index + 1)
+        consumed.update(range(index, end))
+        leaves += [(index, path, alias, public(stream, index)) for path, alias in found]
+    facade, paths, bound = [], [], set()
+    for index, path, alias, visible in leaves:
+        if path[-1] == "include":
+            problems.append(("include!", "moving"))
+        glob = path[-1] == "*"
+        target = path[:-1] if glob or (len(path) > 1 and path[-1] == "self") else path
+        if not glob and alias != "_":
+            bound.add(alias or target[-1])
+        relative = crate_relative(target, module, depth(index))
+        at_facade = module == "lib" and depth(index) == 0 and level[index] == 0
+        if visible and not at_facade:
+            problems.append((spelled(path, alias), "re-export"))
+        if relative == ["super"]:
+            problems.append((spelled(path, alias), "beyond root"))
+        elif relative == []:  # lib.rs reads every path from the root, so its root globs hide nothing
+            if not (glob and module == "lib"):
+                problems.append((spelled(path, alias), "crate glob" if glob else "crate alias"))
+        elif at_facade:
+            if relative is not None:
+                facade.append((alias or target[-1], relative, glob, spelled(path, alias)))
+        elif relative is not None:
+            paths.append(relative)
+    problems += [(f"mod {name}", "shadowing module") for name in inline if name in bound | crate_modules]
+
+    for index, path in written_paths(stream, consumed | declared, builtin):
+        relative = crate_relative(path, module, depth(index))
+        if relative == ["super"]:
+            problems.append(("::".join(path), "beyond root"))
+        elif relative:
+            paths.append(relative)
+    for index in attribute_strings + macro_strings:
+        for _, path in written_paths(tokens(stream[index].text), set(), set()):
+            if len(path) > 1 and (path[0] in {"crate", "super", "self"} or path[0] in crate_modules):
+                problems.append((stream[index].text, "string path"))
+            elif index in attribute_strings and (relative := crate_relative(path, module, depth(index))):
+                paths.append(relative)
+    return Module(facade, paths, list(dict.fromkeys(problems)))
+
+
+def facade_targets(lib: Module, crate_modules: set[str]) -> tuple[dict[str, set[str]], list[tuple[str, str]]]:
+    """The crate modules each lib.rs re-export name stands for (one hop), and the rejected re-exports."""
+    names = {name for name, _, glob, _ in lib.facade if not glob}
+    targets: dict[str, set[str]] = {}
+    problems = []
+    for name, target, glob, construct in lib.facade:
+        head = target[0]
+        if head in names and target != [name]:
+            problems.append((construct, "facade chain"))
+        elif glob and head in crate_modules:
+            problems.append((construct, "facade glob"))
+        elif not glob:
+            targets.setdefault(name, set()).add(head if head in crate_modules else "lib")
+    return targets, problems
 
 
 def module_edges(crate: str, source: Path, groups: dict[str, int]) -> tuple[set[str], list[str]]:
     """Outward intra-crate edges of one crate, and its unmapped or unsupported modules."""
     files = {path.stem: path for path in sorted(source.glob("*.rs"))}
-    modules = {name: parse_module(name, path.read_text()) for name, path in files.items()}
+    crate_modules = set(files) - {"lib"}
+    modules = {name: parse_module(name, path.read_text(), crate_modules) for name, path in files.items()}
+    modules.setdefault("lib", Module([], [], []))
+    targets, facade_problems = facade_targets(modules["lib"], crate_modules)
     errors = sorted({*(f"unmapped Rust module: {crate}: {name}" for name in files if name not in groups),
                      *(f"unmapped Rust module: {crate}: {path.relative_to(source).as_posix()}"
                        for path in source.rglob("*.rs") if path.parent != source)})
-    errors += [f"unsupported Rust construct: {crate}: {name}: {problem!r}"
-               for name, module in modules.items() for problem in module.unsupported]
-    modules.setdefault("lib", Module([], set(), [], [], []))
+    errors += [f"unsupported Rust construct: {crate}: {name}: {construct!r}: {RULES[rule]}"
+               for name, module in modules.items()
+               for construct, rule in module.unsupported + (facade_problems if name == "lib" else [])]
     edges = set()
     for importer, module in modules.items():
         if importer not in groups:
             continue
-        # The root's `use` items are the facade: they count where they are named.
-        for path in module.paths + ([] if importer == "lib" else module.uses):
-            for target in resolve(path, modules, importer):
+        for path in module.paths:
+            head = path[0]
+            found = ({head} if head in crate_modules else set()) | targets.get(head, set())
+            for target in found:
                 if target in groups and groups[importer] < groups[target]:
                     edges.add(f"{crate}: {importer} -> {target}")
     return edges, errors
