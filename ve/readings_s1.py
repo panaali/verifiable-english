@@ -51,6 +51,18 @@ def _sorted_items(value):
 # ---------------------------------------------------------------------------------------------------------------
 # The environment (1.1)
 
+def _placeholder_frame(data):
+    """`unspecified` completions read as `deny` (Lean `Wire.placeholderFrame`); every other field unchanged."""
+    predicates = (data.get("vocabulary") or {}).get("predicates")
+    if type(predicates) is not dict:
+        return data
+    renamed = {name: ({**decl, "regulated": {**decl["regulated"], "default": "deny"}}
+                      if type(decl) is dict and type(decl.get("regulated")) is dict
+                      and decl["regulated"].get("default") == "unspecified" else decl)
+               for name, decl in predicates.items()}
+    return {**data, "vocabulary": {**data["vocabulary"], "predicates": renamed}}
+
+
 class S1Environment:
     """The environment with `readings@1`, its chain, and the lower and frame environments. The environment is read
     as Lean receives it (`wire`), as the document is: an explicit null is an absent field at every depth, so
@@ -73,6 +85,11 @@ class S1Environment:
                       "soft" if "soft-norms@0" in self.profiles else "norms")
         frame = [p for p in self.lower_profiles if p != "norm-defaults@0"]
         self.frame_data = {**data, "profiles": frame}
+        if "norm-defaults@0" in self.lower_profiles:
+            # DRI ruling 4 (2026-10-03): the frame reads each `unspecified` completion as the placeholder `deny`
+            # (norm-defaults 2.3's E‴), as Lean's `placeholderFrame` does, so that the frame decodes without the
+            # profile and content beside it reaches the abstention of 1.1 instead of a decoder text.
+            self.frame_data = _placeholder_frame(self.frame_data)
         self.env = _environment(data)
         self.lower = _environment(self.lower_data)
         self.frame = _environment(self.frame_data)

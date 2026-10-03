@@ -698,7 +698,9 @@ def _lower_soft_document(doc):
     """The soft document the lower route checks: under `readings@1` the head strips the profile and hands every
     other case to the lower route (composition-s1.md 4.1), so its environment is the one without it."""
     soft = doc["soft_document"]
-    if "readings@1" not in doc["environment"].profiles:
+    if "readings@1" not in doc["environment"].profiles or (soft is None and doc["rights_document"] is None):
+        # The norms chain has no soft document, with or without `readings@1` (DRI ruling 4: a norms document with
+        # `norm-defaults@0` and `readings@1` reaches this with a claim graph).
         return soft
     data = doc["environment"].to_dict()
     data["profiles"] = [p for p in data["profiles"] if p != "readings@1"]
