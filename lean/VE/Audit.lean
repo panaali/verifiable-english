@@ -3340,3 +3340,5 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.fixed_not_reserved
 #print axioms VE.Readings.fmap_name
 #print axioms VE.Readings.fmap_inj
+#print axioms VE.Readings.mem_buildNodes_choice
+#print axioms VE.Readings.choice_names_nodup

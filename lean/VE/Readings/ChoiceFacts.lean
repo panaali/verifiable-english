@@ -676,4 +676,90 @@ theorem fmap_inj {D : Doc} (hh : Hyps D) (c : Choice) {N N' : SoftNode} (hN : N 
       rw [h1, h2] at hn
       exact (qualify_inj hn).2
 
+/-! ## The rules of a choice's document are distinct -/
+
+theorem mem_buildNodes_choice {c : Choice} {it : Item} {M : SoftNode}
+    (h : M ∈ buildNodes (fun _ => true) (pickC c) it) :
+    (∃ u cs, it = .fixed u (.norm M) cs) ∨
+      (∃ R a, it = .set R ∧ pickC c R = some a ∧ a.content = some (.norm M)) := by
+  cases it with
+  | fixed u c' cs =>
+    simp only [buildNodes, if_true, mem_normsOf] at h
+    subst h; exact Or.inl ⟨u, cs, rfl⟩
+  | bar u b => simp [buildNodes] at h
+  | set R =>
+    simp only [buildNodes] at h
+    split at h
+    · rename_i c' cs hp
+      rw [mem_normsOf] at h; subst h
+      simp only [Option.bind_eq_some_iff, Option.map_eq_some_iff] at hp
+      obtain ⟨a, hpa, c'', hc'', he⟩ := hp
+      cases he
+      exact Or.inr ⟨R, a, rfl, hpa, hc''⟩
+    · simp at h
+
+theorem choice_names_nodup {D : Doc} (hh : Hyps D) (c : Choice) :
+    ((choiceDoc D c).1.soft.T.nodes.map (·.name)).Nodup := by
+  have hfree := (wellFormedDoc_parts hh.wf).2.2.2.2.1
+  have hda := (distinctAcrossSets_spec D).mp hh.da
+  rw [choiceDoc_eq, (build_shape D _ _).nodes, List.map_append, List.nodup_append]
+  refine ⟨(build_names D hh.chain _ _ hfree).1, ?_, ?_⟩
+  · -- the placed rules
+    rw [List.map_flatMap, List.nodup_iff_pairwise_ne, List.pairwise_flatMap]
+    refine ⟨fun it _ => ?_, ?_⟩
+    · cases it with
+      | fixed u c' cs => cases c' <;> simp [buildNodes, normsOf]
+      | bar u b => simp [buildNodes]
+      | set R =>
+        simp only [buildNodes]
+        split <;> rename_i hp
+        · rename_i c' cs; cases c' <;> simp [normsOf]
+        · simp
+    · have hP1 := hda.2.2.2
+      have hP2 : D.items.Pairwise (fun x y => ∀ R R', setOf x = some R → setOf y = some R' → R.id ≠ R'.id) := by
+        have := hh.nodup
+        rw [sets_eq, List.nodup_iff_pairwise_ne, List.pairwise_map, List.pairwise_filterMap] at this
+        exact this.imp (fun h R R' hR hR' => h R hR R' hR')
+      refine (hP1.and hP2).imp_of_mem (fun {x y} hx hy hxy => ?_)
+      intro n hn n' hn' he
+      simp only [List.mem_map] at hn hn'
+      obtain ⟨M, hM, rfl⟩ := hn
+      obtain ⟨M', hM', rfl⟩ := hn'
+      rcases mem_buildNodes_choice hM with ⟨u, cs, rfl⟩ | ⟨R, a, rfl, hpa, hc⟩ <;>
+        rcases mem_buildNodes_choice hM' with ⟨u', cs', rfl⟩ | ⟨R', a', rfl, hpa', hc'⟩
+      · exact hxy.1 M.name (by simp [Item.names, Content.declared]) (by simp [Item.names, Content.declared]; exact he)
+      · simp only [pickC, Option.bind_eq_some_iff] at hpa'
+        obtain ⟨i', _, ha'⟩ := hpa'
+        exact hda.1 R' (mem_sets.mpr hy) ("rule", M'.name)
+          (by simp only [declaredBy, List.mem_flatMap, List.mem_filterMap]
+              exact ⟨_, ⟨a', List.mem_of_getElem? ha', hc'⟩, by simp [Content.declared]⟩)
+          u _ cs hx ("rule", M.name) (by simp [Content.declared]) he
+      · simp only [pickC, Option.bind_eq_some_iff] at hpa
+        obtain ⟨i, _, ha⟩ := hpa
+        exact hda.1 R (mem_sets.mpr hx) ("rule", M.name)
+          (by simp only [declaredBy, List.mem_flatMap, List.mem_filterMap]
+              exact ⟨_, ⟨a, List.mem_of_getElem? ha, hc⟩, by simp [Content.declared]⟩)
+          u' _ cs' hy ("rule", M'.name) (by simp [Content.declared]) he.symm
+      · simp only [pickC, Option.bind_eq_some_iff] at hpa hpa'
+        obtain ⟨i, _, ha⟩ := hpa
+        obtain ⟨i', _, ha'⟩ := hpa'
+        exact hda.2.2.1 R (mem_sets.mpr hx) R' (mem_sets.mpr hy) (hxy.2 R R' rfl rfl) ("rule", M.name)
+          (by simp only [declaredBy, List.mem_flatMap, List.mem_filterMap]
+              exact ⟨_, ⟨a, List.mem_of_getElem? ha, hc⟩, by simp [Content.declared]⟩)
+          ("rule", M'.name)
+          (by simp only [declaredBy, List.mem_flatMap, List.mem_filterMap]
+              exact ⟨_, ⟨a', List.mem_of_getElem? ha', hc'⟩, by simp [Content.declared]⟩) he.symm
+  · intro n hn n' hn' he
+    simp only [List.mem_map] at hn hn'
+    obtain ⟨F, hF, rfl⟩ := hn
+    obtain ⟨M, hM, rfl⟩ := hn'
+    obtain ⟨it, hit, hM⟩ := List.mem_flatMap.mp hM
+    rcases mem_buildNodes_choice hM with ⟨u, cs, rfl⟩ | ⟨R, a, rfl, hpa, hc⟩
+    · obtain ⟨keep, pick, hw, hm⟩ := fixed_home hh hit
+      exact (build_names D hh.chain keep pick hw).2 F hF M hm he
+    · obtain ⟨m, hm, rfl⟩ := mem_sets_getElem (mem_sets.mpr hit)
+      simp only [pickC, Option.bind_eq_some_iff] at hpa
+      obtain ⟨i, _, ha⟩ := hpa
+      exact (build_names D hh.chain _ _ (one_wf hh hm ha hc)).2 F hF M (one_has hm ha hc) he
+
 end VE.Readings
