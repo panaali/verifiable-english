@@ -933,6 +933,67 @@ def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
     service.close()
 
 
+def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch):
+    """Load reproducer (W6a generator, Lean authority, a 2 h 14 min suite): the
+    5-second default is the users'; without a setting a request still waits 5 s."""
+    from ve.backends import lean_service
+    for variable in ("VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"):
+        monkeypatch.delenv(variable)
+    assert (lean_service.INTERACTIVE_TIMEOUT, lean_service.STARTUP_TIMEOUT) == (5.0, 30.0)
+    assert lean_service.configured_seconds("VE_LEAN_SERVICE_STARTUP_TIMEOUT", 30.0) == 30.0
+    waits = []
+    roundtrip = LeanService._roundtrip
+
+    def recorded(self, mode, cases_text, count, timeout, *rest):
+        waits.append(timeout)
+        return roundtrip(self, mode, cases_text, count, timeout, *rest)
+    monkeypatch.setattr(LeanService, "_roundtrip", recorded)
+    case = {"id": "a", "ast": [["top"]]}
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service:
+        service.run("evaluate", [case])
+        service.run("evaluate", [case], timeout=7)
+    with LeanService(fake(tmp_path, "ok"), timeout=3, allow_unlisted_build=True) as service:
+        service.run("evaluate", [case])
+    assert waits == [5.0, 7, 3]
+
+
+def test_the_setting_replaces_the_request_and_startup_defaults(tmp_path, monkeypatch):
+    """A request (or a start) slower than the setting is stopped at the setting,
+    retried once and recovered: the setting, not the 5 s (30 s) default, is the
+    wait, and a shared pool created earlier follows a later setting."""
+    monkeypatch.setenv("VE_LEAN_SERVICE_TIMEOUT", "0.5")
+    service = LeanService(fake(tmp_path, "flaky"), allow_unlisted_build=True)
+    with service:
+        assert service.run("evaluate", [{"id": "a", "ast": [["top"]]}])[0]["status"] == "ok"
+        assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+    monkeypatch.setenv("VE_LEAN_SERVICE_STARTUP_TIMEOUT", "0.5")
+    remaining = []
+    read_line = LeanService._read_line
+
+    def recorded(self, deadline):
+        remaining.append(deadline - time.monotonic())
+        return read_line(self, deadline)
+    monkeypatch.setattr(LeanService, "_read_line", recorded)
+    silent = LeanService(fake(tmp_path, "silent"), allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="handshake"):
+        silent.start()
+    silent.close()
+    # Both handshake waits end within the setting, not 30 s after the start.
+    assert len(remaining) == 2 and all(r <= 0.5 for r in remaining), remaining
+
+
+@pytest.mark.parametrize("variable", ["VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"])
+@pytest.mark.parametrize("value", ["", "0", "-1", "nan", "inf", "five"])
+def test_a_setting_that_is_not_positive_seconds_is_refused(tmp_path, monkeypatch, variable, value):
+    monkeypatch.setenv(variable, value)
+    service = LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match=variable) as caught:
+        service.run("evaluate", [{"id": "a"}])
+    assert not isinstance(caught.value, VEError)
+    assert service.stats["starts"] == 0 and service.pid is None
+    service.close()
+
+
 def test_spawn_error_is_supervised_and_cleans_up(tmp_path):
     executable = tmp_path / "not-executable"
     executable.write_text("not an executable")
