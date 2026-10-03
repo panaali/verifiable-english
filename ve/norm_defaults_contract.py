@@ -5,14 +5,41 @@ names. The diagnostic engine observes a source only after the legacy validator r
 acceptance or identity.
 """
 
+from copy import deepcopy
+from functools import lru_cache
+
 from ve import norm_defaults as nd
 from ve.ast import _Checker
 from ve.environment import Environment
-from ve.errors import ResourceLimit
+from ve.errors import ResourceLimit, VEError
 from ve.limits import MAX_PREDICATES
 from ve.norms import NormDocument
 from ve.norms_contract import CLASSIFIERS, HOOKS, heights, source
-from ve.wire_contract.engine import Registry
+from ve.wire_contract.engine import Registry, load, overlay, run
+
+
+@lru_cache(maxsize=1)
+def _locked_contract():
+    return load("norm-defaults@0")
+
+
+def public_rejection(environment, norms, error: VEError, *, contract=None, registry=None) -> VEError:
+    """Attach a public record to the original legacy error, only at a rejected admission call."""
+    if error.diagnostic is not None:
+        return error
+    try:
+        active_contract = _locked_contract() if contract is None else contract
+        if active_contract["status"] != "public":
+            return error
+        root = {"environment": deepcopy(environment), "norms": deepcopy(norms)}
+        outcome = run(active_contract, root, registry=REGISTRY if registry is None else registry)
+        record = overlay(active_contract, error, outcome)
+    except Exception:
+        return error
+    error.diagnostic = record
+    error.message = record["text"]
+    error.args = (record["text"],)
+    return error
 
 
 def legacy_validation(environment, norms):

@@ -171,7 +171,11 @@ def admit_norm_defaults_document(environment, document):
             split.append(("norm", w2._Unit(raw["id"], start, stop, kind, content)))
         else:
             split.append(("other", raw))
-    source = nd.UnspecifiedDocument(env, [NormDocument._decode(c) for c in active])
+    try:
+        source = nd.UnspecifiedDocument(env, [NormDocument._decode(c) for c in active])
+    except VEError as error:
+        from .norm_defaults_contract import public_rejection
+        raise public_rejection(env.to_dict(), active, error)
     # A quoted norm is checked over the source with each `unspecified` read as the
     # placeholder `deny` (Lean `checkQuoted` on the decoded source).
     placeholder = Environment(nd._placeholder(env.to_dict())) if quoted else None

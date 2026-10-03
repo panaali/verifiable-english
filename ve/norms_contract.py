@@ -4,6 +4,8 @@ The diagnostic engine observes a source only after the legacy validator rejects
 it. It never decides acceptance or identity.
 """
 
+from copy import deepcopy
+from functools import lru_cache
 import json
 
 from ve.ast import _Checker
@@ -11,7 +13,7 @@ from ve.environment import Environment
 from ve.errors import UnsupportedProfile, VEError
 from ve.limits import MAX_DEPTH, MAX_INDEX, MAX_NODES
 from ve.norms import NormDocument, _used_predicates, dependency_order
-from ve.wire_contract.engine import Registry
+from ve.wire_contract.engine import Registry, load, overlay, run
 
 
 # The profiles of the unit's domain (2.2): checker profiles are refused by both routes before the validator
@@ -20,6 +22,30 @@ DOMAIN_PROFILES = frozenset({"data@0", "definitions@0", "documents@1", "norm-def
                              "relational-fol@0", "time@0"})
 NORM_KINDS = ("norms-elaborate", "norms-conflict", "norms-certificate")
 OUTSIDE = "UnsupportedProfile: the case is outside the unit's domain"
+
+
+@lru_cache(maxsize=1)
+def _locked_contract():
+    return load("norms@0")
+
+
+def public_rejection(environment, norms, error: VEError, *, contract=None, registry=None) -> VEError:
+    """Attach a public record to the original legacy error, only at a rejected admission call."""
+    if error.diagnostic is not None:
+        return error
+    try:
+        active_contract = _locked_contract() if contract is None else contract
+        if active_contract["status"] != "public":
+            return error
+        root = {"environment": deepcopy(environment), "norms": deepcopy(norms)}
+        outcome = run(active_contract, root, registry=REGISTRY if registry is None else registry)
+        record = overlay(active_contract, error, outcome)
+    except Exception:
+        return error
+    error.diagnostic = record
+    error.message = record["text"]
+    error.args = (record["text"],)
+    return error
 
 
 def legacy_validation(environment, norms):
