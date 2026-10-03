@@ -40,6 +40,7 @@ import VE.Norms.Examples
 import VE.Norms.Cedar
 import VE.Norms.Replay
 import VE.Norms.Flagged
+import VE.Norms.FlaggedSpec
 import VE.Service.Graph
 import VE.Service.Readings
 import VE.Service.FamilyNorms
@@ -866,6 +867,62 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.Flagged.conflictFree_flagged
 #print axioms VE.Norms.Flagged.norms_flagged_conflict_sound
 #print axioms VE.Norms.Flagged.norms_flagged_witness_sound
+#print axioms VE.Norms.FlaggedSpec.baseEnv_predicates
+#print axioms VE.Norms.FlaggedSpec.regName_layer
+#print axioms VE.Norms.FlaggedSpec.regName_hidden
+#print axioms VE.Norms.FlaggedSpec.baseEnv_hidden
+#print axioms VE.Norms.FlaggedSpec.defn_not_regName
+#print axioms VE.Norms.FlaggedSpec.layer_cases
+#print axioms VE.Norms.FlaggedSpec.preds_declared
+#print axioms VE.Norms.FlaggedSpec.wf_preds_congr
+#print axioms VE.Norms.FlaggedSpec.bindAll_wellFormed_inv
+#print axioms VE.Norms.FlaggedSpec.definition_body_wellFormed
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_layer
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_base
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_tupleTyped
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_base_denote
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_constants
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_meaning
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_agrees
+#print axioms VE.Norms.FlaggedSpec.freeExpansion_admissible
+#print axioms VE.Norms.FlaggedSpec.regTable_some
+#print axioms VE.Norms.FlaggedSpec.regTable_at
+#print axioms VE.Norms.FlaggedSpec.regTable_none_base
+#print axioms VE.Norms.FlaggedSpec.regTable_wellFormed
+#print axioms VE.Norms.FlaggedSpec.regSubst_wellFormed
+#print axioms VE.Norms.FlaggedSpec.regTable_sound
+#print axioms VE.Norms.FlaggedSpec.regSubst_denote
+#print axioms VE.Norms.FlaggedSpec.regSubst_base_iff
+#print axioms VE.Norms.FlaggedSpec.conflictPy_iff
+#print axioms VE.Norms.FlaggedSpec.outcomePy_iff
+#print axioms VE.Norms.FlaggedSpec.pairConflictPy_iff
+#print axioms VE.Norms.FlaggedSpec.pyStructure_tupleTyped
+#print axioms VE.Norms.FlaggedSpec.pyStructure_admissible
+#print axioms VE.Norms.FlaggedSpec.flag_premise_base
+#print axioms VE.Norms.FlaggedSpec.sat_literals_relation
+#print axioms VE.Norms.FlaggedSpec.pyStructure_background
+#print axioms VE.Norms.FlaggedSpec.conflictFree_of_base
+#print axioms VE.Norms.FlaggedSpec.mapM_ok_mem
+#print axioms VE.Norms.FlaggedSpec.filterMapM_ok_mem
+#print axioms VE.Norms.FlaggedSpec.eraseDups_length_le
+#print axioms VE.Norms.FlaggedSpec.nodup_of_eraseDups_length
+#print axioms VE.Norms.FlaggedSpec.nodup_fst_unique
+#print axioms VE.Norms.FlaggedSpec.finish_eq
+#print axioms VE.Norms.FlaggedSpec.elaborate_names
+#print axioms VE.Norms.FlaggedSpec.decodeDefined_name
+#print axioms VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined
+#print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
+#print axioms VE.Norms.FlaggedSpec.decodeSource_flag_not_defined
+#print axioms VE.Norms.FlaggedSpec.conflictFreeCheck_background
+#print axioms VE.Norms.FlaggedSpec.conflictFreeCheck_definition_base
+#print axioms VE.Norms.FlaggedSpec.pyTargets_nil_conflictFree
+#print axioms VE.Norms.FlaggedSpec.norms_flagged_conflict_free
+#print axioms VE.Norms.FlaggedSpec.verdict_witness
+#print axioms VE.Norms.FlaggedSpec.verdict_conflict
+#print axioms VE.Norms.FlaggedSpec.runCase_conflict
+#print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_free
+#print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
+#print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
 #print axioms VE.Service.Graph.graph_sound
 #print axioms VE.Service.Graph.graph_entails
 #print axioms VE.Service.Graph.graph_unfolds

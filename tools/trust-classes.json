@@ -2729,15 +2729,19 @@
     "VE.Norms.Flagged.ConflictReplay.accepts"
    ],
    "C": [
+    "VE.Norms.Flagged.BaseConflictFree",
     "VE.Norms.Flagged.ConflictReplay",
+    "VE.Norms.Flagged.ConflictReplay.conflictFree",
     "VE.Norms.Flagged.ConflictReplay.targets",
     "VE.Norms.Flagged.Witness",
     "VE.Norms.Flagged.baseBackground",
+    "VE.Norms.Flagged.baseEnv",
     "VE.Norms.Flagged.conflictFreeCheck",
     "VE.Norms.Flagged.conflictPy",
     "VE.Norms.Flagged.firstFailure",
     "VE.Norms.Flagged.flagPremises",
     "VE.Norms.Flagged.outcomePy",
+    "VE.Norms.Flagged.pairConflictPy",
     "VE.Norms.Flagged.pyTargets",
     "VE.Norms.Flagged.regSubst",
     "VE.Norms.Flagged.regTable",
@@ -2749,14 +2753,17 @@
     "VE.Norms.Flagged.witnessFrom"
    ],
    "D[V]": [
-    "VE.Norms.Flagged.BaseConflictFree",
-    "VE.Norms.Flagged.ConflictReplay.conflictFree",
-    "VE.Norms.Flagged.baseEnv",
     "VE.Norms.Flagged.decodePackage"
    ],
    "G[V]": [
-    "VE.Norms.Flagged.hasTotal",
-    "VE.Norms.Flagged.pairConflictPy"
+    "VE.Norms.Flagged.hasTotal"
+   ]
+  },
+  "VE/Norms/FlaggedSpec.lean": {
+   "P": [
+    "VE.Norms.FlaggedSpec.freeExpansion",
+    "VE.Norms.FlaggedSpec.pyStructure",
+    "VE.Norms.FlaggedSpec.regNames"
    ]
   },
   "VE/Norms/Layer.lean": {

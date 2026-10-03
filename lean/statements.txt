@@ -7474,6 +7474,401 @@ theorem VE.Norms.Flagged.replayEntailment_source
     VE.Norms.Flagged.replayEntailment j = Except.ok r →
       VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src
   -- expr 1440082822
+theorem VE.Norms.FlaggedSpec.baseEnv_hidden
+  ∀ (D : VE.Norms.Doc) (n : String),
+    n ∈ VE.Norms.FlaggedSpec.regNames D → (VE.Norms.Flagged.baseEnv D).predicates n = Option.none
+  -- expr 2916079141
+theorem VE.Norms.FlaggedSpec.baseEnv_predicates
+  ∀ (D : VE.Norms.Doc) (n : String),
+    (VE.Norms.Flagged.baseEnv D).predicates n =
+      if n ∈ VE.Norms.FlaggedSpec.regNames D then Option.none else D.E.predicates n
+  -- expr 2751506237
+theorem VE.Norms.FlaggedSpec.bindAll_wellFormed_inv
+  ∀ {E : VE.Environment} (body : VE.Formula) (ss Γ : List String),
+    VE.Formula.WellFormed E Γ (VE.Norms.bindAll ss body) → VE.Formula.WellFormed E (ss.reverse ++ Γ) body
+  -- expr 678809971
+theorem VE.Norms.FlaggedSpec.conflictFreeCheck_background
+  ∀ {src : VE.Norms.Wire.Source} {certs : List (Option VE.Tableau.Certificate)},
+    VE.Norms.Flagged.conflictFreeCheck src certs = Bool.true →
+      ∀ {t : String × List String × VE.Formula},
+        t ∈ VE.Norms.Flagged.pyTargets src.D →
+          ∀ (a : VE.Formula),
+            a ∈ VE.Norms.Flagged.baseBackground src → VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv src.D) [] a
+  -- expr 1546263526
+theorem VE.Norms.FlaggedSpec.conflictFreeCheck_definition_base
+  ∀ {src : VE.Norms.Wire.Source} {certs : List (Option VE.Tableau.Certificate)},
+    VE.Norms.Flagged.conflictFreeCheck src certs = Bool.true →
+      VE.Norms.Flagged.pyTargets src.D ≠ [] →
+        ∀ {d : VE.Norms.Definition},
+          VE.Norms.Sym.defn d ∈ VE.Norms.syms src.D.T →
+            VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv src.D) d.args.reverse d.body ∧
+              ∀ (p : String), p ∈ VE.Norms.preds d.body → ¬p ∈ VE.Norms.FlaggedSpec.regNames src.D
+  -- expr 3804855268
+theorem VE.Norms.FlaggedSpec.conflictFree_of_base
+  ∀ (src : VE.Norms.Wire.Source),
+    (∀ (a : VE.Formula),
+        a ∈ VE.Norms.Flagged.baseBackground src → VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv src.D) [] a) →
+      (∀ (f : VE.Data.Background.Flag),
+          f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name) →
+        (∀ (S : VE.Structure),
+            S.Admissible (VE.Norms.Flagged.baseEnv src.D) →
+              VE.Norms.Sat S (VE.Norms.Flagged.baseBackground src) → VE.Norms.Flagged.BaseConflictFree src S) →
+          ∀ (B : VE.Structure),
+            VE.Norms.BaseAdmissible src.D B →
+              VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
+  -- expr 2576212085
+theorem VE.Norms.FlaggedSpec.conflictPy_iff
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {B : VE.Structure},
+        B.Admissible (VE.Norms.envAt D 0) →
+          ∀ {k : Nat} {r : VE.Norms.Regulated},
+            (VE.Norms.syms D.T)[k]? = Option.some (VE.Norms.Sym.reg r) →
+              ∀ (vs : List B.Carrier),
+                VE.TupleTyped B r.sorts vs →
+                  (VE.Formula.denote (VE.Norms.FlaggedSpec.pyStructure D B) (VE.Norms.tupleVal vs)
+                      (VE.Norms.Flagged.conflictPy D r) ↔
+                    VE.Formula.denote B (VE.Norms.tupleVal vs) (VE.Norms.conflict D r))
+  -- expr 744515196
+theorem VE.Norms.FlaggedSpec.decodeDefined_name
+  ∀ {p : String} {ss : List String} {payload : Lean.Json} {e : String × List String × VE.Formula},
+    VE.Route.Wire.decodeDefined p ss payload = Except.ok e → e.fst = p
+  -- expr 2175119638
+theorem VE.Norms.FlaggedSpec.decodeSource_flag_not_defined
+  ∀ (environment norms : Lean.Json) (flags : Bool) (src : VE.Norms.Wire.Source),
+    VE.Norms.Wire.decodeSource environment norms flags = Except.ok src →
+      ∀ (f : VE.Data.Background.Flag),
+        f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name
+  -- expr 3314156819
+theorem VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined
+  ∀ (profiles : List String) (v : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.Wire.decodeVocabulary profiles v = Except.ok rv →
+      ∀ (f : VE.Data.Background.Flag), f ∈ rv.flags → ∀ (d : VE.Definitions.Def), d ∈ rv.definitions → f.name ≠ d.name
+  -- expr 3127472073
+theorem VE.Norms.FlaggedSpec.definition_body_wellFormed
+  ∀ {E : VE.Environment} (d : VE.Norms.Definition),
+    VE.Formula.WellFormed E [] d.premise → VE.Formula.WellFormed E d.args.reverse d.body
+  -- expr 3771509629
+theorem VE.Norms.FlaggedSpec.defn_not_regName
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {k : Nat} {d : VE.Norms.Definition},
+        (VE.Norms.syms D.T)[k]? = Option.some (VE.Norms.Sym.defn d) → ¬d.name ∈ VE.Norms.FlaggedSpec.regNames D
+  -- expr 3207619038
+theorem VE.Norms.FlaggedSpec.elaborate_names
+  ∀ (E : VE.Environment) (entries : List (String × List String × VE.Formula)) (ds : List VE.Definitions.Def),
+    VE.Definitions.elaborate E entries = Except.ok ds →
+      ∀ (d : VE.Definitions.Def), d ∈ ds → ∃ e, e ∈ entries ∧ d.name = e.fst
+  -- expr 3410260080
+theorem VE.Norms.FlaggedSpec.eraseDups_length_le
+  ∀ {α : Type} [inst : BEq α] (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.length ≤ l.length
+  -- expr 3597454330
+theorem VE.Norms.FlaggedSpec.filterMapM_ok_mem
+  ∀ {α β ε : Type} {f : α → Except ε (Option β)} {xs : List α} {ys : List β},
+    List.filterMapM f xs = Except.ok ys → ∀ (y : β), y ∈ ys → ∃ x, x ∈ xs ∧ f x = Except.ok (Option.some y)
+  -- expr 4042951021
+theorem VE.Norms.FlaggedSpec.finish_eq
+  ∀ {E : VE.Environment} {l ds : List VE.Definitions.Def}, VE.Definitions.finish E l = Except.ok ds → ds = l
+  -- expr 3537632391
+theorem VE.Norms.FlaggedSpec.flag_premise_base
+  ∀ (src : VE.Norms.Wire.Source),
+    (∀ (f : VE.Data.Background.Flag),
+        f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name) →
+      ∀ (a : VE.Formula),
+        a ∈ VE.Norms.Flagged.flagPremises src →
+          VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv src.D) [] a →
+            VE.Formula.WellFormed (VE.Norms.envAt src.D 0) [] a
+  -- expr 870548097
+theorem VE.Norms.FlaggedSpec.freeExpansion_admissible
+  ∀ {D : VE.Norms.Doc} {B : VE.Structure},
+    VE.Norms.Valid D → B.Admissible (VE.Norms.envAt D 0) → (VE.Norms.FlaggedSpec.freeExpansion D B).Admissible D.E
+  -- expr 889825233
+theorem VE.Norms.FlaggedSpec.freeExpansion_agrees
+  ∀ {D : VE.Norms.Doc} {B : VE.Structure},
+    VE.Norms.Valid D →
+      B.Admissible (VE.Norms.envAt D 0) → ∀ (k : Nat), VE.Norms.AgreesBelow D k (VE.Norms.FlaggedSpec.freeExpansion D B)
+  -- expr 2856623989
+theorem VE.Norms.FlaggedSpec.freeExpansion_base
+  ∀ {D : VE.Norms.Doc} (B : VE.Structure) {n : String},
+    ¬n ∈ VE.Norms.layerNames D.T →
+      ∀ (vs : List B.Carrier), (VE.Norms.FlaggedSpec.freeExpansion D B).relation n vs ↔ B.relation n vs
+  -- expr 523615376
+theorem VE.Norms.FlaggedSpec.freeExpansion_base_denote
+  ∀ {D : VE.Norms.Doc} {B : VE.Structure} (a : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed (VE.Norms.envAt D 0) Γ a →
+      ∀ (ρ : VE.Valuation B), VE.Formula.denote (VE.Norms.FlaggedSpec.freeExpansion D B) ρ a ↔ VE.Formula.denote B ρ a
+  -- expr 3821329083
+theorem VE.Norms.FlaggedSpec.freeExpansion_constants
+  ∀ {D : VE.Norms.Doc} {B : VE.Structure},
+    B.Admissible (VE.Norms.envAt D 0) → VE.Norms.ConstantsTyped D (VE.Norms.FlaggedSpec.freeExpansion D B)
+  -- expr 1352026167
+theorem VE.Norms.FlaggedSpec.freeExpansion_layer
+  ∀ {D : VE.Norms.Doc} (B : VE.Structure),
+    VE.Norms.Valid D →
+      ∀ {k : Nat} {q : VE.Norms.Sym},
+        (VE.Norms.syms D.T)[k]? = Option.some q →
+          ∀ (vs : List B.Carrier),
+            (VE.Norms.FlaggedSpec.freeExpansion D B).relation q.name vs ↔
+              VE.TupleTyped B q.sorts vs ∧
+                VE.Formula.denote B (VE.Norms.tupleVal vs) (VE.Norms.subst D.T k (VE.Norms.Sym.meaning D.T q))
+  -- expr 3457470722
+theorem VE.Norms.FlaggedSpec.freeExpansion_meaning
+  ∀ {D : VE.Norms.Doc} {B : VE.Structure},
+    VE.Norms.Valid D →
+      B.Admissible (VE.Norms.envAt D 0) →
+        ∀ (k : Nat) (q : VE.Norms.Sym),
+          (VE.Norms.syms D.T)[k]? = Option.some q →
+            ∀ (vs : List (VE.Norms.FlaggedSpec.freeExpansion D B).Carrier),
+              VE.TupleTyped (VE.Norms.FlaggedSpec.freeExpansion D B) q.sorts vs →
+                ((VE.Norms.FlaggedSpec.freeExpansion D B).relation q.name vs ↔
+                  VE.Formula.denote (VE.Norms.FlaggedSpec.freeExpansion D B) (VE.Norms.tupleVal vs)
+                    (VE.Norms.Sym.meaning D.T q))
+  -- expr 204371834
+theorem VE.Norms.FlaggedSpec.freeExpansion_tupleTyped
+  ∀ {D : VE.Norms.Doc} (B : VE.Structure) (ss : List String) (vs : List B.Carrier),
+    VE.TupleTyped (VE.Norms.FlaggedSpec.freeExpansion D B) ss vs ↔ VE.TupleTyped B ss vs
+  -- expr 1953769697
+theorem VE.Norms.FlaggedSpec.layer_cases
+  ∀ {D : VE.Norms.Doc} {n : String},
+    n ∈ VE.Norms.layerNames D.T → n ∈ VE.Norms.FlaggedSpec.regNames D ∨ ∃ d, d ∈ D.T.definitions ∧ d.name = n
+  -- expr 2354729781
+theorem VE.Norms.FlaggedSpec.mapM_ok_mem
+  ∀ {α β ε : Type} {f : α → Except ε β} {xs : List α} {ys : List β},
+    List.mapM f xs = Except.ok ys → ∀ (y : β), y ∈ ys → ∃ x, x ∈ xs ∧ f x = Except.ok y
+  -- expr 4262899139
+theorem VE.Norms.FlaggedSpec.nodup_fst_unique
+  ∀ {α β : Type} {l : List (α × β)} {a : α} {b c : β}, (List.map Prod.fst l).Nodup → (a, b) ∈ l → (a, c) ∈ l → b = c
+  -- expr 2826055956
+theorem VE.Norms.FlaggedSpec.nodup_of_eraseDups_length
+  ∀ {α : Type} [inst : BEq α] [LawfulBEq α] (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.length = l.length → l.Nodup
+  -- expr 142684592
+theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
+  ∀ (environment : Lean.Json) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Norms.Wire.decodeNormsEnvironment environment = Except.ok ne →
+      ∀ (f : VE.Data.Background.Flag),
+        f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
+  -- expr 1715331330
+theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
+  ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
+    VE.Norms.Flagged.replayConflict j = Except.ok r →
+      r.conflictFree = Bool.true →
+        VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+          ∀ (B : VE.Structure),
+            VE.Norms.BaseAdmissible r.src.D B →
+              VE.Norms.Sat B (VE.Norms.Flagged.flagPremises r.src) → VE.Norms.ConflictFree r.src.D B
+  -- expr 2183590775
+theorem VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
+  ∀ (j₁ j₂ a₁ a₂ : Lean.Json),
+    VE.Norms.Run.runCase j₁ = Except.ok a₁ →
+      VE.Route.Run.caseKind j₁ = Except.ok "norms-conflict" →
+        VE.Norms.Run.runCase j₂ = Except.ok a₂ →
+          VE.Route.Run.caseKind j₂ = Except.ok "norms-conflict" →
+            j₁.getObjValD "environment" = j₂.getObjValD "environment" →
+              j₁.getObjValD "norms" = j₂.getObjValD "norms" →
+                a₁.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
+                  a₂.getObjValD "verdict" ≠ Lean.Json.str "CONFLICT"
+  -- expr 32276655
+theorem VE.Norms.FlaggedSpec.norms_wire_conflict_free
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-conflict" →
+        answer.getObjValD "verdict" = Lean.Json.str "CONFLICT-FREE" →
+          ∃ src,
+            VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok src ∧
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible src.D B →
+                  VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
+  -- expr 1754971354
+theorem VE.Norms.FlaggedSpec.norms_wire_conflict_refuted
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-conflict" →
+        answer.getObjValD "verdict" = Lean.Json.str "CONFLICT" →
+          ∃ src,
+            VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok src ∧
+              ¬∀ (B : VE.Structure),
+                  VE.Norms.BaseAdmissible src.D B →
+                    VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) → VE.Norms.ConflictFree src.D B
+  -- expr 915280145
+theorem VE.Norms.FlaggedSpec.outcomePy_iff
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {B : VE.Structure},
+        B.Admissible (VE.Norms.envAt D 0) →
+          ∀ {k : Nat} {r : VE.Norms.Regulated},
+            (VE.Norms.syms D.T)[k]? = Option.some (VE.Norms.Sym.reg r) →
+              ∀ (vs : List B.Carrier),
+                VE.TupleTyped B r.sorts vs →
+                  (VE.Formula.denote (VE.Norms.FlaggedSpec.pyStructure D B) (VE.Norms.tupleVal vs)
+                      (VE.Norms.Flagged.outcomePy D r.name) ↔
+                    VE.Formula.denote B (VE.Norms.tupleVal vs) (VE.Norms.outcomeBase D r.name))
+  -- expr 1827019796
+theorem VE.Norms.FlaggedSpec.pairConflictPy_iff
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {B : VE.Structure},
+        B.Admissible (VE.Norms.envAt D 0) →
+          ∀ {pr : VE.Norms.Pair},
+            pr ∈ VE.Norms.pairs D.T →
+              ∀ (vs : List B.Carrier),
+                VE.TupleTyped B pr.sorts vs →
+                  (VE.Formula.denote (VE.Norms.FlaggedSpec.pyStructure D B) (VE.Norms.tupleVal vs)
+                      (VE.Norms.Flagged.pairConflictPy D pr) ↔
+                    VE.Formula.denote B (VE.Norms.tupleVal vs) (VE.Norms.pairConflict D pr))
+  -- expr 1976605301
+theorem VE.Norms.FlaggedSpec.preds_declared
+  ∀ {E : VE.Environment} (a : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ a → ∀ (p : String), p ∈ VE.Norms.preds a → E.predicates p ≠ Option.none
+  -- expr 1504797618
+theorem VE.Norms.FlaggedSpec.pyStructure_admissible
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {B : VE.Structure},
+        B.Admissible (VE.Norms.envAt D 0) → (VE.Norms.FlaggedSpec.pyStructure D B).Admissible (VE.Norms.Flagged.baseEnv D)
+  -- expr 2948553854
+theorem VE.Norms.FlaggedSpec.pyStructure_background
+  ∀ (src : VE.Norms.Wire.Source) {B : VE.Structure},
+    VE.Norms.BaseAdmissible src.D B →
+      VE.Norms.Sat B (VE.Norms.Flagged.flagPremises src) →
+        (∀ (a : VE.Formula),
+            a ∈ VE.Norms.Flagged.baseBackground src → VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv src.D) [] a) →
+          (∀ (f : VE.Data.Background.Flag),
+              f ∈ src.ne.rv.flags → ∀ (d : VE.Norms.Definition), d ∈ src.D.T.definitions → f.name ≠ d.name) →
+            VE.Norms.Sat (VE.Norms.FlaggedSpec.pyStructure src.D B) (VE.Norms.Flagged.baseBackground src)
+  -- expr 2972598731
+theorem VE.Norms.FlaggedSpec.pyStructure_tupleTyped
+  ∀ (D : VE.Norms.Doc) (B : VE.Structure) (ss : List String) (vs : List B.Carrier),
+    VE.TupleTyped (VE.Norms.FlaggedSpec.pyStructure D B) ss vs ↔ VE.TupleTyped B ss vs
+  -- expr 1082628822
+theorem VE.Norms.FlaggedSpec.pyTargets_nil_conflictFree
+  ∀ (src : VE.Norms.Wire.Source),
+    VE.Norms.Flagged.pyTargets src.D = [] → ∀ (B : VE.Structure), VE.Norms.ConflictFree src.D B
+  -- expr 2287076072
+theorem VE.Norms.FlaggedSpec.regName_hidden
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (n : String), n ∈ VE.Norms.FlaggedSpec.regNames D → (VE.Norms.envAt D 0).predicates n = Option.none
+  -- expr 508428947
+theorem VE.Norms.FlaggedSpec.regName_layer
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D → ∀ {n : String}, n ∈ VE.Norms.FlaggedSpec.regNames D → n ∈ VE.Norms.layerNames D.T
+  -- expr 2639171359
+theorem VE.Norms.FlaggedSpec.regSubst_base_iff
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {B : VE.Structure},
+        B.Admissible (VE.Norms.envAt D 0) →
+          ∀ (k : Nat) (φ : VE.Formula) (Γ : List String),
+            VE.Formula.WellFormed (VE.Norms.envAt D k) Γ φ →
+              ∀ (ρ : VE.Valuation B),
+                VE.Valuation.Typed B Γ ρ →
+                  (VE.Formula.denote (VE.Norms.FlaggedSpec.pyStructure D B) ρ (VE.Norms.Flagged.regSubst D.T k φ) ↔
+                    VE.Formula.denote B ρ (VE.Norms.subst D.T k φ))
+  -- expr 600223344
+theorem VE.Norms.FlaggedSpec.regSubst_denote
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (k : Nat) (S : VE.Structure),
+        VE.Norms.ConstantsTyped D S →
+          VE.Norms.AgreesBelow D k S →
+            ∀ (φ : VE.Formula) (Γ : List String),
+              VE.Formula.WellFormed (VE.Norms.envAt D k) Γ φ →
+                ∀ (ρ : VE.Valuation S),
+                  VE.Valuation.Typed S Γ ρ →
+                    (VE.Formula.denote S ρ (VE.Norms.Flagged.regSubst D.T k φ) ↔ VE.Formula.denote S ρ φ)
+  -- expr 319132047
+theorem VE.Norms.FlaggedSpec.regSubst_wellFormed
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (k : Nat) (φ : VE.Formula) (Γ : List String),
+        VE.Formula.WellFormed (VE.Norms.envAt D k) Γ φ →
+          VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv D) Γ (VE.Norms.Flagged.regSubst D.T k φ)
+  -- expr 3367207385
+theorem VE.Norms.FlaggedSpec.regTable_at
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (k j : Nat) (r : VE.Norms.Regulated),
+        j < k →
+          (VE.Norms.syms D.T)[j]? = Option.some (VE.Norms.Sym.reg r) →
+            VE.Norms.Flagged.regTable D.T k r.name =
+              Option.some (VE.Norms.substWith (VE.Norms.Flagged.regTable D.T j) (VE.Norms.outcome D.T r))
+  -- expr 1993099581
+theorem VE.Norms.FlaggedSpec.regTable_none_base
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (k : Nat) (n : String) (ss : List String),
+        VE.Norms.Flagged.regTable D.T k n = Option.none →
+          (VE.Norms.envAt D k).predicates n = Option.some ss → (VE.Norms.Flagged.baseEnv D).predicates n = Option.some ss
+  -- expr 1393284101
+theorem VE.Norms.FlaggedSpec.regTable_some
+  ∀ (T : VE.Norms.Tree) (k : Nat) (n : String) (F : VE.Formula),
+    VE.Norms.Flagged.regTable T k n = Option.some F →
+      ∃ j r,
+        j < k ∧
+          (VE.Norms.syms T)[j]? = Option.some (VE.Norms.Sym.reg r) ∧
+            r.name = n ∧ F = VE.Norms.substWith (VE.Norms.Flagged.regTable T j) (VE.Norms.outcome T r)
+  -- expr 1208021025
+theorem VE.Norms.FlaggedSpec.regTable_sound
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (S : VE.Structure),
+        VE.Norms.ConstantsTyped D S →
+          ∀ (k : Nat),
+            VE.Norms.AgreesBelow D k S →
+              ∀ (n : String) (F : VE.Formula),
+                VE.Norms.Flagged.regTable D.T k n = Option.some F →
+                  ∃ ss,
+                    (VE.Norms.envAt D k).predicates n = Option.some ss ∧
+                      VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv D) ss.reverse F ∧
+                        ∀ (vs : List S.Carrier),
+                          VE.TupleTyped S ss vs → (VE.Formula.denote S (VE.Norms.tupleVal vs) F ↔ S.relation n vs)
+  -- expr 4238747724
+theorem VE.Norms.FlaggedSpec.regTable_wellFormed
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ (k : Nat) (n : String) (F : VE.Formula),
+        VE.Norms.Flagged.regTable D.T k n = Option.some F →
+          ∃ ss,
+            (VE.Norms.envAt D k).predicates n = Option.some ss ∧
+              VE.Formula.WellFormed (VE.Norms.Flagged.baseEnv D) ss.reverse F
+  -- expr 3692369507
+theorem VE.Norms.FlaggedSpec.runCase_conflict
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-conflict" →
+        (∃ src w,
+            VE.Norms.Flagged.replayWitness j = Except.ok ⟨src, w⟩ ∧
+              answer.getObjValD "verdict" = Lean.Json.str (if w.conflict = Bool.true then "CONFLICT" else "UNKNOWN")) ∨
+          ∃ r,
+            VE.Norms.Flagged.replayConflict j = Except.ok r ∧
+              answer.getObjValD "verdict" =
+                Lean.Json.str (if r.conflictFree = Bool.true then "CONFLICT-FREE" else "UNKNOWN")
+  -- expr 2368055738
+theorem VE.Norms.FlaggedSpec.sat_literals_relation
+  ∀ (lits : List String) (S : VE.Structure) (R : String → List S.Carrier → Prop),
+    VE.Norms.Sat { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := R }
+        (VE.Route.Background.literals lits) ↔
+      VE.Norms.Sat S (VE.Route.Background.literals lits)
+  -- expr 2681041794
+theorem VE.Norms.FlaggedSpec.verdict_conflict
+  ∀ (id v : String) (t : Lean.Json) (rest : List (String × Lean.Json)),
+    (rest = [] ∨ ∃ d, rest = [("detail", Lean.Json.str d)]) →
+      (VE.Route.Wire.ok id ([("verdict", Lean.Json.str v), ("targets", t)] ++ rest)).getObjValD "verdict" =
+        Lean.Json.str v
+  -- expr 1287198844
+theorem VE.Norms.FlaggedSpec.verdict_witness
+  ∀ (id v : String) (a b : Lean.Json),
+    (VE.Route.Wire.ok id [("verdict", Lean.Json.str v), ("target", a), ("targets", b)]).getObjValD "verdict" =
+      Lean.Json.str v
+  -- expr 4045763363
+theorem VE.Norms.FlaggedSpec.wf_preds_congr
+  ∀ {E E' : VE.Environment},
+    E'.sorts = E.sorts →
+      E'.constants = E.constants →
+        ∀ (a : VE.Formula),
+          (∀ (p : String), p ∈ VE.Norms.preds a → E'.predicates p = E.predicates p) →
+            ∀ (Γ : List String), VE.Formula.WellFormed E Γ a → VE.Formula.WellFormed E' Γ a
+  -- expr 3673167134
 theorem VE.Norms.Replay.baseModel_valid
   ∀ (ne : VE.Norms.Wire.NormsEnvironment) (D : VE.Norms.Doc),
     D.E = ne.rv.environment →
