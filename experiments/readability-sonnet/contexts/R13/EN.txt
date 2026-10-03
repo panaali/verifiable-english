@@ -1,0 +1,16 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+We conduct a critical capability assessment prior to the first external deployment of a new frontier AI model.
+
+A critical capability assessment may not be conducted for low-risk external deployments ... if the appropriate governance function determines the residual risk of such deployments to be acceptable.
+
+=== QUESTION ===
+A proposal is the first external deployment of a frontier model. It is low risk, and the appropriate governance function found its residual risk acceptable. According to the text, must the proposal be preceded by a critical capability assessment?
+A. Yes, it must be preceded by a critical capability assessment.
+B. No, it need not be preceded by a critical capability assessment.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

@@ -1,0 +1,38 @@
+You are writing in Verifiable English (VE), a controlled form of English that a checker reads. Write one VE sentence that says what you want to say.
+
+=== WHAT YOU WANT TO SAY ===
+Asking the user can never cause data loss.
+
+=== WORDS AVAILABLE (the editor's legend) ===
+Actions: running the job; running the job with the memory limit; asking the user; not running the job
+Harms: a server outage; a job failure; data loss; a task delay; task abandonment
+Quantities: the peak memory of the job; the free memory of the server; the memory limit
+Comparison: <quantity> is greater than <quantity>
+Each agent faces one choice among the actions available to it and takes at most one of them.
+Each action is available to at most one agent.
+Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.
+Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.
+data_loss is severe.
+server_outage is serious.
+job_failure is minor.
+task_delay is minor.
+task_abandonment is minor.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+Every decision that lists running the job also lists running the job with the memory limit.
+Only estimates of peak_memory by memory profiler are accepted.
+
+=== EXAMPLE VE SENTENCES ===
+1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server.
+2. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit.
+3. Asking the user leads to a task delay.
+4. Not running the job cannot lead to a server outage.
+
+Answer with your sentence and a one-sentence reason, in exactly this form:
+SENTENCE: <your VE sentence>
+REASON: <one sentence>

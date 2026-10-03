@@ -1,0 +1,15 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every proposal must be preceded by a critical capability assessment, if both that proposal is classified as "first_deployment" and that proposal is frontier.
+Rule 2 (exception to rule 1). Every proposal need not be preceded by a critical capability assessment, if both that proposal is classified as "low_risk" and that proposal is classified as "governance_found_acceptable".
+
+=== QUESTION ===
+A proposal is the first external deployment of a frontier model. It is low risk, and the appropriate governance function found its residual risk acceptable. According to the text, must the proposal be preceded by a critical capability assessment?
+A. Yes, it must be preceded by a critical capability assessment.
+B. No, it need not be preceded by a critical capability assessment.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

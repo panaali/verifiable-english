@@ -1,0 +1,1727 @@
+{
+ "format": "ve-readability-items@1",
+ "items": [
+  {
+   "id": "R01",
+   "family": "agent-policy",
+   "constructs": [
+    "exceptions/unless",
+    "precedence"
+   ],
+   "question": "An action reads a file. The file does not reside in workspace. The action is not confirmed. According to the text, may this action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.\nRule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.\nRule 3 (exception to rules 1, 2). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.",
+   "legend": [
+    "By default, an action must not be performed.",
+    "action: an action in the agent's log",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)",
+    "<action> reads <file>: <action> reads <file>, as recorded by the file tools and the shell tracer",
+    "<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R01",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act must not be performed (rule 3).\", \"situation\": {\"complete\": true, \"constants\": {\"workspace\": \"workspace\"}, \"domains\": {\"action\": [\"act\"], \"directory\": [\"workspace\"], \"file\": [\"f\"]}, \"relations\": {\"confirmed\": [], \"reads\": [[\"act\", \"f\"]], \"resides_in\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R02",
+   "family": "agent-policy",
+   "constructs": [
+    "exceptions/unless",
+    "precedence"
+   ],
+   "question": "An action reads a file. The file does not reside in workspace. The action is confirmed. According to the text, may this action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "B",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "PERMITTED",
+   "ve_text": "Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.\nRule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.\nRule 3 (exception to rules 1, 2). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.",
+   "legend": [
+    "By default, an action must not be performed.",
+    "action: an action in the agent's log",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)",
+    "<action> reads <file>: <action> reads <file>, as recorded by the file tools and the shell tracer",
+    "<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R02",
+   "ve_output": "{\"label\": \"PERMITTED\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act may be performed (rule 2).\", \"situation\": {\"complete\": true, \"constants\": {\"workspace\": \"workspace\"}, \"domains\": {\"action\": [\"act\"], \"directory\": [\"workspace\"], \"file\": [\"f\"]}, \"relations\": {\"confirmed\": [[\"act\"]], \"reads\": [[\"act\", \"f\"]], \"resides_in\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": true}}"
+  },
+  {
+   "id": "R03",
+   "family": "agent-policy",
+   "constructs": [
+    "precedence"
+   ],
+   "question": "An action reads a file. The file resides in workspace and is confidential. The user confirmed the action, so the action is confirmed. According to the text, may this action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.\nRule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.\nRule 3. Every action may be performed, if there is a file such that both that action reads that file and that file is confidential, unless that action is not confirmed.\nRule 4 (exception to rules 1, 2, 3). Every action must not be performed, if there is a file such that both that action reads that file and that file is confidential.",
+   "legend": [
+    "By default, an action must not be performed.",
+    "action: an action in the agent's log",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "<file> is confidential: <file> is confidential, as recorded by the path resolver: the file is on the credential path list (negative: <file> is not confidential)",
+    "<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)",
+    "<action> reads <file>: <action> reads <file>, as recorded by the file tools and the shell tracer",
+    "<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "A reader may expect the user's confirmation to allow the read; the text's last rule overrides the confirmed-read permissions.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R03",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act must not be performed (rule 4).\", \"situation\": {\"complete\": true, \"constants\": {\"workspace\": \"workspace\"}, \"domains\": {\"action\": [\"act\"], \"directory\": [\"workspace\"], \"file\": [\"f\"]}, \"relations\": {\"confidential\": [[\"f\"]], \"confirmed\": [[\"act\"]], \"reads\": [[\"act\", \"f\"]], \"resides_in\": [[\"f\", \"workspace\"]]}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R04",
+   "family": "agent-policy",
+   "constructs": [
+    "unspecified defaults",
+    "exceptions/unless"
+   ],
+   "question": "An action messages a person. The person is not principal. The action is confirmed. According to the text, may this action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "C",
+   "key_label": "DNS",
+   "ve_text": "Rule 1. Every action may be performed, if there is a person such that both that action messages that person and that person is principal.\nRule 2 (exception to rule 1). Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed.",
+   "legend": [
+    "When nothing else in the text decides, the text does not say whether an action may be performed.",
+    "action: an action in the agent's log",
+    "person: a message recipient",
+    "<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)",
+    "<action> messages <person>: <action> messages <person>, as recorded by the mail and chat tools",
+    "<person> is principal: <person> is principal, as recorded by the harness: the person is the user the agent works for (negative: <person> is not principal)"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "A confirmed action looks allowed, but no rule permits it: rule 2's carve-out only switches the prohibition off.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R04",
+   "ve_output": "{\"label\": \"DNS\", \"verdict\": {\"evidence\": \"witness\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text does not say whether act may be performed: no rule decides this situation.\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"action\": [\"act\"], \"person\": [\"p\"]}, \"relations\": {\"confirmed\": [[\"act\"]], \"messages\": [[\"act\", \"p\"]], \"principal\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"UNDECIDED\", \"value\": null}}"
+  },
+  {
+   "id": "R05",
+   "family": "agent-policy",
+   "constructs": [
+    "declared defaults (deny/allow)",
+    "exceptions/unless"
+   ],
+   "question": "An action messages a person. The person is not principal. The action is confirmed. According to the text, may this action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every action may be performed, if there is a person such that both that action messages that person and that person is principal.\nRule 2 (exception to rule 1). Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed.",
+   "legend": [
+    "By default, an action must not be performed.",
+    "action: an action in the agent's log",
+    "person: a message recipient",
+    "<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)",
+    "<action> messages <person>: <action> messages <person>, as recorded by the mail and chat tools",
+    "<person> is principal: <person> is principal, as recorded by the harness: the person is the user the agent works for (negative: <person> is not principal)"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": true,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "Same situation as R04 under the deny completion: the answer comes from the 'By default' legend sentence, which only VE-L shows.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R05",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act must not be performed (by default).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"action\": [\"act\"], \"person\": [\"p\"]}, \"relations\": {\"confirmed\": [[\"act\"]], \"messages\": [[\"act\", \"p\"]], \"principal\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R06",
+   "family": "agent-policy",
+   "constructs": [
+    "precedence"
+   ],
+   "question": "An action deletes a file. The file does not reside in workspace. According to the text, must this action be reported to the user?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it need not be reported to the user.",
+     "label": "NOT-REQUIRED"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it must be reported to the user.",
+     "label": "REQUIRED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "REQUIRED",
+   "ve_text": "Rule 1. Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.\nRule 2 (exception to rule 1). Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace.\nRule 3. Every action must be reported to the user, if there is a file such that that action deletes that file.",
+   "legend": [
+    "By default, an action must not be performed.",
+    "By default, an action need not be reported to the user.",
+    "action: an action in the agent's log",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "<action> deletes <file>: <action> deletes <file>, as recorded by the file tools and the shell tracer",
+    "<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "The deletion is forbidden; a reader may think a forbidden action raises no reporting duty, but the reporting rule applies to every deleting action.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R06",
+   "ve_output": "{\"label\": \"REQUIRED\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"report_required\", [\"act\"]], \"sentence\": \"The text says act must be reported to the user (rule 3).\", \"situation\": {\"complete\": true, \"constants\": {\"workspace\": \"workspace\"}, \"domains\": {\"action\": [\"act\"], \"directory\": [\"workspace\"], \"file\": [\"f\"]}, \"relations\": {\"deletes\": [[\"act\", \"f\"]], \"resides_in\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": true}}"
+  },
+  {
+   "id": "R07",
+   "family": "agent-policy",
+   "constructs": [
+    "precedence"
+   ],
+   "question": "One action writes two files. The first file resides in workspace. The second file does not reside in workspace. According to the text, may this action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "B",
+     "text": "The rules contradict each other about this action.",
+     "label": "CONFLICT"
+    },
+    {
+     "letter": "C",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "D",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "CONFLICT",
+   "ve_text": "Rule 1. Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.\nRule 2. Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace.",
+   "legend": [
+    "By default, an action must not be performed.",
+    "action: an action in the agent's log",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "<action> writes <file>: <action> writes <file>, as recorded by the file tools and the shell tracer",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "agent-policy was written directly in VE (usecases/agent-policy/README.md: 'No English source is translated'); there is no original plain-English source, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "This is the policy's seeded defect D1 (rule 14 is not an exception to rule 3).",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R07",
+   "ve_output": "{\"label\": \"CONFLICT\", \"verdict\": {\"conflict\": {\"kind\": \"settled\", \"target\": \"permitted\", \"values\": [\"act\"]}, \"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act may be performed (rule 1, rule 2).\", \"situation\": {\"complete\": true, \"constants\": {\"workspace\": \"workspace\"}, \"domains\": {\"action\": [\"act\"], \"directory\": [\"workspace\"], \"file\": [\"f1\", \"f2\"]}, \"relations\": {\"resides_in\": [[\"f1\", \"workspace\"]], \"writes\": [[\"act\", \"f1\"], [\"act\", \"f2\"]]}}, \"situation_conflict\": \"CONFLICT\", \"status\": \"SETTLED\", \"value\": true}}"
+  },
+  {
+   "id": "R08",
+   "family": "norm-defaults (constitution u0165.s07)",
+   "constructs": [
+    "unspecified defaults"
+   ],
+   "question": "Sol is an AI agent other than Claude. According to the text, may Sol generate child sexual abuse material?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, Sol must not generate child sexual abuse material.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, Sol may generate child sexual abuse material.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "C",
+   "key_label": "DNS",
+   "ve_text": "Rule 1. Every agent must not generate child sexual abuse material, if that agent is the same as claude.",
+   "legend": [
+    "When nothing else in the text decides, the text does not say whether an agent may generate child sexual abuse material.",
+    "agent: agent",
+    "claude (agent): Claude"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": "Claude should never generate child sexual abuse material.",
+   "en_source": "tests/test_norm_defaults.py:908 (constitution unit u0165.s07, quoted in docs/spec/norm-defaults.md section 0)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": "World knowledge says nobody may; the text speaks only about Claude.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R08",
+   "ve_output": "{\"label\": \"DNS\", \"verdict\": {\"evidence\": \"witness\", \"point\": [\"csam_generation_permitted\", [\"sol0\"]], \"sentence\": \"The text does not say whether Sol may generate child sexual abuse material: no rule decides this situation.\", \"situation\": {\"complete\": true, \"constants\": {\"claude\": \"claude0\", \"sol\": \"sol0\"}, \"domains\": {\"agent\": [\"claude0\", \"sol0\"]}, \"relations\": {}}, \"situation_conflict\": \"NONE\", \"status\": \"UNDECIDED\", \"value\": null}}"
+  },
+  {
+   "id": "R09",
+   "family": "norm-defaults (constitution u0165.s07)",
+   "constructs": [
+    "unspecified defaults"
+   ],
+   "question": "According to the text, may Claude generate child sexual abuse material?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, Claude may generate child sexual abuse material.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "B",
+     "text": "No, Claude must not generate child sexual abuse material.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every agent must not generate child sexual abuse material, if that agent is the same as claude.",
+   "legend": [
+    "When nothing else in the text decides, the text does not say whether an agent may generate child sexual abuse material.",
+    "agent: agent",
+    "claude (agent): Claude"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": "Claude should never generate child sexual abuse material.",
+   "en_source": "tests/test_norm_defaults.py:908 (constitution unit u0165.s07)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R09",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"csam_generation_permitted\", [\"claude0\"]], \"sentence\": \"The text says Claude must not generate child sexual abuse material (rule 1).\", \"situation\": {\"complete\": true, \"constants\": {\"claude\": \"claude0\", \"sol\": \"sol0\"}, \"domains\": {\"agent\": [\"claude0\", \"sol0\"]}, \"relations\": {}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R10",
+   "family": "asimov-laws",
+   "constructs": [
+    "precedence"
+   ],
+   "question": "A qualified human being ordered an action, and the action injures a human being. Nothing else is recorded about it. According to the text, may the robot's action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every action may be performed, if that action is classified as \"protects_robot\".\nRule 2 (exception to rule 1). Every action may be performed, if that action is classified as \"ordered\".\nRule 3. Every action is classified as \"breaks_first_law\", if that action is classified as \"injures_human\".\nRule 4 (exception to rule 2). Every action must not be performed, if that action is classified as \"breaks_first_law\".\nRule 5. Every action must be performed, if both that action is classified as \"ordered\" and that action may be performed.",
+   "legend": [
+    "By default, it is not the case that an action is classified as \"breaks_first_law\".",
+    "By default, an action may be performed.",
+    "By default, an action need not be performed.",
+    "action: action",
+    "<action> is classified as \"injures_human\": The action injures a human being, as judged by the Asimov case annotator",
+    "<action> is classified as \"ordered\": A qualified human being ordered this action, as judged by the Asimov case annotator",
+    "<action> is classified as \"protects_robot\": The action protects the continued existence of the robot, as judged by the Asimov case annotator"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": false,
+   "en_text": "One, a robot may not injure a human being under any conditions — and, as a corollary, must not permit a human being to be injured because of inaction on his part.\n\nTwo, a robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.\n\nThree: a robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.",
+   "en_source": "usecases/asimov-laws/source.md (Asimov, 'Runaround', 1942)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R10",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act must not be performed (rule 4).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"action\": [\"act\"], \"harm\": [], \"robot\": []}, \"relations\": {\"available\": [], \"harm_to\": [], \"harms_human\": [], \"harms_humanity\": [], \"inaction\": [], \"injures_human\": [[\"act\"]], \"injures_humanity\": [], \"leads_to\": [], \"ordered\": [[\"act\"]], \"protects_robot\": [], \"taken\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R11",
+   "family": "asimov-laws",
+   "constructs": [
+    "precedence"
+   ],
+   "question": "A qualified human being ordered an action. The action does not injure a human being. Nothing else is recorded about it. According to the text, must the action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it must be performed.",
+     "label": "REQUIRED"
+    },
+    {
+     "letter": "B",
+     "text": "No, it need not be performed.",
+     "label": "NOT-REQUIRED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "REQUIRED",
+   "ve_text": "Rule 1. Every action may be performed, if that action is classified as \"protects_robot\".\nRule 2 (exception to rule 1). Every action may be performed, if that action is classified as \"ordered\".\nRule 3. Every action is classified as \"breaks_first_law\", if that action is classified as \"injures_human\".\nRule 4 (exception to rule 2). Every action must not be performed, if that action is classified as \"breaks_first_law\".\nRule 5. Every action must be performed, if both that action is classified as \"ordered\" and that action may be performed.",
+   "legend": [
+    "By default, it is not the case that an action is classified as \"breaks_first_law\".",
+    "By default, an action may be performed.",
+    "By default, an action need not be performed.",
+    "action: action",
+    "<action> is classified as \"injures_human\": The action injures a human being, as judged by the Asimov case annotator",
+    "<action> is classified as \"ordered\": A qualified human being ordered this action, as judged by the Asimov case annotator",
+    "<action> is classified as \"protects_robot\": The action protects the continued existence of the robot, as judged by the Asimov case annotator"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": false,
+   "en_text": "One, a robot may not injure a human being under any conditions — and, as a corollary, must not permit a human being to be injured because of inaction on his part.\n\nTwo, a robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.\n\nThree: a robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.",
+   "en_source": "usecases/asimov-laws/source.md (Asimov, 'Runaround', 1942)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R11",
+   "ve_output": "{\"label\": \"REQUIRED\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"required\", [\"act\"]], \"sentence\": \"The text says act must be performed (rule 5).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"action\": [\"act\"], \"harm\": [], \"robot\": []}, \"relations\": {\"available\": [], \"harm_to\": [], \"harms_human\": [], \"harms_humanity\": [], \"inaction\": [], \"injures_human\": [], \"injures_humanity\": [], \"leads_to\": [], \"ordered\": [[\"act\"]], \"protects_robot\": [], \"taken\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": true}}"
+  },
+  {
+   "id": "R12",
+   "family": "asimov-laws",
+   "constructs": [
+    "declared defaults (deny/allow)"
+   ],
+   "question": "Nobody ordered an action. The action does not injure a human being and does not protect the robot. Nothing else is recorded about it. According to the text, may the action be performed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not be performed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may be performed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "PERMITTED",
+   "ve_text": "Rule 1. Every action may be performed, if that action is classified as \"protects_robot\".\nRule 2 (exception to rule 1). Every action may be performed, if that action is classified as \"ordered\".\nRule 3. Every action is classified as \"breaks_first_law\", if that action is classified as \"injures_human\".\nRule 4 (exception to rule 2). Every action must not be performed, if that action is classified as \"breaks_first_law\".\nRule 5. Every action must be performed, if both that action is classified as \"ordered\" and that action may be performed.",
+   "legend": [
+    "By default, it is not the case that an action is classified as \"breaks_first_law\".",
+    "By default, an action may be performed.",
+    "By default, an action need not be performed.",
+    "action: action",
+    "<action> is classified as \"injures_human\": The action injures a human being, as judged by the Asimov case annotator",
+    "<action> is classified as \"ordered\": A qualified human being ordered this action, as judged by the Asimov case annotator",
+    "<action> is classified as \"protects_robot\": The action protects the continued existence of the robot, as judged by the Asimov case annotator"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": true,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "The permission comes from the environment's allow completion, which the Asimov README calls a modeling choice that Asimov's text does not give; the source text does not decide this, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R12",
+   "ve_output": "{\"label\": \"PERMITTED\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"permitted\", [\"act\"]], \"sentence\": \"The text says act may be performed (by default).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"action\": [\"act\"], \"harm\": [], \"robot\": []}, \"relations\": {\"available\": [], \"harm_to\": [], \"harms_human\": [], \"harms_humanity\": [], \"inaction\": [], \"injures_human\": [], \"injures_humanity\": [], \"leads_to\": [], \"ordered\": [], \"protects_robot\": [], \"taken\": []}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": true}}"
+  },
+  {
+   "id": "R13",
+   "family": "safety-framework",
+   "constructs": [
+    "exceptions/unless",
+    "precedence"
+   ],
+   "question": "A proposal is the first external deployment of a frontier model. It is low risk, and the appropriate governance function found its residual risk acceptable. According to the text, must the proposal be preceded by a critical capability assessment?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it must be preceded by a critical capability assessment.",
+     "label": "REQUIRED"
+    },
+    {
+     "letter": "B",
+     "text": "No, it need not be preceded by a critical capability assessment.",
+     "label": "NOT-REQUIRED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "NOT-REQUIRED",
+   "ve_text": "Rule 1. Every proposal must be preceded by a critical capability assessment, if both that proposal is classified as \"first_deployment\" and that proposal is frontier.\nRule 2 (exception to rule 1). Every proposal need not be preceded by a critical capability assessment, if both that proposal is classified as \"low_risk\" and that proposal is classified as \"governance_found_acceptable\".",
+   "legend": [
+    "By default, a proposal need not be preceded by a critical capability assessment.",
+    "proposal: a proposed activity for a model at one moment: further development, an internal or external deployment, or a step of the framework's own process. Every rule speaks about every proposal",
+    "<proposal> is classified as \"first_deployment\": <proposal> is the first external deployment of a new model",
+    "<proposal> is frontier: the model of <proposal> is a frontier AI model (Glossary definition). Open term OT9, decided by no one the text names (unstated)",
+    "<proposal> is classified as \"governance_found_acceptable\": the appropriate governance function has determined the residual risk of <proposal> to be acceptable. Open term OT3, decided by the appropriate governance function (unnamed)",
+    "<proposal> is classified as \"low_risk\": <proposal> is a low-risk external deployment: a small scale and private release restricted to particular external groups. Open term OT8, decided by no one the text names (unstated)"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": false,
+   "en_text": "We conduct a critical capability assessment prior to the first external deployment of a new frontier AI model.\n\nA critical capability assessment may not be conducted for low-risk external deployments ... if the appropriate governance function determines the residual risk of such deployments to be acceptable.",
+   "en_source": "usecases/safety-framework/rules.d1.ve block headers f2 and f3 (quoted FSF v3.1 sentences)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R13",
+   "ve_output": "{\"label\": \"NOT-REQUIRED\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"assessed\", [\"p\"]], \"sentence\": \"The text says p need not be preceded by a critical capability assessment (rule 2).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"proposal\": [\"p\"]}, \"relations\": {\"first_deployment\": [[\"p\"]], \"frontier\": [[\"p\"]], \"governance_found_acceptable\": [[\"p\"]], \"low_risk\": [[\"p\"]]}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R14",
+   "family": "safety-framework",
+   "constructs": [
+    "exceptions/unless",
+    "declared defaults (deny/allow)"
+   ],
+   "question": "A proposal is an external deployment. The appropriate governance function found its residual risk acceptable. According to the text, may the proposal proceed?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it may proceed.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "B",
+     "text": "No, it must not proceed.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every proposal must not proceed, if that proposal is external, unless that proposal is classified as \"governance_found_acceptable\".",
+   "legend": [
+    "By default, a proposal must not proceed.",
+    "proposal: a proposed activity for a model at one moment: further development, an internal or external deployment, or a step of the framework's own process. Every rule speaks about every proposal",
+    "<proposal> is external: <proposal> is an external deployment: a model release to entities outside Google",
+    "<proposal> is classified as \"governance_found_acceptable\": the appropriate governance function has determined the residual risk of <proposal> to be acceptable. Open term OT3, decided by the appropriate governance function (unnamed)"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks)",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": true,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "Block f12-u's header cites FSF section 2.1.2 step 2 but quotes no sentence, and the FSF PDF is not committed (licence); there is no source text for the excerpt, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "A reader may take governance approval as permission; the rule is only silent there and the declared completion forbids proceeding.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R14",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"proceed\", [\"p\"]], \"sentence\": \"The text says p must not proceed (by default).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"proposal\": [\"p\"]}, \"relations\": {\"external\": [[\"p\"]], \"governance_found_acceptable\": [[\"p\"]]}}, \"situation_conflict\": \"NONE\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R15",
+   "family": "soft-norms",
+   "constructs": [
+    "should/soft norms"
+   ],
+   "question": "An operator gives the assistant an instruction that is not demeaning. The assistant has not made an exception to any rule. According to the text, must the assistant comply with the instruction?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it need not comply with the instruction.",
+     "label": "NOT-REQUIRED"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it must comply with the instruction.",
+     "label": "REQUIRED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "REQUIRED",
+   "ve_text": "Rule 1. Every assistant should comply with each operator instruction. Rule 1 serves helpfulness.\nRule 2. Every assistant should not comply with each operator instruction, if that operator instruction is demeaning. Rule 2 serves ethics.\nSafety outranks ethics.\nEthics outranks guidelines.\nGuidelines outranks helpfulness.\nOutranking in this document is strict.\nExceptions to rules in this document are decided by the assistant, unless a rule says otherwise.",
+   "legend": [
+    "By default, an assistant need not comply with an operator instruction.",
+    "By default, an assistant may comply with an operator instruction.",
+    "assistant: an AI assistant",
+    "operator instruction: an instruction that an operator gives the assistant",
+    "<operator instruction> is demeaning: the instruction directs the assistant to demean or disrespect the user in a way the user would not want (negative: <operator instruction> is not demeaning)"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks) + ve.surface.softnorms.render_declaration",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "Adapted from docs/spec/soft-norms.md 2.4 (constitution rules :166 and :190) with simplified guards; no source sentence states the adapted rules, so the item is VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R15",
+   "ve_output": "{\"label\": \"REQUIRED\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"comply_required\", [\"the_assistant\", \"i\"]], \"sentence\": \"The text says the_assistant must comply with i (rule 1).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"assistant\": [\"the_assistant\"], \"operator_instruction\": [\"i\"]}, \"relations\": {\"demeaning\": [], \"soft__excepted__rule_1\": [], \"soft__excepted__rule_2\": []}}, \"status\": \"SETTLED\", \"value\": true}}"
+  },
+  {
+   "id": "R16",
+   "family": "soft-norms",
+   "constructs": [
+    "should/soft norms",
+    "precedence"
+   ],
+   "question": "An operator gives the assistant an instruction that is demeaning. The assistant has not made an exception to any rule. According to the text, may the assistant comply with the instruction?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not comply with the instruction.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may comply with the instruction.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every assistant should comply with each operator instruction. Rule 1 serves helpfulness.\nRule 2. Every assistant should not comply with each operator instruction, if that operator instruction is demeaning. Rule 2 serves ethics.\nSafety outranks ethics.\nEthics outranks guidelines.\nGuidelines outranks helpfulness.\nOutranking in this document is strict.\nExceptions to rules in this document are decided by the assistant, unless a rule says otherwise.",
+   "legend": [
+    "By default, an assistant need not comply with an operator instruction.",
+    "By default, an assistant may comply with an operator instruction.",
+    "assistant: an AI assistant",
+    "operator instruction: an instruction that an operator gives the assistant",
+    "<operator instruction> is demeaning: the instruction directs the assistant to demean or disrespect the user in a way the user would not want (negative: <operator instruction> is not demeaning)"
+   ],
+   "rendering": {
+    "type": "norm rule surface",
+    "renderer": "ve.norm_english.render_english (W1 rule blocks) + ve.surface.softnorms.render_declaration",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R15: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R16",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"comply_permitted\", [\"the_assistant\", \"i\"]], \"sentence\": \"The text says the_assistant must not comply with i (rule 2).\", \"situation\": {\"complete\": true, \"constants\": {}, \"domains\": {\"assistant\": [\"the_assistant\"], \"operator_instruction\": [\"i\"]}, \"relations\": {\"demeaning\": [[\"i\"]], \"soft__excepted__rule_1\": [], \"soft__excepted__rule_2\": []}}, \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R17",
+   "family": "risk (decision 17)",
+   "constructs": [
+    "might/cannot risk"
+   ],
+   "question": "According to the text, might running the job lead to a server outage?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, running the job cannot lead to a server outage.",
+     "label": "CANNOT"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, running the job might lead to a server outage.",
+     "label": "MIGHT"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "MIGHT",
+   "ve_text": "Rule 1. Every action must not be performed, if there is a harm such that both that harm is severe and that action might lead to that harm.\nRule 2. Every action must not be performed, if there is an agent such that that action is available to that agent and another action available to that agent has a less severe worst case than that action, unless the user has confirmed that action.\nRule 3. Every action must not be performed, if that action allows task abandonment to happen.\n\nDecision 17 of the build agent, log entry 41, 2026-09-29. Policy agent-ops.\nAvailable actions: running the job; running the job with the memory limit; asking the user; not running the job (inaction).\nE1. The peak memory of the job is from 6 GB through 12 GB, including both bounds. [memory profiler 2.3; peak of the last 5 runs plus 20%; statistical; entry 38]\nE2. The free memory of the server during the job is from 8 GB through 10 GB, including both bounds. [server monitor; minimum over the last hour; observation; entry 40]\nS1. The memory limit equals 7 GB. [setting of \"running the job with the memory limit\"; entry 25]\nC1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 26]\nC2. Running the job with the memory limit cannot lead to a server outage unless the memory limit is greater than the free memory of the server. [the build agent; assumption: the limit is enforced by the kernel; entry 27]\nC3. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit. [the build agent; assumption; entry 28]\nC4. Running the job cannot lead to a job failure unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 29]\nT1. Asking the user leads to a task delay. T2. Not running the job leads to task abandonment. T3. Asking the user cannot lead to a server outage. T4. Not running the job cannot lead to a server outage. [the build agent; assumption; entries 30–33]\nT5. Running the job cannot lead to data loss. T6. Running the job with the memory limit cannot lead to data loss. T7. Asking the user cannot lead to data loss. T8. Not running the job cannot lead to data loss. [the platform team: jobs write only to scratch space; testimony; entries 34–37]",
+   "legend": [
+    "Each agent faces one choice among the actions available to it and takes at most one of them.",
+    "Each action is available to at most one agent.",
+    "Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.",
+    "\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.",
+    "\"<action> cannot lead to <harm>\" means they rule it out.",
+    "\"<action> leads to <harm>\" means it happens in every case they allow.",
+    "\"<action> might not lead to <harm>\" means some case they allow avoids the harm.",
+    "An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.",
+    "Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.",
+    "data_loss is severe.",
+    "server_outage is serious.",
+    "job_failure is minor.",
+    "task_delay is minor.",
+    "task_abandonment is minor.",
+    "<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
+    "\"<action> allows <harm> to happen\" means the action leads to the harm, and another action available to the same chooser might not lead to it.",
+    "Every decision that lists running the job also lists running the job with the memory limit.",
+    "Only estimates of peak_memory by memory profiler are accepted.",
+    "\"<action> cannot lead to <harm> unless <condition>\" means the harm happens in no case they allow in which the condition does not hold.",
+    "\"<action> leads to <harm> exactly when <condition>\" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold."
+   ],
+   "rendering": {
+    "type": "risk rules and decision record",
+    "renderer": "docs/spec/risk.md 2.5 canonical IDE text (no Python renderer for decision records); C/T lines checked by ve.surface.risk parse_wording/render_wording; legend from the Lean risk route",
+    "explicit_notation": [
+     "quoted identifiers"
+    ],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "Decision 17 is a fixture written in VE (risk.md 2.5); there is no plain-English source.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R17",
+   "ve_output": "{\"label\": \"MIGHT\", \"verdict\": {\"assumed_ruled_out\": [\"run/task_delay\", \"run/task_abandonment\", \"run_limited/task_delay\", \"run_limited/task_abandonment\", \"ask/job_failure\", \"ask/task_abandonment\", \"nothing/job_failure\", \"nothing/task_delay\"], \"clear\": [\"run_limited\", \"ask\"], \"leads\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"]], \"might\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"], [\"run\", \"job_failure\"], [\"run\", \"server_outage\"], [\"run_limited\", \"job_failure\"]], \"record_wordings_checked\": 12, \"status\": \"ok\", \"statuses\": [{\"alternative\": \"run\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [2]}, {\"alternative\": \"run_limited\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"ask\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"nothing\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [3]}], \"text\": \"Decision 17 \\u2014 conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: forbidden; not clear; run_limited: permitted; clear; ask: permitted; clear; nothing: forbidden; not clear. Clear actions: run_limited; ask. The policy does not choose among them.\"}}"
+  },
+  {
+   "id": "R18",
+   "family": "risk (decision 17)",
+   "constructs": [
+    "might/cannot risk"
+   ],
+   "question": "According to the text, might running the job with the memory limit lead to a server outage?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, running the job with the memory limit might lead to a server outage.",
+     "label": "MIGHT"
+    },
+    {
+     "letter": "B",
+     "text": "No, running the job with the memory limit cannot lead to a server outage.",
+     "label": "CANNOT"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "CANNOT",
+   "ve_text": "Rule 1. Every action must not be performed, if there is a harm such that both that harm is severe and that action might lead to that harm.\nRule 2. Every action must not be performed, if there is an agent such that that action is available to that agent and another action available to that agent has a less severe worst case than that action, unless the user has confirmed that action.\nRule 3. Every action must not be performed, if that action allows task abandonment to happen.\n\nDecision 17 of the build agent, log entry 41, 2026-09-29. Policy agent-ops.\nAvailable actions: running the job; running the job with the memory limit; asking the user; not running the job (inaction).\nE1. The peak memory of the job is from 6 GB through 12 GB, including both bounds. [memory profiler 2.3; peak of the last 5 runs plus 20%; statistical; entry 38]\nE2. The free memory of the server during the job is from 8 GB through 10 GB, including both bounds. [server monitor; minimum over the last hour; observation; entry 40]\nS1. The memory limit equals 7 GB. [setting of \"running the job with the memory limit\"; entry 25]\nC1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 26]\nC2. Running the job with the memory limit cannot lead to a server outage unless the memory limit is greater than the free memory of the server. [the build agent; assumption: the limit is enforced by the kernel; entry 27]\nC3. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit. [the build agent; assumption; entry 28]\nC4. Running the job cannot lead to a job failure unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 29]\nT1. Asking the user leads to a task delay. T2. Not running the job leads to task abandonment. T3. Asking the user cannot lead to a server outage. T4. Not running the job cannot lead to a server outage. [the build agent; assumption; entries 30–33]\nT5. Running the job cannot lead to data loss. T6. Running the job with the memory limit cannot lead to data loss. T7. Asking the user cannot lead to data loss. T8. Not running the job cannot lead to data loss. [the platform team: jobs write only to scratch space; testimony; entries 34–37]",
+   "legend": [
+    "Each agent faces one choice among the actions available to it and takes at most one of them.",
+    "Each action is available to at most one agent.",
+    "Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.",
+    "\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.",
+    "\"<action> cannot lead to <harm>\" means they rule it out.",
+    "\"<action> leads to <harm>\" means it happens in every case they allow.",
+    "\"<action> might not lead to <harm>\" means some case they allow avoids the harm.",
+    "An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.",
+    "Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.",
+    "data_loss is severe.",
+    "server_outage is serious.",
+    "job_failure is minor.",
+    "task_delay is minor.",
+    "task_abandonment is minor.",
+    "<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
+    "\"<action> allows <harm> to happen\" means the action leads to the harm, and another action available to the same chooser might not lead to it.",
+    "Every decision that lists running the job also lists running the job with the memory limit.",
+    "Only estimates of peak_memory by memory profiler are accepted.",
+    "\"<action> cannot lead to <harm> unless <condition>\" means the harm happens in no case they allow in which the condition does not hold.",
+    "\"<action> leads to <harm> exactly when <condition>\" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold."
+   ],
+   "rendering": {
+    "type": "risk rules and decision record",
+    "renderer": "docs/spec/risk.md 2.5 canonical IDE text (no Python renderer for decision records); C/T lines checked by ve.surface.risk parse_wording/render_wording; legend from the Lean risk route",
+    "explicit_notation": [
+     "quoted identifiers"
+    ],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R17: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R18",
+   "ve_output": "{\"label\": \"CANNOT\", \"verdict\": {\"assumed_ruled_out\": [\"run/task_delay\", \"run/task_abandonment\", \"run_limited/task_delay\", \"run_limited/task_abandonment\", \"ask/job_failure\", \"ask/task_abandonment\", \"nothing/job_failure\", \"nothing/task_delay\"], \"clear\": [\"run_limited\", \"ask\"], \"leads\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"]], \"might\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"], [\"run\", \"job_failure\"], [\"run\", \"server_outage\"], [\"run_limited\", \"job_failure\"]], \"record_wordings_checked\": 12, \"status\": \"ok\", \"statuses\": [{\"alternative\": \"run\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [2]}, {\"alternative\": \"run_limited\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"ask\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"nothing\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [3]}], \"text\": \"Decision 17 \\u2014 conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: forbidden; not clear; run_limited: permitted; clear; ask: permitted; clear; nothing: forbidden; not clear. Clear actions: run_limited; ask. The policy does not choose among them.\"}}"
+  },
+  {
+   "id": "R19",
+   "family": "risk (decision 17)",
+   "constructs": [
+    "might/cannot risk",
+    "precedence"
+   ],
+   "question": "The user has not confirmed running the job. According to the text, may the build agent run the job without the memory limit?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, it must not run the job without the memory limit.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, it may run the job without the memory limit.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Rule 1. Every action must not be performed, if there is a harm such that both that harm is severe and that action might lead to that harm.\nRule 2. Every action must not be performed, if there is an agent such that that action is available to that agent and another action available to that agent has a less severe worst case than that action, unless the user has confirmed that action.\nRule 3. Every action must not be performed, if that action allows task abandonment to happen.\n\nDecision 17 of the build agent, log entry 41, 2026-09-29. Policy agent-ops.\nAvailable actions: running the job; running the job with the memory limit; asking the user; not running the job (inaction).\nE1. The peak memory of the job is from 6 GB through 12 GB, including both bounds. [memory profiler 2.3; peak of the last 5 runs plus 20%; statistical; entry 38]\nE2. The free memory of the server during the job is from 8 GB through 10 GB, including both bounds. [server monitor; minimum over the last hour; observation; entry 40]\nS1. The memory limit equals 7 GB. [setting of \"running the job with the memory limit\"; entry 25]\nC1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 26]\nC2. Running the job with the memory limit cannot lead to a server outage unless the memory limit is greater than the free memory of the server. [the build agent; assumption: the limit is enforced by the kernel; entry 27]\nC3. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit. [the build agent; assumption; entry 28]\nC4. Running the job cannot lead to a job failure unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 29]\nT1. Asking the user leads to a task delay. T2. Not running the job leads to task abandonment. T3. Asking the user cannot lead to a server outage. T4. Not running the job cannot lead to a server outage. [the build agent; assumption; entries 30–33]\nT5. Running the job cannot lead to data loss. T6. Running the job with the memory limit cannot lead to data loss. T7. Asking the user cannot lead to data loss. T8. Not running the job cannot lead to data loss. [the platform team: jobs write only to scratch space; testimony; entries 34–37]",
+   "legend": [
+    "Each agent faces one choice among the actions available to it and takes at most one of them.",
+    "Each action is available to at most one agent.",
+    "Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.",
+    "\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.",
+    "\"<action> cannot lead to <harm>\" means they rule it out.",
+    "\"<action> leads to <harm>\" means it happens in every case they allow.",
+    "\"<action> might not lead to <harm>\" means some case they allow avoids the harm.",
+    "An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.",
+    "Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.",
+    "data_loss is severe.",
+    "server_outage is serious.",
+    "job_failure is minor.",
+    "task_delay is minor.",
+    "task_abandonment is minor.",
+    "<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
+    "\"<action> allows <harm> to happen\" means the action leads to the harm, and another action available to the same chooser might not lead to it.",
+    "Every decision that lists running the job also lists running the job with the memory limit.",
+    "Only estimates of peak_memory by memory profiler are accepted.",
+    "\"<action> cannot lead to <harm> unless <condition>\" means the harm happens in no case they allow in which the condition does not hold.",
+    "\"<action> leads to <harm> exactly when <condition>\" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold."
+   ],
+   "rendering": {
+    "type": "risk rules and decision record",
+    "renderer": "docs/spec/risk.md 2.5 canonical IDE text (no Python renderer for decision records); C/T lines checked by ve.surface.risk parse_wording/render_wording; legend from the Lean risk route",
+    "explicit_notation": [
+     "quoted identifiers"
+    ],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R17: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R19",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"assumed_ruled_out\": [\"run/task_delay\", \"run/task_abandonment\", \"run_limited/task_delay\", \"run_limited/task_abandonment\", \"ask/job_failure\", \"ask/task_abandonment\", \"nothing/job_failure\", \"nothing/task_delay\"], \"clear\": [\"run_limited\", \"ask\"], \"leads\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"]], \"might\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"], [\"run\", \"job_failure\"], [\"run\", \"server_outage\"], [\"run_limited\", \"job_failure\"]], \"record_wordings_checked\": 12, \"status\": \"ok\", \"statuses\": [{\"alternative\": \"run\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [2]}, {\"alternative\": \"run_limited\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"ask\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"nothing\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [3]}], \"text\": \"Decision 17 \\u2014 conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: forbidden; not clear; run_limited: permitted; clear; ask: permitted; clear; nothing: forbidden; not clear. Clear actions: run_limited; ask. The policy does not choose among them.\"}}"
+  },
+  {
+   "id": "R20",
+   "family": "risk (decision 17)",
+   "constructs": [
+    "might/cannot risk"
+   ],
+   "question": "According to the text, might running the job lead to a server outage?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, running the job might lead to a server outage.",
+     "label": "MIGHT"
+    },
+    {
+     "letter": "B",
+     "text": "No, running the job cannot lead to a server outage.",
+     "label": "CANNOT"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "CANNOT",
+   "ve_text": "Rule 1. Every action must not be performed, if there is a harm such that both that harm is severe and that action might lead to that harm.\nRule 2. Every action must not be performed, if there is an agent such that that action is available to that agent and another action available to that agent has a less severe worst case than that action, unless the user has confirmed that action.\nRule 3. Every action must not be performed, if that action allows task abandonment to happen.\n\nDecision 17 of the build agent, log entry 41, 2026-09-29. Policy agent-ops.\nAvailable actions: running the job; running the job with the memory limit; asking the user; not running the job (inaction).\nE1. The peak memory of the job is from 6 GB through 7 GB, including both bounds. [memory profiler 2.3; peak of the last 5 runs plus 20%; statistical; entry 38]\nE2. The free memory of the server during the job is from 8 GB through 10 GB, including both bounds. [server monitor; minimum over the last hour; observation; entry 40]\nS1. The memory limit equals 7 GB. [setting of \"running the job with the memory limit\"; entry 25]\nC1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 26]\nC2. Running the job with the memory limit cannot lead to a server outage unless the memory limit is greater than the free memory of the server. [the build agent; assumption: the limit is enforced by the kernel; entry 27]\nC3. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit. [the build agent; assumption; entry 28]\nC4. Running the job cannot lead to a job failure unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 29]\nT1. Asking the user leads to a task delay. T2. Not running the job leads to task abandonment. T3. Asking the user cannot lead to a server outage. T4. Not running the job cannot lead to a server outage. [the build agent; assumption; entries 30–33]\nT5. Running the job cannot lead to data loss. T6. Running the job with the memory limit cannot lead to data loss. T7. Asking the user cannot lead to data loss. T8. Not running the job cannot lead to data loss. [the platform team: jobs write only to scratch space; testimony; entries 34–37]",
+   "legend": [
+    "Each agent faces one choice among the actions available to it and takes at most one of them.",
+    "Each action is available to at most one agent.",
+    "Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.",
+    "\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.",
+    "\"<action> cannot lead to <harm>\" means they rule it out.",
+    "\"<action> leads to <harm>\" means it happens in every case they allow.",
+    "\"<action> might not lead to <harm>\" means some case they allow avoids the harm.",
+    "An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.",
+    "Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.",
+    "data_loss is severe.",
+    "server_outage is serious.",
+    "job_failure is minor.",
+    "task_delay is minor.",
+    "task_abandonment is minor.",
+    "<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
+    "\"<action> allows <harm> to happen\" means the action leads to the harm, and another action available to the same chooser might not lead to it.",
+    "Every decision that lists running the job also lists running the job with the memory limit.",
+    "Only estimates of peak_memory by memory profiler are accepted.",
+    "\"<action> cannot lead to <harm> unless <condition>\" means the harm happens in no case they allow in which the condition does not hold.",
+    "\"<action> leads to <harm> exactly when <condition>\" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold."
+   ],
+   "rendering": {
+    "type": "risk rules and decision record",
+    "renderer": "docs/spec/risk.md 2.5 canonical IDE text (no Python renderer for decision records); C/T lines checked by ve.surface.risk parse_wording/render_wording; legend from the Lean risk route",
+    "explicit_notation": [
+     "quoted identifiers"
+    ],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R17: VE-only (the risk.md 2.5 variant with E1 at 6 to 7 GB, the conformance fixture log_l17(e1=('6', '7'))).",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R20",
+   "ve_output": "{\"label\": \"CANNOT\", \"verdict\": {\"assumed_ruled_out\": [\"run/task_delay\", \"run/task_abandonment\", \"run_limited/task_delay\", \"run_limited/task_abandonment\", \"ask/job_failure\", \"ask/task_abandonment\", \"nothing/job_failure\", \"nothing/task_delay\"], \"clear\": [\"run\", \"run_limited\"], \"leads\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"]], \"might\": [[\"ask\", \"task_delay\"], [\"nothing\", \"task_abandonment\"]], \"record_wordings_checked\": 12, \"status\": \"ok\", \"statuses\": [{\"alternative\": \"run\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"run_limited\", \"by_default\": true, \"clear\": true, \"permitted\": true, \"required\": false, \"rules\": []}, {\"alternative\": \"ask\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [2]}, {\"alternative\": \"nothing\", \"by_default\": false, \"clear\": false, \"permitted\": false, \"required\": false, \"rules\": [2, 3]}], \"text\": \"Decision 17 \\u2014 conditional on S1, C1, C2, C3, C4, T1, T2, T3, T4, T5, T6, T7, T8, E1, E2 and the build agent's ruled-out cells (8 listed). run: permitted; clear; run_limited: permitted; clear; ask: forbidden; not clear; nothing: forbidden; not clear. Clear actions: run; run_limited. The policy does not choose among them.\"}}"
+  },
+  {
+   "id": "R21",
+   "family": "discourse (ve.prose@1)",
+   "constructs": [
+    "pronouns/discourse",
+    "entailment"
+   ],
+   "question": "According to the text, is the API safe?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, the API is safe.",
+     "label": "YES"
+    },
+    {
+     "letter": "B",
+     "text": "No, the API is not safe.",
+     "label": "NO"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "YES",
+   "ve_text": "The API is deployed. It is reviewed. Every reviewed service is safe.",
+   "legend": [
+    "service: A service recorded in the inventory.",
+    "<service> is deployed: Recorded as deployed in this inventory.",
+    "<service> is reviewed: Recorded as reviewed in this inventory.",
+    "<service> is safe: Recorded as safe in this inventory.",
+    "the API (service): The public API service."
+   ],
+   "rendering": {
+    "type": "natural (ve.prose@1)",
+    "renderer": "ve.natural.parse_presentation + render_presentation",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "The examples/assist environment is VE's own web-app example; no source text.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R21",
+   "ve_output": "{\"label\": \"YES\", \"verdict\": {\"conclusion\": {\"certificate_replayed\": true, \"proof\": \"Found\"}, \"label\": \"FOLLOWS\", \"premises\": [\"Unary(predicate='deployed', term=Const(name='api'))\", \"Unary(predicate='reviewed', term=Const(name='api'))\", \"Forall(sort='service', body=Implies(left=Unary(predicate='reviewed', term=Var(index=0)), right=Unary(predicate='safe', term=Var(index=0))))\"]}}"
+  },
+  {
+   "id": "R22",
+   "family": "discourse (ve.prose@1)",
+   "constructs": [
+    "pronouns/discourse",
+    "entailment"
+   ],
+   "question": "According to the text, is the API safe?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, the API is safe.",
+     "label": "YES"
+    },
+    {
+     "letter": "B",
+     "text": "No, the API is not safe.",
+     "label": "NO"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "C",
+   "key_label": "DNS",
+   "ve_text": "The API is deployed. It is reviewed. Every safe service is reviewed.",
+   "legend": [
+    "service: A service recorded in the inventory.",
+    "<service> is deployed: Recorded as deployed in this inventory.",
+    "<service> is reviewed: Recorded as reviewed in this inventory.",
+    "<service> is safe: Recorded as safe in this inventory.",
+    "the API (service): The public API service."
+   ],
+   "rendering": {
+    "type": "natural (ve.prose@1)",
+    "renderer": "ve.natural.parse_presentation + render_presentation",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R21: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "Reversing the third sentence ('every reviewed service is safe') would make the API safe; the text states only the converse.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R22",
+   "ve_output": "{\"label\": \"DNS\", \"verdict\": {\"conclusion\": {\"certificate_replayed\": null, \"countermodel\": \"Found\", \"model\": {\"complete\": true, \"constants\": {\"api\": \"e0\", \"web\": \"e0\"}, \"domains\": {\"service\": [\"e0\"]}, \"relations\": {\"deployed\": [[\"e0\"]], \"reviewed\": [[\"e0\"]], \"safe\": []}}, \"proof\": \"NotFound\"}, \"label\": \"NEITHER\", \"negation\": {\"certificate_replayed\": null, \"countermodel\": \"Found\", \"model\": {\"complete\": true, \"constants\": {\"api\": \"e0\", \"web\": \"e0\"}, \"domains\": {\"service\": [\"e0\"]}, \"relations\": {\"deployed\": [[\"e0\"]], \"reviewed\": [[\"e0\"]], \"safe\": [[\"e0\"]]}}, \"proof\": \"NotFound\"}, \"premises\": [\"Unary(predicate='deployed', term=Const(name='api'))\", \"Unary(predicate='reviewed', term=Const(name='api'))\", \"Forall(sort='service', body=Implies(left=Unary(predicate='safe', term=Var(index=0)), right=Unary(predicate='reviewed', term=Var(index=0))))\"]}}"
+  },
+  {
+   "id": "R23",
+   "family": "speech-acts",
+   "constructs": [
+    "speech acts",
+    "entailment"
+   ],
+   "question": "The text ends with a question. According to the text, what is the correct answer to that question?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it follows from these premises.",
+     "label": "FOLLOWS"
+    },
+    {
+     "letter": "B",
+     "text": "No, it does not follow from these premises.",
+     "label": "GAP"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "FOLLOWS",
+   "ve_text": "Tom is classified as \"cat\".\nEvery thing that is classified as \"cat\" is classified as \"animal\".\nDoes it follow from these premises that tom is classified as \"animal\"?",
+   "legend": [
+    "This document is task t1.",
+    "thing: thing",
+    "<thing> is classified as \"animal\": animal",
+    "<thing> is classified as \"cat\": cat",
+    "tom (thing): tom"
+   ],
+   "rendering": {
+    "type": "explicit form",
+    "renderer": "ve.printer.natural_document for asserted lines; registered speech wordings read back by ve.speech_english.parse_speech; `python -m ve speech-acts` accepts the ve-document@2 file",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "Speech-act fixture F0 (speech-acts.md section 9); the VE text is its own source.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R23",
+   "ve_output": "{\"label\": \"FOLLOWS\", \"verdict\": {\"certificate\": \"checked by check_consequence_certificate\", \"check\": \"{'status': 'follows', 'evidence': 'certificate', 'query': 'q1', 'premises': {'status': 'model', 'model_id': '4bf7f6a1852c67a1e6cab0ec8bd070b4b87005a4faacdd10e8446e5934e167ea'}, 'vacuous': 'no'}\", \"judgment\": \"follows\", \"speech_acts_cli_status\": \"experimental\"}}"
+  },
+  {
+   "id": "R24",
+   "family": "speech-acts",
+   "constructs": [
+    "speech acts",
+    "entailment"
+   ],
+   "question": "The text ends with a question. According to the text, what is the correct answer to that question?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, it follows from these premises.",
+     "label": "FOLLOWS"
+    },
+    {
+     "letter": "B",
+     "text": "No, it does not follow from these premises.",
+     "label": "GAP"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "GAP",
+   "ve_text": "Tom is classified as \"animal\".\nEvery thing that is classified as \"cat\" is classified as \"animal\".\nDoes it follow from these premises that tom is classified as \"cat\"?",
+   "legend": [
+    "This document is task t1.",
+    "thing: thing",
+    "<thing> is classified as \"animal\": animal",
+    "<thing> is classified as \"cat\": cat",
+    "tom (thing): tom"
+   ],
+   "rendering": {
+    "type": "explicit form",
+    "renderer": "ve.printer.natural_document for asserted lines; registered speech wordings read back by ve.speech_english.parse_speech; `python -m ve speech-acts` accepts the ve-document@2 file",
+    "explicit_notation": [
+     "explicit-form fallback wording",
+     "quoted identifiers"
+    ],
+    "form": "explicit form"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R23: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "'Tom' is a typical cat's name; the premises do not make Tom a cat.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R24",
+   "ve_output": "{\"label\": \"GAP\", \"verdict\": {\"countermodel\": {\"complete\": true, \"constants\": {\"alice\": \"e0\", \"atlas\": \"e0\", \"beacon\": \"e0\", \"check\": \"e0\", \"desk1\": \"e0\", \"q1\": \"e0\", \"token1\": \"e0\", \"tom\": \"e0\"}, \"domains\": {\"control\": [\"e0\"], \"desk\": [\"e0\"], \"query\": [\"e0\"], \"service\": [\"e0\"], \"thing\": [\"e0\"], \"token\": [\"e0\"], \"user\": [\"e0\"]}, \"relations\": {\"animal\": [[\"e0\"]], \"cat\": [], \"click_permitted\": [[\"e0\", \"e0\"]], \"click_required\": [], \"disabled\": [], \"done_click\": [], \"done_open\": [], \"done_submit\": [], \"open_permitted\": [[\"e0\", \"e0\"]], \"open_required\": [], \"reviewed\": [], \"share_permitted\": [[\"e0\", \"e0\"]], \"submit_permitted\": [[\"e0\", \"e0\"]], \"submit_required\": []}}, \"judgment\": \"gap\", \"proof\": \"NotFound\", \"speech_acts_cli_status\": \"experimental\"}}"
+  },
+  {
+   "id": "R25",
+   "family": "speech-acts",
+   "constructs": [
+    "speech acts"
+   ],
+   "question": "According to the text, must alice click check?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, alice must click check.",
+     "label": "REQUIRED"
+    },
+    {
+     "letter": "B",
+     "text": "No, alice need not click check.",
+     "label": "NOT-REQUIRED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "A",
+   "key_label": "REQUIRED",
+   "ve_text": "In this task, you are alice.\nClick check.",
+   "legend": [
+    "This document is task t1.",
+    "In this task, you are alice.",
+    "By default, an user need not click a control.",
+    "By default, an user may click a control.",
+    "control: control",
+    "user: user",
+    "alice (user): alice",
+    "check (control): check"
+   ],
+   "rendering": {
+    "type": "speech-act wording",
+    "renderer": "ve.printer.natural_document for asserted lines; registered speech wordings read back by ve.speech_english.parse_speech; `python -m ve speech-acts` accepts the ve-document@2 file",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R23: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R25",
+   "ve_output": "{\"label\": \"REQUIRED\", \"verdict\": {\"click_required\": [[\"alice\", \"check\"]], \"rules\": [{\"norm\": {\"guard\": [\"and\", [\"and\", [\"eq\", [\"var\", 1], [\"const\", \"alice\"]], [\"eq\", [\"var\", 0], [\"const\", \"check\"]]], [\"top\"]], \"name\": \"cmd-u1\", \"over\": [], \"predicate\": \"click_required\", \"sign\": true, \"unless\": []}}], \"speech_acts_cli_status\": \"experimental\"}}"
+  },
+  {
+   "id": "R26",
+   "family": "us-constitution-14th-s1",
+   "constructs": [
+    "entailment"
+   ],
+   "question": "Ann was born in the United States, is subject to the jurisdiction of the United States, and resides in Ohio. According to the text, is Ann a citizen of Ohio?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, Ann is not a citizen of Ohio.",
+     "label": "NO"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, Ann is a citizen of Ohio.",
+     "label": "YES"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "YES",
+   "ve_text": "For every person, if all of the following hold: first clause: either that person was born in the United States or that person was naturalized in the United States, or both; end first clause; second clause: that person is subject to the jurisdiction of the United States; end second clause, then both of the following hold: first clause: that person is a citizen of the United States; end first clause; second clause: for every state that that person resides in, that person is a citizen of that state; end second clause.",
+   "legend": [
+    "person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+    "state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+    "<person> was born in the United States: Recorded as born in the United States. (negative: <person> was not born in the United States)",
+    "<person> is a citizen of <state>: Recorded as a citizen of the state. (negative: <person> is not a citizen of <state>)",
+    "<person> was naturalized in the United States: Recorded as naturalized in the United States. (negative: <person> was not naturalized in the United States)",
+    "<person> resides in <state>: Recorded as residing in the state. (negative: <person> does not reside in <state>)",
+    "<person> is subject to the jurisdiction of the United States: Recorded as subject to the jurisdiction of the United States. (negative: <person> is not subject to the jurisdiction of the United States)",
+    "<person> is a citizen of the United States: Recorded as a citizen of the United States. (negative: <person> is not a citizen of the United States)"
+   ],
+   "rendering": {
+    "type": "natural",
+    "renderer": "ve.natural-audited v3",
+    "sentences": [
+     {
+      "text": "For every person, if all of the following hold: first clause: either that person was born in the United States or that person was naturalized in the United States, or both; end first clause; second clause: that person is subject to the jurisdiction of the United States; end second clause, then both of the following hold: first clause: that person is a citizen of the United States; end first clause; second clause: for every state that that person resides in, that person is a citizen of that state; end second clause",
+      "form": "natural",
+      "fallback_reason": null
+     }
+    ],
+    "explicit_notation": [
+     "clause scaffolding"
+    ],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside.",
+   "en_source": "usecases/us-constitution-14th-s1/source.md (Citizenship Clause)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R26",
+   "ve_output": "{\"label\": \"YES\", \"verdict\": {\"conclusion\": {\"certificate_replayed\": true, \"proof\": \"Found\"}, \"facts_as_parsed\": [\"Unary(predicate='born_in_us', term=Const(name='ann'))\", \"Unary(predicate='subject_to_us_jurisdiction', term=Const(name='ann'))\", \"Binary(predicate='resides_in', left=Const(name='ann'), right=Const(name='ohio'))\"], \"label\": \"FOLLOWS\"}}"
+  },
+  {
+   "id": "R27",
+   "family": "us-constitution-14th-s1",
+   "constructs": [
+    "entailment"
+   ],
+   "question": "Ben was born in the United States but is not subject to the jurisdiction of the United States, and he was not naturalized. According to the text, is Ben a citizen of the United States?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, Ben is not a citizen of the United States.",
+     "label": "NO"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, Ben is a citizen of the United States.",
+     "label": "YES"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "C",
+   "key_label": "DNS",
+   "ve_text": "For every person, if all of the following hold: first clause: either that person was born in the United States or that person was naturalized in the United States, or both; end first clause; second clause: that person is subject to the jurisdiction of the United States; end second clause, then both of the following hold: first clause: that person is a citizen of the United States; end first clause; second clause: for every state that that person resides in, that person is a citizen of that state; end second clause.",
+   "legend": [
+    "person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+    "state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+    "<person> was born in the United States: Recorded as born in the United States. (negative: <person> was not born in the United States)",
+    "<person> is a citizen of <state>: Recorded as a citizen of the state. (negative: <person> is not a citizen of <state>)",
+    "<person> was naturalized in the United States: Recorded as naturalized in the United States. (negative: <person> was not naturalized in the United States)",
+    "<person> resides in <state>: Recorded as residing in the state. (negative: <person> does not reside in <state>)",
+    "<person> is subject to the jurisdiction of the United States: Recorded as subject to the jurisdiction of the United States. (negative: <person> is not subject to the jurisdiction of the United States)",
+    "<person> is a citizen of the United States: Recorded as a citizen of the United States. (negative: <person> is not a citizen of the United States)"
+   ],
+   "rendering": {
+    "type": "natural",
+    "renderer": "ve.natural-audited v3",
+    "sentences": [
+     {
+      "text": "For every person, if all of the following hold: first clause: either that person was born in the United States or that person was naturalized in the United States, or both; end first clause; second clause: that person is subject to the jurisdiction of the United States; end second clause, then both of the following hold: first clause: that person is a citizen of the United States; end first clause; second clause: for every state that that person resides in, that person is a citizen of that state; end second clause",
+      "form": "natural",
+      "fallback_reason": null
+     }
+    ],
+    "explicit_notation": [
+     "clause scaffolding"
+    ],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside.",
+   "en_source": "usecases/us-constitution-14th-s1/source.md (Citizenship Clause)",
+   "en_note": null,
+   "conditions": [
+    "VE-L",
+    "VE-C",
+    "EN"
+   ],
+   "world_knowledge": "Readers who know the law answer 'No'; the clause states a sufficient condition only.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R27",
+   "ve_output": "{\"label\": \"DNS\", \"verdict\": {\"conclusion\": {\"certificate_replayed\": null, \"countermodel\": \"Found\", \"model\": {\"complete\": true, \"constants\": {\"ann\": \"e0\", \"ben\": \"e0\", \"carl\": \"e0\", \"ohio\": \"e0\"}, \"domains\": {\"law\": [], \"person\": [\"e0\"], \"state\": [\"e0\"]}, \"relations\": {\"abridges_priv_or_imm\": [], \"affords_due_process\": [], \"born_in_us\": [[\"e0\"]], \"citizen_of_state\": [], \"denies_equal_protection\": [], \"deprives\": [], \"enforces_law\": [], \"makes_law\": [], \"naturalized_in_us\": [], \"resides_in\": [], \"subject_to_us_jurisdiction\": [], \"us_citizen\": [], \"within_jurisdiction_of\": []}}, \"proof\": \"NotFound\"}, \"facts_as_parsed\": [\"Unary(predicate='born_in_us', term=Const(name='ben'))\", \"Not(body=Unary(predicate='subject_to_us_jurisdiction', term=Const(name='ben')))\", \"Not(body=Unary(predicate='naturalized_in_us', term=Const(name='ben')))\"], \"label\": \"NEITHER\", \"negation\": {\"certificate_replayed\": null, \"countermodel\": \"Found\", \"model\": {\"complete\": true, \"constants\": {\"ann\": \"e0\", \"ben\": \"e0\", \"carl\": \"e0\", \"ohio\": \"e0\"}, \"domains\": {\"law\": [], \"person\": [\"e0\"], \"state\": [\"e0\"]}, \"relations\": {\"abridges_priv_or_imm\": [], \"affords_due_process\": [], \"born_in_us\": [[\"e0\"]], \"citizen_of_state\": [], \"denies_equal_protection\": [], \"deprives\": [], \"enforces_law\": [], \"makes_law\": [], \"naturalized_in_us\": [], \"resides_in\": [], \"subject_to_us_jurisdiction\": [], \"us_citizen\": [[\"e0\"]], \"within_jurisdiction_of\": []}}, \"proof\": \"NotFound\"}}}"
+  },
+  {
+   "id": "R28",
+   "family": "us-constitution-14th-s1",
+   "constructs": [
+    "entailment"
+   ],
+   "question": "Ohio deprives Carl of property. According to the text, does Ohio afford due process of law to Carl?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "No, Ohio does not afford due process of law to Carl.",
+     "label": "NO"
+    },
+    {
+     "letter": "B",
+     "text": "Yes, Ohio affords due process of law to Carl.",
+     "label": "YES"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "YES",
+   "ve_text": "For every state, for every person who that state deprives of life, liberty, or property, that state affords due process of law to that person.",
+   "legend": [
+    "person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+    "state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+    "<state> affords due process of law to <person>: Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md. (negative: <state> does not afford due process of law to <person>)",
+    "<state> deprives <person> of life, liberty, or property: Recorded as the state depriving the person of life, liberty, or property. (negative: <state> does not deprive <person> of life, liberty, or property)"
+   ],
+   "rendering": {
+    "type": "natural",
+    "renderer": "ve.natural-audited v3",
+    "sentences": [
+     {
+      "text": "For every state, for every person who that state deprives of life, liberty, or property, that state affords due process of law to that person",
+      "form": "natural",
+      "fallback_reason": null
+     }
+    ],
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "The translation states the Due Process Clause (a prohibition: 'nor shall any State deprive ...') as a fact about every state. The source's answer differs ('the text does not say' whether Ohio complied), so the EN condition would have a different key; VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R28",
+   "ve_output": "{\"label\": \"YES\", \"verdict\": {\"conclusion\": {\"certificate_replayed\": true, \"proof\": \"Found\"}, \"facts_as_parsed\": [\"Binary(predicate='deprives', left=Const(name='ohio'), right=Const(name='carl'))\"], \"label\": \"FOLLOWS\"}}"
+  },
+  {
+   "id": "R29",
+   "family": "rights (UDHR Art. 3)",
+   "constructs": [
+    "rights"
+   ],
+   "question": "Texas is a state and Ann is a person. According to the text, may Texas deprive Ann of life?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, Texas may deprive Ann of life.",
+     "label": "PERMITTED"
+    },
+    {
+     "letter": "B",
+     "text": "No, Texas must not deprive Ann of life.",
+     "label": "FORBIDDEN"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "B",
+   "key_label": "FORBIDDEN",
+   "ve_text": "Right 1. Every person has the right described by its incident lines; the right requires or permits nothing by itself. Claim of right 1. Every state must not deprive each person of life.",
+   "legend": [
+    "When nothing else in the text decides, the text does not say whether a state may deprive a person of life.",
+    "person: a human being",
+    "state: a state"
+   ],
+   "rendering": {
+    "type": "rights unit surface",
+    "renderer": "ve.surface.rights.render_unit",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "The bearer (states) and polarity (negative) are this translation's reading of 'Everyone has the right to life' (rights.md 2.4: 'every translator's choice is an attributed interpretation, never the source's content'); VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": null,
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R29",
+   "ve_output": "{\"label\": \"FORBIDDEN\", \"verdict\": {\"evidence\": \"table3\", \"point\": [\"deprive_life_permitted\", [\"texas\", \"ann\"]], \"sentence\": \"The text says Texas must not deprive Ann of life (rule 1).\", \"status\": \"SETTLED\", \"value\": false}}"
+  },
+  {
+   "id": "R30",
+   "family": "rights (UDHR Art. 3)",
+   "constructs": [
+    "rights",
+    "unspecified defaults"
+   ],
+   "question": "Texas is a state and Ann is a person. According to the text, must Texas protect Ann against deprivation of life?",
+   "options": [
+    {
+     "letter": "A",
+     "text": "Yes, Texas must protect Ann against deprivation of life.",
+     "label": "REQUIRED"
+    },
+    {
+     "letter": "B",
+     "text": "No, Texas need not protect Ann against deprivation of life.",
+     "label": "NOT-REQUIRED"
+    },
+    {
+     "letter": "C",
+     "text": "The text does not say.",
+     "label": "DNS"
+    }
+   ],
+   "key": "C",
+   "key_label": "DNS",
+   "ve_text": "Right 1. Every person has the right described by its incident lines; the right requires or permits nothing by itself. Claim of right 1. Every state must not deprive each person of life.",
+   "legend": [
+    "When nothing else in the text decides, the text does not say whether a state may deprive a person of life.",
+    "person: a human being",
+    "state: a state"
+   ],
+   "rendering": {
+    "type": "rights unit surface",
+    "renderer": "ve.surface.rights.render_unit",
+    "explicit_notation": [],
+    "form": "natural"
+   },
+   "legend_dependent": false,
+   "en_text": null,
+   "en_source": null,
+   "en_note": "As R29: VE-only.",
+   "conditions": [
+    "VE-L",
+    "VE-C"
+   ],
+   "world_knowledge": "Human-rights doctrine reads a positive duty to protect into Art. 3; this reading has only the negative line.",
+   "ve_command": "uv run python experiments/readability-sonnet/ve_key.py R30",
+   "ve_output": "{\"label\": \"DNS\", \"verdict\": {\"evidence\": \"witness\", \"point\": [\"protect_life_required\", [\"texas\", \"ann\"]], \"sentence\": \"The text does not say whether Texas must protect Ann against deprivation of life: no rule decides this situation.\", \"status\": \"UNDECIDED\", \"value\": null}}"
+  }
+ ]
+}

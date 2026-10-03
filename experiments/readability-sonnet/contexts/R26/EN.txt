@@ -1,0 +1,14 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside.
+
+=== QUESTION ===
+Ann was born in the United States, is subject to the jurisdiction of the United States, and resides in Ohio. According to the text, is Ann a citizen of Ohio?
+A. No, Ann is not a citizen of Ohio.
+B. Yes, Ann is a citizen of Ohio.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

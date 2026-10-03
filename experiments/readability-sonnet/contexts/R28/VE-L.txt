@@ -1,0 +1,20 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+For every state, for every person who that state deprives of life, liberty, or property, that state affords due process of law to that person.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.
+state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.
+<state> affords due process of law to <person>: Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md. (negative: <state> does not afford due process of law to <person>)
+<state> deprives <person> of life, liberty, or property: Recorded as the state depriving the person of life, liberty, or property. (negative: <state> does not deprive <person> of life, liberty, or property)
+
+=== QUESTION ===
+Ohio deprives Carl of property. According to the text, does Ohio afford due process of law to Carl?
+A. No, Ohio does not afford due process of law to Carl.
+B. Yes, Ohio affords due process of law to Carl.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

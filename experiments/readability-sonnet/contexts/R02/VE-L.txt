@@ -1,0 +1,26 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Rule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Rule 3 (exception to rules 1, 2). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+By default, an action must not be performed.
+action: an action in the agent's log
+directory: a directory, such as the agent's workspace
+file: a file path, as resolved by the path resolver
+<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)
+<action> reads <file>: <action> reads <file>, as recorded by the file tools and the shell tracer
+<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)
+workspace (directory): the workspace directory of the agent's task
+
+=== QUESTION ===
+An action reads a file. The file does not reside in workspace. The action is confirmed. According to the text, may this action be performed?
+A. Yes, it may be performed.
+B. No, it must not be performed.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

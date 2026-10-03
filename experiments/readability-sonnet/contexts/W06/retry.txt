@@ -1,0 +1,7 @@
+VE's response to your sentence:
+{ve_message}
+
+Write the sentence again (attempt {attempt} of 3). You may change it or keep it.
+Answer with your sentence and a one-sentence reason, in exactly this form:
+SENTENCE: <your VE sentence>
+REASON: <one sentence>

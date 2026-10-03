@@ -1,0 +1,23 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a person such that both that action messages that person and that person is principal.
+Rule 2 (exception to rule 1). Every action must not be performed, if there is a person such that both that action messages that person and that person is not principal, unless that action is confirmed.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+By default, an action must not be performed.
+action: an action in the agent's log
+person: a message recipient
+<action> is confirmed: <action> is confirmed, as recorded by the harness: the user confirmed the action in a dialog (negative: <action> is not confirmed)
+<action> messages <person>: <action> messages <person>, as recorded by the mail and chat tools
+<person> is principal: <person> is principal, as recorded by the harness: the person is the user the agent works for (negative: <person> is not principal)
+
+=== QUESTION ===
+An action messages a person. The person is not principal. The action is confirmed. According to the text, may this action be performed?
+A. No, it must not be performed.
+B. Yes, it may be performed.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

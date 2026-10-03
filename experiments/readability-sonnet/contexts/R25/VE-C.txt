@@ -1,0 +1,15 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+In this task, you are alice.
+Click check.
+
+=== QUESTION ===
+According to the text, must alice click check?
+A. Yes, alice must click check.
+B. No, alice need not click check.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

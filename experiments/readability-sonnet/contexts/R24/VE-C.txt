@@ -1,0 +1,16 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Tom is classified as "animal".
+Every thing that is classified as "cat" is classified as "animal".
+Does it follow from these premises that tom is classified as "cat"?
+
+=== QUESTION ===
+The text ends with a question. According to the text, what is the correct answer to that question?
+A. Yes, it follows from these premises.
+B. No, it does not follow from these premises.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

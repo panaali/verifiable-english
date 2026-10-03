@@ -1,0 +1,14 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+For every state, for every person who that state deprives of life, liberty, or property, that state affords due process of law to that person.
+
+=== QUESTION ===
+Ohio deprives Carl of property. According to the text, does Ohio afford due process of law to Carl?
+A. No, Ohio does not afford due process of law to Carl.
+B. Yes, Ohio affords due process of law to Carl.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

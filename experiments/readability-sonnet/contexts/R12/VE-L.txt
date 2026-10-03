@@ -1,0 +1,27 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if that action is classified as "protects_robot".
+Rule 2 (exception to rule 1). Every action may be performed, if that action is classified as "ordered".
+Rule 3. Every action is classified as "breaks_first_law", if that action is classified as "injures_human".
+Rule 4 (exception to rule 2). Every action must not be performed, if that action is classified as "breaks_first_law".
+Rule 5. Every action must be performed, if both that action is classified as "ordered" and that action may be performed.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+By default, it is not the case that an action is classified as "breaks_first_law".
+By default, an action may be performed.
+By default, an action need not be performed.
+action: action
+<action> is classified as "injures_human": The action injures a human being, as judged by the Asimov case annotator
+<action> is classified as "ordered": A qualified human being ordered this action, as judged by the Asimov case annotator
+<action> is classified as "protects_robot": The action protects the continued existence of the robot, as judged by the Asimov case annotator
+
+=== QUESTION ===
+Nobody ordered an action. The action does not injure a human being and does not protect the robot. Nothing else is recorded about it. According to the text, may the action be performed?
+A. No, it must not be performed.
+B. Yes, it may be performed.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

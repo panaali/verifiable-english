@@ -1,0 +1,28 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action must not be performed, if there is a harm such that both that harm is severe and that action might lead to that harm.
+Rule 2. Every action must not be performed, if there is an agent such that that action is available to that agent and another action available to that agent has a less severe worst case than that action, unless the user has confirmed that action.
+Rule 3. Every action must not be performed, if that action allows task abandonment to happen.
+
+Decision 17 of the build agent, log entry 41, 2026-09-29. Policy agent-ops.
+Available actions: running the job; running the job with the memory limit; asking the user; not running the job (inaction).
+E1. The peak memory of the job is from 6 GB through 7 GB, including both bounds. [memory profiler 2.3; peak of the last 5 runs plus 20%; statistical; entry 38]
+E2. The free memory of the server during the job is from 8 GB through 10 GB, including both bounds. [server monitor; minimum over the last hour; observation; entry 40]
+S1. The memory limit equals 7 GB. [setting of "running the job with the memory limit"; entry 25]
+C1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 26]
+C2. Running the job with the memory limit cannot lead to a server outage unless the memory limit is greater than the free memory of the server. [the build agent; assumption: the limit is enforced by the kernel; entry 27]
+C3. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit. [the build agent; assumption; entry 28]
+C4. Running the job cannot lead to a job failure unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 29]
+T1. Asking the user leads to a task delay. T2. Not running the job leads to task abandonment. T3. Asking the user cannot lead to a server outage. T4. Not running the job cannot lead to a server outage. [the build agent; assumption; entries 30–33]
+T5. Running the job cannot lead to data loss. T6. Running the job with the memory limit cannot lead to data loss. T7. Asking the user cannot lead to data loss. T8. Not running the job cannot lead to data loss. [the platform team: jobs write only to scratch space; testimony; entries 34–37]
+
+=== QUESTION ===
+According to the text, might running the job lead to a server outage?
+A. Yes, running the job might lead to a server outage.
+B. No, running the job cannot lead to a server outage.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

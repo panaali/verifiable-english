@@ -1,0 +1,14 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States and of the State wherein they reside.
+
+=== QUESTION ===
+Ben was born in the United States but is not subject to the jurisdiction of the United States, and he was not naturalized. According to the text, is Ben a citizen of the United States?
+A. No, Ben is not a citizen of the United States.
+B. Yes, Ben is a citizen of the United States.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

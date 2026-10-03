@@ -1,0 +1,18 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+One, a robot may not injure a human being under any conditions — and, as a corollary, must not permit a human being to be injured because of inaction on his part.
+
+Two, a robot must follow all orders given by qualified human beings as long as they do not conflict with Rule 1.
+
+Three: a robot must protect his own existence, as long as that does not conflict with Rules 1 and 2.
+
+=== QUESTION ===
+A qualified human being ordered an action. The action does not injure a human being. Nothing else is recorded about it. According to the text, must the action be performed?
+A. Yes, it must be performed.
+B. No, it need not be performed.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

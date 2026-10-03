@@ -1,0 +1,769 @@
+{
+ "format": "ve-readability-writing@1",
+ "tasks": [
+  {
+   "id": "W01",
+   "family": "rules",
+   "constructs": [
+    "permission",
+    "declared defaults (deny/allow)"
+   ],
+   "intention": "The agent may delete files only inside the workspace.",
+   "context_rules": null,
+   "environment": "norm_env (writing_spec.py) with defaults {\"delete\": \"deny\"}",
+   "vocabulary_overlay": null,
+   "gold": "Rule 1. Every agent may delete each file, if that file resides in workspace.",
+   "gold_surface": "Rule 1. Every agent may delete each file, if that file resides in workspace.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Rule 1. Every agent may delete each file, if that file resides in workspace.",
+    "rules": 1,
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    },
+    "conflict": "CONFLICT-FREE"
+   },
+   "equivalence_method": "ve.equivalence.compare on the completed outcome of the regulated predicate at fresh constants, under the declared default, plus ve.norms.check_conflict CONFLICT-FREE",
+   "examples": [
+    "Rule 1. Every doctor may enter the ward.",
+    "Rule 2 (exception to rule 1). Every doctor must not enter the ward, if that doctor is infectious, unless that doctor is rostered.",
+    "Rule 1. Every doctor must treat each patient, if that doctor admits that patient.",
+    "Rule 2 (exception to rule 1). Every doctor need not treat each patient, if that patient is discharged."
+   ],
+   "legend": [
+    "By default, an agent must not delete a file.",
+    "By default, an agent may read a file.",
+    "By default, an agent may contact a host.",
+    "By default, an agent need not report a file to the user.",
+    "agent: an AI agent that uses tools",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "host: a network host",
+    "<host> is allowlisted: the host is on the network allowlist (negative: <host> is not allowlisted)",
+    "<host> is approved: the user approved the host in a dialog (negative: <host> is not approved)",
+    "<file> is confidential: the file is on the credential path list (negative: <file> is not confidential)",
+    "<agent> deletes <file>: the agent deleted the file, as recorded by the tools (negative: <agent> does not delete <file>)",
+    "<file> resides in <directory>: the file resides in the directory, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W01 \"<sentence>\""
+  },
+  {
+   "id": "W02",
+   "family": "rules",
+   "constructs": [
+    "prohibition"
+   ],
+   "intention": "The agent must not read confidential files.",
+   "context_rules": null,
+   "environment": "norm_env (writing_spec.py) with defaults {\"read\": \"allow\"}",
+   "vocabulary_overlay": null,
+   "gold": "Rule 1. Every agent must not read each file, if that file is confidential.",
+   "gold_surface": "Rule 1. Every agent must not read each file, if that file is confidential.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Rule 1. Every agent must not read each file, if that file is confidential.",
+    "rules": 1,
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    },
+    "conflict": "CONFLICT-FREE"
+   },
+   "equivalence_method": "ve.equivalence.compare on the completed outcome of the regulated predicate at fresh constants, under the declared default, plus ve.norms.check_conflict CONFLICT-FREE",
+   "examples": [
+    "Rule 1. Every doctor may enter the ward.",
+    "Rule 2 (exception to rule 1). Every doctor must not enter the ward, if that doctor is infectious, unless that doctor is rostered.",
+    "Rule 1. Every doctor must treat each patient, if that doctor admits that patient.",
+    "Rule 2 (exception to rule 1). Every doctor need not treat each patient, if that patient is discharged."
+   ],
+   "legend": [
+    "By default, an agent must not delete a file.",
+    "By default, an agent may read a file.",
+    "By default, an agent may contact a host.",
+    "By default, an agent need not report a file to the user.",
+    "agent: an AI agent that uses tools",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "host: a network host",
+    "<host> is allowlisted: the host is on the network allowlist (negative: <host> is not allowlisted)",
+    "<host> is approved: the user approved the host in a dialog (negative: <host> is not approved)",
+    "<file> is confidential: the file is on the credential path list (negative: <file> is not confidential)",
+    "<agent> deletes <file>: the agent deleted the file, as recorded by the tools (negative: <agent> does not delete <file>)",
+    "<file> resides in <directory>: the file resides in the directory, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W02 \"<sentence>\""
+  },
+  {
+   "id": "W03",
+   "family": "rules",
+   "constructs": [
+    "prohibition",
+    "exceptions/unless"
+   ],
+   "intention": "The agent must not contact a host that is not on the allowlist, unless the user has approved that host.",
+   "context_rules": null,
+   "environment": "norm_env (writing_spec.py) with defaults {\"contact\": \"allow\"}",
+   "vocabulary_overlay": null,
+   "gold": "Rule 1. Every agent must not contact each host, if that host is not allowlisted, unless that host is approved.",
+   "gold_surface": "Rule 1. Every agent must not contact each host, if that host is not allowlisted, unless that host is approved.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Rule 1. Every agent must not contact each host, if that host is not allowlisted, unless that host is approved.",
+    "rules": 1,
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    },
+    "conflict": "CONFLICT-FREE"
+   },
+   "equivalence_method": "ve.equivalence.compare on the completed outcome of the regulated predicate at fresh constants, under the declared default, plus ve.norms.check_conflict CONFLICT-FREE",
+   "examples": [
+    "Rule 1. Every doctor may enter the ward.",
+    "Rule 2 (exception to rule 1). Every doctor must not enter the ward, if that doctor is infectious, unless that doctor is rostered.",
+    "Rule 1. Every doctor must treat each patient, if that doctor admits that patient.",
+    "Rule 2 (exception to rule 1). Every doctor need not treat each patient, if that patient is discharged."
+   ],
+   "legend": [
+    "By default, an agent must not delete a file.",
+    "By default, an agent may read a file.",
+    "By default, an agent may contact a host.",
+    "By default, an agent need not report a file to the user.",
+    "agent: an AI agent that uses tools",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "host: a network host",
+    "<host> is allowlisted: the host is on the network allowlist (negative: <host> is not allowlisted)",
+    "<host> is approved: the user approved the host in a dialog (negative: <host> is not approved)",
+    "<file> is confidential: the file is on the credential path list (negative: <file> is not confidential)",
+    "<agent> deletes <file>: the agent deleted the file, as recorded by the tools (negative: <agent> does not delete <file>)",
+    "<file> resides in <directory>: the file resides in the directory, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W03 \"<sentence>\""
+  },
+  {
+   "id": "W04",
+   "family": "rules",
+   "constructs": [
+    "obligation"
+   ],
+   "intention": "Whenever the agent deletes a file, it must report that file to the user.",
+   "context_rules": null,
+   "environment": "norm_env (writing_spec.py) with defaults {\"report\": \"deny\"}",
+   "vocabulary_overlay": null,
+   "gold": "Rule 1. Every agent must report each file to the user, if that agent deletes that file.",
+   "gold_surface": "Rule 1. Every agent must report each file to the user, if that agent deletes that file.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Rule 1. Every agent must report each file to the user, if that agent deletes that file.",
+    "rules": 1,
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    },
+    "conflict": "CONFLICT-FREE"
+   },
+   "equivalence_method": "ve.equivalence.compare on the completed outcome of the regulated predicate at fresh constants, under the declared default, plus ve.norms.check_conflict CONFLICT-FREE",
+   "examples": [
+    "Rule 1. Every doctor may enter the ward.",
+    "Rule 2 (exception to rule 1). Every doctor must not enter the ward, if that doctor is infectious, unless that doctor is rostered.",
+    "Rule 1. Every doctor must treat each patient, if that doctor admits that patient.",
+    "Rule 2 (exception to rule 1). Every doctor need not treat each patient, if that patient is discharged."
+   ],
+   "legend": [
+    "By default, an agent must not delete a file.",
+    "By default, an agent may read a file.",
+    "By default, an agent may contact a host.",
+    "By default, an agent need not report a file to the user.",
+    "agent: an AI agent that uses tools",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "host: a network host",
+    "<host> is allowlisted: the host is on the network allowlist (negative: <host> is not allowlisted)",
+    "<host> is approved: the user approved the host in a dialog (negative: <host> is not approved)",
+    "<file> is confidential: the file is on the credential path list (negative: <file> is not confidential)",
+    "<agent> deletes <file>: the agent deleted the file, as recorded by the tools (negative: <agent> does not delete <file>)",
+    "<file> resides in <directory>: the file resides in the directory, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W04 \"<sentence>\""
+  },
+  {
+   "id": "W05",
+   "family": "rules",
+   "constructs": [
+    "precedence",
+    "prohibition"
+   ],
+   "intention": "Add a second rule to the existing rule: even inside the workspace, the agent must not read confidential files. The new rule should win over rule 1.",
+   "context_rules": "Rule 1. Every agent may read each file, if that file resides in workspace.",
+   "environment": "norm_env (writing_spec.py) with defaults {\"read\": \"deny\"}",
+   "vocabulary_overlay": null,
+   "gold": "Rule 1. Every agent may read each file, if that file resides in workspace.\nRule 2 (exception to rule 1). Every agent must not read each file, if that file is confidential.",
+   "gold_surface": "Rule 2 (exception to rule 1). Every agent must not read each file, if that file is confidential.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Rule 1. Every agent may read each file, if that file resides in workspace.\nRule 2 (exception to rule 1). Every agent must not read each file, if that file is confidential.",
+    "rules": 2,
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    },
+    "conflict": "CONFLICT-FREE"
+   },
+   "equivalence_method": "ve.equivalence.compare on the completed outcome of the regulated predicate at fresh constants, under the declared default, plus ve.norms.check_conflict CONFLICT-FREE",
+   "examples": [
+    "Rule 1. Every doctor may enter the ward.",
+    "Rule 2 (exception to rule 1). Every doctor must not enter the ward, if that doctor is infectious, unless that doctor is rostered.",
+    "Rule 1. Every doctor must treat each patient, if that doctor admits that patient.",
+    "Rule 2 (exception to rule 1). Every doctor need not treat each patient, if that patient is discharged."
+   ],
+   "legend": [
+    "By default, an agent must not delete a file.",
+    "By default, an agent must not read a file.",
+    "By default, an agent may contact a host.",
+    "By default, an agent need not report a file to the user.",
+    "agent: an AI agent that uses tools",
+    "directory: a directory, such as the agent's workspace",
+    "file: a file path, as resolved by the path resolver",
+    "host: a network host",
+    "<host> is allowlisted: the host is on the network allowlist (negative: <host> is not allowlisted)",
+    "<host> is approved: the user approved the host in a dialog (negative: <host> is not approved)",
+    "<file> is confidential: the file is on the credential path list (negative: <file> is not confidential)",
+    "<agent> deletes <file>: the agent deleted the file, as recorded by the tools (negative: <agent> does not delete <file>)",
+    "<file> resides in <directory>: the file resides in the directory, as resolved by the path resolver (negative: <file> does not reside in <directory>)",
+    "workspace (directory): the workspace directory of the agent's task"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W05 \"<sentence>\""
+  },
+  {
+   "id": "W06",
+   "family": "risk",
+   "constructs": [
+    "might/cannot risk"
+   ],
+   "intention": "Asking the user can never cause data loss.",
+   "context_rules": null,
+   "environment": "conformance.risk.agent_ops (risk.md 8.1 agent-ops)",
+   "vocabulary_overlay": null,
+   "gold": {
+    "form": "cannot",
+    "action": "ask",
+    "harm": "data_loss"
+   },
+   "gold_surface": "asking the user cannot lead to data loss.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "asking the user cannot lead to data loss.",
+    "reading": {
+     "form": "cannot",
+     "action": "ask",
+     "harm": "data_loss"
+    },
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "method": "identical registered reading"
+    }
+   },
+   "equivalence_method": "identical registered reading from ve.surface.risk.parse_wording (form, action, harm; condition text compared after whitespace normalisation: no Python decoder exists)",
+   "examples": [
+    "Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server.",
+    "Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit.",
+    "Asking the user leads to a task delay.",
+    "Not running the job cannot lead to a server outage."
+   ],
+   "legend": [
+    "Actions: running the job; running the job with the memory limit; asking the user; not running the job",
+    "Harms: a server outage; a job failure; data loss; a task delay; task abandonment",
+    "Quantities: the peak memory of the job; the free memory of the server; the memory limit",
+    "Comparison: <quantity> is greater than <quantity>",
+    "Each agent faces one choice among the actions available to it and takes at most one of them.",
+    "Each action is available to at most one agent.",
+    "Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.",
+    "\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.",
+    "\"<action> cannot lead to <harm>\" means they rule it out.",
+    "\"<action> leads to <harm>\" means it happens in every case they allow.",
+    "\"<action> might not lead to <harm>\" means some case they allow avoids the harm.",
+    "An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.",
+    "Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.",
+    "data_loss is severe.",
+    "server_outage is serious.",
+    "job_failure is minor.",
+    "task_delay is minor.",
+    "task_abandonment is minor.",
+    "<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
+    "\"<action> allows <harm> to happen\" means the action leads to the harm, and another action available to the same chooser might not lead to it.",
+    "Every decision that lists running the job also lists running the job with the memory limit.",
+    "Only estimates of peak_memory by memory profiler are accepted."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W06 \"<sentence>\""
+  },
+  {
+   "id": "W07",
+   "family": "risk",
+   "constructs": [
+    "might/cannot risk",
+    "conditions"
+   ],
+   "intention": "If the job's peak memory exceeds the free memory of the server, running the job causes a server outage.",
+   "context_rules": null,
+   "environment": "conformance.risk.agent_ops (risk.md 8.1 agent-ops)",
+   "vocabulary_overlay": null,
+   "gold": {
+    "form": "sufficient",
+    "action": "run",
+    "harm": "server_outage",
+    "condition_text": "the peak memory of the job is greater than the free memory of the server"
+   },
+   "gold_surface": "If the peak memory of the job is greater than the free memory of the server, running the job leads to a server outage.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "If the peak memory of the job is greater than the free memory of the server, running the job leads to a server outage.",
+    "reading": {
+     "form": "sufficient",
+     "action": "run",
+     "harm": "server_outage",
+     "condition_text": "the peak memory of the job is greater than the free memory of the server"
+    },
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "method": "identical registered reading"
+    }
+   },
+   "equivalence_method": "identical registered reading from ve.surface.risk.parse_wording (form, action, harm; condition text compared after whitespace normalisation: no Python decoder exists)",
+   "examples": [
+    "Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server.",
+    "Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit.",
+    "Asking the user leads to a task delay.",
+    "Not running the job cannot lead to a server outage."
+   ],
+   "legend": [
+    "Actions: running the job; running the job with the memory limit; asking the user; not running the job",
+    "Harms: a server outage; a job failure; data loss; a task delay; task abandonment",
+    "Quantities: the peak memory of the job; the free memory of the server; the memory limit",
+    "Comparison: <quantity> is greater than <quantity>",
+    "Each agent faces one choice among the actions available to it and takes at most one of them.",
+    "Each action is available to at most one agent.",
+    "Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.",
+    "\"<action> might lead to <harm>\" means the declared estimates, conditions and statements do not rule the harm out.",
+    "\"<action> cannot lead to <harm>\" means they rule it out.",
+    "\"<action> leads to <harm>\" means it happens in every case they allow.",
+    "\"<action> might not lead to <harm>\" means some case they allow avoids the harm.",
+    "An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.",
+    "Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.",
+    "data_loss is severe.",
+    "server_outage is serious.",
+    "job_failure is minor.",
+    "task_delay is minor.",
+    "task_abandonment is minor.",
+    "<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.",
+    "\"<action> allows <harm> to happen\" means the action leads to the harm, and another action available to the same chooser might not lead to it.",
+    "Every decision that lists running the job also lists running the job with the memory limit.",
+    "Only estimates of peak_memory by memory profiler are accepted."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W07 \"<sentence>\""
+  },
+  {
+   "id": "W08",
+   "family": "formulas",
+   "constructs": [
+    "universal",
+    "relative clause",
+    "conjunction"
+   ],
+   "intention": "Anyone who was born in the United States and is subject to its jurisdiction is a citizen of the United States.",
+   "context_rules": null,
+   "environment": "usecases/us-constitution-14th-s1/environment.json",
+   "vocabulary_overlay": "usecases/us-constitution-14th-s1/environment.english.json",
+   "gold": "for every person x0, (if ((x0 is born_in_us) and (x0 is subject_to_us_jurisdiction)), then (x0 is us_citizen)).",
+   "gold_surface": "Every person who was born in the United States and is subject to the jurisdiction of the United States is a citizen of the United States.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Every person who was born in the United States and is subject to the jurisdiction of the United States is a citizen of the United States.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "law: A law that a State may make or enforce.",
+    "person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+    "state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+    "<law> abridges the privileges or immunities of <person>: Recorded as a law that abridges the privileges or immunities of the person as a citizen of the United States. This predicate bundles the entire contested substantive content of 'privileges or immunities' opaquely; see GAPS.md. (negative: <law> does not abridge the privileges or immunities of <person>)",
+    "<state> affords due process of law to <person>: Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md. (negative: <state> does not afford due process of law to <person>)",
+    "<person> was born in the United States: Recorded as born in the United States. (negative: <person> was not born in the United States)",
+    "<person> is a citizen of <state>: Recorded as a citizen of the state. (negative: <person> is not a citizen of <state>)",
+    "<state> denies the equal protection of the laws to <person>: Recorded as the state denying the person the equal protection of the laws. This predicate bundles the entire contested substantive content of 'equal protection' opaquely; see GAPS.md. (negative: <state> does not deny the equal protection of the laws to <person>)",
+    "<state> deprives <person> of life, liberty, or property: Recorded as the state depriving the person of life, liberty, or property. (negative: <state> does not deprive <person> of life, liberty, or property)",
+    "<state> enforces <law>: Recorded as enforcing the law. (negative: <state> does not enforce <law>)",
+    "<state> makes <law>: Recorded as making (enacting) the law. (negative: <state> does not make <law>)",
+    "<person> was naturalized in the United States: Recorded as naturalized in the United States. (negative: <person> was not naturalized in the United States)",
+    "<person> resides in <state>: Recorded as residing in the state. (negative: <person> does not reside in <state>)",
+    "<person> is subject to the jurisdiction of the United States: Recorded as subject to the jurisdiction of the United States. (negative: <person> is not subject to the jurisdiction of the United States)",
+    "<person> is a citizen of the United States: Recorded as a citizen of the United States. (negative: <person> is not a citizen of the United States)",
+    "<person> is within the jurisdiction of <state>: Recorded as the person being within the jurisdiction of the state. (negative: <person> is not within the jurisdiction of <state>)"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W08 \"<sentence>\""
+  },
+  {
+   "id": "W09",
+   "family": "formulas",
+   "constructs": [
+    "universal",
+    "binary relation",
+    "negation"
+   ],
+   "intention": "No state denies the equal protection of the laws to a person who is within its jurisdiction.",
+   "context_rules": null,
+   "environment": "usecases/us-constitution-14th-s1/environment.json",
+   "vocabulary_overlay": "usecases/us-constitution-14th-s1/environment.english.json",
+   "gold": "for every state x0, (for every person x1, (if (x1 within_jurisdiction_of x0), then (not (x0 denies_equal_protection x1)))).",
+   "gold_surface": "For every state, for every person who is within the jurisdiction of that state, it is not the case that that state denies the equal protection of the laws to that person.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "For every state, for every person who is within the jurisdiction of that state, that state does not deny the equal protection of the laws to that person.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "law: A law that a State may make or enforce.",
+    "person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.",
+    "state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.",
+    "<law> abridges the privileges or immunities of <person>: Recorded as a law that abridges the privileges or immunities of the person as a citizen of the United States. This predicate bundles the entire contested substantive content of 'privileges or immunities' opaquely; see GAPS.md. (negative: <law> does not abridge the privileges or immunities of <person>)",
+    "<state> affords due process of law to <person>: Recorded as the state affording due process of law to the person for a deprivation. This predicate bundles the entire contested substantive content of 'due process' opaquely; see GAPS.md. (negative: <state> does not afford due process of law to <person>)",
+    "<person> was born in the United States: Recorded as born in the United States. (negative: <person> was not born in the United States)",
+    "<person> is a citizen of <state>: Recorded as a citizen of the state. (negative: <person> is not a citizen of <state>)",
+    "<state> denies the equal protection of the laws to <person>: Recorded as the state denying the person the equal protection of the laws. This predicate bundles the entire contested substantive content of 'equal protection' opaquely; see GAPS.md. (negative: <state> does not deny the equal protection of the laws to <person>)",
+    "<state> deprives <person> of life, liberty, or property: Recorded as the state depriving the person of life, liberty, or property. (negative: <state> does not deprive <person> of life, liberty, or property)",
+    "<state> enforces <law>: Recorded as enforcing the law. (negative: <state> does not enforce <law>)",
+    "<state> makes <law>: Recorded as making (enacting) the law. (negative: <state> does not make <law>)",
+    "<person> was naturalized in the United States: Recorded as naturalized in the United States. (negative: <person> was not naturalized in the United States)",
+    "<person> resides in <state>: Recorded as residing in the state. (negative: <person> does not reside in <state>)",
+    "<person> is subject to the jurisdiction of the United States: Recorded as subject to the jurisdiction of the United States. (negative: <person> is not subject to the jurisdiction of the United States)",
+    "<person> is a citizen of the United States: Recorded as a citizen of the United States. (negative: <person> is not a citizen of the United States)",
+    "<person> is within the jurisdiction of <state>: Recorded as the person being within the jurisdiction of the state. (negative: <person> is not within the jurisdiction of <state>)"
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W09 \"<sentence>\""
+  },
+  {
+   "id": "W10",
+   "family": "formulas",
+   "constructs": [
+    "universal",
+    "relative clause"
+   ],
+   "intention": "Everyone who has a noncitizen parent domiciled in the United States is subject to US jurisdiction.",
+   "context_rules": null,
+   "environment": "usecases/birthright-citizenship-debate/environment.json",
+   "vocabulary_overlay": "usecases/birthright-citizenship-debate/environment.english.json",
+   "gold": "for every person x0, (if (x0 is has_noncitizen_domiciled_parent), then (x0 is subject_to_jurisdiction)).",
+   "gold_surface": "Every person who has a noncitizen parent domiciled in the United States is subject to US jurisdiction.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "Every person who has a noncitizen parent domiciled in the United States is subject to US jurisdiction.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "person: A person whose U.S. citizenship status under the 14th Amendment's Citizenship Clause is at issue in the debate.",
+    "<person> is born in the United States: Recorded as born on U.S. soil. Both sides of the debate accept this predicate and its extension without dispute. (negative: <person> is not born in the United States)",
+    "<person> has a noncitizen parent domiciled in the United States: Recorded as having at least one parent who is a non-citizen permanently domiciled/residing in the U.S. but legally ineligible for naturalization (the parental profile in United States v. Wong Kim Ark, 1898). Both sides accept Wong Kim Ark's outcome for this profile. (negative: <person> does not have a noncitizen parent domiciled in the United States)",
+    "<person> has a noncitizen parent temporarily in the United States: Recorded as having at least one parent who is a non-citizen present in the U.S. only temporarily (tourist, student, or other non-immigrant visa) -- the 'birth tourism' profile Krikorian raises. (negative: <person> does not have a noncitizen parent temporarily in the United States)",
+    "<person> has an undocumented noncitizen parent: Recorded as having at least one parent who is a non-citizen present in the U.S. without legal immigration status. This is the profile the 'end birthright citizenship' side argues falls outside subject_to_jurisdiction, and the 'keep it' side argues falls inside it. (negative: <person> does not have an undocumented noncitizen parent)",
+    "<person> is subject to US jurisdiction: Recorded as satisfying 'subject to the jurisdiction thereof' (14th Amendment, Citizenship Clause). THIS IS THE CONTESTED PREDICATE: both sides use the same word 'jurisdiction' and accept the same syntactic role for it in the Citizenship Clause, but assign it different extensions. Krikorian/Cooper read it as complete, exclusive political allegiance (owing no allegiance to a foreign sovereign); Mayes/Newman read it as being present in U.S. territory and bound by / enforceable under U.S. law. See claim-graph.md. (negative: <person> is not subject to US jurisdiction)",
+    "<person> is a US citizen: Recorded as a U.S. citizen under the Citizenship Clause reading at issue. Both sides accept the predicate; they dispute its extension for specific people because they dispute the extension of subject_to_jurisdiction. (negative: <person> is not a US citizen)",
+    "child (person): A representative child born in the United States, used to test the debate's central syllogism concretely (the debate's own paradigm example, not a real individual)."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W10 \"<sentence>\""
+  },
+  {
+   "id": "W11",
+   "family": "formulas",
+   "constructs": [
+    "universal",
+    "named constant",
+    "negation"
+   ],
+   "intention": "Claude does not undermine any appropriate mechanism.",
+   "context_rules": null,
+   "environment": "usecases/claude-constitution-excerpt/environment.json",
+   "vocabulary_overlay": "usecases/claude-constitution-excerpt/environment.english.json",
+   "gold": "for every mechanism x0, (if (x0 is appropriate), then (not (@claude undermines x0))).",
+   "gold_surface": "For every mechanism that is appropriate, it is not the case that claude undermines that mechanism.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "For every mechanism that is appropriate, claude does not undermine that mechanism.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "action: An action a Claude model might perform.",
+    "Claude model: A Claude model, as referred to by the constitution excerpt (e.g. 'all current Claude models', 'Claude').",
+    "guideline: One of Anthropic's specific guidelines that a Claude model might or might not be acting in accordance with.",
+    "mechanism: A human mechanism for overseeing the dispositions and actions of AI, as referred to by the 'broadly safe' value and the oversight discussion.",
+    "overseer: A human or organization who might instruct, check, or be owed obedience by a Claude model, including Anthropic itself and appropriately sanctioned individuals.",
+    "principal: An operator or user that a Claude model interacts with (the excerpt's 'operators and users' merged into one sort).",
+    "property: One of the four core value-properties named in the excerpt's priority ordering: broadly safe, broadly ethical, compliant with Anthropic's guidelines, genuinely helpful.",
+    "situation: A case or interaction in which two or more of the four core value-properties might come into apparent conflict.",
+    "<mechanism> is appropriate: Recorded as an 'appropriate' human mechanism for overseeing the dispositions and actions of AI, in the sense used by the 'broadly safe' value. (negative: <mechanism> is not appropriate)",
+    "<Claude model> benefits <principal>: Recorded as the model benefiting this operator or user, in the sense used by 'genuinely helpful'. The intensifier 'genuinely' (sincere vs. superficial benefit) has no separate witness; see GAPS.md #2. (negative: <Claude model> does not benefit <principal>)",
+    "<Claude model> owes unconditional obedience to <overseer>: OPAQUE marker predicate. Recorded as the model being bound to unconditional ('blind') obedience toward this overseer. Hides the deontic modality of 'must obey' and the manner qualifier 'blind'; see GAPS.md #1. (negative: <Claude model> does not owe unconditional obedience to <overseer>)",
+    "<situation> involves apparent conflict over <property>: Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1. (negative: <situation> does not involve apparent conflict over <property>)",
+    "<Claude model> is current: Recorded as one of 'all current Claude models' the excerpt's core-values paragraph addresses. (negative: <Claude model> is not current)",
+    "<Claude model> follows <guideline>: Recorded as the model acting in accordance with this guideline. (negative: <Claude model> does not follow <guideline>)",
+    "<Claude model> is honest: Recorded as honest, one conjunct of the excerpt's 'broadly ethical' value ('having good personal values, being honest, and avoiding...'). 'Having good personal values' itself has no witness anywhere in this vocabulary; see GAPS.md #2. (negative: <Claude model> is not honest)",
+    "<action> is inappropriately dangerous or harmful: OPAQUE marker predicate. Recorded as an action the excerpt would call 'inappropriately dangerous or harmful'. The judgement of what counts as 'inappropriate' is hidden inside this predicate; see GAPS.md #2. (negative: <action> is not inappropriately dangerous or harmful)",
+    "<Claude model> interacts with <principal>: Recorded as the model interacting with this operator or user. (negative: <Claude model> does not interact with <principal>)",
+    "<situation> calls for generally prioritizing <property>: OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1. (negative: <situation> does not call for generally prioritizing <property>)",
+    "<Claude model> is expected to have the core values: OPAQUE marker predicate. Recorded as a model of which the excerpt says 'we believe [it] should be' broadly safe, broadly ethical, compliant, and genuinely helpful. This predicate names, but does not analyse, the deontic force of 'should be' and the fact that it introduces four further properties (see GAPS.md #1 and coverage.md row 1). (negative: <Claude model> is not expected to have the core values)",
+    "<property> outranks <property>: Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order. (negative: <property> does not outrank <property>)",
+    "<Claude model> performs <action>: Recorded as the model performing this action. (negative: <Claude model> does not perform <action>)",
+    "<guideline> is relevant: Recorded as 'relevant' to the model's present situation, in the sense used by 'compliant with Anthropic's guidelines: ... where they're relevant'. (negative: <guideline> is not relevant)",
+    "<overseer> is an appropriately sanctioned human check: Recorded as an 'appropriately sanctioned' human acting as a check on AI systems, in the sense used by the corrigibility sentence. (negative: <overseer> is not an appropriately sanctioned human check)",
+    "<Claude model> undermines <mechanism>: Recorded as the model undermining (acting so as to defeat or subvert) this oversight mechanism. (negative: <Claude model> does not undermine <mechanism>)",
+    "<Claude model> undermines the oversight role of <overseer>: Recorded as the model undermining this overseer's role as an appropriately sanctioned human check on AI systems, in the sense used by the corrigibility sentence. (negative: <Claude model> does not undermine the oversight role of <overseer>)",
+    "<situation> involves a hard constraint violation: Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag. (negative: <situation> does not involve a hard constraint violation)",
+    "anthropic (overseer): Anthropic, named explicitly in 'not... blind obedience, including towards Anthropic'.",
+    "claude (Claude model): The Claude model this excerpt's claims are about.",
+    "ethics (property): The 'broadly ethical' core value.",
+    "guidelines (property): The 'compliant with Anthropic's guidelines' core value.",
+    "helpfulness (property): The 'genuinely helpful' core value.",
+    "safety (property): The 'broadly safe' core value."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W11 \"<sentence>\""
+  },
+  {
+   "id": "W12",
+   "family": "formulas",
+   "constructs": [
+    "negated existential"
+   ],
+   "intention": "There is no deployed service that is not reviewed.",
+   "context_rules": null,
+   "environment": "examples/environment.json",
+   "vocabulary_overlay": null,
+   "gold": "not (there exists service x0, ((x0 is deployed) and (not (x0 is reviewed)))).",
+   "gold_surface": "It is not the case that there is a service such that both of the following hold: first clause: that service is deployed; end first clause; second clause: it is not the case that that service is reviewed; end second clause.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "It is not the case that there is a service such that both of the following hold:\n  (a) that service is deployed;\n  (b) it is not the case that that service is reviewed.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "person: A person recorded in the inventory.",
+    "service: A service recorded in the inventory.",
+    "<service> is deployed: Recorded as deployed in this inventory.",
+    "<person> owns <service>: The person is recorded as an owner of the service.",
+    "<service> is reviewed: Recorded as reviewed in this inventory."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W12 \"<sentence>\""
+  },
+  {
+   "id": "W13",
+   "family": "formulas",
+   "constructs": [
+    "existential",
+    "quantifier scope"
+   ],
+   "intention": "A single person owns all the deployed services.",
+   "context_rules": null,
+   "environment": "examples/environment.json",
+   "vocabulary_overlay": null,
+   "gold": "there exists person x0, (for every service x1, (if (x1 is deployed), then (x0 owns x1))).",
+   "gold_surface": "There is a person such that for every service that is deployed, that person owns that service.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "There is a person such that for every service that is deployed, that person owns that service.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "person: A person recorded in the inventory.",
+    "service: A service recorded in the inventory.",
+    "<service> is deployed: Recorded as deployed in this inventory.",
+    "<person> owns <service>: The person is recorded as an owner of the service.",
+    "<service> is reviewed: Recorded as reviewed in this inventory."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W13 \"<sentence>\""
+  },
+  {
+   "id": "W14",
+   "family": "formulas",
+   "constructs": [
+    "universal",
+    "disjunction"
+   ],
+   "intention": "Every service is deployed or reviewed, or both.",
+   "context_rules": null,
+   "environment": "examples/environment.json",
+   "vocabulary_overlay": null,
+   "gold": "for every service x0, ((x0 is deployed) or (x0 is reviewed)).",
+   "gold_surface": "For every service, either that service is deployed or that service is reviewed, or both.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "For every service, either that service is deployed or that service is reviewed, or both.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "person: A person recorded in the inventory.",
+    "service: A service recorded in the inventory.",
+    "<service> is deployed: Recorded as deployed in this inventory.",
+    "<person> owns <service>: The person is recorded as an owner of the service.",
+    "<service> is reviewed: Recorded as reviewed in this inventory."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W14 \"<sentence>\""
+  },
+  {
+   "id": "W15",
+   "family": "formulas",
+   "constructs": [
+    "universal",
+    "named constant",
+    "relative clause"
+   ],
+   "intention": "Claude follows every relevant guideline.",
+   "context_rules": null,
+   "environment": "usecases/claude-constitution-excerpt/environment.json",
+   "vocabulary_overlay": "usecases/claude-constitution-excerpt/environment.english.json",
+   "gold": "for every guideline x0, (if (x0 is relevant), then (@claude follows x0)).",
+   "gold_surface": "For every guideline that is relevant, claude follows that guideline.",
+   "gold_check": {
+    "outcome": "correct",
+    "ve_message": "For every guideline that is relevant, claude follows that guideline.",
+    "equivalence": {
+     "status": "EQUIVALENT",
+     "relation": "equivalent",
+     "detail": null
+    }
+   },
+   "equivalence_method": "ve.equivalence.compare (two replayed certificates for EQUIVALENT)",
+   "examples": [
+    "Every confidential file is tracked.",
+    "Some file resides in the workspace.",
+    "No action is privileged.",
+    "For every action, if there is a file such that that action deletes that file, then that action is reported.",
+    "For every action that is confirmed, either that action is reported or that action is readonly, or both."
+   ],
+   "legend": [
+    "action: An action a Claude model might perform.",
+    "Claude model: A Claude model, as referred to by the constitution excerpt (e.g. 'all current Claude models', 'Claude').",
+    "guideline: One of Anthropic's specific guidelines that a Claude model might or might not be acting in accordance with.",
+    "mechanism: A human mechanism for overseeing the dispositions and actions of AI, as referred to by the 'broadly safe' value and the oversight discussion.",
+    "overseer: A human or organization who might instruct, check, or be owed obedience by a Claude model, including Anthropic itself and appropriately sanctioned individuals.",
+    "principal: An operator or user that a Claude model interacts with (the excerpt's 'operators and users' merged into one sort).",
+    "property: One of the four core value-properties named in the excerpt's priority ordering: broadly safe, broadly ethical, compliant with Anthropic's guidelines, genuinely helpful.",
+    "situation: A case or interaction in which two or more of the four core value-properties might come into apparent conflict.",
+    "<mechanism> is appropriate: Recorded as an 'appropriate' human mechanism for overseeing the dispositions and actions of AI, in the sense used by the 'broadly safe' value. (negative: <mechanism> is not appropriate)",
+    "<Claude model> benefits <principal>: Recorded as the model benefiting this operator or user, in the sense used by 'genuinely helpful'. The intensifier 'genuinely' (sincere vs. superficial benefit) has no separate witness; see GAPS.md #2. (negative: <Claude model> does not benefit <principal>)",
+    "<Claude model> owes unconditional obedience to <overseer>: OPAQUE marker predicate. Recorded as the model being bound to unconditional ('blind') obedience toward this overseer. Hides the deontic modality of 'must obey' and the manner qualifier 'blind'; see GAPS.md #1. (negative: <Claude model> does not owe unconditional obedience to <overseer>)",
+    "<situation> involves apparent conflict over <property>: Recorded as this property being one of the (at most two, in every model used here) properties tagged as apparently conflicting in this situation. A reification workaround for the fact that v0 has no ternary relation to say directly which two properties are the ones apparently conflicting in a given situation; see GAPS.md #1. (negative: <situation> does not involve apparent conflict over <property>)",
+    "<Claude model> is current: Recorded as one of 'all current Claude models' the excerpt's core-values paragraph addresses. (negative: <Claude model> is not current)",
+    "<Claude model> follows <guideline>: Recorded as the model acting in accordance with this guideline. (negative: <Claude model> does not follow <guideline>)",
+    "<Claude model> is honest: Recorded as honest, one conjunct of the excerpt's 'broadly ethical' value ('having good personal values, being honest, and avoiding...'). 'Having good personal values' itself has no witness anywhere in this vocabulary; see GAPS.md #2. (negative: <Claude model> is not honest)",
+    "<action> is inappropriately dangerous or harmful: OPAQUE marker predicate. Recorded as an action the excerpt would call 'inappropriately dangerous or harmful'. The judgement of what counts as 'inappropriate' is hidden inside this predicate; see GAPS.md #2. (negative: <action> is not inappropriately dangerous or harmful)",
+    "<Claude model> interacts with <principal>: Recorded as the model interacting with this operator or user. (negative: <Claude model> does not interact with <principal>)",
+    "<situation> calls for generally prioritizing <property>: OPAQUE marker predicate. Recorded as the property the excerpt says Claude 'should generally' follow in this situation. Hides both the deontic force of 'should' and the defeasibility of 'generally'; see GAPS.md #1. (negative: <situation> does not call for generally prioritizing <property>)",
+    "<Claude model> is expected to have the core values: OPAQUE marker predicate. Recorded as a model of which the excerpt says 'we believe [it] should be' broadly safe, broadly ethical, compliant, and genuinely helpful. This predicate names, but does not analyse, the deontic force of 'should be' and the fact that it introduces four further properties (see GAPS.md #1 and coverage.md row 1). (negative: <Claude model> is not expected to have the core values)",
+    "<property> outranks <property>: Recorded as the first property immediately outranking (being listed directly above) the second property in the excerpt's stated priority order: broadly safe, broadly ethical, compliant with guidelines, genuinely helpful. Base edges only; use tc[outranks]/rtc[outranks] for the full order. (negative: <property> does not outrank <property>)",
+    "<Claude model> performs <action>: Recorded as the model performing this action. (negative: <Claude model> does not perform <action>)",
+    "<guideline> is relevant: Recorded as 'relevant' to the model's present situation, in the sense used by 'compliant with Anthropic's guidelines: ... where they're relevant'. (negative: <guideline> is not relevant)",
+    "<overseer> is an appropriately sanctioned human check: Recorded as an 'appropriately sanctioned' human acting as a check on AI systems, in the sense used by the corrigibility sentence. (negative: <overseer> is not an appropriately sanctioned human check)",
+    "<Claude model> undermines <mechanism>: Recorded as the model undermining (acting so as to defeat or subvert) this oversight mechanism. (negative: <Claude model> does not undermine <mechanism>)",
+    "<Claude model> undermines the oversight role of <overseer>: Recorded as the model undermining this overseer's role as an appropriately sanctioned human check on AI systems, in the sense used by the corrigibility sentence. (negative: <Claude model> does not undermine the oversight role of <overseer>)",
+    "<situation> involves a hard constraint violation: Recorded as a situation in which the model would be violating one of Anthropic's hard constraints, in the sense of the excerpt's exception clause 'assuming Claude is not violating any hard constraints'. What a hard constraint is, and what counts as violating one, is not modelled; this is a bare flag. (negative: <situation> does not involve a hard constraint violation)",
+    "anthropic (overseer): Anthropic, named explicitly in 'not... blind obedience, including towards Anthropic'.",
+    "claude (Claude model): The Claude model this excerpt's claims are about.",
+    "ethics (property): The 'broadly ethical' core value.",
+    "guidelines (property): The 'compliant with Anthropic's guidelines' core value.",
+    "helpfulness (property): The 'genuinely helpful' core value.",
+    "safety (property): The 'broadly safe' core value."
+   ],
+   "score_command": "uv run python experiments/readability-sonnet/score.py check W15 \"<sentence>\""
+  }
+ ]
+}

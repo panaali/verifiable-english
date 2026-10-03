@@ -1,0 +1,50 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action must not be performed, if there is a harm such that both that harm is severe and that action might lead to that harm.
+Rule 2. Every action must not be performed, if there is an agent such that that action is available to that agent and another action available to that agent has a less severe worst case than that action, unless the user has confirmed that action.
+Rule 3. Every action must not be performed, if that action allows task abandonment to happen.
+
+Decision 17 of the build agent, log entry 41, 2026-09-29. Policy agent-ops.
+Available actions: running the job; running the job with the memory limit; asking the user; not running the job (inaction).
+E1. The peak memory of the job is from 6 GB through 12 GB, including both bounds. [memory profiler 2.3; peak of the last 5 runs plus 20%; statistical; entry 38]
+E2. The free memory of the server during the job is from 8 GB through 10 GB, including both bounds. [server monitor; minimum over the last hour; observation; entry 40]
+S1. The memory limit equals 7 GB. [setting of "running the job with the memory limit"; entry 25]
+C1. Running the job cannot lead to a server outage unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 26]
+C2. Running the job with the memory limit cannot lead to a server outage unless the memory limit is greater than the free memory of the server. [the build agent; assumption: the limit is enforced by the kernel; entry 27]
+C3. Running the job with the memory limit leads to a job failure exactly when the peak memory of the job is greater than the memory limit. [the build agent; assumption; entry 28]
+C4. Running the job cannot lead to a job failure unless the peak memory of the job is greater than the free memory of the server. [the build agent; assumption; entry 29]
+T1. Asking the user leads to a task delay. T2. Not running the job leads to task abandonment. T3. Asking the user cannot lead to a server outage. T4. Not running the job cannot lead to a server outage. [the build agent; assumption; entries 30–33]
+T5. Running the job cannot lead to data loss. T6. Running the job with the memory limit cannot lead to data loss. T7. Asking the user cannot lead to data loss. T8. Not running the job cannot lead to data loss. [the platform team: jobs write only to scratch space; testimony; entries 34–37]
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+Each agent faces one choice among the actions available to it and takes at most one of them.
+Each action is available to at most one agent.
+Doing nothing counts as one of a agent's actions; every checked situation lists exactly one inaction per agent with any alternative.
+"<action> might lead to <harm>" means the declared estimates, conditions and statements do not rule the harm out.
+"<action> cannot lead to <harm>" means they rule it out.
+"<action> leads to <harm>" means it happens in every case they allow.
+"<action> might not lead to <harm>" means some case they allow avoids the harm.
+An unexamined severe or serious outcome counts as possible; the deciding agent rules out other unexamined outcomes.
+Severity, from most to least severe: severe, serious, minor. Severity is set by the platform team.
+data_loss is severe.
+server_outage is serious.
+job_failure is minor.
+task_delay is minor.
+task_abandonment is minor.
+<a> has a less severe worst case than <b> when <b> might lead to a harm more severe than every harm <a> might lead to.
+"<action> allows <harm> to happen" means the action leads to the harm, and another action available to the same chooser might not lead to it.
+Every decision that lists running the job also lists running the job with the memory limit.
+Only estimates of peak_memory by memory profiler are accepted.
+"<action> cannot lead to <harm> unless <condition>" means the harm happens in no case they allow in which the condition does not hold.
+"<action> leads to <harm> exactly when <condition>" means the harm happens in every case they allow in which the condition holds, and in no case they allow in which it does not hold.
+
+=== QUESTION ===
+According to the text, might running the job lead to a server outage?
+A. No, running the job cannot lead to a server outage.
+B. Yes, running the job might lead to a server outage.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

@@ -1,0 +1,24 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+For every person, if all of the following hold: first clause: either that person was born in the United States or that person was naturalized in the United States, or both; end first clause; second clause: that person is subject to the jurisdiction of the United States; end second clause, then both of the following hold: first clause: that person is a citizen of the United States; end first clause; second clause: for every state that that person resides in, that person is a citizen of that state; end second clause.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+person: A natural person who may be born, naturalized, resident, or subject to jurisdiction.
+state: A U.S. State, i.e. a state-level jurisdiction capable of making or enforcing law.
+<person> was born in the United States: Recorded as born in the United States. (negative: <person> was not born in the United States)
+<person> is a citizen of <state>: Recorded as a citizen of the state. (negative: <person> is not a citizen of <state>)
+<person> was naturalized in the United States: Recorded as naturalized in the United States. (negative: <person> was not naturalized in the United States)
+<person> resides in <state>: Recorded as residing in the state. (negative: <person> does not reside in <state>)
+<person> is subject to the jurisdiction of the United States: Recorded as subject to the jurisdiction of the United States. (negative: <person> is not subject to the jurisdiction of the United States)
+<person> is a citizen of the United States: Recorded as a citizen of the United States. (negative: <person> is not a citizen of the United States)
+
+=== QUESTION ===
+Ann was born in the United States, is subject to the jurisdiction of the United States, and resides in Ohio. According to the text, is Ann a citizen of Ohio?
+A. No, Ann is not a citizen of Ohio.
+B. Yes, Ann is a citizen of Ohio.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

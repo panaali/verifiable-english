@@ -1,0 +1,19 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Right 1. Every person has the right described by its incident lines; the right requires or permits nothing by itself. Claim of right 1. Every state must not deprive each person of life.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+When nothing else in the text decides, the text does not say whether a state may deprive a person of life.
+person: a human being
+state: a state
+
+=== QUESTION ===
+Texas is a state and Ann is a person. According to the text, may Texas deprive Ann of life?
+A. Yes, Texas may deprive Ann of life.
+B. No, Texas must not deprive Ann of life.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

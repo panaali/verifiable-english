@@ -1,0 +1,25 @@
+You are writing in Verifiable English (VE), a controlled form of English that a checker reads. Write one VE sentence that says what you want to say.
+
+=== WHAT YOU WANT TO SAY ===
+Everyone who has a noncitizen parent domiciled in the United States is subject to US jurisdiction.
+
+=== WORDS AVAILABLE (the editor's legend) ===
+person: A person whose U.S. citizenship status under the 14th Amendment's Citizenship Clause is at issue in the debate.
+<person> is born in the United States: Recorded as born on U.S. soil. Both sides of the debate accept this predicate and its extension without dispute. (negative: <person> is not born in the United States)
+<person> has a noncitizen parent domiciled in the United States: Recorded as having at least one parent who is a non-citizen permanently domiciled/residing in the U.S. but legally ineligible for naturalization (the parental profile in United States v. Wong Kim Ark, 1898). Both sides accept Wong Kim Ark's outcome for this profile. (negative: <person> does not have a noncitizen parent domiciled in the United States)
+<person> has a noncitizen parent temporarily in the United States: Recorded as having at least one parent who is a non-citizen present in the U.S. only temporarily (tourist, student, or other non-immigrant visa) -- the 'birth tourism' profile Krikorian raises. (negative: <person> does not have a noncitizen parent temporarily in the United States)
+<person> has an undocumented noncitizen parent: Recorded as having at least one parent who is a non-citizen present in the U.S. without legal immigration status. This is the profile the 'end birthright citizenship' side argues falls outside subject_to_jurisdiction, and the 'keep it' side argues falls inside it. (negative: <person> does not have an undocumented noncitizen parent)
+<person> is subject to US jurisdiction: Recorded as satisfying 'subject to the jurisdiction thereof' (14th Amendment, Citizenship Clause). THIS IS THE CONTESTED PREDICATE: both sides use the same word 'jurisdiction' and accept the same syntactic role for it in the Citizenship Clause, but assign it different extensions. Krikorian/Cooper read it as complete, exclusive political allegiance (owing no allegiance to a foreign sovereign); Mayes/Newman read it as being present in U.S. territory and bound by / enforceable under U.S. law. See claim-graph.md. (negative: <person> is not subject to US jurisdiction)
+<person> is a US citizen: Recorded as a U.S. citizen under the Citizenship Clause reading at issue. Both sides accept the predicate; they dispute its extension for specific people because they dispute the extension of subject_to_jurisdiction. (negative: <person> is not a US citizen)
+child (person): A representative child born in the United States, used to test the debate's central syllogism concretely (the debate's own paradigm example, not a real individual).
+
+=== EXAMPLE VE SENTENCES ===
+1. Every confidential file is tracked.
+2. Some file resides in the workspace.
+3. No action is privileged.
+4. For every action, if there is a file such that that action deletes that file, then that action is reported.
+5. For every action that is confirmed, either that action is reported or that action is readonly, or both.
+
+Answer with your sentence and a one-sentence reason, in exactly this form:
+SENTENCE: <your VE sentence>
+REASON: <one sentence>

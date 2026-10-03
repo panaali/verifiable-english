@@ -1,0 +1,16 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a file such that both that action writes that file and that file resides in workspace.
+Rule 2. Every action must not be performed, if there is a file such that both that action writes that file and that file does not reside in workspace.
+
+=== QUESTION ===
+One action writes two files. The first file resides in workspace. The second file does not reside in workspace. According to the text, may this action be performed?
+A. Yes, it may be performed.
+B. The rules contradict each other about this action.
+C. No, it must not be performed.
+D. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

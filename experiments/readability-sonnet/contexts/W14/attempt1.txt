@@ -1,0 +1,22 @@
+You are writing in Verifiable English (VE), a controlled form of English that a checker reads. Write one VE sentence that says what you want to say.
+
+=== WHAT YOU WANT TO SAY ===
+Every service is deployed or reviewed, or both.
+
+=== WORDS AVAILABLE (the editor's legend) ===
+person: A person recorded in the inventory.
+service: A service recorded in the inventory.
+<service> is deployed: Recorded as deployed in this inventory.
+<person> owns <service>: The person is recorded as an owner of the service.
+<service> is reviewed: Recorded as reviewed in this inventory.
+
+=== EXAMPLE VE SENTENCES ===
+1. Every confidential file is tracked.
+2. Some file resides in the workspace.
+3. No action is privileged.
+4. For every action, if there is a file such that that action deletes that file, then that action is reported.
+5. For every action that is confirmed, either that action is reported or that action is readonly, or both.
+
+Answer with your sentence and a one-sentence reason, in exactly this form:
+SENTENCE: <your VE sentence>
+REASON: <one sentence>

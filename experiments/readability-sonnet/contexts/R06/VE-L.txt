@@ -1,0 +1,26 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a file such that both that action deletes that file and that file resides in workspace.
+Rule 2 (exception to rule 1). Every action must not be performed, if there is a file such that both that action deletes that file and that file does not reside in workspace.
+Rule 3. Every action must be reported to the user, if there is a file such that that action deletes that file.
+
+=== LEGEND (explanations the editor shows for the words in the text) ===
+By default, an action must not be performed.
+By default, an action need not be reported to the user.
+action: an action in the agent's log
+directory: a directory, such as the agent's workspace
+file: a file path, as resolved by the path resolver
+<action> deletes <file>: <action> deletes <file>, as recorded by the file tools and the shell tracer
+<file> resides in <directory>: <file> resides in <directory>, as resolved by the path resolver (negative: <file> does not reside in <directory>)
+workspace (directory): the workspace directory of the agent's task
+
+=== QUESTION ===
+An action deletes a file. The file does not reside in workspace. According to the text, must this action be reported to the user?
+A. No, it need not be reported to the user.
+B. Yes, it must be reported to the user.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

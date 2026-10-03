@@ -1,0 +1,14 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every proposal must not proceed, if that proposal is external, unless that proposal is classified as "governance_found_acceptable".
+
+=== QUESTION ===
+A proposal is an external deployment. The appropriate governance function found its residual risk acceptable. According to the text, may the proposal proceed?
+A. Yes, it may proceed.
+B. No, it must not proceed.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>

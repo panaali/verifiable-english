@@ -1,0 +1,30 @@
+You are writing in Verifiable English (VE), a controlled form of English that a checker reads. Write one VE sentence that says what you want to say.
+
+=== WHAT YOU WANT TO SAY ===
+Whenever the agent deletes a file, it must report that file to the user.
+
+=== WORDS AVAILABLE (the editor's legend) ===
+By default, an agent must not delete a file.
+By default, an agent may read a file.
+By default, an agent may contact a host.
+By default, an agent need not report a file to the user.
+agent: an AI agent that uses tools
+directory: a directory, such as the agent's workspace
+file: a file path, as resolved by the path resolver
+host: a network host
+<host> is allowlisted: the host is on the network allowlist (negative: <host> is not allowlisted)
+<host> is approved: the user approved the host in a dialog (negative: <host> is not approved)
+<file> is confidential: the file is on the credential path list (negative: <file> is not confidential)
+<agent> deletes <file>: the agent deleted the file, as recorded by the tools (negative: <agent> does not delete <file>)
+<file> resides in <directory>: the file resides in the directory, as resolved by the path resolver (negative: <file> does not reside in <directory>)
+workspace (directory): the workspace directory of the agent's task
+
+=== EXAMPLE VE SENTENCES ===
+1. Rule 1. Every doctor may enter the ward.
+2. Rule 2 (exception to rule 1). Every doctor must not enter the ward, if that doctor is infectious, unless that doctor is rostered.
+3. Rule 1. Every doctor must treat each patient, if that doctor admits that patient.
+4. Rule 2 (exception to rule 1). Every doctor need not treat each patient, if that patient is discharged.
+
+Answer with your sentence and a one-sentence reason, in exactly this form:
+SENTENCE: <your VE sentence>
+REASON: <one sentence>

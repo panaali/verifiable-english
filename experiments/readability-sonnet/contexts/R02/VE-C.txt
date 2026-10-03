@@ -1,0 +1,16 @@
+Read the text below and answer the question that follows it.
+
+=== TEXT ===
+Rule 1. Every action may be performed, if there is a file such that both that action reads that file and that file resides in workspace.
+Rule 2. Every action may be performed, if there is a file such that both that action reads that file and that action is confirmed.
+Rule 3 (exception to rules 1, 2). Every action must not be performed, if there is a file such that both that action reads that file and that file does not reside in workspace, unless that action is confirmed.
+
+=== QUESTION ===
+An action reads a file. The file does not reside in workspace. The action is confirmed. According to the text, may this action be performed?
+A. Yes, it may be performed.
+B. No, it must not be performed.
+C. The text does not say.
+
+Answer with the letter of one option and a one-sentence reason, in exactly this form:
+ANSWER: <letter>
+REASON: <one sentence>
