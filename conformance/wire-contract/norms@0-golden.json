@@ -1,0 +1,414 @@
+{
+  "contract": "norms@0",
+  "fixtures": {
+    "N1": "clean",
+    "N1-empty": "clean",
+    "N10": {
+      "check": "3.8b",
+      "class": "SyntaxError",
+      "code": "NORMS_INVALID_FORMULA",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/guard",
+      "phase": "rule-shape",
+      "revision": 1
+    },
+    "N11": {
+      "check": "3.9b",
+      "class": "SyntaxError",
+      "code": "NORMS_INVALID_FORMULA",
+      "contract": "norms@0",
+      "path": "/norms/1/norm/unless/1",
+      "phase": "rule-shape",
+      "revision": 1
+    },
+    "N12": {
+      "args": {
+        "value": "A0"
+      },
+      "check": "4.1",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_NAME",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/name",
+      "phase": "rules",
+      "revision": 1,
+      "text": "InvalidInput: invalid rule name 'A0'"
+    },
+    "N13": {
+      "args": {
+        "value": "a0"
+      },
+      "check": "4.2",
+      "class": "DuplicateDeclaration",
+      "code": "NORMS_DUPLICATE_DECLARATION",
+      "contract": "norms@0",
+      "path": "/norms/2/norm/name",
+      "phase": "rules",
+      "revision": 1,
+      "text": "DuplicateDeclaration: rule a0"
+    },
+    "N15": {
+      "args": {
+        "value": "c"
+      },
+      "check": "4.4",
+      "class": "InvalidInput",
+      "code": "NORMS_UNKNOWN_PREDICATE",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/predicate",
+      "phase": "rules",
+      "revision": 1,
+      "text": "UnknownSymbol: regulated predicate c"
+    },
+    "N16": {
+      "args": {},
+      "check": "4.5",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_RULE_FIELDS",
+      "contract": "norms@0",
+      "path": "/norms/1/norm/sign",
+      "phase": "rules",
+      "revision": 1,
+      "text": "InvalidInput: invalid sign or too many carve-outs"
+    },
+    "N17": {
+      "args": {},
+      "check": "4.6",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_RULE_FIELDS",
+      "contract": "norms@0",
+      "path": "/norms/1/norm/unless",
+      "phase": "rules",
+      "revision": 1,
+      "text": "InvalidInput: invalid sign or too many carve-outs"
+    },
+    "N18": {
+      "check": "4.7a",
+      "class": "TypeMismatch",
+      "code": "NORMS_TYPE_MISMATCH",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N19": {
+      "check": "4.7b",
+      "class": "UnknownSymbol",
+      "code": "NORMS_UNKNOWN_SYMBOL",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N2": {
+      "args": {},
+      "check": "2.1",
+      "class": "InvalidInput",
+      "code": "NORMS_PROFILE_REQUIRED",
+      "contract": "norms@0",
+      "path": "/environment/profiles",
+      "phase": "profiles",
+      "revision": 1,
+      "text": "UnsupportedProfile: norms@0 is required"
+    },
+    "N20": {
+      "check": "4.7c",
+      "class": "UnboundVariable",
+      "code": "NORMS_UNBOUND_VARIABLE",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N21": {
+      "check": "4.7d",
+      "class": "ResourceLimit",
+      "code": "NORMS_RESOURCE_LIMIT",
+      "contract": "norms@0",
+      "path": "/norms/2",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N22": {
+      "args": {
+        "value": "zz"
+      },
+      "check": "5.1",
+      "class": "InvalidInput",
+      "code": "NORMS_UNKNOWN_RULE",
+      "contract": "norms@0",
+      "path": "/norms/2/norm/over/0",
+      "phase": "references",
+      "revision": 1,
+      "text": "UnknownRule: rule zz"
+    },
+    "N23": {
+      "args": {
+        "parent_predicate": "x_permitted",
+        "predicate": "x_required",
+        "rule": "c2",
+        "value": "b1"
+      },
+      "check": "5.2",
+      "class": "InvalidInput",
+      "code": "NORMS_PRECEDENCE_ACROSS_PREDICATES",
+      "contract": "norms@0",
+      "path": "/norms/2/norm/over/0",
+      "phase": "references",
+      "revision": 1,
+      "text": "PrecedenceAcrossPredicates: rule c2 on x_required, rule b1 on x_permitted"
+    },
+    "N24": {
+      "args": {
+        "detail": "a0, c2"
+      },
+      "check": "6.1",
+      "class": "InvalidInput",
+      "code": "NORMS_DEPENDENCY_CYCLE",
+      "contract": "norms@0",
+      "path": "/norms",
+      "phase": "semantic",
+      "revision": 1,
+      "text": "DependencyCycle: a0, c2"
+    },
+    "N25": {
+      "args": {},
+      "check": "6.2",
+      "class": "ResourceLimit",
+      "code": "NORMS_RESOURCE_LIMIT",
+      "contract": "norms@0",
+      "path": "/norms",
+      "phase": "semantic",
+      "revision": 1,
+      "text": "ResourceLimit: precedence depth"
+    },
+    "N26": {
+      "args": {
+        "detail": "x_permitted, x_required"
+      },
+      "check": "6.3",
+      "class": "InvalidInput",
+      "code": "NORMS_DEPENDENCY_CYCLE",
+      "contract": "norms@0",
+      "path": "/norms",
+      "phase": "semantic",
+      "revision": 1,
+      "text": "DependencyCycle: x_permitted, x_required"
+    },
+    "N27": {
+      "args": {},
+      "check": "3.1",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_UNIT",
+      "contract": "norms@0",
+      "path": "/norms/1",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: expected norm object"
+    },
+    "N28": {
+      "args": {
+        "value": "c"
+      },
+      "check": "4.4",
+      "class": "InvalidInput",
+      "code": "NORMS_UNKNOWN_PREDICATE",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/predicate",
+      "phase": "rules",
+      "revision": 1,
+      "text": "UnknownSymbol: regulated predicate c"
+    },
+    "N29": {
+      "args": {
+        "value": "A0"
+      },
+      "check": "4.1",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_NAME",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/name",
+      "phase": "rules",
+      "revision": 1,
+      "text": "InvalidInput: invalid rule name 'A0'"
+    },
+    "N3": {
+      "args": {},
+      "check": "2.2",
+      "class": "ResourceLimit",
+      "code": "NORMS_RESOURCE_LIMIT",
+      "contract": "norms@0",
+      "path": "/norms",
+      "phase": "profiles",
+      "revision": 1,
+      "text": "ResourceLimit: rules"
+    },
+    "N30": {
+      "args": {},
+      "check": "3.4",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_RULE_FIELDS",
+      "contract": "norms@0",
+      "path": "/norms/1/norm/unless",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: unless and over must be arrays"
+    },
+    "N31": {
+      "check": "4.7b",
+      "class": "UnknownSymbol",
+      "code": "NORMS_UNKNOWN_SYMBOL",
+      "contract": "norms@0",
+      "path": "/norms/1",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N32": {
+      "check": "3.8b",
+      "class": "SyntaxError",
+      "code": "NORMS_INVALID_FORMULA",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/guard",
+      "phase": "rule-shape",
+      "revision": 1
+    },
+    "N33": {
+      "check": "4.7b",
+      "class": "UnknownSymbol",
+      "code": "NORMS_UNKNOWN_SYMBOL",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N34": {
+      "check": "4.7b",
+      "class": "UnknownSymbol",
+      "code": "NORMS_UNKNOWN_SYMBOL",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N35": {
+      "check": "4.7b",
+      "class": "UnknownSymbol",
+      "code": "NORMS_UNKNOWN_SYMBOL",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N36": {
+      "check": "3.8b",
+      "class": "SyntaxError",
+      "code": "NORMS_INVALID_FORMULA",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/guard",
+      "phase": "rule-shape",
+      "revision": 1
+    },
+    "N37": {
+      "check": "3.8a",
+      "class": "ResourceLimit",
+      "code": "NORMS_RESOURCE_LIMIT",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/guard",
+      "phase": "rule-shape",
+      "revision": 1
+    },
+    "N38": {
+      "check": "4.7e",
+      "class": "UnsupportedProfile",
+      "code": "NORMS_UNSUPPORTED_PROFILE",
+      "contract": "norms@0",
+      "path": "/norms/0",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N39": {
+      "check": "4.7d",
+      "class": "ResourceLimit",
+      "code": "NORMS_RESOURCE_LIMIT",
+      "contract": "norms@0",
+      "path": "/norms/2",
+      "phase": "rules",
+      "revision": 1
+    },
+    "N4": {
+      "args": {},
+      "check": "3.1",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_UNIT",
+      "contract": "norms@0",
+      "path": "/norms/1",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: expected norm object"
+    },
+    "N40": {
+      "check": "1.1",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_ENVIRONMENT",
+      "contract": "norms@0",
+      "path": "/environment",
+      "phase": "environment",
+      "revision": 1
+    },
+    "N5": {
+      "args": {},
+      "check": "3.2",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_UNIT",
+      "contract": "norms@0",
+      "path": "/norms/0/norm",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: expected norm object"
+    },
+    "N6": {
+      "args": {},
+      "check": "3.3",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_RULE_FIELDS",
+      "contract": "norms@0",
+      "path": "/norms/2/norm",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: invalid norm fields"
+    },
+    "N7": {
+      "args": {},
+      "check": "3.4",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_RULE_FIELDS",
+      "contract": "norms@0",
+      "path": "/norms/1/norm/unless",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: unless and over must be arrays"
+    },
+    "N8": {
+      "args": {},
+      "check": "3.7",
+      "class": "InvalidInput",
+      "code": "NORMS_INVALID_RULE_FIELDS",
+      "contract": "norms@0",
+      "path": "/norms/2/norm/over/1",
+      "phase": "rule-shape",
+      "revision": 1,
+      "text": "InvalidInput: rule predicate and precedence edges must be strings"
+    },
+    "N9": {
+      "check": "3.8a",
+      "class": "ResourceLimit",
+      "code": "NORMS_RESOURCE_LIMIT",
+      "contract": "norms@0",
+      "path": "/norms/0/norm/guard",
+      "phase": "rule-shape",
+      "revision": 1
+    }
+  },
+  "revision": 1,
+  "source": "docs/spec/wire-contract-s5.md 8.1 and 8.2"
+}
