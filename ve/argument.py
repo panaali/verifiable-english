@@ -44,10 +44,9 @@ def _checker_build():
         "node_type": symbol(record.node_type),
         "profiles": list(record.profiles),
         "hooks": {name: symbol(getattr(record, name)) for name in (
-            "evaluator_hook", "witness_renderer", "parser_hook", "strict_parser_hook",
+            "witness_renderer", "parser_hook", "strict_parser_hook",
             "printer_hook", "fluent_hook", "english_renderer", "grammar_hook", "derivation_hook",
-            "strict_grammar_hook", "wire_encoder", "wire_decoder", "fol_import_hook",
-            "fol_export_hook", "typecheck_hook")},
+            "strict_grammar_hook", "fol_import_hook", "fol_export_hook")},
         "traversal_hooks": ({name: symbol(fn) for name, fn in record.traversal_hooks.items()}
                             if record.traversal_hooks else {})}
         for record in sorted(records(), key=lambda item: item.wire_tag)]

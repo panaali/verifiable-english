@@ -358,11 +358,12 @@ def check_layers(index: Index) -> list[str]:
                 if layer is not None and importer < layer and edge not in ledger:
                     errors.append(f"{path}: new outward Lean import {edge} (layer {importer} -> {layer})")
     if rust:
-        # The snapshot already holds every staged manifest under its rust/ workspace.
+        # The snapshot already holds every staged manifest under its rust/ workspace,
+        # but no Rust sources: the intra-crate module check runs in the gate only.
         stderr = io.StringIO()
         try:
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
-                failed = policy.check_rust_deps.main()
+                failed = policy.check_rust_deps.main(["--crates-only"])
         except (OSError, KeyError, ValueError) as error:
             failed, stderr = 1, io.StringIO(f"cannot read the staged Rust workspace: {error}\n")
         if failed:
