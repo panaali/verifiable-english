@@ -19,6 +19,7 @@ import sys
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve import assurance
 from ve.backends import lean as lean_backend
 from ve.errors import AuthorityViolation, CheckerUnavailable, ResourceLimit, VEError
@@ -449,7 +450,8 @@ def test_every_lean_binding_routes_its_operation(lean_bin):
     """Each probe is accepted in its declared mode, through the backend (binding, response and row schema)."""
     from conformance.binding_probes import probes
     for (op_id, executable, mode, kind), case in probes().items():
-        rows = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode, timeout=600)
+        rows = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode,
+                                timeout=HANG_TIMEOUT)
         assert rows[0]["status"] == "ok", (op_id, executable, mode, kind, rows)
 
 
@@ -477,7 +479,8 @@ def test_every_real_answer_is_counted_and_indexed(lean_bin, tmp_path):
     from conformance.binding_probes import probes
     for (op_id, executable, mode, kind), case in probes().items():
         binding = _declared_binding(op_id, executable, mode, kind)
-        [row] = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode, timeout=600)
+        [row] = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode,
+                                 timeout=HANG_TIMEOUT)
         assert lean_backend.row_problem(case, {**row, "case_index": 0}, 0, binding["response"],
                                         binding.get("counts")) is None
         forged = [*_miscounted(row, binding), *({**row, "case_index": i} for i in (False, 0.0, "0"))]
@@ -487,7 +490,7 @@ def test_every_real_answer_is_counted_and_indexed(lean_bin, tmp_path):
             answer.write_text(json.dumps([bad]))
             fake = _fake_lean(tmp_path, f"print(open({str(answer)!r}).read())", f"forged_{index}")
             with pytest.raises(CheckerUnavailable, match="count|case indices|JSON result"):
-                lean_backend.run(op_id, fake, [case], runner=executable, mode=mode, timeout=60)
+                lean_backend.run(op_id, fake, [case], runner=executable, mode=mode, timeout=HANG_TIMEOUT)
 
 
 def test_no_other_mode_accepts_an_operations_probe(lean_bin):
@@ -503,7 +506,7 @@ def test_no_other_mode_accepts_an_operations_probe(lean_bin):
                 # A shared kind such as admission has a declared binding in both modes.
                 continue
             proc = subprocess.run([str(lean_bin / executable), *([other] if other else [])],
-                                  input=json.dumps([case]), capture_output=True, text=True, timeout=600)
+                                  input=json.dumps([case]), capture_output=True, text=True, timeout=HANG_TIMEOUT)
             row = json.loads(proc.stdout)[0]
             assert row["status"] == "error", (op_id, mode, kind, "accepted by", other or "(default)")
 
@@ -868,11 +871,10 @@ def _bundle():
 
 
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
-    from ve import bundle
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
     with monkeypatch.context() as short:
-        short.setattr(bundle, "LEAN_REPLAY_TIMEOUT", 1)
+        short.setenv("VE_LEAN_TIMEOUT", "1")
         with pytest.raises(CheckerUnavailable, match="no answer"):
             check_bundle(_bundle(), lean_executable=hang)
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
@@ -1015,9 +1017,9 @@ def test_malformed_argument_answers_are_unavailable(tmp_path, fault):
 
 
 def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeypatch):
-    from ve import argument, check_argument, outstanding_obligations
+    from ve import check_argument, outstanding_obligations
     from ve.argument_fixtures import merged_vocabulary_example
-    monkeypatch.setattr(argument, "LEAN_REPLAY_TIMEOUT", 1)
+    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1")
     graph = merged_vocabulary_example()
     outcomes = {}
     for name, body in (("absent", None), ("crash", FAULTS["crash"]), ("hang", FAULTS["hang"]),

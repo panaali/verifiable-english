@@ -164,6 +164,10 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
   fallback to Python. Cancellation is out of band only (the kill).
+- The one-shot runner transports (`ve/backends/lean.py`) have the same rule: each caller's wall-clock default
+  (60 to 300 s) is a hang guard, `VE_LEAN_TIMEOUT` replaces every one (`configured_timeout`), an explicit
+  timeout is kept, a value that is not a positive finite number of seconds is `CheckerUnavailable` before
+  the runner starts, and the test suite sets it to `HANG_TIMEOUT`.
 - Response shapes have one source: `ve/backends/lean_service_schema/` (one JSON schema file per mode plus the
   envelope and shared Lean value domains; dialect in its `README.md`). `ve/backends/service_schema.py`
   compiles it; the supervisor has no other shape checks. Following the threat model, the schemas hold binding

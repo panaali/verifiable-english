@@ -12,7 +12,6 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tools import rust_build
-from ve import argument, bundle
 from ve.surface import unambiguity
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -85,11 +84,14 @@ def _build_backends(lock):
 
 
 # The checker clients' wall-clock defaults (5 s per Rust call or Lean service
-# request, 30 s for a service to start) are hang guards, not work limits; under
-# load a correct call can outlast them. Every test, and every process a test
-# starts, waits HANG_TIMEOUT instead; the work limits are the backends' budgets.
-# Set for the whole process, so module fixtures and collection see it too.
-CHECKER_TIMEOUTS = ("VE_RUST_TIMEOUT", "VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT")
+# request, 30 s for a service to start, 60-300 s per one-shot Lean runner call,
+# 10-600 s in the conformance harness, 30 s for the pre-commit wire check) are
+# hang guards, not work limits; under load a correct call can outlast them.
+# Every test, and every process a test starts, waits HANG_TIMEOUT instead; the
+# work limits are the backends' budgets. Set for the whole process, so module
+# fixtures and collection see it too.
+CHECKER_TIMEOUTS = ("VE_RUST_TIMEOUT", "VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT",
+                    "VE_LEAN_TIMEOUT", "VE_CONFORMANCE_HANG_TIMEOUT", "VE_PRECOMMIT_TIMEOUT")
 
 
 def pytest_configure(config):
@@ -126,8 +128,5 @@ def generous_hang_guards(monkeypatch):
     # Deadline tests install their own deterministic clock and budget.
     # All production defaults and semantic work limits remain unchanged.
     monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", HANG_TIMEOUT)
-    monkeypatch.setattr(argument, "LEAN_REPLAY_TIMEOUT", HANG_TIMEOUT)
-    monkeypatch.setattr(bundle, "LEAN_REPLAY_TIMEOUT", HANG_TIMEOUT)
-    monkeypatch.setenv("VE_CONFORMANCE_HANG_TIMEOUT", str(HANG_TIMEOUT))
     for variable in CHECKER_TIMEOUTS:
         monkeypatch.setenv(variable, str(HANG_TIMEOUT))
