@@ -6,9 +6,9 @@ each recorded situation's evaluations are replayed by Rust, untrusted, whose val
 answer is the authority: its diagnostic rejects the document, and a disagreement of Python or Rust with it is
 `CheckerUnavailable`, never a rejection and never an admission.
 
-What this checks is the readings head of 4.1 on the decoded units and active sets. Couplings, narrowings and
-W2's structural validation of the sets are not decoded by Lean (S1 limitation, DRI ruling 3): `ve/readings.py`
-checks them in Python, and the report says so.
+`validate` retains S1's scope: couplings, narrowings and W2's structural checks are handled by Python there.
+`elaborate` runs after those checks and compares S2's decoded restrictions, choice search and generated slot with
+Python's independent regeneration. Verdict search is still separate from this admission path.
 """
 from __future__ import annotations
 
