@@ -25,8 +25,10 @@ split is separate Rust kernel, profile and surface crates. Until then the same
 checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
 root, `ast`, `environment`, `model`, `wire`; profile: `eval`, `route`, `search`,
 `order`, `units`, `risk`, `readings`, `discourse`; surface: `surface`) and rejects
-outward `crate::` imports, resolving names the crate root re-exports to their
-defining module, except the exact edges in
+outward `crate::` and `super::` paths, resolving re-exported names (from the crate
+root or a module's `pub use`, chained, failing closed on globs) to every module
+they may name and rejecting `#[path]`, `#[macro_use]`, `#[macro_export]`,
+`include!` and `extern crate self`, except the exact edges in
 [`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json).
 The stage-1 Lean service and its Python adapter are tool-layer modules. This
 classification checks their imports and selects their consumers; the service is
