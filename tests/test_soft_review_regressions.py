@@ -35,7 +35,7 @@ from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_reche
 from ve.softnorms import decode_rule
 from subprocesses import ChildCPU
 
-REJECTED_INPUTS = 4626
+REJECTED_INPUTS = 4843
 ACCEPTED_NEAR_LIMIT = 90
 REJECTED_NEAR_LIMIT = 137
 
