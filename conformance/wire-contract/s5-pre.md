@@ -54,3 +54,15 @@ On the cases both validators reject, the Python class and the class that
 recorded in 2.3 (`norms@0 is required` and `regulated predicate`). They are not
 verdict differences; the contract keeps Python's classes (D3), and the measured
 delta's `lean_route_changes` will report them once the Lean engine runs.
+
+## Integrated three-way measurement
+
+After merging the Python and Lean engines, the complete shadow gates ran over
+2,857 `norms@0` and 3,024 `norm-defaults@0` cases. The stored gate and delta
+reports are `norms@0-gate.json`, `norm-defaults@0-gate.json`, and their
+`-delta.json` counterparts. Python has zero deferred cases, residuals, or
+class differences for both units. The gates still fail for the verdict
+differences above: the Lean engine disagrees with Python on the constant
+`verbalisation` cases, and `norm-defaults@0` has no Lean first-fault witness
+for check 6.3 because the Lean route accepts D11. The two switch gates cannot
+pass until the product verdicts are reconciled and remeasured.
