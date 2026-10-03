@@ -1,6 +1,6 @@
 use crate::{
     Document, Environment, FiniteModel, Formula, MAX_EVALUATIONS, Result, error,
-    eval::{Evaluator, compatible},
+    semantics::{Evaluator, compatible},
 };
 use serde::Serialize;
 use serde_json::{Value, json};

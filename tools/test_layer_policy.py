@@ -627,12 +627,11 @@ class LayerSelectionTests(unittest.TestCase):
         edges, errors = check_rust_deps.module_edges("ve-core", source, check_rust_deps.MODULE_GROUPS["ve-core"])
         self.assertEqual(errors, [])
         self.assertEqual(edges, set(json.loads(check_rust_deps.MODULE_LEDGER.read_text())))
-        self.assertEqual(edges, {"ve-core: environment -> route", "ve-core: model -> eval",
-                                 "ve-core: wire -> surface"})
+        self.assertEqual(edges, set())
         output = io.StringIO()
         with redirect_stdout(output):
             self.assertEqual(check_rust_deps.main(), 0)
-        self.assertIn("module graph kept (3 reviewed legacy edges)", output.getvalue())
+        self.assertIn("module graph kept (0 reviewed legacy edges)", output.getvalue())
 
     def test_outward_rust_module_imports_are_rejected(self):
         with TemporaryDirectory() as directory:

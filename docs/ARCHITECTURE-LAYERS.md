@@ -23,8 +23,9 @@ its `lakefile.toml` root, or a top-level `*Main` module, is tool layer by rule. 
 [`tools/check_rust_deps.py`](../tools/check_rust_deps.py). The desired future
 split is separate Rust kernel, profile and surface crates. Until then the same
 checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
-root, `ast`, `environment`, `model`, `wire`; profile: `eval`, `route`, `search`,
-`order`, `units`, `risk`, `readings`, `discourse`; surface: `surface`) and rejects
+root, `ast`, `environment`, `model`, `wire`, `semantics`, `graph`; profile:
+`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`, `discourse`;
+surface: `surface`) and rejects
 outward paths except the exact edges in
 [`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). This
 module check is a stopgap until the crate split, after which cargo enforces the
@@ -104,12 +105,17 @@ kernel AST/wire traversal that uses surface registrations, and legacy Lean
 `Core` and tableau proofs that import routed or closure proof machinery.
 `VE.Norms.Wire -> VE.Route.Run` was removed by importing the needed gate and
 wire directly, with `VE.Norms.Run` importing `VE.Route.Run` explicitly.
+The three `ve-core` module edges were removed without changing the `ve` binary's
+output: `dependency_order` moved to kernel `graph`, the evaluator core
+(`Evaluator`, `Explanation`, `TraceBinding`, `compatible`) to kernel `semantics`,
+and `wire` decodes with its own `FORMULA_ARITY` table, which the surface records
+repeat (a unit test keeps the two equal).
 
 | Language | Current outward edges (exact exceptions) |
 |---|---|
 | Python | `ve.ast -> ve.surface.nary`, `ve.assist.cli -> ve_experiments.assist_haiku`, `ve.closure -> ve.surface.registry`, `ve.english -> ve.argument`, `ve.environment -> ve.definitions`, `ve.environment -> ve.profiles`, `ve.model -> ve.background`, `ve.model -> ve.definitions`, `ve.model -> ve.evaluate`, `ve.norms -> ve.search` |
 | Lean | `VE.Bridge -> VE.Surface`, `VE.TableauExtendedRules -> VE.Closure.Congruence`, `VE.RoundTrip -> VE.LexicalProofs`, `VE.CertificateWire -> VE.Closure.Bridge`, `VE.TableauExtendedInduction -> VE.Closure.Induction`, `VE.TableauExtended -> VE.Closure.Substitution`, `VE.TableauExtendedExtra -> VE.Closure.PathRules`, `VE.Order.WireGate -> VE.Order.Surface`, `VE.Core.Bridge -> VE.Route.Gate`, `VE.Core.Conservativity -> VE.Closure.Consequence`, `VE.Core.RoundTrip -> VE.Core.Surface`, `VE.Closure.RoundTrip -> VE.Closure.Surface`, `VE.Core.Route -> VE.Route.Checker`, `VE.Core.Route -> VE.Route.Gate`, `VE.Core.Route -> VE.Route.Route`, `VE.Core.Wire -> VE.Route.Wire` |
-| Rust | None at the crate boundary; inside `ve-core`: `environment -> route`, `model -> eval`, `wire -> surface` |
+| Rust | None at the crate boundary or inside `ve-core` |
 
 Commands: `uv run --group dev python tools/check_python_layers.py`,
 `python3 tools/check_lean_imports.py`, `python3 tools/check_rust_deps.py`.
