@@ -192,7 +192,8 @@ def test_the_suite_raises_every_checker_setting_to_the_hang_guard():
 
 
 def test_every_precommit_wait_follows_the_setting_else_its_default(monkeypatch):
-    from tools import check_lean_imports as reader
+    monkeypatch.syspath_prepend(str(ROOT / "tools"))  # as the hook loads it
+    import check_lean_imports as reader
     monkeypatch.delenv("VE_PRECOMMIT_TIMEOUT")
     defaults = (precommit.WIRE_CHECK_TIMEOUT, reader.ORACLE_BUDGET, reader.PROBE_WAIT)
     assert defaults == (30, 3, 2)
@@ -203,6 +204,44 @@ def test_every_precommit_wait_follows_the_setting_else_its_default(monkeypatch):
         monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", text)
         with pytest.raises(ValueError, match="VE_PRECOMMIT_TIMEOUT"):
             precommit.configured_wait(30)
+
+
+CLOCKS = {"monotonic", "perf_counter", "time", "monotonic_ns", "perf_counter_ns", "time_ns"}
+
+
+def elapsed_assertions(path: Path) -> list[str]:
+    """The `assert` statements in `path` that read a clock or an `elapsed` value: elapsed time
+    is never an acceptance criterion (tests/subprocesses.py; measure CPU seconds or an event)."""
+    found = []
+    for node in ast.walk(ast.parse(path.read_text(), str(path))):
+        if isinstance(node, ast.Assert):
+            for inner in ast.walk(node.test):
+                clock = (isinstance(inner, ast.Call) and isinstance(inner.func, ast.Attribute)
+                         and inner.func.attr in CLOCKS and isinstance(inner.func.value, ast.Name)
+                         and inner.func.value.id == "time")
+                if clock or (isinstance(inner, ast.Name) and inner.id == "elapsed"):
+                    found.append(f"{path.relative_to(ROOT)}:{node.lineno}: asserts on elapsed time")
+                    break
+    return found
+
+
+def test_no_test_accepts_on_elapsed_time():
+    assert [line for path in sorted((ROOT / "tests").rglob("*.py")) if "__pycache__" not in path.parts
+            for line in elapsed_assertions(path)] == []
+
+
+@pytest.mark.parametrize("source, flagged", [
+    ("assert time.monotonic() - started < 5\n", True),
+    ("assert elapsed < 10, result.stderr\n", True),
+    ("assert time.perf_counter() - t0 < 1\n", True),
+    ("assert cpu.seconds < 10\n", False),
+    ("assert deadline > 0\n", False),
+], ids=["monotonic", "elapsed", "perf_counter", "CPU seconds", "other name"])
+def test_the_elapsed_guard_sees_each_form(tmp_path, monkeypatch, source, flagged):
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    path = tmp_path / "example.py"
+    path.write_text(source)
+    assert bool(elapsed_assertions(path)) == flagged
 
 
 def reachable_test_modules() -> list[str]:
