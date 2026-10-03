@@ -527,7 +527,8 @@ def _lean_rows(binary, unit, cases):
     for batch in _lean_batches([{"id": str(i), "kind": kind, "environment": raw, "norms": norms}
                                 for i, (raw, norms) in enumerate(cases)]):
         result = subprocess.run([str(BIN / binary), *([unit] if unit else []), "-"],
-                                input=json.dumps(batch), text=True, capture_output=True, timeout=600)
+                                input=json.dumps(batch), text=True, capture_output=True,
+                                timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
         if result.returncode not in (0, 1):
             raise RuntimeError(f"{binary}: {result.stderr}")
         parsed = json.loads(result.stdout)
