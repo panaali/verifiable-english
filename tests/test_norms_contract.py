@@ -361,3 +361,27 @@ def test_golden_records_are_current():
     from conformance.wire_contract_golden import ROOT as REPORTS, unit_reports
     for filename, body in unit_reports("norms@0").items():
         assert json.loads((REPORTS / filename).read_text()) == body
+
+
+def test_gate_rows_of_a_new_unit_judge_its_report(monkeypatch):
+    """wire-contract-s5.md 4.4 and section 9 on a measured report of `norms@0`, in Python (no Lean
+    engine yet: every case reads as one Lean does not, so Lean has no witness): the Python rows hold, and
+    the gate names each check without a witness, S5-pre and the class rule apart."""
+    from conformance import wire_contract_gate as gate
+    faults = catalogue("norms@0")
+    cases = [("0", "0:" + fault.name, *fault.source(), expected_record(CONTRACT, fault), (fault,), False)
+             for fault in faults]
+    monkeypatch.setattr(gate, "gate_cases", lambda contract: cases)
+    value = gate.report("norms@0", lean=False)
+    assert value["mismatches"] == [] and value["residual"] == {"python": 0, "lean": 0}
+    assert value["public_class_differences"] == 0 and value["s5_pre"].startswith("closed")
+    assert value["feasibility"] == {"n1": 14, "n2": 6, "coarse": 1, "t3": 3, "total": 20, "of": 24,
+                                    "threshold": None, "met": True}
+    failures = gate.gate_failures(value)
+    assert "norms@0: coverage: 2.1 has no first-fault witness" in failures
+    assert not any("4.3 has no first-fault witness" in failure for failure in failures)  # gap G3
+    value["public_class_differences"] = 2
+    value["legacy_verdict_differences"] = [{"case": "x", "python": None, "lean": ["InvalidInput", "t"]}]
+    failures = gate.gate_failures(value)
+    assert "norms@0: public delta: 2 class differences" in failures
+    assert "norms@0: legacy verdict differences ['x']" in failures

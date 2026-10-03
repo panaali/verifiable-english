@@ -2949,6 +2949,7 @@
   "tests/test_norms_contract.py::test_fixture_of_8_1[N7]",
   "tests/test_norms_contract.py::test_fixture_of_8_1[N8]",
   "tests/test_norms_contract.py::test_fixture_of_8_1[N9]",
+  "tests/test_norms_contract.py::test_gate_rows_of_a_new_unit_judge_its_report",
   "tests/test_norms_contract.py::test_golden_records_are_current",
   "tests/test_norms_contract.py::test_node_counts_of_n21",
   "tests/test_norms_contract.py::test_non_first_order_tag_reads_invalid_indexed_formula",
