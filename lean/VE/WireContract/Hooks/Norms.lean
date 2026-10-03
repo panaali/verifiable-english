@@ -18,8 +18,9 @@ diagnostic only and under no theorem (spec 5.2):
 * the syntax walk of 3.8 and 3.9, `synFormula`: `Norms.Wire.budgetFormula` and
   `budgetTerm` line for line, except that a value that is not a string in a name
   position is read as `sentinel`, so that the name fails typing (4.7b) and not the
-  walk. Where the names are strings it returns `budgetFormula`'s result (L8, the
-  `#guard`s below);
+  walk. Where the names are strings it returns `budgetFormula`'s result (L8: the
+  `#guard`s below on samples, and `tests/wire_contract_l8.lean` on every such
+  guard and carve-out of both units' corpora, from its running count);
 * the typing walk of 4.7, `typeWalk`: the checks and texts of
   `Norms.typeDiagnostic` and `termSort` in their order, with one running node
   total that counts each formula and term node on entering it, before its own
@@ -441,7 +442,8 @@ def registered : List String :=
 
 #guard Tables.Norms.table.hookNames.all registered.contains
 
-/-! L8: where the names are strings, the syntax walk is `budgetFormula`. -/
+/-! L8 on samples: where the names are strings, the syntax walk is `budgetFormula`. The corpus-wide check is
+`tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus`. -/
 
 def sameAsBudget (count : Nat) (j : Json) : Bool :=
   match synFormula 64 count j, VE.Norms.Wire.budgetFormula 64 count j with
