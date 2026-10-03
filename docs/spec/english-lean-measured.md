@@ -3,7 +3,7 @@
 **Status:** S0 deliverable of [english-lean-PLAN.md](english-lean-PLAN.md) section 5, **partial**, 2026-10-03,
 branch `english-lean/py`. Every figure below was measured by a committed tool on this branch; the raw data is
 `conformance/english-lean/s0-report.json`. Nothing here changes a verdict, an identity, a public code or a
-frozen file. Items that S0 still owes are listed in section 7.
+frozen file. Items that S0 still owes are listed in section 8.
 
 Tools (no model calls; none is on an admission path):
 
@@ -13,6 +13,7 @@ Tools (no model calls; none is on an admission path):
 | `conformance/english_lean_engine.py` | Python reference of the item-1 engine (spec 2.4 to 2.8, 5.2 to 5.7) and the English matching (5.8) | imported by the next two |
 | `conformance/english_lean_corpus.py` | the engine corpus `conformance/english-lean/engine.json` (spec 8.1 to 8.3, 8.7) | `uv run python -m conformance.english_lean_corpus` |
 | `conformance/english_lean_lexer.py` | Python reference of the draft lexer (spec 2.2), fixtures `conformance/english-lean/lexer.json` (8.4) | `tests/test_english_lean_lexer.py` |
+| `conformance/english_lean_tokens.py` | Python's Lark grammar converted to word tokens and read by the reference engine: verdict parity, steps | `uv run python -m conformance.english_lean_tokens --per-configuration 60` |
 | `conformance/english_lean_lexicon.py` | Python's lexicon export and identity, a reference of `Lexicon.valid`, fixtures `conformance/english-lean/lexicon.json` (8.5) | `uv run python -m conformance.english_lean_lexicon` |
 
 ## 1. Python's generated grammar, per configuration
@@ -57,7 +58,7 @@ Findings.
   (reviewed overlays). The one terminal the lexer refuses is `.`, the terminator, which W4 keeps out of the
   sentence grammar.
 - **Sizes differ from plan 1.2's static count** (82 alternatives over 20 nonterminals) because Lark's
-  expansion of `?`, `*` and inlined rules adds rules and nonterminals. The tree correspondence (section 7)
+  expansion of `?`, `*` and inlined rules adds rules and nonterminals. The tree correspondence (sections 7 and 8)
   must map them.
 
 ## 2. Synthetic limit environments
@@ -124,7 +125,7 @@ sentences too.
   original. Spec O1 prescribes, for a non-empty class, a `glued` flag on `punct` before S2. **For the DRI:**
   either add the flag (Lean then rejects these mutants as Python does), or record the widening as an
   accepted product difference under SEMANTICS-MIGRATION-PLAN 2.3. No hyphenated word occurred in the
-  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 7) must
+  rendered corpus, so the `non-citizen` case of O1 is not yet measured; the sealed corpus (section 8) must
   include declared wordings with hyphens.
 - **Whitespace (O3):** the reference lexer uses the 29 code points of Python's `str.isspace`, which is what
   `_normalise_english_source` collapses (Lean's `Char.isWhitespace` has 4 of them). The list is a literal in
@@ -180,7 +181,60 @@ Over 39 environments (the 17 round-trip configurations and 22 use-case environme
   undeclared predicate (`template_owners`, `english.py:259–263`); V4 names declared, alias and profile
   wordings only. No corpus environment exercises the difference; the lexicon mutation replay should.
 
-## 7. What S0 still owes
+## 7. Python's grammar over word tokens (a first cut at the tree correspondence)
+
+`conformance/english_lean_tokens.py` converts each configuration's Lark grammar, after EBNF expansion, into a
+grammar of the reference engine over the reference lexer's tokens. Its docstring lists the conversion rule by
+rule: phrases become their word tokens in place (`kw` for case-sensitive words, `content` for
+case-insensitive ones), `LABEL`, `NUMERAL` and `INT_OP` become nonterminals over token classes, the document
+rule gives way to the lexer's sentence split, rules over `IMPOSSIBLE` are dropped, and a capitalised
+duplicate of a constant alternative is dropped because `kw` accepts the sentence-initial capital (none
+occurred in the corpus). The reference parser then reads the same 1,020 rendered texts as section 3
+(`conformance/english-lean/tokens-report.json`).
+
+| Configuration | Rules | \|G\| | Longest RHS | Rank depth | Verdict `one` | Max steps | Max tokens | CPU s |
+|---|---|---|---|---|---|---|---|---|
+| ordinary | 131 | 515 | 28 | 4 | 60 / 60 | 32,968 | 63 | 0.99 |
+| closure | 131 | 515 | 28 | 4 | 60 / 60 | 66,138 | 127 | 1.35 |
+| colliding_aliases | 117 | 521 | 28 | 4 | 60 / 60 | 88,071 | 167 | 1.84 |
+| function_words | 124 | 528 | 28 | 4 | 60 / 60 | 45,989 | 86 | 1.52 |
+| function_identifiers | 114 | 500 | 28 | 4 | 60 / 60 | 77,346 | 153 | 1.46 |
+| precision_templates | 126 | 514 | 28 | 4 | 60 / 60 | 81,328 | 156 | 1.43 |
+| birthright-citizenship-debate | 114 | 501 | 28 | 4 | 60 / 60 | 69,072 | 136 | 1.23 |
+| claude-constitution-excerpt | 185 | 706 | 28 | 4 | 60 / 60 | 189,711 | 266 | 2.74 |
+| news-article | 204 | 829 | 28 | 4 | 60 / 60 | 77,381 | 92 | 2.84 |
+| us-constitution-14th-s1 | 139 | 667 | 28 | 4 | 60 / 60 | 92,458 | 137 | 3.02 |
+| birthright-citizenship-debate-reviewed | 126 | 629 | 28 | 4 | 60 / 60 | 76,306 | 120 | 2.43 |
+| claude-constitution-excerpt-reviewed | 235 | 946 | 28 | 4 | 60 / 60 | 208,248 | 218 | 4.34 |
+| news-article-reviewed | 251 | 1,020 | 28 | 4 | 60 / 60 | 125,562 | 121 | 3.25 |
+| us-constitution-14th-s1-reviewed | 174 | 942 | 28 | 4 | 60 / 60 | 190,186 | 200 | 4.52 |
+| accepted-suggestions | 122 | 484 | 28 | 4 | 60 / 60 | 54,959 | 112 | 0.99 |
+| adopted-unary | 130 | 649 | 28 | 4 | 60 / 60 | 91,202 | 139 | 1.98 |
+| order | 139 | 535 | 28 | 5 | 60 / 60 | 90,170 | 166 | 1.17 |
+
+Findings.
+
+- **Derivation parity on the sample: 1,020 of 1,020.** Every text Python accepts has exactly one derivation
+  over word tokens. No text needed a terminal the lexer cannot produce, and the converted grammars are
+  well-formed (W1 to W3, with ranks of depth 4 or 5) and free of the terminator (W4).
+- **The ambiguity direction holds on Python's constructed fixture.** `tests/test_natural.py`'s three
+  `deployed service` sentences, which Python rejects with two derivations, have two derivations over tokens
+  too; the witnesses differ exactly where Python's do (a natural `every ADJ NOUN` clause against the
+  two-word noun).
+- **Steps (the Python reference's counter of spec 2.6):** p50 17,082, p95 58,173, p99 118,032, max 208,248
+  (218 tokens); the longest sentence, 266 tokens, needs 189,711. That is about 700 to 950 steps per token,
+  far below the cubic bound. **Input for the work budget:** plan section 5 sets it at 10× the largest corpus
+  need, so on this sample about 2.1 million reference steps; S1a measures Lean's counter, which charges the
+  same events.
+- **Right-hand sides grow over tokens:** the longest is 28 symbols (the split-`if` listing, spec O10).
+- **CPU time:** 37 s for the 1,020 sentences in the Python reference (about 36 ms per sentence, unoptimised
+  Python). This is not a Lean latency estimate.
+- **What this is not:** a comparison of formulas (the converted grammar has no actions), the full sealed
+  corpus, or the reverse corpus. It shows that the conversion keeps verdicts on Python's own renderings and
+  on the one constructed ambiguity; S2's comparison applies the same conversion rules to the Lean grammar's
+  derivations.
+
+## 8. What S0 still owes
 
 | Item (plan section 5) | State |
 |---|---|
@@ -190,8 +244,9 @@ Over 39 environments (the 17 round-trip configurations and 22 use-case environme
 | Token-length histogram | done on rendered texts (section 3); the use-case documents and pilots are not yet included |
 | Character-versus-token probes | partly: spacing mutants (section 4); hyphenated wordings and word-split mutants are not yet measured |
 | Sealing the shadow corpus with hashes | not done |
-| The tree correspondence (Lark ↔ Lean derivations) | not done |
+| The tree correspondence (Lark ↔ Lean derivations) | first cut: verdict parity under the conversion of section 7; formulas and witness multiplicity wait for S2's actions |
 | Classification of the 49 rejection sites; blocked-wording ids | not done |
+| Lexicon validity of Python's selections | done (section 6); one V1 finding for the DRI |
 | Sort of every lint code into subsumed, ported, retained | not done |
-| Earley time per sentence | not done |
+| Earley time per sentence | not done (the machine was too loaded for wall-clock figures); section 7 gives reference-engine steps and CPU time instead |
 | G4 volume and coverage targets | not done |

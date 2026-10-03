@@ -1,0 +1,299 @@
+{
+ "ambiguity_probe": [
+  {
+   "python": "AmbiguousDerivation: two derivations",
+   "sentence": "Every deployed service is reviewed.",
+   "tokens": "many",
+   "witnesses": [
+    "sentence#0(formula#6(natural#113(natural_every#127(Every, natural_subject#132(deployed, service), natural_tail#129(relative#100(is, reviewed))))))",
+    "sentence#0(formula#11(universal#48(Every, declaration#55(noun#84(deployed, service)), relative#100(is, reviewed))))"
+   ]
+  },
+  {
+   "python": "AmbiguousDerivation: two derivations",
+   "sentence": "It is not the case that every deployed service is reviewed.",
+   "tokens": "many",
+   "witnesses": [
+    "sentence#0(formula#8(negation#19(It, is, not, the, case, that, formula#6(natural#113(natural_every#127(every, natural_subject#132(deployed, service), natural_tail#129(relative#100(is, reviewed))))))))",
+    "sentence#0(formula#8(negation#19(It, is, not, the, case, that, formula#11(universal#48(every, declaration#55(noun#84(deployed, service)), relative#100(is, reviewed))))))"
+   ]
+  },
+  {
+   "python": "AmbiguousDerivation: two derivations",
+   "sentence": "Every DEPLOYED service is reviewed.",
+   "tokens": "many",
+   "witnesses": [
+    "sentence#0(formula#6(natural#113(natural_every#127(Every, natural_subject#132(DEPLOYED, service), natural_tail#129(relative#100(is, reviewed))))))",
+    "sentence#0(formula#11(universal#48(Every, declaration#55(noun#84(DEPLOYED, service)), relative#100(is, reviewed))))"
+   ]
+  }
+ ],
+ "configurations": [
+  {
+   "configuration": "ordinary",
+   "cpu_seconds": 0.987,
+   "longest_rhs": 28,
+   "max_steps": 32968,
+   "max_tokens": 63,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 515,
+   "rules": 131,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "closure",
+   "cpu_seconds": 1.353,
+   "longest_rhs": 28,
+   "max_steps": 66138,
+   "max_tokens": 127,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 515,
+   "rules": 131,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "colliding_aliases",
+   "cpu_seconds": 1.841,
+   "dropped: uses IMPOSSIBLE": 5,
+   "longest_rhs": 28,
+   "max_steps": 88071,
+   "max_tokens": 167,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 521,
+   "rules": 117,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "function_words",
+   "cpu_seconds": 1.516,
+   "dropped: uses IMPOSSIBLE": 5,
+   "longest_rhs": 28,
+   "max_steps": 45989,
+   "max_tokens": 86,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 528,
+   "rules": 124,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "function_identifiers",
+   "cpu_seconds": 1.459,
+   "dropped: uses IMPOSSIBLE": 6,
+   "longest_rhs": 28,
+   "max_steps": 77346,
+   "max_tokens": 153,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 500,
+   "rules": 114,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "precision_templates",
+   "cpu_seconds": 1.432,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 81328,
+   "max_tokens": 156,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 514,
+   "rules": 126,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "birthright-citizenship-debate",
+   "cpu_seconds": 1.232,
+   "dropped: uses IMPOSSIBLE": 7,
+   "longest_rhs": 28,
+   "max_steps": 69072,
+   "max_tokens": 136,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 501,
+   "rules": 114,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "claude-constitution-excerpt",
+   "cpu_seconds": 2.742,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 189711,
+   "max_tokens": 266,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 706,
+   "rules": 185,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "news-article",
+   "cpu_seconds": 2.835,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 77381,
+   "max_tokens": 92,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 829,
+   "rules": 204,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "us-constitution-14th-s1",
+   "cpu_seconds": 3.023,
+   "dropped: uses IMPOSSIBLE": 7,
+   "longest_rhs": 28,
+   "max_steps": 92458,
+   "max_tokens": 137,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 667,
+   "rules": 139,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "birthright-citizenship-debate-reviewed",
+   "cpu_seconds": 2.431,
+   "dropped: uses IMPOSSIBLE": 7,
+   "longest_rhs": 28,
+   "max_steps": 76306,
+   "max_tokens": 120,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 629,
+   "rules": 126,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "claude-constitution-excerpt-reviewed",
+   "cpu_seconds": 4.337,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 208248,
+   "max_tokens": 218,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 946,
+   "rules": 235,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "news-article-reviewed",
+   "cpu_seconds": 3.25,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 125562,
+   "max_tokens": 121,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 1020,
+   "rules": 251,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "us-constitution-14th-s1-reviewed",
+   "cpu_seconds": 4.516,
+   "dropped: uses IMPOSSIBLE": 7,
+   "longest_rhs": 28,
+   "max_steps": 190186,
+   "max_tokens": 200,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 942,
+   "rules": 174,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "accepted-suggestions",
+   "cpu_seconds": 0.985,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 54959,
+   "max_tokens": 112,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 484,
+   "rules": 122,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "adopted-unary",
+   "cpu_seconds": 1.977,
+   "dropped: uses IMPOSSIBLE": 7,
+   "longest_rhs": 28,
+   "max_steps": 91202,
+   "max_tokens": 139,
+   "nonterminals": 37,
+   "rank_depth": 4,
+   "rhs_total": 649,
+   "rules": 130,
+   "verdicts": {
+    "one": 60
+   }
+  },
+  {
+   "configuration": "order",
+   "cpu_seconds": 1.171,
+   "dropped: uses IMPOSSIBLE": 1,
+   "longest_rhs": 28,
+   "max_steps": 90170,
+   "max_tokens": 166,
+   "nonterminals": 44,
+   "rank_depth": 5,
+   "rhs_total": 535,
+   "rules": 139,
+   "verdicts": {
+    "one": 60
+   }
+  }
+ ],
+ "differences": [],
+ "format": "ve.english-lean-tokens@1",
+ "per_configuration": 60,
+ "steps": {
+  "at_longest_sentence": {
+   "steps": 189711,
+   "tokens": 266
+  },
+  "max": 208248,
+  "p50": 17082,
+  "p95": 58173,
+  "p99": 118032
+ }
+}
