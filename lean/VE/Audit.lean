@@ -3403,3 +3403,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.choice_fuel_le
 #print axioms VE.Readings.faithful_sim
 #print axioms VE.Readings.superpose_faithful
+#print axioms VE.Readings.Examples.kb_sup_assertions
+#print axioms VE.Readings.Examples.kb_choice
+#print axioms VE.Readings.Examples.kb_superpose_assertions_fails

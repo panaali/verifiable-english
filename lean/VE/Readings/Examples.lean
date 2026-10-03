@@ -512,7 +512,7 @@ def M18 : Doc := ⟨.soft, frameK, [.set (formulaSet "rs1" "u1"), .set (formulaS
 #guard (onePremises M18 ++ couplingPremises M18 ++ narrowingPremises M18).map (·.1) ==
   ["coupling:c1", "narrowing:n1", "narrowing:n2"]
 
-/-! ## A statement of 8.4 that is false of some `Doc` values (reported against the spec)
+/-! ## Statements of 8.4 that are false of some `Doc` values (reported against the spec)
 
 **The choice vocabulary in the frame.** `VE.Environment` lists its constants and predicates as functions, so
 `WellFormedDoc` cannot see a frame that declares the constant `ve__here` or a bit predicate (S1 left those names to
@@ -577,5 +577,50 @@ theorem kh_base_down_fails :
   simp [pull, VE.FiniteModel.asStructure, MH] at hv hd
   subst hv
   exact absurd hd (by decide)
+
+/-! The same gap breaks `superpose_assertions`: in a frame that declares `ve__bit__1__0` over agents and `ve__here`
+as an agent, the assertion candidates `ve__bit__1__0(ve__here)` and its negation are admitted, but `sup KB` gates
+them with the very bit they mention, so no reinterpretation of the choice vocabulary satisfies both gated
+assertions while every structure satisfies one candidate (`kb_superpose_assertions_fails`). -/
+
+def frameB : VE.Rights.RightsDoc :=
+  { frameK with soft := { frameK.soft with E := { frameK.soft.E with
+      predicates := fun p => if p == "ve__bit__1__0" then some ["agent"] else frameK.soft.E.predicates p,
+      constants := fun x => if x == "ve__here" then some "agent" else none } } }
+def bH : VE.Formula := .unary "ve__bit__1__0" (.const "ve__here")
+def rsB : ReadingSet := ⟨"rs1", "u1", 1, [⟨"a", some (.assertion bH), [], []⟩, ⟨"b", some (.assertion (.not bH)), [], []⟩]⟩
+def KB : Doc := docK [.set rsB] .soft frameB
+#guard WellFormedDoc KB && supReady KB && superposable KB
+
+theorem kb_sup_assertions : (sup KB).2 = [.implies (.not bH) bH, .implies bH (.not bH)] := by decide
+theorem kb_choice : choicePremises KB = [] := by decide
+
+def SB : VE.Structure.{0} where
+  Carrier := Unit
+  domain _ _ := True
+  constant _ := some ()
+  relation _ _ := False
+
+theorem kb_superpose_assertions_fails :
+    ¬ ((∃ S', ChoiceExtension KB SB S' ∧ VE.Norms.Sat S' ((sup KB).2 ++ choicePremises KB)) ↔
+      (VE.Norms.Sat SB (free KB).2 ∧ ∀ R ∈ KB.sets, ∃ a ∈ R.candidates, ∃ φ, a.content = some (.assertion φ) ∧
+        φ.denote SB [])) := by
+  intro h
+  have hrhs : VE.Norms.Sat SB (free KB).2 ∧ ∀ R ∈ KB.sets, ∃ a ∈ R.candidates, ∃ φ,
+      a.content = some (.assertion φ) ∧ φ.denote SB [] := by
+    refine ⟨?_, fun R hR => ?_⟩
+    · have : (free KB).2 = [] := by decide
+      rw [this]; exact VE.Compose.sat_nil _
+    · have : R = rsB := by simpa [KB, docK, Doc.sets] using hR
+      subst this
+      refine ⟨⟨"b", some (.assertion (.not bH)), [], []⟩, by simp [rsB], .not bH, rfl, ?_⟩
+      simp [bH, VE.Formula.denote, SB]
+  obtain ⟨S', _, hs⟩ := h.mpr hrhs
+  rw [kb_sup_assertions, kb_choice] at hs
+  have h1 : (VE.Formula.implies (.not bH) bH).denote S' [] := hs _ (by simp)
+  have h2 : (VE.Formula.implies bH (.not bH)).denote S' [] := hs _ (by simp)
+  by_cases hb : bH.denote S' []
+  · exact (h2 hb) hb
+  · exact hb (h1 hb)
 
 end VE.Readings.Examples
