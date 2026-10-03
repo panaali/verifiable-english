@@ -2,6 +2,9 @@
   "all_check_count": 30,
   "boundary_problems": [],
   "boundary_without_record": 0,
+  "call_snapshot_cases": 486,
+  "call_snapshot_difference_count": 0,
+  "call_snapshot_differences": [],
   "checks_without_first": {
     "lean": [
       "4.3"
@@ -20,7 +23,7 @@
   },
   "class_differences": [],
   "class_rule_exempt": {
-    "1.1": 185,
+    "1.1": 188,
     "3.8b": 93
   },
   "contract": "norms@0",
@@ -5062,6 +5065,39 @@
         "InvalidInput",
         "UnknownSymbol: regulated predicate c"
       ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid regulated role or default for x_permitted"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+      ]
+    }
+  ],
+  "legacy_crashes": [
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'int' is not a container or iterable"
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'bool' is not a container or iterable"
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'int' is not a container or iterable"
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'bool' is not a container or iterable"
     }
   ],
   "legacy_verdict_differences": [
@@ -5080,6 +5116,14 @@
         "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
       ],
       "python": null
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u",
+      "lean": [
+        "InvalidInput",
+        "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+      ],
+      "python": null
     }
   ],
   "masking_not_required": {
@@ -5088,6 +5132,12 @@
   "mismatches": [
     {
       "case": "L:constant-verbalisation",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u",
       "problems": [
         "engines differ on fault or clean"
       ]
@@ -5207,6 +5257,6 @@
     "A": 1056,
     "B": 200,
     "legacy_differences": 2,
-    "replayed": 1561
+    "replayed": 1639
   }
 }

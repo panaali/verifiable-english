@@ -18,20 +18,21 @@ needs no `ve_diagnose` entry for either unit. The corpus is the shadow gate's
 (tiers 0, A, B, R and L) at revision 1 of each contract, on the branch
 `wire-s5/py`.
 
-## `norms@0`: 2,857 cases, two differences
+## `norms@0`: 2,935 cases, three differences in two classes
 
 | Case | Python | Lean route |
 |---|---|---|
 | `L:defined-layer`: a regulated rule's guard mentions a defined predicate whose body mentions the rule's own predicate, under `definitions@0` | accepts | `DependencyCycle: d, x_required` |
-| `L:constant-verbalisation`: a constant with a `verbalisation` member | accepts | `fields do not match: expected [sort, description], got [description, sort, verbalisation]` |
+| `L:constant-verbalisation`: a constant with a `verbalisation` member, and the recorded input of `tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u` whose constant carries one | accepts | `fields do not match: expected [sort, description], got [description, sort, verbalisation]` |
 
 The first is the fourth candidate of 2.12: Python's layer graph has regulated
 nodes only (`ve/norms.py`, the layer order), Lean's stratum graph has regulated
 and defined nodes. The second was not a candidate. Python's environment decoder
 admits `verbalisation` on a constant; the norms route's environment decoder
-does not.
+does not. The recorded input entered the corpus when the recorded test files
+became the globs of 7.1 (`tests/test_norm*`, `tests/test_*contract*`).
 
-## `norm-defaults@0`: 3,024 cases, six differences in three classes
+## `norm-defaults@0`: 3,028 cases, six differences in three classes
 
 | Case | Python | Lean route |
 |---|---|---|
@@ -56,9 +57,11 @@ Python legacy validator neither accepts nor rejects, and the call
 reports 1.1. `ve/environment.py` is outside item 1's diff scope (7.2), so the
 crash is recorded here, not fixed, and pinned by
 `tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain`
-(the expectation `crash`). The gate's corpus holds no such source: the gate's
-Python column reads only a `VEError`. Under `norm-defaults@0` the same
-environment lists no profile and is outside the domain.
+(the expectation `crash`). That test's four sources (a number and a Boolean,
+recorded once for each parametrisation) are in the corpus of `norms@0`; the gate
+lists each under `legacy_crashes`, runs neither engine on it, and fails on it as
+on a verdict difference. Under `norm-defaults@0` the same environment lists no
+profile and is outside the domain.
 
 ## Class differences (recorded, not S5-pre's)
 
@@ -73,11 +76,19 @@ delta's `lean_route_changes` will report them once the Lean engine runs.
 ## Integrated three-way measurement
 
 After merging the Python and Lean engines, the complete shadow gates ran over
-2,857 `norms@0` and 3,024 `norm-defaults@0` cases. The stored gate and delta
+2,935 `norms@0` and 3,028 `norm-defaults@0` cases. The stored gate and delta
 reports are `norms@0-gate.json`, `norm-defaults@0-gate.json`, and their
 `-delta.json` counterparts. Python has zero deferred cases, residuals, or
 class differences for both units. The gates still fail for the verdict
 differences above: the Lean engine disagrees with Python on the constant
-`verbalisation` cases, and `norm-defaults@0` has no Lean first-fault witness
-for check 6.3 because the Lean route accepts D11. The two switch gates cannot
-pass until the product verdicts are reconciled and remeasured.
+`verbalisation` cases, `norm-defaults@0` has no Lean first-fault witness
+for check 6.3 because the Lean route accepts D11, and `norms@0` lists the
+four Python crashes. The two switch gates cannot pass until the product
+verdicts are reconciled and remeasured.
+
+Z8 holds on both corpora: on the 486 rejected `norms@0` cases and the 354
+rejected `norm-defaults@0` cases that do not reach the statement of 2.8, the
+call raises the error of `<unit>-call-snapshot.json`, taken in shadow. The
+snapshot is rewritten only while a contract is in shadow
+(`--write-call-snapshot`); a switch commit that adds a corpus case rewrites it
+before it sets `status`, and G12 compares the public call with it.

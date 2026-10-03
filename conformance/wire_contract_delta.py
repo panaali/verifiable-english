@@ -34,6 +34,7 @@ def unit_report(unit):
         "s5_pre": {
             "status": gate["s5_pre"],
             "verdict_differences": gate["legacy_verdict_differences"],
+            "python_crashes": gate["legacy_crashes"],
             "class_differences": gate["legacy_code_differences"],
             "detail": "conformance/wire-contract/s5-pre.md",
         },

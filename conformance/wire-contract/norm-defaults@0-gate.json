@@ -2,6 +2,9 @@
   "all_check_count": 36,
   "boundary_problems": [],
   "boundary_without_record": 0,
+  "call_snapshot_cases": 354,
+  "call_snapshot_difference_count": 0,
+  "call_snapshot_differences": [],
   "checks_without_first": {
     "lean": [
       "w1/2.1",
@@ -59,7 +62,7 @@
     "lean": 34,
     "python": 34
   },
-  "handler_reaching_cases": 1359,
+  "handler_reaching_cases": 1362,
   "lean_route_changes": [
     {
       "cases": 85,
@@ -4250,6 +4253,7 @@
       ]
     }
   ],
+  "legacy_crashes": [],
   "legacy_verdict_differences": [
     {
       "case": "0:fill-premise",
@@ -4468,7 +4472,7 @@
         "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
         "record_text": "ResourceLimit: unspecified name length"
       },
-      "text_changes": 3
+      "text_changes": 5
     },
     {
       "check": "6.1",
@@ -4515,12 +4519,12 @@
   "s5_pre": "open: a legacy verdict difference is not fixed (s5-pre.md)",
   "source_modified_count": 0,
   "status": "shadow",
-  "text_delta_count": 261,
+  "text_delta_count": 263,
   "tiers": {
     "0": 44,
     "A": 1137,
     "B": 200,
     "legacy_differences": 2,
-    "replayed": 1641
+    "replayed": 1645
   }
 }

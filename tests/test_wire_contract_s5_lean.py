@@ -329,6 +329,12 @@ UNITS = {
 }
 
 
+def fixture_sources(unit):
+    """The unit's fixtures as this module builds them, for the corpus-completeness test (8.7)."""
+    base, fixtures = UNITS[unit][:2]
+    return [(name, *source(base, change)) for name, change, *_ in fixtures]
+
+
 @pytest.mark.parametrize("unit", sorted(UNITS))
 def test_fixtures_records_and_legacy_agreement(diagnose, unit):
     base, fixtures, kind, module, validate = UNITS[unit]

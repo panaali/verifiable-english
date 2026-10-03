@@ -21,6 +21,7 @@ import argparse
 from collections import Counter
 from copy import deepcopy
 from dataclasses import dataclass
+import hashlib
 import importlib
 import json
 from pathlib import Path
@@ -379,6 +380,52 @@ def source_key(raw, norms):
     return json.dumps([raw, norms], sort_keys=True)
 
 
+# Z8 and G12 (wire-contract-s5.md 8.4, 8.5) of a unit after the pilot: on every rejected corpus case that is
+# not handler-reaching, the call on D(N) raises the error it raised before the switch commit. The snapshot
+# holds that error per source, written while the contract is in shadow (`--write-call-snapshot`).
+
+def source_digest(raw, norms):
+    return hashlib.sha256(source_key(raw, norms).encode()).hexdigest()[:24]
+
+
+def call_snapshot_path(unit):
+    return DIRECTORY / f"{unit}-call-snapshot.json"
+
+
+def call_snapshot(unit):
+    """The stored calls of the unit's snapshot by source digest, or `{}` when there is none."""
+    path = call_snapshot_path(unit)
+    return json.loads(path.read_text())["calls"] if path.exists() else {}
+
+
+def _norm_objects(norms):
+    return type(norms) is list and all(type(unit) is dict for unit in norms)
+
+
+def write_call_snapshot(unit):
+    """Rewrite the unit's call snapshot from the corpus. Refused at `public`: the snapshot is the call's
+    error before the switch commit, so it is taken in shadow and never regenerated from a public tree."""
+    u = unit_of(unit)
+    contract = load(u.contract)
+    if contract["status"] == "public":
+        raise SystemExit(f"{u.contract} is public: the call snapshot is taken before the switch commit")
+    calls = {}
+    for _, _, raw, norms, *_ in gate_cases(contract):
+        if not _norm_objects(norms) or python_crash(contract, raw, norms) is not None \
+                or _python(contract, raw, norms)[0] is None or u.module.handler_reaching(raw, norms):
+            continue
+        calls[source_digest(raw, norms)] = u.module.call_outcome(raw, norms)
+    value = {"contract": u.contract, "revision": contract["revision"], "status": contract["status"],
+             "calls": dict(sorted(calls.items()))}
+    call_snapshot_path(u.contract).write_text(
+        "{\n" + ",\n".join(f"{json.dumps(key)}: {json.dumps(value[key], sort_keys=True)}"
+                           for key in ("contract", "revision", "status")) + ',\n"calls": {\n'
+        + ",\n".join(f"{json.dumps(key)}: {json.dumps(call, ensure_ascii=False)}"
+                     for key, call in value["calls"].items())
+        + "\n}}\n")
+    return len(calls)
+
+
 def legacy_difference_sources(contract):
     """Inputs on which the two legacy validators differed or differ (s3-pre.md), with the record both
     engines must report: every profile outside the Lean route's registry, on `env()` and on the base, the
@@ -488,6 +535,19 @@ def _lean_rows(binary, unit, cases):
             raise RuntimeError(f"{binary}: wrong row count")
         rows.extend(parsed)
     return rows
+
+
+def python_crash(contract, raw, norms):
+    """A unit after the pilot: the text of an exception other than a `VEError` that its Python legacy
+    validator raises on the source, or `None`. Such a validator neither accepts nor rejects, and the engine,
+    whose 1.1 calls the same decoder, cannot be run on the source (s5-pre.md)."""
+    try:
+        unit_of(contract).module.legacy_validation(deepcopy(raw), deepcopy(norms))
+    except VEError:
+        return None
+    except Exception as exc:
+        return f"{type(exc).__name__}: {exc}"
+    return None
 
 
 def _python(contract, raw, norms):
@@ -610,13 +670,32 @@ def report(unit=PILOT, lean=True):
     class_differences, class_exempt = [], Counter()
     lean_route_changes = {}
     handler_reaching = 0
+    snapshot = call_snapshot(u.contract) if module is not None else {}
+    call_cases, call_differences = 0, []
+    legacy_crashes = []
     for tier, label, raw, norms, expected, combo, lean_reads in cases:
         sizes[tier] += 1
+        crash = python_crash(contract, raw, norms) if module is not None else None
+        if crash is not None:
+            # S5-pre: Python neither accepts nor rejects; the case's Lean rows are read and reported.
+            lean_error = None
+            if lean_reads:
+                next(lean_engine)
+                lean_error = next(lean_legacy).get("error")
+            legacy_crashes.append({"case": label, "python": crash, "lean": lean_error})
+            continue
         python_legacy, python_outcome, python_error, modified = _python(contract, raw, norms)
         source_modified_count += modified
         py = python_outcome.record if isinstance(python_outcome, Fault) else None
         reaching = python_legacy is not None and (module is None or module.handler_reaching(raw, norms))
         handler_reaching += module is not None and reaching
+        if module is not None and python_legacy is not None and not reaching and _norm_objects(norms):
+            # Z8, at every commit: the call raises the error of its snapshot before the switch.
+            call_cases += 1
+            before = snapshot.get(source_digest(raw, norms), "no snapshot")
+            observed = module.call_outcome(raw, norms)
+            if observed != before:
+                call_differences.append({"case": label, "call": observed, "snapshot": before})
         if python_legacy is not None:
             reported = overlay(contract, python_error, python_outcome)
             check = reported.get("check", "deferred")
@@ -654,7 +733,8 @@ def report(unit=PILOT, lean=True):
                 if fresh.diagnostic != reported or fresh.message != reported["text"] or str(fresh) != reported["text"]:
                     boundary_problems.append(f"{label}: function record or message differs")
                 if module is not None:
-                    boundary_problems += module.call_problems(label, raw, norms, python_error, reported, reaching)
+                    boundary_problems += module.call_problems(label, raw, norms, python_error, reported, reaching,
+                                                              snapshot.get(source_digest(raw, norms)))
                 elif type(norms) in (list, tuple) and all(type(unit) is dict and "norm" in unit for unit in norms):
                     from ve.soft_route import admit_soft_document
                     document = {"units": [{"kind": "norm", "content": unit} for unit in deepcopy(norms)]}
@@ -803,13 +883,17 @@ def report(unit=PILOT, lean=True):
     if module is not None:
         value.pop("s3_pre"), value.pop("public_code_differences")
         value.update({
-            "s5_pre": ("open: a legacy verdict difference is not fixed (s5-pre.md)" if verdict_open
+            "s5_pre": ("open: a legacy verdict difference is not fixed (s5-pre.md)" if verdict_open or legacy_crashes
                        else "closed: no legacy verdict difference"),
+            "legacy_crashes": legacy_crashes,
             "public_class_differences": len(class_differences),
             "class_differences": class_differences[:50],
             "class_rule_exempt": dict(sorted(class_exempt.items())),
             "handler_reaching_cases": handler_reaching,
             "lean_route_changes": [lean_route_changes[check] for check in checks if check in lean_route_changes],
+            "call_snapshot_cases": call_cases,
+            "call_snapshot_difference_count": len(call_differences),
+            "call_snapshot_differences": call_differences[:50],
         })
     return value
 
@@ -823,8 +907,12 @@ def legacy_comparison(unit):
     rows = _lean_rows(u.lean_route, None, [(c[2], c[3]) for c in cases])
     verdicts, classes = [], Counter()
     for case, row in zip(cases, rows):
-        python_legacy = _python(load(u.contract), case[2], case[3])[0]
         lean = (checker_error(row["error"]).code, row["error"]) if row["status"] == "error" else None
+        crash = python_crash(u.contract, case[2], case[3]) if u.module is not None else None
+        if crash is not None:
+            verdicts.append({"case": case[1], "python": crash, "lean": lean})
+            continue
+        python_legacy = _python(load(u.contract), case[2], case[3])[0]
         if (python_legacy is None) != (lean is None):
             verdicts.append({"case": case[1], "python": python_legacy, "lean": lean})
         elif python_legacy and python_legacy[0] != lean[0]:
@@ -865,9 +953,18 @@ def gate_failures(value):
                             if isinstance(differences, list) else f"{unit}: legacy verdict differences {differences!r}")
         if not isinstance(value["s5_pre"], str) or not value["s5_pre"].startswith("closed"):
             failures.append(f"{unit}: S5-pre {value['s5_pre']!r}")
+        crashes = value["legacy_crashes"]
+        if not isinstance(crashes, list) or crashes:
+            failures.append(f"{unit}: S5-pre: the Python legacy validator crashes on "
+                            f"{[row.get('case') for row in crashes] if isinstance(crashes, list) else crashes!r}")
         classes = value["public_class_differences"]
         if not _count(classes) or classes:
             failures.append(f"{unit}: public delta: {classes} class differences")
+        # Z8 (8.5), at every status: a required row over no case is vacuous.
+        calls, compared = value["call_snapshot_difference_count"], value["call_snapshot_cases"]
+        if not _count(calls) or not _count(compared) or calls or not compared:
+            failures.append(f"{unit}: Z8: the call differs from its snapshot before the switch on {calls!r} of "
+                            f"{compared!r} cases")
     else:
         if not isinstance(differences, list) or differences:
             failures.append(f"S3-pre: legacy verdict differences {differences!r}")
@@ -1015,6 +1112,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--record-test-inputs", action="store_true")
+    parser.add_argument("--write-call-snapshot", action="store_true",
+                        help="a unit in shadow: rewrite the call snapshot of Z8 and G12 from the corpus")
     parser.add_argument("--unit", default=PILOT)
     parser.add_argument("--legacy-only", action="store_true",
                         help="compare the two legacy validators only (S5-pre) and print the differences")
@@ -1024,6 +1123,8 @@ def main():
     u = unit_of(args.unit)
     if args.record_test_inputs:
         print(f"{write_test_inputs(u.contract)} recorded test inputs written to {u.test_inputs.relative_to(ROOT)}")
+    if args.write_call_snapshot:
+        print(f"{write_call_snapshot(u.contract)} calls written to {call_snapshot_path(u.contract).relative_to(ROOT)}")
     if args.legacy_only:
         print(json.dumps(legacy_comparison(u.contract), indent=1, sort_keys=True))
         return 0

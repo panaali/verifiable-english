@@ -14,8 +14,8 @@ import sys
 
 from conformance import wire_contract_faults_norms as norms_faults
 from conformance.wire_contract_faults import Fault, _replacing, _set_at
-from conformance.wire_contract_faults_norms import (ATOM, BUDGET, balanced, call_problems, class_exempt,
-                                                   own_text)
+from conformance.wire_contract_faults_norms import (ATOM, BUDGET, balanced, call_outcome, call_problems,
+                                                   class_exempt, own_text)
 from ve.errors import VEError
 from ve.norm_defaults_contract import REGISTRY, legacy_validation
 from ve.norms_contract import in_domain
@@ -26,8 +26,7 @@ UNIT = "norm-defaults@0"
 LEAN_ROUTE = "ve_norm_defaults_route"
 CASE_KIND = "norm-defaults-elaborate"
 FEASIBILITY_OF = 6
-RECORDED_TESTS = ("tests/test_norm_defaults_contract*", "tests/test_norm_defaults.py",
-                  "tests/test_norm_defaults_three_way.py", "tests/test_norm_defaults_differential.py")
+RECORDED_TESTS = norms_faults.RECORDED_TESTS
 # 8.4's allowed coverage gaps for this unit: G1 as the pilot's; G2 to `w1/2.1`, which the environment
 # decoder masks under this unit's profile; G3 applies to no check of this unit.
 GAP_APPLIES = {"G1": lambda faults: {f.check for f in faults} - {f.check for f in faults if f.readers != "python"},
@@ -207,4 +206,4 @@ def test_and_fixture_sources():
     return [(f"fixture:{label}", raw, norms) for label, raw, norms in fixture_sources()]
 
 
-__all__ = ["call_problems", "class_exempt", "own_text", "legacy_validation", "REGISTRY"]
+__all__ = ["call_outcome", "call_problems", "class_exempt", "own_text", "legacy_validation", "REGISTRY"]
