@@ -45,12 +45,17 @@ class RightsEnvironment(SoftEnvironment):
     LAYERS = frozenset({"rights@0"})
 
     def __init__(self, data):
-        if type(data) is not dict or "rights@0" not in data.get("profiles", []):
+        profiles = data.get("profiles") if type(data) is dict else None
+        if type(profiles) is not list or any(type(p) is not str for p in profiles):
+            # VE.Rights.Wire.decodeRightsEnvironment reads the profiles first.
+            raise UnsupportedProfile("profiles must be a sorted unique array")
+        if "rights@0" not in profiles:
             raise UnsupportedProfile("rights@0 is required")
-        if "soft-norms@0" not in data["profiles"]:
+        if "soft-norms@0" not in profiles:
             raise UnsupportedProfile("rights@0 requires soft-norms@0")
         raw = deepcopy(data)
-        rights = raw.get("vocabulary", {}).pop("rights", None)
+        vocabulary = raw.get("vocabulary", {})
+        rights = vocabulary.pop("rights", None) if type(vocabulary) is dict else None
         # As Lean's `decodeRightsBlock` reads the block: `holders` and `bearers` are required, `protected` and
         # `alters` optional (an absent one is empty). The block is kept as written, so its identity is Lean's.
         if (type(rights) is not dict or not {"holders", "bearers"} <= set(rights)
@@ -61,7 +66,8 @@ class RightsEnvironment(SoftEnvironment):
                 # 3.1's null recognition is the absent key: canonical JSON has no null,
                 # and the Lean wire sends the field absent.
                 del entry["recognition"]
-        for predicate in raw["vocabulary"].get("predicates", ()):
+        predicates = vocabulary.get("predicates")
+        for predicate in (predicates if type(predicates) is dict else ()):
             if predicate.startswith("rights__"):
                 raise VEError(f"InvalidInput: author predicate {predicate} begins with rights__")
         object.__setattr__(self, "rights", rights)
