@@ -1,0 +1,2 @@
+# Wire contract stage S5 (pointer plan)
+Item 1 of THIS plan is stage S5 of docs/spec/wire-contract-PLAN.md (S0-S4 merged on main; soft-norms@0 switched in S4). Apply that plan's S5 section exactly: norms@0 and norm-defaults@0 switched from shadow to the contract's diagnostics, accept/reject and identities unchanged, only diagnostics may become uniform (listed per profile), the corpus-completeness test kept. Honest open questions.
