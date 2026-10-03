@@ -34,6 +34,7 @@ import VE.Readings.Situation
 import VE.Readings.SupConflict
 import VE.Readings.BaseDown
 import VE.Readings.SupWitness
+import VE.Readings.BaseUp
 import VE.Readings.Examples
 import VE.Checks
 import VE.Closure.Checks
