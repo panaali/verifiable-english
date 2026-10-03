@@ -35,3 +35,15 @@ Run in this worktree on Python 3.12.3, without model calls:
 
 The remaining S4 plan items 2–6 need their own statement specifications.
 They are outside the item-1 public switch.
+
+## Review fixes (2026-10-03)
+
+After the fixes of the wire-s4 reviews (spec section 15), in this worktree, without model calls:
+
+- `lake build`: 544 jobs passed; `python lean/audit.py`: 2,819 theorem declarations, standard axiom
+  allowlist only. No Lean or Rust source changed, so `cargo test` was not rerun.
+- `python -m conformance.wire_contract_gate --check`: 8,796 cases, zero mismatches, no unmet coverage, no
+  legacy verdict or code difference; 498 text changes in seven signed checks.
+- `tools/wire_contract.py --check`, `lean/VE/Route/frozen.py`, `tools/check_lean_imports.py` and the delta
+  report check: passed.
+- Full non-live pytest suite with four workers: 5,754 passed, 6 optional skips.
