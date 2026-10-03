@@ -191,15 +191,18 @@ def test_the_suite_raises_every_checker_setting_to_the_hang_guard():
     assert lean_backend.configured_timeout(60.0) == HANG_TIMEOUT
 
 
-def test_the_precommit_wire_check_waits_the_setting_else_30_seconds(monkeypatch):
+def test_every_precommit_wait_follows_the_setting_else_its_default(monkeypatch):
+    from tools import check_lean_imports as reader
     monkeypatch.delenv("VE_PRECOMMIT_TIMEOUT")
-    assert precommit.check_timeout() == 30
+    defaults = (precommit.WIRE_CHECK_TIMEOUT, reader.ORACLE_BUDGET, reader.PROBE_WAIT)
+    assert defaults == (30, 3, 2)
+    assert [precommit.configured_wait(default) for default in defaults] == [30, 3, 2]
     monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", "1234.5")
-    assert precommit.check_timeout() == 1234.5
+    assert [precommit.configured_wait(default) for default in defaults] == [1234.5] * 3
     for text in ("0", "-1", "nan", "inf", "", "ten"):
         monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", text)
         with pytest.raises(ValueError, match="VE_PRECOMMIT_TIMEOUT"):
-            precommit.check_timeout()
+            precommit.configured_wait(30)
 
 
 def reachable_test_modules() -> list[str]:
