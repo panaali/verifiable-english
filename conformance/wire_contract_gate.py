@@ -39,12 +39,13 @@ from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_fir
 from tests.test_soft_norms_lean import env
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
-from ve.softnorms_contract import REGISTRY
-from ve.wire_contract.engine import Deferred, Fault, load, run
+from ve.softnorms_contract import REGISTRY, public_rejection
+from ve.wire_contract.engine import Deferred, Fault, load, overlay, run
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
 REPORT = ROOT / "conformance/wire-contract/soft-norms@0-gate.json"
+SWITCH = ROOT / "conformance/wire-contract/soft-norms@0-switch.json"
 SPEC = ROOT / "docs/spec/wire-contract.md"
 # The tests' `soft-norms@0` inputs that no other source of the corpus builds, as `tests/contract_input_recorder.py`
 # records them from the test files of `RECORDED_TESTS` (`--record-test-inputs` rewrites the file).
@@ -412,13 +413,18 @@ def _lean_rows(binary, unit, cases):
 
 
 def _python(contract, raw, norms):
+    copied_raw, copied_norms = deepcopy(raw), deepcopy(norms)
+    before = deepcopy((copied_raw, copied_norms))
+    error = None
     try:
-        load_soft_document(deepcopy(raw), deepcopy(norms))
+        load_soft_document(copied_raw, copied_norms)
         legacy = None
     except VEError as exc:
+        error = exc
         legacy = (exc.code, str(exc))
+    modified = (copied_raw, copied_norms) != before
     outcome = run(contract, {"environment": deepcopy(raw), "norms": deepcopy(norms)}, registry=REGISTRY)
-    return legacy, outcome
+    return legacy, outcome, error, modified
 
 
 def gate_cases(contract, recorded=True):
@@ -494,10 +500,51 @@ def report():
     phase_pairs = set()
     mismatches, legacy_verdicts, legacy_code_deltas = [], [], []
     text_deltas = Counter()
+    public_changes = {}
+    public_code_differences = 0
+    boundary_problems = []
+    boundary_without_record = 0
+    source_modified_count = 0
     for tier, label, raw, norms, expected, combo, lean_reads in cases:
         sizes[tier] += 1
-        python_legacy, python_outcome = _python(contract, raw, norms)
+        python_legacy, python_outcome, python_error, modified = _python(contract, raw, norms)
+        source_modified_count += modified
         py = python_outcome.record if isinstance(python_outcome, Fault) else None
+        if python_legacy is not None:
+            reported = overlay(contract, python_error, python_outcome)
+            check = reported.get("check", "deferred")
+            text_changed = reported["text"] != python_legacy[1]
+            code_changed = "code" in reported and reported["code"] != python_legacy[0]
+            public_code_differences += code_changed
+            if text_changed or code_changed:
+                entry = public_changes.setdefault(check, {
+                    "check": check, "text_changes": 0, "code_differences": 0,
+                    "example": {"case": label, "legacy_code": python_legacy[0],
+                                "legacy_text": python_legacy[1], "record_code": reported.get("code"),
+                                "record_text": reported["text"]}})
+                entry["text_changes"] += text_changed
+                entry["code_differences"] += code_changed
+            if contract["status"] == "public":
+                fresh = deepcopy(python_error)
+                returned = public_rejection(raw, norms, fresh)
+                if fresh.diagnostic is None:
+                    boundary_without_record += 1
+                if returned is not fresh or type(fresh) is not type(python_error) or fresh.code != python_error.code:
+                    boundary_problems.append(f"{label}: function changed the legacy error object, type or code")
+                if fresh.diagnostic != reported or fresh.message != reported["text"] or str(fresh) != reported["text"]:
+                    boundary_problems.append(f"{label}: function record or message differs")
+                if type(norms) in (list, tuple) and all(type(unit) is dict and "norm" in unit for unit in norms):
+                    from ve.soft_route import admit_soft_document
+                    document = {"units": [{"kind": "norm", "content": unit} for unit in deepcopy(norms)]}
+                    try:
+                        admit_soft_document(deepcopy(raw), document)
+                    except VEError as raised:
+                        expected_dict = {**python_error.to_dict(), "message": reported["text"],
+                                         "diagnostic": reported}
+                        if type(raised) is not type(python_error) or raised.to_dict() != expected_dict:
+                            boundary_problems.append(f"{label}: call error differs from the legacy error and record")
+                    else:
+                        boundary_problems.append(f"{label}: call accepted a rejected source")
         problems = []
         # 2.8: a deferred outcome counts under the deferred share of its language, never as residual.
         deferring = {"python": isinstance(python_outcome, Deferred), "lean": False}
@@ -580,7 +627,7 @@ def report():
     reasons = {**UNREACHED, **lean_exempt}
     verdict_open = bool(legacy_verdicts)
     return {
-        "contract": contract["contract"], "revision": contract["revision"],
+        "contract": contract["contract"], "revision": contract["revision"], "status": contract["status"],
         "oracle": ("fault catalogue: hand-written check, path and args per fault, text from the contract's "
                    "template, table position from the contract; inherited text from each legacy validator"),
         "tiers": {"0": sizes["0"], "A": sizes["A"], "B": sizes["B"], "replayed": sizes["R"],
@@ -604,6 +651,12 @@ def report():
         "coverage_unmet_reasons": {check: reasons[check] for check in checks if check in reasons},
         "coverage_met": not (unmet["first"] or unmet["masked"] or unmet["adjacent_phase_pairs"]),
         "text_delta_count": sum(text_deltas.values()),
+        "public_diagnostic_changes": [public_changes[check] for check in
+                                      [*checks, "residual", "deferred"] if check in public_changes],
+        "public_code_differences": public_code_differences,
+        "boundary_problems": boundary_problems,
+        "boundary_without_record": boundary_without_record,
+        "source_modified_count": source_modified_count,
         "mismatches": mismatches,
     }
 
@@ -636,6 +689,29 @@ def gate_failures(value):
         failures.append(f"S3-pre: legacy verdict differences {differences!r}")
     if not isinstance(value["s3_pre"], str) or not value["s3_pre"].startswith("closed"):
         failures.append(f"S3-pre {value['s3_pre']!r}")
+    code_differences = value["legacy_code_differences"]
+    if not isinstance(code_differences, list) or code_differences:
+        failures.append(f"legacy code differences {code_differences!r}")
+    public_code_differences = value["public_code_differences"]
+    if not _count(public_code_differences) or public_code_differences:
+        failures.append(f"public delta: {public_code_differences} code differences")
+    modified = value["source_modified_count"]
+    if not _count(modified) or modified:
+        failures.append(f"the legacy validator modified its source in {modified} cases")
+    if value["status"] == "public":
+        signed = json.loads(SWITCH.read_text())["signed"] if SWITCH.exists() else {}
+        measured = {row["check"]: row["text_changes"] for row in value["public_diagnostic_changes"]
+                    if row["text_changes"]}
+        for check, count in measured.items():
+            if check not in signed:
+                failures.append(f"public delta: check {check} changes text in {count} cases and is not signed")
+        for check in signed:
+            if check not in measured:
+                failures.append(f"public delta: signed check {check} has no text change")
+        without = value["boundary_without_record"]
+        if not _count(without) or without:
+            failures.append(f"boundary: {without} errors without a record")
+        failures.extend(f"boundary: {problem}" for problem in value["boundary_problems"])
     return failures
 
 

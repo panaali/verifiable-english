@@ -947,8 +947,10 @@ def generated_invalid_soft_blocks():
     baseline = env({"parties": ["p"], "ranks": ["a", "b"],
                     "outranking": {"mode": "strict"}})
     mutations = {
-        "parties": [False, {}, "p", [False], ["Bad!"], ["p", "p"]],
-        "ranks": [False, {}, "a", [42], ["Bad!"], ["a", "a"]],
+        # A name that is not a string, for each JSON kind whose Python spelling is not its compact JSON
+        # (wire-contract.md 6, checks 2.7a and 2.8c): a Boolean, an array and an object; and an integer.
+        "parties": [False, {}, "p", [False], [["p"]], [{"p": 1}], ["Bad!"], ["p", "p"]],
+        "ranks": [False, {}, "a", [42], [False], [["a"]], [{"a": 1}], ["Bad!"], ["a", "a"]],
         "outranks": [False, {}, "a", [[]], [["a"]], [["a", "b", "a"]],
                      [[1, "b"]], [["a", "a"]], [["a", "b"], ["a", "b"]],
                      [["a", "unknown"]]],

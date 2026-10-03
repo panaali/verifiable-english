@@ -1,4 +1,4 @@
-"""Shadow pilot checks: the existing soft validator still owns the verdict."""
+"""Pilot contract checks: the existing soft validator still owns the verdict."""
 
 from copy import deepcopy
 from pathlib import Path
@@ -11,6 +11,7 @@ import pytest
 from conformance.soft_norms import generated
 from tests.test_soft_norms_lean import env, norm, ranks, should
 from ve.errors import UnsupportedProfile, VEError
+from ve import softnorms as soft
 from ve.softnorms import load_soft_document
 from ve.softnorms_contract import INHERITED_PROFILES, REGISTRY, ROUTE_PROFILES, soft_source
 from ve.wire import loads_json
@@ -88,7 +89,7 @@ def test_shadow_fault_agrees_with_legacy_rejection(make):
     assert isinstance(outcome, Fault)
     assert outcome.record["check"] == expected
     assert outcome.record["code"] == error.value.code
-    assert CONTRACT["status"] == "shadow"
+    assert CONTRACT["status"] == "public"
     assert error.value.diagnostic is None
 
 
@@ -113,7 +114,7 @@ def test_profiles_outside_the_lean_route_fail_check_3_2(profile):
     outcome = diagnose(source, [])
     index = PYTHON_ONLY_PROFILES[profile]
     assert outcome.record == {
-        "contract": "soft-norms@0", "revision": 3, "check": "3.2", "phase": "profiles",
+        "contract": "soft-norms@0", "revision": 4, "check": "3.2", "phase": "profiles",
         "code": "SOFT_UNSUPPORTED_PROFILE", "class": "UnsupportedProfile",
         "path": f"/environment/profiles/{index}", "text": f"UnsupportedProfile: Unsupported profile {profile}",
         "args": {"value": profile}}
@@ -126,10 +127,35 @@ def test_norm_defaults_with_unspecified_default_fails_check_2_3():
     source["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
     with pytest.raises(VEError) as legacy:
         load_soft_document(deepcopy(source), [])
-    assert legacy.value.code == "SOFT_UNSUPPORTED_PROFILE"
+    assert legacy.value.code == "SOFT_INVALID_INPUT"
+    # The source lists the profile, so W1's "requires norm-defaults@0" would be false of it (Fable B2).
+    fill = "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+    assert str(legacy.value) == fill
     outcome = diagnose(source, [])
-    assert (outcome.record["check"], outcome.record["code"], outcome.record["path"]) == (
-        "2.3", "SOFT_INVALID_INPUT", "/environment")
+    assert (outcome.record["check"], outcome.record["code"], outcome.record["path"], outcome.record["text"]) == (
+        "2.3", "SOFT_INVALID_INPUT", "/environment", fill)
+
+
+def test_unspecified_default_without_norm_defaults_names_the_profile():
+    """Without `norm-defaults@0` among the source's profiles, W1's text is true and stays."""
+    source = env()
+    source["vocabulary"]["predicates"]["x_required"]["regulated"]["default"] = "unspecified"
+    text = "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+    with pytest.raises(VEError) as legacy:
+        load_soft_document(deepcopy(source), [])
+    assert (legacy.value.code, str(legacy.value)) == ("SOFT_INVALID_INPUT", text)
+    assert diagnose(source, []).record["text"] == text
+
+
+@pytest.mark.parametrize("profile", sorted(soft._DROPPED_PROFILE_TEXTS))
+def test_no_soft_route_text_names_a_listed_profile_as_missing(profile):
+    """The class of Fable B2: every profile the soft route removes before W1 has its W1 remedy text
+    restated, and the restated text is what both the legacy validator and the 2.3 hook give."""
+    assert profile in soft._INHERITED_PROFILES and profile not in soft._SOFT_ROUTE_INHERITED_PROFILES
+    assert set(soft._INHERITED_PROFILES) - set(soft._SOFT_ROUTE_INHERITED_PROFILES) == set(
+        soft._DROPPED_PROFILE_TEXTS)
+    text, restated = soft._DROPPED_PROFILE_TEXTS[profile]
+    assert profile in text and "requires" in text and "requires" not in restated
 
 
 def test_hook_lists_are_the_lean_route_lists():
@@ -225,20 +251,73 @@ def test_admission_adapter_selects_active_norm_units():
     assert diagnose(**soft_source(case)) is CLEAN
 
 
-def test_diagnostic_modules_stay_off_verdict_import_paths():
+def _diagnostic_import_boundary(overrides=None):
+    """Resolve relative and package imports, then pin the one production call shape."""
     root = DIRECTORY.parent
+    overrides = overrides or {}
+    route_tree = None
     for path in root.rglob("*.py"):
         if "wire_contract" in path.parts or path.name == "softnorms_contract.py":
             continue
-        tree = ast.parse(path.read_text())
+        tree = ast.parse(overrides.get(path, path.read_text()))
+        package = ".".join(path.relative_to(root.parent).parts[:-1])
         imports = []
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
-                imports.extend(alias.name for alias in node.names)
-            elif isinstance(node, ast.ImportFrom) and node.module:
-                imports.append(node.module)
-        assert all(not name.startswith(("ve.wire_contract", "ve.softnorms_contract"))
-                   for name in imports), path
+                imports.extend((alias.name, node) for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                base = package.split(".")[:len(package.split(".")) - node.level + 1] if node.level else []
+                module = ".".join(base + ([node.module] if node.module else [])) if node.level else node.module
+                imports.append((module, node))
+                imports.extend((module + "." + alias.name, node) for alias in node.names)
+        diagnostic = [(name, node) for name, node in imports if name and
+                      (name == "ve.softnorms_contract" or name.startswith("ve.softnorms_contract.") or
+                       name == "ve.wire_contract" or name.startswith("ve.wire_contract."))]
+        if path.name == "soft_route.py":
+            route_tree = tree
+            target = [node for name, node in diagnostic if name == "ve.softnorms_contract"]
+            assert len({id(node) for node in target}) == 1
+            assert all(not name.startswith("ve.wire_contract") for name, _ in diagnostic)
+            imported = target[0]
+            assert isinstance(imported, ast.ImportFrom)
+            assert imported.module == "softnorms_contract" and imported.level == 1
+            assert [alias.name for alias in imported.names] == ["public_rejection"]
+        else:
+            assert not diagnostic, path
+    assert route_tree is not None
+    function = next(node for node in route_tree.body if isinstance(node, ast.FunctionDef)
+                    and node.name == "admit_soft_document")
+    handlers = [node for node in ast.walk(function) if isinstance(node, ast.ExceptHandler)
+                and isinstance(node.type, ast.Name) and node.type.id == "VEError"]
+    assert len(handlers) == 1
+    handler = handlers[0]
+    imports = [node for node in ast.walk(handler) if isinstance(node, ast.ImportFrom)
+               and node.module == "softnorms_contract"]
+    calls = [node for node in ast.walk(route_tree) if isinstance(node, ast.Call)
+             and isinstance(node.func, ast.Name) and node.func.id == "public_rejection"]
+    raises = [node for node in ast.walk(handler) if isinstance(node, ast.Raise)
+              and isinstance(node.exc, ast.Call) and isinstance(node.exc.func, ast.Name)
+              and node.exc.func.id == "public_rejection"]
+    assert len(imports) == len(calls) == len(raises) == 1
+    assert calls[0] is raises[0].exc
+
+
+def test_diagnostic_modules_stay_off_verdict_import_paths():
+    _diagnostic_import_boundary()
+    root = DIRECTORY.parent
+    document = root / "document.py"
+    route = root / "soft_route.py"
+    with pytest.raises(AssertionError):
+        _diagnostic_import_boundary({document: document.read_text() +
+                                     "\nfrom .softnorms_contract import soft_source\n"})
+    with pytest.raises(AssertionError):
+        _diagnostic_import_boundary({route: route.read_text().replace(
+            "raise public_rejection(environment, active, error)",
+            "public_rejection(environment, active, error)\n                raise error")})
+    with pytest.raises(AssertionError):
+        _diagnostic_import_boundary({route: route.read_text().replace(
+            "raise public_rejection(environment, active, error)",
+            "diagnosed = public_rejection(environment, active, error)\n                raise diagnosed")})
 
 
 def test_seeded_soft_sources_keep_verdict_and_code_agreement():
