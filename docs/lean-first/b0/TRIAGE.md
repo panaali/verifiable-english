@@ -4,7 +4,7 @@ Plan: `docs/LEAN-FIRST-PLAN.md` (draft 3, branch `design/lean-first`), section 5
 Source: the fuzzer's reviewed baseline `conformance/difffuzz-baseline.json` on `infra/difffuzz` at `9d7b8ccc`
 (not on `main`; format `ve-difffuzz-baseline@2`, 403 entries in 18 follow-up groups, DF-1 to DF-18; the plan
 was written against the earlier 138-entry, 13-group baseline). The data, with one minimised input per group and
-each implementation's recorded answer, is [`conformance/lean-first/df-triage.json`](../../../conformance/lean-first/df-triage.json);
+each implementation's recorded answer, is [`docs/lean-first/b0/df-triage.json`](df-triage.json);
 `tests/test_lean_first_triage.py` checks that every group is classed and runs the Lean-accepts bugs live.
 
 Classes (the plan's three, plus two for groups where Lean is not in question):
