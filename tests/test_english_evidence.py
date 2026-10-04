@@ -89,7 +89,26 @@ def test_english_mixed_merge_smoke(offset, index, parts):
     report = english_mixed.mixed(1, offsets={offset}, part=(index, parts))
     assert report['failure_count'] == 0, report['failures']
     assert len(report['vocabularies']) == 1
-    assert report['texts'] > 0
+    # The slice parsed its share of the texts, not merely generated them (testperf review C).
+    assert report['parsed'] == len(range(index, report['texts'], parts)) > 0
+
+
+def test_english_mixed_slices_cover_every_text():
+    """Every configuration's parts are 0..n-1 of the same n, so the slices parse every text once."""
+    parts = {}
+    for offset, index, count in MIXED_SLICES:
+        parts.setdefault(offset, []).append((index, count))
+    assert sorted(parts) == list(range(MIXED_CONFIGURATIONS))
+    assert all(sorted(rows) == [(i, rows[0][1]) for i in range(rows[0][1])] for rows in parts.values())
+
+
+def test_english_mixed_counts_parsed_texts(monkeypatch):
+    """An empty selection parses nothing and says so: `part=(1, 1)` selects no index."""
+    calls = []
+    monkeypatch.setattr(english_mixed, 'parse_english', lambda *args, **kwargs: calls.append(args))
+    report = english_mixed.mixed(1, offsets={0}, part=(1, 1))
+    assert report['texts'] > 0 and report['parsed'] == 0 and calls == []
+    assert english_mixed.mixed(1, offsets={0}, parse=False)['parsed'] == 0
 
 
 def test_english_mixed_merge_smoke_covers_every_construct():

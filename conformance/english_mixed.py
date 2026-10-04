@@ -116,7 +116,7 @@ def mixed(per_vocabulary=40, offsets=None, parse=True, part=(0, 1)):
     """The report over every configuration, or over the configurations at `offsets` only
     (each keeps its seed, so the slices together are the whole run; the coverage of the
     registered constructs is then not judged). `part=(i, n)` renders and parses only the
-    texts whose index in their configuration is `i` modulo `n`. With `parse` false, texts
+    texts whose index in their configuration is `i` modulo `n`; `parsed` counts them. With `parse` false, texts
     are generated but neither rendered nor parsed: the coverage, which depends on the
     generated formulas only, is the same."""
     warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
@@ -145,12 +145,13 @@ def mixed(per_vocabulary=40, offsets=None, parse=True, part=(0, 1)):
         formulas = list(dict.fromkeys(formulas))
         documents = [ast.Document((f,)) for f in formulas]
         documents += [ast.Document(tuple(formulas[i:i + 3])) for i in range(0, len(formulas) - 2, 3)]
-        counts, seen, digest = Counter(), set(), hashlib.sha256()
+        counts, seen, digest, parsed = Counter(), set(), hashlib.sha256(), 0
         for index, document in enumerate(documents):
             for formula in document.formulas:
                 node_types(formula, seen)
             if not parse or index % part[1] != part[0]:
                 continue
+            parsed += 1
             text = render(document, env, 've_english', **options)
             digest.update(text.encode())
             try:
@@ -171,7 +172,7 @@ def mixed(per_vocabulary=40, offsets=None, parse=True, part=(0, 1)):
                 continue
             counts['paragraphs' if len(document.formulas) > 1 else 'sentences'] += 1
         covered |= seen & enabled
-        rows.append({'vocabulary': name, 'seed': MIXED_SEED + offset, 'texts': len(documents),
+        rows.append({'vocabulary': name, 'seed': MIXED_SEED + offset, 'texts': len(documents), 'parsed': parsed,
                      **dict(sorted(counts.items())), 'multiple_derivations': counts['multiple_derivations'],
                      'node_types': sorted(t.__name__ for t in seen & enabled),
                      'corpus_sha256': digest.hexdigest()})
@@ -186,7 +187,7 @@ def mixed(per_vocabulary=40, offsets=None, parse=True, part=(0, 1)):
     return {'method': 'rendered mixed-construct sentences and paragraphs; parse_english all-derivations check',
             'vocabularies': rows, 'missing_constructs': missing,
             'unexercised_profiles': unexercised_profiles, 'seed': MIXED_SEED,
-            'texts': sum(r['texts'] for r in rows), 'failures': failures[:200], 'failure_count': len(failures)}
+            'texts': sum(r['texts'] for r in rows), 'parsed': sum(r['parsed'] for r in rows), 'failures': failures[:200], 'failure_count': len(failures)}
 
 
 if __name__ == '__main__':
