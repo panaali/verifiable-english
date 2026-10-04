@@ -119,6 +119,8 @@ UNBUILT = {
     "tests/test_evidence_bounds.py",
     # Data: the text of a shell action in the agent-policy use case's log, never executed.
     "usecases/agent-policy/emit_log.py",
+    # This file: the scan's own examples, which `test_the_scan_finds_each_way_to_build_a_command` parses.
+    "tests/test_nested_pytest.py",
 }
 
 
