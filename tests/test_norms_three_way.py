@@ -66,6 +66,12 @@ def rust_executable():
 
 
 def run(executable, cases):
+    """The rows of Rust's `conformance` or of the Lean norms route (`LEAN`, the service mode `norms`)."""
+    if executable == LEAN:
+        status, rows, stderr = lean_routes.run(LEAN, cases)
+        assert status in (0, 1), stderr
+        assert len(rows) == len(cases)
+        return rows
     command = [str(executable)] + (["conformance"] if executable == RUST else []) + ["-"]
     result = subprocess.run(command, input=json.dumps(cases),
                             text=True, capture_output=True, timeout=HANG_TIMEOUT)

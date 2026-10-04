@@ -159,8 +159,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
 | `lean/VE/Route/Decode.lean` | 282 | 282 | 1–282 | `7cd23701ca95…` |
-| `lean/VE/Time/Document.lean` | 615 | 615 | 1–615 | `0f80c18de219…` |
-| `lean/VE/Time/Wire.lean` | 863 | 863 | 1–863 | `c57241b6144d…` |
+| `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
+| `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `7f9c8b54dc82…` |
 | `lean/VE/Attribution/Admission.lean` | 327 | 327 | 1–327 | `357665dbfa39…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
 | `lean/VE/Attribution/Wire.lean` | 510 | 510 | 1–510 | `f8b2a8b0b381…` |
@@ -171,14 +171,14 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Risk/Record.lean` | 1266 | 1266 | 1–1266 | `9b9aa82f9a8d…` |
 | `lean/VE/Risk/Audit.lean` | 190 | 190 | 1–190 | `62c518fee5d3…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
-| `lean/VE/Risk/Run.lean` | 651 | 651 | 1–651 | `dbfad8022806…` |
+| `lean/VE/Risk/Run.lean` | 632 | 632 | 1–632 | `6d98b5de4c61…` |
 | `lean/VE/Rights/Wire.lean` | 698 | 698 | 1–698 | `fc25e57bed1a…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
 | `lean/VE/NormDefaults/Wire.lean` | 377 | 377 | 1–377 | `b823854df575…` |
 | `lean/VE/NormDefaults/Replay.lean` | 371 | 371 | 1–371 | `46be075c8793…` |
 | `lean/VE/NormDefaults/Admission.lean` | 350 | 350 | 1–350 | `b60054268019…` |
 | `lean/VE/Readings/Wire.lean` | 651 | 651 | 1–651 | `677f5ceb4a01…` |
-| **total** | | **17,636** | | |
+| **total** | | **17,595** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
