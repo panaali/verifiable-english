@@ -3925,6 +3925,8 @@
   "tests/test_search_options.py::test_unused_predicates_do_not_multiply_models_or_trigger_atom_limit",
   "tests/test_search_options.py::test_used_predicates_include_every_formula_and_nonvacuity_filter[countermodel]",
   "tests/test_search_options.py::test_used_predicates_include_every_formula_and_nonvacuity_filter[distinguishing]",
+  "tests/test_shadow_baseline.py::test_l9_z3_every_probe_cell_in_shadow",
+  "tests/test_shadow_baseline.py::test_z3_a_candidate_that_changes_pythons_object_is_reported",
   "tests/test_shadow_call_sites.py::test_every_uncompared_reason_is_used_and_registered",
   "tests/test_shadow_call_sites.py::test_l10_a_coupled_reading_set_is_a_compared_call",
   "tests/test_shadow_call_sites.py::test_l10_each_scope_gap_is_counted_under_its_reason[admission-soft]",
