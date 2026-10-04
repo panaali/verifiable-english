@@ -11,6 +11,8 @@ messages, for example; for a refused batch, the service's diagnostic).
 from __future__ import annotations
 
 import atexit
+import json
+from pathlib import Path
 
 from ve.backends.lean_service import LeanService
 from ve.errors import VEError
@@ -26,6 +28,12 @@ MODES = {
 _service: LeanService | None = None
 
 
+def mode(route) -> str:
+    """The service mode of `route`: a mode, an executable name or an executable's path."""
+    name = Path(str(route)).name
+    return MODES.get(name, name)
+
+
 def _started() -> LeanService:
     global _service
     if _service is None:
@@ -35,24 +43,43 @@ def _started() -> LeanService:
     return _service
 
 
+def _service_rows(mode: str, cases: list, timeout: float | None) -> list:
+    """Every case of this module goes through here (`tests/contract_input_recorder.py` wraps it)."""
+    return _started().run(mode, cases, timeout=timeout)
+
+
 def run(route: str, cases: list, *, timeout: float | None = None) -> tuple[int, list | None, str]:
-    """(exit status, rows, stderr) for `cases` on `route`, an executable name or a mode."""
-    service = _started()
-    start, _ = service.stderr()
+    """(exit status, rows, stderr) for `cases` on `route` (`mode`)."""
+    start, _ = _started().stderr()
     try:
-        rows = service.run(MODES.get(route, route), cases, timeout=timeout)
+        rows = _service_rows(mode(route), cases, timeout)
     except VEError as refused:
         return 2, None, refused.message
-    _, stderr = service.stderr(start)
+    _, stderr = _started().stderr(start)
     return (1 if any(type(r) is dict and r.get("status") == "error" for r in rows) else 0), rows, stderr
 
 
 def rows(route: str, cases: list, *, timeout: float | None = None) -> list:
     """The rows of `run`; a refused batch raises its diagnostic."""
-    service = _started()
-    return service.run(MODES.get(route, route), cases, timeout=timeout)
+    return _service_rows(mode(route), cases, timeout)
 
 
 def diagnose(unit: str, cases: list, *, timeout: float | None = None) -> list:
     """The rows `ve_diagnose <unit>` printed for `cases` (mode `diagnose`)."""
-    return rows("diagnose", [{**case, "unit": unit} for case in cases], timeout=timeout)
+    return _service_rows("diagnose", [{**case, "unit": unit} for case in cases], timeout)
+
+
+def diagnose_text(unit: str, text: str, *, timeout: float | None = None) -> list:
+    """`diagnose` on a case array written as `text`, each case's members kept in their written
+    order after a first member `unit`; a refused batch raises its diagnostic."""
+    from ve.backends.lean_service import case_texts
+    texts = case_texts(text)
+    assert texts is not None and all(t.startswith("{") for t in texts), text[:200]
+    member = '"unit":' + json.dumps(unit)
+    texts = ["{" + member + ("," if t[1:].strip() != "}" else "") + t[1:] for t in texts]
+    cases_text = "[" + ",".join(texts) + "]"
+    _, response = _started().exchange("diagnose", cases_text, len(texts), timeout=timeout, texts=texts)
+    if response.get("status") == "error":
+        from ve.backends.relay import rejection
+        raise rejection(response["code"], response["error"])
+    return [entry["result"] for entry in response["results"]]

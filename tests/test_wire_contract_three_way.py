@@ -1,13 +1,13 @@
 """One submission compared with the spec record, Python and Lean engines."""
 
 import json
-import subprocess
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
 from conformance.soft_norms import multi_fault_base
+from tests import lean_routes
 from conformance.wire_contract_golden import reports as golden_reports
 from tests.test_wire_contract_corpus import CONTRACTS, LIMITS, NAMES, _registry
 from tests.test_wire_contract_lean import DEFER, DEMO
@@ -24,12 +24,9 @@ from tests.test_wire_contract_lean import LEAN
 
 
 def _lean(unit, roots, kind):
-    assert LEAN.exists(), "build ve_diagnose before running three-way conformance"
+    assert LEAN.exists(), "build ve_service before running three-way conformance"
     cases = [{"id": str(i), "kind": kind, **root} for i, root in enumerate(roots)]
-    result = subprocess.run([str(LEAN), unit, "-"], input=json.dumps(cases),
-                            text=True, capture_output=True, timeout=600)
-    assert result.returncode == 0, result.stderr
-    rows = json.loads(result.stdout)
+    rows = lean_routes.diagnose(unit, cases)
     assert len(rows) == len(cases)
     assert all(row["status"] == "ok" for row in rows)
     return rows
@@ -162,8 +159,7 @@ def admission_sources():
 
 def test_admission_adapter_uses_active_norm_units():
     (environment, rules), (_, bad_rules) = admission_sources()
-    elaborated = elaborate(Path(__file__).resolve().parents[1] /
-                           "lean/.lake/build/bin/ve_soft_norms_route", environment, rules)
+    elaborated = elaborate("ve_soft_norms_route", environment, rules)
     coherence = next(b for b in elaborated["background"] if b.get("label") == "soft:coherence:a,b")
     document = {"units": [{"id": f"u{i}", "span": [i * 10, i * 10 + 5],
                            "kind": "norm", "content": rule} for i, rule in enumerate(rules)],
@@ -173,10 +169,7 @@ def test_admission_adapter_uses_active_norm_units():
     [engine] = _lean("soft-norms@0", [case], "admission")
     assert engine["outcome"] == "clean"
     submitted = {"id": "admission", "kind": "admission", **case}
-    legacy = subprocess.run([str(Path(__file__).resolve().parents[1] /
-                                 "lean/.lake/build/bin/ve_soft_norms_route"), "-"],
-                            input=json.dumps([submitted]), text=True, capture_output=True, timeout=180)
-    assert json.loads(legacy.stdout)[0]["status"] == "ok"
+    assert lean_routes.rows("soft-norms", [submitted])[0]["status"] == "ok"
     bad = deepcopy(case)
     bad["document"]["units"][0]["content"] = bad_rules[0]
     [lean_bad] = _lean("soft-norms@0", [bad], "admission")
