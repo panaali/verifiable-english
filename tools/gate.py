@@ -56,6 +56,7 @@ ALLOWED_ENVIRONMENT = (
     "LAKE_CACHE_DIR",                   # fresh, in scratch
     "CARGO_HOME",                       # fresh, in scratch; seeded by isolated_cargo
     "PYTHONNOUSERSITE",                 # 1
+    "PYTHONPYCACHEPREFIX",              # fresh, in scratch: no bytecode cached before the gate
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD",   # 1
 )
 # Added only for the stage that needs them.
@@ -291,7 +292,8 @@ def gate_environment(scratch: Path) -> dict[str, str]:
     directories = {"HOME": home, "XDG_CACHE_HOME": home / ".cache",
                    "XDG_CONFIG_HOME": home / ".config", "XDG_DATA_HOME": home / ".local/share",
                    "TMPDIR": scratch / "tmp", "UV_CACHE_DIR": scratch / "uv-cache",
-                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home"}
+                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home",
+                   "PYTHONPYCACHEPREFIX": scratch / "pycache"}
     for directory in directories.values():
         directory.mkdir(parents=True, exist_ok=True)
     # Only uv is exposed from outside the toolchains and the system directories.
