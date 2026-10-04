@@ -1,4 +1,11 @@
-"""A pytest plugin that records every `soft-norms@0` input the tests themselves submit.
+"""A pytest plugin that records every input of one wire unit that the tests themselves submit.
+
+The unit is `VE_CONTRACT_UNIT` (`soft-norms@0` by default), or each unit of `VE_CONTRACT_UNITS` with
+the test files whose inputs count for it. For `norms@0` and `norm-defaults@0`
+(wire-contract-s5.md 7.1) it also wraps each unit's `legacy_validation` and `public_rejection`, the two
+admission routes, `NormDocument` and `UnspecifiedDocument` built over an environment, and the Lean norm
+routes and `ve_diagnose` with a norm unit; a source is recorded for the unit whose domain holds it. For the
+pilot:
 
 Loaded with `-p tests.contract_input_recorder` before any test module is imported, it wraps the ways a
 test reaches the pilot: the Python engine (`ve.wire_contract.engine.run` on `soft-norms@0`), the Python
@@ -20,7 +27,8 @@ import sys
 
 TESTS = Path(__file__).resolve().parent
 SOFT_CONFORMANCE = TESTS.parent / "conformance/soft_norms.py"
-# Input key -> (collection index of the recording test, -1 outside a test; its test id; sequence number).
+# Unit -> input key -> (collection index of the recording test, -1 outside a test; its test id;
+# sequence number).
 _RECORDED = {}
 _CURRENT = [-1]
 _SEQUENCE = itertools.count()
@@ -31,13 +39,27 @@ def _from_tests():
     return caller.parent == TESTS or caller == SOFT_CONFORMANCE
 
 
-def _record(environment, norms):
+# The unit whose inputs are recorded (`VE_CONTRACT_UNIT`, the pilot by default; wire-contract-s5.md 7.1),
+# or several at once: `VE_CONTRACT_UNITS`, a JSON object from each unit to the test files whose inputs
+# count for it (each unit's own `recorded_tests`), so that one run records every unit as its own runs would.
+FILES = json.loads(os.environ.get("VE_CONTRACT_UNITS", "null"))
+RECORDING = set(FILES) if FILES is not None else {os.environ.get("VE_CONTRACT_UNIT", "soft-norms@0")}
+UNIT = next(iter(RECORDING)) if len(RECORDING) == 1 else None
+
+
+def _record(environment, norms, unit="soft-norms@0"):
+    if unit not in RECORDING:
+        return
+    label = os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0]
+    if FILES is not None and label.split("::")[0] not in FILES[unit]:
+        return
     key = json.dumps([environment, norms], sort_keys=True, default=repr)
     # The first recording in collection order names the input, under xdist too; the sequence
     # number orders the inputs one test records first as they were recorded.
-    label = (_CURRENT[0], os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0], next(_SEQUENCE))
-    if key not in _RECORDED or label < _RECORDED[key]:
-        _RECORDED[key] = label
+    recording = (_CURRENT[0], label, next(_SEQUENCE))
+    inputs = _RECORDED.setdefault(unit, {})
+    if key not in inputs or recording < inputs[key]:
+        inputs[key] = recording
 
 
 def _install():
@@ -69,9 +91,9 @@ def _install():
         return original_route(case, *args, **kwargs)
 
     def run(contract, root, *args, **kwargs):
-        if (_from_tests() and isinstance(contract, dict) and contract.get("contract") == "soft-norms@0"
+        if (_from_tests() and isinstance(contract, dict) and contract.get("contract") in UNITS
                 and isinstance(root, dict) and {"environment", "norms"} <= set(root)):
-            _record(root["environment"], root["norms"])
+            _record(root["environment"], root["norms"], contract["contract"])
         return original_run(contract, root, *args, **kwargs)
 
     def load_soft_document(environment, norms, *args, **kwargs):
@@ -99,6 +121,7 @@ def _install():
 
     def run_process(command, *args, **kwargs):
         if _from_tests() and isinstance(command, (list, tuple)) and command:
+            _record_norm_cases(command, kwargs.get("input"))
             name = Path(str(command[0])).name
             soft = name == "ve_soft_norms_route" or (name == "ve_diagnose" and "soft-norms@0" in map(str, command))
             if soft and isinstance(kwargs.get("input"), str):
@@ -114,10 +137,93 @@ def _install():
         return original_subprocess(command, *args, **kwargs)
 
     engine.run, softnorms.load_soft_document, subprocess.run = run, load_soft_document, run_process
+    if RECORDING - {"soft-norms@0"}:
+        _install_norms()
     soft_route._run = route
     soft_route.admit_soft_document = admit_soft_document
     softnorms_contract.public_rejection = public_rejection
     softnorms.SoftEnvironment.__init__, softnorms.SoftNormDocument.__init__ = environment_init, document_init
+
+
+# The units other than the pilot (wire-contract-s5.md 7.1): each with the module of its contract.
+UNITS = {"soft-norms@0", "norms@0", "norm-defaults@0"}
+NORM_ROUTES = {"ve_norms_route": "norms@0", "ve_norm_defaults_route": "norm-defaults@0"}
+
+
+def _norm_unit(environment):
+    """The unit a norm source belongs to: `norm-defaults@0` when its environment lists that profile."""
+    profiles = environment.get("profiles") if isinstance(environment, dict) else None
+    return "norm-defaults@0" if isinstance(profiles, list) and "norm-defaults@0" in profiles else "norms@0"
+
+
+def _record_norm(environment, norms):
+    """Record a norm source for its unit, when it is in that unit's domain (2.2)."""
+    from ve.norms_contract import in_domain
+    environment = environment.to_dict() if hasattr(environment, "to_dict") else environment
+    norms = [unit.to_dict() if hasattr(unit, "to_dict") else unit for unit in norms] \
+        if isinstance(norms, (list, tuple)) else norms
+    environment, norms = json.loads(json.dumps([environment, norms], default=repr))
+    unit = _norm_unit(environment)
+    if in_domain(environment, norms, defaults=unit == "norm-defaults@0"):
+        _record(environment, norms, unit)
+
+
+def _record_norm_cases(command, text):
+    """The cases a test hands to a norm route or to `ve_diagnose` with a norm unit."""
+    name = Path(str(command[0])).name
+    if not isinstance(text, str) or not (name in NORM_ROUTES or (
+            name == "ve_diagnose" and set(map(str, command)) & {"norms@0", "norm-defaults@0"})):
+        return
+    from ve.norms_contract import active_norms
+    for case in json.loads(text):
+        if not isinstance(case, dict):
+            continue
+        kind = case.get("kind")
+        if kind == "admission":
+            _record_norm(case.get("environment"), active_norms(case.get("document")))
+        elif isinstance(kind, str) and (kind.startswith("norms-") or kind.startswith("norm-defaults-")):
+            _record_norm(case.get("environment"), case.get("norms"))
+
+
+def _install_norms():
+    """The ways a test reaches `norms@0` and `norm-defaults@0`: each unit's `legacy_validation` and
+    `public_rejection`, the admission routes, and `NormDocument` and `UnspecifiedDocument` built over an
+    environment (wire-contract-s5.md 7.1). Only calls from a test file count."""
+    import importlib
+    from ve import norm_admission, norm_defaults, norm_defaults_route, norms
+    for module_name, unit in (("ve.norms_contract", "norms@0"), ("ve.norm_defaults_contract", "norm-defaults@0")):
+        try:
+            module = importlib.import_module(module_name)
+        except ImportError:
+            continue
+        for function in ("legacy_validation", "public_rejection"):
+            original = getattr(module, function, None)
+            if original is None:
+                continue
+            def wrapper(environment, norms_, *args, original=original, **kwargs):
+                if _from_tests():
+                    _record_norm(environment, norms_)
+                return original(environment, norms_, *args, **kwargs)
+            setattr(module, function, wrapper)
+    for module, function in ((norm_admission, "admit_norm_document"),
+                             (norm_defaults_route, "admit_norm_defaults_document")):
+        original = getattr(module, function)
+        def admit(environment, document, *args, original=original, **kwargs):
+            if _from_tests():
+                from ve.norms_contract import active_norms
+                _record_norm(environment, active_norms(document))
+            return original(environment, document, *args, **kwargs)
+        setattr(module, function, admit)
+    for cls in (norms.NormDocument, norm_defaults.UnspecifiedDocument):
+        original = cls.__init__
+        def init(self, env, units, *args, original=original, **kwargs):
+            if _from_tests() and hasattr(env, "to_dict"):
+                try:
+                    _record_norm(env, list(units))
+                except Exception:
+                    pass
+            return original(self, env, units, *args, **kwargs)
+        cls.__init__ = init
 
 
 _install()
@@ -135,8 +241,10 @@ def pytest_runtest_protocol(item, nextitem):
 
 
 def pytest_sessionfinish(session, exitstatus):
-    """Write the inputs. An xdist worker writes its own part next to `VE_CONTRACT_INPUTS`
-    (it ends before the controller does), and the controller merges the parts."""
+    """Write the inputs: one unit's as a list, several as an object from unit to list. Under
+    xdist each worker writes its own `<path>.<worker>` (it ends before the controller does) and
+    the controller merges them: an input recorded by several tests keeps the first test in
+    collection order, and the rows are in the order a serial run writes them."""
     path = os.environ.get("VE_CONTRACT_INPUTS")
     if not path:
         return
@@ -145,11 +253,15 @@ def pytest_sessionfinish(session, exitstatus):
     if worker:
         Path(f"{path}.{worker}").write_text(json.dumps(_RECORDED))
         return
-    for part in sorted(Path(path).parent.glob(Path(path).name + ".gw*")):
-        for key, label in json.loads(part.read_text()).items():
-            label = tuple(label)
-            if key not in _RECORDED or label < _RECORDED[key]:
-                _RECORDED[key] = label
+    recorded = {unit: dict(_RECORDED.get(unit, {})) for unit in sorted(RECORDING)}
+    for part in sorted(Path(path).parent.glob(f"{Path(path).name}.gw*")):
+        for unit, inputs in json.loads(part.read_text()).items():
+            for key, recording in inputs.items():
+                recording = tuple(recording)
+                if key not in recorded[unit] or recording < recorded[unit][key]:
+                    recorded[unit][key] = recording
         part.unlink()
-    ordered = sorted(_RECORDED.items(), key=lambda item: (item[1][1], item[1][0], item[1][2]))
-    Path(path).write_text(json.dumps([[label, *json.loads(key)] for key, (_, label, _) in ordered]))
+    rows = {unit: [[label, *json.loads(key)] for key, (_, label, _) in
+                   sorted(inputs.items(), key=lambda item: (item[1][1], item[1][0], item[1][2]))]
+            for unit, inputs in recorded.items()}
+    Path(path).write_text(json.dumps(rows[UNIT] if FILES is None else rows))

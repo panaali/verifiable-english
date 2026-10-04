@@ -13,6 +13,7 @@ import tomllib
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tools import gate, nested_pytest
 
 
@@ -25,7 +26,12 @@ def events():
             "selected": ["tests/a.py::test_a", "tests/b.py::test_b"],
             "deselected": [], "collection_reports": [],
             "tests": {"tests/a.py::test_a": {"outcome": "passed"},
-                      "tests/b.py::test_b": {"outcome": "passed"}}}
+                      "tests/b.py::test_b": {"outcome": "passed"}},
+            "workers": {"gw0": ["tests/a.py::test_a", "tests/b.py::test_b"]}}
+
+
+# The gate's two pytest runs: the serial collection, then the suite under xdist.
+PYTEST_STAGES = ("Python collection", "Python suite")
 
 
 @pytest.mark.parametrize("change,reason", [
@@ -113,7 +119,10 @@ def test_gate_environment_is_an_allowlist(tmp_path, monkeypatch):
     assert set(env) == set(gate.ALLOWED_ENVIRONMENT)
     assert normalized(env, tmp_path / "poisoned") == normalized(clean, tmp_path / "clean")
     assert all(value.startswith(str(tmp_path / "poisoned")) for name, value in env.items()
-               if name in ("HOME", "TMPDIR", "UV_CACHE_DIR", "LAKE_CACHE_DIR", "CARGO_HOME"))
+               if name in ("HOME", "TMPDIR", "UV_CACHE_DIR", "LAKE_CACHE_DIR", "CARGO_HOME",
+                           "PYTHONPYCACHEPREFIX"))
+    # No bytecode cached before the gate is loaded in place of its source.
+    assert not any(Path(env["PYTHONPYCACHEPREFIX"]).iterdir())
     with pytest.raises(RuntimeError, match="unlisted"):
         gate.record_environment({"environment": {}}, "base", {**env, "LEAN_CC": "/bin/false"})
     with pytest.raises(RuntimeError, match="unlisted"):
@@ -236,7 +245,7 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
 
         def fake_command(args, *, env, stage, cwd=None):
             seen.append({"args": args, "cwd": str(cwd), "env": dict(env), "stage": stage})
-            if stage == "Python suite":
+            if stage in PYTEST_STAGES:
                 Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(events()))
             return versions.get(stage, "")
 
@@ -478,27 +487,31 @@ def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
 def test_terminated_gate_cannot_leave_old_pass_record(tmp_path):
     output = tmp_path / "record.json"
     output.write_text('{"status":"passed"}')
+    started = tmp_path / "started"
     # The handler lets the gate's cleanup remove its scratch directory; the
-    # record must already be failed before the signal arrives.
-    script = ("import signal, sys, time\nfrom tools import gate\n"
+    # record must already be failed when the first work starts (an event, not
+    # an interval: under load the child can take any time to get there).
+    script = ("import signal, sys, time\nfrom pathlib import Path\nfrom tools import gate\n"
               "signal.signal(signal.SIGTERM, lambda *args: sys.exit(1))\n"
-              "gate.command = lambda *args, **kwargs: time.sleep(30)\n"
+              "started = Path(sys.argv[2])\n"
+              "def work(*args, **kwargs):\n"
+              "    started.touch()\n"
+              f"    time.sleep({HANG_TIMEOUT})\n"
+              "gate.command = work\n"
               "sys.argv = ['gate.py', '--output', sys.argv[1]]\n"
               "gate.main()\n")
-    process = subprocess.Popen([sys.executable, "-c", script, str(output)],
+    process = subprocess.Popen([sys.executable, "-c", script, str(output), str(started)],
                                cwd=gate.ROOT, stdout=subprocess.DEVNULL,
                                stderr=subprocess.DEVNULL)
     try:
-        deadline = time.monotonic() + 5
-        while time.monotonic() < deadline:
-            if json.loads(output.read_text()).get("status") == "failed":
-                break
+        deadline = time.monotonic() + HANG_TIMEOUT
+        while not started.exists() and process.poll() is None and time.monotonic() < deadline:
             time.sleep(0.02)
-        else:
-            pytest.fail("gate did not reset the record before work")
+        assert started.exists(), "the gate never started work"
+        assert json.loads(output.read_text())["status"] == "failed", "gate did not reset the record before work"
     finally:
         process.send_signal(signal.SIGTERM)
-        process.wait(timeout=5)
+        process.wait(timeout=HANG_TIMEOUT)
     assert json.loads(output.read_text())["status"] == "failed"
 
 
@@ -578,7 +591,7 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
             return str(tmp_path / ".venv")
         if stage == "native Rust tests":
             return "test result: ok. 2 passed; 0 failed; 0 ignored;"
-        if stage == "Python suite":
+        if stage in PYTEST_STAGES:
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(events()))
         return ""
 

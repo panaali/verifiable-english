@@ -5,6 +5,7 @@ import json
 from copy import deepcopy
 from itertools import combinations
 from pathlib import Path
+import os
 import random
 import subprocess
 import sys
@@ -707,7 +708,8 @@ def compare_near_limit(sources):
     rows = []
     for batch in _batches(wire):
         run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
-                             capture_output=True, timeout=600, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
         rows += json.loads(run.stdout)
     if len(rows) != len(sources):
         raise AssertionError("Lean returned the wrong near-limit row count")
@@ -1104,36 +1106,44 @@ def exercised_sources():
             *((f"near-limit:{name}", raw, rules) for name, raw, rules in near_limit_cases())]
 
 
-def compare_rejected():
+def compare_rejected(part=0, parts=1):
+    """Every rejected input: Python and Lean reject it with the same code (and the same
+    text for a fixture), and each named multi-fault case with its table's code. With
+    `parts`, only the inputs whose index is `part` modulo `parts` (the suite runs the
+    parts in parallel). Returns the number of inputs compared."""
     named = expected_rejections()
     cases = rejected_cases()
-    expected = []
-    for raw, rules in cases:
+    indices = range(part, len(cases), parts)
+    expected = {}
+    for i in indices:
+        raw, rules = cases[i]
         try:
             load_soft_document(raw, rules)
         except VEError as exc:
-            expected.append((str(exc), exc.code))
+            expected[i] = (str(exc), exc.code)
         else:
             raise AssertionError("Python unexpectedly accepted a rejected soft source")
-    wire = [{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": rules}
-            for i, (raw, rules) in enumerate(cases)]
+    wire = [{"id": str(i), "kind": "soft-elaborate", "environment": cases[i][0], "norms": cases[i][1]}
+            for i in indices]
     rows = []
     for batch in _batches(wire):
         run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
-                             capture_output=True, timeout=300, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "300")))
         rows += json.loads(run.stdout)
-    if len(rows) != len(cases):
+    if len(rows) != len(indices):
         raise AssertionError("Lean returned the wrong rejected row count")
-    offset = len(rejected_sources())
-    for i, (row, (error, code)) in enumerate(zip(rows, expected)):
+    fixtures = len(rejected_sources())
+    for i, row in zip(indices, rows):
+        error, code = expected[i]
         if row.get("status") != "error" or row.get("code") != code:
             raise AssertionError((i, error, code, row))
-        if i < offset and row.get("error") != error:
+        if i < fixtures and row.get("error") != error:
             raise AssertionError((i, error, row))
     for i, (name, _, _, table_code) in enumerate(named):
-        if expected[offset + i][1] != table_code:
-            raise AssertionError((name, table_code, expected[offset + i]))
-    return len(cases)
+        if fixtures + i in expected and expected[fixtures + i][1] != table_code:
+            raise AssertionError((name, table_code, expected[fixtures + i]))
+    return len(indices)
 
 
 def rust_fixture_rows():
@@ -1142,7 +1152,8 @@ def rust_fixture_rows():
         soft = SoftNormDocument(SoftEnvironment(raw), rules)
         case = {"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules}
         run = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), text=True,
-                             capture_output=True, timeout=120, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
         row = json.loads(run.stdout)[0]
         if row.get("status") != "ok":
             raise AssertionError((name, row))
@@ -1192,6 +1203,16 @@ def main():
                                             separators=(",", ":")) + "\n")
         print(json.dumps({"rust_cases": len(rows), "path": str(RUST_FIXTURES)}))
         return
+    report = compare_generated()
+    near_accepted, near_rejected = compare_near_limit(near_limit_cases())
+    print(json.dumps({**report, "rejected_inputs": compare_rejected(),
+                      "near_limit_accepted": near_accepted,
+                      "near_limit_rejected": near_rejected}))
+
+
+def compare_generated():
+    """The TREES generated accepted trees: Lean accepts each, and the public elaboration
+    check of its regenerated targets passes."""
     compared = 0
     seed = 0
     trees = generated_trees()
@@ -1207,7 +1228,8 @@ def main():
                   "environment": raw, "norms": rules}
                  for i, (raw, rules, _) in enumerate(batch)]
         run = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=120, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
         rows = json.loads(run.stdout)
         if len(rows) != len(batch):
             raise AssertionError("Lean returned the wrong row count")
@@ -1219,13 +1241,9 @@ def main():
             except VEError as exc:
                 raise AssertionError(f"regeneration mismatch at seed {seed - len(batch) + i}") from exc
         compared += len(batch)
-    near_accepted, near_rejected = compare_near_limit(near_limit_cases())
-    print(json.dumps({"accepted_trees": compared, "seeds_examined": seed,
-                      "environment_matches": compared, "layer_matches": compared,
-                      "soft_background_matches": compared, "decision_matches": compared,
-                      "rejected_inputs": compare_rejected(),
-                      "near_limit_accepted": near_accepted,
-                      "near_limit_rejected": near_rejected}))
+    return {"accepted_trees": compared, "seeds_examined": seed,
+            "environment_matches": compared, "layer_matches": compared,
+            "soft_background_matches": compared, "decision_matches": compared}
 
 
 if __name__ == "__main__":

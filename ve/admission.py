@@ -484,7 +484,8 @@ def _lean_quantity_admission(env, document) -> dict:
     from .backends.diagnostics import checker_error
     [row] = backend.run("admission", QUANTITY_ROUTE,
                         [{"id": "admission", "kind": "document", "environment": env.to_dict(),
-                          "document": document}], runner="ve_quantity", timeout=60.0)
+                          "document": document}], runner="ve_quantity",
+                        timeout=backend.configured_timeout(60.0))
     if row["status"] == "error":
         raise checker_error(row["error"])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}

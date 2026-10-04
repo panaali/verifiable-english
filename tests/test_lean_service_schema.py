@@ -79,12 +79,12 @@ def genuine(executables):
     """[(mode, request, response)] from the real service, in 16-case requests."""
     service_executable, _ = executables
     exchanges = []
-    with LeanService(service_executable, timeout=600) as service:
+    with LeanService(service_executable, timeout=HANG_TIMEOUT) as service:
         for mode, cases in corpus().items():
             for start in range(0, len(cases), 16):
                 chunk = cases[start:start + 16]
                 text = _text(chunk)
-                _, response = service.exchange(mode, text, len(chunk), timeout=600)
+                _, response = service.exchange(mode, text, len(chunk), timeout=HANG_TIMEOUT)
                 request = {"id": response["id"], "mode": mode, "cases": chunk,
                            "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
                 assert rebind(request, response) == (request, response)
@@ -838,8 +838,8 @@ def test_service_norms_content_matches_python_regeneration(executables):
     docs = [*norms_corpus(160), *pair_corpus(60)]
     cases = [lean_case(i, doc) for i, doc in enumerate(docs)]
     text = _text(cases)
-    with LeanService(executables[0], timeout=600) as service:
-        _, response = service.exchange("norms", text, len(cases), timeout=600)
+    with LeanService(executables[0], timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("norms", text, len(cases), timeout=HANG_TIMEOUT)
         assert service.stats["retries"] == 0
     for i, (doc, bound) in enumerate(zip(docs, response["results"], strict=True)):
         got = bound["result"]
