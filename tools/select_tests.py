@@ -67,8 +67,6 @@ RUST_LAYER_INPUTS = {"tools/rust-module-exceptions.json", "tools/check_rust_deps
                      "tools/layer_policy.py"}
 KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
                "usecases", "docs", "paper", "examples", "data", "bench", "design"}
-# A map whose commit is this many changed files away from the base is not used.
-STALE_DRIFT = 400
 
 
 def units() -> list[str]:
@@ -242,9 +240,9 @@ def parse(change: Change) -> tuple[Summary | None, Summary | None]:
 
 def python_change(sel: Selection, change: Change, old: Summary | None, new: Summary | None,
                   called: dict[tuple[str, str], frozenset[str]]) -> None:
-    path, coverage, graph = change.path, sel.coverage, sel.graph
-    if coverage is not None:
-        sel.add(coverage.readers(path), f"reads {path}")
+    path = change.path
+    if sel.coverage is not None:
+        sel.add(sel.coverage.readers(path), f"reads {path}")
     sel.static(mentions_path(path), f"names {path}")
     if (path.startswith("tests/test_") or path in EXTRA_UNITS) and change.new is not None:
         sel.add([path], "changed test")
@@ -258,29 +256,34 @@ def python_change(sel: Selection, change: Change, old: Summary | None, new: Summ
             d is None or d.imports_changed or change.presence_changed):
         sel.checks.add(CHECK_PYTHON)
     sel.static(lambda files, _: path in files, f"imports {path}")
-    if coverage is None:
-        return
+    if sel.coverage is not None:
+        python_impact(sel.coverage, sel.graph, set(sel.all_units), sel.add, path, old, new, d, called)
+
+
+def python_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], add,
+                  path: str, old: Summary | None, new: Summary | None, d,
+                  called: dict[tuple[str, str], frozenset[str]]) -> None:
+    """Report through `add(tests, reason)` the mapped tests one module's change can affect."""
     defs = set((old.units if old else {}) | (new.units if new else {}))
     if d is None or d.effect or d.decorated or path.endswith("__init__.py"):
-        sel.add(coverage.importers(path) | coverage.file_wide(path, defs),
-                f"{path}: import-time change")
+        add(coverage.importers(path) | coverage.file_wide(path, defs), f"{path}: import-time change")
         if d is None:
             return
     for qualname in d.changed | d.removed:
-        sel.add(coverage.tests_of(path, qualname), f"{path}:{qualname}")
+        add(coverage.tests_of(path, qualname), f"{path}:{qualname}")
     for qualname in sorted(d.added):
         name = qualname.rsplit(".", 1)[-1]
         if not any(name in references for key, references in called.items() if key != (path, qualname)):
             # Nothing in the change calls it by name: it may be dispatched dynamically.
-            sel.add(coverage.file_wide(path, defs - d.added),
-                    f"{path}: new {qualname} not called by name in the change")
+            add(coverage.file_wide(path, defs - d.added), f"{path}: new {qualname} not called by name")
     if d.binds:
-        taint(sel, path, old, new, set(d.binds), set())
+        taint(coverage, graph, all_units, add, path, old, new, set(d.binds), set())
 
 
-def taint(sel: Selection, path: str, old: Summary | None, new: Summary | None,
-          names: set[str], seen: set[tuple[str, frozenset[str]]]) -> None:
-    """Select functions that read a changed module-level name, here and in importers."""
+def taint(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], add, path: str,
+          old: Summary | None, new: Summary | None, names: set[str],
+          seen: set[tuple[str, frozenset[str]]]) -> None:
+    """Report the functions that read a changed module-level name, here and in importers."""
     key = (path, frozenset(names))
     if key in seen:
         return
@@ -302,22 +305,38 @@ def taint(sel: Selection, path: str, old: Summary | None, new: Summary | None,
     for summary in versions:
         for unit in summary.units.values():
             if unit.references & names:
-                sel.add(sel.coverage.tests_of(path, unit.qualname), f"{path}:{unit.qualname} reads a changed name")
-    if path in sel.all_units:
-        sel.add([path], f"{path} reads a changed name")
-    for importer in sel.graph.reverse.get(path, ()):
-        imported = sel.graph.imported_names.get((importer, path), set())
-        summary = sel.graph.summaries.get(importer)
+                add(coverage.tests_of(path, unit.qualname), f"{path}:{unit.qualname} reads a changed name")
+    if path in all_units:
+        add([path], f"{path} reads a changed name")
+    for importer in graph.reverse.get(path, ()):
+        imported = graph.imported_names.get((importer, path), set())
+        summary = graph.summaries.get(importer)
         if summary is None:
             continue
         if "<module>" in imported:
-            reached = names & summary.identifiers
+            reached = names & summary.attributes  # `module.NAME`
         elif "*" in imported:
             reached = set(names)
         else:
             reached = imported & names
         if reached:
-            taint(sel, importer, None, summary, reached, seen)
+            taint(coverage, graph, all_units, add, importer, None, summary, reached, seen)
+
+
+def lean_programs(graph: source_graph.Graph, path: str, presence_changed: bool) -> set[str]:
+    """Executables a Lean input can change: those whose root imports the module."""
+    if path.endswith(".lean") and not presence_changed:
+        return graph.executables_using(".".join(Path(path).with_suffix("").parts[1:]))
+    return set(lean_executables())  # a project file, or a module that appeared or vanished
+
+
+def runs_lean(executables: set[str]):
+    programs = {f"lean/.lake/build/bin/{name}" for name in executables} | {"lake", "lean"}
+    return lambda name: name in programs
+
+
+def runs_rust(name: str) -> bool:
+    return name.startswith("rust/target/") or name in ("cargo", "rustc")
 
 
 def lean_change(sel: Selection, change: Change) -> None:
@@ -325,15 +344,9 @@ def lean_change(sel: Selection, change: Change) -> None:
     sel.code = sel.lean = sel.audit = True
     if path.endswith(".lean"):
         sel.checks.add(CHECK_LEAN)
-        module = ".".join(Path(path).with_suffix("").parts[1:])
-        executables = sel.graph.executables_using(module)
-        if change.presence_changed:
-            executables = set(lean_executables())  # a new or removed module may change any root
-    else:
-        executables = set(lean_executables())
-    programs = {f"lean/.lake/build/bin/{name}" for name in executables} | {"lake", "lean"}
+    executables = lean_programs(sel.graph, path, change.presence_changed)
     if sel.coverage is not None:
-        sel.add(sel.coverage.runners(lambda name: name in programs), f"runs Lean via {path}")
+        sel.add(sel.coverage.runners(runs_lean(executables)), f"runs Lean via {path}")
         sel.add(sel.coverage.readers(path), f"reads {path}")
     tokens = {f"lean-exe:{name}" for name in executables} | {"lean-tool"}
     sel.static(lambda _, mentions: bool(tokens & mentions), f"runs Lean via {path}")
@@ -345,16 +358,14 @@ def rust_change(sel: Selection, change: Change) -> None:
     if change.path.endswith((".rs", "Cargo.toml")):
         sel.checks.add(CHECK_RUST)
     if sel.coverage is not None:
-        sel.add(sel.coverage.runners(lambda name: name.startswith("rust/target/")
-                                     or name in ("cargo", "rustc")), f"runs Rust via {change.path}")
+        sel.add(sel.coverage.runners(runs_rust), f"runs Rust via {change.path}")
         sel.add(sel.coverage.readers(change.path), f"reads {change.path}")
     sel.static(lambda _, mentions: "rust" in mentions, f"runs Rust via {change.path}")
 
 
 def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) -> None:
     path = change.path
-    document = path.endswith(DOCUMENT_SUFFIXES)
-    if not document:
+    if not path.endswith(DOCUMENT_SUFFIXES):
         sel.code = True
     if sel.coverage is not None:
         sel.add(sel.coverage.readers(path), f"reads {path}")
@@ -371,22 +382,76 @@ def rust_texts() -> dict[str, str]:
             for path in git_lines("ls-files", "rust/*.rs")}
 
 
-def drift_units(paths: list[str], commit: str, base: str) -> dict[str, set[str]]:
-    """Per drift Python file, the units changed between the map's commit and the base."""
-    contents = blobs([f"{rev}:{p}" for p in paths for rev in (commit, base)])
-    found = {}
-    for path in paths:
+def is_lean_input(path: str) -> bool:
+    return path.endswith(".lean") and path.startswith("lean/") or path in LEAN_PROJECT
+
+
+def is_rust_input(path: str) -> bool:
+    return path in RUST_PROJECT or (path.startswith("rust/") and path.endswith((".rs", "Cargo.toml")))
+
+
+def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: set[str],
+                    base: str) -> tuple[set[str], int]:
+    """Units whose coverage at `base` may differ from the map's.
+
+    A test that ran none of the code that changed between the map's commit and
+    `base` (no changed function, no module whose import-time statements
+    changed, no changed file it read) runs the same way at `base` as when it
+    was recorded, so its map entry still holds. Every other test is uncertain.
+    Returns the uncertain units and the number of files changed since the map.
+    """
+    base_commit = git_lines("rev-parse", base)[0]
+    cache = source_graph.cache_path(ROOT).with_name(
+        f"uncertain-{coverage.commit[:16]}-{base_commit[:16]}-{source_graph.CODE_VERSION}.json")
+    try:
+        cached = json.loads(cache.read_text())
+        return set(cached["uncertain"]), cached["drift"]
+    except (OSError, ValueError, KeyError):
+        pass
+    status = dict(line.split("\t", 1)[::-1] for line in git_lines(
+        "diff", "--no-renames", "--name-status", coverage.commit, base_commit))
+    drift = sorted(status)
+    found: set[str] = set()
+
+    def add(tests, _reason=""):
+        found.update(test for test in tests if test in all_units)
+
+    python = [p for p in drift if p.endswith(".py")]
+    contents = blobs([f"{rev}:{p}" for p in python for rev in (coverage.commit, base_commit)])
+    parsed = {}
+    for path in python:
         module, package = source_graph.module_name(path)
+        before, after = contents[f"{coverage.commit}:{path}"], contents[f"{base_commit}:{path}"]
         try:
-            before = contents[f"{commit}:{path}"]
-            after = contents[f"{base}:{path}"]
-            d = delta(source_graph.summary_of(before, module, package) if before is not None else None,
-                      source_graph.summary_of(after, module, package) if after is not None else None)
+            parsed[path] = (source_graph.summary_of(before, module, package) if before is not None else None,
+                            source_graph.summary_of(after, module, package) if after is not None else None)
         except SyntaxError:
-            found[path] = {"*"}
-            continue
-        found[path] = d.changed | d.added | ({"<module>"} if d.binds or d.effect else set())
-    return found
+            parsed[path] = None
+    called = {}
+    for path, versions in parsed.items():
+        if versions is not None:
+            for qualname, references in delta(*versions).references.items():
+                called[(path, qualname)] = references
+    for path in drift:
+        add([path])  # a changed test's own record is stale
+        add(coverage.readers(path))
+        if status[path] in ("A", "D"):
+            add(coverage.listers(path))
+        if path.endswith(".py"):
+            versions = parsed[path]
+            if versions is None:
+                add(coverage.importers(path) | coverage.file_wide(path, set(coverage.functions.get(path, {}))))
+            else:
+                d = delta(*versions)
+                if not d.empty:
+                    python_impact(coverage, graph, all_units, add, path, *versions, d, called)
+        elif is_lean_input(path):
+            add(coverage.runners(runs_lean(lean_programs(graph, path, False))))
+        elif is_rust_input(path):
+            add(coverage.runners(runs_rust))
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps({"uncertain": sorted(found), "drift": len(drift)}))
+    return found, len(drift)
 
 
 def resolve_map(base: str, coverage) -> Coverage | None:
@@ -402,11 +467,13 @@ def resolve_map(base: str, coverage) -> Coverage | None:
 
 def select(paths: list[str] | None = None, *, full: bool = False, base: str = "HEAD",
            after: str | None = None, changes: list[Change] | None = None,
-           coverage="auto") -> dict:
+           coverage="auto", assume_fresh: bool = False) -> dict:
     """Plan for `changes` (or `paths`, compared between `base` and `after`/the working tree).
 
     `coverage` is a map path, a loaded map, None for the static graph only, or
-    "auto" for the newest cached map recorded at an ancestor of `base`.
+    "auto" for the nearest cached map recorded at an ancestor of `base`.
+    `assume_fresh` treats the map as if recorded at `base` (an estimate, for
+    reports only: it skips the drift check that keeps selection safe).
     """
     started = time.monotonic()
     if changes is None:
@@ -421,17 +488,16 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     all_units = units()
     cov = resolve_map(base, coverage)
     unmapped = set(all_units)
-    drift: list[str] = []
+    uncertain: set[str] = set()
+    drift_files = 0
     if cov is not None:
         try:
-            drift = git_lines("diff", "--no-renames", "--name-only", cov.commit, base)
+            uncertain, drift_files = (set(), 0) if assume_fresh else uncertain_since(
+                cov, graph, set(all_units), base)
         except subprocess.CalledProcessError:
             cov = None  # the map's commit is not in this repository
-    if cov is not None and len(drift) > STALE_DRIFT:
-        cov = None
     if cov is not None:
-        unmapped = set(all_units) - cov.recorded
-        unmapped |= {p for p in drift if p in all_units}  # their recorded edges are stale
+        unmapped = (set(all_units) - cov.recorded) | uncertain
     sel = Selection(graph, cov, unmapped, all_units)
     if full or not changes:
         sel.full.append("requested" if full else "no changed paths")
@@ -460,57 +526,20 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
             sel.audit = True
         if path.endswith(".py"):
             python_change(sel, change, *parsed[path], called)
-        elif path.endswith(".lean") or path in LEAN_PROJECT:
+        elif is_lean_input(path):
             lean_change(sel, change)
-        elif path in RUST_PROJECT or (top == "rust" and (path.endswith(".rs") or path.endswith("Cargo.toml"))):
+        elif is_rust_input(path):
             rust_change(sel, change)
         else:
             if rust_sources is None:
                 rust_sources = rust_texts()
             data_change(sel, change, rust_sources)
-    if cov is not None and drift:
-        apply_drift(sel, changes, parsed, drift, base)
     source_graph.save_summaries()
-    return finish(sel, changes, paths, started)
+    return finish(sel, changes, paths, started, drift_files)
 
 
-def apply_drift(sel: Selection, changes: list[Change], parsed: dict, drift: list[str],
-                base: str) -> None:
-    """Units changed since the map that name changed code may now reach it."""
-    names = set()
-    for change in changes:
-        names.add(posixpath.basename(change.path))
-        if change.path in parsed:
-            if not change.known:
-                names.add("*")
-                continue
-            d = delta(*parsed[change.path])
-            names |= {q.rsplit(".", 1)[-1] for q in d.changed | d.added | d.removed} | d.binds
-        elif change.path.endswith(".lean"):
-            names |= {f"lean-exe:{e}" for e in lean_executables()}
-    changed = {c.path for c in changes}
-    graph = sel.graph
-    python = [p for p in drift if p.endswith(".py") and p not in changed and graph.summaries.get(p)
-              and ("*" in names or names & (graph.summaries[p].identifiers | graph.summaries[p].constants))]
-    if not python:
-        return
-    for path, drifted in drift_units(python, sel.coverage.commit, base).items():
-        summary = graph.summaries[path]
-        hits = names & (summary.identifiers | summary.constants)
-        for qualname in drifted:
-            unit = summary.units.get(qualname)
-            if qualname in ("*", "<module>") or unit is None:
-                sel.add(sel.coverage.importers(path) | {t for t in sel.all_units
-                                                        if path in sel.closure(t)[0]},
-                        f"{path} changed since the map and names the change")
-            elif unit.references & names or any(n in summary.constants for n in hits):
-                tests = sel.coverage.tests_of(path, qualname)
-                if not tests and qualname not in sel.coverage.functions.get(path, {}):
-                    tests = {t for t in sel.all_units if path in sel.closure(t)[0]}
-                sel.add(tests, f"{path}:{qualname} changed since the map")
-
-
-def finish(sel: Selection, changes: list[Change], paths: list[str], started: float) -> dict:
+def finish(sel: Selection, changes: list[Change], paths: list[str], started: float,
+           drift_files: int) -> dict:
     full = bool(sel.full)
     if full:
         selected = list(sel.all_units)
@@ -565,7 +594,9 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
     return {"changed": paths, "selected": selected, "selected_count": len(selected),
             "full_count": len(sel.all_units), "full": full, "full_reasons": sel.full,
             "smoke": list(SMOKE), "reasons": {t: sorted(r) for t, r in sorted(sel.reasons.items())},
-            "map": None if cov is None else {"commit": cov.commit, "path": str(cov.path or "")},
+            "map": None if cov is None else {"commit": cov.commit, "path": str(cov.path or ""),
+                                             "files_changed_since": drift_files,
+                                             "uncertain_units": len(sel.unmapped)},
             "unmapped": sorted(sel.unmapped) if cov is not None else "all (static graph only)",
             "commands": commands, "lean_build": lean, "rust_build": sel.rust,
             "seconds": round(time.monotonic() - started, 2)}
