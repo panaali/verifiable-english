@@ -158,6 +158,14 @@ S2 and later, not started on this branch:
   the S2 comparison runs on equal tokens;
 - the remaining G1a figures: the BlueDot document and the build time of generated modules.
 
-Known test failure under load: `tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case`
-fails on the Rust checker's 5-second wall clock at load averages above 60 (recorded before this item);
-it touches nothing this branch changes.
+## 7. Verification
+
+`lake build` (575 jobs) and `python3 lean/audit.py` (302 source files, 3,093 named theorems, standard axioms
+only) pass, as do `lean/VE/Route/frozen.py` and `tools/check_lean_imports.py`. The full pytest suite ran in
+16 file chunks plus the merge smoke at load averages of 30 to 90: 5,965 passed, 7 skipped, 2 failed. One
+failure was `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (the new
+measurement tool reads JSON); the manifest now classifies it, and the file then passed (128 tests). The
+other was `test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case[1]`,
+on the Rust checker's 5-second wall clock at load 68; it touches nothing this branch changes and passed
+alone at load 57. After the last Lean edits (warnings only), the inventory, layer, manifest, pre-commit and
+english-lean tests passed again (188 tests).
