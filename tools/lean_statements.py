@@ -6,10 +6,13 @@ Writes the name and pretty-printed type of every theorem listed by `#print axiom
 
     theorem <name>
       <type, pretty-printed at width 100, indented by two spaces>
+      -- uses <the constants of the elaborated type outside Init, Std, Lean and Lake, sorted>
       -- expr <hash of the elaborated type>
 
 The hash is Lean's structural hash of the type expression, so a change the pretty printer hides
-(an implicit argument, a universe) still shows. A proof refactor leaves every kept entry
+(an implicit argument, a universe) still shows. The `uses` line names every declaration the
+statement mentions by its full name, dot notation included; `tools/trust_map.py` checks a tie
+against it. A proof refactor leaves every kept entry
 byte-identical; a step that adds, removes or restates theorems lists them.
 
     python3 tools/lean_statements.py           # rewrite lean/statements.txt (needs `lake build`)
@@ -49,14 +52,20 @@ set_option pp.fullNames true in
   let some path ← IO.getEnv "VE_STATEMENT_NAMES"
     | throwError "VE_STATEMENT_NAMES is not set"
   let names := (← IO.FS.lines path).toList.filter (· ≠ "")
+  let env ← getEnv
+  let library : Name → Bool := fun c => match env.getModuleIdxFor? c with
+    | some i => [`Init, `Std, `Lean, `Lake].contains (env.header.moduleNames[i.toNat]!).getRoot
+    | none => false
   for s in names do
     let n ← resolveGlobalConstNoOverloadCore s.toName
     let info ← getConstInfo n
     let fmt ← ppExpr info.type
     let body := (toString fmt).splitOn "\n" |>.map ("  " ++ ·)
+    let uses := (info.type.getUsedConstants.filter (! library ·)).map toString |>.qsort (· < ·)
     IO.println s!"theorem {s}"
     for line in body do
       IO.println line
+    IO.println s!"  -- uses {" ".intercalate uses.toList}"
     IO.println s!"  -- expr {hash info.type}"
 """
 
@@ -99,6 +108,14 @@ def parse(text: str) -> dict[str, str]:
     if name is not None:
         entries[name] = "".join(body)
     return entries
+
+
+def uses(body: str) -> set[str] | None:
+    """The full names on an entry's `-- uses` line, or None if the entry has none."""
+    for line in body.splitlines():
+        if line.startswith("  -- uses"):
+            return set(line.removeprefix("  -- uses").split())
+    return None
 
 
 def difference(old: str, new: str) -> tuple[list[str], list[str], list[str]]:
