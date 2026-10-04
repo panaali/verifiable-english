@@ -55,7 +55,10 @@ The selector works at the level of functions, not layers:
   every test that imported the module. A new function that nothing in the
   change calls by name might be dispatched dynamically, so it selects every
   test that ran a function of its file. A module that is added or deleted
-  counts as an import-time change: every test that imported it.
+  counts as an import-time change: every test that imported it, even when the
+  module binds nothing (empty, only a docstring, `pass` or comments). The map
+  cannot have seen an added module imported, so for one the static graph also
+  selects, among all tests, those whose imports now reach it.
 * **Deleted and changed files in the static graph.** The graph is built from
   the tree after the change, plus each changed file as it was before: a
   deleted module keeps its importers, a deleted fixture the tests that named
@@ -65,10 +68,14 @@ The selector works at the level of functions, not layers:
   `lean/audit.py` and the Lean import check.
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
-* **Data and documents.** The tests that read the file, and for an added or
-  removed file the tests that listed its directory. A fixture that a Rust test
-  embeds with `include_bytes!` also runs `cargo test`. Documentation selects
-  only its readers.
+* **Any file.** Whatever its kind (Python, Lean, Rust, data), the tests that
+  read it, and for an added or removed file the tests that listed its
+  directory. `kind_of` and `file_impact` in `tools/select_tests.py` are this
+  one rule for the plan and the drift check; a path named without a visible
+  edit may also have appeared or vanished.
+* **Data and documents.** Nothing beyond that rule, except that a fixture a
+  Rust test embeds with `include_bytes!` also runs `cargo test`.
+  Documentation selects only its readers and listers.
 * **Everything.** `tests/conftest.py`, `pyproject.toml`, `uv.lock`,
   `.gitignore` and files outside the known top-level directories select the
   complete suite.
@@ -110,9 +117,10 @@ altered which code a test reaches. A test that ran none of the code changed
 since the map (no changed function, no module whose import-time statements
 changed, no changed file it read or listed, no rebuilt program it started)
 runs exactly as recorded, so its map entry holds. Every other test is
-*uncertain* and is selected by the static graph (`tools/source_graph.py`:
-import closure, string-literal mentions of files, directories and programs)
-instead. Test files that failed or were opaque when recorded (a Python child
+*uncertain* (the drift check applies the plan's per-file rule, so a file that
+selects everything, such as `pyproject.toml`, makes every test uncertain) and
+is selected by the static graph (`tools/source_graph.py`: import closure,
+string-literal mentions of files, directories and programs) instead. Test files that failed or were opaque when recorded (a Python child
 the recorder could not follow) are treated the same way, and without a map
 the static graph is the whole answer (`--static` forces it).
 
@@ -142,6 +150,10 @@ test passes without the bug; a test failing either way is deselected and the
 run repeated. A seed the selection does not catch is run against every other
 test file: a failure there would be an escape (none occurred); seeds that no
 test in the suite detects are listed, and the next seed is used.
+
+These numbers were computed on 2026-10-04 with version-2 maps and the
+selector before the review fixes in `docs/testselect-report.md`; they have
+not been regenerated since (that needs a version-3 map recording).
 
 The tables below are generated from `docs/testselect-evidence.json` by
 `python3 tools/select_tests_evidence.py table`; `tests/test_select_tests.py`
