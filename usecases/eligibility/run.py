@@ -703,7 +703,7 @@ def results_markdown(results, keyed):
         lines.append(f"| {name} | {status} | {steps} | {n} |")
     lean = s["lean"]
     lines += ["", "## Evidence", "",
-              f"- Step certificates produced: {lean['certificates']}; accepted by the Lean quantity route: {lean['certificates_accepted']}.",
+              f"- Step certificates produced: {lean['certificates']}; accepted by Lean `ve_quantity`: {lean['certificates_accepted']}.",
               f"- Answer documents (`documents@1`): {lean['documents']}; admitted by Lean: {lean['documents_admitted']}.",
               f"- Non-vacuity: {lean['model_premises_true']} of {lean['model_premises']} premise evaluations are true in the"
               " reference fixture models (Lean evaluation).",

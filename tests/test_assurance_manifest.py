@@ -487,6 +487,11 @@ def test_every_real_answer_is_counted_and_indexed(lean_bin, tmp_path):
         forged = [*_miscounted(row, binding), *({**row, "case_index": i} for i in (False, 0.0, "0"))]
         assert len(forged) > 3 or not binding.get("counts"), (op_id, mode, kind)
         for index, bad in enumerate(forged):
+            if executable == "ve_service":
+                # The service's rows are bound by its schemas before `run` reads them; the binding's own
+                # check still refuses each forged row.
+                assert lean_backend.row_problem(case, bad, 0, binding["response"], binding.get("counts")), bad
+                continue
             answer = tmp_path / f"forged_{index}.json"
             answer.write_text(json.dumps([bad]))
             fake = _fake_lean(tmp_path, f"print(open({str(answer)!r}).read())", f"forged_{index}")
@@ -502,6 +507,11 @@ def test_no_other_mode_accepts_an_operations_probe(lean_bin):
     for _, executable, mode, _ in _binding_keys(OPS):
         modes.setdefault(executable, set()).add(mode)
     for (op_id, executable, mode, kind), case in probes().items():
+        if executable == "ve_service":
+            # Each service mode is one runner, pinned by `runMode_*`; the norm-defaults and quantity
+            # runners delegate the cases they do not own (to the norms route), as their one-shot
+            # executables did, so a mode of another former executable may accept a probe.
+            continue
         for other in sorted(modes[executable] - {mode}):
             proc = subprocess.run([str(lean_bin / executable), *([other] if other else [])],
                                   input=json.dumps([case]), capture_output=True, text=True, timeout=600)

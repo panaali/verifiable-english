@@ -106,7 +106,7 @@ def natural_view(sentences):
 
 def agree(tmp_path, sentences, names, target="api", sections=None):
     """Run the shared document through the three implementations; return the common outcome."""
-    for binary in (LEAN, RUST):
+    for binary in (lean_routes.SERVICE, RUST):
         if not binary.exists():
             pytest.skip(f"{binary.name} is not built")
     path, text = write(tmp_path, sentences, names, target, sections)
