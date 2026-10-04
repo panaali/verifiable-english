@@ -28,7 +28,11 @@ import time
 
 from layer_policy import ROOT, lean_default_targets, lean_executables
 
-VERSION = 2  # 2: directory listings by the import system and pytest are not recorded
+# 2: directory listings by the import system and pytest are not recorded.
+# 3: a test's own reads and listings count even though pytest runs it (version 2
+#    dropped any made with a pytest frame anywhere on the stack), so earlier maps
+#    lack edges and are not used.
+VERSION = 3
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",

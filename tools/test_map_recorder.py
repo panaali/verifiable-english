@@ -7,6 +7,9 @@ every line, so a child that a test kills still leaves what it did up to then:
   ["r", file]             a file under the root was opened, other than by import
   ["d", directory]        a directory under the root was listed by test code
                           (not by the import system or pytest itself)
+
+`origin` decides who an open or a listing is for: the innermost frame of
+code under the root or of infrastructure (import system, site, pytest).
   ["x", program, cwd]     a process was started; `program` is root-relative
                           when under the root, else its base name
   ["c", pid, python]      a child process id, and whether it runs Python
@@ -82,15 +85,14 @@ def _python(program: str) -> bool:
 def _audit(event, args):
     try:
         if event == "open":
-            # Imports read sources and caches through importlib; those are not data reads.
-            if sys._getframe(1).f_code.co_filename.startswith("<frozen importlib"):
-                return
             relative = _relative(args[0])
-            if relative is not None and not (relative.endswith(".py") and _source_lookup()):
+            # Imports, pytest's assertion rewriting, tracebacks and warnings read
+            # Python sources to run or show them; a test's own read is data.
+            if relative is not None and not (relative.endswith(".py") and _origin() != TEST):
                 _emit(["r", relative])
         elif event in ("os.listdir", "os.scandir"):
             relative = _relative(args[0] if args else ".")
-            if relative is not None and not _infrastructure():
+            if relative is not None and _origin() != INFRASTRUCTURE:
                 _emit(["d", relative])
         elif event in ("subprocess.Popen", "os.posix_spawn", "os.exec"):
             program, argv = os.fsdecode(args[0]), args[1]
@@ -110,39 +112,50 @@ def _audit(event, args):
         pass
 
 
-INFRASTRUCTURE = ("<frozen importlib", "/_pytest/", "/pluggy/", "/importlib/metadata/",
-                  "/site.py", "/pkgutil.py", "/_hypothesis_pytestplugin.py")
+TEST, DISPLAY, INFRASTRUCTURE = "test", "display", "infrastructure"
+# Code that opens and lists files for its own purposes: the import system,
+# site setup, and pytest with its plugin machinery and plugins.
+INFRASTRUCTURE_CODE = ("<frozen importlib", "<frozen zipimport", "<frozen site>", "/site.py",
+                       "/_pytest/", "/pluggy/", "/importlib/metadata/", "/_hypothesis_pytestplugin.py")
+# Standard-library code that reads a source file to show lines of it.
+DISPLAY_CODE = ("/linecache.py", "/traceback.py", "/warnings.py", "<frozen linecache>")
+INSPECT_CODE = ("/inspect.py",)
 
 
-def _infrastructure() -> bool:
-    """Is the import system, site setup or pytest's collection listing this directory?
+def origin(filenames, root: str, own=frozenset()) -> str:
+    """Who an open or a directory listing is for, from the code filenames of
+    the stack, innermost first: TEST, DISPLAY or INFRASTRUCTURE.
 
-    Every process lists the import path and the test directory that way; a
-    test's own glob or listdir is a dependency on what the directory holds."""
-    frame = sys._getframe(2)
-    while frame is not None:
-        if any(marker in frame.f_code.co_filename for marker in INFRASTRUCTURE):
-            return True
-        frame = frame.f_back
-    return False
-
-
-def _source_lookup() -> bool:
-    """Is this open a traceback, warning or assertion-rewrite reading source lines?
-
-    Those reads show code, they do not test it. `inspect.getsource` reads
-    through linecache too, and a test may compare what it returns, so a read
-    under `inspect` still counts.
+    The innermost frame that is code under the root (the test, its helpers,
+    the project) or infrastructure decides. Everything else, the standard
+    library and third-party packages, acts for whoever called it, so
+    `pathlib`, `glob` or a parser loading its grammar count for the test.
+    Pytest frames further out do not matter: every test runs under them.
+    Between the open and that frame, a traceback, warning or linecache frame
+    means a source line is being shown (DISPLAY), unless `inspect`, whose
+    result a test may compare, asked for it; the outermost of these wins. A
+    stack with no deciding frame (`python -c`) counts as the test's.
     """
-    frame, lookup = sys._getframe(2), False
-    while frame is not None:
-        name = frame.f_code.co_filename
-        if name.endswith("inspect.py"):
-            return False
-        if name.endswith(("linecache.py", "traceback.py", "warnings.py")) or "/_pytest/" in name:
-            lookup = True
-        frame = frame.f_back
-    return lookup
+    display = False
+    for name in filenames:
+        if any(marker in name for marker in INFRASTRUCTURE_CODE):
+            return INFRASTRUCTURE
+        if name.startswith(root + os.sep) and name not in own:
+            break
+        if name.endswith(DISPLAY_CODE):
+            display = True
+        elif name.endswith(INSPECT_CODE):
+            display = False
+    return DISPLAY if display else TEST
+
+
+def _origin() -> str:
+    def stack(frame):
+        while frame is not None:
+            yield frame.f_code.co_filename
+            frame = frame.f_back
+    # From the audit hook's frame (the recorder's own file, so passed over) outward.
+    return origin(stack(sys._getframe(1)), _state["root"], _state["own"])
 
 
 def _which(program: str) -> str | None:
