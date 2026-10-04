@@ -41,7 +41,7 @@ The CI report lists the seeds of each profile, so a profile without a path stays
 - an object's keys and a list reversed;
 - a list's first entry duplicated;
 - every string value and object key with NBSP, a double space, a tab, a trailing `\r`, U+212A for k,
-  U+0130 for i, upper case and Arabic-Indic digits;
+  U+0130 for i, upper case, Arabic-Indic digits, a curly quote and a control character (U+001C);
 - every array or string that a wire-contract table limits (`max_items` and `max_bytes` checks of
   `soft-norms@0`, with `ve/wire_contract/limits.json`, and of the corpus units) resized to limit − 1, limit and
   limit + 1.
@@ -91,6 +91,17 @@ every id listed is used.
 | DF-11 | Admission of a document whose certificate trace is malformed: Python reports the admission label error first, Lean the certificate's field set. | `wire-contract-PLAN.md` 7, S9 row (`ve-document@1`) |
 | DF-12 | Unicode in a regulated act phrase (NBSP): Python rejects the risk environment (`W6 environment does not round-trip`) and Lean's risk route accepts it. | `wire-contract-PLAN.md` 7, S7 row (`risk@0`); FINDING-CLASSES class 4 (one normaliser) |
 | DF-13 | Block routes (alternatives, risk, soft norms): Lean reports a block-level diagnostic (`risk.block`, `alternatives.block`, `invalid vocabulary`) where Python reports the field or the missing profile. | `wire-contract-PLAN.md` 7, S7 row (`alternatives@0`, `risk@0`); S3 for `soft-norms@0`'s environment |
+
+## Acceptance items
+
+| Item | Tag | State |
+|---|---|---|
+| `--ci` is in the suite, at most 5 minutes of CPU (`test_ci_run`) | AGENT | done |
+| Weakened comparisons and a changed Python diagnostic make the run fail (`test_a_weakened_comparison_fails_the_ci_verdict`, `test_a_changed_python_diagnostic_is_caught`) | AGENT | done |
+| Baseline seeded with today's disagreements, each with a follow-up id | AGENT | done |
+| Review of the baseline's grouping into DF-1 to DF-13 | HUMAN | deferred to the branch review (owner: reviewer) |
+| The nightly script calls `--deep 20` | EXTERNAL | deferred: the nightly script is outside the repository (owner: orchestrator); the instruction is in `docs/ARCHITECTURE-LAYERS.md` |
+| Merge `fix/env-field-types`, then run `--update-baseline` to drop DF-1 and the Python-against-Lean part of DF-5 | EXTERNAL | deferred: that branch is not on `main` (owner: orchestrator) |
 
 ## Not covered
 

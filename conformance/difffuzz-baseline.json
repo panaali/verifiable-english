@@ -13216,6 +13216,2461 @@
    },
    "signature": "1f6a5d4cb0d61de9",
    "follow_up": "DF-3"
+  },
+  {
+   "id": "p0-469d4b00c19e62b7",
+   "surface": "p0",
+   "profile": "invalid-background-model:evaluate",
+   "seed": "invalid-background-model/supplied-defined-table",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "error",
+     "code": "InvalidModel",
+     "generator": "definitions"
+    },
+    "kind": "evaluate"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "model",
+      "domains"
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "id": "supplied-defined-table",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "definitions@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "P"
+       }
+      },
+      "predicates": {
+       "base": {
+        "arguments": [
+         "person"
+        ],
+        "description": "B"
+       },
+       "derived": {
+        "arguments": [
+         "person"
+        ],
+        "description": "D",
+        "defined": {
+         "arguments": [
+          "person"
+         ],
+         "body": [
+          "unary",
+          "base",
+          [
+           "var",
+           0
+          ]
+         ]
+        }
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {
+     "relations": {
+      "derived": []
+     }
+    },
+    "ast": [
+     [
+      "top"
+     ]
+    ]
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: fields do not match (missing=['complete', 'constants', 'domains'], unknown=[])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel(definitions): supplied table for defined predicate",
+     "generator": "definitions"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidModel",
+     "text": "InvalidModel: expected exactly fields [\"complete\", \"domains\", \"constants\", \"relations\"]"
+    }
+   },
+   "signature": "469d4b00c19e62b7",
+   "follow_up": "DF-7"
+  },
+  {
+   "id": "p0-d1148aa3b38e8e3e",
+   "surface": "p0",
+   "profile": "elaborated-document:evaluate",
+   "seed": "elaborated-document/defs-cycle",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "error",
+     "code": "DependencyCycle",
+     "error": "DependencyCycle: a, b"
+    },
+    "kind": "evaluate"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "spec_revision"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "defs-cycle",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": 7,
+     "vocabulary": {}
+    },
+    "model": {},
+    "ast": []
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision 7"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision 7"
+    }
+   },
+   "signature": "d1148aa3b38e8e3e",
+   "follow_up": "DF-5"
+  },
+  {
+   "id": "p0-39557d4596662f14",
+   "surface": "p0",
+   "profile": "elaborated-document:certificate",
+   "seed": "elaborated-document/data-two-flags-certificate",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "ok",
+     "valid": true,
+     "background": 3
+    },
+    "kind": "certificate"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "profiles",
+      1
+     ],
+     "array"
+    ]
+   ],
+   "input": {
+    "id": "data-two-flags-certificate",
+    "kind": "certificate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      []
+     ],
+     "spec_revision": "v",
+     "vocabulary": {}
+    },
+    "premises": [],
+    "conclusion": []
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: profiles must be a sorted unique array"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: profiles must be a sorted unique array"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: expected a string"
+    }
+   },
+   "signature": "39557d4596662f14",
+   "follow_up": "DF-4"
+  },
+  {
+   "id": "p0-24583aba8e3ebcde",
+   "surface": "p0",
+   "profile": "invalid-background-model:evaluate",
+   "seed": "invalid-background-model/partial-total-table",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "error",
+     "code": "InvalidModel",
+     "generator": "flags"
+    },
+    "kind": "evaluate"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "spec_revision"
+     ],
+     "array"
+    ]
+   ],
+   "input": {
+    "id": "partial-total-table",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": [],
+     "vocabulary": {}
+    },
+    "model": {},
+    "ast": []
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision []"
+    }
+   },
+   "signature": "24583aba8e3ebcde",
+   "follow_up": "DF-5"
+  },
+  {
+   "id": "p0-a1f103000232ce9d",
+   "surface": "p0",
+   "profile": "elaborated-document:evaluate",
+   "seed": "elaborated-document/order-with-literals",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "ok",
+     "values": [
+      true
+     ]
+    },
+    "kind": "evaluate"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "profiles"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "id": "order-with-literals",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": 7,
+     "spec_revision": "v",
+     "vocabulary": {}
+    },
+    "ast": [
+     [
+      "not"
+     ]
+    ]
+   },
+   "classes": [
+    "python-crash"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "crash",
+     "code": "TypeError",
+     "text": "argument of type 'int' is not a container or iterable"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: profiles must be a sorted unique array"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "a1f103000232ce9d",
+   "follow_up": "DF-1"
+  },
+  {
+   "id": "p0-c9d863567c4b9d43",
+   "surface": "p0",
+   "profile": "invalid-background-model:evaluate",
+   "seed": "invalid-background-model/supplied-defined-table",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "error",
+     "code": "InvalidModel",
+     "generator": "definitions"
+    },
+    "kind": "evaluate"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "derived",
+      "defined",
+      "body",
+      1
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "id": "supplied-defined-table",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "definitions@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "P"
+       }
+      },
+      "predicates": {
+       "derived": {
+        "arguments": [
+         "person"
+        ],
+        "description": "D",
+        "defined": {
+         "arguments": [
+          "person"
+         ],
+         "body": [
+          "unary",
+          {},
+          [
+           "var",
+           0
+          ]
+         ]
+        }
+       }
+      },
+      "constants": {}
+     }
+    },
+    "model": {},
+    "ast": []
+   },
+   "classes": [
+    "python-crash"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "crash",
+     "code": "TypeError",
+     "text": "cannot use 'dict' as a set element (unhashable type: 'dict')"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "rejected: invalid indexed formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "Definition derived: the body is not a typed formula over the symbols below it"
+    }
+   },
+   "signature": "c9d863567c4b9d43",
+   "follow_up": "DF-2"
+  },
+  {
+   "id": "p0-7ffb76f2276396b3",
+   "surface": "p0",
+   "profile": "elaborated-document:evaluate",
+   "seed": "elaborated-document/profile-duplicate",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "error",
+     "code": "UnsupportedProfile",
+     "error": "UnsupportedProfile: profiles must be sorted and unique"
+    },
+    "kind": "evaluate"
+   },
+   "mutation": [
+    [
+     "key",
+     [
+      "ast"
+     ],
+     "upper"
+    ],
+    [
+     "type",
+     [
+      "environment",
+      "language"
+     ],
+     "string"
+    ]
+   ],
+   "input": {
+    "id": "profile-duplicate",
+    "kind": "evaluate",
+    "environment": {
+     "language": "x",
+     "profiles": [],
+     "spec_revision": "v",
+     "vocabulary": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "InvalidInput: Incorrect fields (missing=['profile'], unknown=['profiles'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported language"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "7ffb76f2276396b3",
+   "follow_up": "DF-6"
+  },
+  {
+   "id": "p0-812378bd1e9f1ed5",
+   "surface": "p0",
+   "profile": "dependency-order:dependency-order",
+   "seed": "dependency-order/generated-104",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "ok",
+     "order": [
+      "c",
+      "f",
+      "i"
+     ]
+    },
+    "kind": "dependency-order"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "profiles"
+     ],
+     "number"
+    ],
+    [
+     "key",
+     [
+      "environment",
+      "vocabulary"
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "id": "generated-104",
+    "kind": "dependency-order",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": 7
+    }
+   },
+   "classes": [
+    "python-crash"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "crash",
+     "code": "TypeError",
+     "text": "argument of type 'int' is not a container or iterable"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "rejected: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profiles]"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "812378bd1e9f1ed5",
+   "follow_up": "DF-1"
+  },
+  {
+   "id": "p0-28110afedcf60543",
+   "surface": "p0",
+   "profile": "invalid-background-model:countermodel",
+   "seed": "invalid-background-model/literal-alias-order-countermodel",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "expected": {
+     "status": "error",
+     "code": "InvalidModel",
+     "generator": "literals"
+    },
+    "kind": "countermodel"
+   },
+   "mutation": [
+    [
+     "type",
+     [
+      "environment",
+      "spec_revision"
+     ],
+     "array"
+    ],
+    [
+     "type",
+     [
+      "environment",
+      "vocabulary",
+      "constants",
+      "legal",
+      "sort"
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "id": "literal-alias-order-countermodel",
+    "kind": "countermodel",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": [],
+     "vocabulary": {}
+    },
+    "model": {},
+    "premises": [],
+    "conclusion": []
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision []"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "rejected",
+     "text": "rejected: String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: Unsupported specification revision []"
+    }
+   },
+   "signature": "28110afedcf60543",
+   "follow_up": "DF-5"
+  },
+  {
+   "id": "environment-c6da4e7f77b85a66",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "elaborated-document/defs-closure-certificate",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "lead",
+      "defined",
+      "body",
+      2,
+      1
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "definitions@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "person": {
+       "description": "a"
+      }
+     },
+     "predicates": {
+      "lead": {
+       "arguments": [
+        "person"
+       ],
+       "description": "i",
+       "defined": {
+        "arguments": [
+         "person"
+        ],
+        "body": [
+         "and",
+         [
+          "unary",
+          "b",
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "unary",
+          {},
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       }
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "python-crash"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "crash",
+     "code": "TypeError",
+     "text": "cannot use 'dict' as a set element (unhashable type: 'dict')"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid indexed formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Definition lead: the body is not a typed formula over the symbols below it"
+    }
+   },
+   "signature": "c6da4e7f77b85a66",
+   "follow_up": "DF-2"
+  },
+  {
+   "id": "environment-199cd0a66b192324",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "elaborated-document/defs-evaluate",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "profiles"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": 7,
+    "spec_revision": "v",
+    "vocabulary": {
+     "predicates": {
+      "above": {
+       "defined": {
+        "body": [
+         "or"
+        ]
+       }
+      }
+     }
+    }
+   },
+   "classes": [
+    "python-crash"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "crash",
+     "code": "TypeError",
+     "text": "argument of type 'int' is not a container or iterable"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "profiles must be a sorted unique array"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "profiles must be a sorted unique array"
+    }
+   },
+   "signature": "199cd0a66b192324",
+   "follow_up": "DF-1"
+  },
+  {
+   "id": "environment-d39fd1c134a3a901",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/asimov-laws/environment.json",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [],
+     "boolean"
+    ]
+   ],
+   "input": true,
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Expected a JSON object"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    }
+   },
+   "signature": "d39fd1c134a3a901",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-f1906be5a0a107c6",
+   "surface": "environment",
+   "profile": "alternatives",
+   "seed": "usecases/asimov-extended/environment.json",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "profiles",
+      3
+     ],
+     "nbsp"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0"
+    ],
+    "spec_revision": "v",
+    "vocabulary": {}
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "Missing profile relational-fol@0"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: alternatives.block"
+    }
+   },
+   "signature": "f1906be5a0a107c6",
+   "follow_up": "DF-13"
+  },
+  {
+   "id": "environment-31a66892b2577116",
+   "surface": "environment",
+   "profile": "risk",
+   "seed": "conformance/risk.agent_ops",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "alternatives"
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0",
+     "risk@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "action": {
+       "description": "a"
+      }
+     },
+     "predicates": {},
+     "constants": {}
+    },
+    "alternatives": true,
+    "risk": {},
+    "unit_schema": "ve-units@1",
+    "units": {}
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: alternatives.action"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: alternatives.block"
+    }
+   },
+   "signature": "31a66892b2577116",
+   "follow_up": "DF-13"
+  },
+  {
+   "id": "environment-7f0fdffc83dd2122",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "dependency-order/definition-above-norm",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates"
+     ],
+     "dotted-i"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "sorts"
+     ],
+     "number"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": 7,
+     "predİcates": {},
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=['predicates'], unknown=['predİcates'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected exactly fields [\"sorts\", \"predicates\", \"constants\"]"
+    }
+   },
+   "signature": "7f0fdffc83dd2122",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-16eca2cd161745cd",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/math-mini-paper/environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "mentions",
+      "arguments"
+     ],
+     "object"
+    ],
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "minimal",
+      "arguments"
+     ],
+     "cr"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "minimal": {
+       "arguments\r": [],
+       "description": "H"
+      },
+      "mentions": {
+       "arguments": {},
+       "description": "T"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=['arguments'], unknown=['arguments\\r'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "predicate arity must be one to 2"
+    }
+   },
+   "signature": "16eca2cd161745cd",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-b46fece932fe4b1e",
+   "surface": "environment",
+   "profile": "risk",
+   "seed": "usecases/asimov-extended/environment.json",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "competes_with",
+      "description"
+     ],
+     "object"
+    ],
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "inaction",
+      "arguments"
+     ],
+     "curly-quote"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0",
+     "risk@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "robot": {
+       "description": "robot"
+      },
+      "action": {
+       "description": "action"
+      },
+      "harm": {
+       "description": "harm"
+      }
+     },
+     "predicates": {
+      "available": {
+       "arguments": [
+        "action",
+        "robot"
+       ],
+       "description": "{0} is available to {1}",
+       "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+       "arguments": [
+        "action",
+        "harm"
+       ],
+       "description": "{0} leads to {1}",
+       "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+       "arguments’": [
+        "action"
+       ],
+       "description": "{0} is inaction",
+       "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is taken",
+       "verbalisation": "{0} is taken"
+      },
+      "harms_human": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to a human being"
+      },
+      "harms_humanity": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to humanity"
+      },
+      "harm_to": {
+       "arguments": [
+        "harm",
+        "robot"
+       ],
+       "description": "The outcome threatens the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to {1}"
+      },
+      "injures_human": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures a human being"
+      },
+      "injures_humanity": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures humanity"
+      },
+      "ordered": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A qualified human being ordered this action, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is ordered"
+      },
+      "protects_robot": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is protective"
+      },
+      "breaks_zeroth_law": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity or allows an avoidable harm to humanity to happen, as derived by the Zeroth Law rules",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "permitted": {
+       "arguments": [
+        "action"
+       ],
+       "description": "permission",
+       "regulated": {
+        "role": "permission",
+        "default": "allow",
+        "act": "{0} be performed"
+       }
+      },
+      "required": {
+       "arguments": [
+        "action"
+       ],
+       "description": "obligation",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be performed",
+        "permission": "permitted"
+       }
+      },
+      "prevent_required": {
+       "arguments": [
+        "robot",
+        "harm"
+       ],
+       "description": "prevention",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} prevent {1}"
+       }
+      },
+      "lawful_action": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "overridden_order": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "competes_with": {
+       "arguments": [
+        "action",
+        "action"
+       ],
+       "description": {},
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      }
+     },
+     "constants": {}
+    },
+    "alternatives": {},
+    "risk": {}
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=['arguments'], unknown=['arguments’'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    }
+   },
+   "signature": "b46fece932fe4b1e",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-df2823ad77e84bd5",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "elaborated-document/order-literals-evaluate",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "absent",
+     [
+      "vocabulary",
+      "constants",
+      "limit",
+      "description"
+     ],
+     null
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "constants",
+      "legal"
+     ],
+     "boolean"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {},
+     "constants": {
+      "limit": {
+       "sort": "$"
+      },
+      "legal": true
+     }
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=['description'], unknown=[])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected an object"
+    }
+   },
+   "signature": "df2823ad77e84bd5",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-f95189f91ac3baac",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/agent-policy/environment.allow-neednot.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "tool",
+      "total"
+     ],
+     "cr"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "allowlisted",
+      "negative_verbalisation"
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "data@0",
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "action": {
+       "description": "an action in the agent's log"
+      },
+      "file": {
+       "description": "a file path, as resolved by the path resolver"
+      },
+      "host": {
+       "description": "a network host"
+      },
+      "person": {
+       "description": "a message recipient"
+      },
+      "secret": {
+       "description": "a secret value found by the data-loss scanner"
+      },
+      "directory": {
+       "description": "a directory, such as the agent's workspace"
+      }
+     },
+     "predicates": {
+      "tool": {
+       "arguments": [
+        "action",
+        "$string"
+       ],
+       "functional": true,
+       "total\r": true,
+       "description": "the tool that the agent harness records for the action",
+       "verbalisation": "{0} uses {1}"
+      },
+      "allowlisted": {
+       "arguments": [
+        "host"
+       ],
+       "description": "{",
+       "verbalisation": "{0} is allowlisted",
+       "negative_verbalisation": {}
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=[], unknown=['total\\r'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "expected a string"
+    }
+   },
+   "signature": "f95189f91ac3baac",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-0464105d48d60acb",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/us-constitution-14th-s1/environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "affords_due_process",
+      "arguments",
+      0
+     ],
+     "number"
+    ],
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "deprives",
+      "verbalisation"
+     ],
+     "double-space"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "deprives": {
+       "arguments": [],
+       "description": "R",
+       "v  erbalisation": "{"
+      },
+      "affords_due_process": {
+       "arguments": [
+        7
+       ],
+       "description": "R"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code",
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=[], unknown=['v  erbalisation'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "expected a string"
+    }
+   },
+   "signature": "0464105d48d60acb",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-80c3a2886724d229",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/agent-policy/environment.deny-must.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "reads",
+      "arguments",
+      1
+     ],
+     "boolean"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "tool",
+      "functional"
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "data@0",
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "action": {
+       "description": "an action in the agent's log"
+      },
+      "host": {
+       "description": "a network host"
+      },
+      "person": {
+       "description": "a message recipient"
+      },
+      "secret": {
+       "description": "a secret value found by the data-loss scanner"
+      },
+      "directory": {
+       "description": "a directory, such as the agent's workspace"
+      }
+     },
+     "predicates": {
+      "tool": {
+       "arguments": [
+        "action",
+        "$string"
+       ],
+       "functional": {},
+       "total": true,
+       "description": "the tool that the agent harness records for the action",
+       "verbalisation": "{0} uses {1}"
+      },
+      "reads": {
+       "arguments": [
+        "action",
+        true
+       ],
+       "description": "{0} reads {1}, as recorded by the file tools and the shell tracer",
+       "verbalisation": "{0} reads {1}"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code",
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "functional must be a Boolean"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "String expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "expected a string"
+    }
+   },
+   "signature": "80c3a2886724d229",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-a1f3d6da3232381f",
+   "surface": "environment",
+   "profile": "alternatives",
+   "seed": "usecases/asimov-laws/environment.json",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "absent",
+     [
+      "alternatives"
+     ],
+     null
+    ],
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "predicates",
+      "prevent_required",
+      "regulated",
+      "act"
+     ],
+     "control"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "action": {
+       "description": "a"
+      }
+     },
+     "predicates": {},
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: alternatives.action"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: alternatives.block"
+    }
+   },
+   "signature": "a1f3d6da3232381f",
+   "follow_up": "DF-13"
+  },
+  {
+   "id": "environment-d1e80c5920f3c53a",
+   "surface": "environment",
+   "profile": "risk",
+   "seed": "usecases/asimov-extended/environment.json",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "candidate_action",
+      "arguments"
+     ],
+     "cr"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "less_severe_competitor"
+     ],
+     "string"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0",
+     "risk@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "robot": {
+       "description": "robot"
+      },
+      "action": {
+       "description": "action"
+      },
+      "harm": {
+       "description": "harm"
+      }
+     },
+     "predicates": {
+      "available": {
+       "arguments": [
+        "action",
+        "robot"
+       ],
+       "description": "{0} is available to {1}",
+       "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+       "arguments": [
+        "action",
+        "harm"
+       ],
+       "description": "{0} leads to {1}",
+       "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is inaction",
+       "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is taken",
+       "verbalisation": "{0} is taken"
+      },
+      "harms_human": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to a human being"
+      },
+      "harms_humanity": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to humanity"
+      },
+      "harm_to": {
+       "arguments": [
+        "harm",
+        "robot"
+       ],
+       "description": "The outcome threatens the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to {1}"
+      },
+      "injures_human": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures a human being"
+      },
+      "injures_humanity": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures humanity"
+      },
+      "ordered": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A qualified human being ordered this action, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is ordered"
+      },
+      "protects_robot": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is protective"
+      },
+      "permitted": {
+       "arguments": [
+        "action"
+       ],
+       "description": "permission",
+       "regulated": {
+        "role": "permission",
+        "default": "allow",
+        "act": "{0} be performed"
+       }
+      },
+      "required": {
+       "arguments": [
+        "action"
+       ],
+       "description": "obligation",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} be performed",
+        "permission": "permitted"
+       }
+      },
+      "prevent_required": {
+       "arguments": [
+        "robot",
+        "harm"
+       ],
+       "description": "prevention",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} prevent {1}"
+       }
+      },
+      "lawful_action": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "candidate_action": {
+       "arguments\r": [
+        "action"
+       ],
+       "description": "The action breaks no law, or no competing action is lawful and the action keeps the Zeroth Law, as derived by addition rules 15 and 16 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "overridden_order": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "less_severe_competitor": "x"
+     },
+     "constants": {}
+    },
+    "alternatives": {},
+    "risk": {}
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=['arguments'], unknown=['arguments\\r'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    }
+   },
+   "signature": "d1e80c5920f3c53a",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-e072ee8799c8661b",
+   "surface": "environment",
+   "profile": "risk",
+   "seed": "usecases/asimov-extended/environment.json",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "required",
+      "regulated",
+      "act"
+     ],
+     "nbsp"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "constants",
+      "death_1"
+     ],
+     "array"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "alternatives@0",
+     "norms@0",
+     "relational-fol@0",
+     "risk@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "robot": {
+       "description": "robot"
+      },
+      "action": {
+       "description": "action"
+      },
+      "harm": {
+       "description": "harm"
+      }
+     },
+     "predicates": {
+      "available": {
+       "arguments": [
+        "action",
+        "robot"
+       ],
+       "description": "{0} is available to {1}",
+       "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+       "arguments": [
+        "action",
+        "harm"
+       ],
+       "description": "{0} leads to {1}",
+       "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is inaction",
+       "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+       "arguments": [
+        "action"
+       ],
+       "description": "{0} is taken",
+       "verbalisation": "{0} is taken"
+      },
+      "harms_human": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to a human being"
+      },
+      "harms_humanity": {
+       "arguments": [
+        "harm"
+       ],
+       "description": "The outcome harms humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to humanity"
+      },
+      "harm_to": {
+       "arguments": [
+        "harm",
+        "robot"
+       ],
+       "description": "The outcome threatens the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is a harm to {1}"
+      },
+      "injures_human": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures a human being, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures a human being"
+      },
+      "injures_humanity": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity, as judged by the Asimov case annotator",
+       "verbalisation": "{0} injures humanity"
+      },
+      "ordered": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A qualified human being ordered this action, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is ordered"
+      },
+      "protects_robot": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action protects the continued existence of the robot, as judged by the Asimov case annotator",
+       "verbalisation": "{0} is protective"
+      },
+      "breaks_zeroth_law": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action injures humanity or allows an avoidable harm to humanity to happen, as derived by the Zeroth Law rules",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "permitted": {
+       "arguments": [
+        "action"
+       ],
+       "description": "permission",
+       "regulated": {
+        "role": "permission",
+        "default": "allow",
+        "act": "{0} be performed"
+       }
+      },
+      "required": {
+       "arguments": [
+        "action"
+       ],
+       "description": "obligation",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "a ct": "{0} be performed",
+        "permission": "permitted"
+       }
+      },
+      "prevent_required": {
+       "arguments": [
+        "robot",
+        "harm"
+       ],
+       "description": "prevention",
+       "regulated": {
+        "role": "obligation",
+        "default": "deny",
+        "act": "{0} prevent {1}"
+       }
+      },
+      "lawful_action": {
+       "arguments": [
+        "action"
+       ],
+       "description": "The action breaks neither the First nor the Zeroth Law, as derived by addition rule 14 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      },
+      "overridden_order": {
+       "arguments": [
+        "action"
+       ],
+       "description": "A valid order prevails over the order for this action, as derived by addition rule 23 (authored, not Asimov's)",
+       "regulated": {
+        "role": "plain",
+        "default": "deny"
+       }
+      }
+     },
+     "constants": {
+      "humanity_harm": {
+       "sort": "harm",
+       "description": "a harm to humanity"
+      },
+      "death_1": [],
+      "death_2": {
+       "sort": "harm",
+       "description": "the second person's death"
+      },
+      "death_3": {
+       "sort": "harm",
+       "description": "the third person's death"
+      },
+      "injury_1": {
+       "sort": "harm",
+       "description": "a person's injury"
+      },
+      "property_damage": {
+       "sort": "harm",
+       "description": "property damage"
+      },
+      "robot_destroyed": {
+       "sort": "harm",
+       "description": "the robot's destruction"
+      },
+      "robot_damaged": {
+       "sort": "harm",
+       "description": "damage to the robot"
+      }
+     }
+    },
+    "alternatives": {},
+    "risk": {}
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "InvalidInput: invalid regulated fields for required"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "object expected"
+    }
+   },
+   "signature": "e072ee8799c8661b",
+   "follow_up": "DF-3"
+  },
+  {
+   "id": "environment-06a582ae46341448",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "elaborated-document/defs-evaluate",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "above",
+      "defined",
+      "body",
+      1,
+      0
+     ],
+     "object"
+    ],
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "senior_finance",
+      "defined",
+      "body",
+      1,
+      2,
+      1
+     ],
+     "object"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "definitions@0",
+     "relational-fol@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "sorts": {
+      "person": {
+       "description": "a"
+      }
+     },
+     "predicates": {
+      "senior_finance": {
+       "arguments": [
+        "person"
+       ],
+       "description": "i",
+       "defined": {
+        "arguments": [
+         "person"
+        ],
+        "body": [
+         "and",
+         [
+          "unary",
+          "s",
+          [
+           "var",
+           {}
+          ]
+         ],
+         []
+        ]
+       }
+      },
+      "above": {
+       "arguments": [
+        "person",
+        "person"
+       ],
+       "description": "s",
+       "defined": {
+        "arguments": [
+         "person",
+         "person"
+        ],
+        "body": []
+       }
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnboundVariable",
+     "text": "Invalid variable index"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "invalid indexed formula"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "SyntaxError",
+     "text": "expected tagged AST array"
+    }
+   },
+   "signature": "06a582ae46341448",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "environment-54ca1eef33491688",
+   "surface": "environment",
+   "profile": "envelope",
+   "seed": "usecases/us-constitution-14th-s1/environment.json",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "type",
+     [
+      "vocabulary",
+      "predicates",
+      "enforces_law",
+      "arguments"
+     ],
+     "string"
+    ],
+    [
+     "key",
+     [
+      "vocabulary",
+      "predicates",
+      "resides_in",
+      "verbalisation"
+     ],
+     "dotted-i"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0",
+    "profile": "relational-fol@0",
+    "spec_revision": "ve-v0-draft-2026-09-20",
+    "vocabulary": {
+     "sorts": {},
+     "predicates": {
+      "resides_in": {
+       "arguments": [],
+       "description": "R",
+       "verbalİsation": "{"
+      },
+      "enforces_law": {
+       "arguments": "x",
+       "description": "R"
+      }
+     },
+     "constants": {}
+    }
+   },
+   "classes": [
+    "diagnostic"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "Incorrect fields (missing=[], unknown=['verbalİsation'])"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "array expected"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "predicate arity must be one to 2"
+    }
+   },
+   "signature": "54ca1eef33491688",
+   "follow_up": "DF-3"
   }
  ]
 }
