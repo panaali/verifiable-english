@@ -1,8 +1,10 @@
 # Lean first: one owner for every piece of VE logic
 
-**Status:** draft 2, 2026-10-04, branch `design/lean-first` (from `main` at `f4142cb9`). Planning only: no code,
-proof or test changes. Measurements in section 3 were taken on this commit; the scripts are in
-[`docs/lean-first/`](lean-first/).
+**Status:** Draft 3 (converged, DRI answers recorded), 2026-10-04, branch `design/lean-first` (from `main` at
+`f4142cb9`). Planning only: no code, proof or test changes. Measurements in section 3 were taken on this commit; the
+scripts are in [`docs/lean-first/`](lean-first/). Draft 3 applies the converged edits of the Fable/Astra review
+(`~/code/manage-agents/debates/design-lean-first/`, converged after round 3) and the DRI's answers to section 8
+(`~/code/manage-agents/lean-first-dri.md`); section 9 lists what changed.
 
 **Directive (lead, 2026-10-04).** No logic is duplicated across Python, Lean and Rust. Each piece of logic lives in
 exactly one language, and the others call it. Python and Lean today duplicate validation, diagnostics, semantics and
@@ -19,7 +21,12 @@ cannot load under either authority**: its one readings call needs **1,161 s CPU 
 admission at about 4 s per candidate, and Python's byte-for-byte regeneration adds 938 s, 918 s of it one-shot Lean
 rights calls. (5) Lean authority checks the use-case documents in 1.4–9 s (26× faster than Python on bluedot) but
 **refuses 3 of 4 constitution-pilot documents** (`norm-defaults@0`, `readings@1`). Fixes F1–F6 (section 4) come
-before the switches. Plan: 26 batches, ~100–120 build hours, ~14,000 Python lines deleted (~19,000 with English).
+before the switches. (6) **What the plan claims:** one owner for all duplicated logic **except two generator-internal
+cases**, Rust's candidate evaluator (`eval.rs` and the order evaluator) and the provers' Python replay, which are
+retained pending question 10 and listed as unfinished duplication until batch 2's measurement and batch 15b decide
+them (rule 3, section 6.4). The plan promises no search speed under either outcome. Plan: 32 batches (0–18 with
+sub-batches, including the four gated F5 optimisation batches), about 110–170 build hours by the table's per-batch
+estimates, ~14,000 Python lines deleted (~19,000 with English).
 
 ## 1. Ownership rules
 
@@ -35,13 +42,28 @@ before the switches. Plan: 26 batches, ~100–120 build hours, ~14,000 Python li
    `CheckerUnavailable`. Python keeps the CLI, the views and markdown, the web app API, `ve assist` and other editor
    help (ambiguity hints, lexicon proposals), harnesses and adapters.
 3. **Generators are allowed once, untrusted.** Proof search (tableau, order, closure induction, norm conflicts),
-   situation search for readings and model search propose evidence. Each kind lives in one language; Lean checks
-   every proposal before it is reported; an exhausted or refused proposal is `UNKNOWN` or `CheckerUnavailable`,
-   never a verdict.
+   situation search for readings and model search propose evidence. Each search strategy has one implementation,
+   in one language; Lean checks every proposal before it is reported; an exhausted or refused proposal is
+   `UNKNOWN` or `CheckerUnavailable`, never a verdict. **Generators call the semantic owner for candidate
+   evaluation and certificate replay.** Two duplicates of that logic exist today and are **retained pending
+   question 10, listed as unfinished**: Rust's evaluator (`eval.rs`, 419 lines, plus the order evaluator in
+   `order.rs`), which `rust/ve-core/src/search.rs` calls for every candidate and for the non-vacuity guard (line
+   594), and the provers' internal Python replay (`entailment.py` `_Replayer`, `order.py`, `closure.py`). The plan
+   cannot grant them an exception: the directive is "no logic duplicated", and a failed performance measurement
+   constrains the design but does not amend the directive. While retained they are declared in the inventory as
+   generator-internal, untrusted and never reported (values, counts, traces and `ResourceLimit` reported to Python
+   come from Lean's metered evaluator after batch 15), covered by a non-authoritative differential test against
+   Lean on the conformance corpus, and never yield a verdict. They do affect completeness: a wrong skip or an early
+   exhaustion turns a found countermodel into `UNKNOWN` or `ResourceLimit`, so candidate order, first witness,
+   charging, counts and exhaustion are preservation obligations of batch 15b. Batch 2 measures both cases; batch
+   15b deletes them only on the condition stated there; otherwise the DRI takes the numbers to the lead (question
+   10), and an approved retention changes the objective to **one authoritative decision owner**, which this plan
+   would then say instead of "all duplicated logic removed".
 4. **Rust is a search accelerator only.** It keeps countermodel and distinguishing-model search, whose witnesses
-   Lean checks (non-vacuity included, see batch 15). Rust's parser, validators, route, evaluator and the statement
-   layer differentials are deleted. Rust decodes only input Lean has already accepted; a Rust rejection of such
-   input is `CheckerUnavailable`, and no Rust text reaches a user.
+   Lean checks (non-vacuity included, see batch 15). Rust's parser, validators, route and the statement layer
+   differentials are deleted; its evaluator and order evaluator are the retained duplicate of rule 3, deleted by
+   batch 15b only on the measured condition stated there. Rust decodes only input Lean has already accepted; a
+   Rust rejection of such input is `CheckerUnavailable`, and no Rust text reaches a user.
 5. **Wire primitives are the one accepted exception.** Each language that speaks the wire keeps its restricted JSON
    reader, canonical JSON writer and SHA-256, because they are the protocol itself. They are specified by
    `docs/spec/v0-language.md` and pinned by shared test vectors. What they are applied to (the identity preimage of
@@ -75,10 +97,10 @@ numbers refer to section 5. Sizes today: `ve/` 39,194 Python lines, `lean/` 87,7
 | Route admission | `admission.py` `_admit_document_python` 493–579 | route `admission`, `runAdmission_sound` | — | Python / Lean | Lean | ~500 | 13 |
 | Argument graph and statuses | `argument.py` 251–345, 412, 625–727 | `graph` mode, `GenericGraph.check_sound` | — | Python / Lean only when Python says "composed" (`argument.py:588`) | Lean | ~150 | 13 |
 | Readings ALL/SOME/NONE, W2 set structure, couplings | `readings.py` 125–270, 288–386, 445–508 | `readings` mode (three soundness theorems); no couplings, narrowings or W2 set decoding (`lean/READINGS.md:146`) | — | Python / Lean confirms; couplings and joint choices stay Python | Lean | ~250 | 14 |
-| Evaluation (value, budget, trace) | `evaluate.py` `_Evaluator`, also called directly by `search.py`, `norms.py`, `cedar.py`, `model.py`, `readings.py` | route and legacy `evaluate`; `eval_iff_denote`; no work budget (`Service/Protocol.lean:33-35`) | `eval.rs`, `order.rs` | Python / Rust computes, Lean checks the value only; counts, traces and `ResourceLimit` are Rust's alone | Lean (budgeted evaluator) | ~180 | 15 |
+| Evaluation (value, budget, trace) | `evaluate.py` `_Evaluator`, also called directly by `search.py`, `norms.py`, `cedar.py`, `model.py`, `readings.py` | route and legacy `evaluate`; `eval_iff_denote`; no work budget (`Service/Protocol.lean:33-35`) | `eval.rs`, `order.rs` | Python / Rust computes, Lean checks the value only; counts, traces and `ResourceLimit` are Rust's alone | Lean (metered evaluator, 15a). **Duplicate retained pending question 10, unfinished:** `eval.rs` + the order evaluator, generator-internal, untrusted, never reported (rule 3); deleted by 15b only on its measured condition | ~180 | 2 (measure), 15 |
 | Countermodel check | `search.py` 149–229 | `countermodelCheck_iff`, `countermodel_sound` | `search.rs` | Python / Rust then Lean | Lean | ~40 | 15 |
-| Countermodel and distinguishing search, non-vacuity | `search.py` 259–640, 740–812 | none; no non-vacuity predicate | `search.rs`: the same generator | Python / Rust proposes; non-vacuity checked only by Python (`search.py:471-537`) | Rust (untrusted), Lean checks witnesses and non-vacuity | ~560 | 15 |
-| Certificate replay, binding prechecks, step budget | `entailment.py` `_Replayer` 615, `_check_certificate_python` 798, prechecks 709–760; `order.py`; `closure.py` | `checkCertificate_sound*` | — | Python / Lean for validity, Python prechecks and budget | Lean; the provers keep their own internal replay as generator code | ~300 | 13 |
+| Countermodel and distinguishing search, non-vacuity | `search.py` 259–640, 740–812 | none; no non-vacuity predicate | `search.rs`: the same generator; evaluates every candidate with `eval.rs` (`search.rs:594`, plus the non-vacuity guard) | Python / Rust proposes; non-vacuity checked only by Python (`search.py:471-537`) | Rust (untrusted) enumerates; Lean checks witnesses and non-vacuity; candidate evaluation per rule 3 and batch 2 | ~560 | 2 (measure), 15 |
+| Certificate replay, binding prechecks, step budget | `entailment.py` `_Replayer` 615, `_check_certificate_python` 798, prechecks 709–760; `order.py`; `closure.py` | `checkCertificate_sound*` | — | Python / Lean for validity, Python prechecks and budget | Lean. **Duplicate retained pending question 10, unfinished:** the provers' internal Python replay, generator-internal, untrusted, never reported (rule 3); deleted by 15b only on its measured condition | ~300 | 2 (measure), 13, 15 |
 | `premise_status`, `compare`, attacks | `vacuity.py`, `equivalence.py`, `attacks.py` | constituents only | — | Python rule over Lean-checked parts | Lean (small rule) | ~30 | 13 |
 | Assist decisions | `assist/session.py` `_decide` 330–367 treats the prover's unreplayed `Found` as yes; `proposer.py:312` `_entails` | none | — | Python | Lean replay (generators stay Python) | 0 (rewire) | 18 |
 | Cedar adapter allow/deny | `adapters/cedar.py:264-278` (`_Evaluator` + `NormDocument.outcome`) | none dispatched | — | Python | Lean | 0 (rewire) | 18 |
@@ -109,7 +131,7 @@ numbers refer to section 5. Sizes today: `ve/` 39,194 Python lines, `lean/` 87,7
 |---|---|---|---|---|---|
 | Formula-level English parse and one-reading audit | `english.py` `EnglishParser` (886), `surface/unambiguity.py` (Lark Earley, 30 s wall-clock limit) | `VE/English/Parse.lean` (core fragment, `core_one_reading` proved), off the admission path; branch `english-lean/lean` (generic table parser, S1a/S1b proved) | Python (`assurance-manifest.json` `english.admission`: `authority: python`) | Lean (english-lean) | E1–E3 |
 | Lexing and normalisation | `english.py:122, 165` | branch: `EnglishGrammar/Lexer.lean` | Python | Lean | E1 |
-| Vocabulary lint (18 codes) | `printer.py`, `english.py:230-538`, `english_vocabulary.py` | `English/Check.lean` (narrower, harness only); branch `Lexicon.valid` V1–V5 | Python | Lean for the 10 meaning-relevant codes; the 8 reader-protection codes are DRI question 5 | E2 |
+| Vocabulary lint (18 codes) | `printer.py`, `english.py:230-538`, `english_vocabulary.py` | `English/Check.lean` (narrower, harness only); branch `Lexicon.valid` V1–V5 | Python | Lean for the 10 meaning-relevant codes. Of the 8 reader-protection codes (DRI answer 5): those that change accept/reject protect the one-reading promise and are Lean acceptance checks; the purely stylistic ones are Python editor warnings that never reject | E2 |
 | Statement-layer English (norm rule blocks, norm-default legends, reports, speech, quantities, definitions, risk, soft norms, rights) | `norm_english.py`, `norm_defaults_english.py`, `report_english.py`, `speech_english.py`, `surface/*.py` (~2,500 lines) | none | Python, and it decides acceptance | Lean, one layer at a time after E2 | E3 |
 | Display sentences | `rights.py:503-530`, `readings_english.py` | `Rights/Wire.lean:332-357`, risk legend `Risk/Run.lean:421-452` | built in both and compared (`rights_route.py:39-90`) | Lean emits, Python displays | 7, 5 |
 | Render, then re-parse | `english.py:809-856` | `English/Render.lean`, `core_parse_render` | Python at runtime | Python renders as an untrusted producer; Lean re-parses each output | E2 |
@@ -143,7 +165,8 @@ These are concrete instances of the class the directive targets, found by readin
 
 - **W1 act phrases:** Python's reserved words include `no` (`ve/environment.py:28`); Lean's copy does not
   (`lean/VE/Norms/Wire.lean:25-27`, also `VE/Surface.lean:67`). An act phrase containing "no" is rejected by
-  Python and, as far as the code shows, accepted by Lean.
+  Python and, as far as the code shows, accepted by Lean. **Decided (DRI answer 6):** Lean adopts Python's list as a
+  signed change, before the batch that switches the surface (section 5.2, batch 0 triage).
 - **Quantity admission:** the docstring says Lean is the authority (`ve/quantity_admission.py:12`); by default
   Python decides (`ve/admission.py:443-444`).
 - **Risk admission routing:** `admission.py:508` sends any environment with an alternatives block, risk included,
@@ -152,8 +175,11 @@ These are concrete instances of the class the directive targets, found by readin
   (`ve/assurance-manifest.json:650-665`); both Python and Lean implement it.
 - The unmerged differential fuzzer (`infra/difffuzz`, `conformance/DIFFFUZZ.md`) baselines 138 live
   disagreements in 13 groups (DF-1 to DF-13): diagnostic codes, texts and fault order between Python, Lean and Rust
-  on environments, models, labels, block routes and Unicode. Every one of them disappears by construction once
-  Python relays Lean's diagnostic and Rust's texts are never shown.
+  on environments, models, labels, block routes and Unicode. Relaying Lean's diagnostic and never showing Rust's
+  texts makes the Python and Rust columns disappear, but it does not establish that Lean's answer satisfies the
+  frozen contract: four of the groups are Lean acceptance bugs (section 7.1), and "Lean is the spec" cannot override
+  a frozen contract. Batch 0 triages every group into one of three classes (section 5.2) before any surface
+  switches.
 
 ## 3. Measurements: how fast is calling Lean?
 
@@ -332,11 +358,28 @@ fix.
 | # | Problem (measured) | Fix | Expected gain | Batch |
 |---|---|---|---|---|
 | F1 | Every statement-layer route is a one-shot process: about 0.1 s of CPU and 0.25–0.5 s of wall at this load before any work (section 3.2). A small document's soft-norm check is almost all start-up (0.07 s CPU for a 1 KB document). 14 executables, 2.4 GiB. | Service modes for the 12 one-shot routes, in the one persistent service. | *Measured:* −0.1 s CPU and −0.25–0.5 s wall per route call (about −0.3 s CPU on the constitution pilot's `s1` check, which makes 4); one 170 MiB binary instead of 2.4 GiB. | 1 |
-| F2 | The environment is re-sent and re-decoded on every call: a trivial typing call costs 4.05 ms of Lean CPU with the agent-policy environment and 0.38 ms with an empty one, and decoding that environment alone costs 4.07 ms; 542 MB of JSON in one agent-policy run. | Content-addressed environment handles: the first request registers the environment, later requests name its digest; a miss is a bound request error and the client resends. | *Estimate:* Lean CPU per agent-policy call from 3.4–6.8 ms to the conformance corpus's 0.5–1.6 ms, so 387 s to about 40–100 s for the harness and 131 s to about 15–35 s for eligibility; the JSON volume and the client's 104 s of response checks shrink with it. | 2 |
+| F2 | The environment is re-sent and re-decoded on every call: a trivial typing call costs 4.05 ms of Lean CPU with the agent-policy environment and 0.38 ms with an empty one, and decoding that environment alone costs 4.07 ms; 542 MB of JSON in one agent-policy run. | Content-addressed environment handles: the first request registers the environment, later requests name its digest; a miss is a bound request error and the client resends. Obligation: the answer to a request naming a handle equals the answer to the same request with the environment re-sent (below). | *Estimate:* Lean CPU per agent-policy call from 3.4–6.8 ms to the conformance corpus's 0.5–1.6 ms, so 387 s to about 40–100 s for the harness and 131 s to about 15–35 s for eligibility; the JSON volume and the client's 104 s of response checks shrink with it. | 2 |
 | F3 | Callers send one case per request (61,695 requests in one agent-policy run). | One request per document or per prover step for typing, route and norms calls. Only useful after F2: batching alone saved nothing with a real environment (4.05 ms per case). | *Measured on the conformance corpus:* −30–40% wall; *estimate* for harnesses after F2: per-call wall from 10–13 ms to 1–2 ms. | 2 |
 | F4 | Flat wall-clock limits: under load the service's 5 s limit stopped the agent-policy harness after 353 s and Rust's 5 s limit stopped the bluedot document (a 4.1 s CPU search); the readings route's flat 120 s is 10× below what the UDHR call needs on any host. | Per-operation deadlines, set from measured CPU per operation and input size (in CPU time where the platform allows), and reported as `CheckerUnavailable` with the operation named. | Removes failures caused by host load; an input that needs more than its operation's deadline fails saying which operation. | 1 |
-| F5 | The UDHR readings call: 1,161 s CPU; 62% is admission, about 4.1 s per candidate, each a whole-document rights elaboration (2.2–2.9 s CPU per 28 KB); Python then repeats the chain in 352 one-shot calls (918 s CPU). | (a) Delete Python's regeneration and its rights calls. (b) Build each candidate's `one D s i` at most once per request and reuse it wherever the answer needs it (today its row and its chain findings build it separately). (c) Elaborate the shared base once and each candidate's own unit as a delta, with a lemma that the result equals `one D s i`. (d) Profile and speed up the rights chain (`limitationScope`, `noDistinction`, key generation). (e) Run independent sets in parallel across the service pool. | (a) *measured:* load from about 2,550 s to about 1,390 s wall, CPU −45%. (b)–(d) *estimate:* admission's 176 whole-document elaborations become one plus 176 deltas; the target is the 120 s budget on a quiet host, about 10× below today. (e) *estimate:* wall ÷ pool size (39 independent sets). | 3 |
+| F5 | The UDHR readings call: 1,161 s CPU; 62% is admission, about 4.1 s per candidate, each a whole-document rights elaboration (2.2–2.9 s CPU per 28 KB); Python then repeats the chain in 352 one-shot calls (918 s CPU). | (a) Delete Python's regeneration and its rights calls (batch 3). Then, as separate gated optimisation batches 3b–3e: (b) build each candidate's `one D s i` at most once per request and reuse it wherever the answer needs it (today its row and its chain findings build it separately); (c) elaborate the shared base once and each candidate's own unit as a delta, with a lemma that the result equals `one D s i`; (d) profile and speed up the rights chain (`limitationScope`, `noDistinction`, key generation); (e) run independent sets in parallel across the service pool, **after (b)**, because every per-set request re-admits the whole document today (62% of the cost), so partitioning before (b) multiplies that cost. | (a) *measured:* load from about 2,550 s to about 1,390 s wall, CPU −45%. (b)–(d) *estimate:* admission's 176 whole-document elaborations become one plus 176 deltas; the measurements support reusing decoded work and profiling the rights chain, not an established tenfold gain, so each of (b)–(e) has its own improvement gate and the last one must bring the pilot load under the 120 s budget on a quiet host (about 10× below today). (e) *estimate:* wall ÷ pool size (39 independent sets). | 3, 3b–3e |
 | F6 | Every Rust evaluation is a new process: 22,533 in one agent-policy run, 13 ms wall and 4 ms CPU each, 328 s of summed wall. | Rust as one persistent JSON-lines process per worker, like the Lean service. | *Estimate:* about 1 ms per call, so 328 s to about 25–40 s. | 2 |
+
+**Preservation obligations per fix.** Corpus agreement alone does not establish these properties, so each fix states
+what it must preserve and the batch tests it directly:
+
+- **F2 (handles):** for every request of the batch's corpus run, the answer with a handle equals the answer with the
+  environment re-sent; a handle miss is a bound request error, never a different answer.
+- **F5c (incremental elaboration):** the delta elaboration equals `one D s i`, as a Lean lemma, not a corpus check.
+- **F5e (per-set parallelism):** the per-set requests together equal one whole-document call: whole-document
+  admission is preserved, the first error is the first in document order, and identities are unchanged. F5e comes
+  after F5b.
+- **15a (metered evaluation):** the metered evaluator agrees with `eval_iff_denote` whenever the budget is not
+  exhausted, and reproduces Python's charging rule (counts, `ResourceLimit`, traces) on the evaluation and
+  countermodel corpora.
+- **15b (generator-internal duplicates):** candidate order, first witness, charging, counts and exhaustion are
+  preserved on the search fixtures and the certificate cohorts (rule 3).
+- **Batch 12 prerequisite:** a decode-validity theorem for the envelope and vocabulary decoders, like
+  `decodeModel_valid`, since section 7.1 admits they are unproved (batch 12a).
 
 Two further costs are small but paid by every CLI process: the service start (233 ms at load 70, 41 ms quiet) and
 the client's SHA-256 of the 170 MiB service binary (144 ms quiet), once per process. Caching the binary's digest by
@@ -351,13 +394,15 @@ commit at the same time, comparing CPU where the host is loaded:
 | One service call, interactive modes | p50 ≤ 2 ms Lean CPU, p95 ≤ 10 ms wall on a quiet host |
 | One document check (≤ 500 KB, readings excluded) | ≤ 1 s Lean CPU, ≤ 2 s wall on a quiet host, Rust search excluded |
 | Use-case harnesses (agent-policy, eligibility) | ≤ 1.25× the base commit's wall at the same load; a batch that switches an operation to Lean must not exceed it (agent-policy under Lean is 5.5× today, so batch 2 comes first) |
-| Pilot document load (UDHR, constitution) | ≤ 120 s wall on a quiet host (the readings route's present limit); UDHR needs F5 |
+| Pilot document load (UDHR, constitution) | ≤ 120 s wall on a quiet host (the readings route's present limit); UDHR needs F5. Batches 3b–3e each gate on a measured improvement of the captured UDHR readings case against the previous head, and the last of them must meet this row |
+| Search (bluedot document, search fixtures, agent-policy evaluation calls) | no speed is promised under either design of rule 3; batch 2 measures against the operation's F4 deadline and the base commit's contemporaneous run. Today's bluedot figures (9.02 s wall under load, 4.07 s Rust CPU) are a baseline to preserve, not a deadline |
 | Any batch, any measured workload | no more than 20% more Lean CPU than the base commit, unless the batch's `DELTA.md` lists it and the DRI signs |
 
 **What this means for the order.** Switching the core operations to Lean (batches 12 and 13b) before F2, F3 and F6
-would make every many-call workload 5× slower; that is why batches 1 and 2 come first. The readings route is
-already Lean's; batch 3 deletes Python's repetition of it (half the load) and starts F5, which is the only fix that
-needs Lean proofs.
+would make every many-call workload 5× slower; that is why batches 1 and 2 come before them. The readings route is
+already Lean's; batch 3 deletes Python's repetition of it (half the load) and the gated batches 3b–3e carry F5, the
+only fix that needs Lean proofs. The DRI's order (answer 9): batch 0; then batches 1, 3 and 4 in parallel; then 2;
+the rest as section 5.2 states.
 
 ## 5. Plan: ordered batches
 
@@ -365,6 +410,10 @@ Each batch is 2–6 hours of build work for one worker (review rounds come on to
 switches the callers to the single owner, it **deletes** the duplicate in the same merge, and it keeps behaviour
 under the lean-first gate below. Python features are deleted only after Lean has them (port first, then delete), so
 no batch removes a capability unless the DRI accepts it by name.
+
+**Throughput rules for every batch (DRI, 2026-10-04):** 2–6 hours; the builder works from a build checklist; while
+iterating, run only the tests the change affects (the full suite at the gate); delete the duplicate in the same
+batch; the differential fuzzer's baseline must not grow.
 
 ### 5.1 The lean-first gate (every batch)
 
@@ -380,20 +429,25 @@ no batch removes a capability unless the DRI accepts it by name.
    branches hold about 30 runs with their companion documents). The result must be identical, or every change is
    listed in the batch's `DELTA.md`, classed `wording`, `order`, `verdict` or `availability`. Wording and order
    lists are signed as one block, as wire-contract S4 did for its 498 text changes; each verdict or availability
-   change needs a DRI signature.
-3. **Deletion ledger.** The planned Python lines are gone; every deleted Python raise site is mapped to the Lean
-   check that now reports it, or to a DRI-accepted drop. `tools/relay_lint.py` (batch 0) fails if a relayed module
-   raises a content diagnostic of its own, and the stage-0 inventory script shows no consumer of a deleted symbol.
+   change needs a DRI signature. Replacing today's `CheckerUnavailable` (two copies disagree) with Lean's answer is
+   an `availability` change and needs that signature; classifying Lean as the specification does not supply it, and
+   "Lean is the spec" cannot override a frozen contract. The differential fuzzer's baseline must not grow.
+3. **Deletion ledger.** The planned Python lines are gone; every deleted Python **decision site** is mapped to the
+   Lean check or answer that now owns it, or to a DRI-accepted drop. Decision sites are the raise sites **and** the
+   section 2.4 sites that produce successful outputs: status folds, coverage and residual counts, identities,
+   verdicts. `tools/relay_lint.py` (batch 0) fails if a relayed module raises a content diagnostic of its own, and
+   the stage-0 inventory script shows no consumer of a deleted symbol.
 4. **Latency.** The batch's operations stay inside the section-4 budgets, measured on the same corpus run.
 
 ### 5.2 Batches
 
 | # | Batch | Lean work | Python and Rust deleted | Hours |
 |---|---|---|---|---:|
-| 0 | **Relay foundation.** One Python entry, `ve/backends/relay.py`: `decide(mode, cases)` returns Lean's rows or raises the `VEError` subclass of Lean's code with Lean's text verbatim; `CheckerUnavailable` only for operational failures. `tools/lean_first_diff.py` (built from mig3/py's recorder M3.1 and `tools/shadow_gate.py` M3.4) and `tools/relay_lint.py`. Freeze the pre-deletion Python under a tag for the oracle (section 6.2). | The service adds `code` to every rejection row, derived in one Lean function from the runner's `Class:` prefix, so no frozen runner changes | the prefix-stripping tables in `backends/diagnostics.py` (Python texts that imitated Lean's are replaced by Lean's own) | 4–6 |
+| 0 | **Relay foundation.** One Python entry, `ve/backends/relay.py`: `decide(mode, cases)` returns Lean's rows or raises the `VEError` subclass of Lean's code with Lean's text verbatim; `CheckerUnavailable` only for operational failures. `tools/lean_first_diff.py` (built from mig3/py's recorder M3.1 and `tools/shadow_gate.py` M3.4; it records decision sites, not raise sites only) and `tools/relay_lint.py`. Freeze the pre-deletion Python under a tag for the oracle (section 6.2), the baseline artifacts and dependencies, and the contract expectations. **Triage DF-1 to DF-13** per group, with a discrepancy fixture per group (the readings disagreement cases included), into three classes: (i) the frozen contract fixes Python's behaviour, so Lean has a bug, fixed before that surface switches; (ii) the contract is silent and Lean's answer is sound, so the change is `availability`, one DRI signature each (gate item 2); (iii) the contract is silent and Lean is wrong, so Lean has a bug. The four known Lean-accepts bugs (DF-8 empty vocabulary, DF-12 NBSP act phrase, duplicate `protected` rights entries, act-phrase `no`, section 7.1) are class (i) or (iii) and are fixed before the batch that switches each one's surface: the review names batches 5, 9 and 12; the duplicate `protected` check belongs to the rights route, batch 7. | The service adds `code` to every rejection row, derived in one Lean function from the runner's `Class:` prefix, so no frozen runner changes | the prefix-stripping tables in `backends/diagnostics.py` (Python texts that imitated Lean's are replaced by Lean's own) | 4–6 |
 | 1 | **Every route in the service.** Service modes for the 12 one-shot executables (soft norms, rights, speech acts, reports, alternatives, risk, risk eval, quantity, norm defaults, discourse, readings, diagnose), each pinned by an `rfl` theorem like `runMode_route`, with binding schemas; Gate-1 byte parity against the one-shot runner on each route's corpus. Per-operation deadlines replace the flat 5 s interactive limit (F4). | glue in `VE/Service/` | the six bespoke transports of `backends/lean.py`; the one-shot executables leave `defaultTargets` (2.4 GiB of binaries become one 170 MiB service) | 4–6 |
-| 2 | **Service throughput.** Content-addressed environment handles (F2), one request per document for typing, route and norms calls (F3), and Rust as one persistent JSON-lines process instead of one process per case (F6). | handle table in the service (a miss is a bound request error; the client resends) | per-call environment re-encoding in the adapters | 3–5 |
-| 3 | **Readings S1.** `readings_route.validate` relays Lean's row (F5a: half the UDHR load); per-set requests across the pool (F5e). | F5b: build each candidate's `one D s i` once per request; F5c (incremental candidate elaboration with its equality lemma) and F5d (rights-chain profile) follow as their own batches if F5b does not reach the 120 s budget | `readings_s1.py` (1,470), `rust_check`, `readings.rs`, the 352 rights calls per UDHR load | 4–6 |
+| 2 | **Service throughput, and the rule-3 measurement.** Content-addressed environment handles (F2, with its obligation), one request per document for typing, route and norms calls (F3), and Rust as one persistent JSON-lines process instead of one process per case (F6). **Measurement** of both generator-internal duplicates with one record: work units (models checked, prover steps), bytes sent, Lean CPU per unit, transport, decoding and semantic work separated, and wall against the operation's F4 deadline and the base commit's contemporaneous run. Rust as enumerator only ships candidate batches to the existing `evaluate` route with handles and F3 batching, on the bluedot document, the search fixtures and the agent-policy evaluation calls; the provers replay through the certificate route per prover step (F3 already names per-prover-step requests), on the certificate cohorts. Neither design's speed is assumed, and failure of one JSON transport design alone does not show every compliant interface too slow: if batched transport fails the deadline, investigate an in-process compiled Lean interface, which does not exist today (no `@[export]` anywhere in `lean/`) and would be a new build artifact linked into the Rust crate with packaging and assurance-manifest cost; record its cost, and let no batch depend on it before the lead has seen the numbers. The record is the design input of 15a and the evidence for question 10. | handle table in the service (a miss is a bound request error; the client resends) | per-call environment re-encoding in the adapters | 3–5 |
+| 3 | **Readings S1.** `readings_route.validate` relays Lean's row (F5a: half the UDHR load). | none | `readings_s1.py` (1,470), `rust_check`, `readings.rs`, the 352 rights calls per UDHR load | 4–6 |
+| 3b–3e | **UDHR readings optimisations**, one gated batch each, after batch 3 and off the critical path of batches 2–18: 3b F5b (build each candidate's `one D s i` once per request); 3c F5c (incremental candidate elaboration with its equality lemma); 3d F5d (rights-chain profile and speed-up, `limitationScope`, `noDistinction`, key generation); 3e F5e (per-set requests across the pool, with its preservation obligation; after 3b). Each gates on a measured improvement of the captured UDHR readings case against the previous head; the series ends when the pilot load meets the 120 s budget on a quiet host, which the last batch must show. | F5b–F5d in `Readings/Run.lean` and the rights chain; the F5c lemma | none | 4 × 3–5 |
 | 4 | **Discourse.** `rejection` always returns Lean's diagnostic; joint-choice checks come from Lean's `gateChoices`. | none | `python_discourse`, resolution, joint checks (~1,190), `discourse.rs` | 2–4 |
 | 5 | **Risk and alternatives blocks.** Environments with these blocks are validated by their routes; coverage folds come from `alt-elaborate`; admission routes risk first, as Lean's dispatch does. | port `AlternativesReserved`; coverage counts in `alt-elaborate` | `_alternatives_block`, `risk.decode_block`/`check_block` (~370), `risk.rs` | 3–4 |
 | 6 | **Soft norms.** Lean is asked first; Rust's soft premises come from Lean's answer. | add soft status, weighing points and the `Overlap`, `override_cycles`, `DualGuardCycle` lines to `soft-elaborate` | `softnorms.py` phases and semantics (~800), `softnorms_contract.py` and `wire_contract/engine.py` (837), the regeneration compare | 4–6 |
@@ -404,12 +458,13 @@ no batch removes a capability unless the DRI accepts it by name.
 | 10b | **Norm defaults, switch.** | — | `norm_defaults.py` (~1,000), Python admission (~105) | 3–4 |
 | 11a | **Speech acts, Lean side** (replaces wire S6). | 8.5 wrapper and admission; answer, compliance and nomination records | — | 4–6 |
 | 11b | **Speech acts, switch.** `ve speech-acts` and `speech_document.py` call the route. | — | `speech_acts.py` and `speech_document.py` semantics (~1,400) | 3–5 |
-| 12 | **Environments, models and the profile gate.** Lean validates, Python constructs. Needs batch 2's handles, since environment construction is the hottest call. Ends the env-profiles finding class and DF-1 to DF-13. | the `environment` mode accepts every profile Python's registry accepts, through Lean's composed dispatch (today 9 of 17: `norm-defaults@0` and `readings@1` are refused, so Lean authority refuses the pilots, section 3.4) | `Environment._decode` and model validation (~590), `profiles.py` gate (~110), `validation.decided` | 4–6 |
+| 12a | **Decoder theorems** (prerequisite of 12b). | a decode-validity theorem for the envelope and vocabulary decoders, like `decodeModel_valid`; section 7.1 admits they are unproved today, and after 12b no second opinion catches a decoder bug | — | 4–6 |
+| 12b | **Environments, models and the profile gate.** Lean validates, Python constructs. Needs batch 2's handles, since environment construction is the hottest call, and 12a's theorems. Ends the env-profiles finding class and closes the DF-1 to DF-13 groups batch 0 triaged to this surface. | the `environment` mode accepts every profile Python's registry accepts, through Lean's composed dispatch (today 9 of 17: `norm-defaults@0` and `readings@1` are refused, so Lean authority refuses the pilots, section 3.4) | `Environment._decode` and model validation (~590), `profiles.py` gate (~110), `validation.decided` | 4–6 |
 | 13a | **Core diagnostics in Lean.** | parse diagnostics with spans (Python `_Parser`'s messages move into Lean); order-family printer; certificate binding prechecks and step budget | — | 4–6 |
-| 13b | **Core operations default to Lean.** Typing, parse, definitions, Background, bundles, norms, admission, graph, readings, premise status, compare. | none | the Python bodies (~2,000), the `shadow` path | 4–6 |
-| 14a–d | **Stage 2c gaps**, one batch each: `definitions@0` sugar; non-first-order norm guards; n-ary core definitions; coupled reading sets and joint choices. | the four extensions | each Python fallback branch | 4 × 3–5 |
-| 15a | **Budgeted evaluation and non-vacuity in Lean** (DRI question 2). | a metered evaluator with Python's charging rule (counts, `ResourceLimit`, traces); a non-vacuity check | — | 4–6 |
-| 15b | **Evaluation and search switch.** Rust keeps search only. | — | `_Evaluator` (rewire `norms`, `cedar`, `readings`, `model`), Python search (~560); Rust `surface.rs`, `route.rs`, `eval.rs`, order evaluation, `units.rs`, `risk.rs`, `discourse.rs`, `readings.rs` (about 4,000 of 7,654 Rust lines) | 4–6 |
+| 13b | **Core operations default to Lean**, for the operations with complete Lean coverage only. Typing, parse, definitions, Background, bundles, norms, admission, graph, readings, premise status, compare. The four stage-2c fallback branches (`definitions@0` surface sugar, non-first-order norm guards on the closure, core and order families, n-ary core definitions, coupled reading sets and joint choices) are named in 13b's `DELTA.md` and **retained** until 14a–d delete them; the DRI's order puts 14a–d after 13b, so this is the branch taken (the alternative, 14a–d before 13b, is not). | none | the Python bodies of the covered operations (~2,000 less the four fallback branches), the `shadow` path | 4–6 |
+| 14a–d | **Stage 2c gaps**, one batch each: `definitions@0` sugar; non-first-order norm guards; n-ary core definitions; coupled reading sets and joint choices. | the four extensions | the Python fallback branch 13b retained for it | 4 × 3–5 |
+| 15a | **Budgeted evaluation and non-vacuity in Lean** (DRI question 2/10), designed from batch 2's record. | a metered evaluator with Python's charging rule (counts, `ResourceLimit`, traces), agreeing with `eval_iff_denote` whenever the budget is not exhausted; if Rust-as-enumerator met its deadline in batch 2, the evaluator also answers candidate batches (first distinguishing model, exact counts); a non-vacuity check | — | 4–6 |
+| 15b | **Evaluation and search switch.** Rust keeps search only. Lean checks every reported witness, non-vacuity included, in both branches below. **Condition for deleting the rule-3 duplicates** (`eval.rs`, the order evaluator, the provers' Python replay): the implementation batch 2 measured preserves candidate order, first witness, charging, counts and exhaustion on the search fixtures and the certificate cohorts, and meets the operation's deadline. If it does, 15b deletes them. If it does not, 15b deletes the rest of its list, the two duplicates stay listed as unfinished (rule 3: generator-internal, never reported, differential-tested), and the DRI takes the record to the lead for an explicit amendment (question 10); approval would change the objective to one authoritative decision owner, which the plan then states instead of "all duplicated logic removed". Independent batches proceed either way; ownership closure stays open until the lead rules. | — | `_Evaluator` (rewire `norms`, `cedar`, `readings`, `model`), Python search (~560); Rust `surface.rs`, `route.rs`, `units.rs`, `risk.rs`, `discourse.rs`, `readings.rs`; and, on the condition stated, `eval.rs`, order evaluation and the Python replay (about 4,000 of 7,654 Rust lines in all) | 4–6 |
 | 16a | **Document wrapper, Lean side.** A `document` mode: front matter, unit spans and schema, MIXED parts, status inference and fold, coverage and residual counts. | new | — | 4–6 |
 | 16b | **Document switch.** `document.py` keeps file I/O and display. | — | ~900 lines of `document.py` | 3–5 |
 | 17 | **Assist and adapters.** `_decide` and `_entails` replay through Lean before answering yes; Cedar decisions through Lean evaluation. | none | 0 (rewire) | 2–3 |
@@ -424,16 +479,27 @@ on `design/english-lean`):
 | E2 | `english.admission` to Lean | S5 directly, on corpus evidence (the 85,000 English pairs, use cases and pilots) instead of S4's 14-day shadow; `EnglishParser` acceptance and the Lark one-reading audit are deleted in the same batch (S5 and S7 merged). The Lark grammar for editor diagnostics is generated from Lean's grammar data and never decides acceptance. |
 | E3 | statement-layer English, one profile per batch | after that profile's batch above: norm rule blocks, norm-default legends, reports, speech, quantities, definitions, risk, soft norms, rights |
 
-**Why this order.** Batches 0–2 make relaying cheap and fast. Batches 3 and 4 are deletions where Lean already
-decides, so behaviour cannot change by construction (Python had to agree with Lean or fail), and they remove the
-most lines per hour. Batches 5–9 flip profiles whose Lean route already exists. Batches 10–11 port missing Lean
-features first. Batches 12–13 flip the core, the largest blast radius, after the throughput work. Batches 14–16 add
-the remaining Lean, and 17–18 clean up. Total: 26 batches, roughly 100–120 build hours, plus the English track.
+**Order (DRI answer 9).** Plan edits → batch 0 → batches 1, 3 and 4 in parallel → 2 → 5–9 in parallel → 10a, 11a
+and 13a in parallel → 10b, 11b, 12 (12a then 12b) → 13b → 14a–d, 15a and 16a → 15b and 16b → 17 → 18. The English
+track E1–E3 runs in parallel throughout. Batches 3b–3e follow batch 3 on their own worker and gate only the pilot
+budget row of section 4.
+
+**Why this order.** Batches 0–2 make relaying cheap and fast; batch 2's measurement also settles how 15a is designed.
+Batches 3 and 4 delete Python copies where Lean already decides, and they remove the most lines per hour. **No answer
+given today changes** in them: every input that gets an answer today gets the same answer. Inputs that fail today
+because the two copies disagree (`CheckerUnavailable`) get Lean's answer instead; each such change is listed as
+`availability` in the batch's `DELTA.md`, tested by its discrepancy fixture and signed by the DRI (gate item 2). That
+is not "by construction": a readings disagreement is `CheckerUnavailable` today, and relaying turns it into whatever
+Lean says, which is why batch 0's triage comes first. Batches 5–9 flip profiles whose Lean route already exists.
+Batches 10–11 port missing Lean features first. Batches 12–13 flip the core, the largest blast radius, after the
+throughput work and the decoder theorems. Batches 14–16 add the remaining Lean, and 17–18 clean up. Total: 32
+batches, about 110–170 build hours by the table's per-batch estimates, plus the English track.
 
 **Expected result.** About 14,000 of the 39,194 Python lines deleted by batch 18 (about 3,500–3,900 core, about
 9,000–10,000 statement layers, about 1,000 backends and wire-contract engine), and about 5,000 more with the English
 track (`english.py`, the Lark audit, about 2,500 lines of statement-layer English). Rust shrinks to search, about
-3,000 lines.
+3,000 lines if 15b's condition holds; otherwise `eval.rs` and the order evaluator stay as listed, unfinished
+duplication.
 
 ## 6. What happens to the other plans
 
@@ -450,13 +516,14 @@ track (`english.py`, the Lark audit, about 2,500 lines of statement-layer Englis
   S5-pre verdict differences (2 for norms, 6 for norm defaults) become inputs to batches 10 and 13b: each is
   resolved by adopting Lean's verdict or porting Python's behaviour into Lean, by DRI ruling.
 - **Kept:** the merged Lean engine, the generated `soft-norms@0` table and `ve_diagnose` stay as Lean's own
-  diagnostic table for soft norms; the Python engine and hooks go in batch 6. **S10** ("contract first") is
-  replaced by rule 6 ("Lean first").
+  diagnostic table for soft norms; the Python engine and hooks go in batch 6. The table keeps being generated from
+  the JSON contract until batch 18, which decides whether to fold it into Lean source (DRI answer 8). **S10**
+  ("contract first") is replaced by rule 6 ("Lean first").
 
 ### 6.2 The migration plan's stages 3–5 and the 14-day shadow
 
 - **The 14-day calendar soak is replaced by corpus evidence per batch** (gate item 2) plus a short operational
-  soak. Reasoning: under mig3's definition a clean day is one complete nightly run of fixed corpora. The only inputs
+  soak (decided, DRI answer 1). Reasoning: under mig3's definition a clean day is one complete nightly run of fixed corpora. The only inputs
   that change from day to day are the date-seeded fuzz seed and new pilot runs, so 14 days add 14 seeds and about
   28 pilot documents. Batch gates run 14 seeds at once and every historical pilot document, so the same evidence
   arrives in hours. What a calendar does add is operational: leaks, RSS growth, timeouts under real load. That is
@@ -466,15 +533,16 @@ track (`english.py`, the Lark audit, about 2,500 lines of statement-layer Englis
   commit with the batch head over the same corpora (A/B by commit), which measures exactly the batch's behaviour
   change and keeps working after the Python copy is deleted.
 - **mig3:** stop the `mig3/py` build where it is and reuse its recorder (M3.1) and `tools/shadow_gate.py` (M3.4) as
-  the A/B tool. Open questions: q2 (order of the 2c gaps against the 14 days) becomes batches 14a–d, each with its
+  the A/B tool (decided, DRI answer 4). Open questions: q2 (order of the 2c gaps against the 14 days) becomes batches 14a–d, each with its
   own evidence; q3 (timeouts) is answered by measurement (section 3.4: the flat 5 s limits failed the
   agent-policy harness and the bluedot document under load) and batch 1's per-operation deadlines (F4); q6 (shadow
   in CI on every merge) is dropped.
 - **Stage 4 rollback** by `VE_AUTHORITY=python` disappears operation by operation as batches delete the Python
   copy. Rollback becomes reverting one batch merge, which the one-merge-per-batch rule keeps possible.
-- **Stage 5** is spread over the batches. Its independent-oracle rule is kept: before batch 3 the pre-deletion
-  Python is frozen under a tag and run in isolation (the `conformance/replay_baseline.py` pattern) to give new
-  fixtures an `oracle: lean+pinned-python` label inside the frozen language.
+- **Stage 5** is spread over the batches. Its independent-oracle rule is kept (decided, DRI answer 7): before batch
+  3 the pre-deletion Python is frozen under a tag and run in isolation, in one maintained environment (the
+  `conformance/replay_baseline.py` pattern), to give new fixtures an `oracle: lean+pinned-python` label inside the
+  frozen language. The oracle is deleted after batch 18 plus 14 clean days.
 
 ### 6.3 english-lean
 
@@ -482,18 +550,28 @@ Kept, and on the critical path for the one-reading guarantee (the lead's P0 of 2
 14-day shadow becomes corpus evidence (batch E2), and S5 (authority) and S7 (retire `EnglishParser` and Lark) merge
 into one batch, so Python's parser never runs beside Lean's as a second authority. The test-only Python reference
 implementations (`conformance/english_lean_{engine,lexer,lexicon}.py`) are deleted once Lean's engine is the only
-one; until then they are test oracles, not shipped logic. The vocabulary lint's eight reader-protection codes are
-DRI question 5.
+one; until then they are test oracles, not shipped logic. The vocabulary lint's eight reader-protection codes
+(DRI answer 5): the ones that change accept/reject protect the one-reading promise and become Lean acceptance
+checks; the purely stylistic ones become Python editor warnings that never reject. E2 sorts the eight into the two
+groups in its `DELTA.md`.
 
 ### 6.4 Rust
 
 Rust becomes an untrusted search accelerator: countermodel and distinguishing-model search, whose witnesses Lean
 checks, with non-vacuity checked in Lean (batch 15a). Deleted: the third parser and printer (`surface.rs`, no
-runtime caller today), `route.rs` (tests only), the statement-layer differentials (`units.rs`, `risk.rs`,
-`discourse.rs`, `readings.rs`) and, once Lean has a budgeted evaluator, `eval.rs` and the order evaluator. This
-follows the lead's earlier "don't pursue Lean search or retire Rust now": Rust stays for the one job where it is
-18× faster than Python. Python's own model search (`search.py`, ~560 lines), the duplicate generator, is deleted.
-`infra/layers2-b2` (R1–R3, the crate split) is not merged; splitting a 3,000-line search crate is not worth it.
+runtime caller today), `route.rs` (tests only) and the statement-layer differentials (`units.rs`, `risk.rs`,
+`discourse.rs`, `readings.rs`). **`eval.rs` and the order evaluator are a different case.** `search.rs` evaluates
+every candidate with them (line 594, plus the non-vacuity guard), so deleting them while keeping search means Rust
+enumerates and Lean evaluates. Whether that meets the operation's deadline is unmeasured: the plan's only numbers
+(0.38 ms for an empty-environment typing call, 4.07 ms to decode a 5 KB environment, 9.02 s wall with 4.07 s Rust CPU
+for the bluedot document under load, a default cap of 10,000 models per query at `search.rs:105`) predict neither
+design's speed, so **the plan promises no search speed under either**. Batch 2 measures; 15b deletes the two on the
+condition stated there; otherwise they stay as generator-internal duplicates, listed as unfinished and never
+reported, until the lead rules on question 10. Rust retains enumeration, candidate ordering and the search strategy
+in both branches, which respects the lead's earlier "don't pursue Lean search or retire Rust now": Rust stays for the
+one job where it is 18× faster than Python. Python's own model search (`search.py`, ~560 lines), the duplicate
+generator, is deleted. `infra/layers2-b2` (R1–R3, the crate split) is not merged; splitting a 3,000-line search
+crate is not worth it.
 
 ### 6.5 Other in-flight work
 
@@ -502,9 +580,10 @@ follows the lead's earlier "don't pursue Lean search or retire Rust now": Rust s
 - **Consolidation (`infra/consolidate-b1`):** continues. It applies "one owner" inside Lean and shrinks the trusted
   base that every relayed answer now depends on.
 - **Differential fuzzer (`infra/difffuzz`):** merge it as the record of today's 138 disagreements. Batch by batch
-  its Python column goes away and the baseline must shrink to zero for each relayed surface. It stays as the
-  relay's type-confusion fuzzer (only `VEError` or `CheckerUnavailable` may escape) and as the Lean-versus-frozen-
-  Python oracle.
+  its Python column goes away and the baseline must shrink to zero for each relayed surface; **it must never grow**
+  (a throughput rule of every batch, section 5). It stays as the relay's type-confusion fuzzer (only `VEError` or
+  `CheckerUnavailable` may escape), as the Lean-versus-frozen-Python oracle, and as the non-authoritative
+  differential test of the two rule-3 duplicates against Lean while they are retained.
 
 ## 7. Risks and what we lose
 
@@ -512,16 +591,20 @@ follows the lead's earlier "don't pursue Lean search or retire Rust now": Rust s
    the dependency-order route accepts an empty vocabulary (DF-8), the risk route accepts an NBSP act phrase that
    Python rejects (DF-12), Lean accepts duplicate `protected` rights entries that Python rejects
    (`ARCH-ROADMAP.md`), and the act-phrase `no` drift above. Lean's envelope and vocabulary decoders are not proved
-   (`lean/README.md`). After deletion such a bug reaches users with no second opinion. Mitigations: the frozen
-   Python oracle for new fixtures; decoder specifications and theorems for the envelope and vocabulary decoders
-   first; the fuzzer against Lean alone with spec-derived expectations; review attention moves to Lean decoders.
+   (`lean/README.md`). After deletion such a bug reaches users with no second opinion. Mitigations: batch 0's
+   three-class triage of DF-1 to DF-13, with the four bugs above fixed before their surfaces switch; the frozen
+   Python oracle for new fixtures (kept until batch 18 plus 14 clean days); the decode-validity theorems for the
+   envelope and vocabulary decoders as batch 12a, a prerequisite of the environment switch; the fuzzer against Lean
+   alone with spec-derived expectations; review attention moves to Lean decoders.
 2. **Worse messages for a while.** Lean's parse rejection is one generic sentence, and some decoder texts expose
    internals (`String expected`). Each surface switches only after its Python messages are ported (batch 13a, E2),
-   but every batch changes texts users and tests have seen; each change is listed and signed.
+   but every batch changes texts users and tests have seen; each change is listed and signed. Decided (DRI answer
+   3): Lean's texts are canonical, and Python's better user-facing texts are ported into Lean.
 3. **Performance where Lean is slower today** (sections 3 and 4): the agent-policy harness takes 5.5× as long under
    Lean authority, and the UDHR pilot's readings call (already Lean's) needs about 10× its limit. Batches 1–3 are
-   prerequisites for flipping anything with a large environment or many readings, and F2, F5b and F6 are estimates
-   until their batches measure them; if F2 falls short, the core switches (12, 13b) wait. The IDE path is fine: a
+   prerequisites for flipping anything with a large environment or many readings, and F2, F5b–F5e and F6 are
+   estimates until their batches measure them; if F2 falls short, the core switches (12, 13b) wait; the F5 batches
+   are gated one by one and the pilot budget is met only when the last of them shows it. The IDE path is fine: a
    service call costs 1–2 ms at the median.
 4. **Lean build and review friction.** A wording change becomes a Lean rebuild (9 minutes from scratch on a quiet
    machine, more than an hour at today's load), a frozen-hash rehash and an audit. More work needs Lean-capable
@@ -534,22 +617,99 @@ follows the lead's earlier "don't pursue Lean search or retire Rust now": Rust s
    deleted raise site mapped to a Lean check) is the guard.
 8. **The English move is the largest single risk**: the Lean chart parser's speed on pilot-sized documents is not
    measured yet (english-lean S0 still owes token lengths for use cases and pilots).
+9. **Two duplicates may outlive the plan.** Rust's candidate evaluator (`eval.rs`, 419 lines, plus the order
+   evaluator) and the provers' Python replay are second implementations of semantics under the directive's letter,
+   retained pending question 10 and listed as unfinished (rule 3, section 6.4). While retained they change
+   completeness, not soundness: a wrong skip or an early exhaustion turns a found countermodel into `UNKNOWN` or
+   `ResourceLimit` without any unsound accepted verdict, so the corpus A/B must compare first witness, counts and
+   `ResourceLimit` behaviour, not verdicts only, and the differential test against Lean is not optional. If batch
+   2's measurement shows no compliant implementation meets the deadline, the plan's claim shrinks from "all
+   duplicated logic" to "one authoritative decision owner", by an explicit lead-approved amendment, not by default.
+   The plan promises no search speed under either design.
 
-## 8. Questions for the DRI
+## 8. Questions for the DRI, with the answers recorded (2026-10-04)
+
+Answers from `~/code/manage-agents/lean-first-dri.md`; each is applied in the section named.
 
 1. Replace the 14-day calendar soak with per-batch corpus evidence plus a three-day operational soak after batch
-   13b? Recommended: yes.
-2. Rust evaluation: delete it and give Lean a budgeted evaluator (batch 15a), or keep Rust as the untrusted
-   producer of budgets, counts and traces? Recommended: delete, if 15a's evaluator stays within the per-call budget.
+   13b? Recommended: yes. **Answer: yes.** Per-batch corpus evidence plus a 3-day operational soak after batch 13b
+   replaces the 14-day calendar soak (section 6.2).
+2. The generator-internal duplicates (reworded after the review; decided together with question 10). Rust's
+   candidate evaluator (`eval.rs` and the order evaluator) and the provers' Python replay are second implementations
+   of semantics. Batch 2 measures Rust as enumerator calling Lean's `evaluate` route, and the provers replaying
+   through the certificate route per step. Does 15b delete the duplicates when the measured implementation
+   preserves candidate order, first witness, charging, counts and exhaustion and meets the deadline, and otherwise
+   take the numbers to the lead? **Answer (2/10): as converged** (draft 3 edits 1–4): batch 2 measures; 15a is
+   designed from that record; 15b deletes the Rust and Python evaluation only if order, first witness, charging,
+   counts and exhaustion are preserved; otherwise the DRI takes the numbers to the lead (rule 3, batches 2, 15a,
+   15b, section 6.4).
 3. Wording: Lean's texts become canonical everywhere, with Python's better texts ported into Lean where users see
-   them (parse errors, the readability evaluation's items)? Recommended: yes.
-4. Stop the `mig3/py` build and reuse its recorder as the A/B tool? Recommended: yes.
+   them (parse errors, the readability evaluation's items)? Recommended: yes. **Answer: yes.** Lean's texts are
+   canonical; Python's better user-facing texts are ported into Lean (section 7.2, batch 13a, E2).
+4. Stop the `mig3/py` build and reuse its recorder as the A/B tool? Recommended: yes. **Answer: yes** (section 6.2,
+   batch 0).
 5. The vocabulary lint's eight reader-protection codes: Lean acceptance checks, or Python editor warnings that
-   never reject?
-6. Act-phrase `no`: adopt Python's list in Lean as a signed change? Recommended: yes.
+   never reject? **Answer: both, by effect.** Codes that change accept/reject protect the one-reading promise and are
+   Lean acceptance checks; purely stylistic codes are Python editor warnings that never reject (sections 2.3, 6.3).
+6. Act-phrase `no`: adopt Python's list in Lean as a signed change? Recommended: yes. **Answer: yes**, as a signed
+   change (section 2.5, batch 0 triage).
 7. Keep a frozen pre-deletion Python as a test oracle (one isolated environment to maintain)? Recommended: yes.
+   **Answer: yes**, in one isolated environment, deleted after batch 18 plus 14 clean days (section 6.2).
 8. `soft-norms@0` contract: keep generating Lean's table from the JSON contract, or fold it into Lean source?
-   Recommended: keep until batch 18, then decide.
+   Recommended: keep until batch 18, then decide. **Answer: keep generating from the JSON contract until batch 18,
+   then decide** (section 6.1).
 9. Start order: batch 0–2 first, or batch 3 (readings: halves the UDHR load and starts F5) first? Recommended: 0,
    then 3 and 1 in parallel, then 2. Batch 3 alone does not bring the UDHR load under its 120 s limit (1,161 s of
-   Lean CPU remain); F5b–F5d do, if anything does.
+   Lean CPU remain); F5b–F5d do, if anything does. **Answer:** plan edits → batch 0 → batches 1, 3, 4 in parallel →
+   2 → 5–9 in parallel → 10a, 11a, 13a in parallel → 10b, 11b, 12 → 13b → 14a–d, 15a, 16a → 15b, 16b → 17 → 18;
+   English track E1–E3 in parallel throughout (section 5.2). With it the DRI set throughput rules for every batch:
+   2–6 h; build checklist; only the tests the change affects while iterating; delete the duplicate in the same
+   batch; the difffuzz baseline must not grow (section 5).
+10. **(New, from the review.)** If batch 2 finds no compliant implementation (Rust enumerating and Lean evaluating,
+    provers replaying through Lean) that meets the operation's deadline while preserving candidate order, first
+    witness, charging, counts and exhaustion, the DRI takes the numbers to the lead for an explicit amendment to the
+    ownership directive. Approval would change the objective from "all duplicated logic removed" to "one
+    authoritative decision owner", and the plan must say so; until then the two duplicates are listed as unfinished.
+    **Answer:** decided with question 2 above: otherwise the DRI takes the numbers to the lead.
+
+## 9. Draft 3: what changed and why
+
+The Fable/Astra review (`~/code/manage-agents/debates/design-lean-first/`) converged after round 3 on Fable's
+round-3 joint position: Fable's round-1 edits 2 and 4–6, Astra's round-2 items 1–4 as worded in that round, and
+edit 3 with Astra's three triage classes. The DRI answered section 8 the same day. Applied:
+
+1. **Rule 3 (review item 1, Astra round-2 item 1).** Each search strategy has one implementation and generators
+   call the semantic owner for candidate evaluation and certificate replay. Rust's `eval.rs` with the order
+   evaluator, and the provers' Python replay, are named as duplicates retained pending question 10 and listed as
+   unfinished, in rule 3, the inventory (section 2.1) and the risks (section 7.9); the plan's claim becomes "all
+   duplicated logic except the two generator-internal cases question 10 decides" (summary). The plan does not grant
+   the exception itself and does not describe retention as temporary. Inventory, differential-testing and
+   witness-checking requirements kept.
+2. **Batch 2 measures both cases (Astra round-2 item 2)** with one record: work units, bytes, Lean CPU per unit,
+   transport, decoding and semantic work separated, wall against the F4 deadline and the contemporaneous base run; on
+   the bluedot document, the search fixtures, the agent-policy evaluation calls and the certificate cohorts. The
+   in-process compiled Lean interface is investigated only if batched transport fails, with its cost recorded and no
+   batch depending on it before the lead has seen the numbers. No search speed is promised under either design;
+   today's bluedot figures are a baseline, not a deadline (section 4 budgets, section 6.4).
+3. **15a designed from that record; 15b's deletion condition (Astra round-2 item 3):** candidate order, first
+   witness, charging, counts and exhaustion preserved on the search fixtures and the certificate cohorts; Lean
+   checks every reported witness including non-vacuity in both branches.
+4. **Question 10 (Astra round-2 item 4)** added; question 2 reworded to that choice; both answered by the DRI.
+5. **13b narrowed (edit 2):** only operations with complete Lean coverage; the four stage-2c fallback branches are
+   named and retained until 14a–d, which the DRI's order places after 13b.
+6. **Behaviour claim reworded (edit 3 with the three triage classes):** no answer given today changes; inputs that
+   fail today by disagreement get Lean's answer as a signed `availability` change; batch 0 triages DF-1 to DF-13 into
+   contract-fixes-Python (Lean bug), contract-silent-and-Lean-sound (`availability`, one DRI signature each) and
+   contract-silent-and-Lean-wrong (Lean bug); the four known Lean-accepts bugs are fixed before their surfaces
+   switch. "By construction" removed from section 2.5 and the order rationale. Gate item 2 states that "Lean is the
+   spec" supplies no signature.
+7. **Obligations per fix (edit 4):** F2 handle-equals-resend, F5c's equality lemma, F5e equals one whole-document
+   call (first error in document order, identities unchanged) and moved after F5b, 15a's agreement with
+   `eval_iff_denote` and Python's charging rule; batch 12a adds the decode-validity theorems for the envelope and
+   vocabulary decoders as a prerequisite of the environment switch (section 4, batches 3b–3e, 12a, 15a).
+8. **Deletion ledger (edit 5)** extended from raise sites to the section 2.4 decision sites: status folds, counts,
+   identities, successful outputs (gate item 3).
+9. **Order (edit 6, DRI answer 9):** batch 0, then 1, 3 and 4 in parallel, then 2, then as section 5.2 states;
+   F5b–F5e are gated optimisation batches 3b–3e, and the last must meet the 120 s pilot budget.
+10. **DRI answers 1, 3–8** recorded where they apply (sections 2.3, 2.5, 6.1–6.3, 7.2) and the throughput rules
+    added to section 5. Batch count and hours re-totalled from the table (32 batches, about 110–170 hours).
