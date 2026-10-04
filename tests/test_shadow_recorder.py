@@ -1,6 +1,6 @@
 """Stage 3 shadow recorder: the shadow call, the classes, records and tallies.
 
-The fixtures S1 to S20, C1 to C13 and L1 to L7 of docs/spec/mig3.md section 8,
+The fixtures S1 to S20, C1 to C13, L1 to L7 and Z5 of docs/spec/mig3.md section 8,
 with expectations written from sections 2 and 4.  Unless a test says otherwise
 the two sides are plain functions given to `execute`, the authority is `shadow`
 and `VE_SHADOW_DIR` is a fresh directory.
@@ -531,3 +531,15 @@ def test_unwritten_tallies_are_not_counted_without_shadow(monkeypatch, tmp_path)
     note_uncompared("parse", "parse-scope")
     assert list(tmp_path.iterdir()) == []
     assert (os.getpid(), str(tmp_path)) not in dispatch._workers
+
+
+# --- 8.5 conservativity ---------------------------------------------------------------
+
+def test_z5_the_default_authority_and_the_manifest_are_unchanged(monkeypatch):
+    for name in ("VE_AUTHORITY", "VE_AUTHORITY_OVERRIDES"):
+        monkeypatch.delenv(name, raising=False)
+    assert dispatch.authority_for("evaluate") == "python"
+    assert all(dispatch.authority_for(name) == "python" for name in dispatch.DISPATCH_NAMES)
+    manifest = json.loads((Path(dispatch.__file__).parents[1] / "assurance-manifest.json").read_text())
+    authorities = [operation["authority"] for operation in manifest["operations"]]
+    assert (authorities.count("python"), authorities.count("lean-only"), len(authorities)) == (24, 2, 26)

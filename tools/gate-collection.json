@@ -4044,6 +4044,7 @@
   "tests/test_shadow_recorder.py::test_s8_backend_unavailable_is_a_completion_failure",
   "tests/test_shadow_recorder.py::test_s9_no_lean_adapter_has_no_candidate_whatever_rust_passes",
   "tests/test_shadow_recorder.py::test_unwritten_tallies_are_not_counted_without_shadow",
+  "tests/test_shadow_recorder.py::test_z5_the_default_authority_and_the_manifest_are_unchanged",
   "tests/test_shadow_runs.py::test_a_calibration_run_is_not_held_to_the_floors",
   "tests/test_shadow_runs.py::test_a_complete_run",
   "tests/test_shadow_runs.py::test_a_run_through_the_tool[0]",
