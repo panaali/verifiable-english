@@ -113,7 +113,10 @@ def test_gate_environment_is_an_allowlist(tmp_path, monkeypatch):
     assert set(env) == set(gate.ALLOWED_ENVIRONMENT)
     assert normalized(env, tmp_path / "poisoned") == normalized(clean, tmp_path / "clean")
     assert all(value.startswith(str(tmp_path / "poisoned")) for name, value in env.items()
-               if name in ("HOME", "TMPDIR", "UV_CACHE_DIR", "LAKE_CACHE_DIR", "CARGO_HOME"))
+               if name in ("HOME", "TMPDIR", "UV_CACHE_DIR", "LAKE_CACHE_DIR", "CARGO_HOME",
+                           "PYTHONPYCACHEPREFIX"))
+    # No bytecode cached before the gate is loaded in place of its source.
+    assert not any(Path(env["PYTHONPYCACHEPREFIX"]).iterdir())
     with pytest.raises(RuntimeError, match="unlisted"):
         gate.record_environment({"environment": {}}, "base", {**env, "LEAN_CC": "/bin/false"})
     with pytest.raises(RuntimeError, match="unlisted"):
