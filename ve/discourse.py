@@ -18,6 +18,7 @@ import collections
 import errno
 import json
 import os
+import re
 from pathlib import Path
 
 from .backends.lean_service import CheckerUnavailable
@@ -232,17 +233,127 @@ def unavailable_report(error):
     return CheckerUnavailable(f"CheckerUnavailable: Lean admits the document but Python cannot report it ({error})")
 
 
-def _joint(lean, block, active):
+# Binding Lean's answer to the document asked about ------------------------------
+#
+# `lean_admission` checks the answer's shape before Python loads the document; once loaded, every
+# member the relay reads is bound to what the document records (an untrusted answer's schema): the units,
+# the mentions, the validity claims and the active open reading sets. An answer that is not an
+# answer to this document is `CheckerUnavailable`, never a verdict: Lean decides which choices are
+# compatible and how each reference and claim comes out, Python only that the answer is about
+# this document and well formed (no duplicate or out-of-range choice, the joint disjunction the
+# one its choices denote).
+
+_REFERENCE_STATUSES = {"resolved", "navigation", "pending"}  # Run.lean `referencesJson`
+_VERDICT = re.compile(r"(checked|refuted|none|unconfirmed \(.+\))\Z", re.S)  # Admission.lean `verdictText`
+_REPORT_ID = re.compile(r"[0-9a-f]{64}\Z")
+
+
+def _foreign(member):
+    return CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route answered another document ({member})")
+
+
+def _decoded(env, data, member):
+    """A formula of the answer, decoded as Python decodes any formula; one that does not decode is
+    no answer (an untrusted value never escapes as a Python error)."""
+    from .ast import formula_from_data
+    try:
+        return formula_from_data(env, data)
+    except (VEError, TypeError, ValueError, KeyError, IndexError, RecursionError):
+        raise _foreign(member) from None
+
+
+def _conj(formulas):
+    """Joint.lean `conj`, on the wire: the empty conjunction is top, one formula is itself, else
+    right-nested."""
+    if not formulas:
+        return ["top"]
+    return formulas[0] if len(formulas) == 1 else ["and", formulas[0], _conj(formulas[1:])]
+
+
+def _disj(formulas):
+    """Joint.lean `disj`, on the wire, over the nonempty list of a completed joint set."""
+    return formulas[0] if len(formulas) == 1 else ["or", formulas[0], _disj(formulas[1:])]
+
+
+def _bind_references(block, references):
+    """Run.lean `referencesJson`: one line per recorded mention, in manifest order, carrying the
+    mention's id, unit, form and target as recorded, and one of the three statuses."""
+    mentions = block.get("mentions", []) if type(block) is dict else []
+    if len(references) != len(mentions):
+        raise _foreign("references")
+    for ref, mention in zip(references, mentions):
+        if (type(ref) is not dict or set(ref) != {"mention", "unit", "form", "target", "status"}
+                or [ref["mention"], ref["unit"], ref["form"], ref["target"]]
+                != [mention["id"], mention["unit"], mention["form"], mention["target"]]
+                or ref["status"] not in _REFERENCE_STATUSES):
+            raise _foreign("references")
+
+
+def _bind_joint(doc, lean, open_sets):
+    """The joint set over the active open reading sets (Joint.lean `compatibleChoices` at Lean's
+    budget): UNKNOWN exactly when their product is over the budget; else between one and product
+    choices, each one reading index in range per open set, in that set order, listed in the
+    enumeration's strictly increasing order (so none twice), and the joint disjunction the
+    disjunction of the conjunctions of the chosen readings (`joint`)."""
+    product = 1
+    for rs in open_sets:
+        product *= len(rs["readings"])
+    if lean["admitted"] == "UNKNOWN":
+        if product <= _JOINT_BUDGET:
+            raise _foreign("joint")
+        return
+    choices = lean["joint_choices"]
+    if product > _JOINT_BUDGET or not 1 <= len(choices) <= product:
+        raise _foreign("joint")
+    vectors = []
+    for choice in choices:
+        if (len(choice) != len(open_sets)
+                or any([s, v] != [rs["id"], rs["version"]] or i >= len(rs["readings"])
+                       for (s, v, i), rs in zip(choice, open_sets))):
+            raise _foreign("joint choices")
+        vectors.append([i for _, _, i in choice])
+    if any(a >= b for a, b in zip(vectors, vectors[1:])):
+        raise _foreign("joint choices")
+    # compared on the wire: a joint disjunction of many choices is deeper than Python's AST budget
+    from .ast import formula_to_data
+    env = doc["environment"]
+    readings = [[formula_to_data(env, _decoded(env, r["content"], "reading sets")) for r in rs["readings"]]
+                for rs in open_sets]
+    if lean["joint_formula"] != _disj([_conj([readings[k][i] for k, i in enumerate(vector)]) for vector in vectors]):
+        raise _foreign("joint formula")
+
+
+def _bind_answer(doc, block, lean, open_sets):
+    """Lean's answer, bound to the loaded document (see above)."""
+    units = [u["id"] for u in doc["units"]]
+    if list(lean["statuses"]) != units:
+        raise _foreign("statuses")
+    if not _REPORT_ID.match(lean["report_id"]):
+        raise _foreign("report id")
+    _bind_references(block, lean["references"])
+    # Admission.lean `admitCore`: every unit of a formula-producing (non-navigation) mention is
+    # bound unless a presupposition of it is pending, and a pending unit never is
+    pending = {ref["unit"] for ref in lean["references"] if ref["status"] == "pending"}
+    producing = {ref["unit"] for ref in lean["references"] if ref["status"] != "navigation"}
+    if not producing - pending <= set(lean["bound"]) <= set(units) - pending:
+        raise _foreign("bound")
+    for formula in lean["bound"].values():
+        _decoded(doc["environment"], formula, "bound")
+    claims = block.get("validity", []) if type(block) is dict else []
+    if (list(lean["validity"]) != [claim["unit"] for claim in claims]
+            or not all(type(v) is str and _VERDICT.match(v) for v in lean["validity"].values())):
+        raise _foreign("validity")
+    _bind_joint(doc, lean, open_sets)
+
+
+def _joint(lean, block, open_sets):
     """The joint set as Lean answered it: the compatible choices of the active open sets (each a
     mapping `set@version` to a reading index), or UNKNOWN over the budget."""
     constraints = block.get("constraints", []) if type(block) is dict else []
     count = len(constraints) if type(constraints) is list else 0
     if lean["admitted"] == "UNKNOWN":
         return {"status": "UNKNOWN", "budget": _JOINT_BUDGET, "constraints": count}
-    open_sets = [(rs["id"], rs["version"]) for rs in active if rs["status"] == "open"]
     choices = lean["joint_choices"]
-    if any([tuple(x[:2]) for x in choice] != open_sets for choice in choices):
-        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route chose over other reading sets")
     return {"status": "complete", "choices": [{f"{s}@{v}": i for s, v, i in choice} for choice in choices],
             "count": len(choices), "constraints": count}
 
@@ -297,13 +408,13 @@ def validate_discourse(doc, lean):
     report id, the validity verdicts, the joint choices and the joint disjunction are Lean's
     (`load_document` has raised Lean's rejection of a document Lean does not admit)."""
     block = doc["meta"]["discourse"]
-    if set(lean["statuses"]) != {u["id"] for u in doc["units"]}:
-        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route reported other units")
+    open_sets = [rs for rs in active_reading_sets(doc["meta"].get("reading_sets", [])) if rs["status"] == "open"]
+    _bind_answer(doc, block, lean, open_sets)
     for unit in doc["units"]:
         unit["status"] = lean["statuses"][unit["id"]]
     groups = block.get("groups", []) if type(block) is dict else []
     return {"references": lean["references"], "groups": groups,
-            "joint": _joint(lean, block, active_reading_sets(doc["meta"].get("reading_sets", []))),
+            "joint": _joint(lean, block, open_sets),
             "joint_formula": lean.get("joint_formula"),
             "presentations": _presentations(doc, block, lean),
             "report_id": lean["report_id"], "validity": lean["validity"]}

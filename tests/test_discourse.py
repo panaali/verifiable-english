@@ -180,21 +180,23 @@ def test_prior_quantifier_blocks_bare_pronoun(tmp_path):
         load_document(_write(tmp_path, front, source))
 
 
-def _correlated(tmp_path, constraints, label=0):
-    """The sample with two more units, each with an open reading set of two readings (`reviewed`
-    and `deployed` of api), the constraints over them, and a graph citing reading `label` of rs6."""
+def _correlated(tmp_path, constraints, label=0, readings=None, sets=2):
+    """The sample with `sets` (at least two) more units, each with an open reading set of two
+    readings (`readings`, by default `reviewed` and `deployed` of api, told apart by the model
+    where only `reviewed(api)` and `exempt(api)` hold), the constraints over them, and a graph
+    citing reading `label` of rs6."""
     source, front = _sample(tmp_path)
     data = _environment()
     data["profiles"].remove("ve.discourse@1")
     env = Environment(data)
-    p, q = front["units"][0]["content"]["ast"], front["units"][1]["content"]["ast"]
-    # one entity per sort, `reviewed(api)` true and `deployed(api)` false: it separates p and q
+    p, q = readings or (front["units"][0]["content"]["ast"], front["units"][1]["content"]["ast"])
+    # one entity per sort, `reviewed(api)` and `exempt(api)` true, the rest false: it separates p and q
     model = {"complete": True, "domains": {s: [f"e_{s}"] for s in env.model_sorts},
              "constants": {c: f"e_{d.sort}" for c, d in env.constants.items()},
-             "relations": {name: ([[f"e_{env.constants['api'].sort}"]] if name == "reviewed" else [])
+             "relations": {name: ([[f"e_{env.constants['api'].sort}"]] if name in ("reviewed", "exempt") else [])
                            for name in env.predicates}}
     mid = FiniteModel.from_dict(env, model).model_id
-    for uid in ("u3", "u4"):
+    for uid in [f"u{3 + k}" for k in range(sets)]:
         start = len(source)
         source += b"Api is reviewed.\n"
         front["units"].append({"id": uid, "span": [start, len(source)], "kind": "asserted",
@@ -210,7 +212,7 @@ def _correlated(tmp_path, constraints, label=0):
                            "distinguishing_models": {other: mid for other, _ in readings if other != key}}}
             for key, ast in readings]}
 
-    front["reading_sets"] = [reading_set("u3", "rs5"), reading_set("u4", "rs6")]
+    front["reading_sets"] = [reading_set(f"u{3 + k}", f"rs{5 + k}") for k in range(sets)]
     front["discourse"]["constraints"] = constraints
     front["graph"] = {"root": "root", "nodes": [{"name": "root", "ast": [p, q][label],
                                                  "label": f"readings:rs6@1:{label}"}]}
@@ -610,8 +612,9 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
     retargeted = _write(tmp_path, front, source)
     with pytest.raises(VEError, match="^InaccessibleTarget: m1: alice$"):
         check_document(retargeted)
-    answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "r" * 64,
-              "references": admitted["references"], "statuses": {"u1": "CHECKED", "u2": "OPEN"},
+    retargeted_references = [{**admitted["references"][0], "target": {"kind": "entity", "name": "alice"}}]
+    answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "f" * 64,
+              "references": retargeted_references, "statuses": {"u1": "CHECKED", "u2": "OPEN"},
               "validity": {}, "joint": 1, "joint_choices": [[]], "joint_formula": ["top"],
               "bound": {"u2": ["unary", "deployed", ["const", "api"]]}}
     route = tmp_path / "route.sh"
@@ -622,21 +625,31 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
     answers([answer])
     monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(route))
     result = check_document(retargeted)
-    assert result["report_id"] == "r" * 64 and "discourse_hints" not in result
-    assert result["reviewed_presentations"] == {"u2": "Api is deployed.\n"}
+    assert result["report_id"] == "f" * 64 and "discourse_hints" not in result
+    assert result["references"] == retargeted_references
+    # `alice` is no registered name: no reviewed wording shows it
+    assert result["reviewed_presentations"] == {}
     assert result["coverage"]["bytes_by_status"] == {"CHECKED": 17, "OPEN": 16}
+    # an answer about the document as it was before the retargeting is no answer to it
+    answers([{**answer, "references": admitted["references"]}])
+    with pytest.raises(CheckerUnavailable, match=r"^CheckerUnavailable: .* another document \(references\)$"):
+        check_document(retargeted)
+    front["discourse"]["mentions"][0]["target"]["name"] = "api"
+    original = _write(tmp_path, front, source)
+    answer["references"] = admitted["references"]
+    answers([answer])
+    assert check_document(original)["reviewed_presentations"] == {"u2": "Api is deployed.\n"}
     # a bound formula the shown wording does not parse to is never shown
     answers([{**answer, "bound": {"u2": ["unary", "reviewed", ["const", "api"]]}}])
-    assert check_document(retargeted)["reviewed_presentations"] == {}
+    assert check_document(original)["reviewed_presentations"] == {}
     for key, value in [("validity", None), ("bound", None), ("bound", []), ("joint", True), ("joint", 2), ("joint_choices", [[], []]),
                        ("joint_choices", [[["rs1", True, 0]]]), ("joint_formula", None),
                        ("joint", "ResourceLimit: joint choices")]:
         broken = {**answer, key: value} if value is not None else {k: v for k, v in answer.items() if k != key}
         answers([broken])
         with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: the Lean discourse route returned no"):
-            check_document(retargeted)
+            check_document(original)
     answers([{"id": "python-admission", "status": "error", "error": "StaleTarget: m1"}], code=1)
-    front["discourse"]["mentions"][0]["target"]["name"] = "api"
     with pytest.raises(VEError, match="^StaleTarget: m1$") as caught:
-        check_document(_write(tmp_path, front, source))
+        check_document(original)
     assert caught.value.code == "StaleTarget"
