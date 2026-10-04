@@ -46,7 +46,7 @@ or not it accepts it, so a rejection of a seed is compared like any other answer
 | Surface | Python | Lean | Rust | Compared |
 |---|---|---|---|---|
 | `requests` | `conformance.three_way.python_verdict` | by the environment's language (`LEAN_REQUESTS`): `ve_conformance route` for ve.core@0.2; `ve_conformance` and its `check-certificate` mode for ve.core@0 and ve.core@0.1; no `search` (`NO_LEAN` gives each reason) | `ve conformance` where `rust_request` maps the case | outcome; each implementation's own diagnostic code (`diagnostic_code`: Python's `VEError.code`, Rust's code, Lean's text as `checker_error` classifies it); the text of a P0 `KNOWN` code on the P0 route (an `InvalidModel`'s generator instead); the verdict values. Rust's `certificate` verdict is a bounded search, so its value is not compared and a certificate the Lean route rejects does not contradict it |
-| `environment` | `Environment` | the route that decodes the envelope (`lean_route`, `ROUTES`): the service's `environment` mode, or the alternatives, risk, soft-norms, speech-acts, reports, norm-defaults or quantity route with a case that only decodes it | a `label` case for the core envelope and soft norms, a `quantity` case for W6; none for the other blocks (`ROUTES` gives each reason) | outcome; code; the text when Python or Lean gives a decoder type diagnostic (`TYPE_DIAGNOSTICS`, the env-profiles directive, Python against Lean only); the environment identity on the envelope and quantity routes |
+| `environment` | `Environment` | the route that decodes the envelope (`lean_route`, `ROUTES`): the service's `environment` mode, or the alternatives, risk, soft-norms, speech-acts, reports, norm-defaults or quantity route with a case that only decodes it | a `label` case for the core envelope and soft norms, a `quantity` case for W6; none for the other blocks (`ROUTES` gives each reason) | outcome; code; the text when Python or Lean gives a decoder type diagnostic (`TYPE_DIAGNOSTICS`, the env-profiles directive, Python against Lean only); the environment identity on the envelope and quantity routes. A route that names its own code (`OwnCodes`: the soft-norms route's `code`, a code of `soft-norms@0`) keeps it: it is compared with the code of the route's Python counterpart (`load_soft_document` with no norms), and its class in the contract's `codes` table is the code compared with `Environment` and Rust |
 | `wire` | the engine | `ve_diagnose` | none | the whole record, except the text and args of an `inherited` check |
 
 An input off the restricted wire (`null`, a float) is never sent: every Lean and Rust package reader refuses it as
@@ -63,17 +63,23 @@ Every row a Lean or Rust runner prints is checked before it is read, against the
 | Runner | Check |
 |---|---|
 | `ve_conformance route` | the service's `route` schema (`ve.backends.service_schema.check_row`), which `tests/test_lean_service_schema.py` checks against Lean's own decoders (`ve_response_decode`) |
-| `ve_conformance` (v0) and `check-certificate` | the assurance manifest's runner bindings (`ve/assurance-manifest.json`), read by `ve.backends.lean.row_problem`: response types and counted fields |
+| `ve_conformance` (v0) and `check-certificate` | the assurance manifest's runner bindings (`ve/assurance-manifest.json`), read by `ve.backends.lean.row_problem`: response types and counted fields; an error row carries nothing but the error (and `valid: false` in the certificate mode) |
 | the service's `environment` mode | the service client's schema check, and the identity field |
-| block routes and `ve_quantity` | the one-shot runner contract (`row_problem`) and each route encoder's ok fields (`LEAN_ROUTE_FIELDS`); `test_route_tables_are_the_genuine_rows_fields` checks them against genuine rows, field for field |
+| block routes and `ve_quantity` | the one-shot runner contract (`row_problem`), each route encoder's ok fields (`LEAN_ROUTE_FIELDS`) and no other field; on an error row of a route with its own code, that code, one of its contract's codes (`route_row_check`); `test_route_tables_are_the_genuine_rows_fields` checks the fields against genuine rows, field for field |
 | `ve_diagnose` | `clean`, or `fault` with one record of the wire contract's record fields (`RECORD_FIELDS`, the Python engine's `Fault` record) |
-| `ve conformance` (Rust) | the statuses and fields of the operation Rust reads the case as (`RUST_ROWS`, `rust_operation`); an error row's `{code, message}` |
+| `ve conformance` (Rust) | the statuses and fields of the operation Rust reads the case as (`RUST_ROWS`, `rust_operation`); an error row's `{code, message}` and no other field |
 
 Each batch must also print one row per case, bound to its case by id (or, for a case the runner could not read,
-by position) with JSON types kept apart, and exit 1 exactly when some row is an error.
+by position) with JSON types kept apart, and exit 1 exactly when some row is an error. A batch that does not
+answer (a crash or signal, no answer within `HANG_TIMEOUT`, a runner that cannot start, output that is not UTF-8
+or nests too deep to decode) is split until the case is alone, and that case did not answer. That, and a
+runner's refusal of a case's package, are values of their own types (`NoAnswer`, `Refused`), never rows: a
+printed `{"id": "0", "framing": "oops"}` is a malformed row, not a refusal, and a runner's own error code
+`framing` is a code (`refusal` alone makes a refusal).
 `test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers` checks that every genuine row passes, that
-a row reduced to its id is no answer on every runner, and that each field a check reads, dropped or retyped, is no
-answer.
+a row reduced to its id (alone, or with a `framing` or `panic` member) is no answer on every runner, that each
+field a check reads, dropped or retyped, is no answer, and that a field the producer does not print is no answer
+where the producer's schema is closed.
 
 ## Mutants
 
@@ -99,8 +105,8 @@ seed; `--deep N` takes N times as many from the date's seed.
 - **`python-crash`**: Python raised something other than `VEError`. An exception raised by the fuzzer's own
   adapter, for a field the adapter reads, means the call cannot be made and is not counted.
 - **`timeout`**: a Python call spent its CPU budget (`PYTHON_CPU`).
-- **`no-answer`**: a Lean or Rust process did not answer, by panic, signal, CPU limit, malformed output or a row
-  that fails its check. The batch is split until the input is alone.
+- **`no-answer`**: a Lean or Rust process did not answer, by panic, signal, CPU limit, hang, failure to start,
+  malformed output or a row that fails its check. The batch is split until the input is alone.
 - **`outcome`**, **`code`**, **`diagnostic`** or **`value`**: two implementations that take part disagree.
 
 A finding's signature is the surface, the profile (request family and kind, Lean route or wire unit), the classes,
@@ -137,7 +143,7 @@ entry may sit under a neighbouring id.
 | DF-15 | A request without its `model` (or with a misspelt key): Rust reads it as another operation (a document parsed, a search) and accepts; Lean's route says `property not found`. Python's adapter cannot make the call. | new: the Rust conformance dispatch (one case shape per kind) |
 | DF-16 | Python's search and countermodel check accept an object where `premises` must be an array; Lean says `array expected` and Rust `premises must be an array`. | new: the Python premises decoder |
 | DF-17 | The norm-defaults route rejects data flags (`norms route with data flags is not implemented`) on an environment Python's `Environment` accepts. | norm-defaults plan (data flags on the norm-defaults route) |
-| DF-18 | Python's `Environment` rejects the `soft` vocabulary block of the soft-norms sources of `conformance/soft_norms_rust.json` (`unknown=['soft']`), which Lean's soft-norms route and Rust accept. | `wire-contract-PLAN.md` 7, S3 row (`soft-norms@0` environment) |
+| DF-18 | Python's `Environment` rejects the `soft` vocabulary block of the soft-norms sources of `conformance/soft_norms_rust.json` (`unknown=['soft']`), which Rust accepts and Lean's soft-norms route accepts or rejects by a soft check of its own (Python's soft counterpart gives the same code). | `wire-contract-PLAN.md` 7, S3 row (`soft-norms@0` environment) |
 
 ## Acceptance items
 
@@ -148,6 +154,8 @@ entry may sit under a neighbouring id.
 | Off-wire inputs and Python timeouts are compared, not dropped (`test_python_accepting_an_off_wire_input_is_a_finding`, `test_a_python_timeout_is_a_finding`) | AGENT | done |
 | Every fixture is read or excluded with a reason; every engine with a path answers every seed (`test_every_fixture_is_read_or_excluded_with_a_reason`, `test_every_engine_with_a_path_answers_every_environment_seed`) | AGENT | done |
 | Every runner row is checked against its producer's schema; dropped and retyped fields are no answer (`test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers`) | AGENT | done |
+| A route's own code is kept, compared with its Python counterpart and checked against its contract's codes (`test_a_routes_own_code_is_kept_compared_and_checked`, `test_the_compared_code_of_an_own_code_is_its_contract_class`, `test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds`; the production reader `run_soft_case` refuses a code or message that is not text: `test_the_soft_route_reader_checks_the_code_it_keeps`) | AGENT | done |
+| Runner transport is not a row: printed `framing`/`panic` members and every transport failure are no answer, isolated by bisection (`test_a_printed_framing_member_is_a_malformed_row_not_a_refusal`, `test_a_runner_that_fails_in_transport_is_isolated_and_does_not_answer`, `test_a_runner_whose_output_is_not_utf8_does_not_answer`, `test_a_runner_code_named_framing_is_a_code_not_a_refusal`) | AGENT | done |
 | Baseline seeded with today's disagreements, each with a follow-up id | AGENT | done |
 | Review of the baseline's grouping into DF-1 to DF-18 | HUMAN | deferred to the branch review (owner: reviewer) |
 | The nightly script calls `--deep 20` | EXTERNAL | deferred: the nightly script is outside the repository (owner: orchestrator); the instruction is in `docs/ARCHITECTURE-LAYERS.md` |
@@ -159,8 +167,8 @@ entry may sit under a neighbouring id.
   carry them.
 - The `max_count` limit form, and the core limits of `ve/limits.py`, which are not in a wire-contract table.
 - 10,000-deep nesting.
-- The legacy soft-norms route (`load_soft_document` against `ve_soft_norms_route`), which `wire_contract_gate.py`
-  compares.
+- The legacy soft-norms route's norms (`load_soft_document` against `ve_soft_norms_route`), which
+  `wire_contract_gate.py` compares; the environment surface compares its environment decode, with no norms.
 - The discourse, rights and readings routes: no fixture environment takes them, and the route table has no entry
   for them.
 - Requests that a use case's own script builds (its `.ve` documents as admission graphs, certificates whose

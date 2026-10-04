@@ -46,12 +46,27 @@ def run_soft_case(executable, case):
         raise VEError(f"soft route returned invalid JSON: {completed.stderr.strip()}") from exc
     row = rows[0]
     if row.get("status") == "error":
+        problem = soft_error_problem(row)
+        if problem:
+            raise CheckerUnavailable(f"Lean soft route: {problem}", operation="soft-route", backend="lean")
         error = VEError(row.get("error", "soft route rejected input"))
         error.code = row.get("code", error.code)
         raise error
     if completed.returncode != 0 or row.get("status") != "ok":
         raise VEError(f"soft route failed: {completed.stderr.strip()}")
     return row
+
+
+def soft_error_problem(row: dict) -> str | None:
+    """Why a soft route error row is not a rejection, or None: its message is text, and so is the code it
+    names, when it names one (`SoftNorms/Run.lean` `runCaseReported`). Without a code, the rejection keeps
+    VEError's. Which codes the route may name is the soft-norms@0 contract's table, a diagnostic module
+    that stays off this verdict path (tests/test_softnorms_contract.py); tools/difffuzz.py checks it."""
+    if "error" in row and type(row["error"]) is not str:
+        return "an error row's message is not text"
+    if "code" in row and (type(row["code"]) is not str or not row["code"]):
+        return "an error row's code is not text"
+    return None
 
 
 _SCALARS = {

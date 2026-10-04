@@ -235,6 +235,98 @@ def test_error_verdicts_keep_each_implementations_code():
     assert error_verdict(None, "UnsupportedProfile: Unsupported language")["diagnostic_code"] == "UnsupportedProfile"
 
 
+def _soft_reproducer():
+    """The recheck's B1 reproducer: a soft-norms environment with `vocabulary: 7`, which the soft-norms route
+    rejects with its own code `SOFT_INVALID_INPUT`."""
+    surface = df.EnvironmentSurface()
+    seed = next(s for s in surface.seeds() if s.profile == "soft-norms")
+    root = df.apply(seed.root, ["type", ["vocabulary"], "number"])
+    return surface, df.Seed("environment", "soft-norms", seed.id, root), root
+
+
+def _with_lean_row(surface, seed, root, change):
+    """The finding classes and projection of `root` when the Lean route's genuine row is changed by
+    `change`; Python answers as it does."""
+    answers, [(case, row)] = _genuine(surface, "lean", [seed])
+    changed = deepcopy(row)
+    change(changed)
+    [lean] = _replay_rows(surface, "lean", [seed], [changed])
+    live = {"python": surface.python(seed, root), "lean": lean, "rust": df.NOT_APPLICABLE}
+    return row, lean, df.classes(surface, seed, live, root)
+
+
+def test_a_routes_own_code_is_kept_compared_and_checked(built):
+    """The recheck's B1/B4: the soft-norms route's own code survives the reduction. Python's counterpart of
+    the route gives the same code, so the genuine answers agree; Lean's code changed to another code of the
+    contract is a `code` finding that names both own codes; the code deleted, retyped or outside the
+    contract's codes is a runner that did not answer."""
+    surface, seed, root = _soft_reproducer()
+    row, lean, (found, _) = _with_lean_row(surface, seed, root, lambda row: None)
+    assert row["status"] == "error" and row["code"] == "SOFT_INVALID_INPUT", row
+    assert lean["own"] == "SOFT_INVALID_INPUT" and lean["code"] == "InvalidInput"
+    assert surface.python(seed, root)["own"] == "SOFT_INVALID_INPUT" and found == []
+    _, lean, (found, projected) = _with_lean_row(
+        surface, seed, root, lambda row: row.update(code="SOFT_UNKNOWN_RANK"))
+    assert found == ["code"], (found, lean)
+    assert (projected["python"]["own"], projected["lean"]["own"]) == ("SOFT_INVALID_INPUT", "SOFT_UNKNOWN_RANK")
+    for change in (lambda row: row.pop("code"), lambda row: row.update(code=7),
+                   lambda row: row.update(code="SOFT_NOT_A_CODE"), lambda row: row.update(code="InvalidInput")):
+        _, lean, (found, _) = _with_lean_row(surface, seed, root, change)
+        assert lean["outcome"] == "panic" and found == ["no-answer"], (lean, found)
+    surface.close()
+
+
+def test_the_compared_code_of_an_own_code_is_its_contract_class(built):
+    """An own code is compared with engines that do not speak the contract by its class in the contract's
+    `codes` table (the producer's own classification), not by VEError's default."""
+    surface, seed, root = _soft_reproducer()
+    codes = df.contract_codes("soft-norms@0")
+    for code in ("SOFT_UNSUPPORTED_PROFILE", "SOFT_DUPLICATE_DECLARATION", "SOFT_UNKNOWN_PARTY"):
+        _, lean, _ = _with_lean_row(surface, seed, root, lambda row: row.update(code=code))
+        assert (lean["code"], lean["own"]) == (codes[code]["class"], code) and lean["code"] != "InvalidInput"
+    surface.close()
+
+
+def test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds(built):
+    """Each route that names its own codes (`OwnCodes`) is compared with its Python counterpart: on every
+    seed of the route both give a code (or both accept), and they agree."""
+    surface = df.EnvironmentSurface()
+    owned = [name for name, route in df.ROUTES.items() if route.own]
+    assert owned == ["soft-norms"]
+    seeds = [s for s in surface.seeds() if s.profile in owned]
+    try:
+        rows = df.evaluate(surface, [(seed, seed.root) for seed in seeds])
+    finally:
+        surface.close()
+    for seed, (_, _, answers, _) in zip(seeds, rows):
+        assert "own" in answers["python"] and "own" in answers["lean"], (seed.id, answers)
+        assert answers["python"]["own"] == answers["lean"]["own"], (seed.id, answers)
+
+
+def _soft_runner(tmp_path, row):
+    """A soft route runner that prints `row` for its case."""
+    script = tmp_path / "soft_route"
+    script.write_text(f"#!{sys.executable}\nimport sys\nsys.stdout.write({json.dumps([row])!r})\nsys.exit(1)\n")
+    script.chmod(0o755)
+    return script
+
+
+def test_the_soft_route_reader_checks_the_code_it_keeps(tmp_path):
+    """The production reader of the same field (`ve.backends.lean.run_soft_case`): the route's code is the
+    rejection's code; a code or a message that is not text is no rejection but CheckerUnavailable. (Which
+    codes are the contract's is checked by the fuzzer: the contract table stays off verdict paths.)"""
+    from ve.backends.lean import run_soft_case
+    from ve.errors import CheckerUnavailable, VEError
+    base = {"id": "x", "status": "error", "error": "InvalidInput: invalid vocabulary"}
+    with pytest.raises(VEError) as raised:
+        run_soft_case(_soft_runner(tmp_path, {**base, "code": "SOFT_INVALID_INPUT"}), {"id": "x"})
+    assert raised.value.code == "SOFT_INVALID_INPUT"
+    for bad in ({**base, "code": 7}, {**base, "code": ""}, {**base, "code": None}, {**base, "code": ["x"]},
+                {**base, "error": 7}):
+        with pytest.raises(CheckerUnavailable):
+            run_soft_case(_soft_runner(tmp_path, bad), {"id": "x"})
+
+
 # ---------------------------------------------------------------- B2: missing answers are findings
 
 def test_python_accepting_an_off_wire_input_is_a_finding(built, monkeypatch):
@@ -266,7 +358,7 @@ def test_every_runner_refuses_an_off_wire_package(built, command):
     for case in ({"id": "0", "kind": "evaluate", "environment": None}, {"id": "0", "model": 1.5}):
         assert not df.on_wire(case)
         [row] = df.run_rows([executable, *command[1:]], [case])
-        assert set(row) == {"framing"}, (command, row)
+        assert type(row) is df.Refused, (command, row)
 
 
 def test_a_python_timeout_is_a_finding(monkeypatch):
@@ -285,10 +377,98 @@ def test_off_wire_inputs_get_the_package_refusal():
     assert not df.on_wire({"a": None}) and not df.on_wire({"a": 1.5})
     seed = df.Seed("toy", "toy", "toy", None, ("python", "lean"))
     [answers] = Toy().answers([(seed, {"bad": None})])
-    assert answers["lean"] == df.error(df.FRAMING, df.off_wire({"bad": None}))
+    assert answers["lean"] == df.refusal(df.off_wire({"bad": None}))
     # A refusal agrees with a rejection and disagrees with an acceptance.
     assert df.classes(Toy(), seed, answers, {"bad": None})[0] == []
     assert df.classes(Toy(), seed, {**answers, "python": df.ok()}, {"bad": None})[0] == ["outcome"]
+
+
+def test_a_runner_code_named_framing_is_a_code_not_a_refusal():
+    """Only the fuzzer makes a refusal (`refusal`): a runner whose own error code is `framing` gives a code,
+    compared like any other."""
+    seed = df.Seed("toy", "toy", "toy", None, ("python", "lean"))
+    answers = {"python": df.error("InvalidInput", "bad"), "lean": df.error(df.FRAMING, "bad")}
+    assert df.classes(Toy(), seed, answers, {})[0] == ["code"]
+    assert df.classes(Toy(), seed, {**answers, "lean": df.refusal("bad")}, {})[0] == []
+
+
+# ---------------------------------------------------------------- recheck B4 and B: transport is not a row
+
+def _fake_runner(monkeypatch, answer):
+    """Every runner batch answered by `answer(cases)`: (returncode, stdout), or an exception to raise."""
+    import subprocess
+
+    def run(command, stdin, cpu_seconds, env=None):
+        result = answer(json.loads(stdin))
+        if isinstance(result, BaseException):
+            raise result
+        returncode, stdout = result
+        return subprocess.CompletedProcess(command, returncode, stdout, ""), 0.0
+    monkeypatch.setattr(df, "run_cpu_bounded", run)
+
+
+def _invalid_label():
+    """An invalid-label request (`labels:label` with the label replaced by "x"), which Python rejects."""
+    seed = next(s for s in df.Requests().seeds() if s.profile == "labels:label")
+    return seed, df.apply(seed.root, ["type", ["label"], "string"])
+
+
+def _request_classes(seed, root):
+    surface = df.Requests()
+    [lean] = surface.lean([(seed, root)])
+    answers = {"python": surface.python(seed, root), "lean": lean, "rust": df.NOT_APPLICABLE}
+    return lean, df.classes(surface, seed, answers, root)[0]
+
+
+def test_a_printed_framing_member_is_a_malformed_row_not_a_refusal(monkeypatch):
+    """The recheck's B4 reproducer: a runner that exits 0 and prints `[{"id": "0", "framing": "oops"}]` for an
+    invalid-label request once read as the fuzzer's own package refusal, which agrees with Python's
+    rejection (no finding). It is a row, and a malformed one: no answer."""
+    seed, root = _invalid_label()
+    assert df.Requests().python(seed, root)["outcome"] == "error"
+    for printed in ({"framing": "oops"}, {"panic": "oops"}, {"framing": "oops", "status": "error", "error": "x"}):
+        _fake_runner(monkeypatch, lambda cases: (
+            1 if "status" in printed else 0, json.dumps([{"id": c["id"], **printed} for c in cases])))
+        [row] = df.run_rows(["runner"], [{"id": "0"}])
+        assert type(row) is dict and df.panic(row) is None
+        lean, found = _request_classes(seed, root)
+        assert lean["outcome"] == "panic" and found == ["no-answer"], (printed, lean, found)
+
+
+@pytest.mark.parametrize("failure", ["timeout", "cannot start", "not text", "too deep"])
+def test_a_runner_that_fails_in_transport_is_isolated_and_does_not_answer(monkeypatch, failure):
+    """The recheck's B: a runner that does not finish within HANG_TIMEOUT raised `TimeoutExpired` out of the
+    fuzzer. Every transport failure (a hang, a runner that cannot start, output that is not UTF-8, output
+    nested too deep to decode) is the case's runner not answering: the batch is split until that case is
+    alone, the others answer, and the case is a `no-answer` finding."""
+    import subprocess
+    raised = {"timeout": subprocess.TimeoutExpired(["runner"], 1), "cannot start": FileNotFoundError(2, "absent"),
+              "not text": UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid start byte")}
+
+    def answer(cases):
+        if any(c.get("bad") for c in cases):
+            if failure in raised:
+                return raised[failure]
+            return 0, "[" * 100000
+        return 0, json.dumps([{"id": c["id"], "status": "ok"} for c in cases])
+    _fake_runner(monkeypatch, answer)
+    cases = [{"id": str(i), **({"bad": True} if i == 5 else {})} for i in range(9)]
+    rows = df.run_rows(["runner"], cases)
+    assert [type(row).__name__ for row in rows] == ["dict"] * 5 + ["NoAnswer"] + ["dict"] * 3, rows
+    seed, root = _invalid_label()
+    _fake_runner(monkeypatch, lambda cases: answer([{**c, "bad": True} for c in cases]))
+    lean, found = _request_classes(seed, root)
+    assert lean["outcome"] == "panic" and found == ["no-answer"], (lean, found)
+
+
+def test_a_runner_whose_output_is_not_utf8_does_not_answer(tmp_path):
+    """The `not text` failure above, from a real process: `subprocess` raises while decoding its output."""
+    script = tmp_path / "runner.py"
+    script.write_text("import sys\nsys.stdin.read()\nsys.stdout.buffer.write(b'\\xff\\xfe')\n")
+    [row] = df.run_rows([sys.executable, script], [{"id": "0"}])
+    assert type(row) is df.NoAnswer and "UTF-8" in row.reason
+    [row] = df.run_rows([tmp_path / "absent"], [{"id": "0"}])
+    assert type(row) is df.NoAnswer and "cannot start" in row.reason
 
 
 # ---------------------------------------------------------------- B3: coverage
@@ -402,7 +582,7 @@ def _replay_rows(surface, engine, seeds, rows):
         bound = df.bind_rows(chosen, cases)
         if bound is not None:
             return bound
-        return [(df.bind_rows([row], [case]) or [{"panic": "rows out of order"}])[0]
+        return [(df.bind_rows([row], [case]) or [df.NoAnswer("rows out of order")])[0]
                 for row, case in zip(chosen, cases)]
     batched = df.batched
     df.batched = printed
@@ -425,6 +605,8 @@ def _schema_fields(surface, engine, seed, case, row):
     out = {"status": "string", "id": "string", **({"error": "string"} if row.get("status") == "error" else {})}
     if row.get("status") != "error":
         out.update(fields)
+    elif surface.name == "environment" and engine == "lean" and df.ROUTES[df.lean_route(seed.root)].own:
+        out[df.ROUTES[df.lean_route(seed.root)].own.field] = "string"
     paths = {(name,): spec for name, spec in out.items() if name in row}
     if surface.name == "wire" and "diagnostic" in row:
         paths.update({("diagnostic", name): spec for name, spec in df.RECORD_FIELDS.items()})
@@ -470,22 +652,37 @@ def _row_cases():
     return out
 
 
+def _closed(surface, engine, seed, row):
+    """Whether the row's check admits no field its producer does not print: the block routes, `ve_diagnose`
+    and the service's route mode (its closed schemas); the error rows of the v0 runner and of Rust."""
+    if engine == "lean" and (surface.name in ("environment", "wire") or seed.meta["lean"] == "route"):
+        return True
+    return row.get("status") == "error"
+
+
 def test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers(built):
-    """Checklist 4 and the review's B4 reproducer (an alternatives answer reduced to `{"id": "0"}`): every
-    genuine row of every runner passes its check; each field the check reads, dropped or given another JSON
-    type, makes the row a runner that did not answer (`panic`), whatever else the row says."""
+    """Checklist 4 and the review's B4 reproducers (an alternatives answer reduced to `{"id": "0"}`; a row
+    `{"id": "0", "framing": "oops"}`, which once read as the fuzzer's own package refusal): every genuine
+    row of every runner passes its check; a row reduced to its id, alone or with a `framing` or `panic`
+    member, is no answer; each field the check reads, dropped or given another JSON type, and a field the
+    producer does not print, make the row a runner that did not answer (`panic`), whatever else the row
+    says."""
     for surface, engine, seeds in _row_cases():
         answers, genuine = _genuine(surface, engine, seeds)
         assert all(a["outcome"] in ("ok", "error") for a in answers), [a for a in answers if a["outcome"] == "panic"]
-        reduced = _replay_rows(surface, engine, seeds, [{"id": case["id"]} for case, _ in genuine])
-        assert all(a["outcome"] == "panic" for a in reduced), (surface.name, engine, reduced)
+        for extra in ({}, {"framing": "oops"}, {"panic": "oops"}):
+            reduced = _replay_rows(surface, engine, seeds, [{"id": case["id"], **extra} for case, _ in genuine])
+            assert all(a["outcome"] == "panic" for a in reduced), (surface.name, engine, extra, reduced)
         for index, (seed, (case, row)) in enumerate(zip(seeds, genuine)):
-            for path, spec in _schema_fields(surface, engine, seed, case, row).items():
-                for variant in _variants(row, path, spec):
-                    rows = [r for _, r in genuine]
-                    rows[index] = variant
-                    answer = _replay_rows(surface, engine, seeds, rows)[index]
-                    assert answer["outcome"] == "panic", (surface.name, engine, seed.id, path, variant, answer)
+            variants = [(path, variant) for path, spec in _schema_fields(surface, engine, seed, case, row).items()
+                        for variant in _variants(row, path, spec)]
+            if _closed(surface, engine, seed, row):
+                variants.append((("framing",), {**row, "framing": "oops"}))
+            for path, variant in variants:
+                rows = [r for _, r in genuine]
+                rows[index] = variant
+                answer = _replay_rows(surface, engine, seeds, rows)[index]
+                assert answer["outcome"] == "panic", (surface.name, engine, seed.id, path, variant, answer)
 
 
 def test_route_tables_are_the_genuine_rows_fields(built):
@@ -516,7 +713,8 @@ def test_a_row_that_names_its_case_by_position_is_bound_to_it(tmp_path):
         "                  {'id': c['id'], 'status': 'ok'} for i, c in enumerate(cases)]))\n"
         "sys.exit(1 if any(c.get('bad') for c in cases) else 0)\n")
     rows = df.run_rows([sys.executable, script], [{"id": "a"}, {"id": "b", "bad": True}])
-    assert rows == [{"id": "a", "status": "ok"}, {"id": "b", "status": "error", "error": "bad"}]
+    # Bound by position, the row keeps its form: its check knows the runner never ran the case.
+    assert rows == [{"id": "a", "status": "ok"}, {"case_index": 1, "status": "error", "error": "bad"}]
 
 
 def test_an_exit_status_that_disagrees_with_the_rows_is_no_answer(tmp_path):
@@ -526,7 +724,7 @@ def test_an_exit_status_that_disagrees_with_the_rows_is_no_answer(tmp_path):
         "cases = json.load(sys.stdin)\n"
         "print(json.dumps([{'id': c['id'], 'status': 'error', 'error': 'x'} for c in cases]))\n")
     rows = df.run_rows([sys.executable, script], [{"id": "a"}])
-    assert set(rows[0]) == {"panic"}
+    assert type(rows[0]) is df.NoAnswer
 
 
 # ---------------------------------------------------------------- the pieces
@@ -633,10 +831,10 @@ def test_a_runner_that_does_not_answer_is_found_by_bisection(tmp_path):
     cases[3]["boom"] = True
     cases[6]["frame"] = True
     rows = df.run_rows([sys.executable, script], cases)
-    assert [sorted(row) for row in rows] == [["id", "status"]] * 3 + [["panic"]] + [["id", "status"]] * 2 + \
-        [["framing"]] + [["id", "status"]] * 2
+    assert [type(row).__name__ for row in rows] == ["dict"] * 3 + ["NoAnswer"] + ["dict"] * 2 + \
+        ["Refused"] + ["dict"] * 2
     assert df.panic(rows[3])["outcome"] == "panic"
-    assert df.panic(rows[6]) == df.error(df.FRAMING, "")
+    assert df.panic(rows[6]) == df.refusal("")
 
 
 def test_only_veerror_is_a_python_answer():
