@@ -436,8 +436,8 @@ def test_large_staged_change_stays_under_ten_cpu_seconds(staging, tmp_path):
         files[f"experiments/timing-probe/case_{number:04}.md"] = line * 120
     staging.stage_many(files)
     staging.rehash(*lean)
-    # At the hook's own waits (the `lean --deps` budget and toolchain probes), the large change passes.
-    staging.env.pop("VE_PRECOMMIT_TIMEOUT")
+    # The hook's waits stay the suite's hang guard: a real child never runs against their
+    # defaults (30 s, 3 s, 2 s), which tests/test_hang_guards.py checks by instrumentation.
     result = staging.run("--timings")
     assert result.returncode == 0, result.stderr
     # The hook's own work is measured in CPU seconds, which load does not stretch as it

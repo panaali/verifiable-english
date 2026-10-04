@@ -14,6 +14,7 @@ import subprocess
 import sys
 import threading
 import time
+from types import SimpleNamespace
 
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
@@ -935,26 +936,55 @@ def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
 
 def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch):
     """Load reproducer (W6a generator, Lean authority, a 2 h 14 min suite): the
-    5-second default is the users'; without a setting a request still waits 5 s."""
+    5-second default is the users'; without a setting a request still waits 5 s (a
+    start 30 s). Each default is checked at the wait it gives: the services start under
+    the suite's settings and answer within HANG_TIMEOUT, so no real child runs against
+    a default (tests/conftest.py refuses one)."""
     from ve.backends import lean_service
-    for variable in ("VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"):
-        monkeypatch.delenv(variable)
     assert (lean_service.INTERACTIVE_TIMEOUT, lean_service.STARTUP_TIMEOUT) == (5.0, 30.0)
-    assert lean_service.configured_seconds("VE_LEAN_SERVICE_STARTUP_TIMEOUT", 30.0) == 30.0
     waits = []
     roundtrip = LeanService._roundtrip
 
     def recorded(self, mode, cases_text, count, timeout, *rest):
         waits.append(timeout)
-        return roundtrip(self, mode, cases_text, count, timeout, *rest)
+        return roundtrip(self, mode, cases_text, count, HANG_TIMEOUT, *rest)
     monkeypatch.setattr(LeanService, "_roundtrip", recorded)
     case = {"id": "a", "ast": [["top"]]}
-    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service:
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service, \
+            LeanService(fake(tmp_path, "ok"), timeout=3, allow_unlisted_build=True) as fixed:
+        for variable in ("VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"):
+            monkeypatch.delenv(variable)
         service.run("evaluate", [case])
         service.run("evaluate", [case], timeout=7)
-    with LeanService(fake(tmp_path, "ok"), timeout=3, allow_unlisted_build=True) as service:
-        service.run("evaluate", [case])
+        fixed.run("evaluate", [case])
     assert waits == [5.0, 7, 3]
+    assert lean_service.configured_seconds("VE_LEAN_SERVICE_STARTUP_TIMEOUT", 30.0) == 30.0
+
+    class Unstarted:
+        """A service process that is never started: two ends of a pipe."""
+        def __init__(self, argv, **options):
+            read, write = os.pipe()
+            self.stdout, self.stdin = open(read, "rb", buffering=0), open(write, "wb", buffering=0)
+
+        def poll(self):
+            return 0
+
+        def wait(self, timeout=None):
+            return 0
+    starts = []
+
+    def handshake(self, deadline):
+        starts.append(deadline)
+        raise lean_service._Failure("instrumented start")
+    monkeypatch.setattr(lean_service, "subprocess", SimpleNamespace(
+        Popen=Unstarted, PIPE=subprocess.PIPE, TimeoutExpired=subprocess.TimeoutExpired))
+    monkeypatch.setattr(lean_service, "time", SimpleNamespace(monotonic=lambda: 0.0))
+    monkeypatch.setattr(LeanService, "_read_line", handshake)
+    for startup_timeout in (None, 4):
+        with pytest.raises(CheckerUnavailable, match="instrumented start"):
+            LeanService(fake(tmp_path, "ok"), startup_timeout=startup_timeout, address_space=None,
+                        allow_unlisted_build=True).start()
+    assert starts == [30.0, 30.0, 4, 4]  # one retry each
 
 
 def test_the_setting_replaces_the_request_and_startup_defaults(tmp_path, monkeypatch):
