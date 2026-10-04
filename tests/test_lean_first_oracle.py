@@ -28,7 +28,7 @@ def test_the_oracle_runs_the_pre_deletion_python(tmp_path, capfd):
     script = tmp_path / "probe.py"
     script.write_text("import ve\nfrom ve.errors import UnknownSymbol\n"
                       "print(ve.__file__)\nprint(UnknownSymbol('x').message)\n")
-    assert oracle.run(script) == 0
+    assert oracle.run(script, scratch=tmp_path) == 0
     location, message = capfd.readouterr().out.splitlines()
     assert "ve-lean-first-oracle-" in location and message == "x"
     assert UnknownSymbol("x").message == "UnknownSymbol: x"
