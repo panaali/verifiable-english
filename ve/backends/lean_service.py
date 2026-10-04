@@ -76,7 +76,11 @@ class _Failure(Exception):
     """An operational failure of one process; the supervisor restarts it."""
 
 
-def _decode_json(line: bytes) -> object:
+def _decode_json(line: bytes | str) -> object:
+    """A runner's JSON output (this service, the Rust JSONL checker, the one-shot routes that are not
+    read as restricted JSON): duplicate fields, non-finite constants and strings that are not Unicode
+    text (a `\\ud800` escape decodes to a lone surrogate, which no Lean or Rust string holds) raise
+    ValueError."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -88,8 +92,19 @@ def _decode_json(line: bytes) -> object:
     def invalid_constant(value):
         raise ValueError(f"invalid JSON number {value}")
 
-    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
-                      parse_int=_json_integer)
+    value = json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
+                       parse_int=_json_integer)
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if type(item) is str:
+            item.encode("utf-8")  # UnicodeEncodeError, a ValueError, on a lone surrogate
+        elif type(item) is list:
+            pending.extend(item)
+        elif type(item) is dict:
+            pending.extend(item)
+            pending.extend(item.values())
+    return value
 
 
 def _json_integer(digits: str) -> int | Decimal:

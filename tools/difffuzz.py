@@ -32,9 +32,11 @@ is that refusal (`framing`), which agrees with any rejection and disagrees with 
 Every row a Lean or Rust runner returns is checked against the schema its producer declares before it is
 read (the `*_row_problem` checks: the Lean service schemas, the assurance manifest's runner bindings, and the
 encoders' response tables `LEAN_ROUTE_FIELDS`, `RECORD_FIELDS` and `RUST_ROWS`, with each route's own code);
-a row that fails is a runner that did not answer, never an answer. A runner that does not answer at all (a
-crash, a hang, output that is not text or JSON) or refuses a package is a value of its own type
-(`NoAnswer`, `Refused`), never a row, so nothing a runner prints can pass for either.
+a row that fails is a runner that did not answer, never an answer. The row of a case a runner could not read
+is `POSITION_ROW` alone: no field of the route it never ran. A runner that does not answer at all (a crash, a
+hang, output that is not Unicode text or JSON) or refuses a package is a value of its own type (`NoAnswer`,
+`Refused`), never a row, so nothing a runner prints can pass for either. Every answer enters the comparison
+through `held`: one that cannot be kept as JSON text is a crash or no answer, never the fuzzer's exception.
 
 A *finding* is a Python exception other than VEError, a Python call that does not finish in its CPU
 budget, a Lean or Rust process that does not answer (panic, signal, hang, malformed output), or a disagreement
@@ -138,6 +140,16 @@ def canonical(value) -> str:
 
 def digest(value) -> str:
     return hashlib.sha256(canonical(value).encode()).hexdigest()[:16]
+
+
+def unholdable(value):
+    """Why `value` cannot be signed, reported and kept in the baseline (`canonical`, then UTF-8: a lone
+    surrogate, a number JSON cannot print, a value that is not JSON), or None when it can."""
+    try:
+        canonical(value).encode("utf-8")
+    except (TypeError, ValueError, RecursionError) as exc:
+        return f"{type(exc).__name__}: {exc}"[:200]
+    return None
 
 
 # ---------------------------------------------------------------- mutations
@@ -447,6 +459,18 @@ def python_authority():
             os.environ["VE_AUTHORITY"] = previous
 
 
+def held(engine, answer):
+    """`answer` as the fuzzer keeps it: every answer is signed, reported and stored as JSON text, so one
+    that cannot be (`unholdable`: a diagnostic quoting a lone surrogate, say) is Python's crash, or a Lean
+    or Rust runner that did not answer."""
+    problem = unholdable(answer)
+    if problem is None:
+        return answer
+    if engine == "python":
+        return {"outcome": "crash", "code": "UnholdableAnswer", "text": problem}
+    return {"outcome": "panic", "text": f"answer is not JSON text: {problem}"}
+
+
 def call_python(function, harness):
     """Run one Python call. A VEError is the implementation's answer; any other exception raised
     inside `ve/` is a crash; one raised by the harness itself (`harness` files: a field the adapter
@@ -531,8 +555,12 @@ def _read_batch(completed, cases):
         return None, f"exit {completed.returncode}: {completed.stderr[-300:]}"
     if "PANIC" in completed.stderr or "panicked" in completed.stderr:
         return None, f"panic: {completed.stderr[-300:]}"
+    from ve.backends.lean_service import _decode_json
     try:
-        rows = json.loads(completed.stdout)
+        # The runners' reader: a string that is not Unicode text (a `\ud800` escape) is no answer.
+        rows = _decode_json(completed.stdout)
+    except UnicodeError:
+        return None, "output is not Unicode text: a string holds a lone surrogate"
     except (ValueError, RecursionError):
         rows = None
     if type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows):
@@ -686,7 +714,8 @@ def bound_row_problem(executable, mode, kinds):
         # mode `valid: false` (`CertificateWire.runCaseReported`).
         if row.get("valid", False) is not False:
             return "an error row says its certificate is valid"
-        return closed_row_problem(row, {}, ("valid",) if mode == "check-certificate" else ())
+        valid = ("valid",) if mode in ("check-certificate", "order") else ()
+        return closed_row_problem(row, {}, valid, valid)
     return check
 
 
@@ -696,14 +725,24 @@ def fields_row_problem(fields, counts=None):
     return check
 
 
-def closed_row_problem(row, response, error_fields=()):
+# The row every Lean runner prints for a case it could not read (`JsonInput.parseCases` gave an error:
+# `lean/Main.lean`, each route's `main`, `Service/Protocol.lean`; `ResponseDecode.lean` reads it so): it
+# never ran the case's route, so it carries none of the route's fields. `lean/Main.lean` alone adds
+# `valid: false` in its certificate and order modes.
+POSITION_ROW = ("status", "case_index", "error")
+
+
+def closed_row_problem(row, response, error_fields=(), position_fields=()):
     """The fields of a row its producer does not print, or None: an ok row is its id, status and
-    `response`; an error row its id (or, for a case the runner could not read, its position), status,
-    error and at most `error_fields`."""
+    `response`; an error row of a case the runner ran its id, status, error and at most `error_fields`;
+    the error row of a case it could not read (named by position) `POSITION_ROW` and at most
+    `position_fields`, never a field of the route it did not run."""
     if row["status"] == "ok":
         allowed = {"id", "status", *response}
+    elif "id" in row:
+        allowed = {"id", "status", "error", *error_fields}
     else:
-        allowed = {"id" if "id" in row else "case_index", "status", "error", *error_fields}
+        allowed = {*POSITION_ROW, *position_fields}
     extra = sorted(set(row) - allowed)
     return f"a row has fields its producer does not print: {extra}" if extra else None
 
@@ -712,12 +751,13 @@ def route_row_check(name):
     """The check of the rows of a Lean block route that decodes an environment (`ROUTES`): the one-shot
     runner contract; the encoder's ok fields (`LEAN_ROUTE_FIELDS`) and no other field; and, where the
     route names its own code (`OwnCodes`), that code on every error row of a case it ran: a string
-    among its contract's codes."""
+    among its contract's codes. The row of a case the route could not read names no code
+    (`closed_row_problem`)."""
     fields, own = LEAN_ROUTE_FIELDS[name], ROUTES[name].own
     error_fields = (own.field,) if own else ()
 
     def check(case, row, index):
-        problem = lean_row_problem(case, row, index, fields) or closed_row_problem(row, fields, error_fields)
+        problem = lean_row_problem(case, row, index, fields) or closed_row_problem(row, fields, error_fields, ())
         if problem or own is None or row["status"] != "error" or "id" not in row:
             return problem
         code = row.get(own.field)
@@ -853,7 +893,7 @@ class Surface:
             else:
                 results = getattr(self, engine)([items[index] for index in chosen])
             for index, answer in zip(chosen, results):
-                out[index][engine] = answer
+                out[index][engine] = held(engine, answer)
         return out
 
     def text_fixed(self, seed, left, right):

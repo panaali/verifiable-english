@@ -471,6 +471,171 @@ def test_a_runner_whose_output_is_not_utf8_does_not_answer(tmp_path):
     assert type(row) is df.NoAnswer and "cannot start" in row.reason
 
 
+# ---------------------------------------------------------------- looprecheck2: rows of unread cases, text
+
+def _position_rows(extra):
+    """A runner that exits 1 and prints, for every case, the row of a case it could not read, with `extra`."""
+    return lambda cases: (1, json.dumps([{"case_index": i, "status": "error",
+                                          "error": "InvalidInput: invalid vocabulary", **extra}
+                                         for i, _ in enumerate(cases)]))
+
+
+def _environment_classes(surface, seed, root):
+    [lean] = surface.lean([(seed, root)])
+    answers = {"python": surface.python(seed, root), "lean": lean, "rust": df.NOT_APPLICABLE}
+    return lean, df.classes(surface, seed, answers, root)[0]
+
+
+def test_a_row_for_a_case_the_route_could_not_read_names_no_route_code(monkeypatch):
+    """The looprecheck2 B reproducer: for the soft-norms environment with `vocabulary: 7`, a route row that
+    names its case by position and carries `code: 7` (or a contract code, or an unknown one) gave no
+    finding: the code went unchecked without an `id`, then was dropped. That row is the error of a case the
+    route never ran, so it names no code; any route field on it is a runner that did not answer."""
+    surface, seed, root = _soft_reproducer()
+    _fake_runner(monkeypatch, _position_rows({}))
+    lean, found = _environment_classes(surface, seed, root)
+    assert lean["outcome"] == "error" and "own" not in lean and "no-answer" not in found, (lean, found)
+    for code in (7, "SOFT_UNKNOWN_RANK", "SOFT_INVALID_INPUT", "SOFT_NOT_A_CODE", None, ["x"]):
+        _fake_runner(monkeypatch, _position_rows({"code": code}))
+        lean, found = _environment_classes(surface, seed, root)
+        assert lean["outcome"] == "panic" and "no-answer" in found, (code, lean, found)
+    surface.close()
+
+
+def _deep_case():
+    """A case nested deeper than every Lean runner's case decoder reads (`JsonInput.parseCases`, 255
+    levels in an array): the runner answers it by position."""
+    deep = "x"
+    for _ in range(300):
+        deep = [deep]
+    return {"id": "0", "kind": "evaluate", "deep": deep}
+
+
+# Every Lean runner the fuzzer reads, with the check its rows get (`lean_row_check`, `route_row_check`,
+# `diagnose_row_problem`; the service's environment mode is checked by its client's schemas).
+LEAN_RUNNER_CHECKS = {
+    "ve_conformance route": (["ve_conformance", "route"], df.route_row_problem),
+    "ve_conformance": (["ve_conformance"], df.bound_row_problem("ve_conformance", "", [])),
+    "ve_conformance check-certificate": (["ve_conformance", "check-certificate"],
+                                         df.bound_row_problem("ve_conformance", "check-certificate", [])),
+    "ve_diagnose": (["ve_diagnose", "demo@0"], df.diagnose_row_problem),
+    **{route.lean: ([route.lean], df.route_row_check(name)) for name, route in df.ROUTES.items() if route.case},
+}
+# Every field some row of some runner prints beyond the position row.
+ROUTE_ONLY_FIELDS = sorted({"id", "code", "valid", "generator", "outcome", "diagnostic", *df.RECORD_FIELDS,
+                            *(field for fields in df.LEAN_ROUTE_FIELDS.values() for field in fields),
+                            *(key for values in df.REQUEST_VALUES.values() for key in values)}
+                           - set(df.POSITION_ROW))
+
+
+@pytest.mark.parametrize("runner", sorted(LEAN_RUNNER_CHECKS))
+def test_every_runner_rows_for_unread_cases_carry_the_position_row_alone(built, runner):
+    """The class of the reproducer above, on every Lean runner: its genuine row for a case it could not read
+    passes its check, and that row with any field another of its rows prints (a route code, `valid` where
+    the mode does not print it, an answer field, an `id`) is a runner that did not answer."""
+    command, check = LEAN_RUNNER_CHECKS[runner]
+    case = _deep_case()
+    [row] = df.run_rows([df.BIN / command[0], *command[1:], "-"], [case])
+    assert type(row) is dict and "id" not in row and set(row) <= {*df.POSITION_ROW, "valid"}, (runner, row)
+    assert df.checked(check, case, row) == (row, None), runner
+    for field in ROUTE_ONLY_FIELDS:
+        if field in row:
+            continue
+        value = {"code": "SOFT_INVALID_INPUT", "valid": False, "id": "0"}.get(field, "x")
+        _, bad = df.checked(check, case, {**row, field: value})
+        assert bad is not None and bad["outcome"] == "panic", (runner, field)
+
+
+def test_the_position_row_is_the_service_schemas_case_error():
+    """`POSITION_ROW` is the service schemas' row of an unread case (`Service.Protocol.caseError`), and its
+    `valid` form belongs to the modes that print `valid` on every error row."""
+    common = json.loads((ROOT / "ve/backends/lean_service_schema/common.json").read_text())["$defs"]
+    assert set(common["case_error"]["required"]) == set(common["case_error"]["properties"]) == set(df.POSITION_ROW)
+    assert set(common["case_error_valid"]["properties"]) == {*df.POSITION_ROW, "valid"}
+
+
+def test_the_production_soft_reader_takes_no_code_from_an_unread_case(tmp_path):
+    """The production mirror (`ve.backends.lean.soft_error_problem`): a row named by position that names a
+    code is CheckerUnavailable, not a rejection with that code."""
+    from ve.backends.lean import run_soft_case
+    from ve.errors import CheckerUnavailable, VEError
+    row = {"case_index": 0, "status": "error", "error": "InvalidInput: invalid vocabulary"}
+    with pytest.raises(VEError) as raised:
+        run_soft_case(_soft_runner(tmp_path, row), {"id": "x"})
+    assert raised.value.code != "SOFT_INVALID_INPUT"
+    with pytest.raises(CheckerUnavailable):
+        run_soft_case(_soft_runner(tmp_path, {**row, "code": "SOFT_INVALID_INPUT"}), {"id": "x"})
+
+
+SURROGATE_OUTPUTS = {
+    "rust error.code": lambda c: {"id": c["id"], "status": "error", "error": {"code": "\ud800", "message": "m"}},
+    "rust error.message": lambda c: {"id": c["id"], "status": "error", "error": {"code": "C", "message": "\udc00"}},
+    "lean error": lambda c: {"id": c["id"], "status": "error", "error": "bad \ud800"},
+    "ok value": lambda c: {"id": c["id"], "status": "ok", "label": "\udfff"},
+    "key": lambda c: {"id": c["id"], "status": "ok", "\ud800": 1},
+}
+
+
+@pytest.mark.parametrize("where", sorted(SURROGATE_OUTPUTS))
+def test_runner_output_that_is_not_unicode_text_does_not_answer(monkeypatch, where):
+    """The looprecheck2 B reproducer: on an invalid-label request, runner stdout with the JSON escape `\\ud800`
+    in Rust's `error.code` (or `error.message`) passed decoding and validation, then crashed the fuzzer
+    (`UnicodeEncodeError` in `digest`). A lone surrogate anywhere in a runner's output (a value, a key, an ok
+    row) is output that is not text: the case's runner did not answer, and the fuzzer goes on."""
+    make = SURROGATE_OUTPUTS[where]
+    _fake_runner(monkeypatch, lambda cases: (
+        1 if "error" in make(cases[0]) else 0, json.dumps([make(c) for c in cases])))
+    assert "\\ud" in json.dumps([make({"id": "0"})])  # the escape, as a runner prints it
+    [row] = df.run_rows(["runner"], [{"id": "0"}])
+    assert type(row) is df.NoAnswer and "Unicode" in row.reason, row
+    seed, root = _invalid_label()
+    surface = df.Requests()
+    [(found, projected, answers, signature)] = df.evaluate(surface, [(seed, root)])
+    assert answers["rust"]["outcome"] == "panic" and answers["lean"]["outcome"] == "panic", answers
+    assert "no-answer" in found and signature and df.unholdable(projected) is None
+
+
+def test_every_answer_the_fuzzer_keeps_is_json_text():
+    """The class of the reproducer above at the one place every engine's answer enters (`Surface.answers`):
+    an answer that cannot be signed and stored as JSON text (a lone surrogate quoted in a Python diagnostic,
+    a number JSON cannot print) is Python's crash, or a runner that did not answer; never an exception."""
+    from decimal import Decimal
+
+    class Unholdable(Toy):
+        def python(self, seed, root):
+            return df.error("InvalidInput", "quoted \ud800")
+
+        def lean(self, items):
+            return [df.ok({"n": Decimal("1" * 5000)}) for _ in items]
+    seed = df.Seed("toy", "toy", "toy", {}, ("python", "lean"))
+    [answers] = Unholdable().answers([(seed, {})])
+    assert answers["python"]["outcome"] == "crash" and answers["lean"]["outcome"] == "panic", answers
+    found, projected = df.classes(Unholdable(), seed, answers, {})
+    assert found == ["no-answer", "python-crash"] and df.signature("toy", seed, found, projected)
+
+
+def test_the_runner_reader_rejects_text_that_is_not_unicode(tmp_path):
+    """The production mirror: the one reader of runner output (`lean_service._decode_json`, used by the
+    service, the Rust JSONL checker and the one-shot routes that are not read as restricted JSON) rejects a
+    lone surrogate in any value or key, so none reaches a diagnostic."""
+    from ve.backends.lean import run_norm_defaults_cases, run_readings_cases, run_soft_case
+    from ve.backends.lean_service import _decode_json
+    from ve.errors import CheckerUnavailable, VEError
+    for text in ('"\\ud800"', '["a", ["\\udc00"]]', '{"\\ud800": 1}', '{"a": {"b": "x\\udfff"}}'):
+        with pytest.raises(ValueError):
+            _decode_json(text)
+        with pytest.raises(ValueError):
+            _decode_json(text.encode())
+    assert _decode_json('{"a": ["\\ud83d\\ude00"]}') == {"a": ["\U0001F600"]}  # a surrogate pair is text
+    row = {"id": "x", "status": "error", "error": "bad \ud800", "code": "SOFT_INVALID_INPUT"}
+    with pytest.raises(VEError) as raised:
+        run_soft_case(_soft_runner(tmp_path, row), {"id": "x"})
+    assert df.unholdable([raised.value.message, raised.value.code]) is None
+    for read in (run_norm_defaults_cases, run_readings_cases):
+        with pytest.raises(CheckerUnavailable):
+            read(_soft_runner(tmp_path, row), [{"id": "x"}])
+
+
 # ---------------------------------------------------------------- B3: coverage
 
 def _load(relative):
