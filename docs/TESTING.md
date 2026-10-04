@@ -44,14 +44,22 @@ The selector works at the level of functions, not layers:
 * **Python.** `tools/change_units.py` parses the old and new file with `ast`
   into functions (named by their CPython `__qualname__`) and import-time
   statements. Comments and docstrings belong to neither, so a comment-only
-  edit selects nothing but the tests that read the file as text. A changed
-  function selects the tests that executed it. A changed import-time
+  edit selects nothing but the tests that read the file as text. A function's
+  digest is its whole `ast` node less docstring and decorators, so its kind
+  (`def` or `async def`), signature and type parameters count; defs under any
+  compound statement (`match`, `try`/`except*`, loops) are functions too. A
+  changed function selects the tests that executed it. A changed import-time
   statement selects the functions, in this module and in modules that import
   the name, that read a name it binds (following derived values such as
   `DERIVED = LIMIT * 2`). A top-level call or a registering decorator selects
   every test that imported the module. A new function that nothing in the
   change calls by name might be dispatched dynamically, so it selects every
-  test that ran a function of its file.
+  test that ran a function of its file. A module that is added or deleted
+  counts as an import-time change: every test that imported it.
+* **Deleted and changed files in the static graph.** The graph is built from
+  the tree after the change, plus each changed file as it was before: a
+  deleted module keeps its importers, a deleted fixture the tests that named
+  it, and an import the change removed still counts.
 * **Lean.** The executables whose root imports the module (from the Lean
   import graph), then the tests that ran those executables; plus `lake build`,
   `lean/audit.py` and the Lean import check.
@@ -81,7 +89,12 @@ children started with an explicit `env=` inherit it). It records, per test
 file, the functions under the repository that ran (`sys.monitoring`), the
 files read and directories listed by test code (an audit hook; the import
 system's, pytest's, tracebacks' and warnings' source reads are excluded), and
-the programs started. The map for commit C goes to
+the programs started. Who a read or listing is for is decided by the
+innermost frame that is either code under the repository (the test and the
+project: recorded) or infrastructure (import system, site, pytest: not
+recorded); the standard library and third-party packages in between act for
+their caller, and pytest frames further out do not matter. Maps of an
+earlier recorder version are not used. The map for commit C goes to
 `~/.cache/ve-testmap/C.json.gz` (`$VE_TESTMAP_CACHE`); the selector uses the
 recorded map nearest below the base, or one saved by `--run` for exactly the
 base's tree. The full recording takes about an hour with 7 parallel files on
