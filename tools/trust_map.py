@@ -8,13 +8,16 @@ Every Lean declaration under `lean/` gets one class of docs/TRUST-MAP.md section
   or diagnostic, `[I]` identity and provenance; trusted unless tied to K or S by a theorem;
 * `C` checked executables, `P` proofs and proof helpers, `T` tests and checks: not trusted.
 
-Theorems are `P`, and `example` and `#guard`-style commands are `T`, by their kind. Every other
-declaration takes its class from the side table `tools/trust-classes.json` (open question 11 of
-the plan: a side table changes no Lean file hash). A table entry may name the theorems that tie a
-D or G declaration (`{"name": ..., "tied": [theorem, ...]}`, at least one theorem); each such
-theorem must be in `lean/statements.txt` (bundle ST), and the constants its statement uses (the
-dump's `-- uses` line, full names) must include the declaration and some other K, S or untied
-[V] declaration, the meaning the tie points at.
+Theorems are `P`, and `example` and `#guard`-style commands are `T`, by their kind (`KIND_CLASSES`);
+a table entry for one of them is a problem, whatever class it names. Every other declaration takes
+its class from the side table `tools/trust-classes.json` (open question 11 of the plan: a side
+table changes no Lean file hash). A table entry may name the theorems that tie a D or G
+declaration (`{"name": ..., "tied": [theorem, ...]}`, at least one theorem); each such theorem
+must be in `lean/statements.txt` (bundle ST), and the constants its statement uses (the dump's
+`-- uses` line, full names) must include the declaration and some other anchor, the meaning the
+tie points at. The anchors are derived from the classification the budget reports, never from a
+table entry alone: a declaration of the tree whose class validated and that the budget counts as
+K, S or untied [V] (`is_anchor`).
 
 A declaration's lines run from its docstring (or first attribute line) to the line before the
 next declaration or structural command, as in the trust map's method (section 9). Namespace,
@@ -242,10 +245,8 @@ def statements(path: Path = STATEMENTS) -> dict[str, set[str] | None]:
     return {name: uses(body) for name, body in parse_statements(path.read_text()).items()}
 
 
-def anchors(table: dict) -> set[str]:
-    """Declarations a tie can point at: those the budget counts as trusted (K, S, untied [V])."""
-    return {name for entries in table.values() for name, entry in entries.items()
-            if isinstance(entry, str) and (entry in {"K", "S"} or entry.endswith("[V]"))}
+# Declarations whose kind fixes their class: the side table cannot name them.
+KIND_CLASSES = {"theorem": "P", "lemma": "P", "example": "T", "command": "T"}
 
 
 def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | None],
@@ -259,11 +260,14 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | 
     executable code: it is K or S, a [V] D or G declaration, P or T (a proof or test helper), or a
     tied C, D or G declaration; an untied C, [R] or [I] class would drop it from the budget
     unread."""
-    if decl.kind in {"theorem", "lemma"}:
-        return "P", False, []
-    if decl.kind in {"example", "command"}:
-        return "T", False, []
-    entry = table.get(module, {}).get(decl.name)
+    entry = table.get(module, {}).get(decl.name) if decl.name is not None else None
+    if decl.kind in KIND_CLASSES:
+        cls = KIND_CLASSES[decl.kind]
+        if entry is None:
+            return cls, False, []
+        listed = entry if isinstance(entry, str) else entry["class"]
+        return cls, False, [f"{module}: {decl.name}: a {decl.kind} is {cls} by its kind; the table cannot list it "
+                            f"(it lists {listed}{' tied' if isinstance(entry, dict) else ''})"]
     if entry is None:
         return "?", False, []
     if isinstance(entry, str):
@@ -287,7 +291,7 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | 
             problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {decl.name}")
         elif not used & (trusted - {decl.name}):
             problems.append(f"{module}: {decl.name}: the statement of {theorem} mentions no K, S or untied [V] "
-                            "declaration to tie it to")
+                            "declaration of the tree, validly classified, to tie it to")
     return cls, not problems, problems
 
 
@@ -302,6 +306,12 @@ def is_trusted(cls: str, tied: bool, problems: list[str]) -> bool:
     return bool(problems) or cls in {"K", "S", "?"} or cls[0] in "DG" and cls.endswith("[V]") and not tied
 
 
+def is_anchor(cls: str, tied: bool, problems: list[str]) -> bool:
+    """What a tie can point at: a declaration the budget counts as trusted by its validated
+    class (K, S, untied [V]); not one trusted only because it is unclassified or failed validation."""
+    return not problems and cls != "?" and is_trusted(cls, tied, problems)
+
+
 @dataclass
 class Classified:
     module: str
@@ -311,33 +321,54 @@ class Classified:
     trusted: bool
 
 
-def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
-         predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
-    """Every declaration under `root` with its validated class, the line count of each file, and
-    the problems found (unknown table entries, unverified ties, predicates in an untrusted class, a
-    missing predicate list). `measure` and `ledger` both read the tree through this one pass, so
-    neither can report numbers whose classification failed validation."""
-    table = load_table(table_path)
-    proved = statements(statements_path)
-    trusted = anchors(table)
-    predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
-    out, lines, problems, seen = [], {}, [], defaultdict(set)
-    if not predicates_path.is_file():
-        problems.append(f"{predicates_path.name} is missing; run tools/lean_statements.py")
-    predicates = lean_predicates(predicates_path)
+def scan_tree(root: Path = ROOT) -> tuple[list[tuple[str, Decl]], dict[str, int]]:
+    """Every declaration under `root` with its module, and the line count of each file."""
+    decls, lines = [], {}
     for path in sources(root):
         module = module_key(path, root)
-        decls, lines[module] = scan(path)
-        for decl in decls:
+        found, lines[module] = scan(path)
+        decls += [(module, decl) for decl in found]
+    return decls, lines
+
+
+def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, set[str] | None],
+                  predicates: set[str]) -> tuple[list[Classified], list[str]]:
+    """Every declaration with its validated class, and the problems found. The anchors a tie may
+    point at come from a first pass over the same declarations without any anchor (`is_anchor`:
+    a tied declaration never validates there, so ties cannot anchor each other); the second pass
+    checks the ties against them."""
+    first = [classify(module, decl, table, proved, frozenset(), predicates) for module, decl in decls]
+    trusted = {decl.name for (_, decl), result in zip(decls, first) if decl.name is not None and is_anchor(*result)}
+    out, problems, seen = [], [], defaultdict(set)
+    for (module, decl), (cls, tied, issues) in zip(decls, first):
+        if isinstance(table.get(module, {}).get(decl.name), dict):
             cls, tied, issues = classify(module, decl, table, proved, trusted, predicates)
-            problems += issues
-            if decl.name is not None:
-                seen[module].add(decl.name)
-            out.append(Classified(module, decl, cls, tied, is_trusted(cls, tied, issues)))
+        problems += issues
+        if decl.name is not None:
+            seen[module].add(decl.name)
+        out.append(Classified(module, decl, cls, tied, is_trusted(cls, tied, issues)))
     for module, entries in table.items():
         for name in sorted(set(entries) - seen.get(module, set())):
             problems.append(f"{TABLE.name}: {module}: {name} is not a declaration of that file")
-    return out, lines, problems
+    return out, problems
+
+
+def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+         predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
+    """Every declaration under `root` with its validated class, the line count of each file, and
+    the problems found (unknown table entries, entries for theorems, unverified ties, predicates in
+    an untrusted class, a missing predicate list). `measure` and `ledger` both read the tree
+    through this one pass, so neither can report numbers whose classification failed validation."""
+    table = load_table(table_path)
+    proved = statements(statements_path)
+    predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
+    problems = []
+    if not predicates_path.is_file():
+        problems.append(f"{predicates_path.name} is missing; run tools/lean_statements.py")
+    predicates = lean_predicates(predicates_path)
+    decls, lines = scan_tree(root)
+    out, found = classify_tree(decls, table, proved, predicates)
+    return out, lines, problems + found
 
 
 def measure(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
@@ -655,8 +686,9 @@ def ledger(root: Path = ROOT, path: Path = LEDGER, table_path: Path = TABLE,
     to the first step that names it, and the untrusted lines they name; `net` is removed + tied −
     `adds_est`, `score` is net ÷ (days × risk)."""
     walked, _, problems = walk(root, table_path, statements_path, predicates_path)
+    # Proofs and tests are left out unless the trust rule counts them (failing closed).
     decls = [(d.module, d.decl.name, d.decl.lines, d.trusted) for d in walked
-             if d.decl.kind not in {"theorem", "lemma", "example", "command"} and d.decl.name is not None]
+             if (d.decl.kind not in KIND_CLASSES or d.trusted) and d.decl.name is not None]
     credited: set[tuple[str, str]] = set()
     rows = []
     for step in json.loads(path.read_text())["steps"]:
