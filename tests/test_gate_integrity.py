@@ -15,6 +15,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tools import gate
+from tools.pytest_run import pytest_command, pytest_environment
 
 
 def empty_result():
@@ -62,9 +63,9 @@ def test_pytest_plugin_observes_collection_bypasses(tmp_path, body, conftest):
     output = tmp_path / "events.json"
     env = {**os.environ, "VE_GATE_PYTEST_RESULT": str(output),
            "PYTHONPATH": str(gate.ROOT)}
-    run = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p",
-                          "tools.gate_pytest", "-o", "addopts=", str(tmp_path)],
-                         cwd=gate.ROOT, env=env, capture_output=True, text=True)
+    run = subprocess.run(pytest_command([sys.executable], "-q", "-p", "tools.gate_pytest", "-o", "addopts=",
+                                        str(tmp_path)),
+                         cwd=gate.ROOT, env=pytest_environment(env), capture_output=True, text=True)
     assert run.returncode in (0, 5), run.stdout + run.stderr
     observed = json.loads(output.read_text())
     if conftest:

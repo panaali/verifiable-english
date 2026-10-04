@@ -29,6 +29,7 @@ from conformance.wire_contract_gate import (EXAMPLES, PILOT, RECORDED_TESTS, TES
                                             record_all_test_inputs, source_key, unit_of)
 from subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_conformance import fixtures
+from tools.pytest_run import pytest_command, pytest_environment
 from tests.test_wire_contract_soft_lean import fixture_sources
 from ve.wire_contract.engine import load
 
@@ -78,27 +79,24 @@ def test_one_run_records_each_unit_as_its_own_run_does(tmp_path):
     files = {unit: sample if unit == PILOT else [] for unit in (PILOT, *UNITS)}
     environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNITS": json.dumps(files),
                    "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
-    result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *sample],
-                            cwd=ROOT, env=environment, capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == 0, result.stdout[-4000:]
+
+    def record(env):
+        result = subprocess.run(pytest_command([sys.executable], "-q", "-p", "tests.contract_input_recorder",
+                                               "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live",
+                                               *sample),
+                                cwd=ROOT, env=pytest_environment(env), capture_output=True, text=True,
+                                timeout=HANG_TIMEOUT)
+        assert result.returncode == 0, result.stdout[-4000:]
+    record(environment)
     joint = json.loads(output.read_text())
     alone = tmp_path / "alone.json"
     environment = {key: value for key, value in environment.items() if key != "VE_CONTRACT_UNITS"}
-    result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *sample],
-                            cwd=ROOT, env={**environment, "VE_CONTRACT_INPUTS": str(alone)},
-                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == 0, result.stdout[-4000:]
+    record({**environment, "VE_CONTRACT_INPUTS": str(alone)})
     assert joint[PILOT] == json.loads(alone.read_text()) and joint[PILOT]
     assert joint["norms@0"] == joint["norm-defaults@0"] == []
     # The same files, counted for the norm units too, do record norm sources.
     files = {unit: sample for unit in (PILOT, *UNITS)}
-    result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *sample],
-                            cwd=ROOT, env={**environment, "VE_CONTRACT_UNITS": json.dumps(files)},
-                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == 0, result.stdout[-4000:]
+    record({**environment, "VE_CONTRACT_UNITS": json.dumps(files)})
     assert json.loads(output.read_text())["norms@0"]
 
 

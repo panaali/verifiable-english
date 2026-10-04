@@ -20,6 +20,7 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools import rust_build  # noqa: E402
+from tools.pytest_run import pytest_command, pytest_environment  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
@@ -62,16 +63,15 @@ STAGE_ENVIRONMENT = {
 # The gate's pytest invocation, shared by its collection run, its suite run and the
 # baseline writer (`--write-collection`), so the baseline is what the gate collects.
 # Plugin autoload is off in the gate, so every plugin is named here.
-PYTEST_ARGS = ("-q", "-p", "hypothesis.extra.pytestplugin", "-p", "tools.gate_pytest",
-               "-o", "addopts=-ra", "-m", "not live", "tests")
+PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
 
 
 def collection_command(python: list[str]) -> list[str]:
-    return [*python, "-m", "pytest", "--collect-only", *PYTEST_ARGS]
+    return pytest_command(python, "--collect-only", *PYTEST_ARGS)
 
 
 def suite_command(python: list[str], workers: str) -> list[str]:
-    return [*python, "-m", "pytest", "-p", "xdist.plugin", "-n", workers, *PYTEST_ARGS]
+    return pytest_command(python, "-n", workers, *PYTEST_ARGS)
 
 
 def merge_pytest_events(collection: dict, suite: dict) -> dict:
@@ -89,7 +89,7 @@ def merge_pytest_events(collection: dict, suite: dict) -> dict:
 
 def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None) -> dict:
     """Run the gate's collection in `env` (plugin autoload off) and return its events."""
-    env = {**env, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1", "VE_GATE_PYTEST_RESULT": str(result_file)}
+    env = {**pytest_environment(env), "VE_GATE_PYTEST_RESULT": str(result_file)}
     command(collection_command(python or [sys.executable]), env=env, stage="Python collection")
     return json.loads(result_file.read_text())
 
@@ -386,9 +386,8 @@ def write_collection() -> int:
     """Regenerate the baseline after intentional test changes: the gate's own collection
     (deselected live tests included), run in this environment without its plugin
     overrides. tests/test_gate.py checks the committed file against the same run."""
-    env = {name: value for name, value in os.environ.items() if name not in ("PYTEST_ADDOPTS", "PYTEST_PLUGINS")}
     with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
-        events = collect({**env, "VE_NATIVE_PREBUILT": "1"}, Path(directory) / "collection.json")
+        events = collect({**os.environ, "VE_NATIVE_PREBUILT": "1"}, Path(directory) / "collection.json")
     write_baseline(COLLECTION, events["collected"])
     print(f"[gate] wrote {len(events['collected'])} test IDs to {COLLECTION}")
     return 0

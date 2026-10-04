@@ -24,6 +24,8 @@ import time
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from tools.pytest_run import pytest_command, pytest_environment  # noqa: E402
 
 
 def durations(junit: Path) -> list[tuple[str, float]]:
@@ -125,10 +127,10 @@ def main() -> int:
             junit, cpu_log = Path(directory) / "junit.xml", Path(directory) / "cpu.jsonl"
             load_start = os.getloadavg()[0]
             before, started = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic()
-            done = subprocess.run([sys.executable, "-m", "pytest", "-p", "no:cacheprovider", "-q",
-                                   "-p", "tools.bench.cpu_per_test", f"--junitxml={junit}",
-                                   *[a for a in args.pytest if a != "--"]],
-                                  cwd=ROOT, env={**os.environ, "VE_TEST_CPU_LOG": str(cpu_log)},
+            done = subprocess.run(pytest_command([sys.executable], "-p", "no:cacheprovider", "-q",
+                                                 "-p", "tools.bench.cpu_per_test", f"--junitxml={junit}",
+                                                 *[a for a in args.pytest if a != "--"]),
+                                  cwd=ROOT, env=pytest_environment({**os.environ, "VE_TEST_CPU_LOG": str(cpu_log)}),
                                   capture_output=True, text=True, timeout=6 * 3600)
             wall, after = time.monotonic() - started, resource.getrusage(resource.RUSAGE_CHILDREN)
             result = report(args.label, wall, after.ru_utime - before.ru_utime, after.ru_stime - before.ru_stime,
