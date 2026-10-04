@@ -128,6 +128,7 @@ import VE.Readings.Wire
 import VE.Readings.Run
 import VE.WireContract.Engine
 import VE.Grammar.Derives
+import VE.EnglishGrammar.FoldAgree
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3143,3 +3144,4 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Grammar.rhs_ne_nil_of_mem
 #print axioms VE.Grammar.yield_ne_nil_of
 #print axioms VE.Grammar.yield_ne_nil
+#print axioms VE.EnglishGrammar.foldChar_agrees
