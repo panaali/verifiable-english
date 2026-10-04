@@ -13,7 +13,9 @@ how their answers compare:
 * `environment`: every distinct environment of the fixtures, decoded by Python's `Environment`, by the Lean
   route that decodes that envelope (`lean_route`) and by Rust, each as the route table `ROUTES` says (an
   engine with no path there is named with the reason). A text is compared when either side is a decoder
-  type diagnostic (`TYPE_DIAGNOSTICS`), and the environment identity when the engines report one.
+  type diagnostic (`TYPE_DIAGNOSTICS`), and the environment identity when the engines report one. A route
+  that names its own code (`OwnCodes`: the soft-norms route's `code`) keeps it: the code is compared with
+  its Python counterpart's, and its class in the route's contract is the code compared with the others.
 * `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`), by the Python engine
   and `ve_diagnose`; the whole diagnostic record is compared, except the text and args of an inherited
   check (the contract's `inherited` flag).
@@ -29,11 +31,13 @@ is that refusal (`framing`), which agrees with any rejection and disagrees with 
 
 Every row a Lean or Rust runner returns is checked against the schema its producer declares before it is
 read (the `*_row_problem` checks: the Lean service schemas, the assurance manifest's runner bindings, and the
-encoders' response tables `LEAN_ROUTE_FIELDS`, `RECORD_FIELDS` and `RUST_ROWS`); a row that fails is a
-runner that did not answer, never an answer.
+encoders' response tables `LEAN_ROUTE_FIELDS`, `RECORD_FIELDS` and `RUST_ROWS`, with each route's own code);
+a row that fails is a runner that did not answer, never an answer. A runner that does not answer at all (a
+crash, a hang, output that is not text or JSON) or refuses a package is a value of its own type
+(`NoAnswer`, `Refused`), never a row, so nothing a runner prints can pass for either.
 
 A *finding* is a Python exception other than VEError, a Python call that does not finish in its CPU
-budget, a Lean or Rust process that does not answer (panic, signal, malformed output), or a disagreement
+budget, a Lean or Rust process that does not answer (panic, signal, hang, malformed output), or a disagreement
 between the answers of the implementations that take part. Findings are grouped by signature (surface,
 profile, classes and the compared answers). A signature in the reviewed baseline
 (`conformance/difffuzz-baseline.json`) is known; any other is new, and is minimised (`minimise`) before it
@@ -61,6 +65,7 @@ import random
 import re
 import resource
 import signal
+import subprocess
 import sys
 import time
 import traceback
@@ -382,6 +387,16 @@ NOT_APPLICABLE = {"outcome": "n/a"}
 FRAMING = "framing"
 
 
+def refusal(text):
+    """A package reader's refusal: the code `framing` is how it is shown; `refused` is what makes it one,
+    which no runner's own code (a Rust error code `framing`, say) can set."""
+    return {**error(FRAMING, text), "refused": True}
+
+
+def refused(answer):
+    return answer.get("refused") is True
+
+
 def malformed(problem):
     return {"outcome": "panic", "text": f"malformed row: {problem}"[:300]}
 
@@ -457,40 +472,77 @@ def call_python(function, harness):
 
 # ---------------------------------------------------------------- runner rows
 
+# What a batch runner gives for one case: the row it printed (a JSON object, checked against its producer's
+# schema before it is read), or one of these two. They are types of their own, so that nothing a runner
+# prints can pass for one: a printed `{"framing": ...}` is a row, and a malformed one.
+
+@dataclass(frozen=True)
+class NoAnswer:
+    """The runner did not answer the case: a crash, a signal, a hang, malformed output (`run_rows`)."""
+    reason: str
+
+
+@dataclass(frozen=True)
+class Refused:
+    """The runner's package reader refused the case as a whole (exit 2 with the case alone)."""
+    text: str
+
+
+def _exchange(command, cases):
+    """(completed process, None) for one batch, or (None, the reason the runner did not answer): it could
+    not be started, it did not finish within HANG_TIMEOUT, or its output is not text."""
+    try:
+        completed, _ = run_cpu_bounded([str(c) for c in command], json.dumps(cases, ensure_ascii=False),
+                                       BATCH_CPU, env=CHILD_ENV)
+    except subprocess.TimeoutExpired:
+        return None, f"no answer within {HANG_TIMEOUT} s"
+    except OSError as exc:
+        return None, f"cannot start: {exc}"
+    except UnicodeError as exc:
+        return None, f"output is not UTF-8 text: {exc}"
+    return completed, None
+
+
 def run_rows(command, cases):
-    """One row per case from a batch runner, or the reason it did not answer: a batch that does not
-    answer is split until the case that does not answer is alone (`{"panic": reason}`). A batch
-    answers when it prints one object per case, in order, with each case's id, and its exit status is
-    1 exactly when some row is an error (the one-shot runner contract, `ve/backends/lean.py`)."""
+    """One row per case from a batch runner, or `NoAnswer`: a batch that does not answer is split until
+    the case that does not answer is alone. A batch answers when it prints one object per case, in
+    order, each naming its case (`bind_rows`), and its exit status is 1 exactly when some row is an error
+    (the one-shot runner contract, `ve/backends/lean.py`). A case alone that the runner refuses as a
+    package (exit 2) is `Refused`."""
     if not cases:
         return []
-    text = json.dumps(cases, ensure_ascii=False)
-    completed, _ = run_cpu_bounded([str(c) for c in command], text, BATCH_CPU, env=CHILD_ENV)
-    reason = None
-    if completed.returncode not in (0, 1):
-        reason = f"exit {completed.returncode}: {completed.stderr[-300:]}"
-    elif "PANIC" in completed.stderr or "panicked" in completed.stderr:
-        reason = f"panic: {completed.stderr[-300:]}"
-    else:
-        try:
-            rows = json.loads(completed.stdout)
-        except ValueError:
-            rows = None
-        if type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows):
-            reason = f"malformed output: {completed.stdout[:200]}"
-        elif bind_rows(rows, cases) is None:
-            reason = "rows out of order"
-        elif (completed.returncode == 1) != any(r.get("status") == "error" for r in rows):
-            reason = f"exit status {completed.returncode} disagrees with the rows"
+    completed, reason = _exchange(command, cases)
     if reason is None:
-        return bind_rows(rows, cases)
+        rows, reason = _read_batch(completed, cases)
+        if reason is None:
+            return rows
     if len(cases) == 1:
-        if completed.returncode == 2 and reason.startswith("exit 2"):
+        if completed is not None and completed.returncode == 2:
             # The runner refused the package (framing): an answer, compared with Python's.
-            return [{"framing": completed.stderr.strip()[-300:] or completed.stdout.strip()[-300:]}]
-        return [{"panic": reason}]
+            return [Refused(completed.stderr.strip()[-300:] or completed.stdout.strip()[-300:])]
+        return [NoAnswer(reason)]
     middle = len(cases) // 2
     return run_rows(command, cases[:middle]) + run_rows(command, cases[middle:])
+
+
+def _read_batch(completed, cases):
+    """(rows bound to `cases`, None), or (None, why the batch's output is not an answer)."""
+    if completed.returncode not in (0, 1):
+        return None, f"exit {completed.returncode}: {completed.stderr[-300:]}"
+    if "PANIC" in completed.stderr or "panicked" in completed.stderr:
+        return None, f"panic: {completed.stderr[-300:]}"
+    try:
+        rows = json.loads(completed.stdout)
+    except (ValueError, RecursionError):
+        rows = None
+    if type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows):
+        return None, f"malformed output: {completed.stdout[:200]}"
+    bound = bind_rows(rows, cases)
+    if bound is None:
+        return None, "rows out of order"
+    if (completed.returncode == 1) != any(r.get("status") == "error" for r in rows):
+        return None, f"exit status {completed.returncode} disagrees with the rows"
+    return bound, None
 
 
 def _bound(row, case, index):
@@ -502,13 +554,12 @@ def _bound(row, case, index):
 
 
 def bind_rows(rows, cases):
-    """The rows bound to their cases, or None when one does not name its case (`_bound`). A case the
-    runner could not read is named by its position (`case_index`); its row is bound to the case's id, so
-    that it reads as that case's error."""
+    """The rows, as printed, when each names its case (`_bound`), else None. A row that names its case by
+    position (`case_index`) is the error of a case the runner could not read; it keeps that form, so its
+    check knows the runner never ran the case's route."""
     if not all(_bound(row, case, index) for index, (row, case) in enumerate(zip(rows, cases))):
         return None
-    return [{"id": case["id"], "status": "error", "error": row.get("error")} if "id" not in row else row
-            for row, case in zip(rows, cases)]
+    return list(rows)
 
 
 def batched(command, cases):
@@ -519,9 +570,12 @@ def batched(command, cases):
 
 
 def panic(row):
-    if "framing" in row:
-        return error(FRAMING, row["framing"])
-    return {"outcome": "panic", "text": row["panic"]} if "panic" in row else None
+    """The answer of a case the runner did not answer or refused, or None for a printed row."""
+    if type(row) is Refused:
+        return refusal(row.text)
+    if type(row) is NoAnswer:
+        return {"outcome": "panic", "text": row.reason}
+    return None
 
 
 # ---------------------------------------------------------------- responses
@@ -626,13 +680,50 @@ def bound_row_problem(executable, mode, kinds):
             problem = lean_row_problem(case, row, index, binding["response"], binding.get("counts"))
             if problem:
                 return problem
-        return None
+        if row["status"] != "error":
+            return None
+        # The runner's error rows (`lean/Main.lean`) carry nothing but the error, and in the certificate
+        # mode `valid: false` (`CertificateWire.runCaseReported`).
+        if row.get("valid", False) is not False:
+            return "an error row says its certificate is valid"
+        return closed_row_problem(row, {}, ("valid",) if mode == "check-certificate" else ())
     return check
 
 
 def fields_row_problem(fields, counts=None):
     def check(case, row, index):
         return lean_row_problem(case, row, index, fields, counts)
+    return check
+
+
+def closed_row_problem(row, response, error_fields=()):
+    """The fields of a row its producer does not print, or None: an ok row is its id, status and
+    `response`; an error row its id (or, for a case the runner could not read, its position), status,
+    error and at most `error_fields`."""
+    if row["status"] == "ok":
+        allowed = {"id", "status", *response}
+    else:
+        allowed = {"id" if "id" in row else "case_index", "status", "error", *error_fields}
+    extra = sorted(set(row) - allowed)
+    return f"a row has fields its producer does not print: {extra}" if extra else None
+
+
+def route_row_check(name):
+    """The check of the rows of a Lean block route that decodes an environment (`ROUTES`): the one-shot
+    runner contract; the encoder's ok fields (`LEAN_ROUTE_FIELDS`) and no other field; and, where the
+    route names its own code (`OwnCodes`), that code on every error row of a case it ran: a string
+    among its contract's codes."""
+    fields, own = LEAN_ROUTE_FIELDS[name], ROUTES[name].own
+    error_fields = (own.field,) if own else ()
+
+    def check(case, row, index):
+        problem = lean_row_problem(case, row, index, fields) or closed_row_problem(row, fields, error_fields)
+        if problem or own is None or row["status"] != "error" or "id" not in row:
+            return problem
+        code = row.get(own.field)
+        if type(code) is not str or code not in own.codes():
+            return f"an error row has no {own.contract} code in {own.field!r}"
+        return None
     return check
 
 
@@ -651,7 +742,7 @@ def rust_row_problem(kind):
             if type(problem) is not dict or type(problem.get("code")) is not str or \
                     type(problem.get("message")) is not str:
                 return "an error row has no error code and message"
-            return None
+            return closed_row_problem(row, {})
         if type(status) is not str or status not in statuses:
             return f"a result row has no status of {sorted(statuses | {'error'})}"
         for name, spec in fields.items():
@@ -670,7 +761,8 @@ def diagnose_row_problem(case, row, index):
     from ve.backends.lean import conforms
     problem = lean_row_problem(case, row, index)
     if problem or row["status"] == "error":
-        return problem
+        # `Diagnose.lean`: an error row is the adapter's error alone.
+        return problem or closed_row_problem(row, {})
     if row.get("outcome") == "clean":
         return None if set(row) == {"id", "status", "outcome"} else "a clean row has other fields"
     # `lean/VE/WireContract/Diagnose.lean` `diagnoseCase`: `clean`, or `fault` with one record.
@@ -685,9 +777,13 @@ def diagnose_row_problem(case, row, index):
     return None
 
 
-def checked(problem_of, case, row, index):
-    """The row, or the reason it is not a well-formed answer (a `malformed` answer)."""
-    problem = problem_of(case, row, index)
+def checked(problem_of, case, row):
+    """(the row, None) when the runner printed a well-formed answer; else (None, the answer it is
+    instead): its refusal, its not answering, or the reason the row is not an answer (`malformed`). A
+    row that names its case by position was bound to it by that position (`bind_rows`)."""
+    if type(row) in (NoAnswer, Refused):
+        return None, panic(row)
+    problem = problem_of(case, row, row["case_index"] if "id" not in row else 0)
     return (row, None) if problem is None else (None, malformed(problem))
 
 
@@ -740,14 +836,14 @@ class Surface:
         no path for the input (`path`); each of Lean and Rust answers its items in batches, and the input
         off the restricted wire gets every package reader's refusal (`framing`) without being sent."""
         out = [{} for _ in items]
-        refused = [off_wire(root) for _, root in items]
+        off = [off_wire(root) for _, root in items]
         for engine in ENGINES:
             chosen = []
             for index, (seed, root) in enumerate(items):
                 if not self.path(engine, seed, root):
                     out[index][engine] = NOT_APPLICABLE
-                elif engine != "python" and refused[index] is not None:
-                    out[index][engine] = error(FRAMING, refused[index])
+                elif engine != "python" and off[index] is not None:
+                    out[index][engine] = refusal(off[index])
                 else:
                     chosen.append(index)
             if not chosen:
@@ -892,10 +988,7 @@ class Requests(Surface):
             rows = batched(command, [case for _, case in group])
             for (index, case), row in zip(group, rows):
                 seed, root = items[index]
-                if panic(row):
-                    out[index] = panic(row)
-                    continue
-                row, bad = checked(lean_row_check(seed, case), case, row, 0)
+                row, bad = checked(lean_row_check(seed, case), case, row)
                 if bad:
                     out[index] = bad
                 elif row["status"] == "error":
@@ -915,12 +1008,9 @@ class Requests(Surface):
         cases = [{**self.rust_case(seed, root), "id": str(index)} for index, (seed, root) in enumerate(items)]
         out = []
         for (seed, root), case, row in zip(items, cases, batched([rust_binary(), "conformance"], cases)):
-            if panic(row):
-                out.append(panic(row))
-                continue
             kind = seed.meta["kind"]
             operation = rust_operation(case)
-            row, bad = checked(rust_row_problem(operation), case, row, 0)
+            row, bad = checked(rust_row_problem(operation), case, row)
             if bad:
                 out.append(bad)
             elif row["status"] != "error" and operation != seed.meta["rust"]["operation"]:
@@ -977,16 +1067,49 @@ TOP_QUANTITY = {"format": "ve-quantity@1", "formula": ["top"]}
 
 
 @dataclass(frozen=True)
+class OwnCodes:
+    """A Lean route whose error rows name the producer's own code, in `field`. The code is one of the
+    wire contract `contract`'s `codes`, whose `class` is the code compared with an engine that does not
+    speak the contract; `python` is Python's counterpart of the route, which raises the same codes, so
+    the own codes are compared too (`own` in an answer: the code, or None for an acceptance)."""
+    contract: str
+    python: object
+    field: str = "code"
+
+    def codes(self):
+        return contract_codes(self.contract)
+
+
+_CONTRACT_CODES = {}
+
+
+def contract_codes(contract):
+    """{code: {class, summary}} of a production wire contract (`ve/wire_contract/<contract>.json`)."""
+    if contract not in _CONTRACT_CODES:
+        from ve.wire_contract.engine import load
+        _CONTRACT_CODES[contract] = load(contract)["codes"]
+    return _CONTRACT_CODES[contract]
+
+
+def _soft_route_python(environment):
+    """Python's counterpart of the soft-norms route's `soft-elaborate` decode with no norms
+    (`conformance/soft_norms.py` `compare_near_limit` holds its code equal to the route's)."""
+    from ve.softnorms import load_soft_document
+    load_soft_document(environment, [])
+
+
+@dataclass(frozen=True)
 class Route:
     """How each engine decodes one kind of environment. `lean` is the Lean executable and the case fields
     that make it decode the environment and nothing else to fail (`ve_service` is the service's
     `environment` mode); `rust` builds Rust's case for an environment, or is None with `no_rust` the
-    reason. `identity`: the engines report the environment identity."""
+    reason. `identity`: the engines report the environment identity. `own`: the route's own codes."""
     lean: str
     case: dict | None
     rust: object = None
     no_rust: str = ""
     identity: bool = False
+    own: OwnCodes | None = None
 
 
 def _rust_label(env):
@@ -1003,7 +1126,8 @@ ROUTES = {
                           no_rust="Rust reads the four core envelope fields only (no alternatives block)"),
     "risk": Route("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}},
                   no_rust="Rust reads the four core envelope fields only (no risk block)"),
-    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_label),
+    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_label,
+                        own=OwnCodes("soft-norms@0", _soft_route_python)),
     "speech": Route("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}},
                     no_rust="Rust reads the four core envelope fields only (no speech-acts block)"),
     "reports": Route("ve_reports_route", {"kind": "reports-elaborate", "document": {"units": []}},
@@ -1065,11 +1189,24 @@ class EnvironmentSurface(Surface):
         return engine != "rust" or ROUTES[lean_route(root)].rust is not None
 
     def python(self, seed, root):
+        """`Environment`'s answer; on a route with its own codes, with Python's own code for the route
+        (`own`), from the route's Python counterpart."""
         from ve.environment import Environment
 
         def decode():
             return ok({"environment_id": Environment(deepcopy(root)).environment_id})
-        return call_python(decode, self.harness)
+        answer = call_python(decode, self.harness)
+        own = ROUTES[lean_route(root)].own
+        if own is None or answer["outcome"] not in ("ok", "error"):
+            return answer
+
+        def counterpart():
+            own.python(deepcopy(root))
+            return ok()
+        mirrored = call_python(counterpart, self.harness)
+        if mirrored["outcome"] in ("crash", "timeout"):
+            return mirrored  # the counterpart's crash or timeout is the finding
+        return {**answer, "own": mirrored.get("code")} if mirrored["outcome"] in ("ok", "error") else answer
 
     def lean(self, items):
         from ve.backends.diagnostics import checker_error
@@ -1088,22 +1225,24 @@ class EnvironmentSurface(Surface):
             else:
                 cases = [{"id": str(i), "environment": roots[i], **route.case} for i in indices]
                 rows = batched([BIN / route.lean, "-"], cases)
-                problem_of = fields_row_problem(LEAN_ROUTE_FIELDS[name])
+                problem_of = route_row_check(name)
             for i, case, row in zip(indices, cases, rows):
-                if panic(row):
-                    out[i] = panic(row)
-                    continue
-                row, bad = checked(problem_of, case, row, 0)
+                row, bad = checked(problem_of, case, row)
                 if bad:
                     out[i] = bad
+                elif row["status"] == "error" and route.own is not None and "id" in row:
+                    # The route's own code is kept; the code compared with Python's `Environment` and Rust
+                    # is its class in the route's contract.
+                    own = row[route.own.field]
+                    out[i] = {**error(route.own.codes()[own]["class"], row["error"]), "own": own}
                 elif row["status"] == "error":
-                    # A route that names its code (the soft-norms route) is read as its Python entry point
-                    # reads it (`ve/backends/lean.py` `run_soft_case`); the others' texts carry it.
-                    code = row["code"] if type(row.get("code")) is str else None
-                    diagnostic = checker_error(row["error"], code=code).to_dict()
+                    # The other routes' texts carry their code, read as the Lean backend reads it.
+                    diagnostic = checker_error(row["error"]).to_dict()
                     out[i] = error(diagnostic["code"], diagnostic["message"])
                 else:
                     out[i] = ok({"environment_id": row["environment_id"]} if route.identity else None)
+                    if route.own is not None:
+                        out[i]["own"] = None
         return out
 
     def _service(self, cases):
@@ -1119,7 +1258,7 @@ class EnvironmentSurface(Surface):
         except Exception as exc:  # noqa: BLE001 - CheckerUnavailable (a malformed response) or a crash
             self.close()
             if len(cases) == 1:
-                return [{"panic": f"{type(exc).__name__}: {exc}"[:300]}]
+                return [NoAnswer(f"{type(exc).__name__}: {exc}"[:300])]
             middle = len(cases) // 2
             return self._service(cases[:middle]) + self._service(cases[middle:])
 
@@ -1127,10 +1266,7 @@ class EnvironmentSurface(Surface):
         cases = [{**ROUTES[lean_route(root)].rust(root), "id": str(i)} for i, (_, root) in enumerate(items)]
         out = []
         for case, row in zip(cases, batched([rust_binary(), "conformance"], cases)):
-            if panic(row):
-                out.append(panic(row))
-                continue
-            row, bad = checked(rust_row_problem(case["kind"]), case, row, 0)
+            row, bad = checked(rust_row_problem(case["kind"]), case, row)
             if bad:
                 out.append(bad)
             elif row["status"] == "error":
@@ -1208,10 +1344,7 @@ class Wire(Surface):
             kind = "soft-elaborate" if unit == "soft-norms@0" else "corpus"
             cases = [{"id": str(i), "kind": kind, **items[i][1]} for i in indices]
             for i, case, row in zip(indices, cases, batched([BIN / "ve_diagnose", unit, "-"], cases)):
-                if panic(row):
-                    out[i] = panic(row)
-                    continue
-                row, bad = checked(diagnose_row_problem, case, row, 0)
+                row, bad = checked(diagnose_row_problem, case, row)
                 if bad:
                     out[i] = bad
                 elif row["status"] == "error":
@@ -1303,20 +1436,28 @@ def compare(surface, seed, left, right):
     (left_engine, a), (right_engine, b) = left, right
     if surface.equivalent(seed, left, right):
         return set()
+    # Two engines that speak one route's own codes (`OwnCodes`) are held to the same one, or both accept.
+    found = {"code"} if own_differs(a, b) else set()
     if a["outcome"] != b["outcome"]:
-        return {"outcome"}
+        return found | {"outcome"}
     if a["outcome"] == "error":
-        if FRAMING in (a.get("code"), b.get("code")):
-            return set()  # a package refusal carries no diagnostic; it agrees with any rejection
+        if refused(a) or refused(b):
+            return found  # a package refusal carries no diagnostic; it agrees with any rejection
         if a.get("code") != b.get("code"):
-            return {"code"}
+            return found | {"code"}
         if surface.text_fixed(seed, left, right) and surface.error_key(a) != surface.error_key(b):
-            return {"diagnostic"}
-        return set()
+            return found | {"diagnostic"}
+        return found
     if surface.value_compared(seed, left_engine) and surface.value_compared(seed, right_engine) and \
             a["value"] is not None and b["value"] is not None and canonical(a["value"]) != canonical(b["value"]):
-        return {"value"}
-    return set()
+        return found | {"value"}
+    return found
+
+
+def own_differs(a, b):
+    """Whether two answers that both carry a route's own code (`own`: the code, None for an acceptance)
+    carry different ones."""
+    return "own" in a and "own" in b and a["own"] != b["own"]
 
 
 CLASSES = ("python-crash", "timeout", "no-answer", "outcome", "code", "diagnostic", "value")
@@ -1335,17 +1476,21 @@ def classes(surface, seed, answers, root):
     if any(a["outcome"] == "panic" for e, a in live.items() if e != "python"):
         found.add("no-answer")
     comparable = [(e, a) for e, a in live.items() if a["outcome"] in ("ok", "error")]
-    fixed = set()
+    fixed, owned = set(), set()
     for i, left in enumerate(comparable):
         for right in comparable[i + 1:]:
             found |= compare(surface, seed, left, right)
-            if left[1]["outcome"] == right[1]["outcome"] == "error" and \
-                    left[1].get("code") == right[1].get("code") != FRAMING and surface.text_fixed(seed, left, right):
+            if left[1]["outcome"] == right[1]["outcome"] == "error" and not (refused(left[1]) or refused(right[1])) \
+                    and left[1].get("code") == right[1].get("code") and surface.text_fixed(seed, left, right):
                 fixed |= {left[0], right[0]}
+            if own_differs(left[1], right[1]):
+                owned |= {left[0], right[0]}
     projected = {}
     forms = input_forms(root) if fixed or found & {"python-crash", "no-answer"} else []
     for engine, answer in live.items():
         view = {k: answer[k] for k in ("outcome", "code") if k in answer}
+        if engine in owned:
+            view["own"] = answer["own"]
         if answer["outcome"] in ("crash", "panic") or engine in fixed:
             key = surface.error_key(answer) if answer["outcome"] == "error" else answer.get("text")
             view["fixed"] = template(key, forms)
