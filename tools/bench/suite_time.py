@@ -69,6 +69,36 @@ def report(label, wall, user, system, rows, log, load_start, load_end, commit=No
                                    for n, c in sorted(cpu, key=lambda row: -row[1])[:10]]} if cpu else {})}
 
 
+RESULTS = ROOT / "tools/bench/results"
+RUNS = ("suite-before.json", "suite-after-n32.json", "suite-after-auto.json")
+
+
+def table(runs=RUNS) -> str:
+    """The Markdown table of the recorded runs that docs/testspeed-report.md shows (a test
+    regenerates it from the JSON)."""
+    lines = ["| run | commit | workers | load (1 min) start → end | wall s | CPU s (user + sys) | passed | skipped "
+             "| slowest test s |", "|---|---|---|---|---|---|---|---|---|"]
+    for name in runs:
+        run = json.loads((RESULTS / name).read_text())
+        lines.append(f"| {run['label']} | `{run['commit'][:8]}` | {run['workers']} | "
+                     f"{run['load_start']:.1f} → {run['load_end']:.1f} | {run['wall_seconds']:.0f} | "
+                     f"{run['cpu_seconds']['total']:.0f} | {run['counts'].get('passed', 0)} | "
+                     f"{run['counts'].get('skipped', 0)} | {run['slowest_tests'][0]['seconds']:.0f} |")
+    return "\n".join(lines)
+
+
+def slowest(name="suite-before.json") -> str:
+    """The ten slowest tests of a recorded run, as a Markdown list."""
+    run = json.loads((RESULTS / name).read_text())
+    return "\n".join(f"{i}. `{row['nodeid']}`: {row['seconds']:.0f} s" for i, row in enumerate(run["slowest_tests"], 1))
+
+
+def most_cpu(name="suite-after-auto.json") -> str:
+    run = json.loads((RESULTS / name).read_text())
+    return "\n".join(f"{i}. `{row['nodeid']}`: {row['cpu_seconds']:.0f} CPU s"
+                     for i, row in enumerate(run["most_cpu_tests"], 1))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--label", required=True)

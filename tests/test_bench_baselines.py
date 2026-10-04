@@ -29,3 +29,16 @@ def test_the_stored_baselines_cover_every_benchmark_that_replaced_a_suite_assert
     for prefix in ("test_precommit_large_staged_change::", "test_soft_exponential_unfoldings_are_refused_cheaply[",
                    "test_kernel_bounded_batches[w6a-generator]::", "test_kernel_bounded_batches[w6a-route-limits]::"):
         assert any(key.startswith(prefix) for key in keys), prefix
+
+
+def test_the_testspeed_report_shows_the_recorded_runs():
+    """docs/testspeed-report.md: every measured number is regenerated from tools/bench/results."""
+    from tools.bench import suite_time
+    report = (ROOT / "docs/testspeed-report.md").read_text()
+
+    def block(name):
+        return report.split(f"<!-- {name} -->\n", 1)[1].split(f"\n<!-- /{name} -->", 1)[0]
+    assert block("runs") == suite_time.table()
+    assert block("slowest") == suite_time.slowest("suite-before.json")
+    assert block("slowest-after") == suite_time.slowest("suite-after-n32.json")
+    assert block("most-cpu") == suite_time.most_cpu("suite-after-auto.json")

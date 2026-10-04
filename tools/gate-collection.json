@@ -681,6 +681,7 @@
   "tests/test_background.py::test_proofs_and_argument_replay_include_background",
   "tests/test_bench_baselines.py::test_a_measurement_over_its_allowance_or_without_a_baseline_fails",
   "tests/test_bench_baselines.py::test_the_stored_baselines_cover_every_benchmark_that_replaced_a_suite_assertion",
+  "tests/test_bench_baselines.py::test_the_testspeed_report_shows_the_recorded_runs",
   "tests/test_bench_timing.py::test_measure_excludes_cold_call_and_samples_each_warm_call",
   "tests/test_bench_timing.py::test_p95_uses_all_twenty_editor_samples",
   "tests/test_bluedot_grant.py::test_causal_units_on_the_merged_route",
