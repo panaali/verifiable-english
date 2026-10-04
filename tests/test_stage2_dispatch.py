@@ -129,16 +129,22 @@ def test_rust_wait_setting_that_is_not_positive_seconds_is_refused(monkeypatch, 
 
 
 def test_rust_checker_slower_than_the_setting_is_stopped_at_it(monkeypatch, tmp_path):
-    """The setting is the real wait of the checker process, which is killed."""
+    """The setting is the real wait of the checker process, which is killed. The
+    checker never answers, and its deadline is injected as expired: the test waits
+    for no deadline."""
+    from ve.backends import rust_jsonl
+    from subprocesses import expired_waits
     script = tmp_path / "ve"
     script.write_text("#!/bin/sh\nexec sleep 600\n")
     script.chmod(0o755)
     from hashlib import sha256
     monkeypatch.setenv("VE_RUST_JSONL", str(script))
     monkeypatch.setenv("VE_RUST_SHA256", sha256(script.read_bytes()).hexdigest())
-    monkeypatch.setenv("VE_RUST_TIMEOUT", "0.2")
-    with pytest.raises(CheckerUnavailable, match="timed out after 0.2 seconds"):
+    monkeypatch.setenv("VE_RUST_TIMEOUT", "1234.5")
+    waits = expired_waits(monkeypatch, rust_jsonl)
+    with pytest.raises(CheckerUnavailable, match="timed out after 1234.5 seconds"):
         rust_run({"id": "x", "kind": "check"})
+    assert waits == [1234.5]
 
 
 def test_the_suite_waits_its_hang_guard_for_every_checker():

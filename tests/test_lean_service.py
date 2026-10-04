@@ -330,7 +330,7 @@ def test_killed_process_is_replaced_between_requests(service_executable):
     with LeanService(service_executable) as service:
         first = service.pid
         os.kill(first, 9)
-        time.sleep(0.2)
+        service._proc.wait()  # reaped: the client sees it dead before the next request
         assert service.run("evaluate", CASES[:2])[0]["status"] == "ok"
         assert service.pid != first
 
@@ -444,12 +444,17 @@ if behaviour == "startup-eof":
     sys.exit(3)
 if behaviour == "silent":
     time.sleep(60)
+# A flaky service hangs on every request of its first process only. The process,
+# not the request, decides: a client that gives up before the first process read
+# its request still meets a hanging process first.
+started = marker + "-started"
+first_process = not os.path.exists(started)
+open(started, "a").close()
 print(json.dumps(hello), flush=True)
 for line in sys.stdin:
     request = json.loads(line)
-    first = not os.path.exists(marker)
     open(marker, "a").close()
-    if behaviour == "hang" or (behaviour == "flaky" and first):
+    if behaviour == "hang" or (behaviour == "flaky" and first_process):
         time.sleep(60)
     if behaviour == "crash":
         sys.exit(3)
@@ -554,6 +559,49 @@ for line in sys.stdin:
 '''
 
 
+ALL = range(1 << 30)
+
+
+@pytest.fixture
+def expired(monkeypatch):
+    """An injected clock for the client's response waits, so that no test waits out a
+    deadline against a fake that never answers: the response wait of each request
+    attempt in `expired.requests` (numbered from 0 over the test's attempts) and, with
+    `expired.handshakes`, every handshake wait, has already expired when it starts.
+    Every other wait is the configured one (HANG_TIMEOUT in the suite). Records the
+    timeout of every request attempt in `expired.waits`."""
+    return expire_service_waits(monkeypatch)
+
+
+def expire_service_waits(monkeypatch):
+    state = SimpleNamespace(requests=set(), handshakes=False, waits=[])
+    roundtrip, read_line, spawn = LeanService._roundtrip, LeanService._read_line, LeanService._spawn
+    phase = threading.local()
+
+    def within(expires, call):
+        outer, phase.expires = getattr(phase, "expires", False), expires
+        try:
+            return call()
+        finally:
+            phase.expires = outer
+
+    def recorded_roundtrip(self, mode, cases_text, count, timeout, *rest):
+        attempt = len(state.waits)
+        state.waits.append(timeout)
+        return within(attempt in state.requests,
+                      lambda: roundtrip(self, mode, cases_text, count, timeout, *rest))
+
+    def handshake(self):
+        return within(state.handshakes, lambda: spawn(self))
+
+    def read(self, deadline):
+        return read_line(self, time.monotonic() if getattr(phase, "expires", False) else deadline)
+    monkeypatch.setattr(LeanService, "_roundtrip", recorded_roundtrip)
+    monkeypatch.setattr(LeanService, "_spawn", handshake)
+    monkeypatch.setattr(LeanService, "_read_line", read)
+    return state
+
+
 def fake(tmp_path, behaviour):
     script = tmp_path / "fake.py"
     script.write_text(FAKE)
@@ -566,25 +614,32 @@ def fake(tmp_path, behaviour):
 @pytest.mark.parametrize("behaviour", ["hang", "crash", "garbage", "truncated", "wrong-id", "short",
                                        "wrong-mode", "missing-error", "boolean-result", "empty-result",
                                        "duplicate-response", "nan-result"])
-def test_operational_faults_fail_closed(tmp_path, behaviour):
-    service = LeanService(fake(tmp_path, behaviour), timeout=0.5, allow_unlisted_build=True)
+def test_operational_faults_fail_closed(tmp_path, expired, behaviour):
+    if behaviour == "hang":
+        expired.requests = ALL
+    service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
     try:
         with pytest.raises(CheckerUnavailable) as caught:
             service.run("evaluate", [{}])
         assert caught.value.code == "CheckerUnavailable"
         assert not isinstance(caught.value, ResourceLimit)
         assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+        assert expired.waits == [HANG_TIMEOUT] * 2
     finally:
         service.close()
 
 
-def test_one_retry_recovers_a_hung_batch(tmp_path):
-    with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
+def test_one_retry_recovers_a_hung_batch(tmp_path, expired):
+    """The first attempt's deadline is injected (it has expired against a process that
+    never answers); the retry waits HANG_TIMEOUT and its fresh process answers."""
+    expired.requests = {0}
+    with LeanService(fake(tmp_path, "flaky"), allow_unlisted_build=True) as service:
         assert service.run("evaluate", [{"id": "a", "ast": [["top"]]},
                                         {"id": "b", "ast": [["top"]]}]) == [
             {"id": "a", "status": "ok", "values": [True], "value": True, "canonical": ""},
             {"id": "b", "status": "ok", "values": [True], "value": True, "canonical": ""}]
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+    assert expired.waits == [HANG_TIMEOUT] * 2
 
 
 @pytest.mark.parametrize("behaviour,mode,case", [
@@ -926,8 +981,9 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
 
 @pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits",
                                        "bad-protocol", "startup-eof"])
-def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
-    service = LeanService(fake(tmp_path, behaviour), startup_timeout=0.5, allow_unlisted_build=True)
+def test_bad_or_missing_handshake_is_unavailable(tmp_path, expired, behaviour):
+    expired.handshakes = behaviour == "silent"
+    service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
     with pytest.raises(CheckerUnavailable, match="handshake"):
         service.start()
     assert service.pid is None and service.stats["starts"] == 2 and service.stats["retries"] == 1
@@ -984,32 +1040,33 @@ def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch):
         with pytest.raises(CheckerUnavailable, match="instrumented start"):
             LeanService(fake(tmp_path, "ok"), startup_timeout=startup_timeout, address_space=None,
                         allow_unlisted_build=True).start()
-    assert starts == [30.0, 30.0, 4, 4]  # one retry each
+    # The setting replaces the 30 s default: each handshake ends at the setting after its start.
+    monkeypatch.setenv("VE_LEAN_SERVICE_STARTUP_TIMEOUT", "1234.5")
+    with pytest.raises(CheckerUnavailable, match="instrumented start"):
+        LeanService(fake(tmp_path, "ok"), address_space=None, allow_unlisted_build=True).start()
+    assert starts == [30.0, 30.0, 4, 4, 1234.5, 1234.5]  # one retry each
 
 
-def test_the_setting_replaces_the_request_and_startup_defaults(tmp_path, monkeypatch):
-    """A request (or a start) slower than the setting is stopped at the setting,
-    retried once and recovered: the setting, not the 5 s (30 s) default, is the
-    wait, and a shared pool created earlier follows a later setting."""
-    monkeypatch.setenv("VE_LEAN_SERVICE_TIMEOUT", "0.5")
+def test_the_setting_replaces_the_request_and_startup_defaults(tmp_path, monkeypatch, expired):
+    """A request (or a start) that outlasts the setting is stopped, retried once and
+    recovered: the setting, not the 5 s (30 s) default, is each attempt's wait. The
+    first request's deadline, and every handshake's of the silent service, is injected
+    as expired; the handshake deadline's value is checked by
+    test_users_keep_the_wall_clock_defaults."""
+    monkeypatch.setenv("VE_LEAN_SERVICE_TIMEOUT", "1234.5")
+    expired.requests = {0}
     service = LeanService(fake(tmp_path, "flaky"), allow_unlisted_build=True)
     with service:
         assert service.run("evaluate", [{"id": "a", "ast": [["top"]]}])[0]["status"] == "ok"
         assert service.stats["retries"] == 1 and service.stats["starts"] == 2
-    monkeypatch.setenv("VE_LEAN_SERVICE_STARTUP_TIMEOUT", "0.5")
-    remaining = []
-    read_line = LeanService._read_line
-
-    def recorded(self, deadline):
-        remaining.append(deadline - time.monotonic())
-        return read_line(self, deadline)
-    monkeypatch.setattr(LeanService, "_read_line", recorded)
+    assert expired.waits == [1234.5, 1234.5]
+    monkeypatch.setenv("VE_LEAN_SERVICE_STARTUP_TIMEOUT", "1234.5")
+    expired.handshakes = True
     silent = LeanService(fake(tmp_path, "silent"), allow_unlisted_build=True)
     with pytest.raises(CheckerUnavailable, match="handshake"):
         silent.start()
+    assert silent.stats["starts"] == 2 and silent.stats["retries"] == 1
     silent.close()
-    # Both handshake waits end within the setting, not 30 s after the start.
-    assert len(remaining) == 2 and all(r <= 0.5 for r in remaining), remaining
 
 
 @pytest.mark.parametrize("variable", ["VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"])

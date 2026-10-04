@@ -19,7 +19,7 @@ import sys
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from subprocesses import HANG_TIMEOUT, expired_waits
 from ve import assurance
 from ve.backends import lean as lean_backend
 from ve.errors import AuthorityViolation, CheckerUnavailable, ResourceLimit, VEError
@@ -733,7 +733,8 @@ FAULTS = {
     "wrong-id": "print(json.dumps([{'id': 'other', 'status': 'ok'}]))",
     "ok-rows-exit-1": "print(json.dumps([{'id': c['id'], 'status': 'ok'} for c in cases])); sys.exit(1)",
     "error-rows-exit-0": "print(json.dumps([{'id': c['id'], 'status': 'error'} for c in cases]))",
-    "hang": "time.sleep(30)",
+    # Never answers; a test injects its deadline as expired (tests/subprocesses.py: expired_waits).
+    "hang": "import threading; threading.Event().wait()",
     # Rows that are JSON objects but not an answer (review reproducer: exit 0 with `[{}]`).
     "empty-row": "print(json.dumps([{}]))",
     "no-status": "print(json.dumps([{'id': c['id']} for c in cases]))",
@@ -754,11 +755,14 @@ FAULTS = {
 
 
 @pytest.mark.parametrize("fault", FAULTS)
-def test_backend_faults_are_checker_unavailable(tmp_path, fault):
+def test_backend_faults_are_checker_unavailable(tmp_path, monkeypatch, fault):
     fake = _fake_lean(tmp_path, FAULTS[fault])
+    waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: fault == "hang")
     with pytest.raises(CheckerUnavailable) as caught:
-        lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=2)
+        lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route",
+                         timeout=HANG_TIMEOUT)
     assert caught.value.backend == "lean" and caught.value.operation == "bundle.check"
+    assert waits == ([HANG_TIMEOUT] if fault == "hang" else [])
 
 
 def test_row_schema():
@@ -828,13 +832,14 @@ def test_every_declared_response_field_is_enforced(op_id, binding):
 def test_missing_backend_is_checker_unavailable(tmp_path):
     with pytest.raises(CheckerUnavailable, match="cannot start"):
         lean_backend.run("bundle.check", tmp_path / "absent", CASE, runner="ve_conformance",
-                         mode="route", timeout=2)
+                         mode="route", timeout=HANG_TIMEOUT)
 
 
 def test_backend_rejection_is_returned_as_a_semantic_row(tmp_path):
     fake = _fake_lean(tmp_path, "print(json.dumps([{'id': c['id'], 'status': 'error', 'error': 'forged'} "
                                 "for c in cases])); sys.exit(1)")
-    rows = lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route", timeout=5)
+    rows = lean_backend.run("bundle.check", fake, CASE, runner="ve_conformance", mode="route",
+                            timeout=HANG_TIMEOUT)
     assert rows == [{"id": "bundle", "status": "error", "error": "forged"}]
 
 
@@ -863,7 +868,7 @@ def test_undeclared_call_site_inside_ve_is_refused(tmp_path):
 def test_backend_calls_must_be_declared(tmp_path, op_id, runner, mode, case):
     # The binding is checked before any process starts.
     with pytest.raises(RuntimeError, match="not declared"):
-        lean_backend.run(op_id, tmp_path / "absent", [case], runner=runner, mode=mode, timeout=1)
+        lean_backend.run(op_id, tmp_path / "absent", [case], runner=runner, mode=mode, timeout=HANG_TIMEOUT)
 
 
 def _bundle():
@@ -873,10 +878,12 @@ def _bundle():
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve.bundle import check_bundle
     hang = _fake_lean(tmp_path, FAULTS["hang"], name="hang")
-    with monkeypatch.context() as short:
-        short.setenv("VE_LEAN_TIMEOUT", "1")
-        with pytest.raises(CheckerUnavailable, match="no answer"):
+    with monkeypatch.context() as setting:
+        setting.setenv("VE_LEAN_TIMEOUT", "1234.5")
+        waits = expired_waits(setting, lean_backend)
+        with pytest.raises(CheckerUnavailable, match="no answer within 1234.5 s"):
             check_bundle(_bundle(), lean_executable=hang)
+    assert waits == [1234.5]
     assert check_bundle(_bundle())["lean_outcome"] == "not_requested"
     with pytest.raises(CheckerUnavailable):
         check_bundle(_bundle(), lean_executable=tmp_path / "absent")
@@ -1019,7 +1026,8 @@ def test_malformed_argument_answers_are_unavailable(tmp_path, fault):
 def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve import check_argument, outstanding_obligations
     from ve.argument_fixtures import merged_vocabulary_example
-    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1")
+    monkeypatch.setenv("VE_LEAN_TIMEOUT", "1234.5")
+    waits = expired_waits(monkeypatch, lean_backend, expire=lambda argv: Path(argv[0]).name == "hang")
     graph = merged_vocabulary_example()
     outcomes = {}
     for name, body in (("absent", None), ("crash", FAULTS["crash"]), ("hang", FAULTS["hang"]),
@@ -1033,6 +1041,7 @@ def test_argument_separates_lean_rejection_from_unavailability(tmp_path, monkeyp
     assert outcomes["rejecting"] == ("rejected", "Lean-checked: no", "rejected")
     for name in ("absent", "crash", "hang"):
         assert outcomes[name] == ("unavailable", "Lean-checked: unavailable", "unavailable"), name
+    assert waits and set(waits) == {1234.5}
     assert check_argument(graph).lean_outcome == "not_requested"
 
 
