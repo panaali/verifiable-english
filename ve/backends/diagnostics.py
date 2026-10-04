@@ -1,11 +1,10 @@
-"""Diagnostics of the checkers that send no code: the Rust JSONL checker and the one-shot
-Lean `ve_quantity` runner.
+"""Diagnostics of the checker that sends no code: the Rust JSONL checker.
 
-The Lean service sends its own code, which `relay.py` relays. These runners leave the
-code in the message's `Class:` prefix; the text is kept verbatim (docs/LEAN-FIRST-PLAN.md,
-rule 2: no prefix stripping). An unrecognised prefix is InvalidInput, never a verdict.
-Retained until the one-shot routes move into the service (batch 1) and Rust texts stop
-reaching users (batch 15).
+The Lean service sends its own code, which `relay.py` relays; since lean-first batch 1 every Lean
+route is a service mode, so no Lean row reaches this module. Rust leaves the code in the message's
+`Class:` prefix; the text is kept verbatim (docs/LEAN-FIRST-PLAN.md, rule 2: no prefix stripping).
+An unrecognised prefix is InvalidInput, never a verdict. Retained until Rust texts stop reaching
+users (batch 15).
 """
 from __future__ import annotations
 
