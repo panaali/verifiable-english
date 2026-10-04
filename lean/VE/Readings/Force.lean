@@ -499,4 +499,282 @@ theorem selects_canon {N : SoftNode} (hN : N ∈ C.T.nodes) (vs : List S.Carrier
 
 end Expansion
 
+/-! ## The premises of a document and its relaxed twin -/
+
+theorem flatMap_congr_mem {α β : Type} {l : List α} {f g : α → List β} (h : ∀ a ∈ l, f a = g a) :
+    l.flatMap f = l.flatMap g := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    simp only [List.flatMap_cons]
+    rw [h a List.mem_cons_self, ih (fun b hb => h b (List.mem_cons_of_mem _ hb))]
+
+theorem filterMap_congr_mem {α β : Type} {l : List α} {f g : α → Option β} (h : ∀ a ∈ l, f a = g a) :
+    l.filterMap f = l.filterMap g := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    simp only [List.filterMap_cons]
+    rw [h a List.mem_cons_self, ih (fun b hb => h b (List.mem_cons_of_mem _ hb))]
+
+/-- A list's first match on `P` is its filter's when every match passes the filter. -/
+theorem find?_of_filter {α : Type} (l : List α) (P Q : α → Bool) (h : ∀ a, P a = true → Q a = true) :
+    (l.filter Q).find? P = l.find? P := by
+  rw [List.find?_filter]
+  congr 1
+  funext a
+  cases hp : P a
+  · simp
+  · simp [h a hp]
+
+theorem sat_append (S : VE.Structure.{u}) (a b : List VE.Formula) : Sat S (a ++ b) ↔ Sat S a ∧ Sat S b := by
+  simp only [Sat, List.mem_append]
+  exact ⟨fun h => ⟨fun x hx => h x (Or.inl hx), fun x hx => h x (Or.inr hx)⟩,
+    fun ⟨ha, hb⟩ x hx => hx.elim (ha x) (hb x)⟩
+
+theorem atom_false {S : VE.Structure.{u}} {p : String} (h : ∀ vs, ¬ S.relation p vs) (ss : List String)
+    (ρ : VE.Valuation S) : ¬ (VE.Norms.atom p ss).denote S ρ := by
+  unfold VE.Norms.atom
+  split
+  · rintro ⟨v, _, hv⟩; exact h _ hv
+  · rintro ⟨v, w, _, _, hv⟩; exact h _ hv
+  · exact id
+
+section Premises
+variable {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd)
+include hw
+
+theorem Twin.collidingPairs_eq :
+    VE.SoftNorms.collidingPairs (relaxDoc C Nd) = VE.SoftNorms.collidingPairs C := by
+  have hv := hw.valid
+  unfold VE.SoftNorms.collidingPairs
+  congr 1
+  show (C.T.nodes.map (relaxTo Nd)).flatMap _ = _
+  rw [List.flatMap_map]
+  apply flatMap_congr_mem
+  intro M hM
+  show List.filterMap _ (C.T.nodes.map (relaxTo Nd)) = _
+  rw [List.filterMap_map]
+  apply filterMap_congr_mem
+  intro N hN
+  simp only [Function.comp_def]
+  -- two rules named like the twin never collide, and the twin collides with nothing
+  have hcol : ∀ X ∈ C.T.nodes, ∀ Y ∈ C.T.nodes, X.name = Nd.name →
+      Incompatible (relaxDoc C Nd) (relaxTo Nd X) (relaxTo Nd Y) = true → Y.name = Nd.name := by
+    intro X hX Y hY hn hi
+    have ha := act_of_incompatible hv hi
+    have := hw.alone (relaxTo Nd Y) (relax_mem hY) (by
+      rw [← ha]; show actKey C (relaxTo Nd X).pred = actKey C Nd.pred
+      rw [relaxTo_pred, hw.pred X hX hn])
+    rwa [relaxTo_name] at this
+  by_cases hm : M.name = Nd.name
+  · have h1 : ¬ ((relaxTo Nd M).mode = .default ∧ (relaxTo Nd N).mode = .default ∧
+        (relaxTo Nd M).name < (relaxTo Nd N).name ∧
+        Incompatible (relaxDoc C Nd) (relaxTo Nd M) (relaxTo Nd N) = true) := by
+      rintro ⟨_, _, hlt, hi⟩
+      have := hcol M hM N hN hm hi
+      rw [relaxTo_name, relaxTo_name, hm, this] at hlt
+      exact String.lt_irrefl _ hlt
+    have h2 : ¬ (M.mode = .default ∧ N.mode = .default ∧ M.name < N.name ∧ Incompatible C M N = true) :=
+      fun h => by rw [hw.strict M hM hm] at h; cases h.1
+    rw [if_neg h1, if_neg h2]
+  · by_cases hn : N.name = Nd.name
+    · have h1 : ¬ ((relaxTo Nd M).mode = .default ∧ (relaxTo Nd N).mode = .default ∧
+          (relaxTo Nd M).name < (relaxTo Nd N).name ∧
+          Incompatible (relaxDoc C Nd) (relaxTo Nd M) (relaxTo Nd N) = true) := by
+        rintro ⟨_, _, _, hi⟩
+        have hi' : Incompatible (relaxDoc C Nd) (relaxTo Nd N) (relaxTo Nd M) = true := by
+          rw [VE.SoftNorms.incompatible_symm]; exact hi
+        exact hm (hcol N hN M hM hn hi')
+      have h2 : ¬ (M.mode = .default ∧ N.mode = .default ∧ M.name < N.name ∧ Incompatible C M N = true) :=
+        fun h => by rw [hw.strict N hN hn] at h; cases h.2.1
+      rw [if_neg h1, if_neg h2]
+    · rw [relaxTo_of_ne hm, relaxTo_of_ne hn]
+      rfl
+
+theorem Twin.outweighsTriples_eq :
+    VE.SoftNorms.outweighsTriples (relaxDoc C Nd) = VE.SoftNorms.outweighsTriples C := by
+  unfold VE.SoftNorms.outweighsTriples
+  rw [hw.collidingPairs_eq]
+  rfl
+
+omit hw in
+theorem offDecisions_relax : VE.SoftNorms.offDecisions (relaxDoc C Nd) = VE.SoftNorms.offDecisions C := by
+  unfold VE.SoftNorms.offDecisions
+  show (C.T.nodes.map (relaxTo Nd)).flatMap _ = _
+  rw [List.flatMap_map]
+  congr 1
+  funext N
+  simp only [relaxTo_alterable, VE.SoftNorms.offName, relaxTo_name, relaxTo_pred]
+  rfl
+
+theorem Twin.exceptedDecisions_filter : ∀ l : List SoftNode, (∀ M ∈ l, M ∈ C.T.nodes) →
+    ((((l.map (relaxTo Nd)).filter (·.mode == .default)).map (fun N =>
+        (VE.SoftNorms.exceptedName N, VE.SoftNorms.sortsOf (relaxDoc C Nd) N.pred))).filter
+        (·.1 != VE.SoftNorms.exceptedName Nd)) =
+      ((((l.filter (·.mode == .default)).map (fun N =>
+        (VE.SoftNorms.exceptedName N, VE.SoftNorms.sortsOf C N.pred))).filter
+        (·.1 != VE.SoftNorms.exceptedName Nd)))
+  | [], _ => rfl
+  | M :: l, hl => by
+    have ih := Twin.exceptedDecisions_filter l (fun X hX => hl X (List.mem_cons_of_mem _ hX))
+    have hM := hl M List.mem_cons_self
+    by_cases hn : M.name = Nd.name
+    · have hs := hw.strict M hM hn
+      have hd : (relaxTo Nd M).mode = .default := by rw [relaxTo_of_eq hn]
+      have hx : VE.SoftNorms.exceptedName (relaxTo Nd M) = VE.SoftNorms.exceptedName Nd := by
+        unfold VE.SoftNorms.exceptedName; rw [relaxTo_name, hn]
+      rw [List.map_cons, List.filter_cons_of_pos (by simp [hd]), List.map_cons,
+        List.filter_cons_of_neg (by simp [hx]), List.filter_cons_of_neg (by simp [hs])]
+      exact ih
+    · rw [List.map_cons, relaxTo_of_ne hn]
+      by_cases hd : M.mode = .default
+      · rw [List.filter_cons_of_pos (by simp [hd]), List.filter_cons_of_pos (by simp [hd]),
+          List.map_cons, List.map_cons]
+        by_cases hx : VE.SoftNorms.exceptedName M = VE.SoftNorms.exceptedName Nd
+        · rw [List.filter_cons_of_neg (by simp [hx]), List.filter_cons_of_neg (by simp [hx])]
+          exact ih
+        · rw [List.filter_cons_of_pos (by simp [hx]), List.filter_cons_of_pos (by simp [hx]), ih]
+          rfl
+      · rw [List.filter_cons_of_neg (by simp [hd]), List.filter_cons_of_neg (by simp [hd])]
+        exact ih
+
+theorem Twin.decisions_find {p : String} (hp : p ≠ VE.SoftNorms.exceptedName Nd) :
+    (VE.SoftNorms.decisions (relaxDoc C Nd)).find? (·.1 == p) =
+      (VE.SoftNorms.decisions C).find? (·.1 == p) := by
+  have hq : ∀ a : String × List String, (a.1 == p) = true → (a.1 != VE.SoftNorms.exceptedName Nd) = true := by
+    intro a ha
+    simp only [beq_iff_eq] at ha
+    simp [ha, hp]
+  rw [← find?_of_filter _ _ _ hq, ← find?_of_filter (VE.SoftNorms.decisions C) _ _ hq]
+  congr 1
+  unfold VE.SoftNorms.decisions
+  rw [List.filter_append, List.filter_append, List.filter_append, List.filter_append, offDecisions_relax]
+  unfold VE.SoftNorms.outweighsDecisions
+  rw [hw.outweighsTriples_eq]
+  congr 2
+  exact hw.exceptedDecisions_filter C.T.nodes (fun _ h => h)
+
+/-- Off the exception predicate, the base vocabularies of the two elaborations agree. -/
+theorem Twin.envAt_zero (hs : SoftValid C) {p : String} (hp : p ≠ VE.SoftNorms.exceptedName Nd) :
+    (envAt (soften (relaxDoc C Nd)) 0).predicates p = (envAt (soften C) 0).predicates p := by
+  have hvs := VE.Norms.valid_of_wellFormed _ hs.wf
+  have hvd := VE.Norms.valid_of_wellFormed _ hw.valid.wf
+  simp only [envAt, VE.Norms.hide, List.drop_zero]
+  have hl : p ∈ VE.Norms.layerNames (soften (relaxDoc C Nd)).T ↔ p ∈ VE.Norms.layerNames (soften C).T :=
+    ⟨layerNames_mem (T₁ := (soften (relaxDoc C Nd)).T) (T₂ := (soften C).T) rfl rfl hvd.stratum hvs.stratum,
+     layerNames_mem (T₁ := (soften C).T) (T₂ := (soften (relaxDoc C Nd)).T) rfl rfl hvs.stratum hvd.stratum⟩
+  by_cases hm : p ∈ VE.Norms.layerNames (soften C).T
+  · rw [if_pos (hl.mpr hm), if_pos hm]
+  · rw [if_neg (fun h => hm (hl.mp h)), if_neg hm]
+    show (VE.SoftNorms.envPrime (relaxDoc C Nd)).predicates p = (VE.SoftNorms.envPrime C).predicates p
+    unfold VE.SoftNorms.envPrime
+    simp only
+    rw [hw.decisions_find hp]
+    rfl
+
+theorem Twin.baseAdmissible (hs : SoftValid C) (S : VE.Structure.{u})
+    (hS : ∀ vs, ¬ S.relation (VE.SoftNorms.exceptedName Nd) vs) :
+    VE.Norms.BaseAdmissible (soften C) S ↔ VE.Norms.BaseAdmissible (soften (relaxDoc C Nd)) S := by
+  unfold VE.Norms.BaseAdmissible VE.Structure.Admissible
+  have key : ∀ p vs, S.relation p vs → (envAt (soften (relaxDoc C Nd)) 0).predicates p =
+      (envAt (soften C) 0).predicates p :=
+    fun p vs h => hw.envAt_zero hs (fun he => hS vs (he ▸ h))
+  constructor
+  · rintro ⟨⟨hc, hr⟩, hb⟩
+    exact ⟨⟨hc, fun p vs h => by rw [key p vs h]; exact hr p vs h⟩, hb⟩
+  · rintro ⟨⟨hc, hr⟩, hb⟩
+    exact ⟨⟨hc, fun p vs h => by rw [← key p vs h]; exact hr p vs h⟩, hb⟩
+
+/-- The exception premises: the relaxed document adds only the twin's necessary conditions, which hold where its
+    exception predicate is false. -/
+theorem Twin.excPremises (S : VE.Structure.{u}) (hsuf : ∀ e, Nd.exception = some e → e.sufficient = [])
+    (hS : ∀ vs, ¬ S.relation (VE.SoftNorms.exceptedName Nd) vs) :
+    Sat S (VE.SoftNorms.excPremises C) ↔ Sat S (VE.SoftNorms.excPremises (relaxDoc C Nd)) := by
+  have hoff : ∀ M ∈ C.T.nodes, M.name ≠ Nd.name →
+      VE.SoftNorms.excPremisesOf (relaxDoc C Nd) (relaxTo Nd M) = VE.SoftNorms.excPremisesOf C M := by
+    intro M _ hn
+    rw [relaxTo_of_ne hn]
+    rfl
+  have hon : ∀ M ∈ C.T.nodes, M.name = Nd.name → VE.SoftNorms.excPremisesOf C M = [] := by
+    intro M hM hn
+    unfold VE.SoftNorms.excPremisesOf
+    rw [hw.strict M hM hn]
+  have hsat : ∀ M ∈ C.T.nodes, M.name = Nd.name →
+      Sat S (VE.SoftNorms.excPremisesOf (relaxDoc C Nd) (relaxTo Nd M)) := by
+    intro M hM hn φ hφ
+    have hmode : (relaxTo Nd M).mode = .default := by rw [relaxTo_of_eq hn]
+    have hexc : (relaxTo Nd M).exception = Nd.exception := by rw [relaxTo_of_eq hn]
+    have hname : VE.SoftNorms.exceptedName (relaxTo Nd M) = VE.SoftNorms.exceptedName Nd := by
+      unfold VE.SoftNorms.exceptedName; rw [relaxTo_name, hn]
+    unfold VE.SoftNorms.excPremisesOf at hφ
+    rw [hmode, hexc] at hφ
+    cases hex : Nd.exception with
+    | none => simp [hex] at hφ
+    | some e =>
+      simp only [hex] at hφ
+      rw [hsuf e hex, List.map_nil, List.nil_append] at hφ
+      obtain ⟨c, _, rfl⟩ := List.mem_map.mp hφ
+      rw [VE.Norms.bindAll_denote_nil]
+      intro vs _ hx
+      have he2 : ∀ ws, ¬ S.relation (VE.SoftNorms.exceptedName (relaxTo Nd M)) ws := by
+        intro ws; rw [hname]; exact hS ws
+      exact (atom_false he2 _ _ hx).elim
+  unfold VE.SoftNorms.excPremises Sat
+  constructor
+  · intro h φ hφ
+    have hφ' : φ ∈ (C.T.nodes.map (relaxTo Nd)).flatMap (VE.SoftNorms.excPremisesOf (relaxDoc C Nd)) := hφ
+    rw [List.flatMap_map, List.mem_flatMap] at hφ'
+    obtain ⟨M, hM, hφ'⟩ := hφ'
+    by_cases hn : M.name = Nd.name
+    · exact hsat M hM hn φ hφ'
+    · rw [hoff M hM hn] at hφ'
+      exact h φ (List.mem_flatMap.mpr ⟨M, hM, hφ'⟩)
+  · intro h φ hφ
+    obtain ⟨M, hM, hφ'⟩ := List.mem_flatMap.mp hφ
+    by_cases hn : M.name = Nd.name
+    · rw [hon M hM hn] at hφ'; cases hφ'
+    · apply h φ
+      show φ ∈ (C.T.nodes.map (relaxTo Nd)).flatMap (VE.SoftNorms.excPremisesOf (relaxDoc C Nd))
+      rw [List.flatMap_map, List.mem_flatMap]
+      refine ⟨M, hM, ?_⟩
+      rw [hoff M hM hn]; exact hφ'
+
+end Premises
+
+/-! ## The exception predicate in the relaxed expansion -/
+
+/-- The exception predicate is no layer symbol of the relaxed elaboration. -/
+theorem Twin.excepted_out {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hn : ∃ M ∈ C.T.nodes, M.name = Nd.name)
+    (hdef : ∀ d ∈ C.T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd) :
+    VE.SoftNorms.exceptedName Nd ∉ VE.Norms.layerNames (soften (relaxDoc C Nd)).T := by
+  intro h
+  rcases List.mem_append.mp (Wire.layerNames_sub h) with h | h
+  · obtain ⟨r, hr, hrn⟩ := List.mem_map.mp h
+    obtain ⟨M, hM, hMn⟩ := hn
+    have hdec : VE.SoftNorms.exceptedName Nd ∈ VE.SoftNorms.decisionNames (relaxDoc C Nd) := by
+      unfold VE.SoftNorms.decisionNames VE.SoftNorms.decisions VE.SoftNorms.exceptedDecisions
+      refine List.mem_map.mpr ⟨(VE.SoftNorms.exceptedName (relaxTo Nd M),
+        VE.SoftNorms.sortsOf (relaxDoc C Nd) (relaxTo Nd M).pred), ?_, ?_⟩
+      · refine List.mem_append_left _ (List.mem_append_left _ (List.mem_map.mpr ⟨relaxTo Nd M, ?_, rfl⟩))
+        refine List.mem_filter.mpr ⟨relax_mem hM, ?_⟩
+        rw [relaxTo_of_eq hMn]; rfl
+      · show VE.SoftNorms.exceptedName (relaxTo Nd M) = _
+        unfold VE.SoftNorms.exceptedName; rw [relaxTo_name, hMn]
+    have h1 := hw.valid.decFresh _ hdec
+    have h2 := hw.valid.regDecl r hr
+    have hrn' : r.name = VE.SoftNorms.exceptedName Nd := hrn
+    rw [hrn', h1] at h2
+    cases h2
+  · obtain ⟨d, hd, hdn⟩ := List.mem_map.mp h
+    exact hdef d hd hdn
+
+theorem Twin.excepted_canon {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hn : ∃ M ∈ C.T.nodes, M.name = Nd.name)
+    (hdef : ∀ d ∈ C.T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd) (S : VE.Structure.{u})
+    (hS : ∀ vs, ¬ S.relation (VE.SoftNorms.exceptedName Nd) vs) (ρ : VE.Valuation S) :
+    ¬ (exceptedF C Nd).denote (canon (soften (relaxDoc C Nd)) S) ρ :=
+  have hc : ∀ vs, ¬ (canon (soften (relaxDoc C Nd)) S).relation (VE.SoftNorms.exceptedName Nd) vs :=
+    fun vs h => hS vs ((VE.SoftNorms.canon_off S (hw.excepted_out hn hdef) vs).mp h)
+  atom_false hc _ ρ
+
 end VE.Readings
