@@ -28,6 +28,7 @@ import sys
 from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
+from .lean_service import _decode_json
 
 
 def run_soft_case(executable, case):
@@ -236,7 +237,7 @@ def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 1
         raise CheckerUnavailable("ve_norm_defaults_route is unavailable") from exc
     try:
         rows = json.loads(completed.stdout)
-    except ValueError as exc:
+    except (ValueError, RecursionError) as exc:
         raise CheckerUnavailable("ve_norm_defaults_route returned invalid JSON") from exc
     if (type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows)
             or any(r.get("status") not in ("ok", "error") for r in rows)):
@@ -258,8 +259,10 @@ def run_readings_cases(executable, cases: list[dict], *, timeout: float = 120) -
     if completed.returncode not in (0, 1):
         raise CheckerUnavailable("ve_readings_route failed")
     try:
-        rows = json.loads(completed.stdout)
-    except ValueError as exc:
+        # The Lean service's reader: a repeated member, a non-JSON number or nesting past the runtime limit is no
+        # answer (`json.loads` alone keeps the last of two members and lets RecursionError escape).
+        rows = _decode_json(completed.stdout)
+    except (ValueError, RecursionError) as exc:
         raise CheckerUnavailable("ve_readings_route returned invalid JSON") from exc
     if (type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows)
             or any(r.get("status") not in ("ok", "error") for r in rows)

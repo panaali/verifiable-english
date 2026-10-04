@@ -128,6 +128,63 @@ UNBOUND = {
     "pair witness_value a number": _put(PAIR + ("witness_value",), 0),
     "pair other_value a string": _put(PAIR + ("other_value",), "true"),
     "pair with an extra fact": _put(PAIR + ("certified",), True),
+    # lf-3 review B1: the base's byte-for-byte comparison rejected each of these; the relay's schema did not.
+    "sets emptied": _put(("sets",), []),
+    "pairs emptied": _put(("sets", 0, "pairs"), []),
+    "pair dropped": lambda row: _set(row)["pairs"].pop(),
+    "pair duplicated": lambda row: _set(row)["pairs"].append(copy.deepcopy(_set(row)["pairs"][0])),
+    "pairs reordered": lambda row: _set(row)["pairs"].reverse(),
+    "pair reading and other swapped": lambda row: _set(row)["pairs"][0].update(
+        reading=_set(row)["pairs"][0]["other"], other=_set(row)["pairs"][0]["reading"]),
+    "pair situation another digest": _put(PAIR + ("situation",), "f" * 64),
+    "pair witness the other reading": _put(PAIR + ("witness",), "strict"),
+    "pair separated false": _put(PAIR + ("separated",), False),
+    "pair witness_admissible false": _put(PAIR + ("witness_admissible",), False),
+    "pair witness_value flipped": _put(PAIR + ("witness_value",), True),
+    "pair witness_value null": _put(PAIR + ("witness_value",), None),
+    "pair other_value dropped where the other owns no key": _drop(PAIR + ("other_value",)),
+    "pair other_value showing the witness's value": _put(PAIR + ("other_value",), False),
+    "owned key of no constructor": _put(CANDIDATE + ("owned", 0, "key"), {"bogus": "no-deception"}),
+    "owned key with a field of another constructor": _put(CANDIDATE + ("owned", 0, "key"),
+                                                          {"excepted": "no-deception", "act": "avoid_required"}),
+    "owned key emptied": _put(CANDIDATE + ("owned", 0, "key"), {}),
+    "owned key value a number": _put(CANDIDATE + ("owned", 0, "key", "excepted"), 7),
+    "owned key value empty": _put(CANDIDATE + ("owned", 0, "key", "excepted"), ""),
+    "owned name empty": _put(CANDIDATE + ("owned", 0, "name"), ""),
+    "owned entry duplicated into shared": lambda row: _set(row)["candidates"][1]["shared"].append(
+        copy.deepcopy(_set(row)["candidates"][1]["owned"][0])),
+    "decision key no longer owned by the witness": lambda row: _set(row)["candidates"][1].update(
+        shared=_set(row)["candidates"][1]["owned"], owned=[]),
+    "document_hash emptied": _put(CANDIDATE + ("document_hash",), ""),
+    "document_hash not a digest": _put(CANDIDATE + ("document_hash",), "abc"),
+    "document_hash upper case": lambda row: _set(row)["candidates"][1].update(
+        document_hash=_set(row)["candidates"][1]["document_hash"].upper()),
+    "candidate finding without its suffix": _put(CANDIDATE + ("findings",), ["UnlicensedLimitation: x"]),
+    "candidate finding under another candidate": _put(CANDIDATE + ("findings",), ["X: y under rs1@1:0"]),
+    "pending candidate whose reading has content": lambda row: _set(row)["candidates"].__setitem__(
+        1, {"id": "default", "index": 1, "pending": True}),
+    "set finding emptied text": _put(("sets", 0, "findings"), [""]),
+    "set finding of another set": _put(("sets", 0, "findings"), ["SeparatedByDecisionOnly: rs2: 0, 1 (not certified)"]),
+    "set finding index out of range": _put(("sets", 0, "findings"), ["SeparatedByDecisionOnly: rs1: 0, 2 (not certified)"]),
+    "set finding of a candidate with itself": _put(("sets", 0, "findings"), ["SeparatedByActOnly: rs1: 1, 1"]),
+    "set finding act-only reversed": _put(("sets", 0, "findings"), ["SeparatedByActOnly: rs1: 1, 0"]),
+    "set finding without its not-certified suffix": _put(("sets", 0, "findings"), ["SeparatedByDecisionOnly: rs1: 0, 1"]),
+    "set finding act-only with the suffix": _put(("sets", 0, "findings"), ["SeparatedByActOnly: rs1: 0, 1 (not certified)"]),
+    "set finding with Unicode digits": _put(("sets", 0, "findings"), ["SeparatedByDecisionOnly: rs1: ٠, 1 (not certified)"]),
+    "set finding duplicated": lambda row: _set(row)["findings"].append(_set(row)["findings"][0]),
+    "set findings out of order": _put(("sets", 0, "findings"), ["SeparatedByActOnly: rs1: 0, 1",
+                                                                "SeparatedByDecisionOnly: rs1: 0, 1 (not certified)"]),
+    "set version negative": _put(("sets", 0, "version"), -1),
+    # lf-3 review B2: retyped ids reached a dictionary or set membership before any type check (TypeError).
+    "set id a list": _put(("sets", 0, "set"), []),
+    "set id an object": _put(("sets", 0, "set"), {}),
+    "situation id an object": _put(PAIR + ("situation",), {}),
+    "situation id a list": _put(PAIR + ("situation",), []),
+    "witness an object": _put(PAIR + ("witness",), {}),
+    "pair reading a list": _put(("sets", 0, "pairs", 0, "reading"), []),
+    "candidate id a list": _put(CANDIDATE + ("id",), []),
+    "owned key value a list": _put(CANDIDATE + ("owned", 0, "key", "excepted"), []),
+    "row id a list": _put(("id",), []),
 }
 
 
@@ -144,12 +201,19 @@ def test_a_row_not_bound_to_the_request_is_unavailable(monkeypatch, k1, fault):
 
 
 def test_a_row_without_content_bearing_sets_is_bound_only_alone(monkeypatch, k1):
+    """`content_bearing: false` is bound to a request whose active sets carry no content (every candidate pending
+    here), alone; a request with a content-bearing set answered `false` is unavailable."""
     raw, document, _, _ = k1
+    pending = copy.deepcopy(document)
+    for reading in pending["reading_sets"][0]["readings"]:
+        del reading["content"]
     answering(monkeypatch, {"id": "readings-s1", "status": "ok", "content_bearing": False})
-    assert route.validate(raw, units_of(document), document["reading_sets"])["content_bearing"] is False
-    answering(monkeypatch, {"id": "readings-s1", "status": "ok", "content_bearing": False, "sets": []})
-    with pytest.raises(CheckerUnavailable):
-        route.validate(raw, units_of(document), document["reading_sets"])
+    assert route.validate(raw, units_of(pending), pending["reading_sets"])["content_bearing"] is False
+    for request, row in ((document, {"id": "readings-s1", "status": "ok", "content_bearing": False}),
+                         (pending, {"id": "readings-s1", "status": "ok", "content_bearing": False, "sets": []})):
+        answering(monkeypatch, row)
+        with pytest.raises(CheckerUnavailable, match="ve_readings_route returned an invalid answer"):
+            route.validate(raw, units_of(request), request["reading_sets"])
 
 
 def _filtered(monkeypatch, code):
