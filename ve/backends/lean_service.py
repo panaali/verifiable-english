@@ -34,7 +34,7 @@ Supervision: an address-space limit on the process, a deadline per request, recy
 after a number of requests or above an RSS threshold, and a small pool.
 
 Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
-(`DEADLINES`): CPU seconds of the service process, a base plus a share per MiB of cases,
+(`DEADLINES`): CPU seconds of the service process, a base per case plus a share per MiB of cases,
 measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
 wall-clock seconds. Load on the host therefore does not stop a request; a request that needs
 more CPU than its deadline is `CheckerUnavailable` naming its mode, and is not retried, since
@@ -78,10 +78,10 @@ MAX_RESPONSE_BYTES = 1 << 30
 ENVELOPE_BYTES = 1024
 
 
-# CPU seconds per request by mode: (base, per MiB of cases). The core modes kept the flat 5 s
-# limit before; their measured CPU is 0.5–1.6 ms per case at the median and about 0.8 ms per KiB of
-# environment re-sent with each case (LEAN-FIRST-PLAN 3.3, 3.4), so 5 s plus 30 s per MiB is
-# over 30 times what a full 4 MiB batch measured. The statement-layer routes keep their one-shot
+# CPU seconds by mode: (base per case, per MiB of cases); each case is one operation. The core modes
+# kept a flat 5 s per request before; their measured CPU is 0.5–1.6 ms per case at the median and
+# about 0.8 ms per KiB of environment re-sent with each case (LEAN-FIRST-PLAN 3.3, 3.4), so 5 s per
+# case plus 30 s per MiB is far above any measured request. The statement-layer routes keep their one-shot
 # callers' limits as the base (120 s, reports and quantity 60 s, alternatives and risk 180 s,
 # discourse 300 s) with a share per MiB above their measured CPU: about 1.3 s per MiB for soft
 # norms, 100 s per MiB for the rights chain (2.2–2.9 s per 28 KiB document). The readings
@@ -101,10 +101,10 @@ WALL_FACTOR = 10.0
 _MIB = 1 << 20
 
 
-def deadline(mode: str, size: int) -> float:
-    """CPU seconds a request of `mode` with `size` bytes of cases may use (`DEADLINES`)."""
+def deadline(mode: str, size: int, cases: int = 1) -> float:
+    """CPU seconds a request of `mode` with `cases` cases in `size` bytes may use (`DEADLINES`)."""
     base, per_mib = DEADLINES[mode]
-    return base + per_mib * size / _MIB
+    return base * max(cases, 1) + per_mib * size / _MIB
 
 
 def _cpu_seconds(pid: int) -> float | None:
@@ -491,13 +491,13 @@ class LeanService:
         return ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
 
-    def _deadline(self, mode: str, size: int, timeout: float | None) -> _Deadline:
+    def _deadline(self, mode: str, size: int, cases: int, timeout: float | None) -> _Deadline:
         """The request's deadline: `timeout` wall-clock seconds when given, else its mode's
         CPU deadline (`deadline`) with the wall-clock cap; wall-clock alone where the CPU time
         of the process is not reported."""
         if timeout is not None:
             return _Deadline(time.monotonic() + timeout, mode=mode)
-        cpu = deadline(mode, size)
+        cpu = deadline(mode, size, cases)
         start = _cpu_seconds(self._proc.pid)
         if start is None:
             return _Deadline(time.monotonic() + cpu, mode=mode)
@@ -505,7 +505,7 @@ class LeanService:
 
     def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float | None,
                    nonce: str, line: bytes, texts: list[str] | None) -> tuple[bytes, dict]:
-        deadline = self._deadline(mode, len(cases_text.encode()), timeout)
+        deadline = self._deadline(mode, len(cases_text.encode()), count, timeout)
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
         try:

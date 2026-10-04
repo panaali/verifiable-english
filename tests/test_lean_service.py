@@ -620,6 +620,7 @@ def test_every_mode_has_a_deadline_that_grows_with_its_input():
     for mode, (base, per_mib) in DEADLINES.items():
         assert base > 0 and per_mib > 0, mode
         assert deadline(mode, 0) == base and deadline(mode, 1 << 20) == base + per_mib, mode
+        assert deadline(mode, 1 << 20, 3) == 3 * base + per_mib, mode
     # The readings route keeps the UDHR call (about 2,300 s of CPU per MiB) unavailable until F5.
     assert deadline("readings-route", 500_000) < 2300 * 500_000 / (1 << 20)
 
