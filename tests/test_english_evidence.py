@@ -21,6 +21,32 @@ def require_lean_build():
         'Run lake build before the English evidence tests'
 
 
+# A harness's `pairs` and `texts` count the documents it generated, not the round trips it
+# completed; a run that skips its comparisons still reports them. Each gate below checks the
+# completed round trips against the corpus instead.
+
+def lean_incomplete(report):
+    """The vocabularies of an `english_lean` report whose core ASTs did not all complete the
+    round trip (Lean core render, then Python parse back to the AST; for an admitted lexicon,
+    Lean's own round trip too), or whose comparisons did not run."""
+    rows = report['vocabularies']
+    problems = [] if sum(row.get('asts', 0) for row in rows) == report['pairs'] else ['pairs not compared']
+    if not sum(row.get('python reads lean core text', 0) for row in rows):
+        problems.append('no round trip')
+    for row in rows:
+        core = row.get('asts', 0) - row.get('outside core AST', 0)
+        if row.get('status') != 'compared' or row.get('python reads lean core text', 0) != core or \
+                (row['lean_admissible'] and row.get('lean core round trip', 0) != core):
+            problems.append(row['vocabulary'])
+    return problems
+
+
+def mixed_round_trips(row):
+    """The documents of an `english_mixed` row that rendered, parsed with one derivation and
+    came back as the same AST."""
+    return row.get('sentences', 0) + row.get('paragraphs', 0)
+
+
 def test_core_classifier_and_missing_parse_mutation(monkeypatch):
     require_lean_build()
     name, env, options = next(configurations())
@@ -70,6 +96,22 @@ def test_english_differential_merge_smoke():
     assert report['failure_count'] == 0
     assert report['pairs'] == 85
     assert len(report['vocabularies']) == 17
+    assert lean_incomplete(report) == []
+
+
+def test_a_differential_that_skips_its_comparisons_is_incomplete(monkeypatch):
+    """Review: a harness that generates its corpus but compares nothing reported the same
+    counts. Every AST classified outside the core (so never rendered or compared) leaves
+    the pairs and no failure, and `lean_incomplete` names it."""
+    require_lean_build()
+    name, env, options = next(configurations())
+    monkeypatch.setattr(english_lean, 'configurations', lambda: iter([(name, env, options)]))
+    monkeypatch.setattr(english_lean, 'corpus', lambda *_: [ast.Top()])
+    assert lean_incomplete(english_lean.differential(1)) == []
+    monkeypatch.setattr(english_lean, 'v0_only', lambda formula: False)
+    report = english_lean.differential(1)
+    assert report['pairs'] == 1 and report['failure_count'] == 0
+    assert lean_incomplete(report) == ['no round trip']
 
 
 # One test per configuration, or per part of a slow one, so that they render and parse
@@ -87,7 +129,21 @@ def test_english_mixed_merge_smoke(offset, part, parts):
     report = english_mixed.mixed(1, only={offset}, part=part, parts=parts)
     assert [row['vocabulary'] for row in report['vocabularies']] == [MIXED[offset]]
     assert report['failure_count'] == 0, report['failures'][:3]
-    assert report['texts'] > 0
+    # The intended corpus: this part's share of the configuration's generated documents
+    # (generating them alone renders and parses nothing). Each must complete a round trip.
+    corpus = english_mixed.mixed(1, only={offset}, check=False)['texts']
+    [row] = report['vocabularies']
+    assert row['texts'] == len(range(part, corpus, parts)) > 0
+    assert mixed_round_trips(row) == row['texts']
+
+
+def test_an_unchecked_mixed_run_completes_no_round_trip():
+    """Review: with `check=False` as the default, every smoke part passed, because `texts`
+    counts the generated documents. The smoke now requires a round trip per document,
+    which an unchecked run never completes."""
+    report = english_mixed.mixed(1, only={MIXED.index('order')}, check=False)
+    [row] = report['vocabularies']
+    assert row['texts'] > 0 and mixed_round_trips(row) == 0
 
 
 def test_the_mixed_parts_are_configurations():
@@ -122,6 +178,7 @@ def test_full_english_report_gate():
     assert report['full_gate'] and report['pairs'] == 85000
     assert report['per_vocabulary'] == 5000 and len(report['vocabularies']) == 17
     assert report['failure_count'] == 0
+    assert lean_incomplete(report) == []
     assert report['seed'] == 2026092107
     assert report['corpus_sha256'] == \
         '12d5984396f2b5e2869195deaae419b6e8a5b73e8eb3bb4515f72d04bbc168ed'
@@ -132,6 +189,8 @@ def test_full_mixed_report_gate():
     assert report['seed'] == 2026792107
     assert report['texts'] == 6757 and len(report['vocabularies']) == 18
     assert report['failure_count'] == 0
+    assert all(mixed_round_trips(row) == row['texts'] > 0 for row in report['vocabularies'])
+    assert sum(row['texts'] for row in report['vocabularies']) == report['texts']
     assert report['missing_constructs'] == report['unexercised_profiles'] == []
     assert report['vocabularies'][0]['corpus_sha256'] == \
         '90b67e0b66f9f1a996de021b71c13935a6d144327451ca7cfb31ac0bc41631a7'
