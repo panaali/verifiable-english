@@ -198,6 +198,7 @@ def worker_count(cpus=None, load=None):
     return max(floor, min(configured, cpus - round(load)))
 
 
+@pytest.hookimpl(optionalhook=True)  # the gate loads pytest without plugin autoload
 def pytest_xdist_auto_num_workers(config):
     count = worker_count()
     print(f"ve: -n auto: {count} workers (load {os.getloadavg()[0]:.1f}, "

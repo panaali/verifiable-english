@@ -59,6 +59,39 @@ STAGE_ENVIRONMENT = {
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
+# The gate's pytest invocation, shared by its collection run, its suite run and the
+# baseline writer (`--write-collection`), so the baseline is what the gate collects.
+# Plugin autoload is off in the gate, so every plugin is named here.
+PYTEST_ARGS = ("-q", "-p", "hypothesis.extra.pytestplugin", "-p", "tools.gate_pytest",
+               "-o", "addopts=-ra", "-m", "not live", "tests")
+
+
+def collection_command(python: list[str]) -> list[str]:
+    return [*python, "-m", "pytest", "--collect-only", *PYTEST_ARGS]
+
+
+def suite_command(python: list[str], workers: str) -> list[str]:
+    return [*python, "-m", "pytest", "-p", "xdist.plugin", "-n", workers, *PYTEST_ARGS]
+
+
+def merge_pytest_events(collection: dict, suite: dict) -> dict:
+    """The collection run's IDs with the suite run's results. Every xdist worker of the
+    suite run must have collected exactly the collection run's selection."""
+    workers = suite.get("workers")
+    if not isinstance(workers, dict) or not workers:
+        raise RuntimeError("the suite run recorded no worker collection")
+    for worker, ids in sorted(workers.items()):
+        if ids != collection["selected"]:
+            raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
+                               f"{len(collection['selected'])}")
+    return {**collection, "tests": suite["tests"], "workers": workers}
+
+
+def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None) -> dict:
+    """Run the gate's collection in `env` (plugin autoload off) and return its events."""
+    env = {**env, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1", "VE_GATE_PYTEST_RESULT": str(result_file)}
+    command(collection_command(python or [sys.executable]), env=env, stage="Python collection")
+    return json.loads(result_file.read_text())
 
 
 def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: str) -> str:
@@ -349,10 +382,37 @@ def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
     yield {**env, "CARGO_NET_OFFLINE": "true", "CARGO_ENCODED_RUSTFLAGS": flags}, workdir
 
 
+def write_collection() -> int:
+    """Regenerate the baseline after intentional test changes: the gate's own collection
+    (deselected live tests included), run in this environment without its plugin
+    overrides. tests/test_gate.py checks the committed file against the same run."""
+    env = {name: value for name, value in os.environ.items() if name not in ("PYTEST_ADDOPTS", "PYTEST_PLUGINS")}
+    with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
+        events = collect({**env, "VE_NATIVE_PREBUILT": "1"}, Path(directory) / "collection.json")
+    write_baseline(COLLECTION, events["collected"])
+    print(f"[gate] wrote {len(events['collected'])} test IDs to {COLLECTION}")
+    return 0
+
+
+def write_baseline(path: Path, ids: list[str]) -> None:
+    if len(ids) != len(set(ids)):
+        raise RuntimeError("duplicate test ID in collection")
+    path.write_text(json.dumps(sorted(ids), indent=2) + "\n")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
+    parser.add_argument("--workers", default="auto",
+                        help="xdist workers for the suite (default auto: the CPUs the load leaves, "
+                             "tests/conftest.py)")
+    parser.add_argument("--write-collection", action="store_true",
+                        help="write the gate's collection to the baseline, tools/gate-collection.json, and exit")
     args = parser.parse_args()
+    if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
+        parser.error("--workers is a positive count or auto")
+    if args.write_collection:
+        return write_collection()
     output = args.output.resolve()
     result = {"schema_version": 1, "commit_sha": "", "dirty": False,
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
@@ -428,22 +488,25 @@ def main() -> int:
                     raise RuntimeError("native Rust tests absent or ignored")
                 result["stages"].append("cargo_test")
 
-            events_file = scratch / "pytest.json"
+            python = ["uv", "run", "--frozen", "--no-sync", "python"]
+            collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
             pytest_env = record_environment(result, "pytest", {
-                **env, "VE_GATE_PYTEST_RESULT": str(events_file),
+                **env, "VE_GATE_PYTEST_RESULT": str(collection_file),
                 "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
                 "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
                 "VE_RUST_BINARY": str(rust_binary)})
+            # The collection, serially (xdist workers report no deselection), then the
+            # suite on `--workers` xdist workers; a worker must collect that selection.
+            collection = collect(pytest_env, collection_file, python=python)
             try:
-                command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         "-q", "-p", "hypothesis.extra.pytestplugin",
-                         "-p", "tools.gate_pytest", "-o", "addopts=-ra",
-                         "-m", "not live", "tests"], env=pytest_env, stage="Python suite")
+                command(suite_command(python, args.workers),
+                        env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
-            interpret_pytest(result, json.loads(events_file.read_text()), policy, expected)
+            interpret_pytest(result, merge_pytest_events(collection, json.loads(events_file.read_text())),
+                             policy, expected)
             result["stages"].append("pytest")
             completed = True
         except (OSError, ValueError, KeyError, RuntimeError) as exc:
