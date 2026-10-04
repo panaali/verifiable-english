@@ -22,10 +22,11 @@ import random
 import pytest
 
 from conformance.p0 import envelope
-from subprocesses import run_cpu_bounded
+from subprocesses import HANG_TIMEOUT, run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
-from ve.backends import dispatch
+from ve.backends import dispatch, rust_jsonl
+from ve.backends.lean_service import LeanService
 from ve.errors import ResourceLimit
 from ve.evaluate import _Evaluator
 from ve.limits import MAX_EVALUATIONS
@@ -315,11 +316,28 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
     """The Lean-authority counterpart of the metered test above: the same
     generated cases, through the same public calls under VE_AUTHORITY=lean, each
     report `ResourceLimit`, and every operation they dispatch runs on Lean (no
-    Python fallback). It counts no Python units: the verdicts are the backends'."""
+    Python fallback). It counts no Python units: the verdicts are the backends'.
+
+    Lean-authority evaluation asks Rust first. Under load (a 2 h 14 min suite)
+    one such call outlasted the Rust client's 5-second default; every Rust call
+    and Lean service request here must wait the suite's hang guard instead
+    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`)."""
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     calls = []
     monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
+    waits, lean_waits = [], []
+    checker, roundtrip = rust_jsonl._run_checker, LeanService._roundtrip
+
+    def recorded(argv, *, input, timeout):
+        waits.append(timeout)
+        return checker(argv, input=input, timeout=timeout)
+
+    def lean_recorded(self, mode, cases_text, count, timeout, *rest):
+        lean_waits.append(timeout)
+        return roundtrip(self, mode, cases_text, count, timeout, *rest)
+    monkeypatch.setattr(rust_jsonl, "_run_checker", recorded)
+    monkeypatch.setattr(LeanService, "_roundtrip", lean_recorded)
     dispatched = set()
     for name, verdict, _, _, _ in generate(seed):
         calls.clear()
@@ -327,6 +345,8 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
         assert all(authority == "lean" for _, authority in calls), (name, calls)
         dispatched.update(op for op, _ in calls)
     assert BUDGET_OPERATIONS <= dispatched, BUDGET_OPERATIONS - dispatched
+    assert waits and set(waits) == {HANG_TIMEOUT}, sorted(set(waits))
+    assert lean_waits and set(lean_waits) == {HANG_TIMEOUT}, sorted(set(lean_waits))
 
 
 # --- The Python meter keeps the regression power of the old wall-clock bound ---

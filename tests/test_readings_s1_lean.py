@@ -18,6 +18,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.readings_s1 import wire
 from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
@@ -42,7 +43,7 @@ def lean():
 def run(executable, cases):
     # The restricted Lean JSON input has no null: an absent value is omitted, as `ve/readings_route.py` sends it.
     result = subprocess.run([str(executable), "-"], input=json.dumps(wire(cases)), text=True,
-                            capture_output=True, timeout=180)
+                            capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

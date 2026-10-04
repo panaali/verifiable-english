@@ -5,6 +5,7 @@ import json
 from copy import deepcopy
 from itertools import combinations
 from pathlib import Path
+import os
 import random
 import subprocess
 import sys
@@ -707,7 +708,8 @@ def compare_near_limit(sources):
     rows = []
     for batch in _batches(wire):
         run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
-                             capture_output=True, timeout=600, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
         rows += json.loads(run.stdout)
     if len(rows) != len(sources):
         raise AssertionError("Lean returned the wrong near-limit row count")
@@ -1120,7 +1122,8 @@ def compare_rejected():
     rows = []
     for batch in _batches(wire):
         run = subprocess.run([str(LEAN), "-"], input=batch, text=True,
-                             capture_output=True, timeout=300, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "300")))
         rows += json.loads(run.stdout)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong rejected row count")
@@ -1142,7 +1145,8 @@ def rust_fixture_rows():
         soft = SoftNormDocument(SoftEnvironment(raw), rules)
         case = {"id": name, "kind": "soft-elaborate", "environment": raw, "norms": rules}
         run = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), text=True,
-                             capture_output=True, timeout=120, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
         row = json.loads(run.stdout)[0]
         if row.get("status") != "ok":
             raise AssertionError((name, row))
@@ -1207,7 +1211,8 @@ def main():
                   "environment": raw, "norms": rules}
                  for i, (raw, rules, _) in enumerate(batch)]
         run = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=120, check=False)
+                             capture_output=True, check=False,
+                             timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "120")))
         rows = json.loads(run.stdout)
         if len(rows) != len(batch):
             raise AssertionError("Lean returned the wrong row count")
