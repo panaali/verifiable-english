@@ -448,7 +448,7 @@ def test_u16_ast_budget_counts_the_fill_guards():
     NormDocument(env, [rule("big", "x_permitted", True, balanced(9999))])
     with pytest.raises(ResourceLimit) as caught:
         nd.UnspecifiedDocument(env, [rule("big", "x_permitted", True, balanced(9999))])
-    assert str(caught.value) == "AST exceeds 10,000 nodes"
+    assert str(caught.value) == "ResourceLimit: AST exceeds 10,000 nodes"
     nd.UnspecifiedDocument(env, [rule("big", "x_permitted", True, balanced(9997))])
 
 
