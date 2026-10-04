@@ -50,11 +50,11 @@ def python_verdict(case):
     from ve.vacuity import premise_status
     kind = case["kind"]
     try:
+        # The envelope is decoded and gated before anything else (the route contract, `runCase`).
+        env = Environment(case["environment"])
         if kind == "label":
             validate_label(case["label"])
-            Environment(case["environment"])
             return {"status": "ok", "label": parse_label(case["label"]).render()}
-        env = Environment(case["environment"])
         if kind == "dependency-order":
             return {"status": "ok", "order": list(dependency_order_nodes(case["nodes"]))}
         if kind == "admission":
