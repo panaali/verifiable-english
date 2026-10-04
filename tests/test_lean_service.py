@@ -34,6 +34,11 @@ BIN = ROOT / "lean/.lake/build/bin"
 CASES = json.loads((ROOT / "conformance/evaluation.json").read_text())
 
 
+# The statement-layer route modes (lean-first batch 1) whose rows are `common.json` route_row.
+OPEN_ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "quantity",
+                    "norm-defaults", "discourse", "readings-route")
+
+
 @pytest.fixture(scope="session")
 def service_executable():
     lake = shutil.which("lake")
@@ -653,6 +658,30 @@ def test_the_executable_digest_is_reused_across_processes_until_the_file_changes
     assert sorted(p.name for p in tmp_path.iterdir()) == ["service", "service.sha256-cache"]
 
 
+@pytest.mark.parametrize("mode", [*OPEN_ROUTE_MODES, "diagnose", "risk-eval"])
+def test_a_route_rejection_without_its_text_fails_closed(tmp_path, mode):
+    """A statement-layer route's answer is open beyond its binding, but a rejection row is not: without a
+    text `error` it is no rejection, and the batch is CheckerUnavailable (common.json route_error)."""
+    case = {"id": "c", "kind": "k", "unit": "soft-norms@0"}
+    row = {"status": "error", "error": "InvalidInput: x", **({} if mode == "risk-eval" else {"id": "c"})}
+
+    def answer(result, coded):
+        # Beside a rejection the service sets its code; beside anything else, none (`Protocol.coding`), so a
+        # broken row is refused by the row schema, not by the envelope's coding rule.
+        return {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": mode,
+                "results": [{"index": 0, "digest": {"$digest": 0}, "result": result,
+                             **({"code": "InvalidInput"} if coded else {})}],
+                "counts": {"cases": 1, "bytes": "__bytes__", "errors": 1}}
+    marker = tmp_path / "marker"
+    marker.write_text(json.dumps(answer(row, True)))
+    with LeanService(fake(tmp_path, "scripted"), allow_unlisted_build=True) as service:
+        assert service.run(mode, [case]) == [row]
+        for broken in ({k: v for k, v in row.items() if k != "error"}, {**row, "error": 7}):
+            marker.write_text(json.dumps(answer(broken, False)))
+            with pytest.raises(CheckerUnavailable, match="malformed response"):
+                service.run(mode, [case])
+
+
 def test_one_retry_recovers_a_hung_batch(tmp_path):
     with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
         assert service.run("evaluate", [{"id": "a", "ast": [["top"]]},
@@ -909,11 +938,6 @@ def test_nested_boolean_id_substitution_is_operational_failure(tmp_path, mode):
     if mode in ("check-certificate", "order"):
         row["valid"] = False
     _scripted_response_rejected(tmp_path, mode, case, row)
-
-
-# The statement-layer route modes (lean-first batch 1) whose rows are `common.json` route_row.
-OPEN_ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "quantity",
-                    "norm-defaults", "discourse", "readings-route")
 
 
 _SCHEMA_SEEDS = {
