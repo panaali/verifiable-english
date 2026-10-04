@@ -178,6 +178,41 @@ maps and the selector before both review rounds. `docs/TESTING.md` now says
 so. Regenerating them needs a version-3 map recording (about an hour) and the
 replay. That recording is the nightly job deferred to the orchestrator above.
 
+## Review fixes (testselect-looprecheck2.final, round on `bc2405a9`)
+
+Both B findings were one class: an added or removed file changes the
+listing of every directory above it, because as the first or last file in
+its directory it makes that directory appear or vanish, which changes the
+parent's listing, up to the root. `Coverage.listers` looked only at the
+nearest recorded directory and never at the root `.`. It now unions the
+listers of every directory above the path. One helper, `directories_above`,
+lists them for the map lookup and for the static `mentions_path`.
+
+- B, root-level dependencies were ignored: a test that listed `.` with
+  `Path('.').glob('*.md')` failed once a root Markdown file appeared or
+  vanished, but neither the plan nor the drift check selected it.
+- B, a recorded child directory hid the listers of its parents: deleting the
+  last file of `tests/fixtures/sub` failed the tests that listed
+  `tests/fixtures` and `tests/fixtures/sub`, but only the second was selected.
+- Regression test:
+  `test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it`.
+  It records three pytest tests under the real recorder (listers of `.`,
+  `tests/fixtures` and `tests/fixtures/sub`). It runs them after each change
+  to show that they fail, and requires the plan and the drift check to select
+  every one that fails.
+- Class check: `test_the_plan_and_the_drift_check_treat_presence_alike` now
+  has a root-level example (`_presence_probe.md`) and one lister per directory
+  above each example, plus a lister of an unrelated directory that must not
+  be selected.
+- Two seeded mutants were added to `SAFETY_CASES`: "listers of the root are
+  ignored" and "only the nearest recorded directory's listers count".
+
+Checks on `1d45e0ee`: `lake build` OK; `lean/audit.py` PASS (2959
+declarations); full pytest suite with 12 workers: 8743 passed, 6 skipped,
+0 failed (26 min). `tests/test_select_tests.py`: 102 passed, including 13
+seeded mutants. Evidence refresh and quiet-machine timing stay deferred, as
+above.
+
 ## Known limits
 
 - An assignment whose value calls something (`X = registry.add(f)`) counts
