@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 
-from tests.lean_wording import lean_wording
 from tests.probe_matrix import model_wire, raw_environment
 from ve import Environment, FiniteModel, Top
 from ve.ast import formula_to_data
@@ -91,7 +90,7 @@ def _typing_error(env, formula):
     ("closure@0",), ("closure@0", "nary@0"), ("closure@0", "nary@0", "definitions@0"),
     ("closure@0", "norms@0"), ("order@0",)])
 def test_lean_typing_diagnostics_match_python(profiles, monkeypatch):
-    """The decoder's rejection is named with Python's code and Lean's message (`lean_wording`)."""
+    """The decoder's rejection is named with Python's code and message."""
     from ve.ast import (Atom, Binary, Const, Eq, Exists, Forall, Named, Reach, Unary, Var)
     env = Environment(raw_environment(profiles))
     cases = [Unary("missing", Const("x")), Unary("base", Const("absent")),
@@ -106,7 +105,7 @@ def test_lean_typing_diagnostics_match_python(profiles, monkeypatch):
         expected = _typing_error(env, formula)
         assert expected is not None, formula
         monkeypatch.setenv("VE_AUTHORITY", "lean")
-        assert _typing_error(env, formula) == lean_wording(*expected), formula
+        assert _typing_error(env, formula) == expected, formula
         monkeypatch.delenv("VE_AUTHORITY")
 
 
@@ -138,7 +137,7 @@ def test_lean_typing_on_legacy_envelopes_matches_python(kind, monkeypatch):
     for bad in (Unary("missing", Const("x")), Binary("base", Const("x"), Const("x"))):
         expected = _typing_error(env, bad)
         monkeypatch.setenv("VE_AUTHORITY", "lean")
-        assert _typing_error(env, bad) == lean_wording(*expected)
+        assert _typing_error(env, bad) == expected
         monkeypatch.delenv("VE_AUTHORITY")
 
 
@@ -189,5 +188,5 @@ def test_lean_typing_budget_diagnostics_match_python(kind, monkeypatch):
         expected = error(case)
         assert expected is not None and expected[0] in ("ResourceLimit", "UnknownSymbol")
         monkeypatch.setenv("VE_AUTHORITY", "lean")
-        assert error(case) == lean_wording(*expected)
+        assert error(case) == expected
         monkeypatch.delenv("VE_AUTHORITY")

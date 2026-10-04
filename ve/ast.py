@@ -223,12 +223,12 @@ class _Checker:
     def tick(self):
         self.nodes += 1
         if self.nodes > MAX_NODES:
-            raise ResourceLimit("AST exceeds 10,000 nodes")
+            raise ResourceLimit("ResourceLimit: AST exceeds 10,000 nodes")
 
     def term(self, node, context, depth=1):
         self.tick()
         if depth > MAX_DEPTH:
-            raise ResourceLimit("Arithmetic term exceeds 64 nesting levels")
+            raise ResourceLimit("ResourceLimit: Arithmetic term exceeds 64 nesting levels")
         if type(node) is Var:
             if type(node.index) is not int or not 0 <= node.index <= MAX_INDEX:
                 raise UnboundVariable("Variable index must be a bounded nonnegative integer (not Boolean)")
@@ -259,7 +259,7 @@ class _Checker:
     def formula(self, node, context=(), depth=1):
         self.tick()
         if depth > MAX_DEPTH:
-            raise ResourceLimit("Formula exceeds 64 nesting levels")
+            raise ResourceLimit("ResourceLimit: Formula exceeds 64 nesting levels")
         kind = type(node)
         if kind in (Top, Bottom):
             return

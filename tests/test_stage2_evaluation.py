@@ -16,7 +16,6 @@ from ve.errors import VEError
 from ve.backends.lean_service import CheckerUnavailable
 from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
 from ve.admission import admit_document
-from tests.lean_wording import lean_wording
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_service"
@@ -70,7 +69,7 @@ def test_lean_norms_admission_with_data_flags_matches_python(monkeypatch):
                 row.append((error.code, str(error)))
         outcomes[authority] = row
     assert outcomes["python"][0]["admitted"] and len(outcomes["python"]) == 3
-    assert outcomes["lean"] == outcomes["python"][:1] + [lean_wording(*row) for row in outcomes["python"][1:]]
+    assert outcomes["lean"] == outcomes["python"]
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
