@@ -188,6 +188,8 @@ def test_nonvacuity_treats_shared_dag_nodes_as_separate_occurrences(env):
 
 def test_search_validates_and_hashes_formulas_once(monkeypatch, env):
     import ve.search as search
+    # The counts are Python's search's own; at `shadow` the candidate checks the formulas again.
+    monkeypatch.setenv("VE_AUTHORITY", "python")
     checks = hashes = 0
     original_check = search.check_formula
     original_meaning = search.meaning_id
