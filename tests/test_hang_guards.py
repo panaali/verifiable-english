@@ -60,11 +60,14 @@ INJECTED = {
     "tests/test_hang_guards.py::test_an_explicit_lean_timeout_is_kept": "instrumented subprocess.run",
     "tests/test_hang_guards.py::test_every_precommit_wait_follows_the_setting_else_its_default":
         "instrumented subprocess.run and oracle clock",
-    "tests/test_lean_service.py::test_users_keep_the_wall_clock_defaults": "instrumented roundtrip and handshake",
+    "tests/test_lean_service.py::test_users_keep_the_wall_clock_defaults":
+        "expire_service_waits frozen clock; instrumented handshake",
     "tests/test_stage2_dispatch.py::test_rust_wait_is_the_default_unless_configured": "instrumented Rust checker",
     # Injected expired deadlines against never-answering fakes (expired_waits, expire_service_waits).
     "tests/test_lean_service.py::test_the_setting_replaces_the_request_and_startup_defaults":
         "expire_service_waits; asserts the setting is each attempt's wait",
+    "tests/test_lean_service.py::test_the_injected_clock_records_a_miscomputed_deadline":
+        "expire_service_waits; asserts each seeded deadline mutant records another wait",
     "tests/test_stage2_dispatch.py::test_rust_checker_slower_than_the_setting_is_stopped_at_it":
         "expired_waits; asserts the setting is the wait",
     "tests/test_hang_guards.py::test_a_wire_check_that_outlasts_its_wait_blocks_the_commit":
