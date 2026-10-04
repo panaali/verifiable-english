@@ -120,3 +120,7 @@ only records.
   `rejectionCode_mem` are new. They need statement review (build checklist 17).
 - **Diagnostics of rows with no code** (Rust, one-shot `ve_quantity`): their text is no longer stripped either.
   No corpus record reached one with a changed text.
+
+## DRI signatures (2026-10-04)
+- **W1 (wording, one block): signed.** Lean's texts are canonical (LEAN-FIRST-PLAN DRI answer 3); Python now writes Lean's `Code: text` exactly.
+- **A1 (availability, readings route): signed.** When Python and Lean differed only by the `Code: ` prefix, the route returned CheckerUnavailable; now it returns Lean's diagnostic. That is the intended outcome of one owner: the difference was an artefact of the duplicate, not a real disagreement.
