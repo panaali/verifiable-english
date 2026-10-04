@@ -271,7 +271,7 @@
    }
   }
  ],
- "seal_id": "af809cb3ef17ecb5c7a88bc8ccd3d9026172ac27eb640ebbe4c982f19790eaab",
+ "seal_id": "071cf5ecd39f44a0773f1843bacb7976435f6fbc980d85e2ff42e352e5e208ff",
  "sources": [
   {
    "kind": "corpus source",
@@ -296,7 +296,7 @@
   {
    "kind": "corpus source",
    "path": "conformance/english-lean/lexer.json",
-   "sha256": "4543c807cfd36a1f12738874d3e7770bc1809c926218c8a6fb09040bb6b4dce1"
+   "sha256": "1a13d8c26595ed33aee51677218c592f736932b805ffca7220132a6929b7bb78"
   },
   {
    "kind": "corpus source",

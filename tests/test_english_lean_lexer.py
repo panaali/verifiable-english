@@ -47,6 +47,16 @@ def test_spans_are_byte_offsets_and_cover_the_token_text():
     assert [data[a:b].decode() for _, a, b in sentence] == ['Café', 'owns', '"näme"']
 
 
+def test_punctuation_adjacency_is_part_of_exact_matching():
+    canonical = L.lex('Legacy is non-compliant.')[0][3]
+    assert canonical == ('punct', '-', True, True)
+    for source in ('Legacy is non - compliant.', 'Legacy is non -compliant.',
+                   'Legacy is non- compliant.'):
+        mutant = L.lex(source)[0][3]
+        assert mutant != canonical
+        assert not E.terminal_accepts(('exact', canonical), mutant)
+
+
 def test_collapsed_length_matches_python_normalisation():
     from ve.english import _normalise_english_source
     words = type('W', (), {'constants': {}, 'declared_constants': set()})()

@@ -60,10 +60,20 @@ def _phrase_symbols(phrase: str, case_insensitive: bool) -> list:
     except (LX.LexError, ValueError) as e:
         raise Unconvertible(f'phrase {phrase!r} does not lex as one sentence: {e}') from e
     out = []
-    for tok in tokens:
+    for k, tok in enumerate(tokens):
         if tok[0] == 'word':
             out.append(E.T(('content', tok[1]) if case_insensitive else ('kw', tok[1])))
         else:
+            if tok[0] == 'punct':
+                # The period appended only to make a sentence must not make
+                # the phrase's final punctuation look attached on its right.
+                tok = ('punct', tok[1], tok[2], tok[3] if k < len(tokens) - 1 else False)
+                if tok[1] in (',', ';', ':'):
+                    tok = ('punct', tok[1], True, False)
+                elif tok[1] == '[':
+                    tok = ('punct', '[', False, True)
+                elif tok[1] == ']':
+                    tok = ('punct', ']', True, False)
             out.append(E.T(('exact', tok)))
     return out
 
@@ -86,11 +96,12 @@ def convert(grammar: str) -> tuple[E.Grammar, list[str], dict]:
             class_rules['LABEL'] = [(E.T(('cls', ('label', l))),) for l in letters[1].split('|')]
             return [('n', 'LABEL')]
         if name == 'NUMERAL':
-            class_rules['NUMERAL'] = [(E.T(('cls', ('numeral',))),),
-                                      (E.T(('exact', ('punct', '-'))), E.T(('cls', ('numeral',))))]
+            class_rules['NUMERAL'] = [(E.T(('cls', ('numeral',))),)] + [
+                (E.T(('exact', ('punct', '-', before, True))), E.T(('cls', ('numeral',))))
+                for before in (False, True)]
             return [('n', 'NUMERAL')]
         if name == 'INT_OP':
-            class_rules['INT_OP'] = [(E.T(('exact', ('punct', c))),) for c in '+-*']
+            class_rules['INT_OP'] = [(E.T(('exact', ('punct', c, False, False))),) for c in '+-*']
             return [('n', 'INT_OP')]
         if t.pattern.type == 'str':
             phrase = t.pattern.value
@@ -117,7 +128,22 @@ def convert(grammar: str) -> tuple[E.Grammar, list[str], dict]:
         if rhs is None:
             record['dropped: uses IMPOSSIBLE'] += 1
             continue
-        raw.append((r.origin.name, rhs))
+        lhs = r.origin.name
+        variants = [rhs]
+        for pos, sym in enumerate(rhs):
+            if not isinstance(sym, E.T) or sym.a[0] != 'exact' or sym.a[1][0] != 'punct':
+                continue
+            punct = sym.a[1]
+            forms = [punct]
+            if punct[1] == '[':
+                forms = [('punct', '[', before, True) for before in (False, True)]
+            elif punct[1] == ']':
+                forms = [('punct', ']', True, after) for after in (False, True)]
+            elif punct[1] == '-' and lhs in ('int_term', 'int_neg'):
+                forms = [('punct', '-', before, True) for before in (False, True)]
+            variants = [v[:pos] + [E.T(('exact', form))] + v[pos + 1:]
+                        for v in variants for form in forms]
+        raw.extend((lhs, variant) for variant in variants)
     for name, alternatives in class_rules.items():
         raw.extend((name, list(rhs)) for rhs in alternatives)
     # drop capitalised duplicates of a lower-case alternative of the same rule
