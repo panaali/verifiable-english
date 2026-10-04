@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 
 import pytest
 
@@ -27,15 +28,23 @@ def _write(path: Path, outcomes: dict, source="s", authority="python") -> str:
 CONTROLS = {"control-accepted": OK, "control-rejected": REJECTED}
 
 
+def _expected(expected: dict) -> dict:
+    """`expected_cases`' form of {group: cases}: a set names cases recorded through `op` alone; a
+    dict gives each case its operations' function."""
+    return {group: cases if isinstance(cases, dict) else {case: diff.only("op") for case in cases}
+            for group, cases in expected.items()}
+
+
 def _compare(tmp_path, base, head, delta=None, base_source="s", head_source="s", expected=None, controls=True):
     if controls:
         base, head = {**CONTROLS, **base}, {**CONTROLS, **head}
     if expected is None:
         expected = {("c", "python"): {case.split("#")[0] for case in [*base, *head]}}
     elif controls:
-        expected = {group: cases | set(CONTROLS) for group, cases in expected.items()}
+        expected = {group: {**_expected({group: cases})[group], **{case: diff.only("op") for case in CONTROLS}}
+                    for group, cases in expected.items()}
     return diff.compare(_write(tmp_path / "base.jsonl", base, base_source),
-                        _write(tmp_path / "head.jsonl", head, head_source), delta, expected=expected)
+                        _write(tmp_path / "head.jsonl", head, head_source), delta, expected=_expected(expected))
 
 
 def test_identical_runs_have_no_difference(tmp_path):
@@ -75,9 +84,33 @@ def test_only_signed_wording_pairs_and_records_are_accepted(tmp_path):
     assert _compare(tmp_path, {"a": OK}, {"a": changed}, {"verdict": [{**entry, "head": OK}]})["unlisted"] == 1
 
 
+def _after_op(held):
+    """Case `a`'s operations: `op`, then `other` when `op` returned (as `CONFORMANCE_OPS` chains)."""
+    return {"op"} | ({"other"} if "returned" in (held.get("op") or {}) else set())
+
+
 def test_a_missing_record_is_a_difference(tmp_path):
-    result = _compare(tmp_path, {"a": OK, "a#other": OK}, {"a": OK})
-    assert result["unlisted"] == 1 and result["differences"][0]["head"] is None
+    """An operation that runs on one side only, since what it builds on returned there only."""
+    result = _compare(tmp_path, {"a": OK, "a#other": OK}, {"a": REJECTED}, expected={("c", "python"): {"a": _after_op}})
+    assert result["unlisted"] == 2
+    assert [(row["op"], row["class"], row["head"]) for row in result["differences"]] == [
+        ("op", "verdict", REJECTED), ("other", "verdict", None)]
+
+
+# lf-0 looprecheck1 B1: a recording holds every operation each case requires, not only the case.
+
+@pytest.mark.parametrize("base, head", [
+    ({"a": OK, "a#other": OK}, {"a": OK}),                       # a required operation dropped
+    ({"a": OK}, {"a": OK}),                                      # ... on both sides
+    ({"a": REJECTED, "a#other": OK}, {"a": REJECTED}),           # an operation nothing requires
+    ({"a": OK, "a#other": OK, "a#third": OK}, {"a": OK, "a#other": OK, "a#third": OK}),
+])
+def test_a_recording_must_hold_exactly_the_operations_of_each_case(tmp_path, base, head):
+    with pytest.raises(diff.Unusable, match="does not hold the c/python operations"):
+        _compare(tmp_path, base, head, expected={("c", "python"): {"a": _after_op}})
+    # A probe or pilot case is recorded through its one operation.
+    with pytest.raises(diff.Unusable, match="operations"):
+        _compare(tmp_path, {"a": OK}, {"a": OK}, expected={("c", "python"): {"a": diff.only("cell")}})
 
 
 def test_runs_over_different_corpus_files_are_refused(tmp_path):
@@ -93,7 +126,8 @@ def test_empty_recordings_are_unusable(tmp_path):
     with pytest.raises(diff.Unusable, match="no case"):
         _compare(tmp_path, {}, {}, expected={("c", "python"): set()}, controls=False)
     with pytest.raises(diff.Unusable, match="no recording"):
-        diff.compare(str(tmp_path / "absent"), str(tmp_path / "absent"), None, expected={("c", "python"): {"a"}})
+        diff.compare(str(tmp_path / "absent"), str(tmp_path / "absent"), None,
+                     expected=_expected({("c", "python"): {"a"}}))
 
 
 @pytest.mark.parametrize("base, head", [
@@ -189,13 +223,25 @@ def test_public_records_are_mig3s():
 
 
 def test_the_conformance_corpus_records_every_operation(monkeypatch):
+    """The recorder and the completeness check read one table (`CONFORMANCE_OPS`): a recording is
+    complete, and the looprecheck1 B1 reproducer, the same recording with only its `environment`
+    records, or without one later operation, is unusable."""
     monkeypatch.setenv("VE_AUTHORITY", "python")
     monkeypatch.setattr(diff, "CONFORMANCE", ("validation", "countermodels", "closure"))
-    records = list(diff.conformance_records(ROOT, "python"))
-    ops = {record["op"] for record in records}
-    assert {"environment", "model", "typing", "meaning_id", "evaluate", "countermodel_check"} <= ops
-    assert len({record["case"] for record in records}) == sum(
-        len(json.loads((ROOT / f"conformance/{name}.json").read_text())) for name in diff.CONFORMANCE)
+    records = {("conformance", "python", r["case"], r["op"]): {"outcome": r["outcome"]}
+               for r in diff.conformance_records(ROOT, "python")}
+    assert {key[3] for key in records} == {op for op, _, _ in diff.CONFORMANCE_OPS}
+    expected = diff.expected_cases(ROOT, ("conformance",), ("python",))
+    assert {key[2] for key in records} == expected["conformance", "python"].keys()
+    diff.completeness("recording", records, expected)
+    environment_only = {key: row for key, row in records.items() if key[3] == "environment"}
+    assert len(environment_only) < len(records)
+    with pytest.raises(diff.Unusable, match="required operations missing"):
+        diff.completeness("recording", environment_only, expected)
+    for op, _, _ in diff.CONFORMANCE_OPS[1:]:
+        dropped = next(key for key in records if key[3] == op)
+        with pytest.raises(diff.Unusable, match=re.escape(f"1 required operations missing (first {dropped[2:]!r})")):
+            diff.completeness("recording", {k: v for k, v in records.items() if k != dropped}, expected)
 
 
 def test_a_message_with_a_line_separator_is_one_record(tmp_path):

@@ -42,7 +42,9 @@ mig3's fine classes (2.5: the path walk), then the plan's change class:
 it checks (``--corpus``, ``--authority``, default all; the pilots have the one authority
 ``default``), each side must hold a record of every case of the corpus as this checkout defines it
 (`expected_cases`: the conformance files' case ids, the probe matrix's frozen baseline, the pilot
-documents) and nothing else, some of its records must be available, and it must hold both an
+documents), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`,
+given the outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``),
+and nothing else, some of its records must be available, and it must hold both an
 acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
 both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
 when the delta lists it under ``unavailable`` with a ``reason`` (``{"corpus", "authority", "case",
@@ -153,42 +155,66 @@ def identified(value, identity: str) -> dict:
     return {identity: getattr(value, identity), "record": public(value)}
 
 
-def conformance_records(root: Path, authority: str):
+# The public operations a conformance case is recorded through, in order: (operation, whether the
+# case holds its input, the operations that must have returned first). The one table of both the
+# recorder (`conformance_records`) and the completeness check (`conformance_ops`).
+CONFORMANCE_OPS = (
+    ("environment", lambda case: True, ()),
+    ("model", lambda case: "model" in case, ("environment",)),
+    ("parse", lambda case: isinstance(case.get("source"), str), ("environment",)),
+    ("canonicalize", lambda case: isinstance(case.get("source"), str), ("environment",)),
+    ("source_id", lambda case: isinstance(case.get("source"), str), ("environment",)),
+    ("typing", lambda case: "ast" in case, ("environment",)),
+    ("meaning_id", lambda case: "ast" in case, ("typing",)),
+    ("evaluate", lambda case: "ast" in case, ("typing", "model")),
+    ("countermodel_check", lambda case: "conclusion" in case, ("model",)),
+)
+
+
+def conformance_ops(case: dict, outcome_of) -> dict[str, dict | None]:
+    """The operations conformance case `case` is recorded through (`CONFORMANCE_OPS`), in order,
+    each with its outcome `outcome_of(op)` (None for one a recording lacks): an operation runs when
+    the case holds its input and every operation it builds on returned."""
+    outcomes: dict[str, dict | None] = {}
+    for op, holds, after in CONFORMANCE_OPS:
+        if holds(case) and all("returned" in (outcomes.get(p) or {}) for p in after):
+            outcomes[op] = outcome_of(op)
+    return outcomes
+
+
+def conformance_calls(case: dict) -> dict:
+    """The call of each operation of `CONFORMANCE_OPS` on `case`; the environment, model and
+    checked document are built once per case."""
+    from functools import cache
     from ve import (Environment, FiniteModel, canonicalize, check_countermodel, check_document,
                     document_from_data, evaluate, formula_from_data, meaning_id, parse, source_id)
+    env = cache(lambda: Environment(case["environment"]))
+    model = cache(lambda: FiniteModel.from_dict(env(), case["model"]))
+    document = cache(lambda: check_document(env(), document_from_data(env(), case["ast"])))
+
+    def countermodel():
+        premises = [formula_from_data(env(), p) for p in case["premises"]]
+        return check_countermodel(env(), premises, formula_from_data(env(), case["conclusion"]), model())
+
+    return {"environment": lambda: identified(env(), "environment_id"),
+            "model": lambda: identified(model(), "model_id"),
+            "parse": lambda: parse(env(), case["source"]),
+            "canonicalize": lambda: canonicalize(env(), case["source"]),
+            "source_id": lambda: source_id(case["source"], env()),
+            "typing": document,
+            "meaning_id": lambda: meaning_id(env(), document()),
+            "evaluate": lambda: evaluate(env(), document(), model()),
+            "countermodel_check": countermodel}
+
+
+def conformance_records(root: Path, authority: str):
     for name in CONFORMANCE:
         path = root / f"conformance/{name}.json"
         source = digest(path)
         for case in json.loads(path.read_text()):
-            base = {"case": f"{name}/{case['id']}", "source_sha256": source}
-            env_out = outcome(lambda: identified(Environment(case["environment"]), "environment_id"))
-            yield {**base, "op": "environment", "outcome": env_out}
-            if "returned" not in env_out:
-                continue
-            env = Environment(case["environment"])
-            model = None
-            if "model" in case:
-                model_out = outcome(lambda: identified(FiniteModel.from_dict(env, case["model"]), "model_id"))
-                yield {**base, "op": "model", "outcome": model_out}
-                if "returned" in model_out:
-                    model = FiniteModel.from_dict(env, case["model"])
-            if isinstance(case.get("source"), str):
-                yield {**base, "op": "parse", "outcome": outcome(lambda: parse(env, case["source"]))}
-                yield {**base, "op": "canonicalize", "outcome": outcome(lambda: canonicalize(env, case["source"]))}
-                yield {**base, "op": "source_id", "outcome": outcome(lambda: source_id(case["source"], env))}
-            if "ast" in case:
-                doc_out = outcome(lambda: check_document(env, document_from_data(env, case["ast"])))
-                yield {**base, "op": "typing", "outcome": doc_out}
-                if "returned" in doc_out:
-                    document = check_document(env, document_from_data(env, case["ast"]))
-                    yield {**base, "op": "meaning_id", "outcome": outcome(lambda: meaning_id(env, document))}
-                    if model is not None:
-                        yield {**base, "op": "evaluate", "outcome": outcome(lambda: evaluate(env, document, model))}
-            if "conclusion" in case and model is not None:
-                def countermodel():
-                    premises = [formula_from_data(env, p) for p in case["premises"]]
-                    return check_countermodel(env, premises, formula_from_data(env, case["conclusion"]), model)
-                yield {**base, "op": "countermodel_check", "outcome": outcome(countermodel)}
+            calls = conformance_calls(case)
+            for op, out in conformance_ops(case, lambda op: outcome(calls[op])).items():
+                yield {"case": f"{name}/{case['id']}", "source_sha256": source, "op": op, "outcome": out}
 
 
 def pilot_documents(root: Path) -> list[tuple[str, str, bytes]]:
@@ -277,21 +303,30 @@ def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
     return ("default",) if corpus == "pilots" else tuple(authorities)
 
 
-def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict[tuple[str, str], set[str]]:
+def only(op: str):
+    """The operations of a case recorded through `op` alone, whatever its outcome."""
+    return lambda held: {op}
+
+
+def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict[tuple[str, str], dict]:
     """Every case each (corpus, authority) of a complete recording holds, from this checkout's
     corpora, not from a recording: the conformance files' case ids, the cells and named probes of
-    the probe matrix's frozen baseline, and the pilot documents."""
-    cases: dict[str, set[str]] = {}
+    the probe matrix's frozen baseline, and the pilot documents. Each case maps to its operations:
+    a function of the outcomes a recording holds for the case (`{op: outcome}`) giving the set of
+    operations it must hold, since a conformance case's later operations run only on what its
+    earlier ones returned (`conformance_ops`)."""
+    cases: dict[str, dict] = {}
     for corpus in corpora:
         if corpus == "conformance":
-            cases[corpus] = {f"{name}/{case['id']}" for name in CONFORMANCE
-                             for case in json.loads((root / f"conformance/{name}.json").read_text())}
+            cases[corpus] = {
+                f"{name}/{case['id']}": (lambda held, case=case: set(conformance_ops(case, held.get)))
+                for name in CONFORMANCE for case in json.loads((root / f"conformance/{name}.json").read_text())}
         elif corpus == "probe":
             baseline = json.loads((root / PROBE_BASELINE).read_text())
-            cases[corpus] = {probe_case(row) for row in baseline["cells"]} | {
-                f"{section}/{name}" for section in PROBE_SECTIONS for name in baseline[section]}
+            cases[corpus] = {probe_case(row): only(row["operation"]) for row in baseline["cells"]} | {
+                f"{section}/{name}": only(section) for section in PROBE_SECTIONS for name in baseline[section]}
         else:
-            cases[corpus] = {name for name, _, _ in pilot_documents(root)}
+            cases[corpus] = {name: only("document_check") for name, _, _ in pilot_documents(root)}
     return {(corpus, authority): cases[corpus] for corpus in corpora
             for authority in authorities_of(corpus, authorities)}
 
@@ -379,17 +414,30 @@ def text_pairs(base, head, path=()):
 
 def completeness(name: str, records: dict, expected: dict) -> None:
     """`Unusable` unless `records` hold every expected case of every expected (corpus, authority),
+    each through exactly the operations it requires given its recorded outcomes (`expected_cases`),
     nothing else of those, and some available record of each."""
     for group, cases in sorted(expected.items()):
         if not cases:
             raise Unusable(f"no case of {'/'.join(group)} is defined in this checkout")
         held = [key for key in records if key[:2] == group]
         recorded = {key[2] for key in held}
-        if recorded != cases:
-            missing, extra = sorted(cases - recorded), sorted(recorded - cases)
+        if recorded != cases.keys():
+            missing, extra = sorted(cases.keys() - recorded), sorted(recorded - cases.keys())
             raise Unusable(f"{name} does not hold the {'/'.join(group)} corpus: {len(missing)} of its "
                            f"{len(cases)} cases missing{f' (first {missing[0]})' if missing else ''}, "
                            f"{len(extra)} other cases{f' (first {extra[0]})' if extra else ''}")
+        by_case: dict[str, dict] = {}
+        for key in held:
+            by_case.setdefault(key[2], {})[key[3]] = records[key]["outcome"]
+        missing, extra = [], []
+        for case, outcomes in sorted(by_case.items()):
+            required = cases[case](outcomes)
+            missing += [(case, op) for op in sorted(required - outcomes.keys())]
+            extra += [(case, op) for op in sorted(outcomes.keys() - required)]
+        if missing or extra:
+            raise Unusable(f"{name} does not hold the {'/'.join(group)} operations: {len(missing)} required "
+                           f"operations missing{f' (first {missing[0]})' if missing else ''}, {len(extra)} "
+                           f"operations no case requires{f' (first {extra[0]})' if extra else ''}")
         if all(_unavailable(records[key]["outcome"]) for key in held):
             raise Unusable(f"{name}: every {'/'.join(group)} record is unavailable")
         # Every corpus holds accepted and rejected inputs: a recording that rejects (or accepts)
