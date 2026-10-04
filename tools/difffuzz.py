@@ -64,6 +64,9 @@ BASELINE = ROOT / "conformance/difffuzz-baseline.json"
 FORMAT = "ve-difffuzz-baseline@1"
 ENGINES = ("python", "lean", "rust")
 
+# The whole environment of a Lean or Rust runner: nothing from the caller's shell reaches it.
+CHILD_ENV = {"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8"}
+
 # CPU seconds one Python call or one Lean/Rust batch may spend before it counts as not answering.
 PYTHON_CPU = 20
 BATCH_CPU = 300
@@ -73,6 +76,8 @@ BATCH_CASES = 400
 CI_BUDGET = {"p0": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500)}
 CHUNK = 2000
 MINIMISE_EVALUATIONS = 3000
+# New signatures minimised in one run; any beyond are reported as found (`"minimised": false`).
+MINIMISE_LIMIT = 40
 MINIMISE_BATCH = 200
 
 
@@ -389,7 +394,7 @@ def run_rows(command, cases):
     if not cases:
         return []
     text = json.dumps(cases, ensure_ascii=False)
-    completed, _ = run_cpu_bounded([str(c) for c in command], text, BATCH_CPU)
+    completed, _ = run_cpu_bounded([str(c) for c in command], text, BATCH_CPU, env=CHILD_ENV)
     reason = None
     if completed.returncode not in (0, 1):
         reason = f"exit {completed.returncode}: {completed.stderr[-300:]}"
@@ -1198,12 +1203,18 @@ def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
         report["findings"][name] = dict(sorted(counts.items()))
     surfaces_built = built
     entries = []
-    for sig, finding in new.items():
+    for index, (sig, finding) in enumerate(new.items()):
         surface = surfaces_built[finding.seed.surface]
-        log(f"minimising {finding.seed.surface} {finding.seed.profile} {finding.classes}")
-        minimised = minimise(surface, finding.seed, finding.root, sig)
+        if index < MINIMISE_LIMIT:
+            log(f"minimising {finding.seed.surface} {finding.seed.profile} {finding.classes}")
+            minimised = minimise(surface, finding.seed, finding.root, sig)
+        else:
+            minimised = finding.root
         [(_, _, answers, _)] = evaluate(surface, [(finding.seed, minimised)])
-        entries.append(entry_for(finding, surface.profile(finding.seed, minimised), minimised, answers))
+        entry = entry_for(finding, surface.profile(finding.seed, minimised), minimised, answers)
+        if index >= MINIMISE_LIMIT:
+            entry["minimised"] = False
+        entries.append(entry)
     report["new"] = entries
     replayed = replay(baseline["entries"], surfaces_built)
     report["baseline"] = {

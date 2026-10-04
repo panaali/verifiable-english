@@ -93,6 +93,15 @@ and nightly, run the full suite** with
 release binary, Python tests, dependency checks and axiom audit. Do not treat a
 selected run as a green-tag gate.
 
+Nightly, after the full suite, also run the deep differential fuzz:
+`uv run python tools/difffuzz.py --deep 20 --report difffuzz-nightly.json`
+([conformance/DIFFFUZZ.md](../conformance/DIFFFUZZ.md)). It takes 20 times the
+CI sample from the date's seed. Exit 1 means one of three things: a new
+disagreement, which it reports minimised; a baseline entry that no longer
+reproduces; or an entry with no follow-up id. Triage each new disagreement:
+fix it, or add it to `conformance/difffuzz-baseline.json` with a follow-up id
+(`--update-baseline` writes it as `TODO`).
+
 ## Current exceptions
 
 The exact imported edges and reasons are tracked in

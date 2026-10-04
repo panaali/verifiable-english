@@ -25,6 +25,7 @@ TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 ALWAYS = {
     "tests/test_conformance.py", "tests/test_lean_conformance.py",
     "tests/test_replay_conservativity.py", "tests/test_p0_three_way.py",
+    "tests/test_difffuzz.py",
 }
 TEST_LAYER_OVERRIDES = {
     # Wall-clock deadlines and randomized histories are measurements.
