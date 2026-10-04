@@ -81,13 +81,13 @@ relaying turns it into whatever Lean says"). Batch 0's triage put readings disag
 
 ## Rest of the gate (5.1)
 
-- **Suite (item 1).** The full suite at the head (`6f… ` and later, 16 chunks and the English merge smoke,
-  `VE_NATIVE_PREBUILT=1`, `-n 3` per chunk): every chunk passes after one fix. The first run had 51 failures in
-  `tests/test_environment_field_types.py`: `S1Environment` was still listed as a validating entry, and it no
+- **Suite (item 1).** The full suite at `ffeddcc3` (the head's code; later commits change this file only), 16
+  chunks and the English merge smoke, `VE_NATIVE_PREBUILT=1`, `-n 3` per chunk: **8,774 passed, 6 skipped** (the
+  usual optional dependencies), merge smoke 1 passed, no failure. An earlier run at `64a3bf25` had 51 failures in
+  `tests/test_environment_field_types.py`: `S1Environment` was still listed there as a validating entry, and it no
   longer validates (rule 2). The test now lists the entries that validate, and the nested-value test keeps
-  `S1Environment`, so a caller before Lean (the search, `document._s1_attached`) still never crashes; chunk 12
-  rerun: 2,986 passed. Totals: chunks 0–15 9,729 passed (incl. the rerun), 7 skipped (the usual optional
-  dependencies), merge smoke 1 passed. Test changes are the ones this batch's deletions require: Python's
+  `S1Environment`, so a caller before Lean (the search, `document._s1_attached`) still never crashes
+  (`71a1f547`: `S1Environment` reads the profiles of the environment it built). Test changes are the ones this batch's deletions require: Python's
   regeneration is no longer compared (`test_readings_s1_lean.py` `agreed` now checks the relay;
   `test_readings_s1_differential.py` checks the search against Lean and the relay against Lean's row), and the
   new `tests/test_readings_route_relay.py`. `tools/gate_collection.py --write`: 46 IDs added, 1 removed
@@ -95,8 +95,9 @@ relaying turns it into whatever Lean says"). Batch 0's triage put readings disag
   on the head: `tools/wire_contract.py --check`, `tools/relay_lint.py` (2 relayed modules),
   `tools/check_python_layers.py`, `tools/check_rust_deps.py`, `lint-imports` and `lean/audit.py` (287 files,
   3,045 theorems, standard axioms only) pass; `lake build` replays clean (no Lean change).
-- **Differential fuzzer (item 2).** `infra/difffuzz` (`7c34a1a8`) merged onto the head (`f81f36e6`, a scratch
-  worktree). The base side is batch 0's head-side run (`ve-lf-0/.lf0`: `df-head2.json` and `seeds-head/`), whose
+- **Differential fuzzer (item 2).** `infra/difffuzz` (`7c34a1a8`) merged onto `b3844521` (`f81f36e6`, a scratch
+  worktree; the only later code change is `71a1f547`'s one line of `ve/readings_s1.py`, which no fuzzer surface
+  reaches). The base side is batch 0's head-side run (`ve-lf-0/.lf0`: `df-head2.json` and `seeds-head/`), whose
   `ve/`, `lean/`, `rust/` and fuzzer equal this batch's base but for one line of `ve/assurance-manifest.json` (a
   reviewed handler's name). CI sample: 23 new signatures on each side, the same ones, 329 baseline entries seen and
   80 not reproduced on each side. The 13 date seeds 20260921 to 20261003 (`--deep 1` each): per seed the same
