@@ -59,6 +59,40 @@ def predicate_file(predicates: tuple[str, ...] = (), modules: tuple[str, ...] = 
     return "-- header\n" + "".join(f"module {m}\n" for m in modules) + "".join(f"{located(p)}\n" for p in predicates)
 
 
+# What Lean's environment records for each fixture source (lean/declarations.txt without the
+# module): every constant with a source range, as `<line>:<column>-<line>:<column> <kind> <name>`.
+# The structure's field is inside its range; the anonymous instance has Lean's generated name.
+COMPILED = {
+    "FIXTURE": ["8:0-10:10 def VE.Demo.decodeThing", "12:0-13:53 theorem VE.Demo.decodeThing_empty",
+                "15:0-16:13 instance VE.Demo.instInhabitedNat", "18:0-19:9 structure VE.Demo.Meaning",
+                "19:2-19:3 def VE.Demo.Meaning.x", "22:0-22:20 def VE.Demo.helper"],
+    "OTHER": ["3:0-4:9 structure VE.Demo.Meaning", "4:2-4:3 def VE.Demo.Meaning.y", "6:0-6:24 def VE.Demo.decodeThing",
+              "8:0-8:19 def VE.Demo.helper"],
+    "MARKER": ["5:0-5:32 theorem VE.Demo.marker", "7:0-7:82 theorem VE.Demo.decodeThing_tie"],
+}
+INSTANCE = "VE.Demo.instInhabitedNat"
+
+
+def write_declarations(root: Path) -> None:
+    """lean/declarations.txt for every file of a fixture tree, as tools/lean_statements.py writes it
+    from the compiled environment: a fixture source takes its `COMPILED` entries, a committed file
+    its block of the committed list."""
+    sources = {globals()[name]: entries for name, entries in COMPILED.items()}
+    committed, hashes = lean_statements.declaration_list()
+    blocks = []
+    for path in lean_statements.sources(root):
+        module = lean_statements.module_name(path.relative_to(root / "lean").as_posix())
+        digest = lean_statements.source_hash(path)
+        if path.read_text() in sources:
+            entries = [f"{e}@{module}" for e in sources[path.read_text()]]
+        else:
+            assert hashes[module] == digest, path
+            entries = [f"{d.start[0]}:{d.start[1]}-{d.end[0]}:{d.end[1]} {d.kind} {d.name}@{module}"
+                       for d in committed[module]]
+        blocks.append(f"module {module} {digest}\n" + "".join(f"{e}\n" for e in entries))
+    (root / "lean/declarations.txt").write_text("-- header\n" + "".join(blocks))
+
+
 def write_tree(root: Path, table: dict, statements: str = "", predicates: tuple[str, ...] = (),
                modules: tuple[str, ...] = ("VE.Demo",)) -> None:
     (root / "lean/VE").mkdir(parents=True, exist_ok=True)
@@ -67,30 +101,76 @@ def write_tree(root: Path, table: dict, statements: str = "", predicates: tuple[
     (root / "tools/trust-classes.json").write_text(json.dumps({"modules": {"VE/Demo.lean": table}}))
     (root / "lean/statements.txt").write_text(statements)
     (root / "lean/predicates.txt").write_text(predicate_file(predicates, modules))
+    write_declarations(root)
+
+
+def scan_fixture(folder: Path, source: str, entries: list[str]) -> tuple[list, int, list[str]]:
+    with_module = [lean_statements.DECLARED.match(f"{e}@VE.Demo") for e in entries]
+    declared = [lean_statements.Declared(m[6].removesuffix("@VE.Demo"), m[5], (int(m[1]), int(m[2])),
+                                         (int(m[3]), int(m[4]))) for m in with_module]
+    path = folder / "Demo.lean"
+    path.write_text(source)
+    return trust_map.scan(path, declared)
 
 
 def test_scan_spans_names_and_kinds(tmp_path):
-    path = tmp_path / "Demo.lean"
-    try:
-        path.write_text(FIXTURE)
-        decls, total = trust_map.scan(path)
-    finally:
-        path.unlink()
-    assert total == len(FIXTURE.splitlines())
+    decls, total, problems = scan_fixture(tmp_path, FIXTURE, COMPILED["FIXTURE"])
+    assert total == len(FIXTURE.splitlines()) and problems == []
     rows = [(d.kind, d.name, d.start, d.end) for d in decls]
     assert rows == [
         ("def", "VE.Demo.decodeThing", 8, 11),          # docstring through the blank line
         ("theorem", "VE.Demo.decodeThing_empty", 12, 14),  # the attribute line starts it
-        ("instance", "instance:Inhabited Nat", 15, 17),
-        ("structure", "VE.Demo.Meaning", 18, 20),
+        ("instance", INSTANCE, 15, 17),
+        ("structure", "VE.Demo.Meaning", 18, 20),        # its field is part of it
         ("def", "VE.Demo.helper", 22, 22),               # `section` and `end` are boundaries
-        ("example", None, 25, 26),
+        ("command", None, 25, 26),                       # `example` declares nothing
         ("command", None, 27, 28),
     ]
 
 
+@pytest.mark.parametrize("source,entries,problem,line", [
+    # A declaration the compiled module does not record (a stale or hand-written list): its lines
+    # stay counted, trusted and unclassifiable (no name).
+    (FIXTURE, [e for e in COMPILED["FIXTURE"] if "helper" not in e],
+     "line 22 reads as a declaration, but the compiled module records none there", (None, "unrecorded", 22)),
+    # Two declarations on one line: the scanner saw only the first.
+    ("namespace VE.Demo\ndef a : Nat := 1 def b : Nat := 2\nend VE.Demo\n", ["2:0-2:16 def VE.Demo.a", "2:17-2:33 def VE.Demo.b"],
+     "line 2: VE.Demo.a, VE.Demo.b start on one line; write each declaration on its own lines", (None, "unrecorded", 2)),
+    # Two unrelated constants on one range cannot be told apart.
+    ("def a : Nat := 1\n", ["1:0-1:16 def VE.Demo.a", "1:0-1:16 def VE.Demo.b"], "VE.Demo.b and VE.Demo.a share one source range",
+     ("VE.Demo.a", "def", 1)),
+])
+def test_scan_fails_where_the_compiled_module_disagrees(tmp_path, source, entries, problem, line):
+    decls, _, problems = scan_fixture(tmp_path, source, entries)
+    assert problems == [problem]
+    assert line in [(d.name, d.kind, d.start) for d in decls]
+
+
+def test_nothing_inside_a_compiled_range_ends_the_declaration(tmp_path):
+    """A column-0 comment block or a term-level `open … in` inside a declaration's body cut its
+    lines short under the source scanner, and the rest counted `o` (untrusted)."""
+    source = ("namespace VE.Demo\ndef meaning (n : Nat) : Nat :=\n/- a comment at column 0 -/\n  n +\n"
+              "open Nat in succ 0\n\nexample : meaning 0 = 1 := rfl\nend VE.Demo\n")
+    decls, _, problems = scan_fixture(tmp_path, source, ["2:0-5:18 def VE.Demo.meaning"])
+    assert problems == []
+    assert [(d.name, d.start, d.end) for d in decls] == [("VE.Demo.meaning", 2, 6), (None, 7, 7)]
+
+
+def test_generated_parts_belong_to_their_declaration():
+    """A structure's fields, a derived instance, a `where` helper and a macro's generated rules lie
+    inside the declaration's range; of constants with one range the name the others extend wins."""
+    tops, problems = trust_map.top_level([
+        lean_statements.Declared(n, k, s, e) for n, k, s, e in [
+            ("VE.Pt", "structure", (1, 0), (4, 15)), ("VE.Pt.x", "def", (2, 2), (2, 3)),
+            ("VE.instReprPt.repr", "def", (4, 11), (4, 15)), ("VE.instReprPt", "instance", (4, 11), (4, 15)),
+            ("VE.helper", "def", (6, 0), (7, 34)), ("VE.helper.aux", "def", (7, 6), (7, 34)),
+            ("_aux_X___macroRules_tacticWalk_1", "def", (9, 0), (9, 42)), ("tacticWalk", "def", (9, 0), (9, 42)),
+            ("_hidden", "def", (11, 0), (11, 20))]])
+    assert problems == [] and [t.name for t in tops] == ["VE.Pt", "VE.helper", "tacticWalk", "_hidden"]
+
+
 def test_classes_counts_and_unclassified_fail_closed(tmp_path):
-    write_tree(tmp_path, {"D[V]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning"], "C": ["instance:Inhabited Nat"]})
+    write_tree(tmp_path, {"D[V]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning"], "C": [INSTANCE]})
     files, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json",
                                         tmp_path / "lean/statements.txt")
     assert problems == []
@@ -168,11 +248,17 @@ def test_malformed_ties_are_rejected(tmp_path, tie):
         tie_problems(tmp_path, {"D[V]": [tie], "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"))
 
 
-def test_unnamed_declaration_cannot_be_tied(tmp_path):
-    table = {"D[V]": [{"name": "instance:Inhabited Nat", "tied": ["VE.Demo.decodeThing_empty"]}],
-             "S": ["VE.Demo.Meaning"]}
-    _, problems = tie_problems(tmp_path, table, entry("…", "VE.Demo.Meaning instance:Inhabited Nat"))
-    assert any("an unnamed declaration cannot be tied" in p for p in problems)
+@pytest.mark.parametrize("spelling", ["instance:Inhabited Nat", "VE.Demo.«helper»", "VE.Demo.helper(n"])
+def test_source_spellings_are_not_declarations(tmp_path, spelling):
+    """Fix 4 B: the table names declarations as Lean compiles them. A name the old source scanner
+    made up (an anonymous instance's signature, a quoted name, a binder without a space) classes
+    nothing: it is a stale entry, and the declaration it meant stays unclassified and trusted."""
+    files, problems = tie_problems(tmp_path, {"C": [spelling], "S": ["VE.Demo.Meaning"]}, "")
+    assert problems == [f"trust-classes.json: VE/Demo.lean: {spelling} is not a declaration of that file"]
+    # Lean's generated instance name can be tied like any other declaration.
+    table = {"D[V]": [{"name": INSTANCE, "tied": ["VE.Demo.decodeThing_empty"]}], "S": ["VE.Demo.Meaning"]}
+    files, problems = tie_problems(tmp_path, table, entry("…", f"VE.Demo.Meaning {INSTANCE}"))
+    assert problems == [] and files["VE/Demo.lean"]["tied"] == 3
 
 
 @pytest.mark.parametrize("cls,ok", [("K", True), ("S", True), ("P", True), ("T", True), ("D[V]", True),
@@ -226,12 +312,12 @@ def test_seed_puts_predicates_and_kernel_types_in_the_meaning():
 
 def test_rebaseline_needs_a_reason_for_growth(tmp_path):
     write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
-                          "C": ["instance:Inhabited Nat"]})
+                          "C": [INSTANCE]})
     tables = (tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
     baseline_path = tmp_path / "baseline.json"
     trust_map.write_baseline(trust_map.measure(tmp_path, *tables)[0], baseline_path, {})
     write_tree(tmp_path, {"K": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
-                          "C": ["instance:Inhabited Nat"]})
+                          "C": [INSTANCE]})
     grown, _ = trust_map.measure(tmp_path, *tables)
     with pytest.raises(ValueError, match="K grew from 0 to 4"):
         trust_map.write_baseline(grown, baseline_path)
@@ -253,7 +339,7 @@ def test_committed_kernel_meaning_is_trusted():
 
 def test_ledger_credits_each_declaration_once(tmp_path):
     write_tree(tmp_path, {"S": ["VE.Demo.Meaning"], "G[V]": ["VE.Demo.helper"], "D[R]": ["VE.Demo.decodeThing"],
-                          "C": ["instance:Inhabited Nat"]})
+                          "C": [INSTANCE]})
     path = tmp_path / "ledger.json"
     path.write_text(json.dumps({"steps": [
         {"step": "a", "title": "", "days": 1, "risk": 2, "adds_est": 1,
@@ -294,8 +380,10 @@ PROBLEM_TREES = {
     "tie not mentioned": (TIED, entry("True", "VE.Demo.Meaning"), (), False),
     "tie to nothing trusted": (TIED, entry("…", "VE.Demo.decodeThing"), (), False),
     "tying theorem missing": (TIED, "", (), False),
-    "unnamed tie": ({"D[V]": [{"name": "instance:Inhabited Nat", "tied": ["VE.Demo.decodeThing_empty"]}],
-                     "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning instance:Inhabited Nat"), (), False),
+    # Fix 4 B: names the old source scanner spelled; Lean names these `VE.Demo.instInhabitedNat`
+    # and `VE.Demo.helper`.
+    "source-spelled instance": ({"C": ["instance:Inhabited Nat"], "S": ["VE.Demo.Meaning"]}, "", (), False),
+    "quoted spelling": ({"C": ["VE.Demo.«helper»"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper",), False),
     "stale table entry": ({"D[V]": ["VE.Demo.gone"], "S": ["VE.Demo.Meaning"]}, "", (), False),
     "predicate list missing": ({"S": ["VE.Demo.Meaning"]}, "", (), True),
     # Review B (looprecheck 2): a theorem listed as S anchored the tie, while the budget counted it P.
@@ -328,6 +416,13 @@ PROBLEM_TREES = {
                                        {"predicates": "-- header\nmodule VE.Demo\nVE.Demo.helper\n"}),
     "uses line without modules": (TIED, "theorem VE.Demo.decodeThing_empty\n  …\n"
                                         "  -- uses VE.Demo.Meaning VE.Demo.decodeThing\n  -- expr 1\n", (), False),
+    # Fix 4 B: the declarations are the compiled module's; a source edited since, or no list at all,
+    # leaves nothing to classify by.
+    "source edited after the declaration list": ({"S": ["VE.Demo.Meaning"]}, "", (), False, {"edit": "VE/Demo.lean"}),
+    "declaration list missing": ({"S": ["VE.Demo.Meaning"]}, "", (), False, {"declarations": None}),
+    "declaration list of another module": ({"S": ["VE.Demo.Meaning"]}, "", (), False, {"declarations": (
+        "-- header\nmodule VE.Demo 0000000000000000000000000000000000000000000000000000000000000000\n"
+        "8:0-10:10 def VE.Demo.decodeThing@VE.Other\n")}),
 }
 VALID_TREES = {
     "tied": (TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False),
@@ -351,7 +446,8 @@ def problem_tree(root: Path, tree: tuple) -> None:
     """Write a fixture tree: (table of VE/Demo.lean, statement dump, predicates, drop the predicate
     list, options). The options add files (`files`, path under lean/ to source or "OTHER"), table
     entries of other files (`table`), the modules the predicate scan read (`modules`, default every
-    file) and a predicate list verbatim (`predicates`)."""
+    file), a predicate list verbatim (`predicates`), a declaration list verbatim (`declarations`,
+    None for none) and a file edited after the declaration list was written (`edit`)."""
     table, dump, predicates, drop, *rest = tree
     options = rest[0] if rest else {}
     files = options.get("files", {})
@@ -366,6 +462,15 @@ def problem_tree(root: Path, tree: tuple) -> None:
         (root / "lean/predicates.txt").write_text(options["predicates"])
     if drop:
         (root / "lean/predicates.txt").unlink()
+    write_declarations(root)
+    if "declarations" in options:
+        if options["declarations"] is None:
+            (root / "lean/declarations.txt").unlink()
+        else:
+            (root / "lean/declarations.txt").write_text(options["declarations"])
+    if "edit" in options:
+        path = root / "lean" / options["edit"]
+        path.write_text(path.read_text() + "-- edited\n")
     (root / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
 
 
@@ -395,6 +500,13 @@ def test_ledger_and_measure_share_validation_and_trust(tmp_path, name):
      "rerun tools/lean_statements.py"),
     ("uses line without modules", "VE/Demo.lean: VE.Demo.decodeThing: statements.txt has no uses line with "
      "defining modules for VE.Demo.decodeThing_empty; rerun tools/lean_statements.py"),
+    ("source-spelled instance", "trust-classes.json: VE/Demo.lean: instance:Inhabited Nat is not a declaration of that file"),
+    ("quoted spelling", "trust-classes.json: VE/Demo.lean: VE.Demo.«helper» is not a declaration of that file"),
+    ("source edited after the declaration list", "VE/Demo.lean: declarations.txt was not compiled from this source; "
+     "rerun tools/lean_statements.py"),
+    ("declaration list missing", "declarations.txt is missing; run tools/lean_statements.py"),
+    ("declaration list of another module", "declarations.txt: '8:0-10:10 def VE.Demo.decodeThing@VE.Other' is not a "
+     "declaration of the module above it; rerun tools/lean_statements.py"),
 ])
 def test_declarations_are_told_apart_by_module(tmp_path, name, problem):
     """Review B (looprecheck 3): a declaration is its name and its module. Each tree fails for
@@ -438,10 +550,11 @@ def test_dump_tells_namesakes_of_two_modules_apart(tmp_path, capsys):
     shutil.copy(ROOT / "lean/lean-toolchain", lean / "lean-toolchain")
     for name, text in COLLISION.items():
         (lean / name).write_text(text)
-    statements, predicates = lean_statements.dump_all(tmp_path)
+    statements, predicates, declarations = lean_statements.dump_all(tmp_path)
     assert "  -- uses VE.Demo.anchor@VE.Decoder VE.Demo.decodeThing@VE.Decoder\n" in statements
     (lean / "statements.txt").write_text(statements)
     (lean / "predicates.txt").write_text(predicates)
+    (lean / "declarations.txt").write_text(declarations)
     assert trust_map.predicate_list(lean / "predicates.txt")[1] == {"VE", "VE.Audit", "VE.Decoder", "VE.Meaning"}
     (tmp_path / "tools").mkdir()
     (tmp_path / "docs").mkdir()
@@ -470,6 +583,89 @@ def test_dump_tells_namesakes_of_two_modules_apart(tmp_path, capsys):
     classes({"S": ["VE.Demo.anchor"], "D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_tie"]}]})
     _, problems = trust_map.measure(tmp_path, table_path, lean / "statements.txt")
     assert problems == []
+
+
+# Fix 4 B: one predicate, `WellFormed`, written in every spelling the old source scanner misread,
+# each in its own module (the reviewer's reproducer was `def «WellFormed» : Prop`, which the
+# scanner recorded as `VE.Demo.«WellFormed»`, and `def WellFormed(n : Nat)`, recorded as
+# `WellFormed(n`). Each body is two lines, as `Plain`'s.
+SPELLINGS = {
+    "Plain": "namespace VE.Plain\ndef WellFormed (n : Nat) : Prop :=\n  n = n\nend VE.Plain\n",
+    "Quoted": "namespace VE.Quoted\ndef «WellFormed» (n : Nat) : Prop :=\n  n = n\nend VE.Quoted\n",
+    "Tight": "namespace VE.Tight\ndef WellFormed(n : Nat) : Prop :=\n  n = n\nend VE.Tight\n",
+    "Nested": "namespace VE\nnamespace Nested\nsection\nvariable (k : Nat)\ndef WellFormed (n : Nat) : Prop :=\n"
+              "  n = k\nend\nend Nested\nend VE\n",
+    "Rooted": "def VE.Rooted.WellFormed (n : Nat) : Prop :=\n  n = n\n",
+    "Mixed": "namespace VE.Mixed\n@[reducible] protected def «WellFormed»(n:Nat):Prop :=\n  n = n\nend VE.Mixed\n",
+}
+
+
+@pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
+def test_compiled_names_do_not_depend_on_spelling(tmp_path, capsys):
+    """Every spelling of the predicate is the declaration `VE.<Module>.WellFormed` of the compiled
+    module, with the same class, lines and verdict as the plain one in all four entry points."""
+    lean = tmp_path / "lean"
+    (lean / "VE").mkdir(parents=True)
+    shutil.copy(ROOT / "lean/lean-toolchain", lean / "lean-toolchain")
+    (lean / "lakefile.toml").write_text(COLLISION["lakefile.toml"])
+    (lean / "VE.lean").write_text("".join(f"import VE.{m}\n" for m in SPELLINGS))
+    (lean / "VE/Audit.lean").write_text("import VE\n")
+    for module, text in SPELLINGS.items():
+        (lean / f"VE/{module}.lean").write_text(text)
+    statements, predicates, declarations = lean_statements.dump_all(tmp_path)
+    for name, text in (("statements", statements), ("predicates", predicates), ("declarations", declarations)):
+        (lean / f"{name}.txt").write_text(text)
+    assert lean_statements.predicates(lean / "predicates.txt") == {(f"VE.{m}", f"VE.{m}.WellFormed") for m in SPELLINGS}
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
+    table_path = tmp_path / "tools/trust-classes.json"
+
+    def classes(cls: str, spelled=lambda m: f"VE.{m}.WellFormed") -> None:
+        table_path.write_text(json.dumps({"modules": {f"VE/{m}.lean": {cls: [spelled(m)]} for m in SPELLINGS}}))
+
+    def report() -> tuple[list[tuple[str, str, str, int, bool]], list[str]]:
+        walked, _, problems = trust_map.walk(tmp_path, table_path, lean / "statements.txt")
+        rows = [(d.module, d.decl.name, d.cls, d.decl.lines, d.trusted) for d in walked if d.decl.name]
+        return rows, problems
+
+    # Classed S: every spelling is one trusted two-line predicate, and every entry point passes.
+    classes("S")
+    rows, problems = report()
+    assert problems == [] and sorted(rows) == sorted((f"VE/{m}.lean", f"VE.{m}.WellFormed", "S", 2, True) for m in SPELLINGS)
+    for flags in ([], ["--write"], ["--check"], ["--ledger"]):
+        assert trust_map.main([*flags, "--root", str(tmp_path)]) == 0, flags
+    baseline = (tmp_path / "docs/trust-baseline.json").read_text()
+    assert json.loads(baseline)["budget"]["S"] == 2 * len(SPELLINGS)
+    # Classed C: every spelling fails with the plain one's problem, in every entry point.
+    classes("C")
+    assert sorted(report()[1]) == sorted(f"VE/{m}.lean: VE.{m}.WellFormed: a predicate cannot be C unless a theorem "
+                                         "ties it; classify it K or S (or P for a proof helper)" for m in SPELLINGS)
+    # The scanner's spellings name nothing: each entry is stale and the predicate stays trusted.
+    for spelled in (lambda m: f"VE.{m}.«WellFormed»", lambda m: f"VE.{m}.WellFormed(n"):
+        classes("C", spelled)
+        rows, problems = report()
+        assert sorted(problems) == sorted(f"trust-classes.json: VE/{m}.lean: {spelled(m)} is not a declaration of that "
+                                          "file" for m in SPELLINGS)
+        assert all(cls == "?" and trusted for _, _, cls, _, trusted in rows)
+    for spelled in (None, lambda m: f"VE.{m}.«WellFormed»"):
+        classes("C", *([spelled] if spelled else []))
+        capsys.readouterr()
+        for flags in ([], ["--check"], ["--write"], ["--ledger"]):
+            assert trust_map.main([*flags, "--root", str(tmp_path)]) == 1, flags
+            assert "PASS" not in capsys.readouterr().out
+    assert (tmp_path / "docs/trust-baseline.json").read_text() == baseline
+    # A source edited after the dump fails until the dump is rewritten.
+    classes("S")
+    (lean / "VE/Quoted.lean").write_text(SPELLINGS["Quoted"].replace("  n = n\n", "  n = n ∧\n  n = n ∧\n  n = n\n"))
+    assert report()[1] == ["VE/Quoted.lean: declarations.txt was not compiled from this source; rerun "
+                           "tools/lean_statements.py"]
+    assert trust_map.main(["--check", "--root", str(tmp_path)]) == 1
+    (lean / "declarations.txt").write_text(lean_statements.dump_all(tmp_path)[2])
+    assert report()[1] == []
+    # The two added lines are S growth.
+    assert trust_map.main(["--check", "--root", str(tmp_path)]) == 1
+    assert "S grew from 12 to 14" in capsys.readouterr().err
 
 
 @pytest.mark.parametrize("name", PROBLEM_TREES)
@@ -504,6 +700,7 @@ def test_ledger_rejects_a_misclassified_kernel_predicate(tmp_path, capsys):
     (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps({"steps": [
         {"step": "1", "title": "", "days": 1, "risk": 1,
          "removed": [{"module": module, "names": r"\.Formula\.WellFormed$"}]}]}))
+    write_declarations(tmp_path)
     (row,), problems = trust_map.ledger(tmp_path, tmp_path / "tools/consolidation-ledger.json",
                                         tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
     assert len(problems) == 1 and "VE.Closure.Formula.WellFormed: a predicate cannot be C" in problems[0]
@@ -531,11 +728,12 @@ def test_theorem_listed_as_meaning_anchors_nothing(tmp_path, capsys, flags):
     theorem P. Every entry point succeeded with zero trusted lines, and `--check` passed decoder
     growth against a zero budget."""
     write_tree(tmp_path, {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_tie"]}],
-                          "C": ["VE.Demo.Meaning", "VE.Demo.helper", "instance:Inhabited Nat"]},
+                          "C": ["VE.Demo.Meaning", "VE.Demo.helper", INSTANCE]},
                "theorem VE.Demo.decodeThing_tie\n  VE.Demo.decodeThing \"\" = 0 ∧ VE.Demo.marker = True.intro\n"
                "  -- uses VE.Demo.decodeThing@VE.Demo VE.Demo.marker@VE.Marker\n  -- expr 1\n",
                modules=("VE.Demo", "VE.Marker"))
     (tmp_path / "lean/VE/Marker.lean").write_text(MARKER)
+    write_declarations(tmp_path)
     table_path = tmp_path / "tools/trust-classes.json"
     modules = json.loads(table_path.read_text())["modules"]
     table_path.write_text(json.dumps({"modules": {**modules, "VE/Marker.lean": {"S": ["VE.Demo.marker"]}}}))
@@ -559,7 +757,7 @@ def test_theorem_listed_as_meaning_anchors_nothing(tmp_path, capsys, flags):
 # Generated mutation tests: each table entry's class (and each unlisted declaration's) is replaced,
 # and the tool must either report a problem or report exactly what the declarations support.
 
-KIND_FIXED = {"theorem": "P", "lemma": "P", "example": "T", "command": "T"}
+KIND_FIXED = {"theorem": "P", "command": "T"}
 
 
 def unsound(walked: list, table: dict, proved: dict, predicates: set[tuple[str, str]]) -> list[str]:
@@ -626,7 +824,7 @@ def test_mutated_fixture_classes_are_reported_or_rejected(tmp_path, name):
     """Every named declaration of a valid fixture tree, alone and in pairs, takes every class
     (untied and tied) or none."""
     problem_tree(tmp_path, VALID_TREES[name])
-    decls, _ = trust_map.scan_tree(tmp_path)
+    decls, _, _, _ = trust_map.scan_tree(tmp_path)
     table = trust_map.load_table(tmp_path / "tools/trust-classes.json")
     proved = trust_map.statements(tmp_path / "lean/statements.txt")
     predicates = trust_map.lean_predicates(tmp_path / "lean/predicates.txt")
@@ -645,7 +843,7 @@ def test_mutated_fixture_classes_are_reported_or_rejected(tmp_path, name):
 
 @pytest.fixture(scope="module")
 def committed_tree():
-    decls, _ = trust_map.scan_tree()
+    decls, _, _, _ = trust_map.scan_tree()
     return decls, trust_map.load_table(), trust_map.statements(), trust_map.lean_predicates()
 
 
@@ -694,7 +892,7 @@ def test_committed_ties_are_valid():
 
 def test_budget_check_needs_a_signed_allowance(tmp_path):
     write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
-                          "C": ["instance:Inhabited Nat"]})
+                          "C": [INSTANCE]})
     tables = (tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
     files, _ = trust_map.measure(tmp_path, *tables)
     baseline_path = tmp_path / "baseline.json"
@@ -702,7 +900,7 @@ def test_budget_check_needs_a_signed_allowance(tmp_path):
     baseline = json.loads(baseline_path.read_text())
     assert trust_map.check(files, baseline) == []
     write_tree(tmp_path, {"D[V]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
-                          "C": ["instance:Inhabited Nat"]})
+                          "C": [INSTANCE]})
     grown, _ = trust_map.measure(tmp_path, *tables)
     failures = trust_map.check(grown, baseline)
     assert len(failures) == 1 and failures[0].startswith("V grew from 0 to 4")
@@ -740,7 +938,9 @@ def test_statement_dump_lists_every_audited_theorem():
 
 @pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
 def test_statement_dump_is_current():
-    statements, predicates = lean_statements.dump_all()
+    statements, predicates, declarations = lean_statements.dump_all()
+    assert declarations == lean_statements.DECLARATIONS.read_text(), \
+        "lean/declarations.txt is stale: run python3 tools/lean_statements.py"
     assert statements == lean_statements.OUTPUT.read_text(), \
         "lean/statements.txt is stale: run python3 tools/lean_statements.py"
     assert predicates == lean_statements.PREDICATES.read_text(), \

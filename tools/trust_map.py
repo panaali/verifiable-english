@@ -22,10 +22,20 @@ as the dump's `name@Module` constants and predicates are: two files nothing impo
 each define `VE.Demo.anchor`, and a statement about one says nothing about the other. The
 predicate list must have read every file of the tree.
 
+The declarations are the compiled environment's, never the source text's: `lean/declarations.txt`
+(written by tools/lean_statements.py with the statement and predicate dumps) lists every constant
+of each module with its kind and source range, and the hash of the source it was compiled from. A
+declaration is a constant whose range no other constant's contains, named as Lean names it (a
+quoted `«WellFormed»` is `WellFormed`, an anonymous instance has its generated name), so no
+spelling of the source can change what is classified. A file whose source differs from the one
+the list was compiled from fails every run.
+
 A declaration's lines run from its docstring (or first attribute line) to the line before the
-next declaration or structural command, as in the trust map's method (section 9). Namespace,
+next declaration or structural command, as in the trust map's method (section 9); the source text
+only places these boundaries. `example` and `#`-commands declare nothing and are T. Namespace,
 section, `open`, `import` and similar lines, module comments and lines before the first
-declaration are `o`.
+declaration are `o`. A line that reads as a declaration where Lean records none, and two
+declarations on one line, fail the run.
 
 The trusted count is K + S + untied D[V] + untied G[V] + unclassified declarations: a declaration
 that is not in the side table is counted as untied [V], so new code is trusted until classified,
@@ -73,18 +83,20 @@ STATEMENTS = LEAN / "statements.txt"
 sys.path.insert(0, str(LEAN))
 sys.path.insert(0, str(ROOT / "tools"))
 from audit import code_only  # noqa: E402
-from lean_statements import (PREDICATES, module_name, parse as parse_statements, predicate_list,  # noqa: E402
-                             predicates as lean_predicates, sources, uses)
+from lean_statements import (DECLARATIONS, PREDICATES, Declared, declaration_list, module_name,  # noqa: E402
+                             parse as parse_statements, predicate_list, predicates as lean_predicates,
+                             source_hash, sources, uses)
 
 COLUMNS = ("K", "S", "D", "G", "C", "P", "T", "o")
 CLASSES = ("K", "S", "C", "P", "T", *(f"{c}[{g}]" for c in "DG" for g in "VRI"))
 GROUPS = ("V", "R", "I")
 
+# Source text places line boundaries only. A line that reads as a declaration must be where Lean
+# records one (or an `example`, which declares nothing); names and kinds come from the dump.
 DECL = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable|nonrec|partial|unsafe|scoped|local)\s+)*"
     r"(?P<kind>class\s+inductive|deriving\s+instance|def|abbrev|structure|inductive|class|instance|theorem|"
-    r"lemma|example|opaque|axiom|macro_rules|macro|syntax|notation|infixl|infixr|infix|prefix|postfix|elab)"
-    r"\b(?P<rest>.*)$")
+    r"lemma|example|opaque|axiom|macro_rules|macro|syntax|notation|infixl|infixr|infix|prefix|postfix|elab)\b")
 COMMAND = re.compile(r"^\s*#(?:guard_msgs|guard|eval|print|check|reduce|synth)\b")
 STRUCTURAL = re.compile(r"^\s*(?:namespace|end|section|noncomputable\s+section|open|variable|universe|"
                         r"set_option|import|attribute|mutual|export)\b")
@@ -103,107 +115,91 @@ class Decl:
         return self.end - self.start + 1
 
 
-def doc_starts(text: str) -> dict[int, int]:
-    """Map the last line of each `/-- ... -/` docstring to its first line (both 1-based)."""
-    found, i, depth, start, quoted = {}, 0, 0, None, False
-    while i < len(text):
-        pair = text[i:i + 2]
-        if depth:
-            if pair == "/-":
-                depth, i = depth + 1, i + 2
-                continue
-            if pair == "-/":
-                depth, i = depth - 1, i + 2
-                if depth == 0 and start is not None:
-                    found[text.count("\n", 0, i) + 1] = start
-                continue
-        elif quoted:
-            if text[i] == "\\":
-                i += 2
-                continue
-            quoted = text[i] != '"'
-        elif pair == "--":
-            end = text.find("\n", i)
-            i = len(text) if end < 0 else end
+def internal(name: str) -> bool:
+    """A name Lean generates (a component starting with `_`, as `_aux_…_macroRules_…`)."""
+    return any(part.startswith("_") for part in name.split("."))
+
+
+def top_level(declared: list[Declared]) -> tuple[list[Declared], list[str]]:
+    """The declarations of one compiled module: every constant whose source range no other
+    constant's range contains. A constant inside another's range is part of it (a structure's
+    fields and derived instances, a `where` helper, a macro's generated rules). Of constants with one
+    range, the one the others' names extend is the declaration, a generated name never; two
+    unrelated names on one range are a problem, since neither can be told apart from the other."""
+    ordered = sorted(declared, key=lambda d: (d.start, (-d.end[0], -d.end[1]), internal(d.name), len(d.name), d.name))
+    tops: list[Declared] = []
+    problems: list[str] = []
+    for d in ordered:
+        top = tops[-1] if tops else None
+        if top is not None and top.start <= d.start and d.end <= top.end:
+            if (d.start, d.end) == (top.start, top.end) and not d.name.startswith(top.name + ".") \
+                    and not internal(d.name):
+                problems.append(f"{d.name} and {top.name} share one source range")
             continue
-        elif pair == "/-":
-            start = text.count("\n", 0, i) + 1 if text.startswith("/--", i) else None
-            depth, i = 1, i + 2
-            continue
-        elif text[i] == '"':
-            quoted = True
-        i += 1
-    return found
+        tops.append(d)
+    return tops, problems
 
 
-def item_name(kind: str, rest: str, scopes: list[str]) -> str | None:
-    kind = " ".join(kind.split())
-    if kind == "example":
-        return None
-    words = rest.split()
-    if kind in {"def", "abbrev", "structure", "inductive", "class", "class inductive", "theorem", "lemma",
-                "opaque", "axiom"} and words:
-        base = words[0]
-    elif kind == "instance" and words and not words[0].startswith((":", "(", "[", "{", "⦃")) \
-            and not words[0].startswith("priority"):
-        base = words[0]
-    else:
-        signature = re.split(r"\s(?:where|:=)(?:\s|$)", " " + rest.strip())[0].strip()
-        return f"{kind}:{' '.join(signature.removeprefix(':').split())}"
-    if base.startswith("_root_."):
-        return base.removeprefix("_root_.")
-    return ".".join([s for s in scopes if s] + [base])
-
-
-def scan(path: Path) -> tuple[list[Decl], int]:
-    """The declarations of one Lean file and its line count."""
+def scan(path: Path, declared: list[Declared]) -> tuple[list[Decl], int, list[str]]:
+    """The declarations of one Lean file, its line count and the problems found. The declarations,
+    their names and kinds are the compiled module's (`declared`, from lean/declarations.txt); the
+    source text only places line boundaries. A declaration's lines run from its first line (moved up
+    over `set_option … in` and attribute-only lines before it; its docstring is in its range) to
+    the line before the next declaration, unnamed command (`example`, `#guard` and the like: T) or
+    structural line. A line that reads as a declaration outside every compiled declaration, and two
+    declarations starting on one line, are problems (and trusted, unnamed). Lines are counted as
+    Lean counts them, split at newlines only."""
     text = path.read_text()
-    code = code_only(text).splitlines()
-    docs = doc_starts(text)
-    total = len(text.splitlines())
-    scopes: list[str] = []
-    starts: list[tuple[int, str, str | None]] = []  # (line, kind, name)
+    code = code_only(text).split("\n")
+    total = text.count("\n") + (0 if text.endswith("\n") or not text else 1)
+    tops, problems = top_level(declared)
+
+    def opened(number: int) -> int:
+        """The first line of a declaration or command written at line `number`."""
+        start, above = number, number - 1
+        while above >= 1 and (not code[above - 1].strip() or PREFIX.match(code[above - 1])):
+            if code[above - 1].strip():
+                start = above
+            above -= 1
+        return start
+
+    named: dict[int, list[Declared]] = defaultdict(list)
+    for d in tops:
+        named[opened(d.start[0])].append(d)
+    # Lines inside a declaration's compiled range after its first: nothing written there ends it.
+    inside = {n for d in tops for n in range(d.start[0] + 1, d.end[0] + 1)}
+    unnamed: dict[int, str] = {}
     boundaries: set[int] = set()
-    pending: int | None = None
-    for number, line in enumerate(code, 1):
-        if not line.strip():
-            continue
-        if PREFIX.match(line):
-            pending = pending or number
+    for number, line in enumerate(code[:total], 1):
+        if not line.strip() or PREFIX.match(line) or number in inside:
             continue
         decl = DECL.match(line)
-        command = COMMAND.match(line)
-        if decl or command:
-            start = pending or number
-            start = docs.get(start - 1, start)
-            if decl:
-                kind = " ".join(decl["kind"].split())
-                starts.append((start, kind, item_name(kind, decl["rest"], scopes)))
-            else:
-                starts.append((start, "command", None))
-            pending = None
-            continue
-        pending = None
-        structural = STRUCTURAL.match(line)
-        if structural:
+        if COMMAND.match(line) or decl and decl["kind"] == "example":
+            unnamed.setdefault(opened(number), "command")
+        elif decl:
+            if not any(d.start[0] == number for d in tops):
+                unnamed.setdefault(opened(number), "unrecorded")
+                problems.append(f"line {number} reads as a declaration, but the compiled module records none there")
+        elif STRUCTURAL.match(line):
             boundaries.add(number)
-            namespace = re.match(r"\s*namespace\s+(\S+)", line)
-            if namespace:
-                scopes.append(namespace[1])
-            elif re.match(r"\s*(?:noncomputable\s+)?section\b", line):
-                scopes.append("")
-            elif re.match(r"\s*end(?:\s|$)", line) and scopes:
-                scopes.pop()
     # A module docstring or comment block at top level also ends the declaration before it.
-    for number, line in enumerate(text.splitlines(), 1):
-        if re.match(r"/-(?!-)", line):
+    for number, line in enumerate(text.split("\n")[:total], 1):
+        if re.match(r"/-(?!-)", line) and number not in inside:
             boundaries.add(number)
-    stops = sorted({s for s, _, _ in starts} | boundaries | {total + 1})
+    stops = sorted(set(named) | set(unnamed) | boundaries | {total + 1})
     decls = []
-    for start, kind, name in starts:
-        following = next(stop for stop in stops if stop > start)
-        decls.append(Decl(name, kind, start, following - 1))
-    return decls, total
+    for start in sorted(set(named) | set(unnamed)):
+        end = next(stop for stop in stops if stop > start) - 1
+        here = named.get(start, [])
+        if len(here) > 1:
+            problems.append(f"line {start}: {', '.join(d.name for d in here)} start on one line; "
+                            "write each declaration on its own lines")
+            decls.append(Decl(None, "unrecorded", start, end))
+        elif here:
+            decls.append(Decl(here[0].name, here[0].kind, start, end))
+        else:
+            decls.append(Decl(None, unnamed[start], start, end))
+    return decls, total, problems
 
 
 def module_key(path: Path, root: Path = ROOT) -> str:
@@ -245,8 +241,9 @@ def statements(path: Path = STATEMENTS) -> dict[str, set[tuple[str, str]] | None
     return {name: uses(body) for name, body in parse_statements(path.read_text()).items()}
 
 
-# Declarations whose kind fixes their class: the side table cannot name them.
-KIND_CLASSES = {"theorem": "P", "lemma": "P", "example": "T", "command": "T"}
+# Declarations whose kind fixes their class: the side table cannot name them. `command` is a
+# stretch of source that declares nothing (`example`, `#guard` and the like).
+KIND_CLASSES = {"theorem": "P", "command": "T"}
 
 
 Ident = tuple[str, str]  # (defining Lean module, full name), as the dump's `name@Module`
@@ -287,8 +284,6 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[Ident] 
     cls, problems = entry["class"], []
     if cls[0] not in "CDG":
         problems.append(f"{module}: {decl.name}: only C, D and G declarations can be tied")
-    if decl.name is None or ":" in decl.name:
-        problems.append(f"{module}: {decl.name}: an unnamed declaration cannot be tied")
     for theorem in entry["tied"]:
         used = proved.get(theorem)
         if theorem not in proved:
@@ -331,18 +326,48 @@ class Classified:
     trusted: bool
 
 
-def scan_tree(root: Path = ROOT) -> tuple[list[tuple[str, Decl]], dict[str, int]]:
-    """Every declaration under `root` with its module, and the line count of each file."""
-    decls, lines = [], {}
-    for path in sources(root):
-        module = module_key(path, root)
-        found, lines[module] = scan(path)
+def scan_tree(root: Path = ROOT, declarations_path: Path | None = None
+              ) -> tuple[list[tuple[str, Decl]], dict[str, int], list[str], set[str]]:
+    """Every declaration under `root` with its module, the line count of each file, the problems
+    found, and the files whose declarations are unknown. The declarations are those of
+    lean/declarations.txt; a file whose source is not the one the list was compiled from (or that
+    the list lacks) fails, and is scanned without any compiled declaration, so every line in it that
+    reads as a declaration is trusted and unnamed."""
+    path = root / DECLARATIONS.relative_to(ROOT) if declarations_path is None else declarations_path
+    problems: list[str] = []
+    declared: dict[str, list[Declared]] = {}
+    hashes: dict[str, str] = {}
+    if not path.is_file():
+        problems.append(f"{path.name} is missing; run tools/lean_statements.py")
+    else:
+        try:
+            declared, hashes = declaration_list(path)
+        except ValueError as error:
+            problems.append(str(error))
+    readable = not problems
+    decls, lines, unread = [], {}, set()
+    for source in sources(root):
+        module = module_key(source, root)
+        name = module_name(module)
+        if hashes.get(name) != source_hash(source):
+            if readable:  # an unreadable list is one problem already
+                problems.append(f"{module}: {path.name} was not compiled from this source; rerun "
+                                "tools/lean_statements.py")
+            found, lines[module], _ = scan(source, [])  # one problem for the file, not one per line
+            issues = []
+            unread.add(module)
+        else:
+            found, lines[module], issues = scan(source, declared[name])
+        problems += [f"{module}: {issue}" for issue in issues]
         decls += [(module, decl) for decl in found]
-    return decls, lines
+    for name in sorted(set(hashes) - {module_name(m) for m in lines}):
+        problems.append(f"{path.name} lists module {name}, which is not a file of the tree; rerun "
+                        "tools/lean_statements.py")
+    return decls, lines, problems, unread
 
 
 def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, set[Ident] | None],
-                  predicates: set[Ident]) -> tuple[list[Classified], list[str]]:
+                  predicates: set[Ident], unread: set[str] = frozenset()) -> tuple[list[Classified], list[str]]:
     """Every declaration with its validated class, and the problems found. The anchors a tie may
     point at come from a first pass over the same declarations without any anchor (`is_anchor`:
     a tied declaration never validates there, so ties cannot anchor each other); the second pass
@@ -360,6 +385,8 @@ def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, 
             seen[module].add(decl.name)
         out.append(Classified(module, decl, cls, tied, is_trusted(cls, tied, issues)))
     for module, entries in table.items():
+        if module in unread:  # its declarations are unknown; the file already fails
+            continue
         for name in sorted(set(entries) - seen.get(module, set())):
             problems.append(f"{TABLE.name}: {module}: {name} is not a declaration of that file")
     return out, problems
@@ -369,8 +396,9 @@ def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = ST
          predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
     """Every declaration under `root` with its validated class, the line count of each file, and
     the problems found (unknown table entries, entries for theorems, unverified ties, predicates in
-    an untrusted class, a missing predicate list). `measure` and `ledger` both read the tree
-    through this one pass, so neither can report numbers whose classification failed validation."""
+    an untrusted class, a missing predicate list, a declaration list not compiled from the tree).
+    `measure` and `ledger` both read the tree through this one pass, so neither can report numbers
+    whose classification failed validation."""
     table = load_table(table_path)
     proved = statements(statements_path)
     predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
@@ -382,14 +410,15 @@ def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = ST
             predicates, scanned = predicate_list(predicates_path)
         except ValueError as error:
             problems.append(str(error))
-    decls, lines = scan_tree(root)
+    decls, lines, scanned_problems, unread = scan_tree(root)
+    problems += scanned_problems
     if scanned is not None:
         # A predicate of a file the scan did not read would be classed without anyone knowing.
         for module in lines:
             if module_name(module) not in scanned:
                 problems.append(f"{module}: {predicates_path.name} did not read module {module_name(module)}; "
                                 "rerun tools/lean_statements.py")
-    out, found = classify_tree(decls, table, proved, predicates)
+    out, found = classify_tree(decls, table, proved, predicates, unread)
     return out, lines, problems + found
 
 
@@ -610,11 +639,11 @@ def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None,
     sizes: dict[str, int] = {}
     kinds: dict[str, str] = {}
     for decl in decls:
-        if decl.kind in {"theorem", "lemma", "example", "command"} or decl.name is None:
+        if decl.kind in KIND_CLASSES or decl.name is None:
             continue
         sizes[decl.name] = sizes.get(decl.name, 0) + decl.lines
         kinds.setdefault(decl.name, decl.kind)
-    short = {name: name.rsplit(".", 1)[-1].split(":", 1)[-1] for name in sizes}
+    short = {name: name.rsplit(".", 1)[-1] for name in sizes}
     allowed = [c for c in ("K", "S", "D", "G", "C") if row is not None and row.get(c, 0) > 0]
     test_module = re.search(r"Examples|Checks|ResponseDecode|RiskEvalMain", module) is not None
     out: dict[str, object] = {}
@@ -666,9 +695,15 @@ def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE,
     modules: dict[str, dict[str, list[str]]] = {}
     predicates = lean_predicates(root / PREDICATES.relative_to(ROOT))
     old = {} if fresh or not table_path.is_file() else load_table(table_path)
+    scanned, _, problems, _ = scan_tree(root)
+    if problems:
+        raise SystemExit("cannot seed from a declaration list that fails: " + "; ".join(problems[:5]))
+    by_module: dict[str, list[Decl]] = defaultdict(list)
+    for module, decl in scanned:
+        by_module[module].append(decl)
     for path in sources(root):
         module = module_key(path, root)
-        decls, _ = scan(path)
+        decls = by_module[module]
         classes: dict[str, list] = defaultdict(list)
         for name, entry in seed_module(module, decls, section11.get(module), predicates, old.get(module)).items():
             if isinstance(entry, dict):
@@ -708,10 +743,12 @@ def ledger(root: Path = ROOT, path: Path = LEDGER, table_path: Path = TABLE,
     to the first step that names it, and the untrusted lines they name; `net` is removed + tied −
     `adds_est`, `score` is net ÷ (days × risk)."""
     walked, _, problems = walk(root, table_path, statements_path, predicates_path)
-    # Proofs and tests are left out unless the trust rule counts them (failing closed).
-    decls = [(d.module, d.decl.name, d.decl.lines, d.trusted) for d in walked
-             if (d.decl.kind not in KIND_CLASSES or d.trusted) and d.decl.name is not None]
-    credited: set[tuple[str, str]] = set()
+    # Proofs and tests are left out unless the trust rule counts them (failing closed). An unnamed
+    # declaration (one the compiled module does not record) has the empty name: only a selector
+    # without a name pattern names it.
+    decls = [(d.module, d.decl.name or "", d.decl.lines, d.trusted, d.decl.start) for d in walked
+             if d.decl.kind not in KIND_CLASSES or d.trusted]
+    credited: set[tuple[str, int]] = set()
     rows = []
     for step in json.loads(path.read_text())["steps"]:
         row = {"step": step["step"], "title": step["title"], "days": step["days"], "risk": step["risk"],
@@ -724,10 +761,10 @@ def ledger(root: Path = ROOT, path: Path = LEDGER, table_path: Path = TABLE,
                 hits = [d for d in decls if any(fnmatch.fnmatchcase(d[0], g) for g in globs) and names.search(d[1])]
                 if not hits:
                     problems.append(f"{path.name}: step {step['step']} {column}: {selector} names no declaration")
-                for module, name, lines, trusted in hits:
-                    if (module, name) in credited:
+                for module, name, lines, trusted, start in hits:
+                    if (module, start) in credited:
                         continue
-                    credited.add((module, name))
+                    credited.add((module, start))
                     if trusted:
                         trusted_lines += lines
                     else:
