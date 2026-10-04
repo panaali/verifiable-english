@@ -1,0 +1,217 @@
+[
+  {
+    "id": "suite",
+    "plan": "the full suite",
+    "command": [
+      "{python}",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "-p",
+      "tools.shadow_pytest",
+      "-n",
+      "4",
+      "tests"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": true
+  },
+  {
+    "id": "baseline",
+    "plan": "the stage-0 baseline (every matrix cell, including rejections and budget boundaries)",
+    "command": [
+      "{python}",
+      "tools/shadow_corpus.py",
+      "baseline"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "conformance",
+    "plan": "every conformance fixture and generator (evaluation 701, countermodels 708, parser 742, identity 706, certificates 732 plus 150 forged, the closure, order, induction, admission, elaborated-document and norms families",
+    "command": [
+      "{python}",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "-p",
+      "tools.shadow_pytest",
+      "tests/test_conformance.py",
+      "tests/test_lean_conformance.py",
+      "tests/test_rust_conformance.py",
+      "tests/test_lean_certificates.py",
+      "tests/test_closure.py",
+      "tests/test_closure_certificates.py",
+      "tests/test_closure_induction.py",
+      "tests/test_order.py",
+      "tests/test_norm_admission.py",
+      "tests/test_p0_three_way.py",
+      "tests/test_norms_three_way.py"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "differentials",
+    "plan": "the 1,000-set definitions and 1,000-case data differentials",
+    "command": [
+      "{python}",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "-p",
+      "tools.shadow_pytest",
+      "tests/test_definitions_differential.py",
+      "tests/test_data_three_way.py"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "english",
+    "plan": "85,000 English pairs",
+    "command": [
+      "{python}",
+      "tools/shadow_corpus.py",
+      "english"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "fuzz-core",
+    "plan": "fuzz (5,000 core",
+    "command": [
+      "{python}",
+      "tools/shadow_corpus.py",
+      "fuzz",
+      "--count",
+      "5000",
+      "--seed",
+      "20260922"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "fuzz-closure",
+    "plan": "3,000 closure",
+    "command": [
+      "{python}",
+      "tools/shadow_corpus.py",
+      "fuzz-closure",
+      "--count",
+      "3000",
+      "--seed",
+      "20260924"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "fuzz-nightly",
+    "plan": "plus a fresh 5,000-case seed nightly",
+    "command": [
+      "{python}",
+      "tools/shadow_corpus.py",
+      "fuzz",
+      "--count",
+      "5000",
+      "--seed",
+      "day"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "pilots",
+    "plan": "the `usecases/` pilots through `ve document check`",
+    "command": [
+      "{python}",
+      "tools/shadow_corpus.py",
+      "pilots"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "assist",
+    "plan": "assist ledgers (tests, `experiments/authoring-gates/`, T1c)",
+    "command": [
+      "{python}",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "-p",
+      "tools.shadow_pytest",
+      "tests/test_assist.py",
+      "tests/test_assist_deadline.py",
+      "tests/test_assist_invariants.py",
+      "tests/test_assist_recovery.py",
+      "tests/test_assist_recovery_replay.py",
+      "tests/test_authoring.py",
+      "tests/test_t1c.py"
+    ],
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "validators",
+    "plan": "E1, P1 and iceberg validators",
+    "command": null,
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  },
+  {
+    "id": "webapp",
+    "plan": "the web app API tests",
+    "command": null,
+    "expected_exit": 0,
+    "min_cases": null,
+    "min_compared": null,
+    "calibration": null,
+    "merge": false
+  }
+]
