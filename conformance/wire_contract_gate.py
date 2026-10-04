@@ -37,6 +37,7 @@ from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks,
                                     multi_fault_base, multi_fault_cases, rejected_sources, soft3_accepted,
                                     soft3_reproducers)
 from conformance.wire_contract import choose_combinations
+from tools.pytest_run import pytest_command, pytest_environment
 from conformance.wire_contract_faults import (PILOT, UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position, unit_module,
                                               unreached)
@@ -329,14 +330,38 @@ def record_test_inputs(output, unit=PILOT):
     """Run the unit's recorded test files (`RECORDED_TESTS` for the pilot) under
     `tests/contract_input_recorder.py`, which writes to `output` each input of the unit they, or the soft
     conformance module they run, hand to an engine or a legacy validator: `[test id, environment, norms]`.
+    The files run on xdist workers (`-n auto`: tests/conftest.py fits the count to the
+    machine's load), each recording its own inputs, which the recorder merges.
     Returns the pytest process."""
     u = unit_of(unit)
     files = sorted({path for pattern in u.recorded_tests for path in ROOT.glob(pattern)})
     environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNIT": u.contract,
                    "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
-    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *map(str, files)],
-                          cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
+    return subprocess.run(recorder_command(*map(str, files)),
+                          cwd=ROOT, env=pytest_environment(environment), capture_output=True, text=True,
+                          timeout=3600)
+
+
+def recorder_command(*files):
+    """pytest under the input recorder on xdist workers (`-n auto`), over `files`."""
+    return pytest_command([sys.executable], "-q", "-p", "tests.contract_input_recorder", "-p", "no:cacheprovider",
+                          "-o", "addopts=", "-m", "not live", "-n", "auto", *files)
+
+
+def record_all_test_inputs(output, units):
+    """`record_test_inputs` for several units in one run: the union of their recorded test files
+    runs once, and each unit records only the inputs of its own files, as its own run would.
+    `output` gets a JSON object from each unit to its `[test id, environment, norms]` rows.
+    Returns the pytest process."""
+    files = {unit_of(unit).contract: sorted({path.relative_to(ROOT).as_posix()
+                                            for pattern in unit_of(unit).recorded_tests
+                                            for path in ROOT.glob(pattern)}) for unit in units}
+    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNITS": json.dumps(files),
+                   "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
+    environment.pop("VE_CONTRACT_UNIT", None)
+    return subprocess.run(recorder_command(*sorted({path for paths in files.values() for path in paths})),
+                          cwd=ROOT, env=pytest_environment(environment), capture_output=True, text=True,
+                          timeout=3600)
 
 
 def write_test_inputs(unit=PILOT):

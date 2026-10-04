@@ -9,7 +9,9 @@ import sys
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tools import gate, gate_collection
+from tools.pytest_run import pytest_command, pytest_environment
 
 REFRESH = "uv run python tools/gate_collection.py --write"
 
@@ -127,8 +129,9 @@ EARLIER = ("an earlier collection", "an ordinary pytest run")
 def ordinary_pytest_run(repository):
     env = {name: value for name, value in os.environ.items()
            if name not in ("PYTHONPYCACHEPREFIX", "PYTHONDONTWRITEBYTECODE")}
-    subprocess.run([sys.executable, "-m", "pytest", "-p", "no:cacheprovider", "--collect-only", "-q",
-                    "tests"], cwd=repository, env=env, capture_output=True, check=True)
+    subprocess.run(pytest_command([sys.executable], "-p", "no:cacheprovider", "--collect-only", "-q", "tests"),
+                   cwd=repository, env=pytest_environment(env), capture_output=True, check=True,
+                   timeout=HANG_TIMEOUT)
 
 
 def gate_run_collection(repository, scratch):
@@ -136,9 +139,8 @@ def gate_run_collection(repository, scratch):
     env = gate.gate_environment(scratch)
     output = scratch / "events.json"
     env.update(PATH=os.environ["PATH"], PYTHONPATH=str(gate.ROOT), VE_GATE_PYTEST_RESULT=str(output))
-    args = list(gate.PYTEST_ARGS)
-    args.insert(args.index("tests"), "--collect-only")
-    subprocess.run([sys.executable, "-m", "pytest", *args], cwd=repository, env=env, capture_output=True)
+    subprocess.run(gate.collection_command([sys.executable]), cwd=repository, env=env, capture_output=True,
+                   timeout=HANG_TIMEOUT)
     return json.loads(output.read_text())["collected"]
 
 
