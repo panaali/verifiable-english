@@ -159,7 +159,7 @@ def _python(raw):
         Environment(raw)
     except VEError as exc:
         # A plain VEError carries its code in the message; a subclass carries it in `code`.
-        return str(exc) if type(exc) is VEError else f"{exc.code}: {exc}"
+        return str(exc) if type(exc) is VEError or str(exc).startswith(f"{exc.code}: ") else f"{exc.code}: {exc}"
     return "ok"
 
 
