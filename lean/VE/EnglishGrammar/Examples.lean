@@ -1,8 +1,8 @@
-import VE.EnglishGrammar.Lexer
+import VE.EnglishGrammar.Lexicon
 
-/-! Fixtures of the English instance that need no lexicon: the lexer (docs/spec/english-lean.md 8.4,
+/-! Fixtures of the English instance: the lexer (docs/spec/english-lean.md 8.4,
 `conformance/english-lean/lexer.json`), the `glued` flags of the DRI's ruling on O1, the matching of
-2.3 and the terminator condition W4 (e27). -/
+2.3, the terminator condition W4 (e27), and lexicon validity (8.5, `conformance/english-lean/lexicon.json`). -/
 
 namespace VE.EnglishGrammar.Examples
 open VE.Grammar VE.EnglishGrammar
@@ -90,5 +90,68 @@ def e27 : Grammar Terminal :=
     start := 0, rank := #[0] }
 #guard e27.wf
 #guard !terminatorFree e27
+
+-- 8.5: lexicon validity. `F` is examples/fluent/environment.json; `F2` adds `audited`.
+def F : Env :=
+  { sorts := [{ name := "person" }, { name := "service" }],
+    predicates := [{ name := "deployed", arity := 1, wording := some "{0} is deployed" },
+                   { name := "reviewed", arity := 1, wording := some "{0} is reviewed",
+                     negative := some "{0} is not reviewed" },
+                   { name := "owns", arity := 2, wording := some "{0} owns {1}",
+                     negative := some "{0} does not own {1}" }],
+    constants := [{ name := "alice" }, { name := "legacy" }] }
+def F2 : Env := { F with predicates := F.predicates ++ [{ name := "audited", arity := 1, wording := some "{0} is reviewed" }] }
+def LF : Lexicon :=
+  { nouns := [("person", "person"), ("service", "service")], letters := [("person", "P"), ("service", "S")],
+    wordings := [("deployed", "{0} is deployed"), ("owns", "{0} owns {1}"), ("reviewed", "{0} is reviewed")],
+    negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")], aliases := [],
+    spellings := [("alice", "alice"), ("legacy", "legacy")] }
+
+def setW (L : Lexicon) (p w : String) : Lexicon :=
+  { L with wordings := (L.wordings.filter (·.1 != p)) ++ [(p, w)] }
+def dropN (L : Lexicon) (p : String) : Lexicon := { L with negatives := L.negatives.filter (·.1 != p) }
+def setN (L : Lexicon) (p w : String) : Lexicon :=
+  { L with negatives := (L.negatives.filter (·.1 != p)) ++ [(p, w)] }
+
+/-- The failing conditions, without repetition, in order. -/
+def conds (E : Env) (L : Lexicon) : List String :=
+  ((L.failures E {}).map (·.1)).eraseDups.mergeSort (· ≤ ·)
+
+def recorded : String := "{0} has the recorded relation \"owns\" to {1}"
+def clsR : String := "{0} is classified as \"reviewed\""
+def clsA : String := "{0} is classified as \"audited\""
+
+#guard conds F LF == []                                                     -- v1
+#guard conds F (dropN (setW LF "owns" recorded) "owns") == []              -- v2
+#guard conds F (setW LF "owns" recorded) == ["V5"]                          -- v3
+#guard conds F (setW LF "reviewed" "{0} is checked") == ["V2", "V5"]        -- v4
+#guard conds F (setW LF "owns" "{0} owns") == ["V2", "V3", "V5"]            -- v5
+#guard conds F (setN LF "reviewed" "{0} is reviewed") == ["V2", "V5"]       -- v6
+#guard conds F { LF with spellings := [("alice", "alice")] } == ["V1"]      -- v7
+#guard conds F { LF with spellings := LF.spellings ++ [("bob", "bob")] } == ["V1"]
+#guard conds F2 (setW LF "audited" clsA) == ["V4"]                          -- v8
+#guard conds F2 (setW (dropN (setW LF "reviewed" clsR) "reviewed") "audited" "{0} is reviewed") == ["V4"]  -- v9
+#guard conds F2 (setW (dropN (setW LF "reviewed" clsR) "reviewed") "audited" clsA) == []  -- v10
+#guard conds F2 (setW (dropN (setW LF "reviewed" "{0} is  Reviewed") "reviewed") "audited" clsA) ==
+  ["V2", "V4"]                                                              -- v11
+#guard (LF.valid F {}) && !((setW LF "owns" recorded).valid F {})
+-- V1 exempts no symbol (DRI ruling 2): a generated predicate without a wording is a failure.
+#guard conds { F with predicates := F.predicates ++ [{ name := "risk__more_severe", arity := 2 }] } LF == ["V1"]
+-- v12
+#guard negativeTemplate "{0} is deployed" 1 == some "{0} is not deployed"
+#guard negativeTemplate "{0} owns {1}" 2 == some "{0} does not own {1}"
+#guard negativeTemplate "{0} has a parent {1}" 2 == some "{0} does not have a parent {1}"
+#guard negativeTemplate "{0} carries {1}" 2 == some "{0} does not carry {1}"
+#guard negativeTemplate "{0} glass {1}" 2 == none
+#guard negativeTemplate "{0} voted for {1}" 2 == some "{0} did not vote for {1}"
+#guard negativeTemplate "{0} involves a hard constraint violation" 1 ==
+  some "{0} does not involve a hard constraint violation"
+-- wordingKey: case and runs of whitespace and hyphens outside quotes; quoted parts exact
+#guard wordingKey "{0} is  Reviewed" == wordingKey "{0} is reviewed"
+#guard wordingKey "{0} is non-Compliant" == "{0} is non compliant"
+#guard wordingKey "{0} is classified as \"A  b\"" == "{0} is classified as \"A  b\""
+#guard wordingKey "  a \"b" == "a \"b"
+#guard jsonQuote "has_owner" == "\"has_owner\""
+#guard jsonQuote "café\"" == "\"caf\\u00e9\\\"\""
 
 end VE.EnglishGrammar.Examples
