@@ -1,0 +1,133 @@
+{
+ "format": "lean-first-delta@1",
+ "batch": "0",
+ "wording": [
+  {
+   "base": "AST exceeds 10,000 nodes",
+   "head": "ResourceLimit: AST exceeds 10,000 nodes"
+  },
+  {
+   "base": "Equality requires one sort, received 'person' and 'service'",
+   "head": "TypeMismatch: Equality requires one sort, received 'person' and 'service'"
+  },
+  {
+   "base": "Equality requires one sort, received 'service' and 'person'",
+   "head": "TypeMismatch: Equality requires one sort, received 'service' and 'person'"
+  },
+  {
+   "base": "Formula exceeds 64 nesting levels",
+   "head": "ResourceLimit: Formula exceeds 64 nesting levels"
+  },
+  {
+   "base": "Invalid variable index",
+   "head": "UnboundVariable: Invalid variable index"
+  },
+  {
+   "base": "Predicate 'deployed' expects ('service',), received ('person',)",
+   "head": "TypeMismatch: Predicate 'deployed' expects ('service',), received ('person',)"
+  },
+  {
+   "base": "Predicate 'owns' expects ('person', 'service'), received ('service', 'service')",
+   "head": "TypeMismatch: Predicate 'owns' expects ('person', 'service'), received ('service', 'service')"
+  },
+  {
+   "base": "Predicate 'owns' has arity 2, not 1",
+   "head": "TypeMismatch: Predicate 'owns' has arity 2, not 1"
+  },
+  {
+   "base": "Undeclared predicate argument sort: 'absent'",
+   "head": "UnknownSymbol: Undeclared predicate argument sort: 'absent'"
+  },
+  {
+   "base": "Undeclared predicate argument sort: 'unknown'",
+   "head": "UnknownSymbol: Undeclared predicate argument sort: 'unknown'"
+  },
+  {
+   "base": "Unknown binder sort 'missing'",
+   "head": "UnknownSymbol: Unknown binder sort 'missing'"
+  },
+  {
+   "base": "Unknown binder sort 5",
+   "head": "UnknownSymbol: Unknown binder sort 5"
+  },
+  {
+   "base": "Unknown predicate 'missing'",
+   "head": "UnknownSymbol: Unknown predicate 'missing'"
+  },
+  {
+   "base": "Unknown predicate 5",
+   "head": "UnknownSymbol: Unknown predicate 5"
+  },
+  {
+   "base": "Unsupported language, semantic profile, or specification revision",
+   "head": "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
+  },
+  {
+   "base": "Variable index 0 is outside its scope",
+   "head": "UnboundVariable: Variable index 0 is outside its scope"
+  },
+  {
+   "base": "admission of documents with definitions is deferred",
+   "head": "UnsupportedProfile: admission of documents with definitions is deferred"
+  },
+  {
+   "base": "admission on the closure family is deferred",
+   "head": "UnsupportedProfile: admission on the closure family is deferred"
+  },
+  {
+   "base": "admission on the order family is deferred",
+   "head": "UnsupportedProfile: admission on the order family is deferred"
+  },
+  {
+   "base": "definitions on the order family require an order definition layer",
+   "head": "UnsupportedProfile: definitions on the order family require an order definition layer"
+  },
+  {
+   "base": "definitions@0 required",
+   "head": "UnsupportedProfile: definitions@0 required"
+  },
+  {
+   "base": "norm document admission is FOL-only",
+   "head": "UnsupportedProfile: norm document admission is FOL-only"
+  },
+  {
+   "base": "norms@0 required",
+   "head": "UnsupportedProfile: norms@0 required"
+  },
+  {
+   "base": "unbound variable 'broken'",
+   "head": "UnboundVariable: unbound variable 'broken'"
+  },
+  {
+   "base": "unbound variable 's'",
+   "head": "UnboundVariable: unbound variable 's'"
+  },
+  {
+   "base": "unbound variable 'trueish'",
+   "head": "UnboundVariable: unbound variable 'trueish'"
+  },
+  {
+   "base": "unknown binary predicate 'deployed'",
+   "head": "UnknownSymbol: unknown binary predicate 'deployed'"
+  },
+  {
+   "base": "unknown constant 'missing'",
+   "head": "UnknownSymbol: unknown constant 'missing'"
+  },
+  {
+   "base": "unknown sort 'absent'",
+   "head": "UnknownSymbol: unknown sort 'absent'"
+  },
+  {
+   "base": "unknown unary predicate 'absent'",
+   "head": "UnknownSymbol: unknown unary predicate 'absent'"
+  },
+  {
+   "base": "unknown unary predicate 'owns'",
+   "head": "UnknownSymbol: unknown unary predicate 'owns'"
+  }
+ ],
+ "order": [],
+ "verdict": [],
+ "availability": []
+}
