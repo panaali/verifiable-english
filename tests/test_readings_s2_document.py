@@ -997,3 +997,82 @@ def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
     unknown = {**strict["model"], "relations": {**strict["model"]["relations"], "rights__lim__9": [["e0", "e0"]]}}
     with pytest.raises(VEError, match="decision table rights__lim__9 has no wording"):
         wording.situation(unknown, strict["choice"])
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Review fix4 (compose-s2): every rule-bearing field of
+# every line kind has an owner.
+
+def _power_env():
+    from tests.test_norms import permission
+    raw = env_rights()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["marry_permitted"] = permission("allow", act="{0} marry", args=("person",))
+    predicates["recognise_required"] = obligation("deny", None, act="{0} recognise {1}", args=("state", "person"))
+    predicates["married"] = {"arguments": ["person"], "description": "married"}
+    raw["vocabulary"]["rights"]["alters"] = {
+        "marry_permitted": {"holder_slot": 0, "status": "married", "recognition": "recognise_required"}}
+    return raw
+
+
+def _power(mode):
+    return {"right": {"name": "r16", "holder": "person", "guard": ["top"], "lines": [
+        {"kind": "power", "cites": {}, "liberty": norm_object("may-marry", "marry_permitted", True),
+         "recognition": norm_object("recognise-marriage", "recognise_required", True, mode)}]}}
+
+
+def test_fix4_a2_power_right_countermodel_names_its_recognition_rule(tmp_path):
+    """The finding's case: a power right read strict or default for `recognise-marriage` answers SOME; the
+    countermodel supposes the exception to the recognition rule (before: `no sentence of the reading states rule
+    recognise-marriage`)."""
+    path = s2_document(tmp_path, [("set", "rs16", "u16", [("strict", _power("strict"), "right", None),
+                                                          ("default", _power("default"), "right", None)])],
+                       raw=_power_env())
+    conclusion = ["forall", "state", ["forall", "person", ["binary", "recognise_required", ["var", 1], ["var", 0]]]]
+    data, lines, wording = _query(path, conclusion)
+    assert data["verdict"] == "SOME", data
+    assert data["countermodel"]["model"]["relations"]["soft__excepted__recognise_marriage"]
+    assert lines[1].startswith("Read sentence 1 as reading 2: the conclusion does not follow. It fails here: ")
+    assert lines[1].endswith("; suppose the decider decides the exception applies to e0 and e0."), lines[1]
+    _one_derivation(lines, wording)
+
+
+def _lean_line_schema():
+    """The line kinds and rule-bearing fields Lean's rights decoder reads (`decodeKind`, `decodeLine`)."""
+    import re
+    text = (Path(__file__).resolve().parents[1] / "lean/VE/Rights/Wire.lean").read_text()
+    kinds = text.split("def decodeKind", 1)[1].split("\ndef ", 1)[0]
+    line = text.split("def decodeLine ", 1)[1].split("\ndef ", 1)[0]
+    return set(re.findall(r'\.str "([a-z]+)" =>', kinds)), set(re.findall(r'← opt "([a-z]+)"', line))
+
+
+def test_fix4_a2_class_every_line_kind_has_owner_discovery():
+    """The class, enumerated from the schema: every line kind (Python's table, Lean's decoder) names its
+    rule-bearing fields, and every rule such a line states is found by `Content.rules`, by the declared names and by
+    the owner discovery of countermodel rendering, both for a candidate of the choice and for a fixed sentence."""
+    from types import SimpleNamespace
+    from ve import rights
+    from ve.readings_route import S2Wording
+    from ve.readings_s1 import Content, line_value
+    lean_kinds, lean_fields = _lean_line_schema()
+    assert lean_kinds == set(rights.LINE_RULE_FIELDS) == set(rights._KINDS), lean_kinds
+    assert lean_fields == set(rights.RULE_FIELDS), lean_fields
+    for kind in sorted(lean_kinds | set(rights.LINE_RULE_FIELDS)):
+        fields = rights.LINE_RULE_FIELDS[kind]  # a kind without its rule-bearing fields fails here
+        line = {"kind": kind, **{field: norm_object(f"{kind}-{field}", "arrest_permitted", True) for field in fields}}
+        assert line_value(line)[0] == kind
+        names = [f"{kind}-{field}" for field in fields]
+        for content_kind, body in (("right", {"name": "r1", "holder": "person", "lines": [line]}),
+                                   ("right_lines", {"right": "r1", "lines": [line]})):
+            content = Content(content_kind, body, {content_kind: body})
+            assert [rule["name"] for rule in content.rules()] == names
+            assert [n for k, n in content.declared() if k == "rule"] == names
+            candidate = SimpleNamespace(content=content)
+            other = SimpleNamespace(content=None)
+            wording = S2Wording.__new__(S2Wording)
+            wording.sets = [SimpleNamespace(id="rs1", candidates=[other, candidate])]
+            wording.route = SimpleNamespace(source=SimpleNamespace(fixed_units=lambda: [("u5", content)]))
+            wording.numbers = {"u5": 5}
+            for name in names:
+                assert wording._rule_owner(name, {("rs1", 1)}) == (True, None), (kind, name)
+                assert wording._rule_owner(name, {("rs1", 0)}) == (False, 5), (kind, name)

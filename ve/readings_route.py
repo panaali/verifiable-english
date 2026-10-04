@@ -678,12 +678,11 @@ class S2Wording:
 
         source = self.route.source
         for _, content in source.fixed_units():
-            if content.kind == "norm":
-                add(content.body, None, content.body["name"])
+            for rule in content.rules():
+                add(rule, None, rule["name"])
         for R in self.sets:
             for i, a in enumerate(R.candidates):
-                if a.content is not None and a.content.kind == "norm":
-                    rule = a.content.body
+                for rule in (a.content.rules() if a.content is not None else []):
                     add(rule, (R.id, i), rule["name"])
                     add(rule, (R.id, i), qualify(position(self.sets, R.id, i), rule["name"]))
         return out
@@ -733,13 +732,11 @@ class S2Wording:
         return own.side, {generated: key for key, generated, _ in own.side.gen_keys()}
 
     def _rule_owner(self, name, chosen):
-        """(True, None) when the rule named `name` is a candidate's of the choice, (False, n) when sentence n's."""
+        """(True, None) when the rule named `name` is a candidate's of the choice, (False, n) when sentence n's. Every
+        rule a content states is found (`Content.rules`: a norm, and every rule-bearing field of every line kind, a
+        power line's liberty and recognition included; compose-s2 fix4 A2)."""
         def names(content):
-            if content is None:
-                return []
-            if content.kind == "norm":
-                return [content.body["name"]]
-            return [line["norm"]["name"] for line in content.lines() if type(line.get("norm")) is dict]
+            return [] if content is None else [rule["name"] for rule in content.rules()]
         for R in self.sets:
             for i, a in enumerate(R.candidates):
                 if (R.id, i) in chosen and name in names(a.content):
