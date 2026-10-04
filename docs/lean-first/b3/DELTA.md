@@ -44,7 +44,7 @@ removed. The three constitution-pilot S1 documents (`pilot/cc-20261003T0600Z`, `
 |---|---|---|---:|
 | W3.1 | `"python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); Python's regeneration of Lean's answer, byte for byte"`, `"rust": "untrusted evaluation of every recorded situation (10)"` | `"python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them)"`, no `rust` | 3 |
 
-**Signature:** DRI, wording block W3 — pending.
+**Signature:** DRI, wording block W3 — signed 2026-10-04 (Lean's texts are canonical).
 
 ## A3: the readings route answers Lean's diagnostic where Python's regeneration disagreed (`availability`)
 
@@ -77,7 +77,7 @@ This is the class plan section 5.2 names for batch 3 ("a readings disagreement i
 relaying turns it into whatever Lean says"). Batch 0's triage put readings disagreements in group R1 (class ii,
 `docs/lean-first/b0/TRIAGE.md`): the contract is silent and Lean's answer is sound.
 
-**Signature:** DRI, availability A3 (51 records) — pending.
+**Signature:** DRI, availability A3 (51 records) — signed 2026-10-04: where Python's regeneration disagreed with Lean, Lean's diagnostic is the answer (one owner).
 
 ## Rest of the gate (5.1)
 
