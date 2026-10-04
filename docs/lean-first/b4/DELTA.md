@@ -113,8 +113,8 @@ reaches a user (rule 4).
 
 ## Signatures needed
 
-- **W4 + O4 + O5 (wording and order, one block):** pending.
-- **V1 (`discourse_hints` dropped):** pending.
+- **W4 + O4 + O5 (wording and order, one block):** signed by the DRI 2026-10-04 (Lean's texts and order are canonical; LEAN-FIRST-PLAN DRI answer 3). JSON `null`: the frozen parser's rejection (spec 3.1) is the rule; the Loader.lean header's `NotImplemented` wording is a stale comment to correct; Python's clearer message for this case is to be ported into Lean's text (FOLLOW-UPS).
+- **V1 (`discourse_hints` dropped):** signed by the DRI 2026-10-04: the hints were Python's second opinion beside Lean's verdict; with one owner they go. Verdicts, statuses, references and report ids are unchanged.
 
 ## Rest of the gate (5.1)
 
