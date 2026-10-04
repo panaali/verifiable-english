@@ -568,9 +568,9 @@ def _profiles(value):
 
 def adapter_cases(unit):
     """(id, case, expected): `outside` for the domain's refusal, `kind` for a kind without input, `in` for a
-    case whose root both engines diagnose, and `crash` for one inside the domain on which Python's environment
-    decoder raises `TypeError`, not a `VEError` (`profiles` a number or a Boolean; `ve/environment.py:327`, frozen
-    in item 1), where Lean's 1.1 rejects: an S5-pre candidate (s5-pre.md)."""
+    case whose root both engines diagnose, and `decoder` for one inside the domain whose environment does not
+    decode (`profiles` a number or a Boolean): both engines fault at 1.1 and the legacy validator rejects with a
+    `VEError`. Python's decoder raised `TypeError` on it until the env-field-types fix (s5-pre.md)."""
     base, kind = (base_b, "norms-elaborate") if unit == "norms@0" else (base_u, "norm-defaults-elaborate")
     environment, norms = base()
     mixed = {"units": [7, "x", {"kind": "norm", "content": norms[0]}, {"kind": "quoted", "content": norms[1]},
@@ -581,9 +581,9 @@ def adapter_cases(unit):
         ("profile-object", _with(base, _profiles(lambda p: [{"p": "norms@0"}] + p), kind), "outside"),
         ("profiles-string", _with(base, _profiles(lambda p: " ".join(p)), kind),
          "in" if unit == "norms@0" else "outside"),
-        ("profiles-number", _with(base, _profiles(lambda p: 7), kind), "crash" if unit == "norms@0" else "outside"),
+        ("profiles-number", _with(base, _profiles(lambda p: 7), kind), "decoder" if unit == "norms@0" else "outside"),
         ("profiles-boolean", _with(base, _profiles(lambda p: True), kind),
-         "crash" if unit == "norms@0" else "outside"),
+         "decoder" if unit == "norms@0" else "outside"),
         ("profiles-missing", _with(base, lambda c: c["environment"].pop("profiles"), kind),
          "in" if unit == "norms@0" else "outside"),
         ("environment-number", _with(base, lambda c: c.update(environment=7), kind),
@@ -629,10 +629,7 @@ def python_adapter_row(unit, case):
         root = registry.adapters[contract["adapter"]](copy.deepcopy(case))
     except UnsupportedProfile as error:
         return {"id": case["id"], "status": "error", "error": str(error)}
-    try:
-        outcome = engine_run(contract, root, registry=registry)
-    except TypeError:
-        return {"id": case["id"], "status": "crash"}
+    outcome = engine_run(contract, root, registry=registry)
     if isinstance(outcome, Fault):
         return {"id": case["id"], "status": "ok", "outcome": "fault",
                 "at": [outcome.record["check"], outcome.record["path"]]}
@@ -651,13 +648,11 @@ def test_both_adapters_share_one_domain(diagnose, unit):
     cases = adapter_cases(unit)
     lean = [lean_adapter_row(row) for row in run(diagnose, [unit], [case for _, case, _ in cases])]
     python = [python_adapter_row(unit, case) for _, case, _ in cases]
-    crashes = {name for name, _, expected in cases if expected == "crash"}
-    assert [row for row in python if row["id"] not in crashes] == [row for row in lean if row["id"] not in crashes]
-    for (name, case, expected), row, lean_row in zip(cases, python, lean):
-        if expected == "crash":
-            assert row == {"id": name, "status": "crash"}
-            assert lean_row == {"id": name, "status": "ok", "outcome": "fault", "at": ["1.1", "/environment"]}
-            with pytest.raises(TypeError):
+    assert python == lean
+    for (name, case, expected), row in zip(cases, python):
+        if expected == "decoder":
+            assert row == {"id": name, "status": "ok", "outcome": "fault", "at": ["1.1", "/environment"]}
+            with pytest.raises(VEError):
                 legacy_norms(case["environment"], case["norms"])
         elif expected == "outside":
             assert row == {"id": name, "status": "error", "error": OUTSIDE}

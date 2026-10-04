@@ -5117,6 +5117,7 @@
   "tests/test_llm.py::test_failure_is_returned_not_raised_and_not_cached",
   "tests/test_llm.py::test_identical_concurrent_requests_make_one_call",
   "tests/test_llm.py::test_identity_separates_cache_entries",
+  "tests/test_llm.py::test_live_smoke",
   "tests/test_llm.py::test_log_records_tokens_and_cache_hits",
   "tests/test_llm.py::test_model_settings_suffix",
   "tests/test_llm.py::test_parse_verdict_accepts[Reasoning here {not json}.\\n{\"verdict\": \"reject\", \"confidence\": 0.7}-reject]",
