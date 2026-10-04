@@ -37,12 +37,16 @@ def test_the_service_states_the_code_list_the_client_requires():
 
 
 class _Pool:
+    """A pool whose service answers `rows`, each bound with the code beside it (`coding`)."""
+
     def __init__(self, rows):
         self.rows, self.calls = rows, []
 
-    def run(self, mode, cases, *, timeout=None):
+    def run_bound(self, mode, cases, *, timeout=None):
         self.calls.append((mode, cases, timeout))
-        return self.rows
+        return [{"index": i, "digest": "0" * 64,
+                 "result": {k: v for k, v in row.items() if k not in ("code", "generator")},
+                 **{k: row[k] for k in ("code", "generator") if k in row}} for i, row in enumerate(self.rows)]
 
     def close(self):
         pass

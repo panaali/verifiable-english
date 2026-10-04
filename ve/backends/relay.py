@@ -1,11 +1,12 @@
 """The one Python entry to Lean's decisions (docs/LEAN-FIRST-PLAN.md, rule 2, batch 0).
 
 `decide(mode, cases)` sends a batch to the persistent Lean service and returns Lean's
-rows in case order. A rejection row raises the `VEError` subclass of Lean's `code` with
-Lean's text verbatim: no rewording, no prefix stripping and no classification here, since
-the service derives every code (`lean/VE/Service/Protocol.lean`, `rejectionCode`). Python
-raises its own error only for operational failures: `CheckerUnavailable` when the service
-cannot answer, or answers with a code this client has no class for.
+rows in case order. A rejection row raises the `VEError` subclass of the `code` the service
+sets beside it with Lean's text verbatim: no rewording, no prefix stripping and no
+classification here, since the service derives every code (`lean/VE/Service/Protocol.lean`,
+`rejectionCode` and `coding`). Python raises its own error only for operational failures:
+`CheckerUnavailable` when the service cannot answer, or answers with a code this client has
+no class for.
 """
 from __future__ import annotations
 
@@ -61,13 +62,14 @@ def decide(mode: str, cases: list[dict], *, timeout: float | None = None) -> lis
         if _pool is None:
             _pool = LeanServicePool()
         pool = _pool
-    rows = pool.run(mode, cases, timeout=timeout)
-    for row in rows:
+    entries = pool.run_bound(mode, cases, timeout=timeout)
+    for entry in entries:
+        row = entry["result"]
         if row.get("status") == "error":
-            error = rejection(row["code"], row["error"], generator=row.get("generator"))
+            error = rejection(entry["code"], row["error"], generator=entry.get("generator"))
             if isinstance(error, VEError):
                 # Provenance only: the Gate 2 parity tool counts a rejection cell as
                 # backend-decided when the error the operation raised carries this mark.
                 error.backend_rejection = True
             raise error
-    return rows
+    return [entry["result"] for entry in entries]
