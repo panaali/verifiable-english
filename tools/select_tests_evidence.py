@@ -11,9 +11,11 @@ It writes docs/testselect-evidence.json.
 ``mutants`` takes the first --count replayed commits that changed a Python
 function under ve/ or tools/, checks out each commit in --worktree, applies
 one seeded mutation inside a function that commit changed, selects for that
-working-tree change, and runs the selected pytest files until the first
-failure. A mutant the selection does not catch is then run against every
-other test file, to tell an escape from a mutant no test detects.
+working-tree change with a fresh map (the smaller, precise selection) and with
+the nightly map, and runs the fresh selection's pytest files until the first
+failure (and checks that the nightly selection holds that test). A mutant the
+selection does not catch is then run against every other test file, to tell
+an escape from a mutant no test detects.
 
 ``table`` prints the Markdown tables of docs/TESTING.md from the JSON.
 """
@@ -201,24 +203,29 @@ def mutants(args: argparse.Namespace) -> int:
             if mutated is None:
                 continue
             (worktree / path).write_text(mutated[0])
-            plan = json.loads(subprocess.run(
-                ["python3", "tools/select_tests.py", "--json", "--paths", path], cwd=worktree, capture_output=True,
-                text=True, check=True).stdout)
-            files = [t for t in plan["selected"] if t.startswith("tests/")]
-            log = logs / f"{commit}-{seed}-selected.log"
+
+            def plan(*extra):
+                return json.loads(subprocess.run(
+                    ["python3", "tools/select_tests.py", "--json", "--paths", path, *extra], cwd=worktree,
+                    capture_output=True, text=True, check=True).stdout)
+
+            nightly, fresh = plan(), plan("--assume-fresh")
+            files = [t for t in fresh["selected"] if t.startswith("tests/")]
+            log = logs / f"{commit}-{seed}-fresh.log"
             started = time.monotonic()
             code = run_pytest(worktree, files, log, first_failure=True) if files else 0
+            failure = next((line.split()[1] for line in log.read_text().splitlines()
+                            if line.startswith(("FAILED ", "ERROR "))), None) if files else None
             result = {"commit": commit, "file": path, "function": qualname, "seed": seed,
-                      "mutation": mutated[1], "selected": plan["selected_count"],
-                      "units": plan["full_count"],
-                      "map": plan["map"]["commit"][:10] if plan["map"] else None,
+                      "mutation": mutated[1], "selected": fresh["selected_count"],
+                      "nightly_selected": nightly["selected_count"], "units": fresh["full_count"],
+                      "map": fresh["map"]["commit"][:10] if fresh["map"] else None,
                       "selected_exit": code, "selected_seconds": round(time.monotonic() - started),
-                      "failure": next((line.split()[1] for line in log.read_text().splitlines()
-                                       if line.startswith(("FAILED ", "ERROR "))), None)}
+                      "failure": failure,
+                      "failure_in_nightly": bool(failure) and failure.split("::")[0] in nightly["selected"]}
             if code == 0:
                 # Not caught by the selection: does any other test catch it?
-                others = sorted(set(t for t in select_tests.units() if t.startswith("tests/"))
-                                - set(files))
+                others = sorted(set(t for t in select_tests.units() if t.startswith("tests/")) - set(files))
                 rest = run_pytest(worktree, others, logs / f"{commit}-{seed}-rest.log", first_failure=True)
                 result.update(rest_exit=rest, rest_files=len(others))
                 git("checkout", "-q", "--force", "--", ".", cwd=worktree)
@@ -256,13 +263,14 @@ def table(data: dict) -> str:
               f"selection time before {max(r['before_seconds'] for r in replay)} s at most, "
               f"after {max(r['seconds'] for r in replay)} s at most."]
     if data.get("mutants"):
-        lines += ["", "| Commit | Function | Mutation | Selected | First failing test | Caught |",
+        lines += ["", "| Commit | Function | Mutation | Selected (fresh / nightly) | First failing test | Caught |",
                   "|---|---|---|---:|---|---|"]
         for row in data["mutants"]:
             caught = "yes" if row["selected_exit"] != 0 else (
                 "ESCAPED" if row.get("rest_exit") else "no test detects it")
             lines.append(f"| `{row['commit'][:8]}` | `{row['file']}:{row['function']}` | {row['mutation']} | "
-                         f"{row['selected']}/{row['units']} | `{row['failure'] or '-'}` | {caught} |")
+                         f"{row['selected']} / {row['nightly_selected']} of {row['units']} | "
+                         f"`{row['failure'] or '-'}` | {caught}{'' if row.get('failure_in_nightly', True) else ' (not in nightly)'} |")
     return "\n".join(lines)
 
 
