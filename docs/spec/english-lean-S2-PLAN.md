@@ -1,14 +1,15 @@
 # English in Lean, stage S2: the English instance (plan)
 
-**Status:** plan, draft 3, 2026-10-04, branch `design/english-lean-s2` (draft 1 was the pointer plan at
-`340b9877`; draft 2 at `8d5fcebe`). Item 1 of this plan is stage S2 of [english-lean-PLAN.md](english-lean-PLAN.md)
+**Status:** plan, draft 4, 2026-10-04, branch `design/english-lean-s2` (draft 1 was the pointer plan at
+`340b9877`; draft 2 at `8d5fcebe`; draft 3 at `94b9220a`). Item 1 of this plan is stage S2 of [english-lean-PLAN.md](english-lean-PLAN.md)
 (the **base plan**, draft 2): the English instance of the generic grammar engine. It builds on S0 and S1a/S1b,
 which are on branch `english-lean/integrate` at `689219b1` and merge as `ve-green-english-lean`
 ([english-lean-measured.md](english-lean-measured.md), [english-lean-s1.md](english-lean-s1.md) on that branch).
-The item-1 statement spec is [english-lean-s2.md](english-lean-s2.md), draft 2. **Nothing was built for this
+The item-1 statement spec is [english-lean-s2.md](english-lean-s2.md), draft 3. **Nothing was built for this
 draft.** The spec's Lean statements were type-checked as stubs against the S1 build, and every verdict and
 count in its fixtures was computed by the proved S1 parser, for draft 1 and again for draft 2 after the
-statement review's edits (spec sections 12 and 13); formulas were derived by hand and are confirmed against
+statement review's edits (spec sections 12 and 13); spec draft 3 re-ran nothing, since no computed figure
+depends on its two corrections (spec section 14); formulas were derived by hand and are confirmed against
 Python in S2 (spec, section 0).
 
 **Review provenance.** The debate directory `manage-agents/debates/design-english-lean-s2/` holds the review of
@@ -17,8 +18,10 @@ qualifications; where the two texts differ, Astra's governs). No round was held 
 2 applied that joint position as it bears on S2 (section 2), and the DRI's amendments of the pointer plan
 (section 3), which take precedence where they differ from an edit. The statement review of the spec
 (`manage-agents/debates/english-lean-s2-spec/`, Astra and Fable, converged FIX after round 2 on 2026-10-04) is
-applied by spec draft 2 and, where it bears on this plan, by draft 3 (section 5). S2 proof work waits for the
-review's bounded re-check of those edits (section 1, S2.3).
+applied by spec draft 2 and, where it bears on this plan, by draft 3 (section 5). The first verification pass of
+spec draft 2 (`manage-agents/english-lean-s2-p3ver1.final.md`, FAIL on two inconsistencies, 2026-10-04) is
+applied by spec draft 3 and, where it bears on this plan, by this draft (section 5). S2 proof work waits for the
+bounded re-verification of those edits (section 1, S2.3).
 
 ## 0. Decision in brief
 
@@ -46,8 +49,8 @@ Three things are decided here and nowhere else in this stage.
 |---|---|---|---|
 | S2.0 | **Fixed rules as data.** `ve/english_grammar/relational-fol@0.json` (spec 2.9) for the base constructs, contractions, listings, guards, coordination, closure and natural clauses; the generator to `lean/VE/EnglishGrammar/Fixed/*.lean` (table literals, no theorem) with `--check`; `ve/english_grammar/LOCK.json` with `actions_version`; the commit-hook check (spec 4.5, t1, i5) | Python implementer | the generated table equals the fixed rules of spec 2.5 rule for rule; `--check` and the lock check fail on t1 and i5 |
 | S2.1 | **Grammar construction.** `lexRules` (spec 2.6, with Lark's cuts for relatives and `content_lit`'s lexing of nouns), `grammar`, `ty`, the rank array and the nonterminal catalogue (spec 2.4); `start_sentence` holds by construction (spec 5.6); `terminatorFree` of every generated and lexical rule; `Env.decode` with the signatures (spec 2.3) | Lean implementer | spec 8.1 verdict fixtures b1 to b55 and d1 to d4 reproduce; `grammar_rules` and `lexRules_terminatorFree` proved |
-| S2.2 | **Actions and meaning.** The action library of spec 2.7 as `fixedActs ++ lexActs E L` (closed fixed actions, lexical constructors over entry and signature, sorts carried in values), the context threading (`Ctx`), the side conditions, the three new `Reject` codes for the DRI (spec 2.8); `meaning` | Lean implementer | spec 8.2 meaning fixtures reproduce against Python's formulas; no action constructs `Reject.internal` (source test); no fixed action mentions `E` or `L` (source test) |
-| S2.3 | **Readers and statements.** `read`, `translate`, `checkRendering`, `EnglishOneReading`; the theorems of spec 5.6 proved; audit, frozen-inventory and layer entries | Lean implementer | `lean/audit.py` clean, standard axioms only; the statement review's bounded re-check of spec section 13 has passed before any proof is written |
+| S2.2 | **Actions and meaning.** The action library of spec 2.7 as `fixedActs ++ lexActs E L` (closed fixed actions, lexical constructors over entry and signature, sorts carried in values), the context threading (`Ctx`), the side conditions, the four new `Reject` codes for the DRI (spec 2.8); `meaning` | Lean implementer | spec 8.2 meaning fixtures reproduce against Python's formulas; no action constructs `Reject.internal` (source test); no fixed action mentions `E` or `L` (source test) |
+| S2.3 | **Readers and statements.** `read`, `translate`, `checkRendering`, `EnglishOneReading`; the theorems of spec 5.6 proved; audit, frozen-inventory and layer entries | Lean implementer | `lean/audit.py` clean, standard axioms only; the bounded re-verification of spec sections 13 and 14 has passed before any proof is written |
 | S2.4 | **Service.** Modes `english.read` and `english.grammar` in a new executable (`Main.lean` is frozen); the six identities (spec 2.10); the JSON export (spec 4.4, `kwMid` included) | Lean implementer | fixtures i1 to i6, t4 |
 | S2.5 | **Adapter and shadow.** `ve/backends/english_lean.py`: the Lean call under `dispatch.execute("english.admission", …)` for the dispatched unit of spec 2.10 (the grammatical reading up to `check_document`; `_check_conclusions` stays after the dispatch in Python for either backend); authority stays `python`; shadow records with the spec's comparison classes and `conclusion_rejected`; `invalidGrammar` fails closed as `CheckerUnavailable`; the `glued` flags in the Python reference lexer and in `conformance/english_lean_tokens.py` (S1 report, section 6) | Python implementer | under `VE_AUTHORITY_OVERRIDES=english.admission=shadow` every call is recorded; nothing changes under the default |
 | S2.6 | **G2 harness.** The tree correspondence (spec 2.11); the comparison on the sealed corpus (`conformance/english_lean_seal.py --check` first); the reverse corpus sampled from the `english.grammar` export with spacing and word-split mutants; the lexicon mutation replay; the three-way differential on the 57,765 core texts; the use-case documents and pilots read through the seal; the readability-gap fixtures; the two budgets S1a could not measure (BlueDot document ≤ 1 s, generated modules ≤ 60 s of `lake build`) | Python implementer | the G2 report `docs/spec/english-lean-s2-report.md` |
@@ -115,8 +118,12 @@ file (spec 2.10, 5.6); (3) G1a stays a pass gate (S2.6). All three hold in this 
    or one whose subject is not a constant written as a name; Python's `coordination` returns nothing in both
    cases, and the statement review required these two preconditions of the hand parser to be actions once the
    table took `term` as Lark's does) and `naturalScoped` (a natural clause under a binder; Python's natural
-   hook returns nothing when the scope is not empty). All three are tier B additions like
-   `coefficientNotNumeral`. For the DRI at the statement review; the DRI may split `coordinationForm` in two.
+   hook returns nothing when the scope is not empty), and `relativeForm` (the subject relative of a wording whose
+   first symbol is a hole other than `{0}`: Lark's cut strips that hole's term and derives the clause, the hand
+   parser's cut strips `{0} ` only and never accepts the text, so the Lean action must reject rather than build
+   a formula Python refuses; spec 2.6, 2.7, e52; added by the verification pass, spec section 14). All four are
+   tier B additions like `coefficientNotNumeral`. For the DRI at the statement review; the DRI may split
+   `coordinationForm` in two.
 3. **The final lint list** (ruling 4; LEAN-FIRST DRI answer 5). Proposal in spec 2.14: five of the eight retained
    codes and the hole-order rule of `TEMPLATE_SHAPE` protect the reading and become Lean validity conditions
    when Python's lint retires (E2); three are style and become editor warnings. In S2 all eighteen stay in the
@@ -162,3 +169,18 @@ What the review left to do before S2.3: the stub re-run on the amended fixtures 
 12: every statement elaborates, every verdict holds, the steps are unchanged), then the bounded re-check limited
 to the edits of spec section 13. PASS follows that re-check, not this draft. The order of section 1 is
 unchanged: S2.0 and S2.5 (Python) and S2.1 and S2.2 (Lean) may start; S2.3's proofs wait.
+
+**Verification pass applied (draft 4).** The first bounded re-check of spec draft 2 returned FAIL on two
+inconsistencies (`manage-agents/english-lean-s2-p3ver1.final.md`): the nine `formula.*` rows carried `through`
+while `nest` alone checks the nesting limit, and the subject-relative cut stripped the leading term only for
+`{0}`-first wordings while Python's generator strips any leading `term `. Spec draft 3 applies both (spec 2.4,
+2.5, 2.6, 2.7, 2.11, 13, 14). The items that bear on this plan:
+
+| Spec correction | Plan change |
+|---|---|
+| the nine `formula.*` rows take `nest` | none: S2.2's row already owes the nesting increments of `child()` |
+| subject relatives cut as Lark cuts them, whichever hole leads; the `{1}`-first corner is a rule the hand parser never accepts, so `relSubject` rejects with a fourth tier B code, `relativeForm` (e52) | S2.2 row (four codes); Q2 |
+| the rank of `relative` keeps its value with the right reason; nothing re-run | S2.3's "done when" names the re-verification of spec sections 13 and 14 |
+
+The verifier found no unrelated substantive change in draft 2; draft 3 adds none beyond these. PASS follows the
+bounded re-verification of spec section 14, not this draft.
