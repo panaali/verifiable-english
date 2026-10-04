@@ -589,7 +589,10 @@ document (the premise status's `⊥` included) is promoted (review B). Every ver
 choices (ALL and NONE on the enumerated route, CONFLICT-FREE under every reading there, and the superposed route's
 per-choice ALL and NONE) keeps `restrictions`: the labels `coupling:<id>` and `narrowing:<id>` of the restrictions
 in force that exclude some complete choice taking `A`, in `choiceCore D`'s order, also in `conditional_on` for ALL
-and CONFLICT-FREE; the English shows them as on the superposed route, E3 with E5 or E7 (review A).
+and CONFLICT-FREE; the English shows them as on the superposed route, E3 with E5 or E7 (review A). A model's
+`<situation>` on the enumerated route supposes every decision table the choice's own document generates
+(`gen_keys`: exceptions, switches, outweighing, limitations, their conditions and the bar, rights' included), and a
+non-empty generated decision table that no wording covers is an error, never left out (review A).
 
 ### 4.7 Conservativity
 

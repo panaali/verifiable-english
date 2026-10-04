@@ -706,14 +706,81 @@ class S2Wording:
                 for row in sorted(relations[predicate]):
                     facts.append(words.predicates[predicate].format(*row))
         chosen = {(s, i) for s, i in choice}
+        own = self._choice_decisions(choice)
         for predicate in sorted(relations):
             for row in sorted(relations[predicate]):
-                phrase = self._decision(predicate, row, chosen)
+                phrase = (self._decision(predicate, row, chosen) if own is None else
+                          self._choice_decision(own, predicate, row, chosen))
                 if phrase is not None:
                     facts.append("suppose " + phrase)
+                elif predicate not in self.author and predicate.startswith(_DECISION_PREFIXES):
+                    # Review A of compose-s2 looprecheck2: a decision the situation needs is never left out.
+                    raise VEError(f"InvalidInput: a situation's decision table {predicate} has no wording")
         text = "; ".join(facts) if facts else "nothing exists"
         self.slots.situations.add(text)
         return text
+
+    def _choice_decisions(self, choice):
+        """On the enumerated route a model is one of the choice's own document, so its decision tables are the ones
+        that document generates (`gen_keys`: exceptions, switches, outweighing, limitations, their conditions and
+        the bar, on every chain): (the choice's side, generated name → key). None on the superposed route."""
+        from .readings_verdicts import Enumerated
+        if not isinstance(self.route, Enumerated):
+            return None
+        own = self.route._choice({s: i for s, i in choice})
+        if own.chain == "norms":
+            return own.side, {}
+        return own.side, {generated: key for key, generated, _ in own.side.gen_keys()}
+
+    def _rule_owner(self, name, chosen):
+        """(True, None) when the rule named `name` is a candidate's of the choice, (False, n) when sentence n's."""
+        def names(content):
+            if content is None:
+                return []
+            if content.kind == "norm":
+                return [content.body["name"]]
+            return [line["norm"]["name"] for line in content.lines() if type(line.get("norm")) is dict]
+        for R in self.sets:
+            for i, a in enumerate(R.candidates):
+                if (R.id, i) in chosen and name in names(a.content):
+                    return True, None
+        for uid, content in self.route.source.fixed_units():
+            if name in names(content):
+                return False, self.numbers[uid]
+        raise VEError(f"InvalidInput: no sentence of the reading states rule {name}")
+
+    def _choice_decision(self, own, predicate, row, chosen):
+        """`<decision>` (2.1) for a decision table of a choice's own document, as S1 words it for a reading."""
+        side, keys = own
+        key = keys.get(predicate)
+        if key is None:
+            return None
+        subject = _series(list(row))
+        soft = side.soft.env.soft or {}
+        if key[0] in ("excepted", "off"):
+            mine, number = self._rule_owner(key[1], chosen)
+            sentence = "this sentence" if mine else f"sentence {number}"
+            if key[0] == "off":
+                return f"{key[3]} has turned {sentence} off for {subject}"
+            rule = next((r for r, name, bearer in side.keyed_rules() if name == key[1] and bearer == key[2]), None)
+            decided = ((rule.exception or {}).get("decided_by") if rule is not None else None) or \
+                soft.get("exception_decider")
+            target = "the exception" if mine else f"the exception to {sentence}"
+            return f"{self.s1.decider(decided)} decides {target} applies to {subject}"
+        if key[0] == "outweighs":
+            who = self.s1.decider(soft.get("outranking", {}).get("decided_by"))
+            return f"{who} decides that {key[2]} outweighs {key[3]} for {subject}"
+        rd = side.rights
+        if key[0] == "lim":
+            limit = next(item for item in rd.limitations if item["name"] == key[1])
+            who = limit["decided_by"]
+        elif key[0] == "cond":
+            limit = next(item for item in rd.limitations if item["name"] == key[1])
+            condition = next(item for item in limit["conditions"] if item["name"] == key[3])
+            who = condition.get("decided_by") or limit["decided_by"]
+        else:
+            who = rd.bar["decided_by"]
+        return f"{self.s1.decider(who)} decides that " + rd.wordings[predicate].format(*row)
 
     def _decision(self, predicate, row, chosen):
         subject = _series(list(row))
@@ -901,6 +968,9 @@ class S2Wording:
             raise VEError("InvalidInput: a countermodel's wording needs its checked model")
         return self.E.named_result(self.readings(counter["choice"]), "countermodel", self.slots,
                                    situation=self.situation(model, counter["choice"]))
+
+
+_DECISION_PREFIXES = ("soft__excepted__", "soft__off__", "soft__outweighs__", "rights__")
 
 
 def _series(values):

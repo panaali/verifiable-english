@@ -956,3 +956,44 @@ def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path)
     assert superposed.route == "superposed"
     assert superposed.restrictions(()) == ["coupling:c1", "narrowing:n1"]
     assert superposed.restrictions([("rs1", 0)]) == ["coupling:c1"]
+
+
+RIGHTS_ARREST = ["forall", "state", ["forall", "person", ["implies", ["binary", "arbitrary_arrest", ["var", 1],
+                                                                       ["var", 0]],
+                                                          ["not", ["binary", "arrest_permitted", ["var", 1],
+                                                                   ["var", 0]]]]]]
+
+
+def test_review_a3_rights_countermodel_names_its_exception(tmp_path):
+    """The finding's case: M12's default-right countermodel holds only because the exception applies; its English
+    supposes that decision (before: omitted, though clearing it makes the conclusion true in Lean)."""
+    path = s2_document(tmp_path, [("set", "rs9", "u9", [("strict", _claim("strict"), "right", None),
+                                                        ("default", _claim("default"), "right", None)])],
+                       raw=env_rights())
+    data, lines, wording = _query(path, RIGHTS_ARREST)
+    assert data["verdict"] == "SOME"
+    model = data["countermodel"]["model"]
+    assert model["relations"]["soft__excepted__no_arbitrary_arrest"], model
+    assert lines[1].startswith("Read sentence 1 as reading 2: the conclusion does not follow. It fails here: ")
+    assert lines[1].endswith("; suppose the decider decides the exception applies to e0 and e0."), lines[1]
+    _one_derivation(lines, wording)
+
+
+def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
+    """The class: a fixed limitation's tables (`lim`, `cond`) on the rights chain are worded as decisions too, and a
+    decision table no wording covers is refused, never silently left out of a situation."""
+    from tests.test_readings_s1_lean import LIMITATION
+    path = s2_document(tmp_path, [("set", "rs9", "u9", [("strict", _claim("strict"), "right", None),
+                                                        ("default", _claim("default"), "right", None)]),
+                                  ("fixed", "u29", {"limitation": LIMITATION})], raw=env_rights())
+    data, lines, wording = _query(path, RIGHTS_ARREST)
+    assert data["verdict"] == "NONE"
+    strict = next(c for c in data["countermodels"] if c["choice"] == [["rs9", 0]])
+    assert strict["model"]["relations"]["rights__lim__1"] and strict["model"]["relations"]["rights__cond__1"]
+    line = next(line for line in lines if line.startswith("Read sentence 1 as reading 1: "))
+    assert "suppose the decider decides that the limitation is determined by law where e0 arrests e0" in line
+    assert "suppose the decider decides that limitation 1 holds where e0 arrests e0" in line
+    _one_derivation(lines, wording)
+    unknown = {**strict["model"], "relations": {**strict["model"]["relations"], "rights__lim__9": [["e0", "e0"]]}}
+    with pytest.raises(VEError, match="decision table rights__lim__9 has no wording"):
+        wording.situation(unknown, strict["choice"])
