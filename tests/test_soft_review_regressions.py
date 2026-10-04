@@ -26,8 +26,7 @@ from ve.ast import _Checker
 from conformance.soft_norms import (RUST_FIXTURES, rust_fixture_rows, loop_recheck_reproducers,
                                     soft2_reproducers, soft3_reproducers, soft3_accepted,
                                     soft_limits_reproducers, multi_fault_cases, multi_faults,
-                                    near_limit_cases, compare_near_limit, _strict_under_default,
-                                    compare_rejected, main as conformance_main, soft4_reproducers,
+                                    _strict_under_default, main as conformance_main, soft4_reproducers,
                                     soft4_near_limit, _plain_chain, _negations, _opposed,
                                     _twice, _dual_outcomes, soft4_aggregate_reproducers,
                                     smallest_queries, _exact, _exception,
@@ -318,13 +317,6 @@ def test_generated_sizes_equal_the_checker_walk():
                 soft.elaborated.outcome(predicate, base=True)), (name, predicate)
 
 
-def test_accepted_sources_elaborate_and_rejected_sources_share_codes():
-    # Every accepted fixture and the near-limit generator: accepted implies Lean
-    # accepts and the public regeneration check passes; rejected implies the same code.
-    accepted, rejected = compare_near_limit(near_limit_cases())
-    assert (accepted, rejected) == (ACCEPTED_NEAR_LIMIT, REJECTED_NEAR_LIMIT)
-
-
 def test_multi_fault_generator_covers_the_table():
     faults = multi_faults()
     assert {f[2][0] for f in faults} == {1, 2, 3, 4, 5, 6}
@@ -335,10 +327,6 @@ def test_multi_fault_generator_covers_the_table():
     assert any(len(p) == 1 for p in phases.values())
     assert any(len(p) >= 2 for p in phases.values())
     assert len({code for *_, code in cases}) >= 20
-
-
-def test_rejection_fixtures_and_generated_soft_inputs_share_codes():
-    assert compare_rejected() == REJECTED_INPUTS
 
 
 def test_document_checks_environment_and_rules_as_one_source(tmp_path):
@@ -466,6 +454,11 @@ def test_rust_soft_fixture_matches_both_regenerators():
 
 
 def test_generated_soft_conformance_is_part_of_suite(capsys):
+    """The conformance module's report: 1,000 generated trees; every accepted fixture and
+    near-limit source (accepted implies Lean accepts and the public regeneration check passes;
+    rejected implies the same code); and every rejection fixture and generated soft input with
+    the same code (`compare_near_limit(near_limit_cases())` and `compare_rejected()`, which
+    two separate tests used to run again with these expected values)."""
     conformance_main()
     report = json.loads(capsys.readouterr().out)
     assert report["accepted_trees"] == 1000
