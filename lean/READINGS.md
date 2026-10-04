@@ -18,8 +18,8 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 | `Separate.lean` | 8.3: `GenKey`, `genKeys`, `owned`, `ownedKeys`; `Tables`, `withTables`, `expand`, `Probe`, `selectable`, `Observes`, `authorEnv`, `Achieves`, `Separated`; the executable check (`Situation`, `tablesModel`, `tablesTyped`, `probeTyped`, `observe`, `sideValid`, `sideValue`, `cells`, `assignments`, `tablesFor`, `tablesOf`, `situationWF`, `separates`); `probesOf`, `observeAll`; `strictOf`, `strictTwin`, `forceTwins`, `relaxTo`, `twinDocs`, `decisionOnly`, `AchievesQuiet`, `actOnly` |
 | `Force.lean` | `decision_only_sound` and its three parts: `relaxDoc`, `Twin` and the force lemma for a whole document; `canon_relax`; the premises and probe values over one base; `TwinDocs`, `tablesRel`, `quiet_iff` |
 | `Lines.lean` | DRI ruling 1: `linesOnce`, the admission text `lineOrderText` (4.4), `checkRights` in named steps (equal by `rfl`) and the facts read from it, and `genKeys_nodup` |
-| `Wire.lean` | 8.4: the environment on the three chains, the document's units and active reading sets, contents, keys, tables, probes and situations; the checks of 4.1 with section 7's texts (`admissionText`); `SeparateReplay`, `replaySeparate`, `readings_wire_separate_sound` |
-| `Run.lean`, `../ReadingsMain.lean` | The `ve_readings_route` executable |
+| `Wire.lean` | 8.4: the environment on the three chains, the document's units and active reading sets, contents, keys, tables, probes and situations; the checks of 4.1 with section 7's texts (`admissionText`); admission as specified (`admitReadingsSpec`) and as run (`admitReadings`, each candidate validated once); `SeparateReplay`, `replaySeparate`, `readings_wire_separate_sound` |
+| `Run.lean`, `../ReadingsMain.lean` | The `ve_readings_route` executable; a candidate's row and a pair's facts as specified (`candidateJsonSpec`, `pairFactsSpec`) and as run, each side's completion evaluated once (`completions`, `separatesWith`) |
 | `Examples.lean` | Build-time `#guard` regressions on fixtures K1 to K22 of 9.2, K2b's inadmissible base as two theorems, and the two counterexamples to `genKeys_nodup` without its hypothesis (`twiceListed`, `orderOnly`) |
 
 ## Theorems
@@ -102,6 +102,18 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
   the conclusion of `separates_sound` for the decoded document, pair and situation.
 * `author_valid`: a base decoded over the author's base model vocabulary is valid over `authorEnv`.
 * `layerNames_sub`: every layer symbol is a regulated or a defined predicate.
+* `admitReadings_eq` (lean-first plan F5b): admission as run equals admission as specified. `admissionText` already
+  validates `free D` and every candidate's `one D s i` (`chainText`); once it finds nothing, `WellFormedDoc` is
+  `frameWF` (`wellFormedDoc_of_admissionText`, from `sideWF_of_chainText`), so admission evaluates `frameWF` instead
+  of validating each document a second time.
+
+### `Run.lean`
+
+* `pairFacts_eq` (F5b): a pair's facts as run equal the facts as specified. The witness's completion is evaluated
+  once for `separates` and its two fields, and the other side's completions once per assignment for `separates`,
+  `other_admissible` and `other_value` (`separatesWith_eq`; `assignments_of_ownedKeys_nil` for `other_value`).
+* `candidateJson_eq` (F5b, `rfl`): a candidate's row builds its document `one D s i` once, for its keys and its
+  findings.
 
 ### `Force.lean`
 
