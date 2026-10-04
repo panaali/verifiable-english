@@ -15,8 +15,9 @@ every line, so a child that a test kills still leaves what it did up to then:
 Paths are relative to $VE_TESTMAP_ROOT. tools/test_map.py installs a `.pth`
 hook in the project environment that calls `start()` whenever VE_TESTMAP_OUT
 is set, so a Python child of the project environment records too: an explicit
-`env=` gets the two recording variables added. A Python child that leaves no
-record (another interpreter, or `-I`/`-E`) marks its test as opaque. A forked
+`env=` gets the two recording variables added (unless it sets its own, as a
+nested recording does). A Python child that leaves no record (another
+interpreter, or `-S`, which skips the hook) marks its test as opaque. A forked
 child starts its own file and re-arms every code object.
 """
 from __future__ import annotations
@@ -103,8 +104,8 @@ def _audit(event, args):
                     relative = _relative(argument)
                     if relative is not None and os.path.isfile(os.path.join(_state["root"], relative)):
                         _emit(["r", relative])
-            if _python(program) and any(flag in ("-I", "-E", "-S") for flag in list(argv or ())[1:3]):
-                _emit(["o", f"python child without the recorder: {argv!r}"])
+            if _python(program) and "-S" in list(argv or ())[1:4]:
+                _emit(["o", f"python child without site, so without the recorder: {argv!r}"])
     except Exception:  # an audit hook must never break the audited call
         pass
 
@@ -160,7 +161,7 @@ def _wrap_popen() -> None:
         if env is not None and python:
             env = dict(env)
             for name in ("VE_TESTMAP_OUT", "VE_TESTMAP_ROOT"):
-                env[name] = os.environ[name]
+                env.setdefault(name, os.environ[name])  # a nested recording keeps its own
             kwargs["env"] = env
         original(self, args, *rest, **kwargs)
         _emit(["c", self.pid, _python(program)])
