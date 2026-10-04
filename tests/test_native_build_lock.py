@@ -206,15 +206,17 @@ def test_local_runs_reuse_binaries_only_while_their_stamp_matches(tmp_path):
 
 
 @pytest.mark.parametrize("cpus, load, settings, workers", [
-    (32, 0.0, {}, 32), (32, 20.4, {}, 12), (32, 51.2, {}, 8), (16, 2.6, {"VE_TEST_WORKERS": "8"}, 8),
-    (16, 6.0, {"VE_TEST_WORKERS": "8"}, 8), (16, 13.0, {"VE_TEST_WORKERS": "8"}, 4),
-    (32, 51.2, {"VE_TEST_MIN_WORKERS": "1"}, 1), (32, 51.2, {"VE_TEST_WORKERS": "2"}, 2),
-    (2, 9.0, {}, 1),
-], ids=["idle", "busy", "overloaded: the floor", "configured", "configured, room left", "configured and busy",
-        "floor of one", "configured below the floor", "two CPUs"])
+    (32, 0.0, {}, 32), (32, 20.4, {}, 12), (32, 31.0, {}, 1), (32, 51.2, {}, 1),
+    (16, 2.6, {"VE_TEST_WORKERS": "8"}, 8), (16, 6.0, {"VE_TEST_WORKERS": "8"}, 8),
+    (16, 13.0, {"VE_TEST_WORKERS": "8"}, 3), (32, 51.2, {"VE_TEST_MIN_WORKERS": "8"}, 8),
+    (32, 20.4, {"VE_TEST_MIN_WORKERS": "8"}, 12), (32, 51.2, {"VE_TEST_MIN_WORKERS": "8", "VE_TEST_WORKERS": "2"}, 2),
+    (32, 51.2, {"VE_TEST_MIN_WORKERS": "0"}, 1), (2, 9.0, {}, 1),
+], ids=["idle", "busy", "one slot left (review)", "overloaded: one", "configured", "configured, room left",
+        "configured and busy", "opt-in floor", "opt-in floor below capacity", "configured below the floor",
+        "a floor of zero is one", "two CPUs"])
 def test_auto_workers_leave_the_busy_part_of_the_machine_alone(monkeypatch, cpus, load, settings, workers):
-    """`-n auto` takes min(CPUs - load, VE_TEST_WORKERS), at least the floor, so a busy machine
-    is not oversubscribed."""
+    """`-n auto` takes min(CPUs - load, VE_TEST_WORKERS), at least one, so a busy machine is
+    not oversubscribed; a larger floor is only taken when VE_TEST_MIN_WORKERS asks for it."""
     for variable in ("VE_TEST_WORKERS", "VE_TEST_MIN_WORKERS"):
         monkeypatch.delenv(variable, raising=False)
     for variable, value in settings.items():

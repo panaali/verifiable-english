@@ -57,7 +57,7 @@ The product modules import one another widely (for example, `ve/environment.py`'
 
 ### 4. Parallelism and build reuse
 
-- `-n auto` = max(`VE_TEST_MIN_WORKERS`, min(usable CPUs − 1-minute load, `VE_TEST_WORKERS`)). The floor defaults to a quarter of the CPUs. Without it, this VM, whose load rarely falls below its 32 CPUs, would run the suite on one worker.
+- `-n auto` = max(`VE_TEST_MIN_WORKERS`, min(usable CPUs − 1-minute load, `VE_TEST_WORKERS`)). The floor defaults to 1, so by default the count is the capacity the load leaves, never fewer than one worker (32 CPUs at load 31: one). A larger floor is opt-in; this VM, whose load rarely falls below its 32 CPUs, sets one to avoid running the suite on one worker.
 - Without `VE_NATIVE_PREBUILT`, a run reuses the binaries while the stamp of the last build in this checkout still matches. The stamp hashes the source contents and records each executable's identity. `=1` and `=0` keep their meanings, and the gate still builds explicitly.
 
 ### 6. The wire-s5 recheck's instances
