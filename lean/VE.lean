@@ -9,6 +9,7 @@ import VE.Readings.Lines
 import VE.Readings.Wire
 import VE.Readings.Run
 import VE.Readings.Examples
+import VE.Readings.Force
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks
