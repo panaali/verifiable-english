@@ -1,0 +1,33 @@
+{
+  "unit": "u0156.s03",
+  "rights_block": {
+    "holders": [
+      "user"
+    ],
+    "bearers": [
+      "claude_instance"
+    ],
+    "protected": [],
+    "alters": {}
+  },
+  "candidates": {
+    "strict": {
+      "base_predicates_in_its_situation": [
+        "following_requires_damaging_deception"
+      ]
+    },
+    "default": {
+      "base_predicates_in_its_situation": [
+        "following_requires_damaging_deception",
+        "soft__excepted__no_system_prompt_deception"
+      ]
+    }
+  },
+  "situation_of_candidate_x_candidate_checked": {
+    "situation built for strict, checked on strict": "accepted (model 7fe72e51ffe2…)",
+    "situation built for strict, checked on default": "rejected: relations must contain exactly the base predicates; defined tables are computed",
+    "situation built for default, checked on strict": "rejected: relations must contain exactly the base predicates; defined tables are computed",
+    "situation built for default, checked on default": "accepted (model d4c7094a212d…)"
+  },
+  "conclusion": "A situation is accepted only for the candidate it was built for; the strict and the defeasible candidate never share one, so VE cannot check that they differ. Force readings therefore cannot be rights-reading candidates that carry checked content."
+}
