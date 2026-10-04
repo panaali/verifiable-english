@@ -675,7 +675,8 @@ def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatc
         calls.append((tuple(premises), conclusion))
         return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
     monkeypatch.setattr(search, "check_countermodel", refuse)
-    if os.environ.get("VE_AUTHORITY", "python") != "python":
+    # At `shadow` the outcome is Python's (docs/spec/mig3.md 2.3, V1).
+    if os.environ.get("VE_AUTHORITY", "python") not in ("python", "shadow"):
         # A backend search returns one witness; a refused witness is a
         # disagreement between generator and check, never NotFound.
         with pytest.raises(CheckerUnavailable):
