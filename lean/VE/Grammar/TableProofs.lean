@@ -45,6 +45,7 @@ theorem dedup_of_nodup [DecidableEq X] : ∀ {xs : List X}, xs.Nodup → dedup x
 variable {T K : Type} [DecidableEq T] [DecidableEq K] [Accepts K T]
 variable {G : Grammar K} {cap b b2 : Nat} {w : Array T} {ts : List (Tree T)} {t u : Tree T}
 
+omit [DecidableEq K] in
 theorem mem_finalPass {ts : List (Tree T)} :
     t ∈ finalPass G cap w ts → t ∈ ts ∧ Derives G (.n G.start) w.toList t := by
   intro h
@@ -54,10 +55,12 @@ theorem mem_finalPass {ts : List (Tree T)} :
   simp only [Bool.and_eq_true, beq_iff_eq] at h1
   exact ⟨h1.1, h1.2.1, h1.2.2⟩
 
+omit [DecidableEq K] in
 theorem finalPass_nodup {ts : List (Tree T)} : (finalPass G cap w ts).Nodup := by
   unfold finalPass
   exact (nodup_dedup _).sublist (List.take_sublist _ _)
 
+omit [DecidableEq K] in
 theorem finalPass_length {ts : List (Tree T)} : (finalPass G cap w ts).length ≤ cap := by
   unfold finalPass
   simp only [List.length_take]

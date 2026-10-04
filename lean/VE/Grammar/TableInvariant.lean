@@ -374,11 +374,13 @@ def combineOne (next : Nat → Bucket (List (Tree T))) (last : Bool) (j1 : Nat) 
     List (Nat × List (Tree T)) :=
   if last then [(j1, [t])] else (next j1).flatMap fun q => q.2.map fun us => (q.1, t :: us)
 
+omit [DecidableEq T] in
 theorem combine_eq {first : Bucket (Tree T)} {next : Nat → Bucket (List (Tree T))} {last : Bool} :
     combine first next last = first.flatMap fun p => p.2.flatMap (combineOne next last p.1) := by
   unfold combine combineOne
   rfl
 
+omit [DecidableEq T] in
 theorem mem_combineOne {next : Nat → Bucket (List (Tree T))} {last : Bool} {j1 : Nat} {t : Tree T}
     {c : Nat × List (Tree T)} : c ∈ combineOne next last j1 t ↔
       (last = true ∧ c = (j1, [t])) ∨ (last = false ∧ ∃ q ∈ next j1, ∃ us ∈ q.2, c = (q.1, t :: us)) := by
@@ -390,6 +392,7 @@ theorem mem_combineOne {next : Nat → Bucket (List (Tree T))} {last : Bool} {j1
     · rintro ⟨q, hq, us, hus, rfl⟩; exact ⟨q, hq, us, hus, rfl⟩
   · simp
 
+omit [DecidableEq T] in
 theorem head_of_mem_combineOne {next : Nat → Bucket (List (Tree T))} {last : Bool} {j1 : Nat} {t : Tree T}
     {c : Nat × List (Tree T)} (h : c ∈ combineOne next last j1 t) : c.2.head? = some t := by
   rcases mem_combineOne.mp h with ⟨_, rfl⟩ | ⟨_, q, _, us, _, rfl⟩ <;> rfl
@@ -764,12 +767,14 @@ theorem order_nodup : (G.prepare.order.map (·.index)).Nodup := by
   rw [this, List.zipIdx_map_snd]
   exact List.nodup_range'
 
+omit [DecidableEq K] in
 theorem rule_lhs_lt (hG : G.wf = true) {r : Nat} {R0 : Rule K} (hr : G.rules[r]? = some R0) :
     R0.lhs < G.rank.size := by
   have h := rule_wf_of_mem hG hr
   simp only [Rule.wf, Bool.and_eq_true, decide_eq_true_eq] at h
   exact h.1.1.1
 
+omit [DecidableEq K] in
 theorem rule_head_rank (hG : G.wf = true) {r : Nat} {R0 : Rule K} (hr : G.rules[r]? = some R0) {B : Nat}
     {rest : List (Sym K)} (hrhs : R0.rhs = .n B :: rest) : G.rank.getD B 0 < G.rank.getD R0.lhs 0 := by
   have h := rule_wf_of_mem hG hr
@@ -840,6 +845,7 @@ theorem span_term {a : K} {i j : Nat} {t : Tree T} (hi : i < w.size) (hj : j ≤
   · rintro ⟨rfl, ha, rfl⟩
     exact ⟨by rw [derives_leaf]; exact ha, by rw [yield_leaf]; exact (toks_one hi).symm⟩
 
+omit [DecidableEq T] [DecidableEq K] in
 theorem firstAt_term_ok {a : K} {i : Nat} {row : NtRow T} (hi : i < w.size) (hcap : 0 < cap) :
     BOk cap w.size (Span G w (.t a) i) (firstAt w i row (.t a)) := by
   have hw : w[i]? = some w[i] := by simp [hi]
@@ -877,6 +883,7 @@ omit [DecidableEq T] [DecidableEq K] [Accepts K T] in
 theorem addAll_nil {X : Type} {e : Bucket X} : e.addAll cap [] = e := by
   simp [Bucket.addAll, Bucket.merge]
 
+omit [DecidableEq K] in
 /-- One rule applied at the start position `i`: its candidates added to the entry of its left-hand side
 keep the entries complete-or-full, with the rule added to the done set. -/
 theorem ruleStep_ok (hG : G.wf = true) (hcap : 0 < cap) {i : Nat} (hi : i < w.size)
@@ -1073,6 +1080,7 @@ def ValidPos (G : Grammar K) (p : SufPos K) : Prop :=
   ∃ R0, G.rules[p.rule]? = some R0 ∧ 1 ≤ p.pos ∧ ∃ h : p.pos < R0.rhs.length,
     p.sym = R0.rhs[p.pos] ∧ p.last = (R0.rhs.drop (p.pos + 1)).isEmpty
 
+omit [DecidableEq K] in
 theorem mem_sufPositions_succ {r : Nat} {p : SufPos K} : ∀ {l : List (Sym K)} {d0 : Nat}, 1 ≤ d0 →
     (p ∈ sufPositions r l d0 ↔ ∃ k, ∃ h : k < l.length, p = ⟨r, d0 + k, l[k], (l.drop (k + 1)).isEmpty⟩)
   | [], _, _ => by simp [sufPositions]
@@ -1094,6 +1102,7 @@ theorem mem_sufPositions_succ {r : Nat} {p : SufPos K} : ∀ {l : List (Sym K)} 
         simp only [List.getElem_cons_succ, List.drop_succ_cons, SufPos.mk.injEq, true_and, and_true]
         omega
 
+omit [DecidableEq K] in
 theorem mem_sufPositions {r : Nat} {p : SufPos K} {l : List (Sym K)} :
     p ∈ sufPositions r l 0 ↔ ∃ d, 1 ≤ d ∧ ∃ h : d < l.length, p = ⟨r, d, l[d], (l.drop (d + 1)).isEmpty⟩ := by
   match l with
@@ -1116,6 +1125,7 @@ theorem mem_sufPositions {r : Nat} {p : SufPos K} {l : List (Sym K)} :
 def allPositions (G : Grammar K) : List (SufPos K) :=
   G.rules.toList.zipIdx.flatMap fun (R, r) => sufPositions r R.rhs 0
 
+omit [DecidableEq K] in
 theorem mem_allPositions {p : SufPos K} : p ∈ allPositions G ↔ ValidPos G p := by
   unfold allPositions ValidPos
   rw [List.mem_flatMap]
@@ -1140,7 +1150,7 @@ theorem getD_modify_any {α : Type} {g : Array α} {k2 k : Nat} {f : α → α} 
   · subst h
     by_cases hlt : k2 < g.size
     · simp [hlt]
-    · simp [hlt, Array.getElem?_eq_none (Nat.le_of_not_lt hlt)]
+    · simp [hlt]
   · simp [h]
 
 /-- One step of `groupBy`. -/
@@ -1317,6 +1327,7 @@ theorem byNt_sym {B : Nat} {g : List (SufPos K)} (h : (B, g) ∈ G.prepare.byNt)
   | .n B2, hkey => simp at hkey; rw [hkey]
   | .t _, hkey => simp at hkey
 
+omit [DecidableEq K] in
 theorem ValidPos.unique {p q : SufPos K} (hp : ValidPos G p) (hq : ValidPos G q) (hr : p.rule = q.rule)
     (hd : p.pos = q.pos) : p = q := by
   obtain ⟨R0, h0, _, hl0, hs0, hz0⟩ := hp
@@ -1354,7 +1365,7 @@ structure OutInv (G : Grammar K) (cap : Nat) (w : Array T) (i : Nat) (nt : NtRow
   val : ∀ p, ValidPos G p → outAt out p.rule p.pos = [] ∨ outAt out p.rule p.pos = sufVal cap w i nt suf p
   done : ∀ p, ValidPos G p → Done p.rule p.pos → outAt out p.rule p.pos = sufVal cap w i nt suf p
 
-omit [DecidableEq T] in
+omit [DecidableEq T] [DecidableEq K] in
 theorem OutInv.mono {i : Nat} {nt : NtRow T} {suf : Array (SufRow T)} {D D2 : Nat → Nat → Prop}
     {out : SufRow T} (h : OutInv G cap w i nt suf D out) (hD : ∀ r d, D2 r d → D r d) :
     OutInv G cap w i nt suf D2 out :=
@@ -1368,8 +1379,8 @@ theorem outAt_write {out : SufRow T} {r0 d0 r d : Nat} {v : Bucket (List (Tree T
   rw [getD_modify hr]
   by_cases h1 : r = r0
   · subst h1
-    simp only [if_pos rfl, true_and]
-    simp only [Array.getD_eq_getD_getElem?, Array.getElem?_setIfInBounds]
+    simp only [true_and]
+    simp only [Array.getD_eq_getD_getElem?]
     by_cases h2 : d = d0
     · subst h2
       simp only [Array.getD_eq_getD_getElem?] at hd
@@ -1377,6 +1388,7 @@ theorem outAt_write {out : SufRow T} {r0 d0 r d : Nat} {v : Bucket (List (Tree T
     · simp [Ne.symm h2, h2]
   · simp [h1]
 
+omit [DecidableEq T] [DecidableEq K] in
 theorem sufPosGo_ok {i : Nat} {nt : NtRow T} {suf : Array (SufRow T)} :
     ∀ (ps : List (SufPos K)) (out : SufRow T) (c : Nat) (D : Nat → Nat → Prop),
     (∀ p ∈ ps, ValidPos G p) → OutInv G cap w i nt suf D out →
@@ -1443,6 +1455,7 @@ theorem sufPosGo_ok {i : Nat} {nt : NtRow T} {suf : Array (SufRow T)} :
             · exact absurd ⟨hr2, hd2⟩ he
       exact (sufPosGo_ok ps _ _ _ hvs h2).mono hD
 
+omit [DecidableEq T] [DecidableEq K] in
 theorem sufGroups_ok {i : Nat} {nt : NtRow T} {suf : Array (SufRow T)} {on : Nat → Bool} :
     ∀ (gs : List (Nat × List (SufPos K))) (out : SufRow T) (c : Nat) (D : Nat → Nat → Prop),
     (∀ kg ∈ gs, ∀ p ∈ kg.2, ValidPos G p) → OutInv G cap w i nt suf D out →
@@ -1634,7 +1647,7 @@ theorem fill_ok (hG : G.wf = true) (hcap : 0 < cap) {b : Nat} :
       simp only [Array.getD_eq_getD_getElem?, Array.getElem?_setIfInBounds]
       by_cases hp : k = p
       · subst hp
-        simp only [if_pos rfl, if_pos (show k < suf.size by omega), Option.getD_some]
+        simp only [if_pos (show k < suf.size by omega)]
         exact hrow.2
       · rw [if_neg hp]
         have := hsuf p (by omega) h2

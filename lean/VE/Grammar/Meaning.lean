@@ -83,6 +83,7 @@ namespace VE.Grammar
 variable {T K : Type} [Accepts K T]
 variable {G : Grammar K} {S : Sig T} {ty : Nat → S.Ty} {acts : Array (Action S)} {X : Sym K} {t : Tree T}
 
+omit [Accepts K T] in
 theorem typed_rule (h : G.typed S ty acts = true) {r : Nat} {R : Rule K} (hr : G.rules[r]? = some R) :
     ∃ a, acts[R.act]? = some a ∧ a.args = R.rhs.map (symTy S ty) ∧ a.out = ty R.lhs := by
   unfold Grammar.typed at h
@@ -98,6 +99,7 @@ theorem typed_rule (h : G.typed S ty acts = true) {r : Nat} {R : Rule K} (hr : G
     exact ⟨a, rfl, @of_decide_eq_true _ (@instDecidableEqList _ S.decEq _ _) this.1,
       @of_decide_eq_true _ (S.decEq _ _) this.2⟩
 
+omit [Accepts K T] in
 theorem toArgs_some : ∀ (Xs : List (Sym K)) (vs : List (Val S)),
     (∀ i (h : i < Xs.length), ∃ v : S.Sem (symTy S ty Xs[i]), vs[i]? = some ⟨symTy S ty Xs[i], v⟩) → vs.length = Xs.length →
     ∃ xs, toArgs S (Xs.map (symTy S ty)) vs = some xs
