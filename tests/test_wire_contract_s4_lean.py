@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 import tools.wire_contract as wire_tool
 from conformance.soft_norms import multi_fault_base, multi_faults
 from tests.test_wire_contract_lint import shipped_copy  # noqa: F401  (a fixture)
@@ -45,7 +46,7 @@ def diagnose():
         if lake is None:
             pytest.skip("lake is required for ve_diagnose")
         result = subprocess.run([lake, "build", "ve_diagnose"], cwd=ROOT / "lean", capture_output=True,
-                                text=True, timeout=1200)
+                                text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr
     return BIN / "ve_diagnose"
 
@@ -63,7 +64,7 @@ def test_l1_diagnose_prints_the_record_of_s1(diagnose):
     raw, rules = s1_source()
     case = {"id": "s1", "kind": "soft-elaborate", "environment": raw, "norms": rules}
     result = subprocess.run([str(diagnose), "soft-norms@0", "-"], input=json.dumps([case]), text=True,
-                            capture_output=True, timeout=600)
+                            capture_output=True, timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     record = {"contract": "soft-norms@0", "revision": revision(), "check": "2.7a", "phase": "declarations",
               "code": "SOFT_INVALID_NAME", "class": "InvalidInput", "path": "/environment/vocabulary/soft/parties/1",

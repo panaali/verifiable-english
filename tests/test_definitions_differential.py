@@ -15,7 +15,7 @@ import json
 import os
 import random
 import shutil
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 import subprocess
 from copy import deepcopy
 from pathlib import Path

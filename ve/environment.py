@@ -30,6 +30,36 @@ _IDENTIFIER = re.compile(r"[a-z][a-z0-9_]*\Z", re.ASCII)
 _ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 
 
+def listed_profiles(data) -> tuple[str, ...]:
+    """The profiles named by environment JSON that may not be valid yet: `()`
+    unless `profiles` is an array of strings. Routing that reads the profiles
+    before the decoder runs uses this; the decoder rejects any other value
+    (Lean's `profilesOf`)."""
+    profiles = data.get("profiles") if type(data) is dict else None
+    return tuple(profiles) if _string_array(profiles) else ()
+
+
+def _string_array(value) -> bool:
+    return type(value) is list and all(type(item) is str for item in value)
+
+
+def route_kind(data) -> str:
+    """The Lean route that decodes a route envelope: by its profiles when they
+    are an array of strings, else by the blocks it carries. "speech", "alternatives" and "risk"
+    read the profiles before the envelope; "reports", "quantity" and "envelope"
+    (`VE.Route.Gate.decodeEnvelope`) read the field set first."""
+    if _string_array(data.get("profiles")):
+        named = [kind for profile, kind in (("risk@0", "risk"), ("alternatives@0", "alternatives"),
+                                            ("speech-acts@0", "speech"), ("reports@0", "reports"))
+                 if profile in data["profiles"]]
+    else:
+        named = [kind for block, kind in (("risk", "risk"), ("alternatives", "alternatives"),
+                                          ("speech_acts", "speech")) if block in data]
+    if named:
+        return named[0]
+    return "quantity" if "unit_schema" in data or "units" in data else "envelope"
+
+
 def valid_identifier(name) -> bool:
     return type(name) is str and len(name) <= MAX_IDENTIFIER_BYTES and _IDENTIFIER.fullmatch(name) is not None
 
@@ -165,9 +195,10 @@ def _alternatives_block(raw, sorts, predicates, constants, *, risk_enabled=False
     """Check declarations only; Lean owns inlining, validity and followability."""
     mandatory = {"chooser", "action", "harm", "available", "leads_to", "outcomes"}
     optional = {"decided_by", "performed", "inaction", "taken", "proximate", "fulfilments"}
-    if type(raw) is not dict or not mandatory <= raw.keys():
-        missing = sorted(mandatory - raw.keys()) if type(raw) is dict else sorted(mandatory)
-        raise VEError(f"InvalidInput: alternatives.{missing[0] if missing else 'block'}")
+    if type(raw) is not dict:
+        raise VEError("InvalidInput: alternatives.block")  # VE.Alternatives.Wire.decodeBlock
+    if not mandatory <= raw.keys():
+        raise VEError(f"InvalidInput: alternatives.{sorted(mandatory - raw.keys())[0]}")
     if unknown := sorted(raw.keys() - mandatory - optional):
         raise VEError(f"InvalidInput: alternatives.{unknown[0]}")
     for word in ("avoidable", "unavoidable", "allows", "prevents"):
@@ -315,22 +346,64 @@ class Environment:
     def _decode(self, data, *, _generated_reports=False):
         canonical_json(data)  # Check size, Unicode, and the restricted wire subset.
         language = data.get("language") if type(data) is dict else None
-        modern = language in (CLOSURE_LANGUAGE, profile_registry.LANGUAGE)
+        # Lean's decoders read a language that is not a string, or absent, as
+        # the route's (VE.Service.Standalone.isLegacy): the route's fields, in
+        # the order of the route that decodes the envelope (`route_kind`). So is
+        # any other language on an envelope a block route decodes, as those read
+        # the profiles and the block before the language; elsewhere an unknown
+        # language is the frozen v0 decoder's (conformance/validation.json).
         closure = language == CLOSURE_LANGUAGE
-        route = language == profile_registry.LANGUAGE
+        route = type(data) is dict and (
+            type(language) is not str or language == profile_registry.LANGUAGE
+            or (language not in (LANGUAGE, CLOSURE_LANGUAGE)
+                and route_kind(data) in ("speech", "alternatives", "risk")))
+        modern = route or closure
+        kind = route_kind(data) if route else None
         extended = type(data) is dict and ("unit_schema" in data or "units" in data)
+        units_together = UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
+        if kind == "risk" and ("unit_schema" in data) != ("units" in data):
+            raise units_together  # VE.Risk.Wire.extended, before the profiles
+        if kind in ("speech", "alternatives", "risk"):
+            # The block routes read the profiles, their gate and their block
+            # before the envelope's field set and language: VE.SpeechActs.Wire.
+            # decodeSpeechEnvironmentFull, VE.Alternatives.Wire.decodeAltSource,
+            # VE.Risk.Wire.decodeRiskSource.
+            profile_registry.route_gate(kind, data.get("profiles"))
+            if kind == "speech":
+                vocabulary = data.get("vocabulary")
+                if type(vocabulary) is not dict or type(vocabulary.get("predicates")) is not dict:
+                    raise VEError("InvalidInput: environment vocabulary")  # predicatesOf
+                from .speech_acts import parse_scope
+                parse_scope(data.get("speech_acts"))
+            elif "alternatives" not in data:
+                raise VEError("InvalidInput: alternatives.block")
+            elif kind == "risk" and "risk" not in data:
+                raise VEError("InvalidInput: risk.block")
         if extended and (not route or "unit_schema" not in data or "units" not in data):
-            raise UnsupportedProfile("unit_schema and units require the ve.core@0.2 quantity route together")
+            raise units_together
         fields = {"language", "profiles" if modern else "profile", "spec_revision", "vocabulary"}
-        has_alternatives = route and type(data) is dict and "alternatives" in data
-        has_risk = route and type(data) is dict and "risk" in data
-        require_fields(data, fields | ({"speech_acts"} if route and "speech-acts@0" in data.get("profiles", []) else set())
-                       | ({"alternatives"} if has_alternatives else set())
-                       | ({"risk"} if has_risk else set())
+        require_fields(data, fields | ({"speech_acts"} if kind == "speech" else set())
+                       | ({"alternatives"} if kind in ("alternatives", "risk") else set())
+                       | ({"risk"} if kind == "risk" else set())
                        | ({"unit_schema", "units"} if extended else set()))
+        if route and type(language) is not str:
+            raise VEError("String expected")
+        if route and language != profile_registry.LANGUAGE:
+            raise UnsupportedProfile("Unsupported language")  # VE.Route.Gate.decodeEnvelope
         order = False
         if route:
+            if kind == "quantity":
+                # The quantity route (VE.Time.Wire.decodeEnvironment) reads the
+                # profiles with `strings`; the risk route as the gate does.
+                if type(data["profiles"]) is not list:
+                    raise VEError("array expected")
+                if not _string_array(data["profiles"]):
+                    raise VEError("String expected")
             family = profile_registry.checker_family(data["profiles"])
+            # Every top-level field's type is checked before its value is used,
+            # with the diagnostics of Lean's decoders (VE.Route.Gate.decodeEnvelope).
+            if type(data["spec_revision"]) is not str:
+                raise VEError("String expected")
             if data["spec_revision"] != profile_registry.SPEC_REVISION:
                 raise UnsupportedProfile(f"Unsupported specification revision {data['spec_revision']}")
             order = family == "order"
@@ -339,29 +412,53 @@ class Environment:
                 if tuple(data["profiles"]) not in W6_PROFILES + RISK_UNIT_PROFILES:
                     raise UnsupportedProfile(W6_PROFILE_TEXT)
         elif closure:
+            # VE.Closure.Bridge and VE.Order.Wire read the profiles as an array
+            # of strings and the revision as a string before comparing them.
+            if type(data["profiles"]) is not list:
+                raise VEError("array expected")
+            if any(type(p) is not str for p in data["profiles"]) or type(data["spec_revision"]) is not str:
+                raise VEError("String expected")
             if (data["profiles"], data["spec_revision"]) == (list(ORDER_PROFILES), ORDER_REVISION):
                 order = True
             elif data["profiles"] != list(CLOSURE_PROFILES) or data["spec_revision"] != CLOSURE_REVISION:
                 raise UnsupportedProfile("Unsupported profiles or specification revision"
                                          + (" (closure@0 x order@0 is not supported)"
-                                            if type(data["profiles"]) is list
-                                            and {"closure@0", "order@0"} <= set(data["profiles"]) else ""))
-        elif (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
-            raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
+                                            if {"closure@0", "order@0"} <= set(data["profiles"]) else ""))
+        else:
+            if language == LANGUAGE and any(type(data[key]) is not str for key in ("profile", "spec_revision")):
+                # VE.Bridge.decodeEnvironment reads all three as strings before comparing them.
+                raise VEError("String expected")
+            if (data["language"], data["profile"], data["spec_revision"]) != (LANGUAGE, PROFILE, SPEC_REVISION):
+                raise UnsupportedProfile("Unsupported language, semantic profile, or specification revision")
         vocab = data["vocabulary"]
         if extended:
             from .units import validate_units
+            if type(data["unit_schema"]) is not str and "risk@0" not in data["profiles"]:
+                # VE.Time.Wire.decodeEnvironment; the risk route compares the
+                # value (VE.Risk.Wire), which validate_units does.
+                raise VEError("String expected")
             checked_units = validate_units(data["unit_schema"], data["units"])
             units = {tag: MappingProxyType({"scale": record["scale"],
                                           "display": MappingProxyType(dict(record["display"]))})
                      for tag, record in checked_units.items()}
         else:
             units = None
-        if route and "reports@0" in data["profiles"] and type(vocab) is dict and "reports" not in vocab:
+        if route and "reports@0" in data["profiles"] and (type(vocab) is not dict or "reports" not in vocab):
+            # VE.Attribution.Wire.decodeEnvironment reads the block from the
+            # vocabulary (`getObjVal?`, which fails on any other value) first.
             raise UnsupportedProfile("reports@0 needs a reports block")
+        if type(vocab) is not dict:
+            raise VEError("object expected")
         require_fields(vocab, {"sorts", "predicates", "constants"} |
                        ({"reports"} if route and "reports@0" in data["profiles"] else set()),
                        path="/vocabulary")
+        if route and "reports@0" in data["profiles"]:
+            # VE.Attribution.Wire reads the block's fields and types before the vocabulary.
+            require_fields(vocab["reports"], {"holders", "evidence"}, path="/vocabulary/reports")
+            if type(vocab["reports"]["holders"]) is not list:
+                raise VEError("array expected")
+            if not _string_array(vocab["reports"]["holders"]) or type(vocab["reports"]["evidence"]) is not str:
+                raise VEError("String expected")
         for kind in ("sorts", "predicates", "constants"):
             if type(vocab[kind]) is not dict:
                 raise VEError(f"{kind} must be an object")
@@ -528,12 +625,12 @@ class Environment:
             })
         reports = None
         if route and "reports@0" in data["profiles"]:
-            raw_reports = vocab["reports"]
-            require_fields(raw_reports, {"holders", "evidence"}, path="/vocabulary/reports")
-            holders, evidence = raw_reports["holders"], raw_reports["evidence"]
-            if (type(holders) is not list or not 1 <= len(holders) <= 8
-                    or len(set(holders)) != len(holders) or any(h not in sorts for h in holders)):
-                raise UnknownSymbol("holder sort")
+            holders, evidence = vocab["reports"]["holders"], vocab["reports"]["evidence"]
+            if not 1 <= len(holders) <= 8 or len(set(holders)) != len(holders):
+                raise VEError("InvalidInput: holders must be 1 to 8 distinct sorts")
+            for holder in holders:
+                if holder not in sorts:
+                    raise UnknownSymbol(f"holder sort {holder}")
             if type(evidence) is not str or evidence not in sorts:
                 raise UnknownSymbol("evidence sort")
             if any(c.get("sort") in holders and type(c.get("verbalisation")) is str and
@@ -551,15 +648,11 @@ class Environment:
         if route and "alternatives@0" in data["profiles"]:
             alternatives = _alternatives_block(data.get("alternatives"), sorts, predicates, constants,
                                                risk_enabled="risk@0" in data["profiles"])
-        elif has_alternatives:
-            raise UnsupportedProfile("alternatives block requires alternatives@0")
         risk = None
         if route and "risk@0" in data["profiles"]:
             from .risk import validate_block
             risk = validate_block(data.get("risk"), sorts, predicates, constants,
                                   loads_json(alternatives), units)
-        elif has_risk:
-            raise UnsupportedProfile("risk block requires risk@0")
         profile_predicates = {}
         profile_sorts = {}
         profile_constants = {}
