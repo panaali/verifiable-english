@@ -174,7 +174,7 @@ theorem one_reading_single {w : List T} : OneReading G μ st w A c st2 → Deriv
   simp only [Except.ok.injEq, Prod.mk.injEq] at hmt
   exact ⟨hmt.1.symm, hmt.2.1.symm, hmt.2.2.symm⟩
 
-omit [DecidableEq K] [Accepts K T] in
+omit [DecidableEq K] [Accepts K T] [DecidableEq T] in
 theorem mem_readingSet {ts : List (Tree T)} {x : α × Bool × σ} :
     x ∈ readingSet μ st ts ↔ ∃ t ∈ ts, μ st t = .ok x := by
   unfold readingSet
