@@ -1616,6 +1616,7 @@
   "tests/test_english_evidence.py::test_full_mixed_report_gate",
   "tests/test_english_evidence.py::test_new_profile_cannot_hide_registered_construct",
   "tests/test_english_evidence.py::test_shadowed_binder_rejected_by_both_parsers",
+<<<<<<< HEAD
   "tests/test_english_lean_engine.py::test_budget_never_shortens_a_result",
   "tests/test_english_lean_engine.py::test_corpus_lists_every_fixture_of_the_spec",
   "tests/test_english_lean_engine.py::test_engine_corpus_case[g10]",
@@ -1713,6 +1714,12 @@
   "tests/test_english_lean_seal.py::test_seal_identity_covers_its_content",
   "tests/test_english_lean_tokens.py::test_converted_fluent_grammar_is_well_formed_and_reads_renderings_once",
   "tests/test_english_lean_tokens.py::test_pythons_two_derivation_fixture_is_ambiguous_over_tokens",
+=======
+  "tests/test_english_lean_tables.py::test_idiom_tables_equal_python",
+  "tests/test_english_lean_tables.py::test_irregular_verbs_equal_python",
+  "tests/test_english_lean_tables.py::test_past_verbs_equal_python",
+  "tests/test_english_lean_tables.py::test_whitespace_list_equals_python_isspace",
+>>>>>>> english-lean/lean
   "tests/test_english_unambiguity.py::test_derivation_node_budget_rejects",
   "tests/test_english_unambiguity.py::test_earley_alarm_budget_restores_signal_state",
   "tests/test_english_unambiguity.py::test_earley_time_budget_rejects_in_worker_thread",
