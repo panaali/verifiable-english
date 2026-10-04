@@ -73,10 +73,11 @@ COMPILED = {
 INSTANCE = "VE.Demo.instInhabitedNat"
 
 
-def write_declarations(root: Path) -> None:
+def write_declarations(root: Path, generated: dict[str, list[str]] | None = None) -> None:
     """lean/declarations.txt for every file of a fixture tree, as tools/lean_statements.py writes it
     from the compiled environment: a fixture source takes its `COMPILED` entries, a committed file
-    its block of the committed list."""
+    its block of the committed list. `generated` adds, per module, constants without a source
+    range whose name extends no constant (`<kind> <name>`, as a `run_elab` adds them)."""
     sources = {globals()[name]: entries for name, entries in COMPILED.items()}
     committed, hashes = lean_statements.declaration_list()
     blocks = []
@@ -88,7 +89,8 @@ def write_declarations(root: Path) -> None:
         else:
             assert hashes[module] == digest, path
             entries = [f"{d.start[0]}:{d.start[1]}-{d.end[0]}:{d.end[1]} {d.kind} {d.name}@{module}"
-                       for d in committed[module]]
+                       if d.start else f"generated {d.kind} {d.name}@{module}" for d in committed[module]]
+        entries += [f"generated {e}@{module}" for e in (generated or {}).get(module, [])]
         blocks.append(f"module {module} {digest}\n" + "".join(f"{e}\n" for e in entries))
     (root / "lean/declarations.txt").write_text("-- header\n" + "".join(blocks))
 
@@ -399,6 +401,14 @@ COMPILED["WHERE"] = ["2:0-4:38 def VE.Demo.decoder", "4:2-4:38 def VE.Demo.decod
 WHERE_FILES = {"files": {"VE/Where.lean": "WHERE"}}
 NESTED = "VE.Demo.decoder.WellFormed@VE.Where"
 
+# Review B (consolidate-b1 fix 5): a module whose source declares nothing Lean records a range
+# for, as one whose only command is a `run_elab` that adds `VE.Empty.WellFormed` with `addDecl`.
+# The predicate list names the predicate, but no declaration of the module did, so no file placed
+# it and every entry point passed with zero trusted lines.
+EMPTY = "namespace VE.Empty\nend VE.Empty\n"
+COMPILED["EMPTY"] = []
+EMPTY_FILES = {"files": {"VE/Empty.lean": "EMPTY"}}
+
 
 def where_tree(decoder: dict, dump: str = "", predicates: tuple[str, ...] = (NESTED,)) -> tuple:
     """A problem tree: VE/Demo.lean with Meaning S, and VE/Where.lean with the decoder classed `decoder`."""
@@ -470,6 +480,17 @@ PROBLEM_TREES = {
     # its name extends; one that extends none is part of nothing and fails.
     "rangeless predicate of a C declaration": ({"C": ["VE.Demo.Meaning"]}, "", ("VE.Demo.Meaning.below",), False),
     "predicate of no declaration": ({"S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.orphan",), False),
+    # Review B (consolidate-b1 fix 5): every constant of the compiled dumps is placed or fails,
+    # whatever file or module it names. A predicate of a file without declarations, of a module
+    # that is no file, a module the predicate scan read that is no file, and a constant Lean
+    # records without a range whose name extends no constant.
+    "predicate of a file without declarations": ({"S": ["VE.Demo.Meaning"]}, "", ("VE.Empty.WellFormed@VE.Empty",),
+                                                 False, EMPTY_FILES),
+    "predicate of a module that is no file": ({"S": ["VE.Demo.Meaning"]}, "", ("VE.Gone.WellFormed@VE.Gone",), False),
+    "scanned module that is no file": ({"S": ["VE.Demo.Meaning"]}, "", (), False, {"modules": ("VE.Demo", "VE.Gone")}),
+    "generated constant": ({"S": ["VE.Demo.Meaning"]}, "", (), False, {"generated": {"VE.Demo": ["def VE.Demo.made"]}}),
+    "generated constant of a file without declarations": (
+        {"S": ["VE.Demo.Meaning"]}, "", (), False, {**EMPTY_FILES, "generated": {"VE.Empty": ["def VE.Empty.made"]}}),
 }
 VALID_TREES = {
     "tied": (TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False),
@@ -497,7 +518,8 @@ def problem_tree(root: Path, tree: tuple) -> None:
     """Write a fixture tree: (table of VE/Demo.lean, statement dump, predicates, drop the predicate
     list, options). The options add files (`files`, path under lean/ to source or "OTHER"), table
     entries of other files (`table`), the modules the predicate scan read (`modules`, default every
-    file), a predicate list verbatim (`predicates`), a declaration list verbatim (`declarations`,
+    file), a predicate list verbatim (`predicates`), generated constants of the declaration list
+    (`generated`, as `write_declarations` takes them), a declaration list verbatim (`declarations`,
     None for none) and a file edited after the declaration list was written (`edit`)."""
     table, dump, predicates, drop, *rest = tree
     options = rest[0] if rest else {}
@@ -505,7 +527,7 @@ def problem_tree(root: Path, tree: tuple) -> None:
     modules = options.get("modules", ("VE.Demo", *(f.removesuffix(".lean").replace("/", ".") for f in files)))
     write_tree(root, table, dump, predicates, modules)
     for name, text in files.items():
-        (root / "lean" / name).write_text({"OTHER": OTHER, "WHERE": WHERE}.get(text, text))
+        (root / "lean" / name).write_text({"OTHER": OTHER, "WHERE": WHERE, "EMPTY": EMPTY}.get(text, text))
     if "table" in options:
         path = root / "tools/trust-classes.json"
         path.write_text(json.dumps({"modules": {**json.loads(path.read_text())["modules"], **options["table"]}}))
@@ -513,7 +535,7 @@ def problem_tree(root: Path, tree: tuple) -> None:
         (root / "lean/predicates.txt").write_text(options["predicates"])
     if drop:
         (root / "lean/predicates.txt").unlink()
-    write_declarations(root)
+    write_declarations(root, options.get("generated"))
     if "declarations" in options:
         if options["declarations"] is None:
             (root / "lean/declarations.txt").unlink()
@@ -568,6 +590,16 @@ def test_ledger_and_measure_share_validation_and_trust(tmp_path, name):
      "its own (a tie of the declaration does not tie what is inside it)"),
     ("predicate of no declaration", "VE/Demo.lean: the predicate VE.Demo.orphan is part of no declaration of the "
      "file (no source range, and its name extends none); rerun tools/lean_statements.py"),
+    ("predicate of a file without declarations", "VE/Empty.lean: the predicate VE.Empty.WellFormed is part of no "
+     "declaration of the file (no source range, and its name extends none); rerun tools/lean_statements.py"),
+    ("predicate of a module that is no file", "predicates.txt: the predicate VE.Gone.WellFormed is of module VE.Gone, "
+     "which is not a file of the tree; rerun tools/lean_statements.py"),
+    ("scanned module that is no file", "predicates.txt read module VE.Gone, which is not a file of the tree; rerun "
+     "tools/lean_statements.py"),
+    *((name, f"{file}: VE.{module}.made (def) has no source range and its name extends no constant (a metaprogram such "
+       "as `run_elab` or `addDecl` made it): no line of the file can be classified for it")
+      for name, file, module in (("generated constant", "VE/Demo.lean", "Demo"),
+                                 ("generated constant of a file without declarations", "VE/Empty.lean", "Empty"))),
 ])
 def test_declarations_are_told_apart_by_module(tmp_path, name, problem):
     """Review B (looprecheck 3): a declaration is its name and its module. Each tree fails for
@@ -797,6 +829,114 @@ def test_no_entry_point_succeeds_on_a_validation_problem(tmp_path, capsys, name,
         assert "| Step |" not in out and "the ledger is not reported" in err
 
 
+SECTION11 = "## 11. Per-module line counts\n"
+# The problem trees whose compiled dumps fail; the table plays no part, since `--seed` rewrites it.
+DUMP_PROBLEMS = ["predicate list missing", "a file the predicate scan did not read", "predicate list without modules",
+                 "source edited after the declaration list", "declaration list missing",
+                 "declaration list of another module", "predicate of no declaration",
+                 "predicate of a file without declarations", "predicate of a module that is no file",
+                 "scanned module that is no file", "generated constant",
+                 "generated constant of a file without declarations"]
+
+
+@pytest.mark.parametrize("name", DUMP_PROBLEMS)
+def test_seed_reads_the_dumps_as_every_entry_point_does(tmp_path, name):
+    """`--seed` reads the tree through the same pass (`read_tree`, `place_tree`): it refuses every
+    dump `walk` refuses, and leaves the table as it was."""
+    problem_tree(tmp_path, PROBLEM_TREES[name])
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/TRUST-MAP.md").write_text(SECTION11)
+    table = (tmp_path / "tools/trust-classes.json").read_text()
+    with pytest.raises(SystemExit, match="cannot seed from compiled dumps that fail"):
+        trust_map.main(["--seed", str(tmp_path / "docs/TRUST-MAP.md"), "--root", str(tmp_path)])
+    assert (tmp_path / "tools/trust-classes.json").read_text() == table
+
+
+def add_decl(name: str, type_: str, value: str) -> str:
+    """A `run_elab` command adding the definition `name` with `addDecl`: Lean records no source
+    range for it."""
+    return (f"run_elab do\n  addDecl <| Declaration.defnDecl {{\n    name := `{name}\n    levelParams := []\n"
+            f"    type := {type_}\n    value := {value}\n    hints := .abbrev\n    safety := .safe\n  }}\n")
+
+
+ELAB_HEADER = "import Lean\nopen Lean Elab Command\n"
+CONTROL = "namespace VE.Control\ndef checked : Nat := 0\nend VE.Control\n"
+# Review B (consolidate-b1 fix 5), the reviewer's reproducer: VE/Demo.lean's only command adds the
+# predicate `VE.Demo.WellFormed`, so the module has no ranged declaration; VE/Control.lean adds a
+# definition beside a written one. Neither constant has a line of its own.
+ADDED = {"VE/Demo.lean": ELAB_HEADER + add_decl("VE.Demo.WellFormed", "mkSort .zero", "mkConst ``True"),
+         "VE/Control.lean": ELAB_HEADER + CONTROL + add_decl("VE.Control.decide", "mkConst ``Nat", "mkNatLit 1")}
+ADDED_PROBLEMS = sorted([
+    "VE/Demo.lean: the predicate VE.Demo.WellFormed is part of no declaration of the file (no source range, and its "
+    "name extends none); rerun tools/lean_statements.py",
+    *(f"{file}: {name} (def) has no source range and its name extends no constant (a metaprogram such as `run_elab` "
+      "or `addDecl` made it): no line of the file can be classified for it"
+      for file, name in (("VE/Demo.lean", "VE.Demo.WellFormed"), ("VE/Control.lean", "VE.Control.decide")))])
+
+
+@pytest.fixture(scope="module")
+def added_tree(tmp_path_factory):
+    """A compiled tree with the baseline written before the `run_elab` commands were added, and the
+    dumps written after."""
+    root = tmp_path_factory.mktemp("added")
+    lean = root / "lean"
+    (lean / "VE").mkdir(parents=True)
+    shutil.copy(ROOT / "lean/lean-toolchain", lean / "lean-toolchain")
+    (lean / "lakefile.toml").write_text(COLLISION["lakefile.toml"])
+    (lean / "VE.lean").write_text("import VE.Demo\nimport VE.Control\n")
+    (lean / "VE/Audit.lean").write_text("import VE\n")
+    for folder in ("tools", "docs"):
+        (root / folder).mkdir()
+    (root / "tools/consolidation-ledger.json").write_text(json.dumps(
+        {"steps": [{"step": "all", "title": "", "days": 1, "risk": 1, "removed": [{"module": "*"}]}]}))
+    (root / "tools/trust-classes.json").write_text(json.dumps({"modules": {"VE/Control.lean": {"C": ["VE.Control.checked"]}}}))
+    (root / "docs/TRUST-MAP.md").write_text(SECTION11)
+
+    def dump(sources: dict[str, str]) -> None:
+        for path, text in sources.items():
+            (lean / path).write_text(text)
+        for name, text in zip(("statements", "predicates", "declarations"), lean_statements.dump_all(root)):
+            (lean / f"{name}.txt").write_text(text)
+
+    dump({"VE/Demo.lean": ELAB_HEADER, "VE/Control.lean": CONTROL})
+    assert trust_map.main(["--write", "--root", str(root)]) == 0
+    assert json.loads((root / "docs/trust-baseline.json").read_text())["totals"]["trusted"] == 0
+    dump(ADDED)
+    declarations = (lean / "declarations.txt").read_text()
+    assert "\ngenerated def VE.Demo.WellFormed@VE.Demo\n" in declarations
+    assert "\ngenerated def VE.Control.decide@VE.Control\n" in declarations
+    assert lean_statements.declaration_list(lean / "declarations.txt")[0]["VE.Demo"] == [
+        lean_statements.Declared("VE.Demo.WellFormed", "def", None, None)]
+    assert lean_statements.predicates(lean / "predicates.txt") == {("VE.Demo", "VE.Demo.WellFormed")}
+    return root
+
+
+@pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
+@pytest.mark.parametrize("flags", [[], ["--write"], ["--check"], ["--ledger"], ["--seed"]])
+def test_constants_added_by_a_metaprogram_fail_every_entry_point(added_tree, tmp_path, capsys, flags):
+    """Review B (consolidate-b1 fix 5), compiled: the dumps list `VE.Demo.WellFormed` but no ranged
+    declaration of VE.Demo, so no file placed the predicate; the default report, `--write`,
+    `--check` and `--ledger` exited 0 with zero trusted lines against the unchanged baseline. Each
+    entry point now fails on every constant no line of the tree is placed for, and writes nothing."""
+    root = tmp_path / "tree"
+    shutil.copytree(added_tree, root)
+    _, problems = trust_map.measure(root, root / "tools/trust-classes.json", root / "lean/statements.txt")
+    assert sorted(problems) == ADDED_PROBLEMS
+    baseline, table = (root / "docs/trust-baseline.json").read_text(), (root / "tools/trust-classes.json").read_text()
+    capsys.readouterr()
+    if flags == ["--seed"]:
+        with pytest.raises(SystemExit, match="cannot seed from compiled dumps that fail") as failed:
+            trust_map.main(["--seed", str(root / "docs/TRUST-MAP.md"), "--root", str(root)])
+        err = str(failed.value)
+    else:
+        assert trust_map.main([*flags, "--root", str(root)]) == 1
+        out, err = capsys.readouterr()
+        assert "PASS" not in out and "| Step |" not in out and "wrote" not in out
+    assert all(problem in err for problem in ADDED_PROBLEMS)
+    assert (root / "docs/trust-baseline.json").read_text() == baseline
+    assert (root / "tools/trust-classes.json").read_text() == table
+
+
 def test_ledger_rejects_a_misclassified_kernel_predicate(tmp_path, capsys):
     """Review B (looprecheck 1): with the committed `Closure/Syntax.lean`, `Formula.WellFormed`
     classed C passed `--ledger` with zero trusted lines and exit 0."""
@@ -913,10 +1053,10 @@ def unsound(walked: list, table: dict, proved: dict, predicates: set[tuple[str, 
         held = [p for p in d.decl.parts if (me[0], p) in predicates] if me else []
         if held and not ((counted and not d.tied) or d.cls in {"P", "T"}):
             errors.append(f"{name}: holds the predicates {held} and is reported {d.cls}{' tied' * d.tied}")
-    # Every predicate of a reported module is reported, as a declaration or a part of one.
-    modules = {ident(d)[0] for d in walked if d.decl.name is not None}
+    # Every predicate of the list is reported, as a declaration or a part of one, whether or not
+    # its module reports any declaration (consolidate-b1 fix 5).
     placed = {(ident(d)[0], n) for d in walked if d.decl.name is not None for n in (d.decl.name, *d.decl.parts)}
-    errors += [f"{p}: a predicate reported nowhere" for p in predicates if p[0] in modules and p not in placed]
+    errors += [f"{p}: a predicate reported nowhere" for p in predicates if p not in placed]
     return errors
 
 
@@ -936,8 +1076,8 @@ def mutate(table: dict, module: str, name: str, variant: object) -> dict:
     return out
 
 
-def assert_sound_or_rejected(decls, table, proved, predicates, label) -> None:
-    walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
+def assert_sound_or_rejected(decls, files, table, proved, predicates, label) -> None:
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates, files)
     errors = unsound(walked, table, proved, predicates)
     assert problems or not errors, f"{label}: passed while {errors}"
 
@@ -947,49 +1087,64 @@ def test_mutated_fixture_classes_are_reported_or_rejected(tmp_path, name):
     """Every named declaration of a valid fixture tree, alone and in pairs, takes every class
     (untied and tied) or none."""
     problem_tree(tmp_path, VALID_TREES[name])
-    decls, _, _, _ = trust_map.scan_tree(tmp_path)
+    decls, files, _, _ = trust_map.scan_tree(tmp_path)
     table = trust_map.load_table(tmp_path / "tools/trust-classes.json")
     proved = trust_map.statements(tmp_path / "lean/statements.txt")
     predicates = trust_map.lean_predicates(tmp_path / "lean/predicates.txt")
-    assert not unsound(*trust_map.classify_tree(decls, table, proved, predicates)[:1], table, proved, predicates)
+    assert not unsound(*trust_map.classify_tree(decls, table, proved, predicates, files)[:1], table, proved, predicates)
     targets = sorted({(m, d.name) for m, d in decls if d.name is not None})
     variants = {t: entry_variants(table.get(t[0], {}).get(t[1]), sorted(proved)) for t in targets}
     for i, (module, decl) in enumerate(targets):
         for variant in variants[module, decl]:
             once = mutate(table, module, decl, variant)
-            assert_sound_or_rejected(decls, once, proved, predicates, f"{decl}={variant}")
+            assert_sound_or_rejected(decls, files, once, proved, predicates, f"{decl}={variant}")
             for module2, decl2 in targets[i + 1:]:
                 for variant2 in variants[module2, decl2]:
-                    assert_sound_or_rejected(decls, mutate(once, module2, decl2, variant2), proved, predicates,
+                    assert_sound_or_rejected(decls, files, mutate(once, module2, decl2, variant2), proved, predicates,
                                              f"{decl}={variant}, {decl2}={variant2}")
+
+
+@pytest.mark.parametrize("name", ["predicate of no declaration", "predicate of a file without declarations",
+                                  "predicate of a module that is no file"])
+def test_oracle_sees_every_unplaced_predicate(tmp_path, name):
+    """The oracle checks every predicate of the list, not only those of modules that report a
+    declaration (consolidate-b1 fix 5: it shared the tool's blind spot), and the tool rejects each
+    one it reports nowhere."""
+    problem_tree(tmp_path, PROBLEM_TREES[name])
+    decls, files, _, _ = trust_map.scan_tree(tmp_path)
+    predicates = trust_map.lean_predicates(tmp_path / "lean/predicates.txt")
+    table, proved = trust_map.load_table(tmp_path / "tools/trust-classes.json"), {}
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates, files)
+    assert [e for e in unsound(walked, table, proved, predicates) if "a predicate reported nowhere" in e] and problems
 
 
 @pytest.fixture(scope="module")
 def committed_tree():
-    decls, _, _, _ = trust_map.scan_tree()
-    return decls, trust_map.load_table(), trust_map.statements(), trust_map.lean_predicates()
+    decls, files, _, _ = trust_map.scan_tree()
+    return decls, files, trust_map.load_table(), trust_map.statements(), trust_map.lean_predicates()
 
 
 def test_mutated_committed_ties_are_reported_or_rejected(committed_tree):
     """Every committed tie and every declaration its theorems mention (its possible anchors) takes
     every class, untied and tied, or none, against the committed dump and the files they live in
-    (with those files' table entries, so the sub-tree is itself a valid tree)."""
-    decls, table, proved, predicates = committed_tree
-    walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
+    (with those files' table entries and predicates, so the sub-tree is itself a valid tree)."""
+    decls, files, table, proved, predicates = committed_tree
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates, files)
     assert problems == [] and not unsound(walked, table, proved, predicates)
     owner = {trust_map.ident(m, d.name): m for m, d in decls if d.name is not None}
     tying = sorted({t for entries in table.values() for e in entries.values() if isinstance(e, dict) for t in e["tied"]})
     targets = sorted({(m, n) for m, entries in table.items() for n, e in entries.items() if isinstance(e, dict)}
                      | {(owner[u], u[1]) for t in tying for u in proved[t] if u in owner})
     assert len(targets) > len(tying)
-    files = {m for m, _ in targets}
+    files = sorted({m for m, _ in targets})
     decls = [(m, d) for m, d in decls if m in files]
     table = {m: entries for m, entries in table.items() if m in files}
-    walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
+    predicates = {p for p in predicates if p[0] in {lean_statements.module_name(m) for m in files}}
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates, files)
     assert problems == [] and not unsound(walked, table, proved, predicates)
     for module, name in targets:
         for variant in entry_variants(table.get(module, {}).get(name), tying[:1]):
-            assert_sound_or_rejected(decls, mutate(table, module, name, variant), proved, predicates,
+            assert_sound_or_rejected(decls, files, mutate(table, module, name, variant), proved, predicates,
                                      f"{name}={variant}")
 
 
