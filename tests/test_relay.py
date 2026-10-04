@@ -15,7 +15,7 @@ from ve import Environment
 from ve.admission import AdmissionError
 from ve.ast import Const, Unary, formula_to_data
 from ve.backends import lean as lean_backend, relay
-from ve.backends.service_schema import DIRECTORY as SCHEMAS
+from ve.backends.service_schema import DIRECTORY as SCHEMAS, same_json
 from ve.errors import (CheckerUnavailable, InvalidModel, ResourceLimit, UnknownSymbol, UnsupportedProfile,
                        VEError)
 
@@ -162,6 +162,7 @@ TRANSPORTS = {
     "readings": lambda exe, case: lean_backend.run_readings_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
 }
 CODED = {"soft"}
+RESTRICTED = {"run", "alternatives", "reports"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
 
 
 def test_every_runner_transport_is_listed():
@@ -190,6 +191,10 @@ def test_every_runner_transport_is_listed():
              "discourse": "run_discourse_case", "reports": "run_reports_case",
              "norm-defaults": "run_norm_defaults_cases", "readings": "run_readings_cases"}
     assert public == {names[key] for key in TRANSPORTS}
+    restricted = {node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
+                  and any(isinstance(k, ast_module.keyword) and k.arg == "restricted"
+                          and getattr(k.value, "value", None) is True for k in ast_module.walk(node))}
+    assert restricted == {names[key] for key in RESTRICTED}
 
 
 def _row(**fields):
@@ -224,6 +229,11 @@ NO_ANSWER = {
     "no-error-text": (_row(status="error"), 1),
     "duplicate-field": (b'[{"id":"0","id":"0","status":"ok"}]', 0),
     "non-finite": (b'[{"id":"0","status":"ok","value":NaN}]', 0),
+    # lf-0 looprecheck1 B3: a number no float holds is no answer, never infinity or zero.
+    "float-overflow": (b'[{"id":"0","status":"ok","value":1e999}]', 0),
+    "float-overflow-negative": (b'[{"id":"0","status":"ok","value":-1.5E+400}]', 0),
+    "float-underflow": (b'[{"id":"0","status":"ok","value":1e-999}]', 0),
+    "float-overflow-in-error": (b'[{"id":"0","status":"error","error":"x","value":[2e308]}]', 1),
     "too-deep": (b'[{"id":"0","status":"ok","value":' + b"[" * 100_000 + b"]" * 100_000 + b"}]", 0),
     "two-rows": (json.dumps([{"id": "0", "status": "ok"}] * 2).encode(), 0),
     "exit-2": (_row(status="ok"), 2),
@@ -232,32 +242,45 @@ NO_ANSWER = {
 }
 
 
-def _mutants():
-    """Genuine rows with one field dropped, retyped or duplicated, or a foreign identity added:
-    none is an answer to CASE (checklist line 4)."""
-    genuine = {"ok": ({"id": "0", "status": "ok"}, 0), "error": ({"id": "0", "status": "error", "error": "x"}, 1)}
+# The identities a submitted case can have: the runners echo the `id` field, `null` for a case
+# without one (lf-0 looprecheck1 B2: a row without the field matched a case without one).
+CASES = {"string-id": CASE, "no-id": {"kind": "bundle"}}
+
+
+def _mutants(case):
+    """Genuine rows for `case` with one field dropped, retyped or duplicated, or a foreign identity
+    added: none is an answer to `case` (checklist line 4)."""
+    ident = case.get("id")
+    genuine = {"ok": ({"id": ident, "status": "ok"}, 0), "error": ({"id": ident, "status": "error", "error": "x"}, 1)}
     for kind, (row, status) in genuine.items():
         for name in row:
             yield f"{kind}-drop-{name}", {k: v for k, v in row.items() if k != name}, status
             # Every retyping, and for the identity and status fields a near-miss of the same type.
-            near = {"id": (0, "0 "), "status": ("OK", "")}.get(name, ())
+            near = {"id": (0, "0 ", "", False, "null"), "status": ("OK", "")}.get(name, ())
             for bad in (7, True, None, [], {}, "\ud800", *near):
-                yield f"{kind}-{name}-{bad!r}", {**row, name: bad}, status
+                if not same_json(bad, row[name]):
+                    yield f"{kind}-{name}-{bad!r}", {**row, name: bad}, status
         yield f"{kind}-case-index", {**row, "case_index": 0}, status
         yield f"{kind}-false-case-index", {**row, "case_index": False}, status
-    yield "ok-code", {"id": "0", "status": "ok", "code": "InvalidInput"}, 0
-    yield "ok-error", {"id": "0", "status": "ok", "error": ""}, 0
+    yield "ok-code", {"id": ident, "status": "ok", "code": "InvalidInput"}, 0
+    yield "ok-error", {"id": ident, "status": "ok", "error": ""}, 0
+    # The soft route's coded rejection, naming no case (the looprecheck1 B2 reproducer).
+    yield "coded-error-no-id", {"status": "error", "error": "InvalidInput: invalid vocabulary",
+                                "code": "SOFT_UNKNOWN_RANK"}, 1
 
 
-MUTANTS = {name: (json.dumps([row]).encode(), status) for name, row, status in _mutants()}
+# fault -> (stdout, exit status, the submitted case); the mutants of a case without an id are `no-id-*`.
+FAULTS = {name: (stdout, status, CASE) for name, (stdout, status) in NO_ANSWER.items()} | {
+    ("" if identity == "string-id" else f"{identity}-") + name: (json.dumps([row]).encode(), status, case)
+    for identity, case in CASES.items() for name, row, status in _mutants(case)}
 
 
 @pytest.mark.parametrize("transport", TRANSPORTS)
-@pytest.mark.parametrize("fault", [*NO_ANSWER, *MUTANTS])
+@pytest.mark.parametrize("fault", FAULTS)
 def test_output_that_is_no_answer_is_checker_unavailable(tmp_path, transport, fault):
-    stdout, status = NO_ANSWER.get(fault) or MUTANTS[fault]
+    stdout, status, case = FAULTS[fault]
     with pytest.raises(CheckerUnavailable):
-        TRANSPORTS[transport](_runner(tmp_path, stdout, status), CASE)
+        TRANSPORTS[transport](_runner(tmp_path, stdout, status), case)
 
 
 @pytest.mark.parametrize("transport", sorted(set(TRANSPORTS) - CODED))
@@ -277,20 +300,33 @@ def test_the_soft_routes_coded_rejection_keeps_its_code(tmp_path):
 
 
 @pytest.mark.parametrize("transport", TRANSPORTS)
-def test_genuine_rows_are_answers(tmp_path, transport):
+@pytest.mark.parametrize("identity", CASES)
+def test_genuine_rows_are_answers(tmp_path, transport, identity):
     """Controls: a case rejection, a position row and (but for `run`, whose binding requires
-    fields) a success are rows on every transport; the soft route raises its rejections."""
-    for stdout, status in ((_row(status="error", error="E: x"), 1),
+    fields) a success are rows on every transport, for a case with an id and one without (whose
+    rows carry `"id": null`); the soft route raises its rejections. Numbers a float holds are
+    read as such, zero included. The transports reading VE's restricted JSON, which has neither
+    null nor fractions, refuse rows holding them."""
+    case = CASES[identity]
+
+    def row(**fields):
+        return json.dumps([{"id": case.get("id"), **fields}]).encode()
+
+    for stdout, status in ((row(status="error", error="E: x"), 1),
                            (json.dumps([{"case_index": 0, "status": "error", "error": "E: x"}]).encode(), 1),
-                           (_row(status="ok", value="é ok"), 0)):
+                           (row(status="ok", value="é ok"), 0),
+                           (row(status="ok", value=[1.5, -0.0, 1.7976931348623157e308, 5e-324]), 0)):
         if transport == "run" and status == 0:
             continue
         exe = _runner(tmp_path, stdout, status)
-        if transport == "soft" and status == 1:
+        if transport in RESTRICTED and (b"null" in stdout or b"." in stdout):
+            with pytest.raises(CheckerUnavailable, match="not a JSON result array"):
+                TRANSPORTS[transport](exe, case)
+        elif transport == "soft" and status == 1:
             with pytest.raises(VEError, match="^E: x$"):
-                _soft(exe, CASE)
+                _soft(exe, case)
         else:
-            assert TRANSPORTS[transport](exe, CASE) == json.loads(stdout)[0]
+            assert TRANSPORTS[transport](exe, case) == json.loads(stdout)[0]
 
 
 def test_the_rust_checker_output_is_read_by_the_same_decoder(tmp_path):
@@ -312,6 +348,42 @@ def test_the_checker_output_decoder_refuses_text_that_is_not_unicode(text):
     with pytest.raises(ValueError):
         _decode_json(text)
     assert _decode_json(b'["\\ud83d\\ude00"]') == ["\U0001F600"]
+
+
+@pytest.mark.parametrize("number", [b"1e999", b"-1e999", b"1E+309", b"2e308", b"1e-999", b"-0.1e-400", b"1.0e-330"])
+def test_the_checker_output_decoder_refuses_numbers_no_float_holds(number):
+    """lf-0 looprecheck1 B3: `json` reads them as infinity or zero without `parse_constant`."""
+    from ve.backends.lean_service import _decode_json
+    with pytest.raises(ValueError, match="outside the float range"):
+        _decode_json(b'{"value":' + number + b"}")
+
+
+@pytest.mark.parametrize("number, value", [(b"0e999", 0.0), (b"-0.0e-999", 0.0), (b"0.000", 0.0), (b"1.5", 1.5),
+                                           (b"5e-324", 5e-324), (b"1.7976931348623157e308", 1.7976931348623157e308),
+                                           (b"1" + b"0" * 400, 10 ** 400)])
+def test_the_checker_output_decoder_keeps_numbers_a_float_or_int_holds(number, value):
+    from ve.backends.lean_service import _decode_json
+    assert _decode_json(b"[" + number + b"]") == [value]
+
+
+def test_the_rust_checker_output_must_name_its_case(tmp_path):
+    """lf-0 looprecheck1 B2 on the Rust reader: a record without `id` (or `false` for case 0) is
+    no answer, also to a case without an id; Rust echoes `""` for that case."""
+    import hashlib
+    from ve.backends import rust_jsonl
+    exe, out = tmp_path / "rust", tmp_path / "out.bin"
+    exe.write_text(f"#!/bin/sh\ncat >/dev/null\ncat '{out}'\nexit 1\n")
+    exe.chmod(0o755)
+    run = lambda case: rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,  # noqa: E731
+                                      expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())
+    for record, case in (({}, {"kind": "evaluate"}), ({"id": False}, {"id": 0}), ({"id": 0}, {"id": False}),
+                         ({"id": None}, {"kind": "evaluate"}), ({"id": "0"}, {"id": 0})):
+        out.write_text(json.dumps({**record, "status": "error", "error": "UnknownSymbol: x"}) + "\n")
+        with pytest.raises(CheckerUnavailable, match="mismatched Rust response id"):
+            run(case)
+    out.write_text(json.dumps({"id": "", "status": "error", "error": "UnknownSymbol: x"}) + "\n")
+    with pytest.raises(UnknownSymbol):
+        run({"kind": "evaluate"})
 
 
 # The relay itself, over a scripted service (the persistent path): the same answers are

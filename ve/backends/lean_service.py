@@ -40,6 +40,7 @@ import hashlib
 import itertools
 import json
 from decimal import Decimal
+import math
 import os
 from pathlib import Path
 import queue
@@ -80,7 +81,8 @@ def _decode_json(line: bytes | str) -> object:
     """A checker's JSON output (this service, the one-shot Lean runners, the Rust JSONL checker):
     bytes that are not UTF-8, duplicate fields, non-finite constants and strings that are not
     Unicode text (a `\\ud800` escape decodes to a lone surrogate, which no Lean or Rust string
-    holds) raise ValueError; nesting beyond Python's recursion limit raises RecursionError."""
+    holds) and numbers no float holds (`_json_float`) raise ValueError; nesting beyond Python's
+    recursion limit raises RecursionError."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -94,7 +96,7 @@ def _decode_json(line: bytes | str) -> object:
 
     text = line.decode("utf-8") if isinstance(line, (bytes, bytearray)) else line
     value = json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
-                       parse_int=_json_integer)
+                       parse_int=_json_integer, parse_float=_json_float)
     pending = [value]
     while pending:
         item = pending.pop()
@@ -116,6 +118,16 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
+
+
+def _json_float(text: str) -> float:
+    """A JSON number with a fraction or exponent, as its nearest float. `json` reads an
+    exponent beyond the float range as infinity (`1e999`) or zero (`1e-999`) without calling
+    `parse_constant`: such a number is ValueError, never a value it is not."""
+    value = float(text)
+    if not math.isfinite(value) or (value == 0 and re.split("[eE]", text)[0].strip("-+0.")):
+        raise ValueError(f"JSON number {text} is outside the float range")
+    return value
 
 
 _JSON_WHITESPACE = " \t\r\n"
