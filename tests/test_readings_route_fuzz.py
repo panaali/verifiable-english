@@ -239,6 +239,57 @@ def test_every_mutant_of_a_genuine_answer_is_unavailable(corpus):
     assert accepted == []
 
 
+def _category(value):
+    return "null" if value is None else type(value).__name__
+
+
+def test_the_schema_alone_refuses_every_type_fault(corpus):
+    """Each layer holds on its own (build checklist 13): the schema refuses every replacement that changes a
+    node's JSON type, outside the two the producer allows (a null or Boolean `other_value`, a list emptied), and
+    an empty `sets` or `candidates`."""
+    for case, row in corpus:
+        assert route.ROW(row)
+        for path, label, mutant in _mutants(row):
+            if not label.startswith("replaced") or not path:
+                continue
+            old, new = _at(row, path), _at(mutant, path)
+            if _category(old) == _category(new) or (path[-1] == "other_value" and new in (None, True, False)):
+                continue
+            if new == [] and type(old) is list:
+                continue
+            assert not route.ROW(mutant), (path, label)
+        if row["content_bearing"]:
+            for path in (("sets",), ("sets", 0, "candidates")):
+                mutant = copy.deepcopy(row)
+                _at(mutant, path[:-1])[path[-1]] = []
+                assert not route.ROW(mutant), path
+
+
+def test_the_binding_alone_refuses_every_well_typed_mutant(corpus):
+    """A mutant the schema passes is refused by the binding deliberately (`_Invalid`), not by a crash that the
+    containment happens to catch."""
+    for case, row in corpus:
+        for path, label, mutant in _mutants(row):
+            if mutant == row or _lean_decided(path) or not route.ROW(mutant) or path == ("id",):
+                continue
+            with pytest.raises(route._Invalid):
+                route._bind(mutant, case["document"])
+        if row["content_bearing"]:
+            with pytest.raises(route._Invalid):
+                route._bind({"id": row["id"], "status": "ok", "content_bearing": False}, case["document"])
+
+
+@pytest.mark.parametrize("error", [TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError])
+def test_a_failure_of_the_check_itself_is_contained(monkeypatch, corpus, error):
+    case, row = corpus[0]
+
+    def failing(row, document):
+        raise error("injected")
+    monkeypatch.setattr(route, "_bind", failing)
+    with pytest.raises(CheckerUnavailable, match="ve_readings_route returned an invalid answer"):
+        route._check(row, case)
+
+
 def _two_faults(row):
     """Two type faults at once, at the first and last leaf of each set: the second must not mask the first."""
     leaves = [p for p in _paths(row) if p and type(_at(row, p)) not in (dict, list)]
