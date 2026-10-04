@@ -70,7 +70,8 @@ def base_environment(meta):
         if type(data) is dict and type(data.get("profiles")) is list and PROFILE in data["profiles"]:
             raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
         return data
-    if type(data) is not dict or type(data.get("profiles")) is not list:
+    if (type(data) is not dict or type(data.get("profiles")) is not list
+            or any(type(p) is not str for p in data["profiles"])):
         raise VEError("invalid environment profiles")
     profiles = data["profiles"]
     if profiles != sorted(set(profiles)) or PROFILE not in profiles or "relational-fol@0" not in profiles:

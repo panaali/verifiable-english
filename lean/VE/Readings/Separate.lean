@@ -310,6 +310,31 @@ def forceTwins (c c' : Content) : Option (SoftNode × SoftNode) :=
     else none
   | .rightLines r ls, .rightLines r' ls' => if r == r' then twinLineLists ls ls' else none
   | _, _ => none
+/-- A node of the strict reading's elaboration with the default twin's mode, exception and `hard` when it carries
+    the twin's name; any other node unchanged. -/
+def relaxTo (Nd M : SoftNode) : SoftNode :=
+  if M.name == Nd.name then { M with mode := .default, exception := Nd.exception, hard := Nd.hard } else M
+/-- The default reading's document is the strict reading's with only the twin's mode changed, read on what the
+    semantics uses: both contents declare the same names, the twin's among them; the two readings assert the same
+    formulas and generate the same rights vocabulary and `Lim_D`; the elaborated rules of the default reading are
+    the strict reading's through `relaxTo`, where the twin's name is strict; the generated keys differ by the
+    twin's exception key only, which is the one key named by the twin's exception predicate; the selectable rules
+    correspond through `relaxTo`; and no definition takes the exception predicate's name. -/
+def twinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : SoftNode) : Bool :=
+  let Xs := one D s i
+  let Xd := one D s j
+  let k₀ := GenKey.excepted Nd.name none
+  decide (ci.declared = cj.declared) && cj.declared.contains ("rule", Nd.name) && decide (Xs.2 = Xd.2) &&
+  decide (VE.Rights.genDecls Xs.1 = VE.Rights.genDecls Xd.1) &&
+  decide (VE.Rights.limPremises Xs.1 = VE.Rights.limPremises Xd.1) &&
+  decide ((correlate Xd.1).T.nodes = (correlate Xs.1).T.nodes.map (relaxTo Nd)) &&
+  (correlate Xs.1).T.nodes.all (fun M => M.name != Nd.name || M.mode == .strict) &&
+  decide (genKeys Xs.1 = (genKeys Xd.1).filter (·.1 != k₀)) &&
+  (genKeys Xd.1).all (fun g => (g.1 == k₀) == (g.2.1 == VE.SoftNorms.exceptedName Nd)) &&
+  decide (Xd.1.soft.T.nodes = Xs.1.soft.T.nodes.map (relaxTo Nd)) &&
+  decide ((linesOf Xd.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, nodeOf Xd.1 RN.2)) =
+    (linesOf Xs.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, relaxTo Nd (nodeOf Xs.1 RN.2)))) &&
+  (correlate Xd.1).T.definitions.all (·.name != VE.SoftNorms.exceptedName Nd)
 /-- The criterion of 1.7 with i the strict twin: the default twin's exception key. -/
 def decisionOnly (D : Doc) (s : String) (i j : Nat) : Option GenKey :=
   match (candidate D s i).bind (·.content), (candidate D s j).bind (·.content) with
@@ -319,7 +344,8 @@ def decisionOnly (D : Doc) (s : String) (i j : Nat) : Option GenKey :=
       let C := correlate (one D s j).1
       if (Nd.exception.all (·.sufficient.isEmpty)) &&
           C.T.nodes.any (fun M => M.name == Nd.name && M.pred == Nd.pred) &&
-          C.T.nodes.all (fun M => VE.SoftNorms.act C M != VE.SoftNorms.act C Nd || M.name == Nd.name)
+          C.T.nodes.all (fun M => VE.SoftNorms.act C M != VE.SoftNorms.act C Nd || M.name == Nd.name) &&
+          twinDocs D s i j ci cj Nd
       then some (.excepted Nd.name none) else none
     | none => none
   | _, _ => none
@@ -340,7 +366,7 @@ theorem decisionOnly_spec (D : Doc) (s : String) (i j : Nat) (k : GenKey) (h : d
         cases h
         simp only [Bool.and_eq_true, Option.all_eq_true, List.isEmpty_iff, List.all_eq_true, List.any_eq_true,
           Bool.or_eq_true, bne_iff_ne, ne_eq, beq_iff_eq] at hc
-        obtain ⟨⟨he, _⟩, hn⟩ := hc
+        obtain ⟨⟨⟨he, _⟩, hn⟩, _⟩ := hc
         refine ⟨ci, cj, Ns, Nd, hi, hj, hf, rfl, fun e hx => he e hx, fun M hM ha => ?_⟩
         rcases hn M hM with h' | h'
         · exact absurd ha h'
