@@ -150,10 +150,39 @@ def test_the_baseline_alone_passes(built):
     assert report["passed"], _summary(report)
 
 
+def _crash_baseline(monkeypatch, tmp_path):
+    """A baseline of one environment entry whose Python call crashes, with Python made to crash on that input
+    alone. The real baseline holds no crash since the merge with `fix/env-field-types` fixed DF-2 (Python's
+    `TypeError` on a malformed definition body), so the crash mutant needs one of its own."""
+    entry = deepcopy(next(e for e in df.load_baseline()["entries"] if e["surface"] == "environment"))
+    python = df.EnvironmentSurface.python
+
+    def crash():
+        raise TypeError("injected")
+
+    def crashing(self, seed, root):
+        return df.call_python(crash, self.harness) if root == entry["input"] else python(self, seed, root)
+    monkeypatch.setattr(df.EnvironmentSurface, "python", crashing)
+    surface = df.EnvironmentSurface()
+    try:
+        [(found, _, answers, signature)] = df.evaluate(surface, [(df.seed_of(entry), entry["input"])])
+    finally:
+        surface.close()
+    assert "python-crash" in found, found
+    entry.update(classes=found, answers=answers, signature=signature)
+    path = tmp_path / "baseline.json"
+    path.write_text(json.dumps({"format": df.FORMAT, "entries": [entry]}))
+    return path
+
+
 @pytest.mark.parametrize("mutant", sorted(COMPARISON_MUTANTS))
-def test_a_weakened_comparison_fails_the_ci_verdict(built, monkeypatch, mutant):
+def test_a_weakened_comparison_fails_the_ci_verdict(built, monkeypatch, tmp_path, mutant):
+    path = df.BASELINE
+    if mutant == "crash counted as a diagnostic":
+        path = _crash_baseline(monkeypatch, tmp_path)
+        assert df.fuzz(scale=0, baseline_path=path)["passed"]
     COMPARISON_MUTANTS[mutant](monkeypatch)
-    report = df.fuzz(scale=0)
+    report = df.fuzz(scale=0, baseline_path=path)
     assert not report["passed"], mutant
     assert report["baseline"]["not_reproduced"], mutant
 
@@ -236,11 +265,12 @@ def test_error_verdicts_keep_each_implementations_code():
 
 
 def _soft_reproducer():
-    """The recheck's B1 reproducer: a soft-norms environment with `vocabulary: 7`, which the soft-norms route
-    rejects with its own code `SOFT_INVALID_INPUT`."""
+    """The recheck's B1 reproducer: a soft-norms environment with `vocabulary.predicates: 7`, which the
+    soft-norms route rejects with its own code `SOFT_INVALID_INPUT`. (B1's `vocabulary: 7` now gets Python's
+    decoder type diagnostic, so its text is compared too: DF-13. The nested field still gets neither.)"""
     surface = df.EnvironmentSurface()
     seed = next(s for s in surface.seeds() if s.profile == "soft-norms")
-    root = df.apply(seed.root, ["type", ["vocabulary"], "number"])
+    root = df.apply(seed.root, ["type", ["vocabulary", "predicates"], "number"])
     return surface, df.Seed("environment", "soft-norms", seed.id, root), root
 
 
@@ -487,7 +517,7 @@ def _environment_classes(surface, seed, root):
 
 
 def test_a_row_for_a_case_the_route_could_not_read_names_no_route_code(monkeypatch):
-    """The looprecheck2 B reproducer: for the soft-norms environment with `vocabulary: 7`, a route row that
+    """The looprecheck2 B reproducer: for the soft-norms environment of `_soft_reproducer`, a route row that
     names its case by position and carries `code: 7` (or a contract code, or an unknown one) gave no
     finding: the code went unchecked without an `id`, then was dropped. That row is the error of a case the
     route never ran, so it names no code; any route field on it is a runner that did not answer."""
@@ -1019,7 +1049,7 @@ def test_only_veerror_is_a_python_answer():
 
 def test_every_wire_unit_is_fuzzed_or_included(built):
     from tests.test_wire_contract_corpus import CONTRACTS
-    units = set(CONTRACTS) | {"soft-norms@0"}
+    units = set(CONTRACTS) | set(df.corpus.WIRE_UNITS)
     included = {"inner@0", "mid@0"}  # reached only through the includes of forms@0 (and Lean's own unit tests)
     seeded = {seed.profile for seed in df.Wire().seeds()}
     assert seeded | included == units
