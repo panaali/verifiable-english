@@ -30,17 +30,22 @@ import source_graph
 
 
 _CACHE = None
+_SAVED_CACHE_HOME = None
 
 
 def setUpModule():
     # The selector caches parsed sources; keep those writes in a private directory.
-    global _CACHE
+    global _CACHE, _SAVED_CACHE_HOME
     _CACHE = TemporaryDirectory()
+    _SAVED_CACHE_HOME = os.environ.get("XDG_CACHE_HOME")
     os.environ["XDG_CACHE_HOME"] = _CACHE.name
 
 
 def tearDownModule():
-    os.environ.pop("XDG_CACHE_HOME", None)
+    if _SAVED_CACHE_HOME is None:
+        os.environ.pop("XDG_CACHE_HOME", None)
+    else:
+        os.environ["XDG_CACHE_HOME"] = _SAVED_CACHE_HOME
     _CACHE.cleanup()
 
 

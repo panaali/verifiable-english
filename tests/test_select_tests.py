@@ -466,3 +466,15 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
         arguments = (tmp_path,)
     with pytest.raises(AssertionError):
         check(*arguments)
+
+
+def test_testing_doc_tables_are_generated_from_the_evidence():
+    import select_tests_evidence
+    data = json.loads((ROOT / "docs/testselect-evidence.json").read_text())
+    text = (ROOT / "docs/TESTING.md").read_text()
+    start, end = "<!-- testselect-evidence:start -->\n", "\n<!-- testselect-evidence:end -->"
+    shown = text[text.index(start) + len(start):text.index(end)]
+    assert shown == select_tests_evidence.table(data)
+    assert len(data["replay"]) == 50 and len(data["mutants"]) == 10
+    # Every seeded bug was caught, and only after the same test passed without it.
+    assert all(row["failure"] and not row.get("rest_exit") for row in data["mutants"])
