@@ -1,7 +1,7 @@
 # English in Lean, S2: the English instance (statement specification)
 
-> Status: statement specification, draft 3 (2026-10-04), branch `design/english-lean-s2`. This is the item-1
-> statement spec of [english-lean-S2-PLAN.md](english-lean-S2-PLAN.md) draft 4 (the **S2 plan**). It writes out
+> Status: statement specification, draft 4 (2026-10-04), branch `design/english-lean-s2`. This is the item-1
+> statement spec of [english-lean-S2-PLAN.md](english-lean-S2-PLAN.md) draft 5 (the **S2 plan**). It writes out
 > stage S2 of [english-lean-PLAN.md](english-lean-PLAN.md) (the **base plan**, draft 2) on top of
 > [english-lean.md](english-lean.md) draft 2 (the **base spec**), whose tier A engine is proved and whose tier B
 > lexer, tokens and `Lexicon.valid` are built on branch `english-lean/integrate` at `689219b1`
@@ -15,9 +15,12 @@
 > Astra and Fable, converged FIX after round 2 on 2026-10-04; section 13 lists the edits). The stub was re-run
 > for draft 2 on the amended signatures, statements, ranks and fixtures, and every check passed (section 12).
 > **Draft 3 applies the two corrections of the first verification pass** (`manage-agents/english-lean-s2-p3ver1.final.md`,
-> FAIL, 2026-10-04; section 14 lists them with their consequences); nothing was re-run for it, because no figure of
-> section 12 depends on either correction (section 14). The review's PASS follows a bounded re-check of the edits
-> of sections 13 and 14, not this draft.
+> FAIL, 2026-10-04; section 14 lists them with their consequences). **Draft 4 applies the one correction of the
+> second verification pass** (`manage-agents/english-lean-s2-p3ver2.final.md`, FAIL, 2026-10-04; section 15): the
+> hand parser can match a text that the `{1}`-first subject relative derives, so `relativeForm` maps onto two
+> Python classes, not one. Nothing was re-run for either draft, because no figure of section 12 depends on any of
+> the three corrections (sections 14, 15). The review's PASS follows a bounded re-check of the edits of sections
+> 13 to 15, not this draft.
 > Formulas in section 8 were derived by hand from `ve/english.py` and are confirmed against Python in S2; a
 > difference there is a finding, not a failed fixture. Every `file:line` was read on 2026-10-04 and must be
 > re-read at each step. Nothing here changes a verdict, an identity, a public code, a frozen file, an existing
@@ -37,8 +40,8 @@ are S3. Nothing user-visible changes: `english.admission` keeps `authority: pyth
 In this specification: the decisions (1), the definitions (2), the English of every new outcome and claim (3),
 the diagnostics (4), the Lean definitions and the exact statements (5), files and gates (6), what is consumed
 and returned (7), the acceptance fixtures (8), limits (9), the statement review checklist (10), the open points
-(11), how the figures were computed (12), the statement review's edits (13), and the verification pass's
-corrections (14).
+(11), how the figures were computed (12), the statement review's edits (13), the first verification pass's
+corrections (14), and the second verification pass's correction (15).
 
 ## 1. Decisions
 
@@ -302,10 +305,17 @@ first). Three corners follow Lark for the derivation and the hand parser for the
   (e51);
 - a wording whose first symbol is a hole other than `{0}` loses that `⟨term⟩` under Lark's cut
   (`relative → follows ⟨term⟩` for `{1} follows {0}`) and keeps it under the hand parser's, whose pattern
-  therefore begins with a term and matches no text that the rule derives: the hand parser falls to
-  `unknown_atom` (`:1101`, `SyntaxError`). The rule is generated as Lark generates it, so the tree
-  correspondence stays one to one (2.11), and `relSubject` rejects every derivation of it with `relativeForm`
-  (2.7, 2.8; e52);
+  therefore begins with a term and has one term group more than the rule has terms. Python never accepts a
+  text the rule derives, in one of two ways. When the pattern does not match the text, the hand parser falls to
+  `unknown_atom` (`:1101`, `SyntaxError`): e52, where nothing of `F` is spelled `follows` or begins with it.
+  When the pattern re-segments the text, which the spellings of a lexicon can allow, the hand parser prepends
+  `var 0` to one argument too many (`:1089`) and `check_document` rejects the atom (`ast.py:272–276`; the
+  `illTyped` class, as for e51): e53, the wording `{1} {0} are related` with persons spelled `alice`, `bob` and
+  `alice bob`, where the rule `relative → ⟨term⟩ are related` reads `alice bob are related` with one constant
+  and the pattern `(term) (term) are related` reads it with two. The rule is generated as Lark generates it, so
+  the tree correspondence stays one to one (2.11), and `relSubject` rejects every derivation of it with
+  `relativeForm` (2.7, 2.8; e52, e53). The action sees its term children, not the text, so it cannot tell the
+  two Python outcomes apart: `relativeForm` maps onto either class, and G2 accepts either (2.8, 2.11);
 - a binary wording that begins with `{1}` contains no ` {1}`, so it gets no object relative in Lean, while
   Python's rule for it reads the literal text `{1}`, which the lexer rejects (`badCharacter`: `{` is no chunk
   or punctuation character) before any rule applies.
@@ -370,7 +380,7 @@ nothing else: formulas use de Bruijn indices, 0 the innermost (`ETerm.var`).
 | `termIt` | → `term` | the `it` rule above, as `⟨const c, none⟩`: a resolved `it` is not a written constant |
 | `top`, `bottom`, `eq` | → `formula` | `top`; `bottom`; `eq t u` (the left term keeps `leftmost`) |
 | `pred p order negated` | terms → `formula` | `pred p args` with the arguments in declaration order (the wording's hole order permutes them); `not` of it when negated; the first term keeps `leftmost`, later terms get false |
-| `relSubject p order negated`, `relObject p negated` | terms → `relative` | as `pred` with `var 0` in the subject slot, or in the object slot. `relSubject` tells the two corners of 2.6 apart from `order` and the number of its term children: when the wording begins with a word, the rule keeps every term and `relSubject` prepends `var 0` to the clause's arguments as the hand parser does (`:1085–1089`), so the formula is ill-typed; when the wording begins with a hole other than `{0}` (the first of `order` is not 0), the rule has lost that term and `relSubject` rejects with `relativeForm`, because the hand parser's subject cut (`:1054`) accepts no text the rule derives |
+| `relSubject p order negated`, `relObject p negated` | terms → `relative` | as `pred` with `var 0` in the subject slot, or in the object slot. `relSubject` tells the two corners of 2.6 apart from `order` and the number of its term children: when the wording begins with a word, the rule keeps every term and `relSubject` prepends `var 0` to the clause's arguments as the hand parser does (`:1085–1089`), so the formula is ill-typed; when the wording begins with a hole other than `{0}` (the first of `order` is not 0), the rule has lost that term and `relSubject` rejects with `relativeForm`, because the hand parser's subject cut (`:1054`) never accepts a text the rule derives: its pattern misses the text, or re-segments it into an atom with one argument too many that `check_document` rejects (2.6); the action, which sees its term children and not the text, cannot tell which, and rejects with the one code |
 | `noun s n`, `label s`, `const c s nf`, `adjective p s`, `natSubject p s n`, `relation r`, `count refl`, `copulaRel p` | terminals → their type | the datum; `copulaRel p` (`copula_relative → is a`) is the relative `pred p [var 0]` (`:1484`, the first clause of a `some` sentence is an ordinary relative) |
 | `coordSubjects k` | `term ×3, adjective → formula` | in this order (`english.py:1570–1599`): the scope must be empty, else `coordinationForm` (`:1572`); the three terms are run (the first keeps `leftmost`, the others get false; `It, alice and legacy are deployed.` as a first sentence is therefore `pronounUnresolved`, b48); each must be a written constant whose spelling is a name form, `⟨const cᵢ, some ⟨cᵢ, sᵢ, true⟩⟩`, else `coordinationForm` (`:1574–1577`: a resolved `it`, a reference, a label, a quoted spelling or the added article `the sp` is not a name); the three names distinct, else `coordinationRepeated` (`:1592`); each `sᵢ` equal to the adjective's sort, else `sortMismatch` (`:1594–1595`); then `k (pred p [const c₁]) (k (pred p [const c₂]) (pred p [const c₃]))` (`:1597–1599`) |
 | `coordAdjectives k` | `term, adjective ×3 → formula` | the same scope and subject conditions on the one term (`:1572–1577`, `:1600–1604`); the three predicates distinct, else `coordinationRepeated` (`:1606`); the subject's sort equal to each adjective's sort, else `sortMismatch` (`:1607–1608`); then `k (pred p₁ [const c]) (k (pred p₂ [const c]) (pred p₃ [const c]))` |
@@ -399,9 +409,13 @@ The S1 `Reject` list (`Syntax.lean`) with four additions, all tier B and for the
 | `coordinationRepeated` | a coordination names one constant, or one adjective, twice | `coordination` returns nothing; the text falls to `unknown_atom`: `SyntaxError` |
 | `coordinationForm` | a coordination under a binder, or one whose subject is not a constant written as a name form (2.7) | `coordination` returns nothing when the scope is not empty (`english.py:1572`) or when a subject is not one of its names (`:1574–1577`, `:1590–1592`); the text falls to `unknown_atom`: `SyntaxError` |
 | `naturalScoped` | a natural clause under a binder | `_natural_parser` returns nothing when the scope is not empty; the generic forms then fail: `SyntaxError` |
-| `relativeForm` | a subject relative of a wording whose first symbol is a hole other than `{0}` (2.6) | the hand parser's subject cut keeps the leading term (`english.py:1054`), so its pattern matches no text that Lark's rule derives; the text falls to `unknown_atom` (`:1101`): `SyntaxError` |
+| `relativeForm` | a subject relative of a wording whose first symbol is a hole other than `{0}` (2.6) | the hand parser's subject cut keeps the leading term (`english.py:1054`), so its pattern has one term group more than Lark's rule has terms; either the pattern misses the text, which falls to `unknown_atom` (`:1101`): `SyntaxError` (e52), or the pattern re-segments the text and the atom has one argument too many (`:1089`), which `check_document` rejects (`ast.py:272–276`): the `illTyped` class (e53) |
 
-All four map onto `SyntaxError`, so the public code does not change (D12 of the base spec). The S2 constructs
+The first three map onto `SyntaxError`. `relativeForm` maps onto `SyntaxError` or onto the `illTyped` class by the
+text, and the action cannot tell which (2.6), so G2 accepts either class for it and records which one Python gave
+(2.11). No public code changes (D12 of the base spec): under Python authority the public code is Python's, and
+once the hole-order rule of `TEMPLATE_SHAPE` is a V3 condition (2.14, E2) no valid lexicon has such a wording, so
+the rule is never generated. The S2 constructs
 use these existing codes: `shadowedName`, `unboundReference`, `pronounUnresolved`, `sortMismatch` (for the
 sorts of coordination, copula, owner and reach, and for a label letter that is not the noun's sort),
 `markerDepth`, `nestingLimit`, `blockedWording "natural-negation"`. The ill-typed formula of a subject relative
@@ -471,8 +485,10 @@ checked first with `english_lean_seal.py --check`): Python's outcome **at the di
 is after `check_document` and before `_check_conclusions` (class, formulas in wire form, canonical strict text,
 conclusion indices, witness count from the Lark forest), against Lean's (status, `ast`, `canonical`,
 `conclusions`, witness count). Agreement is the base plan's comparison rule (section 5): equal formulas, canonical
-text, identities and marks when both accept; mapped classes when both reject (base 4.1); wall-clock
-`ResourceLimit` excluded and listed. A text whose grammatical reading agrees and whose marked conclusion Python's
+text, identities and marks when both accept; mapped classes when both reject (base 4.1), where `relativeForm` is
+mapped onto two classes, `SyntaxError` and the `illTyped` class, the harness accepting either and recording which
+one Python gave, because the hand parser's class there turns on a re-segmentation of the text that the action
+does not see (2.6, 2.8); wall-clock `ResourceLimit` excluded and listed. A text whose grammatical reading agrees and whose marked conclusion Python's
 entailment check then refuses is not a difference: that check is Python's for either backend (D16), and the
 harness records it separately as `conclusion_rejected`. Everything else is a difference, closed only as a Lean
 fix, a Python fix or a recorded product decision.
@@ -623,7 +639,7 @@ Base 4.1, unchanged. `translate`'s `notOneSentence` is status `rejected` with co
 | `CoordinationRepeated` | 3.2 | `SyntaxError` (unknown phrase) |
 | `CoordinationForm` | 3.2 | `SyntaxError` (unknown phrase) |
 | `NaturalScoped` | 3.2 | `SyntaxError` |
-| `RelativeForm` | 3.2 | `SyntaxError` (unknown phrase) |
+| `RelativeForm` | 3.2 | `SyntaxError` (unknown phrase), or the `check_document` rejection that `IllTyped` covers when the hand parser re-segments the text (2.6, 2.8) |
 
 ### 4.3 The response
 
@@ -1088,12 +1104,13 @@ binder.
 | e44 | `Therefore it is deployed.` after `Legacy is deployed.` | `ok`, marks false and true; `it` resolves: `leftmost` is true after the marker. The reader's result is the same for `Therefore it is reviewed.`, whose conclusion Python's `_check_conclusions` then refuses (`english.py:1710–1713`) after the dispatched unit (2.10): the fixture uses the entailed conclusion so that the reader and Python's admission agree |
 | e45 | `Alice owns it.` after `Legacy is deployed.` | `stopped 1 (rejected pronounUnresolved)`: `it` is not leftmost |
 | e46 | `For every service, it is reviewed.` after `Legacy is deployed.` | `stopped 1 (rejected pronounUnresolved)`: the scope is not empty |
-| e47 | `EFormula.encode` of every result of e1 to e7, e29 to e46 and e48 to e52 that is `ok` | equal to Python's wire form of `parse_english` on the same sources; the rejected and ill-typed results have no wire form and are excluded |
+| e47 | `EFormula.encode` of every result of e1 to e7, e29 to e46 and e48 to e53 that is `ok` | equal to Python's wire form of `parse_english` on the same sources; the rejected and ill-typed results have no wire form and are excluded |
 | e48 | b49 | `stopped 0 (rejected sortMismatch)`: the label's sort `person` is not the noun's sort `service` |
 | e49 | b50 | `stopped 0 (rejected (blockedWording "natural-negation"))`: the relative of the `both` tail is a negation |
 | e50 | b48; b53; b54; b55 | `stopped 0 (rejected pronounUnresolved)` (the `it` rule fails first: no referent); `stopped 0 (rejected coordinationForm)`; `stopped 0 (rejected coordinationForm)`; `stopped 1 (rejected coordinationForm)`. Compare e34's `coordinationRepeated` and `sortMismatch`, which are checked after the form |
 | e51 | *obligation*: `F` with a binary `owner_of` over `service × person` declared `the owner of {0} is {1}`, and `Every service that the owner of that service is alice is reviewed.` | one derivation, `universal.guard-relative` whose guard is the subject relative that keeps both its `⟨term⟩`s (2.6, the wording begins with a word; the object relative `the owner of ⟨term⟩ is` leaves `alice is reviewed`, which no relative derives); the meaning `all service (implies (pred owner_of [var 0, var 0, const alice]) (pred reviewed [var 0]))` is `illTyped`, as `check_document` rejects the hand parser's three-argument atom (`english.py:1089–1097`, the longest match; `ast.py:272–276`) |
-| e52 | *obligation*: `F` with a binary `follows` over `person × person` declared `{1} follows {0}`, and `Every person who follows alice owns legacy.` | one derivation, `universal.guard-relative` whose guard is the subject relative `follows ⟨term⟩` (2.6: Lark strips the leading `term ` of a `{1}`-first wording too; the wording contains no ` {1}`, so there is no object relative); the meaning is `stopped 0 (rejected relativeForm)`: the hand parser's subject cut keeps the leading term (`english.py:1054`), its pattern matches nothing at `follows alice`, and the sentence falls to `unknown_atom` (`:1101`, `SyntaxError`) |
+| e52 | *obligation*: `F` with a binary `follows` over `person × person` declared `{1} follows {0}`, and `Every person who follows alice owns legacy.` | one derivation, `universal.guard-relative` whose guard is the subject relative `follows ⟨term⟩` (2.6: Lark strips the leading `term ` of a `{1}`-first wording too; the wording contains no ` {1}`, so there is no object relative); the meaning is `stopped 0 (rejected relativeForm)`: the hand parser's subject cut keeps the leading term (`english.py:1054`), its pattern `(term) follows (term)` matches nothing at `follows alice` (no term of `F` is spelled `follows` or begins with it), and the sentence falls to `unknown_atom` (`:1101`, `SyntaxError`); compare e53 |
+| e53 | *obligation*: `F` with a binary `related` over `person × person` declared `{1} {0} are related`, two more persons spelled `bob` and `alice bob`, and `Every person alice bob are related.` | one derivation, `universal.relative` whose relative is the subject relative `⟨term⟩ are related` (2.6: Lark's rule for the wording is `term term are related` and its cut strips one leading `term `, `english.py:1924`; the term is the constant spelled `alice bob`, the only term that leaves `are related`); the meaning is `stopped 0 (rejected relativeForm)`. Python does not fall to `unknown_atom`: the hand parser's pattern `(term) (term) are related` (`:1054` strips nothing from a `{1}`-first wording) re-segments `alice bob are related` as `alice`, `bob`, prepends `var 0` (`:1089`) and builds the three-argument atom `related(var 0, alice, bob)`, which `check_document` rejects (`ast.py:272–276`): the `illTyped` class, as for e51, not `SyntaxError`. Both sides reject; the class differs, and G2 accepts either for `relativeForm` (2.8, 2.11). The second verification pass's counterexample (section 15) |
 
 ### 8.3 Lexicon and mutation replay
 
@@ -1197,7 +1214,8 @@ typed for every valid lexicon (checked per request); no statement relates the fi
 (measured by G2); the widenings are measured, not accepted; `Extends` and `grammar_extension` are proposals
 until reviewed, and `grammar_extension` speaks of the base profile only; the formulas of 8.2 are hand-derived
 until S2 confirms them; the conclusion check of a marked sentence is not part of the reading and is claimed
-nowhere (D16); nothing here moves authority.
+nowhere (D16); the Python class of a `relativeForm` rejection is one of two, and the reader does not say which
+(2.8); nothing here moves authority.
 
 ## 10. Statement review checklist (Astra + Fable, before S2.3)
 
@@ -1223,7 +1241,7 @@ nowhere (D16); nothing here moves authority.
 10. The widening rules (2.12) are correctly stated as proposals and their meanings are the intended ones.
 11. The lint sort (2.14) follows the DRI's rule by effect.
 12. The computed fixtures of section 8 are the right expectations, b34, b38, b44, b46 to b55, d1, tr1 and tr2
-    in particular; the hand-derived formulas of 8.2 are right, e43, e44, e48 to e52 in particular.
+    in particular; the hand-derived formulas of 8.2 are right, e43, e44, e48 to e53 in particular.
 13. Every name passes the audit's rules and collides with nothing in `VE.English` or `VE.Discourse`.
 14. No public message, code or identity changes.
 
@@ -1232,7 +1250,7 @@ nowhere (D16); nothing here moves authority.
 | # | Point | Recommendation |
 |---|---|---|
 | Q1 | the widenings | measured here; signed decision before any table change (S2 plan, Q1) |
-| Q2 | `coordinationRepeated`, `coordinationForm`, `naturalScoped`, `relativeForm` | adopt (tier B, as `coefficientNotNumeral` was); the review added `coordinationForm` for the hand parser's scope and name-form conditions on coordination (section 13); the verification pass added `relativeForm` for the subject relative of a wording whose first symbol is a hole other than `{0}`, which Lark derives and the hand parser never accepts (section 14) |
+| Q2 | `coordinationRepeated`, `coordinationForm`, `naturalScoped`, `relativeForm` | adopt (tier B, as `coefficientNotNumeral` was); the review added `coordinationForm` for the hand parser's scope and name-form conditions on coordination (section 13); the first verification pass added `relativeForm` for the subject relative of a wording whose first symbol is a hole other than `{0}`, which Lark derives and the hand parser never accepts (section 14); the second corrected its Python class, `SyntaxError` or the `illTyped` class by the text, either accepted by G2 (section 15) |
 | Q3 | the final lint list | adopt 2.14 at this review; implement in E2 |
 | Q4 | `Extends` | adopt 2.13 for the base profile, with full signatures and closed fixed actions (the review's resolution); profiles stay deferred; defer the statement if the amended stub does not elaborate it |
 | Q5 | `kwMid` | adopt; otherwise mid-sentence `The api` is a recorded difference |
@@ -1270,9 +1288,9 @@ section 8. All checks passed on 2026-10-04 under Lean 4.24.0 for draft 1.
   spines of b48 and b50 as 8.1 states them;
 - the steps of 8.6, unchanged.
 
-The `kwMid` rows c1 to c3, the V3 row l4, e51 and e52 stay obligations. The file is re-created from this
+The `kwMid` rows c1 to c3, the V3 row l4, e51, e52 and e53 stay obligations. The file is re-created from this
 specification when S2.1 starts; its contents are sections 2.4 to 2.6, 5.2 to 5.4 and 8. Nothing was re-run
-for draft 3 (section 14).
+for drafts 3 and 4 (sections 14 and 15).
 
 ## 13. The statement review's edits (draft 2)
 
@@ -1322,17 +1340,47 @@ their consequences, and nothing else.
 Two consequences of finding 2 were not in the verifier's text and are recorded here. First, the corrected rule
 derives texts that the hand parser never accepts: its own subject cut strips a leading `{0} ` only
 (`english.py:1054`), so for a wording whose first symbol is a hole other than `{0}` its pattern keeps a leading
-term and misses every text that `relative → follows ⟨term⟩` derives; the sentence falls to `unknown_atom`
-(`:1101`, `SyntaxError`). An action that built a formula there would accept what Python rejects, the unsafe
-direction, so `relSubject` rejects, and the rejection needs a code. It is a fourth tier B code, `relativeForm`,
-in the family the statement review created for hand-parser-only rejections that fall to `unknown_atom`
-(`coordinationRepeated`, `coordinationForm`), mapping onto `SyntaxError` like them (D6, 2.8, 3.2, 4.2, 7,
-10.5, Q2); fixture e52 (an obligation) pins it. Second, the rank array is unchanged: `relative` stays at 2
+term, which either misses the text (the sentence falls to `unknown_atom`, `:1101`, `SyntaxError`) or, as the
+second verification pass showed, re-segments it into an atom with one argument too many that `check_document`
+rejects (section 15; draft 3 claimed the first outcome alone). An action that built a formula there would accept
+what Python rejects, the unsafe direction, so `relSubject` rejects, and the rejection needs a code. It is a fourth
+tier B code, `relativeForm`, in the family the statement review created for hand-parser-only rejections that fall
+to `unknown_atom` (`coordinationRepeated`, `coordinationForm`), mapping onto `SyntaxError` like them when the
+pattern misses (D6, 2.8, 3.2, 4.2, 7, 10.5, Q2; section 15 adds the second class); fixture e52 (an obligation)
+pins it. Second, the rank array is unchanged: `relative` stays at 2
 because a subject relative can still begin with `term`, for a wording whose first two symbols are holes, which
 base V3 allows (2.4).
 
 Nothing was re-run. No figure of section 12 depends on either correction: the stub evaluates no action, so the
 `through`/`nest` column is outside it, and every wording of `F`, `LF`, the extended `F` of e34, `FD` and the
 lexicon of l2 begins with `{0}`, so no fixture grammar has a rule whose shape the second correction changes.
+The second verification pass re-checked these edits, confirmed both, and returned one finding on the first
+consequence above (section 15).
+
+## 15. The second verification pass's correction (draft 4)
+
+The second verification pass (`manage-agents/english-lean-s2-p3ver2.final.md`, read-only, 2026-10-04) confirmed
+both corrections of section 14 (all nine `formula.*` rows take `nest`; subject relatives strip the leading term
+whichever hole it is), found no unrelated substantive edit, and returned FAIL on one finding. Draft 4 applies it
+and its consequences, and nothing else.
+
+| # | Finding | Applied in |
+|---|---|---|
+| 1 | Draft 3 assumed that the hand parser's pattern matches no text that the `{1}`-first subject relative derives, and mapped `relativeForm` onto `SyntaxError` alone. Counterexample: the wording `{1} {0} are related` with persons spelled `alice`, `bob` and `alice bob`; for `Every person alice bob are related.` Lark's relative reads the one constant `alice bob`, while the hand parser's pattern reads two terms, `alice` and `bob`, prepends `var 0` (`english.py:1089`) and builds a three-argument atom that `check_document` rejects: it does not fall to `unknown_atom` | 2.6 (the second corner has two Python outcomes); 2.7 (`relSubject`'s reason); 2.8 (the `relativeForm` row and the class paragraph); 2.11 (G2 accepts either class for `relativeForm` and records which); 4.2; 9; e52's reason; e53 (an obligation); Q2; the record of section 14 |
+
+What the correction keeps and what it changes. The rejection stays unconditional on Lean's side, because Python
+never accepts a text the rule derives: the hand parser's pattern has one term group more than the rule has terms,
+so when it matches it builds an atom of arity plus one, and when it does not match the text falls to
+`unknown_atom`. What changes is the claim and the class: the action sees its term children, not the text, so it
+cannot tell a re-segmented text from a missed one, and `relativeForm` is mapped onto both `SyntaxError` and the
+`illTyped` class, G2 accepting either and recording which (2.8, 2.11). This is the smallest correction that makes
+the specification true. Making the action reproduce the hand parser's re-segmentation would put the text inside an
+action, against the action design of 2.7 (values and a context, not text); excluding the wording by validity would
+move the hole-order rule of `TEMPLATE_SHAPE` from E2 into S2, against DRI ruling 4, under which the retained lint
+codes stay Python checks in S2 (2.14). Neither was asked for. Once that rule is a V3 condition (E2), no valid
+lexicon reaches the corner.
+
+Nothing was re-run. No figure of section 12 depends on the correction: the stub evaluates no action, e53 is an
+obligation like e51 and e52, the ranks are unchanged, and every wording of the fixture grammars begins with `{0}`.
 The next step is a bounded re-verification of the edits of this section; PASS follows that re-verification, not
 this draft.
