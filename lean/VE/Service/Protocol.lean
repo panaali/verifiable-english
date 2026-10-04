@@ -109,6 +109,48 @@ def caseResult (m : Mode) (index : Nat) : Except String Json → Json
   | .ok j => runMode m j
   | .error message => caseError m index message
 
+/-! ## Diagnostic codes (docs/LEAN-FIRST-PLAN.md, batch 0)
+
+Every rejection the service returns carries `code`, the public diagnostic code of its
+message, so that a client relays Lean's code and text and classifies nothing itself. The
+code is derived from the runner's `Class:` prefix by `rejectionCode`, the one place that
+does it; no runner changes. -/
+
+/-- The public diagnostic codes a rejection can carry (`ve/errors.py`). A runner prefix that
+is not one of them (`DependencyCycle`, `ShadowedVariable`, ...) is `InvalidInput`. -/
+def rejectionCodes : List String := ["InvalidInput", "SyntaxError", "UnknownSymbol",
+  "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile",
+  "ResourceLimit", "AdmissionError", "CheckerUnavailable"]
+
+/-- The code of a rejection message: `InvalidModel` when it names a generator
+(`Route.Run.generatorOf`), else its text up to the first `:` when that is a public code, else
+`InvalidInput`. -/
+def rejectionCode (message : String) : String :=
+  if (VE.Route.Run.generatorOf message).isSome then "InvalidModel"
+  else
+    let head := (message.splitOn ":").headD message
+    if rejectionCodes.contains head then head else "InvalidInput"
+
+/-- The members `coded` sets on a rejection with message `m`: its code, and the generator an
+`InvalidModel(generator)` message names (as `Route.Run.runCaseReported` already reports it). -/
+def codeMembers (m : String) : List (String × Json) :=
+  ("code", .str (rejectionCode m)) :: match VE.Route.Run.generatorOf m with
+    | some g => [("generator", .str g)]
+    | none => []
+
+/-- A runner result with its code: an error row (`status` "error" with a text `error`) gets
+`codeMembers` of its message; every other result is returned unchanged. -/
+def coded (row : Json) : Json :=
+  match row.getObjValD "status", row.getObjValD "error" with
+  | .str "error", .str message => (codeMembers message).foldl (fun r (k, v) => r.setObjVal! k v) row
+  | _, _ => row
+
+#guard rejectionCode "UnknownSymbol: Unknown predicate p" == "UnknownSymbol"
+#guard rejectionCode "InvalidModel(definitions): x" == "InvalidModel"
+#guard rejectionCode "DependencyCycle: a -> a" == "InvalidInput"
+#guard rejectionCode "String expected" == "InvalidInput"
+#guard rejectionCode "ResourceLimit" == "ResourceLimit"
+
 structure Budget where
   cases : Nat := maxCases
   bytes : Nat := maxLineBytes
@@ -215,9 +257,9 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
   | _, none, _ => throw "request field mode is missing"
   | _, _, none => throw "request field cases is missing"
 
-/-- The per-case results: exactly `caseResult` in request order. -/
+/-- The per-case results: exactly `caseResult` in request order, each `coded`. -/
 def results (r : Request) (cases : Array (Except String Json)) : Array Json :=
-  cases.mapIdx (caseResult r.mode)
+  cases.mapIdx fun i c => coded (caseResult r.mode i c)
 
 /-! ## Case digests
 
@@ -430,10 +472,10 @@ def errorDigests (cases : String) : Json :=
   | .error _ => .null
 
 /-- The error for a decoded request that cannot be answered (budget, batch decoding),
-bound like a response: its nonce, its mode and the digests of its cases. -/
+bound like a response: its nonce, its mode and the digests of its cases, with its code. -/
 def requestError (r : Request) (message : String) : Json :=
   Json.mkObj [("id", .str r.id), ("status", .str "error"), ("mode", .str r.mode.name),
-    ("digests", errorDigests r.cases), ("error", .str message)]
+    ("digests", errorDigests r.cases), ("error", .str message), ("code", .str (rejectionCode message))]
 
 /-- The response to one request line. -/
 def respond (line : String) : Json :=
@@ -460,7 +502,7 @@ which hashes the executable it starts. -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
     ("lean", .str Lean.versionString), ("modes", toJson (modes.map Mode.name)),
-    ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
+    ("codes", toJson rejectionCodes), ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
       ("max_cases", toJson maxCases), ("json_depth", toJson (256 : Nat))])]
 
 /-! ## Dispatch pins (statement review: each mode is exactly its existing runner) -/
@@ -521,15 +563,38 @@ theorem respond_decoded (line : String) (members : Array (String × String)) (r 
   simp [respond, hm, hr]
 
 theorem results_eq (r : Request) (cases : Array (Except String Json)) (i : Nat) (h : i < cases.size) :
-    (results r cases)[i]? = some (caseResult r.mode i cases[i]) := by
+    (results r cases)[i]? = some (coded (caseResult r.mode i cases[i])) := by
   simp [results, h]
 
-/-- Result `i` of a response is case `i`'s runner result, bound to its position and to
-its case digest. -/
+/-- Result `i` of a response is case `i`'s runner result with its code, bound to its
+position and to its case digest. -/
 theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (digests : Array String)
     (i : Nat) (h : i < cases.size) :
     (bindResults (results r cases) digests)[i]? =
-      some (bound i (digests.getD i "") (caseResult r.mode i cases[i])) := by
+      some (bound i (digests.getD i "") (coded (caseResult r.mode i cases[i]))) := by
   simp [bindResults, results, h]
+
+/-- `coded` changes only rejections: a result whose status is not "error" is returned as is. -/
+theorem coded_of_status (row : Json) (h : row.getObjValD "status" ≠ .str "error") : coded row = row := by
+  unfold coded
+  split
+  · simp_all
+  · rfl
+
+/-- A rejection with message `m` gets exactly the members `codeMembers m`. -/
+theorem coded_error (row : Json) (m : String) (hs : row.getObjValD "status" = .str "error")
+    (he : row.getObjValD "error" = .str m) :
+    coded row = (codeMembers m).foldl (fun r (k, v) => r.setObjVal! k v) row := by
+  simp [coded, hs, he]
+
+/-- Every code is a public diagnostic code. -/
+theorem rejectionCode_mem (m : String) : rejectionCode m ∈ rejectionCodes := by
+  unfold rejectionCode
+  split
+  · simp [rejectionCodes]
+  · dsimp only
+    split
+    · next h => exact List.contains_iff_mem.mp h
+    · simp [rejectionCodes]
 
 end VE.Service

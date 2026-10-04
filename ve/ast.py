@@ -345,7 +345,7 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
     if authority_for("typing") == "python" or not _typing_in_scope(env):
         _Checker(env).formula(formula)
         return formula
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.rust_jsonl import run as rust_run
     ast = _to_data(formula)
     payload = {"environment_id": env.environment_id, "ast": ast}
@@ -360,7 +360,7 @@ def check_formula(env: Environment, formula: Formula) -> Formula:
     def lean():
         key = (env.environment_id, canonical_json(ast))
         if key not in _LEAN_TYPED:
-            run("check", [case()])
+            decide("check", [case()])
             if len(_LEAN_TYPED) >= _LEAN_TYPED_LIMIT:
                 _LEAN_TYPED.clear()
             _LEAN_TYPED[key] = True
@@ -383,7 +383,7 @@ def check_document(env: Environment, document: Document) -> Document:
         for formula in document.formulas:
             checker.formula(formula)
         return document
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.rust_jsonl import run as rust_run
     case = {"id": "typing", "environment": env.to_dict(),
             "ast": [_to_data(formula) for formula in document.formulas]}
@@ -395,7 +395,7 @@ def check_document(env: Environment, document: Document) -> Document:
         return document
 
     def lean():
-        run("check", [case])
+        decide("check", [case])
         return document
 
     def rust():

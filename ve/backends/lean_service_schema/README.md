@@ -11,6 +11,10 @@ The single source of truth for the shapes of `ve_service` responses
   the nonce, the mode and `digests`.
 * `<mode>.json` for every mode: `row` is the schema of one `result`; its context is
   the request case at the same position.
+* Every rejection (a request error, or a result whose `status` is `error`) carries `code`,
+  the public diagnostic code the service derives from the message (`Service.Protocol.coded`);
+  the handshake's `codes` is that code domain, and a service with another list is refused at
+  its start. An `InvalidModel(generator)` rejection also carries `generator`.
 * `common.json`: shared value domains, each the domain of the Lean decoder named in
   its `$comment` (formulas, terms, kinds, labels, ...).
 

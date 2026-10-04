@@ -183,7 +183,8 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     from .ast import _to_data
     from .backends.dispatch import execute
     from .backends.lean_service import CheckerUnavailable
-    from .backends.lean_runner import lean_mode, route_environment, run as lean_run
+    from .backends.lean_runner import lean_mode, route_environment
+    from .backends.relay import decide
     from .backends.rust_jsonl import run as rust_run, rust_environment, soft_case
 
     case = {"id": "countermodel", "environment": rust_environment(env), **soft_case(env),
@@ -221,7 +222,7 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
         if result.status == "ResourceLimit":
             return result
         request = {**case, "kind": "countermodel", "environment": route_environment(env)}
-        row = lean_run(lean_mode(env), [request])[0]
+        row = decide(lean_mode(env), [request])[0]
         if row["refutes"] != result.valid:
             raise CheckerUnavailable("CheckerUnavailable: Lean and Rust countermodel checks disagree")
         return result

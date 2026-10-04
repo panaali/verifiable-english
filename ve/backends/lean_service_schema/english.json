@@ -6,10 +6,11 @@
     {"$ref": "#/$defs/error"},
     {"$ref": "#/$defs/run"}]},
   "$defs": {
-    "error": {"type": "object", "required": ["status", "error"], "additionalProperties": false,
+    "error": {"type": "object", "required": ["status", "error", "code"], "additionalProperties": false,
       "properties": {
         "status": {"const": "error"},
-        "error": {"$ref": "common.json#/$defs/text"}}},
+        "error": {"$ref": "common.json#/$defs/text"},
+        "code": {"$ref": "common.json#/$defs/code"}}},
     "run": {"type": "object", "required": ["admissible", "covers", "results"], "additionalProperties": false,
       "properties": {
         "admissible": {"type": "boolean"},
