@@ -23,6 +23,11 @@ from tools import rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
+# The suite as the gate runs it; tools/gate_collection.py collects with the same arguments.
+PYTEST_ARGS = ("-q", "-p", "hypothesis.extra.pytestplugin", "-p", "tools.gate_pytest",
+               "-o", "addopts=-ra", "-m", "not live", "tests")
+# The documented refresh of COLLECTION after intended test changes.
+REFRESH = "uv run python tools/gate_collection.py --write"
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
                    "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
@@ -51,6 +56,7 @@ ALLOWED_ENVIRONMENT = (
     "LAKE_CACHE_DIR",                   # fresh, in scratch
     "CARGO_HOME",                       # fresh, in scratch; seeded by isolated_cargo
     "PYTHONNOUSERSITE",                 # 1
+    "PYTHONPYCACHEPREFIX",              # fresh, in scratch: no bytecode cached before the gate
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD",   # 1
 )
 # Added only for the stage that needs them.
@@ -192,6 +198,19 @@ def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
                and entry["reason"] in reason for entry in entries)
 
 
+def collection_difference(added: list[str], removed: list[str]) -> str:
+    """Every ID collected but not pinned and pinned but not collected, and the refresh."""
+    lines = [f"The pinned baseline {COLLECTION.relative_to(ROOT)} differs from the collected tests: "
+             f"{len(added)} collected but not pinned, {len(removed)} pinned but not collected."]
+    for title, ids in (("Collected but not pinned", added), ("Pinned but not collected", removed)):
+        if ids:
+            lines.append(f"{title}:")
+            lines.extend(f"  {nodeid}" for nodeid in ids)
+    lines.append(f"If these test changes are intended, run `{REFRESH}` after `(cd lean && lake build)`, check "
+                 "every removed ID is meant to go, and commit the file with the change.")
+    return "\n".join(lines)
+
+
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str]) -> None:
     tests = events["tests"]
     collected = events["collected"]
@@ -209,9 +228,7 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
     unexpected = sorted(set(collected) - set(expected))
     if missing or unexpected:
         result["failures"].append({"stage": "coverage",
-                                   "reason": f"collection differs from baseline: {len(missing)} missing, "
-                                             f"{len(unexpected)} unexpected; missing={missing[:10]}, "
-                                             f"unexpected={unexpected[:10]}"})
+                                   "reason": collection_difference(unexpected, missing)})
     if set(selected) | set(deselected) != set(collected) or set(selected) & set(deselected):
         result["failures"].append({"stage": "coverage",
                                    "reason": "tests removed from final collection without a deselection report"})
@@ -275,7 +292,8 @@ def gate_environment(scratch: Path) -> dict[str, str]:
     directories = {"HOME": home, "XDG_CACHE_HOME": home / ".cache",
                    "XDG_CONFIG_HOME": home / ".config", "XDG_DATA_HOME": home / ".local/share",
                    "TMPDIR": scratch / "tmp", "UV_CACHE_DIR": scratch / "uv-cache",
-                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home"}
+                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home",
+                   "PYTHONPYCACHEPREFIX": scratch / "pycache"}
     for directory in directories.values():
         directory.mkdir(parents=True, exist_ok=True)
     # Only uv is exposed from outside the toolchains and the system directories.
@@ -436,9 +454,7 @@ def main() -> int:
                 "VE_RUST_BINARY": str(rust_binary)})
             try:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         "-q", "-p", "hypothesis.extra.pytestplugin",
-                         "-p", "tools.gate_pytest", "-o", "addopts=-ra",
-                         "-m", "not live", "tests"], env=pytest_env, stage="Python suite")
+                         *PYTEST_ARGS], env=pytest_env, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
