@@ -28,7 +28,8 @@ import time
 
 from layer_policy import ROOT, lean_default_targets, lean_executables
 
-VERSION = 1
+VERSION = 2  # 2: directory listings by the import system and pytest are not recorded
+UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
                                                "tools/test_layer_policy.py"]}
@@ -222,6 +223,24 @@ def merge(results: dict[str, dict], previous: dict) -> None:
                 result[key] |= old[test][key]
 
 
+def tree_map_path(tree: str) -> Path:
+    return cache_dir() / f"tree-{tree}.json.gz"
+
+
+def working_tree_id(root: Path = ROOT) -> str:
+    """Git tree id of the working tree: tracked and untracked-but-not-ignored files as they are now."""
+    index = Path(git("rev-parse", "--git-path", "index", root=root))
+    index = index if index.is_absolute() else root / index
+    with tempfile.TemporaryDirectory() as directory:
+        copy = Path(directory) / "index"
+        if index.exists():
+            shutil.copy(index, copy)
+        env = {**os.environ, "GIT_INDEX_FILE": str(copy)}
+        subprocess.run(["git", "add", "-A"], cwd=root, env=env, check=True, capture_output=True)
+        return subprocess.run(["git", "write-tree"], cwd=root, env=env, check=True,
+                              capture_output=True, text=True).stdout.strip()
+
+
 def find_map(base: str, root: Path = ROOT) -> Path | None:
     """The cached map nearest below `base`: of the maps recorded at its ancestors,
     the one with the fewest commits between it and `base`. $VE_TESTMAP overrides."""
@@ -240,6 +259,10 @@ def find_map(base: str, root: Path = ROOT) -> Path | None:
                 capture_output=True).returncode:
             continue
         if best is None or int(distance.stdout) < best[0]:
+            try:
+                load(path)
+            except (OSError, ValueError, EOFError):
+                continue  # unreadable, or recorded by another version of the recorder
             best = (int(distance.stdout), path)
     return best[1] if best else None
 
@@ -357,7 +380,7 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     rec = sub.add_parser("record", help="record a map for HEAD")
     rec.add_argument("--jobs", type=int, default=8)
-    rec.add_argument("--timeout", type=float, default=3600, help="seconds per test file")
+    rec.add_argument("--timeout", type=float, default=UNIT_TIMEOUT, help="seconds per test file")
     rec.add_argument("--output", help="map path (default: the shared cache)")
     rec.add_argument("--allow-dirty", action="store_true")
     rec.add_argument("--no-build", action="store_true", help="binaries are already built")
