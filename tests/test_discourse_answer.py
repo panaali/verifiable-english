@@ -159,3 +159,31 @@ def test_genuine_answers_are_bound(tmp_path):
             source, front = _correlated(tmp_path, constraint, sets=sets)
             result = check_document(_write(tmp_path, front, source))
             assert result["joint_choices"]["status"] == ("UNKNOWN" if 2 ** sets > 64 else "complete"), result
+
+
+def test_joint_status_and_unit_order_are_bound(tmp_path, monkeypatch):
+    """Answers no single fault reaches: an UNKNOWN joint set within the budget, a completed one over
+    it (its first choice, with the disjunction that choice denotes), and the statuses of the
+    units out of document order."""
+    path, _ = _document(tmp_path, "some")
+    genuine = discourse.lean_admission(path.read_bytes(), tmp_path)
+    unknown = {k: v for k, v in genuine.items() if k not in ("joint_choices", "joint_formula")}
+    _answered(monkeypatch, {**unknown, "admitted": "UNKNOWN", "joint": "ResourceLimit: joint choices"})
+    with pytest.raises(CheckerUnavailable, match=r"\(joint\)$"):
+        check_document(path)
+    _answered(monkeypatch, {**genuine, "statuses": dict(reversed(genuine["statuses"].items()))})
+    with pytest.raises(CheckerUnavailable, match=r"\(statuses\)$"):
+        check_document(path)
+    monkeypatch.undo()
+    path, _ = _document(tmp_path, "over")
+    genuine = discourse.lean_admission(path.read_bytes(), tmp_path)
+    assert genuine["admitted"] == "UNKNOWN"
+    reviewed = unary("reviewed", "api")
+    first = [[f"rs{5 + k}", 1, 0] for k in range(7)]
+    conjunction = reviewed
+    for _ in range(6):
+        conjunction = ["and", reviewed, conjunction]
+    _answered(monkeypatch, {**genuine, "admitted": True, "joint": 1, "joint_choices": [first],
+                            "joint_formula": conjunction})
+    with pytest.raises(CheckerUnavailable, match=r"\(joint\)$"):
+        check_document(path)
