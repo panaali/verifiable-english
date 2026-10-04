@@ -61,6 +61,53 @@ class Graph:
     lean_modules: dict[str, str] = field(default_factory=dict)        # Lean module -> file
     lean_imports: dict[str, list[str]] = field(default_factory=dict)
     lean_unreadable: list[str] = field(default_factory=list)
+    # Earlier versions of changed files that still exist (see `overlay`).
+    previous: dict[str, Summary] = field(default_factory=dict)
+
+    def overlay(self, earlier: dict[str, str | None]) -> Graph:
+        """This graph with the earlier version of each changed file kept too.
+
+        `earlier` maps each changed path to its content before the change, or
+        None where it did not exist (for non-Python files only presence
+        matters). A removed file stays a node with its old imports and
+        mentions, so its importers and the tests that named it still reach
+        it; a file that still exists keeps the edges of its old version as
+        well as its new ones, so an import or mention that the change dropped
+        still counts.
+        """
+        present = set(self.files)
+        summaries, previous = dict(self.summaries), {}
+        lean_imports_by_module = dict(self.lean_imports)
+        lean_modules = dict(self.lean_modules)
+        unreadable = list(self.lean_unreadable)
+        removed = {path for path, text in earlier.items() if text is not None and path not in present}
+        for path, text in earlier.items():
+            if text is None:
+                continue
+            if path.endswith(".py"):
+                module, package = module_name(path)
+                try:
+                    old = summary_of(text, module, package)
+                except SyntaxError:
+                    old = None
+                if path in removed:
+                    summaries[path] = old
+                elif old is not None:
+                    previous[path] = old
+            elif path in removed and path.startswith("lean/") and path.endswith(".lean"):
+                module = ".".join(Path(path).with_suffix("").parts[1:])
+                try:
+                    lean_imports_by_module[module] = list(lean_imports(text))
+                    lean_modules[module] = path
+                except HeaderError:
+                    unreadable.append(path)
+        if not removed and not previous:
+            return self
+        graph = Graph(self.root, sorted(present | removed), summaries, lean_modules=lean_modules,
+                      lean_imports=lean_imports_by_module, lean_unreadable=unreadable, previous=previous)
+        graph.prepare_names()
+        graph.build()
+        return graph
 
     # -- Python ---------------------------------------------------------------
     def resolve(self, importer: str, name: str) -> str | None:
@@ -75,62 +122,68 @@ class Graph:
                     return candidate
         return None
 
+    def versions(self, path: str) -> list[Summary]:
+        """The parsed versions of a file: now, and before the change if it changed."""
+        return [s for s in (self.summaries.get(path), self.previous.get(path)) if s is not None]
+
     def build(self) -> None:
         self._file_set = set(self.files)
-        init = self.summaries.get("ve/__init__.py")
-        if init is not None:
+        for init in self.versions("ve/__init__.py"):
             for edge in init.imports:
                 target = self.resolve("ve/__init__.py", edge.module)
                 if target and edge.names:
                     for name, alias in edge.names:
-                        self.exports[alias] = target
-        for path, summary in self.summaries.items():
-            if summary is None:
-                continue
+                        self.exports.setdefault(alias, target)  # the current version first
+        for path in self.summaries:
             targets: dict[str, set[str]] = {}
-
-            def add(target: str | None, names) -> None:
-                if target and target != path:
-                    targets.setdefault(target, set()).update(names)
-
-            for edge in summary.imports:
-                if edge.names is None:  # import a.b.c
-                    parts = edge.module.split(".")
-                    for i in range(1, len(parts)):
-                        parent = self.resolve(path, ".".join(parts[:i]))
-                        if parent and parent != "ve/__init__.py":
-                            add(parent, {"<module>"})
-                    if edge.module == "ve":
-                        for name, owner in self.exports.items():
-                            if name in summary.identifiers:
-                                add(owner, {name})
-                    else:
-                        add(self.resolve(path, edge.module), {"<module>"})
-                    continue
-                if edge.module == "ve":
-                    for name, alias in edge.names:
-                        if name == "*":
-                            for exported, owner in self.exports.items():
-                                add(owner, {exported})
-                        elif name in self.exports:
-                            add(self.exports[name], {name})
-                        else:
-                            add(self.resolve(path, f"ve.{name}"), {"<module>"})
-                    continue
-                base = self.resolve(path, edge.module)
-                for name, alias in edge.names:
-                    submodule = self.resolve(path, f"{edge.module}.{name}") if name != "*" else None
-                    if submodule:
-                        add(submodule, {"<module>"})
-                        if base and base != "ve/__init__.py":
-                            add(base, {"<module>"})
-                    else:
-                        add(base, {name})
+            self.mentions[path] = set()
+            for summary in self.versions(path):
+                self._targets(path, summary, targets)
+                self.mentions[path] |= self._mentions(summary)
             self.edges[path] = set(targets)
             for target, names in targets.items():
                 self.imported_names[(path, target)] = names
                 self.reverse.setdefault(target, set()).add(path)
-            self.mentions[path] = self._mentions(summary)
+
+    def _targets(self, path: str, summary: Summary, targets: dict[str, set[str]]) -> None:
+        """Add to `targets` the files one version of `path` imports, with the names it takes."""
+        def add(target: str | None, names) -> None:
+            if target and target != path:
+                targets.setdefault(target, set()).update(names)
+
+        for edge in summary.imports:
+            if edge.names is None:  # import a.b.c
+                parts = edge.module.split(".")
+                for i in range(1, len(parts)):
+                    parent = self.resolve(path, ".".join(parts[:i]))
+                    if parent and parent != "ve/__init__.py":
+                        add(parent, {"<module>"})
+                if edge.module == "ve":
+                    for name, owner in self.exports.items():
+                        if name in summary.identifiers:
+                            add(owner, {name})
+                else:
+                    add(self.resolve(path, edge.module), {"<module>"})
+                continue
+            if edge.module == "ve":
+                for name, alias in edge.names:
+                    if name == "*":
+                        for exported, owner in self.exports.items():
+                            add(owner, {exported})
+                    elif name in self.exports:
+                        add(self.exports[name], {name})
+                    else:
+                        add(self.resolve(path, f"ve.{name}"), {"<module>"})
+                continue
+            base = self.resolve(path, edge.module)
+            for name, alias in edge.names:
+                submodule = self.resolve(path, f"{edge.module}.{name}") if name != "*" else None
+                if submodule:
+                    add(submodule, {"<module>"})
+                    if base and base != "ve/__init__.py":
+                        add(base, {"<module>"})
+                else:
+                    add(base, {name})
 
     def _mentions(self, summary: Summary) -> set[str]:
         found = set()
