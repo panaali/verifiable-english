@@ -6,6 +6,7 @@ Every cache write goes under tmp_path (XDG_CACHE_HOME).
 """
 from __future__ import annotations
 
+import ast
 import json
 import os
 from pathlib import Path
@@ -26,6 +27,7 @@ from change_units import delta, summarize  # noqa: E402
 import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
+import test_map_recorder  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -89,6 +91,23 @@ QUALNAME_SOURCE = textwrap.dedent('''
     except ImportError:
         def guarded():
             pass
+    try:
+        pass
+    except* OSError:
+        def grouped():
+            pass
+    match 1:
+        case 1:
+            def matched():
+                class Inside:
+                    async def method(self):
+                        pass
+    for _ in ():
+        async def looped():
+            pass
+    else:
+        def after_loop():
+            pass
 ''')
 
 
@@ -130,6 +149,122 @@ def test_delta_classifies_each_kind_of_edit(old, new, expected):
     d = delta(summarize(old, "m"), summarize(new, "m"))
     for field, value in expected.items():
         assert getattr(d, field) == value, field
+
+
+@pytest.mark.parametrize("old", [
+    "def f():\n    return 1\n",
+    "class C:\n    def f(self):\n        return 1\n",
+    "def g():\n    def f():\n        return 1\n    return f\n",
+    "class C:\n    @staticmethod\n    def f():\n        return 1\n",
+])
+def test_def_and_async_def_are_different_units(old):
+    new = old.replace("def f(", "async def f(")
+    d = delta(summarize(old, "m"), summarize(new, "m"))
+    assert any(q.endswith("f") for q in d.changed), d
+    assert not delta(summarize(new, "m"), summarize(new, "m")).changed
+
+
+def test_making_a_repository_method_async_changes_it():
+    # The reviewed case: `Environment._decode` turned into a coroutine selected no
+    # conformance test, because both kinds of def were digested as `def`.
+    source = real("ve/environment.py")
+    assert "    def _decode(" in source
+    changed = source.replace("    def _decode(", "    async def _decode(", 1)
+    assert "Environment._decode" in delta(summarize(source, "ve.environment"),
+                                          summarize(changed, "ve.environment")).changed
+
+
+# One edit of each field of a def or class (named from the `ast` schema below).
+DEF = "@deco\ndef f(a: int = 1) -> int:\n    '''Doc.'''\n    return a\n"
+CLASS = "@deco\nclass C(Base, metaclass=M):\n    x = 1\n"
+FIELD_EDITS = {
+    ("def", "name"): DEF.replace("def f", "def g"),
+    ("def", "args"): DEF.replace("a: int = 1", "a: int = 2"),
+    ("def", "body"): DEF.replace("return a", "return -a"),
+    ("def", "decorator_list"): DEF.replace("@deco", "@other"),
+    ("def", "returns"): DEF.replace("-> int", "-> str"),
+    ("def", "type_params"): DEF.replace("def f(", "def f[T]("),
+    ("class", "name"): CLASS.replace("class C", "class D"),
+    ("class", "bases"): CLASS.replace("Base,", "Other,"),
+    ("class", "keywords"): CLASS.replace("metaclass=M", "metaclass=N"),
+    ("class", "body"): CLASS.replace("x = 1", "x = 2"),
+    ("class", "decorator_list"): CLASS.replace("@deco", "@other"),
+    ("class", "type_params"): CLASS.replace("class C(", "class C[T]("),
+}
+# Not semantic: a type comment is a comment (and `ast.parse` drops it by default).
+NOT_SEMANTIC = {"type_comment"}
+
+
+def test_every_field_of_a_def_or_class_is_part_of_its_digest():
+    for kind, cls in (("def", ast.FunctionDef), ("def", ast.AsyncFunctionDef), ("class", ast.ClassDef)):
+        assert set(cls._fields) - NOT_SEMANTIC == {f for k, f in FIELD_EDITS if k == kind}, cls
+    for (kind, field), edited in FIELD_EDITS.items():
+        for prefix in ("", "async "):
+            old = (DEF if kind == "def" else CLASS).replace("def f", prefix + "def f")
+            new = edited.replace("def ", prefix + "def ")
+            d = delta(summarize(old, "m"), summarize(new, "m"))
+            assert not d.empty, (prefix, kind, field)
+            # Nested in a class, the edit still shows (as a changed unit or statement).
+            nest = lambda text: "class Holder:\n" + textwrap.indent(text, "    ")  # noqa: E731
+            assert not delta(summarize(nest(old), "m"), summarize(nest(new), "m")).empty, (prefix, kind, field)
+
+
+def compound_statements() -> set[type]:
+    """Statement kinds that hold other statements, read from the `ast` schema."""
+    def holds(annotation) -> bool:
+        return any(name in str(annotation) for name in ("ast.stmt", "excepthandler", "match_case"))
+    return {cls for cls in ast.stmt.__subclasses__()
+            if cls not in (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+            and any(holds(t) for t in cls._field_types.values())}
+
+
+# A def in every block of every compound statement; {body} marks each def.
+COMPOUND_TEMPLATES = {
+    ast.For: "for _ in x:\n{a}\nelse:\n{b}\n",
+    ast.AsyncFor: "async def outer():\n    async for _ in x:\n{a2}\n    else:\n{b2}\n",
+    ast.While: "while x:\n{a}\nelse:\n{b}\n",
+    ast.If: "if x:\n{a}\nelse:\n{b}\n",
+    ast.With: "with x:\n{a}\n",
+    ast.AsyncWith: "async def outer():\n    async with x:\n{a2}\n",
+    ast.Match: "match x:\n    case 1:\n{a2}\n    case _:\n{b2}\n",
+    ast.Try: "try:\n{a}\nexcept E:\n{b}\nelse:\n{c}\nfinally:\n{d}\n",
+    ast.TryStar: "try:\n{a}\nexcept* E:\n{b}\nelse:\n{c}\nfinally:\n{d}\n",
+}
+
+
+def test_defs_in_every_compound_statement_are_units():
+    assert set(COMPOUND_TEMPLATES) == compound_statements()
+    for kind, template in COMPOUND_TEMPLATES.items():
+        def render(value):
+            blocks = {}
+            for slot in "abcd":
+                body = f"def unit_{slot}():\n    return {value}\n"
+                blocks[slot] = textwrap.indent(body, "    ")
+                blocks[slot + "2"] = textwrap.indent(body, "        ")
+            return template.format(**blocks)
+        old, new = summarize(render(1), "m"), summarize(render(2), "m")
+        slots = [s for s in "abcd" if "{" + s in template]
+        prefix = "outer.<locals>." if template.startswith("async def outer") else ""
+        expected = {f"{prefix}unit_{s}" for s in slots}
+        assert expected <= set(old.units), kind
+        assert set(old.units) == code_qualnames(render(1)), kind
+        assert expected <= delta(old, new).changed, kind
+
+
+def test_every_identifier_field_of_the_ast_is_classified():
+    # A name-holding field the binder does not know would let a rebinding go unseen.
+    found = {(cls.__name__, name) for cls in vars(ast).values()
+             if isinstance(cls, type) and issubclass(cls, ast.AST)
+             for name, annotation in getattr(cls, "_field_types", {}).items() if "str" in str(annotation)}
+    assert found == set(change_units.IDENTIFIER_FIELDS)
+    for old, new, name in (
+            ("try:\n    pass\nexcept E as e:\n    pass\n", "try:\n    pass\nexcept F as e:\n    pass\n", "e"),
+            ("match x:\n    case [a]:\n        pass\n", "match x:\n    case [1, a]:\n        pass\n", "a"),
+            ("match x:\n    case [*rest]:\n        pass\n", "match x:\n    case [1, *rest]:\n        pass\n", "rest"),
+            ("match x:\n    case {1: a, **rest}:\n        pass\n", "match x:\n    case {2: a, **rest}:\n        pass\n",
+             "rest")):
+        binds = delta(summarize(old, "m"), summarize(new, "m")).binds
+        assert name in binds and not {"E", "F", "x"} & binds, binds
 
 
 def make_graph(root: Path, files: dict[str, str], lean: dict[str, str] | None = None) -> source_graph.Graph:
@@ -305,11 +440,78 @@ def test_static_closure_follows_imports_facade_and_named_programs(tmp_path):
     assert {"lean-exe:ve_demo", "tests/data/fixtures.json"} <= mentions
 
 
-def recorder_run(tmp_path, program: str) -> dict:
-    """Run `program` under the recorder (children start it as the .pth hook would) and fold the records."""
+AFTER_DELETION = {
+    "ve/__init__.py": "from .core import parse\n",
+    "ve/core.py": "def parse():\n    return 1\n",
+    "tests/test_importer.py": "import ve.gone\nfrom ve import parse\n",
+    "tests/test_dropped.py": "from ve.core import parse\n",          # imported ve.low before
+    "tests/test_fixture.py": "DATA = 'tests/data/gone.json'\n",
+    "tests/test_facade.py": "from ve import vanished\n",              # ve exported it before
+}
+BEFORE_DELETION = {
+    "ve/gone.py": "def used():\n    return 1\n",
+    "tests/data/gone.json": "{}",
+    "tests/test_dropped.py": "from ve.core import parse\nfrom ve.low import helper\n",
+    "ve/low.py": "def helper():\n    return 1\n",
+    "ve/__init__.py": "from .core import parse\nfrom .low import helper as vanished\n",
+}
+
+
+def test_a_deleted_file_keeps_the_tests_that_used_it(tmp_path):
+    # Built from the tree after the change, the graph has no node for a deleted
+    # module, so its importer's test was not selected; the overlay keeps each
+    # changed file as it was before as well.
+    graph = make_graph(tmp_path, AFTER_DELETION).overlay(BEFORE_DELETION)
+    assert "ve/gone.py" not in make_graph(tmp_path, AFTER_DELETION).closure("tests/test_importer.py")[0]
+    assert "ve/gone.py" in graph.closure("tests/test_importer.py")[0]
+    assert "ve/low.py" in graph.closure("tests/test_dropped.py")[0]
+    assert "ve/low.py" in graph.closure("tests/test_facade.py")[0]
+    assert "tests/data/gone.json" in graph.closure("tests/test_fixture.py")[1]
+    assert graph.reverse["ve/gone.py"] == {"tests/test_importer.py"}
+
+
+def test_without_a_map_deleting_a_module_selects_its_importers(monkeypatch):
+    path = "ve/authoring.py"  # imported only by tests/test_authoring.py
+    tree = source_graph.load(select_tests.ROOT)
+    # The graph of the tree after the deletion (the file itself stays on disk here).
+    deleted = source_graph.Graph(tree.root, [f for f in tree.files if f != path],
+                                 {f: s for f, s in tree.summaries.items() if f != path},
+                                 lean_modules=tree.lean_modules, lean_imports=tree.lean_imports,
+                                 lean_unreadable=tree.lean_unreadable)
+    deleted.prepare_names()
+    deleted.build()
+    assert "tests/test_authoring.py" not in deleted.reverse.get(path, set())
+    monkeypatch.setattr(source_graph, "load", lambda root: deleted)
+    plan = plan_for([select_tests.Change(path, real(path), None)], None)
+    assert "tests/test_authoring.py" in plan["selected"], plan["reasons"]
+
+
+def test_with_a_map_deleting_a_module_selects_every_test_that_imported_it(tmp_path):
+    # A module of constants only: no unit was removed and no reader of a name runs
+    # in the importer's functions, yet every test that imported it now fails.
+    library = {**LIBRARY, "pkg/consts.py": "VALUE = 1\n"}
+    graph = make_graph(tmp_path, {k: v for k, v in library.items() if k != "pkg/consts.py"})
+    edges = {"tests/test_consts.py": {"f": [("pkg/consts.py", "<module>")]}, "tests/test_other.py": {}}
+    coverage = select_tests.Coverage(make_map(edges))
+    found = select_tests.uncertain_units(coverage, graph, set(edges), {"pkg/consts.py": "D"},
+                                         {"pkg/consts.py": (library["pkg/consts.py"], None)})
+    assert found == {"tests/test_consts.py"}
+    found = set()
+    old = summarize(library["pkg/consts.py"], "pkg.consts")
+    select_tests.python_impact(coverage, graph, set(edges), lambda tests, _="": found.update(tests),
+                               "pkg/consts.py", old, None, delta(old, None), {})
+    assert found == {"tests/test_consts.py"}
+
+
+def recorder_run(tmp_path, program: str, argv=("main.py",), files: dict[str, str] | None = None) -> dict:
+    """Run `program` (or `-m module ...`) under the recorder, children starting it as the
+    .pth hook would, and fold the records."""
     root, out = tmp_path / "root", tmp_path / "out"
     root.mkdir()
     out.mkdir()
+    for path, text in (files or {}).items():
+        (root / path).parent.mkdir(parents=True, exist_ok=True)
+        (root / path).write_text(text)
     (root / "lib.py").write_text("import warnings\n\ndef used():\n    return 1\n\ndef in_child():\n    return 2\n\n"
                                  "def in_fork():\n    return 3\n\ndef never():\n    return 4\n\n"
                                  "def noisy():\n    warnings.warn('shown with a source line')\n    raise ValueError\n")
@@ -321,9 +523,14 @@ def recorder_run(tmp_path, program: str) -> dict:
     (root / "start.py").write_text(
         f"import runpy, sys\nsys.path.insert(0, {str(ROOT / 'tools')!r})\nimport test_map_recorder\n"
         "test_map_recorder.start()\nsys.path.pop(0)\nsys.path.insert(0, '.')\n"
-        "runpy.run_path(sys.argv[1], run_name='__main__')\n")
-    env = {"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root)}
-    subprocess.run([sys.executable, "start.py", "main.py"], cwd=root, env=env, check=True,
+        "if sys.argv[1] == '-m':\n"
+        "    sys.argv = sys.argv[2:]\n"
+        "    runpy.run_module(sys.argv[0], run_name='__main__', alter_sys=True)\n"
+        "else:\n"
+        "    runpy.run_path(sys.argv[1], run_name='__main__')\n")
+    env = {"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root),
+           "PYTHONDONTWRITEBYTECODE": "1"}
+    subprocess.run([sys.executable, "start.py", *argv], cwd=root, env=env, check=True,
                    timeout=HANG_TIMEOUT)
     tracked = ({p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()},
                {".", *(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_dir())})
@@ -364,6 +571,65 @@ def test_a_python_child_that_leaves_no_record_makes_the_unit_opaque(tmp_path):
         subprocess.run([sys.executable, "-S", "-c", "pass"], check=True)
     '''))
     assert result["opaque"]
+
+
+def test_a_test_run_by_pytest_keeps_its_own_reads_and_listings(tmp_path):
+    # The reviewed case: every frame of a test has pytest further out, and the
+    # recorder dropped any read of a Python source and any listing made with a
+    # pytest frame anywhere on the stack, so editing lib.py or adding a fixture
+    # did not select this test although either made it fail.
+    test = textwrap.dedent('''
+        import ast, glob, os
+        from pathlib import Path
+        import helper
+        ROOT = Path(__file__).resolve().parent.parent
+
+        def test_uses_files():
+            assert ast.parse((ROOT / "lib.py").read_text()).body
+            assert sorted(p.name for p in (ROOT / "fixtures").iterdir()) == ["case.json"]
+            assert os.listdir(ROOT / "more") == ["x.txt"]
+            assert glob.glob(str(ROOT / "globbed" / "*.txt"))
+            assert helper.value() == 1
+    ''')
+    result = recorder_run(tmp_path, "", ("-m", "pytest", "-q", "-p", "no:cacheprovider", "--rootdir", ".",
+                                         "--confcutdir", ".", "tests/test_uses.py"),
+                          {"tests/test_uses.py": test, "helper.py": "def value():\n    return 1\n",
+                           "more/x.txt": "", "globbed/y.txt": ""})
+    assert "lib.py" in result["r"]  # read as data by the test
+    assert {"fixtures", "more", "globbed"} <= result["d"]
+    # Imports and pytest's assertion rewriting read sources; collection lists directories.
+    assert not {"helper.py", "tests/test_uses.py"} & result["r"]
+    assert not {".", "tests"} & result["d"]
+    assert ("helper.py", "value") in result["f"] and result["opaque"] == []
+
+
+ROOT_DIR, PYTEST = "/r", "/venv/site-packages/_pytest/python.py"
+PLUGGY, LIBRARY_CODE = "/venv/site-packages/pluggy/_callers.py", "/venv/site-packages/lark/load_grammar.py"
+STDLIB = "/usr/lib/python3.14/{}.py".format
+TEST_FILE, PROJECT = "/r/tests/test_x.py", "/r/ve/lib.py"
+ORIGINS = [
+    # (stack of code filenames, innermost first; who the open or listing is for)
+    ([STDLIB("pathlib/_local"), TEST_FILE, PYTEST, PLUGGY], test_map_recorder.TEST),
+    ([STDLIB("glob"), PROJECT, TEST_FILE, PYTEST], test_map_recorder.TEST),
+    ([LIBRARY_CODE, PROJECT, TEST_FILE, PYTEST], test_map_recorder.TEST),
+    ([STDLIB("pkgutil"), PROJECT, PYTEST], test_map_recorder.TEST),
+    (["/r/tools/test_map_recorder.py", STDLIB("os"), TEST_FILE, PYTEST], test_map_recorder.TEST),
+    (["<string>"], test_map_recorder.TEST),
+    ([STDLIB("linecache"), STDLIB("inspect"), TEST_FILE, PYTEST], test_map_recorder.TEST),
+    ([STDLIB("linecache"), STDLIB("traceback"), TEST_FILE, PYTEST], test_map_recorder.DISPLAY),
+    ([STDLIB("linecache"), STDLIB("warnings"), PROJECT, TEST_FILE], test_map_recorder.DISPLAY),
+    ([STDLIB("linecache"), PYTEST, PLUGGY], test_map_recorder.INFRASTRUCTURE),
+    ([PYTEST, PLUGGY, STDLIB("runpy")], test_map_recorder.INFRASTRUCTURE),
+    (["<frozen importlib._bootstrap_external>", "<frozen importlib._bootstrap>", TEST_FILE, PYTEST],
+     test_map_recorder.INFRASTRUCTURE),
+    (["<frozen site>"], test_map_recorder.INFRASTRUCTURE),
+    (["/venv/lib/python3.14/importlib/metadata/__init__.py", TEST_FILE], test_map_recorder.INFRASTRUCTURE),
+]
+
+
+def test_reads_and_listings_belong_to_the_innermost_owner():
+    for stack, expected in ORIGINS:
+        assert test_map_recorder.origin(iter(stack), ROOT_DIR, {"/r/tools/test_map_recorder.py"}) == expected, stack
 
 
 @pytest.fixture(scope="module")
@@ -441,6 +707,13 @@ SAFETY_CASES = (
     ("module-level statements are ignored", test_a_changed_constant_selects_its_readers_here_and_in_importers),
     ("drift is ignored", test_tests_that_ran_no_drifted_code_keep_their_map_entry),
     ("new functions are trusted", test_a_new_function_nothing_calls_by_name_selects_the_whole_file),
+    ("any pytest frame on the stack makes a read infrastructure",
+     test_reads_and_listings_belong_to_the_innermost_owner),
+    ("def and async def are digested alike", test_making_a_repository_method_async_changes_it),
+    ("the graph forgets deleted files", test_a_deleted_file_keeps_the_tests_that_used_it),
+    ("the plan's graph forgets deleted files", test_without_a_map_deleting_a_module_selects_its_importers),
+    ("a vanished module is not an import-time change",
+     test_with_a_map_deleting_a_module_selects_every_test_that_imported_it),
 )
 
 
@@ -461,6 +734,30 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
         arguments = (tmp_path,)
     elif name == "drift is ignored":
         monkeypatch.setattr(select_tests, "python_impact", lambda *args, **kwargs: None)
+        arguments = (tmp_path,)
+    elif name == "any pytest frame on the stack makes a read infrastructure":
+        real_origin = test_map_recorder.origin
+
+        def any_ancestor(filenames, root, own=frozenset()):
+            filenames = list(filenames)
+            if any("/_pytest/" in f or "/pluggy/" in f for f in filenames):
+                return test_map_recorder.INFRASTRUCTURE
+            return real_origin(filenames, root, own)
+        monkeypatch.setattr(test_map_recorder, "origin", any_ancestor)
+        arguments = ()
+    elif name == "def and async def are digested alike":
+        monkeypatch.setattr(change_units, "_unit_node", lambda node: ast.FunctionDef(
+            name=node.name, args=node.args, body=node.body, decorator_list=[], returns=node.returns,
+            type_params=node.type_params))
+        arguments = ()
+    elif name in ("the graph forgets deleted files", "the plan's graph forgets deleted files"):
+        monkeypatch.setattr(source_graph.Graph, "overlay", lambda self, earlier: self)
+        arguments = (tmp_path,) if name == "the graph forgets deleted files" else (monkeypatch,)
+    elif name == "a vanished module is not an import-time change":
+        real_impact = select_tests.python_impact
+        monkeypatch.setattr(select_tests, "python_impact", lambda coverage, graph, all_units, add, path, old, new, d,
+                            called: real_impact(coverage, graph, all_units, add, path, old or new, new or old,
+                                                d, called))
         arguments = (tmp_path,)
     else:
         monkeypatch.setattr(select_tests.Coverage, "file_wide", lambda self, file, defs: set())
