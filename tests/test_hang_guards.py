@@ -557,7 +557,8 @@ def test_the_elapsed_guard_sees_each_form(tmp_path, monkeypatch, source, flagged
 
 
 def reachable_test_modules() -> list[str]:
-    """The test modules that code outside tests/ imports (`tests.NAME`), and those they import in turn."""
+    """The test modules that code outside tests/ imports (`tests.NAME`, or the string `"tests.NAME"` it
+    hands to `importlib`), and those they import in turn."""
     def imported(path):
         for node in ast.walk(ast.parse(path.read_text(), str(path))):
             if isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
@@ -565,6 +566,8 @@ def reachable_test_modules() -> list[str]:
                     yield node.module.split(".")[1]
                 elif node.module == "tests":
                     yield from (alias.name for alias in node.names)
+            elif isinstance(node, ast.Constant) and type(node.value) is str and re.fullmatch(r"tests\.\w+", node.value):
+                yield node.value.split(".")[1]
     todo = [name for directory in ("conformance", "tools", "usecases", "ve")
             for path in (ROOT / directory).rglob("*.py") if "__pycache__" not in path.parts
             for name in imported(path)]

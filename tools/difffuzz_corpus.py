@@ -22,6 +22,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORIES = ("conformance", "usecases")
+# The production wire-contract units `ve_diagnose` diagnoses: each has a `<unit>-test-inputs.json`.
+WIRE_UNITS = ("soft-norms@0", "norms@0", "norm-defaults@0")
 
 # Files that are not fixtures, by pattern: (kind, reason). `artifact` files are outputs of a tool or a run
 # (reports, baselines, results); they may quote environments but are not inputs. `no-input` files hold no
@@ -36,10 +38,11 @@ EXCLUDED = {
     "conformance/wire.json": ("no-input", "raw-text cases of the restricted JSON reader (tests/test_wire.py); "
                                           "the fuzzer's inputs are parsed JSON"),
     "conformance/wire-contract/engine*.json": ("no-input", "the wire-contract engine's own test vectors"),
-    "conformance/wire-contract/soft-norms*-delta.json": ("no-input", "a recorded delta between engines"),
-    "conformance/wire-contract/soft-norms@0-catalogue.json": ("no-input", "the soft-norms@0 diagnostic catalogue"),
-    "conformance/wire-contract/soft-norms@0-gate.json": ("artifact", "the wire-contract gate's report"),
-    "conformance/wire-contract/soft-norms@0-golden.json": ("artifact", "golden diagnostics of the gate"),
+    "conformance/wire-contract/*-delta.json": ("no-input", "a recorded delta between engines"),
+    "conformance/wire-contract/*@0-catalogue.json": ("no-input", "a unit's diagnostic catalogue"),
+    "conformance/wire-contract/*@0-gate.json": ("artifact", "the wire-contract gate's report"),
+    "conformance/wire-contract/*@0-golden.json": ("artifact", "golden diagnostics of the gate"),
+    "conformance/wire-contract/*@0-call-snapshot.json": ("artifact", "a unit's recorded legacy call results"),
     "conformance/wire-contract/soft-norms@0-switch.json": ("no-input", "the switch record of soft-norms@0"),
     "usecases/*/results.json": ("artifact", "a use case's recorded results"),
     "usecases/*/*/results.json": ("artifact", "a use case's recorded results"),
@@ -254,7 +257,7 @@ def requests() -> list[tuple[str, str, dict, object]]:
 def wire_fixtures() -> list[str]:
     """The fixture files the `wire` surface reads: the wire-contract units' contracts and test inputs."""
     return [f for f in fixture_files() if fnmatch.fnmatchcase(f, "conformance/wire-contract/contracts/*.json")
-            or f == "conformance/wire-contract/soft-norms@0-test-inputs.json"]
+            or f in {f"conformance/wire-contract/{unit}-test-inputs.json" for unit in WIRE_UNITS}]
 
 
 def readers(relative: str, data, usecase_origins=None) -> set[str]:

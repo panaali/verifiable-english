@@ -16,9 +16,9 @@ how their answers compare:
   type diagnostic (`TYPE_DIAGNOSTICS`), and the environment identity when the engines report one. A route
   that names its own code (`OwnCodes`: the soft-norms route's `code`) keeps it: the code is compared with
   its Python counterpart's, and its class in the route's contract is the code compared with the others.
-* `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`), by the Python engine
-  and `ve_diagnose`; the whole diagnostic record is compared, except the text and args of an inherited
-  check (the contract's `inherited` flag).
+* `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`, `norms@0`,
+  `norm-defaults@0`), by the Python engine and `ve_diagnose`; the whole diagnostic record is compared, except
+  the text and args of an inherited check (the contract's `inherited` flag).
 
 Each seed is run as it is, and its 1-fault and 2-fault mutants (`one_faults`): every JSON node replaced by
 7, true, null, [], {} and "x"; an object member removed; keys and lists reversed; a list's first entry
@@ -280,6 +280,7 @@ def limit_patterns():
     from tests.test_wire_contract_corpus import CONTRACTS, LIMITS
     production = json.loads((ROOT / "ve/wire_contract/limits.json").read_text())
     tables = [(None, load("soft-norms@0"), production)] + [
+        (unit, load(unit), production) for unit in corpus.WIRE_UNITS if unit != "soft-norms@0"] + [
         (unit, contract, LIMITS) for unit, contract in sorted(CONTRACTS.items())]
     out = []
 
@@ -348,8 +349,9 @@ def limit_faults(nodes, limits):
     for pattern, kind, limit in limits:
         for path, node in nodes:
             if _matches(pattern, path) and type(node) is (list if kind == "max_items" else str):
+                # `_resized` makes nothing of an empty list; asking it would copy the node for each size.
                 out.extend(["limit", list(path), size] for size in (limit - 1, limit, limit + 1)
-                           if size >= 0 and size != len(node) and _resized(node, size) is not None)
+                           if size >= 0 and size != len(node) and (type(node) is str or node))
     return out
 
 
@@ -1331,6 +1333,7 @@ class Wire(Surface):
 
     def __init__(self):
         self._inherited_cache = {}
+        self._engines = {}
 
     def seeds(self):
         from tests.test_wire_contract_corpus import CASES
@@ -1350,13 +1353,29 @@ class Wire(Surface):
             soft.setdefault(canonical([environment, norms]), (test, environment, norms))
         out += [Seed("wire", "soft-norms@0", f"soft-norms@0/{name}", {"environment": e, "norms": n},
                      ("python", "lean")) for name, e, n in soft.values()]
+        for unit in corpus.WIRE_UNITS[1:]:
+            found = {}
+            for test, environment, norms in json.loads(
+                    (ROOT / f"conformance/wire-contract/{unit}-test-inputs.json").read_text()):
+                found.setdefault(canonical([environment, norms]), (f"{test}#{len(found)}", environment, norms))
+            out += [Seed("wire", unit, f"{unit}/{name}", {"environment": e, "norms": n}, ("python", "lean"))
+                    for name, e, n in found.values()]
         return out
 
     def _engine(self, unit):
+        """(contract, run options) of `unit`, loaded and lock-checked once."""
+        if unit not in self._engines:
+            self._engines[unit] = self._load_engine(unit)
+        return self._engines[unit]
+
+    def _load_engine(self, unit):
         from ve.wire_contract.engine import load
         if unit == "soft-norms@0":
             from ve.softnorms_contract import REGISTRY
             return load("soft-norms@0"), {"registry": REGISTRY}
+        if unit in corpus.WIRE_UNITS:
+            from conformance.wire_contract_faults import unit_module
+            return load(unit), {"registry": unit_module(unit).REGISTRY}
         from tests.test_wire_contract_corpus import CONTRACTS, LIMITS as UNIT_LIMITS, NAMES, _registry
         return CONTRACTS[unit], {"registry": _registry(), "contracts": CONTRACTS, "limits": UNIT_LIMITS,
                                  "names": NAMES}
@@ -1366,7 +1385,17 @@ class Wire(Surface):
         contract, options = self._engine(seed.profile)
 
         def diagnose():
-            outcome = run(contract, deepcopy(root), **options)
+            from ve.errors import VEError
+            source = deepcopy(root)
+            if "adapter" in contract:
+                # As `ve_diagnose` does: the unit's adapter builds the root from the case, and refuses a case
+                # outside the unit's domain before any check runs (wire-contract-s5.md 2.2).
+                try:
+                    source = options["registry"].adapters[contract["adapter"]](
+                        {"kind": _diagnose_kind(seed.profile), **source})
+                except VEError as exc:
+                    return {"outcome": "error", "code": "adapter", "text": exc.message, "record": None}
+            outcome = run(contract, source, **options)
             if outcome is CLEAN:
                 return ok(None)
             if isinstance(outcome, Deferred):
@@ -1381,7 +1410,7 @@ class Wire(Surface):
             by_unit.setdefault(seed.profile, []).append(index)
         out = [None] * len(items)
         for unit, indices in by_unit.items():
-            kind = "soft-elaborate" if unit == "soft-norms@0" else "corpus"
+            kind = _diagnose_kind(unit)
             cases = [{"id": str(i), "kind": kind, **items[i][1]} for i in indices]
             for i, case, row in zip(indices, cases, batched([BIN / "ve_diagnose", unit, "-"], cases)):
                 row, bad = checked(diagnose_row_problem, case, row)
@@ -1400,24 +1429,34 @@ class Wire(Surface):
     def rust(self, items):
         raise AssertionError("no Rust path for the wire-contract units")
 
+
     def _inherited(self, unit):
         if unit in self._inherited_cache:
             return self._inherited_cache[unit]
+        from ve.wire_contract.engine import load
         try:
-            contract, _ = self._engine(unit)
+            contract, options = self._engine(unit)
         except KeyError:
             return set()
+        contracts = options.get("contracts") or {}
         inherited = set()
 
-        def visit(entries):
+        # The gate's rule (`wire_contract_gate.inherited_checks`), with an include resolved as the engine
+        # resolves it: an included contract's inherited check by its include path (`w1-environment/1.1`).
+        def visit(entries, prefix):
             for entry in entries:
                 if "each" in entry:
-                    visit(entry["checks"])
-                for member in entry.get("emits", []) if entry.get("kind") == "classifier" else [entry]:
-                    if member.get("inherited"):
-                        inherited.add(member["id"])
+                    visit(entry["checks"], prefix)
+                elif entry.get("kind") == "include":
+                    inner = contracts.get(entry["contract"]) or load(entry["contract"])
+                    visit([check for phase in inner["phases"] if phase["name"] in entry["phases"]
+                           for check in phase["checks"]], prefix + entry["id"] + "/")
+                elif entry.get("kind") == "classifier":
+                    inherited.update(prefix + m["id"] for m in entry["emits"] if m.get("inherited"))
+                elif entry.get("inherited"):
+                    inherited.add(prefix + entry["id"])
         for phase in contract["phases"]:
-            visit(phase["checks"])
+            visit(phase["checks"], "")
         self._inherited_cache[unit] = inherited
         return inherited
 
@@ -1433,6 +1472,17 @@ class Wire(Surface):
 
     def text_fixed(self, seed, left, right):
         return True
+
+
+def _diagnose_kind(unit):
+    """The case kind `ve_diagnose` reads for `unit`: a production unit's legacy route kind (its fault
+    catalogue's `CASE_KIND`), `corpus` for a conformance unit."""
+    if unit == "soft-norms@0":
+        return "soft-elaborate"
+    if unit in corpus.WIRE_UNITS:
+        from conformance.wire_contract_faults import unit_module
+        return unit_module(unit).CASE_KIND
+    return "corpus"
 
 
 SURFACES = {"requests": Requests, "environment": EnvironmentSurface, "wire": Wire}
