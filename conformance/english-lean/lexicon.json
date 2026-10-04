@@ -3,7 +3,8 @@
   "spec": "docs/spec/english-lean.md, section 8.5 (draft 2)",
   "notes": [
     "Expected results are copied from the specification. `F` is examples/fluent/environment.json; `F2` is F with one more predicate `audited` on `service`, declared with the wording `{0} is reviewed`.",
-    "A case's lexicon is `LF` with its `edits` applied in order: `set` [field, symbol, value], `remove` [field, symbol], `add` [field, symbol, value]. `conditions` is the set of failing conditions, empty for a valid lexicon."
+    "A case's lexicon is `LF` with its `edits` applied in order to the field's list of entries: `set` [field, symbol, value] replaces every entry of the symbol by one, `remove` [field, symbol] drops every entry of the symbol, `add` [field, symbol, value] adds an entry (a symbol already present is then repeated); after each of these the field is sorted. `append` [field, symbol, value] adds an entry at the end without sorting, so that a repeated symbol's first entry is the earlier one. `conditions` is the set of failing conditions, empty for a valid lexicon.",
+    "Cases `r1` to `r9` are review regressions (2026-10-04), not from the specification: a repeated entry of any field is V1, and a negative without a positive (or with a positive of fewer than two words) is V5, never a crash. `lean/VE/EnglishGrammar/LexiconFixtures.lean` is generated from this file."
   ],
   "environments": {
     "F": {"path": "examples/fluent/environment.json"},
@@ -43,7 +44,20 @@
     {"id": "v11", "env": "F2", "edits": [{"set": ["wordings", "reviewed", "{0} is  Reviewed"]},
                                          {"remove": ["negatives", "reviewed"]},
                                          {"add": ["wordings", "audited", "{0} is classified as \"audited\""]}],
-     "conditions": ["V2", "V4"]}
+     "conditions": ["V2", "V4"]},
+    {"id": "r1", "env": "F", "edits": [{"add": ["nouns", "person", "person"]}], "conditions": ["V1"]},
+    {"id": "r2", "env": "F", "edits": [{"add": ["letters", "person", "P"]}], "conditions": ["V1"]},
+    {"id": "r3", "env": "F", "edits": [{"add": ["wordings", "owns", "{0} owns {1}"]}], "conditions": ["V1"]},
+    {"id": "r4a", "env": "F", "edits": [{"add": ["wordings", "owns", "{0} has the recorded relation \"owns\" to {1}"]}],
+     "conditions": ["V1", "V5"]},
+    {"id": "r4b", "env": "F",
+     "edits": [{"append": ["wordings", "owns", "{0} has the recorded relation \"owns\" to {1}"]}],
+     "conditions": ["V1"]},
+    {"id": "r5", "env": "F", "edits": [{"add": ["negatives", "owns", "{0} does not own {1}"]}], "conditions": ["V1"]},
+    {"id": "r6", "env": "F", "edits": [{"add": ["spellings", "legacy", "legacy"]}], "conditions": ["V1"]},
+    {"id": "r7", "env": "F", "edits": [{"remove": ["wordings", "owns"]}], "conditions": ["V1", "V5"]},
+    {"id": "r8", "env": "F", "edits": [{"set": ["wordings", "owns", "{0}"]}], "conditions": ["V2", "V3", "V5"]},
+    {"id": "r9", "env": "F", "edits": [{"set": ["wordings", "owns", ""]}], "conditions": ["V2", "V3", "V5"]}
   ],
   "negative_templates": [
     {"wording": "{0} is deployed", "arity": 1, "expected": "{0} is not deployed"},

@@ -1,5 +1,4 @@
 """Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`."""
-from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -9,6 +8,7 @@ from ve import Environment
 from ve.english import EnglishVocabulary
 from ve.english_phrases import wording_key
 from ve.english_vocabulary import negative_template
+from ve.errors import VEError
 
 from conformance import english_lean_lexicon as X
 
@@ -17,23 +17,11 @@ CORPUS = json.loads((ROOT / 'conformance/english-lean/lexicon.json').read_text()
 
 
 def _environment(name):
-    spec = CORPUS['environments'][name]
-    data = json.loads((ROOT / spec['path']).read_text())
-    data['vocabulary']['predicates'].update(spec.get('add_predicates', {}))
-    return Environment(data)
+    return X.fixture_environment(CORPUS, name)
 
 
 def _lexicon(case, env):
-    lex = {'format': X.FORMAT, 'environment_id': env.environment_id, **deepcopy(CORPUS['LF'])}
-    for edit in case['edits']:
-        (op, args), = edit.items()
-        entries = dict(map(tuple, lex[args[0]]))
-        if op == 'remove':
-            entries.pop(args[1])
-        else:
-            entries[args[1]] = args[2]
-        lex[args[0]] = sorted([k, v] for k, v in entries.items())
-    return lex
+    return X.fixture_lexicon(CORPUS, case, env)
 
 
 @pytest.mark.parametrize('case', CORPUS['cases'], ids=lambda c: c['id'])
@@ -70,3 +58,43 @@ def test_wording_key_port_agrees_on_ascii_and_folds_narrowly():
         assert X.wording_key_lean(text) == wording_key(text)
     # Python's casefold is wider than the Lean fold (spec 2.3): the sharp s is the first difference.
     assert wording_key('{0} is Groß') != X.wording_key_lean('{0} is Groß')
+
+
+def test_lean_fixtures_are_generated_from_the_python_reference():
+    # `lake build` checks each #guard: Lean's `Lexicon.failures` equals the reference's failures.
+    assert X.LEAN_FIXTURES.read_text() == X.lean_fixtures(), \
+        'regenerate: uv run python -m conformance.english_lean_lexicon --lean-fixtures'
+
+
+def test_mutants_reach_every_condition_and_never_crash():
+    env = _environment('F')
+    view = X.lexical_view(EnglishVocabulary(env))
+    lf = {field: CORPUS['LF'][field] for field in X.LEXICON_FIELDS}
+    found = {label: X.failures(view, lex) for label, lex in X.mutants(view, lf)}
+    assert {f[0] for fs in found.values() for f in fs} == {'V1', 'V2', 'V3', 'V4', 'V5'}
+    assert sum(1 for fs in found.values() if not fs) < len(found) // 4
+    # a repeated entry of any field is V1 (review regression: dictionaries dropped the repetition)
+    for field in ('nouns', 'letters', 'wordings', 'negatives', 'spellings'):
+        for label, fs in found.items():
+            if label.startswith(field + '[') and label.endswith(' dup'):
+                assert any(f[0] == 'V1' for f in fs), label
+
+
+@pytest.mark.parametrize('value', [7, None, True, {}, [['owns']], [['owns', 7]], [[1, 'x']], 'owns'])
+def test_a_malformed_lexicon_is_refused(value):
+    env = _environment('F')
+    lex = _lexicon(CORPUS['cases'][0], env)
+    lex['wordings'] = value
+    with pytest.raises(VEError):
+        X.check(EnglishVocabulary(env), lex)
+    lex = _lexicon(CORPUS['cases'][0], env)
+    lex['aliases'] = [['owns', '{0} has {1}', 0]]
+    with pytest.raises(VEError):
+        X.check(EnglishVocabulary(env), lex)
+
+
+@pytest.mark.parametrize('wording,arity', [(None, 2), ('', 2), ('{0}', 2), ('{0}', 1), ('{0} gives {1} to {2}', 3),
+                                           ('{0} is given {1} by {2}', 3)])
+def test_negative_template_is_total(wording, arity):
+    expected = '{0} is not given {1} by {2}' if wording == '{0} is given {1} by {2}' else None
+    assert X.negative_template_of(wording, arity) == expected
