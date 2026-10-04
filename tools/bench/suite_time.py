@@ -42,7 +42,15 @@ def summary(log: str) -> dict:
             "workers": int(next(filter(None, workers.groups()))) if workers else None}
 
 
-def report(label, wall, user, system, rows, log, load_start, load_end, commit=None):
+def cpu_rows(log: Path) -> list[tuple[str, float]]:
+    totals = Counter()
+    for line in log.read_text().splitlines():
+        row = json.loads(line)
+        totals[row["nodeid"]] += row["cpu"]
+    return list(totals.items())
+
+
+def report(label, wall, user, system, rows, log, load_start, load_end, commit=None, cpu=()):
     files = Counter()
     for nodeid, seconds in rows:
         files[nodeid.split("::")[0]] += seconds
@@ -55,7 +63,10 @@ def report(label, wall, user, system, rows, log, load_start, load_end, commit=No
             **summary(log), "test_seconds_sum": round(sum(s for _, s in rows), 1),
             "slowest_tests": [{"nodeid": n, "seconds": round(s, 1)}
                               for n, s in sorted(rows, key=lambda row: -row[1])[:10]],
-            "slowest_files": [{"file": f, "seconds": round(s, 1)} for f, s in files.most_common(10)]}
+            "slowest_files": [{"file": f, "seconds": round(s, 1)} for f, s in files.most_common(10)],
+            **({"cpu_seconds_of_tests": round(sum(c for _, c in cpu), 1),
+                "most_cpu_tests": [{"nodeid": n, "cpu_seconds": round(c, 1)}
+                                   for n, c in sorted(cpu, key=lambda row: -row[1])[:10]]} if cpu else {})}
 
 
 def main() -> int:
@@ -80,16 +91,22 @@ def main() -> int:
         result["workers"] = result["workers"] or args.workers
     else:
         with tempfile.TemporaryDirectory() as directory:
-            junit = Path(directory) / "junit.xml"
+            junit, cpu_log = Path(directory) / "junit.xml", Path(directory) / "cpu.jsonl"
             load_start = os.getloadavg()[0]
             before, started = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic()
             done = subprocess.run([sys.executable, "-m", "pytest", "-p", "no:cacheprovider", "-q",
-                                   f"--junitxml={junit}", *[a for a in args.pytest if a != "--"]],
-                                  cwd=ROOT, capture_output=True, text=True, timeout=6 * 3600)
+                                   "-p", "tools.bench.cpu_per_test", f"--junitxml={junit}",
+                                   *[a for a in args.pytest if a != "--"]],
+                                  cwd=ROOT, env={**os.environ, "VE_TEST_CPU_LOG": str(cpu_log)},
+                                  capture_output=True, text=True, timeout=6 * 3600)
             wall, after = time.monotonic() - started, resource.getrusage(resource.RUSAGE_CHILDREN)
             result = report(args.label, wall, after.ru_utime - before.ru_utime, after.ru_stime - before.ru_stime,
-                            durations(junit), done.stdout + done.stderr, load_start, os.getloadavg()[0])
+                            durations(junit), done.stdout + done.stderr, load_start, os.getloadavg()[0],
+                            cpu=cpu_rows(cpu_log) if cpu_log.exists() else ())
             result["returncode"] = done.returncode
+            arguments = [a for a in args.pytest if a != "--"]
+            if result["workers"] is None and "-n" in arguments and arguments[arguments.index("-n") + 1].isdecimal():
+                result["workers"] = int(arguments[arguments.index("-n") + 1])
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({k: result[k] for k in ("wall_seconds", "cpu_seconds", "summary", "workers")}))
     return 0

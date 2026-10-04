@@ -1,0 +1,106 @@
+{
+  "label": "after, -n 32",
+  "commit": "a4fe3f55e9aa19b9f5c9c718467b95b8855e27fc",
+  "cpus": 32,
+  "load_start": 44.51171875,
+  "load_end": 25.6982421875,
+  "wall_seconds": 1754.0,
+  "cpu_seconds": {
+    "user": 20174.2,
+    "system": 685.4,
+    "total": 20859.6
+  },
+  "summary": "6233 passed, 6 skipped, 101 warnings in 1751.04s (0:29:11)",
+  "counts": {
+    "passed": 6233,
+    "skipped": 6,
+    "warnings": 101
+  },
+  "workers": 32,
+  "test_seconds_sum": 28767.3,
+  "slowest_tests": [
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit",
+      "seconds": 898.7
+    },
+    {
+      "nodeid": "tests/test_bluedot_grant.py::test_document_coverage_and_premise_limit",
+      "seconds": 803.8
+    },
+    {
+      "nodeid": "tests/test_readings_s1_differential.py::test_generated_sets_agree_with_lean",
+      "seconds": 791.6
+    },
+    {
+      "nodeid": "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip",
+      "seconds": 749.8
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget",
+      "seconds": 696.5
+    },
+    {
+      "nodeid": "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents",
+      "seconds": 677.4
+    },
+    {
+      "nodeid": "tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results",
+      "seconds": 479.3
+    },
+    {
+      "nodeid": "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+      "seconds": 451.4
+    },
+    {
+      "nodeid": "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed",
+      "seconds": 441.3
+    },
+    {
+      "nodeid": "tests/test_norm_defaults_three_way.py::test_spec8_differentials",
+      "seconds": 374.8
+    }
+  ],
+  "slowest_files": [
+    {
+      "file": "tests/test_wire_gate_corpus.py",
+      "seconds": 1780.1
+    },
+    {
+      "file": "tests/test_english_evidence.py",
+      "seconds": 1770.3
+    },
+    {
+      "file": "tests/test_asimov_extended.py",
+      "seconds": 1567.5
+    },
+    {
+      "file": "tests/test_discourse_lean.py",
+      "seconds": 1389.2
+    },
+    {
+      "file": "tests/test_risk_margins.py",
+      "seconds": 1160.3
+    },
+    {
+      "file": "tests/test_soft_review_regressions.py",
+      "seconds": 1058.9
+    },
+    {
+      "file": "tests/test_risk_generated_policies.py",
+      "seconds": 939.0
+    },
+    {
+      "file": "tests/test_eligibility_wfp.py",
+      "seconds": 933.9
+    },
+    {
+      "file": "tests/test_assist_invariants.py",
+      "seconds": 892.2
+    },
+    {
+      "file": "tests/test_assist.py",
+      "seconds": 870.9
+    }
+  ],
+  "returncode": 0
+}
