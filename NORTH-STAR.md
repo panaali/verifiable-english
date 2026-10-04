@@ -29,6 +29,9 @@ Snapshot: **2026-09-27**, repository baseline `9db5a20` (`ve-integration` / this
 ### Readability (zero-training) evidence
 Readability eval 2026-10-03 (Claude Sonnet 5.5 as proxy reader/writer with only what a human gets; pre-registered bars): reading 98% with or without editor legends vs 93% plain English on the same items; critical misreadings 1.7%; writing 0 silent wrong meanings, 100% correct within 3 attempts using VE's own error messages, 75% first-try parse. Upper bound for careful readers; small samples. Writing-side grammar gaps listed in ARCH-ROADMAP.
 
+### Vocabulary out of the box (lead-approved 2026-10-04)
+Shared sense dictionary (one sense per document, editor asks once), automatic negatives for simple adjectives, starter vocabulary packs per domain. Keeps one reading; removes most per-word declaration work. After english-lean S2.
+
 ### Use-case backlog (added 2026-09-29, lead-approved; order = orchestrator's recommendation)
 
 | # | Use case | Why it matters | Needs | Status |
