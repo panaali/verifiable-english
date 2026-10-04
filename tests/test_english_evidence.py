@@ -72,8 +72,30 @@ def test_english_differential_merge_smoke():
     assert len(report['vocabularies']) == 17
 
 
-def test_english_mixed_merge_smoke():
-    report = english_mixed.mixed(1)
+# english_surface's configurations and the n-ary one; the coverage test checks the count.
+MIXED_CONFIGURATIONS = 18
+# The configurations whose texts take minutes to parse are split further, by text index.
+MIXED_PARTS = {8: 2, 11: 4, 12: 8}
+MIXED_SLICES = [(offset, index, MIXED_PARTS.get(offset, 1)) for offset in range(MIXED_CONFIGURATIONS)
+                for index in range(MIXED_PARTS.get(offset, 1))]
+
+
+@pytest.mark.parametrize('offset,index,parts', MIXED_SLICES,
+                         ids=[f'{offset}-{index}of{parts}' for offset, index, parts in MIXED_SLICES])
+def test_english_mixed_merge_smoke(offset, index, parts):
+    """`english_mixed.mixed(1)` one configuration (or part of one) at a time, each with its
+    own seed, so the workers share the run; together the slices parse every text of the
+    whole run."""
+    report = english_mixed.mixed(1, offsets={offset}, part=(index, parts))
+    assert report['failure_count'] == 0, report['failures']
+    assert len(report['vocabularies']) == 1
+    assert report['texts'] > 0
+
+
+def test_english_mixed_merge_smoke_covers_every_construct():
+    """The whole run's construct coverage, which the generated formulas alone decide."""
+    report = english_mixed.mixed(1, parse=False)
+    assert len(report['vocabularies']) == MIXED_CONFIGURATIONS
     assert report['failure_count'] == 0
     assert report['texts'] > 0
     assert not report['missing_constructs']
