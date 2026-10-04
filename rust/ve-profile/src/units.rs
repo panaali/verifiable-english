@@ -1,9 +1,10 @@
 //! W6a ground-unit regeneration for Rust conformance. No proof certificates:
 //! Rust regenerates, evaluates and checks countermodels; Lean certifies.
-use crate::{Error, Result, digest, error, order_case};
+use crate::order_case;
 use num_bigint::BigInt;
 use serde_json::{Value, json};
 use std::fmt;
+use ve_kernel::{Error, Result, digest, internal::error};
 
 const NUMBERS2: &str = "$int quantification requires the missing numbers2 route";
 const POINTS_SUFFIX: &str = " percentage points";
@@ -596,7 +597,7 @@ fn declarations(e: &Value) -> Result<()> {
         return error("ResourceLimit", "At most 64 unit tags");
     }
     for (tag, record) in u {
-        if crate::environment::identifier(tag, "InvalidInput").is_err() || tag == "dimensionless" {
+        if ve_kernel::internal::identifier(tag, "InvalidInput").is_err() || tag == "dimensionless" {
             return error("InvalidInput", format!("Invalid unit tag {tag:?}"));
         }
         scale(e, tag)?;

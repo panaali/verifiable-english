@@ -20,6 +20,9 @@ S3-pre from the legacy verdict differences, the deferred share from the deferred
 import argparse
 from collections import Counter
 from copy import deepcopy
+from dataclasses import dataclass
+import hashlib
+import importlib
 import json
 from pathlib import Path
 import random
@@ -34,9 +37,12 @@ from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks,
                                     multi_fault_base, multi_fault_cases, rejected_sources, soft3_accepted,
                                     soft3_reproducers)
 from conformance.wire_contract import choose_combinations
-from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
-                                              footprint, legacy_codes, overlaps, position)
+from tools.pytest_run import pytest_command, pytest_environment
+from conformance.wire_contract_faults import (PILOT, UNREACHED, catalogue, expected_first, expected_record,
+                                              footprint, legacy_codes, overlaps, position, unit_module,
+                                              unreached)
 from tests.test_soft_norms_lean import env
+from ve.backends.diagnostics import checker_error
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
 from ve.softnorms_contract import REGISTRY, public_rejection
@@ -67,12 +73,57 @@ PYTHON_ONLY_PROFILES = ("alternatives@0", "norm-defaults@0", "reports@0", "right
 # The rows of 8.3's table of allowed coverage gaps, each with the checks it applies to, judged from the fault
 # catalogue: G1, the checks every fault of which only the in-process API can carry.
 GAP_APPLIES = {"G1": lambda faults: {f.check for f in faults} - {f.check for f in faults if f.readers != "python"}}
+# Another unit's gate reads its spec, wire-contract-s5.md (7.1), and its own paths in this directory.
+S5_SPEC = ROOT / "docs/spec/wire-contract-s5.md"
+DIRECTORY = ROOT / "conformance/wire-contract"
+# The case kind of each Lean binary's input, and of `ve_diagnose`'s for each unit.
+CASE_KINDS = {"ve_soft_norms_route": "soft-elaborate", "ve_norms_route": "norms-elaborate",
+              "ve_norm_defaults_route": "norm-defaults-elaborate"}
 
 
-def allowed_gaps():
-    """8.3's table of allowed coverage gaps, read from the spec: {gap: (language, reason)}."""
-    text = SPEC.read_text()
-    section = text[text.index("**Allowed coverage gaps.**"):text.index("### 8.4")]
+@dataclass(frozen=True)
+class Unit:
+    """One unit's gate (wire-contract-s5.md 7.1): its paths, the spec section of its allowed coverage gaps
+    with the rules that apply them, its feasibility denominator and threshold, its Lean legacy route with the
+    case kind that route and `ve_diagnose` read, and, for a unit other than the pilot, the module of its fault
+    catalogue, which also builds its corpus and holds its legacy validation."""
+    contract: str
+    report: Path
+    switch: Path
+    test_inputs: Path
+    recorded_tests: tuple
+    examples: Path
+    spec: Path
+    gaps: tuple
+    gap_applies: dict
+    feasibility_of: int | None
+    feasibility_threshold: int | None
+    lean_route: str
+    case_kind: str
+    module: object = None
+
+
+def unit_of(name=PILOT):
+    """The unit's gate. The pilot's is read from this module's names at each call."""
+    if type(name) is dict:
+        name = name["contract"]
+    if name == PILOT:
+        return Unit(PILOT, REPORT, SWITCH, TEST_INPUTS, RECORDED_TESTS, EXAMPLES, SPEC,
+                    ("**Allowed coverage gaps.**", "### 8.4"), GAP_APPLIES, FEASIBILITY_OF, FEASIBILITY_THRESHOLD,
+                    "ve_soft_norms_route", "soft-elaborate")
+    module = unit_module(name)
+    return Unit(name, DIRECTORY / f"{name}-gate.json", DIRECTORY / f"{name}-switch.json",
+                DIRECTORY / f"{name}-test-inputs.json", module.RECORDED_TESTS,
+                ROOT / "ve/wire_contract/examples" / name, S5_SPEC, ("**Allowed coverage gaps**", "### 8.5"),
+                module.GAP_APPLIES, module.FEASIBILITY_OF, None, module.LEAN_ROUTE, module.CASE_KIND, module)
+
+
+def allowed_gaps(unit=PILOT):
+    """The unit's table of allowed coverage gaps (8.3 for the pilot), read from the spec:
+    {gap: (language, reason)}."""
+    u = unit_of(unit)
+    text = u.spec.read_text()
+    section = text[text.index(u.gaps[0]):text.index(u.gaps[1])]
     rows = {}
     for line in section.splitlines():
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
@@ -80,33 +131,43 @@ def allowed_gaps():
             if len(cells) != 4 or cells[0] in rows:
                 raise ValueError(f"malformed row of the allowed coverage gaps: {line}")
             rows[cells[0]] = (cells[1].lower(), cells[3])
-    if set(rows) != set(GAP_APPLIES):
-        raise ValueError(f"allowed coverage gaps {sorted(rows)}, rules for {sorted(GAP_APPLIES)}")
+    if set(rows) != set(u.gap_applies):
+        raise ValueError(f"allowed coverage gaps {sorted(rows)}, rules for {sorted(u.gap_applies)}")
     return rows
 
 
-def exempt_gaps(language):
+def exempt_gaps(language, unit=PILOT):
     """{check: reason} for each check that `language` may lack a witness for (8.3): the table's rows for that
-    language, each applied to the checks the fault catalogue gives it."""
-    faults = catalogue()
+    language (or for both), each applied to the checks the fault catalogue gives it."""
+    u = unit_of(unit)
+    faults = catalogue(u.contract)
     exempt = {}
-    for gap, (row_language, reason) in sorted(allowed_gaps().items()):
-        if row_language == language:
-            exempt.update((check, reason) for check in GAP_APPLIES[gap](faults))
+    for gap, (row_language, reason) in sorted(allowed_gaps(u.contract).items()):
+        if row_language in (language, "both"):
+            exempt.update((check, reason) for check in u.gap_applies[gap](faults))
     return exempt
 
 
+def _included_entries(entry):
+    """The entries an include brings in, in its order: the named phases of the included contract."""
+    inner = load(entry["contract"])
+    return [check for phase in inner["phases"] if phase["name"] in entry["phases"] for check in phase["checks"]]
+
+
 def inherited_checks(contract):
-    """The checks and members whose text and args are the inherited decoder's (2.5, rule 5)."""
+    """The checks and members whose text and args are the inherited decoder's (2.5, rule 5); an included
+    one by its include path (`w1-environment/1.1`)."""
     found = set()
-    def walk(entries):
+    def walk(entries, prefix=""):
         for entry in entries:
             if "each" in entry:
-                walk(entry["checks"])
+                walk(entry["checks"], prefix)
+            elif entry.get("kind") == "include":
+                walk(_included_entries(entry), prefix + entry["id"] + "/")
             elif entry.get("kind") == "classifier":
-                found.update(m["id"] for m in entry["emits"] if m.get("inherited"))
+                found.update(prefix + m["id"] for m in entry["emits"] if m.get("inherited"))
             elif entry.get("inherited"):
-                found.add(entry["id"])
+                found.add(prefix + entry["id"])
     for phase in contract["phases"]:
         walk(phase["checks"])
     return found
@@ -129,15 +190,18 @@ def inherited_texts(contract):
 
 
 def all_checks(contract):
+    """Every check and member in table order; an included one by its include path (`w1/4.2`)."""
     found = []
-    def walk(entries):
+    def walk(entries, prefix=""):
         for entry in entries:
             if "each" in entry:
-                walk(entry["checks"])
+                walk(entry["checks"], prefix)
+            elif entry.get("kind") == "include":
+                walk(_included_entries(entry), prefix + entry["id"] + "/")
             elif entry.get("kind") == "classifier":
-                found.extend(m["id"] for m in entry["emits"])
-            elif entry.get("kind") != "include":
-                found.append(entry["id"])
+                found.extend(prefix + m["id"] for m in entry["emits"])
+            else:
+                found.append(prefix + entry["id"])
     for phase in contract["phases"]:
         walk(phase["checks"])
     return found
@@ -167,6 +231,12 @@ def feasibility(contract):
     for phase in contract["phases"]:
         walk(phase["checks"])
     counts = Counter(tiers.values())
+    u = unit_of(contract)
+    if u.feasibility_threshold is None:
+        # A new unit's gate reports the counts and requires none (wire-contract-s5.md 2.3, R9).
+        return {"n1": counts["T1"], "n2": counts["T2"], "coarse": counts["coarse"], "t3": counts["T3"],
+                "total": counts["T1"] + counts["T2"], "of": len(tiers), "threshold": None,
+                "met": len(tiers) == u.feasibility_of}
     return {"n1": counts["T1"], "n2": counts["T2"], "coarse": counts["coarse"], "t3": counts["T3"],
             "total": counts["T1"] + counts["T2"], "of": len(tiers), "threshold": FEASIBILITY_THRESHOLD,
             "met": len(tiers) == FEASIBILITY_OF and counts["T1"] + counts["T2"] >= FEASIBILITY_THRESHOLD}
@@ -195,7 +265,7 @@ def tier_b(faults, prints, count=200, seed=19):
 
 
 def _applied(faults):
-    raw, rules = multi_fault_base()
+    raw, rules = (faults[0].base if faults and faults[0].base else multi_fault_base)()
     root = {"environment": raw, "norms": rules}
     for fault in faults:
         fault.apply(root)
@@ -256,33 +326,66 @@ def test_and_fixture_sources(recorded=True):
     return sources
 
 
-def record_test_inputs(output):
-    """Run the test files of `RECORDED_TESTS` under `tests/contract_input_recorder.py`, which writes to
-    `output` each `soft-norms@0` input they, or the soft conformance module they run, hand to an engine or a
-    legacy validator: `[test id, environment, norms]`. Returns the pytest process."""
-    files = sorted({path for pattern in RECORDED_TESTS for path in ROOT.glob(pattern)})
-    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_NATIVE_PREBUILT": "1",
-                   "PYTHONPATH": str(ROOT)}
-    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *map(str, files)],
-                          cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
+def record_test_inputs(output, unit=PILOT):
+    """Run the unit's recorded test files (`RECORDED_TESTS` for the pilot) under
+    `tests/contract_input_recorder.py`, which writes to `output` each input of the unit they, or the soft
+    conformance module they run, hand to an engine or a legacy validator: `[test id, environment, norms]`.
+    The files run on xdist workers (`-n auto`: tests/conftest.py fits the count to the
+    machine's load), each recording its own inputs, which the recorder merges.
+    Returns the pytest process."""
+    u = unit_of(unit)
+    files = sorted({path for pattern in u.recorded_tests for path in ROOT.glob(pattern)})
+    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNIT": u.contract,
+                   "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
+    return subprocess.run(recorder_command(*map(str, files)),
+                          cwd=ROOT, env=pytest_environment(environment), capture_output=True, text=True,
+                          timeout=3600)
 
 
-def write_test_inputs():
-    """Rewrite `TEST_INPUTS`: the recorded test inputs that the rest of the corpus does not hold."""
+def recorder_command(*files):
+    """pytest under the input recorder on xdist workers (`-n auto`), over `files`."""
+    return pytest_command([sys.executable], "-q", "-p", "tests.contract_input_recorder", "-p", "no:cacheprovider",
+                          "-o", "addopts=", "-m", "not live", "-n", "auto", *files)
+
+
+def record_all_test_inputs(output, units):
+    """`record_test_inputs` for several units in one run: the union of their recorded test files
+    runs once, and each unit records only the inputs of its own files, as its own run would.
+    `output` gets a JSON object from each unit to its `[test id, environment, norms]` rows.
+    Returns the pytest process."""
+    files = {unit_of(unit).contract: sorted({path.relative_to(ROOT).as_posix()
+                                            for pattern in unit_of(unit).recorded_tests
+                                            for path in ROOT.glob(pattern)}) for unit in units}
+    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNITS": json.dumps(files),
+                   "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
+    environment.pop("VE_CONTRACT_UNIT", None)
+    return subprocess.run(recorder_command(*sorted({path for paths in files.values() for path in paths})),
+                          cwd=ROOT, env=pytest_environment(environment), capture_output=True, text=True,
+                          timeout=3600)
+
+
+def write_test_inputs(unit=PILOT):
+    """Rewrite the unit's test inputs (`TEST_INPUTS` for the pilot): the recorded test inputs that the rest
+    of the corpus does not hold."""
+    u = unit_of(unit)
     with tempfile.TemporaryDirectory() as directory:
         output = Path(directory) / "inputs.json"
-        result = record_test_inputs(output)
+        result = record_test_inputs(output, u.contract)
         if result.returncode != 0:
             raise RuntimeError(result.stdout[-4000:] + result.stderr[-4000:])
         recorded = json.loads(output.read_text())
-    seen = {source_key(case[2], case[3]) for case in gate_cases(load("soft-norms@0"), recorded=False)}
+    seen = {source_key(case[2], case[3]) for case in gate_cases(load(u.contract), recorded=False)}
     rows = []
     for label, raw, norms in recorded:
         if source_key(raw, norms) not in seen:
             seen.add(source_key(raw, norms))
             rows.append([label, raw, norms])
-    TEST_INPUTS.write_text(json.dumps(rows, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+    if u.module is None:
+        u.test_inputs.write_text(json.dumps(rows, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+    else:
+        # One row per line: a unit's recorded formulas nest deeply, and indentation would multiply their size.
+        u.test_inputs.write_text("[\n" + ",\n".join(json.dumps(row, sort_keys=True, ensure_ascii=False,
+                                                                separators=(",", ":")) for row in rows) + "\n]\n")
     return len(rows)
 
 
@@ -300,6 +403,52 @@ def carries_null(value):
 
 def source_key(raw, norms):
     return json.dumps([raw, norms], sort_keys=True)
+
+
+# Z8 and G12 (wire-contract-s5.md 8.4, 8.5) of a unit after the pilot: on every rejected corpus case that is
+# not handler-reaching, the call on D(N) raises the error it raised before the switch commit. The snapshot
+# holds that error per source, written while the contract is in shadow (`--write-call-snapshot`).
+
+def source_digest(raw, norms):
+    return hashlib.sha256(source_key(raw, norms).encode()).hexdigest()[:24]
+
+
+def call_snapshot_path(unit):
+    return DIRECTORY / f"{unit}-call-snapshot.json"
+
+
+def call_snapshot(unit):
+    """The stored calls of the unit's snapshot by source digest, or `{}` when there is none."""
+    path = call_snapshot_path(unit)
+    return json.loads(path.read_text())["calls"] if path.exists() else {}
+
+
+def _norm_objects(norms):
+    return type(norms) is list and all(type(unit) is dict for unit in norms)
+
+
+def write_call_snapshot(unit):
+    """Rewrite the unit's call snapshot from the corpus. Refused at `public`: the snapshot is the call's
+    error before the switch commit, so it is taken in shadow and never regenerated from a public tree."""
+    u = unit_of(unit)
+    contract = load(u.contract)
+    if contract["status"] == "public":
+        raise SystemExit(f"{u.contract} is public: the call snapshot is taken before the switch commit")
+    calls = {}
+    for _, _, raw, norms, *_ in gate_cases(contract):
+        if not _norm_objects(norms) or python_crash(contract, raw, norms) is not None \
+                or _python(contract, raw, norms)[0] is None or u.module.handler_reaching(raw, norms):
+            continue
+        calls[source_digest(raw, norms)] = u.module.call_outcome(raw, norms)
+    value = {"contract": u.contract, "revision": contract["revision"], "status": contract["status"],
+             "calls": dict(sorted(calls.items()))}
+    call_snapshot_path(u.contract).write_text(
+        "{\n" + ",\n".join(f"{json.dumps(key)}: {json.dumps(value[key], sort_keys=True)}"
+                           for key in ("contract", "revision", "status")) + ',\n"calls": {\n'
+        + ",\n".join(f"{json.dumps(key)}: {json.dumps(call, ensure_ascii=False)}"
+                     for key, call in value["calls"].items())
+        + "\n}}\n")
+    return len(calls)
 
 
 def legacy_difference_sources(contract):
@@ -398,11 +547,13 @@ def _lean_batches(cases, count=100, limit=8 << 20):
 
 
 def _lean_rows(binary, unit, cases):
+    kind = unit_of(unit).case_kind if unit else CASE_KINDS[binary]
     rows = []
-    for batch in _lean_batches([{"id": str(i), "kind": "soft-elaborate", "environment": raw, "norms": norms}
+    for batch in _lean_batches([{"id": str(i), "kind": kind, "environment": raw, "norms": norms}
                                 for i, (raw, norms) in enumerate(cases)]):
         result = subprocess.run([str(BIN / binary), *([unit] if unit else []), "-"],
-                                input=json.dumps(batch), text=True, capture_output=True, timeout=600)
+                                input=json.dumps(batch), text=True, capture_output=True,
+                                timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
         if result.returncode not in (0, 1):
             raise RuntimeError(f"{binary}: {result.stderr}")
         parsed = json.loads(result.stdout)
@@ -412,25 +563,43 @@ def _lean_rows(binary, unit, cases):
     return rows
 
 
+def python_crash(contract, raw, norms):
+    """A unit after the pilot: the text of an exception other than a `VEError` that its Python legacy
+    validator raises on the source, or `None`. Such a validator neither accepts nor rejects, and the engine,
+    whose 1.1 calls the same decoder, cannot be run on the source (s5-pre.md)."""
+    try:
+        unit_of(contract).module.legacy_validation(deepcopy(raw), deepcopy(norms))
+    except VEError:
+        return None
+    except Exception as exc:
+        return f"{type(exc).__name__}: {exc}"
+    return None
+
+
 def _python(contract, raw, norms):
+    module = unit_of(contract).module
+    legacy_validation = load_soft_document if module is None else module.legacy_validation
+    registry = REGISTRY if module is None else module.REGISTRY
     copied_raw, copied_norms = deepcopy(raw), deepcopy(norms)
     before = deepcopy((copied_raw, copied_norms))
     error = None
     try:
-        load_soft_document(copied_raw, copied_norms)
+        legacy_validation(copied_raw, copied_norms)
         legacy = None
     except VEError as exc:
         error = exc
         legacy = (exc.code, str(exc))
     modified = (copied_raw, copied_norms) != before
-    outcome = run(contract, {"environment": deepcopy(raw), "norms": deepcopy(norms)}, registry=REGISTRY)
+    outcome = run(contract, {"environment": deepcopy(raw), "norms": deepcopy(norms)}, registry=registry)
     return legacy, outcome, error, modified
 
 
 def gate_cases(contract, recorded=True):
     """The gate's corpus. Each case: (tier, label, raw, norms, expected fields or None, the faults it
     combines, Lean reads it). `recorded` False leaves out the recorded test inputs of `TEST_INPUTS`."""
-    faults = catalogue()
+    u = unit_of(contract)
+    module = u.module
+    faults = catalogue(u.contract)
     prints = {fault.name: footprint(fault) for fault in faults}
     both = [fault for fault in faults if fault.readers == "both"]
     cases = []
@@ -448,14 +617,15 @@ def gate_cases(contract, recorded=True):
                       expected_record(contract, first), combo, True))
     # Masking pairs for the checks no sampled combination masks: the fault with the nearest earlier
     # position among those independent of it. A reproducer replaces the whole source, so the fault applied
-    # after it is `language` (1.2), which any source can carry.
+    # after it is `language` (1.2) for the pilot, the unit's `WHOLE_SOURCE_PARTNER` otherwise, which any
+    # source can carry.
     covered = {f.check for combo in combos for f in combo if f is not expected_first(contract, combo)}
     by_name = {fault.name: fault for fault in faults}
     for fault in faults:
         if fault.check in covered and fault.readers == "both":
             continue
         if "whole-source" in fault.labels:
-            pair = (fault, by_name["language"])
+            pair = (fault, by_name["language" if module is None else module.WHOLE_SOURCE_PARTNER])
         else:
             earlier = [other for other in both
                        if position(contract, other) < position(contract, fault)
@@ -468,31 +638,47 @@ def gate_cases(contract, recorded=True):
         cases.append(("A", f"A-mask:{pair[0].name}+{pair[1].name}", root["environment"], root["norms"],
                       expected_record(contract, pair[1]), pair, fault.readers == "both"))
     cases += [("B", label, raw, norms, None, (), True) for label, raw, norms in tier_b(both, prints)]
-    cases += [("R", "R:" + label, raw, norms, None, (), True) for label, raw, norms in replay_sources()]
-    differences = legacy_difference_sources(contract)
+    replayed = replay_sources() if module is None else module.replay_sources()
+    cases += [("R", "R:" + label, raw, norms, None, (), module is None or not carries_null([raw, norms]))
+              for label, raw, norms in replayed]
+    differences = (legacy_difference_sources(contract) if module is None
+                   else module.legacy_difference_sources(contract))
     cases += [("L", label, raw, norms, expected, (), True) for label, raw, norms, expected in differences]
     # The tests' and fixtures' inputs that no other tier has, each once, replayed with the other corpora.
     seen = {source_key(case[2], case[3]) for case in cases}
-    for label, raw, norms in test_and_fixture_sources(recorded):
+    if module is None:
+        tested = test_and_fixture_sources(recorded)
+    else:
+        tested = module.test_and_fixture_sources()
+        if recorded and u.test_inputs.exists():
+            tested += [("recorded:" + label, raw, norms) for label, raw, norms in json.loads(u.test_inputs.read_text())]
+    for label, raw, norms in tested:
         if source_key(raw, norms) not in seen:
             seen.add(source_key(raw, norms))
             cases.append(("R", "R:test:" + label, raw, norms, None, (), not carries_null([raw, norms])))
     return cases
 
 
-def report():
-    contract = load("soft-norms@0")
+def report(unit=PILOT, lean=True):
+    """The gate's report. `lean` False runs no Lean binary: every case is read as one Lean does not read,
+    so only the Python rows are measured (a unit whose Lean hooks are not built yet; never stored)."""
+    u = unit_of(unit)
+    module = u.module
+    contract = load(u.contract)
     inherited = inherited_checks(contract)
     if any(text != "{message}" for text in inherited_texts(contract)):
         raise ValueError("an inherited check's text is not `{message}`: the oracle compares it with the legacy text")
-    faults = catalogue()
-    codes = legacy_codes()
-    lean_exempt = exempt_gaps("lean")
+    faults = catalogue(u.contract)
+    codes = legacy_codes() if module is None else {}
+    lean_exempt = exempt_gaps("lean", u.contract)
+    python_exempt = exempt_gaps("python", u.contract)
     cases = gate_cases(contract)
+    if not lean:
+        cases = [case[:6] + (False,) for case in cases]
 
     lean_cases = [case for case in cases if case[6]]
-    lean_engine = iter(_lean_rows("ve_diagnose", "soft-norms@0", [(c[2], c[3]) for c in lean_cases]))
-    lean_legacy = iter(_lean_rows("ve_soft_norms_route", None, [(c[2], c[3]) for c in lean_cases]))
+    lean_engine = iter(_lean_rows("ve_diagnose", u.contract, [(c[2], c[3]) for c in lean_cases]))
+    lean_legacy = iter(_lean_rows(u.lean_route, None, [(c[2], c[3]) for c in lean_cases]))
 
     residual, deferred, sizes = Counter(), Counter(), Counter()
     first = {"python": set(), "lean": set()}
@@ -505,35 +691,77 @@ def report():
     boundary_problems = []
     boundary_without_record = 0
     source_modified_count = 0
+    # A unit other than the pilot (wire-contract-s5.md 2.11, 2.12): the class rule, the handler-reaching
+    # cases of the public delta and the Lean route's texts beside the records.
+    class_differences, class_exempt = [], Counter()
+    lean_route_changes = {}
+    handler_reaching = 0
+    snapshot = call_snapshot(u.contract) if module is not None else {}
+    call_cases, call_differences = 0, []
+    legacy_crashes = []
     for tier, label, raw, norms, expected, combo, lean_reads in cases:
         sizes[tier] += 1
+        crash = python_crash(contract, raw, norms) if module is not None else None
+        if crash is not None:
+            # S5-pre: Python neither accepts nor rejects; the case's Lean rows are read and reported.
+            lean_error = None
+            if lean_reads:
+                next(lean_engine)
+                lean_error = next(lean_legacy).get("error")
+            legacy_crashes.append({"case": label, "python": crash, "lean": lean_error})
+            continue
         python_legacy, python_outcome, python_error, modified = _python(contract, raw, norms)
         source_modified_count += modified
         py = python_outcome.record if isinstance(python_outcome, Fault) else None
+        reaching = python_legacy is not None and (module is None or module.handler_reaching(raw, norms))
+        handler_reaching += module is not None and reaching
+        if module is not None and python_legacy is not None and not reaching and _norm_objects(norms):
+            # Z8, at every commit: the call raises the error of its snapshot before the switch.
+            call_cases += 1
+            before = snapshot.get(source_digest(raw, norms), "no snapshot")
+            observed = module.call_outcome(raw, norms)
+            if observed != before:
+                call_differences.append({"case": label, "call": observed, "snapshot": before})
         if python_legacy is not None:
             reported = overlay(contract, python_error, python_outcome)
             check = reported.get("check", "deferred")
             text_changed = reported["text"] != python_legacy[1]
-            code_changed = "code" in reported and reported["code"] != python_legacy[0]
-            public_code_differences += code_changed
-            if text_changed or code_changed:
+            if module is None:
+                code_changed = "code" in reported and reported["code"] != python_legacy[0]
+                public_code_differences += code_changed
+            else:
+                # 2.12: the record's class is the legacy code, on every rejected case, except on the
+                # exempt checks, which are counted.
+                code_changed = "class" in reported and reported["class"] != python_legacy[0]
+                if code_changed and module.class_exempt(check, python_legacy[0]):
+                    class_exempt[check] += 1
+                    code_changed = False
+                elif code_changed:
+                    class_differences.append({"case": label, "check": check, "legacy_code": python_legacy[0],
+                                              "record_class": reported["class"]})
+            if (text_changed or code_changed) and reaching:
                 entry = public_changes.setdefault(check, {
-                    "check": check, "text_changes": 0, "code_differences": 0,
+                    "check": check, "text_changes": 0,
+                    "code_differences" if module is None else "class_differences": 0,
                     "example": {"case": label, "legacy_code": python_legacy[0],
                                 "legacy_text": python_legacy[1], "record_code": reported.get("code"),
                                 "record_text": reported["text"]}})
                 entry["text_changes"] += text_changed
-                entry["code_differences"] += code_changed
+                entry["code_differences" if module is None else "class_differences"] += code_changed
             if contract["status"] == "public":
                 fresh = deepcopy(python_error)
-                returned = public_rejection(raw, norms, fresh)
+                function = public_rejection if module is None else module.public_rejection
+                returned = function(raw, norms, fresh)
                 if fresh.diagnostic is None:
                     boundary_without_record += 1
                 if returned is not fresh or type(fresh) is not type(python_error) or fresh.code != python_error.code:
                     boundary_problems.append(f"{label}: function changed the legacy error object, type or code")
                 if fresh.diagnostic != reported or fresh.message != reported["text"] or str(fresh) != reported["text"]:
                     boundary_problems.append(f"{label}: function record or message differs")
-                if type(norms) in (list, tuple) and all(type(unit) is dict and "norm" in unit for unit in norms):
+                if module is not None:
+                    boundary_problems += module.call_problems(label, raw, norms, python_error, reported, reaching,
+                                                              snapshot.get(source_digest(raw, norms)))
+                elif type(norms) in (list, tuple) and all(type(unit) is dict and "norm" in unit for unit in norms):
                     from ve.soft_route import admit_soft_document
                     document = {"units": [{"kind": "norm", "content": unit} for unit in deepcopy(norms)]}
                     try:
@@ -555,8 +783,13 @@ def report():
                 problems.append(f"lean: ve_diagnose row without an outcome: {engine_row}")
             ln = engine_row.get("diagnostic") if outcome == "fault" else None
             deferring["lean"] = outcome == "deferred"
-            lean_legacy_result = ((legacy_row["code"], legacy_row["error"]) if legacy_row["status"] == "error"
-                                  else None)
+            if legacy_row["status"] != "error":
+                lean_legacy_result = None
+            elif module is None:
+                lean_legacy_result = (legacy_row["code"], legacy_row["error"])
+            else:
+                # No norms route reports a code: its class is the one `checker_error` gives the text (2.2).
+                lean_legacy_result = (checker_error(legacy_row["error"]).code, legacy_row["error"])
         else:
             ln = lean_legacy_result = None
         languages = [("python", py, python_legacy)] + ([("lean", ln, lean_legacy_result)] if lean_reads else [])
@@ -571,7 +804,7 @@ def report():
             if (legacy is None) != (record is None):
                 problems.append(f"{language}: legacy {'accepts' if legacy is None else 'rejects'}, engine "
                                 f"{record['check'] if record else 'deferred' if deferring[language] else 'clean'}")
-            elif record is not None and record["code"] != legacy[0]:
+            elif record is not None and module is None and record["code"] != legacy[0]:
                 problems.append(f"{language}: engine code {record['code']}, legacy {legacy[0]}")
         if lean_reads and (py is None) == (ln is None) and py is not None:
             left, right = dict(py), dict(ln)
@@ -582,22 +815,36 @@ def report():
                 problems.append(f"engines differ: python {py['check']} {py['path']}, lean {ln['check']} {ln['path']}")
         elif lean_reads and (py is None) != (ln is None):
             problems.append("engines differ on fault or clean")
+        if module is not None and lean_reads and ln is not None and lean_legacy_result is not None \
+                and ln["text"] != lean_legacy_result[1]:
+            # D2: the Lean route's own text beside the record, reported and never enforced.
+            entry = lean_route_changes.setdefault(ln["check"], {
+                "check": ln["check"], "cases": 0,
+                "example": {"case": label, "record_text": ln["text"], "route_text": lean_legacy_result[1]}})
+            entry["cases"] += 1
         if expected is not None:
             for language, record, legacy in languages:
-                problems += [f"{language}: {problem}"
-                             for problem in record_problems(record, expected, None if tier == "L" else legacy)]
-            if (lean_reads and ln is not None and lean_legacy_result is not None
+                compared = None if tier == "L" or (module is not None and language == "lean") else legacy
+                if module is not None and record is not None and module.own_text(record):
+                    compared = None  # J10: an inherited member's own text, not the decoder's
+                problems += [f"{language}: {problem}" for problem in record_problems(record, expected, compared)]
+            if (module is None and lean_reads and ln is not None and lean_legacy_result is not None
                     and expected["check"] not in inherited and ln["text"] != lean_legacy_result[1]):
                 problems.append(f"lean: text {ln['text']!r}, route {lean_legacy_result[1]!r}")
             if tier == "0" and combo[0].name in codes and codes[combo[0].name] != expected["code"]:
                 problems.append(f"catalogue: multi_faults code {codes[combo[0].name]}, contract {expected['code']}")
-        if tier == "L":
+        if module is not None and lean_reads and (python_legacy is None) != (lean_legacy_result is None):
+            # S5-pre (2.12): the two legacy validators' verdicts, over every tier.
+            legacy_verdicts.append({"case": label, "python": python_legacy, "lean": lean_legacy_result})
+        elif module is not None and lean_reads and python_legacy and python_legacy[0] != lean_legacy_result[0]:
+            legacy_code_deltas.append({"case": label, "python": python_legacy, "lean": lean_legacy_result})
+        if tier == "L" and module is None:
             if (python_legacy is None) != (lean_legacy_result is None):
                 legacy_verdicts.append({"case": label, "python": python_legacy, "lean": lean_legacy_result})
             elif python_legacy and lean_legacy_result and python_legacy[0] != lean_legacy_result[0]:
                 legacy_code_deltas.append({"case": label, "python": python_legacy, "lean": lean_legacy_result})
         if py is not None and python_legacy is not None and py["check"] not in inherited \
-                and py["text"] != python_legacy[1]:
+                and py["text"] != python_legacy[1] and reaching:
             text_deltas[py["check"]] += 1
         if problems:
             mismatches.append({"case": label, "problems": problems})
@@ -617,16 +864,16 @@ def report():
     without_masked = {language: sorted(set(checks) - masked[language], key=checks.index) for language in masked}
     adjacent = [(a, a + 1) for a in range(len(contract["phases"]) - 1)]
     unmet = {
-        "first": sorted(set(without_first["python"]) | (set(without_first["lean"]) - set(lean_exempt)),
-                        key=checks.index),
+        "first": sorted((set(without_first["python"]) - set(python_exempt))
+                        | (set(without_first["lean"]) - set(lean_exempt)), key=checks.index),
         # 8.3: every check after the table's first instance is masked by an earlier one; the first has none.
-        "masked": sorted((set(without_masked["python"]) | (set(without_masked["lean"]) - set(lean_exempt)))
-                         - {table_first}, key=checks.index),
+        "masked": sorted(((set(without_masked["python"]) - set(python_exempt))
+                          | (set(without_masked["lean"]) - set(lean_exempt))) - {table_first}, key=checks.index),
         "adjacent_phase_pairs": [list(pair) for pair in adjacent if pair not in phase_pairs],
     }
-    reasons = {**UNREACHED, **lean_exempt}
+    reasons = {**unreached(u.contract), **python_exempt, **lean_exempt}
     verdict_open = bool(legacy_verdicts)
-    return {
+    value = {
         "contract": contract["contract"], "revision": contract["revision"], "status": contract["status"],
         "oracle": ("fault catalogue: hand-written check, path and args per fault, text from the contract's "
                    "template, table position from the contract; inherited text from each legacy validator"),
@@ -659,6 +906,45 @@ def report():
         "source_modified_count": source_modified_count,
         "mismatches": mismatches,
     }
+    if module is not None:
+        value.pop("s3_pre"), value.pop("public_code_differences")
+        value.update({
+            "s5_pre": ("open: a legacy verdict difference is not fixed (s5-pre.md)" if verdict_open or legacy_crashes
+                       else "closed: no legacy verdict difference"),
+            "legacy_crashes": legacy_crashes,
+            "public_class_differences": len(class_differences),
+            "class_differences": class_differences[:50],
+            "class_rule_exempt": dict(sorted(class_exempt.items())),
+            "handler_reaching_cases": handler_reaching,
+            "lean_route_changes": [lean_route_changes[check] for check in checks if check in lean_route_changes],
+            "call_snapshot_cases": call_cases,
+            "call_snapshot_difference_count": len(call_differences),
+            "call_snapshot_differences": call_differences[:50],
+        })
+    return value
+
+
+def legacy_comparison(unit):
+    """S5-pre's measurement alone (wire-contract-s5.md 2.12): over every corpus case that Lean reads, the
+    Python legacy validator against the unit's Lean route, with no engine run. Returns the verdict
+    differences and the class differences (the route's class as `checker_error` gives it)."""
+    u = unit_of(unit)
+    cases = [case for case in gate_cases(load(u.contract)) if case[6]]
+    rows = _lean_rows(u.lean_route, None, [(c[2], c[3]) for c in cases])
+    verdicts, classes = [], Counter()
+    for case, row in zip(cases, rows):
+        lean = (checker_error(row["error"]).code, row["error"]) if row["status"] == "error" else None
+        crash = python_crash(u.contract, case[2], case[3]) if u.module is not None else None
+        if crash is not None:
+            verdicts.append({"case": case[1], "python": crash, "lean": lean})
+            continue
+        python_legacy = _python(load(u.contract), case[2], case[3])[0]
+        if (python_legacy is None) != (lean is None):
+            verdicts.append({"case": case[1], "python": python_legacy, "lean": lean})
+        elif python_legacy and python_legacy[0] != lean[0]:
+            classes[(python_legacy[0], lean[0])] += 1
+    return {"cases": len(cases), "legacy_verdict_differences": verdicts,
+            "legacy_class_differences": {f"{a} / {b}": n for (a, b), n in sorted(classes.items())}}
 
 
 def _count(value):
@@ -683,23 +969,45 @@ def gate_failures(value):
             failures.append(f"residual count {value['residual'].get(language)!r} in {language}")
     failures += _deferred_failures(value)
     failures += _coverage_failures(value)
-    failures += _feasibility_failures(value["feasibility"])
+    failures += _feasibility_failures(value["feasibility"], value["contract"])
     differences = value["legacy_verdict_differences"]
-    if not isinstance(differences, list) or differences:
-        failures.append(f"S3-pre: legacy verdict differences {differences!r}")
-    if not isinstance(value["s3_pre"], str) or not value["s3_pre"].startswith("closed"):
-        failures.append(f"S3-pre {value['s3_pre']!r}")
-    code_differences = value["legacy_code_differences"]
-    if not isinstance(code_differences, list) or code_differences:
-        failures.append(f"legacy code differences {code_differences!r}")
-    public_code_differences = value["public_code_differences"]
-    if not _count(public_code_differences) or public_code_differences:
-        failures.append(f"public delta: {public_code_differences} code differences")
+    if value["contract"] != PILOT:
+        # wire-contract-s5.md 4.4: S5-pre and the class rule; Lean's route texts and classes are reported.
+        unit = value["contract"]
+        if not isinstance(differences, list) or differences:
+            failures.append(f"{unit}: legacy verdict differences {[row.get('case') for row in differences]!r}"
+                            if isinstance(differences, list) else f"{unit}: legacy verdict differences {differences!r}")
+        if not isinstance(value["s5_pre"], str) or not value["s5_pre"].startswith("closed"):
+            failures.append(f"{unit}: S5-pre {value['s5_pre']!r}")
+        crashes = value["legacy_crashes"]
+        if not isinstance(crashes, list) or crashes:
+            failures.append(f"{unit}: S5-pre: the Python legacy validator crashes on "
+                            f"{[row.get('case') for row in crashes] if isinstance(crashes, list) else crashes!r}")
+        classes = value["public_class_differences"]
+        if not _count(classes) or classes:
+            failures.append(f"{unit}: public delta: {classes} class differences")
+        # Z8 (8.5), at every status: a required row over no case is vacuous.
+        calls, compared = value["call_snapshot_difference_count"], value["call_snapshot_cases"]
+        if not _count(calls) or not _count(compared) or calls or not compared:
+            failures.append(f"{unit}: Z8: the call differs from its snapshot before the switch on {calls!r} of "
+                            f"{compared!r} cases")
+    else:
+        if not isinstance(differences, list) or differences:
+            failures.append(f"S3-pre: legacy verdict differences {differences!r}")
+        if not isinstance(value["s3_pre"], str) or not value["s3_pre"].startswith("closed"):
+            failures.append(f"S3-pre {value['s3_pre']!r}")
+        code_differences = value["legacy_code_differences"]
+        if not isinstance(code_differences, list) or code_differences:
+            failures.append(f"legacy code differences {code_differences!r}")
+        public_code_differences = value["public_code_differences"]
+        if not _count(public_code_differences) or public_code_differences:
+            failures.append(f"public delta: {public_code_differences} code differences")
     modified = value["source_modified_count"]
     if not _count(modified) or modified:
         failures.append(f"the legacy validator modified its source in {modified} cases")
     if value["status"] == "public":
-        signed = json.loads(SWITCH.read_text())["signed"] if SWITCH.exists() else {}
+        switch = unit_of(value["contract"]).switch
+        signed = json.loads(switch.read_text())["signed"] if switch.exists() else {}
         measured = {row["check"]: row["text_changes"] for row in value["public_diagnostic_changes"]
                     if row["text_changes"]}
         for check, count in measured.items():
@@ -750,17 +1058,23 @@ def _coverage_failures(value):
     rows = ("first", "masked", "adjacent_phase_pairs")
     if not isinstance(unmet, dict) or set(unmet) != set(rows) or any(type(unmet[row]) is not list for row in rows):
         return [f"coverage unmet is malformed: {unmet!r}"]
-    if any(unmet[row] for row in rows):
+    if value["contract"] != PILOT:
+        # wire-contract-s5.md 4.4: one line per check that lacks a first-fault witness.
+        failures += [f"{value['contract']}: coverage: {check} has no first-fault witness" for check in unmet["first"]]
+        if unmet["masked"] or unmet["adjacent_phase_pairs"]:
+            failures.append(f"{value['contract']}: coverage unmet: masked {unmet['masked']}, "
+                            f"adjacent phase pairs {unmet['adjacent_phase_pairs']}")
+    elif any(unmet[row] for row in rows):
         failures.append(f"coverage unmet: {unmet}")
     if value["coverage_met"] is not True:
         failures.append(f"coverage_met {value['coverage_met']!r}")
-    checks = all_checks(load("soft-norms@0"))
+    checks = all_checks(load(value["contract"]))
     if value["all_check_count"] != len(checks):
         failures.append(f"all_check_count {value['all_check_count']!r}, the table has {len(checks)}")
     if set(value["masking_not_required"]) - {checks[0]}:
         failures.append(f"masking not required of {sorted(value['masking_not_required'])}, only of {checks[0]}")
     reasons = value["coverage_unmet_reasons"]
-    allowed = {language: exempt_gaps(language) for language in ("python", "lean")}
+    allowed = {language: exempt_gaps(language, value["contract"]) for language in ("python", "lean")}
     if not isinstance(reasons, dict):
         return failures + [f"coverage_unmet_reasons is malformed: {reasons!r}"]
     for check, reason in sorted(reasons.items()):
@@ -782,12 +1096,26 @@ def _coverage_failures(value):
     return failures
 
 
-def _feasibility_failures(feasible):
+def _feasibility_failures(feasible, unit=PILOT):
     """Spec 9's feasibility row, from `n1` and `n2` against 45 of 67: the four counts are non-negative
     integers that partition the 67 numbered checks, so no count can exceed the checks there are, and the
-    report's `total`, `threshold` and `met` are what those counts give."""
+    report's `total`, `threshold` and `met` are what those counts give. Another unit's row requires no
+    threshold, only the partition of its numbered checks (wire-contract-s5.md section 9)."""
     failures = []
     parts = ("n1", "n2", "coarse", "t3")
+    u = unit_of(unit)
+    if u.feasibility_threshold is None:
+        if not all(_count(feasible.get(part)) for part in parts + ("of", "total")) \
+                or feasible.get("threshold") is not None or type(feasible.get("met")) is not bool:
+            return [f"feasibility counts are not non-negative integers, or met is not Boolean: {feasible}"]
+        total = sum(feasible[part] for part in parts)
+        if feasible["of"] != u.feasibility_of or total != u.feasibility_of:
+            failures.append(f"feasibility counts {total} checks by tier of {feasible['of']}, not the "
+                            f"{u.feasibility_of} numbered checks")
+        if (feasible["total"], feasible["met"]) != (feasible["n1"] + feasible["n2"],
+                                                    feasible["of"] == u.feasibility_of == total):
+            failures.append(f"feasibility report inconsistent: {feasible}")
+        return failures
     if not all(_count(feasible.get(part)) for part in parts + ("of", "total", "threshold")) \
             or type(feasible.get("met")) is not bool:
         return [f"feasibility counts are not non-negative integers, or met is not Boolean: {feasible}"]
@@ -810,20 +1138,46 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--record-test-inputs", action="store_true")
+    parser.add_argument("--write-call-snapshot", action="store_true",
+                        help="a unit in shadow: rewrite the call snapshot of Z8 and G12 from the corpus")
+    parser.add_argument("--unit", default=PILOT)
+    parser.add_argument("--legacy-only", action="store_true",
+                        help="compare the two legacy validators only (S5-pre) and print the differences")
+    parser.add_argument("--python-only", action="store_true",
+                        help="measure the Python rows only and print them; the stored report is not touched")
     args = parser.parse_args()
+    u = unit_of(args.unit)
     if args.record_test_inputs:
-        print(f"{write_test_inputs()} recorded test inputs written to {TEST_INPUTS.relative_to(ROOT)}")
-    value = report()
+        print(f"{write_test_inputs(u.contract)} recorded test inputs written to {u.test_inputs.relative_to(ROOT)}")
+    if args.write_call_snapshot:
+        print(f"{write_call_snapshot(u.contract)} calls written to {call_snapshot_path(u.contract).relative_to(ROOT)}")
+    if args.legacy_only:
+        print(json.dumps(legacy_comparison(u.contract), indent=1, sort_keys=True))
+        return 0
+    if args.python_only:
+        value = report(u.contract, lean=False)
+        print(json.dumps({key: value[key] for key in value if key not in ("checks_without_first",
+                                                                         "checks_without_masked")},
+                         indent=1, sort_keys=True))
+        return 0
+    value = report() if u.contract == PILOT else report(u.contract)
     rendered = json.dumps(value, indent=2, sort_keys=True) + "\n"
     if args.check:
-        if not REPORT.exists() or REPORT.read_text() != rendered:
+        if not u.report.exists() or u.report.read_text() != rendered:
             print("wire gate report differs")
             return 1
     else:
-        REPORT.write_text(rendered)
-    print(f"{sum(value['tiers'].values())} cases; {len(value['mismatches'])} mismatches; "
-          f"coverage unmet: {value['coverage_unmet']}; feasibility {value['feasibility']['total']}; "
-          f"S3-pre {value['s3_pre']}")
+        u.report.write_text(rendered)
+    if u.contract == PILOT:
+        print(f"{sum(value['tiers'].values())} cases; {len(value['mismatches'])} mismatches; "
+              f"coverage unmet: {value['coverage_unmet']}; feasibility {value['feasibility']['total']}; "
+              f"S3-pre {value['s3_pre']}")
+    else:
+        print(f"{u.contract}: {sum(value['tiers'].values())} cases; {len(value['mismatches'])} mismatches; "
+              f"coverage unmet: {value['coverage_unmet']}; feasibility {value['feasibility']}; "
+              f"S5-pre {value['s5_pre']}")
+        changed = sum(row["cases"] for row in value["lean_route_changes"])
+        print(f"gate reports: {u.contract}: lean route differs on {changed} cases")
     failures = gate_failures(value)
     for failure in failures:
         print(f"gate fails: {failure}")

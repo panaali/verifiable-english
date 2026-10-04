@@ -70,7 +70,8 @@ def base_environment(meta):
         if type(data) is dict and type(data.get("profiles")) is list and PROFILE in data["profiles"]:
             raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
         return data
-    if type(data) is not dict or type(data.get("profiles")) is not list:
+    if (type(data) is not dict or type(data.get("profiles")) is not list
+            or any(type(p) is not str for p in data["profiles"])):
         raise VEError("invalid environment profiles")
     profiles = data["profiles"]
     if profiles != sorted(set(profiles)) or PROFILE not in profiles or "relational-fol@0" not in profiles:
@@ -1343,8 +1344,8 @@ def lean_admission(raw, directory):
         raise VEError("InvalidInput: the document is not UTF-8 text") from None
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
-    from .backends.lean import run_discourse_case
-    returncode, stdout, stderr = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
+    from .backends.lean import configured_timeout, run_discourse_case
+    returncode, stdout, stderr = run_discourse_case(executable, case, timeout=configured_timeout(_ROUTE_TIMEOUT))
     try:
         rows = json.loads(stdout)
     except ValueError:

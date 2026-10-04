@@ -12,16 +12,24 @@ even before a test runs it. This file's name matches neither glob, so it does no
 """
 
 from functools import lru_cache
+import importlib
 import inspect
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
+
+import pytest
 
 from conformance import soft_norms
 from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, generated_invalid_soft_blocks,
                                     generated_invalid_soft_rules, rejected_sources, soft3_reproducers)
-from conformance.wire_contract_gate import (EXAMPLES, RECORDED_TESTS, TEST_INPUTS, gate_cases,
-                                            record_test_inputs, source_key)
+from conformance.wire_contract_gate import (EXAMPLES, PILOT, RECORDED_TESTS, TEST_INPUTS, gate_cases,
+                                            record_all_test_inputs, source_key, unit_of)
+from subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_conformance import fixtures
+from tools.pytest_run import pytest_command, pytest_environment
 from tests.test_wire_contract_soft_lean import fixture_sources
 from ve.wire_contract.engine import load
 
@@ -34,7 +42,7 @@ SUBMITTING = {"test_softnorms_contract.py", "test_softnorms_public_contract.py",
               "test_soft_norms_conformance.py", "test_soft_norms_lean.py", "test_soft_review_regressions.py"}
 # The conformance module's functions that build no source of their own: the comparisons that run the
 # validators on the sources the other functions build, and the fault mutations `multi_fault_cases` applies.
-NOT_SOURCES = {"compare_near_limit", "compare_rejected", "main", "multi_faults", "rust_fixture_rows",
+NOT_SOURCES = {"compare_generated", "compare_near_limit", "compare_rejected", "main", "multi_faults", "rust_fixture_rows",
                "smallest_queries"}
 
 
@@ -43,18 +51,62 @@ def corpus():
     return frozenset(source_key(case[2], case[3]) for case in gate_cases(load("soft-norms@0")))
 
 
-def test_gate_corpus_holds_every_contract_and_soft_test_input(tmp_path):
+@pytest.fixture(scope="module")
+def recorded_inputs(tmp_path_factory):
+    """Every unit's recorded test inputs, from one run of the union of their recorded test files
+    (each unit records only its own files' inputs, as `record_test_inputs` does for one unit)."""
+    output = tmp_path_factory.mktemp("recorded") / "inputs.json"
+    result = record_all_test_inputs(output, (PILOT, *UNITS))
+    # A skipped or failed test may have submitted fewer inputs than it does when it runs.
+    assert result.returncode == 0 and " skipped" not in result.stdout, result.stdout[-4000:] + result.stderr[-4000:]
+    return json.loads(output.read_text())
+
+
+def test_gate_corpus_holds_every_test_input_of_every_unit(recorded_inputs):
+    """One recording run for the pilot and the units: the checks below, per unit."""
+    assert set(recorded_inputs) == {PILOT, *UNITS}
+    check_pilot_inputs(recorded_inputs[PILOT])
+    for unit in UNITS:
+        check_unit_inputs(unit, recorded_inputs[unit])
+
+
+def test_one_run_records_each_unit_as_its_own_run_does(tmp_path):
+    """The joint recording keeps each unit to its own test files: a file of one unit only adds
+    nothing to another unit's inputs, though it submits some (the s5 admission tests submit
+    norm sources)."""
+    sample = ["tests/test_softnorms_public_contract.py", "tests/test_wire_contract_s5_admission.py"]
+    output = tmp_path / "inputs.json"
+    files = {unit: sample if unit == PILOT else [] for unit in (PILOT, *UNITS)}
+    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNITS": json.dumps(files),
+                   "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
+
+    def record(env):
+        result = subprocess.run(pytest_command([sys.executable], "-q", "-p", "tests.contract_input_recorder",
+                                               "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live",
+                                               *sample),
+                                cwd=ROOT, env=pytest_environment(env), capture_output=True, text=True,
+                                timeout=HANG_TIMEOUT)
+        assert result.returncode == 0, result.stdout[-4000:]
+    record(environment)
+    joint = json.loads(output.read_text())
+    alone = tmp_path / "alone.json"
+    environment = {key: value for key, value in environment.items() if key != "VE_CONTRACT_UNITS"}
+    record({**environment, "VE_CONTRACT_INPUTS": str(alone)})
+    assert joint[PILOT] == json.loads(alone.read_text()) and joint[PILOT]
+    assert joint["norms@0"] == joint["norm-defaults@0"] == []
+    # The same files, counted for the norm units too, do record norm sources.
+    files = {unit: sample for unit in (PILOT, *UNITS)}
+    record({**environment, "VE_CONTRACT_UNITS": json.dumps(files)})
+    assert json.loads(output.read_text())["norms@0"]
+
+
+def check_pilot_inputs(recorded):
     """A missing input is a test input no source of the corpus builds: `python -m
     conformance.wire_contract_gate --record-test-inputs` records it into `TEST_INPUTS`, which the gate replays
     (Lean reads none that carries a `null`, which only the in-process API can)."""
     files = {path for pattern in RECORDED_TESTS for path in ROOT.glob(pattern)}
     assert set(ROOT.glob("tests/test_wire_contract*")) | set(ROOT.glob("tests/test_softnorms*")) <= files
     assert Path(__file__) not in files
-    output = tmp_path / "inputs.json"
-    result = record_test_inputs(output)
-    # A skipped or failed test may have submitted fewer inputs than it does when it runs.
-    assert result.returncode == 0 and " skipped" not in result.stdout, result.stdout[-4000:] + result.stderr[-4000:]
-    recorded = json.loads(output.read_text())
     assert SUBMITTING <= {Path(label.split("::")[0]).name for label, _, _ in recorded}
     # The conformance module's comparison ran under the recorder: every source it submits was recorded.
     submitted = {source_key(raw, norms) for label, raw, norms in recorded}
@@ -125,3 +177,63 @@ def test_gate_corpus_holds_every_soft_conformance_fixture():
                for name, rows in sources.items()}
     assert all(rows for rows in sources.values())
     assert missing == {name: [] for name in sources}
+
+
+# wire-contract-s5.md 8.7: the same three tests for each unit after the pilot. Each unit's fault catalogue module
+# names its recorded test files (`RECORDED_TESTS`), builds its conformance scripts' sources
+# (`conformance_sources`) and its examples; its test module holds its fixtures (`fixture_sources`).
+UNITS = ("norms@0", "norm-defaults@0")
+# Astra review B: the recorded files omitted the S5 contract tests, whose D8, D12 and D13 sources were not in
+# the corpus. Each submitting file below must be the first to record at least one input of the unit (the
+# recorder keeps a source's first test id, so a file whose sources another file submits first is not named;
+# `tests/test_wire_contract_s5_admission.py` is such a file, recorded through the globs below).
+UNIT_SUBMITTING = {"norms@0": {"test_norms_contract.py", "test_norm_admission.py", "test_norms.py",
+                               "test_norms_three_way.py", "test_wire_contract_s5_lean.py"},
+                   "norm-defaults@0": {"test_norm_defaults_contract.py", "test_norm_defaults.py",
+                                       "test_norm_defaults_three_way.py", "test_norm_defaults_differential.py",
+                                       "test_wire_contract_s5_lean.py"}}
+# wire-contract-s5.md 7.1: the globs every unit after the pilot records.
+UNIT_GLOBS = ("tests/test_norm*", "tests/test_*contract*")
+UNIT_TESTS = {"norms@0": "tests.test_norms_contract", "norm-defaults@0": "tests.test_norm_defaults_contract"}
+
+
+@lru_cache(maxsize=None)
+def unit_corpus(unit):
+    return frozenset(source_key(case[2], case[3]) for case in gate_cases(load(unit)))
+
+
+def check_unit_inputs(unit, recorded):
+    """A missing input is a test input no source of the unit's corpus builds: `python -m
+    conformance.wire_contract_gate --unit <unit> --record-test-inputs` records it into the unit's test inputs."""
+    files = {path for pattern in unit_of(unit).recorded_tests for path in ROOT.glob(pattern)}
+    assert {path for pattern in UNIT_GLOBS for path in ROOT.glob(pattern)} <= files
+    assert {ROOT / "tests" / name for name in UNIT_SUBMITTING[unit]} | {
+        ROOT / "tests/test_wire_contract_s5_admission.py"} <= files
+    assert Path(__file__) not in files
+    assert UNIT_SUBMITTING[unit] <= {Path(label.split("::")[0]).name for label, _, _ in recorded}
+    submitted = {source_key(raw, norms) for label, raw, norms in recorded}
+    gate = unit_corpus(unit)
+    assert sorted({label for label, raw, norms in recorded if source_key(raw, norms) not in gate}) == []
+    stored = json.loads(unit_of(unit).test_inputs.read_text())
+    others = {source_key(case[2], case[3]) for case in gate_cases(load(unit), recorded=False)}
+    assert {source_key(raw, norms) for _, raw, norms in stored} <= submitted - others
+
+
+@pytest.mark.parametrize("unit", UNITS)
+def test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts(unit):
+    sources = unit_of(unit).module.conformance_sources()
+    gate = unit_corpus(unit)
+    assert sources and [label for label, raw, norms in sources if source_key(raw, norms) not in gate] == []
+
+
+@pytest.mark.parametrize("unit", UNITS)
+def test_unit_gate_corpus_holds_every_fixture(unit):
+    """The fixtures of the unit's statement spec that its tests build (its contract test's and the Lean
+    fixture test's, which builds D8, D12 and D13 its own way), and its examples."""
+    from tests.test_wire_contract_s5_lean import fixture_sources as lean_fixture_sources
+    module = unit_of(unit).module
+    sources = (importlib.import_module(UNIT_TESTS[unit]).fixture_sources() + lean_fixture_sources(unit)
+               + module.example_sources())
+    gate = unit_corpus(unit)
+    assert len(module.example_sources()) >= 2
+    assert [label for label, raw, norms in sources if source_key(raw, norms) not in gate] == []
