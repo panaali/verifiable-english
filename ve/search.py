@@ -274,7 +274,10 @@ def _relation_assignments(env: Any, domains: dict[str, list[str]],
         raise _SearchSpaceLimit
     atoms = tuple((name, row) for name in sorted(used)
                   for row in product(*(domains[s] for s in env.predicates[name].arguments)))
-    base_predicates = set(env.predicates) - env.definition_entries.keys()
+    # Each access to env.definition_entries decodes every definition again.
+    defined = env.definition_entries.keys()
+    base_predicates = set(env.predicates) - defined
+    relation_names = [name for name in sorted(env.predicates) if name not in defined]
     regulated_pairs = tuple((name, decl.regulated.permission)
                             for name, decl in env.predicates.items()
                             if decl.regulated is not None and decl.regulated.permission is not None
@@ -283,7 +286,7 @@ def _relation_assignments(env: Any, domains: dict[str, list[str]],
                     if name in base_predicates and (decl.functional or decl.total))
     for size in range(len(atoms) + 1):
         for subset in combinations(atoms, size):
-            relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
+            relations = {name: [] for name in relation_names}
             for name, row in subset:
                 relations[name].append(list(row))
             # These declarations are model-validity conditions. Filtering them
@@ -389,6 +392,8 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
     for k in numerals:
         values.update((k - 1, k, k + 1))
     values = sorted(values, key=lambda v: (abs(v), v))
+    defined = env.definition_entries.keys()
+    relation_names = [name for name in sorted(env.predicates) if name not in defined]
     minimum = {sort: minimum_size for sort in sorts}
     for name in object_constants:
         minimum[env.constants[name].sort] = max(minimum[env.constants[name].sort], 1)
@@ -410,7 +415,7 @@ def _order_models(env: Any, minimum_size: int, maximum: int, used: frozenset[str
             choices = [domains[env.constants[name].sort] for name in object_constants]
             for size in range(len(atoms) + 1):
                 for subset in combinations(atoms, size):
-                    relations = {name: [] for name in sorted(env.predicates) if name not in env.definition_entries}
+                    relations = {name: [] for name in relation_names}
                     for name, row in subset:
                         relations[name].append([str(x) if type(x) is int else x for x in row])
                     for denotations in product(*choices):
