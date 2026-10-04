@@ -20,7 +20,6 @@ ignore_imports =
     ve.ast -> ve.backends.lean_runner
     ve.ast -> ve.backends.rust_jsonl
     ve.ast -> ve.surface.nary
-    ve.ast -> ve.surface.registry
     ve.background -> ve.backends.dispatch
     ve.background -> ve.backends.lean_runner
     ve.background -> ve.backends.lean_service
@@ -42,7 +41,6 @@ ignore_imports =
     ve.evaluate -> ve.backends.dispatch
     ve.evaluate -> ve.backends.lean_runner
     ve.evaluate -> ve.backends.rust_jsonl
-    ve.evaluate -> ve.surface.registry
     ve.model -> ve.backends.dispatch
     ve.model -> ve.backends.validation
     ve.model -> ve.background
@@ -63,4 +61,3 @@ ignore_imports =
     ve.speech_acts -> ve.speech_english
     ve.speech_acts -> ve.vacuity
     ve.units -> ve.search
-    ve.wire -> ve.surface.registry
