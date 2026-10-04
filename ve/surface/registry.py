@@ -12,7 +12,6 @@ class SurfaceRecord:
     english_keywords: tuple[str, ...]
     fluent_form: str
     grammar_production: str
-    evaluator_hook: object = None
     traversal_hooks: object = None
     witness_renderer: object = None
     node_type: type | None = None
@@ -25,11 +24,8 @@ class SurfaceRecord:
     grammar_hook: object = None
     derivation_hook: object = None
     strict_grammar_hook: object = None
-    wire_encoder: object = None
-    wire_decoder: object = None
     fol_import_hook: object = None
     fol_export_hook: object = None
-    typecheck_hook: object = None
     profiles: tuple[str, ...] = ()
 
 
@@ -46,6 +42,10 @@ def register(record: SurfaceRecord) -> None:
         raise ValueError(f"Duplicate wire tag {record.wire_tag}")
     if record.node_type is not None and record.node_type in _by_type:
         raise ValueError(f"Duplicate surface constructor {record.node_type.__name__}")
+    if (record.node_type is not None or record.wire_arity is not None) and (
+            (record.node_type, record.wire_arity)
+            != (ast.NODE_TYPES.get(record.wire_tag), ast.WIRE_ARITY.get(record.wire_tag))):
+        raise ValueError(f"Surface record {record.wire_tag!r} disagrees with the kernel wire tables")
     if type(record.profiles) is not tuple or record.profiles != tuple(sorted(set(record.profiles))):
         raise ValueError("Surface profiles must be sorted and unique")
     if record.traversal_hooks is not None and type(record.traversal_hooks) is not dict:
@@ -53,12 +53,10 @@ def register(record: SurfaceRecord) -> None:
     if record.parser_hook is not None and (record.grammar_hook is None or
                                            record.derivation_hook is None):
         raise ValueError("English parser hooks require grammar and derivation hooks")
-    for value in (record.evaluator_hook, record.witness_renderer, record.parser_hook,
+    for value in (record.witness_renderer, record.parser_hook,
                   record.strict_parser_hook, record.printer_hook, record.fluent_hook,
                   record.english_renderer, record.grammar_hook, record.derivation_hook,
-                  record.strict_grammar_hook,
-                  record.wire_encoder, record.wire_decoder, record.fol_import_hook,
-                  record.fol_export_hook, record.typecheck_hook,
+                  record.strict_grammar_hook, record.fol_import_hook, record.fol_export_hook,
                   *((record.traversal_hooks or {}).values())):
         if value is not None and (not callable(value) or not value.__module__.startswith("ve.")):
             raise ValueError("Surface hooks must be callables from ve modules")
