@@ -11,8 +11,10 @@ Every Lean declaration under `lean/` gets one class of docs/TRUST-MAP.md section
 Theorems are `P`, and `example` and `#guard`-style commands are `T`, by their kind. Every other
 declaration takes its class from the side table `tools/trust-classes.json` (open question 11 of
 the plan: a side table changes no Lean file hash). A table entry may name the theorems that tie a
-D or G declaration (`{"class": "D[V]", "tied": [theorem, ...]}`); each such theorem must be in
-`lean/statements.txt` (bundle ST) and its statement must mention the declaration.
+D or G declaration (`{"name": ..., "tied": [theorem, ...]}`, at least one theorem); each such
+theorem must be in `lean/statements.txt` (bundle ST), and the constants its statement uses (the
+dump's `-- uses` line, full names) must include the declaration and some other K, S or untied
+[V] declaration, the meaning the tie points at.
 
 A declaration's lines run from its docstring (or first attribute line) to the line before the
 next declaration or structural command, as in the trust map's method (section 9). Namespace,
@@ -51,7 +53,9 @@ BASELINE = ROOT / "docs/trust-baseline.json"
 STATEMENTS = LEAN / "statements.txt"
 
 sys.path.insert(0, str(LEAN))
+sys.path.insert(0, str(ROOT / "tools"))
 from audit import code_only  # noqa: E402
+from lean_statements import parse as parse_statements, uses  # noqa: E402
 
 COLUMNS = ("K", "S", "D", "G", "C", "P", "T", "o")
 CLASSES = ("K", "S", "C", "P", "T", *(f"{c}[{g}]" for c in "DG" for g in "VRI"))
@@ -203,32 +207,41 @@ def load_table(path: Path = TABLE) -> dict[str, dict[str, object]]:
             for name in names:
                 entry: object = cls
                 if isinstance(name, dict):
-                    entry, name = {"class": cls, "tied": list(name["tied"])}, name["name"]
+                    tied = name.get("tied")
+                    if set(name) != {"name", "tied"} or not isinstance(name["name"], str) \
+                            or not isinstance(tied, list) or not tied \
+                            or not all(isinstance(t, str) and t for t in tied):
+                        raise ValueError(f"{path.name}: {module}: a tie must be {{\"name\": str, \"tied\": "
+                                         f"[theorem, ...]}} with at least one theorem: {name!r}")
+                    entry, name = {"class": cls, "tied": list(tied)}, name["name"]
+                if not isinstance(name, str):
+                    raise ValueError(f"{path.name}: {module}: {name!r} is not a declaration name")
                 if name in entries:
                     raise ValueError(f"{path.name}: {module}: {name} is listed twice")
                 entries[name] = entry
     return table
 
 
-def statements(path: Path = STATEMENTS) -> dict[str, str]:
-    """`theorem name` headers of lean/statements.txt and the statement text under each."""
-    found, name, body = {}, None, []
+def statements(path: Path = STATEMENTS) -> dict[str, set[str] | None]:
+    """The theorems of lean/statements.txt and the full names on each one's `-- uses` line
+    (None for an entry without that line)."""
     if not path.is_file():
-        return found
-    for line in path.read_text().splitlines():
-        if line.startswith("theorem "):
-            if name:
-                found[name] = "\n".join(body)
-            name, body = line.removeprefix("theorem ").strip(), []
-        elif name is not None:
-            body.append(line)
-    if name:
-        found[name] = "\n".join(body)
-    return found
+        return {}
+    return {name: uses(body) for name, body in parse_statements(path.read_text()).items()}
 
 
-def classify(module: str, decl: Decl, table: dict, proved: dict[str, str]) -> tuple[str, bool, list[str]]:
-    """(class, tied, problems) of one declaration."""
+def anchors(table: dict) -> set[str]:
+    """Declarations a tie can point at: those the budget counts as trusted (K, S, untied [V])."""
+    return {name for entries in table.values() for name, entry in entries.items()
+            if isinstance(entry, str) and (entry in {"K", "S"} or entry.endswith("[V]"))}
+
+
+def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | None],
+             trusted: set[str] = frozenset()) -> tuple[str, bool, list[str]]:
+    """(class, tied, problems) of one declaration. A tie holds when every listed theorem is in
+    the statement dump and its statement mentions the declaration itself (its full name, not a
+    same-named declaration of another namespace) and some other declaration in `trusted`, the
+    K, S or untied [V] meaning it is tied to."""
     if decl.kind in {"theorem", "lemma"}:
         return "P", False, []
     if decl.kind in {"example", "command"}:
@@ -241,13 +254,20 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, str]) -> tu
     cls, problems = entry["class"], []
     if cls[0] not in "DG":
         problems.append(f"{module}: {decl.name}: only D and G declarations can be tied")
-    short = decl.name.rsplit(".", 1)[-1]
+    if decl.name is None or ":" in decl.name:
+        problems.append(f"{module}: {decl.name}: an unnamed declaration cannot be tied")
     for theorem in entry["tied"]:
-        statement = proved.get(theorem)
-        if statement is None:
+        used = proved.get(theorem)
+        if theorem not in proved:
             problems.append(f"{module}: {decl.name}: tying theorem {theorem} is not in {STATEMENTS.name}")
-        elif not re.search(rf"(?<![\w.']){re.escape(short)}(?![\w'])|\.{re.escape(short)}(?![\w'])", statement):
-            problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {short}")
+        elif used is None:
+            problems.append(f"{module}: {decl.name}: {STATEMENTS.name} has no uses line for {theorem}; "
+                            "rerun tools/lean_statements.py")
+        elif decl.name not in used:
+            problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {decl.name}")
+        elif not used & (trusted - {decl.name}):
+            problems.append(f"{module}: {decl.name}: the statement of {theorem} mentions no K, S or untied [V] "
+                            "declaration to tie it to")
     return cls, not problems, problems
 
 
@@ -261,6 +281,7 @@ def measure(root: Path = ROOT, table_path: Path = TABLE,
     """Per-file counts and the problems found (unknown table entries, unverified ties)."""
     table = load_table(table_path)
     proved = statements(statements_path)
+    trusted = anchors(table)
     files, problems, seen = {}, [], defaultdict(set)
     for path in sources(root):
         module = module_key(path, root)
@@ -269,7 +290,7 @@ def measure(root: Path = ROOT, table_path: Path = TABLE,
         counts["lines"] = total
         covered = 0
         for decl in decls:
-            cls, tied, issues = classify(module, decl, table, proved)
+            cls, tied, issues = classify(module, decl, table, proved, trusted)
             problems += issues
             if decl.name is not None:
                 seen[module].add(decl.name)

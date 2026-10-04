@@ -91,20 +91,86 @@ def test_classes_counts_and_unclassified_fail_closed(tmp_path):
     assert sum(counts[c] for c in trust_map.COLUMNS) + counts["unclassified"] == counts["lines"]
 
 
+def tie_problems(root: Path, table: dict, dump: str) -> tuple[dict, list[str]]:
+    write_tree(root, table, dump)
+    return trust_map.measure(root, root / "tools/trust-classes.json", root / "lean/statements.txt")
+
+
+def entry(statement: str, uses: str) -> str:
+    return f"theorem VE.Demo.decodeThing_empty\n  {statement}\n  -- uses {uses}\n  -- expr 1\n"
+
+
+TIED = {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_empty"]}], "S": ["VE.Demo.Meaning"]}
+
+
 def test_ties_are_checked_against_the_statement_dump(tmp_path):
-    table = {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_empty"]}]}
-    dump = "theorem VE.Demo.decodeThing_empty\n  VE.Demo.decodeThing \"\" = 0\n  -- expr 1\n"
-    write_tree(tmp_path, table, dump)
-    files, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json",
-                                        tmp_path / "lean/statements.txt")
+    files, problems = tie_problems(tmp_path, TIED, entry('VE.Demo.decodeThing "" = (VE.Demo.Meaning.x ⟨0⟩)',
+                                                         "VE.Demo.Meaning VE.Demo.Meaning.x VE.Demo.decodeThing"))
     assert problems == [] and files["VE/Demo.lean"]["tied"] == 4
-    assert files["VE/Demo.lean"]["trusted"] == 7  # the unclassified helper, Meaning and instance only
-    write_tree(tmp_path, table, "theorem VE.Demo.decodeThing_empty\n  True\n")
-    _, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
-    assert problems and "does not mention decodeThing" in problems[0]
-    write_tree(tmp_path, {"D[V]": ["VE.Demo.gone"]})
-    _, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    assert files["VE/Demo.lean"]["trusted"] == 7  # the unclassified helper and instance, and Meaning only
+    _, problems = tie_problems(tmp_path, TIED, entry("True", "VE.Demo.Meaning"))
+    assert problems and "does not mention VE.Demo.decodeThing" in problems[0]
+    _, problems = tie_problems(tmp_path, {"D[V]": ["VE.Demo.gone"]}, "")
     assert any("VE.Demo.gone is not a declaration" in p for p in problems)
+
+
+def test_tie_needs_the_qualified_declaration(tmp_path):
+    """Review B: a statement about another namespace's `decodeThing` passed the short-name match."""
+    _, problems = tie_problems(tmp_path, TIED, entry('VE.Other.decodeThing "" = 0 ∧ VE.Demo.Meaning = VE.Demo.Meaning',
+                                                     "VE.Demo.Meaning VE.Other.decodeThing"))
+    assert len(problems) == 1 and "does not mention VE.Demo.decodeThing" in problems[0]
+    # Dot notation hides the namespace in the text; the uses line still names the declaration.
+    files, problems = tie_problems(tmp_path, TIED, entry("∀ (m : VE.Demo.Meaning), m.decodeThing = 0",
+                                                         "VE.Demo.Meaning VE.Demo.decodeThing"))
+    assert problems == [] and files["VE/Demo.lean"]["tied"] == 4
+    # A dump written before the uses line existed ties nothing.
+    _, problems = tie_problems(tmp_path, TIED, "theorem VE.Demo.decodeThing_empty\n  VE.Demo.decodeThing \"\" = 0\n"
+                                               "  -- expr 1\n")
+    assert len(problems) == 1 and "has no uses line" in problems[0]
+
+
+def test_tie_needs_a_trusted_meaning(tmp_path):
+    """A theorem that mentions only the declaration (or only untrusted code) ties it to nothing."""
+    _, problems = tie_problems(tmp_path, TIED, entry('VE.Demo.decodeThing "" = 0', "VE.Demo.decodeThing"))
+    assert len(problems) == 1 and "mentions no K, S or untied [V]" in problems[0]
+    checked = {**TIED, "S": [], "C": ["VE.Demo.Meaning"]}
+    _, problems = tie_problems(tmp_path, checked, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"))
+    assert len(problems) == 1 and "mentions no K, S or untied [V]" in problems[0]
+    # Two declarations tied to each other leave nothing trusted.
+    mutual = {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_empty"]},
+                       {"name": "VE.Demo.helper", "tied": ["VE.Demo.decodeThing_empty"]}]}
+    _, problems = tie_problems(tmp_path, mutual, entry("…", "VE.Demo.decodeThing VE.Demo.helper"))
+    assert len(problems) == 2 and all("mentions no K, S or untied [V]" in p for p in problems)
+
+
+@pytest.mark.parametrize("tie", [
+    {"name": "VE.Demo.decodeThing", "tied": []},                    # review B: an empty list tied it
+    {"name": "VE.Demo.decodeThing", "tied": "VE.Demo.decodeThing_empty"},
+    {"name": "VE.Demo.decodeThing", "tied": [""]},
+    {"name": "VE.Demo.decodeThing"},
+    {"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_empty"], "note": "x"},
+    {"name": 3, "tied": ["VE.Demo.decodeThing_empty"]},
+])
+def test_malformed_ties_are_rejected(tmp_path, tie):
+    with pytest.raises(ValueError, match="a tie must be"):
+        tie_problems(tmp_path, {"D[V]": [tie], "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"))
+
+
+def test_unnamed_declaration_cannot_be_tied(tmp_path):
+    table = {"D[V]": [{"name": "instance:Inhabited Nat", "tied": ["VE.Demo.decodeThing_empty"]}],
+             "S": ["VE.Demo.Meaning"]}
+    _, problems = tie_problems(tmp_path, table, entry("…", "VE.Demo.Meaning instance:Inhabited Nat"))
+    assert any("an unnamed declaration cannot be tied" in p for p in problems)
+
+
+def test_committed_ties_are_valid():
+    """Every tie in the committed table passes the checks above against the committed dump."""
+    table = trust_map.load_table()
+    proved = trust_map.statements()
+    assert all(uses is not None for uses in proved.values())
+    _, problems = trust_map.measure()
+    assert not [p for p in problems if "tie" in p or "mention" in p]
+    assert all(isinstance(e, str) or e["tied"] for entries in table.values() for e in entries.values())
 
 
 def test_budget_check_needs_a_signed_allowance(tmp_path):
