@@ -271,6 +271,15 @@ PROBLEM_TREES = {
                      "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning instance:Inhabited Nat"), (), False),
     "stale table entry": ({"D[V]": ["VE.Demo.gone"], "S": ["VE.Demo.Meaning"]}, "", (), False),
     "predicate list missing": ({"S": ["VE.Demo.Meaning"]}, "", (), True),
+    # Review B (looprecheck 2): a theorem listed as S anchored the tie, while the budget counted it P.
+    "theorem listed as S anchors a tie": ({"S": ["VE.Demo.decodeThing_empty"], **{"D[V]": TIED["D[V]"]}},
+                                          entry("…", "VE.Demo.decodeThing VE.Demo.decodeThing_empty"), (), False),
+    "theorem listed as P": ({"P": ["VE.Demo.decodeThing_empty"], "S": ["VE.Demo.Meaning"]}, "", (), False),
+    "theorem listed tied": ({"C": [{"name": "VE.Demo.decodeThing_empty", "tied": ["VE.Demo.decodeThing_empty"]}],
+                             "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing_empty"), (), False),
+    "anchor listed for another file": ({"D[V]": TIED["D[V]"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"),
+                                       (), False, {"VE/Other.lean": {"S": ["VE.Demo.Meaning"]}}),
+    "anchor only unclassified": ({"D[V]": TIED["D[V]"]}, entry("…", "VE.Demo.helper VE.Demo.decodeThing"), (), False),
 }
 VALID_TREES = {
     "tied": (TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False),
@@ -282,8 +291,11 @@ WHOLE_TREE = {"steps": [{"step": "all", "title": "", "days": 1, "risk": 1, "remo
 
 
 def problem_tree(root: Path, tree: tuple) -> None:
-    table, dump, predicates, drop = tree
+    table, dump, predicates, drop, *other = tree
     write_tree(root, table, dump, predicates)
+    if other:
+        path = root / "tools/trust-classes.json"
+        path.write_text(json.dumps({"modules": {**json.loads(path.read_text())["modules"], **other[0]}}))
     if drop:
         (root / "lean/predicates.txt").unlink()
     (root / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
@@ -339,6 +351,161 @@ def test_ledger_rejects_a_misclassified_kernel_predicate(tmp_path, capsys):
     assert row["removed"] > 0 and row["removed_untrusted"] == 0
     assert trust_map.main(["--ledger", "--root", str(tmp_path)]) == 1
     assert "a predicate cannot be C" in capsys.readouterr().err
+
+
+MARKER = '''import VE.Demo
+
+namespace VE.Demo
+
+theorem marker : True := trivial
+
+theorem decodeThing_tie : decodeThing "" = 0 ∧ marker = True.intro := ⟨rfl, rfl⟩
+
+end VE.Demo
+'''
+
+
+@pytest.mark.parametrize("flags", [[], ["--check"], ["--write"], ["--ledger"]])
+def test_theorem_listed_as_meaning_anchors_nothing(tmp_path, capsys, flags):
+    """Review B (looprecheck 2): `theorem marker : True` listed as S anchored the tie of a D[V]
+    decoder through `decodeThing "" = 0 ∧ marker = True.intro`, while the budget counted the
+    theorem P. Every entry point succeeded with zero trusted lines, and `--check` passed decoder
+    growth against a zero budget."""
+    write_tree(tmp_path, {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_tie"]}],
+                          "C": ["VE.Demo.Meaning", "VE.Demo.helper", "instance:Inhabited Nat"]},
+               "theorem VE.Demo.decodeThing_tie\n  VE.Demo.decodeThing \"\" = 0 ∧ VE.Demo.marker = True.intro\n"
+               "  -- uses And Eq Nat String True True.intro VE.Demo.decodeThing VE.Demo.marker\n  -- expr 1\n")
+    (tmp_path / "lean/VE/Marker.lean").write_text(MARKER)
+    table_path = tmp_path / "tools/trust-classes.json"
+    modules = json.loads(table_path.read_text())["modules"]
+    table_path.write_text(json.dumps({"modules": {**modules, "VE/Marker.lean": {"S": ["VE.Demo.marker"]}}}))
+    (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
+    (tmp_path / "docs").mkdir()
+    zero = {"totals": trust_map.empty_counts(), "files": {}, "signed": []}
+    (tmp_path / "docs/trust-baseline.json").write_text(json.dumps(zero))
+    files, problems = trust_map.measure(tmp_path, table_path, tmp_path / "lean/statements.txt")
+    assert sorted(problems) == [
+        "VE/Demo.lean: VE.Demo.decodeThing: the statement of VE.Demo.decodeThing_tie mentions no K, S or untied [V] "
+        "declaration of the tree, validly classified, to tie it to",
+        "VE/Marker.lean: VE.Demo.marker: a theorem is P by its kind; the table cannot list it (it lists S)"]
+    assert files["VE/Demo.lean"]["trusted"] == 4 and files["VE/Marker.lean"]["trusted"] == 2  # failing closed
+    assert trust_map.check(files, zero)  # the decoder's lines are budget growth
+    assert trust_map.main([*flags, "--root", str(tmp_path)]) == 1
+    out, err = capsys.readouterr()
+    assert "a theorem is P by its kind" in err and "PASS" not in out and "| Step |" not in out
+    assert json.loads((tmp_path / "docs/trust-baseline.json").read_text()) == zero
+
+
+# Generated mutation tests: each table entry's class (and each unlisted declaration's) is replaced,
+# and the tool must either report a problem or report exactly what the declarations support.
+
+KIND_FIXED = {"theorem": "P", "lemma": "P", "example": "T", "command": "T"}
+
+
+def unsound(walked: list, table: dict, proved: dict, predicates: set[str]) -> list[str]:
+    """What a report claims that the declarations contradict. This oracle reads only the reported
+    classes, each declaration's kind and the statement dump, not the tool's anchor set: a theorem,
+    example or command is P or T by its kind and cannot be listed; every other declaration is
+    reported in its listed class (or `?`); `trusted` is K, S, `?` or untied [V]; each tying theorem
+    mentions the declaration and another one the same report counts as trusted by its class; a
+    predicate is not left untrusted untied."""
+    reported = {d.decl.name: d for d in walked if d.decl.name is not None}
+    errors = []
+    for d in walked:
+        name = d.decl.name
+        listed = table.get(d.module, {}).get(name) if name is not None else None
+        cls = listed if listed is None or isinstance(listed, str) else listed["class"]
+        fixed = KIND_FIXED.get(d.decl.kind)
+        if fixed and (d.cls != fixed or listed is not None):
+            errors.append(f"{name}: a {d.decl.kind} reported {d.cls} and listed {cls}")
+        elif not fixed and d.cls != (cls or "?"):
+            errors.append(f"{name}: listed {cls}, reported {d.cls}")
+        counted = d.cls in {"K", "S", "?"} or d.cls[0] in "DG" and d.cls.endswith("[V]") and not d.tied
+        if d.trusted != counted:
+            errors.append(f"{name}: {d.cls} reported trusted={d.trusted}")
+        if d.tied:
+            for theorem in listed["tied"]:
+                used = proved.get(theorem) or set()
+                if name not in used or not any(
+                        n != name and n in reported and reported[n].trusted and not reported[n].tied
+                        and reported[n].cls != "?" for n in used):
+                    errors.append(f"{name}: {theorem} ties it to nothing the report counts as trusted")
+        if name in predicates and not (counted or d.tied or d.cls in {"P", "T"}):
+            errors.append(f"{name}: a predicate reported {d.cls} untied")
+    return errors
+
+
+def entry_variants(cls_now: object, theorems: list[str]) -> list[object]:
+    """Every class, untied and tied to each theorem of the dump (or to the entry's own theorems),
+    and no entry at all."""
+    own = [cls_now["tied"]] if isinstance(cls_now, dict) else []
+    ties = own + [[t] for t in theorems if [t] not in own]
+    return [None, *trust_map.CLASSES, *({"class": c, "tied": t} for c in trust_map.CLASSES for t in ties)]
+
+
+def mutate(table: dict, module: str, name: str, variant: object) -> dict:
+    out = {m: dict(entries) for m, entries in table.items()}
+    out.setdefault(module, {}).pop(name, None)
+    if variant is not None:
+        out[module][name] = variant
+    return out
+
+
+def assert_sound_or_rejected(decls, table, proved, predicates, label) -> None:
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
+    errors = unsound(walked, table, proved, predicates)
+    assert problems or not errors, f"{label}: passed while {errors}"
+
+
+@pytest.mark.parametrize("name", VALID_TREES)
+def test_mutated_fixture_classes_are_reported_or_rejected(tmp_path, name):
+    """Every named declaration of a valid fixture tree, alone and in pairs, takes every class
+    (untied and tied) or none."""
+    problem_tree(tmp_path, VALID_TREES[name])
+    decls, _ = trust_map.scan_tree(tmp_path)
+    table = trust_map.load_table(tmp_path / "tools/trust-classes.json")
+    proved = trust_map.statements(tmp_path / "lean/statements.txt")
+    predicates = trust_map.lean_predicates(tmp_path / "lean/predicates.txt")
+    assert not unsound(*trust_map.classify_tree(decls, table, proved, predicates)[:1], table, proved, predicates)
+    targets = sorted({(m, d.name) for m, d in decls if d.name is not None})
+    variants = {t: entry_variants(table.get(t[0], {}).get(t[1]), sorted(proved)) for t in targets}
+    for i, (module, decl) in enumerate(targets):
+        for variant in variants[module, decl]:
+            once = mutate(table, module, decl, variant)
+            assert_sound_or_rejected(decls, once, proved, predicates, f"{decl}={variant}")
+            for module2, decl2 in targets[i + 1:]:
+                for variant2 in variants[module2, decl2]:
+                    assert_sound_or_rejected(decls, mutate(once, module2, decl2, variant2), proved, predicates,
+                                             f"{decl}={variant}, {decl2}={variant2}")
+
+
+@pytest.fixture(scope="module")
+def committed_tree():
+    decls, _ = trust_map.scan_tree()
+    return decls, trust_map.load_table(), trust_map.statements(), trust_map.lean_predicates()
+
+
+def test_mutated_committed_ties_are_reported_or_rejected(committed_tree):
+    """Every committed tie and every declaration its theorems mention (its possible anchors) takes
+    every class, untied and tied, or none, against the committed dump and the files they live in
+    (with those files' table entries, so the sub-tree is itself a valid tree)."""
+    decls, table, proved, predicates = committed_tree
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
+    assert problems == [] and not unsound(walked, table, proved, predicates)
+    modules = {d.name: m for m, d in decls if d.name is not None}
+    tying = sorted({t for entries in table.values() for e in entries.values() if isinstance(e, dict) for t in e["tied"]})
+    targets = sorted({(m, n) for m, entries in table.items() for n, e in entries.items() if isinstance(e, dict)}
+                     | {(modules[n], n) for t in tying for n in proved[t] if n in modules})
+    assert len(targets) > len(tying)
+    files = {m for m, _ in targets}
+    decls = [(m, d) for m, d in decls if m in files]
+    table = {m: entries for m, entries in table.items() if m in files}
+    walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
+    assert problems == [] and not unsound(walked, table, proved, predicates)
+    for module, name in targets:
+        for variant in entry_variants(table.get(module, {}).get(name), tying[:1]):
+            assert_sound_or_rejected(decls, mutate(table, module, name, variant), proved, predicates,
+                                     f"{name}={variant}")
 
 
 def test_committed_ledger_names_real_declarations():
