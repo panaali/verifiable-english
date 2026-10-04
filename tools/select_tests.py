@@ -295,6 +295,8 @@ def taint(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], ad
         grew = False
         for summary in versions:
             for statement in summary.statements:
+                if statement.is_import:
+                    continue  # importers of a changed name are reached through the graph
                 if statement.references & (names | callables) and not statement.binds <= names:
                     names |= statement.binds
                     grew = True
@@ -392,13 +394,9 @@ def is_rust_input(path: str) -> bool:
 
 def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: set[str],
                     base: str) -> tuple[set[str], int]:
-    """Units whose coverage at `base` may differ from the map's.
+    """Units whose coverage at `base` may differ from the map's, and how many files differ.
 
-    A test that ran none of the code that changed between the map's commit and
-    `base` (no changed function, no module whose import-time statements
-    changed, no changed file it read) runs the same way at `base` as when it
-    was recorded, so its map entry still holds. Every other test is uncertain.
-    Returns the uncertain units and the number of files changed since the map.
+    Cached per (map commit, base commit) next to the graph cache.
     """
     base_commit = git_lines("rev-parse", base)[0]
     cache = source_graph.cache_path(ROOT).with_name(
@@ -410,48 +408,62 @@ def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: se
         pass
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", coverage.commit, base_commit))
-    drift = sorted(status)
+    python = [p for p in status if p.endswith(".py")]
+    contents = blobs([f"{rev}:{p}" for p in python for rev in (coverage.commit, base_commit)])
+    versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"]) for p in python}
+    found = uncertain_units(coverage, graph, all_units, status, versions)
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps({"uncertain": sorted(found), "drift": len(status)}))
+    return found, len(status)
+
+
+def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: set[str],
+                    status: dict[str, str], versions: dict[str, tuple[str | None, str | None]]) -> set[str]:
+    """Units whose recorded run may differ now, given what changed since the map.
+
+    `status` maps each changed path to git's A/D/M letter; `versions` gives the
+    map-time and current text of each changed Python file. A test that ran
+    none of the changed code (no changed function, no module whose
+    import-time statements changed, no changed file it read or program it
+    ran) runs the same way now as when it was recorded, so its map entry
+    still holds. Every other test is uncertain.
+    """
     found: set[str] = set()
 
     def add(tests, _reason=""):
         found.update(test for test in tests if test in all_units)
 
-    python = [p for p in drift if p.endswith(".py")]
-    contents = blobs([f"{rev}:{p}" for p in python for rev in (coverage.commit, base_commit)])
     parsed = {}
-    for path in python:
+    for path, (before, after) in versions.items():
         module, package = source_graph.module_name(path)
-        before, after = contents[f"{coverage.commit}:{path}"], contents[f"{base_commit}:{path}"]
         try:
             parsed[path] = (source_graph.summary_of(before, module, package) if before is not None else None,
                             source_graph.summary_of(after, module, package) if after is not None else None)
         except SyntaxError:
             parsed[path] = None
     called = {}
-    for path, versions in parsed.items():
-        if versions is not None:
-            for qualname, references in delta(*versions).references.items():
+    for path, pair in parsed.items():
+        if pair is not None:
+            for qualname, references in delta(*pair).references.items():
                 called[(path, qualname)] = references
-    for path in drift:
+    for path, letter in status.items():
         add([path])  # a changed test's own record is stale
         add(coverage.readers(path))
-        if status[path] in ("A", "D"):
+        if letter in ("A", "D"):
             add(coverage.listers(path))
-        if path.endswith(".py"):
-            versions = parsed[path]
-            if versions is None:
+        if path in parsed:
+            pair = parsed[path]
+            if pair is None:
                 add(coverage.importers(path) | coverage.file_wide(path, set(coverage.functions.get(path, {}))))
             else:
-                d = delta(*versions)
+                d = delta(*pair)
                 if not d.empty:
-                    python_impact(coverage, graph, all_units, add, path, *versions, d, called)
+                    python_impact(coverage, graph, all_units, add, path, *pair, d, called)
         elif is_lean_input(path):
-            add(coverage.runners(runs_lean(lean_programs(graph, path, False))))
+            add(coverage.runners(runs_lean(lean_programs(graph, path, letter in ("A", "D")))))
         elif is_rust_input(path):
             add(coverage.runners(runs_rust))
-    cache.parent.mkdir(parents=True, exist_ok=True)
-    cache.write_text(json.dumps({"uncertain": sorted(found), "drift": len(drift)}))
-    return found, len(drift)
+    return found
 
 
 def resolve_map(base: str, coverage) -> Coverage | None:

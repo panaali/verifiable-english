@@ -42,6 +42,7 @@ class Statement:
     binds: frozenset[str]
     references: frozenset[str]
     effect: bool             # does more than bind names (a top-level call, del, ...)
+    is_import: bool = False  # binds each imported name to its own source
 
 
 @dataclass(frozen=True)
@@ -202,7 +203,8 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
                 type_ignores=[]))
         else:
             references = _references(node)
-        summary.statements.append(Statement(body, frozenset(_binds(node)), references, _effect(node)))
+        summary.statements.append(Statement(body, frozenset(_binds(node)), references, _effect(node),
+                                            isinstance(node, (ast.Import, ast.ImportFrom))))
     parts = module.split(".") if package else module.split(".")[:-1]
     constants = set()
     for node in ast.walk(tree):
