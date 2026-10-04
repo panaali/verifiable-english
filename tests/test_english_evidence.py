@@ -72,10 +72,33 @@ def test_english_differential_merge_smoke():
     assert len(report['vocabularies']) == 17
 
 
-def test_english_mixed_merge_smoke():
-    report = english_mixed.mixed(1)
-    assert report['failure_count'] == 0
+# One test per configuration, or per part of a slow one, so that they render and parse
+# in parallel (the slowest took 511 s alone under load 40).
+MIXED = [name for name, _, _ in english_mixed.all_configurations()]
+MIXED_PARTS = {'news-article-reviewed': 4, 'claude-constitution-excerpt-reviewed': 3, 'news-article': 2}
+
+
+@pytest.mark.parametrize('offset, part, parts',
+                         [(offset, part, MIXED_PARTS.get(name, 1)) for offset, name in enumerate(MIXED)
+                          for part in range(MIXED_PARTS.get(name, 1))],
+                         ids=[f'{name}-{part}' if name in MIXED_PARTS else name for name in MIXED
+                              for part in range(MIXED_PARTS.get(name, 1))])
+def test_english_mixed_merge_smoke(offset, part, parts):
+    report = english_mixed.mixed(1, only={offset}, part=part, parts=parts)
+    assert [row['vocabulary'] for row in report['vocabularies']] == [MIXED[offset]]
+    assert report['failure_count'] == 0, report['failures'][:3]
     assert report['texts'] > 0
+
+
+def test_the_mixed_parts_are_configurations():
+    assert set(MIXED_PARTS) <= set(MIXED)
+
+
+def test_english_mixed_merge_generates_every_registered_construct():
+    """The coverage half of the smoke run: the generated formulas alone decide it."""
+    report = english_mixed.mixed(1, check=False)
+    assert len(report['vocabularies']) == len(MIXED) and report['texts'] > 0
+    assert report['failure_count'] == 0
     assert not report['missing_constructs']
     assert not report['unexercised_profiles']
 
