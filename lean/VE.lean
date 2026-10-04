@@ -1,5 +1,6 @@
 import VE.Audit
-import VE.Grammar.Table
+import VE.Grammar.TableProofs
+import VE.Grammar.Meaning
 import VE.EnglishGrammar.Examples
 import VE.EnglishGrammar.FoldAgree
 import VE.Compose.Slot
