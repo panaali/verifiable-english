@@ -41,7 +41,7 @@ At run time, `tests/conftest.py` already refused a child started without a check
 
 ### 3. The fast path
 
-`tools/select_tests.py --impacted [--run]` selects the tests a change can affect: their Python import closure, the Lean executables and the Rust checker their code starts, and the data paths their strings name. `tests/test_select_tests.py` checks four things: every test file is reachable from a source path; Lean and Rust changes select their conformance tests; narrow changes select fewer than 40 files; and unknown, deleted or facade changes select everything. Measured selections, out of 213 files:
+`tools/select_tests.py --impacted [--run]` selects the tests a change can affect: their Python import closure (with that of every `conftest.py` pytest loads for them), the Lean executables and the Rust checker their code starts, and the data paths their strings name. `tests/test_select_tests.py` checks five things: every test file is reachable from a source path; Lean and Rust changes select their conformance tests; a change to `tests/conftest.py` or anything it imports selects every test; narrow changes select fewer than 40 files; and unknown, deleted or facade changes select everything. Measured selections, out of 214 files:
 
 | change | files selected |
 |---|---|
@@ -49,11 +49,12 @@ At run time, `tests/conftest.py` already refused a child started without a check
 | `tools/hooks/precommit.py` | 7 |
 | `tools/bench/baseline.py` | 9 |
 | `conformance/evaluation.json` | 12 |
-| `ve/softnorms.py` | 187 |
+| `tests/conftest.py` | 214 |
+| `ve/softnorms.py` | 214 |
 | `lean/VE/Norms/Wire.lean` | 199 |
 | `rust/ve/src/main.rs` | 192 |
 
-The product modules import one another widely (for example, `ve/environment.py`'s closure holds 72 modules), so the static selection stays coarse for product and native changes. The same commit fixes the two documented-layer rows `tools/test_layer_policy.py` reported as failing.
+The product modules import one another widely (for example, `ve/environment.py`'s closure holds 72 modules), so the static selection stays coarse for product and native changes. `tests/conftest.py` imports `ve.surface`, whose closure holds 72 product modules, so a change to any of them selects every test. The same commit fixes the two documented-layer rows `tools/test_layer_policy.py` reported as failing.
 
 ### 4. Parallelism and build reuse
 

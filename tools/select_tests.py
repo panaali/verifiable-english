@@ -337,6 +337,17 @@ def closure(relative: str) -> frozenset[str]:
 
 
 @cache
+def test_closure(test: str) -> frozenset[str]:
+    """What pytest loads for the test file `test`: its closure and the closure of every
+    conftest.py from the repository root down to its directory, which pytest imports
+    for each test below it without the test naming it."""
+    directories = [ROOT, *(ROOT / part for part in Path(test).parents[:-1][::-1])]
+    conftests = [(directory / "conftest.py").relative_to(ROOT).as_posix() for directory in directories
+                 if (directory / "conftest.py").is_file()]
+    return closure(test).union(*(closure(conftest) for conftest in conftests))
+
+
+@cache
 def text(relative: str) -> str:
     return (ROOT / relative).read_text(errors="replace")
 
@@ -391,9 +402,14 @@ def lean_executables_of(module: str) -> frozenset[str]:
 
 def reaches(test: str, changed: str) -> bool:
     """Whether a change to `changed` can change the outcome of the test file `test`."""
-    files = closure(test)
-    if changed in files or changed in EXTRA_SOURCES.get(test, ()):
+    if changed in test_closure(test) or changed in EXTRA_SOURCES.get(test, ()):
         return True
+    # A conftest's imports run for every test, so a change to one reaches them all (above).
+    # Native checkers are another matter: the conftest builds them once per session (the
+    # plan's own build command covers a native change) and starts none, so whether a test
+    # runs one is decided by its own closure.
+    native = changed.startswith(("lean/", "rust/"))
+    files = closure(test) if native else test_closure(test)
     # Data paths and checker configuration are named by the test side (tests, the harness,
     # tools); a product module names the executables it starts on its own.
     harness = [literals(f) for f in files if not f.startswith(("ve/", "ve_experiments/"))]
@@ -430,7 +446,7 @@ def impacted(paths: list[str], *, full: bool = False) -> dict:
         hits = [test for test in tests if (ROOT / changed).exists() and reaches(test, changed)] \
             if not changed.startswith("tests/test_") else [changed] * (ROOT / changed).exists()
         if changed.startswith("tests/test_"):
-            hits += [test for test in tests if changed in closure(test)]
+            hits += [test for test in tests if changed in test_closure(test)]
         reached[changed] = sorted(set(hits))
         if changed == "ve/__init__.py" or not (ROOT / changed).exists():
             unreached.append(changed)  # the facade reexports every layer; a deletion has no reader left
