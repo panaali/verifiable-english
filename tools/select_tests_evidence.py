@@ -9,13 +9,14 @@
 It writes docs/testselect-evidence.json.
 
 ``mutants`` takes the first --count replayed commits that changed a Python
-function under ve/ or tools/, checks out each commit in --worktree, applies
-one seeded mutation inside a function that commit changed, selects for that
-working-tree change with a fresh map (the smaller, precise selection) and with
-the nightly map, and runs the fresh selection's pytest files until the first
-failure (and checks that the nightly selection holds that test). A mutant the
-selection does not catch is then run against every other test file, to tell
-an escape from a mutant no test detects.
+function under ve/ or tools/ and, in --worktree checked out at --at (a
+revision with a map recorded at it, so selection is as precise as it gets),
+applies one seeded mutation inside a function that commit changed, selects for
+that change, and runs the selected pytest files until the first failure. A
+failure counts once the same test passes without the mutant; a test that also
+fails without it is deselected and the run repeated. A mutant the selection
+does not catch is run against every other test file, to tell an escape from a
+mutant no test detects (then the next seed is tried).
 
 ``table`` prints the Markdown tables of docs/TESTING.md from the JSON.
 """
@@ -128,7 +129,7 @@ class Mutator(ast.NodeTransformer):
         return node
 
 
-def mutate(source: str, qualname: str, seed: int) -> tuple[str, str] | None:
+def mutate(source: str, qualname: str, seed: str) -> tuple[str, str] | None:
     """`source` with one seeded mutation inside `qualname`, and its description."""
     tree = ast.parse(source)
     target = None
@@ -161,20 +162,44 @@ def mutate(source: str, qualname: str, seed: int) -> tuple[str, str] | None:
     return "".join(lines[:first - 1]) + text + "".join(lines[last:]), mutator.applied
 
 
-def run_pytest(worktree: Path, files: list[str], log: Path, *, first_failure: bool) -> int:
+def run_command(worktree: Path, command, log: Path) -> int:
+    env = dict(os.environ)
+    env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
+    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
+    with log.open("w") as handle:
+        return subprocess.run(list(command), cwd=worktree, env=env, stdout=handle, stderr=subprocess.STDOUT,
+                              check=False).returncode
+
+
+def run_pytest(worktree: Path, files: list[str], log: Path, *, first_failure: bool, workers: int = 14) -> int:
     env = dict(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     command = ["uv", "run", "--frozen", "--group", "dev", "python", "-m", "pytest", "-q",
-               "-n", str(min(8, max(1, len(files)))), *(["--maxfail=1"] if first_failure else []), *files]
+               *(["-n", str(min(workers, len(files)))] if workers > 1 else []),
+               *(["--maxfail=1"] if first_failure else []), *files]
     with log.open("w") as handle:
         return subprocess.run(command, cwd=worktree, env=env, stdout=handle, stderr=subprocess.STDOUT,
                               check=False).returncode
 
 
+def first_failure(log: Path) -> tuple[str | None, bool]:
+    """The first failing test id in a pytest log, and whether it failed while collecting."""
+    line = next((line for line in log.read_text(errors="replace").splitlines()
+                 if line.startswith(("FAILED ", "ERROR "))), None)
+    if line is None:
+        return None, False
+    failure = line.split()[1]
+    return failure, line.startswith("ERROR ") and "::" not in failure
+
+
 def mutants(args: argparse.Namespace) -> int:
+    """Seeded bugs in the functions recent commits changed, at one revision with its own map."""
     data = json.loads(EVIDENCE.read_text())
     worktree = Path(args.worktree)
+    git("checkout", "-q", "--force", "--detach", args.at, cwd=worktree)
+    for name in SELECTOR_FILES:
+        shutil.copy(ROOT / "tools" / name, worktree / "tools" / name)
     logs = Path(tempfile.mkdtemp(prefix="ve-select-mutants-"))
     rows = [row for row in data.get("mutants", []) if row["commit"] not in args.redo]
     done = {row["commit"] for row in rows}
@@ -186,60 +211,77 @@ def mutants(args: argparse.Namespace) -> int:
         if not candidates or commit in done:
             continue
         path = candidates[0]
-        old_text, new_text = git("show", f"{commit}^:{path}"), git("show", f"{commit}:{path}")
         module, package = select_tests.source_graph.module_name(path)
-        d = select_tests.delta(select_tests.source_graph.summary_of(old_text, module, package),
-                               select_tests.source_graph.summary_of(new_text, module, package))
-        functions = sorted(d.changed | d.added)
+        d = select_tests.delta(
+            select_tests.source_graph.summary_of(git("show", f"{commit}^:{path}"), module, package),
+            select_tests.source_graph.summary_of(git("show", f"{commit}:{path}"), module, package))
+        current = (worktree / path).read_text()
+        functions = sorted((d.changed | d.added) & set(
+            select_tests.source_graph.summary_of(current, module, package).units))
         if not functions:
             continue
-        git("checkout", "-q", "--force", "--detach", commit, cwd=worktree)
-        for name in SELECTOR_FILES:
-            shutil.copy(ROOT / "tools" / name, worktree / "tools" / name)
-        mutated = None
+        undetected = []
         for seed in range(args.seeds):
             qualname = random.Random(f"{commit}:{seed}").choice(functions)
-            mutated = mutate(new_text + "\n", qualname, seed)
+            mutated = mutate(current, qualname, f"{commit}:{seed}")
             if mutated is None:
                 continue
             (worktree / path).write_text(mutated[0])
-
-            def plan(*extra):
-                return json.loads(subprocess.run(
-                    ["python3", "tools/select_tests.py", "--json", "--paths", path, *extra], cwd=worktree,
-                    capture_output=True, text=True, check=True).stdout)
-
-            nightly, fresh = plan(), plan("--assume-fresh")
-            files = [t for t in fresh["selected"] if t.startswith("tests/")]
-            log = logs / f"{commit}-{seed}-fresh.log"
-            started = time.monotonic()
-            code = run_pytest(worktree, files, log, first_failure=True) if files else 0
-            failure = next((line.split()[1] for line in log.read_text().splitlines()
-                            if line.startswith(("FAILED ", "ERROR "))), None) if files else None
+            plan = json.loads(subprocess.run(
+                ["python3", "tools/select_tests.py", "--json", "--paths", path], cwd=worktree,
+                capture_output=True, text=True, check=True).stdout)
+            files = [t for t in plan["selected"] if t.startswith("tests/")]
             result = {"commit": commit, "file": path, "function": qualname, "seed": seed,
-                      "mutation": mutated[1], "selected": fresh["selected_count"],
-                      "nightly_selected": nightly["selected_count"], "units": fresh["full_count"],
-                      "map": fresh["map"]["commit"][:10] if fresh["map"] else None,
-                      "selected_exit": code, "selected_seconds": round(time.monotonic() - started),
-                      "failure": failure,
-                      "failure_in_nightly": bool(failure) and failure.split("::")[0] in nightly["selected"]}
-            if code == 0:
-                # Not caught by the selection: does any other test catch it?
-                others = sorted(set(t for t in select_tests.units() if t.startswith("tests/")) - set(files))
-                rest = run_pytest(worktree, others, logs / f"{commit}-{seed}-rest.log", first_failure=True)
-                result.update(rest_exit=rest, rest_files=len(others))
-                git("checkout", "-q", "--force", "--", ".", cwd=worktree)
-                print(json.dumps(result), flush=True)
-                if rest != 0:
-                    rows.append(result)  # an escape: recorded, and the commit is done
+                      "mutation": mutated[1], "selected": plan["selected_count"], "units": plan["full_count"],
+                      "map": plan["map"]["commit"][:10] if plan["map"] else None,
+                      "uncertain": plan["map"]["uncertain_units"] if plan["map"] else None,
+                      "flaky": [], "failure": None}
+            started = time.monotonic()
+            for attempt in range(3):
+                log = logs / f"{commit}-{seed}-{attempt}.log"
+                deselect = [f"--deselect={test}" for test in result["flaky"]]
+                result["selected_exit"] = run_pytest(worktree, [*deselect, *files], log, first_failure=True) \
+                    if files else 0
+                failure, collection = first_failure(log) if files else (None, False)
+                if failure is None:
                     break
-                continue  # no test detects this mutant; try the next seed
-            git("checkout", "-q", "--force", "--", ".", cwd=worktree)
+                # A catch counts only if the same test passes without the mutant.
+                (worktree / path).write_text(current)
+                baseline = run_pytest(worktree, ["--collect-only", failure] if collection else [failure],
+                                      logs / f"{commit}-{seed}-{attempt}-baseline.log",
+                                      first_failure=True, workers=1)
+                (worktree / path).write_text(mutated[0])
+                if baseline == 0:
+                    result["failure"] = failure
+                    break
+                result["flaky"].append(failure)  # fails without the mutant too
+            extra = [unit for unit in plan["selected"] if unit in select_tests.EXTRA_UNITS]
+            for unit in extra if result["failure"] is None else ():
+                if run_command(worktree, select_tests.EXTRA_UNITS[unit], logs / f"{commit}-{seed}-extra.log"):
+                    (worktree / path).write_text(current)
+                    if run_command(worktree, select_tests.EXTRA_UNITS[unit],
+                                   logs / f"{commit}-{seed}-extra-baseline.log") == 0:
+                        result["failure"] = unit
+                    (worktree / path).write_text(mutated[0])
+            result["selected_seconds"] = round(time.monotonic() - started)
+            if result["failure"] is None:
+                # Not caught by the selection: does any other test catch it?
+                others = sorted({p.relative_to(worktree).as_posix() for p in (worktree / "tests").glob("test_*.py")}
+                                - set(files))
+                log = logs / f"{commit}-{seed}-rest.log"
+                result["rest_exit"] = run_pytest(worktree, [*(f"--deselect={t}" for t in result["flaky"]), *others],
+                                                 log, first_failure=True)
+                result["rest_failure"] = first_failure(log)[0]
+            (worktree / path).write_text(current)
             print(json.dumps(result), flush=True)
-            rows.append(result)
-            break
+            if result["failure"] or result.get("rest_exit"):
+                result["undetected_before"] = undetected
+                rows.append(result)  # caught, or an escape to report
+                break
+            undetected.append(f"{qualname}: {mutated[1]}")  # no test detects it; try the next seed
         data["mutants"] = rows
         EVIDENCE.write_text(json.dumps(data, indent=1) + "\n")
+    git("checkout", "-q", "--force", "--", ".", cwd=worktree)
     print(f"logs in {logs}")
     return 0
 
@@ -263,14 +305,12 @@ def table(data: dict) -> str:
               f"selection time before {max(r['before_seconds'] for r in replay)} s at most, "
               f"after {max(r['seconds'] for r in replay)} s at most."]
     if data.get("mutants"):
-        lines += ["", "| Commit | Function | Mutation | Selected (fresh / nightly) | First failing test | Caught |",
+        lines += ["", "| Commit | Function | Mutation | Selected | First failing test | Caught |",
                   "|---|---|---|---:|---|---|"]
         for row in data["mutants"]:
-            caught = "yes" if row["selected_exit"] != 0 else (
-                "ESCAPED" if row.get("rest_exit") else "no test detects it")
+            caught = "yes" if row["failure"] else ("ESCAPED" if row.get("rest_exit") else "no test detects it")
             lines.append(f"| `{row['commit'][:8]}` | `{row['file']}:{row['function']}` | {row['mutation']} | "
-                         f"{row['selected']} / {row['nightly_selected']} of {row['units']} | "
-                         f"`{row['failure'] or '-'}` | {caught}{'' if row.get('failure_in_nightly', True) else ' (not in nightly)'} |")
+                         f"{row['selected']}/{row['units']} | `{row['failure'] or row.get('rest_failure') or '-'}` | {caught} |")
     return "\n".join(lines)
 
 
@@ -283,6 +323,7 @@ def main() -> int:
     rep.add_argument("--count", type=int, default=50)
     mut = sub.add_parser("mutants")
     mut.add_argument("--worktree", required=True, help="a disposable worktree with built binaries")
+    mut.add_argument("--at", required=True, help="revision to mutate; needs a map recorded at it")
     mut.add_argument("--count", type=int, default=10)
     mut.add_argument("--seeds", type=int, default=5, help="mutants to try per commit")
     mut.add_argument("--redo", nargs="*", default=[], help="commits to measure again")
