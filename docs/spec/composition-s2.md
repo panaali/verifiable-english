@@ -453,6 +453,8 @@ them. Case kinds on `ve_readings_route`, beside S1's `readings-validate` and `re
   kinds, the chain's certificate kind and `choice-model` (a base model of the chain's document, checked against its
   base Background and the premises read through the outcome substitution), the inner premises are the regenerated
   assertions of `choiceDoc D c` followed by the case's own (`lean/READINGS.md`).
+  As built (compose-s2 looprecheck2 review B): a certificate kind is `accepted` only with the choice's conflict
+  packages, which the lower route's conflict kind must find CONFLICT-FREE on the same document (14.8).
 - Every other kind: `readings@1` is stripped and the case is run by the lower route's logic unchanged (S1 8.4).
 
 Identity. S2a adds no identity. `sup D`, `Choice_D`, the name map and every compatible choice are regenerated from the
@@ -579,6 +581,11 @@ choice, before the verdicts are combined; a refusal of evidence Python's own che
 result keeps `assumed`, readings no compatible choice takes are `ReadingsUnsatisfiable` as on the superposed route
 (7), and the English names the readings (2.3 item 2): ALL is E12 with R2 naming exactly the candidates of `A`,
 NONE is the E12 lines alone, never E27 (review A).
+
+As built (compose-s2 looprecheck2): an entailment is certified on the enumerated route only when every compatible
+choice it is combined over (those taking `A`) is CONFLICT-FREE, as on the superposed route (14.8); otherwise
+`UNKNOWN (conflict status: <status>)` naming the first such choice, and no certificate of a conflicting choice's
+document (the premise status's `⊥` included) is promoted (review B).
 
 ### 4.7 Conservativity
 

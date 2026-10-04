@@ -744,6 +744,14 @@ class Enumerated(_Route):
         if not chosen:
             # Review A1's class: every verdict under readings no compatible choice takes would be vacuous.
             raise VEError(self.untaken_text(A))
+        # Review B of compose-s2 looprecheck2: an entailment is certified only under readings whose conflict status
+        # is CONFLICT-FREE (14.8), as on the superposed route; a choice where two rules collide proves everything.
+        statuses = [(self.choice_json(c), self._choice(c).conflict()["verdict"]) for c in chosen]
+        blocked = [(c, s) for c, s in statuses if s != "CONFLICT-FREE"]
+        if blocked:
+            status = "CONFLICT" if any(s == "CONFLICT" for _, s in blocked) else "UNKNOWN"
+            return {"verdict": "UNKNOWN", "route": "enumerated", "status": f"UNKNOWN (conflict status: {status})",
+                    "conflict_status": status, "choice": next(c for c, s in blocked if s == status), **named}
         rows = [(self.choice_json(c), self._choice(c).entailment(conclusion_ast, premises)) for c in chosen]
         proofs = [{"choice": c, **r} for c, r in rows if r["outcome"] == "proof"]
         counters = [{"choice": c, **r} for c, r in rows if r["outcome"] == "countermodel"]
@@ -823,19 +831,26 @@ class _ChoiceDocument:
     def certified(self, conclusion_ast, gamma=(), max_steps=None):
         """A certificate of `conclusion_ast` (⊥ when None) from the choice's document and Γ: Python's prover finds
         it (untrusted), and the lower route's own certificate kind accepts it on the document Lean regenerates for
-        the choice, its assertions included (`readings-choice`). The Lean answer, or None within the budget."""
+        the choice, its assertions included (`readings-choice`). The Lean answer, or None within the budget.
+
+        Only when the choice's conflict status is CONFLICT-FREE (14.8; review B of compose-s2 looprecheck2): where
+        two rules collide the layer premises prove every conclusion, so a certificate there proves nothing about the
+        reading. Lean accepts the certificate only together with the conflict packages it checks itself."""
         from .ast import _to_data
         from .entailment import check_entailment_certificate, prove_entailment
+        if self.conflict()["verdict"] != "CONFLICT-FREE":
+            return None
         steps = BUDGET["max_steps"] if max_steps is None else max_steps
         premises, phi = self._all(gamma), self._phi(conclusion_ast)
         proof = prove_entailment(self.env, premises, phi, max_steps=steps)
         if proof.status != "Found" or not check_entailment_certificate(self.env, premises, phi, proof.certificate,
                                                                        max_steps=steps).valid:
             return None
-        answer = self._inner({"kind": f"{self.chain}-certificate", "premises": list(gamma),
-                              "conclusion": _to_data(phi), "certificate": self._bound(proof.certificate, premises,
-                                                                                       phi)})
-        if answer.get("valid") is not True:
+        row = self._row({"kind": f"{self.chain}-certificate", "premises": list(gamma), "conclusion": _to_data(phi),
+                         "certificate": self._bound(proof.certificate, premises, phi),
+                         "conflict": self._conflict_packages})
+        answer = row["inner"]
+        if answer.get("valid") is not True or row.get("accepted") is not True:
             raise CheckerUnavailable("ReadingsConformance: the lower route does not accept the certificate Python's "
                                      "prover found on a reading's document")
         return answer
@@ -903,7 +918,13 @@ class _ChoiceDocument:
 
     def conflict(self):
         """The lower route's conflict check on the choice's document, with Python's packages, run by Lean's
-        `readings-choice` on the document Lean builds for the choice."""
+        `readings-choice` on the document Lean builds for the choice (computed once; `certified` sends the same
+        packages with every certificate)."""
+        if "_conflict" not in self.__dict__:
+            self._conflict = self._check_conflict()
+        return self._conflict
+
+    def _check_conflict(self):
         from .ast import Not, _to_data, formula_from_data
         from .entailment import prove_entailment
         from .norms import _bind, _prove_targets
@@ -923,6 +944,7 @@ class _ChoiceDocument:
                                         "certificate": proof.certificate}
             inner = ({"kind": "soft-conflict", "packages": packages, "pairs": {}} if self.chain == "soft" else
                      {"kind": "rights-conflict", "packages": packages})
+        self._conflict_packages = {key: value for key, value in inner.items() if key != "kind"}
         answer = self._inner(inner)
         if answer["verdict"] == "CONFLICT-FREE":
             return {"verdict": "CONFLICT-FREE", "conditional_on": answer.get("conditional_on", []),
@@ -958,12 +980,15 @@ class _ChoiceDocument:
         return base, [formula_from_data(base, _to_data(f), _generated=True) for f in formulas]
 
     def _inner(self, inner):
+        return self._row(inner)["inner"]
+
+    def _row(self, inner):
         row = self.route.lean("readings-choice", choice=self.route.choice_json(self.choice), inner=inner)
         answer = row["inner"]
         if answer.get("status") != "ok":
             raise CheckerUnavailable(f"ReadingsConformance: the lower route refused a reading's document: "
                                      f"{answer.get('error')}")
-        return answer
+        return row
 
     def _witness(self):
         """A finite base model where some conflict target holds, with its tuple (Python's search, untrusted)."""
@@ -993,7 +1018,11 @@ class _ChoiceDocument:
 
     def entailment(self, conclusion_ast, gamma=()):
         """A certificate or a countermodel of the choice's document, each replayed by Lean on the document it
-        regenerates for the choice (`certified`, `model`), or unknown within the budget."""
+        regenerates for the choice (`certified`, `model`), or unknown within the budget; `conflict` with the status
+        when the choice's conflict status is not CONFLICT-FREE (14.8), since no entailment is certified there."""
+        status = self.conflict()["verdict"]
+        if status != "CONFLICT-FREE":
+            return {"outcome": "conflict", "conflict_status": status}
         answer = self.certified(conclusion_ast, gamma)
         if answer is not None:
             return {"outcome": "proof", "conditional_on": answer.get("conditional_on", [])}

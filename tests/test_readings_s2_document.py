@@ -673,8 +673,11 @@ def test_review_b_enumerated_evidence_is_replayed_by_lean(tmp_path, monkeypatch)
     seen = _lean_spy(monkeypatch)
     assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
     choices = [tuple((R.id, c[R.id]) for R in route.sets) for c in route.choices]
-    assert _inner_kinds(seen) == [(c, "soft-certificate") for c in choices]
-    assert all(row["inner"]["valid"] is True for _, row in seen)
+    # Each choice's conflict status first (14.8), then its certificate, accepted with the same packages.
+    assert _inner_kinds(seen) == [(c, k) for k in ("soft-conflict", "soft-certificate") for c in choices]
+    certificates = [row for case, row in seen if case["inner"]["kind"] == "soft-certificate"]
+    assert all(row["inner"]["valid"] is True and row["accepted"] is True and row["conflict_free"] is True
+               for row in certificates)
     seen.clear()
     some = route.entailment(every("warn_required"))
     assert some["verdict"] == "SOME"
@@ -758,8 +761,12 @@ def test_review_b_rights_and_norms_chains_replay_models_and_certificates(tmp_pat
     data = route.entailment(arrested)
     # Under *must* the claim refuses every arbitrary arrest; under *should* an exception may apply.
     assert data["verdict"] == "SOME" and data["proof"]["choice"] == [["rs9", 0]], data
+    # (Each choice's conflict status was computed, once, by the premise status above.)
     assert {k for _, k in _inner_kinds(seen)} == {"rights-certificate", "choice-model"}
-    assert all(row["inner"].get("valid") is True for case, row in seen if case["kind"] == "readings-choice")
+    assert all(row["inner"].get("valid") is True for case, row in seen
+               if case["kind"] == "readings-choice" and case["inner"]["kind"] != "rights-conflict")
+    assert all(row["accepted"] is True for case, row in seen
+               if case.get("inner", {}).get("kind") == "rights-certificate")
     # The norms chain: M9 without soft-norms@0 is not superposable either (its precedence cycle).
     norms_raw = _k9()
     norms_raw["profiles"] = ["norms@0", "readings@1", "relational-fol@0"]
@@ -769,7 +776,9 @@ def test_review_b_rights_and_norms_chains_replay_models_and_certificates(tmp_pat
     assert route.entailment(every("warn_required", guard=ASKS))["verdict"] == "ALL"
     assert route.entailment(every("warn_required"))["verdict"] == "SOME"
     assert route.premises()["status"] == "model"
-    assert {k for _, k in _inner_kinds(seen)} == {"norms-certificate", "choice-model"}
+    assert {k for _, k in _inner_kinds(seen)} == {"norms-conflict", "norms-certificate", "choice-model"}
+    assert all(row["accepted"] is True for case, row in seen
+               if case.get("inner", {}).get("kind") == "norms-certificate")
 
 
 def test_review_b_dead_readings_null_when_certification_cannot_finish(tmp_path, monkeypatch):
@@ -807,3 +816,80 @@ def test_review_b_enumerated_dead_readings_null_when_certification_cannot_finish
     assert route.dead_readings() is None and route.report_fields()["dead_readings"] is None
     statuses = {(c["set"], c["index"]): c["status"] for c in route.premises()["candidates"]}
     assert statuses[("rs9", 1)] == "UNKNOWN" and statuses[("rs8", 1)] == "narrowed"
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# compose-s2 looprecheck2: review B (no entailment is certified under a reading whose rules collide).
+
+def _m8(tmp_path):
+    waive = lambda over: norm("waive-x", "avoid_required", False, over=over, guard=ASKS)  # noqa: E731
+    return s2_document(tmp_path, [("fixed", "u0", norm("base-x", "avoid_required", True)),
+                                  ("set", "rs1", "u1", [("a", waive(()), "norm", None),
+                                                        ("b", waive(("base-x",)), "norm", None)]),
+                                  ("fixed", "u3", norm("stop-x", "avoid_required", False, over=("waive-x",)))])
+
+
+def test_review_b2_conflicting_reading_certifies_no_entailment(tmp_path):
+    """The finding's case: on M8 under `rs1:0` (CONFLICT) both `∀agent ∀user. avoid_required` and its pointwise
+    negation were ALL. Every entailment there is `UNKNOWN (conflict status: CONFLICT)`, as on the superposed route;
+    under the conflict-free `rs1:1` the negation is ALL and the conclusion NONE."""
+    path = _m8(tmp_path)
+    route = verdicts(path)
+    assert route.route == "enumerated"
+    blocked = {"verdict": "UNKNOWN", "route": "enumerated", "status": "UNKNOWN (conflict status: CONFLICT)",
+               "conflict_status": "CONFLICT", "choice": [["rs1", 0]]}
+    for negated in (False, True):
+        phi = every("avoid_required", negated=negated)
+        assert route.entailment(phi) == blocked
+        assert route.entailment(phi, assumed=[("rs1", 0)]) == {**blocked, "assumed": [["rs1", 0]]}
+        assert route.entailment(phi, assumed=[("rs1", 1)])["verdict"] == ("ALL" if negated else "NONE")
+    # The class: no certificate of a conflicting choice's document is promoted, `⊥` (premise status) included.
+    own = route._choice(route.choices[0])
+    assert own.conflict()["verdict"] == "CONFLICT"
+    assert own.certified(every("avoid_required")) is None and own.certified(None) is None
+    assert own.entailment(every("avoid_required")) == {"outcome": "conflict", "conflict_status": "CONFLICT"}
+    assert [c["status"] for c in route.premises()["choices"]] != ["INCONSISTENT", "INCONSISTENT"]
+    _, _, wording = _wording(path)
+    assert wording.query(every("avoid_required"), route.entailment(every("avoid_required"))) == []
+
+
+def test_review_b2_lean_accepts_a_reading_certificate_only_conflict_free(tmp_path):
+    """Lean's side of the class: `readings-choice` accepts a chain certificate only with the choice's conflict
+    packages, which the lower route's own conflict kind must find CONFLICT-FREE on the same document."""
+    from ve.ast import _to_data
+    path = _m8(tmp_path)
+    route = verdicts(path)
+    free, conflicting = route._choice(route.choices[1]), route._choice(route.choices[0])
+    phi = every("avoid_required", negated=True)
+    assert free.certified(phi)["valid"] is True
+    # The certificate Python's prover finds on the conflicting choice is valid, and still not accepted.
+    from ve.entailment import prove_entailment
+    conflicting.conflict()
+    premises, formula = conflicting._all(), conflicting._phi(phi)
+    proof = prove_entailment(conflicting.env, premises, formula)
+    assert proof.status == "Found"
+    case = {"kind": "soft-certificate", "premises": [], "conclusion": _to_data(formula),
+            "certificate": proof.certificate}
+    row = conflicting._row({**case, "conflict": conflicting._conflict_packages})
+    assert row["inner"]["valid"] is True and row["conflict_free"] is False and row["accepted"] is False, row
+    from ve.errors import CheckerUnavailable
+    with pytest.raises(CheckerUnavailable, match="a reading's certificate needs the choice's conflict packages"):
+        conflicting._row(case)
+
+
+def test_review_b2_python_never_bypasses_lean_conflict_check(tmp_path, monkeypatch):
+    """A Python conflict status that claims CONFLICT-FREE on the conflicting choice cannot promote its certificate:
+    Lean checks the packages itself and does not accept it, which is `CheckerUnavailable`, never a verdict."""
+    from ve.errors import CheckerUnavailable
+    from ve.readings_verdicts import _ChoiceDocument
+    path = _m8(tmp_path)
+    route = verdicts(path)
+    real = _ChoiceDocument.conflict
+
+    def lying(self):
+        answer = real(self)
+        return {**answer, "verdict": "CONFLICT-FREE"}
+
+    monkeypatch.setattr(_ChoiceDocument, "conflict", lying)
+    with pytest.raises(CheckerUnavailable, match="does not accept the certificate"):
+        route.entailment(every("avoid_required", negated=True))
