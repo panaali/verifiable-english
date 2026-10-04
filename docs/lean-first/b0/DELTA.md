@@ -9,10 +9,18 @@ docs/lean-first/b0/delta.json`).
 
 | Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
 |---|---:|---:|---:|---:|---:|---:|
-__TABLE__
+| probe, `python` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 |
+| probe, `lean` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 |
+| conformance, `python` | 19,806 | 19,773 | 33 | 0 | 0 | 0 |
+| conformance, `lean` | 19,806 | 19,773 | 33 | 0 | 0 | 0 |
+| pilots (`ve document check`, default authority) | 214 | 214 | 0 | 0 | 0 | 0 |
+| **All** | 58,696 | 52,276 | 6,420 | 0 | 0 | 0 |
 
-Every difference is a wording change of list W1, and every W1 pair is used. No `order`, `verdict` or
-`availability` change: no answer changes, only texts.
+`compare` exits 0 with `"unlisted": 0` (head recorded at `bd59c8f4`, whose `ve/` and `lean/` are those of
+`385311aa`; head recording 8 min 51 s wall). Every difference is a wording change of list W1, and every W1 pair
+is used (the record counts below are the head run's). The corpora show no `order`, `verdict` or
+`availability` change. The one availability change of the batch, A1 below, is on the readings route, which none
+of these corpora reaches.
 
 ## W1: Python's texts for Lean-prefixed codes are Lean's (`wording`, signed as one block)
 
@@ -60,6 +68,48 @@ corpus reached.
 | W1.31 | `unknown unary predicate 'owns'` | `UnknownSymbol: unknown unary predicate 'owns'` | 4 |
 
 **Signature:** DRI, wording block W1 — pending.
+
+## A1: the readings route answers where Python's text differed from Lean's only by the code (`availability`)
+
+`ve/readings_route.validate` compares Python's regeneration with Lean's row and raises `CheckerUnavailable`
+when they differ. Where the only difference was the `Code: ` prefix W1 now gives Python's text, the two agree,
+and the route raises Lean's diagnostic instead of `CheckerUnavailable`. The suite has one such input: the
+rights document of `tests/test_readings_s1_lean.py` over an environment without (or with a null)
+`vocabulary.predicates.arbitrary_arrest`.
+
+| Id | Input | Base | Head |
+|---|---|---|---|
+| A1 | readings-validate, rights document, `arbitrary_arrest` absent or null | `CheckerUnavailable` (`ReadingsConformance: Python and Lean differ on readings-validate`) | `VEError` `UnknownSymbol: Unknown predicate 'arbitrary_arrest' under rs9@1:0` (Lean's row, now Python's too) |
+
+Tested by `test_a_text_that_differed_only_by_the_code_prefix_gets_leans_diagnostic`. The base's
+`test_explicit_null_is_absent_in_the_environment` pinned the old answer (`_known_text_difference`) and passed at
+the base. The other known text differences of that test (decoder texts, Lean's content decoder answering first)
+are unchanged. The rule extends to any readings-validate input whose two texts differed only by one of W1's
+prefixes. No other public path compares Python's text with Lean's: the soft route's restatement
+(`softnorms._DROPPED_PROFILE_TEXTS`) matches a text that already carried its prefix, and the dispatch shadow
+only records.
+
+**Signature:** DRI, availability A1 — pending.
+
+## Rest of the gate (5.1)
+
+- **Suite (item 1).** The full suite ran at `e6356cd6` (16 chunks and the English merge smoke,
+  `VE_NATIVE_PREBUILT=1`). It had three failures, all fixed in `bd59c8f4`: A1's pinned base answer, W1.1's
+  pinned base text (`test_norm_defaults.py`), and the reviewed broad handler's new name (`run_bound.worker`, in
+  `ve/assurance-manifest.json`). The re-run of those files passed (315 tests), and so did `test_gate_collection.py`
+  after `tools/gate_collection.py --write` (9 IDs added, none removed). Every other test passed. Gate stages
+  outside pytest, on the head: `tools/wire_contract.py --check`, `lake build` and `lean/audit.py` (287 files,
+  3,045 theorems, standard axioms only) pass.
+- **Differential fuzzer (item 2).** `infra/difffuzz` (`ca522bac`) merged onto the base (`dc62ee95`) and onto
+  the head (`7d1872bf`, the head's `ve/` and `lean/`). CI sample: 23 new signatures on each side, the same ones,
+  329 baseline entries seen and 80 not reproduced on each side. The 13 date seeds 20260921 to 20261003
+  (`--deep 1` each) give the same counts on both sides, seed by seed, with no head-only signature and no baseline
+  entry that reproduces on one side only. With the CI sample that is 14 seeds. The baseline does not grow.
+- **Deletion ledger (item 3).** [`LEDGER.md`](LEDGER.md); `tools/relay_lint.py` passes on the head.
+- **Latency (item 4).** `docs/lean-first/b0/latency.py 2000` (one warm service, single-case `check`, half
+  rejections), base and head run side by side at load 34: wall p50 0.75 ms (base) against 0.71 ms (head), p95
+  3.4 ms against 0.96 ms, service CPU 0.345 ms against 0.335 ms per call. The `code` beside a rejection costs no
+  measurable time; both are inside section 4's budgets.
 
 ## Not in the corpora above
 

@@ -30,9 +30,10 @@ it either).
 
 ## Lines
 
-Python (`ve/`, base to head): 140 lines deleted, 193 added. The decision code deleted is `diagnostics.py`
-(39 lines out, 16 in), `lean_runner.py` (29 out) and `lean_service.py`'s request-error branch; the additions are
-`relay.py` (73 lines, the entry the later batches route through), the response schemas' `code` (33 lines of
-JSON) and 15 lines of `errors.py`. Lean (`lean/`): `VE/Service/Protocol.lean` +74/−9 (`rejectionCodes`,
-`rejectionCode`, `codeMembers`, `coded`, five `#guard`s, three new theorems, two restated),
-`ResponseDecode.lean` +25/−4, `Audit.lean` +3.
+Python (`ve/`, base to head, `git diff --shortstat 62a5c589 HEAD -- ve`): 141 lines deleted, 204 added. The
+decision code deleted is `diagnostics.py` (39 lines out, 16 in), `lean_runner.py` (29 out, 1 in) and
+`lean_service.py`'s request-error branch (+20/−14 with `run_bound`); the additions are `relay.py` (75 lines, the
+entry the later batches route through), the response schemas' `code` (JSON) and 15 lines of `errors.py`. Lean
+(`lean/`, +207/−18 in all): `VE/Service/Protocol.lean` +79/−5 (`rejectionCodes`, `rejectionCode`, `codeMembers`,
+`coding`, five `#guard`s, the new theorems, two restated), `ResponseDecode.lean` +35/−10, `Audit.lean` +4,
+`axioms.txt` +86 (generated), `checkers.lock` and `frozen-sources.sha256` repinned.
