@@ -37,7 +37,7 @@ SUBMITTING = {"test_softnorms_contract.py", "test_softnorms_public_contract.py",
               "test_soft_norms_conformance.py", "test_soft_norms_lean.py", "test_soft_review_regressions.py"}
 # The conformance module's functions that build no source of their own: the comparisons that run the
 # validators on the sources the other functions build, and the fault mutations `multi_fault_cases` applies.
-NOT_SOURCES = {"compare_near_limit", "compare_rejected", "main", "multi_faults", "rust_fixture_rows",
+NOT_SOURCES = {"compare_generated", "compare_near_limit", "compare_rejected", "main", "multi_faults", "rust_fixture_rows",
                "smallest_queries"}
 
 

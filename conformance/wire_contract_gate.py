@@ -329,13 +329,16 @@ def record_test_inputs(output, unit=PILOT):
     """Run the unit's recorded test files (`RECORDED_TESTS` for the pilot) under
     `tests/contract_input_recorder.py`, which writes to `output` each input of the unit they, or the soft
     conformance module they run, hand to an engine or a legacy validator: `[test id, environment, norms]`.
+    The files run on xdist workers (`-n auto`: tests/conftest.py fits the count to the
+    machine's load), each recording its own inputs, which the recorder merges.
     Returns the pytest process."""
     u = unit_of(unit)
     files = sorted({path for pattern in u.recorded_tests for path in ROOT.glob(pattern)})
     environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNIT": u.contract,
                    "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
     return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *map(str, files)],
+                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", "-n", "auto",
+                           *map(str, files)],
                           cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
 
 
