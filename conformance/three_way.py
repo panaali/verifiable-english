@@ -5,7 +5,11 @@ reduces its answer to a verdict: Python in process (`python_verdict`), Rust
 through `ve conformance` (`rust_request`, `rust_verdict`) and Lean through
 `ve_conformance route` (`lean_verdict`). Errors are reduced by `error_verdict`
 to the P0 contract's codes (`KNOWN`), whose texts the contract fixes; every
-other rejection is `rejected`. Used by tests/test_p0_three_way.py and
+other rejection is `rejected`. The reduction is the three-way test's contract
+only: each error verdict also keeps the implementation's own diagnostic code
+(`diagnostic_code`: Python's `VEError.code`, Rust's error code, and for Lean the
+code `checker_error` gives its text, as the Lean backend raises it), which the
+differential fuzzer compares. Used by tests/test_p0_three_way.py and
 tools/difffuzz.py.
 """
 from __future__ import annotations
@@ -25,13 +29,20 @@ def diagnostic(code, message):
 
 
 def error_verdict(code, message, generator=None):
+    """`code` is the implementation's own code, or None for a Lean error text (classified by
+    `checker_error`, the Lean backend's reading of it)."""
+    if code is None:
+        from ve.backends.diagnostics import checker_error
+        code, actual = "rejected", checker_error(message).code
+    else:
+        actual = code
     text = diagnostic(code, message)
     if text.startswith("InvalidModel"):
         code = "InvalidModel"
     else:
         head = text.split(":", 1)[0]
         code = head if head in KNOWN else code if code in KNOWN else "rejected"
-    out = {"status": "error", "code": code, "error": text}
+    out = {"status": "error", "code": code, "diagnostic_code": actual, "error": text}
     if generator is not None:
         out["generator"] = generator
     return out
@@ -155,7 +166,7 @@ def rust_verdict(case, result):
 def lean_verdict(case, result):
     kind = case["kind"]
     if result.get("status") == "error":
-        verdict = error_verdict("rejected", result["error"], result.get("generator"))
+        verdict = error_verdict(None, result["error"], result.get("generator"))
         if kind == "certificate" and verdict["code"] not in ("UnsupportedProfile", "ResourceLimit"):
             return {"status": "ok", "valid": False}
         return verdict
