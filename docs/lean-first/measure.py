@@ -5,7 +5,7 @@ Run from the repository root with the call profiler loaded:
     export PATH=$HOME/.elan/bin:$PATH VE_LEANFIRST_LOG=/tmp/lf.jsonl PYTHONPATH=docs/lean-first/hook
     uv run --frozen python docs/lean-first/measure.py startup --repeats 20
     VE_LEANFIRST_TAG=doc:udhr uv run --frozen python docs/lean-first/measure.py document load PATH
-    uv run --frozen python docs/lean-first/measure.py report /tmp/lf.jsonl
+    uv run --frozen python docs/lean-first/measure.py report /tmp/lf.jsonl [--by-caller | --by-op]
 
 `startup` times every Lean executable on an empty batch (process start to answer) and the
 service's spawn-to-handshake. `document` times one public document step (load, check, render)
@@ -183,6 +183,28 @@ def _stats(values: list[float], cpus: list[float]) -> dict:
             "cpu_max_ms": round(max(cpus) * 1000, 2) if cpus else None}
 
 
+def by_op(log: Path) -> None:
+    """One line per `document` step: its Python CPU and the Lean and Rust calls made since the previous step of
+    the same process (the profiler's lines are written in call order)."""
+    pending: dict = {}
+    for line in log.read_text().splitlines():
+        r = json.loads(line)
+        bucket = pending.setdefault((r.get("tag", ""), r["pid"]), [])
+        if r["kind"] != "op":
+            bucket.append(r)
+            continue
+        lean = [c for c in bucket if c["kind"] in ("oneshot", "service", "spawn")]
+        rust = [c for c in bucket if c["kind"] == "rust"]
+        print(json.dumps({"tag": r.get("tag", ""), "path": r["path"], "bytes": r["bytes"],
+                          "wall_s": round(r["wall"], 3), "python_cpu_s": round(r["python_cpu"], 3),
+                          "lean_calls": len(lean), "lean_wall_s": round(sum(c["wall"] for c in lean), 3),
+                          "lean_cpu_s": round(sum(c.get("cpu", 0.0) for c in lean), 3),
+                          "oneshot": sorted({c["exe"] for c in lean if c["kind"] == "oneshot"}),
+                          "rust_calls": len(rust), "rust_cpu_s": round(sum(c["cpu"] for c in rust), 3),
+                          "status": r["status"][:80]}))
+        bucket.clear()
+
+
 def report(log: Path, by_caller: bool) -> None:
     records = [json.loads(line) for line in log.read_text().splitlines() if line.strip()]
     tags = sorted({r.get("tag", "") for r in records})
@@ -242,6 +264,7 @@ def main(argv=None) -> None:
     r = sub.add_parser("report")
     r.add_argument("log", type=Path)
     r.add_argument("--by-caller", action="store_true")
+    r.add_argument("--by-op", action="store_true", help="one line per document step")
     args = parser.parse_args(argv)
     if args.command == "startup":
         startup(args.repeats)
@@ -250,6 +273,8 @@ def main(argv=None) -> None:
     elif args.command == "document":
         for path in args.paths:
             document(args.step, path, args.lean_timeout, args.profile)
+    elif args.by_op:
+        by_op(args.log)
     else:
         report(args.log, args.by_caller)
 

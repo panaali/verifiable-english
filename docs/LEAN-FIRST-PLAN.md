@@ -1,6 +1,6 @@
 # Lean first: one owner for every piece of VE logic
 
-**Status:** draft 1, 2026-10-04, branch `design/lean-first` (from `main` at `f4142cb9`). Planning only: no code,
+**Status:** draft 2, 2026-10-04, branch `design/lean-first` (from `main` at `f4142cb9`). Planning only: no code,
 proof or test changes. Measurements in section 3 were taken on this commit; the scripts are in
 [`docs/lean-first/`](lean-first/).
 
@@ -10,7 +10,16 @@ English conditions, and that duplication causes most review findings
 (`~/code/manage-agents/FINDING-CLASSES.md`: about 27% of implementation findings and 30% of fix cost sit in
 cross-language logic; features with duplicated implementations average 6.6 fix rounds against 3.4).
 
-<!-- SUMMARY -->
+**Summary.** (1) A warm Lean service call costs **1–3.5 ms wall, 0.5–1.6 ms Lean CPU** (p50, 19,558 conformance
+calls): fast enough for every interactive and corpus use. (2) With a real 5 KB environment a call costs **4 ms of CPU,
+90% of it re-decoding the environment** (0.38 ms with an empty one; batching does not help), so the agent-policy
+harness takes **883 s under `VE_AUTHORITY=lean` against 162 s today** (identical answers; 61,695 single-case
+requests, 22,533 Rust processes). (3) One-shot routes cost **~0.1 s CPU each before any work**. (4) The **UDHR pilot
+cannot load under either authority**: its one readings call needs **1,161 s CPU against a 120 s limit**, 62% of it
+admission at about 4 s per candidate, and Python's byte-for-byte regeneration adds 938 s, 918 s of it one-shot Lean
+rights calls. (5) Lean authority checks the use-case documents in 1.4–9 s (26× faster than Python on bluedot) but
+**refuses 3 of 4 constitution-pilot documents** (`norm-defaults@0`, `readings@1`). Fixes F1–F6 (section 4) come
+before the switches. Plan: 26 batches, ~100–120 build hours, ~14,000 Python lines deleted (~19,000 with English).
 
 ## 1. Ownership rules
 
@@ -119,6 +128,8 @@ delete anything:
 - readings couplings, narrowings and W2 set structure; the ALL/SOME/NONE verdict for coupled and joint choices;
 - the `AlternativesReserved` check; coverage and residual blocks for soft norms, rights and alternatives;
 - the `@1` document wrapper, unit statuses and coverage counts;
+- the core profile registry (`lean/VE/Route/Gate.lean:46-55`, 9 profiles against Python's 17): under
+  `VE_AUTHORITY=lean`, environments with `norm-defaults@0` or `readings@1` are refused (section 3.4);
 - stage 2c gaps: `definitions@0` surface sugar, non-first-order norm guards on the closure, core and order
   families, n-ary core definitions, W6 quantity typing;
 - certificate binding prechecks and the replay step budget; non-vacuity of search witnesses; evaluation budgets,
@@ -151,15 +162,18 @@ These are concrete instances of the class the directive targets, found by readin
 - **Commit** `f4142cb9` (this branch's base). Lean built with `lake build` (560 jobs; the build matches
   `lean/checkers.lock`), Rust with `tools/rust_build.py` (hash pinned).
 - **Host:** AMD EPYC 7B12, 32 logical CPUs, shared with other workers. The one-minute load average was **57–88**
-  throughout (another worker ran the full suite at `-n 16`). Wall times are therefore inflated, roughly 3–5× against
+  for sections 3.2 and 3.3 (another worker ran the full suite at `-n 16`) and **21–74** for sections 3.4 and 3.5
+  (2026-10-04, 07:59–09:20 UTC). Wall times are therefore inflated, roughly 3–5× against
   a quiet machine; every table also gives the checker's **CPU time**, which load inflates much less. The quiet
   reference is the Gate-1 run on `8bf11607` (`experiments/lean-service/latency-8bf1160/LATENCY.md`): service call
   p50 0.75–1.43 ms and p95 1.2–2.4 ms, cold start 41 ms, one-shot 45–54 ms.
 - **Tools** (`docs/lean-first/`): `hook/sitecustomize.py` records every Lean one-shot process, service request and
   service start, and every Rust process a VE process makes, with wall and CPU time and the calling `ve` function;
-  `measure.py` times start-up, the conformance corpora and document steps and aggregates the records;
-  `dump_readings_case.py`, `separate_case.py` and `count_answer.py` isolate the UDHR readings call. Raw records are
-  not committed; the commands are in each script's docstring.
+  `measure.py` times start-up, the conformance corpora and document steps and aggregates the records (`report
+  --by-op` per document); `dump_readings_case.py`, `separate_case.py`, `count_answer.py` and `regenerate_case.py`
+  isolate the UDHR readings call and Python's regeneration of it; `env_cost.py` measures the environment's share of
+  a service call. Each Lean call of sections 3.4 and 3.5 was bounded at 30 minutes; none reached the bound. Raw
+  records are not committed; the commands are in each script's docstring.
 - **Authorities.** "Python authority" is today's default. "Lean authority" is `VE_AUTHORITY=lean` (Stage 2's
   adapters: Lean decides the class-A operations, Rust evaluates and searches). Statement-layer routes (soft norms,
   rights, readings, alternatives, quantity and so on) run as one-shot Lean processes under both.
@@ -216,18 +230,134 @@ few milliseconds of wall time even on a loaded host. Batching saves a further 30
 
 ### 3.4 Use-case documents and pilots
 
-`ve document check` (or the use case's own harness) under each authority. "Lean share" is the time spent in Lean
-calls.
+`ve document check` (`measure.py document check`, one process per authority, so the service is warm after the first
+document) or the use case's own harness, under today's default authority and under `VE_AUTHORITY=lean`. "Lean" is
+the checker's own CPU in Lean calls with the number of calls (service requests and starts, one-shot processes);
+"Rust" likewise. The service's 5 s and Rust's 5 s limits were raised to 300 s for these runs (`VE_LEANFIRST_TIMEOUT`)
+so that every run could be timed; the failures they cause at the normal limits are in the notes. The default
+columns ran with `VE_AUTHORITY` unset for the harnesses and the alternatives document and with `VE_AUTHORITY=python`
+for the other documents, which is the same for documents without alternatives or risk blocks: set explicitly,
+`python` refuses those two routes (`ve/alternatives.py:27-28`, `ve/risk.py:235-236`), unset it calls them.
 
-<!-- DOCS-TABLE -->
+| Workload | Size | Default: wall | Default: Python / Lean (calls) / Rust CPU | Lean: wall | Lean: Python / Lean (calls) / Rust CPU | Note |
+|---|---:|---:|---|---:|---|---|
+| bluedot `causal.ve.md` | 6.7 KB | 0.13 s | 0.02 / 0.10 s (1 one-shot) / – | 1.77 s | 0.36 / 0.23 s (5) / – | Lean wall includes the service start |
+| news `news-w6a.ve.md` | 52 KB | 4.53 s | 3.86 / – / – | 1.47 s | 0.35 / 0.20 s (26) / 0.27 s (5) | |
+| bluedot `document.ve.md` | 147 KB | 232 s | 225 / – / – | 9.02 s | 2.02 / 0.63 s (50) / 4.07 s (1) | Python's model search against Rust's; at Rust's 5 s limit the Lean run failed (`CheckerUnavailable`, earlier run, load 57) |
+| constitution pilot `translation.ve.md` | 424 KB | 1.48 s | 0.91 / – / – | refused | – | `UnsupportedProfile: Unsupported profile norm-defaults@0` |
+| constitution pilot `readings/s1.ve.md` | 415 KB | 8.79 s | 5.00 / 1.08 s (4 one-shot) / 0.14 s (34) | refused | – | `… readings@1` |
+| constitution pilot `readings/all-strict.ve.md` | 378 KB | 12.05 s | 10.76 / – / – | refused | – | `… norm-defaults@0` |
+| constitution pilot `readings/all-default.ve.md` | 345 KB | 0.79 s | 0.26 / 0.33 s (3 one-shot) / – | 1.43 s | 0.39 / 0.50 s (31) / 0.01 s (3) | |
+| UDHR companions, 25 documents | 1.4–7.6 KB | p50 0.012 s, p95 0.093 s | 0.42 / 0.37 s (5 one-shot) / – in total | 5 checked, p50 0.29 s | 0.47 / 0.46 s (107) / – in total | 20 of 25 refused (`norm-defaults@0`) |
+| UDHR `translation.ve.md` (load) | 869 KB | fails at 120 s | ≈ 2,550 s with the limit lifted, 98% of its CPU in Lean (section 3.5) | refused in 1.1 s | – | `… readings@1` |
+| agent-policy `check.py base` (6 workers) | 26 rules, 42 actions | 162 s | all Python (389 s CPU), 0 Lean calls | 883 s | Lean 387 s (61,695 requests + 8 starts) / Rust 95.5 s (22,533 processes) | identical results (42/42, same policy summary); at the 5 s limit the Lean run failed after 353 s (earlier run) |
+| eligibility `run.py --no-write` (6 workers) | 80 profiles | 1,155 s | Lean 214 s (26 one-shot `ve_quantity`, about 9,400 cases, up to 8.4 MB) | 1,417 s | Lean 312 s: the same one-shots 181 s + 22,707 service requests and 13 starts, 131 s | both 269/269 and 32/32 mutants |
+
+**Reading.**
+
+- **Single documents are fast enough under Lean.** Where Lean authority answers, its Lean CPU is 0.2–0.63 s per
+  document, and the bluedot document drops from 232 s to 9 s because Rust's search replaces Python's.
+- **Lean authority cannot check the pilots.** Lean's core profile registry (`lean/VE/Route/Gate.lean:46-55`) has 9
+  profiles, Python's (`ve/profiles.py:19-37`) 17. The statement layers Python strips before calling Lean are not
+  affected, but `norm-defaults@0` and `readings@1` reach Lean's `environment` mode and are refused, although Lean's
+  composed dispatch (`Compose/Dispatch.lean`) routes both. This is a gap for batch 12, not a speed problem.
+- **Many-call harnesses are not fast enough under Lean.** Agent-policy: the same 42/42 answers in 5.5× the time.
+  Phase by phase (the harness's own `policy_seconds`): pairs 36.9 → 342.3 s, rules 1.0 → 29.3 s, tool gaps 53.9 → 70.6
+  s. Every one of the 61,695 Lean requests carried one case (typing 23,150, evaluation route 13,819, Background
+  12,199, norms 8,714, model 1,261, certificate replay 1,256) and the whole environment again: 542 MB of JSON. Lean
+  CPU per call was 3.4–6.8 ms (p50; 16.6 ms for certificate replay) against 0.5–1.6 ms on the conformance corpus;
+  the client's response checks add 104 s; and every evaluation starts a Rust process (13 ms wall, 4 ms CPU).
+  Eligibility pays the same overhead on 22,707 requests (+23% wall), and its own replay costs 19–23 ms of Lean CPU
+  per case because each case carries the 10 KB environment.
+- **The environment is most of the cost of a call.** `env_cost.py` (300 calls each, load 74): a trivial typing call
+  (`check` of `top`) costs **4.05 ms** of Lean CPU with the agent-policy environment and **0.38 ms** with an empty
+  one; decoding the environment alone (`environment` mode) costs 4.07 ms; sending 300 such cases in one request
+  costs 4.05 ms per case, so batching without environment handles saves nothing.
 
 ### 3.5 The UDHR pilot: one Lean call
 
-<!-- UDHR -->
+`document load` of the UDHR translation (pilot run `20261003T0600Z`, 869 KB, 50 reading sets) makes one
+`readings-validate` call to the one-shot `ve_readings_route` with a fixed 120 s limit (`ve/backends/lean.py:247`),
+then regenerates the answer in Python and compares the two byte for byte (`ve/readings_route.py:90-118`). The case
+was captured with `dump_readings_case.py` (500 KB) and run directly, cut to its first 1, 5 and 10 sets, and as one
+`readings-separate` query (`separate_case.py`), each bounded at 30 minutes:
+
+| Request | Content-bearing sets | Candidates | Pairs | Input | Lean wall | Lean CPU |
+|---|---:|---:|---:|---:|---:|---:|
+| `readings-separate`, one pair, first set only | 1 | 4 | 1 | 40 KB | 26.0 s | 21.1 s |
+| `readings-validate`, first set | 1 | 4 | 12 | 40 KB | 29.8 s | 24.3 s |
+| `readings-validate`, first 5 sets (earlier run) | 5 | 16 | 40 | 61 KB | 283.8 s | 97.2 s |
+| `readings-validate`, first 10 sets | 10 | 30 | 72 | 85 KB | 171.3 s | 161.2 s |
+| `readings-separate`, one pair, whole document | 39 | 176 | 1 | 500 KB | 836.7 s | **721.0 s** |
+| `readings-validate`, whole document | 39 | 176 | 734 | 500 KB | **1,389.0 s** | **1,161.4 s** |
+| Python's regeneration (`readings_s1.answer`, `regenerate_case.py`) | 39 | 176 | 734 | | 1,159.5 s | Python 28.5 s, Lean 918.2 s (352 one-shot `ve_rights_route`), Rust 2.4 s (734) |
+
+Lean's answer and Python's regeneration were byte-identical. Peak memory 96 MB.
+
+**Reading.**
+
+- **The call does not finish anywhere near its limit:** 1,161 s of CPU against 120 s, so on a quiet host too
+  `document load` is `CheckerUnavailable` under the default limit, whichever authority is set. With the limit lifted
+  the load is the Lean call plus Python's regeneration, run one after the other: about **2,550 s** at this load,
+  98% of its CPU in Lean.
+- **The cost is per candidate, not per pair.** Lean CPU fits about **4.1 s per candidate plus 0.6 s per pair**
+  (within 8% on all four validate rows). A query about one pair costs 721 s on the whole document because
+  `readings-separate` admits the whole document first (`lean/VE/Readings/Run.lean:182-186`); admission is 62% of
+  the full call. The answer then builds each candidate's document `one D s i` again, separately for its row and for
+  its chain findings (`Run.lean:63, 73`). Where inside admission the time goes is not profiled yet.
+- **The unit of work is a whole-document rights elaboration.** Each candidate's rights document is 28 KB: the whole
+  document with that one reading. Python's regeneration asks Lean for it twice per candidate, `rights-scope` (2.2 s
+  CPU p50) and `rights-elaborate` (2.9 s CPU p50). For comparison, the constitution pilot's 105 KB soft-norm
+  document goes through `ve_soft_norms_route` in 0.14 s CPU, start-up included, so the rights chain is the step to
+  profile.
+- **Python's regeneration is not a cheaper second opinion.** Its own work is 28.5 s; the other 918 s are the same
+  Lean rights chain called again as 352 separate processes.
 
 ## 4. Where calling Lean is fast enough, and the fixes where it is not
 
-<!-- FIXES -->
+**Fast enough today, no fix needed:**
+
+- **Interactive and IDE calls.** One service call is 1–3.5 ms wall and 0.5–1.6 ms of Lean CPU at the median on the
+  conformance corpus, even at load 70 (section 3.3); 0.75–1.43 ms on a quiet host (Gate 1).
+- **Corpus and gate runs.** The conformance files run through the service as fast as through `ve_conformance`, and
+  batched 30–40% faster (section 3.3).
+- **Single documents.** Where Lean authority answers, a use-case or pilot document costs 0.2–0.63 s of Lean CPU and
+  1.4–9 s of wall time, Rust's search included (section 3.4). Small statement-layer documents (the UDHR companions)
+  check in 12 ms at the median under the default authority.
+
+**Not fast enough, with the fix.** F1 to F6 are the fixes the batches of section 5 refer to. Gains marked
+*measured* follow from section 3's numbers; gains marked *estimate* are to be measured by the batch that builds the
+fix.
+
+| # | Problem (measured) | Fix | Expected gain | Batch |
+|---|---|---|---|---|
+| F1 | Every statement-layer route is a one-shot process: about 0.1 s of CPU and 0.25–0.5 s of wall at this load before any work (section 3.2). A small document's soft-norm check is almost all start-up (0.07 s CPU for a 1 KB document). 14 executables, 2.4 GiB. | Service modes for the 12 one-shot routes, in the one persistent service. | *Measured:* −0.1 s CPU and −0.25–0.5 s wall per route call (about −0.3 s CPU on the constitution pilot's `s1` check, which makes 4); one 170 MiB binary instead of 2.4 GiB. | 1 |
+| F2 | The environment is re-sent and re-decoded on every call: a trivial typing call costs 4.05 ms of Lean CPU with the agent-policy environment and 0.38 ms with an empty one, and decoding that environment alone costs 4.07 ms; 542 MB of JSON in one agent-policy run. | Content-addressed environment handles: the first request registers the environment, later requests name its digest; a miss is a bound request error and the client resends. | *Estimate:* Lean CPU per agent-policy call from 3.4–6.8 ms to the conformance corpus's 0.5–1.6 ms, so 387 s to about 40–100 s for the harness and 131 s to about 15–35 s for eligibility; the JSON volume and the client's 104 s of response checks shrink with it. | 2 |
+| F3 | Callers send one case per request (61,695 requests in one agent-policy run). | One request per document or per prover step for typing, route and norms calls. Only useful after F2: batching alone saved nothing with a real environment (4.05 ms per case). | *Measured on the conformance corpus:* −30–40% wall; *estimate* for harnesses after F2: per-call wall from 10–13 ms to 1–2 ms. | 2 |
+| F4 | Flat wall-clock limits: under load the service's 5 s limit stopped the agent-policy harness after 353 s and Rust's 5 s limit stopped the bluedot document (a 4.1 s CPU search); the readings route's flat 120 s is 10× below what the UDHR call needs on any host. | Per-operation deadlines, set from measured CPU per operation and input size (in CPU time where the platform allows), and reported as `CheckerUnavailable` with the operation named. | Removes failures caused by host load; an input that needs more than its operation's deadline fails saying which operation. | 1 |
+| F5 | The UDHR readings call: 1,161 s CPU; 62% is admission, about 4.1 s per candidate, each a whole-document rights elaboration (2.2–2.9 s CPU per 28 KB); Python then repeats the chain in 352 one-shot calls (918 s CPU). | (a) Delete Python's regeneration and its rights calls. (b) Build each candidate's `one D s i` at most once per request and reuse it wherever the answer needs it (today its row and its chain findings build it separately). (c) Elaborate the shared base once and each candidate's own unit as a delta, with a lemma that the result equals `one D s i`. (d) Profile and speed up the rights chain (`limitationScope`, `noDistinction`, key generation). (e) Run independent sets in parallel across the service pool. | (a) *measured:* load from about 2,550 s to about 1,390 s wall, CPU −45%. (b)–(d) *estimate:* admission's 176 whole-document elaborations become one plus 176 deltas; the target is the 120 s budget on a quiet host, about 10× below today. (e) *estimate:* wall ÷ pool size (39 independent sets). | 3 |
+| F6 | Every Rust evaluation is a new process: 22,533 in one agent-policy run, 13 ms wall and 4 ms CPU each, 328 s of summed wall. | Rust as one persistent JSON-lines process per worker, like the Lean service. | *Estimate:* about 1 ms per call, so 328 s to about 25–40 s. | 2 |
+
+Two further costs are small but paid by every CLI process: the service start (233 ms at load 70, 41 ms quiet) and
+the client's SHA-256 of the 170 MiB service binary (144 ms quiet), once per process. Caching the binary's digest by
+path, size and modification time removes the second; a per-user resident service would remove both, but is not
+needed for any measured workload.
+
+**Budgets** (the latency item of the batch gate, 5.1 item 4). Measured on the batch's corpus run against the base
+commit at the same time, comparing CPU where the host is loaded:
+
+| Operation class | Budget |
+|---|---|
+| One service call, interactive modes | p50 ≤ 2 ms Lean CPU, p95 ≤ 10 ms wall on a quiet host |
+| One document check (≤ 500 KB, readings excluded) | ≤ 1 s Lean CPU, ≤ 2 s wall on a quiet host, Rust search excluded |
+| Use-case harnesses (agent-policy, eligibility) | ≤ 1.25× the base commit's wall at the same load; a batch that switches an operation to Lean must not exceed it (agent-policy under Lean is 5.5× today, so batch 2 comes first) |
+| Pilot document load (UDHR, constitution) | ≤ 120 s wall on a quiet host (the readings route's present limit); UDHR needs F5 |
+| Any batch, any measured workload | no more than 20% more Lean CPU than the base commit, unless the batch's `DELTA.md` lists it and the DRI signs |
+
+**What this means for the order.** Switching the core operations to Lean (batches 12 and 13b) before F2, F3 and F6
+would make every many-call workload 5× slower; that is why batches 1 and 2 come first. The readings route is
+already Lean's; batch 3 deletes Python's repetition of it (half the load) and starts F5, which is the only fix that
+needs Lean proofs.
 
 ## 5. Plan: ordered batches
 
@@ -263,7 +393,7 @@ no batch removes a capability unless the DRI accepts it by name.
 | 0 | **Relay foundation.** One Python entry, `ve/backends/relay.py`: `decide(mode, cases)` returns Lean's rows or raises the `VEError` subclass of Lean's code with Lean's text verbatim; `CheckerUnavailable` only for operational failures. `tools/lean_first_diff.py` (built from mig3/py's recorder M3.1 and `tools/shadow_gate.py` M3.4) and `tools/relay_lint.py`. Freeze the pre-deletion Python under a tag for the oracle (section 6.2). | The service adds `code` to every rejection row, derived in one Lean function from the runner's `Class:` prefix, so no frozen runner changes | the prefix-stripping tables in `backends/diagnostics.py` (Python texts that imitated Lean's are replaced by Lean's own) | 4–6 |
 | 1 | **Every route in the service.** Service modes for the 12 one-shot executables (soft norms, rights, speech acts, reports, alternatives, risk, risk eval, quantity, norm defaults, discourse, readings, diagnose), each pinned by an `rfl` theorem like `runMode_route`, with binding schemas; Gate-1 byte parity against the one-shot runner on each route's corpus. Per-operation deadlines replace the flat 5 s interactive limit (F4). | glue in `VE/Service/` | the six bespoke transports of `backends/lean.py`; the one-shot executables leave `defaultTargets` (2.4 GiB of binaries become one 170 MiB service) | 4–6 |
 | 2 | **Service throughput.** Content-addressed environment handles (F2), one request per document for typing, route and norms calls (F3), and Rust as one persistent JSON-lines process instead of one process per case (F6). | handle table in the service (a miss is a bound request error; the client resends) | per-call environment re-encoding in the adapters | 3–5 |
-| 3 | **Readings S1.** `readings_route.validate` relays Lean's row; per-set requests across the pool. | F5: admit the document once (`Admitted.D` is recomputed per pair today), cache per-set answers by digest | `readings_s1.py` (1,470), `rust_check`, `readings.rs` | 4–6 |
+| 3 | **Readings S1.** `readings_route.validate` relays Lean's row (F5a: half the UDHR load); per-set requests across the pool (F5e). | F5b: build each candidate's `one D s i` once per request; F5c (incremental candidate elaboration with its equality lemma) and F5d (rights-chain profile) follow as their own batches if F5b does not reach the 120 s budget | `readings_s1.py` (1,470), `rust_check`, `readings.rs`, the 352 rights calls per UDHR load | 4–6 |
 | 4 | **Discourse.** `rejection` always returns Lean's diagnostic; joint-choice checks come from Lean's `gateChoices`. | none | `python_discourse`, resolution, joint checks (~1,190), `discourse.rs` | 2–4 |
 | 5 | **Risk and alternatives blocks.** Environments with these blocks are validated by their routes; coverage folds come from `alt-elaborate`; admission routes risk first, as Lean's dispatch does. | port `AlternativesReserved`; coverage counts in `alt-elaborate` | `_alternatives_block`, `risk.decode_block`/`check_block` (~370), `risk.rs` | 3–4 |
 | 6 | **Soft norms.** Lean is asked first; Rust's soft premises come from Lean's answer. | add soft status, weighing points and the `Overlap`, `override_cycles`, `DualGuardCycle` lines to `soft-elaborate` | `softnorms.py` phases and semantics (~800), `softnorms_contract.py` and `wire_contract/engine.py` (837), the regeneration compare | 4–6 |
@@ -274,7 +404,7 @@ no batch removes a capability unless the DRI accepts it by name.
 | 10b | **Norm defaults, switch.** | — | `norm_defaults.py` (~1,000), Python admission (~105) | 3–4 |
 | 11a | **Speech acts, Lean side** (replaces wire S6). | 8.5 wrapper and admission; answer, compliance and nomination records | — | 4–6 |
 | 11b | **Speech acts, switch.** `ve speech-acts` and `speech_document.py` call the route. | — | `speech_acts.py` and `speech_document.py` semantics (~1,400) | 3–5 |
-| 12 | **Environments, models and the profile gate.** Lean validates, Python constructs. Needs batch 2's handles, since environment construction is the hottest call. Ends the env-profiles finding class and DF-1 to DF-13. | none (the decoders exist) | `Environment._decode` and model validation (~590), `profiles.py` gate (~110), `validation.decided` | 4–6 |
+| 12 | **Environments, models and the profile gate.** Lean validates, Python constructs. Needs batch 2's handles, since environment construction is the hottest call. Ends the env-profiles finding class and DF-1 to DF-13. | the `environment` mode accepts every profile Python's registry accepts, through Lean's composed dispatch (today 9 of 17: `norm-defaults@0` and `readings@1` are refused, so Lean authority refuses the pilots, section 3.4) | `Environment._decode` and model validation (~590), `profiles.py` gate (~110), `validation.decided` | 4–6 |
 | 13a | **Core diagnostics in Lean.** | parse diagnostics with spans (Python `_Parser`'s messages move into Lean); order-family printer; certificate binding prechecks and step budget | — | 4–6 |
 | 13b | **Core operations default to Lean.** Typing, parse, definitions, Background, bundles, norms, admission, graph, readings, premise status, compare. | none | the Python bodies (~2,000), the `shadow` path | 4–6 |
 | 14a–d | **Stage 2c gaps**, one batch each: `definitions@0` sugar; non-first-order norm guards; n-ary core definitions; coupled reading sets and joint choices. | the four extensions | each Python fallback branch | 4 × 3–5 |
@@ -337,8 +467,9 @@ track (`english.py`, the Lark audit, about 2,500 lines of statement-layer Englis
   change and keeps working after the Python copy is deleted.
 - **mig3:** stop the `mig3/py` build where it is and reuse its recorder (M3.1) and `tools/shadow_gate.py` (M3.4) as
   the A/B tool. Open questions: q2 (order of the 2c gaps against the 14 days) becomes batches 14a–d, each with its
-  own evidence; q3 (timeouts) is answered by measurement (section 3.4: the flat 5 s limit fails under load) and
-  batch 1's per-operation deadlines; q6 (shadow in CI on every merge) is dropped.
+  own evidence; q3 (timeouts) is answered by measurement (section 3.4: the flat 5 s limits failed the
+  agent-policy harness and the bluedot document under load) and batch 1's per-operation deadlines (F4); q6 (shadow
+  in CI on every merge) is dropped.
 - **Stage 4 rollback** by `VE_AUTHORITY=python` disappears operation by operation as batches delete the Python
   copy. Rollback becomes reverting one batch merge, which the one-merge-per-batch rule keeps possible.
 - **Stage 5** is spread over the batches. Its independent-oracle rule is kept: before batch 3 the pre-deletion
@@ -387,9 +518,11 @@ follows the lead's earlier "don't pursue Lean search or retire Rust now": Rust s
 2. **Worse messages for a while.** Lean's parse rejection is one generic sentence, and some decoder texts expose
    internals (`String expected`). Each surface switches only after its Python messages are ported (batch 13a, E2),
    but every batch changes texts users and tests have seen; each change is listed and signed.
-3. **Performance where Lean is slower today** (section 3): the agent-policy harness and the UDHR pilot are slower
-   or fail under Lean today. Batches 1–3 are prerequisites for flipping anything with a large environment or many
-   readings. The IDE path is fine: a service call costs 1–2 ms at the median.
+3. **Performance where Lean is slower today** (sections 3 and 4): the agent-policy harness takes 5.5× as long under
+   Lean authority, and the UDHR pilot's readings call (already Lean's) needs about 10× its limit. Batches 1–3 are
+   prerequisites for flipping anything with a large environment or many readings, and F2, F5b and F6 are estimates
+   until their batches measure them; if F2 falls short, the core switches (12, 13b) wait. The IDE path is fine: a
+   service call costs 1–2 ms at the median.
 4. **Lean build and review friction.** A wording change becomes a Lean rebuild (9 minutes from scratch on a quiet
    machine, more than an hour at today's load), a frozen-hash rehash and an audit. More work needs Lean-capable
    workers, and Lean glue needs statement review. The bet is that this costs less than the 6.6-against-3.4 fix
@@ -417,5 +550,6 @@ follows the lead's earlier "don't pursue Lean search or retire Rust now": Rust s
 7. Keep a frozen pre-deletion Python as a test oracle (one isolated environment to maintain)? Recommended: yes.
 8. `soft-norms@0` contract: keep generating Lean's table from the JSON contract, or fold it into Lean source?
    Recommended: keep until batch 18, then decide.
-9. Start order: batch 0–2 first, or batch 3 (readings, which also fixes the UDHR pilot's timeout) first?
-   Recommended: 0, then 3 and 1 in parallel, then 2.
+9. Start order: batch 0–2 first, or batch 3 (readings: halves the UDHR load and starts F5) first? Recommended: 0,
+   then 3 and 1 in parallel, then 2. Batch 3 alone does not bring the UDHR load under its 120 s limit (1,161 s of
+   Lean CPU remain); F5b–F5d do, if anything does.
