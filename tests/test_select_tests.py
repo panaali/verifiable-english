@@ -155,7 +155,8 @@ def make_graph(root: Path, files: dict[str, str], lean: dict[str, str] | None = 
 
 
 def make_map(edges: dict[str, dict], commit: str = "0" * 40, failed: tuple[str, ...] = ()) -> dict:
-    results = {test: {"f": set(map(tuple, e.get("f", ()))), "r": set(e.get("r", ())),
+    """A map as the recorder would write it; each unit ran at least its own module."""
+    results = {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
                       "d": set(e.get("d", ())), "x": set(e.get("x", ())), "opaque": [],
                       "exit": 1 if test in failed else 0, "seconds": 1.0}
                for test, e in edges.items()}
@@ -259,7 +260,7 @@ def test_map_round_trips_through_its_edges():
              "t2": {"f": [("a.py", "g"), ("b.py", "<module>")]}}
     data = make_map(edges)
     back = test_map.unit_edges(json.loads(json.dumps(data)))
-    assert back == {test: {"f": set(map(tuple, e.get("f", ()))), "r": set(e.get("r", ())),
+    assert back == {test: {"f": {(test, "<module>"), *map(tuple, e.get("f", ()))}, "r": set(e.get("r", ())),
                            "d": set(e.get("d", ())), "x": set(e.get("x", ()))}
                     for test, e in edges.items()}
 
@@ -478,3 +479,39 @@ def test_testing_doc_tables_are_generated_from_the_evidence():
     assert len(data["replay"]) == 50 and len(data["mutants"]) == 10
     # Every seeded bug was caught, and only after the same test passed without it.
     assert all(row["failure"] and not row.get("rest_exit") for row in data["mutants"])
+
+
+def test_smoke_files_and_top_level_areas_match_the_tree():
+    every = select_tests.units()
+    assert set(select_tests.SMOKE) <= set(every)
+    tracked = subprocess.run(["git", "ls-tree", "-d", "--name-only", "HEAD"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout.split()
+    # A top-level directory the selector does not know selects everything; list new ones on purpose.
+    assert set(tracked) - select_tests.KNOWN_AREAS == set()
+
+
+def corruptions(data: dict):
+    """Each field dropped, emptied, retyped (including bool for int) or pointed out of range."""
+    for key in data:
+        yield f"drop {key}", {k: v for k, v in data.items() if k != key}
+        for value in (None, 7, True, "x", [], {}):
+            if value != data[key]:
+                yield f"{key}={value!r}", {**data, key: value}
+    yield "index out of range", {**data, "reads": {"a.json": [len(data["tests"])]}}
+    yield "bool index", {**data, "reads": {"a.json": [True]}}
+    yield "empty index list", {**data, "programs": {"lake": []}}
+    yield "status missing a test", {**data, "status": {}}
+    yield "bool exit", {**data, "status": {t: {**s, "exit": False} for t, s in data["status"].items()}}
+    yield "duplicate test", {**data, "tests": data["tests"] * 2}
+
+
+def test_a_malformed_map_is_rejected():
+    data = make_map({"t1": {"f": [("a.py", "f")], "r": ["d.json"]}, "t2": {"x": ["lake"]}})
+    test_map.validate(json.loads(json.dumps(data)))
+    for name, corrupt in corruptions(data):
+        if name.startswith(("drop created", "created=", "commit='x'")) or name in (
+                "reads={}", "dirs={}", "programs={}"):
+            continue  # informational, still a commit, or a table that may well be empty
+        with pytest.raises(ValueError):
+            test_map.validate(corrupt)
+            pytest.fail(name)
