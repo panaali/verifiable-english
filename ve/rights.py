@@ -11,7 +11,7 @@ import re
 
 from .ast import And, Atom, Binary, Bottom, Implies, Or, Top, Unary, Var, _Checker, _Decoder, _to_data
 from .environment import valid_identifier
-from .errors import DuplicateDeclaration, ResourceLimit, UnsupportedProfile, VEError
+from .errors import DuplicateDeclaration, ResourceLimit, UnknownSymbol, UnsupportedProfile, VEError
 from .norms import Norm, _bind, _instantiate
 from .search import _used_predicates
 from .softnorms import SoftEnvironment, SoftNormDocument, decode_rule
@@ -28,15 +28,32 @@ def _name(value):
     return value
 
 
-def _unique(values, kind):
-    if type(values) is not list or not values:
-        raise VEError(f"InvalidInput: {kind} must be a nonempty list")
+def _strings(value):
+    return type(value) is list and all(type(item) is str for item in value)
+
+
+def _decode_block(rights):
+    """The types `decodeRightsBlock` reads before the soft environment is
+    decoded: `holders`, `bearers` and `protected` arrays of strings, `alters` an
+    object whose entries have their fields, a natural `holder_slot` and a string
+    `status` and `recognition`."""
+    if (not all(_strings(rights.get(key, [])) for key in ("holders", "bearers", "protected"))
+            or type(rights.get("alters", {})) is not dict):
+        raise VEError("InvalidInput: invalid rights block")
+    for act, entry in rights.get("alters", {}).items():
+        if (type(entry) is not dict or not {"holder_slot", "status"} <= set(entry)
+                or set(entry) - {"holder_slot", "status", "recognition"}
+                or type(entry["holder_slot"]) is not int or entry["holder_slot"] < 0
+                or type(entry["status"]) is not str or type(entry.get("recognition", "")) is not str):
+            raise VEError(f"InvalidInput: alters {act}")
+
+
+def _duplicate(values, kind):
     seen = set()
     for value in values:
         if value in seen:
             raise DuplicateDeclaration(f"{kind} {value}")
         seen.add(value)
-    return tuple(values)
 
 
 class RightsEnvironment(SoftEnvironment):
@@ -45,12 +62,17 @@ class RightsEnvironment(SoftEnvironment):
     LAYERS = frozenset({"rights@0"})
 
     def __init__(self, data):
-        if type(data) is not dict or "rights@0" not in data.get("profiles", []):
+        profiles = data.get("profiles") if type(data) is dict else None
+        if type(profiles) is not list or any(type(p) is not str for p in profiles):
+            # VE.Rights.Wire.decodeRightsEnvironment reads the profiles first.
+            raise UnsupportedProfile("profiles must be a sorted unique array")
+        if "rights@0" not in profiles:
             raise UnsupportedProfile("rights@0 is required")
-        if "soft-norms@0" not in data["profiles"]:
+        if "soft-norms@0" not in profiles:
             raise UnsupportedProfile("rights@0 requires soft-norms@0")
         raw = deepcopy(data)
-        rights = raw.get("vocabulary", {}).pop("rights", None)
+        vocabulary = raw.get("vocabulary", {})
+        rights = vocabulary.pop("rights", None) if type(vocabulary) is dict else None
         # As Lean's `decodeRightsBlock` reads the block: `holders` and `bearers` are required, `protected` and
         # `alters` optional (an absent one is empty). The block is kept as written, so its identity is Lean's.
         if (type(rights) is not dict or not {"holders", "bearers"} <= set(rights)
@@ -61,38 +83,39 @@ class RightsEnvironment(SoftEnvironment):
                 # 3.1's null recognition is the absent key: canonical JSON has no null,
                 # and the Lean wire sends the field absent.
                 del entry["recognition"]
-        for predicate in raw["vocabulary"].get("predicates", ()):
+        _decode_block(rights)
+        predicates = vocabulary.get("predicates")
+        for predicate in (predicates if type(predicates) is dict else ()):
             if predicate.startswith("rights__"):
                 raise VEError(f"InvalidInput: author predicate {predicate} begins with rights__")
         object.__setattr__(self, "rights", rights)
         super().__init__(raw)
-        holders = _unique(rights["holders"], "holder")
-        bearers = _unique(rights["bearers"], "bearer")
+        # VE.Rights.Correlate.checkBlock's order: nonempty, declared, distinct.
+        holders, bearers = tuple(rights["holders"]), tuple(rights["bearers"])
+        if not holders or not bearers:
+            raise VEError("InvalidInput: invalid rights block")
         for sort in (*holders, *bearers):
             if sort not in self.sorts:
-                raise VEError(f"UnknownSymbol: sort {sort}")
+                raise UnknownSymbol(f"UnknownSymbol: sort {sort}")
+        _duplicate(holders, "holder")
+        _duplicate(bearers, "bearer")
         object.__setattr__(self, "holders", holders)
         object.__setattr__(self, "bearers", bearers)
         protected = rights.get("protected", [])
-        if type(protected) is not list or len(set(protected)) != len(protected):
+        if len(set(protected)) != len(protected):
             raise VEError("InvalidInput: protected")
         for name in protected:
             decl = self.predicates.get(name)
             if (decl is None or decl.regulated is not None or decl.defined is not None
                     or not set(decl.arguments) & set(holders)):
                 raise VEError(f"InvalidInput: protected {name}")
-        alters = rights.get("alters", {})
-        if type(alters) is not dict:
-            raise VEError("InvalidInput: alters")
-        for act, entry in alters.items():
+        for act, entry in rights.get("alters", {}).items():
             declaration = self.predicates.get(act)
-            if (type(entry) is not dict or not {"holder_slot", "status"} <= set(entry)
-                    or set(entry) - {"holder_slot", "status", "recognition"}
-                    or declaration is None or declaration.regulated is None
+            if (declaration is None or declaration.regulated is None
                     or declaration.regulated.role != "permission"):
                 raise VEError(f"InvalidInput: alters {act}")
             slot = entry["holder_slot"]
-            if type(slot) is not int or not 0 <= slot < len(declaration.arguments):
+            if slot >= len(declaration.arguments):
                 raise VEError(f"InvalidInput: alters {act}")
             holder = declaration.arguments[slot]
             status = self.predicates.get(entry["status"])

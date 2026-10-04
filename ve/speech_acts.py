@@ -23,6 +23,27 @@ _ALLOWED = {"relational-fol@0", "norms@0", "speech-acts@0"}
 PROOF_TASK_ACT = "{0} submit a proof of {1}"
 
 
+def parse_scope(raw):
+    """The block's structure, as Lean's `parseScope`, which the speech route
+    reads before the envelope: an object of `task`, `addressee` and
+    `definites`, with string names and definite phrases in normal form."""
+    block = VEError("InvalidInput: speech_acts block")
+    if type(raw) is not dict or "task" not in raw or set(raw) - {"task", "addressee", "definites"}:
+        raise block
+    if type(raw["task"]) is not str:
+        raise block
+    addressee = raw.get("addressee")
+    if "addressee" in raw and (type(addressee) is not dict or set(addressee) != {"sort", "constant"}
+                               or any(type(v) is not str for v in addressee.values())):
+        raise block
+    definites = raw.get("definites", {})
+    if type(definites) is not dict or any(type(c) is not str for c in definites.values()):
+        raise block
+    for phrase in definites:
+        if type(phrase) is not str or len(phrase.encode()) > 80 or not _PHRASE.fullmatch(phrase):
+            raise block
+
+
 def validate_scope(raw, sorts, constants, predicates):
     """Validate the identity-bound task legend without changing old environments.
 
@@ -32,22 +53,14 @@ def validate_scope(raw, sorts, constants, predicates):
     error, never an `UnknownSymbol` or a crash.
     """
     block = VEError("InvalidInput: speech_acts block")
-    if type(raw) is not dict or "task" not in raw or set(raw) - {"task", "addressee", "definites"}:
-        raise block
-    if type(raw["task"]) is not str or not _TOKEN.fullmatch(raw["task"]):
+    parse_scope(raw)
+    if not _TOKEN.fullmatch(raw["task"]):
         raise block
     result = {"task": raw["task"]}
     addressee = raw.get("addressee")
-    if "addressee" in raw and (type(addressee) is not dict or set(addressee) != {"sort", "constant"}
-                               or any(type(v) is not str for v in addressee.values())):
-        raise block
     definites = raw.get("definites", {})
-    if type(definites) is not dict or any(type(c) is not str for c in definites.values()):
-        raise block
     normalized = {}
     for phrase, constant in definites.items():
-        if type(phrase) is not str or len(phrase.encode()) > 80 or not _PHRASE.fullmatch(phrase):
-            raise block
         key = " ".join(phrase.split())
         if key in normalized or key in constants or key in sorts or key.lower() in {
                 "true", "false", "is", "equals", "not", "and", "or", "if", "then", "for",
