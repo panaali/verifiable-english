@@ -82,8 +82,12 @@ INJECTED = {
     "tests/test_cpu_bounds.py::test_time_a_child_spends_waiting_is_not_charged": "tests run_cpu_bounded",
     "tests/test_cpu_bounds.py::test_a_child_that_spins_past_its_limit_is_stopped": "tests run_cpu_bounded",
     "tests/test_cpu_bounds.py::test_child_cpu_counts_only_children_that_end_inside_the_block": "tests ChildCPU",
-    # The guard's own examples.
+    # The guards' own examples: sources the static guard parses, and lowered settings the
+    # runtime guard refuses before any real checker starts (or that only a fake sees).
     "tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form": "guard example sources",
+    "tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused":
+        "refused before the real checker starts",
+    "tests/test_hang_guards.py::test_a_lowered_setting_for_a_fake_checker_is_allowed": "a fake child only",
 }
 
 
@@ -426,6 +430,36 @@ def test_a_child_started_without_a_checker_setting_is_refused(monkeypatch, remov
         remove(monkeypatch)
     assert len(conftest.REFUSED) == 1
     conftest.REFUSED.clear()  # the refusal was this test's point
+
+
+@pytest.mark.parametrize("start", [
+    # The wire-s5 recheck's class: a real checker given a short deadline fails under load.
+    lambda monkeypatch: (monkeypatch.setenv("VE_LEAN_SERVICE_TIMEOUT", "0.5"),
+                         subprocess.Popen([str(ROOT / "lean/.lake/build/bin/ve_service")])),
+    lambda monkeypatch: subprocess.run([str(ROOT / "rust/target/release/ve"), "jsonl", "-"],
+                                       env={**os.environ, "VE_RUST_TIMEOUT": "5"}, timeout=HANG_TIMEOUT),
+    lambda monkeypatch: (monkeypatch.setenv("VE_LEAN_TIMEOUT", "ten"),
+                         os.posix_spawn(str(ROOT / "lean/.lake/build/bin/ve_conformance"), ["ve_conformance"],
+                                        dict(os.environ))),
+], ids=["service setting, this process", "Rust setting, child environment", "unreadable setting, posix_spawn"])
+def test_a_real_checker_started_with_a_lowered_setting_is_refused(monkeypatch, start):
+    import conftest
+    with pytest.raises(conftest.CheckerSettingRemoved, match="started the real checker .* below HANG_TIMEOUT"):
+        start(monkeypatch)
+    assert len(conftest.REFUSED) == 1
+    conftest.REFUSED.clear()  # the refusal was this test's point
+
+
+def test_a_lowered_setting_for_a_fake_checker_is_allowed(tmp_path, monkeypatch):
+    """A deadline test lowers a setting for a fake, or injects the expiry
+    (tests/subprocesses.py: expired_waits); only a real checker must get the hang guard."""
+    import conftest
+    monkeypatch.setenv("VE_LEAN_SERVICE_TIMEOUT", "0.5")
+    _start_child()
+    assert conftest.lowered_checker_settings(sys.executable, None) == []
+    assert conftest.lowered_checker_settings(str(ROOT / "rust/target/release/ve"), None) == [
+        "VE_LEAN_SERVICE_TIMEOUT"]
+    assert conftest.REFUSED == []
 
 
 def test_a_removed_setting_without_a_real_child_or_a_fresh_environment_is_allowed(monkeypatch):

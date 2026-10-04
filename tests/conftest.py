@@ -115,16 +115,58 @@ def removed_checker_settings(env):
     return [variable for variable in CHECKER_TIMEOUTS if variable not in env]
 
 
-# Audit events that start a process, and the position of their environment argument.
-PROCESS_EVENTS = {"subprocess.Popen": 3, "os.posix_spawn": 2, "os.system": None}
+# The real checkers: the Lean executables and the Rust builds.
+CHECKERS = (ROOT / "lean/.lake/build/bin", ROOT / "rust/target")
+
+
+def real_checker(program) -> bool:
+    if program is None:
+        return False
+    path = os.path.realpath(os.fsdecode(program))
+    return any(path.startswith(f"{directory}{os.sep}") for directory in CHECKERS)
+
+
+def lowered_checker_settings(program, env):
+    """The checker settings a real checker started with `env` (None: this process's
+    environment) would wait less than HANG_TIMEOUT under, when `env` derives from a
+    running test's environment. A test of a deadline injects its expiry against a fake
+    (tests/subprocesses.py: expired_waits); a real checker under load always gets the
+    hang guard."""
+    env = os.environ if env is None else env
+    if "PYTEST_CURRENT_TEST" not in env or not real_checker(program):
+        return []
+    lowered = []
+    for variable in CHECKER_TIMEOUTS:
+        try:
+            if float(env.get(variable, HANG_TIMEOUT)) < HANG_TIMEOUT:
+                lowered.append(variable)
+        except ValueError:
+            lowered.append(variable)
+    return lowered
+
+
+# Audit events that start a process: the positions of their program and environment arguments.
+PROCESS_EVENTS = {"subprocess.Popen": (0, 3), "os.posix_spawn": (0, 2), "os.system": (None, None)}
 
 
 def refuse_child_without_checker_settings(event, args):
     if event in PROCESS_EVENTS:
-        position = PROCESS_EVENTS[event]
-        missing = removed_checker_settings(None if position is None else args[position])
+        program_at, env_at = PROCESS_EVENTS[event]
+        env = None if env_at is None else args[env_at]
+        missing = removed_checker_settings(env)
         if missing:
             message = f"{event} started a child without {', '.join(missing)}"
+            REFUSED.append(message)
+            raise CheckerSettingRemoved(message)
+        program = None
+        if program_at is not None:
+            program = args[program_at]
+            if program is None and event == "subprocess.Popen":
+                argv = args[1]
+                program = argv if isinstance(argv, (str, bytes, os.PathLike)) else next(iter(argv), None)
+        lowered = lowered_checker_settings(program, env)
+        if lowered:
+            message = f"{event} started the real checker {program} with {', '.join(lowered)} below HANG_TIMEOUT"
             REFUSED.append(message)
             raise CheckerSettingRemoved(message)
 
@@ -169,4 +211,4 @@ def generous_hang_guards(monkeypatch):
     REFUSED.clear()
     yield
     refused, REFUSED[:] = list(REFUSED), []
-    assert refused == [], "a test removed a checker setting and started a real child"
+    assert refused == [], "a test removed or lowered a checker setting and started a real child"
