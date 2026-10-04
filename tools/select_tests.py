@@ -16,13 +16,17 @@ How a change selects tests:
   import (a top-level call, a registering decorator) selects every test that
   imported the module. A new function nothing in the change calls by name
   selects every test that ran a function of its file. An added or deleted
-  module selects every test that imported it.
+  module selects every test that imported it, even when it binds nothing
+  (empty, a docstring, `pass`); an added one, which the map cannot have seen
+  imported, also every test whose static closure now imports it.
 * The static graph is the tree after the change plus each changed file as it
   was before, so a deleted module or fixture still leads to its users.
 * Lean: the executables whose root imports the module, then the tests that
   ran them; Rust: the tests that ran a Rust binary, and `cargo test`.
-* Any other file: the tests that read it, and, for an added or removed file,
-  the tests that listed its directory. Documentation only selects its readers.
+* Every file, whatever its kind: the tests that read it, and, for an added or
+  removed file, the tests that listed its directory. Documentation only
+  selects these. `kind_of` and `file_impact` are the one rule for both the
+  plan and the drift check below.
 * The map is recorded for an earlier commit. Code that changed since then
   ("drift") may call the changed code anew: drift units that name what changed
   add their own tests. Tests the map does not cover (new, failed or opaque when
@@ -125,9 +129,11 @@ class Change:
     new: str | None          # None: absent after
     known: bool = True       # False: contents unknown, the whole file counts as changed
 
+    presence_known: bool = True  # False: it may also have appeared or vanished
+
     @property
     def presence_changed(self) -> bool:
-        return (self.old is None) != (self.new is None)
+        return not self.presence_known or (self.old is None) != (self.new is None)
 
 
 def read_changes(paths: list[str], *, base: str, after: str | None) -> list[Change]:
@@ -251,23 +257,73 @@ def parse(change: Change) -> tuple[Summary | None, Summary | None]:
 def python_change(sel: Selection, change: Change, old: Summary | None, new: Summary | None,
                   called: dict[tuple[str, str], frozenset[str]]) -> None:
     path = change.path
-    if sel.coverage is not None:
-        sel.add(sel.coverage.readers(path), f"reads {path}")
+    d = delta(old, new) if change.known else None
+    mapped(sel, change, (old, new, d), called)
     sel.static(mentions_path(path), f"names {path}")
     if (path.startswith("tests/test_") or path in EXTRA_UNITS) and change.new is not None:
         sel.add([path], "changed test")
-    d = delta(old, new) if change.known else None
-    if d is not None and d.empty:
-        if change.presence_changed:
-            sel.code = True
+    if d is not None and d.empty and not change.presence_changed:
         return  # comments and docstrings only
     sel.code = True
     if path.startswith(("ve/", "ve_experiments/", "experiments/")) and (
             d is None or d.imports_changed or change.presence_changed):
         sel.checks.add(CHECK_PYTHON)
-    sel.static(lambda files, _: path in files, f"imports {path}")
+    # The map cannot have seen anyone import a module that did not exist: for an
+    # added one the static graph answers for every unit.
+    sel.static(lambda files, _: path in files, f"imports {path}", everyone=change.old is None)
+
+
+def mapped(sel: Selection, change: Change, python=None, called=None) -> None:
     if sel.coverage is not None:
-        python_impact(sel.coverage, sel.graph, set(sel.all_units), sel.add, path, old, new, d, called)
+        file_impact(sel.coverage, sel.graph, set(sel.all_units), sel.add, change.path,
+                    change.presence_changed, python, called)
+
+
+EVERYTHING_KIND, PYTHON, LEAN, RUST, DATA = KINDS = ("everything", "python", "lean", "rust", "data")
+
+
+def kind_of(path: str) -> str:
+    """Which rule a changed path falls under, for the plan and the drift check alike."""
+    top = path.split("/", 1)[0]
+    if path in EVERYTHING or ("/" not in path and not path.endswith(DOCUMENT_SUFFIXES)
+                              and path not in RUST_PROJECT and path != ".importlinter") \
+            or ("/" in path and top not in KNOWN_AREAS):
+        return EVERYTHING_KIND
+    if path.endswith(".py"):
+        return PYTHON
+    if is_lean_input(path):
+        return LEAN
+    if is_rust_input(path):
+        return RUST
+    return DATA
+
+
+def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], add, path: str,
+                presence_changed: bool, python=None, called=None) -> None:
+    """Report through `add(tests, reason)` the mapped tests a change to one file can affect.
+
+    The one rule for every kind of file, used by the plan and by the drift
+    check: the tests that read the file; for a file that appeared or vanished,
+    the tests that listed its directory; then what its kind adds. `python` is
+    (old summary, new summary, delta) for a Python file, the delta None when
+    the contents are unknown or not valid Python.
+    """
+    kind = kind_of(path)
+    if kind == EVERYTHING_KIND:
+        add(all_units, f"{path} changes everything")
+        return
+    add(coverage.readers(path), f"reads {path}")
+    if presence_changed:
+        add(coverage.listers(path), f"lists the directory of {path}")
+    if kind == PYTHON:
+        old, new, d = python if python is not None else (None, None, None)
+        # Presence counts whatever the module binds: deleting an empty one breaks its importers.
+        if d is None or not d.empty or presence_changed:
+            python_impact(coverage, graph, all_units, add, path, old, new, d, called or {})
+    elif kind == LEAN:
+        add(coverage.runners(runs_lean(lean_programs(graph, path, presence_changed))), f"runs Lean via {path}")
+    elif kind == RUST:
+        add(coverage.runners(runs_rust), f"runs Rust via {path}")
 
 
 def python_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], add,
@@ -275,6 +331,8 @@ def python_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[
                   called: dict[tuple[str, str], frozenset[str]]) -> None:
     """Report through `add(tests, reason)` the mapped tests one module's change can affect."""
     defs = set((old.units if old else {}) | (new.units if new else {}))
+    if d is None:
+        defs |= set(coverage.functions.get(path, {}))  # contents unknown: whatever ran there
     # A module that appears or vanishes changes what importing it does, whatever it binds.
     if d is None or d.effect or d.decorated or path.endswith("__init__.py") or (old is None) != (new is None):
         add(coverage.importers(path) | coverage.file_wide(path, defs), f"{path}: import-time change")
@@ -358,9 +416,7 @@ def lean_change(sel: Selection, change: Change) -> None:
     if path.endswith(".lean"):
         sel.checks.add(CHECK_LEAN)
     executables = lean_programs(sel.graph, path, change.presence_changed)
-    if sel.coverage is not None:
-        sel.add(sel.coverage.runners(runs_lean(executables)), f"runs Lean via {path}")
-        sel.add(sel.coverage.readers(path), f"reads {path}")
+    mapped(sel, change)
     tokens = {f"lean-exe:{name}" for name in executables} | {"lean-tool"}
     sel.static(lambda _, mentions: bool(tokens & mentions), f"runs Lean via {path}")
     sel.static(mentions_path(path), f"names {path}")
@@ -370,9 +426,7 @@ def rust_change(sel: Selection, change: Change) -> None:
     sel.code = sel.rust = True
     if change.path.endswith((".rs", "Cargo.toml")):
         sel.checks.add(CHECK_RUST)
-    if sel.coverage is not None:
-        sel.add(sel.coverage.runners(runs_rust), f"runs Rust via {change.path}")
-        sel.add(sel.coverage.readers(change.path), f"reads {change.path}")
+    mapped(sel, change)
     sel.static(lambda _, mentions: "rust" in mentions, f"runs Rust via {change.path}")
 
 
@@ -380,10 +434,7 @@ def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) ->
     path = change.path
     if not path.endswith(DOCUMENT_SUFFIXES):
         sel.code = True
-    if sel.coverage is not None:
-        sel.add(sel.coverage.readers(path), f"reads {path}")
-        if change.presence_changed:
-            sel.add(sel.coverage.listers(path), f"lists the directory of {path}")
+    mapped(sel, change)
     sel.static(mentions_path(path), f"names {path}")
     name = posixpath.basename(path)
     if any(name in text for text in rust_sources.values()):
@@ -462,21 +513,15 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
                 called[(path, qualname)] = references
     for path, letter in status.items():
         add([path])  # a changed test's own record is stale
-        add(coverage.readers(path))
-        if letter in ("A", "D"):
-            add(coverage.listers(path))
+        python = None
         if path in parsed:
             pair = parsed[path]
-            if pair is None:
-                add(coverage.importers(path) | coverage.file_wide(path, set(coverage.functions.get(path, {}))))
-            else:
-                d = delta(*pair)
-                if not d.empty:
-                    python_impact(coverage, graph, all_units, add, path, *pair, d, called)
-        elif is_lean_input(path):
-            add(coverage.runners(runs_lean(lean_programs(graph, path, letter in ("A", "D")))))
-        elif is_rust_input(path):
-            add(coverage.runners(runs_rust))
+            python = (None, None, None) if pair is None else (*pair, delta(*pair))
+        # Any letter but M (T: a file became a link or back) may change what is there.
+        file_impact(coverage, graph, all_units, add, path, letter != "M", python, called)
+        if kind_of(path) == PYTHON and letter == "A":
+            # Added since the map: no recorded test can have imported it.
+            add(test for test in all_units if path in graph.closure(test)[0])
     return found
 
 
@@ -518,7 +563,7 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
         if after is None:
             for change in changes:
                 if change.old == change.new:  # named but not edited: assume anything changed
-                    change.known = False
+                    change.known = change.presence_known = False
     paths = [change.path for change in changes]
     # The tree after the change, plus each changed file as it was before it: a
     # deleted module or fixture still leads to the tests that used it.
@@ -548,10 +593,8 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     rust_sources = None
     for change in changes:
         path = change.path
-        top = path.split("/", 1)[0]
-        if path in EVERYTHING or ("/" not in path and not path.endswith(DOCUMENT_SUFFIXES)
-                                  and path not in RUST_PROJECT and path != ".importlinter") \
-                or ("/" in path and top not in KNOWN_AREAS):
+        kind = kind_of(path)
+        if kind == EVERYTHING_KIND:
             sel.full.append(path)
             continue
         if path in PYTHON_LAYER_INPUTS or path == ".importlinter":
@@ -562,11 +605,11 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
             sel.checks.add(CHECK_RUST)
         if path == "lean/audit.py":
             sel.audit = True
-        if path.endswith(".py"):
+        if kind == PYTHON:
             python_change(sel, change, *parsed[path], called)
-        elif is_lean_input(path):
+        elif kind == LEAN:
             lean_change(sel, change)
-        elif is_rust_input(path):
+        elif kind == RUST:
             rust_change(sel, change)
         else:
             if rust_sources is None:
