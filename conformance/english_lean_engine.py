@@ -425,7 +425,7 @@ def rule_map_ok(e: RuleMap, G: Grammar, G2: Grammar, acts: list, acts2: list) ->
 # ---------------------------------------------------------------- the English matching (2.3, 5.8)
 #
 # Tokens: ('word', text, initial), ('quoted', name), ('label', letter, index), ('numeral', value),
-# ('punct', text). Terminals: ('kw', s), ('content', s), ('exact', tok), ('cls', ('numeral',)),
+# ('punct', text, glued_before, glued_after). Terminals: ('kw', s), ('content', s), ('exact', tok), ('cls', ('numeral',)),
 # ('cls', ('label', letter)).
 
 TERMINATOR = ('punct', '.')
@@ -527,6 +527,8 @@ def token_from_json(x) -> tuple:
     if 'num' in x:
         return ('numeral', x['num'])
     if 'p' in x:
+        if 'glued_before' in x or 'glued_after' in x:
+            return ('punct', x['p'], x.get('glued_before', False), x.get('glued_after', False))
         return ('punct', x['p'])
     raise ValueError(f'unknown token {x!r}')
 
@@ -541,7 +543,8 @@ def token_to_json(tok: tuple):
         return {'label': tok[1], 'index': tok[2]}
     if kind == 'numeral':
         return {'num': tok[1]}
-    return {'p': tok[1]}
+    return ({'p': tok[1], 'glued_before': tok[2], 'glued_after': tok[3]}
+            if len(tok) == 4 else {'p': tok[1]})
 
 
 def grammar_from_json(g: dict) -> tuple[Grammar, list[str]]:

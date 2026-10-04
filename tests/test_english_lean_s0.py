@@ -31,8 +31,8 @@ def test_attribute_product_is_factored_into_a_sum():
     assert S.attribute_product(env) == {'pairs': 12, 'relations': 3, 'properties': 4, 'factored_rules': 7}
 
 
-def test_o1_spaced_hyphen_lexes_like_the_wording_and_python_rejects_it():
-    """Spec O1, measured: the draft tokens do not record adjacency (english-lean-measured.md section 4)."""
+def test_o1_spaced_hyphen_has_distinct_tokens_and_python_rejects_it():
+    """The spacing ruling keeps Python's rejection visible to the token grammar."""
     import json
     import warnings
     import pytest
@@ -50,6 +50,6 @@ def test_o1_spaced_hyphen_lexes_like_the_wording_and_python_rejects_it():
         warnings.simplefilter('ignore')
         assert parse_english(env, 'Legacy is non-compliant.', **options)
         for spaced in ('Legacy is non - compliant.', 'Legacy is non -compliant.'):
-            assert LX.lex(spaced) == LX.lex('Legacy is non-compliant.')
+            assert LX.lex(spaced) != LX.lex('Legacy is non-compliant.')
             with pytest.raises(VEError):
                 parse_english(env, spaced, **options)

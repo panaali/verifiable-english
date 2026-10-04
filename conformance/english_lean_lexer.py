@@ -3,7 +3,7 @@
 Test code: no admission path calls it. It is the oracle for the Lean `lex` of S2 and the instrument of
 S0's character-versus-token probes (plan 7.2, spec O1 to O3). Tokens are the tuples of
 `conformance.english_lean_engine`: ('word', text, initial), ('quoted', name), ('label', letter, index),
-('numeral', value), ('punct', text).
+('numeral', value), ('punct', text, glued_before, glued_after).
 
 Draft choices that the spec leaves to S0, recorded in `docs/spec/english-lean-measured.md`:
 
@@ -101,6 +101,11 @@ def lex_spans(source: str) -> list[list[tuple[tuple, int, int]]]:
     current: list = []
     i = 0
     n = len(source)
+    def punct(text: str, start: int, end: int) -> tuple:
+        before = start > 0 and source[start - 1] not in WHITESPACE
+        after = end < n and source[end] not in WHITESPACE
+        return ('punct', text, before, after)
+
     while i < n:
         c = source[i]
         if c in WHITESPACE:
@@ -138,11 +143,11 @@ def lex_spans(source: str) -> list[list[tuple[tuple, int, int]]]:
             continue
         marker = next((m for m in MARKERS if source.startswith(m, i)), None)
         if marker:
-            current.append((('punct', marker), offsets[i], offsets[i + len(marker)]))
+            current.append((punct(marker, i, i + len(marker)), offsets[i], offsets[i + len(marker)]))
             i += len(marker)
             continue
         if c in PUNCTUATION:
-            current.append((('punct', c), offsets[i], offsets[i + 1]))
+            current.append((punct(c, i, i + 1), offsets[i], offsets[i + 1]))
             i += 1
             continue
         if c.isascii():

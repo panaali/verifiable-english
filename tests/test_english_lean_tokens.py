@@ -9,6 +9,16 @@ from conformance import english_lean_tokens as K
 ROOT = K.ROOT
 
 
+def test_phrase_conversion_keeps_canonical_punctuation_spacing():
+    exact = lambda token: E.T(('exact', token))
+    assert K._phrase_symbols('non-compliant', False) == [
+        E.T(('kw', 'non')), exact(('punct', '-', True, True)), E.T(('kw', 'compliant'))]
+    assert K._phrase_symbols(',', False) == [exact(('punct', ',', True, False))]
+    assert K._phrase_symbols('holds:', False) == [E.T(('kw', 'holds')), exact(('punct', ':', True, False))]
+    assert K._phrase_symbols('[', False) == [exact(('punct', '[', False, True))]
+    assert K._phrase_symbols(']', False) == [exact(('punct', ']', True, False))]
+
+
 def test_converted_fluent_grammar_is_well_formed_and_reads_renderings_once():
     env = Environment.from_json((ROOT / 'examples/fluent/environment.json').read_bytes())
     G, names, record = K.convert(english_lark_grammar(env))

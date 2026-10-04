@@ -201,7 +201,7 @@
    "class": "G",
    "lean": "none",
    "message": "Expected a space between these words.",
-   "note": "`space`: over tokens spacing is invisible, so this is the O1 class (measured, section 4 of the report)"
+   "note": "`space`: word boundaries are token boundaries; punctuation adjacency is recorded by glued flags"
   },
   {
    "call_sites": 1,
@@ -269,9 +269,9 @@
   {
    "call_sites": 1,
    "class": "S",
-   "lean": "new code needed",
+   "lean": "coefficientNotNumeral",
    "message": "A scaling coefficient must be an integer numeral.",
-   "note": "probe p7: `[budget * limit]` has one derivation; the draft `Reject` list has no code for it"
+   "note": "probe p7: `[budget * limit]` has one derivation and its meaning rejects the coefficient"
   },
   {
    "call_sites": 1,
