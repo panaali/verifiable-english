@@ -478,8 +478,10 @@ def test_every_real_answer_is_counted_and_indexed(lean_bin, tmp_path):
     for (op_id, executable, mode, kind), case in probes().items():
         binding = _declared_binding(op_id, executable, mode, kind)
         [row] = lean_backend.run(op_id, lean_bin / executable, [case], runner=executable, mode=mode, timeout=600)
+        assert lean_backend.row_problem(case, row, 0, binding["response"], binding.get("counts")) is None
+        # lf-0 review B2: a row naming its case both by id and by position is no answer.
         assert lean_backend.row_problem(case, {**row, "case_index": 0}, 0, binding["response"],
-                                        binding.get("counts")) is None
+                                        binding.get("counts"))
         forged = [*_miscounted(row, binding), *({**row, "case_index": i} for i in (False, 0.0, "0"))]
         assert len(forged) > 3 or not binding.get("counts"), (op_id, mode, kind)
         for index, bad in enumerate(forged):
@@ -954,8 +956,10 @@ def test_well_formed_bundle_answers_are_verdicts(tmp_path):
     from ve.bundle import check_bundle
     result = check_bundle(_bundle(), lean_executable=_bundle_answer(tmp_path, "pass"))
     assert result["lean_checked"] and result["lean_outcome"] == "accepted"
+    # lf-0 review B2: the same answer naming its case by position too is no answer.
     indexed = _bundle_answer(tmp_path, "row['case_index'] = 0", "indexed")
-    assert check_bundle(_bundle(), lean_executable=indexed)["lean_outcome"] == "accepted"
+    with pytest.raises(CheckerUnavailable, match="position"):
+        check_bundle(_bundle(), lean_executable=indexed)
     other = _bundle_answer(tmp_path, "row['lemmas'] = row['lemmas'][::-1]", "reordered")
     with pytest.raises(VEError, match="did not accept") as caught:
         check_bundle(_bundle(), lean_executable=other)
