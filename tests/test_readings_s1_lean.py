@@ -337,16 +337,10 @@ def rs9(raw, strict, default=None):
 
 
 def agreed(lean, raw, document):
-    """Lean's row, after checking that Python regenerates it byte for byte (4.1 rule 3)."""
-    from ve.errors import VEError
-    from ve.readings_route import rights_findings
-    from ve.readings_s1 import answer
+    """Lean's row, after checking that the route relays it: the row itself, or its diagnostic with Lean's text
+    (lean-first batch 3: no Python regeneration is compared with it)."""
     row = {k: v for k, v in validate(lean, raw, document).items() if k != "id"}
-    try:
-        python = {"status": "ok", **answer(raw, document, chain_findings=rights_findings)}
-    except VEError as exc:
-        python = {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
-    assert python == row
+    assert _route(raw, document, None) == row
     return row
 
 
@@ -385,7 +379,7 @@ SAME_LINE = {
 @pytest.mark.parametrize("variant", sorted(SAME_LINE))
 def test_line_order_compares_lines_decoded(lean, variant):
     """Lean's line order holds decoded lines (`SourceLine`): a line written again with a default field spelled
-    out is the same line listed twice, and Python says so with Lean's text."""
+    out is the same line listed twice, and the route says so with Lean's text."""
     raw = env_rights()
     document = {"units": [{"id": "u9"}],
                 "reading_sets": [rs9(raw, r9_right([r9_line("strict"), SAME_LINE[variant]]))]}
@@ -425,8 +419,8 @@ DEFAULTED_UNITS = {
 
 @pytest.mark.parametrize("variant", sorted(DEFAULTED_UNITS))
 def test_rights_units_read_with_lean_defaults(lean, variant):
-    """A field Lean's rights decoder reads as optional (absent and null alike on its wire) is read so by Python's
-    regeneration too: an absent decider inherits, is missing, or (a bar's) is accepted, as Lean decides."""
+    """A field Lean's rights decoder reads as optional (absent and null alike on its wire): an absent decider
+    inherits, is missing, or (a bar's) is accepted, as Lean decides, and the route relays it."""
     raw = env_rights()
     content, expected = DEFAULTED_UNITS[variant]
     kind = next(iter(content))
@@ -453,9 +447,8 @@ EXPLICIT_NULL_RIGHTS = {
 
 @pytest.mark.parametrize("variant", sorted(EXPLICIT_NULL_RIGHTS))
 def test_explicit_null_is_absent_in_rights_candidates(lean, variant):
-    """Lean's input has no null (`wire` omits it), so an explicit null is the field's default to Lean. Python's
-    regeneration reads the document the same way: the candidate is admitted by both, with the same answer, rather
-    than refused by Python alone (a `CheckerUnavailable` on the route)."""
+    """Lean's input has no null (`wire` omits it), so an explicit null is the field's default to Lean: the
+    candidate is admitted, and the route relays the answer."""
     raw = env_rights()
     row = agreed(lean, raw, {"units": [{"id": "u9"}], "reading_sets": [rs9(raw, EXPLICIT_NULL_RIGHTS[variant])]})
     assert row["status"] == "ok", row
@@ -568,25 +561,13 @@ ENVIRONMENT_NULLS = [(name, path) for name, (make, _, _) in NULL_ENVIRONMENTS.it
                                                       and p not in set(_fields(make())))]]
 
 
-def _python_answer(raw, document):
-    from ve.errors import VEError
-    from ve.readings_route import rights_findings
-    from ve.readings_s1 import answer
-    try:
-        return {"status": "ok", **answer(raw, document, chain_findings=rights_findings)}
-    except VEError as exc:
-        return {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
-
-
 def _known_text_difference(name, path):
-    """The cases whose environment, without the field, Lean and Python refuse with different texts: the route is
-    `CheckerUnavailable` on them, with the null exactly as without the field, and admits nothing. Not this finding's
-    class and not changed: a required field missing (the environment decoders' texts differ: `fields do not match`
-    against `Incorrect fields`, `invalid signature` against `Undeclared predicate argument sort`), and a candidate's
-    content made ill-typed by the environment (Lean's content decoder refuses it before any candidate label, or with
-    its code, `UnknownSymbol: `, before the text: the malformed-contents limitation of the earlier rechecks).
-    The rights document's `arbitrary_arrest` line left the class in lean-first batch 0: Python's text now carries
-    Lean's `UnknownSymbol: ` too, so the route answers Lean's diagnostic (`docs/lean-first/b0/DELTA.md` A1)."""
+    """The cases whose environment, without the field, Lean and Python's regeneration refused with different texts,
+    so that the route was `CheckerUnavailable` on them until lean-first batch 3 deleted the regeneration: a required
+    field missing (the environment decoders' texts differed: `fields do not match` against `Incorrect fields`,
+    `invalid signature` against `Undeclared predicate argument sort`), and a candidate's content made ill-typed by
+    the environment (Lean's content decoder refuses it before any candidate label, or with its code). The route now
+    raises Lean's diagnostic on each (`docs/lean-first/b3/DELTA.md`, `availability`); Lean refuses every one."""
     required = (path[-1] in ("arguments", "description") or path[:2] == ("vocabulary", "sorts") and len(path) == 3
                 or name == "norms" and len(path) <= 2 and path not in (("profiles",), ("vocabulary", "soft"),
                                                                        ("vocabulary", "rights"))
@@ -613,15 +594,11 @@ def _route(lean_path_environment, document, unit_kind):
 
 @pytest.mark.parametrize("name,path", ENVIRONMENT_NULLS, ids=lambda v: v if type(v) is str else ".".join(map(str, v)))
 def test_explicit_null_is_absent_in_the_environment(lean, name, path):
-    """Review finding B (compose-s1-loop): Python decoded the raw environment while Lean receives it through `wire`,
-    so `vocabulary.soft: null`, `vocabulary.rights: null` or a predicate's `regulated: null` was `ok` for Lean,
-    refused by Python, and `CheckerUnavailable` on the route. Every S1 entry point now reads the environment as
-    Lean does: each field of each environment, at every depth, and each optional field it leaves out, written as
-    null, is the field absent to Lean, to Python's regeneration and to the route (`ve/readings_route.py`, Rust's
-    replay included), and outside the pinned text differences the route answers Lean's row or raises Lean's
-    diagnostic. The class covers `vocabulary.rights.protected` and `alters` (optional to Lean's rights decoder, so
-    to Python's now), a null `profiles` (Lean's text, not a Python `KeyError`) and a right's line on a predicate
-    whose `regulated` is null (Lean's `UnknownSymbol`, not a Python `AttributeError`)."""
+    """Review finding B (compose-s1-loop): each field of each environment, at every depth, and each optional field
+    it leaves out, written as null, is the field absent to Lean and to the route (`ve/readings_route.py`), and the
+    route answers Lean's row or raises Lean's diagnostic. The class covers `vocabulary.rights.protected` and
+    `alters`, a null `profiles` (Lean's text) and a right's line on a predicate whose `regulated` is null (Lean's
+    `UnknownSymbol`). The cases Python's regeneration once refused with another text are refused by Lean."""
     from ve.errors import VEError
     make, make_document, unit_kind = NULL_ENVIRONMENTS[name]
     nulled = _nulled(make(), path)
@@ -634,16 +611,11 @@ def test_explicit_null_is_absent_in_the_environment(lean, name, path):
         document = make_document(make())
     row = {k: v for k, v in validate(lean, nulled, document).items() if k != "id"}
     assert row == {k: v for k, v in validate(lean, absent, document).items() if k != "id"}
-    python = _python_answer(nulled, document)
-    assert python == _python_answer(absent, document)
     routed = _route(nulled, document, unit_kind)
     assert routed == _route(absent, document, unit_kind)
+    assert routed == row
     if _known_text_difference(name, path):
-        assert row["status"] == "error" and python["status"] == "error" and python != row, (row, python)
-        assert routed == "CheckerUnavailable"
-    else:
-        assert python == row
-        assert routed == row
+        assert row["status"] == "error", row
 
 
 def test_a_text_that_differed_only_by_the_code_prefix_gets_leans_diagnostic(lean):
@@ -656,7 +628,6 @@ def test_a_text_that_differed_only_by_the_code_prefix_gets_leans_diagnostic(lean
     text = "UnknownSymbol: Unknown predicate 'arbitrary_arrest' under rs9@1:0"
     assert {k: v for k, v in validate(lean, absent, document).items() if k != "id"} == {"status": "error",
                                                                                        "error": text}
-    assert _python_answer(absent, document) == {"status": "error", "error": text}
     assert _route(absent, document, unit_kind) == {"status": "error", "error": text}
 
 
@@ -665,7 +636,7 @@ def test_environment_nulls_cover_the_reported_fields():
     for case in (("soft", ("vocabulary", "soft")), ("soft", ("vocabulary", "rights")),
                  ("rights", ("vocabulary", "rights", "protected")), ("rights", ("vocabulary", "rights", "alters")),
                  ("soft", ("profiles",)), ("rights", ("vocabulary", "predicates", "arrest_permitted", "regulated"))):
-        assert case in ENVIRONMENT_NULLS and not _known_text_difference(*case)
+        assert case in ENVIRONMENT_NULLS
 
 
 def test_other_kinds_go_to_the_lower_route(lean):
