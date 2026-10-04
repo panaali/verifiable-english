@@ -126,6 +126,22 @@
         "status": {"const": "error"},
         "error": {"$ref": "#/$defs/text"},
         "valid": {"const": false}}},
+    "route_error": {"$comment": "A case a statement-layer route rejected (the batch 1 modes): the request's id (null if absent) and the message; `code` is the soft-norms@0 contract code of a soft route rejection (SoftNorms.Run.reportedCode), `generator` and `valid: false` are the delegated route's (Route.Run.runCaseReported, Time.Wire.runCaseReported).",
+      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+      "properties": {
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "error": {"$ref": "#/$defs/text"},
+        "code": {"type": "string"},
+        "generator": {"type": "string"},
+        "valid": {"const": false}}},
+    "route_ok": {"$comment": "An answer of a statement-layer route, bound to its case by the id it echoes. Its other fields are the route's answer, which the service owns (docs/spec/lean-service.md, threat model); the caller reads them.",
+      "type": "object", "required": ["id", "status"],
+      "properties": {
+        "id": {"x-echo": "/id"},
+        "status": {"const": "ok"}}},
+    "route_row": {"$comment": "One row of a statement-layer route mode: the one-shot route executable's row for the case.",
+      "anyOf": [{"$ref": "#/$defs/case_error"}, {"$ref": "#/$defs/route_error"}, {"$ref": "#/$defs/route_ok"}]},
     "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}}
   }
 }

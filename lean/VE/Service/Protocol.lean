@@ -11,6 +11,18 @@ import VE.Service.Readings
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
+import VE.SoftNorms.Run
+import VE.Rights.Run
+import VE.SpeechActs.Run
+import VE.Attribution.Run
+import VE.Alternatives.Run
+import VE.Risk.Run
+import VE.Risk.Eval
+import VE.Time.Document
+import VE.NormDefaults.Run
+import VE.Discourse.Run
+import VE.Readings.Run
+import VE.Service.Diagnose
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -47,6 +59,8 @@ def maxCases : Nat := 4096
 inductive Mode where
   | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
   | parse | graph | readings | bundle | familyNorms
+  | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
+  | discourse | readingsRoute | diagnose
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -65,9 +79,23 @@ def Mode.name : Mode → String
   | .readings => "readings"
   | .bundle => "bundle"
   | .familyNorms => "family-norms"
+  | .softNorms => "soft-norms"
+  | .rights => "rights"
+  | .speechActs => "speech-acts"
+  | .reports => "reports"
+  | .alternatives => "alternatives"
+  | .risk => "risk"
+  | .riskEval => "risk-eval"
+  | .quantity => "quantity"
+  | .normDefaults => "norm-defaults"
+  | .discourse => "discourse"
+  | .readingsRoute => "readings-route"
+  | .diagnose => "diagnose"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
-  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms]
+  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms,
+  .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
+  .discourse, .readingsRoute, .diagnose]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -82,7 +110,9 @@ def englishReported (j : Json) : Json :=
 
 /-- One decoded case: the reported output of the existing runner for the mode.
 `evaluate`, `check-certificate`, `order` and `route` are the `ve_conformance`
-subcommands, `norms` is `ve_norms_route`, `english` is `VE/English/Run.lean`. -/
+subcommands, `norms` is `ve_norms_route`, `english` is `VE/English/Run.lean`; the
+statement-layer modes from `soft-norms` on are the per-case functions of the one-shot route
+executables (docs/LEAN-FIRST-PLAN.md, batch 1), which leave the default build targets. -/
 def runMode : Mode → Json → Json
   | .evaluate, j => VE.Order.runEvaluationCaseReported j
   | .checkCertificate, j => VE.CertificateWire.runCaseReported j
@@ -99,6 +129,18 @@ def runMode : Mode → Json → Json
   | .readings, j => Standalone.reported Family.readingsMode j
   | .bundle, j => Standalone.reported FamilyBundle.bundleCase j
   | .familyNorms, j => FamilyNorms.runCaseReported j
+  | .softNorms, j => VE.SoftNorms.Run.runCaseReported j
+  | .rights, j => VE.Rights.Run.runCaseReported j
+  | .speechActs, j => VE.SpeechActs.Run.runCaseReported j
+  | .reports, j => VE.Reports.Run.runCaseReported j
+  | .alternatives, j => VE.Alternatives.Run.runCaseReported j
+  | .risk, j => VE.Risk.Run.runCaseReported j
+  | .riskEval, j => VE.Risk.Eval.runCaseReported j
+  | .quantity, j => VE.Time.Wire.runCaseReported j VE.Time.Document.extension
+  | .normDefaults, j => VE.NormDefaults.Run.runCaseReported j
+  | .discourse, j => VE.Discourse.Run.runCaseReported j
+  | .readingsRoute, j => VE.Readings.Run.runCaseReported j
+  | .diagnose, j => Diagnose.diagnoseCase j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -538,6 +580,23 @@ theorem runMode_bundle (j : Json) :
     runMode .bundle j = Standalone.reported FamilyBundle.bundleCase j := rfl
 theorem runMode_familyNorms (j : Json) :
     runMode .familyNorms j = FamilyNorms.runCaseReported j := rfl
+theorem runMode_softNorms (j : Json) : runMode .softNorms j = VE.SoftNorms.Run.runCaseReported j := rfl
+theorem runMode_rights (j : Json) : runMode .rights j = VE.Rights.Run.runCaseReported j := rfl
+theorem runMode_speechActs (j : Json) : runMode .speechActs j = VE.SpeechActs.Run.runCaseReported j := rfl
+theorem runMode_reports (j : Json) : runMode .reports j = VE.Reports.Run.runCaseReported j := rfl
+theorem runMode_alternatives (j : Json) :
+    runMode .alternatives j = VE.Alternatives.Run.runCaseReported j := rfl
+theorem runMode_risk (j : Json) : runMode .risk j = VE.Risk.Run.runCaseReported j := rfl
+theorem runMode_riskEval (j : Json) : runMode .riskEval j = VE.Risk.Eval.runCaseReported j := rfl
+theorem runMode_quantity (j : Json) :
+    runMode .quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension := rfl
+theorem runMode_normDefaults (j : Json) :
+    runMode .normDefaults j = VE.NormDefaults.Run.runCaseReported j := rfl
+theorem runMode_discourse (j : Json) : runMode .discourse j = VE.Discourse.Run.runCaseReported j := rfl
+theorem runMode_readingsRoute (j : Json) :
+    runMode .readingsRoute j = VE.Readings.Run.runCaseReported j := rfl
+theorem runMode_diagnose (j : Json) : runMode .diagnose j = Diagnose.diagnoseCase j := rfl
+
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 

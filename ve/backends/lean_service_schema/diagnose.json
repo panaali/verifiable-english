@@ -1,0 +1,14 @@
+{
+  "$id": "diagnose.json",
+  "$comment": "Mode diagnose: Service.Diagnose.diagnoseCase over a case {unit, case}, the row ve_diagnose <unit> prints for case (WireContract.Diagnose.diagnoseCase). Diagnostic only: it decides no verdict.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+      "properties": {"id": {"x-echo": "/case/id"}, "status": {"const": "error"},
+        "error": {"$ref": "common.json#/$defs/text"}}},
+    {"type": "object", "required": ["id", "status", "outcome"], "additionalProperties": false,
+      "properties": {"id": {"x-echo": "/case/id"}, "status": {"const": "ok"},
+        "outcome": {"enum": ["clean", "fault"]}, "diagnostic": {"type": "object"}},
+      "if": {"properties": {"outcome": {"const": "fault"}}},
+      "then": {"required": ["diagnostic"]}, "else": {"not": {"required": ["diagnostic"]}}}]}
+}

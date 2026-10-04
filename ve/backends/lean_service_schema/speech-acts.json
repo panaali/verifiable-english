@@ -1,0 +1,7 @@
+{
+  "$id": "speech-acts.json",
+  "$comment": "Mode speech-acts: SpeechActs.Run.runCaseReported (ve_speech_acts_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}

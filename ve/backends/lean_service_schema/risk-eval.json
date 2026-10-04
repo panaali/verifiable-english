@@ -1,0 +1,11 @@
+{
+  "$id": "risk-eval.json",
+  "$comment": "Mode risk-eval: Risk.Eval.runCaseReported, the test-only differential harness of docs/spec/risk.md 8.3 (ve_risk_eval). Its rows carry no id; the binding is the case digest.",
+  "row": {"anyOf": [
+    {"$ref": "common.json#/$defs/case_error"},
+    {"type": "object", "required": ["status", "error"], "additionalProperties": false,
+      "properties": {"status": {"const": "error"}, "error": {"$ref": "common.json#/$defs/text"}}},
+    {"type": "object", "required": ["status", "results"], "additionalProperties": false,
+      "properties": {"status": {"const": "ok"}, "results": {"type": "array", "x-length": "/conditions",
+        "items": {"type": "object"}}}}]}
+}

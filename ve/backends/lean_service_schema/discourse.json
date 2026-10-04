@@ -1,0 +1,7 @@
+{
+  "$id": "discourse.json",
+  "$comment": "Mode discourse: Discourse.Run.runCaseReported (ve_discourse_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "$id": "reports.json",
+  "$comment": "Mode reports: Reports.Run.runCaseReported (ve_reports_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}
