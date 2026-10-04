@@ -1049,3 +1049,38 @@ def test_pool_raises_the_earliest_failing_request(service_executable):
         with pytest.raises(VEError) as expected:
             single.run("evaluate", cases)
     assert str(caught.value) == str(expected.value)
+
+
+@pytest.mark.parametrize("result, coding", [
+    ({"id": "c", "status": "error", "error": "rejected"}, {}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": "Nonsense"}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": 7}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": "InvalidInput", "generator": 1}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": "InvalidInput", "other": "x"}),
+    ({"id": "c", "status": "ok", "kind": "source", "identity_id": "0" * 64}, {"code": "InvalidInput"}),
+    ({"id": "c", "status": "ok", "kind": "source", "identity_id": "0" * 64}, {"generator": "literals"}),
+])
+def test_a_rejection_needs_its_public_code_and_nothing_else_carries_one(tmp_path, result, coding):
+    """Lean-first batch 0: beside a rejection the service sets one of the handshake's codes
+    (`Service.Protocol.coding`); a missing or unknown code, or a code beside a success, is an
+    operational failure, never a verdict."""
+    answer = {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": "identity",
+              "results": [{"index": 0, "digest": {"$digest": 0}, "result": result, **coding}],
+              "counts": {"cases": 1, "bytes": "__bytes__", "errors": int(result["status"] == "error")}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    with LeanService(executable, allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            service.run("identity", [{"id": "c", "kind": "source", "source": "x"}])
+
+
+def test_a_rejection_with_its_code_is_accepted(tmp_path):
+    """The control of the test above: the same scripted entry with a public code is a row."""
+    result = {"id": "c", "status": "error", "error": "rejected"}
+    answer = {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": "identity",
+              "results": [{"index": 0, "digest": {"$digest": 0}, "result": result, "code": "InvalidInput"}],
+              "counts": {"cases": 1, "bytes": "__bytes__", "errors": 1}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    with LeanService(executable, allow_unlisted_build=True) as service:
+        assert service.run("identity", [{"id": "c", "kind": "source", "source": "x"}]) == [result]
