@@ -1,0 +1,7 @@
+{
+  "$id": "soft-norms.json",
+  "$comment": "Mode soft-norms: SoftNorms.Run.runCaseReported (ve_soft_norms_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}

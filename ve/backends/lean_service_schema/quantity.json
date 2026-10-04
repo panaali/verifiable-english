@@ -1,0 +1,7 @@
+{
+  "$id": "quantity.json",
+  "$comment": "Mode quantity: Time.Wire.runCaseReported with Time.Document.extension (ve_quantity), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}

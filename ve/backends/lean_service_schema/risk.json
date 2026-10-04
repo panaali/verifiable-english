@@ -1,0 +1,7 @@
+{
+  "$id": "risk.json",
+  "$comment": "Mode risk: Risk.Run.runCaseReported (ve_risk_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}

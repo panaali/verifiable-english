@@ -1,0 +1,7 @@
+{
+  "$id": "rights.json",
+  "$comment": "Mode rights: Rights.Run.runCaseReported (ve_rights_route), a statement-layer route (docs/LEAN-FIRST-PLAN.md, batch 1).",
+  "row": {
+    "$ref": "common.json#/$defs/route_row"
+  }
+}
