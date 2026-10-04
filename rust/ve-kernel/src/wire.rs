@@ -292,6 +292,28 @@ pub(crate) fn fields<'a>(
     Ok(obj)
 }
 
+/// Wire array length of each formula tag, tag included (Python `ve.ast.WIRE_ARITY` without the
+/// integer comparisons, which Rust does not decode). Surface records repeat it; a unit test there
+/// keeps the two equal.
+pub(crate) const FORMULA_ARITY: &[(&str, usize)] = &[
+    ("top", 1),
+    ("bottom", 1),
+    ("unary", 3),
+    ("binary", 4),
+    ("atom", 3),
+    ("eq", 3),
+    ("not", 2),
+    ("and", 3),
+    ("or", 3),
+    ("implies", 3),
+    ("forall", 3),
+    ("exists", 3),
+    ("reach", 5),
+];
+
 pub(crate) fn formula_tag_arity(tag: &str) -> usize {
-    crate::surface::formula_record(tag).map_or(0, |record| record.wire_arity)
+    FORMULA_ARITY
+        .iter()
+        .find(|(name, _)| *name == tag)
+        .map_or(0, |(_, arity)| *arity)
 }
