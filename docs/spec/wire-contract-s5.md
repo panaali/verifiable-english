@@ -1358,5 +1358,6 @@ frozen pilot file changed, and both contracts stay in shadow.
 
 Found on the way and recorded in `conformance/wire-contract/s5-pre.md`, not fixed (outside 7.2's scope): an
 environment whose `profiles` is a number or a Boolean makes Python's environment decoder raise `TypeError` where
-Lean rejects at 1.1; the gates list such cases under `legacy_crashes`. Not done: Fable's wording of
+Lean rejects at 1.1; the gates list such cases under `legacy_crashes`. (Since fixed by the env-field-types work
+merged from `ve-integration`; see s5-pre.md.) Not done: Fable's wording of
 `norm-defaults@0`'s 5.1 sentence, which is a contract text and so a new revision for the statement review.

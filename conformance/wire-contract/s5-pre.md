@@ -46,7 +46,16 @@ class found under `norms@0`, reached here by inputs the tests already submit.
 The second candidate of 2.12 (a document that the decoder accepts and that
 `norms-elaborate` then rejects) has no case on either corpus.
 
-## Found while aligning the two adapters' domain: a Python crash
+## Found while aligning the two adapters' domain: a Python crash (fixed)
+
+Fixed by the env-field-types work, merged from `ve-integration`: Python's
+environment decoder now rejects a `profiles` that is not an array of strings
+with a `VEError`, and the Python engine faults at 1.1 as `ve_diagnose` does.
+`test_both_adapters_share_one_domain` now asserts that (the expectation
+`decoder`), and `--legacy-only` on `norms@0` lists no crash, only the three
+verdict differences above. The stored gate and delta reports predate the fix
+and still list the four crashes until the gate is next run. The original
+record follows.
 
 An environment whose `profiles` is a number or a Boolean is inside the domain of
 `norms@0` (2.2: an environment that does not decode is in the domain). Python's
@@ -83,7 +92,7 @@ class differences for both units. The gates still fail for the verdict
 differences above: the Lean engine disagrees with Python on the constant
 `verbalisation` cases, `norm-defaults@0` has no Lean first-fault witness
 for check 6.3 because the Lean route accepts D11, and `norms@0` lists the
-four Python crashes. The two switch gates cannot pass until the product
+four Python crashes (since fixed, see above; not yet remeasured). The two switch gates cannot pass until the product
 verdicts are reconciled and remeasured.
 
 Z8 holds on both corpora: on the 486 rejected `norms@0` cases and the 354
