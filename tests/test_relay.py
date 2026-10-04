@@ -360,7 +360,8 @@ def test_the_checker_output_decoder_refuses_numbers_no_float_holds(number):
 
 @pytest.mark.parametrize("number, value", [(b"0e999", 0.0), (b"-0.0e-999", 0.0), (b"0.000", 0.0), (b"1.5", 1.5),
                                            (b"5e-324", 5e-324), (b"1.7976931348623157e308", 1.7976931348623157e308),
-                                           (b"1" + b"0" * 400, 10 ** 400)])
+                                           (b"1" + b"0" * 400, 10 ** 400)],
+                         ids=["0e999", "-0.0e-999", "0.000", "1.5", "5e-324", "float-max", "integer-1e400"])
 def test_the_checker_output_decoder_keeps_numbers_a_float_or_int_holds(number, value):
     from ve.backends.lean_service import _decode_json
     assert _decode_json(b"[" + number + b"]") == [value]
