@@ -108,6 +108,18 @@ def pytest_sessionfinish(session, exitstatus):
         lock.close()
 
 
+@pytest.fixture
+def injects_backend_faults(monkeypatch):
+    """For a test that injects a backend fault (a fake or malformed backend
+    answer, a simulated migration) to check how one authority handles it. At
+    `shadow` the injected fault would also reach the candidate and be recorded
+    as the backend's (docs/spec/mig3.md 2.11, the cause `harness`), so there the
+    test runs at `python`, the authority whose outcome shadow returns; at every
+    other authority it runs as selected."""
+    if os.environ.get("VE_AUTHORITY") == "shadow":
+        monkeypatch.setenv("VE_AUTHORITY", "python")
+
+
 @pytest.fixture(autouse=True)
 def generous_hang_guards(monkeypatch):
     # Deadline tests install their own deterministic clock and budget.

@@ -624,6 +624,7 @@ def p0():
 LEAVES = ("certificate.check", "countermodel.check")
 
 
+@pytest.mark.usefixtures("injects_backend_faults")
 def test_combinations_propagate_unavailability_instead_of_unknown(p0):
     from ve.ast import Bottom, Const, Not, Top, Unary
     from ve.equivalence import compare, validate_reference
@@ -651,6 +652,7 @@ def test_combinations_propagate_unavailability_instead_of_unknown(p0):
                 validate_reference(p0, formula)
 
 
+@pytest.mark.usefixtures("injects_backend_faults")
 def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatch):
     """Review reproducer: both searches returned Found with countermodel.check migrated."""
     from ve import search
@@ -675,8 +677,7 @@ def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatc
         calls.append((tuple(premises), conclusion))
         return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
     monkeypatch.setattr(search, "check_countermodel", refuse)
-    # At `shadow` the outcome is Python's (docs/spec/mig3.md 2.3, V1).
-    if os.environ.get("VE_AUTHORITY", "python") not in ("python", "shadow"):
+    if os.environ.get("VE_AUTHORITY", "python") != "python":
         # A backend search returns one witness; a refused witness is a
         # disagreement between generator and check, never NotFound.
         with pytest.raises(CheckerUnavailable):
@@ -865,6 +866,7 @@ def _bundle():
     return json.loads((ROOT / "usecases/math-mini-paper/t7-definitions-bundle.json").read_text())
 
 
+@pytest.mark.usefixtures("injects_backend_faults")
 def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
     from ve import bundle
     from ve.bundle import check_bundle
@@ -884,6 +886,7 @@ def test_bundle_separates_rejection_from_unavailability(tmp_path, monkeypatch):
         assert check_bundle(_bundle(), lean_executable=LEAN_BIN / "ve_conformance")["lean_outcome"] == "accepted"
 
 
+@pytest.mark.usefixtures("injects_backend_faults")
 @pytest.mark.parametrize("fault", ["empty-row", "no-status", "ok-without-fields", "ill-typed-field",
                                    "error-without-message"])
 def test_malformed_rows_never_become_a_rejection(tmp_path, fault):
@@ -938,6 +941,7 @@ def _bundle_answer(tmp_path, mutation, name="bundle_lean", lean=None):
     return _fake_lean(tmp_path, f"{answer}\n{mutation}\nprint(json.dumps([row]))", name)
 
 
+@pytest.mark.usefixtures("injects_backend_faults")
 @pytest.mark.parametrize("fault", BUNDLE_ROW_FAULTS)
 def test_malformed_bundle_answers_are_unavailable(tmp_path, fault):
     """Review reproducer: `checked: {}` became a Checked, Lean-accepted bundle; `lemmas: [1]` InvalidInput."""
@@ -1067,6 +1071,7 @@ def test_argument_record_identity_is_unchanged_except_for_unavailability(tmp_pat
     assert unavailable["lean_status"] == "Lean-checked: unavailable"
 
 
+@pytest.mark.usefixtures("injects_backend_faults")
 def test_cli_reports_checker_unavailable_with_its_own_exit_code(tmp_path, capsys):
     from ve.__main__ import EXIT_CHECKER_UNAVAILABLE, main
     path = tmp_path / "bundle.json"

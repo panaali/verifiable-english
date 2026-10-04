@@ -466,7 +466,11 @@ def check_wire_contract(index: Index) -> list[str]:
         target = index.snapshot / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(blob)
-    env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
+    # The snapshot holds sources and no checker binaries, so its check runs at the Python
+    # authority whatever the caller selected, and records nothing for shadow mode.
+    env = {name: value for name, value in os.environ.items()
+           if name not in ("VE_AUTHORITY_OVERRIDES", "VE_SHADOW_DIR", "VE_SHADOW_LOG", "VE_SHADOW_RUN")}
+    env.update({"PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1", "VE_AUTHORITY": "python"})
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
                           timeout=30, check=False)
