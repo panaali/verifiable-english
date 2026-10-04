@@ -886,8 +886,7 @@ class S2Wording:
         conflict = route.conflict(())
         if conflict["status"] == "CONFLICT-FREE":
             lines.append(E.every_result(k, "conflict_free", self.slots))
-            used = (conflict.get("reading_premises_used", []) if conflict.get("evidence") == "certificates" else
-                    self._restrictions(conflict))
+            used = self._dependencies(conflict)
             lines += self.provided(used)
             lines += self.independent(self._mentions(used))
         elif conflict["status"] == "CONFLICT" and "model" in conflict:
@@ -905,7 +904,11 @@ class S2Wording:
             lines.append(E.named_result(self.readings(premises["choice"]), "premise_model", self.slots,
                                         situation=self.situation(premises["model"], premises["choice"])))
         elif premises["status"] == "INCONSISTENT" and premises.get("evidence") == "certificate":
+            # A certificate with A = [] (2.3 item 1): E3 and E13 from what it and its conflict certificates rely on.
             lines.append(E.every_result(k, "inconsistent", self.slots))
+            used = self._dependencies(premises)
+            lines += self.provided(used)
+            lines += self.independent(self._mentions(used))
         for dead in route.dead_readings() or []:
             lines.append(E.dead_reading(self.set_number[dead["set"]], self.names[dead["set"]][dead["index"]],
                                         self.slots))
@@ -926,14 +929,14 @@ class S2Wording:
                 lines.append(E.named_result(self.readings(assumed), "follows", self.slots, conclusion=slot))
             else:
                 lines.append(E.every_result(k, "follows", self.slots, conclusion=slot))
+            # Review A1 of compose-s2 fix4: the conditions and the independence statement are both worded from the
+            # answer's one dependency set, its conflict certificates' included. Combined over the compatible choices
+            # (review A of compose-s2 looprecheck2) the set holds the couplings and narrowings that excluded the
+            # others (E3 with E5 and E7), and no independence is claimed.
+            used = self._dependencies(data)
+            lines += self.provided(used)
             if data.get("evidence") == "certificate":
-                used = data.get("reading_premises_used", [])
-                lines += self.provided(used)
                 lines += self.independent(set(self._mentions(used)) | {s for s, _ in assumed})
-            else:
-                # Review A of compose-s2 looprecheck2: combined over the compatible choices, the result keeps the
-                # couplings and narrowings that excluded the others (E3 with E5 and E7).
-                lines += self.provided(self._restrictions(data))
         elif verdict == "SOME":
             lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
                                         conclusion=slot))
@@ -950,6 +953,15 @@ class S2Wording:
             lines.append(E.over_budget(self.slots))
             lines.append(self._countermodel(data["countermodel"]))
         return lines
+
+    @staticmethod
+    def _dependencies(data):
+        """The slot labels a Lean-checked answer depends on (`reading_premises_used`, `Superposed._dependencies` on
+        the superposed route, the restrictions on the enumerated route); an answer without them is refused, never
+        worded as depending on no reading."""
+        if "reading_premises_used" not in data:
+            raise VEError("InvalidInput: a checked answer's wording needs the reading premises it depends on")
+        return data["reading_premises_used"]
 
     @staticmethod
     def _restrictions(data):
