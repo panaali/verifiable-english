@@ -1,32 +1,44 @@
 """Cross-language differential fuzzer: Python, the Lean routes and Rust on seeded mutants.
 
-Every fixture of the conformance corpus and the use cases is a *seed*. A seed belongs to a *surface*,
-which says how each implementation runs it and how its answers compare:
+Every fixture of the conformance corpus and the use cases is read into seeds, or excluded with a reason
+(`tools/difffuzz_corpus.py`). A seed belongs to a *surface*, which says how each implementation runs it and
+how their answers compare:
 
-* `p0`: the P0 route cases (`conformance/p0.py`), through `conformance.three_way` (Python in process,
-  `ve_conformance route`, `ve conformance`); verdicts and errors are reduced as the P0 three-way test
-  reduces them, so a text is compared when the P0 contract fixes it (`three_way.KNOWN`).
-* `environment`: every distinct environment of the corpus and the use cases, decoded by Python's
-  `Environment`, by the Lean route that decodes that envelope (`lean_route`) and by Rust (a `label`
-  case); a text is compared when either side is a decoder type diagnostic (`TYPE_DIAGNOSTICS`), and the
-  environment identity when both engines report one.
-* `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`), by the Python
-  engine and `ve_diagnose`; the whole diagnostic record is compared, except the text and args of an
-  inherited check (the contract's `inherited` flag).
+* `requests`: every route request of the fixtures (the P0 families, the v0 families, the use cases' requests
+  and their models against their environments), through `conformance.three_way`: Python in process, Lean by
+  the runner its environment's language takes (`LEAN_REQUESTS`: `ve_conformance route` for ve.core@0.2,
+  `ve_conformance` and its `check-certificate` mode for v0), Rust by `ve conformance` where `rust_request`
+  maps the case. Each implementation's own diagnostic code is compared; a text where the P0 contract fixes it
+  (`three_way.KNOWN`, P0 route only).
+* `environment`: every distinct environment of the fixtures, decoded by Python's `Environment`, by the Lean
+  route that decodes that envelope (`lean_route`) and by Rust, each as the route table `ROUTES` says (an
+  engine with no path there is named with the reason). A text is compared when either side is a decoder
+  type diagnostic (`TYPE_DIAGNOSTICS`), and the environment identity when the engines report one.
+* `wire`: the wire-contract units (`demo@0`, `defer@0`, `forms@0`, `soft-norms@0`), by the Python engine
+  and `ve_diagnose`; the whole diagnostic record is compared, except the text and args of an inherited
+  check (the contract's `inherited` flag).
 
-Each seed gets 1-fault and 2-fault mutants (`one_faults`): every JSON node replaced by 7, true, null,
-[], {} and "x"; an object member removed; keys and lists reversed; a list's first entry duplicated;
-string values and object keys with NBSP, a double space, a tab, a carriage return, U+212A, a dotted
-capital I, upper case, Arabic-Indic digits, a curly quote and a control character (U+001C); and every array or string a wire-contract table limits
-resized to limit - 1, limit and limit + 1 (`limit_patterns`). An implementation takes part on a seed
-when it has a path for it: it accepts the unmutated seed (or, for `p0`, the three-way test runs it).
+Each seed is run as it is, and its 1-fault and 2-fault mutants (`one_faults`): every JSON node replaced by
+7, true, null, [], {} and "x"; an object member removed; keys and lists reversed; a list's first entry
+duplicated; string values and object keys with NBSP, a double space, a tab, a carriage return, U+212A, a
+dotted capital I, upper case, Arabic-Indic digits, a curly quote and a control character (U+001C); and
+every array or string a wire-contract table limits resized to limit - 1, limit and limit + 1
+(`limit_patterns`). An implementation takes part on an input when the surface gives it a path; an input
+off the restricted wire (null, a float) is refused by every Lean and Rust package reader, so their answer
+is that refusal (`framing`), which agrees with any rejection and disagrees with an acceptance.
 
-A *finding* is a Python exception other than VEError, a Lean or Rust process that does not answer
-(panic, signal, malformed output), or a disagreement between the answers of the implementations that
-take part. Findings are grouped by signature (surface, profile, classes and the compared answers).
-A signature in the reviewed baseline (`conformance/difffuzz-baseline.json`) is known; any other is
-new, and is minimised (`minimise`) before it is reported. Every baseline entry is replayed on its
-minimised input and must still give its recorded answers, so a fix must shrink the baseline.
+Every row a Lean or Rust runner returns is checked against the schema its producer declares before it is
+read (the `*_row_problem` checks: the Lean service schemas, the assurance manifest's runner bindings, and the
+encoders' response tables `LEAN_ROUTE_FIELDS`, `RECORD_FIELDS` and `RUST_ROWS`); a row that fails is a
+runner that did not answer, never an answer.
+
+A *finding* is a Python exception other than VEError, a Python call that does not finish in its CPU
+budget, a Lean or Rust process that does not answer (panic, signal, malformed output), or a disagreement
+between the answers of the implementations that take part. Findings are grouped by signature (surface,
+profile, classes and the compared answers). A signature in the reviewed baseline
+(`conformance/difffuzz-baseline.json`) is known; any other is new, and is minimised (`minimise`) before it
+is reported. Every baseline entry is replayed on its minimised input and must still give its recorded
+answers, so a fix must shrink the baseline.
 
     python3 tools/difffuzz.py --ci           # seeded and bounded; tests/test_difffuzz.py runs it
     python3 tools/difffuzz.py --deep 20      # nightly: 20 times the CI sample, seeded by the date
@@ -58,10 +70,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tests.subprocesses import HANG_TIMEOUT, run_cpu_bounded  # noqa: E402
+from tools import difffuzz_corpus as corpus  # noqa: E402
 
 BIN = ROOT / "lean/.lake/build/bin"
 BASELINE = ROOT / "conformance/difffuzz-baseline.json"
-FORMAT = "ve-difffuzz-baseline@1"
+FORMAT = "ve-difffuzz-baseline@2"
 ENGINES = ("python", "lean", "rust")
 
 # The whole environment of a Lean or Rust runner: nothing from the caller's shell reaches it.
@@ -73,7 +86,7 @@ BATCH_CPU = 300
 BATCH_CASES = 400
 
 # The CI sample: 1-fault and 2-fault mutants per surface. `--deep N` multiplies both.
-CI_BUDGET = {"p0": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500)}
+CI_BUDGET = {"requests": (6000, 1500), "environment": (6000, 1500), "wire": (6000, 1500)}
 CHUNK = 2000
 MINIMISE_EVALUATIONS = 3000
 # New signatures minimised in one run; any beyond are reported as found (`"minimised": false`).
@@ -142,16 +155,16 @@ def _insert_space(text, space):
 
 
 UNICODE = {
-    "nbsp": lambda s: _insert_space(s, "\u00a0"),
+    "nbsp": lambda s: _insert_space(s, " "),
     "double-space": lambda s: _insert_space(s, "  "),
     "tab": lambda s: _insert_space(s, "\t"),
     "cr": lambda s: s + "\r",
-    "kelvin": lambda s: _replace_first(s, "kK", "\u212a"),
-    "dotted-i": lambda s: _replace_first(s, "iI", "\u0130"),
+    "kelvin": lambda s: _replace_first(s, "kK", "K"),
+    "dotted-i": lambda s: _replace_first(s, "iI", "İ"),
     "upper": lambda s: s.upper(),
     "digits": lambda s: "".join(chr(0x660 + int(c)) if c in "0123456789" else c for c in s),
-    "curly-quote": lambda s: (_replace_first(s, "'", "\u2019") or _replace_first(s, '"', "\u201d")
-                              or s + "\u2019"),
+    "curly-quote": lambda s: (_replace_first(s, "'", "’") or _replace_first(s, '"', "”")
+                              or s + "’"),
     "control": lambda s: s + "\x1c",
 }
 
@@ -280,38 +293,78 @@ def _matches(pattern, path):
     return len(pattern) == len(path) and all(p == "*" or p == str(s) for p, s in zip(pattern, path))
 
 
-def one_faults(root, protected, limits, mutate_root=False):
-    """Every 1-fault mutation of `root` that changes it: [op, path, arg] lists, the limit ones last."""
+def fault_nodes(root, protected, mutate_root=False):
+    """The (path, node) pairs of `root` a mutation may change."""
+    return [(path, node) for path, node in walk(root)
+            if (path or mutate_root) and not any(related(path, p) and len(path) >= len(p) for p in protected)]
+
+
+def node_faults(root, path, node):
+    """Every 1-fault mutation of one node that changes it, but the limit ones."""
     out = []
-    nodes = [(path, node) for path, node in walk(root)
-             if (path or mutate_root) and not any(related(path, p) and len(path) >= len(p) for p in protected)]
-    for path, node in nodes:
-        where = list(path)
-        for kind, value in TYPES.items():
-            if not (type(node) is type(value) and node == value):
-                out.append(["type", where, kind])
-        if path and type(path[-1]) is str:
-            out.append(["absent", where, None])
-            siblings = get(root, path[:-1])
-            for name, change in UNICODE.items():
-                changed = change(path[-1])
-                if changed is not None and changed not in siblings:
-                    out.append(["key", where, name])
-        if (type(node) is dict and len(node) > 1) or (type(node) is list and node != node[::-1]):
-            out.append(["reorder", where, None])
-        if type(node) is list and node:
-            out.append(["duplicate", where, None])
-        if type(node) is str:
-            for name, change in UNICODE.items():
-                changed = change(node)
-                if changed is not None and changed != node:
-                    out.append(["unicode", where, name])
+    where = list(path)
+    for kind, value in TYPES.items():
+        if not (type(node) is type(value) and node == value):
+            out.append(["type", where, kind])
+    if path and type(path[-1]) is str:
+        out.append(["absent", where, None])
+        siblings = get(root, path[:-1])
+        for name, change in UNICODE.items():
+            changed = change(path[-1])
+            if changed is not None and changed not in siblings:
+                out.append(["key", where, name])
+    if (type(node) is dict and len(node) > 1) or (type(node) is list and node != node[::-1]):
+        out.append(["reorder", where, None])
+    if type(node) is list and node:
+        out.append(["duplicate", where, None])
+    if type(node) is str:
+        for name, change in UNICODE.items():
+            changed = change(node)
+            if changed is not None and changed != node:
+                out.append(["unicode", where, name])
+    return out
+
+
+def limit_faults(nodes, limits):
+    """The limit - 1, limit and limit + 1 resizings of every node a limit pattern matches."""
+    out = []
     for pattern, kind, limit in limits:
         for path, node in nodes:
             if _matches(pattern, path) and type(node) is (list if kind == "max_items" else str):
                 out.extend(["limit", list(path), size] for size in (limit - 1, limit, limit + 1)
                            if size >= 0 and size != len(node) and _resized(node, size) is not None)
     return out
+
+
+def one_faults(root, protected, limits, mutate_root=False):
+    """Every 1-fault mutation of `root` that changes it: [op, path, arg] lists, the limit ones last."""
+    nodes = fault_nodes(root, protected, mutate_root)
+    return [m for path, node in nodes for m in node_faults(root, path, node)] + limit_faults(nodes, limits)
+
+
+class Faults:
+    """The 1-fault mutations of one seed, drawn without listing them all: a node (or the seed's limit
+    resizings, as one more entry) at random, then one of its mutations at random, never the same twice."""
+
+    def __init__(self, root, protected, limits, mutate_root):
+        self.root = root
+        self.nodes = fault_nodes(root, protected, mutate_root)
+        self.limits = limit_faults(self.nodes, limits)
+        self.used = set()
+
+    def draw(self, rng, attempts=24):
+        entries = len(self.nodes) + (1 if self.limits else 0)
+        for _ in range(attempts if entries else 0):
+            pick = rng.randrange(entries)
+            candidates = self.limits if pick == len(self.nodes) else node_faults(self.root, *self.nodes[pick])
+            if not candidates:
+                continue
+            mutation = candidates[rng.randrange(len(candidates))]
+            key = canonical(mutation)
+            if key not in self.used:
+                self.used.add(key)
+                return mutation
+        return None
 
 
 # ---------------------------------------------------------------- answers
@@ -325,18 +378,28 @@ def error(code, text):
 
 
 NOT_APPLICABLE = {"outcome": "n/a"}
-OFF_WIRE = {"outcome": "off-wire"}
+# A Lean or Rust package reader's refusal of an input as a whole: it agrees with any rejection.
+FRAMING = "framing"
+
+
+def malformed(problem):
+    return {"outcome": "panic", "text": f"malformed row: {problem}"[:300]}
+
+
+def off_wire(value):
+    """Why `value` is not restricted JSON (the only input the Lean and Rust package readers take, and the
+    only one the Lean and Rust backends send: `ve.wire.canonical_json` checks it so), or None when it is."""
+    from ve.errors import VEError
+    from ve.wire import validate_json
+    try:
+        validate_json(value)
+        return None
+    except VEError as exc:
+        return exc.message
 
 
 def on_wire(value):
-    """Whether `value` is restricted JSON, the only input the Lean and Rust package readers take."""
-    from ve.errors import VEError
-    from ve.wire import canonical_json
-    try:
-        canonical_json(value)
-        return True
-    except VEError:
-        return False
+    return off_wire(value) is None
 
 
 @contextmanager
@@ -372,7 +435,8 @@ def python_authority():
 def call_python(function, harness):
     """Run one Python call. A VEError is the implementation's answer; any other exception raised
     inside `ve/` is a crash; one raised by the harness itself (`harness` files: a field the adapter
-    reads is missing or mistyped) means the call cannot be made, and is not applicable."""
+    reads is missing or mistyped) means the call cannot be made, and is not applicable. A call that
+    spends its CPU budget is a `timeout`, which is a finding."""
     from ve.errors import VEError
     try:
         with python_authority(), _cpu_alarm(PYTHON_CPU):
@@ -391,9 +455,13 @@ def call_python(function, harness):
         return {"outcome": "crash", "code": type(exc).__name__, "text": str(exc)[:200]}
 
 
+# ---------------------------------------------------------------- runner rows
+
 def run_rows(command, cases):
     """One row per case from a batch runner, or the reason it did not answer: a batch that does not
-    answer is split until the case that does not answer is alone (`{"panic": reason}`)."""
+    answer is split until the case that does not answer is alone (`{"panic": reason}`). A batch
+    answers when it prints one object per case, in order, with each case's id, and its exit status is
+    1 exactly when some row is an error (the one-shot runner contract, `ve/backends/lean.py`)."""
     if not cases:
         return []
     text = json.dumps(cases, ensure_ascii=False)
@@ -410,17 +478,37 @@ def run_rows(command, cases):
             rows = None
         if type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows):
             reason = f"malformed output: {completed.stdout[:200]}"
-        elif [r.get("id") for r in rows] != [c.get("id") for c in cases]:
+        elif bind_rows(rows, cases) is None:
             reason = "rows out of order"
+        elif (completed.returncode == 1) != any(r.get("status") == "error" for r in rows):
+            reason = f"exit status {completed.returncode} disagrees with the rows"
     if reason is None:
-        return rows
+        return bind_rows(rows, cases)
     if len(cases) == 1:
         if completed.returncode == 2 and reason.startswith("exit 2"):
             # The runner refused the package (framing): an answer, compared with Python's.
-            return [{"framing": completed.stderr.strip()[-300:]}]
+            return [{"framing": completed.stderr.strip()[-300:] or completed.stdout.strip()[-300:]}]
         return [{"panic": reason}]
     middle = len(cases) // 2
     return run_rows(command, cases[:middle]) + run_rows(command, cases[middle:])
+
+
+def _bound(row, case, index):
+    """Whether a row names its case: by its id, or (an error row of a case the runner could not read) by
+    its position, with JSON types kept apart (`false` is not case 0)."""
+    if "id" in row:
+        return row["id"] == case.get("id") and type(row["id"]) is type(case.get("id"))
+    return row.get("status") == "error" and type(row.get("case_index")) is int and row["case_index"] == index
+
+
+def bind_rows(rows, cases):
+    """The rows bound to their cases, or None when one does not name its case (`_bound`). A case the
+    runner could not read is named by its position (`case_index`); its row is bound to the case's id, so
+    that it reads as that case's error."""
+    if not all(_bound(row, case, index) for index, (row, case) in enumerate(zip(rows, cases))):
+        return None
+    return [{"id": case["id"], "status": "error", "error": row.get("error")} if "id" not in row else row
+            for row, case in zip(rows, cases)]
 
 
 def batched(command, cases):
@@ -432,8 +520,175 @@ def batched(command, cases):
 
 def panic(row):
     if "framing" in row:
-        return error("framing", row["framing"])
+        return error(FRAMING, row["framing"])
     return {"outcome": "panic", "text": row["panic"]} if "panic" in row else None
+
+
+# ---------------------------------------------------------------- responses
+
+# Response types: the assurance manifest's (`ve/backends/lean.py` `conforms`): bool, nat, string, object,
+# json, array<T>.
+LEAN_ENVELOPE = {}  # the one-shot runner row contract alone (status, error, id), `row_problem`
+
+# The ok rows of the Lean routes that decode an environment, by route: their encoders' fields
+# (`lean/VE/<Route>/Run.lean`); `tests/test_difffuzz.py` checks them against genuine rows.
+_ELABORATED = {"background": "array<json>", "conflict_targets": "array<json>", "fragment": "bool",
+               "order": "array<json>", "premises": "array<json>"}
+_ALTERNATIVES = {**_ELABORATED, "alternatives": "array<json>", "base_premises": "array<json>",
+                 "followable": "object", "inlined": "array<json>", "legend": "array<json>",
+                 "unmapped_obligations": "array<json>"}
+LEAN_ROUTE_FIELDS = {
+    "alternatives": {**_ALTERNATIVES, "profile_exists": "object"},
+    "risk": {**_ALTERNATIVES, "document_hash": "string", "e_risk": "object", "environment_id": "string",
+             "risk_premises": "array<json>", "unranked_severities": "array<json>"},
+    "soft-norms": {**_ELABORATED, "colliding_pairs": "array<json>", "conditional_on": "array<json>",
+                   "decisions": "array<json>", "derived": "array<json>", "environment_prime": "object",
+                   "warnings": "array<json>"},
+    "norm-defaults": {**_ELABORATED, "fill": "array<json>", "fragment_fill": "bool", "reached": "array<json>",
+                      "unsaid": "array<json>", "unspecified": "array<json>"},
+    "speech": {"commands": "array<json>", "dormant": "array<json>", "environment_id": "string",
+               "legend": "array<json>", "policy": "object", "premises": "array<json>", "queries": "array<json>",
+               "questions": "array<json>", "scope": "object"},
+    "reports": {"bridge_formulas": "array<json>", "content_ids": "array<json>", "envelope": "object",
+                "environment_reports_id": "string", "keys": "array<json>", "open_terms": "array<json>",
+                "premises": "array<json>", "warnings": "array<json>"},
+    # `lean/VE/Time/Wire.lean` `runCase`, kind `admission`.
+    "quantity": {"assurance": "string", "Q": "json", "core": "json", "meaning_id": "string",
+                 "core_meaning_id": "string", "environment_id": "string", "target_environment_id": "string"},
+}
+
+# The diagnostic record of a wire contract (`ve/wire_contract/engine.py`, the `Fault` record), which
+# `ve_diagnose` emits for the same contract.
+RECORD_FIELDS = {"contract": "string", "revision": "nat", "check": "string", "phase": "string",
+                 "code": "string", "class": "string", "path": "string", "text": "string", "args": "object"}
+
+# Rust `ve conformance` rows by request kind: (the statuses of an answer, its fields, counted fields);
+# the encoders are `rust/ve-core/src/{order,units}.rs`. An error row is `{"id", "status": "error",
+# "error": {"code", "message"}}`.
+RUST_ROWS = {
+    "label": ({"ok"}, {"label": "string"}, {}),
+    "dependency-order": ({"ok"}, {"order": "array<string>"}, {}),
+    "evaluate": ({"ok"}, {"values": "array<bool>"}, {"values": "case.ast"}),
+    "parse": ({"ok"}, {"ast": "json", "canonical": "string", "meaning_id": "string"}, {}),
+    "countermodel": ({"ok", "Valid", "NotCountermodel"}, {"valid": "bool"}, {}),
+    "search": ({"Found", "NotFound", "ResourceLimit"}, {"model": "json"}, {}),
+    "quantity": ({"ok"}, {"environment_id": "string", "target_environment_id": "string",
+                          "meaning_id": "string"}, {}),
+}
+
+
+def rust_operation(case):
+    """The operation `ve conformance` reads a case as, by its fields (`rust/ve-core/src/order.rs`
+    `order_case` and the core dispatch): a named kind, else premises and a conclusion are a countermodel
+    check with a model and a search without, else a document is evaluated with a model and parsed
+    without."""
+    kind = case.get("kind")
+    if kind in ("label", "dependency-order", "quantity", "countermodel"):
+        return kind
+    if "premises" in case and "conclusion" in case:
+        return "countermodel" if "model" in case else "search"
+    return "evaluate" if "model" in case else "parse"
+
+
+def manifest_bindings(executable, mode, kinds):
+    """Every binding the assurance manifest declares for a Lean runner call (`ve/assurance-manifest.json`):
+    the response fields and counts its `ok` rows carry."""
+    from ve.assurance import OPERATIONS
+    return [binding for op in OPERATIONS.values() for binding in (op.get("lean") or {}).get("bindings", ())
+            if binding["executable"] == executable and binding["mode"] == mode
+            and set(binding.get("kinds", ())) == set(kinds)]
+
+
+def lean_row_problem(case, row, index, response=LEAN_ENVELOPE, counts=None):
+    from ve.backends.lean import row_problem
+    return row_problem(case, row, index, response, counts)
+
+
+def route_row_problem(case, row, index):
+    """A `ve_conformance route` row against the service's `route` schema, which tests/test_lean_service_schema.py
+    checks against the Lean decoders (`ve_response_decode`)."""
+    from ve.backends.service_schema import Invalid, check_row
+    try:
+        check_row("route", row, case, index)
+    except Invalid as exc:
+        return str(exc)
+    return None
+
+
+def bound_row_problem(executable, mode, kinds):
+    """A row checked against every manifest binding of the call; a call with none declared is an error of
+    the fuzzer's table, not a row problem."""
+    bindings = manifest_bindings(executable, mode, kinds)
+    assert bindings, f"no manifest binding for {executable} {mode or '(default)'} {kinds}"
+
+    def check(case, row, index):
+        for binding in bindings:
+            problem = lean_row_problem(case, row, index, binding["response"], binding.get("counts"))
+            if problem:
+                return problem
+        return None
+    return check
+
+
+def fields_row_problem(fields, counts=None):
+    def check(case, row, index):
+        return lean_row_problem(case, row, index, fields, counts)
+    return check
+
+
+def rust_row_problem(kind):
+    from ve.backends.lean import conforms
+    statuses, fields, counts = RUST_ROWS[kind]
+
+    def check(case, row, index):
+        if type(row) is not dict:
+            return "a result row is not an object"
+        if row.get("id") != case.get("id") or type(row.get("id")) is not type(case.get("id")):
+            return "result ids do not match the submitted cases"
+        status = row.get("status")
+        if status == "error":
+            problem = row.get("error")
+            if type(problem) is not dict or type(problem.get("code")) is not str or \
+                    type(problem.get("message")) is not str:
+                return "an error row has no error code and message"
+            return None
+        if type(status) is not str or status not in statuses:
+            return f"a result row has no status of {sorted(statuses | {'error'})}"
+        for name, spec in fields.items():
+            if name not in row or not conforms(row[name], spec):
+                return f"an answer has no well-formed {name!r} ({spec})"
+        for name, reference in counts.items():
+            source, _, counted = reference.partition(".")
+            other = (case if source == "case" else row).get(counted)
+            if type(other) is not list or len(row[name]) != len(other):
+                return f"an answer's {name!r} does not count {reference}"
+        return None
+    return check
+
+
+def diagnose_row_problem(case, row, index):
+    from ve.backends.lean import conforms
+    problem = lean_row_problem(case, row, index)
+    if problem or row["status"] == "error":
+        return problem
+    if row.get("outcome") == "clean":
+        return None if set(row) == {"id", "status", "outcome"} else "a clean row has other fields"
+    # `lean/VE/WireContract/Diagnose.lean` `diagnoseCase`: `clean`, or `fault` with one record.
+    record = row.get("diagnostic")
+    if row.get("outcome") != "fault" or set(row) != {"id", "status", "outcome", "diagnostic"}:
+        return "an ok row is neither clean nor one fault"
+    if type(record) is not dict or set(record) != set(RECORD_FIELDS):
+        return f"a diagnostic is not a record of {sorted(RECORD_FIELDS)}"
+    for name, spec in RECORD_FIELDS.items():
+        if not conforms(record[name], spec):
+            return f"a diagnostic has no well-formed {name!r} ({spec})"
+    return None
+
+
+def checked(problem_of, case, row, index):
+    """The row, or the reason it is not a well-formed answer (a `malformed` answer)."""
+    problem = problem_of(case, row, index)
+    return (row, None) if problem is None else (None, malformed(problem))
 
 
 # ---------------------------------------------------------------- surfaces
@@ -465,6 +720,10 @@ class Surface:
         """The route or unit an input takes: findings are counted and signed by it."""
         return seed.profile
 
+    def path(self, engine, seed, root):
+        """Whether `engine` has a path for the input `root` of `seed`."""
+        return engine in seed.engines
+
     def limits(self, seed):
         out = []
         for unit, pattern, kind, limit in LIMITS():
@@ -477,19 +736,20 @@ class Surface:
         return out
 
     def answers(self, items):
-        """{engine: answer} for each (seed, root), from the engines of `ENGINES` that take part on its
-        seed; each of Lean and Rust answers every item in batches."""
+        """{engine: answer} for each (seed, root): every engine of `ENGINES` answers, `n/a` when it has
+        no path for the input (`path`); each of Lean and Rust answers its items in batches, and the input
+        off the restricted wire gets every package reader's refusal (`framing`) without being sent."""
         out = [{} for _ in items]
-        wire = [on_wire(root) for _, root in items]
+        refused = [off_wire(root) for _, root in items]
         for engine in ENGINES:
-            chosen = [index for index, (seed, _) in enumerate(items) if engine in seed.engines]
-            if engine != "python":
-                # Lean and Rust read packages of restricted JSON only (no null, no float): an input
-                # off that wire never reaches them, so they have no answer to compare.
-                for index in chosen:
-                    if not wire[index]:
-                        out[index][engine] = OFF_WIRE
-                chosen = [index for index in chosen if wire[index]]
+            chosen = []
+            for index, (seed, root) in enumerate(items):
+                if not self.path(engine, seed, root):
+                    out[index][engine] = NOT_APPLICABLE
+                elif engine != "python" and refused[index] is not None:
+                    out[index][engine] = error(FRAMING, refused[index])
+                else:
+                    chosen.append(index)
             if not chosen:
                 continue
             if engine == "python":
@@ -511,6 +771,11 @@ class Surface:
     def value_compared(self, seed, engine):
         return True
 
+    def equivalent(self, seed, left, right):
+        """Whether two engines' different answers, each (engine, answer), mean the same under the
+        surface's contract."""
+        return False
+
 
 _LIMITS = None
 
@@ -522,48 +787,93 @@ def LIMITS():
     return _LIMITS
 
 
-# P0 ---------------------------------------------------------------------------
+# Requests -----------------------------------------------------------------------
 
-P0_FAMILIES = ("elaborated-document", "invalid-background-model", "dependency-order", "labels", "admission")
-P0_VALUES = {"label": ("label",), "dependency-order": ("order",), "evaluate": ("values",),
-             "countermodel": ("refutes",), "search": ("found", "model"), "certificate": ("valid",),
-             "background": ("background", "generators"),
-             "admission": ("admitted", "report", "report_id", "kinds")}
+V0_LANGUAGES = ("ve.core@0", "ve.core@0.1")
+
+# The Lean runner that answers each request kind, by its environment's language family (v0: ve.core@0 and
+# ve.core@0.1; core: every other language): the `ve_conformance` mode, or None with the reason.
+LEAN_REQUESTS = {
+    "core": {kind: "route" for kind in ("label", "dependency-order", "admission", "background", "evaluate",
+                                         "countermodel", "certificate")},
+    "v0": {"evaluate": "", "countermodel": "", "certificate": "check-certificate"},
+}
+NO_LEAN = {
+    ("core", "search"): "the route checks a search's model only as a countermodel",
+    ("v0", "search"): "the v0 runner checks a search's model only as a countermodel",
+    ("v0", "label"): "labels are a ve.core@0.2 route kind",
+    ("v0", "dependency-order"): "dependency orders are a ve.core@0.2 route kind",
+    ("v0", "admission"): "admission is a ve.core@0.2 route kind",
+    ("v0", "background"): "Background is a ve.core@0.2 route kind",
+}
+REQUEST_VALUES = {"label": ("label",), "dependency-order": ("order",), "evaluate": ("values",),
+                  "countermodel": ("refutes",), "search": ("found", "model"), "certificate": ("valid",),
+                  "background": ("background", "generators"),
+                  "admission": ("admitted", "report", "report_id", "kinds")}
+# The v0 wire takes these kinds without a `kind` member (the manifest bindings' `kinds: []`).
+V0_UNKINDED = ("evaluate", "certificate")
 
 
-class P0(Surface):
-    """The P0 route families of the three-way test (the vacuity family asserts its own witness)."""
-    name = "p0"
+def language_family(environment):
+    language = environment.get("language") if type(environment) is dict else None
+    return "v0" if language in V0_LANGUAGES else "core"
+
+
+def lean_request(seed, root):
+    """The Lean case for an input and the mode it goes to (its seed's runner)."""
+    mode = seed.meta["lean"]
+    case = dict(root)
+    if seed.meta["family"] == "v0" and case.get("kind") in V0_UNKINDED:
+        del case["kind"]
+    return mode, case
+
+
+def lean_row_check(seed, case):
+    family, kind, mode = seed.meta["family"], seed.meta["kind"], seed.meta["lean"]
+    if mode == "route":
+        return route_row_problem
+    kinds = [] if kind in V0_UNKINDED else [kind]
+    return bound_row_problem("ve_conformance", mode, kinds)
+
+
+class Requests(Surface):
+    """Every route request of the fixtures (`difffuzz_corpus.requests`)."""
+    name = "requests"
     protected = (("id",), ("kind",), ("max_domain_size",))
     env_prefix = ("environment",)
     harness = frozenset({"difffuzz.py", "three_way.py"})
 
     def seeds(self):
-        from conformance.three_way import rust_request
+        from conformance.three_way import python_verdict, rust_request
         out = []
-        for family in P0_FAMILIES:
-            for case in json.loads((ROOT / f"conformance/{family}.json").read_text()):
-                if "pending" in case:
-                    continue
-                root = {k: v for k, v in case.items() if k != "expected"}
-                engines = ["python"]
-                if case["kind"] != "search":
-                    engines.append("lean")
-                if rust_request(case) is not None:
-                    engines.append("rust")
-                out.append(Seed("p0", f"{family}:{case['kind']}", f"{family}/{case['id']}", root,
-                                tuple(engines), {"expected": case["expected"], "kind": case["kind"]}))
+        for origin, kind, case, expected in corpus.requests():
+            family = language_family(case["environment"])
+            mode = LEAN_REQUESTS[family].get(kind)
+            root = {"id": origin, **case}
+            if expected is None and kind == "certificate":
+                # Rust's certificate verdict is a bounded search: it takes part when the certificate is valid.
+                verdict = call_python(lambda: python_verdict(deepcopy(root)), self.harness)
+                expected = {"valid": verdict.get("valid") is True}
+            engines = ["python"] + (["lean"] if mode is not None else [])
+            template = rust_request({**root, "expected": expected or {}})
+            rust = None
+            if template is not None:
+                engines.append("rust")
+                # The fields Rust's case reads from the input, and the ones `rust_request` sets itself.
+                rust = {"fields": [k for k in template if k in root],
+                        "constants": {k: v for k, v in template.items() if k not in root},
+                        "operation": rust_operation(template)}
+            stem = origin.split("/")[1].split(".json")[0] if origin.startswith("conformance/") else \
+                "usecase:" + origin.split("/")[1]
+            out.append(Seed("requests", f"{stem}:{kind}", origin, root, tuple(engines),
+                            {"kind": kind, "family": family, "lean": mode, "rust": rust}))
         return out
 
     def _verdict(self, seed, verdict):
-        kind = seed.meta["kind"]
         if verdict["status"] == "error":
-            if kind == "certificate" and verdict["code"] not in ("UnsupportedProfile", "ResourceLimit"):
-                # `three_way.lean_verdict`'s certificate rule, applied to every engine alike.
-                return ok({"valid": False})
-            return {**error(verdict["code"], verdict["error"]),
+            return {**error(verdict["diagnostic_code"], verdict["error"]),
                     **({"generator": verdict["generator"]} if "generator" in verdict else {})}
-        return ok({key: verdict.get(key) for key in P0_VALUES[kind]})
+        return ok({key: verdict.get(key) for key in REQUEST_VALUES[seed.meta["kind"]]})
 
     def python(self, seed, root):
         from conformance.three_way import python_verdict
@@ -571,47 +881,78 @@ class P0(Surface):
         return self._verdict(seed, answer) if "status" in answer else answer
 
     def lean(self, items):
-        from conformance.three_way import lean_verdict
-        rows = batched([BIN / "ve_conformance", "route", "-"],
-                       [{**root, "id": str(index)} for index, (_, root) in enumerate(items)])
-        return [panic(row) or self._lean(seed, root, row, lean_verdict) for (seed, root), row in zip(items, rows)]
+        from conformance.three_way import error_verdict
+        by_mode = {}
+        for index, (seed, root) in enumerate(items):
+            mode, case = lean_request(seed, root)
+            by_mode.setdefault(mode, []).append((index, {**case, "id": str(index)}))
+        out = [None] * len(items)
+        for mode, group in by_mode.items():
+            command = [BIN / "ve_conformance", *([mode] if mode else []), "-"]
+            rows = batched(command, [case for _, case in group])
+            for (index, case), row in zip(group, rows):
+                seed, root = items[index]
+                if panic(row):
+                    out[index] = panic(row)
+                    continue
+                row, bad = checked(lean_row_check(seed, case), case, row, 0)
+                if bad:
+                    out[index] = bad
+                elif row["status"] == "error":
+                    out[index] = self._verdict(seed, error_verdict(None, row["error"], row.get("generator")))
+                else:
+                    out[index] = ok({key: row.get(key) for key in REQUEST_VALUES[seed.meta["kind"]]})
+        return out
 
-    def _lean(self, seed, root, row, lean_verdict):
-        try:
-            return self._verdict(seed, lean_verdict(root, row))
-        except (KeyError, TypeError) as exc:
-            return {"outcome": "panic", "text": f"malformed row {exc!r}: {canonical(row)[:200]}"}
+    def rust_case(self, seed, root):
+        """The Rust case of an input: the fields its seed's request reads (`rust_request` on the seed),
+        each taken from the input where the input has it, and the ones `rust_request` sets."""
+        rust = seed.meta["rust"]
+        return {**{key: root[key] for key in rust["fields"] if key in root}, **rust["constants"]}
 
     def rust(self, items):
-        from conformance.three_way import rust_request, rust_verdict
-        requests = []
-        for index, (seed, root) in enumerate(items):
-            try:
-                request = rust_request({**root, "expected": seed.meta["expected"]})
-            except (KeyError, TypeError, AttributeError):
-                request = None
-            requests.append(request if request is None else {**request, "id": str(index)})
-        sent = [r for r in requests if r is not None]
-        rows = iter(batched([rust_binary(), "conformance"], sent))
+        from conformance.three_way import rust_verdict
+        cases = [{**self.rust_case(seed, root), "id": str(index)} for index, (seed, root) in enumerate(items)]
         out = []
-        for (seed, root), request in zip(items, requests):
-            if request is None:
-                out.append(NOT_APPLICABLE)
+        for (seed, root), case, row in zip(items, cases, batched([rust_binary(), "conformance"], cases)):
+            if panic(row):
+                out.append(panic(row))
                 continue
-            row = next(rows)
-            try:
-                out.append(panic(row) or self._verdict(seed, rust_verdict(root, row)))
-            except (KeyError, TypeError) as exc:
-                out.append({"outcome": "panic", "text": f"malformed row {exc!r}: {canonical(row)[:200]}"})
+            kind = seed.meta["kind"]
+            operation = rust_operation(case)
+            row, bad = checked(rust_row_problem(operation), case, row, 0)
+            if bad:
+                out.append(bad)
+            elif row["status"] != "error" and operation != seed.meta["rust"]["operation"]:
+                # A field the mutant dropped makes Rust read another request (a document parsed, not
+                # evaluated): Rust accepted the input, and its answer has nothing to compare.
+                out.append(ok(None))
+            else:
+                out.append(self._verdict(seed, rust_verdict({"kind": kind}, row)))
         return out
 
     def value_compared(self, seed, engine):
         # Rust's certificate verdict is a bounded search, not a replay (three-way test, plan 3.7).
         return not (engine == "rust" and seed.meta["kind"] == "certificate")
 
+    def equivalent(self, seed, left, right):
+        # A certificate the Lean route rejects is an invalid certificate (`three_way.lean_verdict`): any
+        # rejection but an unsupported profile or a resource limit means `valid: false`. Rust's
+        # certificate answer is a bounded search that never reads the certificate, so the Lean route's
+        # rejection of a certificate does not contradict it (Python's rejections are compared with it).
+        if seed.meta["kind"] != "certificate":
+            return False
+        for (rejecter, x), (engine, y) in ((left, right), (right, left)):
+            if x["outcome"] == "error" and x.get("code") not in ("UnsupportedProfile", "ResourceLimit") \
+                    and y["outcome"] == "ok":
+                if engine == "rust":
+                    return rejecter == "lean"
+                return (y.get("value") or {}).get("valid") is False
+        return False
+
     def text_fixed(self, seed, left, right):
         from conformance.three_way import KNOWN
-        return left[1]["code"] in KNOWN
+        return seed.meta["lean"] == "route" and left[1]["code"] in KNOWN
 
     def error_key(self, answer):
         # The P0 contract fixes an InvalidModel's generator, not its text.
@@ -632,16 +973,52 @@ TYPE_DIAGNOSTICS = {
     ("InvalidInput", "InvalidInput: environment vocabulary"),
 }
 
-# The Lean route that decodes each kind of envelope, and a case on which that route answers with the
-# environment decoded and nothing else to fail.
-ROUTE_CASES = {
-    "alternatives": ("ve_alternatives_route", {"kind": "alt-elaborate", "norms": []}),
-    "risk": ("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}}),
-    "soft-norms": ("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}),
-    "speech": ("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}}),
-    "reports": ("ve_reports_route", {"kind": "reports-elaborate", "document": {"units": []}}),
-    "quantity": ("ve_quantity", {"kind": "document", "document": {"units": []}}),
+TOP_QUANTITY = {"format": "ve-quantity@1", "formula": ["top"]}
+
+
+@dataclass(frozen=True)
+class Route:
+    """How each engine decodes one kind of environment. `lean` is the Lean executable and the case fields
+    that make it decode the environment and nothing else to fail (`ve_service` is the service's
+    `environment` mode); `rust` builds Rust's case for an environment, or is None with `no_rust` the
+    reason. `identity`: the engines report the environment identity."""
+    lean: str
+    case: dict | None
+    rust: object = None
+    no_rust: str = ""
+    identity: bool = False
+
+
+def _rust_label(env):
+    return {"kind": "label", "label": "asserted", "environment": env}
+
+
+def _rust_quantity(env):
+    return {"kind": "quantity", "environment": env, "quantity": TOP_QUANTITY}
+
+
+ROUTES = {
+    "envelope": Route("ve_service", None, _rust_label, identity=True),
+    "alternatives": Route("ve_alternatives_route", {"kind": "alt-elaborate", "norms": []},
+                          no_rust="Rust reads the four core envelope fields only (no alternatives block)"),
+    "risk": Route("ve_risk_route", {"kind": "risk-elaborate", "document": {"norms": []}},
+                  no_rust="Rust reads the four core envelope fields only (no risk block)"),
+    "soft-norms": Route("ve_soft_norms_route", {"kind": "soft-elaborate", "norms": []}, _rust_label),
+    "speech": Route("ve_speech_acts_route", {"kind": "speech-elaborate", "document": {"units": []}},
+                    no_rust="Rust reads the four core envelope fields only (no speech-acts block)"),
+    "reports": Route("ve_reports_route", {"kind": "reports-elaborate", "document": {"units": []}},
+                     no_rust="Rust reads the four core envelope fields only (no reports profile)"),
+    "norm-defaults": Route("ve_norm_defaults_route", {"kind": "norm-defaults-elaborate", "norms": []},
+                           no_rust="Rust evaluates Python's filled premise lists only (conformance/norm_defaults.py)"),
+    "quantity": Route("ve_quantity", {"kind": "admission", "quantity": TOP_QUANTITY}, _rust_quantity,
+                      identity=True),
 }
+
+# The block route each profile takes, first match first; then the blocks an envelope carries when its
+# profiles are not an array of strings.
+PROFILE_ROUTES = (("risk@0", "risk"), ("alternatives@0", "alternatives"), ("speech-acts@0", "speech"),
+                  ("reports@0", "reports"), ("soft-norms@0", "soft-norms"), ("norm-defaults@0", "norm-defaults"))
+BLOCK_ROUTES = (("risk", "risk"), ("alternatives", "alternatives"), ("speech_acts", "speech"))
 
 
 def lean_route(data):
@@ -651,23 +1028,21 @@ def lean_route(data):
     blocks the envelope carries; then the W6 fields choose the quantity route."""
     if type(data) is not dict:
         return "envelope"
-    if data.get("language") in ("ve.core@0", "ve.core@0.1"):
+    if data.get("language") in V0_LANGUAGES:
         return "envelope"
     profiles = data.get("profiles")
     if type(profiles) is list and all(type(p) is str for p in profiles):
-        chosen = [route for profile, route in (("risk@0", "risk"), ("alternatives@0", "alternatives"),
-                                               ("speech-acts@0", "speech"), ("reports@0", "reports"),
-                                               ("soft-norms@0", "soft-norms"))
-                  if profile in profiles]
+        chosen = [route for profile, route in PROFILE_ROUTES if profile in profiles]
     else:
-        chosen = [route for block, route in (("risk", "risk"), ("alternatives", "alternatives"),
-                                             ("speech_acts", "speech")) if block in data]
+        chosen = [route for block, route in BLOCK_ROUTES if block in data]
     if chosen:
         return chosen[0]
     return "quantity" if {"unit_schema", "units"} & set(data) else "envelope"
 
 
 class EnvironmentSurface(Surface):
+    """Every distinct environment of the fixtures (`difffuzz_corpus.environments`), each decoded by every
+    engine its route gives a path (`ROUTES`), whether or not that engine accepts the seed."""
     name = "environment"
     env_prefix = ()
     mutate_root = True
@@ -681,40 +1056,13 @@ class EnvironmentSurface(Surface):
             self._lean_service = None
 
     def seeds(self):
-        from ve.environment import Environment
-        found = {}
-
-        def add(origin, data):
-            if type(data) is dict and "language" in data:
-                found.setdefault(canonical(data), (origin, data))
-        for family in (*P0_FAMILIES, "vacuity"):
-            for case in json.loads((ROOT / f"conformance/{family}.json").read_text()):
-                add(f"{family}/{case['id']}", case["environment"])
-        for path in sorted(ROOT.glob("usecases/**/environment*.json")):
-            add(str(path.relative_to(ROOT)), json.loads(path.read_text()))
-        for test, environment, _ in json.loads(
-                (ROOT / "conformance/wire-contract/soft-norms@0-test-inputs.json").read_text()):
-            add(f"soft-norms@0-test-inputs/{test}", environment)
-        from conformance.risk import agent_ops
-        add("conformance/risk.agent_ops", agent_ops())
-        seeds = []
-        for origin, data in found.values():
-            try:
-                with python_authority():
-                    Environment(deepcopy(data))
-            except Exception:  # noqa: BLE001 - a seed Python rejects is not a seed
-                continue
-            seeds.append(Seed("environment", lean_route(data), origin, data))
-        # Each engine takes part on a seed whose unmutated environment it accepts.
-        lean = self.lean([(s, s.root) for s in seeds])
-        rust = self.rust([(s, s.root) for s in seeds])
-        for seed, l, r in zip(seeds, lean, rust):
-            seed.engines = tuple(e for e, a in (("python", ok()), ("lean", l), ("rust", r))
-                                 if a["outcome"] == "ok")
-        return seeds
+        return [Seed("environment", lean_route(env), origin, env) for origin, env in corpus.environments()]
 
     def profile(self, seed, root):
         return lean_route(root)
+
+    def path(self, engine, seed, root):
+        return engine != "rust" or ROUTES[lean_route(root)].rust is not None
 
     def python(self, seed, root):
         from ve.environment import Environment
@@ -730,61 +1078,65 @@ class EnvironmentSurface(Surface):
         for index, root in enumerate(roots):
             by_route.setdefault(lean_route(root), []).append(index)
         out = [None] * len(roots)
-        for route, indices in by_route.items():
-            if route == "envelope":
+        for name, indices in by_route.items():
+            route = ROUTES[name]
+            if route.case is None:
                 cases = [{"id": str(i), "environment": roots[i]} for i in indices]
+                # The service client checks each row against the service's `environment` schema too.
                 rows = self._service(cases)
+                problem_of = fields_row_problem({"environment_id": "string"})
             else:
-                binary, case = ROUTE_CASES[route]
-                rows = batched([BIN / binary, "-"],
-                               [{"id": str(i), "environment": roots[i], **case} for i in indices])
-            for i, row in zip(indices, rows):
-                if "not-on-wire" in row:
-                    out[i] = OFF_WIRE
-                elif "panic" in row or "framing" in row:
+                cases = [{"id": str(i), "environment": roots[i], **route.case} for i in indices]
+                rows = batched([BIN / route.lean, "-"], cases)
+                problem_of = fields_row_problem(LEAN_ROUTE_FIELDS[name])
+            for i, case, row in zip(indices, cases, rows):
+                if panic(row):
                     out[i] = panic(row)
-                elif row.get("status") == "error":
-                    diagnostic = checker_error(str(row.get("error", ""))).to_dict()
+                    continue
+                row, bad = checked(problem_of, case, row, 0)
+                if bad:
+                    out[i] = bad
+                elif row["status"] == "error":
+                    # A route that names its code (the soft-norms route) is read as its Python entry point
+                    # reads it (`ve/backends/lean.py` `run_soft_case`); the others' texts carry it.
+                    code = row["code"] if type(row.get("code")) is str else None
+                    diagnostic = checker_error(row["error"], code=code).to_dict()
                     out[i] = error(diagnostic["code"], diagnostic["message"])
                 else:
-                    out[i] = ok({"environment_id": row.get("environment_id")} if route == "envelope" else None)
+                    out[i] = ok({"environment_id": row["environment_id"]} if route.identity else None)
         return out
 
     def _service(self, cases):
-        """The Lean service's `environment` mode (the envelope decoder), one row per case; a case
-        the service cannot answer is retried alone, and one that still fails did not answer."""
+        """The Lean service's `environment` mode (the envelope decoder), one row per case, checked by the
+        service client against the service schemas; a batch the service does not answer well is split
+        until the case is alone, and that case did not answer."""
         from ve.backends.lean_service import LeanService
-        from ve.errors import VEError
         try:
             if self._lean_service is None:
                 self._lean_service = LeanService(timeout=HANG_TIMEOUT)
                 self._lean_service.start()
             return self._lean_service.run("environment", cases)
-        except Exception as exc:  # noqa: BLE001 - CheckerUnavailable, or a batch the transport refuses
-            if not isinstance(exc, VEError):
-                self.close()
+        except Exception as exc:  # noqa: BLE001 - CheckerUnavailable (a malformed response) or a crash
+            self.close()
             if len(cases) == 1:
-                # The transport refuses what is not on the restricted wire (an explicit null): the
-                # service never sees it, so it has no answer to compare.
-                if isinstance(exc, VEError):
-                    return [{"not-on-wire": str(exc)}]
                 return [{"panic": f"{type(exc).__name__}: {exc}"[:300]}]
             middle = len(cases) // 2
             return self._service(cases[:middle]) + self._service(cases[middle:])
 
     def rust(self, items):
-        cases = [{"id": str(i), "kind": "label", "label": "asserted", "environment": root}
-                 for i, (_, root) in enumerate(items)]
+        cases = [{**ROUTES[lean_route(root)].rust(root), "id": str(i)} for i, (_, root) in enumerate(items)]
         out = []
-        for row in batched([rust_binary(), "conformance"], cases):
-            if "panic" in row or "framing" in row:
+        for case, row in zip(cases, batched([rust_binary(), "conformance"], cases)):
+            if panic(row):
                 out.append(panic(row))
-            elif row.get("status") == "error" and type(row.get("error")) is dict:
-                out.append(error(row["error"].get("code"), row["error"].get("message")))
-            elif row.get("status") == "error":
-                out.append({"outcome": "panic", "text": f"malformed row {canonical(row)[:200]}"})
+                continue
+            row, bad = checked(rust_row_problem(case["kind"]), case, row, 0)
+            if bad:
+                out.append(bad)
+            elif row["status"] == "error":
+                out.append(error(row["error"]["code"], row["error"]["message"]))
             else:
-                out.append(ok(None))
+                out.append(ok({"environment_id": row["environment_id"]} if case["kind"] == "quantity" else None))
         return out
 
     def text_fixed(self, seed, left, right):
@@ -855,16 +1207,20 @@ class Wire(Surface):
         for unit, indices in by_unit.items():
             kind = "soft-elaborate" if unit == "soft-norms@0" else "corpus"
             cases = [{"id": str(i), "kind": kind, **items[i][1]} for i in indices]
-            for i, row in zip(indices, batched([BIN / "ve_diagnose", unit, "-"], cases)):
-                if "panic" in row or "framing" in row:
+            for i, case, row in zip(indices, cases, batched([BIN / "ve_diagnose", unit, "-"], cases)):
+                if panic(row):
                     out[i] = panic(row)
-                elif row.get("status") != "ok":
-                    out[i] = {"outcome": "error", "code": "adapter", "text": str(row.get("error")), "record": None}
-                elif row.get("outcome") == "clean":
+                    continue
+                row, bad = checked(diagnose_row_problem, case, row, 0)
+                if bad:
+                    out[i] = bad
+                elif row["status"] == "error":
+                    out[i] = {"outcome": "error", "code": "adapter", "text": row["error"], "record": None}
+                elif row["outcome"] == "clean":
                     out[i] = ok(None)
                 else:
-                    record = row.get("diagnostic") or {}
-                    out[i] = {"outcome": "error", "code": record.get("code"), "text": record.get("text"),
+                    record = row["diagnostic"]
+                    out[i] = {"outcome": "error", "code": record["code"], "text": record["text"],
                               "record": record}
         return out
 
@@ -906,7 +1262,7 @@ class Wire(Surface):
         return True
 
 
-SURFACES = {"p0": P0, "environment": EnvironmentSurface, "wire": Wire}
+SURFACES = {"requests": Requests, "environment": EnvironmentSurface, "wire": Wire}
 
 
 # ---------------------------------------------------------------- comparison
@@ -945,9 +1301,13 @@ def template(value, forms):
 def compare(surface, seed, left, right):
     """The finding classes between two engines' answers, each (engine, answer)."""
     (left_engine, a), (right_engine, b) = left, right
+    if surface.equivalent(seed, left, right):
+        return set()
     if a["outcome"] != b["outcome"]:
         return {"outcome"}
     if a["outcome"] == "error":
+        if FRAMING in (a.get("code"), b.get("code")):
+            return set()  # a package refusal carries no diagnostic; it agrees with any rejection
         if a.get("code") != b.get("code"):
             return {"code"}
         if surface.text_fixed(seed, left, right) and surface.error_key(a) != surface.error_key(b):
@@ -959,13 +1319,19 @@ def compare(surface, seed, left, right):
     return set()
 
 
+CLASSES = ("python-crash", "timeout", "no-answer", "outcome", "code", "diagnostic", "value")
+
+
 def classes(surface, seed, answers, root):
     """The finding classes of one mutant's answers ({engine: answer}), and the projection of each
-    answer that its signature keeps: outcome, code and the texts a contract fixes, templated."""
-    live = {e: a for e, a in answers.items() if a["outcome"] not in ("n/a", "timeout", "off-wire")}
+    answer that its signature keeps: outcome, code and the texts a contract fixes, templated. Only an
+    engine with no path (`n/a`) is left out; a Python call that does not finish is a `timeout`."""
+    live = {e: a for e, a in answers.items() if a["outcome"] != "n/a"}
     found = set()
     if live.get("python", {}).get("outcome") == "crash":
         found.add("python-crash")
+    if live.get("python", {}).get("outcome") == "timeout":
+        found.add("timeout")
     if any(a["outcome"] == "panic" for e, a in live.items() if e != "python"):
         found.add("no-answer")
     comparable = [(e, a) for e, a in live.items() if a["outcome"] in ("ok", "error")]
@@ -974,7 +1340,7 @@ def classes(surface, seed, answers, root):
         for right in comparable[i + 1:]:
             found |= compare(surface, seed, left, right)
             if left[1]["outcome"] == right[1]["outcome"] == "error" and \
-                    left[1].get("code") == right[1].get("code") and surface.text_fixed(seed, left, right):
+                    left[1].get("code") == right[1].get("code") != FRAMING and surface.text_fixed(seed, left, right):
                 fixed |= {left[0], right[0]}
     projected = {}
     forms = input_forms(root) if fixed or found & {"python-crash", "no-answer"} else []
@@ -1016,27 +1382,47 @@ def evaluate(surface, items):
 # ---------------------------------------------------------------- sampling
 
 def sample(surface, seeds, ones, twos, rng):
-    """`ones` 1-fault and `twos` 2-fault mutants, spread over the seeds round-robin: [(seed, mutations)]."""
-    pools = []
+    """Every seed as it is, then `ones` 1-fault and `twos` 2-fault mutants: [(seed, mutations)]. The
+    1-fault mutants go round-robin over the profiles and, within each, over its seeds, so that a family
+    of many seeds does not crowd out the others (`Faults` draws each seed's mutations)."""
+    by_profile = {}
     for seed in seeds:
-        candidates = one_faults(seed.root, surface.protected, surface.limits(seed), surface.mutate_root)
-        rng.shuffle(candidates)
-        pools.append((seed, candidates))
-    chosen = []
-    cursor = 0
-    while len(chosen) < ones and any(pool for _, pool in pools):
-        seed, pool = pools[cursor % len(pools)]
-        if pool:
-            chosen.append((seed, [pool.pop()]))
-        cursor += 1
+        by_profile.setdefault(seed.profile, []).append(seed)
+    profiles = sorted(by_profile)
+    faults = {}
+
+    def draw(seed):
+        if seed.id not in faults:
+            faults[seed.id] = Faults(seed.root, surface.protected, surface.limits(seed), surface.mutate_root)
+        return faults[seed.id].draw(rng)
+
+    chosen = [(seed, []) for seed in seeds]
+    cursors = {profile: 0 for profile in profiles}
+    turn = 0
+    exhausted = set()
+    while len(chosen) - len(seeds) < ones and len(exhausted) < len(profiles):
+        profile = profiles[turn % len(profiles)]
+        turn += 1
+        if profile in exhausted:
+            continue
+        group = by_profile[profile]
+        for _ in range(len(group)):
+            seed = group[cursors[profile] % len(group)]
+            cursors[profile] += 1
+            mutation = draw(seed)
+            if mutation is not None:
+                chosen.append((seed, [mutation]))
+                break
+        else:
+            exhausted.add(profile)
     pairs = []
-    rich = [(seed, candidates) for seed, candidates in pools if len(candidates) >= 2] or []
     attempts = 0
-    while len(pairs) < twos and rich and attempts < twos * 20:
+    while len(pairs) < twos and profiles and attempts < twos * 20:
         attempts += 1
-        seed, pool = rich[rng.randrange(len(rich))]
-        first, second = rng.sample(pool, 2)
-        if related(tuple(first[1]), tuple(second[1])):
+        group = by_profile[profiles[rng.randrange(len(profiles))]]
+        seed = group[rng.randrange(len(group))]
+        first, second = draw(seed), draw(seed)
+        if first is None or second is None or related(tuple(first[1]), tuple(second[1])):
             continue
         pairs.append((seed, [first, second]))
     return chosen + pairs
@@ -1110,8 +1496,10 @@ def baseline_problems(baseline):
     problems = []
     seen = set()
     for entry in baseline["entries"]:
-        missing = [k for k in ("id", "surface", "profile", "seed", "input", "answers", "classes",
+        # The input may be any JSON value (a minimised environment can be `0` or `[]`); it must be there.
+        missing = [k for k in ("id", "surface", "profile", "seed", "answers", "classes",
                                "signature", "follow_up") if not entry.get(k) and entry.get(k) != {}]
+        missing += [] if "input" in entry else ["input"]
         if missing:
             problems.append(f"{entry.get('id')}: missing {missing}")
         if str(entry.get("follow_up", "")).strip().upper() in ("", "TODO"):
@@ -1122,6 +1510,12 @@ def baseline_problems(baseline):
     return problems
 
 
+def seed_of(entry):
+    """The seed a baseline entry names, rebuilt from the entry (its root is not needed to replay)."""
+    return Seed(entry["surface"], entry["profile"], entry["seed"], None, tuple(entry["engines"]),
+                dict(entry.get("meta", {})))
+
+
 def replay(entries, surfaces):
     """Each baseline entry run again on its minimised input: (entry, status, now) where status is
     `reproduces`, `changed` (another finding) or `fixed` (no finding)."""
@@ -1130,8 +1524,7 @@ def replay(entries, surfaces):
     for entry in entries:
         by_surface.setdefault(entry["surface"], []).append(entry)
     for name, group in by_surface.items():
-        items = [(Seed(name, entry["profile"], entry["seed"], None, tuple(entry["engines"]),
-                       dict(entry.get("meta", {}))), entry["input"]) for entry in group]
+        items = [(seed_of(entry), entry["input"]) for entry in group]
         rows = evaluate(surfaces[name], items)
         for entry, (found, projected, answers, sig) in zip(group, rows):
             status = "reproduces" if sig == entry["signature"] else "fixed" if not found else "changed"
@@ -1139,11 +1532,15 @@ def replay(entries, surfaces):
     return out
 
 
+# The seed fields a replay needs beyond the input: the request surface's runners.
+META_KEYS = ("kind", "family", "lean", "rust")
+
+
 def entry_for(finding, profile, minimised, answers, follow_up=None, entry_id=None):
     seed = finding.seed
+    meta = {k: v for k, v in seed.meta.items() if k in META_KEYS}
     return {"id": entry_id or f"{seed.surface}-{finding.signature}", "surface": seed.surface,
-            "profile": profile, "seed": seed.id, "engines": list(seed.engines),
-            "meta": {k: v for k, v in seed.meta.items() if k == "kind" or k == "expected"},
+            "profile": profile, "seed": seed.id, "engines": list(seed.engines), "meta": meta,
             "mutation": finding.mutations, "input": minimised, "classes": finding.classes,
             "answers": answers, "signature": finding.signature, "follow_up": follow_up or "TODO"}
 
@@ -1181,14 +1578,15 @@ def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
     seen = {}
     for name in names:
         surface = built[name]
-        seeds = surface.seeds()
+        seeds = surface.seeds() if scale else []
         report["corpus"][name] = _count(seed.profile for seed in seeds)
         ones, twos = CI_BUDGET[name]
         rng = random.Random(f"{rng_seed}:{name}")
         mutants = sample(surface, seeds, ones * scale, twos * scale, rng)
-        report["mutants"][name] = {"one-fault": sum(len(m) == 1 for _, m in mutants),
+        report["mutants"][name] = {"zero-fault": sum(len(m) == 0 for _, m in mutants),
+                                   "one-fault": sum(len(m) == 1 for _, m in mutants),
                                    "two-fault": sum(len(m) == 2 for _, m in mutants)}
-        log(f"{name}: {len(seeds)} seeds, {len(mutants)} mutants")
+        log(f"{name}: {len(seeds)} seeds, {len(mutants)} inputs")
         counts = {}
         answered = {}
         for start in range(0, len(mutants), CHUNK):
@@ -1209,10 +1607,9 @@ def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
                     new[sig] = Finding(seed, mutations, root, found, answers, projected, sig)
         report["findings"][name] = dict(sorted(counts.items()))
         report["answers"][name] = dict(sorted(answered.items()))
-    surfaces_built = built
     entries = []
     for index, (sig, finding) in enumerate(new.items()):
-        surface = surfaces_built[finding.seed.surface]
+        surface = built[finding.seed.surface]
         if index < MINIMISE_LIMIT:
             log(f"minimising {finding.seed.surface} {finding.seed.profile} {finding.classes}")
             minimised = minimise(surface, finding.seed, finding.root, sig)
@@ -1224,7 +1621,7 @@ def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
             entry["minimised"] = False
         entries.append(entry)
     report["new"] = entries
-    replayed = replay(baseline["entries"], surfaces_built)
+    replayed = replay(baseline["entries"], built)
     report["baseline"] = {
         "entries": len(baseline["entries"]),
         "seen_in_sample": sum(1 for entry in baseline["entries"] if entry["signature"] in seen),
@@ -1260,7 +1657,11 @@ def main(argv=None):
     parser.add_argument("--update-baseline", action="store_true",
                         help="drop entries that no longer reproduce and add new findings as TODO")
     parser.add_argument("--report", type=Path, help="write the JSON report here")
+    parser.add_argument("--minimise-limit", type=int, metavar="N",
+                        help=f"minimise at most N new signatures (default {MINIMISE_LIMIT})")
     args = parser.parse_args(argv)
+    if args.minimise_limit is not None:
+        globals()["MINIMISE_LIMIT"] = args.minimise_limit
     seed = args.seed if args.seed is not None else (
         20261004 if args.ci else int(datetime.date.today().strftime("%Y%m%d")))
     report = fuzz(scale=1 if args.ci else args.deep, rng_seed=seed, surfaces=args.surface,
