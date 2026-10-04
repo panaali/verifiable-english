@@ -14,7 +14,7 @@ layers =
     ve.background:ve.closure:ve.definitions:ve.entailment:ve.evaluate:ve.norms:ve.order:ve.profiles:ve.alternatives:ve.reports:ve.rights:ve.softnorms:ve.softnorms_contract:ve.speech_acts:ve.units
     ve.ast:ve.environment:ve.errors:ve.identity:ve.limits:ve.model:ve.wire:ve.wire_contract:ve.assurance
 ignore_imports =
-    ve.alternatives -> ve.backends.lean
+    ve.alternatives -> ve.backends.relay
     ve.assist.cli -> ve_experiments.assist_haiku
     ve.ast -> ve.backends.dispatch
     ve.ast -> ve.backends.relay
