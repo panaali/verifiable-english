@@ -18,6 +18,11 @@ The invocations are:
   every `conformance/*.json` corpus that is a list of cases and every `lean/VE/*/examples/*.json`
   case file. A mode is given every corpus, matching or not: a corpus of another route's cases
   exercises its rejection path, which must not change either;
+* for the executables that read no case list, the inputs their tests generate: a `ve_service`
+  session over `tests/lean_service_corpus.py` (every mode and result kind, and the request
+  errors), its English payloads for `ve_english_run`, the baseline service's responses to that
+  session for both `ve_response_decode` checks, and one shard of `tests/test_risk_differential.py`
+  for `ve_risk_eval`;
 * with `--contract-inputs`, the `soft-norms@0` inputs that `tests/contract_input_recorder.py`
   wrote (`VE_CONTRACT_INPUTS`), as `soft-elaborate` cases for `ve_soft_norms_route` and
   `ve_diagnose soft-norms@0`;
@@ -29,8 +34,9 @@ The invocations are:
 under `lean/`, or `lake build --no-build` reports work to do) and a `ve_service` that is not
 pinned in `lean/checkers.lock`. An executable whose new build is byte-identical to its baseline
 is not run (identical programs, identical output); `--all` runs it anyway. A clean comparison is
-evidence of equal output over these inputs only; a run that times out, or an empty invocation
-list, makes the differential invalid (exit 1). The full recorded corpus of a suite run is large
+evidence of equal output over these inputs only; a run that times out, an empty invocation
+list, or a compared executable (rebuilt, or any under `--all`) with no invocation makes the
+differential invalid (exit 1). The full recorded corpus of a suite run is large
 (about 10,000 invocations, tens of minutes at `--jobs 8`).
 """
 from __future__ import annotations
@@ -67,6 +73,8 @@ CASE_MODES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("ve_reports_route", ()), ("ve_alternatives_route", ()), ("ve_risk_route", ()),
     ("ve_norm_defaults_route", ()), ("ve_readings_route", ()),
 )
+# Executables that read no case list; `harness_invocations` gives their inputs.
+HARNESS_EXECUTABLES = frozenset({"ve_service", "ve_english_run", "ve_response_decode", "ve_risk_eval"})
 
 
 class Invocation(NamedTuple):
@@ -111,6 +119,57 @@ def static_invocations(root: Path = ROOT) -> list[Invocation]:
         name = corpus.relative_to(root).as_posix()
         for exe, mode in modes:
             found.append(Invocation(exe, f"{' '.join(mode)} {name}".strip(), (*mode, str(corpus))))
+    return found
+
+
+def service_session() -> tuple[bytes, list[tuple[str, dict]]]:
+    """A `ve_service` session over `tests/lean_service_corpus.py` (every mode and result kind, in
+    16-case requests, then the request errors), with the request each response is bound to."""
+    from tests.lean_service_corpus import ERROR_REQUESTS, corpus
+    from ve.backends.lean_service import LeanService, request_context
+    lines, requests = [], []
+
+    def request(mode: str, text: str, count: int, budget: dict) -> None:
+        nonce = f"out-{len(requests)}"
+        lines.append(LeanService._request_line(nonce, mode, text, budget))
+        requests.append((mode, request_context(nonce, mode, text, count)))
+
+    for mode, cases in corpus().items():
+        for start in range(0, len(cases), 16):
+            text = json.dumps(cases[start:start + 16], ensure_ascii=False, separators=(",", ":"))
+            count = len(cases[start:start + 16])
+            request(mode, text, count, {"cases": max(count, 1), "bytes": len(text.encode())})
+    for mode, text, count, budget in ERROR_REQUESTS:
+        request(mode, text, count, budget or {"cases": max(count, 1), "bytes": len(text.encode())})
+    return b"".join(lines), requests
+
+
+def harness_invocations(baseline: Path) -> list[Invocation]:
+    """Inputs of the executables that read no case list (`ve_service`, `ve_english_run`,
+    `ve_response_decode`, `ve_risk_eval`), from the generators their tests use. The responses that
+    `ve_response_decode` checks are the baseline service's answers to the session."""
+    for folder in (ROOT, ROOT / "tests"):  # the test modules import their helpers as pytest does
+        if str(folder) not in sys.path:
+            sys.path.insert(0, str(folder))
+    from tests.lean_service_corpus import english_cases
+    from tests.test_risk_differential import lean_cases, shard
+    session, requests = service_session()
+    found = [Invocation("ve_service", "corpus session", (), session)]
+    found += [Invocation("ve_english_run", f"english payload {index}", (),
+                         json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode())
+              for index, payload in enumerate(english_cases())]
+    boxes, conditions, _ = shard(0)
+    found.append(Invocation("ve_risk_eval", "risk conditions shard 0", (),
+                            json.dumps(lean_cases(boxes[:12], conditions[:12])).encode()))
+    code, out, err = run(baseline / "ve_service", found[0])
+    responses = [json.loads(line) for line in out.decode().splitlines()[1:]]
+    if code != 0 or len(responses) != len(requests):
+        raise SystemExit(f"the baseline ve_service answered {len(responses)} of {len(requests)} requests "
+                         f"(exit {code}): {err[-500:]!r}")
+    for check in ("decode", "invariants"):
+        text = "".join(json.dumps({"check": check, "mode": mode, "request": request, "responses": [response]},
+                                  ensure_ascii=False) + "\n" for (mode, request), response in zip(requests, responses))
+        found.append(Invocation("ve_response_decode", f"{check} of the corpus session", (), text.encode()))
     return found
 
 
@@ -224,10 +283,19 @@ def compare(baseline: Path, new: Path, extra: list[Invocation], scratch: Path, *
         print(f"executables missing from the baseline or the new build: {', '.join(missing)}", file=sys.stderr)
         return 2
     changed = sorted(name for name in manifest["executables"] if digest(new / name) != manifest["executables"][name])
-    work = [*static_invocations(), *extra]
     # A byte-identical executable gives identical output on every input; its runs are skipped
     # unless --all asks for them.
-    run_work = sorted((i for i in work if everything or i.exe in changed), key=weight, reverse=True)
+    targets = sorted(manifest["executables"]) if everything else changed
+    work = [*static_invocations(), *extra]
+    if set(targets) & HARNESS_EXECUTABLES:
+        work += harness_invocations(baseline)
+    unknown = sorted({i.exe for i in work} - set(manifest["executables"]))
+    if unknown:
+        print(f"invocations of executables that are not in the baseline: {', '.join(unknown)}", file=sys.stderr)
+        return 2
+    run_work = sorted((i for i in work if i.exe in targets), key=weight, reverse=True)
+    # Every executable that is compared needs inputs: an executable with none would pass unseen.
+    uncovered = sorted(set(targets) - {i.exe for i in run_work})
 
     def both(invocation: Invocation) -> tuple[Invocation, tuple, tuple]:
         return invocation, run(baseline / invocation.exe, invocation), run(new / invocation.exe, invocation)
@@ -250,10 +318,17 @@ def compare(baseline: Path, new: Path, extra: list[Invocation], scratch: Path, *
     skipped = len(work) - len(run_work)
     print(f"{len(work)} invocations, {len(run_work)} run on both builds, {skipped} skipped as their executable "
           f"is byte-identical to the baseline; {len(differences)} differences, {len(timeouts)} timed out")
-    if timeouts or not work:
-        print("INVALID differential: " + (f"{len(timeouts)} invocations timed out, so their output was not "
-                                          "compared in full" if timeouts else "no invocations"), file=sys.stderr)
-    return 1 if differences or timeouts or not work else 0
+    invalid = []
+    if timeouts:
+        invalid.append(f"{len(timeouts)} invocations timed out, so their output was not compared in full")
+    if not work:
+        invalid.append("no invocations")
+    if uncovered:
+        invalid.append(f"no invocation of the rebuilt executables {', '.join(uncovered)}, so their output was "
+                       "not compared")
+    for reason in invalid:
+        print(f"INVALID differential: {reason}", file=sys.stderr)
+    return 1 if differences or invalid else 0
 
 
 def main(argv: list[str]) -> int:

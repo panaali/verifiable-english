@@ -154,11 +154,17 @@ def shard(seed):
     return boxes, conditions, kinds
 
 
-def lean_eval(boxes, conditions):
+def lean_cases(boxes, conditions):
+    """The `ve_risk_eval` input for the boxes and their conditions (also replayed by
+    tools/lean_output_diff.py)."""
     env = cell_env()
-    cases = [{"environment": env, "quantities": [{"name": n, "tag": D, "lo": lo, "hi": hi}
-                                                 for n, (lo, hi) in box.items()],
-              "conditions": rows} for box, rows in zip(boxes, conditions)]
+    return [{"environment": env, "quantities": [{"name": n, "tag": D, "lo": lo, "hi": hi}
+                                                for n, (lo, hi) in box.items()],
+             "conditions": rows} for box, rows in zip(boxes, conditions)]
+
+
+def lean_eval(boxes, conditions):
+    cases = lean_cases(boxes, conditions)
     out = subprocess.run([str(LEAN)], input=json.dumps(cases), text=True, capture_output=True, timeout=500)
     assert out.returncode == 0, out.stderr
     rows = json.loads(out.stdout)
