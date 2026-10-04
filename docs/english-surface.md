@@ -437,6 +437,11 @@ shadowed binder must be rejected. The `--full` gate requires 17 configurations
 times 5,000 formulas, exactly 85,000 pairs. The reports record the seed and
 corpus hashes. `tests/test_english_evidence.py` runs both harnesses at every
 merge and checks that the full differential report passes the count gate.
+The gate counts each configuration's core ASTs itself, by walking the corpus
+against the constructors of Lean's core `Formula`, rather than trusting the
+harness's own classifier: every core AST must complete the round trip, and a
+classifier that drops any one constructor fails it (a small covering corpus
+holds every core constructor, which the smoke's five directed formulas do not).
 This Python correspondence is finite evidence, not a Lean theorem about the
 Python parser or the presentation lexer.
 

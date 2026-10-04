@@ -1,0 +1,4473 @@
+{
+  "class_rule_exempt": {
+    "w1-environment/1.1": 199,
+    "w1-shape/3.8b": 99
+  },
+  "continuation_coverage_met": false,
+  "contract": "norm-defaults@0",
+  "contract_sha256": "f693ee6488f090694087e1bd397fc58051bf76bbb1ff8264220cfeb8de2b4ec8",
+  "coverage_unmet": {
+    "adjacent_phase_pairs": [],
+    "first": [
+      "6.3"
+    ],
+    "masked": []
+  },
+  "coverage_unmet_reasons": {
+    "w1/2.1": "The including unit's environment decoder requires the profile this check requires, so the check is never the first fault under this unit; it is witnessed in the included unit's own gate."
+  },
+  "handler_reaching_cases": 1362,
+  "inherited_records": "text and args are language-specific until base contracts exist",
+  "lean_route_changes": [
+    {
+      "cases": 85,
+      "check": "w1-shape/3.1",
+      "example": {
+        "case": "0:unit-field",
+        "record_text": "InvalidInput: expected norm object",
+        "route_text": "fields do not match: expected [norm], got [extra, norm]"
+      }
+    },
+    {
+      "cases": 34,
+      "check": "w1-shape/3.2",
+      "example": {
+        "case": "0:norm-shape",
+        "record_text": "InvalidInput: expected norm object",
+        "route_text": "object expected"
+      }
+    },
+    {
+      "cases": 49,
+      "check": "w1-shape/3.3",
+      "example": {
+        "case": "0:norm-fields",
+        "record_text": "InvalidInput: invalid norm fields",
+        "route_text": "fields do not match: expected [name, predicate, sign, guard, unless, over], got [guard, name, predicate, sign, unless]"
+      }
+    },
+    {
+      "cases": 24,
+      "check": "w1-shape/3.4",
+      "example": {
+        "case": "A:unless-shape+guard-predicate-name",
+        "record_text": "InvalidInput: unless and over must be arrays",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 15,
+      "check": "w1-shape/3.5",
+      "example": {
+        "case": "A:over-shape+guard-predicate-name",
+        "record_text": "InvalidInput: unless and over must be arrays",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 112,
+      "check": "w1-shape/3.6",
+      "example": {
+        "case": "0:predicate-type",
+        "record_text": "InvalidInput: rule predicate and precedence edges must be strings",
+        "route_text": "String expected"
+      }
+    },
+    {
+      "cases": 55,
+      "check": "w1-shape/3.7",
+      "example": {
+        "case": "0:over-item",
+        "record_text": "InvalidInput: rule predicate and precedence edges must be strings",
+        "route_text": "String expected"
+      }
+    },
+    {
+      "cases": 1,
+      "check": "w1-shape/3.8b",
+      "example": {
+        "case": "R:generated:116",
+        "record_text": "invalid indexed formula",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 18,
+      "check": "w1-shape/3.9a",
+      "example": {
+        "case": "A:carve-out-depth+sign-type",
+        "record_text": "ResourceLimit: formula depth exceeds 64",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 22,
+      "check": "w1-shape/3.9b",
+      "example": {
+        "case": "A:carve-out-shape+guard-predicate-name",
+        "record_text": "array expected",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 17,
+      "check": "w1/4.1",
+      "example": {
+        "case": "A:name-class+sign-type",
+        "record_text": "InvalidInput: invalid rule name 'A0'",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 3,
+      "check": "w1/4.2",
+      "example": {
+        "case": "R:generated:71",
+        "record_text": "DuplicateDeclaration: rule c2",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 17,
+      "check": "w1/4.3",
+      "example": {
+        "case": "A:name-repeat+reserved-name",
+        "record_text": "InvalidInput: reserved name unsaid--x",
+        "route_text": "DuplicateDeclaration: rule a0"
+      }
+    },
+    {
+      "cases": 7,
+      "check": "w1/4.4",
+      "example": {
+        "case": "A:predicate-unregulated+sign-type",
+        "record_text": "UnknownSymbol: regulated predicate c",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 9,
+      "check": "w1/4.7a",
+      "example": {
+        "case": "A:sign-type+guard-arity",
+        "record_text": "TypeMismatch: Predicate 'c' has arity 1, not 2",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 45,
+      "check": "w1/4.7b",
+      "example": {
+        "case": "0:guard-predicate-name",
+        "record_text": "UnknownSymbol: Unknown predicate '<not a string>'",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 2,
+      "check": "w1/4.7c",
+      "example": {
+        "case": "A:sign-type+guard-scope",
+        "record_text": "UnboundVariable: Variable index 1 is outside its scope",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 7,
+      "check": "w1/4.7d",
+      "example": {
+        "case": "0:nodes-before-type",
+        "record_text": "ResourceLimit: AST exceeds 10,000 nodes",
+        "route_text": "UnknownSymbol: Unknown predicate 'd'"
+      }
+    },
+    {
+      "cases": 15,
+      "check": "w1/4.7e",
+      "example": {
+        "case": "0:string-binder",
+        "record_text": "UnsupportedProfile: $string quantification requires data stage 2",
+        "route_text": "UnknownSymbol: Unknown binder sort '$string'"
+      }
+    }
+  ],
+  "public_class_differences": 0,
+  "public_diagnostic_changes": [
+    {
+      "check": "w1-shape/3.1",
+      "class_differences": 0,
+      "example": {
+        "case": "0:unit-field",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "Incorrect fields (missing=[], unknown=['extra'])",
+        "record_code": "NORMS_INVALID_UNIT",
+        "record_text": "InvalidInput: expected norm object"
+      },
+      "text_changes": 85
+    },
+    {
+      "check": "w1-shape/3.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:norm-shape",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "Expected a JSON object",
+        "record_code": "NORMS_INVALID_UNIT",
+        "record_text": "InvalidInput: expected norm object"
+      },
+      "text_changes": 34
+    },
+    {
+      "check": "w1-shape/3.3",
+      "class_differences": 0,
+      "example": {
+        "case": "0:norm-fields",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "Incorrect fields (missing=['over'], unknown=[])",
+        "record_code": "NORMS_INVALID_RULE_FIELDS",
+        "record_text": "InvalidInput: invalid norm fields"
+      },
+      "text_changes": 49
+    },
+    {
+      "check": "w1-shape/3.8b",
+      "class_differences": 0,
+      "example": {
+        "case": "0:guard-reach-first",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "AST exceeds depth or node budget",
+        "record_code": "NORMS_INVALID_FORMULA",
+        "record_text": "invalid indexed formula"
+      },
+      "text_changes": 49
+    },
+    {
+      "check": "w1/2.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:rules-limit",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "rules",
+        "record_code": "NORMS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: rules"
+      },
+      "text_changes": 3
+    },
+    {
+      "check": "w1/4.1",
+      "class_differences": 0,
+      "example": {
+        "case": "R:generated:2",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "InvalidInput: invalid rule name \"a'b\"",
+        "record_code": "NORMS_INVALID_NAME",
+        "record_text": "InvalidInput: invalid rule name 'a'b'"
+      },
+      "text_changes": 15
+    },
+    {
+      "check": "w1/4.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:name-repeat",
+        "legacy_code": "DuplicateDeclaration",
+        "legacy_text": "rule a0",
+        "record_code": "NORMS_DUPLICATE_DECLARATION",
+        "record_text": "DuplicateDeclaration: rule a0"
+      },
+      "text_changes": 54
+    },
+    {
+      "check": "w1/6.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:precedence-depth",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "precedence depth",
+        "record_code": "NORMS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: precedence depth"
+      },
+      "text_changes": 3
+    },
+    {
+      "check": "5.1",
+      "class_differences": 0,
+      "example": {
+        "case": "0:filled-vocabulary",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "vocabulary size",
+        "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: vocabulary size"
+      },
+      "text_changes": 8
+    },
+    {
+      "check": "5.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:filled-rules",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "rules",
+        "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: rules"
+      },
+      "text_changes": 2
+    },
+    {
+      "check": "5.3",
+      "class_differences": 0,
+      "example": {
+        "case": "0:unspecified-name",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "unspecified name length",
+        "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: unspecified name length"
+      },
+      "text_changes": 5
+    },
+    {
+      "check": "6.1",
+      "class_differences": 0,
+      "example": {
+        "case": "0:filled-nodes",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "AST exceeds 10,000 nodes",
+        "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: AST exceeds 10,000 nodes"
+      },
+      "text_changes": 2
+    },
+    {
+      "check": "6.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:filled-depth",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "precedence depth",
+        "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: precedence depth"
+      },
+      "text_changes": 2
+    },
+    {
+      "check": "6.3",
+      "class_differences": 0,
+      "example": {
+        "case": "0:fill-premise",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "fill premise unsaid:pair:x_required,x_permitted",
+        "record_code": "NORM_DEFAULTS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: fill premise unsaid:pair:x_required,x_permitted"
+      },
+      "text_changes": 1
+    }
+  ],
+  "revision": 1,
+  "s5_pre": {
+    "class_differences": [
+      {
+        "case": "0:guard-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "0:carve-out-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "0:guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "0:guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "0:predicate-unregulated",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "0:guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "0:guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "0:guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "0:nodes-before-type",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "0:string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:norm-fields+carve-out-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-shape+carve-out-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-item+carve-out-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-shape",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-depth",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-reach-first",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-index",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:name-repeat+predicate-unregulated",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:name-repeat+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:name-repeat+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:name-repeat+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:name-repeat+reserved-name",
+        "lean": [
+          "DuplicateDeclaration",
+          "DuplicateDeclaration: rule a0"
+        ],
+        "python": [
+          "InvalidInput",
+          "InvalidInput: reserved name unsaid--x"
+        ]
+      },
+      {
+        "case": "A:name-repeat+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+carve-out-limit",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+guard-predicate",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+rules-nodes",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+carve-out-predicate",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+nodes-before-type",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+over-unknown",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+over-predicate",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+precedence-cycle",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+reserved-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-arity",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 1, not 2"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-predicate",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 'd'"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-scope",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Variable index 1 is outside its scope"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:sign-type+string-binder",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:carve-out-limit+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:carve-out-limit+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-limit+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-limit+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:rules-nodes+reserved-name",
+        "lean": [
+          "ResourceLimit",
+          "ResourceLimit: AST exceeds 10,000 nodes"
+        ],
+        "python": [
+          "InvalidInput",
+          "InvalidInput: reserved name unsaid--x"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+reserved-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "InvalidInput",
+          "InvalidInput: reserved name unsaid--x"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:guard-predicate-name+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:guard-predicate-name+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:guard-predicate-name+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:guard-predicate-name+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:guard-constant+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-constant+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-constant+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-constant+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-sort+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:guard-sort+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:guard-sort+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:guard-sort+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+over-unknown",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+over-predicate",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+precedence-cycle",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+reserved-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "InvalidInput",
+          "InvalidInput: reserved name unsaid--x"
+        ]
+      },
+      {
+        "case": "A:over-unknown+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:over-predicate+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:precedence-cycle+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:reserved-name+string-binder",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+sign-type",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+sign-type",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-shape+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+carve-out-limit",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+sign-type",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+sign-type",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-sort+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:guard-shape+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+name-class",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-index+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-index+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-predicate-name+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:guard-constant+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-constant+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+name-class",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-scope",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:string-binder+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-predicate-name+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:string-binder+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:guard-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-shape+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-class",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+carve-out-limit",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-shape+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-arity",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+string-binder",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-sort+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:guard-shape+name-class",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+sign-type",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-limit",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-shape+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-index+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-index+name-class",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-index+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:name-repeat+string-binder+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:name-repeat+guard-sort+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-index+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-shape+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+carve-out-predicate+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+over-predicate+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-repeat+guard-scope",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-scope+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-index+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-index+predicate-unregulated+sign-type",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-shape+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-reach-first+carve-out-limit",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+name-class+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-constant+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-class+guard-scope",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-index+name-class",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-scope+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+predicate-unregulated+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-arity+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-sort+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-item+carve-out-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+sign-type+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+name-class+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+over-predicate+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:guard-index+name-repeat+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-depth+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-shape+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+predicate-unregulated+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+predicate-unregulated+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-limit+guard-sort+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:name-repeat+guard-constant+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:guard-shape+name-class+sign-type",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+carve-out-predicate+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-index+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-predicate+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-shape+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-index+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+predicate-unregulated+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+over-unknown+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-reach-first+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-index+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:norm-fields+carve-out-shape+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-limit+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+precedence-cycle+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+reserved-name+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+sign-type+guard-predicate",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+reserved-name+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "InvalidInput",
+          "InvalidInput: reserved name unsaid--x"
+        ]
+      },
+      {
+        "case": "A:guard-index+sign-type+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-index+predicate-unregulated+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:over-shape+carve-out-shape+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+sign-type+guard-arity",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-limit+guard-constant+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-repeat+guard-constant",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-shape+carve-out-depth+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-index+over-unknown+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-index+carve-out-limit",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+name-repeat+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:norm-fields+carve-out-shape+sign-type",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:norm-fields+carve-out-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+predicate-unregulated+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:reserved-name+string-binder+filled-vocabulary",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:guard-sort+over-predicate+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "A:guard-shape+name-repeat+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+guard-constant+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-arity+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-index+carve-out-limit+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:precedence-cycle+string-binder+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:string-binder+filled-vocabulary+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown binder sort '$string'"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "$string quantification requires data stage 2"
+        ]
+      },
+      {
+        "case": "A:guard-shape+carve-out-depth+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-item+guard-reach-first+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-predicate+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-reach-first+carve-out-limit",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+over-unknown+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:over-shape+carve-out-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+sign-type+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+sign-type+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-shape+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+name-class+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+name-repeat+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-shape+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-constant+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-reach-first+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+predicate-unregulated+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-predicate+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-shape+guard-index+sign-type",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+guard-reach-first+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+predicate-unregulated+sign-type",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:over-item+carve-out-depth+guard-sort",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-shape+sign-type+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+carve-out-limit+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-item+carve-out-depth+sign-type",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-reach-first+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-index+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+name-class+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+sign-type+carve-out-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-reach-first+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-predicate+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 'd'"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+predicate-unregulated+over-predicate",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-constant+over-predicate+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown constant 5"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-repeat+guard-predicate-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+sign-type+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-reach-first+name-class",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:over-shape+carve-out-shape+sign-type",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-sort+precedence-cycle",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-shape+name-repeat+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:unless-shape+guard-index+name-repeat",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:norm-fields+guard-reach-first+predicate-unregulated",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:guard-reach-first+carve-out-limit+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "A:carve-out-predicate+guard-predicate-name+unspecified-name",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "A:sign-type+guard-scope+filled-vocabulary",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Variable index 1 is outside its scope"
+        ]
+      },
+      {
+        "case": "A:over-shape+carve-out-shape+reserved-name",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "A:nodes-before-type+precedence-cycle+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: Unknown predicate 'd'"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds 10,000 nodes"
+        ]
+      },
+      {
+        "case": "A:unit-field+guard-index+sign-type",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:guard-index+carve-out-predicate+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-index+sign-type",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+guard-predicate+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:predicate-unregulated+carve-out-predicate+unspecified-name",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "A:carve-out-depth+guard-predicate-name+over-unknown",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B1",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "B2",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B14",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B15",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B32",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B41",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B43",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B44",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B53",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B54",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "B65",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 1, not 2"
+        ]
+      },
+      {
+        "case": "B74",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B76",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B77",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B82",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "B97",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown binder sort 5"
+        ]
+      },
+      {
+        "case": "B102",
+        "lean": [
+          "DuplicateDeclaration",
+          "DuplicateDeclaration: rule a0"
+        ],
+        "python": [
+          "InvalidInput",
+          "InvalidInput: reserved name unsaid--x"
+        ]
+      },
+      {
+        "case": "B104",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnknownSymbol",
+          "Unknown predicate 7"
+        ]
+      },
+      {
+        "case": "B111",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B115",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B119",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B122",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "B129",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B134",
+        "lean": [
+          "InvalidInput",
+          "Natural number expected"
+        ],
+        "python": [
+          "UnboundVariable",
+          "Invalid variable index"
+        ]
+      },
+      {
+        "case": "B136",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B137",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B141",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B142",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B150",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B153",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B156",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "B161",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B163",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "B175",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B178",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed term"
+        ],
+        "python": [
+          "ResourceLimit",
+          "AST exceeds depth or node budget"
+        ]
+      },
+      {
+        "case": "B188",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 1, not 2"
+        ]
+      },
+      {
+        "case": "B198",
+        "lean": [
+          "InvalidInput",
+          "array expected"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:1",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:5",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:13",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:19",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:26",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:40",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:52",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "R:generated:53",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:58",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' expects ('user',), received ('assistant',)"
+        ]
+      },
+      {
+        "case": "R:generated:71",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "DuplicateDeclaration",
+          "rule c2"
+        ]
+      },
+      {
+        "case": "R:generated:86",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:108",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:109",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:123",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:126",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:130",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "DuplicateDeclaration",
+          "rule b1"
+        ]
+      },
+      {
+        "case": "R:generated:134",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid rule name"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 2, not 1"
+        ]
+      },
+      {
+        "case": "R:generated:142",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:151",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "UnsupportedProfile",
+          "Comparisons require order@0"
+        ]
+      },
+      {
+        "case": "R:generated:155",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "R:generated:174",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:181",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:189",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:195",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:218",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:220",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "R:generated:227",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "R:generated:230",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:231",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:234",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:239",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:246",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:275",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:282",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:287",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:298",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "R:generated:311",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate c"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate c"
+        ]
+      },
+      {
+        "case": "R:generated:317",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:321",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:323",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "Unknown AST tag or incorrect arity: 'unary'"
+        ]
+      },
+      {
+        "case": "R:generated:325",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 2, not 1"
+        ]
+      },
+      {
+        "case": "R:generated:343",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:344",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' expects ('user',), received ('assistant',)"
+        ]
+      },
+      {
+        "case": "R:generated:347",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid rule name"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 2, not 1"
+        ]
+      },
+      {
+        "case": "R:generated:372",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:373",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid rule name"
+        ],
+        "python": [
+          "TypeMismatch",
+          "Predicate 'c' has arity 2, not 1"
+        ]
+      },
+      {
+        "case": "R:generated:375",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      },
+      {
+        "case": "R:generated:379",
+        "lean": [
+          "UnknownSymbol",
+          "UnknownSymbol: regulated predicate zz"
+        ],
+        "python": [
+          "InvalidInput",
+          "UnknownSymbol: regulated predicate zz"
+        ]
+      },
+      {
+        "case": "R:generated:386",
+        "lean": [
+          "InvalidInput",
+          "InvalidInput: invalid sign or too many carve-outs"
+        ],
+        "python": [
+          "DuplicateDeclaration",
+          "rule c2"
+        ]
+      },
+      {
+        "case": "R:generated:398",
+        "lean": [
+          "InvalidInput",
+          "invalid indexed formula"
+        ],
+        "python": [
+          "SyntaxError",
+          "AST nodes must be nonempty tagged JSON arrays"
+        ]
+      }
+    ],
+    "detail": "conformance/wire-contract/s5-pre.md",
+    "python_crashes": [],
+    "status": "open: a legacy verdict difference is not fixed (s5-pre.md)",
+    "verdict_differences": [
+      {
+        "case": "0:fill-premise",
+        "lean": null,
+        "python": [
+          "ResourceLimit",
+          "fill premise unsaid:pair:x_required,x_permitted"
+        ]
+      },
+      {
+        "case": "L:data-flag",
+        "lean": [
+          "UnsupportedProfile",
+          "UnsupportedProfile: norms route with data flags is not implemented"
+        ],
+        "python": null
+      },
+      {
+        "case": "L:constant-verbalisation",
+        "lean": [
+          "InvalidInput",
+          "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+        ],
+        "python": null
+      },
+      {
+        "case": "R:test:recorded:tests/test_norm_defaults.py::test_u1_claude_settled_no_and_sol_undecided",
+        "lean": [
+          "InvalidInput",
+          "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+        ],
+        "python": null
+      },
+      {
+        "case": "R:test:recorded:tests/test_norm_defaults.py::test_u1_variants_keep_the_unchanged_decoder_identity",
+        "lean": [
+          "InvalidInput",
+          "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+        ],
+        "python": null
+      },
+      {
+        "case": "R:test:recorded:tests/test_norm_defaults.py::test_u1_variants_keep_the_unchanged_decoder_identity",
+        "lean": [
+          "InvalidInput",
+          "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+        ],
+        "python": null
+      }
+    ]
+  },
+  "status": "shadow",
+  "text_delta_count": 263,
+  "three_way_cases": 3028,
+  "three_way_disagreements": [
+    {
+      "case": "0:fill-premise",
+      "problems": [
+        "lean: legacy accepts, engine 6.3"
+      ]
+    },
+    {
+      "case": "L:constant-verbalisation",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_u1_claude_settled_no_and_sol_undecided",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_u1_variants_keep_the_unchanged_decoder_identity",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_u1_variants_keep_the_unchanged_decoder_identity",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    }
+  ]
+}

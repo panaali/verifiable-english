@@ -1343,8 +1343,8 @@ def lean_admission(raw, directory):
         raise VEError("InvalidInput: the document is not UTF-8 text") from None
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
-    from .backends.lean import run_discourse_case
-    row = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
+    from .backends.lean import configured_timeout, run_discourse_case
+    row = run_discourse_case(executable, case, timeout=configured_timeout(_ROUTE_TIMEOUT))
     status = row["status"]
     # A row naming the case by position is Lean's reader refusing the case Python wrote: no answer.
     well_formed = "case_index" not in row and status == "error" or status == "ok" and (
