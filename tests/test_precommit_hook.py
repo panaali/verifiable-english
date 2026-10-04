@@ -107,7 +107,7 @@ def passes(staging: Staging) -> None:
 def test_clean_commit_passes(staging):
     staging.stage("ve/errors.py", staging.head("ve/errors.py") + b"\n# A harmless comment.\n")
     staging.stage("docs/precommit-probe.md", "# Probe\n\nA token of thanks; the password is in the vault.\n")
-    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.surface.registry\n")  # ledgered edge
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.backends.dispatch\n")  # ledgered edge
     staging.stage("lean/VE/Syntax.lean", staging.head("lean/VE/Syntax.lean") + b"\n-- A comment.\n")
     staging.rehash("lean/VE/Syntax.lean")
     staging.stage("tools/hooks/unused.txt", None)  # removing an absent path is a no-op
@@ -198,7 +198,7 @@ def test_verdicts_do_not_depend_on_the_working_tree(staging, tmp_path):
     elsewhere = tmp_path / "worktree"
     elsewhere.mkdir()
     (elsewhere / ".gitattributes").write_text("* -diff\n")
-    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.surface.registry\n")
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.backends.dispatch\n")
     staging.stage("lean/VE/Syntax.lean", staging.head("lean/VE/Syntax.lean") + b"\n-- A comment.\n")
     staging.rehash("lean/VE/Syntax.lean")
     clean = staging.run_in(elsewhere)

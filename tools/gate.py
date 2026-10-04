@@ -24,6 +24,8 @@ from tools.pytest_run import pytest_command, pytest_environment  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
+# The documented refresh of COLLECTION after intended test changes.
+REFRESH = "uv run python tools/gate_collection.py --write"
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
                    "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
@@ -52,6 +54,7 @@ ALLOWED_ENVIRONMENT = (
     "LAKE_CACHE_DIR",                   # fresh, in scratch
     "CARGO_HOME",                       # fresh, in scratch; seeded by isolated_cargo
     "PYTHONNOUSERSITE",                 # 1
+    "PYTHONPYCACHEPREFIX",              # fresh, in scratch: no bytecode cached before the gate
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD",   # 1
 )
 # Added only for the stage that needs them.
@@ -61,8 +64,9 @@ STAGE_ENVIRONMENT = {
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
-# baseline writer (`--write-collection`), so the baseline is what the gate collects.
-# Plugin autoload is off in the gate, so every plugin is named here.
+# baseline writer (tools/gate_collection.py, also `--write-collection`), so the baseline
+# is what the gate collects. Plugin autoload is off in the gate, so every plugin is
+# named here or by tools/pytest_run.py.
 PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
 
 
@@ -225,6 +229,19 @@ def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
                and entry["reason"] in reason for entry in entries)
 
 
+def collection_difference(added: list[str], removed: list[str]) -> str:
+    """Every ID collected but not pinned and pinned but not collected, and the refresh."""
+    lines = [f"The pinned baseline {COLLECTION.relative_to(ROOT)} differs from the collected tests: "
+             f"{len(added)} collected but not pinned, {len(removed)} pinned but not collected."]
+    for title, ids in (("Collected but not pinned", added), ("Pinned but not collected", removed)):
+        if ids:
+            lines.append(f"{title}:")
+            lines.extend(f"  {nodeid}" for nodeid in ids)
+    lines.append(f"If these test changes are intended, run `{REFRESH}` after `(cd lean && lake build)`, check "
+                 "every removed ID is meant to go, and commit the file with the change.")
+    return "\n".join(lines)
+
+
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str]) -> None:
     tests = events["tests"]
     collected = events["collected"]
@@ -242,9 +259,7 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
     unexpected = sorted(set(collected) - set(expected))
     if missing or unexpected:
         result["failures"].append({"stage": "coverage",
-                                   "reason": f"collection differs from baseline: {len(missing)} missing, "
-                                             f"{len(unexpected)} unexpected; missing={missing[:10]}, "
-                                             f"unexpected={unexpected[:10]}"})
+                                   "reason": collection_difference(unexpected, missing)})
     if set(selected) | set(deselected) != set(collected) or set(selected) & set(deselected):
         result["failures"].append({"stage": "coverage",
                                    "reason": "tests removed from final collection without a deselection report"})
@@ -308,7 +323,8 @@ def gate_environment(scratch: Path) -> dict[str, str]:
     directories = {"HOME": home, "XDG_CACHE_HOME": home / ".cache",
                    "XDG_CONFIG_HOME": home / ".config", "XDG_DATA_HOME": home / ".local/share",
                    "TMPDIR": scratch / "tmp", "UV_CACHE_DIR": scratch / "uv-cache",
-                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home"}
+                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home",
+                   "PYTHONPYCACHEPREFIX": scratch / "pycache"}
     for directory in directories.values():
         directory.mkdir(parents=True, exist_ok=True)
     # Only uv is exposed from outside the toolchains and the system directories.
@@ -383,20 +399,10 @@ def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
 
 
 def write_collection() -> int:
-    """Regenerate the baseline after intentional test changes: the gate's own collection
-    (deselected live tests included), run in this environment without its plugin
-    overrides. tests/test_gate.py checks the committed file against the same run."""
-    with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
-        events = collect({**os.environ, "VE_NATIVE_PREBUILT": "1"}, Path(directory) / "collection.json")
-    write_baseline(COLLECTION, events["collected"])
-    print(f"[gate] wrote {len(events['collected'])} test IDs to {COLLECTION}")
-    return 0
-
-
-def write_baseline(path: Path, ids: list[str]) -> None:
-    if len(ids) != len(set(ids)):
-        raise RuntimeError("duplicate test ID in collection")
-    path.write_text(json.dumps(sorted(ids), indent=2) + "\n")
+    """Regenerate the baseline after intentional test changes: the documented refresh,
+    REFRESH (tools/gate_collection.py --write), with the suite's native build prebuilt."""
+    from tools import gate_collection
+    return gate_collection.write(prebuilt=True)
 
 
 def main() -> int:

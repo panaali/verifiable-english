@@ -9,8 +9,8 @@ public reexport facade, not an architectural dependency source.
 
 | Layer | Python `ve` modules | Lean modules | Rust |
 |---|---|---|---|
-| 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire`, `wire_contract` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` (one crate currently contains kernel, profile and surface code) |
-| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `norms_contract`, `softnorms`, `softnorms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`order`, `route`, `eval`, `search`); intra-crate Rust imports are not enforced yet |
+| 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire`, `wire_contract` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` crate root and `ast`, `environment`, `model`, `wire`, `semantics`, `graph` (one crate holds all three groups until the crate split) |
+| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `softnorms_contract`, `norms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`, `discourse`); intra-crate module groups are checked by `tools/check_rust_deps.py` |
 | 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `readings_english`, `report_english`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
 | 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_defaults`, `norm_defaults_contract`, `norm_defaults_english`, `norm_defaults_route`, `norm_strict`, `openterms`, `propose`, `readings`, `readings_route`, `readings_s1`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
@@ -21,8 +21,33 @@ must be classified there; `tools/test_layer_policy.py` fails on any unclassified
 module in `ve/` or `lean/`. A new route or service executable needs no entry:
 its `lakefile.toml` root, or a top-level `*Main` module, is tool layer by rule. Rust's two crate boundaries are in
 [`tools/check_rust_deps.py`](../tools/check_rust_deps.py). The desired future
-split is separate Rust kernel, profile and surface crates; the present crate
-check cannot claim to enforce boundaries inside `ve-core`.
+split is separate Rust kernel, profile and surface crates. Until then the same
+checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
+root, `ast`, `environment`, `model`, `wire`, `semantics`, `graph`; profile:
+`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`, `discourse`;
+surface: `surface`) and rejects
+outward paths except the exact edges in
+[`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). This
+module check is a stopgap until the crate split, after which cargo enforces the
+boundary, so it does not re-implement Rust's name resolution: it is fail-closed
+on a strict subset. It tokenizes as rustc does (nested comments, raw strings,
+decoded string escapes, Unicode identifiers after NFC) and accepts plain
+`crate::<module>::...` paths (also through `super::` reaching the root), ordinary
+`mod` declarations, and `lib.rs`'s top-level `use` items as the only re-exporting
+facade, each naming a module directly, so `crate::<name>` resolves in one hop.
+The crate root's own items count as kernel. Every form that could hide a
+dependency is rejected with a message naming the plain form: aliases and globs
+of the crate root, re-exports anywhere else, facade chains and module globs,
+inline modules named like an imported name or a crate module, crate paths in
+attribute or macro strings and in macro definitions, `#[path]`, `#[macro_use]`,
+`#[macro_export]` (also under `cfg_attr`), `include!` (also renamed),
+`extern crate self`, macros 2.0 and macro metavariables after `::`.
+Rust's `units`, `risk`, `readings` and `discourse` are profile modules, as in
+Lean (`VE.Risk.*`, `VE.Route.Readings` and the `VE.Discourse.*` checks are
+layer 2). Python files the same duties differently: `ve.units` is a profile
+module but `ve.risk`, `ve.readings` and `ve.discourse` are layer-4 route
+modules. This cross-language mismatch is recorded, not resolved
+([plan 2](ARCHITECTURE-LAYERS-PLAN2.md), open question 9).
 The stage-1 Lean service and its Python adapter are tool-layer modules. This
 classification checks their imports and selects their consumers; the service is
 still outside the `ve` command path, as described in
@@ -86,12 +111,17 @@ kernel AST/wire traversal that uses surface registrations, and legacy Lean
 `Core` and tableau proofs that import routed or closure proof machinery.
 `VE.Norms.Wire -> VE.Route.Run` was removed by importing the needed gate and
 wire directly, with `VE.Norms.Run` importing `VE.Route.Run` explicitly.
+The three `ve-core` module edges were removed without changing the `ve` binary's
+output: `dependency_order` moved to kernel `graph`, the evaluator core
+(`Evaluator`, `Explanation`, `TraceBinding`, `compatible`) to kernel `semantics`,
+and `wire` decodes with its own `FORMULA_ARITY` table, which the surface records
+repeat (a unit test keeps the two equal).
 
 | Language | Current outward edges (exact exceptions) |
 |---|---|
-| Python | `ve.ast -> ve.surface.nary`, `ve.ast -> ve.surface.registry`, `ve.assist.cli -> ve_experiments.assist_haiku`, `ve.closure -> ve.surface.registry`, `ve.english -> ve.argument`, `ve.environment -> ve.definitions`, `ve.environment -> ve.profiles`, `ve.evaluate -> ve.surface.registry`, `ve.model -> ve.background`, `ve.model -> ve.definitions`, `ve.model -> ve.evaluate`, `ve.norms -> ve.search`, `ve.wire -> ve.surface.registry` |
+| Python | `ve.ast -> ve.surface.nary`, `ve.assist.cli -> ve_experiments.assist_haiku`, `ve.closure -> ve.surface.registry`, `ve.english -> ve.argument`, `ve.environment -> ve.definitions`, `ve.environment -> ve.profiles`, `ve.model -> ve.background`, `ve.model -> ve.definitions`, `ve.model -> ve.evaluate`, `ve.norms -> ve.search` |
 | Lean | `VE.Bridge -> VE.Surface`, `VE.TableauExtendedRules -> VE.Closure.Congruence`, `VE.RoundTrip -> VE.LexicalProofs`, `VE.CertificateWire -> VE.Closure.Bridge`, `VE.TableauExtendedInduction -> VE.Closure.Induction`, `VE.TableauExtended -> VE.Closure.Substitution`, `VE.TableauExtendedExtra -> VE.Closure.PathRules`, `VE.Order.WireGate -> VE.Order.Surface`, `VE.Core.Bridge -> VE.Route.Gate`, `VE.Core.Conservativity -> VE.Closure.Consequence`, `VE.Core.RoundTrip -> VE.Core.Surface`, `VE.Closure.RoundTrip -> VE.Closure.Surface`, `VE.Core.Route -> VE.Route.Checker`, `VE.Core.Route -> VE.Route.Gate`, `VE.Core.Route -> VE.Route.Route`, `VE.Core.Wire -> VE.Route.Wire` |
-| Rust | None at the crate boundary; internal `ve-core` module imports are outside this check's scope |
+| Rust | None at the crate boundary or inside `ve-core` |
 
 Commands: `uv run --group dev python tools/check_python_layers.py`,
 `python3 tools/check_lean_imports.py`, `python3 tools/check_rust_deps.py`.

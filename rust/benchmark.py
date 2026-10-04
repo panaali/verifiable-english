@@ -159,7 +159,7 @@ def main(repeats, output, closure_only=False):
               'rustc':command('rustc','--version'),'cargo':command('cargo','--version'),
               'git_revision':command('git','rev-parse','HEAD'),
               'source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
-                               for p in sorted([*ROOT.glob('ve/*.py'), *ROOT.glob('rust/ve-core/src/*.rs'),
+                               for p in sorted([*ROOT.glob('ve/*.py'), *ROOT.glob('rust/*/src/*.rs'),
                                                 ROOT/'rust/ve-core/examples/bench.rs', ROOT/'rust/benchmark.py',
                                                 ROOT/'rust/Cargo.lock', ROOT/'rust/ve-core/Cargo.toml'])},
               'load_average_start':load_start,'load_average_end':os.getloadavg(),
