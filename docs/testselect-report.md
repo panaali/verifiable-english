@@ -80,7 +80,64 @@ CPU-hours). The orchestrator's merge-verify equivalent above was run instead.
   and `7903d5fa` in `~/.cache/ve-testmap`. Precision for Python changes
   depends on map freshness (see the results above).
 
+## Review fixes (testselect-review.final, round on `589229ed`)
+
+Each finding was treated as a class; each reviewed failure is a regression
+test in `tests/test_select_tests.py`, and each fix has a seeded mutant in
+`SAFETY_CASES` that must fail a check.
+
+- B, recorder dropped test reads and listings (any pytest frame on the stack
+  made an open or listing "infrastructure", and every test runs under
+  pytest). `test_map_recorder.origin` now decides by the innermost frame
+  that is code under the root (recorded) or infrastructure (import system,
+  site, pytest: not recorded); the standard library and third-party code act
+  for their caller. Map `VERSION` is 3, so the version-2 maps (which lack
+  these edges) are no longer used. Tests:
+  `test_a_test_run_by_pytest_keeps_its_own_reads_and_listings` (a real
+  pytest run under the recorder; it fails with the reviewed recorder) and
+  `test_reads_and_listings_belong_to_the_innermost_owner`.
+- B, `async def` digested as `def`. A unit's digest is now its own `ast`
+  node less docstring and decorators, so the def's kind and any field
+  (including future ones) count; the import-time residue keeps the kind;
+  nested blocks are found from the `ast` schema, so defs under `match` and
+  `try`/`except*` are units; `except ... as e` and match captures bind.
+  Tests: `test_making_a_repository_method_async_changes_it`,
+  `test_every_field_of_a_def_or_class_is_part_of_its_digest`,
+  `test_defs_in_every_compound_statement_are_units` and
+  `test_every_identifier_field_of_the_ast_is_classified` (the last three
+  enumerate from the `ast` schema and fail on a field or statement kind
+  that is not classified).
+- B, deleted modules lost their dependents. `Graph.overlay` keeps each
+  changed file's earlier version in the static graph (removed files with
+  their old imports and mentions; old edges of changed files), used by
+  `select` and by the drift check. A module that appears or vanishes is an
+  import-time change for mapped tests. Drift results are cached under a key
+  that includes the selector's own code. Tests:
+  `test_a_deleted_file_keeps_the_tests_that_used_it`,
+  `test_without_a_map_deleting_a_module_selects_its_importers` (deleting
+  `ve/authoring.py`) and
+  `test_with_a_map_deleting_a_module_selects_every_test_that_imported_it`.
+
+Checks on HEAD after these fixes: `lake build` OK; `lean/audit.py` PASS
+(2959 declarations); full pytest suite with 14 workers on the loaded VM
+(load about 27): 8695 passed, 6 skipped, 1 failed:
+`test_precommit_hook.py::test_large_staged_change_stays_under_ten_seconds`
+took 18 s against its 10 s wall-clock bound under that load, and passed
+when rerun alone. The pre-commit hook shares no code with the selector.
+`tests/test_select_tests.py`: 55 passed, including nine seeded mutants.
+
+Not redone: the evidence numbers above (replay and seeded bugs) were
+computed with the version-2 maps and the selector before these fixes. Those
+maps are now rejected, so selection uses the static graph until
+`python3 tools/test_map.py record` writes a version-3 map (nightly, deferred
+to the orchestrator as above). Cold selection speed (finding C) is
+unchanged; the overlay adds about 0.2 s when a change touches Python files.
+
 ## Known limits
+
+- An assignment whose value calls something (`X = registry.add(f)`) counts
+  as computing `X`, not as an import-time effect, so it selects the readers
+  of `X` rather than every importer.
 
 - Dynamic dispatch of a new function from unchanged code is covered only by
   the "new function not called by name" rule (every test of its file).
