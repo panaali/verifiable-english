@@ -6,6 +6,8 @@ failed a 60-second elapsed bound that the same batch met alone), while the CPU
 seconds a process spends are, to first order, the same on a busy or an idle
 machine.
 """
+import json
+import os
 import resource
 import subprocess
 from types import SimpleNamespace
@@ -43,6 +45,11 @@ def run_cpu_bounded(command, stdin, cpu_seconds):
     with ChildCPU() as cpu:
         completed = subprocess.run(command, input=stdin, text=True, capture_output=True,
                                    timeout=HANG_TIMEOUT, preexec_fn=limit)
+    log = os.environ.get("VE_BENCH_CPU_LOG")
+    if log:  # tools/bench/test_perf.py benchmarks what each bounded child spends
+        with open(log, "a") as stream:
+            stream.write(json.dumps({"test": os.environ.get("PYTEST_CURRENT_TEST", "").rsplit(" ", 1)[0],
+                                     "command": os.path.basename(command[0]), "cpu": cpu.seconds}) + "\n")
     return completed, cpu.seconds
 
 
