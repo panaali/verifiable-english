@@ -2953,6 +2953,14 @@
 'VE.Readings.Wire.layerNames_sub' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.author_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.Wire.readings_wire_separate_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Wire.sideWF_of_chainText' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Wire.firstSome_eq_none' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Wire.wellFormedDoc_of_admissionText' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Wire.admitReadings_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.candidateJson_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Run.separatesWith_eq' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.assignments_of_ownedKeys_nil' depends on axioms: [propext, Quot.sound]
+'VE.Readings.Run.pairFacts_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.relaxTo_name' does not depend on any axioms
 'VE.Readings.relaxTo_pred' does not depend on any axioms
 'VE.Readings.relaxTo_sign' does not depend on any axioms

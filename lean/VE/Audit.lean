@@ -3122,6 +3122,14 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.layerNames_sub
 #print axioms VE.Readings.Wire.author_valid
 #print axioms VE.Readings.Wire.readings_wire_separate_sound
+#print axioms VE.Readings.Wire.sideWF_of_chainText
+#print axioms VE.Readings.Wire.firstSome_eq_none
+#print axioms VE.Readings.Wire.wellFormedDoc_of_admissionText
+#print axioms VE.Readings.Wire.admitReadings_eq
+#print axioms VE.Readings.Run.candidateJson_eq
+#print axioms VE.Readings.Run.separatesWith_eq
+#print axioms VE.Readings.Run.assignments_of_ownedKeys_nil
+#print axioms VE.Readings.Run.pairFacts_eq
 #print axioms VE.Readings.relaxTo_name
 #print axioms VE.Readings.relaxTo_pred
 #print axioms VE.Readings.relaxTo_sign

@@ -543,7 +543,10 @@ structure Admitted where
 
 def Admitted.D (a : Admitted) : Doc := docOf a.re a.doc
 
-def admitReadings (environment document : Json) : Except String Admitted := do
+/-- Admission as specified: the checks of 4.1, then `WellFormedDoc` evaluated in full. It elaborates and
+    validates `free D` and every candidate's `one D s i` twice, once in `admissionText` and once in
+    `WellFormedDoc`; `admitReadings` is the same function with each validated once (`admitReadings_eq`). -/
+def admitReadingsSpec (environment document : Json) : Except String Admitted := do
   let re ← decodeEnvironment environment
   let doc ← decodeDocument re document
   match admissionText re (docOf re doc) with
@@ -551,6 +554,85 @@ def admitReadings (environment document : Json) : Except String Admitted := do
   | none =>
     if h : WellFormedDoc (docOf re doc) = true then pure ⟨re, doc, h⟩
     else throw "InvalidInput: readings document is not well-formed"
+
+/-- `WellFormedDoc` without the chain checks of `free D` and of each candidate's `one D s i`. -/
+def frameWF (D : Doc) : Bool := reservedFree D && distinctAcrossSets D && interfaceClosed D && singlyAttached D
+
+/-- A side without a chain diagnostic is well-formed: `chainText` computes `sideWF`'s two conjuncts. -/
+theorem sideWF_of_chainText (D : Doc) (X : RightsDoc × List VE.Formula) (h : chainText D.chain X = none) :
+    sideWF D X = true := by
+  unfold chainText at h
+  unfold sideWF
+  generalize D.chain = c at h ⊢
+  cases c with
+  | rights =>
+    cases hl : lineOrderText X.1 <;> cases hv : VE.Rights.validateRights X.1 <;>
+      simp only [hl, hv, Option.or, chainWF, VE.Rights.WellFormedRights] at h ⊢ <;> (try split at h) <;> simp_all
+  | soft =>
+    cases hn : noRights X.1 <;> cases hv : VE.SoftNorms.validateSoft X.1.soft <;>
+      simp only [hn, hv, chainWF, VE.SoftNorms.WellFormedSoft] at h ⊢ <;> (try split at h) <;> simp_all
+  | norms =>
+    cases hn : noRights X.1 <;> cases hs : allStrict X.1 <;> cases hv : VE.SoftNorms.validateSoft X.1.soft <;>
+      simp only [hn, hs, hv, chainWF, VE.SoftNorms.WellFormedSoft] at h ⊢ <;> (try split at h) <;> simp_all
+
+theorem firstSome_eq_none {α β : Type} {l : List α} {f : α → Option β} (h : firstSome l f = none) :
+    ∀ x ∈ l, f x = none := by
+  unfold firstSome at h
+  exact List.filterMap_eq_nil_iff.mp (List.head?_eq_none_iff.mp h)
+
+/-- Once `admissionText` has found nothing, `WellFormedDoc` is `frameWF`. -/
+theorem wellFormedDoc_of_admissionText (re : ReadingsEnvironment) (D : Doc) (h : admissionText re D = none) :
+    WellFormedDoc D = frameWF D := by
+  simp only [admissionText, Option.or_eq_none_iff] at h
+  obtain ⟨-, -, -, -, -, hfree, hsets⟩ := h
+  have hone : ∀ R ∈ D.sets, ∀ i ∈ List.range R.candidates.length,
+      (R.candidates[i]?.bind (·.content)).isNone = true ∨ sideWF D (one D R.id i) = true := by
+    intro R hR i hi
+    have h1 := firstSome_eq_none hsets R hR
+    have h2 := firstSome_eq_none h1 i hi
+    by_cases hc : (R.candidates[i]?.bind (·.content)).isNone = true
+    · exact Or.inl hc
+    · rw [if_neg hc, Option.map_eq_none_iff] at h2
+      exact Or.inr (sideWF_of_chainText D _ h2)
+  unfold WellFormedDoc frameWF
+  rw [sideWF_of_chainText D _ hfree]
+  have hall : (D.sets.all (fun R => (List.range R.candidates.length).all (fun i =>
+      (R.candidates[i]?.bind (·.content)).isNone || sideWF D (one D R.id i)))) = true := by
+    simp only [List.all_eq_true, Bool.or_eq_true]
+    exact hone
+  rw [hall]
+  simp only [Bool.and_true]
+
+/-- Admission with `free D` and each candidate validated once: `WellFormedDoc`'s chain checks are `admissionText`'s,
+    so only `frameWF` is evaluated after it. -/
+def admitReadings (environment document : Json) : Except String Admitted := do
+  let re ← decodeEnvironment environment
+  let doc ← decodeDocument re document
+  match h : admissionText re (docOf re doc) with
+  | some e => throw e
+  | none =>
+    if hf : frameWF (docOf re doc) = true then pure ⟨re, doc, (wellFormedDoc_of_admissionText re _ h).trans hf⟩
+    else throw "InvalidInput: readings document is not well-formed"
+
+theorem admitReadings_eq (environment document : Json) :
+    admitReadings environment document = admitReadingsSpec environment document := by
+  unfold admitReadings admitReadingsSpec
+  simp only [bind, Except.bind]
+  split
+  · rfl
+  · rename_i re _
+    split
+    · rfl
+    · rename_i doc _
+      split
+      · rename_i e h
+        simp only [h]
+      · rename_i h
+        have hw := wellFormedDoc_of_admissionText re _ h
+        simp only [h]
+        by_cases hf : frameWF (docOf re doc) = true
+        · rw [dif_pos hf, dif_pos (hw.trans hf)]
+        · rw [dif_neg hf, dif_neg (fun h' => hf (hw.symm.trans h'))]
 
 /-! ## The replay -/
 
