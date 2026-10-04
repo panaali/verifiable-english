@@ -133,6 +133,51 @@ maps are now rejected, so selection uses the static graph until
 to the orchestrator as above). Cold selection speed (finding C) is
 unchanged; the overlay adds about 0.2 s when a change touches Python files.
 
+## Review fixes (testselect-looprecheck1.final, round on `1f1e154f`)
+
+Both B findings were cases of one class: the plan (`select`) and the drift
+check (`uncertain_units`) each had their own per-kind rules, and an added or
+removed file was handled differently by kind. Both now call one rule,
+`kind_of` and `file_impact` in `tools/select_tests.py`.
+
+- B, deleting a module that binds nothing (empty, only a docstring, `pass`)
+  selected none of its importers, statically or with a map, and the drift
+  check kept their map entries. An empty semantic delta no longer hides an
+  added or deleted module, in the plan's static and mapped parts and in the
+  drift check. In the same class: an added module, which the map cannot have
+  seen imported, also selects every test whose static closure now imports
+  it, and a path named without a visible edit may have appeared or vanished.
+  Tests: `test_deleting_a_module_that_binds_nothing_selects_its_importers`
+  (four contents, fresh map, static graph and drift check) and
+  `test_a_new_module_selects_the_tests_that_now_import_it`.
+- B, an added Python fixture ignored the tests that listed its directory
+  (only data files used listers). Every kind (Python, Lean, Rust, data) now
+  selects the listers of an added or removed file's directory. Test:
+  `test_adding_a_python_fixture_selects_the_tests_that_listed_its_directory`
+  (`.py`, `.json`, `.lean`, `.rs` added to `tests/fixtures`).
+- Class check: `test_the_plan_and_the_drift_check_treat_presence_alike`
+  runs every kind in `select_tests.KINDS` (the test fails if a kind has no
+  example) × added/deleted × contents. It requires the readers, listers and,
+  by kind, importers or program runners, and it requires the plan and the
+  drift check to agree. As in the plan, a file that selects everything
+  (`pyproject.toml`, unknown areas) changed since the map now makes every
+  map entry uncertain.
+- Two seeded mutants were added to `SAFETY_CASES`: "an empty delta hides an
+  added or deleted module" and "directory listings count for data files only".
+
+Checks on HEAD `dd669c45`: `lake build` OK; `lean/audit.py` PASS (2959
+declarations); full pytest suite with 14 workers: 8738 passed, 6 skipped, 0
+failed. `tests/test_select_tests.py`: 97 passed, including 11 seeded
+mutants. In the run of only the tests this change affects (load about 40),
+`test_precommit_hook.py::test_large_staged_change_stays_under_ten_seconds`
+went over its wall-clock bound, as in the previous round. It passed alone
+and in the full suite.
+
+Not redone (follow-up): the evidence tables still come from the version-2
+maps and the selector before both review rounds. `docs/TESTING.md` now says
+so. Regenerating them needs a version-3 map recording (about an hour) and the
+replay. That recording is the nightly job deferred to the orchestrator above.
+
 ## Known limits
 
 - An assignment whose value calls something (`X = registry.add(f)`) counts
