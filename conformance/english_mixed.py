@@ -112,12 +112,20 @@ def nary_configuration():
     }), {}
 
 
-def mixed(per_vocabulary=40):
+def mixed(per_vocabulary=40, offsets=None, parse=True, part=(0, 1)):
+    """The report over every configuration, or over the configurations at `offsets` only
+    (each keeps its seed, so the slices together are the whole run; the coverage of the
+    registered constructs is then not judged). `part=(i, n)` renders and parses only the
+    texts whose index in their configuration is `i` modulo `n`. With `parse` false, texts
+    are generated but neither rendered nor parsed: the coverage, which depends on the
+    generated formulas only, is the same."""
     warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
     rows, failures, covered = [], [], set()
     registered = {r.node_type for r in registry.records() if r.node_type is not None}
     enabled_anywhere = set()
     for offset, (name, env, options) in enumerate(chain(configurations(), (nary_configuration(),))):
+        if offsets is not None and offset not in offsets:
+            continue
         rng = random.Random(MIXED_SEED + offset)
         enabled = {r.node_type for r in registry.records()
                    if r.node_type is not None and registry.enabled(r, env)}
@@ -138,9 +146,11 @@ def mixed(per_vocabulary=40):
         documents = [ast.Document((f,)) for f in formulas]
         documents += [ast.Document(tuple(formulas[i:i + 3])) for i in range(0, len(formulas) - 2, 3)]
         counts, seen, digest = Counter(), set(), hashlib.sha256()
-        for document in documents:
+        for index, document in enumerate(documents):
             for formula in document.formulas:
                 node_types(formula, seen)
+            if not parse or index % part[1] != part[0]:
+                continue
             text = render(document, env, 've_english', **options)
             digest.update(text.encode())
             try:
@@ -166,11 +176,11 @@ def mixed(per_vocabulary=40):
                      'node_types': sorted(t.__name__ for t in seen & enabled),
                      'corpus_sha256': digest.hexdigest()})
         print(json.dumps(rows[-1]), flush=True)
-    unexercised_profiles = sorted(t.__name__ for t in registered - enabled_anywhere)
+    unexercised_profiles = sorted(t.__name__ for t in registered - enabled_anywhere) if offsets is None else []
     if unexercised_profiles:
         failures.append({'kind': 'registered construct has no exercising configuration',
                          'node_types': unexercised_profiles})
-    missing = sorted(t.__name__ for t in registered - covered)
+    missing = sorted(t.__name__ for t in registered - covered) if offsets is None else []
     if missing:
         failures.append({'kind': 'registered construct not generated', 'node_types': missing})
     return {'method': 'rendered mixed-construct sentences and paragraphs; parse_english all-derivations check',
