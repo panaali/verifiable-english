@@ -1,16 +1,19 @@
 import Lean.Data.Json
 import VE.Grammar.Table
-import VE.EnglishGrammar.Token
+import VE.EnglishGrammar.Lexer
 
 /-! G1a measurement of the grammar engine (docs/spec/english-lean-PLAN.md section 5, S1a).
 
     lake build ve_english_lean_bench
     .lake/build/bin/ve_english_lean_bench <input.json> [repetitions]
+    .lake/build/bin/ve_english_lean_bench --lex <sources.json>
 
 The input lists grammars over the English tokens and terminals with sentences to read; it is written
 by `bench/english_lean_g1a.py`. For each sentence the tool runs `parse` with cap 2 and a budget that
 cannot be exhausted, and prints one JSON line: the number of tokens, the verdict, the steps of the
 step counter of spec 2.6 and the least CPU time of the repetitions in microseconds.
+With `--lex` it reads a JSON list of sources and prints, per source, the tokens of `lexSpans` with
+their byte spans, or the rejection: the instrument of the lexer differential against the Python reference.
 Measurement only: no admission path reads it.
 -/
 
@@ -131,10 +134,36 @@ def prepareTime (G : Grammar Terminal) : IO (Prepared Terminal × Nat) := do
   let t1 ← cpuNanos
   return (P, if n == 0 then t1 - t0 + 1 else t1 - t0)
 
+def tokJson : Tok → Json
+  | .word t i => Json.arr #[toJson "word", toJson t, toJson i]
+  | .quoted n => Json.arr #[toJson "quoted", toJson n]
+  | .label l k => Json.arr #[toJson "label", toJson l, toJson k]
+  | .numeral v => Json.arr #[toJson "numeral", toJson v]
+  | .punct t b a => Json.arr #[toJson "punct", toJson t, toJson b, toJson a]
+
+def rejectJson (r : Reject) : Json :=
+  let pos : Option Nat := match r with
+    | .badCharacter k | .openQuote k | .badNumeral k | .emptySentence k => some k
+    | _ => none
+  Json.mkObj ([("reject", toJson (repr r).pretty)] ++ (pos.map fun k => ("at", toJson k)).toList)
+
+def lexMain (path : String) : IO UInt32 := do
+  let .ok input := Json.parse (← IO.FS.readFile path) | IO.eprintln "input is not JSON"; return 2
+  let .ok sources := input.getArr? | IO.eprintln "expected a list of sources"; return 2
+  for s in sources do
+    let .ok text := s.getStr? | IO.eprintln "a source is not a string"; return 2
+    let line := match lexSpans text with
+      | .ok ss => Json.mkObj [("sentences", Json.arr (ss.map fun (sent : Array Spanned) =>
+          Json.arr (sent.map fun (x : Spanned) => Json.arr #[tokJson x.1, toJson x.2.1, toJson x.2.2])))]
+      | .error r => rejectJson r
+    IO.println line.compress
+  return 0
+
 end EnglishLeanBench
 
 open EnglishLeanBench in
 def main (args : List String) : IO UInt32 := do
+  if let ["--lex", path] := args then return ← lexMain path
   let some path := args.head? | IO.eprintln "usage: ve_english_lean_bench <input.json> [repetitions]"; return 2
   let reps := (args.drop 1).head?.bind String.toNat? |>.getD 3
   let text ← IO.FS.readFile path
