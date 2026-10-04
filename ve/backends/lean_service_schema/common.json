@@ -3,6 +3,8 @@
   "$comment": "Shared value domains of Lean service results. Every domain is the one the named Lean decoder accepts (lean/VE/...): the response validator in ve/backends/lean_service.py is compiled from these files and ve_response_decode (lean/ResponseDecode.lean) is the differential oracle. Only well-formedness and request binding are described here: relations the runners guarantee between values (counts regenerated from the environment, graph unfoldings, dependency orders, verdict details) are the service's responsibility and are tested on its outputs (docs/spec/lean-service.md, threat model). Dialect: README.md in this directory.",
   "$defs": {
     "text": {"type": "string", "minLength": 1},
+    "code": {"$comment": "Service.Protocol.rejectionCode: the public diagnostic code of a rejection, which the client relays with the message (docs/LEAN-FIRST-PLAN.md, batch 0); the handshake's codes.",
+      "enum": ["InvalidInput", "SyntaxError", "UnknownSymbol", "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile", "ResourceLimit", "AdmissionError", "CheckerUnavailable"]},
     "nat": {"type": "integer", "minimum": 0},
     "booleans": {"type": "array", "items": {"type": "boolean"}},
     "strings": {"type": "array", "items": {"type": "string"}},
@@ -99,30 +101,36 @@
         "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
 
     "case_error": {"$comment": "Service.Protocol.caseError: a case the batch decoder rejected on its own.",
-      "type": "object", "required": ["status", "case_index", "error"], "additionalProperties": false,
+      "type": "object", "required": ["status", "case_index", "error", "code"], "additionalProperties": false,
       "properties": {
         "status": {"const": "error"},
         "case_index": {"type": "integer", "x-index": true},
-        "error": {"$ref": "#/$defs/text"}}},
+        "error": {"$ref": "#/$defs/text"},
+        "code": {"$ref": "#/$defs/code"}}},
     "case_error_valid": {"$comment": "Service.Protocol.caseError for check-certificate and order.",
-      "type": "object", "required": ["status", "case_index", "error", "valid"], "additionalProperties": false,
+      "type": "object", "required": ["status", "case_index", "error", "valid", "code"], "additionalProperties": false,
       "properties": {
         "status": {"const": "error"},
         "case_index": {"type": "integer", "x-index": true},
         "error": {"$ref": "#/$defs/text"},
+        "code": {"$ref": "#/$defs/code"},
         "valid": {"const": false}}},
-    "error": {"$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
-      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
-      "properties": {
-        "id": {"x-echo": "/id"},
-        "status": {"const": "error"},
-        "error": {"$ref": "#/$defs/text"}}},
-    "error_valid": {"$comment": "The same with valid: false (CertificateWire and Order.Surface runCaseReported).",
-      "type": "object", "required": ["id", "status", "error", "valid"], "additionalProperties": false,
+    "error": {"$comment": "A case the runner rejected: the request's id (null if absent), the message, its code and the generator an InvalidModel(generator) message names (Service.Protocol.coded).",
+      "type": "object", "required": ["id", "status", "error", "code"], "additionalProperties": false,
       "properties": {
         "id": {"x-echo": "/id"},
         "status": {"const": "error"},
         "error": {"$ref": "#/$defs/text"},
+        "code": {"$ref": "#/$defs/code"},
+        "generator": {"type": "string"}}},
+    "error_valid": {"$comment": "The same with valid: false (CertificateWire and Order.Surface runCaseReported).",
+      "type": "object", "required": ["id", "status", "error", "valid", "code"], "additionalProperties": false,
+      "properties": {
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "error": {"$ref": "#/$defs/text"},
+        "code": {"$ref": "#/$defs/code"},
+        "generator": {"type": "string"},
         "valid": {"const": false}}},
     "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}}
   }

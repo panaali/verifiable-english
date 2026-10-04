@@ -190,7 +190,7 @@ def test_genuine_request_errors_are_bound_and_accepted(genuine_errors, executabl
     """mig1d recheck: every request error echoes the request's mode and its case digests
     (`null` for a cases text that does not split), and the schemas and the Lean decoders
     accept each one against its request."""
-    assert all(set(response) == {"id", "status", "mode", "digests", "error"} and response["mode"] == mode
+    assert all(set(response) == {"id", "status", "mode", "digests", "error", "code"} and response["mode"] == mode
                and response["digests"] == request["digests"] for mode, request, response in genuine_errors)
     assert any(request["digests"] is None for _, request, _ in genuine_errors)
     assert any(request["digests"] and request["cases"] is None for _, request, _ in genuine_errors)

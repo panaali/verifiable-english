@@ -1,24 +1,5 @@
-"""Lazy shared Lean service client for public adapters."""
+"""The cases public adapters send to the Lean service; `relay.decide` sends them."""
 from __future__ import annotations
-
-import atexit
-import threading
-
-from .diagnostics import require_ok
-from .lean_service import LeanServicePool
-
-_pool: LeanServicePool | None = None
-_lock = threading.Lock()
-
-
-def _close() -> None:
-    global _pool
-    if _pool is not None:
-        _pool.close()
-        _pool = None
-
-
-atexit.register(_close)
 
 
 def route_mode(env) -> str:
@@ -88,12 +69,3 @@ def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dic
     # The legacy evaluation runner takes a kind-less case; the others name it.
     return mode, case if mode == "evaluate" else {**case, "kind": "evaluate"}
 
-
-def run(mode: str, cases: list[dict], *, timeout: float | None = None) -> list[dict]:
-    """Send a batch and classify each case diagnostic."""
-    global _pool
-    with _lock:
-        if _pool is None:
-            _pool = LeanServicePool()
-        pool = _pool
-    return [require_ok(row) for row in pool.run(mode, cases, timeout=timeout)]

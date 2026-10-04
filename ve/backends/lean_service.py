@@ -9,8 +9,8 @@ module yet: no Python semantics is switched.
 Failure classes:
 
 * A deterministic rejection of a whole request by the service (its budget, a batch the
-  restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
-  runners' exit-2 diagnostics would; the process stays up. Such a request error is bound
+  restricted decoder rejects) raises the exception of the service's `code` with its text
+  (`relay.rejection`); the process stays up. Such a request error is bound
   like a response, to the nonce, the mode and every case digest; one without that
   binding is operational.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
@@ -505,10 +505,8 @@ class LeanService:
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
         _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
         if response.get("status") == "error":
-            message = str(response.get("error", ""))
-            if message.startswith("ResourceLimit"):
-                raise ResourceLimit(message)
-            raise VEError(message)
+            from .relay import rejection  # relay.py builds on this client
+            raise rejection(response["code"], response["error"])
         return [bound["result"] for bound in response["results"]]
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:

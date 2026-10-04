@@ -1,6 +1,7 @@
 import VE.Norms.Run
 import VE.Order.Wire
 import VE.Service.EnglishRun
+import VE.Service.Protocol
 
 /-! `ve_response_decode`: the Lean side of the tests of service responses. Test tooling
 only: nothing imports it and no theorem depends on it.
@@ -143,7 +144,8 @@ def okRow (row case : Json) (required : List String) (optional : List String := 
   need (isField case "id" (.str id)) "id is not the request's"
 
 def errorRow (row case : Json) (extra : List String) : Check := do
-  shape row (["id", "status", "error"] ++ extra) []
+  shape row (["id", "status", "error"] ++ extra) ["generator"]
+  if let .ok g := row.getObjVal? "generator" then string g
   need (isField row "status" (.str "error")) "status"
   need ((← field row "id") == case.getObjValD "id") "id is not the request's"
   text (← field row "error")
@@ -573,8 +575,14 @@ def englishItem (j case : Json) : Check := do
     need (formulas.any (!·.isEmpty)) "checked without formulas"
   else need (rendered.isNull && !(← (← field j "roundtrip").getBool?)) "rendering or roundtrip without a check"
 
-/-- The content invariants of one decoded result (case errors have none). -/
+/-- The content invariants of one decoded result (case errors have none but their code: the
+code of the message, `Service.Protocol.rejectionCode`). -/
 def row (mode : String) (r case : Json) (_index : Nat) : Check := do
+  if let .ok (.str m) := r.getObjVal? "error" then
+    need (r.getObjValD "code" == .str (VE.Service.rejectionCode m)) "code is not the message's"
+    need (r.getObjValD "generator" == match VE.Route.Run.generatorOf m with
+      | some g => .str g
+      | none => .null) "generator is not the message's"
   if has r "case_index" then return
   let ok := isField r "status" (.str "ok")
   match mode with
@@ -601,6 +609,18 @@ def row (mode : String) (r case : Json) (_index : Nat) : Check := do
 
 end Invariants
 
+/-- `Service.Protocol.coded`: a rejection carries a public diagnostic code, which the mode's
+row check does not see (the runners' rows have none); any other result carries no code. -/
+def uncoded (x : Json) : Except String Json := do
+  if isField x "status" (.str "error") then
+    need (VE.Service.rejectionCodes.contains (← (← field x "code").getStr?)) "code is not a public code"
+    match x with
+    | .obj kvs => pure (.obj (kvs.erase (cmp := compare) "code"))
+    | _ => throw "result is not an object"
+  else
+    need (!has x "code") "code on a result that is not a rejection"
+    pure x
+
 /-- `Service.Protocol.bound`: result `i` carries position `i` and the digest of case `i`. -/
 def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
   shape b ["index", "digest", "result"] []
@@ -615,11 +635,12 @@ each result with its case and position. -/
 def response (mode : String) (request r : Json) (content : Json → Json → Nat → Check) : Check := do
   let nonce ← field request "id"
   if isField r "status" (.str "error") then
-    shape r ["id", "status", "mode", "digests", "error"] []
+    shape r ["id", "status", "mode", "digests", "error", "code"] []
     need ((← field r "id") == nonce && (← (field r "id")).getStr?.toBool) "id is not the nonce"
     need (isField r "mode" (.str mode)) "mode"
     need ((← field r "digests") == (← field request "digests")) "digests are not the request's"
     text (← field r "error")
+    need (VE.Service.rejectionCodes.contains (← (← field r "code").getStr?)) "code is not a public code"
   else
     shape r ["id", "status", "mode", "results", "counts"] []
     need (isField r "status" (.str "ok")) "status"
@@ -632,7 +653,7 @@ def response (mode : String) (request r : Json) (content : Json → Json → Nat
     let mut rows := #[]
     for i in [:results.size] do
       match bound results[i]! i digests[i]! >>= fun x => do
-          row mode x cases[i]! i; content x cases[i]! i; pure x with
+          row mode (← uncoded x) cases[i]! i; content x cases[i]! i; pure x with
       | .ok x => rows := rows.push x
       | .error m => throw s!"result {i}: {m}"
     let counts ← field r "counts"

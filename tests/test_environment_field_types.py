@@ -26,11 +26,13 @@ import subprocess
 import pytest
 
 from ve.backends.diagnostics import checker_error
+from ve.backends.relay import rejection
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.wire import canonical_json
 from conformance.risk import agent_ops
 from tests import probe_matrix as pm
+from tests.lean_wording import lean_wording
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
@@ -51,6 +53,7 @@ TYPE_DIAGNOSTICS = {
     ("InvalidInput", "InvalidInput: risk.block"), ("InvalidInput", "units must be an object"),
     ("InvalidInput", "InvalidInput: environment vocabulary"),
 }
+LEAN_TYPE_DIAGNOSTICS = {lean_wording(*diagnostic) for diagnostic in TYPE_DIAGNOSTICS}
 
 
 def _speech():
@@ -222,8 +225,8 @@ def test_python_and_lean_authorities_agree(monkeypatch, base, field, data):
 
 
 def lean_environment_mode(data):
-    from ve.backends import lean_runner
-    return outcome(lambda: lean_runner.run("environment", [{"id": "e", "environment": data}]))
+    from ve.backends import relay
+    return outcome(lambda: relay.decide("environment", [{"id": "e", "environment": data}]))
 
 
 # The Lean decoder of each route and a case that reaches its environment decoder.
@@ -280,8 +283,9 @@ def lean_route_rows(route, environments):
         assert done.returncode in (0, 1) and "PANIC" not in done.stderr, done.stderr[-2000:]
         rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [str(i) for i in range(len(environments))]
-    return [pair(checker_error(row["error"]).to_dict()) if row["status"] == "error" else ("ok", "")
-            for row in rows]
+    # The service's rows carry Lean's code; the one-shot routes' leave it in the text's prefix.
+    return [pair((rejection(row["code"], row["error"]) if "code" in row else checker_error(row["error"])).to_dict())
+            if row["status"] == "error" else ("ok", "") for row in rows]
 
 
 def lean_diagnostic(data):
@@ -309,8 +313,8 @@ def test_type_diagnostics_are_leans(monkeypatch, base, field, data):
     python = pair(outcome(lambda: Environment(data)))
     lean = lean_diagnostic(data)
     assert lean[0] != "ok", (lean_route(data), data)
-    if python in TYPE_DIAGNOSTICS or lean in TYPE_DIAGNOSTICS:
-        assert python == lean, lean_route(data)
+    if python in TYPE_DIAGNOSTICS or lean in LEAN_TYPE_DIAGNOSTICS:
+        assert lean_wording(*python) == lean, lean_route(data)
 
 
 # Pairs of fields, each replaced by a value of each kind or removed: a check
@@ -356,10 +360,10 @@ def test_pairs_of_wrong_typed_fields_have_the_routes_diagnostics(monkeypatch, ba
     for route, routed in by_route.items():
         lean.update(zip([name for name, _ in routed], lean_route_rows(route, [data for _, data in routed])))
     accepted = [name for name, _ in cases if "ok" in (python[name][0], lean[name][0])
-                and python[name] != lean[name]]
+                and lean_wording(*python[name]) != lean[name]]
     differing = [(name, python[name], lean[name]) for name, _ in cases
-                 if (python[name] in TYPE_DIAGNOSTICS or lean[name] in TYPE_DIAGNOSTICS)
-                 and python[name] != lean[name]]
+                 if (python[name] in TYPE_DIAGNOSTICS or lean[name] in LEAN_TYPE_DIAGNOSTICS)
+                 and lean_wording(*python[name]) != lean[name]]
     assert accepted == []
     assert differing == [], "\n".join(map(str, differing[:60]))
 
