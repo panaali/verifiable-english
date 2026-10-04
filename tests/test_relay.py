@@ -96,8 +96,8 @@ def test_rows_are_returned_in_order_and_unchanged(monkeypatch):
     rows = [{"id": str(i), "status": "ok", "value": i} for i in range(3)]
     pool = _Pool(rows)
     monkeypatch.setattr(relay, "_pool", pool)
-    assert relay.decide("evaluate", [{"id": "0"}], timeout=7.0) == rows
-    assert pool.calls == [("evaluate", [{"id": "0"}], 7.0)]
+    assert relay.decide("evaluate", [{"id": "0"}], timeout=HANG_TIMEOUT) == rows
+    assert pool.calls == [("evaluate", [{"id": "0"}], HANG_TIMEOUT)]
 
 
 @needs_service

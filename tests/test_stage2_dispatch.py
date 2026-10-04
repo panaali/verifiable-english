@@ -96,7 +96,8 @@ def recorded_rust(monkeypatch, tmp_path):
 
     def checker(argv, *, input, timeout):
         waits.append(timeout)
-        return subprocess.CompletedProcess(argv, 0, b'{"id":"x","status":"ok"}\n', b"")
+        # A record the producer's schema accepts for a `check` case (`ve/backends/rust_schema`).
+        return subprocess.CompletedProcess(argv, 0, b'{"id":"x","status":"ok","well_typed":true}\n', b"")
     monkeypatch.setattr("ve.backends.rust_jsonl._run_checker", checker)
     from hashlib import sha256
     return waits, lambda **options: rust_run({"id": "x", "kind": "check"}, executable=executable,

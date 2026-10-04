@@ -144,3 +144,21 @@ only records.
 ## DRI signatures (2026-10-04)
 - **W1 (wording, one block): signed.** Lean's texts are canonical (LEAN-FIRST-PLAN DRI answer 3); Python now writes Lean's `Code: text` exactly.
 - **A1 (availability, readings route): signed.** When Python and Lean differed only by the `Code: ` prefix, the route returned CheckerUnavailable; now it returns Lean's diagnostic. That is the intended outcome of one owner: the difference was an artefact of the duplicate, not a real disagreement.
+
+## Merge with ve-integration (2026-10-04)
+- **Wire contracts norms@0 and norm-defaults@0 (S5, shadow).** Their inherited texts are each engine's own
+  decoder text, so W1 reaches them. The Python syntax walk (`ve/norms_contract.py`) now refuses an invalid
+  variable index with `UnboundVariable: Invalid variable index`, as `_Decoder` (W1.5) and the Lean hook
+  (`Hooks/Norms.lean`) do. The fixture pins of 8.1 and 8.2 (N21, N33 to N35, N38, D9) carry W1's prefixes. Both
+  units' call snapshots, gate reports and delta reports were rewritten from the merged tree (`--write-call-snapshot`
+  is allowed in shadow). Their gate failures are the ones the stored reports already had (S5-pre open, the same
+  mismatches and residual). The four `legacy_crashes` of norms@0 on non-array `profiles` are gone; that comes from
+  ve-integration's own env-field-types fix, which postdates the stored report.
+- **Gap: soft-norms@0 (public) signed check 6.5a.** W1.1 gives the legacy validator's AST node limit text the
+  `ResourceLimit: ` prefix that 6.5a's signed sentence attributes to the contract. Measured from this tree, 6.5a
+  changes no text (498 → 478 text changes), so `wire_contract_gate --check` reports "signed check 6.5a has no text
+  change". The stored pilot report, its delta and `soft-norms-python-delta.json` were already stale at
+  lean-first/b0 before the merge, and they are left unchanged here. The DRI decides whether to drop 6.5a from
+  the countersigned switch (`soft-norms@0-switch.json`, the release note, wire-contract-s4.md 3.3 and 16) or to
+  keep the sentence as the public change relative to the pre-switch release. After that decision, regenerate the
+  three artifacts.
