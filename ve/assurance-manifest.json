@@ -33,8 +33,7 @@
     "python:argument-diagnostics": "CheckerConflict, ContradictoryPremises, Incomplete, ResourceLimit and InvalidInput statuses; display that asserts no consequence"
   },
   "reviewed_broad_handlers": {
-    "ve/discourse.py:validate_discourse": "CheckerUnavailable is re-raised first; a Python failure on a @2 document only drops Python's editor hints and diagnostic text (or makes the joint set UNKNOWN), and the verdict is Lean's discourse route answer",
-    "ve/document.py:load_document": "CheckerUnavailable is re-raised first; on a @2 document Lean rejected, Python's failure becomes Lean's diagnostic (rejection), and on one Lean admitted it becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document.py:load_document": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
     "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
     "ve/__main__.py:_main": "display only: an English rendering of an already computed record is omitted (`display_omitted`); the verdict fields are untouched",
     "ve/assist/api.py:call_tool": "CheckerUnavailable is caught first and keeps its code; other RuntimeErrors are logged as a rejected BackendError call, never a verdict",
