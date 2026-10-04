@@ -50,13 +50,23 @@ end VE.Demo
 '''
 
 
-def write_tree(root: Path, table: dict, statements: str = "", predicates: tuple[str, ...] = ()) -> None:
+def located(token: str) -> str:
+    """A fixture constant as the dump writes it: `name@Module`, `VE.Demo` unless given."""
+    return token if "@" in token else f"{token}@VE.Demo"
+
+
+def predicate_file(predicates: tuple[str, ...] = (), modules: tuple[str, ...] = ("VE.Demo",)) -> str:
+    return "-- header\n" + "".join(f"module {m}\n" for m in modules) + "".join(f"{located(p)}\n" for p in predicates)
+
+
+def write_tree(root: Path, table: dict, statements: str = "", predicates: tuple[str, ...] = (),
+               modules: tuple[str, ...] = ("VE.Demo",)) -> None:
     (root / "lean/VE").mkdir(parents=True, exist_ok=True)
     (root / "lean/VE/Demo.lean").write_text(FIXTURE)
     (root / "tools").mkdir(exist_ok=True)
     (root / "tools/trust-classes.json").write_text(json.dumps({"modules": {"VE/Demo.lean": table}}))
     (root / "lean/statements.txt").write_text(statements)
-    (root / "lean/predicates.txt").write_text("-- header\n" + "".join(f"{p}\n" for p in predicates))
+    (root / "lean/predicates.txt").write_text(predicate_file(predicates, modules))
 
 
 def test_scan_spans_names_and_kinds(tmp_path):
@@ -98,7 +108,8 @@ def tie_problems(root: Path, table: dict, dump: str, predicates: tuple[str, ...]
 
 
 def entry(statement: str, uses: str) -> str:
-    return f"theorem VE.Demo.decodeThing_empty\n  {statement}\n  -- uses {uses}\n  -- expr 1\n"
+    return (f"theorem VE.Demo.decodeThing_empty\n  {statement}\n"
+            f"  -- uses {' '.join(located(u) for u in uses.split())}\n  -- expr 1\n")
 
 
 TIED = {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_empty"]}], "S": ["VE.Demo.Meaning"]}
@@ -196,7 +207,7 @@ def test_seed_puts_predicates_and_kernel_types_in_the_meaning():
     decls = [trust_map.Decl("VE.Closure.Edge", "inductive", 2, 3), trust_map.Decl("VE.Closure.Formula.WellFormed", "def", 4, 5),
              trust_map.Decl("VE.Closure.Formula.check", "def", 6, 7)]
     row = {"K": 4, "C": 3, "P": 0, "T": 0}
-    predicates = {"VE.Closure.Formula.WellFormed"}
+    predicates = {(m, "VE.Closure.Formula.WellFormed") for m in ("VE.Closure.Syntax", "VE.Norms.X", "VE.Tableau", "VE.New")}
     # Before the fix the row's room decided, and WellFormed and Edge were C (review B).
     kept = {"VE.Closure.Edge": "C", "VE.Closure.Formula.WellFormed": "C", "VE.Closure.Formula.check": "C"}
     assert trust_map.seed_module("VE/Closure/Syntax.lean", decls, row, predicates, kept) == {
@@ -237,7 +248,7 @@ def test_committed_kernel_meaning_is_trusted():
         assert table[module][f"{logic}.Formula.WellFormed"] == "K"
         assert table[module][f"{logic}.Formula"] == "K"
     predicates = trust_map.lean_predicates()
-    assert "VE.Closure.Formula.WellFormed" in predicates
+    assert ("VE.Closure.Syntax", "VE.Closure.Formula.WellFormed") in predicates
 
 
 def test_ledger_credits_each_declaration_once(tmp_path):
@@ -259,8 +270,24 @@ def test_ledger_credits_each_declaration_once(tmp_path):
                         "names no declaration"]
 
 
+# A second module that defines namesakes of VE/Demo.lean's declarations (nothing imports the two
+# together, so Lean accepts both).
+OTHER = '''namespace VE.Demo
+
+structure Meaning where
+  y : Nat
+
+def decodeThing : Nat := 0
+
+def helper : Nat := 2
+
+end VE.Demo
+'''
+OTHER_TABLE = {"S": ["VE.Demo.Meaning"], "C": ["VE.Demo.decodeThing", "VE.Demo.helper"]}
+
 # Every kind of validation problem `walk` reports, as (table, statement dump, predicates, drop the
-# predicate list). Review B (looprecheck 1): `--ledger` discarded these and exited 0.
+# predicate list, options of `problem_tree`). Review B (looprecheck 1): `--ledger` discarded these
+# and exited 0.
 PROBLEM_TREES = {
     "predicate classed C": ({"C": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper",), False),
     "predicate classed D[R]": ({"D[R]": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper",), False),
@@ -278,24 +305,65 @@ PROBLEM_TREES = {
     "theorem listed tied": ({"C": [{"name": "VE.Demo.decodeThing_empty", "tied": ["VE.Demo.decodeThing_empty"]}],
                              "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing_empty"), (), False),
     "anchor listed for another file": ({"D[V]": TIED["D[V]"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"),
-                                       (), False, {"VE/Other.lean": {"S": ["VE.Demo.Meaning"]}}),
+                                       (), False, {"table": {"VE/Other.lean": {"S": ["VE.Demo.Meaning"]}}}),
     "anchor only unclassified": ({"D[V]": TIED["D[V]"]}, entry("…", "VE.Demo.helper VE.Demo.decodeThing"), (), False),
+    # Review B (looprecheck 3): the anchors were full names without their module. The statement
+    # mentions `VE.Demo.Meaning` of VE/Demo.lean, classed C; a namesake in VE/Other.lean, a module
+    # nothing imports with it, is S and anchored the tie.
+    "anchor's namesake in another module": (
+        {**TIED, "S": [], "C": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False,
+        {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": OTHER_TABLE}}),
+    # The same for the tied declaration: the statement is about another module's `decodeThing`.
+    "tied declaration's namesake in another module": (
+        TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing@VE.Other"), (), False,
+        {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": OTHER_TABLE}}),
+    # And for predicates: the list names VE/Demo.lean's `helper`, not the namesake.
+    "predicate classed C beside a namesake": (
+        {"C": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper",), False,
+        {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": OTHER_TABLE}}),
+    "a file the predicate scan did not read": (
+        {"S": ["VE.Demo.Meaning"]}, "", (), False,
+        {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": OTHER_TABLE}, "modules": ("VE.Demo",)}),
+    "predicate list without modules": ({"S": ["VE.Demo.Meaning"]}, "", (), False,
+                                       {"predicates": "-- header\nmodule VE.Demo\nVE.Demo.helper\n"}),
+    "uses line without modules": (TIED, "theorem VE.Demo.decodeThing_empty\n  …\n"
+                                        "  -- uses VE.Demo.Meaning VE.Demo.decodeThing\n  -- expr 1\n", (), False),
 }
 VALID_TREES = {
     "tied": (TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False),
     "unclassified": ({"S": ["VE.Demo.Meaning"]}, "", (), False),
     "predicate tied": ({"C": [{"name": "VE.Demo.helper", "tied": ["VE.Demo.decodeThing_empty"]}], "S": ["VE.Demo.Meaning"]},
                        entry("…", "VE.Demo.Meaning VE.Demo.helper"), ("VE.Demo.helper",), False),
+    # A statement about the meaning another module defines ties to that meaning.
+    "tied to another module's meaning": (
+        {**TIED, "S": [], "C": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning@VE.Other VE.Demo.decodeThing"), (),
+        False, {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": OTHER_TABLE}}),
+    # A predicate of another module says nothing about its namesake here.
+    "namesake of a predicate": (
+        {"C": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper@VE.Other",), False,
+        {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": {**OTHER_TABLE, "C": ["VE.Demo.decodeThing"],
+                                                                          "S": ["VE.Demo.Meaning", "VE.Demo.helper"]}}}),
 }
 WHOLE_TREE = {"steps": [{"step": "all", "title": "", "days": 1, "risk": 1, "removed": [{"module": "VE/*"}]}]}
 
 
 def problem_tree(root: Path, tree: tuple) -> None:
-    table, dump, predicates, drop, *other = tree
-    write_tree(root, table, dump, predicates)
-    if other:
+    """Write a fixture tree: (table of VE/Demo.lean, statement dump, predicates, drop the predicate
+    list, options). The options add files (`files`, path under lean/ to source or "OTHER"), table
+    entries of other files (`table`), the modules the predicate scan read (`modules`, default every
+    file) and a predicate list verbatim (`predicates`)."""
+    table, dump, predicates, drop, *rest = tree
+    options = rest[0] if rest else {}
+    files = options.get("files", {})
+    modules = options.get("modules", ("VE.Demo", *(f.removesuffix(".lean").replace("/", ".") for f in files)))
+    write_tree(root, table, dump, predicates, modules)
+    for name, text in files.items():
+        (root / "lean" / name).write_text(OTHER if text == "OTHER" else text)
+    if "table" in options:
         path = root / "tools/trust-classes.json"
-        path.write_text(json.dumps({"modules": {**json.loads(path.read_text())["modules"], **other[0]}}))
+        path.write_text(json.dumps({"modules": {**json.loads(path.read_text())["modules"], **options["table"]}}))
+    if "predicates" in options:
+        (root / "lean/predicates.txt").write_text(options["predicates"])
     if drop:
         (root / "lean/predicates.txt").unlink()
     (root / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
@@ -311,7 +379,97 @@ def test_ledger_and_measure_share_validation_and_trust(tmp_path, name):
     files, measured = trust_map.measure(tmp_path, *tables)
     (row,), problems = trust_map.ledger(tmp_path, tmp_path / "tools/consolidation-ledger.json", *tables)
     assert problems == measured and (problems != []) is (name in PROBLEM_TREES)
-    assert row["removed"] == files["VE/Demo.lean"]["trusted"]
+    assert row["removed"] == sum(counts["trusted"] for counts in files.values())
+
+
+@pytest.mark.parametrize("name,problem", [
+    ("anchor's namesake in another module", "VE/Demo.lean: VE.Demo.decodeThing: the statement of "
+     "VE.Demo.decodeThing_empty mentions no K, S or untied [V] declaration of the tree, validly classified, to tie it to"),
+    ("tied declaration's namesake in another module", "VE/Demo.lean: VE.Demo.decodeThing: the statement of "
+     "VE.Demo.decodeThing_empty does not mention VE.Demo.decodeThing of VE.Demo"),
+    ("predicate classed C beside a namesake", "VE/Demo.lean: VE.Demo.helper: a predicate cannot be C unless a "
+     "theorem ties it; classify it K or S (or P for a proof helper)"),
+    ("a file the predicate scan did not read", "VE/Other.lean: predicates.txt did not read module VE.Other; "
+     "rerun tools/lean_statements.py"),
+    ("predicate list without modules", "predicates.txt: 'VE.Demo.helper' names no defining module; "
+     "rerun tools/lean_statements.py"),
+    ("uses line without modules", "VE/Demo.lean: VE.Demo.decodeThing: statements.txt has no uses line with "
+     "defining modules for VE.Demo.decodeThing_empty; rerun tools/lean_statements.py"),
+])
+def test_declarations_are_told_apart_by_module(tmp_path, name, problem):
+    """Review B (looprecheck 3): a declaration is its name and its module. Each tree fails for
+    exactly its own reason."""
+    problem_tree(tmp_path, PROBLEM_TREES[name])
+    _, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    assert problems == [problem]
+
+
+def test_namesake_cannot_lend_its_class(tmp_path):
+    """The reviewer's numbers: with the anchor's namesake as the meaning, the D[V] decoder counted
+    zero trusted lines, so `--check` passed decoder growth against a zero [V] budget."""
+    problem_tree(tmp_path, VALID_TREES["tied to another module's meaning"])
+    files, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    assert problems == [] and files["VE/Demo.lean"]["tied"] == 4
+    tied = trust_map.budget(files["VE/Demo.lean"])["V"]  # the unclassified helper and instance
+    problem_tree(tmp_path, PROBLEM_TREES["anchor's namesake in another module"])
+    files, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    # The decoder's four lines fail closed into [V].
+    assert problems and files["VE/Demo.lean"]["tied"] == 0 and trust_map.budget(files["VE/Demo.lean"])["V"] == tied + 4
+
+
+COLLISION = {
+    "lakefile.toml": 'name = "collision"\nversion = "0.1.0"\ndefaultTargets = ["VE"]\n[[lean_lib]]\nname = "VE"\n',
+    "VE.lean": "import VE.Decoder\n",
+    "VE/Audit.lean": "import VE.Decoder\n#print axioms VE.Demo.decodeThing_tie\n",
+    "VE/Decoder.lean": ("namespace VE.Demo\ndef anchor : Nat := 1\ndef decodeThing (_ : String) : Nat :=\n  let x := 0\n"
+                        "  x\ntheorem decodeThing_tie : decodeThing \"\" = 0 ∧ anchor = 1 := ⟨rfl, rfl⟩\nend VE.Demo\n"),
+    "VE/Meaning.lean": "namespace VE.Demo\ndef anchor : Nat := 0\nend VE.Demo\n",
+}
+
+
+@pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
+def test_dump_tells_namesakes_of_two_modules_apart(tmp_path, capsys):
+    """Review B (looprecheck 3), the reviewer's reproducer: VE/Decoder.lean's `anchor` is C and
+    VE/Meaning.lean (nothing imports it) defines an S namesake. The tie of the decoder mentions the
+    C one; it validated against the S one, and every entry point passed. A fresh dump names each
+    constant's module, and reads VE/Meaning.lean although nothing imports it."""
+    lean = tmp_path / "lean"
+    (lean / "VE").mkdir(parents=True)
+    shutil.copy(ROOT / "lean/lean-toolchain", lean / "lean-toolchain")
+    for name, text in COLLISION.items():
+        (lean / name).write_text(text)
+    statements, predicates = lean_statements.dump_all(tmp_path)
+    assert "  -- uses VE.Demo.anchor@VE.Decoder VE.Demo.decodeThing@VE.Decoder\n" in statements
+    (lean / "statements.txt").write_text(statements)
+    (lean / "predicates.txt").write_text(predicates)
+    assert trust_map.predicate_list(lean / "predicates.txt")[1] == {"VE", "VE.Audit", "VE.Decoder", "VE.Meaning"}
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps(
+        {"steps": [{"step": "all", "title": "", "days": 1, "risk": 1, "removed": [{"module": "*"}]}]}))
+    table_path = tmp_path / "tools/trust-classes.json"
+
+    def classes(decoder: dict) -> None:
+        table_path.write_text(json.dumps({"modules": {"VE/Meaning.lean": {"S": ["VE.Demo.anchor"]},
+                                                      "VE/Decoder.lean": decoder}}))
+
+    # The baseline: the decoder untrusted ([R]), so [V] is zero.
+    classes({"C": ["VE.Demo.anchor"], "D[R]": ["VE.Demo.decodeThing"]})
+    assert trust_map.main(["--write", "--root", str(tmp_path)]) == 0
+    baseline = (tmp_path / "docs/trust-baseline.json").read_text()
+    assert json.loads(baseline)["budget"]["V"] == 0
+    # The decoder made D[V], tied through the C anchor: rejected by every entry point.
+    classes({"C": ["VE.Demo.anchor"], "D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_tie"]}]})
+    capsys.readouterr()
+    for flags in ([], ["--check"], ["--write"], ["--ledger"]):
+        assert trust_map.main([*flags, "--root", str(tmp_path)]) == 1, flags
+        assert "VE.Demo.decodeThing: the statement of VE.Demo.decodeThing_tie mentions no K, S or untied [V]" \
+            in capsys.readouterr().err
+    assert (tmp_path / "docs/trust-baseline.json").read_text() == baseline
+    # With the anchor it mentions classed S, the tie holds.
+    classes({"S": ["VE.Demo.anchor"], "D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_tie"]}]})
+    _, problems = trust_map.measure(tmp_path, table_path, lean / "statements.txt")
+    assert problems == []
 
 
 @pytest.mark.parametrize("name", PROBLEM_TREES)
@@ -341,7 +499,8 @@ def test_ledger_rejects_a_misclassified_kernel_predicate(tmp_path, capsys):
     (tmp_path / "tools").mkdir()
     (tmp_path / "tools/trust-classes.json").write_text(json.dumps({"modules": {module: by_class}}))
     (tmp_path / "lean/statements.txt").write_text("")
-    (tmp_path / "lean/predicates.txt").write_text("-- header\nVE.Closure.Formula.WellFormed\n")
+    (tmp_path / "lean/predicates.txt").write_text(predicate_file(("VE.Closure.Formula.WellFormed@VE.Closure.Syntax",),
+                                                                 ("VE.Closure.Syntax",)))
     (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps({"steps": [
         {"step": "1", "title": "", "days": 1, "risk": 1,
          "removed": [{"module": module, "names": r"\.Formula\.WellFormed$"}]}]}))
@@ -374,7 +533,8 @@ def test_theorem_listed_as_meaning_anchors_nothing(tmp_path, capsys, flags):
     write_tree(tmp_path, {"D[V]": [{"name": "VE.Demo.decodeThing", "tied": ["VE.Demo.decodeThing_tie"]}],
                           "C": ["VE.Demo.Meaning", "VE.Demo.helper", "instance:Inhabited Nat"]},
                "theorem VE.Demo.decodeThing_tie\n  VE.Demo.decodeThing \"\" = 0 ∧ VE.Demo.marker = True.intro\n"
-               "  -- uses And Eq Nat String True True.intro VE.Demo.decodeThing VE.Demo.marker\n  -- expr 1\n")
+               "  -- uses VE.Demo.decodeThing@VE.Demo VE.Demo.marker@VE.Marker\n  -- expr 1\n",
+               modules=("VE.Demo", "VE.Marker"))
     (tmp_path / "lean/VE/Marker.lean").write_text(MARKER)
     table_path = tmp_path / "tools/trust-classes.json"
     modules = json.loads(table_path.read_text())["modules"]
@@ -402,17 +562,21 @@ def test_theorem_listed_as_meaning_anchors_nothing(tmp_path, capsys, flags):
 KIND_FIXED = {"theorem": "P", "lemma": "P", "example": "T", "command": "T"}
 
 
-def unsound(walked: list, table: dict, proved: dict, predicates: set[str]) -> list[str]:
+def unsound(walked: list, table: dict, proved: dict, predicates: set[tuple[str, str]]) -> list[str]:
     """What a report claims that the declarations contradict. This oracle reads only the reported
     classes, each declaration's kind and the statement dump, not the tool's anchor set: a theorem,
     example or command is P or T by its kind and cannot be listed; every other declaration is
     reported in its listed class (or `?`); `trusted` is K, S, `?` or untied [V]; each tying theorem
-    mentions the declaration and another one the same report counts as trusted by its class; a
-    predicate is not left untrusted untied."""
-    reported = {d.decl.name: d for d in walked if d.decl.name is not None}
+    mentions the declaration and another one the same report counts as trusted by its class, each
+    as the module that defines it (`name@Module`); a predicate is not left untrusted untied."""
+    def ident(d) -> tuple[str, str]:
+        return d.module.removesuffix(".lean").replace("/", "."), d.decl.name
+
+    reported = {ident(d): d for d in walked if d.decl.name is not None}
     errors = []
     for d in walked:
         name = d.decl.name
+        me = ident(d) if name is not None else None
         listed = table.get(d.module, {}).get(name) if name is not None else None
         cls = listed if listed is None or isinstance(listed, str) else listed["class"]
         fixed = KIND_FIXED.get(d.decl.kind)
@@ -426,11 +590,11 @@ def unsound(walked: list, table: dict, proved: dict, predicates: set[str]) -> li
         if d.tied:
             for theorem in listed["tied"]:
                 used = proved.get(theorem) or set()
-                if name not in used or not any(
-                        n != name and n in reported and reported[n].trusted and not reported[n].tied
+                if me not in used or not any(
+                        n != me and n in reported and reported[n].trusted and not reported[n].tied
                         and reported[n].cls != "?" for n in used):
                     errors.append(f"{name}: {theorem} ties it to nothing the report counts as trusted")
-        if name in predicates and not (counted or d.tied or d.cls in {"P", "T"}):
+        if me in predicates and not (counted or d.tied or d.cls in {"P", "T"}):
             errors.append(f"{name}: a predicate reported {d.cls} untied")
     return errors
 
@@ -492,10 +656,10 @@ def test_mutated_committed_ties_are_reported_or_rejected(committed_tree):
     decls, table, proved, predicates = committed_tree
     walked, problems = trust_map.classify_tree(decls, table, proved, predicates)
     assert problems == [] and not unsound(walked, table, proved, predicates)
-    modules = {d.name: m for m, d in decls if d.name is not None}
+    owner = {trust_map.ident(m, d.name): m for m, d in decls if d.name is not None}
     tying = sorted({t for entries in table.values() for e in entries.values() if isinstance(e, dict) for t in e["tied"]})
     targets = sorted({(m, n) for m, entries in table.items() for n, e in entries.items() if isinstance(e, dict)}
-                     | {(modules[n], n) for t in tying for n in proved[t] if n in modules})
+                     | {(owner[u], u[1]) for t in tying for u in proved[t] if u in owner})
     assert len(targets) > len(tying)
     files = {m for m, _ in targets}
     decls = [(m, d) for m, d in decls if m in files]

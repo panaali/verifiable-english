@@ -686,6 +686,14 @@ The budget check (step 0) now also fails a predicate (a declaration whose type e
 listed in `lean/predicates.txt`) classed C, [R] or [I] without a tie: such a class took
 `Closure.Formula.WellFormed`, the kernel typing predicate, out of K (consolidate-b1 review B).
 
+A declaration is its full name and its defining module together: the statement dump's `uses`
+lines and the predicate list write each constant as `name@Module`, and a tie, an anchor or a
+predicate matches only the declaration of that module. Two files nothing imports together may each
+define `VE.Demo.anchor`; a tie through the C one validated against an S namesake before
+(consolidate-b1c looprecheck 1, B). The predicate list now reads every file of the tree, each
+module outside `VE` (the executables' roots, the unimported `WireContract` files) imported alone,
+and the budget check fails a file the list did not read.
+
 ## 5. What not to consolidate, and why
 
 1. **The v0 logic** (`VE/Syntax`, `Semantics`, `Finite`, `Consequence`; 110 K lines). It stays a
