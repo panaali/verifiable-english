@@ -825,30 +825,48 @@ class S2Wording:
     # -- E3's lines (2.3 item 1)
 
     def provided(self, used):
+        """E3's lines for the slot labels an answer uses, each read by its kind (`slot_label`), never by its ending:
+        a coupling or narrowing id may itself be `one` or `quiet` (compose-s2 looprecheck1 A)."""
+        from .readings_sup import slot_label
         E, lines = self.E, []
         quiet = False
         for label in used:
-            if label.endswith(":one"):
-                set_id = label.split(":", 1)[1].rsplit("@", 1)[0]
-                R = next(R for R in self.sets if R.id == set_id)
-                lines.append(E.one_reading(self.set_number[set_id], len(R.candidates), self.slots))
-            elif label.endswith(":quiet") or label.startswith("readings:quiet:"):
+            decoded = slot_label(label)
+            if decoded.kind == "one":
+                R = self._set(decoded.set, decoded.version, label)
+                lines.append(E.one_reading(self.set_number[R.id], len(R.candidates), self.slots))
+            elif decoded.kind in ("own", "shared"):
                 quiet = True
-            elif label.startswith("coupling:"):
+            elif decoded.kind == "coupling":
                 from .readings_english import coupling_sentence
-                coupling = next(c for c in self.route.couplings if c["id"] == label.split(":", 1)[1])
+                coupling = self._restriction(self.route.couplings, decoded, label)
                 sets = {R.id: {"unit": R.unit} for R in self.sets}
                 lines.append(E.gated("E5", coupling_sentence(coupling, sets, self.doc["units"]), self.slots))
-            elif label.startswith("narrowing:"):
-                narrowing = next(n for n in self.route.narrowings if n["id"] == label.split(":", 1)[1])
-                R = next(R for R in self.sets if (R.id, R.version) == (narrowing["set"], narrowing["version"]))
+            elif decoded.kind == "narrowing":
+                narrowing = self._restriction(self.route.narrowings, decoded, label)
+                R = self._set(narrowing["set"], narrowing["version"], label)
                 cited = [self.numbers[u] for u in narrowing["reason_spans"]]
                 for i, a in enumerate(R.candidates):
                     if a.id not in narrowing["keeps"]:
                         lines.append(E.narrowed(self.set_number[R.id], self.names[R.id][i], cited, self.slots))
+            else:
+                raise VEError(f"InvalidInput: unknown slot label kind {decoded.kind}")
         if quiet:
             lines.append(E.quiet(self.slots))
         return ([E.provided(self.slots)] + lines) if lines else []
+
+    def _set(self, set_id, version, label):
+        R = next((R for R in self.sets if (R.id, R.version) == (set_id, version)), None)
+        if R is None:
+            raise VEError(f"InvalidInput: slot label {label} names no open reading set")
+        return R
+
+    @staticmethod
+    def _restriction(items, decoded, label):
+        found = next((item for item in items if item["id"] == decoded.key), None)
+        if found is None:
+            raise VEError(f"InvalidInput: slot label {label} names no {decoded.kind}")
+        return found
 
     def independent(self, mentions):
         return [self.E.independent(self.set_number[R.id], self.slots) for R in self.sets if R.id not in mentions]
@@ -858,14 +876,15 @@ class S2Wording:
         coupling or narrowing label by the sets it restricts."""
         from .readings_sup import bit_name, bits_of, in_force
         asts = {entry["label"]: entry["ast"] for entry in self.route.row.get("slot", [])}
+        from .readings_sup import slot_label
         restricted = set()
         for label in used:
-            kind, _, ident = label.partition(":")
-            if kind == "coupling":
-                coupling = next(c for c in self.route.couplings if c["id"] == ident)
+            decoded = slot_label(label)
+            if decoded.kind == "coupling":
+                coupling = self._restriction(self.route.couplings, decoded, label)
                 restricted.update(ref["set"] for ref in coupling["sets"])
-            elif kind == "narrowing":
-                narrowing = next(n for n in self.route.narrowings if n["id"] == ident)
+            elif decoded.kind == "narrowing":
+                narrowing = self._restriction(self.route.narrowings, decoded, label)
                 restricted.update(R.id for R in self.sets if in_force(R, narrowing))
         out = []
         for position, R in enumerate(self.sets, 1):
