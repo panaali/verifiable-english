@@ -361,7 +361,7 @@ def test_recorder_sees_functions_reads_and_children(tmp_path):
 def test_a_python_child_that_leaves_no_record_makes_the_unit_opaque(tmp_path):
     result = recorder_run(tmp_path, textwrap.dedent('''
         import subprocess, sys
-        subprocess.run([sys.executable, "-I", "-c", "pass"], check=True)
+        subprocess.run([sys.executable, "-S", "-c", "pass"], check=True)
     '''))
     assert result["opaque"]
 

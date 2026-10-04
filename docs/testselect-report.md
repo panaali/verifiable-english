@@ -86,8 +86,8 @@ CPU-hours). The orchestrator's merge-verify equivalent above was run instead.
   the "new function not called by name" rule (every test of its file).
 - Coverage of randomized tests can vary between runs: `record` unions the
   previous map's edges.
-- A Python child started outside the project environment, or with `-I` or
-  `-E`, makes its test opaque, so the static graph answers for that test.
+- A Python child started outside the project environment, or with `-S`,
+  makes its test opaque, so the static graph answers for that test.
 - Directory listings by a test's own code are recorded, but which files
   match its glob is not, so an added file selects every lister of its
   directory.
