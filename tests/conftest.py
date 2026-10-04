@@ -187,14 +187,14 @@ def _setting(variable, default):
 def worker_count(cpus=None, load=None):
     """`-n auto`: the CPUs this process may use less the machine's 1-minute load, at most
     VE_TEST_WORKERS (default: every usable CPU). A busy machine then gets fewer workers
-    instead of an oversubscribed run. The floor, VE_TEST_MIN_WORKERS (default: a quarter
-    of the CPUs), keeps a machine whose load never falls below its CPU count (a shared
-    VM) from running a ~20,000 CPU-second suite on one worker; test outcomes do not
-    depend on load either way."""
+    instead of an oversubscribed run; never fewer than one. More is opt-in: the floor
+    VE_TEST_MIN_WORKERS (default 1, at most VE_TEST_WORKERS) lets a machine whose load
+    never falls below its CPU count (a shared VM) run the ~20,000 CPU-second suite on
+    more than one worker; test outcomes do not depend on load either way."""
     cpus = len(os.sched_getaffinity(0)) if cpus is None else cpus
     load = os.getloadavg()[0] if load is None else load
     configured = _setting("VE_TEST_WORKERS", cpus)
-    floor = min(_setting("VE_TEST_MIN_WORKERS", max(1, cpus // 4)), configured)
+    floor = min(_setting("VE_TEST_MIN_WORKERS", 1), configured)
     return max(floor, min(configured, cpus - round(load)))
 
 
