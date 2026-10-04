@@ -159,7 +159,7 @@ def test_nothing_inside_a_compiled_range_ends_the_declaration(tmp_path):
 def test_generated_parts_belong_to_their_declaration():
     """A structure's fields, a derived instance, a `where` helper and a macro's generated rules lie
     inside the declaration's range; of constants with one range the name the others extend wins."""
-    tops, problems = trust_map.top_level([
+    tops, parts, problems = trust_map.top_level([
         lean_statements.Declared(n, k, s, e) for n, k, s, e in [
             ("VE.Pt", "structure", (1, 0), (4, 15)), ("VE.Pt.x", "def", (2, 2), (2, 3)),
             ("VE.instReprPt.repr", "def", (4, 11), (4, 15)), ("VE.instReprPt", "instance", (4, 11), (4, 15)),
@@ -167,6 +167,9 @@ def test_generated_parts_belong_to_their_declaration():
             ("_aux_X___macroRules_tacticWalk_1", "def", (9, 0), (9, 42)), ("tacticWalk", "def", (9, 0), (9, 42)),
             ("_hidden", "def", (11, 0), (11, 20))]])
     assert problems == [] and [t.name for t in tops] == ["VE.Pt", "VE.helper", "tacticWalk", "_hidden"]
+    # The constants inside each range stay recorded as its parts, for `classify` to check.
+    assert parts == {"VE.Pt": ["VE.Pt.x", "VE.instReprPt", "VE.instReprPt.repr"], "VE.helper": ["VE.helper.aux"],
+                     "tacticWalk": ["_aux_X___macroRules_tacticWalk_1"], "_hidden": []}
 
 
 def test_classes_counts_and_unclassified_fail_closed(tmp_path):
@@ -308,6 +311,15 @@ def test_seed_puts_predicates_and_kernel_types_in_the_meaning():
     kept = {"VE.Closure.Formula.WellFormed": tie, "VE.Closure.Formula.check": "G[V]"}
     seeded = trust_map.seed_module("VE/Closure/Syntax.lean", decls, row, predicates, kept)
     assert seeded["VE.Closure.Formula.WellFormed"] == tie and seeded["VE.Closure.Formula.check"] == "G[V]"
+    # A declaration holding a predicate (a `where` helper) is seeded as the predicate is; a tie of
+    # it does not cover the predicate, so it does not stay (consolidate-b1d looprecheck 1).
+    holder = [trust_map.Decl("VE.Demo.decoder", "def", 2, 4, ("VE.Demo.decoder.WellFormed",))]
+    inside = {("VE.Norms.X", "VE.Demo.decoder.WellFormed")}
+    for old in ("C", "D[R]", {"class": "C", "tied": ["VE.Demo.acceptance"]}, None):
+        kept = {} if old is None else {"VE.Demo.decoder": old}
+        assert trust_map.seed_module("VE/Norms/X.lean", holder, {"S": 5, "C": 5}, inside, kept) == {"VE.Demo.decoder": "S"}
+    assert trust_map.seed_module("VE/Norms/X.lean", holder, {"S": 5, "C": 5}, set(), {"VE.Demo.decoder": "C"}) == {
+        "VE.Demo.decoder": "C"}
 
 
 def test_rebaseline_needs_a_reason_for_growth(tmp_path):
@@ -371,6 +383,31 @@ end VE.Demo
 '''
 OTHER_TABLE = {"S": ["VE.Demo.Meaning"], "C": ["VE.Demo.decodeThing", "VE.Demo.helper"]}
 
+# Review B (consolidate-b1d looprecheck 1), the reviewer's reproducer: a predicate written as a
+# `where` helper lies inside the decoder's range, so it was part of the decoder and never checked
+# as a predicate; with the decoder C, every entry point passed with zero trusted lines.
+WHERE = '''namespace VE.Demo
+def decoder (n : Nat) : Bool := n == 0
+where
+  WellFormed (n : Nat) : Prop := n = 0
+theorem acceptance (n : Nat) : decoder n = true ↔ decoder.WellFormed n := by
+  simp [decoder, decoder.WellFormed]
+end VE.Demo
+'''
+COMPILED["WHERE"] = ["2:0-4:38 def VE.Demo.decoder", "4:2-4:38 def VE.Demo.decoder.WellFormed",
+                     "5:0-6:36 theorem VE.Demo.acceptance"]
+WHERE_FILES = {"files": {"VE/Where.lean": "WHERE"}}
+NESTED = "VE.Demo.decoder.WellFormed@VE.Where"
+
+
+def where_tree(decoder: dict, dump: str = "", predicates: tuple[str, ...] = (NESTED,)) -> tuple:
+    """A problem tree: VE/Demo.lean with Meaning S, and VE/Where.lean with the decoder classed `decoder`."""
+    return ({"S": ["VE.Demo.Meaning"]}, dump, predicates, False, {**WHERE_FILES, "table": {"VE/Where.lean": decoder}})
+
+
+ACCEPTANCE = ("theorem VE.Demo.acceptance\n  …\n  -- uses VE.Demo.Meaning@VE.Demo VE.Demo.decoder@VE.Where "
+              f"{NESTED}\n  -- expr 1\n")
+
 # Every kind of validation problem `walk` reports, as (table, statement dump, predicates, drop the
 # predicate list, options of `problem_tree`). Review B (looprecheck 1): `--ledger` discarded these
 # and exited 0.
@@ -423,6 +460,16 @@ PROBLEM_TREES = {
     "declaration list of another module": ({"S": ["VE.Demo.Meaning"]}, "", (), False, {"declarations": (
         "-- header\nmodule VE.Demo 0000000000000000000000000000000000000000000000000000000000000000\n"
         "8:0-10:10 def VE.Demo.decodeThing@VE.Other\n")}),
+    # Review B (consolidate-b1d looprecheck 1): a predicate inside a declaration's range is checked
+    # under the declaration's class, which its lines take; a tie of the declaration does not cover it.
+    "predicate inside a C declaration": where_tree({"C": ["VE.Demo.decoder"]}),
+    "predicate inside a D[R] declaration": where_tree({"D[R]": ["VE.Demo.decoder"]}),
+    "predicate inside a tied declaration": where_tree(
+        {"C": [{"name": "VE.Demo.decoder", "tied": ["VE.Demo.acceptance"]}]}, ACCEPTANCE),
+    # A generated predicate without a range (an inductive's `below`) is part of the declaration
+    # its name extends; one that extends none is part of nothing and fails.
+    "rangeless predicate of a C declaration": ({"C": ["VE.Demo.Meaning"]}, "", ("VE.Demo.Meaning.below",), False),
+    "predicate of no declaration": ({"S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.orphan",), False),
 }
 VALID_TREES = {
     "tied": (TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False),
@@ -438,6 +485,10 @@ VALID_TREES = {
         {"C": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper@VE.Other",), False,
         {"files": {"VE/Other.lean": "OTHER"}, "table": {"VE/Other.lean": {**OTHER_TABLE, "C": ["VE.Demo.decodeThing"],
                                                                           "S": ["VE.Demo.Meaning", "VE.Demo.helper"]}}}),
+    "predicate inside an S declaration": where_tree({"S": ["VE.Demo.decoder"]}),
+    "predicate inside a [V] declaration": where_tree({"D[V]": ["VE.Demo.decoder"]}),
+    "predicate inside an unclassified declaration": where_tree({}),
+    "rangeless predicate of an S declaration": ({"S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.Meaning.below",), False),
 }
 WHOLE_TREE = {"steps": [{"step": "all", "title": "", "days": 1, "risk": 1, "removed": [{"module": "VE/*"}]}]}
 
@@ -454,7 +505,7 @@ def problem_tree(root: Path, tree: tuple) -> None:
     modules = options.get("modules", ("VE.Demo", *(f.removesuffix(".lean").replace("/", ".") for f in files)))
     write_tree(root, table, dump, predicates, modules)
     for name, text in files.items():
-        (root / "lean" / name).write_text(OTHER if text == "OTHER" else text)
+        (root / "lean" / name).write_text({"OTHER": OTHER, "WHERE": WHERE}.get(text, text))
     if "table" in options:
         path = root / "tools/trust-classes.json"
         path.write_text(json.dumps({"modules": {**json.loads(path.read_text())["modules"], **options["table"]}}))
@@ -507,6 +558,16 @@ def test_ledger_and_measure_share_validation_and_trust(tmp_path, name):
     ("declaration list missing", "declarations.txt is missing; run tools/lean_statements.py"),
     ("declaration list of another module", "declarations.txt: '8:0-10:10 def VE.Demo.decodeThing@VE.Other' is not a "
      "declaration of the module above it; rerun tools/lean_statements.py"),
+    *((name, f"VE/Where.lean: VE.Demo.decoder: a declaration holding a predicate (VE.Demo.decoder.WellFormed) cannot be "
+       f"{cls}; classify it K or S (or P for a proof helper), or declare the predicate on its own (a tie of the "
+       "declaration does not tie what is inside it)")
+      for name, cls in (("predicate inside a C declaration", "C"), ("predicate inside a D[R] declaration", "D[R]"),
+                        ("predicate inside a tied declaration", "tied C"))),
+    ("rangeless predicate of a C declaration", "VE/Demo.lean: VE.Demo.Meaning: a declaration holding a predicate "
+     "(VE.Demo.Meaning.below) cannot be C; classify it K or S (or P for a proof helper), or declare the predicate on "
+     "its own (a tie of the declaration does not tie what is inside it)"),
+    ("predicate of no declaration", "VE/Demo.lean: the predicate VE.Demo.orphan is part of no declaration of the "
+     "file (no source range, and its name extends none); rerun tools/lean_statements.py"),
 ])
 def test_declarations_are_told_apart_by_module(tmp_path, name, problem):
     """Review B (looprecheck 3): a declaration is its name and its module. Each tree fails for
@@ -668,6 +729,61 @@ def test_compiled_names_do_not_depend_on_spelling(tmp_path, capsys):
     assert "S grew from 12 to 14" in capsys.readouterr().err
 
 
+@pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
+def test_where_predicate_is_checked_in_a_fresh_dump(tmp_path, capsys):
+    """Review B (consolidate-b1d looprecheck 1), the reviewer's reproducer compiled: the decoder
+    classed C holds `where WellFormed (n : Nat) : Prop`. Every entry point exited 0 with zero
+    trusted lines, and two more predicate lines passed `--check` against the old baseline."""
+    lean = tmp_path / "lean"
+    (lean / "VE").mkdir(parents=True)
+    shutil.copy(ROOT / "lean/lean-toolchain", lean / "lean-toolchain")
+    (lean / "lakefile.toml").write_text(COLLISION["lakefile.toml"])
+    (lean / "VE.lean").write_text("import VE.Demo\n")
+    (lean / "VE/Audit.lean").write_text("import VE\n#print axioms VE.Demo.acceptance\n")
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
+    table_path = tmp_path / "tools/trust-classes.json"
+    baseline_path = tmp_path / "docs/trust-baseline.json"
+
+    def dump(source: str) -> None:
+        (lean / "VE/Demo.lean").write_text(source)
+        for name, text in zip(("statements", "predicates", "declarations"), lean_statements.dump_all(tmp_path)):
+            (lean / f"{name}.txt").write_text(text)
+
+    def classes(decoder: object) -> None:
+        table_path.write_text(json.dumps({"modules": {"VE/Demo.lean": decoder}}))
+
+    def entry_points(expected: int, needle: str = "") -> None:
+        for flags in ([], ["--write"], ["--check"], ["--ledger"]):
+            assert trust_map.main([*flags, "--root", str(tmp_path)]) == expected, flags
+            out, err = capsys.readouterr()
+            assert needle in err and (expected == 0 or "PASS" not in out and "| Step |" not in out)
+
+    dump(WHERE)
+    assert lean_statements.predicates(lean / "predicates.txt") == {("VE.Demo", "VE.Demo.decoder.WellFormed")}
+    holding = "VE.Demo.decoder: a declaration holding a predicate (VE.Demo.decoder.WellFormed) cannot be"
+    for decoder, how in (({"C": ["VE.Demo.decoder"]}, "C"), ({"D[I]": ["VE.Demo.decoder"]}, "D[I]"),
+                         ({"C": [{"name": "VE.Demo.decoder", "tied": ["VE.Demo.acceptance"]}]}, "tied C")):
+        classes(decoder)
+        capsys.readouterr()
+        entry_points(1, f"{holding} {how};")
+        assert not baseline_path.exists()
+    # Classed S, the decoder's three lines (its predicate's included) are trusted meaning.
+    classes({"S": ["VE.Demo.decoder"]})
+    entry_points(0)
+    assert json.loads(baseline_path.read_text())["budget"]["S"] == 3
+    # The predicate grown by two lines is S growth over the baseline; classed C, it fails again.
+    dump(WHERE.replace("Prop := n = 0", "Prop :=\n    n = 0 ∧\n    True"))
+    assert trust_map.main(["--check", "--root", str(tmp_path)]) == 1
+    assert "S grew from 3 to 5" in capsys.readouterr().err
+    classes({"C": ["VE.Demo.decoder"]})
+    capsys.readouterr()
+    for flags in ([], ["--check"], ["--ledger"]):
+        assert trust_map.main([*flags, "--root", str(tmp_path)]) == 1, flags
+        assert f"{holding} C;" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize("name", PROBLEM_TREES)
 @pytest.mark.parametrize("flags", [[], ["--check"], ["--write"], ["--ledger"]])
 def test_no_entry_point_succeeds_on_a_validation_problem(tmp_path, capsys, name, flags):
@@ -794,6 +910,13 @@ def unsound(walked: list, table: dict, proved: dict, predicates: set[tuple[str, 
                     errors.append(f"{name}: {theorem} ties it to nothing the report counts as trusted")
         if me in predicates and not (counted or d.tied or d.cls in {"P", "T"}):
             errors.append(f"{name}: a predicate reported {d.cls} untied")
+        held = [p for p in d.decl.parts if (me[0], p) in predicates] if me else []
+        if held and not ((counted and not d.tied) or d.cls in {"P", "T"}):
+            errors.append(f"{name}: holds the predicates {held} and is reported {d.cls}{' tied' * d.tied}")
+    # Every predicate of a reported module is reported, as a declaration or a part of one.
+    modules = {ident(d)[0] for d in walked if d.decl.name is not None}
+    placed = {(ident(d)[0], n) for d in walked if d.decl.name is not None for n in (d.decl.name, *d.decl.parts)}
+    errors += [f"{p}: a predicate reported nowhere" for p in predicates if p[0] in modules and p not in placed]
     return errors
 
 
