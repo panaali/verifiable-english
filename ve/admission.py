@@ -17,7 +17,7 @@ from typing import NamedTuple
 from .assurance import semantic_entry
 from .ast import Or, formula_from_data, formula_to_data
 from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
-from .environment import Environment
+from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id
 from .profiles import LANGUAGE, require_checker
@@ -444,7 +444,7 @@ def admit_document(environment, document) -> dict:
         return _admit_document_python(environment, document)
     from .softnorms import SoftEnvironment
     if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
-            "soft-norms@0" in environment.get("profiles", [])):
+            "soft-norms@0" in listed_profiles(environment)):
         # The soft route is Lean's (soft_route.admit_soft_document runs it).
         return _admit_document_python(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
@@ -484,7 +484,8 @@ def _lean_quantity_admission(env, document) -> dict:
     from .backends.diagnostics import checker_error
     [row] = backend.run("admission", QUANTITY_ROUTE,
                         [{"id": "admission", "kind": "document", "environment": env.to_dict(),
-                          "document": document}], runner="ve_quantity", timeout=60.0)
+                          "document": document}], runner="ve_quantity",
+                        timeout=backend.configured_timeout(60.0))
     if row["status"] == "error":
         raise checker_error(row["error"])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
@@ -497,7 +498,7 @@ def _admit_document_python(environment, document) -> dict:
     kinds rendered back (byte-identical to the input kinds)."""
     from .softnorms import SoftEnvironment
     if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
-            "soft-norms@0" in environment.get("profiles", [])):
+            "soft-norms@0" in listed_profiles(environment)):
         from .soft_route import admit_soft_document
         return admit_soft_document(environment, document)
     env = environment if type(environment) is Environment else Environment(environment)
