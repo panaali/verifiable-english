@@ -48,7 +48,7 @@ CRATE_LAYERS = {"ve-core": 1, "ve": 4}
 MODULE_LEDGER = ROOT / "tools/rust-module-exceptions.json"
 MODULE_GROUPS = {"ve-core": {
     **dict.fromkeys(("lib", "ast", "environment", "model", "wire", "semantics", "graph"), 1),
-    **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings", "discourse"), 2),
+    **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings"), 2),
     "surface": 3,
 }}
 # What rustc skips between tokens (Pattern_White_Space, line comments), string literals
