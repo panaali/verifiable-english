@@ -63,13 +63,19 @@ also keeps the section 11 counts in the baseline next to the measured ones.
 A predicate is meaning a reviewer reads: classed C, [R] or [I] without a tie it fails every run.
 So does a declaration holding a predicate among its parts (a `where` helper or a field inside its
 range, or a generated predicate without a range whose name extends it), tied or not: the predicate's
-lines are the declaration's, and a tie of the declaration says nothing about them. A predicate that
-is part of no declaration of its file fails the run too.
+lines are the declaration's, and a tie of the declaration says nothing about them.
+
+Every constant of the compiled dumps is placed, or the run fails, in every entry point (`read_tree`,
+`place_tree`): each predicate of the list is part of a declaration of its module's file (a file
+with no declaration included), a predicate or a scanned module of no file of the tree fails, and so
+does a constant without a source range whose name extends no constant (`generated`: what
+`run_elab` or `addDecl` adds, which no line of the file can be classified for).
 """
 from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+from collections.abc import Iterable
 from dataclasses import dataclass, replace
 import fnmatch
 import json
@@ -388,7 +394,8 @@ def scan_tree(root: Path = ROOT, declarations_path: Path | None = None
     found, and the files whose declarations are unknown. The declarations are those of
     lean/declarations.txt; a file whose source is not the one the list was compiled from (or that
     the list lacks) fails, and is scanned without any compiled declaration, so every line in it that
-    reads as a declaration is trusted and unnamed."""
+    reads as a declaration is trusted and unnamed. A `generated` constant (no source range, and its
+    name extends no constant) fails: no line of its file is its own."""
     path = root / DECLARATIONS.relative_to(ROOT) if declarations_path is None else declarations_path
     problems: list[str] = []
     declared: dict[str, list[Declared]] = {}
@@ -413,7 +420,11 @@ def scan_tree(root: Path = ROOT, declarations_path: Path | None = None
             issues = []
             unread.add(module)
         else:
-            found, lines[module], issues = scan(source, declared[name])
+            ranged = [d for d in declared[name] if d.start is not None]
+            found, lines[module], issues = scan(source, ranged)
+            issues += [f"{d.name} ({d.kind}) has no source range and its name extends no constant (a metaprogram "
+                       "such as `run_elab` or `addDecl` made it): no line of the file can be classified for it"
+                       for d in declared[name] if d.start is None]
         problems += [f"{module}: {issue}" for issue in issues]
         decls += [(module, decl) for decl in found]
     for name in sorted(set(hashes) - {module_name(m) for m in lines}):
@@ -422,25 +433,41 @@ def scan_tree(root: Path = ROOT, declarations_path: Path | None = None
     return decls, lines, problems, unread
 
 
+def place_tree(decls: list[tuple[str, Decl]], files: Iterable[str], predicates: set[Ident],
+               unread: set[str] = frozenset()) -> tuple[list[tuple[str, Decl]], list[str]]:
+    """`decls` with every predicate of the list placed (`place`), and the problems. The predicate
+    list drives it, not the declarations: each predicate is placed in the file of its module, a
+    file without any declaration included, and a predicate of a module that is no file of the tree
+    (`files`, paths under lean/) fails. The predicates of a file whose declarations are unknown
+    (`unread`, already failing) are not placed."""
+    by_module: dict[str, list[Decl]] = defaultdict(list)
+    for module, decl in decls:
+        by_module[module].append(decl)
+    modules = list(dict.fromkeys([*files, *by_module]))
+    out, problems = [], []
+    for module in modules:
+        found = by_module.get(module, [])
+        if module not in unread:
+            found, issues = place(module, found, predicates)
+            problems += issues
+        out += [(module, decl) for decl in found]
+    known = {module_name(module) for module in modules}
+    problems += [f"{PREDICATES.name}: the predicate {pred} is of module {pred_module}, which is not a file of the "
+                 "tree; rerun tools/lean_statements.py" for pred_module, pred in sorted(predicates) if pred_module not in known]
+    return out, problems
+
+
 def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, set[Ident] | None],
-                  predicates: set[Ident], unread: set[str] = frozenset()) -> tuple[list[Classified], list[str]]:
+                  predicates: set[Ident], files: Iterable[str],
+                  unread: set[str] = frozenset()) -> tuple[list[Classified], list[str]]:
     """Every declaration with its validated class, and the problems found. The anchors a tie may
     point at come from a first pass over the same declarations without any anchor (`is_anchor`:
     a tied declaration never validates there, so ties cannot anchor each other); the second pass
     checks the ties against them. An anchor is a declaration of one module (`ident`): a namesake
-    of an anchor in another module anchors nothing. Every predicate of a read file is part of one
-    of its declarations first (`place`)."""
-    problems: list[str] = []
-    by_module: dict[str, list[Decl]] = defaultdict(list)
-    for module, decl in decls:
-        by_module[module].append(decl)
-    decls = []
-    for module, found in by_module.items():
-        if module not in unread:
-            found, issues = place(module, found, predicates)
-            problems += issues
-        decls += [(module, decl) for decl in found]
-    first =[classify(module, decl, table, proved, frozenset(), predicates) for module, decl in decls]
+    of an anchor in another module anchors nothing. Every predicate of the list is part of one
+    declaration of its file (`files`, paths under lean/) first (`place_tree`)."""
+    decls, problems = place_tree(decls, files, predicates, unread)
+    first = [classify(module, decl, table, proved, frozenset(), predicates) for module, decl in decls]
     trusted = {ident(module, decl.name) for (module, decl), result in zip(decls, first)
                if decl.name is not None and is_anchor(*result)}
     out, seen = [], defaultdict(set)
@@ -459,15 +486,13 @@ def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, 
     return out, problems
 
 
-def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
-         predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
-    """Every declaration under `root` with its validated class, the line count of each file, and
-    the problems found (unknown table entries, entries for theorems, unverified ties, predicates in
-    an untrusted class, a missing predicate list, a declaration list not compiled from the tree).
-    `measure` and `ledger` both read the tree through this one pass, so neither can report numbers
-    whose classification failed validation."""
-    table = load_table(table_path)
-    proved = statements(statements_path)
+def read_tree(root: Path = ROOT, predicates_path: Path | None = None
+              ) -> tuple[list[tuple[str, Decl]], dict[str, int], set[Ident], set[str], list[str]]:
+    """The tree as the compiled dumps record it: every declaration with its module (`scan_tree`),
+    the line count of each file, the predicates, the files whose declarations are unknown, and the
+    problems. The predicate list must have read every file of the tree, and only those: a module
+    it read that is no file would hold predicates no file accounts for. Every entry point (`walk`,
+    `seed`) reads the tree here."""
     predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
     problems, predicates, scanned = [], set(), None
     if not predicates_path.is_file():
@@ -485,7 +510,23 @@ def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = ST
             if module_name(module) not in scanned:
                 problems.append(f"{module}: {predicates_path.name} did not read module {module_name(module)}; "
                                 "rerun tools/lean_statements.py")
-    out, found = classify_tree(decls, table, proved, predicates, unread)
+        for name in sorted(scanned - {module_name(module) for module in lines}):
+            problems.append(f"{predicates_path.name} read module {name}, which is not a file of the tree; rerun "
+                            "tools/lean_statements.py")
+    return decls, lines, predicates, unread, problems
+
+
+def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+         predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
+    """Every declaration under `root` with its validated class, the line count of each file, and
+    the problems found (unknown table entries, entries for theorems, unverified ties, predicates in
+    an untrusted class or of no declaration, a missing predicate list, a declaration list not
+    compiled from the tree, a generated constant). `measure` and `ledger` both read the tree
+    through this one pass, so neither can report numbers whose classification failed validation."""
+    table = load_table(table_path)
+    proved = statements(statements_path)
+    decls, lines, predicates, unread, problems = read_tree(root, predicates_path)
+    out, found = classify_tree(decls, table, proved, predicates, lines, unread)
     return out, lines, problems + found
 
 
@@ -765,19 +806,17 @@ def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE,
     seeded; `fresh` ignores the current table."""
     section11 = parse_section11(trust_map.read_text())
     modules: dict[str, dict[str, list[str]]] = {}
-    predicates = lean_predicates(root / PREDICATES.relative_to(ROOT))
     old = {} if fresh or not table_path.is_file() else load_table(table_path)
-    scanned, _, problems, _ = scan_tree(root)
-    if problems:
-        raise SystemExit("cannot seed from a declaration list that fails: " + "; ".join(problems[:5]))
+    scanned, lines, predicates, unread, problems = read_tree(root)
+    placed, placing = place_tree(scanned, lines, predicates, unread)
+    if problems + placing:
+        raise SystemExit("cannot seed from compiled dumps that fail: " + "; ".join((problems + placing)[:5]))
     by_module: dict[str, list[Decl]] = defaultdict(list)
-    for module, decl in scanned:
+    for module, decl in placed:
         by_module[module].append(decl)
     for path in sources(root):
         module = module_key(path, root)
-        decls, placing = place(module, by_module[module], predicates)
-        if placing:
-            raise SystemExit("cannot seed from a declaration list that fails: " + "; ".join(placing[:5]))
+        decls = by_module[module]
         classes: dict[str, list] = defaultdict(list)
         for name, entry in seed_module(module, decls, section11.get(module), predicates, old.get(module)).items():
             if isinstance(entry, dict):
