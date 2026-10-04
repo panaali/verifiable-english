@@ -11,7 +11,7 @@ All `ve/readings_s1.py` unless named; Lean files are under `lean/VE/Readings/`.
 
 | # | Deleted (base) | Decided | Owner now |
 |---|---|---|---|
-| D1 | `ve/readings_route.py` `validate`: Python's answer computed and compared with Lean's row byte for byte, `CheckerUnavailable` on any difference | whether the route answers at all | Lean's row, relayed (`Run.lean` `runCase`, `validateResult`); the route checks only that the row is bound to the request (`_bound`) |
+| D1 | `ve/readings_route.py` `validate`: Python's answer computed and compared with Lean's row byte for byte, `CheckerUnavailable` on any difference | whether the route answers at all | Lean's row, relayed (`Run.lean` `runCase`, `validateResult`); the route checks only the row's schema (from `Run.lean`'s encoders) and its binding to the request (`_check`: `ROW`, `_bind`), deciding nothing Lean decides |
 | D2 | `answer` (the whole regenerated row: `content_bearing`, per-candidate `pending`, `owned`, `shared`, the order of keys, per-pair facts, the 4.5 refusals `each other reading needs a distinguishing model id`, `distinguishing model id does not match model`, `invalid situation`, `violates a generated premise`, `does not separate readings`) | the answer of `readings-validate` | `Run.lean` `validateResult`, `candidateJson`, `setPairs` |
 | D3 | `Side.document_hash` with `_canonical_raw`, `_canonical_unit`, `_canonical_norm` | each candidate's chain document hash | `Run.lean` `documentHash` (`oneJson`) |
 | D4 | `ve/readings_route.py` `rights_findings`: two rights-route calls (`rights-scope`, `rights-elaborate`) per candidate, 352 per UDHR load | the chain findings `limitationScope`, `noDistinction` | `Run.lean` `chainFindings` (Python never had an implementation; it asked the rights route) |
@@ -54,12 +54,13 @@ The differential test of the last row is `tests/test_readings_s1_differential.py
 
 `git diff --numstat 776a64d7 HEAD`:
 
-- **Python `ve/`: 752 lines deleted, 201 added (net −551).** `readings_s1.py` 1,470 → 896 (−650, +76: the module
-  docstring, `Decoded`); `readings_route.py` 465 → 488 (−101, +124: the binding check `_bound` and the
-  construction guard `_built` are new); `document.py` ±1. The plan's estimate (~1,530) assumed the whole of
+- **Python `ve/`: 790 lines deleted, 330 added (net −460).** `readings_s1.py` 1,470 → 895 (−679, +104: the module
+  docstring, `Decoded`, the key table `KEY_FIELDS`); `readings_route.py` 465 → 577 (−107, +219: the answer's
+  schema `ROW` and binding `_bind`, review lf-3 B1/B2, and the construction guard `_built` are new);
+  `backends/lean.py` +6/−3 (the strict JSON reader); `document.py` ±1. The plan's estimate (~1,530) assumed the whole of
   `readings_s1.py` goes; the retained construction above is why it does not yet.
 - **Rust: 75 lines deleted** (`readings.rs` 70, `lib.rs` 2, `main.rs` 3), 0 added.
 - **Lean: 0 lines** (none planned).
-- Tests: `test_readings_route_relay.py` +189 (new); the Lean and differential tests drop their Python comparisons
+- Tests: `test_readings_route_relay.py` +253 and `test_readings_route_fuzz.py` +356 (new); the Lean and differential tests drop their Python comparisons
   (−82, +72). Tools: `lean_first_diff.py` +78/−7 (the readings corpus, `checked_by` as wording),
   `readings_s1_pilot.py`, `relay_lint.py`, `check_rust_deps.py` small. Docs: `composition-s1.md` 8.4 and 10.

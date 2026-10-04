@@ -1116,7 +1116,9 @@ S1 has no kind named `-elaborate`: `readings-validate`'s answer is its regenerat
 `readings-elaborate` for `sup D`.
 
 **Lean-first batch 3 (2026-10-04, docs/LEAN-FIRST-PLAN.md rule 2).** The answer is Lean's alone: `ve/readings_route.py`
-relays the row (or raises Lean's diagnostic with its text) after checking that it is bound to the request, and the
+relays the row (or raises Lean's diagnostic with its text) after checking it against the schema of `Run.lean`'s
+encoders and binding it to the request (its sets, candidates, pairs and their situations, and the producer's
+invariants: `ve/readings_route.py` `_check`; anything else is `CheckerUnavailable`), and the
 byte-for-byte comparison with Python's regeneration (`readings_s1.answer`), the rights route calls it made for the
 chain findings, and Rust's untrusted replay (`readings-evaluate`) are deleted. The batch's evidence and the inputs
 whose answer changed are in `docs/lean-first/b3/DELTA.md`.

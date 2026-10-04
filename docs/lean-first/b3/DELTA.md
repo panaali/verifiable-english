@@ -138,6 +138,38 @@ Each was applied alone, its test run, then the file restored (`git status` clean
 | M4 `_built` converts nothing | a construction failure after admission is `CheckerUnavailable` | `test_a_construction_failure_after_lean_admitted_is_unavailable` |
 | M5 the search's outcome evaluation negated | the rule-3 duplicate stays in step with Lean | `test_generated_sets_lean_answers` |
 | M6 the A/B tool treats `checked_by` as a verdict | a report's description is one wording pair | `test_a_reports_description_is_one_wording_pair` |
+| M7 `separated` may be false | Lean answers only separated pairs | `test_every_mutant_of_a_genuine_answer_is_unavailable` |
+| M8 the containment does not catch `TypeError` | a failure of the check itself is operational | `test_a_failure_of_the_check_itself_is_contained` |
+| M9 pairs not bound | every ordered pair of non-pending candidates, in order, with its situation and witness | `test_a_row_not_bound_to_the_request_is_unavailable` |
+| M10 `sets` may be empty | `content_bearing: true` has a set | `test_the_schema_alone_refuses_every_type_fault` |
+| M11 `document_hash` any string | a hash is 64 lowercase hex digits | `test_every_mutant_of_a_genuine_answer_is_unavailable` |
+| M12 `witness_value` unbound | the witness shows the recorded value | `test_a_row_not_bound_to_the_request_is_unavailable` |
+| M13 finding order unchecked | findings in `setFindings`' order, once each | `test_a_row_not_bound_to_the_request_is_unavailable` |
+| M14 repeated keys allowed | a candidate's keys are deduplicated | `test_a_row_not_bound_to_the_request_is_unavailable` |
+| M15 a key any object | keys are `keyJson`'s constructors (`KEY_FIELDS`) | `test_the_schema_alone_refuses_every_type_fault` |
+| M16 `content_bearing` unbound | `content_bearing` is bound to the request's sets | `test_the_binding_alone_refuses_every_well_typed_mutant` |
+
+M7 to M16 were added for review lf-3 (below); each was applied alone by a script, the two route test files run,
+and the file restored.
+
+## Review lf-3: the answer's schema and binding (B1, B2)
+
+The relay's first binding check (`_bound`) failed open: a genuine row with `sets` or `pairs` emptied, a pair
+duplicated, a key of no constructor, an empty hash or `separated: false` was accepted (and `separated: false`
+reached the English as "They differ here"), and a set id retyped to `[]` or a situation id to `{}` escaped as
+`TypeError`. `ve/readings_route.py` `_check` replaces it: the schema `ROW`, written from `Run.lean`'s encoders,
+is checked over the whole row before anything is compared or hashed; `_bind` then checks what the request fixes
+(the content-bearing sets in source order, candidates and pending states, every ordered pair of non-pending
+candidates with its situation and witness) and the producer's invariants (`separated` and `witness_admissible`
+true, `witness_value` the recorded value, `other_value` present exactly when the other side owns no key, decisions
+owned by the witness and fixed tables by neither, findings in `setFindings`' text and order); any failure of the
+check is `CheckerUnavailable`. Keys are read through one table (`readings_s1.KEY_FIELDS`) for `key_json`,
+`decode_key` and the schema; the English reads findings with the check's parser; the transport reads with the
+Lean service's strict JSON reader (a repeated member, deep nesting); the unused, unchecked `separate_many` is
+deleted. `tests/test_readings_route_fuzz.py` mutates every node of 12 genuine rows (over 5,000 mutants, and
+two-fault mutants): only `CheckerUnavailable` escapes, and an accepted mutant changed only what Lean alone decides.
+The readings and pilot corpora recorded again at the fix (1,374 records) are the same as the head's records above,
+record for record (`compare`: 1,374 same, 0 unlisted).
 
 ## Not done here
 
