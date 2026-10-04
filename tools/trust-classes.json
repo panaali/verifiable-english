@@ -1,5 +1,5 @@
 {
- "comment": "Trust classes of Lean declarations (docs/TRUST-MAP.md section 2), read by tools/trust_map.py. Seeded by `tools/trust_map.py --seed` from the trust map's section 11 module rows and name rules; correct entries by hand. A tie is written {\"name\": ..., \"tied\": [theorem, ...]}.",
+ "comment": "Trust classes of Lean declarations (docs/TRUST-MAP.md section 2), read by tools/trust_map.py. Seeded by `tools/trust_map.py --seed` from the trust map's section 11 module rows, lean/predicates.txt and name rules; a reseed keeps every entry except predicates outside K and S and kernel data types (see seed_module). A tie is written {\"name\": ..., \"tied\": [theorem, ...]}.",
  "modules": {
   "AlternativesMain.lean": {
    "G[V]": [
@@ -383,10 +383,10 @@
   },
   "VE/Alternatives/Run.lean": {
    "S": [
+    "VE.Alternatives.Run.AltAdmissionAnswer",
     "VE.Alternatives.Run.followableText"
    ],
    "G[V]": [
-    "VE.Alternatives.Run.AltAdmissionAnswer",
     "VE.Alternatives.Run.actWords",
     "VE.Alternatives.Run.assumedHarmFree",
     "VE.Alternatives.Run.chooserReport",
@@ -417,7 +417,12 @@
   },
   "VE/Alternatives/Validate.lean": {
    "S": [
+    "VE.Alternatives.E1",
+    "VE.Alternatives.E2",
+    "VE.Alternatives.E3",
     "VE.Alternatives.EntityName",
+    "VE.Alternatives.ExistenceFacts",
+    "VE.Alternatives.RowsConsistent",
     "VE.Alternatives.e1B",
     "VE.Alternatives.nm",
     "VE.Alternatives.permittedAt",
@@ -426,8 +431,6 @@
     "VE.Alternatives.scenarioConflict"
    ],
    "C": [
-    "VE.Alternatives.E1",
-    "VE.Alternatives.E2",
     "VE.Alternatives.altModelChecks",
     "VE.Alternatives.availOf",
     "VE.Alternatives.duties",
@@ -443,9 +446,6 @@
     "instance:EntityName VE.Bridge.Entity"
    ],
    "G[V]": [
-    "VE.Alternatives.E3",
-    "VE.Alternatives.ExistenceFacts",
-    "VE.Alternatives.RowsConsistent",
     "VE.Alternatives.discharges",
     "VE.Alternatives.existenceFailure",
     "VE.Alternatives.failureText",
@@ -498,12 +498,12 @@
   "VE/Attribution/Admission.lean": {
    "S": [
     "VE.Reports.Content.isDefinition",
+    "VE.Reports.ReportsLeafAdmitted",
+    "VE.Reports.ReportsNodeAdmitted",
     "VE.Reports.envelopeMatches",
     "VE.Reports.isReportStatement"
    ],
    "C": [
-    "VE.Reports.ReportsLeafAdmitted",
-    "VE.Reports.ReportsNodeAdmitted",
     "VE.Reports.admitNodes",
     "VE.Reports.authorPath",
     "VE.Reports.checkOuter",
@@ -526,7 +526,8 @@
   "VE/Attribution/Bridge.lean": {
    "S": [
     "VE.Reports.BridgeAdmitted",
-    "VE.Reports.BridgeLabel"
+    "VE.Reports.BridgeLabel",
+    "VE.Reports.HolderOk"
    ],
    "D[V]": [
     "VE.Reports.BridgeLabel.agent",
@@ -538,7 +539,6 @@
     "VE.Reports.w2Doc"
    ],
    "G[V]": [
-    "VE.Reports.HolderOk",
     "VE.Reports.kindOf"
    ]
   },
@@ -794,9 +794,7 @@
   },
   "VE/Bridge.lean": {
    "K": [
-    "VE.Bridge.ModelData.toModel",
-    "VE.Bridge.Vocabulary.environment",
-    "VE.Bridge.lookup"
+    "VE.Bridge.JsonEntails"
    ],
    "C": [
     "VE.Bridge.CountermodelQuery",
@@ -807,8 +805,9 @@
    "D[V]": [
     "VE.Bridge.Entity",
     "VE.Bridge.Fields",
-    "VE.Bridge.JsonEntails",
+    "VE.Bridge.ModelData.toModel",
     "VE.Bridge.Vocabulary",
+    "VE.Bridge.Vocabulary.environment",
     "VE.Bridge.decodeCountermodel",
     "VE.Bridge.decodeDocument",
     "VE.Bridge.decodeEnvironment",
@@ -823,6 +822,7 @@
     "VE.Bridge.formulaNodes",
     "VE.Bridge.generatedName",
     "VE.Bridge.localIds",
+    "VE.Bridge.lookup",
     "VE.Bridge.runCaseReported",
     "VE.Bridge.stringField",
     "VE.Bridge.strings",
@@ -883,23 +883,24 @@
   },
   "VE/ClaimGraph.lean": {
    "S": [
+    "VE.Graph.Acyclic",
     "VE.Graph.CertificatePredicate",
     "VE.Graph.CertificateSound",
     "VE.Graph.Claim",
     "VE.Graph.ClaimGraph",
     "VE.Graph.Dependency",
+    "VE.Graph.IsAssumption",
     "VE.Graph.Node",
     "VE.Graph.Path",
     "VE.Graph.SoundReport",
     "VE.Graph.Unfolds",
     "VE.Graph.resolve",
+    "VE.Graph.tableauValid",
     "VE.Graph.uniqueNames",
     "instance:(E : Environment) (c : Tableau.Certificate) (ps : List Claim) (r : Claim) :"
    ],
    "C": [
-    "VE.Graph.Acyclic",
     "VE.Graph.Edge",
-    "VE.Graph.IsAssumption",
     "VE.Graph.Report",
     "VE.Graph.acyclicCheck",
     "VE.Graph.check",
@@ -907,8 +908,7 @@
     "VE.Graph.checkNodes",
     "VE.Graph.checkTableau",
     "VE.Graph.lookup",
-    "VE.Graph.rank",
-    "VE.Graph.tableauValid"
+    "VE.Graph.rank"
    ]
   },
   "VE/Closure/Bridge.lean": {
@@ -967,29 +967,33 @@
   "VE/Closure/Paths.lean": {
    "K": [
     "VE.Closure.Kind",
-    "VE.Closure.dedup",
-    "VE.Closure.pivot",
-    "VE.Closure.reachEval"
+    "VE.Closure.Path",
+    "VE.Closure.Reachable"
    ],
    "C": [
-    "VE.Closure.ClosedAt",
-    "VE.Closure.Path",
-    "VE.Closure.Reachable",
+    "VE.Closure.dedup",
+    "VE.Closure.pivot",
+    "VE.Closure.reachEval",
     "VE.Closure.vertices",
     "VE.Closure.warshall"
+   ],
+   "P": [
+    "VE.Closure.ClosedAt"
    ]
   },
   "VE/Closure/Substitution.lean": {
    "C": [
-    "VE.Closure.Edge.Typed",
     "VE.Closure.Edge.at",
-    "VE.Closure.Edge.denote",
     "VE.Closure.Edge.shift",
     "VE.Closure.Formula.subst",
     "VE.Closure.liftSub",
     "VE.Closure.liftTerm",
     "VE.Closure.substTerm",
     "VE.Closure.unfold"
+   ],
+   "P": [
+    "VE.Closure.Edge.Typed",
+    "VE.Closure.Edge.denote"
    ]
   },
   "VE/Closure/Surface.lean": {
@@ -1008,16 +1012,16 @@
   },
   "VE/Closure/Syntax.lean": {
    "K": [
+    "VE.Closure.Edge",
     "VE.Closure.Formula",
+    "VE.Closure.Formula.WellFormed",
     "VE.Closure.Formula.denote",
+    "VE.Closure.Formula.reach",
     "VE.Closure.embed",
     "VE.Closure.erase"
    ],
    "C": [
-    "VE.Closure.Edge",
-    "VE.Closure.Formula.WellFormed",
-    "VE.Closure.Formula.check",
-    "VE.Closure.Formula.reach"
+    "VE.Closure.Formula.check"
    ]
   },
   "VE/Compose/Content.lean": {
@@ -1035,6 +1039,8 @@
   },
   "VE/Compose/Dispatch.lean": {
    "S": [
+    "VE.Compose.ChainList",
+    "VE.Compose.TodayList",
     "VE.Compose.base",
     "VE.Compose.stackHead",
     "VE.Compose.unsupported",
@@ -1042,9 +1048,7 @@
     "VE.Compose.wrapperProfiles"
    ],
    "G[V]": [
-    "VE.Compose.ChainList",
     "VE.Compose.Route",
-    "VE.Compose.TodayList",
     "VE.Compose.dispatch",
     "VE.Compose.outside",
     "VE.Compose.refusal",
@@ -1081,6 +1085,7 @@
     "VE.Compose.Labelled.formulas",
     "VE.Compose.Labelled.wellLabelled",
     "VE.Compose.PrefixAdmissibleP",
+    "VE.Compose.SlotWellFormed",
     "VE.Compose.backgroundP",
     "VE.Compose.slotChain",
     "VE.Compose.slotCheck",
@@ -1089,7 +1094,6 @@
    "C": [
     "VE.Compose.Labelled",
     "VE.Compose.SlotChain",
-    "VE.Compose.SlotWellFormed",
     "VE.Compose.backgroundBaseP",
     "VE.Compose.backgroundValidP",
     "VE.Compose.gate",
@@ -1100,8 +1104,10 @@
   },
   "VE/Consequence.lean": {
    "C": [
-    "VE.Derivation",
     "VE.countermodelCheck"
+   ],
+   "P": [
+    "VE.Derivation"
    ]
   },
   "VE/Core/Bridge.lean": {
@@ -1190,38 +1196,42 @@
   "VE/Core/Paths.lean": {
    "K": [
     "VE.Core.Kind",
-    "VE.Core.dedup",
-    "VE.Core.pivot",
-    "VE.Core.reachEval"
+    "VE.Core.Path",
+    "VE.Core.Reachable"
    ],
    "C": [
-    "VE.Core.ClosedAt",
-    "VE.Core.Path",
-    "VE.Core.Reachable",
+    "VE.Core.dedup",
+    "VE.Core.pivot",
+    "VE.Core.reachEval",
     "VE.Core.vertices",
     "VE.Core.warshall"
+   ],
+   "P": [
+    "VE.Core.ClosedAt"
    ]
   },
   "VE/Core/Route.lean": {
    "K": [
-    "VE.Route.core"
+    "VE.Route.core",
+    "VE.Route.coreValid"
    ],
    "C": [
-    "VE.Route.Checker.core",
-    "VE.Route.coreValid"
+    "VE.Route.Checker.core"
    ]
   },
   "VE/Core/Substitution.lean": {
    "C": [
-    "VE.Core.Edge.Typed",
     "VE.Core.Edge.at",
-    "VE.Core.Edge.denote",
     "VE.Core.Edge.shift",
     "VE.Core.Formula.subst",
     "VE.Core.liftSub",
     "VE.Core.liftTerm",
     "VE.Core.substTerm",
     "VE.Core.unfold"
+   ],
+   "P": [
+    "VE.Core.Edge.Typed",
+    "VE.Core.Edge.denote"
    ]
   },
   "VE/Core/Surface.lean": {
@@ -1246,26 +1256,23 @@
     "VE.Core.Formula",
     "VE.Core.Formula.WellFormed",
     "VE.Core.Formula.denote",
-    "VE.Core.Formula.reach"
-   ],
-   "C": [
-    "VE.Core.Formula.check",
+    "VE.Core.Formula.reach",
     "VE.Core.embed",
     "VE.Core.erase"
+   ],
+   "C": [
+    "VE.Core.Formula.check"
    ]
   },
   "VE/Core/TableauExtended.lean": {
    "C": [
     "VE.Core.Tableau.Assignment",
-    "VE.Core.Tableau.Assignment.Typed",
     "VE.Core.Tableau.Branch",
-    "VE.Core.Tableau.Branch.Holds",
     "VE.Core.Tableau.Branch.add",
     "VE.Core.Tableau.Branch.scoped",
     "VE.Core.Tableau.Certificate",
     "VE.Core.Tableau.Rule",
     "VE.Core.Tableau.Signed",
-    "VE.Core.Tableau.Signed.Holds",
     "VE.Core.Tableau.Signed.rule",
     "VE.Core.Tableau.Signed.tag",
     "VE.Core.Tableau.Token",
@@ -1276,6 +1283,11 @@
     "VE.Core.Tableau.Trace",
     "VE.Core.Tableau.bindingsValue",
     "VE.Core.Tableau.extend"
+   ],
+   "P": [
+    "VE.Core.Tableau.Assignment.Typed",
+    "VE.Core.Tableau.Branch.Holds",
+    "VE.Core.Tableau.Signed.Holds"
    ]
   },
   "VE/Core/TableauExtendedChecker.lean": {
@@ -1291,10 +1303,8 @@
   "VE/Core/TableauExtendedClosure.lean": {
    "C": [
     "VE.Core.Tableau.Atom",
-    "VE.Core.Tableau.Atom.denote",
     "VE.Core.Tableau.Branch.known",
     "VE.Core.Tableau.Literal",
-    "VE.Core.Tableau.Literal.Holds",
     "VE.Core.Tableau.atomMatches",
     "VE.Core.Tableau.closed",
     "VE.Core.Tableau.closes",
@@ -1308,6 +1318,10 @@
     "VE.Core.Tableau.reachable",
     "VE.Core.Tableau.termToken",
     "VE.Core.Tableau.tokenListMatches"
+   ],
+   "P": [
+    "VE.Core.Tableau.Atom.denote",
+    "VE.Core.Tableau.Literal.Holds"
    ]
   },
   "VE/Core/TableauExtendedExtra.lean": {
@@ -1355,11 +1369,11 @@
     "VE.Data.Background.Flag",
     "VE.Data.Background.Functional",
     "VE.Data.Background.Intended",
+    "VE.Data.Background.Total",
     "VE.Data.Background.generate",
     "VE.Data.Background.totalPremise"
    ],
    "C": [
-    "VE.Data.Background.Total",
     "VE.Data.Background.flagsValid",
     "VE.Data.Background.functionalPremise",
     "VE.Data.Background.premises"
@@ -1374,17 +1388,17 @@
   "VE/Definitions/Bundle.lean": {
    "S": [
     "VE.Definitions.Bundle.Leaf",
+    "VE.Definitions.Bundle.LeafBound",
+    "VE.Definitions.Bundle.ReadingBound",
     "VE.Definitions.Bundle.ReadingCompatible",
+    "VE.Definitions.Bundle.Sound",
     "VE.Definitions.Bundle.appendNew",
     "VE.Definitions.Bundle.leafChoices",
     "VE.Definitions.Bundle.readingBindingOk"
    ],
    "C": [
     "VE.Definitions.Bundle.Known",
-    "VE.Definitions.Bundle.LeafBound",
     "VE.Definitions.Bundle.Lemma",
-    "VE.Definitions.Bundle.ReadingBound",
-    "VE.Definitions.Bundle.Sound",
     "VE.Definitions.Bundle.addReading",
     "VE.Definitions.Bundle.backgroundLeaves",
     "VE.Definitions.Bundle.checkAll",
@@ -1419,9 +1433,13 @@
   },
   "VE/Definitions/Layer.lean": {
    "S": [
+    "VE.Definitions.Agrees",
+    "VE.Definitions.Chain",
     "VE.Definitions.Def",
+    "VE.Definitions.Def.Arity",
     "VE.Definitions.Def.head",
     "VE.Definitions.Def.premise",
+    "VE.Definitions.RelationFree",
     "VE.Definitions.Step",
     "VE.Definitions.chainLayer",
     "VE.Definitions.hide",
@@ -1431,11 +1449,7 @@
     "VE.Definitions.names"
    ],
    "C": [
-    "VE.Definitions.Agrees",
-    "VE.Definitions.Chain",
     "VE.Definitions.ChainLayer",
-    "VE.Definitions.Def.Arity",
-    "VE.Definitions.RelationFree",
     "VE.Definitions.expand",
     "VE.Definitions.forget",
     "VE.Definitions.stepLayer"
@@ -1453,6 +1467,7 @@
   "VE/Discourse/Access.lean": {
    "S": [
     "VE.Discourse.Acc",
+    "VE.Discourse.AliasEq",
     "VE.Discourse.accB",
     "VE.Discourse.accessible",
     "VE.Discourse.anchorOf",
@@ -1512,7 +1527,6 @@
     "instance:(D : DDoc) (t t' : Target) : Decidable (AliasEq D t t')"
    ],
    "D[V]": [
-    "VE.Discourse.AliasEq",
     "VE.Discourse.binderTarget",
     "VE.Discourse.charsBytes",
     "VE.Discourse.foldChar",
@@ -1686,6 +1700,7 @@
   },
   "VE/Discourse/English.lean": {
    "S": [
+    "VE.Discourse.LexiconCovers",
     "VE.Discourse.SourceDerives",
     "VE.Discourse.discourseSourceSurface",
     "VE.Discourse.discourseSurface",
@@ -1693,7 +1708,6 @@
     "VE.Discourse.unitOfFormula"
    ],
    "D[V]": [
-    "VE.Discourse.LexiconCovers",
     "VE.Discourse.recordedAssignment"
    ]
   },
@@ -1713,11 +1727,11 @@
   },
   "VE/Discourse/Fusion.lean": {
    "S": [
+    "VE.Discourse.IsConjunctionMentioningZero",
     "VE.Discourse.fused",
     "VE.Discourse.isAnd"
    ],
    "C": [
-    "VE.Discourse.IsConjunctionMentioningZero",
     "VE.Discourse.conjuncts",
     "VE.Discourse.mentionsVar",
     "VE.Discourse.sharedWitness",
@@ -1726,7 +1740,6 @@
   },
   "VE/Discourse/Grammar.lean": {
    "C": [
-    "VE.Discourse.Derives",
     "VE.Discourse.allForms",
     "VE.Discourse.citeWords",
     "VE.Discourse.demonstrativeWords",
@@ -1744,6 +1757,7 @@
    "D[V]": [
     "VE.Discourse.Core",
     "VE.Discourse.DTree",
+    "VE.Discourse.Derives",
     "VE.Discourse.Mod",
     "VE.Discourse.NP",
     "VE.Discourse.Restr",
@@ -1881,11 +1895,11 @@
   "VE/Discourse/Resolve.lean": {
    "S": [
     "VE.Discourse.Accepted",
+    "VE.Discourse.Supported",
+    "VE.Discourse.ValidOk",
     "VE.Discourse.accCands"
    ],
    "C": [
-    "VE.Discourse.Supported",
-    "VE.Discourse.ValidOk",
     "VE.Discourse.aligned",
     "VE.Discourse.argSort",
     "VE.Discourse.assignOf",
@@ -1966,6 +1980,7 @@
   "VE/Discourse/WellFormed.lean": {
    "S": [
     "VE.Discourse.CoreTyped",
+    "VE.Discourse.DeclaredSymbol",
     "VE.Discourse.Intended",
     "VE.Discourse.ModTyped",
     "VE.Discourse.PredTyped",
@@ -2022,7 +2037,6 @@
     "VE.Discourse.witnessOpening"
    ],
    "D[V]": [
-    "VE.Discourse.DeclaredSymbol",
     "VE.Discourse.formText",
     "VE.Discourse.kindText",
     "VE.Discourse.readingName"
@@ -2076,7 +2090,6 @@
   "VE/English/Check.lean": {
    "C": [
     "VE.English.AtomKey",
-    "VE.English.Facts",
     "VE.English.Lit.args",
     "VE.English.Lit.key",
     "VE.English.admissible",
@@ -2091,6 +2104,9 @@
     "VE.English.templateOk",
     "VE.English.templateWords",
     "VE.English.truthT"
+   ],
+   "P": [
+    "VE.English.Facts"
    ]
   },
   "VE/English/ClauseProofs.lean": {
@@ -2104,11 +2120,11 @@
     "VE.English.Lit.denote",
     "VE.English.TermTree.denote",
     "VE.English.Tree",
+    "VE.English.Tree.Syntactic",
     "VE.English.markers"
    ],
    "D[V]": [
     "VE.English.Header",
-    "VE.English.Tree.Syntactic",
     "VE.English.Tree.denote",
     "VE.English.Tree.size",
     "VE.English.Tree.yield",
@@ -2118,6 +2134,8 @@
   },
   "VE/English/Lexicon.lean": {
    "S": [
+    "VE.English.Admitted",
+    "VE.English.Covers",
     "VE.English.Slot.isHole",
     "VE.English.Template.arity",
     "VE.English.TermTree.ok",
@@ -2126,8 +2144,6 @@
     "VE.English.openers"
    ],
    "D[V]": [
-    "VE.English.Admitted",
-    "VE.English.Covers",
     "VE.English.Lexicon",
     "VE.English.Lit",
     "VE.English.Lit.ok",
@@ -2227,12 +2243,12 @@
   },
   "VE/Finite.lean": {
    "K": [
-    "VE.Document.eval",
     "VE.FiniteModel",
+    "VE.FiniteModel.Valid",
     "VE.FiniteModel.asStructure"
    ],
    "C": [
-    "VE.FiniteModel.Valid",
+    "VE.Document.eval",
     "VE.Formula.eval"
    ]
   },
@@ -2272,6 +2288,8 @@
     "VE.NormDefaults.Admission.LayerLeaf",
     "VE.NormDefaults.Admission.NodeAdmitted",
     "VE.NormDefaults.Admission.ProfileLeaf",
+    "VE.NormDefaults.Admission.ReportAdmitted",
+    "VE.NormDefaults.Admission.SourceDecoded",
     "VE.NormDefaults.Admission.checkQuoted",
     "VE.NormDefaults.Admission.fillLabelled",
     "VE.NormDefaults.Admission.fillLabels",
@@ -2289,11 +2307,7 @@
     "VE.NormDefaults.Admission.fillJson"
    ],
    "D[V]": [
-    "VE.NormDefaults.Admission.SourceDecoded",
     "VE.NormDefaults.Admission.decodeFilledDoc"
-   ],
-   "G[V]": [
-    "VE.NormDefaults.Admission.ReportAdmitted"
    ]
   },
   "VE/NormDefaults/Check.lean": {
@@ -2328,14 +2342,15 @@
   },
   "VE/NormDefaults/Evidence.lean": {
    "S": [
+    "VE.NormDefaults.OutB",
     "VE.NormDefaults.UniversalQF",
+    "VE.NormDefaults.finFill",
     "VE.NormDefaults.kany"
    ],
    "C": [
     "VE.FiniteModel.withFill",
     "VE.NormDefaults.FiniteFill",
     "VE.NormDefaults.MAX_UNSAID_ATOMS",
-    "VE.NormDefaults.OutB",
     "VE.NormDefaults.allTuples",
     "VE.NormDefaults.atomV",
     "VE.NormDefaults.closeCone",
@@ -2351,7 +2366,6 @@
     "VE.NormDefaults.fillBody",
     "VE.NormDefaults.fillOfAtoms",
     "VE.NormDefaults.fillValid",
-    "VE.NormDefaults.finFill",
     "VE.NormDefaults.kall",
     "VE.NormDefaults.kand",
     "VE.NormDefaults.kleene",
@@ -2462,13 +2476,13 @@
   },
   "VE/NormDefaults/Run.lean": {
    "S": [
+    "VE.NormDefaults.Run.AdmissionAnswerU",
     "VE.NormDefaults.Run.BindingsMatchSourceAndRegeneration",
     "VE.NormDefaults.Run.encodeAdmitted",
     "VE.NormDefaults.Run.firstFailureU",
     "VE.NormDefaults.Run.usesNormDefaultsPath"
    ],
    "G[V]": [
-    "VE.NormDefaults.Run.AdmissionAnswerU",
     "VE.NormDefaults.Run.main",
     "VE.NormDefaults.Run.runAdmission",
     "VE.NormDefaults.Run.runCase",
@@ -2558,8 +2572,13 @@
   "VE/Norms/Admission.lean": {
    "S": [
     "VE.Norms.Admission.CertificateBound",
+    "VE.Norms.Admission.CertificatesBound",
+    "VE.Norms.Admission.LayerLeaf",
+    "VE.Norms.Admission.NodeAdmitted",
     "VE.Norms.Admission.NormContent",
     "VE.Norms.Admission.ProfileLeaf",
+    "VE.Norms.Admission.ReportAdmitted",
+    "VE.Norms.Admission.SourceDecoded",
     "VE.Norms.Admission.backgroundLeaf",
     "VE.Norms.Admission.nodeBinding",
     "VE.Norms.Admission.premiseAsts",
@@ -2569,9 +2588,6 @@
    ],
    "C": [
     "VE.Norms.Admission.Admitted",
-    "VE.Norms.Admission.CertificatesBound",
-    "VE.Norms.Admission.LayerLeaf",
-    "VE.Norms.Admission.NodeAdmitted",
     "VE.Norms.Admission.admitDocument",
     "VE.Norms.Admission.admitNodes",
     "VE.Norms.Admission.checkBindings",
@@ -2579,24 +2595,22 @@
     "instance:(src : Wire.Source) (D : VE.Route.Admission.Doc) (w : WireNode) :"
    ],
    "D[V]": [
-    "VE.Norms.Admission.SourceDecoded",
     "VE.Norms.Admission.checkQuoted",
     "instance:(src : Wire.Source) (w : WireNode) : Decidable (LayerLeaf src w)"
    ],
    "G[V]": [
-    "VE.Norms.Admission.ReportAdmitted",
     "VE.Norms.Admission.envelopeGate"
    ]
   },
   "VE/Norms/Basic.lean": {
    "K": [
+    "VE.Norms.Arity",
+    "VE.Norms.Denotes",
     "VE.Norms.Term.inst",
     "VE.Norms.atom",
     "VE.Norms.iffF"
    ],
    "C": [
-    "VE.Norms.Arity",
-    "VE.Norms.Denotes",
     "VE.Norms.Term.shift",
     "VE.Norms.allF",
     "VE.Norms.anyF",
@@ -2672,11 +2686,11 @@
     "VE.Norms.ConflictFree",
     "VE.Norms.ConflictFreeAt",
     "VE.Norms.ConflictFreeAtIdx",
+    "VE.Norms.DocumentExpansion",
     "VE.Norms.conflict",
     "VE.Norms.outcomeBase"
    ],
    "C": [
-    "VE.Norms.DocumentExpansion",
     "VE.Norms.backgroundValid",
     "VE.Norms.interpret",
     "VE.Norms.pairConflict"
@@ -2688,6 +2702,8 @@
     "VE.Norms.DecidesD",
     "VE.Norms.Definition.premise",
     "VE.Norms.IntendedAt",
+    "VE.Norms.RulesTyped",
+    "VE.Norms.SelectsD",
     "VE.Norms.Value",
     "VE.Norms.YieldsD",
     "VE.Norms.applies",
@@ -2696,8 +2712,6 @@
     "VE.Norms.selects"
    ],
    "C": [
-    "VE.Norms.RulesTyped",
-    "VE.Norms.SelectsD",
     "VE.Norms.Sym.premise",
     "VE.Norms.catalaValue",
     "VE.Norms.decides",
@@ -2729,19 +2743,39 @@
     "VE.Norms.Flagged.ConflictReplay.accepts"
    ],
    "C": [
-    "VE.Norms.Flagged.BaseConflictFree",
+    {
+     "name": "VE.Norms.Flagged.BaseConflictFree",
+     "tied": [
+      "VE.Norms.FlaggedSpec.conflictFree_of_base"
+     ]
+    },
     "VE.Norms.Flagged.ConflictReplay",
-    "VE.Norms.Flagged.ConflictReplay.conflictFree",
+    {
+     "name": "VE.Norms.Flagged.ConflictReplay.conflictFree",
+     "tied": [
+      "VE.Norms.FlaggedSpec.norms_flagged_conflict_free"
+     ]
+    },
     "VE.Norms.Flagged.ConflictReplay.targets",
     "VE.Norms.Flagged.Witness",
     "VE.Norms.Flagged.baseBackground",
-    "VE.Norms.Flagged.baseEnv",
+    {
+     "name": "VE.Norms.Flagged.baseEnv",
+     "tied": [
+      "VE.Norms.FlaggedSpec.conflictFree_of_base"
+     ]
+    },
     "VE.Norms.Flagged.conflictFreeCheck",
     "VE.Norms.Flagged.conflictPy",
     "VE.Norms.Flagged.firstFailure",
     "VE.Norms.Flagged.flagPremises",
     "VE.Norms.Flagged.outcomePy",
-    "VE.Norms.Flagged.pairConflictPy",
+    {
+     "name": "VE.Norms.Flagged.pairConflictPy",
+     "tied": [
+      "VE.Norms.FlaggedSpec.pairConflictPy_iff"
+     ]
+    },
     "VE.Norms.Flagged.pyTargets",
     "VE.Norms.Flagged.regSubst",
     "VE.Norms.Flagged.regTable",
@@ -2770,14 +2804,14 @@
    "S": [
     "VE.Norms.definitionsHold",
     "VE.Norms.layer",
+    "VE.Norms.profileHold",
     "VE.Norms.route",
     "VE.Norms.symLayer",
     "VE.Norms.symPremises"
    ],
    "C": [
     "VE.Norms.Chain",
-    "VE.Norms.chain",
-    "VE.Norms.profileHold"
+    "VE.Norms.chain"
    ]
   },
   "VE/Norms/Plain.lean": {
@@ -2851,12 +2885,12 @@
   },
   "VE/Norms/Run.lean": {
    "S": [
+    "VE.Norms.Run.AdmissionAnswer",
     "VE.Norms.Run.BindingsMatchSourceAndRegeneration",
     "VE.Norms.Run.encodeAdmitted",
     "VE.Norms.Run.usesNormsPath"
    ],
    "G[V]": [
-    "VE.Norms.Run.AdmissionAnswer",
     "VE.Norms.Run.main",
     "VE.Norms.Run.reportDomain",
     "VE.Norms.Run.reportJson",
@@ -2882,10 +2916,10 @@
   "VE/Norms/Subst.lean": {
    "K": [
     "VE.Norms.AgreesBelow",
+    "VE.Norms.ConstantsTyped",
     "VE.Norms.Table"
    ],
    "C": [
-    "VE.Norms.ConstantsTyped",
     "VE.Norms.Sym.clash",
     "VE.Norms.Sym.meaning",
     "VE.Norms.expTable",
@@ -3007,12 +3041,12 @@
   "VE/Order/Finite.lean": {
    "K": [
     "VE.Order.FiniteModel",
-    "VE.Order.FiniteModel.asStructure",
-    "VE.Order.compareEval"
+    "VE.Order.FiniteModel.Valid",
+    "VE.Order.FiniteModel.asStructure"
    ],
    "C": [
-    "VE.Order.FiniteModel.Valid",
     "VE.Order.Formula.eval",
+    "VE.Order.compareEval",
     "instance:{α : Type u} [DecidableEq α] : LawfulBEq (Value α)"
    ]
   },
@@ -3114,19 +3148,15 @@
   "VE/Order/Tableau.lean": {
    "C": [
     "VE.Order.Tableau.Assignment",
-    "VE.Order.Tableau.Assignment.Typed",
     "VE.Order.Tableau.Branch",
-    "VE.Order.Tableau.Branch.Holds",
     "VE.Order.Tableau.Branch.add",
     "VE.Order.Tableau.Branch.known",
     "VE.Order.Tableau.Branch.scoped",
     "VE.Order.Tableau.Certificate",
     "VE.Order.Tableau.Combo",
     "VE.Order.Tableau.Cut",
-    "VE.Order.Tableau.Defined",
     "VE.Order.Tableau.Rule",
     "VE.Order.Tableau.Signed",
-    "VE.Order.Tableau.Signed.Holds",
     "VE.Order.Tableau.Signed.rule",
     "VE.Order.Tableau.Token",
     "VE.Order.Tableau.Token.denote",
@@ -3159,6 +3189,12 @@
     "VE.Order.Tableau.splitAtom",
     "VE.Order.Tableau.splitBranches",
     "VE.Order.Tableau.termToken"
+   ],
+   "P": [
+    "VE.Order.Tableau.Assignment.Typed",
+    "VE.Order.Tableau.Branch.Holds",
+    "VE.Order.Tableau.Defined",
+    "VE.Order.Tableau.Signed.Holds"
    ]
   },
   "VE/Order/TableauChecks.lean": {
@@ -3380,9 +3416,12 @@
   },
   "VE/Readings/Separate.lean": {
    "S": [
+    "VE.Readings.Achieves",
+    "VE.Readings.AchievesQuiet",
     "VE.Readings.KeepsFrame",
     "VE.Readings.Observes",
     "VE.Readings.Probe",
+    "VE.Readings.Separated",
     "VE.Readings.Situation",
     "VE.Readings.actOnly",
     "VE.Readings.assignments",
@@ -3404,11 +3443,8 @@
     "VE.Readings.withTables"
    ],
    "C": [
-    "VE.Readings.Achieves",
-    "VE.Readings.AchievesQuiet",
     "VE.Readings.GenKey",
     "VE.Readings.GenKey.source",
-    "VE.Readings.Separated",
     "VE.Readings.Tables",
     "VE.Readings.cells",
     "VE.Readings.decisionOnly",
@@ -3508,9 +3544,6 @@
    ],
    "D[V]": [
     "VE.Rights.Admission.Admitted",
-    "VE.Rights.Admission.CouplingLeaf",
-    "VE.Rights.Admission.LayerLeaf",
-    "VE.Rights.Admission.NodeAdmitted",
     "VE.Rights.Admission.admitNodes",
     "VE.Rights.Admission.decodeRightsDoc",
     "VE.Rights.Admission.otherAssumptions",
@@ -3524,6 +3557,9 @@
    ],
    "G[V]": [
     "VE.Rights.Admission.CouplingChoicesCompatible",
+    "VE.Rights.Admission.CouplingLeaf",
+    "VE.Rights.Admission.LayerLeaf",
+    "VE.Rights.Admission.NodeAdmitted",
     "VE.Rights.Admission.ProfileLeaf",
     "VE.Rights.Admission.RightsLeaf",
     "VE.Rights.Admission.SoftLeaf",
@@ -3671,8 +3707,10 @@
    ]
   },
   "VE/Rights/Route.lean": {
+   "S": [
+    "VE.Rights.PrefixAdmissibleR"
+   ],
    "C": [
-    "VE.Rights.PrefixAdmissibleR",
     "VE.Rights.RightsChain",
     "VE.Rights.backgroundValidR",
     "VE.Rights.rightsChain",
@@ -3937,6 +3975,7 @@
   "VE/Risk/Background.lean": {
    "S": [
     "VE.Risk.BaseAdmissibleRisk",
+    "VE.Risk.PlainPred",
     "VE.Risk.ReductVia",
     "VE.Risk.RiskConflictFree",
     "VE.Risk.backgroundValidRisk",
@@ -3953,7 +3992,6 @@
     "VE.Risk.riskTargetAccepted"
    ],
    "C": [
-    "VE.Risk.PlainPred",
     "VE.Risk.classFunctional",
     "VE.Risk.expand"
    ],
@@ -3973,8 +4011,10 @@
     "VE.Risk.Box.lo",
     "VE.Risk.Box.mem",
     "VE.Risk.Cond",
+    "VE.Risk.Cond.NotFree",
     "VE.Risk.Cond.atomNames",
     "VE.Risk.Cond.holds",
+    "VE.Risk.InBox",
     "VE.Risk.LinForm",
     "VE.Risk.LinForm.Normal",
     "VE.Risk.LinForm.normalize",
@@ -3997,9 +4037,7 @@
     "VE.Risk.Box",
     "VE.Risk.Box.hi",
     "VE.Risk.BoxEntry",
-    "VE.Risk.Cond.NotFree",
     "VE.Risk.Cond.eval",
-    "VE.Risk.InBox",
     "VE.Risk.LinForm.eval",
     "VE.Risk.LinForm.names",
     "VE.Risk.LinForm.neg",
@@ -4025,6 +4063,7 @@
     "VE.Risk.RiskDoc.classes",
     "VE.Risk.RiskDoc.sev",
     "VE.Risk.RiskEnv",
+    "VE.Risk.RiskValid",
     "VE.Risk.SeverityDecl",
     "VE.Risk.Unexamined",
     "VE.Risk.WellFormedRisk",
@@ -4055,7 +4094,6 @@
     "VE.Risk.withRiskDefinitions"
    ],
    "C": [
-    "VE.Risk.RiskValid",
     "VE.Risk.classPred",
     "VE.Risk.lessWorstName"
    ],
@@ -4259,6 +4297,7 @@
     "VE.Risk.Beyond",
     "VE.Risk.Dir",
     "VE.Risk.LinForm.without",
+    "VE.Risk.NearAs",
     "VE.Risk.Outcome",
     "VE.Risk.StatusKept",
     "VE.Risk.curStatus",
@@ -4278,7 +4317,6 @@
     "VE.Risk.Endpoint",
     "VE.Risk.Estimate.side",
     "VE.Risk.LinForm.coeffOf",
-    "VE.Risk.NearAs",
     "VE.Risk.Side",
     "VE.Risk.atomCandidates",
     "VE.Risk.candidates",
@@ -4299,6 +4337,7 @@
   },
   "VE/Risk/Run.lean": {
    "S": [
+    "VE.Risk.Run.RiskAdmissionAnswer",
     "VE.Risk.Run.RiskConflictReplay.conflictFree",
     "VE.Risk.Run.usesRiskPath"
    ],
@@ -4310,7 +4349,6 @@
    ],
    "G[V]": [
     "VE.Risk.Run.AuditReplay",
-    "VE.Risk.Run.RiskAdmissionAnswer",
     "VE.Risk.Run.RiskConflictReplay",
     "VE.Risk.Run.RiskFollowableReplay",
     "VE.Risk.Run.RiskFollowableReplay.conflictFree",
@@ -4423,15 +4461,18 @@
    "S": [
     "VE.Route.Admission.Admitted",
     "VE.Route.Admission.AssertedUnit",
+    "VE.Route.Admission.ChoicesCompatible",
     "VE.Route.Admission.CitationsClosed",
     "VE.Route.Admission.Doc",
     "VE.Route.Admission.DocUnit",
     "VE.Route.Admission.Kind.agent?",
     "VE.Route.Admission.Kind.depth",
     "VE.Route.Admission.Label",
+    "VE.Route.Admission.LeafAdmitted",
     "VE.Route.Admission.Lemma",
     "VE.Route.Admission.NodeAdmitted",
     "VE.Route.Admission.QuotedUnit",
+    "VE.Route.Admission.ReadingContent",
     "VE.Route.Admission.WireNode.toNode",
     "VE.Route.Admission.acts",
     "VE.Route.Admission.admitNodes",
@@ -4451,14 +4492,12 @@
     "instance:(D : Doc) (w : WireNode) : Decidable (LeafAdmitted D w)"
    ],
    "C": [
-    "VE.Route.Admission.LeafAdmitted",
     "VE.Route.Admission.admitDocument",
     "VE.Route.Admission.checkBindings"
    ],
    "D[V]": [
     "VE.Route.Admission.Kind.quoted",
     "VE.Route.Admission.Label.render",
-    "VE.Route.Admission.ReadingContent",
     "VE.Route.Admission.ReadingSet",
     "VE.Route.Admission.WireNode",
     "VE.Route.Admission.decodeDoc",
@@ -4475,7 +4514,6 @@
     "instance:(D : Doc) (w : WireNode) : Decidable (NodeAdmitted D w)"
    ],
    "G[V]": [
-    "VE.Route.Admission.ChoicesCompatible",
     "VE.Route.Admission.Kind",
     "VE.Route.Admission.atomicKind",
     "VE.Route.Admission.modalities",
@@ -4538,8 +4576,6 @@
    "C": [
     "VE.Route.Budget.Entity",
     "VE.Route.Budget.OrderRows",
-    "VE.Route.Budget.closureRel",
-    "VE.Route.Budget.closureRelN",
     "VE.Route.Budget.computeDefinedB",
     "VE.Route.Budget.evalC",
     "VE.Route.Budget.evalF",
@@ -4564,6 +4600,8 @@
    ],
    "G[V]": [
     "VE.Route.Budget.budgetExhausted",
+    "VE.Route.Budget.closureRel",
+    "VE.Route.Budget.closureRelN",
     "VE.Route.Budget.definitionBudget",
     "deriving instance:Hashable for VE.Closure.Formula",
     "deriving instance:Hashable for VE.Closure.Kind",
@@ -4576,20 +4614,20 @@
   },
   "VE/Route/Checker.lean": {
    "K": [
+    "VE.Route.CertificateSound",
+    "VE.Route.Checker",
     "VE.Route.Checker.closure",
     "VE.Route.Checker.order",
     "VE.Route.closure",
     "VE.Route.closureValid",
     "VE.Route.fol",
-    "VE.Route.order"
+    "VE.Route.folValid",
+    "VE.Route.order",
+    "VE.Route.orderValid"
    ],
    "C": [
-    "VE.Route.CertificateSound",
-    "VE.Route.Checker",
     "VE.Route.Checker.tableau",
-    "VE.Route.Checker.tableauClaims",
-    "VE.Route.folValid",
-    "VE.Route.orderValid"
+    "VE.Route.Checker.tableauClaims"
    ]
   },
   "VE/Route/Checks.lean": {
@@ -4604,12 +4642,9 @@
   },
   "VE/Route/Closure.lean": {
    "C": [
-    "VE.Route.Closure.CacheOK",
-    "VE.Route.Closure.ClosedAt",
     "VE.Route.Closure.EdgeKey",
     "VE.Route.Closure.Edges",
     "VE.Route.Closure.Entity",
-    "VE.Route.Closure.Inside",
     "VE.Route.Closure.Meter",
     "VE.Route.Closure.endpointSet",
     "VE.Route.Closure.endpoints",
@@ -4621,6 +4656,11 @@
     "VE.Route.Closure.reachValue",
     "VE.Route.Closure.warshallH",
     "VE.Route.Closure.warshallRun"
+   ],
+   "P": [
+    "VE.Route.Closure.CacheOK",
+    "VE.Route.Closure.ClosedAt",
+    "VE.Route.Closure.Inside"
    ]
   },
   "VE/Route/Decode.lean": {
@@ -4662,22 +4702,24 @@
   "VE/Route/Flags.lean": {
    "C": [
     "VE.Route.Flags.Entity",
-    "VE.Route.Flags.Seen",
     "VE.Route.Flags.fastFlags",
     "VE.Route.Flags.functionalFast",
     "VE.Route.Flags.functionalGo",
     "VE.Route.Flags.totalFast",
     "VE.Route.Flags.typedRows"
+   ],
+   "P": [
+    "VE.Route.Flags.Seen"
    ]
   },
   "VE/Route/Gate.lean": {
    "S": [
+    "VE.Route.Gate.AllowedFamily",
     "VE.Route.Gate.Family.name",
     "VE.Route.Gate.base",
     "VE.Route.Gate.language"
    ],
    "C": [
-    "VE.Route.Gate.AllowedFamily",
     "VE.Route.Gate.known",
     "VE.Route.Gate.profilesOf",
     "VE.Route.Gate.specRevision"
@@ -4699,18 +4741,18 @@
   },
   "VE/Route/Layer.lean": {
    "K": [
+    "VE.Route.Layer",
     "VE.Route.Layer.composeAux",
+    "VE.Route.Semantics",
     "VE.Route.Semantics.Entails",
     "VE.Route.Semantics.Sat",
     "VE.Route.Unique"
    ],
    "S": [
-    "VE.Route.Layer",
     "VE.Route.Layer.Compatible",
     "VE.Route.Layer.comp",
     "VE.Route.Layer.compose",
-    "VE.Route.Layer.id",
-    "VE.Route.Semantics"
+    "VE.Route.Layer.id"
    ]
   },
   "VE/Route/Readings.lean": {
@@ -4721,6 +4763,9 @@
   "VE/Route/Route.lean": {
    "S": [
     "VE.Route.BackgroundComplete",
+    "VE.Route.BackgroundSound",
+    "VE.Route.DagAcyclic",
+    "VE.Route.DepEdge",
     "VE.Route.DepNode",
     "VE.Route.DepPath",
     "VE.Route.cycleDiagnostic",
@@ -4728,7 +4773,6 @@
     "VE.Route.nodeNames"
    ],
    "C": [
-    "VE.Route.BackgroundSound",
     "VE.Route.checkedPremises",
     "VE.Route.dependencyOrder",
     "VE.Route.deps",
@@ -4736,8 +4780,6 @@
     "VE.Route.verifyOrder"
    ],
    "G[V]": [
-    "VE.Route.DagAcyclic",
-    "VE.Route.DepEdge",
     "VE.Route.sortStrings"
    ]
   },
@@ -4933,13 +4975,15 @@
   "VE/Service/FamilyBundle.lean": {
    "S": [
     "VE.Service.FamilyBundle.Known",
+    "VE.Service.FamilyBundle.ReadingBound",
+    "VE.Service.FamilyBundle.ReadingCompatible",
+    "VE.Service.FamilyBundle.Sound",
     "VE.Service.FamilyBundle.appendNew",
     "VE.Service.FamilyBundle.leafChoices",
     "VE.Service.FamilyBundle.lookupKnown"
    ],
    "C": [
     "VE.Service.FamilyBundle.Leaf",
-    "VE.Service.FamilyBundle.Sound",
     "VE.Service.FamilyBundle.addReading",
     "VE.Service.FamilyBundle.checkAll",
     "VE.Service.FamilyBundle.checkLemma",
@@ -4948,7 +4992,6 @@
     "VE.Service.FamilyBundle.leafBoundCheck"
    ],
    "D[V]": [
-    "VE.Service.FamilyBundle.ReadingCompatible",
     "VE.Service.FamilyBundle.ReadingSet",
     "VE.Service.FamilyBundle.decodeLeaf",
     "VE.Service.FamilyBundle.decodeLemma",
@@ -4956,7 +4999,6 @@
    ],
    "G[V]": [
     "VE.Service.FamilyBundle.Lemma",
-    "VE.Service.FamilyBundle.ReadingBound",
     "VE.Service.FamilyBundle.bundleCase",
     "VE.Service.FamilyBundle.disjunction",
     "VE.Service.FamilyBundle.run"
@@ -4990,19 +5032,19 @@
    ],
    "S": [
     "VE.Service.GenericGraph.CertificateSound",
+    "VE.Service.GenericGraph.Dependency",
     "VE.Service.GenericGraph.Ent",
     "VE.Service.GenericGraph.IsAssumption",
     "VE.Service.GenericGraph.Node",
     "VE.Service.GenericGraph.Path",
-    "VE.Service.GenericGraph.Report"
+    "VE.Service.GenericGraph.Report",
+    "VE.Service.GenericGraph.SoundReport",
+    "VE.Service.GenericGraph.Unfolds"
    ],
    "C": [
     "VE.Service.GenericGraph.Claim",
     "VE.Service.GenericGraph.ClaimGraph",
-    "VE.Service.GenericGraph.Dependency",
     "VE.Service.GenericGraph.Edge",
-    "VE.Service.GenericGraph.SoundReport",
-    "VE.Service.GenericGraph.Unfolds",
     "VE.Service.GenericGraph.acyclicCheck",
     "VE.Service.GenericGraph.check",
     "VE.Service.GenericGraph.checkNode",
@@ -5014,12 +5056,10 @@
   },
   "VE/Service/GenericReadings.lean": {
    "S": [
+    "VE.Service.GenericReadings.Choice",
+    "VE.Service.GenericReadings.Refutes",
     "VE.Service.GenericReadings.disjunction",
     "VE.Service.GenericReadings.resolve"
-   ],
-   "C": [
-    "VE.Service.GenericReadings.Choice",
-    "VE.Service.GenericReadings.Refutes"
    ]
   },
   "VE/Service/Graph.lean": {
@@ -5051,11 +5091,6 @@
    "D[V]": [
     "VE.Service.Mode.name",
     "VE.Service.Mode.ofName?",
-    "VE.Service.Sha256.blocks",
-    "VE.Service.Sha256.hex",
-    "VE.Service.Sha256.load",
-    "VE.Service.Sha256.rounds",
-    "VE.Service.Sha256.schedule",
     "VE.Service.bindResults",
     "VE.Service.commas",
     "VE.Service.decodeBudget",
@@ -5068,7 +5103,16 @@
     "VE.Service.results"
    ],
    "D[I]": [
+    "VE.Service.Sha256.State",
+    "VE.Service.Sha256.blocks",
     "VE.Service.Sha256.digest",
+    "VE.Service.Sha256.extend",
+    "VE.Service.Sha256.hex",
+    "VE.Service.Sha256.load",
+    "VE.Service.Sha256.rotr",
+    "VE.Service.Sha256.roundConstants",
+    "VE.Service.Sha256.rounds",
+    "VE.Service.Sha256.schedule",
     "VE.Service.caseDigest",
     "VE.Service.caseDigests",
     "VE.Service.errorDigests"
@@ -5078,10 +5122,6 @@
     "VE.Service.Mode",
     "VE.Service.Request",
     "VE.Service.Request.budget",
-    "VE.Service.Sha256.State",
-    "VE.Service.Sha256.extend",
-    "VE.Service.Sha256.rotr",
-    "VE.Service.Sha256.roundConstants",
     "VE.Service.bound",
     "VE.Service.caseResult",
     "VE.Service.englishReported",
@@ -5105,11 +5145,11 @@
   },
   "VE/Service/Readings.lean": {
    "S": [
+    "VE.Service.Readings.Choice",
     "VE.Service.Readings.disjunction",
     "VE.Service.Readings.resolve"
    ],
    "C": [
-    "VE.Service.Readings.Choice",
     "VE.Service.Readings.allCheck",
     "VE.Service.Readings.refutes"
    ],
@@ -5194,22 +5234,22 @@
   "VE/SoftNorms/Admission.lean": {
    "S": [
     "VE.SoftNorms.Admission.Admitted",
+    "VE.SoftNorms.Admission.CertificatesBound",
     "VE.SoftNorms.Admission.LayerLeaf",
+    "VE.SoftNorms.Admission.NodeAdmitted",
     "VE.SoftNorms.Admission.ProfileLeaf",
+    "VE.SoftNorms.Admission.ReportAdmitted",
+    "VE.SoftNorms.Admission.SoftLeaf",
+    "VE.SoftNorms.Admission.SourceDecoded",
     "VE.SoftNorms.Admission.admitNodes",
     "VE.SoftNorms.Admission.otherAssumptions",
     "instance:(src : SoftSource) (w : WireNode) : Decidable (LayerLeaf src w)",
     "instance:(src : SoftSource) (w : WireNode) : Decidable (SoftLeaf src w)"
    ],
    "D[V]": [
-    "VE.SoftNorms.Admission.NodeAdmitted",
     "VE.SoftNorms.Admission.decodeSoftDoc"
    ],
    "G[V]": [
-    "VE.SoftNorms.Admission.CertificatesBound",
-    "VE.SoftNorms.Admission.ReportAdmitted",
-    "VE.SoftNorms.Admission.SoftLeaf",
-    "VE.SoftNorms.Admission.SourceDecoded",
     "VE.SoftNorms.Admission.admitDocument",
     "VE.SoftNorms.Admission.checkQuoted",
     "VE.SoftNorms.Admission.conditionalOn",
@@ -5220,8 +5260,10 @@
   "VE/SoftNorms/Coherence.lean": {
    "S": [
     "VE.SoftNorms.BaseAdmissible'",
+    "VE.SoftNorms.BaseSubstructure",
     "VE.SoftNorms.InFragment",
     "VE.SoftNorms.NoHardPairConflict",
+    "VE.SoftNorms.NoStrictCollision",
     "VE.SoftNorms.PrefixAdmissible'",
     "VE.SoftNorms.SoftChain",
     "VE.SoftNorms.SoftConflictFree",
@@ -5232,8 +5274,6 @@
     "VE.SoftNorms.softRouteChain"
    ],
    "C": [
-    "VE.SoftNorms.BaseSubstructure",
-    "VE.SoftNorms.NoStrictCollision",
     "VE.SoftNorms.background'",
     "VE.SoftNorms.canon",
     "VE.SoftNorms.classificationBackgroundValid",
@@ -5290,11 +5330,12 @@
   },
   "VE/SoftNorms/Run.lean": {
    "S": [
+    "VE.SoftNorms.Run.BindingsMatchSourceAndRegeneration",
+    "VE.SoftNorms.Run.SoftAdmissionAnswer",
     "VE.SoftNorms.Run.sufficientCoherence",
     "VE.SoftNorms.Run.usesSoftPath"
    ],
    "C": [
-    "VE.SoftNorms.Run.BindingsMatchSourceAndRegeneration",
     "VE.SoftNorms.Run.classificationPackage",
     "VE.SoftNorms.Run.conflictValidWithout",
     "VE.SoftNorms.Run.entailmentValidWithout",
@@ -5306,7 +5347,6 @@
     "VE.SoftNorms.Run.openAfterClassification"
    ],
    "G[V]": [
-    "VE.SoftNorms.Run.SoftAdmissionAnswer",
     "VE.SoftNorms.Run.main",
     "VE.SoftNorms.Run.pairsResult",
     "VE.SoftNorms.Run.reportedCode",
@@ -5352,6 +5392,7 @@
   },
   "VE/SoftNorms/Soften.lean": {
    "S": [
+    "VE.SoftNorms.SoftValid",
     "VE.SoftNorms.blockedSize",
     "VE.SoftNorms.capLevel",
     "VE.SoftNorms.containsDunder",
@@ -5384,7 +5425,6 @@
    ],
    "C": [
     "VE.SoftNorms.FSize",
-    "VE.SoftNorms.SoftValid",
     "VE.SoftNorms.at'",
     "VE.SoftNorms.checkSoft",
     "VE.SoftNorms.checkSoftEnv",
@@ -5459,6 +5499,7 @@
     "VE.SoftNorms.Incompatible",
     "VE.SoftNorms.Mode",
     "VE.SoftNorms.Outranking",
+    "VE.SoftNorms.RanksValid",
     "VE.SoftNorms.SoftDoc",
     "VE.SoftNorms.SoftDoc.base",
     "VE.SoftNorms.SoftNode",
@@ -5499,7 +5540,6 @@
     "VE.SoftNorms.weighingSyms"
    ],
    "C": [
-    "VE.SoftNorms.RanksValid",
     "VE.SoftNorms.SoftEnv",
     "VE.SoftNorms.act",
     "VE.SoftNorms.actSorts",
@@ -5564,6 +5604,7 @@
   },
   "VE/SpeechActs/Answer.lean": {
    "S": [
+    "VE.SpeechActs.AnswersAt",
     "VE.SpeechActs.answerEval",
     "VE.SpeechActs.correct",
     "VE.SpeechActs.instAt",
@@ -5572,7 +5613,6 @@
     "VE.SpeechActs.tokens"
    ],
    "C": [
-    "VE.SpeechActs.AnswersAt",
     "VE.SpeechActs.allAnswer"
    ]
   },
@@ -5648,6 +5688,7 @@
     "VE.SpeechActs.Question",
     "VE.SpeechActs.Scope",
     "VE.SpeechActs.SpeechDoc",
+    "VE.SpeechActs.ValidSpeech",
     "VE.SpeechActs.WellFormedSpeech",
     "VE.SpeechActs.addresseeConst",
     "VE.SpeechActs.combine",
@@ -5670,7 +5711,6 @@
     "VE.SpeechActs.Answer",
     "VE.SpeechActs.Force",
     "VE.SpeechActs.Query",
-    "VE.SpeechActs.ValidSpeech",
     "VE.SpeechActs.actSorts",
     "VE.SpeechActs.assertedFormulas",
     "VE.SpeechActs.boundTuple",
@@ -5775,6 +5815,7 @@
   },
   "VE/Surface.lean": {
    "D[V]": [
+    "VE.Surface.NamesValid",
     "VE.Surface.binderAllowed",
     "VE.Surface.boundary",
     "VE.Surface.consume",
@@ -5794,9 +5835,6 @@
     "VE.Surface.readIdent",
     "VE.Surface.reserved",
     "VE.Surface.statementChars"
-   ],
-   "D[I]": [
-    "VE.Surface.NamesValid"
    ]
   },
   "VE/SurfaceProofs.lean": {
@@ -5824,15 +5862,12 @@
   "VE/Tableau.lean": {
    "C": [
     "VE.Tableau.Assignment",
-    "VE.Tableau.Assignment.Typed",
     "VE.Tableau.Branch",
-    "VE.Tableau.Branch.Holds",
     "VE.Tableau.Branch.add",
     "VE.Tableau.Branch.scoped",
     "VE.Tableau.Certificate",
     "VE.Tableau.Rule",
     "VE.Tableau.Signed",
-    "VE.Tableau.Signed.Holds",
     "VE.Tableau.Signed.rule",
     "VE.Tableau.Token",
     "VE.Tableau.Token.denote",
@@ -5842,6 +5877,11 @@
     "VE.Tableau.Trace",
     "VE.Tableau.bindingsValue",
     "VE.Tableau.extend"
+   ],
+   "P": [
+    "VE.Tableau.Assignment.Typed",
+    "VE.Tableau.Branch.Holds",
+    "VE.Tableau.Signed.Holds"
    ]
   },
   "VE/TableauChecker.lean": {
@@ -5866,10 +5906,8 @@
   "VE/TableauClosure.lean": {
    "C": [
     "VE.Tableau.Atom",
-    "VE.Tableau.Atom.denote",
     "VE.Tableau.Branch.known",
     "VE.Tableau.Literal",
-    "VE.Tableau.Literal.Holds",
     "VE.Tableau.atomMatches",
     "VE.Tableau.closed",
     "VE.Tableau.closes",
@@ -5882,20 +5920,21 @@
     "VE.Tableau.literals",
     "VE.Tableau.reachable",
     "VE.Tableau.termToken"
+   ],
+   "P": [
+    "VE.Tableau.Atom.denote",
+    "VE.Tableau.Literal.Holds"
    ]
   },
   "VE/TableauExtended.lean": {
    "C": [
     "VE.Closure.Tableau.Assignment",
-    "VE.Closure.Tableau.Assignment.Typed",
     "VE.Closure.Tableau.Branch",
-    "VE.Closure.Tableau.Branch.Holds",
     "VE.Closure.Tableau.Branch.add",
     "VE.Closure.Tableau.Branch.scoped",
     "VE.Closure.Tableau.Certificate",
     "VE.Closure.Tableau.Rule",
     "VE.Closure.Tableau.Signed",
-    "VE.Closure.Tableau.Signed.Holds",
     "VE.Closure.Tableau.Signed.rule",
     "VE.Closure.Tableau.Signed.tag",
     "VE.Closure.Tableau.Token",
@@ -5906,6 +5945,11 @@
     "VE.Closure.Tableau.Trace",
     "VE.Closure.Tableau.bindingsValue",
     "VE.Closure.Tableau.extend"
+   ],
+   "P": [
+    "VE.Closure.Tableau.Assignment.Typed",
+    "VE.Closure.Tableau.Branch.Holds",
+    "VE.Closure.Tableau.Signed.Holds"
    ]
   },
   "VE/TableauExtendedChecker.lean": {
@@ -5921,10 +5965,8 @@
   "VE/TableauExtendedClosure.lean": {
    "C": [
     "VE.Closure.Tableau.Atom",
-    "VE.Closure.Tableau.Atom.denote",
     "VE.Closure.Tableau.Branch.known",
     "VE.Closure.Tableau.Literal",
-    "VE.Closure.Tableau.Literal.Holds",
     "VE.Closure.Tableau.atomMatches",
     "VE.Closure.Tableau.closed",
     "VE.Closure.Tableau.closes",
@@ -5937,6 +5979,10 @@
     "VE.Closure.Tableau.literals",
     "VE.Closure.Tableau.reachable",
     "VE.Closure.Tableau.termToken"
+   ],
+   "P": [
+    "VE.Closure.Tableau.Atom.denote",
+    "VE.Closure.Tableau.Literal.Holds"
    ]
   },
   "VE/TableauExtendedExtra.lean": {
@@ -5981,6 +6027,8 @@
    "S": [
     "VE.Time.Civil",
     "VE.Time.Civil.Before",
+    "VE.Time.Civil.Proper",
+    "VE.Time.Civil.Valid",
     "VE.Time.Civil.num",
     "VE.Time.Civil.succ",
     "VE.Time.civilCandidate",
@@ -5993,8 +6041,6 @@
     "VE.Time.leap"
    ],
    "C": [
-    "VE.Time.Civil.Proper",
-    "VE.Time.Civil.Valid",
     "VE.Time.Civil.iso",
     "VE.Time.Civil.properB",
     "VE.Time.checkedCivil",
@@ -6053,15 +6099,21 @@
   "VE/Time/Document.lean": {
    "S": [
     "VE.Time.Document.AssertedUnit",
+    "VE.Time.Document.ChoicesCompatible",
+    "VE.Time.Document.CitationsClosed",
     "VE.Time.Document.Entry",
     "VE.Time.Document.Entry.Sound",
     "VE.Time.Document.Entry.SoundOverLeaves",
     "VE.Time.Document.Good",
+    "VE.Time.Document.LeafAdmitted",
+    "VE.Time.Document.NodeAdmitted",
     "VE.Time.Document.QDoc",
     "VE.Time.Document.QLemma",
     "VE.Time.Document.QNode",
     "VE.Time.Document.QReadingSet",
     "VE.Time.Document.QUnit",
+    "VE.Time.Document.QuotedUnit",
+    "VE.Time.Document.ReadingContent",
     "VE.Time.Document.citesLemma",
     "VE.Time.Document.claimJson",
     "VE.Time.Document.lookupEntry",
@@ -6073,9 +6125,6 @@
    ],
    "C": [
     "VE.Time.Document.Admitted",
-    "VE.Time.Document.CitationsClosed",
-    "VE.Time.Document.LeafAdmitted",
-    "VE.Time.Document.NodeAdmitted",
     "VE.Time.Document.admitDocument",
     "VE.Time.Document.admitNodes",
     "VE.Time.Document.checkGraph",
@@ -6088,7 +6137,6 @@
     "instance:{w : W6Env} (D : QDoc w) (u : String) (φ : QFormula) : Decidable (AssertedUnit D u φ)"
    ],
    "D[V]": [
-    "VE.Time.Document.ReadingContent",
     "VE.Time.Document.admitDecoded",
     "VE.Time.Document.decodeDocument",
     "VE.Time.Document.decodeLeaf",
@@ -6099,8 +6147,6 @@
     "VE.Time.Document.unitOf"
    ],
    "G[V]": [
-    "VE.Time.Document.ChoicesCompatible",
-    "VE.Time.Document.QuotedUnit",
     "VE.Time.Document.isCite",
     "VE.Time.Document.main",
     "VE.Time.Document.runDocument",
@@ -6126,6 +6172,7 @@
     "VE.Time.TStructure.Admissible",
     "VE.Time.TStructure.lower",
     "VE.Time.TTuple",
+    "VE.Time.TValue",
     "VE.Time.TValue.forget",
     "VE.Time.lift",
     "VE.Time.retag",
@@ -6138,17 +6185,21 @@
     "VE.Time.CalWithin",
     "VE.Time.Coord",
     "VE.Time.TCompare",
-    "VE.Time.TValue",
     "VE.Time.TValue.Typed",
     "VE.Time.Typed"
    ]
   },
   "VE/Time/Syntax.lean": {
    "K": [
+    "VE.Time.Admitted",
     "VE.Time.HasType",
     "VE.Time.QEnv",
+    "VE.Time.QEnv.ValidTag",
+    "VE.Time.QEnv.erase",
     "VE.Time.QFormula",
     "VE.Time.QFormula.erase",
+    "VE.Time.QTerm",
+    "VE.Time.QTerm.erase",
     "VE.Time.QTerm.isDay",
     "VE.Time.QTerm.typeOf",
     "VE.Time.QType",
@@ -6157,13 +6208,8 @@
     "VE.Time.elapsedTag"
    ],
    "C": [
-    "VE.Time.Admitted",
-    "VE.Time.QEnv.ValidTag",
-    "VE.Time.QEnv.erase",
     "VE.Time.QEnv.validTag",
     "VE.Time.QFormula.admits",
-    "VE.Time.QTerm",
-    "VE.Time.QTerm.erase",
     "VE.Time.dayTag",
     "VE.Time.guard",
     "VE.Time.guards"
@@ -6266,7 +6312,6 @@
     "VE.WireContract.Atom.admits",
     "VE.WireContract.Entry.hookNames",
     "VE.WireContract.Frame.enter",
-    "VE.WireContract.Holds",
     "VE.WireContract.Instance",
     "VE.WireContract.Table.hookNames",
     "VE.WireContract.concrete",
@@ -6296,6 +6341,7 @@
     "VE.WireContract.Finding",
     "VE.WireContract.Frame",
     "VE.WireContract.Frame.top",
+    "VE.WireContract.Holds",
     "VE.WireContract.HookResult",
     "VE.WireContract.Hooks",
     "VE.WireContract.Lit.holds",

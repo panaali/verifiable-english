@@ -605,8 +605,9 @@ to 10; that recount does not delay steps 1a and 2a, which add theorems only.
 | 9 Normative core | 400 | 0 | 18 | 2 | 11 | compose S2b before 9a |
 | 10 Fixtures | 0 | 0 | 4 | 1 | n/a | none |
 
-By score alone the order would be 5, 7, 6, 8a, 2a, 4, 9, 1, 3. The plan follows the DRI's order
-for 1 to 4 for these reasons:
+By estimated score alone the order would be 5, 7, 6, 8a, 2a, 4, 9, 1, 3; the measured ledger
+(4.1) re-ranks steps 5 to 10 as 7, 5, 8a, 6, 9, 10. The plan follows the DRI's order for 1 to 4
+for these reasons:
 
 * Step 1 has a low score and still goes first. It is the one place where a public verdict means
   something other than the reviewed specification, and no other step can be trusted to "mean the
@@ -626,6 +627,62 @@ about 1,550 fewer lines to maintain.
 Expected result (est.), to be replaced by measured numbers from step 0: about 1,650 trusted lines
 removed and about 2,650 tied, out of about 25,000, before step 8b. Per feature added afterwards,
 the trusted text is its `Doc`, its `Intended` and its codec description.
+
+### 4.1 Measured ledger (E9)
+
+Step 0's tool now measures the table above. `tools/consolidation-ledger.json` names, for each
+step, the declarations it removes, ties or reclassifies (module globs and name patterns taken
+from the step's text), and `python3 tools/trust_map.py --ledger` counts their trusted lines (K, S
+and untied [V]) under the reviewed side table, crediting each declaration to the first step that
+names it. Lines the step names that are already untrusted (C, P, T, [R], [I], tied) earn nothing.
+`Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
+claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
+Measured on the table after the consolidate-b1 review (K 978, S 7,565, trusted 25,650 of
+88,757 lines):
+
+| Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
+| 2a | 0 | 114 | 0 | 30 | 84 | 4 | 1 | 21.0 |
+| 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
+| 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
+| 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
+| 5 | 0 | 491 | 0 | 0 | 491 | 14 | 1 | 35.1 |
+| 6 | 35 | 0 | 1284 | 0 | 35 | 3 | 1 | 11.7 |
+| 7 | 601 | 0 | 0 | 60 | 541 | 6 | 2 | 45.1 |
+| 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
+| 8b | 0 | 3480 | 0 | 0 | 3480 | 30 | 3 | 38.7 |
+| 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
+| 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
+
+What the measurement changes:
+
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (45.1), 5 (35.1), 8a (18.1), 6 (11.7),
+  9 (2.4), 10. Step 8b's 3,480 is an upper bound (every untied line of the eight units' `Wire.lean`
+  files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
+  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (601 trusted
+  dispatch and `main` lines, not 340) and 5 is smaller than estimated (491 measured against 1,500 to
+  2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
+  are already C.
+* **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
+  [R], and the dead code is mostly P. Its value is 6e: 1,284 lines of `WireContract/*`,
+  `SoftNorms/Phases`, `Service/TypingDiagnostic` and `Norms/Tree` diagnostics are counted [V]
+  until marked [R]. That moves lines out of the reading load without a theorem, so it is shown
+  apart from `Net`.
+* **Step 4** removes 718 trusted lines of admission skeleton for an estimated 420-line kit (net
+  298, not 650); **step 3** removes 39 trusted lines (its gain is the 1,550 untrusted lines and one
+  `denote`, as section 4 already says); **step 9** has 88 measured lines before 9b's lowering, which
+  cannot be measured until it exists.
+* **Step 1:** 1a and 1b are done; the nine `Flagged` definitions are C, and `BaseConflictFree` is
+  tied by `conflictFree_of_base` in the side table. The remaining 23 lines are 1c's
+  `FamilyNorms.conflictCase`.
+* Steps 1 to 4 keep the DRI's order (section 4 above). The measured total before 8b is 2,534
+  trusted lines removed or tied (net 1,954 after 580 estimated additions) out of 25,650, against the
+  estimate of about 4,300.
+
+The budget check (step 0) now also fails a predicate (a declaration whose type ends in `Prop`,
+listed in `lean/predicates.txt`) classed C, [R] or [I] without a tie: such a class took
+`Closure.Formula.WellFormed`, the kernel typing predicate, out of K (consolidate-b1 review B).
 
 ## 5. What not to consolidate, and why
 

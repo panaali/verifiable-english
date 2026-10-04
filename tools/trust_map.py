@@ -27,20 +27,28 @@ that is not in the side table is counted as untied [V], so new code is trusted u
     python3 tools/trust_map.py            # per-file counts against docs/trust-baseline.json
     python3 tools/trust_map.py --check    # exit 1 if K, S or untied [V] grew without a signed entry
     python3 tools/trust_map.py --write    # rewrite the baseline from the current tree
+    python3 tools/trust_map.py --ledger   # measured lines per plan step (E9, tools/consolidation-ledger.json)
 
 Growth of K, S or untied [V] (unclassified included) over the baseline fails `--check` unless the
 baseline's `signed` list allows it: each entry is `{"change", "signed", "allow": {"K": n, "S": n,
-"V": n}}`, a note signed by the DRI. `--write` moves the signed entries into `history`.
+"V": n}}`, a note signed by the DRI. `--write` moves the signed entries into `history`; growth
+beyond them (a reclassification, not new code) needs `--reason`, which `history` keeps.
 
-`--seed TRUST-MAP.md` rebuilds the side table: every declaration is classified by the rules in
+`--seed TRUST-MAP.md` updates the side table: current entries and ties stay, except that a
+predicate (`lean/predicates.txt`, a declaration whose type ends in `Prop`) outside K, S, P and T takes
+its meaning class and a kernel data type takes K; new declarations are classified by the rules in
 `seed_module`, constrained to the classes that the trust map's section 11 row for its module
-records, and the section 11 counts are kept in the baseline next to the measured ones.
+records (`--fresh` reclassifies everything). It does not touch the baseline; `--seed --write`
+also keeps the section 11 counts in the baseline next to the measured ones.
+
+A predicate is meaning a reviewer reads: classed C, [R] or [I] without a tie it fails every run.
 """
 from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
 from dataclasses import dataclass
+import fnmatch
 import json
 from pathlib import Path
 import re
@@ -49,13 +57,14 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean"
 TABLE = ROOT / "tools/trust-classes.json"
+LEDGER = ROOT / "tools/consolidation-ledger.json"
 BASELINE = ROOT / "docs/trust-baseline.json"
 STATEMENTS = LEAN / "statements.txt"
 
 sys.path.insert(0, str(LEAN))
 sys.path.insert(0, str(ROOT / "tools"))
 from audit import code_only  # noqa: E402
-from lean_statements import parse as parse_statements, uses  # noqa: E402
+from lean_statements import PREDICATES, parse as parse_statements, predicates as lean_predicates, uses  # noqa: E402
 
 COLUMNS = ("K", "S", "D", "G", "C", "P", "T", "o")
 CLASSES = ("K", "S", "C", "P", "T", *(f"{c}[{g}]" for c in "DG" for g in "VRI"))
@@ -237,11 +246,16 @@ def anchors(table: dict) -> set[str]:
 
 
 def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | None],
-             trusted: set[str] = frozenset()) -> tuple[str, bool, list[str]]:
+             trusted: set[str] = frozenset(), predicates: set[str] = frozenset()) -> tuple[str, bool, list[str]]:
     """(class, tied, problems) of one declaration. A tie holds when every listed theorem is in
     the statement dump and its statement mentions the declaration itself (its full name, not a
     same-named declaration of another namespace) and some other declaration in `trusted`, the
-    K, S or untied [V] meaning it is tied to."""
+    K, S or untied [V] meaning it is tied to.
+
+    A declaration in `predicates` (its type ends in `Prop`) is a statement a reviewer reads, not
+    executable code: it is K or S, a [V] D or G declaration, P or T (a proof or test helper), or a
+    tied C, D or G declaration; an untied C, [R] or [I] class would drop it from the budget
+    unread."""
     if decl.kind in {"theorem", "lemma"}:
         return "P", False, []
     if decl.kind in {"example", "command"}:
@@ -250,10 +264,13 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | 
     if entry is None:
         return "?", False, []
     if isinstance(entry, str):
+        if decl.name in predicates and (entry == "C" or entry[0] in "DG" and not entry.endswith("[V]")):
+            return entry, False, [f"{module}: {decl.name}: a predicate cannot be {entry} unless a theorem ties it; "
+                                  "classify it K or S (or P for a proof helper)"]
         return entry, False, []
     cls, problems = entry["class"], []
-    if cls[0] not in "DG":
-        problems.append(f"{module}: {decl.name}: only D and G declarations can be tied")
+    if cls[0] not in "CDG":
+        problems.append(f"{module}: {decl.name}: only C, D and G declarations can be tied")
     if decl.name is None or ":" in decl.name:
         problems.append(f"{module}: {decl.name}: an unnamed declaration cannot be tied")
     for theorem in entry["tied"]:
@@ -276,13 +293,18 @@ def empty_counts() -> dict[str, int]:
             "tied": 0, "unclassified": 0, "trusted": 0, "lines": 0}
 
 
-def measure(root: Path = ROOT, table_path: Path = TABLE,
-            statements_path: Path = STATEMENTS) -> tuple[dict[str, dict[str, int]], list[str]]:
-    """Per-file counts and the problems found (unknown table entries, unverified ties)."""
+def measure(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+            predicates_path: Path | None = None) -> tuple[dict[str, dict[str, int]], list[str]]:
+    """Per-file counts and the problems found (unknown table entries, unverified ties, predicates
+    in an untrusted class)."""
     table = load_table(table_path)
     proved = statements(statements_path)
     trusted = anchors(table)
+    predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
     files, problems, seen = {}, [], defaultdict(set)
+    if not predicates_path.is_file():
+        problems.append(f"{predicates_path.name} is missing; run tools/lean_statements.py")
+    predicates = lean_predicates(predicates_path)
     for path in sources(root):
         module = module_key(path, root)
         decls, total = scan(path)
@@ -290,7 +312,7 @@ def measure(root: Path = ROOT, table_path: Path = TABLE,
         counts["lines"] = total
         covered = 0
         for decl in decls:
-            cls, tied, issues = classify(module, decl, table, proved, trusted)
+            cls, tied, issues = classify(module, decl, table, proved, trusted, predicates)
             problems += issues
             if decl.name is not None:
                 seen[module].add(decl.name)
@@ -300,11 +322,11 @@ def measure(root: Path = ROOT, table_path: Path = TABLE,
                 counts["trusted"] += decl.lines
                 continue
             counts[cls[0]] += decl.lines
+            if tied:
+                counts["tied"] += decl.lines
             if cls[0] in "DG":
                 counts[cls] += decl.lines
-                if tied:
-                    counts["tied"] += decl.lines
-                elif cls.endswith("[V]"):
+                if not tied and cls.endswith("[V]"):
                     counts["trusted"] += decl.lines
             elif cls in {"K", "S"}:
                 counts["trusted"] += decl.lines
@@ -349,11 +371,21 @@ def check(files: dict[str, dict[str, int]], baseline: dict) -> list[str]:
     return failures
 
 
-def write_baseline(files: dict[str, dict[str, int]], path: Path = BASELINE, section11: dict | None = None) -> None:
+def write_baseline(files: dict[str, dict[str, int]], path: Path = BASELINE, section11: dict | None = None,
+                   reason: str | None = None) -> None:
+    """Rewrite the baseline. Growth beyond the signed allowances (`check`) is absorbed only with
+    a `reason`, kept in `history` with the budget before and after."""
     old = json.loads(path.read_text()) if path.is_file() else {}
+    unexplained = check(files, old) if old else []
+    if unexplained and not reason:
+        raise ValueError("the budget grew beyond the signed allowances; rebaseline with a reason: "
+                         + "; ".join(unexplained))
     history = old.get("history", [])
     for entry in old.get("signed", []):
         history.append({**entry, "rebaselined_from": budget(old["totals"])})
+    if reason:
+        history.append({"change": reason, "rebaselined_from": budget(old["totals"]) if old else None,
+                        "to": budget(totals(files))})
     data = {
         "comment": "Generated by tools/trust_map.py --write; see docs/CONSOLIDATION-PLAN.md step 0.",
         "totals": totals(files),
@@ -460,14 +492,41 @@ def group_of(cls: str, short: str) -> str:
     return cls
 
 
-def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None) -> dict[str, str]:
+# The logic itself (TRUST-MAP 4.1): v0, closure, core, order and time syntax, typing, structures
+# and semantics, and the route layer. Their data types are K, as their predicates are.
+KERNEL = re.compile(r"^VE/(?:(?:Closure|Core|Order|Time)/)?(?:Syntax|Semantics|Finite|Consequence|Paths)\.lean$"
+                    r"|^VE/Route/(?:Layer|Checker)\.lean$")
+
+
+def predicate_class(module: str, row: dict[str, int] | None) -> str:
+    """The seeded class of a predicate (a declaration whose type ends in `Prop`): the meaning
+    class its row allows (K in the kernel modules, otherwise S first), else trusted [V] glue,
+    else a proof or test helper. Never C, [R] or [I]: those leave it out of the budget unread."""
+    if row is None:
+        return "S"
+    if row.get("K", 0) > 0 and (KERNEL.match(module) or not row.get("S", 0)):
+        return "K"
+    if row.get("S", 0) > 0:
+        return "S"
+    if row.get("K", 0) > 0:
+        return "K"
+    if row.get("G", 0) > 0 or row.get("D", 0) > 0:
+        return "G[V]" if row.get("G", 0) >= row.get("D", 0) else "D[V]"
+    return "T" if row.get("T", 0) > row.get("P", 0) else "P"
+
+
+def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None,
+                predicates: set[str] = frozenset(), kept: dict[str, object] | None = None) -> dict[str, object]:
     """Seeded classes of the named non-theorem declarations of one file.
 
-    The classes a file may use are those its section 11 row records (a file without a row gets
-    G, so it counts as trusted). Inside that set a declaration takes the first class whose name
-    rule matches (`SEED_RULES`) while that class has room left in the row; the rest fill the
+    `kept` is the file's current table: its ties and classes stay, except that a predicate not
+    already K, S, P or T takes `predicate_class` and a data type of a kernel module takes K. The other
+    declarations are new. The classes a file may use are those its section 11 row records (a file
+    without a row gets G, so it counts as trusted). Inside that set a new declaration takes the
+    first class whose name rule matches (`SEED_RULES`) while that class has room left in the row; the rest fill the
     classes with the most room left, largest declaration first.
     """
+    kept = kept or {}
     sizes: dict[str, int] = {}
     kinds: dict[str, str] = {}
     for decl in decls:
@@ -476,22 +535,34 @@ def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None) -> d
         sizes[decl.name] = sizes.get(decl.name, 0) + decl.lines
         kinds.setdefault(decl.name, decl.kind)
     short = {name: name.rsplit(".", 1)[-1].split(":", 1)[-1] for name in sizes}
-    if row is None:
-        return {name: group_of("G", short[name]) for name in sizes}
-    allowed = [c for c in ("K", "S", "D", "G", "C") if row.get(c, 0) > 0]
+    allowed = [c for c in ("K", "S", "D", "G", "C") if row is not None and row.get(c, 0) > 0]
     test_module = re.search(r"Examples|Checks|ResponseDecode|RiskEvalMain", module) is not None
-    out: dict[str, str] = {}
-    if row.get("T", 0) > 0 and test_module:
-        for name in sizes:
-            if kinds[name] not in {"structure", "inductive"} or not allowed:
-                out[name] = "T"
+    out: dict[str, object] = {}
+    for name in sizes:
+        old = kept.get(name)
+        if isinstance(old, dict):  # a tie is a reviewed fact, checked on every run
+            out[name] = old
+        elif name in predicates:
+            # K, S, P and T are reviewed choices for a predicate; any other class is not allowed.
+            out[name] = old if old in {"K", "S", "P", "T"} else predicate_class(module, row)
+        elif KERNEL.match(module) and "K" in allowed and kinds[name] in {"structure", "inductive"}:
+            out[name] = "K"
+        elif old is not None:
+            out[name] = old
+        elif row is not None and row.get("T", 0) > 0 and test_module \
+                and (kinds[name] not in {"structure", "inductive"} or not allowed):
+            out[name] = "T"
     rest = [name for name in sizes if name not in out]
+    if row is None:
+        return {**out, **{name: group_of("G", short[name]) for name in rest}}
     if not allowed:
         fill = "T" if row.get("T", 0) > row.get("P", 0) else "P"
         return {**out, **{name: fill for name in rest}}
     if len(allowed) == 1:
         return {**out, **{name: group_of(allowed[0], short[name]) for name in rest}}
     room = Counter({c: row[c] for c in allowed})
+    for name, entry in out.items():
+        room[(entry if isinstance(entry, str) else entry["class"])[0]] -= sizes[name]
     chosen: dict[str, str] = {}
     for name in sorted(rest, key=lambda n: -sizes[n]):
         for c, pattern in SEED_RULES:
@@ -507,24 +578,102 @@ def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None) -> d
     return {**out, **{name: group_of(c, short[name]) for name, c in chosen.items()}}
 
 
-def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE) -> dict[str, dict[str, int]]:
+def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE,
+         fresh: bool = False) -> dict[str, dict[str, int]]:
+    """Rewrite the side table: the current entries are kept (`seed_module`), new declarations
+    seeded; `fresh` ignores the current table."""
     section11 = parse_section11(trust_map.read_text())
     modules: dict[str, dict[str, list[str]]] = {}
+    predicates = lean_predicates(root / PREDICATES.relative_to(ROOT))
+    old = {} if fresh or not table_path.is_file() else load_table(table_path)
     for path in sources(root):
         module = module_key(path, root)
         decls, _ = scan(path)
-        classes: dict[str, list[str]] = defaultdict(list)
-        for name, cls in seed_module(module, decls, section11.get(module)).items():
-            classes[cls].append(name)
+        classes: dict[str, list] = defaultdict(list)
+        for name, entry in seed_module(module, decls, section11.get(module), predicates, old.get(module)).items():
+            if isinstance(entry, dict):
+                classes[entry["class"]].append({"name": name, "tied": entry["tied"]})
+            else:
+                classes[entry].append(name)
         if classes:
-            modules[module] = {c: sorted(classes[c]) for c in CLASSES if classes.get(c)}
+            modules[module] = {c: sorted(classes[c], key=lambda e: e if isinstance(e, str) else e["name"])
+                               for c in CLASSES if classes.get(c)}
     table_path.write_text(json.dumps({
         "comment": ("Trust classes of Lean declarations (docs/TRUST-MAP.md section 2), read by "
                     "tools/trust_map.py. Seeded by `tools/trust_map.py --seed` from the trust map's "
-                    "section 11 module rows and name rules; correct entries by hand. A tie is "
-                    "written {\"name\": ..., \"tied\": [theorem, ...]}."),
+                    "section 11 module rows, lean/predicates.txt and name rules; a reseed keeps "
+                    "every entry except predicates outside K and S and kernel data types (see "
+                    "seed_module). A tie is written {\"name\": ..., \"tied\": [theorem, ...]}."),
         "modules": modules}, indent=1, ensure_ascii=False) + "\n")
     return section11
+
+
+# The E9 ledger -----------------------------------------------------------------------------------
+
+def expand(pattern: str) -> list[str]:
+    """A glob with `{a,b}` alternatives as plain fnmatch globs."""
+    match = re.search(r"\{([^{}]*)\}", pattern)
+    if not match:
+        return [pattern]
+    return [g for part in match[1].split(",")
+            for g in expand(pattern[:match.start()] + part + pattern[match.end():])]
+
+
+def ledger(root: Path = ROOT, path: Path = LEDGER, table_path: Path = TABLE,
+           statements_path: Path = STATEMENTS) -> tuple[list[dict], list[str]]:
+    """Measured lines of each step of the ledger, and the problems found (a selector that names no
+    declaration). For each of `removed`, `tied` and `reclassified`: the trusted lines (K, S,
+    untied [V]) of the declarations its selectors name, each declaration credited to the first
+    step that names it, and the untrusted lines they name; `net` is removed + tied − `adds_est`,
+    `score` is net ÷ (days × risk)."""
+    table = load_table(table_path)
+    proved = statements(statements_path)
+    trusted_names = anchors(table)
+    predicates = lean_predicates(root / PREDICATES.relative_to(ROOT))
+    decls = []  # (module, name, lines, trusted)
+    for source in sources(root):
+        module = module_key(source, root)
+        for decl in scan(source)[0]:
+            if decl.kind in {"theorem", "lemma", "example", "command"} or decl.name is None:
+                continue
+            cls, tied, _ = classify(module, decl, table, proved, trusted_names, predicates)
+            trusted = cls in {"K", "S", "?"} or cls[0] in "DG" and cls.endswith("[V]") and not tied
+            decls.append((module, decl.name, decl.lines, trusted))
+    credited: set[tuple[str, str]] = set()
+    rows, problems = [], []
+    for step in json.loads(path.read_text())["steps"]:
+        row = {"step": step["step"], "title": step["title"], "days": step["days"], "risk": step["risk"],
+               "adds_est": step.get("adds_est", 0)}
+        for column in ("removed", "tied", "reclassified"):
+            trusted_lines = untrusted_lines = 0
+            for selector in step.get(column, []):
+                globs = expand(selector["module"])
+                names = re.compile(selector.get("names", ""))
+                hits = [d for d in decls if any(fnmatch.fnmatchcase(d[0], g) for g in globs) and names.search(d[1])]
+                if not hits:
+                    problems.append(f"{path.name}: step {step['step']} {column}: {selector} names no declaration")
+                for module, name, lines, trusted in hits:
+                    if (module, name) in credited:
+                        continue
+                    credited.add((module, name))
+                    if trusted:
+                        trusted_lines += lines
+                    else:
+                        untrusted_lines += lines
+            row[column] = trusted_lines
+            row[f"{column}_untrusted"] = untrusted_lines
+        row["net"] = row["removed"] + row["tied"] - row["adds_est"]
+        row["score"] = round(row["net"] / (row["days"] * row["risk"]), 1)
+        rows.append(row)
+    return rows, problems
+
+
+def print_ledger(rows: list[dict]) -> None:
+    print("| Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |")
+    print("|---|---:|---:|---:|---:|---:|---:|---:|---:|")
+    for r in rows:
+        print(f"| {r['step']} {r['title']} | {r['removed']} | {r['tied']} | {r['reclassified']} | {r['adds_est']} | "
+              f"{r['net']} | {r['days']} | {r['risk']} | {r['score']} |")
 
 
 def report(files: dict[str, dict[str, int]], baseline: dict | None) -> None:
@@ -548,14 +697,27 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="fail if K, S or untied [V] grew without a signed entry")
     parser.add_argument("--write", action="store_true", help="rewrite docs/trust-baseline.json")
-    parser.add_argument("--seed", type=Path, metavar="TRUST-MAP.md", help="rebuild tools/trust-classes.json")
+    parser.add_argument("--seed", type=Path, metavar="TRUST-MAP.md",
+                        help="classify new declarations in tools/trust-classes.json (with --write, also "
+                             "keep the section 11 counts in the baseline)")
+    parser.add_argument("--fresh", action="store_true", help="with --seed, ignore the current table")
+    parser.add_argument("--reason", help="with --write, why the budget grew beyond the signed allowances "
+                                         "(a reclassification); kept in the baseline's history")
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--ledger", action="store_true",
+                        help="print the measured E9 ledger of tools/consolidation-ledger.json")
     args = parser.parse_args(argv)
     root = args.root.resolve()
     table_path = root / TABLE.relative_to(ROOT)
     baseline_path = root / BASELINE.relative_to(ROOT)
     statements_path = root / STATEMENTS.relative_to(ROOT)
-    section11 = seed(args.seed, root, table_path) if args.seed else None
+    if args.ledger:
+        rows, problems = ledger(root, root / LEDGER.relative_to(ROOT), table_path, statements_path)
+        for problem in problems:
+            print(problem, file=sys.stderr)
+        print_ledger(rows)
+        return 1 if problems else 0
+    section11 = seed(args.seed, root, table_path, fresh=args.fresh) if args.seed else None
     files, problems = measure(root, table_path, statements_path)
     for problem in problems:
         print(problem, file=sys.stderr)
@@ -563,8 +725,12 @@ def main(argv: list[str]) -> int:
     report(files, None if args.write else baseline)
     if problems:
         return 1
-    if args.write or args.seed:
-        write_baseline(files, baseline_path, section11)
+    if args.write:
+        try:
+            write_baseline(files, baseline_path, section11, args.reason)
+        except ValueError as error:
+            print(f"BUDGET: {error}", file=sys.stderr)
+            return 1
         print(f"wrote {baseline_path.relative_to(root)}")
         return 0
     if args.check:

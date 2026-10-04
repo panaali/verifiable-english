@@ -50,12 +50,13 @@ end VE.Demo
 '''
 
 
-def write_tree(root: Path, table: dict, statements: str = "") -> None:
+def write_tree(root: Path, table: dict, statements: str = "", predicates: tuple[str, ...] = ()) -> None:
     (root / "lean/VE").mkdir(parents=True, exist_ok=True)
     (root / "lean/VE/Demo.lean").write_text(FIXTURE)
     (root / "tools").mkdir(exist_ok=True)
     (root / "tools/trust-classes.json").write_text(json.dumps({"modules": {"VE/Demo.lean": table}}))
     (root / "lean/statements.txt").write_text(statements)
+    (root / "lean/predicates.txt").write_text("-- header\n" + "".join(f"{p}\n" for p in predicates))
 
 
 def test_scan_spans_names_and_kinds(tmp_path):
@@ -91,8 +92,8 @@ def test_classes_counts_and_unclassified_fail_closed(tmp_path):
     assert sum(counts[c] for c in trust_map.COLUMNS) + counts["unclassified"] == counts["lines"]
 
 
-def tie_problems(root: Path, table: dict, dump: str) -> tuple[dict, list[str]]:
-    write_tree(root, table, dump)
+def tie_problems(root: Path, table: dict, dump: str, predicates: tuple[str, ...] = ()) -> tuple[dict, list[str]]:
+    write_tree(root, table, dump, predicates)
     return trust_map.measure(root, root / "tools/trust-classes.json", root / "lean/statements.txt")
 
 
@@ -163,6 +164,111 @@ def test_unnamed_declaration_cannot_be_tied(tmp_path):
     assert any("an unnamed declaration cannot be tied" in p for p in problems)
 
 
+@pytest.mark.parametrize("cls,ok", [("K", True), ("S", True), ("P", True), ("T", True), ("D[V]", True),
+                                    ("G[V]", True), ("C", False), ("D[R]", False), ("G[I]", False)])
+def test_predicate_is_never_untrusted_unread(tmp_path, cls, ok):
+    """Review B: `Closure.Formula.WellFormed`, the kernel typing predicate, was C and left the budget."""
+    write_tree(tmp_path, {cls: ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, predicates=("VE.Demo.helper",))
+    files, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json",
+                                        tmp_path / "lean/statements.txt")
+    assert (problems == []) is ok
+    if not ok:
+        assert "VE.Demo.helper: a predicate cannot be" in problems[0]
+
+
+def test_predicate_leaves_the_budget_only_through_a_tie(tmp_path):
+    table = {"C": [{"name": "VE.Demo.helper", "tied": ["VE.Demo.decodeThing_empty"]}], "S": ["VE.Demo.Meaning"]}
+    helper = ("VE.Demo.helper",)
+    files, problems = tie_problems(tmp_path, table, entry("…", "VE.Demo.Meaning VE.Demo.helper"), helper)
+    assert problems == [] and files["VE/Demo.lean"]["tied"] == 1 and files["VE/Demo.lean"]["C"] == 1
+    _, problems = tie_problems(tmp_path, table, entry("…", "VE.Demo.helper"), helper)
+    assert len(problems) == 1 and "mentions no K, S or untied [V]" in problems[0]
+
+
+def test_missing_predicate_list_fails_closed(tmp_path):
+    write_tree(tmp_path, {"S": ["VE.Demo.Meaning"]})
+    (tmp_path / "lean/predicates.txt").unlink()
+    _, problems = trust_map.measure(tmp_path, tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    assert problems == ["predicates.txt is missing; run tools/lean_statements.py"]
+
+
+def test_seed_puts_predicates_and_kernel_types_in_the_meaning():
+    decls = [trust_map.Decl("VE.Closure.Edge", "inductive", 2, 3), trust_map.Decl("VE.Closure.Formula.WellFormed", "def", 4, 5),
+             trust_map.Decl("VE.Closure.Formula.check", "def", 6, 7)]
+    row = {"K": 4, "C": 3, "P": 0, "T": 0}
+    predicates = {"VE.Closure.Formula.WellFormed"}
+    # Before the fix the row's room decided, and WellFormed and Edge were C (review B).
+    kept = {"VE.Closure.Edge": "C", "VE.Closure.Formula.WellFormed": "C", "VE.Closure.Formula.check": "C"}
+    assert trust_map.seed_module("VE/Closure/Syntax.lean", decls, row, predicates, kept) == {
+        "VE.Closure.Edge": "K", "VE.Closure.Formula.WellFormed": "K", "VE.Closure.Formula.check": "C"}
+    assert trust_map.seed_module("VE/Closure/Syntax.lean", decls, row, predicates)["VE.Closure.Formula.WellFormed"] == "K"
+    # Outside the kernel a predicate is S where the row has S, a proof helper where it has only C and P.
+    assert trust_map.seed_module("VE/Norms/X.lean", decls[1:2], {"S": 5, "C": 5}, predicates)[decls[1].name] == "S"
+    assert trust_map.seed_module("VE/Tableau.lean", decls[1:2], {"C": 5, "P": 9}, predicates)[decls[1].name] == "P"
+    assert trust_map.seed_module("VE/New.lean", decls[1:2], None, predicates)[decls[1].name] == "S"
+    # Reviewed classes and ties stay.
+    tie = {"class": "C", "tied": ["VE.Closure.wf_iff"]}
+    kept = {"VE.Closure.Formula.WellFormed": tie, "VE.Closure.Formula.check": "G[V]"}
+    seeded = trust_map.seed_module("VE/Closure/Syntax.lean", decls, row, predicates, kept)
+    assert seeded["VE.Closure.Formula.WellFormed"] == tie and seeded["VE.Closure.Formula.check"] == "G[V]"
+
+
+def test_rebaseline_needs_a_reason_for_growth(tmp_path):
+    write_tree(tmp_path, {"D[R]": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
+                          "C": ["instance:Inhabited Nat"]})
+    tables = (tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    baseline_path = tmp_path / "baseline.json"
+    trust_map.write_baseline(trust_map.measure(tmp_path, *tables)[0], baseline_path, {})
+    write_tree(tmp_path, {"K": ["VE.Demo.decodeThing"], "S": ["VE.Demo.Meaning", "VE.Demo.helper"],
+                          "C": ["instance:Inhabited Nat"]})
+    grown, _ = trust_map.measure(tmp_path, *tables)
+    with pytest.raises(ValueError, match="K grew from 0 to 4"):
+        trust_map.write_baseline(grown, baseline_path)
+    trust_map.write_baseline(grown, baseline_path, reason="reclassified decodeThing")
+    history = json.loads(baseline_path.read_text())["history"]
+    assert history[-1]["change"] == "reclassified decodeThing" and history[-1]["to"]["K"] == 4
+
+
+def test_committed_kernel_meaning_is_trusted():
+    """The kernel's typing predicates and syntax are K in every copy of the logic."""
+    table = trust_map.load_table()
+    for logic, module in (("VE", "VE/Syntax.lean"), ("VE.Closure", "VE/Closure/Syntax.lean"),
+                          ("VE.Core", "VE/Core/Syntax.lean"), ("VE.Order", "VE/Order/Syntax.lean")):
+        assert table[module][f"{logic}.Formula.WellFormed"] == "K"
+        assert table[module][f"{logic}.Formula"] == "K"
+    predicates = trust_map.lean_predicates()
+    assert "VE.Closure.Formula.WellFormed" in predicates
+
+
+def test_ledger_credits_each_declaration_once(tmp_path):
+    write_tree(tmp_path, {"S": ["VE.Demo.Meaning"], "G[V]": ["VE.Demo.helper"], "D[R]": ["VE.Demo.decodeThing"],
+                          "C": ["instance:Inhabited Nat"]})
+    path = tmp_path / "ledger.json"
+    path.write_text(json.dumps({"steps": [
+        {"step": "a", "title": "", "days": 1, "risk": 2, "adds_est": 1,
+         "tied": [{"module": "VE/{Demo,Gone}.lean", "names": r"\.(Meaning|decodeThing)$"}]},
+        {"step": "b", "title": "", "days": 1, "risk": 1,
+         "removed": [{"module": "VE/*.lean"}], "reclassified": [{"module": "VE/Demo.lean", "names": "nothing"}]}]}))
+    rows, problems = trust_map.ledger(tmp_path, path, tmp_path / "tools/trust-classes.json",
+                                      tmp_path / "lean/statements.txt")
+    a, b = rows
+    assert (a["tied"], a["tied_untrusted"], a["net"], a["score"]) == (3, 4, 2, 1.0)  # Meaning trusted, decodeThing [R]
+    # Step b names the whole file again: Meaning and decodeThing are not credited twice.
+    assert (b["removed"], b["removed_untrusted"]) == (1, 3)  # helper; the instance is C
+    assert problems == ["ledger.json: step b reclassified: {'module': 'VE/Demo.lean', 'names': 'nothing'} "
+                        "names no declaration"]
+
+
+def test_committed_ledger_names_real_declarations():
+    rows, problems = trust_map.ledger()
+    assert problems == []
+    assert [r["step"] for r in rows] == ["1", "2a", "2b", "3", "4", "5", "6", "7", "8a", "8b", "9", "10"]
+    # The plan's section 4 quotes these measured figures (E9); regenerate them after a table change.
+    plan = (ROOT / "docs/CONSOLIDATION-PLAN.md").read_text()
+    for r in rows:
+        assert f"| {r['step']} | {r['removed']} | {r['tied']} |" in plan, r["step"]
+
+
 def test_committed_ties_are_valid():
     """Every tie in the committed table passes the checks above against the committed dump."""
     table = trust_map.load_table()
@@ -221,8 +327,11 @@ def test_statement_dump_lists_every_audited_theorem():
 
 @pytest.mark.skipif(shutil.which("lake") is None, reason="lake is not on PATH")
 def test_statement_dump_is_current():
-    assert lean_statements.dump() == lean_statements.OUTPUT.read_text(), \
+    statements, predicates = lean_statements.dump_all()
+    assert statements == lean_statements.OUTPUT.read_text(), \
         "lean/statements.txt is stale: run python3 tools/lean_statements.py"
+    assert predicates == lean_statements.PREDICATES.read_text(), \
+        "lean/predicates.txt is stale: run python3 tools/lean_statements.py"
 
 
 def fake_build(folder: Path, names: list[str], body: str) -> None:
