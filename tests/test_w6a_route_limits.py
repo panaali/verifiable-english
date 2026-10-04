@@ -35,9 +35,11 @@ CPU = 30
 
 
 def run(command, cases):
+    # The kernel stops a batch that spends CPU seconds past the limit (a runaway guard: it
+    # then exits by a signal, which fails here). What each batch spends is a benchmark
+    # against a stored baseline (tools/bench/test_perf.py), not a test criterion.
     completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
     assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
-    assert cpu < CPU, (command[0], cpu)
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
     return results

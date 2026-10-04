@@ -22,6 +22,10 @@ must carry with its type (`bool`, `nat`, `string`, `object`, `json`, or
 size (an array's length, a `nat`'s value) must equal the length of a case
 array (`case.NAME`) or of another response array (`row.NAME`). Nothing reads
 an `ok` row that fails its schema.
+
+Each caller's wall-clock timeout is a guard against a hung runner, not a work
+limit: `VE_LEAN_TIMEOUT` replaces every caller's default (`configured_timeout`;
+the test suite raises it to its hang guard, so machine load cannot fail a test).
 """
 from __future__ import annotations
 
@@ -32,16 +36,29 @@ import sys
 from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
-from .lean_service import _decode_json
+from .lean_service import _decode_json, configured_seconds
 # JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`.
 from .service_schema import same_json as _same
 
+SOFT_TIMEOUT = 120.0
+ROUTE_TIMEOUT = 120.0
 
-def run_soft_case(executable, case, *, timeout: float = 120) -> dict:
+
+def configured_timeout(default: float) -> float:
+    """The wall-clock timeout of one one-shot Lean runner call whose caller's default is
+    `default`: `VE_LEAN_TIMEOUT` when set, else `default`. A value that is not a positive
+    finite number of seconds is `CheckerUnavailable` before the runner starts."""
+    return configured_seconds("VE_LEAN_TIMEOUT", default)
+
+
+def run_soft_case(executable, case, *, timeout: float | None = None) -> dict:
     """Transport one soft route case (`ve_soft_norms_route`, `ve_rights_route`) through the shared
     Lean process boundary. Its rows name a code beside a case rejection (`SoftNorms/Run.lean`
     `runCaseReported`); a rejection raises `VEError` with that code. Output that is no answer
-    (`read_rows`) is `CheckerUnavailable`, never a rejection."""
+    (`read_rows`) is `CheckerUnavailable`, never a rejection. Without a `timeout`, the call
+    waits `configured_timeout(SOFT_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(SOFT_TIMEOUT)
     try:
         completed = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
                                    capture_output=True, timeout=timeout, check=False)
@@ -256,19 +273,24 @@ def run_reports_case(executable, case: dict, *, timeout: float) -> dict:
                        restricted=True)[0]
 
 
-def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
+def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float | None = None) -> list[dict]:
     """Transport cases to `ve_norm_defaults_route`: one row per case, in order. A row with
     `status: error` is Lean's rejection of that case; a route that cannot start, does not
-    answer in time or gives no answer (`read_rows`) is `CheckerUnavailable`."""
+    answer in time or gives no answer (`read_rows`) is `CheckerUnavailable`. Without a
+    `timeout`, the call waits `configured_timeout(ROUTE_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(ROUTE_TIMEOUT)
     return _route_rows("ve_norm_defaults_route", executable, cases,
                        json.dumps(cases, ensure_ascii=False).encode(), timeout=timeout)
 
 
-def run_readings_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
+def run_readings_cases(executable, cases: list[dict], *, timeout: float | None = None) -> list[dict]:
     """Transport cases to `ve_readings_route` (composition-s1.md 8.4): one row per case, in order.
 
     A row with `status: error` is Lean's rejection of that case. A route that cannot start, does
     not answer in time, or gives no answer (`read_rows`) is `CheckerUnavailable`, never a
-    rejection."""
+    rejection. Without a `timeout`, the call waits `configured_timeout(ROUTE_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(ROUTE_TIMEOUT)
     return _route_rows("ve_readings_route", executable, cases, json.dumps(cases, ensure_ascii=False).encode(),
                        timeout=timeout)

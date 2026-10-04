@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.ast import formula_from_data
 from ve.document import check_document, load_document, stored_identities
 from ve.environment import Environment
@@ -39,13 +40,14 @@ def lean():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the discourse Lean route")
-        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=1200)
+        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 
 
 def run(cases):
-    result = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=300)
+    result = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True, capture_output=True,
+                            timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

@@ -12,6 +12,7 @@ import subprocess
 
 import pytest
 
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_w6a_review_regressions import (COLLIDING_UNITS, IDENTITY_VARIANTS, label, money,
                                                raw_environment)
 from ve import ast
@@ -33,7 +34,7 @@ pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_qua
 
 def lean(cases):
     process = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=600)
+                             capture_output=True, timeout=HANG_TIMEOUT)
     assert process.returncode in (0, 1), process.stderr[:500]
     results = json.loads(process.stdout)
     assert len(results) == len(cases)
@@ -42,7 +43,7 @@ def lean(cases):
 
 def rust(cases):
     process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=600)
+                             capture_output=True, timeout=HANG_TIMEOUT)
     assert process.returncode in (0, 1), process.stderr[:500]
     return json.loads(process.stdout)
 
@@ -474,6 +475,6 @@ def test_generic_route_still_rejects_extended_environments():
     process = subprocess.run([str(conformance), "route", "-"], text=True, capture_output=True,
                              input=json.dumps([{"id": "bypass", "kind": "evaluate", "environment": raw,
                                                 "ast": [["lt", ["num", "375"], ["num", "400"]]]}]),
-                             timeout=60)
+                             timeout=HANG_TIMEOUT)
     [result] = json.loads(process.stdout)
     assert result["status"] == "error" and "unit_schema" in result["error"]

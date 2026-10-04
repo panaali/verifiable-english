@@ -1,6 +1,7 @@
 """Regressions for shared native artifacts during parallel pytest runs."""
 
 import fcntl
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -108,18 +109,24 @@ def test_timeout_stops_compiler_descendants(tmp_path, monkeypatch, driver_delay)
     ))
     communicate = subprocess.Popen.communicate
 
+    waits = []
+
     def communicate_once_spawned(process, *args, **kwargs):
-        # Start the build's timeout only when the driver's descendants exist.
+        # The build's deadline expires (an injected clock) only once the driver's
+        # descendants exist: the driver never ends, so nothing waits it out.
+        if kwargs.get("timeout") is None:  # reaping the stopped group
+            return communicate(process, *args, **kwargs)
         _wait_for(spawned)
-        return communicate(process, *args, **kwargs)
+        waits.append(kwargs["timeout"])
+        return communicate(process, *args, **{**kwargs, "timeout": 0})
 
     monkeypatch.setattr(subprocess.Popen, "communicate", communicate_once_spawned)
     try:
         with (tmp_path / "build.lock").open("a+") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
             with pytest.raises(TimeoutError):
-                conftest._run_build([sys.executable, "-c", driver], None, None, lock,
-                    timeout=1)
+                conftest._run_build([sys.executable, "-c", driver], None, None, lock)
+        assert waits == [HANG_TIMEOUT]
         assert ready.exists()
         # _run_build returns only after the whole group has stopped, so the
         # grandchild's lock is already free; no interval decides this.
@@ -157,3 +164,61 @@ def test_lock_path_ignores_tmpdir(tmp_path, monkeypatch):
     monkeypatch.setenv("TMPDIR", str(tmp_path))
     assert conftest.native_lock_path() == expected
     assert expected == conftest.ROOT / "rust/target/.ve-native-build.lock"
+
+
+def _native_checkout(root):
+    """A checkout with one Lean and one Rust source and every native output the build makes."""
+    subprocess.run(["git", "init", "-q", str(root)], check=True, timeout=HANG_TIMEOUT)
+    (root / ".gitignore").write_text("ignored.lean\n")
+    for name, text in {"lean/VE/A.lean": "def a := 1\n", "rust/src/main.rs": "fn main() {}\n",
+                       "rust-toolchain.toml": "[toolchain]\n", "lean/.lake/build/bin/ve_service": "lean",
+                       "rust/target/release/ve": "release", "rust/target/debug/ve": "debug"}.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(text)
+    subprocess.run(["git", "add", "lean/VE", "rust/src", "rust-toolchain.toml", ".gitignore"], cwd=root,
+                   check=True, timeout=HANG_TIMEOUT)
+
+
+def test_local_runs_reuse_binaries_only_while_their_stamp_matches(tmp_path):
+    """The default local run skips the build exactly when the last build's stamp still matches
+    the native inputs (tracked or new, ignored files apart) and the outputs it produced."""
+    _native_checkout(tmp_path)
+    assert not conftest.native_fresh(tmp_path)
+    stamp = conftest.native_stamp_path(tmp_path)
+    stamp.write_text(json.dumps(conftest.native_fingerprint(tmp_path)))
+    assert conftest.native_fresh(tmp_path)
+    (tmp_path / "ignored.lean").write_text("not an input\n")
+    (tmp_path / "lean/.lake/build/trace").write_text("a build directory is not an input\n")
+    assert conftest.native_fresh(tmp_path)
+    changes = [
+        lambda: (tmp_path / "lean/VE/A.lean").write_text("def a := 2\n"),  # an edited source
+        lambda: (tmp_path / "rust/src/new.rs").write_text("\n"),  # a new, untracked source
+        lambda: (tmp_path / "rust-toolchain.toml").write_text("[toolchain]\nchannel = '1.99'\n"),
+        lambda: (tmp_path / "rust/target/release/ve").write_text("another build"),  # a replaced output
+        lambda: (tmp_path / "lean/.lake/build/bin/ve_quantity").write_text("lean"),  # an added output
+    ]
+    for change in changes:
+        stamp.write_text(json.dumps(conftest.native_fingerprint(tmp_path)))
+        change()
+        assert not conftest.native_fresh(tmp_path)
+    (tmp_path / "rust/target/debug/ve").unlink()
+    assert conftest.native_fingerprint(tmp_path) is None and not conftest.native_fresh(tmp_path)
+
+
+@pytest.mark.parametrize("cpus, load, settings, workers", [
+    (32, 0.0, {}, 32), (32, 20.4, {}, 12), (32, 31.0, {}, 1), (32, 51.2, {}, 1),
+    (16, 2.6, {"VE_TEST_WORKERS": "8"}, 8), (16, 6.0, {"VE_TEST_WORKERS": "8"}, 8),
+    (16, 13.0, {"VE_TEST_WORKERS": "8"}, 3), (32, 51.2, {"VE_TEST_MIN_WORKERS": "8"}, 8),
+    (32, 20.4, {"VE_TEST_MIN_WORKERS": "8"}, 12), (32, 51.2, {"VE_TEST_MIN_WORKERS": "8", "VE_TEST_WORKERS": "2"}, 2),
+    (32, 51.2, {"VE_TEST_MIN_WORKERS": "0"}, 1), (2, 9.0, {}, 1),
+], ids=["idle", "busy", "one slot left (review)", "overloaded: one", "configured", "configured, room left",
+        "configured and busy", "opt-in floor", "opt-in floor below capacity", "configured below the floor",
+        "a floor of zero is one", "two CPUs"])
+def test_auto_workers_leave_the_busy_part_of_the_machine_alone(monkeypatch, cpus, load, settings, workers):
+    """`-n auto` takes min(CPUs - load, VE_TEST_WORKERS), at least one, so a busy machine is
+    not oversubscribed; a larger floor is only taken when VE_TEST_MIN_WORKERS asks for it."""
+    for variable in ("VE_TEST_WORKERS", "VE_TEST_MIN_WORKERS"):
+        monkeypatch.delenv(variable, raising=False)
+    for variable, value in settings.items():
+        monkeypatch.setenv(variable, value)
+    assert conftest.worker_count(cpus=cpus, load=load) == workers

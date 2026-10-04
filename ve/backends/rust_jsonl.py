@@ -9,7 +9,7 @@ import subprocess
 
 from ..errors import ResourceLimit
 from .diagnostics import require_ok
-from .lean_service import CheckerUnavailable, _decode_json
+from .lean_service import CheckerUnavailable, _decode_json, configured_seconds
 from .service_schema import Compiler, Context, Invalid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -17,6 +17,15 @@ SCHEMA = Path(__file__).resolve().parent / "rust_schema"
 DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
+DEFAULT_TIMEOUT = 5.0
+
+
+def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
+    """The wall-clock timeout of one Rust call whose caller's default is `default`:
+    `VE_RUST_TIMEOUT` when set (the test suite raises it to its hang guard, so
+    machine load cannot fail a test), else `default`. A guard against a hung
+    checker only; Rust's work limits are its evaluation budgets."""
+    return configured_seconds("VE_RUST_TIMEOUT", default)
 
 
 def _run_checker(argv, *, input, timeout):
@@ -66,12 +75,15 @@ def rust_environment(env) -> dict:
 
 
 def run(case: dict, *, executable: str | os.PathLike | None = None,
-        timeout: float = 5.0, expected_sha256: str | None = None) -> dict:
+        timeout: float | None = None, expected_sha256: str | None = None) -> dict:
     """Run one case and return its checked record, or a classified error.
 
     The subprocess is waited on before returning, so no worker outlives the
-    call. A selected Rust backend never falls back to Python.
+    call. A selected Rust backend never falls back to Python. Without a
+    `timeout`, the call waits `configured_timeout()` seconds.
     """
+    if timeout is None:
+        timeout = configured_timeout()
     binary = Path(executable or os.environ.get("VE_RUST_JSONL") or DEFAULT_EXECUTABLE)
     if not binary.is_file():
         raise CheckerUnavailable(f"CheckerUnavailable: missing Rust executable {binary}")

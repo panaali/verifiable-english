@@ -61,6 +61,9 @@ GENERATOR = ("untrusted generator (inventory class U): it only proposes a witnes
              "which the selected authority checks before anything is reported")
 SURFACE = ("surface decoder (inventory class S) typing open formulas, which no adapter types; "
            "every operation the decoded object reaches re-decodes and checks it on the selected authority")
+DIAGNOSTIC = ("wire contract hook (docs/spec/wire-contract-s5.md 2.5), diagnostic only: it runs after the "
+              "legacy validator has rejected, retypes as the validator did to name the first failing check, and "
+              "decides no verdict")
 EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
     ("ve.closure", "derive_induction", "ve.ast", "_Checker"): GENERATOR,
     ("ve.norms", "_find_conflict", "ve.ast", "_Checker"): GENERATOR,
@@ -87,6 +90,8 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
         SURFACE + " (speech acts: Lean-only route with no Python admission dispatch)",
     ("ve.speech_english", "_body", "ve.ast", "_Checker"):
         SURFACE + " (speech acts: Lean-only route with no Python admission dispatch)",
+    ("ve.norms_contract", "typing_failure", "ve.ast", "_Checker"): DIAGNOSTIC,
+    ("ve.norm_defaults_contract", "filled_ast_fits", "ve.ast", "_Checker"): DIAGNOSTIC,
 }
 
 
