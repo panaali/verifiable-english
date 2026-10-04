@@ -9,6 +9,12 @@ Branch: `english-lean/integrate`. This checkpoint merges `english-lean/py` and `
 - `lake build` passed (575 jobs) on the second run. The first run suffered a clang frontend crash while compiling generated C under concurrent load. `python3 lean/audit.py` passed: 302 source files, 3,093 named theorems, standard axioms only. The frozen-source and Lean layer checks passed. Free disk space was 65 GiB.
 - Full pytest suite: `VE_NATIVE_PREBUILT=1 .venv/bin/python -m pytest -q -n 4` finished with 8,744 passed, 6 optional skips and no failures in 1:25:12. It ran against the committed code; this report received its final result afterward. No model calls were made.
 
+## Review fixes (Astra and Fable reviews, 2026-10-04)
+
+- **Lexicon validity, Python versus Lean** (Astra B1, B2). The Python reference of `Lexicon.valid` read each field as a dictionary, so a repeated entry escaped V1 and a negative without a positive crashed. It is now a condition-by-condition port of Lean's `Lexicon.failures` over the lexicon's lists, with a total `negativeTemplate`. `lean/VE/EnglishGrammar/LexiconFixtures.lean` is generated from `conformance/english-lean/lexicon.json` and the reference. It holds every corpus case (new review cases `r1`–`r9`) and one- and two-fault mutants of `LF`, each as a `#guard` on Lean's full failure set. `lake build` therefore checks Python against Lean on 159 lexicons. `tests/test_english_lean_lexicon.py` keeps the file current and checks that the mutants reach V1–V5. The Rust side has no lexicon check.
+- **Numerals** (Astra B3). The reference lexer and the tree printer read and print decimals in blocks. Numerals and label indices up to the 10,000-character text limit lex as they do in Lean, regardless of Python's `int_max_str_digits`. The same boundary sources are fixtures on both sides.
+- **Audit record** (Fable B1, Astra C). `lean/axioms.txt` was regenerated: 3,093 entries, including the 134 new theorems. `lean/audit.py` now fails when the record differs from its output, and `--write` regenerates it. `tests/test_lean_audit_record.py` checks the record against the theorem inventory without running Lean.
+
 ## Required work still open
 
 S2 requires fixed-rule JSON with generation and locking, the English grammar/actions/meaning, `read`, the section 5.8 theorems, a service mode, and an end-to-end Python adapter. S3 requires the formula-level profile rules and conformance. S4 requires the specified 14 consecutive clean shadow days. S5 requires the authority change, renderer checks, and support-matrix parity. The reverse corpus, formula/witness comparison, and genuine Python/Lean/Rust three-way tests on the spec fixtures are absent. The worker reports' remaining S0 measurements (use-case and pilot lengths, unloaded wall-clock timing) are also absent. No one-reading, frozen-contract or axiom claim has been widened to cover these missing stages.
@@ -20,7 +26,7 @@ The numbers refer to `~/code/manage-agents/prompts/build-checklist.txt`. “Not 
 | Line | Status | Evidence or remaining requirement |
 |---|---|---|
 | 1 | Not done | English diagnostics and limits have no single generated Python/Lean/Rust table. |
-| 2 | Not done | No English three-way, two-fault differential fuzz. |
+| 2 | Partial | Lexicon validity has a generated one- and two-fault Python/Lean differential (`LexiconFixtures.lean`). There is no English reader or Rust differential. |
 | 3 | Not done | No shared normalization function across the new English reader and every entry point. |
 | 4 | Not done | No English service response schema or response mutation fuzz. |
 | 5 | Not done | No English service malformed-node sweep or reference-resolution proof. |
