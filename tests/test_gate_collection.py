@@ -3,6 +3,9 @@ must list every added and removed ID with the documented refresh."""
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 
 import pytest
 
@@ -104,19 +107,72 @@ def test_collection_applies_the_gates_discovery_rules(repository, rules, path, c
     assert (f"{path}::test_hidden" in gate_collection.collect(repository)) != collected
 
 
-def test_collection_reflects_the_tree_now_not_an_earlier_collection(repository):
-    # A module whose parameter comes from a file its import generates must
-    # yield only the current parameter after it changes, not one an earlier
-    # collection left behind (same size, so only a fresh read tells them apart).
-    template = ("import pathlib, pytest\nGENERATED = pathlib.Path(__file__).with_name('generated.txt')\n"
-                "GENERATED.write_text('{case}')\n"
-                "@pytest.mark.parametrize('case', [GENERATED.read_text()])\n"
-                "def test_generated(case): pass\n")
-    for case in ("y", "z"):
-        (repository / "tests/test_two.py").write_text(template.format(case=case))
-        ids = gate_collection.collect(repository)
-        assert [nodeid for nodeid in ids if "test_generated" in nodeid] == [
-            f"tests/test_two.py::test_generated[{case}]"]
+GENERATED = ("import pathlib, pytest\nGENERATED = pathlib.Path(__file__).with_name('generated.txt')\n"
+             "GENERATED.write_text('{case}')\n"
+             "@pytest.mark.parametrize('case', [GENERATED.read_text()])\n"
+             "def test_generated(case): pass\n")
+IMPORTING = ("import pytest\nfrom ve_gate_generated_case import CASE\n"
+             "@pytest.mark.parametrize('case', [CASE])\ndef test_generated(case): pass\n")
+# The changed source of a parameter: the test module, whose bytecode pytest
+# rewrites and caches, or a module it imports, whose bytecode Python caches.
+SOURCES = {
+    "test module": ({}, "tests/test_two.py", GENERATED),
+    "imported module": ({"tests/test_two.py": IMPORTING}, "tests/ve_gate_generated_case.py",
+                        "CASE = '{case}'\n"),
+}
+# Where the bytecode cached for the earlier source came from.
+EARLIER = ("an earlier collection", "an ordinary pytest run")
+
+
+def ordinary_pytest_run(repository):
+    env = {name: value for name, value in os.environ.items()
+           if name not in ("PYTHONPYCACHEPREFIX", "PYTHONDONTWRITEBYTECODE")}
+    subprocess.run([sys.executable, "-m", "pytest", "-p", "no:cacheprovider", "--collect-only", "-q",
+                    "tests"], cwd=repository, env=env, capture_output=True, check=True)
+
+
+def gate_run_collection(repository, scratch):
+    # The gate's own pytest run, in its environment, collecting only.
+    env = gate.gate_environment(scratch)
+    output = scratch / "events.json"
+    env.update(PATH=os.environ["PATH"], PYTHONPATH=str(gate.ROOT), VE_GATE_PYTEST_RESULT=str(output))
+    args = list(gate.PYTEST_ARGS)
+    args.insert(args.index("tests"), "--collect-only")
+    subprocess.run([sys.executable, "-m", "pytest", *args], cwd=repository, env=env, capture_output=True)
+    return json.loads(output.read_text())["collected"]
+
+
+# Both compare their collection with the baseline: the suite's guard and the gate.
+COLLECTORS = {"guard": lambda repository, scratch: gate_collection.collect(repository),
+              "gate": gate_run_collection}
+
+
+@pytest.mark.parametrize("earlier", EARLIER)
+@pytest.mark.parametrize("files,changed,template", SOURCES.values(), ids=SOURCES)
+@pytest.mark.parametrize("collector", COLLECTORS.values(), ids=COLLECTORS)
+def test_collection_reflects_the_tree_now_not_cached_bytecode(repository, tmp_path_factory, collector,
+                                                               files, changed, template, earlier):
+    # A same-size change within the same second leaves the source's recorded
+    # size and whole-second mtime as they were, so cached bytecode looks
+    # current: only a fresh compile yields the parameter now in the tree. The
+    # mtime is set back exactly, so the same second is not left to timing.
+    for name, text in files.items():
+        (repository / name).write_text(text)
+    source = repository / changed
+    source.write_text(template.format(case="y"))
+    if earlier == "an earlier collection":
+        ids = collector(repository, tmp_path_factory.mktemp("scratch"))
+        assert "tests/test_two.py::test_generated[y]" in ids
+    else:
+        ordinary_pytest_run(repository)
+        assert any(source.parent.joinpath("__pycache__").glob(f"{source.stem}.*.pyc"))
+    before = source.stat()
+    source.write_text(template.format(case="z"))
+    os.utime(source, ns=(before.st_atime_ns, before.st_mtime_ns))
+    assert source.stat().st_size == before.st_size
+    ids = collector(repository, tmp_path_factory.mktemp("scratch"))
+    assert [nodeid for nodeid in ids if "test_generated" in nodeid] == [
+        "tests/test_two.py::test_generated[z]"]
 
 
 @pytest.mark.parametrize("body", [

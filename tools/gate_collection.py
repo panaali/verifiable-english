@@ -34,8 +34,11 @@ def collect(root: Path = ROOT, *, prebuilt: bool = False) -> list[str]:
     with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
         output = Path(directory) / "events.json"
         env = {name: os.environ[name] for name in INHERITED if name in os.environ}
+        # Bytecode is checked only against its source's size and whole-second
+        # mtime, so a same-size edit within the second would load the earlier
+        # source. An empty cache, never the tree's __pycache__, compiles it fresh.
         env.update(PYTEST_DISABLE_PLUGIN_AUTOLOAD="1", VE_GATE_PYTEST_RESULT=str(output),
-                   PYTHONPATH=str(ROOT))
+                   PYTHONPATH=str(ROOT), PYTHONPYCACHEPREFIX=str(Path(directory) / "pycache"))
         if prebuilt:
             # Inside a running suite, whose session holds the shared build lock.
             env["VE_NATIVE_PREBUILT"] = "1"
