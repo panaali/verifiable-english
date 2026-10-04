@@ -461,7 +461,18 @@ def _worker() -> _Worker | None:
             if worker is None:
                 worker = _workers[key] = _Worker(Path(directory))
                 worker.write_tally()
+                _finalize_in_child()
     return worker
+
+
+def _finalize_in_child() -> None:
+    """A process that `multiprocessing` started (a pool worker, a
+    ProcessPoolExecutor worker) leaves by `os._exit` after the module's own exit
+    handlers and never runs `atexit`; its normal exit finalizes its tally there.
+    The module is only looked up: `ve` starts no processes outside the backends."""
+    process, util = sys.modules.get("multiprocessing.process"), sys.modules.get("multiprocessing.util")
+    if process is not None and util is not None and process.parent_process() is not None:
+        util.Finalize(None, _finalize, exitpriority=0)
 
 
 @atexit.register

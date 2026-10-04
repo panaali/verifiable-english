@@ -4032,6 +4032,7 @@
   "tests/test_shadow_recorder.py::test_s19_uncompared_calls_are_counted_by_reason",
   "tests/test_shadow_recorder.py::test_s1_agreement_returns_the_same_object_and_writes_nothing",
   "tests/test_shadow_recorder.py::test_s20_a_worker_registers_before_its_first_shadow_call",
+  "tests/test_shadow_recorder.py::test_s20_pool_workers_finalize_at_a_normal_exit",
   "tests/test_shadow_recorder.py::test_s2_divergence_record",
   "tests/test_shadow_recorder.py::test_s3_same_error_agrees_and_reraises_pythons_exception",
   "tests/test_shadow_recorder.py::test_s4_different_text_is_a_message_difference",

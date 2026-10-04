@@ -976,6 +976,9 @@ def main(argv=None):
             exported = json.loads(EVIDENCE.read_text())
             results["M9"] = {"lean_p0": replay_lean(exported), "rust_models": replay_rust(exported),
                              "lean_norms_route": lean_norms_route(policy(), *parse_log((HERE / "log.ve").read_text(), pool))}
+        # Let the workers exit normally (leaving the block terminates them by a signal).
+        pool.close()
+        pool.join()
     print(json.dumps({k: results.get(k) for k in ("comparison", "policy_summary", "M8", "M9", "M10")
                       if args.part != "mutants"} if args.part != "mutants" else results["mutants"],
                      indent=1, ensure_ascii=False)[:6000])

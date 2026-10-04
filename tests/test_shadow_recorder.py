@@ -294,6 +294,30 @@ assert not list(directory.glob("records-*.jsonl"))
     assert tally["final"] is True and tally["calls"] == 0
 
 
+POOL = """
+import multiprocessing
+def call(_):
+    return dispatch.execute("evaluate", {}, lambda: 1, lean=lambda: 1)
+pool = multiprocessing.get_context("fork").Pool(2)
+assert pool.map(call, range(8)) == [1] * 8
+pool.close()
+pool.join()
+"""
+
+
+def test_s20_pool_workers_finalize_at_a_normal_exit(tmp_path):
+    """A multiprocessing child exits by os._exit and never runs atexit: a pool
+    worker that exits normally (close, join) finalizes all the same. A worker
+    killed by a signal does not (L14)."""
+    completed = _child(tmp_path, POOL)
+    assert completed.returncode == 0, completed.stderr
+    tallies = _tallies(tmp_path)
+    workers = [t for t in tallies if t["calls"]]
+    assert workers, tallies
+    assert all(t["final"] for t in tallies), tallies
+    assert sum(t["ops"]["evaluate"]["agree"] for t in workers) == 8
+
+
 # --- 8.2 the classes and the projection ----------------------------------------------
 
 def classes_of(directory, op, python, lean) -> list[str]:

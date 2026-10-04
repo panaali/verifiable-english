@@ -31,6 +31,9 @@ def rerun():
     evidence = check.Evidence(keep=check.LEAN_ROUTE.exists())
     with multiprocessing.get_context("fork").Pool(check.WORKERS) as pool:
         base = check.run(evidence=evidence, pool=pool)
+        # Let the workers exit normally (leaving the block terminates them by a signal).
+        pool.close()
+        pool.join()
     return base, evidence
 
 

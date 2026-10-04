@@ -307,6 +307,8 @@ def compute(sample=SAMPLE):
     jobs = [("ext", env, ext_rules), ("base", env, base_rules)]
     with multiprocessing.get_context("fork").Pool(min(len(jobs), WORKERS)) as pool:
         done = {name: (result, packages) for name, result, packages in pool.map(_conflict_job, jobs)}
+        pool.close()
+        pool.join()
     ext_conflict, ext_packages = done["ext"]
     timing["conflict_ext_seconds"] = ext_conflict.pop("seconds")
     timing["conflict_base_seconds"] = done["base"][0].pop("seconds")
