@@ -10,8 +10,6 @@ inputs. The Python soft profile (item 2) is not needed: environments are raw JSO
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -22,30 +20,26 @@ from ve.environment import Environment
 from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.wire import digest
+from tests import lean_routes
 from tests.test_norms import environment, obligation, permission
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
+LEAN = "ve_soft_norms_route"
+SERVICE = ROOT / "lean/.lake/build/bin/ve_service"
 DECIDER = {"decided_by": "assistant", "sufficient": [], "necessary": [], "factors": []}
 
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for the soft-norms Lean route")
-        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
-        assert built.returncode == 0, built.stdout + built.stderr
+    if not SERVICE.exists():
+        pytest.skip("the Lean service has not been built")
     return LEAN
 
 
-def run(executable, cases):
-    result = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=180)
-    assert result.returncode in (0, 1), result.stderr
-    rows = json.loads(result.stdout)
+def run(route, cases):
+    """The rows of `route` (`tests/lean_routes.py`: the service mode of a one-shot route's name or path)."""
+    status, rows, stderr = lean_routes.run(route, cases)
+    assert status in (0, 1), stderr
     assert len(rows) == len(cases)
     return rows
 
@@ -269,7 +263,7 @@ def test_w1_inputs_delegate_unchanged(lean):
     raw["profiles"] = ["norms@0", "relational-fol@0"]
     case = {"id": "w1", "kind": "norms-elaborate", "environment": raw, "norms": [norm("m", "x_required", True)]}
     soft = run(lean, [case])[0]
-    w1 = run(ROOT / "lean/.lake/build/bin/ve_norms_route", [case])[0]
+    w1 = run("ve_norms_route", [case])[0]
     assert soft == w1
 
 

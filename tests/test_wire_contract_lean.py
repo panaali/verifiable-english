@@ -1,4 +1,4 @@
-"""The Lean wire contract engine (`ve_diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
+"""The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
 
 The expected records are the hand-derived ones of the spec's "Expected" column (E1 to E36, Lean side),
 written out whole: check, phase, code, class, path, text and args. Records are compared as canonical
@@ -8,20 +8,20 @@ from __future__ import annotations
 
 import copy
 import json
-import shutil
-import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+from ve.errors import VEError
 from ve.wire import canonical_json
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from check_lean_imports import diagnostic_only_violation, imports  # noqa: E402
 
-LEAN = ROOT / "lean/.lake/build/bin/ve_diagnose"
+LEAN = ROOT / "lean/.lake/build/bin/ve_service"
 
 BASE = {"doc": {"items": [{"name": "a", "tags": ["x", "y"]}, {"name": "b", "tags": []}],
                 "mode": "open", "owner": "root", "refs": ["a"], "table": {"k": 1},
@@ -31,24 +31,13 @@ BASE = {"doc": {"items": [{"name": "a", "tags": ["x", "y"]}, {"name": "b", "tags
 @pytest.fixture(scope="module")
 def lean():
     if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for ve_diagnose")
-        built = subprocess.run([lake, "build", "ve_diagnose"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
-        assert built.returncode == 0, built.stdout + built.stderr
+        pytest.skip("the Lean service has not been built")
     return LEAN
-
-
-def call(unit, text):
-    return subprocess.run([str(LEAN), unit, "-"], input=text, text=True, capture_output=True, timeout=120)
 
 
 def diagnose(unit, roots):
     cases = [{"id": f"c{n}", "kind": "corpus", **root} for n, root in enumerate(roots)]
-    result = call(unit, json.dumps(cases))
-    assert result.returncode == 0, result.stderr
-    rows = json.loads(result.stdout)
+    rows = lean_routes.diagnose(unit, cases)
     assert [row["id"] for row in rows] == [case["id"] for case in cases]
     assert all(row["status"] == "ok" for row in rows)
     return rows
@@ -220,12 +209,10 @@ def test_demo_corpus_one_batch(lean):
 def test_member_order_never_matters(lean):
     """E2: every object's members written in reverse order gives the same outcome as written."""
     text = "[" + reversed_members({"id": "E2", "kind": "corpus", **BASE}) + "]"
-    result = call("demo@0", text)
-    assert result.returncode == 0, result.stderr
-    assert [outcome(row) for row in json.loads(result.stdout)] == ["clean"]
+    assert [outcome(row) for row in lean_routes.diagnose_text("demo@0", text)] == ["clean"]
     edited = DEMO["E22"][0]
-    result = call("demo@0", "[" + reversed_members({"id": "E22", **edited}) + "]")
-    assert [outcome(row) for row in json.loads(result.stdout)] == [DEMO["E22"][1]]
+    rows = lean_routes.diagnose_text("demo@0", "[" + reversed_members({"id": "E22", **edited}) + "]")
+    assert [outcome(row) for row in rows] == [DEMO["E22"][1]]
 
 
 @pytest.mark.parametrize("name", sorted(DEFER))
@@ -245,31 +232,33 @@ def test_inner_contract_alone(lean):
 
 
 def test_runner_errors(lean):
-    """Spec 4.2: an unknown unit and a usage error exit 2; a case beyond the depth limit is an error row."""
-    unknown = call("nope@0", "[]")
-    assert unknown.returncode == 2
-    assert unknown.stderr.strip() == "UnsupportedProfile: no wire contract nope@0"
-    usage = subprocess.run([str(LEAN)], capture_output=True, text=True, timeout=60)
-    assert usage.returncode == 2
-    malformed = call("demo@0", '[{"id": "ok", "doc": null}]')
-    assert malformed.returncode == 2 and malformed.stdout == ""
+    """Spec 4.2 in the service: an unknown unit is an error row with the runner's text (the one-shot
+    runner exited 2 with it), a batch the restricted decoder refuses is a request error, and a case
+    beyond the depth limit is an error row."""
+    [unknown] = lean_routes.diagnose("nope@0", [{"id": "u"}])
+    assert unknown == {"id": "u", "status": "error", "error": "UnsupportedProfile: no wire contract nope@0"}
+    [unnamed] = lean_routes.rows("diagnose", [{"id": "v"}])
+    assert unnamed == {"id": "v", "status": "error", "error": "InvalidInput: a diagnose case names its unit"}
+    with pytest.raises(VEError):
+        lean_routes.diagnose_text("demo@0", '[{"id": "ok", "doc": null}]')
     deep = '{"id": "deep", "doc": ' + "[" * 300 + "]" * 300 + "}"
-    bad = call("demo@0", "[" + deep + ', {"id": "fine"}]')
-    assert bad.returncode == 1
-    rows = json.loads(bad.stdout)
+    rows = lean_routes.diagnose_text("demo@0", "[" + deep + ', {"id": "fine"}]')
     assert rows[0] == {"status": "error", "case_index": 0, "error": "ResourceLimit: JSON depth exceeds 256"}
     assert rows[1]["status"] == "ok" and rows[1]["outcome"] == "fault"
 
 
 def test_diagnostic_only_import_rule():
-    """Spec 7.3 and fixture L14: only the engine's own modules, `DiagnoseMain` and (the engine only) `VE.Audit`
-    may import `VE.WireContract.*`; the tree keeps the rule."""
+    """Spec 7.3 and fixture L14: only the engine's own modules, `DiagnoseMain`, the service's diagnose mode
+    `VE.Service.Diagnose` and (the engine only) `VE.Audit` may import `VE.WireContract.*`; the tree keeps the
+    rule."""
     assert diagnostic_only_violation("VE.SoftNorms.Run", "VE.WireContract.Engine")
     assert diagnostic_only_violation("VE", "VE.WireContract.Table")
     assert diagnostic_only_violation("VE.Audit", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("Main", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("VE.Audit", "VE.WireContract.Engine") is None
     assert diagnostic_only_violation("DiagnoseMain", "VE.WireContract.Diagnose") is None
+    assert diagnostic_only_violation("VE.Service.Diagnose", "VE.WireContract.Diagnose") is None
+    assert diagnostic_only_violation("VE.Service.Protocol", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("VE.WireContract.Diagnose", "VE.WireContract.Engine") is None
     assert diagnostic_only_violation("VE.SoftNorms.Run", "VE.WireContracts") is None
     lean = ROOT / "lean"
