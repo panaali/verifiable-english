@@ -3,8 +3,8 @@
 Stage 1 of docs/spec/SEMANTICS-MIGRATION-PLAN.md. The service speaks JSON lines: a
 handshake line, then one response line per request line. A request is one batch of
 cases for one mode, and each result is exactly what the one-shot runner for that mode
-prints for the case (`lean/VE/Service/Protocol.lean`). Nothing in `ve` calls this
-module yet: no Python semantics is switched.
+prints for the case (`lean/VE/Service/Protocol.lean`). `relay.py` is its one caller in `ve`;
+since lean-first batch 1 every statement-layer route is a mode of this service.
 
 Failure classes:
 
@@ -30,9 +30,17 @@ Every field must also be well formed (`lean_service_schema/`, compiled by
 `service_schema.py`). Content that preserves binding, such as the targets inside one
 norms result, is the service's responsibility and is not checked here.
 
-Supervision: an address-space limit on the process, a per-batch timeout (5 s
-interactive, 60 s for batch callers), recycling after a number of requests or above
-an RSS threshold, and a small pool.
+Supervision: an address-space limit on the process, a deadline per request, recycling
+after a number of requests or above an RSS threshold, and a small pool.
+
+Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
+(`DEADLINES`): CPU seconds of the service process, a base plus a share per MiB of cases,
+measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
+wall-clock seconds. Load on the host therefore does not stop a request; a request that needs
+more CPU than its deadline is `CheckerUnavailable` naming its mode, and is not retried, since
+the same request needs the same work. A request that is given a `timeout` has that wall-clock
+limit instead, as before. Every request also has a wall-clock cap, `WALL_FACTOR` times its CPU
+deadline, for a process that stops being scheduled.
 """
 from __future__ import annotations
 
@@ -61,8 +69,6 @@ MAX_LINE_BYTES = 16 * 1024 * 1024
 MAX_CASES = 4096
 BATCH_CASES = 256
 BATCH_BYTES = 4 * 1024 * 1024
-INTERACTIVE_TIMEOUT = 5.0
-BATCH_TIMEOUT = 60.0
 STARTUP_TIMEOUT = 30.0
 ADDRESS_SPACE = 4 << 30
 MAX_RSS = 2 << 30
@@ -72,8 +78,57 @@ MAX_RESPONSE_BYTES = 1 << 30
 ENVELOPE_BYTES = 1024
 
 
+# CPU seconds per request by mode: (base, per MiB of cases). The core modes kept the flat 5 s
+# limit before; their measured CPU is 0.5–1.6 ms per case at the median and about 0.8 ms per KiB of
+# environment re-sent with each case (LEAN-FIRST-PLAN 3.3, 3.4), so 5 s plus 30 s per MiB is
+# over 30 times what a full 4 MiB batch measured. The statement-layer routes keep their one-shot
+# callers' limits as the base (120 s, reports and quantity 60 s, alternatives and risk 180 s,
+# discourse 300 s) with a share per MiB above their measured CPU: about 1.3 s per MiB for soft
+# norms, 100 s per MiB for the rights chain (2.2–2.9 s per 28 KiB document). The readings
+# route's share is the exception: the UDHR document needs about 2,300 s per MiB (3.5), and
+# its deadline (120 s plus 240 s per MiB) keeps it unavailable until F5 is built.
+_CORE = (5.0, 30.0)
+DEADLINES: dict[str, tuple[float, float]] = {
+    **{mode: _CORE for mode in ("evaluate", "check-certificate", "order", "route", "norms", "english",
+                                "environment", "model", "check", "identity", "parse", "graph", "readings",
+                                "bundle", "family-norms")},
+    "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),
+    "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
+    "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
+    "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
+}
+WALL_FACTOR = 10.0
+_MIB = 1 << 20
+
+
+def deadline(mode: str, size: int) -> float:
+    """CPU seconds a request of `mode` with `size` bytes of cases may use (`DEADLINES`)."""
+    base, per_mib = DEADLINES[mode]
+    return base + per_mib * size / _MIB
+
+
+def _cpu_seconds(pid: int) -> float | None:
+    """CPU time (user and system) of process `pid`, or None where /proc does not report it."""
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as f:
+            fields = f.read().rsplit(b")", 1)[1].split()
+    except (OSError, IndexError):
+        return None
+    # Fields 14 and 15 (utime, stime) are the 12th and 13th after the command name.
+    return (int(fields[11]) + int(fields[12])) / os.sysconf("SC_CLK_TCK")
+
+
 class _Failure(Exception):
     """An operational failure of one process; the supervisor restarts it."""
+
+
+class _Deadline:
+    """When a request must be answered: by `wall` (monotonic), and, if `cpu` is set, before
+    the process has used `cpu` more seconds of CPU than `start` (its CPU time at the request)."""
+    __slots__ = ("wall", "cpu", "start", "mode")
+
+    def __init__(self, wall: float, cpu: float | None = None, start: float | None = None, mode: str = ""):
+        self.wall, self.cpu, self.start, self.mode = wall, cpu, start, mode
 
 
 def _decode_json(line: bytes) -> object:
@@ -198,7 +253,7 @@ class LeanService:
     """One supervised `ve_service` process. Thread-safe; one batch in flight at a time."""
 
     def __init__(self, executable: str | os.PathLike | None = None, *,
-                 timeout: float = INTERACTIVE_TIMEOUT, startup_timeout: float = STARTUP_TIMEOUT,
+                 timeout: float | None = None, startup_timeout: float = STARTUP_TIMEOUT,
                  address_space: int | None = ADDRESS_SPACE, max_requests: int = MAX_REQUESTS,
                  max_rss: int | None = MAX_RSS, expected_sha256: str | None = None,
                  allow_unlisted_build: bool = False,
@@ -305,7 +360,7 @@ class LeanService:
             self._buffer.clear()
             self._served, self._recycle = 0, False
             self.stats["starts"] += 1
-            line = self._read_line(time.monotonic() + self.startup_timeout)
+            line = self._read_line(_Deadline(time.monotonic() + self.startup_timeout))
             handshake = _decode_json(line)
             try:
                 check_handshake(handshake)
@@ -345,6 +400,19 @@ class LeanService:
                 self._stderr = None
             self._buffer.clear()
 
+    def stderr(self, start: int = 0) -> tuple[int, str]:
+        """The current process's standard error from byte `start` on, and its length: what a
+        one-shot runner would have printed there (Lean's `PANIC` messages, for example)."""
+        if self._stderr is None:
+            return 0, ""
+        try:
+            self._stderr.seek(0, os.SEEK_END)
+            size = self._stderr.tell()
+            self._stderr.seek(min(start, size))
+            return size, self._stderr.read().decode(errors="replace")
+        except (OSError, ValueError):
+            return 0, ""
+
     def _stderr_tail(self) -> str:
         if self._stderr is None:
             return ""
@@ -358,16 +426,31 @@ class LeanService:
 
     # Framing
 
-    def _write_all(self, data: bytes, deadline: float) -> None:
+    def _wait(self, deadline: _Deadline, what: str) -> float:
+        """Seconds to wait before `deadline` is checked again; raises once it has passed. A CPU
+        deadline is checked at least as often as the process could have used up what is left of
+        it (it runs one thread)."""
+        remaining = deadline.wall - time.monotonic()
+        if remaining <= 0:
+            raise _Failure(f"timeout {what}" + (f" (mode {deadline.mode})" if deadline.mode else ""))
+        if deadline.cpu is None:
+            return remaining
+        used = _cpu_seconds(self._proc.pid)
+        if used is not None and used - deadline.start > deadline.cpu:
+            self._stop(graceful=False)
+            raise CheckerUnavailable(
+                f"CheckerUnavailable: the Lean service mode {deadline.mode} used more than its deadline "
+                f"of {deadline.cpu:.6g} s of CPU", operation=deadline.mode, backend="lean")
+        left = deadline.cpu if used is None else deadline.cpu - (used - deadline.start)
+        return min(remaining, max(left, 0.01))
+
+    def _write_all(self, data: bytes, deadline: _Deadline) -> None:
         fd = self._proc.stdin.fileno()
         view = memoryview(data)
         with selectors.DefaultSelector() as sel:
             sel.register(fd, selectors.EVENT_WRITE)
             while view:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise _Failure("timeout writing the request")
-                if not sel.select(remaining):
+                if not sel.select(self._wait(deadline, "writing the request")):
                     continue
                 try:
                     written = os.write(fd, view)
@@ -377,7 +460,7 @@ class LeanService:
                     raise _Failure(f"service input closed: {exc}") from None
                 view = view[written:]
 
-    def _read_line(self, deadline: float) -> bytes:
+    def _read_line(self, deadline: _Deadline) -> bytes:
         fd = self._proc.stdout.fileno()
         with selectors.DefaultSelector() as sel:
             sel.register(fd, selectors.EVENT_READ)
@@ -389,10 +472,7 @@ class LeanService:
                     return line
                 if len(self._buffer) > MAX_RESPONSE_BYTES:
                     raise _Failure("response line exceeds the size limit")
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise _Failure("timeout waiting for the response")
-                if not sel.select(remaining):
+                if not sel.select(self._wait(deadline, "waiting for the response")):
                     continue
                 try:
                     chunk = os.read(fd, 1 << 20)
@@ -407,9 +487,21 @@ class LeanService:
         return ('{"id":' + json.dumps(nonce) + ',"mode":' + json.dumps(mode) + ',"budget":'
                 + json.dumps(budget, separators=(",", ":")) + ',"cases":' + cases_text + "}\n").encode()
 
-    def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float,
+    def _deadline(self, mode: str, size: int, timeout: float | None) -> _Deadline:
+        """The request's deadline: `timeout` wall-clock seconds when given, else its mode's
+        CPU deadline (`deadline`) with the wall-clock cap; wall-clock alone where the CPU time
+        of the process is not reported."""
+        if timeout is not None:
+            return _Deadline(time.monotonic() + timeout, mode=mode)
+        cpu = deadline(mode, size)
+        start = _cpu_seconds(self._proc.pid)
+        if start is None:
+            return _Deadline(time.monotonic() + cpu, mode=mode)
+        return _Deadline(time.monotonic() + WALL_FACTOR * cpu, cpu, start, mode)
+
+    def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float | None,
                    nonce: str, line: bytes, texts: list[str] | None) -> tuple[bytes, dict]:
-        deadline = time.monotonic() + timeout
+        deadline = self._deadline(mode, len(cases_text.encode()), timeout)
         self._write_all(line, deadline)
         raw = self._read_line(deadline)
         try:
