@@ -225,16 +225,42 @@ def request_context(nonce: str, mode: str, cases_text: str, count: int,
 _hashes: dict[tuple, str] = {}
 
 
+_HEX64 = re.compile(r"[0-9a-f]{64}")
+
+
 def executable_sha256(path: Path) -> str:
-    """SHA-256 of the executable file, cached while its filesystem identity is unchanged."""
+    """SHA-256 of the executable file, cached while its filesystem identity (device, inode, size,
+    modification and change times) is unchanged: in this process, and across processes in the sidecar
+    `<executable>.sha256-cache` (docs/LEAN-FIRST-PLAN.md section 4: hashing the 180 MiB service binary cost
+    every CLI process about 0.2 s of CPU). Any write to the executable changes its change time, so a
+    replaced or edited binary is hashed again; a sidecar that cannot be read or written is ignored."""
     st = path.stat()
     key = (str(path), st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
     if key not in _hashes:
-        digest = hashlib.sha256()
-        with path.open("rb") as f:
-            for block in iter(lambda: f.read(1 << 20), b""):
-                digest.update(block)
-        _hashes[key] = digest.hexdigest()
+        sidecar = path.with_name(path.name + ".sha256-cache")
+        try:
+            cached = json.loads(sidecar.read_text())
+        except (OSError, ValueError):
+            cached = None
+        if (type(cached) is dict and cached.get("key") == list(key) and type(cached.get("sha256")) is str
+                and _HEX64.fullmatch(cached["sha256"])):
+            _hashes[key] = cached["sha256"]
+        else:
+            digest = hashlib.sha256()
+            with path.open("rb") as f:
+                for block in iter(lambda: f.read(1 << 20), b""):
+                    digest.update(block)
+            _hashes[key] = digest.hexdigest()
+            written = None
+            try:
+                with tempfile.NamedTemporaryFile("w", dir=sidecar.parent, prefix=sidecar.name,
+                                                 delete=False) as out:
+                    written = out.name
+                    json.dump({"key": list(key), "sha256": _hashes[key]}, out)
+                os.replace(written, sidecar)
+            except OSError:
+                if written is not None:
+                    Path(written).unlink(missing_ok=True)
     return _hashes[key]
 
 

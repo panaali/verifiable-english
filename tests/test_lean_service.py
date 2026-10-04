@@ -625,6 +625,34 @@ def test_every_mode_has_a_deadline_that_grows_with_its_input():
     assert deadline("readings-route", 500_000) < 2300 * 500_000 / (1 << 20)
 
 
+def test_the_executable_digest_is_reused_across_processes_until_the_file_changes(tmp_path, monkeypatch):
+    """The client's SHA-256 of the service binary is cached beside it by the file's identity, so a new
+    process does not read the binary again; a write to the binary or a sidecar for another identity is
+    a miss, and the digest is the file's."""
+    import hashlib
+    from ve.backends import lean_service
+    binary = tmp_path / "service"
+    binary.write_bytes(b"first build")
+    monkeypatch.setattr(lean_service, "_hashes", {})
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"first build").hexdigest()
+    sidecar = tmp_path / "service.sha256-cache"
+    assert json.loads(sidecar.read_text())["sha256"] == hashlib.sha256(b"first build").hexdigest()
+    monkeypatch.setattr(lean_service, "_hashes", {})  # a new process
+    real_open = Path.open
+    monkeypatch.setattr(Path, "open", lambda path, *a, **k: (_ for _ in ()).throw(AssertionError("read"))
+                        if path == binary else real_open(path, *a, **k))
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"first build").hexdigest()
+    monkeypatch.setattr(Path, "open", real_open)
+    binary.write_bytes(b"second build")
+    monkeypatch.setattr(lean_service, "_hashes", {})
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"second build").hexdigest()
+    forged = json.loads(sidecar.read_text())
+    sidecar.write_text(json.dumps({"key": [*forged["key"][:-1], 0], "sha256": "0" * 64}))
+    monkeypatch.setattr(lean_service, "_hashes", {})
+    assert lean_service.executable_sha256(binary) == hashlib.sha256(b"second build").hexdigest()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["service", "service.sha256-cache"]
+
+
 def test_one_retry_recovers_a_hung_batch(tmp_path):
     with LeanService(fake(tmp_path, "flaky"), timeout=0.5, allow_unlisted_build=True) as service:
         assert service.run("evaluate", [{"id": "a", "ast": [["top"]]},
