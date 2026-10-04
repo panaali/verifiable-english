@@ -115,17 +115,6 @@ def shift(formula, amount=1):
     return map_free(formula, lambda i: ast.Var(i + amount))
 
 
-def substitute(formula, replacement):
-    """Capture-avoiding substitution of free indices through registered nodes."""
-    from .surface.registry import by_node
-    record = by_node(formula)
-    if record is not None and record.traversal_hooks is not None:
-        hook = record.traversal_hooks.get("substitute")
-        if hook is not None:
-            return hook(formula, replacement)
-    return map_free(formula, replacement)
-
-
 def edge_at(edge, source, destination):
     if type(edge) is ast.Named:
         return ast.Binary(edge.relation, source, destination)
