@@ -1124,12 +1124,12 @@ def compare_rejected():
         rows += json.loads(run.stdout)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong rejected row count")
+    offset = len(rejected_sources())
     for i, (row, (error, code)) in enumerate(zip(rows, expected)):
         if row.get("status") != "error" or row.get("code") != code:
             raise AssertionError((i, error, code, row))
-        if i < len(rejected_sources()) and row.get("error") != error:
+        if i < offset and row.get("error") != error:
             raise AssertionError((i, error, row))
-    offset = len(rejected_sources())
     for i, (name, _, _, table_code) in enumerate(named):
         if expected[offset + i][1] != table_code:
             raise AssertionError((name, table_code, expected[offset + i]))
