@@ -144,8 +144,7 @@ def okRow (row case : Json) (required : List String) (optional : List String := 
   need (isField case "id" (.str id)) "id is not the request's"
 
 def errorRow (row case : Json) (extra : List String) : Check := do
-  shape row (["id", "status", "error"] ++ extra) ["generator"]
-  if let .ok g := row.getObjVal? "generator" then string g
+  shape row (["id", "status", "error"] ++ extra) []
   need (isField row "status" (.str "error")) "status"
   need ((← field row "id") == case.getObjValD "id") "id is not the request's"
   text (← field row "error")
@@ -575,14 +574,16 @@ def englishItem (j case : Json) : Check := do
     need (formulas.any (!·.isEmpty)) "checked without formulas"
   else need (rendered.isNull && !(← (← field j "roundtrip").getBool?)) "rendering or roundtrip without a check"
 
-/-- The content invariants of one decoded result (case errors have none but their code: the
-code of the message, `Service.Protocol.rejectionCode`). -/
-def row (mode : String) (r case : Json) (_index : Nat) : Check := do
+/-- The coding beside a rejection is its message's: `Service.Protocol.codeMembers`. -/
+def coding (b r : Json) : Check := do
   if let .ok (.str m) := r.getObjVal? "error" then
-    need (r.getObjValD "code" == .str (VE.Service.rejectionCode m)) "code is not the message's"
-    need (r.getObjValD "generator" == match VE.Route.Run.generatorOf m with
+    need (b.getObjValD "code" == .str (VE.Service.rejectionCode m)) "code is not the message's"
+    need (b.getObjValD "generator" == match VE.Route.Run.generatorOf m with
       | some g => .str g
       | none => .null) "generator is not the message's"
+
+/-- The content invariants of one decoded result (case errors have none). -/
+def row (mode : String) (r case : Json) (_index : Nat) : Check := do
   if has r "case_index" then return
   let ok := isField r "status" (.str "ok")
   match mode with
@@ -609,21 +610,19 @@ def row (mode : String) (r case : Json) (_index : Nat) : Check := do
 
 end Invariants
 
-/-- `Service.Protocol.coded`: a rejection carries a public diagnostic code, which the mode's
-row check does not see (the runners' rows have none); any other result carries no code. -/
-def uncoded (x : Json) : Except String Json := do
-  if isField x "status" (.str "error") then
-    need (VE.Service.rejectionCodes.contains (← (← field x "code").getStr?)) "code is not a public code"
-    match x with
-    | .obj kvs => pure (.obj (kvs.erase (cmp := compare) "code"))
-    | _ => throw "result is not an object"
-  else
-    need (!has x "code") "code on a result that is not a rejection"
-    pure x
+/-- `Service.Protocol.coding`: beside a rejection (an error row with a text `error`), a public
+diagnostic code and possibly a generator name; beside any other result, neither. -/
+def coding (b result : Json) : Check := do
+  if isField result "status" (.str "error") && (result.getObjValD "error").getStr?.toBool then
+    need (VE.Service.rejectionCodes.contains (← (← field b "code").getStr?)) "code is not a public code"
+    if let .ok g := b.getObjVal? "generator" then string g
+  else need (!has b "code" && !has b "generator") "code beside a result that is not a rejection"
 
-/-- `Service.Protocol.bound`: result `i` carries position `i` and the digest of case `i`. -/
+/-- `Service.Protocol.bound`: result `i` carries position `i` and the digest of case `i`, and
+the coding of a rejection. -/
 def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
-  shape b ["index", "digest", "result"] []
+  shape b ["index", "digest", "result"] ["code", "generator"]
+  coding b (← field b "result")
   need ((← (← field b "index").getNat?) == index) "index is not the result's position"
   hex64 (← field b "digest")
   need ((← field b "digest") == digest) "digest is not the case's"
@@ -631,8 +630,8 @@ def bound (b : Json) (index : Nat) (digest : Json) : Except String Json := do
 
 /-- `Service.Protocol`: a request error bound to the request's mode and case digests
 (`requestError`), or one bound result per case with exact counts; `content` is applied to
-each result with its case and position. -/
-def response (mode : String) (request r : Json) (content : Json → Json → Nat → Check) : Check := do
+each bound entry and its result, with its case and position. -/
+def response (mode : String) (request r : Json) (content : Json → Json → Json → Nat → Check) : Check := do
   let nonce ← field request "id"
   if isField r "status" (.str "error") then
     shape r ["id", "status", "mode", "digests", "error", "code"] []
@@ -653,7 +652,7 @@ def response (mode : String) (request r : Json) (content : Json → Json → Nat
     let mut rows := #[]
     for i in [:results.size] do
       match bound results[i]! i digests[i]! >>= fun x => do
-          row mode (← uncoded x) cases[i]! i; content x cases[i]! i; pure x with
+          row mode x cases[i]! i; content results[i]! x cases[i]! i; pure x with
       | .ok x => rows := rows.push x
       | .error m => throw s!"result {i}: {m}"
     let counts ← field r "counts"
@@ -663,16 +662,21 @@ def response (mode : String) (request r : Json) (content : Json → Json → Nat
     let errors := (rows.filter (fun x => isField x "status" (.str "error"))).size
     need ((← (← field counts "errors").getNat?) == errors) "counts.errors"
 
-def verdict (check : Json → Json → Nat → Check) (mode : String) (request r : Json) : Json :=
+def verdict (check : Json → Json → Json → Nat → Check) (mode : String) (request r : Json) : Json :=
   match response mode request r check with
   | .ok () => .str "accept"
   | .error m => .str s!"reject: {m}"
 
-def noContent (_ _ : Json) (_ : Nat) : Check := pure ()
+def noContent (_ _ _ : Json) (_ : Nat) : Check := pure ()
 
-def contentCheck (mode : String) : Json → Except String (Json → Json → Nat → Check)
+/-- The invariants of one bound result: its coding, then its row's. -/
+def invariants (mode : String) (b r case : Json) (index : Nat) : Check := do
+  Invariants.coding b r
+  Invariants.row mode r case index
+
+def contentCheck (mode : String) : Json → Except String (Json → Json → Json → Nat → Check)
   | .null | .str "decode" => .ok noContent
-  | .str "invariants" => .ok (Invariants.row mode)
+  | .str "invariants" => .ok (invariants mode)
   | c => .error s!"unknown check {c.compress}"
 
 def line (text : String) : Except String Json := do

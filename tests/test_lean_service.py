@@ -290,10 +290,10 @@ def test_english_consumed_number_keeps_one_shot_decoding(service_executable, num
         _, response = service.exchange("english", "[" + raw + "]", 1)
     expected = (json.loads(one_shot.stdout) if one_shot.returncode == 0 else
                 {"status": "error", "error": one_shot.stderr.decode().strip()})
-    [row] = results(response)
-    # The service adds the rejection's code (Service.Protocol.coded); the one-shot runner has none.
-    assert {k: v for k, v in row.items() if k != "code"} == expected
-    assert ("code" in row) == (expected.get("status") == "error") and row.get("code", "InvalidInput") in CODES
+    assert results(response) == [expected]
+    # Beside a rejection the service sets its code (Service.Protocol.coding); the row is the runner's.
+    [entry] = response["results"]
+    assert ("code" in entry) == (expected.get("status") == "error") and entry.get("code", "InvalidInput") in CODES
 
 
 def test_english_ignored_large_integer_matches_one_shot(service_executable):
@@ -420,7 +420,8 @@ def bind(rows, line):
     body = line.split(',"cases":', 1)[1].rstrip()[:-1].strip()
     texts = [json.dumps(c, ensure_ascii=False, separators=(",", ":")) for c in json.loads(body)]
     return [{"index": i, "digest": hashlib.sha256(texts[i].encode()).hexdigest() if i < len(texts) else "0" * 64,
-             "result": row} for i, row in enumerate(rows)]
+             "result": row, **({"code": "InvalidInput"} if isinstance(row, dict) and row.get("status") == "error"
+                               and isinstance(row.get("error"), str) else {})} for i, row in enumerate(rows)]
 
 
 def placeholders(value, line):
@@ -838,7 +839,7 @@ def test_evaluation_response_requires_one_value_per_formula(tmp_path, mode, valu
 @pytest.mark.parametrize("mode", ["evaluate", "check-certificate", "order", "route", "norms"])
 def test_nested_boolean_id_substitution_is_operational_failure(tmp_path, mode):
     case = {"id": {"nested": [0]}}
-    row = {"id": {"nested": [False]}, "status": "error", "error": "rejected", "code": "InvalidInput"}
+    row = {"id": {"nested": [False]}, "status": "error", "error": "rejected"}
     if mode in ("check-certificate", "order"):
         row["valid"] = False
     _scripted_response_rejected(tmp_path, mode, case, row)

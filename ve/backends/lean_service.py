@@ -507,15 +507,20 @@ class LeanService:
         if response.get("status") == "error":
             from .relay import rejection  # relay.py builds on this client
             raise rejection(response["code"], response["error"])
-        return [bound["result"] for bound in response["results"]]
+        return response["results"]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        """The bound entries for `cases`, in order: each runner result with, beside a rejection,
+        its `code` (and `generator`). Batches above the adapter caps (256 cases or 4 MiB) are
+        split into several requests; each is one timeout unit."""
+        entries: list = []
+        for chunk in self._chunks(_texts(cases)):
+            entries.extend(self._run_chunk(mode, chunk, timeout))
+        return entries
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
-        """The runner results for `cases`, in order. Batches above the adapter caps (256
-        cases or 4 MiB) are split into several requests; each is one timeout unit."""
-        results: list = []
-        for chunk in self._chunks(_texts(cases)):
-            results.extend(self._run_chunk(mode, chunk, timeout))
-        return results
+        """The runner results for `cases`, in order (`run_bound` without the bindings)."""
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
 
 
 def _texts(cases: list) -> list[str]:
@@ -551,9 +556,12 @@ class LeanServicePool:
             self._idle.put(service)
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         chunks = list(self._services[0]._chunks(_texts(cases), parts=len(self._services)))
         if len(chunks) <= 1:
-            return self._on_idle(lambda service: service.run(mode, cases, timeout=timeout))
+            return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
         answers: list = [None] * len(chunks)
         pending = iter(range(len(chunks)))
         claim = threading.Lock()

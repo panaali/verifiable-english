@@ -101,36 +101,30 @@
         "kinds": {"type": "array", "items": {"$ref": "#/$defs/kind"}, "x-equals": "/document/units/*/kind"}}},
 
     "case_error": {"$comment": "Service.Protocol.caseError: a case the batch decoder rejected on its own.",
-      "type": "object", "required": ["status", "case_index", "error", "code"], "additionalProperties": false,
+      "type": "object", "required": ["status", "case_index", "error"], "additionalProperties": false,
       "properties": {
         "status": {"const": "error"},
         "case_index": {"type": "integer", "x-index": true},
-        "error": {"$ref": "#/$defs/text"},
-        "code": {"$ref": "#/$defs/code"}}},
+        "error": {"$ref": "#/$defs/text"}}},
     "case_error_valid": {"$comment": "Service.Protocol.caseError for check-certificate and order.",
-      "type": "object", "required": ["status", "case_index", "error", "valid", "code"], "additionalProperties": false,
+      "type": "object", "required": ["status", "case_index", "error", "valid"], "additionalProperties": false,
       "properties": {
         "status": {"const": "error"},
         "case_index": {"type": "integer", "x-index": true},
         "error": {"$ref": "#/$defs/text"},
-        "code": {"$ref": "#/$defs/code"},
         "valid": {"const": false}}},
-    "error": {"$comment": "A case the runner rejected: the request's id (null if absent), the message, its code and the generator an InvalidModel(generator) message names (Service.Protocol.coded).",
-      "type": "object", "required": ["id", "status", "error", "code"], "additionalProperties": false,
+    "error": {"$comment": "A case the runner rejected: the request's id (null if absent) and the message.",
+      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
       "properties": {
         "id": {"x-echo": "/id"},
         "status": {"const": "error"},
-        "error": {"$ref": "#/$defs/text"},
-        "code": {"$ref": "#/$defs/code"},
-        "generator": {"type": "string"}}},
+        "error": {"$ref": "#/$defs/text"}}},
     "error_valid": {"$comment": "The same with valid: false (CertificateWire and Order.Surface runCaseReported).",
-      "type": "object", "required": ["id", "status", "error", "valid", "code"], "additionalProperties": false,
+      "type": "object", "required": ["id", "status", "error", "valid"], "additionalProperties": false,
       "properties": {
         "id": {"x-echo": "/id"},
         "status": {"const": "error"},
         "error": {"$ref": "#/$defs/text"},
-        "code": {"$ref": "#/$defs/code"},
-        "generator": {"type": "string"},
         "valid": {"const": false}}},
     "no_kind": {"$comment": "Selector over the request case: no kind field.", "type": "object", "not": {"required": ["kind"]}}
   }

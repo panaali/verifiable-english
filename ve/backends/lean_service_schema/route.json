@@ -25,12 +25,11 @@
       "label": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "label"}}},
       "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}}},
     "error": {"$comment": "Route.Run.runCaseReported: the generator of an InvalidModel message (generatorOf, the service's); valid: false iff the request kind is certificate.",
-      "type": "object", "required": ["id", "status", "error", "code"], "additionalProperties": false,
+      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
       "properties": {
         "id": {"x-echo": "/id"},
         "status": {"const": "error"},
         "error": {"$ref": "common.json#/$defs/text"},
-        "code": {"$ref": "common.json#/$defs/code"},
         "generator": {"type": "string"},
         "valid": {"const": false}},
       "if": {"x-case": {"$ref": "#/$defs/kind/certificate"}},
