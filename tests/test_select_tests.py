@@ -315,6 +315,8 @@ def recorder_run(tmp_path, program: str) -> dict:
     (root / "data.json").write_text("{}")
     (root / "main.py").write_text(program)
     (root / "child.py").write_text("import lib\nlib.in_child()\n")
+    (root / "fixtures").mkdir()
+    (root / "fixtures/case.json").write_text("{}")
     (root / "start.py").write_text(
         f"import runpy, sys\nsys.path.insert(0, {str(ROOT / 'tools')!r})\nimport test_map_recorder\n"
         "test_map_recorder.start()\nsys.path.pop(0)\nsys.path.insert(0, '.')\n"
@@ -322,7 +324,8 @@ def recorder_run(tmp_path, program: str) -> dict:
     env = {"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root)}
     subprocess.run([sys.executable, "start.py", "main.py"], cwd=root, env=env, check=True,
                    timeout=HANG_TIMEOUT)
-    tracked = ({p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()}, {"."})
+    tracked = ({p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()},
+               {".", *(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_dir())})
     return test_map.read_unit(out, tracked)
 
 
@@ -332,6 +335,7 @@ def test_recorder_sees_functions_reads_and_children(tmp_path):
         import lib
         lib.used()
         json.load(open("data.json"))
+        os.listdir("fixtures")
         try:
             lib.noisy()
         except ValueError:
@@ -349,6 +353,7 @@ def test_recorder_sees_functions_reads_and_children(tmp_path):
     assert functions == {"<module>", "used", "in_child", "in_fork", "noisy"}
     assert "data.json" in result["r"]
     assert "lib.py" not in result["r"]  # imports, tracebacks and warnings read source, not data
+    assert result["d"] == {"fixtures"}  # the import system's listing of "." is not the test's
     assert result["opaque"] == []
 
 
