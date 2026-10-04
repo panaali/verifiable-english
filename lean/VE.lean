@@ -1,4 +1,5 @@
 import VE.Audit
+import VE.Grammar.Table
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content

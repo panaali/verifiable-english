@@ -127,6 +127,7 @@ import VE.Readings.Examples
 import VE.Readings.Wire
 import VE.Readings.Run
 import VE.WireContract.Engine
+import VE.Grammar.Derives
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -3125,3 +3126,20 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.WireContract.instances_views
 #print axioms VE.WireContract.findSome_congr_reached
 #print axioms VE.WireContract.run_congr_reached
+-- english-lean (docs/spec/english-lean.md 5.9): the grammar engine and the English instance.
+#print axioms VE.Grammar.yieldAll_nil
+#print axioms VE.Grammar.yieldAll_cons
+#print axioms VE.Grammar.yield_leaf
+#print axioms VE.Grammar.yield_node
+#print axioms VE.Grammar.derivesAll_nil_nil
+#print axioms VE.Grammar.derivesAll_cons
+#print axioms VE.Grammar.derivesAll_nil_cons
+#print axioms VE.Grammar.derivesAll_cons_nil
+#print axioms VE.Grammar.derives_leaf
+#print axioms VE.Grammar.derives_node
+#print axioms VE.Grammar.derives_leaf_n
+#print axioms VE.Grammar.derives_node_t
+#print axioms VE.Grammar.rule_wf_of_mem
+#print axioms VE.Grammar.rhs_ne_nil_of_mem
+#print axioms VE.Grammar.yield_ne_nil_of
+#print axioms VE.Grammar.yield_ne_nil
