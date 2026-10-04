@@ -88,7 +88,7 @@ class _Parser:
         if text == "-0" or (self.i + len(text) < len(self.s) and self.s[self.i + len(text)].isdigit()):
             self.error("non-canonical integer numeral", start)
         self.i = match.end()
-        return int(text)
+        return ast.numeral_value(text)
 
     def term(self, depth: int = 1):
         start = self.i

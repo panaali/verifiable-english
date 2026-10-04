@@ -178,13 +178,55 @@ MAX_NUMERAL_CHARS = 40
 _DECIMAL = re.compile(r"-?(?:0|[1-9][0-9]*)\Z", re.ASCII)
 
 
+# Python's `int(str)` and `str(int)` refuse numbers of more than `sys.get_int_max_str_digits()` digits
+# (4,300 by default, 640 at the least) with a bare ValueError. Every conversion of input text goes
+# through `numeral_value` (a numeral: the 40-character bound first) or `decimal_value` (an index that
+# Lean reads as an unbounded Nat); `tests/test_numeral_conversion.py` holds every other `int(` call
+# in `ve/` to a reviewed list.
+_BLOCK = 600
+_BLOCK_BASE = 10 ** _BLOCK
+
+
+def _fits_numeral(value: int) -> bool:
+    """`len(str(value)) <= MAX_NUMERAL_CHARS`, without converting a value of any size to text."""
+    return -10 ** (MAX_NUMERAL_CHARS - 1) < value < 10 ** MAX_NUMERAL_CHARS
+
+
 def integer_value(value) -> int:
     """Validate a Python integer used as a numeral or coefficient (not Boolean)."""
     if type(value) is not int:
         raise TypeMismatch("Integer literals must be Python int values (not Boolean)")
-    if len(str(value)) > MAX_NUMERAL_CHARS:
+    if not _fits_numeral(value):
         raise ResourceLimit(f"Integer literal exceeds {MAX_NUMERAL_CHARS} characters")
     return value
+
+
+def numeral_value(text: str) -> int:
+    """The value of a numeral already matched as optional minus and ASCII digits: the length bound
+    is checked before conversion, so a long numeral is a ResourceLimit at any digit limit."""
+    if len(text) > MAX_NUMERAL_CHARS:
+        raise ResourceLimit(f"Integer literal exceeds {MAX_NUMERAL_CHARS} characters")
+    return int(text)
+
+
+def decimal_value(digits: str) -> int:
+    """The value of a run of ASCII digits of any length (Lean's `String.toNat?` on an index)."""
+    value = 0
+    for k in range(0, len(digits), _BLOCK):
+        block = digits[k:k + _BLOCK]
+        value = value * 10 ** len(block) + int(block)
+    return value
+
+
+def decimal_text(value: int) -> str:
+    """The decimal text of an integer of any size: the inverse of `decimal_value`, with a sign."""
+    if value < 0:
+        return "-" + decimal_text(-value)
+    blocks = []
+    while value >= _BLOCK_BASE:
+        value, low = divmod(value, _BLOCK_BASE)
+        blocks.append(f"{low:0{_BLOCK}d}")
+    return str(value) + "".join(reversed(blocks))
 
 
 def decimal_from_wire(text) -> int:
@@ -195,7 +237,7 @@ def decimal_from_wire(text) -> int:
         raise ResourceLimit(f"Integer literal exceeds {MAX_NUMERAL_CHARS} characters")
     if not _DECIMAL.match(text) or text == "-0":
         raise SyntaxError(f"Non-canonical integer literal {text!r}")
-    return int(text)
+    return numeral_value(text)
 
 
 def decimal_to_wire(value: int) -> str:

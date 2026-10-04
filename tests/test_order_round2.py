@@ -134,6 +134,10 @@ def test_order_source_limit_boundaries_three_way(rust_executable, lean_executabl
         (f"for every item {name64}a, (true).\n", False),
         (f"for every item {numeric_name64}9, (true).\n", False),
         (f"{'9' * 41} < 0.\n", False),
+        # past Python's lowest and default digit limits (english-lean looprecheck1, finding 1)
+        (f"{'9' * 641} < 0.\n", False),
+        (f"-{'9' * 4301} < 0.\n", False),
+        (f"[{'9' * 4301} * @n] < 0.\n", False),
     ]
     rust_cases = [{"id": str(i), "environment": base["environment"], "source": source}
                   for i, (source, _) in enumerate(sources)]
