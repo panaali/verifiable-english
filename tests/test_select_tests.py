@@ -10,6 +10,7 @@ import ast
 import json
 import os
 from pathlib import Path
+import posixpath
 import subprocess
 import sys
 import textwrap
@@ -35,6 +36,8 @@ def private_cache(tmp_path_factory, monkeypatch):
     monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path_factory.getbasetemp() / "cache"))
     monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path_factory.getbasetemp() / "maps"))
     monkeypatch.delenv("VE_TESTMAP", raising=False)
+    # The synthetic library lives in `pkg/`; outside the known areas any file would change everything.
+    monkeypatch.setattr(select_tests, "KNOWN_AREAS", select_tests.KNOWN_AREAS | {"pkg"})
 
 
 def code_qualnames(source: str) -> set[str]:
@@ -632,10 +635,14 @@ def test_reads_and_listings_belong_to_the_innermost_owner():
         assert test_map_recorder.origin(iter(stack), ROOT_DIR, {"/r/tools/test_map_recorder.py"}) == expected, stack
 
 
-@pytest.fixture(scope="module")
-def head():
+def head_commit() -> str:
     return subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True,
                           check=True).stdout.strip()
+
+
+@pytest.fixture(scope="module")
+def head():
+    return head_commit()
 
 
 def plan_for(changes, coverage):
@@ -701,6 +708,133 @@ def test_native_changes_schedule_builds_and_their_runners(head):
     assert list(select_tests.AUDIT) not in rust["commands"]
 
 
+def graph_without(path: str) -> source_graph.Graph:
+    """The checkout's graph as if `path` were deleted (the file itself stays on disk here)."""
+    tree = source_graph.load(select_tests.ROOT)
+    deleted = source_graph.Graph(tree.root, [f for f in tree.files if f != path],
+                                 {f: s for f, s in tree.summaries.items() if f != path},
+                                 lean_modules=tree.lean_modules, lean_imports=tree.lean_imports,
+                                 lean_unreadable=tree.lean_unreadable)
+    deleted.prepare_names()
+    deleted.build()
+    return deleted
+
+
+# Modules that bind nothing: no unit, no statement, so their semantic delta is empty.
+BINDS_NOTHING = {"empty": "", "docstring": '"""Only a docstring."""\n', "pass": "pass\n",
+                 "comment": "# only a comment\n"}
+
+
+@pytest.mark.parametrize("content", BINDS_NOTHING.values(), ids=BINDS_NOTHING)
+def test_deleting_a_module_that_binds_nothing_selects_its_importers(content, head, monkeypatch):
+    # Review B1: the empty delta returned before the deletion was looked at, so
+    # neither the static graph nor a fresh map selected the importer that now
+    # fails to collect, and the drift check kept the importer's map entry.
+    path = "ve/authoring.py"  # imported only by tests/test_authoring.py
+    importer = "tests/test_authoring.py"
+    static = graph_without(path)
+    monkeypatch.setattr(source_graph, "load", lambda root: static)
+    plan = plan_for([select_tests.Change(path, content, None)], None)
+    assert importer in plan["selected"], plan["reasons"]
+    edges = {test: {} for test in select_tests.units()}
+    edges[importer] = {"f": [(path, "<module>")]}
+    plan = plan_for([select_tests.Change(path, content, None)], make_map(edges, commit=head))
+    assert f"{path}: import-time change" in plan["reasons"].get(importer, []), plan["reasons"]
+    coverage = select_tests.Coverage(make_map(edges, commit=head))
+    every = set(edges)
+    assert importer in select_tests.uncertain_units(coverage, static, every, {path: "D"}, {path: (content, None)})
+    assert importer not in select_tests.uncertain_units(coverage, static, every, {path: "M"},
+                                                        {path: (content, content + "\n")})
+
+
+def test_adding_a_python_fixture_selects_the_tests_that_listed_its_directory(head):
+    # Review B2: a test that listed tests/fixtures failed once b.py appeared there;
+    # the plan applied directory listings to data files only.
+    edges = {test: {} for test in select_tests.units()}
+    edges["tests/test_bundle.py"] = {"d": ["tests/fixtures"]}
+    data = make_map(edges, commit=head)
+    for name in ("b.py", "b.json", "b.lean", "b.rs"):
+        plan = plan_for([select_tests.Change(f"tests/fixtures/{name}", None, "X = 1\n")], data)
+        assert f"lists the directory of tests/fixtures/{name}" in plan["reasons"].get("tests/test_bundle.py", []), \
+            (name, plan["reasons"])
+
+
+def test_a_new_module_selects_the_tests_that_now_import_it(tmp_path):
+    # Nobody can have imported it when the map was recorded: those who import it now
+    # ran without it (an optional import, or a failure), so the static graph answers.
+    graph = make_graph(tmp_path, {**LIBRARY, "pkg/fresh.py": "",
+                                  "tests/test_fresh.py": "try:\n    import pkg.fresh\nexcept ImportError:\n    pass\n"})
+    edges = {"tests/test_fresh.py": {}, "tests/test_bounded.py": EDGES["tests/test_bounded.py"]}
+    coverage = select_tests.Coverage(make_map(edges))
+    assert select_tests.uncertain_units(coverage, graph, set(edges), {"pkg/fresh.py": "A"},
+                                        {"pkg/fresh.py": (None, "")}) == {"tests/test_fresh.py"}
+
+
+def test_a_named_but_unedited_path_may_have_appeared_or_vanished():
+    change = select_tests.Change("tests/fixtures/b.py", None, None)
+    assert not change.presence_changed
+    change.presence_known = False
+    assert change.presence_changed
+
+
+# One example path of every kind of file the selector knows (generated from its table below).
+KIND_EXAMPLES = {
+    "python": ("ve/_presence_probe.py", "tests/fixtures/_presence_probe.py"),
+    "lean": ("lean/VE/_PresenceProbe.lean",),
+    "rust": ("rust/ve-core/src/_presence_probe.rs",),
+    "data": ("tests/fixtures/_presence_probe.json", "docs/_presence_probe.md"),
+    "everything": ("pyproject.toml", "_presence_probe.cfg"),
+}
+PRESENCE_UNITS = {"reader": "tests/test_background.py", "lister": "tests/test_bundle.py",
+                  "importer": "tests/test_authoring.py", "runner": "tests/test_english.py",
+                  "bystander": "tests/test_vacuity.py"}
+
+
+def presence_cases():
+    for kind, paths in KIND_EXAMPLES.items():
+        for path in paths:
+            contents = BINDS_NOTHING | {"code": "X = 1\n"} if kind == "python" else {"text": "x\n"}
+            for letter in ("A", "D"):
+                for name, content in contents.items():
+                    yield pytest.param(kind, path, letter, content, id=f"{path}-{letter}-{name}")
+
+
+def test_every_kind_of_file_has_a_presence_example():
+    assert set(KIND_EXAMPLES) == set(select_tests.KINDS)
+    for kind, paths in KIND_EXAMPLES.items():
+        assert {select_tests.kind_of(path) for path in paths} == {kind}, kind
+
+
+@pytest.mark.parametrize("kind, path, letter, content", list(presence_cases()))
+def test_the_plan_and_the_drift_check_treat_presence_alike(kind, path, letter, content, head):
+    """Adding or deleting any kind of file selects its readers, the listers of its
+    directory, and (a module) its importers, in the plan and the drift check alike."""
+    assert not set(PRESENCE_UNITS.values()) & set(select_tests.SMOKE)
+    edges = {test: {} for test in select_tests.units()}
+    edges[PRESENCE_UNITS["reader"]] = {"r": [path]}
+    edges[PRESENCE_UNITS["lister"]] = {"d": [posixpath.dirname(path) or "."]}
+    edges[PRESENCE_UNITS["importer"]] = {"f": [(path, "<module>")]}
+    edges[PRESENCE_UNITS["runner"]] = {"x": ["lean/.lake/build/bin/ve_conformance", "rust/target/release/ve"]}
+    data = make_map(edges, commit=head)
+    old, new = (None, content) if letter == "A" else (content, None)
+    plan = plan_for([select_tests.Change(path, old, new)], data)
+    every = set(edges)
+    if kind == "everything":
+        assert plan["full"]
+        expected = every
+    else:
+        expected = {PRESENCE_UNITS["reader"], PRESENCE_UNITS["lister"]}
+        expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": {PRESENCE_UNITS["runner"]},
+                     "rust": {PRESENCE_UNITS["runner"]}, "data": set()}[kind]
+        mapped = {test for test, reasons in plan["reasons"].items()
+                  if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}
+        assert mapped == expected, plan["reasons"]
+    versions = {path: (old, new)} if path.endswith(".py") else {}
+    drift = select_tests.uncertain_units(select_tests.Coverage(data), source_graph.load(select_tests.ROOT),
+                                         every, {path: letter}, versions)
+    assert drift == expected
+
+
 SAFETY_CASES = (
     # (mutation of the selector, the check above that must then fail)
     ("tests_of matches only the exact name", test_lookups_match_nested_code_but_not_name_prefixes),
@@ -714,6 +848,10 @@ SAFETY_CASES = (
     ("the plan's graph forgets deleted files", test_without_a_map_deleting_a_module_selects_its_importers),
     ("a vanished module is not an import-time change",
      test_with_a_map_deleting_a_module_selects_every_test_that_imported_it),
+    ("an empty delta hides an added or deleted module",
+     test_deleting_a_module_that_binds_nothing_selects_its_importers),
+    ("directory listings count for data files only",
+     test_adding_a_python_fixture_selects_the_tests_that_listed_its_directory),
 )
 
 
@@ -759,6 +897,20 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
                             called: real_impact(coverage, graph, all_units, add, path, old or new, new or old,
                                                 d, called))
         arguments = (tmp_path,)
+    elif name == "an empty delta hides an added or deleted module":
+        real_file_impact = select_tests.file_impact
+
+        def empty_hides(coverage, graph, all_units, add, path, presence_changed, python=None, called=None):
+            if python is not None and python[2] is not None and python[2].empty:
+                presence_changed = False
+            real_file_impact(coverage, graph, all_units, add, path, presence_changed, python, called)
+        monkeypatch.setattr(select_tests, "file_impact", empty_hides)
+        arguments = ("", head_commit(), monkeypatch)
+    elif name == "directory listings count for data files only":
+        real_listers = select_tests.Coverage.listers
+        monkeypatch.setattr(select_tests.Coverage, "listers", lambda self, path: set() if select_tests.kind_of(
+            path) != select_tests.DATA else real_listers(self, path))
+        arguments = (head_commit(),)
     else:
         monkeypatch.setattr(select_tests.Coverage, "file_wide", lambda self, file, defs: set())
         arguments = (tmp_path,)
