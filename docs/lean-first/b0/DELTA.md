@@ -37,7 +37,7 @@ and head alike `ve document check` answers `CheckerUnavailable` (`ve_readings_ro
 readings route needs far longer on this document than its 120 s runner timeout. The record is the same on both
 sides but shows nothing about preservation, so it is listed in `delta.json` under `unavailable` with that reason.
 
-**Signature:** DRI, unavailable U1 — pending.
+**Signature:** DRI, unavailable U1 — signed 2026-10-04: the UDHR document is unavailable on both sides (readings route exceeds its 120 s runner timeout); batch 3 (readings speed, F5) owns the fix. It gives no preservation evidence and is recorded as such.
 
 ## W1: Python's texts for Lean-prefixed codes are Lean's (`wording`, signed as one block)
 
