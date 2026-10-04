@@ -27,7 +27,7 @@ from . import norm_defaults as nd
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_norm_defaults_route"
 
 
-def run_cases(cases, executable=LEAN_ROUTE, *, timeout=120):
+def run_cases(cases, executable=LEAN_ROUTE, *, timeout=None):
     """Every case through one process; rows in case order (errors are rows)."""
     return run_norm_defaults_cases(executable, cases, timeout=timeout)
 

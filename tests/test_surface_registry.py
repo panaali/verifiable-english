@@ -32,6 +32,66 @@ def test_keywords_cover_statement_initial_literals():
         assert dispatch(keyword + "x")[0] == keyword
 
 
+def test_surface_record_fields():
+    # The kernel never consults a registered evaluator, typing or wire hook, so
+    # the record has no such slots (docs/ARCHITECTURE-LAYERS-PLAN2.md P1).
+    from dataclasses import fields
+    from ve.argument import _checker_build
+    assert [field.name for field in fields(SurfaceRecord)] == [
+        "wire_tag", "strict_form", "english_keywords", "fluent_form", "grammar_production",
+        "traversal_hooks", "witness_renderer", "node_type", "wire_arity", "parser_hook",
+        "strict_parser_hook", "printer_hook", "fluent_hook", "english_renderer", "grammar_hook",
+        "derivation_hook", "strict_grammar_hook", "fol_import_hook", "fol_export_hook", "profiles"]
+    assert re.fullmatch(r"[0-9a-f]{64}", _checker_build())
+
+
+def test_registered_wire_tags_match_the_kernel_tables():
+    # Every record naming a node type or wire arity, including tags registered
+    # beyond ve.surface.registry's own, agrees with ve.ast's tables, and every
+    # kernel tag is registered (docs/ARCHITECTURE-LAYERS-PLAN2.md P2).
+    from ve import ast
+    from ve.surface.registry import records
+    from ve.wire import formula_tag_arity
+    typed = {r.wire_tag: (r.node_type, r.wire_arity) for r in records()
+             if r.node_type is not None or r.wire_arity is not None}
+    assert typed == {tag: (ast.NODE_TYPES[tag], ast.WIRE_ARITY[tag]) for tag in ast.WIRE_ARITY}
+    assert ast.WIRE_TAGS == {kind: tag for tag, kind in ast.NODE_TYPES.items()}
+    assert len(typed) == 15
+    assert {tag: formula_tag_arity(tag) for tag in typed} == ast.WIRE_ARITY
+    assert formula_tag_arity("var") is None and formula_tag_arity("norm") is None
+    class FutureNode:
+        pass
+
+    for tag, wrong in (("future-tag", dict(wire_arity=3)), ("future-node", dict(node_type=FutureNode)),
+                       ("and", dict(node_type=ast.And, wire_arity=4)), ("and", dict(wire_arity=3)),
+                       ("and", dict(node_type=ast.And))):
+        from ve.surface import registry
+        registry._records.pop("and"); registry._by_type.pop(ast.And)  # restored by the fixture
+        with pytest.raises(ValueError, match="disagrees with the kernel wire tables"):
+            register(SurfaceRecord(tag, "", (), "", "", **wrong))
+        register(SurfaceRecord("and", "", (), "", "", node_type=ast.And, wire_arity=3))
+
+
+@pytest.mark.parametrize("authority", ["lean", "shadow", "rust-experimental"])
+def test_malformed_formulas_keep_their_attribute_error(monkeypatch, authority):
+    # Before P2 a non-node reached by _to_data failed the registry lookup with
+    # AttributeError under every non-Python typing authority; the kernel tables
+    # keep that (review of layers2-b1, finding C), at every formula position.
+    import json
+    from ve import ast
+    from ve.environment import Environment
+    env = Environment.from_dict(json.load(open("examples/environment.json")))
+    monkeypatch.setenv("VE_AUTHORITY", authority)
+    for formula in (ast.And(ast.Top(), None), ast.Or(ast.Top(), "x"), ast.Implies(ast.Top(), 1),
+                    ast.Not(5), ast.Forall("s", None), ast.Exists("s", ast.Not(None)), None, object()):
+        for check in (ast.check_formula, ast.formula_to_data,
+                      lambda env, formula: ast.check_document(env, ast.Document((formula,)))):
+            with pytest.raises(AttributeError, match="is not a formula node"):
+                check(env, formula)
+        with pytest.raises(AttributeError, match="is not a formula node"):
+            ast._to_data(formula)
+
+
 def test_duplicate_keyword_refused():
     with pytest.raises(ValueError, match="Duplicate English keyword"):
         register(SurfaceRecord("test-duplicate", "", ("both ",), "", ""))

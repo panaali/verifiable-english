@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from conformance.soft_norms import multi_fault_base, multi_fault_cases, multi_faults
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import env, norm
 from ve.wire import canonical_json
 
@@ -34,14 +35,14 @@ def built():
         if lake is None:
             pytest.skip("lake is required for ve_diagnose and ve_soft_norms_route")
         result = subprocess.run([lake, "build", "ve_diagnose", "ve_soft_norms_route"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=1200)
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr
     return BIN
 
 
 def call(binary, args, cases):
     result = subprocess.run([str(binary), *args, "-"], input=json.dumps(cases), text=True, capture_output=True,
-                            timeout=600)
+                            timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -74,7 +75,7 @@ def with_faults(*names):
 
 
 def record(check, phase, code, cls, path, text, args=None):
-    return {"contract": "soft-norms@0", "revision": 3, "check": check, "phase": phase, "code": code,
+    return {"contract": "soft-norms@0", "revision": 4, "check": check, "phase": phase, "code": code,
             "class": cls, "path": path, "text": text, "args": args or {}}
 
 
@@ -204,10 +205,7 @@ def s3_pre_sources():
 
 
 def test_s3_pre_norm_defaults_profile(built):
-    """S3-pre (conformance/wire-contract/s3-pre.md): with `norm-defaults@0` among the profiles, which Python
-    passes to W1's decoding and Lean does not, both legacy validators reject every source. Both engines
-    report the Lean route's check, because the Python hooks use the Lean lists; Python's legacy code differs
-    only where its decoding admits an `unspecified` default."""
+    """S4-pre: both legacy validators reject every source with the same code."""
     from ve.errors import VEError
     from ve.softnorms import load_soft_document
 
@@ -217,8 +215,13 @@ def test_s3_pre_norm_defaults_profile(built):
     for (raw, rules), (engine, legacy), (lean_code, check) in zip(sources, rows, expected):
         with pytest.raises(VEError) as caught:
             load_soft_document(json.loads(json.dumps(raw)), json.loads(json.dumps(rules)))
-        assert caught.value.code == "SOFT_UNSUPPORTED_PROFILE"
+        assert caught.value.code == lean_code
+        # The source lists `norm-defaults@0`, so no text may name that profile as missing (Fable B2).
         assert "checked through fill" in str(caught.value)
+        assert "requires norm-defaults@0" not in str(caught.value)
+        if check == "2.3":
+            assert str(caught.value) == ("UnsupportedProfile: norm-defaults@0 documents are checked through "
+                                         "fill (ve.norm_defaults)")
         assert legacy["status"] == "error" and legacy["code"] == lean_code
         assert engine["diagnostic"]["check"] == check
         agree(engine, legacy)
@@ -228,8 +231,8 @@ def test_s3_pre_norm_defaults_profile(built):
         assert canonical_json(python) == canonical_json(engine["diagnostic"])
 
 
-# What Python's legacy validator does with each profile that its registry has and the Lean route's does not
-# (s3-pre.md). `rights@0` is a verdict difference: Python accepts the source and the Lean route rejects it.
+# What Python's legacy validator does with each profile absent from the Lean soft route
+# (s3-pre.md and s4-pre.md). The rights and speech-act differences are now closed.
 PYTHON_ONLY_LEGACY = {
     "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "alternatives@0 with soft-norms@0"),
     "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",
@@ -239,7 +242,7 @@ PYTHON_ONLY_LEGACY = {
     # alone refuses it at 3.2 with the Lean route's text (it accepted before the fix).
     "rights@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0"),
     "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "risk@0 requires alternatives@0"),
-    "speech-acts@0": ("SOFT_INVALID_INPUT", "Incorrect fields (missing=['speech_acts'], unknown=[])"),
+    "speech-acts@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile speech-acts@0"),
 }
 
 

@@ -16,7 +16,7 @@ from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
 from .ast import Document, formula_from_data, formula_to_data
 from .backends.lean_service import CheckerUnavailable
-from .environment import Environment
+from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
@@ -93,9 +93,9 @@ def _split(raw: bytes):
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     if "couplings" in meta and not {"rights@0", "readings@1"}.intersection(
-            meta.get("environment", {}).get("profiles", [])):
+            listed_profiles(meta.get("environment"))):
         raise VEError("UnsupportedProfile: rights@0 is required for couplings")
-    if "completions" in meta and "norm-defaults@0" not in meta.get("environment", {}).get("profiles", []):
+    if "completions" in meta and "norm-defaults@0" not in listed_profiles(meta.get("environment")):
         raise VEError("UnsupportedProfile: norm-defaults@0 is required for completions")
     return meta, *_body(body)
 
@@ -273,7 +273,7 @@ def _s1_attached(environment_data, meta):
     """Under `readings@1`, the fixed units attached to an open content-bearing set (composition-s1.md 1.3): they
     belong to that set's candidates' documents, and the lower route checks `free D` without them (4.1). A
     document S1 cannot decode is left whole here; the readings route reports its diagnostic."""
-    if "readings@1" not in environment_data.get("profiles", []):
+    if "readings@1" not in listed_profiles(environment_data):
         return frozenset()
     sets = meta.get("reading_sets", [])
     if type(sets) is not list or not any(
@@ -293,7 +293,7 @@ def _s1_attached(environment_data, meta):
 
 def _environment(data):
     """The environment of a document's (profile-stripped) environment data."""
-    profiles = data.get("profiles", [])
+    profiles = listed_profiles(data)
     if "rights@0" in profiles:
         from .rights import RightsEnvironment
         return RightsEnvironment(data)
@@ -348,9 +348,10 @@ def _load_document(raw: bytes, path: str | Path, lean):
         raise VEError("document needs an embedded environment")
     from .discourse import base_environment, validate_discourse
     environment_data = base_environment(meta)
-    rights_enabled = "rights@0" in environment_data.get("profiles", [])
-    soft_enabled = "soft-norms@0" in environment_data.get("profiles", [])
-    defaults_enabled = "norm-defaults@0" in environment_data.get("profiles", [])
+    profiles = listed_profiles(environment_data)
+    rights_enabled = "rights@0" in profiles
+    soft_enabled = "soft-norms@0" in profiles
+    defaults_enabled = "norm-defaults@0" in profiles
     if defaults_enabled and soft_enabled:
         # The soft and rights document routes are checked by Lean, which has no
         # norm-defaults branch yet; ve.norm_defaults builds their fill in Python.
