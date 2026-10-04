@@ -22,7 +22,10 @@ section, `open`, `import` and similar lines, module comments and lines before th
 declaration are `o`.
 
 The trusted count is K + S + untied D[V] + untied G[V] + unclassified declarations: a declaration
-that is not in the side table is counted as untied [V], so new code is trusted until classified.
+that is not in the side table is counted as untied [V], so new code is trusted until classified,
+and a declaration whose class or tie fails validation is trusted too (and fails the run). The
+default report, `--check`, `--write` and `--ledger` all read the tree through one validating pass
+(`walk`) and one trust rule (`is_trusted`); none of them exits 0 while a problem stands.
 
     python3 tools/trust_map.py            # per-file counts against docs/trust-baseline.json
     python3 tools/trust_map.py --check    # exit 1 if K, S or untied [V] grew without a signed entry
@@ -293,48 +296,72 @@ def empty_counts() -> dict[str, int]:
             "tied": 0, "unclassified": 0, "trusted": 0, "lines": 0}
 
 
-def measure(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
-            predicates_path: Path | None = None) -> tuple[dict[str, dict[str, int]], list[str]]:
-    """Per-file counts and the problems found (unknown table entries, unverified ties, predicates
-    in an untrusted class)."""
+def is_trusted(cls: str, tied: bool, problems: list[str]) -> bool:
+    """The one rule for what the budget counts as trusted: K, S, untied [V], an unclassified
+    declaration, and (failing closed) a declaration whose class or tie did not validate."""
+    return bool(problems) or cls in {"K", "S", "?"} or cls[0] in "DG" and cls.endswith("[V]") and not tied
+
+
+@dataclass
+class Classified:
+    module: str
+    decl: Decl
+    cls: str
+    tied: bool
+    trusted: bool
+
+
+def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+         predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
+    """Every declaration under `root` with its validated class, the line count of each file, and
+    the problems found (unknown table entries, unverified ties, predicates in an untrusted class, a
+    missing predicate list). `measure` and `ledger` both read the tree through this one pass, so
+    neither can report numbers whose classification failed validation."""
     table = load_table(table_path)
     proved = statements(statements_path)
     trusted = anchors(table)
     predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
-    files, problems, seen = {}, [], defaultdict(set)
+    out, lines, problems, seen = [], {}, [], defaultdict(set)
     if not predicates_path.is_file():
         problems.append(f"{predicates_path.name} is missing; run tools/lean_statements.py")
     predicates = lean_predicates(predicates_path)
     for path in sources(root):
         module = module_key(path, root)
-        decls, total = scan(path)
-        counts = empty_counts()
-        counts["lines"] = total
-        covered = 0
+        decls, lines[module] = scan(path)
         for decl in decls:
             cls, tied, issues = classify(module, decl, table, proved, trusted, predicates)
             problems += issues
             if decl.name is not None:
                 seen[module].add(decl.name)
-            covered += decl.lines
-            if cls == "?":
-                counts["unclassified"] += decl.lines
-                counts["trusted"] += decl.lines
-                continue
-            counts[cls[0]] += decl.lines
-            if tied:
-                counts["tied"] += decl.lines
-            if cls[0] in "DG":
-                counts[cls] += decl.lines
-                if not tied and cls.endswith("[V]"):
-                    counts["trusted"] += decl.lines
-            elif cls in {"K", "S"}:
-                counts["trusted"] += decl.lines
-        counts["o"] = total - covered
-        files[module] = counts
+            out.append(Classified(module, decl, cls, tied, is_trusted(cls, tied, issues)))
     for module, entries in table.items():
         for name in sorted(set(entries) - seen.get(module, set())):
             problems.append(f"{TABLE.name}: {module}: {name} is not a declaration of that file")
+    return out, lines, problems
+
+
+def measure(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+            predicates_path: Path | None = None) -> tuple[dict[str, dict[str, int]], list[str]]:
+    """Per-file counts and the problems `walk` found."""
+    decls, lines, problems = walk(root, table_path, statements_path, predicates_path)
+    files = {}
+    for module, total in lines.items():
+        counts = empty_counts()
+        counts["lines"] = counts["o"] = total
+        files[module] = counts
+    for d in decls:
+        counts = files[d.module]
+        counts["o"] -= d.decl.lines
+        if d.trusted:
+            counts["trusted"] += d.decl.lines
+        if d.cls == "?":
+            counts["unclassified"] += d.decl.lines
+            continue
+        counts[d.cls[0]] += d.decl.lines
+        if d.tied:
+            counts["tied"] += d.decl.lines
+        if d.cls[0] in "DG":
+            counts[d.cls] += d.decl.lines
     return files, problems
 
 
@@ -620,27 +647,18 @@ def expand(pattern: str) -> list[str]:
 
 
 def ledger(root: Path = ROOT, path: Path = LEDGER, table_path: Path = TABLE,
-           statements_path: Path = STATEMENTS) -> tuple[list[dict], list[str]]:
-    """Measured lines of each step of the ledger, and the problems found (a selector that names no
-    declaration). For each of `removed`, `tied` and `reclassified`: the trusted lines (K, S,
-    untied [V]) of the declarations its selectors name, each declaration credited to the first
-    step that names it, and the untrusted lines they name; `net` is removed + tied − `adds_est`,
-    `score` is net ÷ (days × risk)."""
-    table = load_table(table_path)
-    proved = statements(statements_path)
-    trusted_names = anchors(table)
-    predicates = lean_predicates(root / PREDICATES.relative_to(ROOT))
-    decls = []  # (module, name, lines, trusted)
-    for source in sources(root):
-        module = module_key(source, root)
-        for decl in scan(source)[0]:
-            if decl.kind in {"theorem", "lemma", "example", "command"} or decl.name is None:
-                continue
-            cls, tied, _ = classify(module, decl, table, proved, trusted_names, predicates)
-            trusted = cls in {"K", "S", "?"} or cls[0] in "DG" and cls.endswith("[V]") and not tied
-            decls.append((module, decl.name, decl.lines, trusted))
+           statements_path: Path = STATEMENTS, predicates_path: Path | None = None) -> tuple[list[dict], list[str]]:
+    """Measured lines of each step of the ledger, and the problems found: every problem of `walk`
+    (the same validation `measure` runs; a ledger over a table that fails it is not a measurement)
+    and a selector that names no declaration. For each of `removed`, `tied` and `reclassified`: the
+    trusted lines (`is_trusted`) of the declarations its selectors name, each declaration credited
+    to the first step that names it, and the untrusted lines they name; `net` is removed + tied −
+    `adds_est`, `score` is net ÷ (days × risk)."""
+    walked, _, problems = walk(root, table_path, statements_path, predicates_path)
+    decls = [(d.module, d.decl.name, d.decl.lines, d.trusted) for d in walked
+             if d.decl.kind not in {"theorem", "lemma", "example", "command"} and d.decl.name is not None]
     credited: set[tuple[str, str]] = set()
-    rows, problems = [], []
+    rows = []
     for step in json.loads(path.read_text())["steps"]:
         row = {"step": step["step"], "title": step["title"], "days": step["days"], "risk": step["risk"],
                "adds_est": step.get("adds_est", 0)}
@@ -715,8 +733,11 @@ def main(argv: list[str]) -> int:
         rows, problems = ledger(root, root / LEDGER.relative_to(ROOT), table_path, statements_path)
         for problem in problems:
             print(problem, file=sys.stderr)
+        if problems:
+            print("FAIL: the ledger is not reported while the table fails validation", file=sys.stderr)
+            return 1
         print_ledger(rows)
-        return 1 if problems else 0
+        return 0
     section11 = seed(args.seed, root, table_path, fresh=args.fresh) if args.seed else None
     files, problems = measure(root, table_path, statements_path)
     for problem in problems:
