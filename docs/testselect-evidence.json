@@ -1256,6 +1256,56 @@
    "selected_exit": 2,
    "selected_seconds": 9,
    "undetected_before": []
+  },
+  {
+   "commit": "6d9f7012f3",
+   "file": "ve/backends/validation.py",
+   "function": "environment_in_scope",
+   "seed": 0,
+   "mutation": "negate if",
+   "selected": 12,
+   "units": 209,
+   "map": "f4142cb9d4",
+   "uncertain": 1,
+   "flaky": [],
+   "failure": "tests/test_stage2_validation.py::test_statement_layers_and_rust_keep_the_python_decoder",
+   "selected_exit": 2,
+   "selected_seconds": 97,
+   "undetected_before": []
+  },
+  {
+   "commit": "e9669e1307",
+   "file": "ve/admission.py",
+   "function": "_admit_document_python",
+   "seed": 1,
+   "mutation": "negate if",
+   "selected": 27,
+   "units": 209,
+   "map": "f4142cb9d4",
+   "uncertain": 1,
+   "flaky": [],
+   "failure": "tests/test_p0_three_way.py::test_data_background_deduction_admission_matches_lean",
+   "selected_exit": 2,
+   "selected_seconds": 557,
+   "undetected_before": [
+    "admit_document: return None"
+   ]
+  },
+  {
+   "commit": "1f31f7b56b",
+   "file": "tools/check_rust_deps.py",
+   "function": "parse_module",
+   "seed": 0,
+   "mutation": "negate if",
+   "selected": 4,
+   "units": 209,
+   "map": "f4142cb9d4",
+   "uncertain": 1,
+   "flaky": [],
+   "failure": "tools/test_layer_policy.py",
+   "selected_exit": 0,
+   "selected_seconds": 121,
+   "undetected_before": []
   }
  ]
 }

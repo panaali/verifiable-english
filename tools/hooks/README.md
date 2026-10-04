@@ -65,7 +65,7 @@ Only part of what a bypass skips is checked again before a merge. The gate
 and the test suite, which runs `lean/VE/Route/frozen.py`. **Nothing downstream
 scans for secrets**, and the layer checkers (`tools/check_python_layers.py`,
 `tools/check_lean_imports.py`, `tools/check_rust_deps.py`) run only from
-`tools/select_tests.py`, not in the gate. After a bypass, run
+`tools/select_tests.py`, when their inputs change, not in the gate. After a bypass, run
 `tools/hooks/pre-commit` by hand once the commit's content is staged again (for
 example after `git reset --soft HEAD~1`), or run those checkers directly.
 

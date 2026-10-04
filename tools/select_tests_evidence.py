@@ -39,7 +39,7 @@ import select_tests
 
 EVIDENCE = ROOT / "docs/testselect-evidence.json"
 SELECTOR_FILES = ("select_tests.py", "change_units.py", "source_graph.py", "test_map.py",
-                  "test_map_recorder.py")
+                  "test_map_recorder.py", "test_layer_policy.py")
 
 
 def git(*args: str, cwd: Path = ROOT) -> str:
@@ -268,10 +268,26 @@ def mutants(args: argparse.Namespace) -> int:
                 # Not caught by the selection: does any other test catch it?
                 others = sorted({p.relative_to(worktree).as_posix() for p in (worktree / "tests").glob("test_*.py")}
                                 - set(files))
-                log = logs / f"{commit}-{seed}-rest.log"
-                result["rest_exit"] = run_pytest(worktree, [*(f"--deselect={t}" for t in result["flaky"]), *others],
-                                                 log, first_failure=True)
-                result["rest_failure"] = first_failure(log)[0]
+                for attempt in range(3):
+                    log = logs / f"{commit}-{seed}-rest-{attempt}.log"
+                    result["rest_exit"] = run_pytest(
+                        worktree, [*(f"--deselect={t}" for t in result["flaky"]), *others], log, first_failure=True)
+                    failure, collection = first_failure(log)
+                    result["rest_failure"] = failure
+                    if failure is None:
+                        break
+                    # An escape only if it fails alone with the mutant and passes alone without it.
+                    alone = ["--collect-only", failure] if collection else [failure]
+                    with_mutant = run_pytest(worktree, alone, logs / f"{commit}-{seed}-rest-{attempt}-alone.log",
+                                             first_failure=True, workers=1)
+                    (worktree / path).write_text(current)
+                    without = run_pytest(worktree, alone, logs / f"{commit}-{seed}-rest-{attempt}-baseline.log",
+                                         first_failure=True, workers=1)
+                    (worktree / path).write_text(mutated[0])
+                    if with_mutant and not without:
+                        break
+                    result["flaky"].append(failure)
+                    result["rest_exit"], result["rest_failure"] = 0, None
             (worktree / path).write_text(current)
             print(json.dumps(result), flush=True)
             if result["failure"] or result.get("rest_exit"):
@@ -297,7 +313,7 @@ def table(data: dict) -> str:
                      f"`{(row['map'] or 'none')[:8]}` | {row['uncertain']} | {row['seconds']} |")
     replay = data["replay"]
     total = len(replay)
-    lines += ["", f"Totals over {total} commits: before {sum(r['before'] for r in replay)}, "
+    lines += ["", f"Totals over {total} commits ending at `{data['head']}`: before {sum(r['before'] for r in replay)}, "
               f"after (nightly map) {sum(r['nightly'] for r in replay)}, "
               f"after (fresh map) {sum(r['fresh'] for r in replay)} test-file runs; "
               f"`lean/audit.py` before {sum(r['before_lean_audit'] for r in replay)} times, "
@@ -305,12 +321,13 @@ def table(data: dict) -> str:
               f"selection time before {max(r['before_seconds'] for r in replay)} s at most, "
               f"after {max(r['seconds'] for r in replay)} s at most."]
     if data.get("mutants"):
-        lines += ["", "| Commit | Function | Mutation | Selected | First failing test | Caught |",
-                  "|---|---|---|---:|---|---|"]
+        lines += ["", "| Commit | Function | Mutation | Selected | First failing test | Caught | Earlier seeds no test detects |",
+                  "|---|---|---|---:|---|---|---|"]
         for row in data["mutants"]:
             caught = "yes" if row["failure"] else ("ESCAPED" if row.get("rest_exit") else "no test detects it")
             lines.append(f"| `{row['commit'][:8]}` | `{row['file']}:{row['function']}` | {row['mutation']} | "
-                         f"{row['selected']}/{row['units']} | `{row['failure'] or row.get('rest_failure') or '-'}` | {caught} |")
+                         f"{row['selected']}/{row['units']} | `{row['failure'] or row.get('rest_failure') or '-'}` | {caught} | "
+                         f"{'; '.join(row.get('undetected_before') or []) or '-'} |")
     return "\n".join(lines)
 
 
