@@ -291,33 +291,14 @@ def no_prevailing(spec, ext):
 
 # ---------------------------------------------------------------------------- the whole run
 
-def decide_records(env, base_rules, ext_rules, records):
-    """Every record decided under the base and the extended rules, with its category and the
-    independent reading's agreement: Lean's decisions and the per-record results."""
-    lean = both(env, base_rules, ext_rules, records)
-    independent = read_all(records)
-    per_record = {}
-    for name in records:
-        base, ext = lean["base"][name], lean["ext"][name]
-        per_record[name] = {"base": base, "ext": ext, "category": category(base.get("clear"), ext.get("clear")),
-                            "independent_agrees": {side: agrees(lean[side][name], independent[name][side])
-                                                   for side in ("base", "ext")}}
-    return lean, per_record
-
-
 def _conflict_job(job):
     name, env, rules = job
     result, packages = conflict(env, rules)
     return name, result, packages
 
 
-def compute(sample=SAMPLE):
-    env = cases.environment()
-    ext_rules, base_rules = cases.norms(True), cases.norms(False)
-    records = cases.all_records()
-    timing = {}
-
-    start = time.time()
+def document_section(env, ext_rules, base_rules, timing):
+    """Both conflict checks (in parallel) and the extended policy's followability."""
     jobs = [("ext", env, ext_rules), ("base", env, base_rules)]
     with multiprocessing.get_context("fork").Pool(min(len(jobs), WORKERS)) as pool:
         done = {name: (result, packages) for name, result, packages in pool.map(_conflict_job, jobs)}
@@ -327,18 +308,29 @@ def compute(sample=SAMPLE):
     start = time.time()
     follow = [followable(env, ext_rules, ext_packages, k) for k in ("S:j", "P:P8 all-break-zeroth")]
     timing["followability_seconds"] = round(time.time() - start, 1)
-    document = {"ext_conflict": ext_conflict, "base_conflict": done["base"][0], "ext_followable": follow}
+    return {"ext_conflict": ext_conflict, "base_conflict": done["base"][0], "ext_followable": follow}
 
-    # The mutants run beside the decisions and the sample.
-    mutant_pool = multiprocessing.get_context("fork").Pool(5)
-    mutant_jobs = mutant_pool.starmap_async(mutant, [(m, env, ext_rules) for m in ("M1", "M2", "M3", "M4", "M5")])
-    mutant_start = time.time()
 
+def records_section(env, base_rules, ext_rules, records, timing):
+    """Lean's base and extended decisions of every record, with the independent reading's
+    agreement. Returns the per-record results and the decisions."""
     start = time.time()
-    lean, per_record = decide_records(env, base_rules, ext_rules, records)
+    lean = both(env, base_rules, ext_rules, records)
     timing["decisions_seconds"] = round(time.time() - start, 1)
     timing["decisions"] = 2 * len(records)
+    independent = read_all(records)
+    per_record = {}
+    for name in records:
+        base, ext = lean["base"][name], lean["ext"][name]
+        per_record[name] = {"base": base, "ext": ext, "category": category(base.get("clear"), ext.get("clear")),
+                            "independent_agrees": {side: agrees(lean[side][name], independent[name][side])
+                                                   for side in ("base", "ext")}}
+    return per_record, lean
 
+
+def sampled_section(env, base_rules, ext_rules, sample, timing):
+    """The seeded sample decided by Lean and read independently. Returns the specs, Lean's
+    decisions and the sampled result."""
     start = time.time()
     specs = sampled(sample)
     sample_lean = both(env, base_rules, ext_rules, specs)
@@ -346,21 +338,43 @@ def compute(sample=SAMPLE):
     disagreements = [k for k in specs for side in ("base", "ext")
                      if not agrees(sample_lean[side][k], sample_reading[k][side])]
     timing["sampled_seconds"] = round(time.time() - start, 1)
+    result = {"records": len(specs), "seed": SEED, "lean_vs_reading_disagreements": sorted(set(disagreements)),
+              "base_clear": sum(bool(sample_lean["base"][k]["clear"]) for k in specs),
+              "ext_clear": sum(bool(sample_lean["ext"][k]["clear"]) for k in specs),
+              **properties(specs, sample_lean)}
+    return specs, sample_lean, result
+
+
+MUTANTS = ("M1", "M2", "M3", "M4", "M5")
+
+
+def compute(sample=SAMPLE):
+    """The whole run: the sections, with the mutants beside the decisions and the sample
+    (tests/test_asimov_extended.py checks each section on its own)."""
+    env = cases.environment()
+    ext_rules, base_rules = cases.norms(True), cases.norms(False)
+    records = cases.all_records()
+    timing = {}
+    document = document_section(env, ext_rules, base_rules, timing)
+
+    # The mutants run beside the decisions and the sample.
+    mutant_pool = multiprocessing.get_context("fork").Pool(5)
+    mutant_jobs = mutant_pool.starmap_async(mutant, [(m, env, ext_rules) for m in MUTANTS])
+    mutant_start = time.time()
+
+    per_record, lean = records_section(env, base_rules, ext_rules, records, timing)
+    specs, sample_lean, sampled_result = sampled_section(env, base_rules, ext_rules, sample, timing)
 
     start = time.time()
     deny = {"records": permission_default(env, base_rules, ext_rules, records, lean),
             "sampled": permission_default(env, base_rules, ext_rules, specs, sample_lean)}
     timing["permission_default_seconds"] = round(time.time() - start, 1)
-    mutants = dict(zip(("M1", "M2", "M3", "M4", "M5"), mutant_jobs.get()))
+    mutants = dict(zip(MUTANTS, mutant_jobs.get()))
     mutant_pool.close()
     mutant_pool.join()
     for result in mutants.values():
         result.pop("seconds")
     timing["mutants_done_after_seconds"] = round(time.time() - mutant_start, 1)
-    sampled_result = {"records": len(specs), "seed": SEED, "lean_vs_reading_disagreements": sorted(set(disagreements)),
-                      "base_clear": sum(bool(sample_lean["base"][k]["clear"]) for k in specs),
-                      "ext_clear": sum(bool(sample_lean["ext"][k]["clear"]) for k in specs),
-                      **properties(specs, sample_lean)}
     return {"document": document, "records": per_record, "mutants": mutants, "sampled": sampled_result,
             "permission_default_deny": deny, "timing": timing}
 

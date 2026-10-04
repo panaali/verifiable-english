@@ -152,6 +152,13 @@ not finish sooner than the longest of them.
 | 199d0e4a | readings@1 differential: 200 documents by default, 1,000 nightly | 281-477 s → 72 s |
 | dbc24d8e | `ve.search`: the defined predicates read once per model enumeration instead of decoding every definition's JSON for each predicate of each candidate (96% of the bluedot test's time) | 257-377 s → 31 s |
 
+Merged with ve-integration's infra/testspeed, which split the same tests its own way: its
+mixed-English parts (per configuration, by name), its soft comparison parts (the report test no
+longer reruns them) and its per-section asimov-extended rerun replace 30cdbfdf, 618e9db1,
+3b23004e and d4b98970; the recorder keeps e5491dda's collection-order merge for every unit; the
+asimov sections other than the records carry the `nightly` marker of 85f758d8;
+`tools/pytest_run.py` is folded into `tools/nested_pytest.py`.
+
 Tried and reverted: computing the eligibility baseline profiles lazily per mutant test. Its gain
 depends on how xdist distributes the file's tests; on its own the file got slower.
 
@@ -163,12 +170,12 @@ passed on HEAD (14.6 min at `-n 3`).
 
 | nightly test | default replacement (same inputs) |
 |---|---|
-| test_asimov_extended.py::test_rerun_equals_the_committed_results (870-1,008 s) | test_rerun_of_the_records_equals_the_committed_results: the 51 records under both rule sets, the committed per-record results (36 s; a mutant changes 23 records and fails it) |
+| test_asimov_extended.py: test_rerun_document_…, test_rerun_mutant_… (5), test_rerun_sample_… (870-1,008 s as one test before the merge) | test_rerun_records_equal_the_committed_results: the 51 records under both rule sets and their permission default, against the committed results |
 | test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents (293-361 s) | test_rights_differential_on_one_hundred_generated_documents: the first 100 accepted documents of the same seeds, every shape, 23 rejections (28 s) |
 | test_readings_s1_differential.py::test_all_generated_sets_agree_with_lean (416 s) | test_generated_sets_agree_with_lean: the first 200 of the same seeds, every fault and generator (72 s) |
 
 What the default run no longer covers: the asimov document checks, mutants, sampled records and
-permission default; documents 101-1,000 and 201-1,000 of the two differentials.
+their permission default; documents 101-1,000 and 201-1,000 of the two differentials.
 
 ## Worker counts
 
@@ -219,7 +226,7 @@ The prover and countermodel search were not dominant in any profiled test after 
 
 | # | fix | estimate | owner / approval |
 |---|---|---|---|
-| 1 | `tools/gate.py` runs the Python suite serially (~2.6 CPU-hours of test time); run it on xdist (`tools/gate_pytest.py` must merge worker events) | gate pytest stage ~2.5 h → ~25 min | HUMAN (lead): the gate's trust setup |
+| 1 | `tools/gate.py` runs the Python suite serially (~2.6 CPU-hours of test time); run it on xdist (`tools/gate_pytest.py` must merge worker events) | gate pytest stage ~2.5 h → ~25 min | done by infra/testspeed (merged) |
 | 2 | Lean risk route: elaborate each distinct policy once per batch (`lean/VE/Risk/Run.lean` `runDecision`) | asimov nightly ~870 s → ~60 s; risk margins and generated policies ~300 s | HUMAN: trusted checker change, statement review |
 | 3 | English: cache `EnglishVocabulary`; then a Rust Earley check | ~300 s; then ~1,500 s | AGENT (cache), HUMAN (port) |
 | 4 | `lean/audit.py` re-elaborates `VE/Audit.lean` (2,959 `#print axioms`) instead of reading lake's cached build log | test_lean_transitive_axiom_allowlist 211-372 s → ~10 s; the gate's audit stage too | HUMAN: audit trust boundary |

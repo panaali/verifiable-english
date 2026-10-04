@@ -13,7 +13,7 @@ import sys
 
 # The plugins every run loads, by module: the gate's suite and every nested run.
 PLUGINS = ("hypothesis.extra.pytestplugin",)
-# The xdist plugin, by its entry-point name; loaded only for more than one worker.
+# The xdist plugin, by its entry-point name; loaded for more than one worker, `auto` or `xdist=True`.
 XDIST = "xdist"
 # The options only a plugin loaded here may add; callers pass `workers` and `dist` instead.
 PLUGIN_OPTIONS = ("-n", "--numprocesses", "--dist", "--maxprocesses", "-d")
@@ -23,12 +23,13 @@ AMBIENT_PREFIXES = ("PYTEST_", "VE_GATE_PYTEST_")
 AMBIENT_NAMES = ("VE_TEST_PROFILE_DIR",)
 
 
-def command(arguments: Sequence[str], *, workers: int = 1, dist: str | None = None,
-            python: Sequence[str] = (sys.executable,)) -> list[str]:
-    """`python -m pytest` with PLUGINS, xdist on `workers` processes (with `--dist=dist`) when there
-    is more than one, then `arguments`."""
-    if type(workers) is not int or workers < 1:
-        raise ValueError(f"workers must be a positive int, not {workers!r}")
+def command(arguments: Sequence[str], *, workers: int | str = 1, dist: str | None = None,
+            xdist: bool = False, python: Sequence[str] = (sys.executable,)) -> list[str]:
+    """`python -m pytest` with PLUGINS, then `arguments`. With more than one worker, `auto` (the
+    load-aware count of tests/conftest.py) or `xdist=True` (one worker that is still an xdist
+    worker, for runs that read xdist's reports), the run is on xdist (with `--dist=dist`)."""
+    if not (workers == "auto" or type(workers) is int and workers >= 1):
+        raise ValueError(f"workers must be a positive int or 'auto', not {workers!r}")
     arguments = [str(argument) for argument in arguments]
     for index, argument in enumerate(arguments):
         if argument.split("=", 1)[0] in PLUGIN_OPTIONS or (argument.startswith("-n") and argument[2:].isdigit()):
@@ -37,7 +38,7 @@ def command(arguments: Sequence[str], *, workers: int = 1, dist: str | None = No
             raise ValueError(f"-p {arguments[index + 1]}: the builder loads it")
     plugins = [option for name in PLUGINS for option in ("-p", name)]
     parallel = (["-p", XDIST, "-n", str(workers), *([f"--dist={dist}"] if dist else [])]
-                if workers > 1 else [])
+                if xdist or workers != 1 else [])
     return [*python, "-m", "pytest", *plugins, *parallel, *arguments]
 
 
