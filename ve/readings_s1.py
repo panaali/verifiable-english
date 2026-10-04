@@ -135,6 +135,13 @@ class Content:
     def lines(self):
         return self.body.get("lines", []) if self.kind in ("right", "right_lines") else []
 
+    def rules(self):
+        """The rule objects the content states: a norm's body, or every rule-bearing field of each of its lines."""
+        from .rights import RULE_FIELDS
+        if self.kind == "norm":
+            return [self.body]
+        return [line[k] for line in self.lines() for k in RULE_FIELDS if type(line.get(k)) is dict]
+
     def declared(self):
         if self.kind == "assertion":
             return []
@@ -164,7 +171,9 @@ class Content:
 
 
 def _line_rule_names(line):
-    return [line[k]["name"] for k in ("norm", "liberty", "recognition") if type(line.get(k)) is dict]
+    """The names of the rules a line states, from every rule-bearing field of the rights schema (`RULE_FIELDS`)."""
+    from .rights import RULE_FIELDS
+    return [line[k]["name"] for k in RULE_FIELDS if type(line.get(k)) is dict]
 
 
 def _cite_uses(cites):
@@ -178,7 +187,8 @@ def _cite_uses(cites):
 
 
 def _line_uses(line):
-    uses = [("rule", n) for k in ("norm", "liberty", "recognition") if type(line.get(k)) is dict
+    from .rights import RULE_FIELDS
+    uses = [("rule", n) for k in RULE_FIELDS if type(line.get(k)) is dict
             for n in line[k].get("over", [])]
     return uses + _cite_uses(line.get("cites", {}))
 
@@ -736,12 +746,12 @@ def _canonical_raw(raw):
 def _canonical_unit(u):
     if "norm" in u:
         return {**u, "norm": _canonical_raw(u["norm"])}
+    from .rights import RULE_FIELDS
     for key in ("right", "right_lines"):
         if key in u:
             body = u[key]
             if type(body) is dict and type(body.get("lines")) is list:
-                body = {**body, "lines": [{**line, **{k: _canonical_raw(line[k]) for k in
-                                                      ("norm", "liberty", "recognition") if k in line}}
+                body = {**body, "lines": [{**line, **{k: _canonical_raw(line[k]) for k in RULE_FIELDS if k in line}}
                                           for line in body["lines"]]}
             return {**u, key: body}
     return u
@@ -1404,10 +1414,7 @@ def guard_base(admission, s, i):
         _element(sort, 0, 1)) > 1)] for sort in sorted(author.model_sorts)}
     relations = {p: [] for p in sorted(author.predicates) if p not in author.definition_entries}
     content = admission.candidate(s, i).content
-    rules = ([content.body] if content.kind == "norm" else
-             [line[k] for line in content.lines() for k in ("norm", "liberty", "recognition")
-              if type(line.get(k)) is dict])
-    for rule in rules:
+    for rule in content.rules():
         decl = admission.senv.frame.predicates.get(rule.get("predicate") or "")
         if decl is None:
             continue
