@@ -270,9 +270,58 @@ def find_map(base: str, root: Path = ROOT) -> Path | None:
 def load(path: Path) -> dict:
     with gzip.open(path, "rt", encoding="utf-8") as handle:
         data = json.load(handle)
-    if data.get("version") != VERSION:
-        raise ValueError(f"{path}: map version {data.get('version')}, expected {VERSION}")
+    validate(data, str(path))
     return data
+
+
+def validate(data, where: str = "map") -> None:
+    """Reject a map that `build_map` could not have written; raises ValueError."""
+    def fail(reason: str):
+        raise ValueError(f"{where}: {reason}")
+
+    def strings(value, what):
+        if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+            fail(f"{what} is not a list of strings")
+
+    def indices(value, what):
+        if not isinstance(value, list) or not value or not all(
+                type(i) is int and 0 <= i < len(tests) for i in value):
+            fail(f"{what} is not a non-empty list of test indices")
+
+    if not isinstance(data, dict) or data.get("version") != VERSION:
+        fail(f"version {data.get('version') if isinstance(data, dict) else None!r}, expected {VERSION}")
+    if not isinstance(data.get("commit"), str):
+        fail("commit is not a string")
+    tests = data.get("tests")
+    strings(tests, "tests")
+    if len(set(tests)) != len(tests):
+        fail("duplicate test")
+    status = data.get("status")
+    if not isinstance(status, dict) or set(status) != set(tests):
+        fail("status does not name exactly the tests")
+    for test, entry in status.items():
+        if not isinstance(entry, dict) or type(entry.get("exit")) not in (int, str) \
+                or type(entry.get("seconds")) not in (int, float) or not isinstance(entry.get("opaque"), list):
+            fail(f"status of {test} is malformed")
+    functions = data.get("functions")
+    if not isinstance(functions, dict):
+        fail("functions is not an object")
+    for file, qualnames in functions.items():
+        if not isinstance(qualnames, dict):
+            fail(f"functions of {file} is not an object")
+        for qualname, value in qualnames.items():
+            indices(value, f"{file}:{qualname}")
+    for table in ("reads", "dirs", "programs"):
+        if not isinstance(data.get(table), dict):
+            fail(f"{table} is not an object")
+        for key, value in data[table].items():
+            indices(value, f"{table}[{key}]")
+    # A unit recorded as passing ran code: at least its own module.
+    ran = {i for qualnames in functions.values() for value in qualnames.values() for i in value}
+    silent = [test for i, test in enumerate(tests)
+              if status[test]["exit"] in (0, 5) and not status[test]["opaque"] and i not in ran]
+    if silent:
+        fail(f"{len(silent)} passing units ran no recorded code, e.g. {silent[0]}")
 
 
 def record_units(selected: list[str], work: Path, jobs: int, timeout: float) -> dict[str, dict]:

@@ -473,6 +473,7 @@ def resolve_map(base: str, coverage) -> Coverage | None:
     if isinstance(coverage, Coverage) or coverage is None:
         return coverage
     if isinstance(coverage, dict):
+        test_map.validate(coverage)
         return Coverage(coverage)
     if coverage == "auto":
         # A map recorded by `--run` for exactly this tree is fresh: nothing drifted.
