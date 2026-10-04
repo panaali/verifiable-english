@@ -1034,8 +1034,8 @@ diagnostic from Python and Lean on 200 generated graphs (P0's differential exten
 `conflictFree_prefix`, `norms_route_acceptance`, `norms_route_countermodel`, `conflict_witness_sound`,
 `conflict_pair_witness_sound`, `norms_wire_acceptance`, `norms_wire_conflict_sound` (implemented as
 `Flagged.norms_flagged_conflict_sound` with `FlaggedSpec.norms_flagged_conflict_free` and, from the public entry,
-`FlaggedSpec.norms_wire_conflict_free`; the legacy `Replay.norms_wire_conflict_sound` covers only documents without
-flags or definitions and no executable calls it), `cedar_decision` audited (`lean/audit.py`: allowlist unchanged, no `sorry`); `conflict_smallModel` when claimed;
+`FlaggedSpec.norms_wire_conflict_free`; the legacy `Replay.norms_wire_conflict_sound` decodes with flags rejected,
+so it covers only documents without flags (definitions are admitted), and no executable calls it), `cedar_decision` audited (`lean/audit.py`: allowlist unchanged, no `sorry`); `conflict_smallModel` when claimed;
 `lean/NORMS.md` lists each in plain words; `lean/METATHEORY.md` gains the `Norms` section; frozen-source hashes of
 the v0, closure, order and Route files unchanged.
 Lean executable guards instantiate 10.1(m–u), including actual `Layer` values for (c), arbitrary invalid lower
