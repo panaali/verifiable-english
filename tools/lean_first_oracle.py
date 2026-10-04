@@ -80,14 +80,14 @@ def write() -> None:
                                    indent=1, sort_keys=True) + "\n")
 
 
-def run(script: Path) -> int:
+def run(script: Path, scratch: Path | None = None) -> int:
     problems = check()
     if problems:
         print("\n".join(problems), file=sys.stderr)
         return 2
     manifest = json.loads(MANIFEST.read_text())
     archive = git("archive", manifest["commit"], *manifest["trees"])
-    with tempfile.TemporaryDirectory(prefix="ve-lean-first-oracle-") as directory:
+    with tempfile.TemporaryDirectory(prefix="ve-lean-first-oracle-", dir=scratch) as directory:
         with tarfile.open(fileobj=io.BytesIO(archive)) as tree:
             tree.extractall(directory, filter="data")
         env = {**os.environ, "PYTHONPATH": directory, "VE_AUTHORITY": "python"}
