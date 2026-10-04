@@ -25,7 +25,6 @@ import collections
 import errno
 import hashlib
 from itertools import product
-import json
 import os
 from pathlib import Path
 import re
@@ -1345,22 +1344,15 @@ def lean_admission(raw, directory):
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
     from .backends.lean import run_discourse_case
-    returncode, stdout, stderr = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
-    try:
-        rows = json.loads(stdout)
-    except ValueError:
-        rows = None
-    row = rows[0] if type(rows) is list and len(rows) == 1 and type(rows[0]) is dict else {}
-    status = row.get("status")
-    well_formed = (row.get("id") == _CASE_ID and returncode == (1 if status == "error" else 0) and (
-        type(row.get("error")) is str if status == "error" else
-        status == "ok" and row.get("admitted") in (True, "UNKNOWN") and type(row.get("report_id")) is str
+    row = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
+    status = row["status"]
+    # A row naming the case by position is Lean's reader refusing the case Python wrote: no answer.
+    well_formed = "case_index" not in row and status == "error" or status == "ok" and (
+        row.get("admitted") in (True, "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict
-        and all(type(v) is str and v in _STATUSES for v in row["statuses"].values())))
+        and all(type(v) is str and v in _STATUSES for v in row["statuses"].values()))
     if not well_formed:
-        detail = stderr.decode("utf-8", "replace").strip()[-300:]
-        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case"
-                                 + (f" ({detail})" if detail else ""))
+        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case")
     if status == "ok" and binary:
         raise VEError(f"InvalidInput: import file {binary[0]} is not UTF-8 text")
     return row

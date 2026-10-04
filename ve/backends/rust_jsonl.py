@@ -99,7 +99,7 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
             f"CheckerUnavailable: Rust protocol failure (exit {completed.returncode}; {detail})")
     try:
         record = _decode_json(lines[0])
-    except (UnicodeDecodeError, ValueError):
+    except (ValueError, RecursionError):
         raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
     if not isinstance(record, dict) or record.get("id") != case.get("id", ""):
         raise CheckerUnavailable("CheckerUnavailable: mismatched Rust response id")
