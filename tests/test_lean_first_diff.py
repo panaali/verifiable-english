@@ -63,6 +63,20 @@ def test_only_signed_wording_pairs_and_records_are_accepted(tmp_path):
     assert _compare(tmp_path, {"a": OK}, {"a": changed}, {"verdict": [{**entry, "head": OK}]})["unlisted"] == 1
 
 
+def test_a_reports_description_is_one_wording_pair(tmp_path):
+    """Batch 3: a report's `checked_by` changes as a whole (a member dropped included) and is wording, accepted
+    only when its canonical texts are a signed pair; a verdict beside it is still a verdict."""
+    base = {"returned": {"stdout": {"readings": {"checked_by": {"lean": "L", "rust": "R"}, "sets": 1}}}}
+    head = {"returned": {"stdout": {"readings": {"checked_by": {"lean": "L"}, "sets": 1}}}}
+    pair = {"base": '{"lean": "L", "rust": "R"}', "head": '{"lean": "L"}'}
+    result = _compare(tmp_path, {"a": base}, {"a": head}, {"wording": [pair]})
+    assert [row["class"] for row in result["differences"]] == ["wording"] and result["unlisted"] == 0
+    assert _compare(tmp_path, {"a": base}, {"a": head})["unlisted"] == 1
+    verdict = {"returned": {"stdout": {"readings": {"checked_by": {"lean": "L"}, "sets": 2}}}}
+    result = _compare(tmp_path, {"a": base}, {"a": verdict}, {"wording": [pair]})
+    assert [row["class"] for row in result["differences"]] == ["verdict"] and result["unlisted"] == 1
+
+
 def test_a_missing_record_is_a_difference(tmp_path):
     result = _compare(tmp_path, {"a": OK, "b": OK}, {"a": OK})
     assert result["unlisted"] == 1 and result["differences"][0]["head"] is None
