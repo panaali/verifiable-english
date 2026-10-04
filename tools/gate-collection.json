@@ -6240,6 +6240,7 @@
   "tests/test_rights_lean.py::test_unsatisfiable_strict_bar_overlap_is_only_a_candidate",
   "tests/test_rights_render_status.py::test_open_bar_unit_renders_without_checked_label",
   "tests/test_rights_render_status.py::test_open_default_right_and_limitation_render_without_checked_label",
+  "tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents",
   "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents",
   "tests/test_rights_three_way.py::test_rights_three_way_fixtures",
   "tests/test_risk_diagnostics.py::test_python_and_lean_environment_diagnostics_agree",
