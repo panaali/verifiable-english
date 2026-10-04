@@ -1,8 +1,8 @@
 {
   "contract": "soft-norms@0",
-  "revision": 3,
+  "revision": 4,
   "format": 1,
-  "status": "shadow",
+  "status": "public",
   "input": [
     "environment",
     "norms"

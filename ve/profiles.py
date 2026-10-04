@@ -109,6 +109,40 @@ def checker_family(profiles):
             "closure" if "closure@0" in checker else "fol")
 
 
+SPEECH_ROUTE_PROFILES = frozenset({BASE, "norms@0", "speech-acts@0"})
+
+
+def route_gate(route, profiles):
+    """The profile gate a block route reads before the envelope, with its
+    diagnostics: VE.SpeechActs.Wire.profileGate ("speech"),
+    VE.Alternatives.Wire.profileGate ("alternatives") and
+    VE.Risk.Wire.profileGate ("risk"). `checker_family` checks the rest later."""
+    if type(profiles) is not list or any(type(p) is not str for p in profiles):
+        raise UnsupportedProfile("profiles must be a sorted unique array")
+    if profiles != sorted(set(profiles)):
+        raise UnsupportedProfile("profiles must be sorted and unique")
+    if route == "speech":
+        if "speech-acts@0" not in profiles:
+            raise UnsupportedProfile("UnsupportedProfile: speech-acts@0 is required")
+        if "norms@0" not in profiles:
+            raise UnsupportedProfile("UnsupportedProfile: speech-acts@0 requires norms@0")
+        for profile in profiles:
+            if profile not in SPEECH_ROUTE_PROFILES:
+                raise UnsupportedProfile(f"UnsupportedProfile: speech-acts@0 with {profile}")
+        return
+    if route == "risk":
+        if "risk@0" not in profiles:
+            raise UnsupportedProfile("risk@0 is required")
+        if "alternatives@0" not in profiles:
+            raise UnsupportedProfile("risk@0 requires alternatives@0")
+    if "alternatives@0" not in profiles:
+        raise UnsupportedProfile("alternatives@0 is required")
+    if "norms@0" not in profiles:
+        raise UnsupportedProfile("alternatives@0 requires norms@0")
+    if "soft-norms@0" in profiles:
+        raise UnsupportedProfile("alternatives@0 with soft-norms@0")
+
+
 # No allowed checker family remains gated after W4 stage 1.
 GATED = {}
 

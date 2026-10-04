@@ -42,6 +42,7 @@ import VE.Readings.SupAll
 import VE.Readings.SupWireSound
 import VE.Readings.ChoiceWF
 import VE.Readings.Examples
+import VE.Readings.Force
 import VE.Checks
 import VE.Closure.Checks
 import VE.Order.Checks

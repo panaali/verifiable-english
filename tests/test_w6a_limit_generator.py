@@ -7,8 +7,9 @@ and large domains (the domain limit, and full domains under nested binders),
 across the quantity runner and every route family, with both reproducers from
 the W6a loop review. Python, Lean and Rust must each report `ResourceLimit`,
 and the work each spends is bounded by measures that do not grow with machine
-load: Python's own evaluation units, and the CPU seconds of each Lean and Rust
-batch (neither reports its units). The same cases also go through the public
+load: Python's own evaluation units, and a kernel limit on the CPU seconds of
+each Lean and Rust batch (neither reports its units), which stops a runaway.
+What each batch spends is benchmarked by tools/bench/test_perf.py. The same cases also go through the public
 API under the Lean authority, which must report `ResourceLimit` without any
 operation falling back to Python.
 """
@@ -22,10 +23,11 @@ import random
 import pytest
 
 from conformance.p0 import envelope
-from subprocesses import run_cpu_bounded
+from subprocesses import HANG_TIMEOUT, run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
-from ve.backends import dispatch
+from ve.backends import dispatch, rust_jsonl
+from ve.backends.lean_service import LeanService
 from ve.errors import ResourceLimit
 from ve.evaluate import _Evaluator
 from ve.limits import MAX_EVALUATIONS
@@ -40,7 +42,7 @@ RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "rel
 pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
 SEEDS = range(3)
-CPU = 60  # CPU seconds per backend per batch; each batch spends under 10 alone
+CPU = 60  # the runaway guard: CPU seconds per backend per batch; each spends under 10 alone
 # Every generated case stops at its first exhausted budget: at most MAX_EVALUATIONS
 # charged units and the one refused charge that reports the limit.
 CASE_UNITS = MAX_EVALUATIONS + 1
@@ -272,9 +274,11 @@ def meter_python(monkeypatch):
 
 
 def run(command, cases):
+    # The kernel stops a batch that spends CPU seconds past the limit (a runaway guard: it
+    # then exits by a signal, which fails here). What each batch spends is a benchmark
+    # against a stored baseline (tools/bench/test_perf.py), not a test criterion.
     completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
     assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
-    assert cpu < CPU, (command[0], cpu)
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
     return results
@@ -315,11 +319,28 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
     """The Lean-authority counterpart of the metered test above: the same
     generated cases, through the same public calls under VE_AUTHORITY=lean, each
     report `ResourceLimit`, and every operation they dispatch runs on Lean (no
-    Python fallback). It counts no Python units: the verdicts are the backends'."""
+    Python fallback). It counts no Python units: the verdicts are the backends'.
+
+    Lean-authority evaluation asks Rust first. Under load (a 2 h 14 min suite)
+    one such call outlasted the Rust client's 5-second default; every Rust call
+    and Lean service request here must wait the suite's hang guard instead
+    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`)."""
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     calls = []
     monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
+    waits, lean_waits = [], []
+    checker, roundtrip = rust_jsonl._run_checker, LeanService._roundtrip
+
+    def recorded(argv, *, input, timeout):
+        waits.append(timeout)
+        return checker(argv, input=input, timeout=timeout)
+
+    def lean_recorded(self, mode, cases_text, count, timeout, *rest):
+        lean_waits.append(timeout)
+        return roundtrip(self, mode, cases_text, count, timeout, *rest)
+    monkeypatch.setattr(rust_jsonl, "_run_checker", recorded)
+    monkeypatch.setattr(LeanService, "_roundtrip", lean_recorded)
     dispatched = set()
     for name, verdict, _, _, _ in generate(seed):
         calls.clear()
@@ -327,6 +348,8 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
         assert all(authority == "lean" for _, authority in calls), (name, calls)
         dispatched.update(op for op, _ in calls)
     assert BUDGET_OPERATIONS <= dispatched, BUDGET_OPERATIONS - dispatched
+    assert waits and set(waits) == {HANG_TIMEOUT}, sorted(set(waits))
+    assert lean_waits and set(lean_waits) == {HANG_TIMEOUT}, sorted(set(lean_waits))
 
 
 # --- The Python meter keeps the regression power of the old wall-clock bound ---

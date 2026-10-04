@@ -12,9 +12,9 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
-import time
 
 import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
@@ -107,7 +107,7 @@ def passes(staging: Staging) -> None:
 def test_clean_commit_passes(staging):
     staging.stage("ve/errors.py", staging.head("ve/errors.py") + b"\n# A harmless comment.\n")
     staging.stage("docs/precommit-probe.md", "# Probe\n\nA token of thanks; the password is in the vault.\n")
-    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.surface.registry\n")  # ledgered edge
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.backends.dispatch\n")  # ledgered edge
     staging.stage("lean/VE/Syntax.lean", staging.head("lean/VE/Syntax.lean") + b"\n-- A comment.\n")
     staging.rehash("lean/VE/Syntax.lean")
     staging.stage("tools/hooks/unused.txt", None)  # removing an absent path is a no-op
@@ -198,7 +198,7 @@ def test_verdicts_do_not_depend_on_the_working_tree(staging, tmp_path):
     elsewhere = tmp_path / "worktree"
     elsewhere.mkdir()
     (elsewhere / ".gitattributes").write_text("* -diff\n")
-    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.surface.registry\n")
+    staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nimport ve.backends.dispatch\n")
     staging.stage("lean/VE/Syntax.lean", staging.head("lean/VE/Syntax.lean") + b"\n-- A comment.\n")
     staging.rehash("lean/VE/Syntax.lean")
     clean = staging.run_in(elsewhere)
@@ -419,7 +419,9 @@ def test_emergency_bypass_warns(staging):
     assert "the gate does NOT re-check secrets or layer imports" in result.stderr
 
 
-def test_large_staged_change_stays_under_ten_seconds(staging):
+def stage_large_change(staging):
+    """Stage an edit of every Python and hand-written Lean source, and 1500 new 10 kB files.
+    Returns the staged files."""
     files = {}
     tracked = staging.git("ls-files", "-z", "--", "ve", "lean/VE").decode().split("\0")
     python = [p for p in tracked if p.endswith(".py")]
@@ -435,10 +437,25 @@ def test_large_staged_change_stays_under_ten_seconds(staging):
         files[f"experiments/timing-probe/case_{number:04}.md"] = line * 120
     staging.stage_many(files)
     staging.rehash(*lean)
-    started = time.perf_counter()
+    return files
+
+
+def without_lean(tmp_path):
+    """A PATH holding only what the hook needs besides Lean, so `lean --deps` is skipped."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    for tool in ("python3", "git", "dirname"):
+        (bin_dir / tool).symlink_to(shutil.which(tool))
+    return str(bin_dir)
+
+
+def test_large_staged_change_passes(staging, tmp_path):
+    """Its cost in CPU seconds is a benchmark (tools/bench/test_perf.py), not a test criterion."""
+    stage_large_change(staging)
+    # The hook's waits stay the suite's hang guard: a real child never runs against their
+    # defaults (30 s, 3 s, 2 s), which tests/test_hang_guards.py checks by instrumentation.
     result = staging.run("--timings")
-    elapsed = time.perf_counter() - started
     assert result.returncode == 0, result.stderr
-    assert elapsed < 10, result.stderr
-    print(f"\n{len(files) + 1} staged paths, {sum(map(len, files.values())) / 1e6:.1f} MB: "
-          f"{elapsed:.2f} s\n{result.stderr}")
+    result = staging.run("--timings", PATH=without_lean(tmp_path))
+    assert result.returncode == 0, result.stderr
+    assert "lean --deps: pinned toolchain unavailable; plain-layout grammar only" in result.stderr

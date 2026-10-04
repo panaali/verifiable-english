@@ -20,9 +20,12 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools import rust_build  # noqa: E402
+from tools.pytest_run import pytest_command, pytest_environment  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
+# The documented refresh of COLLECTION after intended test changes.
+REFRESH = "uv run python tools/gate_collection.py --write"
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
                    "cargo_test", "pytest")
 REQUIRED_FAMILIES = (
@@ -51,6 +54,7 @@ ALLOWED_ENVIRONMENT = (
     "LAKE_CACHE_DIR",                   # fresh, in scratch
     "CARGO_HOME",                       # fresh, in scratch; seeded by isolated_cargo
     "PYTHONNOUSERSITE",                 # 1
+    "PYTHONPYCACHEPREFIX",              # fresh, in scratch: no bytecode cached before the gate
     "PYTEST_DISABLE_PLUGIN_AUTOLOAD",   # 1
 )
 # Added only for the stage that needs them.
@@ -59,6 +63,39 @@ STAGE_ENVIRONMENT = {
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
+# The gate's pytest invocation, shared by its collection run, its suite run and the
+# baseline writer (tools/gate_collection.py, also `--write-collection`), so the baseline
+# is what the gate collects. Plugin autoload is off in the gate, so every plugin is
+# named here or by tools/pytest_run.py.
+PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
+
+
+def collection_command(python: list[str]) -> list[str]:
+    return pytest_command(python, "--collect-only", *PYTEST_ARGS)
+
+
+def suite_command(python: list[str], workers: str) -> list[str]:
+    return pytest_command(python, "-n", workers, *PYTEST_ARGS)
+
+
+def merge_pytest_events(collection: dict, suite: dict) -> dict:
+    """The collection run's IDs with the suite run's results. Every xdist worker of the
+    suite run must have collected exactly the collection run's selection."""
+    workers = suite.get("workers")
+    if not isinstance(workers, dict) or not workers:
+        raise RuntimeError("the suite run recorded no worker collection")
+    for worker, ids in sorted(workers.items()):
+        if ids != collection["selected"]:
+            raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
+                               f"{len(collection['selected'])}")
+    return {**collection, "tests": suite["tests"], "workers": workers}
+
+
+def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None) -> dict:
+    """Run the gate's collection in `env` (plugin autoload off) and return its events."""
+    env = {**pytest_environment(env), "VE_GATE_PYTEST_RESULT": str(result_file)}
+    command(collection_command(python or [sys.executable]), env=env, stage="Python collection")
+    return json.loads(result_file.read_text())
 
 
 def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: str) -> str:
@@ -192,6 +229,19 @@ def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
                and entry["reason"] in reason for entry in entries)
 
 
+def collection_difference(added: list[str], removed: list[str]) -> str:
+    """Every ID collected but not pinned and pinned but not collected, and the refresh."""
+    lines = [f"The pinned baseline {COLLECTION.relative_to(ROOT)} differs from the collected tests: "
+             f"{len(added)} collected but not pinned, {len(removed)} pinned but not collected."]
+    for title, ids in (("Collected but not pinned", added), ("Pinned but not collected", removed)):
+        if ids:
+            lines.append(f"{title}:")
+            lines.extend(f"  {nodeid}" for nodeid in ids)
+    lines.append(f"If these test changes are intended, run `{REFRESH}` after `(cd lean && lake build)`, check "
+                 "every removed ID is meant to go, and commit the file with the change.")
+    return "\n".join(lines)
+
+
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str]) -> None:
     tests = events["tests"]
     collected = events["collected"]
@@ -209,9 +259,7 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
     unexpected = sorted(set(collected) - set(expected))
     if missing or unexpected:
         result["failures"].append({"stage": "coverage",
-                                   "reason": f"collection differs from baseline: {len(missing)} missing, "
-                                             f"{len(unexpected)} unexpected; missing={missing[:10]}, "
-                                             f"unexpected={unexpected[:10]}"})
+                                   "reason": collection_difference(unexpected, missing)})
     if set(selected) | set(deselected) != set(collected) or set(selected) & set(deselected):
         result["failures"].append({"stage": "coverage",
                                    "reason": "tests removed from final collection without a deselection report"})
@@ -275,7 +323,8 @@ def gate_environment(scratch: Path) -> dict[str, str]:
     directories = {"HOME": home, "XDG_CACHE_HOME": home / ".cache",
                    "XDG_CONFIG_HOME": home / ".config", "XDG_DATA_HOME": home / ".local/share",
                    "TMPDIR": scratch / "tmp", "UV_CACHE_DIR": scratch / "uv-cache",
-                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home"}
+                   "LAKE_CACHE_DIR": scratch / "lake-cache", "CARGO_HOME": scratch / "cargo-home",
+                   "PYTHONPYCACHEPREFIX": scratch / "pycache"}
     for directory in directories.values():
         directory.mkdir(parents=True, exist_ok=True)
     # Only uv is exposed from outside the toolchains and the system directories.
@@ -349,10 +398,26 @@ def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
     yield {**env, "CARGO_NET_OFFLINE": "true", "CARGO_ENCODED_RUSTFLAGS": flags}, workdir
 
 
+def write_collection() -> int:
+    """Regenerate the baseline after intentional test changes: the documented refresh,
+    REFRESH (tools/gate_collection.py --write), with the suite's native build prebuilt."""
+    from tools import gate_collection
+    return gate_collection.write(prebuilt=True)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
+    parser.add_argument("--workers", default="auto",
+                        help="xdist workers for the suite (default auto: the CPUs the load leaves, "
+                             "tests/conftest.py)")
+    parser.add_argument("--write-collection", action="store_true",
+                        help="write the gate's collection to the baseline, tools/gate-collection.json, and exit")
     args = parser.parse_args()
+    if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
+        parser.error("--workers is a positive count or auto")
+    if args.write_collection:
+        return write_collection()
     output = args.output.resolve()
     result = {"schema_version": 1, "commit_sha": "", "dirty": False,
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
@@ -428,22 +493,25 @@ def main() -> int:
                     raise RuntimeError("native Rust tests absent or ignored")
                 result["stages"].append("cargo_test")
 
-            events_file = scratch / "pytest.json"
+            python = ["uv", "run", "--frozen", "--no-sync", "python"]
+            collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
             pytest_env = record_environment(result, "pytest", {
-                **env, "VE_GATE_PYTEST_RESULT": str(events_file),
+                **env, "VE_GATE_PYTEST_RESULT": str(collection_file),
                 "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
                 "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
                 "VE_RUST_BINARY": str(rust_binary)})
+            # The collection, serially (xdist workers report no deselection), then the
+            # suite on `--workers` xdist workers; a worker must collect that selection.
+            collection = collect(pytest_env, collection_file, python=python)
             try:
-                command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         "-q", "-p", "hypothesis.extra.pytestplugin",
-                         "-p", "tools.gate_pytest", "-o", "addopts=-ra",
-                         "-m", "not live", "tests"], env=pytest_env, stage="Python suite")
+                command(suite_command(python, args.workers),
+                        env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
-            interpret_pytest(result, json.loads(events_file.read_text()), policy, expected)
+            interpret_pytest(result, merge_pytest_events(collection, json.loads(events_file.read_text())),
+                             policy, expected)
             result["stages"].append("pytest")
             completed = True
         except (OSError, ValueError, KeyError, RuntimeError) as exc:

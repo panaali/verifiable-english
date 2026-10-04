@@ -23,15 +23,17 @@ class Definition:
 
 
 def _mentions(formula: ast.Formula) -> set[str]:
+    # The decoder keeps a name of any JSON kind; one that is not a string names
+    # no symbol, and the body's typing check rejects it.
     match formula:
         case ast.Unary(predicate, _) | ast.Binary(predicate, _, _) | ast.Atom(predicate, _):
-            return {predicate}
+            return {predicate} if type(predicate) is str else set()
         case ast.Not(body) | ast.Forall(_, body) | ast.Exists(_, body):
             return _mentions(body)
         case ast.And(left, right) | ast.Or(left, right) | ast.Implies(left, right):
             return _mentions(left) | _mentions(right)
         case ast.Reach(_, ast.Named(relation), _, _):
-            return {relation}
+            return {relation} if type(relation) is str else set()
         case ast.Reach(_, ast.Body(_, body), _, _):
             return _mentions(body)
         case _:
