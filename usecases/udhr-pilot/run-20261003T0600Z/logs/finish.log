@@ -1,0 +1,49 @@
+{
+ "unit_counts_by_status": {
+  "CHECKED": 1,
+  "LABELLED": 34,
+  "READINGS": 50,
+  "UNFORMALISED": 45
+ },
+ "bytes_by_status": {
+  "CHECKED": 57,
+  "LABELLED": 535,
+  "READINGS": 4265,
+  "UNFORMALISED": 6059
+ },
+ "claimed_covered_bytes": 4857,
+ "claimed_covered_percent": 44.49,
+ "audit_verified_covered_bytes": 2106,
+ "audit_verified_covered_percent": 19.29,
+ "old_boundary_aggregation": {
+  "CHECKED": 1,
+  "LABELLED": 34,
+  "READINGS": 39,
+  "UNFORMALISED": 42
+ },
+ "missing_feature_tally": {
+  "attribution": 4,
+  "causation": 4,
+  "modality/belief": 2,
+  "norms": 7,
+  "other:act_phrase_grammar": 11,
+  "other:comparison": 2,
+  "other:evaluative_open_claim": 2,
+  "other:grounding_of_authority": 1,
+  "other:metaphorical_endowment": 1,
+  "other:priority_of_rights": 1,
+  "other:right_lines_across_open_sets": 4,
+  "quantities": 1,
+  "time": 5
+ },
+ "newly_covered_bytes": 1825,
+ "vocabulary_use": {
+  "regulated_predicates": 62,
+  "regulated_limit": 64,
+  "predicates": 70,
+  "predicate_limit": 256,
+  "sorts": 5,
+  "sort_limit": 32,
+  "regulated_predicates_previous_run": 29
+ }
+}

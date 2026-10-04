@@ -1,0 +1,66 @@
+{
+ "load_seconds": 1537.1,
+ "coverage": {
+  "source_bytes": 10916,
+  "accounted_bytes": 10916,
+  "coverage_percent": 100,
+  "bytes_by_kind": {
+   "meta": 535,
+   "unformalised": 4778,
+   "attributed": 801,
+   "norm": 3336,
+   "right": 1466
+  },
+  "bytes_by_status": {
+   "LABELLED": 535,
+   "UNFORMALISED": 6059,
+   "OPEN": 4265,
+   "CHECKED": 57
+  },
+  "unformalised_reasons": {
+   "causation": 4,
+   "attribution": 4,
+   "modality_belief": 2,
+   "other_evaluative_open_claim": 2,
+   "norms": 7,
+   "time": 5,
+   "other_metaphorical_endowment": 1,
+   "other_act_phrase_grammar": 11,
+   "other_right_lines_across_open_sets": 4,
+   "other_grounding_of_authority": 1,
+   "other_comparison": 2,
+   "quantities": 1,
+   "other_priority_of_rights": 1
+  },
+  "residual": {
+   "open_terms": 51,
+   "assumptions": 0,
+   "bridge_leaves": 0,
+   "unresolved_reading_sets": 50,
+   "default_exceptions": 0,
+   "instruction_switches": 0,
+   "holistic_overrides": 0,
+   "weighing_points": 0,
+   "limitation_terms": 0,
+   "limitation_deciders_unstated": 0,
+   "bar_terms": 0,
+   "power_shadows": 0,
+   "bearer_readings": 39,
+   "polarity_readings": 14,
+   "incident_readings": 6,
+   "force_readings": 25,
+   "couplings": 0,
+   "narrowings": 0,
+   "rights_findings_pending": 1,
+   "separations": 367,
+   "readings_findings": 225,
+   "pending_candidates": 0
+  },
+  "residual_total": 778,
+  "soft_status": "CHECKED",
+  "default_exceptions_by_decider": {},
+  "soft_residual_labels": [],
+  "soft_background_labels": [],
+  "rights_residual_labels": []
+ }
+}
