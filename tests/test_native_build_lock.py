@@ -108,18 +108,24 @@ def test_timeout_stops_compiler_descendants(tmp_path, monkeypatch, driver_delay)
     ))
     communicate = subprocess.Popen.communicate
 
+    waits = []
+
     def communicate_once_spawned(process, *args, **kwargs):
-        # Start the build's timeout only when the driver's descendants exist.
+        # The build's deadline expires (an injected clock) only once the driver's
+        # descendants exist: the driver never ends, so nothing waits it out.
+        if kwargs.get("timeout") is None:  # reaping the stopped group
+            return communicate(process, *args, **kwargs)
         _wait_for(spawned)
-        return communicate(process, *args, **kwargs)
+        waits.append(kwargs["timeout"])
+        return communicate(process, *args, **{**kwargs, "timeout": 0})
 
     monkeypatch.setattr(subprocess.Popen, "communicate", communicate_once_spawned)
     try:
         with (tmp_path / "build.lock").open("a+") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
             with pytest.raises(TimeoutError):
-                conftest._run_build([sys.executable, "-c", driver], None, None, lock,
-                    timeout=1)
+                conftest._run_build([sys.executable, "-c", driver], None, None, lock)
+        assert waits == [HANG_TIMEOUT]
         assert ready.exists()
         # _run_build returns only after the whole group has stopped, so the
         # grandchild's lock is already free; no interval decides this.
