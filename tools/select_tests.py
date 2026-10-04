@@ -15,7 +15,10 @@ How a change selects tests:
   here or in importing modules, that read a name it binds; one that acts at
   import (a top-level call, a registering decorator) selects every test that
   imported the module. A new function nothing in the change calls by name
-  selects every test that ran a function of its file.
+  selects every test that ran a function of its file. An added or deleted
+  module selects every test that imported it.
+* The static graph is the tree after the change plus each changed file as it
+  was before, so a deleted module or fixture still leads to its users.
 * Lean: the executables whose root imports the module, then the tests that
   ran them; Rust: the tests that ran a Rust binary, and `cargo test`.
 * Any other file: the tests that read it, and, for an added or removed file,
@@ -32,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -69,6 +73,9 @@ RUST_LAYER_INPUTS = {"tools/rust-module-exceptions.json", "tools/check_rust_deps
                      "tools/layer_policy.py"}
 KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
                "usecases", "docs", "paper", "examples", "data", "bench", "design"}
+# Cached drift results depend on this file's rules as well as the graph's.
+SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
+                                  + Path(__file__).read_bytes()).hexdigest()[:16]
 
 
 def units() -> list[str]:
@@ -268,7 +275,8 @@ def python_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[
                   called: dict[tuple[str, str], frozenset[str]]) -> None:
     """Report through `add(tests, reason)` the mapped tests one module's change can affect."""
     defs = set((old.units if old else {}) | (new.units if new else {}))
-    if d is None or d.effect or d.decorated or path.endswith("__init__.py"):
+    # A module that appears or vanishes changes what importing it does, whatever it binds.
+    if d is None or d.effect or d.decorated or path.endswith("__init__.py") or (old is None) != (new is None):
         add(coverage.importers(path) | coverage.file_wide(path, defs), f"{path}: import-time change")
         if d is None:
             return
@@ -403,7 +411,7 @@ def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: se
     """
     base_commit = git_lines("rev-parse", base)[0]
     cache = source_graph.cache_path(ROOT).with_name(
-        f"uncertain-{coverage.commit[:16]}-{base_commit[:16]}-{source_graph.CODE_VERSION}.json")
+        f"uncertain-{coverage.commit[:16]}-{base_commit[:16]}-{SELECTOR_VERSION}.json")
     try:
         cached = json.loads(cache.read_text())
         return set(cached["uncertain"]), cached["drift"]
@@ -432,6 +440,9 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
     still holds. Every other test is uncertain.
     """
     found: set[str] = set()
+    # Keep what deleted and changed files imported and named at the map's commit.
+    graph = graph.overlay({path: versions[path][0] if path in versions else (None if letter == "A" else "")
+                           for path, letter in status.items()})
 
     def add(tests, _reason=""):
         found.update(test for test in tests if test in all_units)
@@ -509,7 +520,9 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
                 if change.old == change.new:  # named but not edited: assume anything changed
                     change.known = False
     paths = [change.path for change in changes]
-    graph = source_graph.load(ROOT)
+    # The tree after the change, plus each changed file as it was before it: a
+    # deleted module or fixture still leads to the tests that used it.
+    graph = source_graph.load(ROOT).overlay({change.path: change.old for change in changes})
     all_units = units()
     cov = resolve_map(base, coverage)
     unmapped = set(all_units)
