@@ -26,7 +26,6 @@ import random
 import re
 import os
 import subprocess
-import sys
 import tempfile
 
 from conformance.soft_norms import (RUST_FIXTURES, combined_invalid_soft_blocks, exercised_sources,
@@ -37,6 +36,7 @@ from conformance.wire_contract import choose_combinations
 from conformance.wire_contract_faults import (UNREACHED, catalogue, expected_first, expected_record,
                                               footprint, legacy_codes, overlaps, position)
 from tests.test_soft_norms_lean import env
+from tools import nested_pytest
 from ve.errors import VEError
 from ve.softnorms import load_soft_document
 from ve.softnorms_contract import REGISTRY, public_rejection
@@ -265,12 +265,11 @@ def record_test_inputs(output, workers=None):
     files = sorted({path for pattern in RECORDED_TESTS for path in ROOT.glob(pattern)})
     if workers is None:
         workers = max(1, min(8, (os.cpu_count() or 1) // 8))
-    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_NATIVE_PREBUILT": "1",
-                   "PYTHONPATH": str(ROOT)}
-    parallel = ["-n", str(workers)] if workers > 1 else []
-    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *parallel,
-                           *map(str, files)],
+    environment = nested_pytest.environment(os.environ, VE_CONTRACT_INPUTS=str(output), VE_NATIVE_PREBUILT="1",
+                                            PYTHONPATH=str(ROOT))
+    return subprocess.run(nested_pytest.command(["-q", "-p", "tests.contract_input_recorder",
+                                                 "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live",
+                                                 *map(str, files)], workers=workers),
                           cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
 
 

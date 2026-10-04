@@ -19,7 +19,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import rust_build  # noqa: E402
+from tools import nested_pytest, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
@@ -429,16 +429,16 @@ def main() -> int:
                 result["stages"].append("cargo_test")
 
             events_file = scratch / "pytest.json"
-            pytest_env = record_environment(result, "pytest", {
-                **env, "VE_GATE_PYTEST_RESULT": str(events_file),
-                "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
-                "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
-                "VE_RUST_BINARY": str(rust_binary)})
+            pytest_env = record_environment(result, "pytest", nested_pytest.environment(
+                env, VE_GATE_PYTEST_RESULT=str(events_file),
+                VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
+                VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
+                VE_RUST_BINARY=str(rust_binary)))
             try:
-                command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         "-q", "-p", "hypothesis.extra.pytestplugin",
-                         "-p", "tools.gate_pytest", "-o", "addopts=-ra",
-                         "-m", "not live", "tests"], env=pytest_env, stage="Python suite")
+                command(nested_pytest.command(["-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra",
+                                               "-m", "not live", "tests"],
+                                              python=["uv", "run", "--frozen", "--no-sync", "python"]),
+                        env=pytest_env, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():

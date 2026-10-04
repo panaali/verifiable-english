@@ -19,6 +19,7 @@ import sys
 from check_lean_imports import imports as lean_imports
 from layer_policy import (NAMES, ROOT, lean_default_targets, lean_executables, lean_layer,
                           python_exports, python_imports, python_layer, source_layer)
+import nested_pytest
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 # These exercise the public wire across languages, routes, and frozen fixtures.
@@ -226,8 +227,8 @@ def select(paths: list[str], *, full: bool = False) -> dict:
     if rust_debug_binary:
         commands.append([*CARGO, "build", "--locked", "--manifest-path",
                          "rust/Cargo.toml", "-p", "ve"])
-    commands.append(["uv", "run", "--frozen", "--group", "dev", "python", "-m",
-                     "pytest", "-q", *selected])
+    commands.append(nested_pytest.command(["-q", *selected],
+                                          python=["uv", "run", "--frozen", "--group", "dev", "python"]))
     return {"changed": paths, "path_layers": layers, "minimum_layer": minimum,
             "layer_name": NAMES[minimum], "selected": selected,
             "selected_count": len(selected), "full_count": len(TESTS),
@@ -236,7 +237,8 @@ def select(paths: list[str], *, full: bool = False) -> dict:
 
 
 def run(plan: dict) -> int:
-    env = dict(os.environ)
+    # The selected tests run as the gate runs them, whatever pytest settings the shell has.
+    env = nested_pytest.environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     if plan["lean_build"]:
