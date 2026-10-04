@@ -1,16 +1,16 @@
 # English in Lean, stage S2: the English instance (plan)
 
-**Status:** plan, draft 5, 2026-10-04, branch `design/english-lean-s2` (draft 1 was the pointer plan at
-`340b9877`; draft 2 at `8d5fcebe`; draft 3 at `94b9220a`; draft 4 at `dc6c5443`). Item 1 of this plan is stage S2 of [english-lean-PLAN.md](english-lean-PLAN.md)
+**Status:** plan, draft 6, 2026-10-04, branch `design/english-lean-s2` (draft 1 was the pointer plan at
+`340b9877`; draft 2 at `8d5fcebe`; draft 3 at `94b9220a`; draft 4 at `dc6c5443`; draft 5 at `32409057`). Item 1 of this plan is stage S2 of [english-lean-PLAN.md](english-lean-PLAN.md)
 (the **base plan**, draft 2): the English instance of the generic grammar engine. It builds on S0 and S1a/S1b,
 which are on branch `english-lean/integrate` at `689219b1` and merge as `ve-green-english-lean`
 ([english-lean-measured.md](english-lean-measured.md), [english-lean-s1.md](english-lean-s1.md) on that branch).
-The item-1 statement spec is [english-lean-s2.md](english-lean-s2.md), draft 4. **Nothing was built for this
+The item-1 statement spec is [english-lean-s2.md](english-lean-s2.md), draft 5. **Nothing was built for this
 draft.** The spec's Lean statements were type-checked as stubs against the S1 build, and every verdict and
 count in its fixtures was computed by the proved S1 parser, for draft 1 and again for draft 2 after the
-statement review's edits (spec sections 12 and 13); spec drafts 3 and 4 re-ran nothing, since no computed
-figure depends on their three corrections (spec sections 14 and 15); formulas were derived by hand and are
-confirmed against Python in S2 (spec, section 0).
+statement review's edits (spec sections 12 and 13); spec drafts 3 to 5 re-ran nothing, since no computed
+figure depends on their four corrections (spec sections 14 to 16; the unchanged stub was re-elaborated for
+draft 5); formulas were derived by hand and are confirmed against Python in S2 (spec, section 0).
 
 **Review provenance.** The debate directory `manage-agents/debates/design-english-lean-s2/` holds the review of
 the base plan (rounds of 2026-10-03, converged after round 3: Fable's eight edits of round 3 with Astra's three
@@ -22,6 +22,8 @@ applied by spec draft 2 and, where it bears on this plan, by draft 3 (section 5)
 spec draft 2 (`manage-agents/english-lean-s2-p3ver1.final.md`, FAIL on two inconsistencies, 2026-10-04) is
 applied by spec draft 3 and, where it bears on this plan, by draft 4 (section 5). The second verification pass
 (`manage-agents/english-lean-s2-p3ver2.final.md`, FAIL on one finding, 2026-10-04) is applied by spec draft 4
+and, where it bears on this plan, by draft 5 (section 5). The third verification pass
+(`manage-agents/english-lean-s2-p3ver3.final.md`, FAIL on one finding, 2026-10-04) is applied by spec draft 5
 and, where it bears on this plan, by this draft (section 5). S2 proof work waits for the bounded re-verification
 of those edits (section 1, S2.3).
 
@@ -60,7 +62,8 @@ Three things are decided here and nowhere else in this stage.
 **Gate G2** (base plan, section 5, as amended): on every sealed corpus text, the verdict (zero, one or many),
 the formulas in wire form, the canonical strict text, the conclusion marks and the witness multiplicity agree
 with Python under the tree correspondence, Python's outcome being taken at the dispatched boundary (after
-`check_document`, before `_check_conclusions`; spec 2.10, 2.11); on the reverse corpus every text Lean accepts is accepted by Python
+`check_document`, before `_check_conclusions`; spec 2.10, 2.11) and rejections compared by the class map of spec
+4.2, whose inherited `IllTyped` row gains `UnsupportedProfile`; on the reverse corpus every text Lean accepts is accepted by Python
 with the same formulas, or is dispositioned under SEMANTICS-MIGRATION-PLAN 2.3; under lexicon mutation no corpus
 text gets a different formula; zero unexplained differences; the two budgets met or their revision reviewed;
 audit clean with the spec's theorems in the inventory. Known listed items that are not differences:
@@ -125,8 +128,10 @@ file (spec 2.10, 5.6); (3) G1a stays a pass gate (S2.6). All three hold in this 
    parser's cut strips `{0} ` only and never accepts the text, either missing it (`SyntaxError`) or
    re-segmenting it into an atom with one argument too many that `check_document` rejects, so the Lean action
    must reject rather than build a formula Python refuses, and, since it cannot tell the two Python outcomes
-   apart, the code maps onto either class and G2 accepts either; spec 2.6, 2.7, 2.8, 2.11, e52, e53; added by
-   the first verification pass and corrected by the second, spec sections 14 and 15). All four are
+   apart, the code maps onto either class and G2 accepts either; the `check_document` class there is
+   `UnsupportedProfile`, since an `Atom` node needs `nary@0`, which the base profile lacks, so spec 4.2 adds
+   that class to the inherited `IllTyped` row; spec 2.6, 2.7, 2.8, 2.11, 4.2, e52, e53; added by the first
+   verification pass and corrected by the second and third, spec sections 14 to 16). All four are
    tier B additions like `coefficientNotNumeral`. For the DRI at the statement review; the DRI may split
    `coordinationForm` in two.
 3. **The final lint list** (ruling 4; LEAN-FIRST DRI answer 5). Proposal in spec 2.14: five of the eight retained
@@ -203,5 +208,24 @@ Python class is `SyntaxError` or the ill-typed class by the text. Spec draft 4 a
 | `relativeForm` stays the unconditional rejection, since Python never accepts the text, but maps onto two Python classes; G2 accepts either for it and records which | Q2; S2.6's comparison inherits the rule through spec 2.11; no gate change: both sides reject, and verdict, witness multiplicity and formulas still agree |
 | e53, an obligation like e51 and e52; nothing re-run | S2.2's "done when" (spec 8.2 reproduces) |
 
-The verifier found no unrelated substantive change in draft 3; draft 4 adds none beyond this. PASS follows the
-bounded re-verification of spec section 15, not this draft.
+The verifier found no unrelated substantive change in draft 3; draft 4 adds none beyond this. The third pass
+confirmed the correction (below).
+
+**Third verification pass applied (draft 6).** The bounded re-check of spec draft 4
+(`manage-agents/english-lean-s2-p3ver3.final.md`) confirmed the correction of section 15 and returned FAIL on one
+finding: e53 is stated under `F`, which lacks `nary@0`, so `check_document` rejects its three-argument atom with
+`UnsupportedProfile` (`ve/ast.py:272`), before the arity check, while the inherited `IllTyped` row of the base
+spec lists `UnknownSymbol` and `TypeMismatch` only; the "`SyntaxError` or `illTyped` class" rule did not
+explicitly cover its own counterexample. Spec draft 5 applies it (spec 4.2 amends the row; 2.5, 2.6, 2.8, 2.11,
+e43, e51, e53, 9, 10.12, Q2, section 16) and re-read every rejected fixture's Python class against the check that
+fires first, which found the same gap under e51 and under b51, b52 of e43 (the `Reach` check, `:281–282`), a third
+Python path for the re-segmentation corner inside a guard (the hand parser's ambiguity guard, `SyntaxError`, one of
+the two accepted classes), and one imprecise row (`coordinationRepeated`, b35). The items that bear on this plan:
+
+| Spec correction | Plan change |
+|---|---|
+| `illTyped` maps onto three Python classes, `UnknownSymbol`, `TypeMismatch` and `UnsupportedProfile` (spec 4.2); `relativeForm` keeps its two-class rule, the second class now named exactly | Q2; G2's class comparison (section 1) names the amended map; S2.6's harness implements it through spec 2.11 and 4.2; no gate change: both sides reject, and verdict, witness multiplicity and formulas still agree |
+| no Lean statement, code, message or figure changes; the stub was re-elaborated unchanged against the S1 build and stays untracked, uncommitted | none |
+
+The verifier found no unrelated substantive change in draft 4; draft 5 adds none beyond these. PASS follows the
+bounded re-verification of spec section 16, not this draft.
