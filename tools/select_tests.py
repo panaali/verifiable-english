@@ -707,6 +707,9 @@ def main() -> int:
     parser.add_argument("--full", action="store_true")
     parser.add_argument("--map", help="coverage map (default: newest cached ancestor map)")
     parser.add_argument("--static", action="store_true", help="ignore the coverage map")
+    parser.add_argument("--assume-fresh", action="store_true",
+                        help="treat the map as recorded at the base (an estimate for reports; "
+                             "skips the drift check, so not safe for real runs)")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--explain", action="store_true", help="print why each test is selected")
     parser.add_argument("--run", action="store_true",
@@ -724,7 +727,8 @@ def main() -> int:
     else:
         base, after = "HEAD", None
     coverage = None if args.static else (args.map or "auto")
-    plan = select(paths, full=args.full, base=base, after=after, coverage=coverage)
+    plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
+                  assume_fresh=args.assume_fresh)
     if args.json:
         print(json.dumps(plan, indent=2))
     else:
