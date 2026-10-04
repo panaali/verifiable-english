@@ -32,7 +32,6 @@ from ve.errors import VEError
 from ve.wire import canonical_json
 from conformance.risk import agent_ops
 from tests import probe_matrix as pm
-from tests.lean_wording import lean_wording
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
@@ -48,12 +47,11 @@ FIELDS = ("language", "profile", "profiles", "spec_revision", "vocabulary",
 TYPE_DIAGNOSTICS = {
     ("InvalidInput", "String expected"), ("InvalidInput", "array expected"),
     ("InvalidInput", "object expected"),
-    ("UnsupportedProfile", "profiles must be a sorted unique array"),
+    ("UnsupportedProfile", "UnsupportedProfile: profiles must be a sorted unique array"),
     ("InvalidInput", "InvalidInput: speech_acts block"), ("InvalidInput", "InvalidInput: alternatives.block"),
     ("InvalidInput", "InvalidInput: risk.block"), ("InvalidInput", "units must be an object"),
     ("InvalidInput", "InvalidInput: environment vocabulary"),
 }
-LEAN_TYPE_DIAGNOSTICS = {lean_wording(*diagnostic) for diagnostic in TYPE_DIAGNOSTICS}
 
 
 def _speech():
@@ -313,8 +311,8 @@ def test_type_diagnostics_are_leans(monkeypatch, base, field, data):
     python = pair(outcome(lambda: Environment(data)))
     lean = lean_diagnostic(data)
     assert lean[0] != "ok", (lean_route(data), data)
-    if python in TYPE_DIAGNOSTICS or lean in LEAN_TYPE_DIAGNOSTICS:
-        assert lean_wording(*python) == lean, lean_route(data)
+    if python in TYPE_DIAGNOSTICS or lean in TYPE_DIAGNOSTICS:
+        assert python == lean, lean_route(data)
 
 
 # Pairs of fields, each replaced by a value of each kind or removed: a check
@@ -360,10 +358,10 @@ def test_pairs_of_wrong_typed_fields_have_the_routes_diagnostics(monkeypatch, ba
     for route, routed in by_route.items():
         lean.update(zip([name for name, _ in routed], lean_route_rows(route, [data for _, data in routed])))
     accepted = [name for name, _ in cases if "ok" in (python[name][0], lean[name][0])
-                and lean_wording(*python[name]) != lean[name]]
+                and python[name] != lean[name]]
     differing = [(name, python[name], lean[name]) for name, _ in cases
-                 if (python[name] in TYPE_DIAGNOSTICS or lean[name] in LEAN_TYPE_DIAGNOSTICS)
-                 and lean_wording(*python[name]) != lean[name]]
+                 if (python[name] in TYPE_DIAGNOSTICS or lean[name] in TYPE_DIAGNOSTICS)
+                 and python[name] != lean[name]]
     assert accepted == []
     assert differing == [], "\n".join(map(str, differing[:60]))
 
@@ -385,9 +383,9 @@ def test_looprecheck1_examples_have_the_routes_diagnostics(monkeypatch, base, fi
 
 
 @pytest.mark.parametrize("base, changes, expected", [
-    *[("reports", {"vocabulary": value}, ("UnsupportedProfile", "reports@0 needs a reports block"))
+    *[("reports", {"vocabulary": value}, ("UnsupportedProfile", "UnsupportedProfile: reports@0 needs a reports block"))
       for value in (7, True, [], "x")],
-    *[(base, {"language": 7, "profiles": 7}, ("UnsupportedProfile", "profiles must be a sorted unique array"))
+    *[(base, {"language": 7, "profiles": 7}, ("UnsupportedProfile", "UnsupportedProfile: profiles must be a sorted unique array"))
       for base in ("speech", "alternatives", "risk", "risk-units")],
 ])
 def test_directive3_examples_have_the_routes_diagnostics(monkeypatch, base, changes, expected):
