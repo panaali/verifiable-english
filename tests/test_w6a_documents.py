@@ -10,6 +10,8 @@ import subprocess
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_units_lean_w6a import LEAN, lean, rust
 from tests.test_w6a_review_regressions import money, named, raw_environment
 from ve.admission import admit_document
@@ -24,7 +26,7 @@ from ve.units import core_formula, erased_environment, prove_quantity, quantity_
 
 ROOT = Path(__file__).resolve().parents[1]
 NEWS = ROOT / "usecases" / "news-article"
-pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 
 
 def q(formula):

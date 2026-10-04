@@ -9,18 +9,19 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.risk import Log, cell_env, condition, dec, estimate, gt, q, record
 from ve.risk import run_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_risk_route"
+LEAN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
 RUST = ROOT / "rust/target/release/ve"
 
 
 def _direct_lean(case):
-    completed = subprocess.run([str(LEAN), "-"], input=json.dumps([case]),
-                               text=True, capture_output=True, timeout=60)
+    completed = lean_routes.completed(LEAN, [case])
     assert completed.returncode in (0, 1), completed.stderr
     return json.loads(completed.stdout)[0]
 
@@ -214,8 +215,7 @@ def test_random_records_lean_and_rust_regenerate_the_same_cells():
                          "record": {"alternatives": ["act", "nothing"], "harms": harms,
                                     "classes": dict(env["risk"]["harm_classes"]), "always_possible": [],
                                     "unexamined": "possible", "cells": list(sides.values())}})
-    lean = json.loads(subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                                     capture_output=True, timeout=500).stdout)
+    lean = json.loads(lean_routes.completed(LEAN, cases).stdout)
     rust = json.loads(subprocess.run([str(RUST), "conformance"], input=json.dumps(prepared), text=True,
                                      capture_output=True, timeout=500).stdout)
     kinds = {"ok": 0, "error": 0}

@@ -39,7 +39,7 @@ request error `{"digests", "error", "id", "mode", "status": "error"}`, bound lik
 response: its nonce, its mode and the digests of its cases (`null` when its cases text
 does not split into cases). Only a line whose envelope cannot be decoded gets the unbound
 line error `{"error", "id", "status": "error"}`, which answers no request. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
-batch decoder; English uses `Lean.Json.parse`, its one-shot decoder. No state
+batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder. No state
 is kept between lines.
 
 Budgets are deterministic functions of the request: its size in bytes and its number
@@ -480,8 +480,16 @@ def parseEnglishCases (text : String) : Except String (Array (Except String Json
   unless raw.size == cases.size do throw "English batch split mismatch"
   pure (raw.map fun source => .ok (.str source))
 
+/-- The `risk-eval` batch, read with Lean.Json.parse as its former one-shot runner `ve_risk_eval`
+read it (its cases carry JSON values the restricted decoder refuses, such as null). -/
+def parseLeanCases (text : String) : Except String (Array (Except String Json)) := do
+  let cases ← (← Json.parse text).getArr?
+  pure (cases.map .ok)
+
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
-  if r.mode == .english then parseEnglishCases r.cases else VE.JsonInput.parseCases r.cases
+  if r.mode == .english then parseEnglishCases r.cases
+  else if r.mode == .riskEval then parseLeanCases r.cases
+  else VE.JsonInput.parseCases r.cases
 
 /-- The request's budget: the service limits, lowered by its `budget` member. -/
 def Request.budget (r : Request) : Except String Budget :=

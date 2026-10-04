@@ -83,3 +83,31 @@ def diagnose_text(unit: str, text: str, *, timeout: float | None = None) -> list
         from ve.backends.relay import rejection
         raise rejection(response["code"], response["error"])
     return [entry["result"] for entry in response["results"]]
+
+
+SERVICE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_service"
+
+
+def completed(route, cases: list, *, text: bool = True, timeout: float | None = None):
+    """`run` in the shape of the one-shot's `subprocess.run(..., capture_output=True)`: its exit
+    status, its rows as the JSON text it printed (empty when the batch is refused) and its standard
+    error."""
+    import subprocess
+    status, rows, stderr = run(route, cases, timeout=timeout)
+    stdout = "" if rows is None else json.dumps(rows, ensure_ascii=False)
+    return subprocess.CompletedProcess([str(route)], status, stdout if text else stdout.encode(),
+                                       stderr if text else stderr.encode())
+
+
+def bounded(route, cases: list, cpu_seconds: float) -> tuple[list, float]:
+    """The rows of `route` for `cases` and the service's CPU seconds for them, which must stay below
+    `cpu_seconds` (the one-shot ran under that kernel CPU limit; the service's own bound is its mode's
+    deadline, `lean_service.DEADLINES`)."""
+    service = _started()
+    before = service.cpu_seconds()
+    result = _service_rows(mode(route), cases, None)
+    after = service.cpu_seconds()
+    assert before is not None and after is not None and after >= before, "no CPU time for the service"
+    used = after - before
+    assert used < cpu_seconds, (route, used)
+    return result, used

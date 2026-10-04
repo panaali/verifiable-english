@@ -80,7 +80,7 @@ EXCEPTIONS: dict[tuple[str, str, str, str], str] = {
     ("ve.softnorms", "_rule_references", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
     ("ve.softnorms", "_within_limits", "ve.ast", "_Checker"): SURFACE + " (soft norms: Lean-only route)",
     ("ve.rights", "RightsDocument.__init__", "ve.ast", "_Checker"):
-        SURFACE + " (rights: Lean-only route; rights_route replays the document through ve_rights_route)",
+        SURFACE + " (rights: Lean-only route; rights_route replays the document through the service mode rights)",
     ("ve.rights_route", "check_rights_regenerated", "ve.ast", "_Checker"):
         SURFACE + " (rights: Lean-only route; check_rights_regenerated compares Lean's regeneration)",
     ("ve.speech_acts", "SpeechDocument._question", "ve.ast", "_Checker"):

@@ -16,6 +16,8 @@ import subprocess
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_units_lean_w6a import LEAN, ROOT, lean, quantity, rust
 from tests.test_w6a_review_regressions import raw_environment
 from ve import ast
@@ -26,7 +28,7 @@ from ve.model import FiniteModel
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.units import erased_environment, quantity_countermodel
 
-pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 CONFORMANCE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
 
 

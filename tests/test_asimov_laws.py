@@ -396,18 +396,15 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_altern
     (docs/spec/norm-defaults.md 3.3, integration gap). Python and Lean's alternatives route both
     reject the switched environment, so the case keeps its default and README says why. When this
     test fails, the combination exists: switch `permitted` to `unspecified` and re-run."""
-    from ve.alternatives import _BINARY
+    from tests import lean_routes
     from ve.errors import UnsupportedProfile
     data = load()[0]
     assert "alternatives@0" in data["profiles"]
     switched = _unspecified_permission(data)
     with pytest.raises(UnsupportedProfile, match="alternatives@0 with norm-defaults@0 is not implemented"):
         Environment(switched)
-    if not _BINARY.is_file():
-        pytest.skip("ve_alternatives_route is not built")
-    done = subprocess.run([str(_BINARY), "-"], capture_output=True, text=True, timeout=120, input=json.dumps(
-        [{"id": "switched", "kind": "alt-elaborate", "environment": switched, "norms": norms()}]))
-    (row,) = json.loads(done.stdout)
+    (row,) = lean_routes.rows("alternatives", [{"id": "switched", "kind": "alt-elaborate", "environment": switched,
+                                                "norms": norms()}])
     assert (row["status"], row["error"]) == ("error", "UnsupportedProfile: Unsupported profile norm-defaults@0")
     readme = (ROOT / "README.md").read_text()
     assert "## The completion defaults and `unspecified`" in readme

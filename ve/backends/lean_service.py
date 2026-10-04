@@ -400,6 +400,10 @@ class LeanService:
                 self._stderr = None
             self._buffer.clear()
 
+    def cpu_seconds(self) -> float | None:
+        """CPU time the current process has used, where the platform reports it."""
+        return None if self._proc is None else _cpu_seconds(self._proc.pid)
+
     def stderr(self, start: int = 0) -> tuple[int, str]:
         """The current process's standard error from byte `start` on, and its length: what a
         one-shot runner would have printed there (Lean's `PANIC` messages, for example)."""

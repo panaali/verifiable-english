@@ -9,7 +9,7 @@ built and is read only by `score`, after every answer is fixed.
 2. Staged fallback, run whenever single shot certifies no answer: each derived
    atom or amount is one step, proved from the rules that define it, the facts
    those rules mention, and earlier steps. The steps form a `documents@1` quantity
-   document per answer, which Lean admits (`ve_quantity` case `document`).
+   document per answer, which Lean admits (the quantity route, case `document`).
 3. Lean replays every certificate, and evaluates every premise in a fixture model
    built from the independent reference (non-vacuity).
 4. Mutation check (PLAN section 8) on the staged route.
@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 import time
 from datetime import date
@@ -39,7 +38,6 @@ from ve.environment import Environment  # noqa: E402
 from ve.errors import VEError  # noqa: E402
 from ve.units import _core_problem, elaborate_quantity, prove_quantity  # noqa: E402
 
-LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
 STEP_CONSTANTS = ("amount", "recovered_amount", "kept")
 LEVEL1 = ("reached_pa", "reached_80", "resident_in_week", "has_rb", "in_residential_care")
 PAIRS = ("lives_with", "home_throughout", "partners_throughout")  # binary derived atoms, role to other
@@ -275,27 +273,11 @@ def answer_targets(answers):
 
 # --- Lean ----------------------------------------------------------------------------
 
-def lean(cases, limit=8 * 1024 * 1024):
-    """Run cases through Lean `ve_quantity` in batches under its 16 MiB input limit."""
-    batches, batch, size = [], [], 0
-    for case in cases:
-        n = len(json.dumps(case))
-        if batch and size + n > limit:
-            batches.append(batch)
-            batch, size = [], 0
-        batch.append(case)
-        size += n
-    if batch:
-        batches.append(batch)
-    results = []
-    for part in batches:
-        process = subprocess.run([str(LEAN), "-"], input=json.dumps(part), text=True,
-                                 capture_output=True, timeout=1800)
-        if process.returncode not in (0, 1):
-            raise RuntimeError(process.stderr[:500])
-        got = json.loads(process.stdout)
-        assert [r["id"] for r in got] == [c["id"] for c in part]
-        results += got
+def lean(cases):
+    """Run cases through the Lean quantity route (service mode `quantity`); its rows, in order."""
+    from ve.backends.relay import rows
+    results = rows("quantity", cases)
+    assert [r["id"] for r in results] == [c["id"] for c in cases]
     return results
 
 
@@ -721,7 +703,7 @@ def results_markdown(results, keyed):
         lines.append(f"| {name} | {status} | {steps} | {n} |")
     lean = s["lean"]
     lines += ["", "## Evidence", "",
-              f"- Step certificates produced: {lean['certificates']}; accepted by Lean `ve_quantity`: {lean['certificates_accepted']}.",
+              f"- Step certificates produced: {lean['certificates']}; accepted by the Lean quantity route: {lean['certificates_accepted']}.",
               f"- Answer documents (`documents@1`): {lean['documents']}; admitted by Lean: {lean['documents_admitted']}.",
               f"- Non-vacuity: {lean['model_premises_true']} of {lean['model_premises']} premise evaluations are true in the"
               " reference fixture models (Lean evaluation).",

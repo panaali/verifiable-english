@@ -12,37 +12,31 @@ from __future__ import annotations
 
 import copy
 import json
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests import lean_routes
 
 from ve.readings_s1 import wire
 from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_readings_route"
+LEAN = "ve_readings_route"  # its service mode, through tests/lean_routes.py
 SOFT_PROFILES = ("norms@0", "readings@1", "relational-fol@0", "soft-norms@0")
 
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("lake is required for the readings Lean route")
-        built = subprocess.run([lake, "build", "ve_readings_route"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=1800)
-        assert built.returncode == 0, built.stdout + built.stderr
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service has not been built")
     return LEAN
 
 
 def run(executable, cases):
     # The restricted Lean JSON input has no null: an absent value is omitted, as `ve/readings_route.py` sends it.
-    result = subprocess.run([str(executable), "-"], input=json.dumps(wire(cases)), text=True,
-                            capture_output=True, timeout=180)
+    result = lean_routes.completed(executable, wire(cases))
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

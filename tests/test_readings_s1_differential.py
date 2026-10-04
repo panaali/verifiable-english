@@ -21,6 +21,8 @@ from itertools import product
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_readings_s1_lean import LEAN, SOFT_PROFILES, env_k, env_rights, norm_object
 from ve.errors import VEError
 from ve.readings_route import rights_findings, run_lean, rust_check
@@ -35,7 +37,7 @@ NOT_ASKS_ALL = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         pytest.skip("ve_readings_route is not built")
     return LEAN
 

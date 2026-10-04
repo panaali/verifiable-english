@@ -459,6 +459,9 @@ for line in sys.stdin:
     open(marker, "a").close()
     if behaviour == "hang" or (behaviour == "flaky" and first):
         time.sleep(60)
+    if behaviour == "spin":
+        while True:
+            pass
     if behaviour == "crash":
         sys.exit(3)
     if behaviour == "garbage":
@@ -584,6 +587,41 @@ def test_operational_faults_fail_closed(tmp_path, behaviour):
         assert service.stats["starts"] == 2 and service.stats["retries"] == 1
     finally:
         service.close()
+
+
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+def test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried(tmp_path, monkeypatch):
+    """F4: a request that needs more CPU than its operation's deadline is `CheckerUnavailable` naming the
+    mode, at once: the same request needs the same work, so it is not retried."""
+    from ve.backends import lean_service
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.3, 0.0))
+    with LeanService(fake(tmp_path, "spin"), allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match="mode evaluate used more than its deadline of 0.3 s of CPU") \
+                as caught:
+            service.run("evaluate", [{}])
+        assert caught.value.operation == "evaluate" and not isinstance(caught.value, ResourceLimit)
+        assert service.stats["starts"] == 1 and service.stats["retries"] == 0 and service.pid is None
+
+
+def test_a_request_that_gets_no_cpu_meets_the_wall_cap(tmp_path, monkeypatch):
+    """A process that stops being scheduled (here, sleeping) uses no CPU; the wall-clock cap,
+    `WALL_FACTOR` times the CPU deadline, still ends the request, which is retried once."""
+    from ve.backends import lean_service
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.05, 0.0))
+    with LeanService(fake(tmp_path, "hang"), allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match=r"timeout waiting for the response \(mode evaluate\)"):
+            service.run("evaluate", [{}])
+        assert service.stats["starts"] == 2 and service.stats["retries"] == 1
+
+
+def test_every_mode_has_a_deadline_that_grows_with_its_input():
+    from ve.backends.lean_service import DEADLINES, deadline
+    assert set(DEADLINES) == set(MODES)
+    for mode, (base, per_mib) in DEADLINES.items():
+        assert base > 0 and per_mib > 0, mode
+        assert deadline(mode, 0) == base and deadline(mode, 1 << 20) == base + per_mib, mode
+    # The readings route keeps the UDHR call (about 2,300 s of CPU per MiB) unavailable until F5.
+    assert deadline("readings-route", 500_000) < 2300 * 500_000 / (1 << 20)
 
 
 def test_one_retry_recovers_a_hung_batch(tmp_path):
