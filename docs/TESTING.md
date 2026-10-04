@@ -13,7 +13,7 @@ This takes the changed files from the working tree (tracked changes and new file
 
 A test file is selected when one of these changed:
 
-- a Python file it imports, directly or transitively. This covers tests, their helpers, `conformance/`, `tools/`, `ve/` and `ve_experiments/`, and includes imports inside functions. A name taken from the `ve` facade counts as its defining module.
+- a Python file it imports, directly or transitively. This covers tests, their helpers, `conformance/`, `tools/`, `ve/` and `ve_experiments/`, and includes imports inside functions. A name taken from the `ve` facade counts as its defining module. Every `conftest.py` pytest loads for the test (from the repository root down to its directory) counts as imported, so a change to `tests/conftest.py` or to anything it imports selects every test below it.
 - a Lean module, when the test's code names an executable that contains that module. Product code counts only when it starts that executable itself. Test code that names the service, the Lean authority, `.lake` or the Lean sources also counts. So a Lean change selects that executable's conformance tests.
 - the Rust sources, when the test's code starts the Rust checker or selects an authority. So a Rust change selects the Rust conformance and three-way tests.
 - a data file whose path, name or use-case directory appears in a string in the test's code, such as `usecases/asimov-laws/...` for `tests/test_asimov_laws.py`.

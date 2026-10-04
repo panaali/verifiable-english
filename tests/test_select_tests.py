@@ -69,6 +69,32 @@ def test_changes_select_the_tests_that_depend_on_them(selector, changed, expecte
     assert set(plan["always"]) <= set(plan["selected"])
 
 
+@pytest.mark.parametrize("changed", ["tests/conftest.py", "tests/subprocesses.py", "tools/rust_build.py",
+                                     "ve/surface/unambiguity.py"])
+def test_what_the_conftest_loads_selects_every_test_below_it(selector, changed):
+    """Review: a change to tests/conftest.py selected 18 of 214 files. pytest imports each
+    conftest.py for every test below it, so a change to it, or to what it imports,
+    selects them all."""
+    assert changed in selector.closure("tests/conftest.py")
+    plan = selector.impacted([changed])
+    assert not plan["fallback"] and plan["selected_count"] == plan["full_count"]
+
+
+def test_a_conftest_in_a_test_directory_joins_its_tests_closure(selector, tmp_path, monkeypatch):
+    (tmp_path / "tests/deep").mkdir(parents=True)
+    for conftest in ("conftest.py", "tests/conftest.py", "tests/deep/conftest.py"):
+        (tmp_path / conftest).write_text("")
+    (tmp_path / "tests/deep/test_x.py").write_text("")
+    (tmp_path / "tests/test_y.py").write_text("")
+    monkeypatch.setattr(selector, "ROOT", tmp_path)
+    # Which conftest files join, each standing for its own (cached, real-tree) closure.
+    monkeypatch.setattr(selector, "closure", lambda relative: frozenset({relative}))
+    found = selector.test_closure.__wrapped__
+    assert found("tests/deep/test_x.py") == {"tests/deep/test_x.py", "conftest.py", "tests/conftest.py",
+                                             "tests/deep/conftest.py"}
+    assert found("tests/test_y.py") == {"tests/test_y.py", "conftest.py", "tests/conftest.py"}
+
+
 def test_narrow_changes_select_few_tests(selector):
     """The fast path is fast where the code is narrow (the product's modules import one
     another widely, so a kernel change still selects most of the suite)."""
