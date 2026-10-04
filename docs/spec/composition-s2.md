@@ -413,6 +413,12 @@ slot (`reading_premises`), of which it is a subset. Review A2: a countermodel's 
 to through every rule-bearing field of every line kind (`LINE_RULE_FIELDS` in `ve/rights.py`, read by
 `Content.rules`), a power line's liberty and recognition included.
 
+As built (compose-s2 looprecheck1, review A): E3 reads each used slot label by its kind, never by how it ends. Every
+slot label is built by `SlotLabel.render` and read back by `slot_label` (`ve/readings_sup.py`), which tells the five
+kinds of 1.6 apart by their leading words (`coupling:`, `narrowing:`, `readings:quiet:`, then `readings:<set>@<v>:`),
+as `slot_wellLabelled` does. A coupling or narrowing id is any token, so `coupling:quiet` is the coupling `quiet`
+(E5), not quiescence, and `narrowing:one` is the narrowing `one` (E7). Any other string is an `InvalidInput`.
+
 ### 2.4 Non-wordings, beyond composition.md 2.2
 
 - E10 or E26 for a model-based result, or E12 naming fewer sentences than the complete choice a model encodes.

@@ -8,6 +8,7 @@ The order here is the source order of ``Document.sets`` and candidate order.
 from __future__ import annotations
 
 from copy import deepcopy
+from typing import NamedTuple
 
 from .errors import VEError
 from .readings_s1 import Content, decode_content
@@ -341,6 +342,58 @@ def choices(sets, couplings=(), narrowings=(), *, limit=MAX_CHOICES):
     return result, len(result) > limit
 
 
+class SlotLabel(NamedTuple):
+    """A slot label read by its kind (1.6): `one` (`readings:<set>@<v>:one`), `own` (`readings:<set>@<v>:<i>:quiet`),
+    `shared` (`readings:quiet:outweighs:<a>:<L>:<H>`, `key` the part after `readings:quiet:`), `coupling` and
+    `narrowing` (`<kind>:<id>`). Every slot label is built by `render` and read back by `slot_label`, which tells the
+    kinds apart by their leading words as `slot_wellLabelled` does, never by how the label ends: an id is a token, so
+    it may itself be `one` or `quiet`."""
+    kind: str
+    set: str | None = None
+    version: int | None = None
+    index: int | None = None
+    key: str | None = None
+
+    def render(self) -> str:
+        if self.kind == "one":
+            return f"readings:{self.set}@{self.version}:one"
+        if self.kind == "own":
+            return f"readings:{self.set}@{self.version}:{self.index}:quiet"
+        if self.kind == "shared":
+            return f"readings:quiet:{self.key}"
+        if self.kind in ("coupling", "narrowing"):
+            return f"{self.kind}:{self.key}"
+        raise VEError(f"InvalidInput: unknown slot label kind {self.kind}")
+
+
+SLOT_LABEL_KINDS = ("one", "own", "shared", "coupling", "narrowing")
+
+
+def slot_label(label) -> SlotLabel:
+    """The one reader of a slot label (inverse of `SlotLabel.render`); anything else is an `InvalidInput`."""
+    def parsed():
+        kind, _, rest = label.partition(":")
+        if kind in ("coupling", "narrowing"):
+            return SlotLabel(kind, key=rest)
+        if kind != "readings":
+            return None
+        if rest.startswith("quiet:"):
+            return SlotLabel("shared", key=rest[len("quiet:"):])
+        head, _, tail = rest.partition(":")
+        set_id, at, version = head.rpartition("@")
+        if not at or not version.isdigit():
+            return None
+        if tail == "one":
+            return SlotLabel("one", set_id, int(version))
+        index, _, word = tail.partition(":")
+        return SlotLabel("own", set_id, int(version), int(index)) if word == "quiet" and index.isdigit() else None
+
+    decoded = parsed() if type(label) is str else None
+    if decoded is None or decoded.render() != label:
+        raise VEError(f"InvalidInput: invalid slot label {label!r}")
+    return decoded
+
+
 def one_premises(sets):
     """Exclude unused bit patterns, omitting labels with no formula."""
     labelled = []
@@ -349,7 +402,7 @@ def one_premises(sets):
         unused = [["not", pattern(position, count, index)]
                   for index in range(count, 1 << bits_of(count))]
         if unused:
-            labelled.append((f"readings:{reading_set.id}@{reading_set.version}:one", conj(unused)))
+            labelled.append((SlotLabel("one", reading_set.id, reading_set.version).render(), conj(unused)))
     return labelled
 
 
@@ -367,7 +420,7 @@ def coupling_premises(sets, couplings):
                         forbidden.append(["not", ["and", choice_atom(sets, left.id, i),
                                                   choice_atom(sets, right.id, j)]])
         if forbidden:
-            labelled.append((f"coupling:{coupling['id']}", conj(forbidden)))
+            labelled.append((SlotLabel("coupling", key=coupling["id"]).render(), conj(forbidden)))
     return labelled
 
 
@@ -379,7 +432,7 @@ def narrowing_premises(sets, narrowings):
                 dropped = [["not", choice_atom(sets, reading_set.id, i)]
                            for i, a in enumerate(reading_set.candidates) if a.id not in narrowing["keeps"]]
                 if dropped:
-                    labelled.append((f"narrowing:{narrowing['id']}", conj(dropped)))
+                    labelled.append((SlotLabel("narrowing", key=narrowing["id"]).render(), conj(dropped)))
                 break
     return labelled
 
@@ -477,13 +530,13 @@ def superposed_elaboration(doc, couplings=(), narrowings=()):
             mine = [_quiet_formula(doc.sets, name, sorts, owners)
                     for name, sorts, owners in keys if owners == [[(m, i)]]]
             if mine:
-                labelled.append((f"readings:{reading_set.id}@{reading_set.version}:{i}:quiet", conj(mine)))
+                labelled.append((SlotLabel("own", reading_set.id, reading_set.version, i).render(), conj(mine)))
     for name, sorts, owners in keys:
         if [] in owners or (len(owners) == 1 and len(owners[0]) == 1):
             continue
         if [] not in owners:
             _, _, low, high, act = name.split("__", 4)
-            labelled.append((f"readings:quiet:outweighs:{act}:{low}:{high}",
+            labelled.append((SlotLabel("shared", key=f"outweighs:{act}:{low}:{high}").render(),
                              _quiet_formula(doc.sets, name, sorts, owners)))
     labelled += coupling_premises(doc.sets, couplings) + narrowing_premises(doc.sets, narrowings)
 

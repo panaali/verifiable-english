@@ -239,11 +239,12 @@ def test_m5_narrowing_premise_and_no_dead_reading(tmp_path):
     assert [(c["index"], c["status"]) for c in report["premises"]["candidates"]] == [(0, "model"), (1, "narrowed")]
 
 
-def _m6(tmp_path, narrowings=()):
+def _m6(tmp_path, narrowings=(), coupling_id="c1"):
     probe_unit = ("fixed", "u2", ["top"])
     s2 = ("strict", norm("be-kind", "help_required", True), "norm", {"force": "strict"})
     d2 = ("default", norm("be-kind", "help_required", True, "default"), "norm", {"force": "default"})
-    coupling = {"id": "c1", "axis": "force", "sets": [{"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}],
+    coupling = {"id": coupling_id, "axis": "force",
+                "sets": [{"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}],
                 "by": "reviewer", "reason_spans": ["u1"]}
     return s2_document(tmp_path, [("set", "rs1", "u1", [(*S[:3], {"force": "strict"}), (*DF[:3], {"force": "default"})]),
                                   ("set", "rs2", "u3", [s2, d2]), probe_unit],
@@ -1008,15 +1009,16 @@ def _top_cited(items):
 
 
 _FIX4_FIXTURES = {
-    "m3": (lambda tmp_path, narrowings: s2_document(tmp_path, _top_cited([
+    "m3": (lambda tmp_path, narrowings, coupling="c1": s2_document(tmp_path, _top_cited([
         ("set", "rs1", "u1", [S, DF]), ("fixed", "u0", NEVER_AVOID)]), narrowings=narrowings),
            {"rs1": ["strict", "default"]}, ["avoid_required", "help_required"]),
-    "m4": (lambda tmp_path, narrowings: s2_document(tmp_path, _top_cited([
+    "m4": (lambda tmp_path, narrowings, coupling="c1": s2_document(tmp_path, _top_cited([
         ("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)]), narrowings=narrowings),
            {"rs1": ["strict", "default"]}, ["avoid_required", "help_required"]),
-    "m6": (lambda tmp_path, narrowings: _m6(tmp_path, [{**n, "reason_spans": ["u2"]} for n in narrowings]),
+    "m6": (lambda tmp_path, narrowings, coupling="c1": _m6(
+        tmp_path, [{**n, "reason_spans": ["u2"]} for n in narrowings], coupling),
            {"rs1": ["strict", "default"], "rs2": ["strict", "default"]}, ["avoid_required", "help_required"]),
-    "m9": (lambda tmp_path, narrowings: s2_document(tmp_path, _top_cited([
+    "m9": (lambda tmp_path, narrowings, coupling="c1": s2_document(tmp_path, _top_cited([
         ("fixed", "u0", norm("f-warn", "warn_required", True, guard=ASKS)),
         ("set", "rs1", "u1", [("a", norm("r-a", "avoid_required", True,
                                          guard=["binary", "help_required", ["var", 1], ["var", 0]]), "norm", None),
@@ -1109,12 +1111,49 @@ def test_fix4_a1_english_conditions_are_the_certificate_dependencies(tmp_path, f
     """Generated over the M-fixtures, without and with a narrowing keeping each candidate: every checked answer's
     English conditions (E3) are exactly the slot labels its certificates rely on, the conflict certificates'
     included, and its independence statements (E13) are the open sets none of them mentions."""
+    _assert_fix4_wording(tmp_path, fixture, narrowed)
+
+
+def _expected_provided(wording, route, used):
+    """E3's lines for `used` from the test's own table, each label's kind found by regenerating every label from
+    the document (its couplings, narrowings and open sets), never by reading the label: a restriction id may be any
+    token, `one` and `quiet` included (compose-s2 looprecheck1 A)."""
+    from ve.readings_english import coupling_sentence
+    E, slots = wording.E, wording.slots
+    couplings = {"coupling:" + c["id"]: c for c in route.couplings}
+    narrowings = {"narrowing:" + n["id"]: n for n in route.narrowings}
+    ones = {f"readings:{R.id}@{R.version}:one": R for R in route.sets}
+    slot = [label for label, _ in getattr(route, "slot", [])]
+    lines, quiet = [], False
+    for label in used:
+        assert sum(label in table for table in (couplings, narrowings, ones)) <= 1, label
+        if label in couplings:
+            sets = {R.id: {"unit": R.unit} for R in route.sets}
+            lines.append(E.gated("E5", coupling_sentence(couplings[label], sets, wording.doc["units"]), slots))
+        elif label in narrowings:
+            n = narrowings[label]
+            R = next(R for R in route.sets if (R.id, R.version) == (n["set"], n["version"]))
+            cited = [wording.numbers[u] for u in n["reason_spans"]]
+            lines += [E.narrowed(wording.set_number[R.id], wording.names[R.id][i], cited, slots)
+                      for i, a in enumerate(R.candidates) if a.id not in n["keeps"]]
+        elif label in ones:
+            R = ones[label]
+            lines.append(E.one_reading(wording.set_number[R.id], len(R.candidates), slots))
+        else:
+            assert label in slot and label.startswith("readings:"), label  # a quiescence label (1.6)
+            quiet = True
+    if quiet:
+        lines.append(E.quiet(slots))
+    return [E.provided(slots)] + lines if lines else []
+
+
+def _assert_fix4_wording(tmp_path, fixture, narrowed, ident="n1", coupling="c1"):
     from ve.readings_verdicts import Enumerated, Superposed
     build, sets, predicates = _FIX4_FIXTURES[fixture]
-    narrowings = [] if narrowed is None else [{"id": "n1", "set": narrowed[0], "version": 1, "keeps": [narrowed[1]],
+    narrowings = [] if narrowed is None else [{"id": ident, "set": narrowed[0], "version": 1, "keeps": [narrowed[1]],
                                                "by": "reviewer", "reason_spans": ["uz"]}]
     try:
-        path = build(tmp_path, narrowings)
+        path = build(tmp_path, narrowings, coupling)
         doc, route, wording = _wording(path)
     except VEError as exc:
         assert "ReadingsUnsatisfiable" in str(exc) or "DeadReading" in str(exc), exc
@@ -1131,6 +1170,7 @@ def test_fix4_a1_english_conditions_are_the_certificate_dependencies(tmp_path, f
         else:
             assert used == route.restrictions(())
         head = lines.index(wording.E.every_result(len(route.sets), "conflict_free", wording.slots))
+        assert wording.provided(used) == _expected_provided(wording, route, used), used
         tail = wording.provided(used) + wording.independent(_mentioned(route, used))
         assert lines[head + 1:head + 1 + len(tail)] == tail, (lines, used)
     checked = 0
@@ -1163,6 +1203,7 @@ def test_fix4_a1_english_conditions_are_the_certificate_dependencies(tmp_path, f
                 else:
                     assert used == route.restrictions(A)
                     tail = wording.provided(used)
+                assert wording.provided(used) == _expected_provided(wording, route, used), used
                 assert lines[1:] == tail, (lines, used)
                 _one_derivation(lines, wording)
     # Every fixture but M3 (a CONFLICT, every entailment UNKNOWN) words some checked answer without a narrowing; a
@@ -1170,16 +1211,18 @@ def test_fix4_a1_english_conditions_are_the_certificate_dependencies(tmp_path, f
     assert checked or fixture == "m3" or narrowed is not None, "no checked answer was worded"
 
 
-def test_fix4_a1_conflict_dependent_narrowing_is_worded(tmp_path):
+@pytest.mark.parametrize("ident", ["n1", "quiet", "one"])
+def test_fix4_a1_conflict_dependent_narrowing_is_worded(tmp_path, ident):
     """The finding's case: M3 with `n1` keeping only *should* answers ALL for ¬avoid_required only because the
     narrowing removes the collision under *must*; the English keeps the narrowing (E3, E7) and never says the answer
-    is independent of sentence 1. Without `n1` the answer is UNKNOWN (CONFLICT)."""
-    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["default"], "by": "reviewer",
+    is independent of sentence 1. Without `n1` the answer is UNKNOWN (CONFLICT). compose-s2 looprecheck1 A: the
+    same with the narrowing named `quiet` (once worded as quiescence instead) or `one` (once a crash)."""
+    narrowing = {"id": ident, "set": "rs1", "version": 1, "keeps": ["default"], "by": "reviewer",
                  "reason_spans": ["u2"]}
     items = [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", NEVER_AVOID), ("fixed", "u2", ["top"])]
     path = s2_document(tmp_path, items, narrowings=[narrowing])
     data, lines, wording = _query(path, every("avoid_required", negated=True))
-    assert data["verdict"] == "ALL" and data["reading_premises_used"] == ["narrowing:n1"], data
+    assert data["verdict"] == "ALL" and data["reading_premises_used"] == [f"narrowing:{ident}"], data
     assert data["mentions"] == ["rs1"]
     assert lines[1:] == ["This holds provided that:", "Sentence 1 is not read as *must*, because of sentence 3."]
     assert not any("does not depend" in line for line in lines)
@@ -1187,6 +1230,86 @@ def test_fix4_a1_conflict_dependent_narrowing_is_worded(tmp_path):
     bare = s2_document(tmp_path / "bare", items)
     assert verdicts(bare).entailment(every("avoid_required", negated=True))["status"] == \
         "UNKNOWN (conflict status: CONFLICT)"
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Review looprecheck1 A (compose-s2): a slot label is read by its kind, so a coupling or narrowing id that is also a
+# label word (`one`, `quiet`, ...) is worded as the restriction it is.
+
+_KIND_WORDS = ["one", "quiet", "readings", "coupling", "narrowing", "outweighs"]
+_KIND_WORD_CASES = [(name, narrowed, ident) for name, narrowed in _FIX4_CASES if narrowed is not None or name == "m6"
+                    for ident in ("one", "quiet")]
+
+
+@pytest.mark.parametrize("fixture,narrowed,ident", _KIND_WORD_CASES,
+                         ids=[f"{n}-{'none' if k is None else ':'.join(k)}-{i}" for n, k, i in _KIND_WORD_CASES])
+def test_looprecheck1_a_restriction_ids_that_are_label_words(tmp_path, fixture, narrowed, ident):
+    """The fix4 sweep with every coupling and narrowing named `one` or `quiet`: each checked answer's E3 lines are
+    the test's own table of its labels (E5 per coupling, E7 per narrowing), never a quiescence line or a crash."""
+    _assert_fix4_wording(tmp_path, fixture, narrowed, ident, coupling=ident)
+
+
+@pytest.mark.parametrize("ident", ["quiet", "one"])
+def test_looprecheck1_a_m6_coupling_named_like_a_label_kind(tmp_path, ident):
+    """The finding's M6 cases: with the coupling and the narrowing both named `quiet` or `one`, the answer that
+    relies on both words the coupling (E5) and the narrowing (E7), as when they are named `c1` and `n1`; once the
+    coupling was worded as quiescence (`quiet`) or crashed (`one`)."""
+    lines = {}
+    for coupling, narrowed in (("c1", "n1"), (ident, ident)):
+        narrowing = {"id": narrowed, "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                     "reason_spans": ["u2"]}
+        path = _m6(tmp_path / coupling, [narrowing], coupling_id=coupling)
+        data, lines[coupling], wording = _query(path, every("help_required"))
+        assert data["verdict"] == "ALL", data
+        assert data["reading_premises_used"] == [f"coupling:{coupling}", f"narrowing:{narrowed}"], data
+        _one_derivation(lines[coupling], wording)
+        _report(path)  # the report words every label too
+    assert lines[ident][1:] == lines["c1"][1:] == [
+        "This holds provided that:", "Sentences 1 and 2 are read with the same force, because of sentence 1.",
+        "Sentence 1 is not read as *should*, because of sentence 3."]
+
+
+def test_looprecheck1_a_slot_labels_round_trip_by_kind():
+    """`slot_label` is the inverse of `SlotLabel.render` on every kind, with every id a label word, and rejects
+    anything else with an `InvalidInput` (never a crash or a wrong kind)."""
+    from ve.readings_sup import SLOT_LABEL_KINDS, SlotLabel, slot_label
+    made = []
+    for word in _KIND_WORDS + ["n1", "a.b-c_9", "0"]:
+        made += [SlotLabel("one", word, 1), SlotLabel("own", word, 12, 0), SlotLabel("own", word, 1, 7),
+                 SlotLabel("shared", key=f"outweighs:{word}:lo:hi"), SlotLabel("coupling", key=word),
+                 SlotLabel("narrowing", key=word)]
+    assert {label.kind for label in made} == set(SLOT_LABEL_KINDS)
+    rendered = [label.render() for label in made]
+    for label, text in zip(made, rendered):
+        assert slot_label(text) == label, text
+    assert len(set(rendered)) == len(rendered)  # distinct values, distinct labels (slot_wellLabelled)
+    for bad in [7, None, True, [], {}, "", "readings:", "readings:s@1", "readings:s@x:one", "readings:s@01:one",
+                "readings:s@1:x:quiet", "readings:s@1:1:loud", "readings:s@1:\u0661:quiet", "readings:s:one",
+                "cite:a/b", "quiet", "one"]:
+        with pytest.raises(VEError, match="invalid slot label"):
+            slot_label(bad)
+
+
+def test_looprecheck1_a_every_generated_slot_label_has_its_kind(tmp_path):
+    """Every label the route generates (Lean's slot, Python's regeneration) reads back as the kind that made it, on
+    M6 with the coupling and a narrowing named after label words."""
+    from ve.readings_sup import slot_label
+    for ident in _KIND_WORDS:
+        narrowing = {"id": ident, "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                     "reason_spans": ["u2"]}
+        try:
+            doc, route, _ = _wording(_m6(tmp_path / ident, [narrowing], coupling_id=ident))
+        except VEError as exc:
+            assert "DeadReading" in str(exc), exc
+            continue
+        labels = [label for label, _ in getattr(route, "slot", [])] + route.restrictions(())
+        assert labels
+        for label in labels:
+            decoded = slot_label(label)
+            if label in (f"coupling:{ident}", f"narrowing:{ident}"):
+                assert (decoded.kind, decoded.key) == (label.split(":", 1)[0], ident), label
+            else:
+                assert decoded.kind in ("one", "own", "shared"), label
 
 
 def test_fix4_a1_wording_refuses_an_answer_without_its_dependencies(tmp_path):

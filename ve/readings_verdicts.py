@@ -119,7 +119,7 @@ class _Route:
         narrowings in force that exclude some complete choice taking `A`: a verdict combined over the compatible
         choices holds only given them (review A of compose-s2 looprecheck2). An over-approximation of what selected
         the choices, never an omission."""
-        from .readings_sup import in_force
+        from .readings_sup import SlotLabel, in_force
         fixed = {s: i for s, i in A}
         by_id = {R.id: R for R in self.sets}
         out = []
@@ -131,11 +131,11 @@ class _Route:
             if any(fixed.get(L.id, i) == i and fixed.get(R.id, j) == j and
                    (a.labels.get(axis) is None or a.labels.get(axis) != b.labels.get(axis))
                    for L, R in pairs for i, a in enumerate(L.candidates) for j, b in enumerate(R.candidates)):
-                out.append(f"coupling:{coupling['id']}")
+                out.append(SlotLabel("coupling", key=coupling["id"]).render())
         for narrowing in self.narrowings:
             R = next((R for R in self.sets if in_force(R, narrowing)), None)
             if R is not None and R.id not in fixed and any(a.id not in narrowing["keeps"] for a in R.candidates):
-                out.append(f"narrowing:{narrowing['id']}")
+                out.append(SlotLabel("narrowing", key=narrowing["id"]).render())
         return out
 
     def report_fields(self):
