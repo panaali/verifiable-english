@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import signal
 import subprocess
+import sys
 import time
 
 import pytest
@@ -94,9 +95,44 @@ CHECKER_TIMEOUTS = ("VE_RUST_TIMEOUT", "VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVI
                     "VE_LEAN_TIMEOUT", "VE_CONFORMANCE_HANG_TIMEOUT", "VE_PRECOMMIT_TIMEOUT")
 
 
+class CheckerSettingRemoved(BaseException):
+    """A child started without a checker setting (a BaseException, so no product handler hides it)."""
+
+
+# The refused starts of the running test (a worker thread may swallow the exception).
+REFUSED = []
+
+
+def removed_checker_settings(env):
+    """The checker settings a child started with `env` (None: this process's environment)
+    lacks, when `env` derives from a running test's environment (it holds the
+    PYTEST_CURRENT_TEST pytest sets). Such a child would wait a production default: a
+    test checks a default by instrumentation, never by a real child running against it.
+    A fresh environment (the gate's) is the child's own to configure."""
+    env = os.environ if env is None else env
+    if "PYTEST_CURRENT_TEST" not in env:
+        return []
+    return [variable for variable in CHECKER_TIMEOUTS if variable not in env]
+
+
+# Audit events that start a process, and the position of their environment argument.
+PROCESS_EVENTS = {"subprocess.Popen": 3, "os.posix_spawn": 2, "os.system": None}
+
+
+def refuse_child_without_checker_settings(event, args):
+    if event in PROCESS_EVENTS:
+        position = PROCESS_EVENTS[event]
+        missing = removed_checker_settings(None if position is None else args[position])
+        if missing:
+            message = f"{event} started a child without {', '.join(missing)}"
+            REFUSED.append(message)
+            raise CheckerSettingRemoved(message)
+
+
 def pytest_configure(config):
     for variable in CHECKER_TIMEOUTS:
         os.environ[variable] = str(HANG_TIMEOUT)
+    sys.addaudithook(refuse_child_without_checker_settings)
 
 
 def pytest_sessionstart(session):
@@ -130,3 +166,7 @@ def generous_hang_guards(monkeypatch):
     monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", HANG_TIMEOUT)
     for variable in CHECKER_TIMEOUTS:
         monkeypatch.setenv(variable, str(HANG_TIMEOUT))
+    REFUSED.clear()
+    yield
+    refused, REFUSED[:] = list(REFUSED), []
+    assert refused == [], "a test removed a checker setting and started a real child"

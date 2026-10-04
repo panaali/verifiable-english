@@ -191,19 +191,102 @@ def test_the_suite_raises_every_checker_setting_to_the_hang_guard():
     assert lean_backend.configured_timeout(60.0) == HANG_TIMEOUT
 
 
-def test_every_precommit_wait_follows_the_setting_else_its_default(monkeypatch):
+class StagedIndex:
+    """The part of the hook's index its waiting checks read: `staged` paths and their contents."""
+
+    def __init__(self, snapshot, staged, policy):
+        self.snapshot, self.blobs, self._policy = snapshot, staged, policy
+        self.changed = {path: SimpleNamespace(status="M", mode="100644") for path in staged}
+
+    def staged(self, predicate=lambda path: True):
+        return sorted(path for path in self.changed if predicate(path))
+
+    def listing(self):
+        return dict.fromkeys(self.blobs, "0" * 40)
+
+    def read(self, names):
+        return {name: self.blobs.get(name) for name in names}
+
+    def policy(self):
+        return self._policy
+
+
+@pytest.fixture
+def precommit_waits(tmp_path, monkeypatch):
+    """Run the hook's waiting checks, recording the wait of each child they would start (none starts)."""
     monkeypatch.syspath_prepend(str(ROOT / "tools"))  # as the hook loads it
     import check_lean_imports as reader
+    import layer_policy
+    seen = []
+
+    def run(argv, **options):
+        seen.append((Path(argv[0]).name if argv[0] != sys.executable else "python", argv[1], options["timeout"]))
+        stdout = "Lean (version 4.99.0, x86_64)" if argv[1] == "--version" else ""
+        return subprocess.CompletedProcess(argv, 1 if argv[1] == "--deps" else 0, stdout, "refused")
+    fake = SimpleNamespace(run=run, TimeoutExpired=subprocess.TimeoutExpired)
+    monkeypatch.setattr(precommit, "subprocess", fake)
+    monkeypatch.setattr(precommit, "NOTES", [])
+    monkeypatch.setattr(reader, "subprocess", fake)
+    monkeypatch.setattr(reader, "shutil", SimpleNamespace(which={"lean": "/toolchain/bin/lean"}.get))
+    monkeypatch.setattr(reader, "time", SimpleNamespace(monotonic=lambda: 0.0))  # the whole budget is left
+    policy = SimpleNamespace(layer_policy=layer_policy, check_lean_imports=reader)
+    staged = {"lean/VE/Syntax.lean": b"import VE.Core\n", precommit.LEAN_TOOLCHAIN: b"leanprover/lean4:v4.99.0\n",
+              "tools/wire_contract.py": b"# staged\n"}
+
+    def checks():
+        seen.clear()
+        precommit.check_layers(StagedIndex(tmp_path, staged, policy))
+        precommit.check_wire_contract(StagedIndex(tmp_path, staged, policy))
+        return list(seen)
+    return reader, checks
+
+
+def test_every_precommit_wait_follows_the_setting_else_its_default(precommit_waits, monkeypatch):
+    """A recheck paused a real wire check that a hook test ran at the 30 s default: it failed
+    after 30 s. Each default is checked at the call that would start the child; no child starts."""
+    reader, checks = precommit_waits
+    assert (precommit.WIRE_CHECK_TIMEOUT, reader.ORACLE_BUDGET, reader.PROBE_WAIT) == (30, 3, 2)
     monkeypatch.delenv("VE_PRECOMMIT_TIMEOUT")
-    defaults = (precommit.WIRE_CHECK_TIMEOUT, reader.ORACLE_BUDGET, reader.PROBE_WAIT)
-    assert defaults == (30, 3, 2)
-    assert [precommit.configured_wait(default) for default in defaults] == [30, 3, 2]
+    assert checks() == [("lean", "--version", 2), ("lean", "--deps", 3), ("python", "tools/wire_contract.py", 30)]
     monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", "1234.5")
-    assert [precommit.configured_wait(default) for default in defaults] == [1234.5] * 3
+    assert [wait for *_, wait in checks()] == [1234.5] * 3
     for text in ("0", "-1", "nan", "inf", "", "ten"):
         monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", text)
         with pytest.raises(ValueError, match="VE_PRECOMMIT_TIMEOUT"):
             precommit.configured_wait(30)
+
+
+def _start_child(env=None):
+    subprocess.run([sys.executable, "-c", "pass"], env=env, timeout=HANG_TIMEOUT, check=True)
+
+
+@pytest.mark.parametrize("remove", [
+    # The recheck's example: a hook test popped the setting from the environment it gave the hook.
+    lambda monkeypatch: _start_child({key: value for key, value in os.environ.items()
+                                      if key != "VE_PRECOMMIT_TIMEOUT"}),
+    lambda monkeypatch: (monkeypatch.delenv("VE_LEAN_SERVICE_TIMEOUT"), _start_child()),
+    lambda monkeypatch: (monkeypatch.delenv("VE_RUST_TIMEOUT"), os.system("true")),
+    lambda monkeypatch: (monkeypatch.delenv("VE_LEAN_TIMEOUT"),
+                         os.posix_spawn(sys.executable, [sys.executable, "-c", "pass"], dict(os.environ))),
+], ids=["popped from a child's environment", "deleted from this process", "os.system", "os.posix_spawn"])
+def test_a_child_started_without_a_checker_setting_is_refused(monkeypatch, remove):
+    import conftest
+    with pytest.raises(conftest.CheckerSettingRemoved, match="started a child without VE_"):
+        remove(monkeypatch)
+    assert len(conftest.REFUSED) == 1
+    conftest.REFUSED.clear()  # the refusal was this test's point
+
+
+def test_a_removed_setting_without_a_real_child_or_a_fresh_environment_is_allowed(monkeypatch):
+    import conftest
+    # The gate's fresh environment holds none of the suite's settings, by design.
+    _start_child({"PATH": os.environ["PATH"]})
+    _start_child()
+    # Instrumented: the setting is removed, and no real child starts.
+    monkeypatch.delenv("VE_PRECOMMIT_TIMEOUT")
+    assert conftest.removed_checker_settings(None) == ["VE_PRECOMMIT_TIMEOUT"]
+    assert precommit.configured_wait(precommit.WIRE_CHECK_TIMEOUT) == 30
+    assert conftest.REFUSED == []
 
 
 CLOCKS = {"monotonic", "perf_counter", "time", "monotonic_ns", "perf_counter_ns", "time_ns"}
