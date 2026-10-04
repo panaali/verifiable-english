@@ -69,8 +69,10 @@ The selector works at the level of functions, not layers:
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
 * **Any file.** Whatever its kind (Python, Lean, Rust, data), the tests that
-  read it, and for an added or removed file the tests that listed its
-  directory. `kind_of` and `file_impact` in `tools/select_tests.py` are this
+  read it, and for an added or removed file the tests that listed any
+  directory above it, up to and including the root `.` (as the first or last
+  file there it also makes its directory appear or vanish, which changes the
+  parent's listing). `kind_of` and `file_impact` in `tools/select_tests.py` are this
   one rule for the plan and the drift check; a path named without a visible
   edit may also have appeared or vanished.
 * **Data and documents.** Nothing beyond that rule, except that a fixture a

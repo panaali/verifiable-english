@@ -192,4 +192,6 @@ replay. That recording is the nightly job deferred to the orchestrator above.
   makes its test opaque, so the static graph answers for that test.
 - Directory listings by a test's own code are recorded, but which files
   match its glob is not, so an added file selects every lister of its
-  directory.
+  directory. Nor is the tree before and after compared, so it also selects
+  every lister of every directory above it, even when its own directory
+  neither appeared nor vanished.

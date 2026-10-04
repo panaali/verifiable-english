@@ -24,7 +24,8 @@ How a change selects tests:
 * Lean: the executables whose root imports the module, then the tests that
   ran them; Rust: the tests that ran a Rust binary, and `cargo test`.
 * Every file, whatever its kind: the tests that read it, and, for an added or
-  removed file, the tests that listed its directory. Documentation only
+  removed file, the tests that listed any directory above it, the root "."
+  included (it may make its directory appear or vanish). Documentation only
   selects these. `kind_of` and `file_impact` are the one rule for both the
   plan and the drift check below.
 * The map is recorded for an earlier commit. Code that changed since then
@@ -187,13 +188,13 @@ class Coverage:
         return self._names(self.reads.get(path, ()))
 
     def listers(self, path: str) -> set[str]:
-        """Tests that listed the nearest recorded directory above `path`."""
-        parent = posixpath.dirname(path)
-        while parent:
-            if parent in self.dirs:
-                return self._names(self.dirs[parent])
-            parent = posixpath.dirname(parent)
-        return set()
+        """Tests that listed any directory above `path`, the root "." included.
+
+        A file that appears or vanishes changes its directory's listing; as the
+        first or last file there it also makes that directory appear or vanish,
+        which changes the parent's listing, and so on up to the root.
+        """
+        return self._names(i for directory in directories_above(path) for i in self.dirs.get(directory, ()))
 
     def runners(self, predicate) -> set[str]:
         return self._names(i for name, indices in self.programs.items() if predicate(name)
@@ -233,13 +234,20 @@ class Selection:
                 self.add([test], reason + " (static)")
 
 
-def mentions_path(path: str):
-    """Predicate: a closure names the file or one of its directories."""
-    directories = set()
+def directories_above(path: str) -> list[str]:
+    """Every directory that holds `path`, nearest first, ending with the root "."
+    (the recorder's name for it)."""
+    found = []
     parent = posixpath.dirname(path)
     while parent:
-        directories.add(f"dir:{parent}")
+        found.append(parent)
         parent = posixpath.dirname(parent)
+    return [*found, "."]
+
+
+def mentions_path(path: str):
+    """Predicate: a closure names the file or one of its directories."""
+    directories = {f"dir:{directory}" for directory in directories_above(path)}
     return lambda files, mentions: path in mentions or bool(directories & mentions)
 
 
