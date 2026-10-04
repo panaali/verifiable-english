@@ -22,7 +22,7 @@ from types import SimpleNamespace
 import pytest
 
 from conformance.alternatives import environment as alternatives_environment
-from subprocesses import HANG_TIMEOUT
+from subprocesses import HANG_TIMEOUT, expired_waits
 from ve import admission, alternatives, discourse, norm_defaults_route, readings_route, reports_route, risk
 from ve.backends import lean as lean_backend
 from tools.hooks import precommit
@@ -66,6 +66,8 @@ INJECTED = {
     "tests/test_lean_service.py::test_the_setting_replaces_the_request_and_startup_defaults":
         "expire_service_waits; asserts the setting is each attempt's wait",
     "tests/test_stage2_dispatch.py::test_rust_checker_slower_than_the_setting_is_stopped_at_it":
+        "expired_waits; asserts the setting is the wait",
+    "tests/test_hang_guards.py::test_a_wire_check_that_outlasts_its_wait_blocks_the_commit":
         "expired_waits; asserts the setting is the wait",
     "tests/test_assurance_manifest.py::test_bundle_separates_rejection_from_unavailability":
         "expired_waits; asserts the setting is the wait",
@@ -409,6 +411,19 @@ def test_every_precommit_wait_follows_the_setting_else_its_default(precommit_wai
         monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", text)
         with pytest.raises(ValueError, match="VE_PRECOMMIT_TIMEOUT"):
             precommit.configured_wait(30)
+
+
+def test_a_wire_check_that_outlasts_its_wait_blocks_the_commit(tmp_path, monkeypatch):
+    """The pre-commit wire check's child never answers; its deadline, the setting, is injected
+    as expired, so nothing waits it out. The check raises, and the hook blocks on any check
+    that raises (`precommit.main`: a broken check must block)."""
+    monkeypatch.setenv("VE_PRECOMMIT_TIMEOUT", "1234.5")
+    waits = expired_waits(monkeypatch, precommit, expire=lambda argv: "tools/wire_contract.py" in argv)
+    staged = {"tools/wire_contract.py": b"import threading\nthreading.Event().wait()\n"}
+    with pytest.raises(subprocess.TimeoutExpired) as caught:
+        precommit.check_wire_contract(StagedIndex(tmp_path, staged, None))
+    assert isinstance(caught.value, Exception) and caught.value.timeout == 1234.5
+    assert waits == [1234.5]
 
 
 def _start_child(env=None):
