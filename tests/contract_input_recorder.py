@@ -212,7 +212,20 @@ _install()
 
 
 def pytest_sessionfinish(session, exitstatus):
+    """Write the inputs. Under xdist each worker writes its own `<path>.<worker>` and the
+    controller, which ends after every worker has, merges them: an input recorded by several
+    tests keeps the first test id in order, as a serial run does."""
     path = os.environ.get("VE_CONTRACT_INPUTS")
-    if path:
-        rows = [[label, *json.loads(key)] for key, label in sorted(_RECORDED.items(), key=lambda item: item[1])]
-        Path(path).write_text(json.dumps(rows))
+    if not path:
+        return
+    worker = os.environ.get("PYTEST_XDIST_WORKER")
+    if worker:
+        Path(f"{path}.{worker}").write_text(json.dumps(_RECORDED))
+        return
+    recorded = dict(_RECORDED)
+    for part in sorted(Path(path).parent.glob(f"{Path(path).name}.gw*")):
+        for key, label in json.loads(part.read_text()).items():
+            recorded[key] = min(label, recorded.get(key, label))
+        part.unlink()
+    rows = [[label, *json.loads(key)] for key, label in sorted(recorded.items(), key=lambda item: (item[1], item[0]))]
+    Path(path).write_text(json.dumps(rows))
