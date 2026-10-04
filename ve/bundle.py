@@ -93,7 +93,7 @@ def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> 
     case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas,
              **({} if document is None else {"document": document})}]
     return lean_backend.run("bundle.check", lean_executable, case, runner="ve_conformance",
-                            mode="route", timeout=LEAN_REPLAY_TIMEOUT)[0]
+                            mode="route", timeout=lean_backend.configured_timeout(LEAN_REPLAY_TIMEOUT))[0]
 
 
 def _lean_bundle_mode(data) -> str | None:
