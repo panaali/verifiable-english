@@ -612,7 +612,8 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
         check_document(retargeted)
     answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "r" * 64,
               "references": admitted["references"], "statuses": {"u1": "CHECKED", "u2": "OPEN"},
-              "validity": {}, "joint": 1, "joint_choices": [[]], "joint_formula": ["top"]}
+              "validity": {}, "joint": 1, "joint_choices": [[]], "joint_formula": ["top"],
+              "bound": {"u2": ["unary", "deployed", ["const", "api"]]}}
     route = tmp_path / "route.sh"
 
     def answers(rows, code=0):
@@ -624,7 +625,10 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
     assert result["report_id"] == "r" * 64 and "discourse_hints" not in result
     assert result["reviewed_presentations"] == {"u2": "Api is deployed.\n"}
     assert result["coverage"]["bytes_by_status"] == {"CHECKED": 17, "OPEN": 16}
-    for key, value in [("validity", None), ("joint", True), ("joint", 2), ("joint_choices", [[], []]),
+    # a bound formula the shown wording does not parse to is never shown
+    answers([{**answer, "bound": {"u2": ["unary", "reviewed", ["const", "api"]]}}])
+    assert check_document(retargeted)["reviewed_presentations"] == {}
+    for key, value in [("validity", None), ("bound", None), ("bound", []), ("joint", True), ("joint", 2), ("joint_choices", [[], []]),
                        ("joint_choices", [[["rs1", True, 0]]]), ("joint_formula", None),
                        ("joint", "ResourceLimit: joint choices")]:
         broken = {**answer, key: value} if value is not None else {k: v for k, v in answer.items() if k != key}

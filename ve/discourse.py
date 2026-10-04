@@ -28,6 +28,7 @@ PROFILE = "ve.discourse@1"
 _MAX_NESTING = 4  # Lean's `depthOf D ≤ 4`: how deep `import_files` reads the stored chain
 _JOINT_BUDGET = 64  # Lean's `compatibleChoices` limit, shown beside an UNKNOWN joint set
 _PRESENTED = {"pronoun", "demonstrative", "ordinal_pair"}
+_LAYOUT = " \t\n\r"  # the layout around a unit's sentences, not part of them (4.1(4))
 
 
 # Reading what Lean reads -----------------------------------------------------
@@ -198,7 +199,7 @@ def lean_admission(raw, directory):
         status == "ok" and row.get("admitted") in (True, "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict
         and all(type(v) is str and v in _STATUSES for v in row["statuses"].values())
-        and type(row.get("validity")) is dict and _joint_answer(row)))
+        and type(row.get("validity")) is dict and type(row.get("bound")) is dict and _joint_answer(row)))
     if not well_formed:
         detail = stderr.decode("utf-8", "replace").strip()[-300:]
         raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case"
@@ -246,33 +247,47 @@ def _joint(lean, block, active):
             "count": len(choices), "constraints": count}
 
 
-def _presentations(doc, block, references):
+def _presentations(doc, block, lean):
     """Each unit's reviewed wording: a unit with meaning whose recorded formula-producing mentions
     are all resolved pronouns, demonstratives or ordinal pairs naming an entity, with each mention's
-    bytes replaced by the display its target is registered under (display only: Lean resolved the
-    targets)."""
+    bytes replaced by the display its target is registered under. Lean resolved the targets; the
+    wording is shown only when the English parser reads it (each constant by the parser's own
+    spelling, so a display it does not read back never decides) as exactly the formula Lean bound
+    to the unit: nothing is displayed without passing the parser."""
+    from .ast import formula_to_data
+    from .english import EnglishVocabulary, parse_english
+    env = doc["environment"]
     names = block.get("names", []) if type(block) is dict else []
     displays = {n["constant"]: n["display"] for n in names}
+    spellings = EnglishVocabulary(env).constants
     spans = {m["id"]: m["span"] for m in block.get("mentions", [])} if type(block) is dict else {}
     active = {rs["unit"] for rs in active_reading_sets(doc["meta"].get("reading_sets", []))}
     by_unit = collections.defaultdict(list)
-    for ref in references:
-        target = ref["target"]
+    for ref in lean["references"]:
         if ref["status"] != "navigation":
-            by_unit[ref["unit"]].append((spans[ref["mention"]], ref, target))
+            by_unit[ref["unit"]].append((spans[ref["mention"]], ref, ref["target"]))
     out = {}
     for unit in doc["units"]:
         rows = sorted(by_unit.get(unit["id"], []), key=lambda r: r[0][0])
-        if (not rows or (unit["content"] is None and unit["id"] not in active)
+        bound = lean["bound"].get(unit["id"])
+        if (not rows or bound is None or (unit["content"] is None and unit["id"] not in active)
                 or any(ref["status"] != "resolved" or ref["form"] not in _PRESENTED
                        or target.get("kind") != "entity" or target.get("name") not in displays
-                       for _, ref, target in rows)):
+                       or target["name"] not in spellings for _, ref, target in rows)):
             continue
-        cursor, shown = unit["span"][0], b""
+        cursor, shown, read = unit["span"][0], b"", b""
         for (start, end), _, target in rows:
-            shown += doc["source"][cursor:start] + displays[target["name"]].encode("utf-8")
+            gap = doc["source"][cursor:start]
+            shown += gap + displays[target["name"]].encode("utf-8")
+            read += gap + spellings[target["name"]].encode("utf-8")
             cursor = end
-        out[unit["id"]] = (shown + doc["source"][cursor:unit["span"][1]]).decode("utf-8")
+        rest = doc["source"][cursor:unit["span"][1]]
+        try:
+            parsed = parse_english(env, (read + rest).decode("utf-8").strip(_LAYOUT))
+        except (VEError, UnicodeError):
+            continue
+        if len(parsed.formulas) == 1 and formula_to_data(env, parsed.formulas[0]) == bound:
+            out[unit["id"]] = (shown + rest).decode("utf-8")
     return out
 
 
@@ -290,7 +305,7 @@ def validate_discourse(doc, lean):
     return {"references": lean["references"], "groups": groups,
             "joint": _joint(lean, block, active_reading_sets(doc["meta"].get("reading_sets", []))),
             "joint_formula": lean.get("joint_formula"),
-            "presentations": _presentations(doc, block, lean["references"]),
+            "presentations": _presentations(doc, block, lean),
             "report_id": lean["report_id"], "validity": lean["validity"]}
 
 
