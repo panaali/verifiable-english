@@ -1,6 +1,8 @@
 """Shared test setup for serial and xdist runs."""
 
 import fcntl
+import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -177,22 +179,111 @@ def pytest_configure(config):
     sys.addaudithook(refuse_child_without_checker_settings)
 
 
+def _setting(variable, default):
+    text = os.environ.get(variable, "")
+    return int(text) if text.isdecimal() and int(text) > 0 else default
+
+
+def worker_count(cpus=None, load=None):
+    """`-n auto`: the CPUs this process may use less the machine's 1-minute load, at most
+    VE_TEST_WORKERS (default: every usable CPU). A busy machine then gets fewer workers
+    instead of an oversubscribed run. The floor, VE_TEST_MIN_WORKERS (default: a quarter
+    of the CPUs), keeps a machine whose load never falls below its CPU count (a shared
+    VM) from running a ~20,000 CPU-second suite on one worker; test outcomes do not
+    depend on load either way."""
+    cpus = len(os.sched_getaffinity(0)) if cpus is None else cpus
+    load = os.getloadavg()[0] if load is None else load
+    configured = _setting("VE_TEST_WORKERS", cpus)
+    floor = min(_setting("VE_TEST_MIN_WORKERS", max(1, cpus // 4)), configured)
+    return max(floor, min(configured, cpus - round(load)))
+
+
+def pytest_xdist_auto_num_workers(config):
+    count = worker_count()
+    print(f"ve: -n auto: {count} workers (load {os.getloadavg()[0]:.1f}, "
+          f"{len(os.sched_getaffinity(0))} CPUs)", file=sys.stderr)
+    return count
+
+
+# What the native builds read, and what they produce.
+NATIVE_INPUTS = ("lean", "rust", "rust-toolchain.toml")
+NATIVE_BUILD_DIRS = ("lean/.lake", "rust/target")
+
+
+def native_outputs(root=ROOT):
+    binaries = root / "lean/.lake/build/bin"
+    return sorted((*(binaries.iterdir() if binaries.is_dir() else ()),
+                   root / "rust/target/release/ve", root / "rust/target/debug/ve"))
+
+
+def native_fingerprint(root=ROOT):
+    """The native builds' inputs (the content of every tracked or unignored file under
+    lean/ and rust/, build directories excepted, and the Rust toolchain pin) and the
+    identity of their outputs (size, modification time and inode of each executable);
+    None when an output is missing. Equal to the stamp the last build in this checkout
+    wrote exactly when its inputs and outputs are unchanged."""
+    listed = subprocess.run(["git", "ls-files", "-z", "-c", "-o", "--exclude-standard", "--", *NATIVE_INPUTS],
+                            cwd=root, capture_output=True, check=True, timeout=HANG_TIMEOUT).stdout
+    digest = hashlib.sha256()
+    for name in sorted(set(filter(None, listed.decode().split("\0")))):
+        if name.startswith(tuple(f"{directory}/" for directory in NATIVE_BUILD_DIRS)):
+            continue
+        path = root / name
+        if path.is_file():
+            digest.update(name.encode() + b"\0" + path.read_bytes() + b"\0")
+    outputs = {}
+    for path in native_outputs(root):
+        try:
+            status = path.stat()
+        except FileNotFoundError:
+            return None
+        outputs[path.relative_to(root).as_posix()] = [status.st_size, status.st_mtime_ns, status.st_ino]
+    return {"inputs": digest.hexdigest(), "outputs": outputs}
+
+
+def native_stamp_path(root=ROOT):
+    return native_lock_path(root).with_name(".ve-native-stamp.json")
+
+
+def native_fresh(root=ROOT) -> bool:
+    """Whether the last build in this checkout already produced the current binaries."""
+    stamp = native_stamp_path(root)
+    fingerprint = native_fingerprint(root)
+    try:
+        return fingerprint is not None and json.loads(stamp.read_text()) == fingerprint
+    except (FileNotFoundError, ValueError):
+        return False
+
+
 def pytest_sessionstart(session):
-    """Build once, then hold a read lock until all this process's tests end."""
+    """Build once, then hold a read lock until all this process's tests end.
+
+    VE_NATIVE_PREBUILT=1 uses the binaries as they are; =0 always builds. Unset (local
+    runs), the binaries are reused when the stamp of the last build in this checkout
+    still matches their inputs and outputs, else built and stamped."""
     lock_path = native_lock_path()
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     lock = lock_path.open("a+")
+    prebuilt = os.environ.get("VE_NATIVE_PREBUILT")
     try:
-        if hasattr(session.config, "workerinput") or os.environ.get("VE_NATIVE_PREBUILT") == "1":
+        if hasattr(session.config, "workerinput") or prebuilt == "1":
             fcntl.flock(lock, fcntl.LOCK_SH)
-        else:
-            fcntl.flock(lock, fcntl.LOCK_EX)
+            return
+        if prebuilt != "0" and native_fresh():
+            fcntl.flock(lock, fcntl.LOCK_SH)  # waits for a build in progress
+            if native_fresh():
+                return
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        if prebuilt == "0" or not native_fresh():
             _build_backends(lock)
-            fcntl.flock(lock, fcntl.LOCK_SH)
+            native_stamp_path().write_text(json.dumps(native_fingerprint()) + "\n")
+        fcntl.flock(lock, fcntl.LOCK_SH)
     except BaseException:
         lock.close()
         raise
-    session.config._ve_native_lock = lock
+    finally:
+        if not lock.closed:
+            session.config._ve_native_lock = lock
 
 
 def pytest_sessionfinish(session, exitstatus):
