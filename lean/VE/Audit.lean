@@ -128,7 +128,9 @@ import VE.Readings.Wire
 import VE.Readings.Run
 import VE.WireContract.Engine
 import VE.Grammar.Derives
+import VE.Grammar.Extension
 import VE.Grammar.Meaning
+import VE.Grammar.Reading
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.EnglishGrammar.FoldAgree
@@ -3147,11 +3149,32 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Grammar.rhs_ne_nil_of_mem
 #print axioms VE.Grammar.yield_ne_nil_of
 #print axioms VE.Grammar.yield_ne_nil
+#print axioms VE.Grammar.extension_safe
+#print axioms VE.Grammar.extension_keeps_many
+#print axioms VE.Grammar.rule_map_sem_of
+#print axioms VE.Grammar.rule_map_sems_of
+#print axioms VE.Grammar.rule_map_sem
+#print axioms VE.Grammar.rule_map_inj
+#print axioms VE.Grammar.rule_map_injs
+#print axioms VE.Grammar.rule_map_embeds
 #print axioms VE.Grammar.typed_rule
 #print axioms VE.Grammar.toArgs_some
 #print axioms VE.Grammar.sem_total_of
 #print axioms VE.Grammar.semAll_total_of
 #print axioms VE.Grammar.sem_total
+#print axioms VE.Grammar.read_sound
+#print axioms VE.Grammar.read_complete
+#print axioms VE.Grammar.read_none
+#print axioms VE.Grammar.read_ambiguous
+#print axioms VE.Grammar.read_rejected
+#print axioms VE.Grammar.one_reading_unique
+#print axioms VE.Grammar.one_reading_single
+#print axioms VE.Grammar.mem_readingSet
+#print axioms VE.Grammar.readings_exact
+#print axioms VE.Grammar.doc_sound
+#print axioms VE.Grammar.doc_complete
+#print axioms VE.Grammar.doc_stopped
+#print axioms VE.Grammar.doc_unique
 #print axioms VE.Grammar.Bucket.get_nil
 #print axioms VE.Grammar.Bucket.get_cons
 #print axioms VE.Grammar.Bucket.get_eq_nil
