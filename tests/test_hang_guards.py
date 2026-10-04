@@ -490,8 +490,13 @@ def test_a_removed_setting_without_a_real_child_or_a_fresh_environment_is_allowe
 
 
 CLOCKS = {"monotonic", "perf_counter", "time", "process_time", "thread_time"}
-# Names that hold a measured duration or CPU cost, and the CPU meter's reading (`cpu.seconds`).
-MEASURES = re.compile(r"elapsed|duration|latency|cpu|ru_utime|ru_stime|getrusage", re.IGNORECASE)
+# Words of a name that hold a measured duration or CPU cost (`lean_cpu`, `duration_ms`, `ru_utime`);
+# the CPU meter's reading is `cpu.seconds`. A count of CPUs (`cpus`) is not a measure.
+MEASURES = {"elapsed", "duration", "latency", "cpu", "utime", "stime", "getrusage"}
+
+
+def _measure(name):
+    return bool(MEASURES & set(name.lower().split("_")))
 
 
 def _assertions(tree):
@@ -517,9 +522,8 @@ def elapsed_assertions(path: Path) -> list[str]:
             clock = (isinstance(inner, ast.Call) and isinstance(inner.func, ast.Attribute)
                      and inner.func.attr.removesuffix("_ns") in CLOCKS and isinstance(inner.func.value, ast.Name)
                      and inner.func.value.id == "time")
-            measure = ((isinstance(inner, ast.Name) and MEASURES.search(inner.id))
-                       or (isinstance(inner, ast.Attribute)
-                           and (inner.attr == "seconds" or MEASURES.search(inner.attr))))
+            measure = ((isinstance(inner, ast.Name) and _measure(inner.id))
+                       or (isinstance(inner, ast.Attribute) and (inner.attr == "seconds" or _measure(inner.attr))))
             if clock or measure:
                 found.append(f"{path.relative_to(ROOT).as_posix()}::{function}: {node.lineno}: asserts on time")
                 break
@@ -538,8 +542,10 @@ def elapsed_assertions(path: Path) -> list[str]:
     ("assert result.duration_ms < 50\n", True),
     ("assert deadline > 0\n", False),
     ("assert waits == [HANG_TIMEOUT]\n", False),
+    ("assert usage.ru_utime < 3\n", True),
+    ("assert worker_count(cpus=32, load=0) == 32\n", False),
 ], ids=["monotonic", "elapsed", "perf_counter", "process_time", "nanoseconds", "CPU seconds", "CPU name",
-        "duration", "other name", "recorded wait"])
+        "duration", "other name", "recorded wait", "rusage", "CPU count"])
 def test_the_elapsed_guard_sees_each_form(tmp_path, monkeypatch, source, flagged):
     monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
     path = tmp_path / "example.py"
