@@ -1,19 +1,20 @@
-"""Python's regeneration of the S1 readings route (docs/spec/composition-s1.md 4.1 to 4.6, 8.4).
+"""Python's construction of S1 readings documents (docs/spec/composition-s1.md 1.1 to 1.7), for the English of the
+checked answer and for the untrusted search for separating situations (10).
 
-`answer` computes, from the environment and the document alone, what Lean's `readings-validate` answers: the
-first diagnostic of 4.1 in its order, or per content-bearing set the candidates (each candidate's chain document
-hash, its owned and shared source keys with their generated names, its chain findings), every pair with the
-facts of its recorded situation, and the findings of 4.6. `ve/readings_route.py` compares the two answers byte
-for byte (4.1 rule 3). Python is not the authority: Lean's answer decides admission, and Python's search for
-situations (`search`) is checked by Lean before anything is recorded (8.5).
+Lean owns every decision about a `readings@1` document: `ve/readings_route.py` relays `ve_readings_route`'s
+`readings-validate` row (the checks of 4.1, every candidate's document, keys and chain findings, every recorded
+separation, the findings of 4.6), and nothing here checks or regenerates it (lean-first batch 3). What is left
+builds, from the environment and the document, the contents, each candidate's chain document (`one D s i`) and its
+generated keys, which the English of `readings_route.Wording` names, and which the search evaluates. A document
+Lean refuses never reaches the English, and a construction that fails on a document Lean accepted is the route's
+`CheckerUnavailable` (docs/LEAN-FIRST-PLAN.md rule 2). The search runs before Lean has seen the situations: it
+only proposes, and Lean's answer on the recorded document is the only check (8.5).
 
-Python reuses its own chain classes (`RightsDocument`, `SoftNormDocument`), whose generated formulas the soft and
-rights routes already compare with Lean's, and evaluates their premises, outcomes, selections and assertions on
-each situation as Lean's `separates` does. One field is not computed independently: the per-candidate chain
-findings of the rights chain (`limitationScope`, `noDistinction`) have no Python implementation; they are the
-rights route's own answer (`rights-scope`) on the candidate's document, as in Python's rights report today.
-Couplings, narrowings and W2's structural validation of the sets are Python's alone; Lean does not decode them
-(S1 limitation, DRI ruling 3), and nothing here says Lean checked them.
+Four pieces repeat Lean's logic and are retained, listed as unfinished in `docs/lean-first/b3/LEDGER.md`: the
+attachment relation (`Document.attached`, Lean's `attached`), the generated keys (`Side.gen_keys`, `genKeys`),
+the force twins and acts the English names (`force_twins`, `content_acts`: `forceTwins`, `contentActs`), and the
+search's evaluation of a candidate's side (`Side.valid`, `Side.observe`: `sideValid`, `sideValue`), which is a
+generator-internal duplicate under the plan's rule 3.
 """
 from __future__ import annotations
 
@@ -27,7 +28,6 @@ READINGS = "readings@1"
 RIGHTS_KINDS = ("right", "right_lines", "limitation", "bar", "norm")
 MAX_CELLS = 12
 PROBE_KINDS = ("claim", "liberty", "immunity", "powerLiberty", "powerRecognition", "norm")
-SITUATION_FIELDS = ["base", "decisions", "fixed", "probe", "value", "witness"]
 
 
 def wire(value):
@@ -60,21 +60,14 @@ class S1Environment:
         from .document import _environment
         data = wire(data)
         self.data = data
-        profiles = data.get("profiles") if type(data) is dict else None
-        if type(profiles) is not list or any(type(p) is not str for p in profiles):
-            # Lean's `profilesOf`: an absent profiles field (or a null one, which `wire` omits) is refused first.
-            raise VEError("UnsupportedProfile: profiles must be a sorted unique array")
-        self.profiles = list(profiles)
-        if READINGS not in self.profiles:
-            raise VEError("UnsupportedProfile: readings@1 is required")
+        self.env = _environment(data)
+        self.profiles = list(data["profiles"])
         self.lower_profiles = [p for p in self.profiles if p != READINGS]
         self.lower_data = {**data, "profiles": self.lower_profiles}
         self.chain = ("rights" if "rights@0" in self.profiles else
                       "soft" if "soft-norms@0" in self.profiles else "norms")
         frame = [p for p in self.lower_profiles if p != "norm-defaults@0"]
         self.frame_data = {**data, "profiles": frame}
-        self.env = _environment(data)
-        self.lower = _environment(self.lower_data)
         self.frame = _environment(self.frame_data)
         self.regulated = {name: decl for name, decl in self.frame.predicates.items() if decl.regulated is not None}
 
@@ -142,9 +135,6 @@ class Content:
         scope = self.body.get("scope")
         return [("right", r) for r in scope] if type(scope) is list else []
 
-    def needs(self):
-        return None if self.kind == "assertion" else "norms@0" if self.kind == "norm" else "rights@0"
-
 
 def _line_rule_names(line):
     return [line[k]["name"] for k in ("norm", "liberty", "recognition") if type(line.get(k)) is dict]
@@ -168,7 +158,7 @@ def _line_uses(line):
 
 # Decoded values. Lean compares contents as it decodes them (`SourceLine`, `SoftNode`, a right's header), not as
 # written: an absent `cites`, `fan_out`, `mode`, `alterable` or `hard` is its default, and formulas are trees.
-# Every comparison of contents goes through these values (the line order of 4.4, force twins of 1.7).
+# The force twins of 1.7 compare contents through these values.
 
 _UNDECODED = (VEError, TypeError, KeyError, AttributeError, ValueError, RecursionError)
 _LINE_FIELDS = {"kind", "norm", "liberty", "recognition", "fan_out", "holder_slot", "cites"}
@@ -191,7 +181,7 @@ def node_value(raw, fan_pred=None):
 
 def line_value(line):
     """A line as `decodeLine` decodes it (a `SourceLine`): kind, rules, fan-out, holder slot, citations. A line
-    Lean does not decode keeps its JSON: Lean refuses its document before comparing any line."""
+    that does not decode keeps its JSON (Lean refuses its document)."""
     j = wire(line)
     try:
         if set(j) - _LINE_FIELDS or j["kind"] not in ("claim", "liberty", "immunity", "power"):
@@ -298,7 +288,9 @@ class ReadingSet:
 class Document:
     """The items of 1.2 in source order: ("fixed", unit, Content), ("bar", unit, raw json), ("set", ReadingSet).
     The document is read as Lean receives it (`wire`): an explicit null is an absent field at every depth, so a
-    right's line with `cites: null` or a norm with `mode: null` is decoded with its defaults, as Lean decodes it."""
+    right's line with `cites: null` or a norm with `mode: null` is built with its defaults, as Lean decodes it.
+    Nothing is checked: a candidate whose content is no content of its kind is Lean's rejection, and is built here
+    as written."""
 
     def __init__(self, senv, document):
         self.senv = senv
@@ -310,18 +302,14 @@ class Document:
         self.items = []
         for unit in units:
             uid, kind = unit["id"], unit.get("kind")
-            if unit.get("content") is not None and kind is None:
-                raise VEError("InvalidInput: unit kind is required")
             reading_set = next((r for r in active if r["unit"] == uid), None)
             if reading_set is not None:
                 if reading_set["status"] == "open":
                     self.items.append(("set", uid, ReadingSet(reading_set, [
-                        self._candidate(reading_set["id"], r) for r in reading_set["readings"]])))
+                        self._candidate(r) for r in reading_set["readings"]])))
                     continue
-                if len(reading_set["readings"]) != 1:
-                    raise VEError("authored reading needs one signed choice")
-                kind = reading_set["readings"][0]["kind"]
-                content = reading_set["readings"][0].get("content")
+                [signed] = reading_set["readings"]
+                kind, content = signed["kind"], signed.get("content")
             else:
                 content = unit.get("content")
             decoded = decode_content(content)
@@ -330,25 +318,12 @@ class Document:
             elif type(decoded) is tuple and type(kind) is str and kind in RIGHTS_KINDS:
                 self.items.append(("bar", uid, content["bar"]))
 
-    def _candidate(self, set_id, reading):
+    @staticmethod
+    def _candidate(reading):
         decoded = decode_content(reading.get("content"))
-        labels = reading.get("labels") or {}
-        kind = reading["kind"]
-        if decoded is None:
-            return Candidate(reading["id"], None, labels)
-        if type(decoded) is tuple:
-            raise VEError("UnsupportedProfile: readings@1 bar candidate content is not implemented")
-        if decoded.kind == "assertion":
-            return Candidate(reading["id"], decoded if kind == "asserted" else None, labels)
-        if kind != decoded.kind:
-            shown = kind if type(kind) is str else "composite"
-            raise VEError(f"InvalidInput: reading {set_id}:{reading['id']} has kind {shown} "
-                          f"and content of kind {decoded.kind}")
-        if self.senv.chain == "norms" and decoded.kind == "norm":
-            # On the norms chain a norm is W1's: a soft field is the W1 decoder's error.
-            from .norms import NormDocument
-            NormDocument._decode({"norm": decoded.body})
-        return Candidate(reading["id"], decoded, labels)
+        if isinstance(decoded, Content) and decoded.kind == "assertion" and reading["kind"] != "asserted":
+            decoded = None
+        return Candidate(reading["id"], decoded, reading.get("labels") or {})
 
     @property
     def sets(self):
@@ -365,11 +340,6 @@ class Document:
     @staticmethod
     def declared_by(R):
         return [n for a in R.candidates if a.content is not None for n in a.content.declared()]
-
-    @classmethod
-    def interface_of(cls, R):
-        return [n for n in cls.declared_by(R)
-                if all(a.content is not None and n in a.content.declared() for a in R.candidates)]
 
     def attached(self):
         """The sets each fixed unit is attached to: the least relation of 1.3."""
@@ -402,19 +372,17 @@ class Document:
         a = pick(item[2])
         return [a.content] if a is not None and a.content is not None else []
 
-    def free(self, attached):
-        return self.build(lambda u: not attached.get(u), lambda R: None)
-
     def one(self, attached, s, i):
         return self.build(lambda u: all(t == s for t in attached.get(u, ())),
                           lambda R: R.candidates[i] if R.id == s and i < len(R.candidates) else None)
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# One chain document (`one D s i`, `free D`) with its elaboration, keys and evaluation
+# One chain document (`one D s i`) with its elaboration, keys and evaluation
 
 class Side:
-    """A chain document assembled from contents in source order (`place`), checked and elaborated."""
+    """A candidate's chain document assembled from contents in source order (`place`) and elaborated by Python's
+    chain classes, unchecked: Lean checks it (`sideWF`)."""
 
     def __init__(self, senv, contents, unit_ids):
         self.senv, self.contents, self.unit_ids = senv, contents, unit_ids
@@ -422,50 +390,9 @@ class Side:
         self.rights = None
         self.soft = None
 
-    # -- the line order (DRI ruling 1, 4.4)
-
-    def line_order_text(self):
-        # Lines compare as Lean decodes them (`SourceLine`, `line_value`), not as written.
-        rights, order = [], []
-        for c in self.contents:
-            if not isinstance(c, Content):
-                continue
-            if c.kind == "right":
-                rights.append([c.body["name"], [line_value(line) for line in c.lines()]])
-                order.extend((c.body["name"], line_value(line)) for line in c.lines())
-            elif c.kind == "right_lines":
-                r = c.body["right"]
-                for entry in rights:
-                    if entry[0] == r:
-                        entry[1].extend(line_value(line) for line in c.lines())
-                order.extend((r, line_value(line)) for line in c.lines())
-        seen = []
-        for r, line in order:
-            if not any(name == r and line in lines for name, lines in rights):
-                return f"UnknownRight: {r}"
-            if (r, line) in seen:
-                return f"InvalidInput: line order lists a line of right {r} twice"
-            seen.append((r, line))
-        return None
-
-    def has_rights(self):
-        return any(not isinstance(c, Content) or c.kind in ("right", "right_lines", "limitation")
-                   for c in self.contents)
-
-    def chain_text(self):
-        """`Wire.chainText`: the chain's well-formedness of the document, then its assertions' typing."""
-        try:
-            self._elaborate()
-        except VEError as exc:
-            return exc.message if hasattr(exc, "message") else str(exc)
-        return None
-
     def _elaborate(self):
         chain = self.senv.chain
         if chain == "rights":
-            text = self.line_order_text()
-            if text is not None:
-                raise VEError(text)
             from .rights import RightsDocument
             units = [{"source_units": list(self.unit_ids)}]
             for c in self.contents:
@@ -476,43 +403,8 @@ class Side:
             self.rights = RightsDocument(self.senv.frame, units)
             self.soft = self.rights.soft_document
         else:
-            if self.has_rights():
-                raise VEError("UnsupportedProfile: rights content requires rights@0")
-            norms = [c.raw for c in self.contents if c.kind == "norm"]
-            if chain == "norms" and any(
-                    c.body.get("mode", "strict") != "strict" or c.body.get("alterable") for c in self.contents
-                    if c.kind == "norm"):
-                raise VEError("InvalidInput: invalid norm fields")
-            from .softnorms import SoftNormDocument, check_soft_source
-            env = self.senv.soft_frame()
-            check_soft_source(env.to_dict(), norms)
-            self.soft = SoftNormDocument(env, norms)
-        from .ast import formula_from_data
-        env = self.soft.extended_env
-        try:
-            for ast in self.assertions:
-                # Decoding types the closed formula over the complete vocabulary (`a.check` in `sideWF`).
-                formula_from_data(env, ast, _generated=True)
-        except (VEError, SyntaxError):
-            raise VEError("InvalidInput: ill-typed assertion") from None
-
-    # -- the chain's document hash (Run.documentHash)
-
-    def document_hash(self):
-        # Lean hashes the units as it receives them: without null values.
-        units = [wire(c.raw) if isinstance(c, Content) else {"bar": wire(c[1])} for c in self.contents
-                 if not (isinstance(c, Content) and c.kind == "assertion")]
-        from .document import _environment
-        lower = _environment(self.senv.lower_data)
-        payload = {"environment_id": lower.environment_id}
-        if self.senv.chain == "rights":
-            payload["document"] = [{"source_units": list(self.unit_ids)}] + [_canonical_unit(u) for u in units]
-            return digest(f"ve-rights-{lower.identity_version}\n", payload)
-        if self.senv.chain == "soft":
-            payload["document"] = [_canonical_norm(u) for u in units]
-            return digest(f"ve-soft-norms-{lower.identity_version}\n", payload)
-        payload["document"] = units
-        return digest(f"ve-norms-{lower.identity_version}\n", payload)
+            from .softnorms import SoftNormDocument
+            self.soft = SoftNormDocument(self.senv.soft_frame(), [c.raw for c in self.contents if c.kind == "norm"])
 
     # -- source keys (1.5, `genKeys`)
 
@@ -570,12 +462,6 @@ class Side:
         self._keys = keys
         return keys
 
-    def key_sorts(self, key):
-        return next((sorts for k, _, sorts in self.gen_keys() if k == key), None)
-
-    def generates(self, key):
-        return any(k == key for k, _, _ in self.gen_keys())
-
     # -- evaluation over a finite base with tables (`tablesModel`, `backgroundValidR`, `observe`)
 
     def model(self, base, tables):
@@ -584,25 +470,6 @@ class Side:
         for key, name, _ in self.gen_keys():
             relations[name] = set(next((t for k, t in tables if k == key), ()))
         return _Model(base.domains, base.constants, relations)
-
-    def tables_typed(self, base, tables):
-        for key, rows in tables:
-            if not self.generates(key):
-                return False
-            for row in rows:
-                for k, name, sorts in self.gen_keys():
-                    if k == key and not _typed(base, sorts, row):
-                        return False
-        return True
-
-    def probe_typed(self, base, probe):
-        if probe == "holds":
-            return True
-        kind, predicate, row = probe
-        regulated = self.senv.regulated
-        if kind not in ("outcome", *PROBE_KINDS) or predicate not in regulated:
-            return False
-        return _typed(base, list(regulated[predicate].arguments), row)
 
     def _formulas(self):
         if hasattr(self, "_prepared"):
@@ -660,85 +527,10 @@ class Side:
         return any(evaluator.formula(tree._expand(selected[rule.core.name], None), bindings)[0]
                    for rule in self.selectable(kind, predicate))
 
-    def evaluation_case(self, base, tables, probe):
-        """The side of Rust's untrusted `readings-evaluate` case: the base environment with a constant per
-        entity, the model, and the closed premises, probe formulas and assertions (10)."""
-        from .ast import And, Const, Not, _to_data
-        from .norms import _instantiate
-        env, premises, assertions = self._formulas()
-        model = self.model(base, tables)
-        data = env.to_dict()
-        data["vocabulary"].pop("soft", None)
-        names = {}
-        for sort, values in sorted(model.domains.items()):
-            for value in values:
-                names[(sort, value)] = f"s1_{len(names)}"
-                data["vocabulary"]["constants"][names[(sort, value)]] = {
-                    "sort": sort, "description": f"the entity {value} of the situation"}
-        outcomes, selections = [], []
-        if probe != "holds":
-            kind, predicate, row = probe
-            sorts = list(self.senv.regulated[predicate].arguments)
-            terms = tuple(Const(names[(s, v)]) for s, v in zip(sorts, row))
-            tree = self.soft.elaborated
-            if kind == "outcome":
-                positive, negative, _ = tree.selection(predicate)
-                conflict = And(tree._expand(positive, predicate), tree._expand(negative, predicate))
-                outcomes = [_instantiate(Not(conflict), terms),
-                            _instantiate(tree.outcome(predicate, base=True), terms)]
-            else:
-                _, _, selected = tree.selection(predicate)
-                selections = [_instantiate(tree._expand(selected[rule.core.name], None), terms)
-                              for rule in self.selectable(kind, predicate)]
-        wire_model = {"complete": True, "domains": {s: sorted(v) for s, v in model.domains.items()},
-                      "constants": {**dict(model.constants), **{n: v for (s, v), n in names.items()}},
-                      "relations": {p: sorted(map(list, rows)) for p, rows in model.relations.items()}}
-        return {"environment": data, "model": wire_model,
-                "premises": [_to_data(f) for f in premises], "outcomes": [_to_data(f) for f in outcomes],
-                "selections": [_to_data(f) for f in selections],
-                "assertions": [_to_data(f) for f in assertions]}
-
-
 class _Model:
     def __init__(self, domains, constants, relations):
         self.domains, self.constants = domains, constants
         self.relations = {p: frozenset(map(tuple, rows)) for p, rows in relations.items()}
-
-
-def _typed(base, sorts, row):
-    return len(sorts) == len(row) and all(v in base.domains.get(s, ()) for s, v in zip(sorts, row))
-
-
-def _canonical_raw(raw):
-    if type(raw) is not dict:
-        return raw
-    return {k: v for k, v in raw.items()
-            if not ((k, v) == ("mode", "strict") or (k, v) == ("alterable", []) or (k, v) == ("hard", False))}
-
-
-def _canonical_unit(u):
-    if "norm" in u:
-        return {**u, "norm": _canonical_raw(u["norm"])}
-    for key in ("right", "right_lines"):
-        if key in u:
-            body = u[key]
-            if type(body) is dict and type(body.get("lines")) is list:
-                body = {**body, "lines": [{**line, **{k: _canonical_raw(line[k]) for k in
-                                                      ("norm", "liberty", "recognition") if k in line}}
-                                          for line in body["lines"]]}
-            return {**u, key: body}
-    return u
-
-
-def _canonical_norm(u):
-    raw = u.get("norm")
-    if type(raw) is not dict:
-        return u
-
-    def dropped(k, v):
-        return ((k == "mode" and v == "strict") or (k == "rank" and v is None) or (k == "alterable" and v == [])
-                or (k == "exception" and v is None) or (k == "hard" and v is False))
-    return {"norm": {k: v for k, v in raw.items() if not dropped(k, v)}}
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -759,21 +551,12 @@ def key_json(key):
     return {"aimed": key[1]}
 
 
-def key_text(key):
-    kind = key[0]
-    if kind == "excepted":
-        return f"excepted {key[1]}" + (f" bearer {key[2]}" if key[2] is not None else "")
-    if kind == "off":
-        return f"off {key[1]}" + (f" bearer {key[2]}" if key[2] is not None else "") + f" {key[3]}"
-    return " ".join([kind, *key[1:]])
-
-
-def decode_key(j, bad):
-    if type(j) is not dict:
-        raise VEError(bad)
+def decode_key(j):
+    """A situation's key as `decodeKey` reads it; a key that does not decode is a construction failure (Lean
+    refuses its document)."""
+    if type(j) is not dict or any(type(v) is not str for v in j.values()):
+        raise ValueError(f"undecodable key {j!r}")
     keys = sorted(j)
-    if any(type(v) is not str for v in j.values()):
-        raise VEError(bad)
     if keys in (["excepted"], ["bearer", "excepted"]):
         return ("excepted", j["excepted"], j.get("bearer"))
     if keys in (["off", "party"], ["bearer", "off", "party"]):
@@ -786,7 +569,7 @@ def decode_key(j, bad):
         return ("cond", j["cond"], j["act"], j["condition"])
     if keys == ["aimed"]:
         return ("aimed", j["aimed"])
-    raise VEError(bad)
+    raise ValueError(f"undecodable key {j!r}")
 
 
 def key_source(key):
@@ -798,19 +581,17 @@ def key_source(key):
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Admission (4.1 to 4.4)
+# The decoded document (1.1 to 1.5)
 
-class Admission:
-    """The decoded document after the checks of 4.1 up to each candidate's well-formedness."""
+class Decoded:
+    """The environment and the document, with the attachment of 1.3 and each candidate's side built on demand.
+    Nothing is checked (Lean's `admitReadings` is the check)."""
 
     def __init__(self, environment, document):
         self.senv = S1Environment(environment)
         self.doc = Document(self.senv, document)
         self.attached = self.doc.attached()
         self.sides = {}
-        text = self._admission_text()
-        if text is not None:
-            raise VEError(text)
 
     def side(self, s, i):
         if (s, i) not in self.sides:
@@ -835,212 +616,6 @@ class Admission:
     def content_bearing(R):
         return any(a.content is not None and a.content.kind != "assertion" for a in R.candidates)
 
-    def _admission_text(self):
-        senv, doc = self.senv, self.doc
-        for text in (self._abstention(), self._reserved(), self._duplicate(), self._interface(),
-                     self._attachment()):
-            if text is not None:
-                return text
-        text = Side(senv, doc.free(self.attached), doc.unit_ids).chain_text()
-        if text is not None:
-            return text
-        for R in doc.sets:
-            for i, a in enumerate(R.candidates):
-                if a.content is None:
-                    continue
-                side = Side(senv, doc.one(self.attached, R.id, i), doc.unit_ids)
-                text = side.chain_text()
-                if text is not None:
-                    return text + f" under {R.id}@{R.version}:{i}"
-                self.sides[(R.id, i)] = side
-        return None
-
-    def _abstention(self):
-        lower = self.senv.lower_profiles
-        if "norm-defaults@0" in lower and any(self.content_bearing(R) for R in self.doc.sets):
-            return "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
-        for R in self.doc.sets:
-            for a in R.candidates:
-                need = a.content.needs() if a.content is not None else None
-                if need is not None and need not in lower:
-                    return f"UnsupportedProfile: reading {R.id}:{a.id} of kind {a.content.kind} requires {need}"
-        return None
-
-    def _reserved(self):
-        vocabulary = self.senv.data["vocabulary"]
-        symbols = (sorted(vocabulary.get("sorts", {})) + sorted(vocabulary.get("predicates", {})) +
-                   sorted(vocabulary.get("constants", {})))
-        for name in symbols:
-            if name.startswith("ve__"):
-                return f"InvalidInput: name {name} begins with ve__"
-        for item in self.doc.items:
-            contents = ([item[2]] if item[0] == "fixed" else
-                        [a.content for a in item[2].candidates if a.content is not None] if item[0] == "set" else [])
-            for c in contents:
-                for _, name in c.declared():
-                    if name.startswith("rd-"):
-                        return f"InvalidInput: name {name} begins with rd-"
-        return None
-
-    def _item_names(self, item):
-        if item[0] == "fixed":
-            return [n for _, n in item[2].declared()]
-        if item[0] == "bar":
-            return [item[2].get("name")]
-        return []
-
-    def _duplicate(self):
-        doc = self.doc
-        fixed_names = [n for item in doc.items for n in self._item_names(item)]
-        sets = doc.sets
-        for k, R in enumerate(sets):
-            for _, name in doc.declared_by(R):
-                if name in fixed_names:
-                    return f"DuplicateDeclaration: {name} in reading sets {R.id} and the document"
-                for other in sets[k + 1:]:
-                    if other.id != R.id and any(m == name for _, m in doc.declared_by(other)):
-                        return f"DuplicateDeclaration: {name} in reading sets {R.id} and {other.id}"
-        earlier = []
-        for item in doc.items:
-            for name in self._item_names(item):
-                if name in earlier:
-                    return self._fixed_duplicate_text(name)
-            earlier.extend(self._item_names(item))
-        return None
-
-    def _fixed_duplicate_text(self, name):
-        declared = [n for item in self.doc.items if item[0] == "fixed" for n in item[2].declared()]
-        declared += [("bar", item[2].get("name")) for item in self.doc.items if item[0] == "bar"]
-        if self.senv.chain == "rights":
-            if ("right", name) in declared:
-                return f"DuplicateDeclaration: right {name}"
-            if ("limitation", name) in declared:
-                return f"DuplicateDeclaration: limitation {name}"
-            if ("bar", name) in declared:
-                return "DuplicateDeclaration: bar"
-        return f"DuplicateDeclaration: rule {name}"
-
-    def _interface(self):
-        doc = self.doc
-        for R in doc.sets:
-            declared, interface = doc.declared_by(R), doc.interface_of(R)
-            for u, c in doc.fixed_units():
-                for n in c.uses():
-                    if n in declared and n not in interface:
-                        return f"ReadingInterface: {R.id}: {n[1]}"
-        return None
-
-    def _attachment(self):
-        ids = [R.id for R in self.doc.sets]
-        for u, _ in self.doc.fixed_units():
-            hit = [s for s in ids if s in self.attached.get(u, ())]
-            if len(hit) >= 2:
-                return f"UnsupportedProfile: readings@1 fixed unit {u} depends on reading sets {hit[0]} and {hit[1]}"
-        return None
-
-    # -- situations (4.5)
-
-    def decode_situation(self, s, i, j, sid, entry):
-        """`decodeSituation`, `stepOne` and the base's validity: the situation, or 4.5 step 1's diagnostic."""
-        bad = f"InvalidInput: invalid situation {sid}"
-        if type(entry) is not dict or sorted(entry) != SITUATION_FIELDS:
-            raise VEError(bad)
-        if self.senv.situation_id(entry) != sid:
-            raise VEError("distinguishing model id does not match model")
-        if type(entry["witness"]) is not str:
-            raise VEError(bad)
-        base = entry["base"]
-        if type(base) is not dict:
-            raise VEError(bad)
-        base = base if "complete" in base else {**base, "complete": True}
-        base = {**base, "complete": True}
-        from .model import FiniteModel
-        try:
-            model = FiniteModel._decode(self.senv.author_environment(), base, _defer_model_id=True)
-        except VEError:
-            raise VEError(bad) from None
-        for sort, values in sorted(model.domains.items()):
-            for value in values:
-                if value.startswith("rd-"):
-                    raise VEError(f"InvalidInput: name {value} begins with rd-")
-                if "__" in value:
-                    raise VEError(bad)
-        Xi, Xj = self.side(s, i), self.side(s, j)
-
-        def tables(raw):
-            if raw is None:
-                return []
-            if type(raw) is not list:
-                raise VEError(bad)
-            out = []
-            for item in raw:
-                if type(item) is not dict or sorted(item) != ["key", "tuples"]:
-                    raise VEError(bad)
-                key = decode_key(item["key"], bad)
-                sorts = Xi.key_sorts(key) or Xj.key_sorts(key)
-                if sorts is None or type(item["tuples"]) is not list:
-                    raise VEError(bad)
-                rows = []
-                for row in item["tuples"]:
-                    if type(row) is not list or len(row) != len(sorts) or any(type(v) is not str for v in row):
-                        raise VEError(bad)
-                    rows.append(tuple(row))
-                out.append((key, rows))
-            return out
-
-        fixed, decisions = tables(entry["fixed"]), tables(entry["decisions"])
-        probe = self._probe(entry["probe"], bad)
-        if type(entry["value"]) is not bool:
-            raise VEError(bad)
-        witness = entry["witness"]
-        for key, _ in decisions:
-            if not self.owned(s, i, key):
-                raise VEError(f"InvalidInput: situation {sid} decides {key_text(key)}, which reading {witness} "
-                              "does not own")
-        for key, _ in fixed:
-            if self.owned(s, i, key) or self.owned(s, j, key):
-                raise VEError(f"InvalidInput: situation {sid} decides {key_text(key)}, which reading {witness} "
-                              "does not own")
-        situation = (model, fixed, decisions, probe, entry["value"])
-        if not self.situation_wf(s, i, j, situation):
-            raise VEError(bad)
-        return situation
-
-    def _probe(self, raw, bad):
-        if raw == "holds":
-            return "holds"
-        if type(raw) is not dict or ("outcome" in raw) == ("selects" in raw):
-            raise VEError(bad)
-        body = raw.get("outcome") if "outcome" in raw else raw.get("selects")
-        if type(body) is not dict or type(body.get("predicate")) is not str:
-            raise VEError(bad)
-        kind = "outcome" if "outcome" in raw else body.get("kind")
-        if type(kind) is not str:
-            raise VEError(bad)
-        predicate = body["predicate"]
-        decl = self.senv.regulated.get(predicate)
-        sorts = list(decl.arguments) if decl is not None else []
-        row = body.get("tuple")
-        if type(row) is not list or len(row) != len(sorts) or any(type(v) is not str for v in row):
-            raise VEError(bad)
-        return (kind, predicate, tuple(row))
-
-    def tables_for(self, s, i, tables):
-        side = self.side(s, i)
-        return [(k, rows) for k, rows in tables if side.generates(k)]
-
-    def situation_wf(self, s, i, j, situation):
-        model, fixed, decisions, probe, _ = situation
-        keys = [k for k, _ in fixed + decisions]
-        Xi, Xj = self.side(s, i), self.side(s, j)
-        return (len(set(keys)) == len(keys)
-                and all(not self.owned(s, i, k) and not self.owned(s, j, k) and (Xi.generates(k) or Xj.generates(k))
-                        for k, _ in fixed)
-                and all(self.owned(s, i, k) and Xi.generates(k) for k, _ in decisions)
-                and Xi.tables_typed(model, self.tables_for(s, i, fixed + decisions))
-                and Xj.tables_typed(model, self.tables_for(s, j, fixed))
-                and Xi.probe_typed(model, probe))
-
     def key_tuples(self, s, j, model, key):
         rows = []
         for k, _, sorts in self.side(s, j).gen_keys():
@@ -1059,106 +634,16 @@ class Admission:
         for bits in product((False, True), repeat=len(cells)):
             yield [(k, [row for (key, row), bit in zip(cells, bits) if key == k and bit]) for k in keys]
 
+    # -- the search's evaluation of one side (`sideValid`, `sideValue`; rule 3, untrusted): the search builds
+    # every table from the side's own keys over the base, so each is typed
+
     def side_valid(self, s, i, model, tables):
         side = self.side(s, i)
-        return side.tables_typed(model, tables) and side.valid(side.model(model, tables))
+        return side.valid(side.model(model, tables))
 
     def side_value(self, s, i, model, tables, probe):
         side = self.side(s, i)
         return side.observe(side.model(model, tables), probe)
-
-    def pair_facts(self, s, sid, other_name, *, rust=None):
-        """`pairFacts`: the replay of one recorded situation, as `readings-separate` answers it."""
-        R = self.doc.set_by_id(s)
-        if R is None:
-            raise VEError(f"InvalidInput: unknown reading set {s}")
-        entry = R.situations.get(sid) if type(R.situations) is dict else None
-        if entry is None:
-            raise VEError("distinguishing model id does not match model")
-        bad = f"InvalidInput: invalid situation {sid}"
-        witness = entry.get("witness") if type(entry) is dict else None
-        if type(witness) is not str:
-            raise VEError(bad)
-        ids = [a.id for a in R.candidates]
-        if witness not in ids or other_name not in ids:
-            raise VEError(bad)
-        i, j = ids.index(witness), ids.index(other_name)
-        if i == j:
-            raise VEError(bad)
-        situation = self.decode_situation(s, i, j, sid, entry)
-        model, fixed, decisions, probe, value = situation
-        Ti = self.tables_for(s, i, fixed + decisions)
-        if self.cells(s, j, model) > MAX_CELLS:
-            raise VEError("ResourceLimit: decision assignments")
-        Tj = self.tables_for(s, j, fixed)
-        witness_valid = self.side_valid(s, i, model, Ti)
-        witness_value = self.side_value(s, i, model, Ti, probe)
-        other_admissible = False
-        reached = False
-        for G in self.assignments(s, j, model):
-            if self.side_valid(s, j, model, Tj + G):
-                other_admissible = True
-                if self.side_value(s, j, model, Tj + G, probe) == value:
-                    reached = True
-                    break
-        separated = witness_valid and witness_value == value and not reached
-        facts = {"situation": sid, "witness": witness, "separated": separated,
-                 "witness_admissible": witness_valid, "witness_value": witness_value,
-                 "other_admissible": other_admissible}
-        if not self.owned_keys(s, j):
-            facts["other_value"] = self.side_value(s, j, model, Tj, probe)
-        if rust is not None:
-            rust(self, s, i, j, situation, Ti, Tj, facts)
-        return facts
-
-    # -- findings (4.6, 1.7)
-
-    def decision_only(self, s, i, j):
-        ci, cj = self.candidate(s, i).content, self.candidate(s, j).content
-        if ci is None or cj is None:
-            return None
-        twins = force_twins(ci, cj)
-        if twins is None:
-            return None
-        _, default = twins
-        side = self.side(s, j)
-        sd = side.soft
-        if (default.get("exception") or {}).get("sufficient"):
-            return None
-        rules = list(sd.rules)
-        if not any(r.core.name == default["name"] and r.core.predicate == default["predicate"] for r in rules):
-            return None
-        act = _act_key(sd.env, default["predicate"])
-        if any(_act_key(sd.env, r.core.predicate) == act and r.core.name != default["name"] for r in rules):
-            return None
-        return ("excepted", default["name"], None)
-
-    def act_only(self, s, i, j):
-        ci, cj = self.candidate(s, i).content, self.candidate(s, j).content
-        if ci is None or cj is None:
-            return None
-        a, b = content_acts(self.side(s, i), ci), content_acts(self.side(s, j), cj)
-        if len(a) == 1 and len(b) == 1 and a[0] != b[0]:
-            return (a[0], b[0])
-        return None
-
-    def set_findings(self, R):
-        n = len(R.candidates)
-        findings = []
-        for i in range(n):
-            for j in range(i + 1, n):
-                if self.decision_only(R.id, i, j) is not None:
-                    findings.append(decision_only_text(R.id, i, j))
-                elif self.decision_only(R.id, j, i) is not None:
-                    findings.append(decision_only_text(R.id, j, i))
-                if self.act_only(R.id, i, j) is not None:
-                    findings.append(f"SeparatedByActOnly: {R.id}: {i}, {j}")
-        return findings
-
-
-def decision_only_text(s, i, j):
-    """DRI ruling 2: the finding's theorem is unproved, so its text says it is not certified."""
-    return f"SeparatedByDecisionOnly: {s}: {i}, {j} (not certified)"
 
 
 def _twin_nodes(strict, default):
@@ -1240,65 +725,6 @@ def _act_key(env, predicate):
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# The answer of `readings-validate` (8.4)
-
-def answer(environment, document, *, chain_findings=None, rust=None):
-    """Python's `readings-validate` answer, as Lean's `validateResult` builds it, or the first diagnostic of 4.1
-    raised as `VEError`. `chain_findings(units, label)` supplies the rights chain's findings of one candidate's
-    document (none on the other chains); `rust` checks each pair's evaluations against Rust's (10)."""
-    admission = Admission(environment, document)
-    sets = [R for R in admission.doc.sets if Admission.content_bearing(R)]
-    if not sets:
-        return {"content_bearing": False}
-    rows = []
-    for R in sets:
-        candidates = []
-        for i, a in enumerate(R.candidates):
-            if a.content is None:
-                candidates.append({"id": a.id, "index": i, "pending": True})
-                continue
-            side = admission.side(R.id, i)
-            keys = []
-            for key, name, _ in side.gen_keys():
-                if key not in [k for k, _ in keys]:
-                    keys.append((key, name))
-            label = f" under {R.id}@{R.version}:{i}"
-            findings = ([text + label for text in chain_findings(side, label)]
-                        if chain_findings is not None and admission.senv.chain == "rights" else [])
-            candidates.append({
-                "id": a.id, "index": i, "pending": False, "document_hash": side.document_hash(),
-                "owned": [{"key": key_json(k), "name": n} for k, n in keys if admission.owned(R.id, i, k)],
-                "shared": [{"key": key_json(k), "name": n} for k, n in keys if not admission.owned(R.id, i, k)],
-                "findings": findings})
-        pairs = []
-        for x in R.candidates:
-            for y in R.candidates:
-                if x is y or x.content is None or y.content is None:
-                    continue
-                reading = next(r for r in R.raw["readings"] if r["id"] == x.id)
-                models = reading["admission"]["distinguishing_models"]
-                sid = models.get(y.id)
-                if sid is None:
-                    raise VEError("each other reading needs a distinguishing model id")
-                entry = R.situations.get(sid)
-                if entry is None:
-                    raise VEError("distinguishing model id does not match model")
-                witness = entry.get("witness") if type(entry) is dict else None
-                if witness not in (x.id, y.id):
-                    raise VEError(f"InvalidInput: invalid situation {sid}")
-                other = y.id if witness == x.id else x.id
-                facts = admission.pair_facts(R.id, sid, other, rust=rust)
-                if not facts["witness_admissible"]:
-                    raise VEError("distinguishing model violates a generated premise")
-                if not facts["separated"]:
-                    raise VEError("distinguishing model does not separate readings")
-                pairs.append({"reading": x.id, "other": y.id, "pair": facts})
-        rows.append({"set": R.id, "version": R.version, "candidates": candidates, "pairs": pairs,
-                     "findings": admission.set_findings(R)})
-    return {"content_bearing": True, "sets": rows}
-
-
-# ---------------------------------------------------------------------------------------------------------------
 # The search for separating situations (10; not verified: Lean checks what it finds, 8.5)
 
 MAX_SEARCH_BASES = 4096
@@ -1341,29 +767,29 @@ def _subsets_by_size(cells):
         yield from combinations(cells, n)
 
 
-def _probes(admission, s, i, j, base):
+def _probes(decoded, s, i, j, base):
     """Probes of 1.6 typed over the base, in the order of 2.3: `outcome`, `holds` between two assertions,
     `selects`, `holds` on a mixed pair."""
-    regulated = admission.senv.regulated
+    regulated = decoded.senv.regulated
     outcomes = [("outcome", p, row) for p in sorted(regulated)
                 for row in product(*(base.domains[a] for a in regulated[p].arguments))]
     selects = [(k, p, row) for p in sorted(regulated) for k in PROBE_KINDS
                for row in product(*(base.domains[a] for a in regulated[p].arguments))]
-    assertions = all(admission.candidate(s, x).content.kind == "assertion" for x in (i, j))
+    assertions = all(decoded.candidate(s, x).content.kind == "assertion" for x in (i, j))
     return outcomes + (["holds"] if assertions else []) + selects + ([] if assertions else ["holds"])
 
 
-def search(environment, document, set_id, *, max_size=2, hints=(), admission=None):
+def search(environment, document, set_id, *, max_size=2, hints=(), decoded=None):
     """For each ordered pair of candidates of the set, neither pending, a situation entry Python finds that
     separates them, or None. The witness is either reading of the pair; tables of shared keys stay empty.
     `hints` are bases tried first (a pilot's recorded situation, re-expressed)."""
     from .model import FiniteModel
-    admission = admission or Admission(environment, document)
-    R = admission.doc.set_by_id(set_id)
+    decoded = decoded or Decoded(environment, document)
+    R = decoded.doc.set_by_id(set_id)
     found = {}
-    author = admission.senv.author_environment()
+    author = decoded.senv.author_environment()
     bases = []
-    for wire_base in [*hints, *_bases(admission.senv, max_size)]:
+    for wire_base in [*hints, *_bases(decoded.senv, max_size)]:
         try:
             bases.append((wire_base, FiniteModel._decode(author, {**wire_base, "complete": True},
                                                          _defer_model_id=True)))
@@ -1374,24 +800,24 @@ def search(environment, document, set_id, *, max_size=2, hints=(), admission=Non
         for y in contents:
             if x == y or (x, y) in found:
                 continue
-            found[(x, y)] = found[(y, x)] = _search_pair(admission, set_id, x, y, bases)
+            found[(x, y)] = found[(y, x)] = _search_pair(decoded, set_id, x, y, bases)
     return {(R.candidates[x].id, R.candidates[y].id): entry for (x, y), entry in found.items()}
 
 
-def guard_base(admission, s, i):
+def guard_base(decoded, s, i):
     """The base of a recorded force situation: one element of each sort, and every positive atom of the
     candidate's rule guards true at the tuple of its arguments (the pilots' "every guard atom of the rule true,
     every carve-out false")."""
-    author = admission.senv.author_environment()
+    author = decoded.senv.author_environment()
     domains = {sort: [_element(sort, 0, 1, whole=[_element(o, 0, 1) for o in author.model_sorts].count(
         _element(sort, 0, 1)) > 1)] for sort in sorted(author.model_sorts)}
     relations = {p: [] for p in sorted(author.predicates) if p not in author.definition_entries}
-    content = admission.candidate(s, i).content
+    content = decoded.candidate(s, i).content
     rules = ([content.body] if content.kind == "norm" else
              [line[k] for line in content.lines() for k in ("norm", "liberty", "recognition")
               if type(line.get(k)) is dict])
     for rule in rules:
-        decl = admission.senv.frame.predicates.get(rule.get("predicate") or "")
+        decl = decoded.senv.frame.predicates.get(rule.get("predicate") or "")
         if decl is None:
             continue
         sorts = list(decl.arguments)
@@ -1418,27 +844,27 @@ def _positive_atoms(formula):
     return []
 
 
-def _search_pair(admission, s, x, y, bases):
+def _search_pair(decoded, s, x, y, bases):
     for wire_base, model in bases:
         for i, j in ((x, y), (y, x)):
-            if admission.cells(s, j, model) > MAX_CELLS or admission.cells(s, i, model) > MAX_CELLS:
+            if decoded.cells(s, j, model) > MAX_CELLS or decoded.cells(s, i, model) > MAX_CELLS:
                 continue
-            for decisions in admission.assignments(s, i, model):
+            for decisions in decoded.assignments(s, i, model):
                 decisions = [(k, rows) for k, rows in decisions]
-                if not admission.side_valid(s, i, model, decisions):
+                if not decoded.side_valid(s, i, model, decisions):
                     continue
-                for probe in _probes(admission, s, i, j, model):
-                    value = admission.side_value(s, i, model, decisions, probe)
+                for probe in _probes(decoded, s, i, j, model):
+                    value = decoded.side_value(s, i, model, decisions, probe)
                     if value is None:
                         continue
-                    if any(admission.side_valid(s, j, model, G) and admission.side_value(s, j, model, G, probe) == value
-                           for G in admission.assignments(s, j, model)):
+                    if any(decoded.side_valid(s, j, model, G) and decoded.side_value(s, j, model, G, probe) == value
+                           for G in decoded.assignments(s, j, model)):
                         continue
-                    return _entry(admission, s, i, wire_base, decisions, probe, value)
+                    return _entry(decoded, s, i, wire_base, decisions, probe, value)
     return None
 
 
-def _entry(admission, s, i, wire_base, decisions, probe, value):
+def _entry(decoded, s, i, wire_base, decisions, probe, value):
     if probe == "holds":
         probe_json = "holds"
     elif probe[0] == "outcome":
@@ -1447,10 +873,10 @@ def _entry(admission, s, i, wire_base, decisions, probe, value):
         probe_json = {"selects": {"kind": probe[0], "predicate": probe[1], "tuple": list(probe[2])}}
     order = {"excepted": 0, "off": 1, "outweighs": 2, "lim": 3, "cond": 4, "aimed": 5}
     tables = sorted(((k, rows) for k, rows in decisions if rows), key=lambda t: (order[t[0][0]], t[0][1:]))
-    entry = {"base": wire_base, "fixed": [], "witness": admission.candidate(s, i).id,
+    entry = {"base": wire_base, "fixed": [], "witness": decoded.candidate(s, i).id,
              "decisions": [{"key": key_json(k), "tuples": [list(r) for r in rows]} for k, rows in tables],
              "probe": probe_json, "value": value}
-    return admission.senv.situation_id(entry), entry
+    return decoded.senv.situation_id(entry), entry
 
 
 def record_situations(reading_set, found):
