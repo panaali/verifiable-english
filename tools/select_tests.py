@@ -36,8 +36,10 @@ import json
 import os
 from pathlib import Path
 import posixpath
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 
 from change_units import Summary, delta
@@ -148,6 +150,7 @@ class Coverage:
         self.reads = data["reads"]
         self.dirs = data["dirs"]
         self.programs = data["programs"]
+        self.status = data["status"]
         self.recorded = {test for test, status in data["status"].items()
                          if status["exit"] in (0, 5) and not status["opaque"]}
 
@@ -471,6 +474,15 @@ def resolve_map(base: str, coverage) -> Coverage | None:
         return coverage
     if isinstance(coverage, dict):
         return Coverage(coverage)
+    if coverage == "auto":
+        # A map recorded by `--run` for exactly this tree is fresh: nothing drifted.
+        tree = test_map.tree_map_path(git_lines("rev-parse", f"{base}^{{tree}}")[0])
+        try:
+            data = test_map.load(tree)
+            data["commit"] = git_lines("rev-parse", base)[0]
+            return Coverage(data, tree)
+        except (OSError, ValueError, EOFError):
+            pass
     path = Path(coverage) if coverage != "auto" else test_map.find_map(base)
     if path is None or not path.exists():
         return None
@@ -614,18 +626,74 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
             "seconds": round(time.monotonic() - started, 2)}
 
 
-def run(plan: dict) -> int:
+def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | None, str | None]]]:
+    """Git status letters and Python texts for the working tree against `commit`."""
+    status = dict(line.split("\t", 1)[::-1] for line in git_lines(
+        "diff", "--no-renames", "--name-status", commit))
+    status.update({path: "A" for path in git_lines("ls-files", "--others", "--exclude-standard")})
+    python = [p for p in status if p.endswith(".py")]
+    old = blobs([f"{commit}:{p}" for p in python])
+    versions = {p: (old[f"{commit}:{p}"],
+                    (ROOT / p).read_text(encoding="utf-8", errors="replace") if (ROOT / p).is_file() else None)
+                for p in python}
+    return status, versions
+
+
+def run_recorded(plan: dict, jobs: int) -> int:
+    """Run the selected units one process each under the recorder, then save a map for this tree.
+
+    Units the run did not record keep their entries from the map the plan
+    used, unless the working tree changed code they ran: those are marked
+    unrecorded, so the static graph answers for them until they run again.
+    """
+    selected = plan["selected"]
+    tree = test_map.working_tree_id()
+    test_map.build_natives()
+    work = Path(tempfile.mkdtemp(prefix="ve-select-run-"))
+    results = test_map.record_units(selected, work, jobs, test_map.UNIT_TIMEOUT)
+    failed = [unit for unit in selected if results[unit]["exit"] not in (0, 5)]
+    for unit in failed:
+        log = work / (unit.replace("/", "__") + ".log")
+        print(f"FAILED {unit} (exit {results[unit]['exit']}); log {log}\n"
+              + "\n".join(log.read_text(errors="replace").splitlines()[-25:]), flush=True)
+    every = set(units())
+    base = resolve_map("HEAD", plan["map"]["path"]) if plan["map"] else None
+    stale: set[str] = set()
+    if base is not None:
+        status, versions = working_changes(base.commit)
+        stale = uncertain_units(base, source_graph.load(ROOT), every, status, versions) - set(selected)
+        edges = test_map.unit_edges({"tests": base.tests, "functions": base.functions, "reads": base.reads,
+                                     "dirs": base.dirs, "programs": base.programs})
+        for unit in sorted(every - set(selected)):
+            if unit in edges and unit in base.status:
+                results[unit] = {**edges[unit], **base.status[unit]}
+                if unit in stale:
+                    results[unit]["exit"] = "stale"  # ran changed code; not re-run here
+    data = test_map.build_map(results, base.commit if base is not None else "")
+    data["tree"] = tree
+    test_map.write_map(data, test_map.tree_map_path(tree))
+    shutil.rmtree(work, ignore_errors=True)
+    print(f"recorded {len(selected)} units for tree {tree[:10]}; {len(stale)} others left to the "
+          f"static graph until they run; {len(failed)} failed", flush=True)
+    return 1 if failed else 0
+
+
+def run(plan: dict, *, record: bool = True, jobs: int = 8) -> int:
     env = dict(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     if plan["lean_build"]:
         env["VE_LEAN_PREBUILT"] = "1"
     for command in plan["commands"]:
+        if record and (command in [list(c) for c in EXTRA_UNITS.values()] or command[6:8] == ["-m", "pytest"]):
+            continue  # recorded below, one process per unit
         print("+", " ".join(command), flush=True)
         cwd = ROOT / "lean" if command[:2] == ["lake", "build"] else ROOT
         result = subprocess.run(command, cwd=cwd, env=env, check=False)
         if result.returncode:
             return result.returncode
+    if record and plan["selected"]:
+        return run_recorded(plan, jobs)
     return 0
 
 
@@ -641,7 +709,12 @@ def main() -> int:
     parser.add_argument("--static", action="store_true", help="ignore the coverage map")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--explain", action="store_true", help="print why each test is selected")
-    parser.add_argument("--run", action="store_true")
+    parser.add_argument("--run", action="store_true",
+                        help="run the plan; each selected test file runs in its own recorded "
+                             "process, and the coverage is saved for this tree")
+    parser.add_argument("--no-record", action="store_true",
+                        help="with --run: one plain pytest process, nothing recorded")
+    parser.add_argument("--jobs", type=int, default=8, help="parallel test files for --run")
     args = parser.parse_args()
     paths = args.paths if args.paths is not None else changed_paths(args.base, args.commit)
     if args.commit:
@@ -664,7 +737,7 @@ def main() -> int:
                 print(f"  {test}: {'; '.join(reasons[:3])}{' ...' if len(reasons) > 3 else ''}")
         for command in plan["commands"]:
             print("+", " ".join(command))
-    return run(plan) if args.run else 0
+    return run(plan, record=not args.no_record, jobs=args.jobs) if args.run else 0
 
 
 if __name__ == "__main__":

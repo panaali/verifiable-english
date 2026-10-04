@@ -5,7 +5,8 @@ every line, so a child that a test kills still leaves what it did up to then:
 
   ["f", file, qualname]   a code object under the root started (sys.monitoring)
   ["r", file]             a file under the root was opened, other than by import
-  ["d", directory]        a directory under the root was listed
+  ["d", directory]        a directory under the root was listed by test code
+                          (not by the import system or pytest itself)
   ["x", program, cwd]     a process was started; `program` is root-relative
                           when under the root, else its base name
   ["c", pid, python]      a child process id, and whether it runs Python
@@ -88,7 +89,7 @@ def _audit(event, args):
                 _emit(["r", relative])
         elif event in ("os.listdir", "os.scandir"):
             relative = _relative(args[0] if args else ".")
-            if relative is not None:
+            if relative is not None and not _infrastructure():
                 _emit(["d", relative])
         elif event in ("subprocess.Popen", "os.posix_spawn", "os.exec"):
             program, argv = os.fsdecode(args[0]), args[1]
@@ -106,6 +107,23 @@ def _audit(event, args):
                 _emit(["o", f"python child without the recorder: {argv!r}"])
     except Exception:  # an audit hook must never break the audited call
         pass
+
+
+INFRASTRUCTURE = ("<frozen importlib", "/_pytest/", "/pluggy/", "/importlib/metadata/",
+                  "/site.py", "/pkgutil.py", "/_hypothesis_pytestplugin.py")
+
+
+def _infrastructure() -> bool:
+    """Is the import system, site setup or pytest's collection listing this directory?
+
+    Every process lists the import path and the test directory that way; a
+    test's own glob or listdir is a dependency on what the directory holds."""
+    frame = sys._getframe(2)
+    while frame is not None:
+        if any(marker in frame.f_code.co_filename for marker in INFRASTRUCTURE):
+            return True
+        frame = frame.f_back
+    return False
 
 
 def _source_lookup() -> bool:
