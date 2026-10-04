@@ -6,10 +6,10 @@
 which are on branch `english-lean/integrate` at `689219b1` and merge as `ve-green-english-lean`
 ([english-lean-measured.md](english-lean-measured.md), [english-lean-s1.md](english-lean-s1.md) on that branch).
 The item-1 statement spec is [english-lean-s2.md](english-lean-s2.md), draft 2. **Nothing was built for this
-draft.** The spec's Lean statements were type-checked as stubs against the S1 build for its draft 1, and every
-verdict and count in its fixtures was computed by the proved S1 parser; the statement review's edits (spec
-section 13) were not re-run, and the rows they touch are marked *recompute* until the stub is re-created (spec
-section 12); formulas were derived by hand and are confirmed against Python in S2 (spec, section 0).
+draft.** The spec's Lean statements were type-checked as stubs against the S1 build, and every verdict and
+count in its fixtures was computed by the proved S1 parser, for draft 1 and again for draft 2 after the
+statement review's edits (spec sections 12 and 13); formulas were derived by hand and are confirmed against
+Python in S2 (spec, section 0).
 
 **Review provenance.** The debate directory `manage-agents/debates/design-english-lean-s2/` holds the review of
 the base plan (rounds of 2026-10-03, converged after round 3: Fable's eight edits of round 3 with Astra's three
@@ -158,7 +158,7 @@ each with where it is applied). Spec draft 2 applies all of it. The items that b
 | reach fixtures need `closure@0`; b46/b47 are `shadowedName`; b48 is `one` with a rejected meaning; new fixtures b49 to b55, e48 to e51, q7 | S2.1's and S2.2's "done when" |
 | `read_stopped`, `translate_exact`, D5, `kwMid` encoding, "has a binder" | no plan change beyond Q5's encoding note |
 
-What the review left to do before S2.3: re-create the stub on the amended fixtures and ranks (spec section 12),
-then the bounded re-check limited to the edits of spec section 13. PASS follows that re-check, not this draft.
-The order of section 1 is unchanged: S2.0 and S2.5 (Python) and S2.1 and S2.2 (Lean) may start; S2.3's proofs
-wait.
+What the review left to do before S2.3: the stub re-run on the amended fixtures and ranks (done, spec section
+12: every statement elaborates, every verdict holds, the steps are unchanged), then the bounded re-check limited
+to the edits of spec section 13. PASS follows that re-check, not this draft. The order of section 1 is
+unchanged: S2.0 and S2.5 (Python) and S2.1 and S2.2 (Lean) may start; S2.3's proofs wait.
