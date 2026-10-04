@@ -13,7 +13,7 @@ import tomllib
 
 import pytest
 
-from tools import gate
+from tools import gate, nested_pytest
 
 
 def empty_result():
@@ -54,10 +54,10 @@ def test_pytest_plugin_observes_collection_bypasses(tmp_path, body, conftest):
     if conftest:
         (tmp_path / "conftest.py").write_text(conftest)
     output = tmp_path / "events.json"
-    env = {**os.environ, "VE_GATE_PYTEST_RESULT": str(output),
-           "PYTHONPATH": str(gate.ROOT)}
-    run = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p",
-                          "tools.gate_pytest", "-o", "addopts=", str(tmp_path)],
+    env = nested_pytest.environment(os.environ, VE_GATE_PYTEST_RESULT=str(output),
+                                    PYTHONPATH=str(gate.ROOT))
+    run = subprocess.run(nested_pytest.command(["-q", "-p", "tools.gate_pytest", "-o", "addopts=",
+                                                str(tmp_path)]),
                          cwd=gate.ROOT, env=env, capture_output=True, text=True)
     assert run.returncode in (0, 5), run.stdout + run.stderr
     observed = json.loads(output.read_text())
