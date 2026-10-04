@@ -20,7 +20,7 @@ open VE.Norms (Regulated Sat tupleVal envAt size)
 open VE.SoftNorms (SoftNode SoftDoc SoftValid soften WellFormedSoft ValueSoft canon exceptedF act actKey
   dualPerm dualOblig Incompatible LiveD StrictYieldsD StrictSelectsD StrictDecidesD BlockedD EligibleD DomWithD
   EffD AppliesSoftD YieldsSoftD SelectsSoftD DecidesSoftD rulesOn mem_rulesOn mem_childrenIn_iff)
-open VE.Rights (RightsDoc correlate BaseAdmissibleR)
+open VE.Rights (RightsDoc correlate BaseAdmissibleR linesOf nodeOf)
 open VE.Compose (Content)
 universe u
 
@@ -518,7 +518,7 @@ theorem filterMap_congr_mem {α β : Type} {l : List α} {f g : α → Option β
     rw [h a List.mem_cons_self, ih (fun b hb => h b (List.mem_cons_of_mem _ hb))]
 
 /-- A list's first match on `P` is its filter's when every match passes the filter. -/
-theorem find?_of_filter {α : Type} (l : List α) (P Q : α → Bool) (h : ∀ a, P a = true → Q a = true) :
+theorem find_filter_of {α : Type} (l : List α) (P Q : α → Bool) (h : ∀ a, P a = true → Q a = true) :
     (l.filter Q).find? P = l.find? P := by
   rw [List.find?_filter]
   congr 1
@@ -526,6 +526,21 @@ theorem find?_of_filter {α : Type} (l : List α) (P Q : α → Bool) (h : ∀ a
   cases hp : P a
   · simp
   · simp [h a hp]
+
+/-- The same, for matches inside the list only. -/
+theorem find_filter_mem {α : Type} (l : List α) (P Q : α → Bool) (h : ∀ a ∈ l, P a = true → Q a = true) :
+    (l.filter Q).find? P = l.find? P := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    have ih' := ih (fun b hb => h b (List.mem_cons_of_mem _ hb))
+    cases hp : P a
+    · cases hq : Q a
+      · rw [List.filter_cons_of_neg (by simp [hq]), List.find?_cons_of_neg (by simp [hp]), ih']
+      · rw [List.filter_cons_of_pos hq, List.find?_cons_of_neg (by simp [hp]),
+          List.find?_cons_of_neg (by simp [hp]), ih']
+    · rw [List.filter_cons_of_pos (h a List.mem_cons_self hp), List.find?_cons_of_pos hp,
+        List.find?_cons_of_pos hp]
 
 theorem sat_append (S : VE.Structure.{u}) (a b : List VE.Formula) : Sat S (a ++ b) ↔ Sat S a ∧ Sat S b := by
   simp only [Sat, List.mem_append]
@@ -646,7 +661,7 @@ theorem Twin.decisions_find {p : String} (hp : p ≠ VE.SoftNorms.exceptedName N
     intro a ha
     simp only [beq_iff_eq] at ha
     simp [ha, hp]
-  rw [← find?_of_filter _ _ _ hq, ← find?_of_filter (VE.SoftNorms.decisions C) _ _ hq]
+  rw [← find_filter_of _ _ _ hq, ← find_filter_of (VE.SoftNorms.decisions C) _ _ hq]
   congr 1
   unfold VE.SoftNorms.decisions
   rw [List.filter_append, List.filter_append, List.filter_append, List.filter_append, offDecisions_relax]
@@ -875,5 +890,330 @@ theorem observes_twin {Xs Xd : RightsDoc} {Nd : SoftNode} (hcd : correlate Xd = 
     subst hcd
     apply iff_congr _ Iff.rfl
     exact forall₂_congr (fun a ha => canon_relax hw hs S hc he _ a [] (hA a ha) [] (VE.typed_empty S))
+
+/-! ## Assembly -/
+
+/-- `twinDocs` as propositions. -/
+structure TwinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : SoftNode) : Prop where
+  declared : ci.declared = cj.declared
+  owns : ("rule", Nd.name) ∈ cj.declared
+  assertions : (one D s i).2 = (one D s j).2
+  genDecls : VE.Rights.genDecls (one D s i).1 = VE.Rights.genDecls (one D s j).1
+  lim : VE.Rights.limPremises (one D s i).1 = VE.Rights.limPremises (one D s j).1
+  nodes : (correlate (one D s j).1).T.nodes = (correlate (one D s i).1).T.nodes.map (relaxTo Nd)
+  strict : ∀ M ∈ (correlate (one D s i).1).T.nodes, M.name = Nd.name → M.mode = .strict
+  keys : genKeys (one D s i).1 = (genKeys (one D s j).1).filter (·.1 != GenKey.excepted Nd.name none)
+  keyName : ∀ g ∈ genKeys (one D s j).1,
+    (g.1 = GenKey.excepted Nd.name none ↔ g.2.1 = VE.SoftNorms.exceptedName Nd)
+  soft : (one D s j).1.soft.T.nodes = (one D s i).1.soft.T.nodes.map (relaxTo Nd)
+  lines : (linesOf (one D s j).1).map (fun RN => (RN.2.ikind, RN.2.node.pred, nodeOf (one D s j).1 RN.2)) =
+    (linesOf (one D s i).1).map (fun RN => (RN.2.ikind, RN.2.node.pred, relaxTo Nd (nodeOf (one D s i).1 RN.2)))
+  defs : ∀ d ∈ (correlate (one D s j).1).T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd
+
+theorem twinDocs_spec {D : Doc} {s : String} {i j : Nat} {ci cj : Content} {Nd : SoftNode}
+    (h : twinDocs D s i j ci cj Nd = true) : TwinDocs D s i j ci cj Nd := by
+  simp only [twinDocs, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, Bool.or_eq_true, bne_iff_ne,
+    ne_eq, beq_iff_eq, List.contains_iff_mem] at h
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hdc, how⟩, has⟩, hgd⟩, hlim⟩, hnd⟩, hst⟩, hk⟩, hkn⟩, hso⟩, hl⟩, hdf⟩ := h
+  refine ⟨hdc, how, has, hgd, hlim, hnd, fun M hM hn => ?_, hk, fun g hg => ?_, hso, hl, hdf⟩
+  · rcases hst M hM with h | h
+    · exact absurd hn h
+    · exact h
+  · have := hkn g hg
+    simp only [Bool.beq_eq_decide_eq] at this
+    by_cases h1 : g.1 = GenKey.excepted Nd.name none <;> by_cases h2 : g.2.1 = VE.SoftNorms.exceptedName Nd <;>
+      simp_all
+
+/-- What `decisionOnly` checks, as propositions. -/
+theorem decisionOnly_twin {D : Doc} {s : String} {i j : Nat} {k₀ : GenKey} (h : decisionOnly D s i j = some k₀) :
+    ∃ ci cj Nd, (candidate D s i).bind (·.content) = some ci ∧ (candidate D s j).bind (·.content) = some cj ∧
+      k₀ = .excepted Nd.name none ∧ (∀ e, Nd.exception = some e → e.sufficient = []) ∧
+      (∃ M ∈ (correlate (one D s j).1).T.nodes, M.name = Nd.name ∧ M.pred = Nd.pred) ∧
+      (∀ M ∈ (correlate (one D s j).1).T.nodes, VE.SoftNorms.act (correlate (one D s j).1) M =
+        VE.SoftNorms.act (correlate (one D s j).1) Nd → M.name = Nd.name) ∧
+      TwinDocs D s i j ci cj Nd := by
+  unfold decisionOnly at h
+  dsimp only at h
+  split at h
+  · rename_i ci cj hi hj
+    split at h
+    · rename_i Ns Nd _
+      split at h
+      · rename_i hc
+        cases h
+        simp only [Bool.and_eq_true, Option.all_eq_true, List.isEmpty_iff, List.all_eq_true, List.any_eq_true,
+          Bool.or_eq_true, bne_iff_ne, ne_eq, beq_iff_eq] at hc
+        obtain ⟨⟨⟨he, hm⟩, hn⟩, ht⟩ := hc
+        refine ⟨ci, cj, Nd, hi, hj, rfl, fun e hx => he e hx, hm, fun M hM ha => ?_, twinDocs_spec ht⟩
+        rcases hn M hM with h' | h'
+        · exact absurd ha h'
+        · exact h'
+      · cases h
+    · cases h
+  · cases h
+
+/-- Two documents equal but for their nodes, the second's through `relaxTo`. -/
+theorem eq_relaxDoc {A C : SoftDoc} {Nd : SoftNode} (hE : A.E = C.E) (hl : A.lits = C.lits) (hs : A.soft = C.soft)
+    (hr : A.T.regulated = C.T.regulated) (hd : A.T.definitions = C.T.definitions)
+    (hn : A.T.nodes = C.T.nodes.map (relaxTo Nd)) : A = relaxDoc C Nd := by
+  obtain ⟨E, l, so, ⟨r, d, n⟩⟩ := A
+  obtain ⟨E', l', so', ⟨r', d', n'⟩⟩ := C
+  simp only at hE hl hs hr hd hn
+  subst hE hl hs hr hd hn
+  rfl
+
+/-- The relations of `withTables`. -/
+def tablesRel (X : RightsDoc) (B : VE.Structure.{u}) (G : Tables B.Carrier) : String → List B.Carrier → Prop :=
+  (withTables X B G).relation
+
+theorem withTables_rel (X : RightsDoc) (B : VE.Structure.{u}) (G : Tables B.Carrier) :
+    withTables X B G = { B with relation := tablesRel X B G } := rfl
+
+/-- A completion has no tuple on a name its document does not generate and its base leaves empty. -/
+theorem withTables_none {X : RightsDoc} {B : VE.Structure.{u}} {G : Tables B.Carrier} {e : String}
+    (h : (genKeys X).find? (·.2.1 == e) = none) (hB : ∀ vs, ¬ B.relation e vs) :
+    ∀ vs, ¬ (withTables X B G).relation e vs := by
+  intro vs hv
+  simp only [withTables, h] at hv
+  exact hB vs hv
+
+section Pair
+variable {D : Doc} {s : String} {i j : Nat} {ci cj : Content} {Nd : SoftNode} (hT : TwinDocs D s i j ci cj Nd)
+include hT
+
+/-- The default reading's elaborated document is the strict reading's through `relaxTo`. -/
+theorem TwinDocs.correlate_eq : correlate (one D s j).1 = relaxDoc (correlate (one D s i).1) Nd := by
+  obtain ⟨ei, hi⟩ : ∃ extra, (one D s i).1.soft =
+      { D.frame.soft with T := { D.frame.soft.T with nodes := D.frame.soft.T.nodes ++ extra } } := build_soft _ _ _
+  obtain ⟨ej, hj⟩ : ∃ extra, (one D s j).1.soft =
+      { D.frame.soft with T := { D.frame.soft.T with nodes := D.frame.soft.T.nodes ++ extra } } := build_soft _ _ _
+  refine eq_relaxDoc ?_ ?_ ?_ ?_ ?_ hT.nodes
+  · show VE.Rights.envR (one D s j).1 = VE.Rights.envR (one D s i).1
+    simp only [VE.Rights.envR, hi, hj, hT.genDecls]
+  · show (one D s j).1.soft.lits = (one D s i).1.soft.lits
+    rw [hi, hj]
+  · show (one D s j).1.soft.soft = (one D s i).1.soft.soft
+    rw [hi, hj]
+  · show (one D s j).1.soft.T.regulated = (one D s i).1.soft.T.regulated
+    rw [hi, hj]
+  · show (one D s j).1.soft.T.definitions = (one D s i).1.soft.T.definitions
+    rw [hi, hj]
+
+/-- The selectable rules of the default reading are the strict reading's through `relaxTo`. -/
+theorem TwinDocs.selectable_eq (k p : String) :
+    selectable (one D s j).1 k p = (selectable (one D s i).1 k p).map (relaxTo Nd) := by
+  unfold selectable
+  split
+  · rw [hT.soft, List.filter_map, List.map_inj_left.mpr (fun _ _ => rfl)]
+    congr 2
+    funext M
+    simp only [Function.comp_def, relaxTo_pred]
+  · have key : ∀ {β : Type} (l : List β) (f : β → VE.Rights.IKind × String × SoftNode),
+        (l.filter (fun x => kindWord (f x).1 == k && (f x).2.1 == p)).map (fun x => (f x).2.2) =
+          ((l.map f).filter (fun t => kindWord t.1 == k && t.2.1 == p)).map (·.2.2) := by
+      intro β l f
+      rw [List.filter_map, List.map_map]
+      rfl
+    rw [List.map_map]
+    simp only [Function.comp_def]
+    have h1 := key (linesOf (one D s j).1) (fun RN => (RN.2.ikind, RN.2.node.pred, nodeOf (one D s j).1 RN.2))
+    have h2 := key (linesOf (one D s i).1)
+      (fun RN => (RN.2.ikind, RN.2.node.pred, relaxTo Nd (nodeOf (one D s i).1 RN.2)))
+    simp only at h1 h2
+    rw [h1, h2, hT.lines]
+
+/-- A key the strict reading generates is not the twin's exception key, and its name is not the exception
+    predicate. -/
+theorem TwinDocs.find_strict (p : String) (hp : p ≠ VE.SoftNorms.exceptedName Nd) :
+    (genKeys (one D s i).1).find? (·.2.1 == p) = (genKeys (one D s j).1).find? (·.2.1 == p) := by
+  rw [hT.keys]
+  apply find_filter_mem
+  intro g hg hgp
+  simp only [beq_iff_eq] at hgp
+  simp only [bne_iff_ne, ne_eq]
+  intro hk
+  exact hp (hgp ▸ (hT.keyName g hg).mp hk)
+
+/-- The strict reading generates no key named by the exception predicate. -/
+theorem TwinDocs.find_excepted :
+    (genKeys (one D s i).1).find? (·.2.1 == VE.SoftNorms.exceptedName Nd) = none := by
+  rw [List.find?_eq_none]
+  intro g hg hgp
+  simp only [beq_iff_eq] at hgp
+  rw [hT.keys, List.mem_filter] at hg
+  simp only [bne_iff_ne, ne_eq] at hg
+  exact hg.2 ((hT.keyName g hg.1).mpr hgp)
+
+theorem TwinDocs.owned_eq (hi : (candidate D s i).bind (·.content) = some ci)
+    (hj : (candidate D s j).bind (·.content) = some cj) (k : GenKey) : owned D s i k = owned D s j k := by
+  unfold owned
+  rw [hi, hj]
+  cases k.source <;> simp [hT.declared]
+
+theorem TwinDocs.owned_excepted (hj : (candidate D s j).bind (·.content) = some cj) :
+    owned D s j (.excepted Nd.name none) = true := by
+  unfold owned
+  rw [hj]
+  exact List.contains_iff_mem.mpr hT.owns
+
+/-- The strict reading's elaborated document and the twin satisfy what the force lemma reads. -/
+theorem TwinDocs.twin (hD : WellFormedDoc D = true) (hj : (candidate D s j).bind (·.content) ≠ none)
+    (hm : ∃ M ∈ (correlate (one D s j).1).T.nodes, M.name = Nd.name ∧ M.pred = Nd.pred)
+    (ha : ∀ M ∈ (correlate (one D s j).1).T.nodes, VE.SoftNorms.act (correlate (one D s j).1) M =
+        VE.SoftNorms.act (correlate (one D s j).1) Nd → M.name = Nd.name) :
+    Twin (correlate (one D s i).1) Nd := by
+  have hc := hT.correlate_eq
+  have hv : SoftValid (relaxDoc (correlate (one D s i).1) Nd) := by
+    rw [← hc]
+    have hw := sideWF_one D hD hj
+    simp only [sideWF, Bool.and_eq_true] at hw
+    exact VE.SoftNorms.softValid_of_wellFormed _ (chain_soft _ _ hw.1)
+  refine ⟨hT.strict, fun M hM hn => ?_, hv, fun M hM h => ha M (by rw [hc]; exact hM) (by rw [hc]; exact h)⟩
+  obtain ⟨M', hM', hn', hp'⟩ := hm
+  rw [hc] at hM'
+  have he : relaxTo Nd M = M' := eq_of_key (·.name) hv.names (relax_mem hM) hM' (by
+    show (relaxTo Nd M).name = M'.name
+    rw [relaxTo_name, hn, hn'])
+  rw [← relaxTo_pred Nd M, he, hp']
+
+/-- A base admissible over the author's vocabulary has no tuple on the twin's exception predicate. -/
+theorem TwinDocs.excepted_empty (hw : Twin (correlate (one D s i).1) Nd)
+    (hn : ∃ M ∈ (correlate (one D s i).1).T.nodes, M.name = Nd.name) (B : VE.Structure.{u})
+    (hB : B.Admissible (authorEnv D)) : ∀ vs, ¬ B.relation (VE.SoftNorms.exceptedName Nd) vs := by
+  intro vs h
+  obtain ⟨ss, hss, _⟩ := hB.2 _ vs h
+  have h1 := envAt_author D (one D s i).1 (keepsFrame_one D s i) hT.find_excepted hss
+  have h0 : (envAt (soften (correlate (one D s i).1)) 0).predicates (VE.SoftNorms.exceptedName Nd) = none := by
+    obtain ⟨hd, _⟩ := genKeys_find_none hT.find_excepted
+    simp only [envAt, VE.Norms.hide, List.drop_zero]
+    split
+    · rfl
+    · show (VE.SoftNorms.envPrime (correlate (one D s i).1)).predicates _ = none
+      simp only [VE.SoftNorms.envPrime]
+      rw [List.find?_eq_none.mpr (fun d hd' => by simpa using hd d hd')]
+      exact hw.valid.decFresh _ (excepted_mem hn)
+  rw [h0] at h1
+  cases h1
+
+/-- Where the base has no tuple on the exception predicate, a completion of the strict reading is the
+    completion of the default one whose exception table is empty and whose other tables are the same. -/
+theorem TwinDocs.tablesRel_eq (B : VE.Structure.{u}) (hB : ∀ vs, ¬ B.relation (VE.SoftNorms.exceptedName Nd) vs)
+    (G H : Tables B.Carrier) (hGH : ∀ k, k ≠ .excepted Nd.name none → ∀ vs, G k vs ↔ H k vs)
+    (hH : ∀ vs, ¬ H (.excepted Nd.name none) vs) :
+    tablesRel (one D s i).1 B G = tablesRel (one D s j).1 B H := by
+  funext p vs
+  unfold tablesRel withTables
+  dsimp only
+  by_cases hp : p = VE.SoftNorms.exceptedName Nd
+  · subst hp
+    rw [hT.find_excepted]
+    dsimp only
+    split
+    · rename_i g hg
+      obtain ⟨hgm, hgp⟩ := find_name hg
+      rw [(hT.keyName g hgm).mpr hgp]
+      exact propext ⟨fun h => (hB vs h).elim, fun h => (hH vs h).elim⟩
+    · rfl
+  · rw [hT.find_strict p hp]
+    split
+    · rename_i g hg
+      obtain ⟨hgm, hgp⟩ := find_name hg
+      exact propext (hGH g.1 (fun hk => hp (hgp ▸ (hT.keyName g hgm).mp hk)) vs)
+    · rfl
+
+/-- One structure on which the exception predicate is false, read by both readings. -/
+theorem TwinDocs.core (hw : Twin (correlate (one D s i).1) Nd) (hs : SoftValid (correlate (one D s i).1))
+    (hn : ∃ M ∈ (correlate (one D s i).1).T.nodes, M.name = Nd.name)
+    (hdef : ∀ d ∈ (correlate (one D s i).1).T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd)
+    (hsuf : ∀ e, Nd.exception = some e → e.sufficient = [])
+    (hA : ∀ a ∈ (one D s i).2, a.WellFormed (envAt (soften (correlate (one D s i).1))
+      (size (soften (correlate (one D s i).1)))) [])
+    (S : VE.Structure.{u}) (hS : ∀ vs, ¬ S.relation (VE.SoftNorms.exceptedName Nd) vs) (q : Probe S.Carrier)
+    (v : Bool) :
+    BaseAdmissibleR (one D s i).1 S ∧ Observes (one D s i).1 (one D s i).2 S q v ↔
+      BaseAdmissibleR (one D s j).1 S ∧ Observes (one D s j).1 (one D s j).2 S q v := by
+  have hc := hT.correlate_eq
+  have hP := hw.baseAdmissiblePrime hs hn hdef S hS hsuf
+  have hO := fun hB => observes_twin hc hw hs hn hdef hT.selectable_eq _ hA S hS hB q v
+  unfold BaseAdmissibleR
+  rw [hc, ← hT.lim, ← hT.assertions]
+  constructor
+  · rintro ⟨⟨hB, hl⟩, hobs⟩
+    exact ⟨⟨hP.mp hB, hl⟩, (hO hB.1).mp hobs⟩
+  · rintro ⟨⟨hB', hl⟩, hobs⟩
+    have hB := hP.mpr hB'
+    exact ⟨⟨hB, hl⟩, (hO hB.1).mpr hobs⟩
+
+end Pair
+
+/-- A probe value read over two completions of one base with equal relations. -/
+theorem observes_withTables {X X₁ X₂ : RightsDoc} {A : List VE.Formula} {B : VE.Structure.{u}}
+    {G₁ G₂ : Tables B.Carrier} (h : tablesRel X₁ B G₁ = tablesRel X₂ B G₂) (q : Probe B.Carrier) (v : Bool)
+    (ho : Observes X A (withTables X₁ B G₁) q v) : Observes X A (withTables X₂ B G₂) q v := by
+  have ho' : Observes X A { B with relation := tablesRel X₁ B G₁ } q v := ho
+  rw [h] at ho'
+  exact ho'
+
+/-- The exchange of completions behind `decision_only_sound`, over any two documents: a completion of the
+    first reading is one of the second with the table of `k₀` empty, and back. -/
+theorem quiet_iff {Xs Xd : RightsDoc} {As Ad : List VE.Formula} {oi oj : GenKey → Bool} {k₀ : GenKey} {e : String}
+    {E : VE.Environment} (B : VE.Structure.{u}) (F : Tables B.Carrier) (q : Probe B.Carrier) (v : Bool)
+    (hown : ∀ k, oi k = oj k) (hk₀ : oj k₀ = true) (hB : B.Admissible E → ∀ vs, ¬ B.relation e vs)
+    (hrel : (∀ vs, ¬ B.relation e vs) → ∀ G H : Tables B.Carrier, (∀ k, k ≠ k₀ → ∀ vs, G k vs ↔ H k vs) →
+      (∀ vs, ¬ H k₀ vs) → tablesRel Xs B G = tablesRel Xd B H)
+    (hcore : (∀ vs, ¬ B.relation e vs) → ∀ G : Tables B.Carrier,
+      (BaseAdmissibleR Xs (withTables Xs B G) ∧ Observes Xs As (withTables Xs B G) q v ↔
+        BaseAdmissibleR Xd (withTables Xs B G) ∧ Observes Xd Ad (withTables Xs B G) q v)) :
+    (B.Admissible E ∧ ∃ G : Tables B.Carrier, (∀ k, oi k = false → ∀ vs, G k vs ↔ F k vs) ∧
+      BaseAdmissibleR Xs (withTables Xs B G) ∧ Observes Xs As (withTables Xs B G) q v) ↔
+    (B.Admissible E ∧ ∃ G : Tables B.Carrier, (∀ k, oj k = false → ∀ vs, G k vs ↔ F k vs) ∧ (∀ vs, ¬ G k₀ vs) ∧
+      BaseAdmissibleR Xd (withTables Xd B G) ∧ Observes Xd Ad (withTables Xd B G) q v) := by
+  have hwt : ∀ G H : Tables B.Carrier, tablesRel Xs B G = tablesRel Xd B H → withTables Xs B G = withTables Xd B H :=
+    fun G H h => by rw [withTables_rel, withTables_rel, h]
+  constructor
+  · rintro ⟨hBa, G, hG, hadm, hobs⟩
+    have hB' := hB hBa
+    let H : Tables B.Carrier := fun k vs => k ≠ k₀ ∧ G k vs
+    have hR := hrel hB' G H (fun k hk vs => ⟨fun h => ⟨hk, h⟩, fun h => h.2⟩) (fun vs h => h.1 rfl)
+    obtain ⟨hadm', hobs'⟩ := (hcore hB' G).mp ⟨hadm, hobs⟩
+    refine ⟨hBa, H, fun k hk vs => ?_, fun vs h => h.1 rfl, by rw [← hwt G H hR]; exact hadm', observes_withTables hR q v hobs'⟩
+    have hne : k ≠ k₀ := fun he => by rw [he, hk₀] at hk; cases hk
+    have hGF := hG k (by rw [hown]; exact hk) vs
+    exact ⟨fun h => hGF.mp h.2, fun h => ⟨hne, hGF.mpr h⟩⟩
+  · rintro ⟨hBa, H, hH, hH₀, hadm, hobs⟩
+    have hB' := hB hBa
+    have hR := hrel hB' H H (fun _ _ _ => Iff.rfl) hH₀
+    have hadm2 : BaseAdmissibleR Xd (withTables Xs B H) := by rw [hwt H H hR]; exact hadm
+    have hobs2 : Observes Xd Ad (withTables Xs B H) q v := observes_withTables hR.symm q v hobs
+    obtain ⟨hadm', hobs'⟩ := (hcore hB' H).mpr ⟨hadm2, hobs2⟩
+    exact ⟨hBa, H, fun k hk vs => hH k (by rw [← hown]; exact hk) vs, hadm', hobs'⟩
+
+/-- With the default twin's exception table empty the two readings reach the same probe values on every base:
+    every separation of the pair uses that table. -/
+theorem decision_only_sound (D : Doc) (hD : WellFormedDoc D = true) (s : String) (i j : Nat) (k₀ : GenKey)
+    (h : decisionOnly D s i j = some k₀) (B : VE.Structure.{u}) (F : Tables B.Carrier) (q : Probe B.Carrier)
+    (v : Bool) :
+  Achieves D s i B F q v ↔ AchievesQuiet D s j k₀ B F q v := by
+  obtain ⟨ci, cj, Nd, hci, hcj, rfl, hsuf, hm, ha, hT⟩ := decisionOnly_twin h
+  have hc := hT.correlate_eq
+  have hw := hT.twin hD (by rw [hcj]; simp) hm ha
+  have hwi := sideWF_one D hD (s := s) (i := i) (by rw [hci]; simp)
+  simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hwi
+  have hs : SoftValid (correlate (one D s i).1) := VE.SoftNorms.softValid_of_wellFormed _ (chain_soft _ _ hwi.1)
+  have hA : ∀ a ∈ (one D s i).2, a.WellFormed (envAt (soften (correlate (one D s i).1))
+      (size (soften (correlate (one D s i).1)))) [] :=
+    fun a ha => (VE.check_iff_wellFormed _ _ _).mp (hwi.2 a ha)
+  have hn : ∃ M ∈ (correlate (one D s i).1).T.nodes, M.name = Nd.name := by
+    obtain ⟨M', hM', hn', _⟩ := hm
+    rw [hc] at hM'
+    obtain ⟨M, hM, rfl⟩ := mem_relaxDoc.mp hM'
+    exact ⟨M, hM, by rw [← relaxTo_name Nd M]; exact hn'⟩
+  have hdef : ∀ d ∈ (correlate (one D s i).1).T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd :=
+    fun d hd => hT.defs d (by rw [hc]; exact hd)
+  have hown := hT.owned_eq hci hcj
+  have hk₀ := hT.owned_excepted hcj
+  unfold Achieves AchievesQuiet
+  exact quiet_iff B F q v hown hk₀ (hT.excepted_empty hw hn B) (fun hB => hT.tablesRel_eq B hB)
+    (fun hB G => hT.core hw hs hn hdef hsuf hA (withTables (one D s i).1 B G) (withTables_none hT.find_excepted hB) q v)
 
 end VE.Readings
