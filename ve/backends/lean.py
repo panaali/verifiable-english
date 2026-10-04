@@ -13,7 +13,7 @@ one row contract of every runner: `status` is `ok` or `error`; a row naming its
 case by position (`case_index`) carries only that position and an `error`; any
 other row has an `id` field naming the submitted case, with its JSON type (a
 string id, an integer index: `false` is not case 0), and `null` for a case
-without one (a row without the field names no case); an `error` row carries a string `error`
+without one (a row without the field names no case); an `error` row carries a non-empty string `error`
 and, on a coded route only, a string `code`; an `ok` row carries neither. Output
 that is no Unicode text (a `\\ud800` escape) is no answer. Each
 binding's manifest `response` gives every field an `ok` row of the operation
@@ -72,7 +72,7 @@ def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str
     The row contract every one-shot runner's `main` writes (`lean/VE/*/Run.lean`): a case the
     runner could not read is answered by its position alone (`status: error`, `case_index`,
     `error` and, from the certificate and order runners, `valid: false`); every other row names the case's `id` (null when the case has none)
-    and no position. An `error` row carries a string `error` and, only on a route whose rows name
+    and no position. An `error` row carries a non-empty string `error` and, only on a route whose rows name
     codes (`coded`), a non-empty string `code`; an `ok` row carries neither."""
     if type(row) is not dict:
         return "a result row is not an object"
@@ -93,7 +93,8 @@ def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str
     elif "id" not in row or not _same(row["id"], case.get("id")):
         return "result ids do not match the submitted cases"
     if status == "error":
-        if type(row.get("error")) is not str:
+        # Lean's texts are never empty (`lean_service_schema/common.json` `text`, the same rows).
+        if type(row.get("error")) is not str or not row["error"]:
             return "an error row has no error message"
         if "code" in row and not (coded and type(row["code"]) is str and row["code"]):
             return "an error row names a code its route does not give"

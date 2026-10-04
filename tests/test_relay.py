@@ -248,16 +248,16 @@ CASES = {"string-id": CASE, "no-id": {"kind": "bundle"}}
 
 
 def _mutants(case):
-    """Genuine rows for `case` with one field dropped, retyped or duplicated, or a foreign identity
-    added: none is an answer to `case` (checklist line 4)."""
+    """Genuine rows for `case` with one field dropped, emptied, nulled, retyped or duplicated, or a
+    foreign identity added: none is an answer to `case` (checklist line 4)."""
     ident = case.get("id")
     genuine = {"ok": ({"id": ident, "status": "ok"}, 0), "error": ({"id": ident, "status": "error", "error": "x"}, 1)}
     for kind, (row, status) in genuine.items():
         for name in row:
             yield f"{kind}-drop-{name}", {k: v for k, v in row.items() if k != name}, status
-            # Every retyping, and for the identity and status fields a near-miss of the same type.
-            near = {"id": (0, "0 ", "", False, "null"), "status": ("OK", "")}.get(name, ())
-            for bad in (7, True, None, [], {}, "\ud800", *near):
+            # Every emptying and retyping, and for the identity and status fields a near-miss of the same type.
+            near = {"id": (0, "0 ", False, "null"), "status": ("OK",)}.get(name, ())
+            for bad in (7, True, None, "", [], {}, "\ud800", *near):
                 if not same_json(bad, row[name]):
                     yield f"{kind}-{name}-{bad!r}", {**row, name: bad}, status
         yield f"{kind}-case-index", {**row, "case_index": 0}, status
@@ -377,12 +377,13 @@ def test_the_rust_checker_output_must_name_its_case(tmp_path):
     exe.chmod(0o755)
     run = lambda case: rust_jsonl.run(case, executable=exe, timeout=HANG_TIMEOUT,  # noqa: E731
                                       expected_sha256=hashlib.sha256(exe.read_bytes()).hexdigest())
+    error = {"code": "UnknownSymbol", "message": "UnknownSymbol: x"}
     for record, case in (({}, {"kind": "evaluate"}), ({"id": False}, {"id": 0}), ({"id": 0}, {"id": False}),
                          ({"id": None}, {"kind": "evaluate"}), ({"id": "0"}, {"id": 0})):
-        out.write_text(json.dumps({**record, "status": "error", "error": "UnknownSymbol: x"}) + "\n")
-        with pytest.raises(CheckerUnavailable, match="mismatched Rust response id"):
+        out.write_text(json.dumps({**record, "status": "error", "error": error}) + "\n")
+        with pytest.raises(CheckerUnavailable, match=r"malformed Rust response \((id: |missing field id)"):
             run(case)
-    out.write_text(json.dumps({"id": "", "status": "error", "error": "UnknownSymbol: x"}) + "\n")
+    out.write_text(json.dumps({"id": "", "status": "error", "error": error}) + "\n")
     with pytest.raises(UnknownSymbol):
         run({"kind": "evaluate"})
 
