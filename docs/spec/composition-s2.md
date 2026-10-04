@@ -401,6 +401,18 @@ R6  the sentences of this document cannot all be true together.                 
    choice otherwise; under named readings, item 2's E12 for ALL and the E12 lines alone for NONE. Nothing in the
    English says which route produced a verdict; the report's `route` field does (6).
 
+As built (compose-s2 fix4, review A1): the "used slot labels" of items 1 and 2 are one dependency set per answer,
+`reading_premises_used`, computed from every certificate the answer is accepted on: the conflict certificates under
+`A` as well as the answer's own (a narrowing that removes a collision is needed by the conflict certificates even
+when the entailment's certificate never touches it). Each certificate is replayed with slot premises replaced by
+`⊤`, one label at a time in slot order, and a label is left out when every certificate still closes; E3 and E13 are
+both worded from that set. The premise status's `⊥` certificate (E10 with R6) gets E3 and E13 the same way. A
+verdict combined over the compatible choices words the union of its choices' sets with its restrictions (E3 only).
+On the enumerated route the set is the restrictions. Python computes the set by replay; Lean's rows report the whole
+slot (`reading_premises`), of which it is a subset. Review A2: a countermodel's decisions find the rule they belong
+to through every rule-bearing field of every line kind (`LINE_RULE_FIELDS` in `ve/rights.py`, read by
+`Content.rules`), a power line's liberty and recognition included.
+
 ### 2.4 Non-wordings, beyond composition.md 2.2
 
 - E10 or E26 for a model-based result, or E12 naming fewer sentences than the complete choice a model encodes.

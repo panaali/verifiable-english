@@ -46,6 +46,16 @@ def _used(certificate, count):
     return found
 
 
+def _replays(env, premises, conclusion, certificate):
+    """Whether the certificate's trace closes on `premises` (after the Background), bound afresh to them: Python's
+    own replay of a trace it generated, which only narrows what an answer is worded as depending on."""
+    from .entailment import _binding, _validate_inputs, check_entailment_certificate
+    full = _validate_inputs(env, premises, conclusion)
+    bound = {**certificate, **_binding(env, full, conclusion)}
+    return check_entailment_certificate(env, full, conclusion, bound, max_steps=BUDGET["max_steps"],
+                                        _background=False).valid
+
+
 def _literal(formula):
     from .ast import Binary, Bottom, Not, Top, Unary
     inner = formula.body if isinstance(formula, Not) else formula
@@ -199,23 +209,49 @@ class Superposed(_Route):
                 self._formulas(self.ext, self.assertions + list(gamma)))
 
     def _prove(self, env, slot, rest, conclusion):
-        """A certificate of `conclusion` from slot ++ rest (the prover prepends the Background), and the slot labels
-        it needs: each slot premise is replaced by ⊤ in turn and dropped when a proof remains. The certificate
-        returned is one that never expands a dropped premise, so it checks against the full list as well."""
+        """A certificate of `conclusion` from slot ++ rest (the prover prepends the Background) that needs as few
+        slot premises as the prover finds: each slot premise is replaced by ⊤ in turn and stays replaced when a
+        proof remains. The certificate returned never expands a replaced premise, so it checks against the full
+        list as well; what it depends on is `_dependencies`'."""
         from .ast import Top
         from .entailment import prove_entailment
         proof = prove_entailment(env, slot + rest, conclusion, max_steps=BUDGET["max_steps"])
         if proof.status != "Found":
-            return None, []
+            return None
         current = list(slot)
         for k in range(len(slot)):
             trial = current[:k] + [Top()] + current[k + 1:]
             again = prove_entailment(env, trial + rest, conclusion, max_steps=BUDGET["max_steps"])
             if again.status == "Found":
                 current, proof = trial, again
-        used = [label for k, (label, _) in enumerate(self.slot) if not isinstance(current[k], Top)
-                or isinstance(slot[k], Top)]
-        return proof.certificate, used
+        return proof.certificate
+
+    def _dependencies(self, proofs):
+        """The one dependency set of an answer (compose-s2 fix4 A1): the slot labels its certificates rely on, the
+        conflict certificates it is accepted under included, in slot order. `proofs` are (environment, slot
+        formulas, rest, conclusion, certificate), each certificate over the Background ++ slot ++ rest. Every
+        certificate is replayed with slot premises replaced by ⊤, one label at a time in slot order, and a label
+        stays out when every certificate still closes: each certificate closes without the labels left out, and
+        none of them closes once any label kept is left out too. Both the English conditions (E3) and the
+        independence statement (E13) are worded from this set, never from a separate computation."""
+        from .ast import Top
+        kept = [True] * len(self.slot)
+        for k in range(len(self.slot)):
+            trial = kept[:k] + [False] + kept[k + 1:]
+            if all(_replays(env, [f if trial[j] else Top() for j, f in enumerate(slot)] + list(rest), phi, cert)
+                   for env, slot, rest, phi, cert in proofs):
+                kept = trial
+        return [label for k, (label, _) in enumerate(self.slot) if kept[k]]
+
+    def _conflict_proofs(self, A, certificates):
+        """The conflict certificates under `A` as `_dependencies` replays them: over Background_base′ ++ slot ++
+        atoms, each of its target's closed negation."""
+        from .ast import Not
+        from .norms import _bind
+        slot = self._formulas(self.base, [ast for _, ast in self.slot])
+        atoms = self._formulas(self.base, self._atoms(A))
+        return [(self.base, slot, atoms, _bind(Not(formula), sorts), certificates[target])
+                for target, sorts, formula in self.soft.elaborated.conflict_targets() if target in certificates]
 
     def _coherence(self, certificate, env):
         """The coherence labels of the Background a certificate expands, or that are literals (a literal is closed
@@ -244,12 +280,11 @@ class Superposed(_Route):
         slot = self._formulas(self.base, [ast for _, ast in self.slot])
         atoms = self._formulas(self.base, self._atoms(A))
         premises = slot + atoms
-        certificates, missing, needed = {}, None, set()
+        certificates, missing = {}, None
         for target, sorts, formula in self.soft.elaborated.conflict_targets():
-            certificate, used = self._prove(self.base, slot, atoms, _bind(Not(formula), sorts))
+            certificate = self._prove(self.base, slot, atoms, _bind(Not(formula), sorts))
             if certificate is not None:
                 certificates[target] = certificate
-                needed.update(used)
             elif missing is None:
                 missing = target
         assumed = [list(x) for x in A]
@@ -261,7 +296,7 @@ class Superposed(_Route):
             coherence = set()
             for certificate in certificates.values():
                 coherence.update(self._coherence(certificate, self.base))
-            used = [label for label, _ in self.slot if label in needed]
+            used = self._dependencies(self._conflict_proofs(A, certificates))
             coh = [label for label, _ in self.soft.extended_env.soft_premises if label in coherence]
             result = {"status": "CONFLICT-FREE", "evidence": "certificates", "assumed": assumed,
                       "certificates": certificates, "conditional_on": coh + used, "reading_premises_used": used,
@@ -455,7 +490,8 @@ class Superposed(_Route):
             return None
         phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
         full = self._full(A, gamma)
-        certificate, used = self._prove(self.ext, full[:len(self.slot)], full[len(self.slot):], phi)
+        slot, rest = full[:len(self.slot)], full[len(self.slot):]
+        certificate = self._prove(self.ext, slot, rest, phi)
         if certificate is None:
             return None
         row = self.lean("readings-certificate", assumed=[list(x) for x in A], premises=list(gamma),
@@ -464,9 +500,15 @@ class Superposed(_Route):
         if row["accepted"] is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the certificate Python's prover "
                                      "found on the superposed document")
+        # Review A1 of compose-s2 fix4: Lean accepts the certificate only under the conflict certificates, so the
+        # answer depends on their slot labels too (a narrowing that removes a collision proves nothing itself).
+        used = self._dependencies(self._conflict_proofs(A, conflict["certificates"]) +
+                                  [(self.ext, slot, rest, phi, certificate)])
+        labels = {label for label, _ in self.slot}
+        coherence = [label for label in conflict["conditional_on"] if label not in labels]
         return {"certificate": certificate, "assumed": [list(x) for x in A],
                 "reading_premises_used": used, "mentions": self._mentions(A, used),
-                "conditional_on": list(dict.fromkeys(conflict["conditional_on"] + used))}
+                "conditional_on": list(dict.fromkeys(coherence + used))}
 
     def _mentions(self, A, used):
         """The open sets a used leaf mentions (2.3: a leaf mentions a set when its formula contains a bit
@@ -494,7 +536,8 @@ class Superposed(_Route):
             proof = self.certificate((), (), None)
             if proof is not None:
                 result = {"status": "INCONSISTENT", "route": "superposed", "evidence": "certificate",
-                          "conditional_on": proof["conditional_on"]}
+                          "conditional_on": proof["conditional_on"],
+                          "reading_premises_used": proof["reading_premises_used"]}
             else:
                 conflict = self.conflict(())
                 result = {"status": "UNKNOWN", "route": "superposed", "budget": dict(BUDGET),
@@ -611,7 +654,8 @@ class Superposed(_Route):
                 continue
             proof = self.certificate(A, premises, conclusion_ast)
             if proof is not None:
-                proofs.append({"choice": self.choice_json(choice), "conditional_on": proof["conditional_on"]})
+                proofs.append({"choice": self.choice_json(choice), "conditional_on": proof["conditional_on"],
+                               "reading_premises_used": proof["reading_premises_used"]})
             else:
                 unknown.append({"choice": self.choice_json(choice)})
         if proofs and counters:
@@ -624,8 +668,14 @@ class Superposed(_Route):
         restrictions = self.restrictions(())
         if proofs:
             conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
+            # Review A1 of compose-s2 fix4: the combined answer depends on what each choice's certificates rely on
+            # as well as on the restrictions that selected the choices.
+            used = {label for p in proofs for label in p["reading_premises_used"]} | set(restrictions)
+            labels = [label for label, _ in self.slot]
             return {"verdict": "ALL", "route": "superposed", "evidence": "certificates", "proofs": proofs,
-                    "conditional_on": conditional, "restrictions": restrictions}
+                    "conditional_on": conditional, "restrictions": restrictions,
+                    "reading_premises_used": [label for label in labels if label in used] +
+                                             [label for label in restrictions if label not in labels]}
         return {"verdict": "NONE", "route": "superposed", "countermodels": counters, "restrictions": restrictions}
 
     def report_fields(self):
@@ -707,8 +757,10 @@ class Enumerated(_Route):
             restrictions = self.restrictions(A)
             conditional = list(dict.fromkeys([label for _, r in rows for label in r.get("conditional_on", [])] +
                                              restrictions))
+            # On the enumerated route each choice is its own document: what the answer depends on of the readings
+            # is the restrictions that selected the choices (`reading_premises_used`, as on the superposed route).
             return {"status": "CONFLICT-FREE", "route": "enumerated", "conditional_on": conditional,
-                    "restrictions": restrictions,
+                    "restrictions": restrictions, "reading_premises_used": restrictions,
                     "status_text": f"CONFLICT-FREE among rules on the same act under every reading ({len(rows)} "
                                    "readings checked one at a time)",
                     "choices": [{"choice": c, "status": "CONFLICT-FREE"} for c, _ in rows]}
@@ -794,7 +846,8 @@ class Enumerated(_Route):
         if len(proofs) == len(rows):
             conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
             return {"verdict": "ALL", "route": "enumerated", "evidence": "certificates", "proofs": proofs,
-                    "conditional_on": conditional, "restrictions": restrictions, **named}
+                    "conditional_on": conditional, "restrictions": restrictions,
+                    "reading_premises_used": restrictions, **named}
         if len(counters) == len(rows):
             return {"verdict": "NONE", "route": "enumerated", "countermodels": counters,
                     "restrictions": restrictions, **named}

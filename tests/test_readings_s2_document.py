@@ -1000,8 +1000,203 @@ def test_review_a3_class_every_generated_decision_is_worded(tmp_path):
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Review fix4 (compose-s2): every rule-bearing field of
+# Review fix4 (compose-s2): every dependency of a checked answer is in its English, and every rule-bearing field of
 # every line kind has an owner.
+
+def _top_cited(items):
+    return list(items) + [("fixed", "uz", ["top"])]
+
+
+_FIX4_FIXTURES = {
+    "m3": (lambda tmp_path, narrowings: s2_document(tmp_path, _top_cited([
+        ("set", "rs1", "u1", [S, DF]), ("fixed", "u0", NEVER_AVOID)]), narrowings=narrowings),
+           {"rs1": ["strict", "default"]}, ["avoid_required", "help_required"]),
+    "m4": (lambda tmp_path, narrowings: s2_document(tmp_path, _top_cited([
+        ("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)]), narrowings=narrowings),
+           {"rs1": ["strict", "default"]}, ["avoid_required", "help_required"]),
+    "m6": (lambda tmp_path, narrowings: _m6(tmp_path, [{**n, "reason_spans": ["u2"]} for n in narrowings]),
+           {"rs1": ["strict", "default"], "rs2": ["strict", "default"]}, ["avoid_required", "help_required"]),
+    "m9": (lambda tmp_path, narrowings: s2_document(tmp_path, _top_cited([
+        ("fixed", "u0", norm("f-warn", "warn_required", True, guard=ASKS)),
+        ("set", "rs1", "u1", [("a", norm("r-a", "avoid_required", True,
+                                         guard=["binary", "help_required", ["var", 1], ["var", 0]]), "norm", None),
+                              ("b", norm("r-b", "help_required", True,
+                                         guard=["binary", "warn_required", ["var", 1], ["var", 0]]), "norm", None)]),
+        ("set", "rs2", "u2", [("c", norm("r-c", "warn_required", True,
+                                         guard=["binary", "avoid_required", ["var", 1], ["var", 0]]), "norm", None),
+                              ("d", norm("r-d", "warn_required", True), "norm", None)])]),
+        raw=_k9(), narrowings=narrowings),
+           {"rs1": ["a", "b"], "rs2": ["c", "d"]}, ["warn_required", "avoid_required"]),
+}
+_FIX4_CASES = [(name, None) for name in _FIX4_FIXTURES] + [
+    (name, (set_id, kept)) for name, (_, sets, _) in _FIX4_FIXTURES.items()
+    for set_id, ids in sets.items() for kept in ids]
+
+
+def _replay_without(checks, left_out):
+    """Whether every certificate still closes with the slot premises labelled `left_out` replaced by ⊤ (the
+    certificate bound afresh to that list): the test's own replay, not the route's."""
+    from ve.ast import Top
+    from ve.entailment import _binding, _validate_inputs, check_entailment_certificate
+    for env, labelled, rest, phi, certificate in checks:
+        premises = [Top() if label in left_out else formula for label, formula in labelled] + list(rest)
+        full = _validate_inputs(env, premises, phi)
+        bound = {**certificate, **_binding(env, full, phi)}
+        if not check_entailment_certificate(env, full, phi, bound, _background=False).valid:
+            return False
+    return True
+
+
+def _certificate_checks(route, A, conclusion=None, certificate=None):
+    """Every certificate a superposed answer under `A` is accepted on: the conflict certificates under `A` and, for
+    an entailment, its own; each with its labelled slot premises and the rest of its premise list."""
+    from ve.ast import Bottom, Not, formula_from_data
+    from ve.norms import _bind
+    conflict = route.conflict(A)
+    labels = [label for label, _ in route.slot]
+    base_slot = list(zip(labels, route._formulas(route.base, [ast for _, ast in route.slot])))
+    atoms = route._formulas(route.base, route._atoms(A))
+    checks = [(route.base, base_slot, atoms, _bind(Not(formula), sorts), conflict["certificates"][target])
+              for target, sorts, formula in route.soft.elaborated.conflict_targets()]
+    if certificate is not None:
+        full = route._full(A)
+        phi = Bottom() if conclusion is None else formula_from_data(route.ext, conclusion, _generated=True)
+        checks.append((route.ext, list(zip(labels, full[:len(labels)])), full[len(labels):], phi, certificate))
+    return checks
+
+
+def _assert_exact_dependencies(route, checks, used):
+    """`used` is what the certificates rely on: they all close without every other slot premise, and leaving out
+    any label of `used` as well makes one of them fail."""
+    labels = [label for label, _ in route.slot]
+    assert used == [label for label in labels if label in used], used  # slot order, no repeats
+    outside = {label for label in labels if label not in used}
+    assert _replay_without(checks, outside), (used, "the certificates need a label left out of the English")
+    for label in used:
+        assert not _replay_without(checks, outside | {label}), (label, "worded but not relied on")
+
+
+def _mentioned(route, used):
+    from ve.readings_sup import bit_name, bits_of
+    asts = dict(route.slot) if hasattr(route, "slot") else {}
+    out = set()
+    for position, R in enumerate(route.sets, 1):
+        bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
+        if any(bits & _predicates_of(asts.get(label, [])) for label in used):
+            out.add(R.id)
+        if any(label == f"narrowing:{n['id']}" and n["set"] == R.id for n in route.narrowings for label in used):
+            out.add(R.id)
+        if any(label == f"coupling:{c['id']}" and R.id in [ref["set"] for ref in c["sets"]]
+               for c in route.couplings for label in used):
+            out.add(R.id)
+    return out
+
+
+def _predicates_of(ast):
+    out, stack = set(), [ast]
+    while stack:
+        node = stack.pop()
+        if type(node) is list and node:
+            if node[0] in ("unary", "binary") and type(node[1]) is str:
+                out.add(node[1])
+            stack.extend(item for item in node[1:] if type(item) is list)
+    return out
+
+
+@pytest.mark.parametrize("fixture,narrowed", _FIX4_CASES,
+                         ids=[f"{n}-{'none' if k is None else ':'.join(k)}" for n, k in _FIX4_CASES])
+def test_fix4_a1_english_conditions_are_the_certificate_dependencies(tmp_path, fixture, narrowed):
+    """Generated over the M-fixtures, without and with a narrowing keeping each candidate: every checked answer's
+    English conditions (E3) are exactly the slot labels its certificates rely on, the conflict certificates'
+    included, and its independence statements (E13) are the open sets none of them mentions."""
+    from ve.readings_verdicts import Enumerated, Superposed
+    build, sets, predicates = _FIX4_FIXTURES[fixture]
+    narrowings = [] if narrowed is None else [{"id": "n1", "set": narrowed[0], "version": 1, "keeps": [narrowed[1]],
+                                               "by": "reviewer", "reason_spans": ["uz"]}]
+    try:
+        path = build(tmp_path, narrowings)
+        doc, route, wording = _wording(path)
+    except VEError as exc:
+        assert "ReadingsUnsatisfiable" in str(exc) or "DeadReading" in str(exc), exc
+        return
+    superposed = isinstance(route, Superposed)
+    assert superposed or isinstance(route, Enumerated)
+    # The report: CONFLICT-FREE under every reading is worded from the conflict certificates' dependencies.
+    conflict = route.conflict(())
+    lines = wording.report()
+    if conflict["status"] == "CONFLICT-FREE":
+        used = conflict["reading_premises_used"]
+        if superposed:
+            _assert_exact_dependencies(route, _certificate_checks(route, ()), used)
+        else:
+            assert used == route.restrictions(())
+        head = lines.index(wording.E.every_result(len(route.sets), "conflict_free", wording.slots))
+        tail = wording.provided(used) + wording.independent(_mentioned(route, used))
+        assert lines[head + 1:head + 1 + len(tail)] == tail, (lines, used)
+    checked = 0
+    assumptions = [None] + [[(s, i)] for s, i in route.candidates()
+                            if (route.taken([(s, i)]) if superposed else
+                                any(c[s] == i for c in (route.choices or [])))]
+    for predicate in predicates:
+        for negated in (False, True):
+            conclusion = every(predicate, negated)
+            for assumed in assumptions:
+                data = route.entailment(conclusion, assumed=assumed)
+                lines = wording.query(conclusion, data)
+                if data["verdict"] != "ALL":
+                    continue
+                checked += 1
+                A = [tuple(x) for x in (assumed or [])]
+                used = data["reading_premises_used"]
+                if data["evidence"] == "certificate":
+                    proof = route.certificate(A, (), conclusion)
+                    assert proof["reading_premises_used"] == used
+                    _assert_exact_dependencies(route, _certificate_checks(route, A, conclusion, proof["certificate"]),
+                                               used)
+                    tail = wording.provided(used) + wording.independent(_mentioned(route, used) | {s for s, _ in A})
+                elif superposed:
+                    per_choice = {label for p in data["proofs"] for label in
+                                  route.certificate([tuple(x) for x in p["choice"]], (), conclusion)[
+                                      "reading_premises_used"]}
+                    assert set(used) == per_choice | set(route.restrictions(A)), used
+                    tail = wording.provided(used)
+                else:
+                    assert used == route.restrictions(A)
+                    tail = wording.provided(used)
+                assert lines[1:] == tail, (lines, used)
+                _one_derivation(lines, wording)
+    # Every fixture but M3 (a CONFLICT, every entailment UNKNOWN) words some checked answer without a narrowing; a
+    # narrowing keeping only *should* may leave none.
+    assert checked or fixture == "m3" or narrowed is not None, "no checked answer was worded"
+
+
+def test_fix4_a1_conflict_dependent_narrowing_is_worded(tmp_path):
+    """The finding's case: M3 with `n1` keeping only *should* answers ALL for ¬avoid_required only because the
+    narrowing removes the collision under *must*; the English keeps the narrowing (E3, E7) and never says the answer
+    is independent of sentence 1. Without `n1` the answer is UNKNOWN (CONFLICT)."""
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["default"], "by": "reviewer",
+                 "reason_spans": ["u2"]}
+    items = [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", NEVER_AVOID), ("fixed", "u2", ["top"])]
+    path = s2_document(tmp_path, items, narrowings=[narrowing])
+    data, lines, wording = _query(path, every("avoid_required", negated=True))
+    assert data["verdict"] == "ALL" and data["reading_premises_used"] == ["narrowing:n1"], data
+    assert data["mentions"] == ["rs1"]
+    assert lines[1:] == ["This holds provided that:", "Sentence 1 is not read as *must*, because of sentence 3."]
+    assert not any("does not depend" in line for line in lines)
+    _one_derivation(lines, wording)
+    bare = s2_document(tmp_path / "bare", items)
+    assert verdicts(bare).entailment(every("avoid_required", negated=True))["status"] == \
+        "UNKNOWN (conflict status: CONFLICT)"
+
+
+def test_fix4_a1_wording_refuses_an_answer_without_its_dependencies(tmp_path):
+    path = s2_document(tmp_path, [("set", "rs1", "u1", [S, DF]), ("fixed", "u0", HELP_X)])
+    doc, route, wording = _wording(path)
+    data = route.entailment(every("help_required"))
+    del data["reading_premises_used"]
+    with pytest.raises(VEError, match="reading premises it depends on"):
+        wording.query(every("help_required"), data)
+
 
 def _power_env():
     from tests.test_norms import permission
