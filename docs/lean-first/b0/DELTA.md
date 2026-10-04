@@ -7,20 +7,37 @@ docs/lean-first/b0/delta.json`).
 
 ## Result
 
-| Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
-|---|---:|---:|---:|---:|---:|---:|
-| probe, `python` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 |
-| probe, `lean` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 |
-| conformance, `python` | 19,806 | 19,773 | 33 | 0 | 0 | 0 |
-| conformance, `lean` | 19,806 | 19,773 | 33 | 0 | 0 | 0 |
-| pilots (`ve document check`, default authority) | 214 | 214 | 0 | 0 | 0 | 0 |
-| **All** | 58,696 | 52,276 | 6,420 | 0 | 0 | 0 |
+| Corpus | Records per side | Same | Wording | Order | Verdict | Availability | Unavailable |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| probe, `python` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 | 0 |
+| probe, `lean` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 | 0 |
+| conformance, `python` | 19,806 | 19,773 | 33 | 0 | 0 | 0 | 0 |
+| conformance, `lean` | 19,806 | 19,773 | 33 | 0 | 0 | 0 | 0 |
+| pilots (`ve document check`, default authority) | 214 | 213 | 0 | 0 | 0 | 0 | 1 |
+| **All** | 58,696 | 52,275 | 6,420 | 0 | 0 | 0 | 1 |
 
 `compare` exits 0 with `"unlisted": 0` (head recorded at `bd59c8f4`, whose `ve/` and `lean/` are those of
 `385311aa`; head recording 8 min 51 s wall). Every difference is a wording change of list W1, and every W1 pair
 is used (the record counts below are the head run's). The corpora show no `order`, `verdict` or
 `availability` change. The one availability change of the batch, A1 below, is on the readings route, which none
 of these corpora reaches.
+
+Since the lf-0 review (B3), `compare` first checks that the evidence can show preservation, and exits 2
+otherwise: each side holds a record of every case of every corpus and authority as this checkout defines them
+(the conformance files' case ids, the probe matrix's frozen baseline `conformance/baseline-2026-09/python.json`,
+the pilot documents) and no other case; each corpus and authority holds an available record, an acceptance and a
+rejection; and a record unavailable on both sides is its own class, `unavailable`, accepted only when the delta
+lists it with a reason (U1 below). Two empty, wholly unavailable or constant-answer recordings are refused
+(`tests/test_lean_first_diff.py`). Outcomes are compared as typed JSON: `true` is not `1` (review C).
+
+## U1: one pilot document is unavailable on both sides (`unavailable`)
+
+`pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md`, `document_check`: on base
+and head alike `ve document check` answers `CheckerUnavailable` (`ve_readings_route is unavailable`), since the
+readings route needs far longer on this document than its 120 s runner timeout. The record is the same on both
+sides but shows nothing about preservation, so it is listed in `delta.json` under `unavailable` with that reason.
+
+**Signature:** DRI, unavailable U1 — pending.
 
 ## W1: Python's texts for Lean-prefixed codes are Lean's (`wording`, signed as one block)
 

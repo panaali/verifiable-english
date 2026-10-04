@@ -38,6 +38,17 @@ mig3's fine classes (2.5: the path walk), then the plan's change class:
 * ``order``: both sides raised and the codes differ (another fault is reported first);
 * ``verdict``: anything else (verdicts, identities, counts, structure, a missing record).
 
+``compare`` refuses evidence that cannot show preservation (exit 2): for every corpus and authority
+it checks (``--corpus``, ``--authority``, default all; the pilots have the one authority
+``default``), each side must hold a record of every case of the corpus as this checkout defines it
+(`expected_cases`: the conformance files' case ids, the probe matrix's frozen baseline, the pilot
+documents) and nothing else, some of its records must be available, and it must hold both an
+acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
+both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
+when the delta lists it under ``unavailable`` with a ``reason`` (``{"corpus", "authority", "case",
+"op", "reason"}``); one unavailable on one side only is an ``availability`` difference. Outcomes
+are compared as JSON, with types: ``true`` is not ``1``.
+
 ``--delta`` names the batch's signed list. ``wording`` is a list of text pairs ``{"base", "head"}``
 (mig3 2.4's wording map, signed as one block): a wording difference is accepted when every text
 that differs is a listed pair. ``order``, ``verdict`` and ``availability`` list records, each
@@ -70,6 +81,8 @@ IDENTITY_KEYS = frozenset({"environment_id", "source_id", "meaning_id", "model_i
                            "graph_id", "report_id", "document_hash"})
 COUNT_KEYS = frozenset({"evaluations", "steps", "models_checked"})
 PILOT_TIMEOUT = 600
+PROBE_BASELINE = "conformance/baseline-2026-09/python.json"
+PROBE_SECTIONS = ("graph_probes", "budget_boundaries", "feature_probes")
 
 
 # --- records ---------------------------------------------------------------------------
@@ -109,6 +122,12 @@ def digest(path: Path) -> str:
 
 # --- the corpora (run in the child, importing the recorded checkout's `ve`) -------------------
 
+def probe_case(row: dict) -> str:
+    """The case key of a probe matrix cell."""
+    return json.dumps([row.get("language", "ve.core@0.2"), list(row["profiles"]), row["operation"],
+                       row["input_class"]])
+
+
 def probe_records(root: Path, authority: str):
     from tests import probe_matrix as probe
     from tools import stage2_parity
@@ -120,10 +139,9 @@ def probe_records(root: Path, authority: str):
     data = stage2_parity._generate(authority)
     source = digest(root / "tests/probe_matrix.py")
     for row in data["cells"]:
-        key = [row.get("language", "ve.core@0.2"), list(row["profiles"]), row["operation"], row["input_class"]]
-        yield {"case": json.dumps(key), "op": row["operation"], "source_sha256": source,
+        yield {"case": probe_case(row), "op": row["operation"], "source_sha256": source,
                "outcome": {"cell": row["cell"], "status": row["status"], "output": public(row["output"])}}
-    for section in ("graph_probes", "budget_boundaries", "feature_probes"):
+    for section in PROBE_SECTIONS:
         for name, row in data[section].items():
             yield {"case": f"{section}/{name}", "op": section, "source_sha256": source,
                    "outcome": public({k: v for k, v in row.items() if k != "routed"})
@@ -251,15 +269,48 @@ def record(args) -> int:
 
 # --- comparison ------------------------------------------------------------------------
 
+class Unusable(Exception):
+    """Evidence that cannot show preservation: `compare` gives no verdict on it (exit 2)."""
+
+
+def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
+    return ("default",) if corpus == "pilots" else tuple(authorities)
+
+
+def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict[tuple[str, str], set[str]]:
+    """Every case each (corpus, authority) of a complete recording holds, from this checkout's
+    corpora, not from a recording: the conformance files' case ids, the cells and named probes of
+    the probe matrix's frozen baseline, and the pilot documents."""
+    cases: dict[str, set[str]] = {}
+    for corpus in corpora:
+        if corpus == "conformance":
+            cases[corpus] = {f"{name}/{case['id']}" for name in CONFORMANCE
+                             for case in json.loads((root / f"conformance/{name}.json").read_text())}
+        elif corpus == "probe":
+            baseline = json.loads((root / PROBE_BASELINE).read_text())
+            cases[corpus] = {probe_case(row) for row in baseline["cells"]} | {
+                f"{section}/{name}" for section in PROBE_SECTIONS for name in baseline[section]}
+        else:
+            cases[corpus] = {name for name, _, _ in pilot_documents(root)}
+    return {(corpus, authority): cases[corpus] for corpus in corpora
+            for authority in authorities_of(corpus, authorities)}
+
+
+def _same(a, b) -> bool:
+    from ve.backends.service_schema import same_json  # the recorded checkout's `ve` may lack it
+    return same_json(a, b)
+
 def load(path: str) -> dict[tuple, dict]:
     records = {}
+    if not Path(path).is_file():
+        raise Unusable(f"{path}: no recording")
     for line in Path(path).read_text().split("\n"):
         if not line:
             continue
         row = json.loads(line)
         key = (row["corpus"], row["authority"], row["case"], row["op"])
         if key in records:
-            raise SystemExit(f"{path}: duplicate record {key}")
+            raise Unusable(f"{path}: duplicate record {key}")
         records[key] = row
     return records
 
@@ -276,7 +327,7 @@ def leaf_differences(a, b, path=()):
         if len(a) != len(b):
             return [(path, "shape")]
         return [d for x, y in zip(a, b) for d in leaf_differences(x, y, path)]
-    return [] if a == b else [(path, "leaf")]
+    return [] if _same(a, b) else [(path, "leaf")]
 
 
 def _unavailable(outcome) -> bool:
@@ -285,8 +336,8 @@ def _unavailable(outcome) -> bool:
 
 
 def change_class(base: dict | None, head: dict | None) -> str | None:
-    """The plan's class of a difference between two outcomes, or None when equal."""
-    if base == head:
+    """The plan's class of a difference between two outcomes, or None when equal (as JSON, with types)."""
+    if _same(base, head):
         return None
     if base is None or head is None:
         return "verdict"
@@ -300,6 +351,11 @@ def change_class(base: dict | None, head: dict | None) -> str | None:
                            for path, kind in differences):
         return "wording"
     return "verdict"
+
+
+def _rejected(outcome: dict) -> bool:
+    """Whether an outcome is a rejection (or unavailable): an error, a rejection cell, a failing exit."""
+    return _raised(outcome) is not None or outcome.get("exit", 0) != 0 or "timeout" in outcome
 
 
 def _raised(outcome: dict):
@@ -318,21 +374,47 @@ def text_pairs(base, head, path=()):
         return [p for k in base.keys() & head.keys() for p in text_pairs(base[k], head[k], path + (k,))]
     if isinstance(base, list) and isinstance(head, list):
         return [p for x, y in zip(base, head) for p in text_pairs(x, y, path)]
-    return [(base, head)] if base != head and path and path[-1] in ("message", "detail", "stderr") else []
+    return [(base, head)] if not _same(base, head) and path and path[-1] in ("message", "detail", "stderr") else []
 
 
-def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
+def completeness(name: str, records: dict, expected: dict) -> None:
+    """`Unusable` unless `records` hold every expected case of every expected (corpus, authority),
+    nothing else of those, and some available record of each."""
+    for group, cases in sorted(expected.items()):
+        if not cases:
+            raise Unusable(f"no case of {'/'.join(group)} is defined in this checkout")
+        held = [key for key in records if key[:2] == group]
+        recorded = {key[2] for key in held}
+        if recorded != cases:
+            missing, extra = sorted(cases - recorded), sorted(recorded - cases)
+            raise Unusable(f"{name} does not hold the {'/'.join(group)} corpus: {len(missing)} of its "
+                           f"{len(cases)} cases missing{f' (first {missing[0]})' if missing else ''}, "
+                           f"{len(extra)} other cases{f' (first {extra[0]})' if extra else ''}")
+        if all(_unavailable(records[key]["outcome"]) for key in held):
+            raise Unusable(f"{name}: every {'/'.join(group)} record is unavailable")
+        # Every corpus holds accepted and rejected inputs: a recording that rejects (or accepts)
+        # all of them is a broken checker, and two broken alike would compare equal.
+        rejected = {_rejected(records[key]["outcome"]) for key in held}
+        if rejected != {True, False}:
+            raise Unusable(f"{name}: every {'/'.join(group)} record is "
+                           f"{'a rejection' if True in rejected else 'an acceptance'}")
+
+
+def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dict) -> dict:
+    """The classed differences of two recordings, given the `expected` cases (`expected_cases`)."""
     base, head = load(base_path), load(head_path)
+    completeness(base_path, base, expected)
+    completeness(head_path, head, expected)
     sources = Counter()
     for key in base.keys() & head.keys():
         if base[key]["source_sha256"] != head[key]["source_sha256"]:
             sources[key[0]] += 1
     if sources:
-        raise SystemExit(f"the two runs read different corpus files: {dict(sources)}")
+        raise Unusable(f"the two runs read different corpus files: {dict(sources)}")
     delta = delta or {}
     wording = {(pair["base"], pair["head"]) for pair in delta.get("wording", [])}
     listed = {}
-    for klass in ("order", "verdict", "availability"):
+    for klass in ("order", "verdict", "availability", "unavailable"):
         for entry in delta.get(klass, []):
             listed[(entry["corpus"], entry["authority"], entry["case"], entry["op"])] = (klass, entry)
     rows, totals, unlisted = [], Counter(), []
@@ -340,6 +422,8 @@ def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
         old = base.get(key, {}).get("outcome")
         new = head.get(key, {}).get("outcome")
         klass = change_class(old, new)
+        if klass != "availability" and old is not None and new is not None and _unavailable(old):
+            klass = "unavailable"   # on both sides: no evidence of preservation
         if klass is None:
             totals["same"] += 1
             continue
@@ -347,9 +431,12 @@ def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
         entry = listed.get(key)
         if klass == "wording":
             accepted = all(pair in wording for pair in text_pairs(old, new))
+        elif klass == "unavailable":
+            accepted = entry is not None and entry[0] == klass and type(entry[1].get("reason")) is str \
+                and entry[1]["reason"].strip() != ""
         else:
-            accepted = (entry is not None and entry[0] == klass and entry[1].get("base") == old
-                        and entry[1].get("head") == new)
+            accepted = (entry is not None and entry[0] == klass and _same(entry[1].get("base"), old)
+                        and _same(entry[1].get("head"), new))
         row = {"corpus": key[0], "authority": key[1], "case": key[2], "op": key[3], "class": klass,
                "base": old, "head": new, "listed": accepted}
         rows.append(row)
@@ -375,13 +462,19 @@ def main(argv=None) -> int:
     p.add_argument("head")
     p.add_argument("--delta", type=Path)
     p.add_argument("--json", type=Path)
+    p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
+    p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
     args = parser.parse_args(argv)
     if args.command == "record":
         return record(args)
     if args.command == "_child":
         return child(args)
     delta = json.loads(args.delta.read_text()) if args.delta else None
-    result = compare(args.base, args.head, delta)
+    try:
+        result = compare(args.base, args.head, delta, expected=expected_cases(ROOT, args.corpus, args.authority))
+    except Unusable as exc:
+        print(f"unusable evidence: {exc}", file=sys.stderr)
+        return 2
     if args.json:
         args.json.write_text(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
     print(json.dumps({"records": result["records"], "totals": result["totals"], "unlisted": result["unlisted"]},
