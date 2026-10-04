@@ -156,6 +156,12 @@ reaches a user (rule 4).
   (`tests/test_discourse_answer.py::test_genuine_answers_are_bound` and the suite), so no public result of the
   corpora should change. The A/B tool was not rerun. Every one- and two-fault mutant of five genuine answers is
   `CheckerUnavailable` or shown identically (`test_genuine_answer_mutants_never_pass_as_answers`).
+  The unit statuses and validity verdicts are bound by key membership, not key order, because Lean emits
+  JSON object keys in lexical order (lf-4 looprecheck1 B). Every genuine answer with every object's keys
+  reversed or sorted is shown identically (`test_object_key_order_is_no_part_of_the_answer`). The joint
+  conjunction and disjunction are built without Python recursion. A joint set over 1,000 open sets passes
+  (`test_a_joint_set_deeper_than_pythons_call_depth_is_admitted`). An answer nested deeper than the C stack
+  can read is `CheckerUnavailable` (`test_an_answer_deeper_than_the_c_stack_is_no_answer`).
   This change leaves one earlier, fail-closed limit in place. A constrained joint set whose disjunction is
   deeper than Python's AST budget (`ve/limits.py`, depth 64), such as 64 choices over six sets, is still
   `CheckerUnavailable` when `_report` decodes the disjunction as a premise.

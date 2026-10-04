@@ -161,17 +161,19 @@ def test_genuine_answers_are_bound(tmp_path):
             assert result["joint_choices"]["status"] == ("UNKNOWN" if 2 ** sets > 64 else "complete"), result
 
 
-def test_joint_status_and_unit_order_are_bound(tmp_path, monkeypatch):
+def test_joint_status_and_unit_set_are_bound(tmp_path, monkeypatch):
     """Answers no single fault reaches: an UNKNOWN joint set within the budget, a completed one over
-    it (its first choice, with the disjunction that choice denotes), and the statuses of the
-    units out of document order."""
+    it (its first choice, with the disjunction that choice denotes), and statuses over another set
+    of units (one unit swapped for a unit the document does not have)."""
     path, _ = _document(tmp_path, "some")
     genuine = discourse.lean_admission(path.read_bytes(), tmp_path)
     unknown = {k: v for k, v in genuine.items() if k not in ("joint_choices", "joint_formula")}
     _answered(monkeypatch, {**unknown, "admitted": "UNKNOWN", "joint": "ResourceLimit: joint choices"})
     with pytest.raises(CheckerUnavailable, match=r"\(joint\)$"):
         check_document(path)
-    _answered(monkeypatch, {**genuine, "statuses": dict(reversed(genuine["statuses"].items()))})
+    statuses = dict(genuine["statuses"])
+    statuses["u99"] = statuses.pop("u1")
+    _answered(monkeypatch, {**genuine, "statuses": statuses})
     with pytest.raises(CheckerUnavailable, match=r"\(statuses\)$"):
         check_document(path)
     monkeypatch.undo()
@@ -187,3 +189,86 @@ def test_joint_status_and_unit_order_are_bound(tmp_path, monkeypatch):
                             "joint_formula": conjunction})
     with pytest.raises(CheckerUnavailable, match=r"\(joint\)$"):
         check_document(path)
+
+
+def _reordered(value, order):
+    """The JSON value with every object's keys in `order` (`reversed` or `sorted`), at every depth."""
+    if type(value) is dict:
+        return {k: _reordered(value[k], order) for k in order(value)}
+    if type(value) is list:
+        return [_reordered(v, order) for v in value]
+    return value
+
+
+@pytest.mark.parametrize("name", ["some", "free", "none", "over", "validity"])
+def test_object_key_order_is_no_part_of_the_answer(tmp_path, monkeypatch, capsys, name):
+    """A JSON object is unordered (Lean emits its keys lexically, not in document order): every
+    genuine answer with the keys of every object reversed or sorted, at every depth, is shown
+    identically, never `CheckerUnavailable` (lf-4 looprecheck1 B, statuses and validity order)."""
+    path, ast = _document(tmp_path, name)
+    conclusion = tmp_path / "conclusion.json"
+    conclusion.write_text(json.dumps(ast))
+    genuine = discourse.lean_admission(path.read_bytes(), tmp_path)
+    shown = _shown(path, conclusion, capsys)
+    for order in (reversed, sorted):
+        _answered(monkeypatch, _reordered(genuine, order))
+        assert _shown(path, conclusion, capsys) == shown, order
+
+
+def _renamed(front, renamed):
+    """The front matter with its units renamed (`renamed`, old id to new), everywhere a unit is named."""
+    for record in front["units"]:
+        record["id"] = renamed[record["id"]]
+    for record in (*front["discourse"]["mentions"], *front.get("reading_sets", [])):
+        record["unit"] = renamed[record["unit"]]
+    return front
+
+
+def test_units_and_claims_out_of_lexical_order_are_admitted(tmp_path):
+    """The review's reproductions: units whose document order is not their ids' lexical order (`z`,
+    `a`, and u1 to u10) and validity claims listed `u2`, `u1` are genuine admissions."""
+    source, front = _sample(tmp_path)
+    path = _write(tmp_path, _renamed(front, {"u1": "z", "u2": "a"}), source)
+    assert list(discourse.lean_admission(path.read_bytes(), tmp_path)["statuses"]) == ["a", "z"]
+    assert check_document(path)["references"][0]["unit"] == "a"
+    source, front = _correlated(tmp_path, [], sets=8)
+    path = _write(tmp_path, front, source)
+    assert list(discourse.lean_admission(path.read_bytes(), tmp_path)["statuses"])[:3] == ["u1", "u10", "u2"]
+    assert check_document(path)["joint_choices"]["status"] == "UNKNOWN"
+    doc = validity_doc("This document is a valid VE document.", "this_policy", True,
+                       before=["This document is a valid VE document."])
+    claims = doc["discourse"]["validity"]
+    claims.insert(0, {**claims[0], "unit": "u2"})
+    claims[1]["unit"] = "u1"
+    assert [c["unit"] for c in claims] == ["u2", "u1"]
+    path = tmp_path / "validity.ve.md"
+    path.write_text(text(doc, env(constants=DOC_CONSTANTS)))
+    assert check_document(path)["validity"] == {"u1": "checked", "u2": "checked"}
+
+
+def test_a_joint_set_deeper_than_pythons_call_depth_is_admitted(tmp_path):
+    """The review's reproduction: 1,000 singleton open reading sets, no constraints, padded unit
+    ids (so the statuses are in document order). Lean admits exactly one joint choice, a
+    conjunction 1,000 deep; the relay binds it without recursion (Python's call depth is 1,000)."""
+    source, front = _correlated(tmp_path, [], sets=1000, readings=(EXEMPT, ["not", EXEMPT]))
+    _renamed(front, {u["id"]: f"u{int(u['id'][1:]):04d}" for u in front["units"]})
+    for rs in front["reading_sets"]:  # one reading, so no distinguishing model
+        del rs["readings"][1], rs["models"]
+        rs["readings"][0]["admission"]["distinguishing_models"] = {}
+    path = _write(tmp_path, front, source)
+    genuine = discourse.lean_admission(path.read_bytes(), tmp_path)
+    assert genuine["joint"] == 1 and list(genuine["statuses"]) == [u["id"] for u in front["units"]]
+    assert check_document(path)["joint_choices"] == {"status": "complete", "count": 1, "constraints": 0}
+
+
+def test_an_answer_deeper_than_the_c_stack_is_no_answer(tmp_path, monkeypatch):
+    """Nesting no JSON reader on the C stack reads (a joint disjunction 200,000 deep) is
+    `CheckerUnavailable`, never an escaping `RecursionError`."""
+    path, _ = _document(tmp_path, "some")
+    row = json.dumps([{**discourse.lean_admission(path.read_bytes(), tmp_path), "joint_formula": "DEEP"}])
+    depth = 200_000
+    deep = '["or", ["top"], ' * depth + '["top"]' + "]" * depth
+    stdout = row.replace('"DEEP"', deep).encode()
+    monkeypatch.setattr(lean_backend, "run_discourse_case", lambda executable, case, timeout: (0, stdout, b""))
+    with pytest.raises(CheckerUnavailable, match="no answer to the case"):
+        discourse.lean_admission(path.read_bytes(), tmp_path)
