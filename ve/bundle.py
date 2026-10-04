@@ -93,7 +93,7 @@ def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> 
     case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas,
              **({} if document is None else {"document": document})}]
     return lean_backend.run("bundle.check", lean_executable, case, runner="ve_conformance",
-                            mode="route", timeout=LEAN_REPLAY_TIMEOUT)[0]
+                            mode="route", timeout=lean_backend.configured_timeout(LEAN_REPLAY_TIMEOUT))[0]
 
 
 def _lean_bundle_mode(data) -> str | None:
@@ -104,9 +104,9 @@ def _lean_bundle_mode(data) -> str | None:
     statement layers. `bundle` (`VE.Service.FamilyBundle`) takes every other
     ve.core@0.2 environment of any family (`validation.family_in_scope`),
     norms environments included, and the frozen v0 and v0.1 envelopes."""
-    from .backends.validation import LEGACY_LANGUAGES, family_in_scope
+    from .backends.validation import family_in_scope, legacy_language
     environment = data.get("environment") if type(data) is dict else None
-    if type(environment) is dict and environment.get("language") in LEGACY_LANGUAGES:
+    if type(environment) is dict and legacy_language(environment):
         return "bundle"
     if type(environment) is not dict or environment.get("language") != "ve.core@0.2":
         return None

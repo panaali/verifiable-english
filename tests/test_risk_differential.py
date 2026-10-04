@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import cell_env
+from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_risk_eval"
@@ -165,7 +166,7 @@ def lean_cases(boxes, conditions):
 
 def lean_eval(boxes, conditions):
     cases = lean_cases(boxes, conditions)
-    out = subprocess.run([str(LEAN)], input=json.dumps(cases), text=True, capture_output=True, timeout=500)
+    out = subprocess.run([str(LEAN)], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert out.returncode == 0, out.stderr
     rows = json.loads(out.stdout)
     assert all(r["status"] == "ok" for r in rows), rows[:1]
@@ -178,7 +179,7 @@ def rust_eval(boxes, conditions):
               "scales": {}}
              for i, (box, rows) in enumerate(zip(boxes, conditions)) for j, tree in enumerate(rows)]
     out = subprocess.run([str(RUST), "conformance"], input=json.dumps(cases), text=True, capture_output=True,
-                         timeout=500)
+                         timeout=HANG_TIMEOUT)
     rows = json.loads(out.stdout)
     it = iter(rows)
     return [[next(it) for _ in box_rows] for box_rows in conditions]

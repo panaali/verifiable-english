@@ -4,11 +4,11 @@
 //! environment (the profile list without `ve.discourse@1`) and computes their identities and
 //! verdicts, which must agree with Python's and Lean's (regression evidence; the trust path is
 //! the Lean route).
-use crate::{
-    CountermodelProblem, Document, Environment, FiniteModel, Formula, MAX_EVALUATIONS, Result,
-    SearchBounds, error, evaluate_formula, find_countermodel,
-};
+use crate::{CountermodelProblem, SearchBounds, evaluate_formula, find_countermodel};
 use serde_json::{Value, json};
+use ve_kernel::{
+    Document, Environment, FiniteModel, Formula, MAX_EVALUATIONS, Result, internal::error,
+};
 
 pub const ELABORATED_DOCUMENT: &str = "elaborated-document";
 
@@ -28,7 +28,7 @@ pub fn elaborated_document_case(v: &Value) -> Result<Value> {
     }
     let environment = v
         .get("environment")
-        .ok_or_else(|| crate::Error::new("InvalidInput", "missing environment"))?;
+        .ok_or_else(|| ve_kernel::Error::new("InvalidInput", "missing environment"))?;
     if environment
         .get("profiles")
         .and_then(Value::as_array)
@@ -42,7 +42,7 @@ pub fn elaborated_document_case(v: &Value) -> Result<Value> {
     let env = Environment::from_value(environment)?;
     let formulas = v
         .get("formulas")
-        .ok_or_else(|| crate::Error::new("InvalidInput", "missing formulas"))?;
+        .ok_or_else(|| ve_kernel::Error::new("InvalidInput", "missing formulas"))?;
     let doc = Document::from_value(&env, formulas)?;
     let meaning_ids = (0..doc.formulas().len())
         .map(|i| doc.formula_meaning_id(i))
@@ -67,7 +67,7 @@ pub fn elaborated_document_case(v: &Value) -> Result<Value> {
             .map(|i| {
                 evaluate_formula(&doc, i, &model, MAX_EVALUATIONS).and_then(|r| {
                     r.value.ok_or_else(|| {
-                        crate::Error::new("ResourceLimit", "evaluation budget exhausted")
+                        ve_kernel::Error::new("ResourceLimit", "evaluation budget exhausted")
                     })
                 })
             })

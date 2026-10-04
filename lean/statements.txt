@@ -11313,6 +11313,410 @@ theorem VE.Readings.Examples.k2b_not_admissible
   ¬VE.Readings.Examples.m0b.asStructure.Admissible (VE.Readings.authorEnv VE.Readings.Examples.K2)
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.Readings.Examples.K2@VE.Readings.Examples VE.Readings.Examples.m0b@VE.Readings.Examples VE.Readings.authorEnv@VE.Readings.Separate VE.Structure.Admissible@VE.Semantics
   -- expr 809559075
+theorem VE.Readings.Twin.act_ne
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ {M : VE.SoftNorms.SoftNode}, M ∈ C.T.nodes → M.name ≠ Nd.name → VE.SoftNorms.act C M ≠ VE.SoftNorms.act C Nd
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
+  -- expr 3169615033
+theorem VE.Readings.Twin.alone_src
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (M : VE.SoftNorms.SoftNode), M ∈ C.T.nodes → VE.SoftNorms.act C M = VE.SoftNorms.act C Nd → M.name = Nd.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
+  -- expr 3726021841
+theorem VE.Readings.Twin.applies
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          ¬VE.Formula.denote S ρ (VE.SoftNorms.exceptedF C Nd) →
+            (VE.SoftNorms.AppliesSoftD (VE.Readings.relaxDoc C Nd) S ρ (VE.Readings.relaxTo Nd M) ↔
+              VE.SoftNorms.AppliesSoftD C S ρ M)
+  -- uses VE.Formula.denote@VE.Semantics VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.AppliesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2584492119
+theorem VE.Readings.Twin.baseAdmissible
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        ∀ (S : VE.Structure),
+          (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+            (VE.Norms.BaseAdmissible (VE.SoftNorms.soften C) S ↔
+              VE.Norms.BaseAdmissible (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S)
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 491302566
+theorem VE.Readings.Twin.baseAdmissiblePrime
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        (∃ M, M ∈ C.T.nodes ∧ M.name = Nd.name) →
+          (∀ (d : VE.Norms.Definition), d ∈ C.T.definitions → d.name ≠ VE.SoftNorms.exceptedName Nd) →
+            ∀ (S : VE.Structure),
+              (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+                (∀ (e : VE.SoftNorms.Exception), Nd.exception = Option.some e → e.sufficient = []) →
+                  (VE.SoftNorms.BaseAdmissible' C S ↔ VE.SoftNorms.BaseAdmissible' (VE.Readings.relaxDoc C Nd) S)
+  -- uses VE.Formula@VE.Syntax VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.BaseAdmissible'@VE.SoftNorms.Coherence VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 197092039
+theorem VE.Readings.Twin.blocked_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name ≠ Nd.name → (VE.SoftNorms.BlockedD (VE.Readings.relaxDoc C Nd) S ρ M ↔ VE.SoftNorms.BlockedD C S ρ M)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.BlockedD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3227505790
+theorem VE.Readings.Twin.blocked_twin
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name = Nd.name → ¬VE.SoftNorms.BlockedD (VE.Readings.relaxDoc C Nd) S ρ (VE.Readings.relaxTo Nd M)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.BlockedD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2578183988
+theorem VE.Readings.Twin.cohPremises
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        (∃ M, M ∈ C.T.nodes ∧ M.name = Nd.name) →
+          (∀ (d : VE.Norms.Definition), d ∈ C.T.definitions → d.name ≠ VE.SoftNorms.exceptedName Nd) →
+            ∀ (S : VE.Structure),
+              (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+                VE.Norms.BaseAdmissible (VE.SoftNorms.soften C) S →
+                  VE.Norms.BaseAdmissible (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S →
+                    (VE.Norms.Sat S (VE.SoftNorms.cohPremises C) ↔
+                      VE.Norms.Sat S (VE.SoftNorms.cohPremises (VE.Readings.relaxDoc C Nd)))
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.cohPremises@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2356529927
+theorem VE.Readings.Twin.collidingPairs_eq
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd → VE.SoftNorms.collidingPairs (VE.Readings.relaxDoc C Nd) = VE.SoftNorms.collidingPairs C
+  -- uses VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 2466242761
+theorem VE.Readings.Twin.decides
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S),
+        ¬VE.Formula.denote S ρ (VE.SoftNorms.exceptedF C Nd) →
+          ∀ (p : String) (sign : Bool),
+            VE.SoftNorms.DecidesSoftD (VE.Readings.relaxDoc C Nd) S ρ p sign ↔ VE.SoftNorms.DecidesSoftD C S ρ p sign
+  -- uses VE.Formula.denote@VE.Semantics VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1887947825
+theorem VE.Readings.Twin.decisions_find
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ {p : String},
+        p ≠ VE.SoftNorms.exceptedName Nd →
+          List.find? (fun x => x.fst == p) (VE.SoftNorms.decisions (VE.Readings.relaxDoc C Nd)) =
+            List.find? (fun x => x.fst == p) (VE.SoftNorms.decisions C)
+  -- uses VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.decisions@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 716208690
+theorem VE.Readings.Twin.default_on
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ {N : VE.SoftNorms.SoftNode},
+        N ∈ (VE.Readings.relaxDoc C Nd).T.nodes →
+          VE.SoftNorms.act (VE.Readings.relaxDoc C Nd) N = VE.SoftNorms.act (VE.Readings.relaxDoc C Nd) Nd →
+            N.mode = VE.SoftNorms.Mode.default
+  -- uses VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
+  -- expr 1965246688
+theorem VE.Readings.Twin.dom_twin
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name = Nd.name →
+            ∀ (eff : VE.SoftNorms.SoftNode → Prop),
+              ¬VE.SoftNorms.DomWithD (VE.Readings.relaxDoc C Nd) S ρ eff (VE.Readings.relaxTo Nd M)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.DomWithD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3370909066
+theorem VE.Readings.Twin.eff_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) (g : Nat) (M : VE.SoftNorms.SoftNode),
+        M ∈ C.T.nodes →
+          M.name ≠ Nd.name → (VE.SoftNorms.EffD (VE.Readings.relaxDoc C Nd) S ρ g M ↔ VE.SoftNorms.EffD C S ρ g M)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.EffD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3848850314
+theorem VE.Readings.Twin.eff_twin
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name = Nd.name →
+            ∀ (g : Nat),
+              VE.SoftNorms.EffD (VE.Readings.relaxDoc C Nd) S ρ g (VE.Readings.relaxTo Nd M) ↔
+                VE.SoftNorms.LiveD (VE.Readings.relaxDoc C Nd) S ρ (VE.Readings.relaxTo Nd M)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.EffD@VE.SoftNorms.Semantics VE.SoftNorms.LiveD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2442736011
+theorem VE.Readings.Twin.eligible_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name ≠ Nd.name → (VE.SoftNorms.EligibleD (VE.Readings.relaxDoc C Nd) S ρ M ↔ VE.SoftNorms.EligibleD C S ρ M)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.EligibleD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1868931793
+theorem VE.Readings.Twin.envAt_zero
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        ∀ {p : String},
+          p ≠ VE.SoftNorms.exceptedName Nd →
+            (VE.Norms.envAt (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) 0).predicates p =
+              (VE.Norms.envAt (VE.SoftNorms.soften C) 0).predicates p
+  -- uses VE.Environment.predicates@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3705110001
+theorem VE.Readings.Twin.excPremises
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure),
+        (∀ (e : VE.SoftNorms.Exception), Nd.exception = Option.some e → e.sufficient = []) →
+          (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+            (VE.Norms.Sat S (VE.SoftNorms.excPremises C) ↔
+              VE.Norms.Sat S (VE.SoftNorms.excPremises (VE.Readings.relaxDoc C Nd)))
+  -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1142481295
+theorem VE.Readings.Twin.exceptedDecisions_filter
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (l : List VE.SoftNorms.SoftNode),
+        (∀ (M : VE.SoftNorms.SoftNode), M ∈ l → M ∈ C.T.nodes) →
+          List.filter (fun x => x.fst != VE.SoftNorms.exceptedName Nd)
+              (List.map (fun N => (VE.SoftNorms.exceptedName N, VE.SoftNorms.sortsOf (VE.Readings.relaxDoc C Nd) N.pred))
+                (List.filter (fun x => x.mode == VE.SoftNorms.Mode.default) (List.map (VE.Readings.relaxTo Nd) l))) =
+            List.filter (fun x => x.fst != VE.SoftNorms.exceptedName Nd)
+              (List.map (fun N => (VE.SoftNorms.exceptedName N, VE.SoftNorms.sortsOf C N.pred))
+                (List.filter (fun x => x.mode == VE.SoftNorms.Mode.default) l))
+  -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.instDecidableEqMode@VE.SoftNorms.Tree VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 2449677391
+theorem VE.Readings.Twin.exceptedF_eq
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name = Nd.name →
+            VE.SoftNorms.exceptedF (VE.Readings.relaxDoc C Nd) (VE.Readings.relaxTo Nd M) = VE.SoftNorms.exceptedF C Nd
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften
+  -- expr 2142049062
+theorem VE.Readings.Twin.excepted_canon
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      (∃ M, M ∈ C.T.nodes ∧ M.name = Nd.name) →
+        (∀ (d : VE.Norms.Definition), d ∈ C.T.definitions → d.name ≠ VE.SoftNorms.exceptedName Nd) →
+          ∀ (S : VE.Structure),
+            (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+              ∀ (ρ : VE.Valuation S),
+                ¬VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) ρ
+                    (VE.SoftNorms.exceptedF C Nd)
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 464641467
+theorem VE.Readings.Twin.excepted_out
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      (∃ M, M ∈ C.T.nodes ∧ M.name = Nd.name) →
+        (∀ (d : VE.Norms.Definition), d ∈ C.T.definitions → d.name ≠ VE.SoftNorms.exceptedName Nd) →
+          ¬VE.SoftNorms.exceptedName Nd ∈ VE.Norms.layerNames (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)).T
+  -- uses VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1478894983
+theorem VE.Readings.Twin.live_twin
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {M : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name = Nd.name →
+            ¬VE.Formula.denote S ρ (VE.SoftNorms.exceptedF C Nd) →
+              (VE.SoftNorms.LiveD (VE.Readings.relaxDoc C Nd) S ρ (VE.Readings.relaxTo Nd M) ↔ VE.SoftNorms.LiveD C S ρ M)
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.LiveD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1794989597
+theorem VE.Readings.Twin.mem_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ {X : VE.SoftNorms.SoftNode}, X.pred ≠ Nd.pred → (X ∈ (VE.Readings.relaxDoc C Nd).T.nodes ↔ X ∈ C.T.nodes)
+  -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 2909843770
+theorem VE.Readings.Twin.off_name
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd → ∀ {M : VE.SoftNorms.SoftNode}, M ∈ C.T.nodes → M.pred ≠ Nd.pred → M.name ≠ Nd.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 119636514
+theorem VE.Readings.Twin.opponent
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ {M M' : VE.SoftNorms.SoftNode},
+        M ∈ C.T.nodes →
+          M.name ≠ Nd.name →
+            VE.SoftNorms.Incompatible C M' M = Bool.true →
+              (M' ∈ (VE.Readings.relaxDoc C Nd).T.nodes ↔ M' ∈ C.T.nodes) ∧ M'.pred ≠ Nd.pred
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 2365632783
+theorem VE.Readings.Twin.outweighsTriples_eq
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd → VE.SoftNorms.outweighsTriples (VE.Readings.relaxDoc C Nd) = VE.SoftNorms.outweighsTriples C
+  -- uses VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.outweighsTriples@VE.SoftNorms.Tree
+  -- expr 3813486814
+theorem VE.Readings.Twin.selects
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S),
+        ¬VE.Formula.denote S ρ (VE.SoftNorms.exceptedF C Nd) →
+          ∀ (f : Nat) {M : VE.SoftNorms.SoftNode},
+            M ∈ C.T.nodes →
+              (VE.SoftNorms.SelectsSoftD (VE.Readings.relaxDoc C Nd) S ρ f (VE.Readings.relaxTo Nd M) ↔
+                VE.SoftNorms.SelectsSoftD C S ρ f M)
+  -- uses VE.Formula.denote@VE.Semantics VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2676087342
+theorem VE.Readings.Twin.strictDecides_none
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {q : String},
+        VE.SoftNorms.actKey C q = VE.SoftNorms.act C Nd →
+          ∀ (sign : Bool), ¬VE.SoftNorms.StrictDecidesD (VE.Readings.relaxDoc C Nd) S ρ q sign
+  -- uses VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.StrictDecidesD@VE.SoftNorms.Semantics VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actKey@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3951783336
+theorem VE.Readings.Twin.strictDecides_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) {q : String},
+        q ≠ Nd.pred →
+          ∀ (sign : Bool),
+            VE.SoftNorms.StrictDecidesD (VE.Readings.relaxDoc C Nd) S ρ q sign ↔ VE.SoftNorms.StrictDecidesD C S ρ q sign
+  -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.StrictDecidesD@VE.SoftNorms.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2679134723
+theorem VE.Readings.Twin.strictSelects_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) (f : Nat) {N : VE.SoftNorms.SoftNode},
+        N.pred ≠ Nd.pred →
+          (VE.SoftNorms.StrictSelectsD (VE.Readings.relaxDoc C Nd) S ρ f N ↔ VE.SoftNorms.StrictSelectsD C S ρ f N)
+  -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.StrictSelectsD@VE.SoftNorms.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2598198109
+theorem VE.Readings.Twin.strictYields_off
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S) (f : Nat) (N : VE.SoftNorms.SoftNode),
+        N.pred ≠ Nd.pred →
+          (VE.SoftNorms.StrictYieldsD (VE.Readings.relaxDoc C Nd) S ρ f N ↔ VE.SoftNorms.StrictYieldsD C S ρ f N)
+  -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.StrictYieldsD@VE.SoftNorms.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3035428377
+theorem VE.Readings.Twin.yields
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      ∀ (S : VE.Structure) (ρ : VE.Valuation S),
+        ¬VE.Formula.denote S ρ (VE.SoftNorms.exceptedF C Nd) →
+          ∀ (f : Nat) (M : VE.SoftNorms.SoftNode),
+            M ∈ C.T.nodes →
+              (VE.SoftNorms.YieldsSoftD (VE.Readings.relaxDoc C Nd) S ρ f (VE.Readings.relaxTo Nd M) ↔
+                VE.SoftNorms.YieldsSoftD C S ρ f M)
+  -- uses VE.Formula.denote@VE.Semantics VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.YieldsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 325227780
+theorem VE.Readings.TwinDocs.core
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      VE.Readings.Twin (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd →
+        VE.SoftNorms.SoftValid (VE.Rights.correlate (VE.Readings.one D s i).fst) →
+          (∃ M, M ∈ (VE.Rights.correlate (VE.Readings.one D s i).fst).T.nodes ∧ M.name = Nd.name) →
+            (∀ (d : VE.Norms.Definition),
+                d ∈ (VE.Rights.correlate (VE.Readings.one D s i).fst).T.definitions →
+                  d.name ≠ VE.SoftNorms.exceptedName Nd) →
+              (∀ (e : VE.SoftNorms.Exception), Nd.exception = Option.some e → e.sufficient = []) →
+                (∀ (a : VE.Formula),
+                    a ∈ (VE.Readings.one D s i).snd →
+                      VE.Formula.WellFormed
+                        (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate (VE.Readings.one D s i).fst))
+                          (VE.Norms.size (VE.SoftNorms.soften (VE.Rights.correlate (VE.Readings.one D s i).fst))))
+                        [] a) →
+                  ∀ (S : VE.Structure),
+                    (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+                      ∀ (q : VE.Readings.Probe S.Carrier) (v : Bool),
+                        VE.Rights.BaseAdmissibleR (VE.Readings.one D s i).fst S ∧
+                            VE.Readings.Observes (VE.Readings.one D s i).fst (VE.Readings.one D s i).snd S q v ↔
+                          VE.Rights.BaseAdmissibleR (VE.Readings.one D s j).fst S ∧
+                            VE.Readings.Observes (VE.Readings.one D s j).fst (VE.Readings.one D s j).snd S q v
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.Observes@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Twin@VE.Readings.Force VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.one@VE.Readings.Doc VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2394840344
+theorem VE.Readings.TwinDocs.correlate_eq
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      VE.Rights.correlate (VE.Readings.one D s j).fst =
+        VE.Readings.relaxDoc (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.one@VE.Readings.Doc VE.Readings.relaxDoc@VE.Readings.Force VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1224258363
+theorem VE.Readings.TwinDocs.excepted_empty
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      VE.Readings.Twin (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd →
+        (∃ M, M ∈ (VE.Rights.correlate (VE.Readings.one D s i).fst).T.nodes ∧ M.name = Nd.name) →
+          ∀ (B : VE.Structure),
+            B.Admissible (VE.Readings.authorEnv D) →
+              ∀ (vs : List B.Carrier), ¬B.relation (VE.SoftNorms.exceptedName Nd) vs
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.Twin@VE.Readings.Force VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.authorEnv@VE.Readings.Separate VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2959607568
+theorem VE.Readings.TwinDocs.find_excepted
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      List.find? (fun x => x.snd.fst == VE.SoftNorms.exceptedName Nd) (VE.Readings.genKeys (VE.Readings.one D s i).fst) =
+        Option.none
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.genKeys@VE.Readings.Separate VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 2807491230
+theorem VE.Readings.TwinDocs.find_strict
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      ∀ (p : String),
+        p ≠ VE.SoftNorms.exceptedName Nd →
+          List.find? (fun x => x.snd.fst == p) (VE.Readings.genKeys (VE.Readings.one D s i).fst) =
+            List.find? (fun x => x.snd.fst == p) (VE.Readings.genKeys (VE.Readings.one D s j).fst)
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.genKeys@VE.Readings.Separate VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 2987323569
+theorem VE.Readings.TwinDocs.owned_eq
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      ((VE.Readings.candidate D s i).bind fun x => x.content) = Option.some ci →
+        ((VE.Readings.candidate D s j).bind fun x => x.content) = Option.some cj →
+          ∀ (k : VE.Readings.GenKey), VE.Readings.owned D s i k = VE.Readings.owned D s j k
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.candidate@VE.Readings.Doc VE.Readings.owned@VE.Readings.Separate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1549999686
+theorem VE.Readings.TwinDocs.owned_excepted
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      ((VE.Readings.candidate D s j).bind fun x => x.content) = Option.some cj →
+        VE.Readings.owned D s j (VE.Readings.GenKey.excepted Nd.name Option.none) = Bool.true
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey.excepted@VE.Readings.Separate VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.candidate@VE.Readings.Doc VE.Readings.owned@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1127319573
+theorem VE.Readings.TwinDocs.selectable_eq
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      ∀ (k p : String),
+        VE.Readings.selectable (VE.Readings.one D s j).fst k p =
+          List.map (VE.Readings.relaxTo Nd) (VE.Readings.selectable (VE.Readings.one D s i).fst k p)
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.one@VE.Readings.Doc VE.Readings.relaxTo@VE.Readings.Separate VE.Readings.selectable@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 4138545119
+theorem VE.Readings.TwinDocs.tablesRel_eq
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      ∀ (B : VE.Structure),
+        (∀ (vs : List B.Carrier), ¬B.relation (VE.SoftNorms.exceptedName Nd) vs) →
+          ∀ (G H : VE.Readings.Tables B.Carrier),
+            (∀ (k : VE.Readings.GenKey),
+                k ≠ VE.Readings.GenKey.excepted Nd.name Option.none → ∀ (vs : List B.Carrier), G k vs ↔ H k vs) →
+              (∀ (vs : List B.Carrier), ¬H (VE.Readings.GenKey.excepted Nd.name Option.none) vs) →
+                VE.Readings.tablesRel (VE.Readings.one D s i).fst B G =
+                  VE.Readings.tablesRel (VE.Readings.one D s j).fst B H
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey.excepted@VE.Readings.Separate VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Tables@VE.Readings.Separate VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.one@VE.Readings.Doc VE.Readings.tablesRel@VE.Readings.Force VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1857987882
+theorem VE.Readings.TwinDocs.twin
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.TwinDocs D s i j ci cj Nd →
+      VE.Readings.WellFormedDoc D = Bool.true →
+        ((VE.Readings.candidate D s j).bind fun x => x.content) ≠ Option.none →
+          (∃ M, M ∈ (VE.Rights.correlate (VE.Readings.one D s j).fst).T.nodes ∧ M.name = Nd.name ∧ M.pred = Nd.pred) →
+            (∀ (M : VE.SoftNorms.SoftNode),
+                M ∈ (VE.Rights.correlate (VE.Readings.one D s j).fst).T.nodes →
+                  VE.SoftNorms.act (VE.Rights.correlate (VE.Readings.one D s j).fst) M =
+                      VE.SoftNorms.act (VE.Rights.correlate (VE.Readings.one D s j).fst) Nd →
+                    M.name = Nd.name) →
+              VE.Readings.Twin (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Twin@VE.Readings.Force VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
+  -- expr 974540504
 theorem VE.Readings.Wire.author_valid
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Readings.Doc) (units : List String),
     D.frame = VE.Readings.Wire.frameOf re units →
@@ -11335,6 +11739,13 @@ theorem VE.Readings.Wire.readings_wire_separate_sound
               r.σ.value
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Readings.Achieves@VE.Readings.Separate VE.Readings.Situation.base@VE.Readings.Separate VE.Readings.Situation.fixed@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate VE.Readings.Situation.value@VE.Readings.Separate VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.other@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.set@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.witness@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.σ@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.replaySeparate@VE.Readings.Wire VE.Readings.separates@VE.Readings.Separate VE.Readings.tablesOf@VE.Readings.Separate VE.Structure.Carrier@VE.Semantics
   -- expr 2305353467
+theorem VE.Readings.act_of_incompatible
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.SoftValid D →
+      ∀ {M N : VE.SoftNorms.SoftNode},
+        VE.SoftNorms.Incompatible D M N = Bool.true → VE.SoftNorms.act D M = VE.SoftNorms.act D N
+  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.act@VE.SoftNorms.Tree
+  -- expr 1168210531
 theorem VE.Readings.applies_alone
   ∀ (X : VE.SoftNorms.SoftDoc) (N : VE.SoftNorms.SoftNode) (S : VE.Structure) (ρ : VE.Valuation S),
     X.T.nodes = [N] →
@@ -11350,6 +11761,12 @@ theorem VE.Readings.assignments_nil
     VE.Readings.ownedKeys D s j = [] → VE.Readings.assignments D s j M = [[]]
   -- uses VE.FiniteModel@VE.Finite VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.assignments@VE.Readings.Separate VE.Readings.ownedKeys@VE.Readings.Separate
   -- expr 685935066
+theorem VE.Readings.atom_false
+  ∀ {S : VE.Structure} {p : String},
+    (∀ (vs : List S.Carrier), ¬S.relation p vs) →
+      ∀ (ss : List String) (ρ : VE.Valuation S), ¬VE.Formula.denote S ρ (VE.Norms.atom p ss)
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.atom@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 4008356294
 theorem VE.Readings.attachedF_iff
   ∀ (D : VE.Readings.Doc) (u t : String), t ∈ VE.Readings.attachedF D D.items.length u ↔ VE.Readings.Attached D u t
   -- uses VE.Readings.Attached@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.attachedF@VE.Readings.Doc
@@ -11441,6 +11858,23 @@ theorem VE.Readings.build_soft
             { regulated := __src.regulated, definitions := __src.definitions, nodes := D.frame.soft.T.nodes ++ extra } }
   -- uses VE.Formula@VE.Syntax VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.build@VE.Readings.Doc VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.lits@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.SoftTree@VE.SoftNorms.Tree
   -- expr 2414130814
+theorem VE.Readings.canon_relax
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        ∀ (S : VE.Structure),
+          VE.Norms.ConstantsTyped (VE.SoftNorms.soften C) S →
+            (∀ (ρ : VE.Valuation (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S)),
+                ¬VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) ρ
+                    (VE.SoftNorms.exceptedF C Nd)) →
+              ∀ (k : Nat) (φ : VE.Formula) (Γ : List String),
+                VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften C) k) Γ φ →
+                  ∀ (ρ : VE.Valuation S),
+                    VE.Valuation.Typed S Γ ρ →
+                      (VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften C) S) ρ φ ↔
+                        VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) ρ φ)
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.envAt@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation.Typed@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3607714429
 theorem VE.Readings.catalaValue_eq
   ∀ (P N : Prop) (d v : Bool),
     VE.Norms.catalaValue P N d = Option.some v ↔ ¬(P ∧ N) ∧ ((if d = Bool.true then ¬N else P) ↔ v = Bool.true)
@@ -11489,6 +11923,27 @@ theorem VE.Readings.decides_alone
               VE.SoftNorms.DecidesSoftD X S ρ p sign ↔ VE.SoftNorms.DecidesSoftD (VE.Readings.strictTwin X N) S ρ p sign
   -- uses VE.Formula.denote@VE.Semantics VE.Readings.strictTwin@VE.Readings.Separate VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2754252877
+theorem VE.Readings.decides_canon
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        ∀ (S : VE.Structure),
+          VE.Norms.ConstantsTyped (VE.SoftNorms.soften C) S →
+            (∀ (ρ : VE.Valuation (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S)),
+                ¬VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) ρ
+                    (VE.SoftNorms.exceptedF C Nd)) →
+              ∀ {r : VE.Norms.Regulated},
+                r ∈ C.T.regulated →
+                  ∀ (vs : List S.Carrier),
+                    VE.TupleTyped S r.sorts vs →
+                      ∀ (sign : Bool),
+                        VE.SoftNorms.DecidesSoftD C (VE.SoftNorms.canon (VE.SoftNorms.soften C) S) (VE.Norms.tupleVal vs)
+                            r.name sign ↔
+                          VE.SoftNorms.DecidesSoftD (VE.Readings.relaxDoc C Nd)
+                            (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S)
+                            (VE.Norms.tupleVal vs) r.name sign
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2559152379
 theorem VE.Readings.decisionOnly_spec
   ∀ (D : VE.Readings.Doc) (s : String) (i j : Nat) (k : VE.Readings.GenKey),
     VE.Readings.decisionOnly D s i j = Option.some k →
@@ -11505,6 +11960,33 @@ theorem VE.Readings.decisionOnly_spec
                         M.name = Nd.name
   -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey.excepted@VE.Readings.Separate VE.Readings.GenKey@VE.Readings.Separate VE.Readings.candidate@VE.Readings.Doc VE.Readings.decisionOnly@VE.Readings.Separate VE.Readings.forceTwins@VE.Readings.Separate VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
   -- expr 2523737394
+theorem VE.Readings.decisionOnly_twin
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {k₀ : VE.Readings.GenKey},
+    VE.Readings.decisionOnly D s i j = Option.some k₀ →
+      ∃ ci cj Nd,
+        ((VE.Readings.candidate D s i).bind fun x => x.content) = Option.some ci ∧
+          ((VE.Readings.candidate D s j).bind fun x => x.content) = Option.some cj ∧
+            k₀ = VE.Readings.GenKey.excepted Nd.name Option.none ∧
+              (∀ (e : VE.SoftNorms.Exception), Nd.exception = Option.some e → e.sufficient = []) ∧
+                (∃ M,
+                    M ∈ (VE.Rights.correlate (VE.Readings.one D s j).fst).T.nodes ∧ M.name = Nd.name ∧ M.pred = Nd.pred) ∧
+                  (∀ (M : VE.SoftNorms.SoftNode),
+                      M ∈ (VE.Rights.correlate (VE.Readings.one D s j).fst).T.nodes →
+                        VE.SoftNorms.act (VE.Rights.correlate (VE.Readings.one D s j).fst) M =
+                            VE.SoftNorms.act (VE.Rights.correlate (VE.Readings.one D s j).fst) Nd →
+                          M.name = Nd.name) ∧
+                    VE.Readings.TwinDocs D s i j ci cj Nd
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey.excepted@VE.Readings.Separate VE.Readings.GenKey@VE.Readings.Separate VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.candidate@VE.Readings.Doc VE.Readings.decisionOnly@VE.Readings.Separate VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
+  -- expr 280721565
+theorem VE.Readings.decision_only_sound
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      ∀ (s : String) (i j : Nat) (k₀ : VE.Readings.GenKey),
+        VE.Readings.decisionOnly D s i j = Option.some k₀ →
+          ∀ (B : VE.Structure) (F : VE.Readings.Tables B.Carrier) (q : VE.Readings.Probe B.Carrier) (v : Bool),
+            VE.Readings.Achieves D s i B F q v ↔ VE.Readings.AchievesQuiet D s j k₀ B F q v
+  -- uses VE.Readings.Achieves@VE.Readings.Separate VE.Readings.AchievesQuiet@VE.Readings.Separate VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Tables@VE.Readings.Separate VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.decisionOnly@VE.Readings.Separate VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 959701162
 theorem VE.Readings.dedup_nodup
   ∀ {α : Type} [inst : BEq α] [LawfulBEq α] (l : List α), (VE.SoftNorms.dedup l).Nodup
   -- uses VE.SoftNorms.dedup@VE.SoftNorms.Tree
@@ -11547,6 +12029,20 @@ theorem VE.Readings.distinct_lines
                     ∀ (n' : VE.SoftNorms.SoftNode), n' ∈ VE.Rights.authorNodes e'.snd → n.name ≠ n'.name
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.RightsNames@VE.Readings.Lines VE.Readings.rsLines@VE.Readings.Lines VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.authorNodes@VE.Rights.Correlate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 2991332026
+theorem VE.Readings.dualOblig_act
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.SoftValid D →
+      ∀ {q r : String},
+        VE.SoftNorms.dualOblig D q = Option.some r → VE.SoftNorms.actKey D q = q ∧ VE.SoftNorms.actKey D r = q
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.actKey@VE.SoftNorms.Tree VE.SoftNorms.dualOblig@VE.SoftNorms.Tree
+  -- expr 1194430890
+theorem VE.Readings.dualPerm_act
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.SoftValid D →
+      ∀ {q m : String},
+        VE.SoftNorms.dualPerm D q = Option.some m → VE.SoftNorms.actKey D q = m ∧ VE.SoftNorms.actKey D m = m
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.actKey@VE.SoftNorms.Tree VE.SoftNorms.dualPerm@VE.SoftNorms.Tree
+  -- expr 1088137978
 theorem VE.Readings.dupOf_nodup
   ∀ {l : List String}, VE.SoftNorms.dupOf l = Option.none → l.Nodup
   -- uses VE.SoftNorms.dupOf@VE.SoftNorms.Soften
@@ -11572,20 +12068,60 @@ theorem VE.Readings.envAt_constants
       (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate X)) 0).constants = (VE.Readings.authorEnv D).constants
   -- uses VE.Environment.constants@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.KeepsFrame@VE.Readings.Separate VE.Readings.authorEnv@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 1173611264
+theorem VE.Readings.eq_of_key
+  ∀ {α : Type} (key : α → String) {l : List α},
+    (List.map key l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → key x = key y → x = y
+  -- uses 
+  -- expr 617683291
+theorem VE.Readings.eq_relaxDoc
+  ∀ {A C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    A.E = C.E →
+      A.lits = C.lits →
+        A.soft = C.soft →
+          A.T.regulated = C.T.regulated →
+            A.T.definitions = C.T.definitions →
+              A.T.nodes = List.map (VE.Readings.relaxTo Nd) C.T.nodes → A = VE.Readings.relaxDoc C Nd
+  -- uses VE.Environment@VE.Syntax VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.lits@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree
+  -- expr 2767299958
+theorem VE.Readings.excepted_mem
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    (∃ M, M ∈ C.T.nodes ∧ M.name = Nd.name) →
+      VE.SoftNorms.exceptedName Nd ∈ VE.SoftNorms.decisionNames (VE.Readings.relaxDoc C Nd)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 1883543959
 theorem VE.Readings.exists_dup_split
   ∀ {α : Type} {l : List α}, ¬l.Nodup → ∃ a x b c, l = a ++ x :: (b ++ x :: c)
   -- uses 
   -- expr 1904067167
+theorem VE.Readings.filterMap_congr_mem
+  ∀ {α β : Type} {l : List α} {f g : α → Option β},
+    (∀ (a : α), a ∈ l → f a = g a) → List.filterMap f l = List.filterMap g l
+  -- uses 
+  -- expr 2402145654
 theorem VE.Readings.filter_mem_subsets
   ∀ {β : Type u} (P : β → Bool) (L : List β), List.filter P L ∈ VE.Readings.subsets L
   -- uses VE.Readings.subsets@VE.Readings.Separate
   -- expr 632192249
+theorem VE.Readings.find_filter_mem
+  ∀ {α : Type} (l : List α) (P Q : α → Bool),
+    (∀ (a : α), a ∈ l → P a = Bool.true → Q a = Bool.true) → List.find? P (List.filter Q l) = List.find? P l
+  -- uses 
+  -- expr 940121055
+theorem VE.Readings.find_filter_of
+  ∀ {α : Type} (l : List α) (P Q : α → Bool),
+    (∀ (a : α), P a = Bool.true → Q a = Bool.true) → List.find? P (List.filter Q l) = List.find? P l
+  -- uses 
+  -- expr 1665229504
 theorem VE.Readings.find_name
   ∀ {X : VE.Rights.RightsDoc} {p : String} {g : VE.Readings.GenKey × String × List String},
     List.find? (fun x => x.snd.fst == p) (VE.Readings.genKeys X) = Option.some g →
       g ∈ VE.Readings.genKeys X ∧ g.snd.fst = p
   -- uses VE.Readings.GenKey@VE.Readings.Separate VE.Readings.genKeys@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 3889965955
+theorem VE.Readings.flatMap_congr_mem
+  ∀ {α β : Type} {l : List α} {f g : α → List β}, (∀ (a : α), a ∈ l → f a = g a) → List.flatMap f l = List.flatMap g l
+  -- uses 
+  -- expr 3397308229
 theorem VE.Readings.force_agrees_off_exception
   ∀ (X : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft X = Bool.true →
@@ -11600,6 +12136,11 @@ theorem VE.Readings.force_agrees_off_exception
                       VE.SoftNorms.ValueSoft X r S vs = VE.SoftNorms.ValueSoft (VE.Readings.strictTwin X N) r S vs
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.Regulated@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.strictTwin@VE.Readings.Separate VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 284541538
+theorem VE.Readings.fuel_relax
+  ∀ (C : VE.SoftNorms.SoftDoc) (Nd : VE.SoftNorms.SoftNode),
+    VE.SoftNorms.fuel (VE.Readings.relaxDoc C Nd) = VE.SoftNorms.fuel C
+  -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree
+  -- expr 809100429
 theorem VE.Readings.genKeys_find_none
   ∀ {X : VE.Rights.RightsDoc} {p : String},
     List.find? (fun x => x.snd.fst == p) (VE.Readings.genKeys X) = Option.none →
@@ -11633,6 +12174,10 @@ theorem VE.Readings.genKeys_nodup
       VE.Readings.linesOnce X = Bool.true → (List.map (fun x => x.fst) (VE.Readings.genKeys X)).Nodup
   -- uses VE.Readings.Chain@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.chainWF@VE.Readings.Doc VE.Readings.genKeys@VE.Readings.Separate VE.Readings.linesOnce@VE.Readings.Lines VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 1554393808
+theorem VE.Readings.incompatible_self
+  ∀ (D : VE.SoftNorms.SoftDoc) (N : VE.SoftNorms.SoftNode), VE.SoftNorms.Incompatible D N N = Bool.false
+  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3951479345
 theorem VE.Readings.insertBy_perm
   ∀ {α : Type} (lt : α → α → Bool) (x : α) (l : List α), (VE.Norms.insertBy lt x l).Perm (x :: l)
   -- uses VE.Norms.insertBy@VE.Norms.Tree
@@ -11699,6 +12244,15 @@ theorem VE.Readings.layerNames_hidden
           x ∈ VE.Norms.layerNames D.frame.soft.base.T
   -- uses VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.KeepsFrame@VE.Readings.Separate VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.base@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 565704499
+theorem VE.Readings.layerNames_mem
+  ∀ {T₁ T₂ : VE.Norms.Tree},
+    T₁.regulated = T₂.regulated →
+      T₁.definitions = T₂.definitions →
+        (∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₁) = Except.ok o) →
+          (∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₂) = Except.ok o) →
+            ∀ {n : String}, n ∈ VE.Norms.layerNames T₁ → n ∈ VE.Norms.layerNames T₂
+  -- uses VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.Norms.stratumNodes@VE.Norms.Tree VE.Route.dependencyOrder@VE.Route.Route
+  -- expr 3899445064
 theorem VE.Readings.layer_sub
   ∀ (Tf T' : VE.Norms.Tree),
     Tf.regulated = T'.regulated →
@@ -11806,6 +12360,11 @@ theorem VE.Readings.mem_nextUnits
       ∃ c' cs', VE.Readings.Item.fixed u' c' cs' ∈ D.items ∧ ∃ n, n ∈ VE.Readings.usesOfUnit D u ∧ n ∈ c'.declared
   -- uses VE.Compose.Content.declared@VE.Compose.Content VE.Compose.Content@VE.Compose.Content VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Item.fixed@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.nextUnits@VE.Readings.Doc VE.Readings.usesOfUnit@VE.Readings.Doc
   -- expr 1659882428
+theorem VE.Readings.mem_relaxDoc
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd X : VE.SoftNorms.SoftNode},
+    X ∈ (VE.Readings.relaxDoc C Nd).T.nodes ↔ ∃ M, M ∈ C.T.nodes ∧ X = VE.Readings.relaxTo Nd M
+  -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 1736247873
 theorem VE.Readings.mem_sets
   ∀ {D : VE.Readings.Doc} {R : VE.Readings.ReadingSet}, R ∈ D.sets ↔ VE.Readings.Item.set R ∈ D.items
   -- uses VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Item.set@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc
@@ -11912,6 +12471,43 @@ theorem VE.Readings.observes_rel
           VE.Readings.Observes X A { Carrier := α, domain := d, constant := c, relation := R2 } q v
   -- uses VE.Formula@VE.Syntax VE.Readings.Observes@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.mk@VE.Semantics
   -- expr 4151546453
+theorem VE.Readings.observes_twin
+  ∀ {Xs Xd : VE.Rights.RightsDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Rights.correlate Xd = VE.Readings.relaxDoc (VE.Rights.correlate Xs) Nd →
+      VE.Readings.Twin (VE.Rights.correlate Xs) Nd →
+        VE.SoftNorms.SoftValid (VE.Rights.correlate Xs) →
+          (∃ M, M ∈ (VE.Rights.correlate Xs).T.nodes ∧ M.name = Nd.name) →
+            (∀ (d : VE.Norms.Definition),
+                d ∈ (VE.Rights.correlate Xs).T.definitions → d.name ≠ VE.SoftNorms.exceptedName Nd) →
+              (∀ (k p : String),
+                  VE.Readings.selectable Xd k p = List.map (VE.Readings.relaxTo Nd) (VE.Readings.selectable Xs k p)) →
+                ∀ (A : List VE.Formula),
+                  (∀ (a : VE.Formula),
+                      a ∈ A →
+                        VE.Formula.WellFormed
+                          (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate Xs))
+                            (VE.Norms.size (VE.SoftNorms.soften (VE.Rights.correlate Xs))))
+                          [] a) →
+                    ∀ (S : VE.Structure),
+                      (∀ (vs : List S.Carrier), ¬S.relation (VE.SoftNorms.exceptedName Nd) vs) →
+                        VE.Norms.BaseAdmissible (VE.SoftNorms.soften (VE.Rights.correlate Xs)) S →
+                          ∀ (q : VE.Readings.Probe S.Carrier) (v : Bool),
+                            VE.Readings.Observes Xs A S q v ↔ VE.Readings.Observes Xd A S q v
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Observes@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.Readings.selectable@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.definitions@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3001262563
+theorem VE.Readings.observes_withTables
+  ∀ {X X₁ X₂ : VE.Rights.RightsDoc} {A : List VE.Formula} {B : VE.Structure} {G₁ G₂ : VE.Readings.Tables B.Carrier},
+    VE.Readings.tablesRel X₁ B G₁ = VE.Readings.tablesRel X₂ B G₂ →
+      ∀ (q : VE.Readings.Probe B.Carrier) (v : Bool),
+        VE.Readings.Observes X A (VE.Readings.withTables X₁ B G₁) q v →
+          VE.Readings.Observes X A (VE.Readings.withTables X₂ B G₂) q v
+  -- uses VE.Formula@VE.Syntax VE.Readings.Observes@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Tables@VE.Readings.Separate VE.Readings.tablesRel@VE.Readings.Force VE.Readings.withTables@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 677579733
+theorem VE.Readings.offDecisions_relax
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.SoftNorms.offDecisions (VE.Readings.relaxDoc C Nd) = VE.SoftNorms.offDecisions C
+  -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.offDecisions@VE.SoftNorms.Tree
+  -- expr 496483248
 theorem VE.Readings.one_formula_only
   ∀ (D : VE.Readings.Doc),
     (∀ (R : VE.Readings.ReadingSet),
@@ -11980,6 +12576,79 @@ theorem VE.Readings.probesOf_typed
     q ∈ VE.Readings.probesOf D M → VE.Readings.probeTyped (VE.Readings.one D s i).fst M q = Bool.true
   -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.Probe@VE.Readings.Separate VE.Readings.one@VE.Readings.Doc VE.Readings.probeTyped@VE.Readings.Separate VE.Readings.probesOf@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 3464921575
+theorem VE.Readings.quiet_iff
+  ∀ {Xs Xd : VE.Rights.RightsDoc} {As Ad : List VE.Formula} {oi oj : VE.Readings.GenKey → Bool} {k₀ : VE.Readings.GenKey}
+    {e : String} {E : VE.Environment} (B : VE.Structure) (F : VE.Readings.Tables B.Carrier)
+    (q : VE.Readings.Probe B.Carrier) (v : Bool),
+    (∀ (k : VE.Readings.GenKey), oi k = oj k) →
+      oj k₀ = Bool.true →
+        (B.Admissible E → ∀ (vs : List B.Carrier), ¬B.relation e vs) →
+          ((∀ (vs : List B.Carrier), ¬B.relation e vs) →
+              ∀ (G H : VE.Readings.Tables B.Carrier),
+                (∀ (k : VE.Readings.GenKey), k ≠ k₀ → ∀ (vs : List B.Carrier), G k vs ↔ H k vs) →
+                  (∀ (vs : List B.Carrier), ¬H k₀ vs) → VE.Readings.tablesRel Xs B G = VE.Readings.tablesRel Xd B H) →
+            ((∀ (vs : List B.Carrier), ¬B.relation e vs) →
+                ∀ (G : VE.Readings.Tables B.Carrier),
+                  VE.Rights.BaseAdmissibleR Xs (VE.Readings.withTables Xs B G) ∧
+                      VE.Readings.Observes Xs As (VE.Readings.withTables Xs B G) q v ↔
+                    VE.Rights.BaseAdmissibleR Xd (VE.Readings.withTables Xs B G) ∧
+                      VE.Readings.Observes Xd Ad (VE.Readings.withTables Xs B G) q v) →
+              ((B.Admissible E ∧
+                  ∃ G,
+                    (∀ (k : VE.Readings.GenKey), oi k = Bool.false → ∀ (vs : List B.Carrier), G k vs ↔ F k vs) ∧
+                      VE.Rights.BaseAdmissibleR Xs (VE.Readings.withTables Xs B G) ∧
+                        VE.Readings.Observes Xs As (VE.Readings.withTables Xs B G) q v) ↔
+                B.Admissible E ∧
+                  ∃ G,
+                    (∀ (k : VE.Readings.GenKey), oj k = Bool.false → ∀ (vs : List B.Carrier), G k vs ↔ F k vs) ∧
+                      (∀ (vs : List B.Carrier), ¬G k₀ vs) ∧
+                        VE.Rights.BaseAdmissibleR Xd (VE.Readings.withTables Xd B G) ∧
+                          VE.Readings.Observes Xd Ad (VE.Readings.withTables Xd B G) q v)
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Observes@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Tables@VE.Readings.Separate VE.Readings.tablesRel@VE.Readings.Force VE.Readings.withTables@VE.Readings.Separate VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 839357850
+theorem VE.Readings.relaxTo_alterable
+  ∀ (Nd M : VE.SoftNorms.SoftNode), (VE.Readings.relaxTo Nd M).alterable = M.alterable
+  -- uses VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3491649313
+theorem VE.Readings.relaxTo_name
+  ∀ (Nd M : VE.SoftNorms.SoftNode), (VE.Readings.relaxTo Nd M).name = M.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 2065941602
+theorem VE.Readings.relaxTo_of_eq
+  ∀ {Nd M : VE.SoftNorms.SoftNode},
+    M.name = Nd.name →
+      VE.Readings.relaxTo Nd M =
+        { toNode := M.toNode, mode := VE.SoftNorms.Mode.default, rank := M.rank, alterable := M.alterable,
+          exception := Nd.exception, hard := Nd.hard }
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 2761899990
+theorem VE.Readings.relaxTo_of_ne
+  ∀ {Nd M : VE.SoftNorms.SoftNode}, M.name ≠ Nd.name → VE.Readings.relaxTo Nd M = M
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 678428302
+theorem VE.Readings.relaxTo_over
+  ∀ (Nd M : VE.SoftNorms.SoftNode), (VE.Readings.relaxTo Nd M).over = M.over
+  -- uses VE.Norms.Node.over@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3323686171
+theorem VE.Readings.relaxTo_pred
+  ∀ (Nd M : VE.SoftNorms.SoftNode), (VE.Readings.relaxTo Nd M).pred = M.pred
+  -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 412786584
+theorem VE.Readings.relaxTo_sign
+  ∀ (Nd M : VE.SoftNorms.SoftNode), (VE.Readings.relaxTo Nd M).sign = M.sign
+  -- uses VE.Norms.Node.sign@VE.Norms.Tree VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3852821720
+theorem VE.Readings.relax_children
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd M : VE.SoftNorms.SoftNode} (X : VE.SoftNorms.SoftNode),
+    X ∈ VE.SoftNorms.children (VE.Readings.relaxDoc C Nd) (VE.Readings.relaxTo Nd M) ↔
+      ∃ Y, Y ∈ VE.SoftNorms.children C M ∧ X = VE.Readings.relaxTo Nd Y
+  -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.children@VE.SoftNorms.Tree
+  -- expr 3467451083
+theorem VE.Readings.relax_mem
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd M : VE.SoftNorms.SoftNode},
+    M ∈ C.T.nodes → VE.Readings.relaxTo Nd M ∈ (VE.Readings.relaxDoc C Nd).T.nodes
+  -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 728450805
 theorem VE.Readings.rightsNames_of_chainWF
   ∀ (c : VE.Readings.Chain) (X : VE.Rights.RightsDoc), VE.Readings.chainWF c X = Bool.true → VE.Readings.RightsNames X
   -- uses VE.Readings.Chain@VE.Readings.Doc VE.Readings.RightsNames@VE.Readings.Lines VE.Readings.chainWF@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
@@ -11995,11 +12664,35 @@ theorem VE.Readings.rules_eq
         (List.flatMap (fun R => List.map (fun x => (R.name, x)) R.lines) rs)
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Rights.Right.lines@VE.Rights.Tree VE.Rights.Right.name@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.authorNodes@VE.Rights.Correlate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 1317329409
+theorem VE.Readings.sat_append
+  ∀ (S : VE.Structure) (a b : List VE.Formula), VE.Norms.Sat S (a ++ b) ↔ VE.Norms.Sat S a ∧ VE.Norms.Sat S b
+  -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics
+  -- expr 3116685401
 theorem VE.Readings.selectable_mem
   ∀ {X : VE.Rights.RightsDoc} {k p : String} {N : VE.SoftNorms.SoftNode},
     N ∈ VE.Readings.selectable X k p → N ∈ (VE.Rights.correlate X).T.nodes ∧ N.pred = p
   -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.selectable@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
   -- expr 1216577636
+theorem VE.Readings.selects_canon
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        ∀ (S : VE.Structure),
+          VE.Norms.ConstantsTyped (VE.SoftNorms.soften C) S →
+            (∀ (ρ : VE.Valuation (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S)),
+                ¬VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) ρ
+                    (VE.SoftNorms.exceptedF C Nd)) →
+              ∀ {N : VE.SoftNorms.SoftNode},
+                N ∈ C.T.nodes →
+                  ∀ (vs : List S.Carrier),
+                    VE.TupleTyped S (VE.SoftNorms.sortsOf C N.pred) vs →
+                      (VE.SoftNorms.SelectsSoftD C (VE.SoftNorms.canon (VE.SoftNorms.soften C) S) (VE.Norms.tupleVal vs)
+                          (VE.SoftNorms.fuel C) N ↔
+                        VE.SoftNorms.SelectsSoftD (VE.Readings.relaxDoc C Nd)
+                          (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) (VE.Norms.tupleVal vs)
+                          (VE.SoftNorms.fuel (VE.Readings.relaxDoc C Nd)) (VE.Readings.relaxTo Nd N))
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.Readings.relaxTo@VE.Readings.Separate VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1524934502
 theorem VE.Readings.separates_noKeys
   ∀ {α : Type u} [inst : DecidableEq α] (D : VE.Readings.Doc) (s : String) (i j : Nat) (M : VE.FiniteModel α)
     (F : List (VE.Readings.GenKey × List (List α))) (q : VE.Readings.Probe α) (v : Bool),
@@ -12178,6 +12871,15 @@ theorem VE.Readings.switch_false
     N.alterable = [] → ∀ (Y : VE.SoftNorms.SoftDoc), ¬VE.Formula.denote S ρ (VE.SoftNorms.switchF Y N)
   -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.switchF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 750796692
+theorem VE.Readings.syms_mem
+  ∀ {T₁ T₂ : VE.Norms.Tree},
+    T₁.regulated = T₂.regulated →
+      T₁.definitions = T₂.definitions →
+        (∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₁) = Except.ok o) →
+          (∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₂) = Except.ok o) →
+            ∀ {q : VE.Norms.Sym}, q ∈ VE.Norms.syms T₁ → q ∈ VE.Norms.syms T₂
+  -- uses VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Sym@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.stratumNodes@VE.Norms.Tree VE.Norms.syms@VE.Norms.Tree VE.Route.dependencyOrder@VE.Route.Route
+  -- expr 451096882
 theorem VE.Readings.tableOf_append_of_not
   ∀ {α : Type u} (k : VE.Readings.GenKey) (A B : List (VE.Readings.GenKey × List (List α))),
     (∀ (t : VE.Readings.GenKey × List (List α)), t ∈ A → t.fst ≠ k) →
@@ -12261,6 +12963,11 @@ theorem VE.Readings.tupleTyped_withTables
     (vs : List S.Carrier), VE.TupleTyped (VE.Readings.withTables X S G) ss vs ↔ VE.TupleTyped S ss vs
   -- uses VE.Readings.Tables@VE.Readings.Separate VE.Readings.withTables@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 651269556
+theorem VE.Readings.twinDocs_spec
+  ∀ {D : VE.Readings.Doc} {s : String} {i j : Nat} {ci cj : VE.Compose.Content} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.twinDocs D s i j ci cj Nd = Bool.true → VE.Readings.TwinDocs D s i j ci cj Nd
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Readings.Doc@VE.Readings.Doc VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.twinDocs@VE.Readings.Separate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1712136275
 theorem VE.Readings.typedTuple_domains
   ∀ {α : Type u} [inst : DecidableEq α] {M M' : VE.FiniteModel α},
     M.domains = M'.domains →
@@ -12286,11 +12993,42 @@ theorem VE.Readings.valid_tablesModel
               (VE.Readings.tablesModel X M T).Valid (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate X)) 0)
   -- uses VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.KeepsFrame@VE.Readings.Separate VE.Readings.authorEnv@VE.Readings.Separate VE.Readings.tablesModel@VE.Readings.Separate VE.Readings.tablesTyped@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 2354324841
+theorem VE.Readings.value_canon
+  ∀ {C : VE.SoftNorms.SoftDoc} {Nd : VE.SoftNorms.SoftNode},
+    VE.Readings.Twin C Nd →
+      VE.SoftNorms.SoftValid C →
+        ∀ (S : VE.Structure),
+          VE.Norms.ConstantsTyped (VE.SoftNorms.soften C) S →
+            (∀ (ρ : VE.Valuation (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S)),
+                ¬VE.Formula.denote (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) ρ
+                    (VE.SoftNorms.exceptedF C Nd)) →
+              ∀ {r : VE.Norms.Regulated},
+                r ∈ C.T.regulated →
+                  ∀ (vs : List S.Carrier),
+                    VE.TupleTyped S r.sorts vs →
+                      VE.SoftNorms.ValueSoft C r (VE.SoftNorms.canon (VE.SoftNorms.soften C) S) vs =
+                        VE.SoftNorms.ValueSoft (VE.Readings.relaxDoc C Nd) r
+                          (VE.SoftNorms.canon (VE.SoftNorms.soften (VE.Readings.relaxDoc C Nd)) S) vs
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Readings.Twin@VE.Readings.Force VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1501890599
 theorem VE.Readings.withTables_domain
   ∀ {X : VE.Rights.RightsDoc} {S : VE.Structure} {G : VE.Readings.Tables S.Carrier},
     (VE.Readings.withTables X S G).domain = S.domain
   -- uses VE.Readings.Tables@VE.Readings.Separate VE.Readings.withTables@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3057973200
+theorem VE.Readings.withTables_none
+  ∀ {X : VE.Rights.RightsDoc} {B : VE.Structure} {G : VE.Readings.Tables B.Carrier} {e : String},
+    List.find? (fun x => x.snd.fst == e) (VE.Readings.genKeys X) = Option.none →
+      (∀ (vs : List B.Carrier), ¬B.relation e vs) →
+        ∀ (vs : List (VE.Readings.withTables X B G).Carrier), ¬(VE.Readings.withTables X B G).relation e vs
+  -- uses VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Tables@VE.Readings.Separate VE.Readings.genKeys@VE.Readings.Separate VE.Readings.withTables@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3039940636
+theorem VE.Readings.withTables_rel
+  ∀ (X : VE.Rights.RightsDoc) (B : VE.Structure) (G : VE.Readings.Tables B.Carrier),
+    VE.Readings.withTables X B G =
+      { Carrier := B.Carrier, domain := B.domain, constant := B.constant, relation := VE.Readings.tablesRel X B G }
+  -- uses VE.Readings.Tables@VE.Readings.Separate VE.Readings.tablesRel@VE.Readings.Force VE.Readings.withTables@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 920371802
 theorem VE.Readings.yields_alone
   ∀ (X : VE.SoftNorms.SoftDoc) (N : VE.SoftNorms.SoftNode) (S : VE.Structure) (ρ : VE.Valuation S),
     X.T.nodes = [N] →

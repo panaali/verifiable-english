@@ -181,6 +181,7 @@ module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Readings.Doc
 module VE.Readings.Examples
+module VE.Readings.Force
 module VE.Readings.Lines
 module VE.Readings.Run
 module VE.Readings.Separate
@@ -281,11 +282,15 @@ module VE.Typing
 module VE.WireContract.Diagnose
 module VE.WireContract.Engine
 module VE.WireContract.Hooks.Corpus
+module VE.WireContract.Hooks.NormDefaults
+module VE.WireContract.Hooks.Norms
 module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
 module VE.WireContract.Table
 module VE.WireContract.Tables.Corpus
+module VE.WireContract.Tables.NormDefaults
+module VE.WireContract.Tables.Norms
 module VE.WireContract.Tables.SoftNorms
 module VE
 Iceberg.Within@Iceberg
@@ -511,7 +516,10 @@ VE.Readings.Observes@VE.Readings.Separate
 VE.Readings.PathTo@VE.Readings.Doc
 VE.Readings.RightsNames@VE.Readings.Lines
 VE.Readings.Separated@VE.Readings.Separate
+VE.Readings.Twin@VE.Readings.Force
+VE.Readings.TwinDocs@VE.Readings.Force
 VE.Readings.tablesOf@VE.Readings.Separate
+VE.Readings.tablesRel@VE.Readings.Force
 VE.Reports.AgreeOn@VE.Attribution.Semantics
 VE.Reports.AssertedA@VE.Attribution.Conservative
 VE.Reports.AssertedJ@VE.Attribution.Conservative

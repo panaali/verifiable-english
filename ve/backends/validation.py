@@ -46,9 +46,16 @@ def nary_core_definitions(profiles, predicates) -> bool:
 LEGACY_LANGUAGES = frozenset({"ve.core@0", "ve.core@0.1"})
 
 
+def legacy_language(data: dict) -> bool:
+    """Whether `data` names a frozen envelope's language; any JSON value may
+    stand there before the decoder runs."""
+    language = data.get("language")
+    return type(language) is str and language in LEGACY_LANGUAGES
+
+
 def environment_in_scope(data) -> bool:
     """Whether Lean's `environment` mode validates this environment input."""
-    if type(data) is dict and data.get("language") in LEGACY_LANGUAGES:
+    if type(data) is dict and legacy_language(data):
         return True
     if type(data) is not dict or data.get("language") != "ve.core@0.2":
         return False

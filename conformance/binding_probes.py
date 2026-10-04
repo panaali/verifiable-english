@@ -24,6 +24,15 @@ def _soft_wire_root():
     return json.loads((ROOT / "ve/wire_contract/examples/soft-norms@0/empty.json").read_text())
 
 
+def _norm_wire_case(unit, kind):
+    root = json.loads((ROOT / f"ve/wire_contract/examples/{unit}/empty.json").read_text())
+    if kind == "admission":
+        return {"id": f"wire-{unit}-admission", "kind": kind,
+                "environment": root["environment"],
+                "document": {"units": [], "graph": {"root": "leaf", "nodes": []}}}
+    return {"id": f"wire-{unit}-{kind}", "kind": kind, **root}
+
+
 def _python(env_json):
     from ve.environment import Environment
     return Environment(env_json)
@@ -163,6 +172,10 @@ BUILDERS = {
         lambda: {"id": "wire-admission", "kind": "admission",
                  "environment": _soft_wire_root()["environment"],
                  "document": {"units": [], "graph": {"root": "leaf", "nodes": []}}},
+    **{("wire.diagnose", "ve_diagnose", unit, kind):
+       (lambda unit=unit, kind=kind: _norm_wire_case(unit, kind))
+       for unit, prefix in (("norms@0", "norms"), ("norm-defaults@0", "norm-defaults"))
+       for kind in (f"{prefix}-elaborate", f"{prefix}-conflict", f"{prefix}-certificate", "admission")},
     ("parse", C, "", None): lambda: _evaluate_case(_legacy(), "parse", source="true.\n"),
     ("parse", C, "order", "surface"): _surface,
     ("evaluate", C, "", None): lambda: _evaluate_case(_legacy(), "evaluate"),

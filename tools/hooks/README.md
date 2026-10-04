@@ -9,16 +9,19 @@ a temporary snapshot of the index together with the staged directory and `.py`
 layout that Python import resolution consults. The working tree is never read,
 so a verdict depends only on what the commit would record. It runs no tests and
 no builds. A typical commit takes well under a second;
-`tests/test_precommit_hook.py` holds a 1,765-path, 18 MB staged change to under
-10 s. Run `tools/hooks/pre-commit --timings` to see per-check times.
+`tests/test_precommit_hook.py` holds the hook's own work on a 1,882-path, 21 MB
+staged change to under 10 CPU seconds; `lean --deps` adds at most its budget
+(below) and two 2 s toolchain probes. `VE_PRECOMMIT_TIMEOUT` replaces all of the hook's
+wall-clock waits (the test suite sets it to its hang guard). Run
+`tools/hooks/pre-commit --timings` to see per-check times.
 
 | Check | What it rejects | Source of truth |
 | --- | --- | --- |
 | secrets | In every added or modified staged file, text or binary: a match for private key blocks, AWS, GitHub, Anthropic, OpenAI, Google, Slack, Hugging Face or Stripe live credentials, or a quoted high-entropy `api_key`/`secret_key`/`client_secret`/`access_token`/`auth_token`/`password` value, on a line that is not already a line of that path at `HEAD`; any staged path under `.webapp-private/`; `.env` files (not `.env.example`/`.sample`/`.template`), `id_rsa`-style keys, `.p12`/`.pfx` files | patterns in `precommit.py` |
-| layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean` (Python: the whole file; Lean: the header, which must be in the plain layout below); a staged `lean/**/*.lean` header outside the plain layout, or one the pinned toolchain's `lean --deps` reads differently; a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged | the staged `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py` and ledgers `tools/layer-exceptions.json`, `tools/lean-layer-exceptions.json` |
+| layer imports | New outward imports (a module importing a higher layer) that are not in the reviewed ledger, in staged `ve/**/*.py` and `lean/**/*.lean` (Python: the whole file; Lean: the header, which must be in the plain layout below); a staged `lean/**/*.lean` header outside the plain layout, or one the pinned toolchain's `lean --deps` reads differently; a newly added module the layer map does not cover; a missing local Lean import; outward crate dependencies when a `rust/**/Cargo.toml` is staged (`check_rust_deps.py --crates-only`: the snapshot holds no Rust sources, so intra-crate module imports and `tools/rust-module-exceptions.json` are left to the full checker) | the staged `tools/layer_policy.py`, `tools/check_lean_imports.py`, `tools/check_rust_deps.py` and ledgers `tools/layer-exceptions.json`, `tools/lean-layer-exceptions.json` |
 | Lean forbidden tokens | In staged files under `lean/`: every whole word the staged `lean/audit.py` forbids (today `sorry`, `sorryAx`, `admit`, `axiom`, `unsafe`, `native_decide`, `implemented_by`, `partial`, `opaque`, `extern`), in comments and strings too, as the audit does. In other staged `.lean` files: `sorry`, `sorryAx`, `admit` or `axiom` in code | the staged `lean/audit.py` |
 | frozen files | A staged change to a file listed in `lean/VE/Route/frozen-sources.sha256` unless the staged inventory records the staged file's SHA-256; a deleted file that is still listed; a new `lean/VE/**/*.lean` module that is not listed; a changed `lean/Main.lean` that no longer matches `MAIN_BASE` in `lean/VE/Route/frozen.py`. A staged inventory or `frozen.py` re-checks every entry | `lean/VE/Route/frozen.py` rules |
-| wire contract | When wire contract sources or the generated English table change, `tools/wire_contract.py --check` must pass on a staged snapshot | staged `ve/`, `tools/wire_contract.py`, `lean/audit.py`, and `docs/spec/soft-norms-wire-table.md` |
+| wire contract | When wire contract sources or the generated English table change, `tools/wire_contract.py --check` must pass on a staged snapshot within 30 s (`VE_PRECOMMIT_TIMEOUT` replaces it; a value that is not a positive number of seconds blocks) | staged `ve/`, `tools/wire_contract.py`, `lean/audit.py`, and `docs/spec/soft-norms-wire-table.md` |
 
 A Lean header is in the plain layout when it is one `import A.B.C` per line at
 column 0 (ASCII name parts, nothing else on the line), with only blank lines,

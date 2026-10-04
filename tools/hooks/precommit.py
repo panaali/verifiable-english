@@ -21,6 +21,7 @@ import importlib
 import importlib.util
 import io
 import json
+import math
 import multiprocessing
 import os
 from pathlib import Path, PurePosixPath
@@ -329,7 +330,8 @@ def check_layers(index: Index) -> list[str]:
             except reader.HeaderError as error:
                 errors.append(f"{path}: Lean header {error}")
         # The pinned toolchain's own header parser must agree with the plain-layout reading.
-        command = reader.pinned_lean((blobs[LEAN_TOOLCHAIN] or b"").decode()) if read else None
+        command = (reader.pinned_lean((blobs[LEAN_TOOLCHAIN] or b"").decode(),
+                                      wait=configured_wait(reader.PROBE_WAIT)) if read else None)
         if command is None:
             NOTES.append("lean --deps: pinned toolchain unavailable; plain-layout grammar only")
         else:
@@ -338,7 +340,8 @@ def check_layers(index: Index) -> list[str]:
             for number, path in enumerate(read):
                 files[path] = (folder / f"{number}.lean", read[path])
                 files[path][0].write_bytes(blobs[path])
-            wrong, checked = reader.lean_disagreements(command, files)
+            wrong, checked = reader.lean_disagreements(command, files,
+                                                       budget=configured_wait(reader.ORACLE_BUDGET))
             NOTES.append(f"lean --deps confirmed or refuted {checked} of {len(files)} staged Lean headers")
             for path, message in sorted(wrong.items()):
                 errors.append(f"{path}: Lean header: {message}; {reader.PLAIN_LAYOUT}")
@@ -358,11 +361,12 @@ def check_layers(index: Index) -> list[str]:
                 if layer is not None and importer < layer and edge not in ledger:
                     errors.append(f"{path}: new outward Lean import {edge} (layer {importer} -> {layer})")
     if rust:
-        # The snapshot already holds every staged manifest under its rust/ workspace.
+        # The snapshot already holds every staged manifest under its rust/ workspace,
+        # but no Rust sources: the intra-crate module check runs in the gate only.
         stderr = io.StringIO()
         try:
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
-                failed = policy.check_rust_deps.main()
+                failed = policy.check_rust_deps.main(["--crates-only"])
         except (OSError, KeyError, ValueError) as error:
             failed, stderr = 1, io.StringIO(f"cannot read the staged Rust workspace: {error}\n")
         if failed:
@@ -443,22 +447,46 @@ def check_frozen(index: Index) -> list[str]:
     return errors
 
 
+# The generated English table and the fault catalogue index of every shipped unit, and the modules of their
+# registries and legacy validators (`UNITS` and `unit_paths` in tools/wire_contract.py).
+WIRE_UNIT_PATHS = re.compile(r"(?:docs/spec/[a-z0-9-]+-wire-table\.md"
+                             r"|conformance/wire-contract/[a-z0-9-]+@[0-9]+-catalogue\.json)\Z")
+
+
+WIRE_CHECK_TIMEOUT = 30.0
+
+
+def configured_wait(default: float) -> float:
+    """A wall-clock wait of the hook whose default is `default` (the wire check's 30 s, the staged
+    `lean --deps` budget and toolchain probes): `VE_PRECOMMIT_TIMEOUT` when set (the test suite
+    raises it to its hang guard, so machine load cannot change a test's outcome), else `default`.
+    A value that is not a positive finite number of seconds blocks."""
+    text = os.environ.get("VE_PRECOMMIT_TIMEOUT")
+    if text is None:
+        return default
+    try:
+        seconds = float(text)
+    except ValueError:
+        seconds = math.nan
+    if not (math.isfinite(seconds) and seconds > 0):
+        raise ValueError(f"VE_PRECOMMIT_TIMEOUT must be a positive number of seconds, not {text!r}")
+    return seconds
+
+
 def check_wire_contract(index: Index) -> list[str]:
     """Run the wire generator on staged sources and generated output."""
     watched = ("ve/wire_contract/", "ve/softnorms_contract.py", "ve/softnorms.py",
+               "ve/norms_contract.py", "ve/norms.py", "ve/norm_defaults_contract.py", "ve/norm_defaults.py",
                "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
-               "docs/spec/soft-norms-wire-table.md", "lean/VE/WireContract/",
-               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/",
-               "conformance/wire-contract/soft-norms@0-catalogue.json")
-    if not any(path.startswith(watched) for path in index.changed):
+               "lean/VE/WireContract/",
+               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/")
+    if not any(path.startswith(watched) or WIRE_UNIT_PATHS.match(path) for path in index.changed):
         return []
     names = [path for path in index.listing()
              if path.startswith(("ve/", "conformance/wire-contract/contracts/",
-                                 "lean/VE/WireContract/")) or path in {
+                                 "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path) or path in {
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
                  "lean/VE/Route/frozen-sources.sha256",
-                 "docs/spec/soft-norms-wire-table.md",
-                 "conformance/wire-contract/soft-norms@0-catalogue.json",
                  "conformance/wire-contract/engine-golden.json"}]
     for path, blob in index.read(names).items():
         if blob is None:
@@ -469,7 +497,7 @@ def check_wire_contract(index: Index) -> list[str]:
     env = {**os.environ, "PYTHONPATH": str(index.snapshot), "PYTHONDONTWRITEBYTECODE": "1"}
     done = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
                           cwd=index.snapshot, env=env, capture_output=True, text=True,
-                          timeout=30, check=False)
+                          timeout=configured_wait(WIRE_CHECK_TIMEOUT), check=False)
     if done.returncode:
         return [line for line in (done.stdout + done.stderr).splitlines() if line]
     return []

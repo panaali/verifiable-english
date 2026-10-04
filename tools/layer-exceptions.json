@@ -5,7 +5,6 @@
   "ve.ast -> ve.backends.lean_runner": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.ast -> ve.backends.rust_jsonl": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.ast -> ve.surface.nary": "AST imports n-ary registration for wire decoding; split registration bootstrap from the core AST.",
-  "ve.ast -> ve.surface.registry": "AST wire traversal dispatches through surface hooks; extract a kernel extension interface.",
   "ve.background -> ve.backends.dispatch": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.background -> ve.backends.lean_runner": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.background -> ve.backends.lean_service": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
@@ -27,7 +26,6 @@
   "ve.evaluate -> ve.backends.dispatch": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.evaluate -> ve.backends.lean_runner": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.evaluate -> ve.backends.rust_jsonl": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
-  "ve.evaluate -> ve.surface.registry": "Evaluator invokes registered n-ary hooks; move semantic hook dispatch inward.",
   "ve.model -> ve.backends.dispatch": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.model -> ve.backends.validation": "Stage 2 authority adapter (SEMANTICS-MIGRATION-PLAN.md 2a): the class-A function dispatches its verdict through ve.backends; place the dispatch and checker clients below the kernel when stage 5 deletes the Python bodies.",
   "ve.model -> ve.background": "Model validation invokes profile background checks; move profile validation out of kernel model decoding.",
@@ -47,6 +45,5 @@
   "ve.speech_acts -> ve.norm_admission": "Speech acts reuse quoted-norm admission; split the shared checks into a profile module.",
   "ve.speech_acts -> ve.speech_english": "Speech acts render their English wording; move rendering to the surface caller.",
   "ve.speech_acts -> ve.vacuity": "Speech acts compute premise status; move the call to a route module.",
-  "ve.units -> ve.search": "Units read used predicates from search helpers; move the helper to the kernel.",
-  "ve.wire -> ve.surface.registry": "Wire arity helper consults registered surface tags; move tag metadata to a kernel registry."
+  "ve.units -> ve.search": "Units read used predicates from search helpers; move the helper to the kernel."
 }
