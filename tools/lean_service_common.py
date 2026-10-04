@@ -15,7 +15,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin"
+# The one-shot references. `ve_norms_route` left the build in lean-first batch 1 (its runner is the
+# service's `norms` mode); `VE_ONE_SHOT_BIN` names the bin directory of a build that still has it.
+BIN = Path(os.environ.get("VE_ONE_SHOT_BIN") or ROOT / "lean/.lake/build/bin")
 DEFAULT_BENCH = Path.home() / "code/ve-bench"
 
 # bench implementation -> (service mode, one-shot command)

@@ -17,6 +17,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_discourse_lean import run as lean_run
 from ve.document import check_document, load_document
 from ve.english import parse_english
@@ -24,7 +26,7 @@ from ve.environment import Environment
 from ve.errors import VEError
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_discourse_route"
+LEAN = "ve_discourse_route"  # its service mode, through tests/lean_routes.py
 RUST = ROOT / "rust/target/release/ve"
 CONSTANTS = {"api": "service", "beta": "service", "gamma": "service", "alice": "person", "bob": "person"}
 PREDICATES = {"reviewed": ["service"], "deployed": ["service"], "ready": ["person"]}

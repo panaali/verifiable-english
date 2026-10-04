@@ -15,18 +15,19 @@ from __future__ import annotations
 import json
 import random
 import re
-import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.risk import Log, cell_env, condition, estimate, record, statement
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin/ve_risk_route"
-pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 
 D = "dimensionless"
 RECORDS = 200
@@ -45,7 +46,7 @@ CELLS = ("server_outage", "job_failure", "task_delay")
 
 
 def route(cases):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=590)
+    out = lean_routes.completed(BIN, cases)
     return json.loads(out.stdout)
 
 

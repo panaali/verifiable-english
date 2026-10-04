@@ -13,10 +13,11 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests import lean_routes
 
 from conformance.risk import (Log, agent_ops, agent_ops_rules, asimov_risk, cell_env, condition, estimate, gt, q,
                               record)
@@ -29,7 +30,7 @@ from ve.norm_english import parse_english as parse_norm
 from ve.surface.risk import SUFFICIENT_REWRITE, parse_wording, render_wording
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin/ve_risk_route"
+BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
 HARMS = {"outage": ("an outage", "serious"), "loss": ("loss", "severe"), "delay": ("a delay", "minor")}
 
 
@@ -325,11 +326,11 @@ def test_k29_bare_prevents_is_rejected_with_its_rewrite():
 # ---------------------------------------------------------------------------- the paraphrases (Lean's legend)
 
 def _lean(case):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps([case]), text=True, capture_output=True, timeout=300)
+    out = lean_routes.completed(BIN, [case])
     return json.loads(out.stdout)[0]
 
 
-@pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 def test_paraphrases_are_the_legend_lines():
     """2.2, 2.4: each word the policy uses gets its paraphrase; excludes and avoids get theirs."""
     raw = asimov_risk({"death": ("the person's death", "fatal"), "bruising": ("the person's bruising", "injuring")},
@@ -358,7 +359,7 @@ def test_paraphrases_are_the_legend_lines():
         assert line in legend, line
 
 
-@pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 def test_sufficient_condition_renders_its_frozen_legend_line():
     """k2, k19: c5's legend line uses the frozen wording, with no "(wording pending)"; necessary and exact forms
     render their lines."""

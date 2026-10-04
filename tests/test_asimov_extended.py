@@ -258,7 +258,7 @@ def test_the_committed_permission_default_results_agree_with_the_reading():
     assert deny["records"]["lean_vs_reading_disagreements"] == deny["sampled"]["lean_vs_reading_disagreements"] == []
 
 
-@pytest.mark.skipif(not check.BINARY.exists(), reason="ve_risk_route is not built")
+@pytest.mark.skipif(not check.SERVICE.exists(), reason="the Lean service is not built")
 def test_rerun_equals_the_committed_results():
     results = check.compute()
     results["comparison"] = check.compare(results, KEY)
@@ -273,9 +273,8 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_a
     (docs/spec/norm-defaults.md 3.3, integration gap). Python and Lean's risk route both reject the
     switched environment, so the case keeps v2's default and README says why. When this test fails,
     the combination exists: switch `permitted` to `unspecified` and re-run."""
-    import subprocess
+    from tests import lean_routes
     from ve.errors import UnsupportedProfile
-    from ve.risk import _BINARY
     env = cases.environment()
     assert {"alternatives@0", "risk@0"} <= set(env["profiles"])
     switched = json.loads(json.dumps(env))
@@ -287,11 +286,8 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_a
     without_risk["profiles"] = [p for p in switched["profiles"] if p != "risk@0"]
     with pytest.raises(UnsupportedProfile, match="alternatives@0 with norm-defaults@0 is not implemented"):
         Environment(without_risk)
-    if not _BINARY.is_file():
-        pytest.skip("ve_risk_route is not built")
-    done = subprocess.run([str(_BINARY), "-"], capture_output=True, text=True, timeout=120, input=json.dumps(
-        [{"id": "switched", "kind": "risk-elaborate", "environment": switched, "norms": []}]))
-    (row,) = json.loads(done.stdout)
+    (row,) = lean_routes.rows("risk", [{"id": "switched", "kind": "risk-elaborate", "environment": switched,
+                                        "norms": []}])
     assert (row["status"], row["error"]) == ("error", "UnsupportedProfile: Unsupported profile norm-defaults@0")
     readme = (HERE / "README.md").read_text()
     assert "### Why the default is not `unspecified`" in readme

@@ -564,24 +564,37 @@ def test_discourse_wording(tmp_path):
         check_document(_write(tmp_path, front, source))
 
 
+def _route_answers(monkeypatch, answer):
+    """The Lean discourse route (service mode `discourse`) answers `answer`: its rows, or an exception."""
+    from ve.backends import relay
+
+    def rows(mode, cases, **_):
+        assert mode == "discourse" and len(cases) == 1
+        if isinstance(answer, BaseException):
+            raise answer
+        return answer
+    monkeypatch.setattr(relay, "rows", rows)
+
+
 def test_lean_unavailable_is_never_a_python_verdict(tmp_path, monkeypatch):
     """discourse-authority-directive 1: a `@2` document's admission is the Lean route's. Without an
-    answer from it (no executable, a crash, output that is not one well-formed answer to the case)
+    answer from it (no service, a crash, a row that is not one well-formed answer to the case)
     the result is `CheckerUnavailable`, never a Python-only CHECKED or rejection; a `@1` document
     never asks it."""
-    from ve.backends.lean_service import CheckerUnavailable
+    from ve.backends import relay
+    from ve.backends.lean_service import CheckerUnavailable, LeanServicePool
     source, front = _sample(tmp_path)
     path = _write(tmp_path, front, source)
     assert check_document(path)["references"][0]["status"] == "resolved"
-    broken = tmp_path / "route.sh"
-    for executable, body in [(tmp_path / "missing", None), ("/bin/false", None), ("/bin/cat", None),
-                             (broken, '[{"id": "python-admission", "status": "ok", "admitted": true}]'),
-                             (broken, '[{"id": "other", "status": "error", "error": "InvalidInput: x"}]')]:
-        if body is not None:
-            broken.write_text(f"#!/bin/sh\ncat > /dev/null\necho '{body}'\nexit 1\n" if "error" in body
-                              else f"#!/bin/sh\ncat > /dev/null\necho '{body}'\n")
-            broken.chmod(0o755)
-        monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(executable))
+    with monkeypatch.context() as missing:
+        missing.setattr(relay, "_pool", LeanServicePool(size=1, executable=tmp_path / "missing"))
+        for call in (load_document, check_document, render_document):
+            with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
+                call(path)
+    for answer in [CheckerUnavailable("CheckerUnavailable: the service crashed"),
+                   [{"id": "python-admission", "status": "ok", "admitted": True}],
+                   [{"id": "other", "status": "error", "error": "InvalidInput: x"}]]:
+        _route_answers(monkeypatch, answer)
         for call in (load_document, check_document, render_document):
             with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
                 call(path)
@@ -603,15 +616,11 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
         check_document(retargeted)
     answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "r" * 64,
               "references": admitted["references"], "statuses": {"u1": "CHECKED", "u2": "OPEN"}}
-    route = tmp_path / "route.sh"
-    route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps([answer]) + "'\n")
-    route.chmod(0o755)
-    monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(route))
+    _route_answers(monkeypatch, [answer])
     result = check_document(retargeted)
     assert result["report_id"] == "r" * 64 and result["discourse_hints"] == ["InaccessibleTarget: m1: alice"]
     assert result["coverage"]["bytes_by_status"] == {"CHECKED": 17, "OPEN": 16}
-    route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps(
-        [{"id": "python-admission", "status": "error", "error": "StaleTarget: m1"}]) + "'\nexit 1\n")
+    _route_answers(monkeypatch, [{"id": "python-admission", "status": "error", "error": "StaleTarget: m1"}])
     front["discourse"]["mentions"][0]["target"]["name"] = "api"
     with pytest.raises(VEError, match="^StaleTarget: m1$") as caught:
         check_document(_write(tmp_path, front, source))

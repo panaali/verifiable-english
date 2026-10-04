@@ -248,15 +248,15 @@ def test_runner_errors(lean):
 
 
 def test_diagnostic_only_import_rule():
-    """Spec 7.3 and fixture L14: only the engine's own modules, `DiagnoseMain`, the service's diagnose mode
-    `VE.Service.Diagnose` and (the engine only) `VE.Audit` may import `VE.WireContract.*`; the tree keeps the
-    rule."""
+    """Spec 7.3 and fixture L14: only the engine's own modules, the service's diagnose mode `VE.Service.Diagnose`
+    (the one-shot root `DiagnoseMain` before lean-first batch 1) and (the engine only) `VE.Audit` may import
+    `VE.WireContract.*`; the tree keeps the rule."""
     assert diagnostic_only_violation("VE.SoftNorms.Run", "VE.WireContract.Engine")
     assert diagnostic_only_violation("VE", "VE.WireContract.Table")
     assert diagnostic_only_violation("VE.Audit", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("Main", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("VE.Audit", "VE.WireContract.Engine") is None
-    assert diagnostic_only_violation("DiagnoseMain", "VE.WireContract.Diagnose") is None
+    assert diagnostic_only_violation("DiagnoseMain", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("VE.Service.Diagnose", "VE.WireContract.Diagnose") is None
     assert diagnostic_only_violation("VE.Service.Protocol", "VE.WireContract.Diagnose")
     assert diagnostic_only_violation("VE.WireContract.Diagnose", "VE.WireContract.Engine") is None

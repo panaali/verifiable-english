@@ -14,6 +14,8 @@ import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests import lean_routes
 from subprocesses import HANG_TIMEOUT
 
 from tools import rust_build
@@ -28,16 +30,16 @@ from ve.norms import (NormDocument, _bind, _instantiate, check_conflict,
 from tests.test_norms import environment, model, obligation, permission, rule
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_norms_route"
+LEAN = "ve_norms_route"  # its service mode, through tests/lean_routes.py
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust/target/release/ve")))
 
 
 @pytest.fixture(scope="module")
 def lean_executable():
     if os.environ.get("VE_LEAN_PREBUILT"):
-        assert LEAN.is_file(), f"gate Lean build missing: {LEAN}"
+        assert lean_routes.SERVICE.exists(), f"gate Lean build missing: {LEAN}"
         return LEAN
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the W1 wire gate")

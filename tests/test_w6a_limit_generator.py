@@ -21,6 +21,8 @@ import random
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.p0 import envelope
 from subprocesses import run_cpu_bounded
 from ve import Environment, FiniteModel, evaluate
@@ -33,11 +35,11 @@ from ve.search import check_countermodel
 from ve.units import elaborate_quantity, erased_environment, quantity_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
-QUANTITY = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+QUANTITY = "ve_quantity"  # its service mode, through tests/lean_routes.py
 ROUTE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
 SERVICE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_service"
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
-pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
+pytestmark = pytest.mark.skipif(not (lean_routes.SERVICE.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
 SEEDS = range(3)
 CPU = 60  # CPU seconds per backend per batch; each batch spends under 10 alone
@@ -272,6 +274,10 @@ def meter_python(monkeypatch):
 
 
 def run(command, cases):
+    if command[0] == str(QUANTITY):
+        results, _ = lean_routes.bounded(QUANTITY, cases, CPU)
+        assert len(results) == len(cases)
+        return results
     completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
     assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
     assert cpu < CPU, (command[0], cpu)

@@ -12,25 +12,25 @@ records cite).
 from __future__ import annotations
 
 import json
-import subprocess
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
+
+from tests import lean_routes
 
 from conformance.risk import (D17_ALTERNATIVES, D17_CITES, D17_QUANTITIES, Log, agent_ops, agent_ops_rules,
                               cell_env, condition, dec, decision_17, estimate, gt, log_l17, q, record, rule,
                               statement)
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_risk_route"
+BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
 
-pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 
 
 def run(cases):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True,
-                         check=False, timeout=600)
+    out = lean_routes.completed(BIN, cases)
     assert out.returncode in (0, 1), out.stderr
     rows = json.loads(out.stdout)
     assert len(rows) == len(cases)

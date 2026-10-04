@@ -1,8 +1,7 @@
 import VE.SpeechActs.Wire
 import VE.Norms.Run
 
-/-! The `ve_speech_acts_route` executable (docs/spec/speech-acts.md 8.6), invoked
-as `lean/.lake/build/bin/ve_speech_acts_route <cases.json|->`. Each case is
+/-! The `ve_service` mode `speech-acts` (docs/spec/speech-acts.md 8.6), formerly the one-shot `ve_speech_acts_route`. Each case is
 `{"id", "kind", "environment", "document", ...}`; `document` holds the units of
 3.2 and the derived `queries` records. Every formula is regenerated from the
 decoded document (`Wire.decodeDocument`); nothing on the wire supplies
@@ -542,25 +541,6 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]
   else VE.Norms.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_speech_acts_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 /-! ## Soundness of the replays -/
 

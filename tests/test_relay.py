@@ -44,8 +44,10 @@ class _Pool:
 
     def run_bound(self, mode, cases, *, timeout=None):
         self.calls.append((mode, cases, timeout))
+        # `row_code` is a code the runner's own row carries (the soft-norms@0 contract's).
         return [{"index": i, "digest": "0" * 64,
-                 "result": {k: v for k, v in row.items() if k not in ("code", "generator")},
+                 "result": {**{k: v for k, v in row.items() if k not in ("code", "generator", "row_code")},
+                            **({"code": row["row_code"]} if "row_code" in row else {})},
                  **{k: row[k] for k in ("code", "generator") if k in row}} for i, row in enumerate(self.rows)]
 
     def close(self):
@@ -96,6 +98,52 @@ def test_rows_are_returned_in_order_and_unchanged(monkeypatch):
     monkeypatch.setattr(relay, "_pool", pool)
     assert relay.decide("evaluate", [{"id": "0"}], timeout=7.0) == rows
     assert pool.calls == [("evaluate", [{"id": "0"}], 7.0)]
+
+
+def test_route_rows_keep_rejections_as_rows(monkeypatch):
+    """`rows` (batch 1) returns every row, rejections included, for a caller that reads them itself."""
+    rows = [{"id": "a", "status": "ok", "value": 1},
+            {"id": "b", "status": "error", "error": "UnsupportedProfile: x", "code": "UnsupportedProfile"}]
+    pool = _Pool(rows)
+    monkeypatch.setattr(relay, "_pool", pool)
+    assert relay.rows("rights", [{"id": "a"}, {"id": "b"}], timeout=3.0) == [
+        {"id": "a", "status": "ok", "value": 1}, {"id": "b", "status": "error", "error": "UnsupportedProfile: x"}]
+    assert pool.calls == [("rights", [{"id": "a"}, {"id": "b"}], 3.0)]
+
+
+def test_a_route_rows_own_contract_code_is_the_errors_code(monkeypatch):
+    """A soft route rejection carries the soft-norms@0 contract code in its row; the relayed error keeps it
+    as its code (as the one-shot transport did), its class from the service's public code, its text Lean's."""
+    text = "UnsupportedProfile: Unsupported profile norm-defaults@0"
+    monkeypatch.setattr(relay, "_pool", _Pool([{"id": "s", "status": "error", "error": text,
+                                                 "code": "UnsupportedProfile",
+                                                 "row_code": "SOFT_UNSUPPORTED_PROFILE"}]))
+    with pytest.raises(UnsupportedProfile) as caught:
+        relay.decide("soft-norms", [{"id": "s"}])
+    assert caught.value.code == "SOFT_UNSUPPORTED_PROFILE" and caught.value.message == text
+
+
+ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval",
+               "quantity", "norm-defaults", "discourse", "readings-route", "diagnose")
+
+
+@needs_service
+@pytest.mark.parametrize("mode", ROUTE_MODES)
+def test_every_route_mode_answers_through_the_service(mode):
+    """Each one-shot route is a service mode (batch 1): a case it cannot read is a rejection row of the
+    mode's schema, bound to the case, never an operational failure."""
+    [row] = relay.rows(mode, [{"id": "x", "kind": "no-such-kind", "unit": "soft-norms@0"}])
+    assert row["status"] == "error" and type(row["error"]) is str, row
+
+
+@needs_service
+def test_risk_eval_reads_its_cases_with_leans_own_json_parser():
+    """`risk-eval` reads its batch as `ve_risk_eval` did, with Lean.Json.parse: a null the restricted wire
+    decoder refuses (the whole batch, for every other mode) is that case's rejection row here."""
+    [row] = relay.rows("risk-eval", [{"environment": None, "quantities": [], "conditions": []}])
+    assert row["status"] == "error", row
+    with pytest.raises(VEError, match="restricted JSON"):
+        relay.rows("risk", [{"id": "x", "kind": "risk-elaborate", "environment": None}])
 
 
 @needs_service

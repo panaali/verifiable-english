@@ -1352,8 +1352,7 @@ def test_signed_choice_source_null_is_one_diagnostic(lean):
             document, case = _choice_case(env, value, kind, content)
             assert _outcome(lambda: core(env, document)) == "InvalidInput: speech wording"
             if value is None:
-                completed = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), capture_output=True,
-                                           text=True, timeout=60)
+                completed = lean_routes.completed(LEAN, [case])
                 assert completed.returncode != 0 and "expected restricted JSON value" in completed.stderr
             else:
                 assert _lean_outcome(run1(case)) == "InvalidInput: speech wording"
