@@ -191,7 +191,7 @@ def lean_admission(raw, directory):
     returncode, stdout, stderr = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
     try:
         rows = json.loads(stdout)
-    except ValueError:
+    except (ValueError, RecursionError):  # RecursionError: nesting deeper than the C stack
         rows = None
     row = rows[0] if type(rows) is list and len(rows) == 1 and type(rows[0]) is dict else {}
     status = row.get("status")
@@ -262,17 +262,31 @@ def _decoded(env, data, member):
         raise _foreign(member) from None
 
 
+def _right_nested(tag, formulas):
+    """`[tag, f1, [tag, f2, ... fn]]`, built from the right without recursion: a joint set has as
+    many conjuncts as open sets and as many disjuncts as choices, more than Python's call depth."""
+    out = formulas[-1]
+    for formula in reversed(formulas[:-1]):
+        out = [tag, formula, out]
+    return out
+
+
 def _conj(formulas):
     """Joint.lean `conj`, on the wire: the empty conjunction is top, one formula is itself, else
     right-nested."""
-    if not formulas:
-        return ["top"]
-    return formulas[0] if len(formulas) == 1 else ["and", formulas[0], _conj(formulas[1:])]
+    return _right_nested("and", formulas) if formulas else ["top"]
 
 
 def _disj(formulas):
     """Joint.lean `disj`, on the wire, over the nonempty list of a completed joint set."""
-    return formulas[0] if len(formulas) == 1 else ["or", formulas[0], _disj(formulas[1:])]
+    return _right_nested("or", formulas)
+
+
+def _keys(obj, expected, member):
+    """A JSON object of the answer keyed by exactly the `expected` ids: membership, never order (Lean
+    emits an object's keys in lexical order, not the document's)."""
+    if set(obj) != set(expected):
+        raise _foreign(member)
 
 
 def _bind_references(block, references):
@@ -319,15 +333,19 @@ def _bind_joint(doc, lean, open_sets):
     env = doc["environment"]
     readings = [[formula_to_data(env, _decoded(env, r["content"], "reading sets")) for r in rs["readings"]]
                 for rs in open_sets]
-    if lean["joint_formula"] != _disj([_conj([readings[k][i] for k, i in enumerate(vector)]) for vector in vectors]):
+    try:
+        same = lean["joint_formula"] == _disj([_conj([readings[k][i] for k, i in enumerate(vector)])
+                                               for vector in vectors])
+    except RecursionError:  # deeper than the C stack compares: no answer Python can read
+        same = False
+    if not same:
         raise _foreign("joint formula")
 
 
 def _bind_answer(doc, block, lean, open_sets):
     """Lean's answer, bound to the loaded document (see above)."""
     units = [u["id"] for u in doc["units"]]
-    if list(lean["statuses"]) != units:
-        raise _foreign("statuses")
+    _keys(lean["statuses"], units, "statuses")
     if not _REPORT_ID.match(lean["report_id"]):
         raise _foreign("report id")
     _bind_references(block, lean["references"])
@@ -340,8 +358,8 @@ def _bind_answer(doc, block, lean, open_sets):
     for formula in lean["bound"].values():
         _decoded(doc["environment"], formula, "bound")
     claims = block.get("validity", []) if type(block) is dict else []
-    if (list(lean["validity"]) != [claim["unit"] for claim in claims]
-            or not all(type(v) is str and _VERDICT.match(v) for v in lean["validity"].values())):
+    _keys(lean["validity"], [claim["unit"] for claim in claims], "validity")
+    if not all(type(v) is str and _VERDICT.match(v) for v in lean["validity"].values()):
         raise _foreign("validity")
     _bind_joint(doc, lean, open_sets)
 
