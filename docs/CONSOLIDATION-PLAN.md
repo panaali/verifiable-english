@@ -635,6 +635,8 @@ step, the declarations it removes, ties or reclassifies (module globs and name p
 from the step's text), and `python3 tools/trust_map.py --ledger` counts their trusted lines (K, S
 and untied [V]) under the reviewed side table, crediting each declaration to the first step that
 names it. Lines the step names that are already untrusted (C, P, T, [R], [I], tied) earn nothing.
+It validates the side table exactly as `--check` does (one shared pass and trust rule) and
+prints no ledger while any classification or tie problem stands.
 `Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
 claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
 Measured on the table after the consolidate-b1 review (K 978, S 7,565, trusted 25,650 of

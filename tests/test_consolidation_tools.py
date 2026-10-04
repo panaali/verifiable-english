@@ -259,6 +259,88 @@ def test_ledger_credits_each_declaration_once(tmp_path):
                         "names no declaration"]
 
 
+# Every kind of validation problem `walk` reports, as (table, statement dump, predicates, drop the
+# predicate list). Review B (looprecheck 1): `--ledger` discarded these and exited 0.
+PROBLEM_TREES = {
+    "predicate classed C": ({"C": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper",), False),
+    "predicate classed D[R]": ({"D[R]": ["VE.Demo.helper"], "S": ["VE.Demo.Meaning"]}, "", ("VE.Demo.helper",), False),
+    "tie not mentioned": (TIED, entry("True", "VE.Demo.Meaning"), (), False),
+    "tie to nothing trusted": (TIED, entry("…", "VE.Demo.decodeThing"), (), False),
+    "tying theorem missing": (TIED, "", (), False),
+    "unnamed tie": ({"D[V]": [{"name": "instance:Inhabited Nat", "tied": ["VE.Demo.decodeThing_empty"]}],
+                     "S": ["VE.Demo.Meaning"]}, entry("…", "VE.Demo.Meaning instance:Inhabited Nat"), (), False),
+    "stale table entry": ({"D[V]": ["VE.Demo.gone"], "S": ["VE.Demo.Meaning"]}, "", (), False),
+    "predicate list missing": ({"S": ["VE.Demo.Meaning"]}, "", (), True),
+}
+VALID_TREES = {
+    "tied": (TIED, entry("…", "VE.Demo.Meaning VE.Demo.decodeThing"), (), False),
+    "unclassified": ({"S": ["VE.Demo.Meaning"]}, "", (), False),
+    "predicate tied": ({"C": [{"name": "VE.Demo.helper", "tied": ["VE.Demo.decodeThing_empty"]}], "S": ["VE.Demo.Meaning"]},
+                       entry("…", "VE.Demo.Meaning VE.Demo.helper"), ("VE.Demo.helper",), False),
+}
+WHOLE_TREE = {"steps": [{"step": "all", "title": "", "days": 1, "risk": 1, "removed": [{"module": "VE/*"}]}]}
+
+
+def problem_tree(root: Path, tree: tuple) -> None:
+    table, dump, predicates, drop = tree
+    write_tree(root, table, dump, predicates)
+    if drop:
+        (root / "lean/predicates.txt").unlink()
+    (root / "tools/consolidation-ledger.json").write_text(json.dumps(WHOLE_TREE))
+
+
+@pytest.mark.parametrize("name", [*PROBLEM_TREES, *VALID_TREES])
+def test_ledger_and_measure_share_validation_and_trust(tmp_path, name):
+    """One pass (`walk`) and one trust rule: the ledger reports every problem `measure` reports, and
+    a step naming the whole tree credits exactly the trusted lines `measure` counts (a declaration
+    whose class fails validation is trusted, failing closed)."""
+    problem_tree(tmp_path, {**PROBLEM_TREES, **VALID_TREES}[name])
+    tables = (tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    files, measured = trust_map.measure(tmp_path, *tables)
+    (row,), problems = trust_map.ledger(tmp_path, tmp_path / "tools/consolidation-ledger.json", *tables)
+    assert problems == measured and (problems != []) is (name in PROBLEM_TREES)
+    assert row["removed"] == files["VE/Demo.lean"]["trusted"]
+
+
+@pytest.mark.parametrize("name", PROBLEM_TREES)
+@pytest.mark.parametrize("flags", [[], ["--check"], ["--write"], ["--ledger"]])
+def test_no_entry_point_succeeds_on_a_validation_problem(tmp_path, capsys, name, flags):
+    problem_tree(tmp_path, PROBLEM_TREES[name])
+    baseline = tmp_path / "docs/trust-baseline.json"
+    assert trust_map.main([*flags, "--root", str(tmp_path)]) == 1
+    assert not baseline.exists()
+    out, err = capsys.readouterr()
+    assert err.strip()
+    if flags == ["--ledger"]:
+        assert "| Step |" not in out and "the ledger is not reported" in err
+
+
+def test_ledger_rejects_a_misclassified_kernel_predicate(tmp_path, capsys):
+    """Review B (looprecheck 1): with the committed `Closure/Syntax.lean`, `Formula.WellFormed`
+    classed C passed `--ledger` with zero trusted lines and exit 0."""
+    (tmp_path / "lean/VE/Closure").mkdir(parents=True)
+    shutil.copy(ROOT / "lean/VE/Closure/Syntax.lean", tmp_path / "lean/VE/Closure/Syntax.lean")
+    module = "VE/Closure/Syntax.lean"
+    table = {name: "K" for name in trust_map.load_table()[module]}
+    table["VE.Closure.Formula.WellFormed"] = "C"
+    by_class: dict[str, list] = {}
+    for name, cls in table.items():
+        by_class.setdefault(cls, []).append(name)
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "tools/trust-classes.json").write_text(json.dumps({"modules": {module: by_class}}))
+    (tmp_path / "lean/statements.txt").write_text("")
+    (tmp_path / "lean/predicates.txt").write_text("-- header\nVE.Closure.Formula.WellFormed\n")
+    (tmp_path / "tools/consolidation-ledger.json").write_text(json.dumps({"steps": [
+        {"step": "1", "title": "", "days": 1, "risk": 1,
+         "removed": [{"module": module, "names": r"\.Formula\.WellFormed$"}]}]}))
+    (row,), problems = trust_map.ledger(tmp_path, tmp_path / "tools/consolidation-ledger.json",
+                                        tmp_path / "tools/trust-classes.json", tmp_path / "lean/statements.txt")
+    assert len(problems) == 1 and "VE.Closure.Formula.WellFormed: a predicate cannot be C" in problems[0]
+    assert row["removed"] > 0 and row["removed_untrusted"] == 0
+    assert trust_map.main(["--ledger", "--root", str(tmp_path)]) == 1
+    assert "a predicate cannot be C" in capsys.readouterr().err
+
+
 def test_committed_ledger_names_real_declarations():
     rows, problems = trust_map.ledger()
     assert problems == []
