@@ -38,7 +38,11 @@ mig3's fine classes (2.5: the path walk), then the plan's change class:
 * ``order``: both sides raised and the codes differ (another fault is reported first);
 * ``verdict``: anything else (verdicts, identities, counts, structure, a missing record).
 
-``compare`` refuses evidence that cannot show preservation (exit 2): for every corpus and authority
+``compare`` refuses evidence that cannot show preservation (exit 2). Before it uses a record, every
+line must be one the recorder writes (`record_problem`, the schema `tools/lean_first_schema/record.json`:
+each corpus's fields, authorities and sources, each operation's outcome, a rejection's complete
+diagnostic), and the records of one corpus file must name one digest; an empty, partial or retyped
+outcome is no acceptance. Then, for every corpus and authority
 it checks (``--corpus``, ``--authority``, default all; the pilots have the one authority
 ``default``), each side must hold a record of every case of the corpus as this checkout defines it
 (`expected_cases`: the conformance files' case ids, the probe matrix's frozen baseline, the pilot
@@ -64,6 +68,7 @@ import argparse
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import dataclasses
+from functools import cache
 import hashlib
 import json
 import os
@@ -138,8 +143,12 @@ def probe_records(root: Path, authority: str):
         dispatch.observers.append(stage2_parity._observe)
         probe.outcome = stage2_parity._outcome
         probe.graph_baselines = stage2_parity._backend_graph_baselines
-    data = stage2_parity._generate(authority)
-    source = digest(root / "tests/probe_matrix.py")
+    yield from probe_rows(stage2_parity._generate(authority), digest(root / "tests/probe_matrix.py"))
+
+
+def probe_rows(data: dict, source: str):
+    """The records of the probe matrix's results `data` (cells and named probes, the form of
+    `PROBE_BASELINE`), read from the file of digest `source`."""
     for row in data["cells"]:
         yield {"case": probe_case(row), "op": row["operation"], "source_sha256": source,
                "outcome": {"cell": row["cell"], "status": row["status"], "output": public(row["output"])}}
@@ -246,18 +255,22 @@ def pilot_records(root: Path, scratch: Path, workers: int):
         name, blob, text = item
         path = scratch / f"{blob}.ve.md"
         path.write_bytes(text)
-        try:
-            done = subprocess.run([sys.executable, "-m", "ve", "document", "check", str(path)], cwd=root,
-                                  env=env, capture_output=True, timeout=PILOT_TIMEOUT)
-            result = {"exit": done.returncode, "stdout": done.stdout.decode("utf-8", "replace"),
-                      "stderr": done.stderr.decode("utf-8", "replace").strip().splitlines()[-1:]}
-        except subprocess.TimeoutExpired:
-            result = {"timeout": PILOT_TIMEOUT}
         return {"case": name, "op": "document_check", "source_sha256": blob, "authority": "default",
-                "outcome": result}
+                "outcome": pilot_check(root, path, env)}
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         yield from pool.map(check, documents)
+
+
+def pilot_check(root: Path, path: Path, env: dict) -> dict:
+    """The outcome of `ve document check` of `path` in the checkout `root`."""
+    try:
+        done = subprocess.run([sys.executable, "-m", "ve", "document", "check", str(path)], cwd=root,
+                              env=env, capture_output=True, timeout=PILOT_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return {"timeout": PILOT_TIMEOUT}
+    return {"exit": done.returncode, "stdout": done.stdout.decode("utf-8", "replace"),
+            "stderr": done.stderr.decode("utf-8", "replace").strip().splitlines()[-1:]}
 
 
 def child(args) -> int:
@@ -335,17 +348,80 @@ def _same(a, b) -> bool:
     from ve.backends.service_schema import same_json  # the recorded checkout's `ve` may lack it
     return same_json(a, b)
 
+SCHEMA = ROOT / "tools/lean_first_schema"
+
+
+@cache
+def _record_schema():
+    from ve.backends.service_schema import Compiler
+    return Compiler(SCHEMA).ref("record.json", "#/record")
+
+
+def _cells(row: dict):
+    """The probe outcomes a record holds (`probe_rows`): a cell, a feature probe, a boundary's pair."""
+    outcome = row["outcome"]
+    if row["corpus"] != "probe" or row["op"] == "graph_probes":
+        return []
+    if row["op"] == "budget_boundaries":
+        return [outcome[side] for side in ("at", "over", "under") if side in outcome]
+    return [outcome]
+
+
+def record_problem(row) -> str | None:
+    """Why `row` is not a record `record` writes, or None: the schema `lean_first_schema/record.json`
+    (fields, their types, each corpus's authorities and sources, each operation's outcome, a
+    rejection's complete diagnostic), then that a rejection cell's status is its error's code."""
+    from ve.backends.service_schema import Context, Invalid
+    try:
+        _record_schema()[0](row, Context(row), {})
+    except Invalid as exc:
+        return str(exc)
+    except RecursionError:
+        return "nesting exceeds the reader's depth"
+    for cell in _cells(row):
+        if cell["cell"] != "S" and cell["status"] != cell["output"]["code"]:
+            return "a rejection cell's status is not its error's code"
+    return None
+
+
+def _source_group(key: tuple) -> tuple:
+    """The records that read one corpus file: a conformance file, the probe matrix, a pilot document."""
+    corpus, _, case, _ = key
+    return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,)}.get(corpus, (corpus, case))
+
+
+def _unique_pairs(pairs):
+    seen = {}
+    for name, value in pairs:
+        if name in seen:
+            raise ValueError(f"duplicate field {name!r}")
+        seen[name] = value
+    return seen
+
+
 def load(path: str) -> dict[tuple, dict]:
-    records = {}
+    """The records of the recording at `path`, each checked (`record_problem`) before any is used: a
+    line the recorder cannot write, a duplicate record, or two records of one corpus file with
+    different digests (mixed identity) is `Unusable`."""
+    records, sources = {}, {}
     if not Path(path).is_file():
         raise Unusable(f"{path}: no recording")
-    for line in Path(path).read_text().split("\n"):
+    for number, line in enumerate(Path(path).read_text().split("\n"), 1):
         if not line:
             continue
-        row = json.loads(line)
+        try:
+            row = json.loads(line, object_pairs_hook=_unique_pairs)
+        except ValueError as exc:
+            raise Unusable(f"{path}: line {number} is not JSON ({exc})") from None
+        problem = record_problem(row)
+        if problem:
+            raise Unusable(f"{path}: line {number} is no record the recorder writes: {problem}")
         key = (row["corpus"], row["authority"], row["case"], row["op"])
         if key in records:
             raise Unusable(f"{path}: duplicate record {key}")
+        source = sources.setdefault(_source_group(key), row["source_sha256"])
+        if source != row["source_sha256"]:
+            raise Unusable(f"{path}: line {number} reads {'/'.join(_source_group(key))} with another digest")
         records[key] = row
     return records
 

@@ -1,6 +1,7 @@
 """`tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2)."""
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -8,19 +9,30 @@ import re
 import pytest
 
 from tools import lean_first_diff as diff
+from ve.backends.service_schema import same_json
 from ve.errors import CheckerUnavailable, InvalidModel, UnknownSymbol
 
 ROOT = Path(__file__).resolve().parents[1]
-OK = {"returned": {"values": [True], "environment_id": "e"}}
+SOURCE, OTHER_SOURCE = "0" * 64, "1" * 64
+ENV_ID, OTHER_ENV_ID = "e" * 64, "f" * 64
+# The records are of the conformance corpus's `environment` operation unless named otherwise.
+OK = {"returned": {"environment_id": ENV_ID, "record": {"values": [True]}}}
 REJECTED = {"raised": {"code": "UnknownSymbol", "message": "UnknownSymbol: Unknown predicate 'p'"}}
+MODEL_OK = {"returned": {"model_id": ENV_ID, "record": {}}}
+GROUP = ("conformance", "python")
 
 
-def _write(path: Path, outcomes: dict, source="s", authority="python") -> str:
-    """One record per case; a case `name#op` is case `name` of operation `op`."""
-    path.write_text("".join(json.dumps({"corpus": "c", "authority": authority, "case": case.split("#")[0],
-                                        "op": (case.split("#") + ["op"])[1], "source_sha256": source,
-                                        "outcome": outcome}) + "\n"
-                            for case, outcome in outcomes.items()))
+def _write(path: Path, outcomes: dict, source=SOURCE, authority="python", corpus="conformance") -> str:
+    """One record per case; a case `name#op` is case `name` of operation `op` (default `environment`,
+    a pilot's `document_check`)."""
+    def record(case, outcome):
+        name, _, op = case.partition("#")
+        if corpus == "pilots":
+            return {"corpus": corpus, "authority": "default", "case": name, "op": "document_check",
+                    "source_sha256": hashlib.sha1(name.encode()).hexdigest(), "outcome": outcome}
+        return {"corpus": corpus, "authority": authority, "case": f"evaluation/{name}", "op": op or "environment",
+                "source_sha256": source, "outcome": outcome}
+    path.write_text("".join(json.dumps(record(case, outcome)) + "\n" for case, outcome in outcomes.items()))
     return str(path)
 
 
@@ -28,23 +40,37 @@ def _write(path: Path, outcomes: dict, source="s", authority="python") -> str:
 CONTROLS = {"control-accepted": OK, "control-rejected": REJECTED}
 
 
-def _expected(expected: dict) -> dict:
-    """`expected_cases`' form of {group: cases}: a set names cases recorded through `op` alone; a
-    dict gives each case its operations' function."""
-    return {group: cases if isinstance(cases, dict) else {case: diff.only("op") for case in cases}
+def _cases(cases, corpus="conformance"):
+    return {(f"evaluation/{case}" if corpus == "conformance" else case): ops for case, ops in cases.items()}
+
+
+def _expected(expected: dict, corpus="conformance") -> dict:
+    """`expected_cases`' form of {group: cases}: a set names cases recorded through their one operation
+    (`environment`, a pilot's `document_check`); a dict gives each case its operations' function."""
+    op = "document_check" if corpus == "pilots" else "environment"
+    return {group: _cases(cases if isinstance(cases, dict) else {case: diff.only(op) for case in cases}, corpus)
             for group, cases in expected.items()}
 
 
-def _compare(tmp_path, base, head, delta=None, base_source="s", head_source="s", expected=None, controls=True):
+def _compare(tmp_path, base, head, delta=None, base_source=SOURCE, head_source=SOURCE, expected=None,
+             controls=True, corpus="conformance"):
+    group = GROUP if corpus == "conformance" else ("pilots", "default")
     if controls:
         base, head = {**CONTROLS, **base}, {**CONTROLS, **head}
     if expected is None:
-        expected = {("c", "python"): {case.split("#")[0] for case in [*base, *head]}}
+        expected = {group: {case.split("#")[0] for case in [*base, *head]}}
     elif controls:
-        expected = {group: {**_expected({group: cases})[group], **{case: diff.only("op") for case in CONTROLS}}
-                    for group, cases in expected.items()}
-    return diff.compare(_write(tmp_path / "base.jsonl", base, base_source),
-                        _write(tmp_path / "head.jsonl", head, head_source), delta, expected=_expected(expected))
+        expected = {key: {**{case: diff.only("environment") for case in CONTROLS},
+                          **(cases if isinstance(cases, dict) else {case: diff.only("environment") for case in cases})}
+                    for key, cases in expected.items()}
+    return diff.compare(_write(tmp_path / "base.jsonl", base, base_source, corpus=corpus),
+                        _write(tmp_path / "head.jsonl", head, head_source, corpus=corpus), delta,
+                        expected=_expected(expected, corpus))
+
+
+def _entry(case, **fields):
+    return {"corpus": "conformance", "authority": "python", "case": f"evaluation/{case}", "op": "environment",
+            **fields}
 
 
 def test_identical_runs_have_no_difference(tmp_path):
@@ -53,9 +79,9 @@ def test_identical_runs_have_no_difference(tmp_path):
 
 
 @pytest.mark.parametrize("head, klass", [
-    ({"returned": {"values": [False], "environment_id": "e"}}, "verdict"),
-    ({"returned": {"values": [True], "environment_id": "f"}}, "verdict"),
-    ({"returned": {"values": [True]}}, "verdict"),
+    ({"returned": {"environment_id": ENV_ID, "record": {"values": [False]}}}, "verdict"),
+    ({"returned": {"environment_id": OTHER_ENV_ID, "record": {"values": [True]}}}, "verdict"),
+    ({"returned": {"environment_id": ENV_ID, "record": {}}}, "verdict"),
     ({"raised": {"code": "CheckerUnavailable", "message": "CheckerUnavailable: down"}}, "availability"),
     (REJECTED, "verdict"),
 ])
@@ -77,57 +103,58 @@ def test_only_signed_wording_pairs_and_records_are_accepted(tmp_path):
     assert _compare(tmp_path, {"a": reworded}, {"a": REJECTED}, {"wording": [pair]})["unlisted"] == 0
     assert _compare(tmp_path, {"a": reworded}, {"a": REJECTED},
                     {"wording": [{**pair, "head": "other"}]})["unlisted"] == 1
-    changed = {"returned": {"values": [False], "environment_id": "e"}}
-    entry = {"corpus": "c", "authority": "python", "case": "a", "op": "op", "base": OK, "head": changed}
+    changed = {"returned": {"environment_id": ENV_ID, "record": {"values": [False]}}}
+    entry = _entry("a", base=OK, head=changed)
     assert _compare(tmp_path, {"a": OK}, {"a": changed}, {"verdict": [entry]})["unlisted"] == 0
     assert _compare(tmp_path, {"a": OK}, {"a": changed}, {"order": [entry]})["unlisted"] == 1
     assert _compare(tmp_path, {"a": OK}, {"a": changed}, {"verdict": [{**entry, "head": OK}]})["unlisted"] == 1
 
 
 def _after_op(held):
-    """Case `a`'s operations: `op`, then `other` when `op` returned (as `CONFORMANCE_OPS` chains)."""
-    return {"op"} | ({"other"} if "returned" in (held.get("op") or {}) else set())
+    """Case `a`'s operations: `environment`, then `model` when it returned (as `CONFORMANCE_OPS` chains)."""
+    return {"environment"} | ({"model"} if "returned" in (held.get("environment") or {}) else set())
 
 
 def test_a_missing_record_is_a_difference(tmp_path):
     """An operation that runs on one side only, since what it builds on returned there only."""
-    result = _compare(tmp_path, {"a": OK, "a#other": OK}, {"a": REJECTED}, expected={("c", "python"): {"a": _after_op}})
+    result = _compare(tmp_path, {"a": OK, "a#model": MODEL_OK}, {"a": REJECTED}, expected={GROUP: {"a": _after_op}})
     assert result["unlisted"] == 2
     assert [(row["op"], row["class"], row["head"]) for row in result["differences"]] == [
-        ("op", "verdict", REJECTED), ("other", "verdict", None)]
+        ("environment", "verdict", REJECTED), ("model", "verdict", None)]
 
 
 # lf-0 looprecheck1 B1: a recording holds every operation each case requires, not only the case.
 
 @pytest.mark.parametrize("base, head", [
-    ({"a": OK, "a#other": OK}, {"a": OK}),                       # a required operation dropped
+    ({"a": OK, "a#model": MODEL_OK}, {"a": OK}),                 # a required operation dropped
     ({"a": OK}, {"a": OK}),                                      # ... on both sides
-    ({"a": REJECTED, "a#other": OK}, {"a": REJECTED}),           # an operation nothing requires
-    ({"a": OK, "a#other": OK, "a#third": OK}, {"a": OK, "a#other": OK, "a#third": OK}),
+    ({"a": REJECTED, "a#model": MODEL_OK}, {"a": REJECTED}),     # an operation nothing requires
+    ({"a": OK, "a#model": MODEL_OK, "a#canonicalize": {"returned": "x."}},
+     {"a": OK, "a#model": MODEL_OK, "a#canonicalize": {"returned": "x."}}),
 ])
 def test_a_recording_must_hold_exactly_the_operations_of_each_case(tmp_path, base, head):
-    with pytest.raises(diff.Unusable, match="does not hold the c/python operations"):
-        _compare(tmp_path, base, head, expected={("c", "python"): {"a": _after_op}})
+    with pytest.raises(diff.Unusable, match="does not hold the conformance/python operations"):
+        _compare(tmp_path, base, head, expected={GROUP: {"a": _after_op}})
     # A probe or pilot case is recorded through its one operation.
     with pytest.raises(diff.Unusable, match="operations"):
-        _compare(tmp_path, {"a": OK}, {"a": OK}, expected={("c", "python"): {"a": diff.only("cell")}})
+        _compare(tmp_path, {"a": OK}, {"a": OK}, expected={GROUP: {"a": diff.only("parse")}})
 
 
 def test_runs_over_different_corpus_files_are_refused(tmp_path):
     with pytest.raises(diff.Unusable, match="different corpus files"):
-        _compare(tmp_path, {"a": OK}, {"a": OK}, head_source="t")
+        _compare(tmp_path, {"a": OK}, {"a": OK}, head_source=OTHER_SOURCE)
 
 
 # lf-0 review B3: evidence that cannot show preservation gives no verdict.
 
 def test_empty_recordings_are_unusable(tmp_path):
     with pytest.raises(diff.Unusable, match="does not hold"):
-        _compare(tmp_path, {}, {}, expected={("c", "python"): {"a"}}, controls=False)
+        _compare(tmp_path, {}, {}, expected={GROUP: {"a"}}, controls=False)
     with pytest.raises(diff.Unusable, match="no case"):
-        _compare(tmp_path, {}, {}, expected={("c", "python"): set()}, controls=False)
+        _compare(tmp_path, {}, {}, expected={GROUP: set()}, controls=False)
     with pytest.raises(diff.Unusable, match="no recording"):
         diff.compare(str(tmp_path / "absent"), str(tmp_path / "absent"), None,
-                     expected=_expected({("c", "python"): {"a"}}))
+                     expected=_expected({GROUP: {"a"}}))
 
 
 @pytest.mark.parametrize("base, head", [
@@ -137,34 +164,38 @@ def test_empty_recordings_are_unusable(tmp_path):
 ])
 def test_a_recording_must_hold_exactly_the_corpus(tmp_path, base, head):
     with pytest.raises(diff.Unusable, match="does not hold"):
-        _compare(tmp_path, base, head, expected={("c", "python"): {"a", "b"}})
+        _compare(tmp_path, base, head, expected={GROUP: {"a", "b"}})
 
 
 def test_a_missing_authority_is_unusable(tmp_path):
-    with pytest.raises(diff.Unusable, match="c/lean"):
-        _compare(tmp_path, {"a": OK}, {"a": OK}, expected={("c", "python"): {"a"}, ("c", "lean"): {"a"}})
+    with pytest.raises(diff.Unusable, match="conformance/lean"):
+        _compare(tmp_path, {"a": OK}, {"a": OK}, expected={GROUP: {"a"}, ("conformance", "lean"): {"a"}})
 
 
 DOWN = {"raised": {"code": "CheckerUnavailable", "message": "CheckerUnavailable: down"}}
 PILOT_DOWN = {"exit": 5, "stderr": [], "stdout": '{"status": "CheckerUnavailable"}'}
 
 
-@pytest.mark.parametrize("down", [DOWN, PILOT_DOWN, {"timeout": 600}])
-def test_wholly_unavailable_recordings_are_unusable(tmp_path, down):
-    with pytest.raises(diff.Unusable, match="every c/python record is unavailable"):
-        _compare(tmp_path, {"a": down, "b": down}, {"a": down, "b": down}, controls=False)
+@pytest.mark.parametrize("down, corpus", [(DOWN, "conformance"), (PILOT_DOWN, "pilots"), ({"timeout": 600}, "pilots")],
+                         ids=["raised", "pilot-exit", "pilot-timeout"])
+def test_wholly_unavailable_recordings_are_unusable(tmp_path, down, corpus):
+    with pytest.raises(diff.Unusable, match=r"every \w+/\w+ record is unavailable"):
+        _compare(tmp_path, {"a": down, "b": down}, {"a": down, "b": down}, controls=False, corpus=corpus)
 
 
-@pytest.mark.parametrize("constant", [OK, REJECTED, {"exit": 0, "stdout": "{}", "stderr": []},
-                                      {"exit": 1, "stdout": "{}", "stderr": []}])
-def test_constant_answer_recordings_are_unusable(tmp_path, constant):
+@pytest.mark.parametrize("constant, corpus", [(OK, "conformance"), (REJECTED, "conformance"),
+                                              ({"exit": 0, "stdout": "{}", "stderr": []}, "pilots"),
+                                              ({"exit": 1, "stdout": "{}", "stderr": []}, "pilots")],
+                         ids=["accepted", "rejected", "pilot-exit-0", "pilot-exit-1"])
+def test_constant_answer_recordings_are_unusable(tmp_path, constant, corpus):
     """Two recordings of a checker that accepts (or rejects) everything compare equal: no evidence."""
-    with pytest.raises(diff.Unusable, match="every c/python record is"):
-        _compare(tmp_path, {"a": constant, "b": constant}, {"a": constant, "b": constant}, controls=False)
+    with pytest.raises(diff.Unusable, match=r"every \w+/\w+ record is"):
+        _compare(tmp_path, {"a": constant, "b": constant}, {"a": constant, "b": constant}, controls=False,
+                 corpus=corpus)
 
 
 def test_a_record_unavailable_on_both_sides_needs_a_signed_reason(tmp_path):
-    entry = {"corpus": "c", "authority": "python", "case": "b", "op": "op"}
+    entry = _entry("b")
     other = {"raised": {"code": "CheckerUnavailable", "message": "CheckerUnavailable: other"}}
     for head in (DOWN, other):
         result = _compare(tmp_path, {"a": OK, "b": DOWN}, {"a": OK, "b": head})
@@ -201,12 +232,11 @@ def test_expected_cases_come_from_the_corpora():
 
 @pytest.mark.parametrize("old, new", [([True], [1]), ([False], [0]), ([1], [1.0]), ([0], [False])])
 def test_a_type_change_is_a_verdict_difference(tmp_path, old, new):
-    base = {"returned": {"values": old, "environment_id": "e"}}
-    head = {"returned": {"values": new, "environment_id": "e"}}
+    base = {"returned": {"environment_id": ENV_ID, "record": {"values": old}}}
+    head = {"returned": {"environment_id": ENV_ID, "record": {"values": new}}}
     result = _compare(tmp_path, {"a": base}, {"a": head})
     assert [row["class"] for row in result["differences"]] == ["verdict"] and result["unlisted"] == 1
-    entry = {"corpus": "c", "authority": "python", "case": "a", "op": "op",
-             "base": {"returned": {"values": new, "environment_id": "e"}}, "head": head}
+    entry = _entry("a", base={"returned": {"environment_id": ENV_ID, "record": {"values": new}}}, head=head)
     # A listed entry naming the other type does not accept it either.
     assert _compare(tmp_path, {"a": base}, {"a": head}, {"verdict": [entry]})["unlisted"] == 1
     assert _compare(tmp_path, {"a": base}, {"a": head}, {"verdict": [{**entry, "base": base}]})["unlisted"] == 0
@@ -248,3 +278,196 @@ def test_a_message_with_a_line_separator_is_one_record(tmp_path):
     base = {"a": {"raised": {"code": "InvalidInput", "message": "x y\x85z"}}}
     path = _write(tmp_path / "r.jsonl", base)
     assert len(diff.load(path)) == 1
+
+
+# lf-0 fix3 B1: every recording line is checked against the recorder's schema before it is used.
+
+def _recording(tmp_path, name, records) -> str:
+    path = tmp_path / name
+    path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records))
+    return str(path)
+
+
+@pytest.fixture(scope="module")
+def conformance_recording():
+    """A genuine recording of three conformance files under Python, and their expected cases."""
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setenv("VE_AUTHORITY", "python")
+        patch.setattr(diff, "CONFORMANCE", ("validation", "countermodels", "closure"))
+        records = [{"corpus": "conformance", "authority": "python", **r}
+                   for r in diff.conformance_records(ROOT, "python")]
+        expected = diff.expected_cases(ROOT, ("conformance",), ("python",))
+    return records, expected
+
+
+def test_the_fix3_reproducer_empty_outcomes_are_unusable(tmp_path, conformance_recording):
+    """The recheck's reproducer: only the environment records, successful outcomes replaced by `{}`.
+    Without the schema the empty outcomes suppressed every later operation and counted as acceptances."""
+    records, expected = conformance_recording
+    whole = _recording(tmp_path, "whole.jsonl", records)
+    assert diff.compare(whole, whole, None, expected=expected)["unlisted"] == 0
+    emptied = [{**r, "outcome": {} if "returned" in r["outcome"] else r["outcome"]}
+               for r in records if r["op"] == "environment"]
+    path = _recording(tmp_path, "emptied.jsonl", emptied)
+    with pytest.raises(diff.Unusable, match=r"line \d+ is no record the recorder writes"):
+        diff.compare(path, path, None, expected=expected)
+    with pytest.raises(diff.Unusable, match="no record the recorder writes"):
+        diff.compare(whole, path, None, expected=expected)
+
+
+def _pilot_record(tmp_path):
+    document = ROOT / "usecases/bluedot-grant/causal.ve.md"
+    env = {**__import__("os").environ, "PYTHONPATH": str(ROOT)}
+    env.pop("VE_AUTHORITY", None)
+    blob = hashlib.sha1(b"blob %d\0" % document.stat().st_size + document.read_bytes()).hexdigest()
+    return {"corpus": "pilots", "authority": "default", "case": "pilot/x:usecases/causal.ve.md",
+            "op": "document_check", "source_sha256": blob, "outcome": diff.pilot_check(ROOT, document, env)}
+
+
+def _genuine(records, tmp_path):
+    """One genuine record of each shape: every conformance operation's returned and raised outcome
+    (with and without span or path), every probe operation's cell kinds and sections, a pilot."""
+    baseline = json.loads((ROOT / diff.PROBE_BASELINE).read_text())
+    probes = [{"corpus": "probe", "authority": "python", **r}
+              for r in diff.probe_rows(baseline, diff.digest(ROOT / "tests/probe_matrix.py"))]
+    def shape(r):
+        o = r["outcome"]
+        kind = ("raised", tuple(sorted(o["raised"]))) if "raised" in o else ("returned",) if "returned" in o \
+            else (o.get("cell"), tuple(sorted(o))) if r["op"] != "budget_boundaries" else tuple(sorted(o))
+        return (r["corpus"], r["op"] if r["corpus"] == "conformance" or r["op"].endswith(("probes", "boundaries"))
+                else "cell", kind)
+    out = {}
+    for r in [*records, *probes]:
+        out.setdefault(shape(r), r)
+    out[("pilots",)] = _pilot_record(tmp_path)
+    return out
+
+
+# The payloads `compare` diffs as typed JSON (any change is a difference the delta must sign): an
+# environment's or model's record, a formula, a trace, a graph package or report, a success's output,
+# an error's structured diagnostic. A mutant replaces a payload whole; its interior is content.
+PAYLOADS = {"record", "explanation", "package", "diagnostic"}
+
+
+def _payload(path, parent) -> bool:
+    return bool(path) and (path[-1] in PAYLOADS or path[-2:] == ("formulas", 0) or path[-1] == "output" and (
+        parent.get("cell") == "S" or "package" in parent))
+
+
+def _nodes(value, path=(), parent=None):
+    """Every node of `value` with its path and parent (a list through its first element), payloads as leaves."""
+    yield path, value, parent or {}
+    if _payload(path, parent or {}):
+        return
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield from _nodes(item, path + (key,), value)
+    elif isinstance(value, list) and value:
+        yield from _nodes(value[0], path + (0,), {})
+
+
+# What the producers write only when set (`VEError.to_dict`, `CheckerUnavailable.to_dict`, a section's
+# probe outcome), and the fields whose value may be null (`Optional`).
+OPTIONAL = {"path", "span", "diagnostic", "generator", "operation", "backend", "routed", "backend_rejection"}
+NULLABLE = {"value", "conclusion_value", "explanation"}
+
+
+def _producible(path, parent, value, new) -> bool:
+    """Whether the recorder can write `new` where it wrote `value`, as far as the types go."""
+    if new is _DROP:
+        return path[-1] in OPTIONAL
+    if type(new) is type(value) or new is None and path[-1] in NULLABLE:
+        return True
+    return path[-1] == "output" and parent.get("cell") == "S"  # a success's result is any JSON
+
+
+_DROP = object()
+# Each field dropped, emptied ("" [] {}), nulled and retyped (7, true, a string).
+_REPLACEMENTS = {"drop": _DROP, "empty-text": "", "empty-array": [], "empty-object": {}, "null": None,
+                 "number": 7, "true": True, "text": "x"}
+
+
+def _replace(value, path, new):
+    if not path:
+        return new
+    out = dict(value) if isinstance(value, dict) else list(value)
+    if new is _DROP and len(path) == 1:
+        del out[path[0]]
+    else:
+        out[path[0]] = _replace(value[path[0]], path[1:], new)
+    return out
+
+
+def test_every_mutated_record_is_unusable(tmp_path, conformance_recording):
+    """Table-driven over every field of one genuine record of each shape: dropped, emptied, nulled and
+    retyped, a record the recorder cannot write is unusable evidence. A mutant the recorder can write
+    (`_producible`: a value of the same kind, null where null is a value, an optional field dropped)
+    that the schema admits is another outcome: `compare` judges its content (its class and the delta)."""
+    genuine = _genuine(conformance_recording[0], tmp_path)
+    assert {key[:2] for key in genuine} >= {("conformance", op) for op, _, _ in diff.CONFORMANCE_OPS} | {
+        ("probe", "cell"), ("probe", "graph_probes"), ("probe", "budget_boundaries"), ("probe", "feature_probes"),
+        ("pilots",)}
+    refused, content, wrong = 0, 0, []
+    for key, record in genuine.items():
+        assert diff.record_problem(record) is None, key
+        for path, value, parent in _nodes(record):
+            if not path:
+                continue
+            for label, new in _REPLACEMENTS.items():
+                if new is not _DROP and same_json(new, value) or new is _DROP and isinstance(path[-1], int):
+                    continue
+                mutant = _replace(record, path, new)
+                if _producible(path, parent, value, new) and diff.record_problem(mutant) is None:
+                    content += 1
+                    continue
+                try:
+                    diff.load(_recording(tmp_path, "mutant.jsonl", [mutant]))
+                    wrong.append(f"{key} {'.'.join(map(str, path))} {label}: accepted")
+                except diff.Unusable:
+                    refused += 1
+    assert not wrong, "\n".join(wrong)
+    assert refused > 5 * content > 0
+
+
+@pytest.mark.parametrize("change", ["conformance-file", "probe-matrix", "duplicate-field"])
+def test_records_of_one_corpus_file_name_one_digest(tmp_path, change):
+    """Mixed identity: two records of one corpus file with different digests, or a line naming a
+    field twice (the second would win), is unusable."""
+    cell = {"corpus": "probe", "authority": "python", "op": "typing", "source_sha256": SOURCE,
+            "outcome": {"cell": "S", "status": "accepted", "output": None}}
+    if change == "conformance-file":
+        lines = [json.dumps({"corpus": "conformance", "authority": "python", "case": f"evaluation/{name}",
+                             "op": "environment", "source_sha256": source, "outcome": OK})
+                 for name, source in (("a", SOURCE), ("b", OTHER_SOURCE))]
+    elif change == "probe-matrix":
+        lines = [json.dumps({**cell, "case": "a"}), json.dumps({**cell, "case": "b", "authority": "lean",
+                                                                 "source_sha256": OTHER_SOURCE})]
+    else:
+        lines = [json.dumps({**cell, "case": "a"})[:-1] + ', "case": "b"}']
+    path = tmp_path / "r.jsonl"
+    path.write_text("\n".join(lines) + "\n")
+    with pytest.raises(diff.Unusable, match="another digest|duplicate field"):
+        diff.load(str(path))
+    # The control: the same records with one digest are usable.
+    if change != "duplicate-field":
+        path.write_text("\n".join(line.replace(OTHER_SOURCE, SOURCE) for line in lines) + "\n")
+        assert len(diff.load(str(path))) == 2
+
+
+@pytest.mark.parametrize("outcome", [
+    {}, {"returned": None}, {"raised": None}, {"raised": {"code": "UnknownSymbol"}},
+    {"raised": {"code": "UnknownSymbol", "message": None}}, {"raised": {"message": "x"}},
+    {"raised": {"code": "", "message": "x"}}, {"returned": "x.", "raised": REJECTED["raised"]},
+], ids=["empty", "null-returned", "null-raised", "no-message", "null-message", "no-code", "empty-code", "both"])
+def test_an_outcome_the_recorder_cannot_write_is_unusable(tmp_path, outcome):
+    with pytest.raises(diff.Unusable, match="no record the recorder writes"):
+        _compare(tmp_path, {"a#canonicalize": outcome}, {"a#canonicalize": {"returned": "x."}})
+
+
+def test_the_schema_names_every_operation_of_the_recorder():
+    """The schema's conformance operations are `CONFORMANCE_OPS`', and its probe sections `PROBE_SECTIONS`."""
+    schema = json.loads((diff.SCHEMA / "record.json").read_text())["$defs"]
+    assert schema["conformance"]["properties"]["op"]["enum"] == [op for op, _, _ in diff.CONFORMANCE_OPS]
+    branches = schema["probe"]["allOf"]
+    assert branches[-1]["if"]["properties"]["op"]["not"]["enum"] == list(diff.PROBE_SECTIONS)
+    assert [b["if"]["properties"]["op"]["const"] for b in branches[:-1]] == list(diff.PROBE_SECTIONS)

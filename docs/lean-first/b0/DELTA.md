@@ -28,7 +28,10 @@ otherwise: each side holds a record of every case of every corpus and authority 
 the pilot documents) and no other case; each corpus and authority holds an available record, an acceptance and a
 rejection; and a record unavailable on both sides is its own class, `unavailable`, accepted only when the delta
 lists it with a reason (U1 below). Two empty, wholly unavailable or constant-answer recordings are refused
-(`tests/test_lean_first_diff.py`). Outcomes are compared as typed JSON: `true` is not `1` (review C).
+(`tests/test_lean_first_diff.py`). Outcomes are compared as typed JSON: `true` is not `1` (review C). Since
+fix3 (B1), every line is first checked against the recorder's schema (`tools/lean_first_schema/record.json`):
+an empty, partial or retyped outcome, a rejection without its code and message, or two digests for one corpus
+file is unusable evidence (exit 2), never an acceptance; the stored head and base recordings pass it unchanged.
 
 ## U1: one pilot document is unavailable on both sides (`unavailable`)
 
