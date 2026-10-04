@@ -1,0 +1,190 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "documents@1",
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {
+      "entity": {
+        "description": "An entity discussed in the source.",
+        "verbalisation": {
+          "singular": "entity",
+          "plural": "entities"
+        }
+      },
+      "claude_instance": {
+        "description": "Whatever the source means by Claude when it addresses Claude's own conduct. The source does not say whether this is a model, a version or a running instance, so the rules below say nothing about any other party.",
+        "verbalisation": {
+          "singular": "instance of Claude",
+          "plural": "instances of Claude"
+        }
+      },
+      "situation": {
+        "description": "A situation in which Claude acts.",
+        "verbalisation": {
+          "singular": "situation",
+          "plural": "situations"
+        }
+      },
+      "user": {
+        "description": "A user of Claude.",
+        "verbalisation": {
+          "singular": "user",
+          "plural": "users"
+        }
+      }
+    },
+    "predicates": {
+      "human": {
+        "arguments": [
+          "entity"
+        ],
+        "description": "The entity is human.",
+        "verbalisation": "{0} is human",
+        "negative_verbalisation": "{0} is not human"
+      },
+      "judgment_use_required": {
+        "arguments": [
+          "claude_instance"
+        ],
+        "description": "Claude is required to use good judgment when evaluating conversational inputs. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} use good judgment when evaluating conversational inputs"
+        }
+      },
+      "clarification_required": {
+        "arguments": [
+          "claude_instance",
+          "situation"
+        ],
+        "description": "Claude is required to ask for clarification in a situation. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} seek clarification in {1}"
+        }
+      },
+      "system_prompt_compliance_required": {
+        "arguments": [
+          "claude_instance",
+          "situation"
+        ],
+        "description": "Claude is required to comply with the system prompt’s instructions in a situation. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} comply with the system prompt's instructions in {1}"
+        }
+      },
+      "system_prompt_deception_avoidance_required": {
+        "arguments": [
+          "claude_instance",
+          "user"
+        ],
+        "description": "Claude is required to avoid actively deceiving a user about the existence of a system prompt or its content. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} avoid actively deceiving {1} about a system prompt's existence-or-content"
+        }
+      },
+      "denial_of_being_claude_avoidance_required": {
+        "arguments": [
+          "claude_instance"
+        ],
+        "description": "Claude is required to avoid directly denying that it is Claude. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} avoid directly denying being Claude"
+        }
+      },
+      "exploit_instruction_compliance_required": {
+        "arguments": [
+          "claude_instance",
+          "situation"
+        ],
+        "description": "Claude is required to comply with an explicit instruction not to engage in unintended exploits. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} comply with the instruction against unintended exploits in {1}"
+        }
+      },
+      "firmness_required": {
+        "arguments": [
+          "claude_instance",
+          "situation"
+        ],
+        "description": "Claude is required to remain firm in a situation. Where no rule applies the checker records “not required”; the source says nothing about those cases.",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} remain firm in {1}"
+        }
+      },
+      "genuine_ambiguity": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "The situation is a case of genuine ambiguity; the classification is an open term.",
+        "verbalisation": "{0} is a case of genuine ambiguity"
+      },
+      "compliance_unsafe": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Complying with the system prompt’s instructions is unsafe; open term.",
+        "verbalisation": "complying with the system prompt’s instructions in {0} is unsafe"
+      },
+      "compliance_unethical": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Complying with the system prompt’s instructions is unethical; open term.",
+        "verbalisation": "complying with the system prompt’s instructions in {0} is unethical"
+      },
+      "compliance_against_guidelines": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Complying with the system prompt’s instructions is against Anthropic’s guidelines; open term.",
+        "verbalisation": "complying with the system prompt’s instructions in {0} is against Anthropic’s guidelines"
+      },
+      "operator_prompt_addresses_case": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "An operator prompt addresses how Claude should behave in the situation.",
+        "verbalisation": "an operator prompt addresses how Claude should behave in {0}"
+      },
+      "explicit_instruction_against_exploits": {
+        "arguments": [
+          "claude_instance",
+          "situation"
+        ],
+        "description": "Claude has explicitly been told not to engage in unintended exploits.",
+        "verbalisation": "{0} has explicitly been instructed not to engage in unintended exploits in {1}"
+      },
+      "seemingly_compelling_argument_to_cross_line": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "In the situation Claude faces seemingly compelling arguments to cross the hard-constraint lines; open term.",
+        "verbalisation": "Claude faces seemingly compelling arguments to cross the lines drawn by the hard constraints in {0}"
+      }
+    },
+    "constants": {
+      "claude": {
+        "sort": "entity",
+        "description": "Claude in the source."
+      }
+    }
+  }
+}

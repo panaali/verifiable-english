@@ -1,0 +1,1877 @@
+{
+  "run": "20261004T1800Z",
+  "baseline_tag": "ve-green-layers2-b2",
+  "previous_run": "20261004T0600Z",
+  "previous_baseline_tag": "ve-green-env-profiles",
+  "source_sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
+  "source_bytes": 184893,
+  "bytes_accounted": 184893,
+  "bytes_accounted_percent": 100.0,
+  "sentence_clause_units": {
+    "units_total": 1132,
+    "unit_counts_by_status": {
+      "CHECKED": 1,
+      "LABELLED": 39,
+      "OPEN": 11,
+      "READINGS": 8,
+      "UNFORMALISED": 1073
+    },
+    "bytes_by_status": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 1429,
+      "READINGS": 1196,
+      "UNFORMALISED": 181897
+    },
+    "previous_run": {
+      "units_total": 1132,
+      "unit_counts_by_status": {
+        "CHECKED": 1,
+        "LABELLED": 39,
+        "OPEN": 10,
+        "READINGS": 9,
+        "UNFORMALISED": 1073
+      },
+      "bytes_by_status": {
+        "CHECKED": 22,
+        "LABELLED": 349,
+        "OPEN": 1249,
+        "READINGS": 1376,
+        "UNFORMALISED": 181897
+      }
+    }
+  },
+  "aggregated_to_previous_boundaries": {
+    "units_total": 299,
+    "unit_counts_by_status": {
+      "LABELLED": 10,
+      "MIXED": 39,
+      "UNFORMALISED": 248,
+      "OPEN": 1,
+      "CHECKED": 1
+    },
+    "bytes_by_substatus": {
+      "CHECKED": 22,
+      "LABELLED": 349,
+      "OPEN": 1429,
+      "READINGS": 1196,
+      "UNFORMALISED": 181897
+    },
+    "previous_run": {
+      "units_total": 299,
+      "unit_counts_by_status": {
+        "LABELLED": 10,
+        "MIXED": 39,
+        "UNFORMALISED": 248,
+        "OPEN": 1,
+        "CHECKED": 1
+      }
+    }
+  },
+  "claimed_covered_bytes": 2996,
+  "claimed_covered_percent": 1.6204,
+  "claimed_covered_bytes_previous_run": 2996,
+  "claimed_covered_bytes_gained": 0,
+  "substantive_covered_bytes": 2647,
+  "substantive_covered_bytes_previous_run": 2647,
+  "audit_verified_covered_bytes": 1104,
+  "audit_verified_covered_percent": 0.5971,
+  "audit_verified_covered_units": [
+    "u0248",
+    "u0052.s01",
+    "u0165.s05",
+    "u0166.s04.p4",
+    "u0165.s02",
+    "u0165.s01",
+    "u0165.s06",
+    "u0165.s07",
+    "u0263.s04.p2",
+    "u0073.s05"
+  ],
+  "audit_verified_covered_bytes_previous_run": 755,
+  "audit_verified_metadata_bytes": 341,
+  "audit_verified_metadata_percent": 0.1844,
+  "audit_verified_metadata_bytes_previous_run": 328,
+  "audit_verified_basis": "Audit-verified = accepted as faithful by an independent audit of this lineage AND byte-identical in this run to the form that audit saw (the same ledger entry apart from volatile notes, the same document unit, the same reading-set admission text). The latest audit (20261004T0600Z, 18/20, a verdict for every sampled unit) rejected u0123.s01.p1 and u0062.s01, neither of which was verified before, so nothing leaves the list. It accepted u0263.s04.p2 and u0073.s05, which the previous audit had rejected and the previous run repaired; both are byte-identical to the form it saw, so they join (finish.py asserts the sum: previous verified bytes plus theirs) together with the label unit u0001. The two units repaired now, u0123.s01.p1 and u0062.s01, and u0123.s02.p1 (same defect, not sampled) are claimed, not verified, until the next audit.",
+  "audit_verified_newly_from_20261004T0600Z": [
+    "u0263.s04.p2",
+    "u0073.s05"
+  ],
+  "audit_verified_newly_label_units_from_20261004T0600Z": [
+    "u0001"
+  ],
+  "audit_verified_dropped_because_changed_or_rejected": {
+    "changed_since_acceptance": [],
+    "rejected_by_an_audit_and_not_re_accepted": []
+  },
+  "audit_rejected_units_and_repair_status": {
+    "rejected_by_20261004T0600Z_audit": [
+      "u0123.s01.p1",
+      "u0062.s01"
+    ],
+    "repaired_in_20261004T1800Z": {
+      "u0123.s01.p1": {
+        "status_before": "READINGS",
+        "status_now": "OPEN",
+        "repair": "“Operators are permitted to ask” states a permission outright; the reading set's second candidate replaced it with a capability (what operators can do), which the text does not admit. Repaired: the ability candidate is removed; the unit has one reading, the scoped permission (the limits of u0123.s03 as exceptions, completion `unspecified`), carried as content in the main document and the strict companion; no reading set remains."
+      },
+      "u0062.s01": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "The ability candidate said what operators can get Claude to do; the source says operators can give Claude instructions, a persona or information, and supplying input does not entail inducing compliance. Repaired: the ability candidate now says what the audit asks, that an operator is able to give Claude a specific set of instructions, a persona, or information (supplying input). The permission candidate is unchanged."
+      },
+      "u0123.s02.p1": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "Not sampled by the 20261004T0600Z audit. Its ability candidate had the same defect as u0062.s01's (what the party can get Claude to do, for a sentence about what operators can instruct), so it is repaired the same way: the candidate says what an operator is able to instruct Claude to do, and that doing so is legitimate. The permission and conditional-permission candidates are unchanged."
+      }
+    },
+    "repaired_in_20261004T1800Z_bytes": 613,
+    "repaired_in_20261004T1800Z_note": "u0123.s02.p1 was not sampled; it is repaired for the same defect as u0062.s01",
+    "repaired_in_20261004T0600Z_and_accepted_by_20261004T0600Z_audit": [
+      "u0263.s04.p2",
+      "u0073.s05"
+    ],
+    "rejected_by_20261003T0600Z_audit": [
+      "u0156.s03",
+      "u0036.s05",
+      "u0078.s01",
+      "u0123.s03",
+      "u0073.s05",
+      "u0263.s04.p2"
+    ],
+    "repaired_in_20261004T0600Z": {
+      "u0156.s03": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "Same defect and repair as u0036.s05; here the defeasible companion also turned an exception into “not required to avoid deception”, which defeating the rule does not establish. The strict reading stays a prohibition (permission predicate, completion `unspecified`)."
+      },
+      "u0036.s05": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "The companions (readings/all-default.ve.md, readings/s1.ve.md) carried the defeasible reading with the completion `deny`, which says “not required” outside the stated conditions; the source says nothing there. Repaired: no companion elaborates the defeasible reading as part of the translation (both stay as demonstrations of the language, outside every claim); the two readings stay in the main document's reading set (no content), the strict reading is elaborated with the completion `unspecified`."
+      },
+      "u0078.s01": {
+        "status_before": "UNFORMALISED",
+        "status_now": "UNFORMALISED",
+        "repair": "“should err on the side of following” is a leaning (a preference), which neither a strict duty nor a defeasible duty keeps; the candidates replaced it with duties, and the companions settled the unstated cases negatively. Repaired: the unit is UNFORMALISED (missing feature other:graded-force); the reading set, the rules and the predicates for it are removed from every document."
+      },
+      "u0123.s03": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "The S1 companion completed the operator permission with `deny` and gave the ability candidates content about operators *supplying* instructions rather than getting Claude to do the listed behaviours. Repaired: the companion no longer counts; the two ability candidates of the main document's reading set now say what the audit asks (an operator is unable to get Claude to do each behaviour by instructing it); the narrow permission is elaborated in the strict companion with the completion `unspecified`."
+      },
+      "u0073.s05": {
+        "status_before": "OPEN",
+        "status_now": "OPEN",
+        "repair": "The soft-norms@0 elaboration needed the completion `deny`. Repaired: one reading with content in the main document under norm-defaults@0 (completion `unspecified`): the case the bullet names is the guard, the three conditions the source states are exceptions, and “generally” is one more named open exception (open term general_exception_to_complying) that nobody the source names decides. VE: where the prompt addresses the case and no exception holds, SETTLED yes (required); where an exception holds or the prompt does not address the case, UNDECIDED."
+      },
+      "u0263.s04.p2": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "Same defect and repair as u0036.s05."
+      }
+    },
+    "repaired_in_20261004T0600Z_bytes": 1319,
+    "rejected_by_20261002T1800Z_audit": [
+      "u0168.s01"
+    ],
+    "repaired_in_20261003T0600Z": {
+      "u0168.s01": {
+        "status_before": "OPEN",
+        "status_now": "OPEN",
+        "repair": "The reading set kept a defeasible reading of “Claude should remain firm” whose open exception could make firmness not required, although the source calls the lines absolute and says they should never be crossed regardless of seemingly compelling arguments (u0166.s01) and that the strength of an argument is not sufficient justification for acting against these principles (u0168.s03). Repaired: the defeasible candidate is removed; one strict reading carries the rule as content (completion `unspecified`), chosen from the two cited spans, not silently."
+      }
+    },
+    "repaired_in_20261003T0600Z_bytes": 96,
+    "rejected_by_20261002T0620Z_audit": [
+      "u0062.s01",
+      "u0123.s02.p1",
+      "u0166.s04.p4"
+    ],
+    "repaired_in_20261002T1800Z": {
+      "u0062.s01": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "Its permission rules allowed every operator input classified as specific instructions, a persona or information, including inputs that u0123.s03 says operators cannot give, so VE reported a conflict that the source does not contain. Repaired: each of the three permissions is scoped by the six limits of u0123.s03 as exceptions (the permission does not cover those inputs); no default is added for any other input."
+      },
+      "u0123.s02.p1": {
+        "status_before": "READINGS",
+        "status_now": "READINGS",
+        "repair": "(1) “Legitimately” made a pure ability reading incomplete: the reading set now keeps three readings, a permission (the word of permission carries it), a conditional permission (legitimacy is a separate condition) and an ability that carries the evaluative as the named open term instruction_is_legitimate. (2) The five permission rules were too broad (a role-play instruction stayed permitted even when it included conduct u0123.s03 prohibits): each is now scoped by the six limits of u0123.s03 as exceptions."
+      },
+      "u0166.s04.p4": {
+        "status_before": "OPEN",
+        "status_now": "OPEN",
+        "repair": "The permission candidate added a duty on operators and users not to unlock the hard constraints, which the source does not state. Repaired: the permission reading and its two rules are removed; the clause is one checked ability statement (no operator and no user is able to unlock a hard constraint), with no norm and no duty on anyone."
+      },
+      "u0123.s01.p1": {
+        "status_before": "READINGS",
+        "status_now": "OPEN",
+        "repair": "same scope as the three rejected units"
+      }
+    },
+    "repaired_in_20261002T1800Z_bytes": 658,
+    "rejected_by_20261001T1800Z_audit": [
+      "u0165.s02",
+      "u0165.s04",
+      "u0165.s06"
+    ],
+    "rejected_by_earlier_audits": {
+      "20260929T1800Z": [
+        "u0156.s03",
+        "u0165.s03"
+      ],
+      "20260930T0600Z": [
+        "u0165.s05",
+        "u0165.s06"
+      ]
+    },
+    "repaired_in_20261002T0620Z": [
+      "u0165.s01",
+      "u0165.s02",
+      "u0165.s03",
+      "u0165.s04",
+      "u0165.s05",
+      "u0165.s06",
+      "u0165.s07"
+    ],
+    "repair": "the defeasible candidate is removed (it contradicts u0166.s01 and u0166.s04); one strict reading carries the prohibition as content; the same shape in u0165.s01, s03, s05 and s07 is repaired with the three the audit sampled",
+    "repaired_earlier_not_re_audited": [
+      "u0165.s05",
+      "u0165.s06",
+      "u0165.s07",
+      "u0125.s04.p2"
+    ],
+    "status_now": {
+      "u0165.s01": "OPEN",
+      "u0165.s02": "OPEN",
+      "u0165.s03": "OPEN",
+      "u0165.s04": "OPEN",
+      "u0165.s05": "OPEN",
+      "u0165.s06": "OPEN",
+      "u0165.s07": "OPEN",
+      "u0125.s04.p2": "READINGS",
+      "u0062.s01": "READINGS",
+      "u0123.s02.p1": "READINGS",
+      "u0166.s04.p4": "OPEN",
+      "u0123.s01.p1": "OPEN",
+      "u0168.s01": "OPEN",
+      "u0156.s03": "READINGS",
+      "u0036.s05": "READINGS",
+      "u0078.s01": "UNFORMALISED",
+      "u0123.s03": "READINGS",
+      "u0073.s05": "OPEN",
+      "u0263.s04.p2": "READINGS"
+    },
+    "counted_as_audit_verified": false,
+    "counted_as_audit_verified_20261002T0620Z_rejections": false,
+    "any_unit_rejected_keeps_covered_status_without_repair": false
+  },
+  "claimed_but_not_audit_verified_bytes": 1551,
+  "repaired_bytes_not_audit_verified": 1543,
+  "documents": {
+    "main": "translation.ve.md",
+    "strict": "readings/all-strict.ve.md",
+    "default": "readings/all-default.ve.md",
+    "s1": "readings/s1.ve.md"
+  },
+  "document_profiles": {
+    "main": [
+      "documents@1",
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+    ],
+    "strict": [
+      "documents@1",
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+    ],
+    "default": [
+      "documents@1",
+      "norms@0",
+      "relational-fol@0",
+      "soft-norms@0"
+    ],
+    "s1": [
+      "documents@1",
+      "norms@0",
+      "readings@1",
+      "relational-fol@0",
+      "soft-norms@0"
+    ]
+  },
+  "open_terms": [
+    {
+      "name": "broad_safety",
+      "arguments": [
+        "claude",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human oversight",
+        "principal hierarchy",
+        "current phase of AI development"
+      ]
+    },
+    {
+      "name": "appropriate_oversight",
+      "arguments": [
+        "mechanism",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "human authorization",
+        "ability to correct AI",
+        "misuse of power"
+      ]
+    },
+    {
+      "name": "genuine_helpfulness",
+      "arguments": [
+        "action",
+        "principal",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "benefit to operators and users",
+        "longer term interests",
+        "other people affected"
+      ]
+    },
+    {
+      "name": "ethical_harm",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "severity",
+        "likelihood",
+        "who bears harm",
+        "possible benefits"
+      ]
+    },
+    {
+      "name": "good_judgment",
+      "arguments": [
+        "action",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "competing values",
+        "uncertainty",
+        "context"
+      ]
+    },
+    {
+      "name": "child_sexual_abuse_material",
+      "arguments": [
+        "material",
+        "context"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "whether the material is child sexual abuse material"
+      ]
+    },
+    {
+      "name": "mass_casualty_weapon_uplift",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as serious uplift",
+        "what counts as seeking to create such a weapon",
+        "what counts as the potential for mass casualties"
+      ]
+    },
+    {
+      "name": "critical_infrastructure_uplift",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as serious uplift",
+        "what counts as an attack",
+        "which systems are critical infrastructure or critical safety systems"
+      ]
+    },
+    {
+      "name": "damaging_cyberweapon_or_malicious_code",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as a cyberweapon or malicious code",
+        "what counts as significant damage",
+        "how likely deployment must be for the damage to count as one that could happen",
+        "whether “that could cause significant damage if deployed” qualifies cyberweapons as well as malicious code"
+      ]
+    },
+    {
+      "name": "clear_and_substantial_undermining_of_oversight",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as clearly and substantially undermining",
+        "what counts as Anthropic’s ability to oversee and correct advanced AI models",
+        "the source points to its section on being broadly safe"
+      ]
+    },
+    {
+      "name": "attempt_to_kill_or_disempower_most_of_humanity",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as the vast majority of humanity",
+        "what counts as disempowering",
+        "what counts as engaging or assisting in an attempt"
+      ]
+    },
+    {
+      "name": "illegitimate_absolute_control",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as unprecedented degrees of control",
+        "what counts as illegitimate",
+        "what counts as absolute societal, military, or economic control",
+        "what counts as engaging or assisting"
+      ]
+    },
+    {
+      "name": "genuine_ambiguity",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "seemingly_compelling_argument_to_cross_line",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "compliance_unsafe",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "compliance_unethical",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "compliance_against_guidelines",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source gives no test for when this holds"
+      ]
+    },
+    {
+      "name": "general_exception_to_complying",
+      "arguments": [
+        "situation"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "the source says “generally” and names no further exception, so which cases it leaves out is not given"
+      ]
+    },
+    {
+      "name": "input_is_specific_instructions",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as a specific set of instructions"
+      ]
+    },
+    {
+      "name": "input_is_persona",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as a persona"
+      ]
+    },
+    {
+      "name": "input_is_information",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as information"
+      ]
+    },
+    {
+      "name": "instruction_role_play_custom_persona",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as a custom AI persona",
+        "what counts as a different name and personality"
+      ]
+    },
+    {
+      "name": "instruction_decline_or_withhold",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which questions and which information count as certain ones",
+        "whether the instruction is to decline to answer and to decline to reveal, or to decline to answer and to reveal"
+      ]
+    },
+    {
+      "name": "instruction_promote_own_products",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as the operator’s own products and services",
+        "what counts as a competitor"
+      ]
+    },
+    {
+      "name": "instruction_focus_on_tasks",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "which tasks count as certain ones"
+      ]
+    },
+    {
+      "name": "instruction_respond_differently",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as typically"
+      ]
+    },
+    {
+      "name": "instruction_is_legitimate",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what makes an operator's instruction legitimate"
+      ]
+    },
+    {
+      "name": "instruction_dishonest_looking_within_honesty",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what could seem dishonest towards users",
+        "what falls within Claude’s honesty principles",
+        "what counts as the broader context"
+      ]
+    },
+    {
+      "name": "instruction_abandon_identity_in_persona",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as Claude’s core identity or principles",
+        "what counts as abandoning them",
+        "whether “while role-playing as a custom AI persona” qualifies only this item or every item of the list"
+      ]
+    },
+    {
+      "name": "instruction_claim_human_when_asked",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as directly and sincerely asked"
+      ]
+    },
+    {
+      "name": "instruction_deceptive_tactics_harming_users",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as genuinely deceptive",
+        "how likely harm must be for the tactics to be ones that could harm users"
+      ]
+    },
+    {
+      "name": "instruction_false_information_deceiving_user",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as false information",
+        "how likely deception must be for the information to be information that could deceive"
+      ]
+    },
+    {
+      "name": "instruction_endanger_health_or_safety",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as endangering health or safety"
+      ]
+    },
+    {
+      "name": "instruction_act_against_guidelines",
+      "arguments": [
+        "operator_input"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as acting against Anthropic’s guidelines"
+      ]
+    },
+    {
+      "name": "operator_unlocks",
+      "arguments": [
+        "operator",
+        "hard_constraint"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as unlocking a hard constraint",
+        "what counts as being able to"
+      ]
+    },
+    {
+      "name": "user_unlocks",
+      "arguments": [
+        "user",
+        "hard_constraint"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as unlocking a hard constraint",
+        "what counts as being able to"
+      ]
+    }
+  ],
+  "open_terms_count": 36,
+  "open_terms_count_previous_run": 36,
+  "reading_sets": {
+    "count": 8,
+    "unresolved": 8,
+    "candidates": {
+      "u0036.s05": [
+        "strict",
+        "default"
+      ],
+      "u0052.s01": [
+        "strict",
+        "default"
+      ],
+      "u0062.s01": [
+        "permission",
+        "ability"
+      ],
+      "u0123.s02.p1": [
+        "permission",
+        "conditional-permission",
+        "ability"
+      ],
+      "u0123.s03": [
+        "narrow-permission",
+        "wide-permission",
+        "narrow-ability",
+        "wide-ability"
+      ],
+      "u0125.s04.p2": [
+        "strict",
+        "default"
+      ],
+      "u0156.s03": [
+        "strict",
+        "default"
+      ],
+      "u0263.s04.p2": [
+        "strict",
+        "default"
+      ]
+    },
+    "units": [
+      "u0036.s05",
+      "u0052.s01",
+      "u0062.s01",
+      "u0123.s02.p1",
+      "u0123.s03",
+      "u0125.s04.p2",
+      "u0156.s03",
+      "u0263.s04.p2"
+    ],
+    "narrowings": [],
+    "narrowings_note": "none: the seven hard constraints and u0168.s01 are no longer reading sets (one strict reading from cited spans), so no narrowing is left that is recorded but not binding",
+    "count_previous_run": 9
+  },
+  "missing_feature_tally": {
+    "other:discourse": 81,
+    "quantities": 119,
+    "norms": 669,
+    "causation": 76,
+    "time": 9,
+    "counting": 31,
+    "defaults": 50,
+    "modality/belief": 24,
+    "other:graded-force": 1,
+    "other:open-list": 1,
+    "attribution": 12
+  },
+  "missing_feature_tally_previous_run": {
+    "other:discourse": 81,
+    "quantities": 119,
+    "norms": 669,
+    "causation": 76,
+    "time": 9,
+    "counting": 31,
+    "defaults": 50,
+    "modality/belief": 24,
+    "other:graded-force": 1,
+    "other:open-list": 1,
+    "attribution": 12
+  },
+  "heading_presuppositions_exposed": 29,
+  "check_verdicts": {
+    "main": {
+      "document_loaded": true,
+      "coverage_percent": 100,
+      "premises": {
+        "status": "UNKNOWN",
+        "reason": "non-assertion reading elaboration pending"
+      },
+      "reading_plan": {
+        "route": "UNKNOWN",
+        "budget": {
+          "max_choices": 64
+        },
+        "choice_count": 96,
+        "units": [
+          "u0036.s05",
+          "u0052.s01",
+          "u0062.s01",
+          "u0123.s02.p1",
+          "u0123.s03",
+          "u0125.s04.p2",
+          "u0156.s03",
+          "u0263.s04.p2"
+        ]
+      },
+      "residual": {
+        "open_terms": 36,
+        "assumptions": 20,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 8,
+        "gaps": 14,
+        "ungrounded_defaults": 0
+      },
+      "norm_defaults": {
+        "gaps": [
+          "clarification_required",
+          "csam_generation_permitted_for_claude",
+          "cyberweapon_creation_permitted",
+          "denial_of_being_claude_permitted",
+          "exploit_instruction_compliance_required",
+          "firmness_required",
+          "humanity_attack_participation_permitted",
+          "illegitimate_control_involvement_permitted",
+          "infrastructure_uplift_permitted",
+          "judgment_use_required",
+          "oversight_undermining_permitted",
+          "system_prompt_compliance_required",
+          "system_prompt_deception_permitted",
+          "weapons_uplift_permitted"
+        ],
+        "findings": []
+      }
+    },
+    "all_strict": {
+      "premises": {
+        "status": "model",
+        "model_id": "aa3acd003c2434dc3a8d0fad62c3be57b15b62417d404d6adca2b3b6c5fbdd56"
+      },
+      "residual": {
+        "open_terms": 36,
+        "assumptions": 31,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0,
+        "gaps": 11,
+        "ungrounded_defaults": 0
+      },
+      "bytes_by_status": {
+        "LABELLED": 349,
+        "UNFORMALISED": 181897,
+        "OPEN": 2359,
+        "CHECKED": 288
+      },
+      "norm_defaults": {
+        "gaps": [
+          "clarification_required",
+          "csam_generation_permitted_for_claude",
+          "cyberweapon_creation_permitted",
+          "exploit_instruction_compliance_required",
+          "firmness_required",
+          "humanity_attack_participation_permitted",
+          "illegitimate_control_involvement_permitted",
+          "infrastructure_uplift_permitted",
+          "oversight_undermining_permitted",
+          "system_prompt_compliance_required",
+          "weapons_uplift_permitted"
+        ],
+        "findings": []
+      }
+    },
+    "s1": {
+      "premises": {
+        "status": "UNKNOWN",
+        "reason": "superposition pending"
+      },
+      "readings": {
+        "separations": {
+          "outcome": 6,
+          "selects": 5,
+          "holds": 4
+        },
+        "findings": {
+          "SeparatedByDecisionOnly": 5,
+          "SeparatedByActOnly": 0
+        }
+      },
+      "residual": {
+        "open_terms": 28,
+        "assumptions": 11,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 8,
+        "default_exceptions": 1,
+        "instruction_switches": 0,
+        "holistic_overrides": 0,
+        "weighing_points": 0,
+        "separations": 15,
+        "readings_findings": 5,
+        "pending_candidates": 0,
+        "couplings": 0
+      },
+      "bytes_by_status": {
+        "LABELLED": 349,
+        "UNFORMALISED": 182912,
+        "OPEN": 1610,
+        "CHECKED": 22
+      }
+    },
+    "all_default": {
+      "premises": {
+        "status": "model",
+        "model_id": "08b87e54a8a2e5e92eb8a68b007d728a65e1cab99a67dc6f326f33096a6d25ba"
+      },
+      "residual": {
+        "open_terms": 10,
+        "assumptions": 7,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0,
+        "default_exceptions": 6,
+        "instruction_switches": 0,
+        "holistic_overrides": 0,
+        "weighing_points": 0
+      },
+      "bytes_by_status": {
+        "LABELLED": 349,
+        "UNFORMALISED": 183876,
+        "OPEN": 646,
+        "CHECKED": 22
+      },
+      "default_exceptions_by_decider": {
+        "unstated": 6
+      }
+    },
+    "english_export": {
+      "strict_rules": 29,
+      "strict_round_trip": 29,
+      "strict_not_round_tripping": [],
+      "default_rules": 6,
+      "default_round_trip": 5,
+      "default_not_round_tripping": [
+        "comply-operator-prompt"
+      ]
+    },
+    "natural_render_checked_clause": "Claude is not human."
+  },
+  "unspecified_probe": {
+    "file": "probes/unspecified-probe.json",
+    "document": "readings/all-strict.ve.md",
+    "points_asked": 34,
+    "undecided": 13,
+    "settled": 21,
+    "conflict": 0,
+    "conflict_reports": {
+      "a role-play instruction that also claims to be human": {
+        "status": "UNKNOWN",
+        "target": null,
+        "kind": "",
+        "tuple": []
+      },
+      "a persona that also is an instruction to claim to be human": {
+        "status": "UNKNOWN",
+        "target": null,
+        "kind": "",
+        "tuple": []
+      },
+      "no atom true": {
+        "status": "UNKNOWN",
+        "target": null,
+        "kind": "",
+        "tuple": []
+      },
+      "whole document, proof attempt": {
+        "status": "CONFLICT-FREE",
+        "detail": ""
+      }
+    },
+    "gaps": {
+      "clarification_required": "reachable",
+      "csam_generation_permitted_for_claude": "reachable",
+      "cyberweapon_creation_permitted": "reachable",
+      "denial_of_being_claude_permitted": "none",
+      "exploit_instruction_compliance_required": "reachable",
+      "firmness_required": "reachable",
+      "humanity_attack_participation_permitted": "reachable",
+      "illegitimate_control_involvement_permitted": "reachable",
+      "infrastructure_uplift_permitted": "reachable",
+      "judgment_use_required": "none",
+      "operator_input_permitted": "unknown",
+      "oversight_undermining_permitted": "reachable",
+      "system_prompt_compliance_required": "reachable",
+      "system_prompt_deception_permitted": "none",
+      "weapons_uplift_permitted": "reachable"
+    },
+    "note": "VE's own verdicts on one-element situations chosen by probe_unspecified.py. Each of the seven hard constraints is SETTLED no (Claude may not) where its case atom holds and UNDECIDED (the text does not say) where it does not; no default permits or forbids anything the source does not state."
+  },
+  "regulated_predicates": {
+    "weapons_uplift_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "infrastructure_uplift_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "cyberweapon_creation_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "oversight_undermining_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "humanity_attack_participation_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "illegitimate_control_involvement_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "csam_generation_permitted_for_claude": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "judgment_use_required": {
+      "role": "obligation",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "clarification_required": {
+      "role": "obligation",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "system_prompt_deception_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "user"
+      ]
+    },
+    "denial_of_being_claude_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance"
+      ]
+    },
+    "exploit_instruction_compliance_required": {
+      "role": "obligation",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "system_prompt_compliance_required": {
+      "role": "obligation",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "firmness_required": {
+      "role": "obligation",
+      "default": "unspecified",
+      "arguments": [
+        "claude_instance",
+        "situation"
+      ]
+    },
+    "operator_input_permitted": {
+      "role": "permission",
+      "default": "unspecified",
+      "arguments": [
+        "operator",
+        "operator_input"
+      ]
+    }
+  },
+  "no_invented_permissions": {
+    "regulated_predicates": 15,
+    "permission_predicates": [
+      "csam_generation_permitted_for_claude",
+      "cyberweapon_creation_permitted",
+      "denial_of_being_claude_permitted",
+      "humanity_attack_participation_permitted",
+      "illegitimate_control_involvement_permitted",
+      "infrastructure_uplift_permitted",
+      "operator_input_permitted",
+      "oversight_undermining_permitted",
+      "system_prompt_deception_permitted",
+      "weapons_uplift_permitted"
+    ],
+    "obligation_predicates": [
+      "clarification_required",
+      "exploit_instruction_compliance_required",
+      "firmness_required",
+      "judgment_use_required",
+      "system_prompt_compliance_required"
+    ],
+    "completions": [
+      "unspecified"
+    ],
+    "predicates_with_default_allow": 0,
+    "predicates_with_default_deny": 0,
+    "first_arguments_of_regulated_predicates": [
+      "claude_instance",
+      "operator"
+    ],
+    "every_party_is_one_the_source_names": true,
+    "soft_companion_completions": [
+      "deny"
+    ],
+    "s1_companion_completions": [
+      "deny"
+    ],
+    "s1_companion_note": "readings/s1.ve.md completes the duties and the operator permission operator_input_permitted with deny: the soft route needs a completion and readings@1 content cannot join norm-defaults@0; the source states none. Since the 20261003T0600Z audit (companion `deny` completions say “not required” outside the stated conditions) this document is a demonstration of the language only: no unit's status, coverage or fidelity is claimed from it",
+    "soft_companion_note": "readings/all-default.ve.md completes every duty with deny (“not required”), because norm-defaults@0 cannot share a document with soft-norms@0; demonstration only since the 20261003T0600Z audit, nothing is claimed from it",
+    "demonstration_documents_not_part_of_the_translation": [
+      "readings/s1.ve.md",
+      "readings/all-default.ve.md"
+    ],
+    "note": "In the main document and the strict companion every completion is `unspecified`: where no rule decides, VE reports UNDECIDED. A prohibition on Claude no longer makes anything permitted for another party, and no duty is completed to “not required”. The party of every regulated predicate is a sort the source names (instances of Claude, operators, users)."
+  },
+  "profile_combination_probe": {
+    "soft-norms@0": "UnsupportedProfile: norm-defaults@0 documents on the soft and rights routes await the Lean route",
+    "closure@0": "norm document admission is FOL-only",
+    "order@0": "norm document admission is FOL-only",
+    "time@0": "accepted at document-check level",
+    "reports@0": "reports@0 with norms@0 layers",
+    "alternatives@0": "InvalidInput: alternatives.block",
+    "speech-acts@0": "UnsupportedProfile: speech-acts@0 with documents@1",
+    "definitions@0": "accepted at document-check level",
+    "data@0": "accepted at document-check level",
+    "rights@0": "rights@0 requires soft-norms@0",
+    "risk@0": "risk@0 requires alternatives@0",
+    "ve.discourse@1": "UnrecordedSlot: u0123.s02.r5: [76303, 76305)",
+    "readings@1": "UnsupportedProfile: readings@1 requires norms@0"
+  },
+  "separating_situations": {
+    "reading_sets": 8,
+    "all_checked_by_lean": true,
+    "file": "readings/separating-situations.json",
+    "claimed": false,
+    "note": "Lean-checked situations of readings/s1.ve.md (composition S1), a demonstration document: it completes duties and the operator permission with `deny`, which the source does not state (audit 20261003T0600Z), so no unit's separation is claimed from it"
+  },
+  "s1": {
+    "document": "readings/s1.ve.md",
+    "profiles": [
+      "documents@1",
+      "norms@0",
+      "readings@1",
+      "relational-fol@0",
+      "soft-norms@0"
+    ],
+    "demonstration_only": true,
+    "demonstration_note": "Not part of the translation and not counted in any claim: its completion `deny` is an invention (audit 20261003T0600Z rejected the units that relied on it). It stays to show what readings@1 does at this tag.",
+    "what": "the force-ambiguous units as content-bearing reading sets: each set has two contents, the default rule and its strict twin; one situation per pair, found by Python's search from the guard base, checked by Lean when the document loads (Python regenerates Lean's answer, Rust replays the situation)",
+    "content_bearing_sets": 8,
+    "sets": {
+      "u0036.s05": {
+        "set": "force-u0036-s05",
+        "source_word": "should",
+        "candidates": [
+          "strict",
+          "default"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "probe": "outcome",
+            "wording": "E14"
+          }
+        ],
+        "findings": [
+          "SeparatedByDecisionOnly: force-u0036-s05: 0, 1 (not certified)"
+        ]
+      },
+      "u0052.s01": {
+        "set": "force-u0052-s01",
+        "source_word": "should",
+        "candidates": [
+          "strict",
+          "default"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "probe": "outcome",
+            "wording": "E14"
+          }
+        ],
+        "findings": [
+          "SeparatedByDecisionOnly: force-u0052-s01: 0, 1 (not certified)"
+        ]
+      },
+      "u0062.s01": {
+        "set": "modal-u0062-s01",
+        "source_word": null,
+        "candidates": [
+          "permission",
+          "ability"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission",
+              "ability"
+            ],
+            "probe": "holds",
+            "wording": "E24"
+          }
+        ],
+        "findings": []
+      },
+      "u0123.s02.p1": {
+        "set": "modal-u0123-s02-p1",
+        "source_word": null,
+        "candidates": [
+          "permission",
+          "conditional-permission",
+          "ability"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "permission",
+              "conditional-permission"
+            ],
+            "probe": "outcome",
+            "wording": "E19"
+          },
+          {
+            "readings": [
+              "permission",
+              "ability"
+            ],
+            "probe": "holds",
+            "wording": "E24"
+          },
+          {
+            "readings": [
+              "conditional-permission",
+              "ability"
+            ],
+            "probe": "holds",
+            "wording": "E24"
+          }
+        ],
+        "findings": []
+      },
+      "u0123.s03": {
+        "set": "scope-modal-u0123-s03",
+        "source_word": null,
+        "candidates": [
+          "narrow-permission",
+          "wide-permission",
+          "narrow-ability",
+          "wide-ability"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "narrow-permission",
+              "wide-permission"
+            ],
+            "probe": "selects",
+            "wording": "E24"
+          },
+          {
+            "readings": [
+              "narrow-permission",
+              "narrow-ability"
+            ],
+            "probe": "selects",
+            "wording": "E24"
+          },
+          {
+            "readings": [
+              "narrow-permission",
+              "wide-ability"
+            ],
+            "probe": "selects",
+            "wording": "E24"
+          },
+          {
+            "readings": [
+              "wide-permission",
+              "narrow-ability"
+            ],
+            "probe": "selects",
+            "wording": "E24"
+          },
+          {
+            "readings": [
+              "wide-permission",
+              "wide-ability"
+            ],
+            "probe": "selects",
+            "wording": "E24"
+          },
+          {
+            "readings": [
+              "narrow-ability",
+              "wide-ability"
+            ],
+            "probe": "holds",
+            "wording": "E21"
+          }
+        ],
+        "findings": []
+      },
+      "u0125.s04.p2": {
+        "set": "force-u0125-s04-p2",
+        "source_word": "should",
+        "candidates": [
+          "strict",
+          "default"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "probe": "outcome",
+            "wording": "E14"
+          }
+        ],
+        "findings": [
+          "SeparatedByDecisionOnly: force-u0125-s04-p2: 0, 1 (not certified)"
+        ]
+      },
+      "u0156.s03": {
+        "set": "force-u0156-s03",
+        "source_word": "shouldn’t",
+        "candidates": [
+          "strict",
+          "default"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "probe": "outcome",
+            "wording": "E14"
+          }
+        ],
+        "findings": [
+          "SeparatedByDecisionOnly: force-u0156-s03: 0, 1 (not certified)"
+        ]
+      },
+      "u0263.s04.p2": {
+        "set": "force-u0263-s04-p2",
+        "source_word": "should",
+        "candidates": [
+          "strict",
+          "default"
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "probe": "outcome",
+            "wording": "E14"
+          }
+        ],
+        "findings": [
+          "SeparatedByDecisionOnly: force-u0263-s04-p2: 0, 1 (not certified)"
+        ]
+      }
+    },
+    "separations": {
+      "outcome": 6,
+      "selects": 5,
+      "holds": 4
+    },
+    "findings": {
+      "SeparatedByDecisionOnly": 5,
+      "SeparatedByActOnly": 0
+    },
+    "wordings": {
+      "E14": 5,
+      "E24": 8,
+      "E19": 1,
+      "E21": 1
+    },
+    "not_certified": [
+      "SeparatedByDecisionOnly: force-u0036-s05: 0, 1 (not certified)",
+      "SeparatedByDecisionOnly: force-u0052-s01: 0, 1 (not certified)",
+      "SeparatedByDecisionOnly: force-u0125-s04-p2: 0, 1 (not certified)",
+      "SeparatedByDecisionOnly: force-u0156-s03: 0, 1 (not certified)",
+      "SeparatedByDecisionOnly: force-u0263-s04-p2: 0, 1 (not certified)"
+    ],
+    "pairs_without_situation": [],
+    "search_limits": [],
+    "search_seconds": 14.7,
+    "load_seconds": 1.8,
+    "premises": {
+      "status": "UNKNOWN",
+      "reason": "superposition pending"
+    },
+    "bytes_by_status": {
+      "LABELLED": 349,
+      "UNFORMALISED": 182912,
+      "OPEN": 1610,
+      "CHECKED": 22
+    },
+    "units_stated_in_duty_form_with_deny": [
+      "u0125.s04.p2",
+      "u0156.s03"
+    ],
+    "operator_sets": {
+      "units": [
+        "u0062.s01",
+        "u0123.s01.p1",
+        "u0123.s02.p1",
+        "u0123.s03"
+      ],
+      "restated_as": "one rule per candidate (a candidate is one content): the several permission rules of the main document become one rule with a disjunctive guard; ability candidates are assertions over operator_can_supply",
+      "invented_completion": "operator_input_permitted completes with deny on the soft chain (not the source's); outcome probes between a permission and an ability candidate rest on it, `holds` and `selects` probes do not"
+    },
+    "main_document_keeps_the_sets_pending": true,
+    "probe": {
+      "a_main_with_readings@1": {
+        "profiles": [
+          "documents@1",
+          "norm-defaults@0",
+          "norms@0",
+          "readings@1",
+          "relational-fol@0"
+        ],
+        "note": "expected by composition S1 1.1: every candidate norm has content null, so no set is content-bearing and the document validates as today (the stored placeholder models are re-identified by the new environment, so the document is rewritten here). Observed: refused when the norm-defaults@0 block is built (ve/norm_defaults.py FilledBaseEnvironment drops norms@0 and keeps readings@1), with a message that is false of the document (norms@0 is listed)",
+        "accepted": false,
+        "error_class": "UnsupportedProfile",
+        "rejection": "UnsupportedProfile: readings@1 requires norms@0"
+      },
+      "b_main_with_one_strict_norm_candidate": {
+        "accepted": false,
+        "error_class": "CheckerUnavailable",
+        "rejection": "ReadingsConformance: Python and Lean differ on readings-validate: Lean InvalidInput: invalid regulated role or default for clarification_required, Python UnsupportedProfile: unspecified completion requires norm-defaults@0"
+      },
+      "c_s1_document_with_norm_defaults@0": {
+        "accepted": false,
+        "error_class": "VEError",
+        "rejection": "UnsupportedProfile: norm-defaults@0 documents on the soft and rights routes await the Lean route"
+      },
+      "s1_document_profiles": [
+        "documents@1",
+        "norms@0",
+        "readings@1",
+        "relational-fol@0",
+        "soft-norms@0"
+      ]
+    },
+    "unchanged_by_s1": "S1 adds no status and no verdict: every unit keeps its status, the document premise is UNKNOWN (superposition pending), and no reading set is resolved (verdicts across readings are S2's)"
+  },
+  "changes_against_previous_run": {
+    "ledger_entries_previous": 1132,
+    "ledger_entries_now": 1132,
+    "unchanged_entries": 1129,
+    "changed_or_replaced_ids": [
+      "u0062.s01",
+      "u0123.s01.p1",
+      "u0123.s02.p1"
+    ],
+    "added_ids": [],
+    "units_newly_covered": [],
+    "units_newly_covered_parent_previous_status": {},
+    "units_with_status_change": [
+      "u0123.s01.p1"
+    ],
+    "reason": "no language change between the tags (below); the ledger changes only where the 20261004T0600Z audit rejected a unit: u0123.s01.p1 READINGS to OPEN (one reading with content, the ability candidate removed, no reading set left), and the candidate texts of the reading sets of u0062.s01 and u0123.s02.p1 (their ability candidates now say what an operator is able to give or instruct); everything else is as in the previous run"
+  },
+  "language_changes_since_previous_tag": {
+    "from": "ve-green-env-profiles",
+    "to": "ve-green-layers2-b2",
+    "git_diff_ve_files": "none: `git diff ve-green-env-profiles..ve-green-layers2-b2 -- ve/` is empty (no Python language change)",
+    "git_diff_lean_files": "lean/VE/Readings/Force.lean (new, 1,219 lines), Readings/Separate.lean (relaxTo, twinDocs), Audit.lean and the frozen-source and checker pins; no new form of text, no new profile, no wire change",
+    "merged": {
+      "proof/decision-only-sound": "Lean proves decision_only_sound (the criterion behind a SeparatedByDecisionOnly finding). The wire text and the English are unchanged by decision: the finding is still written `(not certified)` and shown as E25 (readings@1 note), so nothing downstream reads it as certified; readings/s1.ve.md still shows `It is not certified that ...` at this tag",
+      "infra/layers2-b2": "Rust ve-core split into kernel, profile and surface crates behind a facade; internal, output unchanged",
+      "infra/gate-collection": "test-collection gate (tools/gate_collection.py); infrastructure"
+    },
+    "newly_expressible_features": 0,
+    "newly_expressible": "nothing",
+    "units_upgraded_by_new_features": 0,
+    "why_no_unit_changed_status": "no merged feature adds a form of text, a status or a profile; the units whose status moves (u0123.s01.p1, READINGS to OPEN) move because of the audit's repair, with norm-defaults@0 as merged two tags ago",
+    "profile_combination_result": "see profile_combination_probe and s1.probe (unchanged)"
+  },
+  "conflict_finding": {
+    "previous_run_reported": "a checked CONFLICT between u0123.s02 and u0123.s03 on an input that is both a persona role-play instruction and an instruction to claim to be human",
+    "status_now": "retracted as a finding: the 20261002T0620Z audit rejected the unscoped permission reading it came from (u0062.s01, u0123.s02.p1), so no auditor accepted both readings",
+    "after_scoping": "VE settles that input as `no` (not permitted), reports no conflict at the witness situations, and its whole-document proof attempt returns CONFLICT-FREE (it was UNKNOWN before)"
+  },
+  "legend_sentences": [
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the weapons uplift in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the infrastructure uplift in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the creation in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the undermining in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the participation in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the involvement in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may do the generation in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude must use good judgment when evaluating conversational inputs.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude must seek clarification in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may actively deceive an user about a system prompt's existence-or-content.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude may directly deny being Claude.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude must comply with the instruction against unintended exploits in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude must comply with the system prompt's instructions in a situation.",
+    "When nothing else in the text decides, the text does not say whether an instance of Claude must remain firm in a situation.",
+    "When nothing else in the text decides, the text does not say whether an operator may give Claude an operator input."
+  ],
+  "risk_probe": {
+    "language_tag": "ve-green-risk",
+    "cases": {
+      "u0087.s06 (obligation on Claude, no permission predicate)": {
+        "verdict": "accepted",
+        "raw_status": "ok",
+        "keys": [
+          "alternatives",
+          "background",
+          "base_premises",
+          "conflict_targets",
+          "document_hash",
+          "e_risk",
+          "environment_id",
+          "followable",
+          "fragment",
+          "id",
+          "inlined",
+          "legend",
+          "order",
+          "premises",
+          "risk_premises",
+          "status",
+          "unmapped_obligations",
+          "unranked_severities"
+        ]
+      },
+      "u0087.s06 (with the `performed` pair: permitted, allow by default)": {
+        "verdict": "accepted",
+        "raw_status": "ok",
+        "keys": [
+          "alternatives",
+          "background",
+          "base_premises",
+          "conflict_targets",
+          "document_hash",
+          "e_risk",
+          "environment_id",
+          "followable",
+          "fragment",
+          "id",
+          "inlined",
+          "legend",
+          "order",
+          "premises",
+          "risk_premises",
+          "status",
+          "unmapped_obligations",
+          "unranked_severities"
+        ]
+      },
+      "u0087.s06 as 'must not be performed' (permission predicate with default allow)": {
+        "verdict": "accepted",
+        "raw_status": "ok",
+        "keys": [
+          "alternatives",
+          "background",
+          "base_premises",
+          "conflict_targets",
+          "document_hash",
+          "e_risk",
+          "environment_id",
+          "followable",
+          "fragment",
+          "id",
+          "inlined",
+          "legend",
+          "order",
+          "premises",
+          "risk_premises",
+          "status",
+          "unmapped_obligations",
+          "unranked_severities"
+        ]
+      },
+      "u0218.s13 (severity order only; 'appropriate weight' has no place in stage A)": {
+        "verdict": "accepted",
+        "raw_status": "ok",
+        "keys": [
+          "alternatives",
+          "background",
+          "base_premises",
+          "conflict_targets",
+          "document_hash",
+          "e_risk",
+          "environment_id",
+          "followable",
+          "fragment",
+          "id",
+          "inlined",
+          "legend",
+          "order",
+          "premises",
+          "risk_premises",
+          "status",
+          "unmapped_obligations",
+          "unranked_severities"
+        ]
+      },
+      "u0218.s14 (expected outcome / variance: needs chances and costs)": {
+        "verdict": "InvalidInput: risk.chance_tag (stage B or C not enabled)",
+        "raw_status": "error",
+        "keys": [
+          "error",
+          "id",
+          "status"
+        ]
+      }
+    },
+    "profile_gate": {
+      "risk@0 with the translation's profiles (documents@1, norms@0, relational-fol@0, soft-norms@0)": "rejected: risk@0 requires alternatives@0",
+      "alternatives@0 + risk@0 + norms@0 with soft-norms@0": "rejected: alternatives@0 with soft-norms@0",
+      "alternatives@0 + risk@0 + norms@0 (no soft-norms@0)": "accepted (checker family fol)",
+      "alternatives@0 + risk@0 + norms@0 + rights@0": "rejected: rights@0 requires soft-norms@0",
+      "alternatives@0 + risk@0 + norms@0 + closure@0": "rejected: the risk norms route admits FOL documents only"
+    }
+  },
+  "discourse_probe": {
+    "unit": "u0214.s02",
+    "returncode": 0,
+    "target_of_this_broad_pattern": [
+      "u0214.s01"
+    ],
+    "attempts_in_order": [
+      "1. Base translation minus its norm declaration and norm unit, plus the discourse block, with the clause u0248 still a fenced English block: (20260930T1800Z, ve-green-risk) the Lean route abstained (NotImplemented: fenced English or strict content). Not re-run at ve-green-risk-c5: docs/spec/discourse.md 11 still lists fenced content as a limitation.",
+      "2. Fence removed: (20260930T1800Z) the route abstained (a document without a claim graph); a discourse document must keep a claim graph. Same status at ve-green-risk-c5 (spec 11).",
+      "3. u0248 written as JSON content ({\"ast\": ...}) with its graph node, the name's U+2019 unit kept whole: (20260930T1800Z) InvalidInput: discourse wording of u0214.s02.p1. Superseded by the c5 spec amendment (a location binding needs no discourse wording), but the probe below still cuts the clause in two because a unit holding a location binding must have no meaning and the rest of the sentence is a substantive claim that must not be labelled content-free.",
+      "4. Naming clause cut before the name (two LABELLED fragments p1, p1b, which the translation would not otherwise do; the rest, \", and\" and \"it helps define what we mean by broad safety\", stay UNFORMALISED): (20260930T1800Z) MentionNotSlot: m-this-pattern. At ve-green-risk-c5 this attempt is ACCEPTED at document-check level: both mentions are location bindings (status navigation) to the unit u0214.s01 under the content name “Claude’s principal hierarchy”. This is the one change in the language that touches the constitution, and it labels two fragments of one clause; it formalises nothing.",
+      "5. The same discourse block and fragments added to the real translation (with its norms, soft norms and fence): returncode 1, see in_the_translation_itself."
+    ],
+    "coverage": {
+      "source_bytes": 184893,
+      "accounted_bytes": 184893,
+      "coverage_percent": 100,
+      "bytes_by_kind": {
+        "meta": 429,
+        "unformalised": 183808,
+        "attributed": 634,
+        "asserted": 22
+      },
+      "bytes_by_status": {
+        "LABELLED": 429,
+        "UNFORMALISED": 184442,
+        "CHECKED": 22
+      },
+      "unformalised_reasons": {
+        "other.discourse": 78,
+        "quantities": 119,
+        "norms": 677,
+        "causation": 80,
+        "time": 9,
+        "counting": 31,
+        "defaults": 54,
+        "modality_belief": 24,
+        "attribution": 13
+      },
+      "residual": {
+        "open_terms": 5,
+        "assumptions": 1,
+        "bridge_leaves": 0,
+        "unresolved_reading_sets": 0
+      },
+      "residual_total": 6
+    },
+    "premises": {
+      "status": "model",
+      "model_id": "92f58b70908745380de94e69a238442538e441250ca9e2271abd686ce4ea6a49"
+    },
+    "references": [
+      {
+        "form": "demonstrative",
+        "mention": "m-this-pattern",
+        "status": "navigation",
+        "target": {
+          "content_name": "Claude’s principal hierarchy",
+          "kind": "unit",
+          "units": [
+            "u0214.s01"
+          ]
+        },
+        "unit": "u0214.s02.p1"
+      },
+      {
+        "form": "pronoun",
+        "mention": "m-it",
+        "status": "navigation",
+        "target": {
+          "content_name": "Claude’s principal hierarchy",
+          "kind": "unit",
+          "units": [
+            "u0214.s01"
+          ]
+        },
+        "unit": "u0214.s02.p3"
+      }
+    ],
+    "in_the_translation_itself": {
+      "returncode": 1,
+      "message": "ve.errors.VEError: UnrecordedSlot: u0123.s02.p1: [76303, 76305)",
+      "meaning": "The translation has norm and soft-norm units and one fenced clause. A discourse document must record every slot of a unit that has meaning; the translation's reading-set units have unrecorded slots, and the spec (docs/spec/discourse.md 11) says norm and soft-norm composition is not implemented. So the upgrade cannot enter the main document: u0214.s02 stays UNFORMALISED (other:discourse) there, and only the norms-free companion probe is admitted."
+    }
+  },
+  "rights_reading_probe": {
+    "unit": "u0156.s03",
+    "rights_block": {
+      "holders": [
+        "user"
+      ],
+      "bearers": [
+        "claude_instance"
+      ],
+      "protected": [],
+      "alters": {}
+    },
+    "candidates": {
+      "strict": {
+        "base_predicates_in_its_situation": []
+      },
+      "default": {
+        "base_predicates_in_its_situation": [
+          "soft__excepted__no_system_prompt_deception"
+        ]
+      }
+    },
+    "situation_of_candidate_x_candidate_checked": {
+      "situation built for strict, checked on strict": "accepted (model af35e7a957f3…)",
+      "situation built for strict, checked on default": "rejected: relations must contain exactly the base predicates; defined tables are computed",
+      "situation built for default, checked on strict": "rejected: relations must contain exactly the base predicates; defined tables are computed",
+      "situation built for default, checked on default": "accepted (model 03f19ea7d56f…)"
+    },
+    "conclusion": "A situation is accepted only for the candidate it was built for; the strict and the defeasible candidate never share one, so VE cannot check that they differ. Force readings therefore cannot be rights-reading candidates that carry checked content."
+  },
+  "carried_probes_note": "risk, discourse and rights probes re-run at ve-green-layers2-b2 (probe_risk.py, probe_discourse.py, probe_rights.py); all five probe files (unspecified, S1, risk, discourse, rights) are byte-identical to the previous run's"
+}
