@@ -232,8 +232,10 @@ The prover and countermodel search were not dominant in any profiled test after 
 
 ## Not run, and checklist notes
 
-- `tools/gate.py` was not run: its pytest stage is serial and alone exceeds the one-hour
-  foreground limit. The default suite (8,668 passed, 6 skipped) and the nightly tests (3 passed)
+- `tools/gate.py` did not finish: its pytest stage is serial and alone exceeds the one-hour
+  foreground limit. On 5b005ade every stage before it passed (toolchains, wire contract check,
+  Lean build and audit, Rust build, cargo test); the serial suite was stopped at the two-hour
+  background limit, at `test_readings_s1_differential.py`. The default suite (8,668 passed, 6 skipped) and the nightly tests (3 passed)
   were run on HEAD in this worktree with prebuilt binaries.
 - `tools/gate-collection.json` was updated only for the test IDs changed here; it was already
   212 IDs behind main's collection (another item regenerates it).
