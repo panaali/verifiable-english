@@ -13,12 +13,13 @@ and Python's construction of the admitted document (`ve/readings_s1.py`).
 """
 from __future__ import annotations
 
+import re
 from contextlib import contextmanager
 from pathlib import Path
 
 from .backends.lean import run_readings_cases
 from .errors import CheckerUnavailable, VEError
-from .readings_s1 import Decoded, wire
+from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_bearing, decode_key, wire
 
 LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_readings_route"
 
@@ -48,64 +49,167 @@ def _built():
                                  f"Lean admitted: {type(exc).__name__}") from exc
 
 
-def _strings(value):
-    return type(value) is list and all(type(item) is str for item in value)
+# ---------------------------------------------------------------------------------------------------------------
+# The answer's schema and its binding to the request (build checklist 4)
+#
+# The schema is that of Run.lean's encoders (`validateResult`, `candidateJson`, `keyEntry` with `keyJson`,
+# `pairJson`, `setFindings`), checked over the whole row before anything is compared or hashed. The binding then
+# checks what the request fixes: the content-bearing sets in source order, every candidate in order with its
+# pending state, every ordered pair of candidates neither pending in index order with the situation its
+# distinguishing model names and that situation's witness, and the producer's invariants (Lean only answers a
+# pair it found separated by an admissible witness showing the recorded value; `other_value` is present exactly
+# when the other side owns no key; decisions are the witness's own keys, fixed tables nobody's; findings in
+# `setFindings`' text and order). What is left is Lean's alone: which keys a candidate generates, its hash and
+# chain findings, the other side's completion and which pairs are findings.
+
+class _Invalid(Exception):
+    """A row that is not Lean's answer to this request."""
 
 
-def _bound_candidate(c, n, reading):
-    if type(c) is not dict or c.get("index") != n or type(c.get("index")) is not int or c.get("id") != reading:
-        return False
-    if c.get("pending") is True:
-        return set(c) == {"id", "index", "pending"}
-    keys = {"id", "index", "pending", "document_hash", "owned", "shared", "findings"}
-    return (set(c) == keys and c["pending"] is False and type(c["document_hash"]) is str
-            and _strings(c["findings"])
-            and all(type(k) is list and all(type(e) is dict and set(e) == {"key", "name"} and type(e["key"]) is dict
-                                            and type(e["name"]) is str for e in k)
-                    for k in (c["owned"], c["shared"])))
+def _need(condition):
+    if not condition:
+        raise _Invalid
 
 
-def _bound_pair(p, readings, situations):
-    if type(p) is not dict or set(p) != {"reading", "other", "pair"} or type(p["pair"]) is not dict:
-        return False
-    facts = p["pair"]
-    required = {"situation", "witness", "separated", "witness_admissible", "witness_value", "other_admissible"}
-    return (p["reading"] in readings and p["other"] in readings and p["reading"] != p["other"]
-            and set(facts) in (required, required | {"other_value"})
-            and facts["situation"] in situations and facts["witness"] in (p["reading"], p["other"])
-            and all(type(facts[k]) is bool for k in ("separated", "witness_admissible", "other_admissible"))
-            and all(facts.get(k) is None or type(facts[k]) is bool for k in ("witness_value", "other_value")))
+def _lit(expected):
+    return lambda v: type(v) is type(expected) and v == expected
 
 
-def _bound(row, reading_sets):
-    """Whether an `ok` row has the shape of `validateResult` and names only the request's sets, readings and
-    situations, each set once and every candidate of it in order. This binds Lean's answer to the request; it
-    decides nothing Lean decides (which sets are content-bearing, which pairs separate)."""
-    if row.get("content_bearing") is False:
-        return set(row) == {"id", "status", "content_bearing"}
-    if row.get("content_bearing") is not True or type(row.get("sets")) is not list:
-        return False
-    if set(row) != {"id", "status", "content_bearing", "sets"}:
-        return False
-    requested = {(r.get("id"), r.get("version")): r for r in reading_sets if type(r) is dict}
-    seen = set()
-    for entry in row["sets"]:
-        if type(entry) is not dict or set(entry) != {"set", "version", "candidates", "pairs", "findings"}:
-            return False
-        key = (entry["set"], entry["version"])
-        if type(entry["version"]) is not int or key not in requested or key in seen:
-            return False
-        seen.add(key)
-        R = requested[key]
-        readings = [r.get("id") for r in R.get("readings", []) if type(r) is dict]
-        situations = R.get("situations") if type(R.get("situations")) is dict else {}
-        if (type(entry["candidates"]) is not list or len(entry["candidates"]) != len(readings)
-                or not all(_bound_candidate(c, n, rid) for n, (c, rid) in enumerate(zip(entry["candidates"], readings)))
-                or type(entry["pairs"]) is not list
-                or not all(_bound_pair(p, readings, situations) for p in entry["pairs"])
-                or not _strings(entry["findings"])):
-            return False
-    return True
+def _obj(required, optional=None):
+    optional = optional or {}
+    fields = {**required, **optional}
+    return lambda v: (type(v) is dict and set(required) <= set(v) <= set(fields)
+                      and all(fields[k](item) for k, item in v.items()))
+
+
+def _arr(item, *, nonempty=False):
+    return lambda v: type(v) is list and (bool(v) or not nonempty) and all(item(x) for x in v)
+
+
+def _either(*schemas):
+    return lambda v: any(schema(v) for schema in schemas)
+
+
+def _str(v):
+    return type(v) is str
+
+
+def _name(v):
+    return type(v) is str and v != ""
+
+
+def _nat(v):
+    return type(v) is int and v >= 0
+
+
+def _bool(v):
+    return type(v) is bool
+
+
+def _digest(v):
+    """A sha256 digest as Lean writes one (`CertificateWire.digest`, a situation id): 64 lowercase hex digits."""
+    return type(v) is str and len(v) == 64 and all(ch in "0123456789abcdef" for ch in v)
+
+
+_KEY = _either(*(_obj({f: _name for f in fields if f not in KEY_OPTIONAL},
+                      {f: _name for f in fields if f in KEY_OPTIONAL}) for fields in KEY_FIELDS.values()))
+_KEY_ENTRY = _obj({"key": _KEY, "name": _name})
+_CANDIDATE = _either(
+    _obj({"id": _str, "index": _nat, "pending": _lit(True)}),
+    _obj({"id": _str, "index": _nat, "pending": _lit(False), "document_hash": _digest,
+          "owned": _arr(_KEY_ENTRY), "shared": _arr(_KEY_ENTRY), "findings": _arr(_name)}))
+# Lean answers a pair only after `unless f.witnessValid` and `unless f.separated` (setPairs), so both are true and
+# the witness's value is the recorded one, never null.
+_PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(True),
+                    "witness_admissible": _lit(True), "witness_value": _bool, "other_admissible": _bool},
+                   {"other_value": lambda v: v is None or type(v) is bool})
+_SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
+             "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
+ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}),
+              _obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(True),
+                    "sets": _arr(_SET, nonempty=True)}))
+
+# `setFindings`: `<code>: <set>: <i>, <j>`, with ` (not certified)` on SeparatedByDecisionOnly; per unordered pair
+# (i < j) in order, the decision-only finding (either twin first) before the act-only one (i first).
+FINDING_RANK = {"SeparatedByDecisionOnly": 0, "SeparatedByActOnly": 1}
+_FINDING = re.compile(r"(SeparatedByDecisionOnly|SeparatedByActOnly): (.*): (0|[1-9][0-9]*), (0|[1-9][0-9]*)"
+                      r"( \(not certified\))?", re.DOTALL)
+
+
+def parse_finding(text):
+    """(code, set, i, j) of one of Lean's set findings, or None when it is not in `setFindings`' text."""
+    m = _FINDING.fullmatch(text)
+    if m is None or (m[5] is not None) != (m[1] == "SeparatedByDecisionOnly"):
+        return None
+    return m[1], m[2], int(m[3]), int(m[4])
+
+
+def _bind(row, document):
+    sets = [R for R in Document(None, document).sets if content_bearing(R)]
+    _need(row["content_bearing"] is bool(sets))
+    if sets:
+        _need([(e["set"], e["version"]) for e in row["sets"]] == [(R.id, R.version) for R in sets])
+        for entry, R in zip(row["sets"], sets):
+            _bind_set(entry, R)
+
+
+def _bind_set(entry, R):
+    candidates = entry["candidates"]
+    _need([(c["id"], c["index"], c["pending"]) for c in candidates]
+          == [(a.id, n, a.content is None) for n, a in enumerate(R.candidates)])
+    _need(len({a.id for a in R.candidates}) == len(R.candidates))
+    owned, keys = {}, {}
+    for c in candidates:
+        if c["pending"]:
+            continue
+        generated = [decode_key(e["key"]) for e in c["owned"] + c["shared"]]
+        _need(len(set(generated)) == len(generated))
+        suffix = f" under {R.id}@{R.version}:{c['index']}"
+        _need(all(len(f) > len(suffix) and f.endswith(suffix) for f in c["findings"]))
+        owned[c["index"]] = {decode_key(e["key"]) for e in c["owned"]}
+        keys[c["index"]] = set(generated)
+    index = {a.id: n for n, a in enumerate(R.candidates)}
+    readings = R.raw["readings"]
+    expected = []
+    for x, a in enumerate(R.candidates):
+        for y, b in enumerate(R.candidates):
+            if x != y and a.content is not None and b.content is not None:
+                sid = readings[x]["admission"]["distinguishing_models"][b.id]
+                expected.append((a.id, b.id, sid, R.situations[sid]["witness"]))
+    _need([(p["reading"], p["other"], p["pair"]["situation"], p["pair"]["witness"]) for p in entry["pairs"]]
+          == expected)
+    for p in entry["pairs"]:
+        facts, situation = p["pair"], R.situations[p["pair"]["situation"]]
+        _need(facts["witness"] in (p["reading"], p["other"]))
+        witness = index[facts["witness"]]
+        other = index[p["other"] if facts["witness"] == p["reading"] else p["reading"]]
+        _need(type(situation["value"]) is bool and facts["witness_value"] is situation["value"])
+        _need(("other_value" in facts) is (not owned[other]))
+        # With no key of its own the other side has one completion; separated, it does not show the value.
+        _need(not (facts["other_admissible"] and facts.get("other_value") is facts["witness_value"]))
+        decisions = [decode_key(t["key"]) for t in situation.get("decisions", [])]
+        fixed = [decode_key(t["key"]) for t in situation.get("fixed", [])]
+        _need(all(k in owned[witness] for k in decisions))
+        _need(all(k not in owned[witness] | owned[other] and k in keys[witness] | keys[other] for k in fixed))
+    order = []
+    for text in entry["findings"]:
+        parsed = parse_finding(text)
+        _need(parsed is not None and parsed[1] == R.id)
+        code, _, i, j = parsed
+        _need(i != j and i in owned and j in owned and (code == "SeparatedByDecisionOnly" or i < j))
+        order.append((min(i, j), max(i, j), FINDING_RANK[code]))
+    _need(order == sorted(set(order)))
+
+
+def _check(row, case):
+    """Raise `CheckerUnavailable` unless `row` is a well-formed `ok` answer bound to the request. Every failure of
+    the check itself (a type the schema missed, a missing request field) is contained here: the answer is then
+    not shown to be Lean's, which is operational, never a rejection."""
+    try:
+        _need(ROW(row) and row["id"] == case["id"])
+        _bind(row, case["document"])
+    except (_Invalid, TypeError, KeyError, ValueError, AttributeError, IndexError, RecursionError) as exc:
+        raise CheckerUnavailable("ve_readings_route returned an invalid answer") from exc
 
 
 def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE):
@@ -119,18 +223,8 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE):
     row = run_lean([case], executable=executable)[0]
     if row["status"] == "error":
         raise VEError(row["error"])
-    if not _bound(row, document["reading_sets"]):
-        raise CheckerUnavailable("ve_readings_route returned an invalid answer")
+    _check(row, case)
     return row
-
-
-def separate_many(environment, units, reading_sets, queries, *, executable=LEAN_ROUTE):
-    """`readings-separate` for each (set, situation id, other reading): Lean's answer per query, or its
-    diagnostic (the search's check, 8.5). The document carries the candidate situations."""
-    environment, document = wire(environment), wire(document_wire(units, reading_sets))
-    cases = [{"id": f"q{n}", "kind": "readings-separate", "environment": environment, "document": document,
-              "set": s, "situation": sid, "other": other} for n, (s, sid, other) in enumerate(queries)]
-    return run_lean(cases, executable=executable) if cases else []
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -434,14 +528,9 @@ class Wording:
 
 
 def _finding_pairs(entry, code):
-    """The candidate indices of each of Lean's findings with this code, in Lean's order: `<code>: <set>: <i>, <j>`,
-    then ` (not certified)` on `SeparatedByDecisionOnly` (Run.lean `setFindings`)."""
-    pairs = []
-    for finding in entry["findings"]:
-        if finding.startswith(code + ":"):
-            i, j = finding.split(":", 2)[2].split("(", 1)[0].split(",")
-            pairs.append((int(i), int(j)))
-    return pairs
+    """The candidate indices of each of Lean's findings with this code, in Lean's order (`parse_finding`, the
+    reader `validate` checked them with)."""
+    return [(i, j) for found, _, i, j in map(parse_finding, entry["findings"]) if found == code]
 
 
 def _article(noun):
@@ -485,4 +574,4 @@ def _precedence_related(rules, name):
     return related
 
 
-__all__ = ["CHECKED_BY", "Wording", "document_wire", "report", "run_lean", "separate_many", "validate"]
+__all__ = ["CHECKED_BY", "ROW", "Wording", "document_wire", "parse_finding", "report", "run_lean", "validate"]

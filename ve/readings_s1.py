@@ -536,39 +536,35 @@ class _Model:
 # ---------------------------------------------------------------------------------------------------------------
 # Keys on the wire
 
+# The constructors of `GenKey` on the wire (Wire.lean `keyJson`, `decodeKey`): per constructor, its fields in the
+# order of the key's tuple; `bearer` (KEY_OPTIONAL) is omitted when absent. `key_json`, `decode_key` and the
+# route's response schema (`readings_route`) all read this one table.
+KEY_FIELDS = {
+    "excepted": ("excepted", "bearer"),
+    "off": ("off", "bearer", "party"),
+    "outweighs": ("outweighs", "lower", "higher"),
+    "lim": ("lim", "act"),
+    "cond": ("cond", "act", "condition"),
+    "aimed": ("aimed",),
+}
+KEY_OPTIONAL = frozenset({"bearer"})
+
+
 def key_json(key):
-    kind = key[0]
-    if kind == "excepted":
-        return {"excepted": key[1], **({"bearer": key[2]} if key[2] is not None else {})}
-    if kind == "off":
-        return {"off": key[1], "party": key[3], **({"bearer": key[2]} if key[2] is not None else {})}
-    if kind == "outweighs":
-        return {"outweighs": key[1], "lower": key[2], "higher": key[3]}
-    if kind == "lim":
-        return {"lim": key[1], "act": key[2]}
-    if kind == "cond":
-        return {"cond": key[1], "act": key[2], "condition": key[3]}
-    return {"aimed": key[1]}
+    fields = dict(zip(KEY_FIELDS[key[0]], key[1:]))
+    return {**{f: v for f, v in fields.items() if f not in KEY_OPTIONAL},
+            **{f: v for f, v in fields.items() if f in KEY_OPTIONAL and v is not None}}
 
 
 def decode_key(j):
-    """A situation's key as `decodeKey` reads it; a key that does not decode is a construction failure (Lean
-    refuses its document)."""
+    """A key as `decodeKey` reads it; a key that does not decode is a construction failure (Lean refuses its
+    document) or, in a route's answer, an invalid answer."""
     if type(j) is not dict or any(type(v) is not str for v in j.values()):
         raise ValueError(f"undecodable key {j!r}")
-    keys = sorted(j)
-    if keys in (["excepted"], ["bearer", "excepted"]):
-        return ("excepted", j["excepted"], j.get("bearer"))
-    if keys in (["off", "party"], ["bearer", "off", "party"]):
-        return ("off", j["off"], j.get("bearer"), j["party"])
-    if keys == ["higher", "lower", "outweighs"]:
-        return ("outweighs", j["outweighs"], j["lower"], j["higher"])
-    if keys == ["act", "lim"]:
-        return ("lim", j["lim"], j["act"])
-    if keys == ["act", "cond", "condition"]:
-        return ("cond", j["cond"], j["act"], j["condition"])
-    if keys == ["aimed"]:
-        return ("aimed", j["aimed"])
+    for kind, fields in KEY_FIELDS.items():
+        required = {f for f in fields if f not in KEY_OPTIONAL}
+        if required <= set(j) <= set(fields):
+            return (kind, *(j.get(f) for f in fields))
     raise ValueError(f"undecodable key {j!r}")
 
 
@@ -582,6 +578,11 @@ def key_source(key):
 
 # ---------------------------------------------------------------------------------------------------------------
 # The decoded document (1.1 to 1.5)
+
+def content_bearing(R):
+    """`Wire.contentBearing`: some candidate of the set has content other than an assertion (1.2)."""
+    return any(a.content is not None and a.content.kind != "assertion" for a in R.candidates)
+
 
 class Decoded:
     """The environment and the document, with the attachment of 1.3 and each candidate's side built on demand.
@@ -612,9 +613,7 @@ class Decoded:
     def owned_keys(self, s, i):
         return [k for k, _, _ in self.side(s, i).gen_keys() if self.owned(s, i, k)]
 
-    @staticmethod
-    def content_bearing(R):
-        return any(a.content is not None and a.content.kind != "assertion" for a in R.candidates)
+    content_bearing = staticmethod(content_bearing)
 
     def key_tuples(self, s, j, model, key):
         rows = []
