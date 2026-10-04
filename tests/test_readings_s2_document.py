@@ -457,7 +457,11 @@ def test_n6_e27_none_over_three_choices(tmp_path):
     data, lines, wording = _query(path, nobody_asks)
     assert data["verdict"] == "NONE" and len(data["countermodels"]) == 3
     assert lines[0] == "Under no reading of the 2 open sentences does the conclusion follow."
-    assert len(lines) == 4 and all(line.startswith("Read sentence 1 as ") for line in lines[1:])
+    assert all(line.startswith("Read sentence 1 as ") for line in lines[1:4])
+    # The three choices are the coupling's (review A of compose-s2 looprecheck2): E3 with its E5 line.
+    assert data["restrictions"] == ["coupling:c1"]
+    assert lines[4:] == ["This holds provided that:",
+                         "Sentences 1 and 2 are read with the same force, because of sentence 1."]
     _one_derivation(lines, wording)
 
 
@@ -819,7 +823,9 @@ def test_review_b_enumerated_dead_readings_null_when_certification_cannot_finish
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# compose-s2 looprecheck2: review B (no entailment is certified under a reading whose rules collide).
+# compose-s2 looprecheck2: review B (no entailment is certified under a reading whose rules collide), review A
+# (enumerated combinations keep the couplings and narrowings that selected their choices) and review A (a situation
+# shows every decision the choice's document generates, rights' included).
 
 def _m8(tmp_path):
     waive = lambda over: norm("waive-x", "avoid_required", False, over=over, guard=ASKS)  # noqa: E731
@@ -893,3 +899,60 @@ def test_review_b2_python_never_bypasses_lean_conflict_check(tmp_path, monkeypat
     monkeypatch.setattr(_ChoiceDocument, "conflict", lying)
     with pytest.raises(CheckerUnavailable, match="does not accept the certificate"):
         route.entailment(every("avoid_required", negated=True))
+
+
+def _m9_narrowed(tmp_path):
+    meta, rest = _split(_m9(tmp_path))
+    meta["narrowings"] = [{"id": "n1", "set": "rs2", "version": 1, "keeps": ["d"], "by": "reviewer",
+                           "reason_spans": ["u0"]}]
+    return _write(tmp_path, "m9-narrow.ve.md", meta, rest)
+
+
+WARN_ALL = "*For every agent, for every user, that agent must warn that user.*"
+
+
+def test_review_a2_enumerated_narrowing_kept_in_english(tmp_path):
+    """The finding's case: M9 with `n1` keeping only `rs2:d` turns SOME into ALL; the result keeps the narrowing in
+    `conditional_on` and the English says so (E10, E3, E7), and so does the report's CONFLICT-FREE line."""
+    path = _m9_narrowed(tmp_path)
+    data, lines, wording = _query(path, every("warn_required"))
+    assert data["verdict"] == "ALL" and data["route"] == "enumerated"
+    assert data["restrictions"] == ["narrowing:n1"] and data["conditional_on"] == ["narrowing:n1"]
+    assert lines == [f"Under every reading of the 2 open sentences, the conclusion follows: {WARN_ALL}",
+                     "This holds provided that:", "Sentence 3 is not read as reading 1, because of sentence 1."]
+    _one_derivation(lines, wording)
+    report, wording = _report(path)
+    assert report[1:5] == ["Under every reading of the 2 open sentences, no two rules on the same act contradict "
+                           "each other.", "This holds provided that:",
+                           "Sentence 3 is not read as reading 1, because of sentence 1.",
+                           "This does not depend on how sentence 2 is read."]
+    assert check_document(path)["readings"]["conflict"]["conditional_on"] == ["narrowing:n1"]
+    _one_derivation(report, wording)
+
+
+def test_review_a2_class_every_combined_verdict_keeps_its_restrictions(tmp_path):
+    """The class: ALL and NONE over the compatible choices, with or without named readings, on either route, keep
+    exactly the restrictions that exclude a choice taking the named readings; a combined verdict without them is
+    refused by the English rather than worded as unrestricted."""
+    path = _m9_narrowed(tmp_path)
+    doc, route, wording = _wording(path)
+    # Under a named reading of the narrowed set the narrowing excludes nothing more; under the other set's it does.
+    assert route.restrictions([("rs2", 1)]) == [] and route.restrictions([("rs1", 0)]) == ["narrowing:n1"]
+    under = route.entailment(every("warn_required"), assumed=[("rs1", 0)])
+    assert under["verdict"] == "ALL" and under["restrictions"] == ["narrowing:n1"]
+    assert wording.query(every("warn_required"), under)[1:] == [
+        "This holds provided that:", "Sentence 3 is not read as reading 1, because of sentence 1."]
+    nobody = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
+    none = route.entailment(nobody)
+    assert none["verdict"] == "NONE" and none["restrictions"] == ["narrowing:n1"]
+    assert wording.query(nobody, none)[-2:] == ["This holds provided that:",
+                                                 "Sentence 3 is not read as reading 1, because of sentence 1."]
+    with pytest.raises(VEError, match="needs its restrictions"):
+        wording.query(nobody, {k: v for k, v in none.items() if k != "restrictions"})
+    # The superposed route's combination over its choices (M6 with a narrowing: every choice is listed).
+    narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["strict"], "by": "reviewer",
+                 "reason_spans": ["u2"]}
+    superposed = verdicts(_m6(tmp_path / "m6", [narrowing]))
+    assert superposed.route == "superposed"
+    assert superposed.restrictions(()) == ["coupling:c1", "narrowing:n1"]
+    assert superposed.restrictions([("rs1", 0)]) == ["coupling:c1"]

@@ -104,6 +104,30 @@ class _Route:
     def candidates(self):
         return [(R.id, i) for R in self.sets for i in range(len(R.candidates))]
 
+    def restrictions(self, A=()):
+        """The slot labels (`coupling:<id>`, `narrowing:<id>`, in `choiceCore D`'s order) of the couplings and the
+        narrowings in force that exclude some complete choice taking `A`: a verdict combined over the compatible
+        choices holds only given them (review A of compose-s2 looprecheck2). An over-approximation of what selected
+        the choices, never an omission."""
+        from .readings_sup import in_force
+        fixed = {s: i for s, i in A}
+        by_id = {R.id: R for R in self.sets}
+        out = []
+        for coupling in self.couplings:
+            axis, refs = coupling["axis"], coupling["sets"]
+            if any(ref["set"] not in by_id for ref in refs):
+                continue
+            pairs = [(by_id[left["set"]], by_id[right["set"]]) for left, right in zip(refs, refs[1:])]
+            if any(fixed.get(L.id, i) == i and fixed.get(R.id, j) == j and
+                   (a.labels.get(axis) is None or a.labels.get(axis) != b.labels.get(axis))
+                   for L, R in pairs for i, a in enumerate(L.candidates) for j, b in enumerate(R.candidates)):
+                out.append(f"coupling:{coupling['id']}")
+        for narrowing in self.narrowings:
+            R = next((R for R in self.sets if in_force(R, narrowing)), None)
+            if R is not None and R.id not in fixed and any(a.id not in narrowing["keeps"] for a in R.candidates):
+                out.append(f"narrowing:{narrowing['id']}")
+        return out
+
     def report_fields(self):
         return {}
 
@@ -595,9 +619,14 @@ class Superposed(_Route):
         if unknown:
             return {"verdict": "UNKNOWN", "route": "superposed", "choice": unknown[0]["choice"],
                     "budget": dict(BUDGET)}
+        # Combined over the compatible choices: the couplings and narrowings that excluded the others are kept
+        # (review A of compose-s2 looprecheck2), as a certificate on `sup D` keeps the slot labels it uses.
+        restrictions = self.restrictions(())
         if proofs:
-            return {"verdict": "ALL", "route": "superposed", "evidence": "certificates", "proofs": proofs}
-        return {"verdict": "NONE", "route": "superposed", "countermodels": counters}
+            conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
+            return {"verdict": "ALL", "route": "superposed", "evidence": "certificates", "proofs": proofs,
+                    "conditional_on": conditional, "restrictions": restrictions}
+        return {"verdict": "NONE", "route": "superposed", "countermodels": counters, "restrictions": restrictions}
 
     def report_fields(self):
         conflict = self.conflict(())
@@ -675,8 +704,11 @@ class Enumerated(_Route):
         rows = [(self.choice_json(c), self._choice(c).conflict()) for c in self.choices]
         conflicts = [(c, r) for c, r in rows if r["verdict"] == "CONFLICT"]
         if all(r["verdict"] == "CONFLICT-FREE" for _, r in rows):
-            conditional = list(dict.fromkeys(label for _, r in rows for label in r.get("conditional_on", [])))
+            restrictions = self.restrictions(A)
+            conditional = list(dict.fromkeys([label for _, r in rows for label in r.get("conditional_on", [])] +
+                                             restrictions))
             return {"status": "CONFLICT-FREE", "route": "enumerated", "conditional_on": conditional,
+                    "restrictions": restrictions,
                     "status_text": f"CONFLICT-FREE among rules on the same act under every reading ({len(rows)} "
                                    "readings checked one at a time)",
                     "choices": [{"choice": c, "status": "CONFLICT-FREE"} for c, _ in rows]}
@@ -756,10 +788,16 @@ class Enumerated(_Route):
         proofs = [{"choice": c, **r} for c, r in rows if r["outcome"] == "proof"]
         counters = [{"choice": c, **r} for c, r in rows if r["outcome"] == "countermodel"]
         unknown = [c for c, r in rows if r["outcome"] == "unknown"]
+        # Review A of compose-s2 looprecheck2: ALL and NONE are claims over the compatible choices, so they keep the
+        # couplings and narrowings that excluded the others.
+        restrictions = self.restrictions(A)
         if len(proofs) == len(rows):
-            return {"verdict": "ALL", "route": "enumerated", "evidence": "certificates", "proofs": proofs, **named}
+            conditional = list(dict.fromkeys([label for p in proofs for label in p["conditional_on"]] + restrictions))
+            return {"verdict": "ALL", "route": "enumerated", "evidence": "certificates", "proofs": proofs,
+                    "conditional_on": conditional, "restrictions": restrictions, **named}
         if len(counters) == len(rows):
-            return {"verdict": "NONE", "route": "enumerated", "countermodels": counters, **named}
+            return {"verdict": "NONE", "route": "enumerated", "countermodels": counters,
+                    "restrictions": restrictions, **named}
         if proofs and counters:
             return {"verdict": "SOME", "route": "enumerated", "proof": proofs[0], "countermodel": counters[0],
                     **named}

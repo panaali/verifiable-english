@@ -585,7 +585,11 @@ NONE is the E12 lines alone, never E27 (review A).
 As built (compose-s2 looprecheck2): an entailment is certified on the enumerated route only when every compatible
 choice it is combined over (those taking `A`) is CONFLICT-FREE, as on the superposed route (14.8); otherwise
 `UNKNOWN (conflict status: <status>)` naming the first such choice, and no certificate of a conflicting choice's
-document (the premise status's `⊥` included) is promoted (review B).
+document (the premise status's `⊥` included) is promoted (review B). Every verdict combined over the compatible
+choices (ALL and NONE on the enumerated route, CONFLICT-FREE under every reading there, and the superposed route's
+per-choice ALL and NONE) keeps `restrictions`: the labels `coupling:<id>` and `narrowing:<id>` of the restrictions
+in force that exclude some complete choice taking `A`, in `choiceCore D`'s order, also in `conditional_on` for ALL
+and CONFLICT-FREE; the English shows them as on the superposed route, E3 with E5 or E7 (review A).
 
 ### 4.7 Conservativity
 

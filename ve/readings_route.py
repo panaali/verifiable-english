@@ -790,12 +790,23 @@ class S2Wording:
         return [self.E.independent(self.set_number[R.id], self.slots) for R in self.sets if R.id not in mentions]
 
     def _mentions(self, used):
-        from .readings_sup import bit_name, bits_of
+        """The open sets the used labels mention: a slot leaf by its bit predicates, and on the enumerated route a
+        coupling or narrowing label by the sets it restricts."""
+        from .readings_sup import bit_name, bits_of, in_force
         asts = {entry["label"]: entry["ast"] for entry in self.route.row.get("slot", [])}
+        restricted = set()
+        for label in used:
+            kind, _, ident = label.partition(":")
+            if kind == "coupling":
+                coupling = next(c for c in self.route.couplings if c["id"] == ident)
+                restricted.update(ref["set"] for ref in coupling["sets"])
+            elif kind == "narrowing":
+                narrowing = next(n for n in self.route.narrowings if n["id"] == ident)
+                restricted.update(R.id for R in self.sets if in_force(R, narrowing))
         out = []
         for position, R in enumerate(self.sets, 1):
             bits = {bit_name(position, j) for j in range(bits_of(len(R.candidates)))}
-            if any(bits & _predicates(asts.get(label, [])) for label in used):
+            if R.id in restricted or any(bits & _predicates(asts.get(label, [])) for label in used):
                 out.append(R.id)
         return out
 
@@ -811,7 +822,8 @@ class S2Wording:
         conflict = route.conflict(())
         if conflict["status"] == "CONFLICT-FREE":
             lines.append(E.every_result(k, "conflict_free", self.slots))
-            used = conflict.get("reading_premises_used", [])
+            used = (conflict.get("reading_premises_used", []) if conflict.get("evidence") == "certificates" else
+                    self._restrictions(conflict))
             lines += self.provided(used)
             lines += self.independent(self._mentions(used))
         elif conflict["status"] == "CONFLICT" and "model" in conflict:
@@ -854,6 +866,10 @@ class S2Wording:
                 used = data.get("reading_premises_used", [])
                 lines += self.provided(used)
                 lines += self.independent(set(self._mentions(used)) | {s for s, _ in assumed})
+            else:
+                # Review A of compose-s2 looprecheck2: combined over the compatible choices, the result keeps the
+                # couplings and narrowings that excluded the others (E3 with E5 and E7).
+                lines += self.provided(self._restrictions(data))
         elif verdict == "SOME":
             lines.append(E.named_result(self.readings(data["proof"]["choice"]), "follows", self.slots,
                                         conclusion=slot))
@@ -864,11 +880,20 @@ class S2Wording:
             if k >= 2 and not assumed:
                 lines.append(E.none_result(k, self.slots))
             lines += [self._countermodel(c) for c in data["countermodels"]]
+            lines += self.provided(self._restrictions(data))
         elif verdict == "UNKNOWN" and "countermodel" in data and data.get("budget") == {"max_choices": 64} \
                 and not assumed:
             lines.append(E.over_budget(self.slots))
             lines.append(self._countermodel(data["countermodel"]))
         return lines
+
+    @staticmethod
+    def _restrictions(data):
+        """The restrictions a combined verdict keeps; a combined verdict without the field is refused, never worded
+        as if no coupling or narrowing had selected its choices."""
+        if "restrictions" not in data:
+            raise VEError("InvalidInput: a verdict combined over the compatible choices needs its restrictions")
+        return data["restrictions"]
 
     def _countermodel(self, counter):
         model = counter.get("model")
