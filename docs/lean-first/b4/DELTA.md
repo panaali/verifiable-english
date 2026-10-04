@@ -148,6 +148,17 @@ reaches a user (rule 4).
 - **Theorem statements.** No theorem changed or was added. `discourse_wire_acceptance` still states that a
   successful `admission` answer is `encodeAdmission` of a checked admission, and `encodeAdmission` now appends
   `jointFields`.
+- **Answer binding (lf-4 review B).** After the corpora above were recorded, `ve/discourse.py` began binding
+  every member of Lean's answer that it reads to the loaded document (`_bind_answer`). That covers the units'
+  statuses, the references, the bound units, the validity claims, the report id and the joint set: choices
+  in range, in the enumeration's strictly increasing order, UNKNOWN exactly over the budget, and the
+  disjunction its choices denote. An answer that fails is `CheckerUnavailable`. A genuine answer always passes
+  (`tests/test_discourse_answer.py::test_genuine_answers_are_bound` and the suite), so no public result of the
+  corpora should change. The A/B tool was not rerun. Every one- and two-fault mutant of five genuine answers is
+  `CheckerUnavailable` or shown identically (`test_genuine_answer_mutants_never_pass_as_answers`).
+  This change leaves one earlier, fail-closed limit in place. A constrained joint set whose disjunction is
+  deeper than Python's AST budget (`ve/limits.py`, depth 64), such as 64 choices over six sets, is still
+  `CheckerUnavailable` when `_report` decodes the disjunction as a premise.
 - **Stale prose.** `docs/spec/discourse.md` 4.1(6) and its history sections, and a doc comment in
   `lean/VE/Discourse/Grammar.lean` (frozen, rebuilt only with a Lean change), still name Python's deleted
   `reference_surfaces` as a second implementation.
