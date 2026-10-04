@@ -61,12 +61,16 @@ records (`--fresh` reclassifies everything). It does not touch the baseline; `--
 also keeps the section 11 counts in the baseline next to the measured ones.
 
 A predicate is meaning a reviewer reads: classed C, [R] or [I] without a tie it fails every run.
+So does a declaration holding a predicate among its parts (a `where` helper or a field inside its
+range, or a generated predicate without a range whose name extends it), tied or not: the predicate's
+lines are the declaration's, and a tie of the declaration says nothing about them. A predicate that
+is part of no declaration of its file fails the run too.
 """
 from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import fnmatch
 import json
 from pathlib import Path
@@ -109,6 +113,9 @@ class Decl:
     kind: str
     start: int  # 1-based, inclusive
     end: int  # inclusive
+    # The compiled constants that are part of it: those inside its source range (`top_level`) and
+    # generated ones without a range whose name extends it (`place`).
+    parts: tuple[str, ...] = ()
 
     @property
     def lines(self) -> int:
@@ -120,14 +127,17 @@ def internal(name: str) -> bool:
     return any(part.startswith("_") for part in name.split("."))
 
 
-def top_level(declared: list[Declared]) -> tuple[list[Declared], list[str]]:
+def top_level(declared: list[Declared]) -> tuple[list[Declared], dict[str, list[str]], list[str]]:
     """The declarations of one compiled module: every constant whose source range no other
-    constant's range contains. A constant inside another's range is part of it (a structure's
-    fields and derived instances, a `where` helper, a macro's generated rules). Of constants with one
+    constant's range contains, the constants inside each one's range (by its name), and the
+    problems. A constant inside another's range is part of it (a structure's fields and derived
+    instances, a `where` helper, a macro's generated rules): its lines are the declaration's, and
+    so is its validation (`classify` checks the predicates among the parts). Of constants with one
     range, the one the others' names extend is the declaration, a generated name never; two
     unrelated names on one range are a problem, since neither can be told apart from the other."""
     ordered = sorted(declared, key=lambda d: (d.start, (-d.end[0], -d.end[1]), internal(d.name), len(d.name), d.name))
     tops: list[Declared] = []
+    parts: dict[str, list[str]] = {}
     problems: list[str] = []
     for d in ordered:
         top = tops[-1] if tops else None
@@ -135,9 +145,11 @@ def top_level(declared: list[Declared]) -> tuple[list[Declared], list[str]]:
             if (d.start, d.end) == (top.start, top.end) and not d.name.startswith(top.name + ".") \
                     and not internal(d.name):
                 problems.append(f"{d.name} and {top.name} share one source range")
+            parts[top.name].append(d.name)
             continue
         tops.append(d)
-    return tops, problems
+        parts[d.name] = []
+    return tops, parts, problems
 
 
 def scan(path: Path, declared: list[Declared]) -> tuple[list[Decl], int, list[str]]:
@@ -152,7 +164,7 @@ def scan(path: Path, declared: list[Declared]) -> tuple[list[Decl], int, list[st
     text = path.read_text()
     code = code_only(text).split("\n")
     total = text.count("\n") + (0 if text.endswith("\n") or not text else 1)
-    tops, problems = top_level(declared)
+    tops, parts, problems = top_level(declared)
 
     def opened(number: int) -> int:
         """The first line of a declaration or command written at line `number`."""
@@ -196,7 +208,7 @@ def scan(path: Path, declared: list[Declared]) -> tuple[list[Decl], int, list[st
                             "write each declaration on its own lines")
             decls.append(Decl(None, "unrecorded", start, end))
         elif here:
-            decls.append(Decl(here[0].name, here[0].kind, start, end))
+            decls.append(Decl(here[0].name, here[0].kind, start, end, tuple(parts[here[0].name])))
         else:
             decls.append(Decl(None, unnamed[start], start, end))
     return decls, total, problems
@@ -254,6 +266,38 @@ def ident(module: str, name: str) -> Ident:
     return module_name(module), name
 
 
+def reads_meaning(cls: str, tied: bool) -> bool:
+    """The classes a predicate's lines may take: those a reviewer reads (K, S, untied [V]) and
+    proof or test helpers (P, T). An untied C, [R] or [I] class would drop it from the budget unread."""
+    return cls in {"K", "S", "P", "T"} or cls[0] in "DG" and cls.endswith("[V]") and not tied
+
+
+def held_predicates(module: str, decl: Decl, predicates: set[Ident]) -> list[str]:
+    """The predicates among the compiled constants that are part of `decl` (`Decl.parts`)."""
+    return [part for part in decl.parts if ident(module, part) in predicates]
+
+
+def place(module: str, decls: list[Decl], predicates: set[Ident]) -> tuple[list[Decl], list[str]]:
+    """`decls` (one file's) with every predicate of `module` that has no source range of its own
+    (a generated `Path.below`) added to the parts of the declaration its name extends, and the
+    problems: a predicate that is neither a declaration, nor inside one's range, nor extends one's
+    name would be classed with no line of the file, unread."""
+    name = module_name(module)
+    placed = {n for d in decls if d.name is not None for n in (d.name, *d.parts)}
+    extra: dict[int, list[str]] = defaultdict(list)
+    problems = []
+    for pred_module, pred in sorted(predicates):
+        if pred_module != name or pred in placed:
+            continue
+        owners = [i for i, d in enumerate(decls) if d.name is not None and pred.startswith(d.name + ".")]
+        if not owners:
+            problems.append(f"{module}: the predicate {pred} is part of no declaration of the file "
+                            "(no source range, and its name extends none); rerun tools/lean_statements.py")
+            continue
+        extra[max(owners, key=lambda i: len(decls[i].name))].append(pred)
+    return [replace(d, parts=d.parts + tuple(extra[i])) if i in extra else d for i, d in enumerate(decls)], problems
+
+
 def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[Ident] | None],
              trusted: set[Ident] = frozenset(), predicates: set[Ident] = frozenset()) -> tuple[str, bool, list[str]]:
     """(class, tied, problems) of one declaration. A tie holds when every listed theorem is in
@@ -264,9 +308,15 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[Ident] 
     A declaration in `predicates` (its type ends in `Prop`) is a statement a reviewer reads, not
     executable code: it is K or S, a [V] D or G declaration, P or T (a proof or test helper), or a
     tied C, D or G declaration; an untied C, [R] or [I] class would drop it from the budget
-    unread."""
+    unread.
+
+    A predicate inside the declaration (`decl.parts`: a `where` helper, a structure field) is
+    checked the same way under the declaration's class, which its lines take: the declaration must
+    be K, S, untied [V], P or T. A tie of the declaration does not tie it (the theorem is about the
+    declaration, not about the meaning inside); a predicate to be tied is declared on its own."""
     entry = table.get(module, {}).get(decl.name) if decl.name is not None else None
     me = ident(module, decl.name) if decl.name is not None else None
+    held = held_predicates(module, decl, predicates)
     if decl.kind in KIND_CLASSES:
         cls = KIND_CLASSES[decl.kind]
         if entry is None:
@@ -276,12 +326,18 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[Ident] 
                             f"(it lists {listed}{' tied' if isinstance(entry, dict) else ''})"]
     if entry is None:
         return "?", False, []
+    cls = entry if isinstance(entry, str) else entry["class"]
+    if held and not reads_meaning(cls, isinstance(entry, dict)):
+        how = "tied " if isinstance(entry, dict) else ""
+        return cls, False, [f"{module}: {decl.name}: a declaration holding a predicate ({', '.join(held)}) cannot "
+                            f"be {how}{cls}; classify it K or S (or P for a proof helper), or declare the "
+                            "predicate on its own (a tie of the declaration does not tie what is inside it)"]
     if isinstance(entry, str):
-        if me in predicates and (entry == "C" or entry[0] in "DG" and not entry.endswith("[V]")):
+        if me in predicates and not reads_meaning(entry, False):
             return entry, False, [f"{module}: {decl.name}: a predicate cannot be {entry} unless a theorem ties it; "
                                   "classify it K or S (or P for a proof helper)"]
         return entry, False, []
-    cls, problems = entry["class"], []
+    problems = []
     if cls[0] not in "CDG":
         problems.append(f"{module}: {decl.name}: only C, D and G declarations can be tied")
     for theorem in entry["tied"]:
@@ -372,11 +428,22 @@ def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, 
     point at come from a first pass over the same declarations without any anchor (`is_anchor`:
     a tied declaration never validates there, so ties cannot anchor each other); the second pass
     checks the ties against them. An anchor is a declaration of one module (`ident`): a namesake
-    of an anchor in another module anchors nothing."""
-    first = [classify(module, decl, table, proved, frozenset(), predicates) for module, decl in decls]
+    of an anchor in another module anchors nothing. Every predicate of a read file is part of one
+    of its declarations first (`place`)."""
+    problems: list[str] = []
+    by_module: dict[str, list[Decl]] = defaultdict(list)
+    for module, decl in decls:
+        by_module[module].append(decl)
+    decls = []
+    for module, found in by_module.items():
+        if module not in unread:
+            found, issues = place(module, found, predicates)
+            problems += issues
+        decls += [(module, decl) for decl in found]
+    first =[classify(module, decl, table, proved, frozenset(), predicates) for module, decl in decls]
     trusted = {ident(module, decl.name) for (module, decl), result in zip(decls, first)
                if decl.name is not None and is_anchor(*result)}
-    out, problems, seen = [], [], defaultdict(set)
+    out, seen = [], defaultdict(set)
     for (module, decl), (cls, tied, issues) in zip(decls, first):
         if isinstance(table.get(module, {}).get(decl.name), dict):
             cls, tied, issues = classify(module, decl, table, proved, trusted, predicates)
@@ -628,8 +695,9 @@ def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None,
                 predicates: set[Ident] = frozenset(), kept: dict[str, object] | None = None) -> dict[str, object]:
     """Seeded classes of the named non-theorem declarations of one file.
 
-    `kept` is the file's current table: its ties and classes stay, except that a predicate not
-    already K, S, P or T takes `predicate_class` and a data type of a kernel module takes K. The other
+    `kept` is the file's current table: its ties and classes stay, except that a predicate (or a
+    declaration with a predicate among its parts, tied or not) not already K, S, P or T takes
+    `predicate_class` and a data type of a kernel module takes K. The other
     declarations are new. The classes a file may use are those its section 11 row records (a file
     without a row gets G, so it counts as trusted). Inside that set a new declaration takes the
     first class whose name rule matches (`SEED_RULES`) while that class has room left in the row; the rest fill the
@@ -638,22 +706,26 @@ def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None,
     kept = kept or {}
     sizes: dict[str, int] = {}
     kinds: dict[str, str] = {}
+    holds: set[str] = set()  # declarations with a predicate inside (`held_predicates`)
     for decl in decls:
         if decl.kind in KIND_CLASSES or decl.name is None:
             continue
         sizes[decl.name] = sizes.get(decl.name, 0) + decl.lines
         kinds.setdefault(decl.name, decl.kind)
+        if held_predicates(module, decl, predicates):
+            holds.add(decl.name)
     short = {name: name.rsplit(".", 1)[-1] for name in sizes}
     allowed = [c for c in ("K", "S", "D", "G", "C") if row is not None and row.get(c, 0) > 0]
     test_module = re.search(r"Examples|Checks|ResponseDecode|RiskEvalMain", module) is not None
     out: dict[str, object] = {}
     for name in sizes:
         old = kept.get(name)
-        if isinstance(old, dict):  # a tie is a reviewed fact, checked on every run
+        if isinstance(old, dict) and name not in holds:  # a tie is a reviewed fact, checked on every run
             out[name] = old
-        elif ident(module, name) in predicates:
-            # K, S, P and T are reviewed choices for a predicate; any other class is not allowed.
-            out[name] = old if old in {"K", "S", "P", "T"} else predicate_class(module, row)
+        elif ident(module, name) in predicates or name in holds:
+            # K, S, P and T are reviewed choices for a predicate (or a declaration holding one, which
+            # a tie does not cover: `classify`); any other class is not allowed.
+            out[name] = old if old in ("K", "S", "P", "T") else predicate_class(module, row)
         elif KERNEL.match(module) and "K" in allowed and kinds[name] in {"structure", "inductive"}:
             out[name] = "K"
         elif old is not None:
@@ -703,7 +775,9 @@ def seed(trust_map: Path, root: Path = ROOT, table_path: Path = TABLE,
         by_module[module].append(decl)
     for path in sources(root):
         module = module_key(path, root)
-        decls = by_module[module]
+        decls, placing = place(module, by_module[module], predicates)
+        if placing:
+            raise SystemExit("cannot seed from a declaration list that fails: " + "; ".join(placing[:5]))
         classes: dict[str, list] = defaultdict(list)
         for name, entry in seed_module(module, decls, section11.get(module), predicates, old.get(module)).items():
             if isinstance(entry, dict):
