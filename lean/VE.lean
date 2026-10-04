@@ -1,4 +1,11 @@
 import VE.Audit
+import VE.Grammar.TableProofs
+import VE.Grammar.Meaning
+import VE.Grammar.Reading
+import VE.Grammar.Extension
+import VE.EnglishGrammar.Examples
+import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.EngineExamples
 import VE.Compose.Slot
 import VE.Compose.Dispatch
 import VE.Compose.Content
