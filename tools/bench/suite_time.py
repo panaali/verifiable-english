@@ -38,7 +38,8 @@ def summary(log: str) -> dict:
     line = next((line for line in reversed(log.splitlines()) if re.search(r"\d+ (passed|failed)", line)), "")
     counts = {word: int(number) for number, word in re.findall(r"(\d+) (passed|failed|skipped|errors?|warnings?)", line)}
     workers = re.search(r"-n auto: (\d+) workers|created: (\d+)/\d+ workers", log)
-    return {"summary": line.strip("= "), "counts": counts,
+    outcomes = [line for line in log.splitlines() if line.startswith(("FAILED ", "ERROR ", "SKIPPED "))]
+    return {"summary": line.strip("= "), "counts": counts, "not_passed": outcomes,
             "workers": int(next(filter(None, workers.groups()))) if workers else None}
 
 
