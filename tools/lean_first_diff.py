@@ -23,6 +23,11 @@ Corpora (``--corpus``, default all):
   countermodel check), under each authority.
 * ``pilots``: every `.ve.md` document of every `pilot/*` branch, deduplicated by content,
   through `ve document check` (one process per document, under the default authority).
+* ``discourse``: every `ve-document@2` text of `docs/lean-first/discourse-corpus.json.gz` (the
+  documents the discourse tests write, captured at batch 4's base by
+  `docs/lean-first/b4/capture_discourse.py`), each written with the sibling files its imports name
+  to its own scratch directory, through `check_document` and `render_document` (under the default
+  authority, `--workers` processes).
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -48,9 +53,11 @@ both outcomes are exactly the listed ones. Exit 0 when every difference is liste
 from __future__ import annotations
 
 import argparse
+import base64
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import dataclasses
+import gzip
 import hashlib
 import json
 import os
@@ -59,7 +66,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots")
+CORPORA = ("probe", "conformance", "pilots", "discourse")
+DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
@@ -216,6 +224,35 @@ def pilot_records(root: Path, scratch: Path, workers: int):
         yield from pool.map(check, documents)
 
 
+def _discourse_case(item):
+    """`check_document` and `render_document` of one corpus document (in a pool worker)."""
+    scratch, entry = item
+    from ve.document import check_document, render_document
+    directory = Path(scratch) / entry["id"]
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, data in entry["files"].items():
+        try:
+            (directory / name).write_bytes(base64.b64decode(data))
+        except OSError:
+            pass  # a name no file can have stays absent, as it was in the test that wrote it
+    path = directory / "document.ve.md"
+    path.write_bytes(base64.b64decode(entry["document"]))
+    source = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
+    return [{"case": entry["id"], "op": op, "source_sha256": source, "authority": "default",
+             "outcome": outcome(lambda: call(path))}
+            for op, call in (("document_check", check_document), ("document_render", render_document))]
+
+
+def discourse_records(scratch: Path, workers: int):
+    """The discourse corpus, read from this tool's checkout, recorded with the child's `ve`."""
+    import multiprocessing
+    corpus = json.loads(gzip.decompress((ROOT / DISCOURSE).read_bytes()))
+    os.environ.pop("VE_AUTHORITY", None)
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        for rows in pool.imap(_discourse_case, [(str(scratch), entry) for entry in corpus], chunksize=8):
+            yield from rows
+
+
 def child(args) -> int:
     root = Path(args.root).resolve()
     import ve
@@ -229,6 +266,10 @@ def child(args) -> int:
         for corpus in args.corpus:
             if corpus == "pilots":
                 for record in pilot_records(root, Path(args.out).with_suffix(".pilots"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
+            if corpus == "discourse":
+                for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
             for authority in args.authority:
