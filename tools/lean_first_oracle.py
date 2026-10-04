@@ -2,7 +2,7 @@
 DRI answer 7).
 
 The oracle is the commit tagged `lean-first/oracle-python` (batch 0's base): the Python checkers
-before any Lean-first batch deleted a line. `conformance/lean-first/oracle.json` freezes, by
+before any Lean-first batch deleted a line. `docs/lean-first/oracle.json` freezes, by
 SHA-256 at that commit, what the oracle depends on: its dependency lock, the baseline artifacts,
 the frozen conformance fixtures and the contracts. It is run in isolation as
 `conformance/replay_baseline.py` runs its pinned code: a `git archive` of the commit in a
@@ -30,7 +30,7 @@ import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "conformance/lean-first/oracle.json"
+MANIFEST = ROOT / "docs/lean-first/oracle.json"
 TAG = "lean-first/oracle-python"
 # What the oracle's answers depend on: dependencies, baselines, fixtures with their expectations,
 # and the contracts. Directories are frozen file by file.

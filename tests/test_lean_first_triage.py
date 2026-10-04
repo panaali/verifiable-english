@@ -1,5 +1,5 @@
 """Lean-first batch 0: the triage of the differential fuzzer's disagreement groups
-(`conformance/lean-first/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
+(`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
 
 Every group DF-1 to DF-18 of the fuzzer's baseline is classed and carries its minimised
 fixture. The Lean-accepts bugs the plan names (section 7.1) are run live here: each test
@@ -21,7 +21,7 @@ from ve.backends import relay
 from ve.errors import VEError
 
 ROOT = Path(__file__).resolve().parents[1]
-TRIAGE = json.loads((ROOT / "conformance/lean-first/df-triage.json").read_text())
+TRIAGE = json.loads((ROOT / "docs/lean-first/b0/df-triage.json").read_text())
 GROUPS = {group["id"]: group for group in TRIAGE["groups"]}
 needs_service = pytest.mark.skipif(not (BIN / "ve_service").exists(), reason="Lean service has not been built")
 
