@@ -12,9 +12,9 @@
 > type `Prop`, as base 5.1 prescribes for unproved statements), and every verdict, count and step figure of
 > section 8 was computed by the proved S1 parser on the hand-built fixture grammar of 8.1, over the S1 lexer's
 > tokens (section 12). **Draft 2 applies the statement review** (`manage-agents/debates/english-lean-s2-spec`,
-> Astra and Fable, converged FIX after round 2 on 2026-10-04; section 13 lists the edits). The stub was not
-> re-run for draft 2: every figure that the edits touch is marked *recompute* and is re-established when the stub
-> is re-created (section 12); the review's PASS follows a bounded re-check of these edits, not this draft.
+> Astra and Fable, converged FIX after round 2 on 2026-10-04; section 13 lists the edits). The stub was re-run
+> for draft 2 on the amended signatures, statements, ranks and fixtures, and every check passed (section 12);
+> the review's PASS follows a bounded re-check of these edits, not this draft.
 > Formulas in section 8 were derived by hand from `ve/english.py` and are confirmed against Python in S2; a
 > difference there is a finding, not a failed fixture. Every `file:line` was read on 2026-10-04 and must be
 > re-read at each step. Nothing here changes a verdict, an identity, a public code, a frozen file, an existing
@@ -163,7 +163,7 @@ fixed array, the certificate for every lexicon: terminals-first nonterminals at 
 `guard_atom`, `formula` at 3; `guard_relative`, `guard`, `sentence` at 4. `coordination` is at 2 because its
 rules begin with `term` (2.5); `relative` is at 2 because a wording that begins with `{1}` gives a subject
 relative that begins with `term` (2.6), and `some_tail`, `natural_tail` and `guard_atom` follow it. `Grammar.wf`
-of the fixture grammar was true under draft 1's ranks (8.1); under these ranks it is *recompute* (section 12).
+of the fixture grammar is true under these ranks (8.1, section 12).
 
 ### 2.5 The fixed rules of the base profile
 
@@ -909,11 +909,11 @@ theorem grammar_extension : ∀ (E : Env) (O : Overlay) (L : Lexicon) (E2 : Env)
   ∃ e : RuleMap, e.Ok (grammar E L) (grammar E2 L2) (acts E L) (acts E2 L2)
 ```
 
-`valid_iff_no_failure` was proved in the stub (it unfolds `Lexicon.valid`). The others elaborated as `Prop`s in
-draft 1; `read_stopped` (two conclusions added), `translate_exact` (the redundant `wf` premise removed: a
-`.readings` result is reached only after `translate`'s three checks, which include `wf`, so the proof derives
-it) and `grammar_extension` (its `Extends` of 5.4 and the `acts` of 5.2 changed) are *recompute* (section 12).
-Their proofs are S2.3.
+`valid_iff_no_failure` was proved in the stub (it unfolds `Lexicon.valid`), and `grammar_rules` is `rfl` there.
+The others elaborated as `Prop`s, in draft 2's form: `read_stopped` with its two added conclusions,
+`translate_exact` without the `wf` premise (a `.readings` result is reached only after `translate`'s three
+checks, which include `wf`, so the proof derives it) and `grammar_extension` over the `Extends` of 5.4 and the
+`acts` of 5.2 (section 12). Their proofs are S2.3.
 
 ### 5.7 By construction, and by test
 
@@ -952,14 +952,13 @@ Gates: the statement review of this specification before S2.3's proofs; G2 as th
 ## 8. Acceptance fixtures
 
 Every fixture is an obligation on the implementation. **Verdicts, counts and steps in 8.1, 8.3, 8.4, 8.5 and 8.6
-were computed for draft 1** (section 12) by the proved S1 parser on the fixture grammar `GF`: the 88 fixed rules
-of 2.5 and the 29 lexical rules that 2.6 gives for `F` and `LF` (base 8.5: sorts `person`, `service`; `deployed`,
-`reviewed` with its negative, `owns` with its negative; `alice`, `legacy`), 117 rules in all, `|G|` = 479, 37
-nonterminals, `Grammar.wf` and `terminatorFree` true. Draft 2 changes `GF` in two places that the stub has not
-yet seen: the four coordination rows take `term` (2.5) and the ranks are those of 2.4; the rule count and `|G|`
-are unchanged by construction (a nonterminal replaced by a nonterminal). A row marked *recompute* was computed
-under draft 1's grammar and is re-established, or is new and stated by hand, when the stub is re-created. The
-expected formulas of 8.2 are hand-derived. A fixture whose expected value is marked *obligation* was not computed.
+were computed** (section 12) by the proved S1 parser on the fixture grammar `GF`: the 88 fixed rules of 2.5
+(the four coordination rows over `term`) and the 29 lexical rules that 2.6 gives for `F` and `LF` (base 8.5:
+sorts `person`, `service`; `deployed`, `reviewed` with its negative, `owns` with its negative; `alice`,
+`legacy`), 117 rules in all, `|G|` = 479, 37 nonterminals, with the ranks of 2.4; `Grammar.wf` and
+`terminatorFree` true. The figures were recomputed for draft 2 and every row below holds under it; where draft 1
+had a different value the row says so. The expected formulas of 8.2 are hand-derived. A fixture whose expected
+value is marked *obligation* was not computed.
 
 ### 8.1 Verdicts
 
@@ -1014,14 +1013,17 @@ expected formulas of 8.2 are hand-derived. A fixture whose expected value is mar
 | b45 | `Starting from legacy, legacy is reachable by one or more "owns" steps.` | zero | `F` has no relation over one sort: no `relation` rule |
 | b46 | `Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a service satisfies this condition: that service is deployed.` | one | the derivation exists; the meaning is `shadowedName`: both declarations bind `that service` (e43) |
 | b47 | `Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a service satisfies the following: (a) that service is deployed.` | one | the same |
-| b48 | `It, alice and legacy are deployed.` | one, *recompute* | coordination takes `term`, as Lark's does; the meaning is `pronounUnresolved` (e50). Draft 1 computed `zero` over `constant` |
-| b49 | `For every service named P1, P1 is reviewed.` | one, *recompute* | `label.P` is a rule of `GF`; the meaning is `sortMismatch`: `P` is `person`'s letter (e48) |
-| b50 | `Every deployed service is not reviewed and has an owner.` | one, *recompute* | `natural-tail.both` with the negative relative; the meaning is `blockedWording natural-negation` (e49) |
-| b51 | `Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.` | one, *recompute* | the positive reach pair (e43): under `F` the meaning is `illTyped`, under `F` with `closure@0` a formula |
-| b52 | `Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a second service satisfies the following: (a) that service is deployed.` | one, *recompute* | the same |
-| b53 | `For every person, legacy, beta and gamma are deployed.` under the extended `F` of e34 | one, *recompute* | the meaning is `coordinationForm`: the scope is not empty (e50) |
-| b54 | `The legacy, beta and gamma are deployed.` under the extended `F` of e34 | one, *recompute* | `constant → the legacy` derives; the meaning is `coordinationForm`: the added article is not a name form (e50) |
-| b55 | `Legacy is deployed. It, alice and legacy are deployed.` | one, one, *recompute* | the second sentence's meaning is `coordinationForm`: `it` resolves to `legacy` and is not a written constant (e50) |
+| b48 | `It, alice and legacy are deployed.` | one | coordination takes `term`, as Lark's does; spine `formula.coordination › coordination.subject-and › term.it`; the meaning is `pronounUnresolved` (e50). Draft 1 computed `zero` over `constant` |
+| b49 | `For every service named P1, P1 is reviewed.` | one | `label.P` is a rule of `GF`; the meaning is `sortMismatch`: `P` is `person`'s letter (e48) |
+| b50 | `Every deployed service is not reviewed and has an owner.` | one | spine `natural-every.subject`, tail `natural-tail.both` with the negative relative; the meaning is `blockedWording natural-negation` (e49) |
+| b51 | `Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.` | one | the positive reach pair (e43): under `F` the meaning is `illTyped`, under `F` with `closure@0` a formula |
+| b52 | `Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a second service satisfies the following: (a) that service is deployed.` | one | the same |
+| b53 | `For every person, legacy, beta and gamma are deployed.` under the extended `F` of e34 | one | the meaning is `coordinationForm`: the scope is not empty (e50) |
+| b54 | `The legacy, beta and gamma are deployed.` under the extended `F` of e34 | one | `constant → the legacy` derives; the meaning is `coordinationForm`: the added article is not a name form (e50) |
+| b55 | `Legacy is deployed. It, alice and legacy are deployed.` | one, one | the second sentence's meaning is `coordinationForm`: `it` resolves to `legacy` and is not a written constant (e50) |
+
+The extended `F` of e34 (`GF3` in the stub) adds the services `beta` and `gamma` with their spellings and
+article forms; `Legacy, beta and gamma are deployed.` is `one` under it (e34's accepted case).
 
 The constructed ambiguity of `tests/test_natural.py:543–553`: `FD` is `F` with one more sort whose selected noun
 is `deployed service` and letter `D`.
@@ -1120,12 +1122,12 @@ when the widening is signed.
 
 | Fixture | Steps (cap 2) | Against the budget |
 |---|---|---|
-| b3 | 7,331, *recompute* | 0.35% of 2,100,000 |
-| b21 | 13,162, *recompute* | 0.63% |
-| d1 | 2,514, *recompute* | 0.12% |
+| b3 | 7,331 | 0.35% of 2,100,000 |
+| b21 | 13,162 | 0.63% |
+| d1 | 2,514 | 0.12% |
 
-The three figures are draft 1's; the coordination rows over `term` and the ranks of 2.4 change the parser's
-predictions, so they are re-measured with the stub (section 12).
+The three figures were re-measured for draft 2 under the coordination rows over `term` and the ranks of 2.4,
+and are unchanged from draft 1: none of the three sentences predicts a coordination past its first token.
 
 The two owed G1a budgets are obligations of the G2 report: BlueDot ≤ 1 s, generated modules ≤ 60 s of
 `lake build`.
@@ -1198,8 +1200,7 @@ nowhere (D16); nothing here moves authority.
 10. The widening rules (2.12) are correctly stated as proposals and their meanings are the intended ones.
 11. The lint sort (2.14) follows the DRI's rule by effect.
 12. The computed fixtures of section 8 are the right expectations, b34, b38, b44, b46 to b55, d1, tr1 and tr2
-    in particular; the hand-derived formulas of 8.2 are right, e43, e44, e48 to e51 in particular; the rows
-    marked *recompute* have been re-established by the stub.
+    in particular; the hand-derived formulas of 8.2 are right, e43, e44, e48 to e51 in particular.
 13. Every name passes the audit's rules and collides with nothing in `VE.English` or `VE.Discourse`.
 14. No public message, code or identity changes.
 
@@ -1230,21 +1231,24 @@ with the ranks of 2.4; and ran `lex`, `parse` (cap 2 and the caps of 8.4), `Gram
 `Lexicon.valid`, `Lexicon.failures` and `Prepared.steps` under `#guard` and `#eval` for every computed row of
 section 8. All checks passed on 2026-10-04 under Lean 4.24.0 for draft 1.
 
-**Draft 2 was not run** (no Lean toolchain was available to the editing session). The stub is re-created from
-this specification, before the bounded re-check and again when S2.1 starts, and must then re-establish every row
-marked *recompute*:
+**For draft 2 the stub was amended and re-run** the same day, against the same build, and every check passed:
 
-- the signature of 5.2 (`ConstVal`, `TermVal`, the `Sem` table, `fixedActs`, `lexActs`, `acts` as a
-  definition, `ranks`) and the amended statements of 5.6 (`read_stopped`, `translate_exact`,
-  `grammar_extension` over the `Extends` of 5.4) as `Prop`s;
-- `GF`, `GFD`, `GFv2`, `GFw` with the coordination rows over `term` and the ranks of 2.4: `Grammar.wf`,
-  `terminatorFree`, the rule count 117, `|G|` = 479;
-- the verdicts of b48 (now `one`) and of the new rows b49 to b55 (b53 and b54 under the extended `F` of e34,
-  with `beta` and `gamma` as services), every other row of 8.1 and 8.3 to 8.5 unchanged;
-- the steps of 8.6;
-- the `kwMid` rows c1 to c3 and the V3 row l4 stay obligations, as in draft 1.
+- the signature of 5.2 (`ConstVal`, `TermVal`, the `Sem` table over the S1 `Ty`, `fixedActs`, `lexActs`,
+  `acts` and `grammar` as definitions, `ranks`) and the statements of 5.6 in their draft 2 form
+  (`read_stopped` with its two added conclusions, `translate_exact` without the `wf` premise,
+  `grammar_extension` over the `Extends` of 5.4) elaborate as `Prop`s; `grammar_rules` is `rfl`. The S1 `Env`
+  has no `args` or `sort` fields, so the stub carries the signatures beside it in a structure `EnvS2` (the S1
+  `Env` plus `predArgs : List (String × List String)` and `constSorts : List (String × String)`) and `envSub`
+  compares them by `lookup`; the real `Env.decode` puts them in `PredDecl` and `ConstDecl` (2.3);
+- `GF`, `GF3` (the extended `F` of e34), `GFD`, `GFv2`, `GFw` with the coordination rows over `term` and the
+  ranks of 2.4: `Grammar.wf` and `terminatorFree` true, 117 rules, `|G|` = 479, 37 nonterminals, the longest
+  fixed right-hand side 28;
+- every verdict of 8.1, 8.3, 8.4 and 8.5, b48 (now `one`) and the new rows b49 to b55 included, with the
+  spines of b48 and b50 as 8.1 states them;
+- the steps of 8.6, unchanged.
 
-Its contents are sections 2.4 to 2.6, 5.2 to 5.4 and 8.
+The `kwMid` rows c1 to c3, the V3 row l4 and e51 stay obligations. The file is re-created from this
+specification when S2.1 starts; its contents are sections 2.4 to 2.6, 5.2 to 5.4 and 8.
 
 ## 13. The statement review's edits (draft 2)
 
@@ -1272,8 +1276,8 @@ nonterminals that begin with it move up one rank (2.4). One choice was the edito
 preconditions on coordination (empty scope, name-form subjects) share one new code, `coordinationForm`, because
 Python's behaviour is the same for both (2.8); the DRI may split it (Q2).
 
-The review's closing condition: the stub is re-run on the amended fixtures and ranks (section 12), and PASS
-follows a bounded re-check limited to these edits and their consequences (exact statements against 3.4, the
+The review's closing condition: the stub is re-run on the amended fixtures and ranks (done, section 12), and
+PASS follows a bounded re-check limited to these edits and their consequences (exact statements against 3.4, the
 extension premises and the action construction, the regenerated fixtures, the Python comparison at the
 dispatched boundary). Python authority, the frozen W1, soft and P0 contracts and the signed-widening rule are
 untouched.
