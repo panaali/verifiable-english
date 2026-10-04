@@ -1,4 +1,4 @@
-import VE.Readings.Separate
+import VE.Readings.Wire
 
 /-! `decision_only_sound` (docs/spec/composition-s1.md 1.7, 8.3).
 
@@ -407,5 +407,96 @@ theorem Twin.decides (he : ¬ (exceptedF C Nd).denote S ρ) (p : String) (sign :
       (hw.selects S ρ he _ hM').mpr h⟩
 
 end Force
+
+/-! ## Expansion: the two canonical expansions agree -/
+
+/-- Two trees with the same declarations whose stratum graphs both pass have the same layer symbols. -/
+theorem syms_mem {T₁ T₂ : VE.Norms.Tree} (hr : T₁.regulated = T₂.regulated) (hd : T₁.definitions = T₂.definitions)
+    (h₁ : ∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₁) = .ok o)
+    (h₂ : ∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₂) = .ok o)
+    {q : VE.Norms.Sym} (hq : q ∈ VE.Norms.syms T₁) : q ∈ VE.Norms.syms T₂ := by
+  obtain ⟨n, hn, hl⟩ := List.mem_filterMap.mp hq
+  obtain ⟨o₁, ho₁⟩ := h₁
+  obtain ⟨o₂, ho₂⟩ := h₂
+  obtain ⟨_, hm₁, _⟩ := VE.Route.dag_acyclic _ _ ho₁
+  obtain ⟨_, hm₂, _⟩ := VE.Route.dag_acyclic _ _ ho₂
+  have hn₁ : n ∈ o₁ := by unfold VE.Norms.order at hn; rw [ho₁] at hn; exact hn
+  have hnames : VE.Route.nodeNames (VE.Norms.stratumNodes T₁) = VE.Route.nodeNames (VE.Norms.stratumNodes T₂) := by
+    rw [nodeNames_stratum, nodeNames_stratum, hr, hd]
+  refine List.mem_filterMap.mpr ⟨n, ?_, ?_⟩
+  · unfold VE.Norms.order; rw [ho₂]; exact (hm₂ n).mpr (hnames ▸ (hm₁ n).mp hn₁)
+  · unfold VE.Norms.lookupSym at hl ⊢; rw [← hr, ← hd]; exact hl
+
+theorem layerNames_mem {T₁ T₂ : VE.Norms.Tree} (hr : T₁.regulated = T₂.regulated)
+    (hd : T₁.definitions = T₂.definitions)
+    (h₁ : ∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₁) = .ok o)
+    (h₂ : ∃ o, VE.Route.dependencyOrder (VE.Norms.stratumNodes T₂) = .ok o)
+    {n : String} (h : n ∈ VE.Norms.layerNames T₁) : n ∈ VE.Norms.layerNames T₂ := by
+  obtain ⟨q, hq, rfl⟩ := List.mem_map.mp h
+  exact List.mem_map.mpr ⟨q, syms_mem hr hd h₁ h₂ hq, rfl⟩
+
+section Expansion
+variable {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hs : SoftValid C) (S : VE.Structure.{u})
+  (hc : VE.Norms.ConstantsTyped (soften C) S)
+  (he : ∀ ρ, ¬ (exceptedF C Nd).denote (canon (soften (relaxDoc C Nd)) S) ρ)
+include hw hs hc he
+
+/-- Over one base on which the twin's exception predicate is false in the relaxed expansion, a formula of the
+    strict document has the same truth in the two canonical expansions. -/
+theorem canon_relax (k : Nat) (φ : VE.Formula) (Γ : List String) (hφ : φ.WellFormed (envAt (soften C) k) Γ)
+    (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+    φ.denote (canon (soften C) S) ρ ↔ φ.denote (canon (soften (relaxDoc C Nd)) S) ρ := by
+  have hvs := VE.Norms.valid_of_wellFormed _ hs.wf
+  have hvd := VE.Norms.valid_of_wellFormed _ hw.valid.wf
+  have hcd : VE.Norms.ConstantsTyped (soften (relaxDoc C Nd)) S := hc
+  have hcd' : VE.Norms.ConstantsTyped (soften C) (canon (soften (relaxDoc C Nd)) S) := hc
+  have hagree : ∀ k, VE.Norms.AgreesBelow (soften C) k (canon (soften (relaxDoc C Nd)) S) := by
+    intro k j q _ hq vs hvs'
+    have hqd : q ∈ VE.Norms.syms (soften (relaxDoc C Nd)).T :=
+      syms_mem (T₁ := (soften C).T) (T₂ := (soften (relaxDoc C Nd)).T) rfl rfl hvs.stratum hvd.stratum (List.mem_of_getElem? hq)
+    obtain ⟨j', hj'⟩ := List.mem_iff_getElem?.mp hqd
+    have hlt : j' < size (soften (relaxDoc C Nd)) := (List.getElem?_eq_some_iff.mp hj').1
+    rw [VE.SoftNorms.canon_agrees hvd S hcd (size (soften (relaxDoc C Nd))) j' q hlt hj' vs hvs']
+    cases q with
+    | defn d => exact Iff.rfl
+    | reg r =>
+      show (VE.Norms.outcome (soften (relaxDoc C Nd)).T r).denote _ _ ↔ (VE.Norms.outcome (soften C).T r).denote _ _
+      rw [VE.Norms.outcome_denote, VE.Norms.outcome_denote]
+      simp only [VE.Norms.pos, VE.Norms.neg, VE.Norms.decides_denote, VE.SoftNorms.decidesD_soften]
+      rw [hw.decides _ _ (he _) r.name true, hw.decides _ _ (he _) r.name false]
+  rw [← VE.SoftNorms.canon_subst hvs S hc k φ Γ hφ ρ hρ,
+    ← VE.Norms.subst_denote hvs k (canon (soften (relaxDoc C Nd)) S) hcd' (hagree k) φ Γ hφ ρ hρ]
+  exact (VE.Norms.denote_relation_congr (E := envAt (soften C) 0) (ns := VE.Norms.layerNames (soften C).T)
+    (fun _ hr => VE.Norms.envAt_zero_later hr) S _
+    (fun r vs hr => VE.SoftNorms.canon_off S
+      (fun h => hr (layerNames_mem (T₁ := (soften (relaxDoc C Nd)).T) (T₂ := (soften C).T) rfl rfl hvd.stratum hvs.stratum h)) vs)
+    _ Γ ρ (VE.Norms.subst_wellFormed hvs k φ Γ hφ)).symm
+
+theorem decides_canon {r : Regulated} (hr : r ∈ C.T.regulated) (vs : List S.Carrier)
+    (hvs : VE.TupleTyped S r.sorts vs) (sign : Bool) :
+    DecidesSoftD C (canon (soften C) S) (tupleVal vs) r.name sign ↔
+      DecidesSoftD (relaxDoc C Nd) (canon (soften (relaxDoc C Nd)) S) (tupleVal vs) r.name sign := by
+  have hvs' := VE.Norms.valid_of_wellFormed _ hs.wf
+  have hT := VE.Norms.rulesTyped_of_valid hvs' (VE.Norms.index_before hvs' hr)
+  rw [← VE.SoftNorms.decidesD_soften, ← VE.Norms.decides_denote,
+    canon_relax hw hs S hc he _ _ _ (VE.Norms.decides_wellFormed hT sign) _ (VE.Norms.tupleVal_typed S _ vs hvs),
+    VE.Norms.decides_denote, VE.SoftNorms.decidesD_soften, hw.decides _ _ (he _)]
+
+theorem value_canon {r : Regulated} (hr : r ∈ C.T.regulated) (vs : List S.Carrier)
+    (hvs : VE.TupleTyped S r.sorts vs) :
+    ValueSoft C r (canon (soften C) S) vs = ValueSoft (relaxDoc C Nd) r (canon (soften (relaxDoc C Nd)) S) vs := by
+  unfold ValueSoft
+  rw [propext (decides_canon hw hs S hc he hr vs hvs true), propext (decides_canon hw hs S hc he hr vs hvs false)]
+
+theorem selects_canon {N : SoftNode} (hN : N ∈ C.T.nodes) (vs : List S.Carrier)
+    (hvs : VE.TupleTyped S (VE.SoftNorms.sortsOf C N.pred) vs) :
+    SelectsSoftD C (canon (soften C) S) (tupleVal vs) (VE.SoftNorms.fuel C) N ↔
+      SelectsSoftD (relaxDoc C Nd) (canon (soften (relaxDoc C Nd)) S) (tupleVal vs)
+        (VE.SoftNorms.fuel (relaxDoc C Nd)) (relaxTo Nd N) := by
+  rw [← VE.SoftNorms.selectsPrime_denote,
+    canon_relax hw hs S hc he _ _ _ (hs.selTyped N hN) _ (VE.Norms.tupleVal_typed S _ vs hvs),
+    VE.SoftNorms.selectsPrime_denote, fuel_relax, hw.selects _ _ (he _) _ hN]
+
+end Expansion
 
 end VE.Readings

@@ -324,15 +324,16 @@ def twinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : SoftNode
   let Xs := one D s i
   let Xd := one D s j
   let k₀ := GenKey.excepted Nd.name none
-  ci.declared == cj.declared && cj.declared.contains ("rule", Nd.name) && Xs.2 == Xd.2 &&
-  VE.Rights.genDecls Xs.1 == VE.Rights.genDecls Xd.1 && VE.Rights.limPremises Xs.1 == VE.Rights.limPremises Xd.1 &&
-  (correlate Xd.1).T.nodes == (correlate Xs.1).T.nodes.map (relaxTo Nd) &&
+  decide (ci.declared = cj.declared) && cj.declared.contains ("rule", Nd.name) && decide (Xs.2 = Xd.2) &&
+  decide (VE.Rights.genDecls Xs.1 = VE.Rights.genDecls Xd.1) &&
+  decide (VE.Rights.limPremises Xs.1 = VE.Rights.limPremises Xd.1) &&
+  decide ((correlate Xd.1).T.nodes = (correlate Xs.1).T.nodes.map (relaxTo Nd)) &&
   (correlate Xs.1).T.nodes.all (fun M => M.name != Nd.name || M.mode == .strict) &&
-  genKeys Xs.1 == (genKeys Xd.1).filter (·.1 != k₀) &&
+  decide (genKeys Xs.1 = (genKeys Xd.1).filter (·.1 != k₀)) &&
   (genKeys Xd.1).all (fun g => (g.1 == k₀) == (g.2.1 == VE.SoftNorms.exceptedName Nd)) &&
-  Xd.1.soft.T.nodes == Xs.1.soft.T.nodes.map (relaxTo Nd) &&
-  (linesOf Xd.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, nodeOf Xd.1 RN.2)) ==
-    (linesOf Xs.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, relaxTo Nd (nodeOf Xs.1 RN.2))) &&
+  decide (Xd.1.soft.T.nodes = Xs.1.soft.T.nodes.map (relaxTo Nd)) &&
+  decide ((linesOf Xd.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, nodeOf Xd.1 RN.2)) =
+    (linesOf Xs.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, relaxTo Nd (nodeOf Xs.1 RN.2)))) &&
   (correlate Xd.1).T.definitions.all (·.name != VE.SoftNorms.exceptedName Nd)
 /-- The criterion of 1.7 with i the strict twin: the default twin's exception key. -/
 def decisionOnly (D : Doc) (s : String) (i j : Nat) : Option GenKey :=
