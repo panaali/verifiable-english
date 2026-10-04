@@ -639,7 +639,7 @@ It validates the side table exactly as `--check` does (one shared pass and trust
 prints no ledger while any classification or tie problem stands.
 `Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
 claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
-Measured on the table after the consolidate-b1 review (K 978, S 7,565, trusted 25,650 of
+Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
 88,757 lines):
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
@@ -651,7 +651,7 @@ Measured on the table after the consolidate-b1 review (K 978, S 7,565, trusted 2
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 491 | 0 | 0 | 491 | 14 | 1 | 35.1 |
 | 6 | 35 | 0 | 1284 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 601 | 0 | 0 | 60 | 541 | 6 | 2 | 45.1 |
+| 7 | 603 | 0 | 0 | 60 | 543 | 6 | 2 | 45.2 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3480 | 0 | 0 | 3480 | 30 | 3 | 38.7 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -659,10 +659,10 @@ Measured on the table after the consolidate-b1 review (K 978, S 7,565, trusted 2
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (45.1), 5 (35.1), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (45.2), 5 (35.1), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,480 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
-  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (601 trusted
+  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (603 trusted
   dispatch and `main` lines, not 340) and 5 is smaller than estimated (491 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
@@ -678,8 +678,8 @@ What the measurement changes:
 * **Step 1:** 1a and 1b are done; the nine `Flagged` definitions are C, and `BaseConflictFree` is
   tied by `conflictFree_of_base` in the side table. The remaining 23 lines are 1c's
   `FamilyNorms.conflictCase`.
-* Steps 1 to 4 keep the DRI's order (section 4 above). The measured total before 8b is 2,534
-  trusted lines removed or tied (net 1,954 after 580 estimated additions) out of 25,650, against the
+* Steps 1 to 4 keep the DRI's order (section 4 above). The measured total before 8b is 2,536
+  trusted lines removed or tied (net 1,956 after 580 estimated additions) out of 25,641, against the
   estimate of about 4,300.
 
 The budget check (step 0) now also fails a predicate (a declaration whose type ends in `Prop`,
@@ -693,6 +693,18 @@ define `VE.Demo.anchor`; a tie through the C one validated against an S namesake
 (consolidate-b1c looprecheck 1, B). The predicate list now reads every file of the tree, each
 module outside `VE` (the executables' roots, the unimported `WireContract` files) imported alone,
 and the budget check fails a file the list did not read.
+
+The declarations themselves come from the compiled environment, not from reading the source
+(consolidate-b1 fix 4, B): `lean/declarations.txt`, written with the two dumps, lists each
+module's constants with their kind and source range and the hash of the source compiled. A quoted
+`def «WellFormed»` was recorded as `VE.Demo.«WellFormed»` and `def WellFormed(n : Nat)` as
+`WellFormed(n`, so a C entry under that spelling hid the predicate `VE.Demo.WellFormed`; anonymous
+instances now carry Lean's generated names. The source text only places line boundaries, and a
+file whose source differs from the compiled one fails every entry point. Measured against the
+scanner, this moved the 8 S lines of two `LawfulBEq` instances, which Lean compiles as theorems,
+into P, and corrected extents the scanner's docstring lexer got wrong after a `'"'` literal in
+`Discourse/Access.lean` (S −7, D +7, of which [V] +4) and for the `ve_diagnose` main, whose
+docstring a comment line separates from it ([V] +2); the baseline's history records the change.
 
 ## 5. What not to consolidate, and why
 

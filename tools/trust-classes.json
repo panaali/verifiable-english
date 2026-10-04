@@ -436,14 +436,14 @@
     "VE.Alternatives.duties",
     "VE.Alternatives.e2B",
     "VE.Alternatives.e3B",
+    "VE.Alternatives.instEntityNameEntity",
+    "VE.Alternatives.instEntityNameString",
     "VE.Alternatives.oneFailure",
     "VE.Alternatives.rowsAgreeB",
     "VE.Alternatives.rowsB",
     "VE.Alternatives.rowsTypedB",
     "VE.Alternatives.validateAlternatives",
-    "VE.Alternatives.validateAlternativesWith",
-    "instance:EntityName String",
-    "instance:EntityName VE.Bridge.Entity"
+    "VE.Alternatives.validateAlternativesWith"
    ],
    "G[V]": [
     "VE.Alternatives.discharges",
@@ -606,6 +606,7 @@
     "VE.Reports.digestOf",
     "VE.Reports.documentId",
     "VE.Reports.documentObject",
+    "VE.Reports.elab",
     "VE.Reports.enterScope",
     "VE.Reports.envAt",
     "VE.Reports.envReports",
@@ -613,6 +614,7 @@
     "VE.Reports.holderOf",
     "VE.Reports.holderSort",
     "VE.Reports.identityVersion",
+    "VE.Reports.instCoePinnedEnvironment",
     "VE.Reports.isAssessNode",
     "VE.Reports.isAssessmentAt",
     "VE.Reports.keyOf",
@@ -651,9 +653,7 @@
     "VE.Reports.topReportKeyOf",
     "VE.Reports.unitAssessNames",
     "VE.Reports.unitOf",
-    "VE.Reports.unitPremise",
-    "VE.Reports.«elab»",
-    "instance:Coe Pinned VE.Environment"
+    "VE.Reports.unitPremise"
    ],
    "D[V]": [
     "VE.Reports.CJson",
@@ -894,10 +894,10 @@
     "VE.Graph.Path",
     "VE.Graph.SoundReport",
     "VE.Graph.Unfolds",
+    "VE.Graph.instDecidableTableauValid",
     "VE.Graph.resolve",
     "VE.Graph.tableauValid",
-    "VE.Graph.uniqueNames",
-    "instance:(E : Environment) (c : Tableau.Certificate) (ps : List Claim) (r : Claim) :"
+    "VE.Graph.uniqueNames"
    ],
    "C": [
     "VE.Graph.Edge",
@@ -1064,6 +1064,7 @@
    "T": [
     "VE.Compose.Examples.arrestAnn",
     "VE.Compose.Examples.codeIndex",
+    "VE.Compose.Examples.instBEqExceptStringRoute",
     "VE.Compose.Examples.maskList",
     "VE.Compose.Examples.modelOne",
     "VE.Compose.Examples.modelTwo",
@@ -1074,8 +1075,7 @@
     "VE.Compose.Examples.todayCodes",
     "VE.Compose.Examples.todayText",
     "VE.Compose.Examples.todayTexts",
-    "VE.Compose.Examples.unsortedLists",
-    "instance:BEq (Except String Route)"
+    "VE.Compose.Examples.unsortedLists"
    ]
   },
   "VE/Compose/Slot.lean": {
@@ -1486,6 +1486,7 @@
     "VE.Discourse.flush",
     "VE.Discourse.formFits",
     "VE.Discourse.innermostAnchor",
+    "VE.Discourse.instDecidableAcc",
     "VE.Discourse.joinLimit",
     "VE.Discourse.lemmaNames",
     "VE.Discourse.listTarget",
@@ -1513,18 +1514,17 @@
     "VE.Discourse.unitString",
     "VE.Discourse.unitTarget",
     "VE.Discourse.within",
-    "VE.Discourse.wordAt",
-    "instance:(D : DDoc) (m : Slot) (t : Target) : Decidable (Acc D m t)"
+    "VE.Discourse.wordAt"
    ],
    "C": [
+    "VE.Discourse.instDecidableAliasEq",
     "VE.Discourse.predTarget",
     "VE.Discourse.pronounLike",
     "VE.Discourse.segmentsOf",
     "VE.Discourse.sortNoun",
     "VE.Discourse.sortWord",
     "VE.Discourse.spellings",
-    "VE.Discourse.unitKeys",
-    "instance:(D : DDoc) (t t' : Target) : Decidable (AliasEq D t t')"
+    "VE.Discourse.unitKeys"
    ],
    "D[V]": [
     "VE.Discourse.binderTarget",
@@ -1807,10 +1807,10 @@
    "C": [
     "VE.Discourse.conj",
     "VE.Discourse.extendsTo",
+    "VE.Discourse.instDecidableSatisfies",
     "VE.Discourse.joint",
     "VE.Discourse.occurring",
-    "VE.Discourse.productSize",
-    "instance:(c : Choice) (k : Constraint) : Decidable (Satisfies c k)"
+    "VE.Discourse.productSize"
    ]
   },
   "VE/Discourse/Loader.lean": {
@@ -1887,9 +1887,7 @@
     "VE.Discourse.TargetKind",
     "VE.Discourse.Validity",
     "VE.Discourse.Verdict",
-    "VE.Discourse.unitOf",
-    "instance:LawfulBEq VE.Formula",
-    "instance:LawfulBEq VE.Term"
+    "VE.Discourse.unitOf"
    ]
   },
   "VE/Discourse/Resolve.lean": {
@@ -2258,10 +2256,10 @@
     "VE.GraphChecks.claim",
     "VE.GraphChecks.diamond",
     "VE.GraphChecks.env",
+    "VE.GraphChecks.instDecidableValid",
     "VE.GraphChecks.leaf",
     "VE.GraphChecks.step",
-    "VE.GraphChecks.valid",
-    "instance:(certificate : TestCertificate) (premises : List Claim) (conclusion : Claim) :"
+    "VE.GraphChecks.valid"
    ]
   },
   "VE/Json.lean": {
@@ -2294,11 +2292,11 @@
     "VE.NormDefaults.Admission.fillLabelled",
     "VE.NormDefaults.Admission.fillLabels",
     "VE.NormDefaults.Admission.filledProfiles",
-    "VE.NormDefaults.Admission.otherAssumptions",
-    "instance:(s : Wire.SourceU) (D : VE.Route.Admission.Doc) (w : WireNode) :",
-    "instance:(s : Wire.SourceU) (w : WireNode) : Decidable (FillLeaf s w)",
-    "instance:(s : Wire.SourceU) (w : WireNode) : Decidable (LayerLeaf s w)",
-    "instance:(s : Wire.SourceU) (w : WireNode) : Decidable (ProfileLeaf s w)"
+    "VE.NormDefaults.Admission.instDecidableFillLeaf",
+    "VE.NormDefaults.Admission.instDecidableLayerLeaf",
+    "VE.NormDefaults.Admission.instDecidableNodeAdmitted",
+    "VE.NormDefaults.Admission.instDecidableProfileLeaf",
+    "VE.NormDefaults.Admission.otherAssumptions"
    ],
    "C": [
     "VE.NormDefaults.Admission.Admitted",
@@ -2580,23 +2578,23 @@
     "VE.Norms.Admission.ReportAdmitted",
     "VE.Norms.Admission.SourceDecoded",
     "VE.Norms.Admission.backgroundLeaf",
+    "VE.Norms.Admission.instDecidableProfileLeaf",
     "VE.Norms.Admission.nodeBinding",
     "VE.Norms.Admission.premiseAsts",
     "VE.Norms.Admission.splitDocument",
-    "VE.Norms.Admission.splitUnit",
-    "instance:(src : Wire.Source) (w : WireNode) : Decidable (ProfileLeaf src w)"
+    "VE.Norms.Admission.splitUnit"
    ],
    "C": [
     "VE.Norms.Admission.Admitted",
     "VE.Norms.Admission.admitDocument",
     "VE.Norms.Admission.admitNodes",
     "VE.Norms.Admission.checkBindings",
-    "VE.Norms.Admission.otherAssumptions",
-    "instance:(src : Wire.Source) (D : VE.Route.Admission.Doc) (w : WireNode) :"
+    "VE.Norms.Admission.instDecidableNodeAdmitted",
+    "VE.Norms.Admission.otherAssumptions"
    ],
    "D[V]": [
     "VE.Norms.Admission.checkQuoted",
-    "instance:(src : Wire.Source) (w : WireNode) : Decidable (LayerLeaf src w)"
+    "VE.Norms.Admission.instDecidableLayerLeaf"
    ],
    "G[V]": [
     "VE.Norms.Admission.envelopeGate"
@@ -3046,8 +3044,7 @@
    ],
    "C": [
     "VE.Order.Formula.eval",
-    "VE.Order.compareEval",
-    "instance:{α : Type u} [DecidableEq α] : LawfulBEq (Value α)"
+    "VE.Order.compareEval"
    ]
   },
   "VE/Order/Gate.lean": {
@@ -3386,7 +3383,7 @@
     "VE.Readings.stepsHead",
     "VE.Readings.stepsLimits",
     "VE.Readings.stepsLines",
-    "macro:tactic => `(tactic| repeat' (first"
+    "VE.Readings.tacticWalk_ok"
    ]
   },
   "VE/Readings/Run.lean": {
@@ -3546,14 +3543,14 @@
     "VE.Rights.Admission.Admitted",
     "VE.Rights.Admission.admitNodes",
     "VE.Rights.Admission.decodeRightsDoc",
+    "VE.Rights.Admission.instDecidableCouplingLeaf",
+    "VE.Rights.Admission.instDecidableLayerLeaf",
+    "VE.Rights.Admission.instDecidableProfileLeaf",
+    "VE.Rights.Admission.instDecidableRightsLeaf",
+    "VE.Rights.Admission.instDecidableSoftLeaf",
     "VE.Rights.Admission.otherAssumptions",
     "VE.Rights.Admission.readingRef",
-    "VE.Rights.Admission.selectedValue",
-    "instance:(ids : List String) (w : WireNode) : Decidable (CouplingLeaf ids w)",
-    "instance:(src : RightsSource) (w : WireNode) : Decidable (LayerLeaf src w)",
-    "instance:(src : RightsSource) (w : WireNode) : Decidable (ProfileLeaf src w)",
-    "instance:(src : RightsSource) (w : WireNode) : Decidable (RightsLeaf src w)",
-    "instance:(src : RightsSource) (w : WireNode) : Decidable (SoftLeaf src w)"
+    "VE.Rights.Admission.selectedValue"
    ],
    "G[V]": [
     "VE.Rights.Admission.CouplingChoicesCompatible",
@@ -3566,12 +3563,12 @@
     "VE.Rights.Admission.activeVersion",
     "VE.Rights.Admission.admitDocument",
     "VE.Rights.Admission.checkSourceCites",
+    "VE.Rights.Admission.instDecidableNodeAdmitted",
     "VE.Rights.Admission.jointlySatisfiable",
     "VE.Rights.Admission.labelValues",
     "VE.Rights.Admission.splitDocument",
     "VE.Rights.Admission.splitUnit",
-    "VE.Rights.Admission.validateCouplings",
-    "instance:(src : RightsSource) (D : VE.Route.Admission.Doc) (ids : List String)"
+    "VE.Rights.Admission.validateCouplings"
    ]
   },
   "VE/Rights/Correlate.lean": {
@@ -3700,10 +3697,10 @@
     "VE.Rights.TupleSet",
     "VE.Rights.dutiesOf",
     "VE.Rights.free",
+    "VE.Rights.instMembershipTupleSet",
     "VE.Rights.owes",
     "VE.Rights.regOf",
-    "VE.Rights.rightsOf",
-    "instance:{α : Type u} : Membership α (TupleSet α)"
+    "VE.Rights.rightsOf"
    ]
   },
   "VE/Rights/Route.lean": {
@@ -4026,12 +4023,12 @@
     "VE.Risk.Separable",
     "VE.Risk.UnitCoefficients",
     "VE.Risk.Valuation",
+    "VE.Risk.instDecidableHolds",
     "VE.Risk.maxVal",
     "VE.Risk.nnf",
     "VE.Risk.sepOK",
     "VE.Risk.termSum",
-    "VE.Risk.unitOK",
-    "instance:(c : Cond) (v : Valuation) : Decidable (c.holds v)"
+    "VE.Risk.unitOK"
    ],
    "C": [
     "VE.Risk.Box",
@@ -4303,15 +4300,15 @@
     "VE.Risk.curStatus",
     "VE.Risk.dedup",
     "VE.Risk.estimateOf",
+    "VE.Risk.instDecidableBeyond",
+    "VE.Risk.instDecidableNearAs",
     "VE.Risk.isConflict",
     "VE.Risk.outcomeAt",
     "VE.Risk.outcomeOfView",
     "VE.Risk.scan",
     "VE.Risk.scanConflict",
     "VE.Risk.scanWith",
-    "VE.Risk.setSide",
-    "instance:(dir : Dir) (m y : Int) : Decidable (NearAs dir m y)",
-    "instance:(dir : Dir) (x₀ y : Int) : Decidable (Beyond dir x₀ y)"
+    "VE.Risk.setSide"
    ],
    "C": [
     "VE.Risk.Endpoint",
@@ -4482,14 +4479,14 @@
     "VE.Route.Admission.compatible",
     "VE.Route.Admission.disjunction",
     "VE.Route.Admission.firstUnadmitted",
+    "VE.Route.Admission.instDecidableAssertedUnit",
+    "VE.Route.Admission.instDecidableLeafAdmitted",
+    "VE.Route.Admission.instDecidableReadingContent",
     "VE.Route.Admission.nodeDiagnostic",
     "VE.Route.Admission.require",
     "VE.Route.Admission.sortedSpans",
     "VE.Route.Admission.token",
-    "VE.Route.Admission.tokenChar",
-    "instance:(D : Doc) (s : String) (v : Nat) (c : Option Nat) (φ : VE.Formula) :",
-    "instance:(D : Doc) (u : String) (φ : VE.Formula) : Decidable (AssertedUnit D u φ)",
-    "instance:(D : Doc) (w : WireNode) : Decidable (LeafAdmitted D w)"
+    "VE.Route.Admission.tokenChar"
    ],
    "C": [
     "VE.Route.Admission.admitDocument",
@@ -4507,21 +4504,21 @@
     "VE.Route.Admission.decodeNode",
     "VE.Route.Admission.decodeReadingSet",
     "VE.Route.Admission.decodeUnit",
+    "VE.Route.Admission.instDecidableNodeAdmitted",
     "VE.Route.Admission.parseLabel",
     "VE.Route.Admission.parseLabelRaw",
     "VE.Route.Admission.renderKind",
-    "VE.Route.Admission.tokens",
-    "instance:(D : Doc) (w : WireNode) : Decidable (NodeAdmitted D w)"
+    "VE.Route.Admission.tokens"
    ],
    "G[V]": [
     "VE.Route.Admission.Kind",
     "VE.Route.Admission.atomicKind",
+    "VE.Route.Admission.instDecidableChoicesCompatible",
+    "VE.Route.Admission.instDecidableCitationsClosed",
+    "VE.Route.Admission.instDecidableQuotedUnit",
     "VE.Route.Admission.modalities",
     "VE.Route.Admission.relations",
-    "VE.Route.Admission.unitOf",
-    "instance:(D : Doc) (a u : String) (φ : VE.Formula) : Decidable (QuotedUnit D a u φ)",
-    "instance:(D : Doc) (r : Report) : Decidable (CitationsClosed D r)",
-    "instance:(r : Report) : Decidable (ChoicesCompatible r)"
+    "VE.Route.Admission.unitOf"
    ],
    "G[R]": [
     "VE.Route.Admission.graphRejected"
@@ -4581,6 +4578,7 @@
     "VE.Route.Budget.evalF",
     "VE.Route.Budget.evalN",
     "VE.Route.Budget.hashableValue",
+    "VE.Route.Budget.instHashableFormula_1",
     "VE.Route.Budget.orderIndex",
     "VE.Route.Budget.orderMem",
     "VE.Route.Budget.orderValues",
@@ -4595,18 +4593,17 @@
     "VE.Route.Budget.tickM",
     "VE.Route.Budget.valuesC",
     "VE.Route.Budget.valuesF",
-    "VE.Route.Budget.valuesN",
-    "deriving instance:Hashable for VE.Core.Formula"
+    "VE.Route.Budget.valuesN"
    ],
    "G[V]": [
     "VE.Route.Budget.budgetExhausted",
     "VE.Route.Budget.closureRel",
     "VE.Route.Budget.closureRelN",
     "VE.Route.Budget.definitionBudget",
-    "deriving instance:Hashable for VE.Closure.Formula",
-    "deriving instance:Hashable for VE.Closure.Kind",
-    "deriving instance:Hashable for VE.Core.Kind",
-    "deriving instance:Hashable for VE.Term"
+    "VE.Route.Budget.instHashableFormula",
+    "VE.Route.Budget.instHashableKind",
+    "VE.Route.Budget.instHashableKind_1",
+    "VE.Route.Budget.instHashableTerm"
    ],
    "G[R]": [
     "VE.Route.Budget.tupleLimit"
@@ -4635,9 +4632,9 @@
     "VE.Route.Checks.atom",
     "VE.Route.Checks.decodeError",
     "VE.Route.Checks.definedVocabulary",
+    "VE.Route.Checks.instBEqExcept_vE",
     "VE.Route.Checks.nested",
-    "VE.Route.Checks.twoDefinitions",
-    "instance:{ε α : Type} [BEq ε] [BEq α] : BEq (Except ε α)"
+    "VE.Route.Checks.twoDefinitions"
    ]
   },
   "VE/Route/Closure.lean": {
@@ -4801,14 +4798,14 @@
   "VE/Route/Steps.lean": {
    "G[V]": [
     "VE.Route.Steps.caseCap",
+    "VE.Route.Steps.closure",
+    "VE.Route.Steps.closureList",
+    "VE.Route.Steps.core",
+    "VE.Route.Steps.coreList",
     "VE.Route.Steps.fol",
     "VE.Route.Steps.folList",
-    "closure",
-    "closureList",
-    "core",
-    "coreList",
-    "order",
-    "orderList"
+    "VE.Route.Steps.order",
+    "VE.Route.Steps.orderList"
    ],
    "G[R]": [
     "VE.Route.Steps.limit",
@@ -5242,9 +5239,9 @@
     "VE.SoftNorms.Admission.SoftLeaf",
     "VE.SoftNorms.Admission.SourceDecoded",
     "VE.SoftNorms.Admission.admitNodes",
-    "VE.SoftNorms.Admission.otherAssumptions",
-    "instance:(src : SoftSource) (w : WireNode) : Decidable (LayerLeaf src w)",
-    "instance:(src : SoftSource) (w : WireNode) : Decidable (SoftLeaf src w)"
+    "VE.SoftNorms.Admission.instDecidableLayerLeaf",
+    "VE.SoftNorms.Admission.instDecidableSoftLeaf",
+    "VE.SoftNorms.Admission.otherAssumptions"
    ],
    "D[V]": [
     "VE.SoftNorms.Admission.decodeSoftDoc"
@@ -5253,8 +5250,8 @@
     "VE.SoftNorms.Admission.admitDocument",
     "VE.SoftNorms.Admission.checkQuoted",
     "VE.SoftNorms.Admission.conditionalOn",
-    "instance:(src : SoftSource) (D : VE.Route.Admission.Doc) (w : WireNode) :",
-    "instance:(src : SoftSource) (w : WireNode) : Decidable (ProfileLeaf src w)"
+    "VE.SoftNorms.Admission.instDecidableNodeAdmitted",
+    "VE.SoftNorms.Admission.instDecidableProfileLeaf"
    ]
   },
   "VE/SoftNorms/Coherence.lean": {
@@ -6116,12 +6113,12 @@
     "VE.Time.Document.ReadingContent",
     "VE.Time.Document.citesLemma",
     "VE.Time.Document.claimJson",
+    "VE.Time.Document.instDecidableChoicesCompatible",
     "VE.Time.Document.lookupEntry",
     "VE.Time.Document.nodeDiagnostic",
     "VE.Time.Document.optionalArray",
     "VE.Time.Document.qdisjunction",
-    "VE.Time.Document.sortedSpans",
-    "instance:{w : W6Env} (e : Entry w) : Decidable (ChoicesCompatible e)"
+    "VE.Time.Document.sortedSpans"
    ],
    "C": [
     "VE.Time.Document.Admitted",
@@ -6129,12 +6126,12 @@
     "VE.Time.Document.admitNodes",
     "VE.Time.Document.checkGraph",
     "VE.Time.Document.extension",
+    "VE.Time.Document.instDecidableAssertedUnit",
+    "VE.Time.Document.instDecidableCitationsClosed",
+    "VE.Time.Document.instDecidableLeafAdmitted",
+    "VE.Time.Document.instDecidableNodeAdmitted",
     "VE.Time.Document.leafEntry",
-    "VE.Time.Document.lemmaUnchecked",
-    "instance:{w : W6Env} (D : QDoc w) (e : Entry w) : Decidable (CitationsClosed D e)",
-    "instance:{w : W6Env} (D : QDoc w) (n : QNode w) : Decidable (LeafAdmitted D n)",
-    "instance:{w : W6Env} (D : QDoc w) (n : QNode w) : Decidable (NodeAdmitted D n)",
-    "instance:{w : W6Env} (D : QDoc w) (u : String) (φ : QFormula) : Decidable (AssertedUnit D u φ)"
+    "VE.Time.Document.lemmaUnchecked"
    ],
    "D[V]": [
     "VE.Time.Document.admitDecoded",
@@ -6147,12 +6144,12 @@
     "VE.Time.Document.unitOf"
    ],
    "G[V]": [
+    "VE.Time.Document.instDecidableQuotedUnit",
+    "VE.Time.Document.instDecidableReadingContent",
     "VE.Time.Document.isCite",
     "VE.Time.Document.main",
     "VE.Time.Document.runDocument",
-    "VE.Time.Document.tokenList",
-    "instance:{w : W6Env} (D : QDoc w) (a u : String) (φ : QFormula) :",
-    "instance:{w : W6Env} (D : QDoc w) (s : String) (ver : Nat) (c : Option Nat) (φ : QFormula) :"
+    "VE.Time.Document.tokenList"
    ],
    "G[R]": [
     "VE.Time.Document.graphRejected"
