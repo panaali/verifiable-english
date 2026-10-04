@@ -372,6 +372,64 @@ def fuzz(genuine, genuine_errors, executables):
     return items, lean_verdicts(executables[1], items)
 
 
+# Each field dropped, emptied ("" [] {}), nulled and retyped (7, true, a string): build checklist line 4.
+_DROP = object()
+FIELD_FAULTS = {"drop": _DROP, "empty-text": "", "empty-array": [], "empty-object": {}, "null": None,
+                "number": 7, "true": True, "text": "x"}
+
+
+def field_faults(response):
+    """Every field of `response` (a list through its first element, results to depth 4 below the
+    bound entry) dropped, emptied, nulled and retyped."""
+    def nodes(value, path=()):
+        yield path, value
+        if len(path) < 7:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    yield from nodes(item, path + (key,))
+            elif isinstance(value, list) and value:
+                yield from nodes(value[0], path + (0,))
+    out = []
+    for path, value in nodes(response):
+        if not path:
+            continue
+        for new in FIELD_FAULTS.values():
+            if new is _DROP:
+                if isinstance(path[-1], str):
+                    copy = deepcopy(response)
+                    node = copy
+                    for step in path[:-1]:
+                        node = node[step]
+                    del node[path[-1]]
+                    out.append(copy)
+            elif not (type(new) is type(value) and new == value):
+                out.append(_replace(response, path, new))
+    return out
+
+
+def test_every_field_dropped_emptied_nulled_and_retyped_agrees_with_lean(genuine, genuine_errors, executables):
+    """Table-driven over one genuine response of each mode, case kind and outcome (and every request
+    error): the schema accepts a mutant exactly when the Lean decoders do, and refuses every drop or
+    null of the binding (nonce, mode, index, digest, a rejection's code and text)."""
+    shapes = {}
+    for mode, request, response in singles(genuine):
+        case, row = request["cases"][0], response["results"][0]["result"]
+        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "?"
+        shapes.setdefault((mode, kind, row.get("status"), "case_index" in row), (mode, request, response))
+    items = [(mode, request, field_faults(response)) for mode, request, response in
+             [*shapes.values(), *genuine_errors]]
+    verdicts = assert_agreement(executables[1], items)
+    assert 0 < sum(v == "accept" for v in verdicts) < len(verdicts) // 10
+    for mode, request, response in [*shapes.values(), *genuine_errors]:
+        bound = response["results"][0] if response.get("status") != "error" else None
+        binding = [("id",), ("mode",)] + ([("results", 0, "index"), ("results", 0, "digest")] if bound else [])
+        if bound is None or bound["result"].get("status") == "error":
+            binding += [("results", 0, "code"), ("results", 0, "result", "error")] if bound else [("code",), ("error",)]
+        for path in binding:
+            for new in (None, ""):
+                assert schema_verdict(mode, request, _replace(response, path, new)) != "accept", (mode, path, new)
+
+
 def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
     items, lean = fuzz
     verdicts = assert_agreement(executables[1], items, lean)
