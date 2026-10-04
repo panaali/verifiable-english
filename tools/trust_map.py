@@ -14,10 +14,13 @@ its class from the side table `tools/trust-classes.json` (open question 11 of th
 table changes no Lean file hash). A table entry may name the theorems that tie a D or G
 declaration (`{"name": ..., "tied": [theorem, ...]}`, at least one theorem); each such theorem
 must be in `lean/statements.txt` (bundle ST), and the constants its statement uses (the dump's
-`-- uses` line, full names) must include the declaration and some other anchor, the meaning the
-tie points at. The anchors are derived from the classification the budget reports, never from a
-table entry alone: a declaration of the tree whose class validated and that the budget counts as
-K, S or untied [V] (`is_anchor`).
+`-- uses` line) must include the declaration and some other anchor, the meaning the tie points at.
+The anchors are derived from the classification the budget reports, never from a table entry
+alone: a declaration of the tree whose class validated and that the budget counts as K, S or
+untied [V] (`is_anchor`). A declaration is its full name and its file's module together (`ident`),
+as the dump's `name@Module` constants and predicates are: two files nothing imports together may
+each define `VE.Demo.anchor`, and a statement about one says nothing about the other. The
+predicate list must have read every file of the tree.
 
 A declaration's lines run from its docstring (or first attribute line) to the line before the
 next declaration or structural command, as in the trust map's method (section 9). Namespace,
@@ -70,7 +73,8 @@ STATEMENTS = LEAN / "statements.txt"
 sys.path.insert(0, str(LEAN))
 sys.path.insert(0, str(ROOT / "tools"))
 from audit import code_only  # noqa: E402
-from lean_statements import PREDICATES, parse as parse_statements, predicates as lean_predicates, uses  # noqa: E402
+from lean_statements import (PREDICATES, module_name, parse as parse_statements, predicate_list,  # noqa: E402
+                             predicates as lean_predicates, sources, uses)
 
 COLUMNS = ("K", "S", "D", "G", "C", "P", "T", "o")
 CLASSES = ("K", "S", "C", "P", "T", *(f"{c}[{g}]" for c in "DG" for g in "VRI"))
@@ -202,11 +206,6 @@ def scan(path: Path) -> tuple[list[Decl], int]:
     return decls, total
 
 
-def sources(root: Path = ROOT) -> list[Path]:
-    lean = root / "lean"
-    return [p for p in sorted(lean.rglob("*.lean")) if ".lake" not in p.relative_to(lean).parts]
-
-
 def module_key(path: Path, root: Path = ROOT) -> str:
     return path.relative_to(root / "lean").as_posix()
 
@@ -237,9 +236,10 @@ def load_table(path: Path = TABLE) -> dict[str, dict[str, object]]:
     return table
 
 
-def statements(path: Path = STATEMENTS) -> dict[str, set[str] | None]:
-    """The theorems of lean/statements.txt and the full names on each one's `-- uses` line
-    (None for an entry without that line)."""
+def statements(path: Path = STATEMENTS) -> dict[str, set[tuple[str, str]] | None]:
+    """The theorems of lean/statements.txt and the constants on each one's `-- uses` line as
+    (defining module, full name) (None for an entry without that line, or one written before it
+    carried modules)."""
     if not path.is_file():
         return {}
     return {name: uses(body) for name, body in parse_statements(path.read_text()).items()}
@@ -249,18 +249,27 @@ def statements(path: Path = STATEMENTS) -> dict[str, set[str] | None]:
 KIND_CLASSES = {"theorem": "P", "lemma": "P", "example": "T", "command": "T"}
 
 
-def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | None],
-             trusted: set[str] = frozenset(), predicates: set[str] = frozenset()) -> tuple[str, bool, list[str]]:
+Ident = tuple[str, str]  # (defining Lean module, full name), as the dump's `name@Module`
+
+
+def ident(module: str, name: str) -> Ident:
+    """A declaration named `name` in the file `module` (a path under lean/), as the dump names it."""
+    return module_name(module), name
+
+
+def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[Ident] | None],
+             trusted: set[Ident] = frozenset(), predicates: set[Ident] = frozenset()) -> tuple[str, bool, list[str]]:
     """(class, tied, problems) of one declaration. A tie holds when every listed theorem is in
-    the statement dump and its statement mentions the declaration itself (its full name, not a
-    same-named declaration of another namespace) and some other declaration in `trusted`, the
-    K, S or untied [V] meaning it is tied to.
+    the statement dump and its statement mentions the declaration itself (its full name in its
+    own module, not a same-named declaration of another namespace or another module) and some
+    other declaration in `trusted`, the K, S or untied [V] meaning it is tied to.
 
     A declaration in `predicates` (its type ends in `Prop`) is a statement a reviewer reads, not
     executable code: it is K or S, a [V] D or G declaration, P or T (a proof or test helper), or a
     tied C, D or G declaration; an untied C, [R] or [I] class would drop it from the budget
     unread."""
     entry = table.get(module, {}).get(decl.name) if decl.name is not None else None
+    me = ident(module, decl.name) if decl.name is not None else None
     if decl.kind in KIND_CLASSES:
         cls = KIND_CLASSES[decl.kind]
         if entry is None:
@@ -271,7 +280,7 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | 
     if entry is None:
         return "?", False, []
     if isinstance(entry, str):
-        if decl.name in predicates and (entry == "C" or entry[0] in "DG" and not entry.endswith("[V]")):
+        if me in predicates and (entry == "C" or entry[0] in "DG" and not entry.endswith("[V]")):
             return entry, False, [f"{module}: {decl.name}: a predicate cannot be {entry} unless a theorem ties it; "
                                   "classify it K or S (or P for a proof helper)"]
         return entry, False, []
@@ -285,11 +294,12 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[str] | 
         if theorem not in proved:
             problems.append(f"{module}: {decl.name}: tying theorem {theorem} is not in {STATEMENTS.name}")
         elif used is None:
-            problems.append(f"{module}: {decl.name}: {STATEMENTS.name} has no uses line for {theorem}; "
-                            "rerun tools/lean_statements.py")
-        elif decl.name not in used:
-            problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {decl.name}")
-        elif not used & (trusted - {decl.name}):
+            problems.append(f"{module}: {decl.name}: {STATEMENTS.name} has no uses line with defining modules "
+                            f"for {theorem}; rerun tools/lean_statements.py")
+        elif me not in used:
+            problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {decl.name} "
+                            f"of {module_name(module)}")
+        elif not used & (trusted - {me}):
             problems.append(f"{module}: {decl.name}: the statement of {theorem} mentions no K, S or untied [V] "
                             "declaration of the tree, validly classified, to tie it to")
     return cls, not problems, problems
@@ -331,14 +341,16 @@ def scan_tree(root: Path = ROOT) -> tuple[list[tuple[str, Decl]], dict[str, int]
     return decls, lines
 
 
-def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, set[str] | None],
-                  predicates: set[str]) -> tuple[list[Classified], list[str]]:
+def classify_tree(decls: list[tuple[str, Decl]], table: dict, proved: dict[str, set[Ident] | None],
+                  predicates: set[Ident]) -> tuple[list[Classified], list[str]]:
     """Every declaration with its validated class, and the problems found. The anchors a tie may
     point at come from a first pass over the same declarations without any anchor (`is_anchor`:
     a tied declaration never validates there, so ties cannot anchor each other); the second pass
-    checks the ties against them."""
+    checks the ties against them. An anchor is a declaration of one module (`ident`): a namesake
+    of an anchor in another module anchors nothing."""
     first = [classify(module, decl, table, proved, frozenset(), predicates) for module, decl in decls]
-    trusted = {decl.name for (_, decl), result in zip(decls, first) if decl.name is not None and is_anchor(*result)}
+    trusted = {ident(module, decl.name) for (module, decl), result in zip(decls, first)
+               if decl.name is not None and is_anchor(*result)}
     out, problems, seen = [], [], defaultdict(set)
     for (module, decl), (cls, tied, issues) in zip(decls, first):
         if isinstance(table.get(module, {}).get(decl.name), dict):
@@ -362,11 +374,21 @@ def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = ST
     table = load_table(table_path)
     proved = statements(statements_path)
     predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
-    problems = []
+    problems, predicates, scanned = [], set(), None
     if not predicates_path.is_file():
         problems.append(f"{predicates_path.name} is missing; run tools/lean_statements.py")
-    predicates = lean_predicates(predicates_path)
+    else:
+        try:
+            predicates, scanned = predicate_list(predicates_path)
+        except ValueError as error:
+            problems.append(str(error))
     decls, lines = scan_tree(root)
+    if scanned is not None:
+        # A predicate of a file the scan did not read would be classed without anyone knowing.
+        for module in lines:
+            if module_name(module) not in scanned:
+                problems.append(f"{module}: {predicates_path.name} did not read module {module_name(module)}; "
+                                "rerun tools/lean_statements.py")
     out, found = classify_tree(decls, table, proved, predicates)
     return out, lines, problems + found
 
@@ -574,7 +596,7 @@ def predicate_class(module: str, row: dict[str, int] | None) -> str:
 
 
 def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None,
-                predicates: set[str] = frozenset(), kept: dict[str, object] | None = None) -> dict[str, object]:
+                predicates: set[Ident] = frozenset(), kept: dict[str, object] | None = None) -> dict[str, object]:
     """Seeded classes of the named non-theorem declarations of one file.
 
     `kept` is the file's current table: its ties and classes stay, except that a predicate not
@@ -600,7 +622,7 @@ def seed_module(module: str, decls: list[Decl], row: dict[str, int] | None,
         old = kept.get(name)
         if isinstance(old, dict):  # a tie is a reviewed fact, checked on every run
             out[name] = old
-        elif name in predicates:
+        elif ident(module, name) in predicates:
             # K, S, P and T are reviewed choices for a predicate; any other class is not allowed.
             out[name] = old if old in {"K", "S", "P", "T"} else predicate_class(module, row)
         elif KERNEL.match(module) and "K" in allowed and kinds[name] in {"structure", "inductive"}:
