@@ -274,3 +274,8 @@ asks `supReady`, and `readings-choice` runs on any admitted document.
   premise read through the outcome substitution), `conclusion_value`, `first_failing` (the first failing premise's
   index, else null) and `assertions`. `valid: true` with `conclusion_value: false` is `soft_choice_model_sound`,
   `rights_choice_model_sound` or `norms_choice_model_sound`.
+  A certificate kind also needs `conflict`, the chain's conflict packages (`packages`, and `pairs` on the soft
+  chain) for the same choice: Lean runs the lower route's own conflict kind on them over the same regenerated
+  document (`choiceConflictCase`, never a witness) and answers `conflict_free`, and `accepted` exactly when the
+  certificate is `valid` and the conflict status is CONFLICT-FREE (14.8, as `readings-certificate` asks on `sup D`;
+  compose-s2 looprecheck2 review B). A certificate case without `conflict` is refused.

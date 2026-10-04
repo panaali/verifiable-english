@@ -23,7 +23,9 @@ import VE.Compose.Dispatch
   with the chain's document hash of `choiceDoc D c`. For the evidence kinds (the chain's `*-certificate` and
   `choice-model`) the inner premises are the regenerated assertions of `choiceDoc D c` followed by the case's own;
   `choice-model` checks a base model on the chain's regenerated document (`soft_choice_model_sound`,
-  `rights_choice_model_sound`, `norms_choice_model_sound`). -/
+  `rights_choice_model_sound`, `norms_choice_model_sound`). A certificate kind also needs `conflict` (the chain's
+  conflict packages for the same document): the row's `accepted` is true exactly when the certificate is valid and
+  the lower route's own conflict kind answers CONFLICT-FREE on them (14.8). -/
 namespace VE.Readings.Run
 open Lean
 open VE.Readings
@@ -294,6 +296,32 @@ def choiceModel (chain : Chain) (id : String) (lowerCase : Json) (assertions : N
 /-- The inner kinds whose premises are the regenerated assertions followed by the case's own. -/
 def evidenceKinds : List String := ["soft-certificate", "norms-certificate", "rights-certificate", "choice-model"]
 
+/-- The chain's certificate kinds: an entailment certificate of a choice's document. -/
+def certificateKinds : List String := ["soft-certificate", "norms-certificate", "rights-certificate"]
+
+/-- The lower route's conflict kind of a chain. -/
+def conflictKind : Chain → String
+  | .soft => "soft-conflict"
+  | .rights => "rights-conflict"
+  | .norms => "norms-conflict"
+
+/-- The conflict check a certificate is accepted under (review B of compose-s2 looprecheck2): the case's `conflict`
+    packages, run by the lower route as its own conflict kind on the same regenerated document, never as a witness.
+    A certificate of a document whose rules may contradict each other proves every conclusion at the collision, so
+    it is accepted only when the conflict status is CONFLICT-FREE (composition-s2.md 14.8, as `readings-certificate`
+    requires on `sup D`). -/
+def choiceConflictCase (chain : Chain) (id : String) (conflict lowerCase : Json) : Json :=
+  let source := match chain with
+    | .rights => ("document", lowerCase.getObjValD "document")
+    | _ => ("norms", lowerCase.getObjValD "norms")
+  Json.mkObj ([("id", .str id), ("kind", .str (conflictKind chain)),
+    ("environment", lowerCase.getObjValD "environment"), source,
+    ("packages", conflict.getObjValD "packages")] ++
+    (match chain with | .soft => [("pairs", conflict.getObjValD "pairs")] | _ => []))
+
+def conflictFreeAnswer (answer : Json) : Bool :=
+  answer.getObjValD "status" == .str "ok" && answer.getObjValD "verdict" == .str "CONFLICT-FREE"
+
 /-- `lower` runs a case of the lower route named by `dispatch` (`Run.lean` supplies the runners). -/
 def runChoice (lower : List String → Json → Json) (id : String) (j : Json) : Except String Json := do
   let b ← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")
@@ -320,8 +348,16 @@ def runChoice (lower : List String → Json → Json) (id : String) (j : Json) :
       | .ok a => a
       | .error e => Json.mkObj [("id", .str id), ("status", .str "error"), ("error", .str e)]
     else lower b.a.re.lower lowerCase
-  pure (okWith id [("choice", choiceJson c), ("document_hash", .str (← choiceHash b units)),
-    ("assertions", toJson assertions.length), ("inner", answer)])
+  let accepted ← if certificateKinds.contains kind then do
+      let conflict ← match inner.getObjVal? "conflict" with
+        | .ok (.obj kvs) => pure (Json.obj kvs)
+        | _ => throw "InvalidInput: a reading's certificate needs the choice's conflict packages"
+      let free := conflictFreeAnswer (lower b.a.re.lower (choiceConflictCase b.a.re.chain id conflict lowerCase))
+      let valid := answer.getObjValD "valid" == .bool true
+      pure [("conflict_free", .bool free), ("accepted", .bool (free && valid))]
+    else pure []
+  pure (okWith id ([("choice", choiceJson c), ("document_hash", .str (← choiceHash b units)),
+    ("assertions", toJson assertions.length), ("inner", answer)] ++ accepted))
 
 /-! ## Dispatch -/
 
