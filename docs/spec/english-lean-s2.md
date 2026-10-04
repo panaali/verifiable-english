@@ -1,17 +1,21 @@
 # English in Lean, S2: the English instance (statement specification)
 
-> Status: statement specification, draft 1 (2026-10-04), branch `design/english-lean-s2`. This is the item-1
-> statement spec of [english-lean-S2-PLAN.md](english-lean-S2-PLAN.md) draft 2 (the **S2 plan**). It writes out
+> Status: statement specification, draft 2 (2026-10-04), branch `design/english-lean-s2`. This is the item-1
+> statement spec of [english-lean-S2-PLAN.md](english-lean-S2-PLAN.md) draft 3 (the **S2 plan**). It writes out
 > stage S2 of [english-lean-PLAN.md](english-lean-PLAN.md) (the **base plan**, draft 2) on top of
 > [english-lean.md](english-lean.md) draft 2 (the **base spec**), whose tier A engine is proved and whose tier B
 > lexer, tokens and `Lexicon.valid` are built on branch `english-lean/integrate` at `689219b1`
 > ([english-lean-s1.md](english-lean-s1.md), the **S1 report**; [english-lean-measured.md](english-lean-measured.md),
 > the **S0 report**). Base-spec definitions and statements are not repeated; a section number written `base 2.9`
-> refers to the base spec. **Nothing was built for this draft.** What was run: every Lean signature and statement
-> of section 5 was elaborated as a stub against the S1 build (each statement as a definition of type `Prop`, as
-> base 5.1 prescribes for unproved statements), and every verdict, count and step figure of section 8 was
-> computed by the proved S1 parser on the hand-built fixture grammar of 8.1, over the S1 lexer's tokens (section
-> 12). Formulas in section 8 were derived by hand from `ve/english.py` and are confirmed against Python in S2; a
+> refers to the base spec. **Nothing was built for this draft.** What was run for draft 1: every Lean signature
+> and statement of section 5 was elaborated as a stub against the S1 build (each statement as a definition of
+> type `Prop`, as base 5.1 prescribes for unproved statements), and every verdict, count and step figure of
+> section 8 was computed by the proved S1 parser on the hand-built fixture grammar of 8.1, over the S1 lexer's
+> tokens (section 12). **Draft 2 applies the statement review** (`manage-agents/debates/english-lean-s2-spec`,
+> Astra and Fable, converged FIX after round 2 on 2026-10-04; section 13 lists the edits). The stub was not
+> re-run for draft 2: every figure that the edits touch is marked *recompute* and is re-established when the stub
+> is re-created (section 12); the review's PASS follows a bounded re-check of these edits, not this draft.
+> Formulas in section 8 were derived by hand from `ve/english.py` and are confirmed against Python in S2; a
 > difference there is a finding, not a failed fixture. Every `file:line` was read on 2026-10-04 and must be
 > re-read at each step. Nothing here changes a verdict, an identity, a public code, a frozen file, an existing
 > theorem statement or a checker function.
@@ -30,7 +34,7 @@ are S3. Nothing user-visible changes: `english.admission` keeps `authority: pyth
 In this specification: the decisions (1), the definitions (2), the English of every new outcome and claim (3),
 the diagnostics (4), the Lean definitions and the exact statements (5), files and gates (6), what is consumed
 and returned (7), the acceptance fixtures (8), limits (9), the statement review checklist (10), the open points
-(11), and how the figures were computed (12).
+(11), how the figures were computed (12), and the statement review's edits (13).
 
 ## 1. Decisions
 
@@ -38,18 +42,20 @@ and returned (7), the acceptance fixtures (8), limits (9), the statement review 
 |---|---|---|
 | D1 | `grammar E L` is `fixedRules E.profiles` followed by `lexRules E L`, in that order, with one fixed nonterminal catalogue; the start symbol is nonterminal 0, `sentence` | 2.4, 2.5, 5.6 (`grammar_rules`) |
 | D2 | Every fixed rule is one row of a JSON source, generated into a Lean table literal; punctuation terminals carry the `glued` flags of DRI ruling 1, so the fixed rules accept exactly Python's spacing | 2.5, 2.9 |
-| D3 | A wording becomes rules by one procedure, `lexRules`: clause, subject relative and object relative per wording, negative and alias; noun, label and spelling rules per sort and constant; the natural-view families as Python's `_natural_grammar` instantiates them | 2.6 |
+| D3 | A wording becomes rules by one procedure, `lexRules`: clause, subject relative and object relative per wording, negative and alias, cut exactly as Python's Lark grammar cuts them; noun, label and spelling rules per sort and constant; the natural-view families as Python's `_natural_grammar` instantiates them | 2.6 |
 | D4 | Meanings are computed bottom-up from a context (scope, state, list depth, nesting, leftmost position). Side conditions are declared rejections computed by actions; they never remove a derivation | 2.7, 2.8 |
-| D5 | `start_sentence` holds by construction: `ty E L 0 = .sentence` for every environment and lexicon. The fallback check of base 5.8 is not used | 5.6, 5.7 |
-| D6 | `Reject` gains `coordinationRepeated` and `naturalScoped` (tier B, for the DRI). Every other side condition of the S2 constructs maps to an existing code | 2.8 |
+| D5 | `start_sentence` holds by construction: `ty E L 0 = .sentence` for every environment and lexicon. `read` and `translate` keep base 5.8's start-type test, which is therefore always true for `grammar E L` and costs one comparison; `read_complete_english` carries it as a premise, as base 5.8's fallback wording allows | 5.3, 5.6, 5.7 |
+| D6 | `Reject` gains `coordinationRepeated`, `coordinationForm` and `naturalScoped` (tier B, for the DRI). Every other side condition of the S2 constructs maps to an existing code | 2.8 |
 | D7 | Translation mode is `translate`: one sentence from `DState.init`; its set is complete exactly when the parser returned fewer trees than the cap; a text of two or more sentences is `NotOneSentence` | 2.3, 5.3, 8.4 |
 | D8 | The service modes are `english.read` and `english.grammar`, in a new executable; the six identities of base 2.12 are computed by the service | 2.10, 4.3, 4.4 |
 | D9 | The adapter runs under `dispatch.execute("english.admission", …)`; authority stays `python`; the shadow log is G2's instrument; `invalidGrammar` fails closed as `CheckerUnavailable` | 2.10, 4.5 |
 | D10 | G2 compares verdict, formulas, canonical text, marks and witness multiplicity under the written tree correspondence; the reverse corpus is sampled from the `english.grammar` export; mutation replay is empirical | 2.11 |
 | D11 | The readability writing gaps are fixtures. The two rules that would accept the two rejected sentence shapes are written, measured and excluded from the generated table until signed | 2.12, 8.5 |
-| D12 | `Extends` gets a body: equal profiles, every symbol and selection kept, both lexicons valid. `grammar_extension` is stated against it for the reviewers | 2.13, 5.6 |
+| D12 | `Extends` gets a body: the base profile on both sides, every symbol kept with its full signature (argument sorts, constant sorts), every selection kept, both lexicons valid. The actions are `fixedActs ++ lexActs E L` with `fixedActs` closed and the sort data carried in values, so corresponding actions are equal terms. `grammar_extension` is stated against it for the reviewers | 2.3, 2.7, 2.13, 5.4, 5.6 |
 | D13 | All eighteen lint codes stay in the Python producer in S2. The final sort of the eight retained codes is proposed here and fixed at the statement review | 2.14 |
 | D14 | Lean's texts for `none`, `many`, `rejected` and `budget` are the base spec's; the adapter's nearest-wording suggestion quotes whole tokens only | 3.2, 3.3, 4.5 |
+| D15 | The fixed table mirrors Lark rule for rule (coordination over `term`, relatives cut as Lark cuts them); every further restriction of the hand parser (scope, name spellings, distinctness, sorts, label letters, negation under `every`) is an action. The tree correspondence is therefore one to one and the hand parser's acceptance is the meaning | 2.5, 2.6, 2.7, 2.11 |
+| D16 | The unit that `english.admission` dispatches is the grammatical reading up to the typed check (`check_document`); `_check_conclusions` runs after it in Python for either backend. G2 compares at that boundary | 2.10, 2.11 |
 
 ## 2. Definitions
 
@@ -64,6 +70,8 @@ and returned (7), the acceptance fixtures (8), limits (9), the statement review 
 | side condition | a declared rejection computed by an action (2.8) |
 | widening | a rule whose addition gives a derivation to a text that has none today (2.12) |
 | tree correspondence | the map between a Lark derivation of Python's generated grammar and a Lean derivation of `grammar E L` (2.11) |
+| name form | a constant spelling that Python's coordination accepts as a name: letters and single spaces, optionally after `the `, and the capitalised form of such a spelling that begins with `the ` (`english.py:1574–1577`; 2.6, 2.7) |
+| signature | a predicate's argument sorts in order (`PredDecl.args`) or a constant's sort (`ConstDecl.sort`) (2.3) |
 
 ### 2.2 Tokens and terminals
 
@@ -89,11 +97,15 @@ With it the spelling `the api` of a constant gives the rules `the api` (two `kw`
 ### 2.3 The reader's inputs
 
 - **`Env`** is the lexical view of the S1 build (`Lexicon.lean`: sorts with nouns, predicates with arity,
-  declared wording and negative, constants with display forms, profiles, `ProfileForms`). S2 adds one field,
+  declared wording and negative, constants with display forms, profiles, `ProfileForms`). S2 adds the
+  signatures, which the lexical rules and the actions of 2.6 and 2.7 need: `PredDecl.args : List String`, the
+  argument sorts in order (`arity = args.length`), and `ConstDecl.sort : String`. It adds one more field,
   `source : Lean.Json := .null`, the validated environment JSON; `typedDocument` re-decodes the formulas against
-  it through the existing typed decoder (`lean/VE/Service/Standalone.lean:331`, `decodeTyped`). S2 writes
-  `Env.decode : Json → Json → Except String Env` from the environment and the overlay. For the base profile
-  `forms` is empty (S3 computes the profile forms).
+  it through the existing typed decoder (`lean/VE/Service/Standalone.lean:331`, `decodeTyped`), and **no other
+  definition reads `source`**: `lexRules`, `ty`, the actions and `Env.decode`'s consumers read the typed fields
+  only. S2 writes `Env.decode : Json → Json → Except String Env` from the environment and the overlay; it fills
+  `args` and `sort` from the environment's declarations. For the base profile `forms` is empty (S3 computes the
+  profile forms).
 - **`Overlay`** and **`Lexicon`** are the S1 structures. `Lexicon.valid` is V1 to V5 of base 2.9, unchanged in
   S2 except for the proposal of 2.6 on V3.
 - **The budget** `b` of `read` is `workBudget` = 2,100,000 steps per sentence (DRI ruling 5, S1 build).
@@ -123,13 +135,13 @@ The type of a nonterminal says what value a derivation of it carries (2.7).
 | 14 | `list_marker` | `listMarker` | the marker's text |
 | 15 | `article` | `unit` | |
 | 16 | `declaration` | `declaration` | context → sort and reference text |
-| 17 | `term` | `term` | context → term |
-| 18 | `noun` | `noun` | the sort |
-| 19 | `label` | `label` | the label's text |
-| 20 | `constant` | `constant` | the constant's name |
+| 17 | `term` | `term` | context → term, with the constant's datum when the term is a written constant (`TermVal`, 5.2) |
+| 18 | `noun` | `noun` | the sort and the noun's text |
+| 19 | `label` | `label` | the sort whose letter it is, and the label's text |
+| 20 | `constant` | `constant` | the constant's name, its sort, and whether the spelling is a name form (`ConstVal`, 5.2) |
 | 21 | `relative` | `relative` | |
 | 22 | `object_relative` | `relative` | |
-| 23 | `adjective` | `adjective` | the unary predicate's name |
+| 23 | `adjective` | `adjective` | the unary predicate's name and its argument sort |
 | 24 | `natural` | `formula` | |
 | 25 | `natural_some` | `formula` | |
 | 26 | `some_tail` | `relative` | |
@@ -138,17 +150,20 @@ The type of a nonterminal says what value a derivation of it carries (2.7).
 | 29 | `natural_no` | `formula` | |
 | 30 | `natural_every` | `formula` | |
 | 31 | `natural_tail` | `relative` | |
-| 32 | `natural_subject` | `natSubject` | the adjective's predicate and the noun's sort |
+| 32 | `natural_subject` | `natSubject` | the adjective's predicate, the noun's sort and the noun's text |
 | 33 | `owner_clause` | `relative` | |
 | 34 | `reach` | `formula` | |
 | 35 | `count` | `count` | `true` for zero or more (reflexive) |
 | 36 | `relation` | `relation` | the relation's name |
 
 `Ty` therefore gains `marker`, `unit`, `listMarker`, `noun`, `label`, `constant`, `adjective`, `natSubject`,
-`count`, `relation` (tier B: base 5.8 left the list to S2). `intTerm` stays for S3. The ranks (W3) are the
-certificate of 8.1: terminals-first nonterminals at rank 0; `term`, `declaration`, `some_tail`,
-`natural_tail`, `natural`, `coordination` at 1; `atom`, `object_relative` at 2; `guard_atom`, `formula` at 3;
-`guard_relative`, `guard`, `sentence` at 4. `Grammar.wf` of the fixture grammar is true (8.1).
+`count`, `relation` (tier B: base 5.8 left the list to S2). `intTerm` stays for S3. The ranks (W3) are one
+fixed array, the certificate for every lexicon: terminals-first nonterminals at rank 0; `term`, `declaration`,
+`natural` at 1; `atom`, `object_relative`, `coordination`, `relative` at 2; `some_tail`, `natural_tail`,
+`guard_atom`, `formula` at 3; `guard_relative`, `guard`, `sentence` at 4. `coordination` is at 2 because its
+rules begin with `term` (2.5); `relative` is at 2 because a wording that begins with `{1}` gives a subject
+relative that begins with `term` (2.6), and `some_tail`, `natural_tail` and `guard_atom` follow it. `Grammar.wf`
+of the fixture grammar was true under draft 1's ranks (8.1); under these ranks it is *recompute* (section 12).
 
 ### 2.5 The fixed rules of the base profile
 
@@ -207,10 +222,10 @@ rule expanded and the document rule removed (the lexer splits sentences; W4).
 | `atom.top` | `atom → this holds in all cases` | `top` |
 | `atom.bottom` | `atom → this is impossible` | `bottom` |
 | `atom.eq` | `atom → ⟨term⟩ c:is c:the c:same c:as ⟨term⟩` | `eq` |
-| `coordination.subject-and` | `coordination → ⟨constant⟩, ⟨constant⟩ and ⟨constant⟩ are ⟨adjective⟩` | `coordSubjects and` |
-| `coordination.subject-or` | `coordination → ⟨constant⟩, ⟨constant⟩ or ⟨constant⟩ is ⟨adjective⟩` | `coordSubjects or` |
-| `coordination.predicate-and` | `coordination → ⟨constant⟩ is ⟨adjective⟩, ⟨adjective⟩ and ⟨adjective⟩` | `coordAdjectives and` |
-| `coordination.predicate-or` | `coordination → ⟨constant⟩ is ⟨adjective⟩, ⟨adjective⟩ or ⟨adjective⟩` | `coordAdjectives or` |
+| `coordination.subject-and` | `coordination → ⟨term⟩, ⟨term⟩ and ⟨term⟩ are ⟨adjective⟩` | `coordSubjects and` |
+| `coordination.subject-or` | `coordination → ⟨term⟩, ⟨term⟩ or ⟨term⟩ is ⟨adjective⟩` | `coordSubjects or` |
+| `coordination.predicate-and` | `coordination → ⟨term⟩ is ⟨adjective⟩, ⟨adjective⟩ and ⟨adjective⟩` | `coordAdjectives and` |
+| `coordination.predicate-or` | `coordination → ⟨term⟩ is ⟨adjective⟩, ⟨adjective⟩ or ⟨adjective⟩` | `coordAdjectives or` |
 | `natural.some` `natural.no` `natural.every` | `natural → ⟨natural_some⟩` \| `⟨natural_no⟩` \| `⟨natural_every⟩` | `naturalTop` |
 | `natural-some` | `natural_some → some ⟨declaration⟩ ⟨some_tail⟩` | `someDecl` |
 | `some-tail.relative` | `some_tail → ⟨relative⟩` | `through` |
@@ -226,37 +241,55 @@ rule expanded and the document rule removed (the lexer splits sentences; W4).
 | `reach.body.listed` | the same with `satisfies the following: (a) ⟨formula⟩` | `reachBody true` |
 | `count.one` `count.zero` | `count → one` \| `zero` | `count false` \| `count true` |
 
-Three remarks. The `formula → natural` row is in the fixed table because Python's natural hook extends `formula`
-(`english.py:1990`); its scope restriction is a side condition (2.8, `naturalScoped`). The three-atom guards keep
-Python's two associations (`guard`, `:1286–1293`): `a and b, and c` is `And (And a b) c`, `a, and b and c` is
-`And a (And b c)`. The longest fixed right-hand side has 28 symbols (`listing.*.words`), as S0 measured over
-tokens.
+Five remarks. The `formula → natural` row is in the fixed table because Python's natural hook extends `formula`
+(`english.py:1990`); its scope restriction is a side condition (2.8, `naturalScoped`). The coordination rows
+take `term`, as Lark's do (`:1835–1838`); the hand parser's restrictions to top-level sentences and to constants
+written as names (`:1572–1577`) are side conditions of `coordSubjects` and `coordAdjectives` (2.7, 2.8), so
+`It, alice and legacy are deployed.` has one derivation and a rejected meaning (b48, e50), as it has one Lark
+derivation and a hand-parser rejection. The three-atom guards keep Python's two associations (`guard`,
+`:1286–1293`): `a and b, and c` is `And (And a b) c`, `a, and b and c` is `And a (And b c)`. The reach rows are
+in the base table because Lark's and the hand parser's reach forms are unconditional (`:1458`, `:1866–1868`);
+the profile `closure@0` is enforced by `typedDocument`, as `check_document` enforces it (`ve/ast.py:281–282`),
+so `fixedRules` returns the base table for every profile list that names `relational-fol@0` and gives
+`closure@0` no table of its own (profile tables are S3). The longest fixed right-hand side has 28 symbols
+(`listing.*.words`), as S0 measured over tokens.
 
 ### 2.6 The lexical rules
 
-`lexRules E L` appends, in the order of the lexicon's lists, the rules below. A wording's text is lexed by `lex`
-(with a terminator appended); its word tokens become `content` terminals, a quoted part an `exact` quoted token,
-a punctuation token an `exact` punctuation token with its flags, and a hole `{k}` the nonterminal `term` (the
-slot's sort is an integer sort only under `order@0`, S3). `action` constructors are those of 2.7.
+`lexRules E L` appends, in the order of the lexicon's lists, the rules below. A wording's or a noun's text is
+lexed by `lex` (with a terminator appended); its word tokens become `content` terminals, a quoted part an
+`exact` quoted token, a punctuation token an `exact` punctuation token with its flags, and a hole `{k}` the
+nonterminal `term` (the slot's sort is an integer sort only under `order@0`, S3). This is Lark's `content_lit`
+(`english.py:1827–1829`): the fallback noun `entity of sort "s"` (`:247`) therefore lexes as three `content`
+words and one `exact` quoted token, never as four words. `action` constructors are those of 2.7; each carries
+the data written after it, read from the lexicon entry and from the declaration's signature (2.3), and nothing
+else.
 
 | Family | For | Rules | Action |
 |---|---|---|---|
 | clause | every selected wording, negative and alias of a predicate `p` of arity `k` | `atom → w₀ ⟨term⟩ w₁ … ⟨term⟩ wₖ` with the holes in the wording's order | `pred p order negated` |
-| subject relative | the same, when `{0}` is the first symbol | the clause without its leading `⟨term⟩`: `relative → w …` | `relSubject p order negated` |
-| object relative | the same, for binary wordings ending in ` {1}` | the clause without its trailing `⟨term⟩`: `object_relative → ⟨term⟩ w …` | `relObject p negated` |
-| noun | every sort `s` with selected noun `n` | `noun → c:n₁ … c:nₘ` | `noun s` |
-| label | every sort `s` with letter `ℓ` | `label → cls (label ℓ)` | `label` |
-| spelling | every constant `c` with selected spelling `sp` | `constant → sp` (one `kw` per word; a quoted spelling is one `exact` quoted token); when `sp` is one lower-case word, also `constant → the sp`; when `sp` begins with `the `, also the capitalised spelling (2.2, Q5) | `const c` |
-| adjective | every unary `p` whose selected wording is `{0} is a` with `a` one lower-case ASCII word | `adjective → c:a` | `adjective p` |
-| natural subject | every such `p` on a sort `s` that has a selected noun `n` | `natural_subject → c:a c:n₁ … c:nₘ` | `natSubject p s` |
-| copula | the same `p` | `copula_relative → c:is c:a`; `copula_adjective → c:a` | `copulaRel p`; `adjective p` |
-| owner | when a binary predicate named `owns` has the selected wording `{0} owns {1}` | `owner_clause → has an owner` | `owner` |
+| subject relative | the same | when `{0}` is the first symbol, the clause without its leading `⟨term⟩`: `relative → w …`; otherwise the clause itself, `relative → w₀ ⟨term⟩ …` (Lark strips only a leading `term `, `:1923–1924`) | `relSubject p order negated` |
+| object relative | the same, for binary wordings that contain ` {1}` (the hole after a space) | the clause without that `⟨term⟩` and the space before it, wherever it is: `object_relative → w₀ ⟨term⟩ w₁ w₂` for `{0} w₁ {1} w₂` (Lark and the hand parser delete ` {1}`, `:1056`, `:1926`) | `relObject p negated` |
+| noun | every sort `s` with selected noun `n` | `noun → ⟨the tokens of n⟩` | `noun s n` |
+| label | every sort `s` with letter `ℓ` | `label → cls (label ℓ)` | `label s` |
+| spelling | every constant `c` of sort `s` with selected spelling `sp` | `constant → sp` (one `kw` per word; a quoted spelling is one `exact` quoted token); when `sp` is one lower-case word, also `constant → the sp`; when `sp` begins with `the `, also the capitalised spelling (2.2, Q5) | `const c s nf` with `nf` true for `constant → sp` and for the capitalised spelling when `sp` is a name form (2.1), false otherwise and always for `constant → the sp` (`:1574–1577`: Python's coordination names are the display texts and their capitalised `The …` forms, not the added article) |
+| adjective | every unary `p` on sort `s` whose selected wording is `{0} is a` with `a` one lower-case ASCII word | `adjective → c:a` | `adjective p s` |
+| natural subject | every such `p` on a sort `s` that has a selected noun `n` | `natural_subject → c:a ⟨the tokens of n⟩` | `natSubject p s n` |
+| copula | the same `p` | `copula_relative → c:is c:a`; `copula_adjective → c:a` | `copulaRel p`; `adjective p s` |
+| owner | when a binary predicate named `owns`, with argument sorts `s₁ s₂`, has the selected wording `{0} owns {1}` | `owner_clause → has an owner` | `owner s₁ s₂` |
 | relation | every binary predicate whose two argument sorts are equal | `relation → exact (quoted name)` | `relation name` |
 
 Conditions, as Python's: the adjective, natural-subject and copula families exist only for wordings of the form
 `{0} is a` with `a` matching `[a-z]+` (`english.py:1946–1950`, `:1978–1986`); the owner clause only for that
 exact wording (`:1987–1989`); the relation family only for equal argument sorts (`:1899–1900`). A sort without a
-selected noun has no noun rule and no natural subjects; a lexicon that passes V1 gives every sort a noun.
+selected noun has no noun rule and no natural subjects; a lexicon that passes V1 gives every sort a noun. Two
+cuts follow Python into corners that a lexicon from Python's producer never reaches in S2 (its `TEMPLATE_SHAPE`
+lint keeps `{0}` first): a wording whose `{0}` is not first keeps its `⟨term⟩` in the subject relative, and
+`relSubject` then prepends `var 0` to the clause's arguments exactly as the hand parser does (`:1085–1089`), so
+the formula has one argument too many and fails `typedDocument`, as it fails `check_document` in Python (e51);
+a binary wording that begins with `{1}` contains no ` {1}`, so it gets no object relative in Lean, while Python's
+rule for it reads the literal text `{1}`, which the lexer rejects (`badCharacter`: `{` is no chunk or
+punctuation character) before any rule applies.
 
 **Proposal on V3 (Q6).** A wording whose text does not lex as exactly one sentence of word, quoted and
 punctuation tokens other than a terminator (for example one containing `.`) gives no rule. To make this a
@@ -277,10 +310,19 @@ scope; a `term` value gives a term; a `declaration` value gives the binding it i
 
 **State.** `DState` is the S1 structure: `referents`, the constants mentioned in earlier sentences, sorted,
 without duplicates; `binderSeen`, whether an earlier sentence had a quantifier. The `sentence` action returns
-the state `after A`: referents joined with the constants of `A`, `binderSeen` or-ed with "A has a binder"
-(`english.py:1623–1624`).
+the state `after A`: referents joined with the constants of `A` (every `const` node anywhere in `A`,
+`_mentioned_constants`, `english.py:88–100`), `binderSeen` or-ed with "A has a binder", which is
+`_has_discourse_binder` (`:103–115`): an `all` or `ex` node anywhere in `A`, under any connective, in a reach
+body included (`:1623–1624`).
 
-**The `it` rule** (`english.py:957–961`, `:1069–1073`, `:1376–1378`): `termIt` returns `const c` when
+**Actions as data.** `acts E L = fixedActs ++ lexActs E L` (5.2). `fixedActs` is one closed array: the actions of
+the fixed rows read neither `E` nor `L`; the sort of a constant, an adjective, a label or a natural subject
+reaches them inside the child's value (2.4). `lexActs E L` has one action per rule of `lexRules E L`, in its
+order, each a constructor of the table below applied to the data 2.6 names. This is what makes `grammar_extension`
+provable (2.13): under `Extends` the same entry and the same signature give the same data, so the same term.
+
+**The `it` rule** (`english.py:957–961`, `:1069–1073`, `:1376–1378`): `termIt` returns the term `const c` (as
+`⟨const c, none⟩`: not a written constant) when
 `leftmost` is true, the scope is empty, `st.referents = [c]` and `st.binderSeen` is false; otherwise it rejects
 with `pronounUnresolved`. Because `leftmost` is false after any terminal, `it` can only be the subject of a
 top-level clause or equality at the start of the formula, as in Python.
@@ -294,49 +336,56 @@ nothing else: formulas use de Bruijn indices, 0 the innermost (`ETerm.var`).
 | `sentence m` | `formula → sentence` | from `st`: run the formula in the initial context (empty scope, `st`, depth 0, nesting 1, leftmost true); result `(A, m, st.after A)` |
 | `mark`, `unit`, `listMarker` | terminals → `marker`, `unit`, `listMarker` | the mark; nothing; the marker's text |
 | `through` | `X → X` | the child's value |
+| `nest` | `formula → formula` (the nine `formula.*` rows) | the child's value, after rejecting with `nestingLimit` when the context's nesting exceeds 64 (`MAX_DEPTH`): Python checks at the entry of every `formula()` call (`english.py:1369–1371`), which is every `formula` node |
 | `not` | `formula → formula` | `not A`, the child at nesting + 1, leftmost false |
-| `and2`, `or2`, `implies2` | `formula, formula → formula` | `and A B` etc.; both children leftmost false, nesting + 1 |
-| `listWords k`, `listMarkers k` | two formulas (and two markers) → `formula` | `k A B` with both children at depth + 1, nesting + 1; `listMarkers` first checks the markers: at even depth they must be `(a)` and `(b)`, at odd depth `(i)` and `(ii)` (`_markers`, `english.py:564`), else `markerDepth` |
+| `and2`, `or2` | `formula, formula → formula` (the children are `atom` nodes) | `and A B`, `or A B`; both children leftmost false, nesting unchanged (Python reads atoms there, `:1428–1430`, and atoms do not enter `formula()`) |
+| `implies2` | `formula, formula → formula` | `implies A B`; both children leftmost false, nesting + 1 (`child()`, `:1428–1430`) |
+| `listWords k`, `listMarkers k` | two formulas (and two markers) → `formula` | `k A B` with both children at depth + 1, nesting + 1 (`child(listed=True)`, `:1408–1420`); `listMarkers` first checks the markers: at even depth they must be `(a)` and `(b)`, at odd depth `(i)` and `(ii)` (`_markers`, `english.py:564`), else `markerDepth` |
 | `guardAnd`, `guardLeft`, `guardRight`, `relAnd` | relatives → `relative` | `and a b`; `and (and a b) c`; `and a (and b c)`; `and a b` |
-| `forallBody` | `declaration, formula → formula` | push the binding; `all s B` |
-| `forallGuardBody` | `declaration, unit, relative, formula → formula` | push; `all s (implies G B)` |
-| `forallRel`, `forallGuardRel` | as above with a relative body | `all s R`; `all s (implies G R)` |
-| `existsBody`, `existsRel` | `unit, declaration, formula/relative → formula` | push; `ex s B` |
-| `declThat`, `declOrdinal o`, `declNamed` | `noun → declaration`; `tok, noun`; `noun, tok, label` | the binding `(s, "that " ++ n)`, `(s, "the " ++ o ++ " " ++ n)`, `(s, label text)`; if the reference text is already in the scope, `shadowedName` (`english.py:942–943`) |
-| `termConst c`, `termLabel`, `termRef pre` | → `term` | `const c`; the innermost binding whose reference text is the label's text, or `pre ++ " " ++ noun`, as `var i`; none: `unboundReference` |
-| `termIt` | → `term` | the `it` rule above |
+| `forallBody` | `declaration, formula → formula` | push the binding; `all s B`; the body at nesting + 1 (`child(inner)`, `:1439`) |
+| `forallGuardBody` | `declaration, unit, relative, formula → formula` | push; `all s (implies G B)`; the body at nesting + 1 (`:1439`); the guard at the same nesting (it is atoms) |
+| `forallRel`, `forallGuardRel` | as above with a relative body | `all s R`; `all s (implies G R)`; no nesting change (`:1447`) |
+| `existsBody`, `existsRel` | `unit, declaration, formula/relative → formula` | push; `ex s B`; the body of `existsBody` at nesting + 1 (`:1456`), `existsRel`'s relative unchanged (`:1454`) |
+| `declThat`, `declOrdinal o`, `declNamed` | `noun → declaration`; `tok, noun`; `noun, tok, label` | the binding `(s, "that " ++ n)`, `(s, "the " ++ o ++ " " ++ n)` with `n` the noun's text, `(s, label text)`; `declNamed` first requires the label's sort (the sort whose letter it is, 2.6) to be the noun's sort `s`, else `sortMismatch` (`english.py:935–938`: each sort's noun is offered its own letter only, so `For every service named P1, P1 is reviewed.` is rejected; b49, e48); if the reference text is already in the scope, `shadowedName` (`:942–943`) |
+| `termConst`, `termLabel`, `termRef pre` | `constant → term`; `label → term`; `tok, noun → term` | `⟨const c, some ⟨c, s, nf⟩⟩` from the constant's datum; the innermost binding whose reference text is the label's text, or `pre ++ " " ++ n`, as `⟨var i, none⟩`; none: `unboundReference` |
+| `termIt` | → `term` | the `it` rule above, as `⟨const c, none⟩`: a resolved `it` is not a written constant |
 | `top`, `bottom`, `eq` | → `formula` | `top`; `bottom`; `eq t u` (the left term keeps `leftmost`) |
 | `pred p order negated` | terms → `formula` | `pred p args` with the arguments in declaration order (the wording's hole order permutes them); `not` of it when negated; the first term keeps `leftmost`, later terms get false |
-| `relSubject p order negated`, `relObject p negated` | terms → `relative` | as `pred` with `var 0` in the subject slot, or in the object slot |
-| `noun s`, `label`, `const c`, `adjective p`, `natSubject p s`, `relation r`, `count refl` | terminals → their type | the datum |
-| `coordSubjects k` | `constant ×3, adjective → formula` | `k (pred p [c₁]) (k (pred p [c₂]) (pred p [c₃]))` (`english.py:1597–1599`); the three constants distinct, else `coordinationRepeated`; each constant's sort equal to `p`'s argument sort, else `sortMismatch` |
-| `coordAdjectives k` | `constant, adjective ×3 → formula` | `k (pred p₁ [c]) (k (pred p₂ [c]) (pred p₃ [c]))`; the three predicates distinct, else `coordinationRepeated`; sorts as above |
+| `relSubject p order negated`, `relObject p negated` | terms → `relative` | as `pred` with `var 0` in the subject slot, or in the object slot; when the wording's `{0}` is not first (2.6), `relSubject` prepends `var 0` to the clause's arguments as the hand parser does (`:1085–1089`), and the formula is ill-typed |
+| `noun s n`, `label s`, `const c s nf`, `adjective p s`, `natSubject p s n`, `relation r`, `count refl`, `copulaRel p` | terminals → their type | the datum; `copulaRel p` (`copula_relative → is a`) is the relative `pred p [var 0]` (`:1484`, the first clause of a `some` sentence is an ordinary relative) |
+| `coordSubjects k` | `term ×3, adjective → formula` | in this order (`english.py:1570–1599`): the scope must be empty, else `coordinationForm` (`:1572`); the three terms are run (the first keeps `leftmost`, the others get false; `It, alice and legacy are deployed.` as a first sentence is therefore `pronounUnresolved`, b48); each must be a written constant whose spelling is a name form, `⟨const cᵢ, some ⟨cᵢ, sᵢ, true⟩⟩`, else `coordinationForm` (`:1574–1577`: a resolved `it`, a reference, a label, a quoted spelling or the added article `the sp` is not a name); the three names distinct, else `coordinationRepeated` (`:1592`); each `sᵢ` equal to the adjective's sort, else `sortMismatch` (`:1594–1595`); then `k (pred p [const c₁]) (k (pred p [const c₂]) (pred p [const c₃]))` (`:1597–1599`) |
+| `coordAdjectives k` | `term, adjective ×3 → formula` | the same scope and subject conditions on the one term (`:1572–1577`, `:1600–1604`); the three predicates distinct, else `coordinationRepeated` (`:1606`); the subject's sort equal to each adjective's sort, else `sortMismatch` (`:1607–1608`); then `k (pred p₁ [const c]) (k (pred p₂ [const c]) (pred p₃ [const c]))` |
 | `naturalTop` | `formula → formula` | the child; if the scope is not empty, `naturalScoped` (`english.py:1967–1968`) |
 | `someDecl` | `declaration, relative → formula` | push; `ex s T` |
-| `copulaAnd` | `relative, adjective → relative` | `and R (pred a [var 0])`; `a`'s sort must be the scope's innermost sort, else `sortMismatch` (`english.py:1491–1498`) |
+| `copulaAnd` | `relative, adjective → relative` | `and R (pred a [var 0])`; the adjective's sort must be the scope's innermost sort, else `sortMismatch` (`english.py:1491–1498`) |
 | `noDecl` | `declaration, relative → formula` | push; `not (ex s R)` |
-| `everySubject` | `natSubject, relative → formula` | push `(s, "that " ++ noun)`; `all s (implies (pred p [var 0]) T)`; if `T` is `not _` from a `natural-tail.relative`, `blockedWording "natural-negation"` (`english.py:1539–1540`) |
+| `everySubject` | `natSubject, relative → formula` | push `(s, "that " ++ n)` with `n` the natural subject's noun text (`:1533`); `all s (implies (pred p [var 0]) T)`; if the tail's relative is a negation, `blockedWording "natural-negation"`: that is, if `T` is `not _` (`natural-tail.relative`) or `T` is `and (not _) _` (`natural-tail.both`, whose left conjunct is the relative; Python checks the relative before it reads `and`, `english.py:1538–1540`, so `Every deployed service is not reviewed and has an owner.` is blocked too, b50, e49) |
 | `everyOwner` | `declaration, relative → formula` | push; `all s O` |
-| `owner` | → `relative` | `ex s' (pred owns [var 0, var 1])` where `s'` is the first argument sort of `owns`; its second argument sort must be the scope's innermost sort, else `sortMismatch` (`english.py:1555–1558`) |
+| `owner s₁ s₂` | → `relative` | `ex s₁ (pred owns [var 0, var 1])`; `s₂` must be the scope's innermost sort, else `sortMismatch` (`english.py:1555–1558`) |
 | `reachNamed` | `term, term, count, relation → formula` | `reachNamed refl r t u` |
-| `reachBody listed` | `term, term, count, unit, declaration, unit, declaration, formula → formula` | both declarations the same sort, else `sortMismatch` (`english.py:1472`); push source then destination; `reachBody refl s B t u`; the body at depth + 1 when `listed` |
+| `reachBody listed` | `term, term, count, unit, declaration, unit, declaration, formula → formula` | the source declaration is run in the context's scope and the destination declaration in that scope with the source pushed (`:1469–1471`), so a destination with the source's reference text is `shadowedName` (b46, b47, e43); both declarations the same sort, else `sortMismatch` (`:1472`); push source then destination (the destination is `var 0`, the source `var 1`, `:1476`); `reachBody refl s B t u`; the body at nesting + 1, and at depth + 1 when `listed` (`child(…, listed=listed)`, `:1476`) |
 
-Every action increments nothing but what is named; a formula action rejects with `nestingLimit` when the
-nesting depth exceeds 64 (`MAX_DEPTH`; `english.py:1370–1371`). `textTooLong` is the lexer's. No action
-constructs `Reject.internal` (a source test, 5.7).
+The nesting increments are exactly those of Python's `child()` (`english.py:1395–1396`): `not`, `implies2`,
+`listWords`, `listMarkers`, `forallBody`, `forallGuardBody`, `existsBody` and `reachBody` run their formula
+children at nesting + 1; no other action changes the nesting, and `nest` alone checks it. Every action increments
+nothing but what is named. `textTooLong` is the lexer's. No action constructs `Reject.internal` (a source test,
+5.7).
 
 ### 2.8 Side conditions
 
-The S1 `Reject` list (`Syntax.lean`) with two additions, both tier B and for the DRI:
+The S1 `Reject` list (`Syntax.lean`) with three additions, all tier B and for the DRI:
 
 | Code | When | Python today |
 |---|---|---|
 | `coordinationRepeated` | a coordination names one constant, or one adjective, twice | `coordination` returns nothing; the text falls to `unknown_atom`: `SyntaxError` |
+| `coordinationForm` | a coordination under a binder, or one whose subject is not a constant written as a name form (2.7) | `coordination` returns nothing when the scope is not empty (`english.py:1572`) or when a subject is not one of its names (`:1574–1577`, `:1590–1592`); the text falls to `unknown_atom`: `SyntaxError` |
 | `naturalScoped` | a natural clause under a binder | `_natural_parser` returns nothing when the scope is not empty; the generic forms then fail: `SyntaxError` |
 
-Both map onto `SyntaxError`, so the public code does not change (D12 of the base spec). The S2 constructs use
-these existing codes: `shadowedName`, `unboundReference`, `pronounUnresolved`, `sortMismatch`, `markerDepth`,
-`nestingLimit`, `blockedWording "natural-negation"`.
+All three map onto `SyntaxError`, so the public code does not change (D12 of the base spec). The S2 constructs
+use these existing codes: `shadowedName`, `unboundReference`, `pronounUnresolved`, `sortMismatch` (for the
+sorts of coordination, copula, owner and reach, and for a label letter that is not the noun's sort),
+`markerDepth`, `nestingLimit`, `blockedWording "natural-negation"`. The ill-typed formula of a subject relative
+whose `{0}` is not first (2.6) is no side condition: `typedDocument` rejects it (`illTyped`).
 
 ### 2.9 The fixed-rule source, the generator and the lock file
 
@@ -344,7 +393,9 @@ these existing codes: `shadowedName`, `unboundReference`, `pronounUnresolved`, `
 a nonterminal name of 2.4; `act` an action name of 2.7 with its data (`{"act": "listWords", "kind": "and"}`);
 `rhs` a list of: a string (a `kw` terminal); `{"c": word}` (content); `{"p": text, "before": bool,
 "after": bool}` (punctuation with its flags; the flags default to false); `{"q": name}` (a quoted identifier);
-`{"cls": "numeral"}` or `{"cls": "label", "letter": "S"}`; `{"n": name}` (a nonterminal). A row with
+`{"cls": "numeral"}` or `{"cls": "label", "letter": "S"}`; `{"kwMid": word}` (the terminal of 2.2, Q5; it
+occurs in no fixed row, and the export of 4.4 uses it for the capitalised spelling rules); `{"n": name}` (a
+nonterminal). A row with
 `"status": "proposed"` is kept in the source and excluded from the generated table (2.12). The generator
 `tools/english_grammar_gen.py` writes `lean/VE/EnglishGrammar/Fixed/RelationalFol.lean` (an `Array (Rule
 Terminal)` literal and the nonterminal names) and, with `--check`, fails on any drift, naming the profile and the
@@ -365,11 +416,17 @@ version does not (fixture i5).
 - **Adapter.** `ve/backends/english_lean.py` builds the request from the environment, the overlay options and
   Python's `EnglishVocabulary` (exported as the lexicon by `conformance/english_lean_lexicon.py`'s export, moved
   under `ve/`), calls the service through `LeanService` (`ve/backends/lean_service.py`), and returns the public
-  result type of `parse_english`. `_parse_english_document_uncached` (`ve/english.py:1636`) runs under
-  `dispatch.execute("english.admission", payload, python=…, lean=…)`. Under the default authority nothing
-  changes. Under `VE_AUTHORITY_OVERRIDES=english.admission=shadow` the Python result is returned and every
-  difference is recorded in `ve-shadow.jsonl` with the classes of `dispatch._classes`, plus the fields of 4.5.
-  Under `lean` authority (not in S2), an `invalidGrammar` response is `CheckerUnavailable`.
+  result type of `parse_english`. **The dispatched unit** (D16) is the grammatical reading up to the typed
+  check: in `_parse_english_document_uncached` (`ve/english.py:1636–1672`) the hand parser, the Lark audit
+  (`require_unique_derivation`, `require_correspondence`) and `ast.check_document` (`:1661`), which is what
+  `read` computes (parse, meaning, `typedDocument`). That part runs under `dispatch.execute("english.admission",
+  payload, python=…, lean=…)`. `_check_conclusions` (`:1665`), the entailment check of every marked sentence
+  against the earlier unmarked ones, is not part of the reading: it runs after the dispatch, in Python,
+  unchanged, for either backend and under every authority; `read` returns the marks and does not judge them. Under
+  the default authority nothing changes. Under `VE_AUTHORITY_OVERRIDES=english.admission=shadow` the Python
+  result of the dispatched unit is returned and every difference is recorded in `ve-shadow.jsonl` with the
+  classes of `dispatch._classes`, plus the fields of 4.5. Under `lean` authority (not in S2), an `invalidGrammar`
+  response is `CheckerUnavailable`.
 
 ### 2.11 The G2 harness
 
@@ -380,16 +437,25 @@ punctuation tokens with the flags of the spacing Python's regex accepts); replac
 `INT_OP` by the token-class rules; dropping rules over `IMPOSSIBLE`; mapping the capitalised constant duplicate
 onto the `kwMid` rule (2.2); and mapping the nonterminals of Lark's EBNF expansion (`?formula` inlining, the
 `__start_plus_0` document rule) onto the catalogue of 2.4. These are the rules of `conformance/english_lean_tokens.py`
-(S0 report, section 7) with the `kwMid` case added. Two derivations correspond one to one under it, so the
-witness multiplicity (zero, one, two or more) is compared directly.
+(S0 report, section 7) with the `kwMid` case added. The map is one to one because the fixed table and
+`lexRules` mirror Lark rule for rule (D15): coordination over `term` (`english.py:1835–1838`), subject relatives
+cut by stripping a leading `term ` only (`:1924`), object relatives by deleting ` {1}` (`:1926`), nouns lexed as
+`content_lit` lexes them (`:1827–1829`), the capitalised constant alternative as `kwMid`. The hand parser's
+further restrictions (scope, name spellings, distinctness, sorts, label letters, negation under `every`) remove
+no derivation on either side: Lark derives, the hand parser rejects, and Lean's action rejects (2.7). So the
+witness multiplicity (zero, one, two or more) is compared directly, and a text with one Lark derivation and a
+hand-parser rejection is `one` with a rejected meaning on both sides (b48, b49, b50, b53 to b55).
 
 **Comparison** (`conformance/english_lean_g2.py`), per text of the sealed corpus (`conformance/english-lean/corpus-seal.json`,
-checked first with `english_lean_seal.py --check`): Python's outcome (class, formulas in wire form, canonical
-strict text, conclusion indices, witness count from the Lark forest) against Lean's (status, `ast`, `canonical`,
+checked first with `english_lean_seal.py --check`): Python's outcome **at the dispatched boundary of 2.10**, that
+is after `check_document` and before `_check_conclusions` (class, formulas in wire form, canonical strict text,
+conclusion indices, witness count from the Lark forest), against Lean's (status, `ast`, `canonical`,
 `conclusions`, witness count). Agreement is the base plan's comparison rule (section 5): equal formulas, canonical
 text, identities and marks when both accept; mapped classes when both reject (base 4.1); wall-clock
-`ResourceLimit` excluded and listed. Everything else is a difference, closed only as a Lean fix, a Python fix or
-a recorded product decision.
+`ResourceLimit` excluded and listed. A text whose grammatical reading agrees and whose marked conclusion Python's
+entailment check then refuses is not a difference: that check is Python's for either backend (D16), and the
+harness records it separately as `conclusion_rejected`. Everything else is a difference, closed only as a Lean
+fix, a Python fix or a recorded product decision.
 
 **Reverse corpus** (`conformance/english_lean_reverse.py`): from the `english.grammar` export, derivations are
 sampled by bounded size (depth at most 6, at most 60 tokens) uniformly over rule choices with a fixed seed, the
@@ -431,14 +497,29 @@ not parity and not an S2 decision (S2 plan, Q1).
 
 ### 2.13 Extensions: the body of `Extends`
 
-`Extends E O L E2 O2 L2` holds when: the profiles of `E` and `E2` are equal; every sort of `E` is a sort of `E2`,
-every predicate of `E` a predicate of `E2` with the same arity, every constant of `E` a constant of `E2`; every
-entry of `L` (noun, letter, wording, negative, alias, spelling) is an entry of `L2`; and `L` is valid for `E`,
-`O`, and `L2` for `E2`, `O2`. Under it, `fixedRules` is the same array and every lexical rule of `L` is a lexical
-rule of `L2` with the same action, so a rule map exists (`grammar_extension`, 5.6): `e.nt` is the identity (the
-catalogue of 2.4 is fixed in S2; S3's per-sort property nonterminals revisit this) and `e.rule` sends each rule
-index of `grammar E L` to the index of the same rule in `grammar E2 L2`. Reselecting a wording breaks `lexiconSub`
-(q5); adding a predicate with its own wording keeps it (q6). The profile case stays deferred (base O4).
+`Extends E O L E2 O2 L2` holds when: `E` has the base profile alone, `E.profiles = ["relational-fol@0"]`, and
+`E2` the same profiles (the supported domain of the statement; S3 widens it); every sort of `E` is a sort of
+`E2`; every predicate of `E` is a predicate of `E2` with the same arity **and the same argument sorts**; every
+constant of `E` is a constant of `E2` **with the same sort**; every entry of `L` (noun, letter, wording,
+negative, alias, spelling) is an entry of `L2`; and `L` is valid for `E`, `O`, and `L2` for `E2`, `O2`. Names
+and arities alone would not do: re-declaring `owns` over `service × person` keeps its name and arity, drops the
+`relation` rule and changes the `owner` action's data (q7).
+
+Under it a rule map exists (`grammar_extension`, 5.6), by this argument. `fixedRules` is the same array, since
+the profiles are equal, and `fixedActs` is one closed array, so every fixed rule and its action are the same
+terms on both sides. Every lexical rule of `L` is a lexical rule of `L2`: each family of 2.6 is built from one
+lexicon entry and the signature of its symbol (the hole order and the negation flag from the wording's text, the
+noun's text, the spelling's text and its name form, `args` and `sort`), the entry is in `L2` by `lexiconSub` and
+the signature is unchanged by `envSub`, so the right-hand side is the same list and the action is the same
+constructor applied to the same data: `acts2[R2.act]? = acts[R.act]?` holds by reflexivity after substitution,
+which is what `RuleMap.Ok` demands. No action closes over `E` or `L` (2.7), so an action never differs on the
+symbols of `E2 \ E`. `e.nt` is the identity (the catalogue of 2.4 is fixed in S2; S3's per-sort property
+nonterminals revisit this) and `e.rule` sends each rule index of `grammar E L` to the index of the same rule in
+`grammar E2 L2`; it is injective because V4 makes the selections distinct, so no two rules of `grammar E L`
+coincide. Reselecting a wording breaks `lexiconSub` (q5); adding a predicate with its own wording keeps it (q6);
+changing a signature breaks `envSub` (q7). The profile case stays deferred (base O4). If the amended stub of
+section 12 does not elaborate `grammar_extension` as stated, the statement is deferred rather than weakened (the
+review's fallback).
 
 ### 2.14 The lint codes: the proposed final list
 
@@ -463,7 +544,7 @@ producer, so no text widens. The proposal, for E2:
 
 | Layer | Items added by S2 |
 |---|---|
-| Trusted definitions | the fixed-rule data of 2.5 (JSON source and generated literal); `lexRules`; `ty`; the action library and `meaning`; `Env.decode`; `EFormula.encode`; `typedDocument` as a link to the existing typed decoder |
+| Trusted definitions | the fixed-rule data of 2.5 (JSON source and generated literal); `lexRules`; `ty` and the rank array; the action library (`fixedActs`, `lexActs`) and `meaning`; `Env.decode`; `EFormula.encode`; `typedDocument` as a link to the existing typed decoder |
 | Proved | `read_ok`, `read_complete_english`, `read_stopped`, `english_reading_unique`, `start_sentence`, `meaning_total`, `checked_rendering`, `checked_rendering_exact`, `translate_exact`, `translate_one_sentence`, `grammar_rules`, `lexRules_terminatorFree`; `grammar_extension` once its premise is accepted |
 | Checked per request | `Lexicon.valid`, `Grammar.wf`, `terminatorFree`, `Grammar.typed` |
 | Tested only | the fixed table against the JSON source; the fixtures of section 8; the G2 comparison, reverse corpus and mutation replay; `Reject.internal` unconstructed; the wire form of `EFormula.encode` against Python's |
@@ -477,11 +558,12 @@ adds no claim sentence. The adapter attaches none in S2: records keep `python:su
 
 ### 3.2 The outcomes
 
-Unchanged from base 3.2. Two rejection texts are added (4.2):
+Unchanged from base 3.2. Three rejection texts are added (4.2):
 
 | Code | Text |
 |---|---|
 | `CoordinationRepeated` | `Sentence {i} lists the same name or the same property twice in one list.` |
+| `CoordinationForm` | `Sentence {i} lists three names or three properties where that form is not available. Use it only as a whole sentence, with each name written as it is declared.` |
 | `NaturalScoped` | `Sentence {i} uses a some, no or every clause inside another clause. Write it with for every or there is.` |
 
 ### 3.3 The diagnostics the readability gaps asked for
@@ -497,14 +579,14 @@ Unchanged from base 3.2. Two rejection texts are added (4.2):
 | Statement | Plain English | It does not say |
 |---|---|---|
 | `read_ok`, `read_complete_english`, `english_reading_unique`, `start_sentence`, `meaning_total`, `checked_rendering` | base 3.3 | base 3.3 |
-| `read_stopped` | If the English reader stops at a sentence, the lexicon was valid and the grammar passed its checks, every sentence before that one has one reading in order, and the reported outcome is the reader's outcome for that sentence from the state the earlier sentences leave; it is not an acceptance. | anything about later sentences |
+| `read_stopped` | If the English reader stops at a sentence, the lexicon was valid and the grammar passed all its checks (well-formed, terminator-free, typed, with a sentence as its start symbol), every sentence before that one has one reading in order, and the reported outcome is the reader's outcome for that sentence from the state the earlier sentences leave; it is not an acceptance. | anything about later sentences |
 | `checked_rendering_exact` | The check of a rendered text succeeds exactly when reading the text returns exactly the given formulas and marks. | that the renderer produces such a text |
 | `translate_exact` | If translation mode returns a complete set for a text, the text is one sentence and the set lists exactly the results of the derivations of that sentence that have a meaning from the initial state. | anything when the set is not complete |
 | `translate_one_sentence` | If a text has a number of sentences other than one and the checks pass, translation mode reports that it reads exactly one sentence. | |
 | `grammar_rules` | The rules of the English grammar are the fixed rules of the profiles followed by the lexical rules. | |
 | `lexRules_terminatorFree` | No lexical rule has a terminal that accepts a sentence terminator. | anything about the fixed rules: they are checked by `read` |
 | `valid_iff_no_failure` | A lexicon is valid exactly when its list of failed conditions is empty. | |
-| `grammar_extension` | If an environment and lexicon extend another (same profiles, every symbol and selection kept, both valid), there is a rule map from the smaller grammar into the larger that keeps every rule's sides and action. | anything about profiles; anything when a wording was reselected |
+| `grammar_extension` | If an environment and lexicon of the base profile extend another (every symbol kept with its argument sorts or its sort, every selection kept, both valid), there is a rule map from the smaller grammar into the larger that keeps every rule's sides and action. | anything about other profiles; anything when a wording was reselected or a signature changed |
 
 ## 4. Diagnostics
 
@@ -518,6 +600,7 @@ Base 4.1, unchanged. `translate`'s `notOneSentence` is status `rejected` with co
 | Code | Text | Python today |
 |---|---|---|
 | `CoordinationRepeated` | 3.2 | `SyntaxError` (unknown phrase) |
+| `CoordinationForm` | 3.2 | `SyntaxError` (unknown phrase) |
 | `NaturalScoped` | 3.2 | `SyntaxError` |
 
 ### 4.3 The response
@@ -536,8 +619,10 @@ formula in wire form, the mark and the successor state's `referents` and `binder
             "rhs": [{"n": "formula"}]}, …]}
 ```
 
-`rhs` uses the symbol encoding of 2.9, with `{"p": …}` carrying both flags always. The rules are in the order
-of `grammar E L`, so `index` is the rule index that `derivation` and `witnesses` name.
+`rhs` uses the symbol encoding of 2.9, with `{"p": …}` carrying both flags always and `{"kwMid": word}` for the
+`kwMid` terminal of the capitalised spelling rules (2.2, 2.6), so that the export covers every terminal
+`grammar E L` can contain. `act` is the action's name with its data, as 2.9 writes it. The rules are in the
+order of `grammar E L`, so `index` is the rule index that `derivation` and `witnesses` name.
 
 ### 4.5 Tool, adapter and shadow diagnostics
 
@@ -546,7 +631,7 @@ of `grammar E L`, so `index` is the rule index that `derivation` and `witnesses`
 | `tools/english_grammar_gen.py --check` | a generated table differs from its source; a `proposed` row is in the table | the profile and the first differing tag |
 | the same | a lock-file hash differs with `actions_version` unchanged | the file and the two hashes |
 | adapter | `invalidGrammar` | `CheckerUnavailable` with the fault (`lexicon`, `notWellFormed`, `notTyped`) and, for `lexicon`, the first failure of `Lexicon.failures` |
-| shadow record | any difference | the record has `op`, the six identities, `python` (class, formulas, canonical text, conclusions, witness count), `lean` (status, code, formulas, canonical text, conclusions, witness count, `sentence`), and `classes` from `dispatch._classes` |
+| shadow record | any difference | the record has `op`, the six identities, `python` (class, formulas, canonical text, conclusions, witness count, taken at the dispatched boundary of 2.10), `lean` (status, code, formulas, canonical text, conclusions, witness count, `sentence`), `classes` from `dispatch._classes`, and `conclusion_rejected` when Python's `_check_conclusions` refused the document after the dispatch (not a difference, 2.11) |
 | nearest-wording suggestion | the quoted phrase is not a run of whole lexer tokens | test failure (fixture g1) |
 
 ## 5. Lean: definitions and the exact statements
@@ -563,7 +648,7 @@ and in layer 3 (`tools/layer_policy.py`), the executable in layer 4.
 |---|---|
 | `VE/EnglishGrammar/Fixed/RelationalFol.lean` | generated: the fixed rules and nonterminal names of 2.5 |
 | `VE/EnglishGrammar/Rules.lean` | the catalogue of 2.4, `ty`, `lexRules`, `grammar`, `grammar_rules`, `lexRules_terminatorFree`, `start_sentence` |
-| `VE/EnglishGrammar/Actions.lean` | `Ctx`, `Sem`, `sig`, the action library of 2.7, `acts` |
+| `VE/EnglishGrammar/Actions.lean` | `Ctx`, `ConstVal`, `TermVal`, `Sem`, `sig`, the action library of 2.7, `fixedActs`, `lexActs`, `acts` |
 | `VE/EnglishGrammar/Encode.lean` | `EFormula.encode`, `typedDocument`, `Env.decode` |
 | `VE/EnglishGrammar/Read.lean` | `meaning`, `read`, `translate`, `checkRendering`, `EnglishOneReading`, the statements of 5.6 |
 | `VE/EnglishGrammar/Extends.lean` | `envSub`, `lexiconSub`, `Extends`, `grammar_extension` |
@@ -585,23 +670,38 @@ structure Ctx where
   nesting : Nat        -- formula nesting, 1 at the top
   leftmost : Bool      -- at the first token of the sentence's formula
 
+/-- The datum of a written constant (2.6): its name, its sort, and whether the spelling that wrote it is a
+name form (2.1), which the coordination actions require (2.7). -/
+structure ConstVal where
+  name : String
+  sort : String
+  nameForm : Bool
+  deriving DecidableEq, Repr
+
+/-- A term with the constant's datum when the term is a constant written by a spelling rule; `none` for
+`it`, a reference and a label (2.7). -/
+structure TermVal where
+  term : ETerm
+  written : Option ConstVal := none
+  deriving DecidableEq, Repr
+
 def Sem : Ty → Type
   | .tok => Tok
   | .sentence => DState → Except Reject (EFormula × Bool × DState)
   | .formula => Ctx → Except Reject EFormula
   | .relative => Ctx → Except Reject EFormula   -- the subject is `var 0`
-  | .term => Ctx → Except Reject ETerm
-  | .intTerm => Ctx → Except Reject ETerm       -- S3
-  | .declaration => Ctx → Except Reject (String × String)
+  | .term => Ctx → Except Reject TermVal
+  | .intTerm => Ctx → Except Reject TermVal     -- S3
+  | .declaration => Ctx → Except Reject (String × String)   -- sort, reference text
   | .guard => Ctx → Except Reject EFormula
   | .marker => Bool
   | .unit => Unit
   | .listMarker => String
-  | .noun => String
-  | .label => String
-  | .constant => String
-  | .adjective => String
-  | .natSubject => String × String
+  | .noun => String × String            -- sort, noun text
+  | .label => String × String           -- the sort whose letter it is, the label's text
+  | .constant => ConstVal
+  | .adjective => String × String       -- predicate, its argument sort
+  | .natSubject => String × String × String   -- predicate, sort, noun text
   | .count => Bool
   | .relation => String
 
@@ -614,13 +714,19 @@ def sig : Sig Tok where
 
 def fixedRules (profiles : List String) : Array (Rule Terminal)
 def lexRules (E : Env) (L : Lexicon) : Array (Rule Terminal)
-def grammar (E : Env) (L : Lexicon) : Grammar Terminal     -- rules := fixedRules E.profiles ++ lexRules E L, start := 0
+def ranks : Array Nat                                        -- the certificate of 2.4, one array for every lexicon
+def grammar (E : Env) (L : Lexicon) : Grammar Terminal     -- rules := fixedRules E.profiles ++ lexRules E L, start := 0, rank := ranks
 def ty (E : Env) (L : Lexicon) : Nat → Ty                    -- the table of 2.4, independent of `E` and `L`
-def acts (E : Env) (L : Lexicon) : Array (Action sig)
+def fixedActs : Array (Action sig)                           -- closed: reads neither `E` nor `L` (2.7)
+def lexActs (E : Env) (L : Lexicon) : Array (Action sig)    -- one action per rule of `lexRules E L`, in its order
+def acts (E : Env) (L : Lexicon) : Array (Action sig) := fixedActs ++ lexActs E L
 def actionsVersion : String
 def EFormula.encode : EFormula → Lean.Json
 def typedDocument (E : Env) (As : List EFormula) : Bool
 ```
+
+The `act` field of a fixed rule indexes `fixedActs`; the `act` of the `i`-th lexical rule is
+`fixedActs.size + i`. `acts` is a definition, not an opaque constant: `grammar_extension` unfolds it.
 
 ### 5.3 The readers
 
@@ -699,14 +805,17 @@ def lexiconSub (L L2 : Lexicon) : Prop :=
   (∀ x ∈ L.aliases, x ∈ L2.aliases) ∧ (∀ x ∈ L.spellings, x ∈ L2.spellings)
 
 def envSub (E E2 : Env) : Prop :=
-  E.profiles = E2.profiles ∧
+  E.profiles = ["relational-fol@0"] ∧ E2.profiles = E.profiles ∧
   (∀ s ∈ E.sorts, ∃ s2 ∈ E2.sorts, s2.name = s.name) ∧
-  (∀ p ∈ E.predicates, ∃ q ∈ E2.predicates, q.name = p.name ∧ q.arity = p.arity) ∧
-  (∀ c ∈ E.constants, ∃ c2 ∈ E2.constants, c2.name = c.name)
+  (∀ p ∈ E.predicates, ∃ q ∈ E2.predicates, q.name = p.name ∧ q.arity = p.arity ∧ q.args = p.args) ∧
+  (∀ c ∈ E.constants, ∃ c2 ∈ E2.constants, c2.name = c.name ∧ c2.sort = c.sort)
 
 def Extends (E : Env) (O : Overlay) (L : Lexicon) (E2 : Env) (O2 : Overlay) (L2 : Lexicon) : Prop :=
   envSub E E2 ∧ lexiconSub L L2 ∧ L.valid E O = true ∧ L2.valid E2 O2 = true
 ```
+
+`envSub` does not mention `source`, `wording`, `negative`, `noun` or `display`: `lexRules` and `lexActs` read
+none of them (2.3, 2.6), and `valid` is a separate conjunct.
 
 ### 5.5 The statements, in one table
 
@@ -714,17 +823,17 @@ def Extends (E : Env) (O : Overlay) (L : Lexicon) (E2 : Env) (O2 : Overlay) (L2 
 |---|---|---|---|
 | `read_ok` | `Read` | checked by `read` | P2 for English (base) |
 | `read_complete_english` | `Read` | `wf`, W4, `typed`, start type as premises | P3 for English (base) |
-| `read_stopped` | `Read` | checked by `read` | P2 for a stopped document (new) |
+| `read_stopped` | `Read` | checked by `read` (all four checks are concluded) | P2 for a stopped document (new) |
 | `english_reading_unique` | `Read` | — | P1 per lexicon (base) |
 | `start_sentence` | `Rules` | — | totality (base); `rfl` |
 | `meaning_total` | `Read` | `typed`, start type | totality (base) |
 | `checked_rendering`, `checked_rendering_exact` | `Read` | checked by `read` | the per-output round trip (base), both directions (new) |
-| `translate_exact` | `Read` | `wf` | meaning sets for English (new) |
+| `translate_exact` | `Read` | checked by `translate` (`wf` is inside `.readings`) | meaning sets for English (new) |
 | `translate_one_sentence` | `Read` | the three checks | translation reads one sentence (new) |
 | `grammar_rules` | `Rules` | — | D1 (new) |
 | `lexRules_terminatorFree` | `Rules` | — | W4 for the lexical half (new) |
 | `valid_iff_no_failure` | `Lexicon` or `Rules` | — | the diagnostic of 4.5 is exact (new; proved in the stub) |
-| `grammar_extension` | `Extends` | `Extends` | conservativity for English (base O4; the premise is for the reviewers) |
+| `grammar_extension` | `Extends` | `Extends` (base profile, full signatures, 2.13) | conservativity for English (base O4; the premise is for the reviewers) |
 
 ### 5.6 The exact statements
 
@@ -746,6 +855,7 @@ theorem read_stopped : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : 
     (o : Outcome Tok Reject EFormula),
   read E O L b s = .stopped i o →
   L.valid E O = true ∧ (grammar E L).wf = true ∧ terminatorFree (grammar E L) = true ∧
+  (grammar E L).typed sig (ty E L) (acts E L) = true ∧ ty E L (grammar E L).start = .sentence ∧
   ∃ sents rs st1 w, lex s = .ok sents ∧
     DocOneReading (grammar E L) (meaning (grammar E L) (acts E L)) DState.init
       ((sents.toList.take i).map (·.toList)) rs st1 ∧
@@ -773,7 +883,7 @@ theorem checked_rendering_exact : ∀ (E : Env) (O : Overlay) (L : Lexicon) (b :
 
 theorem translate_exact : ∀ (E : Env) (O : Overlay) (L : Lexicon) (cap b : Nat) (s : String)
     (rs : List (EFormula × Bool × DState)) (x : EFormula × Bool × DState),
-  translate E O L cap b s = .readings rs true → (grammar E L).wf = true →
+  translate E O L cap b s = .readings rs true →
   ∃ w, lex s = .ok #[w] ∧
     (x ∈ rs ↔ ∃ t, Derives (grammar E L) (.n (grammar E L).start) w.toList t ∧
       meaning (grammar E L) (acts E L) DState.init t = .ok x)
@@ -799,16 +909,19 @@ theorem grammar_extension : ∀ (E : Env) (O : Overlay) (L : Lexicon) (E2 : Env)
   ∃ e : RuleMap, e.Ok (grammar E L) (grammar E2 L2) (acts E L) (acts E2 L2)
 ```
 
-`valid_iff_no_failure` was proved in the stub (it unfolds `Lexicon.valid`). The others elaborated as `Prop`s;
-their proofs are S2.3.
+`valid_iff_no_failure` was proved in the stub (it unfolds `Lexicon.valid`). The others elaborated as `Prop`s in
+draft 1; `read_stopped` (two conclusions added), `translate_exact` (the redundant `wf` premise removed: a
+`.readings` result is reached only after `translate`'s three checks, which include `wf`, so the proof derives
+it) and `grammar_extension` (its `Extends` of 5.4 and the `acts` of 5.2 changed) are *recompute* (section 12).
+Their proofs are S2.3.
 
 ### 5.7 By construction, and by test
 
 - `start_sentence` is `rfl`: `grammar E L` has `start := 0` and `ty E L 0 = .sentence` by the table of 2.4.
 - `grammar_rules` is `rfl` against the definition of `grammar`.
 - `lexRules_terminatorFree` is by induction on the lexicon's lists: every terminal of a lexical rule is a
-  `content`, a `kw` of a spelling word, an `exact` of a token that `lex` produced inside a sentence, or a
-  `cls`; none accepts a token whose text is `.` because the lexer never produces one inside a sentence (2.6).
+  `content`, a `kw` or `kwMid` of a spelling word, an `exact` of a token that `lex` produced inside a sentence,
+  or a `cls`; none accepts a token whose text is `.` because the lexer never produces one inside a sentence (2.6).
 - `Reject.internal` is never constructed outside `meaning`: a grep test over `Actions.lean`, plus
   `meaning_total`, which makes the fallback branch unreachable from any derivation of `grammar E L`.
 - `EFormula.encode` equals Python's wire form on the fixtures of 8.2: a differential test, not a theorem.
@@ -834,16 +947,19 @@ Gates: the statement review of this specification before S2.3's proofs; G2 as th
 | S0 | the rejection-site classes and blocked-wording ids; the lint sort; the conversion rules; the seal; the token-length figures | 2.7, 2.8, 2.14, 2.11 |
 | S1 | the engine theorems; `Tok` with `glued`; `lex`; `Lexicon.valid`; `workBudget`; the G1a figures | 2.2, 2.3, 2.11 |
 | the readability evaluation | the four gaps | 2.12, 3.3 |
-| S2 returns | `start_sentence` proved by construction (no fallback); the body of `Extends` (2.13) for the reviewers; two `Reject` codes, the `Ty` additions, `kwMid` and the V3 proposal for the DRI; the G2 report with the two owed budgets | base 5.8, O4; S2 plan Q2 to Q7 |
+| S2 returns | `start_sentence` proved by construction (the start-type test stays in `read`, always true); the body of `Extends` (2.13) for the reviewers; three `Reject` codes, the `Ty` additions, `kwMid` and the V3 proposal for the DRI; the G2 report with the two owed budgets | base 5.8, O4; S2 plan Q2 to Q7 |
 
 ## 8. Acceptance fixtures
 
 Every fixture is an obligation on the implementation. **Verdicts, counts and steps in 8.1, 8.3, 8.4, 8.5 and 8.6
-were computed** (section 12) by the proved S1 parser on the fixture grammar `GF`: the 88 fixed rules of 2.5 and
-the 29 lexical rules that 2.6 gives for `F` and `LF` (base 8.5: sorts `person`, `service`; `deployed`,
+were computed for draft 1** (section 12) by the proved S1 parser on the fixture grammar `GF`: the 88 fixed rules
+of 2.5 and the 29 lexical rules that 2.6 gives for `F` and `LF` (base 8.5: sorts `person`, `service`; `deployed`,
 `reviewed` with its negative, `owns` with its negative; `alice`, `legacy`), 117 rules in all, `|G|` = 479, 37
-nonterminals, `Grammar.wf` and `terminatorFree` true. The expected formulas of 8.2 are hand-derived. A fixture
-whose expected value is marked *obligation* was not computed.
+nonterminals, `Grammar.wf` and `terminatorFree` true. Draft 2 changes `GF` in two places that the stub has not
+yet seen: the four coordination rows take `term` (2.5) and the ranks are those of 2.4; the rule count and `|G|`
+are unchanged by construction (a nonterminal replaced by a nonterminal). A row marked *recompute* was computed
+under draft 1's grammar and is re-established, or is new and stated by hand, when the stub is re-created. The
+expected formulas of 8.2 are hand-derived. A fixture whose expected value is marked *obligation* was not computed.
 
 ### 8.1 Verdicts
 
@@ -896,9 +1012,16 @@ whose expected value is marked *obligation* was not computed.
 | b43 | `Some service is deployed and is reviewed.` | one | `some-tail.two` |
 | b44 | `Every deployed service is not reviewed.` | one | meaning `blockedWording natural-negation` |
 | b45 | `Starting from legacy, legacy is reachable by one or more "owns" steps.` | zero | `F` has no relation over one sort: no `relation` rule |
-| b46 | `Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a service satisfies this condition: that service is deployed.` | one | |
-| b47 | `Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a service satisfies the following: (a) that service is deployed.` | one | |
-| b48 | `It, alice and legacy are deployed.` | zero | coordination takes constants only |
+| b46 | `Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a service satisfies this condition: that service is deployed.` | one | the derivation exists; the meaning is `shadowedName`: both declarations bind `that service` (e43) |
+| b47 | `Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a service satisfies the following: (a) that service is deployed.` | one | the same |
+| b48 | `It, alice and legacy are deployed.` | one, *recompute* | coordination takes `term`, as Lark's does; the meaning is `pronounUnresolved` (e50). Draft 1 computed `zero` over `constant` |
+| b49 | `For every service named P1, P1 is reviewed.` | one, *recompute* | `label.P` is a rule of `GF`; the meaning is `sortMismatch`: `P` is `person`'s letter (e48) |
+| b50 | `Every deployed service is not reviewed and has an owner.` | one, *recompute* | `natural-tail.both` with the negative relative; the meaning is `blockedWording natural-negation` (e49) |
+| b51 | `Starting from legacy, legacy is reachable by zero or more steps, where a step from a service to a second service satisfies this condition: that service is deployed.` | one, *recompute* | the positive reach pair (e43): under `F` the meaning is `illTyped`, under `F` with `closure@0` a formula |
+| b52 | `Starting from legacy, legacy is reachable by one or more steps, where a step from a service to a second service satisfies the following: (a) that service is deployed.` | one, *recompute* | the same |
+| b53 | `For every person, legacy, beta and gamma are deployed.` under the extended `F` of e34 | one, *recompute* | the meaning is `coordinationForm`: the scope is not empty (e50) |
+| b54 | `The legacy, beta and gamma are deployed.` under the extended `F` of e34 | one, *recompute* | `constant → the legacy` derives; the meaning is `coordinationForm`: the added article is not a name form (e50) |
+| b55 | `Legacy is deployed. It, alice and legacy are deployed.` | one, one, *recompute* | the second sentence's meaning is `coordinationForm`: `it` resolves to `legacy` and is not a written constant (e50) |
 
 The constructed ambiguity of `tests/test_natural.py:543–553`: `FD` is `F` with one more sort whose selected noun
 is `deployed service` and letter `D`.
@@ -937,11 +1060,15 @@ binder.
 | e40 | b42, b43 | both `ex service (and (pred deployed [var 0]) (pred reviewed [var 0]))` |
 | e41 | b44 | `stopped 0 (rejected (blockedWording "natural-negation"))` |
 | e42 | `For every person, some service is deployed.` | `stopped 0 (rejected naturalScoped)` |
-| e43 | b46, b47 | `reachBody true service (pred deployed [var 0]) (const legacy) (const legacy)` (zero or more: reflexive); `reachBody false …` |
-| e44 | `Therefore it is reviewed.` after `Legacy is deployed.` | `ok`, marks false and true; `it` resolves: `leftmost` is true after the marker |
+| e43 | b46, b47; b51, b52 | b46, b47: `stopped 0 (rejected shadowedName)`, the destination declaration is run with the source `that service` in scope (2.7; `english.py:942`, `:1471`). b51, b52 under `F`: `illTyped`, a reach formula needs `closure@0` (`ast.py:281–282`). b51, b52 under `F` with `profiles = ["relational-fol@0", "closure@0"]`: `reachBody true service (pred deployed [var 1]) (const legacy) (const legacy)` (zero or more: reflexive) and `reachBody false …`: the destination `the second service` is `var 0`, the source `that service` is `var 1` |
+| e44 | `Therefore it is deployed.` after `Legacy is deployed.` | `ok`, marks false and true; `it` resolves: `leftmost` is true after the marker. The reader's result is the same for `Therefore it is reviewed.`, whose conclusion Python's `_check_conclusions` then refuses (`english.py:1710–1713`) after the dispatched unit (2.10): the fixture uses the entailed conclusion so that the reader and Python's admission agree |
 | e45 | `Alice owns it.` after `Legacy is deployed.` | `stopped 1 (rejected pronounUnresolved)`: `it` is not leftmost |
 | e46 | `For every service, it is reviewed.` after `Legacy is deployed.` | `stopped 1 (rejected pronounUnresolved)`: the scope is not empty |
-| e47 | `EFormula.encode` of e1 to e7 and e29 to e43 | equal to Python's wire form of `parse_english` on the same sources |
+| e47 | `EFormula.encode` of every result of e1 to e7, e29 to e46 and e48 to e51 that is `ok` | equal to Python's wire form of `parse_english` on the same sources; the rejected and ill-typed results have no wire form and are excluded |
+| e48 | b49 | `stopped 0 (rejected sortMismatch)`: the label's sort `person` is not the noun's sort `service` |
+| e49 | b50 | `stopped 0 (rejected (blockedWording "natural-negation"))`: the relative of the `both` tail is a negation |
+| e50 | b48; b53; b54; b55 | `stopped 0 (rejected pronounUnresolved)` (the `it` rule fails first: no referent); `stopped 0 (rejected coordinationForm)`; `stopped 0 (rejected coordinationForm)`; `stopped 1 (rejected coordinationForm)`. Compare e34's `coordinationRepeated` and `sortMismatch`, which are checked after the form |
+| e51 | *obligation*: `F` with a binary `owner_of` over `service × person` declared `the owner of {0} is {1}`, and `Every service that the owner of that service is alice is reviewed.` | one derivation, `universal.guard-relative` whose guard is the subject relative that keeps its `⟨term⟩` (2.6; the object relative `the owner of ⟨term⟩ is` leaves `alice is reviewed`, which no relative derives); the meaning `all service (implies (pred owner_of [var 0, var 0, const alice]) (pred reviewed [var 0]))` is `illTyped`, as `check_document` rejects the hand parser's three-argument atom (`english.py:1089–1097`, the longest match; `ast.py:272–276`) |
 
 ### 8.3 Lexicon and mutation replay
 
@@ -993,9 +1120,12 @@ when the widening is signed.
 
 | Fixture | Steps (cap 2) | Against the budget |
 |---|---|---|
-| b3 | 7,331 | 0.35% of 2,100,000 |
-| b21 | 13,162 | 0.63% |
-| d1 | 2,514 | 0.12% |
+| b3 | 7,331, *recompute* | 0.35% of 2,100,000 |
+| b21 | 13,162, *recompute* | 0.63% |
+| d1 | 2,514, *recompute* | 0.12% |
+
+The three figures are draft 1's; the coordination rows over `term` and the ranks of 2.4 change the parser's
+predictions, so they are re-measured with the stub (section 12).
 
 The two owed G1a budgets are obligations of the G2 report: BlueDot ≤ 1 s, generated modules ≤ 60 s of
 `lake build`.
@@ -1005,7 +1135,8 @@ The two owed G1a budgets are obligations of the G2 report: BlueDot ≤ 1 s, gene
 | Id | Case | Expected |
 |---|---|---|
 | q5 | `F`, `LF` and `F2` (base 8.5) with `reviewed` and `audited` on their fallbacks | `Extends` is false: `lexiconSub` fails on `reviewed`'s wording; `Legacy is reviewed.` loses its reading (base e20) |
-| q6 | `F`, `LF` and `F` plus `archived` on `service` with wording `{0} is archived`, selections otherwise unchanged | `Extends` is true; `grammar_extension` gives a rule map; b1 to b47 keep their verdicts |
+| q6 | `F`, `LF` and `F` plus `archived` on `service` with wording `{0} is archived`, selections otherwise unchanged | `Extends` is true; `grammar_extension` gives a rule map; b1 to b55 keep their verdicts |
+| q7 | `F`, `LF` and `F` with `owns` re-declared over `service × person` (same name, same arity), selections unchanged | `Extends` is false: `envSub` fails on `owns`'s `args`. Without the signature clause it would hold while the `owner s₁ s₂` action and the `relation` family differ (2.13) |
 
 ### 8.8 Evidence and tooling
 
@@ -1029,35 +1160,46 @@ Base i1 to i6 and t1 to t4 stand, with i5 over the lock file of 2.9. Added:
 | | not empty → not valid | l3 |
 | `checked_rendering_exact`: the check succeeds exactly when `read` returns these formulas and marks | ok rs → true | base e22, first case |
 | | otherwise → false | base e22, second and third cases |
-| `Extends` holds exactly when profiles, symbols and selections are kept and both lexicons are valid | kept → embeds | q6 |
-| | reselected → not | q5 |
-| a sentence has a derivation under `GF` exactly when Python's grammar derives it (the tree correspondence) | derives → one | b1 to b23, b32 to b47 |
-| | does not → zero | b24, b25, b27 to b31, b48; d1 to d3 for `many` |
+| `Extends` holds exactly when the base profile, the symbols with their signatures and the selections are kept and both lexicons are valid | kept → embeds | q6 |
+| | reselected → not; signature changed → not | q5; q7 |
+| a sentence has a derivation under `GF` exactly when Python's grammar derives it (the tree correspondence) | derives → one | b1 to b23, b32 to b55 (b34, b35, b44, b46 to b55 with a rejected meaning, as the hand parser rejects them) |
+| | does not → zero | b24, b25, b27 to b31; d1 to d3 for `many` |
 
 ## 9. Limits, and what is not claimed
 
 Base section 9 stands. In addition: no statement says that `grammar E L` is well-formed, terminator-free or
 typed for every valid lexicon (checked per request); no statement relates the fixed table to Python's grammar
 (measured by G2); the widenings are measured, not accepted; `Extends` and `grammar_extension` are proposals
-until reviewed; the formulas of 8.2 are hand-derived until S2 confirms them; nothing here moves authority.
+until reviewed, and `grammar_extension` speaks of the base profile only; the formulas of 8.2 are hand-derived
+until S2 confirms them; the conclusion check of a marked sentence is not part of the reading and is claimed
+nowhere (D16); nothing here moves authority.
 
 ## 10. Statement review checklist (Astra + Fable, before S2.3)
 
-1. The fixed rules of 2.5 are Python's grammar rule for rule over tokens, with the spacing flags Python accepts.
-2. `lexRules` (2.6) instantiates exactly the families and conditions of `english_lark_grammar` and `_natural_grammar`.
+1. The fixed rules of 2.5 are Lark's grammar rule for rule over tokens (coordination over `term`), with the
+   spacing flags Python accepts; every further restriction of the hand parser is an action (D15).
+2. `lexRules` (2.6) instantiates exactly the families and conditions of `english_lark_grammar` and
+   `_natural_grammar`, with Lark's cuts for subject and object relatives and `content_lit`'s lexing of nouns.
 3. The action library (2.7) gives each rule the formula the hand parser gives, in particular the guard
-   associations, the coordination nesting, the natural-view translations and the de Bruijn indices of `owner`.
-4. The `it` rule as `leftmost` plus the state is Python's rule exactly (e44 to e46).
-5. The two new codes (2.8) and the `Ty` additions (2.4) are the right closure of the tier B lists.
-6. `read`'s start-type test and `start_sentence` by construction match base 5.8's approved fallback wording.
+   associations, the coordination nesting and its scope, name-form, distinctness and sort conditions, the label
+   sort of `declNamed`, the natural-view translations, the negation check on both `every` tails, the nesting
+   increments of `child()`, the reach bindings and the de Bruijn indices of `owner`.
+4. The `it` rule as `leftmost` plus the state is Python's rule exactly (e44 to e46), with the binder test of
+   `_has_discourse_binder`.
+5. The three new codes (2.8) and the `Ty` additions (2.4) are the right closure of the tier B lists.
+6. `read`'s start-type test and `start_sentence` by construction match base 5.8's approved fallback wording (D5).
 7. `read_stopped`, `checked_rendering_exact`, `translate_exact`, `translate_one_sentence`, `grammar_rules`,
    `lexRules_terminatorFree` say what 3.4 says, and no more.
-8. The body of `Extends` (2.13) is sufficient for `grammar_extension` and excludes vocabulary reselection.
-9. The tree correspondence (2.11) is one to one, including the `kwMid` case.
+8. The body of `Extends` (2.13, 5.4) is sufficient for `grammar_extension`: the base profile, full signatures,
+   `fixedActs` closed and `lexActs` built from entry and signature alone; it excludes vocabulary reselection
+   (q5) and signature changes (q7).
+9. The tree correspondence (2.11) is one to one, including the `kwMid` case, and the comparison is taken at the
+   dispatched boundary of 2.10 (D16).
 10. The widening rules (2.12) are correctly stated as proposals and their meanings are the intended ones.
 11. The lint sort (2.14) follows the DRI's rule by effect.
-12. The computed fixtures of section 8 are the right expectations, b34, b38, b44, d1, tr1 and tr2 in particular;
-    the hand-derived formulas of 8.2 are right.
+12. The computed fixtures of section 8 are the right expectations, b34, b38, b44, b46 to b55, d1, tr1 and tr2
+    in particular; the hand-derived formulas of 8.2 are right, e43, e44, e48 to e51 in particular; the rows
+    marked *recompute* have been re-established by the stub.
 13. Every name passes the audit's rules and collides with nothing in `VE.English` or `VE.Discourse`.
 14. No public message, code or identity changes.
 
@@ -1066,9 +1208,9 @@ until reviewed; the formulas of 8.2 are hand-derived until S2 confirms them; not
 | # | Point | Recommendation |
 |---|---|---|
 | Q1 | the widenings | measured here; signed decision before any table change (S2 plan, Q1) |
-| Q2 | `coordinationRepeated`, `naturalScoped` | adopt (tier B, as `coefficientNotNumeral` was) |
+| Q2 | `coordinationRepeated`, `coordinationForm`, `naturalScoped` | adopt (tier B, as `coefficientNotNumeral` was); the review added `coordinationForm` for the hand parser's scope and name-form conditions on coordination (section 13) |
 | Q3 | the final lint list | adopt 2.14 at this review; implement in E2 |
-| Q4 | `Extends` | adopt 2.13 for the base profile; profiles stay deferred |
+| Q4 | `Extends` | adopt 2.13 for the base profile, with full signatures and closed fixed actions (the review's resolution); profiles stay deferred; defer the statement if the amended stub does not elaborate it |
 | Q5 | `kwMid` | adopt; otherwise mid-sentence `The api` is a recorded difference |
 | Q6 | V3 and the terminator | adopt; one fixture (l4) |
 | Q7 | the owed budgets | measured in S2.6 |
@@ -1078,7 +1220,7 @@ until reviewed; the formulas of 8.2 are hand-derived until S2 confirms them; not
 
 ## 12. How the figures were computed
 
-A scratch file `lean/SpecStubs_english-lean-s2.lean` (not committed) imported the S1 modules
+For draft 1, a scratch file `lean/SpecStubs_english-lean-s2.lean` (not committed) imported the S1 modules
 (`VE.Grammar.Reading`, `VE.Grammar.Extension`, `VE.EnglishGrammar.Lexer`, `VE.EnglishGrammar.Lexicon`) from the
 `english-lean/integrate` build at `689219b1` (`lake env lean` against that checkout) and: declared the S2
 signatures of 5.2 as `opaque` constants; wrote `meaning`, `read`, `translate`, `checkRendering`,
@@ -1086,5 +1228,52 @@ signatures of 5.2 as `opaque` constants; wrote `meaning`, `read`, `translate`, `
 and checked it with `#check`; proved `valid_iff_no_failure`; built `GF`, `GFD`, `GFv2` and `GFw` as rule lists
 with the ranks of 2.4; and ran `lex`, `parse` (cap 2 and the caps of 8.4), `Grammar.wf`, `terminatorFree`,
 `Lexicon.valid`, `Lexicon.failures` and `Prepared.steps` under `#guard` and `#eval` for every computed row of
-section 8. All checks passed on 2026-10-04 under Lean 4.24.0. The file is to be re-created from this
-specification when S2.1 starts; its contents are sections 2.4 to 2.6, 5.2 to 5.4 and 8.
+section 8. All checks passed on 2026-10-04 under Lean 4.24.0 for draft 1.
+
+**Draft 2 was not run** (no Lean toolchain was available to the editing session). The stub is re-created from
+this specification, before the bounded re-check and again when S2.1 starts, and must then re-establish every row
+marked *recompute*:
+
+- the signature of 5.2 (`ConstVal`, `TermVal`, the `Sem` table, `fixedActs`, `lexActs`, `acts` as a
+  definition, `ranks`) and the amended statements of 5.6 (`read_stopped`, `translate_exact`,
+  `grammar_extension` over the `Extends` of 5.4) as `Prop`s;
+- `GF`, `GFD`, `GFv2`, `GFw` with the coordination rows over `term` and the ranks of 2.4: `Grammar.wf`,
+  `terminatorFree`, the rule count 117, `|G|` = 479;
+- the verdicts of b48 (now `one`) and of the new rows b49 to b55 (b53 and b54 under the extended `F` of e34,
+  with `beta` and `gamma` as services), every other row of 8.1 and 8.3 to 8.5 unchanged;
+- the steps of 8.6;
+- the `kwMid` rows c1 to c3 and the V3 row l4 stay obligations, as in draft 1.
+
+Its contents are sections 2.4 to 2.6, 5.2 to 5.4 and 8.
+
+## 13. The statement review's edits (draft 2)
+
+The review (`manage-agents/debates/english-lean-s2-spec`, Astra and Fable, two rounds on 2026-10-04) converged
+on FIX with one joint list. Draft 2 applies all of it and nothing else. Where the two texts differ, the
+resolution recorded in the second round governs.
+
+| # | Finding | Applied in |
+|---|---|---|
+| 1 | `declaration.named` accepted a label of another sort (`For every service named P1, P1 is reviewed.`) | `label s` carries its sort; `declNamed` rejects `sortMismatch` (2.6, 2.7); b49, e48 |
+| 2 | `Env` had no argument sorts or constant sorts, which the lexical rules and the sort checks need; nothing may recover them through `source` | `PredDecl.args`, `ConstDecl.sort`, filled by `Env.decode`; `source` read by `typedDocument` only (2.3) |
+| 3 | `grammar_extension` was unprovable: `RuleMap.Ok` needs equal action terms, and names and arities do not fix the lexical actions | `acts E L = fixedActs ++ lexActs E L`, `fixedActs` closed, sorts carried in values; `envSub` keeps `args` and `sort`; the base-profile premise; the argument of 2.13; q7 (2.7, 2.13, 5.2, 5.4) |
+| 4 | The tree correspondence was false: Lark's coordination takes `term`; b48 has one Lark derivation; subject relatives with `{0}` not first and object relatives with ` {1}` not final are cut differently | the table mirrors Lark, the hand parser's scope, name-form, distinctness and sort conditions are actions with the code `coordinationForm`; b48 is `one` with `pronounUnresolved`; relatives cut as Lark cuts them; ranks recomputed (2.4, 2.5, 2.6, 2.7, 2.8, 2.11); b53 to b55, e50, e51 |
+| 5 | `everySubject` blocked a negation only under `natural-tail.relative`; Python checks before `and` | the check covers `natural-tail.both` (2.7); b50, e49 |
+| 6 | b46 and b47 bind `that service` twice and are `shadowedName`; a positive reach document needs `closure@0`, which base `F` lacks | e43 rewritten; b51, b52 under `F` and under `F` plus `closure@0`; `fixedRules` for a profile list with `closure@0` (2.5, 2.7, 8.1, 8.2) |
+| 7 | The nesting increments of `for every`, `such that` and reach bodies were unstated, so `nestingLimit` would fire a level late; `copulaRel` was used and undefined | the increments of `child()` and the `nest` action; `copulaRel p` (2.7) |
+| 8 | Fallback nouns `entity of sort "s"` have a quoted token; `c:n₁ … c:nₘ` lost it | nouns and natural subjects lexed as wordings; `noun s n`, `natSubject p s n` carry the text (2.6) |
+| 9 | The dispatched unit was unstated: `_parse_english_document_uncached` runs `check_document` and `_check_conclusions`; e44's conclusion was not entailed | D16; 2.10; the G2 comparison at that boundary and `conclusion_rejected` (2.11, 4.5); e44 uses `Therefore it is deployed.` |
+| 10 | e47 compared encodings of rejected results | restricted to `ok` results (8.2) |
+| 11 | `read_stopped` omitted the typed and start-type conclusions; `translate_exact`'s `wf` premise was redundant; D5 contradicted `read`; "A has a binder" was undefined; `kwMid` had no export encoding | 5.6; D5; 2.7 (`_has_discourse_binder`); 2.9 and 4.4 (`{"kwMid": word}`) |
+
+One consequence the review did not name follows from its item 4 and is recorded here: a wording that begins
+with `{1}` gives, under Lark's cut, a subject relative that begins with `term`, so `relative` and the
+nonterminals that begin with it move up one rank (2.4). One choice was the editor's: the hand parser's two
+preconditions on coordination (empty scope, name-form subjects) share one new code, `coordinationForm`, because
+Python's behaviour is the same for both (2.8); the DRI may split it (Q2).
+
+The review's closing condition: the stub is re-run on the amended fixtures and ranks (section 12), and PASS
+follows a bounded re-check limited to these edits and their consequences (exact statements against 3.4, the
+extension premises and the action construction, the regenerated fixtures, the Python comparison at the
+dispatched boundary). Python authority, the frozen W1, soft and P0 contracts and the signed-widening rule are
+untouched.
