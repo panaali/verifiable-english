@@ -744,6 +744,19 @@ end Premises
 
 /-! ## The exception predicate in the relaxed expansion -/
 
+/-- The twin's exception predicate is a decision predicate of the relaxed document. -/
+theorem excepted_mem {C : SoftDoc} {Nd : SoftNode} (hn : ∃ M ∈ C.T.nodes, M.name = Nd.name) :
+    VE.SoftNorms.exceptedName Nd ∈ VE.SoftNorms.decisionNames (relaxDoc C Nd) := by
+  obtain ⟨M, hM, hMn⟩ := hn
+  unfold VE.SoftNorms.decisionNames VE.SoftNorms.decisions VE.SoftNorms.exceptedDecisions
+  refine List.mem_map.mpr ⟨(VE.SoftNorms.exceptedName (relaxTo Nd M),
+      VE.SoftNorms.sortsOf (relaxDoc C Nd) (relaxTo Nd M).pred), ?_, ?_⟩
+  · refine List.mem_append_left _ (List.mem_append_left _ (List.mem_map.mpr ⟨relaxTo Nd M, ?_, rfl⟩))
+    refine List.mem_filter.mpr ⟨relax_mem hM, ?_⟩
+    rw [relaxTo_of_eq hMn]; rfl
+  · show VE.SoftNorms.exceptedName (relaxTo Nd M) = _
+    unfold VE.SoftNorms.exceptedName; rw [relaxTo_name, hMn]
+
 /-- The exception predicate is no layer symbol of the relaxed elaboration. -/
 theorem Twin.excepted_out {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hn : ∃ M ∈ C.T.nodes, M.name = Nd.name)
     (hdef : ∀ d ∈ C.T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd) :
@@ -751,17 +764,7 @@ theorem Twin.excepted_out {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hn : �
   intro h
   rcases List.mem_append.mp (Wire.layerNames_sub h) with h | h
   · obtain ⟨r, hr, hrn⟩ := List.mem_map.mp h
-    obtain ⟨M, hM, hMn⟩ := hn
-    have hdec : VE.SoftNorms.exceptedName Nd ∈ VE.SoftNorms.decisionNames (relaxDoc C Nd) := by
-      unfold VE.SoftNorms.decisionNames VE.SoftNorms.decisions VE.SoftNorms.exceptedDecisions
-      refine List.mem_map.mpr ⟨(VE.SoftNorms.exceptedName (relaxTo Nd M),
-        VE.SoftNorms.sortsOf (relaxDoc C Nd) (relaxTo Nd M).pred), ?_, ?_⟩
-      · refine List.mem_append_left _ (List.mem_append_left _ (List.mem_map.mpr ⟨relaxTo Nd M, ?_, rfl⟩))
-        refine List.mem_filter.mpr ⟨relax_mem hM, ?_⟩
-        rw [relaxTo_of_eq hMn]; rfl
-      · show VE.SoftNorms.exceptedName (relaxTo Nd M) = _
-        unfold VE.SoftNorms.exceptedName; rw [relaxTo_name, hMn]
-    have h1 := hw.valid.decFresh _ hdec
+    have h1 := hw.valid.decFresh _ (excepted_mem hn)
     have h2 := hw.valid.regDecl r hr
     have hrn' : r.name = VE.SoftNorms.exceptedName Nd := hrn
     rw [hrn', h1] at h2
@@ -776,5 +779,101 @@ theorem Twin.excepted_canon {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hn :
   have hc : ∀ vs, ¬ (canon (soften (relaxDoc C Nd)) S).relation (VE.SoftNorms.exceptedName Nd) vs :=
     fun vs h => hS vs ((VE.SoftNorms.canon_off S (hw.excepted_out hn hdef) vs).mp h)
   atom_false hc _ ρ
+
+/-! ## Admissibility and observation over one base -/
+
+section Base
+variable {C : SoftDoc} {Nd : SoftNode} (hw : Twin C Nd) (hs : SoftValid C)
+  (hn : ∃ M ∈ C.T.nodes, M.name = Nd.name) (hdef : ∀ d ∈ C.T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd)
+  (S : VE.Structure.{u}) (hS : ∀ vs, ¬ S.relation (VE.SoftNorms.exceptedName Nd) vs)
+include hw hs hn hdef hS
+
+/-- The coherence premises: the two documents have the same colliding pairs, none on the twin, and their
+    selections agree in the two expansions. -/
+theorem Twin.cohPremises (hB : VE.Norms.BaseAdmissible (soften C) S)
+    (hB' : VE.Norms.BaseAdmissible (soften (relaxDoc C Nd)) S) :
+    Sat S (VE.SoftNorms.cohPremises C) ↔ Sat S (VE.SoftNorms.cohPremises (relaxDoc C Nd)) := by
+  have he := hw.excepted_canon hn hdef S hS
+  have hc : VE.Norms.ConstantsTyped (soften C) S := hB.1.1
+  have key : ∀ x ∈ VE.SoftNorms.collidingPairs C, ((VE.SoftNorms.cohPremise C x.1 x.2).denote S [] ↔
+      (VE.SoftNorms.cohPremise (relaxDoc C Nd) x.1 x.2).denote S []) := by
+    rintro ⟨M, N⟩ hx
+    have hx' : (M, N) ∈ VE.SoftNorms.collidingPairs (relaxDoc C Nd) := by rw [hw.collidingPairs_eq]; exact hx
+    obtain ⟨hM, hN, hdM, hdN, _, _⟩ := VE.SoftNorms.mem_collidingPairs.mp hx
+    have hnM : M.name ≠ Nd.name := fun h => by rw [hw.strict M hM h] at hdM; cases hdM
+    have hnN : N.name ≠ Nd.name := fun h => by rw [hw.strict N hN h] at hdN; cases hdN
+    have hsN := hs.cpSorts _ hx
+    rw [VE.SoftNorms.coh_canon hs S hB hx, VE.SoftNorms.coh_canon hw.valid S hB' hx']
+    apply forall_congr'; intro vs; apply imp_congr_right; intro hvs
+    have hvsN : VE.TupleTyped S (VE.SoftNorms.sortsOf C N.pred) vs := by
+      have : VE.TupleTyped S (VE.SoftNorms.sortsOf C M.pred) vs := hvs
+      rw [hsN] at this; exact this
+    rw [selects_canon hw hs S hc he hM vs hvs, selects_canon hw hs S hc he hN vs hvsN, relaxTo_of_ne hnM,
+      relaxTo_of_ne hnN]
+  unfold VE.SoftNorms.cohPremises Sat
+  rw [hw.collidingPairs_eq]
+  simp only [List.mem_map]
+  constructor
+  · rintro h φ ⟨x, hx, rfl⟩; exact (key x hx).mp (h _ ⟨x, hx, rfl⟩)
+  · rintro h φ ⟨x, hx, rfl⟩; exact (key x hx).mpr (h _ ⟨x, hx, rfl⟩)
+
+theorem Twin.baseAdmissiblePrime (hsuf : ∀ e, Nd.exception = some e → e.sufficient = []) :
+    VE.SoftNorms.BaseAdmissible' C S ↔ VE.SoftNorms.BaseAdmissible' (relaxDoc C Nd) S := by
+  unfold VE.SoftNorms.BaseAdmissible' VE.SoftNorms.softPremises
+  rw [sat_append, sat_append, hw.excPremises S hsuf hS]
+  constructor
+  · rintro ⟨hB, he, hc⟩
+    have hB' := (hw.baseAdmissible hs S hS).mp hB
+    exact ⟨hB', he, (hw.cohPremises hs hn hdef S hS hB hB').mp hc⟩
+  · rintro ⟨hB', he, hc⟩
+    have hB := (hw.baseAdmissible hs S hS).mpr hB'
+    exact ⟨hB, he, (hw.cohPremises hs hn hdef S hS hB hB').mpr hc⟩
+
+end Base
+
+/-- Every probe has the same value in the two readings' expansions of one admissible base. -/
+theorem observes_twin {Xs Xd : RightsDoc} {Nd : SoftNode} (hcd : correlate Xd = relaxDoc (correlate Xs) Nd)
+    (hw : Twin (correlate Xs) Nd) (hs : SoftValid (correlate Xs))
+    (hn : ∃ M ∈ (correlate Xs).T.nodes, M.name = Nd.name)
+    (hdef : ∀ d ∈ (correlate Xs).T.definitions, d.name ≠ VE.SoftNorms.exceptedName Nd)
+    (hsel : ∀ k p, selectable Xd k p = (selectable Xs k p).map (relaxTo Nd)) (A : List VE.Formula)
+    (hA : ∀ a ∈ A, a.WellFormed (envAt (soften (correlate Xs)) (size (soften (correlate Xs)))) [])
+    (S : VE.Structure.{u}) (hS : ∀ vs, ¬ S.relation (VE.SoftNorms.exceptedName Nd) vs)
+    (hB : VE.Norms.BaseAdmissible (soften (correlate Xs)) S) (q : Probe S.Carrier) (v : Bool) :
+    Observes Xs A S q v ↔ Observes Xd A S q v := by
+  have he := hw.excepted_canon hn hdef S hS
+  have hc : VE.Norms.ConstantsTyped (soften (correlate Xs)) S := hB.1.1
+  cases q with
+  | outcome p vs =>
+    simp only [Observes, expand]
+    generalize correlate Xd = Cd at hcd ⊢
+    subst hcd
+    constructor
+    · rintro ⟨r, hr, hrn, ht, hv⟩
+      exact ⟨r, hr, hrn, ht, (value_canon hw hs S hc he hr vs ht).symm.trans hv⟩
+    · rintro ⟨r, hr, hrn, ht, hv⟩
+      exact ⟨r, hr, hrn, ht, (value_canon hw hs S hc he hr vs ht).trans hv⟩
+  | selects k p vs =>
+    simp only [Observes, expand, hsel]
+    generalize correlate Xd = Cd at hcd ⊢
+    subst hcd
+    apply and_congr_right
+    intro ht
+    apply iff_congr _ Iff.rfl
+    constructor
+    · rintro ⟨N, hN, h⟩
+      obtain ⟨hN', hp⟩ := selectable_mem hN
+      exact ⟨relaxTo Nd N, List.mem_map_of_mem hN,
+        (selects_canon hw hs S hc he hN' vs (by rw [hp]; exact ht)).mp h⟩
+    · rintro ⟨N', hN', h⟩
+      obtain ⟨N, hN, rfl⟩ := List.mem_map.mp hN'
+      obtain ⟨hN'', hp⟩ := selectable_mem hN
+      exact ⟨N, hN, (selects_canon hw hs S hc he hN'' vs (by rw [hp]; exact ht)).mpr h⟩
+  | holds =>
+    simp only [Observes, expand]
+    generalize correlate Xd = Cd at hcd ⊢
+    subst hcd
+    apply iff_congr _ Iff.rfl
+    exact forall₂_congr (fun a ha => canon_relax hw hs S hc he _ a [] (hA a ha) [] (VE.typed_empty S))
 
 end VE.Readings
