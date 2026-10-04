@@ -26,6 +26,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable
 
+from conformance.english_lean_lexer import decimal_text
+
 
 # ---------------------------------------------------------------- symbols, rules, grammars (5.2)
 
@@ -590,6 +592,6 @@ def show_tree(G: Grammar, t) -> str:
     if isinstance(t, Leaf):
         tok = t.tok
         return {'word': lambda: tok[1], 'quoted': lambda: f'"{tok[1]}"',
-                'label': lambda: f'{tok[1]}{tok[2]}', 'numeral': lambda: str(tok[1]),
+                'label': lambda: tok[1] + decimal_text(tok[2]), 'numeral': lambda: decimal_text(tok[1]),
                 'punct': lambda: tok[1]}[tok[0]]()
     return f"{G.rules[t.rule].tag}({', '.join(show_tree(G, u) for u in t.kids)})"
