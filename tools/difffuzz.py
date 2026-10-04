@@ -17,7 +17,7 @@ which says how each implementation runs it and how its answers compare:
 Each seed gets 1-fault and 2-fault mutants (`one_faults`): every JSON node replaced by 7, true, null,
 [], {} and "x"; an object member removed; keys and lists reversed; a list's first entry duplicated;
 string values and object keys with NBSP, a double space, a tab, a carriage return, U+212A, a dotted
-capital I, upper case and Arabic-Indic digits; and every array or string a wire-contract table limits
+capital I, upper case, Arabic-Indic digits, a curly quote and a control character (U+001C); and every array or string a wire-contract table limits
 resized to limit - 1, limit and limit + 1 (`limit_patterns`). An implementation takes part on a seed
 when it has a path for it: it accepts the unmutated seed (or, for `p0`, the three-way test runs it).
 
@@ -142,14 +142,17 @@ def _insert_space(text, space):
 
 
 UNICODE = {
-    "nbsp": lambda s: _insert_space(s, " "),
+    "nbsp": lambda s: _insert_space(s, "\u00a0"),
     "double-space": lambda s: _insert_space(s, "  "),
     "tab": lambda s: _insert_space(s, "\t"),
     "cr": lambda s: s + "\r",
-    "kelvin": lambda s: _replace_first(s, "kK", "K"),
-    "dotted-i": lambda s: _replace_first(s, "iI", "İ"),
+    "kelvin": lambda s: _replace_first(s, "kK", "\u212a"),
+    "dotted-i": lambda s: _replace_first(s, "iI", "\u0130"),
     "upper": lambda s: s.upper(),
     "digits": lambda s: "".join(chr(0x660 + int(c)) if c in "0123456789" else c for c in s),
+    "curly-quote": lambda s: (_replace_first(s, "'", "\u2019") or _replace_first(s, '"', "\u201d")
+                              or s + "\u2019"),
+    "control": lambda s: s + "\x1c",
 }
 
 
@@ -1172,7 +1175,7 @@ def fuzz(*, scale=1, rng_seed=20261004, surfaces=None, baseline_path=BASELINE, u
 def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
     baseline = load_baseline(baseline_path)
     known = {entry["signature"]: entry for entry in baseline["entries"]}
-    report = {"seed": rng_seed, "scale": scale, "corpus": {}, "mutants": {}, "findings": {},
+    report = {"seed": rng_seed, "scale": scale, "corpus": {}, "mutants": {}, "answers": {}, "findings": {},
               "new": [], "baseline": {}}
     new = {}
     seen = {}
@@ -1187,11 +1190,15 @@ def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
                                    "two-fault": sum(len(m) == 2 for _, m in mutants)}
         log(f"{name}: {len(seeds)} seeds, {len(mutants)} mutants")
         counts = {}
+        answered = {}
         for start in range(0, len(mutants), CHUNK):
             chunk = mutants[start:start + CHUNK]
             items = [(seed, apply_all(seed.root, mutations)) for seed, mutations in chunk]
             for (seed, mutations), (_, root), (found, projected, answers, sig) in zip(
                     chunk, items, evaluate(surface, items)):
+                for engine, answer in answers.items():
+                    key = f"{engine}:{answer['outcome']}"
+                    answered[key] = answered.get(key, 0) + 1
                 if not found:
                     continue
                 for cls in found:
@@ -1201,6 +1208,7 @@ def _fuzz(built, names, scale, rng_seed, baseline_path, update, log):
                 if sig not in known and sig not in new:
                     new[sig] = Finding(seed, mutations, root, found, answers, projected, sig)
         report["findings"][name] = dict(sorted(counts.items()))
+        report["answers"][name] = dict(sorted(answered.items()))
     surfaces_built = built
     entries = []
     for index, (sig, finding) in enumerate(new.items()):

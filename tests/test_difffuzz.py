@@ -43,6 +43,11 @@ def test_ci_run(built):
     for name, (ones, twos) in df.CI_BUDGET.items():
         assert report["mutants"][name] == {"one-fault": ones, "two-fault": twos}, name
         assert sum(report["corpus"][name].values()) > 0, name
+    # Every implementation really ran: each answered mutants both ways on every surface it has a path for.
+    for name, engines in (("p0", df.ENGINES), ("environment", df.ENGINES), ("wire", ("python", "lean"))):
+        for engine in engines:
+            for outcome in ("ok", "error"):
+                assert report["answers"][name].get(f"{engine}:{outcome}", 0) > 0, (name, engine, outcome)
     assert sum(report["cpu_seconds"].values()) <= 300, report["cpu_seconds"]
 
 
@@ -83,6 +88,14 @@ COMPARISON_MUTANTS = {
     "drop Rust": lambda monkeypatch: monkeypatch.setattr(df, "ENGINES", ("python", "lean")),
     "crash counted as a diagnostic": _crash_is_a_diagnostic,
     "accept/reject only": _agree_on_outcome_only,
+    "every engine says the same": lambda monkeypatch: monkeypatch.setattr(
+        df, "classes", lambda surface, seed, answers, root: ([], {})),
+    "Lean always accepts": lambda monkeypatch: [
+        monkeypatch.setattr(surface, "lean", lambda self, items: [df.ok() for _ in items])
+        for surface in df.SURFACES.values()],
+    "Lean always rejects": lambda monkeypatch: [
+        monkeypatch.setattr(surface, "lean", lambda self, items: [df.error("InvalidInput", "") for _ in items])
+        for surface in df.SURFACES.values()],
 }
 
 
@@ -149,9 +162,11 @@ def test_mutations():
     assert df.apply(root, ["reorder", ["list"], None])["list"] == [2, 1]
     assert df.apply(root, ["duplicate", ["list"], None])["list"] == [1, 1, 2]
     variants = {name: df.apply(root, ["unicode", ["name"], name])["name"] for name in df.UNICODE}
-    assert variants == {"nbsp": "Kit 12", "double-space": "Kit  12", "tab": "Kit\t12",
-                        "cr": "Kit 12\r", "kelvin": "Kit 12", "dotted-i": "Kİt 12",
-                        "upper": "KIT 12", "digits": "Kit ١٢"}
+    assert variants == {"nbsp": "Kit\u00a012", "double-space": "Kit  12", "tab": "Kit\t12",
+                        "cr": "Kit 12\r", "kelvin": "\u212ait 12", "dotted-i": "K\u0130t 12",
+                        "upper": "KIT 12", "digits": "Kit \u0661\u0662", "curly-quote": "Kit 12\u2019",
+                        "control": "Kit 12\x1c"}
+    assert df.apply({"s": "it's"}, ["unicode", ["s"], "curly-quote"]) == {"s": "it\u2019s"}
     assert list(df.apply(root, ["key", ["obj", "a"], "upper"])["obj"]) == ["A", "b"]
     assert df.apply(root, ["limit", ["list"], 3])["list"] == [1, 2, 1]
     assert df.apply(root, ["limit", ["name"], 3])["name"] == "Kit"
@@ -282,7 +297,7 @@ def test_every_wire_unit_is_fuzzed_or_included(built):
     seeded = {seed.profile for seed in df.Wire().seeds()}
     assert seeded | included == units
     for unit in units:
-        done, _ = df.run_cpu_bounded([str(df.BIN / "ve_diagnose"), unit, "-"], "[]", 60, env=df.CHILD_ENV)
+        done, _ = df.run_cpu_bounded([str(df.BIN / "ve_diagnose"), unit, "-"], "[]", df.BATCH_CPU, env=df.CHILD_ENV)
         assert done.returncode == 0, (unit, done.stderr)
 
 
