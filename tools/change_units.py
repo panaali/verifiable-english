@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import ast
 from collections import Counter
+import copy
 import hashlib
 from dataclasses import dataclass, field
 
@@ -24,6 +25,27 @@ BENIGN_DECORATORS = frozenset({
     "mark", "skip", "skipif", "xfail", "given", "settings", "example", "seed", "composite",
     "no_type_check", "runtime_checkable",
 })
+# Fields of a def that belong to its unit; the rest (its kind, name and
+# decorators) is what the enclosing statement runs at import.
+UNIT_FIELDS = frozenset({"args", "body", "returns", "type_params", "type_comment"})
+# Every AST field that holds an identifier: does it bind that name in the
+# scope where the node sits? (tests/test_select_tests.py checks the table
+# against the `ast` schema, so a new identifier field must be placed here.)
+IDENTIFIER_FIELDS = {
+    ("FunctionDef", "name"): True, ("AsyncFunctionDef", "name"): True, ("ClassDef", "name"): True,
+    ("ExceptHandler", "name"): True, ("MatchAs", "name"): True, ("MatchStar", "name"): True,
+    ("MatchMapping", "rest"): True, ("Global", "names"): True, ("Nonlocal", "names"): True,
+    ("alias", "name"): True, ("alias", "asname"): True,
+    ("Name", "id"): True,  # when its context stores or deletes
+    # Bound in their own scope (parameters, type parameters) or not names at all.
+    ("arg", "arg"): False, ("TypeVar", "name"): False, ("ParamSpec", "name"): False,
+    ("TypeVarTuple", "name"): False, ("Attribute", "attr"): False, ("keyword", "arg"): False,
+    ("MatchClass", "kwd_attrs"): False, ("ImportFrom", "module"): False, ("Constant", "kind"): False,
+    ("TypeIgnore", "tag"): False, ("Assign", "type_comment"): False, ("For", "type_comment"): False,
+    ("AsyncFor", "type_comment"): False, ("With", "type_comment"): False,
+    ("AsyncWith", "type_comment"): False, ("FunctionDef", "type_comment"): False,
+    ("AsyncFunctionDef", "type_comment"): False, ("arg", "type_comment"): False,
+}
 
 
 @dataclass(frozen=True)
@@ -104,8 +126,8 @@ def _binds(node: ast.AST, in_class: bool = False) -> set[str]:
         for child in node.body:
             names |= _binds(child, True)
         return names
-    if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
-        return {node.id}
+    if isinstance(node, ast.Name):
+        return {node.id} if isinstance(node.ctx, (ast.Store, ast.Del)) else set()
     if isinstance(node, (ast.Attribute, ast.Subscript)) and isinstance(node.ctx, (ast.Store, ast.Del)):
         base = node.value
         while isinstance(base, (ast.Attribute, ast.Subscript)):
@@ -115,7 +137,8 @@ def _binds(node: ast.AST, in_class: bool = False) -> set[str]:
         return {node.asname or node.name.split(".")[0]}
     if isinstance(node, (ast.Global, ast.Nonlocal)):
         return set(node.names)
-    names = set()
+    names = {value for name, value in ast.iter_fields(node)  # `except E as e`, match captures
+             if isinstance(value, str) and IDENTIFIER_FIELDS.get((type(node).__name__, name))}
     for child in ast.iter_child_nodes(node):
         names |= _binds(child, in_class)
     return names
@@ -140,12 +163,15 @@ def _benign(node: ast.AST) -> bool:
 def _residue(node) -> str:
     """Dump of what runs at import: like ast.dump, with every def body left out.
 
-    A def keeps its name and decorators; defaults and annotations belong to
-    its unit. In a class, a method with only benign decorators is left out
-    altogether (it is a unit of its own), as are docstrings.
+    A def keeps its kind, name and decorators; the UNIT_FIELDS (defaults,
+    annotations, body) belong to its unit. In a class, a method with only
+    benign decorators is left out altogether (it is a unit of its own), as
+    are docstrings.
     """
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-        return f"def {node.name}{_residue(node.decorator_list)}"
+        return f"{type(node).__name__}(" + ",".join(
+            f"{name}={_residue(value)}" for name, value in ast.iter_fields(node)
+            if name not in UNIT_FIELDS) + ")"
     if isinstance(node, list):
         return "[" + ",".join(_residue(item) for item in node) + "]"
     if not isinstance(node, ast.AST):
@@ -159,6 +185,31 @@ def _residue(node) -> str:
     return f"{type(node).__name__}({','.join(fields)})"
 
 
+def _unit_node(node: ast.FunctionDef | ast.AsyncFunctionDef) -> ast.AST:
+    """The def as its unit sees it: a copy without docstring and decorators.
+
+    Only those two are removed, so its kind (`def` or `async def`) and every
+    other field, including ones a later Python adds, stay in the digest."""
+    unit = copy.copy(node)
+    unit.body = _strip_docstring(node.body) or [ast.Pass()]
+    unit.decorator_list = []
+    return unit
+
+
+def _blocks(node: ast.AST):
+    """The statement lists nested in a compound statement, found from the `ast`
+    schema rather than a list of statement kinds: bodies, `else` and `finally`
+    blocks, and the bodies of except handlers and match cases."""
+    for _, value in ast.iter_fields(node):
+        if isinstance(value, list):
+            if value and all(isinstance(item, ast.stmt) for item in value):
+                yield value
+            else:
+                for item in value:
+                    if isinstance(item, ast.AST) and not isinstance(item, (ast.expr, ast.stmt)):
+                        yield from _blocks(item)
+
+
 def summarize(source: str, module: str, *, package: bool = False) -> Summary:
     """Units, statements and imports of a module. Raises SyntaxError for invalid source."""
     tree = ast.parse(source)
@@ -169,11 +220,8 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
         for node in body:
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 qualname = f"{prefix}{node.name}"
-                stripped = ast.FunctionDef(name=node.name, args=node.args,
-                                           body=_strip_docstring(node.body) or [ast.Pass()],
-                                           decorator_list=[], returns=node.returns, type_params=[])
                 decorators = _digest(ast.List(elts=node.decorator_list, ctx=ast.Load()))
-                unit = Unit(qualname, top or node.name, _digest(stripped), decorators,
+                unit = Unit(qualname, top or node.name, _digest(_unit_node(node)), decorators,
                             _benign(node), _references(node))
                 if qualname in summary.units:  # redefinition (property setters, overloads)
                     old = summary.units[qualname]
@@ -183,13 +231,10 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
                 visit(node.body, f"{qualname}.<locals>.", top or node.name, True)
             elif isinstance(node, ast.ClassDef):
                 visit(node.body, f"{prefix}{node.name}.", top or node.name, in_function)
-            elif hasattr(node, "body") and isinstance(node, (ast.If, ast.Try, ast.With, ast.For,
-                                                             ast.While, ast.AsyncWith, ast.AsyncFor)):
-                # A def under `if`/`try` at any level keeps the enclosing prefix.
-                for block in ("body", "orelse", "finalbody"):
-                    visit(getattr(node, block, []), prefix, top, in_function)
-                for handler in getattr(node, "handlers", []):
-                    visit(handler.body, prefix, top, in_function)
+            else:
+                # A def under `if`, `try`, `match`, a loop ... at any level keeps the enclosing prefix.
+                for block in _blocks(node):
+                    visit(block, prefix, top, in_function)
 
     visit(tree.body, "", None, False)
     for node in tree.body:
