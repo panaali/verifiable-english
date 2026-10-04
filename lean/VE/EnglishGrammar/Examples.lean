@@ -56,6 +56,14 @@ def rejects (s : String) (r : Reject) : Bool :=
 #guard toks "ſervice café." == #[#[wi "ſervice", w "café"]]
 -- Labels and numerals: `S01` and `x1` are words; `0` is a numeral.
 #guard toks "S01 x1 0 12." == #[#[wi "S01", w "x1", .numeral 0, .numeral 12]]
+-- A numeral or a label index has no bound but the text limit, beyond the 4,300 digits of Python's `int`
+-- (review regression; `tests/test_english_lean_lexer.py` checks the same sources in Python).
+#guard toks ("".pushn '9' 4301 ++ ".") == #[#[.numeral ((10 : Int) ^ 4301 - 1)]]
+#guard toks ("S".pushn '9' 4301 ++ ".") == #[#[.label "S" (10 ^ 4301 - 1)]]
+#guard toks ("".pushn '9' 9999 ++ ".") == #[#[.numeral ((10 : Int) ^ 9999 - 1)]]
+#guard rejects ("".pushn '9' 10000 ++ ".") .textTooLong
+#guard toks ("S".pushn '9' 9998 ++ ".") == #[#[.label "S" (10 ^ 9998 - 1)]]
+#guard rejects ("S".pushn '9' 9999 ++ ".") .textTooLong
 -- Python's whitespace: a no-break space separates words.
 #guard toks "a b." == #[#[wi "a", w "b"]]
 

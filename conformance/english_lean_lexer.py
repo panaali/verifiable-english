@@ -71,18 +71,45 @@ def _chunk_char(c: str) -> bool:
     return (c.isascii() and (c.isalnum() or c == '_')) or (not c.isascii() and c not in WHITESPACE)
 
 
+# Python's `int(str)` and `str(int)` refuse numbers of more than `sys.get_int_max_str_digits()` digits
+# (4,300 by default, 640 at the least). The lexer bounds a numeral only by the text limit (spec 2.2;
+# `NumeralBound` is a later check), so decimal text and values convert in blocks below that limit.
+_BLOCK = 600
+_BLOCK_BASE = 10 ** _BLOCK
+
+
+def decimal_value(digits: str) -> int:
+    """The value of a chunk of ASCII digits, of any length."""
+    value = 0
+    for k in range(0, len(digits), _BLOCK):
+        block = digits[k:k + _BLOCK]
+        value = value * 10 ** len(block) + int(block)
+    return value
+
+
+def decimal_text(value: int) -> str:
+    """The decimal text of an integer, of any size: the inverse of `decimal_value`, with a sign."""
+    if value < 0:
+        return '-' + decimal_text(-value)
+    blocks = []
+    while value >= _BLOCK_BASE:
+        value, low = divmod(value, _BLOCK_BASE)
+        blocks.append(f'{low:0{_BLOCK}d}')
+    return str(value) + ''.join(reversed(blocks))
+
+
 def _chunk_token(chunk: str, at: int) -> tuple:
     if chunk.isascii() and chunk.isdigit():
         if len(chunk) > 1 and chunk[0] == '0':
             raise LexError('badNumeral', at)
-        return ('numeral', int(chunk))
+        return ('numeral', decimal_value(chunk))
     if chunk.isascii():
         k = 0
         while k < len(chunk) and 'A' <= chunk[k] <= 'Z':
             k += 1
         digits = chunk[k:]
         if 0 < k < len(chunk) and digits.isdigit() and digits[0] != '0':
-            return ('label', chunk[:k], int(digits))
+            return ('label', chunk[:k], decimal_value(digits))
     return ('word', chunk, False)
 
 

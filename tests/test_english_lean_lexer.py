@@ -31,6 +31,36 @@ def test_lexer_fixture(case):
         assert L.lex(source) == want
 
 
+@pytest.mark.parametrize('digits', [1, 599, 600, 601, 4300, 4301, 9998])
+def test_numerals_and_label_indices_have_no_bound_but_the_text_limit(digits):
+    # Review regression: `int(str)` refused more than 4,300 digits; Lean's `Examples.lean` lexes the same.
+    value = 10 ** digits - 1
+    assert L.lex('9' * digits + '.') == [[('numeral', value)]]
+    assert L.lex('S' + '9' * digits + '.') == [[('label', 'S', value)]]
+    assert L.decimal_text(value) == '9' * digits
+    assert E.show_tree(None, E.Leaf(('numeral', -value))) == '-' + '9' * digits
+
+
+def test_numeral_text_limit_boundary():
+    # 9,999 digits and the terminator are the longest text (L.MAX_TEXT_CHARS); one more digit is too long.
+    assert L.lex('9' * 9999 + '.') == [[('numeral', 10 ** 9999 - 1)]]
+    for source in ('9' * 10_000 + '.', 'S' + '9' * 9999 + '.'):
+        with pytest.raises(L.LexError) as caught:
+            L.lex(source)
+        assert caught.value.code == 'textTooLong'
+
+
+def test_decimal_conversion_round_trips_under_the_lowest_digit_limit():
+    old = sys.get_int_max_str_digits()
+    try:
+        sys.set_int_max_str_digits(640)
+        for text in ['0', '7', '1' + '0' * 1199, '12345678901234567890' * 300]:
+            assert L.decimal_text(L.decimal_value(text)) == text
+        assert L.decimal_value('1' + '0' * 1199) == 10 ** 1199
+    finally:
+        sys.set_int_max_str_digits(old)
+
+
 def test_whitespace_list_is_pythons_isspace():
     assert L.WHITESPACE == frozenset(chr(c) for c in range(sys.maxunicode + 1) if chr(c).isspace())
 
