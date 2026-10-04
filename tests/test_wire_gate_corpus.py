@@ -71,26 +71,35 @@ def test_gate_corpus_holds_every_test_input_of_every_unit(recorded_inputs):
 
 def test_one_run_records_each_unit_as_its_own_run_does(tmp_path):
     """The joint recording keeps each unit to its own test files: a file of one unit only adds
-    nothing to another unit's inputs."""
-    sample = "tests/test_softnorms_public_contract.py"
+    nothing to another unit's inputs, though it submits some (the s5 admission tests submit
+    norm sources)."""
+    sample = ["tests/test_softnorms_public_contract.py", "tests/test_wire_contract_s5_admission.py"]
     output = tmp_path / "inputs.json"
-    files = {unit: [sample] if unit == PILOT else [] for unit in (PILOT, *UNITS)}
+    files = {unit: sample if unit == PILOT else [] for unit in (PILOT, *UNITS)}
     environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNITS": json.dumps(files),
                    "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
     result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", sample],
+                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *sample],
                             cwd=ROOT, env=environment, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout[-4000:]
     joint = json.loads(output.read_text())
     alone = tmp_path / "alone.json"
     environment = {key: value for key, value in environment.items() if key != "VE_CONTRACT_UNITS"}
     result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", sample],
+                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *sample],
                             cwd=ROOT, env={**environment, "VE_CONTRACT_INPUTS": str(alone)},
                             capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout[-4000:]
     assert joint[PILOT] == json.loads(alone.read_text()) and joint[PILOT]
     assert joint["norms@0"] == joint["norm-defaults@0"] == []
+    # The same files, counted for the norm units too, do record norm sources.
+    files = {unit: sample for unit in (PILOT, *UNITS)}
+    result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
+                             "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *sample],
+                            cwd=ROOT, env={**environment, "VE_CONTRACT_UNITS": json.dumps(files)},
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode == 0, result.stdout[-4000:]
+    assert json.loads(output.read_text())["norms@0"]
 
 
 def check_pilot_inputs(recorded):
