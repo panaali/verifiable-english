@@ -259,7 +259,22 @@ def test_the_committed_permission_default_results_agree_with_the_reading():
 
 
 @pytest.mark.skipif(not check.BINARY.exists(), reason="ve_risk_route is not built")
+def test_rerun_of_the_records_equals_the_committed_results():
+    """The records part of the full rerun below (nightly): each record decided by Lean under the
+    base and the extended rules, its category and the independent reading's agreement."""
+    records = cases.all_records()
+    _, per_record = check.decide_records(cases.environment(), cases.norms(False), cases.norms(True), records)
+    assert len(per_record) == len(KEY["records"]) == 51
+    assert json.loads(json.dumps(per_record, sort_keys=True)) == RESULTS["records"]
+
+
+@pytest.mark.nightly
+@pytest.mark.skipif(not check.BINARY.exists(), reason="ve_risk_route is not built")
 def test_rerun_equals_the_committed_results():
+    """Corpus scale (about 15 minutes, 5,000+ CPU seconds of Lean): the document checks, the
+    mutants, the 300 sampled records and the permission default. Runs with `-m nightly` and in
+    tools/gate.py; test_rerun_of_the_records_equals_the_committed_results runs its records part
+    by default."""
     results = check.compute()
     results["comparison"] = check.compare(results, KEY)
     results.pop("timing")

@@ -224,6 +224,7 @@
   "tests/test_asimov_extended.py::test_p9_base_verdict_rests_on_the_permission_default",
   "tests/test_asimov_extended.py::test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_and_alternatives",
   "tests/test_asimov_extended.py::test_rerun_equals_the_committed_results",
+  "tests/test_asimov_extended.py::test_rerun_of_the_records_equals_the_committed_results",
   "tests/test_asimov_extended.py::test_the_committed_permission_default_results_agree_with_the_reading",
   "tests/test_asimov_extended.py::test_the_committed_results_agree_with_the_answer_key_except_the_listed_findings",
   "tests/test_asimov_extended.py::test_the_environment_extends_v2_without_changing_it",

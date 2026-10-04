@@ -291,6 +291,20 @@ def no_prevailing(spec, ext):
 
 # ---------------------------------------------------------------------------- the whole run
 
+def decide_records(env, base_rules, ext_rules, records):
+    """Every record decided under the base and the extended rules, with its category and the
+    independent reading's agreement: Lean's decisions and the per-record results."""
+    lean = both(env, base_rules, ext_rules, records)
+    independent = read_all(records)
+    per_record = {}
+    for name in records:
+        base, ext = lean["base"][name], lean["ext"][name]
+        per_record[name] = {"base": base, "ext": ext, "category": category(base.get("clear"), ext.get("clear")),
+                            "independent_agrees": {side: agrees(lean[side][name], independent[name][side])
+                                                   for side in ("base", "ext")}}
+    return lean, per_record
+
+
 def _conflict_job(job):
     name, env, rules = job
     result, packages = conflict(env, rules)
@@ -321,16 +335,9 @@ def compute(sample=SAMPLE):
     mutant_start = time.time()
 
     start = time.time()
-    lean = both(env, base_rules, ext_rules, records)
+    lean, per_record = decide_records(env, base_rules, ext_rules, records)
     timing["decisions_seconds"] = round(time.time() - start, 1)
     timing["decisions"] = 2 * len(records)
-    independent = read_all(records)
-    per_record = {}
-    for name in records:
-        base, ext = lean["base"][name], lean["ext"][name]
-        per_record[name] = {"base": base, "ext": ext, "category": category(base.get("clear"), ext.get("clear")),
-                            "independent_agrees": {side: agrees(lean[side][name], independent[name][side])
-                                                   for side in ("base", "ext")}}
 
     start = time.time()
     specs = sampled(sample)
