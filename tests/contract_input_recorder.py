@@ -11,6 +11,7 @@ input. At the end the inputs are written, deduplicated, to `VE_CONTRACT_INPUTS` 
 `[test id, environment, norms]`.
 """
 
+import itertools
 import json
 import os
 from pathlib import Path
@@ -19,7 +20,10 @@ import sys
 
 TESTS = Path(__file__).resolve().parent
 SOFT_CONFORMANCE = TESTS.parent / "conformance/soft_norms.py"
+# Input key -> (collection index of the recording test, -1 outside a test; its test id; sequence number).
 _RECORDED = {}
+_CURRENT = [-1]
+_SEQUENCE = itertools.count()
 
 
 def _from_tests():
@@ -29,7 +33,11 @@ def _from_tests():
 
 def _record(environment, norms):
     key = json.dumps([environment, norms], sort_keys=True, default=repr)
-    _RECORDED.setdefault(key, os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0])
+    # The first recording in collection order names the input, under xdist too; the sequence
+    # number orders the inputs one test records first as they were recorded.
+    label = (_CURRENT[0], os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0], next(_SEQUENCE))
+    if key not in _RECORDED or label < _RECORDED[key]:
+        _RECORDED[key] = label
 
 
 def _install():
@@ -115,8 +123,33 @@ def _install():
 _install()
 
 
+def pytest_collection_finish(session):
+    _INDEX.update((item.nodeid, index) for index, item in enumerate(session.items))
+
+
+_INDEX = {}
+
+
+def pytest_runtest_protocol(item, nextitem):
+    _CURRENT[0] = _INDEX.get(item.nodeid, -1)
+
+
 def pytest_sessionfinish(session, exitstatus):
+    """Write the inputs. An xdist worker writes its own part next to `VE_CONTRACT_INPUTS`
+    (it ends before the controller does), and the controller merges the parts."""
     path = os.environ.get("VE_CONTRACT_INPUTS")
-    if path:
-        rows = [[label, *json.loads(key)] for key, label in sorted(_RECORDED.items(), key=lambda item: item[1])]
-        Path(path).write_text(json.dumps(rows))
+    if not path:
+        return
+    # Not PYTEST_XDIST_WORKER: a controller started from inside an xdist worker inherits it.
+    worker = getattr(session.config, "workerinput", {}).get("workerid")
+    if worker:
+        Path(f"{path}.{worker}").write_text(json.dumps(_RECORDED))
+        return
+    for part in sorted(Path(path).parent.glob(Path(path).name + ".gw*")):
+        for key, label in json.loads(part.read_text()).items():
+            label = tuple(label)
+            if key not in _RECORDED or label < _RECORDED[key]:
+                _RECORDED[key] = label
+        part.unlink()
+    ordered = sorted(_RECORDED.items(), key=lambda item: (item[1][1], item[1][0], item[1][2]))
+    Path(path).write_text(json.dumps([[label, *json.loads(key)] for key, (_, label, _) in ordered]))

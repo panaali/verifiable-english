@@ -256,15 +256,21 @@ def test_and_fixture_sources(recorded=True):
     return sources
 
 
-def record_test_inputs(output):
+def record_test_inputs(output, workers=None):
     """Run the test files of `RECORDED_TESTS` under `tests/contract_input_recorder.py`, which writes to
     `output` each `soft-norms@0` input they, or the soft conformance module they run, hand to an engine or a
-    legacy validator: `[test id, environment, norms]`. Returns the pytest process."""
+    legacy validator: `[test id, environment, norms]`. The tests run on `workers` xdist processes (by default
+    an eighth of the CPUs, at most 8); the recorder merges their inputs as one serial run records them.
+    Returns the pytest process."""
     files = sorted({path for pattern in RECORDED_TESTS for path in ROOT.glob(pattern)})
+    if workers is None:
+        workers = max(1, min(8, (os.cpu_count() or 1) // 8))
     environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_NATIVE_PREBUILT": "1",
                    "PYTHONPATH": str(ROOT)}
+    parallel = ["-n", str(workers)] if workers > 1 else []
     return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
-                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *map(str, files)],
+                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", *parallel,
+                           *map(str, files)],
                           cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
 
 
