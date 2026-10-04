@@ -41,4 +41,4 @@ def test_the_testspeed_report_shows_the_recorded_runs():
     assert block("runs") == suite_time.table()
     assert block("slowest") == suite_time.slowest("suite-before.json")
     assert block("slowest-after") == suite_time.slowest("suite-after-n32.json")
-    assert block("most-cpu") == suite_time.most_cpu("suite-after-auto.json")
+    assert block("most-cpu") == suite_time.heaviest("suite-after-auto.json")

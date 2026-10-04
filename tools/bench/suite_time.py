@@ -94,7 +94,7 @@ def slowest(name="suite-before.json") -> str:
     return "\n".join(f"{i}. `{row['nodeid']}`: {row['seconds']:.0f} s" for i, row in enumerate(run["slowest_tests"], 1))
 
 
-def most_cpu(name="suite-after-auto.json") -> str:
+def heaviest(name="suite-after-auto.json") -> str:
     run = json.loads((RESULTS / name).read_text())
     return "\n".join(f"{i}. `{row['nodeid']}`: {row['cpu_seconds']:.0f} CPU s"
                      for i, row in enumerate(run["most_cpu_tests"], 1))
