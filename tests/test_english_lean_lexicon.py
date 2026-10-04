@@ -1,11 +1,12 @@
 """Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`."""
 import json
 from pathlib import Path
+import warnings
 
 import pytest
 
 from ve import Environment
-from ve.english import EnglishVocabulary
+from ve.english import EnglishVocabulary, UnreviewedVocabularyWarning
 from ve.english_phrases import wording_key
 from ve.english_vocabulary import negative_template
 from ve.errors import VEError
@@ -26,8 +27,10 @@ def _lexicon(case, env):
 
 @pytest.mark.parametrize('case', CORPUS['cases'], ids=lambda c: c['id'])
 def test_lexicon_validity_fixture(case):
-    env = _environment(case['env'])
-    failures = X.check(EnglishVocabulary(env), _lexicon(case, env))
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
+        words = X.fixture_vocabulary(CORPUS, case['env'])
+    failures = X.check(words, _lexicon(case, words.env))
     assert sorted({f[0] for f in failures}) == case['conditions'], failures
 
 
@@ -58,6 +61,20 @@ def test_wording_key_port_agrees_on_ascii_and_folds_narrowly():
         assert X.wording_key_lean(text) == wording_key(text)
     # Python's casefold is wider than the Lean fold (spec 2.3): the sharp s is the first difference.
     assert wording_key('{0} is Groß') != X.wording_key_lean('{0} is Groß')
+
+
+def test_wording_key_reads_quotes_as_lean_does():
+    """looprecheck1 finding 2: an unmatched `"` is an ordinary character (the rest is folded), and an
+    escaped line break stays inside its quoted part. The generated fixtures check the same texts
+    against Lean's `wordingKey`; on ASCII, production's key is the reference's."""
+    assert wording_key('"ALICE') == wording_key('"alice') == '"alice'
+    assert wording_key('x "A" "B') == 'x "A" "b'
+    assert wording_key('"a\\\nB"') != wording_key('"a\\\nb"')
+    texts = X.wording_key_texts()
+    assert len(texts) > 1400
+    for text in texts:
+        if text.isascii():
+            assert wording_key(text) == X.wording_key_lean(text), repr(text)
 
 
 def test_lean_fixtures_are_generated_from_the_python_reference():
