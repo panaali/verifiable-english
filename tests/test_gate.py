@@ -1,12 +1,15 @@
 """The full gate must reject missing coverage while honoring exact optional cases."""
+import ast
 import json
 import os
 import sys
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tools import gate
 from tools.gate import REQUIRED_FAMILIES, ROOT, interpret_pytest, permitted
+from tools.pytest_run import pytest_command, pytest_environment
 
 
 def test_exact_parameterized_skip_and_live_deselection_are_accounted_for():
@@ -36,8 +39,7 @@ def test_the_collection_baseline_is_what_the_gate_collects(tmp_path):
     an internal error on an xdist-only conftest hook. The gate's own collection command,
     in this environment, must succeed and collect exactly the committed baseline;
     `python tools/gate.py --write-collection` regenerates it."""
-    env = {name: value for name, value in os.environ.items() if name not in ("PYTEST_ADDOPTS", "PYTEST_PLUGINS")}
-    events = gate.collect({**env, "VE_NATIVE_PREBUILT": "1"}, tmp_path / "collection.json")
+    events = gate.collect({**os.environ, "VE_NATIVE_PREBUILT": "1"}, tmp_path / "collection.json")
     baseline = json.loads(gate.COLLECTION.read_text())
     assert events["collection_reports"] == []
     assert len(events["collected"]) == len(set(events["collected"]))
@@ -46,6 +48,53 @@ def test_the_collection_baseline_is_what_the_gate_collects(tmp_path):
     assert (missing, unexpected) == ([], []), "run python tools/gate.py --write-collection"
     assert baseline == sorted(baseline)
     assert "tests/test_llm.py::test_live_smoke" in events["deselected"]
+
+
+RUNNER = "-m pytest".split()
+# What the gate and the suite run; experiments keep the commands their receipts record.
+NESTED_RUN_TREES = ("tests/", "tools/", "conformance/", "ve/")
+
+
+def nested_pytest_commands(source):
+    """The lines of list or tuple literals in `source` that start pytest themselves:
+    `"-m", "pytest"` or a leading `"pytest"`."""
+    found = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, (ast.List, ast.Tuple)):
+            values = [item.value if isinstance(item, ast.Constant) else None for item in node.elts]
+            if values[:1] == RUNNER[1:] or any(values[i:i + 2] == RUNNER for i in range(len(values))):
+                found.append(node.lineno)
+    return found
+
+
+def test_every_nested_pytest_run_names_its_plugins():
+    """Gate run review: under the gate (plugin autoload off, inherited by children) a
+    nested recording run on `-n auto` failed with "unrecognized arguments: -n", though
+    it passed on a developer's machine. Every nested pytest command is built by
+    tools/pytest_run.py, which turns autoload off and names the plugins, so it runs the
+    same in both places."""
+    listed = gate.subprocess.run(["git", "ls-files", "-z", "--", "*.py"], cwd=ROOT, capture_output=True,
+                                 check=True, timeout=HANG_TIMEOUT).stdout.decode().split("\0")
+    offenders = {}
+    for name in filter(None, listed):
+        if name == "tools/pytest_run.py" or not name.startswith(NESTED_RUN_TREES) or not (ROOT / name).is_file():
+            continue
+        lines = nested_pytest_commands((ROOT / name).read_text())
+        if lines:
+            offenders[name] = lines
+    assert offenders == {}
+    assert nested_pytest_commands('run([sys.executable, "-m", "pytest", "-n", "auto"])\n') == [1]
+    assert nested_pytest_commands('run(("pytest", "-q"))\n') == [1]
+
+
+def test_a_nested_run_on_workers_works_with_autoload_off(tmp_path):
+    (tmp_path / "test_one.py").write_text("def test_one():\n    pass\n")
+    env = pytest_environment({**os.environ, "PYTHONPATH": str(ROOT), "PYTEST_ADDOPTS": "-p no:xdist"})
+    assert env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] == "1" and "PYTEST_ADDOPTS" not in env
+    run = gate.subprocess.run(pytest_command([sys.executable], "-q", "-n", "2", "-p", "no:cacheprovider",
+                                             str(tmp_path)),
+                              cwd=tmp_path, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert run.returncode == 0, run.stdout + run.stderr
 
 
 SAMPLE = """import pytest
@@ -69,14 +118,15 @@ def test_the_gate_records_a_parallel_suite_run(tmp_path, monkeypatch):
     (tmp_path / "tests").mkdir()
     (tmp_path / "tests/test_sample.py").write_text(SAMPLE)
     (tmp_path / "pytest.ini").write_text("[pytest]\nmarkers =\n    live: a model call\n")
-    env = {**os.environ, "PYTHONPATH": str(ROOT), "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
-    env.pop("PYTEST_ADDOPTS", None)
+    env = pytest_environment({**os.environ, "PYTHONPATH": str(ROOT)})
     collection = tmp_path / "collection.json"
     gate.subprocess.run(gate.collection_command([sys.executable]), cwd=tmp_path, check=True,
-                        env={**env, "VE_GATE_PYTEST_RESULT": str(collection)}, capture_output=True)
+                        env={**env, "VE_GATE_PYTEST_RESULT": str(collection)}, capture_output=True,
+                        timeout=HANG_TIMEOUT)
     suite = tmp_path / "suite.json"
     run = gate.subprocess.run(gate.suite_command([sys.executable], "2"), cwd=tmp_path, text=True,
-                              env={**env, "VE_GATE_PYTEST_RESULT": str(suite)}, capture_output=True)
+                              env={**env, "VE_GATE_PYTEST_RESULT": str(suite)}, capture_output=True,
+                              timeout=HANG_TIMEOUT)
     assert run.returncode == 1, run.stdout + run.stderr
     events = gate.merge_pytest_events(json.loads(collection.read_text()), json.loads(suite.read_text()))
     ids = ["tests/test_sample.py::test_passes", "tests/test_sample.py::test_fails"]

@@ -17,6 +17,7 @@ import pytest
 
 from conformance.soft_norms import soft4_reproducers
 from subprocesses import HANG_TIMEOUT, ChildCPU
+from tools.pytest_run import pytest_command, pytest_environment
 from ve.errors import VEError
 from ve.soft_route import _run
 from ve.softnorms import load_soft_document
@@ -64,8 +65,9 @@ BOUNDED = {
 def test_kernel_bounded_batches(record, tmp_path, target):
     log = tmp_path / "cpu.jsonl"
     env = {**os.environ, "VE_BENCH_CPU_LOG": str(log), "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1"}
-    result = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", target],
-                            cwd=ROOT, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    result = subprocess.run(pytest_command([sys.executable], "-q", "-p", "no:cacheprovider", target),
+                            cwd=ROOT, env=pytest_environment(env), capture_output=True, text=True,
+                            timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout[-4000:]
     totals = {}
     for line in log.read_text().splitlines():
