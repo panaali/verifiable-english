@@ -221,7 +221,7 @@ def _python(raw):
     try:
         Environment(deepcopy(raw))
     except VEError as exc:
-        return str(exc) if type(exc) is VEError else f"{exc.code}: {exc}"
+        return str(exc) if type(exc) is VEError or str(exc).startswith(f"{exc.code}: ") else f"{exc.code}: {exc}"
     return "ok"
 
 

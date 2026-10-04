@@ -128,7 +128,7 @@ def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[],
         raise (backend_rejection(error) if error is not None else rejected) from None
     if error is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean accepts {what} that the Python decoder "
-                                 f"rejects ({error.code}: {error.message})")
+                                 f"rejects ({error.code}: {error.message.removeprefix(error.code + ': ')})")
     if not identity(built, row):
         raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
     _remember(cache)
