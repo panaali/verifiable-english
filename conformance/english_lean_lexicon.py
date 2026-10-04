@@ -62,10 +62,9 @@ def lexicon_id(lexicon: dict) -> str:
 # ------------------------------------------------------------------ wordingKey (spec 2.9)
 
 def wording_key_lean(text: str) -> str:
-    """`wordingKey` as spec 2.9 states it, with the fold of 5.8: outside quoted parts, fold and turn
-    each run of whitespace and hyphens into one space; trim."""
-    parts = re.split(r'("(?:[^"\\]|\\.)*")', text)
-    return ''.join(p if p.startswith('"') else re.sub(r'[\s-]+', ' ', fold(p)) for p in parts).strip()
+    """`wordingKey` as spec 2.9 states it: Python's `wording_key` (one reading of quoted parts) with
+    the fold of 5.8 in place of `casefold`, which is wider outside ASCII (spec 2.3)."""
+    return wording_key(text, fold=fold)
 
 
 # ------------------------------------------------------------------ the honest wordings (spec 2.9)
@@ -274,12 +273,12 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
             if HOLE.search(sp):
                 out.append(('V3', 'constant', c))
 
-    # V4 distinctness: a selection against what every other symbol declares or selects
+    # V4 distinctness: a selection against what every other symbol declares or selects, by Lean's key
     owners: dict[str, set[tuple[str, str]]] = {}
 
     def own(text, kind, name):
         if text:
-            owners.setdefault(wording_key(text), set()).add((kind, name))
+            owners.setdefault(wording_key_lean(text), set()).add((kind, name))
 
     for p in preds:
         own(pred[p]['wording'], 'predicate', p)
@@ -297,7 +296,7 @@ def failures(view: dict, lexicon: dict) -> list[tuple[str, str, str]]:
                   [(w, 'predicate', p) for p, w, _ in L['aliases']] +
                   [(n, 'sort', s) for s, n in L['nouns']] + [(sp, 'constant', c) for c, sp in L['spellings']])
     for text, kind, name in selections:
-        if owners.get(wording_key(text), set()) - {(kind, name)}:
+        if owners.get(wording_key_lean(text), set()) - {(kind, name)}:
             out.append(('V4', kind, name))
     return sorted(set(out))
 
@@ -318,6 +317,18 @@ def fixture_environment(corpus: dict, name: str) -> Environment:
     data = json.loads((ROOT / spec['path']).read_text())
     data['vocabulary']['predicates'].update(spec.get('add_predicates', {}))
     return Environment(data)
+
+
+def fixture_vocabulary(corpus: dict, name: str) -> EnglishVocabulary:
+    """The vocabulary of a corpus environment, with its English overlay (`overlay`: sorts, predicates
+    and constants of a `ve.english-vocabulary@1` file) when it has one."""
+    env = fixture_environment(corpus, name)
+    overlay = corpus['environments'][name].get('overlay')
+    if overlay is None:
+        return EnglishVocabulary(env)
+    return EnglishVocabulary(env, vocabulary={'format': 've.english-vocabulary@1',
+                                              'environment_id': env.environment_id,
+                                              'sorts': {}, 'predicates': {}, 'constants': {}, **overlay})
 
 
 def apply_edits(lexicon: dict, edits: list) -> dict:
@@ -455,8 +466,8 @@ def lean_fixtures() -> str:
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', UnreviewedVocabularyWarning)
         for name in corpus['environments']:
-            env = fixture_environment(corpus, name)
-            views[name] = (env, lexical_view(EnglishVocabulary(env)))
+            words = fixture_vocabulary(corpus, name)
+            views[name] = (words.env, lexical_view(words))
             lines += [f'def env{name} : Env :=', '  ' + lean_env(views[name][1]), '']
 
     def guard(label, env_name, lex):
@@ -471,8 +482,30 @@ def lean_fixtures() -> str:
     lf = {field: corpus['LF'][field] for field in LEXICON_FIELDS}
     for label, lex in mutants(views['F'][1], lf):
         guard('mutant ' + label, 'F', lex)
+    texts = wording_key_texts()
+    lines += ['', '-- wordingKey: every text of at most three characters over the alphabet of',
+              '-- `wording_key_texts`, then the longer ones; the keys are `wording_key_lean`.']
+    for k in range(0, len(texts), 100):
+        chunk = texts[k:k + 100]
+        lines += ['#guard [' + ', '.join(lean_string(t) for t in chunk) + '].map wordingKey ==',
+                  '  [' + ', '.join(lean_string(wording_key_lean(t)) for t in chunk) + ']']
     lines += ['', 'end VE.EnglishGrammar.LexiconFixtures', '']
     return '\n'.join(lines)
+
+
+# Quotes, escapes, line breaks, separators and case, with three characters the Lean fold or space set
+# names (no-break space, dotted capital I, Kelvin sign) and one it leaves alone (sharp s).
+KEY_ALPHABET = ('a', 'A', '"', '\\', ' ', '-', '\n', ' ', 'İ', 'K', 'ß')
+
+
+def wording_key_texts() -> list[str]:
+    """The texts of the `wordingKey` differential: all of at most three characters over
+    `KEY_ALPHABET`, then longer texts with quoted parts, unmatched quotes and escaped line breaks."""
+    from itertools import product
+    texts = [''.join(p) for n in range(1, 4) for p in product(KEY_ALPHABET, repeat=n)]
+    texts += ['"ALICE', '"alice', '{0} is "Odd', 'x "A" "B', '"a\\\nB"', '"a\\\nB', 'a "b\\" C',
+              '"A\\\\" B', '  {0} --  is Reviewed  ', '"x" Y "z', '\\"A"B"', '""A""']
+    return texts
 
 
 # ------------------------------------------------------------------ the corpus run
