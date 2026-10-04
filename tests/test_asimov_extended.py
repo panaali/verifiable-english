@@ -22,6 +22,7 @@ sys.path.insert(0, str(HERE))
 import asimov_extended_cases as cases  # noqa: E402
 import asimov_extended_check as check  # noqa: E402
 import asimov_extended_reading as reading  # noqa: E402
+from subprocesses import HANG_TIMEOUT  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.norm_english import render_english  # noqa: E402
 
@@ -289,7 +290,7 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_a
         Environment(without_risk)
     if not _BINARY.is_file():
         pytest.skip("ve_risk_route is not built")
-    done = subprocess.run([str(_BINARY), "-"], capture_output=True, text=True, timeout=120, input=json.dumps(
+    done = subprocess.run([str(_BINARY), "-"], capture_output=True, text=True, timeout=HANG_TIMEOUT, input=json.dumps(
         [{"id": "switched", "kind": "risk-elaborate", "environment": switched, "norms": []}]))
     (row,) = json.loads(done.stdout)
     assert (row["status"], row["error"]) == ("error", "UnsupportedProfile: Unsupported profile norm-defaults@0")

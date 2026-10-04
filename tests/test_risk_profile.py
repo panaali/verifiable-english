@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.environment import Environment
 from ve.english import parse_english_with_metadata
 from ve.norm_english import parse_english as parse_norm_english
@@ -175,7 +176,7 @@ def test_record_diagnostics_are_the_routes():
     binary = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route"
     cases = _decision_cases()
     direct = json.loads(subprocess.run([str(binary), "-"], input=json.dumps(list(cases.values())), text=True,
-                                       capture_output=True, timeout=300).stdout)
+                                       capture_output=True, timeout=HANG_TIMEOUT).stdout)
     for (name, case), expected in zip(cases.items(), direct):
         assert run_case(case) == expected, name
     errors = {name: row["error"] for name, row in zip(cases, direct)}

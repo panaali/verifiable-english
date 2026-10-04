@@ -6,13 +6,13 @@ from pathlib import Path
 import shutil
 import signal
 import subprocess
+import sys
 import time
 
 import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tools import rust_build
-from ve import argument, bundle
 from ve.surface import unambiguity
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -84,6 +84,57 @@ def _build_backends(lock):
         _run_build(command, cwd, env, lock)
 
 
+# The checker clients' wall-clock defaults (5 s per Rust call or Lean service
+# request, 30 s for a service to start, 60-300 s per one-shot Lean runner call,
+# 10-600 s in the conformance harness, 30 s for the pre-commit wire check) are
+# hang guards, not work limits; under load a correct call can outlast them.
+# Every test, and every process a test starts, waits HANG_TIMEOUT instead; the
+# work limits are the backends' budgets. Set for the whole process, so module
+# fixtures and collection see it too.
+CHECKER_TIMEOUTS = ("VE_RUST_TIMEOUT", "VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT",
+                    "VE_LEAN_TIMEOUT", "VE_CONFORMANCE_HANG_TIMEOUT", "VE_PRECOMMIT_TIMEOUT")
+
+
+class CheckerSettingRemoved(BaseException):
+    """A child started without a checker setting (a BaseException, so no product handler hides it)."""
+
+
+# The refused starts of the running test (a worker thread may swallow the exception).
+REFUSED = []
+
+
+def removed_checker_settings(env):
+    """The checker settings a child started with `env` (None: this process's environment)
+    lacks, when `env` derives from a running test's environment (it holds the
+    PYTEST_CURRENT_TEST pytest sets). Such a child would wait a production default: a
+    test checks a default by instrumentation, never by a real child running against it.
+    A fresh environment (the gate's) is the child's own to configure."""
+    env = os.environ if env is None else env
+    if "PYTEST_CURRENT_TEST" not in env:
+        return []
+    return [variable for variable in CHECKER_TIMEOUTS if variable not in env]
+
+
+# Audit events that start a process, and the position of their environment argument.
+PROCESS_EVENTS = {"subprocess.Popen": 3, "os.posix_spawn": 2, "os.system": None}
+
+
+def refuse_child_without_checker_settings(event, args):
+    if event in PROCESS_EVENTS:
+        position = PROCESS_EVENTS[event]
+        missing = removed_checker_settings(None if position is None else args[position])
+        if missing:
+            message = f"{event} started a child without {', '.join(missing)}"
+            REFUSED.append(message)
+            raise CheckerSettingRemoved(message)
+
+
+def pytest_configure(config):
+    for variable in CHECKER_TIMEOUTS:
+        os.environ[variable] = str(HANG_TIMEOUT)
+    sys.addaudithook(refuse_child_without_checker_settings)
+
+
 def pytest_sessionstart(session):
     """Build once, then hold a read lock until all this process's tests end."""
     lock_path = native_lock_path()
@@ -112,7 +163,10 @@ def pytest_sessionfinish(session, exitstatus):
 def generous_hang_guards(monkeypatch):
     # Deadline tests install their own deterministic clock and budget.
     # All production defaults and semantic work limits remain unchanged.
-    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", 1800)
-    monkeypatch.setattr(argument, "LEAN_REPLAY_TIMEOUT", 1800)
-    monkeypatch.setattr(bundle, "LEAN_REPLAY_TIMEOUT", 1800)
-    monkeypatch.setenv("VE_CONFORMANCE_HANG_TIMEOUT", "1800")
+    monkeypatch.setattr(unambiguity, "EARLEY_SECONDS", HANG_TIMEOUT)
+    for variable in CHECKER_TIMEOUTS:
+        monkeypatch.setenv(variable, str(HANG_TIMEOUT))
+    REFUSED.clear()
+    yield
+    refused, REFUSED[:] = list(REFUSED), []
+    assert refused == [], "a test removed a checker setting and started a real child"

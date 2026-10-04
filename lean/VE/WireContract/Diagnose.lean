@@ -2,6 +2,8 @@ import VE.Json
 import VE.WireContract.Engine
 import VE.WireContract.Hooks.Corpus
 import VE.WireContract.Hooks.SoftNorms
+import VE.WireContract.Hooks.Norms
+import VE.WireContract.Hooks.NormDefaults
 
 /-! The `ve_diagnose` runner (docs/spec/wire-contract.md 4.2): the registry of
 contracts and the rows it prints.
@@ -36,6 +38,8 @@ def units : List (String × Registered) :=
    ("mid@0", ⟨Tables.Corpus.Mid.table, Hooks.Corpus.hooks, caseRoot ["tag", "part"]⟩),
    ("forms@0", ⟨Tables.Corpus.Forms.table, Hooks.Corpus.hooks, caseRoot ["doc", "nothing"]⟩),
    ("soft-norms@0", ⟨Tables.SoftNorms.table, Hooks.SoftNorms.hooks, Hooks.SoftNorms.adapter⟩)]
+  ++ [("norms@0", ⟨Tables.Norms.table, Hooks.Norms.hooks, Hooks.Norms.adapter⟩),
+      ("norm-defaults@0", ⟨Tables.NormDefaults.table, Hooks.NormDefaults.hooks, Hooks.NormDefaults.adapter⟩)]
 
 /-- One row: `fault` with the record of the first instance that does not hold, or `clean`. -/
 def diagnoseCase (u : Registered) (case : Json) : Json :=

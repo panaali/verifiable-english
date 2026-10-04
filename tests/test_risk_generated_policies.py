@@ -36,6 +36,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import agent_ops, rule
+from subprocesses import HANG_TIMEOUT
 from ve.ast import Not, _Decoder, formula_from_data
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -55,7 +56,7 @@ MAX_STEPS = 400
 
 def run(cases):
     out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True,
-                         check=False, timeout=600)
+                         check=False, timeout=HANG_TIMEOUT)
     assert out.returncode in (0, 1), out.stderr
     rows = json.loads(out.stdout)
     assert len(rows) == len(cases)

@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from conformance.soft_norms import multi_fault_base, multi_fault_cases, multi_faults
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import env, norm
 from ve.wire import canonical_json
 
@@ -34,14 +35,14 @@ def built():
         if lake is None:
             pytest.skip("lake is required for ve_diagnose and ve_soft_norms_route")
         result = subprocess.run([lake, "build", "ve_diagnose", "ve_soft_norms_route"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=1200)
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr
     return BIN
 
 
 def call(binary, args, cases):
     result = subprocess.run([str(binary), *args, "-"], input=json.dumps(cases), text=True, capture_output=True,
-                            timeout=600)
+                            timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

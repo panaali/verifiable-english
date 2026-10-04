@@ -16,6 +16,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import agent_ops
+from subprocesses import HANG_TIMEOUT
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.risk import run_case
@@ -166,7 +167,7 @@ def _python(raw):
 def _lean(raws):
     cases = [{"id": str(i), "kind": "risk-elaborate", "environment": raw, "document": {"norms": []}}
              for i, raw in enumerate(raws)]
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=600)
+    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert out.returncode in (0, 1), out.stderr
     return [row["error"] if row["status"] == "error" else "ok" for row in json.loads(out.stdout)]
 
@@ -219,5 +220,5 @@ def test_route_answer_is_leans_through_python_dispatch():
             edit(raw)
         case = {"id": name, "kind": "risk-elaborate", "environment": raw, "document": {"norms": []}}
         direct = json.loads(subprocess.run([str(BIN), "-"], input=json.dumps([case]), text=True,
-                                           capture_output=True, timeout=60).stdout)[0]
+                                           capture_output=True, timeout=HANG_TIMEOUT).stdout)[0]
         assert run_case(deepcopy(case)) == direct

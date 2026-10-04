@@ -88,6 +88,72 @@ def test_rust_rejects_malformed_evaluation_response(monkeypatch, tmp_path, respo
         rust_run(case, executable=executable, expected_sha256=sha256(b"mock").hexdigest())
 
 
+def recorded_rust(monkeypatch, tmp_path):
+    """A call to a mock Rust checker, and the wall-clock wait each call is given."""
+    executable = tmp_path / "ve"
+    executable.write_bytes(b"mock")
+    waits = []
+
+    def checker(argv, *, input, timeout):
+        waits.append(timeout)
+        return subprocess.CompletedProcess(argv, 0, b'{"id":"x","status":"ok"}\n', b"")
+    monkeypatch.setattr("ve.backends.rust_jsonl._run_checker", checker)
+    from hashlib import sha256
+    return waits, lambda **options: rust_run({"id": "x", "kind": "check"}, executable=executable,
+                                             expected_sha256=sha256(b"mock").hexdigest(), **options)
+
+
+def test_rust_wait_is_the_default_unless_configured(monkeypatch, tmp_path):
+    """Load reproducer: under the Lean authority, a W6a generated case's Rust call
+    timed out at the client's 5-second default in a 2 h 14 min suite. Users keep
+    the 5 s (60 s for the readings replay); `VE_RUST_TIMEOUT` replaces both
+    defaults; an explicit timeout is kept."""
+    from ve.backends.rust_jsonl import configured_timeout
+    waits, call = recorded_rust(monkeypatch, tmp_path)
+    monkeypatch.delenv("VE_RUST_TIMEOUT")
+    call()
+    assert waits == [5.0] and configured_timeout(60.0) == 60.0
+    monkeypatch.setenv("VE_RUST_TIMEOUT", "2.5")
+    call()
+    call(timeout=0.25)
+    assert waits == [5.0, 2.5, 0.25] and configured_timeout(60.0) == 2.5
+
+
+@pytest.mark.parametrize("value", ["", "0", "-1", "nan", "inf", "five"])
+def test_rust_wait_setting_that_is_not_positive_seconds_is_refused(monkeypatch, tmp_path, value):
+    waits, call = recorded_rust(monkeypatch, tmp_path)
+    monkeypatch.setenv("VE_RUST_TIMEOUT", value)
+    with pytest.raises(CheckerUnavailable, match="VE_RUST_TIMEOUT") as caught:
+        call()
+    assert not isinstance(caught.value, VEError) and waits == []
+
+
+def test_rust_checker_slower_than_the_setting_is_stopped_at_it(monkeypatch, tmp_path):
+    """The setting is the real wait of the checker process, which is killed."""
+    script = tmp_path / "ve"
+    script.write_text("#!/bin/sh\nexec sleep 600\n")
+    script.chmod(0o755)
+    from hashlib import sha256
+    monkeypatch.setenv("VE_RUST_JSONL", str(script))
+    monkeypatch.setenv("VE_RUST_SHA256", sha256(script.read_bytes()).hexdigest())
+    monkeypatch.setenv("VE_RUST_TIMEOUT", "0.2")
+    with pytest.raises(CheckerUnavailable, match="timed out after 0.2 seconds"):
+        rust_run({"id": "x", "kind": "check"})
+
+
+def test_the_suite_waits_its_hang_guard_for_every_checker():
+    """Every test (and every process it starts) waits HANG_TIMEOUT for a Rust call,
+    a Lean service request or a Lean service start, never the users' defaults."""
+    import os
+    from subprocesses import HANG_TIMEOUT
+    from ve.backends.lean_service import configured_seconds
+    from ve.backends.rust_jsonl import configured_timeout
+    for variable in ("VE_RUST_TIMEOUT", "VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"):
+        assert os.environ[variable] == str(HANG_TIMEOUT)
+        assert configured_seconds(variable, 5.0) == HANG_TIMEOUT
+    assert configured_timeout() == configured_timeout(60.0) == HANG_TIMEOUT
+
+
 def test_lean_label_adapter_keeps_value_and_diagnostic(monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = validate_label("asserted")

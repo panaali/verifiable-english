@@ -14,6 +14,7 @@ import subprocess
 import sys
 import threading
 import time
+from types import SimpleNamespace
 
 import pytest
 from hypothesis import HealthCheck, given, settings, strategies as st
@@ -42,7 +43,7 @@ def service_executable():
     return BIN / "ve_service"
 
 
-def raw_session(executable, lines: bytes, timeout=120):
+def raw_session(executable, lines: bytes, timeout=HANG_TIMEOUT):
     proc = subprocess.run([str(executable)], input=lines, capture_output=True, timeout=timeout)
     assert proc.returncode == 0, proc.stderr
     out = proc.stdout.split(b"\n")
@@ -52,7 +53,7 @@ def raw_session(executable, lines: bytes, timeout=120):
 
 def test_english_mode_is_the_generated_copy_of_the_english_runner():
     result = subprocess.run([sys.executable, "VE/Service/english_copy.py", "--check"], cwd=ROOT / "lean",
-                            capture_output=True, text=True, timeout=60)
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert result.returncode == 0, result.stdout + result.stderr
 
 
@@ -335,7 +336,7 @@ def test_killed_process_is_replaced_between_requests(service_executable):
 
 
 def test_kill_during_a_batch_retries_once_on_a_fresh_process(service_executable, monkeypatch):
-    with LeanService(service_executable, timeout=120, batch_cases=4096,
+    with LeanService(service_executable, timeout=HANG_TIMEOUT, batch_cases=4096,
                      batch_bytes=16 << 20) as service:
         first = service.pid
         write = service._write_all
@@ -930,6 +931,96 @@ def test_bad_or_missing_handshake_is_unavailable(tmp_path, behaviour):
     with pytest.raises(CheckerUnavailable, match="handshake"):
         service.start()
     assert service.pid is None and service.stats["starts"] == 2 and service.stats["retries"] == 1
+    service.close()
+
+
+def test_users_keep_the_wall_clock_defaults(tmp_path, monkeypatch):
+    """Load reproducer (W6a generator, Lean authority, a 2 h 14 min suite): the
+    5-second default is the users'; without a setting a request still waits 5 s (a
+    start 30 s). Each default is checked at the wait it gives: the services start under
+    the suite's settings and answer within HANG_TIMEOUT, so no real child runs against
+    a default (tests/conftest.py refuses one)."""
+    from ve.backends import lean_service
+    assert (lean_service.INTERACTIVE_TIMEOUT, lean_service.STARTUP_TIMEOUT) == (5.0, 30.0)
+    waits = []
+    roundtrip = LeanService._roundtrip
+
+    def recorded(self, mode, cases_text, count, timeout, *rest):
+        waits.append(timeout)
+        return roundtrip(self, mode, cases_text, count, HANG_TIMEOUT, *rest)
+    monkeypatch.setattr(LeanService, "_roundtrip", recorded)
+    case = {"id": "a", "ast": [["top"]]}
+    with LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True) as service, \
+            LeanService(fake(tmp_path, "ok"), timeout=3, allow_unlisted_build=True) as fixed:
+        for variable in ("VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"):
+            monkeypatch.delenv(variable)
+        service.run("evaluate", [case])
+        service.run("evaluate", [case], timeout=7)
+        fixed.run("evaluate", [case])
+    assert waits == [5.0, 7, 3]
+    assert lean_service.configured_seconds("VE_LEAN_SERVICE_STARTUP_TIMEOUT", 30.0) == 30.0
+
+    class Unstarted:
+        """A service process that is never started: two ends of a pipe."""
+        def __init__(self, argv, **options):
+            read, write = os.pipe()
+            self.stdout, self.stdin = open(read, "rb", buffering=0), open(write, "wb", buffering=0)
+
+        def poll(self):
+            return 0
+
+        def wait(self, timeout=None):
+            return 0
+    starts = []
+
+    def handshake(self, deadline):
+        starts.append(deadline)
+        raise lean_service._Failure("instrumented start")
+    monkeypatch.setattr(lean_service, "subprocess", SimpleNamespace(
+        Popen=Unstarted, PIPE=subprocess.PIPE, TimeoutExpired=subprocess.TimeoutExpired))
+    monkeypatch.setattr(lean_service, "time", SimpleNamespace(monotonic=lambda: 0.0))
+    monkeypatch.setattr(LeanService, "_read_line", handshake)
+    for startup_timeout in (None, 4):
+        with pytest.raises(CheckerUnavailable, match="instrumented start"):
+            LeanService(fake(tmp_path, "ok"), startup_timeout=startup_timeout, address_space=None,
+                        allow_unlisted_build=True).start()
+    assert starts == [30.0, 30.0, 4, 4]  # one retry each
+
+
+def test_the_setting_replaces_the_request_and_startup_defaults(tmp_path, monkeypatch):
+    """A request (or a start) slower than the setting is stopped at the setting,
+    retried once and recovered: the setting, not the 5 s (30 s) default, is the
+    wait, and a shared pool created earlier follows a later setting."""
+    monkeypatch.setenv("VE_LEAN_SERVICE_TIMEOUT", "0.5")
+    service = LeanService(fake(tmp_path, "flaky"), allow_unlisted_build=True)
+    with service:
+        assert service.run("evaluate", [{"id": "a", "ast": [["top"]]}])[0]["status"] == "ok"
+        assert service.stats["retries"] == 1 and service.stats["starts"] == 2
+    monkeypatch.setenv("VE_LEAN_SERVICE_STARTUP_TIMEOUT", "0.5")
+    remaining = []
+    read_line = LeanService._read_line
+
+    def recorded(self, deadline):
+        remaining.append(deadline - time.monotonic())
+        return read_line(self, deadline)
+    monkeypatch.setattr(LeanService, "_read_line", recorded)
+    silent = LeanService(fake(tmp_path, "silent"), allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match="handshake"):
+        silent.start()
+    silent.close()
+    # Both handshake waits end within the setting, not 30 s after the start.
+    assert len(remaining) == 2 and all(r <= 0.5 for r in remaining), remaining
+
+
+@pytest.mark.parametrize("variable", ["VE_LEAN_SERVICE_TIMEOUT", "VE_LEAN_SERVICE_STARTUP_TIMEOUT"])
+@pytest.mark.parametrize("value", ["", "0", "-1", "nan", "inf", "five"])
+def test_a_setting_that_is_not_positive_seconds_is_refused(tmp_path, monkeypatch, variable, value):
+    monkeypatch.setenv(variable, value)
+    service = LeanService(fake(tmp_path, "ok"), allow_unlisted_build=True)
+    with pytest.raises(CheckerUnavailable, match=variable) as caught:
+        service.run("evaluate", [{"id": "a"}])
+    assert not isinstance(caught.value, VEError)
+    assert service.stats["starts"] == 0 and service.pid is None
     service.close()
 
 

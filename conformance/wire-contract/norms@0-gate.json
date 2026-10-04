@@ -1,0 +1,5262 @@
+{
+  "all_check_count": 30,
+  "boundary_problems": [],
+  "boundary_without_record": 0,
+  "call_snapshot_cases": 486,
+  "call_snapshot_difference_count": 0,
+  "call_snapshot_differences": [],
+  "checks_without_first": {
+    "lean": [
+      "4.3"
+    ],
+    "python": [
+      "4.3"
+    ]
+  },
+  "checks_without_masked": {
+    "lean": [
+      "4.3"
+    ],
+    "python": [
+      "4.3"
+    ]
+  },
+  "class_differences": [],
+  "class_rule_exempt": {
+    "1.1": 188,
+    "3.8b": 93
+  },
+  "contract": "norms@0",
+  "coverage_met": true,
+  "coverage_unmet": {
+    "adjacent_phase_pairs": [],
+    "first": [],
+    "masked": []
+  },
+  "coverage_unmet_reasons": {
+    "4.3": "No source of the unit's domain fails the check. It is in the table because the including unit runs it, and it is witnessed in that unit's gate, as `w1/4.3` (D4)."
+  },
+  "deferred": {
+    "lean": 0,
+    "python": 0
+  },
+  "deferred_share": {
+    "lean": 0.0,
+    "python": 0.0
+  },
+  "feasibility": {
+    "coarse": 1,
+    "met": true,
+    "n1": 14,
+    "n2": 6,
+    "of": 24,
+    "t3": 3,
+    "threshold": null,
+    "total": 20
+  },
+  "first_check_count": {
+    "lean": 29,
+    "python": 29
+  },
+  "handler_reaching_cases": 1161,
+  "lean_route_changes": [
+    {
+      "cases": 12,
+      "check": "1.1",
+      "example": {
+        "case": "A:environment-defined+profile-missing",
+        "record_text": "defined declarations require the definitions@0 profile",
+        "route_text": "UnsupportedProfile: norms@0 is required"
+      }
+    },
+    {
+      "cases": 86,
+      "check": "3.1",
+      "example": {
+        "case": "0:unit-field",
+        "record_text": "InvalidInput: expected norm object",
+        "route_text": "fields do not match: expected [norm], got [extra, norm]"
+      }
+    },
+    {
+      "cases": 22,
+      "check": "3.2",
+      "example": {
+        "case": "0:norm-shape",
+        "record_text": "InvalidInput: expected norm object",
+        "route_text": "object expected"
+      }
+    },
+    {
+      "cases": 39,
+      "check": "3.3",
+      "example": {
+        "case": "0:norm-fields",
+        "record_text": "InvalidInput: invalid norm fields",
+        "route_text": "fields do not match: expected [name, predicate, sign, guard, unless, over], got [guard, name, predicate, sign, unless]"
+      }
+    },
+    {
+      "cases": 21,
+      "check": "3.4",
+      "example": {
+        "case": "A:unless-shape+guard-sort",
+        "record_text": "InvalidInput: unless and over must be arrays",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 11,
+      "check": "3.5",
+      "example": {
+        "case": "A:over-shape+guard-predicate-name",
+        "record_text": "InvalidInput: unless and over must be arrays",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 119,
+      "check": "3.6",
+      "example": {
+        "case": "0:predicate-type",
+        "record_text": "InvalidInput: rule predicate and precedence edges must be strings",
+        "route_text": "String expected"
+      }
+    },
+    {
+      "cases": 49,
+      "check": "3.7",
+      "example": {
+        "case": "0:over-item",
+        "record_text": "InvalidInput: rule predicate and precedence edges must be strings",
+        "route_text": "String expected"
+      }
+    },
+    {
+      "cases": 21,
+      "check": "3.9a",
+      "example": {
+        "case": "A:carve-out-depth+sign-type",
+        "record_text": "ResourceLimit: formula depth exceeds 64",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 10,
+      "check": "3.9b",
+      "example": {
+        "case": "A:carve-out-shape+sign-type",
+        "record_text": "array expected",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 22,
+      "check": "4.1",
+      "example": {
+        "case": "A:name-class+sign-type",
+        "record_text": "InvalidInput: invalid rule name 'A0'",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 9,
+      "check": "4.4",
+      "example": {
+        "case": "A:predicate-unregulated+sign-type",
+        "record_text": "UnknownSymbol: regulated predicate c",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 4,
+      "check": "4.7a",
+      "example": {
+        "case": "A:sign-type+guard-arity",
+        "record_text": "TypeMismatch: Predicate 'c' has arity 1, not 2",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 35,
+      "check": "4.7b",
+      "example": {
+        "case": "0:guard-predicate-name",
+        "record_text": "UnknownSymbol: Unknown predicate '<not a string>'",
+        "route_text": "invalid indexed formula"
+      }
+    },
+    {
+      "cases": 2,
+      "check": "4.7c",
+      "example": {
+        "case": "A:sign-type+guard-scope",
+        "record_text": "UnboundVariable: Variable index 1 is outside its scope",
+        "route_text": "InvalidInput: invalid sign or too many carve-outs"
+      }
+    },
+    {
+      "cases": 5,
+      "check": "4.7d",
+      "example": {
+        "case": "0:nodes-before-type",
+        "record_text": "ResourceLimit: AST exceeds 10,000 nodes",
+        "route_text": "UnknownSymbol: Unknown predicate 'd'"
+      }
+    },
+    {
+      "cases": 12,
+      "check": "4.7e",
+      "example": {
+        "case": "0:guard-string-binder",
+        "record_text": "UnsupportedProfile: $string quantification requires data stage 2",
+        "route_text": "UnknownSymbol: Unknown binder sort '$string'"
+      }
+    }
+  ],
+  "legacy_code_differences": [
+    {
+      "case": "0:profile-missing",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "0:guard-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "0:carve-out-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "0:guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "0:guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "0:predicate-unregulated",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "0:guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "0:guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "0:guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "0:guard-string-binder",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "0:nodes-before-type",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown predicate 'd'"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds 10,000 nodes"
+      ]
+    },
+    {
+      "case": "A:profile-missing+rules-limit",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:norm-fields+carve-out-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+carve-out-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+carve-out-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-shape",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-depth",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-reach-first",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-index",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:name-repeat+predicate-unregulated",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:name-repeat+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:name-repeat+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:name-repeat+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:name-repeat+guard-string-binder",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+carve-out-limit",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+guard-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+rules-nodes",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+carve-out-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+guard-string-binder",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+nodes-before-type",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-arity",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "TypeMismatch",
+        "Predicate 'c' has arity 1, not 2"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-predicate",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 'd'"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-scope",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Variable index 1 is outside its scope"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-string-binder",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:carve-out-limit+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:carve-out-limit+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:carve-out-limit+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:carve-out-limit+guard-string-binder",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-string-binder",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:guard-shape+name-class",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+name-class",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-index+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-constant+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unless-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+sign-type",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+precedence-cycle",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:guard-shape+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+layer-cycle",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-sort+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-class",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-constant",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-index+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+sign-type",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+rules-nodes",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-predicate-name+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+name-class",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:nodes-before-type+precedence-cycle",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown predicate 'd'"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds 10,000 nodes"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-unknown",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-string-binder+over-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:guard-shape+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-index+carve-out-limit",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-string-binder",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-arity",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-index",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-limit",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-depth-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+over-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-arity",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-constant+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-string-binder+over-unknown",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-scope",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-index+sign-type",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-string-binder+precedence-cycle",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-sort+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+sign-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-constant+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-repeat",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-shape+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:nodes-before-type+over-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown predicate 'd'"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds 10,000 nodes"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-reach-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-predicate-name+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-unregulated",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:nodes-before-type+over-unknown",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown predicate 'd'"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds 10,000 nodes"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-item",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-class",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-limit",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+nodes-before-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+over-unknown",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-sort",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-predicate-name",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-sort+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+sign-type",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-shape+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+precedence-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+carve-out-limit",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-fields",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+sign-type",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+precedence-cycle",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-scope",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-predicate-name+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-shape+over-unknown",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-unregulated+sign-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+sign-type+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-index+predicate-unregulated+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-constant+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+predicate-unregulated+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-fields+guard-reach-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing+rules-limit",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:profile-missing+rules-nodes+over-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-predicate+over-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:norm-fields+carve-out-depth+guard-constant",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-reach-first+name-class",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-index+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-shape+name-repeat",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+predicate-unregulated+sign-type",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-shape+name-class",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-predicate-name+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-reach-first+sign-type",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-class+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field+carve-out-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+rules-nodes",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-index+sign-type",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+sign-type+guard-predicate",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-depth+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-index+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+predicate-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+carve-out-limit",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-unregulated+guard-predicate-name",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-predicate+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 'd'"
+      ]
+    },
+    {
+      "case": "A:norm-fields+carve-out-shape+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-limit+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field+guard-constant",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-repeat+sign-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-fields+carve-out-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-constant+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unless-shape+guard-constant",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field+carve-out-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-index+name-class",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-string-binder+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+carve-out-depth+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-class+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-shape+name-class+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field+guard-sort",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-predicate+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+guard-depth-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing+norm-fields",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:guard-shape+sign-type+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-repeat+guard-arity",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-type+name-repeat",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-string-binder+over-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-shape+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing+guard-constant",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-reach-first+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+predicate-unregulated+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-shape+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-reach-first+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-fields+unless-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+name-repeat+guard-arity",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-shape+sign-type",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-depth+carve-out-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+carve-out-predicate+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-class+guard-predicate-name",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-unregulated+over-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-shape+guard-reach-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+sign-type+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+name-class+sign-type",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-reach-first+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-shape+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:norm-fields+carve-out-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-class+over-unknown",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-depth+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:name-repeat+guard-constant+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-item+guard-depth-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+predicate-unregulated+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+carve-out-shape+guard-arity",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+guard-reach-first+name-class",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-class+predicate-unregulated",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-sort+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing+unless-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-item+sign-type",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-shape+carve-out-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-item+guard-sort",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-repeat+guard-predicate-name",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-fields+guard-depth-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-index+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:sign-type+guard-scope+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Variable index 1 is outside its scope"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+name-class+guard-scope",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-type+over-item",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-depth+name-class",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-shape+name-repeat",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-arity+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-shape+carve-out-shape+sign-type",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+guard-string-binder+over-predicate",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:over-shape+carve-out-shape+guard-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-reach-first+name-class",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-reach-first+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+name-repeat+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-shape+over-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-index+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-index+sign-type+carve-out-limit",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-index+precedence-cycle",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+predicate-unregulated+carve-out-limit",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-shape+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+carve-out-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-shape+unless-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+guard-reach-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-shape+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-item+guard-predicate-name",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-scope+carve-out-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-reach-first+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+name-class+guard-string-binder",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field+norm-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-repeat+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+sign-type+carve-out-limit",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-reach-first+carve-out-limit",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+norm-fields+rules-nodes",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+predicate-unregulated+sign-type",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+predicate-unregulated+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+carve-out-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-constant+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:over-item+guard-index+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-class+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:unit-field+guard-shape+carve-out-limit",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unless-shape+guard-predicate-name",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+carve-out-predicate+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing+over-shape",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-reach-first+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:norm-fields+carve-out-depth+guard-sort",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-limit+guard-predicate-name+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown predicate 7"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-scope+over-unknown",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-predicate+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-type+guard-constant",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-index+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-type+carve-out-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+predicate-unregulated+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+sign-type+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+guard-sort",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-index+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-index+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+name-class+predicate-unregulated",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unless-shape+guard-depth-first",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-index+name-class",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:predicate-unregulated+guard-string-binder+precedence-cycle",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-shape+predicate-unregulated",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:norm-fields+guard-shape+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:environment-defined+profile-missing+precedence-depth",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-string-binder+precedence-cycle",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+guard-predicate-name+precedence-cycle",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+sign-type+guard-predicate-name",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:carve-out-depth+name-repeat+sign-type",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+name-class+layer-cycle",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+name-repeat+guard-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:carve-out-predicate+guard-string-binder+over-unknown",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "A:profile-missing+over-item+guard-index",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-shape+guard-constant+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-predicate-name+over-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:carve-out-limit+guard-sort+over-unknown",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unless-shape+guard-predicate",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+predicate-type+over-unknown",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:profile-missing+carve-out-depth+guard-sort",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-reach-first+name-repeat+carve-out-predicate",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "A:profile-missing+guard-shape+over-unknown",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-shape+sign-type+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "A:unless-shape+guard-index+name-repeat",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unless-shape+name-class",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "A:guard-index+name-class+over-predicate",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "A:profile-missing+unit-field+guard-index",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B0",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B2",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "B5",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B6",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B8",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B12",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown binder sort 5"
+      ]
+    },
+    {
+      "case": "B13",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B18",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B22",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B24",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown predicate 'd'"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds 10,000 nodes"
+      ]
+    },
+    {
+      "case": "B28",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "B29",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B33",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "B35",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "B36",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "B40",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B43",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "B44",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "B50",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "B52",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "B53",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "B60",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B63",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B68",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B76",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B81",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B82",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B83",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B85",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "B91",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "B93",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "B94",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B95",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "B100",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: Unknown binder sort '$string'"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "$string quantification requires data stage 2"
+      ]
+    },
+    {
+      "case": "B110",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B111",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B113",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B115",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B119",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B125",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B126",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B127",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B128",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B134",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B136",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "B137",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B142",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "ResourceLimit",
+        "AST exceeds depth or node budget"
+      ]
+    },
+    {
+      "case": "B143",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "Incorrect fields (missing=[], unknown=['defined'])"
+      ]
+    },
+    {
+      "case": "B155",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B157",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B161",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B165",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B166",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B168",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B169",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "B171",
+      "lean": [
+        "InvalidInput",
+        "Natural number expected"
+      ],
+      "python": [
+        "UnboundVariable",
+        "Invalid variable index"
+      ]
+    },
+    {
+      "case": "B175",
+      "lean": [
+        "InvalidInput",
+        "array expected"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "B179",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B180",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B184",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed term"
+      ],
+      "python": [
+        "UnknownSymbol",
+        "Unknown constant 5"
+      ]
+    },
+    {
+      "case": "B185",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B186",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "B194",
+      "lean": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: norms@0 is required"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnsupportedProfile: norms@0 is required"
+      ]
+    },
+    {
+      "case": "R:generated:19",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:20",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:24",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:26",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:38",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:40",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:76",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:79",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:85",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:86",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:87",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:88",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:93",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:98",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid rule name"
+      ],
+      "python": [
+        "TypeMismatch",
+        "Predicate 'c' expects ('user',), received ('assistant',)"
+      ]
+    },
+    {
+      "case": "R:generated:112",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:114",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:119",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:122",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:127",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:152",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:153",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:172",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:188",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "TypeMismatch",
+        "Predicate 'c' has arity 2, not 1"
+      ]
+    },
+    {
+      "case": "R:generated:191",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:213",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:215",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:217",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:220",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:221",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:226",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:227",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:233",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "TypeMismatch",
+        "Predicate 'c' expects ('user',), received ('assistant',)"
+      ]
+    },
+    {
+      "case": "R:generated:238",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:244",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:245",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:283",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:302",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid sign or too many carve-outs"
+      ],
+      "python": [
+        "TypeMismatch",
+        "Predicate 'c' expects ('user',), received ('assistant',)"
+      ]
+    },
+    {
+      "case": "R:generated:305",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:333",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:341",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:347",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:349",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:356",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:364",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "Comparisons require order@0"
+      ]
+    },
+    {
+      "case": "R:generated:371",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate zz"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate zz"
+      ]
+    },
+    {
+      "case": "R:generated:373",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:generated:377",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:394",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "AST nodes must be nonempty tagged JSON arrays"
+      ]
+    },
+    {
+      "case": "R:generated:395",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:generated:398",
+      "lean": [
+        "InvalidInput",
+        "invalid indexed formula"
+      ],
+      "python": [
+        "SyntaxError",
+        "Unknown AST tag or incorrect arity: 'unary'"
+      ]
+    },
+    {
+      "case": "R:test:fixture:N28",
+      "lean": [
+        "UnknownSymbol",
+        "UnknownSymbol: regulated predicate c"
+      ],
+      "python": [
+        "InvalidInput",
+        "UnknownSymbol: regulated predicate c"
+      ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
+      "lean": [
+        "InvalidInput",
+        "InvalidInput: invalid regulated role or default for x_permitted"
+      ],
+      "python": [
+        "UnsupportedProfile",
+        "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+      ]
+    }
+  ],
+  "legacy_crashes": [
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'int' is not a container or iterable"
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'bool' is not a container or iterable"
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'int' is not a container or iterable"
+    },
+    {
+      "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]",
+      "lean": "UnsupportedProfile: profiles must be a sorted unique array",
+      "python": "TypeError: argument of type 'bool' is not a container or iterable"
+    }
+  ],
+  "legacy_verdict_differences": [
+    {
+      "case": "L:defined-layer",
+      "lean": [
+        "InvalidInput",
+        "DependencyCycle: d, x_required"
+      ],
+      "python": null
+    },
+    {
+      "case": "L:constant-verbalisation",
+      "lean": [
+        "InvalidInput",
+        "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+      ],
+      "python": null
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u",
+      "lean": [
+        "InvalidInput",
+        "fields do not match: expected [sort, description], got [description, sort, verbalisation]"
+      ],
+      "python": null
+    }
+  ],
+  "masking_not_required": {
+    "1.1": "the first instance of the table: no earlier check exists, and 8.3 requires a masking witness for every check after it"
+  },
+  "mismatches": [
+    {
+      "case": "L:constant-verbalisation",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    },
+    {
+      "case": "R:test:recorded:tests/test_norm_defaults.py::test_document_graph_admits_the_layer_of_fill_u",
+      "problems": [
+        "engines differ on fault or clean"
+      ]
+    }
+  ],
+  "oracle": "fault catalogue: hand-written check, path and args per fault, text from the contract's template, table position from the contract; inherited text from each legacy validator",
+  "public_class_differences": 0,
+  "public_diagnostic_changes": [
+    {
+      "check": "2.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:rules-limit",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "rules",
+        "record_code": "NORMS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: rules"
+      },
+      "text_changes": 1
+    },
+    {
+      "check": "3.1",
+      "class_differences": 0,
+      "example": {
+        "case": "0:unit-field",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "Incorrect fields (missing=[], unknown=['extra'])",
+        "record_code": "NORMS_INVALID_UNIT",
+        "record_text": "InvalidInput: expected norm object"
+      },
+      "text_changes": 86
+    },
+    {
+      "check": "3.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:norm-shape",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "Expected a JSON object",
+        "record_code": "NORMS_INVALID_UNIT",
+        "record_text": "InvalidInput: expected norm object"
+      },
+      "text_changes": 22
+    },
+    {
+      "check": "3.3",
+      "class_differences": 0,
+      "example": {
+        "case": "0:norm-fields",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "Incorrect fields (missing=['over'], unknown=[])",
+        "record_code": "NORMS_INVALID_RULE_FIELDS",
+        "record_text": "InvalidInput: invalid norm fields"
+      },
+      "text_changes": 39
+    },
+    {
+      "check": "3.8b",
+      "class_differences": 0,
+      "example": {
+        "case": "0:guard-reach-first",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "AST exceeds depth or node budget",
+        "record_code": "NORMS_INVALID_FORMULA",
+        "record_text": "invalid indexed formula"
+      },
+      "text_changes": 46
+    },
+    {
+      "check": "4.1",
+      "class_differences": 0,
+      "example": {
+        "case": "R:generated:3",
+        "legacy_code": "InvalidInput",
+        "legacy_text": "InvalidInput: invalid rule name 1",
+        "record_code": "NORMS_INVALID_NAME",
+        "record_text": "InvalidInput: invalid rule name '1'"
+      },
+      "text_changes": 15
+    },
+    {
+      "check": "4.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:name-repeat",
+        "legacy_code": "DuplicateDeclaration",
+        "legacy_text": "rule a0",
+        "record_code": "NORMS_DUPLICATE_DECLARATION",
+        "record_text": "DuplicateDeclaration: rule a0"
+      },
+      "text_changes": 56
+    },
+    {
+      "check": "6.2",
+      "class_differences": 0,
+      "example": {
+        "case": "0:precedence-depth",
+        "legacy_code": "ResourceLimit",
+        "legacy_text": "precedence depth",
+        "record_code": "NORMS_RESOURCE_LIMIT",
+        "record_text": "ResourceLimit: precedence depth"
+      },
+      "text_changes": 1
+    }
+  ],
+  "residual": {
+    "lean": 1,
+    "python": 0
+  },
+  "revision": 1,
+  "s5_pre": "open: a legacy verdict difference is not fixed (s5-pre.md)",
+  "source_modified_count": 0,
+  "status": "shadow",
+  "text_delta_count": 220,
+  "tiers": {
+    "0": 38,
+    "A": 1056,
+    "B": 200,
+    "legacy_differences": 2,
+    "replayed": 1639
+  }
+}
