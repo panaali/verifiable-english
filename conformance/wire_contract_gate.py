@@ -342,6 +342,23 @@ def record_test_inputs(output, unit=PILOT):
                           cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
 
 
+def record_all_test_inputs(output, units):
+    """`record_test_inputs` for several units in one run: the union of their recorded test files
+    runs once, and each unit records only the inputs of its own files, as its own run would.
+    `output` gets a JSON object from each unit to its `[test id, environment, norms]` rows.
+    Returns the pytest process."""
+    files = {unit_of(unit).contract: sorted({path.relative_to(ROOT).as_posix()
+                                            for pattern in unit_of(unit).recorded_tests
+                                            for path in ROOT.glob(pattern)}) for unit in units}
+    environment = {**os.environ, "VE_CONTRACT_INPUTS": str(output), "VE_CONTRACT_UNITS": json.dumps(files),
+                   "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
+    environment.pop("VE_CONTRACT_UNIT", None)
+    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "tests.contract_input_recorder",
+                           "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live", "-n", "auto",
+                           *sorted({path for paths in files.values() for path in paths})],
+                          cwd=ROOT, env=environment, capture_output=True, text=True, timeout=3600)
+
+
 def write_test_inputs(unit=PILOT):
     """Rewrite the unit's test inputs (`TEST_INPUTS` for the pilot): the recorded test inputs that the rest
     of the corpus does not hold."""
