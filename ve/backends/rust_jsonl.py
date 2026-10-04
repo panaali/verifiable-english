@@ -10,6 +10,7 @@ import subprocess
 from ..errors import ResourceLimit
 from .diagnostics import require_ok
 from .lean_service import CheckerUnavailable, _decode_json
+from .service_schema import same_json
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
@@ -101,7 +102,9 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
         record = _decode_json(lines[0])
     except (ValueError, RecursionError):
         raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
-    if not isinstance(record, dict) or record.get("id") != case.get("id", ""):
+    # Rust echoes the case id (`""` for a case without one) with its JSON type: a record
+    # without the field, or `false` for case 0, names no submitted case.
+    if not isinstance(record, dict) or "id" not in record or not same_json(record["id"], case.get("id", "")):
         raise CheckerUnavailable("CheckerUnavailable: mismatched Rust response id")
     if (record.get("status") == "error") != (completed.returncode == 1):
         raise CheckerUnavailable("CheckerUnavailable: Rust exit status disagrees with response")

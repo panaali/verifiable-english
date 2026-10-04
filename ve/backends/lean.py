@@ -11,8 +11,9 @@ result is ever substituted, and a malformed row is never read as a rejection.
 Every one-shot transport here reads the runner's output with `read_rows`, the
 one row contract of every runner: `status` is `ok` or `error`; a row naming its
 case by position (`case_index`) carries only that position and an `error`; any
-other row names the submitted case `id`, with its JSON type (a string id, an
-integer index: `false` is not case 0); an `error` row carries a string `error`
+other row has an `id` field naming the submitted case, with its JSON type (a
+string id, an integer index: `false` is not case 0), and `null` for a case
+without one (a row without the field names no case); an `error` row carries a string `error`
 and, on a coded route only, a string `code`; an `ok` row carries neither. Output
 that is no Unicode text (a `\\ud800` escape) is no answer. Each
 binding's manifest `response` gives every field an `ok` row of the operation
@@ -32,6 +33,8 @@ from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
 from .lean_service import _decode_json
+# JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`.
+from .service_schema import same_json as _same
 
 
 def run_soft_case(executable, case, *, timeout: float = 120) -> dict:
@@ -85,7 +88,9 @@ def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str
         if status != "error" or row.keys() - {"valid"} != {"status", "case_index", "error"} \
                 or row.get("valid", False) is not False:
             return "a row naming its case by position carries more than its position and an error"
-    elif not _same(row.get("id"), case.get("id")):
+    # The id field is required: the runners write it, `null` for a case without one
+    # (`j.getObjValD "id"`), so a row that omits it names no case at all.
+    elif "id" not in row or not _same(row["id"], case.get("id")):
         return "result ids do not match the submitted cases"
     if status == "error":
         if type(row.get("error")) is not str:
@@ -153,17 +158,6 @@ def conforms(value, spec: str) -> bool:
 
 def _size(value) -> int:
     return value if type(value) is int else len(value)
-
-
-def _same(value, expected) -> bool:
-    """JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`."""
-    if type(value) is not type(expected):
-        return False
-    if type(value) is list:
-        return len(value) == len(expected) and all(map(_same, value, expected))
-    if type(value) is dict:
-        return value.keys() == expected.keys() and all(_same(value[k], expected[k]) for k in value)
-    return value == expected
 
 
 def row_problem(case: dict, row, index: int, response: dict, counts: dict | None = None) -> str | None:
