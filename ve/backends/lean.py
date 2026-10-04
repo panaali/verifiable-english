@@ -28,6 +28,7 @@ import sys
 from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
+from .lean_service import _decode_json
 
 
 def run_soft_case(executable, case):
@@ -39,7 +40,7 @@ def run_soft_case(executable, case):
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise VEError(f"soft route unavailable: {exc}") from exc
     try:
-        rows = json.loads(completed.stdout)
+        rows = _decode_json(completed.stdout)
         if type(rows) is not list or len(rows) != 1 or type(rows[0]) is not dict:
             raise ValueError("invalid result shape")
     except ValueError as exc:
@@ -61,9 +62,13 @@ def soft_error_problem(row: dict) -> str | None:
     """Why a soft route error row is not a rejection, or None: its message is text, and so is the code it
     names, when it names one (`SoftNorms/Run.lean` `runCaseReported`). Without a code, the rejection keeps
     VEError's. Which codes the route may name is the soft-norms@0 contract's table, a diagnostic module
-    that stays off this verdict path (tests/test_softnorms_contract.py); tools/difffuzz.py checks it."""
+    that stays off this verdict path (tests/test_softnorms_contract.py); tools/difffuzz.py checks it. A row
+    that names its case by position (`case_index`) is the error of a case the route could not read: the
+    route never ran it, so the row names no code."""
     if "error" in row and type(row["error"]) is not str:
         return "an error row's message is not text"
+    if "id" not in row and "code" in row:
+        return "a row for a case the route could not read names a code"
     if "code" in row and (type(row["code"]) is not str or not row["code"]):
         return "an error row's code is not text"
     return None
@@ -250,7 +255,7 @@ def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 1
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CheckerUnavailable("ve_norm_defaults_route is unavailable") from exc
     try:
-        rows = json.loads(completed.stdout)
+        rows = _decode_json(completed.stdout)
     except ValueError as exc:
         raise CheckerUnavailable("ve_norm_defaults_route returned invalid JSON") from exc
     if (type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows)
@@ -273,7 +278,7 @@ def run_readings_cases(executable, cases: list[dict], *, timeout: float = 120) -
     if completed.returncode not in (0, 1):
         raise CheckerUnavailable("ve_readings_route failed")
     try:
-        rows = json.loads(completed.stdout)
+        rows = _decode_json(completed.stdout)
     except ValueError as exc:
         raise CheckerUnavailable("ve_readings_route returned invalid JSON") from exc
     if (type(rows) is not list or len(rows) != len(cases) or not all(type(r) is dict for r in rows)

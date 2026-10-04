@@ -70,9 +70,16 @@ Every row a Lean or Rust runner prints is checked before it is read, against the
 | `ve conformance` (Rust) | the statuses and fields of the operation Rust reads the case as (`RUST_ROWS`, `rust_operation`); an error row's `{code, message}` and no other field |
 
 Each batch must also print one row per case, bound to its case by id (or, for a case the runner could not read,
-by position) with JSON types kept apart, and exit 1 exactly when some row is an error. A batch that does not
-answer (a crash or signal, no answer within `HANG_TIMEOUT`, a runner that cannot start, output that is not UTF-8
-or nests too deep to decode) is split until the case is alone, and that case did not answer. That, and a
+by position) with JSON types kept apart, and exit 1 exactly when some row is an error. The row of a case the
+runner could not read is `POSITION_ROW` (`status`, `case_index`, `error`, and `valid: false` in the v0 runner's
+certificate and order modes, as the service schemas' `case_error`) and nothing else: the runner never ran the
+case's route, so a route's own code, an answer field or an `id` on it is a malformed row. Runner output is read by
+the runners' one reader (`ve.backends.lean_service._decode_json`, which the production readers share), which
+rejects duplicate fields, non-finite constants and strings that are not Unicode text (a `\ud800` escape). A
+batch that does not answer (a crash or signal, no answer within `HANG_TIMEOUT`, a runner that cannot start,
+output that is not UTF-8 or Unicode text, or nests too deep to decode) is split until the case is alone, and that
+case did not answer. Every answer of every engine enters the comparison through one gate (`held`): one that cannot
+be signed and stored as JSON text is Python's crash, or a Lean or Rust runner that did not answer. That, and a
 runner's refusal of a case's package, are values of their own types (`NoAnswer`, `Refused`), never rows: a
 printed `{"id": "0", "framing": "oops"}` is a malformed row, not a refusal, and a runner's own error code
 `framing` is a code (`refusal` alone makes a refusal).
@@ -156,6 +163,8 @@ entry may sit under a neighbouring id.
 | Every runner row is checked against its producer's schema; dropped and retyped fields are no answer (`test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers`) | AGENT | done |
 | A route's own code is kept, compared with its Python counterpart and checked against its contract's codes (`test_a_routes_own_code_is_kept_compared_and_checked`, `test_the_compared_code_of_an_own_code_is_its_contract_class`, `test_every_own_code_route_has_a_python_counterpart_that_agrees_on_its_seeds`; the production reader `run_soft_case` refuses a code or message that is not text: `test_the_soft_route_reader_checks_the_code_it_keeps`) | AGENT | done |
 | Runner transport is not a row: printed `framing`/`panic` members and every transport failure are no answer, isolated by bisection (`test_a_printed_framing_member_is_a_malformed_row_not_a_refusal`, `test_a_runner_that_fails_in_transport_is_isolated_and_does_not_answer`, `test_a_runner_whose_output_is_not_utf8_does_not_answer`, `test_a_runner_code_named_framing_is_a_code_not_a_refusal`) | AGENT | done |
+| Rows of unread cases carry the position row alone, on every Lean runner; no route code is taken from one, in the fuzzer or in production (`test_a_row_for_a_case_the_route_could_not_read_names_no_route_code`, `test_every_runner_rows_for_unread_cases_carry_the_position_row_alone`, `test_the_position_row_is_the_service_schemas_case_error`, `test_the_production_soft_reader_takes_no_code_from_an_unread_case`) | AGENT | done |
+| Runner output that is not Unicode text is no answer, and no answer the fuzzer keeps can crash it (`test_runner_output_that_is_not_unicode_text_does_not_answer`, `test_every_answer_the_fuzzer_keeps_is_json_text`, `test_the_runner_reader_rejects_text_that_is_not_unicode`) | AGENT | done |
 | Baseline seeded with today's disagreements, each with a follow-up id | AGENT | done |
 | Review of the baseline's grouping into DF-1 to DF-18 | HUMAN | deferred to the branch review (owner: reviewer) |
 | The nightly script calls `--deep 20` | EXTERNAL | deferred: the nightly script is outside the repository (owner: orchestrator); the instruction is in `docs/ARCHITECTURE-LAYERS.md` |
