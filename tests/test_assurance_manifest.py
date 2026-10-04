@@ -380,8 +380,12 @@ def test_lean_bindings_name_real_executables_modes_and_kinds():
     executables = _lean_executables()
     for op in OPS:
         for binding in (op["lean"] or {}).get("bindings", ()):
-            root = ROOT / "lean" / (executables[binding["executable"]] + ".lean")
-            if binding["mode"]:
+            if binding["executable"] == "ve_service":
+                # The service's modes are its handshake's (lean/VE/Service/Protocol.lean `modes`).
+                from ve.backends.service_schema import MODES
+                assert binding["mode"] in MODES, (op["id"], binding)
+            elif binding["mode"]:
+                root = ROOT / "lean" / (executables[binding["executable"]] + ".lean")
                 assert f'"{binding["mode"]}"' in root.read_text(), (op["id"], binding)
             sources = [ROOT / path for path in binding["dispatch"]]
             assert sources and all(path.exists() for path in sources), (op["id"], binding)

@@ -1,6 +1,6 @@
 """Admission of content-bearing reading sets by the S1 Lean route, with Python's and Rust's agreement.
 
-`validate` sends the document to `ve_readings_route` (`readings-validate`, docs/spec/composition-s1.md 8.4) and
+`validate` sends the document to the Lean readings route (service mode `readings-route`, `readings-validate`, docs/spec/composition-s1.md 8.4) and
 regenerates the answer in Python (`ve/readings_s1.py`); the two must be byte for byte the same (4.1 rule 3), and
 each recorded situation's evaluations are replayed by Rust, untrusted, whose values must agree (10). Lean's
 answer is the authority: its diagnostic rejects the document, and a disagreement of Python or Rust with it is
@@ -12,25 +12,21 @@ checks them in Python, and the report says so.
 """
 from __future__ import annotations
 
-from pathlib import Path
-
-from .backends.lean import run_readings_cases
+from .backends.relay import decide, rows
 from .errors import CheckerUnavailable, VEError
 from .readings_s1 import Admission, answer, wire
 
-LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_readings_route"
-
-
 def document_wire(units, reading_sets):
-    """The document as `ve_readings_route` reads it: every unit with its kind (1.2), content when it has one."""
+    """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
     return {"units": [{"id": unit["id"], "kind": unit["kind"],
                        **({"content": unit["content"]} if unit.get("content") is not None else {})}
                       for unit in units],
             "reading_sets": reading_sets}
 
 
-def run_lean(cases, *, executable=LEAN_ROUTE):
-    return run_readings_cases(executable, wire(cases))
+def run_lean(cases):
+    """Lean's readings route rows for `cases`, in order, rejections included."""
+    return rows("readings-route", wire(cases))
 
 
 def _message(exc):
@@ -40,8 +36,6 @@ def _message(exc):
 def rights_findings(side, label):
     """The rights chain's findings of one candidate's document (4.4): `limitationScope` without certificates
     and `noDistinction`, as the rights route reports them. Python has no implementation of either."""
-    from .rights_route import LEAN_ROUTE as RIGHTS_ROUTE
-    from .backends.lean import run_soft_case
     units = [{"source_units": list(side.unit_ids)}]
     for c in side.contents:
         if isinstance(c, tuple):
@@ -49,10 +43,10 @@ def rights_findings(side, label):
         elif c.kind != "assertion":
             units.append(c.raw)
     environment = wire(side.senv.frame_data)
-    scope = run_soft_case(RIGHTS_ROUTE, {"id": "scope", "kind": "rights-scope", "environment": environment,
-                                         "document": wire(units), "certificates": {}})
-    elaborated = run_soft_case(RIGHTS_ROUTE, {"id": "elaborate", "kind": "rights-elaborate",
-                                              "environment": environment, "document": wire(units)})
+    scope, elaborated = decide("rights", [
+        {"id": "scope", "kind": "rights-scope", "environment": environment, "document": wire(units),
+         "certificates": {}},
+        {"id": "elaborate", "kind": "rights-elaborate", "environment": environment, "document": wire(units)}])
     return list(scope["findings"]) + list(elaborated["findings"])
 
 
@@ -87,7 +81,7 @@ def rust_check(admission, s, i, j, situation, Ti, Tj, facts):
                                      f"on situation {facts['situation']}")
 
 
-def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=True):
+def validate(environment, units, reading_sets, *, rust=True):
     """Return Lean's checked reading data, or raise its first diagnostic.
 
     Transport failure, a malformed response and any disagreement of Python's or Rust's regeneration with Lean's
@@ -97,11 +91,10 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=Tr
     # One normalised input (`wire`: an explicit null is an absent field) for Lean and Python alike.
     environment, document = wire(environment), wire(document_wire(units, reading_sets))
     case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
-    rows = run_lean([case], executable=executable)
-    row = rows[0]
+    row = run_lean([case])[0]
     if row["status"] == "ok" and (type(row.get("content_bearing")) is not bool or
                                   row["content_bearing"] and type(row.get("sets")) is not list):
-        raise CheckerUnavailable("ve_readings_route returned an invalid answer")
+        raise CheckerUnavailable("the Lean readings route returned an invalid answer")
     try:
         python = {"status": "ok", **answer(environment, document, chain_findings=rights_findings,
                                            rust=rust_check if rust else None)}
@@ -118,13 +111,13 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=Tr
     return row
 
 
-def separate_many(environment, units, reading_sets, queries, *, executable=LEAN_ROUTE):
+def separate_many(environment, units, reading_sets, queries):
     """`readings-separate` for each (set, situation id, other reading): Lean's answer per query, or its
     diagnostic (the search's check, 8.5). The document carries the candidate situations."""
     environment, document = wire(environment), wire(document_wire(units, reading_sets))
     cases = [{"id": f"q{n}", "kind": "readings-separate", "environment": environment, "document": document,
               "set": s, "situation": sid, "other": other} for n, (s, sid, other) in enumerate(queries)]
-    return run_lean(cases, executable=executable) if cases else []
+    return run_lean(cases) if cases else []
 
 
 # ---------------------------------------------------------------------------------------------------------------

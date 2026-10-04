@@ -16,7 +16,7 @@ import threading
 import time
 
 import pytest
-from hypothesis import HealthCheck, given, settings, strategies as st
+from hypothesis import HealthCheck, assume, given, settings, strategies as st
 
 from subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavailable, LeanService,
@@ -436,8 +436,7 @@ def placeholders(value, line):
 
 
 hello = {"service": "ve-lean@1", "protocol": 2,
-         "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
-                   "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms"],
+         "modes": __MODES__,
          "codes": __CODES__,
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
@@ -565,7 +564,7 @@ for line in sys.stdin:
 
 def fake(tmp_path, behaviour):
     script = tmp_path / "fake.py"
-    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)))
+    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)).replace("__MODES__", json.dumps(list(MODES))))
     wrapper = tmp_path / f"fake-{behaviour}"
     wrapper.write_text(f"#!/bin/sh\nexec {sys.executable} {script} {behaviour} {tmp_path / 'marker'}\n")
     wrapper.chmod(0o755)
@@ -845,6 +844,11 @@ def test_nested_boolean_id_substitution_is_operational_failure(tmp_path, mode):
     _scripted_response_rejected(tmp_path, mode, case, row)
 
 
+# The statement-layer route modes (lean-first batch 1) whose rows are `common.json` route_row.
+OPEN_ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "quantity",
+                    "norm-defaults", "discourse", "readings-route")
+
+
 _SCHEMA_SEEDS = {
     "evaluate": ({"id": "c"}, {"id": "c", "status": "ok", "values": [True],
                               "value": True, "canonical": ""}),
@@ -875,6 +879,10 @@ _SCHEMA_SEEDS = {
                {"id": "c", "status": "ok", "checked": 1, "lemmas": ["a" * 64]}),
     "family-norms": ({"id": "c", "kind": "norms-certificate"},
                      {"id": "c", "status": "ok", "valid": True, "background": 0, "layers": 1}),
+    "risk-eval": ({"conditions": []}, {"status": "ok", "results": []}),
+    "diagnose": ({"id": "c", "unit": "soft-norms@0", "kind": "soft-elaborate"},
+                 {"id": "c", "status": "ok", "outcome": "clean"}),
+    **{mode: ({"id": "c", "kind": "k"}, {"id": "c", "status": "ok"}) for mode in OPEN_ROUTE_MODES},
 }
 
 
@@ -885,6 +893,8 @@ _SCHEMA_SEEDS = {
      "extra-row-field", "wrong-row-type", "wrong-error-shape", "wrong-digest", "wrong-index",
      "unbound-row")))
 def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation):
+    # A statement-layer route's answer is open beyond its binding (common.json route_ok).
+    assume(not (mutation == "extra-row-field" and mode in OPEN_ROUTE_MODES))
     case, row = _SCHEMA_SEEDS[mode]
     answer = {"id": "__nonce__", "status": "ok", "mode": mode, "results": [row.copy()],
               "counts": {"cases": 1, "bytes": "__bytes__", "errors": 0}}
@@ -901,7 +911,10 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
     elif mutation == "extra-row-field":
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
-        field = ("admissible" if mode == "english" else
+        field = ("id" if mode in OPEN_ROUTE_MODES else
+                 "outcome" if mode == "diagnose" else
+                 "results" if mode == "risk-eval" else
+                 "admissible" if mode == "english" else
                  "valid" if mode in ("check-certificate", "order", "norms", "model") else
                  "environment_id" if mode == "environment" else
                  "identity_id" if mode == "identity" else

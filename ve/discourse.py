@@ -12,7 +12,7 @@ expansions with one typed parse are the competitors; the recorded target must
 be the unique one and the expansion must reproduce the unit's content. Other
 reference forms are recorded but not elaborated in Python.
 
-None of this decides an admission. The Lean route (`ve_discourse_route`) is the
+None of this decides an admission. The Lean route (service mode `discourse`) is the
 semantic authority: it reads the same bytes, and a `ve-document@2` document's
 verdict, unit statuses, references and report id are its answer
 (`validate_discourse`). Python's own check (`python_discourse`) gives editor
@@ -25,9 +25,6 @@ import collections
 import errno
 import hashlib
 from itertools import product
-import json
-import os
-from pathlib import Path
 import re
 
 from .admission import token
@@ -1268,15 +1265,8 @@ def python_discourse(doc):
 
 # The Lean authority (docs/spec/discourse.md 3.4, 8) ----------------------------
 
-_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_discourse_route"
-_ROUTE_TIMEOUT = 300
 _CASE_ID = "python-admission"
 _STATUSES = {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
-
-
-def route_executable():
-    """The `ve_discourse_route` executable: `VE_DISCOURSE_ROUTE`, else the lake build."""
-    return Path(os.environ.get("VE_DISCOURSE_ROUTE") or _ROUTE)
 
 
 def is_discourse_text(raw):
@@ -1328,39 +1318,29 @@ def import_files(raw, directory):
 
 
 def lean_admission(raw, directory):
-    """Lean's admission of a `ve-document@2` text (`ve_discourse_route`, kind `admission`), with the
-    sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
-    Anything else (no executable, a crash, a timeout, output that is not one answer to this case)
+    """Lean's admission of a `ve-document@2` text (service mode `discourse`, kind `admission`), with
+    the sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
+    Anything else (no service, a crash, a deadline, a row that is not one answer to this case)
     is `CheckerUnavailable`, never a verdict; there is no fallback to Python. What no UTF-8 JSON
     can carry never admits: a text that is no UTF-8 text is `InvalidInput` (Lean reads a document
     as a string), and a named file that is none is left out of the case, so Lean still diagnoses
     the document, but Lean's admission, which read that file as absent, is `InvalidInput`."""
-    executable = route_executable()
-    if not executable.is_file():
-        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route {executable} is not built")
     try:
         text = raw.decode("utf-8")
     except UnicodeError:
         raise VEError("InvalidInput: the document is not UTF-8 text") from None
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
-    from .backends.lean import run_discourse_case
-    returncode, stdout, stderr = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
-    try:
-        rows = json.loads(stdout)
-    except ValueError:
-        rows = None
-    row = rows[0] if type(rows) is list and len(rows) == 1 and type(rows[0]) is dict else {}
+    from .backends.relay import rows
+    [row] = rows("discourse", [case])
     status = row.get("status")
-    well_formed = (row.get("id") == _CASE_ID and returncode == (1 if status == "error" else 0) and (
+    well_formed = (row.get("id") == _CASE_ID and (
         type(row.get("error")) is str if status == "error" else
         status == "ok" and row.get("admitted") in (True, "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict
         and all(type(v) is str and v in _STATUSES for v in row["statuses"].values())))
     if not well_formed:
-        detail = stderr.decode("utf-8", "replace").strip()[-300:]
-        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case"
-                                 + (f" ({detail})" if detail else ""))
+        raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case")
     if status == "ok" and binary:
         raise VEError(f"InvalidInput: import file {binary[0]} is not UTF-8 text")
     return row

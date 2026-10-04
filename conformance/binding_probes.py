@@ -154,13 +154,13 @@ def _surface():
             "source": print_document(env, document_from_data(env, case["ast"]))}
 
 
-C, N = "ve_conformance", "ve_norms_route"
+C, S = "ve_conformance", "ve_service"
 BUILDERS = {
-    ("wire.diagnose", "ve_diagnose", "soft-norms@0", "soft-elaborate"):
-        lambda: {"id": "wire-soft", "kind": "soft-elaborate",
+    ("wire.diagnose", S, "diagnose", "soft-elaborate"):
+        lambda: {"id": "wire-soft", "kind": "soft-elaborate", "unit": "soft-norms@0",
                  "environment": _soft_wire_root()["environment"], "norms": []},
-    ("wire.diagnose", "ve_diagnose", "soft-norms@0", "admission"):
-        lambda: {"id": "wire-admission", "kind": "admission",
+    ("wire.diagnose", S, "diagnose", "admission"):
+        lambda: {"id": "wire-admission", "kind": "admission", "unit": "soft-norms@0",
                  "environment": _soft_wire_root()["environment"],
                  "document": {"units": [], "graph": {"root": "leaf", "nodes": []}}},
     ("parse", C, "", None): lambda: _evaluate_case(_legacy(), "parse", source="true.\n"),
@@ -179,13 +179,13 @@ BUILDERS = {
     ("definitions.elaborate", C, "route", "background"): lambda: _route_fixture("elaborated-document", "background"),
     ("definitions.elaborate", C, "route", "dependency-order"):
         lambda: _route_fixture("dependency-order", "dependency-order"),
-    ("norms.elaborate", N, "", "norms-elaborate"): lambda: _norms_case("norms-elaborate"),
-    ("norms.conflict", N, "", "norms-conflict"): _norms_conflict,
-    ("norms.certificate", N, "", "norms-certificate"): _norms_certificate,
+    ("norms.elaborate", S, "norms", "norms-elaborate"): lambda: _norms_case("norms-elaborate"),
+    ("norms.conflict", S, "norms", "norms-conflict"): _norms_conflict,
+    ("norms.certificate", S, "norms", "norms-certificate"): _norms_certificate,
     ("admission", C, "route", "admission"): lambda: _route_fixture("admission", "admission"),
-    ("admission", N, "", "admission"): _norms_admission,
-    ("admission", "ve_norm_defaults_route", "", "admission"): _norm_defaults_admission,
-    ("admission", "ve_quantity", "", "document"): _quantity_admission,
+    ("admission", S, "norms", "admission"): _norms_admission,
+    ("admission", S, "norm-defaults", "admission"): _norm_defaults_admission,
+    ("admission", S, "quantity", "document"): _quantity_admission,
     ("label", C, "route", "label"): lambda: _route_fixture("labels", "label"),
     ("graph.compose", C, "route", "certificate"): lambda: _certificate_case(_route(), "edge", "certificate"),
     ("graph.compose", C, "check-certificate", None): lambda: _certificate_case(_legacy(), "edge"),

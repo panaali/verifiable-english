@@ -10,7 +10,6 @@ formulas are regenerated from the environment.
 """
 from __future__ import annotations
 
-from pathlib import Path
 import re
 from typing import NamedTuple
 
@@ -475,18 +474,13 @@ def admit_document(environment, document) -> dict:
     return execute("admission", case, lambda: _admit_document_python(env, document), lean=lean)
 
 
-QUANTITY_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_quantity"
-
-
 def _lean_quantity_admission(env, document) -> dict:
-    """W6 quantity admission by Lean `ve_quantity` (case kind `document`)."""
+    """W6 quantity admission by the Lean quantity route (service mode `quantity`, case kind
+    `document`); a rejection raises Lean's diagnostic."""
     from .backends import lean as backend
-    from .backends.diagnostics import checker_error
-    [row] = backend.run("admission", QUANTITY_ROUTE,
+    [row] = backend.run("admission", None,
                         [{"id": "admission", "kind": "document", "environment": env.to_dict(),
-                          "document": document}], runner="ve_quantity", timeout=60.0)
-    if row["status"] == "error":
-        raise checker_error(row["error"])
+                          "document": document}], runner="ve_service", mode="quantity")
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
 
