@@ -1,6 +1,7 @@
 """A pytest plugin that records every input of one wire unit that the tests themselves submit.
 
-The unit is `VE_CONTRACT_UNIT` (`soft-norms@0` by default). For `norms@0` and `norm-defaults@0`
+The unit is `VE_CONTRACT_UNIT` (`soft-norms@0` by default), or each unit of `VE_CONTRACT_UNITS` with
+the test files whose inputs count for it. For `norms@0` and `norm-defaults@0`
 (wire-contract-s5.md 7.1) it also wraps each unit's `legacy_validation` and `public_rejection`, the two
 admission routes, `NormDocument` and `UnspecifiedDocument` built over an environment, and the Lean norm
 routes and `ve_diagnose` with a norm unit; a source is recorded for the unit whose domain holds it. For the
@@ -33,15 +34,22 @@ def _from_tests():
     return caller.parent == TESTS or caller == SOFT_CONFORMANCE
 
 
-# The unit whose inputs are recorded (`VE_CONTRACT_UNIT`, the pilot by default; wire-contract-s5.md 7.1).
-UNIT = os.environ.get("VE_CONTRACT_UNIT", "soft-norms@0")
+# The unit whose inputs are recorded (`VE_CONTRACT_UNIT`, the pilot by default; wire-contract-s5.md 7.1),
+# or several at once: `VE_CONTRACT_UNITS`, a JSON object from each unit to the test files whose inputs
+# count for it (each unit's own `recorded_tests`), so that one run records every unit as its own runs would.
+FILES = json.loads(os.environ.get("VE_CONTRACT_UNITS", "null"))
+RECORDING = set(FILES) if FILES is not None else {os.environ.get("VE_CONTRACT_UNIT", "soft-norms@0")}
+UNIT = next(iter(RECORDING)) if len(RECORDING) == 1 else None
 
 
 def _record(environment, norms, unit="soft-norms@0"):
-    if unit != UNIT:
+    if unit not in RECORDING:
+        return
+    label = os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0]
+    if FILES is not None and label.split("::")[0] not in FILES[unit]:
         return
     key = json.dumps([environment, norms], sort_keys=True, default=repr)
-    _RECORDED.setdefault(key, os.environ.get("PYTEST_CURRENT_TEST", "?").rsplit(" ", 1)[0])
+    _RECORDED.setdefault(unit, {}).setdefault(key, label)
 
 
 def _install():
@@ -119,7 +127,7 @@ def _install():
         return original_subprocess(command, *args, **kwargs)
 
     engine.run, softnorms.load_soft_document, subprocess.run = run, load_soft_document, run_process
-    if UNIT != "soft-norms@0":
+    if RECORDING - {"soft-norms@0"}:
         _install_norms()
     soft_route._run = route
     soft_route.admit_soft_document = admit_soft_document
@@ -212,7 +220,24 @@ _install()
 
 
 def pytest_sessionfinish(session, exitstatus):
+    """Write the inputs: one unit's as a list, several as an object from unit to list. Under
+    xdist each worker writes its own `<path>.<worker>` and the controller, which ends after
+    every worker has, merges them: an input recorded by several tests keeps the first test id
+    in order, as a serial run does."""
     path = os.environ.get("VE_CONTRACT_INPUTS")
-    if path:
-        rows = [[label, *json.loads(key)] for key, label in sorted(_RECORDED.items(), key=lambda item: item[1])]
-        Path(path).write_text(json.dumps(rows))
+    if not path:
+        return
+    # Not PYTEST_XDIST_WORKER: a recording run started by a test on a worker inherits it.
+    worker = getattr(session.config, "workerinput", {}).get("workerid")
+    if worker:
+        Path(f"{path}.{worker}").write_text(json.dumps(_RECORDED))
+        return
+    recorded = {unit: dict(_RECORDED.get(unit, {})) for unit in sorted(RECORDING)}
+    for part in sorted(Path(path).parent.glob(f"{Path(path).name}.gw*")):
+        for unit, inputs in json.loads(part.read_text()).items():
+            for key, label in inputs.items():
+                recorded[unit][key] = min(label, recorded[unit].get(key, label))
+        part.unlink()
+    rows = {unit: [[label, *json.loads(key)] for key, label in sorted(inputs.items(), key=lambda item: (item[1], item[0]))]
+            for unit, inputs in recorded.items()}
+    Path(path).write_text(json.dumps(rows[UNIT] if FILES is None else rows))

@@ -7,8 +7,9 @@ and large domains (the domain limit, and full domains under nested binders),
 across the quantity runner and every route family, with both reproducers from
 the W6a loop review. Python, Lean and Rust must each report `ResourceLimit`,
 and the work each spends is bounded by measures that do not grow with machine
-load: Python's own evaluation units, and the CPU seconds of each Lean and Rust
-batch (neither reports its units). The same cases also go through the public
+load: Python's own evaluation units, and a kernel limit on the CPU seconds of
+each Lean and Rust batch (neither reports its units), which stops a runaway.
+What each batch spends is benchmarked by tools/bench/test_perf.py. The same cases also go through the public
 API under the Lean authority, which must report `ResourceLimit` without any
 operation falling back to Python.
 """
@@ -41,7 +42,7 @@ RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "rel
 pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
 SEEDS = range(3)
-CPU = 60  # CPU seconds per backend per batch; each batch spends under 10 alone
+CPU = 60  # the runaway guard: CPU seconds per backend per batch; each spends under 10 alone
 # Every generated case stops at its first exhausted budget: at most MAX_EVALUATIONS
 # charged units and the one refused charge that reports the limit.
 CASE_UNITS = MAX_EVALUATIONS + 1
@@ -273,9 +274,11 @@ def meter_python(monkeypatch):
 
 
 def run(command, cases):
+    # The kernel stops a batch that spends CPU seconds past the limit (a runaway guard: it
+    # then exits by a signal, which fails here). What each batch spends is a benchmark
+    # against a stored baseline (tools/bench/test_perf.py), not a test criterion.
     completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
     assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
-    assert cpu < CPU, (command[0], cpu)
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
     return results
