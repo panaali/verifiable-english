@@ -61,7 +61,7 @@ class S1Environment:
         data = wire(data)
         self.data = data
         self.env = _environment(data)
-        self.profiles = list(data["profiles"])
+        self.profiles = list(self.env.profiles)
         self.lower_profiles = [p for p in self.profiles if p != READINGS]
         self.lower_data = {**data, "profiles": self.lower_profiles}
         self.chain = ("rights" if "rights@0" in self.profiles else
