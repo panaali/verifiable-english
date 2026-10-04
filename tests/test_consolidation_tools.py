@@ -5,6 +5,7 @@ import base64
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -175,10 +176,56 @@ def test_output_diff_static_invocations_cover_every_mode_and_corpus():
     assert {exe for exe, _ in lean_output_diff.CASE_MODES} <= set(lean_output_diff.executables())
 
 
+def test_output_diff_every_executable_has_inputs():
+    """A `lean_exe` with no static inputs could change unseen (review B, consolidate-b1)."""
+    static = {i.exe for i in lean_output_diff.static_invocations()}
+    assert static | lean_output_diff.HARNESS_EXECUTABLES == set(lean_output_diff.executables())
+
+
+@pytest.mark.skipif(not (lean_output_diff.BIN / "ve_service").is_file(), reason="ve_service is not built")
+def test_output_diff_harness_inputs_cover_the_other_executables():
+    work = lean_output_diff.harness_invocations(lean_output_diff.BIN)
+    assert {i.exe for i in work} == lean_output_diff.HARNESS_EXECUTABLES
+    session = next(i for i in work if i.exe == "ve_service")
+    # Some request lines are malformed on purpose (the request errors); read the mode by prefix.
+    modes = {re.match(r'\{"id":"out-\d+","mode":"([\w-]+)"', line)[1] for line in session.stdin.decode().splitlines()}
+    assert {"evaluate", "route", "norms", "english", "identity"} <= modes
+    decoded = [lean_output_diff.run(lean_output_diff.BIN / i.exe, i) for i in work if i.exe == "ve_response_decode"]
+    # The genuine responses are accepted, so the decoder runs past its input checks.
+    assert all(code == 0 and b'"accept"' in out for code, out, _ in decoded)
+
+
+def test_output_diff_fails_when_a_rebuilt_executable_has_no_inputs(tmp_path, monkeypatch, capsys):
+    """The reviewer's case: a rebuilt `ve_service` with zero invocations passed with exit 0."""
+    names = lean_output_diff.executables()
+    monkeypatch.setattr(lean_output_diff, "static_invocations", lambda root=ROOT: [
+        lean_output_diff.Invocation("ve_norms_route", "a", ())])
+    monkeypatch.setattr(lean_output_diff, "harness_invocations", lambda baseline: [])
+    base, new = tmp_path / "base", tmp_path / "new"
+    fake_build(base, names, "echo same")
+    fake_build(new, names, "echo same")
+    (new / "ve_service").write_text("#!/bin/sh\necho same\n# rebuilt\n")
+    manifest = {"commit": "c", "executables": {n: lean_output_diff.digest(base / n) for n in names}}
+    (base / "manifest.json").write_text(json.dumps(manifest))
+    assert lean_output_diff.compare(base, new, [], tmp_path) == 1
+    assert "no invocation of the rebuilt executables ve_service" in capsys.readouterr().err
+    (new / "ve_service").write_text((base / "ve_service").read_text())
+    assert lean_output_diff.compare(base, new, [], tmp_path) == 0
+    # Under --all every executable is compared, so every one needs inputs.
+    assert lean_output_diff.compare(base, new, [], tmp_path, everything=True) == 1
+    monkeypatch.setattr(lean_output_diff, "static_invocations", lambda root=ROOT: [
+        lean_output_diff.Invocation(name, "a", ()) for name in names])
+    assert lean_output_diff.compare(base, new, [], tmp_path, everything=True) == 0
+    # A recorded invocation of an executable the baseline lacks is an error, not a skip.
+    unknown = [lean_output_diff.Invocation("ve_gone", "a", ())]
+    assert lean_output_diff.compare(base, new, unknown, tmp_path) == 2
+
+
 def test_output_diff_reports_a_changed_output(tmp_path, monkeypatch):
     names = lean_output_diff.executables()
     monkeypatch.setattr(lean_output_diff, "static_invocations", lambda root=ROOT: [
-        lean_output_diff.Invocation("ve_norms_route", "demo", ("x",), b"in")])
+        lean_output_diff.Invocation(name, "demo", ("x",), b"in") for name in names])
+    monkeypatch.setattr(lean_output_diff, "harness_invocations", lambda baseline: [])
     base, same, other = tmp_path / "base", tmp_path / "same", tmp_path / "other"
     fake_build(base, names, 'echo "$@"; cat')
     fake_build(same, names, 'echo "$@"; cat')
@@ -190,6 +237,7 @@ def test_output_diff_reports_a_changed_output(tmp_path, monkeypatch):
     assert lean_output_diff.compare(base, other, [], tmp_path) == 1
     monkeypatch.setattr(lean_output_diff, "static_invocations", lambda root=ROOT: [])
     assert lean_output_diff.compare(base, same, [], tmp_path) == 1  # nothing compared is not evidence
+    assert lean_output_diff.compare(base, other, [], tmp_path) == 1
 
 
 def test_output_diff_runs_only_rebuilt_executables(tmp_path, monkeypatch, capsys):
