@@ -58,6 +58,7 @@ class Summary:
     imports: list[ImportEdge] = field(default_factory=list)
     constants: frozenset[str] = frozenset()      # string literals, for path and program mentions
     identifiers: frozenset[str] = frozenset()    # every Name id, attribute and import alias
+    attributes: frozenset[str] = frozenset()     # names read as `something.NAME`
 
 
 def _digest(node: ast.AST) -> str:
@@ -203,7 +204,7 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
             references = _references(node)
         summary.statements.append(Statement(body, frozenset(_binds(node)), references, _effect(node)))
     parts = module.split(".") if package else module.split(".")[:-1]
-    constants, identifiers = set(), set()
+    constants = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
@@ -220,9 +221,9 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
                                                               for a in node.names), None))
         elif isinstance(node, ast.Constant) and isinstance(node.value, str) and len(node.value) < 300:
             constants.add(node.value)
-    identifiers = set(_references(tree))
     summary.constants = frozenset(constants)
-    summary.identifiers = frozenset(identifiers)
+    summary.identifiers = _references(tree)
+    summary.attributes = frozenset(node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute))
     return summary
 
 

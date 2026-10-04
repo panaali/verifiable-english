@@ -223,19 +223,25 @@ def merge(results: dict[str, dict], previous: dict) -> None:
 
 
 def find_map(base: str, root: Path = ROOT) -> Path | None:
-    """The cached map nearest below `base`: an ancestor recorded most recently."""
+    """The cached map nearest below `base`: of the maps recorded at its ancestors,
+    the one with the fewest commits between it and `base`. $VE_TESTMAP overrides."""
     if os.environ.get("VE_TESTMAP"):
         return Path(os.environ["VE_TESTMAP"])
     directory = cache_dir()
     if not directory.is_dir():
         return None
-    maps = sorted(directory.glob("*.json.gz"), key=lambda p: p.stat().st_mtime, reverse=True)
-    for path in maps[:30]:
+    best = None
+    for path in sorted(directory.glob("*.json.gz"), key=lambda p: p.stat().st_mtime, reverse=True)[:30]:
         commit = path.name.split(".", 1)[0]
-        if subprocess.run(("git", "merge-base", "--is-ancestor", commit, base), cwd=root,
-                          capture_output=True).returncode == 0:
-            return path
-    return None
+        distance = subprocess.run(("git", "rev-list", "--count", f"{commit}..{base}"), cwd=root,
+                                  capture_output=True, text=True)
+        if distance.returncode or subprocess.run(
+                ("git", "merge-base", "--is-ancestor", commit, base), cwd=root,
+                capture_output=True).returncode:
+            continue
+        if best is None or int(distance.stdout) < best[0]:
+            best = (int(distance.stdout), path)
+    return best[1] if best else None
 
 
 def load(path: Path) -> dict:
@@ -246,23 +252,14 @@ def load(path: Path) -> dict:
     return data
 
 
-def record(args: argparse.Namespace) -> int:
-    if git("status", "--porcelain", "--untracked-files=no") and not args.allow_dirty:
-        print("refusing to record a map for a modified tree; commit first or pass --allow-dirty",
-              file=sys.stderr)
-        return 2
-    commit = git("rev-parse", "HEAD")
-    if not args.no_build:
-        build_natives()
-    selected = args.units or units()
-    work = Path(args.work) if args.work else Path(tempfile.gettempdir()) / f"ve-testmap-{commit}"
+def record_units(selected: list[str], work: Path, jobs: int, timeout: float) -> dict[str, dict]:
+    """Run each unit in its own recorded process; a rerun resumes from `work`."""
     work.mkdir(parents=True, exist_ok=True)
     tracked = tracked_paths()
-    print(f"recording {len(selected)} units with {args.jobs} jobs in {work}", flush=True)
-    results: dict[str, dict] = {}
+    print(f"recording {len(selected)} units with {jobs} jobs in {work}", flush=True)
 
     def one(unit):
-        result = run_unit(unit, work, args.timeout, tracked)
+        result = run_unit(unit, work, timeout, tracked)
         print(f"  {unit}: exit {result['exit']} in {result['seconds']} s, "
               f"{len(result['f'])} functions{', OPAQUE' if result['opaque'] else ''}", flush=True)
         return unit, result
@@ -270,28 +267,88 @@ def record(args: argparse.Namespace) -> int:
     site = site_packages()
     install_hook(site)
     try:
-        with ThreadPoolExecutor(args.jobs) as pool:
-            results.update(pool.map(one, selected))
+        with ThreadPoolExecutor(jobs) as pool:
+            return dict(pool.map(one, selected))
     finally:
         remove_hook(site)
-    previous = find_map(commit)
-    if previous is not None and not args.no_merge:
-        merge(results, load(previous))
-    data = build_map(results, commit)
-    output = Path(args.output) if args.output else cache_dir() / f"{commit}.json.gz"
+
+
+def write_map(data: dict, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_name(output.name + ".tmp")
     with gzip.open(temporary, "wt", encoding="utf-8") as handle:
         json.dump(data, handle, separators=(",", ":"))
     temporary.replace(output)
-    failed = [unit for unit in selected if results[unit]["exit"] not in (0, 5)]
-    print(f"wrote {output} ({output.stat().st_size // 1024} KiB); "
-          f"{len(failed)} units failed and are left to the static graph: {failed}")
+
+
+def clean_head(args: argparse.Namespace) -> str | None:
+    if git("status", "--porcelain", "--untracked-files=no") and not args.allow_dirty:
+        print("refusing to record a map for a modified tree; commit first or pass --allow-dirty",
+              file=sys.stderr)
+        return None
+    return git("rev-parse", "HEAD")
+
+
+def finish(args: argparse.Namespace, work: Path, data: dict, recorded: list[str]) -> int:
+    output = Path(args.output) if args.output else cache_dir() / f"{data['commit']}.json.gz"
+    write_map(data, output)
+    failed = [unit for unit in recorded if data["status"][unit]["exit"] not in (0, 5)]
+    print(f"wrote {output} ({output.stat().st_size // 1024} KiB); recorded {len(recorded)} units; "
+          f"{len(failed)} failed and are left to the static graph: {failed}")
     if not args.keep:
-        shutil.rmtree(work)
+        shutil.rmtree(work, ignore_errors=True)
     else:
         print(f"kept results and logs in {work}")
     return 0
+
+
+def record(args: argparse.Namespace) -> int:
+    commit = clean_head(args)
+    if commit is None:
+        return 2
+    if not args.no_build:
+        build_natives()
+    selected = args.units or units()
+    work = Path(args.work) if args.work else Path(tempfile.gettempdir()) / f"ve-testmap-{commit}"
+    results = record_units(selected, work, args.jobs, args.timeout)
+    previous = find_map(commit)
+    if previous is not None and not args.no_merge:
+        merge(results, load(previous))
+    return finish(args, work, build_map(results, commit), selected)
+
+
+def update(args: argparse.Namespace) -> int:
+    """Re-record only the units whose coverage may have changed since the nearest map."""
+    commit = clean_head(args)
+    if commit is None:
+        return 2
+    previous_path = find_map(commit)
+    if previous_path is None:
+        print("no cached map is an ancestor of HEAD; run `record` first", file=sys.stderr)
+        return 1
+    previous = load(previous_path)
+    import select_tests  # the selector decides which recorded edges still hold
+    import source_graph
+    coverage = select_tests.Coverage(previous, previous_path)
+    everything = set(units())
+    uncertain, drift = select_tests.uncertain_since(coverage, source_graph.load(ROOT), everything, commit)
+    redo = sorted(uncertain | (everything - coverage.recorded))
+    print(f"map {previous['commit'][:10]} is {drift} changed files behind; "
+          f"{len(redo)} of {len(everything)} units need recording", flush=True)
+    if args.dry_run:
+        print("\n".join(redo))
+        return 0
+    if redo and not args.no_build:
+        build_natives()
+    work = Path(args.work) if args.work else Path(tempfile.gettempdir()) / f"ve-testmap-{commit}"
+    results = record_units(redo, work, args.jobs, args.timeout) if redo else {}
+    edges = unit_edges(previous)
+    for unit in sorted(everything - set(redo)):
+        # Runs the same as when recorded: none of what it executed or read has changed.
+        results[unit] = {**edges[unit], **previous["status"][unit]}
+    data = build_map(results, commit)
+    data["updated_from"] = previous["commit"]
+    return finish(args, work, data, redo)
 
 
 def main() -> int:
@@ -309,11 +366,19 @@ def main() -> int:
                      "(default: a per-commit directory under the system temporary directory)")
     rec.add_argument("--keep", action="store_true", help="keep per-unit results and logs")
     rec.add_argument("units", nargs="*", help="record only these units (for checks)")
+    upd = sub.add_parser("update", help="re-record only the units whose coverage changed since "
+                         "the nearest earlier map (run after each merge to main)")
+    for option in rec._actions[1:]:
+        if option.dest not in ("units", "no_merge"):
+            upd._add_action(option)
+    upd.add_argument("--dry-run", action="store_true", help="list the units, record nothing")
     show = sub.add_parser("show", help="summarize the map used for HEAD")
     show.add_argument("--map")
     args = parser.parse_args()
     if args.command == "record":
         return record(args)
+    if args.command == "update":
+        return update(args)
     path = Path(args.map) if args.map else find_map("HEAD")
     if path is None:
         print("no cached map is an ancestor of HEAD")
