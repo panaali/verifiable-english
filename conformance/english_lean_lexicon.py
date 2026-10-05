@@ -33,7 +33,7 @@ from ve.printer import _negative_template
 from ve.wire import loads_json
 
 from conformance.english_lean_engine import fold
-from conformance.english_lean_lexer import decimal_value
+from conformance.english_lean_lexer import LexError, decimal_value, lex
 
 ROOT = Path(__file__).resolve().parents[1]
 HOLE = re.compile(r'\{([0-9]+)\}')
@@ -113,10 +113,19 @@ def profile_tables(env) -> dict:
     return {'wordings': wordings, 'negatives': negatives, 'aliases': aliases, 'nouns': nouns}
 
 
+def _one_sentence(text: str) -> bool:
+    """`oneSentence`: the text, with a terminator appended, lexes as exactly one sentence (S2 spec 2.6, V3)."""
+    try:
+        return len(lex(text + '.')) == 1
+    except LexError:
+        return False
+
+
 def _shape_ok(wording: str, arity: int) -> bool:
     holes = HOLE.findall(wording)
     words = [w for w in HOLE.sub(' ', wording).split() if w]
-    return sorted(decimal_value(h) for h in holes) == list(range(arity)) and bool(words)
+    return (sorted(decimal_value(h) for h in holes) == list(range(arity)) and bool(words)
+            and _one_sentence(HOLE.sub(' ', wording)))
 
 
 def negative_template_of(wording: str | None, arity: int) -> str | None:

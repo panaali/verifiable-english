@@ -1,3 +1,4 @@
+import Lean.Data.Json
 import VE.EnglishGrammar.Lexer
 
 /-! The selected lexicon and its validity (docs/spec/english-lean.md 2.9 and 5.8; tier B).
@@ -10,7 +11,9 @@ holds when the five conditions of spec 2.9 hold:
   generated symbol without an English wording makes the lexicon invalid until it gets one.
 - V2 honesty: every selection is an honest wording of its own symbol (declared, profile, mechanical,
   fallback); negatives and aliases are the declared or profile-fixed ones.
-- V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word.
+- V3 shape: a predicate wording has each hole `{0}` to `{k-1}` once, no other hole, and a word; and,
+  with its holes replaced by a space, it lexes as one sentence (S2 spec 2.6, Q6), so no wording puts
+  a terminator inside a rule.
 - V4 distinctness, by `wordingKey`, against what every other symbol declares or selects.
 - V5 polarity: a selected negative is `negativeTemplate` of the selected wording, unless a profile block
   fixes it.
@@ -20,10 +23,12 @@ The lint codes that the DRI's ruling 4 (2026-10-04) moves into Lean validity are
 (V5), and the hole part of `TEMPLATE_SHAPE` (V3). The order rule of `TEMPLATE_SHAPE` and the advisory
 lints stay Python checks; the final list is fixed at the statement review.
 
-`Env` and `Overlay` here are the lexical views that `valid` reads (a draft of S2): the declared wordings,
-nouns and display forms, the arities, and the forms the profile blocks fix (`ProfileForms`, spec 2.9
-notes and O7). The profile forms are computed from the profile blocks in S3; the base environments of
-S2 have none.
+`Env` and `Overlay` here are the lexical views that `valid` reads: the declared wordings, nouns and
+display forms, the arities, and the forms the profile blocks fix (`ProfileForms`, spec 2.9 notes and
+O7). The profile forms are computed from the profile blocks in S3; the base environments of S2 have
+none. S2 adds the signatures that the lexical rules and the actions read (S2 spec 2.3): a predicate's
+argument sorts `args` and a constant's `sort`, and the environment JSON `source`, which only the typed
+check of `VE.EnglishGrammar.Encode` reads.
 -/
 
 namespace VE.EnglishGrammar
@@ -200,8 +205,8 @@ def negativeTemplate (wording : String) (arity : Nat) : Option String :=
       | none => rest
     | none => none
 
-/-- The holes of a wording, in order, and its text with every hole replaced by a space. -/
-def holes (w : String) : List Nat × String :=
+/-- The holes of a wording, in order, and its text with every hole `{k}` replaced by `fill k`. -/
+def fillHoles (w : String) (fill : Nat → String) : List Nat × String :=
   let rec go : Nat → List Char → List Nat → List Char → List Nat × List Char
     | 0, _, hs, out => (hs.reverse, out.reverse)
     | _ + 1, [], hs, out => (hs.reverse, out.reverse)
@@ -211,16 +216,28 @@ def holes (w : String) : List Nat × String :=
         match cs.drop ds.length with
         | '}' :: rest =>
           if ds.isEmpty then go n cs hs (c :: out)
-          else go n rest (ds.foldl (fun k d => 10 * k + (d.toNat - '0'.toNat)) 0 :: hs) (' ' :: out)
+          else
+            let k := ds.foldl (fun k d => 10 * k + (d.toNat - '0'.toNat)) 0
+            go n rest (k :: hs) ((fill k).toList.reverse ++ out)
         | _ => go n cs hs (c :: out)
       else go n cs hs (c :: out)
   match go (w.length + 1) w.toList [] [] with
   | (hs, out) => (hs, String.mk out)
 
-/-- V3 for a predicate wording of arity `k`: each hole `{0}` to `{k-1}` once, no other, and a word. -/
+/-- The holes of a wording, in order, and its text with every hole replaced by a space. -/
+def holes (w : String) : List Nat × String := fillHoles w fun _ => " "
+
+/-- Whether a text, with a terminator appended, lexes as exactly one sentence. -/
+def oneSentence (text : String) : Bool :=
+  match lex (text ++ ".") with
+  | .ok sents => sents.size == 1
+  | .error _ => false
+
+/-- V3 for a predicate wording of arity `k`: each hole `{0}` to `{k-1}` once, no other, a word, and the
+text with its holes replaced by a space lexes as one sentence (S2 spec 2.6). -/
 def shapeOk (w : String) (k : Nat) : Bool :=
   match holes w with
-  | (hs, rest) => decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty
+  | (hs, rest) => decide (hs.mergeSort (· ≤ ·) = List.range k) && !(splitWs rest).isEmpty && oneSentence rest
 
 /-- V3 for a noun or a spelling: no hole. -/
 def noHole (w : String) : Bool := (holes w).1.isEmpty
@@ -235,11 +252,15 @@ structure PredDecl where
   arity : Nat
   wording : Option String := none
   negative : Option String := none
+  /-- The argument sorts in order; `arity = args.length` for a decoded environment (S2 spec 2.3). -/
+  args : List String := []
   deriving Repr
 
 structure ConstDecl where
   name : String
   display : Option String := none
+  /-- The constant's sort (S2 spec 2.3). -/
+  sort : String := ""
   deriving Repr
 
 /-- The forms that profile blocks fix (spec 2.9 notes, O7): wordings, negatives, aliases, nouns. -/
@@ -250,6 +271,9 @@ structure ProfileForms where
   nouns : List (String × String) := []
   deriving Repr
 
+/-- The environment JSON is shown compressed. -/
+instance reprJson : Repr Lean.Json := ⟨fun j _ => .text j.compress⟩
+
 /-- The lexical view of an environment that `Lexicon.valid` reads: every sort, predicate and constant,
 the symbols that profile blocks generate included, with their declared wordings. -/
 structure Env where
@@ -258,6 +282,8 @@ structure Env where
   constants : List ConstDecl
   profiles : List String := []
   forms : ProfileForms := {}
+  /-- The validated environment JSON; read by `typedDocument` only (S2 spec 2.3). -/
+  source : Lean.Json := .null
   deriving Repr
 
 /-- The replaced wordings of an English vocabulary overlay. A predicate entry replaces both the

@@ -86,7 +86,7 @@ were discharged by S0 and S1a and are only inherited here.
 
 | # | Converged edit | Where applied in this stage |
 |---|---|---|
-| 1 | **Size.** No fixed ceiling; the attribute-property product is factored | inherited: S0 measured it (measured.md, section 2); the factoring is S3's. The spec's fixture grammar for the base profile has 117 rules and `|G|` = 479 (spec 8.1), measured, not estimated |
+| 1 | **Size.** No fixed ceiling; the attribute-property product is factored | inherited: S0 measured it (measured.md, section 2); the factoring is S3's. The spec's fixture grammar for the base profile has 127 rules and `|G|` = 504 (spec 8.1, as amended by spec section 17: 98 fixed rows), measured, not estimated |
 | 2 | **Cost.** Cap invariant, rule-suffix memoisation, measured steps | inherited: S1a/S1b (s1.md, section 2). S2 owes the two remaining G1a figures (S2.6) |
 | 2a | **G1a is a pass gate** | inherited; the two owed budgets keep that rule: met, or a reviewed revision (S2.6, G2) |
 | 3 | **Parity.** Tree correspondence; compare verdicts, formulas and witness multiplicity, not rule sets | S2.6; spec 2.11 writes the correspondence out, with the capitalised-spelling case that S0 left open (spec 11, Q5); G2 compares the three |

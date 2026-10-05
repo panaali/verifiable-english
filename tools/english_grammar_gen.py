@@ -6,9 +6,10 @@
 docs/spec/english-lean-s2.md 2.9 (S2 plan, S2.0). Each profile's fixed rules are one JSON source under
 `ve/english_grammar/` (an array of rows `{"tag", "lhs", "act", <action data>, "rhs", "status"?}`); a row with
 `"status": "proposed"` stays in the source and out of the table (2.12). `--write` renders every source as an
-`Array (Rule Terminal)` literal in `lean/VE/EnglishGrammar/Fixed/`, with the nonterminal catalogue of 2.4 and
-its ranks, the action of each rule as the `act` text of the `english.grammar` export (4.4) and the SHA-256 of
-the source; it renders `actionsVersion` from the lock file, and rewrites the lock file
+`Array FixedRow` literal in `lean/VE/EnglishGrammar/Fixed/` (each row's action a `FixedAct` constructor of
+`VE.EnglishGrammar.Catalogue` with its data), with the nonterminal names of 2.4 and their ranks, the action of
+each rule as the `act` text of the `english.grammar` export (4.4) and the SHA-256 of the source; it renders
+`actionsVersion` from the lock file, and rewrites the lock file
 `ve/english_grammar/LOCK.json`: the SHA-256 of each table source, each generated table and every Lean file
 that holds a trusted definition of base 2.13 (base 2.12), with `actions_version`.
 
@@ -16,8 +17,8 @@ that holds a trusted definition of base 2.13 (base 2.12), with `actions_version`
 differing rule tag, or the `proposed` row found in the table), when a hashed file differs from the lock
 (naming the file and the two hashes), when a Lean file under `lean/VE/Grammar/` or `lean/VE/EnglishGrammar/`
 is neither hashed nor listed as untrusted, and, against the lock of `--base` (the commit hook passes HEAD's),
-when a hash changed and `actions_version` did not. The fixed rule `k` of a table has `act := k`: `fixedActs`
-holds one action per fixed rule, in order (spec 5.2).
+when a hash changed and `actions_version` did not. The fixed rule `k` of a table has `act := k` (`fixedRules`):
+`fixedActs` holds one action per fixed row, in order (spec 5.2).
 
 The module reads files only through a `read(path) -> bytes | None` and a `listing() -> paths` function, so the
 commit hook runs the same checks on staged blobs; it imports nothing outside the standard library.
@@ -46,8 +47,8 @@ PROFILES = {
 
 # The Lean files that hold a trusted definition of base 2.13 (base 2.12): the tokens and their matching, the
 # lexer, the derivation checker, well-formedness, the reading relations, lexicon validity, the surface syntax
-# and its rejection codes. S2's `lexRules`, action library, `meaning` and AST encoding join this list when
-# their modules exist (spec 5.1).
+# and its rejection codes, and S2's catalogue and action data, `lexRules`, action library, AST encoding and
+# typed check, `meaning` and the readers (spec 5.1).
 TRUSTED = (
     "lean/VE/Grammar/Basic.lean",
     "lean/VE/Grammar/Derives.lean",
@@ -57,6 +58,11 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Lexer.lean",
     "lean/VE/EnglishGrammar/Lexicon.lean",
     "lean/VE/EnglishGrammar/Syntax.lean",
+    "lean/VE/EnglishGrammar/Catalogue.lean",
+    "lean/VE/EnglishGrammar/Rules.lean",
+    "lean/VE/EnglishGrammar/Actions.lean",
+    "lean/VE/EnglishGrammar/Encode.lean",
+    "lean/VE/EnglishGrammar/Read.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {
@@ -68,6 +74,8 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/Examples.lean": "fixtures",
     "lean/VE/EnglishGrammar/FoldAgree.lean": "a theorem: foldChar agrees with the discourse fold",
     "lean/VE/EnglishGrammar/LexiconFixtures.lean": "generated fixtures",
+    "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures",
+    "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
 }
 CLASSIFIED_DIRS = ("lean/VE/Grammar/", "lean/VE/EnglishGrammar/")
@@ -105,6 +113,8 @@ ACTIONS: dict[str, dict[str, object]] = {
     "reachNamed": {}, "reachBody": {"listed": BOOL}, "count": {"reflexive": BOOL},
     "orAdjectives": {}, "impliesAnd": {},
 }
+# The actions of 2.12's proposed rules: `FixedAct` has no constructor for them, so only a proposed row names one.
+PROPOSED_ACTIONS = frozenset({"orAdjectives", "impliesAnd"})
 ROW_KEYS = {"tag", "lhs", "act", "rhs", "status"}
 # Punctuation tokens of the lexer that a rule may name; the terminator `.` never occurs in a rule (W4).
 PUNCTUATION = frozenset({",", ";", ":", "(", ")", "[", "]", "+", "-", "*", "(a)", "(b)", "(i)", "(ii)"})
@@ -217,6 +227,9 @@ def parse_source(data: bytes, what: str) -> list[dict]:
                 raise GrammarSourceError(f"{where}: {act} {key} {value!r} is not one of {list(allowed)}")
         if "status" in row and row["status"] != "proposed":
             raise GrammarSourceError(f"{where}: status {row['status']!r} (only \"proposed\")")
+        if act in PROPOSED_ACTIONS and row.get("status") != "proposed":
+            raise GrammarSourceError(f"{where}: action {act} belongs to a proposed rule (2.12); a table row "
+                                     "cannot name it")
         if type(row["lhs"]) is not str or row["lhs"] not in NONTERMINAL:
             raise GrammarSourceError(f"{where}: unknown nonterminal {row['lhs']!r}")
         rhs = row["rhs"]
@@ -277,10 +290,25 @@ def lean_symbol(sym) -> str:
     return f".t (.cls (.label {lean_string(sym['letter'])}))"
 
 
-def lean_rule(row: dict, index: int) -> str:
+def lean_act(row: dict) -> str:
+    """The row's action as a `FixedAct` term: the constructor, then its data in the order of `ACTIONS`; a flag
+    as `true`/`false`, a kind as a `Conn` constructor, an ordinal or a prefix as a string."""
+    parts = ["." + row["act"]]
+    for key, allowed in ACTIONS[row["act"]].items():
+        value = row[key]
+        if allowed == BOOL:
+            parts.append("true" if value else "false")
+        elif key == "kind":
+            parts.append("." + value)
+        else:
+            parts.append(lean_string(value))
+    return parts[0] if len(parts) == 1 else "(" + " ".join(parts) + ")"
+
+
+def lean_rule(row: dict) -> str:
     rhs = ", ".join(lean_symbol(s) for s in row["rhs"])
-    return (f"{{ lhs := {NONTERMINAL[row['lhs']]}, rhs := [{rhs}], act := {index}, "
-            f"tag := {lean_string(row['tag'])} }}")
+    return (f"{{ tag := {lean_string(row['tag'])}, lhs := {NONTERMINAL[row['lhs']]}, act := {lean_act(row)}, "
+            f"rhs := [{rhs}] }}")
 
 
 def _lean_array(items: list[str], indent: str = "  ") -> list[str]:
@@ -292,36 +320,39 @@ def render_table(profile: str, rows: list[dict], source_sha256: str) -> tuple[by
     source, _, name = PROFILES[profile]
     table = table_rows(rows)
     lines: list[str] = [
-        "import VE.EnglishGrammar.Token", "",
+        "import VE.EnglishGrammar.Catalogue", "",
         f"/-! Generated by `python tools/english_grammar_gen.py --write` from `{source}`; do not edit.",
         f"The fixed rules of the profile `{profile}` (docs/spec/english-lean-s2.md 2.5, 2.9) as a table",
-        "literal, the nonterminal catalogue of 2.4 with its ranks, and the action of each rule as the `act` text",
-        "of the `english.grammar` export (4.4). Fixed rule `k` has `act := k`: `fixedActs` holds one action per",
-        "fixed rule, in this order. Rows with `\"status\": \"proposed\"` are not in the table (2.12).",
-        "`tools/english_grammar_gen.py --check` fails when this file differs from its source. -/", "",
-        "namespace VE.EnglishGrammar.Fixed", "open VE.Grammar VE.EnglishGrammar", "",
+        "literal, one `FixedRow` per row of the source in its order, with the nonterminal names of 2.4 and their",
+        "ranks, and the action of each rule as the `act` text of the `english.grammar` export (4.4). Fixed rule",
+        "`k` has `act := k` (`fixedRules`): `fixedActs` holds one action per row, in this order. Rows with",
+        "`\"status\": \"proposed\"` are not in the table (2.12). `tools/english_grammar_gen.py --check` fails when",
+        "this file differs from its source. -/", "",
+        "namespace VE.EnglishGrammar", "open VE.Grammar", "",
         f"/-- The SHA-256 of `{source}`, which `grammar_id` covers (spec 2.10). -/",
         f"def {name}Sha256 : String := {lean_string(source_sha256)}", "",
-        "/-- The nonterminal catalogue of spec 2.4: nonterminal `i` is the `i`-th name. -/",
-        "def nonterminals : Array String := #[",
+        "/-- The nonterminal names of spec 2.4: nonterminal `i` is the `i`-th name. -/",
+        "def ntNames : Array String := #[",
         *_lean_array([lean_string(n) for n, _ in CATALOGUE]), "]", "",
-        "/-- The rank certificate of spec 2.4 (W3), one entry per nonterminal. -/",
+        "/-- The rank certificate of spec 2.4 (W3), one entry per nonterminal, for every lexicon. -/",
         "def ranks : Array Nat := #[" + ", ".join(str(r) for _, r in CATALOGUE) + "]", "",
         "/-- The action of fixed rule `k`, as the `act` text of the `english.grammar` export (spec 4.4). -/",
         f"def {name}Acts : Array String := #[",
         *_lean_array([lean_string(act_text(row)) for row in table]), "]", "",
-        f"def {name} : Array (Rule Terminal) := #[",
+        f"/-- The fixed rows of `{profile}`. -/",
+        f"def {name}Rows : Array FixedRow := #[",
     ]
     tags: list[str | None] = [None] * len(lines)
-    for line, row in zip(_lean_array([lean_rule(row, k) for k, row in enumerate(table)]), table):
+    for line, row in zip(_lean_array([lean_rule(row) for row in table]), table):
         lines.append(line)
         tags.append(row["tag"])
+    rules = f"{name}Rows.mapIdx fun i r => {{ lhs := r.lhs, rhs := r.rhs, act := i, tag := r.tag }}"
     tail = ["]", "",
-            f"#guard {name}.size == {len(table)}",
-            f"#guard {name}Acts.size == {name}.size",
-            f"#guard ({{ rules := {name}, start := 0, rank := ranks : Grammar Terminal }}).wf",
-            f"#guard terminatorFree {{ rules := {name}, start := 0, rank := ranks }}", "",
-            "end VE.EnglishGrammar.Fixed", ""]
+            f"#guard {name}Rows.size == {len(table)}",
+            f"#guard {name}Acts.size == {name}Rows.size",
+            f"#guard ({{ rules := {rules}, start := 0, rank := ranks : Grammar Terminal }}).wf",
+            f"#guard terminatorFree ({{ rules := {rules}, start := 0, rank := ranks }} : Grammar Terminal)", "",
+            "end VE.EnglishGrammar", ""]
     lines += tail
     tags += [None] * len(tail)
     return "\n".join(lines).encode(), tags
