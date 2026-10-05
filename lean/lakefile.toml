@@ -12,6 +12,11 @@ root = "Main"
 [[lean_lib]]
 name = "Iceberg"
 
+# The service's response shapes (test tooling and the client's schema source; not trusted, no theorems).
+[[lean_lib]]
+name = "ResponseShape"
+globs = ["ResponseShape.*"]
+
 [[lean_exe]]
 name = "ve_service"
 root = "Serve"
