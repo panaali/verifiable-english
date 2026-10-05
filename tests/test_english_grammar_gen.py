@@ -335,6 +335,22 @@ def test_malformed_rows(changes, message):
         G.parse_source(_one(**changes), SOURCE)
 
 
+@pytest.mark.parametrize("text", ["re viewed", "Key", "İt", "a\tb", "a\rb", "a b", "\x07",
+                                  "“owns”", "Reviewed", "deployed "])
+@pytest.mark.parametrize("form", ["kw", "c", "q", "tag"])
+def test_respaced_and_lookalike_text_is_refused(text, form):
+    """A keyword, content word, quoted name or tag with a no-break space, the Kelvin sign, dotted capital I,
+    a tab, a carriage return, a space, a control character, curly quotes or a capital is refused: the table
+    names lexer tokens exactly (a quoted name keeps its spaces and capitals, as the lexer does)."""
+    if form == "q" and text in ("a b", "Reviewed", "deployed "):
+        G.parse_source(_one(rhs=[{"q": text}]), SOURCE)
+        return
+    changes = {"kw": {"rhs": [text]}, "c": {"rhs": [{"c": text}]}, "q": {"rhs": [{"q": text}]},
+               "tag": {"tag": text}}[form]
+    with pytest.raises(G.GrammarSourceError):
+        G.parse_source(_one(**changes), SOURCE)
+
+
 def test_a_repeated_tag_is_refused():
     rows = json.loads((ROOT / SOURCE).read_text())
     rows.append(dict(rows[0]))
