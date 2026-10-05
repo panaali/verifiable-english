@@ -4,7 +4,8 @@
 
 Without `--write` it prints the tables; with it, it replaces the generated block of `DELTA.md`.
 `tests/test_lean_first_b3b_report.py` checks that the block equals this rendering, so every number in it comes
-from `evidence/` (`udhr_timing.py` outputs, `timing.py` outputs and the profiler's lines).
+from `evidence/` (`udhr_timing.py` outputs, `timing.py` outputs and the profiler's lines; the review round's from
+`udhr_timing.py alternate`).
 """
 from __future__ import annotations
 
@@ -12,6 +13,7 @@ import argparse
 import json
 from pathlib import Path
 import re
+import statistics
 
 HERE = Path(__file__).resolve().parent
 EVIDENCE = HERE / "evidence"
@@ -100,9 +102,33 @@ def corpus_rows():
     return rows
 
 
+REVIEW = (("review-b1-reproducer.json", "review B1's reproducer: 12 cells, ten fixed default rules"),
+          ("review-first-error.json", "the first set's default candidate ill-formed, 119 candidates after it"),
+          ("review-udhr-1-set.json", "UDHR first set"))
+
+
+def review_rows():
+    rows = ["| Case | Rounds | Load | Base, min / median CPU (s) | Before the fixes, min / median | Head, min / median "
+            "| Head against before, min / median | Rounds the head is faster | Answers |",
+            "|---|---:|---|---:|---:|---:|---:|---:|---|"]
+    for name, label in REVIEW:
+        data = json.loads((EVIDENCE / name).read_text())
+        cpus = {side: [run["cpu"] for run in runs] for side, runs in data["runs"].items()}
+        least = {side: min(xs) for side, xs in cpus.items()}
+        middle = {side: statistics.median(xs) for side, xs in cpus.items()}
+        faster = sum(h < b for h, b in zip(cpus["head"], cpus["before"]))
+        rows.append(f"| {label} | {data['rounds']} | {data['load_before']}–{data['load_after']} "
+                    + "".join(f"| {least[side]:,.2f} / {middle[side]:,.2f} " for side in ("base", "before", "head"))
+                    + f"| {change(least['before'], least['head'])} / {change(middle['before'], middle['head'])} "
+                    f"| {faster} of {data['rounds']} | {'identical' if data['identical'] else 'DIFFERENT'} |")
+    return rows
+
+
 def render():
     return "\n".join(["### UDHR readings call (paired runs)", "", *udhr_rows(), "", "### Where the head's CPU goes", "",
-                      *profile_rows(), "", "### Other measured workloads", "", *corpus_rows()]) + "\n"
+                      *profile_rows(), "", "### Other measured workloads", "", *corpus_rows(), "",
+                      "### Review round (B1, B2): base, the head before the fixes, the head", "",
+                      *review_rows()]) + "\n"
 
 
 def main(argv=None) -> int:
