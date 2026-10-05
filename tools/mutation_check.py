@@ -17,7 +17,7 @@ import subprocess
 import sys
 import time
 
-from pytest_run import pytest_command, pytest_environment
+import nested_pytest
 from select_tests import ROOT, TESTS, select
 
 CASES = (
@@ -71,13 +71,12 @@ def wire_generated_table_mutation() -> int:
 
 def pytest_run(files: list[str], log: Path, *, workers: int = 4,
                stop_early: bool = False) -> tuple[int, set[str], float]:
-    env = pytest_environment(os.environ)
-    env["UV_CACHE_DIR"] = "/tmp/ve-layers-uv-cache"
-    env["VE_LEAN_PREBUILT"] = "1"
-    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
-    command = pytest_command(["uv", "run", "--frozen", "--group", "dev", "--with", "pytest-xdist", "python"],
-                             "-n", str(min(workers, len(files))), "--dist=loadfile", "-q",
-                             *(["-x"] if stop_early else []), *files)
+    env = nested_pytest.environment(
+        os.environ, UV_CACHE_DIR="/tmp/ve-layers-uv-cache", VE_LEAN_PREBUILT="1",
+        PATH=str(Path.home() / ".elan/bin") + os.pathsep + os.environ.get("PATH", ""))
+    command = nested_pytest.command(["-q", *(["-x"] if stop_early else []), *files],
+                                    workers=min(workers, len(files)), dist="loadfile",
+                                    python=["uv", "run", "--frozen", "--group", "dev", "python"])
     start = time.monotonic()
     with log.open("w") as output:
         result = subprocess.run(command, cwd=ROOT, env=env, stdout=output,

@@ -10,8 +10,7 @@ import sys
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import gate, gate_collection
-from tools.pytest_run import pytest_command, pytest_environment
+from tools import gate, gate_collection, nested_pytest
 
 REFRESH = "uv run python tools/gate_collection.py --write"
 
@@ -129,8 +128,8 @@ EARLIER = ("an earlier collection", "an ordinary pytest run")
 def ordinary_pytest_run(repository):
     env = {name: value for name, value in os.environ.items()
            if name not in ("PYTHONPYCACHEPREFIX", "PYTHONDONTWRITEBYTECODE")}
-    subprocess.run(pytest_command([sys.executable], "-p", "no:cacheprovider", "--collect-only", "-q", "tests"),
-                   cwd=repository, env=pytest_environment(env), capture_output=True, check=True,
+    subprocess.run(nested_pytest.command(["-p", "no:cacheprovider", "--collect-only", "-q", "tests"]),
+                   cwd=repository, env=nested_pytest.environment(env), capture_output=True, check=True,
                    timeout=HANG_TIMEOUT)
 
 
