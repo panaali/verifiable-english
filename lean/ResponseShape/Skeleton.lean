@@ -1,4 +1,4 @@
-import ResponseShape
+import ResponseShape.CaseDeciders
 import Std.Data.TreeMap.Raw.Lemmas
 import Std.Data.TreeMap.Raw.WF
 import Lean.ToExpr
@@ -28,15 +28,24 @@ encoder adds or drops, or a shape that lists another field, fails the build. -/
 namespace ResponseShape
 open Lean
 
-/-- A condition on the request case, as the shapes write it (`x-case`). -/
+/-- A condition on the request case, as the shapes write it (the condition of an `x-case` or of an
+`x-select` entry). -/
 inductive CaseCond where
   /-- The case's `kind` is this string: `{"type": "object", "required": ["kind"], "properties":
-  {"kind": {"const": k}}}`. -/
+  {"kind": {"const": k}}}` (read as the runners read it, with `getStr?`: proofs cannot see into `Json`'s `==`). -/
   | kind (k : String)
   /-- The case has the field `ks[0]`, whose value is an object with the field `ks[1]`, and so
   on: `{"required": [k0], "properties": {k0: {"type": "object", "required": [k1], ...}}}`
   (true of a case that is not an object, as JSON Schema has it). -/
   | path (ks : List String)
+  /-- The same with the case itself an object: `{"type": "object", "required": [k0], ...}`. -/
+  | has (ks : List String)
+  /-- The case is an object without the field `k`: `{"type": "object", "not": {"required": [k]}}`. -/
+  | lacks (k : String)
+  /-- Every condition holds (`allOf`; `true` is the empty conjunction). -/
+  | all (cs : List CaseCond)
+  /-- The runner's own test of the case (`decidedCase`) says yes. -/
+  | decided (d : CaseDecider)
   deriving Inhabited, Repr, BEq, Lean.ToExpr
 
 namespace CaseCond
@@ -50,36 +59,83 @@ def objectHas : Json → List String → Bool
   | _, _ :: _ => false
 
 def holds : CaseCond → Json → Bool
-  | .kind k, j => j.getObjValD "kind" == .str k
+  | .kind k, j => (j.getObjValD "kind").getStr?.toOption == some k
   | .path [], _ => true
   | .path (k :: ks), j => match j with
     | .obj _ => match j.getObjVal? k with
       | .ok v => objectHas v ks
       | .error _ => false
     | _ => true
+  | .has ks, j => match j with
+    | .obj _ => objectHas j ks
+    | _ => false
+  | .lacks k, j => match j with
+    | .obj _ => !(j.getObjVal? k).toBool
+    | _ => false
+  | .all cs, j => allHold cs j
+  | .decided d, j => d.fn j
+where
+  allHold : List CaseCond → Json → Bool
+    | [], _ => true
+    | c :: cs, j => holds c j && allHold cs j
 
-theorem path_ok {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : (CaseCond.path [k]).holds j = true := by
-  cases j <;> simp_all [holds, objectHas, Json.getObjVal?]
+@[simp] theorem holds_all_nil (j : Json) : (CaseCond.all []).holds j = true := rfl
 
-/-- A case that is an object (it has the field `k'`) and lacks the field `k`. -/
-theorem path_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = .ok w) (h : j.getObjVal? k = .error e) :
-    (CaseCond.path [k]).holds j = false := by
-  cases j <;> simp_all [holds, Json.getObjVal?]
+@[simp] theorem holds_all_cons (c : CaseCond) (cs : List CaseCond) (j : Json) :
+    (CaseCond.all (c :: cs)).holds j = (c.holds j && (CaseCond.all cs).holds j) := rfl
 
-theorem objectHas_cons {j v : Json} {k : String} {ks : List String} (h : j.getObjVal? k = .ok v) :
-    objectHas j (k :: ks) = objectHas v ks := by
-  cases j <;> simp_all [objectHas, Json.getObjVal?]
+@[simp] theorem holds_decided (d : CaseDecider) (j : Json) : (CaseCond.decided d).holds j = d.fn j := rfl
 
-theorem holds_path_cons {j v : Json} {k : String} {ks : List String} (h : j.getObjVal? k = .ok v) :
-    (CaseCond.path (k :: ks)).holds j = objectHas v ks := by
-  cases j <;> simp_all [holds, Json.getObjVal?]
+/-- The case's `kind` is known: each condition on it reads off the string. -/
+theorem holds_kind_of {j : Json} {s : String} (h : j.getObjValD "kind" = .str s) (k : String) :
+    (CaseCond.kind k).holds j = (s == k) := by
+  simp only [holds, h]
+  show (some s == some k) = (s == k)
+  by_cases e : s = k
+  · subst e; simp
+  · simp [e]
 
-/-- One field of an object: present or not. -/
-theorem objectHas_one {raw : Json} {m : Std.TreeMap.Raw String Json compare} (hobj : raw = .obj m) (k : String) :
-    objectHas raw [k] = (raw.getObjVal? k).toBool := by
-  subst hobj
-  simp only [objectHas]
-  split <;> simp_all [objectHas, Except.toBool]
+theorem getObjValD_eq (j : Json) (k : String) : j.getObjValD k = (j.getObjVal? k).toOption.getD .null := rfl
+
+/-- A case with a `kind` string has the field. -/
+theorem lacks_of_kind {j : Json} {s : String} (h : j.getObjValD "kind" = .str s) :
+    (CaseCond.lacks "kind").holds j = false := by
+  rw [getObjValD_eq] at h
+  cases hv : j.getObjVal? "kind" with
+  | error e => rw [hv] at h; cases h
+  | ok v => cases j <;> simp_all [holds, Except.toBool]
+
+/-- A case without `kind` has no kind. -/
+theorem kind_of_lacks {j : Json} (h : (CaseCond.lacks "kind").holds j = true) (k : String) :
+    (CaseCond.kind k).holds j = false := by
+  have hd : j.getObjValD "kind" = .null := by
+    rw [getObjValD_eq]
+    cases hv : j.getObjVal? "kind" with
+    | error e => rfl
+    | ok v => cases j <;> simp_all [holds, Except.toBool]
+  simp only [holds, hd]
+  rfl
+
+/-- A case that is an object without the field `k`. -/
+theorem lacks_of_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = .ok w) (h : j.getObjVal? k = .error e) :
+    (CaseCond.lacks k).holds j = true := by
+  cases j <;> simp_all [holds, Json.getObjVal?, Except.toBool]
+
+/-- A field read as a string is the case's `getObjValD` of it. -/
+theorem getObjValD_of_str {j v : Json} {k s : String} (h : j.getObjVal? k = .ok v) (hs : v.getStr? = .ok s) :
+    j.getObjValD k = .str s := by
+  rw [getObjValD_eq, h]
+  cases v <;> simp_all [Json.getStr?] <;> cases hs <;> rfl
+
+end CaseCond
+
+/-- The runner read the case's kind as `k`: the case's `kind` string, or `d` (the runner's default)
+for a case that is an object without one. The conditions of a mode's selection on the kind are
+decided from it (`case_cond`). -/
+def KindRead (d : String) (c : Json) (k : String) : Prop :=
+  c.getObjValD "kind" = .str k ∨ ((CaseCond.lacks "kind").holds c = true ∧ k = d)
+
+namespace CaseCond
 
 def isKind : CaseCond → Bool
   | .kind _ => true
@@ -752,19 +808,27 @@ structure Extract where
   stack : List String := []
   recursive : List String := []
 
-/-- A condition on the request case (`x-case`) as a `CaseCond`, or none if the shape is not one
-of the two forms skeletons describe. -/
+/-- A condition on the request case (`x-case`, or an `x-select` entry's `when`) as a `CaseCond`, or
+none if the shape is not one of the forms skeletons describe: a kind, a nested field, the absence
+of a field, a conjunction, or a runner's test of the case (`decidedCase`). -/
 def caseCondOf (files : List File) : Nat → Shape → Option CaseCond
   | 0, _ => none
   | fuel + 1, s =>
     match s with
     | .ref target => (lookup files target).bind (caseCondOf files fuel)
-    | .lean _ x _ => caseCondOf files fuel x
+    | .lean name x _ => match CaseDecider.ofName? name with
+      | some d => some (.decided d)
+      | none => caseCondOf files fuel x
+    | .bool true => some (.all [])
+    | .allOf ss => (ss.mapM (caseCondOf files fuel)).map .all
     | .node _ [.type ["object"], .required ["kind"], .object [("kind", .const (.str k))] none] => some (.kind k)
+    | .node _ [.type ["object"], .not (.required [k])] => some (.lacks k)
     | .required [k] => some (.path [k])
     | .node _ [.required [k]] => some (.path [k])
     | .node _ [.required [k], .object [(k', inner)] none] =>
       if k == k' then (innerPath fuel inner).map fun ks => .path (k :: ks) else none
+    | .node _ [.type ["object"], .required [k], .object [(k', inner)] none] =>
+      if k == k' then (innerPath fuel inner).map fun ks => .has (k :: ks) else none
     | _ => none
 where
   /-- The nested fields an inner object requires: `{"type": "object", "required": [k], ...}`. -/
@@ -845,7 +909,16 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
     | .onCase _ | .row => pure .any
     | .zip _ x => do pure (.arr [] (← go cond x))
     | .rows x => do pure (.arr [] (← go cond x))
-    | .select cs => do pure (Skel.mkAlt (← cs.mapM fun (_, t) => go cond t))
+    | .select cs => do
+      -- The first entry whose condition the case meets gives the shape; no entry, no value.
+      let mut out := Skel.nothing
+      for (w, t) in cs.reverse do
+        let some c := caseCondOf files depth w
+          | throw "a selector on the request case that skeletons do not describe"
+        -- An entry every case meets (`true`) ends the selection.
+        let k ← go cond t
+        out := if c == .all [] then k else .onCase c k out
+      pure out
     | .lean _ x _ => go cond x
     | .copied _ _ => pure .any
     | .node _ keywords => do

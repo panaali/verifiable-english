@@ -133,7 +133,7 @@ def runCaseReported (j : Json) : Json :=
       (match generatorOf message with
        | some g => [("generator", .str g)]
        | none => []) ++
-      (if j.getObjValD "kind" == .str "certificate" then [("valid", .bool false)] else []))
+      (if (j.getObjValD "kind").getStr?.toOption == some "certificate" then [("valid", .bool false)] else []))
 
 open VE.Order.ProfileGate in
 /-- `route_gate`: every successful `route` case has a `ve.core@0.2`

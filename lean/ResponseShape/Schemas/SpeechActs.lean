@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/speech-acts.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.SpeechActs
 open Lean ResponseShape
 
 def speech_path : Shape :=
-  decidedBy "SpeechActs.Run.usesSpeechPath" VE.SpeechActs.Run.usesSpeechPath <|
+  decidedCase .speechPath <|
   c
     "SpeechActs.Run.usesSpeechPath: the speech-acts@0 profile, the environment's speech_acts block, a speech-* kind, or a unit of kind binding or with command or question content."
     [

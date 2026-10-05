@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Rights
 open Lean ResponseShape
 
 def rights_path : Shape :=
-  decidedBy "Rights.Run.usesRightsPath" VE.Rights.Run.usesRightsPath <|
+  decidedCase .rightsPath <|
   c
     "Rights.Run.usesRightsPath: the rights@0 profile, the vocabulary's rights block, a rights-* kind, or a rights unit (right, right_lines, limitation or bar) in a document array or in a document's units' content."
     [

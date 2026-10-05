@@ -9,6 +9,23 @@ open Lean ResponseShape ResponseShape.Skeletons
 
 variable {req : Json}
 
+/-- `Route.Run.caseKind` (default `evaluate`) of a case that is an object. -/
+theorem caseKind_read {j w : Json} {k' kind : String} (hobj : j.getObjVal? k' = .ok w)
+    (h : VE.Route.Run.caseKind j = .ok kind) : KindRead "evaluate" j kind := by
+  unfold VE.Route.Run.caseKind at h
+  split at h
+  · exact .inl (CaseCond.getObjValD_of_str ‹_› h)
+  · cases h
+    exact .inr ⟨CaseCond.lacks_of_error hobj ‹_›, rfl⟩
+
+/-- `VE.Bridge.stringField` of a case: it is an object. -/
+theorem stringField_obj {j : Json} {k s : String} (h : VE.Bridge.stringField j k = .ok s) :
+    ∃ w, j.getObjVal? k = .ok w := by
+  unfold VE.Bridge.stringField at h
+  cases hv : j.getObjVal? k with
+  | error e => rw [hv] at h; cases h
+  | ok w => exact ⟨w, rfl⟩
+
 theorem claimJson_fits (c : VE.Graph.Claim) :
     Fits req (skel% "common.json#/$defs/claim") (VE.Route.Run.claimJson c) := by
   unfold VE.Route.Run.claimJson
