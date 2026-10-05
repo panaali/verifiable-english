@@ -2831,7 +2831,8 @@
     "VE.EnglishGrammar.ntRelation",
     "VE.EnglishGrammar.ntRelative",
     "VE.EnglishGrammar.ntTerm",
-    "VE.EnglishGrammar.ntTy"
+    "VE.EnglishGrammar.ntTy",
+    "VE.EnglishGrammar.Cmp"
    ]
   },
   "VE/EnglishGrammar/Encode.lean": {
@@ -8101,6 +8102,35 @@
   "VE/WireContract/Tables/SoftNorms.lean": {
    "G[V]": [
     "VE.WireContract.Tables.SoftNorms.table"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Order.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.orderActs",
+    "VE.EnglishGrammar.orderRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.orderSha256"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Alternatives.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.alternativesActs",
+    "VE.EnglishGrammar.alternativesRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.alternativesSha256"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Staged.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ntNamesStaged",
+    "VE.EnglishGrammar.ranksStaged"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Tables.lean": {
+   "G[I]": [
+    "VE.EnglishGrammar.tableSources"
    ]
   }
  }

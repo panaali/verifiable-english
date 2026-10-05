@@ -1,5 +1,6 @@
 import VE.EnglishGrammar.Read
 import VE.EnglishGrammar.Fixed.Version
+import VE.EnglishGrammar.Fixed.Tables
 import VE.Service.Standalone
 import VE.Json
 
@@ -93,8 +94,9 @@ def environmentId (environment : Json) : Except String String := do
   let row ← VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", environment)])
   VE.Bridge.stringField row "environment_id"
 
-/-- The tables of the profiles that have one, with the SHA-256 of each JSON source (spec 2.5, 2.10). -/
-def tables : List (String × String) := [(baseProfile, relationalFolSha256)]
+/-- The tables of the profiles that have one, with the SHA-256 of each JSON source (spec 2.5, 2.10; S3
+2.14): the generated list, never a copy. -/
+def tables : List (String × String) := tableSources
 
 /-- The digest of the environment's profiles that have a table, in the environment's order (base 2.12). -/
 def grammarId (profiles : List String) : Except String String :=
