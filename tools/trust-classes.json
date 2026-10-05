@@ -99,10 +99,41 @@
     "main"
    ]
   },
+  "ResponseShape/CaseDeciders.lean": {
+   "G[V]": [
+    "ResponseShape.CaseDecider",
+    "ResponseShape.CaseDecider.all",
+    "ResponseShape.CaseDecider.fn",
+    "ResponseShape.CaseDecider.name",
+    "ResponseShape.CaseDecider.ofName?",
+    "ResponseShape.decidedCase"
+   ]
+  },
+  "ResponseShape/Encoders/Common.lean": {
+   "G[V]": [
+    "ResponseShape.findOkHyp",
+    "ResponseShape.tacticRead_kind"
+   ]
+  },
+  "ResponseShape/Encoders/Quantity.lean": {
+   "G[V]": [
+    "ResponseShape.Encoders.Quantity.tacticQuantity_rows"
+   ]
+  },
   "ResponseShape/Encoders/ReadingsRoute.lean": {
    "S": [
     "ResponseShape.Encoders.ReadingsRoute.PairEntry",
     "ResponseShape.Encoders.ReadingsRoute.SetEntry"
+   ],
+   "G[V]": [
+    "ResponseShape.Encoders.ReadingsRoute.atomInv",
+    "ResponseShape.Encoders.ReadingsRoute.lowerInv"
+   ]
+  },
+  "ResponseShape/Encoders/Route.lean": {
+   "G[V]": [
+    "ResponseShape.Encoders.Route.routeOk",
+    "ResponseShape.Encoders.Route.tacticKind_route"
    ]
   },
   "ResponseShape/Encoders/SoftNorms.lean": {
@@ -114,29 +145,47 @@
    "G[V]": [
     "ResponseShape.FitsTactic.bound",
     "ResponseShape.FitsTactic.caseBranch",
+    "ResponseShape.FitsTactic.fitsFrom",
     "ResponseShape.FitsTactic.fitsGoal",
+    "ResponseShape.FitsTactic.isStrLit",
     "ResponseShape.FitsTactic.listElems",
     "ResponseShape.FitsTactic.names?",
     "ResponseShape.FitsTactic.objAccepts",
     "ResponseShape.FitsTactic.position",
+    "ResponseShape.FitsTactic.reaches",
+    "ResponseShape.FitsTactic.strBeqTrue?",
     "ResponseShape.FitsTactic.strList?",
     "ResponseShape.FitsTactic.strLit?",
     "ResponseShape.FitsTactic.tacticAlt_mem",
     "ResponseShape.FitsTactic.tacticBool_hyp",
+    "ResponseShape.FitsTactic.tacticCase_kind_rw",
+    "ResponseShape.FitsTactic.tacticCase_path_rw",
+    "ResponseShape.FitsTactic.tacticContra",
     "ResponseShape.FitsTactic.tacticFits_as_",
+    "ResponseShape.FitsTactic.tacticFits_from_",
     "ResponseShape.FitsTactic.tacticFits_pick",
+    "ResponseShape.FitsTactic.tacticKind_subst",
+    "ResponseShape.FitsTactic.tacticOn_case_goal",
     "ResponseShape.FitsTactic.tacticSkel_norm",
     "ResponseShape.FitsTactic.valueKeys",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticCase_cond_1",
     "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFitsUsing__1",
+    "ResponseShape._aux_ResponseShape_FitsTactic___macroRules_ResponseShape_tacticFits_invert__1",
     "ResponseShape.tacticAlt_sub",
+    "ResponseShape.tacticCase_absurd_",
+    "ResponseShape.tacticCase_all_goal",
     "ResponseShape.tacticCase_cond",
+    "ResponseShape.tacticCase_cond_atom",
     "ResponseShape.tacticElem_cases",
     "ResponseShape.tacticElems_split",
     "ResponseShape.tacticFields_split",
     "ResponseShape.tacticFitsUsing_",
+    "ResponseShape.tacticFits_invert_",
     "ResponseShape.tacticKeys_ok",
+    "ResponseShape.tacticKind_norm",
     "ResponseShape.tacticLits_simp",
-    "ResponseShape.tacticOkfits"
+    "ResponseShape.tacticOkfits",
+    "ResponseShape.tacticRevert_lit_tests"
    ]
   },
   "ResponseShape/Schemas/Alternatives.lean": {
@@ -188,6 +237,7 @@
     "ResponseShape.Schemas.Common.code",
     "ResponseShape.Schemas.Common.conflict_targets",
     "ResponseShape.Schemas.Common.environment",
+    "ResponseShape.Schemas.Common.environment_predicate",
     "ResponseShape.Schemas.Common.file",
     "ResponseShape.Schemas.Common.fol_formula",
     "ResponseShape.Schemas.Common.fol_term",
@@ -505,6 +555,7 @@
     "ResponseShape.Schemas.Route.file",
     "ResponseShape.Schemas.Route.kind",
     "ResponseShape.Schemas.Route.label",
+    "ResponseShape.Schemas.Route.ok",
     "ResponseShape.Schemas.Route.row",
     "ResponseShape.Schemas.Route.«dependency-order»"
    ],
@@ -556,6 +607,7 @@
    "S": [
     "ResponseShape.CaseWF",
     "ResponseShape.Fits",
+    "ResponseShape.KindRead",
     "ResponseShape.OkFits",
     "ResponseShape.OkP"
    ],
@@ -571,6 +623,7 @@
     "ResponseShape.Skel.conj",
     "ResponseShape.Skel.conjAll",
     "ResponseShape.Skel.distinct",
+    "ResponseShape.Skel.environmentEntry",
     "ResponseShape.Skel.field",
     "ResponseShape.Skel.isAny",
     "ResponseShape.Skel.item",
@@ -658,6 +711,7 @@
     "ResponseShape.decidedBy",
     "ResponseShape.depth",
     "ResponseShape.disagreeing",
+    "ResponseShape.encodedEnvironment",
     "ResponseShape.enumS",
     "ResponseShape.fail",
     "ResponseShape.isItems",
