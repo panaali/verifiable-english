@@ -46,6 +46,11 @@ IDENTIFIER_FIELDS = {
     ("AsyncWith", "type_comment"): False, ("FunctionDef", "type_comment"): False,
     ("AsyncFunctionDef", "type_comment"): False, ("arg", "type_comment"): False,
 }
+# Spellings of the repository root in a string literal (tools/source_graph.py
+# turns them into a mention of the root directory).
+ROOT_SPELLINGS = frozenset({".", "./"})
+STRING_METHODS = frozenset(name for name in dir(str) if not name.startswith("_"))
+PATH_MODULES = frozenset({"os.path", "posixpath", "ntpath"})  # `os.path.join(".", name)` is a path
 
 
 @dataclass(frozen=True)
@@ -79,7 +84,8 @@ class Summary:
     units: dict[str, Unit] = field(default_factory=dict)
     statements: list[Statement] = field(default_factory=list)
     imports: list[ImportEdge] = field(default_factory=list)
-    constants: frozenset[str] = frozenset()      # string literals, for path and program mentions
+    # String literals, for path and program mentions; "." and "./" only where they may be a path.
+    constants: frozenset[str] = frozenset()
     identifiers: frozenset[str] = frozenset()    # every Name id, attribute and import alias
     attributes: frozenset[str] = frozenset()     # names read as `something.NAME`
 
@@ -210,6 +216,30 @@ def _blocks(node: ast.AST):
                         yield from _blocks(item)
 
 
+def _text_operands(tree: ast.AST) -> set[int]:
+    """Ids of the expressions a module uses as text, not as a path: the receiver
+    and arguments of a `str` method call (`".".join(parts)`, `name.split(".")`;
+    not `os.path.join(".", name)`), compared operands, concatenated operands and
+    pieces of an f-string. Anything else may be a path."""
+    found = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
+                and node.func.attr in STRING_METHODS:
+            receiver = node.func.value
+            found.add(id(receiver))
+            if not (isinstance(receiver, (ast.Name, ast.Attribute)) and ast.unparse(receiver) in PATH_MODULES):
+                found.update(id(item) for item in (*node.args, *(k.value for k in node.keywords)))
+        elif isinstance(node, ast.Compare):
+            found.update(id(item) for item in (node.left, *node.comparators))
+        elif isinstance(node, ast.BinOp):
+            found.update((id(node.left), id(node.right)))
+        elif isinstance(node, ast.AugAssign):
+            found.add(id(node.value))
+        elif isinstance(node, ast.JoinedStr):
+            found.update(id(item) for item in node.values)
+    return found
+
+
 def summarize(source: str, module: str, *, package: bool = False) -> Summary:
     """Units, statements and imports of a module. Raises SyntaxError for invalid source."""
     tree = ast.parse(source)
@@ -252,6 +282,7 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
                                             isinstance(node, (ast.Import, ast.ImportFrom))))
     parts = module.split(".") if package else module.split(".")[:-1]
     constants = set()
+    text = _text_operands(tree)
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
@@ -266,7 +297,8 @@ def summarize(source: str, module: str, *, package: bool = False) -> Summary:
                 absolute = node.module or ""
             summary.imports.append(ImportEdge(absolute, tuple((a.name, a.asname or a.name)
                                                               for a in node.names), None))
-        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and len(node.value) < 300:
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and len(node.value) < 300 \
+                and not (node.value.strip() in ROOT_SPELLINGS and id(node) in text):
             constants.add(node.value)
     summary.constants = frozenset(constants)
     summary.identifiers = _references(tree)
