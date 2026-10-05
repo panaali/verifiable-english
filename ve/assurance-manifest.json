@@ -46,7 +46,7 @@
     "ve/assist/session.py:AssistSession.apply": "CheckerUnavailable is caught with VEError and keeps its code; other RuntimeErrors are logged as BackendError",
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
-    "ve/backends/dispatch.py:execute": "shadow authority only: the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
+    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
@@ -885,7 +885,7 @@
       "lean": {
         "bindings": [],
         "planned_modes": ["english.read"],
-        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it. Shadow adapter ve/backends/english_lean.py (english-lean-s2.md 2.10): under VE_AUTHORITY_OVERRIDES=english.admission=shadow every call is recorded against ve_english_route english.read (lean/EnglishMain.lean, VE.EnglishGrammar.Run; tests/test_english_lean_route.py), whose reader read is proved one reading per sentence (VE.EnglishGrammar.read_ok, english_reading_unique); english.read stays planned here until the authority moves (LEAN-FIRST E2)",
+        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it. Shadow adapter ve/backends/english_lean.py (english-lean-s2.md 2.10): under VE_AUTHORITY_OVERRIDES=english.admission=shadow every call is recorded against ve_english_route english.read, and any other selection is refused (dispatch.SHADOW_ONLY, DRI ruling 6) (lean/EnglishMain.lean, VE.EnglishGrammar.Run; tests/test_english_lean_route.py), whose reader read is proved one reading per sentence (VE.EnglishGrammar.read_ok, english_reading_unique); english.read stays planned here until the authority moves (LEAN-FIRST E2)",
         "theorems": ["VE.English.checked_unique_derivation", "VE.English.checked_one_reading",
                      "VE.English.checked_parse_render", "VE.English.checked_render_injective",
                      "VE.English.admissible_sound", "VE.English.core_parse_sound"],
