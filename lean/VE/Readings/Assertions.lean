@@ -53,18 +53,18 @@ theorem envAt_correlate_none (Z : RightsDoc) (k : Nat) {p : String} (hp : Z.soft
       cases this)]
     exact hp
 
-theorem free_E (D : Doc) : (free D).1.soft.E = D.frame.soft.E := (build_shape D _ _).E
+theorem free_E_frame (D : Doc) : (free D).1.soft.E = D.frame.soft.E := (build_shape D _ _).E
 
 theorem sharedEnv_sorts (D : Doc) : (sharedEnv D).sorts = D.frame.soft.E.sorts := by
   show (correlate (free D).1).E.sorts = _
   show (VE.Rights.envR (free D).1).sorts = _
   show (free D).1.soft.E.sorts = _
-  rw [free_E]
+  rw [free_E_frame]
 
 theorem sharedEnv_constants (D : Doc) : (sharedEnv D).constants = D.frame.soft.E.constants := by
   show (VE.Rights.envR (free D).1).constants = _
   show (free D).1.soft.E.constants = _
-  rw [free_E]
+  rw [free_E_frame]
 
 theorem reading_reserved : reservedSym "ve__reading" = true := by
   have : ("ve__reading" : String) = "ve__" ++ "reading" := by decide
@@ -147,7 +147,7 @@ theorem sharedEnv_noChoice {D : Doc} (h : WellFormedDoc D = true) (hr : supReady
     exact ⟨m + 1, j, rfl⟩
   obtain ⟨m, j, hmj⟩ := hdn
   apply envAt_correlate_none
-  · rw [free_E]; exact hf.2 d hd
+  · rw [free_E_frame]; exact hf.2 d hd
   · rw [hmj]; exact bitName_head m j
 
 /-! ## The assertions of `sup D` -/
