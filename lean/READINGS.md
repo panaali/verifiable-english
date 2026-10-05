@@ -20,7 +20,9 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
 | `Force.lean` | `decision_only_sound` and its three parts: `relaxDoc`, `Twin` and the force lemma for a whole document; `canon_relax`; the premises and probe values over one base; `TwinDocs`, `tablesRel`, `quiet_iff` |
 | `Lines.lean` | DRI ruling 1: `linesOnce`, the admission text `lineOrderText` (4.4), `checkRights` in named steps (equal by `rfl`) and the facts read from it, and `genKeys_nodup` |
 | `Wire.lean` | 8.4: the environment on the three chains, the document's units and active reading sets, contents, keys, tables, probes and situations; the checks of 4.1 with section 7's texts (`admissionText`); admission as specified (`admitReadingsSpec`) and as run (`admitReadings`, each candidate validated once); a side's chain checks as specified (`chainTextSpec`) and as run (`chainText`, the layers computed once); `SeparateReplay`, `replaySeparate`, `readings_wire_separate_sound` |
-| `Run.lean`, `../ReadingsMain.lean` | The `ve_readings_route` executable; a candidate's row and a pair's facts as specified (`candidateJsonSpec`, `pairFactsSpec`) and as run, each side's completion evaluated once (`completions`, `separatesWith`); a pair's facts and a set's pairs with each candidate's side built once per set (`completionsOn`, `pairFactsIn`, `sidesOf`, `sideAt`, `setPairsSpec`, `setPairs`) |
+| `Run.lean`, `../ReadingsMain.lean` | The `ve_readings_route` executable; a candidate's row and a pair's facts as specified (`candidateJsonSpec`, `pairFactsSpec`) and as run, a pair's facts and a set's pairs with each candidate's side built once per set and the other side scanned lazily (`pairFactsIn`, `sidesOf`, `sideAt`, `setPairsSpec`, `setPairs`) |
+| `Scan.lean` | The other side of a pair scanned lazily (`scanOthers`, `otherScanOn`) and a pair's facts in a monad that can count the other side's evaluations (`pairEval`) |
+| `RunExamples.lean` | Build-time `#guard` counts of `pairEval`'s evaluations of the other side (batch 3d review B): one admissibility and one value on a 12-cell query, not 4,096 |
 | `Examples.lean` | Build-time `#guard` regressions on fixtures K1 to K22 of 9.2, K2b's inadmissible base as two theorems, and the two counterexamples to `genKeys_nodup` without its hypothesis (`twiceListed`, `orderOnly`) |
 
 ## Theorems
@@ -108,16 +110,18 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
   `frameWF` (`wellFormedDoc_of_admissionText`, from `sideWF_of_chainText`), so admission evaluates `frameWF` instead
   of validating each document a second time.
 
-### `Run.lean`
+### `Run.lean` and `Scan.lean`
 
-* `pairFacts_eq` (F5b): a pair's facts as run equal the facts as specified. The witness's completion is evaluated
-  once for `separates` and its two fields, and the other side's completions once per assignment for `separates`,
-  `other_admissible` and `other_value` (`separatesWith_eq`; `assignments_of_ownedKeys_nil` for `other_value`).
 * `candidateJson_eq` (F5b, `rfl`): a candidate's row builds its document `one D s i` once, for its keys and its
   findings.
+* `pairEval_id` (`Scan.lean`; F5b, F5d, batch 3d review B): with each candidate's own side and the other side's
+  cells within `maxCells`, `pairEval` in `Id` is `separates` and the specified fields. The witness's completion is
+  evaluated once; the other side's completions go through `scanOthers`, each one's admissibility evaluated only when
+  the scan reaches it and its value only when needed (`scanOthers_eq`, `otherScanOn_id`, `and_not_and_any`;
+  `assignments_of_ownedKeys_nil` for `other_value`). `RunExamples.lean` counts those evaluations at build time: one
+  admissibility and one value on a 12-cell query (4,096 completions) that its first completion decides.
 * `pairFactsIn_eq` (F5d): with `side i = sideOf a.D s i` for every `i`, a pair's facts read from the sides equal
-  `pairFacts` (so `pairFactsSpec`). `replayPair_doc`: a replay is of the admitted document and the requested set.
-  `completionsOn_sideOf`: the other side's completions from its side are `completions`.
+  `pairFactsSpec`. `replayPair_doc`: a replay is of the admitted document and the requested set.
 * `sideAt_sidesOf` (F5d): the per-set cache `sidesOf` (each side a `Thunk`, built when first read) gives
   `sideOf D s i` for every `i`. `setPairs_eq`: a set's pairs read from the cache equal `setPairsSpec`, where each
   pair builds both sides' layers.
@@ -143,9 +147,9 @@ equal to the function it replaces:
   rights validations with the layers computed once are `checkSoft`, `softSemanticCheck`, `validateSoft` and
   `validateRights`.
 
-In `Separate.lean`: `cellsOn_sideOf`, `assignmentsOn_sideOf`, `tablesModelOn_sideOf` (`rfl`), `sideValidOn_sideOf`
-and `sideValueOn_sideOf`: a candidate's completions read from `sideOf D s i` are `cells`, `assignments`,
-`tablesModel`, `sideValid` and `sideValue`. In `Wire.lean`: `chainText_eq`, a side's chain checks as run (each
+In `Separate.lean`: `ownedKeysOn_sideOf`, `cellsOn_sideOf`, `assignmentsOn_sideOf`, `tablesModelOn_sideOf` (`rfl`),
+`sideValidOn_sideOf` and `sideValueOn_sideOf`: a candidate's completions read from `sideOf D s i` are `ownedKeys`,
+`cells`, `assignments`, `tablesModel`, `sideValid` and `sideValue`. In `Wire.lean`: `chainText_eq`, a side's chain checks as run (each
 validation by its `Once` function, the complete environment for the assertions computed once) equal
 `chainTextSpec`; `sideWF_of_chainText` now reads `chainTextSpec` through it.
 

@@ -28,7 +28,7 @@ Each new function sits beside the function it replaces, with a lemma that they a
 | `Readings/Layers.lean` | `checkSoft`, `softSemanticCheck`, `validateSoft`, `validateRights` | `checkSoftOnce` (targets and soft premises from the layers), `softSemanticCheckOnce` (`soften D`, its layers and both layered environments computed once), `validateSoftOnce`, `validateRightsOnce` | `checkSoftOnce_eq`, `softSemanticCheckOnce_eq`, `validateSoftOnce_eq`, `validateRightsOnce_eq` (with `softPremisesIn_eq`, `selectsOn_soften`) |
 | `Readings/Wire.lean` | `chainTextSpec` | `chainText`: each validation by its `Once` function, the complete environment for the assertions computed once | `chainText_eq`; `sideWF_of_chainText` reads `chainTextSpec` through it, so `admitReadings_eq` (3b) is unchanged |
 | `Readings/Separate.lean` | `sideValid`, `sideValue`, `cells`, `assignments`, `tablesModel` | `sideValidOn`, `sideValueOn`, `cellsOn`, `assignmentsOn`, `tablesModelOn`, reading a candidate's `Side` (`sideOf D s i`: its document, assertions and keys, `soften (correlate X)`, its layers and base environment) | `sideValidOn_sideOf`, `sideValueOn_sideOf`, `cellsOn_sideOf`, `assignmentsOn_sideOf`, `tablesModelOn_sideOf` |
-| `Readings/Run.lean` | `pairFacts` (3b), `setPairsSpec` | `pairFactsIn` (both sides read from a cache), `setPairs` (each candidate's side built once per set, `sidesOf`, read by all its pairs) | `pairFactsIn_eq` (with `replayPair_doc`, `completionsOn_sideOf`), `sideAt_sidesOf`, `setPairs_eq` |
+| `Readings/Run.lean`, `Readings/Scan.lean` | `pairFactsSpec`, `setPairsSpec` | `pairFactsIn` (both sides read from a cache, the other side scanned lazily by `pairEval`; review B below), `setPairs` (each candidate's side built once per set, `sidesOf`, read by all its pairs) | `pairFactsIn_eq` (with `replayPair_doc`, `pairEval_id`), `sideAt_sidesOf`, `setPairs_eq` |
 
 The 30 new theorems use the standard axioms only (`lean/axioms.txt`); no theorem statement changed.
 `readings_wire_separate_sound` is unchanged. The functions that replace W1, soft-norm and rights functions are
@@ -179,6 +179,41 @@ has a layer symbol whose meaning reads another, or an asserted unit that reads a
 byte-identical answers on both corpora). `test_outcome_probe_through_two_layers` is new. It has a probe on
 `avoid_required`, whose reading reads `warn_required`, whose fixed rule reads `help_required`, which reads `asks`.
 It also has an asserted unit over `warn_required`. It passes on the base and the head.
+
+## Review B: the other side of a pair is scanned lazily
+
+The review found that `completionsOn` (in `pairFactsIn`) built every completion's admissibility before `.all` and
+`.any` could stop. That is the pattern the DRI note of 2026-10-04 ruled out for this batch. Instrumented, a 12-cell
+query whose first completion decides both answers evaluated all 4,096. The fix:
+
+- `pairFactsIn` checks the bound and then runs `pairEval` (`Readings/Scan.lean`) in `Id`. Its other side goes
+  through `scanOthers`, as in batch 3b's fix: each completion's admissibility is evaluated when the scan reaches it,
+  its value only when it is admissible and the witness shows the value, and the scan stops once both answers are
+  decided. `completions`, `separatesWith`, `completionsOn` and `pairFacts` are gone. `pairEval_id` states
+  `pairEval` against `separates` and the specified fields, and `pairFactsIn_eq` now states `pairFactsIn` against
+  `pairFactsSpec` directly. `ownedKeysOn` is the one owned-key list read by `cellsOn`, `assignmentsOn` and
+  `pairEval`.
+- The same class, elsewhere in this batch: `softSemanticCheckOnce` built the layers and both layered environments
+  before its first conjunct, and `chainText` built the complete environment before knowing whether there is an
+  assertion to type. The specified functions build these only when a conjunct reaches them. Each is now a `Thunk`
+  read where the original computed it; the equality lemmas are unchanged.
+- Regression, with no timing. `pairEval` is generic in a monad with one tick for each admissibility and each value
+  evaluated on the other side. `Readings/RunExamples.lean`, imported by `VE.lean`, pins the counts at build time:
+  (1, 1) on the 12-cell query, (1, 0) when the witness does not show the value, (9, 9) on four users where the ninth
+  completion shows it, (2, 0) when no completion is admissible, and (1, 1) when the other side owns no key. Each
+  answer is also compared with the specified one. `tests/test_readings_lazy_pairs.py` reads the compiled IR of
+  `ve_readings_route`: `pairFactsIn` must call `pairEval`, and `main` must reach `scanOthers`. It also checks the
+  route's answer on the review's reproducer (12 cells, ten fixed default rules). That test's CPU limit only stops a
+  runaway route. Here, evaluating every completion costs 0.37 s and the scan 0.09 s, and the generated-layer limits
+  admit no heavier side, so time cannot separate the two.
+
+Seeded mutants, each applied alone and then restored:
+
+| Mutant | Lemma | Failing check |
+|---|---|---|
+| R1 `scanOthers` keeps scanning after an admissible completion when the witness does not show the value | none (`scanOthers_eq` still builds) | `RunExamples.lean` (12-cell `σWrong12`: count is not (1, 0)); `lake build` fails |
+| R2 `pairEval` evaluates every completion's admissibility up front (`mapM`), then reads the list | `pairEval_id` (replaced by `sorry`) | `RunExamples.lean`: the 12-cell, `σWrong12` and `σAvoid` counts; `lake build` fails |
+| R3 `pairFactsIn` restored to the code before the fix (`completionsOn`, `separatesWith`), bypassing `pairEval` | `pairFactsIn_eq` (replaced by `sorry`) | `test_the_route_runs_the_counted_pair_evaluation` (`pairFactsIn` no longer calls `pairEval`) |
 
 ## Rest of the gate (5.1)
 
