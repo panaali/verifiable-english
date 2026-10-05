@@ -173,8 +173,15 @@ the file was restored after each (`git status` clean).
 
 ## Rest of the gate (5.1)
 
-- **Suite (item 1):** see the fix report for the run at the final head (four chunks, `-n 8`, the gate's pytest
-  options and prebuilt binaries, in a clean worktree).
+- **Suite (item 1):** the full suite at `3819af3e` (this file's later commits change documentation only), in a
+  clean worktree with its own builds, four chunks of `-n 8` with the gate's pytest options and environment
+  (`VE_NATIVE_PREBUILT`, `VE_LEAN_PREBUILT`, `VE_RUST_PREBUILT`, `VE_RUST_BINARY`, no plugin autoload): **9,136
+  passed, 6 skipped, 1 failed**. The failure, `test_rust_reproducible.py::test_a_copy_of_the_workspace_elsewhere_builds_the_same_binary`,
+  is the clean worktree's: the test seeds an offline Cargo registry from the checkout's untracked
+  `.cargo-home/registry`, which a fresh worktree does not have. With that directory copied in, the file passes
+  (8 passed); no Rust changed. `test_lean_transitive_axiom_allowlist` (the whole `lean/audit.py`) is among the
+  passes. Test changes: `test_generated_sets_lean_answers` also compares `other_admissible` (M4 above), and
+  `tests/test_lean_first_b3b_report.py` is new (2 IDs pinned in `tools/gate-collection.json`).
 - **Lean audit:** `lake env lean VE/Audit.lean` lists the 8 new theorems with `propext`, `Quot.sound` and
   `Classical.choice` only; `lean/axioms.txt` and `VE/Route/frozen-sources.sha256` are updated, and the assurance
   manifest pins `Readings/Wire.lean` at its new length (the whole file stays pinned; `admitReadingsSpec` is listed
