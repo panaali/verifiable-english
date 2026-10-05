@@ -139,7 +139,7 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
     exchanges the two completions over abstract documents.
 * Helpers: `relaxTo_name`, `relaxTo_pred`, `relaxTo_sign`, `relaxTo_over`, `relaxTo_alterable`, `relaxTo_of_ne`,
   `relaxTo_of_eq`, `mem_relaxDoc`, `relax_mem`, `fuel_relax`, `eq_of_key`, `dualPerm_act`, `dualOblig_act`,
-  `act_of_incompatible`, `incompatible_self`, the remaining `Twin.*` lemmas, `relax_children`, `syms_mem`,
+  `act_of_incompatible`, `force_incompatible_self`, the remaining `Twin.*` lemmas, `relax_children`, `syms_mem`,
   `layerNames_mem`, `flatMap_congr_mem`, `filterMap_congr_mem`, `find_filter_of`, `find_filter_mem`, `sat_append`,
   `atom_false`, `Twin.outweighsTriples_eq`, `offDecisions_relax`, `Twin.exceptedDecisions_filter`,
   `Twin.baseAdmissible`, `Twin.cohPremises`, `excepted_mem`, `eq_relaxDoc`, `TwinDocs.find_strict`,
