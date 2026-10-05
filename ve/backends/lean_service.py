@@ -103,8 +103,9 @@ def _decode_json(line: bytes | str) -> object:
     """A checker's JSON output (this service, the one-shot Lean runners, the Rust JSONL checker):
     bytes that are not UTF-8, duplicate fields, non-finite constants and strings that are not
     Unicode text (a `\\ud800` escape decodes to a lone surrogate, which no Lean or Rust string
-    holds) and numbers no float holds (`_json_float`) raise ValueError; nesting beyond Python's
-    recursion limit raises RecursionError."""
+    holds) and numbers no float holds (`_json_float`) raise ValueError, and so does nesting beyond
+    Python's recursion limit (otherwise a RecursionError): every way the bytes are no answer is a
+    ValueError. Bytes are decoded as strict UTF-8 here; json.loads alone would guess UTF-16 or UTF-32."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -117,8 +118,11 @@ def _decode_json(line: bytes | str) -> object:
         raise ValueError(f"invalid JSON number {value}")
 
     text = line.decode("utf-8") if isinstance(line, (bytes, bytearray)) else line
-    value = json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
-                       parse_int=_json_integer, parse_float=_json_float)
+    try:
+        value = json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
+                           parse_int=_json_integer, parse_float=_json_float)
+    except RecursionError:
+        raise ValueError("JSON nesting exceeds the runtime limit") from None
     pending = [value]
     while pending:
         item = pending.pop()

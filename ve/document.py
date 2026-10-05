@@ -286,7 +286,7 @@ def _s1_attached(environment_data, meta):
         units = [{"id": u["id"], "kind": u.get("kind"), "content": u.get("content")}
                  for u, _ in _parts(meta.get("units", []))]
         attached = S1Document(S1Environment(environment_data), {"units": units, "reading_sets": sets}).attached()
-    except (VEError, KeyError, TypeError):
+    except (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError):
         return frozenset()
     return frozenset(u for u, owners in attached.items() if owners)
 

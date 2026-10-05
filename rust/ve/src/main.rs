@@ -95,9 +95,6 @@ fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
 }
 fn case(v: &Value) -> Result<Value> {
-    if v.get("kind") == Some(&json!("readings-evaluate")) {
-        return readings_evaluate_case(v);
-    }
     if v.get("kind") == Some(&json!("risk-condition"))
         || v.get("kind") == Some(&json!("risk-cells")) {
         let id = v.get("id").cloned().unwrap_or(json!(""));

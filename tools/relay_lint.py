@@ -28,8 +28,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-# The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 4: discourse).
-RELAYED = ("ve/backends/relay.py", "ve/discourse.py")
+# The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
+# batch 4: discourse).
+RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py")
 FILE_IO = "# relay-lint: file I/O"
 
 

@@ -18,6 +18,6 @@ pub use ve_profile::{
     evaluate_risk_condition, evaluate_traced, find_countermodel, find_countermodel_min,
     find_countermodel_with_nonvacuity, find_distinguishing_model,
     find_distinguishing_model_with_nonvacuity, label_is_canonical, order_case, quantity_case,
-    readings_evaluate_case, regenerate_risk_cells,
+    regenerate_risk_cells,
 };
 pub use ve_surface::{ParseResult, SourceNode, parse, parse_with_metadata, print_document};
