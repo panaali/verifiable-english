@@ -1,19 +1,36 @@
 {
   "$id": "graph.json",
   "$comment": "Graph composition (Service.Graph.graphCase): the checked report of the root's dependency cone by claim name, the compatibility projection (named leaves and supporting deductions in declaration order) and the regenerated Background leaves.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"$ref": "common.json#/$defs/error"},
-    {"type": "object", "required": ["id", "status", "report", "assumptions", "supporting_edges", "background"],
-      "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "report": {"type": "object", "required": ["root", "assumptions"], "additionalProperties": false,
-          "properties": {"root": {"type": "string"}, "assumptions": {"$ref": "common.json#/$defs/strings"}}},
-        "assumptions": {"$ref": "common.json#/$defs/strings"},
-        "supporting_edges": {"$ref": "common.json#/$defs/strings"},
-        "background": {"type": "array", "items": {"type": "object", "required": ["label", "ast"],
-          "additionalProperties": false,
-          "properties": {"label": {"type": "string"}, "ast": {"type": "array", "minItems": 1}}}}}}]}
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "assumptions": {"$ref": "common.json#/$defs/strings"},
+          "background": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"ast": {"minItems": 1, "type": "array"}, "label": {"type": "string"}},
+              "required": ["label", "ast"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "id": {"type": "string", "x-equals": "/id"},
+          "report": {
+            "additionalProperties": false,
+            "properties": {"assumptions": {"$ref": "common.json#/$defs/strings"}, "root": {"type": "string"}},
+            "required": ["root", "assumptions"],
+            "type": "object"
+          },
+          "status": {"const": "ok"},
+          "supporting_edges": {"$ref": "common.json#/$defs/strings"}
+        },
+        "required": ["id", "status", "report", "assumptions", "supporting_edges", "background"],
+        "type": "object"
+      }
+    ]
+  }
 }

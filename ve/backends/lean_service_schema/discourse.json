@@ -1,133 +1,279 @@
 {
   "$id": "discourse.json",
   "$comment": "Mode discourse: Discourse.Run.runCaseReported (formerly ve_discourse_route). A case on the discourse path (usesDiscoursePath) is answered by the discourse runner; every other case is delegated unchanged to the route mode's runner.",
-  "row": {"x-select": [
-    {"when": {"$ref": "#/$defs/discourse_path"}, "then": {"anyOf": [
-      {"$ref": "common.json#/$defs/case_error"},
-      {"$ref": "common.json#/$defs/route_path_error"},
-      {"x-select": [
-        {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "#/$defs/admission"}},
-        {"when": {"$ref": "#/$defs/kind/discourse-validity"}, "then": {"$ref": "#/$defs/validity"}},
-        {"when": {"$ref": "#/$defs/kind/discourse-resolve"}, "then": {"$ref": "#/$defs/resolve"}},
-        {"when": {"$ref": "#/$defs/kind/discourse-joint"}, "then": {"$ref": "#/$defs/joint"}}]}]}},
-    {"when": true, "then": {"$ref": "route.json#/row"}}]},
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/validity"}, "when": {"$ref": "#/$defs/kind/discourse-validity"}},
+                {"then": {"$ref": "#/$defs/resolve"}, "when": {"$ref": "#/$defs/kind/discourse-resolve"}},
+                {"then": {"$ref": "#/$defs/joint"}, "when": {"$ref": "#/$defs/kind/discourse-joint"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/discourse_path"}
+      },
+      {"then": {"$ref": "route.json#/row"}, "when": true}
+    ]
+  },
   "$defs": {
-    "discourse_path": {"$comment": "Discourse.Run.usesDiscoursePath: a document text, the ve.discourse@1 profile in a profile list of strings (Route.Gate.profilesOf), or a discourse-* kind.",
-      "type": "object", "anyOf": [
-        {"required": ["document"], "properties": {"document": {"type": "string"}}},
-        {"required": ["environment"], "properties": {"environment": {
-          "type": "object", "required": ["profiles"], "properties": {"profiles": {
-            "type": "array", "items": {"type": "string"}, "contains": {"const": "ve.discourse@1"}}}}}},
-        {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "discourse-.*"}}}]},
-    "kind": {
-      "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}},
-      "discourse-validity": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "discourse-validity"}}},
-      "discourse-resolve": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "discourse-resolve"}}},
-      "discourse-joint": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "discourse-joint"}}}},
-    "target_kind": {"enum": ["entity", "predicate", "unit", "anchor", "rule", "claim", "document"]},
-    "reference": {"$comment": "Discourse.Admission.referencesJson: a mention, its unit, its form, its front-matter target (Wire.decodeTarget's fields) and its status.",
-      "type": "object", "required": ["mention", "unit", "form", "target", "status"], "additionalProperties": false,
-      "properties": {
-        "mention": {"type": "string"},
-        "unit": {"type": "string"},
-        "form": {"enum": ["pronoun", "demonstrative", "definite", "ordinal_pair", "such", "possessive", "plural",
-                          "section_ref", "definition_ref", "document_name", "citation", "navigation"]},
-        "target": {"type": "object", "required": ["kind"], "additionalProperties": false,
-          "properties": {
-            "kind": {"$ref": "#/$defs/target_kind"},
-            "name": {"type": "string"},
-            "version": {"$ref": "common.json#/$defs/nat"},
-            "members": {"$ref": "common.json#/$defs/strings"},
-            "pair": {"$ref": "common.json#/$defs/string_pair"},
-            "units": {"$ref": "common.json#/$defs/strings"},
-            "content_name": {"type": "string"}}},
-        "status": {"enum": ["pending", "navigation", "resolved"]}}},
-    "validity_map": {"$comment": "Discourse.Admission.verdictText per validity-claim unit.",
-      "type": "object", "additionalProperties": {"type": "string", "pattern": "checked|refuted|none|unconfirmed \\(.*"}},
-    "joint_count": {"$comment": "The number of compatible joint choices, or the joint error.",
-      "anyOf": [{"type": "integer", "minimum": 1}, {"$ref": "common.json#/$defs/text"}]},
-    "admission": {"$comment": "Discourse.Run.encodeAdmission: the wrapper's admission (ve-document@2, or a lifted ve-document@1 text whose identities are empty and whose joint is the missing manifest).",
-      "type": "object", "required": ["id", "status", "admitted", "reading_verdicts", "report", "report_id", "inner_report_id",
-        "document_id", "source_id", "environment_id", "definitions_version", "kinds", "references", "bound", "meaning_ids",
-        "presuppositions", "pending", "validity", "self_truth", "statuses", "joint"],
+    "admission": {
+      "$comment": "Discourse.Run.encodeAdmission: the wrapper's admission (ve-document@2, or a lifted ve-document@1 text whose identities are empty and whose joint is the missing manifest).",
       "additionalProperties": false,
       "properties": {
-        "id": {"$ref": "common.json#/$defs/id_ok"},
-        "status": {"const": "ok"},
         "admitted": {"enum": [true, "UNKNOWN"]},
-        "reading_verdicts": {"type": "object", "additionalProperties": {"const": "UNKNOWN (joint choices)"}},
+        "bound": {"additionalProperties": {"$ref": "common.json#/$defs/generated_formula"}, "type": "object"},
+        "definitions_version": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "inner_report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "joint": {"$ref": "#/$defs/joint_count"},
+        "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
+        "meaning_ids": {"additionalProperties": {"$ref": "common.json#/$defs/hex64"}, "type": "object"},
+        "pending": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [{"type": "string"}, {"pattern": "PresuppositionUnresolved: .*", "type": "string"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "presuppositions": {"additionalProperties": {"pattern": "discourse:presupposition:.*", "type": "string"}, "type": "object"},
+        "reading_verdicts": {"additionalProperties": {"const": "UNKNOWN (joint choices)"}, "type": "object"},
+        "references": {"items": {"$ref": "#/$defs/reference"}, "type": "array"},
         "report": {"$ref": "common.json#/$defs/report"},
         "report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "inner_report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "source_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "definitions_version": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "kinds": {"type": "array", "items": {"$ref": "common.json#/$defs/kind"}},
-        "references": {"type": "array", "items": {"$ref": "#/$defs/reference"}},
-        "bound": {"type": "object", "additionalProperties": {"$ref": "common.json#/$defs/generated_formula"}},
-        "meaning_ids": {"type": "object", "additionalProperties": {"$ref": "common.json#/$defs/hex64"}},
-        "presuppositions": {"type": "object", "additionalProperties": {
-          "type": "string", "pattern": "discourse:presupposition:.*"}},
-        "pending": {"type": "array", "items": {"type": "array", "minItems": 2, "maxItems": 2,
-          "prefixItems": [{"type": "string"}, {"type": "string", "pattern": "PresuppositionUnresolved: .*"}]}},
-        "validity": {"$ref": "#/$defs/validity_map"},
         "self_truth": {"$ref": "common.json#/$defs/strings"},
-        "statuses": {"type": "object", "additionalProperties": {"enum": ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]}},
-        "joint": {"$ref": "#/$defs/joint_count"}}},
-    "validity": {"$comment": "Discourse.Run discourse-validity: each validity claim's verdict.",
-      "type": "object", "required": ["id", "status", "validity"], "additionalProperties": false,
-      "properties": {
-        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "source_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
         "status": {"const": "ok"},
-        "validity": {"$ref": "#/$defs/validity_map"}}},
-    "resolved_target": {"$comment": "Discourse.Run.targetJson: members and units only when nonempty.",
-      "type": "object", "required": ["kind"], "additionalProperties": false,
+        "statuses": {"additionalProperties": {"enum": ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]}, "type": "object"},
+        "validity": {"$ref": "#/$defs/validity_map"}
+      },
+      "required": [
+        "id",
+        "status",
+        "admitted",
+        "reading_verdicts",
+        "report",
+        "report_id",
+        "inner_report_id",
+        "document_id",
+        "source_id",
+        "environment_id",
+        "definitions_version",
+        "kinds",
+        "references",
+        "bound",
+        "meaning_ids",
+        "presuppositions",
+        "pending",
+        "validity",
+        "self_truth",
+        "statuses",
+        "joint"
+      ],
+      "type": "object"
+    },
+    "discourse_path": {
+      "$comment": "Discourse.Run.usesDiscoursePath: a document text, the ve.discourse@1 profile in a profile list of strings (Route.Gate.profilesOf), or a discourse-* kind.",
+      "anyOf": [
+        {"properties": {"document": {"type": "string"}}, "required": ["document"]},
+        {
+          "properties": {
+            "environment": {
+              "properties": {
+                "profiles": {"contains": {"const": "ve.discourse@1"}, "items": {"type": "string"}, "type": "array"}
+              },
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "discourse-.*", "type": "string"}}, "required": ["kind"]}
+      ],
+      "type": "object"
+    },
+    "joint": {
+      "$comment": "Discourse.Run.runJoint: the compatible choices and their disjunction, or the diagnostic.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choices": {
+              "items": {
+                "items": {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "joint": {"$ref": "common.json#/$defs/generated_formula"},
+            "status": {"const": "ok"},
+            "verdict": {"const": "COMPLETE"}
+          },
+          "required": ["id", "status", "verdict", "choices", "joint"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "diagnostic": {"$ref": "common.json#/$defs/text"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"},
+            "verdict": {"enum": ["UNKNOWN", "INVALID"]}
+          },
+          "required": ["id", "status", "verdict", "diagnostic"],
+          "type": "object"
+        }
+      ]
+    },
+    "joint_count": {
+      "$comment": "The number of compatible joint choices, or the joint error.",
+      "anyOf": [{"minimum": 1, "type": "integer"}, {"$ref": "common.json#/$defs/text"}]
+    },
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "discourse-joint": {"properties": {"kind": {"const": "discourse-joint"}}, "required": ["kind"], "type": "object"},
+      "discourse-resolve": {"properties": {"kind": {"const": "discourse-resolve"}}, "required": ["kind"], "type": "object"},
+      "discourse-validity": {"properties": {"kind": {"const": "discourse-validity"}}, "required": ["kind"], "type": "object"}
+    },
+    "reference": {
+      "$comment": "Discourse.Admission.referencesJson: a mention, its unit, its form, its front-matter target (Wire.decodeTarget's fields) and its status.",
+      "additionalProperties": false,
+      "properties": {
+        "form": {
+          "enum": [
+            "pronoun",
+            "demonstrative",
+            "definite",
+            "ordinal_pair",
+            "such",
+            "possessive",
+            "plural",
+            "section_ref",
+            "definition_ref",
+            "document_name",
+            "citation",
+            "navigation"
+          ]
+        },
+        "mention": {"type": "string"},
+        "status": {"enum": ["pending", "navigation", "resolved"]},
+        "target": {
+          "additionalProperties": false,
+          "properties": {
+            "content_name": {"type": "string"},
+            "kind": {"$ref": "#/$defs/target_kind"},
+            "members": {"$ref": "common.json#/$defs/strings"},
+            "name": {"type": "string"},
+            "pair": {"$ref": "common.json#/$defs/string_pair"},
+            "units": {"$ref": "common.json#/$defs/strings"},
+            "version": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": ["kind"],
+          "type": "object"
+        },
+        "unit": {"type": "string"}
+      },
+      "required": ["mention", "unit", "form", "target", "status"],
+      "type": "object"
+    },
+    "resolve": {
+      "$comment": "Discourse.Run.runResolve: each bound unit's resolution, each mention's accessible and recorded targets, well-formedness and the joint count.",
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "joint": {"$ref": "#/$defs/joint_count"},
+        "mentions": {
+          "additionalProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "accessible": {"items": {"$ref": "#/$defs/resolved_target"}, "type": "array"},
+              "accessible_recorded": {"type": "boolean"},
+              "pin": {"$ref": "common.json#/$defs/nat"},
+              "recorded": {"$ref": "#/$defs/resolved_target"}
+            },
+            "required": ["accessible", "recorded", "accessible_recorded"],
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "source_id": {"$ref": "common.json#/$defs/hex64"},
+        "status": {"const": "ok"},
+        "units": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "formula": {"$ref": "common.json#/$defs/generated_formula"},
+                  "meaning_id": {"$ref": "common.json#/$defs/hex64"},
+                  "status": {"const": "resolved"}
+                },
+                "required": ["status", "formula", "meaning_id"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
+                "required": ["status", "error"],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "object"
+        },
+        "well_formed": {"$ref": "common.json#/$defs/text"}
+      },
+      "required": ["id", "status", "units", "mentions", "well_formed", "environment_id", "source_id", "joint"],
+      "type": "object"
+    },
+    "resolved_target": {
+      "$comment": "Discourse.Run.targetJson: members and units only when nonempty.",
+      "additionalProperties": false,
       "properties": {
         "kind": {"$ref": "#/$defs/target_kind"},
-        "name": {"type": "string"},
         "members": {"$ref": "common.json#/$defs/strings", "minItems": 1},
+        "name": {"type": "string"},
         "pair": {"$ref": "common.json#/$defs/string_pair"},
-        "units": {"$ref": "common.json#/$defs/strings", "minItems": 1}}},
-    "resolve": {"$comment": "Discourse.Run.runResolve: each bound unit's resolution, each mention's accessible and recorded targets, well-formedness and the joint count.",
-      "type": "object", "required": ["id", "status", "units", "mentions", "well_formed", "environment_id", "source_id", "joint"],
+        "units": {"$ref": "common.json#/$defs/strings", "minItems": 1}
+      },
+      "required": ["kind"],
+      "type": "object"
+    },
+    "target_kind": {"enum": ["entity", "predicate", "unit", "anchor", "rule", "claim", "document"]},
+    "validity": {
+      "$comment": "Discourse.Run discourse-validity: each validity claim's verdict.",
       "additionalProperties": false,
       "properties": {
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "status": {"const": "ok"},
-        "units": {"type": "object", "additionalProperties": {"anyOf": [
-          {"type": "object", "required": ["status", "formula", "meaning_id"], "additionalProperties": false,
-           "properties": {"status": {"const": "resolved"}, "formula": {"$ref": "common.json#/$defs/generated_formula"},
-                          "meaning_id": {"$ref": "common.json#/$defs/hex64"}}},
-          {"type": "object", "required": ["status", "error"], "additionalProperties": false,
-           "properties": {"status": {"const": "error"}, "error": {"$ref": "common.json#/$defs/text"}}}]}},
-        "mentions": {"type": "object", "additionalProperties": {
-          "type": "object", "required": ["accessible", "recorded", "accessible_recorded"], "additionalProperties": false,
-          "properties": {
-            "accessible": {"type": "array", "items": {"$ref": "#/$defs/resolved_target"}},
-            "recorded": {"$ref": "#/$defs/resolved_target"},
-            "accessible_recorded": {"type": "boolean"},
-            "pin": {"$ref": "common.json#/$defs/nat"}}}},
-        "well_formed": {"$ref": "common.json#/$defs/text"},
-        "environment_id": {"$ref": "common.json#/$defs/hex64"},
-        "source_id": {"$ref": "common.json#/$defs/hex64"},
-        "joint": {"$ref": "#/$defs/joint_count"}}},
-    "joint": {"$comment": "Discourse.Run.runJoint: the compatible choices and their disjunction, or the diagnostic.",
-      "anyOf": [
-        {"type": "object", "required": ["id", "status", "verdict", "choices", "joint"], "additionalProperties": false,
-         "properties": {
-           "id": {"$ref": "common.json#/$defs/id_ok"},
-           "status": {"const": "ok"},
-           "verdict": {"const": "COMPLETE"},
-           "choices": {"type": "array", "minItems": 1, "items": {"type": "array", "items": {
-             "type": "array", "minItems": 3, "maxItems": 3,
-             "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}]}}},
-           "joint": {"$ref": "common.json#/$defs/generated_formula"}}},
-        {"type": "object", "required": ["id", "status", "verdict", "diagnostic"], "additionalProperties": false,
-         "properties": {
-           "id": {"$ref": "common.json#/$defs/id_ok"},
-           "status": {"const": "ok"},
-           "verdict": {"enum": ["UNKNOWN", "INVALID"]},
-           "diagnostic": {"$ref": "common.json#/$defs/text"}}}]}
+        "validity": {"$ref": "#/$defs/validity_map"}
+      },
+      "required": ["id", "status", "validity"],
+      "type": "object"
+    },
+    "validity_map": {
+      "$comment": "Discourse.Admission.verdictText per validity-claim unit.",
+      "additionalProperties": {"pattern": "checked|refuted|none|unconfirmed \\(.*", "type": "string"},
+      "type": "object"
+    }
   }
 }

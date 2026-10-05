@@ -162,9 +162,12 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
   fallback to Python. Cancellation is out of band only (the kill).
-- Response shapes have one source: `ve/backends/lean_service_schema/` (one JSON schema file per mode plus the
-  envelope and shared Lean value domains; dialect in its `README.md`). `ve/backends/service_schema.py`
-  compiles it; the supervisor has no other shape checks. Following the threat model, the schemas hold binding
+- Response shapes have one source, in Lean: `lean/ResponseShape/Schemas/` (one module per schema file, in the
+  dialect of `lean/ResponseShape.lean`), rendered to `ve/backends/lean_service_schema/` (one JSON schema
+  file per mode plus the envelope and shared Lean value domains; dialect in its `README.md`) by
+  `tools/response_schemas.py`, which also fails on any file that is not the rendering
+  (`tests/test_response_schemas.py`). `ve/backends/service_schema.py` compiles the rendered files; the
+  supervisor has no other shape checks. Following the threat model, the schemas hold binding
   and well-formedness only. The binding is the nonce, the mode, each result's position and case digest, and the
   identity fields echoed from the case: `id`, the requested label and witness target, the admission root and
   unit kinds, the requested lemmas' meaning ids and `checked`, one value per requested formula, one result per
@@ -172,7 +175,9 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
   verdicts) and the Lean decoders' grammars and fuel (formula and term depth 64, kind depth 16; generated
   formulas at any depth). A response outside them is an operational failure.
 - `lean/ResponseDecode.lean` (`ve_response_decode`, test tooling outside `VE/`, no theorems) has two checks.
-  `decode` reads responses with the Lean decoders and runner dispatch, and is the schemas' differential oracle.
+  `decode` checks responses with the same Lean shapes, each Lean decoder (formulas, terms, kinds, labels,
+  tokens, numerals) and runner dispatch test (each route's path) deciding beside the shape it names and
+  required to agree with it; it is the schemas' differential oracle for the dialect's Python reading.
   `invariants` checks the content the client leaves to the service, as listed in the threat model.
   `tests/test_lean_service_schema.py` has these requirements:
   - the schemas and `decode` accept every genuine response over a corpus with every mode and result kind;

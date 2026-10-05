@@ -1,177 +1,378 @@
 {
   "$id": "alternatives.json",
   "$comment": "Mode alternatives: Alternatives.Run.runCaseReported (formerly ve_alternatives_route). A case on the alternatives path (usesAltPath) is answered by the alternatives runner; every other case is delegated unchanged to the norms mode's runner.",
-  "row": {"x-select": [
-    {"when": {"$ref": "#/$defs/alt_path"}, "then": {"anyOf": [
-      {"$ref": "common.json#/$defs/case_error"},
-      {"$ref": "common.json#/$defs/route_path_error"},
-      {"x-select": [
-        {"when": {"$ref": "#/$defs/kind/admission"}, "then": {"$ref": "#/$defs/admission"}},
-        {"when": {"$ref": "#/$defs/kind/alt-elaborate"}, "then": {"$ref": "#/$defs/elaborate"}},
-        {"when": {"$ref": "#/$defs/kind/alt-validate"}, "then": {"$ref": "#/$defs/validate"}},
-        {"when": {"allOf": [{"$ref": "#/$defs/kind/alt-conflict"}, {"required": ["witness"]}]},
-         "then": {"$ref": "#/$defs/conflict_witness"}},
-        {"when": {"$ref": "#/$defs/kind/alt-conflict"}, "then": {"$ref": "common.json#/$defs/packages_conflict"}},
-        {"when": {"allOf": [{"$ref": "#/$defs/kind/alt-followable"}, {"required": ["witness"]}]},
-         "then": {"$ref": "#/$defs/followable_witness"}},
-        {"when": {"$ref": "#/$defs/kind/alt-followable"}, "then": {"$ref": "#/$defs/followable"}},
-        {"when": {"$ref": "#/$defs/kind/alt-certificate"}, "then": {"$ref": "#/$defs/certificate"}}]}]}},
-    {"when": true, "then": {"$ref": "norms.json#/row"}}]},
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/alt-elaborate"}},
+                {"then": {"$ref": "#/$defs/validate"}, "when": {"$ref": "#/$defs/kind/alt-validate"}},
+                {
+                  "then": {"$ref": "#/$defs/conflict_witness"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/alt-conflict"}, {"required": ["witness"]}]}
+                },
+                {
+                  "then": {"$ref": "common.json#/$defs/packages_conflict"},
+                  "when": {"$ref": "#/$defs/kind/alt-conflict"}
+                },
+                {
+                  "then": {"$ref": "#/$defs/followable_witness"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/alt-followable"}, {"required": ["witness"]}]}
+                },
+                {"then": {"$ref": "#/$defs/followable"}, "when": {"$ref": "#/$defs/kind/alt-followable"}},
+                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/alt-certificate"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/alt_path"}
+      },
+      {"then": {"$ref": "norms.json#/row"}, "when": true}
+    ]
+  },
   "$defs": {
-    "alt_path": {"$comment": "Alternatives.Run.usesAltPath: the alternatives@0 profile, the environment's alternatives block or an alt-* kind.",
-      "type": "object", "anyOf": [
-        {"required": ["environment"], "properties": {"environment": {
-          "type": "object", "required": ["profiles"], "properties": {"profiles": {
-            "type": "array", "contains": {"const": "alternatives@0"}}}}}},
-        {"required": ["environment"], "properties": {"environment": {"type": "object", "required": ["alternatives"]}}},
-        {"required": ["kind"], "properties": {"kind": {"type": "string", "pattern": "alt-.*"}}}]},
-    "kind": {
-      "admission": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "admission"}}},
-      "alt-elaborate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "alt-elaborate"}}},
-      "alt-validate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "alt-validate"}}},
-      "alt-conflict": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "alt-conflict"}}},
-      "alt-followable": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "alt-followable"}}},
-      "alt-certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "alt-certificate"}}}},
-    "alt_labels": {"$comment": "Alternatives.Background.altPremiseLabels.",
-      "type": "array", "items": {"enum": ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction",
-                                          "alternatives:proximate"]}},
-    "admission": {"$comment": "Alternatives.Run.encodeAdmitted: W2's admission answer and the source labels it is conditional on.",
-      "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+    "admission": {
+      "$comment": "Alternatives.Run.encodeAdmitted: W2's admission answer and the source labels it is conditional on.",
       "additionalProperties": false,
       "properties": {
-        "id": {"$ref": "common.json#/$defs/id_ok"},
-        "status": {"const": "ok"},
         "admitted": {"const": true},
+        "conditional_on": {"$ref": "common.json#/$defs/strings"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array", "x-equals": "/document/units/*/kind"},
         "report": {"$ref": "common.json#/$defs/bound_report"},
         "report_id": {"$ref": "common.json#/$defs/hex64"},
-        "kinds": {"type": "array", "items": {"$ref": "common.json#/$defs/kind"}, "x-equals": "/document/units/*/kind"},
-        "conditional_on": {"$ref": "common.json#/$defs/strings"}}},
-    "regenerated": {"$comment": "Alternatives.Wire.regenerated before the norms fields: the fields risk-elaborate repeats.",
-      "inlined": {"type": "array", "items": {
-        "type": "object", "required": ["norm"], "additionalProperties": false,
-        "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}}}},
-      "alternatives": {"type": "array", "items": {"$ref": "common.json#/$defs/labelled",
-        "properties": {"label": {"enum": ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction",
-                                          "alternatives:proximate"]}}}},
-      "followable": {"type": "object", "required": ["ast", "followable", "clear"], "additionalProperties": false,
-        "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"},
-                       "followable": {"$ref": "common.json#/$defs/generated_formula"},
-                       "clear": {"$ref": "common.json#/$defs/generated_formula"}}},
-      "unmapped_obligations": {"type": "array", "items": {
-        "type": "object", "required": ["obligation", "act"], "additionalProperties": false,
-        "properties": {"obligation": {"type": "string"}, "act": {"type": "string"}}}}},
-    "elaborate": {"$comment": "Alternatives.Wire.regenerated: the legend, the inlined tree, the alternatives premises, the base premises, the followability formulas, the profile words' existential probes, the unmapped obligations, then Norms.Wire.regenerated of the inlined tree.",
-      "type": "object", "required": ["id", "status", "legend", "inlined", "alternatives", "base_premises", "followable",
-        "profile_exists", "unmapped_obligations", "order", "background", "premises", "conflict_targets", "fragment"],
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+      "type": "object"
+    },
+    "alt_labels": {
+      "$comment": "Alternatives.Background.altPremiseLabels.",
+      "items": {
+        "enum": ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction", "alternatives:proximate"]
+      },
+      "type": "array"
+    },
+    "alt_path": {
+      "$comment": "Alternatives.Run.usesAltPath: the alternatives@0 profile, the environment's alternatives block or an alt-* kind.",
+      "anyOf": [
+        {
+          "properties": {
+            "environment": {
+              "properties": {"profiles": {"contains": {"const": "alternatives@0"}, "type": "array"}},
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {
+          "properties": {"environment": {"required": ["alternatives"], "type": "object"}},
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "alt-.*", "type": "string"}}, "required": ["kind"]}
+      ],
+      "type": "object"
+    },
+    "certificate": {
+      "$comment": "Alternatives.Run.runCase alt-certificate.",
       "additionalProperties": false,
       "properties": {
+        "background": {"$ref": "common.json#/$defs/nat"},
+        "conditional_on": {"$ref": "#/$defs/alt_labels"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
+        "layers": {"$ref": "common.json#/$defs/nat"},
         "status": {"const": "ok"},
-        "legend": {"$ref": "common.json#/$defs/nonempty_strings"},
-        "inlined": {"$ref": "#/$defs/regenerated/inlined"},
-        "alternatives": {"$ref": "#/$defs/regenerated/alternatives"},
-        "base_premises": {"$ref": "common.json#/$defs/labelled_list"},
-        "followable": {"$ref": "#/$defs/regenerated/followable"},
-        "profile_exists": {"type": "object", "required": ["avoidable", "unavoidable", "allows", "prevents"],
-          "additionalProperties": false,
-          "properties": {"avoidable": {"$ref": "common.json#/$defs/generated_formula"},
-                         "unavoidable": {"$ref": "common.json#/$defs/generated_formula"},
-                         "allows": {"$ref": "common.json#/$defs/generated_formula"},
-                         "prevents": {"$ref": "common.json#/$defs/generated_formula"}}},
-        "unmapped_obligations": {"$ref": "#/$defs/regenerated/unmapped_obligations"},
-        "order": {"$ref": "common.json#/$defs/strings"},
-        "background": {"$ref": "common.json#/$defs/norms_background"},
-        "premises": {"$ref": "common.json#/$defs/layer_premises"},
-        "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
-        "fragment": {"type": "boolean"}}},
-    "chooser": {"$comment": "Alternatives.Run.chooserReport: violations and breaches exactly when the block names a taken predicate.",
-      "type": "object", "required": ["chooser", "alternatives", "inaction", "permitted", "required", "avoidable",
-        "unavoidable", "allows", "prevents", "clear", "text"],
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "background", "layers", "conditional_on"],
+      "type": "object"
+    },
+    "chooser": {
+      "$comment": "Alternatives.Run.chooserReport: violations and breaches exactly when the block names a taken predicate.",
       "additionalProperties": false,
+      "else": {"not": {"anyOf": [{"required": ["violations"]}, {"required": ["breaches"]}]}},
+      "if": {
+        "x-case": {
+          "properties": {
+            "environment": {
+              "properties": {"alternatives": {"required": ["taken"], "type": "object"}},
+              "required": ["alternatives"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        }
+      },
       "properties": {
-        "chooser": {"type": "string"},
+        "allows": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
         "alternatives": {"$ref": "common.json#/$defs/strings"},
+        "avoidable": {"$ref": "common.json#/$defs/strings"},
+        "breaches": {"$ref": "common.json#/$defs/strings"},
+        "chooser": {"type": "string"},
+        "clear": {"$ref": "common.json#/$defs/strings"},
         "inaction": {"$ref": "common.json#/$defs/strings"},
         "permitted": {"$ref": "common.json#/$defs/strings"},
+        "prevents": {"items": {"$ref": "common.json#/$defs/string_pair"}, "type": "array"},
         "required": {"$ref": "common.json#/$defs/strings"},
-        "avoidable": {"$ref": "common.json#/$defs/strings"},
-        "unavoidable": {"$ref": "common.json#/$defs/strings"},
-        "allows": {"type": "array", "items": {"$ref": "common.json#/$defs/string_pair"}},
-        "prevents": {"type": "array", "items": {"$ref": "common.json#/$defs/string_pair"}},
-        "clear": {"$ref": "common.json#/$defs/strings"},
         "text": {"$ref": "common.json#/$defs/text"},
-        "violations": {"type": "array", "items": {"anyOf": [
-          {"type": "string"},
-          {"type": "object", "required": ["obligation", "arguments"], "additionalProperties": false,
-           "properties": {"obligation": {"type": "string"}, "arguments": {"$ref": "common.json#/$defs/strings"}}}]}},
-        "breaches": {"$ref": "common.json#/$defs/strings"}},
-      "if": {"x-case": {"required": ["environment"], "properties": {"environment": {
-        "type": "object", "required": ["alternatives"], "properties": {"alternatives": {
-          "type": "object", "required": ["taken"]}}}}}},
+        "unavoidable": {"$ref": "common.json#/$defs/strings"},
+        "violations": {
+          "items": {
+            "anyOf": [
+              {"type": "string"},
+              {
+                "additionalProperties": false,
+                "properties": {"arguments": {"$ref": "common.json#/$defs/strings"}, "obligation": {"type": "string"}},
+                "required": ["obligation", "arguments"],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "chooser",
+        "alternatives",
+        "inaction",
+        "permitted",
+        "required",
+        "avoidable",
+        "unavoidable",
+        "allows",
+        "prevents",
+        "clear",
+        "text"
+      ],
       "then": {"required": ["violations", "breaches"]},
-      "else": {"not": {"anyOf": [{"required": ["violations"]}, {"required": ["breaches"]}]}}},
-    "validate": {"$comment": "Alternatives.Run.runValidate: a CONFLICT on the scenario, or the per-chooser evaluation.",
-      "anyOf": [
-        {"type": "object", "required": ["id", "status", "verdict", "target", "tuple", "model_id", "environment_id",
-           "document_hash", "text"], "additionalProperties": false,
-         "properties": {
-           "id": {"$ref": "common.json#/$defs/id_ok"},
-           "status": {"const": "ok"},
-           "verdict": {"const": "CONFLICT"},
-           "target": {"type": "string"},
-           "tuple": {"$ref": "common.json#/$defs/strings"},
-           "model_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-           "environment_id": {"$ref": "common.json#/$defs/hex64"},
-           "document_hash": {"$ref": "common.json#/$defs/hex64"},
-           "text": {"$ref": "common.json#/$defs/text"}}},
-        {"type": "object", "required": ["id", "status", "model_id", "environment_id", "document_hash", "choosers",
-           "assumed_harm_free", "unmapped_obligations", "conditional_on", "text"], "additionalProperties": false,
-         "properties": {
-           "id": {"$ref": "common.json#/$defs/id_ok"},
-           "status": {"const": "ok"},
-           "model_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-           "environment_id": {"$ref": "common.json#/$defs/hex64"},
-           "document_hash": {"$ref": "common.json#/$defs/hex64"},
-           "choosers": {"type": "array", "items": {"$ref": "#/$defs/chooser"}},
-           "assumed_harm_free": {"$ref": "common.json#/$defs/strings"},
-           "unmapped_obligations": {"$ref": "common.json#/$defs/text"},
-           "conditional_on": {"type": "array", "items": {"const": "alternatives:table_complete"}, "maxItems": 1},
-           "text": {"$ref": "common.json#/$defs/text"}}}]},
-    "conflict_witness": {"$comment": "Alternatives.Run.runConflictWitness: the requested target (no target list).",
-      "type": "object", "required": ["id", "status", "verdict", "target"], "additionalProperties": false,
-      "properties": {
-        "id": {"$ref": "common.json#/$defs/id_ok"},
-        "status": {"const": "ok"},
-        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]},
-        "target": {"type": "string", "x-equals": "/witness/target"}}},
-    "followable_witness": {"$comment": "Alternatives.Run.runFollowable with a dilemma witness.",
-      "anyOf": [
-        {"type": "object", "required": ["id", "status", "verdict", "text"], "additionalProperties": false,
-         "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"},
-                        "verdict": {"enum": ["not computed", "UNKNOWN"]}, "text": {"$ref": "common.json#/$defs/text"}}},
-        {"type": "object", "required": ["id", "status", "verdict", "chooser", "diagnosis", "text"],
-         "additionalProperties": false,
-         "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"},
-                        "verdict": {"const": "DILEMMA"}, "chooser": {"type": "string", "x-equals": "/witness/chooser"},
-                        "diagnosis": {"$ref": "common.json#/$defs/text"}, "text": {"$ref": "common.json#/$defs/text"}}}]},
-    "followable": {"$comment": "Alternatives.Run.runFollowable over a certificate package.",
-      "anyOf": [
-        {"type": "object", "required": ["id", "status", "verdict", "text"], "additionalProperties": false,
-         "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"},
-                        "verdict": {"enum": ["not computed", "UNKNOWN"]}, "text": {"$ref": "common.json#/$defs/text"}}},
-        {"type": "object", "required": ["id", "status", "verdict", "conditional_on", "text"], "additionalProperties": false,
-         "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"},
-                        "verdict": {"const": "FOLLOWABLE"}, "conditional_on": {"$ref": "common.json#/$defs/strings"},
-                        "text": {"type": "string", "pattern": "FOLLOWABLE: .*"}}}]},
-    "certificate": {"$comment": "Alternatives.Run.runCase alt-certificate.",
-      "type": "object", "required": ["id", "status", "valid", "background", "layers", "conditional_on"],
+      "type": "object"
+    },
+    "conflict_witness": {
+      "$comment": "Alternatives.Run.runConflictWitness: the requested target (no target list).",
       "additionalProperties": false,
       "properties": {
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "status": {"const": "ok"},
-        "valid": {"type": "boolean"},
-        "background": {"$ref": "common.json#/$defs/nat"},
-        "layers": {"$ref": "common.json#/$defs/nat"},
-        "conditional_on": {"$ref": "#/$defs/alt_labels"}}}
+        "target": {"type": "string", "x-equals": "/witness/target"},
+        "verdict": {"enum": ["CONFLICT", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "target"],
+      "type": "object"
+    },
+    "elaborate": {
+      "$comment": "Alternatives.Wire.regenerated: the legend, the inlined tree, the alternatives premises, the base premises, the followability formulas, the profile words' existential probes, the unmapped obligations, then Norms.Wire.regenerated of the inlined tree.",
+      "additionalProperties": false,
+      "properties": {
+        "alternatives": {"$ref": "#/$defs/regenerated/alternatives"},
+        "background": {"$ref": "common.json#/$defs/norms_background"},
+        "base_premises": {"$ref": "common.json#/$defs/labelled_list"},
+        "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "followable": {"$ref": "#/$defs/regenerated/followable"},
+        "fragment": {"type": "boolean"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "inlined": {"$ref": "#/$defs/regenerated/inlined"},
+        "legend": {"$ref": "common.json#/$defs/nonempty_strings"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "profile_exists": {
+          "additionalProperties": false,
+          "properties": {
+            "allows": {"$ref": "common.json#/$defs/generated_formula"},
+            "avoidable": {"$ref": "common.json#/$defs/generated_formula"},
+            "prevents": {"$ref": "common.json#/$defs/generated_formula"},
+            "unavoidable": {"$ref": "common.json#/$defs/generated_formula"}
+          },
+          "required": ["avoidable", "unavoidable", "allows", "prevents"],
+          "type": "object"
+        },
+        "status": {"const": "ok"},
+        "unmapped_obligations": {"$ref": "#/$defs/regenerated/unmapped_obligations"}
+      },
+      "required": [
+        "id",
+        "status",
+        "legend",
+        "inlined",
+        "alternatives",
+        "base_premises",
+        "followable",
+        "profile_exists",
+        "unmapped_obligations",
+        "order",
+        "background",
+        "premises",
+        "conflict_targets",
+        "fragment"
+      ],
+      "type": "object"
+    },
+    "followable": {
+      "$comment": "Alternatives.Run.runFollowable over a certificate package.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "verdict": {"enum": ["not computed", "UNKNOWN"]}
+          },
+          "required": ["id", "status", "verdict", "text"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "conditional_on": {"$ref": "common.json#/$defs/strings"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"},
+            "text": {"pattern": "FOLLOWABLE: .*", "type": "string"},
+            "verdict": {"const": "FOLLOWABLE"}
+          },
+          "required": ["id", "status", "verdict", "conditional_on", "text"],
+          "type": "object"
+        }
+      ]
+    },
+    "followable_witness": {
+      "$comment": "Alternatives.Run.runFollowable with a dilemma witness.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "verdict": {"enum": ["not computed", "UNKNOWN"]}
+          },
+          "required": ["id", "status", "verdict", "text"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "chooser": {"type": "string", "x-equals": "/witness/chooser"},
+            "diagnosis": {"$ref": "common.json#/$defs/text"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "status": {"const": "ok"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "verdict": {"const": "DILEMMA"}
+          },
+          "required": ["id", "status", "verdict", "chooser", "diagnosis", "text"],
+          "type": "object"
+        }
+      ]
+    },
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "alt-certificate": {"properties": {"kind": {"const": "alt-certificate"}}, "required": ["kind"], "type": "object"},
+      "alt-conflict": {"properties": {"kind": {"const": "alt-conflict"}}, "required": ["kind"], "type": "object"},
+      "alt-elaborate": {"properties": {"kind": {"const": "alt-elaborate"}}, "required": ["kind"], "type": "object"},
+      "alt-followable": {"properties": {"kind": {"const": "alt-followable"}}, "required": ["kind"], "type": "object"},
+      "alt-validate": {"properties": {"kind": {"const": "alt-validate"}}, "required": ["kind"], "type": "object"}
+    },
+    "regenerated": {
+      "$comment": "Alternatives.Wire.regenerated before the norms fields: the fields risk-elaborate repeats.",
+      "alternatives": {
+        "items": {
+          "$ref": "common.json#/$defs/labelled",
+          "properties": {
+            "label": {
+              "enum": [
+                "alternatives:own",
+                "alternatives:one_taken",
+                "alternatives:one_inaction",
+                "alternatives:proximate"
+              ]
+            }
+          }
+        },
+        "type": "array"
+      },
+      "followable": {
+        "additionalProperties": false,
+        "properties": {
+          "ast": {"$ref": "common.json#/$defs/generated_formula"},
+          "clear": {"$ref": "common.json#/$defs/generated_formula"},
+          "followable": {"$ref": "common.json#/$defs/generated_formula"}
+        },
+        "required": ["ast", "followable", "clear"],
+        "type": "object"
+      },
+      "inlined": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}},
+          "required": ["norm"],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "unmapped_obligations": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {"act": {"type": "string"}, "obligation": {"type": "string"}},
+          "required": ["obligation", "act"],
+          "type": "object"
+        },
+        "type": "array"
+      }
+    },
+    "validate": {
+      "$comment": "Alternatives.Run.runValidate: a CONFLICT on the scenario, or the per-chooser evaluation.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "document_hash": {"$ref": "common.json#/$defs/hex64"},
+            "environment_id": {"$ref": "common.json#/$defs/hex64"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "model_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "status": {"const": "ok"},
+            "target": {"type": "string"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "tuple": {"$ref": "common.json#/$defs/strings"},
+            "verdict": {"const": "CONFLICT"}
+          },
+          "required": ["id", "status", "verdict", "target", "tuple", "model_id", "environment_id", "document_hash", "text"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "assumed_harm_free": {"$ref": "common.json#/$defs/strings"},
+            "choosers": {"items": {"$ref": "#/$defs/chooser"}, "type": "array"},
+            "conditional_on": {"items": {"const": "alternatives:table_complete"}, "maxItems": 1, "type": "array"},
+            "document_hash": {"$ref": "common.json#/$defs/hex64"},
+            "environment_id": {"$ref": "common.json#/$defs/hex64"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "model_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "status": {"const": "ok"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "unmapped_obligations": {"$ref": "common.json#/$defs/text"}
+          },
+          "required": [
+            "id",
+            "status",
+            "model_id",
+            "environment_id",
+            "document_hash",
+            "choosers",
+            "assumed_harm_free",
+            "unmapped_obligations",
+            "conditional_on",
+            "text"
+          ],
+          "type": "object"
+        }
+      ]
+    }
   }
 }
