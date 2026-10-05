@@ -71,17 +71,18 @@ theorem assignments_of_ownedKeys_nil {α : Type} [DecidableEq α] (D : Doc) (s :
     value when it owns no key. The witness's completion is evaluated once. With no owned key, j's one completion is
     evaluated once; otherwise j's completions go through `otherScanOn`, each one's admissibility evaluated only when
     the scan reaches it and its value only when needed, so nothing builds or evaluates the `2 ^ cells` completions
-    up front (batch 3b review B1, batch 3d review B). `tickValid` and `tickValue` run at each evaluation of j's
+    up front (batch 3b review B1, batch 3d review B). Each document is read from its side (`Pi.X`, `Pj.X`), so
+    none is built here (batch 3b, the request's table). `tickValid` and `tickValue` run at each evaluation of j's
     admissibility and value: the route runs it in `Id` (`pairFactsIn`), `RunExamples.lean` counts them. The caller
     has checked j's cells against `maxCells`. -/
 def pairEval {m : Type → Type} [Monad m] {α : Type} [DecidableEq α] (tickValid tickValue : m Unit) (D : Doc)
     (s : String) (i j : Nat) (Pi Pj : Side) (σ : Situation α) : m (Bool × Bool × Option Bool × Bool × Option Bool) := do
   let M := σ.base
-  let Ti := tablesFor D s i (σ.fixed ++ σ.decisions)
-  let Tj := tablesFor D s j σ.fixed
+  let Ti := tablesForOf Pi.X (σ.fixed ++ σ.decisions)
+  let Tj := tablesForOf Pj.X σ.fixed
   let valid := sideValidOn Pi M Ti
   let value := sideValueOn Pi M Ti σ.probe
-  let want := situationWF D s i j σ && valid && value == some σ.value
+  let want := situationWFOf D s i j Pi.X Pj.X σ && valid && value == some σ.value
   if ownedKeysOn D s j Pj = [] then
     tickValid
     let ok := sideValidOn Pj M Tj
@@ -103,7 +104,8 @@ theorem pairEval_id {α : Type} [DecidableEq α] (D : Doc) (s : String) (i j : N
         if ownedKeys D s j = [] then sideValue D s j σ.base (tablesFor D s j σ.fixed) σ.probe else none) := by
   have hc' : decide (cells D s j σ.base ≤ maxCells) = true := decide_eq_true hc
   unfold pairEval
-  simp only [ownedKeysOn_sideOf, assignmentsOn_sideOf, sideValidOn_sideOf, sideValueOn_sideOf]
+  simp only [ownedKeysOn_sideOf, assignmentsOn_sideOf, sideValidOn_sideOf, sideValueOn_sideOf, tablesForOf_sideOf,
+    situationWFOf_sideOf]
   by_cases ho : ownedKeys D s j = []
   · simp only [ho, if_true, separates, assignments_of_ownedKeys_nil _ _ _ _ ho, hc', List.all_cons, List.all_nil,
       List.any_cons, List.any_nil, List.append_nil, Bool.and_true, Bool.or_false]

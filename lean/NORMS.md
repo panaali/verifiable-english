@@ -27,7 +27,11 @@ targets.
 | `Checks.lean` | executable guards: byte-identical agreement with Python `ve/norms.py` on five documents; the 10.1 regressions on finite models |
 | `Examples.lean` | actual `Layer` values for 10.1(c) and (m), the composed routes of (c) and (o) |
 | `Wire.lean` | the norms decoder: `regulated` declarations beside the frozen P0 vocabulary decoder, norm objects, `Source`, regenerated outputs |
-| `Replay.lean` | conflict-package replay (CONFLICT-FREE), witness replay (CONFLICT), entailment-certificate replay, and their theorems from raw JSON |
+| `Replay.lean` | the frozen conflict targets and conflict check over `E_base` and `Background_base`, conflict packages, witness data; also legacy replay functions (`replayConflict`, `replayWitness`, `replayEntailment`) and their theorems, which no executable calls |
+| `Flagged.lean` | what the route runs for `norms-conflict`, witnesses and `norms-certificate`: `data@0` flags and W3 definitions admitted, conflict certificates over Python's base environment and base Background (`baseEnv`, `baseBackground`, `pyTargets`) when the document has a flag or a definition |
+| `FlaggedSpec.lean` | the link from `Flagged`'s CONFLICT-FREE to the spec's `ConflictFree` (`conflictFree_of_base`, `norms_flagged_conflict_free`), at the public entry (`norms_wire_conflict_free`, `norms_wire_conflict_refuted`, `norms_wire_conflict_exclusive`), and the two rejection facts it needs |
+| `Admission.lean` | W2 document admission with norm units: decoding, regenerated `layer:norms:<p>` leaves, the report theorem |
+| `Plain.lean` | `background`, `evaluate` and `countermodel` on an environment with `regulated` declarations and no norm objects |
 | `Run.lean`, `../NormsMain.lean` | the `ve_norms_route` executable (Lake target added; existing targets unchanged) |
 
 ## Conventions (agreed with Python through the spec's wire format)
@@ -72,7 +76,7 @@ targets.
 | `IntendedAt T r S` | On every typed tuple the rules, read below `p` (`forget [p] S`), give a value, and `p` holds exactly when it is `true`. |
 | `holdsCatala T S` | `IntendedAt` for every regulated predicate. |
 | `LayerMeaning` | `IntendedAt` for a regulated symbol; for a definition, the relation agrees with the body on typed tuples. |
-| `BaseAdmissible D B` | Structural admissibility over `E_base` plus `Background_base` (literal distinctness; flags arrive with W5). |
+| `BaseAdmissible D B` | Structural admissibility over `E_base` plus `Background_base` (literal distinctness). `data@0` flags are a separate hypothesis, `Sat B (flagPremises src)`, in the `Flagged` and `FlaggedSpec` theorems. |
 | `PrefixAdmissible D k S` | `k = 0`: base-admissible. `k+1`: admissible over `E_(k+1)`, prefix-admissible at `k` after forgetting the `k`-th symbol, that symbol's `LayerMeaning`, and every pair premise closing at it. |
 | `ConflictFreeAt D p S₀` | On the interpreted prefix below `p`: no typed tuple where both `P_p` and `N_p` hold, and every pair closing at `p` respected with the earlier member read from `S₀`'s actual relation. |
 | `ConflictFree D B` | On a base structure: no typed tuple satisfies any `conflict_p` or `conflict_(r,m)` (outcome-substituted formulas). |
@@ -115,14 +119,20 @@ Names have prefix `VE.Norms.`.
 | `Examples.*` | The documents of 10.1(c), (m) and (o) are well-formed (by kernel reduction); both frozen layers of (c) and of (m), and the composed routes of (c) and (o), exist as values. |
 | `norms_route_intended` | The certificate half of acceptance that needs no conflict-freedom. |
 | `conflictFreeCheck_sound` | If every conflict target has an accepted certificate for `Background_base ⊢ ∀x̄. ¬conflict` over the regenerated `E_base`, every base-admissible structure is conflict-free. |
-| `Replay.norms_wire_conflict_sound` | A successful raw conflict-package replay whose every target certificate is accepted: the input decodes to exactly the replayed well-formed document, and every base-admissible structure is conflict-free. |
-| `Replay.norms_wire_conflict_free_expands` | Then every base-admissible structure has exactly one full document expansion. |
-| `Replay.norms_wire_conflict_witness_sound` | A successful raw witness replay whose regenerated target formula is true at the typed tuple of the validated base model: the input decodes to that document, and the model refutes conflict-freedom, unique expansion and the document property. |
+| `Flagged.norms_flagged_conflict_sound` | A successful raw conflict replay (the route's `norms-conflict`) whose every target certificate is accepted: the input decodes to exactly the replayed document; with neither flags nor definitions, every base-admissible structure is conflict-free; otherwise Python's conflict formulas (`pyTargets`: earlier regulated atoms expanded, defined atoms kept) hold in no structure admissible over `baseEnv` (regulated predicates hidden) that satisfies `baseBackground` (flags, definitions, literals), which is `BaseConflictFree`. |
+| `FlaggedSpec.conflictFree_of_base` | JSON-free: when `baseBackground` is typed over `baseEnv` and no flag names a defined predicate, `BaseConflictFree` on every `baseEnv`-admissible structure satisfying `baseBackground` gives `ConflictFree` on every base-admissible structure satisfying the flag premises. |
+| `FlaggedSpec.norms_flagged_conflict_free` | The same replay as `norms_flagged_conflict_sound`, for both kinds of document: the input decodes to the replayed document, and every base-admissible structure satisfying the flag premises is conflict-free (the statement `norms_flagged_witness_sound` refutes). |
+| `FlaggedSpec.norms_wire_conflict_free` | From the public entry `Norms.Run.runCase`: a `norms-conflict` answer whose `verdict` is `CONFLICT-FREE` gives that conclusion for the document decoded from the case's environment and norms. |
+| `FlaggedSpec.norms_wire_conflict_refuted`, `FlaggedSpec.norms_wire_conflict_exclusive` | A `CONFLICT` verdict refutes it (universe 0, the witness model's); so the route never answers CONFLICT-FREE and CONFLICT for the same environment and norms. |
+| `FlaggedSpec.decodeVocabulary_flag_not_defined`, `FlaggedSpec.decodeSource_flag_not_defined` | Rejection: a decoded source has no flag on a defined predicate (the vocabulary decoder's `UnsupportedProfile: Defined predicates cannot carry functional or total flags`, with its duplicate-name check). |
+| `FlaggedSpec.conflictFreeCheck_definition_base`, `FlaggedSpec.pyTargets_nil_conflictFree` | Rejection: when a case has a target, an accepted conflict check means no definition body mentions a regulated predicate (such a premise fails every certificate's typing check over `baseEnv`); with no target, `ConflictFree` is vacuous. |
+| `Flagged.norms_flagged_witness_sound` | A successful raw witness replay whose regenerated target formula is true at the typed tuple of the validated base model, which also satisfies every flag: the input decodes to that document, and the model refutes conflict-freedom over the base-admissible structures satisfying the flag premises. |
 | `Replay.target_refutes` | A valid finite base witness of any conflict target refutes the document property. |
+| `Replay.norms_wire_conflict_sound`, `norms_wire_conflict_free_expands`, `norms_wire_conflict_witness_sound`, `norms_wire_acceptance` | Legacy: statements about `Replay.replayConflict`, `replayWitness` and `replayEntailment`, which no executable calls. The public kinds run `Flagged` (rows above). Retirement is listed in docs/CONSOLIDATION-PLAN.md step 6c. |
 | `Admission.admitDocument_spec` | A successful norms admission from raw JSON: the active norm objects decode to the well-formed source whose layers are regenerated; every quoted norm passes the single-rule checks; the W2 document and every graph node are decoded from the same source (each node with the source AST its claim formula decodes from); every certificate names the recomputed canonical environment id and its premise and conclusion ASTs by meaning id; the graph is sound, every node admitted (by W2 provenance, as an exact regenerated `layer:norms:<p>` leaf, or as a `background:profile` leaf equal to a regenerated pair premise) and every assumption an exact decoded leaf; citations are closed and reading choices compatible. |
 | `Admission.norms_wire_report_consequence` | In every admissible structure satisfying the regenerated Background and layer premises, the report's non-layer, non-Background assumptions entail its root. |
 | `Run.norms_wire_acceptance`, `Run.runAdmission_sound` | 11.4 from the public entry point: a successful norms `admission` answer is exactly `encodeAdmitted` of the checked admission for the case's id; the report id is the digest of the recomputed environment id, the complete source document and that report; and the admission and semantic facts above hold (`AdmissionAnswer`). |
-| `Replay.norms_wire_acceptance` | A successful raw entailment replay with an accepted certificate (bound to the complete environment, the regenerated Background ++ layer premises, the case's premises and the conclusion): the input decodes to that document; the conclusion holds under the direct semantics; and, given conflict-freedom and base formulas, over every base-admissible structure satisfying the premises. |
+| `Flagged.norms_flagged_acceptance` | A successful raw entailment replay (the route's `norms-certificate`) with an accepted certificate (bound to the complete environment, the regenerated flags ++ Background ++ layer premises, the case's premises and the conclusion): the input decodes to that document; the conclusion holds in every admissible structure satisfying the flag premises, the direct semantics, the definitions, the profile, literal distinctness and the premises; and, with no flag, given conflict-freedom and base formulas, over every base-admissible structure satisfying the premises. |
 
 The remaining theorems are helper lemmas (typing, forgetting, instantiation,
 prefix positions, table lookups) audited with the same allowlist.
@@ -132,7 +142,7 @@ prefix positions, table lookups) audited with the same allowlist.
 * Proved: every section 6.2 statement, the prefix satisfaction and typed
   substitution lemmas of 6.1, the proof-gated `conflict_smallModel` of 7.2,
   `cedar_decision`, and the conflict-package, witness and entailment halves of
-  the 11.4 wire theorems. `elaborate_iff_at` and `elaborate_iff` are proved
+  the 11.4 wire theorems (`Flagged`, `FlaggedSpec`). `elaborate_iff_at` and `elaborate_iff` are proved
   without the admissibility hypotheses the spec lists (stronger statements);
   `conflict_smallModel` takes the environment's finite constant list `cs`.
 * `conflict_complete` (enumeration completeness) is deliberately not stated.
@@ -151,10 +161,16 @@ prefix positions, table lookups) audited with the same allowlist.
   regenerated Background and layers plus its remaining assumptions. Digest
   equality is not a claim that SHA-256 is injective, and decoder faithfulness
   to the wire spec is tested, as for the P0 routes.
-* W5 flags and W3 definitions are present in the merged tree, but the executable
-  norms route does not yet compose their premises with norm layers. It rejects
-  norms inputs containing actual definitions or flags. The remaining work is
-  described in [INTEGRATION-GAPS.md](../docs/INTEGRATION-GAPS.md).
+* W5 flags and W3 definitions: the `norms-*` kinds accept both (`Flagged`). Flag
+  premises are regenerated and enter every check as a prefix of its premise
+  list, so each theorem takes them as the hypothesis `Sat _ (flagPremises src)`.
+  For a conflict case with a flag or a definition, the certificates are checked
+  over Python's base environment and base Background, and the verdict means
+  `BaseConflictFree`; `FlaggedSpec.norms_flagged_conflict_free` turns that into
+  the spec's `ConflictFree` over base-admissible structures satisfying the flag
+  premises. Conflict witnesses over documents with definitions are not
+  implemented (`UnsupportedProfile`). Remaining integration work is described
+  in [INTEGRATION-GAPS.md](../docs/INTEGRATION-GAPS.md).
 
 ## The `ve_norms_route` cases (for the Python harness)
 

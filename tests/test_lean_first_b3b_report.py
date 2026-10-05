@@ -28,3 +28,12 @@ def test_every_paired_udhr_run_gave_identical_answers():
     runs = [run for name in ("udhr-1-set.json", "udhr-10-sets.json", "udhr-whole.json")
             for run in json.loads((B3B / "evidence" / name).read_text())["runs"]]
     assert runs and all(run["identical"] and run["base"]["exit"] == run["head"]["exit"] == 0 for run in runs)
+
+
+def test_every_review_round_gave_identical_answers():
+    report = _report()
+    for name, _ in report.REVIEW + report.LOOPRECHECK:
+        data = json.loads((B3B / "evidence" / name).read_text())
+        assert data["identical"] and set(data["runs"]) == {"base", "before", "head"}, name
+        assert all(len(runs) == data["rounds"] for runs in data["runs"].values()), name
+        assert len({run["exit"] for runs in data["runs"].values() for run in runs}) == 1, name

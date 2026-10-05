@@ -1,0 +1,51 @@
+{
+ "case": "review-b1-case.json",
+ "rounds": 3,
+ "runs": {
+  "base": [
+   {
+    "cpu": 0.19,
+    "exit": 0
+   },
+   {
+    "cpu": 0.16,
+    "exit": 0
+   },
+   {
+    "cpu": 0.15,
+    "exit": 0
+   }
+  ],
+  "before": [
+   {
+    "cpu": 8.88,
+    "exit": 0
+   },
+   {
+    "cpu": 11.18,
+    "exit": 0
+   },
+   {
+    "cpu": 11.14,
+    "exit": 0
+   }
+  ],
+  "head": [
+   {
+    "cpu": 0.1,
+    "exit": 0
+   },
+   {
+    "cpu": 0.09,
+    "exit": 0
+   },
+   {
+    "cpu": 0.1,
+    "exit": 0
+   }
+  ]
+ },
+ "identical": true,
+ "load_before": 17.7,
+ "load_after": 32.0
+}

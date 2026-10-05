@@ -239,6 +239,29 @@ suite ran in two halves of `-n 8`, `-m "not live"`, with `VE_NATIVE_PREBUILT`, `
   its baseline cannot grow.
 - **Deletion ledger (item 3):** none; nothing is deleted.
 
+## Merge of ve-integration 62ca1e78 (batch 3b's request table)
+
+Batch 3b, merged into ve-integration after this branch was approved, fixed the same review finding its own way:
+admission builds each candidate's document once into the request's table (`Admitted.side`), and its `pairFacts`
+read both documents from it and scanned the other side with `otherScan`. `tests/test_readings_lean_sharing.py`
+walks the compiled route and allows no path to `one` outside that table. This branch's `pairFactsIn` read layers
+cached per set but rebuilt each document (`sideOf D s i`, and `tablesFor`/`situationWF` inside `pairEval`), so the
+two compose as follows:
+
+- `Separate.lean`: `sideOfDoc X` builds a side from a document; `sideOf D s i` is `sideOfDoc (one D s i)`.
+  `tablesForOf_sideOf` and `situationWFOf_sideOf` (`rfl`) let `pairEval` read the documents from its sides
+  (batch 3b's `tablesForOf`, `situationWFOf`), so it builds none.
+- `Run.lean`: `sideIn a s i := sideOfDoc (a.side s i)` (`sideIn_eq`); `sidesOf` and `sideAt` take the admitted
+  document and build each side from the table. `setPairs` and `readings-separate` run `pairFactsIn` on them.
+  Batch 3b's `pairFacts`, `pairFacts_eq`, `otherScan` and `otherScan_id` are removed: `pairFactsIn` does what they
+  did and also reads each side's layers once. Their audit entries go with them; the rest of the manifest is the
+  union.
+- `RunExamples.lean`: this branch's `pairEval` counts, batch 3b's four-user cases restated on `pairEval` (one
+  admissibility and one value; one and none) and its K15 table checks.
+- `Wire.lean`: batch 3b's 6.4 check (`ResourceLimit: decision predicate <n>`, DRI ruling 2) was added to
+  `chainTextSpec` by the merge and is added to this branch's `chainText` too, so `chainText_eq` holds and admission
+  answers it.
+
 ## Not done here
 
 - **HUMAN (DRI):** the signature for A1.

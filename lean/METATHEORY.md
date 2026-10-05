@@ -465,9 +465,12 @@ Statement review is required for `Value`, `IntendedAt`, `holdsCatala`,
 elaborations and conflict formulas with Python `ve/norms.py` string for string
 and run the 10.1 regressions on finite models; `Norms/Examples.lean` builds the
 frozen layers of 10.1(c) and (m) as values. The `ve_norms_route` executable
-replays conflict packages, witnesses and entailment certificates from raw JSON
-(`Replay.norms_wire_conflict_sound`, `norms_wire_conflict_witness_sound`,
-`norms_wire_acceptance`), and admits W2 documents with norm units
+replays conflict packages, witnesses and entailment certificates from raw JSON,
+with `data@0` flags and W3 definitions (`Flagged.norms_flagged_conflict_sound`,
+`norms_flagged_witness_sound`, `norms_flagged_acceptance`); a CONFLICT-FREE
+verdict means the spec's `ConflictFree` over base-admissible structures that
+satisfy the flag premises (`FlaggedSpec.norms_flagged_conflict_free`, and from
+the public entry `FlaggedSpec.norms_wire_conflict_free`). It admits W2 documents with norm units
 (`Run.norms_wire_acceptance`: the answer is the encoding of the checked
 admission, with recomputed bindings and regenerated layer leaves).
 

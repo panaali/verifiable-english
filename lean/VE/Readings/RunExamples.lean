@@ -1,5 +1,6 @@
 import VE.Readings.Scan
 import VE.Readings.Examples
+import VE.Readings.Wire
 
 /-! How much of the other reading's side the route's pair check evaluates, as build-time checks (`#guard`), with
 no timing (batch 3d review B). `Run.lean`'s `pairFactsIn` runs `Scan.lean`'s `pairEval` in `Id`; here it runs in a state
@@ -7,7 +8,8 @@ monad that counts its two kinds of evaluation of the other side: a completion's 
 value (`sideValueOn`). Each count is pinned, far below the `2 ^ cells` completions that evaluating every completion
 would cost, and each answer is `separates`'s. A `pairEval` that evaluates the completions up front, or reads them
 other than through the scan, changes the counts. The fixtures are `Examples.lean`'s environment K with set `rs1` =
-{0: strict `S`, 1: default `Df`}: the default reading owns one key, `excepted no-deception`, with one cell per user. -/
+{0: strict `S`, 1: default `Df`}: the default reading owns one key, `excepted no-deception`, with one cell per user.
+Last, which candidates' documents admission builds into the request's table (K15, a pending candidate; batch 3b). -/
 namespace VE.Readings.RunExamples
 open VE.Readings
 open VE.Readings.Examples
@@ -62,6 +64,15 @@ def σAvoid : Situation String := sit m4 [] [] (.outcome "avoid_required" ["a", 
 #guard (counted K1 "rs1" 0 1 σAvoid).2 == (9, 9)
 #guard (counted K1 "rs1" 0 1 σAvoid).1 == specified K1 "rs1" 0 1 σAvoid
 
+/-! The review's case on four users (batch 3b): one admissibility and one value are evaluated, not 16; and with the
+witness not showing the value, one admissibility and no value. -/
+def σHelp : Situation String := sit m4 [] [] (.outcome "help_required" ["a", "u1"]) false
+#guard (counted K1 "rs1" 0 1 σHelp).2 == (1, 1)
+#guard (counted K1 "rs1" 0 1 σHelp).1 == specified K1 "rs1" 0 1 σHelp && !separates K1 "rs1" 0 1 σHelp
+def σWrong : Situation String := sit m4 [] [] (.outcome "avoid_required" ["a", "u1"]) false
+#guard (counted K1 "rs1" 0 1 σWrong).2 == (1, 0)
+#guard (counted K1 "rs1" 0 1 σWrong).1 == specified K1 "rs1" 0 1 σWrong && !separates K1 "rs1" 0 1 σWrong
+
 /-! ## Every completion inadmissible: each is evaluated once, no value
 
 K14: no completion of the default reading is admissible; the pair is separated. -/
@@ -74,5 +85,13 @@ K1 with the default reading as witness and the strict reading as the other side.
 def σK1 : Situation String := sit m0 [] [(exc "no-deception", [["a", "u"]])] q0 false
 #guard counted K1 "rs1" 1 0 σK1 == ((true, true, some false, true, some true), (1, 1))
 #guard (counted K1 "rs1" 1 0 σK1).1 == specified K1 "rs1" 1 0 σK1
+
+/-! K15: admission builds no pending candidate's document (batch 3b looprecheck B; `onesOf_active`). The request's
+table holds the strict candidate alone, and the stage admits the document as 4.4 over every candidate does. -/
+def K15 : Doc := docK [.set rs15]
+#guard (Wire.onesOf K15).map (·.1) == [("rs1", 0)]
+#guard (Wire.candidateStage K15).toOption.map (·.map (·.1)) == some [("rs1", 0)]
+#guard (Wire.candidatesOf K15).length == 2 &&
+  (Wire.firstSome (Wire.candidatesOf K15) (fun c => Wire.candidateText K15.chain c.1 c.2 (one K15 c.1.id c.2))).isNone
 
 end VE.Readings.RunExamples
