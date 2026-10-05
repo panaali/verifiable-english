@@ -253,6 +253,18 @@ rules are now:
   `docs/TESTING.md` from 1 to 40, and an added use-case file from 49 to 71.
   A `ve/` edit stayed at 225. With a map, the static graph answers only for
   unmapped and uncertain units.
+- Warm selection took 0.96 s (`--paths NOTES.md docs/TESTING.md
+  tools/source_graph.py`, static graph). The first run after the change took
+  21 s while it re-parsed the sources.
+
+Checks on `437d8d8b`: `lake build` OK; `lean/audit.py` PASS (3045
+declarations); the Rust release binary matches `lean/checkers.lock`. Full
+pytest suite with 12 workers: 10266 passed, 6 skipped, and 2 failed (27 min).
+Both failures were the gate collection baseline missing the 8 new test IDs.
+`6f6bd4cc` pins them, and both tests then passed. `tests/test_select_tests.py`
+had 126 passed, including 18 seeded mutants; `tools/test_layer_policy.py` had
+38 passed. Not run: a fresh `record` of the map under `VERSION` 4, and the
+deferred items above.
 
 ## Known limits
 
