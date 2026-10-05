@@ -218,12 +218,14 @@ theorem checkSoftOnce_eq (D : SoftDoc) : checkSoftOnce D = checkSoft D := by
   rw [softPremisesIn_eq, targetsIn_eq]
   all_goals rfl
 
-/-- `softSemanticCheck` with `soften D`, its two layered environments and its layers computed once. -/
+/-- `softSemanticCheck` with `soften D`, its two layered environments and its layers computed once. Each is built
+    when a conjunct first reads it (a `Thunk`), so a document that fails an earlier conjunct builds none of them, as
+    in `softSemanticCheck` (batch 3d review B: a hoisted value keeps the short-circuit of the code it replaces). -/
 def softSemanticCheckOnce (D : SoftDoc) : Bool :=
   let S := soften D
-  let L := layersOf S
-  let E0 := envAt S 0
-  let En := envAt S L.syms.length
+  let L := Thunk.mk (fun _ => layersOf S)
+  let E0 := Thunk.mk (fun _ => envAt S 0)
+  let En := Thunk.mk (fun _ => envAt S L.get.syms.length)
   VE.Norms.WellFormed S &&
   decide (D.T.nodes.map (·.name)).Nodup &&
   decide (D.T.regulated.map (·.name)).Nodup &&
@@ -239,16 +241,16 @@ def softSemanticCheckOnce (D : SoftDoc) : Bool :=
   decide (decisionNames D).Nodup &&
   (decisionNames D).all (fun n => (D.E.predicates n).isNone) &&
   D.T.nodes.all (fun N => (N.guard :: N.carveOuts).all (fun φ => φ.check D.E (sortsOf D N.pred).reverse)) &&
-  (softPremisesIn D S L).all (fun φ => φ.check E0 []) &&
-  D.T.nodes.all (fun N => (selectsOn S D N).check En (sortsOf D N.pred).reverse) &&
+  (softPremisesIn D S L.get).all (fun φ => φ.check E0.get []) &&
+  D.T.nodes.all (fun N => (selectsOn S D N).check En.get (sortsOf D N.pred).reverse) &&
   (collidingPairs D).all (fun x => sortsOf D x.1.pred == sortsOf D x.2.pred) &&
   D.T.regulated.all (fun r => (D.E.predicates r.name).isSome) &&
   D.T.regulated.all (fun r =>
     [strictPos D r.name, strictNeg D r.name, defaultDecidesOn S D r.name true, defaultDecidesOn S D r.name false].all
-      (fun φ => φ.check En r.sorts.reverse))
+      (fun φ => φ.check En.get r.sorts.reverse))
 
 theorem softSemanticCheckOnce_eq (D : SoftDoc) : softSemanticCheckOnce D = softSemanticCheck D := by
-  simp only [softSemanticCheckOnce, softSemanticCheck, softPremisesIn_eq, layersOf_syms, defaultDecidesOn,
+  simp only [softSemanticCheckOnce, softSemanticCheck, Thunk.get, softPremisesIn_eq, layersOf_syms, defaultDecidesOn,
     defaultPos, defaultNeg, defaultDecidesF, selectsOn_soften, size]
 
 def validateSoftOnce (D : SoftDoc) : Except String Unit :=

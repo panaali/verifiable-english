@@ -448,7 +448,8 @@ def chainTextSpec (c : Chain) (X : RightsDoc × List VE.Formula) : Option String
     else some "InvalidInput: ill-typed assertion"
 
 /-- A side's chain checks, each validation with its layers computed once (`validateRightsOnce`,
-    `validateSoftOnce`) and the complete environment computed once for every assertion (plan F5d). -/
+    `validateSoftOnce`) and the complete environment computed once for every assertion (plan F5d), when the first
+    assertion is typed (a `Thunk`): a side with no assertion builds none, as in `chainTextSpec`. -/
 def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
   let chain : Option String := match c with
     | .rights => (lineOrderText X.1).or <| match VE.Rights.validateRightsOnce X.1 with
@@ -468,13 +469,14 @@ def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
   match chain with
   | some e => some e
   | none =>
-    let S := VE.SoftNorms.soften (VE.Rights.correlate X.1)
-    let En := VE.Norms.envAt S (VE.Norms.size S)
-    if X.2.all (fun a => a.check En []) then none
+    let En := Thunk.mk (fun _ =>
+      let S := VE.SoftNorms.soften (VE.Rights.correlate X.1)
+      VE.Norms.envAt S (VE.Norms.size S))
+    if X.2.all (fun a => a.check En.get []) then none
     else some "InvalidInput: ill-typed assertion"
 
 theorem chainText_eq (c : Chain) (X : RightsDoc × List VE.Formula) : chainText c X = chainTextSpec c X := by
-  simp only [chainText, chainTextSpec, VE.Rights.validateRightsOnce_eq, VE.SoftNorms.validateSoftOnce_eq]
+  simp only [chainText, chainTextSpec, Thunk.get, VE.Rights.validateRightsOnce_eq, VE.SoftNorms.validateSoftOnce_eq]
 
 def contentBearing (R : ReadingSet) : Bool :=
   R.candidates.any (fun a => match a.content with

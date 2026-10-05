@@ -12,8 +12,8 @@ its wall time and this process's CPU time (user + system, from `/proc/self/stat`
   `softSemanticCheckOnce`, `validateRights`/`validateRightsOnce`), with both answers compared.
 * `split`: admission, then per content-bearing set its rows, its pairs (`setPairs`, each candidate's side built
   once for the set) and its findings.
-* `pair SET`: after admission, the first pair of `SET` by `pairFacts` (batch 3b) and by `pairFactsIn` (each side
-  built once), with both answers compared.
+* `pair SET`: after admission, the first pair of `SET` by `pairFactsSpec` (each side built for the pair; batch 3b's
+  `pairFacts` before the batch 3d review) and by `pairFactsIn` (each side built once), with both answers compared.
 -/
 open Lean VE.Readings VE.Readings.Wire VE.Readings.Run
 
@@ -107,12 +107,12 @@ def main (args : List String) : IO Unit := do
     let some entry := RJ.situations.lookup sid | return
     let w := match entry.getObjValD "witness" with | .str w => w | _ => ""
     let otherName := if w == x.id then y.id else x.id
-    let f ← tm "pairFacts" (fun _ => pairFacts a R.id sid otherName)
+    let f ← tm "pairFactsSpec" (fun _ => pairFactsSpec a R.id sid otherName)
     let sides := sidesOf a.D R.id R.candidates.length
     let g ← tm "pairFactsIn, sides built" (fun _ => pairFactsIn a (sideAt a.D R.id sides) R.id sid otherName)
     let h ← tm "pairFactsIn, sides read again" (fun _ => pairFactsIn a (sideAt a.D R.id sides) R.id sid otherName)
     let facts := fun (r : Except String PairFacts) => match r with
       | .ok f => (f.separated, f.witnessValid, f.witnessValue, f.otherAdmissible, f.otherValue)
       | .error _ => (false, false, none, false, none)
-    IO.println s!"pairFacts = pairFactsIn: {facts f == facts g && facts g == facts h}"
+    IO.println s!"pairFactsSpec = pairFactsIn: {facts f == facts g && facts g == facts h}"
   | _ => throw (IO.userError s!"unknown mode {mode}")
