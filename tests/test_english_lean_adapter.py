@@ -223,26 +223,63 @@ def test_the_wall_clock_limit_is_excluded_and_listed(monkeypatch, shadow):
     assert record["excluded"] == "wall-clock ResourceLimit" and record["classes"] == []
 
 
-# ------------------------------------------------------------------ Lean authority (not in S2: fails closed)
+# ------------------------------------------------------------------ Lean authority (not in S2: refused)
 
-@pytest.fixture
-def lean_authority(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=lean")
-
-
-def test_lean_authority_on_agreement_gives_pythons_outcome(monkeypatch, lean_authority):
-    """The same input gets the same verdict on both paths (checklist 10), with Lean's reading."""
-    use(monkeypatch, honest())
-    for source in ACCEPTED + REJECTED:
-        monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
-        python = outcome(source)
-        monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=lean")
-        assert outcome(source)[0] == python[0], source
-        if python[0] == "ok":
-            assert outcome(source) == python
+def lean_leg(source, env=ENV):
+    """The Lean leg of the shadow comparison: Lean's checked reading, or the exception it gives."""
+    return EN._lean_reading(env, source, EN.EnglishVocabulary(env), {})
 
 
-def test_invalid_grammar_is_checker_unavailable(monkeypatch, lean_authority):
+def lying(case):
+    """A well-formed answer for the case that reads every text as `Alice owns legacy.`, whatever it says."""
+    return {**honest()({**case, "source": "Alice owns legacy."}), "identities": honest()(case)["identities"]}
+
+
+@pytest.mark.parametrize("authority", ["lean", "rust-experimental"])
+def test_no_named_override_makes_the_english_reader_the_authority(monkeypatch, tmp_path, authority):
+    """DRI ruling 6 (review A2): the reader stays outside admission. Selecting it is refused, before Lean is
+    called, instead of replacing Python's verdict (`Legacy is deployed .` was accepted that way)."""
+    monkeypatch.setenv("VE_SHADOW_LOG", str(tmp_path / "log.jsonl"))
+    fake = honest()
+    use(monkeypatch, fake)
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={authority}")
+    for source in (*ACCEPTED, *REJECTED, "Legacy is deployed ."):
+        with pytest.raises(CheckerUnavailable, match="only the python or shadow authority"):
+            EN.parse_english_with_metadata(ENV, source)
+    assert fake.calls == [] and not (tmp_path / "log.jsonl").exists()
+
+
+@pytest.mark.parametrize("setting", ["english.admission=shadow", "english.admission=shadow pinned lean",
+                                     "english.admission=python pinned lean"])
+def test_a_lying_reader_never_changes_the_admitted_document(monkeypatch, shadow, setting):
+    """Under shadow, and under a composing adapter's pin, Python's outcome is returned even when Lean's answer
+    differs: the difference is only recorded."""
+    from ve.backends import dispatch
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
+    expected = {source: outcome(source) for source in ACCEPTED + REJECTED}
+    use(monkeypatch, lying)
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", setting.split()[0])
+    if "pinned" in setting:
+        with dispatch.pinned("lean"):
+            found = {source: outcome(source) for source in ACCEPTED + REJECTED}
+    else:
+        found = {source: outcome(source) for source in ACCEPTED + REJECTED}
+    assert found == expected
+    if setting.split()[0].endswith("shadow"):
+        assert any(record["classes"] for record in shadow())
+
+
+def test_execute_refuses_a_shadow_only_operation():
+    """A sibling caller cannot route english.admission through `execute`, where a selection could make the
+    reader the authority; and `shadowed` serves only the shadow-only operations."""
+    from ve.backends import dispatch
+    with pytest.raises(ValueError, match="shadow-only"):
+        dispatch.execute("english.admission", {}, lambda: 1, lean=lambda: 2)
+    with pytest.raises(ValueError, match="not a shadow-only"):
+        dispatch.shadowed("parse", {}, lambda: 1, lambda: 2, lambda a, b: None)
+
+
+def test_invalid_grammar_is_checker_unavailable(monkeypatch):
     fake = honest()
 
     def invalid(case):
@@ -250,20 +287,14 @@ def test_invalid_grammar_is_checker_unavailable(monkeypatch, lean_authority):
                 "text": "The grammar is not valid.", "fault": "lexicon", "failure": ["V5", "negative", "owns"]}
     use(monkeypatch, invalid)
     with pytest.raises(CheckerUnavailable, match="invalidGrammar lexicon: V5 negative owns"):
-        EN.parse_english(ENV, ACCEPTED[0])
+        lean_leg(ACCEPTED[0])
 
 
-def test_structure_is_not_in_the_lean_answer(monkeypatch, lean_authority):
-    use(monkeypatch, honest())
-    with pytest.raises(CheckerUnavailable, match="sentence spans"):
-        EN._parse_english_document_uncached(ENV, ACCEPTED[0], _with_structure=True)
-
-
-def test_a_missing_reader_is_checker_unavailable(monkeypatch, lean_authority, tmp_path):
+def test_a_missing_reader_is_checker_unavailable(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "TRANSPORT", None)
     monkeypatch.setenv("VE_ENGLISH_ROUTE", str(tmp_path / "missing"))
     with pytest.raises(CheckerUnavailable, match="not built"):
-        EN.parse_english(ENV, ACCEPTED[0])
+        lean_leg(ACCEPTED[0])
 
 
 # ------------------------------------------------------------------ malformed answers (checklist 4, 5)
@@ -336,13 +367,13 @@ def test_the_genuine_answer_is_well_formed():
     assert L.response_problem(response, expected, ENV) is None
 
 
-def test_every_malformed_answer_is_checker_unavailable(monkeypatch, lean_authority):
+def test_every_malformed_answer_is_checker_unavailable(monkeypatch):
     case, response = genuine()
     seen = 0
     for label, mutated in mutants(response):
         use(monkeypatch, lambda _case, mutated=mutated: mutated)
         try:
-            EN.parse_english(ENV, case["source"])
+            lean_leg(case["source"])
         except CheckerUnavailable:
             seen += 1
             continue
@@ -350,12 +381,12 @@ def test_every_malformed_answer_is_checker_unavailable(monkeypatch, lean_authori
     assert seen > 60
 
 
-def test_a_formula_outside_the_environment_is_checker_unavailable(monkeypatch, lean_authority):
+def test_a_formula_outside_the_environment_is_checker_unavailable(monkeypatch):
     case, response = genuine()
     response["ast"][0] = ["unary", "nowhere", ["const", "legacy"]]
     use(monkeypatch, lambda _case: response)
     with pytest.raises(CheckerUnavailable):
-        EN.parse_english(ENV, case["source"])
+        lean_leg(case["source"])
 
 
 def test_the_request(monkeypatch):
@@ -390,12 +421,12 @@ def test_a_route_without_an_answer_is_checker_unavailable(tmp_path, body):
         lean_backend.run_english_cases(route, "english.read", [{"id": "english.read"}])
 
 
-def test_a_route_row_without_a_result_is_checker_unavailable(monkeypatch, tmp_path, lean_authority):
+def test_a_route_row_without_a_result_is_checker_unavailable(monkeypatch, tmp_path):
     monkeypatch.setattr(L, "TRANSPORT", None)
     monkeypatch.setenv("VE_ENGLISH_ROUTE", str(fake_route(
         tmp_path, """printf '[{"id":"english.read","status":"ok","other":1}]'\n""")))
     with pytest.raises(CheckerUnavailable, match="did not read the case"):
-        EN.parse_english(ENV, ACCEPTED[0])
+        lean_leg(ACCEPTED[0])
 
 
 # ------------------------------------------------------------------ identities under ve/

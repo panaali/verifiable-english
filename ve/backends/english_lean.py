@@ -2,9 +2,10 @@
 
 docs/spec/english-lean-s2.md 2.10, 2.11, 4.1, 4.2, 4.5 (S2 plan S2.5). The dispatched unit is the
 grammatical reading up to the typed check (D16): `ve.english` runs Python's (the hand parser, the Lark audit
-and `check_document`) and this module's `read` under `dispatch.execute("english.admission", …)`; the
+and `check_document`) and this module's `read` under `dispatch.shadowed("english.admission", …)`; the
 entailment check of marked conclusions runs after the dispatch, in Python, for either backend.
-`english.admission` keeps `authority: python`: under the default nothing here runs, and under
+`english.admission` keeps `authority: python` and is shadow-only (DRI ruling 6): under the default nothing here
+runs, a selection of another authority is refused, and under
 `VE_AUTHORITY_OVERRIDES=english.admission=shadow` Python's result is returned and `shadow_record` writes one
 record for every call, with the six identities, both outcomes, the classes of `dispatch._classes` over the
 comparison forms, and `conclusion_rejected` when Python's conclusion check refused the document.

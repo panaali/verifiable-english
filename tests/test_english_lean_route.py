@@ -274,17 +274,15 @@ def test_admission_under_shadow_records_agreement_with_the_real_reader(monkeypat
     assert any(r.get("conclusion_rejected") for r in records)
 
 
-def test_admission_under_lean_authority_gives_pythons_outcome(monkeypatch):
-    """The same input gets the same verdict on both paths (checklist 10), with Lean's reading."""
+@pytest.mark.parametrize("authority", ["lean", "rust-experimental"])
+def test_admission_refuses_to_make_the_reader_the_authority(monkeypatch, authority):
+    """DRI ruling 6 (review A2): `english.admission=lean` replaced Python's admission, and `Legacy is deployed .`
+    went from SyntaxError to accepted. Every selection other than python or shadow is now refused."""
     env, options = ENVIRONMENTS["F"]()
-    for text in ADMISSION:
-        monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=python")
-        python = outcome(env, text, options)
-        monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "english.admission=lean")
-        lean = outcome(env, text, options)
-        assert lean[0] == python[0], (text, python, lean)
-        if python[0] == "ok":
-            assert lean == python
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={authority}")
+    for text in ADMISSION + ["Legacy is deployed ."]:
+        with pytest.raises(CheckerUnavailable, match="only the python or shadow authority"):
+            EN.parse_english_with_metadata(env, text, **options)
 
 
 # ------------------------------------------------------------------ identities (base 8.8)

@@ -1711,21 +1711,16 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
         raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
     words = EnglishVocabulary(env, **options)
     from .backends import dispatch
-    if not dispatch.overridden('english.admission'):
-        # The Lean reader is not built (english-lean S2.4): only a named override dispatches the reading.
-        reading = _python_reading(env, source, words, options)
-    else:
-        from .backends.english_lean import shadow_record
-        reading = dispatch.execute(
-            'english.admission', {'environment_id': env.environment_id, 'source': source},
-            lambda: _python_reading(env, source, words, options),
-            lean=lambda: _lean_reading(env, source, words, options),
-            shadow=lambda python, lean: shadow_record(env, source, words, python, lean))
+    from .backends.english_lean import shadow_record
+    # The Lean reader only shadows admission (DRI ruling 6): Python's reading is the one returned.
+    reading = dispatch.shadowed(
+        'english.admission', {'environment_id': env.environment_id, 'source': source},
+        lambda: _python_reading(env, source, words, options),
+        lambda: _lean_reading(env, source, words, options),
+        lambda python, lean: shadow_record(env, source, words, python, lean))
     reading.check_conclusions()
     result = reading.document, source, reading.words, reading.conclusions
     if _with_structure:
-        if reading.spans is None:
-            raise CheckerUnavailable('CheckerUnavailable: the Lean English reader gives no sentence spans')
         breaks = tuple(index for index in range(1, len(reading.spans))
                        if re.search(r'\n\s*\n', source[reading.spans[index - 1][1]:reading.spans[index][0]]))
         return (*result, reading.spans, breaks)

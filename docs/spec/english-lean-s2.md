@@ -64,7 +64,7 @@ corrections (14), the second verification pass's correction (15), and the third'
 | D6 | `Reject` gains `coordinationRepeated`, `coordinationForm`, `naturalScoped` and `relativeForm` (tier B, for the DRI). Every other side condition of the S2 constructs maps to an existing code | 2.8 |
 | D7 | Translation mode is `translate`: one sentence from `DState.init`; its set is complete exactly when the parser returned fewer trees than the cap; a text of two or more sentences is `NotOneSentence` | 2.3, 5.3, 8.4 |
 | D8 | The service modes are `english.read` and `english.grammar`, in a new executable; the six identities of base 2.12 are computed by the service | 2.10, 4.3, 4.4 |
-| D9 | The adapter runs under `dispatch.execute("english.admission", …)`; authority stays `python`; the shadow log is G2's instrument; `invalidGrammar` fails closed as `CheckerUnavailable` | 2.10, 4.5 |
+| D9 | The adapter runs under `dispatch.shadowed("english.admission", …)`; authority stays `python`; the shadow log is G2's instrument; `invalidGrammar` fails closed as `CheckerUnavailable` | 2.10, 4.5 |
 | D10 | G2 compares verdict, formulas, canonical text, marks and witness multiplicity under the written tree correspondence; the reverse corpus is sampled from the `english.grammar` export; mutation replay is empirical | 2.11 |
 | D11 | The readability writing gaps are fixtures. The two rules that would accept the two rejected sentence shapes are written, measured and excluded from the generated table until signed | 2.12, 8.5 |
 | D12 | `Extends` gets a body: the base profile on both sides, every symbol kept with its full signature (argument sorts, constant sorts), every selection kept, both lexicons valid. The actions are `fixedActs ++ lexActs E L` with `fixedActs` closed and the sort data carried in values, so corresponding actions are equal terms. `grammar_extension` is stated against it for the reviewers | 2.3, 2.7, 2.13, 5.4, 5.6 |
@@ -469,14 +469,16 @@ version does not (fixture i5).
   result type of `parse_english`. **The dispatched unit** (D16) is the grammatical reading up to the typed
   check: in `_parse_english_document_uncached` (`ve/english.py:1636–1672`) the hand parser, the Lark audit
   (`require_unique_derivation`, `require_correspondence`) and `ast.check_document` (`:1661`), which is what
-  `read` computes (parse, meaning, `typedDocument`). That part runs under `dispatch.execute("english.admission",
-  payload, python=…, lean=…)`. `_check_conclusions` (`:1665`), the entailment check of every marked sentence
+  `read` computes (parse, meaning, `typedDocument`). That part runs under `dispatch.shadowed("english.admission",
+  payload, python, lean, shadow)` (DRI ruling 6: `english.admission` is in `dispatch.SHADOW_ONLY`, so no
+  selection makes the reader the authority; `dispatch.execute` takes over when the authority moves). `_check_conclusions` (`:1665`), the entailment check of every marked sentence
   against the earlier unmarked ones, is not part of the reading: it runs after the dispatch, in Python,
   unchanged, for either backend and under every authority; `read` returns the marks and does not judge them. Under
   the default authority nothing changes. Under `VE_AUTHORITY_OVERRIDES=english.admission=shadow` the Python
   result of the dispatched unit is returned and every difference is recorded in `ve-shadow.jsonl` with the
-  classes of `dispatch._classes`, plus the fields of 4.5. Under `lean` authority (not in S2), an `invalidGrammar`
-  response is `CheckerUnavailable`.
+  classes of `dispatch._classes`, plus the fields of 4.5. A selection of `lean` or `rust-experimental` is refused
+  with `CheckerUnavailable` before the reader is called. Lean's leg (`_lean_reading`) reads an `invalidGrammar`
+  response as `CheckerUnavailable`.
 
 ### 2.11 The G2 harness
 
