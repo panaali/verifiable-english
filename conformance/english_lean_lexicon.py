@@ -6,7 +6,8 @@
 and `lexicon_id` identifies it under the domain `ve-english-lexicon-v1` (spec 2.12). `check(words, lexicon)`
 is a reference of `Lexicon.valid` (V1 to V5), written from spec 2.9: it returns the failing conditions,
 each with its symbol. The run over every corpus environment reports where Python's own selection would be
-refused by Lean (`invalidGrammar lexicon`). Test and measurement code; no admission path calls it.
+refused by Lean (`invalidGrammar lexicon`). Test and measurement code; no admission path calls it. The
+export and its identity are `ve.english_grammar`'s (english-lean-s2.md 6), which the adapter uses.
 
 The reference reads the honest wordings from the display environment that `EnglishVocabulary` holds (the
 environment with the overlay applied), and the profile-fixed forms from the tables below, which copy
@@ -24,39 +25,18 @@ import warnings
 
 from ve import Environment
 from ve.english import EnglishVocabulary, UnreviewedVocabularyWarning, quote
+from ve.english_grammar import LEXICON_FORMAT as FORMAT, export, lexicon_id  # noqa: F401  (moved under ve/)
 from ve.english_phrases import wording_key
 from ve.english_vocabulary import IDIOMS, negative_template
 from ve.errors import VEError
 from ve.printer import _negative_template
-from ve.wire import digest, loads_json
+from ve.wire import loads_json
 
 from conformance.english_lean_engine import fold
 from conformance.english_lean_lexer import decimal_value
 
 ROOT = Path(__file__).resolve().parents[1]
-DOMAIN = 've-english-lexicon-v1\n'
-FORMAT = 've.english-lexicon@1'
 HOLE = re.compile(r'\{([0-9]+)\}')
-
-
-# ------------------------------------------------------------------ export and identity
-
-def export(words: EnglishVocabulary) -> dict:
-    """The lexicon Python selects, in the field order of spec 5.8; every list sorted by symbol."""
-    return {
-        'format': FORMAT,
-        'environment_id': words.env.environment_id,
-        'nouns': sorted([s, n] for s, n in words.sorts.items()),
-        'letters': sorted([s, l] for s, l in words.letters.items()),
-        'wordings': sorted([p, w] for p, w in words.predicates.items()),
-        'negatives': sorted([p, w] for p, w in words.negatives.items()),
-        'aliases': sorted([p, w, bool(neg)] for p, w, neg in words.input_aliases),
-        'spellings': sorted([c, s] for c, s in words.constants.items()),
-    }
-
-
-def lexicon_id(lexicon: dict) -> str:
-    return digest(DOMAIN, lexicon)
 
 
 # ------------------------------------------------------------------ wordingKey (spec 2.9)
