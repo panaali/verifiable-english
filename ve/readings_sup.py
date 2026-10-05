@@ -10,6 +10,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import NamedTuple
 
+from .ast import decimal_value
 from .errors import VEError
 from .readings_s1 import Content, decode_content
 
@@ -384,9 +385,9 @@ def slot_label(label) -> SlotLabel:
         if not at or not version.isdigit():
             return None
         if tail == "one":
-            return SlotLabel("one", set_id, int(version))
+            return SlotLabel("one", set_id, decimal_value(version))
         index, _, word = tail.partition(":")
-        return SlotLabel("own", set_id, int(version), int(index)) if word == "quiet" and index.isdigit() else None
+        return SlotLabel("own", set_id, decimal_value(version), decimal_value(index)) if word == "quiet" and index.isdigit() else None
 
     decoded = parsed() if type(label) is str else None
     if decoded is None or decoded.render() != label:

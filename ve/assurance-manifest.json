@@ -192,6 +192,7 @@
        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"}
     ],
     "other_json": {
+      "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",

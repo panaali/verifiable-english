@@ -14,7 +14,7 @@ from pathlib import Path
 
 from .assurance import semantic_entry
 from .admission import _check_kind, admit_document, token
-from .ast import Document, formula_from_data, formula_to_data
+from .ast import Document, decimal_value, formula_from_data, formula_to_data
 from .backends.lean_service import CheckerUnavailable
 from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, VEError
@@ -1464,7 +1464,7 @@ def main(argv=None):
                         set_id, _, index = item.rpartition(":")
                         if not set_id or not index.isdigit():
                             raise VEError("--under takes SET:INDEX")
-                        assumed.append((set_id, int(index)))
+                        assumed.append((set_id, decimal_value(index)))
                 data = context(doc).entailment(conclusion, assumed=assumed)
                 data["english"] = query_english(doc, conclusion, data)
                 print(json.dumps(data, ensure_ascii=False, indent=2))
