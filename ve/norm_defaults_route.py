@@ -1,4 +1,4 @@
-"""Python entry points for the `ve_norm_defaults_route` Lean executable
+"""Python entry points for the Lean norm-defaults route (service mode `norm-defaults`)
 (docs/spec/norm-defaults.md 3, 6 and 8).
 
 Python builds `fill U`, `Fill_T` and the evidence; Lean regenerates `fill U`
@@ -10,10 +10,9 @@ for byte, and `admit_norm_defaults_document` is W1's admission on `fill U`
 from __future__ import annotations
 
 from dataclasses import replace
-from pathlib import Path
 
 from .assurance import semantic_entry
-from .backends.lean import run_norm_defaults_cases
+from .backends.relay import decide, rows
 from . import admission as w2
 from .ast import _to_data, formula_to_data
 from .background import background
@@ -24,19 +23,14 @@ from .norms import NormDocument
 from .wire import digest
 from . import norm_defaults as nd
 
-LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_norm_defaults_route"
+def run_cases(cases):
+    """Lean's rows for `cases`, in case order (rejections are rows)."""
+    return rows("norm-defaults", cases)
 
 
-def run_cases(cases, executable=LEAN_ROUTE, *, timeout=None):
-    """Every case through one process; rows in case order (errors are rows)."""
-    return run_norm_defaults_cases(executable, cases, timeout=timeout)
-
-
-def run_case(case, executable=LEAN_ROUTE):
-    row = run_cases([case], executable)[0]
-    if row["status"] == "error":
-        raise VEError(row["error"])
-    return row
+def run_case(case):
+    """Lean's row for one case; a rejection raises Lean's diagnostic."""
+    return decide("norm-defaults", [case])[0]
 
 
 def source_case(document, kind, **fields):
@@ -76,10 +70,9 @@ def check_regenerated(document, row):
     return row
 
 
-def elaborate(document, executable=LEAN_ROUTE):
+def elaborate(document):
     """Lean's regeneration of `fill U`, checked against Python's before any use."""
-    return check_regenerated(document, run_case(source_case(document, "norm-defaults-elaborate"),
-                                                executable))
+    return check_regenerated(document, run_case(source_case(document, "norm-defaults-elaborate")))
 
 
 # Entailment over `fill U` (Lean `Wire.replayEntailmentU`).

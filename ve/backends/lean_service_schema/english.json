@@ -1,30 +1,47 @@
 {
   "$id": "english.json",
   "$comment": "Mode english: Service.Protocol.englishReported (the generated copy of VE/English/Run.lean). One result per requested case.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"$ref": "#/$defs/error"},
-    {"$ref": "#/$defs/run"}]},
+  "row": {"anyOf": [{"$ref": "common.json#/$defs/case_error"}, {"$ref": "#/$defs/error"}, {"$ref": "#/$defs/run"}]},
   "$defs": {
-    "error": {"type": "object", "required": ["status", "error"], "additionalProperties": false,
+    "error": {
+      "additionalProperties": false,
+      "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
+      "required": ["status", "error"],
+      "type": "object"
+    },
+    "item": {
+      "$comment": "EnglishRun.runCase for the case at the same position. That a rendering comes exactly with a check, a roundtrip needs a checked rendering and only nonempty formulas are checked is the service's.",
+      "additionalProperties": false,
       "properties": {
-        "status": {"const": "error"},
-        "error": {"$ref": "common.json#/$defs/text"}}},
-    "run": {"type": "object", "required": ["admissible", "covers", "results"], "additionalProperties": false,
+        "checked": {"type": "boolean"},
+        "parsed": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/generated_formulas"}]},
+        "rendered": {"anyOf": [{"type": "null"}, {"items": {"$ref": "#/$defs/token"}, "type": "array"}]},
+        "roundtrip": {"type": "boolean"}
+      },
+      "required": ["parsed", "checked", "rendered", "roundtrip"],
+      "type": "object"
+    },
+    "run": {
+      "additionalProperties": false,
       "properties": {
         "admissible": {"type": "boolean"},
         "covers": {"type": "boolean"},
-        "results": {"type": "array", "x-zip": {"of": "/cases", "items": {"$ref": "#/$defs/item"}}}}},
-    "token": {"$comment": "EnglishRun.encodeTok: a word, or a label [letter, index].",
+        "results": {"type": "array", "x-zip": {"items": {"$ref": "#/$defs/item"}, "of": "/cases"}}
+      },
+      "required": ["admissible", "covers", "results"],
+      "type": "object"
+    },
+    "token": {
+      "$comment": "EnglishRun.encodeTok: a word, or a label [letter, index].",
       "anyOf": [
         {"type": "string"},
-        {"type": "array", "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}], "minItems": 2, "maxItems": 2}]},
-    "item": {"$comment": "EnglishRun.runCase for the case at the same position. That a rendering comes exactly with a check, a roundtrip needs a checked rendering and only nonempty formulas are checked is the service's.",
-      "type": "object", "required": ["parsed", "checked", "rendered", "roundtrip"], "additionalProperties": false,
-      "properties": {
-        "parsed": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/generated_formulas"}]},
-        "checked": {"type": "boolean"},
-        "rendered": {"anyOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/token"}}]},
-        "roundtrip": {"type": "boolean"}}}
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}],
+          "type": "array"
+        }
+      ]
+    }
   }
 }

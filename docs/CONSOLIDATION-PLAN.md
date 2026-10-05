@@ -648,9 +648,15 @@ selector now also names `EnglishLeanBenchMain.lean`, english-lean's measurement 
 the 159 added lines; no admission path reads it, and the seeded table counts it untied [V] by
 default): whether it belongs to the skeleton step or should be classed outside [V] is open for
 the DRI. Step 6 counts 503 more [V] diagnostic lines than at fix 4, from the two merges: mostly
-`WireContract/Hooks/Norms` (417) and `Hooks/NormDefaults` (79)). Step 7 remeasured again after
-the merge into english-lean-s2/integrate: S2.4's `ve_english_route` (`EnglishGrammar.Run`'s
-`runCaseReported` and `main`, and `EnglishMain.lean`) adds 33 trusted lines:
+`WireContract/Hooks/Norms` (417) and `Hooks/NormDefaults` (79)). Steps 7 and 8b remeasured after the merge
+of ve-integration into lean-first batch 1 (2026-10-05), which deleted the thirteen one-shot route executables (their
+`*Main.lean` roots, `EnglishLeanBenchMain.lean` kept) and the route modules' `main` batch loops: 211 of step 7's
+trusted lines are gone already, and 20 of 8b's (`VE.Time.Wire.main`); the service's own batch loop is the one left.
+Batch 1's new modules (`ResponseShape`, `VE/Service/*`) were classified by `--seed` and no step names them.
+Step 7 remeasured again after the merge of that ve-integration into english-lean-s2/integrate (2026-10-05):
+S2.4's `ve_english_route` (`EnglishGrammar.Run`'s `runCaseReported` and `main`, and `EnglishMain.lean`), a
+one-shot executable by english-lean-s2.md 2.10 and the only one-shot route left beside `ve_conformance`, adds
+its 33 trusted lines to batch 1's 551:
 
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -660,24 +666,24 @@ the merge into english-lean-s2/integrate: S2.4's `ve_english_route` (`EnglishGra
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
-| 6 | 35 | 0 | 1787 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 795 | 0 | 0 | 60 | 735 | 6 | 2 | 61.2 |
+| 6 | 35 | 0 | 1758 | 0 | 35 | 3 | 1 | 11.7 |
+| 7 | 584 | 0 | 0 | 60 | 524 | 6 | 2 | 43.7 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
-| 8b | 0 | 3480 | 0 | 0 | 3480 | 30 | 3 | 38.7 |
+| 8b | 0 | 3460 | 0 | 0 | 3460 | 30 | 3 | 38.4 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (61.2), 5 (34.6), 8a (18.1), 6 (11.7),
-  9 (2.4), 10. Step 8b's 3,480 is an upper bound (every untied line of the eight units' `Wire.lean`
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (43.7), 5 (34.6), 8a (18.1), 6 (11.7),
+  9 (2.4), 10. Step 8b's 3,460 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
-  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (795 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable) and 5 is smaller than estimated (485 measured against 1,500 to
+  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
+  dispatch and `main` lines, not 340; 603 before the bench executable; 551 once batch 1 deleted the one-shot routes; 584 with english-lean S2's `ve_english_route`) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
-  [R], and the dead code is mostly P. Its value is 6e: 1,787 lines of `WireContract/*`,
+  [R], and the dead code is mostly P. Its value is 6e: 1,758 lines of `WireContract/*`,
   `SoftNorms/Phases`, `Service/TypingDiagnostic` and `Norms/Tree` diagnostics are counted [V]
   until marked [R]. That moves lines out of the reading load without a theorem, so it is shown
   apart from `Net`.

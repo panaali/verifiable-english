@@ -1,40 +1,59 @@
 {
   "$id": "order.json",
   "$comment": "Mode order: Order.Surface.runCaseReported (Order.Wire.runCase). The kind field is required.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error_valid"},
-    {"$ref": "common.json#/$defs/error_valid"},
-    {"x-select": [
-      {"when": {"$ref": "#/$defs/kind/surface"}, "then": {"$ref": "#/$defs/surface"}},
-      {"when": {"$ref": "#/$defs/kind/evaluate"}, "then": {"$ref": "#/$defs/evaluate"}},
-      {"when": {"$ref": "#/$defs/kind/countermodel"}, "then": {"$ref": "#/$defs/countermodel"}},
-      {"when": {"$ref": "#/$defs/kind/certificate"}, "then": {"$ref": "#/$defs/certificate"}}]}]},
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error_valid"},
+      {"$ref": "common.json#/$defs/error_valid"},
+      {
+        "x-select": [
+          {"then": {"$ref": "#/$defs/surface"}, "when": {"$ref": "#/$defs/kind/surface"}},
+          {"then": {"$ref": "#/$defs/evaluate"}, "when": {"$ref": "#/$defs/kind/evaluate"}},
+          {"then": {"$ref": "#/$defs/countermodel"}, "when": {"$ref": "#/$defs/kind/countermodel"}},
+          {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}}
+        ]
+      }
+    ]
+  },
   "$defs": {
+    "certificate": {
+      "additionalProperties": false,
+      "properties": {"id": {"type": "string", "x-equals": "/id"}, "status": {"const": "ok"}, "valid": {"type": "boolean"}},
+      "required": ["id", "status", "valid"],
+      "type": "object"
+    },
+    "countermodel": {
+      "additionalProperties": false,
+      "properties": {"id": {"type": "string", "x-equals": "/id"}, "refutes": {"type": "boolean"}, "status": {"const": "ok"}},
+      "required": ["id", "status", "refutes"],
+      "type": "object"
+    },
+    "evaluate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "values": {"$ref": "common.json#/$defs/values"}
+      },
+      "required": ["id", "status", "values"],
+      "type": "object"
+    },
     "kind": {
-      "surface": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "surface"}}},
-      "evaluate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "evaluate"}}},
-      "countermodel": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "countermodel"}}},
-      "certificate": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "certificate"}}}},
-    "surface": {"$comment": "runCase re-decodes each parsed formula with Wire.decodeFormula 64, so the generated formulas are within order_formula. That Order.Surface.parse accepts only a nonempty document is the service's.",
-      "type": "object", "required": ["id", "status", "ast"], "additionalProperties": false,
+      "certificate": {"properties": {"kind": {"const": "certificate"}}, "required": ["kind"], "type": "object"},
+      "countermodel": {"properties": {"kind": {"const": "countermodel"}}, "required": ["kind"], "type": "object"},
+      "evaluate": {"properties": {"kind": {"const": "evaluate"}}, "required": ["kind"], "type": "object"},
+      "surface": {"properties": {"kind": {"const": "surface"}}, "required": ["kind"], "type": "object"}
+    },
+    "surface": {
+      "$comment": "runCase re-decodes each parsed formula with Wire.decodeFormula 64, so the generated formulas are within order_formula. That Order.Surface.parse accepts only a nonempty document is the service's.",
+      "additionalProperties": false,
       "properties": {
+        "ast": {"items": {"$ref": "common.json#/$defs/order_formula"}, "type": "array"},
         "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "ast": {"type": "array", "items": {"$ref": "common.json#/$defs/order_formula"}}}},
-    "evaluate": {"type": "object", "required": ["id", "status", "values"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "values": {"$ref": "common.json#/$defs/values"}}},
-    "countermodel": {"type": "object", "required": ["id", "status", "refutes"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "refutes": {"type": "boolean"}}},
-    "certificate": {"type": "object", "required": ["id", "status", "valid"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "valid": {"type": "boolean"}}}
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "ast"],
+      "type": "object"
+    }
   }
 }

@@ -1,12 +1,8 @@
 """Checked reports route and independent Python/Lean elaboration comparison."""
 from __future__ import annotations
 
-from pathlib import Path
-
-from .backends.lean import configured_timeout, run_reports_case
-from .errors import UnsupportedProfile, VEError
-
-EXECUTABLE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_reports_route"
+from .backends.relay import decide
+from .errors import VEError
 FIELDS = ("environment_reports_id", "keys", "premises", "open_terms",
           "bridge_formulas", "content_ids", "envelope", "warnings")
 
@@ -22,14 +18,10 @@ def _without_null(value):
 
 
 def run_case(kind, environment, document):
-    if not EXECUTABLE.is_file():
-        raise UnsupportedProfile("reports@0 needs the built ve_reports_route executable")
+    """Lean's reports route row (service mode `reports`); a rejection raises Lean's diagnostic."""
     case = _without_null({"id": "document", "kind": kind,
                           "environment": environment, "document": document})
-    result = run_reports_case(EXECUTABLE, case, timeout=configured_timeout(60.0))
-    if result.get("status") != "ok":
-        raise VEError(result.get("error", "reports Lean route rejected document"))
-    return result
+    return decide("reports", [case])[0]
 
 
 def checked_elaboration(reports, environment, document):

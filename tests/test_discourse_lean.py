@@ -20,6 +20,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from subprocesses import HANG_TIMEOUT
 from ve.ast import formula_from_data
 from ve.document import check_document, load_document, stored_identities
@@ -30,13 +32,13 @@ from ve.model import FiniteModel
 from ve.wire import digest
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_discourse_route"
+LEAN = "ve_discourse_route"  # its service mode, through tests/lean_routes.py
 PROFILES = ["relational-fol@0", "ve.discourse@1"]
 
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the discourse Lean route")
@@ -46,8 +48,7 @@ def lean():
 
 
 def run(cases):
-    result = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True, capture_output=True,
-                            timeout=HANG_TIMEOUT)
+    result = lean_routes.completed(LEAN, cases)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

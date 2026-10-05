@@ -1,7 +1,7 @@
 """Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 
 One `ve-document@2` text is written once and read by the Python API (`check_document` on the
-file) and the Lean route (`ve_discourse_route` on the same bytes). The admission is Lean's and
+file) and the Lean route (service mode `discourse` on the same bytes). The admission is Lean's and
 the relay shows it (docs/LEAN-FIRST-PLAN.md, batch 4, which also deleted Rust's untrusted
 `elaborated-document` re-check: Rust never resolved references, and its premise verdict is the
 premise search's, tested with the core). Identities (source, document, environment, meaning and
@@ -17,6 +17,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_discourse_lean import run as lean_run
 from ve.document import check_document, load_document
 from ve.english import parse_english
@@ -24,7 +26,7 @@ from ve.environment import Environment
 from ve.errors import VEError
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_discourse_route"
+LEAN = "ve_discourse_route"  # its service mode, through tests/lean_routes.py
 CONSTANTS = {"api": "service", "beta": "service", "gamma": "service", "alice": "person", "bob": "person"}
 PREDICATES = {"reviewed": ["service"], "deployed": ["service"], "ready": ["person"]}
 DISPLAY = {"api": "Api", "beta": "Beta", "gamma": "Gamma", "alice": "Alice", "bob": "Bob"}
@@ -93,8 +95,8 @@ def natural_view(sentences):
 
 def agree(tmp_path, sentences, names, target="api", sections=None):
     """Run the shared document through the relay and the route; return the common outcome."""
-    if not LEAN.exists():
-        pytest.skip(f"{LEAN.name} is not built")
+    if not lean_routes.SERVICE.exists():
+        pytest.skip(f"{lean_routes.SERVICE.name} is not built")
     path, text = write(tmp_path, sentences, names, target, sections)
     python, loaded = python_outcome(path)
     lean = lean_outcome(text)

@@ -12,6 +12,8 @@ import subprocess
 
 import pytest
 
+from tests import lean_routes
+
 from tests.subprocesses import HANG_TIMEOUT
 from tests.test_w6a_review_regressions import (COLLIDING_UNITS, IDENTITY_VARIANTS, label, money,
                                                raw_environment)
@@ -26,15 +28,14 @@ from ve.units import (check_quantity_certificate, day_number, decimal_exact, ela
                       quantity_meaning_id, render_coordinate)
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+LEAN = "ve_quantity"  # its service mode, through tests/lean_routes.py
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
 FIXTURE = ROOT / "usecases" / "news-article" / "w6a-quantity-fixtures.json"
-pytestmark = pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean ve_quantity runner first")
 
 
 def lean(cases):
-    process = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=HANG_TIMEOUT)
+    process = lean_routes.completed(LEAN, cases)
     assert process.returncode in (0, 1), process.stderr[:500]
     results = json.loads(process.stdout)
     assert len(results) == len(cases)

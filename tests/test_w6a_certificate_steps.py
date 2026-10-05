@@ -10,9 +10,10 @@ n = 12 (refused by both), at depth n + 2.
 from __future__ import annotations
 
 import json
-import subprocess
 
 import pytest
+
+from tests import lean_routes
 
 from conformance.p0 import _raw_certificate, envelope
 from tests.test_units_lean_w6a import LEAN as QUANTITY, lean as lean_quantity, quantity
@@ -23,7 +24,7 @@ from ve.ast import formula_from_data
 from ve.entailment import check_entailment_certificate, prove_entailment
 from ve.units import check_quantity_certificate, prove_quantity
 
-pytestmark = pytest.mark.skipif(not (LEAN.exists() and QUANTITY.exists()),
+pytestmark = pytest.mark.skipif(not (LEAN.exists() and lean_routes.SERVICE.exists()),
                                 reason="build the Lean runners first")
 STEP_LIMIT = "ResourceLimit: certificate replay exceeds 10,000 steps"
 
