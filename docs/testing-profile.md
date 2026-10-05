@@ -172,7 +172,7 @@ passed on HEAD (14.6 min at `-n 3`).
 |---|---|
 | test_asimov_extended.py: test_rerun_document_…, test_rerun_mutant_… (5), test_rerun_sample_… (870-1,008 s as one test before the merge) | test_rerun_records_equal_the_committed_results: the 51 records under both rule sets and their permission default, against the committed results |
 | test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents (293-361 s) | test_rights_differential_on_one_hundred_generated_documents: the first 100 accepted documents of the same seeds, every shape, 23 rejections (28 s) |
-| test_readings_s1_differential.py::test_all_generated_sets_agree_with_lean (416 s) | test_generated_sets_agree_with_lean: the first 200 of the same seeds, every fault and generator (72 s) |
+| test_readings_s1_differential.py::test_all_generated_sets_lean_answers (416 s as test_all_generated_sets_agree_with_lean, before lean-first batch 3 deleted Python's regeneration) | test_generated_sets_lean_answers: the first 200 of the same seeds, every fault and generator (72 s before batch 3) |
 
 What the default run no longer covers: the asimov document checks, mutants, sampled records and
 their permission default; documents 101-1,000 and 201-1,000 of the two differentials.

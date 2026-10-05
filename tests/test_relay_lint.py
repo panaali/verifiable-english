@@ -47,5 +47,27 @@ def test_seeded_modules(tmp_path, classes, line, found):
     assert relay_lint.main([str(module)]) == (1 if found else 0)
 
 
+@pytest.mark.parametrize("line, found", [
+    ('raise VEError("InvalidInput: the file is not UTF-8 text")  # relay-lint: file I/O', False),
+    ('raise VEError(\n        f"InvalidInput: {x} is not UTF-8 text")  # relay-lint: file I/O', False),
+    ('raise VEError("InvalidInput: own words")  # relay-lint: file', True),
+    ('raise VEError("InvalidInput: own words")  # relay-lint: file I/O, really', True),
+    ('raise VEError("InvalidInput: own words")\n    x = 1  # relay-lint: file I/O', True),
+])
+def test_only_a_marked_call_is_a_file_io_diagnostic(tmp_path, classes, line, found):
+    module = tmp_path / "relayed.py"
+    module.write_text(f"def f(x):\n    {line}\n")
+    marked = []
+    assert bool(relay_lint.findings(module, classes, marked)) is found
+    assert len(marked) == (0 if found else 1)
+
+
+def test_discourse_is_relayed_with_two_file_io_diagnostics(classes):
+    assert "ve/discourse.py" in relay_lint.RELAYED
+    marked = []
+    assert relay_lint.findings(ROOT / "ve/discourse.py", classes, marked) == []
+    assert len(marked) == 2
+
+
 def test_a_missing_relayed_module_fails(tmp_path):
     assert relay_lint.main([str(tmp_path / "absent.py")]) == 1

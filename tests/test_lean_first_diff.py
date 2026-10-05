@@ -110,6 +110,25 @@ def test_only_signed_wording_pairs_and_records_are_accepted(tmp_path):
     assert _compare(tmp_path, {"a": OK}, {"a": changed}, {"verdict": [{**entry, "head": OK}]})["unlisted"] == 1
 
 
+def test_a_reports_description_is_one_wording_pair(tmp_path):
+    """Batch 3: a report's `checked_by` changes as a whole (a member dropped included) and is wording, accepted
+    only when its canonical texts are a signed pair; a verdict beside it is still a verdict. A pilot's report
+    that is a JSON object is recorded parsed (`pilot_check`), so its members are compared one by one."""
+    def pilot(checked_by, sets=1):
+        return {"exit": 0, "stdout": {"readings": {"checked_by": checked_by, "sets": sets}}, "stderr": []}
+    rejected = {"r": {"exit": 1, "stdout": "{}", "stderr": []}}
+    base, head = {"a": pilot({"lean": "L", "rust": "R"}), **rejected}, {"a": pilot({"lean": "L"}), **rejected}
+    pair = {"base": '{"lean": "L", "rust": "R"}', "head": '{"lean": "L"}'}
+
+    def compare(head, delta=None):
+        return _compare(tmp_path, base, head, delta, controls=False, corpus="pilots")
+    result = compare(head, {"wording": [pair]})
+    assert [row["class"] for row in result["differences"]] == ["wording"] and result["unlisted"] == 0
+    assert compare(head)["unlisted"] == 1
+    result = compare({**head, "a": pilot({"lean": "L"}, sets=2)}, {"wording": [pair]})
+    assert [row["class"] for row in result["differences"]] == ["verdict"] and result["unlisted"] == 1
+
+
 def _after_op(held):
     """Case `a`'s operations: `environment`, then `model` when it returned (as `CONFORMANCE_OPS` chains)."""
     return {"environment"} | ({"model"} if "returned" in (held.get("environment") or {}) else set())
@@ -345,8 +364,9 @@ def _genuine(records, tmp_path):
 
 # The payloads `compare` diffs as typed JSON (any change is a difference the delta must sign): an
 # environment's or model's record, a formula, a trace, a graph package or report, a success's output,
-# an error's structured diagnostic. A mutant replaces a payload whole; its interior is content.
-PAYLOADS = {"record", "explanation", "package", "diagnostic"}
+# an error's structured diagnostic, a pilot's report. A mutant replaces a payload whole; its interior is
+# content.
+PAYLOADS = {"record", "explanation", "package", "diagnostic", "stdout"}
 
 
 def _payload(path, parent) -> bool:
@@ -378,7 +398,8 @@ def _producible(path, parent, value, new) -> bool:
         return path[-1] in OPTIONAL
     if type(new) is type(value) or new is None and path[-1] in NULLABLE:
         return True
-    return path[-1] == "output" and parent.get("cell") == "S"  # a success's result is any JSON
+    # A success's result is any JSON; a pilot's report is a JSON object or its raw text.
+    return path[-1] == "output" and parent.get("cell") == "S" or path[-1] == "stdout" and type(new) in (dict, str)
 
 
 _DROP = object()
@@ -471,3 +492,27 @@ def test_the_schema_names_every_operation_of_the_recorder():
     branches = schema["probe"]["allOf"]
     assert branches[-1]["if"]["properties"]["op"]["not"]["enum"] == list(diff.PROBE_SECTIONS)
     assert [b["if"]["properties"]["op"]["const"] for b in branches[:-1]] == list(diff.PROBE_SECTIONS)
+
+
+def test_readings_records_are_checked_against_their_schema(tmp_path):
+    """Batch 3's readings corpus: Lean's relayed row or the route's diagnostic, under the one authority
+    `default`, read from the corpus file of one digest (`readings_records`); anything else is unusable."""
+    from ve.errors import VEError
+
+    def record(outcome, **fields):
+        return {"corpus": "readings", "authority": "default", "case": "differential/c0", "op": "readings_validate",
+                "source_sha256": SOURCE, "outcome": outcome, **fields}
+    row = {"id": "readings-s1", "status": "ok", "content_bearing": False}
+    accepted = record(diff.outcome(lambda: row))
+    rejected = record(diff.outcome(lambda: (_ for _ in ()).throw(VEError("ReadingInterface: rs1: twin-only"))))
+    assert diff.record_problem(accepted) is None and diff.record_problem(rejected) is None
+    for bad in (record({}), record({"returned": {**row, "status": "error"}}),
+                record({"returned": {k: v for k, v in row.items() if k != "content_bearing"}}),
+                record({"raised": {"message": "x"}}), record(accepted["outcome"], authority="lean"),
+                record(accepted["outcome"], op="document_check"), record(accepted["outcome"], source_sha256="x")):
+        assert diff.record_problem(bad) is not None, bad
+    assert diff.authorities_of("readings") == ("default",)
+    names = diff.readings_cases()
+    assert names[:2] == ["differential/c0", "differential/c1"] and len(names) == len(set(names)) > diff.READINGS_COUNT
+    expected = diff.expected_cases(ROOT, ("readings",))
+    assert list(expected) == [("readings", "default")] and set(expected["readings", "default"]) == set(names)
