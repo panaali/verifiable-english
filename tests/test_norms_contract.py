@@ -206,8 +206,10 @@ FIXTURES = {
 # Python's legacy class on the exempt fixtures (2.12): another class than the record's.
 EXEMPT = {"N32": "UnboundVariable", "N36": "ResourceLimit"}
 # Python's legacy text where the fixture names it (8.1).
-LEGACY_TEXTS = {"N33": "Unknown predicate 7", "N34": "Unknown constant 5", "N35": "Unknown binder sort 5",
-                "N38": "$string quantification requires data stage 2"}
+# lean-first b0 (W1): these classes' texts start with their code, as Lean writes them.
+LEGACY_TEXTS = {"N33": "UnknownSymbol: Unknown predicate 7", "N34": "UnknownSymbol: Unknown constant 5",
+                "N35": "UnknownSymbol: Unknown binder sort 5",
+                "N38": "UnsupportedProfile: $string quantification requires data stage 2"}
 GOLDEN = {name: expected for name, (_, expected) in FIXTURES.items()}
 
 
@@ -255,7 +257,7 @@ def test_node_counts_of_n21():
     rules' guards and carve-outs pass 10,000 at unit 2's guard."""
     raw, norms = FIXTURES["N21"][0]()
     assert syntax_walk(norms[0]["norm"]["guard"]) == 5000
-    assert str(legacy(raw, norms)) == "AST exceeds 10,000 nodes"
+    assert str(legacy(raw, norms)) == "ResourceLimit: AST exceeds 10,000 nodes"
 
 
 def first_order_formulas():

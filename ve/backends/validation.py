@@ -128,7 +128,7 @@ def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[],
         raise (backend_rejection(error) if error is not None else rejected) from None
     if error is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean accepts {what} that the Python decoder "
-                                 f"rejects ({error.code}: {error.message})")
+                                 f"rejects ({error.code}: {error.message.removeprefix(error.code + ': ')})")
     if not identity(built, row):
         raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
     _remember(cache)
@@ -137,13 +137,13 @@ def decided(decode: Callable[[], object], cache: tuple | None, ask: Callable[[],
 
 def validated_environment(env, data, decode: Callable[[], object]):
     """`decode()` builds `env` from `data`; Lean decides its validity."""
-    from .lean_runner import run
+    from .relay import decide
     try:
         cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
     return decided(decode, cache,
-                    lambda: run("environment", [{"id": "environment", "environment": data}])[0],
+                    lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
                     lambda built, row: row.get("environment_id") == built.environment_id,
                     "an environment")
 
@@ -152,7 +152,7 @@ def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | 
     """`decode()` builds a model of `env` from `wire`; Lean decides its validity
     and, for a `claimed` identity pair, whether each claimed identity is the
     recomputed one."""
-    from .lean_runner import run
+    from .relay import decide
     request = {"id": "model", "environment": env.to_dict(), "model": wire,
                **({"claimed": claimed} if claimed is not None else {})}
     try:
@@ -160,6 +160,6 @@ def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | 
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
     return decided(decode, cache,
-                    lambda: run("model", [request])[0],
+                    lambda: decide("model", [request])[0],
                     lambda built, row: row.get("valid") is True and row.get("model_id") == built.model_id,
                     "a model")

@@ -76,7 +76,7 @@ def test_w6_profile_diagnostic_is_unchanged_without_risk(profiles):
            "unit_schema": "ve-units@1", "units": {}}
     with pytest.raises(VEError) as caught:
         Environment(raw)
-    assert f"{type(caught.value).__name__}: {caught.value}" == W6_FROZEN
+    assert type(caught.value).__name__ == "UnsupportedProfile" and str(caught.value) == W6_FROZEN
     root = Path(__file__).resolve().parents[1]
     text = W6_FROZEN.removeprefix("UnsupportedProfile: ")
     assert f'"UnsupportedProfile: {text}"' in (root / "lean/VE/Time/Wire.lean").read_text()
@@ -85,7 +85,7 @@ def test_w6_profile_diagnostic_is_unchanged_without_risk(profiles):
     from ve.units import validate_extension
     with pytest.raises(VEError) as caught:
         validate_extension(profiles, {}, {}, {})
-    assert f"{type(caught.value).__name__}: {caught.value}" == W6_FROZEN
+    assert type(caught.value).__name__ == "UnsupportedProfile" and str(caught.value) == W6_FROZEN
 
 
 def test_risk_quantity_environment_rejects_order_checker():

@@ -25,7 +25,11 @@ from ve.backends.lean_service import (MAX_CASES, MAX_LINE_BYTES, CheckerUnavaila
                                       LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
+
 from ve.errors import ResourceLimit, VEError
+
+# The service's code list, as its handshake states it (envelope.json).
+CODES = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]["codes"]["const"]
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
@@ -213,8 +217,9 @@ def test_protocol_errors_answer_one_line_and_continue(service_executable):
              "h": [case_digest("{}")] * 2, "j": [case_digest("{}"), case_digest('{"id":2}')]}
     for row in rows[:-1]:
         if row["id"] in bound:
-            assert set(row) == {"id", "status", "mode", "digests", "error"}
+            assert set(row) == {"id", "status", "mode", "digests", "error", "code"}
             assert row["mode"] == "evaluate" and row["digests"] == bound[row["id"]]
+            assert row["code"] == ("ResourceLimit" if row["error"].startswith("ResourceLimit:") else "InvalidInput")
         else:
             assert set(row) == {"id", "status", "error"}
     assert rows[-1]["status"] == "ok" and rows[-1]["counts"] == {"cases": 1, "errors": 0,
@@ -233,7 +238,7 @@ def test_budget_rejection_is_deterministic_and_keeps_the_process(service_executa
                                        budget={"cases": 2, "bytes": 1 << 20})
         assert response == {"id": response["id"], "status": "error", "mode": "evaluate",
                             "digests": [case_digest(t) for t in case_texts(json.dumps(CASES[:3]))],
-                            "error": "ResourceLimit: batch has 3 cases; budget is 2"}
+                            "error": "ResourceLimit: batch has 3 cases; budget is 2", "code": "ResourceLimit"}
         assert service.run("evaluate", CASES[:5]) == service.run("evaluate", CASES[:5])
         assert service.pid == pid and service.stats["restarts"] == 0
         with pytest.raises(ResourceLimit):
@@ -288,6 +293,9 @@ def test_english_consumed_number_keeps_one_shot_decoding(service_executable, num
     expected = (json.loads(one_shot.stdout) if one_shot.returncode == 0 else
                 {"status": "error", "error": one_shot.stderr.decode().strip()})
     assert results(response) == [expected]
+    # Beside a rejection the service sets its code (Service.Protocol.coding); the row is the runner's.
+    [entry] = response["results"]
+    assert ("code" in entry) == (expected.get("status") == "error") and entry.get("code", "InvalidInput") in CODES
 
 
 def test_english_ignored_large_integer_matches_one_shot(service_executable):
@@ -414,7 +422,8 @@ def bind(rows, line):
     body = line.split(',"cases":', 1)[1].rstrip()[:-1].strip()
     texts = [json.dumps(c, ensure_ascii=False, separators=(",", ":")) for c in json.loads(body)]
     return [{"index": i, "digest": hashlib.sha256(texts[i].encode()).hexdigest() if i < len(texts) else "0" * 64,
-             "result": row} for i, row in enumerate(rows)]
+             "result": row, **({"code": "InvalidInput"} if isinstance(row, dict) and row.get("status") == "error"
+                               and isinstance(row.get("error"), str) else {})} for i, row in enumerate(rows)]
 
 
 def placeholders(value, line):
@@ -431,6 +440,7 @@ def placeholders(value, line):
 hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": ["evaluate", "check-certificate", "order", "route", "norms", "english",
                    "environment", "model", "check", "identity", "parse", "graph", "readings", "bundle", "family-norms"],
+         "codes": __CODES__,
          "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256}}
 if behaviour == "handshake":
     hello["service"] = "other"
@@ -673,7 +683,7 @@ def test_the_injected_clock_records_a_miscomputed_deadline(tmp_path, monkeypatch
 
 def fake(tmp_path, behaviour):
     script = tmp_path / "fake.py"
-    script.write_text(FAKE)
+    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)))
     wrapper = tmp_path / f"fake-{behaviour}"
     wrapper.write_text(f"#!/bin/sh\nexec {sys.executable} {script} {behaviour} {tmp_path / 'marker'}\n")
     wrapper.chmod(0o755)
@@ -803,7 +813,7 @@ def _request_error(**change):
     """A request error for `_BOUND_CASES`, bound as the service binds it, with `change`."""
     answer = {"__bound__": True, "id": "__nonce__", "status": "error", "mode": "evaluate",
               "digests": [{"$digest": 0}, {"$digest": 1}, {"$digest": 2}],
-              "error": "ResourceLimit: batch has 3 cases; budget is 2"}
+              "error": "ResourceLimit: batch has 3 cases; budget is 2", "code": "ResourceLimit"}
     for key, value in change.items():
         if value is _DROP:
             del answer[key]
@@ -1252,3 +1262,38 @@ def test_pool_raises_the_earliest_failing_request(service_executable):
         with pytest.raises(VEError) as expected:
             single.run("evaluate", cases)
     assert str(caught.value) == str(expected.value)
+
+
+@pytest.mark.parametrize("result, coding", [
+    ({"id": "c", "status": "error", "error": "rejected"}, {}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": "Nonsense"}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": 7}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": "InvalidInput", "generator": 1}),
+    ({"id": "c", "status": "error", "error": "rejected"}, {"code": "InvalidInput", "other": "x"}),
+    ({"id": "c", "status": "ok", "kind": "source", "identity_id": "0" * 64}, {"code": "InvalidInput"}),
+    ({"id": "c", "status": "ok", "kind": "source", "identity_id": "0" * 64}, {"generator": "literals"}),
+])
+def test_a_rejection_needs_its_public_code_and_nothing_else_carries_one(tmp_path, result, coding):
+    """Lean-first batch 0: beside a rejection the service sets one of the handshake's codes
+    (`Service.Protocol.coding`); a missing or unknown code, or a code beside a success, is an
+    operational failure, never a verdict."""
+    answer = {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": "identity",
+              "results": [{"index": 0, "digest": {"$digest": 0}, "result": result, **coding}],
+              "counts": {"cases": 1, "bytes": "__bytes__", "errors": int(result["status"] == "error")}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    with LeanService(executable, allow_unlisted_build=True) as service:
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            service.run("identity", [{"id": "c", "kind": "source", "source": "x"}])
+
+
+def test_a_rejection_with_its_code_is_accepted(tmp_path):
+    """The control of the test above: the same scripted entry with a public code is a row."""
+    result = {"id": "c", "status": "error", "error": "rejected"}
+    answer = {"__bound__": True, "id": "__nonce__", "status": "ok", "mode": "identity",
+              "results": [{"index": 0, "digest": {"$digest": 0}, "result": result, "code": "InvalidInput"}],
+              "counts": {"cases": 1, "bytes": "__bytes__", "errors": 1}}
+    executable = fake(tmp_path, "scripted")
+    (tmp_path / "marker").write_text(json.dumps(answer))
+    with LeanService(executable, allow_unlisted_build=True) as service:
+        assert service.run("identity", [{"id": "c", "kind": "source", "source": "x"}]) == [result]

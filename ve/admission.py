@@ -109,7 +109,7 @@ def _validate_label_python(s) -> str:
 def validate_label(s) -> str:
     """Check the public label grammar through the selected authority."""
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
     if type(s) is not str:
@@ -120,7 +120,7 @@ def validate_label(s) -> str:
             "label": s}
 
     def lean():
-        label = run("route", [case])[0].get("label")
+        label = decide("route", [case])[0].get("label")
         if type(label) is not str or label != s:
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean label result")
         return label
@@ -440,7 +440,7 @@ def _claim_json(env, claim):
 def admit_document(environment, document) -> dict:
     """Admit a document under the selected checker authority."""
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
     if authority_for("admission") == "python":
@@ -464,7 +464,7 @@ def admit_document(environment, document) -> dict:
             return _admit_document_python(env, document)
         if env.unit_schema is not None:
             return _lean_quantity_admission(env, document)
-        row = run("norms" if "norms@0" in env.profiles and (
+        row = decide("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and
              any(type(u) is dict and type(u.get("content")) is dict and
