@@ -437,11 +437,13 @@ def test_english_grammar_change_needs_a_new_actions_version(staging):
     rejects(staging, f"{path}: SHA-256 {old} in {ENGLISH_LOCK}, {new} now")
     lock["files"][path] = new
     staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
-    rejects(staging, f"{path}: SHA-256 {old} at the base, {new} now, with actions_version '1' unchanged")
-    lock["actions_version"] = "2"
+    version = lock["actions_version"]
+    rejects(staging, f"{path}: SHA-256 {old} at the base, {new} now, with actions_version {version!r} unchanged")
+    lock["actions_version"] = version + ".1"
     staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
-    rejects(staging, f"{ENGLISH_VERSION}: does not hold actions_version '2'")
-    staging.stage(ENGLISH_VERSION, staging.head(ENGLISH_VERSION).replace(b'"1"', b'"2"'))
+    rejects(staging, f"{ENGLISH_VERSION}: does not hold actions_version {version + '.1'!r}")
+    staging.stage(ENGLISH_VERSION, staging.head(ENGLISH_VERSION).replace(json.dumps(version).encode(),
+                                                                         json.dumps(version + ".1").encode()))
     staging.rehash(ENGLISH_VERSION)
     passes(staging)
 
@@ -477,9 +479,10 @@ def stage_large_change(staging):
     lock = json.loads(staging.head(ENGLISH_LOCK))
     lock["files"] = {path: hashlib.sha256(files.get(path) or staging.head(path)).hexdigest()
                      for path in lock["files"]}
+    version = json.dumps(lock["actions_version"]).encode()
     lock["actions_version"] = "timing-probe"
     files[ENGLISH_LOCK] = (json.dumps(lock, indent=1) + "\n").encode()
-    files[ENGLISH_VERSION] = staging.head(ENGLISH_VERSION).replace(b'"1"', b'"timing-probe"')
+    files[ENGLISH_VERSION] = staging.head(ENGLISH_VERSION).replace(version, b'"timing-probe"')
     staging.stage_many(files)
     staging.rehash(*[p for p in lean if p in files], ENGLISH_VERSION)
     return files
