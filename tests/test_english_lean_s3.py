@@ -440,3 +440,63 @@ def test_an_edited_staged_source_needs_a_new_version(tree):
     written = G.write(tree, version)
     assert G.PROFILES[ORDER][1] in written and G.TABLES_TARGET not in written
     assert run_check(tree, base) == []
+
+
+# ------------------------------------------------------------------ S3.1, Python's part: DRI ruling 2
+
+def _risk_env():
+    from ve import Environment
+    return Environment(X.FR())
+
+
+def test_ri7_python_reads_and_renders_the_severity_order():
+    """D9 (DRI ruling 2): `risk__more_severe` has the fixed wording `{0} is more severe than {1}`, so Python
+    reads ri7 with one derivation and renders the atom with that wording, both directions."""
+    from ve import ast
+    from ve.english import parse_english, render_english
+    env = _risk_env()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
+        for left, right in (("catastrophic", "minor"), ("minor", "catastrophic")):
+            formula = ast.Binary("risk__more_severe", ast.Const(left), ast.Const(right))
+            text = f"{left.capitalize()} is more severe than {right}"
+            assert parse_english(env, text + ".").formulas == (formula,)
+            assert render_english(formula, env) == text
+
+
+def test_lx4_pythons_lexicon_now_has_the_severity_order():
+    """lx4 is Python of S2: its lexicon had no entry for `risk__more_severe` (V1). The entry is now the
+    profile's form, exported to Lean with the other risk wordings; no negative is added."""
+    from ve.english import EnglishVocabulary
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
+        lexicon = EG.export(EnglishVocabulary(_risk_env()))
+    wordings = dict(lexicon["wordings"])
+    assert wordings["risk__more_severe"] == "{0} is more severe than {1}"
+    assert "risk__more_severe" not in dict(lexicon["negatives"])
+    assert {p for p in wordings if p.startswith("risk__")} == {
+        "risk__might_lead_to", "risk__class", "risk__more_severe", "risk__or_worse", "risk__less_worst"}
+
+
+def test_the_severity_order_wording_stays_reserved_for_its_symbol():
+    """Spec 2.9, V6 part 3 (Python today): under `risk@0` a declared predicate worded like the severity order
+    keeps its quoted fallback; only `risk__more_severe` takes the form."""
+    from ve import Environment
+    from ve.english import EnglishVocabulary
+    raw = X.FR()
+    raw["vocabulary"]["predicates"]["graver"] = {"arguments": ["harm", "harm"], "description": "graver",
+                                                 "verbalisation": "{0} is more severe than {1}"}
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
+        words = EnglishVocabulary(Environment(raw))
+    assert words.predicates["graver"] == '{0} has the recorded relation "graver" to {1}'
+    assert words.predicates["risk__more_severe"] == "{0} is more severe than {1}"
+
+
+def test_the_severity_order_wording_is_absent_without_risk():
+    from ve.english import EnglishVocabulary
+    from ve import Environment
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
+        words = EnglishVocabulary(Environment(X.FA()))
+    assert "risk__more_severe" not in words.predicates
