@@ -114,6 +114,8 @@ inductive Skel where
   | strIn (vs : List String)
   /-- Any value but a string among these. -/
   | strNotIn (vs : List String)
+  /-- A value whose JSON type (`ResponseShape.kind`) is not this one. -/
+  | kindNot (k : String)
   /-- An object: a field of `fields` has a value fitting its skeleton, any other field one
   fitting `extra` (none: no other field); `required` are present, `absent` are not. -/
   | obj (fields : List (String × Skel)) (extra : Option Skel) (required : List String) (absent : List String)
@@ -153,6 +155,7 @@ inductive Fits (c : Json) : Skel → Json → Prop where
   | any (v : Json) : Fits c .any v
   | strIn {vs : List String} {s : String} : s ∈ vs → Fits c (.strIn vs) (.str s)
   | strNotIn {vs : List String} {v : Json} : (∀ s, v = .str s → s ∉ vs) → Fits c (.strNotIn vs) v
+  | kindNot {k : String} {v : Json} : kind v ≠ k → Fits c (.kindNot k) v
   | obj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
       {m : Std.TreeMap.Raw String Json} :
       (∀ k v, m[k]? = some v → Fits c (Skel.field fields extra k) v) →
@@ -567,6 +570,7 @@ theorem congr {p : CaseCond → Bool} {c c' : Json} (hp : ∀ cond, p cond = tru
   | any v => intro _ _; exact Fits.any v
   | strIn hs => intro _ _; exact Fits.strIn hs
   | strNotIn hs => intro _ _; exact Fits.strNotIn hs
+  | kindNot hk => intro _ _; exact Fits.kindNot hk
   | obj hv hreq hab ih =>
     intro n hn
     cases n with
@@ -648,6 +652,12 @@ def conj : Nat → Skel → Skel → Skel
   | _, .strIn a, .strNotIn b => .strIn (a.filter (!b.contains ·))
   | _, .strNotIn a, .strIn b => .strIn (b.filter (!a.contains ·))
   | _, .strNotIn a, .strNotIn b => .strNotIn (mergeStr a b)
+  | _, .kindNot a, .kindNot b => if a == b then .kindNot a else .all [.kindNot a, .kindNot b]
+  | _, .kindNot k, .strIn vs | _, .strIn vs, .kindNot k => if k == "string" then .nothing else .strIn vs
+  | _, .kindNot k, .strNotIn vs | _, .strNotIn vs, .kindNot k => .all [.kindNot k, .strNotIn vs]
+  | _, .kindNot k, .obj fs ex req ab | _, .obj fs ex req ab, .kindNot k =>
+    if k == "object" then .nothing else .obj fs ex req ab
+  | _, .kindNot k, .arr pre it | _, .arr pre it, .kindNot k => if k == "array" then .nothing else .arr pre it
   | fuel + 1, .obj fa ea ra aa, .obj fb eb rb ab =>
     let keys := mergeStr (fa.map (·.1)) (fb.map (·.1))
     let side (fs : List (String × Skel)) (e : Option Skel) (k : String) : Option Skel :=
@@ -863,6 +873,19 @@ where
       | some ss => pure (.obj [(k, .strNotIn ss)] (some .any) [k] [])
       | none => pure .any
     | .required [k] => pure (.obj [] (some .any) [] [k])
+    -- `{"properties": {k: {"type": "object", "required": rs, "properties": {f: const or string}}}}`
+    -- fails exactly when `k` is present and is not an object, lacks one of `rs`, or has one `f`
+    -- of another value or type.
+    | .object [(k, .node _ [.type ["object"], .required rs, .object ps none])] none =>
+      let within (inner : Skel) : Skel := .obj [(k, inner)] (some .any) [k] []
+      let fieldNot : String × Shape → Option Skel
+        | (f, .const (.str v)) => some (within (.obj [(f, .strNotIn [v])] (some .any) [f] []))
+        | (f, .type ["string"]) => some (within (.obj [(f, .kindNot "string")] (some .any) [f] []))
+        | _ => none
+      match ps.mapM fieldNot with
+      | some fs => pure (Skel.mkAlt ([within (.kindNot "object")] ++
+          rs.map (fun r => within (.obj [] (some .any) [] [r])) ++ fs))
+      | none => pure .any
     | _ => pure .any
 
 /-- The skeleton of the shape at `target`, and the recursive targets it names. -/
