@@ -1,0 +1,51 @@
+{
+ "case": "first-error-case.json",
+ "rounds": 3,
+ "runs": {
+  "base": [
+   {
+    "cpu": 3.56,
+    "exit": 1
+   },
+   {
+    "cpu": 3.26,
+    "exit": 1
+   },
+   {
+    "cpu": 3.6,
+    "exit": 1
+   }
+  ],
+  "before": [
+   {
+    "cpu": 3.5,
+    "exit": 1
+   },
+   {
+    "cpu": 3.44,
+    "exit": 1
+   },
+   {
+    "cpu": 3.52,
+    "exit": 1
+   }
+  ],
+  "head": [
+   {
+    "cpu": 0.2,
+    "exit": 1
+   },
+   {
+    "cpu": 0.19,
+    "exit": 1
+   },
+   {
+    "cpu": 0.19,
+    "exit": 1
+   }
+  ]
+ },
+ "identical": true,
+ "load_before": 32.0,
+ "load_after": 42.8
+}

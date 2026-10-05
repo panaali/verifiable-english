@@ -1,0 +1,75 @@
+{
+ "case": "pending-one-set-case.json",
+ "rounds": 5,
+ "runs": {
+  "base": [
+   {
+    "cpu": 0.06,
+    "exit": 0
+   },
+   {
+    "cpu": 0.06,
+    "exit": 0
+   },
+   {
+    "cpu": 0.06,
+    "exit": 0
+   },
+   {
+    "cpu": 0.06,
+    "exit": 0
+   },
+   {
+    "cpu": 0.06,
+    "exit": 0
+   }
+  ],
+  "before": [
+   {
+    "cpu": 0.1,
+    "exit": 0
+   },
+   {
+    "cpu": 0.1,
+    "exit": 0
+   },
+   {
+    "cpu": 0.1,
+    "exit": 0
+   },
+   {
+    "cpu": 0.1,
+    "exit": 0
+   },
+   {
+    "cpu": 0.1,
+    "exit": 0
+   }
+  ],
+  "head": [
+   {
+    "cpu": 0.05,
+    "exit": 0
+   },
+   {
+    "cpu": 0.05,
+    "exit": 0
+   },
+   {
+    "cpu": 0.05,
+    "exit": 0
+   },
+   {
+    "cpu": 0.05,
+    "exit": 0
+   },
+   {
+    "cpu": 0.05,
+    "exit": 0
+   }
+  ]
+ },
+ "identical": true,
+ "load_before": 4.8,
+ "load_after": 4.7
+}

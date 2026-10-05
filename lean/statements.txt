@@ -12414,6 +12414,11 @@ theorem VE.Readings.Hyps.ready
   ∀ {D : VE.Readings.Doc}, VE.Readings.Hyps D → VE.Readings.supReady D = Bool.true
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.supReady@VE.Readings.Choice
   -- expr 4294355137
+theorem VE.Readings.Run.candidateJson_eq
+  ∀ (a : VE.Readings.Wire.Admitted) (R : VE.Readings.ReadingSet) (i : Nat),
+    VE.Readings.Run.candidateJson a R i = VE.Readings.Run.candidateJsonSpec a R i
+  -- uses VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Run.candidateJson@VE.Readings.Run VE.Readings.Run.candidateJsonSpec@VE.Readings.Run VE.Readings.Wire.Admitted@VE.Readings.Wire
+  -- expr 3237936075
 theorem VE.Readings.Run.norms_choice_model_sound
   ∀ (r : VE.Readings.Run.NormsChoiceModel),
     r.check = Bool.true →
@@ -12424,6 +12429,19 @@ theorem VE.Readings.Run.norms_choice_model_sound
             ¬VE.Formula.denote r.M.asStructure [] (VE.Norms.subst r.src.D.T (VE.Norms.size r.src.D) r.φ)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.size@VE.Norms.Tree VE.Norms.subst@VE.Norms.Subst VE.Readings.Run.NormsChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.NormsChoiceModel.check@VE.Readings.SupRun VE.Readings.Run.NormsChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.NormsChoiceModel.value@VE.Readings.SupRun VE.Readings.Run.NormsChoiceModel.Γ@VE.Readings.SupRun VE.Readings.Run.NormsChoiceModel.φ@VE.Readings.SupRun VE.Readings.Run.NormsChoiceModel@VE.Readings.SupRun VE.Structure.Carrier@VE.Semantics
   -- expr 2481691350
+theorem VE.Readings.Run.pairFacts_eq
+  ∀ (a : VE.Readings.Wire.Admitted) (s sid other : String),
+    VE.Readings.Run.pairFacts a s sid other = VE.Readings.Run.pairFactsSpec a s sid other
+  -- uses VE.Readings.Run.PairFacts@VE.Readings.Run VE.Readings.Run.pairFacts@VE.Readings.Run VE.Readings.Run.pairFactsSpec@VE.Readings.Run VE.Readings.Wire.Admitted@VE.Readings.Wire
+  -- expr 1460411408
+theorem VE.Readings.Run.pairFindings_pending
+  ∀ (D : VE.Readings.Doc) (s : String) (i j : Nat),
+    (VE.Readings.Run.pendingIn D s i || VE.Readings.Run.pendingIn D s j) = Bool.true →
+      ∀ (Xi Xj : VE.Rights.RightsDoc × List VE.Formula),
+        VE.Readings.decisionOnlyOf D s i j Xi Xj = Option.none ∧
+          VE.Readings.decisionOnlyOf D s j i Xj Xi = Option.none ∧ VE.Readings.actOnlyOf D s i j Xi Xj = Option.none
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Run.pendingIn@VE.Readings.Run VE.Readings.actOnlyOf@VE.Readings.Separate VE.Readings.decisionOnlyOf@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 4236883661
 theorem VE.Readings.Run.rights_choice_model_sound
   ∀ (r : VE.Readings.Run.RightsChoiceModel),
     r.check = Bool.true →
@@ -12434,6 +12452,11 @@ theorem VE.Readings.Run.rights_choice_model_sound
             ¬VE.Formula.denote r.M.asStructure [] (VE.SoftNorms.circ (VE.Rights.correlate r.src.D) r.φ)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Run.RightsChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel.check@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel.value@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel.Γ@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel.φ@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel@VE.Readings.SupRun VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.Wire.RightsSource.D@VE.Rights.Wire VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics
   -- expr 1194412285
+theorem VE.Readings.Run.setFindings_eq
+  ∀ (a : VE.Readings.Wire.Admitted) (R : VE.Readings.ReadingSet),
+    VE.Readings.Run.setFindings a R = VE.Readings.Run.setFindingsSpec a R
+  -- uses VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Run.setFindings@VE.Readings.Run VE.Readings.Run.setFindingsSpec@VE.Readings.Run VE.Readings.Wire.Admitted@VE.Readings.Wire
+  -- expr 1996451557
 theorem VE.Readings.Run.soft_choice_model_sound
   ∀ (r : VE.Readings.Run.SoftChoiceModel),
     r.check = Bool.true →
@@ -12847,6 +12870,36 @@ theorem VE.Readings.TwinDocs.twin
               VE.Readings.Twin (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd
   -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Twin@VE.Readings.Force VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
   -- expr 974540504
+theorem VE.Readings.Wire.Admitted.side_eq
+  ∀ (a : VE.Readings.Wire.Admitted) (s : String) (i : Nat), a.side s i = VE.Readings.one a.D s i
+  -- uses VE.Formula@VE.Syntax VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted.side@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1465611242
+theorem VE.Readings.Wire.admissionText_of_stage
+  ∀ {re : VE.Readings.Wire.ReadingsEnvironment} {D : VE.Readings.Doc}
+    {t : List ((String × Nat) × VE.Rights.RightsDoc × List VE.Formula)},
+    VE.Readings.Wire.frontText re D = Option.none →
+      VE.Readings.Wire.candidateStage D = Except.ok t → VE.Readings.Wire.admissionText re D = Option.none
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.admissionText@VE.Readings.Wire VE.Readings.Wire.candidateStage@VE.Readings.Wire VE.Readings.Wire.frontText@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1350943602
+theorem VE.Readings.Wire.admitReadings_eq
+  ∀ (environment document : Lean.Json),
+    VE.Readings.Wire.admitReadings environment document = VE.Readings.Wire.admitReadingsSpec environment document
+  -- uses VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.admitReadings@VE.Readings.Wire VE.Readings.Wire.admitReadingsSpec@VE.Readings.Wire
+  -- expr 1881383589
+theorem VE.Readings.Wire.attachedIter_links
+  ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (n : Nat)
+    (tbl : List (String × List String)),
+    VE.Readings.attachedIter { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } n
+        tbl =
+      VE.Readings.attachedIter D n tbl
+  -- uses VE.Readings.Coupling@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.mk@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Narrowing@VE.Readings.Doc VE.Readings.attachedIter@VE.Readings.Doc
+  -- expr 1280254583
+theorem VE.Readings.Wire.attached_links
+  ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing) (u : String),
+    VE.Readings.attached { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } u =
+      VE.Readings.attached D u
+  -- uses VE.Readings.Coupling@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.mk@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Narrowing@VE.Readings.Doc VE.Readings.attached@VE.Readings.Doc
+  -- expr 1066156630
 theorem VE.Readings.Wire.author_valid
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Readings.Doc) (units : List String),
     D.frame = VE.Readings.Wire.frameOf re units →
@@ -12854,6 +12907,44 @@ theorem VE.Readings.Wire.author_valid
         data.valid (VE.Readings.Wire.authorVocabulary re) = Bool.true → data.toModel.Valid (VE.Readings.authorEnv D)
   -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.ModelData.toModel@VE.Bridge VE.Bridge.ModelData.valid@VE.Bridge VE.Bridge.ModelData@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.authorVocabulary@VE.Readings.Wire VE.Readings.Wire.frameOf@VE.Readings.Wire VE.Readings.authorEnv@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2468320515
+theorem VE.Readings.Wire.candidateStage_eq
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.Wire.candidateStage D =
+      match
+        VE.Readings.Wire.firstSome (VE.Readings.Wire.candidatesOf D) fun c =>
+          VE.Readings.Wire.candidateText D.chain c.fst c.snd (VE.Readings.one D c.fst.id c.snd) with
+      | Option.some e => Except.error e
+      | Option.none => Except.ok (VE.Readings.Wire.onesOf D)
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.candidateStage@VE.Readings.Wire VE.Readings.Wire.candidateText@VE.Readings.Wire VE.Readings.Wire.candidatesOf@VE.Readings.Wire VE.Readings.Wire.chainText.match_3@VE.Readings.Wire VE.Readings.Wire.firstSome@VE.Readings.Wire VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3544321643
+theorem VE.Readings.Wire.candidateStage_ok
+  ∀ {D : VE.Readings.Doc} {t : List ((String × Nat) × VE.Rights.RightsDoc × List VE.Formula)},
+    VE.Readings.Wire.candidateStage D = Except.ok t →
+      (VE.Readings.Wire.firstSome (VE.Readings.Wire.candidatesOf D) fun c =>
+            VE.Readings.Wire.candidateText D.chain c.fst c.snd (VE.Readings.one D c.fst.id c.snd)) =
+          Option.none ∧
+        t = VE.Readings.Wire.onesOf D
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.candidateStage@VE.Readings.Wire VE.Readings.Wire.candidateText@VE.Readings.Wire VE.Readings.Wire.candidatesOf@VE.Readings.Wire VE.Readings.Wire.firstSome@VE.Readings.Wire VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1749525528
+theorem VE.Readings.Wire.firstSome_activeOf
+  ∀ (D : VE.Readings.Doc),
+    (VE.Readings.Wire.firstSome (VE.Readings.Wire.activeOf D) fun c =>
+        VE.Readings.Wire.candidateText D.chain c.fst c.snd (VE.Readings.one D c.fst.id c.snd)) =
+      VE.Readings.Wire.firstSome (VE.Readings.Wire.candidatesOf D) fun c =>
+        VE.Readings.Wire.candidateText D.chain c.fst c.snd (VE.Readings.one D c.fst.id c.snd)
+  -- uses VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.activeOf@VE.Readings.Wire VE.Readings.Wire.candidateText@VE.Readings.Wire VE.Readings.Wire.candidatesOf@VE.Readings.Wire VE.Readings.Wire.firstSome@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc
+  -- expr 4087972988
+theorem VE.Readings.Wire.firstSome_eq_none
+  ∀ {α β : Type} {l : List α} {f : α → Option β},
+    VE.Readings.Wire.firstSome l f = Option.none → ∀ (x : α), x ∈ l → f x = Option.none
+  -- uses VE.Readings.Wire.firstSome@VE.Readings.Wire
+  -- expr 3912724415
+theorem VE.Readings.Wire.firstSome_filter
+  ∀ {α β : Type} (p : α → Bool) (f : α → Option β),
+    (∀ (a : α), p a = Bool.false → f a = Option.none) →
+      ∀ (l : List α), VE.Readings.Wire.firstSome (List.filter p l) f = VE.Readings.Wire.firstSome l f
+  -- uses VE.Readings.Wire.firstSome@VE.Readings.Wire
+  -- expr 336670370
 theorem VE.Readings.Wire.layerNames_sub
   ∀ {T : VE.Norms.Tree} {x : String},
     x ∈ VE.Norms.layerNames T → x ∈ List.map (fun x => x.name) T.regulated ++ List.map (fun x => x.name) T.definitions
@@ -12864,6 +12955,36 @@ theorem VE.Readings.Wire.lookup_append_right
     VE.Bridge.lookup (a ++ b) k = (VE.Bridge.lookup a k).or (VE.Bridge.lookup b k)
   -- uses VE.Bridge.lookup@VE.Bridge
   -- expr 2508792324
+theorem VE.Readings.Wire.lookup_isSome_of_mem
+  ∀ {α β : Type} [inst : BEq α] [LawfulBEq α] {a : α} {b : β} {l : List (α × β)},
+    (a, b) ∈ l → (List.lookup a l).isSome = Bool.true
+  -- uses 
+  -- expr 2357932802
+theorem VE.Readings.Wire.lookup_mem
+  ∀ {α β : Type} [inst : BEq α] [LawfulBEq α] {a : α} {b : β} {l : List (α × β)},
+    List.lookup a l = Option.some b → (a, b) ∈ l
+  -- uses 
+  -- expr 3122011733
+theorem VE.Readings.Wire.oneOf_eq
+  ∀ (D : VE.Readings.Doc) (s : String) (i : Nat),
+    VE.Readings.Wire.oneOf D (VE.Readings.Wire.onesOf D) s i = VE.Readings.one D s i
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.oneOf@VE.Readings.Wire VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2660760077
+theorem VE.Readings.Wire.onesOf_active
+  ∀ (D : VE.Readings.Doc) (e : (String × Nat) × VE.Rights.RightsDoc × List VE.Formula),
+    e ∈ VE.Readings.Wire.onesOf D →
+      ∃ R, R ∈ D.sets ∧ R.id = e.fst.fst ∧ VE.Readings.Wire.pendingAt R e.fst.snd = Bool.false
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.Wire.pendingAt@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1350093230
+theorem VE.Readings.Wire.onesOf_holds
+  ∀ (D : VE.Readings.Doc) (R : VE.Readings.ReadingSet),
+    R ∈ D.sets →
+      ∀ (i : Nat),
+        i < R.candidates.length →
+          VE.Readings.Wire.pendingAt R i = Bool.false →
+            (List.lookup (R.id, i) (VE.Readings.Wire.onesOf D)).isSome = Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.candidates@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Readings.Wire.pendingAt@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1924490570
 theorem VE.Readings.Wire.readings_wire_all_sound
   ∀ (j : Lean.Json) (r : VE.Readings.Wire.CertificateReplay),
     VE.Readings.Wire.replayCertificate j = Except.ok r →
@@ -12927,6 +13048,19 @@ theorem VE.Readings.Wire.readings_wire_separate_sound
               r.σ.value
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Readings.Achieves@VE.Readings.Separate VE.Readings.Situation.base@VE.Readings.Separate VE.Readings.Situation.fixed@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate VE.Readings.Situation.value@VE.Readings.Separate VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.other@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.set@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.witness@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.σ@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.replaySeparate@VE.Readings.Wire VE.Readings.separates@VE.Readings.Separate VE.Readings.tablesOf@VE.Readings.Separate VE.Structure.Carrier@VE.Semantics
   -- expr 2305353467
+theorem VE.Readings.Wire.sideWF_of_chainText
+  ∀ (D : VE.Readings.Doc) (X : VE.Rights.RightsDoc × List VE.Formula),
+    VE.Readings.Wire.chainText D.chain X = Option.none → VE.Readings.sideWF D X = Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.chainText@VE.Readings.Wire VE.Readings.sideWF@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2570059509
+theorem VE.Readings.Wire.stageOf_eq
+  ∀ {α γ β ε : Type} (build : α → γ) (f : α → γ → Option ε) (g : α → γ → β) (l : List α),
+    VE.Readings.Wire.stageOf build f g l =
+      match VE.Readings.Wire.firstSome l fun a => f a (build a) with
+      | Option.some e => Except.error e
+      | Option.none => Except.ok (List.map (fun a => g a (build a)) l)
+  -- uses VE.Readings.Wire.firstSome@VE.Readings.Wire VE.Readings.Wire.stageOf.match_1@VE.Readings.Wire VE.Readings.Wire.stageOf@VE.Readings.Wire
+  -- expr 2845390802
 theorem VE.Readings.Wire.supModel_valid
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Readings.Doc),
     VE.Readings.Hyps D →
@@ -12936,6 +13070,18 @@ theorem VE.Readings.Wire.supModel_valid
             M.Valid (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate (VE.Readings.sup D).fst)) 0)
   -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Environment@VE.Syntax VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.envAt@VE.Norms.Tree VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.Wire.ReadingsEnvironment.se@VE.Readings.Wire VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.supVocabulary@VE.Readings.SupWire VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment.ne@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 1174622694
+theorem VE.Readings.Wire.wellFormedDoc_links
+  ∀ (D : VE.Readings.Doc) (cs : List VE.Readings.Coupling) (ns : List VE.Readings.Narrowing),
+    VE.Readings.WellFormedDoc
+        { chain := D.chain, frame := D.frame, items := D.items, couplings := cs, narrowings := ns } =
+      VE.Readings.WellFormedDoc D
+  -- uses VE.Readings.Coupling@VE.Readings.Doc VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc.mk@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Narrowing@VE.Readings.Doc VE.Readings.WellFormedDoc@VE.Readings.Doc
+  -- expr 2053352537
+theorem VE.Readings.Wire.wellFormedDoc_of_admissionText
+  ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Readings.Doc),
+    VE.Readings.Wire.admissionText re D = Option.none → VE.Readings.WellFormedDoc D = VE.Readings.Wire.frameWF D
+  -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.admissionText@VE.Readings.Wire VE.Readings.Wire.frameWF@VE.Readings.Wire
+  -- expr 761819139
 theorem VE.Readings.actSortsOf_choice
   ∀ {D : VE.Readings.Doc} (c : VE.Readings.Choice) (a : String),
     VE.SoftNorms.actSortsOf (VE.Readings.choiceDoc D c).fst.soft a =
@@ -12969,6 +13115,10 @@ theorem VE.Readings.act_sorts
           VE.SoftNorms.sortsOf (VE.Readings.choiceDoc D c).fst.soft N.pred
   -- uses VE.Formula@VE.Syntax VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 634603416
+theorem VE.Readings.and_not_and_any
+  ∀ {β : Type} (w : Bool) (l : List β) (p : β → Bool), (w && !(w && l.any p)) = (w && l.all fun x => !p x)
+  -- uses 
+  -- expr 4137564167
 theorem VE.Readings.anyF_wf
   ∀ {E : VE.Environment} {Γ : List String} (l : List VE.Formula),
     (∀ (a : VE.Formula), a ∈ l → VE.Formula.WellFormed E Γ a) → VE.Formula.WellFormed E Γ (VE.Norms.anyF l)
@@ -16445,6 +16595,17 @@ theorem VE.Readings.origin_unreserved
   ∀ {D : VE.Readings.Doc} {n : String}, VE.Readings.reservedName n = Bool.false → VE.Readings.origin D n = Option.none
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.origin@VE.Readings.Choice VE.Readings.reservedName@VE.Readings.Doc
   -- expr 3939766119
+theorem VE.Readings.otherScan_id
+  ∀ {α : Type} [inst : DecidableEq α] (Xj : VE.Rights.RightsDoc × List VE.Formula) (M : VE.FiniteModel α)
+    (Tj : List (VE.Readings.GenKey × List (List α))) (q : VE.Readings.Probe α) (v want : Bool)
+    (Gs : List (List (VE.Readings.GenKey × List (List α)))),
+    VE.Readings.otherScan (Pure.pure ()) (Pure.pure ()) Xj M Tj q v want Gs =
+      (want &&
+          Gs.any fun G =>
+            VE.Readings.sideValidOf Xj.fst M (Tj ++ G) && VE.Readings.sideValueOf Xj M (Tj ++ G) q == Option.some v,
+        Gs.any fun G => VE.Readings.sideValidOf Xj.fst M (Tj ++ G))
+  -- uses VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Readings.GenKey@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.otherScan@VE.Readings.Scan VE.Readings.sideValidOf@VE.Readings.Separate VE.Readings.sideValueOf@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 441590261
 theorem VE.Readings.outcomeBase_iff
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -17225,6 +17386,12 @@ theorem VE.Readings.sat_of_mem_labelled
     VE.Norms.Sat S L.formulas → ∀ {l : String} {a : VE.Formula}, (l, a) ∈ L → VE.Formula.denote S [] a
   -- uses VE.Compose.Labelled.formulas@VE.Compose.Slot VE.Compose.Labelled@VE.Compose.Slot VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2154534014
+theorem VE.Readings.scanOthers_eq
+  ∀ {β : Type} (valid hits : β → Bool) (want : Bool) (Gs : List β) (adm : Bool),
+    VE.Readings.scanOthers (fun G => Pure.pure (valid G)) (fun G => Pure.pure (hits G)) want Gs adm =
+      (want && Gs.any fun G => valid G && hits G, adm || Gs.any valid)
+  -- uses VE.Readings.scanOthers@VE.Readings.Scan
+  -- expr 97539792
 theorem VE.Readings.search_eq
   ∀ (D : VE.Readings.Doc) (L : List VE.Readings.ReadingSet) (pre : VE.Readings.Choice) (b : Nat),
     VE.Readings.search D L pre b = List.take b (VE.Readings.allFrom D L pre)
