@@ -28,6 +28,7 @@ from tools.lean_service_common import (DEFAULT_BENCH, MODES, machine, one_shot, 
                                        workloads)  # noqa: E402
 from tools.lean_service_parity import adversarial, load  # noqa: E402
 from ve.backends.lean_service import LeanService  # noqa: E402
+from ve.backends.service_schema import same_json  # noqa: E402
 
 IMPL = {mode: impl for impl, (mode, _) in MODES.items()}
 
@@ -102,7 +103,7 @@ def main(argv=None):
                 if want is None:  # English one-shot failure: exit 2, the service's error record
                     if got.get("status") != "error":
                         mismatches.append((i, mode, k))
-                elif got != want:
+                elif not same_json(got, want):
                     mismatches.append((i, mode, k))
             if (i + 1) % 1000 == 0:
                 rss.append({"request": i + 1, "rss_bytes": service.rss()})

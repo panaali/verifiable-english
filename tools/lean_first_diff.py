@@ -267,11 +267,33 @@ def load(path: str) -> dict[tuple, dict]:
         if not line:
             continue
         row = json.loads(line)
-        key = (row["corpus"], row["authority"], row["case"], row["op"])
+        key = record_key(row, path)
         if key in records:
             raise SystemExit(f"{path}: duplicate record {key}")
         records[key] = row
     return records
+
+
+def same(a, b) -> bool:
+    """JSON equality with the response validator's types (`service_schema.same_json`): `true` is not `1`,
+    `false` is not `0` and `1` is not `1.0`, as Python's `==` would have them. Every comparison of two
+    outcomes, or of an outcome and a delta entry, goes through it (lf-1 recheck 3, B)."""
+    from ve.backends.service_schema import same_json  # here, not at import: `_child` imports another checkout's `ve`
+    return same_json(a, b)
+
+
+def json_text(value) -> str:
+    """A leaf's identity in the wording pairs: its JSON text, so the pairs are type-strict too."""
+    return json.dumps(value, sort_keys=True, ensure_ascii=False)
+
+
+def record_key(row: dict, origin: str) -> tuple:
+    """`(corpus, authority, case, op)`, each a string: a number or a boolean there would pair records
+    that Python's `==` and hashing equate (`1` and `true`)."""
+    key = tuple(row.get(name) for name in ("corpus", "authority", "case", "op"))
+    if not all(type(part) is str for part in key):
+        raise Unusable(f"{origin}: a record's corpus, authority, case and op must be strings: {key!r}")
+    return key
 
 
 def leaf_differences(a, b, path=()):
@@ -286,7 +308,7 @@ def leaf_differences(a, b, path=()):
         if len(a) != len(b):
             return [(path, "shape")]
         return [d for x, y in zip(a, b) for d in leaf_differences(x, y, path)]
-    return [] if a == b else [(path, "leaf")]
+    return [] if same(a, b) else [(path, "leaf")]
 
 
 def _unavailable(outcome) -> bool:
@@ -296,7 +318,7 @@ def _unavailable(outcome) -> bool:
 
 def change_class(base: dict | None, head: dict | None) -> str | None:
     """The plan's class of a difference between two outcomes, or None when equal."""
-    if base == head:
+    if same(base, head):
         return None
     if base is None or head is None:
         return "verdict"
@@ -328,7 +350,7 @@ def text_pairs(base, head, path=()):
         return [p for k in base.keys() & head.keys() for p in text_pairs(base[k], head[k], path + (k,))]
     if isinstance(base, list) and isinstance(head, list):
         return [p for x, y in zip(base, head) for p in text_pairs(x, y, path)]
-    return [(base, head)] if base != head and path and path[-1] in ("message", "detail", "stderr") else []
+    return [(base, head)] if not same(base, head) and path and path[-1] in ("message", "detail", "stderr") else []
 
 
 def expected_groups(corpora=CORPORA, authorities=AUTHORITIES) -> set[tuple[str, str]]:
@@ -350,11 +372,11 @@ def compare(base_path: str, head_path: str, delta: dict | None, expect: set | No
     if sources:
         raise Unusable(f"the two runs read different corpus files: {dict(sources)}")
     delta = delta or {}
-    wording = {(pair["base"], pair["head"]) for pair in delta.get("wording", [])}
+    wording = {(json_text(pair["base"]), json_text(pair["head"])) for pair in delta.get("wording", [])}
     listed = {}
     for klass in ("order", "verdict", "availability"):
         for entry in delta.get(klass, []):
-            key = (entry["corpus"], entry["authority"], entry["case"], entry["op"])
+            key = record_key(entry, "the delta")
             if key in listed:
                 # One entry per record: a second would silently replace the first (lf-1 recheck B's class).
                 raise Unusable(f"the delta lists the record {key} twice")
@@ -370,10 +392,10 @@ def compare(base_path: str, head_path: str, delta: dict | None, expect: set | No
         totals[klass] += 1
         entry = listed.get(key)
         if klass == "wording":
-            accepted = all(pair in wording for pair in text_pairs(old, new))
+            accepted = all((json_text(a), json_text(b)) in wording for a, b in text_pairs(old, new))
         else:
             accepted = (entry is not None and entry[0] == klass and "base" in entry[1] and "head" in entry[1]
-                        and entry[1]["base"] == old and entry[1]["head"] == new)
+                        and same(entry[1]["base"], old) and same(entry[1]["head"], new))
         row = {"corpus": key[0], "authority": key[1], "case": key[2], "op": key[3], "class": klass,
                "base": old, "head": new, "listed": accepted}
         rows.append(row)
