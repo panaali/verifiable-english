@@ -1,0 +1,149 @@
+{
+  "label": "after, -n auto (load-aware), default build reuse",
+  "commit": "8e83637adebc69fd975c57ec808548760d965171",
+  "cpus": 32,
+  "load_start": 20.1806640625,
+  "load_end": 100.97998046875,
+  "wall_seconds": 2500.5,
+  "cpu_seconds": {
+    "user": 18113.8,
+    "system": 473.1,
+    "total": 18586.9
+  },
+  "summary": "6233 passed, 6 skipped, 78 warnings in 2494.43s (0:41:34)",
+  "counts": {
+    "passed": 6233,
+    "skipped": 6,
+    "warnings": 78
+  },
+  "workers": 12,
+  "test_seconds_sum": 15105.4,
+  "slowest_tests": [
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit",
+      "seconds": 945.5
+    },
+    {
+      "nodeid": "tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results",
+      "seconds": 557.5
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]",
+      "seconds": 531.8
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module",
+      "seconds": 454.8
+    },
+    {
+      "nodeid": "tests/test_readings_s1_differential.py::test_generated_sets_agree_with_lean",
+      "seconds": 439.6
+    },
+    {
+      "nodeid": "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents",
+      "seconds": 315.5
+    },
+    {
+      "nodeid": "tests/test_bluedot_grant.py::test_document_coverage_and_premise_limit",
+      "seconds": 313.8
+    },
+    {
+      "nodeid": "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist",
+      "seconds": 261.4
+    },
+    {
+      "nodeid": "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip",
+      "seconds": 252.4
+    },
+    {
+      "nodeid": "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed",
+      "seconds": 218.9
+    }
+  ],
+  "slowest_files": [
+    {
+      "file": "tests/test_english_evidence.py",
+      "seconds": 2104.1
+    },
+    {
+      "file": "tests/test_wire_gate_corpus.py",
+      "seconds": 1717.2
+    },
+    {
+      "file": "tests/test_asimov_extended.py",
+      "seconds": 1137.2
+    },
+    {
+      "file": "tests/test_discourse_lean.py",
+      "seconds": 569.5
+    },
+    {
+      "file": "tests/test_soft_review_regressions.py",
+      "seconds": 564.0
+    },
+    {
+      "file": "tests/test_risk_margins.py",
+      "seconds": 522.6
+    },
+    {
+      "file": "tests/test_risk_generated_policies.py",
+      "seconds": 452.7
+    },
+    {
+      "file": "tests/test_readings_s1_differential.py",
+      "seconds": 441.0
+    },
+    {
+      "file": "tests/test_assist_invariants.py",
+      "seconds": 351.8
+    },
+    {
+      "file": "tests/test_rights_three_way.py",
+      "seconds": 348.6
+    }
+  ],
+  "cpu_seconds_of_tests": 18363.4,
+  "most_cpu_tests": [
+    {
+      "nodeid": "tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results",
+      "cpu_seconds": 5989.9
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit",
+      "cpu_seconds": 1184.4
+    },
+    {
+      "nodeid": "tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results",
+      "cpu_seconds": 1001.8
+    },
+    {
+      "nodeid": "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+      "cpu_seconds": 447.6
+    },
+    {
+      "nodeid": "tests/test_bluedot_grant.py::test_document_coverage_and_premise_limit",
+      "cpu_seconds": 296.2
+    },
+    {
+      "nodeid": "tests/test_readings_s1_differential.py::test_generated_sets_agree_with_lean",
+      "cpu_seconds": 293.0
+    },
+    {
+      "nodeid": "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip",
+      "cpu_seconds": 244.2
+    },
+    {
+      "nodeid": "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents",
+      "cpu_seconds": 215.3
+    },
+    {
+      "nodeid": "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist",
+      "cpu_seconds": 204.8
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget",
+      "cpu_seconds": 184.2
+    }
+  ],
+  "returncode": 0
+}

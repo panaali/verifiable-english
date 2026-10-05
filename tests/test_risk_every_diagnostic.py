@@ -21,6 +21,7 @@ import pytest
 from conformance.risk import (D17_ALTERNATIVES, D17_CITES, D17_QUANTITIES, Log, agent_ops, agent_ops_rules,
                               cell_env, condition, dec, decision_17, estimate, gt, log_l17, q, record, rule,
                               statement)
+from subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_risk_route"
@@ -30,7 +31,7 @@ pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not b
 
 def run(cases):
     out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True,
-                         check=False, timeout=600)
+                         check=False, timeout=HANG_TIMEOUT)
     assert out.returncode in (0, 1), out.stderr
     rows = json.loads(out.stdout)
     assert len(rows) == len(cases)

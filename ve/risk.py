@@ -26,6 +26,7 @@ _PROFILE_WORDS = ("avoidable", "unavoidable", "allows", "prevents")
 _KINDS = frozenset({"risk-elaborate", "risk-decision", "risk-conflict",
                     "risk-followable", "risk-audit", "risk-certificate", "admission"})
 _BINARY = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route"
+_ROUTE_TIMEOUT = 180
 
 
 def _err(field):
@@ -223,7 +224,7 @@ def validate_block(raw, sorts, predicates, constants, alt, units):
     return canonical_json(raw)
 
 
-def run_case(case: dict, *, binary: Path | None = None, timeout: int = 180) -> dict:
+def run_case(case: dict, *, binary: Path | None = None, timeout: float | None = None) -> dict:
     """Send a raw case to Lean unchanged; an unavailable route is never a verdict.
 
     Python decodes nothing of the environment, record or log first, so every
@@ -237,5 +238,6 @@ def run_case(case: dict, *, binary: Path | None = None, timeout: int = 180) -> d
     executable = _BINARY if binary is None else Path(binary)
     if not executable.is_file():
         raise CheckerUnavailable("ve_risk_route is unavailable")
-    from .backends.lean import run_alternatives_case
-    return run_alternatives_case(executable, case, timeout=timeout)
+    from .backends.lean import configured_timeout, run_alternatives_case
+    return run_alternatives_case(executable, case,
+                                 timeout=configured_timeout(_ROUTE_TIMEOUT) if timeout is None else timeout)

@@ -7,20 +7,40 @@ docs/lean-first/b0/delta.json`).
 
 ## Result
 
-| Corpus | Records per side | Same | Wording | Order | Verdict | Availability |
-|---|---:|---:|---:|---:|---:|---:|
-| probe, `python` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 |
-| probe, `lean` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 |
-| conformance, `python` | 19,806 | 19,773 | 33 | 0 | 0 | 0 |
-| conformance, `lean` | 19,806 | 19,773 | 33 | 0 | 0 | 0 |
-| pilots (`ve document check`, default authority) | 214 | 214 | 0 | 0 | 0 | 0 |
-| **All** | 58,696 | 52,276 | 6,420 | 0 | 0 | 0 |
+| Corpus | Records per side | Same | Wording | Order | Verdict | Availability | Unavailable |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| probe, `python` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 | 0 |
+| probe, `lean` | 9,435 | 6,258 | 3,177 | 0 | 0 | 0 | 0 |
+| conformance, `python` | 19,806 | 19,773 | 33 | 0 | 0 | 0 | 0 |
+| conformance, `lean` | 19,806 | 19,773 | 33 | 0 | 0 | 0 | 0 |
+| pilots (`ve document check`, default authority) | 214 | 213 | 0 | 0 | 0 | 0 | 1 |
+| **All** | 58,696 | 52,275 | 6,420 | 0 | 0 | 0 | 1 |
 
 `compare` exits 0 with `"unlisted": 0` (head recorded at `bd59c8f4`, whose `ve/` and `lean/` are those of
 `385311aa`; head recording 8 min 51 s wall). Every difference is a wording change of list W1, and every W1 pair
 is used (the record counts below are the head run's). The corpora show no `order`, `verdict` or
 `availability` change. The one availability change of the batch, A1 below, is on the readings route, which none
 of these corpora reaches.
+
+Since the lf-0 review (B3), `compare` first checks that the evidence can show preservation, and exits 2
+otherwise: each side holds a record of every case of every corpus and authority as this checkout defines them
+(the conformance files' case ids, the probe matrix's frozen baseline `conformance/baseline-2026-09/python.json`,
+the pilot documents) and no other case; each corpus and authority holds an available record, an acceptance and a
+rejection; and a record unavailable on both sides is its own class, `unavailable`, accepted only when the delta
+lists it with a reason (U1 below). Two empty, wholly unavailable or constant-answer recordings are refused
+(`tests/test_lean_first_diff.py`). Outcomes are compared as typed JSON: `true` is not `1` (review C). Since
+fix3 (B1), every line is first checked against the recorder's schema (`tools/lean_first_schema/record.json`):
+an empty, partial or retyped outcome, a rejection without its code and message, or two digests for one corpus
+file is unusable evidence (exit 2), never an acceptance; the stored head and base recordings pass it unchanged.
+
+## U1: one pilot document is unavailable on both sides (`unavailable`)
+
+`pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md`, `document_check`: on base
+and head alike `ve document check` answers `CheckerUnavailable` (`ve_readings_route is unavailable`), since the
+readings route needs far longer on this document than its 120 s runner timeout. The record is the same on both
+sides but shows nothing about preservation, so it is listed in `delta.json` under `unavailable` with that reason.
+
+**Signature:** DRI, unavailable U1 — signed 2026-10-04: the UDHR document is unavailable on both sides (readings route exceeds its 120 s runner timeout); batch 3 (readings speed, F5) owns the fix. It gives no preservation evidence and is recorded as such.
 
 ## W1: Python's texts for Lean-prefixed codes are Lean's (`wording`, signed as one block)
 
@@ -124,3 +144,21 @@ only records.
 ## DRI signatures (2026-10-04)
 - **W1 (wording, one block): signed.** Lean's texts are canonical (LEAN-FIRST-PLAN DRI answer 3); Python now writes Lean's `Code: text` exactly.
 - **A1 (availability, readings route): signed.** When Python and Lean differed only by the `Code: ` prefix, the route returned CheckerUnavailable; now it returns Lean's diagnostic. That is the intended outcome of one owner: the difference was an artefact of the duplicate, not a real disagreement.
+
+## Merge with ve-integration (2026-10-04)
+- **Wire contracts norms@0 and norm-defaults@0 (S5, shadow).** Their inherited texts are each engine's own
+  decoder text, so W1 reaches them. The Python syntax walk (`ve/norms_contract.py`) now refuses an invalid
+  variable index with `UnboundVariable: Invalid variable index`, as `_Decoder` (W1.5) and the Lean hook
+  (`Hooks/Norms.lean`) do. The fixture pins of 8.1 and 8.2 (N21, N33 to N35, N38, D9) carry W1's prefixes. Both
+  units' call snapshots, gate reports and delta reports were rewritten from the merged tree (`--write-call-snapshot`
+  is allowed in shadow). Their gate failures are the ones the stored reports already had (S5-pre open, the same
+  mismatches and residual). The four `legacy_crashes` of norms@0 on non-array `profiles` are gone; that comes from
+  ve-integration's own env-field-types fix, which postdates the stored report.
+- **Gap: soft-norms@0 (public) signed check 6.5a.** W1.1 gives the legacy validator's AST node limit text the
+  `ResourceLimit: ` prefix that 6.5a's signed sentence attributes to the contract. Measured from this tree, 6.5a
+  changes no text (498 → 478 text changes), so `wire_contract_gate --check` reports "signed check 6.5a has no text
+  change". The stored pilot report, its delta and `soft-norms-python-delta.json` were already stale at
+  lean-first/b0 before the merge, and they are left unchanged here. The DRI decides whether to drop 6.5a from
+  the countersigned switch (`soft-norms@0-switch.json`, the release note, wire-contract-s4.md 3.3 and 16) or to
+  keep the sentence as the public change relative to the pre-switch release. After that decision, regenerate the
+  three artifacts.

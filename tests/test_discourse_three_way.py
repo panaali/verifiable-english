@@ -1,9 +1,10 @@
-"""Discourse three-way evidence (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
+"""Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 
-One `ve-document@2` text is written once and read by all three implementations: Python
-(`check_document` on the file), the Lean route (`ve_discourse_route` on the same bytes) and Rust,
-which never resolves references and receives, as an untrusted `elaborated-document` case, the
-elaborated formulas Python admitted. Identities (source, document, environment, meaning and
+One `ve-document@2` text is written once and read by the Python API (`check_document` on the
+file) and the Lean route (`ve_discourse_route` on the same bytes). The admission is Lean's and
+the relay shows it (docs/LEAN-FIRST-PLAN.md, batch 4, which also deleted Rust's untrusted
+`elaborated-document` re-check: Rust never resolved references, and its premise verdict is the
+premise search's, tested with the core). Identities (source, document, environment, meaning and
 report ids), statuses, the report, the diagnostics of rejected manifests and the premise verdict
 must agree. Alpha registers `bob` so that the type check is the only filter on its three
 accessible candidates; alpha-prime covers every sub-case of the fixture, each with the
@@ -12,7 +13,6 @@ natural-view outcome it records.
 from __future__ import annotations
 
 import json
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -25,7 +25,6 @@ from ve.errors import VEError
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_discourse_route"
-RUST = ROOT / "rust/target/release/ve"
 CONSTANTS = {"api": "service", "beta": "service", "gamma": "service", "alice": "person", "bob": "person"}
 PREDICATES = {"reviewed": ["service"], "deployed": ["service"], "ready": ["person"]}
 DISPLAY = {"api": "Api", "beta": "Beta", "gamma": "Gamma", "alice": "Alice", "bob": "Bob"}
@@ -83,16 +82,6 @@ def lean_outcome(text):
     return row if row["status"] == "ok" else row["error"]
 
 
-def rust_outcome(formulas):
-    base = environment(("relational-fol@0",))
-    case = {"id": "shared", "family": "elaborated-document", "untrusted": True, "environment": base,
-            "formulas": formulas}
-    rust = subprocess.run([str(RUST), "conformance"], input=json.dumps(case), text=True, capture_output=True,
-                          timeout=60)
-    assert rust.returncode == 0, rust.stdout + rust.stderr
-    return json.loads(rust.stdout)[0]
-
-
 def natural_view(sentences):
     env = Environment(environment(("relational-fol@0",)))
     try:
@@ -103,10 +92,9 @@ def natural_view(sentences):
 
 
 def agree(tmp_path, sentences, names, target="api", sections=None):
-    """Run the shared document through the three implementations; return the common outcome."""
-    for binary in (LEAN, RUST):
-        if not binary.exists():
-            pytest.skip(f"{binary.name} is not built")
+    """Run the shared document through the relay and the route; return the common outcome."""
+    if not LEAN.exists():
+        pytest.skip(f"{LEAN.name} is not built")
     path, text = write(tmp_path, sentences, names, target, sections)
     python, loaded = python_outcome(path)
     lean = lean_outcome(text)
@@ -127,13 +115,7 @@ def agree(tmp_path, sentences, names, target="api", sections=None):
     assert lean["report_id"] == python["report_id"]
     assert lean["statuses"] == {u["id"]: u["status"] for u in loaded["units"]}
     assert python["reviewed_presentations"][last].strip() == "Api is deployed."
-    # Rust on the elaborated document Python admitted (untrusted input)
-    formulas = [u["content"] for u in loaded["units"] if u["content"] is not None]
-    rust = rust_outcome(formulas)
-    assert rust["family"] == "elaborated-document" and rust["untrusted"] is True
-    assert rust["environment_id"] == lean["environment_id"]
-    assert rust["meaning_ids"] == [u["meaning_id"] for u in loaded["units"] if u["content"] is not None]
-    assert rust["premises"]["status"] == python["premises"]["status"] == "model"
+    assert python["premises"]["status"] == "model"
     return lean["bound"][last]
 
 

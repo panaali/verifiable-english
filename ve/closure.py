@@ -174,7 +174,7 @@ def derive_extra(branch, rule, at, parameter):
     if rule == "closure-compose@0":
         if type(parameter) is not str or not parameter.isascii() or not parameter.isdigit():
             raise _InvalidTrace("composition requires another formula index")
-        j = int(parameter)
+        j = ast.decimal_value(parameter)
         if not 0 <= j < len(branch.formulas):
             raise _InvalidTrace("invalid composition source")
         other = branch.formulas[j]

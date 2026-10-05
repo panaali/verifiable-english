@@ -8,44 +8,156 @@ one JSON row per case, a row that does not match the response schema, or an
 exit status inconsistent with the rows) raises `CheckerUnavailable`. No Python
 result is ever substituted, and a malformed row is never read as a rejection.
 
-The response schema every runner row satisfies: `status` is `ok` or `error`;
-an `error` row carries a string `error`, names its case by exactly one of `id`
-and `case_index`, and has no member but those of `ERROR_EXTRAS`; an `ok` row
-carries the submitted case `id`; an `id` or `case_index` present on any row
-names that case, with its JSON type (a string id, an integer index: `false` is
-not case 0). The per-route transports (`route_rows`) check the same rows. Each
+Every one-shot transport here reads the runner's output with `read_rows`, the
+one row contract of every runner: `status` is `ok` or `error`; a row naming its
+case by position (`case_index`) carries only that position and an `error`; any
+other row has an `id` field naming the submitted case, with its JSON type (a
+string id, an integer index: `false` is not case 0), and `null` for a case
+without one (a row without the field names no case); an `error` row carries a non-empty string `error`
+and, on a coded route only, a string `code`; an `ok` row carries neither. Output
+that is no Unicode text (a `\\ud800` escape) is no answer. Each
 binding's manifest `response` gives every field an `ok` row of the operation
 must carry with its type (`bool`, `nat`, `string`, `object`, `json`, or
 `array<T>` with every element of type `T`), and its `counts` the fields whose
 size (an array's length, a `nat`'s value) must equal the length of a case
 array (`case.NAME`) or of another response array (`row.NAME`). Nothing reads
 an `ok` row that fails its schema.
+
+Each caller's wall-clock timeout is a guard against a hung runner, not a work
+limit: `VE_LEAN_TIMEOUT` replaces every caller's default (`configured_timeout`;
+the test suite raises it to its hang guard, so machine load cannot fail a test).
 """
 from __future__ import annotations
 
 import subprocess
 import json
 import sys
-from pathlib import Path
 
 from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
-from .lean_service import _decode_json
+from .lean_service import _decode_json, configured_seconds
+# JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`.
+from .service_schema import same_json as _same
+
+SOFT_TIMEOUT = 120.0
+ROUTE_TIMEOUT = 120.0
 
 
-def run_soft_case(executable, case):
-    """Transport one soft route case through the shared Lean process boundary (`route_rows`).
+def configured_timeout(default: float) -> float:
+    """The wall-clock timeout of one one-shot Lean runner call whose caller's default is
+    `default`: `VE_LEAN_TIMEOUT` when set, else `default`. A value that is not a positive
+    finite number of seconds is `CheckerUnavailable` before the runner starts."""
+    return configured_seconds("VE_LEAN_TIMEOUT", default)
 
-    Lean's error row raises its message (and code) as a `VEError`; a route that cannot answer this
-    case is `CheckerUnavailable`."""
-    row = route_rows(executable, [case], timeout=120,
-                     payload=json.dumps([case], ensure_ascii=False).encode())[0]
+
+def run_soft_case(executable, case, *, timeout: float | None = None) -> dict:
+    """Transport one soft route case (`ve_soft_norms_route`, `ve_rights_route`) through the shared
+    Lean process boundary. Its rows name a code beside a case rejection (`SoftNorms/Run.lean`
+    `runCaseReported`); a rejection raises `VEError` with that code. Output that is no answer
+    (`read_rows`) is `CheckerUnavailable`, never a rejection. Without a `timeout`, the call
+    waits `configured_timeout(SOFT_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(SOFT_TIMEOUT)
+    try:
+        completed = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
+                                   capture_output=True, timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: soft route unavailable: {exc}", operation="soft-route", backend="lean") from None
+    try:
+        [row] = read_rows(completed.returncode, completed.stdout, [case], coded=True)
+    except NoAnswer as exc:
+        detail = completed.stderr.decode("utf-8", "replace").strip()[-300:]
+        raise CheckerUnavailable(f"CheckerUnavailable: soft route returned no answer: {exc}" + (f" ({detail})" if detail else ""),
+                                 operation="soft-route", backend="lean") from None
     if row["status"] == "error":
         error = VEError(row["error"])
-        error.code = row.get("code", error.code)
+        if "code" in row:
+            error.code = row["code"]
         raise error
     return row
+
+
+class NoAnswer(Exception):
+    """Why a one-shot runner's output is no answer to the submitted cases (`read_rows`). Each
+    transport raises it as its own `CheckerUnavailable`: it is never a rejection."""
+
+
+# The members an error row of a Lean runner may carry besides its identity, `status`, `error` and a coded
+# route's `code` (`runCaseReported` in VE/*/Run.lean, VE/Route/Run.lean, VE/CertificateWire.lean,
+# VE/Order/*.lean, VE/Time/Wire.lean; `caseError` in VE/Service/Protocol.lean): the route's `generator` of an
+# `InvalidModel(g)` message, and `valid: false` on certificate and order cases.
+ERROR_EXTRAS = {
+    "generator": lambda value: type(value) is str,
+    "valid": lambda value: value is False,
+}
+
+
+def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str | None:
+    """Why `row` is not a result row for `case`, the `index`-th submitted case, or None.
+
+    The row contract every one-shot runner's `main` writes (`lean/VE/*/Run.lean`): a case the
+    runner could not read is answered by its position alone (`status: error`, `case_index`,
+    `error` and, from the certificate and order runners, `valid: false`); every other row names the case's `id` (null when the case has none)
+    and no position. An `error` row carries a non-empty string `error` and, only on a route whose rows name
+    codes (`coded`), a non-empty string `code`, and no member outside `ERROR_EXTRAS`; an `ok` row carries
+    neither."""
+    if type(row) is not dict:
+        return "a result row is not an object"
+    status = row.get("status")
+    if status not in ("ok", "error"):
+        return "a result row has no status ok or error"
+    # Identity fields are compared with their types: Python's `False == 0` is not
+    # a JSON equality, so a Boolean never names case 0 (nor a float case 1).
+    if "case_index" in row:
+        if not _same(row["case_index"], index):
+            return "result case indices do not match the submitted cases"
+        # `valid: false` beside it on the certificate and order runners (`lean/Main.lean`).
+        if status != "error" or row.keys() - {"valid"} != {"status", "case_index", "error"} \
+                or row.get("valid", False) is not False:
+            return "a row naming its case by position carries more than its position and an error"
+    # The id field is required: the runners write it, `null` for a case without one
+    # (`j.getObjValD "id"`), so a row that omits it names no case at all.
+    elif "id" not in row or not _same(row["id"], case.get("id")):
+        return "result ids do not match the submitted cases"
+    if status == "error":
+        # Lean's texts are never empty (`lean_service_schema/common.json` `text`, the same rows).
+        if type(row.get("error")) is not str or not row["error"]:
+            return "an error row has no error message"
+        if "code" in row and not (coded and type(row["code"]) is str and row["code"]):
+            return "an error row names a code its route does not give"
+        for name in row.keys() - {"id", "case_index", "status", "error", "code"}:
+            if name not in ERROR_EXTRAS or not ERROR_EXTRAS[name](row[name]):
+                return f"an error row has an unexpected {name!r}"
+    elif "error" in row or "code" in row:
+        return "an ok row carries an error or a code"
+    return None
+
+
+def read_rows(returncode: int, stdout: bytes, cases: list, *, coded: bool = False,
+              restricted: bool = False) -> list[dict]:
+    """The result rows of a one-shot runner's answer to `cases`, or `NoAnswer`.
+
+    The one reader of every one-shot runner's output. The runners exit 0 (every case ok) or 1
+    (some case rejected); 2 is a usage or JSON framing error, and anything else is a crash.
+    The output must be one JSON array (`_decode_json`, or VE's restricted JSON when
+    `restricted`: no lone surrogate, duplicate field or non-finite number) of one row per case
+    satisfying `identity_problem`, with an exit status that agrees with its rows."""
+    if returncode not in (0, 1):
+        raise NoAnswer(f"exited with status {returncode}")
+    try:
+        rows = loads_json(stdout) if restricted else _decode_json(stdout)
+    except (VEError, ValueError, RecursionError):
+        raise NoAnswer("output is not a JSON result array") from None
+    if type(rows) is not list or len(rows) != len(cases):
+        raise NoAnswer("output does not hold one result object per case")
+    for index, (case, row) in enumerate(zip(cases, rows)):
+        problem = identity_problem(case, row, index, coded=coded)
+        if problem:
+            raise NoAnswer(problem)
+    if any(row["status"] == "error" for row in rows) != (returncode == 1):
+        raise NoAnswer("exit status disagrees with its result rows")
+    return rows
 
 
 _SCALARS = {
@@ -80,69 +192,14 @@ def _size(value) -> int:
     return value if type(value) is int else len(value)
 
 
-def _same(value, expected) -> bool:
-    """JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`."""
-    if type(value) is not type(expected):
-        return False
-    if type(value) is list:
-        return len(value) == len(expected) and all(map(_same, value, expected))
-    if type(value) is dict:
-        return value.keys() == expected.keys() and all(_same(value[k], expected[k]) for k in value)
-    return value == expected
-
-
-# The members an error row of a Lean runner may carry besides its identity, `status` and `error`
-# (`runCaseReported` in VE/*/Run.lean, VE/Route/Run.lean, VE/CertificateWire.lean, VE/Order/*.lean,
-# VE/Time/Wire.lean; `caseError` in VE/Service/Protocol.lean): the soft route's `code`, the route's
-# `generator` of an `InvalidModel(g)` message, and `valid: false` on certificate and order cases.
-ERROR_EXTRAS = {
-    "code": _SCALARS["string"],
-    "generator": _SCALARS["string"],
-    "valid": lambda value: value is False,
-}
-
-
-def error_row_problem(case: dict, row: dict, index: int) -> str | None:
-    """Why the error row `row` is not Lean's rejection of `case`, submitted at `index`, or None.
-
-    A Lean runner writes an error row in one of two shapes: `runCaseReported` echoes the case's
-    `id` (JSON null when the case has none), and `main` names a case its JSON reader rejected on its
-    own (JSON depth) by `case_index`. A row naming neither, both, or another case, or carrying a
-    member no runner writes, rejects nothing: it is not Lean's answer to this request."""
-    if type(row.get("error")) is not str:
-        return "an error row has no error message"
-    if ("id" in row) == ("case_index" in row):
-        return "an error row does not name its case by exactly one of id and case_index"
-    if "id" in row and not _same(row["id"], case.get("id")):
-        return "result ids do not match the submitted cases"
-    if "case_index" in row and not _same(row["case_index"], index):
-        return "result case indices do not match the submitted cases"
-    for name in row.keys() - {"id", "case_index", "status", "error"}:
-        if name not in ERROR_EXTRAS or not ERROR_EXTRAS[name](row[name]):
-            return f"an error row has an unexpected {name!r}"
-    return None
-
-
 def row_problem(case: dict, row, index: int, response: dict, counts: dict | None = None) -> str | None:
     """Why `row` is not a well-formed answer to `case`, or None.
 
     `response` and `counts` are the binding's manifest schema for `ok` rows.
     """
-    if type(row) is not dict:
-        return "a result row is not an object"
-    status = row.get("status")
-    if type(status) is not str or status not in ("ok", "error"):
-        return "a result row has no status ok or error"
-    if status == "error":
-        return error_row_problem(case, row, index)
-    # Identity fields are compared with their types: Python's `False == 0` is not
-    # a JSON equality, so a Boolean never names case 0 (nor a float case 1).
-    if "case_index" in row and not _same(row["case_index"], index):
-        return "result case indices do not match the submitted cases"
-    if "id" in row and not _same(row["id"], case.get("id")):
-        return "result ids do not match the submitted cases"
-    if "id" in case and not _same(row.get("id"), case["id"]):
-        return "an ok row does not name its case id"
+    problem = identity_problem(case, row, index)
+    if problem or row["status"] == "error":
+        return problem
     for name, spec in response.items():
         if name not in row or not conforms(row[name], spec):
             return f"an ok row has no well-formed {name!r} ({spec})"
@@ -175,98 +232,79 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
         raise unavailable(f"no answer within {timeout} s") from None
     except OSError as exc:
         raise unavailable(f"cannot start {executable}: {exc.strerror or exc}") from None
-    # The one-shot runners exit 0 (every case ok) or 1 (some case rejected);
-    # 2 is a usage or JSON framing error, and anything else is a crash.
-    if proc.returncode not in (0, 1):
-        raise unavailable(f"exited with status {proc.returncode}")
     try:
-        rows = loads_json(proc.stdout)
-    except VEError:
-        raise unavailable("output is not a JSON result array") from None
-    if type(rows) is not list or len(rows) != len(cases):
-        raise unavailable("output does not hold one result object per case")
+        rows = read_rows(proc.returncode, proc.stdout, cases, restricted=True)
+    except NoAnswer as exc:
+        raise unavailable(str(exc)) from None
     for index, (case, row) in enumerate(zip(cases, rows)):
         problem = row_problem(case, row, index, binding["response"], binding.get("counts"))
         if problem:
             raise unavailable(problem)
-    rejected = any(row["status"] == "error" for row in rows)
-    if rejected != (proc.returncode == 1):
-        raise unavailable("exit status disagrees with its result rows")
     return rows
 
 
-def route_answer(route: str, cases: list[dict], returncode: int, stdout: bytes, stderr: bytes = b"") -> list[dict]:
-    """The rows of a one-shot route's answer to `cases`, each bound to its case, or `CheckerUnavailable`.
-
-    The one check of every route transport below: the exit status is 0 or 1; stdout is UTF-8 JSON
-    (`_decode_json`: no repeated member, no non-JSON number, nesting within the runtime limit); it
-    holds one object per case; every row, an error row included, satisfies `row_problem` (an `ok`
-    row names its case's `id`, an error row is Lean's encoder shape naming its case); and the exit
-    status is 1 exactly when some row is an error. The content of an `ok` row is the caller's to
-    check. Nothing here raises anything but `CheckerUnavailable`."""
-    def invalid(problem):
-        return CheckerUnavailable(f"CheckerUnavailable: {route} returned an invalid response: {problem}")
-
-    if returncode not in (0, 1):
-        detail = stderr.decode("utf-8", "replace").strip()[-300:]
-        raise CheckerUnavailable(f"CheckerUnavailable: {route} failed" + (f" ({detail})" if detail else ""))
+def _route_rows(name: str, executable, cases: list, data: bytes, *, timeout: float,
+                restricted: bool = False) -> list[dict]:
+    """Transport `cases` (encoded as `data`) to the route runner `name`: its rows (`read_rows`),
+    or `CheckerUnavailable` when it cannot start, does not answer in time or gives no answer."""
     try:
-        rows = _decode_json(stdout)
-    except ValueError as exc:
-        raise CheckerUnavailable(f"CheckerUnavailable: {route} returned invalid JSON") from exc
-    if type(rows) is not list or len(rows) != len(cases):
-        raise invalid("not one result object per case")
-    for index, (case, row) in enumerate(zip(cases, rows)):
-        problem = row_problem(case, row, index, {})
-        if problem:
-            raise invalid(problem)
-    if (returncode == 1) != any(row["status"] == "error" for row in rows):
-        raise invalid("exit status disagrees with its rows")
-    return rows
-
-
-def route_rows(executable, cases: list[dict], *, timeout: float, payload: bytes | None = None) -> list[dict]:
-    """Submit `cases` (as `payload`, canonical JSON by default) to the one-shot Lean route at path
-    `executable` and return `route_answer`'s rows. A route that cannot start or does not answer
-    in time is `CheckerUnavailable`. The output is read as bytes: decoding is the reader's, inside
-    the containment, never `subprocess`'s."""
-    route = Path(str(executable)).name
-    try:
-        proc = subprocess.run([str(executable), "-"], input=canonical_json(cases) if payload is None else payload,
-                              capture_output=True, timeout=timeout, check=False)
+        proc = subprocess.run([str(executable), "-"], input=data, capture_output=True, timeout=timeout,
+                              check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
-        raise CheckerUnavailable(f"CheckerUnavailable: {route} is unavailable") from exc
-    return route_answer(route, cases, proc.returncode, proc.stdout, proc.stderr)
+        raise CheckerUnavailable(f"CheckerUnavailable: {name} is unavailable") from exc
+    try:
+        return read_rows(proc.returncode, proc.stdout, cases, restricted=restricted)
+    except NoAnswer as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: {name} returned an invalid response ({exc})") from None
 
 
 def run_alternatives_case(executable, case: dict, *, timeout: float) -> dict:
     """Transport a raw alternatives (or risk) case to its dedicated Lean runner."""
-    return route_rows(executable, [case], timeout=timeout)[0]
+    return _route_rows("ve_alternatives_route", executable, [case], canonical_json([case]), timeout=timeout,
+                       restricted=True)[0]
 
 
 def run_discourse_case(executable, case: dict, *, timeout: float) -> dict:
-    """Transport one discourse case to `ve_discourse_route` (`route_rows`); the caller
-    (`ve/discourse.py` `lean_admission`) checks the content of an `ok` row."""
-    return route_rows(executable, [case], timeout=timeout,
-                      payload=json.dumps([case], ensure_ascii=False).encode())[0]
+    """Transport one discourse case to `ve_discourse_route`: its row (`read_rows`). The caller
+    (`ve/discourse.py` `lean_admission`) checks an `ok` row's fields; a route that cannot start,
+    does not answer in time or gives no answer is `CheckerUnavailable`."""
+    try:
+        proc = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
+                              capture_output=True, timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route did not answer ({exc})") from None
+    try:
+        return read_rows(proc.returncode, proc.stdout, [case])[0]
+    except NoAnswer as exc:
+        detail = proc.stderr.decode("utf-8", "replace").strip()[-300:]
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route returned no answer to the case"
+                                 f" ({exc}{'; ' + detail if detail else ''})") from None
 
 
 def run_reports_case(executable, case: dict, *, timeout: float) -> dict:
     """Transport one reports case through the shared Lean process boundary."""
-    return route_rows(executable, [case], timeout=timeout)[0]
+    return _route_rows("ve_reports_route", executable, [case], canonical_json([case]), timeout=timeout,
+                       restricted=True)[0]
 
 
-def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
+def run_norm_defaults_cases(executable, cases: list[dict], *, timeout: float | None = None) -> list[dict]:
     """Transport cases to `ve_norm_defaults_route`: one row per case, in order. A row with
-    `status: error` is Lean's rejection of that case; anything else that is not an answer bound to
-    the request is `CheckerUnavailable` (`route_rows`)."""
-    return route_rows(executable, cases, timeout=timeout, payload=json.dumps(cases, ensure_ascii=False).encode())
+    `status: error` is Lean's rejection of that case; a route that cannot start, does not
+    answer in time or gives no answer (`read_rows`) is `CheckerUnavailable`. Without a
+    `timeout`, the call waits `configured_timeout(ROUTE_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(ROUTE_TIMEOUT)
+    return _route_rows("ve_norm_defaults_route", executable, cases,
+                       json.dumps(cases, ensure_ascii=False).encode(), timeout=timeout)
 
 
-def run_readings_cases(executable, cases: list[dict], *, timeout: float = 120) -> list[dict]:
+def run_readings_cases(executable, cases: list[dict], *, timeout: float | None = None) -> list[dict]:
     """Transport cases to `ve_readings_route` (composition-s1.md 8.4): one row per case, in order.
 
     A row with `status: error` is Lean's rejection of that case. A route that cannot start, does
-    not answer in time, or answers anything but rows bound to the request with a consistent exit
-    status (`route_rows`) is `CheckerUnavailable`, never a rejection."""
-    return route_rows(executable, cases, timeout=timeout, payload=json.dumps(cases, ensure_ascii=False).encode())
+    not answer in time, or gives no answer (`read_rows`) is `CheckerUnavailable`, never a
+    rejection. Without a `timeout`, the call waits `configured_timeout(ROUTE_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(ROUTE_TIMEOUT)
+    return _route_rows("ve_readings_route", executable, cases, json.dumps(cases, ensure_ascii=False).encode(),
+                       timeout=timeout)
