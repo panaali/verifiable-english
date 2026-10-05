@@ -25,6 +25,14 @@ as findings F1 to F6 for the statement review and the DRI. Where the two documen
 is the expectation it overturned; nothing else in this plan changed after draft 2 except that n3 is named in
 the two counterexample lists (5.1 B0, G-S0), as the review's joint position has it.
 
+**Alignment note, 2026-10-05 (statement review).** The statement review of the spec
+(`manage-agents/debates/senses-spec/`, Astra and Fable) converged on FIX, applied in [senses.md](senses.md)
+draft 2 (its section 0.1, edits R1 to R13). This plan's operative text is aligned with it where the review
+touched it: W2, W4 and W6 (2.2); the Q4 rule (2.3, 10); the switch rule for unresolved words (2.4, 2.6); the
+`limit` and `quotedSense` faults (2.5, 2.6); the one-candidate text (2.8); B5, G-S0 and G-S1. **Where this plan
+and the spec differ, the spec governs**: its statements (spec 5.3) replace those of 4.3 here, and its fixtures
+(spec 8) replace the hand-derived values of section 6. The W1, soft and P0 contracts are untouched.
+
 **Evidence for the need** (ARCH-ROADMAP, 2026-10-04): writing a small VE joke needed about five declaration
 lines per word in the environment file (name, argument sorts, description, wording, negative wording), the
 negatives were written by hand, and the text hit the "No X that …" gap (S2's W12, `No service that is
@@ -153,16 +161,16 @@ failure as (condition, word or pack, detail), in condition order, and `wf` is "n
 | # | Condition |
 |---|---|
 | W1 | **Words.** A word is two to fifty lower-case ASCII letters and not in `reservedWords`. The senses of a word in a pack have indices `1` to `n`, each once. A word belongs to exactly one pack of the dictionary; an own sense of the document does not use a pack word |
-| W2 | **Glosses.** A gloss is one to three words of three or more lower-case ASCII letters, none in `reservedWords`, not equal to the word, and not equal to the word of any sense of the dictionary; the glosses of one word's senses are pairwise distinct by `wordingKey` |
+| W2 | **Glosses.** A gloss is one to three words of three to fifty lower-case ASCII letters, none in `reservedWords`, not equal to the word, and not equal to the word of any sense of the dictionary; the glosses of one word's senses are pairwise distinct by `wordingKey`. Every form of a sense (2.3) has at most 256 characters (spec W3, Python's verbalisation limit) |
 | W3 | **Wording.** The wording passes S1's `shapeOk` for arity `kinds.length`, begins with `{0}`, contains the word exactly once as a whole word, and contains no `(`, `)`, `.`, `means`, `meaning` or `in the sense of` |
-| W4 | **Kinds and sorts.** Every kind is a sort of the pack, or, for an own sense, of the document or a named pack. A pack sort has a noun that passes S1's noun conditions (V2's honest forms: the declared noun) and a label letter, one lower-case ASCII letter; the letters of the dictionary's sorts are pairwise distinct (their distinctness from the document's letters is the per-request check of 2.5) |
+| W4 | **Kinds and sorts.** Every kind is a sort of the pack, or, for an own sense, of the document or a named pack. A pack sort has a noun that passes S1's noun conditions (V2's honest forms: the declared noun) and a label letter, one lower-case ASCII letter; the letters of the dictionary's sorts are pairwise distinct (their distinctness from the document's letters is the per-request check of 2.5). As amended by the spec (F2, F3, R2, R3; the pack and fixtures of this plan predate it): the letter is one capital ASCII letter; a sense has one or two kinds and a description that is not empty; a pack sort has a plural and a description that is not empty, a noun and plural of at most 256 characters, and a name that Python's `Environment` accepts (`[a-z][a-z0-9_]*`, at most 64 characters, not a reserved schema word, not `x` and digits) and that does not begin with `sense__` |
 | W5 | **Negative.** When `negativeTemplate wording kinds.length` is `some t`, the entry has no `negative` (it would duplicate `t`). When it is `none`, the entry may declare one; a declared negative passes W3's shape and word conditions, differs from the wording, and begins with `{0}` |
-| W6 | **Distinctness of coexisting forms.** Two forms are compared only when one assignment can select both. For two senses of **different** words: every form of one against every form of the other (the wording, the glossed wording, the two comma forms, the negative, automatic or declared, and the glossed and comma forms of that negative), pairwise distinct by `wordingKey`. For two senses of the **same** word: their glossed forms (distinct by W2) and each one's bare forms against the other's glossed forms (distinct by construction, the gloss adds words); their bare forms **may coincide**, since at most one of them is the default under any assignment (`F`'s two `funny` senses both have `{0} is funny`, d1). Every form of every sense is distinct by `wordingKey` from every pack noun |
+| W6 | **Distinctness of coexisting forms.** Two forms are compared only when one assignment can select both. For every two different senses: every form of one against every form of the other (the wording, the glossed wording, the two comma forms, the negative, automatic or declared, and the glossed and comma forms of that negative), pairwise distinct by `wordingKey`, **checked, not argued**, with one exception: for two senses of the **same** word, their bare forms **may coincide**, since at most one of them is the default under any assignment (`F`'s two `funny` senses both have `{0} is funny`, d1). Distinct glosses do not keep the decorated forms apart: `near` with glosses `beside` and `beside bob` and wordings `{0} is near bob` and `{0} is near` share the comma form `{0} is near, in the sense of beside bob` (spec R1, d26). Every form of every sense is distinct by `wordingKey` from every pack noun and plural |
 | W7 | **Reserved phrases.** No wording, negative, noun or gloss contains `in this document` |
 
 W6 is what makes V4 of the projected lexicon a lookup (D12): under one assignment the projection selects,
-for each word, one bare wording (the default's) and the glossed wordings of the others, and W6 has compared
-exactly those pairs. W2's "not equal to the word of any sense" keeps a gloss from reading as a switch to
+for each word, one bare wording (the default's) and the decorated forms of the others, and W6 has compared
+every pair two senses can select together. W2's "not equal to the word of any sense" keeps a gloss from reading as a switch to
 another word. Nothing in W1 to W7 constrains the arity or the literal words of two senses of one word
 against each other beyond distinctness: `{0} is near bob` (unary) and `{0} is near {1}` (binary) are both
 legal senses of `near` (d18), which is why the run-time state check of 2.6 exists.
@@ -182,8 +190,11 @@ For a sense `s` and a text `t` in which `s.word` occurs once as a whole word:
 `(` glued after, `meaning`, `strange`, `)` glued before, and the rules carry those flags: no other spacing is
 accepted (DRI ruling 1 on O1). The two comma forms exist because the brief's `funny, in the sense of strange,`
 closes with a comma mid-sentence and cannot at a sentence end; both are aliases, never the selected wording,
-and section 6.4's fixtures c1 to c8 are obligations that decide whether they stay: if any c fixture has two
-derivations, the comma forms are dropped and the parenthetical form alone remains (open question Q4).
+and the c fixtures decide whether they stay, by Q4's rule: **if any c fixture is `many` in the column that
+ships (spec 8.5: as merged, or with R3), the comma forms are dropped and the parenthetical form alone
+remains** (open question Q4). The spec's c16 (`Every joke that is funny, in the sense of strange, and is odd,
+in the sense of strange, and is funny is not funny.`) has two derivations with R3, so with R3 the comma forms
+are dropped unless the DRI revises the rule with a fixture showing `one` (spec R9).
 
 **Negatives.** The selected negative of a sense is `negativeTemplate` of its *selected* wording (bare or
 glossed), when that exists: `{0} is funny` gives `{0} is not funny`, `{0} is funny (meaning strange)` gives
@@ -223,7 +234,9 @@ not written: the bare word is the default or nothing.
 **Unresolved words.** A sentence that uses a bare word with no default has no derivation under the
 projection (the bare wording of that word is nobody's). The reader then (2.6) lists the unresolved words of
 that sentence and reads it once per choice of a sense for each, under the projection of the assignment
-extended by that choice. The sentence's unit is open; the document continues from the same state (checked,
+extended by that choice. A word whose every occurrence in the sentence is **switched** (followed by `(` and
+`meaning`, or by a comma and `in the sense of`) is not unresolved there: its gloss names its sense whatever
+the assignment, so a choice for it would only add candidates that differ in nothing (spec R7, s22). The sentence's unit is open; the document continues from the same state (checked,
 2.6). Nothing is guessed, and a sentence with no unresolved word that has no derivation stays `none`, as in
 S2.
 
@@ -263,7 +276,9 @@ wording or profile-fixed (V5, by D3). V1 holds by construction. So `Lexicon.vali
 dictionary over a validated base lexicon of a document with no own predicates (`project_valid`, 4.3, with
 `L.valid E {} = true` among its premises); with own predicates, `Lexicon.failures` is run and any failure is
 reported as `collision` naming the document's symbol and the sense (3.2): the author declared a wording a
-pack already gives, and the message says which.
+pack already gives, and the message says which. Before the build, `project` checks Python's counts on the
+projected environment (at most 32 sorts and 256 predicates, `ve/limits.py:6–7`), which no pack check can
+hold since they count the document's own symbols too: `fault (limit …)` (spec 2.5 step 5, R4).
 
 **The projected environment JSON** is `E`'s validated JSON with the pack sorts and the sense predicates
 inserted into `vocabulary` in canonical order, each predicate with `arguments`, `description` (the sense's),
@@ -292,7 +307,8 @@ smaller projection reads the same under the larger or is rejected as ambiguous, 
 4. S2's three grammar checks on the projection, else `invalidGrammar why`. Then the body is read sentence by
    sentence with S1's `readSentence`, from `DState.init`, under the budget `b` (S2's `workBudget`):
    - `.ok A m`: a resolved unit;
-   - `noDerivation`, and the sentence has unresolved words: every choice of one sense per unresolved word is
+   - `noDerivation`, and the sentence has unresolved words (used, no default, and at least one occurrence not
+     switched, 2.4): every choice of one sense per unresolved word is
      tried (more than `candidateCap` choices: `fault (tooManyCandidates i words)`), each with `readSentence`
      under the projection of `A.extend choice` from the same state. **Typed admission:** a choice is a
      candidate exactly when its outcome is `.ok F m` and `typedDocument P2.env [F]` holds under its projection
@@ -312,6 +328,9 @@ smaller projection reads the same under the larger or is rejected as ambiguous, 
      the state. The text (3.2) names the differing referent or the binder and asks the author to choose a
      sense;
    - any other outcome: `stopped i o`, S2's outcome for a sentence that is not a sense problem.
+   - in either reading branch, a derivation that uses S2's quoted-name `relation.` row of a sense predicate
+     (a binary sense over one sort, `Rules.lean:182–190`) is `fault (quotedSense i word)`: the name is an id
+     the author would write, and the sense map cannot span it (spec R13).
 5. `typedDocument` on every resolved formula, else `illTyped` (candidates were typed at admission, under
    their own projections).
 6. The **sense map**, keyed by **written occurrence**: for each sentence, each lexical rule of a sense
@@ -378,7 +397,7 @@ overlays; not a semantic decision).
 | hover (editor, web app) | on any sense word: its gloss and description, and `default` or `switched` | the sense map's entry for that span |
 | glossary (print, `--glossary`) | a block after the text: one line per used sense, `funny: amusing (the default); funny (meaning strange): odd, hard to explain`, and the unused defaults | the sense map and the reports; display only, outside the checked text |
 | warnings | `The word funny is used in two senses here: amusing (sentences 2, 5) and strange (sentences 2, 4).`; `The line for odd is not needed: odd has one sense.` | the mixed and unused reports |
-| unresolved | `Sentence 2 uses funny, which has two senses here: amusing; strange. Add the line "In this document, funny means amusing." or write funny (meaning strange).`, with the candidates as English sentences, each under the lines of its choice that the document does not yet have; with one candidate (s16): `Sentence 2 uses odd, which has two senses here, and only strange fits a joke. Add the line "In this document, odd means strange." to say so.` | the candidates and the dictionary |
+| unresolved | `Sentence 2 uses funny, which has two senses here: amusing; strange. Add the line "In this document, funny means amusing." or write funny (meaning strange).`, with the candidates as English sentences, each under the lines of its choice that the document does not yet have; with one candidate (s16): `Sentence 2 uses odd, which has two senses here, and only strange gives a reading of this sentence. Add the line "In this document, odd means strange." to say so.` (no typing reason is claimed: in the spec's s20 the other sense fails by derivation, spec R11) | the candidates and the dictionary |
 | diverging | the `CandidatesDiverge` text of 3.2, naming the referent or the binder that differs | the fault |
 
 Rule (ARCH-ROADMAP (e)): every rendered form carries each sense in the text (preamble and inline); hover
@@ -436,6 +455,8 @@ Nothing else is new. No number, symbol or id is ever written or shown.
 | `PreambleLate` | `Sentence {i} gives a word a meaning. Such lines come first, before any other sentence.` |
 | `Collision` (wording) | `The wording {wording} is both in the vocabulary pack {pack} (for {word}) and declared by this document for {symbol}. Keep one.` |
 | `Collision` (letter) | `The label letter {letter} is used both by the vocabulary pack {pack} (for {sort}) and by this document (for {sort₂}). Change one.` |
+| `Collision`, every case | superseded by the spec's total map from `collision kind name sense` to one text (spec 3.2, R10), which adds the text for a pack kind whose noun the document already uses |
+| `VocabularyLimit`, `QuotedSense` | spec 3.2 (R4, R13) |
 | `TooManyCandidates` | `Sentence {i} uses {n} words with no chosen sense: {words}. Choose a sense for at least one of them first.` |
 | `CandidatesDiverge` (referent) | `Sentence {i} uses {word} with no chosen sense, and its senses do not agree on what the sentence is about: read as {gloss₁} it mentions {name}, read as {gloss₂} it does not. Later sentences depend on that, so choose: add the line "In this document, {word} means {gloss₁}." (or {gloss₂}), or write {word} (meaning {gloss₁}).` |
 | `CandidatesDiverge` (binder) | `Sentence {i} uses {word} with no chosen sense, and its senses do not agree on whether the sentence speaks of every or some thing of a kind: read as {gloss₁} it does, read as {gloss₂} it does not. Later sentences depend on that, so choose: add the line "In this document, {word} means {gloss₁}." (or {gloss₂}), or write {word} (meaning {gloss₁}).` |
@@ -665,6 +686,10 @@ listed and re-reviewed, before B5 is accepted (G-S0b). Both stub files stay unco
 
 ### 4.3 The exact statements
 
+Superseded by spec 5.3 (draft 2), which governs: `project_valid` without premises, `project_total` and
+`senses_unit_sound` added, and the changes of the statement review (R4 to R6). The text below is draft 2 of
+this plan, kept as the record the spec's 13.2 compares against.
+
 ```lean
 theorem wf_iff_no_failure : ∀ (D : Dictionary) (ss : List String),
   D.wf ss = true ↔ D.failures ss = []
@@ -803,7 +828,7 @@ interface (D19).
 | B2 | **Packs as files.** The pack schema (2.2) in `docs/spec/senses.md`; `ve/senses/packs/fixtures@1.json` (section 6's pack) and the loader `ve/senses/__init__.py` (read bytes, canonical JSON, nothing else); `ve/senses/reviewed-packs.json` with the fixture pack unpinned; `Decode.lean`: the pack decoder (null rejected, unknown fields rejected, as the frozen decoders do) and `dictionaryId`; fixtures p1 to p6 | 3 | Python files + Lean decoder | B1 |
 | B3 | **Projection.** `Project.lean`: `usedWords` (by headword tokens, D18), `Projection`, `project` over the request's own lexicon `L` (appending the pack nouns and letters and the sense forms, the letter check), `envJson` (canonical insertion into the validated environment JSON; its `environment_id` through the existing Lean identity), `project_valid` proved with the `L.valid E {} = true` premise (or deferred as 4.4 says, with the DRI's signature in the batch report), `project_extends` stated against the interim `Extends`; fixtures j1 to j12 | 5 | Lean | B1, B2 (the base lexicon is S1's `Lexicon`) |
 | B4 | **Preamble.** `Assignment.lean`, `Preamble.lean`: `preambleShaped`, `preambleGrammar` (one rule per sense, kw and content terminals, the comma glued before, `Grammar.wf` and `terminatorFree` true by construction and checked by `#guard` on the fixture pack), `readPreamble` through S1's `verdict` with the lookup faults and `preambleBudget`, `lines`, `preamble_unique` and `lines_read` proved (or as 4.4); fixtures a1 to a12 | 4 | Lean | B1 |
-| B5 | **Reader.** `Read.lean`: `readWithSenses`, the units, candidates with typed admission (`candidateCap`, `lines`), the successor-state check (`candidatesDiverge` with its `Divergence`), `senseMap` from the derivations keyed by written occurrence, `mixedOf`, unused defaults, `flipModel` through the existing evaluator; `senses_resolved_one_reading`, `senses_candidate_sound`, `candidates_complete`, `mixed_exact`, `senseMap_ids` proved against the merged S2.3; R1 to S2.3; fixtures s1 to s18, n1 to n7, c1 to c8 (verdict obligations that decide the comma forms, Q4), m1 to m4 | 6 | Lean | B3, B4, S2.3 merged, G-S0b |
+| B5 | **Reader.** `Read.lean`: `readWithSenses`, the units, candidates with typed admission (`candidateCap`, `lines`), the successor-state check (`candidatesDiverge` with its `Divergence`), `senseMap` from the derivations keyed by written occurrence, `mixedOf`, unused defaults, `flipModel` through the existing evaluator; `senses_resolved_one_reading`, `senses_candidate_sound`, `candidates_complete`, `mixed_exact`, `senseMap_ids` proved against the merged S2.3; R1 to S2.3; fixtures s1 to s18, n1 to n7, c1 to c8 (verdict obligations that decide the comma forms, Q4), m1 to m4; as amended by the spec: its fixtures of 8.5 and 8.7 (c1 to c17, s1 to s23), `senses_unit_sound`, the switch rule, `quotedSense` | 6 | Lean | B3, B4, S2.3 merged, G-S0b, the DRI's decision on R3, and Q4 decided by its rule on the column that ships |
 | B6 | **Service and relay.** Modes in `ve_english_route` (`EnglishMain.lean`): `senses.read`, request (environment, its proposed lexicon as `english.read` receives it, packs' bytes, own senses, source, mode, cap), response (status, S2's six identities of the projection, `dictionary_id`, `senses_version`, units with candidates, each candidate with its resolving lines and the identities of its own projection, flip models, the sense map with byte spans from `lexSpans`, mixed, unused, the preamble lines, the projected environment JSON, code and text); `senses.project`, request (environment, its lexicon, packs, own senses, preamble lines, used words), response (the projected environment JSON and its identities), which is what the CLI's `ve senses project` and the candidate display call; null fields omitted; `ve/senses/LOCK.json` with `sensesVersion` and the hook rule (D17); `ve/assurance-manifest.json`: operations `senses.read` and `senses.project`, `authority: lean`, `target: lean`, no `python` entry, the decoders pinned; `ve/backends/senses.py`: the relay (`decide`, Lean's code and text verbatim, `CheckerUnavailable` only for operational faults); CLI `ve check --surface english --senses PACK …` and `ve senses project|check`; fixtures i1 to i7 | 3 | Lean service + Python relay | B5, S2.4 merged |
 | B7 | **Display.** `ve render --view ve_english --senses …`: Lean's preamble lines, then Python's renderer over the projected environment, then `checkRendering` through the service on the result (a mismatch is `CheckerUnavailable`: the renderer is an untrusted producer, lean-first 2.3); `--glossary`; `--json` with the sense map for hover; the mixed, unneeded, unresolved and diverging texts printed verbatim; each candidate rendered under the projection `senses.project` returns for its resolving lines and re-read by `checkRendering` under it, shown with the lines the document lacks; `ve senses resolve FILE --word W --gloss G` (inserts the preamble line, re-checks); `ve senses propose-readings FILE` writes the W2 reading set of each unresolved unit with two or more candidates from Lean's candidates and flip models (`status: open`, `admission.who: "senses"`, `why` the Lean text, `distinguishing_models` the flip models by id, each reading's text rendered under its candidate's projection) and runs the existing readings validation on the file; a one-candidate unit gets no set and a line saying which line resolves it; the web-app JSON contract documented in `docs/spec/senses.md` (the web app itself is on its own branch, Z4) ; fixtures g1 to g9 | 4 | Python | B6 |
 | B8 | **Starter packs.** Four packs seeded from the reviewed overlays and the pilots' vocabularies (D14): `policies@1` (agent-policy and cedar-attributes: principals, resources, `access`, `allowed`, `denied`, `owns` …), `rights@1` (the UDHR pilot's holders, duties, `entitled`, `protected`, `free` …), `software-services@1` (fluent, assist and the readability eval: `deployed`, `reviewed`, `safe`, `owns`, `depends on` …), `risk@1` (the risk use case: `severe`, `avoidable`, `leads to` …); `tools/senses_propose.py` drafts entries from an environment, its overlay and OEWN glosses for review (untrusted, Python); each pack reviewed and pinned; **measurement** (7.2): every English sentence of the four use cases and the fluent examples re-read with the pack in place of its overlay, counting sentences that read with the same formula up to the renaming of predicate names to sense ids, sentences that need a preamble line, sentences that need a switch, and sentences that no longer read, with the reasons | 6 | data + review + measurement | B6 |
@@ -816,7 +841,8 @@ interface (D19).
 **B0.** Fixtures: the S1 stub elaborates; the interim S2 stub elaborates (a shape check, D19); a1 to a8
 computed; every counterexample fixture of draft 2 is present with its expected value (d1's note, d17, d18,
 d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18). Deletes nothing. Done when the review converges with its
-FIX list applied and both stubs re-elaborate.
+FIX list applied and both stubs re-elaborate. Status 2026-10-05: the review converged on FIX, applied in spec
+draft 2; G-S0 (7.1) is the remaining condition.
 
 **B1.** Fixtures d1 to d19. Not duplicated: `reservedWords` is the one list (D13); `wordingKey`,
 `negativeTemplate`, `shapeOk` are S1's, called, not copied. Done when every d fixture holds (d1 and d17
@@ -841,7 +867,8 @@ the candidates reuse `readSentence` and `typedDocument`; the flip-model evaluati
 Done when s1 (the joke) gives the formulas of 6.6, s2 gives its candidates and flip models, s16 keeps one
 typed candidate without choosing it, s17 reaches `candidatesDiverge` with the referent named, n7 is
 unresolved and not `noDerivation`, the five reading theorems are proved against the merged S2.3, and Q4 is
-decided by c1 to c8.
+decided by its rule (10) on the spec's c fixtures in the column that ships. B5 does not start before the
+DRI's decision on R3 (spec 6.2).
 
 **B6.** Fixtures i1 to i7. Deleted: nothing yet. Not duplicated: no Python decision site in
 `ve/backends/senses.py` (a grep test until lean-first batch 0's `tools/relay_lint.py` exists, then that);
@@ -1059,9 +1086,9 @@ without it (`GF`):
 
 | Gate | After | Passes when |
 |---|---|---|
-| G-S0 | B0 | the statement review converges on FIX or PASS with its list applied; the S1 stub elaborates the dictionary, assignment, preamble and projection statements; the interim S2 stub elaborates the five reading statements (a shape check, D19, with its interim names listed); a1 to a8 computed; every counterexample fixture of draft 2 is present with its expected value: d1's note, d17, d18, d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18 |
+| G-S0 | B0 | the statement review converges on FIX or PASS with its list applied; the S1 stub elaborates the dictionary, assignment, preamble and projection statements; the interim S2 stub elaborates the five reading statements (a shape check, D19, with its interim names listed); a1 to a8 computed; every counterexample fixture of draft 2 is present with its expected value: d1's note, d17, d18, d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18. **As amended (spec 7):** the review converged on FIX; G-S0 passes after one bounded re-review by both reviewers of the spec's diff from draft 1, the three changed statements re-elaborated against the merged S2 build, and the recomputed rows (d2, d26, j13's text, j15, j16, c16, c17, s22, s23, the whole R3 column under the narrowed simulation, every hand-derived row); no second full review. B1 to B4 start when G-S0 passes |
 | G-S0b | before B5 is accepted | the five S2-dependent statements (`project_extends`, `senses_resolved_one_reading`, `senses_candidate_sound`, `candidates_complete`, `senseMap_ids`) re-elaborate against the **merged** S2.3 build, unchanged, or with every difference listed, re-reviewed by the statement reviewers and signed by the DRI; no S2-dependent proof counts before this gate |
-| G-S1 | B5 | every fixture of 6.1 to 6.6 holds, s15 to s18 and n7 included; `lean/audit.py` clean, standard axioms only; the theorems of 4.3 proved, or each deferral signed by the DRI and listed in the report; Q4 decided by c1 to c8 |
+| G-S1 | B5 | every fixture of 6.1 to 6.6 holds, s15 to s18 and n7 included; `lean/audit.py` clean, standard axioms only; the theorems of 4.3 proved, or each deferral signed by the DRI and listed in the report; Q4 decided by its rule (10) on the spec's c fixtures in the column that ships, after the DRI's decision on R3 |
 | G-S2 | B7, B8, B9 | the joke reads, renders and re-reads (g1); the four packs pinned; the measurement of 7.2 in the report; no Python decision site in the relay or the display (lint); latency: `senses.read` on `J` and on each use-case document within S2's `english.read` budget plus 10 ms for the preamble and projection, warm, measured as S1 measured (`bench/english_lean_g1a.py`'s method) |
 
 ### 7.2 Measured claims (obligations of the report)
@@ -1128,7 +1155,7 @@ Nothing is claimed about readability, intent or human comprehension (limit L1).
 | Q1 | `senses.read` with `authority: lean` from the first commit, with no Python implementation and so no shadow | yes: lean-first rule 6; the corpus evidence is section 6 and B8's table |
 | Q2 | packs as request data (D1) against generated Lean literals with a lock file, as S2's fixed rules | request data: one owner, no generator, identified by `dictionary_id` and pinned by review, as overlays; `wf` costs one check per request, cached by `dictionary_id` |
 | Q3 | kinds as sorts, one sense per sort (L4), against a `thing` kind with subsorting | sorts: VE has no subsorts; measure in B8 how many words need two senses for two sorts before designing more |
-| Q4 | keep the two comma forms | decided by c1 to c8 at B5: keep if every c fixture is `one`, else drop and keep the parenthetical form |
+| Q4 | keep the two comma forms | the rule decides: **drop the comma forms if any c fixture is `many` in the column that ships** (spec 8.5: as merged, or with R3), and keep the parenthetical form. Draft 2's wording ("keep if every c fixture is `one`") is replaced, since c7 is `zero` by design. With R3, the spec's c16 is `many`, so the comma forms are dropped unless the DRI revises the rule with a fixture showing `one` (spec R9) |
 | Q5 | `candidateCap` = 8 | yes; s11 is the fixture; raise only with a measured need |
 | Q6 | the preamble as leading sentences (D5), against a separate block or front matter only | leading sentences for plain text, front matter for `ve-document@1`, both read by one Lean function |
 | Q7 | S2 to expose the letter rule and display-form selection from Lean, so `project` calls them instead of copying the adapter's rule | **closed in draft 2, no copy and no request:** the document's own lexicon arrives in the request exactly as `english.read` receives it (S2's one producer), Lean validates it, pack sorts declare their letters (W4), and `project` appends only what the dictionary determines (2.5). R2 is withdrawn. If S2.3 later exposes a selection helper, calling it is equally acceptable |
