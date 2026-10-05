@@ -5612,6 +5612,11 @@
     "VE.Route.Run.runCaseReported"
    ]
   },
+  "VE/Route/RunSound.lean": {
+   "P": [
+    "VE.Route.RunSound.RunnerKind"
+   ]
+  },
   "VE/Route/Steps.lean": {
    "G[V]": [
     "VE.Route.Steps.caseCap",
@@ -5680,12 +5685,64 @@
     "VE.Route.Wire.RouteVocabulary.modelVocabulary",
     "VE.Route.Wire.definitionBackgroundBudget",
     "VE.Route.Wire.runBackground",
-    "VE.Route.Wire.runClosure",
-    "VE.Route.Wire.runFol",
-    "VE.Route.Wire.runOrder"
+    {
+     "name": "VE.Route.Wire.runClosure",
+     "tied": [
+      "VE.Route.WireSound.runClosure_certificate_acceptance",
+      "VE.Route.WireSound.runClosure_countermodel",
+      "VE.Route.WireSound.runClosure_evaluate"
+     ]
+    },
+    {
+     "name": "VE.Route.Wire.runFol",
+     "tied": [
+      "VE.Route.WireSound.runFol_certificate_acceptance",
+      "VE.Route.WireSound.runFol_countermodel",
+      "VE.Route.WireSound.runFol_evaluate"
+     ]
+    },
+    {
+     "name": "VE.Route.Wire.runOrder",
+     "tied": [
+      "VE.Route.WireSound.runOrder_certificate_acceptance",
+      "VE.Route.WireSound.runOrder_countermodel",
+      "VE.Route.WireSound.runOrder_evaluate"
+     ]
+    }
    ],
    "G[R]": [
     "VE.Route.Wire.nodeLimit"
+   ]
+  },
+  "VE/Route/WireSound.lean": {
+   "S": [
+    "VE.Route.WireSound.CertificateClaim",
+    "VE.Route.WireSound.CountermodelAnswer",
+    "VE.Route.WireSound.CountermodelClaim",
+    "VE.Route.WireSound.EvaluateClaim",
+    "VE.Route.WireSound.Family",
+    "VE.Route.WireSound.RouteIntended",
+    "VE.Route.WireSound.Runner.Bound",
+    "VE.Route.WireSound.closureFamily",
+    "VE.Route.WireSound.folFamily",
+    "VE.Route.WireSound.orderFamily"
+   ],
+   "C": [
+    "VE.Route.WireSound.Runner",
+    "VE.Route.WireSound.Runner.layer"
+   ],
+   "P": [
+    "VE.Route.WireSound.Runner.Accepted",
+    "VE.Route.WireSound.Runner.Sound"
+   ],
+   "D[V]": [
+    "VE.Route.WireSound.orderModel",
+    "VE.Route.WireSound.routeModel"
+   ],
+   "G[I]": [
+    "VE.Route.WireSound.closureRunner",
+    "VE.Route.WireSound.folRunner",
+    "VE.Route.WireSound.orderRunner"
    ]
   },
   "VE/Semantics.lean": {
