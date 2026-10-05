@@ -1,0 +1,1178 @@
+{
+ "tests": 8674,
+ "total_test_seconds": 9453.041818640802,
+ "suite_cpu": 9884.926773,
+ "self_cpu": 5877.5515479999995,
+ "child_cpu": 3860.004741,
+ "slowest_tests": [
+  [
+   270.9151513919933,
+   "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip"
+  ],
+  [
+   266.65343984100036,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_contract_and_soft_test_input"
+  ],
+  [
+   264.76679456900456,
+   "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist"
+  ],
+  [
+   221.30562668100174,
+   "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget"
+  ],
+  [
+   199.99744544798887,
+   "tests/test_soft_review_regressions.py::test_generated_soft_conformance_is_part_of_suite"
+  ],
+  [
+   143.61994692500593,
+   "tests/test_p1_amendment15.py::test_runner_preserves_finished_trajectories_initials_and_resumes_without_repurchase"
+  ],
+  [
+   142.6471821130035,
+   "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results"
+  ],
+  [
+   129.10313065000082,
+   "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed"
+  ],
+  [
+   125.24103814999398,
+   "tests/test_norm_defaults_three_way.py::test_spec8_differentials"
+  ],
+  [
+   105.14843371499592,
+   "tests/test_asimov_laws.py::test_followability_agrees_across_python_rust_and_source_reading"
+  ],
+  [
+   103.35737596299441,
+   "tests/test_discourse_lean.py::test_mention_spans_start_and_end_on_tokens"
+  ],
+  [
+   96.84562825999456,
+   "tests/test_order.py::test_lean_differential_corpus"
+  ],
+  [
+   93.48495075800747,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[12-4of8]"
+  ],
+  [
+   93.02280576500198,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[12-0of8]"
+  ],
+  [
+   90.70065948899719,
+   "tests/test_safety_framework.py::test_rerun_equals_committed_results"
+  ],
+  [
+   89.61042084200017,
+   "tests/test_eligibility_wfp.py::test_staged_answers_match_the_key_and_the_recorded_results"
+  ],
+  [
+   87.70958246498776,
+   "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module"
+  ],
+  [
+   87.46095497300121,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[12-3of8]"
+  ],
+  [
+   86.59605129999545,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[12-2of8]"
+  ],
+  [
+   86.54920453499653,
+   "tests/test_english_evidence.py::test_english_mixed_merge_smoke[8-0of2]"
+  ]
+ ],
+ "slowest_files": [
+  [
+   1429.9566290689836,
+   36,
+   "tests/test_english_evidence.py"
+  ],
+  [
+   536.3421370670258,
+   70,
+   "tests/test_discourse_lean.py"
+  ],
+  [
+   389.0116406429952,
+   3,
+   "tests/test_wire_gate_corpus.py"
+  ],
+  [
+   382.61753137804044,
+   11,
+   "tests/test_risk_generated_policies.py"
+  ],
+  [
+   371.4415482950135,
+   32,
+   "tests/test_assist_invariants.py"
+  ],
+  [
+   344.27693648698187,
+   8,
+   "tests/test_risk_margins.py"
+  ],
+  [
+   327.2363053860099,
+   97,
+   "tests/test_assist.py"
+  ],
+  [
+   319.3345106689667,
+   94,
+   "tests/test_english.py"
+  ],
+  [
+   290.36269258888933,
+   87,
+   "tests/test_lean_conformance.py"
+  ],
+  [
+   284.50712190593185,
+   200,
+   "tests/test_soft_review_regressions.py"
+  ],
+  [
+   283.63013462699746,
+   134,
+   "tests/test_lean_service_schema.py"
+  ],
+  [
+   209.00186352301534,
+   82,
+   "tests/test_eligibility_wfp.py"
+  ],
+  [
+   181.17562996400375,
+   3,
+   "tests/test_agent_policy_rerun.py"
+  ],
+  [
+   163.46807035501843,
+   70,
+   "tests/test_fluent.py"
+  ],
+  [
+   143.82723288801208,
+   7,
+   "tests/test_p1_amendment15.py"
+  ],
+  [
+   141.95125281700894,
+   10,
+   "tests/test_w6a_limit_generator.py"
+  ],
+  [
+   136.96651780087268,
+   2672,
+   "tests/test_environment_field_types.py"
+  ],
+  [
+   131.66409031900548,
+   5,
+   "tests/test_p1_amendment13.py"
+  ],
+  [
+   131.15049701900716,
+   7,
+   "tests/test_norm_defaults_three_way.py"
+  ],
+  [
+   129.84114294494793,
+   39,
+   "tests/test_asimov_laws.py"
+  ]
+ ],
+ "files": {
+  "tests/test_agent_policy.py": 21.029900974994234,
+  "tests/test_agent_policy_rerun.py": 181.17562996400375,
+  "tests/test_agent_policy_unspecified.py": 4.246141784991778,
+  "tests/test_alternatives_profile.py": 2.697747393969621,
+  "tests/test_alternatives_three_way.py": 14.94194814596267,
+  "tests/test_argument.py": 0.7146860280117835,
+  "tests/test_argument_adversarial.py": 0.42455491198052187,
+  "tests/test_argument_fixtures.py": 6.91901882498496,
+  "tests/test_asimov_extended.py": 59.39262493897695,
+  "tests/test_asimov_laws.py": 129.84114294494793,
+  "tests/test_assist.py": 327.2363053860099,
+  "tests/test_lexicon.py": 4.937520582956495,
+  "tests/test_llm.py": 0.18391582595359068,
+  "tests/test_nary.py": 0.37439223699766444,
+  "tests/test_nary_differential.py": 31.767449610997573,
+  "tests/test_nary_folio.py": 0.011628968997683842,
+  "tests/test_native_build_lock.py": 9.98819315500441,
+  "tests/test_natural.py": 74.82055123301689,
+  "tests/test_precommit_hook.py": 127.14974283196352,
+  "tests/test_profile_artifacts.py": 0.03046309600904351,
+  "tests/test_profiles.py": 0.020654084015404806,
+  "tests/test_properties.py": 89.36950060899107,
+  "tests/test_propose.py": 79.0794641440516,
+  "tests/test_readings_s1_lean.py": 104.59575191909244,
+  "tests/test_readings_s1_python.py": 0.02000988797226455,
+  "tests/test_replay_conservativity.py": 2.2470473420034978,
+  "tests/test_report_english.py": 2.4902919819869567,
+  "tests/test_reports.py": 11.76051079996978,
+  "tests/test_soft_norms_conformance.py": 10.386942060955334,
+  "tests/test_soft_norms_lean.py": 4.587188978031918,
+  "tests/test_soft_review_regressions.py": 284.50712190593185,
+  "tests/test_softnorms_contract.py": 7.326238576984906,
+  "tests/test_softnorms_public_contract.py": 1.0802010349871125,
+  "tests/test_speech_acts.py": 0.6090039330083528,
+  "tests/test_speech_acts_conformance.py": 104.12580190604785,
+  "tests/test_w6a_looprecheck1.py": 35.775518700960674,
+  "tests/test_w6a_looprecheck2.py": 16.251526213993202,
+  "tests/test_w6a_review_regressions.py": 0.7428996159869712,
+  "tests/test_w6a_route_limits.py": 124.28133899498789,
+  "tests/test_w6b_gates.py": 0.06173381099506514,
+  "tests/test_wire_contract_corpus.py": 0.14439480398141313,
+  "tests/test_wire_contract_engine.py": 0.00898979797057109,
+  "tests/test_wire_contract_faults.py": 50.605552549968706,
+  "tests/test_wire_contract_generator.py": 0.0007862000056775287,
+  "tests/test_wire_contract_lean.py": 3.5022416560314014,
+  "tests/test_wire_contract_lint.py": 2.077819559002819,
+  "tests/test_wire_contract_precondition.py": 0.05695617100718664,
+  "tests/test_wire_contract_s4_lean.py": 0.30617322200123454,
+  "tests/test_wire_contract_soft_lean.py": 48.1132270080052,
+  "tests/test_wire_gate_corpus.py": 389.0116406429952,
+  "tests/test_assist_deadline.py": 20.033600890002855,
+  "tests/test_assist_invariants.py": 371.4415482950135,
+  "tests/test_assist_recovery.py": 24.12735372397583,
+  "tests/test_assist_recovery_replay.py": 80.95731949600217,
+  "tests/test_assurance_manifest.py": 67.30770471192227,
+  "tests/test_speech_acts_lean.py": 17.62330509496678,
+  "tests/test_stage0_inventory.py": 16.197829409975384,
+  "tests/test_stage0_probe_matrix.py": 11.238965914039,
+  "tests/test_stage2_bundle.py": 3.3285909660116886,
+  "tests/test_stage2_dispatch.py": 0.17027364899695385,
+  "tests/test_stage2_graph.py": 4.7060640969648375,
+  "tests/test_stage2_norms.py": 1.6618261269832146,
+  "tests/test_stage2_parse.py": 11.04327753194957,
+  "tests/test_stage2_readings.py": 4.573856538925611,
+  "tests/test_units_lean_w6a.py": 7.135312589962268,
+  "tests/test_units_rust_w6a.py": 2.60345121401042,
+  "tests/test_units_w6a.py": 0.06708181997964857,
+  "tests/test_vacuity.py": 0.03088645599927986,
+  "tests/test_ve_iface.py": 0.16246469999896362,
+  "tests/test_views.py": 7.015218210028252,
+  "tests/test_views_polish.py": 2.1300852870044764,
+  "tests/test_w6a2_looprecheck1.py": 21.074107111999183,
+  "tests/test_w6a2_numeral_characters.py": 9.530998035937955,
+  "tests/test_w6a_certificate_steps.py": 21.996297338992008,
+  "tests/test_w6a_citations.py": 3.148458323033992,
+  "tests/test_attacks.py": 0.642465101016569,
+  "tests/test_authoring.py": 0.0409790619960404,
+  "tests/test_background.py": 0.10245249800937017,
+  "tests/test_bench_timing.py": 0.0016981800145003945,
+  "tests/test_bluedot_grant.py": 49.031057366068126,
+  "tests/test_bundle.py": 5.461464335981873,
+  "tests/test_calendar_regression_w6b.py": 0.0008111679999274202,
+  "tests/test_cedar_attributes.py": 0.0025576289990567602,
+  "tests/test_cedar_norms.py": 0.6116900470296969,
+  "tests/test_cli.py": 77.75603829595639,
+  "tests/test_closure.py": 8.794418116005545,
+  "tests/test_environment_field_types.py": 136.96651780087268,
+  "tests/test_equivalence.py": 0.40187681902898476,
+  "tests/test_lean_service_schema.py": 283.63013462699746,
+  "tests/test_legend.py": 0.32336530199245317,
+  "tests/test_norm_defaults_differential.py": 18.371516436011007,
+  "tests/test_norm_defaults_three_way.py": 131.15049701900716,
+  "tests/test_norm_english.py": 1.0377916709912824,
+  "tests/test_norms.py": 0.11102944101730827,
+  "tests/test_norms_three_way.py": 8.054327332996763,
+  "tests/test_order.py": 102.30654219801363,
+  "tests/test_order_gate.py": 0.43780000600236235,
+  "tests/test_order_grammar.py": 2.424607780012593,
+  "tests/test_order_round2.py": 2.7325380250185844,
+  "tests/test_p0_three_way.py": 2.869793230922369,
+  "tests/test_p1_amendment9.py": 18.19766513302602,
+  "tests/test_p1_history.py": 2.6525369730079547,
+  "tests/test_p1_infrastructure.py": 0.7483902759704506,
+  "tests/test_p1_native_counter.py": 1.1727706609599409,
+  "tests/test_p1_preflight.py": 22.81816528800846,
+  "tests/test_p1_reconcile.py": 29.12750328599941,
+  "tests/test_parser_renderer.py": 0.18742497399944114,
+  "tests/test_risk_every_diagnostic.py": 2.8962055939773563,
+  "tests/test_risk_fixtures.py": 91.00785325298057,
+  "tests/test_risk_generated_policies.py": 382.61753137804044,
+  "tests/test_rust_reproducible.py": 51.71113263898587,
+  "tests/test_safety_framework.py": 103.08281542998157,
+  "tests/test_search_options.py": 1.7347210310108494,
+  "tests/test_closure_certificates.py": 4.0529244909921545,
+  "tests/test_closure_induction.py": 4.492272112998762,
+  "tests/test_closure_witnesses.py": 0.3688927039911505,
+  "tests/test_colab.py": 0.5832479299861006,
+  "tests/test_compose_dispatch.py": 2.0834597459470388,
+  "tests/test_compose_integration.py": 2.1644143119992805,
+  "tests/test_conformance.py": 0.07188584199320758,
+  "tests/test_constitution_w6a_controls.py": 0.004717679003078956,
+  "tests/test_count_w6a.py": 5.2176599010199425,
+  "tests/test_coverage_dashboard.py": 0.017221508001966868,
+  "tests/test_cpu_bounds.py": 5.790140134005924,
+  "tests/test_data_adapters.py": 0.017780196998501197,
+  "tests/test_data_flags.py": 0.02432945801410824,
+  "tests/test_data_surface.py": 28.559751146014605,
+  "tests/test_data_three_way.py": 2.5877977080162964,
+  "tests/test_definitions.py": 0.4539945980068296,
+  "tests/test_definitions_differential.py": 43.42850951402215,
+  "tests/test_definitions_english.py": 4.276449999022589,
+  "tests/test_discourse.py": 6.586348442026065,
+  "tests/test_discourse_constitution.py": 6.219911404019513,
+  "tests/test_lean_conformance.py": 290.36269258888933,
+  "tests/test_lean_import_reader.py": 9.837569512987102,
+  "tests/test_lean_service.py": 44.12604390697379,
+  "tests/test_readings_s1_differential.py": 72.55379411600006,
+  "tests/test_readings_s1_document.py": 6.105956043000333,
+  "tests/test_readings_s1_integration.py": 0.7907338320001145,
+  "tests/test_stage2_evaluation.py": 6.4050366850351566,
+  "tests/test_w6a_documents.py": 21.07071813500079,
+  "tests/test_w6a_limit_generator.py": 141.95125281700894,
+  "tests/test_w6a_limits.py": 2.9188672710079118,
+  "tests/test_discourse_lean.py": 536.3421370670258,
+  "tests/test_discourse_three_way.py": 3.1977391760010505,
+  "tests/test_document.py": 8.353055210987804,
+  "tests/test_e1_core.py": 5.381904186950123,
+  "tests/test_rights.py": 56.65042661198095,
+  "tests/test_rights_lean.py": 4.904856610017305,
+  "tests/test_rights_render_status.py": 0.09580457699485123,
+  "tests/test_rights_three_way.py": 49.7881817929956,
+  "tests/test_risk_diagnostics.py": 3.960508978969301,
+  "tests/test_risk_differential.py": 3.3081455909923534,
+  "tests/test_risk_english.py": 3.691378105933836,
+  "tests/test_risk_integration.py": 33.60175698700914,
+  "tests/test_risk_lean_route.py": 17.256750264015864,
+  "tests/test_stage2_faults.py": 25.791654466978798,
+  "tests/test_stage2_standalone.py": 2.1184043009925517,
+  "tests/test_stage2_validation.py": 1.367022287005966,
+  "tests/test_stats.py": 0.9637364280133625,
+  "tests/test_surface_registry.py": 0.03215450701827649,
+  "tests/test_t1c.py": 11.82487574195693,
+  "tests/test_time_surface_w6a.py": 0.04633582500537159,
+  "tests/test_time_w6a.py": 0.020326236000983045,
+  "tests/test_units_lean_gate_w6a.py": 0.07560206099878997,
+  "tests/test_e1_prompts.py": 107.71137128400733,
+  "tests/test_eligibility_wfp.py": 209.00186352301534,
+  "tests/test_english.py": 319.3345106689667,
+  "tests/test_english_evidence.py": 1429.9566290689836,
+  "tests/test_p1.py": 19.43069559403375,
+  "tests/test_p1_amendment11.py": 0.5737207869970007,
+  "tests/test_p1_amendment12.py": 90.94615115800116,
+  "tests/test_p1_amendment13.py": 131.66409031900548,
+  "tests/test_p1_amendment14.py": 12.77492271099618,
+  "tests/test_p1_amendment15.py": 143.82723288801208,
+  "tests/test_p1_amendment7.py": 28.553293415017833,
+  "tests/test_p1_amendment8.py": 13.922019653982716,
+  "tests/test_english_unambiguity.py": 0.6603838149749208,
+  "tests/test_entailment.py": 0.3009342079385533,
+  "tests/test_entailment_adversarial.py": 0.4162062259929371,
+  "tests/test_entailment_properties.py": 3.0410500270008924,
+  "tests/test_wire_contract_three_way.py": 1.0291350599945872,
+  "tests/test_equivalence_properties.py": 12.036541479996231,
+  "tests/test_evaluate_search.py": 1.1182845329603879,
+  "tests/test_evidence_bounds.py": 22.16281697301747,
+  "tests/test_fluent.py": 163.46807035501843,
+  "tests/test_fol_names.py": 0.043031164997955784,
+  "tests/test_fret_w6a_rerating.py": 0.294371805008268,
+  "tests/test_gate.py": 0.004328898998210207,
+  "tests/test_gate_integrity.py": 9.336675729966373,
+  "tests/test_gatekeeper_adapter.py": 0.08815575801418163,
+  "tests/test_grammar.py": 108.81058969595324,
+  "tests/test_grammar_backends.py": 0.0073925390097429045,
+  "tests/test_grammar_cli.py": 3.3691284739907132,
+  "tests/test_inventory_lint.py": 6.193753644009121,
+  "tests/test_lean_certificates.py": 21.03164536796976,
+  "tests/test_news_w6a_fixtures.py": 1.2405827259935904,
+  "tests/test_norm_admission.py": 0.194143856948358,
+  "tests/test_norm_defaults.py": 3.0160092709120363,
+  "tests/test_reports_agreement.py": 1.5652444360166555,
+  "tests/test_reports_lean.py": 57.53820507098135,
+  "tests/test_reports_status.py": 43.34177968004224,
+  "tests/test_risk_margins.py": 344.27693648698187,
+  "tests/test_risk_profile.py": 1.0169575230247574,
+  "tests/test_risk_rust.py": 0.04893453399563441,
+  "tests/test_risk_w6_extension.py": 1.314212364013656,
+  "tests/test_runner.py": 1.1521130759865628,
+  "tests/test_rust_conformance.py": 33.77592215300683
+ },
+ "executables": [
+  {
+   "exe": "ve_service",
+   "category": "lean service (CPU)",
+   "count": 289,
+   "wall": 5397.0086587490005,
+   "cpu": 37.219902,
+   "median_wall": 0.0984609079969232,
+   "min_wall": 0.06603165200067451
+  },
+  {
+   "exe": "ve_risk_route",
+   "category": "lean route / runner",
+   "count": 1434,
+   "wall": 1428.0776331689558,
+   "cpu": 1280.065689,
+   "median_wall": 0.11115062150201993,
+   "min_wall": 0.04551239399734186
+  },
+  {
+   "exe": "python",
+   "category": "child python",
+   "count": 185,
+   "wall": 535.8424735230146,
+   "cpu": 636.8674910000001,
+   "median_wall": 0.449614825003664,
+   "min_wall": 0.07505107099859742
+  },
+  {
+   "exe": "ve_discourse_route",
+   "category": "lean route / runner",
+   "count": 4534,
+   "wall": 502.1143968409451,
+   "cpu": 380.097083,
+   "median_wall": 0.10631009700227878,
+   "min_wall": 0.052013593005540315
+  },
+  {
+   "exe": "ve_conformance",
+   "category": "lean route / runner",
+   "count": 699,
+   "wall": 159.22948647000158,
+   "cpu": 145.94023099999998,
+   "median_wall": 0.1203847649958334,
+   "min_wall": 0.040807495002809446
+  },
+  {
+   "exe": "ve",
+   "category": "rust checker",
+   "count": 1770,
+   "wall": 158.64294696604338,
+   "cpu": 149.23621,
+   "median_wall": 0.0038739445008104667,
+   "min_wall": 0.0007189300013124011
+  },
+  {
+   "exe": "ve_soft_norms_route",
+   "category": "lean route / runner",
+   "count": 545,
+   "wall": 140.6085551610886,
+   "cpu": 127.333778,
+   "median_wall": 0.12052054500236409,
+   "min_wall": 0.04584359400178073
+  },
+  {
+   "exe": "pre-commit",
+   "category": "other",
+   "count": 72,
+   "wall": 108.9196327509635,
+   "cpu": 108.662176,
+   "median_wall": 1.6884321065044787,
+   "min_wall": 0.0011506000009831041
+  },
+  {
+   "exe": "ve_quantity",
+   "category": "lean route / runner",
+   "count": 336,
+   "wall": 103.25005085897283,
+   "cpu": 88.891447,
+   "median_wall": 0.09388096800103085,
+   "min_wall": 0.04564084400044521
+  },
+  {
+   "exe": "ve_reports_route",
+   "category": "lean route / runner",
+   "count": 548,
+   "wall": 94.83011648002139,
+   "cpu": 81.289002,
+   "median_wall": 0.11329640500116511,
+   "min_wall": 0.060813372998381965
+  },
+  {
+   "exe": "ve_readings_route",
+   "category": "lean route / runner",
+   "count": 643,
+   "wall": 75.0239117690362,
+   "cpu": 58.69421,
+   "median_wall": 0.10949218600580934,
+   "min_wall": 0.07662772099865833
+  },
+  {
+   "exe": "ve_rights_route",
+   "category": "lean route / runner",
+   "count": 506,
+   "wall": 74.12005781002517,
+   "cpu": 60.857941999999994,
+   "median_wall": 0.11839848600357072,
+   "min_wall": 0.07889946000068448
+  },
+  {
+   "exe": "ve_norm_defaults_route",
+   "category": "lean route / runner",
+   "count": 52,
+   "wall": 63.32272633400862,
+   "cpu": 54.504177,
+   "median_wall": 0.1643599595008709,
+   "min_wall": 0.08191837000049418
+  },
+  {
+   "exe": "ve_speech_acts_route",
+   "category": "lean route / runner",
+   "count": 446,
+   "wall": 58.68341604298621,
+   "cpu": 50.531465999999995,
+   "median_wall": 0.10476269200080424,
+   "min_wall": 0.06995904100040207
+  },
+  {
+   "exe": "cargo",
+   "category": "build (lake/cargo)",
+   "count": 18,
+   "wall": 53.29640844000096,
+   "cpu": 94.150976,
+   "median_wall": 0.10333725700184004,
+   "min_wall": 0.023199577000923455
+  },
+  {
+   "exe": "lean",
+   "category": "lean route / runner",
+   "count": 323,
+   "wall": 47.3948208130023,
+   "cpu": 31.882125,
+   "median_wall": 0.1311587439995492,
+   "min_wall": 0.08746203999908175
+  },
+  {
+   "exe": "lake",
+   "category": "build (lake/cargo)",
+   "count": 25,
+   "wall": 45.07287381398055,
+   "cpu": 43.583981,
+   "median_wall": 2.0701002440036973,
+   "min_wall": 0.12551998400158482
+  },
+  {
+   "exe": "ve_alternatives_route",
+   "category": "lean route / runner",
+   "count": 252,
+   "wall": 43.0876177130267,
+   "cpu": 34.313294,
+   "median_wall": 0.11246160099835834,
+   "min_wall": 0.06852524200076004
+  },
+  {
+   "exe": "fake-scripted",
+   "category": "other",
+   "count": 262,
+   "wall": 22.677498794037092,
+   "cpu": 16.353039,
+   "median_wall": 0.0823350600003323,
+   "min_wall": 0.051861663996533025
+  },
+  {
+   "exe": "ve_diagnose",
+   "category": "lean route / runner",
+   "count": 109,
+   "wall": 22.552741447056178,
+   "cpu": 22.467067,
+   "median_wall": 0.06928971200250089,
+   "min_wall": 0.045351173997914884
+  },
+  {
+   "exe": "fake-hang",
+   "category": "other",
+   "count": 48,
+   "wall": 18.417622775035852,
+   "cpu": 2.793571,
+   "median_wall": 0.3729493779974291,
+   "min_wall": 0.3561893250007415
+  },
+  {
+   "exe": "git",
+   "category": "git",
+   "count": 1560,
+   "wall": 14.361224955064245,
+   "cpu": 11.168932,
+   "median_wall": 0.0077241640028660186,
+   "min_wall": 0.00034285000583622605
+  },
+  {
+   "exe": "ve_response_decode",
+   "category": "lean route / runner",
+   "count": 12,
+   "wall": 11.37681419999717,
+   "cpu": 9.87533,
+   "median_wall": 0.2472736990021076,
+   "min_wall": 0.11617225599911762
+  },
+  {
+   "exe": "ve_norms_route",
+   "category": "lean route / runner",
+   "count": 37,
+   "wall": 7.651350715990702,
+   "cpu": 6.502998,
+   "median_wall": 0.11870760500460165,
+   "min_wall": 0.09231097900192253
+  },
+  {
+   "exe": "fake-crash",
+   "category": "other",
+   "count": 94,
+   "wall": 7.609620716990321,
+   "cpu": 6.294461999999999,
+   "median_wall": 0.08055440949829062,
+   "min_wall": 0.05755534299532883
+  },
+  {
+   "exe": "fake_lean",
+   "category": "other",
+   "count": 39,
+   "wall": 6.000346638022165,
+   "cpu": 3.0993559999999998,
+   "median_wall": 0.059846502997970674,
+   "min_wall": 0.040358735001063906
+  },
+  {
+   "exe": "real_lean",
+   "category": "other",
+   "count": 16,
+   "wall": 3.071455563986092,
+   "cpu": 2.286823,
+   "median_wall": 0.18583627699990757,
+   "min_wall": 0.1682067689980613
+  },
+  {
+   "exe": "hang",
+   "category": "other",
+   "count": 2,
+   "wall": 2.018253759997606,
+   "cpu": 0.068738,
+   "median_wall": 1.009126879998803,
+   "min_wall": 1.0081352049965062
+  },
+  {
+   "exe": "control",
+   "category": "other",
+   "count": 6,
+   "wall": 1.9558907070022542,
+   "cpu": 1.617557,
+   "median_wall": 0.33589848799965694,
+   "min_wall": 0.2644106269945041
+  },
+  {
+   "exe": "forged_0",
+   "category": "other",
+   "count": 26,
+   "wall": 1.926685070990061,
+   "cpu": 1.448029,
+   "median_wall": 0.07385714500196627,
+   "min_wall": 0.05773763300385326
+  },
+  {
+   "exe": "forged_1",
+   "category": "other",
+   "count": 26,
+   "wall": 1.882106319993909,
+   "cpu": 1.454616,
+   "median_wall": 0.07137599649649928,
+   "min_wall": 0.045344594997004606
+  },
+  {
+   "exe": "forged_2",
+   "category": "other",
+   "count": 26,
+   "wall": 1.8667625069938367,
+   "cpu": 1.42621,
+   "median_wall": 0.0680475019980804,
+   "min_wall": 0.049344863000442274
+  },
+  {
+   "exe": "ve_risk_eval",
+   "category": "lean route / runner",
+   "count": 4,
+   "wall": 1.221528687994578,
+   "cpu": 1.106249,
+   "median_wall": 0.3054130364980665,
+   "min_wall": 0.2911821939997026
+  },
+  {
+   "exe": "ve_english_run",
+   "category": "lean route / runner",
+   "count": 10,
+   "wall": 1.1770983340029488,
+   "cpu": 0.9296519999999999,
+   "median_wall": 0.1179629849975754,
+   "min_wall": 0.10595846700016409
+  },
+  {
+   "exe": "bundle_lean",
+   "category": "other",
+   "count": 17,
+   "wall": 1.1137315619926085,
+   "cpu": 0.8159829999999999,
+   "median_wall": 0.05905133199848933,
+   "min_wall": 0.05061718400247628
+  },
+  {
+   "exe": "fake-silent",
+   "category": "other",
+   "count": 2,
+   "wall": 1.0143894840002758,
+   "cpu": 0.12009199999999999,
+   "median_wall": 0.5071947420001379,
+   "min_wall": 0.5044432770009735
+  },
+  {
+   "exe": "fake-flaky",
+   "category": "other",
+   "count": 2,
+   "wall": 0.6697636069948203,
+   "cpu": 0.13341899999999998,
+   "median_wall": 0.33488180349741015,
+   "min_wall": 0.0901601989971823
+  },
+  {
+   "exe": "uv",
+   "category": "child python",
+   "count": 4,
+   "wall": 0.6261744829971576,
+   "cpu": 0.40668899999999997,
+   "median_wall": 0.15010277650071657,
+   "min_wall": 0.03248044599604327
+  },
+  {
+   "exe": "fake-wrong-case-id",
+   "category": "other",
+   "count": 8,
+   "wall": 0.60944100299821,
+   "cpu": 0.461275,
+   "median_wall": 0.07284409599742503,
+   "min_wall": 0.055881112995848525
+  },
+  {
+   "exe": "forged_4",
+   "category": "other",
+   "count": 7,
+   "wall": 0.5813181390112732,
+   "cpu": 0.391352,
+   "median_wall": 0.07422159999987343,
+   "min_wall": 0.05427006399986567
+  },
+  {
+   "exe": "forged_3",
+   "category": "other",
+   "count": 7,
+   "wall": 0.5271135149960173,
+   "cpu": 0.372314,
+   "median_wall": 0.07459777099575149,
+   "min_wall": 0.06390826200367883
+  },
+  {
+   "exe": "rustc",
+   "category": "build (lake/cargo)",
+   "count": 10,
+   "wall": 0.3793048209918197,
+   "cpu": 0.23871,
+   "median_wall": 0.036200040001858724,
+   "min_wall": 0.03107275599904824
+  },
+  {
+   "exe": "fake-missing-valid",
+   "category": "other",
+   "count": 4,
+   "wall": 0.30615751098957844,
+   "cpu": 0.24053499999999997,
+   "median_wall": 0.07845451499815681,
+   "min_wall": 0.054501802995218895
+  },
+  {
+   "exe": "fake-background-boolean-premise",
+   "category": "other",
+   "count": 4,
+   "wall": 0.290424892991723,
+   "cpu": 0.246084,
+   "median_wall": 0.06806752149714157,
+   "min_wall": 0.05516204299783567
+  },
+  {
+   "exe": "fake-string-valid",
+   "category": "other",
+   "count": 4,
+   "wall": 0.27955399499478517,
+   "cpu": 0.2097,
+   "median_wall": 0.07069461599894566,
+   "min_wall": 0.06117053199704969
+  },
+  {
+   "exe": "rejecting",
+   "category": "other",
+   "count": 4,
+   "wall": 0.26256602700595977,
+   "cpu": 0.18607200000000002,
+   "median_wall": 0.059600942502584076,
+   "min_wall": 0.05415021299995715
+  },
+  {
+   "exe": "fake-route-string-values",
+   "category": "other",
+   "count": 2,
+   "wall": 0.21380453400342958,
+   "cpu": 0.14442,
+   "median_wall": 0.10690226700171479,
+   "min_wall": 0.10064566799701424
+  },
+  {
+   "exe": "fake-english-nested-bool",
+   "category": "other",
+   "count": 2,
+   "wall": 0.20808237400342477,
+   "cpu": 0.15098499999999998,
+   "median_wall": 0.10404118700171239,
+   "min_wall": 0.09771328799979528
+  },
+  {
+   "exe": "fake-duplicate-response",
+   "category": "other",
+   "count": 2,
+   "wall": 0.20693071500136284,
+   "cpu": 0.128847,
+   "median_wall": 0.10346535750068142,
+   "min_wall": 0.05624877299851505
+  },
+  {
+   "exe": "fake-bad-protocol",
+   "category": "other",
+   "count": 2,
+   "wall": 0.19875651599431876,
+   "cpu": 0.15817599999999998,
+   "median_wall": 0.09937825799715938,
+   "min_wall": 0.09319606899953214
+  },
+  {
+   "exe": "fake-nan-result",
+   "category": "other",
+   "count": 2,
+   "wall": 0.18767233800463146,
+   "cpu": 0.12973400000000002,
+   "median_wall": 0.09383616900231573,
+   "min_wall": 0.08645187000365695
+  },
+  {
+   "exe": "forged_5",
+   "category": "other",
+   "count": 2,
+   "wall": 0.18651226600195514,
+   "cpu": 0.12353799999999998,
+   "median_wall": 0.09325613300097757,
+   "min_wall": 0.09136875800322741
+  },
+  {
+   "exe": "fake-wrong-id",
+   "category": "other",
+   "count": 2,
+   "wall": 0.18238017699331976,
+   "cpu": 0.11169699999999999,
+   "median_wall": 0.09119008849665988,
+   "min_wall": 0.05645816199830733
+  },
+  {
+   "exe": "fake-wrong-mode",
+   "category": "other",
+   "count": 2,
+   "wall": 0.18228566799371038,
+   "cpu": 0.14046,
+   "median_wall": 0.09114283399685519,
+   "min_wall": 0.0811415299976943
+  },
+  {
+   "exe": "fake-short",
+   "category": "other",
+   "count": 2,
+   "wall": 0.18003435699938564,
+   "cpu": 0.14879599999999998,
+   "median_wall": 0.09001717849969282,
+   "min_wall": 0.08618122900224989
+  },
+  {
+   "exe": "fake-english-negative-label",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17759989699698053,
+   "cpu": 0.123495,
+   "median_wall": 0.08879994849849027,
+   "min_wall": 0.08624033899832284
+  },
+  {
+   "exe": "fake-garbage",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17419115799566498,
+   "cpu": 0.135571,
+   "median_wall": 0.08709557899783249,
+   "min_wall": 0.07420968099904712
+  },
+  {
+   "exe": "fake-english-deep-formula",
+   "category": "other",
+   "count": 2,
+   "wall": 0.17271920799976215,
+   "cpu": 0.11806,
+   "median_wall": 0.08635960399988107,
+   "min_wall": 0.08522409899887862
+  },
+  {
+   "exe": "fake-english-order-atom",
+   "category": "other",
+   "count": 2,
+   "wall": 0.16975683799682884,
+   "cpu": 0.12350799999999998,
+   "median_wall": 0.08487841899841442,
+   "min_wall": 0.08445071899768664
+  },
+  {
+   "exe": "fake-boolean-result",
+   "category": "other",
+   "count": 2,
+   "wall": 0.1664199489969178,
+   "cpu": 0.110442,
+   "median_wall": 0.0832099744984589,
+   "min_wall": 0.07392083999729948
+  },
+  {
+   "exe": "fake-small-limits",
+   "category": "other",
+   "count": 2,
+   "wall": 0.1658894100037287,
+   "cpu": 0.12889699999999998,
+   "median_wall": 0.08294470500186435,
+   "min_wall": 0.07476600100198993
+  },
+  {
+   "exe": "fake-truncated",
+   "category": "other",
+   "count": 2,
+   "wall": 0.16378360899398103,
+   "cpu": 0.126203,
+   "median_wall": 0.08189180449699052,
+   "min_wall": 0.07622686000104295
+  },
+  {
+   "exe": "fake-english-bad-formula",
+   "category": "other",
+   "count": 2,
+   "wall": 0.16256313899793895,
+   "cpu": 0.11910199999999999,
+   "median_wall": 0.08128156949896947,
+   "min_wall": 0.06763986100122565
+  },
+  {
+   "exe": "fake-english-deep-parse",
+   "category": "other",
+   "count": 1,
+   "wall": 0.16073405999486567,
+   "cpu": 0.06691699999999999,
+   "median_wall": 0.16073405999486567,
+   "min_wall": 0.16073405999486567
+  },
+  {
+   "exe": "fake-startup-eof",
+   "category": "other",
+   "count": 2,
+   "wall": 0.15085488100157818,
+   "cpu": 0.12245400000000001,
+   "median_wall": 0.07542744050078909,
+   "min_wall": 0.06510998200246831
+  },
+  {
+   "exe": "fake-empty-result",
+   "category": "other",
+   "count": 2,
+   "wall": 0.15031311099301092,
+   "cpu": 0.10724,
+   "median_wall": 0.07515655549650546,
+   "min_wall": 0.07125652099784929
+  },
+  {
+   "exe": "fake-handshake",
+   "category": "other",
+   "count": 2,
+   "wall": 0.15000110100663733,
+   "cpu": 0.109433,
+   "median_wall": 0.07500055050331866,
+   "min_wall": 0.06758720200014068
+  },
+  {
+   "exe": "fake-null-modes",
+   "category": "other",
+   "count": 2,
+   "wall": 0.1492357710012584,
+   "cpu": 0.115997,
+   "median_wall": 0.0746178855006292,
+   "min_wall": 0.07442411100055324
+  },
+  {
+   "exe": "fake-admission-no-report",
+   "category": "other",
+   "count": 2,
+   "wall": 0.14724627099349163,
+   "cpu": 0.109198,
+   "median_wall": 0.07362313549674582,
+   "min_wall": 0.07049311099399347
+  },
+  {
+   "exe": "fake-route-extra-field",
+   "category": "other",
+   "count": 2,
+   "wall": 0.14722989199799486,
+   "cpu": 0.107298,
+   "median_wall": 0.07361494599899743,
+   "min_wall": 0.06872046199714532
+  },
+  {
+   "exe": "fake-norms-bad-verdict",
+   "category": "other",
+   "count": 2,
+   "wall": 0.13233532400045078,
+   "cpu": 0.107983,
+   "median_wall": 0.06616766200022539,
+   "min_wall": 0.05750614300632151
+  },
+  {
+   "exe": "fake-order-bad-surface",
+   "category": "other",
+   "count": 2,
+   "wall": 0.13186477500858018,
+   "cpu": 0.10367599999999999,
+   "median_wall": 0.06593238750429009,
+   "min_wall": 0.04660275500646094
+  },
+  {
+   "exe": "fake-missing-error",
+   "category": "other",
+   "count": 2,
+   "wall": 0.12877608500275528,
+   "cpu": 0.101364,
+   "median_wall": 0.06438804250137764,
+   "min_wall": 0.05915592300152639
+  },
+  {
+   "exe": "forged_6",
+   "category": "other",
+   "count": 2,
+   "wall": 0.12668738499633037,
+   "cpu": 0.099595,
+   "median_wall": 0.06334369249816518,
+   "min_wall": 0.05495931399491383
+  },
+  {
+   "exe": "fake-normal",
+   "category": "other",
+   "count": 1,
+   "wall": 0.11196418599865865,
+   "cpu": 0.071293,
+   "median_wall": 0.11196418599865865,
+   "min_wall": 0.11196418599865865
+  },
+  {
+   "exe": "fake-english-checked-no-render",
+   "category": "other",
+   "count": 1,
+   "wall": 0.11011669599974994,
+   "cpu": 0.067969,
+   "median_wall": 0.11011669599974994,
+   "min_wall": 0.11011669599974994
+  },
+  {
+   "exe": "indexed",
+   "category": "other",
+   "count": 1,
+   "wall": 0.07545115999528207,
+   "cpu": 0.046155,
+   "median_wall": 0.07545115999528207,
+   "min_wall": 0.07545115999528207
+  },
+  {
+   "exe": "crash",
+   "category": "other",
+   "count": 1,
+   "wall": 0.06805499199981568,
+   "cpu": 0.052746,
+   "median_wall": 0.06805499199981568,
+   "min_wall": 0.06805499199981568
+  },
+  {
+   "exe": "python3",
+   "category": "child python",
+   "count": 1,
+   "wall": 0.0658253310029977,
+   "cpu": 0.06615399999999999,
+   "median_wall": 0.0658253310029977,
+   "min_wall": 0.0658253310029977
+  },
+  {
+   "exe": "reordered",
+   "category": "other",
+   "count": 1,
+   "wall": 0.055585733003681526,
+   "cpu": 0.044316999999999995,
+   "median_wall": 0.055585733003681526,
+   "min_wall": 0.055585733003681526
+  },
+  {
+   "exe": "route.sh",
+   "category": "other",
+   "count": 8,
+   "wall": 0.05039441600092687,
+   "cpu": 0.034957,
+   "median_wall": 0.0053971899978932925,
+   "min_wall": 0.0021964100014884025
+  },
+  {
+   "exe": "elan",
+   "category": "other",
+   "count": 3,
+   "wall": 0.03745559499657247,
+   "cpu": 0.025181,
+   "median_wall": 0.011246078000112902,
+   "min_wall": 0.01052439899649471
+  },
+  {
+   "exe": "probe",
+   "category": "other",
+   "count": 1,
+   "wall": 0.011079019001044799,
+   "cpu": 0.00663,
+   "median_wall": 0.011079019001044799,
+   "min_wall": 0.011079019001044799
+  },
+  {
+   "exe": "false",
+   "category": "other",
+   "count": 3,
+   "wall": 0.008438388991635293,
+   "cpu": 0.007235,
+   "median_wall": 0.0024338000002899207,
+   "min_wall": 0.0016414899946539663
+  },
+  {
+   "exe": "cat",
+   "category": "other",
+   "count": 3,
+   "wall": 0.0072449989966116846,
+   "cpu": 0.006151,
+   "median_wall": 0.0023039399966364726,
+   "min_wall": 0.0019759100032388233
+  }
+ ],
+ "categories": {
+  "python in the test process (remainder)": 6361.264347279705,
+  "lean route / runner": 2066.7421774954055,
+  "child python": 536.5344733370148,
+  "other": 187.21078133394622,
+  "rust checker": 158.61342723514983,
+  "build (lake/cargo)": 98.74858707497333,
+  "lean service (CPU)": 29.56679992954758,
+  "git": 14.361224955064245
+ }
+}

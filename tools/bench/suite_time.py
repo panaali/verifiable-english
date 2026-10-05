@@ -25,7 +25,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from tools.pytest_run import pytest_command, pytest_environment  # noqa: E402
+from tools import nested_pytest  # noqa: E402
 
 
 def durations(junit: Path) -> list[tuple[str, float]]:
@@ -123,23 +123,30 @@ def main() -> int:
                         commit=args.commit)
         result["workers"] = result["workers"] or args.workers
     else:
+        arguments = [a for a in args.pytest if a != "--"]
+        # `-n N` or `-n auto` names the xdist workers, which the builder loads itself.
+        workers: int | str = 1
+        if "-n" in arguments:
+            index = arguments.index("-n")
+            value = arguments[index + 1]
+            workers = value if value == "auto" else int(value)
+            del arguments[index:index + 2]
         with tempfile.TemporaryDirectory() as directory:
             junit, cpu_log = Path(directory) / "junit.xml", Path(directory) / "cpu.jsonl"
             load_start = os.getloadavg()[0]
             before, started = resource.getrusage(resource.RUSAGE_CHILDREN), time.monotonic()
-            done = subprocess.run(pytest_command([sys.executable], "-p", "no:cacheprovider", "-q",
-                                                 "-p", "tools.bench.cpu_per_test", f"--junitxml={junit}",
-                                                 *[a for a in args.pytest if a != "--"]),
-                                  cwd=ROOT, env=pytest_environment({**os.environ, "VE_TEST_CPU_LOG": str(cpu_log)}),
+            done = subprocess.run(nested_pytest.command(["-p", "no:cacheprovider", "-q",
+                                                         "-p", "tools.bench.cpu_per_test", f"--junitxml={junit}",
+                                                         *arguments], workers=workers),
+                                  cwd=ROOT, env=nested_pytest.environment(os.environ, VE_TEST_CPU_LOG=str(cpu_log)),
                                   capture_output=True, text=True, timeout=6 * 3600)
             wall, after = time.monotonic() - started, resource.getrusage(resource.RUSAGE_CHILDREN)
             result = report(args.label, wall, after.ru_utime - before.ru_utime, after.ru_stime - before.ru_stime,
                             durations(junit), done.stdout + done.stderr, load_start, os.getloadavg()[0],
                             cpu=cpu_rows(cpu_log) if cpu_log.exists() else ())
             result["returncode"] = done.returncode
-            arguments = [a for a in args.pytest if a != "--"]
-            if result["workers"] is None and "-n" in arguments and arguments[arguments.index("-n") + 1].isdecimal():
-                result["workers"] = int(arguments[arguments.index("-n") + 1])
+            if result["workers"] is None and type(workers) is int:
+                result["workers"] = workers
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({k: result[k] for k in ("wall_seconds", "cpu_seconds", "summary", "workers")}))
     return 0
