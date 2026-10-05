@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/norms.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Norms
 open Lean ResponseShape
 
 def norms_path : Shape :=
-  decidedBy "Norms.Run.usesNormsPath or Norms.Plain.layered" (fun j => VE.Norms.Run.usesNormsPath j || VE.Norms.Plain.layered (j.getObjValD "environment")) <|
+  decidedCase .normsPath <|
   c
     "Norms.Run.usesNormsPath (a regulated predicate, a norms field, a norms-* kind or a unit with norm content) or Plain.layered (a profile of Plain.statementLayers: reports@0, soft-norms@0, rights@0 or speech-acts@0)."
     [

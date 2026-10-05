@@ -1,12 +1,13 @@
 import VE.Service.Protocol
 import ResponseShape
+import ResponseShape.CaseDeciders
 
 /-! The source of `ve/backends/lean_service_schema/discourse.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Discourse
 open Lean ResponseShape
 
 def discourse_path : Shape :=
-  decidedBy "Discourse.Run.usesDiscoursePath" VE.Discourse.Run.usesDiscoursePath <|
+  decidedCase .discoursePath <|
   c
     "Discourse.Run.usesDiscoursePath: a document text, the ve.discourse@1 profile in a profile list of strings (Route.Gate.profilesOf), or a discourse-* kind."
     [

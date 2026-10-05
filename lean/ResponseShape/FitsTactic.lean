@@ -112,12 +112,28 @@ def valueKeys (v : Expr) : MetaM (Bool × List String) := do
     let some ks := names? v.appArg! | throwError "fits_pick: field names are not literals"
     pure (false, ks)
 
+/-- Whether some object skeleton reachable from `k` through conditions on the case and
+alternatives has the fields `keys`. -/
+def reaches (keys : List String) : Nat → Expr → MetaM Bool
+  | 0, _ => pure false
+  | fuel + 1, k => do
+    let k ← whnf k
+    if objAccepts k keys then return true
+    if k.isAppOfArity ``Skel.onCase 3 then
+      let args := k.getAppArgs
+      return (← reaches keys fuel args[1]!) || (← reaches keys fuel args[2]!)
+    if k.isAppOfArity ``Skel.alt 1 then
+      let some members := listElems bound k.appArg! | return false
+      for m in members do
+        if ← reaches keys fuel m then return true
+    return false
+
 /-- Which branch of `.onCase cond t e` has the fields `keys`: `t` (true), `e` (false) or neither. -/
 def caseBranch (k : Expr) (keys : List String) : MetaM (Option Bool) := do
   unless k.isAppOfArity ``Skel.onCase 3 do return none
   let args := k.getAppArgs
-  if objAccepts (← whnf args[1]!) keys then return some true
-  if objAccepts (← whnf args[2]!) keys then return some false
+  if ← reaches keys bound args[1]! then return some true
+  if ← reaches keys bound args[2]! then return some false
   return none
 
 /-- At `Fits c k v` for an object `v` with literal field names: when `k` is an alternative, the
@@ -157,6 +173,30 @@ elab "skel_norm" : tactic => withMainContext do
   if k == args[1]! then throwError "skel_norm: already normal"
   let g ← getMainGoal
   replaceMainGoal [← g.change (mkApp3 (mkConst ``Fits) args[0]! k args[2]!)]
+
+/-- `rw [CaseCond.holds_kind_of h]` with `h : c.getObjValD "kind" = .str s` found by its form (an
+`assumption` search would unify against every hypothesis, unfolding the runners). -/
+elab "case_kind_rw" : tactic => withMainContext do
+  for d in ← getLCtx do
+    if d.isImplementationDetail then continue
+    let ty := (← instantiateMVars d.type).consumeMData
+    let some (_, l, r) := ty.eq? | continue
+    let l := l.consumeMData
+    unless l.isAppOfArity ``Lean.Json.getObjValD 2 && strLit? l.getAppArgs[1]! == some "kind" do continue
+    unless r.consumeMData.isAppOfArity ``Lean.Json.str 1 do continue
+    let h ← mkAppM ``CaseCond.holds_kind_of #[d.toExpr]
+    try
+      let r ← (← getMainGoal).rewrite (← getMainTarget) h
+      let g' ← (← getMainGoal).replaceTargetEq r.eNew r.eqProof
+      replaceMainGoal (g' :: r.mvarIds)
+      return
+    catch _ => continue
+  throwError "case_kind_rw: no hypothesis gives the case's kind"
+
+/-- Fails unless the goal is `Fits c k v` with `k` a condition on the case (`Skel.onCase`). -/
+elab "on_case_goal" : tactic => withMainContext do
+  let (k, _) ← fitsGoal
+  unless k.isAppOfArity ``Skel.onCase 3 do throwError "not a condition on the case"
 
 /-- The position of `a` in the literal list `l` (structural equality). -/
 def position (l a : Expr) : MetaM (Option Nat) := do
@@ -214,15 +254,108 @@ elab "bool_hyp" : tactic => withMainContext do
           return
   throwError "bool_hyp: no hypothesis decides it"
 
+/-- Is `e` a string literal? -/
+def isStrLit (e : Expr) : Bool := (strLit? e).isSome
+
+/-- `(a == b) = true` with `a b : String`: the two sides. -/
+def strBeqTrue? (t : Expr) : MetaM (Option (Expr × Expr)) := do
+  let some (_, l, r) := t.consumeMData.eq? | return none
+  unless r.isConstOf ``Bool.true do return none
+  let l := l.consumeMData
+  unless l.isAppOfArity ``BEq.beq 4 do return none
+  unless (← whnfR l.getAppArgs[0]!).isConstOf ``String do return none
+  return some (l.getAppArgs[2]!.consumeMData, l.getAppArgs[3]!.consumeMData)
+
+/-- The runner's tests of the kind it read, as substitutions: every hypothesis
+`(kind == "lit") = true` (or `"lit" == kind`) replaces the local `kind` by the literal, and a
+goal with a hypothesis `("a" == "b") = true` of distinct literals is closed. -/
+elab "kind_subst" : tactic => do
+  let step : TacticM Bool := withMainContext do
+    let g ← getMainGoal
+    for d in ← getLCtx do
+      if d.isImplementationDetail then continue
+      -- `¬ ("a" == "a") = true`
+      let ty := (← instantiateMVars d.type).consumeMData
+      if ty.isAppOfArity ``Not 1 then
+        if let some (a, b) ← strBeqTrue? ty.appArg! then
+          if isStrLit a && isStrLit b && strLit? a == strLit? b then
+            let hp ← mkDecideProof ty.appArg!
+            g.assign (← mkAbsurd (← g.getType) hp d.toExpr)
+            replaceMainGoal []
+            return false
+      let some (a, b) ← strBeqTrue? ty | continue
+      if isStrLit a && isStrLit b then
+        if strLit? a != strLit? b then
+          let notH ← mkDecideProof (mkNot (← instantiateMVars d.type))
+          g.assign (← mkAbsurd (← g.getType) d.toExpr notH)
+          replaceMainGoal []
+          return false
+        continue
+      unless (a.isFVar && isStrLit b) || (b.isFVar && isStrLit a) do continue
+      let h ← mkAppM ``eq_of_beq #[d.toExpr]
+      let (fv, g') ← g.note `hkind h
+      replaceMainGoal [← Lean.Meta.subst g' fv]
+      return true
+    return false
+  let mut fuel := 64
+  while fuel > 0 do
+    if (← getGoals).isEmpty then return
+    unless ← step do return
+    fuel := fuel - 1
+
 end ResponseShape.FitsTactic
 
 namespace ResponseShape
 open Lean
 
 
-/-- A condition on the request case (`CaseCond.holds req = b`) that the encoder's own test of the
-case decides, as a hypothesis. -/
-macro "case_cond" : tactic => `(tactic|(simp only [CaseCond.holds]; bool_hyp))
+/-- A condition on the request case that is not a conjunction, from the context: the case's kind
+string (`c.getObjValD "kind" = .str s`, then the runner's own test of `s`), the absence of a
+kind, a runner's test of the case (`CaseCond.decided`), or the runner's test written as the
+condition reads (`bool_hyp`). -/
+macro "case_cond_atom" : tactic =>
+  `(tactic| first
+    | with_reducible assumption
+    | (case_kind_rw; first | decide | bool_hyp | rfl | (kind_subst; decide))
+    | with_reducible exact CaseCond.kind_of_lacks ‹_› _
+    | with_reducible exact CaseCond.lacks_of_kind ‹_›
+    | (simp only [CaseCond.holds_decided, CaseDecider.fn]; bool_hyp)
+    | (simp only [CaseCond.holds]; bool_hyp))
+
+theorem CaseCond.all_true {c : CaseCond} {cs : List CaseCond} {j : Json} (h : c.holds j = true)
+    (hs : (CaseCond.all cs).holds j = true) : (CaseCond.all (c :: cs)).holds j = true := by
+  simp [h, hs]
+
+theorem CaseCond.all_false_head {c : CaseCond} {cs : List CaseCond} {j : Json} (h : c.holds j = false) :
+    (CaseCond.all (c :: cs)).holds j = false := by
+  simp [h]
+
+theorem CaseCond.all_false_tail {c : CaseCond} {cs : List CaseCond} {j : Json}
+    (hs : (CaseCond.all cs).holds j = false) : (CaseCond.all (c :: cs)).holds j = false := by
+  simp [hs]
+
+open Meta Elab Tactic ResponseShape.FitsTactic in
+/-- Fails unless the goal is `(CaseCond.all cs).holds c = b` for a literal list `cs`. -/
+elab "case_all_goal" : tactic => withMainContext do
+  let t := (← instantiateMVars (← getMainTarget)).consumeMData
+  let some (_, l, _) := t.eq? | throwError "not an equation"
+  unless l.isAppOfArity ``CaseCond.holds 2 do throwError "not a condition"
+  let c ← whnf l.getAppArgs[0]!
+  unless c.isAppOfArity ``CaseCond.all 1 do throwError "not a conjunction"
+  unless (listElems bound c.appArg!).isSome do throwError "not a literal conjunction"
+
+/-- A condition on the request case (`CaseCond.holds req = b`) that the context decides: a
+conjunction member by member, each member by `case_cond_atom`. -/
+syntax "case_cond" : tactic
+
+macro_rules
+  | `(tactic| case_cond) => `(tactic| first
+    | (case_all_goal; first
+        | exact CaseCond.holds_all_nil _
+        | (refine CaseCond.all_true ?_ ?_ <;> case_cond)
+        | (refine CaseCond.all_false_head ?_; case_cond)
+        | (refine CaseCond.all_false_tail ?_; case_cond))
+    | case_cond_atom)
 
 macro "alt_sub" : tactic =>
   `(tactic|(intro s hs; simp only [List.mem_cons, List.not_mem_nil, or_false] at hs; (repeat' (rcases hs with h | hs)); all_goals (subst_vars; alt_mem)))
@@ -240,6 +373,8 @@ macro_rules
     `(tactic| first
       | (skel_norm; fits using $ls,*)
       | exact Fits.any _
+      | (on_case_goal; refine Fits.onCaseT (by case_cond) ?_; fits using $ls,*)
+      | (on_case_goal; refine Fits.onCaseE (by case_cond) ?_; fits using $ls,*)
       | (exfalso; assumption)
       | $known
       | (apply Fits.mkObj (by keys_ok); fields_split <;> fits using $ls,*)
