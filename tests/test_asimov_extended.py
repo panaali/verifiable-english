@@ -262,6 +262,9 @@ def test_the_committed_permission_default_results_agree_with_the_reading():
 
 
 # The rerun, one section per test so that the sections (and each mutant) run in parallel.
+# Corpus scale (8,070 CPU seconds of Lean, 42% of the suite's, docs/testing-profile.md): the
+# document checks, the mutants and the 300 sampled records run with `-m nightly` and in
+# tools/gate.py; the records section, the 51 records under both rules, runs by default.
 needs_lean = pytest.mark.skipif(not check.BINARY.exists(), reason="ve_risk_route is not built")
 
 
@@ -269,12 +272,14 @@ def _plain(value):
     return json.loads(json.dumps(value, sort_keys=True))
 
 
+@pytest.mark.nightly
 @needs_lean
 def test_rerun_document_equals_the_committed_results():
     document = check.document_section(cases.environment(), cases.norms(True), cases.norms(False), {})
     assert _plain(document) == RESULTS["document"]
 
 
+@pytest.mark.nightly
 @needs_lean
 @pytest.mark.parametrize("name", check.MUTANTS)
 def test_rerun_mutant_equals_the_committed_results(name):
@@ -293,6 +298,7 @@ def test_rerun_records_equal_the_committed_results():
     assert _plain(deny) == RESULTS["permission_default_deny"]["records"]
 
 
+@pytest.mark.nightly
 @needs_lean
 def test_rerun_sample_equals_the_committed_results():
     env, ext_rules, base_rules = cases.environment(), cases.norms(True), cases.norms(False)

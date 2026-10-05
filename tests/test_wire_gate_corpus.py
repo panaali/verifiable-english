@@ -18,7 +18,6 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import sys
 
 import pytest
 
@@ -29,7 +28,7 @@ from conformance.wire_contract_gate import (EXAMPLES, PILOT, RECORDED_TESTS, TES
                                             record_all_test_inputs, source_key, unit_of)
 from subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_conformance import fixtures
-from tools.pytest_run import pytest_command, pytest_environment
+from tools import nested_pytest
 from tests.test_wire_contract_soft_lean import fixture_sources
 from ve.wire_contract.engine import load
 
@@ -81,10 +80,10 @@ def test_one_run_records_each_unit_as_its_own_run_does(tmp_path):
                    "VE_NATIVE_PREBUILT": "1", "PYTHONPATH": str(ROOT)}
 
     def record(env):
-        result = subprocess.run(pytest_command([sys.executable], "-q", "-p", "tests.contract_input_recorder",
-                                               "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live",
-                                               *sample),
-                                cwd=ROOT, env=pytest_environment(env), capture_output=True, text=True,
+        result = subprocess.run(nested_pytest.command(["-q", "-p", "tests.contract_input_recorder",
+                                                       "-p", "no:cacheprovider", "-o", "addopts=", "-m", "not live",
+                                                       *sample]),
+                                cwd=ROOT, env=nested_pytest.environment(env), capture_output=True, text=True,
                                 timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout[-4000:]
     record(environment)
