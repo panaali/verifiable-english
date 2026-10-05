@@ -261,6 +261,14 @@ two compose as follows:
 - `Wire.lean`: batch 3b's 6.4 check (`ResourceLimit: decision predicate <n>`, DRI ruling 2) was added to
   `chainTextSpec` by the merge and is added to this branch's `chainText` too, so `chainText_eq` holds and admission
   answers it.
+- `docs/CONSOLIDATION-PLAN.md`: step 5's tied lines remeasured, 484 → 485.
+
+Checked at the merge: `lake build`; `python3 lean/audit.py` passes (3,932 theorems; `lean/axioms.txt` regenerated);
+`python3 VE/Route/frozen.py` passes (inventory rehashed); the assurance manifest repins `Readings/Wire.lean`
+(988 lines); `tools/lean_statements.py` and `tools/trust_map.py --seed` rerun; `check_lean_imports.py` and
+`test_layer_policy.py` keep the graphs. Targeted tests (the readings, lean-first, manifest, audit, consolidation,
+gate-collection, frozen-inventory, document, service, relay, stage-2 and difffuzz files): 6,101 passed, 1 skipped.
+The full suite is left to the merge train.
 
 ## Not done here
 
