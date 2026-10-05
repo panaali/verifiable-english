@@ -31,7 +31,8 @@ def test_every_paired_udhr_run_gave_identical_answers():
 
 
 def test_every_review_round_gave_identical_answers():
-    for name, _ in _report().REVIEW:
+    report = _report()
+    for name, _ in report.REVIEW + report.LOOPRECHECK:
         data = json.loads((B3B / "evidence" / name).read_text())
         assert data["identical"] and set(data["runs"]) == {"base", "before", "head"}, name
         assert all(len(runs) == data["rounds"] for runs in data["runs"].values()), name

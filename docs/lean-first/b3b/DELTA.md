@@ -31,11 +31,11 @@ so the logic has one owner and no statement changed.
 
 | Lean | Specified | Run | Lemma |
 |---|---|---|---|
-| `Readings/Wire.lean` | `admitReadingsSpec` (`WellFormedDoc` in full) | `admitReadings`: `frontText`, then `candidateStage` (each candidate's `one D s i` built once, validated, kept; the first diagnostic stops it), then `frameWF` only | `admitReadings_eq`, from `wellFormedDoc_of_admissionText`, `sideWF_of_chainText`, `candidateStage_eq` (`stageOf_eq`), `candidateStage_ok`, `admissionText_of_stage` |
-| `Readings/Wire.lean` | `one D s i` | `Admitted.side`: the request's table (`oneOf`) | `Admitted.side_eq`, from `oneOf_eq`; `onesOf_holds`: the table holds every candidate |
+| `Readings/Wire.lean` | `admitReadingsSpec` (`WellFormedDoc` in full) | `admitReadings`: `frontText`, then `candidateStage` (each candidate with content has its `one D s i` built once, validated, kept; the first diagnostic stops it; a pending candidate's is never built), then `frameWF` only | `admitReadings_eq`, from `wellFormedDoc_of_admissionText`, `sideWF_of_chainText`, `candidateStage_eq` (`stageOf_eq`, `firstSome_activeOf`), `candidateStage_ok`, `admissionText_of_stage` |
+| `Readings/Wire.lean` | `one D s i` | `Admitted.side`: the request's table (`oneOf`) | `Admitted.side_eq`, from `oneOf_eq`; `onesOf_holds`, `onesOf_active`: the table holds every candidate with content and no pending one |
 | `Readings/Run.lean` | `pairFactsSpec` | `pairFacts`: both documents from the table; `situationWF` (the replay's `shape`) and the bound not evaluated again; the witness's completion once; with no owned key the other side's one completion once; otherwise `otherScan`: each completion's admissibility when the scan reaches it, its value only when admissible and the witness shows the value, stopping at the first completion that decides both answers | `pairFacts_eq`, from `scanOthers_eq`, `otherScan_id`, `and_not_and_any` |
 | `Readings/Run.lean` | `candidateJsonSpec` | `candidateJson`: the document from the table, read once | `candidateJson_eq` |
-| `Readings/Run.lean` | `setFindingsSpec` | `setFindings`: the documents from the table | `setFindings_eq` |
+| `Readings/Run.lean` | `setFindingsSpec` | `setFindings`: the documents from the table, for pairs of candidates with content only | `setFindings_eq`, from `pairFindings_pending` |
 
 `readings_wire_separate_sound` is unchanged: `replaySeparate` reads `admitReadings`, whose result is now the
 specified one by `admitReadings_eq`. The 19 new theorems use the standard axioms only (`lean/axioms.txt`); no
@@ -60,7 +60,7 @@ round; the minimum and the median over rounds).
 - **B2, sharing within a row only.** Each candidate's document is now built once per request (above). The test is
   the compiler's: `tests/test_readings_lean_sharing.py` reads the route's IR with the pinned toolchain and walks
   every function reachable from `main`; none reaches `one` or `build` except `candidateStage` and `oneOf`'s
-  fallback (unreachable by `onesOf_holds`), and the same walk from `pairFactsSpec`, `candidateJsonSpec` and
+  fallback (by `onesOf_holds`, reached only for a pending candidate; looprecheck round below), and the same walk from `pairFactsSpec`, `candidateJsonSpec` and
   `admitReadingsSpec` does reach `one`.
 - **A `Thunk` table was measured and rejected.** The first version of the table held each document in a `Thunk`,
   built when first read. On the UDHR first set it cost 5–8% more CPU than the head before the fixes (one-off runs
@@ -73,6 +73,34 @@ round; the minimum and the median over rounds).
 
 The readings corpus (1,137 cases of `.scratch/corpus-cases.json`, one route call) gives answers byte-identical to
 the base's and to the head's before the fixes.
+
+## Looprecheck round (B)
+
+The recheck of `1ec9204b` found that the fix for B2 built a document for every candidate, pending ones included,
+although 4.4 skips a pending candidate and so do the rows, the pairs and the findings: its reproducer (60 sets, 119
+pending candidates, one active, ten fixed default rules) took 1.37–1.62 s of CPU against 0.16–0.24 s on the base.
+The class is **building a value that no consumer reads**, and it had two members:
+
+- **Admission.** `candidateStage` now runs over `activeOf D`, the candidates with content, so the request's table
+  holds no pending candidate (`onesOf_active`). A pending candidate has no diagnostic, so leaving it out leaves the
+  first one (`firstSome_filter`, `firstSome_activeOf`); `candidateStage_eq` keeps its statement. `pendingAt` is the
+  one test of "pending" that `candidateText` and `activeOf` share.
+- **Findings.** With the table smaller, `oneOf` builds a document itself for a pending candidate, and `setFindings`
+  read both sides of every pair before `decisionOnlyOf`/`actOnlyOf` looked at the candidates' content: with one
+  set of one active and 59 pending candidates, that rebuilt two documents for each of 1,770 pairs (5.0 s of CPU
+  with the guard removed, 0.11 s with it). `setFindings` now skips a pair with a pending candidate before reading
+  either side; such a pair has neither finding (`pairFindings_pending`), so `setFindings_eq` still holds. The one
+  remaining fallback is a `readings-separate` request naming a pending reading: `replayPair` builds that document
+  once and then refuses the pair, as the base did.
+
+Regressions: `RunExamples.lean` pins at build time that K15's table holds the strict candidate alone while 4.4 over
+both candidates admits it; `tests/test_readings_lean_sharing.py::test_no_pending_candidates_document_is_built` runs
+the review's reproducer (`many-sets`, byte-identical on the wire to the review's file), the same with 120 sets
+(`more-sets`: 5.0 s before the fix, 0.16 s after) and the one-set case under a 1 s CPU limit, which the head before
+this fix exceeds on the first two (1.1–5.2 s) and the guard-less findings on the third. The
+four new theorems use `propext` and `Quot.sound` only. Timings are the last table of the generated block (five
+alternating rounds at load 3–5): the reproducer's head is 31% below the base and 92% below the head before the fix,
+and no case is slower than the base or than the head before the fix; every round's answers are byte-identical.
 
 ## Gate item 2: corpus A/B
 
@@ -165,6 +193,16 @@ wall time, so the comparison is the ratio. The tables below are generated from `
 | review B1's reproducer: 12 cells, ten fixed default rules | 3 | 17.7–32.0 | 0.15 / 0.16 | 8.88 / 11.14 | 0.09 / 0.10 | −99% / −99% | 3 of 3 | identical |
 | the first set's default candidate ill-formed, 119 candidates after it | 3 | 32.0–42.8 | 3.26 / 3.56 | 3.44 / 3.50 | 0.19 / 0.19 | −94% / −95% | 3 of 3 | identical |
 | UDHR first set | 9 | 36.6–13.8 | 17.06 / 18.22 | 8.64 / 9.77 | 8.74 / 9.05 | +1% / −7% | 5 of 9 | identical |
+
+### Looprecheck round (B): base, the head before the fix, the head
+
+| Case | Rounds | Load | Base, min / median CPU (s) | Before the fix, min / median | Head, min / median | Head against base, min / median | Head against before, min / median | Answers |
+|---|---:|---|---:|---:|---:|---:|---:|---|
+| looprecheck B's reproducer: 60 sets, 119 pending candidates, one active, ten fixed default rules | 5 | 4.8–4.8 | 0.13 / 0.13 | 1.13 / 1.17 | 0.09 / 0.09 | −31% / −31% | −92% / −92% | identical |
+| one set: one active candidate, 59 pending, ten fixed default rules | 5 | 4.8–4.7 | 0.06 / 0.06 | 0.10 / 0.10 | 0.05 / 0.05 | −17% / −17% | −50% / −50% | identical |
+| review B1's reproducer | 5 | 4.3–4.2 | 0.09 / 0.09 | 0.06 / 0.06 | 0.05 / 0.05 | −44% / −44% | −17% / −17% | identical |
+| the first set's default candidate ill-formed | 5 | 4.2–4.0 | 1.71 / 1.73 | 0.10 / 0.11 | 0.10 / 0.10 | −94% / −94% | 0% / −9% | identical |
+| UDHR first set | 5 | 3.7–3.1 | 13.33 / 13.38 | 6.86 / 6.90 | 6.77 / 6.84 | −49% / −49% | −1% / −1% | identical |
 <!-- END GENERATED -->
 
 **Reading.**
