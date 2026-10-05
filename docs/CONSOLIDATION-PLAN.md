@@ -266,10 +266,13 @@ theorem covers all three parts, and none names a runner. `Core.Wire.run_certific
 
 **2a. Theorems on the runners as they are.** New file `lean/VE/Route/WireSound.lean`.
 
-1. `fullLayer rv : Layer fol Unit`: the definitions layer composed over the identity layer whose
+1. `fullLayer rv hd : Layer fol Unit`: the definitions layer composed over the identity layer whose
    admissibility is "structurally admissible, flags hold, literals distinct", with
-   `BackgroundSound (fullLayer rv) ((fullBackground rv).map Prod.fst)`. `RouteVocabulary` already
-   carries `chain` and `nodup` (`Route/Wire.lean:33,36`), so no decoder fact is needed.
+   `BackgroundSound (fullLayer rv hd) ((fullBackground rv).map Prod.fst)`. `RouteVocabulary` already
+   carries `chain` and `nodup` (`Route/Wire.lean:33,36`). One decoder fact is needed, `hd :
+   FlagsBase rv`: no flag names a defined predicate, so forgetting the defined tables keeps the
+   flags and every base structure has its expansion (`Norms.FlaggedSpec.
+   decodeVocabulary_flag_not_defined`, discharged at `Route.Run.runCase`).
 2. One record and three claim predicates, which are what the reviewer reads instead of the
    runners. The fol family's `Intended` is `Definitions.Intended ∧` the flags' `Intended`, as
    `decodeDataModel_combined` states, not `Sat S fullBackground`:
@@ -687,12 +690,21 @@ What the measurement changes:
   `FamilyNorms.conflictCase`.
 * **Step 2a:** done (`VE.Route.WireSound`, `VE.Route.RunSound`, `VE.Norms.RunSound`). The side
   table ties `runFol`, `runClosure` and `runOrder` (114 G[V] lines) to their certificate,
-  countermodel and evaluate theorems, so the row now measures 0. Measured, not estimated, the step
-  added 107 trusted lines: S 91 (`Family`, `CertificateClaim`, `CountermodelAnswer`,
-  `CountermodelClaim`, `EvaluateClaim`, `RouteIntended`, `Runner.Bound` and the three family
-  instances, docstrings included) and D[V] 16 (`routeModel`, `orderModel`, the model decoders the
-  claims name). Net −7, against the estimated −84: the claims cover all three kinds of all three
-  runners, not the certificate kind alone, and the family instances are read.
+  countermodel and evaluate theorems, so the row now measures 0. `Runner.acceptance` goes through
+  each family's layer: `fullLayer` (item 1) for FOL, the same layer over closure formulas for
+  closure, the identity layer of `OrderStringAdmissible` for order; with `BackgroundSound` of the
+  layer it gives `CertificateClaim` (`route_intended`) and `BaseClaim` (`route_base`, unique
+  expansion, which step 5b reuses). Measured with `tools/trust_map.py --since` against the parent
+  tree, not estimated, the step adds 128 S lines (`Family`, `CertificateClaim`, `BaseClaim`,
+  `CountermodelAnswer`, `CountermodelClaim`, `EvaluateClaim`, `RouteIntended`, `FlagsBase`,
+  `FlagsHold`, `BaseAdmissible`, `Runner.Bound` and the three family instances, docstrings
+  included), covered by a signed allowance in `docs/trust-baseline.json`, and no K or untied [V]
+  line: the model decoders the claims name (`routeModel`, `orderModel`, D[V] 16) are offset by
+  the 114 tied lines. The layer constructions (`fullLayer`, `Layer.within`, `Layer.toClosure`)
+  are C: their meaning is stated by `fullLayer_admissible_in`, `fullLayer_admissible_out`,
+  `fullLayer_intended` and `fullLayer_premises`. Net +30 trusted lines, against the estimated
+  −84: the claims cover all three kinds of all three runners and the expansion, not the
+  certificate kind alone, and the family instances are read.
 * Steps 1 to 4 keep the DRI's order (section 4 above). After step 2a the measured total before 8b
   is 2,575 trusted lines removed or tied (net 2,025 after 550 estimated additions) out of 25,641,
   against the estimate of about 4,300.

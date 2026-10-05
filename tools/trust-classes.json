@@ -5716,11 +5716,15 @@
   },
   "VE/Route/WireSound.lean": {
    "S": [
+    "VE.Route.WireSound.BaseAdmissible",
+    "VE.Route.WireSound.BaseClaim",
     "VE.Route.WireSound.CertificateClaim",
     "VE.Route.WireSound.CountermodelAnswer",
     "VE.Route.WireSound.CountermodelClaim",
     "VE.Route.WireSound.EvaluateClaim",
     "VE.Route.WireSound.Family",
+    "VE.Route.WireSound.FlagsBase",
+    "VE.Route.WireSound.FlagsHold",
     "VE.Route.WireSound.RouteIntended",
     "VE.Route.WireSound.Runner.Bound",
     "VE.Route.WireSound.closureFamily",
@@ -5728,10 +5732,15 @@
     "VE.Route.WireSound.orderFamily"
    ],
    "C": [
+    "VE.Route.Layer.toClosure",
+    "VE.Route.Layer.within",
     "VE.Route.WireSound.Runner",
-    "VE.Route.WireSound.Runner.layer"
+    "VE.Route.WireSound.closureLayer",
+    "VE.Route.WireSound.definitionsLayer",
+    "VE.Route.WireSound.fullLayer"
    ],
    "P": [
+    "VE.Route.WireSound.Family.Sound",
     "VE.Route.WireSound.Runner.Accepted",
     "VE.Route.WireSound.Runner.Sound"
    ],

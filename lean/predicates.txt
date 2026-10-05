@@ -739,11 +739,17 @@ VE.Route.Semantics.Holds@VE.Route.Layer
 VE.Route.Semantics.Sat@VE.Route.Layer
 VE.Route.Semantics.WellFormed@VE.Route.Layer
 VE.Route.Unique@VE.Route.Layer
+VE.Route.WireSound.BaseAdmissible@VE.Route.WireSound
+VE.Route.WireSound.BaseClaim@VE.Route.WireSound
 VE.Route.WireSound.CertificateClaim@VE.Route.WireSound
 VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound
 VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound
 VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound
+VE.Route.WireSound.Family.Decoded@VE.Route.WireSound
 VE.Route.WireSound.Family.Intended@VE.Route.WireSound
+VE.Route.WireSound.Family.Sound@VE.Route.WireSound
+VE.Route.WireSound.FlagsBase@VE.Route.WireSound
+VE.Route.WireSound.FlagsHold@VE.Route.WireSound
 VE.Route.WireSound.RouteIntended@VE.Route.WireSound
 VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound
 VE.Route.WireSound.Runner.Bound@VE.Route.WireSound
