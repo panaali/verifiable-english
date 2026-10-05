@@ -52,7 +52,11 @@ trusted lines of decoders and glue); `lean/statements.txt`, `declarations.txt`, 
    `ve_readings_route`, `ve_discourse_route`, `ve_diagnose`, `ve_response_decode`); the probe, conformance,
    readings, discourse and pilot corpora run through them. The new kinds have no Python caller, so nothing
    Python-visible changes, and this batch lists no `wording`, `order`, `verdict` or `availability` change. The
-   differential fuzzer's baseline is untouched (no Python, Rust or existing Lean diagnostic changed).
+   differential fuzzer's baseline is untouched (no Python, Rust or existing Lean diagnostic changed). The fourteen
+   date-seeded base/head comparisons below found the same answers, finding counts, new signatures and baseline
+   replay status for every seed. Thirteen dates return the same nonzero fuzzer exit on both sides because their
+   samples include signatures outside the frozen baseline; the fixed CI seed passes on both sides. No signature
+   appears only at the head and no baseline entry changes sides.
 3. **Deletion ledger.** Row 10a deletes nothing.
 4. **Latency.** Paired runs below: no workload got slower beyond noise; the new kinds cost about 3 ms of CPU per
    case (budget: 2 ms p50 per interactive call, 1 s per document check; a report is a document-level call).
@@ -75,6 +79,27 @@ trusted lines of decoders and glue); `lean/statements.txt`, `declarations.txt`, 
 | readings/default | 1,137 |
 
 Base records `feb024e0436d…`, head records `8c96c407eb77…` (SHA-256 of the record files, 66,242 and 66,242 lines).
+
+### Gate item 2: fourteen date-seeded differential comparisons
+
+| Date seed | Mutants per side | New signatures per side | Baseline entries not reproduced | Differences |
+|---:|---:|---:|---:|---:|
+| 20260921 | 25,794 | 47 / 47 | 0 / 0 | none |
+| 20260922 | 25,794 | 55 / 55 | 0 / 0 | none |
+| 20260923 | 25,794 | 47 / 47 | 0 / 0 | none |
+| 20260924 | 25,794 | 78 / 78 | 0 / 0 | none |
+| 20260925 | 25,794 | 50 / 50 | 0 / 0 | none |
+| 20260926 | 25,794 | 41 / 41 | 0 / 0 | none |
+| 20260927 | 25,794 | 47 / 47 | 0 / 0 | none |
+| 20260928 | 25,794 | 52 / 52 | 0 / 0 | none |
+| 20260929 | 25,794 | 55 / 55 | 0 / 0 | none |
+| 20260930 | 25,794 | 56 / 56 | 0 / 0 | none |
+| 20261001 | 25,794 | 52 / 52 | 0 / 0 | none |
+| 20261002 | 25,794 | 44 / 44 | 0 / 0 | none |
+| 20261003 | 25,794 | 53 / 53 | 0 / 0 | none |
+| 20261004 | 25,794 | 0 / 0 | 0 / 0 | none |
+
+Base `2ce1134e532c`, head `c1b96acf0bc9`; baseline SHA-256 `16d8a23683a5…` on both sides. Compared corpus, mutant counts, answers, finding counts, new signature sets, and baseline replay per seed. The baseline was not updated.
 
 ### Gate item 4: latency (paired, base and head alternating)
 
