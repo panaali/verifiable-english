@@ -163,6 +163,18 @@ atexit.register(_close_all)
 os.register_at_fork(after_in_child=_forget_in_child)
 
 
+def _answer(checker: _Checker, data: bytes, timeout: float) -> bytes:
+    """`checker`'s record for `data`; a process that gives none is closed, whatever stopped it."""
+    answered = False
+    try:
+        line = checker.exchange(data, timeout)
+        answered = True
+        return line
+    finally:
+        if not answered:
+            checker.close()
+
+
 def _run_checker(argv, *, input, timeout):
     """The record a persistent `argv` process writes for the case line `input`, as a completed
     process with that line as its output. `TimeoutExpired` or `OSError` when it gives no record;
@@ -181,21 +193,13 @@ def _run_checker(argv, *, input, timeout):
     if checker is None:
         checker = _Checker(argv)
     try:
-        line = checker.exchange(input, timeout)
+        line = _answer(checker, input, timeout)
     except OSError:
-        checker.close()
         if not reused:
             raise
         # A reused process may have ended since its last answer: the case goes once to a new one.
         checker = _Checker(argv)
-        try:
-            line = checker.exchange(input, timeout)
-        except BaseException:
-            checker.close()
-            raise
-    except BaseException:
-        checker.close()
-        raise
+        line = _answer(checker, input, timeout)
     with _idle_lock:
         _idle.setdefault(key, []).append(checker)
     return subprocess.CompletedProcess(list(argv), 0, line + b"\n", b"")
