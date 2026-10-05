@@ -572,3 +572,78 @@ def test_lx14_every_wording_python_selects_on_the_corpus_is_subject_first():
                         bad.append((name, field, p, w))
     assert count == 39 and selected > 700
     assert bad == []
+
+
+# ------------------------------------------------------------------ the boundary of spec 2.3: Python's side
+
+def _refused(raw) -> str:
+    from ve import Environment
+    from ve.errors import VEError
+    with pytest.raises(VEError) as caught:
+        Environment(raw)
+    return type(caught.value).__name__
+
+
+def _edited(name, edit):
+    raw = X.BUILDERS[name]()
+    edit(raw)
+    return raw
+
+
+def test_ev8_to_ev11_python_admits_the_fixture_environments_with_their_identities():
+    """The target of spec 2.3 is Python's `Environment` (`environment.py:647–655`): it admits the JSON of
+    `FA`, `FR`, `FM` and of ev11's unit-bearing `FR`, and its `environment_id` covers the submitted JSON, the
+    unit annotations included (the Lean boundary must compute the same value)."""
+    from ve import Environment
+    ids = {name: Environment(X.BUILDERS[name]()).environment_id for name in ("FA", "FR", "FM", "FR_UNITS")}
+    assert len(set(ids.values())) == 4
+    env = Environment(X.FR_UNITS())
+    assert env.to_dict()["vocabulary"]["constants"]["wait"]["verbalisation"] == "wait"
+    assert env.to_dict()["vocabulary"]["predicates"]["leads_to"]["argument_units"] == {}
+
+
+def test_ev10_the_modal_form_reads_the_normalised_act():
+    """ev10 (F6): an act phrase with doubled spaces gives Python the same environment identity and the same
+    modal form; the modal predicate has no negative (D17)."""
+    from ve import Environment
+    from ve.english import EnglishVocabulary
+    spaced = X.FM()
+    spaced["vocabulary"]["predicates"]["access"]["regulated"]["act"] = "{0}  access   {1}"
+    plain, wide = Environment(X.FM()), Environment(spaced)
+    assert plain.environment_id == wide.environment_id
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
+        for env in (plain, wide):
+            words = EnglishVocabulary(env)
+            assert words.predicates["access"] == "{0} may access {1}"
+            assert words.predicates["review"] == "{0} must review {1}"
+            assert "access" not in words.negatives and "review" not in words.negatives
+
+
+@pytest.mark.parametrize("case, name, edit, cls", [
+    ("alternatives@0 without a block", "FA", lambda r: r.pop("alternatives"), "VEError"),
+    ("a block without the profile", "FA", lambda r: r["profiles"].remove("alternatives@0"), "VEError"),
+    ("risk@0 without alternatives@0", "FR",
+     lambda r: (r["profiles"].remove("alternatives@0"), r.pop("alternatives")), "UnsupportedProfile"),
+    ("a block with an unknown field", "FA", lambda r: r["alternatives"].update(colour="red"), "VEError"),
+    ("a block that names an undeclared sort", "FA", lambda r: r["alternatives"].update(harm="danger"),
+     "UnknownSymbol"),
+])
+def test_ev12_python_refuses_each_malformed_profile_declaration(case, name, edit, cls):
+    assert _refused(_edited(name, edit)) == cls, case
+
+
+@pytest.mark.parametrize("case, edit, message", [
+    ("units without unit_schema", lambda r: r.pop("unit_schema"), "require the ve.core@0.2 quantity route"),
+    ("a declared tag on a non-integer slot", lambda r: r["vocabulary"]["predicates"]["leads_to"].update(
+        argument_units={"0": "usd"}), "Unit on non-integer slot 0"),
+    ("an undeclared tag on a non-integer slot", lambda r: r["vocabulary"]["predicates"]["leads_to"].update(
+        argument_units={"1": "eur"}), "Unit on non-integer slot 1"),
+    ("a unit on a non-integer constant", lambda r: r["vocabulary"]["constants"]["wait"].update(unit="usd"),
+     "Unit on non-integer constant wait"),
+])
+def test_ev13_python_refuses_each_malformed_unit_declaration(case, edit, message):
+    from ve import Environment
+    from ve.errors import VEError
+    with pytest.raises(VEError, match=message):
+        Environment(_edited("FR_UNITS", edit))
