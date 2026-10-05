@@ -193,9 +193,9 @@
       {"file": "lean/VE/EnglishGrammar/Encode.lean", "lines": 139, "sha256": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
        "ranges": [[1, 139]], "declarations": ["typedCheck", "typedDocument", "optString", "optFields", "Env.decode"],
        "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; the full file is pinned conservatively"},
-      {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 331, "sha256": "1e0d02fad48418a1daaa74c0614ee0f2b9fa4161680cf2b682a4665780435ccb",
-       "ranges": [[1, 331]], "declarations": ["pairs", "triples", "decodeLexicon", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
-       "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"}
+      {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 333, "sha256": "7f25caf22271446599d8fdc8a98abb720aefcc495a50f4fa73aa6d39f3965c5f",
+       "ranges": [[1, 333]], "declarations": ["pairs", "triples", "decodeLexicon", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
+       "reason": "english-lean S2.4 and S3.0 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4; english-lean-s3.md 2.14): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities using the generated profile table list, and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",

@@ -36,6 +36,8 @@ EXCLUDED = {
     "conformance/fuzz-summary.json": ("artifact", "the v0 fuzzer's summary"),
     "conformance/english-before-after.json": ("no-input", "English renderings before and after a change"),
     "conformance/english-lean/corpus-seal.json": ("artifact", "hashes sealing the English-in-Lean corpora"),
+    "conformance/english-lean/s3-fixture-comparison.json": (
+        "artifact", "recorded Python/Lean fixture outcomes from the S3 dispatched-boundary comparison"),
     "conformance/english-lean/engine.json": (
         "no-input", "English-in-Lean grammar-engine vectors (tests/test_english_lean_engine.py); no route reads them yet"),
     "conformance/english-lean/lexer.json": (
