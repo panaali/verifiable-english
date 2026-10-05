@@ -1,0 +1,126 @@
+{
+  "$id": "jsonl.json",
+  "$comment": "The records `ve jsonl` writes (rust/ve/src/main.rs `case_record`), one per case, in the dialect of lean_service_schema/README.md; the context is the case as sent. `ve/backends/rust_jsonl.py` checks a record against `record` before reading any field of it: a record no branch admits is no answer (CheckerUnavailable), never a rejection or a verdict. Each branch names the Rust code that builds it; the selection follows main.rs `case` for the case shapes the Python adapters send (a case of another shape has no possible record). The bounds a case sets on counters (`max_evaluations`, `max_models`, the number of premises) are checked in `rust_jsonl.run`.",
+  "record": {
+    "if": {"type": "object", "required": ["status"], "properties": {"status": {"const": "error"}}},
+    "then": {"$ref": "#/$defs/error"},
+    "else": {"x-select": [
+      {"when": {"$ref": "#/$defs/kind/check"}, "then": {"$ref": "#/$defs/typing"}},
+      {"when": {"$ref": "#/$defs/kind/evaluate-budgeted"}, "then": {"$ref": "#/$defs/evaluation"}},
+      {"when": {"$ref": "#/$defs/kind/distinguishing-model"}, "then": {"$ref": "#/$defs/search"}},
+      {"when": {"not": {"required": ["kind"]}, "required": ["premises", "conclusion", "model"]},
+       "then": {"$ref": "#/$defs/countermodel"}},
+      {"when": {"not": {"required": ["kind"]}, "required": ["premises", "conclusion"]},
+       "then": {"$ref": "#/$defs/search"}}
+    ]}
+  },
+  "$defs": {
+    "kind": {
+      "check": {"required": ["kind"], "properties": {"kind": {"const": "check"}}},
+      "evaluate-budgeted": {"required": ["kind"], "properties": {"kind": {"const": "evaluate-budgeted"}}},
+      "distinguishing-model": {"required": ["kind"], "properties": {"kind": {"const": "distinguishing-model"}}}
+    },
+    "text": {"type": "string", "minLength": 1},
+    "nat": {"type": "integer", "minimum": 0},
+    "digest": {"$comment": "lib.rs `digest`: an identity is a SHA-256 in lower-case hex.", "type": "string", "pattern": "[0-9a-f]{64}"},
+    "id": {"$comment": "Every record echoes the case's `id` with its JSON type, `\"\"` for a case without one (`v.get(\"id\").cloned().unwrap_or(json!(\"\"))`).",
+      "x-select": [{"when": {"required": ["id"]}, "then": {"x-equals": "/id"}},
+                   {"when": true, "then": {"const": ""}}]},
+    "error": {"$comment": "main.rs `case_record`: a rejected case is `{id, status: error, error}` with the serialised ve_core::Error (lib.rs: `code`, `message`, `span` when known). Exit status 1.",
+      "type": "object", "required": ["id", "status", "error"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"const": "error"},
+        "error": {"type": "object", "required": ["code", "message"], "additionalProperties": false,
+          "properties": {
+            "code": {"type": "string", "pattern": "[A-Z][A-Za-z]*"},
+            "message": {"$ref": "#/$defs/text"},
+            "span": {"$ref": "#/$defs/span"}}}}},
+    "span": {"$comment": "lib.rs `Span`.",
+      "type": "object", "required": ["start", "end", "line", "column"], "additionalProperties": false,
+      "properties": {"start": {"$ref": "#/$defs/nat"}, "end": {"$ref": "#/$defs/nat"},
+                     "line": {"$ref": "#/$defs/nat"}, "column": {"$ref": "#/$defs/nat"}}},
+    "typing": {"$comment": "main.rs `case`, kind check (order.rs `order_case` alike): the document is well typed.",
+      "type": "object", "required": ["id", "status", "well_typed"], "additionalProperties": false,
+      "properties": {"id": {"$ref": "#/$defs/id"}, "status": {"const": "ok"}, "well_typed": {"const": true}}},
+    "evaluation": {"$comment": "main.rs `case`, kind evaluate-budgeted: eval.rs `Evaluation`, or `TracedEvaluation` (with `explanation`) when the case's `trace` is true; order.rs `order_case` writes the same fields. The status names the value, and the trace's root (eval.rs `evaluate_traced`) is the document's node with that value, or the resource_limit node.",
+      "type": "object", "required": ["id", "status", "value", "evaluations"], "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"enum": ["Satisfied", "Violated", "ResourceLimit"]},
+        "value": {"type": ["boolean", "null"]},
+        "evaluations": {"$ref": "#/$defs/nat"},
+        "explanation": {"$ref": "#/$defs/explanation"}},
+      "anyOf": [
+        {"properties": {"status": {"const": "Satisfied"}, "value": {"const": true},
+                        "explanation": {"properties": {"kind": {"const": "document"}, "value": {"const": true}}}}},
+        {"properties": {"status": {"const": "Violated"}, "value": {"const": false},
+                        "explanation": {"properties": {"kind": {"const": "document"}, "value": {"const": false}}}}},
+        {"properties": {"status": {"const": "ResourceLimit"}, "value": {"const": null},
+                        "explanation": {"properties": {"kind": {"const": "resource_limit"}, "value": {"const": null}}}}}],
+      "x-select": [
+        {"when": {"required": ["trace"], "properties": {"trace": {"const": true}}}, "then": {"required": ["explanation"]}},
+        {"when": true, "then": {"not": {"required": ["explanation"]}}}]},
+    "explanation": {"$comment": "eval.rs `Explanation`; its `bindings` are `TraceBinding`s.",
+      "type": "object", "required": ["kind", "value", "bindings", "detail", "children"], "additionalProperties": false,
+      "properties": {
+        "kind": {"$ref": "#/$defs/text"},
+        "value": {"type": ["boolean", "null"]},
+        "bindings": {"type": "array", "items": {
+          "type": "object", "required": ["debruijn_index", "sort", "local_id"], "additionalProperties": false,
+          "properties": {"debruijn_index": {"$ref": "#/$defs/nat"}, "sort": {"$ref": "#/$defs/text"},
+                         "local_id": {"$ref": "#/$defs/text"}}}},
+        "detail": {"type": "string"},
+        "children": {"type": "array", "items": {"$ref": "#/$defs/explanation"}}}},
+    "search": {"$comment": "search.rs `SearchResult::to_value` (order.rs writes the same fields) with the case id: a model exactly when one was found; the bounds are the case's, defaults 2 and 10,000 (main.rs `number`).",
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "status", "model", "models_checked", "evaluations", "max_domain_size", "max_models", "detail"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"enum": ["Found", "NotFound", "ResourceLimit"]},
+        "model": {"anyOf": [{"$ref": "#/$defs/model"}, {"const": null}]},
+        "models_checked": {"$ref": "#/$defs/nat"},
+        "evaluations": {"$ref": "#/$defs/nat"},
+        "max_domain_size": {"x-select": [{"when": {"required": ["max_domain_size"]}, "then": {"x-equals": "/max_domain_size"}},
+                                         {"when": true, "then": {"const": 2}}]},
+        "max_models": {"x-select": [{"when": {"required": ["max_models"]}, "then": {"x-equals": "/max_models"}},
+                                    {"when": true, "then": {"const": 10000}}]},
+        "detail": {"type": "string"}},
+      "anyOf": [
+        {"properties": {"status": {"const": "Found"}, "model": {"type": "object"}}},
+        {"properties": {"status": {"enum": ["NotFound", "ResourceLimit"]}, "model": {"const": null}}}]},
+    "model": {"$comment": "model.rs `FiniteModel::to_value` (order.rs `Model.canonical` alike): a complete model with every element as text. Its vocabulary is the adapter's to check (`FiniteModel.from_dict`).",
+      "type": "object", "required": ["complete", "domains", "constants", "relations"], "additionalProperties": false,
+      "properties": {
+        "complete": {"const": true},
+        "domains": {"type": "object", "additionalProperties": {"type": "array", "items": {"$ref": "#/$defs/text"}}},
+        "constants": {"type": "object", "additionalProperties": {"$ref": "#/$defs/text"}},
+        "relations": {"type": "object", "additionalProperties": {
+          "type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/text"}}}}}},
+    "countermodel": {"$comment": "search.rs `CountermodelProblem::check_countermodel` (order.rs `order_countermodel_check` alike) with the case id. `values` (order.rs `countermodel_values`) evaluates the premises in order and stops at the first false one (NotCountermodel, conclusion unevaluated) or at an exhausted budget (ResourceLimit, conclusion unevaluated); otherwise it evaluates the conclusion: Valid when false, NotCountermodel when true. `valid` is `status == Valid`. One meaning id per premise.",
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "status", "valid", "premise_values", "conclusion_value", "evaluations", "environment_id",
+                   "model_id", "premise_meaning_ids", "conclusion_meaning_id"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"enum": ["Valid", "NotCountermodel", "ResourceLimit"]},
+        "valid": {"type": "boolean"},
+        "premise_values": {"type": "array", "items": {"type": "boolean"}},
+        "conclusion_value": {"type": ["boolean", "null"]},
+        "evaluations": {"$ref": "#/$defs/nat"},
+        "environment_id": {"$ref": "#/$defs/digest"},
+        "model_id": {"$ref": "#/$defs/digest"},
+        "premise_meaning_ids": {"type": "array", "items": {"$ref": "#/$defs/digest"}, "x-length": "/premises"},
+        "conclusion_meaning_id": {"$ref": "#/$defs/digest"}},
+      "anyOf": [
+        {"properties": {"status": {"const": "Valid"}, "valid": {"const": true}, "conclusion_value": {"const": false},
+                        "premise_values": {"$ref": "#/$defs/premises_held"}}},
+        {"properties": {"status": {"const": "NotCountermodel"}, "valid": {"const": false}, "conclusion_value": {"const": true},
+                        "premise_values": {"$ref": "#/$defs/premises_held"}}},
+        {"properties": {"status": {"const": "NotCountermodel"}, "valid": {"const": false}, "conclusion_value": {"const": null},
+                        "premise_values": {"minItems": 1, "contains": {"const": false}}}},
+        {"properties": {"status": {"const": "ResourceLimit"}, "valid": {"const": false}, "conclusion_value": {"const": null},
+                        "premise_values": {"items": {"const": true}}}}]},
+    "premises_held": {"$comment": "Every premise evaluated, and true.", "items": {"const": true}, "x-length": "/premises"}
+  }
+}

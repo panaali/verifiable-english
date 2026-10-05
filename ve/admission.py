@@ -15,7 +15,7 @@ import re
 from typing import NamedTuple
 
 from .assurance import semantic_entry
-from .ast import Or, formula_from_data, formula_to_data
+from .ast import Or, decimal_text, decimal_value, formula_from_data, formula_to_data
 from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
 from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, UnsupportedProfile, VEError
@@ -55,7 +55,8 @@ class Label(NamedTuple):
                 "background": lambda: f"background:{a[0]}",
                 "cite": lambda: f"cite:{a[0]}/{a[1]}",
                 "open": lambda: f"open:{a[0]}",
-                "readings": lambda: f"readings:{a[0]}@{a[1]}:{'all' if a[2] is None else a[2]}",
+                "readings": lambda: (f"readings:{a[0]}@{decimal_text(a[1])}:"
+                                     f"{'all' if a[2] is None else decimal_text(a[2])}"),
                 "narrowing": lambda: f"narrowing:{a[0]}"}[self.kind]()
 
 
@@ -79,9 +80,11 @@ def _parse_raw(s: str) -> Label | None:
         rest = parts[1].split(":")
         if len(rest) != 2 or not token(parts[0]) or not _NAT.fullmatch(rest[0]):
             return None
+        # Lean's `String.toNat?`: an index of any length
         if rest[1] == "all":
-            return Label("readings", (parts[0], int(rest[0]), None))
-        return Label("readings", (parts[0], int(rest[0]), int(rest[1]))) if _NAT.fullmatch(rest[1]) else None
+            return Label("readings", (parts[0], decimal_value(rest[0]), None))
+        return (Label("readings", (parts[0], decimal_value(rest[0]), decimal_value(rest[1])))
+                if _NAT.fullmatch(rest[1]) else None)
     if s.startswith("narrowing:"):
         return Label("narrowing", (s[10:],)) if token(s[10:]) else None
     return None
@@ -106,7 +109,7 @@ def _validate_label_python(s) -> str:
 def validate_label(s) -> str:
     """Check the public label grammar through the selected authority."""
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
     if type(s) is not str:
@@ -117,7 +120,7 @@ def validate_label(s) -> str:
             "label": s}
 
     def lean():
-        label = run("route", [case])[0].get("label")
+        label = decide("route", [case])[0].get("label")
         if type(label) is not str or label != s:
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean label result")
         return label
@@ -437,7 +440,7 @@ def _claim_json(env, claim):
 def admit_document(environment, document) -> dict:
     """Admit a document under the selected checker authority."""
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
 
     if authority_for("admission") == "python":
@@ -461,7 +464,7 @@ def admit_document(environment, document) -> dict:
             return _admit_document_python(env, document)
         if env.unit_schema is not None:
             return _lean_quantity_admission(env, document)
-        row = run("norms" if "norms@0" in env.profiles and (
+        row = decide("norms" if "norms@0" in env.profiles and (
             any(d.regulated is not None for d in env.predicates.values()) or
             (type(document) is dict and type(document.get("units")) is list and
              any(type(u) is dict and type(u.get("content")) is dict and
@@ -484,7 +487,8 @@ def _lean_quantity_admission(env, document) -> dict:
     from .backends.diagnostics import checker_error
     [row] = backend.run("admission", QUANTITY_ROUTE,
                         [{"id": "admission", "kind": "document", "environment": env.to_dict(),
-                          "document": document}], runner="ve_quantity", timeout=60.0)
+                          "document": document}], runner="ve_quantity",
+                        timeout=backend.configured_timeout(60.0))
     if row["status"] == "error":
         raise checker_error(row["error"])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}

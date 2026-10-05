@@ -93,7 +93,7 @@ def lean_bundle_verdict(lean_executable, environment, lemmas, document=None) -> 
     case = [{"id": "bundle", "kind": "bundle", "environment": environment, "lemmas": lemmas,
              **({} if document is None else {"document": document})}]
     return lean_backend.run("bundle.check", lean_executable, case, runner="ve_conformance",
-                            mode="route", timeout=LEAN_REPLAY_TIMEOUT)[0]
+                            mode="route", timeout=lean_backend.configured_timeout(LEAN_REPLAY_TIMEOUT))[0]
 
 
 def _lean_bundle_mode(data) -> str | None:
@@ -150,7 +150,7 @@ def check_bundle(data, *, lean_executable=None):
 
 
 def _check_bundle_lean(data, mode="route"):
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.validation import decided, key
     _bundle_container(data)
     case = {"id": "bundle", **({"kind": "bundle"} if mode == "route" else {}),
@@ -160,7 +160,7 @@ def _check_bundle_lean(data, mode="route"):
         cache = key("bundle", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return decided(lambda: _check_bundle_python(data), cache, lambda: run(mode, [case])[0],
+    return decided(lambda: _check_bundle_python(data), cache, lambda: decide(mode, [case])[0],
                    lambda report, row: row.get("lemmas") == [r["meaning_id"] for r in report["lemmas"]],
                    "a bundle")
 

@@ -482,7 +482,7 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
 
 def _check_readings_lean(env, sets, conclusion_ast, options):
     from .backends.dispatch import pinned
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .errors import CheckerUnavailable
     evidence = {}
     with pinned("lean"):
@@ -494,7 +494,7 @@ def _check_readings_lean(env, sets, conclusion_ast, options):
             "sets": [[r["content"] for r in s["readings"]] for s in sets],
             "conclusion": conclusion_ast, "verdict": verdict, "evidence": evidence}
     try:
-        row = run("readings", [case])[0]
+        row = decide("readings", [case])[0]
     except VEError as exc:
         # Lean refusing evidence whose parts it checked one by one is a
         # disagreement, never an input rejection.

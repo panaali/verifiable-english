@@ -14,6 +14,7 @@ import sys
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.ast import _to_data
 from ve.environment import Environment
@@ -33,7 +34,7 @@ def rust():
         if cargo is None:
             pytest.skip("cargo is required for speech-act FOL conformance")
         built = subprocess.run([cargo, "build", "-p", "ve"], cwd=ROOT / "rust", env=rust_build.cargo_env(),
-                               capture_output=True, text=True, timeout=600)
+                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return executable
 
@@ -57,7 +58,7 @@ def rust_values(rust, env, formulas, complete_model):
     case = {"id": "speech-section-9", "environment": fol_environment(env),
             "ast": formulas, "model": complete_model}
     completed = subprocess.run([str(rust), "conformance", "-"], input=json.dumps([case]),
-                               capture_output=True, text=True, timeout=60)
+                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert completed.returncode == 0, completed.stdout + completed.stderr
     [result] = json.loads(completed.stdout)
     assert result["status"] == "ok", result
@@ -152,7 +153,7 @@ def test_xi_eta_source_to_answer_end_to_end(rust, lean, tmp_path):
     assert source.answer_lines[0]["status"] == "evaluated"
     assert source.coverage()["bytes_by_class"] == {"C": positions[-1]}
     inspected = subprocess.run([sys.executable, "-m", "ve", "speech-acts", str(path)],
-                               capture_output=True, text=True, timeout=60)
+                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert inspected.returncode == 0, inspected.stderr
     report = json.loads(inspected.stdout)
     assert report["status"] == "experimental" and report["answers"][0]["status"] == "evaluated"
@@ -536,7 +537,7 @@ def test_cli_and_fences_read_the_effective_scope(lean, tmp_path):
                         "\n---\n" + "".join(lines) + "```ve u1\nClick the button.\n```\n")
         source = load_speech_document(path)
         inspected = subprocess.run([sys.executable, "-m", "ve", "speech-acts", str(path)],
-                                   capture_output=True, text=True, timeout=60)
+                                   capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert inspected.returncode == 0, inspected.stdout + inspected.stderr
         report = json.loads(inspected.stdout)
         le = elaborate(env, {"units": [*units[:2], unit("u1", 0, "instruction", command("require", "click_required", ["check"])) | {"span": positions[2:4]}]})
@@ -604,7 +605,7 @@ def test_fenced_and_unfenced_sources_agree_on_the_effective_scope(lean, tmp_path
 
 def _diagnostic(error):
     """A Python diagnostic as Lean renders it (norms.md 11.1): `<code>: <message>` unless the message carries it."""
-    return str(error) if type(error) is VEError else f"{error.code}: {error}"
+    return str(error) if type(error) is VEError or str(error).startswith(f"{error.code}: ") else f"{error.code}: {error}"
 
 
 def _reference_cases():
@@ -1353,7 +1354,7 @@ def test_signed_choice_source_null_is_one_diagnostic(lean):
             assert _outcome(lambda: core(env, document)) == "InvalidInput: speech wording"
             if value is None:
                 completed = subprocess.run([str(LEAN), "-"], input=json.dumps([case]), capture_output=True,
-                                           text=True, timeout=60)
+                                           text=True, timeout=HANG_TIMEOUT)
                 assert completed.returncode != 0 and "expected restricted JSON value" in completed.stderr
             else:
                 assert _lean_outcome(run1(case)) == "InvalidInput: speech wording"
