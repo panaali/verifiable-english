@@ -51,6 +51,18 @@ def _sorted_items(value):
 # ---------------------------------------------------------------------------------------------------------------
 # The environment (1.1)
 
+def _placeholder_frame(data):
+    """`unspecified` completions read as `deny` (Lean `Wire.placeholderFrame`); every other field unchanged."""
+    predicates = (data.get("vocabulary") or {}).get("predicates")
+    if type(predicates) is not dict:
+        return data
+    renamed = {name: ({**decl, "regulated": {**decl["regulated"], "default": "deny"}}
+                      if type(decl) is dict and type(decl.get("regulated")) is dict
+                      and decl["regulated"].get("default") == "unspecified" else decl)
+               for name, decl in predicates.items()}
+    return {**data, "vocabulary": {**data["vocabulary"], "predicates": renamed}}
+
+
 class S1Environment:
     """The environment with `readings@1`, its chain, and the lower and frame environments. The environment is read
     as Lean receives it (`wire`), as the document is: an explicit null is an absent field at every depth, so
@@ -68,6 +80,11 @@ class S1Environment:
                       "soft" if "soft-norms@0" in self.profiles else "norms")
         frame = [p for p in self.lower_profiles if p != "norm-defaults@0"]
         self.frame_data = {**data, "profiles": frame}
+        if "norm-defaults@0" in self.lower_profiles:
+            # DRI ruling 4 (2026-10-03): the frame reads each `unspecified` completion as the placeholder `deny`
+            # (norm-defaults 2.3's E‴), as Lean's `placeholderFrame` does, so that the frame decodes without the
+            # profile and content beside it reaches the abstention of 1.1 instead of a decoder text.
+            self.frame_data = _placeholder_frame(self.frame_data)
         self.frame = _environment(self.frame_data)
         self.regulated = {name: decl for name, decl in self.frame.predicates.items() if decl.regulated is not None}
 
@@ -91,7 +108,7 @@ class S1Environment:
         data["vocabulary"]["predicates"] = {
             name: {k: v for k, v in decl.items() if k != "instruction_of"}
             for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
-        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0")]
+        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0", "readings@1")]
         return Environment(data)
 
     def situation_id(self, entry):
@@ -110,6 +127,13 @@ class Content:
 
     def lines(self):
         return self.body.get("lines", []) if self.kind in ("right", "right_lines") else []
+
+    def rules(self):
+        """The rule objects the content states: a norm's body, or every rule-bearing field of each of its lines."""
+        from .rights import RULE_FIELDS
+        if self.kind == "norm":
+            return [self.body]
+        return [line[k] for line in self.lines() for k in RULE_FIELDS if type(line.get(k)) is dict]
 
     def declared(self):
         if self.kind == "assertion":
@@ -137,7 +161,9 @@ class Content:
 
 
 def _line_rule_names(line):
-    return [line[k]["name"] for k in ("norm", "liberty", "recognition") if type(line.get(k)) is dict]
+    """The names of the rules a line states, from every rule-bearing field of the rights schema (`RULE_FIELDS`)."""
+    from .rights import RULE_FIELDS
+    return [line[k]["name"] for k in RULE_FIELDS if type(line.get(k)) is dict]
 
 
 def _cite_uses(cites):
@@ -151,7 +177,8 @@ def _cite_uses(cites):
 
 
 def _line_uses(line):
-    uses = [("rule", n) for k in ("norm", "liberty", "recognition") if type(line.get(k)) is dict
+    from .rights import RULE_FIELDS
+    uses = [("rule", n) for k in RULE_FIELDS if type(line.get(k)) is dict
             for n in line[k].get("over", [])]
     return uses + _cite_uses(line.get("cites", {}))
 
@@ -341,6 +368,11 @@ class Document:
     def declared_by(R):
         return [n for a in R.candidates if a.content is not None for n in a.content.declared()]
 
+    @classmethod
+    def interface_of(cls, R):
+        return [n for n in cls.declared_by(R)
+                if all(a.content is not None and n in a.content.declared() for a in R.candidates)]
+
     def attached(self):
         """The sets each fixed unit is attached to: the least relation of 1.3."""
         fixed = self.fixed_units()
@@ -405,6 +437,91 @@ class Side:
         else:
             from .softnorms import SoftNormDocument
             self.soft = SoftNormDocument(self.senv.soft_frame(), [c.raw for c in self.contents if c.kind == "norm"])
+
+    # -- S2's regeneration of a choice document's chain refusal (composition-s2.md 4.1 step 5, `route_refusal`)
+    #
+    # Lean-first batch 3 dropped these from S1, whose answer Lean alone now gives; S2's `elaborate` still compares
+    # Python's refusal and certificate binding with Lean's, so they stay here until S2 relays Lean too.
+
+    def line_order_text(self):
+        # Lines compare as Lean decodes them (`SourceLine`, `line_value`), not as written.
+        rights, order = [], []
+        for c in self.contents:
+            if not isinstance(c, Content):
+                continue
+            if c.kind == "right":
+                rights.append([c.body["name"], [line_value(line) for line in c.lines()]])
+                order.extend((c.body["name"], line_value(line)) for line in c.lines())
+            elif c.kind == "right_lines":
+                r = c.body["right"]
+                for entry in rights:
+                    if entry[0] == r:
+                        entry[1].extend(line_value(line) for line in c.lines())
+                order.extend((r, line_value(line)) for line in c.lines())
+        seen = []
+        for r, line in order:
+            if not any(name == r and line in lines for name, lines in rights):
+                return f"UnknownRight: {r}"
+            if (r, line) in seen:
+                return f"InvalidInput: line order lists a line of right {r} twice"
+            seen.append((r, line))
+        return None
+
+    def has_rights(self):
+        return any(not isinstance(c, Content) or c.kind in ("right", "right_lines", "limitation")
+                   for c in self.contents)
+
+    def chain_text(self):
+        """`Wire.chainText`: the chain's well-formedness of the document, then its assertions' typing."""
+        try:
+            self._checked_elaborate()
+        except VEError as exc:
+            return exc.message if hasattr(exc, "message") else str(exc)
+        return None
+
+    def _checked_elaborate(self):
+        chain = self.senv.chain
+        if chain == "rights":
+            text = self.line_order_text()
+            if text is not None:
+                raise VEError(text)
+        else:
+            if self.has_rights():
+                raise VEError("UnsupportedProfile: rights content requires rights@0")
+            norms = [c.raw for c in self.contents if c.kind == "norm"]
+            if chain == "norms" and any(
+                    c.body.get("mode", "strict") != "strict" or c.body.get("alterable") for c in self.contents
+                    if c.kind == "norm"):
+                raise VEError("InvalidInput: invalid norm fields")
+            from .softnorms import check_soft_source
+            check_soft_source(self.senv.soft_frame().to_dict(), norms)
+        self._elaborate()
+        from .ast import formula_from_data
+        env = self.soft.extended_env
+        try:
+            for ast in self.assertions:
+                # Decoding types the closed formula over the complete vocabulary (`a.check` in `sideWF`).
+                formula_from_data(env, ast, _generated=True)
+        except (VEError, SyntaxError):
+            raise VEError("InvalidInput: ill-typed assertion") from None
+
+    # -- the chain's document hash (Run.documentHash)
+
+    def document_hash(self):
+        # Lean hashes the units as it receives them: without null values.
+        units = [wire(c.raw) if isinstance(c, Content) else {"bar": wire(c[1])} for c in self.contents
+                 if not (isinstance(c, Content) and c.kind == "assertion")]
+        from .document import _environment
+        lower = _environment(self.senv.lower_data)
+        payload = {"environment_id": lower.environment_id}
+        if self.senv.chain == "rights":
+            payload["document"] = [{"source_units": list(self.unit_ids)}] + [_canonical_unit(u) for u in units]
+            return digest(f"ve-rights-{lower.identity_version}\n", payload)
+        if self.senv.chain == "soft":
+            payload["document"] = [_canonical_norm(u) for u in units]
+            return digest(f"ve-soft-norms-{lower.identity_version}\n", payload)
+        payload["document"] = units
+        return digest(f"ve-norms-{lower.identity_version}\n", payload)
 
     # -- source keys (1.5, `genKeys`)
 
@@ -531,6 +648,38 @@ class _Model:
     def __init__(self, domains, constants, relations):
         self.domains, self.constants = domains, constants
         self.relations = {p: frozenset(map(tuple, rows)) for p, rows in relations.items()}
+
+
+def _canonical_raw(raw):
+    if type(raw) is not dict:
+        return raw
+    return {k: v for k, v in raw.items()
+            if not ((k, v) == ("mode", "strict") or (k, v) == ("alterable", []) or (k, v) == ("hard", False))}
+
+
+def _canonical_unit(u):
+    if "norm" in u:
+        return {**u, "norm": _canonical_raw(u["norm"])}
+    from .rights import RULE_FIELDS
+    for key in ("right", "right_lines"):
+        if key in u:
+            body = u[key]
+            if type(body) is dict and type(body.get("lines")) is list:
+                body = {**body, "lines": [{**line, **{k: _canonical_raw(line[k]) for k in RULE_FIELDS if k in line}}
+                                          for line in body["lines"]]}
+            return {**u, key: body}
+    return u
+
+
+def _canonical_norm(u):
+    raw = u.get("norm")
+    if type(raw) is not dict:
+        return u
+
+    def dropped(k, v):
+        return ((k == "mode" and v == "strict") or (k == "rank" and v is None) or (k == "alterable" and v == [])
+                or (k == "exception" and v is None) or (k == "hard" and v is False))
+    return {"norm": {k: v for k, v in raw.items() if not dropped(k, v)}}
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -812,10 +961,7 @@ def guard_base(decoded, s, i):
         _element(sort, 0, 1)) > 1)] for sort in sorted(author.model_sorts)}
     relations = {p: [] for p in sorted(author.predicates) if p not in author.definition_entries}
     content = decoded.candidate(s, i).content
-    rules = ([content.body] if content.kind == "norm" else
-             [line[k] for line in content.lines() for k in ("norm", "liberty", "recognition")
-              if type(line.get(k)) is dict])
-    for rule in rules:
+    for rule in content.rules():
         decl = decoded.senv.frame.predicates.get(rule.get("predicate") or "")
         if decl is None:
             continue

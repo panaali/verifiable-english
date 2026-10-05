@@ -288,6 +288,30 @@ the file was restored after each (`git status` clean).
   reaches changed, so its baseline cannot grow.
 - **Deletion ledger (item 3):** none; nothing is deleted.
 
+## Merge of ve-integration (`051a43f4`)
+
+The merge brought composition S2a (`readings-elaborate`, `-conflict`, `-certificate`, `-model`, `-dead`,
+`-choice`: `SupRun.lean`, `SupWire.lean` and their theory) and DRI rulings 2 and 4 on `Readings/Wire.lean`. Conflicts:
+`Readings/Run.lean`'s imports (both kept: `Scan`, `SupRun`), `frozen-sources.sha256` (union, rehashed),
+`ve/assurance-manifest.json` and its generated page (`Readings/Wire.lean` pinned at the merged length with both
+sides' declarations, `admitReadingsSpec` and `placeholderFrame`; `SupWire.lean` added). How the two compose:
+
+- **Ruling 2 in admission's lemma.** `chainText`'s soft chain now reports `ResourceLimit: decision predicate <n>`
+  first and `chainWF` requires `namesFit`; `sideWF_of_chainText` (which lets admission skip the second
+  `WellFormedDoc`) cases on that check too. No statement changed.
+- **S2a keeps the once-per-request table.** `admitS2` re-ran `WellFormedDoc` on the document with its couplings
+  and narrowings, rebuilding every candidate's document after admission had built and checked each once.
+  `WellFormedDoc` reads only the chain, the frame and the items (`wellFormedDoc_links`, with `attached_links` and
+  `attachedIter_links`; `propext` only), so `admitS2` now takes S1's proof; the refusal it guarded could not
+  occur, so no answer changes.
+- **What else the route builds.** `choiceDoc` (a compatible choice's whole document, composition-s2 4.1 and DRI
+  ruling 5) calls `build`; it is not a candidate's document. The certificate and model kinds' `sharedEnv` builds
+  `free D` once more per request, beside admission's: one document, not one per candidate, **left as a gap**
+  (passing it from admission would change S2a's decoder signatures). `test_readings_lean_sharing.py` admits
+  exactly these two callers.
+- The consolidation plan's step 5 is remeasured (488 to 484 tied lines: `setFindings` and `actOnly` were
+  rewritten here), and the trust table reseeded for the merged declarations.
+
 ## Not done here
 
 - The UDHR first 10 sets and whole document were not timed again at the fixed head. Its first set was (review

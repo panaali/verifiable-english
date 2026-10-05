@@ -1,5 +1,6 @@
 import VE.Readings.Wire
 import VE.Readings.Scan
+import VE.Readings.SupRun
 import VE.NormDefaults.Run
 import VE.Rights.Run
 
@@ -18,6 +19,8 @@ import VE.Rights.Run
   `witness_value`), the other side's (`other_admissible`: some assignment of its owned tables is admissible;
   `other_value`, present when it owns no key); or the diagnostic of 4.5 step 1. `separated: true` is
   `Wire.readings_wire_separate_sound`'s hypothesis.
+* The case kinds of S2a (`readings-elaborate`, `readings-conflict`, `readings-certificate`, `readings-model`,
+  `readings-dead`, `readings-choice`): `SupRun.lean` (docs/spec/composition-s2.md 3).
 * Every other kind: `readings@1` is stripped from the profiles and the case is run by the lower route's runner
   (`dispatch` on the list without `readings@1`). -/
 namespace VE.Readings.Run
@@ -284,6 +287,14 @@ def runLower (j : Json) : Json :=
     | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j'
     | _ => VE.Norms.Run.runCaseReported j'
 
+/-- A case of the lower route named by `dispatch` on the profiles without `readings@1`. -/
+def runLowerWith (lower : List String) (j : Json) : Json :=
+  match VE.Compose.dispatch lower with
+  | .ok .rights => VE.Rights.Run.runCaseReported j
+  | .ok .soft => VE.SoftNorms.Run.runCaseReported j
+  | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j
+  | _ => VE.Norms.Run.runCaseReported j
+
 def runCase (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let kind ← VE.Route.Run.caseKind j
@@ -296,14 +307,17 @@ def runCase (j : Json) : Except String Json := do
     let sid ← stringField j "situation"
     let f ← pairFacts a s sid (← stringField j "other")
     return VE.Route.Wire.ok id [("set", .str s), ("pair", pairJson f sid)]
+  if s2Kinds.contains kind then return ← runS2 runLowerWith id kind j
   throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
 def runCaseReported (j : Json) : Json :=
   match VE.Route.Run.caseKind j with
-  | .ok "readings-validate" | .ok "readings-separate" =>
+  | .ok k =>
+    if k == "readings-validate" || k == "readings-separate" || s2Kinds.contains k then
     match runCase j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+    else runLower j
   | _ => runLower j
 
 def main (paths : List String) : IO UInt32 := do

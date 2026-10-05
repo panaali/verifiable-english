@@ -167,7 +167,7 @@ audit allowlist is unchanged. The namespace is `VE.Readings` (`lean/VE/Route/Rea
     exchanges the two completions over abstract documents.
 * Helpers: `relaxTo_name`, `relaxTo_pred`, `relaxTo_sign`, `relaxTo_over`, `relaxTo_alterable`, `relaxTo_of_ne`,
   `relaxTo_of_eq`, `mem_relaxDoc`, `relax_mem`, `fuel_relax`, `eq_of_key`, `dualPerm_act`, `dualOblig_act`,
-  `act_of_incompatible`, `incompatible_self`, the remaining `Twin.*` lemmas, `relax_children`, `syms_mem`,
+  `act_of_incompatible`, `force_incompatible_self`, the remaining `Twin.*` lemmas, `relax_children`, `syms_mem`,
   `layerNames_mem`, `flatMap_congr_mem`, `filterMap_congr_mem`, `find_filter_of`, `find_filter_mem`, `sat_append`,
   `atom_false`, `Twin.outweighsTriples_eq`, `offDecisions_relax`, `Twin.exceptedDecisions_filter`,
   `Twin.baseAdmissible`, `Twin.cohPremises`, `excepted_mem`, `eq_relaxDoc`, `TwinDocs.find_strict`,
@@ -214,5 +214,139 @@ id is `digest("ve-situation-<identity version>\n", {"environment_id", "situation
   `witness_admissible`, `witness_value`, `other_admissible`, and `other_value` when the other reading owns no key.
 * Every other kind is run by the lower route's runner with `readings@1` stripped.
 
-Not decoded by Lean: couplings and narrowings (4.7; their checks are rights 3.3's and Python's), and W2's own
-structural validation of the sets, which Python performs first.
+Not decoded by S1's case kinds: couplings and narrowings (4.7; their checks are rights 3.3's and Python's), and W2's
+own structural validation of the sets, which Python performs first. S2a's case kinds decode couplings and
+narrowings (below).
+
+# Superposed readings in Lean (composition stage S2a)
+
+Specification: [docs/spec/composition-s2.md](../docs/spec/composition-s2.md) section 8, draft 5 with the DRI rulings
+of 2026-10-03 and findings 4 to 6 (change log). `lean/audit.py` passes with no `sorry` and only `propext`,
+`Classical.choice` and `Quot.sound`. S1 definitions changed by S2a: by DRI ruling 2, `chainWF` on the soft chain
+gains `namesFit` (`Doc.lean`), and `Wire.chainText` reports `ResourceLimit: decision predicate <name>` first; by DRI
+ruling 4, `Wire.decodeEnvironment` decodes the frame of a `norm-defaults@0` environment with each `unspecified`
+completion read as the placeholder `deny` (`placeholderFrame`, E‴'s reading), so that content beside the profile
+reaches S1's abstention and a document without content is W2's, instead of a decoder text that is false of the
+document. No S1 theorem statement changed. Frozen sources are untouched (`python3 VE/Route/frozen.py` passes; the new modules are
+listed in `VE/Route/frozen-sources.sha256`).
+
+## Files
+
+| File | Contents |
+|---|---|
+| `Choice.lean` | 8.3: choices (`search_spec`, `choices_spec`, `exists_compatible_of_choices`, `no_compatible_of_choices`; the checked choices `checkedChoices` and `choicesSoftChecked` of DRI ruling 5), the choice vocabulary (`bitsOf`, `bitName`, `bitDecls`, `pattern`, `choiceAtom`), `choiceFresh`, `itemUnit`, `unitsDistinct`, `supReady`, `sup`, owners and `Choice_D`, `slotP`, `slotUnder`, `superposable`, `nameMap`, `pull`, `Encodes`, `ChoiceExtension`, `sharedEnv` |
+| `Superpose.lean` | `sup_wellFormed`, `encodes_atoms`, `encodes_unique`, `dead_sound`, `unsat_sound`, the bit and pattern facts |
+| `ChoiceFacts`, `Children`, `Live`, `Names`, `Shape`, `SoftFacts`, `Simulate`, `Faithful` | the image map `fmap`, its fields and children, liveness through the name map, and `superpose_faithful` by a simulation |
+| `SupSlot.lean`, `Strings.lean` | `sup_no_sets`; string lemmas on ASCII prefixes |
+| `Labels.lean` | `slot_wellLabelled` |
+| `SupEnv.lean` | the vocabulary of `sup D`; `slot_wellFormed` |
+| `Asserted.lean`, `Assertions.lean` | `asserted_shared` (finding 4), `superpose_assertions` (finding 5) |
+| `ChoiceValid.lean`, `ChoiceTyped.lean` | `choice_valid`: W1 reads a compatible choice's softened document as `Valid` (precedence and stratum orders, typing) |
+| `Situation.lean` | `canon_meaning`; Lemma K (`pull_canon`): the expansion of `sup D`, pulled, is the expansion of the choice's document over the pulled base; `superpose_situation` |
+| `SupConflict.lean` | `superpose_conflict_iff` |
+| `BaseDown.lean` | `base_down` (with `checkSoftRule_exception`, the typing of exception conditions read off the rule check) |
+| `SupWitness.lean` | `superpose_conflict_witness`, `superpose_countermodel` |
+| `BaseUp.lean`, `UpPremises.lean`, `UpSlot.lean` | the lifted base `upB` and `base_up` (finding 6) |
+| `SupFree.lean` | `superpose_conflict_free` |
+| `SupAll.lean` | `superpose_all`, `superpose_all_base` |
+| `ChoiceWF.lean` | `choice_sideWF_of_soft`; `choice_wellFormed` with the route's soft check of every choice as its hypothesis (DRI ruling 5) |
+| `Route.lean` | the route of 1.1, `supCertificateCheck`, `supModelCheck`, the refusals of 4.1 steps 3 and 5 (`routeRefusal`, `unsatText`, `superposedCheckText`, `enumeratedCheckText`), the regenerated elaboration (`elaborateFields`) |
+| `SupWire.lean` | 8.5's structures and decoders: couplings and narrowings (W2's texts), `admitS2`, `replaySup`, `decodeChoice`, `supVocabulary`, `decodeSupModel`, `replayCertificate`, `replayModel` |
+| `SupWireSound.lean` | `readings_wire_all_sound`, `readings_wire_model_sound`, `readings_wire_satisfiable`, `readings_wire_assumed_taken`, `readings_wire_choice_wellFormed` |
+| `SupRun.lean` | the case kinds of section 3 (`Run.lean` dispatches to them) |
+| `Examples.lean` | `#guard`s and theorems on M1, M16, M19 (KH, KB), M20; `MU` (two narrowings keeping no choice, review A1) and `MB` (past `maxChoiceChecks`) |
+
+## The statements of 8.4 and 8.5
+
+Proved as stated (draft 5): `sup_no_sets`, `sup_wellFormed`, `asserted_shared` (with `hr`, finding 4),
+`slot_wellFormed`, `slot_wellLabelled`, `encodes_unique`, `encodes_atoms`, `superpose_faithful`, `base_down`,
+`superpose_situation`, `base_up` (as corrected by finding 6), `superpose_conflict_iff`, `superpose_conflict_free`,
+`superpose_conflict_witness`, `superpose_all`, `superpose_all_base`, `superpose_countermodel`, `dead_sound`,
+`unsat_sound`, `superpose_assertions` (with `ChoiceExtension` of finding 5), `readings_wire_all_sound`,
+`readings_wire_model_sound`; and, added by the review of 2026-10-03, `readings_wire_satisfiable` (a replayed
+superposed case has a compatible choice), `readings_wire_assumed_taken` (its named readings are taken by one) and
+`readings_wire_choice_wellFormed`. `base_down`, `base_up`, `superpose_conflict_free` and `superpose_assertions` use
+`choiceFresh` (DRI ruling 1) through `hs` or `hr`; `Examples.lean` keeps the M19 counterexamples without it.
+
+`choice_wellFormed` is proved with one more hypothesis, by DRI ruling 5: `(hw : choicesSoftChecked D = true)`, the
+route's runtime check that every compatible choice's soft document passes the soft check (`WellFormedSoft`, up to
+`maxChoiceChecks` = 1024 choices; past them the check is false and the superposed case kinds refuse with
+`ResourceLimit: more than 1024 readings to check`). `choice_sideWF_of_soft` derives every other conjunct of `sideWF`,
+and `choice_valid` the part every other theorem uses (W1 validity of the softened document). The unconditional
+statement, the soft check's size limits on the generated formulas derived from `sup D`'s, is not claimed; it is a
+follow-up item. `SupReplay.checked` carries the check, so `readings_wire_choice_wellFormed` concludes `sideWF` for
+every compatible choice of a replayed case.
+
+Findings (pending the DRI's confirmation; change log of the spec):
+
+* 4: `asserted_shared` is false without distinct set and unit ids (M20); `supReady` gains `unitsDistinct`, and the
+  theorem gains `(hr : supReady D = true)`.
+* 5: `superpose_assertions` is false when `ChoiceExtension` may reinterpret every `ve__bit__` name; it reinterprets
+  exactly `bitDecls D`'s names.
+* 6: `base_up` was ill-typed (an existential `B` with an arbitrary carrier in `(pull D c B).relation p vs ↔
+  B₀.relation p vs`); the extension is stated as `{ B₀ with relation := R, domain := dom, constant := k }`.
+
+## The wire (S2a case kinds)
+
+Every case is `{"id", "kind", "environment", "document", ...}` as for S1; the document may carry `couplings` and
+`narrowings` in W2's shape (`{"id", "axis", "sets": [{"set", "version"}], "by", "reason_spans"}`,
+`{"id", "set", "version", "keeps", "by", "reason_spans"}`), decoded with W2's checks and texts after S1's admission;
+a unit id used twice is `InvalidInput: duplicate or invalid unit id`. A choice is `[[set, index], ...]`. A model is
+the finite-model wire form (`{"complete", "domains", "constants", "relations"}`, every predicate listed when
+`complete`) over `sup D`'s base vocabulary: the frame's sorts and `ve__reading`, its constants and `ve__here`, the
+decision predicates of `sup D`, the bits `ve__bit__<m+1>__<j>`, and the frame's base predicates. A formula is the
+AST wire form over `sharedEnv D`. A certificate is the tableau certificate wire form (the checker replays the trace;
+the binding fields are not compared). `readings-conflict`, `readings-certificate` and `readings-model` refuse a
+document that is not superposable with `ReadingsNotSuperposable: <sets> (<cause>); use readings-choice` (on the
+rights chain `UnsupportedProfile: superposition of a rights document is S2b; use readings-choice`); before any
+verdict they also refuse, as `readings-elaborate` does on the superposed and enumerated routes (4.1 steps 3 and 5,
+review A1 and DRI ruling 5), a document whose couplings and narrowings in force admit no compatible choice
+(`ReadingsUnsatisfiable: <ids>`, decided by Lean's own search: `no_compatible_of_choices`), and a document with a
+compatible choice whose document fails the chain's check (`<chain diagnostic> under <set>@<v>:<i>, ...`; on the
+superposed route the soft check of every compatible choice, on the enumerated route the chain's check of each of the
+at most 64 choices it checks); past 1024 compatible choices the superposed kinds refuse with
+`ResourceLimit: more than 1024 readings to check`; and `readings-certificate`, `readings-conflict` and
+`readings-model` refuse named readings (`assumed`) that no compatible choice takes, whose every verdict would be
+vacuous (`ReadingsUnsatisfiable: no compatible reading takes <set>@<v>:<i>, ...`; `takenBy`,
+`readings_wire_assumed_taken`). `readings-elaborate` otherwise reports the route, `readings-dead`
+asks `supReady`, and `readings-choice` runs on any admitted document.
+
+* `readings-elaborate`: `route` (`w2`, `pending`, `abstention`, `superposed`, `enumerated`); for `superposed`,
+  `finding` null, `narrowings_stale`, `vocabulary`, `units` (the units of `sup D` with `set`, `unit`, `version`,
+  `index`, `position`), `slot` (label and AST per premise), `names` (per set and candidate, the author name and its
+  name in `sup D`), `choices`, `choice_count`, `choices_checked` (how many compatible choices' documents passed
+  the check, or `over 1024`), `sizes` (against the limits); for `enumerated`, `finding`
+  (`{"text": "ReadingsNotSuperposable: <sets>", "cause"}`), `narrowings_stale`, `choices`, `choice_count`,
+  `choices_checked` (or `over 64`).
+* `readings-conflict`: `assumed` (a choice, default `[]`) and either `conflict_certificates` (an object keyed by
+  conflict target, each a certificate of the target's closed negation over `Background_base′ ++ slotP ++ atoms`)
+  answering `verdict` `CONFLICT-FREE` or `UNKNOWN` with `targets` and `reading_premises`, or `witness`
+  (`{"model", "target", "tuple"}`) answering `CONFLICT` or `UNKNOWN` with `target` and the `choice` the model
+  encodes.
+* `readings-certificate`: `assumed`, `premises`, `conclusion`, `conflict_certificates`, `certificate`; answers
+  `accepted` (`conflict_free && valid`), `conflict_free`, `valid`, `assumed`, `reading_premises`. `accepted: true` is
+  `readings_wire_all_sound`.
+* `readings-model`: `assumed`, `premises`, optional `conclusion` (default `⊥`), `model`; answers `valid`
+  (`supModelCheck`), `conclusion_value`, `first_failing` (the first slot label or assumed atom the model falsifies,
+  else null) and the encoded `choice`. `valid: true` with `conclusion_value: false` is
+  `readings_wire_model_sound`.
+* `readings-dead`: `set`, `index` and a certificate of `¬χ` from `choiceCore D` answer `accepted` and
+  `DeadReading: <set>:<index>` (not for a candidate a narrowing in force drops); without `index`, a certificate of
+  `⊥` answers `ReadingsUnsatisfiable: <coupling and narrowing ids>`.
+* `readings-choice`: `choice` (a compatible complete choice) and `inner` (a case of the lower route without
+  environment or document); Lean runs the lower route on `choiceDoc D c`'s units and answers `choice`,
+  `document_hash` (the chain's hash of that document), `assertions` (how many assertions `choiceDoc D c` has in
+  force) and `inner`. For the evidence kinds (the chain's `soft-certificate`, `norms-certificate` or
+  `rights-certificate`, and `choice-model`) the inner `premises` are the regenerated assertions in source order
+  (`choiceAssertionJsons`) followed by the case's own, so evidence cannot leave an assertion out (compose-s2
+  looprecheck1 review B). `choice-model` takes `premises`, optional `conclusion` (default `⊥`) and a base `model` in
+  the chain decoder's form (soft `decodeModel`, rights `decodeModelR`, norms `baseModelVocabulary`, no
+  definitions), and answers `valid` (the chain's base Background, `Lim_D` included on the rights chain, and every
+  premise read through the outcome substitution), `conclusion_value`, `first_failing` (the first failing premise's
+  index, else null) and `assertions`. `valid: true` with `conclusion_value: false` is `soft_choice_model_sound`,
+  `rights_choice_model_sound` or `norms_choice_model_sound`.
+  A certificate kind also needs `conflict`, the chain's conflict packages (`packages`, and `pairs` on the soft
+  chain) for the same choice: Lean runs the lower route's own conflict kind on them over the same regenerated
+  document (`choiceConflictCase`, never a witness) and answers `conflict_free`, and `accepted` exactly when the
+  certificate is `valid` and the conflict status is CONFLICT-FREE (14.8, as `readings-certificate` asks on `sup D`;
+  compose-s2 looprecheck2 review B). A certificate case without `conflict` is refused.

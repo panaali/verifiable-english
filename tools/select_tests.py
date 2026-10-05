@@ -732,6 +732,7 @@ ON_REQUEST = {"ve/backends/lean_service.py", "ve/backends/lean_runner.py", "ve/b
 ALWAYS = {
     "tests/test_conformance.py", "tests/test_lean_conformance.py",
     "tests/test_replay_conservativity.py", "tests/test_p0_three_way.py",
+    "tests/test_difffuzz.py",
 }
 IMPACTED_CHECKS = (CHECK_PYTHON, CHECK_LEAN, CHECK_RUST, ("python3", "tools/test_layer_policy.py"))
 EXPORTS = python_exports(ROOT)

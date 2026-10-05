@@ -76,7 +76,9 @@ class FilledNormDocument(NormDocument):
         data["vocabulary"]["predicates"] = {
             name: decl for name, decl in data["vocabulary"]["predicates"].items()
             if "regulated" not in decl}
-        data["profiles"] = [p for p in data["profiles"] if p != "norms@0"]
+        # The base vocabulary carries no statement layer: `readings@1` is the head's and is set aside with
+        # `norms@0` (DRI ruling 4 of 2026-10-03: kept alone it read as `readings@1 requires norms@0`).
+        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1")]
         base = FilledBaseEnvironment(data, self.fill_premises)
         self._filled_base = base
         return base
@@ -656,7 +658,7 @@ def _filled_soft_class():
             data["vocabulary"]["predicates"] = {
                 name: {k: v for k, v in decl.items() if k != "instruction_of"}
                 for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
-            data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0")]
+            data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "readings@1")]
             base = FilledSoftBaseEnvironment(data, self.soft_premises, self.fill_premises,
                                              self.rights_premises)
             self._filled_base = base
