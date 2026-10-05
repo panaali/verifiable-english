@@ -9,12 +9,13 @@ open VE.Alternatives VE.Alternatives.Run
 
 variable {req : Json}
 
-theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.alternatives v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The norms mode's rows, off the alternatives path, are rows of this mode. -/
+theorem of_norms {v : Json} (hp : usesAltPath req = false) (h : Fits req Skeletons.norms v) :
+    Fits req Skeletons.alternatives v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
 theorem elaborate_fits (id : String) (src : Wire.AltSource) :
-    Fits req Skeletons.alternatives (ok id (Wire.regenerated src)) := by
+    Fits req (skel% "alternatives.json#/$defs/elaborate") (ok id (Wire.regenerated src)) := by
   unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
@@ -75,7 +76,8 @@ theorem chooser_fits (A : AltDoc) (M : VE.FiniteModel VE.Bridge.Entity) (r : VE.
     | exact hA ▸ ‹A.alt.taken.isSome = true›
     | exact hA ▸ Bool.eq_false_iff.mpr ‹¬ A.alt.taken.isSome = true›
 
-theorem validate_fits (id : String) (j : Json) : OkFits j Skeletons.alternatives (runValidate id j) := by
+theorem validate_fits (id : String) (j : Json) (hp : usesAltPath j = true)
+    (hK : j.getObjValD "kind" = .str "alt-validate") : OkFits j Skeletons.alternatives (runValidate id j) := by
   unfold runValidate
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
@@ -95,7 +97,9 @@ theorem firstFailure_of_not_free (j : Json) (res : Replay.AltConflictReplay)
   rw [List.find?_isSome]
   exact ⟨(t, c), by simpa [Replay.conflictCerts] using hm, by cases c <;> simp_all⟩
 
-theorem conflict_fits (id : String) (j : Json) : OkFits req Skeletons.alternatives (runConflict id j) := by
+theorem conflict_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-conflict") :
+    OkFits j Skeletons.alternatives (runConflict id j) := by
   unfold runConflict runConflictWitness
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
@@ -105,35 +109,38 @@ theorem conflict_fits (id : String) (j : Json) : OkFits req Skeletons.alternativ
     have := firstFailure_of_not_free j _ ‹Replay.replayAltConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem followable_fits (id : String) (j : Json) : OkFits req Skeletons.alternatives (runFollowable id j) := by
+theorem followable_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-followable") :
+    OkFits j Skeletons.alternatives (runFollowable id j) := by
   unfold runFollowable
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
   all_goals fits
 
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
-    Fits req Skeletons.alternatives (encodeAdmitted id reportId res) := by
+    Fits req (skel% "alternatives.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted ok VE.Route.Wire.ok
   fits
   all_goals exact Common.claimJson_fits _
 
-theorem runCase_fits (j : Json) : OkFits j Skeletons.alternatives (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesAltPath j = true) : OkFits j Skeletons.alternatives (runCase j) := by
   unfold runCase
   okfits
+  all_goals read_kind
   all_goals first
-    | (unfold runAdmission; okfits; exact admission_fits _ _ _)
-    | with_reducible exact elaborate_fits _ _
-    | with_reducible exact validate_fits _ _
-    | with_reducible exact conflict_fits _ _
-    | with_reducible exact followable_fits _ _
+    | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
+    | fits_from elaborate_fits _ _
+    | exact validate_fits _ _ hp ‹_›
+    | exact conflict_fits _ _ ‹_› hp ‹_›
+    | exact followable_fits _ _ ‹_› hp ‹_›
     | (simp only [ok, VE.Route.Wire.ok]; fits)
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.alternatives (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.alternatives (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_norms (Norms.runCaseReported_fits j)
+  · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.Alternatives
