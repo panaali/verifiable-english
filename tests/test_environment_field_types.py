@@ -27,6 +27,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from ve.backends.diagnostics import checker_error
+from ve.backends.relay import rejection
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.wire import canonical_json
@@ -47,7 +48,7 @@ FIELDS = ("language", "profile", "profiles", "spec_revision", "vocabulary",
 TYPE_DIAGNOSTICS = {
     ("InvalidInput", "String expected"), ("InvalidInput", "array expected"),
     ("InvalidInput", "object expected"),
-    ("UnsupportedProfile", "profiles must be a sorted unique array"),
+    ("UnsupportedProfile", "UnsupportedProfile: profiles must be a sorted unique array"),
     ("InvalidInput", "InvalidInput: speech_acts block"), ("InvalidInput", "InvalidInput: alternatives.block"),
     ("InvalidInput", "InvalidInput: risk.block"), ("InvalidInput", "units must be an object"),
     ("InvalidInput", "InvalidInput: environment vocabulary"),
@@ -223,8 +224,8 @@ def test_python_and_lean_authorities_agree(monkeypatch, base, field, data):
 
 
 def lean_environment_mode(data):
-    from ve.backends import lean_runner
-    return outcome(lambda: lean_runner.run("environment", [{"id": "e", "environment": data}]))
+    from ve.backends import relay
+    return outcome(lambda: relay.decide("environment", [{"id": "e", "environment": data}]))
 
 
 # The Lean decoder of each route and a case that reaches its environment decoder.
@@ -281,8 +282,9 @@ def lean_route_rows(route, environments):
         assert done.returncode in (0, 1) and "PANIC" not in done.stderr, done.stderr[-2000:]
         rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [str(i) for i in range(len(environments))]
-    return [pair(checker_error(row["error"]).to_dict()) if row["status"] == "error" else ("ok", "")
-            for row in rows]
+    # The service's rows carry Lean's code; the one-shot routes' leave it in the text's prefix.
+    return [pair((rejection(row["code"], row["error"]) if "code" in row else checker_error(row["error"])).to_dict())
+            if row["status"] == "error" else ("ok", "") for row in rows]
 
 
 def lean_diagnostic(data):
@@ -382,9 +384,9 @@ def test_looprecheck1_examples_have_the_routes_diagnostics(monkeypatch, base, fi
 
 
 @pytest.mark.parametrize("base, changes, expected", [
-    *[("reports", {"vocabulary": value}, ("UnsupportedProfile", "reports@0 needs a reports block"))
+    *[("reports", {"vocabulary": value}, ("UnsupportedProfile", "UnsupportedProfile: reports@0 needs a reports block"))
       for value in (7, True, [], "x")],
-    *[(base, {"language": 7, "profiles": 7}, ("UnsupportedProfile", "profiles must be a sorted unique array"))
+    *[(base, {"language": 7, "profiles": 7}, ("UnsupportedProfile", "UnsupportedProfile: profiles must be a sorted unique array"))
       for base in ("speech", "alternatives", "risk", "risk-units")],
 ])
 def test_directive3_examples_have_the_routes_diagnostics(monkeypatch, base, changes, expected):

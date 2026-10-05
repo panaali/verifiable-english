@@ -119,7 +119,7 @@ FIXTURES = {
 }
 # Python's legacy text before the switch, where 6 lists it.
 LEGACY_TEXTS = {"D6": "vocabulary size", "D7": "rules", "D8": "unspecified name length",
-                "D9": "AST exceeds 10,000 nodes", "D10": "precedence depth",
+                "D9": "ResourceLimit: AST exceeds 10,000 nodes", "D10": "precedence depth",
                 "D11": "fill premise unsaid:pair:x_required,x_permitted", "D3": "rule a0"}
 GOLDEN = {name: expected for name, (_, expected) in FIXTURES.items()}
 

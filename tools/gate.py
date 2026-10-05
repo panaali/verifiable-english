@@ -19,8 +19,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import rust_build  # noqa: E402
-from tools.pytest_run import pytest_command, pytest_environment  # noqa: E402
+from tools import nested_pytest, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
 LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
@@ -66,16 +65,18 @@ STAGE_ENVIRONMENT = {
 # The gate's pytest invocation, shared by its collection run, its suite run and the
 # baseline writer (tools/gate_collection.py, also `--write-collection`), so the baseline
 # is what the gate collects. Plugin autoload is off in the gate, so every plugin is
-# named here or by tools/pytest_run.py.
+# named here or by tools/nested_pytest.py.
 PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
 
 
 def collection_command(python: list[str]) -> list[str]:
-    return pytest_command(python, "--collect-only", *PYTEST_ARGS)
+    return nested_pytest.command(["--collect-only", *PYTEST_ARGS], python=python)
 
 
 def suite_command(python: list[str], workers: str) -> list[str]:
-    return pytest_command(python, "-n", workers, *PYTEST_ARGS)
+    """The suite on xdist, even on one worker: merge_pytest_events reads each worker's collection."""
+    return nested_pytest.command(PYTEST_ARGS, workers=workers if workers == "auto" else int(workers),
+                                 xdist=True, python=python)
 
 
 def merge_pytest_events(collection: dict, suite: dict) -> dict:
@@ -93,7 +94,7 @@ def merge_pytest_events(collection: dict, suite: dict) -> dict:
 
 def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None) -> dict:
     """Run the gate's collection in `env` (plugin autoload off) and return its events."""
-    env = {**pytest_environment(env), "VE_GATE_PYTEST_RESULT": str(result_file)}
+    env = nested_pytest.environment(env, VE_GATE_PYTEST_RESULT=str(result_file))
     command(collection_command(python or [sys.executable]), env=env, stage="Python collection")
     return json.loads(result_file.read_text())
 
@@ -495,11 +496,11 @@ def main() -> int:
 
             python = ["uv", "run", "--frozen", "--no-sync", "python"]
             collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
-            pytest_env = record_environment(result, "pytest", {
-                **env, "VE_GATE_PYTEST_RESULT": str(collection_file),
-                "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
-                "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
-                "VE_RUST_BINARY": str(rust_binary)})
+            pytest_env = record_environment(result, "pytest", nested_pytest.environment(
+                env, VE_GATE_PYTEST_RESULT=str(collection_file),
+                VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
+                VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
+                VE_RUST_BINARY=str(rust_binary)))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
             collection = collect(pytest_env, collection_file, python=python)

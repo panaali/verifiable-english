@@ -605,7 +605,7 @@ def test_fenced_and_unfenced_sources_agree_on_the_effective_scope(lean, tmp_path
 
 def _diagnostic(error):
     """A Python diagnostic as Lean renders it (norms.md 11.1): `<code>: <message>` unless the message carries it."""
-    return str(error) if type(error) is VEError else f"{error.code}: {error}"
+    return str(error) if type(error) is VEError or str(error).startswith(f"{error.code}: ") else f"{error.code}: {error}"
 
 
 def _reference_cases():
