@@ -366,7 +366,7 @@ def route_path_error : Shape :=
       closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "#/$defs/text")]]
 
 def environment : Shape :=
-  c
+  copied "the request's environment (its fields passed the envelope check), canonicalized by Norms.Wire.canonicalEnvironmentJson" <| c
     "Norms.Wire.canonicalEnvironmentJson and its extensions (SoftNorms.Wire.primeJson, Rights.Wire.primeJsonR): the request environment after its envelope check (exactly language, profiles, spec_revision and vocabulary), with decision and generated predicates added. Its content is compared with Python's regeneration by the caller."
     [
       obj,
