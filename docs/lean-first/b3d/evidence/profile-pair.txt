@@ -1,0 +1,5 @@
+ 02:56:41 up 1 day, 15 min,  1 user,  load average: 10.64, 15.16, 16.08
+pairFacts: wall 0.369955 s, cpu 0.370000 s
+pairFactsIn, sides built: wall 0.019106 s, cpu 0.010000 s
+pairFactsIn, sides read again: wall 0.017006 s, cpu 0.020000 s
+pairFacts = pairFactsIn: true

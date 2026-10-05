@@ -212,6 +212,7 @@ module VE.Readings.Examples
 module VE.Readings.Faithful
 module VE.Readings.Force
 module VE.Readings.Labels
+module VE.Readings.Layers
 module VE.Readings.Lines
 module VE.Readings.Live
 module VE.Readings.Names

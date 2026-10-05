@@ -1,0 +1,11 @@
+{
+ "records": {
+  "pilots/default": 237,
+  "readings/default": 1137
+ },
+ "totals": {
+  "availability": 1,
+  "same": 1373
+ },
+ "unlisted": 0
+}

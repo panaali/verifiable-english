@@ -437,7 +437,9 @@ def stepOne (D : Doc) (s : String) (i j : Nat) (sid : String) (wName : String) (
 
 /-! ## The checks of 4.1 -/
 
-def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
+/-- A side's chain checks as specified: the chain's validation, then each assertion typed over the complete
+    environment of `soften (correlate X.1)`, rebuilt for each assertion. -/
+def chainTextSpec (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
   let chain : Option String := match c with
     -- The line order first (DRI ruling 1): each entry a line of its right, none listed twice (`linesOnce`).
     | .rights => (lineOrderText X.1).or <| match VE.Rights.validateRights X.1 with
@@ -463,6 +465,39 @@ def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
     if X.2.all (fun a => a.check (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate X.1))
         (VE.Norms.size (VE.SoftNorms.soften (VE.Rights.correlate X.1)))) []) then none
     else some "InvalidInput: ill-typed assertion"
+
+/-- A side's chain checks, each validation with its layers computed once (`validateRightsOnce`,
+    `validateSoftOnce`) and the complete environment computed once for every assertion (plan F5d), when the first
+    assertion is typed (a `Thunk`): a side with no assertion builds none, as in `chainTextSpec`. -/
+def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
+  let chain : Option String := match c with
+    | .rights => (lineOrderText X.1).or <| match VE.Rights.validateRightsOnce X.1 with
+      | .error e => some e
+      | .ok () => none
+    | .soft =>
+      if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
+      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) with
+        | some n => some s!"ResourceLimit: decision predicate {n}"
+        | none => match VE.SoftNorms.validateSoftOnce X.1.soft with
+          | .error e => some e
+          | .ok () => none
+    | .norms =>
+      if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
+      else if !allStrict X.1 then some "InvalidInput: invalid norm fields"
+      else match VE.SoftNorms.validateSoftOnce X.1.soft with
+        | .error e => some e
+        | .ok () => none
+  match chain with
+  | some e => some e
+  | none =>
+    let En := Thunk.mk (fun _ =>
+      let S := VE.SoftNorms.soften (VE.Rights.correlate X.1)
+      VE.Norms.envAt S (VE.Norms.size S))
+    if X.2.all (fun a => a.check En.get []) then none
+    else some "InvalidInput: ill-typed assertion"
+
+theorem chainText_eq (c : Chain) (X : RightsDoc × List VE.Formula) : chainText c X = chainTextSpec c X := by
+  simp only [chainText, chainTextSpec, Thunk.get, VE.Rights.validateRightsOnce_eq, VE.SoftNorms.validateSoftOnce_eq]
 
 def contentBearing (R : ReadingSet) : Bool :=
   R.candidates.any (fun a => match a.content with
@@ -748,7 +783,8 @@ def frameWF (D : Doc) : Bool := reservedFree D && distinctAcrossSets D && interf
 /-- A side without a chain diagnostic is well-formed: `chainText` computes `sideWF`'s two conjuncts. -/
 theorem sideWF_of_chainText (D : Doc) (X : RightsDoc × List VE.Formula) (h : chainText D.chain X = none) :
     sideWF D X = true := by
-  unfold chainText at h
+  rw [chainText_eq] at h
+  unfold chainTextSpec at h
   unfold sideWF
   generalize D.chain = c at h ⊢
   cases c with
