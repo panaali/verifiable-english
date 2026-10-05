@@ -119,6 +119,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
     if module in {"VE.Norms.FlaggedSpec"}:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
+    if module in {"VE.Route.RunSound", "VE.Norms.RunSound"}:
+        return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
     if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
