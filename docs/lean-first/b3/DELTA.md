@@ -149,8 +149,14 @@ Each was applied alone, its test run, then the file restored (`git status` clean
 | M15 a key any object | keys are `keyJson`'s constructors (`KEY_FIELDS`) | `test_the_schema_alone_refuses_every_type_fault` |
 | M16 `content_bearing` unbound | `content_bearing` is bound to the request's sets | `test_the_binding_alone_refuses_every_well_typed_mutant` |
 
-M7 to M16 were added for review lf-3 (below); each was applied alone by a script, the two route test files run,
-and the file restored.
+| M17 an error row skips its identity check | an error row names its case (`id` or `case_index`) | `test_a_replayed_error_not_naming_the_request_is_unavailable` |
+| M18 the transport decodes in `subprocess.run` (`text=True`) | bytes that are not UTF-8 are no answer | `test_no_answer_to_the_case_is_unavailable_on_every_transport` |
+| M19 the reader guesses the encoding (`json.loads` on bytes) | an answer is UTF-8 | `test_no_answer_to_the_case_is_unavailable_on_every_transport` |
+| M20 an error row may carry any member | error rows are Lean's encoder shapes (`ERROR_EXTRAS`) | `test_no_answer_to_the_case_is_unavailable_on_every_transport` |
+| M21 a Rust error record is not checked | a Rust error is ve-core's `Error` | `test_a_rust_record_that_is_no_answer_is_unavailable` |
+
+M7 to M16 were added for review lf-3 and M17 to M21 for its recheck (below); each was applied alone, the route
+test files run, and the file restored.
 
 ## Review lf-3: the answer's schema and binding (B1, B2)
 
@@ -170,6 +176,21 @@ deleted. `tests/test_readings_route_fuzz.py` mutates every node of 12 genuine ro
 two-fault mutants): only `CheckerUnavailable` escapes, and an accepted mutant changed only what Lean alone decides.
 The readings and pilot corpora recorded again at the fix (1,374 records) are the same as the head's records above,
 record for record (`compare`: 1,374 same, 0 unlisted).
+
+## Recheck lf-3 looprecheck1: error rows and decoding (B1, B2)
+
+Error rows were not bound: a genuine Lean error replayed against valid K1 with its `id` changed, `[]` or omitted
+rejected the document. Decoding was outside the guard: a checker writing the byte 0xff made `validate` raise
+`UnicodeDecodeError` (`text=True` decoded in `subprocess.run`). Both came from one class: each one-shot route
+transport checked its own answer, some in fewer ways than others. `ve/backends/lean.py` `route_rows` is now the one
+transport of the soft, rights, alternatives, risk, reports, discourse, norm-defaults and readings routes. It reads
+bytes through `_decode_json`, the one reader of Lean and Rust answers: strict UTF-8, no repeated member, no non-JSON
+number, and nesting past the limit is a `ValueError`. It checks every row with `row_problem`, the manifest runner's
+check. An error row names its case by exactly one of `id` and `case_index` and carries no member outside
+`ERROR_EXTRAS`, written from Lean's encoders. The soft route's operational failures are `CheckerUnavailable`, no
+longer `VEError`. The Rust JSONL transport checks error records against ve-core's `Error`.
+`tests/test_route_transport.py` runs every transport against 38 outputs that are no answer, using real temporary
+checkers, and every built route binary against its own genuine error shapes. 171 of its 295 tests fail at the head.
 
 ## Not done here
 
