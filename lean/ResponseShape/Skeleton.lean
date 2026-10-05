@@ -1,5 +1,6 @@
 import ResponseShape
 import Std.Data.TreeMap.Raw.Lemmas
+import Std.Data.TreeMap.Raw.WF
 import Lean.ToExpr
 
 /-! # Skeletons: the fields of a shape, for the theorems that tie each encoder to its shape
@@ -52,6 +53,9 @@ def field (fields : List (String × Skel)) (extra : Option Skel) (k : String) : 
   | none => extra.getD .nothing
 
 def item (pre : List Skel) (items : Skel) (i : Nat) : Skel := pre.getD i items
+
+/-- Whether `keys` has no duplicate. -/
+def distinct (keys : List String) : Bool := keys.Nodup
 
 /-- Whether `keys` (an object's field names, in order) has no duplicate, only allowed fields,
 every required field and no forbidden one. -/
@@ -121,6 +125,47 @@ theorem mkObj {fields : List (String × Skel)} {extra : Option Skel} {required a
     rw [Std.TreeMap.Raw.mem_ofList.mp hm] at this
     cases this
 
+/-- An object built from a list of fields, then given the field `k` (`Json.setObjVal!`): the names
+of `l` have no duplicate and, with `k` in place of any field of that name, pass `keysOk`. -/
+theorem setObj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
+    {l : List (String × Json)} {k : String} {v : Json}
+    (hk : (Skel.distinct (l.map Prod.fst) && Skel.keysOk fields extra required absent
+      (k :: (l.map Prod.fst).filter (· != k))) = true)
+    (hv : ∀ p ∈ l.filter (·.1 != k), Fits Γ (Skel.field fields extra p.1) p.2)
+    (hkv : Fits Γ (Skel.field fields extra k) v) :
+    Fits Γ (.obj fields extra required absent) ((Json.mkObj l).setObjVal! k v) := by
+  simp only [Skel.distinct, Bool.and_eq_true, decide_eq_true_eq, Skel.keysOk, List.all_eq_true] at hk
+  obtain ⟨hd, ⟨⟨_, _⟩, hreq⟩, hab⟩ := hk
+  have wf : (Std.TreeMap.Raw.ofList l compare).WF := Std.TreeMap.Raw.WF.ofList
+  refine Fits.obj (fun k' v' h => ?_) (fun k' hk' => ?_) (fun k' hk' => ?_)
+  · rw [Std.TreeMap.Raw.getElem?_insert wf] at h
+    split at h
+    · rename_i he
+      cases h
+      rw [← (Std.LawfulEqCmp.compare_eq_iff_eq (cmp := compare)).mp he]
+      exact hkv
+    · rename_i he
+      have hm := ofList_get hd h
+      refine hv (k', v') (List.mem_filter.mpr ⟨hm, ?_⟩)
+      simp only [bne_iff_ne, ne_eq]
+      intro hh
+      exact he ((Std.LawfulEqCmp.compare_eq_iff_eq (cmp := compare)).mpr hh.symm)
+  · rw [Std.TreeMap.Raw.mem_insert wf]
+    have := hreq k' hk'
+    simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, List.contains_iff_mem, List.mem_filter] at this
+    rcases this with rfl | ⟨hm, _⟩
+    · exact Or.inl ((Std.LawfulEqCmp.compare_eq_iff_eq (cmp := compare)).mpr rfl)
+    · exact Or.inr (Std.TreeMap.Raw.mem_ofList.mpr (List.contains_iff_mem.mpr hm))
+  · rw [Std.TreeMap.Raw.mem_insert wf, Std.TreeMap.Raw.mem_ofList]
+    have := hab k' hk'
+    simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, List.contains_iff_mem, List.mem_filter,
+      Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+    intro hh
+    rcases hh with hh | hh
+    · exact this.1 ((Std.LawfulEqCmp.compare_eq_iff_eq (cmp := compare)).mp hh).symm
+    · have hm := List.contains_iff_mem.mp hh
+      simp_all
+
 /-- An array of the images of a list's elements. -/
 theorem arrMap {α : Type} {items : Skel} {xs : List α} {f : α → Json} (h : ∀ x ∈ xs, Fits Γ items (f x)) :
     Fits Γ (.arr [] items) (Json.arr (xs.map f).toArray) := by
@@ -162,6 +207,16 @@ theorem mkObjAlt {ss : List Skel} (n : Nat) {fields : List (String × Skel)} {ex
     (hk : Skel.keysOk fields extra required absent (l.map Prod.fst) = true)
     (hv : ∀ p ∈ l, Fits Γ (Skel.field fields extra p.1) p.2) : Fits Γ (.alt ss) (Json.mkObj l) :=
   Fits.alt (List.mem_of_getElem? hn) (mkObj hk hv)
+
+/-- The alternative `n` of `ss` is an object skeleton the fields of `(Json.mkObj l).setObjVal! k v` pass. -/
+theorem setObjAlt {ss : List Skel} (n : Nat) {fields : List (String × Skel)} {extra : Option Skel}
+    {required absent : List String} {l : List (String × Json)} {k : String} {v : Json}
+    (hn : ss[n]? = some (.obj fields extra required absent))
+    (hk : (Skel.distinct (l.map Prod.fst) && Skel.keysOk fields extra required absent
+      (k :: (l.map Prod.fst).filter (· != k))) = true)
+    (hv : ∀ p ∈ l.filter (·.1 != k), Fits Γ (Skel.field fields extra p.1) p.2)
+    (hkv : Fits Γ (Skel.field fields extra k) v) : Fits Γ (.alt ss) ((Json.mkObj l).setObjVal! k v) :=
+  Fits.alt (List.mem_of_getElem? hn) (setObj hk hv hkv)
 
 /-- Every member of `ss` is one of `ts`: a value fitting `ss` fits `ts` (a runner delegating to
 another mode's runner). -/
