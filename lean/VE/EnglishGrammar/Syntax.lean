@@ -16,6 +16,8 @@ S2 (docs/spec/english-lean-s2.md 2.4 and 2.8) closes the two lists for the base 
   hand parser's restrictions on a derivation that Lark's grammar has, written as side conditions.
 - `Ty` gains the types of the base profile's nonterminals: `marker`, `unit`, `listMarker`, `noun`,
   `label`, `constant`, `adjective`, `natSubject`, `count`, `relation`.
+- `Reject` gains `badSpacing`: whitespace where the lexer's spacing table forbids it, or none where it
+  requires it (DRI ruling 1, finding F1 of `docs/spec/english-lean-s2-integrate.md`).
 -/
 
 namespace VE.EnglishGrammar
@@ -52,6 +54,7 @@ inductive EFormula where
 inductive Reject where
   | sourceTooLong | textTooLong | badCharacter (offset : Nat) | openQuote (offset : Nat)
   | badNumeral (offset : Nat) | emptyDocument | emptySentence (index : Nat) | unterminated
+  | badSpacing (offset : Nat)
   | unboundReference | shadowedName | sortMismatch | markerDepth | nestingLimit | numeralBound
   | coefficientNotNumeral
   | pronounUnresolved | blockedWording (id : String)
@@ -72,6 +75,7 @@ def Reject.code : Reject → String
   | .emptyDocument => "EmptyDocument"
   | .emptySentence _ => "EmptySentence"
   | .unterminated => "Unterminated"
+  | .badSpacing _ => "BadSpacing"
   | .unboundReference => "UnboundReference"
   | .shadowedName => "ShadowedName"
   | .sortMismatch => "SortMismatch"

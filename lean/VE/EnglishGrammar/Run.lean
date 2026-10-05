@@ -37,6 +37,8 @@ def rejectText (i : Nat) : Reject → String
   | .emptyDocument => "Write at least one statement ending with a period."
   | .emptySentence k => s!"Sentence {k + 1} is empty."
   | .unterminated => "The text after the last period is not a sentence. End it with a period."
+  | .badSpacing o => s!"The spacing at position {o} is not allowed: write no space before a period or at the " ++
+    "start, one after a period, and one between words and quoted names."
   | .unboundReference => s!"Sentence {i + 1} uses a name before introducing it."
   | .shadowedName => s!"Sentence {i + 1} introduces a name that is already in use."
   | .sortMismatch => s!"Sentence {i + 1} relates two things of different kinds where the same kind is required."

@@ -113,19 +113,38 @@ def profile_tables(env) -> dict:
     return {'wordings': wordings, 'negatives': negatives, 'aliases': aliases, 'nouns': nouns}
 
 
-def _one_sentence(text: str) -> bool:
-    """`oneSentence`: the text, with a terminator appended, lexes as exactly one sentence (S2 spec 2.6, V3)."""
+HOLE_CHAR = '\ue000'
+
+
+def hole_mark(k: int) -> str:
+    """`holeMark`: the word that stands for hole `k` while a wording is lexed."""
+    return HOLE_CHAR + str(k)
+
+
+def wording_tokens(wording: str) -> tuple[list[int], list[tuple]] | None:
+    """`wordingTokens`: the hole order and the tokens, each hole lexed as the word `hole_mark(k)`; None when
+    the wording contains `HOLE_CHAR`, does not lex as one sentence, or has a hole that is not a word of its
+    own. V3 and the lexical rules read a wording through this one substitution."""
+    if HOLE_CHAR in wording:
+        return None
+    order = [decimal_value(h) for h in HOLE.findall(wording)]
     try:
-        return len(lex(text + '.')) == 1
+        sentences = lex(HOLE.sub(lambda m: hole_mark(decimal_value(m[1])), wording) + '.')
     except LexError:
-        return False
+        return None
+    if len(sentences) != 1:
+        return None
+    marks = {hole_mark(k) for k in order}
+    if sum(1 for t in sentences[0] if t[0] == 'word' and t[1] in marks) != len(order):
+        return None
+    return order, sentences[0]
 
 
 def _shape_ok(wording: str, arity: int) -> bool:
     holes = HOLE.findall(wording)
     words = [w for w in HOLE.sub(' ', wording).split() if w]
     return (sorted(decimal_value(h) for h in holes) == list(range(arity)) and bool(words)
-            and _one_sentence(HOLE.sub(' ', wording)))
+            and wording_tokens(wording) is not None)
 
 
 def negative_template_of(wording: str | None, arity: int) -> str | None:
@@ -347,7 +366,8 @@ def fixture_lexicon(corpus: dict, case: dict, env: Environment) -> dict:
 def mutants(view: dict, lexicon: dict) -> list[tuple[str, dict]]:
     """One- and two-fault mutants of a valid lexicon: each entry repeated (with its own and with another
     honest value), dropped, emptied, cut to one word, given an extra hole, given the next entry's text,
-    and respaced with a no-break space and upper case; an entry for an unknown symbol in each field; aliases with and without the
+    respaced with a no-break space and upper case, with its first hole glued to the next word, and with a
+    leading space; an entry for an unknown symbol in each field; aliases with and without the
     right shape. Two-fault mutants pair single faults of different fields (a fixed sample)."""
     import random
     arity = {p['name']: p['arity'] for p in view['predicates']}
@@ -368,7 +388,10 @@ def mutants(view: dict, lexicon: dict) -> list[tuple[str, dict]]:
                              ('hole', lambda es: es[:i] + [[key, value + ' {9}']] + es[i + 1:]),
                              ('steal', lambda es: es[:i] + [[key, es[(i + 1) % len(es)][1]]] + es[i + 1:]),
                              ('respace', lambda es: es[:i] + [[key, value.replace(' ', '  ', 1).upper()]]
-                                                    + es[i + 1:])):
+                                                    + es[i + 1:]),
+                             # V3 and the rules read one substitution: a hole glued to a word is no hole
+                             ('glue', lambda es: es[:i] + [[key, value.replace('} ', '}', 1)]] + es[i + 1:]),
+                             ('lead-space', lambda es: es[:i] + [[key, ' ' + value]] + es[i + 1:])):
                 singles.append((f'{field}[{i}] {op}', field, edit(lexicon[field])))
         singles.append((f'{field} unknown', field, lexicon[field] + [['zzz', 'zzz']]))
     first = view['predicates'][0]['name']

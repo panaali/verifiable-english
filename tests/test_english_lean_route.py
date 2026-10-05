@@ -581,18 +581,22 @@ VARIANTS = {
 }
 
 
-# Known differences, recorded and open (docs/spec/english-lean-s2-integrate.md, finding F1): the lexer of base
-# 2.2 ignores whitespace around the terminator, while Python refuses a space before it, a word glued after it
-# and whitespace before the first sentence. Lean accepts what Python refuses: the unsafe direction of 2.11.
-# Closing it changes the trusted lexer, its Python reference and a `Reject` code (tier B): a DRI ruling.
-KNOWN_VARIANTS = {"space before the period"}
+NESTING = "This statement exceeds the 64-level nesting limit."
+
+
+def order_difference(record: dict) -> bool:
+    """Both sides reject, by a different check first (docs/spec/english-lean-s2-integrate.md, F3): Python's
+    hand parser applies the nesting limit while it reads (64 negations), before a word or a spacing it would
+    refuse later; Lean lexes the whole text and reads the words before it counts the depth."""
+    return (record["python"]["class"] == "ResourceLimit" and record["python"]["message"] == NESTING
+            and record["lean"]["status"] in ("none", "rejected"))
 
 
 @pytest.mark.parametrize("variant", sorted(VARIANTS))
 def test_text_variants_get_the_same_outcome_from_python_and_lean(variant):
     """Each variant of the fixtures of `F` is read by Python's dispatched unit and by `english.read` with one
-    outcome under 2.11: the lexer of either side refuses or folds it alike; a known variant differs only by
-    Lean reading what Python refuses with `SyntaxError`."""
+    outcome under 2.11: the lexer of either side refuses or folds it alike (finding F1 closed: a space before
+    the period is `BadSpacing`, Python's SyntaxError)."""
     env, options = ENVIRONMENTS["F"]()
     words = EN.EnglishVocabulary(env, **options)
     texts = [t for name, t in FIXTURES if name == "F"]
@@ -604,23 +608,113 @@ def test_text_variants_get_the_same_outcome_from_python_and_lean(variant):
         changed_texts += 1
         record = L.shadow_record(env, changed, words, python_reading(env, changed, words, options),
                                  lean_reading(env, changed, words, options))
-        if record["classes"]:
+        if record["classes"] and not order_difference(record):
             differences.append((changed, record["python"], record["lean"]))
     assert changed_texts > 0
-    if variant in KNOWN_VARIANTS:
-        assert differences and all(p["class"] == "SyntaxError" and l["status"] in ("one", "rejected")
-                                   for _, p, l in differences), differences
-    else:
-        assert differences == []
+    assert differences == []
 
 
-@pytest.mark.parametrize("text", ["Legacy is deployed .", "Legacy is deployed\t.", "Legacy is deployed.It is reviewed.",
-                                  " Legacy is deployed.", "\nLegacy is deployed."])
-def test_known_terminator_spacing_differences(text):
-    """Finding F1, pinned: Python refuses these with `SyntaxError`; Lean reads them. A fix on either side
-    makes this test fail and moves the text to the agreeing variants."""
-    env, options = ENVIRONMENTS["F"]()
+# Review A1/B2 (finding F1): Lean read these texts, Python refuses them. Each is now `BadSpacing` in Lean; the
+# third entry is the same text spaced as both read it.
+DEPLOYED, REVIEWED = "Legacy is deployed.", "Legacy is deployed. It is reviewed."
+RELATION = 'Legacy has the recorded relation "owner_of" to alice.'
+SPACING_REJECTIONS = [
+    ("F", "Legacy is deployed .", DEPLOYED), ("F", "Legacy is deployed\t.", DEPLOYED),
+    ("F", " Legacy is deployed.", DEPLOYED), ("F", "\nLegacy is deployed.", DEPLOYED),
+    ("F", "\u00a0Legacy is deployed.", DEPLOYED), ("F", "Legacy is deployed.It is reviewed.", REVIEWED),
+    ("F", "Legacy is deployed.Therefore legacy is deployed.", "Legacy is deployed. Therefore legacy is deployed."),
+    ("F51", 'Legacy has the recorded relation"owner_of"to alice.', RELATION),
+    ("F51", 'Legacy has the recorded relation "owner_of"to alice.', RELATION),
+    ("F51", 'Legacy has the recorded relation"owner_of" to alice.', RELATION),
+]
+
+
+@pytest.mark.parametrize("name,text,spaced", SPACING_REJECTIONS)
+def test_spacing_rejections_agree(name, text, spaced):
+    """Python refuses each text with SyntaxError; Lean refuses it with `BadSpacing`, at the offset the Python
+    reference lexer gives; the shadow comparison has no difference. The text spaced as Python writes it is
+    read by both, so the rejection is the spacing's."""
+    from conformance import english_lean_lexer as LX
+    env, options = ENVIRONMENTS[name]()
     words = EN.EnglishVocabulary(env, **options)
     python = python_reading(env, text, words, options)
     assert type(python).__name__ == "SyntaxError"
-    assert L.read(env, text, words, options).status == "one"
+    lean = L.read(env, text, words, options)
+    assert (lean.status, lean.response["code"]) == ("rejected", "BadSpacing")
+    with pytest.raises(LX.LexError) as caught:
+        LX.lex(text)
+    assert caught.value.code == "badSpacing" and f"position {caught.value.at} " in lean.response["text"]
+    assert L.shadow_record(env, text, words, python, lean_reading(env, text, words, options))["classes"] == []
+    assert not isinstance(python_reading(env, spaced, words, options), BaseException)
+    assert L.read(env, spaced, words, options).status == "one"
+
+
+def _items(text: str) -> list[tuple[str, int, int]]:
+    """The items of a text that lexes (the Python reference lexer): kind and character span of every token and
+    terminator, in order."""
+    from conformance import english_lean_lexer as LX
+    offsets, at = {}, 0
+    for k, c in enumerate(text):
+        offsets[at] = k
+        at += len(c.encode("utf-8"))
+    offsets[at] = len(text)
+    tokens = [(t[1] if t[0] == "punct" else t[0], offsets[a], offsets[b])
+              for sentence in LX.lex_spans(text) for t, a, b in sentence]
+    covered = {k for _, a, b in tokens for k in range(a, b)}
+    stops = [("stop", k, k + 1) for k, c in enumerate(text) if c == "." and k not in covered]
+    return sorted(tokens + stops, key=lambda item: item[1])
+
+
+def spacing_mutants(text: str) -> list[tuple[str, str]]:
+    """Every spacing change at every item boundary of `text`: whitespace before the first item, after the last,
+    and, between two items, the whitespace removed or widened, or a space put where there is none. One mutant
+    per text for each (change, left kind, right kind), so a long text adds no repeats."""
+    from conformance import english_lean_lexer as LX
+    try:
+        items = _items(text)
+    except LX.LexError:
+        return []
+    out, seen = [(" " + text, "lead"), ("\t" + text, "lead"), (text + " ", "trail")], set()
+    for (left, _, end), (right, start, _) in zip(items, items[1:]):
+        gap = text[end:start]
+        changes = (("glue", text[:end] + text[start:]), ("widen", text[:end] + gap + "\t" + text[start:])) if gap \
+            else (("split", text[:end] + " " + text[start:]),)
+        for change, mutant in changes:
+            if (change, left, right) not in seen:
+                seen.add((change, left, right))
+                out.append((mutant, f"{change} {left}|{right}"))
+    return out
+
+
+
+
+def test_spacing_mutants_of_every_fixture_get_one_outcome():
+    """The class of review A1, not its examples: every spacing change at every token boundary of every spec
+    fixture (and of a quoted-name text per vocabulary) is read by Python's dispatched unit and by `english.read`
+    with one outcome under 2.11. Both verdicts occur, so a constant answer fails."""
+    extra = [("F51", 'Legacy has the recorded relation "owner_of" to alice.'),
+             ("F", 'Starting from legacy, legacy is reachable by one or more "owns" steps.')]
+    differences, outcomes, kinds = [], set(), set()
+    for name in ENVIRONMENTS:
+        env, options = ENVIRONMENTS[name]()
+        words = EN.EnglishVocabulary(env, **options)
+        mutants = [(m, why) for env_name, text in FIXTURES + extra if env_name == name
+                   for m, why in spacing_mutants(text)]
+        rows = route([{**L.request(env, m, words, options), "id": f"m{k}"} for k, (m, _) in enumerate(mutants)])
+        for (mutant, why), row in zip(mutants, rows):
+            assert row["status"] == "ok", row
+            reading = L.LeanReading(row["result"], env)
+            assert L.response_problem(row["result"], L.identities(env, mutant, words, EG.export(words)), env) is None
+            lean = (EN._Reading(env, reading.document(), words, reading.response["conclusions"], lean=reading)
+                    if reading.status == "one" else reading.rejection())
+            python = python_reading(env, mutant, words, options)
+            record = L.shadow_record(env, mutant, words, python, lean)
+            kinds.add(why)
+            outcomes.add(record["python"]["class"])
+            if record["classes"] and not order_difference(record):
+                differences.append((name, why, mutant, record["python"]["class"], reading.status,
+                                    reading.response.get("code")))
+    assert differences == []
+    assert {"accepted", "SyntaxError"} <= outcomes
+    assert {"lead", "trail", "split word|stop", "widen stop|word", "glue stop|word", "glue word|quoted",
+            "glue quoted|word", "split word|,", "glue ,|word"} <= kinds, sorted(kinds)
