@@ -24,7 +24,7 @@ its `lakefile.toml` root, or a top-level `*Main` module, is tool layer by rule. 
 split is separate Rust kernel, profile and surface crates. Until then the same
 checker also assigns each `ve-core/src/*.rs` module a group (kernel: the crate
 root, `ast`, `environment`, `model`, `wire`, `semantics`, `graph`; profile:
-`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`, `discourse`;
+`eval`, `route`, `search`, `order`, `units`, `risk`, `readings`;
 surface: `surface`) and rejects
 outward paths except the exact edges in
 [`tools/rust-module-exceptions.json`](../tools/rust-module-exceptions.json). This
@@ -42,9 +42,9 @@ inline modules named like an imported name or a crate module, crate paths in
 attribute or macro strings and in macro definitions, `#[path]`, `#[macro_use]`,
 `#[macro_export]` (also under `cfg_attr`), `include!` (also renamed),
 `extern crate self`, macros 2.0 and macro metavariables after `::`.
-Rust's `units`, `risk`, `readings` and `discourse` are profile modules, as in
-Lean (`VE.Risk.*`, `VE.Route.Readings` and the `VE.Discourse.*` checks are
-layer 2). Python files the same duties differently: `ve.units` is a profile
+Rust's `units`, `risk` and `readings` are profile modules, as in Lean
+(`VE.Risk.*`, `VE.Route.Readings` and the `VE.Discourse.*` checks are layer 2;
+Rust's `discourse` re-check was deleted by lean-first batch 4). Python files the same duties differently: `ve.units` is a profile
 module but `ve.risk`, `ve.readings` and `ve.discourse` are layer-4 route
 modules. This cross-language mismatch is recorded, not resolved
 ([plan 2](ARCHITECTURE-LAYERS-PLAN2.md), open question 9).
