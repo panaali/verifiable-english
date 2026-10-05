@@ -64,3 +64,5 @@ The differential test of the last row is `tests/test_readings_s1_differential.py
 - Tests: `test_readings_route_relay.py` +253 and `test_readings_route_fuzz.py` +356 (new); the Lean and differential tests drop their Python comparisons
   (−82, +72). Tools: `lean_first_diff.py` +78/−7 (the readings corpus, `checked_by` as wording),
   `readings_s1_pilot.py`, `relay_lint.py`, `check_rust_deps.py` small. Docs: `composition-s1.md` 8.4 and 10.
+
+**DRI ruling (2026-10-04):** accepted as scheduled unfinished duplicates, each removed by the batch named in its row (16a document mode or an earlier small Lean field; track E3; batch 15b / question 10). They decide no admission, verdict or finding; the differential tests above stay until they go. The remaining malformed-reply finding (missing `environment_prime` in `soft-elaborate`) is owned by batch 1's encoder-generated response schemas.
