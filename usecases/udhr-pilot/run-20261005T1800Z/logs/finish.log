@@ -1,0 +1,55 @@
+{
+ "unit_counts_by_status": {
+  "CHECKED": 1,
+  "LABELLED": 34,
+  "READINGS": 49,
+  "UNFORMALISED": 46
+ },
+ "bytes_by_status": {
+  "CHECKED": 57,
+  "LABELLED": 535,
+  "READINGS": 4200,
+  "UNFORMALISED": 6124
+ },
+ "claimed_covered_bytes": 4792,
+ "claimed_covered_percent": 43.9,
+ "audit_verified_covered_bytes": 2350,
+ "audit_verified_covered_percent": 21.53,
+ "audit_pending_bytes": 2442,
+ "old_boundary_aggregation": {
+  "CHECKED": 1,
+  "LABELLED": 34,
+  "READINGS": 38,
+  "UNFORMALISED": 43
+ },
+ "missing_feature_tally": {
+  "attribution": 4,
+  "causation": 4,
+  "defaults": 1,
+  "modality/belief": 2,
+  "norms": 7,
+  "other:act_phrase_grammar": 11,
+  "other:comparison": 2,
+  "other:evaluative_open_claim": 2,
+  "other:grounding_of_authority": 1,
+  "other:metaphorical_endowment": 1,
+  "other:priority_of_rights": 1,
+  "other:right_lines_across_open_sets": 4,
+  "quantities": 1,
+  "time": 5
+ },
+ "reading_set_count": 49,
+ "reading_set_candidates": 152,
+ "reading_set_candidates_previous_run": 157,
+ "companion_documents": 150,
+ "vocabulary_use": {
+  "regulated_predicates_in_main_document": 1,
+  "regulated_limit": 64,
+  "predicates_in_main_document": 8,
+  "regulated_in_companions_by_role_and_completion": {
+   "obligation:unspecified": 103,
+   "permission:unspecified": 18,
+   "plain:unspecified": 29
+  }
+ }
+}
