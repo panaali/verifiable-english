@@ -93,10 +93,8 @@ ENVIRONMENTS = {
     "F52": lambda: case(with_pred(("follows", ["person", "person"], "{1} follows {0}", None))),
     "F53": lambda: case(with_pred(("related", ["person", "person"], "{1} {0} are related", None),
                                   [("bob", "person"), ("alicebob", "person")]), [("alicebob", "alice bob")]),
-    "Fapi": lambda: case(env_json(False, SORTS_F, PREDS_F, CONSTS_F + [("api", "service")])),
+    "Fapi": lambda: case(env_json(False, SORTS_F, PREDS_F, CONSTS_F + [("api", "service")]), [("api", "the api")]),
 }
-ENVIRONMENTS["Fapi"] = lambda: case(env_json(False, SORTS_F, PREDS_F, CONSTS_F + [("api", "service")]),
-                                    [("api", "the api")])
 # The lexicon each environment's fixtures are stated under, in ReadExamples.lean.
 LEXICON = {"F": "LF", "FC": "LF", "F3": "LF3", "FD": "LFD", "F51": "L51", "F52": "L52", "F53": "L53",
            "Fapi": "Lapi"}
@@ -527,3 +525,102 @@ def test_a_route_that_answers_for_another_lexicon_fails_closed(monkeypatch):
     monkeypatch.setattr(L, "TRANSPORT", lambda case: answer({**other, "source": case["source"]}))
     with pytest.raises(CheckerUnavailable, match="lexicon_id"):
         L.read(env, "Alice owns legacy.", EN.EnglishVocabulary(env, **options), options)
+
+
+# ------------------------------------------------------------------ render, then read in Lean (checklist 9)
+
+def test_pythons_renderings_read_back_in_lean_as_their_formulas():
+    """Seeded formulas over the base-profile vocabularies of `conformance.english_surface` (ordinary,
+    closure, colliding aliases, function words and identifiers, precision templates): Python renders each
+    one; when Python reads its rendering back as the formula (one derivation), `english.read` reads the same
+    text as exactly that formula, with one derivation; every answer passes the adapter's checks."""
+    import random
+    from ve import ast, render
+    from conformance.english_surface import SEED, random_formula, vocabularies
+    compared, differences = 0, []
+    for offset, (name, env) in enumerate(vocabularies()):
+        if not set(env.profiles) <= {"relational-fol@0", "closure@0"}:
+            continue
+        rng = random.Random(SEED + offset)
+        words = EN.EnglishVocabulary(env)
+        texts, expected = [], []
+        while len(texts) < 40:
+            formula = random_formula(rng, env, rng.randrange(1, 6))
+            text = render(ast.Document((formula,)), env, "ve_english")
+            try:
+                if EN.parse_english(env, text) != ast.Document((formula,)):
+                    continue
+            except VEError:
+                continue
+            texts.append(text)
+            expected.append([ast._to_data(formula)])
+        cases = [{**L.request(env, text, words, {}), "id": f"r{k}"} for k, text in enumerate(texts)]
+        for text, want, row in zip(texts, expected, route(cases)):
+            assert row["status"] == "ok", (name, text, row)
+            result = row["result"]
+            assert L.response_problem(result, L.identities(env, text, words, EG.export(words)), env) is None
+            compared += 1
+            if (result["status"], result.get("ast")) != ("one", want):
+                differences.append((name, text, result.get("status"), result.get("code"), result.get("ast")))
+    assert differences == []
+    assert compared >= 200
+
+
+# ------------------------------------------------------------------ text variants (checklist 3)
+
+VARIANTS = {
+    "no-break space": lambda t: t.replace(" ", "\u00a0", 1),
+    "double space": lambda t: t.replace(" ", "  ", 1),
+    "tab": lambda t: t.replace(" ", "\t", 1),
+    "carriage return": lambda t: t.replace(" ", "\r\n", 1),
+    "curly quotes": lambda t: t.replace('"', "\u201c", 1).replace('"', "\u201d", 1),
+    "Kelvin sign": lambda t: t.replace("e", "\u212a", 1),
+    "dotted capital I": lambda t: t.replace("i", "\u0130", 1),
+    "control character": lambda t: t.replace(" ", " \x07", 1),
+    "space before the period": lambda t: t[:-1] + " .",
+}
+
+
+# Known differences, recorded and open (docs/spec/english-lean-s2-integrate.md, finding F1): the lexer of base
+# 2.2 ignores whitespace around the terminator, while Python refuses a space before it, a word glued after it
+# and whitespace before the first sentence. Lean accepts what Python refuses: the unsafe direction of 2.11.
+# Closing it changes the trusted lexer, its Python reference and a `Reject` code (tier B): a DRI ruling.
+KNOWN_VARIANTS = {"space before the period"}
+
+
+@pytest.mark.parametrize("variant", sorted(VARIANTS))
+def test_text_variants_get_the_same_outcome_from_python_and_lean(variant):
+    """Each variant of the fixtures of `F` is read by Python's dispatched unit and by `english.read` with one
+    outcome under 2.11: the lexer of either side refuses or folds it alike; a known variant differs only by
+    Lean reading what Python refuses with `SyntaxError`."""
+    env, options = ENVIRONMENTS["F"]()
+    words = EN.EnglishVocabulary(env, **options)
+    texts = [t for name, t in FIXTURES if name == "F"]
+    differences, changed_texts = [], 0
+    for text in texts:
+        changed = VARIANTS[variant](text)
+        if changed == text:
+            continue
+        changed_texts += 1
+        record = L.shadow_record(env, changed, words, python_reading(env, changed, words, options),
+                                 lean_reading(env, changed, words, options))
+        if record["classes"]:
+            differences.append((changed, record["python"], record["lean"]))
+    assert changed_texts > 0
+    if variant in KNOWN_VARIANTS:
+        assert differences and all(p["class"] == "SyntaxError" and l["status"] in ("one", "rejected")
+                                   for _, p, l in differences), differences
+    else:
+        assert differences == []
+
+
+@pytest.mark.parametrize("text", ["Legacy is deployed .", "Legacy is deployed\t.", "Legacy is deployed.It is reviewed.",
+                                  " Legacy is deployed.", "\nLegacy is deployed."])
+def test_known_terminator_spacing_differences(text):
+    """Finding F1, pinned: Python refuses these with `SyntaxError`; Lean reads them. A fix on either side
+    makes this test fail and moves the text to the agreeing variants."""
+    env, options = ENVIRONMENTS["F"]()
+    words = EN.EnglishVocabulary(env, **options)
+    python = python_reading(env, text, words, options)
+    assert type(python).__name__ == "SyntaxError"
+    assert L.read(env, text, words, options).status == "one"
