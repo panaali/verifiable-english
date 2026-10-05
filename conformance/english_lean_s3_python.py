@@ -25,15 +25,14 @@ from pathlib import Path
 import warnings
 
 from conformance import english_lean_s3_fixtures as X
+from ve.backends.english_lean import CLASSES as LEAN_CLASSES
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "conformance/english-lean/s3-python-report.json"
 
-# Spec 2.8 and base 4.1: the Python class of each Lean outcome.
-REJECTION_CLASS = {"nestingLimit": "ResourceLimit", "numeralBound": "ResourceLimit",
-                   "coefficientNotNumeral": "SyntaxError", "unboundReference": "SyntaxError",
-                   "sortMismatch": "SyntaxError", "blockedWording": "SyntaxError",
-                   "pronounUnresolved": "SyntaxError"}
+# Spec 2.8 and base 4.1: read the adapter's checked code-to-class contract.
+REJECTION_CLASS = {code[0].lower() + code[1:]: classes[0]
+                   for code, classes in LEAN_CLASSES.items()}
 STATUS_CLASS = {"zero": "SyntaxError", "none": "SyntaxError", "many": "AmbiguousDerivation",
                 "lexical": "SyntaxError"}
 # The agreed differences of spec 2.11 (Q11): Lean `none`, Python `ResourceLimit`.
