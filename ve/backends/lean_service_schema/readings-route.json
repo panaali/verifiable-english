@@ -82,7 +82,7 @@
                  "type": "object", "required": ["reading", "other", "pair"], "additionalProperties": false,
                  "properties": {"reading": {"type": "string"}, "other": {"type": "string"},
                                 "pair": {"$ref": "#/$defs/pair"}}}},
-               "findings": {"type": "array", "items": {"type": "string", "pattern": "SeparatedBy(Decision|Act)Only: .+"}}}}}}}]},
+               "findings": {"type": "array", "items": {"type": "string", "pattern": "SeparatedBy(Decision|Act)Only: .*"}}}}}}}]},
     "separate": {"$comment": "Readings.Run.runCase readings-separate: the requested set and situation's pair facts.",
       "type": "object", "required": ["id", "status", "set", "pair"], "additionalProperties": false,
       "properties": {

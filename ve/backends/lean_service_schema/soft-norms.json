@@ -55,7 +55,7 @@
           "SOFT_INVALID_TIES_PAIR", "SOFT_MISSING_DECIDER", "SOFT_MISSING_EXCEPTION", "SOFT_OVER_HARD",
           "SOFT_RESOURCE_LIMIT", "SOFT_STRICT_EXCEPTION", "SOFT_STRICT_OUTRANKING_DECIDER", "SOFT_TIE_AGAINST_ORDER",
           "SOFT_UNKNOWN_PARTY", "SOFT_UNKNOWN_RANK", "SOFT_UNSUPPORTED_PROFILE"]}}},
-    "coherence_labels": {"type": "array", "items": {"type": "string", "pattern": "soft:coherence:.+"}},
+    "coherence_labels": {"type": "array", "items": {"type": "string", "pattern": "soft:coherence:.*"}},
     "admission": {"$comment": "SoftNorms.Run.encodeAdmitted: W2's admission answer and the open coherence premises the report assumes.",
       "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
       "additionalProperties": false,
@@ -73,13 +73,13 @@
         "properties": {
           "generator": {"enum": ["definitions", "literals", "profile", "soft"]},
           "ast": {"$ref": "common.json#/$defs/generated_formula"},
-          "label": {"type": "string", "pattern": "soft:(exception|coherence):.+"}},
+          "label": {"type": "string", "pattern": "soft:(exception|coherence):.*"}},
         "if": {"properties": {"generator": {"const": "soft"}}},
         "then": {"required": ["label"]}, "else": {"not": {"required": ["label"]}}}},
     "elaborated": {"$comment": "SoftNorms.Wire.regenerated without environment_prime: the fields rights-elaborate repeats.",
       "decisions": {"type": "array", "items": {
         "type": "object", "required": ["name", "arguments"], "additionalProperties": false,
-        "properties": {"name": {"type": "string", "pattern": "soft__.+"}, "arguments": {"$ref": "common.json#/$defs/strings"}}}},
+        "properties": {"name": {"type": "string", "pattern": "soft__.*"}, "arguments": {"$ref": "common.json#/$defs/strings"}}}},
       "derived": {"type": "array", "items": {
         "type": "object", "required": ["rule", "ast"], "additionalProperties": false,
         "properties": {"rule": {"type": "string"},
@@ -90,7 +90,7 @@
           "pair": {"$ref": "common.json#/$defs/string_pair"},
           "act": {"type": "string"},
           "comparable": {"type": "boolean"},
-          "label": {"type": "string", "pattern": "soft:coherence:.+"},
+          "label": {"type": "string", "pattern": "soft:coherence:.*"},
           "ast": {"$ref": "common.json#/$defs/generated_formula"}}}}},
     "elaborate": {"$comment": "SoftNorms.Wire.regenerated: E' (primeJson), the decision predicates, each rule's derived carve-out (null for a strict rule without alterable), the layers, Background', the colliding pairs with their coherence premises, the conflict targets, the open coherence labels, the fragment flag and the warnings.",
       "type": "object", "required": ["id", "status", "environment_prime", "decisions", "derived", "order", "background",
@@ -119,7 +119,7 @@
           "type": "object", "required": ["pair", "label", "status"], "additionalProperties": false,
           "properties": {
             "pair": {"$ref": "common.json#/$defs/string_pair"},
-            "label": {"type": "string", "pattern": "soft:coherence:.+"},
+            "label": {"type": "string", "pattern": "soft:coherence:.*"},
             "status": {"enum": ["RANK-RESOLVED", "DISJOINT", "WEIGHING POINT", "UNKNOWN"]},
             "detail": {"$ref": "common.json#/$defs/text"}},
           "if": {"properties": {"status": {"enum": ["RANK-RESOLVED", "DISJOINT"]}}},

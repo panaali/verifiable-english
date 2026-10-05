@@ -55,7 +55,7 @@
         "unspecified": {"$ref": "common.json#/$defs/strings"},
         "unsaid": {"type": "array", "items": {
           "type": "object", "required": ["name", "sorts"], "additionalProperties": false,
-          "properties": {"name": {"type": "string", "pattern": "unsaid__.+"}, "sorts": {"$ref": "common.json#/$defs/strings"}}}},
+          "properties": {"name": {"type": "string", "pattern": "unsaid__.*"}, "sorts": {"$ref": "common.json#/$defs/strings"}}}},
         "reached": {"type": "array", "items": {
           "type": "object", "required": ["predicate", "sorts", "ast"], "additionalProperties": false,
           "properties": {"predicate": {"type": "string"}, "sorts": {"$ref": "common.json#/$defs/strings"},

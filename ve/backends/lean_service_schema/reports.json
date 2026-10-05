@@ -84,10 +84,10 @@
         "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
         "keys": {"type": "array", "items": {
           "type": "object", "required": ["name", "arguments", "key"], "additionalProperties": false,
-          "properties": {"name": {"type": "string", "pattern": "reports__.+"},
+          "properties": {"name": {"type": "string", "pattern": "reports__.*"},
                          "arguments": {"$ref": "common.json#/$defs/strings"}, "key": {"$ref": "#/$defs/key"}}}},
         "premises": {"type": "array", "items": {"$ref": "common.json#/$defs/labelled",
-          "properties": {"label": {"pattern": "(report|assessment):.+"}}}},
+          "properties": {"label": {"pattern": "(report|assessment):.*"}}}},
         "open_terms": {"type": "array", "items": {
           "type": "object", "required": ["name", "arguments"], "additionalProperties": false,
           "properties": {
@@ -111,7 +111,7 @@
           "type": "object", "required": ["unit", "content_id"], "additionalProperties": false,
           "properties": {"unit": {"type": "string"}, "content_id": {"$ref": "common.json#/$defs/hex64_or_empty"}}}},
         "envelope": {"$ref": "#/$defs/envelope"},
-        "warnings": {"type": "array", "items": {"type": "string", "pattern": "unreviewed act .+ in .+"}}}},
+        "warnings": {"type": "array", "items": {"type": "string", "pattern": "unreviewed act .*"}}}},
     "certificate": {"$comment": "Reports.Run.runCertificate: the certificate's verdict with both bindings.",
       "type": "object", "required": ["id", "status", "valid", "environment_reports_id", "envelope", "bindings"],
       "additionalProperties": false,
