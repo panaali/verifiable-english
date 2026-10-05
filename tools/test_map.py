@@ -33,7 +33,8 @@ import nested_pytest
 # 3: a test's own reads and listings count even though pytest runs it (version 2
 #    dropped any made with a pytest frame anywhere on the stack), so earlier maps
 #    lack edges and are not used.
-VERSION = 3
+# 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
+VERSION = 4
 UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
@@ -114,17 +115,18 @@ def build_natives() -> None:
         subprocess.run(command, cwd=cwd, env=env, check=True, stdout=subprocess.DEVNULL)
 
 
-def tracked_paths(root: Path = ROOT) -> tuple[set[str], set[str]]:
-    """Tracked files, and the directories that hold them: the only paths a map keeps."""
-    files = set(git("ls-files", "-z", root=root).split("\0")) - {""}
-    dirs = {"."} | {parent.as_posix() for file in files for parent in Path(file).parents
-                    if parent.as_posix() != "."}
-    return files, dirs
+def tracked_paths(root: Path = ROOT) -> set[str]:
+    """Tracked files: the only files whose reads a map keeps."""
+    return set(git("ls-files", "-z", root=root).split("\0")) - {""}
 
 
-def read_unit(directory: Path, tracked: tuple[set[str], set[str]]) -> dict:
-    """Fold one unit's per-process records into sets of tracked paths."""
-    files, dirs = tracked
+def read_unit(directory: Path, files: set[str]) -> dict:
+    """Fold one unit's per-process records into sets of paths.
+
+    Reads count for tracked files only; listings count for every directory
+    under the root, including ones that hold no tracked file or do not exist
+    yet: adding the first file there changes what the test listed.
+    """
     seen = {"f": set(), "r": set(), "d": set(), "x": set()}
     children, opaque, written = [], [], set()
     for path in directory.glob("*.jsonl"):
@@ -140,7 +142,7 @@ def read_unit(directory: Path, tracked: tuple[set[str], set[str]]) -> dict:
                 seen["f"].add((record[1], record[2]))
             elif kind == "r" and record[1] in files:
                 seen["r"].add(record[1])
-            elif kind == "d" and record[1] in dirs:
+            elif kind == "d":
                 seen["d"].add(record[1])
             elif kind == "x":
                 seen["x"].add(record[1])
@@ -152,7 +154,7 @@ def read_unit(directory: Path, tracked: tuple[set[str], set[str]]) -> dict:
     return {**seen, "opaque": sorted(set(opaque))}
 
 
-def run_unit(unit: str, work: Path, timeout: float, tracked: tuple[set[str], set[str]]) -> dict:
+def run_unit(unit: str, work: Path, timeout: float, tracked: set[str]) -> dict:
     """Record one unit, or reuse its finished result from an interrupted run."""
     name = unit.replace("/", "__")
     out, done, log = work / name, work / f"{name}.result.json", work / f"{name}.log"

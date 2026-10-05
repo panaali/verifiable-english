@@ -21,8 +21,10 @@ The invocations are:
 * for the executables that read no case list, the inputs their tests generate: a `ve_service`
   session over `tests/lean_service_corpus.py` (every mode and result kind, and the request
   errors), its English payloads for `ve_english_run`, the baseline service's responses to that
-  session for both `ve_response_decode` checks, and one shard of `tests/test_risk_differential.py`
-  for `ve_risk_eval`;
+  session for both `ve_response_decode` checks, one shard of `tests/test_risk_differential.py`
+  for `ve_risk_eval`, and the sources of `conformance/english-lean/lexer.json` for
+  `ve_english_lean_bench --lex` (its default mode prints CPU times, which no byte comparison
+  holds; it is measurement only);
 * with `--contract-inputs`, the `soft-norms@0` inputs that `tests/contract_input_recorder.py`
   wrote (`VE_CONTRACT_INPUTS`), as `soft-elaborate` cases for `ve_soft_norms_route` and
   `ve_diagnose soft-norms@0`;
@@ -74,7 +76,8 @@ CASE_MODES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("ve_norm_defaults_route", ()), ("ve_readings_route", ()),
 )
 # Executables that read no case list; `harness_invocations` gives their inputs.
-HARNESS_EXECUTABLES = frozenset({"ve_service", "ve_english_run", "ve_response_decode", "ve_risk_eval"})
+HARNESS_EXECUTABLES = frozenset({"ve_service", "ve_english_run", "ve_response_decode", "ve_risk_eval",
+                                 "ve_english_lean_bench"})
 
 
 class Invocation(NamedTuple):
@@ -146,8 +149,9 @@ def service_session() -> tuple[bytes, list[tuple[str, dict]]]:
 
 def harness_invocations(baseline: Path) -> list[Invocation]:
     """Inputs of the executables that read no case list (`ve_service`, `ve_english_run`,
-    `ve_response_decode`, `ve_risk_eval`), from the generators their tests use. The responses that
-    `ve_response_decode` checks are the baseline service's answers to the session."""
+    `ve_response_decode`, `ve_risk_eval`, `ve_english_lean_bench`), from the generators and
+    fixtures their tests use. The responses that `ve_response_decode` checks are the baseline
+    service's answers to the session."""
     for folder in (ROOT, ROOT / "tests"):  # the test modules import their helpers as pytest does
         if str(folder) not in sys.path:
             sys.path.insert(0, str(folder))
@@ -161,6 +165,12 @@ def harness_invocations(baseline: Path) -> list[Invocation]:
     boxes, conditions, _ = shard(0)
     found.append(Invocation("ve_risk_eval", "risk conditions shard 0", (),
                             json.dumps(lean_cases(boxes[:12], conditions[:12])).encode()))
+    lexer = json.loads((ROOT / "conformance/english-lean/lexer.json").read_text())["cases"]
+    sources = [case["source"] if "source" in case else
+               case["source_repeat"]["text"] * case["source_repeat"]["times"] + case["source_repeat"]["tail"]
+               for case in lexer]
+    found.append(Invocation("ve_english_lean_bench", "lex the lexer fixture's sources", ("--lex", "/dev/stdin"),
+                            json.dumps(sources, ensure_ascii=False).encode()))
     code, out, err = run(baseline / "ve_service", found[0])
     responses = [json.loads(line) for line in out.decode().splitlines()[1:]]
     if code != 0 or len(responses) != len(requests):

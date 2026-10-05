@@ -4,6 +4,7 @@
 module AlternativesMain
 module DiagnoseMain
 module DiscourseMain
+module EnglishLeanBenchMain
 module Iceberg
 module Main
 module NormDefaultsMain
@@ -60,6 +61,7 @@ module VE.Closure.RoundTrip
 module VE.Closure.Substitution
 module VE.Closure.Surface
 module VE.Closure.Syntax
+module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Dispatch
 module VE.Compose.Examples
@@ -121,9 +123,25 @@ module VE.English.Render
 module VE.English.RenderProofs
 module VE.English.Run
 module VE.English.Statements
+module VE.EnglishGrammar.EngineExamples
+module VE.EnglishGrammar.Examples
+module VE.EnglishGrammar.FoldAgree
+module VE.EnglishGrammar.Lexer
+module VE.EnglishGrammar.Lexicon
+module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Syntax
+module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
 module VE.EvaluationCounts
 module VE.Finite
+module VE.Grammar.Basic
+module VE.Grammar.Derives
+module VE.Grammar.Extension
+module VE.Grammar.Meaning
+module VE.Grammar.Reading
+module VE.Grammar.Table
+module VE.Grammar.TableInvariant
+module VE.Grammar.TableProofs
 module VE.GraphChecks
 module VE.Json
 module VE.LexicalProofs
@@ -179,12 +197,44 @@ module VE.Order.Typing
 module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
+module VE.Readings.Asserted
+module VE.Readings.Assertions
+module VE.Readings.BaseDown
+module VE.Readings.BaseUp
+module VE.Readings.Children
+module VE.Readings.Choice
+module VE.Readings.ChoiceFacts
+module VE.Readings.ChoiceTyped
+module VE.Readings.ChoiceValid
+module VE.Readings.ChoiceWF
 module VE.Readings.Doc
 module VE.Readings.Examples
+module VE.Readings.Faithful
 module VE.Readings.Force
+module VE.Readings.Labels
 module VE.Readings.Lines
+module VE.Readings.Live
+module VE.Readings.Names
+module VE.Readings.Route
 module VE.Readings.Run
 module VE.Readings.Separate
+module VE.Readings.Shape
+module VE.Readings.Simulate
+module VE.Readings.Situation
+module VE.Readings.SoftFacts
+module VE.Readings.Strings
+module VE.Readings.SupAll
+module VE.Readings.SupConflict
+module VE.Readings.SupEnv
+module VE.Readings.SupFree
+module VE.Readings.SupRun
+module VE.Readings.SupSlot
+module VE.Readings.SupWire
+module VE.Readings.SupWireSound
+module VE.Readings.SupWitness
+module VE.Readings.Superpose
+module VE.Readings.UpPremises
+module VE.Readings.UpSlot
 module VE.Readings.Wire
 module VE.Rights.Admission
 module VE.Rights.Bar
@@ -413,6 +463,23 @@ VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
 VE.Formula.WellFormed@VE.Syntax
 VE.Formula.denote@VE.Semantics
+VE.Grammar.BOk@VE.Grammar.TableInvariant
+VE.Grammar.Bucket.Sorted@VE.Grammar.TableInvariant
+VE.Grammar.Derives@VE.Grammar.Derives
+VE.Grammar.DocOneReading@VE.Grammar.Reading
+VE.Grammar.Embeds@VE.Grammar.Extension
+VE.Grammar.EntryOk@VE.Grammar.TableInvariant
+VE.Grammar.KeysUp@VE.Grammar.TableInvariant
+VE.Grammar.NtFull@VE.Grammar.TableInvariant
+VE.Grammar.NtOk@VE.Grammar.TableInvariant
+VE.Grammar.OneReading@VE.Grammar.Reading
+VE.Grammar.OutInv@VE.Grammar.TableInvariant
+VE.Grammar.RuleMap.Ok@VE.Grammar.Extension
+VE.Grammar.Span@VE.Grammar.TableInvariant
+VE.Grammar.SpanAll@VE.Grammar.TableInvariant
+VE.Grammar.SufRowOk@VE.Grammar.TableInvariant
+VE.Grammar.ValidPos@VE.Grammar.TableInvariant
+VE.Grammar.rootIn@VE.Grammar.TableInvariant
 VE.Graph.Acyclic@VE.ClaimGraph
 VE.Graph.CertificateSound@VE.ClaimGraph
 VE.Graph.Dependency@VE.ClaimGraph
@@ -509,17 +576,34 @@ VE.Order.TupleTyped@VE.Order.Semantics
 VE.Order.Valuation.Typed@VE.Order.Semantics
 VE.Readings.Achieves@VE.Readings.Separate
 VE.Readings.AchievesQuiet@VE.Readings.Separate
+VE.Readings.AsciiL@VE.Readings.Strings
 VE.Readings.Attached.below@VE.Readings.Doc
 VE.Readings.Attached@VE.Readings.Doc
+VE.Readings.ChoiceExtension@VE.Readings.Choice
+VE.Readings.ChosenAt@VE.Readings.UpSlot
+VE.Readings.ChosenNorm@VE.Readings.ChoiceFacts
+VE.Readings.Compatible@VE.Readings.Choice
+VE.Readings.Encodes@VE.Readings.Choice
+VE.Readings.Fits@VE.Readings.Choice
+VE.Readings.FixedNorm@VE.Readings.ChoiceFacts
+VE.Readings.Grows@VE.Readings.Shape
+VE.Readings.Hyps@VE.Readings.ChoiceFacts
+VE.Readings.IsBit@VE.Readings.BaseUp
 VE.Readings.KeepsFrame@VE.Readings.Separate
+VE.Readings.NoSep@VE.Readings.Labels
 VE.Readings.Observes@VE.Readings.Separate
+VE.Readings.OnBit@VE.Readings.BaseUp
 VE.Readings.PathTo@VE.Readings.Doc
 VE.Readings.RightsNames@VE.Readings.Lines
 VE.Readings.Separated@VE.Readings.Separate
+VE.Readings.Sim@VE.Readings.Simulate
 VE.Readings.Twin@VE.Readings.Force
 VE.Readings.TwinDocs@VE.Readings.Force
+VE.Readings.bitOn@VE.Readings.Superpose
 VE.Readings.tablesOf@VE.Readings.Separate
 VE.Readings.tablesRel@VE.Readings.Force
+VE.Readings.upDom@VE.Readings.BaseUp
+VE.Readings.upRel@VE.Readings.BaseUp
 VE.Reports.AgreeOn@VE.Attribution.Semantics
 VE.Reports.AssertedA@VE.Attribution.Conservative
 VE.Reports.AssertedJ@VE.Attribution.Conservative
