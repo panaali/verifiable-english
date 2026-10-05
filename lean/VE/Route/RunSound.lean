@@ -1,5 +1,6 @@
 import VE.Route.Run
 import VE.Route.WireSound
+import VE.Norms.FlaggedSpec
 
 /-! The claims of `VE.Route.WireSound` at the public entry `Route.Run.runCase`
 (docs/CONSOLIDATION-PLAN.md step 2a, item 4). A case whose envelope decodes to
@@ -9,6 +10,9 @@ the FOL, closure or order family and whose kind is `certificate`,
 (`dispatch_fol`, `dispatch_closure`, `dispatch_order`); each family then has one
 corollary per kind: the certificate one read off the answer's `valid` field, the
 countermodel and evaluate ones stating what its `refutes` and `values` fields mean.
+The FOL and closure certificate corollaries also carry `BaseClaim` through the
+composed layer `fullLayer`, whose decoder fact `FlagsBase` (no flag names a
+defined predicate) is `Norms.FlaggedSpec.decodeVocabulary_flag_not_defined`.
 The `closureNary` family (`Core.Wire.run`, `Core.Layers.run`) is not covered
 here (plan step 5a). -/
 namespace VE.Route.RunSound
@@ -79,24 +83,37 @@ theorem dispatch_order (id : String) (environment : Json) (e : Gate.Envelope) (j
   simp only [h4, Bool.false_eq_true, ↓reduceIte] at h
   exact ⟨rv, hrv, h⟩
 
+/-- The route's vocabulary decoder keeps flags off the defined predicates. -/
+theorem decodeRouteVocabulary_flagsBase (e : Gate.Envelope) (rv : RouteVocabulary)
+    (h : Run.decodeRouteVocabulary e = .ok rv) : FlagsBase rv := by
+  unfold Run.decodeRouteVocabulary at h
+  obtain ⟨rv', hrv, h⟩ := bind_ok h
+  split at h
+  · cases h
+    exact VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined _ _ _ hrv
+  · cases h
+
 /-! ## FOL -/
 
 /-- A FOL `certificate` case answered `"valid": true` at the public entry:
-the vocabulary decodes, the certificate is bound, and the decoded conclusion
-holds in every intended structure satisfying the decoded premises. -/
+the vocabulary decodes, the certificate is bound, the decoded conclusion holds
+in every intended structure satisfying the decoded premises, and (for premises
+and conclusion without defined predicates) in every `BaseAdmissible` structure
+satisfying them. -/
 theorem route_fol_certificate (j out : Json) (h : Run.runCase j = .ok out)
     (hk : Run.caseKind j = .ok "certificate") (e : Gate.Envelope)
     (he : Gate.decodeEnvelope (j.getObjValD "environment") = .ok e) (hf : e.family = .fol)
     (hv : out.getObjValD "valid" = .bool true) :
-    ∃ rv, Run.decodeRouteVocabulary e = .ok rv ∧
+    ∃ rv, Run.decodeRouteVocabulary e = .ok rv ∧ ∃ hb : FlagsBase rv,
       (∃ cert, VE.CertificateWire.decodeCertificate (j.getObjValD "certificate") = .ok cert ∧
         folRunner.{u}.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
-      CertificateClaim folFamily.{u} rv j := by
+      CertificateClaim folFamily.{u} rv j ∧ BaseClaim folFamily.{u} rv hb j := by
   obtain ⟨id, e', _, he', hd⟩ := runCase_dispatch j out h
   rw [he] at he'
   cases he'
   obtain ⟨rv, hrv, hrun⟩ := dispatch_fol id _ e j out _ hk (Or.inl rfl) hf hd
-  exact ⟨rv, hrv, runFol_certificate_acceptance _ _ rv id j out hrun hv⟩
+  have hb := decodeRouteVocabulary_flagsBase e rv hrv
+  exact ⟨rv, hrv, hb, runFol_certificate_acceptance _ _ rv hb id j out hrun hv⟩
 
 /-- A FOL `countermodel` case at the public entry: `refutes` is `true` exactly
 when the decoded, intended model refutes the decoded premises and conclusion
@@ -129,15 +146,16 @@ theorem route_closure_certificate (j out : Json) (h : Run.runCase j = .ok out)
     (hk : Run.caseKind j = .ok "certificate") (e : Gate.Envelope)
     (he : Gate.decodeEnvelope (j.getObjValD "environment") = .ok e) (hf : e.family = .closure)
     (hv : out.getObjValD "valid" = .bool true) :
-    ∃ rv, Run.decodeRouteVocabulary e = .ok rv ∧
+    ∃ rv, Run.decodeRouteVocabulary e = .ok rv ∧ ∃ hb : FlagsBase rv,
       (∃ cert, VE.CertificateWire.decodeClosureCertificate (j.getObjValD "certificate") = .ok cert ∧
         closureRunner.{u}.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
-      CertificateClaim closureFamily.{u} rv j := by
+      CertificateClaim closureFamily.{u} rv j ∧ BaseClaim closureFamily.{u} rv hb j := by
   obtain ⟨id, e', _, he', hd⟩ := runCase_dispatch j out h
   rw [he] at he'
   cases he'
   obtain ⟨rv, hrv, hrun⟩ := dispatch_closure id _ e j out _ hk (Or.inl rfl) hf hd
-  exact ⟨rv, hrv, runClosure_certificate_acceptance _ _ rv id j out hrun hv⟩
+  have hb := decodeRouteVocabulary_flagsBase e rv hrv
+  exact ⟨rv, hrv, hb, runClosure_certificate_acceptance _ _ rv hb id j out hrun hv⟩
 
 /-- A closure `countermodel` case at the public entry. -/
 theorem route_closure_countermodel (j out : Json) (h : Run.runCase j = .ok out)
@@ -171,7 +189,7 @@ theorem route_order_certificate (j out : Json) (h : Run.runCase j = .ok out)
     ∃ rv, decodeOrderVocabulary e.vocabulary = .ok rv ∧
       (∃ cert, VE.Order.Wire.decodeCertificate (j.getObjValD "certificate") = .ok cert ∧
         orderRunner.{u}.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
-      CertificateClaim orderFamily.{u} rv j := by
+      CertificateClaim orderFamily.{u} rv j ∧ BaseClaim orderFamily.{u} rv trivial j := by
   obtain ⟨id, e', _, he', hd⟩ := runCase_dispatch j out h
   rw [he] at he'
   cases he'
