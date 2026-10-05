@@ -157,3 +157,12 @@ def test_a_delta_entry_without_its_outcomes_lists_nothing(tmp_path):
     entry = {"corpus": "c", "authority": "python", "case": "b", "op": "op", "head": OK}
     assert diff.compare(base, head, {"verdict": [entry]})["unlisted"] == 1
     assert diff.compare(base, head, {"verdict": [{**entry, "base": None}]})["unlisted"] == 0
+
+
+def test_a_delta_listing_a_record_twice_is_unusable(tmp_path):
+    """The latency tool's overwrite class (lf-1 recheck B): a record listed in two entries kept only the last."""
+    changed = {"returned": {"values": [False], "environment_id": "e"}}
+    entry = {"corpus": "c", "authority": "python", "case": "a", "op": "op", "base": OK, "head": changed}
+    for delta in ({"verdict": [entry, entry]}, {"order": [{**entry, "head": REJECTED}], "verdict": [entry]}):
+        with pytest.raises(diff.Unusable, match="twice"):
+            _compare(tmp_path, {"a": OK}, {"a": changed}, delta)

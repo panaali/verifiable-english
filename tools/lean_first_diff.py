@@ -354,7 +354,11 @@ def compare(base_path: str, head_path: str, delta: dict | None, expect: set | No
     listed = {}
     for klass in ("order", "verdict", "availability"):
         for entry in delta.get(klass, []):
-            listed[(entry["corpus"], entry["authority"], entry["case"], entry["op"])] = (klass, entry)
+            key = (entry["corpus"], entry["authority"], entry["case"], entry["op"])
+            if key in listed:
+                # One entry per record: a second would silently replace the first (lf-1 recheck B's class).
+                raise Unusable(f"the delta lists the record {key} twice")
+            listed[key] = (klass, entry)
     rows, totals, unlisted = [], Counter(), []
     for key in sorted(base.keys() | head.keys()):
         old = base.get(key, {}).get("outcome")

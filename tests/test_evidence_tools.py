@@ -7,6 +7,7 @@ whose own result says it compared nothing or found a difference.
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -83,6 +84,29 @@ def test_b1_latency_fails_unless_every_output_matches(two_checkouts, monkeypatch
     side = {base: "base", head: "head"}
     monkeypatch.setattr(b1_latency, "check", lambda root, doc: (0.1, 0.1, *outputs[side[root]]))
     assert b1_latency.main([str(base), str(head), str(document), "--runs", "2"]) == status
+
+
+@pytest.mark.parametrize("order", [("a", "b"), ("b", "a")])
+def test_b1_latency_keeps_every_document_with_the_same_name(two_checkouts, monkeypatch, capsys, order):
+    """lf-1 recheck B: `a/s1.ve.md` differing and `b/s1.ve.md` matching was one row (the last) and exit 0."""
+    base, head, _ = two_checkouts
+    documents = {}
+    for directory in order:
+        (base.parent / directory).mkdir()
+        documents[directory] = base.parent / directory / "s1.ve.md"
+        documents[directory].write_text(directory)
+    side = {base: "base", head: "head"}
+
+    def check(root, document):
+        differs = document == documents["a"].resolve() and side[root] == "head"
+        return 0.1, 0.1, 0, "other\n" if differs else "ok\n"
+
+    monkeypatch.setattr(b1_latency, "check", check)
+    argv = [str(base), str(head), *(str(documents[d]) for d in order), "--runs", "1"]
+    assert b1_latency.main(argv) == 1
+    rows = json.loads(capsys.readouterr().out)
+    assert [row["document"] for row in rows] == [str(documents[d]) for d in order]
+    assert [row["same_output"] for row in rows] == [d == "b" for d in order]
 
 
 def test_b1_latency_compares_every_run_not_the_last():
