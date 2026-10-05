@@ -20,6 +20,9 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
 INVENTORY = "lean/VE/Route/frozen-sources.sha256"
+ENGLISH_LOCK = "ve/english_grammar/LOCK.json"
+ENGLISH_TABLE = "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean"
+ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
 
 
 class Staging:
@@ -412,11 +415,6 @@ def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
     rejects(staging, "lean/Main.lean: existing subcommands changed")
 
 
-ENGLISH_LOCK = "ve/english_grammar/LOCK.json"
-ENGLISH_TABLE = "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean"
-ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
-
-
 def test_english_grammar_checks_the_staged_generated_table(staging):
     """Spec fixture t1 through the hook: an edited generated rule names the profile and the rule tag."""
     text = staging.head(ENGLISH_TABLE).decode()
@@ -472,8 +470,18 @@ def stage_large_change(staging):
     line = b"The applicant qualifies when every listed condition holds on the reference date.\n"
     for number in range(1500):
         files[f"experiments/timing-probe/case_{number:04}.md"] = line * 120
+    # The English grammar lock hashes trusted Lean files: an edit of them raises actions_version (spec
+    # english-lean-s2.md 2.9), and the generated tables are never edited by hand.
+    for path in [p for p in lean if p.startswith("lean/VE/EnglishGrammar/Fixed/")]:
+        del files[path]
+    lock = json.loads(staging.head(ENGLISH_LOCK))
+    lock["files"] = {path: hashlib.sha256(files.get(path) or staging.head(path)).hexdigest()
+                     for path in lock["files"]}
+    lock["actions_version"] = "timing-probe"
+    files[ENGLISH_LOCK] = (json.dumps(lock, indent=1) + "\n").encode()
+    files[ENGLISH_VERSION] = staging.head(ENGLISH_VERSION).replace(b'"1"', b'"timing-probe"')
     staging.stage_many(files)
-    staging.rehash(*lean)
+    staging.rehash(*[p for p in lean if p in files], ENGLISH_VERSION)
     return files
 
 
