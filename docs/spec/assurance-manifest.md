@@ -180,8 +180,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/Wire.lean` | 988 | 988 | 1–988 | `311cfeb72316…` |
 | `lean/VE/Readings/SupWire.lean` | 378 | 378 | 1–378 | `f1efaaba3d67…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 139 | 139 | 1–139 | `5fd6c65cffd9…` |
-| `lean/VE/EnglishGrammar/Run.lean` | 331 | 331 | 1–331 | `1e0d02fad484…` |
-| **total** | | **18,780** | | |
+| `lean/VE/EnglishGrammar/Run.lean` | 333 | 333 | 1–333 | `7f25caf22271…` |
+| **total** | | **18,782** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
