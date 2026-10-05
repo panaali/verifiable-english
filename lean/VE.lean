@@ -4,6 +4,7 @@ import VE.Compose.Dispatch
 import VE.Compose.Content
 import VE.Compose.Examples
 import VE.Readings.Doc
+import VE.Readings.Layers
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Wire

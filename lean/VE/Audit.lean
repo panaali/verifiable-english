@@ -121,6 +121,7 @@ import VE.NormDefaults.Replay
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Run
 import VE.Readings.Doc
+import VE.Readings.Layers
 import VE.Readings.Separate
 import VE.Readings.Lines
 import VE.Readings.Examples
@@ -3130,6 +3131,36 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Run.separatesWith_eq
 #print axioms VE.Readings.Run.assignments_of_ownedKeys_nil
 #print axioms VE.Readings.Run.pairFacts_eq
+#print axioms VE.Norms.expStep_foldl_length
+#print axioms VE.Norms.expStep_foldl_drop
+#print axioms VE.Norms.entryTable_take
+#print axioms VE.Norms.expAt_expEntries
+#print axioms VE.Norms.subst_expAt
+#print axioms VE.Norms.layersOf_syms
+#print axioms VE.Norms.layersOf_names
+#print axioms VE.Norms.layersOf_entries
+#print axioms VE.Norms.substIn_eq
+#print axioms VE.Norms.conflictIn_eq
+#print axioms VE.Norms.outcomeBaseIn_eq
+#print axioms VE.Norms.pairConflictIn_eq
+#print axioms VE.Norms.targetsIn_eq
+#print axioms VE.SoftNorms.selectsOn_soften
+#print axioms VE.SoftNorms.softPremisesIn_eq
+#print axioms VE.SoftNorms.checkSoftOnce_eq
+#print axioms VE.SoftNorms.softSemanticCheckOnce_eq
+#print axioms VE.SoftNorms.validateSoftOnce_eq
+#print axioms VE.Rights.validateRightsOnce_eq
+#print axioms VE.Readings.cellsOn_sideOf
+#print axioms VE.Readings.assignmentsOn_sideOf
+#print axioms VE.Readings.tablesModelOn_sideOf
+#print axioms VE.Readings.sideValidOn_sideOf
+#print axioms VE.Readings.sideValueOn_sideOf
+#print axioms VE.Readings.Wire.chainText_eq
+#print axioms VE.Readings.Run.completionsOn_sideOf
+#print axioms VE.Readings.Run.replayPair_doc
+#print axioms VE.Readings.Run.pairFactsIn_eq
+#print axioms VE.Readings.Run.sideAt_sidesOf
+#print axioms VE.Readings.Run.setPairs_eq
 #print axioms VE.Readings.relaxTo_name
 #print axioms VE.Readings.relaxTo_pred
 #print axioms VE.Readings.relaxTo_sign
