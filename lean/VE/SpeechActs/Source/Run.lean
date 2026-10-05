@@ -208,7 +208,7 @@ def readingSets (se : Wire.SpeechEnvironment) (envId : String) (unitIds : List S
       if let .arr _ := r.getObjValD "content" then
         let _ ← VE.Bridge.decodeFormula 64 (r.getObjValD "content")
   let plain := items.filter ordinary
-  let _ ← Loader.compileSets se.ne.rv se.profiles envId unitIds (.arr plain.toArray)
+  let _ ← Loader.compileSets se.ne.rv se.profiles envId unitIds (.arr plain.toArray) (python := true)
   let info := fun (i : Json) => (SetInfo.mk (((i.getObjValD "id").getStr?).toOption.getD "")
     (((i.getObjValD "unit").getStr?).toOption.getD "") (((i.getObjValD "version").getNat?).toOption.getD 0)
     (i.getObjValD "status" == .str "authored") (readingsOf i))
@@ -580,13 +580,14 @@ def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechS
   for (_, text) in fences do
     unless Wire.asciiWording text do throw Wire.nonAsciiWording
   let terms := Loader.optionalList fm "open_terms"
-  let openNames ← Loader.openTermNames se.ne.rv terms
+  let openNames ← Loader.openTermNames se.ne.rv terms (python := true)
   for u in units do
-    let _ ← Loader.meaningStatus openNames u.meaning
+    let _ ← Loader.meaningStatus openNames u.meaning (python := true)
   let ids := units.map (·.id)
   let sets ← readingSets se envId ids (Loader.optionalList fm "reading_sets")
   let _ ← Loader.narrowingIds (sets.map fun s => (s.id, s.version,
     s.readings.map fun r => ((r.getObjValD "id").getStr?).toOption.getD "")) ids (Loader.optionalList fm "narrowings")
+    (python := true)
   let chosen := fun (u : SourceUnit) => (latestOf sets u.id).any (·.authored)
   -- An English fence needs the speech parser (Python's English layer); a fence a signed choice replaces does not.
   for u in units do
