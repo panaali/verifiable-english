@@ -54,7 +54,7 @@ def reference : Shape :=
           "document_name",
           "citation",
           "navigation"]),
-        ("target", n [
+        ("target", copied "the mention's front-matter target, copied from the request's document (Discourse.Admission.referencesJson)" <| n [
           obj,
           .required ["kind"],
           closed [

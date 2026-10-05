@@ -317,6 +317,42 @@ theorem mapM {β : Type} {Q : α → Prop} {f : β → Except String α} {xs : L
         · exact h x List.mem_cons_self w hfx
         · exact ih (fun z hz => h z (List.mem_cons_of_mem _ hz)) zs hrest w hw
 
+theorem map {β : Type} {x : Except String β} {f : β → α} (h : ∀ a, P (f a)) : OkP P (x.map f) := by
+  intro w hw
+  cases x with
+  | error e => cases hw
+  | ok a => cases hw; exact h a
+
+theorem filterMapM_loop {β : Type} {Q : α → Prop} {f : β → Except String (Option α)}
+    (h : ∀ x, OkP (fun o => ∀ b, o = some b → Q b) (f x)) :
+    ∀ (xs : List β) (bs : List α), (∀ b ∈ bs, Q b) → OkP (fun ys => ∀ y ∈ ys, Q y) (List.filterMapM.loop f xs bs)
+  | [], bs, hb => by
+    intro ys hys
+    simp only [List.filterMapM.loop] at hys
+    have hys : (Except.ok bs.reverse : Except String (List α)) = .ok ys := hys
+    cases hys
+    intro y hy
+    exact hb y (List.mem_reverse.mp hy)
+  | x :: xs, bs, hb => by
+    intro ys hys
+    simp only [List.filterMapM.loop] at hys
+    cases hfx : f x with
+    | error e => rw [hfx] at hys; cases hys
+    | ok o =>
+      rw [hfx] at hys
+      cases o with
+      | none => exact filterMapM_loop h xs bs hb ys hys
+      | some b =>
+        exact filterMapM_loop h xs (b :: bs) (fun y hy => by
+          rcases List.mem_cons.mp hy with rfl | hy
+          · exact h x _ hfx y rfl
+          · exact hb y hy) ys hys
+
+/-- A `filterMapM` returns elements each satisfying what the function guarantees of its `some`. -/
+theorem filterMapM {β : Type} {Q : α → Prop} {f : β → Except String (Option α)} {xs : List β}
+    (h : ∀ x, OkP (fun o => ∀ b, o = some b → Q b) (f x)) : OkP (fun ys => ∀ y ∈ ys, Q y) (xs.filterMapM f) :=
+  filterMapM_loop h xs [] (fun _ h => by cases h)
+
 theorem of {r : Except String α} {Q : α → Prop} (h : OkP Q r) (hq : ∀ v, Q v → P v) : OkP P r :=
   fun v hv => hq v (h v hv)
 

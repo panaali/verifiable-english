@@ -123,6 +123,17 @@ elab "fits_pick" : tactic => withMainContext do
     if set then evalTactic (← `(tactic| refine Fits.setObjAlt $n rfl (by keys_ok) ?_ ?_))
     else evalTactic (← `(tactic| refine Fits.mkObjAlt $n rfl (by keys_ok) ?_))
 
+/-- `Fits Γ k v` with `k` replaced by its weak head normal form (a field's skeleton looked up,
+an abbreviation unfolded), so that lemmas apply to it by reducible unification. -/
+elab "skel_norm" : tactic => withMainContext do
+  let t ← instantiateMVars (← getMainTarget)
+  unless t.isAppOfArity ``Fits 3 do throwError "not a Fits goal"
+  let args := t.getAppArgs
+  let k ← whnf args[1]!
+  if k == args[1]! then throwError "skel_norm: already normal"
+  let g ← getMainGoal
+  replaceMainGoal [← g.change (mkApp3 (mkConst ``Fits) args[0]! k args[2]!)]
+
 /-- The position of `a` in the literal list `l` (structural equality). -/
 def position (l a : Expr) : MetaM (Option Nat) := do
   let some xs := listElems bound (← whnf l) | return none
@@ -159,20 +170,29 @@ open Lean
 macro "alt_sub" : tactic =>
   `(tactic|(intro s hs; simp only [List.mem_cons, List.not_mem_nil, or_false] at hs; (repeat' (rcases hs with h | hs)); all_goals (subst_vars; alt_mem)))
 
-syntax "fits" : tactic
+/-- `fits using l, ...`: as `fits`, trying at every node first each lemma `l` (a `Fits` fact about
+an encoder, such as `claimJson_fits`), whose hypotheses are closed by assumption. -/
+syntax "fits" (" using " term,+)? : tactic
 
 macro_rules
-  | `(tactic| fits) => `(tactic| first
+  | `(tactic| fits) => `(tactic| fits using Fits.any)
+  | `(tactic| fits using $ls,*) => do
+    let mut known : Lean.TSyntax ``Lean.Parser.Tactic.tacticSeq ← `(tacticSeq| fail "no lemma applies")
+    for l in ls.getElems.reverse do
+      known ← `(tacticSeq| first | (with_reducible apply $l <;> assumption) | $known)
+    `(tactic| first
+      | (skel_norm; fits using $ls,*)
       | exact Fits.any _
-      | (apply Fits.mkObj (by keys_ok); fields_split <;> fits)
-      | (fits_pick <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits)
-      | (apply Fits.setObj (by keys_ok) <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits)
-      | (apply Fits.arrOf; elems_split <;> (try intros) <;> elem_cases <;> fits)
-      | (apply Fits.mkObjExtra; elems_split <;> (try intros) <;> elem_cases <;> fits)
+      | $known
+      | (apply Fits.mkObj (by keys_ok); fields_split <;> fits using $ls,*)
+      | (fits_pick <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
+      | (apply Fits.setObj (by keys_ok) <;> (try simp only [List.map_cons, List.map_nil, List.filter_cons, List.filter_nil, String.reduceBNe, ↓reduceIte, Bool.false_eq_true]) <;> (try fields_split) <;> fits using $ls,*)
+      | (apply Fits.arrOf; elems_split <;> (try intros) <;> elem_cases <;> fits using $ls,*)
+      | (apply Fits.mkObjExtra; elems_split <;> (try intros) <;> elem_cases <;> fits using $ls,*)
       | (apply Fits.strIn_lit; decide)
       | (apply Fits.strNotIn_lit; decide)
-      | (lits_simp; fits)
-      | (split <;> fits)
+      | (lits_simp; fits using $ls,*)
+      | (split <;> fits using $ls,*)
       | skip)
 
 end ResponseShape
