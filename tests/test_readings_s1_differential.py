@@ -8,7 +8,8 @@ and Lean's `readings-validate` is the only answer: every situation the search fi
 which the search finds none is refused, each fault is refused with the text of the check it breaks, and the route
 (`ve.readings_route.validate`) relays every row, Lean's answer or its diagnostic with Lean's text. Python's
 regeneration of the answer and Rust's replay of the situations were deleted in batch 3, so nothing else is
-compared. The count is 1,000 (9.3); `VE_S1_DIFFERENTIAL_COUNT` lowers it for a quick run.
+compared. The count is 1,000 (9.3), in a nightly test; the default run checks the first 200;
+`VE_S1_DIFFERENTIAL_COUNT` lowers both for a quick run.
 
 `test_separation_conservative_shadow` is 9.3's shadow of `separation_conservative` on the search's own evaluation
 (the rule-3 duplicate of Lean's `sideValid` and `sideValue`): on pairs in which neither side owns a key, some
@@ -32,6 +33,8 @@ from ve.readings_s1 import Decoded, record_situations, search
 
 SEED = 20261002
 COUNT = int(os.environ.get("VE_S1_DIFFERENTIAL_COUNT", "1000"))
+# The default run's prefix of those documents, which still breaks every check and exercises every generator.
+QUICK_COUNT = min(COUNT, 200)
 ASKS = ["binary", "asks", ["var", 1], ["var", 0]]
 ASKS_ALL = ["forall", "agent", ["forall", "user", ASKS]]
 NOT_ASKS_ALL = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
@@ -358,7 +361,18 @@ def routed(case):
 
 
 def test_generated_sets_lean_answers(lean):
-    cases, expectations = generated_cases()
+    """The first QUICK_COUNT documents of the nightly run (the same seeds, in order)."""
+    generated_sets_lean_answers(QUICK_COUNT)
+
+
+@pytest.mark.nightly
+def test_all_generated_sets_lean_answers(lean):
+    """9.3's 1,000 documents: runs with `-m nightly` and in tools/gate.py."""
+    generated_sets_lean_answers(COUNT)
+
+
+def generated_sets_lean_answers(count):
+    cases, expectations = generated_cases(count)
     rows = []
     for start in range(0, len(cases), 50):
         rows.extend(run_lean(cases[start:start + 50]))

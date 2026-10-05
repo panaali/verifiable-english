@@ -23,6 +23,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import Log, cell_env, condition, estimate, record, statement
+from subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin/ve_risk_route"
@@ -45,7 +46,7 @@ CELLS = ("server_outage", "job_failure", "task_delay")
 
 
 def route(cases):
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=590)
+    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     return json.loads(out.stdout)
 
 
@@ -112,10 +113,13 @@ def test_margins_agree_with_brute_force(shard):
     rng = random.Random(9000 + shard)
     records = []
     while len(records) < RECORDS // SHARDS:
-        estimates, conditions = draw(rng)
-        res = route([build(policy, estimates, conditions)])[0]
-        if res["status"] == "ok" and res.get("verdict") != "CONFLICT":
-            records.append((estimates, conditions, res))
+        # Candidates are drawn in batches and decided in one route call; the records kept are
+        # the first acceptable ones in draw order, as when each was decided on its own.
+        drawn = [draw(rng) for _ in range(2 * (RECORDS // SHARDS - len(records)))]
+        for (estimates, conditions), res in zip(drawn, route([build(policy, *d) for d in drawn])):
+            if (len(records) < RECORDS // SHARDS and res["status"] == "ok"
+                    and res.get("verdict") != "CONFLICT"):
+                records.append((estimates, conditions, res))
     probes, keys = [], []
     for index, (estimates, conditions, _) in enumerate(records):
         for name, eid in (("q", "Eq"), ("r", "Er")):
