@@ -3,7 +3,8 @@
 
 `completionsOn` built every completion's admissibility before `.all`/`.any` could stop: on a 12-cell query whose
 first completion decides both answers it evaluated all 4,096. The route now runs `pairEval`, whose other side goes
-through `scanOthers` (each admissibility when the scan reaches it, each value only when needed). Three layers pin it:
+through `scanOthers` (each admissibility when the scan reaches it, each value only when needed). The first two
+checks pin it; the third checks the answer:
 
 * Without timing, at build time: `lean/VE/Readings/RunExamples.lean` runs `pairEval` in a counting monad and pins
   the evaluations (one admissibility and one value on the 12-cell query, not 4,096). `VE.lean` imports it, so
@@ -11,8 +12,10 @@ through `scanOthers` (each admissibility when the scan reaches it, each value on
 * The compiled route is the oracle for "the route runs the counted function": a script run by the pinned toolchain
   reads the compiler's IR of `ve_readings_route` and walks every function `main` can call. `pairFactsIn` must call
   `pairEval` and the walk must reach `scanOthers`, so a route that evaluates the completions some other way fails.
-* End to end: the review's reproducer (12 cells, ten fixed default rules) runs under a CPU limit far below what
-  evaluating every completion costs (9 s at the batch-3d head before the fix) and far above what the scan costs.
+* End to end: the review's reproducer (12 cells, ten fixed default rules) gives the specified answer. Its CPU
+  limit only stops a runaway route: with each side's layers built once (batch 3d), evaluating all 4,096
+  completions here costs 0.37 s against the scan's 0.09 s (seeded mutant M3), and the generated-layer limits
+  admit no heavier side, so time cannot tell the two apart. The counts and the IR walk above are the regression.
 """
 from __future__ import annotations
 
@@ -118,7 +121,7 @@ def review_case(raw):
             "set": "rs1", "situation": sid, "other": "default"}, sid
 
 
-def test_the_other_side_is_scanned_lazily_on_the_review_reproducer(lean):  # noqa: F811
+def test_the_review_reproducer_gives_the_specified_answer(lean):  # noqa: F811
     raw = env_k()
     case, sid = review_case(raw)
     completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=3)
