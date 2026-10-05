@@ -6,6 +6,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.environment import Environment
 from ve.errors import UnsupportedProfile
 from ve.units import elaborate_quantity
@@ -32,6 +33,6 @@ def test_integer_quantifier_forms_are_gated(formula):
     if RUST.exists():
         case = {"id": "gate", "kind": "quantity", "environment": raw, "quantity": payload}
         process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(case),
-                                 capture_output=True, text=True, timeout=30)
+                                 capture_output=True, text=True, timeout=HANG_TIMEOUT)
         result = json.loads(process.stdout)[0]
         assert result["status"] == "error" and "numbers2" in result["error"]["message"]

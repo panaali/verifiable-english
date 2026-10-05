@@ -2,7 +2,7 @@
 looprecheck1 B1 and B2, build checklist 4 and 5).
 
 The transports of `ve/backends/lean.py` (soft, rights, alternatives, risk, reports, discourse, norm-defaults,
-readings) share one reader, `route_rows`: the output is read as bytes inside the containment, and every row, an
+readings) share one reader, `read_rows`: the output is read as bytes inside the containment, and every row, an
 error row included, is bound to its case. B1: a genuine Lean error replayed against valid K1 with its `id`
 changed, emptied or omitted used to reject the document (`VEError`); only `ok` rows were bound. B2: a checker
 writing the byte 0xff made `validate` raise `UnicodeDecodeError`, since decoding happened in `subprocess.run`,
@@ -124,7 +124,9 @@ def test_no_answer_to_the_case_is_unavailable_on_every_transport(tmp_path, trans
         TRANSPORTS[transport](checker(tmp_path, stdout, returncode), CASE)
 
 
-# Error rows in the shapes Lean writes: each is Lean's rejection of the case.
+# Error rows in the shapes Lean writes: each is Lean's rejection of the case. Only the soft route's rows name a
+# code (`read_rows(coded=True)`); on any other route a code is no answer (`tests/test_relay.py`).
+CODED = {"soft"}
 GENUINE_ERRORS = {
     "id echoed": ERROR,
     "soft route's code": {**ERROR, "code": "InvalidInput"},
@@ -137,6 +139,10 @@ GENUINE_ERRORS = {
 @pytest.mark.parametrize("shape", GENUINE_ERRORS)
 @pytest.mark.parametrize("transport", TRANSPORTS)
 def test_an_error_row_in_leans_shape_is_a_rejection(tmp_path, transport, shape):
+    if "code" in GENUINE_ERRORS[shape] and transport not in CODED:
+        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
+            TRANSPORTS[transport](checker(tmp_path, _rows(GENUINE_ERRORS[shape]), 1), CASE)
+        return
     row = TRANSPORTS[transport](checker(tmp_path, _rows(GENUINE_ERRORS[shape]), 1), CASE)
     assert row["status"] == "error" and row["error"] == GENUINE_ERRORS[shape]["error"]
 
@@ -168,15 +174,23 @@ def test_every_built_route_answers_its_genuine_errors(binary):
         pytest.skip(f"{binary} is not built")
     transport = TRANSPORTS[ROUTES[binary]]
     for case in ({"id": "c", "kind": "no-such-kind", "environment": {}, "document": "x"},
-                 {"id": "c", "kind": "admission"},
-                 # runCaseReported's id echo for a case without one: JSON null
-                 {"kind": "no-such-kind", "environment": {}}):
+                 {"id": "c", "kind": "admission"}):
         row = transport(executable, case)
         assert row["status"] == "error" and type(row["error"]) is str, (binary, case, row)
+    # runCaseReported's id echo for a case without one: JSON null. The routes read as VE's restricted JSON
+    # (`read_rows(restricted=True)`: alternatives, risk, reports) have no null, so there it is no answer; Python
+    # sends those routes no case without an id.
+    case = {"kind": "no-such-kind", "environment": {}}
+    if ROUTES[binary] in ("alternatives", "reports"):
+        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: "):
+            transport(executable, case)
+    else:
+        row = transport(executable, case)
+        assert row["status"] == "error" and type(row["error"]) is str, (binary, row)
     # `main`'s shape: a case its JSON reader rejects on its own (depth), named by its index. Python's canonical
     # encoder refuses that depth itself, so the case is sent as plain JSON.
     case = {"id": "c", "kind": "admission", "document": _deep(300)}
-    [row] = lean_backend.route_rows(executable, [case], timeout=HANG_TIMEOUT, payload=json.dumps([case]).encode())
+    [row] = lean_backend._route_rows(binary, executable, [case], json.dumps([case]).encode(), timeout=HANG_TIMEOUT)
     assert row == {"status": "error", "case_index": 0, "error": "ResourceLimit: JSON depth exceeds 256"}, binary
 
 

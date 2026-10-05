@@ -28,6 +28,11 @@ Corpora (``--corpus``, default all):
   differential (`tests/test_readings_s1_differential.py`, the search's situations recorded)
   and on every environment-null case of `tests/test_readings_s1_lean.py` (batch 3). The
   documents are generated once, by this checkout, into a file both sides read.
+* ``discourse``: every `ve-document@2` text of `docs/lean-first/discourse-corpus.json.gz` (the
+  documents the discourse tests write, captured at batch 4's base by
+  `docs/lean-first/b4/capture_discourse.py`), each written with the sibling files its imports name
+  to its own scratch directory, through `check_document` and `render_document` (under the default
+  authority, `--workers` processes).
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -43,6 +48,25 @@ mig3's fine classes (2.5: the path walk), then the plan's change class:
 * ``order``: both sides raised and the codes differ (another fault is reported first);
 * ``verdict``: anything else (verdicts, identities, counts, structure, a missing record).
 
+``compare`` refuses evidence that cannot show preservation (exit 2). Before it uses a record, every
+line must be one the recorder writes (`record_problem`, the schema `tools/lean_first_schema/record.json`:
+each corpus's fields, authorities and sources, each operation's outcome, a rejection's complete
+diagnostic), and the records of one corpus file must name one digest; an empty, partial or retyped
+outcome is no acceptance. Then, for every corpus and authority
+it checks (``--corpus``, ``--authority``, default all; the pilots, the readings corpus and the
+discourse corpus have the one authority ``default``), each side must hold a record of every case of
+the corpus as this checkout defines it (`expected_cases`: the conformance files' case ids, the probe
+matrix's frozen baseline, the pilot documents, the readings corpus's cases, the discourse corpus's
+ids), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`, given the
+outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``; a readings case:
+``readings_validate``; a discourse document: `DISCOURSE_OPS`),
+and nothing else, some of its records must be available, and it must hold both an
+acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
+both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
+when the delta lists it under ``unavailable`` with a ``reason`` (``{"corpus", "authority", "case",
+"op", "reason"}``); one unavailable on one side only is an ``availability`` difference. Outcomes
+are compared as JSON, with types: ``true`` is not ``1``.
+
 ``--delta`` names the batch's signed list. ``wording`` is a list of text pairs ``{"base", "head"}``
 (mig3 2.4's wording map, signed as one block): a wording difference is accepted when every text
 that differs is a listed pair. ``order``, ``verdict`` and ``availability`` list records, each
@@ -53,9 +77,12 @@ both outcomes are exactly the listed ones. Exit 0 when every difference is liste
 from __future__ import annotations
 
 import argparse
+import base64
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import dataclasses
+from functools import cache
+import gzip
 import hashlib
 import json
 import os
@@ -64,7 +91,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots", "readings")
+CORPORA = ("probe", "conformance", "pilots", "readings", "discourse")
+DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
+DISCOURSE_OPS = ("document_check", "document_render")
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
@@ -78,6 +107,9 @@ IDENTITY_KEYS = frozenset({"environment_id", "source_id", "meaning_id", "model_i
                            "graph_id", "report_id", "document_hash"})
 COUNT_KEYS = frozenset({"evaluations", "steps", "models_checked"})
 PILOT_TIMEOUT = 600
+READINGS_COUNT = 1000  # the readings differential's documents (composition-s1.md 9.3)
+PROBE_BASELINE = "conformance/baseline-2026-09/python.json"
+PROBE_SECTIONS = ("graph_probes", "budget_boundaries", "feature_probes")
 
 
 # --- records ---------------------------------------------------------------------------
@@ -117,6 +149,12 @@ def digest(path: Path) -> str:
 
 # --- the corpora (run in the child, importing the recorded checkout's `ve`) -------------------
 
+def probe_case(row: dict) -> str:
+    """The case key of a probe matrix cell."""
+    return json.dumps([row.get("language", "ve.core@0.2"), list(row["profiles"]), row["operation"],
+                       row["input_class"]])
+
+
 def probe_records(root: Path, authority: str):
     from tests import probe_matrix as probe
     from tools import stage2_parity
@@ -125,13 +163,16 @@ def probe_records(root: Path, authority: str):
         dispatch.observers.append(stage2_parity._observe)
         probe.outcome = stage2_parity._outcome
         probe.graph_baselines = stage2_parity._backend_graph_baselines
-    data = stage2_parity._generate(authority)
-    source = digest(root / "tests/probe_matrix.py")
+    yield from probe_rows(stage2_parity._generate(authority), digest(root / "tests/probe_matrix.py"))
+
+
+def probe_rows(data: dict, source: str):
+    """The records of the probe matrix's results `data` (cells and named probes, the form of
+    `PROBE_BASELINE`), read from the file of digest `source`."""
     for row in data["cells"]:
-        key = [row.get("language", "ve.core@0.2"), list(row["profiles"]), row["operation"], row["input_class"]]
-        yield {"case": json.dumps(key), "op": row["operation"], "source_sha256": source,
+        yield {"case": probe_case(row), "op": row["operation"], "source_sha256": source,
                "outcome": {"cell": row["cell"], "status": row["status"], "output": public(row["output"])}}
-    for section in ("graph_probes", "budget_boundaries", "feature_probes"):
+    for section in PROBE_SECTIONS:
         for name, row in data[section].items():
             yield {"case": f"{section}/{name}", "op": section, "source_sha256": source,
                    "outcome": public({k: v for k, v in row.items() if k != "routed"})
@@ -143,42 +184,66 @@ def identified(value, identity: str) -> dict:
     return {identity: getattr(value, identity), "record": public(value)}
 
 
-def conformance_records(root: Path, authority: str):
+# The public operations a conformance case is recorded through, in order: (operation, whether the
+# case holds its input, the operations that must have returned first). The one table of both the
+# recorder (`conformance_records`) and the completeness check (`conformance_ops`).
+CONFORMANCE_OPS = (
+    ("environment", lambda case: True, ()),
+    ("model", lambda case: "model" in case, ("environment",)),
+    ("parse", lambda case: isinstance(case.get("source"), str), ("environment",)),
+    ("canonicalize", lambda case: isinstance(case.get("source"), str), ("environment",)),
+    ("source_id", lambda case: isinstance(case.get("source"), str), ("environment",)),
+    ("typing", lambda case: "ast" in case, ("environment",)),
+    ("meaning_id", lambda case: "ast" in case, ("typing",)),
+    ("evaluate", lambda case: "ast" in case, ("typing", "model")),
+    ("countermodel_check", lambda case: "conclusion" in case, ("model",)),
+)
+
+
+def conformance_ops(case: dict, outcome_of) -> dict[str, dict | None]:
+    """The operations conformance case `case` is recorded through (`CONFORMANCE_OPS`), in order,
+    each with its outcome `outcome_of(op)` (None for one a recording lacks): an operation runs when
+    the case holds its input and every operation it builds on returned."""
+    outcomes: dict[str, dict | None] = {}
+    for op, holds, after in CONFORMANCE_OPS:
+        if holds(case) and all("returned" in (outcomes.get(p) or {}) for p in after):
+            outcomes[op] = outcome_of(op)
+    return outcomes
+
+
+def conformance_calls(case: dict) -> dict:
+    """The call of each operation of `CONFORMANCE_OPS` on `case`; the environment, model and
+    checked document are built once per case."""
+    from functools import cache
     from ve import (Environment, FiniteModel, canonicalize, check_countermodel, check_document,
                     document_from_data, evaluate, formula_from_data, meaning_id, parse, source_id)
+    env = cache(lambda: Environment(case["environment"]))
+    model = cache(lambda: FiniteModel.from_dict(env(), case["model"]))
+    document = cache(lambda: check_document(env(), document_from_data(env(), case["ast"])))
+
+    def countermodel():
+        premises = [formula_from_data(env(), p) for p in case["premises"]]
+        return check_countermodel(env(), premises, formula_from_data(env(), case["conclusion"]), model())
+
+    return {"environment": lambda: identified(env(), "environment_id"),
+            "model": lambda: identified(model(), "model_id"),
+            "parse": lambda: parse(env(), case["source"]),
+            "canonicalize": lambda: canonicalize(env(), case["source"]),
+            "source_id": lambda: source_id(case["source"], env()),
+            "typing": document,
+            "meaning_id": lambda: meaning_id(env(), document()),
+            "evaluate": lambda: evaluate(env(), document(), model()),
+            "countermodel_check": countermodel}
+
+
+def conformance_records(root: Path, authority: str):
     for name in CONFORMANCE:
         path = root / f"conformance/{name}.json"
         source = digest(path)
         for case in json.loads(path.read_text()):
-            base = {"case": f"{name}/{case['id']}", "source_sha256": source}
-            env_out = outcome(lambda: identified(Environment(case["environment"]), "environment_id"))
-            yield {**base, "op": "environment", "outcome": env_out}
-            if "returned" not in env_out:
-                continue
-            env = Environment(case["environment"])
-            model = None
-            if "model" in case:
-                model_out = outcome(lambda: identified(FiniteModel.from_dict(env, case["model"]), "model_id"))
-                yield {**base, "op": "model", "outcome": model_out}
-                if "returned" in model_out:
-                    model = FiniteModel.from_dict(env, case["model"])
-            if isinstance(case.get("source"), str):
-                yield {**base, "op": "parse", "outcome": outcome(lambda: parse(env, case["source"]))}
-                yield {**base, "op": "canonicalize", "outcome": outcome(lambda: canonicalize(env, case["source"]))}
-                yield {**base, "op": "source_id", "outcome": outcome(lambda: source_id(case["source"], env))}
-            if "ast" in case:
-                doc_out = outcome(lambda: check_document(env, document_from_data(env, case["ast"])))
-                yield {**base, "op": "typing", "outcome": doc_out}
-                if "returned" in doc_out:
-                    document = check_document(env, document_from_data(env, case["ast"]))
-                    yield {**base, "op": "meaning_id", "outcome": outcome(lambda: meaning_id(env, document))}
-                    if model is not None:
-                        yield {**base, "op": "evaluate", "outcome": outcome(lambda: evaluate(env, document, model))}
-            if "conclusion" in case and model is not None:
-                def countermodel():
-                    premises = [formula_from_data(env, p) for p in case["premises"]]
-                    return check_countermodel(env, premises, formula_from_data(env, case["conclusion"]), model)
-                yield {**base, "op": "countermodel_check", "outcome": outcome(countermodel)}
+            calls = conformance_calls(case)
+            for op, out in conformance_ops(case, lambda op: outcome(calls[op])).items():
+                yield {"case": f"{name}/{case['id']}", "source_sha256": source, "op": op, "outcome": out}
 
 
 def pilot_documents(root: Path) -> list[tuple[str, str, bytes]]:
@@ -210,20 +275,8 @@ def pilot_records(root: Path, scratch: Path, workers: int):
         name, blob, text = item
         path = scratch / f"{blob}.ve.md"
         path.write_bytes(text)
-        try:
-            done = subprocess.run([sys.executable, "-m", "ve", "document", "check", str(path)], cwd=root,
-                                  env=env, capture_output=True, timeout=PILOT_TIMEOUT)
-            stdout = done.stdout.decode("utf-8", "replace")
-            try:
-                stdout = json.loads(stdout)
-            except ValueError:
-                pass
-            result = {"exit": done.returncode, "stdout": stdout,
-                      "stderr": done.stderr.decode("utf-8", "replace").strip().splitlines()[-1:]}
-        except subprocess.TimeoutExpired:
-            result = {"timeout": PILOT_TIMEOUT}
         return {"case": name, "op": "document_check", "source_sha256": blob, "authority": "default",
-                "outcome": result}
+                "outcome": pilot_check(root, path, env)}
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         yield from pool.map(check, documents)
@@ -235,7 +288,7 @@ def readings_corpus(out: Path) -> None:
     from tests import test_readings_s1_lean as fixtures
     from ve.errors import VEError
     from ve.readings_s1 import wire
-    cases, _ = differential.generated_cases(1000)
+    cases, _ = differential.generated_cases(READINGS_COUNT)
     rows = [{"case": f"differential/{c['id']}", "environment": c["environment"], "document": c["document"]}
             for c in cases]
     for name, path in fixtures.ENVIRONMENT_NULLS:
@@ -247,9 +300,21 @@ def readings_corpus(out: Path) -> None:
             document = make_document(make())
         for unit in document["units"]:
             unit.setdefault("kind", unit_kind)
-        rows.append({"case": f"nulls/{name}/{'.'.join(map(str, path))}", "environment": nulled,
-                     "document": document})
+        rows.append({"case": _null_case(name, path), "environment": nulled, "document": document})
+    assert [row["case"] for row in rows] == readings_cases(), "the corpus names its cases as `readings_cases`"
     out.write_text(json.dumps(rows, ensure_ascii=False))
+
+
+def _null_case(name: str, path) -> str:
+    return f"nulls/{name}/{'.'.join(map(str, path))}"
+
+
+def readings_cases() -> list[str]:
+    """The case names of the readings corpus `readings_corpus` writes, without generating it: the
+    differential's documents (ids `c0`, `c1`, ...) and the environment-null cases."""
+    from tests import test_readings_s1_lean as fixtures
+    return [f"differential/c{n}" for n in range(READINGS_COUNT)] + [
+        _null_case(name, path) for name, path in fixtures.ENVIRONMENT_NULLS]
 
 
 def readings_records(path: Path):
@@ -262,6 +327,57 @@ def readings_records(path: Path):
                  for u in document["units"]]
         yield {"case": case["case"], "op": "readings_validate", "source_sha256": source,
                "outcome": outcome(lambda: validate(case["environment"], units, document["reading_sets"]))}
+
+
+def _discourse_case(item):
+    """`check_document` and `render_document` of one corpus document (in a pool worker)."""
+    scratch, entry = item
+    from ve.document import check_document, render_document
+    directory = Path(scratch) / entry["id"]
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, data in entry["files"].items():
+        try:
+            (directory / name).write_bytes(base64.b64decode(data))
+        except OSError:
+            pass  # a name no file can have stays absent, as it was in the test that wrote it
+    path = directory / "document.ve.md"
+    path.write_bytes(base64.b64decode(entry["document"]))
+    source = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
+    return [{"case": entry["id"], "op": op, "source_sha256": source, "authority": "default",
+             "outcome": outcome(lambda: call(path))}
+            for op, call in zip(DISCOURSE_OPS, (check_document, render_document))]
+
+
+def discourse_corpus(root: Path) -> list[dict]:
+    """The entries of the discourse corpus file of the checkout `root`."""
+    return json.loads(gzip.decompress((root / DISCOURSE).read_bytes()))
+
+
+def discourse_records(scratch: Path, workers: int):
+    """The discourse corpus, read from this tool's checkout, recorded with the child's `ve`."""
+    import multiprocessing
+    corpus = discourse_corpus(ROOT)
+    os.environ.pop("VE_AUTHORITY", None)
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        for rows in pool.imap(_discourse_case, [(str(scratch), entry) for entry in corpus], chunksize=8):
+            yield from rows
+
+
+def pilot_check(root: Path, path: Path, env: dict) -> dict:
+    """The outcome of `ve document check` of `path` in the checkout `root`."""
+    try:
+        done = subprocess.run([sys.executable, "-m", "ve", "document", "check", str(path)], cwd=root,
+                              env=env, capture_output=True, timeout=PILOT_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return {"timeout": PILOT_TIMEOUT}
+    stdout = done.stdout.decode("utf-8", "replace")
+    try:
+        report = json.loads(stdout)
+    except ValueError:
+        report = None
+    # A report that is a JSON object is recorded parsed, so that its members are compared one by one.
+    return {"exit": done.returncode, "stdout": report if type(report) is dict else stdout,
+            "stderr": done.stderr.decode("utf-8", "replace").strip().splitlines()[-1:]}
 
 
 def child(args) -> int:
@@ -281,6 +397,10 @@ def child(args) -> int:
                 continue
             if corpus == "pilots":
                 for record in pilot_records(root, Path(args.out).with_suffix(".pilots"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
+            if corpus == "discourse":
+                for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
             for authority in args.authority:
@@ -310,15 +430,127 @@ def record(args) -> int:
 
 # --- comparison ------------------------------------------------------------------------
 
+class Unusable(Exception):
+    """Evidence that cannot show preservation: `compare` gives no verdict on it (exit 2)."""
+
+
+def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
+    return ("default",) if corpus in ("pilots", "readings", "discourse") else tuple(authorities)
+
+
+def only(op: str):
+    """The operations of a case recorded through `op` alone, whatever its outcome."""
+    return lambda held: {op}
+
+
+def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict[tuple[str, str], dict]:
+    """Every case each (corpus, authority) of a complete recording holds, from this checkout's
+    corpora, not from a recording: the conformance files' case ids, the cells and named probes of
+    the probe matrix's frozen baseline, the pilot documents, the readings corpus's cases and the
+    discourse corpus's entries. Each case maps to its operations:
+    a function of the outcomes a recording holds for the case (`{op: outcome}`) giving the set of
+    operations it must hold, since a conformance case's later operations run only on what its
+    earlier ones returned (`conformance_ops`)."""
+    cases: dict[str, dict] = {}
+    for corpus in corpora:
+        if corpus == "conformance":
+            cases[corpus] = {
+                f"{name}/{case['id']}": (lambda held, case=case: set(conformance_ops(case, held.get)))
+                for name in CONFORMANCE for case in json.loads((root / f"conformance/{name}.json").read_text())}
+        elif corpus == "probe":
+            baseline = json.loads((root / PROBE_BASELINE).read_text())
+            cases[corpus] = {probe_case(row): only(row["operation"]) for row in baseline["cells"]} | {
+                f"{section}/{name}": only(section) for section in PROBE_SECTIONS for name in baseline[section]}
+        elif corpus == "readings":
+            cases[corpus] = {name: only("readings_validate") for name in readings_cases()}
+        elif corpus == "discourse":
+            cases[corpus] = {entry["id"]: (lambda held: set(DISCOURSE_OPS)) for entry in discourse_corpus(root)}
+        else:
+            cases[corpus] = {name: only("document_check") for name, _, _ in pilot_documents(root)}
+    return {(corpus, authority): cases[corpus] for corpus in corpora
+            for authority in authorities_of(corpus, authorities)}
+
+
+def _same(a, b) -> bool:
+    from ve.backends.service_schema import same_json  # the recorded checkout's `ve` may lack it
+    return same_json(a, b)
+
+SCHEMA = ROOT / "tools/lean_first_schema"
+
+
+@cache
+def _record_schema():
+    from ve.backends.service_schema import Compiler
+    return Compiler(SCHEMA).ref("record.json", "#/record")
+
+
+def _cells(row: dict):
+    """The probe outcomes a record holds (`probe_rows`): a cell, a feature probe, a boundary's pair."""
+    outcome = row["outcome"]
+    if row["corpus"] != "probe" or row["op"] == "graph_probes":
+        return []
+    if row["op"] == "budget_boundaries":
+        return [outcome[side] for side in ("at", "over", "under") if side in outcome]
+    return [outcome]
+
+
+def record_problem(row) -> str | None:
+    """Why `row` is not a record `record` writes, or None: the schema `lean_first_schema/record.json`
+    (fields, their types, each corpus's authorities and sources, each operation's outcome, a
+    rejection's complete diagnostic), then that a rejection cell's status is its error's code."""
+    from ve.backends.service_schema import Context, Invalid
+    try:
+        _record_schema()[0](row, Context(row), {})
+    except Invalid as exc:
+        return str(exc)
+    except RecursionError:
+        return "nesting exceeds the reader's depth"
+    for cell in _cells(row):
+        if cell["cell"] != "S" and cell["status"] != cell["output"]["code"]:
+            return "a rejection cell's status is not its error's code"
+    return None
+
+
+def _source_group(key: tuple) -> tuple:
+    """The records that read one corpus file: a conformance file, the probe matrix, a pilot document,
+    the readings corpus, a discourse corpus entry."""
+    corpus, _, case, _ = key
+    return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,), "readings": (corpus,)}.get(
+        corpus, (corpus, case))
+
+
+def _unique_pairs(pairs):
+    seen = {}
+    for name, value in pairs:
+        if name in seen:
+            raise ValueError(f"duplicate field {name!r}")
+        seen[name] = value
+    return seen
+
+
 def load(path: str) -> dict[tuple, dict]:
-    records = {}
-    for line in Path(path).read_text().split("\n"):
+    """The records of the recording at `path`, each checked (`record_problem`) before any is used: a
+    line the recorder cannot write, a duplicate record, or two records of one corpus file with
+    different digests (mixed identity) is `Unusable`."""
+    records, sources = {}, {}
+    if not Path(path).is_file():
+        raise Unusable(f"{path}: no recording")
+    for number, line in enumerate(Path(path).read_text().split("\n"), 1):
         if not line:
             continue
-        row = json.loads(line)
+        try:
+            row = json.loads(line, object_pairs_hook=_unique_pairs)
+        except ValueError as exc:
+            raise Unusable(f"{path}: line {number} is not JSON ({exc})") from None
+        problem = record_problem(row)
+        if problem:
+            raise Unusable(f"{path}: line {number} is no record the recorder writes: {problem}")
         key = (row["corpus"], row["authority"], row["case"], row["op"])
         if key in records:
-            raise SystemExit(f"{path}: duplicate record {key}")
+            raise Unusable(f"{path}: duplicate record {key}")
+        source = sources.setdefault(_source_group(key), row["source_sha256"])
+        if source != row["source_sha256"]:
+            raise Unusable(f"{path}: line {number} reads {'/'.join(_source_group(key))} with another digest")
         records[key] = row
     return records
 
@@ -327,7 +559,7 @@ def leaf_differences(a, b, path=()):
     """mig3 2.5 case A: (path, kind) for each difference; kind is `shape`, `leaf`, or `text` for a
     report's description (`DESCRIPTIONS`), compared whole."""
     if path and path[-1] in DESCRIPTIONS:
-        return [] if a == b else [(path, "text")]
+        return [] if _same(a, b) else [(path, "text")]
     if type(a) is not type(b):
         return [(path, "shape")]
     if isinstance(a, dict):
@@ -338,7 +570,7 @@ def leaf_differences(a, b, path=()):
         if len(a) != len(b):
             return [(path, "shape")]
         return [d for x, y in zip(a, b) for d in leaf_differences(x, y, path)]
-    return [] if a == b else [(path, "leaf")]
+    return [] if _same(a, b) else [(path, "leaf")]
 
 
 def _unavailable(outcome) -> bool:
@@ -347,8 +579,8 @@ def _unavailable(outcome) -> bool:
 
 
 def change_class(base: dict | None, head: dict | None) -> str | None:
-    """The plan's class of a difference between two outcomes, or None when equal."""
-    if base == head:
+    """The plan's class of a difference between two outcomes, or None when equal (as JSON, with types)."""
+    if _same(base, head):
         return None
     if base is None or head is None:
         return "verdict"
@@ -362,6 +594,11 @@ def change_class(base: dict | None, head: dict | None) -> str | None:
                            for path, kind in differences):
         return "wording"
     return "verdict"
+
+
+def _rejected(outcome: dict) -> bool:
+    """Whether an outcome is a rejection (or unavailable): an error, a rejection cell, a failing exit."""
+    return _raised(outcome) is not None or outcome.get("exit", 0) != 0 or "timeout" in outcome
 
 
 def _raised(outcome: dict):
@@ -378,27 +615,66 @@ def text_pairs(base, head, path=()):
     """The (base, head) texts of the `message` and `detail` leaves that differ; a description
     (`DESCRIPTIONS`) is one pair of its canonical JSON texts."""
     if path and path[-1] in DESCRIPTIONS:
-        return [] if base == head else [(json.dumps(base, sort_keys=True, ensure_ascii=False),
+        return [] if _same(base, head) else [(json.dumps(base, sort_keys=True, ensure_ascii=False),
                                          json.dumps(head, sort_keys=True, ensure_ascii=False))]
     if isinstance(base, dict) and isinstance(head, dict):
         return [p for k in base.keys() & head.keys() for p in text_pairs(base[k], head[k], path + (k,))]
     if isinstance(base, list) and isinstance(head, list):
         return [p for x, y in zip(base, head) for p in text_pairs(x, y, path)]
-    return [(base, head)] if base != head and path and path[-1] in TEXTS else []
+    return [(base, head)] if not _same(base, head) and path and path[-1] in TEXTS else []
 
 
-def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
+def completeness(name: str, records: dict, expected: dict) -> None:
+    """`Unusable` unless `records` hold every expected case of every expected (corpus, authority),
+    each through exactly the operations it requires given its recorded outcomes (`expected_cases`),
+    nothing else of those, and some available record of each."""
+    for group, cases in sorted(expected.items()):
+        if not cases:
+            raise Unusable(f"no case of {'/'.join(group)} is defined in this checkout")
+        held = [key for key in records if key[:2] == group]
+        recorded = {key[2] for key in held}
+        if recorded != cases.keys():
+            missing, extra = sorted(cases.keys() - recorded), sorted(recorded - cases.keys())
+            raise Unusable(f"{name} does not hold the {'/'.join(group)} corpus: {len(missing)} of its "
+                           f"{len(cases)} cases missing{f' (first {missing[0]})' if missing else ''}, "
+                           f"{len(extra)} other cases{f' (first {extra[0]})' if extra else ''}")
+        by_case: dict[str, dict] = {}
+        for key in held:
+            by_case.setdefault(key[2], {})[key[3]] = records[key]["outcome"]
+        missing, extra = [], []
+        for case, outcomes in sorted(by_case.items()):
+            required = cases[case](outcomes)
+            missing += [(case, op) for op in sorted(required - outcomes.keys())]
+            extra += [(case, op) for op in sorted(outcomes.keys() - required)]
+        if missing or extra:
+            raise Unusable(f"{name} does not hold the {'/'.join(group)} operations: {len(missing)} required "
+                           f"operations missing{f' (first {missing[0]})' if missing else ''}, {len(extra)} "
+                           f"operations no case requires{f' (first {extra[0]})' if extra else ''}")
+        if all(_unavailable(records[key]["outcome"]) for key in held):
+            raise Unusable(f"{name}: every {'/'.join(group)} record is unavailable")
+        # Every corpus holds accepted and rejected inputs: a recording that rejects (or accepts)
+        # all of them is a broken checker, and two broken alike would compare equal.
+        rejected = {_rejected(records[key]["outcome"]) for key in held}
+        if rejected != {True, False}:
+            raise Unusable(f"{name}: every {'/'.join(group)} record is "
+                           f"{'a rejection' if True in rejected else 'an acceptance'}")
+
+
+def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dict) -> dict:
+    """The classed differences of two recordings, given the `expected` cases (`expected_cases`)."""
     base, head = load(base_path), load(head_path)
+    completeness(base_path, base, expected)
+    completeness(head_path, head, expected)
     sources = Counter()
     for key in base.keys() & head.keys():
         if base[key]["source_sha256"] != head[key]["source_sha256"]:
             sources[key[0]] += 1
     if sources:
-        raise SystemExit(f"the two runs read different corpus files: {dict(sources)}")
+        raise Unusable(f"the two runs read different corpus files: {dict(sources)}")
     delta = delta or {}
     wording = {(pair["base"], pair["head"]) for pair in delta.get("wording", [])}
     listed = {}
-    for klass in ("order", "verdict", "availability"):
+    for klass in ("order", "verdict", "availability", "unavailable"):
         for entry in delta.get(klass, []):
             listed[(entry["corpus"], entry["authority"], entry["case"], entry["op"])] = (klass, entry)
     rows, totals, unlisted = [], Counter(), []
@@ -406,6 +682,8 @@ def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
         old = base.get(key, {}).get("outcome")
         new = head.get(key, {}).get("outcome")
         klass = change_class(old, new)
+        if klass != "availability" and old is not None and new is not None and _unavailable(old):
+            klass = "unavailable"   # on both sides: no evidence of preservation
         if klass is None:
             totals["same"] += 1
             continue
@@ -413,9 +691,12 @@ def compare(base_path: str, head_path: str, delta: dict | None) -> dict:
         entry = listed.get(key)
         if klass == "wording":
             accepted = all(pair in wording for pair in text_pairs(old, new))
+        elif klass == "unavailable":
+            accepted = entry is not None and entry[0] == klass and type(entry[1].get("reason")) is str \
+                and entry[1]["reason"].strip() != ""
         else:
-            accepted = (entry is not None and entry[0] == klass and entry[1].get("base") == old
-                        and entry[1].get("head") == new)
+            accepted = (entry is not None and entry[0] == klass and _same(entry[1].get("base"), old)
+                        and _same(entry[1].get("head"), new))
         row = {"corpus": key[0], "authority": key[1], "case": key[2], "op": key[3], "class": klass,
                "base": old, "head": new, "listed": accepted}
         rows.append(row)
@@ -443,6 +724,8 @@ def main(argv=None) -> int:
     p.add_argument("head")
     p.add_argument("--delta", type=Path)
     p.add_argument("--json", type=Path)
+    p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
+    p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
     args = parser.parse_args(argv)
     if args.command == "record":
         return record(args)
@@ -452,7 +735,11 @@ def main(argv=None) -> int:
         readings_corpus(Path(args.out))
         return 0
     delta = json.loads(args.delta.read_text()) if args.delta else None
-    result = compare(args.base, args.head, delta)
+    try:
+        result = compare(args.base, args.head, delta, expected=expected_cases(ROOT, args.corpus, args.authority))
+    except Unusable as exc:
+        print(f"unusable evidence: {exc}", file=sys.stderr)
+        return 2
     if args.json:
         args.json.write_text(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
     print(json.dumps({"records": result["records"], "totals": result["totals"], "unlisted": result["unlisted"]},

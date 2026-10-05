@@ -26,12 +26,41 @@ import check_rust_deps
 import layer_policy
 import rust_output_diff
 import select_tests
+import source_graph
 
-from select_tests import select
 
-# Each case is a compilable ve-core-shaped crate (`cargo check` accepts it): extra lib.rs
-# items, then the ast.rs (kernel), eval.rs (profile) and surface.rs bodies, and the outward
-# edges the module check must report.
+_CACHE = None
+_SAVED_CACHE_HOME = None
+
+
+def setUpModule():
+    # The selector caches parsed sources; keep those writes in a private directory.
+    global _CACHE, _SAVED_CACHE_HOME
+    _CACHE = TemporaryDirectory()
+    _SAVED_CACHE_HOME = os.environ.get("XDG_CACHE_HOME")
+    os.environ["XDG_CACHE_HOME"] = _CACHE.name
+
+
+def tearDownModule():
+    if _SAVED_CACHE_HOME is None:
+        os.environ.pop("XDG_CACHE_HOME", None)
+    else:
+        os.environ["XDG_CACHE_HOME"] = _SAVED_CACHE_HOME
+    _CACHE.cleanup()
+
+
+def select(paths, **kwargs):
+    """The selector on the static graph alone, so these checks do not depend on a cached map."""
+    return select_tests.select(paths, coverage=None, **kwargs)
+
+# Each case is a compilable crate shaped like ve-core before the crate split (`cargo check`
+# accepts it): extra lib.rs items, then the ast.rs (kernel), eval.rs (profile) and surface.rs
+# bodies, and the outward edges the module check must report under FIXTURE_GROUPS.
+FIXTURE_GROUPS = {
+    **dict.fromkeys(("lib", "ast", "environment", "model", "wire", "semantics", "graph"), 1),
+    **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings", "discourse"), 2),
+    "surface": 3,
+}
 SURFACE_RS = "pub fn parse<T: Default>() -> T { T::default() }\npub struct Node;\n"
 WRITE_RS = (SURFACE_RS + "pub fn write<S: serde::Serializer>(v: &u8, s: S) -> Result<S::Ok, S::Error> {\n"
             "    s.serialize_u8(*v)\n}\n")
@@ -272,14 +301,11 @@ def rust_module_fixture(root: Path, lib: str, ast: str, eval_: str, surface: str
 
 
 class LayerSelectionTests(unittest.TestCase):
-    def test_app_change_keeps_cross_cutting_tests_and_app_consumer(self):
+    def test_app_change_keeps_smoke_tests_and_app_consumer(self):
         plan = select(["ve_experiments/t1c/materials.py"])
-        self.assertEqual(plan["minimum_layer"], 5)
         self.assertLess(plan["selected_count"], plan["full_count"])
         self.assertIn("tests/test_t1c.py", plan["selected"])
-        self.assertIn("tests/test_assist_recovery_replay.py", plan["selected"])
-        self.assertIn("tests/test_assist_deadline.py", plan["selected"])
-        self.assertTrue(set(plan["always"]) <= set(plan["selected"]))
+        self.assertTrue(set(plan["smoke"]) <= set(plan["selected"]))
         usecase = select(["usecases/asimov-laws/rules.ve"])
         self.assertIn("tests/test_asimov_laws.py", usecase["selected"])
 
@@ -312,22 +338,17 @@ class LayerSelectionTests(unittest.TestCase):
         plan = select(["new-unmapped-format.xyz"])
         self.assertEqual(plan["selected_count"], plan["full_count"])
         self.assertTrue(plan["lean_build"] and plan["rust_build"])
-        shared = select(["conformance/README.md"])
-        self.assertEqual(shared["minimum_layer"], 1)
+        self.assertTrue(select(["tests/conftest.py"])["full"])
 
     def test_reviewed_outward_imports_select_inner_consumers(self):
         self.assertIn("tests/test_norms.py", select(["ve/search.py"])["selected"])
         self.assertIn("tests/test_norms.py", select(["ve/surface/registry.py"])["selected"])
-        self.assertEqual(select(["ve/surface/registry.py"])["minimum_layer"], 1)
-        self.assertEqual(select(["ve_experiments/assist_haiku.py"])["minimum_layer"], 4)
-        self.assertEqual(select(["ve/surface/__init__.py"])["minimum_layer"], 1)
+        self.assertIn("tests/test_assist.py", select(["ve_experiments/assist_haiku.py"])["selected"])
 
     def test_transitive_source_imports_select_surface_consumers(self):
         for source in ("ve/admission.py", "ve/vacuity.py"):
             with self.subTest(source=source):
-                plan = select([source])
-                self.assertLessEqual(plan["minimum_layer"], 3)
-                self.assertIn("tests/test_english.py", plan["selected"])
+                self.assertIn("tests/test_english.py", select([source])["selected"])
 
     def test_imported_fixtures_and_helpers_select_consumers(self):
         cases = (
@@ -523,12 +544,17 @@ class LayerSelectionTests(unittest.TestCase):
             root = Path(directory)
             (root / "tests").mkdir()
             path = root / "tests/test_route.py"
+            (root / "lean").mkdir()
+            shutil.copy(layer_policy.ROOT / "lean/lakefile.toml", root / "lean/lakefile.toml")
             for name in layer_policy.lean_executables():
-                path.write_text(f'BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "{name}"\n')
-                select_tests.test_layer.cache_clear()
-                with self.subTest(name=name), patch.object(select_tests, "ROOT", root):
-                    self.assertEqual(select_tests.test_layer(path), 4)
-            select_tests.test_layer.cache_clear()
+                source = f'BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "{name}"\n'
+                path.write_text(source)
+                graph = source_graph.Graph(root, ["tests/test_route.py"],
+                                           {"tests/test_route.py": source_graph.summarize(source, "tests.test_route")})
+                graph.prepare_names()
+                graph.build()
+                with self.subTest(name=name):
+                    self.assertIn(f"lean-exe:{name}", graph.closure("tests/test_route.py")[1])
         real_exists = Path.exists
         for binary in ("ve_quantity", "ve_discourse_route", "ve_reports_route"):
             with self.subTest(binary=binary), patch.object(
@@ -594,12 +620,19 @@ class LayerSelectionTests(unittest.TestCase):
             root = Path(directory)
             (root / "tests").mkdir()
             path = root / "tests/test_p1.py"
+            (root / "lean").mkdir()
+            (root / "lean/lakefile.toml").write_text("")
+            (root / "experiments").mkdir()
+            (root / "experiments/p1.py").write_text("")
             for source in ("from experiments import p1\n", "import experiments.p1\n"):
                 path.write_text(source)
-                select_tests.test_layer.cache_clear()
-                with patch.object(select_tests, "ROOT", root):
-                    self.assertEqual(select_tests.test_layer(path), 5)
-            select_tests.test_layer.cache_clear()
+                files = ["experiments/p1.py", "tests/test_p1.py"]
+                graph = source_graph.Graph(root, files, {
+                    "experiments/p1.py": source_graph.summarize("", "experiments.p1"),
+                    "tests/test_p1.py": source_graph.summarize(source, "tests.test_p1")})
+                graph.prepare_names()
+                graph.build()
+                self.assertIn("experiments/p1.py", graph.closure("tests/test_p1.py")[0])
 
     def test_renamed_rust_dependency_in_target_and_workspace_sections(self):
         with TemporaryDirectory() as directory:
@@ -623,16 +656,60 @@ class LayerSelectionTests(unittest.TestCase):
                 self.assertIn("outward crate dependency: ve-core -> ve", error.getvalue())
 
     def test_rust_module_ledger_matches_the_tree(self):
-        source = check_rust_deps.WORKSPACE / "ve-core/src"
-        edges, errors = check_rust_deps.module_edges("ve-core", source, check_rust_deps.MODULE_GROUPS["ve-core"])
-        self.assertEqual(errors, [])
-        self.assertEqual(edges, set(json.loads(check_rust_deps.MODULE_LEDGER.read_text())))
-        self.assertEqual(edges, {"ve-core: environment -> route", "ve-core: model -> eval",
-                                 "ve-core: wire -> surface"})
+        self.assertEqual(json.loads(check_rust_deps.MODULE_LEDGER.read_text()), {})
+        for crate, groups in check_rust_deps.MODULE_GROUPS.items():
+            source = check_rust_deps.WORKSPACE / crate / "src"
+            edges, errors = check_rust_deps.module_edges(crate, source, groups)
+            self.assertEqual((edges, errors), (set(), []), crate)
+            self.assertEqual({path.stem for path in source.glob("*.rs")}, set(groups), crate)
         output = io.StringIO()
         with redirect_stdout(output):
             self.assertEqual(check_rust_deps.main(), 0)
-        self.assertIn("module graph kept (3 reviewed legacy edges)", output.getvalue())
+        self.assertIn("module graph kept (0 reviewed legacy edges)", output.getvalue())
+
+    def test_rust_module_groups_match_the_layer_table(self):
+        # docs/ARCHITECTURE-LAYERS.md: units, risk and readings are profile modules, as in Lean
+        # (Python files risk, readings and discourse at layer 4, a recorded mismatch).
+        # Each library crate holds one group, at its crate layer; the facade holds only lib.rs.
+        groups = check_rust_deps.MODULE_GROUPS
+        self.assertEqual({crate: set(modules) for crate, modules in groups.items()}, {
+            "ve-kernel": {"lib", "ast", "environment", "graph", "internal", "model", "semantics", "wire"},
+            "ve-profile": {"lib", "eval", "order", "risk", "route", "search", "units"},
+            "ve-surface": {"lib", "surface"},
+            "ve-core": {"lib"},
+        })
+        for crate, modules in groups.items():
+            self.assertEqual(set(modules.values()), {check_rust_deps.CRATE_LAYERS[crate]}, crate)
+
+    def test_rust_crate_split_layers(self):
+        self.assertEqual(check_rust_deps.CRATE_LAYERS,
+                         {"ve-kernel": 1, "ve-profile": 2, "ve-surface": 3, "ve-core": 3, "ve": 4})
+        for path, layer in (("rust/ve-kernel/src/semantics.rs", 1), ("rust/ve-core/src/lib.rs", 1),
+                            ("rust/ve-core/tests/conformance.rs", 1), ("rust/ve-profile/src/eval.rs", 2),
+                            ("rust/ve-surface/src/surface.rs", 3), ("rust/ve/src/main.rs", 4),
+                            ("rust/ve-profile/Cargo.toml", 1)):
+            self.assertEqual(layer_policy.source_layer(path), layer, path)
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            crates = {"ve-kernel": [], "ve-profile": ["ve-kernel"], "ve-surface": ["ve-kernel"],
+                      "ve-core": ["ve-kernel", "ve-profile", "ve-surface"], "ve": ["ve-core"]}
+            (root / "Cargo.toml").write_text(f"[workspace]\nmembers = {json.dumps(list(crates))}\n")
+            for crate, uses in crates.items():
+                (root / crate).mkdir()
+                dependencies = "".join(f'{use} = {{ path = "../{use}" }}\n' for use in uses)
+                (root / crate / "Cargo.toml").write_text(f'[package]\nname = "{crate}"\n[dependencies]\n'
+                                                         + dependencies)
+            with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stdout(io.StringIO()):
+                self.assertEqual(check_rust_deps.main(["--crates-only"]), 0)
+            for crate, use in (("ve-kernel", "ve-profile"), ("ve-profile", "ve-surface"), ("ve-core", "ve")):
+                manifest = root / crate / "Cargo.toml"
+                original = manifest.read_text()
+                manifest.write_text(original + f'{use} = {{ path = "../{use}" }}\n')
+                error = io.StringIO()
+                with patch.object(check_rust_deps, "WORKSPACE", root), redirect_stderr(error):
+                    self.assertEqual(check_rust_deps.main(["--crates-only"]), 1)
+                self.assertIn(f"outward crate dependency: {crate} -> {use}", error.getvalue())
+                manifest.write_text(original)
 
     def test_outward_rust_module_imports_are_rejected(self):
         with TemporaryDirectory() as directory:
@@ -658,6 +735,8 @@ class LayerSelectionTests(unittest.TestCase):
             ledger.write_text(json.dumps({"ve-core: ast -> surface": "planted stale key"}))
             error = io.StringIO()
             with (patch.object(check_rust_deps, "WORKSPACE", root),
+                  patch.object(check_rust_deps, "CRATE_LAYERS", {"ve-core": 1, "ve": 4}),
+                  patch.object(check_rust_deps, "MODULE_GROUPS", {"ve-core": FIXTURE_GROUPS}),
                   patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
                 self.assertEqual(check_rust_deps.main(), 1)
             self.assertEqual(sorted(error.getvalue().splitlines()), [
@@ -670,11 +749,13 @@ class LayerSelectionTests(unittest.TestCase):
             ])
             error = io.StringIO()
             with (patch.object(check_rust_deps, "WORKSPACE", root),
+                  patch.object(check_rust_deps, "CRATE_LAYERS", {"ve-core": 1, "ve": 4}),
+                  patch.object(check_rust_deps, "MODULE_GROUPS", {"ve-core": FIXTURE_GROUPS}),
                   patch.object(check_rust_deps, "MODULE_LEDGER", ledger), redirect_stderr(error)):
                 self.assertEqual(check_rust_deps.main(["--crates-only"]), 0, error.getvalue())
 
     def test_rust_module_paths_resolve_generics_and_reexports(self):
-        groups = check_rust_deps.MODULE_GROUPS["ve-core"]
+        groups = FIXTURE_GROUPS
         for name, (lib, ast, eval_, surface, expected) in RUST_MODULE_CASES.items():
             with self.subTest(name), TemporaryDirectory() as directory:
                 source = rust_module_fixture(Path(directory), lib, ast, eval_, surface)
@@ -684,7 +765,7 @@ class LayerSelectionTests(unittest.TestCase):
 
     def test_rust_module_forms_outside_the_strict_subset_are_rejected(self):
         """R0 is fail-closed: every form that could hide a dependency is rejected naming the plain form."""
-        groups = check_rust_deps.MODULE_GROUPS["ve-core"]
+        groups = FIXTURE_GROUPS
         for name, (lib, ast, eval_, surface, module, construct, rule) in RUST_REJECTED_CASES.items():
             with self.subTest(name), TemporaryDirectory() as directory:
                 source = rust_module_fixture(Path(directory), lib, ast, eval_, surface)

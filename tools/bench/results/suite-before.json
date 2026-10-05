@@ -1,0 +1,105 @@
+{
+  "label": "before",
+  "commit": "eccd329bc7f803e2506883d6448a2f211a54a497",
+  "cpus": 32,
+  "load_start": 48.46,
+  "load_end": 21.6,
+  "wall_seconds": 1878.3,
+  "cpu_seconds": {
+    "user": 19820.0,
+    "system": 1127.1,
+    "total": 20947.1
+  },
+  "summary": "6144 passed, 6 skipped, 73 warnings in 1876.22s (0:31:16)",
+  "counts": {
+    "passed": 6144,
+    "skipped": 6,
+    "warnings": 73
+  },
+  "workers": 32,
+  "test_seconds_sum": 22412.0,
+  "slowest_tests": [
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke",
+      "seconds": 1592.3
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_contract_and_soft_test_input",
+      "seconds": 1353.9
+    },
+    {
+      "nodeid": "tests/test_asimov_extended.py::test_rerun_equals_the_committed_results",
+      "seconds": 1116.1
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_recorded_test_input[norm-defaults@0]",
+      "seconds": 763.2
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_recorded_test_input[norms@0]",
+      "seconds": 573.7
+    },
+    {
+      "nodeid": "tests/test_readings_s1_differential.py::test_generated_sets_agree_with_lean",
+      "seconds": 554.6
+    },
+    {
+      "nodeid": "tests/test_bluedot_grant.py::test_document_coverage_and_premise_limit",
+      "seconds": 507.3
+    },
+    {
+      "nodeid": "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip",
+      "seconds": 403.1
+    },
+    {
+      "nodeid": "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents",
+      "seconds": 400.8
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget",
+      "seconds": 395.8
+    }
+  ],
+  "slowest_files": [
+    {
+      "file": "tests/test_wire_gate_corpus.py",
+      "seconds": 3077.7
+    },
+    {
+      "file": "tests/test_english_evidence.py",
+      "seconds": 1710.6
+    },
+    {
+      "file": "tests/test_asimov_extended.py",
+      "seconds": 1131.6
+    },
+    {
+      "file": "tests/test_soft_review_regressions.py",
+      "seconds": 1124.3
+    },
+    {
+      "file": "tests/test_discourse_lean.py",
+      "seconds": 860.3
+    },
+    {
+      "file": "tests/test_eligibility_wfp.py",
+      "seconds": 666.3
+    },
+    {
+      "file": "tests/test_risk_margins.py",
+      "seconds": 661.2
+    },
+    {
+      "file": "tests/test_assist.py",
+      "seconds": 603.3
+    },
+    {
+      "file": "tests/test_readings_s1_differential.py",
+      "seconds": 556.5
+    },
+    {
+      "file": "tests/test_assist_invariants.py",
+      "seconds": 553.1
+    }
+  ]
+}

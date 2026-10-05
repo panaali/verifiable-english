@@ -302,7 +302,7 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
         standalone = re.fullmatch(r"Rule ([1-9][0-9]*) takes precedence over rule ([1-9][0-9]*)\.", line)
         if standalone:
             require_unique_derivation(env, line, grammar=grammar)
-            precedence.setdefault(int(standalone[1]), []).append(int(standalone[2]))
+            precedence.setdefault(ast.numeral_value(standalone[1]), []).append(ast.numeral_value(standalone[2]))
         else:
             blocks.append(line)
     if any(source_ref < 1 or source_ref > len(blocks) or
@@ -316,7 +316,7 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     seen_handles = set()
     for index, block in enumerate(blocks, 1):
         m = _HEADER.fullmatch(block)
-        if m is None or int(m[1]) != index:
+        if m is None or ast.numeral_value(m[1]) != index:
             raise SyntaxError(f"Expected Rule {index} with its own block")
         if manifest is None:
             candidate = index
@@ -335,7 +335,7 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
             seen_handles.add(handle)
             name = entry["name"]
             reserved.add(name)
-        refs = tuple(int(x) for x in re.findall(r"[0-9]+", m[2] or "")) + tuple(precedence.get(index, ()))
+        refs = tuple(ast.numeral_value(x) for x in re.findall(r"[0-9]+", m[2] or "")) + tuple(precedence.get(index, ()))
         clauses = m[3].split(" Except when ")
         if not clauses[0].endswith("."):
             raise SyntaxError("Expected a complete rule sentence")
@@ -472,7 +472,7 @@ def _parse_soft_notes(notes, number, env, words, scope):
         remaining = "" if point < 0 else remaining[point + 2:]
         m = _SOFT_NOTE.fullmatch(statement)
         if m:
-            if int(m[1]) != number:
+            if ast.numeral_value(m[1]) != number:
                 raise SyntaxError("Soft annotation names another rule")
             if m[3] is not None:
                 if result["rank"] is not None:
@@ -483,7 +483,7 @@ def _parse_soft_notes(notes, number, env, words, scope):
                 result[key].append(_parse_guard(m[5], env, words, scope))
             continue
         m = _SOFT_DECIDER.fullmatch(statement)
-        if m and int(m[1]) == number:
+        if m and ast.numeral_value(m[1]) == number:
             if result["decided_by"] is not None:
                 raise SyntaxError("Duplicate exception decider")
             if m[2].startswith('"'):
@@ -497,7 +497,7 @@ def _parse_soft_notes(notes, number, env, words, scope):
                 result["decided_by"] = m[2]
             continue
         m = _SOFT_FACTORS.fullmatch(statement)
-        if m and int(m[1]) == number:
+        if m and ast.numeral_value(m[1]) == number:
             if result["factors"]:
                 raise SyntaxError("Duplicate exception factors")
             # Canonical output quotes each factor, preserving embedded commas.
@@ -535,7 +535,7 @@ def _parse_soft_english(env, source, manifest, *, existing_names):
         m = _SOFT_HEADER.fullmatch(line)
         if m is None:
             raise SyntaxError("Expected a numbered soft rule block")
-        number = int(m[1])
+        number = ast.numeral_value(m[1])
         refs, parties = _soft_surface.parse_header_options(m[2] or "")
         first, notes = _soft_note_parts(m[3], number)
         sentence_end = first.find(". ")

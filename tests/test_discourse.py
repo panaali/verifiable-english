@@ -1,17 +1,18 @@
-"""Regression tests for the conservative Python discourse adapter."""
+"""Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status
+and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN.md, batch 4)."""
 import json
 
 import pytest
 
 from tests.test_views import vocabulary
-from ve.discourse import _joint, _same_witness, check_joint_extensions, joint_assertion
 from ve.document import check_document, load_document, render_document
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.readings import check_readings
 from ve.environment import Environment
 from ve.ast import formula_from_data
 from ve.identity import meaning_id
+from ve.model import FiniteModel
 
 
 def _environment():
@@ -179,19 +180,71 @@ def test_prior_quantifier_blocks_bare_pronoun(tmp_path):
         load_document(_write(tmp_path, front, source))
 
 
-def test_joint_choices_correlate_and_detect_empty():
-    active = [{"id": key, "version": 1, "status": "open", "readings":
-               [{"id": "a"}, {"id": "b"}]} for key in ("r1", "r2")]
-    block = {"constraints": [
-        {"kind": "requires", "a": ["r1", 1, "a"], "b": ["r2", 1, "a"]},
-        {"kind": "requires", "a": ["r1", 1, "b"], "b": ["r2", 1, "b"]}]}
-    assert _joint(block, active)["count"] == 2
-    block["constraints"].extend(
-        {"kind": "excludes", "a": ["r1", 1, x], "b": ["r2", 1, y]}
-        for x in ("a", "b") for y in ("a", "b"))
-    with pytest.raises(VEError, match="InvalidCompatibility"):
-        _joint(block, active)
-    assert _joint({}, [])["choices"] == [{}]
+def _correlated(tmp_path, constraints, label=0, readings=None, sets=2):
+    """The sample with `sets` (at least two) more units, each with an open reading set of two
+    readings (`readings`, by default `reviewed` and `deployed` of api, told apart by the model
+    where only `reviewed(api)` and `exempt(api)` hold), the constraints over them, and a graph
+    citing reading `label` of rs6."""
+    source, front = _sample(tmp_path)
+    data = _environment()
+    data["profiles"].remove("ve.discourse@1")
+    env = Environment(data)
+    p, q = readings or (front["units"][0]["content"]["ast"], front["units"][1]["content"]["ast"])
+    # one entity per sort, `reviewed(api)` and `exempt(api)` true, the rest false: it separates p and q
+    model = {"complete": True, "domains": {s: [f"e_{s}"] for s in env.model_sorts},
+             "constants": {c: f"e_{d.sort}" for c, d in env.constants.items()},
+             "relations": {name: ([[f"e_{env.constants['api'].sort}"]] if name in ("reviewed", "exempt") else [])
+                           for name in env.predicates}}
+    mid = FiniteModel.from_dict(env, model).model_id
+    for uid in [f"u{3 + k}" for k in range(sets)]:
+        start = len(source)
+        source += b"Api is reviewed.\n"
+        front["units"].append({"id": uid, "span": [start, len(source)], "kind": "asserted",
+                               "meaning": "specified", "support": "assumption"})
+    front["discourse"]["anchors"][0]["span"] = [0, len(source)]
+
+    def reading_set(uid, rid):
+        readings = [("a", p), ("b", q)]
+        return {"id": rid, "unit": uid, "version": 1, "status": "open", "models": {mid: model}, "readings": [
+            {"id": key, "kind": "asserted", "content": ast,
+             "meaning_id": meaning_id(env, formula_from_data(env, ast)),
+             "admission": {"who": "author", "why": "recorded choice",
+                           "distinguishing_models": {other: mid for other, _ in readings if other != key}}}
+            for key, ast in readings]}
+
+    front["reading_sets"] = [reading_set(f"u{3 + k}", f"rs{5 + k}") for k in range(sets)]
+    front["discourse"]["constraints"] = constraints
+    front["graph"] = {"root": "root", "nodes": [{"name": "root", "ast": [p, q][label],
+                                                 "label": f"readings:rs6@1:{label}"}]}
+    return source, front
+
+
+def test_joint_choices_are_leans(tmp_path):
+    """The joint set (4.8) is Lean's `compatibleChoices`: the choices the relay reports and hands
+    to the readings verdict are the admission's, and an empty enumeration is Lean's rejection."""
+    requires = [{"kind": "requires", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "a"]},
+                {"kind": "requires", "a": ["rs5", 1, "b"], "b": ["rs6", 1, "b"]}]
+    source, front = _correlated(tmp_path, requires)
+    path = _write(tmp_path, front, source)
+    doc = load_document(path)
+    assert doc["discourse"]["joint"] == {"status": "complete", "count": 2, "constraints": 2,
+                                         "choices": [{"rs5@1": 0, "rs6@1": 0}, {"rs5@1": 1, "rs6@1": 1}]}
+    assert check_document(path)["joint_choices"] == {"status": "complete", "count": 2, "constraints": 2}
+    excludes = [{"kind": "excludes", "a": ["rs5", 1, x], "b": ["rs6", 1, y]} for x in ("a", "b") for y in ("a", "b")]
+    source, front = _correlated(tmp_path, excludes)
+    with pytest.raises(VEError, match="^InvalidCompatibility: rs5, rs6$"):
+        load_document(_write(tmp_path, front, source))
+
+
+def test_composition_gate_is_leans(tmp_path):
+    """A report label outside every compatible choice is Lean's `InvalidCompatibility` (the gate
+    over `gateChoices`); the relay checks no extension of its own."""
+    excludes = [{"kind": "excludes", "a": ["rs5", 1, x], "b": ["rs6", 1, "a"]} for x in ("a", "b")]
+    source, front = _correlated(tmp_path, excludes, label=0)
+    with pytest.raises(VEError, match="^InvalidCompatibility: report root$"):
+        load_document(_write(tmp_path, front, source))
+    source, front = _correlated(tmp_path, excludes, label=1)
+    assert check_document(_write(tmp_path, front, source))["admission"]["admitted"] is True
 
 
 FUSED = ["exists", "item", ["and", ["unary", "deployed", ["var", 0]], ["unary", "reviewed", ["var", 0]]]]
@@ -199,30 +252,21 @@ TWICE = ["exists", "item", ["and", ["unary", "reviewed", ["var", 0]], ["unary", 
 
 
 def test_group_openings_follow_lean(tmp_path):
-    """The authority directive on groups: Python's parser reads a sort by its declared noun only
-    (`A service`), the Lean grammar a group opening by the sort's name only (`An item`). The noun
-    was a Python-only admission and is now Lean's rejection; the name is Lean's admission, with
-    Python's diagnostic as a hint, and a wrong reading is rejected with Python's diagnostic (the
-    known limitation of docs/spec/discourse.md 8: Lean names ManifestMismatch)."""
+    """The authority directive on groups: the Lean grammar reads a group opening by the sort's
+    name only (`An item`), not by its declared noun (`A service`). The noun is Lean's rejection,
+    the name Lean's admission, and a wrong reading Lean's `ManifestMismatch` (batch 4: Python's
+    own fragment diagnostic, kept before when both rejected, is gone)."""
     fragment = "InvalidInput: group rs1@1:same-witness spans are outside the supported fragment"
     source, front = _group_front(FUSED, opening="A service is deployed.", data=_environment())
     with pytest.raises(VEError, match=f"^{fragment}$"):
         load_document(_write(tmp_path, front, source))
     source, front = _group_front(FUSED, data=_environment())
     result = check_document(_write(tmp_path, front, source))
-    assert result["discourse_hints"] == [fragment]
+    assert "discourse_hints" not in result
     assert result["coverage"]["bytes_by_status"] == {"OPEN": len(source)}
     source, front = _group_front(TWICE, data=_environment())
-    with pytest.raises(VEError, match=f"^{fragment}$"):
+    with pytest.raises(VEError, match="^ManifestMismatch: groups.rs1@1:same-witness$"):
         load_document(_write(tmp_path, front, source))
-
-
-def test_same_witness_shape_rejects_split_quantifiers():
-    p = ["unary", "deployed", ["var", 0]]
-    q = ["unary", "reviewed", ["var", 0]]
-    assert _same_witness(["exists", "item", ["and", p, q]])
-    assert not _same_witness(["and", ["exists", "item", p],
-                              ["exists", "item", q]])
 
 
 def test_joint_verdict_uses_only_compatible_choices():
@@ -236,37 +280,10 @@ def test_joint_verdict_uses_only_compatible_choices():
             {"id": "r2", "version": 1, "status": "open", "readings": [
                 {"id": "a", "kind": "asserted", "content": ["top"]},
                 {"id": "b", "kind": "asserted", "content": ["top"]}]}]
-    joint = _joint({"constraints": [
-        {"kind": "requires", "a": ["r1", 1, "a"], "b": ["r2", 1, "a"]},
-        {"kind": "requires", "a": ["r1", 1, "b"], "b": ["r2", 1, "b"]}]}, sets)
+    # the joint set as the relay hands it over from Lean's answer (`discourse._joint`)
+    joint = {"status": "complete", "count": 2, "constraints": 2,
+             "choices": [{"r1@1": 0, "r2@1": 0}, {"r1@1": 1, "r2@1": 1}]}
     assert check_readings(env, sets, p, joint_choices=joint)["verdict"] == "SOME"
-
-
-def test_joint_premise_and_report_extension():
-    data = _environment()
-    data["profiles"].remove("ve.discourse@1")
-    env = Environment(data)
-    p = ["unary", "deployed", ["const", "api"]]
-    q = ["unary", "reviewed", ["const", "api"]]
-    sets = [{"id": key, "version": 1, "status": "open", "readings": [
-        {"id": "a", "kind": "asserted", "content": p},
-        {"id": "b", "kind": "asserted", "content": q}]}
-        for key in ("rs5", "rs6")]
-    joint = _joint({"constraints": [
-        {"kind": "excludes", "a": ["rs5", 1, "a"], "b": ["rs6", 1, "b"]},
-        {"kind": "excludes", "a": ["rs5", 1, "b"], "b": ["rs6", 1, "a"]}]}, sets)
-    assert joint["count"] == 2
-    assert joint_assertion(env, sets, joint) is not None
-    report = {"root": {"name": "root"}, "assumptions": [
-        {"label": "readings:rs5@1:0"}, {"label": "readings:rs6@1:0"}]}
-    check_joint_extensions({}, report, joint)
-    report["assumptions"][1]["label"] = "readings:rs6@1:1"
-    with pytest.raises(VEError, match="InvalidCompatibility: report root"):
-        check_joint_extensions({}, report, joint)
-    report["assumptions"] = []
-    with pytest.raises(VEError, match="InvalidCompatibility: citation 2.1"):
-        check_joint_extensions({"lemmas": [{"name": "2.1", "leaves": [
-            {"label": "readings:rs5@1:0"}, {"label": "readings:rs6@1:1"}]}]}, report, joint)
 
 
 def test_correlated_document_reaches_admission(tmp_path):
@@ -490,11 +507,10 @@ def test_empty_block_keeps_w2_reading_labels(tmp_path):
 
 
 def test_python_reports_lean_references(tmp_path):
-    """Fable B5, under the Lean authority (discourse-authority-directive): a form Python does not
-    elaborate (a plural) was Python's `UnsupportedProfile` abstention; the verdict is now Lean's,
-    a rejection with Lean's diagnostic (Python's abstention names none) or an admission whose
-    references are Lean's, with Python's abstention kept as an editor hint. A location binding
-    beside a pronoun is no resource limit."""
+    """Fable B5, under the Lean authority (discourse-authority-directive): a plural is Lean's to
+    elaborate, a rejection with Lean's diagnostic or an admission whose references are Lean's; a
+    plural has no reviewed wording (only pronouns, demonstratives and ordinal pairs are shown with
+    their target's display). A location binding beside a pronoun is no resource limit."""
     plural = {"kind": "entity", "members": ["api", "alice"]}
     source, units = _units(["Api and Alice are reviewed.", "They are ready."])
     front = _front(source, units, [dict(_mention(source, "m1", "u2", "They", "plural", plural), reading="distributive")])
@@ -510,8 +526,7 @@ def test_python_reports_lean_references(tmp_path):
                    names=names, environment=environment)
     result = check_document(_write(tmp_path, front, source))
     assert [(r["mention"], r["status"]) for r in result["references"]] == [("m1", "resolved")]
-    assert result["discourse_hints"] == [
-        "UnsupportedProfile: ve.discourse@1 plural elaboration is not implemented in Python (u2)"]
+    assert "discourse_hints" not in result
     assert "u2" not in result["reviewed_presentations"]
     source, front = _sample(tmp_path)
     front["discourse"]["mentions"].append(_mention(source, "m2", "u2", "deployed", "navigation",
@@ -548,14 +563,9 @@ def test_navigation_relabel_does_not_hide_a_slot(tmp_path):
 
 
 def test_discourse_wording(tmp_path):
-    """discourse2 loop A and B (discourse.py:527, 562): a unit recording a reference is printable
-    ASCII with canonical spacing once its surrounding layout is removed (4.1(4)), else one code."""
-    from ve.discourse import _canonical_wording
-    for text in ["It is safe.", "It is safe.\n", "\n\tIt is safe. ", "It is safe (v2.1).", "It, then, is safe; yes."]:
-        assert _canonical_wording(text), repr(text)
-    for text in ["It is safe .", "It is safe\t.", "It  is safe.", "It\tis safe.", "It\nis safe.", "It is safe.",
-                 "İt is safe (v2.1).", "It is safe , ok.", "It is ( v2).", "It is safe\x00.", "It is safe​."]:
-        assert not _canonical_wording(text), repr(text)
+    """discourse2 loop A and B: a unit recording a reference is printable ASCII with canonical
+    spacing once its surrounding layout is removed (4.1(4)), else one code: Lean's
+    `canonicalWording` (its variants: tests/test_discourse_lean.py)."""
     source, front = _sample(tmp_path)
     cut = source.index(b"It")
     source = source[:cut] + b"It is deployed .\n"
@@ -592,27 +602,54 @@ def test_lean_unavailable_is_never_a_python_verdict(tmp_path, monkeypatch):
 
 
 def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch):
-    """Python neither adds nor removes an admission: its own check rejects the retargeted pronoun
-    (`InaccessibleTarget`), yet an admission from the route is the result (with Python's
-    diagnostic as a hint), and a route rejection of a document Python admits is the result too."""
+    """Python neither adds nor removes an admission: the route rejects the retargeted pronoun
+    (`InaccessibleTarget`), yet an admission from the route is the result, with nothing of
+    Python's beside it, and a route rejection of a document the route admits otherwise is the
+    result too. A route answer missing a member the relay reads is no answer."""
     source, front = _sample(tmp_path)
     admitted = check_document(_write(tmp_path, front, source))
     front["discourse"]["mentions"][0]["target"]["name"] = "alice"
     retargeted = _write(tmp_path, front, source)
     with pytest.raises(VEError, match="^InaccessibleTarget: m1: alice$"):
         check_document(retargeted)
-    answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "r" * 64,
-              "references": admitted["references"], "statuses": {"u1": "CHECKED", "u2": "OPEN"}}
+    retargeted_references = [{**admitted["references"][0], "target": {"kind": "entity", "name": "alice"}}]
+    answer = {"id": "python-admission", "status": "ok", "admitted": True, "report_id": "f" * 64,
+              "references": retargeted_references, "statuses": {"u1": "CHECKED", "u2": "OPEN"},
+              "validity": {}, "joint": 1, "joint_choices": [[]], "joint_formula": ["top"],
+              "bound": {"u2": ["unary", "deployed", ["const", "api"]]}}
     route = tmp_path / "route.sh"
-    route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps([answer]) + "'\n")
-    route.chmod(0o755)
+
+    def answers(rows, code=0):
+        route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps(rows) + f"'\nexit {code}\n")
+        route.chmod(0o755)
+    answers([answer])
     monkeypatch.setenv("VE_DISCOURSE_ROUTE", str(route))
     result = check_document(retargeted)
-    assert result["report_id"] == "r" * 64 and result["discourse_hints"] == ["InaccessibleTarget: m1: alice"]
+    assert result["report_id"] == "f" * 64 and "discourse_hints" not in result
+    assert result["references"] == retargeted_references
+    # `alice` is no registered name: no reviewed wording shows it
+    assert result["reviewed_presentations"] == {}
     assert result["coverage"]["bytes_by_status"] == {"CHECKED": 17, "OPEN": 16}
-    route.write_text("#!/bin/sh\ncat > /dev/null\necho '" + json.dumps(
-        [{"id": "python-admission", "status": "error", "error": "StaleTarget: m1"}]) + "'\nexit 1\n")
+    # an answer about the document as it was before the retargeting is no answer to it
+    answers([{**answer, "references": admitted["references"]}])
+    with pytest.raises(CheckerUnavailable, match=r"^CheckerUnavailable: .* another document \(references\)$"):
+        check_document(retargeted)
     front["discourse"]["mentions"][0]["target"]["name"] = "api"
+    original = _write(tmp_path, front, source)
+    answer["references"] = admitted["references"]
+    answers([answer])
+    assert check_document(original)["reviewed_presentations"] == {"u2": "Api is deployed.\n"}
+    # a bound formula the shown wording does not parse to is never shown
+    answers([{**answer, "bound": {"u2": ["unary", "reviewed", ["const", "api"]]}}])
+    assert check_document(original)["reviewed_presentations"] == {}
+    for key, value in [("validity", None), ("bound", None), ("bound", []), ("joint", True), ("joint", 2), ("joint_choices", [[], []]),
+                       ("joint_choices", [[["rs1", True, 0]]]), ("joint_formula", None),
+                       ("joint", "ResourceLimit: joint choices")]:
+        broken = {**answer, key: value} if value is not None else {k: v for k, v in answer.items() if k != key}
+        answers([broken])
+        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: the Lean discourse route returned no"):
+            check_document(original)
+    answers([{"id": "python-admission", "status": "error", "error": "StaleTarget: m1"}], code=1)
     with pytest.raises(VEError, match="^StaleTarget: m1$") as caught:
-        check_document(_write(tmp_path, front, source))
+        check_document(original)
     assert caught.value.code == "StaleTarget"

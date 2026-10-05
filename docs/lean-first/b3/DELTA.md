@@ -192,6 +192,18 @@ longer `VEError`. The Rust JSONL transport checks error records against ve-core'
 `tests/test_route_transport.py` runs every transport against 38 outputs that are no answer, using real temporary
 checkers, and every built route binary against its own genuine error shapes. 171 of its 295 tests fail at the head.
 
+Merged with ve-integration (lean-first b0 had built the same transport in parallel): the one reader is now b0's
+`read_rows` with `identity_problem` (through `_route_rows`), which already required the `id` member, a non-empty
+`error`, a bare `case_index` row, and a `code` only on the soft route (`coded`). `ERROR_EXTRAS` (`generator`,
+`valid: false`) was added to it from this batch, so an error row carrying any other member is still no answer.
+`_decode_json` keeps b0's surrogate and float checks and this batch's `RecursionError` as `ValueError`. Rust error
+records are checked by b0's producer schema (`rust_schema/jsonl.json`), which covers the `Error` shape;
+`error_record` was dropped, and the schema's `readings-evaluate` branch with it. A `code` on a route other than
+soft is no answer, so the test's genuine "soft route's code" shape is a rejection on the soft transport only.
+Gap: the alternatives, risk and reports transports read VE's restricted JSON, which has no null, so Lean's
+`id: null` echo for a case without an id is no answer there (`CheckerUnavailable`, never a rejection); Python
+sends those routes no case without an id.
+
 ## Not done here
 
 - The UDHR load end to end (above); batches 3b to 3e.
