@@ -1,0 +1,3289 @@
+{
+ "format": "ve.english-lean-s3-python@1",
+ "fixtures": 163,
+ "agree": 147,
+ "differ": 16,
+ "differences": [
+  "al1",
+  "al2",
+  "al3",
+  "al5",
+  "al6",
+  "al7",
+  "al12",
+  "al13",
+  "al14",
+  "al15",
+  "al18",
+  "al23",
+  "al33",
+  "al34",
+  "al36",
+  "al37"
+ ],
+ "differences_on_python_text": [],
+ "agreed_differences": [
+  "or38a",
+  "or38b"
+ ],
+ "findings": {
+  "safe-fallback": "Under `FA` and `FR` Python selects `{0} is classified as \"safe\"` for `safe`: the declared `{0} is safe` carries SYMBOL_COLLISION, because `is` is the head of the fixed role wording `{0} is available to {1}` (`printer.py:201-205`, `:245-246`). The spec's `LA` and `LR` select `{0} is safe`, which V6 (E2.1) would refuse.",
+  "action-letter": "Under `FA` Python's letter for the action sort is `C`, not the spec's `A` (al5 to al7)."
+ },
+ "selected": {
+  "FO": {
+   "safe": null,
+   "action_letter": null,
+   "risk__more_severe": null
+  },
+  "FO+cap": {
+   "safe": null,
+   "action_letter": null,
+   "risk__more_severe": null
+  },
+  "FD": {
+   "safe": null,
+   "action_letter": null,
+   "risk__more_severe": null
+  },
+  "FA": {
+   "safe": "{0} is classified as \"safe\"",
+   "action_letter": "C",
+   "risk__more_severe": null
+  },
+  "FA2": {
+   "safe": "{0} is classified as \"safe\"",
+   "action_letter": "E",
+   "risk__more_severe": null
+  },
+  "FR": {
+   "safe": "{0} is classified as \"safe\"",
+   "action_letter": "C",
+   "risk__more_severe": "{0} is more severe than {1}"
+  },
+  "FM": {
+   "safe": null,
+   "action_letter": null,
+   "risk__more_severe": null
+  }
+ },
+ "rows": [
+  {
+   "id": "or1",
+   "environment": "FO",
+   "text": "Legacy costs 5.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, num 5]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, num 5]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or2",
+   "environment": "FO",
+   "text": "Legacy costs -5.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, num -5]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, num -5]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or3",
+   "environment": "FO",
+   "text": "Legacy costs -0.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, num 0]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, num 0]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or4",
+   "environment": "FO",
+   "text": "Legacy costs [budget + 1].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, add (const budget) (num 1)]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, add (const budget) (num 1)]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or5",
+   "environment": "FO",
+   "text": "Legacy costs [budget - limit].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, add (const budget) (scale -1 (const limit))]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, add (const budget) (scale -1 (const limit))]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or6a",
+   "environment": "FO",
+   "text": "Legacy costs [3 * budget].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale 3 (const budget)]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale 3 (const budget)]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or6b",
+   "environment": "FO",
+   "text": "Legacy costs [-3 * budget].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale -3 (const budget)]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale -3 (const budget)]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or7",
+   "environment": "FO",
+   "text": "Legacy costs [budget * limit].",
+   "expected": {
+    "status": "rejected",
+    "code": "coefficientNotNumeral"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "A scaling coefficient must be an integer numeral."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or8",
+   "environment": "FO",
+   "text": "Legacy costs [[budget + 1] * limit].",
+   "expected": {
+    "status": "rejected",
+    "code": "coefficientNotNumeral"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "A scaling coefficient must be an integer numeral."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or9",
+   "environment": "FO",
+   "text": "Legacy costs twice the budget.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale 2 (const budget)]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale 2 (const budget)]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or10a",
+   "environment": "FO",
+   "text": "Legacy costs -budget.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (const budget)]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (const budget)]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or10b",
+   "environment": "FO",
+   "text": "Legacy costs --budget.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (scale -1 (const budget))]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (scale -1 (const budget))]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or11",
+   "environment": "FO",
+   "text": "Legacy costs -[budget + 1].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (add (const budget) (num 1))]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (add (const budget) (num 1))]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or12",
+   "environment": "FO",
+   "text": "Legacy costs [budget - -5].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, add (const budget) (scale -1 (num -5))]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, add (const budget) (scale -1 (num -5))]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or13",
+   "environment": "FO",
+   "text": "Legacy costs [[budget + 1] + [2 * limit]].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, add (add (const budget) (num 1)) (scale 2 (const limit))]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, add (add (const budget) (num 1)) (scale 2 (const limit))]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or14",
+   "environment": "FO",
+   "text": "Legacy costs [[budget + 1] + [limit * 2]].",
+   "expected": {
+    "status": "rejected",
+    "code": "coefficientNotNumeral"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "A scaling coefficient must be an integer numeral."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or15a",
+   "environment": "FO",
+   "text": "Budget is at most 5.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "le (const budget) (num 5)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "le (const budget) (num 5)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or15b",
+   "environment": "FO",
+   "text": "Budget IS AT MOST 5.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "le (const budget) (num 5)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "le (const budget) (num 5)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or16a",
+   "environment": "FO",
+   "text": "Budget is less than limit.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "lt (const budget) (const limit)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "lt (const budget) (const limit)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or16b",
+   "environment": "FO",
+   "text": "Budget is more than limit.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "lt (const limit) (const budget)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "lt (const limit) (const budget)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or17",
+   "environment": "FO",
+   "text": "Budget is at least [limit + 1].",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "le (add (const limit) (num 1)) (const budget)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "le (add (const limit) (num 1)) (const budget)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or18a",
+   "environment": "FO",
+   "text": "Budget is the same as limit.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "eq (const budget) (const limit)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "eq (const budget) (const limit)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or18b",
+   "environment": "FO",
+   "text": "Budget exceeds limit.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred exceeds [const budget, const limit]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred exceeds [const budget, const limit]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or19a",
+   "environment": "FO",
+   "text": "Every service that costs 5 is reviewed.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all service (implies (pred costs [var 0, num 5]) (pred reviewed [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all service (implies (pred costs [var 0, num 5]) (pred reviewed [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or19b",
+   "environment": "FO",
+   "text": "Every service costs twice the budget.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all service (pred costs [var 0, scale 2 (const budget)])"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all service (pred costs [var 0, scale 2 (const budget)])"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or20",
+   "environment": "FO",
+   "text": "Legacy costs --5.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "English all-derivations check failed: No terminal matches '5' in the current parser context, at line 1 col 16"
+   },
+   "agrees": true
+  },
+  {
+   "id": "or21",
+   "environment": "FO",
+   "text": "Legacy costs -twice the budget.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "English all-derivations check failed: No terminal matches 't' in the current parser context, at line 1 col 15"
+   },
+   "agrees": true
+  },
+  {
+   "id": "or22",
+   "environment": "FO",
+   "text": "Legacy costs - budget.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs - budget'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or23a",
+   "environment": "FO",
+   "text": "Legacy costs [budget+1].",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs [budget+1]'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or23b",
+   "environment": "FO",
+   "text": "Legacy costs [budget +1].",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs [budget +1]'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or24a",
+   "environment": "FO",
+   "text": "Legacy costs [ budget + 1].",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs [ budget + 1]'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or24b",
+   "environment": "FO",
+   "text": "Legacy costs [budget + 1 ].",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs [budget + 1 ]'. Nearest declared wordings: 'budget'; 'costs {1}'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or25",
+   "environment": "FO",
+   "text": "Legacy costs 007.",
+   "expected": {
+    "status": "lexical",
+    "code": "badNumeral"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs 007'. Nearest declared wordings: 'costs {1}'; 'owns {1}'; 'person'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or26a",
+   "environment": "FO",
+   "text": "Legacy costs legacy.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs legacy'. Nearest declared wordings: 'legacy'; 'costs {1}'; 'alice'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or26b",
+   "environment": "FO",
+   "text": "Legacy is the same as budget.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is the same as budget'. Nearest declared wordings: 'budget'; 'is deployed'; 'exceeds {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or26c",
+   "environment": "FO",
+   "text": "Budget is the same as legacy.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is the same as legacy'. Nearest declared wordings: 'legacy'; 'alice'; 'exceeds {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or26d",
+   "environment": "FO",
+   "text": "Legacy costs twice the 5.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs twice the 5'. Nearest declared wordings: 'costs {1}'; 'service'; 'alice'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or27",
+   "environment": "FO",
+   "text": "Legacy is deployed. It costs 5.",
+   "expected": {
+    "status": "ok",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "pred costs [const legacy, num 5]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "pred costs [const legacy, num 5]"
+    ],
+    "marks": [
+     false,
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or28a",
+   "environment": "FO",
+   "text": "It costs 5.",
+   "expected": {
+    "status": "rejected",
+    "code": "pronounUnresolved"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "The referent of it is incomplete. Repeat the explicit name or confirm a scoped rewrite."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or28b",
+   "environment": "FO",
+   "text": "That service costs 5.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'costs {1}'; 'limit'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or29",
+   "environment": "FO",
+   "text": "Legacy costs ---------------------------------------------------------------budget.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (const budget)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (scale -1 (const budget)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or30",
+   "environment": "FO",
+   "text": "Legacy costs ----------------------------------------------------------------budget.",
+   "expected": {
+    "status": "rejected",
+    "code": "nestingLimit"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Arithmetic term exceeds 64 nesting levels."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or31",
+   "environment": "FO",
+   "text": "Legacy costs [[budget * limit] + ----------------------------------------------------------------budget].",
+   "expected": {
+    "status": "rejected",
+    "code": "nestingLimit"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Arithmetic term exceeds 64 nesting levels."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or32",
+   "environment": "FO",
+   "text": "That service costs ----------------------------------------------------------------budget.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'costs {1}'; 'limit'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or33a",
+   "environment": "FO",
+   "text": "Budget is at most ----------------------------------------------------------------budget.",
+   "expected": {
+    "status": "rejected",
+    "code": "nestingLimit"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Arithmetic term exceeds 64 nesting levels."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or33b",
+   "environment": "FO",
+   "text": "[budget * limit] is at most ----------------------------------------------------------------budget.",
+   "expected": {
+    "status": "rejected",
+    "code": "nestingLimit"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Arithmetic term exceeds 64 nesting levels."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or34a",
+   "environment": "FO",
+   "text": "Legacy costs 9999999999999999999999999999999999999999.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, num 9999999999999999999999999999999999999999]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, num 9999999999999999999999999999999999999999]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or34b",
+   "environment": "FO",
+   "text": "Legacy costs 99999999999999999999999999999999999999999.",
+   "expected": {
+    "status": "rejected",
+    "code": "numeralBound"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Integer literal exceeds 40 characters"
+   },
+   "agrees": true
+  },
+  {
+   "id": "or35a",
+   "environment": "FO",
+   "text": "Legacy costs -999999999999999999999999999999999999999.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, num -999999999999999999999999999999999999999]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, num -999999999999999999999999999999999999999]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or35b",
+   "environment": "FO",
+   "text": "Legacy costs -9999999999999999999999999999999999999999.",
+   "expected": {
+    "status": "rejected",
+    "code": "numeralBound"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Integer literal exceeds 40 characters"
+   },
+   "agrees": true
+  },
+  {
+   "id": "or36a",
+   "environment": "FO",
+   "text": "Every service is reviewed.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all service (pred reviewed [var 0])"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all service (pred reviewed [var 0])"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or36b",
+   "environment": "FO",
+   "text": "For every service that is deployed, there is a person who owns that service.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all service (implies (pred deployed [var 0]) (ex person (pred owns [var 0, var 1])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all service (implies (pred deployed [var 0]) (ex person (pred owns [var 0, var 1])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or38a",
+   "environment": "FO",
+   "text": "----------------------------------------------------------------budget exceeds [ limit + 1].",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Arithmetic term exceeds 64 nesting levels."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or38b",
+   "environment": "FO",
+   "text": "Legacy costs ----------------------------------------------------------------[ limit + 1].",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "ResourceLimit",
+   "python": {
+    "class": "ResourceLimit",
+    "message": "Arithmetic term exceeds 64 nesting levels."
+   },
+   "agrees": true
+  },
+  {
+   "id": "or37a",
+   "environment": "FO+cap",
+   "text": "\"budget_cap\" is at most 5.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "le (const budget_cap) (num 5)"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "le (const budget_cap) (num 5)"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or37b",
+   "environment": "FO+cap",
+   "text": "Legacy costs \"budget_cap\".",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred costs [const legacy, const budget_cap]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred costs [const legacy, const budget_cap]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "or37c",
+   "environment": "FO+cap",
+   "text": "Legacy costs twice the \"budget_cap\".",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'costs twice the \"budget_cap\"'. Nearest declared wordings: '\"budget_cap\"'; 'budget'; 'costs {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da1",
+   "environment": "FD",
+   "text": "The owner_of of legacy is alice.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred owner_of [const legacy, const alice]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred owner_of [const legacy, const alice]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da2",
+   "environment": "FD",
+   "text": "Legacy has the recorded relation \"owner_of\" to alice.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred owner_of [const legacy, const alice]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred owner_of [const legacy, const alice]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da3",
+   "environment": "FD",
+   "text": "The owner_of of legacy is senior.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "ex person (and (pred owner_of [const legacy, var 0]) (pred senior [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "ex person (and (pred owner_of [const legacy, var 0]) (pred senior [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da4",
+   "environment": "FD",
+   "text": "The owner_of of legacy is deployed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the owner_of of legacy'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'legacy'; 'has the recorded relation \"backup_of\" to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da5",
+   "environment": "FD",
+   "text": "The backup_of of legacy is deployed.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred deployed [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred deployed [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da6",
+   "environment": "FD",
+   "text": "For every service, the owner_of of that service is senior.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all service (ex person (and (pred owner_of [var 1, var 0]) (pred senior [var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all service (ex person (and (pred owner_of [var 1, var 0]) (pred senior [var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da7",
+   "environment": "FD",
+   "text": "The owns of alice is legacy.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "The owns of a term requires functional and total declarations."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da8",
+   "environment": "FD",
+   "text": "The Owner_of of legacy is alice.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the Owner_of of legacy'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'legacy'; 'has the recorded relation \"backup_of\" to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da9",
+   "environment": "FD",
+   "text": "If legacy is deployed, then The owner_of of legacy is alice.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'The owner_of of legacy'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'legacy'; 'has the recorded relation \"backup_of\" to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da10",
+   "environment": "FD",
+   "text": "Every service that the owner_of of that service is alice is reviewed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the owner_of of'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'has the recorded relation \"backup_of\" to {1}'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da11",
+   "environment": "FD",
+   "text": "If legacy is deployed, then the owner_of of legacy is alice.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "implies (pred deployed [const legacy]) (pred owner_of [const legacy, const alice])"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "implies (pred deployed [const legacy]) (pred owner_of [const legacy, const alice])"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da12",
+   "environment": "FD",
+   "text": "Legacy is deployed. The backup_of of it is legacy.",
+   "expected": {
+    "status": "ok",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "pred backup_of [const legacy, const legacy]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "pred backup_of [const legacy, const legacy]"
+    ],
+    "marks": [
+     false,
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da13",
+   "environment": "FD",
+   "text": "Legacy is deployed. The backup_of of legacy is it.",
+   "expected": {
+    "status": "ok",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "pred backup_of [const legacy, const legacy]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "pred backup_of [const legacy, const legacy]"
+    ],
+    "marks": [
+     false,
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da14",
+   "environment": "FD",
+   "text": "Legacy is deployed. The backup_of of it is deployed.",
+   "expected": {
+    "status": "ok",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred deployed [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred deployed [const legacy]",
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred deployed [var 0]))"
+    ],
+    "marks": [
+     false,
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da15",
+   "environment": "FD",
+   "text": "Legacy is deployed. If legacy is deployed, then the backup_of of it is legacy.",
+   "expected": {
+    "status": "rejected",
+    "code": "pronounUnresolved",
+    "stopped": 1
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the backup_of of it'. Nearest declared wordings: 'has the recorded relation \"backup_of\" to {1}'; 'is deployed'; 'legacy'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da16",
+   "environment": "FD",
+   "text": "The backup_of of it is legacy.",
+   "expected": {
+    "status": "rejected",
+    "code": "pronounUnresolved",
+    "stopped": 0
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the backup_of of it'. Nearest declared wordings: 'has the recorded relation \"backup_of\" to {1}'; 'is deployed'; 'legacy'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da17.owner_of.senior",
+   "environment": "FD",
+   "text": "The owner_of of legacy is senior.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "ex person (and (pred owner_of [const legacy, var 0]) (pred senior [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "ex person (and (pred owner_of [const legacy, var 0]) (pred senior [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da17.owner_of.deployed",
+   "environment": "FD",
+   "text": "The owner_of of legacy is deployed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the owner_of of legacy'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'legacy'; 'has the recorded relation \"backup_of\" to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da17.owner_of.reviewed",
+   "environment": "FD",
+   "text": "The owner_of of legacy is reviewed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the owner_of of legacy'. Nearest declared wordings: 'has the recorded relation \"owner_of\" to {1}'; 'legacy'; 'has the recorded relation \"backup_of\" to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da17.backup_of.senior",
+   "environment": "FD",
+   "text": "The backup_of of legacy is senior.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'the backup_of of legacy'. Nearest declared wordings: 'has the recorded relation \"backup_of\" to {1}'; 'legacy'; 'is deployed'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "da17.backup_of.deployed",
+   "environment": "FD",
+   "text": "The backup_of of legacy is deployed.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred deployed [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred deployed [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "da17.backup_of.reviewed",
+   "environment": "FD",
+   "text": "The backup_of of legacy is reviewed.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred reviewed [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "ex service (and (pred backup_of [const legacy, var 0]) (pred reviewed [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al1",
+   "environment": "FA",
+   "text": "Every action available to robot is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "Every action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al2",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, every other action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al3",
+   "environment": "FA",
+   "text": "For every action, another action available to robot is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, another action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al4a",
+   "environment": "FA",
+   "text": "Every other action available to robot is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Another action needs a rule on an action as its reference."
+   },
+   "agrees": true,
+   "python_text": "Every other action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Another action needs a rule on an action as its reference."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al4b",
+   "environment": "FA",
+   "text": "Another action available to robot is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Another action needs a rule on an action as its reference."
+   },
+   "agrees": true,
+   "python_text": "Another action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Another action needs a rule on an action as its reference."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al5",
+   "environment": "FA",
+   "text": "For every action named A1, for every action named A2, every other action available to robot is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected ', ' here. Use the English paraphrase as a writing example."
+   },
+   "agrees": false,
+   "python_text": "For every action named C1, for every action named C2, every other action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al6",
+   "environment": "FA",
+   "text": "For every action named A1, for every action named A2, every other action available to robot excluding A1 is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 2)))) (pred safe [var 0]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected ', ' here. Use the English paraphrase as a writing example."
+   },
+   "agrees": false,
+   "python_text": "For every action named C1, for every action named C2, every other action available to robot excluding C1 is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 2)))) (pred safe [var 0]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al7",
+   "environment": "FA",
+   "text": "For every action named A1, for every action named A2, another action available to robot excluding A1 is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 2)))) (pred safe [var 0]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected ', ' here. Use the English paraphrase as a writing example."
+   },
+   "agrees": false,
+   "python_text": "For every action named C1, for every action named C2, another action available to robot excluding C1 is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 2)))) (pred safe [var 0]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al8",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot excluding robot is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "sortMismatch"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "The excluded action must be an action in scope."
+   },
+   "agrees": true,
+   "python_text": "For every action, every other action available to robot excluding robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "The excluded action must be an action in scope."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al9",
+   "environment": "FA",
+   "text": "For every agent, for every action, every other action available to robot excluding that agent is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "sortMismatch"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "The excluded action must be an action in scope."
+   },
+   "agrees": true,
+   "python_text": "For every agent, for every action, every other action available to robot excluding that agent is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "The excluded action must be an action in scope."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al10",
+   "environment": "FA",
+   "text": "Every action available to robot excluding robot is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'excluding robot'. Nearest declared wordings: 'robot'; 'action'; 'injury'."
+   },
+   "agrees": true,
+   "python_text": "Every action available to robot excluding robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'excluding robot'. Nearest declared wordings: 'robot'; 'action'; 'injury'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al11",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot that other action leads to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred leads_to [var 0, const injury])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred leads_to [var 0, const injury])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al12",
+   "environment": "FA",
+   "text": "For every action, another action available to robot either is safe or leads to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, another action available to robot either is classified as \"safe\" or leads to injury.",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al13",
+   "environment": "FA",
+   "text": "For every action, another action available to robot either is safe or leads to injury, or both.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, another action available to robot either is classified as \"safe\" or leads to injury, or both.",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al14",
+   "environment": "FA",
+   "text": "For every action, another action available to robot both is safe and leads to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (and (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, another action available to robot both is classified as \"safe\" and leads to injury.",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (and (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al15",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot either that other action is safe or leads to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, every other action available to robot either that other action is classified as \"safe\" or leads to injury.",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al16",
+   "environment": "FA",
+   "text": "For every action, another action available to robot that other action is the same as wait.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (eq (var 0) (const wait))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (eq (var 0) (const wait))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al17",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot is the same as wait.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is the same as wait'. Nearest declared wordings: 'is classified as \"safe\"'; 'wait'; 'leads to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "al18",
+   "environment": "FA",
+   "text": "Every action available to robot that action is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "Every action available to robot that action is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al19",
+   "environment": "FA",
+   "text": "Every action available to robot that other action is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees": true,
+   "python_text": "Every action available to robot that other action is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al20",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot that action is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees": true,
+   "python_text": "For every action, every other action available to robot that action is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al21",
+   "environment": "FA",
+   "text": "For every action, that other action is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees": true,
+   "python_text": "For every action, that other action is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al22a",
+   "environment": "FA",
+   "text": "Every action available to it is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "pronounUnresolved"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a constant name or a definite reference to an entity already introduced."
+   },
+   "agrees": true,
+   "python_text": "Every action available to it is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Expected a constant name or a definite reference to an entity already introduced."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al22b",
+   "environment": "FA",
+   "text": "Every action available to that agent is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "unboundReference"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "The chooser has no antecedent; write there is a agent such that that action is available to that agent and …"
+   },
+   "agrees": true,
+   "python_text": "Every action available to that agent is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "The chooser has no antecedent; write there is a agent such that that action is available to that agent and …"
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al23",
+   "environment": "FA",
+   "text": "For every agent, every action available to that agent is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all agent (all action (implies (pred available [var 0, var 1]) (pred safe [var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every agent, every action available to that agent is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all agent (all action (implies (pred available [var 0, var 1]) (pred safe [var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al24",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot That other action is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'T'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees": true,
+   "python_text": "For every action, every other action available to robot That other action is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'T'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al25",
+   "environment": "FA",
+   "text": "Every Action available to robot is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
+   },
+   "agrees": true,
+   "python_text": "Every Action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al26",
+   "environment": "FA",
+   "text": "Every action Available to robot is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'Available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
+   },
+   "agrees": true,
+   "python_text": "Every action Available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'Available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al27",
+   "environment": "FA",
+   "text": "Every action available to robot wait is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is classified as \"safe\"'."
+   },
+   "agrees": true,
+   "python_text": "Every action available to robot wait is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is classified as \"safe\"'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al28",
+   "environment": "FA",
+   "text": "Every action available to robot this holds in all cases.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'this holds in all cases'. Nearest declared wordings: 'is classified as \"safe\"'; 'allows {1} to happen'; 'is avoidable by {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "al29",
+   "environment": "FA",
+   "text": "For every action, every other action available to robot is the same as that other action.",
+   "expected": {
+    "status": "none",
+    "stopped": 0
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is the same as'. Nearest declared wordings: 'leads to {1}'; 'prevents {1}'; 'is classified as \"safe\"'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "al30",
+   "environment": "FA",
+   "text": "For every action, another action available to robot that other action is the same as That Other Action.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (eq (var 0) (var 0))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (eq (var 0) (var 0))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al31a",
+   "environment": "FA",
+   "text": "Injury is preventable by robot.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred avoidable [const injury, const robot]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred avoidable [const injury, const robot]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al31b",
+   "environment": "FA",
+   "text": "Injury is avoidable by robot.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred avoidable [const injury, const robot]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred avoidable [const injury, const robot]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al32a",
+   "environment": "FA",
+   "text": "Wait lets injury happen.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred allows [const wait, const injury]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred allows [const wait, const injury]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al32b",
+   "environment": "FA",
+   "text": "Wait does not lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "not (pred leads_to [const wait, const injury])"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "not (pred leads_to [const wait, const injury])"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al32c",
+   "environment": "FA",
+   "text": "Wait prevents injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred prevents [const wait, const injury]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred prevents [const wait, const injury]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "al33",
+   "environment": "FA",
+   "text": "Wait is safe. Therefore every action available to robot is safe.",
+   "expected": {
+    "status": "ok",
+    "formulas": [
+     "pred safe [const wait]",
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ],
+    "marks": [
+     false,
+     true
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "Wait is classified as \"safe\". Therefore every action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "pred safe [const wait]",
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ],
+    "marks": [
+     false,
+     true
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al34",
+   "environment": "FA",
+   "text": "For every action, every action available to robot is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (implies (pred available [var 0, const robot]) (pred safe [var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every action, every action available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (implies (pred available [var 0, const robot]) (pred safe [var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al35",
+   "environment": "FA",
+   "text": "Wait cannot lead to injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'cannot lead to injury'. Nearest declared wordings: 'injury'; 'allows {1} to happen'; 'leads to {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "al36",
+   "environment": "FA2",
+   "text": "Every entity of sort \"action\" available to robot is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "Every entity of sort \"action\" available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al37",
+   "environment": "FA2",
+   "text": "For every entity of sort \"action\", every other entity of sort \"action\" available to robot that other entity of sort \"action\" is safe.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": false,
+   "python_text": "For every entity of sort \"action\", every other entity of sort \"action\" available to robot that other entity of sort \"action\" is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al38a",
+   "environment": "FA2",
+   "text": "Every entity of sort \"Action\" available to robot is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a declared sort noun, optionally first, second, or a numbered name."
+   },
+   "agrees": true,
+   "python_text": "Every entity of sort \"Action\" available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Expected a declared sort noun, optionally first, second, or a numbered name."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "al38b",
+   "environment": "FA2",
+   "text": "Every Entity of sort \"action\" available to robot is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
+   },
+   "agrees": true,
+   "python_text": "Every Entity of sort \"action\" available to robot is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "ri1",
+   "environment": "FR",
+   "text": "Wait might lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred risk__might_lead_to [const wait, const injury]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred risk__might_lead_to [const wait, const injury]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri2",
+   "environment": "FR",
+   "text": "Wait cannot lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "not (pred risk__might_lead_to [const wait, const injury])"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "not (pred risk__might_lead_to [const wait, const injury])"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri3a",
+   "environment": "FR",
+   "text": "Wait might not lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "not (pred leads_to [const wait, const injury])"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "not (pred leads_to [const wait, const injury])"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri3b",
+   "environment": "FR",
+   "text": "Wait leads to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred leads_to [const wait, const injury]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred leads_to [const wait, const injury]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri4",
+   "environment": "FR",
+   "text": "Injury is catastrophic.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred risk__class [const injury, const catastrophic]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred risk__class [const injury, const catastrophic]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri5",
+   "environment": "FR",
+   "text": "Injury is minor or worse.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred risk__or_worse [const injury, const minor]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred risk__or_worse [const injury, const minor]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri6",
+   "environment": "FR",
+   "text": "Wait has a less severe worst case than wait.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred risk__less_worst [const wait, const wait]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred risk__less_worst [const wait, const wait]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri7",
+   "environment": "FR",
+   "text": "Catastrophic is more severe than minor.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred risk__more_severe [const catastrophic, const minor]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred risk__more_severe [const catastrophic, const minor]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri8",
+   "environment": "FR",
+   "text": "Wait might prevent injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred prevents [const wait, const injury]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred prevents [const wait, const injury]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri9",
+   "environment": "FR",
+   "text": "For every harm that is catastrophic, wait cannot lead to that harm.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all harm (implies (pred risk__class [var 0, const catastrophic]) (not (pred risk__might_lead_to [const wait, var 0])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all harm (implies (pred risk__class [var 0, const catastrophic]) (not (pred risk__might_lead_to [const wait, var 0])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri10",
+   "environment": "FR",
+   "text": "Every action available to robot cannot lead to injury.",
+   "expected": {
+    "status": "rejected",
+    "code": "blockedWording"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot and that action cannot lead to injury'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri11a",
+   "environment": "FR",
+   "text": "Every action available to robot either is safe or cannot lead to injury.",
+   "expected": {
+    "status": "rejected",
+    "code": "blockedWording"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": true,
+   "python_text": "Every action available to robot either is classified as \"safe\" or cannot lead to injury.",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot and that action cannot lead to injury'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "ri11b",
+   "environment": "FR",
+   "text": "Every action available to robot both cannot lead to injury and is safe.",
+   "expected": {
+    "status": "rejected",
+    "code": "blockedWording"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
+   },
+   "agrees": true,
+   "python_text": "Every action available to robot both cannot lead to injury and is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot and that action cannot lead to injury'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "ri12",
+   "environment": "FR",
+   "text": "For every action, every other action available to robot cannot lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (not (pred risk__might_lead_to [var 0, const injury]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (not (pred risk__might_lead_to [var 0, const injury]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri13",
+   "environment": "FR",
+   "text": "For every action, another action available to robot cannot lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (not (pred risk__might_lead_to [var 0, const injury]))))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (not (pred risk__might_lead_to [var 0, const injury]))))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri14",
+   "environment": "FR",
+   "text": "Every action available to robot might not lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (not (pred leads_to [var 0, const injury])))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (not (pred leads_to [var 0, const injury])))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri15",
+   "environment": "FR",
+   "text": "Every action available to robot might lead to injury.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred risk__might_lead_to [var 0, const injury]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all action (implies (pred available [var 0, const robot]) (pred risk__might_lead_to [var 0, const injury]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.1",
+   "environment": "FR",
+   "text": "Wait may lead to injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'might lead to': 'may' is permission."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.2",
+   "environment": "FR",
+   "text": "Wait does not lead to injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Choose 'cannot lead to' or 'might not lead to'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.3",
+   "environment": "FR",
+   "text": "Wait could lead to injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'might lead to' for possibility under the declared record."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.4",
+   "environment": "FR",
+   "text": "Wait risks injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'might lead to' for possibility under the declared record."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.5",
+   "environment": "FR",
+   "text": "Wait is likely to lead to injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'might lead to' for possibility under the declared record."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.6",
+   "environment": "FR",
+   "text": "Wait increases the risk of injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'might lead to' for possibility under the declared record."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.7",
+   "environment": "FR",
+   "text": "Wait certainly leads to injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'leads to' for certainty under the declared record."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.8",
+   "environment": "FR",
+   "text": "Wait prevents injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'might prevent' in a risk environment."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.9",
+   "environment": "FR",
+   "text": "Wait is safer than wait.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use 'has a less severe worst case than'."
+   },
+   "agrees": true,
+   "python_text": "Wait is classified as \"safe\"r than wait.",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'is classified as \"safe\"r than wait'. Nearest declared wordings: 'is classified as \"safe\"'; 'is more severe than {1}'; 'catastrophic'."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "ri17.10",
+   "environment": "FR",
+   "text": "Wait leads to injury unless wait is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
+   },
+   "agrees": true,
+   "python_text": "Wait leads to injury unless wait is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "ri17.11",
+   "environment": "FR",
+   "text": "Wait cannot lead to injury exactly when wait is safe.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
+   },
+   "agrees": true,
+   "python_text": "Wait cannot lead to injury exactly when wait is classified as \"safe\".",
+   "python_on_python_text": {
+    "class": "SyntaxError",
+    "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
+   },
+   "agrees_on_python_text": true
+  },
+  {
+   "id": "ri17.12",
+   "environment": "FR",
+   "text": "Wait causes injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "The proximate cause wording needs a declared proximate role; declare it or write 'leads to'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "ri17.13",
+   "environment": "FR",
+   "text": "Wait results in injury.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Use the declared Boolean wording 'leads to' for this outcome."
+   },
+   "agrees": true
+  },
+  {
+   "id": "mo1a",
+   "environment": "FM",
+   "text": "Alice may access legacy.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred access [const alice, const legacy]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred access [const alice, const legacy]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "mo1b",
+   "environment": "FM",
+   "text": "Alice must review legacy.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "pred review [const alice, const legacy]"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "pred review [const alice, const legacy]"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "mo2",
+   "environment": "FM",
+   "text": "Every person who may access legacy owns legacy.",
+   "expected": {
+    "status": "one",
+    "formulas": [
+     "all person (implies (pred access [var 0, const legacy]) (pred owns [var 0, const legacy]))"
+    ]
+   },
+   "expected_class": "accepted",
+   "python": {
+    "class": "accepted",
+    "formulas": [
+     "all person (implies (pred access [var 0, const legacy]) (pred owns [var 0, const legacy]))"
+    ],
+    "marks": [
+     false
+    ]
+   },
+   "agrees": true
+  },
+  {
+   "id": "mo3a",
+   "environment": "FM",
+   "text": "Alice may not access legacy.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'may'. Nearest declared wordings: 'legacy'; 'owns {1}'; 'alice'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "mo3b",
+   "environment": "FM",
+   "text": "Alice access legacy.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 'access legacy'. Nearest declared wordings: 'legacy'; 'may access {1}'; 'alice'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "rg1.FO",
+   "environment": "FO",
+   "text": "Every service is deployed or reviewed, or both.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected '.' here. Use the English paraphrase as a writing example."
+   },
+   "agrees": true
+  },
+  {
+   "id": "rg1.FD",
+   "environment": "FD",
+   "text": "Every service is deployed or reviewed, or both.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected '.' here. Use the English paraphrase as a writing example."
+   },
+   "agrees": true
+  },
+  {
+   "id": "rg2.FO",
+   "environment": "FO",
+   "text": "For every person, if that person is deployed and that person is reviewed, then that person is reviewed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected ', then ' here. Use the English paraphrase as a writing example."
+   },
+   "agrees": true
+  },
+  {
+   "id": "rg3.FO",
+   "environment": "FO",
+   "text": "No service that is deployed is not reviewed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'costs {1}'; 'limit'; 'owns {1}'."
+   },
+   "agrees": true
+  },
+  {
+   "id": "rg3.FD",
+   "environment": "FD",
+   "text": "No service that is deployed is not reviewed.",
+   "expected": {
+    "status": "zero"
+   },
+   "expected_class": "SyntaxError",
+   "python": {
+    "class": "SyntaxError",
+    "message": "Unknown English phrase 't'. Nearest declared wordings: 'owns {1}'; 'alice'; 'legacy'."
+   },
+   "agrees": true
+  }
+ ]
+}

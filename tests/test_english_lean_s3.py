@@ -500,3 +500,75 @@ def test_the_severity_order_wording_is_absent_without_risk():
         warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
         words = EnglishVocabulary(Environment(X.FA()))
     assert "risk__more_severe" not in words.predicates
+
+
+# ------------------------------------------------------------------ S3.5, Python's part: ev5 and lx14
+
+from conformance import english_lean_s3_python as H  # noqa: E402
+
+
+@pytest.fixture(scope="module")
+def python_report():
+    return H.report()
+
+
+def test_ev5_the_committed_report_is_regenerated(python_report):
+    """Every number of `s3-python-report.json` comes from this run (checklist 20)."""
+    committed = json.loads(H.REPORT.read_text())
+    assert committed == json.loads(json.dumps(python_report))
+
+
+def test_ev5_python_agrees_with_every_fixture_in_its_own_selections(python_report):
+    """Spec ev5: on every fixture of 8.1 to 8.5 and 8.7 Python's outcome at the dispatched boundary is the
+    mapped class with the same formulas and marks, except or38's agreed `ResourceLimit` (2.11). Where the
+    spec's hand-written lexicon selects another wording or letter than Python's producer (`H.FINDINGS`), the
+    text written in Python's selections agrees; the exact text's difference is listed, never hidden."""
+    rows = python_report["rows"]
+    assert python_report["fixtures"] == len(rows) > 150
+    assert python_report["differences_on_python_text"] == []
+    for row in rows:
+        if not row["agrees"]:
+            assert row.get("agrees_on_python_text") is True, row["id"]
+            assert row["environment"] in {"FA", "FA2"}
+    assert {r["id"] for r in rows if r["id"] in H.AGREED and r["python"]["class"] == "ResourceLimit"} == set(H.AGREED)
+
+
+def test_ev5_a_wrong_expectation_is_a_difference():
+    """The comparison can fail: a formula with its terms exchanged, a rejection given another class, and a
+    `zero` against an accepted text are each a difference."""
+    got = {"class": "accepted", "formulas": ["lt (const budget) (const limit)"], "marks": [False]}
+    assert H.agrees("x", H.one("lt (const budget) (const limit)"), got)
+    assert not H.agrees("x", H.one("lt (const limit) (const budget)"), got)
+    assert not H.agrees("x", H.ZERO, got)
+    assert not H.agrees("x", H.rejected("nestingLimit"), {"class": "SyntaxError"})
+    assert H.agrees("x", H.rejected("coefficientNotNumeral"), {"class": "SyntaxError"})
+    assert not H.agrees("or38a", H.ZERO, {"class": "SyntaxError"})
+
+
+def test_lx14_every_wording_python_selects_on_the_corpus_is_subject_first():
+    """lx14: over the 39 corpus environments of S0 (the round-trip configurations and the use cases, with
+    their overlays), every wording, negative and alias Python selects begins with `{0} ` and has its holes in
+    increasing order (D8). A counterexample is a finding for the DRI."""
+    from conformance.english_lean_lexicon import environments
+    from ve.english import EnglishVocabulary
+
+    def subject_first(w: str) -> bool:
+        holes = [int(h) for h in re.findall(r"\{([0-9]+)\}", w)]
+        return w.startswith("{0} ") and holes == list(range(len(holes)))
+
+    assert not subject_first("the owner of {0} is {1}") and not subject_first("{1} follows {0}")
+    assert not subject_first("{1} {0} are related") and subject_first("{0} {1} are related")
+    count, selected, bad = 0, 0, []
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UnreviewedVocabularyWarning)
+        for name, env, options in environments():
+            lexicon = EG.export(EnglishVocabulary(env, **options))
+            count += 1
+            for field, entries in (("wordings", lexicon["wordings"]), ("negatives", lexicon["negatives"]),
+                                   ("aliases", [[p, w] for p, w, _ in lexicon["aliases"]])):
+                for p, w in entries:
+                    selected += 1
+                    if not subject_first(w):
+                        bad.append((name, field, p, w))
+    assert count == 39 and selected > 700
+    assert bad == []
