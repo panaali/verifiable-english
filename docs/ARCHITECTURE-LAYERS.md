@@ -55,50 +55,12 @@ still outside the `ve` command path, as described in
 
 ## Tests and non-import dependencies
 
-`tools/select_tests.py` reads the changed paths from a working-tree diff,
-branch diff, historical commit or explicit path list. Its test assignment uses
-AST imports, resolves `from ve import ...` through the public facade, and uses
-the highest imported layer when a test spans layers. Test helpers and fixtures
-imported from other test files contribute their providers transitively; changing
-a helper also selects its consumers. Reviewed outward imports lower the changed
-module's effective layer to include inner consumers, following exception edges
-transitively. It runs tests assigned to that layer and every outer layer.
-Unknown paths and shared fixtures select the full suite. A changed test file is
-always selected.
-
-| Source or input | Assigned layer / test effect |
-|---|---|
-| `ve/*.py`, `lean/**/*.lean`, `rust/{ve-core,ve}/**` | Module or crate layer above; Lean changes build `lake`, Rust changes run `cargo test` and build the release binary |
-| `tests/test_*.py` | Test's import-derived layer; select the changed test itself |
-| `tests/conftest.py`, `tests/data/**`, `conformance/**` | Layer 1, since fixtures and generated reports feed tests across layers; conformance changes rebuild both native backends |
-| `lean/{lakefile.toml,lean-toolchain,lake-manifest.json}`, `rust/{Cargo.toml,Cargo.lock}`, `pyproject.toml`, `uv.lock` | Layer 1 |
-| `ve_experiments/**`, `experiments/**`, `usecases/**`, `paper/**`, documentation | Layer 5, except generated `docs/english-surface.md` and `docs/fluent-examples.md` are layer 1 because tests compare their contents |
-| Unknown paths | Layer 1 full-suite fallback |
-
-Tests that call a `lean/.lake/build/bin` executable (any `lean_exe` named in
-`lean/lakefile.toml`) or `rust/target/release/ve` are treated
-as tool-level consumers even without a Python import. Tests that read
-`usecases` data are app-level consumers. Four cross-cutting Python files always run:
-`test_conformance.py`, `test_lean_conformance.py`,
-`test_replay_conservativity.py`, and `test_p0_three_way.py`. The Python, Lean,
-Rust import/dependency checks, selector boundary checks, and Lean axiom audit
-always run. A missing native binary is built before its selected consumer runs;
-a `lean_exe` outside `defaultTargets` (such as `ve_risk_eval`) is named in its own
-`lake build` when a selected test uses it.
-The randomized recovery replay and wall-clock deadline tests are layer-5
-measurements even though their imported implementation is in layer 4.
-
-Use `python3 tools/select_tests.py --base <merge-base> --run` for a branch
-check, or omit `--base` for the current working tree. `--json` emits the exact
-paths and commands for CI. The runner executes commands sequentially; `pytest`
-excludes the live model tests through `pyproject.toml`'s default marker filter.
-`UV_CACHE_DIR=/tmp/ve-layers-uv-cache` is the default runner cache location.
-
-Selective runs are for fix loops and branch checks. **Before any green tag,
-and nightly, run the full suite** with
-`python3 tools/select_tests.py --full --run`, including Lean build, Rust tests,
-release binary, Python tests, dependency checks and axiom audit. Do not treat a
-selected run as a green-tag gate.
+`tools/select_tests.py` selects tests by the functions, files and programs a
+change touches, using a recorded coverage map with the static import graph as
+the fallback; layers no longer decide selection. [`TESTING.md`](TESTING.md)
+describes the rules, the map and the evidence. Before any green tag, and
+nightly, run the full suite (`python3 tools/select_tests.py --full --run`, or
+`python3 tools/gate.py`); a selected run is not a green-tag gate.
 
 ## Current exceptions
 
@@ -128,50 +90,5 @@ Commands: `uv run --group dev python tools/check_python_layers.py`,
 
 ## Selection evidence
 
-The following replays the 10 newest non-merge commits immediately before this
-branch's layer commits. Counts are Python test files in the present tree; the full
-suite had 96 files at the time of measurement; the merged tree has 101. Historical paths were classified under that policy snapshot.
-
-| Commit | Minimum layer | Selected / full |
-|---|---:|---:|
-| `c395da7` | 5 | 53 / 96 |
-| `b107b7d` | 5 | 53 / 96 |
-| `f4286ef` | 5 | 53 / 96 |
-| `fe7fd33` | 5 | 53 / 96 |
-| `39350c0` | 5 | 53 / 96 |
-| `4af44bd` | 5 | 53 / 96 |
-| `2be5772` | 5 | 53 / 96 |
-| `03d0fd3` | 5 | 53 / 96 |
-| `628659a` | 5 | 53 / 96 |
-| `4704fd8` | 4 | 80 / 96 |
-
-Reproduce a row with `python3 tools/select_tests.py --commit <sha> --json`.
-For representative changed paths at each layer, the selector chooses 96, 96,
-92, 80, and 53 of 96 files respectively from kernel through apps.
-
-One reversible functional fault was injected in a source module at each layer:
-canonical JSON serialization, profile family dispatch, grammar export,
-gatekeeper exemption, and the T1c breadth-first search. An additional registry
-fault covers a reviewed outward edge to the kernel. For each fault,
-`tools/mutation_check.py` ran a selected witness that failed and ran every
-*excluded* test file under the fault. Thus no excluded test failed because of
-these mutations; all full-suite failures attributable to each injected fault
-are inside that layer's selection. The app exclusion was split into four
-11-file invocations after two wall-clock-sensitive assist stress tests were
-assigned to layer 5.
-
-| Fault layer | Selected / full files | Witness failures | Excluded files passing |
-|---|---:|---:|---:|
-| 1 kernel | 96 / 96 | 1 | 0 / 0 |
-| 2 profiles | 96 / 96 | 1 | 0 / 0 |
-| 3 surface | 92 / 96 | 3 | 4 / 4 |
-| 4 tools | 80 / 96 | 1 | 16 / 16 |
-| 5 apps | 53 / 96 | 1 | 43 / 43 |
-
-Exact witness IDs, commands' test-file groups, exit codes and timings are in
-[`layer-mutation-results.json`](layer-mutation-results.json). The full Python suite
-passed with **2,161 passed, 5 skipped** in 21m31s using four pytest workers;
-the five skips are optional backends, an absent pinned FOLIO corpus, a Rust
-admission case outside Rust scope, and an uncached tokenizer. `lake build`,
-`cargo test --locked --all-features`, the Rust release build, the Lean axiom
-audit, and all three dependency checks also passed.
+The layer-based selection evidence that stood here was replaced with the
+function-level selector's in [`TESTING.md`](TESTING.md#evidence).
