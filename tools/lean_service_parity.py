@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.lean_service_common import MODES, machine  # noqa: E402
 from ve.backends.lean_service import LeanService, case_digest, case_texts  # noqa: E402
+from ve.backends.service_schema import same_json  # noqa: E402
 
 COMMAND = {mode: command for mode, command in MODES.values()}
 FIXTURES = ROOT / "conformance"
@@ -272,9 +273,9 @@ def compare_english(service, payloads):
         rows = [bound["result"] for bound in response.get("results") or []] or [None] * n
         for (code, stdout, stderr), row in zip(expected[offset:offset + n], rows):
             if code == 0:
-                ok = stdout in body and json.loads(stdout) == row
+                ok = stdout in body and same_json(json.loads(stdout), row)
             else:
-                ok = row == {"status": "error", "error": stderr}
+                ok = same_json(row, {"status": "error", "error": stderr})
             if ok:
                 stats["identical"] += 1
             else:
@@ -300,9 +301,10 @@ def compare_english_raw(service, payloads):
         stats["requests"] += 1
         row = (response.get("results") or [{"result": None}])[0]["result"]
         if proc.returncode == 0:
-            ok = response["status"] == "ok" and proc.stdout.strip() in results_text(raw) and row == json.loads(proc.stdout)
+            ok = (response["status"] == "ok" and proc.stdout.strip() in results_text(raw)
+                  and same_json(row, json.loads(proc.stdout)))
         else:
-            ok = row == {"status": "error", "error": proc.stderr.decode().strip()}
+            ok = same_json(row, {"status": "error", "error": proc.stderr.decode().strip()})
         if ok:
             stats["identical"] += 1
         else:

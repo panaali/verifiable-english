@@ -166,3 +166,63 @@ def test_a_delta_listing_a_record_twice_is_unusable(tmp_path):
     for delta in ({"verdict": [entry, entry]}, {"order": [{**entry, "head": REJECTED}], "verdict": [entry]}):
         with pytest.raises(diff.Unusable, match="twice"):
             _compare(tmp_path, {"a": OK}, {"a": changed}, delta)
+
+
+# lf-1 recheck 3 B: the comparison is type-strict JSON equality (the response validator's `same_json`), so a
+# boolean answer that came back as an integer, or an integer that came back as a float, is a difference.
+
+@pytest.mark.parametrize("old, new", [(True, 1), (False, 0), (1, 1.0), (0, False), (1.0, 1), (0, -0.0)])
+def test_a_retyped_value_is_a_difference_on_every_path(tmp_path, old, new):
+    base = {group: {"a": {"returned": {"values": [old]}}} for group in diff.expected_groups()}
+    head = {group: {"a": {"returned": {"values": [new]}}} for group in diff.expected_groups()}
+    base_path, head_path = _records(tmp_path / "b.jsonl", base), _records(tmp_path / "h.jsonl", head)
+    result = diff.compare(base_path, head_path, None, diff.expected_groups())
+    assert "same" not in result["totals"] and result["unlisted"] == len(base)
+    assert {row["class"] for row in result["differences"]} == {"verdict"}
+    assert diff.main(["compare", base_path, head_path]) == 1
+    # A delta entry naming the other type lists nothing.
+    entry = {"corpus": "c", "authority": "python", "case": "a", "op": "op"}
+    retyped = {"returned": {"values": [new]}}
+    assert _compare(tmp_path, {"a": {"returned": {"values": [old]}}}, {"a": retyped},
+                    {"verdict": [{**entry, "base": {"returned": {"values": [new]}}, "head": retyped}]})["unlisted"] == 1
+    assert diff.change_class({"returned": {"values": [old]}}, retyped) == "verdict"
+
+
+def test_the_reviewers_reproduction_exits_one(tmp_path):
+    """`{"values":[true]}` against `{"values":[1]}` exited 0 with `"same": 1`."""
+    for old, new in ((True, 1), (False, 0)):
+        base = _records(tmp_path / "b.jsonl", {g: {"a": {"returned": {"values": [old]}}} for g in diff.expected_groups()})
+        head = _records(tmp_path / "h.jsonl", {g: {"a": {"returned": {"values": [new]}}} for g in diff.expected_groups()})
+        assert diff.main(["compare", base, head]) == 1
+        assert "same" not in diff.compare(base, head, None)["totals"]
+
+
+def test_a_wording_pair_matches_only_its_own_types(tmp_path):
+    """Python's set membership equates `(true, 2)` with `(1, 2)`; a signed pair names its texts exactly."""
+    base, head = {"raised": {"code": "X", "message": 1}}, {"raised": {"code": "X", "message": 2}}
+    assert _compare(tmp_path, {"a": base}, {"a": head}, {"wording": [{"base": 1, "head": 2}]})["unlisted"] == 0
+    assert _compare(tmp_path, {"a": base}, {"a": head}, {"wording": [{"base": True, "head": 2}]})["unlisted"] == 1
+    assert _compare(tmp_path, {"a": base}, {"a": head}, {"wording": [{"base": 1.0, "head": 2}]})["unlisted"] == 1
+
+
+@pytest.mark.parametrize("case", [1, True, None, 1.0, ["a"]])
+def test_a_record_key_that_is_not_a_string_is_unusable(tmp_path, case):
+    """Keys `1` and `true` would pair two different records (Python hashes them alike)."""
+    path = tmp_path / "r.jsonl"
+    path.write_text(json.dumps({"corpus": "c", "authority": "python", "case": case, "op": "op",
+                                "source_sha256": "s", "outcome": OK}) + "\n")
+    with pytest.raises(diff.Unusable, match="must be strings"):
+        diff.load(str(path))
+    good = _write(tmp_path / "g.jsonl", {"a": OK})
+    entry = {"corpus": "c", "authority": "python", "case": case, "op": "op", "base": OK, "head": OK}
+    with pytest.raises(diff.Unusable, match="must be strings"):
+        diff.compare(good, _write(tmp_path / "g2.jsonl", {"a": OK}), {"verdict": [entry]})
+
+
+def test_stage2_parity_classifies_a_retyped_output_as_a_change():
+    """The same class in `tools/stage2_parity.py`: its projection was compared with `==`."""
+    from tools import stage2_parity
+    row = {"cell": "A", "status": "ok", "output": {"values": [True]}}
+    assert stage2_parity._classify(row, dict(row)) .startswith("same")
+    for new in (1, 1.0):
+        assert stage2_parity._classify(row, {**row, "output": {"values": [new]}}) == "different"
