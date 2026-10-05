@@ -47,7 +47,9 @@ plain-word statements and the remaining premises.
 `lake build` builds the semantic library, all proofs, direct executable regression
 checks, and the JSON executable. `audit.py` checks that every named theorem has a
 `#print axioms` entry, reruns those audits, and rejects any transitive dependency
-outside `propext`, `Classical.choice`, and `Quot.sound`. All named theorems in the current [audit](axioms.txt) pass;
+outside `propext`, `Classical.choice`, and `Quot.sound`. Its output is the committed record
+[axioms.txt](axioms.txt): the audit fails when the record differs, and `python3 audit.py --write`
+regenerates it after theorems change. All named theorems in the current audit pass;
 there are no `sorry`, new axioms, unsafe declarations, or native-evaluation
 proofs. The source audit scans every project `.lean` file, including `Main.lean`,
 root modules and nested directories (excluding the `.lake` dependency/build

@@ -2,12 +2,17 @@
 
 The pinned toolchain/build cache under .lake is trusted, not project source.
 This is a source/dependency policy check, not an untrusted-code sandbox.
+
+The audit output is the committed record `axioms.txt`; the audit fails when the record differs from
+it, so a new theorem cannot leave the record stale. `python3 lean/audit.py --write` regenerates it.
 """
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parent
+RECORD = ROOT / "axioms.txt"
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 FORBIDDEN = re.compile(r"\b(sorry|sorryAx|admit|axiom|unsafe|native_decide|implemented_by|partial|opaque|extern)\b")
 
@@ -80,7 +85,15 @@ def scan_sources(root):
     return actual, sources
 
 
-def main():
+def recorded_names(text):
+    """The theorem names of an audit record such as `axioms.txt`."""
+    return re.findall(r"^'([^']+)' (?:does not depend on any axioms|depends on axioms)", text, re.M)
+
+
+def main(argv=()):
+    write = list(argv) == ["--write"]
+    if list(argv) and not write:
+        raise SystemExit("usage: python3 lean/audit.py [--write]")
     actual, sources = scan_sources(ROOT)
     recorded = set(re.findall(r"^#print axioms (\S+)", code_only((ROOT / "VE/Audit.lean").read_text()), re.M))
     assert actual == recorded, {"missing": actual - recorded, "extra": recorded - actual}
@@ -97,9 +110,14 @@ def main():
         assert axioms <= ALLOWED, (name, axioms - ALLOWED)
     assert seen == actual
     print(result.stdout, end="")
+    if write:
+        RECORD.write_text(result.stdout)
+    elif RECORD.read_text() != result.stdout:
+        raise AssertionError(f"{RECORD.name} is stale: {len(recorded_names(RECORD.read_text()))} entries, "
+                             f"{len(seen)} audited; regenerate with python3 lean/audit.py --write")
     print(f"PASS: {len(sources)} source files; {len(seen)} named theorem declarations audited "
           "(headline results and helper lemmas); only the declared standard axiom allowlist.")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
