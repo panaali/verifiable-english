@@ -63,12 +63,12 @@ def run_soft_case(executable, case, *, timeout: float | None = None) -> dict:
         completed = subprocess.run([str(executable), "-"], input=json.dumps([case], ensure_ascii=False).encode(),
                                    capture_output=True, timeout=timeout, check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
-        raise CheckerUnavailable(f"soft route unavailable: {exc}", operation="soft-route", backend="lean") from None
+        raise CheckerUnavailable(f"CheckerUnavailable: soft route unavailable: {exc}", operation="soft-route", backend="lean") from None
     try:
         [row] = read_rows(completed.returncode, completed.stdout, [case], coded=True)
     except NoAnswer as exc:
         detail = completed.stderr.decode("utf-8", "replace").strip()[-300:]
-        raise CheckerUnavailable(f"soft route returned no answer: {exc}" + (f" ({detail})" if detail else ""),
+        raise CheckerUnavailable(f"CheckerUnavailable: soft route returned no answer: {exc}" + (f" ({detail})" if detail else ""),
                                  operation="soft-route", backend="lean") from None
     if row["status"] == "error":
         error = VEError(row["error"])
@@ -83,6 +83,16 @@ class NoAnswer(Exception):
     transport raises it as its own `CheckerUnavailable`: it is never a rejection."""
 
 
+# The members an error row of a Lean runner may carry besides its identity, `status`, `error` and a coded
+# route's `code` (`runCaseReported` in VE/*/Run.lean, VE/Route/Run.lean, VE/CertificateWire.lean,
+# VE/Order/*.lean, VE/Time/Wire.lean; `caseError` in VE/Service/Protocol.lean): the route's `generator` of an
+# `InvalidModel(g)` message, and `valid: false` on certificate and order cases.
+ERROR_EXTRAS = {
+    "generator": lambda value: type(value) is str,
+    "valid": lambda value: value is False,
+}
+
+
 def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str | None:
     """Why `row` is not a result row for `case`, the `index`-th submitted case, or None.
 
@@ -90,7 +100,8 @@ def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str
     runner could not read is answered by its position alone (`status: error`, `case_index`,
     `error` and, from the certificate and order runners, `valid: false`); every other row names the case's `id` (null when the case has none)
     and no position. An `error` row carries a non-empty string `error` and, only on a route whose rows name
-    codes (`coded`), a non-empty string `code`; an `ok` row carries neither."""
+    codes (`coded`), a non-empty string `code`, and no member outside `ERROR_EXTRAS`; an `ok` row carries
+    neither."""
     if type(row) is not dict:
         return "a result row is not an object"
     status = row.get("status")
@@ -115,6 +126,9 @@ def identity_problem(case: dict, row, index: int, *, coded: bool = False) -> str
             return "an error row has no error message"
         if "code" in row and not (coded and type(row["code"]) is str and row["code"]):
             return "an error row names a code its route does not give"
+        for name in row.keys() - {"id", "case_index", "status", "error", "code"}:
+            if name not in ERROR_EXTRAS or not ERROR_EXTRAS[name](row[name]):
+                return f"an error row has an unexpected {name!r}"
     elif "error" in row or "code" in row:
         return "an ok row carries an error or a code"
     return None
@@ -239,15 +253,15 @@ def _route_rows(name: str, executable, cases: list, data: bytes, *, timeout: flo
         proc = subprocess.run([str(executable), "-"], input=data, capture_output=True, timeout=timeout,
                               check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
-        raise CheckerUnavailable(f"{name} is unavailable") from exc
+        raise CheckerUnavailable(f"CheckerUnavailable: {name} is unavailable") from exc
     try:
         return read_rows(proc.returncode, proc.stdout, cases, restricted=restricted)
     except NoAnswer as exc:
-        raise CheckerUnavailable(f"{name} returned an invalid response ({exc})") from None
+        raise CheckerUnavailable(f"CheckerUnavailable: {name} returned an invalid response ({exc})") from None
 
 
 def run_alternatives_case(executable, case: dict, *, timeout: float) -> dict:
-    """Transport a raw alternatives case to its dedicated Lean runner."""
+    """Transport a raw alternatives (or risk) case to its dedicated Lean runner."""
     return _route_rows("ve_alternatives_route", executable, [case], canonical_json([case]), timeout=timeout,
                        restricted=True)[0]
 
