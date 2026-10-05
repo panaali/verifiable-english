@@ -362,16 +362,17 @@ def modelId (profiles : List String) (envId : String) (m : Json) : Except String
 
 /-- One reading of a reading set: its id, kind, content and admission record. -/
 def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
-    (ids : List String) (r : Json) : Except String (String × Bool × VE.Formula × List (String × String)) := do
+    (ids seen : List String) (r : Json) : Except String (String × Bool × VE.Formula × List (String × String)) := do
   let keys ← match r with
     | .obj kvs => pure (kvs.toList.map Prod.fst)
     | _ => throw "invalid reading"
   let schema := ["id", "kind", "meaning_id", "content", "admission"]
   unless keys.length == schema.length && schema.all keys.contains do throw "invalid reading"
-  let id ← stringField r "id"
-  let kind ← r.getObjVal? "kind"
+  let id := ((r.getObjValD "id").getStr?).toOption.getD ""
+  unless token id && !seen.contains id do throw "duplicate or invalid reading id"
+  let kind := r.getObjValD "kind"
   let _ ← VE.Route.Admission.decodeKind 16 kind
-  let mid ← stringField r "meaning_id"
+  let mid := ((r.getObjValD "meaning_id").getStr?).toOption.getD ""
   unless token mid do throw "invalid reading meaning id"
   let f ← VE.Route.Wire.decodeClosed rv.environment (← r.getObjVal? "content") (profiles.contains "data@0")
   unless (← VE.Route.Wire.meaningId profiles envId (VE.Route.Wire.encodeFormula f)) == mid do
@@ -382,7 +383,8 @@ def compileReading (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String)
     | _ => throw "invalid reading admission"
   unless akeys.length == 3 && ["who", "why", "distinguishing_models"].all akeys.contains do
     throw "invalid reading admission"
-  unless token (← stringField admission "who") && !(← stringField admission "why").isEmpty do
+  unless (((admission.getObjValD "who").getStr?).toOption.any token) &&
+      (((admission.getObjValD "why").getStr?).toOption.any (!·.isEmpty)) do
     throw "invalid reading admission"
   let models ← match ← admission.getObjVal? "distinguishing_models" with
     | .obj kvs => pure kvs.toList
@@ -410,12 +412,12 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
     let required := ["id", "unit", "version", "status", "readings"]
     unless required.all keys.contains && keys.all (required ++ ["signature", "rejected_history", "models"]).contains do
       throw "invalid reading set"
-    let id ← stringField item "id"
-    let version ← (← item.getObjVal? "version").getNat?
+    let id := ((item.getObjValD "id").getStr?).toOption.getD ""
+    let version := ((item.getObjValD "version").getNat?).toOption.getD 0
     unless token id && 1 ≤ version && !(acc.any fun (s, _) => s.id == id && s.version == version) do
       throw "invalid or duplicate reading set version"
-    let unit ← stringField item "unit"
-    let status ← stringField item "status"
+    let unit := ((item.getObjValD "unit").getStr?).toOption.getD ""
+    let status := ((item.getObjValD "status").getStr?).toOption.getD ""
     unless unitIds.contains unit && (status == "authored" || status == "open") do
       throw "invalid reading set unit or status"
     unless acc.all (fun (s, _) => (s.id == id) == (s.unit == unit)) do
@@ -429,9 +431,9 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
       throw "authored reading needs one signed choice"
     if status == "open" && (item.getObjVal? "signature").toBool then
       throw "open reading set cannot have an author signature"
-    let ids ← readings.mapM fun r => stringField r "id"
-    unless ids.all token && ids.eraseDups.length == ids.length do throw "duplicate or invalid reading id"
-    let compiled ← readings.mapM (compileReading rv profiles envId ids)
+    let ids := readings.map fun r => ((r.getObjValD "id").getStr?).toOption.getD ""
+    -- Each reading in order, its id checked against the ones before it (Python's loop).
+    let compiled ← readings.zipIdx.mapM fun (r, i) => compileReading rv profiles envId ids (ids.take i) r
     let models ← match item.getObjVal? "models" with
       | .ok (.obj kvs) => pure kvs.toList
       | .ok _ => throw "distinguishing models must be supplied by id"
