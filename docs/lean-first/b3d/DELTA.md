@@ -215,6 +215,12 @@ Seeded mutants, each applied alone and then restored:
 | R2 `pairEval` evaluates every completion's admissibility up front (`mapM`), then reads the list | `pairEval_id` (replaced by `sorry`) | `RunExamples.lean`: the 12-cell, `σWrong12` and `σAvoid` counts; `lake build` fails |
 | R3 `pairFactsIn` restored to the code before the fix (`completionsOn`, `separatesWith`), bypassing `pairEval` | `pairFactsIn_eq` (replaced by `sorry`) | `test_the_route_runs_the_counted_pair_evaluation` (`pairFactsIn` no longer calls `pairEval`) |
 
+Verified at `a4e7b1ac` in this worktree (load ~22 on 32 cores): `lake build` and `python3 lean/audit.py` pass
+(3,085 theorems, standard axioms only; `lean/axioms.txt` current), and `python3 VE/Route/frozen.py` passes. The full
+suite ran in two halves of `-n 8`, `-m "not live"`, with `VE_NATIVE_PREBUILT`, `VE_LEAN_PREBUILT`, `VE_RUST_PREBUILT`:
+**9,144 passed, 6 skipped, 0 failed**, the 3 new tests of `test_readings_lazy_pairs.py` included and pinned in
+`tools/gate-collection.json`.
+
 ## Rest of the gate (5.1)
 
 - **Suite (item 1):** the full suite at `1675c0f4` (this file's later commits change documentation only), in a
