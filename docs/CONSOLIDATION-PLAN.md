@@ -659,7 +659,7 @@ the DRI. Step 6 counts 503 more [V] diagnostic lines than at fix 4, from the two
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
 | 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1787 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 762 | 0 | 0 | 60 | 702 | 6 | 2 | 58.5 |
+| 7 | 763 | 0 | 0 | 60 | 703 | 6 | 2 | 58.6 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
 | 8b | 0 | 3480 | 0 | 0 | 3480 | 30 | 3 | 38.7 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
@@ -667,10 +667,10 @@ the DRI. Step 6 counts 503 more [V] diagnostic lines than at fix 4, from the two
 
 What the measurement changes:
 
-* **Re-ranking of steps 5 to 10 by measured score:** 7 (58.5), 5 (34.6), 8a (18.1), 6 (11.7),
+* **Re-ranking of steps 5 to 10 by measured score:** 7 (58.6), 5 (34.6), 8a (18.1), 6 (11.7),
   9 (2.4), 10. Step 8b's 3,480 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
-  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
+  pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (763 trusted
   dispatch and `main` lines, not 340; 603 before the bench executable) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
