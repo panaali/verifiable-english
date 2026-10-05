@@ -17,20 +17,23 @@ ignore_imports =
     ve.alternatives -> ve.backends.lean
     ve.assist.cli -> ve_experiments.assist_haiku
     ve.ast -> ve.backends.dispatch
-    ve.ast -> ve.backends.lean_runner
+    ve.ast -> ve.backends.relay
     ve.ast -> ve.backends.rust_jsonl
     ve.ast -> ve.surface.nary
     ve.background -> ve.backends.dispatch
     ve.background -> ve.backends.lean_runner
     ve.background -> ve.backends.lean_service
+    ve.background -> ve.backends.relay
     ve.background -> ve.backends.validation
     ve.closure -> ve.surface.registry
     ve.definitions -> ve.backends.dispatch
     ve.definitions -> ve.backends.lean_runner
+    ve.definitions -> ve.backends.relay
     ve.definitions -> ve.backends.validation
     ve.english -> ve.argument
     ve.entailment -> ve.backends.dispatch
     ve.entailment -> ve.backends.lean_runner
+    ve.entailment -> ve.backends.relay
     ve.environment -> ve.backends.dispatch
     ve.environment -> ve.backends.validation
     ve.environment -> ve.definitions
@@ -40,6 +43,7 @@ ignore_imports =
     ve.environment -> ve.units
     ve.evaluate -> ve.backends.dispatch
     ve.evaluate -> ve.backends.lean_runner
+    ve.evaluate -> ve.backends.relay
     ve.evaluate -> ve.backends.rust_jsonl
     ve.model -> ve.backends.dispatch
     ve.model -> ve.backends.validation
@@ -47,11 +51,11 @@ ignore_imports =
     ve.model -> ve.definitions
     ve.model -> ve.evaluate
     ve.norms -> ve.backends.dispatch
-    ve.norms -> ve.backends.lean_runner
+    ve.norms -> ve.backends.relay
     ve.norms -> ve.backends.validation
     ve.norms -> ve.search
     ve.parser -> ve.backends.dispatch
-    ve.parser -> ve.backends.lean_runner
+    ve.parser -> ve.backends.relay
     ve.parser -> ve.backends.validation
     ve.reports -> ve.admission
     ve.rights -> ve.search

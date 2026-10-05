@@ -87,9 +87,9 @@ class _Route:
         self.numbers = {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
 
     def lean(self, kind, **fields):
-        from .readings_route import run_lean
+        from .readings_route import lean_timeout, run_lean
         [row] = run_lean([{"id": kind, "kind": kind, "environment": self.environment, "document": self.document,
-                           **fields}], timeout=300)
+                           **fields}], timeout=lean_timeout(300.0))
         if row.get("status") != "ok":
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the {kind} case Python built: "
                                      f"{row.get('error')}")
@@ -398,7 +398,7 @@ class Superposed(_Route):
         substitution, and a witness's target closed existentially. Its values must be the ones Lean's check
         established; a difference is `CheckerUnavailable`, never a verdict."""
         from .ast import Exists, _to_data, formula_from_data
-        from .backends.rust_jsonl import run
+        from .backends.rust_jsonl import configured_timeout, run
         from .norms import _bind
         environment = self.base.to_dict()
         environment["profiles"] = ["relational-fol@0"]
@@ -418,7 +418,7 @@ class Superposed(_Route):
             name, sorts, formula = target
             case["conflict_targets"] = [_to_data(_bind(formula, sorts, Exists))]
         try:
-            record = run(case, timeout=60.0)
+            record = run(case, timeout=configured_timeout(60.0))
         except VEError as exc:
             raise CheckerUnavailable(f"ReadingsConformance: Rust did not evaluate the model shown: "
                                      f"{getattr(exc, 'message', exc)}") from None
