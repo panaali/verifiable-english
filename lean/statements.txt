@@ -27578,6 +27578,60 @@ theorem VE.SpeechActs.Run.valid_transfer
     E'.constants = E.constants → (∀ (p : String), E'.predicates p = E.predicates p) → M.Valid E → M.Valid E'
   -- uses VE.Bridge.Entity@VE.Bridge VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite
   -- expr 2243035471
+theorem VE.SpeechActs.Source.answers_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.AnswerRecord src.dec),
+    r ∈ src.answers.answers →
+      (∀ (a : VE.SpeechActs.Answer) (φ : VE.Formula) (hφ : VE.SpeechActs.correct src.dec.D r.q a = Option.some φ)
+          (c : VE.Tableau.Certificate) (s : VE.SpeechActs.Run.PremiseStatus src.dec.D (VE.SpeechActs.premises src.dec.D)),
+          r.replay = VE.SpeechActs.Run.AnswerReplay.certificate a φ hφ c s →
+            ∀ (S : VE.Structure),
+              S.Admissible (VE.SpeechActs.En src.dec.D) →
+                VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) → VE.SpeechActs.AnswersAt src.dec.D r.q S a) ∧
+        (∀ (a : VE.SpeechActs.Answer) (φ : VE.Formula) (hφ : VE.SpeechActs.correct src.dec.D r.q a = Option.some φ)
+            (c : VE.Tableau.Certificate)
+            (s :
+              VE.SpeechActs.Run.PremiseStatus src.dec.D
+                (VE.SpeechActs.premises src.dec.D ++ [VE.SpeechActs.presupposition src.dec.D r.q])),
+            r.replay = VE.SpeechActs.Run.AnswerReplay.conditional a φ hφ c s →
+              ∀ (S : VE.Structure),
+                S.Admissible (VE.SpeechActs.En src.dec.D) →
+                  VE.Norms.Sat S (VE.SpeechActs.premises src.dec.D) →
+                    VE.Formula.denote S [] (VE.SpeechActs.presupposition src.dec.D r.q) →
+                      VE.SpeechActs.AnswersAt src.dec.D r.q S a) ∧
+          ∀ (id : String) (m : VE.SpeechActs.Run.CheckedModel src.dec.D (VE.SpeechActs.premises src.dec.D)),
+            r.replay = VE.SpeechActs.Run.AnswerReplay.model id m →
+              ∀ (a : VE.SpeechActs.Answer),
+                VE.SpeechActs.answerEval src.dec.D r.q m.M a = Bool.true ↔
+                  VE.SpeechActs.AnswersAt src.dec.D r.q m.M.asStructure a
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.SpeechActs.Answer@VE.SpeechActs.Tree VE.SpeechActs.AnswersAt@VE.SpeechActs.Answer VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Run.AnswerReplay.certificate@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay.conditional@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay.model@VE.SpeechActs.Run VE.SpeechActs.Run.AnswerReplay@VE.SpeechActs.Run VE.SpeechActs.Run.CheckedModel.M@VE.SpeechActs.Run VE.SpeechActs.Run.CheckedModel@VE.SpeechActs.Run VE.SpeechActs.Run.PremiseStatus@VE.SpeechActs.Run VE.SpeechActs.Source.AnswerRecord.q@VE.SpeechActs.Source.Run VE.SpeechActs.Source.AnswerRecord.replay@VE.SpeechActs.Source.Run VE.SpeechActs.Source.AnswerRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Answers.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.answerEval@VE.SpeechActs.Answer VE.SpeechActs.correct@VE.SpeechActs.Answer VE.SpeechActs.premises@VE.SpeechActs.Tree VE.SpeechActs.presupposition@VE.SpeechActs.Answer VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 1970443857
+theorem VE.SpeechActs.Source.coverage_partition
+  ∀ (src : VE.SpeechActs.Source.SpeechSource),
+    (src.cov.rows.all fun r => VE.SpeechActs.Source.reconciles r.status r.cls) = Bool.true ∧
+      VE.SpeechActs.Source.sumBytes (VE.SpeechActs.Source.totals VE.SpeechActs.Source.Row.cls src.cov.rows) =
+          src.source.utf8ByteSize ∧
+        VE.SpeechActs.Source.sumBytes (VE.SpeechActs.Source.totals VE.SpeechActs.Source.Row.status src.cov.rows) =
+          src.source.utf8ByteSize
+  -- uses VE.SpeechActs.Source.Coverage.rows@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.cls@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row.status@VE.SpeechActs.Source.Run VE.SpeechActs.Source.Row@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.cov@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.reconciles@VE.SpeechActs.Source.Run VE.SpeechActs.Source.sumBytes@VE.SpeechActs.Source.Run VE.SpeechActs.Source.totals@VE.SpeechActs.Source.Run
+  -- expr 3659585699
+theorem VE.SpeechActs.Source.query_records_sound
+  ∀ (src : VE.SpeechActs.Source.SpeechSource) (r : VE.SpeechActs.Source.QueryRecord src.dec),
+    r ∈ src.answers.judgments ∨ r ∈ src.compliance →
+      VE.Entails (VE.SpeechActs.En src.dec.D) (VE.SpeechActs.queryPremises src.dec.D r.qr) r.qr.target
+  -- uses VE.Entails@VE.Semantics VE.SpeechActs.En@VE.SpeechActs.Tree VE.SpeechActs.Query.target@VE.SpeechActs.Tree VE.SpeechActs.Source.Answers.judgments@VE.SpeechActs.Source.Run VE.SpeechActs.Source.QueryRecord.qr@VE.SpeechActs.Source.Run VE.SpeechActs.Source.QueryRecord@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.answers@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.compliance@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.dec@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.queryPremises@VE.SpeechActs.Tree
+  -- expr 1831787191
+theorem VE.SpeechActs.Source.source_retained
+  ∀ (p e : Lean.Json) (src : { src // src.payload = p }),
+    VE.SpeechActs.Source.decodeSpeechSource p e = Except.ok src →
+      src.val.metadata = p.getObjValD "metadata" ∧
+        src.val.source = VE.Discourse.Loader.sourceOf p ∧
+          src.val.documentId =
+            VE.CertificateWire.digest "ve-document@2\n"
+              (Lean.Json.mkObj
+                [("metadata", VE.Discourse.Loader.identityMetadata (p.getObjValD "metadata")),
+                  ("source", Lean.Json.str (VE.Discourse.Loader.sourceOf p)), ("fences", p.getObjValD "fences")])
+  -- uses VE.CertificateWire.digest@VE.CertificateWire VE.Discourse.Loader.identityMetadata@VE.Discourse.Loader VE.Discourse.Loader.sourceOf@VE.Discourse.Loader VE.SpeechActs.Source.SpeechSource.documentId@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.metadata@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.payload@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource.source@VE.SpeechActs.Source.Run VE.SpeechActs.Source.SpeechSource@VE.SpeechActs.Source.Run VE.SpeechActs.Source.decodeSpeechSource@VE.SpeechActs.Source.Run
+  -- expr 1041629818
 theorem VE.SpeechActs.Wire.canonical_scope
   ∀ (environment b : Lean.Json) (sc : VE.SpeechActs.Scope),
     environment.getObjVal? "speech_acts" >>= VE.SpeechActs.Wire.parseScope = Except.ok sc →
