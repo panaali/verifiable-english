@@ -70,7 +70,13 @@ base's one-shot executable and the head's service mode in the same batches
 | speech-acts | 10,792 | 10,792 | 0 | 0 | 23.9 | 12.9 | 32.8 | 31.5 |
 | **all** | 155,479 | 155,477 | 0 | 2 | 7,528.2 | 7,360.0 | 10,163.7 | 14,088.1 |
 
-Rows are compared as JSON values (keys sorted), every row of every batch. The two by-design rows are `diagnose`
+Rows are compared as JSON values (keys sorted), every row of every batch. The tool exits 0 only on evidence
+(lf-1 review B): a missing or empty recording, an unknown mode, a requested mode without a recorded case
+or a missing one-shot executable exits 2 before anything runs, and a run that does not account for every
+case sent exits 1 (`tests/test_route_parity.py`). `tools/lean_first_diff.py compare` likewise refuses the
+same file twice and empty runs, and fails a missing corpus or one unavailable on both sides
+(`tests/test_lean_first_diff.py`); the A/B above passes it (one pilot record, D2, is unavailable on both
+sides). The other evidence tools of this class were fixed alike (`tests/test_evidence_tools.py`). The two by-design rows are `diagnose`
 cases whose unit is missing or not a contract: `ve_diagnose` exited 2 for them (it could not be asked without
 a unit); the mode answers each with an error row (D1 below). Wall times are summed over 12 parallel workers on
 a host at load 20–40.
@@ -124,9 +130,19 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
 
 - **O1.** The service's wall time on heavy risk batches exceeds the one-shots' at equal or lower CPU (above).
   Candidates to measure: the 4 GiB address-space limit the supervisor sets, the heap of a long-lived process.
-- **O2.** Route modes' `ok` rows are checked for their binding only (id echo, status; `common.json`
-  `route_ok`), as the deleted transports did; their content stays the service's (threat model). Full row
-  schemas per route are not written.
+- **O2 (closed by the lf-1 review fixes).** Route modes' `ok` rows were checked for their binding only
+  (`common.json` `route_ok`): an answer without `environment_prime`, or with every payload field removed,
+  passed the relay and the caller raised `KeyError`. Every route mode's answers are now closed schemas
+  (`ve/backends/lean_service_schema/<mode>.json`, each field the encoder writes, typed to the leaves, the
+  route's own dispatch test as the selector) with `ve_response_decode` deciding the same responses with
+  the runners' dispatch tests (`ResponseDecode.Routes`). `tests/test_route_row_schemas.py` runs a recorded
+  corpus of every answer kind (`tests/data/route-cases.jsonl`, 248 cases) through the service: every
+  genuine answer is accepted, every drop, empty and retype of every field (to depth 4) gets the same
+  verdict from both sides, no alteration of a field leaves a valid answer, the review's three soft-norms
+  mutants raise `CheckerUnavailable` through `relay.decide` and the public elaboration, twelve schema
+  weakenings are each caught, and a lint fails any answer object left open (one allowance: E''s echoed
+  predicate declarations). `norms.json`'s path now includes all four statement-layer profiles
+  (`Plain.layered`); it named two.
 - **O3.** Docs outside this batch (`lean/*.md`, `docs/spec/*.md`, `conformance/DIFFFUZZ.md` on its branch)
   still name the one-shot executables. `infra/difffuzz` needs the head's adapter (one function) when it merges.
 - **O4.** HUMAN: statement review of the 13 new theorems (`runMode_*` for the twelve modes,
