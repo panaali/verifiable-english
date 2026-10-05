@@ -1298,8 +1298,8 @@ corrections of draft 2 were not run or elaborated (section 12).
 13. Every name passes the audit's rules; no public message, code or identity changes before the flip.
 
 Items 1 to 13 were reviewed on draft 1 (section 13). The review converged on a bounded re-check of what draft
-2 changed, not a full pass. It covers 2.3, 2.4, 2.6, 2.9, 5.1, 5.2, 5.4, 5.5, 8.4, 8.6, 8.13 and the fixtures
-that depend on them:
+2 changed, not a full pass. It covers 2.3, 2.4, 2.6, 2.9, 2.11, 5.1, 5.2, 5.4, 5.5, 8.4, 8.6, 8.13 and the
+fixtures that depend on them:
 
 14. The boundary of 2.3 validates the declarations as submitted, gives the family decoders and the typed check
     the typing view, and computes the identity over the submitted environment. `riskReduced` removes exactly
