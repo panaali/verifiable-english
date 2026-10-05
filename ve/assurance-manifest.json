@@ -55,7 +55,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 17750,
+    "total_lines": 17752,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -185,8 +185,8 @@
       {"file": "lean/VE/NormDefaults/Admission.lean", "lines": 350, "sha256": "b60054268019832d7de8374fb800954933526f31d93ad86a42958b72da4895a5",
        "ranges": [[1, 350]], "declarations": ["fillJson", "decodeFilledDoc", "admitNodes", "admitDocument"],
        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"},
-      {"file": "lean/VE/Readings/Wire.lean", "lines": 765, "sha256": "f2d0b9add4ac10c4516585cd27a04a44bfacb63c523fd77e84c6b4a050808ebd",
-       "ranges": [[1, 765]], "declarations": ["decodeEnvironment", "decodeContent", "decodeReading", "decodeSet", "decodeDocument", "decodeKey", "decodeTables", "decodeProbe", "decodeSituation", "admitReadingsSpec", "admitReadings", "replayPair", "replaySeparate"],
+      {"file": "lean/VE/Readings/Wire.lean", "lines": 767, "sha256": "805fddb1bcd096eeec43671313e9d75a827aec5a9c3665ee897b6cf6fc5912fe",
+       "ranges": [[1, 767]], "declarations": ["decodeEnvironment", "decodeContent", "decodeReading", "decodeSet", "decodeDocument", "decodeKey", "decodeTables", "decodeProbe", "decodeSituation", "admitReadingsSpec", "admitReadings", "replayPair", "replaySeparate"],
        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes; the full file is pinned conservatively"}
     ],
     "other_json": {
