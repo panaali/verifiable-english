@@ -33,5 +33,8 @@ packages = ["ve", "ve_experiments"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["live: calls real model CLIs (run with `pytest -m live`)"]
-addopts = "-ra -m 'not live'"
+markers = [
+    "live: calls real model CLIs (run with `pytest -m live`)",
+    "nightly: corpus-scale rerun whose inputs a faster default test also checks (run with `pytest -m nightly`; tools/gate.py runs it); docs/testing-profile.md lists them",
+]
+addopts = "-ra -m 'not live and not nightly'"

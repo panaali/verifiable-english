@@ -17,11 +17,11 @@ NAMES = {1: "kernel", 2: "profiles", 3: "surface", 4: "tools", 5: "apps-and-meas
 PYTHON = {
     1: "ast environment errors identity limits model wire wire_contract assurance".split(),
     2: ("background closure definitions entailment evaluate norms order profiles "
-        "alternatives reports rights softnorms softnorms_contract speech_acts units").split(),
+        "alternatives reports rights softnorms softnorms_contract norms_contract speech_acts units").split(),
     3: ("english english_phrases english_vocabulary fluent fol grammar natural "
         "norm_english parser printer surface lexicon report_english speech_english readings_english").split(),
     4: ("__main__ adapters admission argument attacks authoring backends bundle check "
-        "document equivalence norm_admission norm_defaults norm_defaults_english norm_defaults_route norm_strict "
+        "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "openterms propose readings search stream_audit vacuity assist discourse quantity_admission "
         "reports_route risk rights_route soft_route speech_document readings_route readings_s1").split(),
     5: ["argument_fixtures"],
@@ -113,7 +113,7 @@ def lean_layer(module: str) -> int | None:
         return 5  # aggregation and audit targets
     if lean_entry(module) or module.endswith(".Run") or module.startswith("VE.Service."):
         return 4
-    if module.startswith("VE.English.") or module in {
+    if module.startswith(("VE.English.", "VE.Grammar.", "VE.EnglishGrammar.")) or module in {
         "VE.Surface", "VE.SurfaceProofs", "VE.ParserContracts", "VE.LexicalProofs",
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:
@@ -153,14 +153,16 @@ def source_layer(path: str) -> int | None:
         return 1 if p.name in {"lakefile.toml", "lean-toolchain", "lake-manifest.json"} else None
     if parts[0] == "rust":
         if p.suffix == ".rs":
-            return 1 if len(parts) > 1 and parts[1] == "ve-core" else 4
+            # The ve-core facade's tests exercise the whole API, so a change there selects as kernel.
+            crate = parts[1] if len(parts) > 1 else ""
+            return {"ve-kernel": 1, "ve-core": 1, "ve-profile": 2, "ve-surface": 3}.get(crate, 4)
         if p.suffix in {".py", ".json"} and p.name not in {"Cargo.lock"}:
             return 5  # benchmarks and generated measurement reports
         return 1 if p.name in {"Cargo.toml", "Cargo.lock"} else None
     if parts[0] in {"ve_experiments", "experiments", "usecases", "paper"}:
         return 5
     if parts[0] == "tools":
-        if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py",
+        if p.name in {"layer_policy.py", "select_tests.py", "mutation_check.py", "nested_pytest.py",
                       "check_python_layers.py", "check_lean_imports.py",
                       "check_rust_deps.py", "test_layer_policy.py", "lean_header_imports.lean"}:
             return 1  # changing the policy invalidates every selection

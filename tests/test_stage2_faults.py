@@ -15,7 +15,7 @@ from ve import ArgumentGraph, Claim, check_argument
 from ve.admission import admit_document, validate_label
 from ve.ast import Bottom, Const, Not, Top, Unary
 from ve.background import background, dependency_order
-from ve.backends import lean_runner, rust_jsonl, validation
+from ve.backends import relay, rust_jsonl, validation
 from ve.backends.lean_service import LeanServicePool
 from ve.bundle import check_bundle
 from ve.definitions import compile_definitions
@@ -34,7 +34,7 @@ from ve.readings import check_readings
 from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
 from ve.vacuity import premise_status
 from tests import probe_matrix as pm
-from tests.test_lean_service import fake
+from tests.test_lean_service import ALL, expire_service_waits, fake
 
 ROOT = Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.skipif(not (ROOT / "lean/.lake/build/bin/ve_service").exists(),
@@ -127,7 +127,7 @@ def lean_authority(monkeypatch):
 
 def use_pool(monkeypatch, executable, **options):
     pool = LeanServicePool(size=1, executable=executable, **options)
-    monkeypatch.setattr(lean_runner, "_pool", pool)
+    monkeypatch.setattr(relay, "_pool", pool)
     return pool
 
 
@@ -139,7 +139,9 @@ def lean_fault(monkeypatch, tmp_path, fault):
         return use_pool(monkeypatch, fake(tmp_path, "scripted"))
     if fault == "crash":
         return use_pool(monkeypatch, fake(tmp_path, "crash"), allow_unlisted_build=True)
-    return use_pool(monkeypatch, fake(tmp_path, "hang"), allow_unlisted_build=True, timeout=0.3)
+    # A service that never answers: every request's deadline is injected as expired.
+    expire_service_waits(monkeypatch).requests = ALL
+    return use_pool(monkeypatch, fake(tmp_path, "hang"), allow_unlisted_build=True)
 
 
 def test_every_dispatched_operation_has_a_fault_case(calls):

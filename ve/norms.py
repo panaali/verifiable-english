@@ -328,8 +328,8 @@ class NormDocument:
         """Lean's `norms-elaborate` answer for this document, kept per document."""
         cached = getattr(self, "_regenerated", None)
         if cached is None:
-            from .backends.lean_runner import run
-            cached = self._regenerated = run(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
+            from .backends.relay import decide
+            cached = self._regenerated = decide(_lean_mode(self), [_lean_case(self, "norms-elaborate")])[0]
         return cached
 
     @semantic_entry("norms.elaborate")
@@ -526,7 +526,7 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
     Lean's too (`premises()` is dispatched).
     """
     from .ast import _to_data
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .entailment import EntailmentCertificateCheck, _lean_replay_record, _replay_prechecks
     max_steps = 10_000
     layers = tuple(formula for _, formula in document.premises())
@@ -535,7 +535,7 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
         return nodes
     case = _lean_case(document, "norms-certificate", premises=[_to_data(p) for p in premises],
                       conclusion=_to_data(conclusion), certificate=certificate)
-    return _lean_replay_record(lambda: run(_lean_mode(document), [case])[0]["valid"], nodes, max_steps)
+    return _lean_replay_record(lambda: decide(_lean_mode(document), [case])[0]["valid"], nodes, max_steps)
 
 
 def _base_model(document, env, model):
@@ -651,7 +651,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
     yields UNKNOWN, which asserts nothing. The model is validated as Python
     validates it until the model adapter lands; Lean validates it again.
     """
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .evaluate import _Exhausted
     from .wire import canonical_json
     env = document.base_environment()
@@ -662,7 +662,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
             if found is not None:
                 target, sorts, values = found
                 witness = {"target": target, "model": model.to_dict(), "tuple": list(values)}
-                row = run(_lean_mode(document), [_lean_case(document, "norms-conflict", witness=witness)])[0]
+                row = decide(_lean_mode(document), [_lean_case(document, "norms-conflict", witness=witness)])[0]
                 if row["verdict"] != "CONFLICT" or row.get("target") != target:
                     raise CheckerUnavailable("CheckerUnavailable: Lean does not confirm the conflict "
                                              "witness Python's search found")
@@ -678,7 +678,7 @@ def _check_conflict_lean(document, *, model, certificates, max_evaluations, prov
             canonical_json(certificates)
         except (VEError, TypeError, ValueError):
             certificates = {}  # packages that are not JSON bind nothing
-        row = run(_lean_mode(document), [_lean_case(document, "norms-conflict", packages=certificates)])[0]
+        row = decide(_lean_mode(document), [_lean_case(document, "norms-conflict", packages=certificates)])[0]
         if row["verdict"] == "CONFLICT-FREE":
             return ConflictReport("CONFLICT-FREE")
         if row["verdict"] != "UNKNOWN" or type(row.get("detail")) is not str:

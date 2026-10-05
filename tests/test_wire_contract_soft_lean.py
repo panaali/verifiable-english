@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from conformance.soft_norms import multi_fault_base, multi_fault_cases, multi_faults
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_soft_norms_lean import env, norm
 from ve.wire import canonical_json
 
@@ -34,14 +35,14 @@ def built():
         if lake is None:
             pytest.skip("lake is required for ve_diagnose and ve_soft_norms_route")
         result = subprocess.run([lake, "build", "ve_diagnose", "ve_soft_norms_route"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=1200)
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert result.returncode == 0, result.stdout + result.stderr
     return BIN
 
 
 def call(binary, args, cases):
     result = subprocess.run([str(binary), *args, "-"], input=json.dumps(cases), text=True, capture_output=True,
-                            timeout=600)
+                            timeout=HANG_TIMEOUT)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)
@@ -233,14 +234,14 @@ def test_s3_pre_norm_defaults_profile(built):
 # What Python's legacy validator does with each profile absent from the Lean soft route
 # (s3-pre.md and s4-pre.md). The rights and speech-act differences are now closed.
 PYTHON_ONLY_LEGACY = {
-    "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "alternatives@0 with soft-norms@0"),
+    "alternatives@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: alternatives@0 with soft-norms@0"),
     "norm-defaults@0": ("SOFT_UNSUPPORTED_PROFILE",
                         "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"),
-    "reports@0": ("SOFT_UNSUPPORTED_PROFILE", "reports@0 with norms@0 layers"),
+    "reports@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: reports@0 with norms@0 layers"),
     # S3-pre: the rights route strips `rights@0` before the soft table, as Lean's does, so the soft route
     # alone refuses it at 3.2 with the Lean route's text (it accepted before the fix).
     "rights@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile rights@0"),
-    "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "risk@0 requires alternatives@0"),
+    "risk@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: risk@0 requires alternatives@0"),
     "speech-acts@0": ("SOFT_UNSUPPORTED_PROFILE", "UnsupportedProfile: Unsupported profile speech-acts@0"),
 }
 

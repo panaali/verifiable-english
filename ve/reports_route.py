@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .backends.lean import run_reports_case
+from .backends.lean import configured_timeout, run_reports_case
 from .errors import UnsupportedProfile, VEError
 
 EXECUTABLE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_reports_route"
@@ -26,7 +26,7 @@ def run_case(kind, environment, document):
         raise UnsupportedProfile("reports@0 needs the built ve_reports_route executable")
     case = _without_null({"id": "document", "kind": kind,
                           "environment": environment, "document": document})
-    result = run_reports_case(EXECUTABLE, case, timeout=60)
+    result = run_reports_case(EXECUTABLE, case, timeout=configured_timeout(60.0))
     if result.get("status") != "ok":
         raise VEError(result.get("error", "reports Lean route rejected document"))
     return result

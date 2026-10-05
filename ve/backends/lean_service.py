@@ -9,8 +9,8 @@ module yet: no Python semantics is switched.
 Failure classes:
 
 * A deterministic rejection of a whole request by the service (its budget, a batch the
-  restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
-  runners' exit-2 diagnostics would; the process stays up. Such a request error is bound
+  restricted decoder rejects) raises the exception of the service's `code` with its text
+  (`relay.rejection`); the process stays up. Such a request error is bound
   like a response, to the nonce, the mode and every case digest; one without that
   binding is operational.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
@@ -32,7 +32,10 @@ norms result, is the service's responsibility and is not checked here.
 
 Supervision: an address-space limit on the process, a per-batch timeout (5 s
 interactive, 60 s for batch callers), recycling after a number of requests or above
-an RSS threshold, and a small pool.
+an RSS threshold, and a small pool. The wall-clock defaults (5 s per request, 30 s to
+start) are guards, not work limits; `VE_LEAN_SERVICE_TIMEOUT` and
+`VE_LEAN_SERVICE_STARTUP_TIMEOUT` replace them (the test suite raises them to its hang
+guard, so machine load cannot fail a test).
 """
 from __future__ import annotations
 
@@ -40,6 +43,7 @@ import hashlib
 import itertools
 import json
 from decimal import Decimal
+import math
 import os
 from pathlib import Path
 import queue
@@ -76,7 +80,32 @@ class _Failure(Exception):
     """An operational failure of one process; the supervisor restarts it."""
 
 
-def _decode_json(line: bytes) -> object:
+def configured_seconds(variable: str, default: float) -> float:
+    """The wall-clock timeout the environment variable `variable` sets, else `default`.
+
+    Only a guard against a hung checker: the semantic work limits are the
+    backends' own budgets and do not depend on it. A value that is not a positive
+    finite number of seconds is refused, never replaced by the default."""
+    text = os.environ.get(variable)
+    if text is None:
+        return default
+    try:
+        seconds = float(text)
+    except ValueError:
+        seconds = math.nan
+    if not (math.isfinite(seconds) and seconds > 0):
+        raise CheckerUnavailable(f"CheckerUnavailable: {variable} must be a positive number of seconds, "
+                                 f"not {text!r}")
+    return seconds
+
+
+def _decode_json(line: bytes | str) -> object:
+    """A checker's JSON output (this service, the one-shot Lean runners, the Rust JSONL checker):
+    bytes that are not UTF-8, duplicate fields, non-finite constants and strings that are not
+    Unicode text (a `\\ud800` escape decodes to a lone surrogate, which no Lean or Rust string
+    holds) and numbers no float holds (`_json_float`) raise ValueError, and so does nesting beyond
+    Python's recursion limit (otherwise a RecursionError): every way the bytes are no answer is a
+    ValueError. Bytes are decoded as strict UTF-8 here; json.loads alone would guess UTF-16 or UTF-32."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -88,8 +117,23 @@ def _decode_json(line: bytes) -> object:
     def invalid_constant(value):
         raise ValueError(f"invalid JSON number {value}")
 
-    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
-                      parse_int=_json_integer)
+    text = line.decode("utf-8") if isinstance(line, (bytes, bytearray)) else line
+    try:
+        value = json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
+                           parse_int=_json_integer, parse_float=_json_float)
+    except RecursionError:
+        raise ValueError("JSON nesting exceeds the runtime limit") from None
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if type(item) is str:
+            item.encode("utf-8")  # UnicodeEncodeError, a ValueError, on a lone surrogate
+        elif type(item) is list:
+            pending.extend(item)
+        elif type(item) is dict:
+            pending.extend(item)
+            pending.extend(item.values())
+    return value
 
 
 def _json_integer(digits: str) -> int | Decimal:
@@ -100,6 +144,16 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
+
+
+def _json_float(text: str) -> float:
+    """A JSON number with a fraction or exponent, as its nearest float. `json` reads an
+    exponent beyond the float range as infinity (`1e999`) or zero (`1e-999`) without calling
+    `parse_constant`: such a number is ValueError, never a value it is not."""
+    value = float(text)
+    if not math.isfinite(value) or (value == 0 and re.split("[eE]", text)[0].strip("-+0.")):
+        raise ValueError(f"JSON number {text} is outside the float range")
+    return value
 
 
 _JSON_WHITESPACE = " \t\r\n"
@@ -198,12 +252,13 @@ class LeanService:
     """One supervised `ve_service` process. Thread-safe; one batch in flight at a time."""
 
     def __init__(self, executable: str | os.PathLike | None = None, *,
-                 timeout: float = INTERACTIVE_TIMEOUT, startup_timeout: float = STARTUP_TIMEOUT,
+                 timeout: float | None = None, startup_timeout: float | None = None,
                  address_space: int | None = ADDRESS_SPACE, max_requests: int = MAX_REQUESTS,
                  max_rss: int | None = MAX_RSS, expected_sha256: str | None = None,
                  allow_unlisted_build: bool = False,
                  batch_cases: int = BATCH_CASES, batch_bytes: int = BATCH_BYTES, retries: int = 1):
         self.executable = Path(executable or os.environ.get("VE_LEAN_SERVICE") or DEFAULT_EXECUTABLE)
+        # None: the configured default, read at each use (the shared pool outlives a setting).
         self.timeout, self.startup_timeout = timeout, startup_timeout
         self.address_space, self.max_requests, self.max_rss = address_space, max_requests, max_rss
         self.expected_sha256 = expected_sha256
@@ -285,6 +340,8 @@ class LeanService:
             if allowed is not None and build not in allowed:
                 raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
                                          f"expected {', '.join(sorted(allowed))}")
+            startup = (self.startup_timeout if self.startup_timeout is not None else
+                       configured_seconds("VE_LEAN_SERVICE_STARTUP_TIMEOUT", STARTUP_TIMEOUT))
             if self._stderr is not None:
                 self._stderr.close()
             self._stderr = tempfile.TemporaryFile()
@@ -305,7 +362,7 @@ class LeanService:
             self._buffer.clear()
             self._served, self._recycle = 0, False
             self.stats["starts"] += 1
-            line = self._read_line(time.monotonic() + self.startup_timeout)
+            line = self._read_line(time.monotonic() + startup)
             handshake = _decode_json(line)
             try:
                 check_handshake(handshake)
@@ -450,7 +507,9 @@ class LeanService:
         """
         if mode not in MODES:
             raise VEError(f"unknown Lean service mode {mode!r}")
-        timeout = self.timeout if timeout is None else timeout
+        if timeout is None:
+            timeout = (self.timeout if self.timeout is not None else
+                       configured_seconds("VE_LEAN_SERVICE_TIMEOUT", INTERACTIVE_TIMEOUT))
         if budget is None:
             budget = {"cases": max(count, 1), "bytes": len(cases_text.encode())}
         with self._lock:
@@ -505,19 +564,22 @@ class LeanService:
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
         _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
         if response.get("status") == "error":
-            message = str(response.get("error", ""))
-            if message.startswith("ResourceLimit"):
-                raise ResourceLimit(message)
-            raise VEError(message)
-        return [bound["result"] for bound in response["results"]]
+            from .relay import rejection  # relay.py builds on this client
+            raise rejection(response["code"], response["error"])
+        return response["results"]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        """The bound entries for `cases`, in order: each runner result with, beside a rejection,
+        its `code` (and `generator`). Batches above the adapter caps (256 cases or 4 MiB) are
+        split into several requests; each is one timeout unit."""
+        entries: list = []
+        for chunk in self._chunks(_texts(cases)):
+            entries.extend(self._run_chunk(mode, chunk, timeout))
+        return entries
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
-        """The runner results for `cases`, in order. Batches above the adapter caps (256
-        cases or 4 MiB) are split into several requests; each is one timeout unit."""
-        results: list = []
-        for chunk in self._chunks(_texts(cases)):
-            results.extend(self._run_chunk(mode, chunk, timeout))
-        return results
+        """The runner results for `cases`, in order (`run_bound` without the bindings)."""
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
 
 
 def _texts(cases: list) -> list[str]:
@@ -553,9 +615,12 @@ class LeanServicePool:
             self._idle.put(service)
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         chunks = list(self._services[0]._chunks(_texts(cases), parts=len(self._services)))
         if len(chunks) <= 1:
-            return self._on_idle(lambda service: service.run(mode, cases, timeout=timeout))
+            return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
         answers: list = [None] * len(chunks)
         pending = iter(range(len(chunks)))
         claim = threading.Lock()

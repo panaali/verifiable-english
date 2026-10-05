@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from ve.backends import dispatch, lean_runner, validation
+from ve.backends import dispatch, relay, validation
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, InvalidModel, VEError
 from ve.model import FiniteModel
@@ -71,7 +71,7 @@ def test_lean_checks_the_norms_profile_of_a_model(monkeypatch):
     wire = {"complete": True, "domains": {"act": ["a"]}, "constants": {},
             "relations": {"required": [["a"]], "permitted": []}}
     with pytest.raises(InvalidModel, match="required relation required exceeds permission permitted") as caught:
-        lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])
+        relay.decide("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])
     assert caught.value.generator == "profile"
     with pytest.raises(InvalidModel, match="required relation"):
         FiniteModel.from_dict(env, wire)
@@ -84,7 +84,7 @@ def fake_lean(monkeypatch, row):
         calls.append(mode)
         return [row(mode, case) for case in cases]
 
-    monkeypatch.setattr(lean_runner, "run", run)
+    monkeypatch.setattr(relay, "decide", run)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     return calls
@@ -97,7 +97,7 @@ def test_a_lean_only_rejection_carries_leans_diagnostic(monkeypatch):
         raise checker_error("UnknownSymbol: lean refuses this vocabulary")
 
     fake_lean(monkeypatch, reject)
-    with pytest.raises(VEError, match="^lean refuses this vocabulary$"):
+    with pytest.raises(VEError, match="^UnknownSymbol: lean refuses this vocabulary$"):
         Environment(pm.raw_environment(()))
 
 
@@ -158,7 +158,7 @@ def test_lean_rejects_a_model_whose_claimed_identity_is_stale(monkeypatch):
     model = FiniteModel.from_dict(env, pm.model_wire(env))
     formula = Unary("base", Const("x"))
     monkeypatch.setenv("VE_AUTHORITY", "lean")
-    row = lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
+    row = relay.decide("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
                                      "claimed": {"environment_id": env.environment_id,
                                                  "model_id": model.model_id}}])[0]
     assert row["model_id"] == model.model_id
@@ -168,7 +168,7 @@ def test_lean_rejects_a_model_whose_claimed_identity_is_stale(monkeypatch):
             evaluate(env, formula, stale)
         assert getattr(raised.value, "backend_rejection", False) is True
         with pytest.raises(VEError, match=f"InvalidModel: model .*{message}"):
-            lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
+            relay.decide("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
                                        "claimed": {"environment_id": stale.environment_id,
                                                    "model_id": stale.model_id}}])
 
@@ -180,7 +180,7 @@ def test_model_identity_sorts_domains_as_python_does(monkeypatch):
     wire["domains"]["item"] = ["j2", "i", "j10"]
     monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = FiniteModel.from_dict(env, wire).model_id
-    row = lean_runner.run("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])[0]
+    row = relay.decide("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])[0]
     assert row["model_id"] == expected
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert FiniteModel.from_dict(env, wire).model_id == expected

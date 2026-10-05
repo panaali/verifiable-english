@@ -109,6 +109,49 @@ def caseResult (m : Mode) (index : Nat) : Except String Json → Json
   | .ok j => runMode m j
   | .error message => caseError m index message
 
+/-! ## Diagnostic codes (docs/LEAN-FIRST-PLAN.md, batch 0)
+
+Every rejection the service returns carries `code`, the public diagnostic code of its
+message, so that a client relays Lean's code and text and classifies nothing itself. The
+code is derived from the runner's `Class:` prefix by `rejectionCode`, the one place that
+does it. It is set beside the runner's result in the bound entry (`bound`), so no runner
+and no runner row changes. -/
+
+/-- The public diagnostic codes a rejection can carry (`ve/errors.py`). A runner prefix that
+is not one of them (`DependencyCycle`, `ShadowedVariable`, ...) is `InvalidInput`. -/
+def rejectionCodes : List String := ["InvalidInput", "SyntaxError", "UnknownSymbol",
+  "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile",
+  "ResourceLimit", "AdmissionError", "CheckerUnavailable"]
+
+/-- The code of a rejection message: `InvalidModel` when it names a generator
+(`Route.Run.generatorOf`), else its text up to the first `:` when that is a public code, else
+`InvalidInput`. -/
+def rejectionCode (message : String) : String :=
+  if (VE.Route.Run.generatorOf message).isSome then "InvalidModel"
+  else
+    let head := (message.splitOn ":").headD message
+    if rejectionCodes.contains head then head else "InvalidInput"
+
+/-- The members set beside a rejection with message `m`: its code, and the generator an
+`InvalidModel(generator)` message names (as `Route.Run.runCaseReported` reports it in its row). -/
+def codeMembers (m : String) : List (String × Json) :=
+  ("code", .str (rejectionCode m)) :: match VE.Route.Run.generatorOf m with
+    | some g => [("generator", .str g)]
+    | none => []
+
+/-- The members set beside a runner result: `codeMembers` of its message for an error row
+(`status` "error" with a text `error`), none for every other result. -/
+def coding (result : Json) : List (String × Json) :=
+  match result.getObjValD "status", result.getObjValD "error" with
+  | .str "error", .str message => codeMembers message
+  | _, _ => []
+
+#guard rejectionCode "UnknownSymbol: Unknown predicate p" == "UnknownSymbol"
+#guard rejectionCode "InvalidModel(definitions): x" == "InvalidModel"
+#guard rejectionCode "DependencyCycle: a -> a" == "InvalidInput"
+#guard rejectionCode "String expected" == "InvalidInput"
+#guard rejectionCode "ResourceLimit" == "ResourceLimit"
+
 structure Budget where
   cases : Nat := maxCases
   bytes : Nat := maxLineBytes
@@ -367,9 +410,10 @@ def caseDigests (text : String) : Except String (Array String) := do
   | .ok ds, .ok ts => ds == ts.map caseDigest
   | _, _ => false
 
-/-- Result `i` with its binding: the case's position and digest. -/
+/-- Result `i` with its binding, the case's position and digest, and the `coding` of a
+rejection. -/
 def bound (index : Nat) (digest : String) (result : Json) : Json :=
-  Json.mkObj [("index", toJson index), ("digest", .str digest), ("result", result)]
+  Json.mkObj ([("index", toJson index), ("digest", .str digest), ("result", result)] ++ coding result)
 
 /-- Results, each bound to its position and its case digest in `digests`. -/
 def bindResults (rs : Array Json) (digests : Array String) : Array Json :=
@@ -430,10 +474,10 @@ def errorDigests (cases : String) : Json :=
   | .error _ => .null
 
 /-- The error for a decoded request that cannot be answered (budget, batch decoding),
-bound like a response: its nonce, its mode and the digests of its cases. -/
+bound like a response: its nonce, its mode and the digests of its cases, with its code. -/
 def requestError (r : Request) (message : String) : Json :=
   Json.mkObj [("id", .str r.id), ("status", .str "error"), ("mode", .str r.mode.name),
-    ("digests", errorDigests r.cases), ("error", .str message)]
+    ("digests", errorDigests r.cases), ("error", .str message), ("code", .str (rejectionCode message))]
 
 /-- The response to one request line. -/
 def respond (line : String) : Json :=
@@ -460,7 +504,7 @@ which hashes the executable it starts. -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
     ("lean", .str Lean.versionString), ("modes", toJson (modes.map Mode.name)),
-    ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
+    ("codes", toJson rejectionCodes), ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
       ("max_cases", toJson maxCases), ("json_depth", toJson (256 : Nat))])]
 
 /-! ## Dispatch pins (statement review: each mode is exactly its existing runner) -/
@@ -531,5 +575,35 @@ theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (dige
     (bindResults (results r cases) digests)[i]? =
       some (bound i (digests.getD i "") (caseResult r.mode i cases[i])) := by
   simp [bindResults, results, h]
+
+/-- A bound entry is the runner's result unchanged, beside its position, its digest and its
+`coding`. -/
+theorem bound_eq (index : Nat) (digest : String) (result : Json) :
+    bound index digest result = Json.mkObj ([("index", toJson index), ("digest", .str digest),
+      ("result", result)] ++ coding result) := rfl
+
+/-- Nothing is set beside a result whose status is not "error". -/
+theorem coding_of_status (result : Json) (h : result.getObjValD "status" ≠ .str "error") :
+    coding result = [] := by
+  unfold coding
+  split
+  · simp_all
+  · rfl
+
+/-- Beside a rejection with message `m`: exactly `codeMembers m`, its code first. -/
+theorem coding_error (result : Json) (m : String) (hs : result.getObjValD "status" = .str "error")
+    (he : result.getObjValD "error" = .str m) :
+    coding result = codeMembers m := by
+  simp [coding, hs, he]
+
+/-- Every code is a public diagnostic code. -/
+theorem rejectionCode_mem (m : String) : rejectionCode m ∈ rejectionCodes := by
+  unfold rejectionCode
+  split
+  · simp [rejectionCodes]
+  · dsimp only
+    split
+    · next h => exact List.contains_iff_mem.mp h
+    · simp [rejectionCodes]
 
 end VE.Service
