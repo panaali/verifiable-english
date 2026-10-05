@@ -9,6 +9,34 @@ open VE.Rights VE.Rights.Run VE.Rights.Wire
 
 variable {req : Json}
 
+/-- Every newly generated rights predicate has the environment's predicate-entry shape. -/
+theorem generated_entries_fit (D : RightsDoc) :
+    ∀ p ∈ genEntries D,
+      Fits req (skel% "common.json#/$defs/environment_predicate") p.2 := by
+  intro p hp
+  by_cases hb : D.bars = []
+  · simp only [genEntries, hb, ↓reduceIte, List.append_nil, List.mem_append, List.mem_map] at hp
+    rcases hp with ⟨a, _, he⟩ | ⟨a, _, he⟩
+    · rw [← congrArg Prod.snd he]
+      exact Common.generatedEntry_fits _ _ _
+    · rw [← congrArg Prod.snd he]
+      exact Common.generatedEntry_fits _ _ _
+  · simp only [genEntries, hb, ↓reduceIte, List.mem_append, List.mem_map] at hp
+    rcases hp with hp | ⟨a, _, he⟩
+    · rcases hp with ⟨a, _, he⟩ | ⟨a, _, he⟩
+      · rw [← congrArg Prod.snd he]
+        exact Common.generatedEntry_fits _ _ _
+      · rw [← congrArg Prod.snd he]
+        exact Common.generatedEntry_fits _ _ _
+    · rw [← congrArg Prod.snd he]
+      exact Common.generatedEntry_fits _ _ _
+
+/-- The rights elaboration's environment field is its rights prime environment. -/
+theorem regenerated_environment (D : RightsDoc) (env : Json) :
+    (regenerated D env).lookup "environment_prime" =
+      some ((primeJsonR D env).toOption.getD .null) := by
+  rfl
+
 /-- The soft-norms mode's rows, off the rights path, are rows of this mode. -/
 theorem of_softNorms {v : Json} (hp : usesRightsPath req = false) (h : Fits req Skeletons.softNorms v) :
     Fits req Skeletons.rights v :=
@@ -51,6 +79,7 @@ theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
   fits
   all_goals try first
+    | exact Fits.rightsEnvironment D env (generated_entries_fit D)
     | exact (labelled_contra (limLabels_nonempty D) ‹_› ‹_›).elim
     | exact (labelled_contra (SoftNorms.softLabelled_nonempty _) ‹_› ‹_›).elim
 

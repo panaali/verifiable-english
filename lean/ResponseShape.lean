@@ -166,6 +166,10 @@ inductive Shape where
   so its fields are the request's, not an encoder's; the encoder theorems
   (`ResponseShape.Encoders`) leave it to the client's validation (`ResponseShape.Skeleton`). -/
   | copied (why : String) (s : Shape)
+  /-- The environment is assembled from a decoded source and generated predicate entries.
+  The response checker uses `s`; the producer skeleton extracts the predicate-entry shape
+  and ties the field to the corresponding prime-environment encoder. -/
+  | encodedEnvironment (s : Shape)
   deriving Inhabited
 
 /-- An entry of a file's `$defs`: a schema, or a group of named schemas (`kind/admission`). -/
@@ -199,6 +203,7 @@ def constS (v : String) : Shape := .const (.str v)
 def decidedBy (name : String) (f : Json → Bool) (s : Shape) : Shape := .lean name s f
 /-- `s`, a value copied from the request (`Shape.copied`). -/
 def copied (why : String) (s : Shape) : Shape := .copied why s
+def encodedEnvironment (s : Shape) : Shape := .encodedEnvironment s
 
 /-- A request case whose `kind` is `k`. -/
 def kindIs (k : String) : Shape := n [obj, .required ["kind"], props [("kind", constS k)]]
@@ -275,6 +280,7 @@ def render (file : String) : Nat → Shape → Except String Json
     | .row => pure (Json.mkObj [("x-row", .bool true)])
     | .lean _ x _ => go x
     | .copied _ x => go x
+    | .encodedEnvironment x => go x
     | .node comment keywords => do
       let mut out : List (String × Json) := comment.toList.map fun c => ("$comment", Json.str c)
       for k in keywords do
@@ -418,6 +424,7 @@ def qualify (file : String) : Nat → Shape → Shape
     | .node comment keywords => .node comment (keywords.map q)
     | .lean name x f => .lean name (q x) f
     | .copied why x => .copied why (q x)
+    | .encodedEnvironment x => .encodedEnvironment (q x)
     | other => other
 
 def File.qualified (f : File) : File :=
@@ -581,6 +588,7 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | some x => go x { value := ctx.value, index := ctx.index } [] value
       | none => throw (.broken "x-row outside x-rows")
     | .copied _ x => go x ctx counters value
+    | .encodedEnvironment x => go x ctx counters value
     | .lean name x decide => do
       if ctx.inside.contains name then return ← go x ctx counters value
       let ctx := { ctx with inside := name :: ctx.inside }
