@@ -6,8 +6,10 @@ Each document is checked N times by each checkout's `ve` (`python -m ve document
 sources and builds), alternating the two; the CPU time is the process tree's (`ve`, its Lean and Rust
 children), read from RUSAGE_CHILDREN.
 
-Exit 0 only when every document's output (exit status and standard output) is the same at both checkouts on
-every run and is not empty; 1 otherwise. Exit 2, before anything runs, when BASE_ROOT and HEAD_ROOT are the
+The report is one row per document argument, in order, named by the path as given: two documents with the
+same file name in different directories are two rows, never one in place of the other. Exit 0 only when
+every document's output (exit status and standard output) is the same at both checkouts on every run and is
+not empty; 1 otherwise. Exit 2, before anything runs, when BASE_ROOT and HEAD_ROOT are the
 same directory, either is not a checkout of `ve`, a document is missing or --runs is below 1.
 """
 from __future__ import annotations
@@ -45,7 +47,7 @@ def main(argv=None):
     if problem:
         print(f"latency: {problem}", file=sys.stderr)
         return 2
-    report = {}
+    report = []
     for document in args.documents:
         runs = {"base": [], "head": []}
         outputs = {"base": set(), "head": set()}
@@ -54,12 +56,13 @@ def main(argv=None):
                 wall, cpu, code, stdout = check(getattr(args, side), document.resolve())
                 runs[side].append((wall, cpu))
                 outputs[side].add((code, stdout))
-        report[document.name] = {side: {"wall_median": round(statistics.median(w for w, _ in r), 3),
-                                        "cpu_median": round(statistics.median(c for _, c in r), 3)}
-                                 for side, r in runs.items()}
-        report[document.name]["same_output"] = same_output(outputs)
+        report.append({"document": str(document),
+                       **{side: {"wall_median": round(statistics.median(w for w, _ in r), 3),
+                                 "cpu_median": round(statistics.median(c for _, c in r), 3)}
+                          for side, r in runs.items()},
+                       "same_output": same_output(outputs)})
     print(json.dumps(report, indent=2))
-    return 0 if all(row["same_output"] for row in report.values()) else 1
+    return 0 if all(row["same_output"] for row in report) else 1
 
 
 def unusable(args) -> str | None:
