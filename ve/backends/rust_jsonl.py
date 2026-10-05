@@ -68,10 +68,18 @@ class _Checker:
         self.buffer = bytearray()
 
     def usable(self) -> bool:
+        """Whether the process may answer another case: it runs, its executable is unchanged, and it
+        has written nothing since its last record (output that answers no case is never read as the
+        next case's answer)."""
         try:
-            return self.process.poll() is None and _identity(self.argv[0]) == self.identity
+            if self.process.poll() is not None or _identity(self.argv[0]) != self.identity:
+                return False
+            os.read(self.process.stdout.fileno(), 1)
+        except BlockingIOError:
+            return True
         except OSError:
             return False
+        return False
 
     def _failure(self, what: str) -> OSError:
         try:
