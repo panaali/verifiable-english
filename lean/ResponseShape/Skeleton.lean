@@ -353,6 +353,20 @@ theorem filterMapM {β : Type} {Q : α → Prop} {f : β → Except String (Opti
     (h : ∀ x, OkP (fun o => ∀ b, o = some b → Q b) (f x)) : OkP (fun ys => ∀ y ∈ ys, Q y) (xs.filterMapM f) :=
   filterMapM_loop h xs [] (fun _ h => by cases h)
 
+/-- An array `mapM` returns the images of the elements, each satisfying what the function guarantees. -/
+theorem arrayMapM {β : Type} {Q : α → Prop} {f : β → Except String α} {xs : Array β}
+    (h : ∀ x ∈ xs, OkP Q (f x)) : OkP (fun ys => ∀ y ∈ ys, Q y) (xs.mapM f) := by
+  intro ys hys
+  rw [Array.mapM_eq_mapM_toList] at hys
+  cases hl : xs.toList.mapM f with
+  | error e => rw [hl] at hys; cases hys
+  | ok l =>
+    rw [hl] at hys
+    have hys : (Except.ok l.toArray : Except String (Array α)) = .ok ys := hys
+    cases hys
+    intro y hy
+    exact OkP.mapM (fun x hx => h x (by simpa using hx)) l hl y (by simpa using hy)
+
 /-- A `for` loop over a list keeps an invariant of its state. -/
 theorem forIn {β : Type} {xs : List β} {init : α} {f : β → α → Except String (ForInStep α)}
     (h0 : P init) (hf : ∀ x ∈ xs, ∀ s, P s → OkP (fun r : ForInStep α => P r.value) (f x s)) :
@@ -377,6 +391,14 @@ theorem of {r : Except String α} {Q : α → Prop} (h : OkP Q r) (hq : ∀ v, Q
 end OkP
 
 theorem isEmpty_empty : ("" : String).isEmpty = true := rfl
+
+/-- Setting a field of an object built from a list is building it from the list with that field
+appended (a later field of the same name replaces an earlier one). -/
+theorem setObjVal_mkObj (l : List (String × Json)) (k : String) (v : Json) :
+    (Json.mkObj l).setObjVal! k v = Json.mkObj (l ++ [(k, v)]) := by
+  simp only [Json.mkObj, Json.setObjVal!]
+  rw [Std.TreeMap.Raw.ofList_eq_insertMany_empty, Std.TreeMap.Raw.ofList_eq_insertMany_empty,
+    Std.TreeMap.Raw.insertMany_append, Std.TreeMap.Raw.insertMany_list_singleton]
 
 theorem getArr?_arr (a : Array Json) : (Json.arr a).getArr? = .ok a := rfl
 
