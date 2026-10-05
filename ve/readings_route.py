@@ -60,13 +60,13 @@ def rust_check(admission, s, i, j, situation, Ti, Tj, facts):
     """Replay one pair's evaluations in Rust, untrusted (10): the witness's completion under the shown
     decision, and the other side with its own tables empty. Each value must be Python's, which the comparison
     with Lean's answer then checks."""
-    from .backends.rust_jsonl import run
+    from .backends.rust_jsonl import configured_timeout, run
     model, _, _, probe, _ = situation
     witness, other = admission.side(s, i), admission.side(s, j)
     sides = [witness.evaluation_case(model, Ti, probe), other.evaluation_case(model, Tj, probe)]
     try:
         record = run({"id": "readings-evaluate", "kind": "readings-evaluate", "untrusted": True, "sides": sides},
-                     timeout=60.0)
+                     timeout=configured_timeout(60.0))
     except VEError as exc:
         # Rust is an untrusted shadow: its failure is never a rejection of the document.
         raise CheckerUnavailable(f"ReadingsConformance: Rust did not evaluate the situation: {_message(exc)}") \

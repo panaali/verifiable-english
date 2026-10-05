@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from tests.test_discourse_lean import run as lean_run
 from ve.document import check_document, load_document
 from ve.english import parse_english
@@ -88,7 +89,7 @@ def rust_outcome(formulas):
     case = {"id": "shared", "family": "elaborated-document", "untrusted": True, "environment": base,
             "formulas": formulas}
     rust = subprocess.run([str(RUST), "conformance"], input=json.dumps(case), text=True, capture_output=True,
-                          timeout=60)
+                          timeout=HANG_TIMEOUT)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     return json.loads(rust.stdout)[0]
 

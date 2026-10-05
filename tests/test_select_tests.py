@@ -1,4 +1,5 @@
-"""The test selector: AST change units, map lookups, drift, the recorder, and whole plans.
+"""The test selector: AST change units, map lookups, drift, the recorder, whole plans,
+and the map-free `--impacted` fast path.
 
 Synthetic graphs and maps keep most checks independent of the repository's
 history; the whole-plan checks run on this checkout with a map built here.
@@ -24,6 +25,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import change_units  # noqa: E402
 from change_units import delta, summarize  # noqa: E402
+from pytest_run import pytest_command, pytest_environment  # noqa: E402
 import select_tests  # noqa: E402
 import source_graph  # noqa: E402
 import test_map  # noqa: E402
@@ -442,6 +444,32 @@ def test_static_closure_follows_imports_facade_and_named_programs(tmp_path):
     assert {"lean-exe:ve_demo", "tests/data/fixtures.json"} <= mentions
 
 
+def test_static_closure_holds_what_each_conftest_above_the_test_reaches(tmp_path):
+    """pytest imports every conftest.py from the root down to a test's directory (the
+    --impacted review finding, which holds for the static graph too). Their native
+    mentions stay theirs: the conftest builds the checkers and starts none."""
+    graph = make_graph(tmp_path, {
+        "conftest.py": "import helpers.top\n",
+        "helpers/__init__.py": "",
+        "helpers/top.py": "",
+        "tests/conftest.py": "import tests.subprocesses\nBIN = 'rust/target/release/ve'\n"
+                             "LEAN = ROOT / 'lean' / '.lake' / 'build' / 'bin' / 've_demo'\n"
+                             "DATA = 'fixtures.json'\n",
+        "tests/subprocesses.py": "",
+        "tests/deep/conftest.py": "import ve.deep\n",
+        "ve/__init__.py": "",
+        "ve/deep.py": "",
+        "tests/test_a.py": "",
+        "tests/deep/test_b.py": "",
+        "tests/data/fixtures.json": "{}",
+    })
+    files, mentions = graph.closure("tests/test_a.py")
+    assert {"helpers/top.py", "tests/subprocesses.py"} <= files and "ve/deep.py" not in files
+    assert "tests/data/fixtures.json" in mentions
+    assert not {"rust", "lean-exe:ve_demo"} & mentions
+    assert {"helpers/top.py", "tests/subprocesses.py", "ve/deep.py"} <= graph.closure("tests/deep/test_b.py")[0]
+
+
 AFTER_DELETION = {
     "ve/__init__.py": "from .core import parse\n",
     "ve/core.py": "def parse():\n    return 1\n",
@@ -530,8 +558,8 @@ def recorder_run(tmp_path, program: str, argv=("main.py",), files: dict[str, str
         "    runpy.run_module(sys.argv[0], run_name='__main__', alter_sys=True)\n"
         "else:\n"
         "    runpy.run_path(sys.argv[1], run_name='__main__')\n")
-    env = {"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root),
-           "PYTHONDONTWRITEBYTECODE": "1"}
+    env = pytest_environment({"PATH": os.environ["PATH"], "VE_TESTMAP_OUT": str(out), "VE_TESTMAP_ROOT": str(root),
+                              "PYTHONDONTWRITEBYTECODE": "1"})
     subprocess.run([sys.executable, "start.py", *argv], cwd=root, env=env, check=True,
                    timeout=HANG_TIMEOUT)
     tracked = ({p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()},
@@ -593,7 +621,7 @@ def test_a_test_run_by_pytest_keeps_its_own_reads_and_listings(tmp_path):
             assert glob.glob(str(ROOT / "globbed" / "*.txt"))
             assert helper.value() == 1
     ''')
-    result = recorder_run(tmp_path, "", ("-m", "pytest", "-q", "-p", "no:cacheprovider", "--rootdir", ".",
+    result = recorder_run(tmp_path, "", (*pytest_command([], "-q", "-p", "no:cacheprovider", "--rootdir", "."),
                                          "--confcutdir", ".", "tests/test_uses.py"),
                           {"tests/test_uses.py": test, "helper.py": "def value():\n    return 1\n",
                            "more/x.txt": "", "globbed/y.txt": ""})
@@ -665,7 +693,7 @@ def test_whole_plans_on_this_checkout(head):
     docs = plan_for([select_tests.Change("docs/english-surface.md", "a", "b")], data)
     assert "tests/test_bundle.py" in docs["selected"]
     assert set(docs["selected"]) <= {"tests/test_bundle.py", "tests/test_english.py"}
-    assert docs["commands"] == [[*docs["commands"][-1][:9], *docs["selected"]]]
+    assert docs["commands"] == [[*select_tests.PYTEST, "-q", *docs["selected"]]]
 
     definitions = real("ve/definitions.py")
     comment = plan_for([select_tests.Change("ve/definitions.py", definitions, "# c\n" + definitions)], data)
@@ -774,9 +802,9 @@ LISTING_FILES = {**LISTING_TREE, **{file: f"from pathlib import Path\n\ndef test
 
 
 def pytest_exit(root: Path, test_file: str) -> int:
-    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--rootdir", ".",
-                           "--confcutdir", ".", test_file], cwd=root, capture_output=True,
-                          env={"PATH": os.environ["PATH"], "PYTHONDONTWRITEBYTECODE": "1"},
+    return subprocess.run(pytest_command([sys.executable], "-q", "-p", "no:cacheprovider", "--rootdir", ".",
+                                         "--confcutdir", ".", test_file), cwd=root, capture_output=True,
+                          env=pytest_environment({"PATH": os.environ["PATH"], "PYTHONDONTWRITEBYTECODE": "1"}),
                           timeout=HANG_TIMEOUT).returncode
 
 
@@ -789,7 +817,7 @@ def test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_i
                       "exit": 0, "seconds": 1.0} for test in select_tests.units()}
     for unit, (test_file, directory, _) in LISTING_TESTS.items():
         (tmp_path / unit).mkdir(parents=True)
-        recorded = recorder_run(tmp_path / unit, "", ("-m", "pytest", "-q", "-p", "no:cacheprovider", "--rootdir",
+        recorded = recorder_run(tmp_path / unit, "", (*pytest_command([], "-q", "-p", "no:cacheprovider", "--rootdir"),
                                                       ".", "--confcutdir", ".", test_file), LISTING_FILES)
         assert recorded["d"] == {directory}, recorded["d"]
         results[unit]["d"] = recorded["d"]
@@ -1049,3 +1077,111 @@ def test_a_malformed_map_is_rejected():
         with pytest.raises(ValueError):
             test_map.validate(corrupt)
             pytest.fail(name)
+
+
+# --- --impacted, the map-free fast path: every test file is reachable from a source path,
+# so that the fast path can run it at all; unknown inputs select the full suite.
+
+
+@pytest.fixture(scope="module")
+def selector():
+    with pytest.MonkeyPatch.context() as patch:
+        import conftest
+        patch.syspath_prepend(str(conftest.ROOT / "tools"))  # as the tool runs
+        import select_tests
+        yield select_tests
+
+
+def tracked(selector):
+    listed = subprocess.run(["git", "ls-files", "-z"], cwd=selector.ROOT, capture_output=True,
+                            check=True, timeout=HANG_TIMEOUT).stdout.decode().split("\0")
+    return [path for path in listed if path and not path.startswith("tests/test_")
+            and (selector.ROOT / path).is_file()]
+
+
+def test_every_test_file_is_reachable_from_a_source_path(selector):
+    tests = [path.relative_to(selector.ROOT).as_posix() for path in selector.TESTS]
+    sources, unreached = {}, []
+    files = None
+    for test in tests:
+        imported = sorted(f for f in selector.closure(test) if f != test and not f.startswith("tests/test_"))
+        if imported:
+            sources[test] = imported[0]
+            continue
+        files = files if files is not None else tracked(selector)
+        found = next((path for path in files if selector.reaches(test, path)), None)
+        if found is None:
+            unreached.append(test)
+        else:
+            sources[test] = found
+    assert unreached == [], ("no source path selects these test files; name their sources in "
+                             "tools/select_tests.py EXTRA_SOURCES")
+    # The fast path itself selects each through its source, without the full fallback.
+    for test in ("tests/test_evidence_bounds.py", "tests/test_precommit_hook.py",
+                 "tests/test_agent_policy_rerun.py", "tests/test_coverage_dashboard.py"):
+        plan = selector.impacted([sources[test]])
+        assert not plan["fallback"] and test in plan["selected"], (test, sources[test])
+
+
+@pytest.mark.parametrize("changed, expected", [
+    # Native changes select their conformance tests.
+    ("lean/VE/Norms/Wire.lean", {"tests/test_lean_conformance.py", "tests/test_soft_norms_lean.py"}),
+    ("rust/ve/src/main.rs", {"tests/test_rust_conformance.py", "tests/test_p0_three_way.py",
+                             "tests/test_nary_differential.py"}),
+    # Data, tools and helpers select the tests that name or import them.
+    ("usecases/asimov-laws/rules.ve", {"tests/test_asimov_laws.py"}),
+    ("tools/hooks/precommit.py", {"tests/test_precommit_hook.py", "tests/test_hang_guards.py"}),
+    ("tests/subprocesses.py", {"tests/test_cpu_bounds.py", "tests/test_hang_guards.py"}),
+    ("tools/bench/baseline.py", {"tests/test_bench_baselines.py"}),
+], ids=["lean", "rust", "use case", "hook", "test helper", "bench"])
+def test_changes_select_the_tests_that_depend_on_them(selector, changed, expected):
+    plan = selector.impacted([changed])
+    assert not plan["fallback"]
+    assert expected <= set(plan["selected"]), expected - set(plan["selected"])
+    assert set(plan["always"]) <= set(plan["selected"])
+
+
+@pytest.mark.parametrize("changed", ["tests/conftest.py", "tests/subprocesses.py", "tools/rust_build.py",
+                                     "ve/surface/unambiguity.py"])
+def test_what_the_conftest_loads_selects_every_test_below_it(selector, changed):
+    """Review: a change to tests/conftest.py selected 18 of 214 files. pytest imports each
+    conftest.py for every test below it, so a change to it, or to what it imports,
+    selects them all."""
+    assert changed in selector.closure("tests/conftest.py")
+    plan = selector.impacted([changed])
+    assert not plan["fallback"] and plan["selected_count"] == plan["full_count"]
+
+
+def test_a_conftest_in_a_test_directory_joins_its_tests_closure(selector, tmp_path, monkeypatch):
+    (tmp_path / "tests/deep").mkdir(parents=True)
+    for conftest in ("conftest.py", "tests/conftest.py", "tests/deep/conftest.py"):
+        (tmp_path / conftest).write_text("")
+    (tmp_path / "tests/deep/test_x.py").write_text("")
+    (tmp_path / "tests/test_y.py").write_text("")
+    monkeypatch.setattr(selector, "ROOT", tmp_path)
+    # Which conftest files join, each standing for its own (cached, real-tree) closure.
+    monkeypatch.setattr(selector, "closure", lambda relative: frozenset({relative}))
+    found = selector.test_closure.__wrapped__
+    assert found("tests/deep/test_x.py") == {"tests/deep/test_x.py", "conftest.py", "tests/conftest.py",
+                                             "tests/deep/conftest.py"}
+    assert found("tests/test_y.py") == {"tests/test_y.py", "conftest.py", "tests/conftest.py"}
+
+
+def test_narrow_changes_select_few_tests(selector):
+    """The fast path is fast where the code is narrow (the product's modules import one
+    another widely, so a kernel change still selects most of the suite)."""
+    for changed in ("usecases/asimov-laws/rules.ve", "tools/hooks/precommit.py", "tools/bench/baseline.py"):
+        assert selector.impacted([changed])["selected_count"] < 40, changed
+
+
+def test_unknown_or_unreached_inputs_select_the_full_suite(selector):
+    for paths in ([], ["new-unmapped-format.xyz"], ["ve/__init__.py"], ["ve/deleted_module.py"]):
+        plan = selector.impacted(paths)
+        assert plan["fallback"] and plan["selected_count"] == plan["full_count"], paths
+
+
+def test_a_script_no_test_reaches_is_reported(selector, monkeypatch):
+    monkeypatch.setattr(selector, "reaches", lambda test, changed: False)
+    plan = selector.impacted(["tools/bench/baseline.py"])
+    assert not plan["fallback"] and plan["scripts_without_tests"] == ["tools/bench/baseline.py"]
+    assert plan["selected"] == sorted(plan["always"])

@@ -7,6 +7,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.ast import formula_from_data
 from ve import ast
 from ve.environment import Environment
@@ -23,7 +24,7 @@ pytestmark = pytest.mark.skipif(not RUST.exists(), reason="build Rust release ru
 
 def rust(case):
     process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(case),
-                             text=True, capture_output=True, timeout=30)
+                             text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert process.returncode in (0, 1), process.stderr
     return json.loads(process.stdout)[0]
 
@@ -143,7 +144,7 @@ def test_rust_day_numbers_match_datetime_on_10000_dates():
                                                                  ["num", "day", str(i)]]}}
              for i in indices]
     process = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(cases),
-                             text=True, capture_output=True, timeout=120)
+                             text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert process.returncode == 0, process.stderr[:500]
     results = json.loads(process.stdout)
     assert len(results) == 10000

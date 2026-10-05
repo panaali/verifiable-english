@@ -1,6 +1,7 @@
-use crate::{
+use ve_kernel::{
     Document, Edge, Environment, Error, Formula, MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES, ReachKind,
-    Result, Span, Term, environment::RESERVED, error,
+    Result, Span, Term,
+    internal::{EnvironmentInternals, RESERVED, error},
 };
 
 /// Frozen core surface registrations. Statement-layer profiles can add records
@@ -10,6 +11,7 @@ pub(crate) struct SurfaceRecord {
     pub strict_form: &'static str,
     #[allow(dead_code)] // Rust evaluates elaborated documents; Python owns English admission.
     pub english_keywords: &'static [&'static str],
+    #[allow(dead_code)] // The kernel decodes with `wire::FORMULA_ARITY`; a test keeps them equal.
     pub wire_arity: usize,
 }
 
@@ -191,7 +193,7 @@ impl Parser<'_> {
     fn term(&mut self) -> Result<Term> {
         if self.eat("@") {
             let (name, p) = self.ident()?;
-            if !self.env.constants.contains_key(&name) {
+            if !self.env.constants().contains_key(&name) {
                 return Err(self.err("UnknownSymbol", format!("unknown constant {name:?}"), p));
             }
             return Ok(Term::Const(name));
@@ -253,7 +255,7 @@ impl Parser<'_> {
             let edge = if self.at("]") {
                 Edge::Named(symbol)
             } else {
-                if !self.env.sorts.contains(&symbol) {
+                if !self.env.sorts().contains(&symbol) {
                     return Err(self.err("UnknownSymbol", "unknown closure sort", pos));
                 }
                 self.literal(" ")?;
@@ -294,7 +296,7 @@ impl Parser<'_> {
                 self.literal("there exists ")?;
             }
             let (sort, p) = self.ident()?;
-            if !self.env.sorts.contains(&sort) {
+            if !self.env.sorts().contains(&sort) {
                 return Err(self.err("UnknownSymbol", "unknown binder sort", p));
             }
             self.literal(" ")?;
@@ -337,7 +339,7 @@ impl Parser<'_> {
             !prefix.is_empty() && prefix.bytes().all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_')
         }) {
             let (predicate, pos) = self.ident()?;
-            if self.env.predicates.get(&predicate).is_none_or(|d| !(3..=6).contains(&d.len())) {
+            if self.env.predicates().get(&predicate).is_none_or(|d| !(3..=6).contains(&d.len())) {
                 return Err(self.err("UnknownSymbol", "unknown n-ary predicate", pos));
             }
             self.literal("(")?;
@@ -354,7 +356,7 @@ impl Parser<'_> {
             let left = self.term()?;
             if self.eat(" is ") {
                 let (p, pos) = self.ident()?;
-                if self.env.predicates.get(&p).is_none_or(|d| d.len() != 1) {
+                if self.env.predicates().get(&p).is_none_or(|d| d.len() != 1) {
                     return Err(self.err("UnknownSymbol", "unknown unary predicate", pos));
                 }
                 f = Formula::Unary(p, left);
@@ -363,7 +365,7 @@ impl Parser<'_> {
             } else {
                 self.literal(" ")?;
                 let (p, pos) = self.ident()?;
-                if self.env.predicates.get(&p).is_none_or(|d| d.len() != 2) {
+                if self.env.predicates().get(&p).is_none_or(|d| d.len() != 2) {
                     return Err(self.err("UnknownSymbol", "unknown binary predicate", pos));
                 }
                 self.literal(" ")?;
@@ -512,4 +514,15 @@ pub fn print_document(doc: &Document) -> Result<String> {
         text.push_str(&line);
     }
     Ok(text)
+}
+
+#[cfg(test)]
+mod arity_tests {
+    use super::*;
+
+    #[test]
+    fn records_repeat_the_kernel_wire_arities() {
+        let records: Vec<_> = RECORDS.iter().map(|r| (r.wire_tag, r.wire_arity)).collect();
+        assert_eq!(records, ve_kernel::internal::FORMULA_ARITY);
+    }
 }
