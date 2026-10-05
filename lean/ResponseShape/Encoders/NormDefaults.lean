@@ -9,9 +9,10 @@ open VE.NormDefaults VE.NormDefaults.Run
 
 variable {req : Json}
 
-theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.normDefaults v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The norms mode's rows, off the norm-defaults path, are rows of this mode. -/
+theorem of_norms {v : Json} (hp : usesNormDefaultsPath req = false) (h : Fits req Skeletons.norms v) :
+    Fits req Skeletons.normDefaults v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
 theorem firstFailure_of_not_free (j : Json) (res : Wire.ConflictReplayU) (h : Wire.replayConflictU j = .ok res)
     (hf : res.conflictFree = false) : (firstFailureU res).isSome = true := by
@@ -26,13 +27,13 @@ theorem firstFailure_of_not_free (j : Json) (res : Wire.ConflictReplayU) (h : Wi
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.normDefaults (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (runCase j) := by
   unfold runCase runOtherCase runAdmission
   simp only []
   okfits
-  all_goals first
-    | with_reducible exact OkP.of (Norms.runCase_fits _) fun _ => of_norms
-    | skip
+  all_goals read_kind
+  all_goals (try contra)
   all_goals (try simp only [VE.Route.Wire.ok, encodeAdmitted, Wire.regeneratedU, VE.Norms.Wire.regenerated])
   all_goals fits
   all_goals try exact Common.claimJson_fits _
@@ -42,12 +43,12 @@ theorem runCase_fits (j : Json) : OkFits req Skeletons.normDefaults (runCase j) 
     have := firstFailure_of_not_free j _ ‹Wire.replayConflictU j = .ok _› (by simp_all)
     simp_all
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.normDefaults (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_norms (Norms.runCaseReported_fits j)
+  · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.NormDefaults
