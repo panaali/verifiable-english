@@ -1,0 +1,251 @@
+{
+ "environments": [
+  {
+   "environment": "ordinary",
+   "failures": [],
+   "lexicon_id": "5d8f2addecaf1823cabdf2e7b61a6239a367b6ba0ca6e4fa989f1e4e8b0ef814",
+   "symbols": 8
+  },
+  {
+   "environment": "closure",
+   "failures": [],
+   "lexicon_id": "113a855c1d394a4db9a8936903442ae7d91b360f3ff8312b0409f18e8704b11a",
+   "symbols": 8
+  },
+  {
+   "environment": "colliding_aliases",
+   "failures": [],
+   "lexicon_id": "c64fd457611d110d2a8009e22e43e51aa99aadd227c6e8350f0f79f44179c553",
+   "symbols": 8
+  },
+  {
+   "environment": "function_words",
+   "failures": [],
+   "lexicon_id": "e12f20ce4b114a258182affd2b759f17411ce35e1c709bb0a32ebf2deaffe5b8",
+   "symbols": 15
+  },
+  {
+   "environment": "function_identifiers",
+   "failures": [],
+   "lexicon_id": "597c569fae044e73dbe1af83f56dd5cef47a48ac8cb1e625ac5ab02356cad4e8",
+   "symbols": 9
+  },
+  {
+   "environment": "precision_templates",
+   "failures": [],
+   "lexicon_id": "74ab45f05ed4378b2ef49bc9019c00879316274419afedb3d4679ed1e2235892",
+   "symbols": 8
+  },
+  {
+   "environment": "birthright-citizenship-debate",
+   "failures": [],
+   "lexicon_id": "d59b8c3530d4d3f4eb48f91d004ffeb59aac9474d9235a5f3ec5a485cff81ae9",
+   "symbols": 8
+  },
+  {
+   "environment": "claude-constitution-excerpt",
+   "failures": [],
+   "lexicon_id": "bfa8fbeaa529ff8f01e2a7eababae4f3ca21aba4537697304b985d1a06f984a3",
+   "symbols": 32
+  },
+  {
+   "environment": "news-article",
+   "failures": [],
+   "lexicon_id": "a005b6f396316905b45203e83448fe5c56d958dc88006cefcca59fa624fa82f6",
+   "symbols": 55
+  },
+  {
+   "environment": "us-constitution-14th-s1",
+   "failures": [],
+   "lexicon_id": "83e3b3b0336246a2b670602feda0f76836c4869840a29d287fcddc870fdaff89",
+   "symbols": 16
+  },
+  {
+   "environment": "birthright-citizenship-debate-reviewed",
+   "failures": [],
+   "lexicon_id": "4671ba0193c97c3f9274e553965ffcb40aae76326f5a8c789bdc6c8280cdd9cf",
+   "symbols": 8
+  },
+  {
+   "environment": "claude-constitution-excerpt-reviewed",
+   "failures": [],
+   "lexicon_id": "b57353307af0cdb7754c4abcdec1bbf9b0cf0b86fb0a5d897a6b2d47f42032a7",
+   "symbols": 32
+  },
+  {
+   "environment": "news-article-reviewed",
+   "failures": [],
+   "lexicon_id": "9db020570ec5013fa126c2bde9bb5cd400c931f90210ac83957a798f216d080c",
+   "symbols": 55
+  },
+  {
+   "environment": "us-constitution-14th-s1-reviewed",
+   "failures": [],
+   "lexicon_id": "4ebb3ff0271140bfaa11386fb9c33eb7eabdb796f7b2e5a17fac02df0a589f00",
+   "symbols": 16
+  },
+  {
+   "environment": "accepted-suggestions",
+   "failures": [],
+   "lexicon_id": "b2ad4f15e9d4cfced4b53f531502389e134102c1665e1072f625d0cd2c59f311",
+   "symbols": 7
+  },
+  {
+   "environment": "adopted-unary",
+   "failures": [],
+   "lexicon_id": "a574daee63f19a6ac6c6849dc06e622750d71b8f5f73d679b0b587dd80394662",
+   "symbols": 9
+  },
+  {
+   "environment": "order",
+   "failures": [],
+   "lexicon_id": "ee5772e346486efce0fbdd648dd3622ff2905509e9b84893f54900bebe10d9ae",
+   "symbols": 8
+  },
+  {
+   "environment": "usecases/agent-policy/environment.allow-must.json",
+   "failures": [],
+   "lexicon_id": "0fdcff78c86813961fa72807661cb0830b5515d31788577f7debe9b9fb58fe46",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/agent-policy/environment.allow-neednot.json",
+   "failures": [],
+   "lexicon_id": "42f8192c5cc5e559acc7819bc143b0bfce667e11ac868f0de15eb6588962bdba",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/agent-policy/environment.deny-must.json",
+   "failures": [],
+   "lexicon_id": "a1e5ac720071ce484e4957eda312fda96d6a1a104d06cbeac9496f890de7db61",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/agent-policy/environment.deny-neednot.json",
+   "failures": [],
+   "lexicon_id": "e86f402417542a0ced320a4d3e97595bb1d9ac99f95c002f469d1aa4c5e25c8e",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/agent-policy/environment.lean.json",
+   "failures": [],
+   "lexicon_id": "4914a4978d57287d5350b704b15e88674c2ee1277bb9824a6a5a0f90af18c62e",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/agent-policy/environment.unspecified.json",
+   "failures": [],
+   "lexicon_id": "32dc389c867d318672c4d3c49e10eec70128bfc0c762fb13941df7e2815c4c5d",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/agent-policy/environment.unspecified.lean.json",
+   "failures": [],
+   "lexicon_id": "116c2e3e86b42038ab3d7a528d8e580b5a7c870b1bab21a18716955f87b10ae6",
+   "symbols": 37
+  },
+  {
+   "environment": "usecases/asimov-extended/environment.json",
+   "failures": [
+    [
+     "V1",
+     "predicate",
+     "risk__more_severe"
+    ]
+   ],
+   "lexicon_id": "baef1a705ac0ebe43a084d91cf1bedf6ade5da1610acaf96fe412980ac23e753",
+   "symbols": 54
+  },
+  {
+   "environment": "usecases/asimov-laws/environment.json",
+   "failures": [],
+   "lexicon_id": "d54fd68cbea459ae786ab2ffdf8be7b704cf1605898ad48eefa3d61bca4e3d21",
+   "symbols": 25
+  },
+  {
+   "environment": "usecases/birthright-citizenship-debate/environment.json",
+   "failures": [],
+   "lexicon_id": "d59b8c3530d4d3f4eb48f91d004ffeb59aac9474d9235a5f3ec5a485cff81ae9",
+   "symbols": 8
+  },
+  {
+   "environment": "usecases/birthright-citizenship-debate/environment.json+overlay",
+   "failures": [],
+   "lexicon_id": "4671ba0193c97c3f9274e553965ffcb40aae76326f5a8c789bdc6c8280cdd9cf",
+   "symbols": 8
+  },
+  {
+   "environment": "usecases/cedar-attributes/environment.json",
+   "failures": [],
+   "lexicon_id": "7b75372c16a28368f66544a643f580c0eb07dddb5693f08939625945600059a7",
+   "symbols": 5
+  },
+  {
+   "environment": "usecases/claude-constitution-excerpt/environment.json",
+   "failures": [],
+   "lexicon_id": "bfa8fbeaa529ff8f01e2a7eababae4f3ca21aba4537697304b985d1a06f984a3",
+   "symbols": 32
+  },
+  {
+   "environment": "usecases/claude-constitution-excerpt/environment.json+overlay",
+   "failures": [],
+   "lexicon_id": "b57353307af0cdb7754c4abcdec1bbf9b0cf0b86fb0a5d897a6b2d47f42032a7",
+   "symbols": 32
+  },
+  {
+   "environment": "usecases/eligibility/environment.json",
+   "failures": [],
+   "lexicon_id": "42a3ce7317052682ca9d841e0af34d682fda1969572dea1c45ec210f542fac66",
+   "symbols": 85
+  },
+  {
+   "environment": "usecases/math-mini-paper/environment-closure.json",
+   "failures": [],
+   "lexicon_id": "d6b5ecf8b3a0d2e008700b299de483e467672542493154becfe87a248839220e",
+   "symbols": 3
+  },
+  {
+   "environment": "usecases/math-mini-paper/environment.json",
+   "failures": [],
+   "lexicon_id": "b93cf4e704ba81233422b0e47274fbd00006c4fe5dd401a01ef7a7e437897e0e",
+   "symbols": 10
+  },
+  {
+   "environment": "usecases/news-article/environment.json",
+   "failures": [],
+   "lexicon_id": "a005b6f396316905b45203e83448fe5c56d958dc88006cefcca59fa624fa82f6",
+   "symbols": 55
+  },
+  {
+   "environment": "usecases/news-article/environment.json+overlay",
+   "failures": [],
+   "lexicon_id": "9db020570ec5013fa126c2bde9bb5cd400c931f90210ac83957a798f216d080c",
+   "symbols": 55
+  },
+  {
+   "environment": "usecases/safety-framework/environment.d1.json",
+   "failures": [],
+   "lexicon_id": "0b98135467ea0bd24672f8c5e071221639ea4f56c27e37874efadeccab68336d",
+   "symbols": 81
+  },
+  {
+   "environment": "usecases/us-constitution-14th-s1/environment.json",
+   "failures": [],
+   "lexicon_id": "83e3b3b0336246a2b670602feda0f76836c4869840a29d287fcddc870fdaff89",
+   "symbols": 16
+  },
+  {
+   "environment": "usecases/us-constitution-14th-s1/environment.json+overlay",
+   "failures": [],
+   "lexicon_id": "4ebb3ff0271140bfaa11386fb9c33eb7eabdb796f7b2e5a17fac02df0a589f00",
+   "symbols": 16
+  }
+ ],
+ "failures_by_condition": {
+  "V1": 1
+ },
+ "format": "ve.english-lean-lexicon-report@1",
+ "invalid": 1,
+ "valid": 38,
+ "wording_key_differences": []
+}

@@ -17,13 +17,16 @@ import pickle
 import posixpath
 import subprocess
 
-from change_units import Summary, summarize
+from change_units import ROOT_SPELLINGS, Summary, summarize
 from check_lean_imports import HeaderError, imports as lean_imports
 from layer_policy import ROOT, lean_executables
 
 # String literals naming these directories say nothing about which files a test uses.
 GENERIC_DIRECTORIES = frozenset({"ve", "tests", "tools", "lean", "rust", "src", "build", "bin",
                                  "target", "VE", "docs", "__pycache__"})
+# In the product's modules "." is the English full stop; the test side (tests,
+# their helpers, tools) names the root "." it lists.
+PRODUCT = ("ve/", "ve_experiments/")
 CODE_VERSION = hashlib.sha256(b"".join(
     (Path(__file__).parent / name).read_bytes()
     for name in ("source_graph.py", "change_units.py"))).hexdigest()[:16]
@@ -139,7 +142,7 @@ class Graph:
             self.mentions[path] = set()
             for summary in self.versions(path):
                 self._targets(path, summary, targets)
-                self.mentions[path] |= self._mentions(summary)
+                self.mentions[path] |= self._mentions(path, summary)
             self.edges[path] = set(targets)
             for target, names in targets.items():
                 self.imported_names[(path, target)] = names
@@ -185,12 +188,13 @@ class Graph:
                 else:
                     add(base, {name})
 
-    def _mentions(self, summary: Summary) -> set[str]:
+    def _mentions(self, path: str, summary: Summary) -> set[str]:
         found = set()
         constants = summary.constants
         for constant in constants:
-            text = constant.strip().removeprefix("./").rstrip("/")
-            if not text or "\n" in text:
+            text = constant.strip()
+            text = "." if text in ROOT_SPELLINGS else text.removeprefix("./").rstrip("/")
+            if not text or "\n" in text or (text == "." and path.startswith(PRODUCT)):
                 continue
             if text in self._file_set:
                 found.add(text)
@@ -214,7 +218,8 @@ class Graph:
         self._file_set = set(self.files)
         self._executables = set(lean_executables(self.root))
         self._basenames: dict[str, set[str]] = {}
-        self._directories: set[str] = set()
+        # The root by the recorder's name for it: a test that lists "." names it.
+        self._directories: set[str] = {"."}
         self._directory_names: dict[str, set[str]] = {}
         for path in self.files:
             name = posixpath.basename(path)

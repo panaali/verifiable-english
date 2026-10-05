@@ -562,9 +562,7 @@ def recorder_run(tmp_path, program: str, argv=("main.py",), files: dict[str, str
                                      "PYTHONDONTWRITEBYTECODE": "1"})
     subprocess.run([sys.executable, "start.py", *argv], cwd=root, env=env, check=True,
                    timeout=HANG_TIMEOUT)
-    tracked = ({p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()},
-               {".", *(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_dir())})
-    return test_map.read_unit(out, tracked)
+    return test_map.read_unit(out, {p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()})
 
 
 def test_recorder_sees_functions_reads_and_children(tmp_path):
@@ -808,21 +806,36 @@ def pytest_exit(root: Path, test_file: str) -> int:
                           timeout=HANG_TIMEOUT).returncode
 
 
+def recorded_listers(tmp_path: Path, head: str, tests: dict[str, tuple[str, str, str]], files: dict[str, str]) -> dict:
+    """A map of every unit, where each unit of `tests` has the listings its scratch
+    test made under the real recorder (in its own tree, `tmp_path/<unit>/root`)."""
+    results = {test: {"f": {(test, "<module>")}, "r": set(), "d": set(), "x": set(), "opaque": [],
+                      "exit": 0, "seconds": 1.0} for test in select_tests.units()}
+    for unit, (test_file, directory, _) in tests.items():
+        (tmp_path / unit).mkdir(parents=True)
+        recorded = recorder_run(tmp_path / unit, "", nested_pytest.command(
+            ["-q", "-p", "no:cacheprovider", "--rootdir", ".", "--confcutdir", ".", test_file], python=[]), files)
+        assert recorded["d"] == {directory}, recorded["d"]
+        results[unit]["d"] = recorded["d"]
+    return test_map.build_map(results, head)
+
+
+def assert_plan_and_drift_select(data: dict, change, letter: str, failing: set[str]) -> None:
+    """The plan selects each failing unit as a lister, and the drift check drops its entry."""
+    plan = plan_for([change], data)
+    assert {test for test in failing
+            if f"lists the directory of {change.path}" in plan["reasons"].get(test, [])} == failing, plan["reasons"]
+    drift = select_tests.uncertain_units(select_tests.Coverage(data), source_graph.load(select_tests.ROOT),
+                                         set(data["tests"]), {change.path: letter}, {})
+    assert failing <= drift, drift
+
+
 def test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it(tmp_path, head):
     # Looprecheck2 B1: a test listing the root "." failed once a root Markdown file
     # appeared, but the lookup never reached ".". B2: with tests/fixtures/sub also
     # recorded, deleting its last file failed the tests/fixtures lister too, but the
     # lookup stopped at the nearest recorded directory. Recorded, not hand-written, edges.
-    results = {test: {"f": {(test, "<module>")}, "r": set(), "d": set(), "x": set(), "opaque": [],
-                      "exit": 0, "seconds": 1.0} for test in select_tests.units()}
-    for unit, (test_file, directory, _) in LISTING_TESTS.items():
-        (tmp_path / unit).mkdir(parents=True)
-        recorded = recorder_run(tmp_path / unit, "", nested_pytest.command(
-            ["-q", "-p", "no:cacheprovider", "--rootdir", ".", "--confcutdir", ".", test_file], python=[]), LISTING_FILES)
-        assert recorded["d"] == {directory}, recorded["d"]
-        results[unit]["d"] = recorded["d"]
-    data = test_map.build_map(results, head)
-    every = set(results)
+    data = recorded_listers(tmp_path, head, LISTING_TESTS, LISTING_FILES)
     root_md, last = "NOTES.md", "tests/fixtures/sub/last.json"
 
     # Each change really fails the tests that listed a directory above it.
@@ -834,16 +847,81 @@ def test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_i
     assert pytest_exit(added, "tests/test_root.py") == 1
     assert [pytest_exit(deleted, LISTING_TESTS[unit][0]) for unit in LISTING_TESTS] == [0, 1, 1]
 
-    for change, letter, failing in ((select_tests.Change(root_md, None, "x\n"), "A", {"tests/test_bundle.py"}),
-                                    (select_tests.Change(last, "{}", None), "D",
-                                     {"tests/test_closure.py", "tests/test_argument.py"})):
-        plan = plan_for([change], data)
-        assert {test for test in failing
-                if f"lists the directory of {change.path}" in plan["reasons"].get(test, [])} == failing, \
-            plan["reasons"]
-        drift = select_tests.uncertain_units(select_tests.Coverage(data), source_graph.load(select_tests.ROOT),
-                                             every, {change.path: letter}, {})
-        assert failing <= drift, drift
+    assert_plan_and_drift_select(data, select_tests.Change(root_md, None, "x\n"), "A", {"tests/test_bundle.py"})
+    assert_plan_and_drift_select(data, select_tests.Change(last, "{}", None), "D",
+                                 {"tests/test_closure.py", "tests/test_argument.py"})
+
+
+# Recorded listers (looprecheck3): a listing of the root that a new top-level directory
+# changes, and a listing of a directory that does not exist yet.
+NEW_DIRECTORY_TESTS = {
+    "tests/test_bundle.py": ("tests/test_root.py", ".",
+                             "assert sorted(p.name for p in Path('.').iterdir() if p.is_dir()) == "
+                             "['fixtures', 'tests']"),
+    "tests/test_closure.py": ("tests/test_new.py", "tests/fixtures/new",
+                              "assert list(Path('tests/fixtures/new').glob('*.md')) == []"),
+}
+NEW_DIRECTORY_FILES = {"tests/fixtures/case.json": "{}",
+                       **{file: f"from pathlib import Path\n\ndef test_listing():\n    {body}\n"
+                          for file, _, body in NEW_DIRECTORY_TESTS.values()}}
+
+
+def test_a_file_in_a_new_directory_selects_the_listers_of_the_root(tmp_path, head):
+    # Rule 1: an added file selects the listers of every directory above it, the root
+    # included, even when only the root was listed: its new top-level directory
+    # changes the root's listing.
+    tests = {unit: NEW_DIRECTORY_TESTS[unit] for unit in ("tests/test_bundle.py",)}
+    data = recorded_listers(tmp_path, head, tests, NEW_DIRECTORY_FILES)
+    added = "docs/new/notes.md"
+    root = tmp_path / "tests/test_bundle.py/root"
+    assert pytest_exit(root, "tests/test_root.py") == 0
+    (root / added).parent.mkdir(parents=True)
+    (root / added).write_text("x\n")
+    assert pytest_exit(root, "tests/test_root.py") == 1
+    assert_plan_and_drift_select(data, select_tests.Change(added, None, "x\n"), "A", {"tests/test_bundle.py"})
+
+
+def test_a_listing_of_a_directory_that_does_not_exist_yet_is_kept(tmp_path, head):
+    # Looprecheck3 B2 (rule 3): a passing test listed tests/fixtures/new, which did not
+    # exist; the map dropped the listing (only directories holding a tracked file were
+    # kept), so adding tests/fixtures/new/a.md failed the test but selected nothing, and
+    # the drift check kept its entry.
+    tests = {unit: NEW_DIRECTORY_TESTS[unit] for unit in ("tests/test_closure.py",)}
+    data = recorded_listers(tmp_path, head, tests, NEW_DIRECTORY_FILES)
+    assert data["dirs"] == {"tests/fixtures/new": [data["tests"].index("tests/test_closure.py")]}
+    added = "tests/fixtures/new/a.md"
+    root = tmp_path / "tests/test_closure.py/root"
+    assert pytest_exit(root, "tests/test_new.py") == 0
+    (root / added).parent.mkdir()
+    (root / added).write_text("x\n")
+    assert pytest_exit(root, "tests/test_new.py") == 1
+    assert_plan_and_drift_select(data, select_tests.Change(added, None, "x\n"), "A", {"tests/test_closure.py"})
+
+
+# Static fallback (looprecheck3 B1, rule 2): which spellings of "." name the root.
+ROOT_NAMERS = {
+    "tests/test_bundle.py": "from pathlib import Path\n\ndef test_md():\n    assert list(Path('.').glob('*.md'))\n",
+    "tests/test_cli.py": "import os\n\ndef test_ls():\n    assert os.listdir('./')\n",
+    "tests/test_assist.py": "import os\n\ndef test_join():\n    assert os.listdir(os.path.join('.', 'docs'))\n",
+}
+NOT_ROOT_NAMERS = {  # "." as text, or as the English full stop in a product module
+    "tests/test_closure.py": "def test_text():\n    assert '.'.join(['a', 'b']).split('.') and 'a' + '.' != f'{1}.'\n",
+    "tests/test_argument.py": "import ve.punctuation\n\ndef test_stop():\n    assert ve.punctuation.STOP\n",
+    "ve/punctuation.py": "STOP = '.'\nMARKS = {',', '.'}\n",
+}
+
+
+def test_without_a_map_an_added_file_selects_the_tests_that_name_the_root(tmp_path, monkeypatch):
+    # Looprecheck3 B1: the static graph never named the root ".", so its `dir:.` lookup
+    # could not match: adding NOTES.md failed a test that listed `Path('.').glob('*.md')`,
+    # but selection without a map returned no tests.
+    graph = make_graph(tmp_path, {**ROOT_NAMERS, **NOT_ROOT_NAMERS})
+    monkeypatch.setattr(source_graph, "load", lambda root: graph)
+    for change in (select_tests.Change("NOTES.md", None, "x\n"), select_tests.Change("docs/new/a.md", None, "x\n"),
+                   select_tests.Change("README.md", "x\n", None)):
+        plan = plan_for([change], None)
+        named = {test for test, reasons in plan["reasons"].items() if f"names {change.path} (static)" in reasons}
+        assert named == set(ROOT_NAMERS), (change.path, plan["reasons"])
 
 
 def test_a_new_module_selects_the_tests_that_now_import_it(tmp_path):
@@ -952,6 +1030,12 @@ SAFETY_CASES = (
      test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it),
     ("only the nearest recorded directory's listers count",
      test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it),
+    ("listers of the root are ignored for a new directory", test_a_file_in_a_new_directory_selects_the_listers_of_the_root),
+    ("listings of directories without a tracked file are dropped",
+     test_a_listing_of_a_directory_that_does_not_exist_yet_is_kept),
+    ("the static graph never names the root", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
+    ("every '.' literal names the root", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
+    ("product modules name the root too", test_without_a_map_an_added_file_selects_the_tests_that_name_the_root),
 )
 
 
@@ -1011,7 +1095,30 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
         monkeypatch.setattr(select_tests.Coverage, "listers", lambda self, path: set() if select_tests.kind_of(
             path) != select_tests.DATA else real_listers(self, path))
         arguments = (head_commit(),)
-    elif name == "listers of the root are ignored":
+    elif name == "listings of directories without a tracked file are dropped":
+        real_read_unit = test_map.read_unit
+
+        def tracked_directories_only(directory, files):
+            result = real_read_unit(directory, files)
+            result["d"] &= {".", *(str(parent) for file in files for parent in PurePosixPath(file).parents)}
+            return result
+        monkeypatch.setattr(test_map, "read_unit", tracked_directories_only)
+        arguments = (tmp_path, head_commit())
+    elif name == "the static graph never names the root":
+        real_prepare = source_graph.Graph.prepare_names
+
+        def without_root(self):
+            real_prepare(self)
+            self._directories.discard(".")
+        monkeypatch.setattr(source_graph.Graph, "prepare_names", without_root)
+        arguments = (tmp_path, monkeypatch)
+    elif name == "every '.' literal names the root":
+        monkeypatch.setattr(change_units, "_text_operands", lambda tree: set())
+        arguments = (tmp_path, monkeypatch)
+    elif name == "product modules name the root too":
+        monkeypatch.setattr(source_graph, "PRODUCT", ())
+        arguments = (tmp_path, monkeypatch)
+    elif name.startswith("listers of the root are ignored"):
         real_listers = select_tests.Coverage.listers
         monkeypatch.setattr(select_tests.Coverage, "listers", lambda self, path: real_listers(self, path)
                             - self._names(self.dirs.get(".", ())))
