@@ -9,8 +9,8 @@ module yet: no Python semantics is switched.
 Failure classes:
 
 * A deterministic rejection of a whole request by the service (its budget, a batch the
-  restricted decoder rejects) raises `ResourceLimit` or `VEError`, as the one-shot
-  runners' exit-2 diagnostics would; the process stays up. Such a request error is bound
+  restricted decoder rejects) raises the exception of the service's `code` with its text
+  (`relay.rejection`); the process stays up. Such a request error is bound
   like a response, to the nonce, the mode and every case digest; one without that
   binding is operational.
 * Anything operational (wall-clock timeout, crash, end of output, garbage, a response
@@ -99,7 +99,12 @@ def configured_seconds(variable: str, default: float) -> float:
     return seconds
 
 
-def _decode_json(line: bytes) -> object:
+def _decode_json(line: bytes | str) -> object:
+    """A checker's JSON output (this service, the one-shot Lean runners, the Rust JSONL checker):
+    bytes that are not UTF-8, duplicate fields, non-finite constants and strings that are not
+    Unicode text (a `\\ud800` escape decodes to a lone surrogate, which no Lean or Rust string
+    holds) and numbers no float holds (`_json_float`) raise ValueError; nesting beyond Python's
+    recursion limit raises RecursionError."""
     def unique(pairs):
         result = {}
         for key, value in pairs:
@@ -111,8 +116,20 @@ def _decode_json(line: bytes) -> object:
     def invalid_constant(value):
         raise ValueError(f"invalid JSON number {value}")
 
-    return json.loads(line, object_pairs_hook=unique, parse_constant=invalid_constant,
-                      parse_int=_json_integer)
+    text = line.decode("utf-8") if isinstance(line, (bytes, bytearray)) else line
+    value = json.loads(text, object_pairs_hook=unique, parse_constant=invalid_constant,
+                       parse_int=_json_integer, parse_float=_json_float)
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if type(item) is str:
+            item.encode("utf-8")  # UnicodeEncodeError, a ValueError, on a lone surrogate
+        elif type(item) is list:
+            pending.extend(item)
+        elif type(item) is dict:
+            pending.extend(item)
+            pending.extend(item.values())
+    return value
 
 
 def _json_integer(digits: str) -> int | Decimal:
@@ -123,6 +140,16 @@ def _json_integer(digits: str) -> int | Decimal:
         # Python's decimal-digit guard is an implementation limit, not a JSON or
         # Lean limit. Decimal preserves the value without disabling that guard.
         return Decimal(digits)
+
+
+def _json_float(text: str) -> float:
+    """A JSON number with a fraction or exponent, as its nearest float. `json` reads an
+    exponent beyond the float range as infinity (`1e999`) or zero (`1e-999`) without calling
+    `parse_constant`: such a number is ValueError, never a value it is not."""
+    value = float(text)
+    if not math.isfinite(value) or (value == 0 and re.split("[eE]", text)[0].strip("-+0.")):
+        raise ValueError(f"JSON number {text} is outside the float range")
+    return value
 
 
 _JSON_WHITESPACE = " \t\r\n"
@@ -533,19 +560,22 @@ class LeanService:
                   "bytes": self.batch_bytes if size <= self.batch_bytes else MAX_LINE_BYTES - ENVELOPE_BYTES}
         _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk)
         if response.get("status") == "error":
-            message = str(response.get("error", ""))
-            if message.startswith("ResourceLimit"):
-                raise ResourceLimit(message)
-            raise VEError(message)
-        return [bound["result"] for bound in response["results"]]
+            from .relay import rejection  # relay.py builds on this client
+            raise rejection(response["code"], response["error"])
+        return response["results"]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        """The bound entries for `cases`, in order: each runner result with, beside a rejection,
+        its `code` (and `generator`). Batches above the adapter caps (256 cases or 4 MiB) are
+        split into several requests; each is one timeout unit."""
+        entries: list = []
+        for chunk in self._chunks(_texts(cases)):
+            entries.extend(self._run_chunk(mode, chunk, timeout))
+        return entries
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
-        """The runner results for `cases`, in order. Batches above the adapter caps (256
-        cases or 4 MiB) are split into several requests; each is one timeout unit."""
-        results: list = []
-        for chunk in self._chunks(_texts(cases)):
-            results.extend(self._run_chunk(mode, chunk, timeout))
-        return results
+        """The runner results for `cases`, in order (`run_bound` without the bindings)."""
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
 
 
 def _texts(cases: list) -> list[str]:
@@ -581,9 +611,12 @@ class LeanServicePool:
             self._idle.put(service)
 
     def run(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
+        return [entry["result"] for entry in self.run_bound(mode, cases, timeout=timeout)]
+
+    def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         chunks = list(self._services[0]._chunks(_texts(cases), parts=len(self._services)))
         if len(chunks) <= 1:
-            return self._on_idle(lambda service: service.run(mode, cases, timeout=timeout))
+            return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
         answers: list = [None] * len(chunks)
         pending = iter(range(len(chunks)))
         claim = threading.Lock()
