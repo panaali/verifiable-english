@@ -132,6 +132,7 @@ def «row» : Shape :=
       ref "common.json#/$defs/case_error",
       ref "common.json#/$defs/error",
       .select [
+        (ref "common.json#/$defs/no_kind", ref "route.json#/$defs/evaluate"),
         (ref "#/$defs/kind/admission", ref "common.json#/$defs/admission"),
         (ref "#/$defs/kind/background", ref "route.json#/$defs/background"),
         (ref "route.json#/$defs/kind/evaluate", ref "route.json#/$defs/evaluate"),
@@ -145,7 +146,7 @@ def «row» : Shape :=
 
 def file : File where
   name := "norms.json"
-  comment := some "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner; every other case is delegated unchanged to route."
+  comment := some "Mode norms: Norms.Run.runCaseReported. A case on the norms path (Norms.Run.usesNormsPath) is answered by the norms runner (a case without a kind is an evaluation, Route.Run.caseKind's default, answered through Norms.Plain.run); every other case is delegated unchanged to route."
   top := [("row", «row»)]
   defs := [
     ("norms_path", .schema norms_path),

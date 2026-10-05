@@ -193,6 +193,22 @@ elab "case_kind_rw" : tactic => withMainContext do
     catch _ => continue
   throwError "case_kind_rw: no hypothesis gives the case's kind"
 
+/-- `rw [CaseCond.path_toBool h]` with `h : c.getObjVal? k = .ok w` found by its form. -/
+elab "case_path_rw" : tactic => withMainContext do
+  for d in ← getLCtx do
+    if d.isImplementationDetail then continue
+    let ty := (← instantiateMVars d.type).consumeMData
+    let some (_, l, r) := ty.eq? | continue
+    unless l.consumeMData.isAppOfArity ``Lean.Json.getObjVal? 2 && r.consumeMData.isAppOfArity ``Except.ok 3 do continue
+    try
+      let h ← mkAppM ``CaseCond.path_toBool #[d.toExpr]
+      let r ← (← getMainGoal).rewrite (← getMainTarget) h
+      let g' ← (← getMainGoal).replaceTargetEq r.eNew r.eqProof
+      replaceMainGoal (g' :: r.mvarIds)
+      return
+    catch _ => continue
+  throwError "case_path_rw: no field of the case is known"
+
 /-- Fails unless the goal is `Fits c k v` with `k` a condition on the case (`Skel.onCase`). -/
 elab "on_case_goal" : tactic => withMainContext do
   let (k, _) ← fitsGoal
@@ -296,6 +312,15 @@ elab "kind_subst" : tactic => do
             g.assign (← mkAbsurd (← g.getType) hp d.toExpr)
             replaceMainGoal []
             return false
+      -- `(a && b) = true`: both, as two facts.
+      if let some (_, l, r) := ty.eq? then
+        if r.isConstOf ``Bool.true && l.consumeMData.isAppOfArity ``and 2 then
+          let ab := l.consumeMData.getAppArgs
+          let both ← mkEqMP (mkApp2 (mkConst ``Bool.and_eq_true) ab[0]! ab[1]!) d.toExpr
+          let (_, g1) ← g.note `hl (← mkAppM ``And.left #[both])
+          let (_, g2) ← g1.note `hr (← mkAppM ``And.right #[both])
+          replaceMainGoal [← g2.clear d.fvarId]
+          return true
       let some (a, b) ← strBeqTrue? ty | continue
       if isStrLit a && isStrLit b then
         if strLit? a != strLit? b then
@@ -322,6 +347,32 @@ namespace ResponseShape
 open Lean
 
 
+open Lean Meta Elab Tactic ResponseShape.FitsTactic in
+/-- Reverts the hypotheses that compare two string literals (`"a" == "b"`), so that a `simp` of
+the goal evaluates them and leaves every other hypothesis as it is. -/
+elab "revert_lit_tests" : tactic => withMainContext do
+  let isLitTest (e : Expr) : Bool :=
+    e.isAppOfArity ``BEq.beq 4 && isStrLit e.getAppArgs[2]! && isStrLit e.getAppArgs[3]!
+  let mut fvars := #[]
+  for d in ← getLCtx do
+    if d.isImplementationDetail then continue
+    if ((← instantiateMVars d.type).find? isLitTest).isSome then fvars := fvars.push d.fvarId
+  if fvars.isEmpty then throwError "no test of literals"
+  let (_, g) ← (← getMainGoal).revert fvars (preserveOrder := true)
+  replaceMainGoal [g]
+
+/-- `kind_subst`, then the runner's tests of literals evaluated in the hypotheses that hold them
+(`"a" == "a" && x` is `x`); other hypotheses are left as they are. -/
+macro "kind_norm" : tactic =>
+  `(tactic|(kind_subst
+            try (revert_lit_tests
+                 simp only [String.reduceBEq, Bool.true_and, Bool.and_true, Bool.false_and, Bool.and_false,
+                   Bool.not_true, Bool.not_false, Bool.true_or, Bool.or_true, Bool.false_or, Bool.or_false,
+                   Bool.false_eq_true, not_false_eq_true, reduceCtorEq, forall_const,
+                   true_implies, false_implies, imp_self]
+                 intros)
+            try kind_subst))
+
 /-- A condition on the request case that is not a conjunction, from the context: the case's kind
 string (`c.getObjValD "kind" = .str s`, then the runner's own test of `s`), the absence of a
 kind, a runner's test of the case (`CaseCond.decided`), or the runner's test written as the
@@ -333,6 +384,7 @@ macro "case_cond_atom" : tactic =>
     | with_reducible exact CaseCond.kind_of_lacks ‹_› _
     | with_reducible exact CaseCond.lacks_of_kind ‹_›
     | with_reducible exact CaseCond.lacks_of_val ‹_›
+    | (case_path_rw; bool_hyp)
     | with_reducible exact CaseCond.path_ok ‹_›
     | with_reducible exact CaseCond.path_error ‹_› ‹_›
     | (simp only [CaseCond.holds_decided, CaseDecider.fn]; bool_hyp)
@@ -404,4 +456,78 @@ macro_rules
       | (split <;> fits using $ls,*)
       | skip)
 
+open Lean Meta Elab Tactic in
+/-- `case_absurd hc`: closes the goal when `hc : cond.holds c = b` contradicts what `case_cond`
+derives from the context. -/
+elab "case_absurd " hc:ident : tactic => withoutRecover <| withMainContext do
+  let h ← Lean.Elab.Term.elabTerm hc none
+  let ty ← whnfR (← instantiateMVars (← Meta.inferType h))
+  let some (_, lhs, b) := ty.eq? | throwError "case_absurd: not an equation"
+  let positive := b.isConstOf ``Bool.true
+  unless positive || b.isConstOf ``Bool.false do throwError "case_absurd: not a Boolean fact"
+  let other := if positive then Lean.mkConst ``Bool.false else Lean.mkConst ``Bool.true
+  let g2 ← Meta.mkFreshExprSyntheticOpaqueMVar (← Meta.mkEq lhs other)
+  let saved ← Lean.Elab.Tactic.getGoals
+  Lean.Elab.Tactic.setGoals [g2.mvarId!]
+  Lean.Elab.Tactic.evalTactic (← `(tactic| case_cond))
+  unless (← Lean.Elab.Tactic.getGoals).isEmpty do throwError "case_absurd: not decided"
+  Lean.Elab.Tactic.setGoals saved
+  -- `false = true` from the two facts
+  let ft ← if positive then Meta.mkEqTrans (← Meta.mkEqSymm g2) h else Meta.mkEqTrans (← Meta.mkEqSymm h) g2
+  let g ← Lean.Elab.Tactic.getMainGoal
+  g.assign (← Meta.mkAppOptM ``absurd #[none, some (← g.getType), some ft, some (Lean.mkConst ``Bool.false_ne_true)])
+  Lean.Elab.Tactic.replaceMainGoal []
+
+/-- `fits_invert h` with `h : Fits c k v`: one goal per object skeleton of `k` that `v` may fit,
+through its alternatives and its conditions on the case, each condition kept as a hypothesis and a
+branch whose condition contradicts the context (`case_absurd`) dropped. -/
+syntax "fits_invert " ident : tactic
+
+macro_rules
+  | `(tactic| fits_invert $h) => `(tactic| (repeat' (first
+      | (obtain ⟨_, hs, $h:ident⟩ := Fits.alt_inv $h:ident
+         simp only [List.mem_cons, List.not_mem_nil, or_false] at hs
+         repeat' (rcases hs with hs | hs)
+         all_goals (try subst hs))
+      | (rcases Fits.onCase_inv $h:ident with ⟨hc, $h:ident⟩ | ⟨hc, $h:ident⟩ <;> (try case_absurd hc)))))
+
 end ResponseShape
+
+namespace ResponseShape.FitsTactic
+open Lean Meta Elab Tactic
+
+/-- `fits_from h` with `h : Fits c s v` (a term, its holes filled from the goal): the goal
+`Fits c k v` for a skeleton `k` of which `s` is
+a member, reached through `k`'s alternatives (each tried) and its conditions on the case (each
+decided by `case_cond`). -/
+def fitsFrom (h : Syntax) : Nat → TacticM Unit
+  | 0 => throwError "fits_from: too deep"
+  | fuel + 1 => withMainContext do
+    if ← (try evalTactic (← `(tactic| exact $(⟨h⟩))); pure true catch _ => pure false) then return
+    try evalTactic (← `(tactic| skel_norm)) catch _ => pure ()
+    let (k, _) ← fitsGoal
+    if k.isAppOfArity ``Skel.onCase 3 then
+      let s ← saveState
+      try
+        evalTactic (← `(tactic| refine Fits.onCaseT (by case_cond) ?_))
+        fitsFrom h fuel
+      catch _ =>
+        s.restore
+        evalTactic (← `(tactic| refine Fits.onCaseE (by case_cond) ?_))
+        fitsFrom h fuel
+      return
+    unless k.isAppOfArity ``Skel.alt 1 do throwError "fits_from: {h} does not fit here"
+    let some members := listElems bound k.appArg! | throwError "fits_from: members are not a literal list"
+    for (_, i) in members.zipIdx do
+      let s ← saveState
+      try
+        let n := Syntax.mkNumLit (toString i)
+        evalTactic (← `(tactic| refine Fits.ofAlt (List.mem_of_getElem? (i := $n) rfl) ?_))
+        fitsFrom h fuel
+        return
+      catch _ => s.restore
+    throwError "fits_from: no member of the alternative takes {h}"
+
+elab "fits_from " h:term : tactic => withoutRecover (fitsFrom h 64)
+
+end ResponseShape.FitsTactic
