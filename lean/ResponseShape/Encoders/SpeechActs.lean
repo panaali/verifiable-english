@@ -9,9 +9,10 @@ open VE.SpeechActs VE.SpeechActs.Run
 
 variable {req : Json}
 
-theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.speechActs v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The norms mode's rows, off the speech-acts path, are rows of this mode. -/
+theorem of_norms {v : Json} (hp : usesSpeechPath req = false) (h : Fits req Skeletons.norms v) :
+    Fits req Skeletons.speechActs v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
 theorem elaborate_fits (id : String) (dec : Wire.Decoded) :
     Fits req (skel% "speech-acts.json#/$defs/elaborate") (VE.Route.Wire.ok id (elaborated dec)) := by
@@ -33,28 +34,29 @@ theorem firstFailure_of_not_free (j : Json) (res : ConflictCase) (h : replayConf
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.speechActs (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesSpeechPath j = true) : OkFits j Skeletons.speechActs (runCase j) := by
   unfold runCase
   simp only []
   okfits
   all_goals first
-    | (fits_as "speech-acts.json#/$defs/elaborate"; with_reducible exact elaborate_fits _ _)
-    | with_reducible exact OkP.of (Norms.runCase_fits j) fun _ => of_norms
-    | skip
-  all_goals (try simp only [VE.Route.Wire.ok])
-  all_goals fits
+    | (exfalso; simp_all; done)
+    | read_kind
+  all_goals (try contradiction)
+  all_goals first
+    | fits_from elaborate_fits _ _
+    | ((try simp only [VE.Route.Wire.ok]); fits)
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
   all_goals
     exfalso
     have := firstFailure_of_not_free j _ ‹replayConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.speechActs (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.speechActs (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_norms (Norms.runCaseReported_fits j)
+  · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
 end ResponseShape.Encoders.SpeechActs

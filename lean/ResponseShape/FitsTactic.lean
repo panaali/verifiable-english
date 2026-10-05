@@ -47,6 +47,13 @@ macro "okfits" : tactic =>
 
 end ResponseShape
 
+namespace ResponseShape
+
+theorem not_not_true {b : Bool} (h : ¬ (!b) = true) : b = true := by
+  cases b <;> simp_all
+
+end ResponseShape
+
 namespace ResponseShape.FitsTactic
 open Lean Meta Elab Tactic
 
@@ -312,6 +319,22 @@ elab "kind_subst" : tactic => do
             g.assign (← mkAbsurd (← g.getType) hp d.toExpr)
             replaceMainGoal []
             return false
+      -- `¬ (!b) = true`: `b = true`.
+      if ty.isAppOfArity ``Not 1 then
+        if let some (_, l, r) := ty.appArg!.consumeMData.eq? then
+          if r.isConstOf ``Bool.true && l.consumeMData.isAppOfArity ``not 1 then
+            let h' ← mkAppM ``ResponseShape.not_not_true #[d.toExpr]
+            let (_, g1) ← g.note `hn h'
+            replaceMainGoal [← g1.clear d.fvarId]
+            return true
+      -- `(!b) = true`: `b = false`.
+      if let some (_, l, r) := ty.eq? then
+        if r.isConstOf ``Bool.true && l.consumeMData.isAppOfArity ``not 1 then
+          let b := l.consumeMData.appArg!
+          let h' ← mkEqMP (mkApp (mkConst ``Bool.not_eq_true') b) d.toExpr
+          let (_, g1) ← g.note `hn h'
+          replaceMainGoal [← g1.clear d.fvarId]
+          return true
       -- `(a && b) = true`: both, as two facts.
       if let some (_, l, r) := ty.eq? then
         if r.isConstOf ``Bool.true && l.consumeMData.isAppOfArity ``and 2 then
@@ -384,7 +407,7 @@ macro "case_cond_atom" : tactic =>
     | with_reducible exact CaseCond.kind_of_lacks ‹_› _
     | with_reducible exact CaseCond.lacks_of_kind ‹_›
     | with_reducible exact CaseCond.lacks_of_val ‹_›
-    | (case_path_rw; bool_hyp)
+    | (case_path_rw; first | assumption | bool_hyp)
     | with_reducible exact CaseCond.path_ok ‹_›
     | with_reducible exact CaseCond.path_error ‹_› ‹_›
     | (simp only [CaseCond.holds_decided, CaseDecider.fn]; bool_hyp)
