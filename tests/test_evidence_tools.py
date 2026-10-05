@@ -91,8 +91,23 @@ def test_b1_latency_compares_every_run_not_the_last():
 
 
 def test_lean_service_latency_refuses_a_bench_without_workloads(monkeypatch, tmp_path, capsys):
+    class Service:
+        stats = {}
+
+        def __init__(self, **kwargs):
+            pass
+
+        def start(self):
+            pass
+
+        def close(self):
+            pass
+    monkeypatch.setattr(lean_service_latency, "LeanService", Service)
     monkeypatch.setattr(lean_service_latency, "workloads", lambda root, quick: [])
-    assert lean_service_latency.main(["--out", str(tmp_path / "out"), "--bench-root", str(tmp_path)]) == 2
+    monkeypatch.setattr(lean_service_latency, "machine", lambda: {"commit": "test", "cpu": "test", "logical_cpus": 1,
+                                                                  "loadavg": [0], "python": "test"})
+    assert lean_service_latency.main(["--out", str(tmp_path / "out"), "--bench-root", str(tmp_path),
+                                      "--cold-starts", "1"]) == 2
     assert "no workload" in capsys.readouterr().err
 
 
