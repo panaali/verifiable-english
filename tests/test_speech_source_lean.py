@@ -502,3 +502,18 @@ def test_every_record_line_is_regenerated_not_copied(lean):
     assert [_to_data(f) for f in core(env, {"units": metadata["units"], "queries": metadata["queries"]})
             .premises()] == result["premises"]
     assert _to_data(And(Top(), Not(Top()))) != result["premises"]
+
+
+@pytest.mark.parametrize("depth", [300, 10_000])
+def test_deep_input_is_a_bounded_rejection(lean, depth):
+    """A 10,000-deep JSON value in the front matter is the restricted reader's ResourceLimit, never a crash."""
+    import subprocess
+
+    from subprocesses import HANG_TIMEOUT
+    name, metadata, source = templates()[0]
+    case = json.dumps([source_case(0, {**metadata, "weights": "DEEP"}, source)])
+    case = case.replace('"DEEP"', "[" * depth + "]" * depth)
+    completed = subprocess.run([str(lean), "-"], input=case, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert completed.returncode == 1
+    assert json.loads(completed.stdout) == [{"case_index": 0, "error": "ResourceLimit: JSON depth exceeds 256",
+                                             "status": "error"}]
