@@ -4710,6 +4710,8 @@
   "tests/test_lean_conformance.py::test_source_audit_scans_literal_tokens_in_quotations[def message := \"unsafe\"]",
   "tests/test_lean_conformance.py::test_source_audit_scans_literal_tokens_in_quotations[def message := s!\"{(by sorry : Nat)}\"]",
   "tests/test_lean_conformance.py::test_source_audit_scans_literal_tokens_in_quotations[macro \"bad\" : term => `(by native_decide)]",
+  "tests/test_lean_first_b3b_report.py::test_delta_tables_are_generated_from_the_evidence",
+  "tests/test_lean_first_b3b_report.py::test_every_paired_udhr_run_gave_identical_answers",
   "tests/test_lean_first_diff.py::test_a_message_with_a_line_separator_is_one_record",
   "tests/test_lean_first_diff.py::test_a_missing_record_is_a_difference",
   "tests/test_lean_first_diff.py::test_a_rejection_with_another_code_is_order_and_its_text_alone_is_wording",
