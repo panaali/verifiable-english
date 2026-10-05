@@ -1,4 +1,4 @@
-import VE.NormDefaults.Replay
+import VE.NormDefaults.Report
 import VE.NormDefaults.Admission
 import VE.Norms.Run
 
@@ -24,6 +24,12 @@ delegates every other case to it.
   when the certificate for `∀x̄. ¬reached_p` is bound and accepted
   (`Wire.normDefaults_wire_gaps_sound`), else `unknown`; with a filled `model` and
   `tuple` → `reachable` when `reached_p` is true there (`Wire.normDefaults_wire_reached_sound`).
+* `norm-defaults-report`: the 3.2 lines of every regulated predicate (`Report.lean`,
+  `Wire.normDefaults_wire_report_sound`): `completion`, `gaps`/`default reached`
+  (`reachable` from the supplied base `model`, searched here, or a supplied filled
+  `witnesses` entry; `none` from a `reached:<p>` package; else `unknown`), the
+  `completions` grounding or `UngroundedDefault` (with `translation`), `inherits_from`,
+  and the residual `gaps` and `ungrounded_defaults`.
 * `norm-defaults-certificate`: `norms`, `premises`, `conclusion`, `certificate` →
   `valid` over `Background(E‴) ++ Fill_T ++ layer premises of T‴ ++ premises`
   (`Wire.normDefaults_wire_acceptance`).
@@ -147,6 +153,9 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
       match firstFailureU res with
       | some d => if res.conflictFree then [] else [("detail", .str d)]
       | none => [])
+  if kind == "norm-defaults-report" then
+    let rep ← Wire.reportFrom j
+    return VE.Route.Wire.ok id rep.toJson
   if kind == "norm-defaults-certificate" then
     let r ← Wire.replayEntailmentU j
     return VE.Route.Wire.ok id [("valid", .bool r.valid),
