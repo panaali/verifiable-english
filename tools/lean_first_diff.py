@@ -22,7 +22,17 @@ Corpora (``--corpus``, default all):
   parse and canonical text, typing, meaning and source identities, evaluation, the
   countermodel check), under each authority.
 * ``pilots``: every `.ve.md` document of every `pilot/*` branch, deduplicated by content,
-  through `ve document check` (one process per document, under the default authority).
+  through `ve document check` (one process per document, under the default authority). A
+  report that is JSON is recorded parsed, so that its members are compared one by one.
+* ``readings``: `ve.readings_route.validate` on the 1,000 documents of the readings
+  differential (`tests/test_readings_s1_differential.py`, the search's situations recorded)
+  and on every environment-null case of `tests/test_readings_s1_lean.py` (batch 3). The
+  documents are generated once, by this checkout, into a file both sides read.
+* ``discourse``: every `ve-document@2` text of `docs/lean-first/discourse-corpus.json.gz` (the
+  documents the discourse tests write, captured at batch 4's base by
+  `docs/lean-first/b4/capture_discourse.py`), each written with the sibling files its imports name
+  to its own scratch directory, through `check_document` and `render_document` (under the default
+  authority, `--workers` processes).
 
 A record is ``{"corpus", "authority", "case", "op", "source_sha256", "outcome"}``; the outcome is
 ``{"returned": <public record>}`` or ``{"raised": <error record>}``, as mig3's recorder writes
@@ -43,11 +53,13 @@ line must be one the recorder writes (`record_problem`, the schema `tools/lean_f
 each corpus's fields, authorities and sources, each operation's outcome, a rejection's complete
 diagnostic), and the records of one corpus file must name one digest; an empty, partial or retyped
 outcome is no acceptance. Then, for every corpus and authority
-it checks (``--corpus``, ``--authority``, default all; the pilots have the one authority
-``default``), each side must hold a record of every case of the corpus as this checkout defines it
-(`expected_cases`: the conformance files' case ids, the probe matrix's frozen baseline, the pilot
-documents), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`,
-given the outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``),
+it checks (``--corpus``, ``--authority``, default all; the pilots, the readings corpus and the
+discourse corpus have the one authority ``default``), each side must hold a record of every case of
+the corpus as this checkout defines it (`expected_cases`: the conformance files' case ids, the probe
+matrix's frozen baseline, the pilot documents, the readings corpus's cases, the discourse corpus's
+ids), through every operation the case requires (a conformance case: `CONFORMANCE_OPS`, given the
+outcomes recorded for it; a probe case: its operation; a pilot: ``document_check``; a readings case:
+``readings_validate``; a discourse document: `DISCOURSE_OPS`),
 and nothing else, some of its records must be available, and it must hold both an
 acceptance and a rejection (every corpus holds both kinds of input). A record unavailable on
 both sides is no evidence either (class ``unavailable``, whatever its texts): it is accepted only
@@ -65,10 +77,12 @@ both outcomes are exactly the listed ones. Exit 0 when every difference is liste
 from __future__ import annotations
 
 import argparse
+import base64
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import dataclasses
 from functools import cache
+import gzip
 import hashlib
 import json
 import os
@@ -77,17 +91,23 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPORA = ("probe", "conformance", "pilots")
+CORPORA = ("probe", "conformance", "pilots", "readings", "discourse")
+DISCOURSE = Path("docs/lean-first/discourse-corpus.json.gz")
+DISCOURSE_OPS = ("document_check", "document_render")
 AUTHORITIES = ("python", "lean")
 CONFORMANCE = ("evaluation", "parser", "identity", "validation", "closure", "countermodels")
 DROPPED = frozenset({"checker_build", "record_id"})
 CLASSES = ("availability", "verdict", "order", "wording")
+TEXTS = ("message", "detail", "stderr")
+# A report's statement of who checked what is descriptive text: a change to it is wording.
+DESCRIPTIONS = ("checked_by",)
 # mig3 2.5: the members whose leaf differences are verdicts, identities and counts.
 VERDICT_KEYS = frozenset({"status", "valid", "value", "values", "refutes", "composed", "verdict", "cell"})
 IDENTITY_KEYS = frozenset({"environment_id", "source_id", "meaning_id", "model_id", "claim_id", "edge_id",
                            "graph_id", "report_id", "document_hash"})
 COUNT_KEYS = frozenset({"evaluations", "steps", "models_checked"})
 PILOT_TIMEOUT = 600
+READINGS_COUNT = 1000  # the readings differential's documents (composition-s1.md 9.3)
 PROBE_BASELINE = "conformance/baseline-2026-09/python.json"
 PROBE_SECTIONS = ("graph_probes", "budget_boundaries", "feature_probes")
 
@@ -262,6 +282,87 @@ def pilot_records(root: Path, scratch: Path, workers: int):
         yield from pool.map(check, documents)
 
 
+def readings_corpus(out: Path) -> None:
+    """Write the readings corpus: generated by this checkout's tests, read by both recorded sides."""
+    from tests import test_readings_s1_differential as differential
+    from tests import test_readings_s1_lean as fixtures
+    from ve.errors import VEError
+    from ve.readings_s1 import wire
+    cases, _ = differential.generated_cases(READINGS_COUNT)
+    rows = [{"case": f"differential/{c['id']}", "environment": c["environment"], "document": c["document"]}
+            for c in cases]
+    for name, path in fixtures.ENVIRONMENT_NULLS:
+        make, make_document, unit_kind = fixtures.NULL_ENVIRONMENTS[name]
+        nulled = fixtures._nulled(make(), path)
+        try:
+            document = make_document(wire(nulled))
+        except (KeyError, TypeError, ValueError, VEError):
+            document = make_document(make())
+        for unit in document["units"]:
+            unit.setdefault("kind", unit_kind)
+        rows.append({"case": _null_case(name, path), "environment": nulled, "document": document})
+    assert [row["case"] for row in rows] == readings_cases(), "the corpus names its cases as `readings_cases`"
+    out.write_text(json.dumps(rows, ensure_ascii=False))
+
+
+def _null_case(name: str, path) -> str:
+    return f"nulls/{name}/{'.'.join(map(str, path))}"
+
+
+def readings_cases() -> list[str]:
+    """The case names of the readings corpus `readings_corpus` writes, without generating it: the
+    differential's documents (ids `c0`, `c1`, ...) and the environment-null cases."""
+    from tests import test_readings_s1_lean as fixtures
+    return [f"differential/c{n}" for n in range(READINGS_COUNT)] + [
+        _null_case(name, path) for name, path in fixtures.ENVIRONMENT_NULLS]
+
+
+def readings_records(path: Path):
+    from ve.errors import VEError  # noqa: F401  (the recorded checkout's classes)
+    from ve.readings_route import validate
+    source = digest(path)
+    for case in json.loads(path.read_text()):
+        document = case["document"]
+        units = [{"id": u["id"], "kind": u.get("kind"), **({"content": u["content"]} if "content" in u else {})}
+                 for u in document["units"]]
+        yield {"case": case["case"], "op": "readings_validate", "source_sha256": source,
+               "outcome": outcome(lambda: validate(case["environment"], units, document["reading_sets"]))}
+
+
+def _discourse_case(item):
+    """`check_document` and `render_document` of one corpus document (in a pool worker)."""
+    scratch, entry = item
+    from ve.document import check_document, render_document
+    directory = Path(scratch) / entry["id"]
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, data in entry["files"].items():
+        try:
+            (directory / name).write_bytes(base64.b64decode(data))
+        except OSError:
+            pass  # a name no file can have stays absent, as it was in the test that wrote it
+    path = directory / "document.ve.md"
+    path.write_bytes(base64.b64decode(entry["document"]))
+    source = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
+    return [{"case": entry["id"], "op": op, "source_sha256": source, "authority": "default",
+             "outcome": outcome(lambda: call(path))}
+            for op, call in zip(DISCOURSE_OPS, (check_document, render_document))]
+
+
+def discourse_corpus(root: Path) -> list[dict]:
+    """The entries of the discourse corpus file of the checkout `root`."""
+    return json.loads(gzip.decompress((root / DISCOURSE).read_bytes()))
+
+
+def discourse_records(scratch: Path, workers: int):
+    """The discourse corpus, read from this tool's checkout, recorded with the child's `ve`."""
+    import multiprocessing
+    corpus = discourse_corpus(ROOT)
+    os.environ.pop("VE_AUTHORITY", None)
+    with multiprocessing.get_context("fork").Pool(workers) as pool:
+        for rows in pool.imap(_discourse_case, [(str(scratch), entry) for entry in corpus], chunksize=8):
+            yield from rows
+
+
 def pilot_check(root: Path, path: Path, env: dict) -> dict:
     """The outcome of `ve document check` of `path` in the checkout `root`."""
     try:
@@ -269,7 +370,13 @@ def pilot_check(root: Path, path: Path, env: dict) -> dict:
                               env=env, capture_output=True, timeout=PILOT_TIMEOUT)
     except subprocess.TimeoutExpired:
         return {"timeout": PILOT_TIMEOUT}
-    return {"exit": done.returncode, "stdout": done.stdout.decode("utf-8", "replace"),
+    stdout = done.stdout.decode("utf-8", "replace")
+    try:
+        report = json.loads(stdout)
+    except ValueError:
+        report = None
+    # A report that is a JSON object is recorded parsed, so that its members are compared one by one.
+    return {"exit": done.returncode, "stdout": report if type(report) is dict else stdout,
             "stderr": done.stderr.decode("utf-8", "replace").strip().splitlines()[-1:]}
 
 
@@ -284,8 +391,16 @@ def child(args) -> int:
             out.write(json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n")
             out.flush()
         for corpus in args.corpus:
+            if corpus == "readings":
+                for record in readings_records(Path(args.out).with_suffix(".readings.json")):
+                    write({"corpus": corpus, "authority": "default", **record})
+                continue
             if corpus == "pilots":
                 for record in pilot_records(root, Path(args.out).with_suffix(".pilots"), args.workers):
+                    write({"corpus": corpus, **record})
+                continue
+            if corpus == "discourse":
+                for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
             for authority in args.authority:
@@ -299,6 +414,13 @@ def child(args) -> int:
 
 def record(args) -> int:
     root = Path(args.root).resolve()
+    if "readings" in args.corpus:
+        corpus = Path(args.out).resolve().with_suffix(".readings.json")
+        if not corpus.exists():
+            done = subprocess.run([sys.executable, str(Path(__file__).resolve()), "_readings_corpus",
+                                   "--out", str(corpus)], cwd=ROOT, env={**os.environ, "PYTHONPATH": str(ROOT)})
+            if done.returncode != 0:
+                return 2
     env = {**os.environ, "PYTHONPATH": str(root)}
     command = [sys.executable, str(Path(__file__).resolve()), "_child", "--root", str(root),
                "--out", str(Path(args.out).resolve()),
@@ -313,7 +435,7 @@ class Unusable(Exception):
 
 
 def authorities_of(corpus: str, authorities=AUTHORITIES) -> tuple[str, ...]:
-    return ("default",) if corpus == "pilots" else tuple(authorities)
+    return ("default",) if corpus in ("pilots", "readings", "discourse") else tuple(authorities)
 
 
 def only(op: str):
@@ -324,7 +446,8 @@ def only(op: str):
 def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict[tuple[str, str], dict]:
     """Every case each (corpus, authority) of a complete recording holds, from this checkout's
     corpora, not from a recording: the conformance files' case ids, the cells and named probes of
-    the probe matrix's frozen baseline, and the pilot documents. Each case maps to its operations:
+    the probe matrix's frozen baseline, the pilot documents, the readings corpus's cases and the
+    discourse corpus's entries. Each case maps to its operations:
     a function of the outcomes a recording holds for the case (`{op: outcome}`) giving the set of
     operations it must hold, since a conformance case's later operations run only on what its
     earlier ones returned (`conformance_ops`)."""
@@ -338,6 +461,10 @@ def expected_cases(root: Path, corpora=CORPORA, authorities=AUTHORITIES) -> dict
             baseline = json.loads((root / PROBE_BASELINE).read_text())
             cases[corpus] = {probe_case(row): only(row["operation"]) for row in baseline["cells"]} | {
                 f"{section}/{name}": only(section) for section in PROBE_SECTIONS for name in baseline[section]}
+        elif corpus == "readings":
+            cases[corpus] = {name: only("readings_validate") for name in readings_cases()}
+        elif corpus == "discourse":
+            cases[corpus] = {entry["id"]: (lambda held: set(DISCOURSE_OPS)) for entry in discourse_corpus(root)}
         else:
             cases[corpus] = {name: only("document_check") for name, _, _ in pilot_documents(root)}
     return {(corpus, authority): cases[corpus] for corpus in corpora
@@ -385,9 +512,11 @@ def record_problem(row) -> str | None:
 
 
 def _source_group(key: tuple) -> tuple:
-    """The records that read one corpus file: a conformance file, the probe matrix, a pilot document."""
+    """The records that read one corpus file: a conformance file, the probe matrix, a pilot document,
+    the readings corpus, a discourse corpus entry."""
     corpus, _, case, _ = key
-    return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,)}.get(corpus, (corpus, case))
+    return {"conformance": (corpus, case.split("/")[0]), "probe": (corpus,), "readings": (corpus,)}.get(
+        corpus, (corpus, case))
 
 
 def _unique_pairs(pairs):
@@ -427,7 +556,10 @@ def load(path: str) -> dict[tuple, dict]:
 
 
 def leaf_differences(a, b, path=()):
-    """mig3 2.5 case A: (path, kind) for each difference; kind is `shape` or `leaf`."""
+    """mig3 2.5 case A: (path, kind) for each difference; kind is `shape`, `leaf`, or `text` for a
+    report's description (`DESCRIPTIONS`), compared whole."""
+    if path and path[-1] in DESCRIPTIONS:
+        return [] if _same(a, b) else [(path, "text")]
     if type(a) is not type(b):
         return [(path, "shape")]
     if isinstance(a, dict):
@@ -458,7 +590,7 @@ def change_class(base: dict | None, head: dict | None) -> str | None:
     if a_raised is not None and b_raised is not None and a_raised.get("code") != b_raised.get("code"):
         return "order"
     differences = leaf_differences(base, head)
-    if differences and all(kind == "leaf" and path and path[-1] in ("message", "detail", "stderr")
+    if differences and all(kind == "text" or kind == "leaf" and path and path[-1] in TEXTS
                            for path, kind in differences):
         return "wording"
     return "verdict"
@@ -480,12 +612,16 @@ def _raised(outcome: dict):
 
 
 def text_pairs(base, head, path=()):
-    """The (base, head) texts of the `message` and `detail` leaves that differ."""
+    """The (base, head) texts of the `message` and `detail` leaves that differ; a description
+    (`DESCRIPTIONS`) is one pair of its canonical JSON texts."""
+    if path and path[-1] in DESCRIPTIONS:
+        return [] if _same(base, head) else [(json.dumps(base, sort_keys=True, ensure_ascii=False),
+                                         json.dumps(head, sort_keys=True, ensure_ascii=False))]
     if isinstance(base, dict) and isinstance(head, dict):
         return [p for k in base.keys() & head.keys() for p in text_pairs(base[k], head[k], path + (k,))]
     if isinstance(base, list) and isinstance(head, list):
         return [p for x, y in zip(base, head) for p in text_pairs(x, y, path)]
-    return [(base, head)] if not _same(base, head) and path and path[-1] in ("message", "detail", "stderr") else []
+    return [(base, head)] if not _same(base, head) and path and path[-1] in TEXTS else []
 
 
 def completeness(name: str, records: dict, expected: dict) -> None:
@@ -581,6 +717,8 @@ def main(argv=None) -> int:
         p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
         p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
         p.add_argument("--workers", type=int, default=4)
+    p = sub.add_parser("_readings_corpus")
+    p.add_argument("--out", required=True)
     p = sub.add_parser("compare")
     p.add_argument("base")
     p.add_argument("head")
@@ -593,6 +731,9 @@ def main(argv=None) -> int:
         return record(args)
     if args.command == "_child":
         return child(args)
+    if args.command == "_readings_corpus":
+        readings_corpus(Path(args.out))
+        return 0
     delta = json.loads(args.delta.read_text()) if args.delta else None
     try:
         result = compare(args.base, args.head, delta, expected=expected_cases(ROOT, args.corpus, args.authority))

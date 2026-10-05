@@ -1,0 +1,928 @@
+{
+ "wording": [
+  {
+   "base": "{\"lean\": \"readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate\", \"not_certified\": \"SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)\", \"python\": \"W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); Python's regeneration of Lean's answer, byte for byte\", \"rust\": \"untrusted evaluation of every recorded situation (10)\"}",
+   "head": "{\"lean\": \"readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate\", \"not_certified\": \"SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)\", \"python\": \"W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them)\"}"
+  }
+ ],
+ "availability": [
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/language",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [language, profiles, spec_revision, vocabulary], got [profiles, spec_revision, vocabulary], Python Incorrect fields (missing=['language'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [profiles, spec_revision, vocabulary]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/spec_revision",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profiles, vocabulary], Python Incorrect fields (missing=['spec_revision'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profiles, vocabulary]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profiles, spec_revision], Python Incorrect fields (missing=['vocabulary'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profiles, spec_revision]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.constants",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [sorts, predicates, constants], got [predicates, sorts], Python Incorrect fields (missing=['constants'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sorts, predicates, constants], got [predicates, sorts]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean property not found: predicates, Python Incorrect fields (missing=['predicates'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: predicates"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates.asks.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates.asks.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates.avoid_required.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates.avoid_required.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates.help_required.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.predicates.help_required.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.sorts",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [sorts, predicates, constants], got [constants, predicates], Python Incorrect fields (missing=['sorts'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [sorts, predicates, constants], got [constants, predicates]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.sorts.agent",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: asks, Python UnknownSymbol: Undeclared predicate argument sort: 'agent'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: asks"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.sorts.agent.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.sorts.user",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: asks, Python UnknownSymbol: Undeclared predicate argument sort: 'user'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: asks"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/norms/vocabulary.sorts.user.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean property not found: vocabulary, Python InvalidInput: invalid rights block"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "property not found: vocabulary"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.predicates.arbitrary_arrest.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.predicates.arbitrary_arrest.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.predicates.arrest_permitted.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.predicates.arrest_permitted.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.predicates.journalist.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.predicates.journalist.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.sorts.person",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: arbitrary_arrest, Python UnknownSymbol: Undeclared predicate argument sort: 'person'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: arbitrary_arrest"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.sorts.person.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.sorts.state",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: arbitrary_arrest, Python UnknownSymbol: Undeclared predicate argument sort: 'state'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: arbitrary_arrest"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/rights/vocabulary.sorts.state.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.asks.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.asks.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.avoid_required",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean UnknownSymbol: regulated predicate avoid_required, Python UnknownSymbol: regulated predicate avoid_required under rs1@1:0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "UnknownSymbol: regulated predicate avoid_required"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.avoid_required.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.avoid_required.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.avoid_required.regulated",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean UnknownSymbol: regulated predicate avoid_required, Python UnknownSymbol: regulated predicate avoid_required under rs1@1:0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "UnknownSymbol: regulated predicate avoid_required"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.help_required.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.predicates.help_required.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.sorts.agent",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: asks, Python UnknownSymbol: Undeclared predicate argument sort: 'agent'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: asks"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.sorts.agent.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.sorts.user",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: asks, Python UnknownSymbol: Undeclared predicate argument sort: 'user'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: asks"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft block/vocabulary.sorts.user.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.asks.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.asks.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.avoid_required",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean UnknownSymbol: regulated predicate avoid_required, Python UnknownSymbol: regulated predicate avoid_required under rs1@1:0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "UnknownSymbol: regulated predicate avoid_required"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.avoid_required.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.avoid_required.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.avoid_required.regulated",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean UnknownSymbol: regulated predicate avoid_required, Python UnknownSymbol: regulated predicate avoid_required under rs1@1:0"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "UnknownSymbol: regulated predicate avoid_required"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.help_required.arguments",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [description], Python Incorrect fields (missing=['arguments'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [description]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.predicates.help_required.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [arguments, description], got [arguments], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [arguments, description], got [arguments]"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.sorts.agent",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: asks, Python UnknownSymbol: Undeclared predicate argument sort: 'agent'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: asks"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.sorts.agent.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.sorts.user",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean invalid signature: asks, Python UnknownSymbol: Undeclared predicate argument sort: 'user'"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "invalid signature: asks"
+    }
+   }
+  },
+  {
+   "corpus": "readings",
+   "authority": "default",
+   "case": "nulls/soft/vocabulary.sorts.user.description",
+   "op": "readings_validate",
+   "base": {
+    "raised": {
+     "code": "CheckerUnavailable",
+     "message": "ReadingsConformance: Python and Lean differ on readings-validate: Lean fields do not match: expected [description], got [], Python Incorrect fields (missing=['description'], unknown=[])"
+    }
+   },
+   "head": {
+    "raised": {
+     "code": "InvalidInput",
+     "message": "fields do not match: expected [description], got []"
+    }
+   }
+  }
+ ]
+}
