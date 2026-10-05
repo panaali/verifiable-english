@@ -12,16 +12,18 @@ comparison forms, and `conclusion_rejected` when Python's conclusion check refus
 The request carries the environment, the overlay (absent without one), the lexicon Python's
 `EnglishVocabulary` selects (`ve.english_grammar.export`), the source, the reading mode `authoring` and the
 cap 2. Every answer is checked before anything reads it: its fields by status (base 4.3; no `null`
-anywhere, no Boolean for a number), its identities against the ones computed here from the same request
-(base 2.12, fixture i4: a different `lexicon_id` fails closed), its counts against its formulas. A
-malformed answer, a missing executable and `invalidGrammar` (a producer fault, base 4.1) are
+anywhere, no Boolean for a number), its code against its status, its identities against the ones computed
+here from the same request (base 2.12, fixture i4: a different `lexicon_id` fails closed), its counts against
+its formulas, and every tree of `derivation` and `witnesses` in the form of spec 4.3: the rule tags along a
+pre-order walk, each with its token span `[start, end)`, the root's span starting at 0 and every child inside
+its parent. A malformed answer, a missing executable and `invalidGrammar` (a producer fault, base 4.1) are
 `CheckerUnavailable`, never a verdict.
 
-Transport: `ve_english_route english.read` (`EnglishMain.lean`, S2.4, not built yet) as a one-shot runner,
-one case per call, its row `{"id", "status": "ok", "result": <the response of base 4.3>}` read by
-`ve.backends.lean.read_rows`; `TRANSPORT` replaces it (the tests' fake reader). When S2.4 builds the
-executable this contract and the field shapes of `derivation` and `witnesses`, which are checked here only
-as one non-empty list per tree, are fixed by the producer's schema.
+Transport: `ve_english_route english.read` (`lean/EnglishMain.lean`, `VE.EnglishGrammar.Run`) as a one-shot
+runner, one case per call, its row `{"id", "status": "ok", "result": <the response of base 4.3>}` read by
+`ve.backends.lean.read_rows`; `TRANSPORT` replaces it (the tests' fake reader). Lean's `one` answer carries
+no canonical text: the canonical strict text of its formulas is Python's printer's (`print_document`), the
+one owner of the printer, so the comparison of 2.11 compares the formulas and the text follows them.
 """
 from __future__ import annotations
 
@@ -57,9 +59,10 @@ CLASSES = {
     "CoordinationRepeated": ("SyntaxError",), "CoordinationForm": ("SyntaxError",),
     "NaturalScoped": ("SyntaxError",), "RelativeForm": ("SyntaxError", *ILL_TYPED),
 }
-# The Python class of each status other than `rejected` (base 4.1).
+# The Python class of each status other than `rejected` (base 4.1), and the code Lean gives it.
 STATUS_CLASSES = {"one": ("accepted",), "none": ("SyntaxError",), "many": ("AmbiguousDerivation",),
                   "budget": ("ResourceLimit",), "invalidGrammar": ("CheckerUnavailable",)}
+STATUS_CODES = {"none": "NoDerivation", "many": "Ambiguous", "budget": "Budget", "invalidGrammar": "InvalidGrammar"}
 ERRORS = {cls.__name__: cls for cls in (SyntaxError, AmbiguousDerivation, ResourceLimit, UnknownSymbol,
                                         TypeMismatch, UnsupportedProfile)}
 # Python's one wall-clock limit on this path (`ve/surface/unambiguity.py`): excluded from G2 and listed.
@@ -90,9 +93,31 @@ def _nat(value) -> bool:
     return type(value) is int and value >= 0
 
 
+def _tree(value) -> bool:
+    """A tree of spec 4.3: `[tag, start, end]` nodes in pre-order, the root first and starting at 0, every
+    other node inside the span of an earlier node that is still open (its parent)."""
+    if type(value) is not list or not value:
+        return False
+    open_spans: list[tuple[int, int]] = []
+    for k, node in enumerate(value):
+        # A rule covers at least one token (W2), so every span is non-empty.
+        if not (type(node) is list and len(node) == 3 and type(node[0]) is str and node[0]
+                and _nat(node[1]) and _nat(node[2]) and node[1] < node[2]):
+            return False
+        start, end = node[1], node[2]
+        while open_spans and start >= open_spans[-1][1]:
+            open_spans.pop()
+        if k == 0:
+            if start != 0:
+                return False
+        elif not open_spans or not (open_spans[-1][0] <= start and end <= open_spans[-1][1]):
+            return False
+        open_spans.append((start, end))
+    return True
+
+
 def _trees(value, count: int | None = None) -> bool:
-    return (type(value) is list and (count is None or len(value) == count)
-            and all(type(tree) is list and tree for tree in value))
+    return (type(value) is list and (count is None or len(value) == count) and all(_tree(t) for t in value))
 
 
 def _has_null(value) -> bool:
@@ -115,7 +140,7 @@ def response_problem(response, expected: dict, env) -> str | None:
     status = response.get("status")
     if type(status) is not str or status not in STATUSES:
         return f"unknown status {status!r}"
-    fields = {"one": ({"ast", "canonical", "conclusions", "derivation"}, set()),
+    fields = {"one": ({"ast", "conclusions", "derivation"}, set()),
               "none": ({"code", "text", "sentence"}, set()),
               "many": ({"code", "text", "sentence", "witnesses"}, set()),
               "budget": ({"code", "text", "sentence"}, set()),
@@ -133,12 +158,14 @@ def response_problem(response, expected: dict, env) -> str | None:
     for name in IDENTITIES:
         if found.get(name) != expected.get(name):
             return f"{name} {found.get(name)!r} is not the request's {expected.get(name)!r}"
-    for name in ("code", "text", "canonical"):
+    for name in ("code", "text"):
         if name in response and (type(response[name]) is not str or not response[name]):
             return f"{name} is not a non-empty string"
+    if status in STATUS_CODES and response["code"] != STATUS_CODES[status]:
+        return f"a {status} response with the code {response['code']!r}"
     if "sentence" in response and not _nat(response["sentence"]):
         return "sentence is not a natural number"
-    if status == "rejected" and response["code"] not in CLASSES:
+    if status == "rejected" and (response["code"] not in CLASSES or response["code"] in STATUS_CODES.values()):
         return f"rejection code {response['code']!r} is not one of base 4.2 or spec 4.2"
     if status == "many" and not _trees(response["witnesses"], 2):
         return "a many response does not carry two witness trees"
@@ -172,7 +199,7 @@ def _transport(case: dict) -> dict:
     executable = Path(os.environ.get("VE_ENGLISH_ROUTE", EXECUTABLE))
     if not executable.is_file():
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader {executable} is not built "
-                                 "(english-lean S2.4)")
+                                 "(lake build ve_english_route)")
     [row] = run_english_cases(executable, MODE, [case], timeout=configured_timeout(ROUTE_TIMEOUT))
     if row["status"] != "ok" or row.keys() != {"id", "status", "result"}:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader did not read the case: "
@@ -183,8 +210,8 @@ def _transport(case: dict) -> dict:
 class LeanReading:
     """A checked `english.read` answer."""
 
-    def __init__(self, response: dict):
-        self.response = response
+    def __init__(self, response: dict, env):
+        self.response, self.env = response, env
         self.status = response["status"]
 
     def classes(self) -> tuple[str, ...]:
@@ -193,9 +220,14 @@ class LeanReading:
             return CLASSES[self.response["code"]]
         return STATUS_CLASSES[self.status]
 
-    def document(self, env) -> ast.Document:
+    def document(self) -> ast.Document:
         """The formulas, which `response_problem` decoded once already."""
-        return ast.Document(tuple(ast.formula_from_data(env, f) for f in self.response["ast"]))
+        return ast.Document(tuple(ast.formula_from_data(self.env, f) for f in self.response["ast"]))
+
+    def canonical(self) -> str:
+        """The canonical strict text of the formulas, by Python's printer (the owner of the printer)."""
+        from ..printer import print_document
+        return print_document(self.env, self.document())
 
     def rejection(self) -> Exception:
         """Lean's outcome other than `one` as the exception of its (first) Python class, with Lean's text;
@@ -215,17 +247,18 @@ class LeanReading:
         out = {"code": python_class if python_class in allowed else allowed[0]}
         out["verdict"] = _verdict(out["code"])
         if self.status == "one":
-            out.update(formulas=self.response["ast"], canonical=self.response["canonical"],
+            out.update(formulas=self.response["ast"], canonical=self.canonical(),
                        conclusions=self.response["conclusions"], witnesses=1)
         elif self.status == "many":
             out["witnesses"] = len(self.response["witnesses"])
         return out
 
     def record(self) -> dict:
-        out = {key: self.response[key] for key in ("status", "code", "canonical", "conclusions", "sentence")
+        out = {key: self.response[key] for key in ("status", "code", "conclusions", "sentence")
                if key in self.response}
         if "ast" in self.response:
             out["formulas"] = self.response["ast"]
+            out["canonical"] = self.canonical()
         if self.status in ("one", "many"):
             out["witnesses"] = 1 if self.status == "one" else len(self.response["witnesses"])
         return out
@@ -242,7 +275,7 @@ def read(env, source: str, words, options: dict) -> LeanReading:
         problem = "the response is nested too deeply"
     if problem:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
-    return LeanReading(response)
+    return LeanReading(response, env)
 
 
 def _verdict(python_class: str) -> str:
