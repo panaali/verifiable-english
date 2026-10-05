@@ -158,13 +158,27 @@ def meaningStatus (openNames : List String) (j : Json) : Except String String :=
   | .obj _ =>
     match ← fields j with
     | [("contextual", .str d)] => if d.isEmpty then throw "invalid meaning status" else pure "contextual"
-    | [("open", .arr xs)] => do
-      let names ← xs.toList.mapM Json.getStr?
-      unless !names.isEmpty && names.all openNames.contains do throw "invalid meaning status"
-      pure "open"
+    | [("open", .arr xs)] =>
+      match xs.toList.mapM Json.getStr? with
+      | .ok names =>
+        unless !names.isEmpty && names.all openNames.contains do throw "invalid meaning status"
+        pure "open"
+      | .error _ => throw "invalid meaning status"
     | [("unformalised", .str r)] => if token r then pure "unformalised" else throw "invalid meaning status"
     | _ => throw "invalid meaning status"
   | _ => throw "invalid meaning status"
+
+/-- W2's status of a unit without an active reading set (`load_document`): content and meaning. The speech-act
+source wrapper reads the same function. -/
+def w2Status (hasContent : Bool) (meaning : String) : String :=
+  if hasContent && meaning == "specified" then "CHECKED"
+  else if meaning == "open" then "OPEN"
+  else if meaning == "unformalised" then "UNFORMALISED" else "LABELLED"
+
+/-- W2's status of a unit whose active reading set decides: CHECKED only for an authored set of asserted
+readings, which W2 checks itself; every other set is stored under OPEN. -/
+def w2SetStatus (authored allAsserted : Bool) : String :=
+  if authored && allAsserted then "CHECKED" else "OPEN"
 
 /-- One compiled unit of the front matter. -/
 structure Unit₀ where
@@ -229,10 +243,7 @@ def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
       unless statuses.contains s do throw "invalid unit status"
       pure (some s)
     | .error _ => pure none
-  let status := if content.isSome && meaning == "specified" then "CHECKED"
-    else if meaning == "open" then "OPEN"
-    else if meaning == "unformalised" then "UNFORMALISED" else "LABELLED"
-  pure ⟨id, (a, b), kind, content, status, explicit⟩
+  pure ⟨id, (a, b), kind, content, w2Status content.isSome meaning, explicit⟩
 
 /-- `_parts`: a unit, or the parts of an explicitly partitioned `MIXED` unit (document.md). The
 parent is provenance only: its bytes are counted once, by its parts, which partition its span
@@ -291,8 +302,9 @@ def compileUnits (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (
     if xs.any fun x => (rest.map Unit₀.id).contains x.id then throw "duplicate or invalid unit id"
     pure (xs ++ rest)
 
-/-- `validate_open_terms`: the declared open-term names. -/
-def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except String (List String) := do
+/-- `validate_open_terms`: the declared open-term names, with Python's texts for every malformed field. The
+conditions are read for their structure only (Python also types them against the environment). -/
+def openTermNames (_rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "open_terms must be a list"
@@ -303,23 +315,25 @@ def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except Strin
     let schema := ["name", "arguments", "decided_by", "necessary", "sufficient", "factors", "precedents",
       "jurisdiction", "version"]
     unless keys.length == schema.length && schema.all keys.contains do throw "invalid open-term schema"
-    let name ← stringField item "name"
+    let name := ((item.getObjValD "name").getStr?).toOption.getD ""
     unless token name && !seen.contains name do throw "duplicate or invalid open term"
-    let args ← strings (← item.getObjVal? "arguments")
-    unless args.all token && args.eraseDups.length == args.length do throw "invalid open-term arguments"
-    unless token (← stringField item "decided_by") && token (← stringField item "jurisdiction") do
+    match strings (item.getObjValD "arguments") with
+    | .ok args => unless args.all token && args.eraseDups.length == args.length do throw "invalid open-term arguments"
+    | .error _ => throw "invalid open-term arguments"
+    unless (((item.getObjValD "decided_by").getStr?).toOption.any token) &&
+        (((item.getObjValD "jurisdiction").getStr?).toOption.any token) do
       throw "open term needs a decision role and jurisdiction"
-    let v ← (← item.getObjVal? "version").getNat?
-    unless 1 ≤ v do throw "invalid open-term version"
+    unless (((item.getObjValD "version").getNat?).toOption.any (1 ≤ ·)) do throw "invalid open-term version"
     for field in ["necessary", "sufficient"] do
-      let fs ← match ← item.getObjVal? field with
+      let fs ← match item.getObjValD field with
         | .arr xs => pure xs.toList
         | _ => throw s!"{field} must be a list"
       for f in fs do let _ ← VE.Bridge.decodeFormula 64 f; pure ()
-    let factors ← strings (← item.getObjVal? "factors")
-    let precedents ← strings (← item.getObjVal? "precedents")
-    unless factors.all (!·.isEmpty) && precedents.all (!·.isEmpty) do
-      throw "invalid open-term factors or precedents"
+    match strings (item.getObjValD "factors"), strings (item.getObjValD "precedents") with
+    | .ok factors, .ok precedents =>
+      unless factors.all (!·.isEmpty) && precedents.all (!·.isEmpty) do
+        throw "invalid open-term factors or precedents"
+    | _, _ => throw "invalid open-term factors or precedents"
     pure (seen ++ [name])) []
 
 /-! ## Distinguishing models (their identity is Python's `model_id`) -/
@@ -446,8 +460,10 @@ def compileSets (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (e
 def activeOf (all : List (FrontSet × List Bool)) : List (FrontSet × List Bool) :=
   all.filter fun (s, _) => !all.any fun (o, _) => o.unit == s.unit && o.version > s.version
 
-/-- `validate_narrowings`: the narrowing ids. -/
-def narrowingIds (all : List FrontSet) (unitIds : List String) (j : Json) : Except String (List String) := do
+/-- `validate_narrowings`: the narrowing ids, over the reading-set versions `(id, version, reading ids)`. Each
+reference is a name (or a version number) before it is resolved, with Python's texts. -/
+def narrowingIds (all : List (String × Nat × List String)) (unitIds : List String) (j : Json) :
+    Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "narrowings must be a list"
@@ -457,17 +473,21 @@ def narrowingIds (all : List FrontSet) (unitIds : List String) (j : Json) : Exce
       | _ => throw "invalid narrowing"
     let schema := ["id", "set", "version", "keeps", "by", "reason_spans"]
     unless keys.length == schema.length && schema.all keys.contains do throw "invalid narrowing"
-    let id ← stringField item "id"
-    unless token id && !ids.contains id && token (← stringField item "by") do throw "invalid narrowing id or author"
-    let set ← stringField item "set"
-    let version ← (← item.getObjVal? "version").getNat?
-    let rs ← match all.find? (fun r => r.id == set && r.version == version) with
-      | some rs => pure rs
+    let id := ((item.getObjValD "id").getStr?).toOption.getD ""
+    unless token id && !ids.contains id && (((item.getObjValD "by").getStr?).toOption.any token) do
+      throw "invalid narrowing id or author"
+    let (set, version) ← match item.getObjValD "set", (item.getObjValD "version").getNat? with
+      | .str s, .ok v => if token s && 1 ≤ v then pure (s, v) else throw "invalid narrowing"
+      | _, _ => throw "invalid narrowing"
+    let readings ← match all.find? (fun r => r.1 == set && r.2.1 == version) with
+      | some r => pure r.2.2
       | none => throw "narrowing cites unknown reading set version"
-    let keeps ← strings (← item.getObjVal? "keeps")
-    unless !keeps.isEmpty && keeps.all (rs.readings.map Prod.fst).contains do throw "narrowing must keep named readings"
-    let spans ← strings (← item.getObjVal? "reason_spans")
-    unless !spans.isEmpty && spans.all unitIds.contains do throw "narrowing needs cited source units"
+    match strings (item.getObjValD "keeps") with
+    | .ok keeps => unless !keeps.isEmpty && keeps.all readings.contains do throw "narrowing must keep named readings"
+    | .error _ => throw "narrowing must keep named readings"
+    match strings (item.getObjValD "reason_spans") with
+    | .ok spans => unless !spans.isEmpty && spans.all unitIds.contains do throw "narrowing needs cited source units"
+    | .error _ => throw "narrowing needs cited source units"
     pure (ids ++ [id])) []
 
 /-- The loaded front matter: its format, the W2 admission object, the active reading sets and
@@ -503,7 +523,7 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   let all ← compileSets rv profiles envId (units.map Unit₀.id) (optionalList front "reading_sets")
   let active := activeOf all
   let status := units.map fun x => (x.id, match active.find? (·.1.unit == x.id) with
-    | some (rs, kinds) => if rs.status == "authored" && kinds.all id then "CHECKED" else "OPEN"
+    | some (rs, kinds) => w2SetStatus (rs.status == "authored") (kinds.all id)
     | none => x.status)
   match front.getObjVal? "lemmas" with
   | .ok (.arr _) | .error _ => pure ()
@@ -511,7 +531,8 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   for x in units do
     if x.kind == .str "asserted" && x.content.isNone && !(all.any (·.1.unit == x.id)) then
       throw "asserted unit needs content or a reading set"
-  let narrowings ← narrowingIds (all.map Prod.fst) (units.map Unit₀.id) (optionalList front "narrowings")
+  let narrowings ← narrowingIds (all.map fun (s, _) => (s.id, s.version, s.readings.map Prod.fst))
+    (units.map Unit₀.id) (optionalList front "narrowings")
   match optionalList front "weights" with
   | .arr ws => for w in ws.toList do
       match w with
