@@ -16,7 +16,7 @@ import warnings
 
 from .assurance import semantic_entry
 from . import ast
-from .errors import ResourceLimit, Span, SyntaxError, VEError
+from .errors import CheckerUnavailable, ResourceLimit, Span, SyntaxError, VEError
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
 from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
@@ -1633,15 +1633,42 @@ class EnglishParser:
         return ast.Document(tuple(formulas))
 
 
-def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):
-    if isinstance(source, bytes):
-        try: source = source.decode('utf-8')
-        except UnicodeDecodeError as exc:
-            raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc
-    if not isinstance(source, str): raise TypeError('source must be str or bytes')
-    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
-        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
-    words = EnglishVocabulary(env, **options)
+class _Reading:
+    """The grammatical reading of a document, the unit `english.admission` dispatches: the hand parser, the
+    Lark audit and `check_document` (docs/spec/english-lean-s2.md 2.10, D16). Conclusion marks are part of
+    it; whether a marked sentence follows is `check_conclusions`, after the dispatch, for either backend.
+    `spans` are the sentences' source spans (Python's reading only); `lean` is Lean's checked answer when
+    the reading is Lean's."""
+
+    def __init__(self, env, document, words, conclusions, spans=None, *, lean=None):
+        self.env, self.document, self.words = env, document, words
+        self.conclusions, self.spans, self.lean = tuple(conclusions), spans, lean
+        self._refused = None
+
+    def comparison(self):
+        """Formulas in wire form, the canonical strict text, the marks and the witness count (2.11)."""
+        from .printer import print_document
+        return {'formulas': [ast._to_data(f) for f in self.document.formulas],
+                'canonical': print_document(self.env, self.document),
+                'conclusions': list(self.conclusions), 'witnesses': 1}
+
+    def conclusion_error(self):
+        """Python's conclusion check (`_check_conclusions`), run once: None, or the error it raised."""
+        if self._refused is None:
+            try:
+                _check_conclusions(self.env, self.document, self.conclusions)
+                self._refused = False
+            except VEError as exc:
+                self._refused = exc
+        return self._refused or None
+
+    def check_conclusions(self):
+        error = self.conclusion_error()
+        if error is not None:
+            raise error
+
+
+def _python_reading(env, source, words, options):
     normalised, boundaries = _normalise_english_source(source, words)
     parser = EnglishParser(env, normalised, words)
     try:
@@ -1662,13 +1689,46 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, **op
     except VEError as exc:
         if exc.span is None: exc.span = Span(0, len(source), 1, 1)
         raise
-    _check_conclusions(env, document, parser.conclusions)
-    result = document, source, parser.words, tuple(parser.conclusions)
+    spans = tuple((boundaries[start], boundaries[end]) for start, end in parser.sentence_spans)
+    return _Reading(env, document, parser.words, parser.conclusions, spans)
+
+
+def _lean_reading(env, source, words, options):
+    from .backends import english_lean
+    reading = english_lean.read(env, source, words, options)
+    if reading.status != 'one':
+        raise reading.rejection()
+    return _Reading(env, reading.document(env), words, reading.response['conclusions'], lean=reading)
+
+
+def _parse_english_document_uncached(env, source, *, _with_structure=False, **options):
+    if isinstance(source, bytes):
+        try: source = source.decode('utf-8')
+        except UnicodeDecodeError as exc:
+            raise SyntaxError('English input must be UTF-8.', span=Span(exc.start, exc.end, 1, exc.start + 1)) from exc
+    if not isinstance(source, str): raise TypeError('source must be str or bytes')
+    if len(source.encode('utf-8')) > MAX_SOURCE_BYTES:
+        raise ResourceLimit(f'English source exceeds {MAX_SOURCE_BYTES} bytes')
+    words = EnglishVocabulary(env, **options)
+    from .backends import dispatch
+    if not dispatch.overridden('english.admission'):
+        # The Lean reader is not built (english-lean S2.4): only a named override dispatches the reading.
+        reading = _python_reading(env, source, words, options)
+    else:
+        from .backends.english_lean import shadow_record
+        reading = dispatch.execute(
+            'english.admission', {'environment_id': env.environment_id, 'source': source},
+            lambda: _python_reading(env, source, words, options),
+            lean=lambda: _lean_reading(env, source, words, options),
+            shadow=lambda python, lean: shadow_record(env, source, words, python, lean))
+    reading.check_conclusions()
+    result = reading.document, source, reading.words, reading.conclusions
     if _with_structure:
-        spans = tuple((boundaries[start], boundaries[end]) for start, end in parser.sentence_spans)
-        breaks = tuple(index for index in range(1, len(spans))
-                       if re.search(r'\n\s*\n', source[spans[index - 1][1]:spans[index][0]]))
-        return (*result, spans, breaks)
+        if reading.spans is None:
+            raise CheckerUnavailable('CheckerUnavailable: the Lean English reader gives no sentence spans')
+        breaks = tuple(index for index in range(1, len(reading.spans))
+                       if re.search(r'\n\s*\n', source[reading.spans[index - 1][1]:reading.spans[index][0]]))
+        return (*result, reading.spans, breaks)
     return result
 
 

@@ -1,0 +1,16 @@
+{
+ "format": "ve.english-grammar-lock@1",
+ "actions_version": "1",
+ "files": {
+  "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean": "78510d098776ba70b1f5a8edb3d7586e0d4a7208832a8e8a79b1b6789664172e",
+  "lean/VE/EnglishGrammar/Lexer.lean": "470ea7449108e1e8c207618beb4d57e956688581d82d5f279862e891dbb306e9",
+  "lean/VE/EnglishGrammar/Lexicon.lean": "95731cb42d2de114e957397765a28de0540e6223d6e0d22c979b9ef4c0a64e37",
+  "lean/VE/EnglishGrammar/Syntax.lean": "46fab6c5b9e1b0edeea9a03fbab1f652a0dba7464eafc7eb9a0b3cced4659966",
+  "lean/VE/EnglishGrammar/Token.lean": "8d019325ae7ebf49551fa4cd8738c5704e34d357049029f3a42da89c7d1bd263",
+  "lean/VE/Grammar/Basic.lean": "74adf159cfee0b28003a2945b98ec7e7ae2fab29017a210352601c873ee044db",
+  "lean/VE/Grammar/Derives.lean": "ef64815fd148f43f610424ac4ca2da8634f9fd55c51a7dd41542a27dfdbeaa8c",
+  "lean/VE/Grammar/Meaning.lean": "6ca0f9cc0181200e390bdfa6b170d51a5baf9d5a236fbfa8ae1ff3c9576805e1",
+  "lean/VE/Grammar/Reading.lean": "87f463821916f6e12f7bfa795b29b57bec90c3a9a009f19ae19926ba2f18a014",
+  "ve/english_grammar/relational-fol@0.json": "de8bc6f7a338611879e5b7826f6f0f48c9b59e1defb549eac406602c13a032f7"
+ }
+}
