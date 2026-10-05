@@ -3128,9 +3128,6 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.Wire.wellFormedDoc_of_admissionText
 #print axioms VE.Readings.Wire.admitReadings_eq
 #print axioms VE.Readings.Run.candidateJson_eq
-#print axioms VE.Readings.Run.separatesWith_eq
-#print axioms VE.Readings.Run.assignments_of_ownedKeys_nil
-#print axioms VE.Readings.Run.pairFacts_eq
 #print axioms VE.Norms.expStep_foldl_length
 #print axioms VE.Norms.expStep_foldl_drop
 #print axioms VE.Norms.entryTable_take
@@ -3156,7 +3153,12 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Readings.sideValidOn_sideOf
 #print axioms VE.Readings.sideValueOn_sideOf
 #print axioms VE.Readings.Wire.chainText_eq
-#print axioms VE.Readings.Run.completionsOn_sideOf
+#print axioms VE.Readings.ownedKeysOn_sideOf
+#print axioms VE.Readings.scanOthers_eq
+#print axioms VE.Readings.otherScanOn_id
+#print axioms VE.Readings.and_not_and_any
+#print axioms VE.Readings.assignments_of_ownedKeys_nil
+#print axioms VE.Readings.pairEval_id
 #print axioms VE.Readings.Run.replayPair_doc
 #print axioms VE.Readings.Run.pairFactsIn_eq
 #print axioms VE.Readings.Run.sideAt_sidesOf

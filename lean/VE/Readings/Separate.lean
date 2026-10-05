@@ -336,13 +336,18 @@ def keyTuplesOn {α : Type u} [DecidableEq α] (P : Side) (M : VE.FiniteModel α
       | none => []
     else []))
 
+def ownedKeysOn (D : Doc) (s : String) (j : Nat) (P : Side) : List GenKey :=
+  (P.keys.map (·.1)).filter (owned D s j)
+
 def cellsOn {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (P : Side) (M : VE.FiniteModel α) : Nat :=
-  (((P.keys.map (·.1)).filter (owned D s j)).map (fun k => (keyTuplesOn P M k).length)).sum
+  ((ownedKeysOn D s j P).map (fun k => (keyTuplesOn P M k).length)).sum
 
 def assignmentsOn {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (P : Side) (M : VE.FiniteModel α) :
     List (List (GenKey × List (List α))) :=
-  ((P.keys.map (·.1)).filter (owned D s j)).foldr (fun k acc =>
+  (ownedKeysOn D s j P).foldr (fun k acc =>
     (subsets (keyTuplesOn P M k)).flatMap (fun tbl => acc.map ((k, tbl) :: ·))) [[]]
+
+theorem ownedKeysOn_sideOf (D : Doc) (s : String) (j : Nat) : ownedKeysOn D s j (sideOf D s j) = ownedKeys D s j := rfl
 
 theorem cellsOn_sideOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α) :
     cellsOn D s j (sideOf D s j) M = cells D s j M := rfl
