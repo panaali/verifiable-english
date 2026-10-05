@@ -23,11 +23,12 @@ def load_pack(path: str | Path) -> bytes:
 
 def bundled_pack(name: str) -> bytes:
     """Read a bundled pack by its exact file name."""
-    if type(name) is not str or not name or name in {".", ".."} or "/" in name or "\\" in name:
+    if (type(name) is not str or not name or name in {".", ".."}
+            or any(char in name for char in ("/", "\\", "\x00"))):
         raise VEError("Invalid sense pack name")
     try:
         return files("ve.senses").joinpath("packs", name + ".json").read_bytes()
-    except OSError as exc:
+    except (OSError, UnicodeError, ValueError) as exc:
         raise VEError(f"Cannot read sense pack: {exc}") from exc
 
 

@@ -70,7 +70,7 @@ def test_review_requires_matching_identity_and_complete_record(tmp_path, monkeyp
     assert review_status("fixtures@1", "id-from-lean") == "unreviewed"
 
 
-@pytest.mark.parametrize("name", ["", ".", "..", "../other", "a/b", "a\\b", 7, True, None])
+@pytest.mark.parametrize("name", ["", ".", "..", "../other", "a/b", "a\\b", "a\x00b", 7, True, None])
 def test_bundled_pack_rejects_path_escape(name):
     with pytest.raises(VEError, match="Invalid sense pack name"):
         bundled_pack(name)
