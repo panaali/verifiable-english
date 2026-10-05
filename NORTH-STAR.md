@@ -32,6 +32,9 @@ Readability eval 2026-10-03 (Claude Sonnet 5.5 as proxy reader/writer with only 
 ### Vocabulary out of the box (lead-approved 2026-10-04)
 Shared sense dictionary (one sense per document, editor asks once), automatic negatives for simple adjectives, starter vocabulary packs per domain. Keeps one reading; removes most per-word declaration work. After english-lean S2.
 
+### Scalable-oversight experiments (2026-10-05)
+Research: [oversight opportunities](/home/seyran/code/manage-agents/reviews/oversight-opportunities-2026-10.md). Ranked: (1) spec-defect audit of real agent policies (pre-registration in progress: docs/experiments/policy-audit-PREREG.md on design/policy-audit); (2) offline judging of tau2-bench airline/retail actions, small vs large judge with and without VE; (3) 'the policy doesn't say' as a reranking filter, later an RL reward (needs a GPU). Fair baselines: Datalog/Z3 written by the same LLM. Obfuscated arguments (Barnes-Christiano): see experiments/obfuscated-arguments/ and the math backlog.
+
 ### Use-case backlog (added 2026-09-29, lead-approved; order = orchestrator's recommendation)
 
 | # | Use case | Why it matters | Needs | Status |
