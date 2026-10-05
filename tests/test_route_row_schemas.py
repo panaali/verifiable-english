@@ -321,3 +321,76 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
     assert swapped
     assert set(assert_agreement(executables[1], swapped)) == {"accept"}
     assert not any(v == "accept" for v in lean_verdicts(executables[1], swapped, "invariants"))
+
+
+# Every answer object is closed: the structural guard of the class (an open `route_ok` passed any payload).
+
+# Objects deliberately open, with why: a predicate declaration of E' echoes the request's (and the
+# generated ones add theirs); its domain is the environment decoder's and the caller compares E' whole.
+OPEN_ALLOWED = {"common.json#/$defs/environment/properties/vocabulary/properties/predicates/additionalProperties"}
+
+
+def open_objects(directory=DIRECTORY):
+    """Answer schemas (reachable from every mode's row and the envelope; request selectors, `if`
+    conditions and refinements beside a `$ref`, `then` or `else` excluded) that describe an object
+    without closing it: no `additionalProperties`, no `x-equals` binding, no closed alternatives."""
+    documents = {p.name: json.loads(p.read_text()) for p in directory.glob("*.json")}
+    stack = [(f"{mode}.json", "#/row") for mode in MODES] + [("envelope.json", "#/response")]
+    seen, found = set(), set()
+
+    def closed(schema):
+        return isinstance(schema, dict) and ("additionalProperties" in schema or "x-equals" in schema or (
+            "anyOf" in schema and all(closed(branch) for branch in schema["anyOf"])))
+
+    def walk(schema, file, where, refinement):
+        if not isinstance(schema, dict):
+            return
+        if "$ref" in schema:
+            name, _, pointer = schema["$ref"].partition("#")
+            stack.append((name or file, "#" + pointer))
+        shaped = schema.get("type") == "object" or "properties" in schema
+        if shaped and not refinement and "$ref" not in schema and not closed(schema):
+            found.add(f"{file}{where}")
+        for key, value in schema.items():
+            if key == "x-select":
+                for i, entry in enumerate(value):
+                    walk(entry["then"], file, f"{where}/x-select/{i}/then", False)
+            elif key == "properties":
+                for name, sub in value.items():
+                    walk(sub, file, f"{where}/properties/{name}", refinement or "$ref" in schema)
+            elif key == "x-tagged":
+                for tag, slots in value.items():
+                    for i, sub in enumerate(slots):
+                        walk(sub, file, f"{where}/x-tagged/{tag}/{i}", False)
+            elif key in ("anyOf", "allOf", "prefixItems"):
+                for i, sub in enumerate(value):
+                    walk(sub, file, f"{where}/{key}/{i}", refinement or key == "allOf")
+            elif key in ("items", "additionalProperties", "x-rows"):
+                walk(value, file, f"{where}/{key}", False)
+            elif key in ("then", "else"):
+                walk(value, file, f"{where}/{key}", True)
+            elif key == "x-zip":
+                walk(value["items"], file, f"{where}/x-zip/items", False)
+
+    while stack:
+        file, pointer = stack.pop()
+        if (file, pointer) not in seen:
+            seen.add((file, pointer))
+            target = documents[file]
+            for step in pointer[2:].split("/") if pointer != "#" else []:
+                target = target[step.replace("~1", "/").replace("~0", "~")]
+            walk(target, file, pointer, False)
+    return found
+
+
+def test_no_answer_object_is_left_open():
+    assert open_objects() == OPEN_ALLOWED
+
+
+def test_an_open_answer_is_found(tmp_path):
+    for path in DIRECTORY.glob("*.json"):
+        shutil.copy(path, tmp_path / path.name)
+    document = json.loads((tmp_path / "risk.json").read_text())
+    document["$defs"]["audit"].pop("additionalProperties")
+    (tmp_path / "risk.json").write_text(json.dumps(document))
+    assert open_objects(tmp_path) == OPEN_ALLOWED | {"risk.json#/$defs/audit"}
