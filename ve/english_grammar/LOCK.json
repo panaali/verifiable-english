@@ -1,8 +1,8 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "3",
+ "actions_version": "4",
  "files": {
-  "lean/VE/EnglishGrammar/Actions.lean": "3ee8db1999901e6ee7a4650fdd1040fe77744c83b231b0c18862f55972641202",
+  "lean/VE/EnglishGrammar/Actions.lean": "b8bce535e4bc40b8c1a7ab853d9616248aa6ad295b5aff1f42c5f4a13cb1039b",
   "lean/VE/EnglishGrammar/Catalogue.lean": "150c694a272ebd12b050b5f33f72884d1e821feaa57741303d37f88be73b2d25",
   "lean/VE/EnglishGrammar/Encode.lean": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
   "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean": "4f61ad7703c694f041086de9501f0c43c41ba978b38f915215bdae0473c614e0",
