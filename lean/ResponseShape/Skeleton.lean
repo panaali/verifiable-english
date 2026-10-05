@@ -205,6 +205,10 @@ theorem bind {β : Type} {x : Except String β} {f : β → Except String α} (h
   | error e => cases hw
   | ok a => exact h a rfl w hw
 
+theorem throw_bind {β : Type} {e : String} {f : β → Except String α} : OkP P (MonadExcept.throw e >>= f) := by
+  intro w hw
+  cases hw
+
 theorem ite {c : Prop} [Decidable c] {a b : Except String α} (ha : c → OkP P a) (hb : ¬ c → OkP P b) :
     OkP P (if c then a else b) := by
   split
