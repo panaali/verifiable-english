@@ -134,7 +134,7 @@ theorem caseKind_setObjVal {j : Json} (hj : CaseWF j) {w : Json} {k : String} (h
   cases j with
   | obj m =>
     unfold caseKind
-    rw [getObjVal_setObjVal hj rfl (by decide)]
+    rw [getObjVal_setObjVal hj.1 rfl (by decide)]
   | _ => simp [Json.getObjVal?] at hobj
 
 theorem runCaseReported_fits (j : Json) : Fits j Skeletons.route (runCaseReported j) := by
