@@ -46,8 +46,10 @@ class _Pool:
 
     def run_bound(self, mode, cases, *, timeout=None):
         self.calls.append((mode, cases, timeout))
+        # `row_code` is a code the runner's own row carries (the soft-norms@0 contract's).
         return [{"index": i, "digest": "0" * 64,
-                 "result": {k: v for k, v in row.items() if k not in ("code", "generator")},
+                 "result": {**{k: v for k, v in row.items() if k not in ("code", "generator", "row_code")},
+                            **({"code": row["row_code"]} if "row_code" in row else {})},
                  **{k: row[k] for k in ("code", "generator") if k in row}} for i, row in enumerate(self.rows)]
 
     def close(self):
@@ -100,6 +102,52 @@ def test_rows_are_returned_in_order_and_unchanged(monkeypatch):
     assert pool.calls == [("evaluate", [{"id": "0"}], HANG_TIMEOUT)]
 
 
+def test_route_rows_keep_rejections_as_rows(monkeypatch):
+    """`rows` (batch 1) returns every row, rejections included, for a caller that reads them itself."""
+    rows = [{"id": "a", "status": "ok", "value": 1},
+            {"id": "b", "status": "error", "error": "UnsupportedProfile: x", "code": "UnsupportedProfile"}]
+    pool = _Pool(rows)
+    monkeypatch.setattr(relay, "_pool", pool)
+    assert relay.rows("rights", [{"id": "a"}, {"id": "b"}], timeout=HANG_TIMEOUT) == [
+        {"id": "a", "status": "ok", "value": 1}, {"id": "b", "status": "error", "error": "UnsupportedProfile: x"}]
+    assert pool.calls == [("rights", [{"id": "a"}, {"id": "b"}], HANG_TIMEOUT)]
+
+
+def test_a_route_rows_own_contract_code_is_the_errors_code(monkeypatch):
+    """A soft route rejection carries the soft-norms@0 contract code in its row; the relayed error keeps it
+    as its code (as the one-shot transport did), its class from the service's public code, its text Lean's."""
+    text = "UnsupportedProfile: Unsupported profile norm-defaults@0"
+    monkeypatch.setattr(relay, "_pool", _Pool([{"id": "s", "status": "error", "error": text,
+                                                 "code": "UnsupportedProfile",
+                                                 "row_code": "SOFT_UNSUPPORTED_PROFILE"}]))
+    with pytest.raises(UnsupportedProfile) as caught:
+        relay.decide("soft-norms", [{"id": "s"}])
+    assert caught.value.code == "SOFT_UNSUPPORTED_PROFILE" and caught.value.message == text
+
+
+ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval",
+               "quantity", "norm-defaults", "discourse", "readings-route", "diagnose")
+
+
+@needs_service
+@pytest.mark.parametrize("mode", ROUTE_MODES)
+def test_every_route_mode_answers_through_the_service(mode):
+    """Each one-shot route is a service mode (batch 1): a case it cannot read is a rejection row of the
+    mode's schema, bound to the case, never an operational failure."""
+    [row] = relay.rows(mode, [{"id": "x", "kind": "no-such-kind", "unit": "soft-norms@0"}])
+    assert row["status"] == "error" and type(row["error"]) is str, row
+
+
+@needs_service
+def test_risk_eval_reads_its_cases_with_leans_own_json_parser():
+    """`risk-eval` reads its batch as `ve_risk_eval` did, with Lean.Json.parse: a null the restricted wire
+    decoder refuses (the whole batch, for every other mode) is that case's rejection row here."""
+    [row] = relay.rows("risk-eval", [{"environment": None, "quantities": [], "conditions": []}])
+    assert row["status"] == "error", row
+    with pytest.raises(VEError, match="restricted JSON"):
+        relay.rows("risk", [{"id": "x", "kind": "risk-elaborate", "environment": None}])
+
+
 @needs_service
 def test_genuine_typing_rejection_is_leans(monkeypatch):
     """Lean's code and text, unstripped: `UnknownSymbol: ...` (wording list W1 of DELTA.md)."""
@@ -130,9 +178,11 @@ def test_genuine_profile_rejection_is_leans(monkeypatch):
         relay.decide("environment", [{"id": "e", "environment": raw}])
 
 
-# The one-shot runner transports (`ve/backends/lean.py`): every one reads its runner's output with
-# `read_rows`, so output that is no answer is `CheckerUnavailable` on every path, never a rejection
-# (lf-0 review B1 and B2; reproducers from the difffuzz looprecheck3 review).
+# The one-shot runner transports (`ve/backends/lean.py` `run`, for `ve_conformance`, and `run_english_cases`,
+# for english-lean S2's `ve_english_route`; lean-first batch 1 made every statement-layer route a service mode
+# and deleted their one-shot transports): each reads its runner's output with `read_rows`, so output that is
+# no answer is `CheckerUnavailable`, never a rejection (lf-0 review B1 and B2; reproducers from the difffuzz
+# looprecheck3 review).
 
 CASE = {"id": "0", "kind": "bundle"}
 
@@ -147,22 +197,14 @@ def _runner(tmp_path, stdout: bytes, status: int):
     return path
 
 
-def _soft(exe, case):
-    return lean_backend.run_soft_case(exe, case, timeout=HANG_TIMEOUT)
-
-
 TRANSPORTS = {
     "run": lambda exe, case: lean_backend.run("bundle.check", exe, [case], runner="ve_conformance",
                                               mode="route", timeout=HANG_TIMEOUT)[0],
-    "soft": _soft,
-    "alternatives": lambda exe, case: lean_backend.run_alternatives_case(exe, case, timeout=HANG_TIMEOUT),
-    "discourse": lambda exe, case: lean_backend.run_discourse_case(exe, case, timeout=HANG_TIMEOUT),
-    "reports": lambda exe, case: lean_backend.run_reports_case(exe, case, timeout=HANG_TIMEOUT),
-    "norm-defaults": lambda exe, case: lean_backend.run_norm_defaults_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
-    "readings": lambda exe, case: lean_backend.run_readings_cases(exe, [case], timeout=HANG_TIMEOUT)[0],
+    "english": lambda exe, case: lean_backend.run_english_cases(exe, "english.read", [case],
+                                                                timeout=HANG_TIMEOUT)[0],
 }
-CODED = {"soft"}
-RESTRICTED = {"run", "alternatives", "reports"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
+CODED: set[str] = set()
+RESTRICTED = {"run", "english"}  # `read_rows(restricted=True)`: `ve.wire.loads_json`
 
 
 def test_every_runner_transport_is_listed():
@@ -187,9 +229,7 @@ def test_every_runner_transport_is_listed():
         node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
         and any(getattr(c.func, "id", None) == "_route_rows" for c in ast_module.walk(node)
                 if isinstance(c, ast_module.Call))}
-    names = {"run": "run", "soft": "run_soft_case", "alternatives": "run_alternatives_case",
-             "discourse": "run_discourse_case", "reports": "run_reports_case",
-             "norm-defaults": "run_norm_defaults_cases", "readings": "run_readings_cases"}
+    names = {"run": "run", "english": "run_english_cases"}
     assert public == {names[key] for key in TRANSPORTS}
     restricted = {node.name for node in tree.body if isinstance(node, ast_module.FunctionDef)
                   and any(isinstance(k, ast_module.keyword) and k.arg == "restricted"
@@ -290,13 +330,7 @@ def test_a_code_on_a_route_without_codes_is_no_answer(tmp_path, transport):
         TRANSPORTS[transport](exe, CASE)
 
 
-def test_the_soft_routes_coded_rejection_keeps_its_code(tmp_path):
-    """The control of the reproducer: the same row without `case_index` is the route's rejection."""
-    exe = _runner(tmp_path, _row(status="error", error="InvalidInput: invalid vocabulary",
-                                 code="SOFT_UNKNOWN_RANK"), 1)
-    with pytest.raises(VEError) as caught:
-        _soft(exe, CASE)
-    assert caught.value.code == "SOFT_UNKNOWN_RANK" and caught.value.message == "InvalidInput: invalid vocabulary"
+# The soft route's coded rejection keeps its code through the relay: test_a_route_rows_own_contract_code_is_the_errors_code.
 
 
 @pytest.mark.parametrize("transport", TRANSPORTS)
@@ -322,9 +356,6 @@ def test_genuine_rows_are_answers(tmp_path, transport, identity):
         if transport in RESTRICTED and (b"null" in stdout or b"." in stdout):
             with pytest.raises(CheckerUnavailable, match="not a JSON result array"):
                 TRANSPORTS[transport](exe, case)
-        elif transport == "soft" and status == 1:
-            with pytest.raises(VEError, match="^E: x$"):
-                _soft(exe, case)
         else:
             assert TRANSPORTS[transport](exe, case) == json.loads(stdout)[0]
 

@@ -17,6 +17,8 @@ from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from subprocesses import HANG_TIMEOUT
 from ve.ast import formula_from_data
 from ve.entailment import prove_entailment
@@ -26,15 +28,15 @@ from ve.wire import digest
 from tests.test_norms import environment, obligation, permission
 
 ROOT = Path(__file__).resolve().parents[1]
-LEAN = ROOT / "lean/.lake/build/bin/ve_rights_route"
-SOFT = ROOT / "lean/.lake/build/bin/ve_soft_norms_route"
-SPEECH = ROOT / "lean/.lake/build/bin/ve_speech_acts_route"
+LEAN = "ve_rights_route"  # its service mode, through tests/lean_routes.py
+SOFT = "ve_soft_norms_route"  # its service mode, through tests/lean_routes.py
+SPEECH = "ve_speech_acts_route"  # its service mode, through tests/lean_routes.py
 BLOCK = {"holders": ["person"], "bearers": ["state", "person"]}
 
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the rights Lean route")
@@ -45,8 +47,7 @@ def lean():
 
 
 def run(executable, cases):
-    result = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=HANG_TIMEOUT)
+    result = lean_routes.completed(executable, cases)
     assert result.returncode in (0, 1), result.stderr
     rows = json.loads(result.stdout)
     assert len(rows) == len(cases)

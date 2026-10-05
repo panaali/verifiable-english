@@ -1,6 +1,6 @@
 """Python relay for the ve.discourse@1 document profile.
 
-A `ve-document@2` document's admission is the Lean route's (`ve_discourse_route`,
+A `ve-document@2` document's admission is the Lean route's (service mode `discourse`,
 docs/spec/discourse.md 3.4, 8): it reads the same bytes and decides everything the
 profile adds, from the block's wire shape and the stored documents to slot coverage,
 reference resolution, groups, the joint set and the composition gate. Python relays
@@ -16,9 +16,7 @@ from __future__ import annotations
 
 import collections
 import errno
-import os
 import re
-from pathlib import Path
 
 from .backends.lean_service import CheckerUnavailable
 from .errors import ResourceLimit, UnsupportedProfile, VEError
@@ -89,15 +87,8 @@ def _embedded(meta, source):
 
 # The Lean authority (docs/spec/discourse.md 3.4, 8) ----------------------------
 
-_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_discourse_route"
-_ROUTE_TIMEOUT = 300
 _CASE_ID = "python-admission"
 _STATUSES = {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
-
-
-def route_executable():
-    """The `ve_discourse_route` executable: `VE_DISCOURSE_ROUTE`, else the lake build."""
-    return Path(os.environ.get("VE_DISCOURSE_ROUTE") or _ROUTE)
 
 
 def is_discourse_text(raw):
@@ -170,34 +161,32 @@ def _joint_answer(row):
 
 
 def lean_admission(raw, directory):
-    """Lean's admission of a `ve-document@2` text (`ve_discourse_route`, kind `admission`), with the
-    sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
-    Anything else (no executable, a crash, a timeout, output that is not one answer to this case)
+    """Lean's admission of a `ve-document@2` text (service mode `discourse`, kind `admission`), with
+    the sibling files its imports name: `{"status": "ok", ...}` or `{"status": "error", "error"}`.
+    Anything else (no service, a crash, a deadline, a row that is not one answer to this case)
     is `CheckerUnavailable`, never a verdict; there is no fallback to Python. What no UTF-8 JSON
     can carry never admits: a text that is no UTF-8 text is `InvalidInput` (Lean reads a document
     as a string), and a named file that is none is left out of the case, so Lean still diagnoses
     the document, but Lean's admission, which read that file as absent, is `InvalidInput`."""
-    executable = route_executable()
-    if not executable.is_file():
-        raise CheckerUnavailable(f"CheckerUnavailable: the Lean discourse route {executable} is not built")
     try:
         text = raw.decode("utf-8")
     except UnicodeError:
         raise VEError("InvalidInput: the document is not UTF-8 text") from None  # relay-lint: file I/O
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
-    from .backends.lean import configured_timeout, run_discourse_case
-    # The shared transport (`read_rows`) binds the row to this case's id, an error row included, and its exit
-    # status to the row's status, and contains every malformed answer.
-    row = run_discourse_case(executable, case, timeout=configured_timeout(_ROUTE_TIMEOUT))
-    status = row["status"]
+    from .backends.relay import rows
+    # The service binds the row to this case (`lean_service`), an error row included, and refuses every
+    # malformed answer (`discourse.json#/row`).
+    [row] = rows("discourse", [case])
+    status = row.get("status") if type(row) is dict else None
     # A row naming the case by position is Lean's reader refusing the case Python wrote: no answer.
-    well_formed = "case_index" not in row and status == "error" or status == "ok" and (
+    well_formed = status is not None and row.get("id") == _CASE_ID and (
+        "case_index" not in row and status == "error" and type(row.get("error")) is str or status == "ok" and (
         # `in (True, ...)` would let 1 through: True == 1 is no JSON equality.
         (row.get("admitted") is True or row.get("admitted") == "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict
         and all(type(v) is str and v in _STATUSES for v in row["statuses"].values())
-        and type(row.get("validity")) is dict and type(row.get("bound")) is dict and _joint_answer(row))
+        and type(row.get("validity")) is dict and type(row.get("bound")) is dict and _joint_answer(row)))
     if not well_formed:
         raise CheckerUnavailable("CheckerUnavailable: the Lean discourse route returned no answer to the case")
     if status == "ok" and binary:

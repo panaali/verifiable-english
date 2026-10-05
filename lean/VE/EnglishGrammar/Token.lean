@@ -10,6 +10,10 @@ A punctuation token carries the `glued` flag of the DRI's ruling on O1 (2026-10-
 `gluedAfter` when none separates it from the character after it. An `exact` terminal compares them,
 so `deployed , it`, `deployed,it` and `non - compliant` do not match the rules that read
 `deployed, it` and `non-compliant`: Lean accepts the spacing that Python accepts and no other.
+
+`kwMid s` (docs/spec/english-lean-s2.md 2.2) accepts the word `s` only where it is not initial: the
+capitalised spelling `The api` of a constant spelled `the api` in the middle of a sentence, which
+`kw "the"` already accepts at the start of one.
 -/
 
 namespace VE.EnglishGrammar
@@ -34,6 +38,7 @@ inductive TokClass where
 
 inductive Terminal where
   | kw (s : String)
+  | kwMid (s : String)
   | content (s : String)
   | exact (t : Tok)
   | cls (c : TokClass)
@@ -67,6 +72,7 @@ def TokClass.accepts : TokClass → Tok → Bool
 
 def Terminal.accepts : Terminal → Tok → Bool
   | .kw s, .word text initial => text == s || (initial && text == capitalise s)
+  | .kwMid s, .word text initial => !initial && text == s
   | .content s, .word text _ => fold text == fold s
   | .exact t, tok => tok.plain == t.plain
   | .cls c, tok => c.accepts tok

@@ -32,10 +32,11 @@ PROBE_WAIT = 2.0
 
 
 # docs/spec/wire-contract.md 7.3: the wire contract engine chooses diagnostics and never a verdict, so no
-# module on a verdict path may import it. Only its own modules, the `ve_diagnose` root and the audit
-# manifest (the engine theorems only) do.
+# module on a verdict path may import it. Only its own modules, the service's diagnose mode
+# `VE.Service.Diagnose` (the one-shot `ve_diagnose` root before docs/LEAN-FIRST-PLAN.md batch 1) and the
+# audit manifest (the engine theorems only) do.
 DIAGNOSTIC_ONLY = "VE.WireContract"
-DIAGNOSTIC_IMPORTERS = frozenset({"DiagnoseMain"})
+DIAGNOSTIC_IMPORTERS = frozenset({"VE.Service.Diagnose"})
 AUDIT_IMPORTS = frozenset({"VE.WireContract.Engine"})
 
 
@@ -48,7 +49,7 @@ def diagnostic_only_violation(importer: str, imported: str) -> str | None:
     if importer == "VE.Audit" and imported in AUDIT_IMPORTS:
         return None
     return (f"{importer} -> {imported}: {DIAGNOSTIC_ONLY}.* is diagnostic only and may be imported by "
-            f"{DIAGNOSTIC_ONLY}.*, DiagnoseMain and (the engine only) VE.Audit (docs/spec/wire-contract.md 7.3)")
+            f"{DIAGNOSTIC_ONLY}.*, VE.Service.Diagnose and (the engine only) VE.Audit (docs/spec/wire-contract.md 7.3)")
 
 
 class HeaderError(ValueError):

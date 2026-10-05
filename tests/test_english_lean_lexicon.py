@@ -115,3 +115,14 @@ def test_a_malformed_lexicon_is_refused(value):
 def test_negative_template_is_total(wording, arity):
     expected = '{0} is not given {1} by {2}' if wording == '{0} is given {1} by {2}' else None
     assert X.negative_template_of(wording, arity) == expected
+
+
+@pytest.mark.parametrize('wording,arity,ok', [
+    ('{0} owns {1}', 2, True), ('{0}, then {1}', 2, True), ('{0}s are {1}', 2, False),
+    ('{0}"x" {1}', 2, False), (' {0} is deployed', 1, False), ('{0} is deployed .', 1, False)])
+def test_v3_reads_the_substitution_of_the_lexical_rules(wording, arity, ok):
+    """Review C2, the same wordings as `Examples.lean`: V3 holds exactly when `wording_tokens` (Lean's
+    `wordingTokens`, which the lexical rules read) gives the wording's tokens, so no wording passes V3 and
+    gives no rule."""
+    assert X._shape_ok(wording, arity) is ok
+    assert (X.wording_tokens(wording) is not None) is ok

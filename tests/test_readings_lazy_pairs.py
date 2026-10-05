@@ -10,12 +10,14 @@ checks pin it; the third checks the answer:
   the evaluations (one admissibility and one value on the 12-cell query, not 4,096). `VE.lean` imports it, so
   `lake build` fails when a count changes.
 * The compiled route is the oracle for "the route runs the counted function": a script run by the pinned toolchain
-  reads the compiler's IR of `ve_readings_route` and walks every function `main` can call. `pairFactsIn` must call
+  reads the compiler's IR and walks every function the service's `readings-route` mode can call (`runCaseReported`,
+  by `runMode_readingsRoute`; the one-shot `ve_readings_route` is gone since batch 1). `pairFactsIn` must call
   `pairEval` and the walk must reach `scanOthers`, so a route that evaluates the completions some other way fails.
 * End to end: the review's reproducer (12 cells, ten fixed default rules) gives the specified answer. Its CPU
-  limit only stops a runaway route: with each side's layers built once (batch 3d), evaluating all 4,096
-  completions here costs 0.37 s against the scan's 0.09 s (seeded mutant R3 in DELTA.md), and the generated-layer limits
-  admit no heavier side, so time cannot tell the two apart. The counts and the IR walk above are the regression.
+  limit (the request's CPU deadline on the service, `lean_routes.completed_within`) only stops a runaway route:
+  with each side's layers built once (batch 3d), evaluating all 4,096 completions here costs 0.37 s against the
+  scan's 0.09 s (seeded mutant R3 in DELTA.md), and the generated-layer limits admit no heavier side,
+  so time cannot tell the two apart. The counts and the IR walk above are the regression.
 """
 from __future__ import annotations
 
@@ -26,7 +28,8 @@ from pathlib import Path
 
 import pytest
 
-from tests.subprocesses import HANG_TIMEOUT, run_cpu_bounded
+from tests import lean_routes
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_readings_s1_lean import entry, env_k, k1_document, lean, norm  # noqa: F401
 from ve.readings_s1 import wire
 
@@ -65,7 +68,7 @@ def main (args : List String) : IO UInt32 := do
   return 0
 """
 
-ENTRY = "VE.Readings.Run.main"
+ENTRY = "VE.Readings.Run.runCaseReported"  # the service mode readings-route (`runMode_readingsRoute`)
 PAIR_FACTS = "VE.Readings.Run.pairFactsIn"
 PAIR_EVAL = "VE.Readings.pairEval"
 SCAN = "VE.Readings.scanOthers"
@@ -124,8 +127,8 @@ def review_case(raw):
 def test_the_review_reproducer_gives_the_specified_answer(lean):  # noqa: F811
     raw = env_k()
     case, sid = review_case(raw)
-    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=3)
-    assert completed.returncode in (0, 1), (completed.returncode, completed.stderr, cpu)
+    completed = lean_routes.completed_within(lean, wire([case]), cpu_seconds=3)
+    assert completed.returncode in (0, 1), (completed.returncode, completed.stderr)
     [row] = json.loads(completed.stdout)
     assert row == {"id": "review-b", "status": "ok", "set": "rs1",
                    "pair": {"situation": sid, "witness": "strict", "separated": False, "witness_admissible": True,

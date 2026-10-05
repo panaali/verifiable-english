@@ -1350,7 +1350,9 @@ def test_output_diff_static_invocations_cover_every_mode_and_corpus():
     corpora = lean_output_diff.case_corpora()
     units = lean_output_diff.diagnose_units()
     assert "soft-norms@0" in units and ROOT / "lean/VE/Route/examples/route-cases.json" in corpora
-    assert len(work) == len(corpora) * (len(lean_output_diff.CASE_MODES) + len(units))
+    # Each corpus: every `ve_conformance` mode, and a `ve_service` session per route mode and per unit.
+    assert len(work) == len(corpora) * (len(lean_output_diff.CASE_MODES) + len(lean_output_diff.ROUTE_MODES)
+                                        + len(units))
     assert {exe for exe, _ in lean_output_diff.CASE_MODES} <= set(lean_output_diff.executables())
 
 
@@ -1377,7 +1379,7 @@ def test_output_diff_fails_when_a_rebuilt_executable_has_no_inputs(tmp_path, mon
     """The reviewer's case: a rebuilt `ve_service` with zero invocations passed with exit 0."""
     names = lean_output_diff.executables()
     monkeypatch.setattr(lean_output_diff, "static_invocations", lambda root=ROOT: [
-        lean_output_diff.Invocation("ve_norms_route", "a", ())])
+        lean_output_diff.Invocation("ve_conformance", "a", ())])
     monkeypatch.setattr(lean_output_diff, "harness_invocations", lambda baseline: [])
     base, new = tmp_path / "base", tmp_path / "new"
     fake_build(base, names, "echo same")
@@ -1421,16 +1423,17 @@ def test_output_diff_reports_a_changed_output(tmp_path, monkeypatch):
 def test_output_diff_runs_only_rebuilt_executables(tmp_path, monkeypatch, capsys):
     names = lean_output_diff.executables()
     monkeypatch.setattr(lean_output_diff, "static_invocations", lambda root=ROOT: [
-        lean_output_diff.Invocation("ve_norms_route", "a", ()), lean_output_diff.Invocation("ve_risk_route", "b", ())])
+        lean_output_diff.Invocation("ve_conformance", "a", ()), lean_output_diff.Invocation("ve_english_run", "b", ())])
+    monkeypatch.setattr(lean_output_diff, "harness_invocations", lambda baseline: [])
     base, new = tmp_path / "base", tmp_path / "new"
     fake_build(base, names, "echo same")
     fake_build(new, names, "echo same")
-    (new / "ve_risk_route").write_text("#!/bin/sh\necho same\n# rebuilt\n")
+    (new / "ve_english_run").write_text("#!/bin/sh\necho same\n# rebuilt\n")
     manifest = {"commit": "c", "executables": {n: lean_output_diff.digest(base / n) for n in names}}
     (base / "manifest.json").write_text(json.dumps(manifest))
     assert lean_output_diff.compare(base, new, [], tmp_path) == 0
     out = capsys.readouterr().out
-    assert "different digest: ve_risk_route" in out and "2 invocations, 1 run on both builds, 1 skipped" in out
+    assert "different digest: ve_english_run" in out and "2 invocations, 1 run on both builds, 1 skipped" in out
 
 
 def test_recorder_records_lean_invocations_for_replay(tmp_path):
@@ -1462,6 +1465,8 @@ def test_contract_inputs_become_soft_elaborate_cases(tmp_path):
     path = tmp_path / "inputs.json"
     path.write_text(json.dumps([["t1", {"env": 1}, [{"norm": 1}]]]))
     work = lean_output_diff.contract_invocations(path)
-    assert [w.exe for w in work] == ["ve_soft_norms_route", "ve_diagnose"]
-    cases = json.loads(work[0].stdin)
-    assert cases == [{"id": "recorded-0", "kind": "soft-elaborate", "environment": {"env": 1}, "norms": [{"norm": 1}]}]
+    assert [w.exe for w in work] == ["ve_service", "ve_service"]
+    [soft], [diagnose] = ([json.loads(line) for line in w.stdin.decode().splitlines()] for w in work)
+    case = {"id": "recorded-0", "kind": "soft-elaborate", "environment": {"env": 1}, "norms": [{"norm": 1}]}
+    assert (soft["mode"], soft["cases"]) == ("soft-norms", [case])
+    assert (diagnose["mode"], diagnose["cases"]) == ("diagnose", [{**case, "unit": "soft-norms@0"}])

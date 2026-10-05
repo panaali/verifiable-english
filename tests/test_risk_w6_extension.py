@@ -11,23 +11,22 @@ ones, and so are Rust's where Rust names the same diagnostic.
 from __future__ import annotations
 
 import json
-import subprocess
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.risk import agent_ops, asimov_risk, asimov_rules
-from subprocesses import HANG_TIMEOUT
 from ve.environment import Environment
 from ve.errors import VEError
 
 ROOT = Path(__file__).resolve().parents[1]
-BIN = ROOT / "lean/.lake/build/bin/ve_risk_route"
-QUANTITY = ROOT / "lean/.lake/build/bin/ve_quantity"
+BIN = "ve_risk_route"  # its service mode, through tests/lean_routes.py
 RUST = ROOT / "rust/target/release/ve"
 
-pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 
 GB = {"scale": "1", "display": {"kind": "decimal", "label": "GB"}}
 W6_PROFILE = ("UnsupportedProfile: ve-units@1 requires exactly order@0, relational-fol@0 and time@0, "
@@ -229,7 +228,7 @@ def _python(raw):
 def _route(raws, kind="risk-elaborate", document=None):
     cases = [{"id": str(i), "kind": kind, "environment": raw, "document": document or {"norms": []}}
              for i, raw in enumerate(raws)]
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
+    out = lean_routes.completed(BIN, cases)
     assert out.returncode in (0, 1), out.stderr
     return json.loads(out.stdout)
 
@@ -294,7 +293,7 @@ def test_base_environment_binding_drops_the_annotations():
     assert res["verdict"] != "CONFLICT-FREE", res
 
 
-@pytest.mark.skipif(not (QUANTITY.exists() and RUST.exists()), reason="ve_quantity or the Rust binary is not built")
+@pytest.mark.skipif(not (lean_routes.SERVICE.exists() and RUST.exists()), reason="the Lean service or the Rust binary is not built")
 @pytest.mark.parametrize("units,constants,text", [
     ({"Gb": {"scale": "1", "display": {"kind": "percent"}}}, {}, 'Invalid unit tag "Gb"'),
     ({"gx": {"scale": "1", "display": {"kind": "decimal", "label": "GB1"}}}, {},

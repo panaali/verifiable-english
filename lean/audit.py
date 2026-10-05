@@ -3,8 +3,8 @@
 The pinned toolchain/build cache under .lake is trusted, not project source.
 This is a source/dependency policy check, not an untrusted-code sandbox.
 
-The audit output is the committed record `axioms.txt`; the audit fails when the record differs from
-it, so a new theorem cannot leave the record stale. `python3 lean/audit.py --write` regenerates it.
+The audit output of every manifest, in order, is the committed record `axioms.txt`; the audit fails when the
+record differs from it, so a new theorem cannot leave the record stale. `python3 lean/audit.py --write` regenerates it.
 """
 from pathlib import Path
 import re
@@ -85,6 +85,26 @@ def scan_sources(root):
     return actual, sources
 
 
+# The audit manifests: the trusted VE tree's (hash-frozen) and the response-shape theorems'
+# (lib ResponseShape, outside the trusted tree). Every theorem of every source is in exactly one.
+MANIFESTS = ("VE/Audit.lean", "ResponseShape/Audit.lean")
+
+
+def unwrapped(output):
+    """The lines of `#print axioms` output, a long one that Lean wrapped joined back."""
+    lines = []
+    for line in output.splitlines():
+        if line.startswith(" ") and lines:
+            lines[-1] += line
+        else:
+            lines.append(line)
+    return lines
+
+
+def recorded_in(manifest):
+    return set(re.findall(r"^#print axioms (\S+)", code_only((ROOT / manifest).read_text()), re.M))
+
+
 def recorded_names(text):
     """The theorem names of an audit record such as `axioms.txt`."""
     return re.findall(r"^'([^']+)' (?:does not depend on any axioms|depends on axioms)", text, re.M)
@@ -95,24 +115,28 @@ def main(argv=()):
     if list(argv) and not write:
         raise SystemExit("usage: python3 lean/audit.py [--write]")
     actual, sources = scan_sources(ROOT)
-    recorded = set(re.findall(r"^#print axioms (\S+)", code_only((ROOT / "VE/Audit.lean").read_text()), re.M))
-    assert actual == recorded, {"missing": actual - recorded, "extra": recorded - actual}
-    result = subprocess.run(["lake", "env", "lean", "VE/Audit.lean"], cwd=ROOT,
-                            text=True, capture_output=True, check=True)
-    seen = set()
-    for line in result.stdout.splitlines():
-        match = re.fullmatch(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[(.*)\])", line)
-        if not match:
-            raise AssertionError(f"Unexpected audit output: {line}")
-        name, _, dependencies = match.groups()
-        seen.add(name)
-        axioms = set(dependencies.split(", ")) if dependencies else set()
-        assert axioms <= ALLOWED, (name, axioms - ALLOWED)
+    recorded = [recorded_in(manifest) for manifest in MANIFESTS]
+    assert not set.intersection(*recorded), {"listed twice": set.intersection(*recorded)}
+    assert actual == set.union(*recorded), {"missing": actual - set.union(*recorded),
+                                           "extra": set.union(*recorded) - actual}
+    seen, output = set(), ""
+    for manifest in MANIFESTS:
+        result = subprocess.run(["lake", "env", "lean", manifest], cwd=ROOT,
+                                text=True, capture_output=True, check=True)
+        for line in unwrapped(result.stdout):
+            match = re.fullmatch(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[(.*)\])", line)
+            if not match:
+                raise AssertionError(f"Unexpected audit output: {line}")
+            name, _, dependencies = match.groups()
+            seen.add(name)
+            axioms = set(dependencies.split(", ")) if dependencies else set()
+            assert axioms <= ALLOWED, (name, axioms - ALLOWED)
+        output += result.stdout
     assert seen == actual
-    print(result.stdout, end="")
+    print(output, end="")
     if write:
-        RECORD.write_text(result.stdout)
-    elif RECORD.read_text() != result.stdout:
+        RECORD.write_text(output)
+    elif RECORD.read_text() != output:
         raise AssertionError(f"{RECORD.name} is stale: {len(recorded_names(RECORD.read_text()))} entries, "
                              f"{len(seen)} audited; regenerate with python3 lean/audit.py --write")
     print(f"PASS: {len(sources)} source files; {len(seen)} named theorem declarations audited "

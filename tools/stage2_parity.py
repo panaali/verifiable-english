@@ -26,6 +26,10 @@ and under the selected authority, and compared with the frozen Python baseline
 
 ``--write`` regenerates ``docs/spec/stage2-parity.md``; ``--show OPERATION`` prints
 the first non-matching cell of one operation.
+
+Exit 0 only when cells were compared and none is a ``regression`` or ``different``; 1 when one is;
+2, before anything runs, for a ``--show`` operation the matrix does not probe, and when the run
+compares no cell.
 """
 from __future__ import annotations
 
@@ -41,6 +45,7 @@ sys.path.insert(0, str(ROOT))
 
 from tests import probe_matrix as probe  # noqa: E402
 from ve.backends import dispatch  # noqa: E402
+from ve.backends.service_schema import same_json  # noqa: E402
 from ve.errors import CheckerUnavailable  # noqa: E402
 
 REPORT = ROOT / "docs/spec/stage2-parity.md"
@@ -101,17 +106,22 @@ def _key(row) -> tuple:
 
 
 def _projected(row):
-    return (row["cell"], row["status"], probe.baseline_projection(row["output"]))
+    return [row["cell"], row["status"], probe.baseline_projection(row["output"])]
+
+
+def _same(a, b) -> bool:
+    """Type-strict JSON equality (`true` is not `1`, `1` is not `1.0`), never Python's `==`."""
+    return same_json(_projected(a), _projected(b))
 
 
 def _classify(old, new, now=None, own=None) -> str:
-    if _projected(old) == _projected(new):
+    if _same(old, new):
         if own is not None and own in new.get("routed", ()):
             return "same, adapter"
         if new["cell"] in ("R", "U") and new.get("backend_rejection"):
             return "same, backend rejection"
         return "same, constituents" if new.get("routed") else "same, python"
-    if now is not None and _projected(now) == _projected(new):
+    if now is not None and _same(now, new):
         return "baseline drift"
     if old["cell"] != new["cell"] or old["status"] != new["status"]:
         return "regression"
@@ -248,6 +258,9 @@ def main(argv=None) -> int:
     probe.outcome = _outcome
     probe.graph_baselines = _backend_graph_baselines
     if args.show:
+        if args.show not in probe.OPERATIONS:
+            print(f"stage2_parity: the probe matrix has no operation {args.show!r}", file=sys.stderr)
+            return 2
         probe.OPERATIONS = tuple(op for op in probe.OPERATIONS if op == args.show)
         probe.graph_baselines = probe.boundary_baselines = probe.feature_baselines = dict
     now = _generate("python")
@@ -261,13 +274,22 @@ def main(argv=None) -> int:
         print(json.dumps(shown, indent=1, sort_keys=True))
         return 0
     result = compare(baseline, now, current)
+    if not result["cells"]:
+        print("stage2_parity: no probe cell was compared", file=sys.stderr)
+        return 2
     if args.json:
         args.json.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
     text = render(result)
     if args.write:
         REPORT.write_text(text)
     print(text)
-    return 0
+    return exit_status(result)
+
+
+def exit_status(result: dict) -> int:
+    """1 when a cell or named probe regressed or differs, else 0 (cells were compared)."""
+    classes = [row["class"] for row in result["cells"] + result["probes"]]
+    return 1 if "regression" in classes or "different" in classes else 0
 
 
 if __name__ == "__main__":

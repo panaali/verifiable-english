@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.lean_service_common import MODES, machine  # noqa: E402
 from ve.backends.lean_service import LeanService, case_digest, case_texts  # noqa: E402
+from ve.backends.service_schema import same_json  # noqa: E402
 
 COMMAND = {mode: command for mode, command in MODES.values()}
 FIXTURES = ROOT / "conformance"
@@ -272,9 +273,9 @@ def compare_english(service, payloads):
         rows = [bound["result"] for bound in response.get("results") or []] or [None] * n
         for (code, stdout, stderr), row in zip(expected[offset:offset + n], rows):
             if code == 0:
-                ok = stdout in body and json.loads(stdout) == row
+                ok = stdout in body and same_json(json.loads(stdout), row)
             else:
-                ok = row == {"status": "error", "error": stderr}
+                ok = same_json(row, {"status": "error", "error": stderr})
             if ok:
                 stats["identical"] += 1
             else:
@@ -300,9 +301,10 @@ def compare_english_raw(service, payloads):
         stats["requests"] += 1
         row = (response.get("results") or [{"result": None}])[0]["result"]
         if proc.returncode == 0:
-            ok = response["status"] == "ok" and proc.stdout.strip() in results_text(raw) and row == json.loads(proc.stdout)
+            ok = (response["status"] == "ok" and proc.stdout.strip() in results_text(raw)
+                  and same_json(row, json.loads(proc.stdout)))
         else:
-            ok = row == {"status": "error", "error": proc.stderr.decode().strip()}
+            ok = same_json(row, {"status": "error", "error": proc.stderr.decode().strip()})
         if ok:
             stats["identical"] += 1
         else:
@@ -362,7 +364,18 @@ def main(argv=None):
                      f"{', '.join(f'{k}: {v}' for k, v in sorted(c['exit_codes'].items()))} |")
     (args.out / "PARITY.md").write_text("\n".join(lines) + "\n")
     print(f"TOTAL {same}/{total} identical")
-    return 0 if same == total else 1
+    return gate_status(report)
+
+
+def gate_status(report) -> int:
+    """0 when every case of every corpus is identical. A corpus that yielded no case (a glob that
+    matched nothing, a fixture that went missing) is no evidence: it fails the gate rather than
+    adding 0/0 to the total."""
+    empty = [f"{c['mode']}: {c['corpus']}" for c in report["corpora"] if c["cases"] == 0]
+    for name in empty:
+        print(f"EMPTY corpus {name}", file=sys.stderr)
+    total = report["total"]
+    return 0 if total["identical"] == total["cases"] and total["cases"] > 0 and not empty else 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,22 @@
+{
+ "format": "ve.english-grammar-lock@1",
+ "actions_version": "5",
+ "files": {
+  "lean/VE/EnglishGrammar/Actions.lean": "b8bce535e4bc40b8c1a7ab853d9616248aa6ad295b5aff1f42c5f4a13cb1039b",
+  "lean/VE/EnglishGrammar/Catalogue.lean": "150c694a272ebd12b050b5f33f72884d1e821feaa57741303d37f88be73b2d25",
+  "lean/VE/EnglishGrammar/Encode.lean": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
+  "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean": "4f61ad7703c694f041086de9501f0c43c41ba978b38f915215bdae0473c614e0",
+  "lean/VE/EnglishGrammar/Lexer.lean": "11ecf520b7be58809d00dce718747f771fdc9bf5ee93c2dab32aff5451b70b50",
+  "lean/VE/EnglishGrammar/Lexicon.lean": "d1511e5304bb286a31c349ce5f762bbaa4f0ede4933564f5d9fc3604dd9a63d0",
+  "lean/VE/EnglishGrammar/Read.lean": "1687001954a2f6c865edaf231df1767601979da0272bf0ac8702c877c9111e7f",
+  "lean/VE/EnglishGrammar/Rules.lean": "695d926e446b4c32d5ab112be6dd5dff88c6a84c35169733a1b9d70eb303e686",
+  "lean/VE/EnglishGrammar/Run.lean": "1e0d02fad48418a1daaa74c0614ee0f2b9fa4161680cf2b682a4665780435ccb",
+  "lean/VE/EnglishGrammar/Syntax.lean": "d296ed3fe824d17ef1f22821d1f826a8d9d6379cbdd97c868677356968aead81",
+  "lean/VE/EnglishGrammar/Token.lean": "98861a1a8696810186d9f9fc934678fae257b464356c5beaf6aec07e9c7f57ac",
+  "lean/VE/Grammar/Basic.lean": "74adf159cfee0b28003a2945b98ec7e7ae2fab29017a210352601c873ee044db",
+  "lean/VE/Grammar/Derives.lean": "ef64815fd148f43f610424ac4ca2da8634f9fd55c51a7dd41542a27dfdbeaa8c",
+  "lean/VE/Grammar/Meaning.lean": "6ca0f9cc0181200e390bdfa6b170d51a5baf9d5a236fbfa8ae1ff3c9576805e1",
+  "lean/VE/Grammar/Reading.lean": "87f463821916f6e12f7bfa795b29b57bec90c3a9a009f19ae19926ba2f18a014",
+  "ve/english_grammar/relational-fol@0.json": "de8bc6f7a338611879e5b7826f6f0f48c9b59e1defb549eac406602c13a032f7"
+ }
+}

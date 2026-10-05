@@ -1,6 +1,6 @@
 """The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
 
-`ve.readings_route.validate` returns `ve_readings_route`'s `readings-validate` row, or raises its diagnostic with
+`ve.readings_route.validate` returns the readings route's `readings-validate` row (service mode `readings-route`), or raises its diagnostic with
 Lean's text verbatim; no Python regeneration or Rust replay is compared with it. A row that is malformed or not
 bound to the request (its sets, versions, candidates in order, readings and situations) is `CheckerUnavailable`,
 never a rejection and never an admission. The English of the report reads Lean's findings, and a construction of
@@ -13,6 +13,7 @@ import copy
 import pytest
 
 import ve.readings_route as route
+from tests import lean_routes
 from tests.test_readings_s1_document import default, s1_document, strict
 from tests.test_readings_s1_lean import LEAN, env_k, k1_document
 from ve.document import check_document
@@ -23,8 +24,8 @@ DECISION_ONLY = "It is not certified that these two readings differ only where"
 
 @pytest.fixture(scope="module")
 def lean():
-    if not LEAN.exists():
-        pytest.skip("ve_readings_route is not built")
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service is not built")
     return LEAN
 
 
@@ -44,8 +45,8 @@ def k1(lean):
 
 
 def answering(monkeypatch, row):
-    """The route's transport answers `row` (one case), as Lean's runner would."""
-    monkeypatch.setattr(route, "run_readings_cases", lambda executable, cases, timeout=None: [copy.deepcopy(row)])
+    """The route answers `row` (one case), as the service's client returns Lean's row."""
+    monkeypatch.setattr(route, "rows", lambda mode, cases, **options: [copy.deepcopy(row)])
 
 
 def test_a_genuine_row_is_returned_as_lean_wrote_it(k1):
@@ -196,7 +197,7 @@ def test_a_row_not_bound_to_the_request_is_unavailable(monkeypatch, k1, fault):
     bad = copy.deepcopy(row)
     UNBOUND[fault](bad)
     answering(monkeypatch, bad)
-    with pytest.raises(CheckerUnavailable, match="ve_readings_route returned an invalid answer"):
+    with pytest.raises(CheckerUnavailable, match="the Lean readings route returned an invalid answer"):
         route.validate(raw, units_of(document), document["reading_sets"])
 
 
@@ -212,21 +213,21 @@ def test_a_row_without_content_bearing_sets_is_bound_only_alone(monkeypatch, k1)
     for request, row in ((document, {"id": "readings-s1", "status": "ok", "content_bearing": False}),
                          (pending, {"id": "readings-s1", "status": "ok", "content_bearing": False, "sets": []})):
         answering(monkeypatch, row)
-        with pytest.raises(CheckerUnavailable, match="ve_readings_route returned an invalid answer"):
+        with pytest.raises(CheckerUnavailable, match="the Lean readings route returned an invalid answer"):
             route.validate(raw, units_of(request), request["reading_sets"])
 
 
 def _filtered(monkeypatch, code):
     """The route with Lean's findings of `code` removed from its rows, as if Lean had not found them."""
-    real = route.run_readings_cases
+    real = route.rows
 
-    def run(executable, cases, timeout=None):
-        rows = real(executable, cases, timeout=timeout)
+    def run(mode, cases, **options):
+        rows = real(mode, cases, **options)
         for row in rows:
             for entry in row.get("sets", []):
                 entry["findings"] = [f for f in entry["findings"] if not f.startswith(code + ":")]
         return rows
-    monkeypatch.setattr(route, "run_readings_cases", run)
+    monkeypatch.setattr(route, "rows", run)
 
 
 def test_the_decision_only_sentence_follows_leans_finding(tmp_path, monkeypatch, lean):
