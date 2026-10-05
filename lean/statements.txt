@@ -19439,10 +19439,32 @@ theorem VE.Service.boundResults_eq
       Option.some (VE.Service.bound i (digests.getD i "") (VE.Service.caseResult r.mode i cases[i]))
   -- uses VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.bindResults@VE.Service.Protocol VE.Service.bound@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
   -- expr 4020929959
+theorem VE.Service.bound_eq
+  ∀ (index : Nat) (digest : String) (result : Lean.Json),
+    VE.Service.bound index digest result =
+      Lean.Json.mkObj
+        ([("index", Lean.ToJson.toJson index), ("digest", Lean.Json.str digest), ("result", result)] ++
+          VE.Service.coding result)
+  -- uses VE.Service.bound@VE.Service.Protocol VE.Service.coding@VE.Service.Protocol
+  -- expr 203835929
 theorem VE.Service.caseResult_ok
   ∀ (m : VE.Service.Mode) (i : Nat) (j : Lean.Json), VE.Service.caseResult m i (Except.ok j) = VE.Service.runMode m j
   -- uses VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 2494159536
+theorem VE.Service.coding_error
+  ∀ (result : Lean.Json) (m : String),
+    result.getObjValD "status" = Lean.Json.str "error" →
+      result.getObjValD "error" = Lean.Json.str m → VE.Service.coding result = VE.Service.codeMembers m
+  -- uses VE.Service.codeMembers@VE.Service.Protocol VE.Service.coding@VE.Service.Protocol
+  -- expr 3888635918
+theorem VE.Service.coding_of_status
+  ∀ (result : Lean.Json), result.getObjValD "status" ≠ Lean.Json.str "error" → VE.Service.coding result = []
+  -- uses VE.Service.coding@VE.Service.Protocol
+  -- expr 3882396647
+theorem VE.Service.rejectionCode_mem
+  ∀ (m : String), VE.Service.rejectionCode m ∈ VE.Service.rejectionCodes
+  -- uses VE.Service.rejectionCode@VE.Service.Protocol VE.Service.rejectionCodes@VE.Service.Protocol
+  -- expr 3222032837
 theorem VE.Service.respond_decoded
   ∀ (line : String) (members : Array (String × String)) (r : VE.Service.Request),
     VE.Service.objectMembers line = Except.ok members →

@@ -69,6 +69,7 @@
    "T": [
     "ResponseDecode.Check",
     "ResponseDecode.Invariants.admission",
+    "ResponseDecode.Invariants.coding",
     "ResponseDecode.Invariants.declarations",
     "ResponseDecode.Invariants.distinct",
     "ResponseDecode.Invariants.englishItem",
@@ -91,6 +92,7 @@
     "ResponseDecode.caseErrorRow",
     "ResponseDecode.checkCertificate",
     "ResponseDecode.claim",
+    "ResponseDecode.coding",
     "ResponseDecode.contentCheck",
     "ResponseDecode.countWhere",
     "ResponseDecode.definitionsCount",
@@ -107,6 +109,7 @@
     "ResponseDecode.graphShape",
     "ResponseDecode.has",
     "ResponseDecode.hex64",
+    "ResponseDecode.invariants",
     "ResponseDecode.isField",
     "ResponseDecode.isTrue",
     "ResponseDecode.kind",
@@ -3365,6 +3368,16 @@
     "VE.Readings.Examples.σ21c"
    ]
   },
+  "VE/Readings/Force.lean": {
+   "S": [
+    "VE.Readings.Twin",
+    "VE.Readings.TwinDocs",
+    "VE.Readings.tablesRel"
+   ],
+   "G[V]": [
+    "VE.Readings.relaxDoc"
+   ]
+  },
   "VE/Readings/Lines.lean": {
    "S": [
     "VE.Readings.GenKey.tag",
@@ -3453,6 +3466,7 @@
     "VE.Readings.keyedNodes",
     "VE.Readings.maxCells",
     "VE.Readings.observe",
+    "VE.Readings.relaxTo",
     "VE.Readings.ruleOf",
     "VE.Readings.selectable",
     "VE.Readings.separates",
@@ -3463,6 +3477,7 @@
     "VE.Readings.tablesFor",
     "VE.Readings.tablesModel",
     "VE.Readings.tablesTyped",
+    "VE.Readings.twinDocs",
     "VE.Readings.twinLineLists",
     "VE.Readings.twinLines",
     "VE.Readings.twinNodes",
@@ -5121,6 +5136,8 @@
     "VE.Service.Request.budget",
     "VE.Service.bound",
     "VE.Service.caseResult",
+    "VE.Service.codeMembers",
+    "VE.Service.coding",
     "VE.Service.englishReported",
     "VE.Service.handleLine",
     "VE.Service.handshake",
@@ -5137,6 +5154,8 @@
     "VE.Service.lineError",
     "VE.Service.maxCases",
     "VE.Service.maxLineBytes",
+    "VE.Service.rejectionCode",
+    "VE.Service.rejectionCodes",
     "VE.Service.requestError"
    ]
   },
@@ -6374,6 +6393,69 @@
     "VE.WireContract.Hooks.Corpus.view"
    ]
   },
+  "VE/WireContract/Hooks/NormDefaults.lean": {
+   "G[V]": [
+    "VE.WireContract.Hooks.NormDefaults.adapter",
+    "VE.WireContract.Hooks.NormDefaults.author",
+    "VE.WireContract.Hooks.NormDefaults.firstOverBudget",
+    "VE.WireContract.Hooks.NormDefaults.formulaDepth",
+    "VE.WireContract.Hooks.NormDefaults.holdsUnless",
+    "VE.WireContract.Hooks.NormDefaults.hooks",
+    "VE.WireContract.Hooks.NormDefaults.own",
+    "VE.WireContract.Hooks.NormDefaults.ownNames",
+    "VE.WireContract.Hooks.NormDefaults.predicate",
+    "VE.WireContract.Hooks.NormDefaults.registered"
+   ]
+  },
+  "VE/WireContract/Hooks/Norms.lean": {
+   "G[V]": [
+    "VE.WireContract.Hooks.Norms.activeNorms",
+    "VE.WireContract.Hooks.Norms.adapter",
+    "VE.WireContract.Hooks.Norms.after",
+    "VE.WireContract.Hooks.Norms.carveOutSyntax",
+    "VE.WireContract.Hooks.Norms.classifier",
+    "VE.WireContract.Hooks.Norms.cycle",
+    "VE.WireContract.Hooks.Norms.domainProfiles",
+    "VE.WireContract.Hooks.Norms.environmentOf",
+    "VE.WireContract.Hooks.Norms.hooks",
+    "VE.WireContract.Hooks.Norms.inSharedDomain",
+    "VE.WireContract.Hooks.Norms.itemIndex",
+    "VE.WireContract.Hooks.Norms.itemValue",
+    "VE.WireContract.Hooks.Norms.l8Samples",
+    "VE.WireContract.Hooks.Norms.layerGraph",
+    "VE.WireContract.Hooks.Norms.nameOf",
+    "VE.WireContract.Hooks.Norms.normsOf",
+    "VE.WireContract.Hooks.Norms.num",
+    "VE.WireContract.Hooks.Norms.outsideDomain",
+    "VE.WireContract.Hooks.Norms.predicate",
+    "VE.WireContract.Hooks.Norms.profiles",
+    "VE.WireContract.Hooks.Norms.registered",
+    "VE.WireContract.Hooks.Norms.regulatedNames",
+    "VE.WireContract.Hooks.Norms.ruleField",
+    "VE.WireContract.Hooks.Norms.ruleTyping",
+    "VE.WireContract.Hooks.Norms.rulesOf",
+    "VE.WireContract.Hooks.Norms.sameAsBudget",
+    "VE.WireContract.Hooks.Norms.sentinel",
+    "VE.WireContract.Hooks.Norms.skeleton",
+    "VE.WireContract.Hooks.Norms.sourceAdapter",
+    "VE.WireContract.Hooks.Norms.synFormula",
+    "VE.WireContract.Hooks.Norms.synRule",
+    "VE.WireContract.Hooks.Norms.synTerm",
+    "VE.WireContract.Hooks.Norms.syntaxMember",
+    "VE.WireContract.Hooks.Norms.tick",
+    "VE.WireContract.Hooks.Norms.typeRule",
+    "VE.WireContract.Hooks.Norms.typeTerm",
+    "VE.WireContract.Hooks.Norms.typeWalk",
+    "VE.WireContract.Hooks.Norms.typingEnvironment",
+    "VE.WireContract.Hooks.Norms.typingMember",
+    "VE.WireContract.Hooks.Norms.view",
+    "VE.WireContract.Hooks.Norms.w1Environment"
+   ],
+   "G[R]": [
+    "VE.WireContract.Hooks.Norms.message",
+    "VE.WireContract.Hooks.Norms.underDefaults"
+   ]
+  },
   "VE/WireContract/Hooks/SoftNorms.lean": {
    "G[V]": [
     "VE.WireContract.Hooks.SoftNorms.adapter",
@@ -6398,6 +6480,7 @@
   },
   "VE/WireContract/Limits.lean": {
    "G[R]": [
+    "VE.WireContract.Limits.MAX_CARVE_OUTS",
     "VE.WireContract.Limits.MAX_FACTOR_BYTES",
     "VE.WireContract.Limits.MAX_RULES",
     "VE.WireContract.Limits.MAX_SOFT_PARTIES",
@@ -6409,6 +6492,7 @@
     "VE.WireContract.Names.decider",
     "VE.WireContract.Names.no_double_underscore",
     "VE.WireContract.Names.not_soft_reserved",
+    "VE.WireContract.Names.rule_name",
     "VE.WireContract.Names.soft_name"
    ]
   },
@@ -6440,6 +6524,16 @@
     "VE.WireContract.Tables.Corpus.Forms.table",
     "VE.WireContract.Tables.Corpus.Inner.table",
     "VE.WireContract.Tables.Corpus.Mid.table"
+   ]
+  },
+  "VE/WireContract/Tables/NormDefaults.lean": {
+   "G[V]": [
+    "VE.WireContract.Tables.NormDefaults.table"
+   ]
+  },
+  "VE/WireContract/Tables/Norms.lean": {
+   "G[V]": [
+    "VE.WireContract.Tables.Norms.table"
    ]
   },
   "VE/WireContract/Tables/SoftNorms.lean": {

@@ -1849,6 +1849,10 @@
 'VE.Service.runRequest_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.results_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.boundResults_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.bound_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.coding_of_status' depends on axioms: [propext]
+'VE.Service.coding_error' depends on axioms: [propext]
+'VE.Service.rejectionCode_mem' depends on axioms: [propext]
 'VE.Service.respond_decoded' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Risk.termSum_cons' depends on axioms: [propext]
 'VE.Risk.termSum_nil' does not depend on any axioms

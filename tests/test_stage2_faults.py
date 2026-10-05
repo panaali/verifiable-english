@@ -15,7 +15,7 @@ from ve import ArgumentGraph, Claim, check_argument
 from ve.admission import admit_document, validate_label
 from ve.ast import Bottom, Const, Not, Top, Unary
 from ve.background import background, dependency_order
-from ve.backends import lean_runner, rust_jsonl, validation
+from ve.backends import relay, rust_jsonl, validation
 from ve.backends.lean_service import LeanServicePool
 from ve.bundle import check_bundle
 from ve.definitions import compile_definitions
@@ -127,7 +127,7 @@ def lean_authority(monkeypatch):
 
 def use_pool(monkeypatch, executable, **options):
     pool = LeanServicePool(size=1, executable=executable, **options)
-    monkeypatch.setattr(lean_runner, "_pool", pool)
+    monkeypatch.setattr(relay, "_pool", pool)
     return pool
 
 
