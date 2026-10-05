@@ -18,6 +18,7 @@ input. At the end the inputs are written, deduplicated, to `VE_CONTRACT_INPUTS` 
 `[test id, environment, norms]`.
 """
 
+import itertools
 import json
 import os
 from pathlib import Path
@@ -26,7 +27,11 @@ import sys
 
 TESTS = Path(__file__).resolve().parent
 SOFT_CONFORMANCE = TESTS.parent / "conformance/soft_norms.py"
+# Unit -> input key -> (collection index of the recording test, -1 outside a test; its test id;
+# sequence number).
 _RECORDED = {}
+_CURRENT = [-1]
+_SEQUENCE = itertools.count()
 
 
 def _from_tests():
@@ -49,7 +54,12 @@ def _record(environment, norms, unit="soft-norms@0"):
     if FILES is not None and label.split("::")[0] not in FILES[unit]:
         return
     key = json.dumps([environment, norms], sort_keys=True, default=repr)
-    _RECORDED.setdefault(unit, {}).setdefault(key, label)
+    # The first recording in collection order names the input, under xdist too; the sequence
+    # number orders the inputs one test records first as they were recorded.
+    recording = (_CURRENT[0], label, next(_SEQUENCE))
+    inputs = _RECORDED.setdefault(unit, {})
+    if key not in inputs or recording < inputs[key]:
+        inputs[key] = recording
 
 
 def _install():
@@ -219,15 +229,26 @@ def _install_norms():
 _install()
 
 
+def pytest_collection_finish(session):
+    _INDEX.update((item.nodeid, index) for index, item in enumerate(session.items))
+
+
+_INDEX = {}
+
+
+def pytest_runtest_protocol(item, nextitem):
+    _CURRENT[0] = _INDEX.get(item.nodeid, -1)
+
+
 def pytest_sessionfinish(session, exitstatus):
     """Write the inputs: one unit's as a list, several as an object from unit to list. Under
-    xdist each worker writes its own `<path>.<worker>` and the controller, which ends after
-    every worker has, merges them: an input recorded by several tests keeps the first test id
-    in order, as a serial run does."""
+    xdist each worker writes its own `<path>.<worker>` (it ends before the controller does) and
+    the controller merges them: an input recorded by several tests keeps the first test in
+    collection order, and the rows are in the order a serial run writes them."""
     path = os.environ.get("VE_CONTRACT_INPUTS")
     if not path:
         return
-    # Not PYTEST_XDIST_WORKER: a recording run started by a test on a worker inherits it.
+    # Not PYTEST_XDIST_WORKER: a controller started from inside an xdist worker inherits it.
     worker = getattr(session.config, "workerinput", {}).get("workerid")
     if worker:
         Path(f"{path}.{worker}").write_text(json.dumps(_RECORDED))
@@ -235,9 +256,12 @@ def pytest_sessionfinish(session, exitstatus):
     recorded = {unit: dict(_RECORDED.get(unit, {})) for unit in sorted(RECORDING)}
     for part in sorted(Path(path).parent.glob(f"{Path(path).name}.gw*")):
         for unit, inputs in json.loads(part.read_text()).items():
-            for key, label in inputs.items():
-                recorded[unit][key] = min(label, recorded[unit].get(key, label))
+            for key, recording in inputs.items():
+                recording = tuple(recording)
+                if key not in recorded[unit] or recording < recorded[unit][key]:
+                    recorded[unit][key] = recording
         part.unlink()
-    rows = {unit: [[label, *json.loads(key)] for key, label in sorted(inputs.items(), key=lambda item: (item[1], item[0]))]
+    rows = {unit: [[label, *json.loads(key)] for key, (_, label, _) in
+                   sorted(inputs.items(), key=lambda item: (item[1][1], item[1][0], item[1][2]))]
             for unit, inputs in recorded.items()}
     Path(path).write_text(json.dumps(rows[UNIT] if FILES is None else rows))

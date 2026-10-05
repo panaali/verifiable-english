@@ -34,10 +34,8 @@ def run_cases(cases, executable=LEAN_ROUTE, *, timeout=None):
 
 def run_case(case, executable=LEAN_ROUTE):
     row = run_cases([case], executable)[0]
-    if row.get("status") == "error":
-        raise VEError(row.get("error", "norm-defaults route rejected input"))
-    if row.get("status") != "ok":
-        raise VEError("norm-defaults route failed")
+    if row["status"] == "error":
+        raise VEError(row["error"])
     return row
 
 

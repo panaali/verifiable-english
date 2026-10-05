@@ -207,7 +207,8 @@ def _background_python(env) -> tuple[Premise, ...]:
 def background(env) -> tuple[Premise, ...]:
     """Environment premises from the selected authority, with the legacy type."""
     from .backends.dispatch import execute
-    from .backends.lean_runner import route_environment, route_mode, run
+    from .backends.lean_runner import route_environment, route_mode
+    from .backends.relay import decide
     from .ast import formula_from_data
 
     case = {"id": "background", "kind": "background", "environment": env.to_dict()}
@@ -218,7 +219,7 @@ def background(env) -> tuple[Premise, ...]:
             # Lean certificate runners bind the case premises alone.
             return ()
         request = {**case, "environment": route_environment(env)}
-        row = run(route_mode(env), [request])[0]
+        row = decide(route_mode(env), [request])[0]
         if len(row["premises"]) != len(row["generators"]):
             from .backends.lean_service import CheckerUnavailable
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean Background result")
@@ -309,7 +310,7 @@ _DEPENDENCY_ENVIRONMENT = {
 def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tuple[str, ...]:
     """Dependencies precede dependents in one DAG over defined and regulated symbols."""
     from .backends.dispatch import authority_for, execute
-    from .backends.lean_runner import run
+    from .backends.relay import decide
     from .backends.lean_service import CheckerUnavailable
     from .errors import ResourceLimit
 
@@ -323,7 +324,7 @@ def dependency_order(dependencies: dict[str, set[str] | tuple[str, ...]]) -> tup
                       for name in sorted(dependencies)]}
 
     def lean():
-        order = run("route", [case])[0]["order"]
+        order = decide("route", [case])[0]["order"]
         if (type(order) is not list or len(order) != len(dependencies)
                 or set(order) != set(dependencies)):
             raise CheckerUnavailable("CheckerUnavailable: malformed Lean dependency order")
