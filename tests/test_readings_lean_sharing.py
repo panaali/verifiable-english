@@ -9,6 +9,8 @@ plan F5b; batch 3b review B1, B2).
   functions (`pairFactsSpec`, `candidateJsonSpec`, `admitReadingsSpec`) does reach `one`, so the walk can fail.
 * Admission stops at the first diagnostic (`firstSome` is `findSome?`): a document whose first set's candidate is
   ill-formed is refused without validating the 119 candidates after it (4.0 s of CPU before, 0.26 s after).
+* No pending candidate's document is built (batch 3b looprecheck B): admission builds the candidates with content
+  only, and a set's findings skip a pair with a pending candidate before reading either side.
 * The other reading's completions are scanned lazily: `RunExamples.lean` pins the evaluation counts at build time;
   here the review's reproducer (12 cells, ten fixed default rules) runs under a CPU limit far below what
   evaluating all 4,096 completions costs (7.8 s on the batch-3b head) and far above what the scan costs (0.07 s).
@@ -177,3 +179,45 @@ def test_admission_stops_at_the_first_ill_formed_candidate(lean):  # noqa: F811
     assert completed.returncode == 1, (completed.returncode, completed.stderr, cpu)
     assert json.loads(completed.stdout) == [{"id": "first", "status": "error", "error":
         "PrecedenceAcrossPredicates: rule r0 on avoid_required, rule hard on help_required under rs0@1:1"}]
+
+
+def pending_document(sets, per_set, fixed=10):
+    """`fixed` fixed default rules and `sets` sets of `per_set` readings each, all pending except the first set's
+    first reading (a strict rule on `help_required`)."""
+    units = [{"id": f"f{k}", "kind": "norm", "content": norm(f"f{k}", "avoid_required", True, "default")}
+             for k in range(fixed)]
+    reading_sets = []
+    for s in range(sets):
+        readings = [reading(f"p{k}", None, {}) for k in range(per_set)]
+        if s == 0:
+            readings[0] = reading("p0", norm("active", "help_required", True), {})
+        reading_sets.append(reading_set(f"rs{s}", f"u{s}", readings, {}))
+        units.append({"id": f"u{s}"})
+    return {"units": units, "reading_sets": reading_sets}
+
+
+def assert_one_active_row(row, per_set):
+    assert row["status"] == "ok" and row["content_bearing"], row
+    [answered] = row["sets"]
+    assert (answered["set"], answered["pairs"], answered["findings"]) == ("rs0", [], [])
+    candidates = answered["candidates"]
+    assert [(c["id"], c["pending"]) for c in candidates] == [("p0", False)] + [(f"p{k}", True)
+                                                                             for k in range(1, per_set)]
+    assert candidates[0]["findings"] == [] and candidates[0]["owned"] == []
+    assert [entry["name"] for entry in candidates[0]["shared"]] == [f"soft__excepted__f{k}" for k in range(10)]
+
+
+@pytest.mark.parametrize("sets, per_set", [(60, 2), (120, 2), (1, 60)], ids=["many-sets", "more-sets", "one-set"])
+def test_no_pending_candidates_document_is_built(lean, sets, per_set):  # noqa: F811
+    """Batch 3b looprecheck B: admission built the 119 pending candidates' documents of `many-sets` (the review's
+    reproducer) though 4.4 skips them (1.1-2.2 s of CPU before, 0.09-0.22 s after); `more-sets` doubles the sets,
+    which makes the head before the fix five times the limit (5.0 s, against 0.16 s). The table now holds the
+    candidates with content alone (`onesOf_active`), so the findings of `one-set` must not read a pending
+    candidate's side either: each of its 1,770 pairs would rebuild both documents outside the table (5.0 s)."""
+    raw = env_k()
+    case = {"id": "pending", "kind": "readings-validate", "environment": raw,
+            "document": pending_document(sets, per_set)}
+    completed, cpu = run_cpu_bounded([str(lean), "-"], json.dumps(wire([case])), cpu_seconds=1)
+    assert completed.returncode == 0, (completed.returncode, completed.stderr, cpu)
+    [row] = json.loads(completed.stdout)
+    assert_one_active_row(row, per_set)
