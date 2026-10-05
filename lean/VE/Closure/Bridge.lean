@@ -69,7 +69,7 @@ def runCase (j : Json) : Except String Json := do
   let v ← decodeEnvironment (← j.getObjVal? "environment")
   let m ← decodeModel v (← j.getObjVal? "model")
   if let .ok kind := j.getObjVal? "kind" then
-    unless kind == .str "countermodel" do throw "unknown case kind"
+    unless kind.getStr?.toOption == some "countermodel" do throw "unknown case kind"
     let ps ← decodeFormulas v.environment (← j.getObjVal? "premises")
     let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
     unless c.check v.environment [] do throw "ill-typed or unbound conclusion"

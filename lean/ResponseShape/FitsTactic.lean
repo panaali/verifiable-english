@@ -332,6 +332,7 @@ macro "case_cond_atom" : tactic =>
     | (case_kind_rw; first | decide | bool_hyp | rfl | (kind_subst; decide))
     | with_reducible exact CaseCond.kind_of_lacks ‹_› _
     | with_reducible exact CaseCond.lacks_of_kind ‹_›
+    | with_reducible exact CaseCond.lacks_of_val ‹_›
     | with_reducible exact CaseCond.path_ok ‹_›
     | with_reducible exact CaseCond.path_error ‹_› ‹_›
     | (simp only [CaseCond.holds_decided, CaseDecider.fn]; bool_hyp)

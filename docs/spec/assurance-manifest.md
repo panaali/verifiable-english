@@ -135,9 +135,9 @@ through the pinned `Gate.decodeEnvelope`.
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
 |---|---:|---:|---|---|
 | `lean/VE/Json.lean` | 136 | 136 | 1–136 | `c5891a586979…` |
-| `lean/VE/Bridge.lean` | 282 | 235 | 14–248 | `967a6ee39961…` |
+| `lean/VE/Bridge.lean` | 282 | 235 | 14–248 | `2d4e432b9698…` |
 | `lean/VE/CertificateWire.lean` | 236 | 164 | 11–163, 177–187 | `3d002c705023…` |
-| `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `9711c23a1786…` |
+| `lean/VE/Closure/Bridge.lean` | 99 | 58 | 9–66 | `b9c7a15be6bb…` |
 | `lean/VE/Core/Bridge.lean` | 159 | 117 | 10–126 | `6cd616c3c663…` |
 | `lean/VE/Core/Wire.lean` | 166 | 166 | 1–166 | `280802e8f79a…` |
 | `lean/VE/Route/Wire.lean` | 666 | 666 | 1–666 | `7a9f5a63f666…` |
