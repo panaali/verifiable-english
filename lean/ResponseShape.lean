@@ -14,8 +14,9 @@ values: a subset of the client's schema dialect
 
 At a `lean` node a Lean function (a runner's decoder or dispatch test) decides the same
 value beside the shape; the two must agree, or the check fails as `broken`, which no
-alternative, negation or condition hides. Test tooling and the schema generator only: no
-runner and no theorem imports this module. -/
+alternative, negation or condition hides. No runner imports this module: it is the schema
+generator, test tooling, and the source of the skeletons (`ResponseShape.Skeleton`) against which
+`ResponseShape.Encoders` proves every runner's rows. -/
 
 namespace ResponseShape
 open Lean

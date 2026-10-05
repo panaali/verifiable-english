@@ -80,23 +80,46 @@ def scan_sources(root):
     return actual, sources
 
 
+# The audit manifests: the trusted VE tree's (hash-frozen) and the response-shape theorems'
+# (lib ResponseShape, outside the trusted tree). Every theorem of every source is in exactly one.
+MANIFESTS = ("VE/Audit.lean", "ResponseShape/Audit.lean")
+
+
+def unwrapped(output):
+    """The lines of `#print axioms` output, a long one that Lean wrapped joined back."""
+    lines = []
+    for line in output.splitlines():
+        if line.startswith(" ") and lines:
+            lines[-1] += line
+        else:
+            lines.append(line)
+    return lines
+
+
+def recorded_in(manifest):
+    return set(re.findall(r"^#print axioms (\S+)", code_only((ROOT / manifest).read_text()), re.M))
+
+
 def main():
     actual, sources = scan_sources(ROOT)
-    recorded = set(re.findall(r"^#print axioms (\S+)", code_only((ROOT / "VE/Audit.lean").read_text()), re.M))
-    assert actual == recorded, {"missing": actual - recorded, "extra": recorded - actual}
-    result = subprocess.run(["lake", "env", "lean", "VE/Audit.lean"], cwd=ROOT,
-                            text=True, capture_output=True, check=True)
+    recorded = [recorded_in(manifest) for manifest in MANIFESTS]
+    assert not set.intersection(*recorded), {"listed twice": set.intersection(*recorded)}
+    assert actual == set.union(*recorded), {"missing": actual - set.union(*recorded),
+                                           "extra": set.union(*recorded) - actual}
     seen = set()
-    for line in result.stdout.splitlines():
-        match = re.fullmatch(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[(.*)\])", line)
-        if not match:
-            raise AssertionError(f"Unexpected audit output: {line}")
-        name, _, dependencies = match.groups()
-        seen.add(name)
-        axioms = set(dependencies.split(", ")) if dependencies else set()
-        assert axioms <= ALLOWED, (name, axioms - ALLOWED)
+    for manifest in MANIFESTS:
+        result = subprocess.run(["lake", "env", "lean", manifest], cwd=ROOT,
+                                text=True, capture_output=True, check=True)
+        for line in unwrapped(result.stdout):
+            match = re.fullmatch(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[(.*)\])", line)
+            if not match:
+                raise AssertionError(f"Unexpected audit output: {line}")
+            name, _, dependencies = match.groups()
+            seen.add(name)
+            axioms = set(dependencies.split(", ")) if dependencies else set()
+            assert axioms <= ALLOWED, (name, axioms - ALLOWED)
+        print(result.stdout, end="")
     assert seen == actual
-    print(result.stdout, end="")
     print(f"PASS: {len(sources)} source files; {len(seen)} named theorem declarations audited "
           "(headline results and helper lemmas); only the declared standard axiom allowlist.")
 
