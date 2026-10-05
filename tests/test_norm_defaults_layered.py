@@ -191,6 +191,43 @@ def test_situations_are_typed_and_unsaid_tables_are_fillings(lean_executable):
     assert rows[2]["error"] == "InvalidInput: unknown status method guess"
 
 
+@pytest.mark.parametrize("fixture,entities,predicate", [
+    ("u8-unspecified", ["a"], "x_permitted"),
+    ("u9-unspecified", ["s", "p"], "arrest_permitted"),
+])
+def test_nested_fillings_are_checked_before_evidence_replay(lean_executable, fixture, entities, predicate):
+    """Every evidence entry uses the same strict decoder. An oversized tuple must
+    never become its valid prefix, and an unknown entity must not disappear when
+    the finite model filters untyped tuples."""
+    kind, env, source, situations = _fixture(fixture)
+    table = "unsaid__" + predicate
+    status = layered.case(kind, env, source, "norm-defaults-status", model=situations[1],
+                          predicate=predicate, tuple=entities, method="undecided",
+                          yes={table: [entities]}, no={})
+    mutations = [7, True, [], {"other": []},
+                 {table: [entities + ["extra"]]},
+                 {table: [entities[:-1]]},
+                 {table: [["nobody", *entities[1:]]]},
+                 {table: [7]}, {table: [entities, entities]}]
+    # Both sides of an undecided witness, plus the filling of a report witness.
+    cases = []
+    for field in ("yes", "no"):
+        for value in mutations[:8]:
+            case = deepcopy(status)
+            case[field] = value
+            cases.append(case)
+    for value in mutations:
+        witness = {"model": status["model"], "filling": value, "tuple": entities}
+        cases.append(layered.case(kind, env, source, "norm-defaults-report",
+                                  witnesses={predicate: witness}))
+    rows = _run([status, *cases], lean_executable)
+    assert rows[0]["point_status"] == "UNDECIDED"
+    assert all(row["status"] == "error" for row in rows[1:]), rows
+    assert all(row.get("point_status") != "UNDECIDED" and
+               all(line.get("reached") != "reachable" for line in row.get("report", []))
+               for row in rows[1:])
+
+
 def test_layered_report_grounding(lean_executable):
     """u9-allow is a translation: its reached allow completion is `UngroundedDefault`
     unless the block cites it, as on the norms route."""
