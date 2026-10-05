@@ -154,7 +154,7 @@
       "type": "array", "items": {
         "type": "object", "required": ["label", "ast"], "additionalProperties": false,
         "properties": {
-          "label": {"type": "string", "pattern": "layer:norms:.+"},
+          "label": {"type": "string", "pattern": "layer:norms:.*"},
           "ast": {"$ref": "#/$defs/generated_formula"}}}},
     "conflict_targets": {"$comment": "Norms.Wire.regenerated: one target per layer, then per declared pair, with its argument sorts.",
       "type": "array", "items": {

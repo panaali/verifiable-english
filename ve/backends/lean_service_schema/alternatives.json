@@ -105,7 +105,9 @@
           {"type": "object", "required": ["obligation", "arguments"], "additionalProperties": false,
            "properties": {"obligation": {"type": "string"}, "arguments": {"$ref": "common.json#/$defs/strings"}}}]}},
         "breaches": {"$ref": "common.json#/$defs/strings"}},
-      "if": {"x-case": {"properties": {"environment": {"properties": {"alternatives": {"required": ["taken"]}}}}}},
+      "if": {"x-case": {"required": ["environment"], "properties": {"environment": {
+        "type": "object", "required": ["alternatives"], "properties": {"alternatives": {
+          "type": "object", "required": ["taken"]}}}}}},
       "then": {"required": ["violations", "breaches"]},
       "else": {"not": {"anyOf": [{"required": ["violations"]}, {"required": ["breaches"]}]}}},
     "validate": {"$comment": "Alternatives.Run.runValidate: a CONFLICT on the scenario, or the per-chooser evaluation.",
@@ -150,7 +152,7 @@
         {"type": "object", "required": ["id", "status", "verdict", "chooser", "diagnosis", "text"],
          "additionalProperties": false,
          "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"},
-                        "verdict": {"const": "DILEMMA"}, "chooser": {"type": "string"},
+                        "verdict": {"const": "DILEMMA"}, "chooser": {"type": "string", "x-equals": "/witness/chooser"},
                         "diagnosis": {"$ref": "common.json#/$defs/text"}, "text": {"$ref": "common.json#/$defs/text"}}}]},
     "followable": {"$comment": "Alternatives.Run.runFollowable over a certificate package.",
       "anyOf": [

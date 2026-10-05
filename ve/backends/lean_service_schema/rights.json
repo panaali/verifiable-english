@@ -42,7 +42,7 @@
       "rights-bar": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "rights-bar"}}},
       "rights-conflict": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "rights-conflict"}}}},
     "conditional_labels": {"$comment": "Open coherence premises and limitation premises (Rights.Wire.openCoherence, limPremisesLabelled).",
-      "type": "array", "items": {"type": "string", "pattern": "(soft:coherence|rights:limitation):.+"}},
+      "type": "array", "items": {"type": "string", "pattern": "(soft:coherence|rights:limitation):.*"}},
     "admission": {"$comment": "Rights.Run.encodeAdmitted: W2's admission answer; kinds are the units' kinds as written (rights units included), and the open premises the report assumes.",
       "type": "object", "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
       "additionalProperties": false,
@@ -93,13 +93,13 @@
         "environment_prime": {"$ref": "common.json#/$defs/environment"},
         "generated": {"type": "array", "items": {"anyOf": [
           {"type": "object", "required": ["name", "kind", "limitation", "act"], "additionalProperties": false,
-           "properties": {"name": {"type": "string", "pattern": "rights__lim__.+"}, "kind": {"const": "lim"},
+           "properties": {"name": {"type": "string", "pattern": "rights__lim__.*"}, "kind": {"const": "lim"},
                           "limitation": {"type": "string"}, "act": {"type": "string"}}},
           {"type": "object", "required": ["name", "kind", "limitation", "act", "condition"], "additionalProperties": false,
-           "properties": {"name": {"type": "string", "pattern": "rights__cond__.+"}, "kind": {"const": "cond"},
+           "properties": {"name": {"type": "string", "pattern": "rights__cond__.*"}, "kind": {"const": "cond"},
                           "limitation": {"type": "string"}, "act": {"type": "string"}, "condition": {"type": "string"}}},
           {"type": "object", "required": ["name", "kind", "predicate"], "additionalProperties": false,
-           "properties": {"name": {"type": "string", "pattern": "rights__bar__.+"}, "kind": {"const": "aimed"},
+           "properties": {"name": {"type": "string", "pattern": "rights__bar__.*"}, "kind": {"const": "aimed"},
                           "predicate": {"type": "string"}}}]}},
         "lines": {"type": "array", "items": {
           "type": "object", "required": ["right", "kind", "instance", "rule", "predicate", "holder_slot", "node"],
@@ -117,14 +117,14 @@
           "if": {"required": ["bearer"]}, "then": {"required": ["source_line"]},
           "else": {"not": {"required": ["source_line"]}}}},
         "limitations": {"type": "array", "items": {"$ref": "common.json#/$defs/labelled",
-          "properties": {"label": {"pattern": "rights:limitation:.+"}}}},
+          "properties": {"label": {"pattern": "rights:limitation:.*"}}}},
         "bars": {"type": "array", "items": {"$ref": "#/$defs/node"}},
         "rights_background": {"type": "array", "items": {
           "type": "object", "required": ["generator", "ast", "label"], "additionalProperties": false,
           "properties": {
             "generator": {"const": "rights"},
             "ast": {"$ref": "common.json#/$defs/generated_formula"},
-            "label": {"type": "string", "pattern": "rights:limitation:.+"}}}},
+            "label": {"type": "string", "pattern": "rights:limitation:.*"}}}},
         "narrowings": {"$ref": "#/$defs/narrowings"},
         "distinction": {"type": "array", "items": {
           "type": "object", "required": ["predicate", "independent", "hits"], "additionalProperties": false,
@@ -187,7 +187,7 @@
              "composition_candidates", "composition_conflicts"], "additionalProperties": false,
            "properties": {
              "predicate": {"type": "string"},
-             "aimed": {"type": "string", "pattern": "rights__bar__.+"},
+             "aimed": {"type": "string", "pattern": "rights__bar__.*"},
              "reading": {"const": "rule"},
              "barred": {"$ref": "common.json#/$defs/strings"},
              "blocked_defaults": {"$ref": "common.json#/$defs/strings"},
@@ -196,7 +196,7 @@
           {"type": "object", "required": ["predicate", "aimed", "reading", "target"], "additionalProperties": false,
            "properties": {
              "predicate": {"type": "string"},
-             "aimed": {"type": "string", "pattern": "rights__bar__.+"},
+             "aimed": {"type": "string", "pattern": "rights__bar__.*"},
              "reading": {"const": "query"},
              "target": {"$ref": "common.json#/$defs/generated_formula"},
              "entailed": {"type": "boolean"}}}]}}}},
