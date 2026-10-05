@@ -103,7 +103,19 @@ def FM() -> dict:
     return raw
 
 
-BUILDERS = {"F": F, "FO": FO, "FD": FD, "FA": FA, "FR": FR, "FM": FM}
+def FR_UNITS() -> dict:
+    """ev11: `FR` with the W6 unit extension as the risk route admits it: the unit profile tuple, `unit_schema`,
+    one declared tag `usd`, an empty `argument_units` on `leads_to` and the constant `wait` with the display
+    `verbalisation` `wait`. `FR` has no integer slot or constant, so no slot or constant carries a unit."""
+    raw = FR()
+    raw["unit_schema"] = "ve-units@1"
+    raw["units"] = {"usd": {"scale": "100", "display": {"kind": "money", "currency": "USD"}}}
+    raw["vocabulary"]["predicates"]["leads_to"]["argument_units"] = {}
+    raw["vocabulary"]["constants"]["wait"]["verbalisation"] = "wait"
+    return raw
+
+
+BUILDERS = {"F": F, "FO": FO, "FD": FD, "FA": FA, "FR": FR, "FM": FM, "FR_UNITS": FR_UNITS}
 
 
 def environment(name: str):
