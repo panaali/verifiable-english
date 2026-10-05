@@ -1,0 +1,1362 @@
+{
+ "format": "lean-first-df-triage@1",
+ "source": "conformance/difffuzz-baseline.json on infra/difffuzz at 9d7b8ccc (ve-difffuzz-baseline@2, 403 entries); one representative (the first) per follow-up id",
+ "classes": {
+  "i": "the frozen contract fixes Python's behaviour: Lean has a bug, fixed before that surface switches",
+  "ii": "the contract is silent (or fixes Lean's answer) and Lean's answer is sound: the switch changes the answer, listed in that batch's DELTA.md and signed (availability and verdict changes one signature each)",
+  "iii": "the contract is silent and Lean is wrong: Lean has a bug, fixed before that surface switches",
+  "rust-only": "Lean and Python agree; only Rust differs, and Rust texts never reach a user (rule 4)",
+  "closed": "no longer reproduces at the batch base"
+ },
+ "groups": [
+  {
+   "id": "DF-1",
+   "class": "closed",
+   "batch": "12",
+   "note": "Python raised TypeError on a non-array `profiles`; Lean and Rust give the P0 text. Closed at the batch base: fix/env-field-types is on main and Python now gives Lean's diagnostic (test_df1_is_closed_at_the_base).",
+   "entries": 17,
+   "fixture": {
+    "baseline_entry": "requests-8f765e543445f1bf",
+    "surface": "requests",
+    "profile": "invalid-background-model:evaluate",
+    "input": {
+     "id": "conformance/invalid-background-model.json/6",
+     "kind": "evaluate",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": 7,
+      "spec_revision": "v",
+      "vocabulary": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "crash",
+      "code": "TypeError",
+      "text": "argument of type 'int' is not a container or iterable"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: profiles must be a sorted unique array"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: profiles must be a sorted unique array"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-2",
+   "class": "ii",
+   "batch": "13b, 15b",
+   "note": "Python crashes (TypeError) on an array or object where a name or tag belongs; only VEError may escape (checklist 5), Lean's decoder rejects with a diagnostic. Lean is sound; a crash becoming Lean's rejection is an availability change, signed when the formula decoder (13b) and search (15b) switch.",
+   "entries": 6,
+   "fixture": {
+    "baseline_entry": "requests-2286594fc6bf5b93",
+    "surface": "requests",
+    "profile": "elaborated-document:search",
+    "input": {
+     "id": "conformance/elaborated-document.json/44",
+     "kind": "search",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "definitions@0",
+       "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+       "sorts": {
+        "person": {
+         "description": "a"
+        }
+       },
+       "predicates": {
+        "above": {
+         "arguments": [
+          "person",
+          "person"
+         ],
+         "description": "s",
+         "defined": {
+          "arguments": [
+           "person",
+           "person"
+          ],
+          "body": [
+           "or",
+           [
+            "binary",
+            {},
+            [
+             "var",
+             1
+            ],
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "exists",
+            "p",
+            [
+             "and",
+             [
+              "binary",
+              "s",
+              [
+               "var",
+               2
+              ],
+              [
+               "var",
+               0
+              ]
+             ],
+             [
+              "binary",
+              "s",
+              [
+               "var",
+               0
+              ],
+              [
+               "var",
+               1
+              ]
+             ]
+            ]
+           ]
+          ]
+         }
+        }
+       },
+       "constants": {}
+      }
+     },
+     "max_domain_size": 2
+    },
+    "answers": {
+     "python": {
+      "outcome": "crash",
+      "code": "TypeError",
+      "text": "cannot use 'dict' as a set element (unhashable type: 'dict')"
+     },
+     "lean": {
+      "outcome": "n/a"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "Definition above: the body is not a typed formula over the symbols below it"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-3",
+   "class": "ii",
+   "batch": "12",
+   "note": "Nested vocabulary fields of the wrong JSON type: both reject with the same code; the texts differ (Lean's decoder type diagnostics). The env-profiles directive fixed Lean's texts for top-level fields; the contract is silent on nested ones. Wording change in batch 12's list.",
+   "entries": 85,
+   "fixture": {
+    "baseline_entry": "environment-a1192ec770a40e0e",
+    "surface": "environment",
+    "profile": "reports",
+    "input": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0",
+      "reports@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {},
+      "constants": {
+       "service": "x"
+      },
+      "reports": {
+       "holders": [],
+       "evidence": "e"
+      }
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "Expected a JSON object"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "object expected"
+     },
+     "rust": {
+      "outcome": "n/a"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-4",
+   "class": "rust-only",
+   "batch": "15b",
+   "note": "Lean and Python give the P0 contract's text; only Rust differs. No Lean action: Rust texts never reach a user (rule 4).",
+   "entries": 8,
+   "fixture": {
+    "baseline_entry": "requests-1f92b9b5cb64aa08",
+    "surface": "requests",
+    "profile": "labels:label",
+    "input": {
+     "id": "conformance/labels.json/4",
+     "kind": "label",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       {}
+      ],
+      "spec_revision": "v",
+      "vocabulary": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: profiles must be a sorted unique array"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: profiles must be a sorted unique array"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: expected a string"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-5",
+   "class": "i",
+   "batch": "12",
+   "note": "A non-string or unknown spec_revision: the frozen v0 contract fixes UnsupportedProfile (conformance/validation.json validation_000 class); Lean says InvalidInput or reports another field first. Lean bug, fixed before the environment surface switches.",
+   "entries": 19,
+   "fixture": {
+    "baseline_entry": "requests-0c134ee8ae475ce1",
+    "surface": "requests",
+    "profile": "parser:evaluate",
+    "input": {
+     "id": "conformance/parser.json/705",
+     "kind": "evaluate",
+     "environment": {
+      "language": "v",
+      "profile": "r",
+      "spec_revision": "v",
+      "vocabulary": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: unsupported environment version"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-6",
+   "class": "i",
+   "batch": "12",
+   "note": "Language and envelope versions: validation.json fixes UnsupportedProfile for an unknown language (validation_000); Lean's v0 runner says InvalidInput (`unsupported environment version`) or `fields do not match`. Lean bug, fixed before batch 12.",
+   "entries": 33,
+   "fixture": {
+    "baseline_entry": "requests-6314bb9f3bf7a362",
+    "surface": "requests",
+    "profile": "validation:evaluate",
+    "input": {
+     "id": "conformance/validation.json/0",
+     "kind": "evaluate",
+     "environment": {
+      "language": "u",
+      "profile": "r",
+      "spec_revision": "v",
+      "vocabulary": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: fields do not match: expected [language, profiles, spec_revision, vocabulary], got [language, profile, spec_revision, vocabulary]"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "UnsupportedProfile: unsupported language, profile or specification revision"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-7",
+   "class": "i",
+   "batch": "12",
+   "note": "Model shape errors: validation.json fixes InvalidModel (validation_007 to validation_020); Lean's route and v0 runner say InvalidInput and read the formulas first. Lean bug, fixed before batch 12 switches model validation.",
+   "entries": 56,
+   "fixture": {
+    "baseline_entry": "requests-773b9b31a7328387",
+    "surface": "requests",
+    "profile": "validation:evaluate",
+    "input": {
+     "id": "conformance/validation.json/7",
+     "kind": "evaluate",
+     "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+       "sorts": {
+        "service": {
+         "description": "A"
+        }
+       },
+       "predicates": {
+        "deployed": {
+         "arguments": [
+          "service"
+         ],
+         "description": "R"
+        }
+       },
+       "constants": {}
+      }
+     },
+     "model": {},
+     "ast": [
+      [
+       "exists",
+       "service",
+       [
+        "unary",
+        "deployed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ]
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "InvalidModel",
+      "text": "InvalidModel: fields do not match (missing=['complete', 'constants', 'domains', 'relations'], unknown=[])"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: fields do not match: expected [complete, domains, constants, relations], got []"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "InvalidModel",
+      "text": "InvalidModel: expected exactly fields [\"complete\", \"domains\", \"constants\", \"relations\"]"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-8",
+   "class": "i",
+   "batch": "12",
+   "note": "The dependency-order route does not decode the vocabulary: it accepts an envelope with a misspelt vocabulary field that the P0 envelope contract (exact fields) rejects, and Python rejects. Lean-accepts bug (section 7.1), fixed before batch 12; the Rust `DependencyCycle` code is rule 4. Live fixture: test_df8_dependency_order_accepts_a_misspelt_vocabulary_field.",
+   "entries": 5,
+   "fixture": {
+    "baseline_entry": "requests-35ffc71fb96473cc",
+    "surface": "requests",
+    "profile": "dependency-order:dependency-order",
+    "input": {
+     "id": "conformance/dependency-order.json/2",
+     "kind": "dependency-order",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+       "sorts": {},
+       "predicates": {},
+       "constants": {}
+      }
+     },
+     "nodes": [
+      {
+       "name": "a",
+       "mentions": [
+        "b"
+       ]
+      },
+      {
+       "name": "b",
+       "mentions": [
+        "a"
+       ]
+      }
+     ]
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "DependencyCycle: a, b"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "DependencyCycle: a, b"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "DependencyCycle",
+      "text": "DependencyCycle: a, b"
+     }
+    }
+   },
+   "accepts_fixture": {
+    "baseline_entry": "requests-63e60be1a7a85386",
+    "surface": "requests",
+    "profile": "dependency-order:dependency-order",
+    "mutation": [
+     [
+      "key",
+      [
+       "environment",
+       "vocabulary",
+       "predicates"
+      ],
+      "tab"
+     ]
+    ],
+    "input": {
+     "id": "conformance/dependency-order.json/5",
+     "kind": "dependency-order",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {}
+     },
+     "nodes": []
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "InvalidInput: Incorrect fields (missing=['constants', 'predicates', 'sorts'], unknown=[])"
+     },
+     "lean": {
+      "outcome": "ok",
+      "value": {
+       "order": []
+      }
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "InvalidInput: expected exactly fields [\"sorts\", \"predicates\", \"constants\"]"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-9",
+   "class": "i",
+   "batch": "12, 13b",
+   "note": "Nested decoder codes and order: validation.json fixes UnknownSymbol, TypeMismatch, UnboundVariable, DuplicateDeclaration and SyntaxError for v0 envelopes where Lean's v0 runner and route say InvalidInput. Lean bug where a frozen fixture fixes the code; on ve.core@0.2 inputs the contract is silent and the change is `order` (13b's list).",
+   "entries": 118,
+   "fixture": {
+    "baseline_entry": "requests-e3c459016280173c",
+    "surface": "requests",
+    "profile": "elaborated-document:evaluate",
+    "input": {
+     "id": "conformance/elaborated-document.json/8",
+     "kind": "evaluate",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+       "sorts": {},
+       "predicates": {},
+       "constants": {
+        "bob": {
+         "sort": "p",
+         "description": "B"
+        }
+       }
+      }
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "UnknownSymbol",
+      "text": "UnknownSymbol: Undeclared constant sort: 'p'"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: unknown constant sort: bob"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "UnknownSymbol",
+      "text": "UnknownSymbol: unknown constant sort"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-10",
+   "class": "ii",
+   "batch": "13b",
+   "note": "A non-string label: labels.json fixes AdmissionError for invalid string labels only; for a non-string the contract is silent and Lean's InvalidInput (a type error) is sound. Code change, 13b's list.",
+   "entries": 1,
+   "fixture": {
+    "baseline_entry": "requests-a6108faaa1097f5a",
+    "surface": "requests",
+    "profile": "labels:label",
+    "input": {
+     "id": "conformance/labels.json/30",
+     "kind": "label",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+       "sorts": {},
+       "predicates": {},
+       "constants": {}
+      }
+     },
+     "label": []
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "AdmissionError",
+      "text": "AdmissionError: invalid label []"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: String expected"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "InvalidInput: label must be a string"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-11",
+   "class": "ii",
+   "batch": "13b",
+   "note": "Admission with a malformed certificate trace: both reject; Python reports the admission label first, Lean the certificate's fields. Order change, 13b's list.",
+   "entries": 1,
+   "fixture": {
+    "baseline_entry": "requests-ac0058b01199427f",
+    "surface": "requests",
+    "profile": "admission:admission",
+    "input": {
+     "id": "conformance/admission.json/4",
+     "kind": "admission",
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "relational-fol@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+       "sorts": {
+        "person": {
+         "description": "a person"
+        }
+       },
+       "predicates": {
+        "in_finance": {
+         "arguments": [
+          "person"
+         ],
+         "description": "works in finance"
+        },
+        "in_legal": {
+         "arguments": [
+          "person"
+         ],
+         "description": "works in legal"
+        },
+        "senior": {
+         "arguments": [
+          "person"
+         ],
+         "description": "is senior"
+        }
+       },
+       "constants": {
+        "alice": {
+         "sort": "person",
+         "description": "Alice"
+        },
+        "bob": {
+         "sort": "person",
+         "description": "Bob"
+        },
+        "finance": {
+         "sort": "$string",
+         "description": "the string finance"
+        },
+        "legal": {
+         "sort": "$string"
+        }
+       }
+      }
+     },
+     "document": {
+      "units": [],
+      "graph": {
+       "root": "r",
+       "nodes": [
+        {
+         "name": "claim-u2",
+         "ast": [
+          "or",
+          [
+           "eq",
+           [
+            "const",
+            "finance"
+           ],
+           [
+            "const",
+            "legal"
+           ]
+          ],
+          [
+           "unary",
+           "in_finance",
+           [
+            "const",
+            "alice"
+           ]
+          ]
+         ]
+        },
+        {
+         "name": "distinct",
+         "ast": [
+          "not",
+          [
+           "eq",
+           [
+            "const",
+            "finance"
+           ],
+           [
+            "const",
+            "legal"
+           ]
+          ]
+         ]
+        },
+        {
+         "name": "r",
+         "ast": [
+          "unary",
+          "in_finance",
+          [
+           "const",
+           "alice"
+          ]
+         ],
+         "premises": [
+          "claim-u2",
+          "distinct"
+         ],
+         "certificate": {
+          "environment_id": "e583e3859ac06408a67d6a9d74d404dd194654eeebe043297ccf8328ff419ede",
+          "premise_meaning_ids": [
+           "a5bffda6e2191135b8452dfad07bd467d25ffd4fb835d91cc844afb2bd85b545",
+           "512aabc1a6942c778e30c68be66f8ff7bcbc8a693056f440362c32e95eb4d169"
+          ],
+          "conclusion_meaning_id": "72bf0364e8684ecd6b94c82f2338232e82da245fb2c4d547d62884a98b91fe7e"
+         }
+        }
+       ]
+      }
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "AdmissionError",
+      "text": "AdmissionError: node claim-u2 is not admitted under label asserted"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: fields do not match: expected [checker_version, environment_id, premise_meaning_ids, conclusion_meaning_id, trace], got [conclusion_meaning_id, environment_id, premise_meaning_ids]"
+     },
+     "rust": {
+      "outcome": "n/a"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-12",
+   "class": "iii",
+   "batch": "5 (also 9)",
+   "note": "An NBSP in a regulated act phrase: Python rejects (the W6 round trip), Lean's risk route accepts an act phrase whose canonical form differs from its text. Contract silent on Unicode spaces; Lean is wrong (one normaliser, FINDING-CLASSES class 4). Lean-accepts bug, fixed before batch 5. Live fixture: test_df12_risk_route_accepts_an_nbsp_act_phrase.",
+   "entries": 1,
+   "fixture": {
+    "baseline_entry": "environment-460ef20704c76e9e",
+    "surface": "environment",
+    "profile": "risk",
+    "input": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "alternatives@0",
+      "norms@0",
+      "relational-fol@0",
+      "risk@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "agent": {
+        "description": "agent"
+       },
+       "action": {
+        "description": "action"
+       },
+       "harm": {
+        "description": "harm"
+       }
+      },
+      "predicates": {
+       "available": {
+        "arguments": [
+         "action",
+         "agent"
+        ],
+        "description": "{",
+        "verbalisation": "{0} is available to {1}"
+       },
+       "leads_to": {
+        "arguments": [
+         "action",
+         "harm"
+        ],
+        "description": "{",
+        "verbalisation": "{0} leads to {1}"
+       },
+       "inaction": {
+        "arguments": [
+         "action"
+        ],
+        "description": "{",
+        "verbalisation": "{0} is inaction"
+       },
+       "taken": {
+        "arguments": [
+         "action"
+        ],
+        "description": "{0} is taken",
+        "verbalisation": "{0} is taken"
+       },
+       "permitted": {
+        "arguments": [
+         "action"
+        ],
+        "description": "permission",
+        "regulated": {
+         "role": "permission",
+         "default": "allow",
+         "act": "{0} be performed"
+        }
+       }
+      },
+      "constants": {
+       "data_loss": {
+        "sort": "harm",
+        "description": "data loss"
+       },
+       "server_outage": {
+        "sort": "harm",
+        "description": "a server outage"
+       },
+       "job_failure": {
+        "sort": "harm",
+        "description": "a job failure"
+       },
+       "task_delay": {
+        "sort": "harm",
+        "description": "a task delay"
+       },
+       "task_abandonment": {
+        "sort": "harm",
+        "description": "t"
+       }
+      }
+     },
+     "alternatives": {
+      "chooser": "agent",
+      "action": "action",
+      "harm": "harm",
+      "available": "available",
+      "leads_to": "leads_to",
+      "outcomes": "signed",
+      "inaction": "inaction",
+      "taken": "taken"
+     },
+     "risk": {
+      "severity": {
+       "sort": "severity",
+       "classes": [
+        "severe",
+        "serious",
+        "minor"
+       ],
+       "more_severe": [],
+       "unranked": [],
+       "decided_by": "t"
+      },
+      "harm_classes": [
+       [
+        "data_loss",
+        "severe"
+       ],
+       [
+        "server_outage",
+        "serious"
+       ],
+       [
+        "job_failure",
+        "minor"
+       ],
+       [
+        "task_delay",
+        "minor"
+       ],
+       [
+        "task_abandonment",
+        "minor"
+       ]
+      ],
+      "unexamined": {
+       "ruled_out_by": "chooser"
+      },
+      "combination": "hull",
+      "use_all_recorded": false
+     },
+     "unit_schema": "ve-units@1",
+     "units": {}
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "W6 environment does not round-trip to its canonical declaration"
+     },
+     "lean": {
+      "outcome": "ok",
+      "value": null
+     },
+     "rust": {
+      "outcome": "n/a"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-13",
+   "class": "ii",
+   "batch": "5, 6, 7, 8, 10, 11",
+   "note": "Block routes: both reject; Lean reports the block-level diagnostic where Python reports the field or the missing profile. Order and code changes in each block's batch.",
+   "entries": 28,
+   "fixture": {
+    "baseline_entry": "environment-badf2fe479368ca9",
+    "surface": "environment",
+    "profile": "alternatives",
+    "input": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "alternatives@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {
+       "taken": {
+        "arguments": [
+         "a"
+        ],
+        "description": "{"
+       }
+      },
+      "constants": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "UnknownSymbol",
+      "text": "Undeclared predicate argument sort: 'a'"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "InvalidInput: alternatives.block"
+     },
+     "rust": {
+      "outcome": "n/a"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-14",
+   "class": "ii",
+   "batch": "6",
+   "note": "Python's wire-contract engine accepts a JSON null that the restricted wire excludes and every Lean and Rust reader refuses. Lean is right; closed when batch 6 deletes the Python engine.",
+   "entries": 3,
+   "fixture": {
+    "baseline_entry": "wire-93ad2ea4d583e105",
+    "surface": "wire",
+    "profile": "soft-norms@0",
+    "input": {
+     "environment": {
+      "language": "ve.core@0.2",
+      "profiles": [
+       "norms@0",
+       "relational-fol@0",
+       "soft-norms@0"
+      ],
+      "spec_revision": "ve-v0.2-expand2-2026-09-25",
+      "vocabulary": {
+       "constants": {},
+       "predicates": {
+        "x_permitted": {
+         "arguments": [
+          "assistant"
+         ],
+         "description": "p",
+         "regulated": {
+          "act": "{0} do x",
+          "default": "allow",
+          "role": "permission"
+         }
+        },
+        "x_required": {
+         "arguments": [
+          "assistant"
+         ],
+         "description": "o",
+         "regulated": {
+          "act": "{0} do x",
+          "default": "deny",
+          "permission": "x_permitted",
+          "role": "obligation"
+         }
+        }
+       },
+       "soft": {
+        "exception_decider": "a",
+        "outranking": {
+         "mode": "strict"
+        }
+       },
+       "sorts": {
+        "assistant": {
+         "description": "a"
+        }
+       }
+      }
+     },
+     "norms": [
+      {
+       "norm": {
+        "exception": {
+         "decided_by": null,
+         "factors": [],
+         "necessary": [],
+         "sufficient": []
+        },
+        "guard": [
+         "top"
+        ],
+        "mode": "default",
+        "name": "a",
+        "over": [],
+        "predicate": "x_required",
+        "sign": true,
+        "unless": []
+       }
+      }
+     ]
+    },
+    "answers": {
+     "python": {
+      "outcome": "ok",
+      "value": null
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "framing",
+      "text": "Unsupported JSON value; null and floating-point numbers are not in v0"
+     },
+     "rust": {
+      "outcome": "n/a"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-15",
+   "class": "rust-only",
+   "batch": "15b",
+   "note": "Rust reads a request without its model as another operation; Lean rejects (`property not found`). Rule 4.",
+   "entries": 10,
+   "fixture": {
+    "baseline_entry": "requests-55c1af5eb5465f90",
+    "surface": "requests",
+    "profile": "evaluation:evaluate",
+    "input": {
+     "id": "conformance/evaluation.json/1",
+     "kind": "evaluate",
+     "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+       "sorts": {
+        "service": {
+         "description": "A"
+        }
+       },
+       "predicates": {
+        "reviewed": {
+         "arguments": [
+          "service"
+         ],
+         "description": "R"
+        }
+       },
+       "constants": {}
+      }
+     },
+     "ast": [
+      [
+       "forall",
+       "service",
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ]
+    },
+    "answers": {
+     "python": {
+      "outcome": "n/a"
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "rejected: property not found: model"
+     },
+     "rust": {
+      "outcome": "ok",
+      "value": null
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-16",
+   "class": "ii",
+   "batch": "15b",
+   "note": "Python's search and countermodel check accept an object for `premises`; Lean says `array expected`. Lean is sound; the change from an answer to a rejection is a verdict change, signed in 15b.",
+   "entries": 3,
+   "fixture": {
+    "baseline_entry": "requests-0145edb8d95b3f64",
+    "surface": "requests",
+    "profile": "search:search",
+    "input": {
+     "id": "conformance/search.json/6",
+     "kind": "search",
+     "environment": {
+      "language": "ve.core@0",
+      "profile": "relational-fol@0",
+      "spec_revision": "ve-v0-draft-2026-09-20",
+      "vocabulary": {
+       "sorts": {
+        "item": {
+         "description": "A"
+        }
+       },
+       "predicates": {
+        "marked": {
+         "arguments": [
+          "item"
+         ],
+         "description": "M"
+        }
+       },
+       "constants": {}
+      }
+     },
+     "premises": {},
+     "conclusion": [
+      "exists",
+      "item",
+      [
+       "unary",
+       "marked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "max_domain_size": 0
+    },
+    "answers": {
+     "python": {
+      "outcome": "ok",
+      "value": {
+       "found": true,
+       "model": {
+        "complete": true,
+        "domains": {
+         "item": []
+        },
+        "constants": {},
+        "relations": {
+         "marked": []
+        }
+       }
+      }
+     },
+     "lean": {
+      "outcome": "n/a"
+     },
+     "rust": {
+      "outcome": "error",
+      "code": "SyntaxError",
+      "text": "SyntaxError: premises must be an array"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-17",
+   "class": "iii",
+   "batch": "10a",
+   "note": "The norm-defaults route refuses data flags (`not implemented`) on an environment Python accepts: a missing Lean feature, ported in 10a before 10b switches.",
+   "entries": 1,
+   "fixture": {
+    "baseline_entry": "environment-acd4cb804167f758",
+    "surface": "environment",
+    "profile": "norm-defaults",
+    "input": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "data@0",
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "action": {
+        "description": "an action in the agent's log"
+       },
+       "file": {
+        "description": "a file path, as resolved by the path resolver"
+       },
+       "host": {
+        "description": "a network host"
+       },
+       "person": {
+        "description": "a message recipient"
+       },
+       "secret": {
+        "description": "a secret value found by the data-loss scanner"
+       },
+       "directory": {
+        "description": "a directory, such as the agent's workspace"
+       }
+      },
+      "predicates": {
+       "tool": {
+        "arguments": [
+         "action",
+         "$string"
+        ],
+        "functional": true,
+        "total": true,
+        "description": "the tool that the agent harness records for the action",
+        "verbalisation": "{0} uses {1}"
+       },
+       "contacts": {
+        "arguments": [
+         "action",
+         "host"
+        ],
+        "description": "{0} contacts {1}, as recorded by the network layer",
+        "verbalisation": "{0} contacts {1}"
+       }
+      },
+      "constants": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "ok",
+      "value": {
+       "environment_id": "9e1ece46743904e4d75f6eb75a7510335a503a24a17b7fcba0162f580f340a19"
+      }
+     },
+     "lean": {
+      "outcome": "error",
+      "code": "UnsupportedProfile",
+      "text": "norms route with data flags is not implemented"
+     },
+     "rust": {
+      "outcome": "n/a"
+     }
+    }
+   }
+  },
+  {
+   "id": "DF-18",
+   "class": "ii",
+   "batch": "6",
+   "note": "Python's `Environment` is not the soft-norms decoder (`SoftEnvironment` is); Lean's soft route and Rust accept the soft block. Lean is sound; closed by batch 6's switch.",
+   "entries": 8,
+   "fixture": {
+    "baseline_entry": "environment-ccfc3f63fa0a12cb",
+    "surface": "environment",
+    "profile": "soft-norms",
+    "input": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norms@0",
+      "relational-fol@0",
+      "soft-norms@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "constants": {},
+      "predicates": {},
+      "soft": {
+       "outranking": {
+        "mode": "strict"
+       }
+      },
+      "sorts": {}
+     }
+    },
+    "answers": {
+     "python": {
+      "outcome": "error",
+      "code": "InvalidInput",
+      "text": "Incorrect fields (missing=[], unknown=['soft'])"
+     },
+     "lean": {
+      "outcome": "ok",
+      "value": null
+     },
+     "rust": {
+      "outcome": "ok",
+      "value": null
+     }
+    }
+   }
+  },
+  {
+   "id": "K1",
+   "class": "iii",
+   "batch": "12",
+   "note": "Act-phrase word `no`: Python's reserved words include it (ve/environment.py RESERVED), Lean's copy does not (lean/VE/Norms/Wire.lean actReserved). DRI answer 6: Lean adopts Python's list as a signed change before the surface switches. Live fixture: test_k1_lean_accepts_the_act_phrase_word_no."
+  },
+  {
+   "id": "K2",
+   "class": "closed",
+   "batch": "7",
+   "note": "Duplicate `protected` rights entries (ARCH-ROADMAP's Lean-accepts bug): closed at the batch base. Lean's rights route now rejects a repeated name, as Python's RightsEnvironment does; only the texts differ (`protected` against `protected person`), a wording change for batch 7's list. Live fixture: test_k2_duplicate_protected_entries_are_rejected_by_both."
+  },
+  {
+   "id": "K3",
+   "class": "i",
+   "batch": "12",
+   "note": "= DF-8 (the dependency-order route accepts an envelope Python and the envelope contract reject)."
+  },
+  {
+   "id": "K4",
+   "class": "iii",
+   "batch": "5",
+   "note": "= DF-12 (the risk route accepts an NBSP act phrase)."
+  },
+  {
+   "id": "R1",
+   "class": "ii",
+   "batch": "3",
+   "note": "Readings S1: a disagreement between Lean's readings answer and Python's regeneration is CheckerUnavailable today (ve/readings_route.py); batch 3 relays Lean's row, so each such input becomes Lean's answer, an availability change signed per input. No disagreement is known: the UDHR pilot's whole-document call regenerated byte for byte (LEAN-FIRST-PLAN.md 3.5), and the pilots of the A/B corpus show none. The fixture is the existing test that a disagreement is CheckerUnavailable, which batch 3 must turn into a listed availability change."
+  }
+ ]
+}

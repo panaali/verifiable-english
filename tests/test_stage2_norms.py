@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from ve.ast import Binary, Const, Top, Unary, Var, _to_data
-from ve.backends import dispatch
+from ve.backends import dispatch, relay
 from ve.backends.lean_service import CheckerUnavailable
 from ve.background import background
 from ve.environment import Environment
@@ -88,7 +88,7 @@ def test_norms_operations_with_flags_and_definitions_match_python(monkeypatch, t
 
 
 def test_lean_norms_background_puts_flag_premises_first():
-    from ve.backends.lean_runner import run
+    from ve.backends.relay import decide as run
     env = flagged(total=True, definitions=True)
     doc = document(env)
     row = run("norms", [{"id": "e", "kind": "norms-elaborate", "environment": env.to_dict(),
@@ -124,7 +124,7 @@ def test_conflict_witness_over_flags_is_lean_checked(monkeypatch):
 
 
 def test_lean_rejects_a_witness_model_that_violates_a_flag():
-    from ve.backends.lean_runner import run
+    from ve.backends.relay import decide as run
     env = flagged()
     doc = NormDocument(env, [rule("must", "required", True, Unary("urgent", Var(0)))])
     model = witness_model(doc, [])
@@ -138,18 +138,18 @@ def test_lean_rejects_a_witness_model_that_violates_a_flag():
 
 
 def test_a_witness_lean_refuses_is_checker_unavailable(monkeypatch):
-    from ve.backends import lean_runner
+    from ve.backends import relay
     env = flagged()
     doc = NormDocument(env, [rule("must", "required", True, Unary("urgent", Var(0)))])
     model = witness_model(doc, [["a", "p"]])
-    real = lean_runner.run
+    real = relay.decide
 
     def refuse(mode, cases, **kw):
         rows = real(mode, cases, **kw)
         return [{**row, "verdict": "UNKNOWN"} if "witness" in case else row
                 for case, row in zip(cases, rows)]
 
-    monkeypatch.setattr(lean_runner, "run", refuse)
+    monkeypatch.setattr(relay, "decide", refuse)
     routed(monkeypatch, "lean")
     with pytest.raises(CheckerUnavailable, match="does not confirm"):
         check_conflict(doc, model=model)
@@ -163,27 +163,27 @@ FAMILIES = [(("closure@0",), False), (("closure@0",), True), (("closure@0", "nar
 def test_norms_on_the_closure_core_and_order_families_are_leans(monkeypatch, family, definitions):
     """First-order norm documents over the other families: Lean regenerates the
     layers over the FOL view and checks the family's certificates."""
-    from ve.backends import lean_runner
+    from ve.backends import relay
     env = flagged(definitions=definitions, family=family, data="order@0" not in family)
     routed(monkeypatch, "python")
     expected = outcomes(document(env))
     assert expected["certificate"].valid and expected["conflict"].status == "CONFLICT-FREE"
     ops = routed(monkeypatch, "lean")
     modes = []
-    real = lean_runner.run
+    real = relay.decide
 
     def spy(mode, cases, **kw):
         modes.append(mode)
         return real(mode, cases, **kw)
 
-    monkeypatch.setattr(lean_runner, "run", spy)
+    monkeypatch.setattr(relay, "decide", spy)
     assert outcomes(document(env)) == expected
     assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
     assert "family-norms" in modes
 
 
 def test_a_family_certificate_bound_to_other_premises_is_invalid_in_lean():
-    from ve.backends.lean_runner import run
+    from ve.backends.relay import decide as run
     env = flagged(family=("closure@0",))
     doc = document(env)
     proof = prove_norm_entailment(doc, (), Top(), max_steps=200)

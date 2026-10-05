@@ -1962,6 +1962,10 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq
 #print axioms VE.Service.boundResults_eq
+#print axioms VE.Service.bound_eq
+#print axioms VE.Service.coding_of_status
+#print axioms VE.Service.coding_error
+#print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
 #print axioms VE.Risk.termSum_cons
 #print axioms VE.Risk.termSum_nil
