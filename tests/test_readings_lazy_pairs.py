@@ -14,7 +14,7 @@ checks pin it; the third checks the answer:
   `pairEval` and the walk must reach `scanOthers`, so a route that evaluates the completions some other way fails.
 * End to end: the review's reproducer (12 cells, ten fixed default rules) gives the specified answer. Its CPU
   limit only stops a runaway route: with each side's layers built once (batch 3d), evaluating all 4,096
-  completions here costs 0.37 s against the scan's 0.09 s (seeded mutant M3), and the generated-layer limits
+  completions here costs 0.37 s against the scan's 0.09 s (seeded mutant R3 in DELTA.md), and the generated-layer limits
   admit no heavier side, so time cannot tell the two apart. The counts and the IR walk above are the regression.
 """
 from __future__ import annotations
