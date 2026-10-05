@@ -16,6 +16,7 @@ fan-out sort)."""
 from __future__ import annotations
 
 import json
+import os
 import random
 import subprocess
 import sys
@@ -231,7 +232,8 @@ def loaded(raw, units, directory):
 
 def _rows(executable, cases):
     run = subprocess.run([str(executable), "-"], input=json.dumps(cases), text=True,
-                         capture_output=True, timeout=600, check=False)
+                         capture_output=True, check=False,
+                         timeout=int(os.environ.get("VE_CONFORMANCE_HANG_TIMEOUT", "600")))
     rows = json.loads(run.stdout)
     if len(rows) != len(cases):
         raise AssertionError("Lean returned the wrong row count")

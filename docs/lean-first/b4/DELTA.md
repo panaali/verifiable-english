@@ -36,6 +36,13 @@ same change. Every difference comes from one rule, **R4: a `ve-document@2` docum
 Lean's diagnostic, never Python's** (before, Python's diagnostic was kept whenever Python rejected too).
 The only other difference is the dropped hints of V1.
 
+Merging `ve-integration` brought `compare`'s stricter evidence rules (a record schema, completeness per
+corpus, and the class `unavailable`; the discourse corpus is now one of the corpora they cover). Re-run on
+the same recordings, both runs still exit 0 with `"unlisted": 0`. Of the 232 pilot records counted as
+same above, one is now `unavailable`: the UDHR translation pilot, `CheckerUnavailable` on both sides
+because the readings route times out on it, as in batch 0's U1. `delta.json` lists it under
+`unavailable` with that reason.
+
 ## O4: the same text with its own code (`order`, 671 documents)
 
 Python raised its copy of Lean's text as a plain `VEError`, whose `code` is `InvalidInput`. The relay now

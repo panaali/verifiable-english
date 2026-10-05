@@ -18,6 +18,7 @@ from pathlib import Path
 import pytest
 
 from conformance.risk import agent_ops, asimov_risk, asimov_rules
+from subprocesses import HANG_TIMEOUT
 from ve.environment import Environment
 from ve.errors import VEError
 
@@ -228,7 +229,7 @@ def _python(raw):
 def _route(raws, kind="risk-elaborate", document=None):
     cases = [{"id": str(i), "kind": kind, "environment": raw, "document": document or {"norms": []}}
              for i, raw in enumerate(raws)]
-    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=600)
+    out = subprocess.run([str(BIN), "-"], input=json.dumps(cases), text=True, capture_output=True, timeout=HANG_TIMEOUT)
     assert out.returncode in (0, 1), out.stderr
     return json.loads(out.stdout)
 
