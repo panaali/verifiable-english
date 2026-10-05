@@ -1,7 +1,7 @@
-import ResponseShape.Encoders.Common
+import ResponseShape.Encoders.Norms
 
 /-! The `soft-norms` mode (`SoftNorms.Run.runCaseReported`) against `soft-norms.json#/row`. A case
-off the soft path is the norms mode's runner, whose rows are rows of this mode (`hnorms`). -/
+off the soft path is the norms mode's, whose rows are rows of this mode. -/
 
 namespace ResponseShape.Encoders.SoftNorms
 open Lean ResponseShape ResponseShape.Skeletons
@@ -108,7 +108,7 @@ theorem of_norms {v : Json} (h : Fits Γ Skeletons.norms v) : Fits Γ Skeletons.
   refine Fits.altSub ?_ h
   alt_sub
 
-theorem runCase_fits (hnorms : ∀ j, OkFits Γ Skeletons.norms (VE.Norms.Run.runCase j)) (j : Json) :
+theorem runCase_fits (j : Json) :
     OkFits Γ Skeletons.softNorms (runCase j) := by
   unfold runCase
   okfits
@@ -116,17 +116,16 @@ theorem runCase_fits (hnorms : ∀ j, OkFits Γ Skeletons.norms (VE.Norms.Run.ru
     okfits
     fits_as "soft-norms.json#/$defs/admission"
     exact admission_fits _ _ _
-  · exact OkP.of (hnorms j) fun _ => of_norms
+  · exact OkP.of (Norms.runCase_fits j) fun _ => of_norms
   · exact runSoftKind_fits _ _ _
 
-theorem runCaseReported_fits (hnorms : ∀ j, OkFits Γ Skeletons.norms (VE.Norms.Run.runCase j))
-    (hnormsReported : ∀ j, Fits Γ Skeletons.norms (VE.Norms.Run.runCaseReported j)) (j : Json) :
+theorem runCaseReported_fits (j : Json) :
     Fits Γ Skeletons.softNorms (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits hnorms j _ ‹_›
+    · exact runCase_fits j _ ‹_›
     · fits
-  · exact of_norms (hnormsReported j)
+  · exact of_norms (Norms.runCaseReported_fits j)
 
 end ResponseShape.Encoders.SoftNorms

@@ -242,6 +242,10 @@ end OkP
 
 theorem isEmpty_empty : ("" : String).isEmpty = true := rfl
 
+theorem getArr?_arr (a : Array Json) : (Json.arr a).getArr? = .ok a := rfl
+
+theorem toOption_ok {α : Type} (a : α) : (Except.ok a : Except String α).toOption = some a := rfl
+
 theorem isEmpty_iff_data (s : String) : s.isEmpty = true ↔ s.data = [] := by
   rcases s with ⟨cs⟩
   cases cs with

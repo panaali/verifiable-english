@@ -30,7 +30,7 @@ macro "fields_split" : tactic =>
 
 /-- The per-element goals of `Fits.arrOf` over appended, mapped and filtered lists. -/
 macro "elems_split" : tactic =>
-  `(tactic|(simp only [List.mem_toArray, List.mem_append, List.mem_map, List.mem_filterMap, or_imp, forall_and, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Option.some.injEq, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]; (repeat' apply And.intro)))
+  `(tactic|(simp only [List.mem_toArray, Array.mem_append, getArr?_arr, toOption_ok, Option.getD_some, List.mem_append, List.mem_map, List.mem_filterMap, or_imp, forall_and, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Option.some.injEq, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]; (repeat' apply And.intro)))
 
 /-- Literal conditions of a field list (`"".isEmpty`). -/
 macro "lits_simp" : tactic =>
