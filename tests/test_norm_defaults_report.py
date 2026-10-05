@@ -244,3 +244,56 @@ def test_predicates_restrict_the_report(lean_executable):
     lines = nd.report(doc, model=situations[0], predicates=("p_permitted",))
     (row,) = _run([report_case(doc, model=situations[0], predicates=["p_permitted"])], lean_executable)
     assert compare(lines, row) == [] and len(row["report"]) == 1
+
+
+def test_report_on_generated_trees(lean_executable):
+    """Spec 8's generated trees (1,000 with their situations, 200 through Python's search
+    evidence), as authored and translation documents, some with a `completions` block:
+    every report is Python's, line for line."""
+    from conformance.norm_defaults_report import generated
+    result = generated(lean_executable)
+    assert result["mismatches"] == []
+    assert result["cases"] == 1200
+    counts = result["counts"]
+    for key in ("situation:reachable", "situation:unknown", "situation:UngroundedDefault", "situation:grounded",
+                "searched:reachable", "searched:none", "searched:UngroundedDefault"):
+        assert counts.get(key, 0) >= 20, (key, counts)
+
+
+MALFORMED = [7, True, [], {}, "x", [7], {"a": 7}, [[]]]
+
+
+def test_malformed_fields_are_refused_or_inert(lean_executable):
+    """Every report field, every entry of `witnesses`, `packages` and `completions`, and
+    every part of a situation replaced by a value of another shape: Lean answers each case
+    with a row, no malformed evidence ever becomes a `reachable` or `none` line, and a
+    replaced situation part is refused exactly when Python refuses the situation (otherwise
+    the report is Python's)."""
+    doc, situations = _document("u1-allow")
+    cases = [report_case(doc, **{field: value}) for field in
+             ("completions", "unit_ids", "translation", "witnesses", "packages", "predicates")
+             for value in MALFORMED]
+    for value in MALFORMED:
+        cases += [report_case(doc, witnesses={CSAM: value}), report_case(doc, packages={f"reached:{CSAM}": value}),
+                  report_case(doc, completions={CSAM: value}, unit_ids=["u1"])]
+    models = [{**situations[0], part: value} for part in ("complete", "domains", "constants", "relations")
+              for value in MALFORMED] + [value for value in MALFORMED]
+    rows = _run(cases + [report_case(doc, model=m) for m in models], lean_executable)
+    assert len(rows) == len(cases) + len(models)
+    evidence, situated = rows[:len(cases)], rows[len(cases):]
+    errors = [r for r in evidence if r["status"] == "error"]
+    assert all(type(r["error"]) is str and r["error"] for r in errors)
+    answered = [r for r in evidence if r["status"] == "ok"]
+    assert answered and len(errors) > 3 * len(answered)
+    assert {line["reached"] for r in answered for line in r["report"]} == {"unknown"}
+    refused = 0
+    for model, row in zip(models, situated):
+        try:
+            lines = nd.report(doc, model=model)
+        except (VEError, AttributeError, KeyError, TypeError, ValueError):
+            # Python's situation decoder refuses it (not always as a VEError: batch 10b relays Lean's)
+            assert row["status"] == "error", model
+            refused += 1
+        else:
+            assert compare(lines, row) == [], model
+    assert refused > len(models) // 2
