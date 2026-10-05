@@ -187,12 +187,14 @@ def lean_admission(raw, directory):
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
     from .backends.lean import configured_timeout, run_discourse_case
-    # `read_rows` binds the row to this case's id and its exit status to the row's status.
+    # The shared transport (`read_rows`) binds the row to this case's id, an error row included, and its exit
+    # status to the row's status, and contains every malformed answer.
     row = run_discourse_case(executable, case, timeout=configured_timeout(_ROUTE_TIMEOUT))
     status = row["status"]
     # A row naming the case by position is Lean's reader refusing the case Python wrote: no answer.
     well_formed = "case_index" not in row and status == "error" or status == "ok" and (
-        row.get("admitted") in (True, "UNKNOWN") and type(row.get("report_id")) is str
+        # `in (True, ...)` would let 1 through: True == 1 is no JSON equality.
+        (row.get("admitted") is True or row.get("admitted") == "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict
         and all(type(v) is str and v in _STATUSES for v in row["statuses"].values())
         and type(row.get("validity")) is dict and type(row.get("bound")) is dict and _joint_answer(row))
