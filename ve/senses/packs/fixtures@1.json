@@ -1,0 +1,23 @@
+{
+  "format": "ve.sense-pack@1",
+  "name": "fixtures@1",
+  "sorts": [
+    {"name": "joke", "noun": "joke", "plural": "jokes", "description": "A joke.", "letter": "J"},
+    {"name": "service", "noun": "service", "plural": "services", "description": "A service.", "letter": "S"},
+    {"name": "person", "noun": "person", "plural": "persons", "description": "A person.", "letter": "P"},
+    {"name": "number", "noun": "number", "plural": "numbers", "description": "A number.", "letter": "N"},
+    {"name": "principal", "noun": "principal", "plural": "principals", "description": "A principal.", "letter": "A"},
+    {"name": "resource", "noun": "resource", "plural": "resources", "description": "A resource.", "letter": "R"}
+  ],
+  "senses": [
+    {"word": "funny", "index": 1, "gloss": "amusing", "description": "causes laughter", "kinds": ["joke"], "wording": "{0} is funny"},
+    {"word": "funny", "index": 2, "gloss": "strange", "description": "odd, hard to explain", "kinds": ["joke"], "wording": "{0} is funny"},
+    {"word": "odd", "index": 1, "gloss": "strange", "description": "odd, hard to explain", "kinds": ["joke"], "wording": "{0} is odd"},
+    {"word": "odd", "index": 2, "gloss": "uneven", "description": "not divisible by two", "kinds": ["number"], "wording": "{0} is odd"},
+    {"word": "tells", "index": 1, "gloss": "says aloud", "description": "says the joke to someone", "kinds": ["person", "joke"], "wording": "{0} tells {1}"},
+    {"word": "deployed", "index": 1, "gloss": "live", "description": "running in production", "kinds": ["service"], "wording": "{0} is deployed"},
+    {"word": "reviewed", "index": 1, "gloss": "checked", "description": "examined by a reviewer", "kinds": ["service"], "wording": "{0} is reviewed"},
+    {"word": "reviewed", "index": 2, "gloss": "rated", "description": "given a public rating", "kinds": ["service"], "wording": "{0} is reviewed"},
+    {"word": "access", "index": 1, "gloss": "read", "description": "may read the resource", "kinds": ["principal", "resource"], "wording": "{0} may access {1}", "negative": "{0} may not access {1}"}
+  ]
+}
