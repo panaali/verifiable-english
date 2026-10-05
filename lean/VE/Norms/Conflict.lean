@@ -275,28 +275,6 @@ def outcomeBase (D : Doc) (n : String) : VE.Formula :=
 def pairConflict (D : Doc) (pr : Pair) : VE.Formula :=
   .and (outcomeBase D pr.req) (.not (outcomeBase D pr.perm))
 
-/-- `conflict`, `outcomeBase` and `pairConflict` from the document's layers, computed once (plan F5d). -/
-def conflictIn (D : Doc) (L : Layers) (r : Regulated) : VE.Formula :=
-  let i := L.names.idxOf r.name
-  .and (substIn L i (pos D.T r.name)) (substIn L i (neg D.T r.name))
-
-def outcomeBaseIn (D : Doc) (L : Layers) (n : String) : VE.Formula :=
-  match D.T.regulated.find? (·.name == n) with
-  | some r => substIn L (L.names.idxOf n) (outcome D.T r)
-  | none => .bottom
-
-def pairConflictIn (D : Doc) (L : Layers) (pr : Pair) : VE.Formula :=
-  .and (outcomeBaseIn D L pr.req) (.not (outcomeBaseIn D L pr.perm))
-
-theorem conflictIn_eq (D : Doc) (r : Regulated) : conflictIn D (layersOf D) r = conflict D r := by
-  simp only [conflictIn, conflict, substIn_eq, layersOf_names, before]
-
-theorem outcomeBaseIn_eq (D : Doc) (n : String) : outcomeBaseIn D (layersOf D) n = outcomeBase D n := by
-  simp only [outcomeBaseIn, outcomeBase, substIn_eq, layersOf_names, before]
-
-theorem pairConflictIn_eq (D : Doc) (pr : Pair) : pairConflictIn D (layersOf D) pr = pairConflict D pr := by
-  simp only [pairConflictIn, pairConflict, outcomeBaseIn_eq]
-
 /-- `ConflictFree`: no typed base tuple satisfies any conflict formula. -/
 def ConflictFree (D : Doc) (B : VE.Structure.{u}) : Prop :=
   (∀ r ∈ D.T.regulated, ∀ vs, VE.TupleTyped B r.sorts vs →
