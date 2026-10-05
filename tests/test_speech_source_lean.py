@@ -71,13 +71,15 @@ def certified(env):
     """Asserted facts, a polar answer, a follows judgment and a proof task, each with a found certificate."""
     lines = ["Atlas is reviewed.\n", "Tom is a cat.\n", "Is atlas reviewed?\n",
              "Does it follow from these premises that tom is a cat?\n",
-             "Prove that tom is a cat using these premises.\n"]
+             "Prove that tom is a cat using these premises.\n", "Beacon is reviewed.\n"]
+    # The last assertion is in premises(D) but not in the pinned Pi_q of the earlier query (1.4).
     units = placed(lines, [
         unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")}),
         unit("b", 0, "asserted", {"ast": U("cat", "tom")}),
         unit("p", 0, "question", polar(U("reviewed", "atlas"))),
         unit("f", 0, "question", {"question": {"mode": "follows", "query": "q1"}}),
-        unit("t", 0, "instruction", command("require", "submit_required", ["q1"]))])
+        unit("t", 0, "instruction", command("require", "submit_required", ["q1"])),
+        unit("z", 0, "asserted", {"ast": U("reviewed", "beacon")})])
     queries = [{"id": "q1", "premises": ["a", "b"], "target": {"ast": U("cat", "tom")}}]
     py = core(env, {"units": units, "queries": queries})
     question = py.questions[0]
@@ -380,7 +382,7 @@ def test_premise_status_evidence_comes_from_the_case(lean):
     env = base_env()
     metadata, source = certified(env)
     py = core(env, {"units": metadata["units"], "queries": metadata["queries"]})
-    status = {"model": model(reviewed=[["atlas"]], cat=[["tom"]])}
+    status = {"model": model(reviewed=[["atlas"], ["beacon"]], cat=[["tom"]])}
     result = run_source(metadata, source, premise_status={"answers": {"0": status, "1": status},
                                                           "compliance": {"0": status}})
     assert result["status"] == "ok", result
@@ -425,6 +427,24 @@ def test_nominations_name_a_candidate_of_the_bound_set(lean):
     assert run_source(metadata, source)["error"] == "AnswerMismatch: x"
     # Python does not record nominations yet (it rejects the record); Lean's answer is the specified one.
     assert py_outcome(*nominated([record]))["error"] == "InvalidInput: answer record"
+
+
+def test_narrowing_references_are_typed_before_resolution(lean):
+    """A narrowing's set and version are a set id and a version number before they are looked up (3.2)."""
+    name, metadata, source = templates()[1]
+    for field, value in (("set", "not a token"), ("set", ""), ("version", 0), ("version", "1"), ("version", True)):
+        changed = copy.deepcopy(metadata)
+        changed["narrowings"][0][field] = value
+        assert run_source(changed, source)["error"] == py_outcome(changed, source)["error"] == "invalid narrowing"
+    for field, value, text in (("set", "other", "narrowing cites unknown reading set version"),
+                               ("version", 2, "narrowing cites unknown reading set version"),
+                               ("keeps", ["r9"], "narrowing must keep named readings"),
+                               ("keeps", [], "narrowing must keep named readings"),
+                               ("reason_spans", ["nowhere"], "narrowing needs cited source units"),
+                               ("by", "Not a token", "invalid narrowing id or author")):
+        changed = copy.deepcopy(metadata)
+        changed["narrowings"][0][field] = value
+        assert run_source(changed, source)["error"] == py_outcome(changed, source)["error"] == text
 
 
 def test_reading_question_needs_its_derived_open_term(lean):
