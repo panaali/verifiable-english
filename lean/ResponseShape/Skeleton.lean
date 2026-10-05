@@ -109,6 +109,26 @@ theorem ofList_get {l : List (String × Json)} (hd : (l.map Prod.fst).Nodup) {k 
     cases h
     exact hm
 
+/-- A field of an object built from a list holds the value of some element of the list. -/
+theorem ofList_get' {l : List (String × Json)} {k : String} {v : Json}
+    (h : (Std.TreeMap.Raw.ofList l compare)[k]? = some v) : ∃ k', (k', v) ∈ l := by
+  rw [Std.TreeMap.Raw.ofList_eq_insertMany_empty,
+    Std.TreeMap.Raw.getElem?_insertMany_list Std.TreeMap.Raw.WF.emptyc] at h
+  simp only [Std.TreeMap.Raw.getElem?_emptyc, Option.or_none] at h
+  rw [List.findSomeRev?_eq_findSome?_reverse] at h
+  obtain ⟨⟨a, b⟩, hm, hb⟩ := List.exists_of_findSome?_eq_some h
+  split at hb
+  · cases hb
+    exact ⟨a, List.mem_reverse.mp hm⟩
+  · cases hb
+
+/-- An object whose field names are data (a map): every value fits `s`. -/
+theorem mkObjExtra {s : Skel} {l : List (String × Json)} (hv : ∀ p ∈ l, Fits Γ s p.2) :
+    Fits Γ (.obj [] (some s) [] []) (Json.mkObj l) := by
+  refine Fits.obj (fun k v h => ?_) (fun _ h => by cases h) (fun _ h => by cases h)
+  obtain ⟨k', hm⟩ := ofList_get' h
+  exact hv _ hm
+
 /-- An object built from a list of fields (`Json.mkObj`): its field names pass `keysOk` and each
 value fits the skeleton of its field. -/
 theorem mkObj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
