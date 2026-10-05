@@ -9040,6 +9040,7 @@
   "tests/test_senses_pack.py::test_bundled_pack_rejects_path_escape[]",
   "tests/test_senses_pack.py::test_bundled_pack_rejects_path_escape[a/b]",
   "tests/test_senses_pack.py::test_bundled_pack_rejects_path_escape[a\\\\b]",
+  "tests/test_senses_pack.py::test_bundled_pack_rejects_path_escape[a\\x00b]",
   "tests/test_senses_pack.py::test_fixture_pack_is_unreviewed",
   "tests/test_senses_pack.py::test_fixture_pack_matches_spec_wordings",
   "tests/test_senses_pack.py::test_generic_canonicalization_is_stable_without_pack_schema",
