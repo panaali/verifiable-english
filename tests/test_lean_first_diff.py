@@ -97,3 +97,63 @@ def test_a_message_with_a_line_separator_is_one_record(tmp_path):
     base = {"a": {"raised": {"code": "InvalidInput", "message": "x y\x85z"}}}
     path = _write(tmp_path / "r.jsonl", base)
     assert len(diff.load(path)) == 1
+
+
+# lf-1 review B, the class of route_parity.py's empty pass: compare is evidence only over recorded runs.
+
+def _records(path: Path, groups: dict) -> str:
+    path.write_text("".join(json.dumps({"corpus": corpus, "authority": authority, "case": case, "op": "op",
+                                        "source_sha256": "s", "outcome": outcome}) + "\n"
+                            for (corpus, authority), outcomes in groups.items() for case, outcome in outcomes.items()))
+    return str(path)
+
+
+def _full(outcome=OK):
+    return {group: {"a": outcome} for group in diff.expected_groups()}
+
+
+def test_compare_refuses_the_same_file_and_runs_without_records(tmp_path, capsys):
+    run = _records(tmp_path / "run.jsonl", _full())
+    assert diff.main(["compare", run, run]) == 2
+    empty = tmp_path / "empty.jsonl"
+    empty.write_text("")
+    assert diff.main(["compare", str(empty), run]) == 2
+    assert diff.main(["compare", "/dev/null", "/dev/null"]) == 2
+    assert "holds no record" in capsys.readouterr().err
+    with pytest.raises(SystemExit, match="same file"):
+        diff.compare(run, run, None)
+
+
+def test_compare_fails_when_a_corpus_is_missing_on_a_side(tmp_path):
+    full = _full()
+    partial_groups = {g: v for g, v in full.items() if g[0] != "pilots"}
+    base, head = _records(tmp_path / "b.jsonl", full), _records(tmp_path / "h.jsonl", partial_groups)
+    assert diff.main(["compare", base, _records(tmp_path / "h2.jsonl", full)]) == 0
+    result = diff.compare(base, head, {"verdict": []}, diff.expected_groups())
+    assert result["problems"] == ["HEAD has no record of pilots/default"]
+    assert diff.main(["compare", base, head]) == 1
+    # A run of one corpus is evidence for that corpus when the comparison names it.
+    probe = {g: v for g, v in full.items() if g[0] == "probe"}
+    one, other = _records(tmp_path / "p1.jsonl", probe), _records(tmp_path / "p2.jsonl", probe)
+    assert diff.main(["compare", one, other]) == 1
+    assert diff.main(["compare", one, other, "--corpus", "probe"]) == 0
+
+
+def test_compare_fails_when_a_corpus_checked_nothing_on_both_sides(tmp_path):
+    down = {"raised": {"code": "CheckerUnavailable", "message": "CheckerUnavailable: no service"}}
+    groups = {**_full(), ("probe", "lean"): {"a": down, "b": down}}
+    base, head = _records(tmp_path / "b.jsonl", groups), _records(tmp_path / "h.jsonl", groups)
+    result = diff.compare(base, head, None, diff.expected_groups())
+    assert result["unlisted"] == 0 and result["unavailable_both"] == {"probe/lean": 2}
+    assert result["problems"] == ["every record of probe/lean is unavailable on both sides"]
+    assert diff.main(["compare", base, head]) == 1
+
+
+def test_a_delta_entry_without_its_outcomes_lists_nothing(tmp_path):
+    """A listed record must name both outcomes: an entry without `base` used to accept a record missing
+    from BASE (None == None)."""
+    base = _records(tmp_path / "b.jsonl", {("c", "python"): {"a": OK}})
+    head = _records(tmp_path / "h.jsonl", {("c", "python"): {"a": OK, "b": OK}})
+    entry = {"corpus": "c", "authority": "python", "case": "b", "op": "op", "head": OK}
+    assert diff.compare(base, head, {"verdict": [entry]})["unlisted"] == 1
+    assert diff.compare(base, head, {"verdict": [{**entry, "base": None}]})["unlisted"] == 0
