@@ -7,12 +7,14 @@ namespace ResponseShape.Encoders.SpeechActs
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.SpeechActs VE.SpeechActs.Run
 
-theorem of_norms {v : Json} (h : Fits Γ Skeletons.norms v) : Fits Γ Skeletons.speechActs v := by
+variable {req : Json}
+
+theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.speechActs v := by
   refine Fits.altSub ?_ h
   alt_sub
 
 theorem elaborate_fits (id : String) (dec : Wire.Decoded) :
-    Fits Γ (skel% "speech-acts.json#/$defs/elaborate") (VE.Route.Wire.ok id (elaborated dec)) := by
+    Fits req (skel% "speech-acts.json#/$defs/elaborate") (VE.Route.Wire.ok id (elaborated dec)) := by
   unfold VE.Route.Wire.ok elaborated Wire.encodeScope encodeNode questionJson VE.Norms.Wire.regenerated
   simp only []
   fits
@@ -31,7 +33,7 @@ theorem firstFailure_of_not_free (j : Json) (res : ConflictCase) (h : replayConf
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.speechActs (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.speechActs (runCase j) := by
   unfold runCase
   simp only []
   okfits
@@ -47,7 +49,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.speechActs (runCase j) := 
     have := firstFailure_of_not_free j _ ‹replayConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.speechActs (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.speechActs (runCaseReported j) := by
   unfold runCaseReported
   split
   · split

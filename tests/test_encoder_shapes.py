@@ -58,8 +58,8 @@ CERTIFICATE = '[("valid", .bool v), ("background", toJson b), ("layers", toJson 
 
 def _certificate(fields: str) -> str:
     return f"""
-example (id : String) (v : Bool) (b l : Nat) (c : List String) :
-    Fits Γ (skel% "soft-norms.json#/$defs/certificate") (VE.Route.Wire.ok id {fields}) := by
+example (req : Json) (id : String) (v : Bool) (b l : Nat) (c : List String) :
+    Fits req (skel% "soft-norms.json#/$defs/certificate") (VE.Route.Wire.ok id {fields}) := by
   simp only [VE.Route.Wire.ok]
   fits
 """
@@ -81,8 +81,8 @@ def test_a_mutated_encoder_fails(lake, tmp_path, mutant):
 
 def _report(claim: str) -> str:
     return f"""
-example (n : String) (a : Json) :
-    Fits Γ (skel% "common.json#/$defs/bound_report")
+example (req : Json) (n : String) (a : Json) :
+    Fits req (skel% "common.json#/$defs/bound_report")
       (Json.mkObj [("root", Json.mkObj {claim}), ("assumptions", Json.arr #[])]) := by
   fits
 """
@@ -102,7 +102,7 @@ def _packages(verdict: str, detail: bool) -> str:
               + (', ("detail", .str t)]' if detail else "]"))
     return f"""
 example (id t : String) (e : Bool) (b : Nat) (ts : List String) :
-    Fits Γ (skel% "soft-norms.json#/$defs/packages") (VE.Route.Wire.ok id {fields}) := by
+    Fits req (skel% "soft-norms.json#/$defs/packages") (VE.Route.Wire.ok id {fields}) := by
   simp only [VE.Route.Wire.ok]
   fits
 """
@@ -128,8 +128,8 @@ elab "mutant%" : term => do
   | .ok (k, _) => pure (Lean.toExpr k)
   | .error e => throwError e
 
-example (id : String) (v : Bool) (b l : Nat) (c : List String) :
-    Fits Γ mutant% (VE.Route.Wire.ok id {CERTIFICATE}) := by
+example (req : Json) (id : String) (v : Bool) (b l : Nat) (c : List String) :
+    Fits req mutant% (VE.Route.Wire.ok id {CERTIFICATE}) := by
   simp only [VE.Route.Wire.ok]
   fits
 """
@@ -145,3 +145,22 @@ def test_a_mutated_shape_fails(lake, tmp_path):
     assert not _passes(lake, tmp_path, _shape(with_extra, with_extra))          # required, never written
     without_layers = GENUINE.replace(', "layers"', "")
     assert not _passes(lake, tmp_path, _shape(without_layers, without_layers))  # written, not allowed
+
+
+def _route_error(valid: bool, certificate: bool) -> str:
+    fields = '[("id", .str id), ("status", .str "error"), ("error", .str m)' + (', ("valid", .bool false)]' if valid else "]")
+    test = "= true" if certificate else "≠ true"
+    return f"""
+example (req : Json) (id m : String) (h : (req.getObjValD "kind" == .str "certificate") {test}) :
+    Fits req Skeletons.route (Json.mkObj {fields}) := by
+  fits
+  all_goals case_cond
+"""
+
+
+def test_a_field_tied_to_the_case_is_checked(lake, tmp_path):
+    """route's error row: `valid` exactly beside a certificate case (a condition on the request, `x-case`)."""
+    assert _passes(lake, tmp_path, _route_error(valid=True, certificate=True))
+    assert _passes(lake, tmp_path, _route_error(valid=False, certificate=False))
+    assert not _passes(lake, tmp_path, _route_error(valid=False, certificate=True))
+    assert not _passes(lake, tmp_path, _route_error(valid=True, certificate=False))

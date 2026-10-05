@@ -6,13 +6,15 @@ namespace ResponseShape.Encoders.Route
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.Route VE.Route.Run
 
+variable {req : Json}
+
 theorem runBackground_fits (id : String) (bg : List (VE.Formula × String)) :
-    Fits Γ Skeletons.route (Wire.runBackground id bg) := by
+    Fits req Skeletons.route (Wire.runBackground id bg) := by
   unfold Wire.runBackground Wire.ok
   fits
 
 theorem runDependencyOrder_fits (id : String) (j : Json) :
-    OkFits Γ Skeletons.route (Wire.runDependencyOrder id j) := by
+    OkFits req Skeletons.route (Wire.runDependencyOrder id j) := by
   unfold Wire.runDependencyOrder
   okfits
   all_goals (try simp only [Wire.ok])
@@ -20,7 +22,7 @@ theorem runDependencyOrder_fits (id : String) (j : Json) :
 
 theorem runFol_fits (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id kind : String)
     (j : Json) (hk : ¬ (kind == "background") = true) :
-    OkFits Γ Skeletons.route (Wire.runFol profiles environment rv id kind j) := by
+    OkFits req Skeletons.route (Wire.runFol profiles environment rv id kind j) := by
   unfold Wire.runFol
   okfits
   all_goals (try simp only [Wire.ok])
@@ -29,7 +31,7 @@ theorem runFol_fits (profiles : List String) (environment : Json) (rv : Wire.Rou
 
 theorem runClosure_fits (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id kind : String)
     (j : Json) (hk : ¬ (kind == "background") = true) :
-    OkFits Γ Skeletons.route (Wire.runClosure profiles environment rv id kind j) := by
+    OkFits req Skeletons.route (Wire.runClosure profiles environment rv id kind j) := by
   unfold Wire.runClosure
   okfits
   all_goals (try simp only [Wire.ok])
@@ -38,21 +40,21 @@ theorem runClosure_fits (profiles : List String) (environment : Json) (rv : Wire
 
 theorem runOrder_fits (profiles : List String) (environment : Json) (rv : Wire.RouteOrderVocabulary)
     (id kind : String) (j : Json) :
-    OkFits Γ Skeletons.route (Wire.runOrder profiles environment rv id kind j) := by
+    OkFits req Skeletons.route (Wire.runOrder profiles environment rv id kind j) := by
   unfold Wire.runOrder
   okfits
   all_goals (try simp only [Wire.ok])
   all_goals fits
 
 theorem coreWire_fits (profiles : List String) (environment : Json) (id kind : String) (j : Json) :
-    OkFits Γ Skeletons.route (VE.Core.Wire.run profiles environment id kind j) := by
+    OkFits req Skeletons.route (VE.Core.Wire.run profiles environment id kind j) := by
   unfold VE.Core.Wire.run
   okfits
   all_goals (try simp only [Wire.ok])
   all_goals first | with_reducible exact runBackground_fits _ _ | fits
 
 theorem coreLayers_fits (profiles : List String) (environment : Json) (id kind : String) (j : Json) :
-    OkFits Γ Skeletons.route (VE.Core.Layers.run profiles environment id kind j) := by
+    OkFits req Skeletons.route (VE.Core.Layers.run profiles environment id kind j) := by
   unfold VE.Core.Layers.run
   okfits
   all_goals first
@@ -61,14 +63,14 @@ theorem coreLayers_fits (profiles : List String) (environment : Json) (id kind :
     | (unfold VE.Core.Layers.coreCertificate; okfits; all_goals (try simp only [Wire.ok]); all_goals fits)
 
 theorem runBundle_fits (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id : String)
-    (j : Json) : OkFits Γ Skeletons.route (VE.Definitions.Bundle.runBundle profiles environment rv id j) := by
+    (j : Json) : OkFits req Skeletons.route (VE.Definitions.Bundle.runBundle profiles environment rv id j) := by
   unfold VE.Definitions.Bundle.runBundle
   okfits
   all_goals (try simp only [Wire.ok])
   all_goals fits
 
 theorem runAdmit_fits (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id : String)
-    (j : Json) : OkFits Γ Skeletons.route (runAdmit profiles environment rv id j) := by
+    (j : Json) : OkFits req Skeletons.route (runAdmit profiles environment rv id j) := by
   unfold runAdmit
   okfits
   all_goals (try simp only [Wire.ok])
@@ -76,7 +78,7 @@ theorem runAdmit_fits (profiles : List String) (environment : Json) (rv : Wire.R
   all_goals exact Common.claimJson_fits _
 
 theorem dispatch_fits (id : String) (environment : Json) (e : Gate.Envelope) (j : Json) :
-    OkFits Γ Skeletons.route (dispatch id environment e j) := by
+    OkFits req Skeletons.route (dispatch id environment e j) := by
   unfold dispatch
   okfits
   all_goals (try simp only [Wire.ok])
@@ -92,15 +94,17 @@ theorem dispatch_fits (id : String) (environment : Json) (e : Gate.Envelope) (j 
     | with_reducible exact runFol_fits _ _ _ _ _ _ ‹_›
     | fits
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.route (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.route (runCase j) := by
   unfold runCase
   okfits
   exact dispatch_fits _ _ _ _
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.route (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.route (runCaseReported j) := by
   unfold runCaseReported
   split
   · exact runCase_fits j _ ‹_›
   · fits
+    -- `valid` exactly beside a certificate case: the row's test of the case is the shape's.
+    all_goals case_cond
 
 end ResponseShape.Encoders.Route

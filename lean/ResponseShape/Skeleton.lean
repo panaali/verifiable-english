@@ -7,22 +7,103 @@ import Lean.ToExpr
 
 A `Skel` is what a `Shape` says about the fields of the objects in a value: for each object
 its allowed fields (each with the skeleton of its value), the fields it requires and the
-fields it forbids, through arrays, alternatives and references; and, where a field's presence
-depends on another field's string value (an `if`/`then`/`else`), that value. Everything else a
-shape checks (patterns, numbers, echoes, counts, grammars without objects) is `any` here.
+fields it forbids, through arrays, alternatives and references; where a field's presence
+depends on another field's string value (an `if`/`then`/`else`), that value; and where it
+depends on the request case (an `if` over `x-case`), that condition (`CaseCond`). Everything
+else a shape checks (patterns, numbers, echoes, counts, grammars without objects) is `any`
+here, and a value the runner copies from the request (`Shape.copied`) is `any`.
 
 `skeleton files s` extracts the skeleton of a shape. It describes at least every value valid
-under the shape (it may allow more: a condition it cannot express is dropped, never
-strengthened), and it keeps every field list: an object closed by `additionalProperties:
-false` is closed here with exactly its properties, and its `required` list is required.
+under the shape (it may allow more: a condition on a field's value it cannot express is
+dropped, never strengthened; a condition on the request it cannot express, or a recursive
+reference, is an error), and it keeps every field list: an object closed by
+`additionalProperties: false` is closed here with exactly its properties, and its `required`
+list is required.
 
-`Fits Γ k v` says that the JSON value `v` has the fields `k` describes (`Γ` names the
-skeletons of recursive references). The theorems of `ResponseShape.Encoders` prove, for every
-service mode, that every row its runner returns fits the skeleton of the mode's row shape, so
-a field an encoder adds or drops, or a shape that lists another field, fails the build. -/
+`Fits c k v` says that the JSON value `v`, answering the request case `c`, has the fields `k`
+describes. The theorems of `ResponseShape.Encoders` prove, for every service mode, that every
+row its runner returns for a case fits the skeleton of the mode's row shape, so a field an
+encoder adds or drops, or a shape that lists another field, fails the build. -/
 
 namespace ResponseShape
 open Lean
+
+/-- A condition on the request case, as the shapes write it (`x-case`). -/
+inductive CaseCond where
+  /-- The case's `kind` is this string: `{"type": "object", "required": ["kind"], "properties":
+  {"kind": {"const": k}}}`. -/
+  | kind (k : String)
+  /-- The case has the field `ks[0]`, whose value is an object with the field `ks[1]`, and so
+  on: `{"required": [k0], "properties": {k0: {"type": "object", "required": [k1], ...}}}`
+  (true of a case that is not an object, as JSON Schema has it). -/
+  | path (ks : List String)
+  deriving Inhabited, Repr, BEq, Lean.ToExpr
+
+namespace CaseCond
+
+/-- An object holding the nested fields `ks` (no condition on the value when `ks` is empty). -/
+def objectHas : Json → List String → Bool
+  | _, [] => true
+  | j@(.obj _), k :: ks => match j.getObjVal? k with
+    | .ok v => objectHas v ks
+    | .error _ => false
+  | _, _ :: _ => false
+
+def holds : CaseCond → Json → Bool
+  | .kind k, j => j.getObjValD "kind" == .str k
+  | .path [], _ => true
+  | .path (k :: ks), j => match j with
+    | .obj _ => match j.getObjVal? k with
+      | .ok v => objectHas v ks
+      | .error _ => false
+    | _ => true
+
+theorem path_ok {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : (CaseCond.path [k]).holds j = true := by
+  cases j <;> simp_all [holds, objectHas, Json.getObjVal?]
+
+/-- A case that is an object (it has the field `k'`) and lacks the field `k`. -/
+theorem path_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = .ok w) (h : j.getObjVal? k = .error e) :
+    (CaseCond.path [k]).holds j = false := by
+  cases j <;> simp_all [holds, Json.getObjVal?]
+
+theorem objectHas_cons {j v : Json} {k : String} {ks : List String} (h : j.getObjVal? k = .ok v) :
+    objectHas j (k :: ks) = objectHas v ks := by
+  cases j <;> simp_all [objectHas, Json.getObjVal?]
+
+theorem holds_path_cons {j v : Json} {k : String} {ks : List String} (h : j.getObjVal? k = .ok v) :
+    (CaseCond.path (k :: ks)).holds j = objectHas v ks := by
+  cases j <;> simp_all [holds, Json.getObjVal?]
+
+/-- One field of an object: present or not. -/
+theorem objectHas_one {raw : Json} {m : Std.TreeMap.Raw String Json compare} (hobj : raw = .obj m) (k : String) :
+    objectHas raw [k] = (raw.getObjVal? k).toBool := by
+  subst hobj
+  simp only [objectHas]
+  split <;> simp_all [objectHas, Except.toBool]
+
+def isKind : CaseCond → Bool
+  | .kind _ => true
+  | _ => false
+
+end CaseCond
+
+/-- A case whose object map is well formed, as every case the service decodes is (its maps are
+built by insertion). -/
+def CaseWF (j : Json) : Prop := ∀ m, j = .obj m → m.WF
+
+/-- Setting a field other than `kind` keeps the case's kind. -/
+theorem kind_setObjVal {j : Json} (hj : CaseWF j) {k : String} (hk : k ≠ "kind") (v : Json) :
+    (j.setObjVal! k v).getObjValD "kind" = j.getObjValD "kind" := by
+  cases j with
+  | obj m =>
+    have wf := hj m rfl
+    simp only [Json.setObjVal!, Json.getObjValD, Json.getObjVal?]
+    have : (m.insert k v).get? "kind" = m.get? "kind" := by
+      have h := Std.TreeMap.Raw.getElem?_insert (k := k) (v := v) (a := "kind") wf
+      have hne : ¬ compare k "kind" = .eq := fun h => hk ((Std.LawfulEqCmp.compare_eq_iff_eq (cmp := compare)).mp h)
+      simpa [hne] using h
+    rw [this]
+  | _ => rfl
 
 inductive Skel where
   /-- Any value. -/
@@ -40,8 +121,8 @@ inductive Skel where
   | arr (pre : List Skel) (items : Skel)
   | all (ss : List Skel)
   | alt (ss : List Skel)
-  /-- A recursive reference, named in `Γ`. -/
-  | ref (target : String)
+  /-- `t` when the request case meets `c`, else `e`. -/
+  | onCase (c : CaseCond) (t e : Skel)
   deriving Inhabited, Repr, BEq, Lean.ToExpr
 
 namespace Skel
@@ -68,26 +149,27 @@ end Skel
 
 /-! ## Fitting -/
 
-inductive Fits (Γ : String → Skel) : Skel → Json → Prop where
-  | any (v : Json) : Fits Γ .any v
-  | strIn {vs : List String} {s : String} : s ∈ vs → Fits Γ (.strIn vs) (.str s)
-  | strNotIn {vs : List String} {v : Json} : (∀ s, v = .str s → s ∉ vs) → Fits Γ (.strNotIn vs) v
+inductive Fits (c : Json) : Skel → Json → Prop where
+  | any (v : Json) : Fits c .any v
+  | strIn {vs : List String} {s : String} : s ∈ vs → Fits c (.strIn vs) (.str s)
+  | strNotIn {vs : List String} {v : Json} : (∀ s, v = .str s → s ∉ vs) → Fits c (.strNotIn vs) v
   | obj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
       {m : Std.TreeMap.Raw String Json} :
-      (∀ k v, m[k]? = some v → Fits Γ (Skel.field fields extra k) v) →
+      (∀ k v, m[k]? = some v → Fits c (Skel.field fields extra k) v) →
       (∀ k ∈ required, (m[k]?).isSome) → (∀ k ∈ absent, m[k]? = none) →
-      Fits Γ (.obj fields extra required absent) (.obj m)
+      Fits c (.obj fields extra required absent) (.obj m)
   | arr {pre : List Skel} {items : Skel} {xs : Array Json} :
-      (∀ i (h : i < xs.size), Fits Γ (Skel.item pre items i) xs[i]) → Fits Γ (.arr pre items) (.arr xs)
-  | all {ss : List Skel} {v : Json} : (∀ s ∈ ss, Fits Γ s v) → Fits Γ (.all ss) v
-  | alt {ss : List Skel} {s : Skel} {v : Json} : s ∈ ss → Fits Γ s v → Fits Γ (.alt ss) v
-  | ref {target : String} {v : Json} : Fits Γ (Γ target) v → Fits Γ (.ref target) v
+      (∀ i (h : i < xs.size), Fits c (Skel.item pre items i) xs[i]) → Fits c (.arr pre items) (.arr xs)
+  | all {ss : List Skel} {v : Json} : (∀ s ∈ ss, Fits c s v) → Fits c (.all ss) v
+  | alt {ss : List Skel} {s : Skel} {v : Json} : s ∈ ss → Fits c s v → Fits c (.alt ss) v
+  | onCaseT {cond : CaseCond} {t e : Skel} {v : Json} : cond.holds c = true → Fits c t v → Fits c (.onCase cond t e) v
+  | onCaseE {cond : CaseCond} {t e : Skel} {v : Json} : cond.holds c = false → Fits c e v → Fits c (.onCase cond t e) v
 
 namespace Fits
 
-variable {Γ : String → Skel}
+variable {c : Json}
 
-theorem nothing_not (v : Json) : ¬ Fits Γ .nothing v := by
+theorem nothing_not (v : Json) : ¬ Fits c .nothing v := by
   intro h
   cases h
 
@@ -123,8 +205,8 @@ theorem ofList_value {l : List (String × Json)} {k : String} {v : Json}
   · cases hb
 
 /-- An object whose field names are data (a map): every value fits `s`. -/
-theorem mkObjExtra {s : Skel} {l : List (String × Json)} (hv : ∀ p ∈ l, Fits Γ s p.2) :
-    Fits Γ (.obj [] (some s) [] []) (Json.mkObj l) := by
+theorem mkObjExtra {s : Skel} {l : List (String × Json)} (hv : ∀ p ∈ l, Fits c s p.2) :
+    Fits c (.obj [] (some s) [] []) (Json.mkObj l) := by
   refine Fits.obj (fun k v h => ?_) (fun _ h => by cases h) (fun _ h => by cases h)
   obtain ⟨k', hm⟩ := ofList_value h
   exact hv _ hm
@@ -141,8 +223,8 @@ theorem none_of_not_mem {m : Std.TreeMap.Raw String Json} (wf : m.WF) {k : Strin
 value fits the skeleton of its field. -/
 theorem mkObj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
     {l : List (String × Json)} (hk : Skel.keysOk fields extra required absent (l.map Prod.fst) = true)
-    (hv : ∀ p ∈ l, Fits Γ (Skel.field fields extra p.1) p.2) :
-    Fits Γ (.obj fields extra required absent) (Json.mkObj l) := by
+    (hv : ∀ p ∈ l, Fits c (Skel.field fields extra p.1) p.2) :
+    Fits c (.obj fields extra required absent) (Json.mkObj l) := by
   simp only [Skel.keysOk, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hk
   obtain ⟨⟨⟨hd, _⟩, hreq⟩, hab⟩ := hk
   have wf : (Std.TreeMap.Raw.ofList l compare).WF := Std.TreeMap.Raw.WF.ofList
@@ -160,9 +242,9 @@ theorem setObj {fields : List (String × Skel)} {extra : Option Skel} {required 
     {l : List (String × Json)} {k : String} {v : Json}
     (hk : (Skel.distinct (l.map Prod.fst) && Skel.keysOk fields extra required absent
       (k :: (l.map Prod.fst).filter (· != k))) = true)
-    (hv : ∀ p ∈ l.filter (·.1 != k), Fits Γ (Skel.field fields extra p.1) p.2)
-    (hkv : Fits Γ (Skel.field fields extra k) v) :
-    Fits Γ (.obj fields extra required absent) ((Json.mkObj l).setObjVal! k v) := by
+    (hv : ∀ p ∈ l.filter (·.1 != k), Fits c (Skel.field fields extra p.1) p.2)
+    (hkv : Fits c (Skel.field fields extra k) v) :
+    Fits c (.obj fields extra required absent) ((Json.mkObj l).setObjVal! k v) := by
   simp only [Skel.distinct, Bool.and_eq_true, decide_eq_true_eq, Skel.keysOk, List.all_eq_true] at hk
   obtain ⟨hd, ⟨⟨_, _⟩, hreq⟩, hab⟩ := hk
   have wf : (Std.TreeMap.Raw.ofList l compare).WF := Std.TreeMap.Raw.WF.ofList
@@ -197,35 +279,35 @@ theorem setObj {fields : List (String × Skel)} {extra : Option Skel} {required 
       simp_all
 
 /-- An array of the images of a list's elements. -/
-theorem arrMap {α : Type} {items : Skel} {xs : List α} {f : α → Json} (h : ∀ x ∈ xs, Fits Γ items (f x)) :
-    Fits Γ (.arr [] items) (Json.arr (xs.map f).toArray) := by
+theorem arrMap {α : Type} {items : Skel} {xs : List α} {f : α → Json} (h : ∀ x ∈ xs, Fits c items (f x)) :
+    Fits c (.arr [] items) (Json.arr (xs.map f).toArray) := by
   refine Fits.arr fun i hi => ?_
   simp only [Skel.item, List.getD_nil, List.getElem_toArray, List.getElem_map]
   exact h _ (List.getElem_mem _)
 
-theorem arrList {items : Skel} {xs : List Json} (h : ∀ x ∈ xs, Fits Γ items x) :
-    Fits Γ (.arr [] items) (Json.arr xs.toArray) := by
-  have := arrMap (Γ := Γ) (f := id) h
+theorem arrList {items : Skel} {xs : List Json} (h : ∀ x ∈ xs, Fits c items x) :
+    Fits c (.arr [] items) (Json.arr xs.toArray) := by
+  have := arrMap (c := c) (f := id) h
   simpa using this
 
-theorem altHead {s : Skel} {ss : List Skel} {v : Json} (h : Fits Γ s v) : Fits Γ (.alt (s :: ss)) v :=
+theorem altHead {s : Skel} {ss : List Skel} {v : Json} (h : Fits c s v) : Fits c (.alt (s :: ss)) v :=
   Fits.alt List.mem_cons_self h
 
-theorem altTail {s : Skel} {ss : List Skel} {v : Json} (h : Fits Γ (.alt ss) v) : Fits Γ (.alt (s :: ss)) v := by
+theorem altTail {s : Skel} {ss : List Skel} {v : Json} (h : Fits c (.alt ss) v) : Fits c (.alt (s :: ss)) v := by
   cases h with
   | alt hm h => exact Fits.alt (List.mem_cons_of_mem _ hm) h
 
-theorem strIn_lit {vs : List String} {s : String} (h : vs.contains s = true) : Fits Γ (.strIn vs) (.str s) :=
+theorem strIn_lit {vs : List String} {s : String} (h : vs.contains s = true) : Fits c (.strIn vs) (.str s) :=
   Fits.strIn (by simpa using h)
 
 theorem strNotIn_lit {vs : List String} {s : String} (h : vs.contains s = false) :
-    Fits Γ (.strNotIn vs) (.str s) :=
+    Fits c (.strNotIn vs) (.str s) :=
   Fits.strNotIn fun t ht => by
     cases ht
     simpa using h
 
 /-- An array whose every element fits `items`. -/
-theorem arrOf {items : Skel} {a : Array Json} (h : ∀ x ∈ a, Fits Γ items x) : Fits Γ (.arr [] items) (.arr a) :=
+theorem arrOf {items : Skel} {a : Array Json} (h : ∀ x ∈ a, Fits c items x) : Fits c (.arr [] items) (.arr a) :=
   Fits.arr fun i hi => by
     simp only [Skel.item, List.getD_nil]
     exact h _ (Array.getElem_mem hi)
@@ -235,7 +317,7 @@ theorem mkObjAlt {ss : List Skel} (n : Nat) {fields : List (String × Skel)} {ex
     {required absent : List String} {l : List (String × Json)}
     (hn : ss[n]? = some (.obj fields extra required absent))
     (hk : Skel.keysOk fields extra required absent (l.map Prod.fst) = true)
-    (hv : ∀ p ∈ l, Fits Γ (Skel.field fields extra p.1) p.2) : Fits Γ (.alt ss) (Json.mkObj l) :=
+    (hv : ∀ p ∈ l, Fits c (Skel.field fields extra p.1) p.2) : Fits c (.alt ss) (Json.mkObj l) :=
   Fits.alt (List.mem_of_getElem? hn) (mkObj hk hv)
 
 /-- The alternative `n` of `ss` is an object skeleton the fields of `(Json.mkObj l).setObjVal! k v` pass. -/
@@ -244,18 +326,18 @@ theorem setObjAlt {ss : List Skel} (n : Nat) {fields : List (String × Skel)} {e
     (hn : ss[n]? = some (.obj fields extra required absent))
     (hk : (Skel.distinct (l.map Prod.fst) && Skel.keysOk fields extra required absent
       (k :: (l.map Prod.fst).filter (· != k))) = true)
-    (hv : ∀ p ∈ l.filter (·.1 != k), Fits Γ (Skel.field fields extra p.1) p.2)
-    (hkv : Fits Γ (Skel.field fields extra k) v) : Fits Γ (.alt ss) ((Json.mkObj l).setObjVal! k v) :=
+    (hv : ∀ p ∈ l.filter (·.1 != k), Fits c (Skel.field fields extra p.1) p.2)
+    (hkv : Fits c (Skel.field fields extra k) v) : Fits c (.alt ss) ((Json.mkObj l).setObjVal! k v) :=
   Fits.alt (List.mem_of_getElem? hn) (setObj hk hv hkv)
 
 /-- Every member of `ss` is one of `ts`: a value fitting `ss` fits `ts` (a runner delegating to
 another mode's runner). -/
-theorem altSub {ss ts : List Skel} {v : Json} (hs : ∀ s ∈ ss, s ∈ ts) (h : Fits Γ (.alt ss) v) :
-    Fits Γ (.alt ts) v := by
+theorem altSub {ss ts : List Skel} {v : Json} (hs : ∀ s ∈ ss, s ∈ ts) (h : Fits c (.alt ss) v) :
+    Fits c (.alt ts) v := by
   cases h with
   | alt hm h => exact Fits.alt (hs _ hm) h
 
-theorem ofAlt {s : Skel} {ss : List Skel} {v : Json} (hs : s ∈ ss) (h : Fits Γ s v) : Fits Γ (.alt ss) v :=
+theorem ofAlt {s : Skel} {ss : List Skel} {v : Json} (hs : s ∈ ss) (h : Fits c s v) : Fits c (.alt ss) v :=
   Fits.alt hs h
 
 end Fits
@@ -264,7 +346,7 @@ end Fits
 def OkP {α : Type} (P : α → Prop) (r : Except String α) : Prop := ∀ v, r = .ok v → P v
 
 /-- Every result a runner returns fits `k`. -/
-abbrev OkFits (Γ : String → Skel) (k : Skel) (r : Except String Json) : Prop := OkP (Fits Γ k) r
+abbrev OkFits (c : Json) (k : Skel) (r : Except String Json) : Prop := OkP (Fits c k) r
 
 namespace OkP
 
@@ -431,6 +513,115 @@ theorem isEmpty_iff_data (s : String) : s.isEmpty = true ↔ s.data = [] := by
   apply Bool.eq_iff_iff.mpr
   simp only [isEmpty_iff_data, String.data_append, List.append_eq_nil_iff, Bool.and_eq_true]
 
+/-! ## Changing the case
+
+A runner that answers a case through another runner on a rewritten case (`Readings.Run.runLower`
+drops `readings@1` from the environment) gives rows that fit for the rewritten case; they fit for
+the original one when every condition on the case in the skeleton reads the same of both. -/
+
+namespace Skel
+
+/-- Whether every condition on the case in `k` satisfies `p` (`fuel` bounds the nesting). -/
+def condsOk (p : CaseCond → Bool) : Nat → Skel → Bool
+  | 0, _ => false
+  | n + 1, k => match k with
+    | .obj fs ex _ _ => fs.all (fun f => condsOk p n f.2) && ex.all (condsOk p n)
+    | .arr pre it => pre.all (condsOk p n) && condsOk p n it
+    | .all ss | .alt ss => ss.all (condsOk p n)
+    | .onCase c t e => p c && condsOk p n t && condsOk p n e
+    | _ => true
+
+theorem lookup_mem {fs : List (String × Skel)} {k : String} {s : Skel} (h : fs.lookup k = some s) :
+    ∃ k', (k', s) ∈ fs := by
+  induction fs with
+  | nil => cases h
+  | cons f fs ih =>
+    simp only [List.lookup] at h
+    split at h
+    · cases h; exact ⟨f.1, List.mem_cons_self⟩
+    · obtain ⟨k', hm⟩ := ih h
+      exact ⟨k', List.mem_cons_of_mem _ hm⟩
+
+theorem condsOk_field {p : CaseCond → Bool} {n : Nat} {fs : List (String × Skel)} {ex : Option Skel} {k : String}
+    (hf : fs.all (fun f => condsOk p n f.2) = true) (he : ex.all (condsOk p n) = true) :
+    condsOk p n (field fs ex k) = true ∨ field fs ex k = .nothing := by
+  unfold field
+  split
+  · rename_i s hs
+    left
+    obtain ⟨k', hm⟩ := lookup_mem hs
+    exact (List.all_eq_true.mp hf) _ hm
+  · cases ex with
+    | none => right; rfl
+    | some e => left; simpa using he
+
+end Skel
+
+namespace Fits
+
+/-- Rows that fit for the case `c` fit for `c'` when every condition of the skeleton that `p`
+admits reads the same of both, and `p` admits all of them. -/
+theorem congr {p : CaseCond → Bool} {c c' : Json} (hp : ∀ cond, p cond = true → cond.holds c = cond.holds c')
+    {k : Skel} {v : Json} (h : Fits c k v) : ∀ n, Skel.condsOk p n k = true → Fits c' k v := by
+  induction h with
+  | any v => intro _ _; exact Fits.any v
+  | strIn hs => intro _ _; exact Fits.strIn hs
+  | strNotIn hs => intro _ _; exact Fits.strNotIn hs
+  | obj hv hreq hab ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      simp only [Skel.condsOk, Bool.and_eq_true] at hn
+      refine Fits.obj (fun k v hk => ?_) hreq hab
+      rcases Skel.condsOk_field (k := k) hn.1 hn.2 with hc | hc
+      · exact ih k v hk n hc
+      · have := hv k v hk
+        rw [hc] at this
+        exact absurd this (nothing_not v)
+  | @arr pre items xs hv ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      simp only [Skel.condsOk, Bool.and_eq_true, List.all_eq_true] at hn
+      refine Fits.arr fun i hi => ih i hi n ?_
+      unfold Skel.item
+      rw [List.getD_eq_getElem?_getD]
+      cases h : pre[i]? with
+      | none => simpa [h] using hn.2
+      | some s => simpa [h] using hn.1 s (List.mem_of_getElem? h)
+  | all hs ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      simp only [Skel.condsOk, List.all_eq_true] at hn
+      exact Fits.all fun s hm => ih s hm n (hn s hm)
+  | alt hm _ ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      simp only [Skel.condsOk, List.all_eq_true] at hn
+      exact Fits.alt hm (ih n (hn _ hm))
+  | onCaseT hc _ ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      simp only [Skel.condsOk, Bool.and_eq_true] at hn
+      exact Fits.onCaseT ((hp _ hn.1.1).symm.trans hc) (ih n hn.1.2)
+  | onCaseE hc _ ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      simp only [Skel.condsOk, Bool.and_eq_true] at hn
+      exact Fits.onCaseE ((hp _ hn.1.1).symm.trans hc) (ih n hn.2)
+
+end Fits
+
 /-! ## Extraction -/
 
 namespace Skel
@@ -451,6 +642,8 @@ def conj : Nat → Skel → Skel → Skel
   | _, _, .nothing => .nothing
   | fuel + 1, .alt as, b => .alt (as.map (conj fuel · b))
   | fuel + 1, a, .alt bs => .alt (bs.map (conj fuel a ·))
+  | fuel + 1, .onCase c t e, b => .onCase c (conj fuel t b) (conj fuel e b)
+  | fuel + 1, a, .onCase c t e => .onCase c (conj fuel a t) (conj fuel a e)
   | _, .strIn a, .strIn b => .strIn (a.filter b.contains)
   | _, .strIn a, .strNotIn b => .strIn (a.filter (!b.contains ·))
   | _, .strNotIn a, .strIn b => .strIn (b.filter (!a.contains ·))
@@ -475,8 +668,6 @@ def conj : Nat → Skel → Skel → Skel
   | _, .all as, .all bs => .all (as ++ bs)
   | _, .all as, b => .all (as ++ [b])
   | _, a, .all bs => .all (a :: bs)
-  | _, .ref t, b => .all [.ref t, b]
-  | _, a, .ref t => .all [a, .ref t]
   | _, _, _ => .nothing
 
 def conjAll (fuel : Nat) (ss : List Skel) : Skel := ss.foldl (conj fuel) .any
@@ -516,6 +707,10 @@ def simp : Nat → Skel → Skel
       | [s] => s
       | ss => .all ss
     | .alt ss => mkAlt (ss.map (simp fuel))
+    | .onCase c t e =>
+      let t := simp fuel t
+      let e := simp fuel e
+      if t == e then t else .onCase c t e
     | k => k
 
 end Skel
@@ -542,10 +737,34 @@ def objectFree (files : List File) : Nat → List String → Shape → Bool
     | _ => true
 
 /-- The state of an extraction: the references being expanded (a reference to one of them is
-recursive and stays a `ref`) and the recursive targets met so far. -/
+recursive, which skeletons do not describe) and the recursive targets met so far. -/
 structure Extract where
   stack : List String := []
   recursive : List String := []
+
+/-- A condition on the request case (`x-case`) as a `CaseCond`, or none if the shape is not one
+of the two forms skeletons describe. -/
+def caseCondOf (files : List File) : Nat → Shape → Option CaseCond
+  | 0, _ => none
+  | fuel + 1, s =>
+    match s with
+    | .ref target => (lookup files target).bind (caseCondOf files fuel)
+    | .lean _ x _ => caseCondOf files fuel x
+    | .node _ [.type ["object"], .required ["kind"], .object [("kind", .const (.str k))] none] => some (.kind k)
+    | .required [k] => some (.path [k])
+    | .node _ [.required [k]] => some (.path [k])
+    | .node _ [.required [k], .object [(k', inner)] none] =>
+      if k == k' then (innerPath fuel inner).map fun ks => .path (k :: ks) else none
+    | _ => none
+where
+  /-- The nested fields an inner object requires: `{"type": "object", "required": [k], ...}`. -/
+  innerPath : Nat → Shape → Option (List String)
+    | 0, _ => none
+    | fuel + 1, s => match s with
+      | .node _ [.type ["object"], .required [k]] => some [k]
+      | .node _ [.type ["object"], .required [k], .object [(k', inner)] none] =>
+        if k == k' then (innerPath fuel inner).map (k :: ·) else none
+      | _ => none
 
 /-- The skeleton of a shape in `files`. `cond` marks a condition of an `if`, whose string
 values are kept (a field present exactly when another field has one of some values). -/
@@ -583,6 +802,10 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
       | some ks => pure (.obj [] (some .any) [] ks)
       | none => pure .any
     | .not _ => pure .any
+    | .ite (.onCase x) t e => do
+      let some c := caseCondOf files depth x
+        | throw "a condition on the request case that skeletons do not describe"
+      pure (.onCase c (← go cond t) (← go cond e))
     | .ite c t e => do
       let yes ← go true c
       let no ← negation c
@@ -593,7 +816,7 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
       let st ← get
       if st.stack.contains target then
         unless st.recursive.contains target do set { st with recursive := st.recursive ++ [target] }
-        pure (.ref target)
+        throw s!"a recursive reference {target}; skeletons do not describe it"
       else
         match lookup files target with
         | none => throw s!"unresolved $ref {target}"

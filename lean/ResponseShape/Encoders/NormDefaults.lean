@@ -7,7 +7,9 @@ namespace ResponseShape.Encoders.NormDefaults
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.NormDefaults VE.NormDefaults.Run
 
-theorem of_norms {v : Json} (h : Fits Γ Skeletons.norms v) : Fits Γ Skeletons.normDefaults v := by
+variable {req : Json}
+
+theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.normDefaults v := by
   refine Fits.altSub ?_ h
   alt_sub
 
@@ -24,7 +26,7 @@ theorem firstFailure_of_not_free (j : Json) (res : Wire.ConflictReplayU) (h : Wi
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.normDefaults (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.normDefaults (runCase j) := by
   unfold runCase runOtherCase runAdmission
   simp only []
   okfits
@@ -40,7 +42,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.normDefaults (runCase j) :
     have := firstFailure_of_not_free j _ ‹Wire.replayConflictU j = .ok _› (by simp_all)
     simp_all
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.normDefaults (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
   split
   · split

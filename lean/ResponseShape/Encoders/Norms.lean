@@ -7,19 +7,21 @@ namespace ResponseShape.Encoders.Norms
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.Norms VE.Norms.Run
 
-theorem of_route {v : Json} (h : Fits Γ Skeletons.route v) : Fits Γ Skeletons.norms v := by
+variable {req : Json}
+
+theorem of_route {v : Json} (h : Fits req Skeletons.route v) : Fits req Skeletons.norms v := by
   refine Fits.altSub ?_ h
   alt_sub
 
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
-    Fits Γ Skeletons.norms (encodeAdmitted id reportId res) := by
+    Fits req Skeletons.norms (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok
   fits
   all_goals exact Common.claimJson_fits _
 
 theorem certificate_fits (profiles : List String) (environment stripped : Json) (T : Tree)
     (extra : List VE.Formula) (id : String) (j : Json) :
-    OkFits Γ Skeletons.norms (Plain.certificate profiles environment stripped T extra id j) := by
+    OkFits req Skeletons.norms (Plain.certificate profiles environment stripped T extra id j) := by
   unfold Plain.certificate Plain.folCertificate Plain.closureCertificate Plain.orderCertificate
     VE.Core.Layers.coreCertificate
   okfits
@@ -28,7 +30,7 @@ theorem certificate_fits (profiles : List String) (environment stripped : Json) 
     | with_reducible exact OkP.of (Route.runOrder_fits _ _ _ _ _ _) fun _ => of_route
     | fits
 
-theorem plain_fits (j : Json) : OkFits Γ Skeletons.norms (Plain.run j) := by
+theorem plain_fits (j : Json) : OkFits req Skeletons.norms (Plain.run j) := by
   unfold Plain.run
   okfits
   all_goals (try simp only [VE.Route.Wire.ok])
@@ -37,7 +39,7 @@ theorem plain_fits (j : Json) : OkFits Γ Skeletons.norms (Plain.run j) := by
     | exact of_route (Route.runCase_fits _ _ ‹_›)
     | fits
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.norms (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.norms (runCase j) := by
   unfold runCase
   okfits
   all_goals (try simp only [VE.Route.Wire.ok, Flagged.regenerated, Wire.regenerated, List.map_cons, List.map_nil,
@@ -48,7 +50,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.norms (runCase j) := by
     | with_reducible exact OkP.of (Route.runCase_fits _) fun _ => of_route
     | fits
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.norms (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.norms (runCaseReported j) := by
   unfold runCaseReported
   split
   · split

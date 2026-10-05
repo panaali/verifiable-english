@@ -8,6 +8,8 @@ namespace ResponseShape.Encoders.Envelope
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.Service
 
+variable {req : Json}
+
 /-- A value whose field `k` is the string `s` is an object holding it. -/
 theorem getObjValD_str {j : Json} {k s : String} (h : j.getObjValD k = .str s) :
     ∃ m : Std.TreeMap.Raw String Json, j = .obj m ∧ m.get? k = some (.str s) := by
@@ -23,14 +25,14 @@ theorem getObjValD_str {j : Json} {k s : String} (h : j.getObjValD k = .str s) :
   | _ => simp [Json.getObjValD, Json.getObjVal?, Except.toOption] at h
 
 theorem bound_fits (index : Nat) (digest : String) (result : Json) :
-    Fits Γ (skel% "envelope.json#/$defs/bound") (bound index digest result) := by
+    Fits req (skel% "envelope.json#/$defs/bound") (bound index digest result) := by
   unfold bound coding codeMembers
   split
   · rename_i m hs he
     obtain ⟨o, rfl, hso⟩ := getObjValD_str hs
     obtain ⟨o', ho, heo⟩ := getObjValD_str he
     cases ho
-    have hr : Fits Γ (.obj [("status", .strIn ["error"]), ("error", .any)] (some .any) ["status", "error"] [])
+    have hr : Fits req (.obj [("status", .strIn ["error"]), ("error", .any)] (some .any) ["status", "error"] [])
         (Json.obj o) := by
       refine Fits.obj (fun k v h => ?_) (fun k hk => ?_) (fun _ h => by cases h)
       · by_cases hk : k = "status"
@@ -52,7 +54,7 @@ theorem bound_fits (index : Nat) (digest : String) (result : Json) :
   · fits
 
 theorem response_fits (r : Request) (cases : Array (Except String Json)) (digests : Array String) :
-    Fits Γ (skel% "envelope.json#/$defs/ok") (response r cases digests) := by
+    Fits req (skel% "envelope.json#/$defs/ok") (response r cases digests) := by
   unfold response bindResults
   simp only []
   fits
@@ -61,7 +63,7 @@ theorem response_fits (r : Request) (cases : Array (Except String Json)) (digest
   exact bound_fits _ _ _
 
 theorem requestError_fits (r : Request) (message : String) :
-    Fits Γ (skel% "envelope.json#/$defs/error") (requestError r message) := by
+    Fits req (skel% "envelope.json#/$defs/error") (requestError r message) := by
   unfold requestError
   fits
 

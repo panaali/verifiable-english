@@ -7,6 +7,8 @@ namespace ResponseShape.Encoders.SoftNorms
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.SoftNorms VE.SoftNorms.Wire VE.SoftNorms.Run
 
+variable {req : Json}
+
 /-- Every soft premise label is a nonempty `soft:...` label (so `bgEntry` gives it a `label`). -/
 theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEmpty = false := by
   intro x hx
@@ -22,7 +24,7 @@ theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEm
   · simp +decide [cohLabel, isEmpty_append, toString]
 
 theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) :
-    Fits Γ (skel% "soft-norms.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
+    Fits req (skel% "soft-norms.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
   unfold VE.Route.Wire.ok regenerated bgEntry
   fits
   all_goals (exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all)
@@ -40,7 +42,7 @@ theorem classify_ok (src : SoftSource) (environment norms pairs : Json) (M N : S
 
 theorem pairs_fits (id : String) (src : SoftSource) (environment norms pairs : Json) (l : List (String × Json))
     (h : pairsResult src environment norms pairs = .ok l) :
-    Fits Γ (skel% "soft-norms.json#/$defs/pairs") (VE.Route.Wire.ok id l) := by
+    Fits req (skel% "soft-norms.json#/$defs/pairs") (VE.Route.Wire.ok id l) := by
   unfold pairsResult at h
   revert h
   apply OkP.bind
@@ -81,7 +83,7 @@ theorem firstFailure_of_not_free (j : Json) (res : SoftConflictReplay) (h : repl
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
 theorem runSoftKind_fits (id kind : String) (j : Json) :
-    OkFits Γ Skeletons.softNorms (runSoftKind id kind j) := by
+    OkFits req Skeletons.softNorms (runSoftKind id kind j) := by
   unfold runSoftKind
   simp only []
   okfits
@@ -98,18 +100,18 @@ theorem runSoftKind_fits (id kind : String) (j : Json) :
     simp_all
 
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
-    Fits Γ (skel% "soft-norms.json#/$defs/admission") (encodeAdmitted id reportId res) := by
+    Fits req (skel% "soft-norms.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok
   fits
   all_goals exact Common.claimJson_fits _
 
 /-- The norms mode's rows are rows of this mode. -/
-theorem of_norms {v : Json} (h : Fits Γ Skeletons.norms v) : Fits Γ Skeletons.softNorms v := by
+theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.softNorms v := by
   refine Fits.altSub ?_ h
   alt_sub
 
 theorem runCase_fits (j : Json) :
-    OkFits Γ Skeletons.softNorms (runCase j) := by
+    OkFits req Skeletons.softNorms (runCase j) := by
   unfold runCase
   okfits
   · unfold runAdmission
@@ -120,7 +122,7 @@ theorem runCase_fits (j : Json) :
   · exact runSoftKind_fits _ _ _
 
 theorem runCaseReported_fits (j : Json) :
-    Fits Γ Skeletons.softNorms (runCaseReported j) := by
+    Fits j Skeletons.softNorms (runCaseReported j) := by
   unfold runCaseReported
   split
   · split

@@ -56,8 +56,4 @@ elab "skel% " target:str : term => do
   | .ok (_, recursive@(_ :: _)) => throwError "{target.getString}: recursive skeleton through {recursive}"
   | .ok (k, []) => pure (toExpr k)
 
-/-- Recursive references: none, since every mode's skeleton is finite (`define_row_skeletons`
-fails on a recursive one). -/
-def Γ : String → Skel := fun _ => .nothing
-
 end ResponseShape.Skeletons

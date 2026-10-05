@@ -5,14 +5,14 @@ import Lean.Elab.Tactic
 
 * `okfits` goes through a runner's `do` block (binds, keeping each `x = .ok a`; conditions;
   matches; join points) down to each returned value, left as a `Fits` goal.
-* `fits` proves `Fits Γ k v` for a value built from `Json.mkObj` with literal field names,
+* `fits` proves `Fits c k v` for a value built from `Json.mkObj` with literal field names,
   arrays of mapped lists, and values `k` says nothing about. At an alternative it picks, by the
   object's field names, the first object skeleton whose fields they pass (`fits_pick`, decided
   here on the literals; the choice is then checked by the kernel). It leaves as goals what it
   cannot decide (a field value that depends on the encoder's data).
 * `alt_mem` proves `s ∈ ss` for a member of a literal list, and `alt_sub` that every member of
   one alternative is a member of another (a runner that delegates to another mode's runner).
-* `fits_as "file.json#/pointer"` narrows `Fits Γ (.alt ss) v` to the member that is the
+* `fits_as "file.json#/pointer"` narrows `Fits c (.alt ss) v` to the member that is the
   skeleton of that shape.
 
 The tactics only build proofs: the kernel checks each, so a wrong choice fails the build. -/
@@ -89,41 +89,65 @@ def objAccepts (k : Expr) (keys : List String) : Bool := Id.run do
   keys.eraseDups.length == keys.length && keys.all (fun x => fs.contains x || extra) &&
     req.all keys.contains && ab.all (fun x => !keys.contains x)
 
-/-- The skeleton and value of a goal `Fits Γ k v`, the skeleton in weak head normal form. -/
+/-- The skeleton and value of a goal `Fits c k v`, the skeleton in weak head normal form. -/
 def fitsGoal : TacticM (Expr × Expr) := do
   let t := (← instantiateMVars (← getMainTarget)).consumeMData.headBeta
   unless t.isAppOfArity ``Fits 3 do throwError "not a Fits goal"
   let args := t.getAppArgs
   pure (← whnf args[1]!, (← instantiateMVars args[2]!).consumeMData)
 
-/-- At `Fits Γ (.alt ss) (Json.mkObj l)` with literal field names: the first object member of
-`ss` whose fields `l`'s names pass. -/
+/-- The field names of an object value: `Json.mkObj l` with literal names, or
+`(Json.mkObj l).setObjVal! key x` (with `key` in place of any field of that name); whether it is
+the latter. -/
+def valueKeys (v : Expr) : MetaM (Bool × List String) := do
+  if v.isAppOfArity ``Lean.Json.setObjVal! 3 then
+    let args := v.getAppArgs
+    let inner := args[0]!.consumeMData
+    unless inner.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: setObjVal! of another value"
+    let some key := strLit? args[1]! | throwError "fits_pick: the set field's name is not a literal"
+    let some ks := names? inner.appArg! | throwError "fits_pick: field names are not literals"
+    pure (true, key :: ks.filter (· != key))
+  else
+    unless v.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: not Json.mkObj"
+    let some ks := names? v.appArg! | throwError "fits_pick: field names are not literals"
+    pure (false, ks)
+
+/-- Which branch of `.onCase cond t e` has the fields `keys`: `t` (true), `e` (false) or neither. -/
+def caseBranch (k : Expr) (keys : List String) : MetaM (Option Bool) := do
+  unless k.isAppOfArity ``Skel.onCase 3 do return none
+  let args := k.getAppArgs
+  if objAccepts (← whnf args[1]!) keys then return some true
+  if objAccepts (← whnf args[2]!) keys then return some false
+  return none
+
+/-- At `Fits c k v` for an object `v` with literal field names: when `k` is an alternative, the
+first member whose fields `v`'s names pass (an object skeleton, or a branch of a condition on the
+request case); when `k` is such a condition, the branch they pass, leaving the condition on the
+case `c` as a goal. -/
 elab "fits_pick" : tactic => withMainContext do
   let (k, v) ← fitsGoal
+  let (set, keys) ← valueKeys v
+  if k.isAppOfArity ``Skel.onCase 3 then
+    match ← caseBranch k keys with
+    | some true => evalTactic (← `(tactic| refine Fits.onCaseT ?_ ?_))
+    | some false => evalTactic (← `(tactic| refine Fits.onCaseE ?_ ?_))
+    | none => throwError "fits_pick: no branch of the condition has the fields {keys}"
+    return
   unless k.isAppOfArity ``Skel.alt 1 do throwError "fits_pick: not an alternative"
-  -- `(Json.mkObj l).setObjVal! key x`: the names of `l` with `key` in place of any of that name.
-  let (set, keys) ← if v.isAppOfArity ``Lean.Json.setObjVal! 3 then do
-      let args := v.getAppArgs
-      let inner := args[0]!.consumeMData
-      unless inner.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: setObjVal! of another value"
-      let some key := strLit? args[1]! | throwError "fits_pick: the set field's name is not a literal"
-      let some ks := names? inner.appArg! | throwError "fits_pick: field names are not literals"
-      pure (true, key :: ks.filter (· != key))
-    else do
-      unless v.isAppOfArity ``Lean.Json.mkObj 1 do throwError "fits_pick: not Json.mkObj"
-      let some ks := names? v.appArg! | throwError "fits_pick: field names are not literals"
-      pure (false, ks)
   let some members := listElems bound k.appArg! | throwError "fits_pick: members are not a literal list"
-  let mut members' := #[]
-  for m in members do members' := members'.push (← whnf m)
-  match members'.toList.findIdx? (objAccepts · keys) with
-  | none => throwError "fits_pick: no member of the alternative has the fields {keys}"
-  | some i =>
+  for (m, i) in members.zipIdx do
+    let m ← whnf m
     let n := Syntax.mkNumLit (toString i)
-    if set then evalTactic (← `(tactic| refine Fits.setObjAlt $n rfl (by keys_ok) ?_ ?_))
-    else evalTactic (← `(tactic| refine Fits.mkObjAlt $n rfl (by keys_ok) ?_))
+    if objAccepts m keys then
+      if set then evalTactic (← `(tactic| refine Fits.setObjAlt $n rfl (by keys_ok) ?_ ?_))
+      else evalTactic (← `(tactic| refine Fits.mkObjAlt $n rfl (by keys_ok) ?_))
+      return
+    if (← caseBranch m keys).isSome then
+      evalTactic (← `(tactic| refine Fits.ofAlt (List.mem_of_getElem? (i := $n) rfl) ?_))
+      return
+  throwError "fits_pick: no member of the alternative has the fields {keys}"
 
-/-- `Fits Γ k v` with `k` replaced by its weak head normal form (a field's skeleton looked up,
+/-- `Fits c k v` with `k` replaced by its weak head normal form (a field's skeleton looked up,
 an abbreviation unfolded), so that lemmas apply to it by reducible unification. -/
 elab "skel_norm" : tactic => withMainContext do
   let t := (← instantiateMVars (← getMainTarget)).consumeMData.headBeta
@@ -156,16 +180,49 @@ elab "alt_mem" : tactic => withMainContext do
     let n := Syntax.mkNumLit (toString i)
     evalTactic (← `(tactic| exact List.mem_of_getElem? (i := $n) rfl))
 
-/-- `Fits Γ (.alt ss) v` narrowed to the member that is the skeleton of the shape at `target`. -/
+/-- `Fits c (.alt ss) v` narrowed to the member that is the skeleton of the shape at `target`. -/
 elab "fits_as " target:str : tactic => withMainContext do
   let (k, _) ← fitsGoal
   unless k.isAppOfArity ``Skel.alt 1 do throwError "fits_as: not an alternative"
   evalTactic (← `(tactic| refine Fits.ofAlt (s := skel% $target) (by alt_mem) ?_))
 
+/-- `e = b` for a Boolean `e` the context decides: a hypothesis `e = true` (when `b` is true) or
+`¬ e = true` (when `b` is false), found by structural equality. -/
+elab "bool_hyp" : tactic => withMainContext do
+  let t := (← instantiateMVars (← getMainTarget)).consumeMData
+  let some (_, lhs, rhs) := t.eq? | throwError "bool_hyp: not an equation"
+  let positive := rhs.isConstOf ``Bool.true
+  for d in ← getLCtx do
+    if d.isImplementationDetail then continue
+    let ty := (← instantiateMVars d.type).consumeMData
+    if positive then
+      if let some (_, l, r) := ty.eq? then
+        if r.isConstOf ``Bool.true && l == lhs then
+          (← getMainGoal).assign d.toExpr
+          replaceMainGoal []
+          return
+    else
+      -- `¬ e = true`, or `e ≠ true`
+      let negated := if ty.isAppOfArity ``Not 1 then some ty.appArg!.consumeMData
+        else if ty.isAppOfArity ``Ne 3 then
+          some (mkApp3 (mkConst ``Eq [levelOne]) ty.getAppArgs[0]! ty.getAppArgs[1]! ty.getAppArgs[2]!)
+        else none
+      if let some (_, l, r) := negated.bind (·.eq?) then
+        if r.isConstOf ``Bool.true && l == lhs then
+          (← getMainGoal).assign (← mkAppM ``Iff.mpr #[mkApp (mkConst ``Bool.eq_false_iff) lhs, d.toExpr])
+          replaceMainGoal []
+          return
+  throwError "bool_hyp: no hypothesis decides it"
+
 end ResponseShape.FitsTactic
 
 namespace ResponseShape
 open Lean
+
+
+/-- A condition on the request case (`CaseCond.holds req = b`) that the encoder's own test of the
+case decides, as a hypothesis. -/
+macro "case_cond" : tactic => `(tactic|(simp only [CaseCond.holds]; bool_hyp))
 
 macro "alt_sub" : tactic =>
   `(tactic|(intro s hs; simp only [List.mem_cons, List.not_mem_nil, or_false] at hs; (repeat' (rcases hs with h | hs)); all_goals (subst_vars; alt_mem)))

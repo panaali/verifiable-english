@@ -8,21 +8,23 @@ namespace ResponseShape.Encoders.ReadingsRoute
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.Readings VE.Readings.Run
 
-theorem keyJson_fits (k : GenKey) : Fits Γ (skel% "readings-route.json#/$defs/key") (Wire.keyJson k) := by
+variable {req : Json}
+
+theorem keyJson_fits (k : GenKey) : Fits req (skel% "readings-route.json#/$defs/key") (Wire.keyJson k) := by
   cases k with
   | excepted r b => cases b <;> simp only [Wire.keyJson, Option.toList, List.map_cons, List.map_nil] <;> fits
   | off r b π => cases b <;> simp only [Wire.keyJson, Option.toList, List.map_cons, List.map_nil] <;> fits
   | _ => unfold Wire.keyJson; fits
 
 theorem candidate_fits (a : Wire.Admitted) (R : ReadingSet) (i : Nat) :
-    OkFits Γ (skel% "readings-route.json#/$defs/candidate") (candidateJson a R i) := by
+    OkFits req (skel% "readings-route.json#/$defs/candidate") (candidateJson a R i) := by
   unfold candidateJson
   okfits
   all_goals (try simp only [keyEntry])
   all_goals fits using keyJson_fits
 
 theorem pair_fits (f : PairFacts) (sid : String) :
-    Fits Γ (skel% "readings-route.json#/$defs/pair") (pairJson f sid) := by
+    Fits req (skel% "readings-route.json#/$defs/pair") (pairJson f sid) := by
   unfold pairJson optBool
   fits
 
@@ -51,20 +53,20 @@ theorem setPairs_entries (a : Wire.Admitted) (R : ReadingSet) (RJ : Wire.SetJ) :
        · exact ⟨_, _, _, _, rfl⟩)
 
 /-- A row of `validateResult`: one content-bearing set with its candidates and pairs. -/
-def SetEntry (x : Json) : Prop :=
+def SetEntry (req : Json) (x : Json) : Prop :=
   ∃ (s : String) (v : Json) (cands pairs : List Json) (fs : Json), x = Json.mkObj [("set", .str s), ("version", v), ("candidates", Json.arr cands.toArray),
       ("pairs", Json.arr pairs.toArray), ("findings", fs)] ∧
-    (∀ c ∈ cands, Fits Γ (skel% "readings-route.json#/$defs/candidate") c) ∧ (∀ p ∈ pairs, PairEntry p)
+    (∀ c ∈ cands, Fits req (skel% "readings-route.json#/$defs/candidate") c) ∧ (∀ p ∈ pairs, PairEntry p)
 
 theorem validate_fits (id : String) (a : Wire.Admitted) :
-    OkP (fun l => Fits Γ Skeletons.readingsRoute (VE.Route.Wire.ok id l)) (validateResult a) := by
+    OkP (fun l => Fits req Skeletons.readingsRoute (VE.Route.Wire.ok id l)) (validateResult a) := by
   unfold validateResult
   simp only []
   okfits
   · simp only [VE.Route.Wire.ok]
     fits
   rename_i rows hrows
-  have hrows := OkP.forIn (P := fun (out : List Json) => ∀ x ∈ out, SetEntry x) (fun _ h => by cases h) (fun R _ r hr => by
+  have hrows := OkP.forIn (P := fun (out : List Json) => ∀ x ∈ out, SetEntry req x) (fun _ h => by cases h) (fun R _ r hr => by
       okfits
       all_goals simp only [ForInStep.value, List.mem_append, List.mem_singleton]
       all_goals first
@@ -82,39 +84,68 @@ theorem validate_fits (id : String) (a : Wire.Admitted) :
   · obtain ⟨r, o, f, sid, rfl⟩ := hp _ ‹_›
     fits using pair_fits
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.readingsRoute (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.readingsRoute (runCase j) := by
   unfold runCase
   okfits
   · exact validate_fits _ _ _ ‹_›
   · simp only [VE.Route.Wire.ok]
     fits using pair_fits
 
-theorem of_rights {v : Json} (h : Fits Γ Skeletons.rights v) : Fits Γ Skeletons.readingsRoute v := by
+theorem of_rights {v : Json} (h : Fits req Skeletons.rights v) : Fits req Skeletons.readingsRoute v := by
   refine Fits.altSub ?_ h
   alt_sub
 
-theorem of_softNorms {v : Json} (h : Fits Γ Skeletons.softNorms v) : Fits Γ Skeletons.readingsRoute v := by
+theorem of_softNorms {v : Json} (h : Fits req Skeletons.softNorms v) : Fits req Skeletons.readingsRoute v := by
   refine Fits.altSub ?_ h
   alt_sub
 
-theorem of_normDefaults {v : Json} (h : Fits Γ Skeletons.normDefaults v) : Fits Γ Skeletons.readingsRoute v := by
+theorem of_normDefaults {v : Json} (h : Fits req Skeletons.normDefaults v) : Fits req Skeletons.readingsRoute v := by
   refine Fits.altSub ?_ h
   alt_sub
 
-theorem of_norms {v : Json} (h : Fits Γ Skeletons.norms v) : Fits Γ Skeletons.readingsRoute v := by
+theorem of_norms {v : Json} (h : Fits req Skeletons.norms v) : Fits req Skeletons.readingsRoute v := by
   refine Fits.altSub ?_ h
   alt_sub
 
-theorem runLower_fits (j : Json) : Fits Γ Skeletons.readingsRoute (runLower j) := by
+/-- A row for the case with its environment rewritten is a row for the case: every condition on
+the case in the lower modes' skeletons is on its `kind`, which the rewrite keeps. -/
+theorem lower {j j' : Json} (hk : j'.getObjValD "kind" = j.getObjValD "kind") {k : Skel} {v : Json}
+    (h : Fits j' k v) (hc : Skel.condsOk CaseCond.isKind 1000 k = true) : Fits j k v :=
+  Fits.congr (p := CaseCond.isKind) (fun cond hp => by
+    cases cond with
+    | kind k => simp [CaseCond.holds, hk]
+    | path ks => cases hp) h 1000 hc
+
+theorem lower_rights {j j' : Json} (hk : j'.getObjValD "kind" = j.getObjValD "kind") :
+    Fits j Skeletons.readingsRoute (VE.Rights.Run.runCaseReported j') :=
+  of_rights (lower hk (Rights.runCaseReported_fits j') (by decide))
+
+theorem lower_softNorms {j j' : Json} (hk : j'.getObjValD "kind" = j.getObjValD "kind") :
+    Fits j Skeletons.readingsRoute (VE.SoftNorms.Run.runCaseReported j') :=
+  of_softNorms (lower hk (SoftNorms.runCaseReported_fits j') (by decide))
+
+theorem lower_normDefaults {j j' : Json} (hk : j'.getObjValD "kind" = j.getObjValD "kind") :
+    Fits j Skeletons.readingsRoute (VE.NormDefaults.Run.runCaseReported j') :=
+  of_normDefaults (lower hk (NormDefaults.runCaseReported_fits j') (by decide))
+
+theorem lower_norms {j j' : Json} (hk : j'.getObjValD "kind" = j.getObjValD "kind") :
+    Fits j Skeletons.readingsRoute (VE.Norms.Run.runCaseReported j') :=
+  of_norms (lower hk (Norms.runCaseReported_fits j') (by decide))
+
+theorem runLower_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readingsRoute (runLower j) := by
   unfold runLower
   repeat' (first | split | simp only [])
-  all_goals first
-    | exact of_rights (Rights.runCaseReported_fits _)
-    | exact of_softNorms (SoftNorms.runCaseReported_fits _)
-    | exact of_normDefaults (NormDefaults.runCaseReported_fits _)
-    | exact of_norms (Norms.runCaseReported_fits _)
+  all_goals
+    first
+      | with_reducible apply lower_rights
+      | with_reducible apply lower_softNorms
+      | with_reducible apply lower_normDefaults
+      | with_reducible apply lower_norms
+    first
+      | rfl
+      | exact kind_setObjVal hj (by decide) _
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.readingsRoute (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readingsRoute (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
@@ -123,6 +154,6 @@ theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.readingsRoute (runCa
   · split
     · exact runCase_fits j _ ‹_›
     · fits
-  · exact runLower_fits j
+  · exact runLower_fits j hj
 
 end ResponseShape.Encoders.ReadingsRoute

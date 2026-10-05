@@ -7,7 +7,9 @@ namespace ResponseShape.Encoders.Rights
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.Rights VE.Rights.Run VE.Rights.Wire
 
-theorem of_softNorms {v : Json} (h : Fits Γ Skeletons.softNorms v) : Fits Γ Skeletons.rights v := by
+variable {req : Json}
+
+theorem of_softNorms {v : Json} (h : Fits req Skeletons.softNorms v) : Fits req Skeletons.rights v := by
   refine Fits.altSub ?_ h
   alt_sub
 
@@ -42,7 +44,7 @@ theorem firstFailure_of_not_free (j : Json) (res : RightsConflictReplay) (h : re
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
 theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
-    Fits Γ (skel% "rights.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
+    Fits req (skel% "rights.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
   unfold VE.Route.Wire.ok regenerated VE.SoftNorms.Wire.regenerated VE.SoftNorms.Wire.bgEntry generatedKeys
     lineJson nodeJson narrowingsJson distinctionJson
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
@@ -52,26 +54,26 @@ theorem elaborate_fits (id : String) (D : RightsDoc) (env : Json) :
     | exact (labelled_contra (SoftNorms.softLabelled_nonempty _) ‹_› ‹_›).elim
 
 theorem projections_fits (id : String) (src : RightsSource) (j : Json) :
-    OkP (fun l => Fits Γ (skel% "rights.json#/$defs/projections") (VE.Route.Wire.ok id l)) (projectionsResult src j) := by
+    OkP (fun l => Fits req (skel% "rights.json#/$defs/projections") (VE.Route.Wire.ok id l)) (projectionsResult src j) := by
   unfold projectionsResult
   okfits
   simp only [VE.Route.Wire.ok, entryJson]
   fits
 
 theorem bar_fits (id : String) (src : RightsSource) (environment document certs : Json) :
-    Fits Γ (skel% "rights.json#/$defs/bar") (VE.Route.Wire.ok id (barResult src environment document certs)) := by
+    Fits req (skel% "rights.json#/$defs/bar") (VE.Route.Wire.ok id (barResult src environment document certs)) := by
   unfold VE.Route.Wire.ok barResult
   simp only []
   fits
 
 theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
-    Fits Γ (skel% "rights.json#/$defs/admission") (encodeAdmitted id reportId res) := by
+    Fits req (skel% "rights.json#/$defs/admission") (encodeAdmitted id reportId res) := by
   unfold encodeAdmitted VE.Route.Wire.ok
   fits
   all_goals exact Common.claimJson_fits _
 
 theorem runRightsKind_fits (id kind : String) (j : Json) :
-    OkFits Γ Skeletons.rights (runRightsKind id kind j) := by
+    OkFits req Skeletons.rights (runRightsKind id kind j) := by
   unfold runRightsKind
   simp only []
   okfits
@@ -79,7 +81,7 @@ theorem runRightsKind_fits (id kind : String) (j : Json) :
     | (unfold runAdmission; okfits; fits_as "rights.json#/$defs/admission"; exact admission_fits _ _ _)
     | (fits_as "rights.json#/$defs/elaborate"; with_reducible exact elaborate_fits _ _ _)
     | (fits_as "rights.json#/$defs/projections"
-       have h := projections_fits id _ j _ ‹projectionsResult _ j = .ok _›
+       have h := projections_fits (req := req) id _ j _ ‹projectionsResult _ j = .ok _›
        simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append] at h
        exact h)
     | (fits_as "rights.json#/$defs/bar"; with_reducible exact bar_fits _ _ _ _ _)
@@ -92,13 +94,13 @@ theorem runRightsKind_fits (id kind : String) (j : Json) :
     have := firstFailure_of_not_free j _ ‹replayRightsConflict j = .ok _› (by simp_all)
     simp_all
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.rights (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.rights (runCase j) := by
   unfold runCase
   okfits
   · exact OkP.of (SoftNorms.runCase_fits j) fun _ => of_softNorms
   · exact runRightsKind_fits _ _ _
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.rights (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.rights (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
