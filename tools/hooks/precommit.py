@@ -391,6 +391,11 @@ def check_lean_tokens(index: Index) -> list[str]:
         for match in pattern.finditer(scanned):
             line = scanned.count("\n", 0, match.start()) + 1
             errors.append(f"{path}:{line}: forbidden Lean token '{match[0]}'")
+        if path.startswith("lean/"):
+            code = audit.code_only(text)
+            for match in audit.ADMIT_TACTIC.finditer(code):
+                line = code.count("\n", 0, match.start()) + 1
+                errors.append(f"{path}:{line}: forbidden Lean token 'admit'")
     return errors
 
 
