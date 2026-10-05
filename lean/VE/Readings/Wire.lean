@@ -36,6 +36,22 @@ def stripReadings (environment : Json) : Except String Json := do
   let profiles ← strings (← environment.getObjVal? "profiles")
   pure (environment.setObjVal! "profiles" (toJson (profiles.filter (· != readingsProfile))))
 
+/-- The frame of a `norm-defaults@0` environment (DRI ruling 4 of 2026-10-03): each `unspecified` completion read as
+    the placeholder `deny`, as norm-defaults 2.3's E‴ reads it, so that the frame decodes without the profile. The
+    frame is read only for content, and content beside `norm-defaults@0` is the abstention of 1.1, so the
+    placeholder decides no answer: it lets that abstention, or a document without content, be reached instead of a
+    decoder text that is false of the document. -/
+def placeholderFrame (environment : Json) : Json :=
+  match environment.getObjVal? "vocabulary" >>= (·.getObjVal? "predicates") >>= fields with
+  | .ok kvs =>
+    let preds := kvs.map (fun (p, e) => match e.getObjVal? "regulated" with
+      | .ok r => if r.getObjValD "default" == .str "unspecified" then
+          (p, e.setObjVal! "regulated" (r.setObjVal! "default" (.str "deny"))) else (p, e)
+      | .error _ => (p, e))
+    environment.setObjVal! "vocabulary" ((environment.getObjValD "vocabulary").setObjVal! "predicates"
+      (Json.mkObj preds))
+  | _ => environment
+
 def emptySoft : VE.SoftNorms.SoftEnv := ⟨[], [], [], [], .strict, none, none, [], []⟩
 def emptyRights : VE.Rights.RightsEnv := ⟨[], [], [], []⟩
 
@@ -61,8 +77,10 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .error e => throw e
   let lowerJson ← stripReadings environment
   let lower := profiles.filter (· != readingsProfile)
-  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it.
-  let frameJson := lowerJson.setObjVal! "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
+  -- `norm-defaults@0` beside content is S1's named abstention (1.1): the frame is decoded without it, its
+  -- `unspecified` completions read as the placeholder `deny` (DRI ruling 4).
+  let frameJson := (if lower.contains "norm-defaults@0" then placeholderFrame lowerJson else lowerJson).setObjVal!
+    "profiles" (toJson (lower.filter (· != "norm-defaults@0")))
   match chainOf profiles with
   | .rights =>
     let re ← VE.Rights.Wire.decodeRightsEnvironment frameJson
@@ -375,7 +393,8 @@ structure SituationJ where
 /-- 1.8: an element name of a situation must not contain `__` or begin `rd-`. -/
 def elementNames (data : VE.Bridge.ModelData) : List String := data.domains.flatMap (·.2)
 
-def decodeSituation (re : ReadingsEnvironment) (D : Doc) (s : String) (i j : Nat) (sid : String) (entry : Json) :
+/-- The situation `sid` of a pair whose two readings' documents are `Xi` (the witness's) and `Xj`. -/
+def decodeSituation (re : ReadingsEnvironment) (D : Doc) (Xi Xj : RightsDoc) (sid : String) (entry : Json) :
     Except String SituationJ := do
   let bad := s!"InvalidInput: invalid situation {sid}"
   match fields entry with
@@ -397,8 +416,6 @@ def decodeSituation (re : ReadingsEnvironment) (D : Doc) (s : String) (i j : Nat
   for n in elementNames data do
     if n.startsWith "rd-" then throw s!"InvalidInput: name {n} begins with rd-"
     if (n.splitOn "__").length > 1 then throw bad
-  let Xi := (one D s i).1
-  let Xj := (one D s j).1
   let sortsOf := fun k => (keySorts Xi k).or (keySorts Xj k)
   let fixed ← decodeTables bad sortsOf (entry.getObjValD "fixed")
   let decisions ← decodeTables bad sortsOf (entry.getObjValD "decisions")
@@ -408,20 +425,21 @@ def decodeSituation (re : ReadingsEnvironment) (D : Doc) (s : String) (i j : Nat
     | _ => throw bad
   pure ⟨sid, witness, ⟨data.toModel, fixed, decisions, probe, value⟩, data, rfl⟩
 
-/-- 4.5 step 1 with section 7's texts, `i` the witness. -/
+/-- 4.5 step 1's ownership texts (section 7), `i` the witness. The rest of step 1 (`situationWF`) answers
+    `invalid situation`, which `replayPair` checks once. -/
 def stepOne (D : Doc) (s : String) (i j : Nat) (sid : String) (wName : String) (σ : Situation Entity) :
     Except String Unit := do
-  let bad := s!"InvalidInput: invalid situation {sid}"
   for t in σ.decisions do
     unless owned D s i t.1 do throw s!"InvalidInput: situation {sid} decides {keyText t.1}, which reading {wName} does not own"
   for t in σ.fixed do
     if owned D s i t.1 || owned D s j t.1 then
       throw s!"InvalidInput: situation {sid} decides {keyText t.1}, which reading {wName} does not own"
-  unless situationWF D s i j σ do throw bad
 
 /-! ## The checks of 4.1 -/
 
-def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
+/-- A side's chain checks as specified: the chain's validation, then each assertion typed over the complete
+    environment of `soften (correlate X.1)`, rebuilt for each assertion. -/
+def chainTextSpec (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
   let chain : Option String := match c with
     -- The line order first (DRI ruling 1): each entry a line of its right, none listed twice (`linesOnce`).
     | .rights => (lineOrderText X.1).or <| match VE.Rights.validateRights X.1 with
@@ -429,9 +447,12 @@ def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
       | .ok () => none
     | .soft =>
       if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
-      else match VE.SoftNorms.validateSoft X.1.soft with
-        | .error e => some e
-        | .ok () => none
+      -- 6.4 before the semantic checks, as `decodeSoftSource` runs `primeVocabulary` (`namesFit`).
+      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) with
+        | some n => some s!"ResourceLimit: decision predicate {n}"
+        | none => match VE.SoftNorms.validateSoft X.1.soft with
+          | .error e => some e
+          | .ok () => none
     | .norms =>
       if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
       else if !allStrict X.1 then some "InvalidInput: invalid norm fields"
@@ -445,12 +466,46 @@ def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
         (VE.Norms.size (VE.SoftNorms.soften (VE.Rights.correlate X.1)))) []) then none
     else some "InvalidInput: ill-typed assertion"
 
+/-- A side's chain checks, each validation with its layers computed once (`validateRightsOnce`,
+    `validateSoftOnce`) and the complete environment computed once for every assertion (plan F5d), when the first
+    assertion is typed (a `Thunk`): a side with no assertion builds none, as in `chainTextSpec`. -/
+def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
+  let chain : Option String := match c with
+    | .rights => (lineOrderText X.1).or <| match VE.Rights.validateRightsOnce X.1 with
+      | .error e => some e
+      | .ok () => none
+    | .soft =>
+      if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
+      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) with
+        | some n => some s!"ResourceLimit: decision predicate {n}"
+        | none => match VE.SoftNorms.validateSoftOnce X.1.soft with
+          | .error e => some e
+          | .ok () => none
+    | .norms =>
+      if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
+      else if !allStrict X.1 then some "InvalidInput: invalid norm fields"
+      else match VE.SoftNorms.validateSoftOnce X.1.soft with
+        | .error e => some e
+        | .ok () => none
+  match chain with
+  | some e => some e
+  | none =>
+    let En := Thunk.mk (fun _ =>
+      let S := VE.SoftNorms.soften (VE.Rights.correlate X.1)
+      VE.Norms.envAt S (VE.Norms.size S))
+    if X.2.all (fun a => a.check En.get []) then none
+    else some "InvalidInput: ill-typed assertion"
+
+theorem chainText_eq (c : Chain) (X : RightsDoc × List VE.Formula) : chainText c X = chainTextSpec c X := by
+  simp only [chainText, chainTextSpec, Thunk.get, VE.Rights.validateRightsOnce_eq, VE.SoftNorms.validateSoftOnce_eq]
+
 def contentBearing (R : ReadingSet) : Bool :=
   R.candidates.any (fun a => match a.content with
     | some (.assertion _) | none => false
     | some _ => true)
 
-def firstSome {α β : Type} (l : List α) (f : α → Option β) : Option β := (l.filterMap f).head?
+/-- The first answer of `f` along `l`; `f` is not evaluated past it. -/
+def firstSome {α β : Type} (l : List α) (f : α → Option β) : Option β := l.findSome? f
 
 /-- 1.1, 1.2: the named abstentions. -/
 def abstention (re : ReadingsEnvironment) (D : Doc) : Option String :=
@@ -524,33 +579,307 @@ def attachmentText (D : Doc) : Option String :=
     | s :: t :: _ => some s!"UnsupportedProfile: readings@1 fixed unit {u} depends on reading sets {s} and {t}"
     | _ => none)
 
+/-- The candidates of every set in source order, each with its index. -/
+def candidatesOf (D : Doc) : List (ReadingSet × Nat) :=
+  D.sets.flatMap (fun R => (List.range R.candidates.length).map (fun i => (R, i)))
+
+/-- Candidate i of R is pending: it has no content, so no document of its own to check (4.4) or read. -/
+def pendingAt (R : ReadingSet) (i : Nat) : Bool := (R.candidates[i]?.bind (·.content)).isNone
+
+/-- The candidates with content, in source order: the only ones whose document admission builds. -/
+def activeOf (D : Doc) : List (ReadingSet × Nat) := (candidatesOf D).filter (fun c => !pendingAt c.1 c.2)
+
+/-- 4.4 for candidate i of R, X its document: none for a pending candidate. -/
+def candidateText (c : Chain) (R : ReadingSet) (i : Nat) (X : RightsDoc × List VE.Formula) : Option String :=
+  if pendingAt R i then none
+  else (chainText c X).map (· ++ s!" under {R.id}@{R.version}:{i}")
+
+/-- The checks of 4.1 before the candidates', in order. -/
+def frontText (re : ReadingsEnvironment) (D : Doc) : Option String :=
+  (abstention re D).or <| (reservedText re D).or <| (duplicateText re.chain D).or <| (interfaceText D).or <|
+    (attachmentText D).or <| chainText D.chain (free D)
+
 /-- The checks of 4.1 up to and including each candidate's well-formedness, in order. -/
 def admissionText (re : ReadingsEnvironment) (D : Doc) : Option String :=
-  (abstention re D).or <| (reservedText re D).or <| (duplicateText re.chain D).or <| (interfaceText D).or <|
-    (attachmentText D).or <| (chainText D.chain (free D)).or <|
-    firstSome D.sets (fun R => firstSome (List.range R.candidates.length) (fun i =>
-      if (R.candidates[i]?.bind (·.content)).isNone then none
-      else (chainText D.chain (one D R.id i)).map (· ++ s!" under {R.id}@{R.version}:{i}")))
+  (frontText re D).or <| firstSome (candidatesOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2))
 
 /-- The `Doc` of a decoded document (1.2). -/
 def docOf (re : ReadingsEnvironment) (doc : Decoded2) : Doc := ⟨re.chain, frameOf re doc.units, doc.items, [], []⟩
 
-/-- A document admitted without separation: `WellFormedDoc` holds. -/
+/-! ## Each candidate's document, once per request (plan F5b) -/
+
+/-- Along `l`: build `X` from each element once, stop at the first diagnostic `f a X`, else keep `g a X`. -/
+def stageOf {α γ β ε : Type} (build : α → γ) (f : α → γ → Option ε) (g : α → γ → β) (l : List α) :
+    Except ε (List β) :=
+  l.mapM (fun a =>
+    let X := build a
+    match f a X with
+    | some e => .error e
+    | none => .ok (g a X))
+
+/-- Every candidate's document `one D s i`, one entry per candidate with content of every set in source order:
+    the request's table, which the rows, the pairs and the findings read. A pending candidate has no entry
+    (`onesOf_active`): 4.4 skips it, and so do the rows, the pairs and the findings. -/
+def onesOf (D : Doc) : List ((String × Nat) × (RightsDoc × List VE.Formula)) :=
+  (activeOf D).map (fun c => ((c.1.id, c.2), one D c.1.id c.2))
+
+/-- Admission's candidate stage as run: each candidate with content in source order, its document built once,
+    checked (4.4) and kept; the first diagnostic stops the stage, so no later candidate's document is built, and a
+    pending candidate's never is (it has no diagnostic: building 119 pending documents cost 1.2–1.4 s of CPU, batch
+    3b looprecheck B). What it keeps is the request's table `onesOf D` (`candidateStage_eq`). The entries are plain
+    values: a table of `Thunk`s cost 5–8% more CPU on the UDHR pilot's first set (batch 3b DELTA, review round). -/
+@[noinline] def candidateStage (D : Doc) : Except String (List ((String × Nat) × (RightsDoc × List VE.Formula))) :=
+  stageOf (fun c => one D c.1.id c.2) (fun c X => candidateText D.chain c.1 c.2 X) (fun c X => ((c.1.id, c.2), X))
+    (activeOf D)
+
+/-- Candidate i of set s's document, read from the table `t`. The table holds every candidate with content of
+    every set (`onesOf_holds`), so `one D s i` itself is built only for a pending candidate, which only a
+    `readings-separate` request naming it asks for, once, before it is refused. -/
+@[noinline] def oneOf (D : Doc) (t : List ((String × Nat) × (RightsDoc × List VE.Formula))) (s : String)
+    (i : Nat) : RightsDoc × List VE.Formula :=
+  match t.lookup (s, i) with
+  | some x => x
+  | none => one D s i
+
+theorem lookup_mem {α β : Type} [BEq α] [LawfulBEq α] {a : α} {b : β} :
+    ∀ {l : List (α × β)}, l.lookup a = some b → (a, b) ∈ l
+  | [], h => by simp [List.lookup] at h
+  | (k, v) :: es, h => by
+    simp only [List.lookup] at h
+    split at h
+    · rename_i hk
+      cases h
+      rw [beq_iff_eq] at hk
+      subst hk
+      exact List.mem_cons_self
+    · exact List.mem_cons_of_mem _ (lookup_mem h)
+
+theorem lookup_isSome_of_mem {α β : Type} [BEq α] [LawfulBEq α] {a : α} {b : β} :
+    ∀ {l : List (α × β)}, (a, b) ∈ l → (l.lookup a).isSome
+  | [], h => by cases h
+  | (k, v) :: es, h => by
+    simp only [List.lookup]
+    split
+    · rfl
+    · rename_i hk
+      rcases List.mem_cons.mp h with h | h
+      · cases h
+        simp at hk
+      · exact lookup_isSome_of_mem h
+
+theorem oneOf_eq (D : Doc) (s : String) (i : Nat) : oneOf D (onesOf D) s i = one D s i := by
+  unfold oneOf
+  split
+  · rename_i x hx
+    obtain ⟨c, _, hk⟩ := List.mem_map.mp (lookup_mem hx)
+    simp only [Prod.mk.injEq] at hk
+    obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hk
+    rfl
+  · rfl
+
+/-- The table holds every candidate with content of every set. -/
+theorem onesOf_holds (D : Doc) (R : ReadingSet) (hR : R ∈ D.sets) (i : Nat) (hi : i < R.candidates.length)
+    (hp : pendingAt R i = false) : ((onesOf D).lookup (R.id, i)).isSome :=
+  lookup_isSome_of_mem (List.mem_map.mpr
+    ⟨(R, i), List.mem_filter.mpr ⟨List.mem_flatMap.mpr ⟨R, hR, List.mem_map.mpr ⟨i, List.mem_range.mpr hi, rfl⟩⟩,
+      by simp [hp]⟩, rfl⟩)
+
+/-- The table holds no pending candidate: each entry is a candidate with content of a set of D. -/
+theorem onesOf_active (D : Doc) : ∀ e ∈ onesOf D, ∃ R ∈ D.sets, R.id = e.1.1 ∧ pendingAt R e.1.2 = false := by
+  intro e he
+  obtain ⟨c, hc, rfl⟩ := List.mem_map.mp he
+  obtain ⟨hc, hp⟩ := List.mem_filter.mp hc
+  obtain ⟨R, hR, hi⟩ := List.mem_flatMap.mp hc
+  obtain ⟨i, -, rfl⟩ := List.mem_map.mp hi
+  exact ⟨R, hR, rfl, by simpa using hp⟩
+
+/-- Leaving out elements without an answer leaves the first answer. -/
+theorem firstSome_filter {α β : Type} (p : α → Bool) (f : α → Option β) (h : ∀ a, p a = false → f a = none) :
+    ∀ l : List α, firstSome (l.filter p) f = firstSome l f
+  | [] => rfl
+  | a :: l => by
+    have ih := firstSome_filter p f h l
+    unfold firstSome at ih ⊢
+    cases hp : p a
+    · rw [List.filter_cons_of_neg (by simp [hp]), List.findSome?_cons, h a hp, ih]
+    · rw [List.filter_cons_of_pos hp, List.findSome?_cons, List.findSome?_cons, ih]
+
+/-- A pending candidate has no diagnostic of 4.4, so admission need not build its document. -/
+theorem firstSome_activeOf (D : Doc) :
+    firstSome (activeOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) =
+      firstSome (candidatesOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) :=
+  firstSome_filter _ _ (fun c hc => by simp [candidateText, show pendingAt c.1 c.2 = true by simpa using hc]) _
+
+/-- A stage answers the first diagnostic, or keeps every element's `g`. -/
+theorem stageOf_eq {α γ β ε : Type} (build : α → γ) (f : α → γ → Option ε) (g : α → γ → β) : ∀ l : List α,
+    stageOf build f g l =
+      match firstSome l (fun a => f a (build a)) with
+      | some e => .error e
+      | none => .ok (l.map (fun a => g a (build a)))
+  | [] => rfl
+  | a :: l => by
+    have ih := stageOf_eq build f g l
+    simp only [stageOf, firstSome] at ih ⊢
+    simp only [List.mapM_cons, List.findSome?_cons]
+    cases h : f a (build a) with
+    | some e => rfl
+    | none =>
+      simp only [bind, Except.bind, ih, List.map_cons]
+      cases hl : List.findSome? (fun a => f a (build a)) l <;> rfl
+
+theorem candidateStage_eq (D : Doc) : candidateStage D =
+    match firstSome (candidatesOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) with
+    | some e => .error e
+    | none => .ok (onesOf D) := by
+  unfold candidateStage
+  rw [stageOf_eq, ← firstSome_activeOf]
+  cases firstSome (activeOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) <;> rfl
+
+theorem candidateStage_ok {D : Doc} {t : List ((String × Nat) × (RightsDoc × List VE.Formula))}
+    (h : candidateStage D = .ok t) :
+    firstSome (candidatesOf D) (fun c => candidateText D.chain c.1 c.2 (one D c.1.id c.2)) = none ∧
+      t = onesOf D := by
+  rw [candidateStage_eq] at h
+  split at h
+  · cases h
+  · rename_i hn
+    cases h
+    exact ⟨hn, rfl⟩
+
+/-- A document admitted without separation: `WellFormedDoc` holds. `ones` is the request's table of every
+    candidate's document. -/
 structure Admitted where
   re : ReadingsEnvironment
   doc : Decoded2
   wf : WellFormedDoc (docOf re doc) = true
+  ones : List ((String × Nat) × (RightsDoc × List VE.Formula))
+  ones_eq : ones = onesOf (docOf re doc)
 
 def Admitted.D (a : Admitted) : Doc := docOf a.re a.doc
 
-def admitReadings (environment document : Json) : Except String Admitted := do
+/-- Candidate i of set s's document, from the request's table. -/
+def Admitted.side (a : Admitted) (s : String) (i : Nat) : RightsDoc × List VE.Formula := oneOf a.D a.ones s i
+
+theorem Admitted.side_eq (a : Admitted) (s : String) (i : Nat) : a.side s i = one a.D s i := by
+  unfold Admitted.side
+  rw [a.ones_eq]
+  exact oneOf_eq _ s i
+
+/-- Admission as specified: the checks of 4.1, then `WellFormedDoc` evaluated in full. It elaborates and
+    validates `free D` and every candidate's `one D s i` twice, once in `admissionText` and once in
+    `WellFormedDoc`; `admitReadings` is the same function with each validated once (`admitReadings_eq`). -/
+def admitReadingsSpec (environment document : Json) : Except String Admitted := do
   let re ← decodeEnvironment environment
   let doc ← decodeDocument re document
   match admissionText re (docOf re doc) with
   | some e => throw e
   | none =>
-    if h : WellFormedDoc (docOf re doc) = true then pure ⟨re, doc, h⟩
+    if h : WellFormedDoc (docOf re doc) = true then pure ⟨re, doc, h, onesOf _, rfl⟩
     else throw "InvalidInput: readings document is not well-formed"
+
+/-- `WellFormedDoc` without the chain checks of `free D` and of each candidate's `one D s i`. -/
+def frameWF (D : Doc) : Bool := reservedFree D && distinctAcrossSets D && interfaceClosed D && singlyAttached D
+
+/-- A side without a chain diagnostic is well-formed: `chainText` computes `sideWF`'s two conjuncts. -/
+theorem sideWF_of_chainText (D : Doc) (X : RightsDoc × List VE.Formula) (h : chainText D.chain X = none) :
+    sideWF D X = true := by
+  rw [chainText_eq] at h
+  unfold chainTextSpec at h
+  unfold sideWF
+  generalize D.chain = c at h ⊢
+  cases c with
+  | rights =>
+    cases hl : lineOrderText X.1 <;> cases hv : VE.Rights.validateRights X.1 <;>
+      simp only [hl, hv, Option.or, chainWF, VE.Rights.WellFormedRights] at h ⊢ <;> (try split at h) <;> simp_all
+  | soft =>
+    cases hn : noRights X.1 <;> cases hv : VE.SoftNorms.validateSoft X.1.soft <;>
+      cases hf : (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) <;>
+      simp only [hn, hv, hf, chainWF, namesFit, VE.SoftNorms.WellFormedSoft] at h ⊢ <;> (try split at h) <;> simp_all
+  | norms =>
+    cases hn : noRights X.1 <;> cases hs : allStrict X.1 <;> cases hv : VE.SoftNorms.validateSoft X.1.soft <;>
+      simp only [hn, hs, hv, chainWF, VE.SoftNorms.WellFormedSoft] at h ⊢ <;> (try split at h) <;> simp_all
+
+theorem firstSome_eq_none {α β : Type} {l : List α} {f : α → Option β} (h : firstSome l f = none) :
+    ∀ x ∈ l, f x = none := by
+  unfold firstSome at h
+  exact List.findSome?_eq_none_iff.mp h
+
+/-- Once `admissionText` has found nothing, `WellFormedDoc` is `frameWF`. -/
+theorem wellFormedDoc_of_admissionText (re : ReadingsEnvironment) (D : Doc) (h : admissionText re D = none) :
+    WellFormedDoc D = frameWF D := by
+  simp only [admissionText, frontText, Option.or_eq_none_iff] at h
+  obtain ⟨⟨-, -, -, -, -, hfree⟩, hsets⟩ := h
+  have hone : ∀ R ∈ D.sets, ∀ i ∈ List.range R.candidates.length,
+      (R.candidates[i]?.bind (·.content)).isNone = true ∨ sideWF D (one D R.id i) = true := by
+    intro R hR i hi
+    have h2 := firstSome_eq_none hsets (R, i) (List.mem_flatMap.mpr ⟨R, hR, List.mem_map.mpr ⟨i, hi, rfl⟩⟩)
+    simp only [candidateText] at h2
+    by_cases hc : pendingAt R i = true
+    · exact Or.inl hc
+    · rw [if_neg hc, Option.map_eq_none_iff] at h2
+      exact Or.inr (sideWF_of_chainText D _ h2)
+  unfold WellFormedDoc frameWF
+  rw [sideWF_of_chainText D _ hfree]
+  have hall : (D.sets.all (fun R => (List.range R.candidates.length).all (fun i =>
+      (R.candidates[i]?.bind (·.content)).isNone || sideWF D (one D R.id i)))) = true := by
+    simp only [List.all_eq_true, Bool.or_eq_true]
+    exact hone
+  rw [hall]
+  simp only [Bool.and_true]
+
+theorem admissionText_of_stage {re : ReadingsEnvironment} {D : Doc}
+    {t : List ((String × Nat) × (RightsDoc × List VE.Formula))} (hf : frontText re D = none)
+    (hs : candidateStage D = .ok t) : admissionText re D = none := by
+  simp only [admissionText, hf, (candidateStage_ok hs).1, Option.or]
+
+/-- Admission as run: `free D` and each candidate validated once, each candidate's document built once and kept in
+    the request's table, which the answer reads again. `WellFormedDoc`'s chain checks are `admissionText`'s, so only
+    `frameWF` is evaluated after it. -/
+def admitReadings (environment document : Json) : Except String Admitted := do
+  let re ← decodeEnvironment environment
+  let doc ← decodeDocument re document
+  match hf0 : frontText re (docOf re doc) with
+  | some e => throw e
+  | none =>
+    match hs : candidateStage (docOf re doc) with
+    | .error e => throw e
+    | .ok t =>
+      if hf : frameWF (docOf re doc) = true then
+        pure ⟨re, doc, (wellFormedDoc_of_admissionText re _ (admissionText_of_stage hf0 hs)).trans hf, t,
+          (candidateStage_ok hs).2⟩
+      else throw "InvalidInput: readings document is not well-formed"
+
+theorem admitReadings_eq (environment document : Json) :
+    admitReadings environment document = admitReadingsSpec environment document := by
+  unfold admitReadings admitReadingsSpec
+  simp only [bind, Except.bind]
+  split
+  · rfl
+  · rename_i re _
+    split
+    · rfl
+    · rename_i doc _
+      split
+      · rename_i e h
+        simp only [admissionText, h, Option.or]
+      · rename_i h
+        have hstage := candidateStage_eq (docOf re doc)
+        split
+        · rename_i e hs
+          rw [hs] at hstage
+          split at hstage
+          · rename_i e' hfs
+            cases hstage
+            simp only [admissionText, h, hfs, Option.or]
+          · cases hstage
+        · rename_i t hs
+          have ha := admissionText_of_stage h hs
+          obtain ⟨_, rfl⟩ := candidateStage_ok hs
+          have hw := wellFormedDoc_of_admissionText re _ ha
+          simp only [ha]
+          by_cases hf : frameWF (docOf re doc) = true
+          · rw [dif_pos hf, dif_pos (hw.trans hf)]
+          · rw [dif_neg hf, dif_neg (fun h' => hf (hw.symm.trans h'))]
 
 /-! ## The replay -/
 
@@ -600,6 +929,11 @@ structure SeparateReplay where
   /-- 4.5 step 1, the keys, the tables and the probe: the decoder refuses a malformed situation with section 7's
       texts. -/
   shape : situationWF D set witness other σ = true
+  /-- The witness's and the other reading's documents, from the request's table. -/
+  Xi : RightsDoc × List VE.Formula
+  Xj : RightsDoc × List VE.Formula
+  hXi : Xi = one D set witness
+  hXj : Xj = one D set other
 
 def readingIndex (D : Doc) (s r : String) : Option Nat :=
   (D.sets.find? (·.id == s)).bind (fun R => R.candidates.findIdx? (·.id == r))
@@ -621,14 +955,17 @@ def replayPair (a : Admitted) (s : String) (sid : String) (otherName : String) :
   let some i := readingIndex D s wName | throw s!"InvalidInput: invalid situation {sid}"
   let some j := readingIndex D s otherName | throw s!"InvalidInput: invalid situation {sid}"
   if i == j then throw s!"InvalidInput: invalid situation {sid}"
-  let sj ← decodeSituation a.re D s i j sid entry
+  let Xi := a.side s i
+  let Xj := a.side s j
+  let sj ← decodeSituation a.re D Xi.1 Xj.1 sid entry
   stepOne D s i j sid wName sj.σ
   if hw : ((candidate D s i).bind (·.content)).isSome then
     if ho : ((candidate D s j).bind (·.content)).isSome then
       if hd : sj.data.valid (authorVocabulary a.re) = true then
-        if hs : situationWF D s i j sj.σ = true then
+        if hs : situationWFOf D s i j Xi.1 Xj.1 sj.σ = true then
           pure (⟨D, a.wf, s, i, j, Option.isSome_iff_ne_none.mp hw, Option.isSome_iff_ne_none.mp ho, sj.σ,
-            sj.base ▸ author_valid a.re D a.doc.units rfl sj.data hd, hs⟩, sj)
+            sj.base ▸ author_valid a.re D a.doc.units rfl sj.data hd,
+            by have e := hs; simp only [Xi, Xj, a.side_eq] at e; exact e, Xi, Xj, a.side_eq s i, a.side_eq s j⟩, sj)
         else throw s!"InvalidInput: invalid situation {sid}"
       else throw s!"InvalidInput: invalid situation {sid}"
     else throw s!"InvalidInput: invalid situation {sid}"

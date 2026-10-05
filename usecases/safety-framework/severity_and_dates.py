@@ -7,7 +7,7 @@ text's own words ("severe" for CCLs, "significant but not severe" for TCLs,
 deploying an unmitigated model at that level *might* lead to that level's harm
 (the CCL and TCL definitions: "absent mitigation measures ... may pose
 heightened risk"). Nothing states that it *leads to* the harm. The Lean risk
-route (`ve_risk_route`) admits the environment, regenerates the order, class
+route (service mode `risk`) admits the environment, regenerates the order, class
 and outcome tables, and is the authority for every S answer except S4.
 
 S4 asks about security levels, not harms, so it is asked in D1: the vocabulary
@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import copy
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -36,7 +35,7 @@ from ve.environment import Environment  # noqa: E402
 from ve.profiles import LANGUAGE, SPEC_REVISION  # noqa: E402
 from ve.units import check_quantity_certificate, day_number, prove_quantity, quantity_countermodel  # noqa: E402
 
-RISK_ROUTE = REPO / "lean/.lake/build/bin/ve_risk_route"
+RISK_ROUTE = REPO / "lean/.lake/build/bin/ve_service"
 LEVELS = {  # level -> (class, the text's words)
     "cbrn_uplift_tcl": ("significant", "CBRN TCL: \"significant but not severe harm\" (2.2.1)"),
     "cbrn_uplift_level_1": ("severe", "\"additional expected harm at severe scale\" (table 2.2.1.a)"),
@@ -84,11 +83,9 @@ def risk_environment():
 
 
 def risk_run(*cases):
-    out = subprocess.run([str(RISK_ROUTE), "-"], input=json.dumps(list(cases)), text=True, capture_output=True,
-                         timeout=600)
-    if out.returncode not in (0, 1) or not out.stdout:
-        raise SystemExit(f"ve_risk_route failed: {out.stderr[:500]}")
-    return json.loads(out.stdout)
+    """The Lean risk route's rows (service mode `risk`)."""
+    from ve.backends.relay import rows
+    return rows("risk", list(cases))
 
 
 def d2(order_mutant=False):

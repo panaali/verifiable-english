@@ -8,6 +8,7 @@ Secret examples are assembled at run time so this file never contains one.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -15,11 +16,13 @@ import subprocess
 
 import pytest
 
-from subprocesses import ChildCPU
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
 INVENTORY = "lean/VE/Route/frozen-sources.sha256"
+ENGLISH_LOCK = "ve/english_grammar/LOCK.json"
+ENGLISH_TABLE = "lean/VE/EnglishGrammar/Fixed/RelationalFol.lean"
+ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
 
 
 class Staging:
@@ -412,6 +415,39 @@ def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
     rejects(staging, "lean/Main.lean: existing subcommands changed")
 
 
+def test_english_grammar_checks_the_staged_generated_table(staging):
+    """Spec fixture t1 through the hook: an edited generated rule names the profile and the rule tag."""
+    text = staging.head(ENGLISH_TABLE).decode()
+    line = next(l for l in text.splitlines() if 'tag := "negation"' in l)
+    staging.stage(ENGLISH_TABLE, text.replace(line, line.replace('.kw "case"', '.kw "fact"')))
+    staging.rehash(ENGLISH_TABLE)
+    rejects(staging, "English grammar check failed",
+            f"relational-fol@0: {ENGLISH_TABLE} differs from its source at rule negation")
+
+
+def test_english_grammar_change_needs_a_new_actions_version(staging):
+    """Base fixture i5 through the hook: a trusted Lean file changed without the lock, then with the lock's
+    hash updated and actions_version unchanged, is rejected; a raised version with its module passes."""
+    path = "lean/VE/EnglishGrammar/Token.lean"
+    edited = staging.head(path) + b"\n-- Changed matching.\n"
+    staging.stage(path, edited)
+    staging.rehash(path)
+    lock = json.loads(staging.head(ENGLISH_LOCK))
+    old, new = lock["files"][path], hashlib.sha256(edited).hexdigest()
+    rejects(staging, f"{path}: SHA-256 {old} in {ENGLISH_LOCK}, {new} now")
+    lock["files"][path] = new
+    staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
+    version = lock["actions_version"]
+    rejects(staging, f"{path}: SHA-256 {old} at the base, {new} now, with actions_version {version!r} unchanged")
+    lock["actions_version"] = version + ".1"
+    staging.stage(ENGLISH_LOCK, json.dumps(lock, indent=1) + "\n")
+    rejects(staging, f"{ENGLISH_VERSION}: does not hold actions_version {version + '.1'!r}")
+    staging.stage(ENGLISH_VERSION, staging.head(ENGLISH_VERSION).replace(json.dumps(version).encode(),
+                                                                         json.dumps(version + ".1").encode()))
+    staging.rehash(ENGLISH_VERSION)
+    passes(staging)
+
+
 def test_emergency_bypass_warns(staging):
     staging.stage("docs/probe.md", SECRETS["GitHub token"]() + "\n")
     result = staging.run(VE_SKIP_HOOKS="1")
@@ -420,7 +456,9 @@ def test_emergency_bypass_warns(staging):
     assert "the gate does NOT re-check secrets or layer imports" in result.stderr
 
 
-def test_large_staged_change_stays_under_ten_cpu_seconds(staging, tmp_path):
+def stage_large_change(staging):
+    """Stage an edit of every Python and hand-written Lean source, and 1500 new 10 kB files.
+    Returns the staged files."""
     files = {}
     tracked = staging.git("ls-files", "-z", "--", "ve", "lean/VE").decode().split("\0")
     python = [p for p in tracked if p.endswith(".py")]
@@ -434,23 +472,38 @@ def test_large_staged_change_stays_under_ten_cpu_seconds(staging, tmp_path):
     line = b"The applicant qualifies when every listed condition holds on the reference date.\n"
     for number in range(1500):
         files[f"experiments/timing-probe/case_{number:04}.md"] = line * 120
+    # The English grammar lock hashes trusted Lean files: an edit of them raises actions_version (spec
+    # english-lean-s2.md 2.9), and the generated tables are never edited by hand.
+    for path in [p for p in lean if p.startswith("lean/VE/EnglishGrammar/Fixed/")]:
+        del files[path]
+    lock = json.loads(staging.head(ENGLISH_LOCK))
+    lock["files"] = {path: hashlib.sha256(files.get(path) or staging.head(path)).hexdigest()
+                     for path in lock["files"]}
+    version = json.dumps(lock["actions_version"]).encode()
+    lock["actions_version"] = "timing-probe"
+    files[ENGLISH_LOCK] = (json.dumps(lock, indent=1) + "\n").encode()
+    files[ENGLISH_VERSION] = staging.head(ENGLISH_VERSION).replace(version, b'"timing-probe"')
     staging.stage_many(files)
-    staging.rehash(*lean)
-    # The hook's waits stay the suite's hang guard: a real child never runs against their
-    # defaults (30 s, 3 s, 2 s), which tests/test_hang_guards.py checks by instrumentation.
-    result = staging.run("--timings")
-    assert result.returncode == 0, result.stderr
-    # The hook's own work is measured in CPU seconds, which load does not stretch as it
-    # stretches elapsed time (a run at load 50 on 16 CPUs took 12.7 s). `lean --deps` is
-    # left out: its share is bounded by its wall-clock budget, not by its work.
+    staging.rehash(*[p for p in lean if p in files], ENGLISH_VERSION)
+    return files
+
+
+def without_lean(tmp_path):
+    """A PATH holding only what the hook needs besides Lean, so `lean --deps` is skipped."""
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     for tool in ("python3", "git", "dirname"):
         (bin_dir / tool).symlink_to(shutil.which(tool))
-    with ChildCPU() as cpu:
-        result = staging.run("--timings", PATH=str(bin_dir))
+    return str(bin_dir)
+
+
+def test_large_staged_change_passes(staging, tmp_path):
+    """Its cost in CPU seconds is a benchmark (tools/bench/test_perf.py), not a test criterion."""
+    stage_large_change(staging)
+    # The hook's waits stay the suite's hang guard: a real child never runs against their
+    # defaults (30 s, 3 s, 2 s), which tests/test_hang_guards.py checks by instrumentation.
+    result = staging.run("--timings")
+    assert result.returncode == 0, result.stderr
+    result = staging.run("--timings", PATH=without_lean(tmp_path))
     assert result.returncode == 0, result.stderr
     assert "lean --deps: pinned toolchain unavailable; plain-layout grammar only" in result.stderr
-    assert cpu.seconds < 10, result.stderr
-    print(f"\n{len(files) + 1} staged paths, {sum(map(len, files.values())) / 1e6:.1f} MB: "
-          f"{cpu.seconds:.2f} CPU s\n{result.stderr}")

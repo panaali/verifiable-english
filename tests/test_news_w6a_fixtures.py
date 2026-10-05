@@ -7,11 +7,11 @@ must carry Lean-checked evidence over the cases it cites (units-schema §7).
 from hashlib import sha256
 import json
 from pathlib import Path
-import subprocess
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
+
 from ve import ast
 from ve.environment import Environment
 from ve.evaluate import evaluate
@@ -22,7 +22,7 @@ from ve.units import (check_quantity_certificate, elaborate_quantity, erased_env
 
 ROOT = Path(__file__).resolve().parents[1]
 NEWS = ROOT / "usecases" / "news-article"
-LEAN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+LEAN = "ve_quantity"  # its service mode, through tests/lean_routes.py
 
 
 def fixture():
@@ -96,23 +96,21 @@ def test_consequences_are_certified_from_cited_cases():
         assert check_quantity_certificate(env, premises, conclusion, certificate)
         lean_cases.append({"id": item["id"], "kind": "certificate", "environment": data["environment"],
                            "premises": premises, "conclusion": conclusion, "certificate": certificate})
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         pytest.skip("build the Lean ve_quantity runner first")
-    process = subprocess.run([str(LEAN), "-"], input=json.dumps(lean_cases), text=True,
-                             capture_output=True, timeout=HANG_TIMEOUT)
+    process = lean_routes.completed(LEAN, lean_cases)
     results = json.loads(process.stdout)
     assert [r["id"] for r in results] == [c["id"] for c in data["consequences"]]
     assert all(r["status"] == "ok" and r["valid"] is True for r in results), results
 
 
 def test_lean_admits_every_case_with_the_model():
-    if not LEAN.exists():
+    if not lean_routes.SERVICE.exists():
         pytest.skip("build the Lean ve_quantity runner first")
     data = fixture()
     cases = [{"id": item["id"], "environment": data["environment"],
               "quantity": quantity(item["formula"]), "model": data["model"]}
              for item in data["cases"] + data["consequences"]]
-    process = subprocess.run([str(LEAN), "-"], input=json.dumps(cases), text=True,
-                             capture_output=True, timeout=HANG_TIMEOUT)
+    process = lean_routes.completed(LEAN, cases)
     results = json.loads(process.stdout)
     assert all(r["status"] == "ok" and r["value"] is True for r in results), results

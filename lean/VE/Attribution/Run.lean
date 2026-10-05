@@ -2,8 +2,7 @@ import VE.Attribution.Admission
 import VE.Attribution.Status
 import VE.Route.Run
 
-/-! The `ve_reports_route` executable (spec 9.4), invoked as
-`lean/.lake/build/bin/ve_reports_route <cases.json|->`. Each case is
+/-! The `ve_service` mode `reports` (spec 9.4), formerly the one-shot `ve_reports_route`. Each case is
 `{"id", "kind", "environment", "document", ...}`. Every formula, key, name,
 premise, open term, bridge formula and identity is regenerated from the decoded
 document (`Wire.decodeDocument`); nothing on the wire supplies them.
@@ -519,24 +518,5 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]
   else VE.Route.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_reports_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.Reports.Run

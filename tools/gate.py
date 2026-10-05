@@ -19,13 +19,10 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import rust_build  # noqa: E402
+from tools import nested_pytest, rust_build  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 COLLECTION = ROOT / "tools/gate-collection.json"
-LEAN_BINARIES = ("ve_conformance", "ve_norms_route", "ve_risk_eval")
-# The suite as the gate runs it; tools/gate_collection.py collects with the same arguments.
-PYTEST_ARGS = ("-q", "-p", "hypothesis.extra.pytestplugin", "-p", "tools.gate_pytest",
-               "-o", "addopts=-ra", "-m", "not live", "tests")
+LEAN_BINARIES = ("ve_conformance", "ve_service")
 # The documented refresh of COLLECTION after intended test changes.
 REFRESH = "uv run python tools/gate_collection.py --write"
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -65,6 +62,41 @@ STAGE_ENVIRONMENT = {
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
 }
+# The gate's pytest invocation, shared by its collection run, its suite run and the
+# baseline writer (tools/gate_collection.py, also `--write-collection`), so the baseline
+# is what the gate collects. Plugin autoload is off in the gate, so every plugin is
+# named here or by tools/nested_pytest.py.
+PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not live", "tests")
+
+
+def collection_command(python: list[str]) -> list[str]:
+    return nested_pytest.command(["--collect-only", *PYTEST_ARGS], python=python)
+
+
+def suite_command(python: list[str], workers: str) -> list[str]:
+    """The suite on xdist, even on one worker: merge_pytest_events reads each worker's collection."""
+    return nested_pytest.command(PYTEST_ARGS, workers=workers if workers == "auto" else int(workers),
+                                 xdist=True, python=python)
+
+
+def merge_pytest_events(collection: dict, suite: dict) -> dict:
+    """The collection run's IDs with the suite run's results. Every xdist worker of the
+    suite run must have collected exactly the collection run's selection."""
+    workers = suite.get("workers")
+    if not isinstance(workers, dict) or not workers:
+        raise RuntimeError("the suite run recorded no worker collection")
+    for worker, ids in sorted(workers.items()):
+        if ids != collection["selected"]:
+            raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
+                               f"{len(collection['selected'])}")
+    return {**collection, "tests": suite["tests"], "workers": workers}
+
+
+def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None) -> dict:
+    """Run the gate's collection in `env` (plugin autoload off) and return its events."""
+    env = nested_pytest.environment(env, VE_GATE_PYTEST_RESULT=str(result_file))
+    command(collection_command(python or [sys.executable]), env=env, stage="Python collection")
+    return json.loads(result_file.read_text())
 
 
 def command(args: list[str], *, cwd: Path = ROOT, env: dict[str, str], stage: str) -> str:
@@ -367,10 +399,26 @@ def isolated_cargo(env: dict[str, str], target_dir: Path | None = None):
     yield {**env, "CARGO_NET_OFFLINE": "true", "CARGO_ENCODED_RUSTFLAGS": flags}, workdir
 
 
+def write_collection() -> int:
+    """Regenerate the baseline after intentional test changes: the documented refresh,
+    REFRESH (tools/gate_collection.py --write), with the suite's native build prebuilt."""
+    from tools import gate_collection
+    return gate_collection.write(prebuilt=True)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
+    parser.add_argument("--workers", default="auto",
+                        help="xdist workers for the suite (default auto: the CPUs the load leaves, "
+                             "tests/conftest.py)")
+    parser.add_argument("--write-collection", action="store_true",
+                        help="write the gate's collection to the baseline, tools/gate-collection.json, and exit")
     args = parser.parse_args()
+    if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
+        parser.error("--workers is a positive count or auto")
+    if args.write_collection:
+        return write_collection()
     output = args.output.resolve()
     result = {"schema_version": 1, "commit_sha": "", "dirty": False,
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
@@ -401,9 +449,6 @@ def main() -> int:
             result["stages"].append("toolchains")
 
             command(["lake", "build"], cwd=ROOT / "lean", env=env, stage="Lean build")
-            # Risk's finite-condition differential uses a non-default executable.
-            command(["lake", "build", "ve_risk_eval"], cwd=ROOT / "lean", env=env,
-                    stage="Lean risk evaluator build")
             for name in LEAN_BINARIES:
                 binary = ROOT / "lean/.lake/build/bin" / name
                 if not binary.is_file() or not os.access(binary, os.X_OK):
@@ -446,20 +491,25 @@ def main() -> int:
                     raise RuntimeError("native Rust tests absent or ignored")
                 result["stages"].append("cargo_test")
 
-            events_file = scratch / "pytest.json"
-            pytest_env = record_environment(result, "pytest", {
-                **env, "VE_GATE_PYTEST_RESULT": str(events_file),
-                "VE_GATE_PYTEST_PROGRESS": str(scratch / "current-test.txt"),
-                "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1", "VE_RUST_PREBUILT": "1",
-                "VE_RUST_BINARY": str(rust_binary)})
+            python = ["uv", "run", "--frozen", "--no-sync", "python"]
+            collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
+            pytest_env = record_environment(result, "pytest", nested_pytest.environment(
+                env, VE_GATE_PYTEST_RESULT=str(collection_file),
+                VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
+                VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
+                VE_RUST_BINARY=str(rust_binary)))
+            # The collection, serially (xdist workers report no deselection), then the
+            # suite on `--workers` xdist workers; a worker must collect that selection.
+            collection = collect(pytest_env, collection_file, python=python)
             try:
-                command(["uv", "run", "--frozen", "--no-sync", "python", "-m", "pytest",
-                         *PYTEST_ARGS], env=pytest_env, stage="Python suite")
+                command(suite_command(python, args.workers),
+                        env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
-            interpret_pytest(result, json.loads(events_file.read_text()), policy, expected)
+            interpret_pytest(result, merge_pytest_events(collection, json.loads(events_file.read_text())),
+                             policy, expected)
             result["stages"].append("pytest")
             completed = True
         except (OSError, ValueError, KeyError, RuntimeError) as exc:

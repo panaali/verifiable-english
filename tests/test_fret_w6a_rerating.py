@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from tests import lean_routes
+
 from tests.test_units_lean_w6a import LEAN, lean, quantity
 from tests.test_w6a_review_regressions import raw_environment
 from ve.environment import Environment
@@ -78,7 +80,7 @@ def depth(node):
     return 1 + max((depth(x) for x in node[1:] if type(x) is list), default=0)
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="build the Lean ve_quantity runner first")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 @pytest.mark.parametrize("steps,expected_depth", [(16, 51), (13, 42)])
 def test_bounded_response_unrolls_and_lean_admits_it(steps, expected_depth):
     raw = tick_env()

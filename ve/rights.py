@@ -17,7 +17,12 @@ from .search import _used_predicates
 from .softnorms import SoftEnvironment, SoftNormDocument, decode_rule
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
-_KINDS = frozenset(("claim", "liberty", "immunity", "power"))
+# Every line kind with its rule-bearing fields, in the order the line states its rules: a power line states a
+# liberty and a recognition rule, every other kind one norm. Whatever names or owns a line's rules reads this table
+# (compose-s2 fix4 A2), so a new kind cannot be added without saying which fields carry its rules.
+LINE_RULE_FIELDS = {"claim": ("norm",), "liberty": ("norm",), "immunity": ("norm",), "power": ("liberty", "recognition")}
+RULE_FIELDS = tuple(dict.fromkeys(field for fields in LINE_RULE_FIELDS.values() for field in fields))
+_KINDS = frozenset(LINE_RULE_FIELDS)
 
 
 def _name(value):
@@ -318,8 +323,8 @@ class RightsDocument:
         for right_name, line in entries:
             if type(line) is not dict:
                 continue
-            norm_fields = ("liberty", "recognition") if line.get("kind") == "power" else ("norm",)
-            for field in norm_fields:
+            kind = line.get("kind")
+            for field in (LINE_RULE_FIELDS.get(kind, ("norm",)) if type(kind) is str else ("norm",)):
                 raw = line.get(field)
                 if type(raw) is not dict:
                     continue
@@ -353,12 +358,12 @@ class RightsDocument:
             if type(line) is not dict or line.get("kind") not in _KINDS:
                 raise VEError("InvalidInput: incident line")
             kind = line["kind"]
-            allowed = ({"kind", "cites", "liberty", "recognition", "holder_slot"} if kind == "power"
-                       else {"kind", "cites", "norm", "holder_slot", "fan_out"})
-            if set(line) - allowed or (kind == "power" and not {"liberty", "recognition"} <= set(line)):
+            fields = LINE_RULE_FIELDS[kind]
+            allowed = {"kind", "cites", "holder_slot", *fields} | (set() if kind == "power" else {"fan_out"})
+            if set(line) - allowed or (kind == "power" and not set(fields) <= set(line)):
                 raise VEError("InvalidInput: incident line fields")
-            norms = (("powerLiberty", line.get("liberty")),
-                     ("powerRecognition", line.get("recognition"))) if kind == "power" else ((kind, line.get("norm")),)
+            norms = (tuple((f"power{field.capitalize()}", line.get(field)) for field in fields) if kind == "power"
+                     else ((kind, line.get("norm")),))
             fan_map = line.get("fan_out")
             if fan_map is not None and (kind not in ("claim", "immunity") or
                                         type(fan_map) is not dict):

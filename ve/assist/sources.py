@@ -20,6 +20,7 @@ import json
 from pathlib import Path
 import re
 
+from ..ast import decimal_value
 from ..environment import RESERVED, valid_identifier
 from ..errors import VEError
 
@@ -104,8 +105,9 @@ def select_p5_item(path, item=None):
     for row in items:
         if row.get("id") == item or row.get("payload", row).get("id") == item:
             return row
-    if str(item).isdigit() and int(item) < len(items):
-        return items[int(item)]
+    index = str(item)
+    if index.isascii() and index.isdigit() and decimal_value(index) < len(items):
+        return items[decimal_value(index)]
     raise VEError(f"No P5 item {item!r} in {path}")
 
 

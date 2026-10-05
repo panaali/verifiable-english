@@ -1,0 +1,25 @@
+{
+  "format": "lean-first-delta@1",
+  "batch": "1",
+  "wording": [],
+  "order": [],
+  "verdict": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": "{\n  \"status\": \"CheckerUnavailable\",\n  \"error\": {\n    \"code\": \"CheckerUnavailable\",\n    \"message\": \"ve_readings_route is unavailable\"\n  }\n}\n"
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": "{\n  \"status\": \"CheckerUnavailable\",\n  \"error\": {\n    \"code\": \"CheckerUnavailable\",\n    \"message\": \"CheckerUnavailable: the Lean service mode readings-route used more than its deadline of 228.599 s of CPU\",\n    \"operation\": \"readings-route\",\n    \"backend\": \"lean\"\n  }\n}\n"
+      }
+    }
+  ],
+  "availability": []
+}

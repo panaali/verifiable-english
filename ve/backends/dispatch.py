@@ -54,17 +54,52 @@ def composed(authority: str, run: Callable[[], T]) -> Callable[[], T]:
     return adapter
 
 
-def authority_for(op: str) -> str:
-    pin = _pin.get()
-    if pin is not None:
-        return pin
-    selected = os.environ.get("VE_AUTHORITY", "python")
+def _overrides() -> dict[str, str]:
+    """The per-operation selections of VE_AUTHORITY_OVERRIDES (the last entry for an operation wins)."""
+    selected = {}
     for entry in filter(None, os.environ.get("VE_AUTHORITY_OVERRIDES", "").split(",")):
         name, sep, authority = entry.partition("=")
         if not sep or not name or authority not in _AUTHORITIES:
             raise ValueError(f"invalid VE_AUTHORITY_OVERRIDES entry {entry!r}")
-        if name == op:
-            selected = authority
+        selected[name] = authority
+    return selected
+
+
+def overridden(op: str) -> bool:
+    """Whether VE_AUTHORITY_OVERRIDES selects an authority for `op` by name. An operation whose Lean side
+    is not built yet joins the dispatch only then, never through VE_AUTHORITY or a pin."""
+    return op in _overrides()
+
+
+# Operations whose other backend may only shadow Python: no selection (VE_AUTHORITY, a named override, a pin)
+# makes it the authority. english.admission keeps the English reader outside admission until its authority
+# moves (english-lean S2, DRI ruling 6; ve/assurance-manifest.json lists english.read as planned only).
+SHADOW_ONLY = frozenset({"english.admission"})
+
+
+def shadowed(op: str, payload: dict, python: Callable[[], T], candidate: Callable[[], T],
+             shadow: Callable[[object, object], dict | None]) -> T:
+    """Python's result for a shadow-only operation; under the named override `op=shadow` the candidate is
+    also run and compared. A named override that selects another backend is refused: it would make the
+    candidate the authority."""
+    if op not in SHADOW_ONLY:
+        raise ValueError(f"{op} is not a shadow-only operation")
+    selected = _overrides().get(op, "python")
+    if selected not in ("python", "shadow"):
+        raise CheckerUnavailable(f"CheckerUnavailable: {op} accepts only the python or shadow authority; "
+                                 f"{selected!r} would make the candidate reader the authority")
+    for observe in observers:
+        observe(op, selected)
+    if selected == "python":
+        return python()
+    return _shadow(op, payload, python, candidate, None, shadow)
+
+
+def authority_for(op: str) -> str:
+    pin = _pin.get()
+    if pin is not None:
+        return pin
+    selected = _overrides().get(op, os.environ.get("VE_AUTHORITY", "python"))
     if selected not in _AUTHORITIES:
         raise ValueError(f"invalid VE_AUTHORITY {selected!r}")
     return selected
@@ -149,12 +184,18 @@ def _append(record: dict) -> None:
 
 def execute(op: str, payload: dict, python: Callable[[], T], *,
             lean: Callable[[], T] | None = None,
-            rust: Callable[[], T] | None = None) -> T:
+            rust: Callable[[], T] | None = None,
+            shadow: Callable[[object, object], dict | None] | None = None) -> T:
     """Run the selected implementation, or compare both while returning Python.
 
     The caller passes independent implementations with the same public result
     type.  No class-A result may be inferred from the Python result in `lean`.
+    Under shadow, `shadow(python_result, backend_result)` (either may be the
+    exception raised instead) replaces the default record: it returns the
+    fields of the record to append, or None for no record.
     """
+    if op in SHADOW_ONLY:
+        raise ValueError(f"{op} is shadow-only: dispatch it through `shadowed`")
     authority = authority_for(op)
     for observe in observers:
         observe(op, authority)
@@ -168,11 +209,17 @@ def execute(op: str, payload: dict, python: Callable[[], T], *,
         if rust is None:
             raise CheckerUnavailable(f"CheckerUnavailable: Rust adapter for {op} is not available")
         return rust()
+    return _shadow(op, payload, python, lean, rust, shadow)
 
+
+def _shadow(op: str, payload: dict, python: Callable[[], T], lean: Callable[[], T] | None,
+            rust: Callable[[], T] | None, shadow: Callable[[object, object], dict | None] | None) -> T:
+    """Run Python and the backend, record their difference, and return Python's result."""
     started = time.monotonic()
     try:
         original = python()
-        left = _record(original)
+        # A comparing `shadow` reads the results itself: Python's result is never lost to a record.
+        left = _record(original) if shadow is None else None
     except Exception as exc:
         original, left = exc, {"code": getattr(exc, "code", type(exc).__name__),
                                "message": str(exc)}
@@ -180,21 +227,26 @@ def execute(op: str, payload: dict, python: Callable[[], T], *,
     candidate = lean or rust
     started = time.monotonic()
     if candidate is None:
+        value = CheckerUnavailable(f"CheckerUnavailable: no adapter for {op}")
         right = {"code": "CheckerUnavailable", "message": f"no adapter for {op}"}
     else:
         try:
-            right = _record(candidate())
+            value = candidate()
+            right = _record(value) if shadow is None else None
         except Exception as exc:
-            right = {"code": getattr(exc, "code", type(exc).__name__),
-                     "message": str(exc)}
+            value, right = exc, {"code": getattr(exc, "code", type(exc).__name__),
+                                 "message": str(exc)}
     backend_ms = (time.monotonic() - started) * 1000
-    classes = _classes(left, right)
-    if classes:
+    if shadow is not None:
+        record = shadow(original, value)
+    else:
+        classes = _classes(left, right)
+        record = {"python": left, "lean": right if lean else None, "rust": right if not lean else None,
+                  "class": classes} if classes else None
+    if record is not None:
         digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False,
                                            separators=(",", ":")).encode()).hexdigest()
-        _append({"op": op, "input_digest": digest, "python": left,
-                 "lean": right if lean else None, "rust": right if not lean else None,
-                 "class": classes, "python_ms": python_ms, "backend_ms": backend_ms})
+        _append({"op": op, "input_digest": digest, **record, "python_ms": python_ms, "backend_ms": backend_ms})
     if isinstance(original, Exception):
         raise original
     return original

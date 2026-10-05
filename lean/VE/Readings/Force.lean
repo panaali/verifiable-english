@@ -110,7 +110,7 @@ theorem act_of_incompatible {M N : SoftNode} (h : Incompatible D M N = true) : a
 
 end Acts
 
-theorem incompatible_self (D : SoftDoc) (N : SoftNode) : Incompatible D N N = false := by
+theorem force_incompatible_self (D : SoftDoc) (N : SoftNode) : Incompatible D N N = false := by
   unfold Incompatible
   cases N.sign <;> simp
 
@@ -284,7 +284,7 @@ theorem Twin.dom_twin {M : SoftNode} (hM : M ∈ C.T.nodes) (hn : M.name = Nd.na
     rw [ha]; show actKey C (relaxTo Nd M).pred = actKey C Nd.pred
     rw [relaxTo_pred, hw.pred M hM hn])
   have he : M' = relaxTo Nd M := eq_of_key (·.name) hv.names hM' hT (by show M'.name = (relaxTo Nd M).name; rw [hn', relaxTo_name, hn])
-  rw [he, incompatible_self] at hi
+  rw [he, force_incompatible_self] at hi
   cases hi
 
 theorem Twin.eff_twin {M : SoftNode} (hM : M ∈ C.T.nodes) (hn : M.name = Nd.name) :
@@ -912,7 +912,7 @@ structure TwinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : So
 
 theorem twinDocs_spec {D : Doc} {s : String} {i j : Nat} {ci cj : Content} {Nd : SoftNode}
     (h : twinDocs D s i j ci cj Nd = true) : TwinDocs D s i j ci cj Nd := by
-  simp only [twinDocs, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, Bool.or_eq_true, bne_iff_ne,
+  simp only [twinDocs, twinDocsOf, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, Bool.or_eq_true, bne_iff_ne,
     ne_eq, beq_iff_eq, List.contains_iff_mem] at h
   obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hdc, how⟩, has⟩, hgd⟩, hlim⟩, hnd⟩, hst⟩, hk⟩, hkn⟩, hso⟩, hl⟩, hdf⟩ := h
   refine ⟨hdc, how, has, hgd, hlim, hnd, fun M hM hn => ?_, hk, fun g hg => ?_, hso, hl, hdf⟩
@@ -932,7 +932,7 @@ theorem decisionOnly_twin {D : Doc} {s : String} {i j : Nat} {k₀ : GenKey} (h 
       (∀ M ∈ (correlate (one D s j).1).T.nodes, VE.SoftNorms.act (correlate (one D s j).1) M =
         VE.SoftNorms.act (correlate (one D s j).1) Nd → M.name = Nd.name) ∧
       TwinDocs D s i j ci cj Nd := by
-  unfold decisionOnly at h
+  unfold decisionOnly decisionOnlyOf at h
   dsimp only at h
   split at h
   · rename_i ci cj hi hj

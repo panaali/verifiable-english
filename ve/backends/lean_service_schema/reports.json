@@ -1,0 +1,403 @@
+{
+  "$id": "reports.json",
+  "$comment": "Mode reports: Reports.Run.runCaseReported (lean/VE/Attribution/Run.lean, formerly ve_reports_route). A case on the reports path (usesReportsPath) is answered by the reports runner; every other case is delegated unchanged to the route mode's runner.",
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/reports-elaborate"}},
+                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/reports-certificate"}},
+                {
+                  "then": {"$ref": "#/$defs/countermodel"},
+                  "when": {"$ref": "#/$defs/kind/reports-countermodel"}
+                },
+                {"then": {"$ref": "#/$defs/scoped"}, "when": {"$ref": "#/$defs/kind/reports-scoped"}},
+                {"then": {"$ref": "#/$defs/status"}, "when": {"$ref": "#/$defs/kind/reports-status"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/reports_path"}
+      },
+      {"then": {"$ref": "route.json#/row"}, "when": true}
+    ]
+  },
+  "$defs": {
+    "admission": {
+      "$comment": "Reports.Run.encodeAdmitted: W2's admission answer over the reports document, its envelope, and the kinds of the report, assessment and negated units.",
+      "additionalProperties": false,
+      "properties": {
+        "admitted": {"const": true},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "kinds": {"items": {"$ref": "#/$defs/report_kind"}, "type": "array"},
+        "report": {"$ref": "common.json#/$defs/bound_report"},
+        "report_id": {"$ref": "common.json#/$defs/hex64"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "admitted", "report", "report_id", "envelope", "kinds"],
+      "type": "object"
+    },
+    "certificate": {
+      "$comment": "Reports.Run.runCertificate: the certificate's verdict with both bindings.",
+      "additionalProperties": false,
+      "properties": {
+        "bindings": {
+          "additionalProperties": false,
+          "properties": {"envelope": {"type": "boolean"}, "inner": {"type": "boolean"}},
+          "required": ["inner", "envelope"],
+          "type": "object"
+        },
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "environment_reports_id", "envelope", "bindings"],
+      "type": "object"
+    },
+    "countermodel": {
+      "$comment": "Reports.Run.countermodelAnswer: whether the model refutes, and each generated predicate's table.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "refutes": {"type": "boolean"},
+        "source_model": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "holds_of": {"$ref": "common.json#/$defs/strings"},
+              "key": {"$ref": "#/$defs/key"},
+              "name": {"type": "string"}
+            },
+            "required": ["name", "key", "holds_of"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "refutes", "source_model"],
+      "type": "object"
+    },
+    "elaborate": {
+      "$comment": "Reports.Run.elaborated: E_reports' identity, the generated predicates with their keys, the premises, the open assessment terms with their records, the bridge formulas, the content identities, the envelope and the warnings.",
+      "additionalProperties": false,
+      "properties": {
+        "bridge_formulas": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "depth": {"$ref": "common.json#/$defs/nat"},
+              "id": {"type": "string"},
+              "unit": {"type": "string"}
+            },
+            "required": ["id", "unit", "depth"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content_ids": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"content_id": {"$ref": "common.json#/$defs/hex64_or_empty"}, "unit": {"type": "string"}},
+            "required": ["unit", "content_id"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "environment_reports_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "keys": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "arguments": {"$ref": "common.json#/$defs/strings"},
+              "key": {"$ref": "#/$defs/key"},
+              "name": {"pattern": "reports__.*", "type": "string"}
+            },
+            "required": ["name", "arguments", "key"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "open_terms": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "arguments": {"$ref": "common.json#/$defs/strings"},
+              "name": {"type": "string"},
+              "record": {
+                "additionalProperties": false,
+                "properties": {
+                  "context": {"type": "string"},
+                  "decided_by": {"type": "string"},
+                  "factors": {"$ref": "common.json#/$defs/strings"},
+                  "id": {"type": "string"},
+                  "jurisdiction": {"type": "string"},
+                  "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+                  "precedents": {"$ref": "common.json#/$defs/strings"},
+                  "sufficient": {"$ref": "common.json#/$defs/generated_formulas"},
+                  "version": {"$ref": "common.json#/$defs/nat"}
+                },
+                "required": [
+                  "id",
+                  "context",
+                  "decided_by",
+                  "necessary",
+                  "sufficient",
+                  "factors",
+                  "precedents",
+                  "jurisdiction",
+                  "version"
+                ],
+                "type": "object"
+              }
+            },
+            "required": ["name", "arguments"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "premises": {
+          "items": {
+            "$ref": "common.json#/$defs/labelled",
+            "properties": {"label": {"pattern": "(report:|assessment:).*"}}
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"},
+        "warnings": {"items": {"pattern": "unreviewed act .*", "type": "string"}, "type": "array"}
+      },
+      "required": [
+        "id",
+        "status",
+        "environment_reports_id",
+        "keys",
+        "premises",
+        "open_terms",
+        "bridge_formulas",
+        "content_ids",
+        "envelope",
+        "warnings"
+      ],
+      "type": "object"
+    },
+    "envelope": {
+      "$comment": "Reports.Run.envelopeJson: the environment and document identities a certificate's envelope must name.",
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"}
+      },
+      "required": ["environment_id", "document_id"],
+      "type": "object"
+    },
+    "envelope_binding": {
+      "additionalProperties": false,
+      "properties": {"envelope": {"type": "boolean"}},
+      "required": ["envelope"],
+      "type": "object"
+    },
+    "key": {
+      "$comment": "Attribution.Wire.generated: a report key or an assessment key.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "act": {"enum": ["says", "believes", "wants", "intends"]},
+            "complement_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "context": {"type": "string"},
+            "holder_sort": {"type": "string"}
+          },
+          "required": ["act", "holder_sort", "context", "complement_id"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "assessment": {"type": "string"},
+            "content_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "judgment": {"enum": ["may", "probably"]}
+          },
+          "required": ["judgment", "assessment", "content_id"],
+          "type": "object"
+        }
+      ]
+    },
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "reports-certificate": {"properties": {"kind": {"const": "reports-certificate"}}, "required": ["kind"], "type": "object"},
+      "reports-countermodel": {"properties": {"kind": {"const": "reports-countermodel"}}, "required": ["kind"], "type": "object"},
+      "reports-elaborate": {"properties": {"kind": {"const": "reports-elaborate"}}, "required": ["kind"], "type": "object"},
+      "reports-scoped": {"properties": {"kind": {"const": "reports-scoped"}}, "required": ["kind"], "type": "object"},
+      "reports-status": {"properties": {"kind": {"const": "reports-status"}}, "required": ["kind"], "type": "object"}
+    },
+    "report_kind": {
+      "$comment": "Route.Admission.renderKind of Attribution.Bridge.kindOf: a report's attributed kind (acts says, believes, wants, intends) or an assessment's hedged kind (could, likely), over an asserted, norm or definition body. Content depth is at most 16 (Wire.decodeContent).",
+      "anyOf": [
+        {"enum": ["asserted", "norm", "definition"]},
+        {
+          "type": "array",
+          "x-tagged": {
+            "attributed": [
+              {"$ref": "common.json#/$defs/text"},
+              {"enum": ["says", "believes", "wants", "intends"]},
+              {"$ref": "#/$defs/report_kind"}
+            ],
+            "hedged": [{"enum": ["could", "likely"]}, {"$ref": "#/$defs/report_kind"}]
+          }
+        }
+      ],
+      "x-fuel": {"counter": "report_kind", "limit": 32}
+    },
+    "reports_path": {
+      "$comment": "Reports.Run.usesReportsPath: the reports@0 profile or a reports-* kind.",
+      "anyOf": [
+        {
+          "properties": {
+            "environment": {
+              "properties": {"profiles": {"contains": {"const": "reports@0"}, "type": "array"}},
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "reports-.*", "type": "string"}}, "required": ["kind"]}
+      ],
+      "type": "object"
+    },
+    "scoped": {
+      "$comment": "Reports.Run.runCaseReported reports-scoped: one verdict per scoped check.",
+      "additionalProperties": false,
+      "properties": {
+        "bindings": {"$ref": "#/$defs/envelope_binding"},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "scoped": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "scoped", "envelope", "bindings"],
+      "type": "object"
+    },
+    "status": {
+      "$comment": "Reports.Run.runStatus: every unit's status with its nested results, the scoped verdicts and the document's status.",
+      "additionalProperties": false,
+      "properties": {
+        "bindings": {"$ref": "#/$defs/envelope_binding"},
+        "document_status": {"$ref": "#/$defs/status_word"},
+        "envelope": {"$ref": "#/$defs/envelope"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "scoped": {"items": {"$ref": "#/$defs/verdict"}, "type": "array"},
+        "status": {"const": "ok"},
+        "units": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {"type": "string"},
+              "nested": {
+                "items": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "item": {"const": "assessment"},
+                        "name": {"type": "string"},
+                        "path": {"pattern": "(1(\\.1)*)?", "type": "string"},
+                        "status": {"const": "OPEN"}
+                      },
+                      "required": ["item", "path", "name", "status"],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "act": {"type": "string"},
+                        "item": {"const": "act"},
+                        "path": {"pattern": "([12](\\.[12])*)?", "type": "string"},
+                        "status": {"const": "LABELLED"}
+                      },
+                      "required": ["item", "path", "act", "status"],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "item": {"const": "unformalised"},
+                        "path": {"pattern": "([12](\\.[12])*)?", "type": "string"},
+                        "reason": {"type": "string"},
+                        "status": {"const": "UNFORMALISED"}
+                      },
+                      "required": ["item", "path", "reason", "status"],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              "status": {"$ref": "#/$defs/status_word"}
+            },
+            "required": ["id", "status", "nested"],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["id", "status", "units", "scoped", "document_status", "envelope", "bindings"],
+      "type": "object"
+    },
+    "status_word": {"enum": ["UNFORMALISED", "OPEN", "UNKNOWN", "LABELLED", "CHECKED"]},
+    "verdict": {
+      "$comment": "Reports.Run.scopedVerdict: one scoped check's verdict; UNKNOWN for unreplayable payloads has no scope.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"detail": {"const": "payloads"}, "id": {"type": "string"}, "status": {"const": "UNKNOWN"}},
+          "required": ["id", "status", "detail"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "background": {"$ref": "common.json#/$defs/nat"},
+            "environment_id": {"type": "string"},
+            "id": {"type": "string"},
+            "status": {"enum": ["FOLLOWS", "PAYLOADS INCONSISTENT", "DOES NOT FOLLOW"]}
+          },
+          "required": ["id", "environment_id", "background", "status"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "background": {"$ref": "common.json#/$defs/nat"},
+            "detail": {
+              "enum": [
+                "witness does not refute",
+                "witness replay over a quoted package's scope is not implemented",
+                "envelope",
+                "certificate does not replay",
+                "no evidence"
+              ]
+            },
+            "environment_id": {"type": "string"},
+            "id": {"type": "string"},
+            "status": {"const": "UNKNOWN"}
+          },
+          "required": ["id", "environment_id", "background", "status", "detail"],
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

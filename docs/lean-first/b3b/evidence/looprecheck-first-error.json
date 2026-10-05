@@ -1,0 +1,75 @@
+{
+ "case": "first-error-case.json",
+ "rounds": 5,
+ "runs": {
+  "base": [
+   {
+    "cpu": 1.73,
+    "exit": 1
+   },
+   {
+    "cpu": 1.71,
+    "exit": 1
+   },
+   {
+    "cpu": 1.72,
+    "exit": 1
+   },
+   {
+    "cpu": 1.75,
+    "exit": 1
+   },
+   {
+    "cpu": 1.75,
+    "exit": 1
+   }
+  ],
+  "before": [
+   {
+    "cpu": 0.1,
+    "exit": 1
+   },
+   {
+    "cpu": 0.11,
+    "exit": 1
+   },
+   {
+    "cpu": 0.11,
+    "exit": 1
+   },
+   {
+    "cpu": 0.11,
+    "exit": 1
+   },
+   {
+    "cpu": 0.11,
+    "exit": 1
+   }
+  ],
+  "head": [
+   {
+    "cpu": 0.1,
+    "exit": 1
+   },
+   {
+    "cpu": 0.1,
+    "exit": 1
+   },
+   {
+    "cpu": 0.11,
+    "exit": 1
+   },
+   {
+    "cpu": 0.1,
+    "exit": 1
+   },
+   {
+    "cpu": 0.1,
+    "exit": 1
+   }
+  ]
+ },
+ "identical": true,
+ "load_before": 4.2,
+ "load_after": 4.0
+}

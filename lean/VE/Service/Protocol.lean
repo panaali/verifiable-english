@@ -11,6 +11,18 @@ import VE.Service.Readings
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
+import VE.SoftNorms.Run
+import VE.Rights.Run
+import VE.SpeechActs.Run
+import VE.Attribution.Run
+import VE.Alternatives.Run
+import VE.Risk.Run
+import VE.Risk.Eval
+import VE.Time.Document
+import VE.NormDefaults.Run
+import VE.Discourse.Run
+import VE.Readings.Run
+import VE.Service.Diagnose
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -27,7 +39,7 @@ request error `{"digests", "error", "id", "mode", "status": "error"}`, bound lik
 response: its nonce, its mode and the digests of its cases (`null` when its cases text
 does not split into cases). Only a line whose envelope cannot be decoded gets the unbound
 line error `{"error", "id", "status": "error"}`, which answers no request. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
-batch decoder; English uses `Lean.Json.parse`, its one-shot decoder. No state
+batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder. No state
 is kept between lines.
 
 Budgets are deterministic functions of the request: its size in bytes and its number
@@ -47,6 +59,8 @@ def maxCases : Nat := 4096
 inductive Mode where
   | evaluate | checkCertificate | order | route | norms | english | environment | model | check | identity
   | parse | graph | readings | bundle | familyNorms
+  | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
+  | discourse | readingsRoute | diagnose
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -65,9 +79,23 @@ def Mode.name : Mode → String
   | .readings => "readings"
   | .bundle => "bundle"
   | .familyNorms => "family-norms"
+  | .softNorms => "soft-norms"
+  | .rights => "rights"
+  | .speechActs => "speech-acts"
+  | .reports => "reports"
+  | .alternatives => "alternatives"
+  | .risk => "risk"
+  | .riskEval => "risk-eval"
+  | .quantity => "quantity"
+  | .normDefaults => "norm-defaults"
+  | .discourse => "discourse"
+  | .readingsRoute => "readings-route"
+  | .diagnose => "diagnose"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
-  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms]
+  .environment, .model, .check, .identity, .parse, .graph, .readings, .bundle, .familyNorms,
+  .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
+  .discourse, .readingsRoute, .diagnose]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -82,7 +110,9 @@ def englishReported (j : Json) : Json :=
 
 /-- One decoded case: the reported output of the existing runner for the mode.
 `evaluate`, `check-certificate`, `order` and `route` are the `ve_conformance`
-subcommands, `norms` is `ve_norms_route`, `english` is `VE/English/Run.lean`. -/
+subcommands, `norms` is `ve_norms_route`, `english` is `VE/English/Run.lean`; the
+statement-layer modes from `soft-norms` on are the per-case functions of the one-shot route
+executables (docs/LEAN-FIRST-PLAN.md, batch 1), which leave the default build targets. -/
 def runMode : Mode → Json → Json
   | .evaluate, j => VE.Order.runEvaluationCaseReported j
   | .checkCertificate, j => VE.CertificateWire.runCaseReported j
@@ -99,6 +129,18 @@ def runMode : Mode → Json → Json
   | .readings, j => Standalone.reported Family.readingsMode j
   | .bundle, j => Standalone.reported FamilyBundle.bundleCase j
   | .familyNorms, j => FamilyNorms.runCaseReported j
+  | .softNorms, j => VE.SoftNorms.Run.runCaseReported j
+  | .rights, j => VE.Rights.Run.runCaseReported j
+  | .speechActs, j => VE.SpeechActs.Run.runCaseReported j
+  | .reports, j => VE.Reports.Run.runCaseReported j
+  | .alternatives, j => VE.Alternatives.Run.runCaseReported j
+  | .risk, j => VE.Risk.Run.runCaseReported j
+  | .riskEval, j => VE.Risk.Eval.runCaseReported j
+  | .quantity, j => VE.Time.Wire.runCaseReported j VE.Time.Document.extension
+  | .normDefaults, j => VE.NormDefaults.Run.runCaseReported j
+  | .discourse, j => VE.Discourse.Run.runCaseReported j
+  | .readingsRoute, j => VE.Readings.Run.runCaseReported j
+  | .diagnose, j => Diagnose.diagnoseCase j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -108,6 +150,49 @@ def caseError (m : Mode) (index : Nat) (message : String) : Json :=
 def caseResult (m : Mode) (index : Nat) : Except String Json → Json
   | .ok j => runMode m j
   | .error message => caseError m index message
+
+/-! ## Diagnostic codes (docs/LEAN-FIRST-PLAN.md, batch 0)
+
+Every rejection the service returns carries `code`, the public diagnostic code of its
+message, so that a client relays Lean's code and text and classifies nothing itself. The
+code is derived from the runner's `Class:` prefix by `rejectionCode`, the one place that
+does it. It is set beside the runner's result in the bound entry (`bound`), so no runner
+and no runner row changes. -/
+
+/-- The public diagnostic codes a rejection can carry (`ve/errors.py`). A runner prefix that
+is not one of them (`DependencyCycle`, `ShadowedVariable`, ...) is `InvalidInput`. -/
+def rejectionCodes : List String := ["InvalidInput", "SyntaxError", "UnknownSymbol",
+  "DuplicateDeclaration", "UnboundVariable", "TypeMismatch", "InvalidModel", "UnsupportedProfile",
+  "ResourceLimit", "AdmissionError", "CheckerUnavailable"]
+
+/-- The code of a rejection message: `InvalidModel` when it names a generator
+(`Route.Run.generatorOf`), else its text up to the first `:` when that is a public code, else
+`InvalidInput`. -/
+def rejectionCode (message : String) : String :=
+  if (VE.Route.Run.generatorOf message).isSome then "InvalidModel"
+  else
+    let head := (message.splitOn ":").headD message
+    if rejectionCodes.contains head then head else "InvalidInput"
+
+/-- The members set beside a rejection with message `m`: its code, and the generator an
+`InvalidModel(generator)` message names (as `Route.Run.runCaseReported` reports it in its row). -/
+def codeMembers (m : String) : List (String × Json) :=
+  ("code", .str (rejectionCode m)) :: match VE.Route.Run.generatorOf m with
+    | some g => [("generator", .str g)]
+    | none => []
+
+/-- The members set beside a runner result: `codeMembers` of its message for an error row
+(`status` "error" with a text `error`), none for every other result. -/
+def coding (result : Json) : List (String × Json) :=
+  match result.getObjValD "status", result.getObjValD "error" with
+  | .str "error", .str message => codeMembers message
+  | _, _ => []
+
+#guard rejectionCode "UnknownSymbol: Unknown predicate p" == "UnknownSymbol"
+#guard rejectionCode "InvalidModel(definitions): x" == "InvalidModel"
+#guard rejectionCode "DependencyCycle: a -> a" == "InvalidInput"
+#guard rejectionCode "String expected" == "InvalidInput"
+#guard rejectionCode "ResourceLimit" == "ResourceLimit"
 
 structure Budget where
   cases : Nat := maxCases
@@ -367,9 +452,10 @@ def caseDigests (text : String) : Except String (Array String) := do
   | .ok ds, .ok ts => ds == ts.map caseDigest
   | _, _ => false
 
-/-- Result `i` with its binding: the case's position and digest. -/
+/-- Result `i` with its binding, the case's position and digest, and the `coding` of a
+rejection. -/
 def bound (index : Nat) (digest : String) (result : Json) : Json :=
-  Json.mkObj [("index", toJson index), ("digest", .str digest), ("result", result)]
+  Json.mkObj ([("index", toJson index), ("digest", .str digest), ("result", result)] ++ coding result)
 
 /-- Results, each bound to its position and its case digest in `digests`. -/
 def bindResults (rs : Array Json) (digests : Array String) : Array Json :=
@@ -394,8 +480,16 @@ def parseEnglishCases (text : String) : Except String (Array (Except String Json
   unless raw.size == cases.size do throw "English batch split mismatch"
   pure (raw.map fun source => .ok (.str source))
 
+/-- The `risk-eval` batch, read with Lean.Json.parse as its former one-shot runner `ve_risk_eval`
+read it (its cases carry JSON values the restricted decoder refuses, such as null). -/
+def parseLeanCases (text : String) : Except String (Array (Except String Json)) := do
+  let cases ← (← Json.parse text).getArr?
+  pure (cases.map .ok)
+
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
-  if r.mode == .english then parseEnglishCases r.cases else VE.JsonInput.parseCases r.cases
+  if r.mode == .english then parseEnglishCases r.cases
+  else if r.mode == .riskEval then parseLeanCases r.cases
+  else VE.JsonInput.parseCases r.cases
 
 /-- The request's budget: the service limits, lowered by its `budget` member. -/
 def Request.budget (r : Request) : Except String Budget :=
@@ -430,10 +524,10 @@ def errorDigests (cases : String) : Json :=
   | .error _ => .null
 
 /-- The error for a decoded request that cannot be answered (budget, batch decoding),
-bound like a response: its nonce, its mode and the digests of its cases. -/
+bound like a response: its nonce, its mode and the digests of its cases, with its code. -/
 def requestError (r : Request) (message : String) : Json :=
   Json.mkObj [("id", .str r.id), ("status", .str "error"), ("mode", .str r.mode.name),
-    ("digests", errorDigests r.cases), ("error", .str message)]
+    ("digests", errorDigests r.cases), ("error", .str message), ("code", .str (rejectionCode message))]
 
 /-- The response to one request line. -/
 def respond (line : String) : Json :=
@@ -460,7 +554,7 @@ which hashes the executable it starts. -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
     ("lean", .str Lean.versionString), ("modes", toJson (modes.map Mode.name)),
-    ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
+    ("codes", toJson rejectionCodes), ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
       ("max_cases", toJson maxCases), ("json_depth", toJson (256 : Nat))])]
 
 /-! ## Dispatch pins (statement review: each mode is exactly its existing runner) -/
@@ -494,6 +588,23 @@ theorem runMode_bundle (j : Json) :
     runMode .bundle j = Standalone.reported FamilyBundle.bundleCase j := rfl
 theorem runMode_familyNorms (j : Json) :
     runMode .familyNorms j = FamilyNorms.runCaseReported j := rfl
+theorem runMode_softNorms (j : Json) : runMode .softNorms j = VE.SoftNorms.Run.runCaseReported j := rfl
+theorem runMode_rights (j : Json) : runMode .rights j = VE.Rights.Run.runCaseReported j := rfl
+theorem runMode_speechActs (j : Json) : runMode .speechActs j = VE.SpeechActs.Run.runCaseReported j := rfl
+theorem runMode_reports (j : Json) : runMode .reports j = VE.Reports.Run.runCaseReported j := rfl
+theorem runMode_alternatives (j : Json) :
+    runMode .alternatives j = VE.Alternatives.Run.runCaseReported j := rfl
+theorem runMode_risk (j : Json) : runMode .risk j = VE.Risk.Run.runCaseReported j := rfl
+theorem runMode_riskEval (j : Json) : runMode .riskEval j = VE.Risk.Eval.runCaseReported j := rfl
+theorem runMode_quantity (j : Json) :
+    runMode .quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension := rfl
+theorem runMode_normDefaults (j : Json) :
+    runMode .normDefaults j = VE.NormDefaults.Run.runCaseReported j := rfl
+theorem runMode_discourse (j : Json) : runMode .discourse j = VE.Discourse.Run.runCaseReported j := rfl
+theorem runMode_readingsRoute (j : Json) :
+    runMode .readingsRoute j = VE.Readings.Run.runCaseReported j := rfl
+theorem runMode_diagnose (j : Json) : runMode .diagnose j = Diagnose.diagnoseCase j := rfl
+
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 
@@ -531,5 +642,35 @@ theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (dige
     (bindResults (results r cases) digests)[i]? =
       some (bound i (digests.getD i "") (caseResult r.mode i cases[i])) := by
   simp [bindResults, results, h]
+
+/-- A bound entry is the runner's result unchanged, beside its position, its digest and its
+`coding`. -/
+theorem bound_eq (index : Nat) (digest : String) (result : Json) :
+    bound index digest result = Json.mkObj ([("index", toJson index), ("digest", .str digest),
+      ("result", result)] ++ coding result) := rfl
+
+/-- Nothing is set beside a result whose status is not "error". -/
+theorem coding_of_status (result : Json) (h : result.getObjValD "status" ≠ .str "error") :
+    coding result = [] := by
+  unfold coding
+  split
+  · simp_all
+  · rfl
+
+/-- Beside a rejection with message `m`: exactly `codeMembers m`, its code first. -/
+theorem coding_error (result : Json) (m : String) (hs : result.getObjValD "status" = .str "error")
+    (he : result.getObjValD "error" = .str m) :
+    coding result = codeMembers m := by
+  simp [coding, hs, he]
+
+/-- Every code is a public diagnostic code. -/
+theorem rejectionCode_mem (m : String) : rejectionCode m ∈ rejectionCodes := by
+  unfold rejectionCode
+  split
+  · simp [rejectionCodes]
+  · dsimp only
+    split
+    · next h => exact List.contains_iff_mem.mp h
+    · simp [rejectionCodes]
 
 end VE.Service

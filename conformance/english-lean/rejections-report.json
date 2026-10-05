@@ -1,0 +1,466 @@
+{
+ "call_sites": 73,
+ "consistent": true,
+ "format": "ve.english-lean-rejections@1",
+ "probes": [
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p1",
+   "python": "SyntaxError: This name is already in scope. Use first and second, or distinct numbered names.",
+   "text": "For every service named S1, for every service named S1, S1 is reviewed.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p2",
+   "python": "SyntaxError: This name is already in scope. Use first and second, or distinct numbered names.",
+   "text": "For every service, for every service, that service is reviewed.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p3",
+   "python": "SyntaxError: Unknown English phrase 't'. Nearest declared wordings: 'owns {1}'; 'alice'; 'legacy'.",
+   "text": "For every person, that service is reviewed.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p4",
+   "python": "SyntaxError: Unknown English phrase 't'. Nearest declared wordings: 'owns {1}'; 'alice'; 'legacy'.",
+   "text": "That service is reviewed.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p5",
+   "python": "SyntaxError: Unknown English phrase 'owns it'. Nearest declared wordings: 'owns {1}'; 'person'; 'alice'.",
+   "text": "Legacy is deployed. Alice owns it.",
+   "tokens": [
+    "one",
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p6",
+   "python": "SyntaxError: The referent of it is incomplete. Repeat the explicit name or confirm a scoped rewrite.",
+   "text": "Alice owns legacy. It is deployed.",
+   "tokens": [
+    "one",
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "order",
+   "first_non_one_sentence": null,
+   "id": "p7",
+   "python": "SyntaxError: A scaling coefficient must be an integer numeral.",
+   "text": "Api costs [budget * limit].",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "accepted",
+   "consistent": true,
+   "earley": "one",
+   "environment": "order",
+   "first_non_one_sentence": null,
+   "id": "p8",
+   "python": "accepted",
+   "text": "Api costs [2 * limit].",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "closure",
+   "first_non_one_sentence": null,
+   "id": "p9",
+   "python": "SyntaxError: The source and destination of a step must have the same sort.",
+   "text": "Starting from alice, legacy is reachable by one or more steps, where a step from a person to a service satisfies this condition: that person owns that service.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "fluent",
+   "first_non_one_sentence": null,
+   "id": "p10",
+   "python": "SyntaxError: Use an explicit for every clause for negation.",
+   "text": "Every deployed service is not reviewed.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "G",
+   "consistent": true,
+   "earley": "zero",
+   "environment": "fluent",
+   "first_non_one_sentence": 0,
+   "id": "p11",
+   "python": "SyntaxError: Phrase 'legacy is deployed quickly' extends existing wording 'deployed': '{0} is deployed'; declare ",
+   "text": "Legacy is deployed quickly.",
+   "tokens": [
+    "zero"
+   ]
+  },
+  {
+   "class": "G",
+   "consistent": true,
+   "earley": "zero",
+   "environment": "fluent",
+   "first_non_one_sentence": 0,
+   "id": "p12",
+   "python": "SyntaxError: Plural or possessive reference needs an explicit-name or scoped-referent confirmation.",
+   "text": "They are deployed.",
+   "tokens": [
+    "zero"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "alternatives",
+   "first_non_one_sentence": null,
+   "id": "p13",
+   "python": "SyntaxError: Another action needs a rule on an action as its reference.",
+   "text": "Another action available to r prevents h.",
+   "tokens": [
+    "one"
+   ]
+  },
+  {
+   "class": "S",
+   "consistent": true,
+   "earley": "one",
+   "environment": "alternatives",
+   "first_non_one_sentence": null,
+   "id": "p14",
+   "python": "SyntaxError: The chooser has no antecedent; write there is a robot such that that action is available to that rob",
+   "text": "Every action available to that robot prevents h.",
+   "tokens": [
+    "one"
+   ]
+  }
+ ],
+ "sites": [
+  {
+   "call_sites": 22,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected {text!r} here",
+   "note": "`need`: a fixed word or punctuation is missing"
+  },
+  {
+   "call_sites": 11,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected a space between these words.",
+   "note": "`space`: word boundaries are token boundaries; punctuation adjacency is recorded by glued flags"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "shadowedName",
+   "message": "This name is already in scope.",
+   "note": "probe p1, p2"
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected a declared sort noun",
+   "note": ""
+  },
+  {
+   "call_sites": 2,
+   "class": "G",
+   "lean": "none",
+   "message": "The {name} of a term requires functional and total declarations.",
+   "note": "attribute rules exist only for functional total relations (english.py `english_lark_grammar`)"
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "String-valued attribute properties require data stage 2.",
+   "note": "property rules exclude the `$string` value sort"
+  },
+  {
+   "call_sites": 1,
+   "class": "A",
+   "lean": "many",
+   "message": "The vocabulary gives this clause more than one meaning.",
+   "note": "two templates match one span: two derivations"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "A condition wording",
+   "note": "`_RISK_CONDITION_IN_RULE`; to confirm on risk@0 texts in S3"
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "Phrase {…} extends existing wording",
+   "note": "probe p11; plan 7.3 keeps it a shadow-comparison item: no derivable text was found"
+  },
+  {
+   "call_sites": 1,
+   "class": "R",
+   "lean": "nestingLimit",
+   "message": "Arithmetic term exceeds",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected an integer term such as [n + 1].",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "coefficientNotNumeral",
+   "message": "A scaling coefficient must be an integer numeral.",
+   "note": "probe p7: `[budget * limit]` has one derivation and its meaning rejects the coefficient"
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected an integer term.",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "Unexpected text in an integer term.",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "_RISK_REJECTED (6 messages)",
+   "note": "in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "The proximate cause wording needs a declared proximate role",
+   "note": "alternatives@0 advice in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "Use the declared Boolean wording 'leads to' for this outcome.",
+   "note": "alternatives@0 advice in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "This outcome wording is not Boolean.",
+   "note": "alternatives@0 advice in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "Through inaction allows has two readings.",
+   "note": "alternatives@0 advice in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "Write the long form: there is a harm such that",
+   "note": "alternatives@0 advice in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "Permission for a person uses the W1 'may' wording",
+   "note": "alternatives@0 advice in `unknown_atom`: fires only when no atom matched"
+  },
+  {
+   "call_sites": 1,
+   "class": "G or S",
+   "lean": "none; unboundReference; pronounUnresolved",
+   "message": "Unknown English phrase",
+   "note": "G for unknown words; S when the phrase is a reference form the grammar derives but scope does not bind (probes p3, p4) or an `it` outside the first slot (probe p5)"
+  },
+  {
+   "call_sites": 1,
+   "class": "G or S",
+   "lean": "none; unboundReference",
+   "message": "Expected a constant name or a definite reference",
+   "note": "as above"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "unboundReference",
+   "message": "Another action needs a rule on an action as its reference.",
+   "note": "probe p13"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "unboundReference",
+   "message": "The chooser has no antecedent",
+   "note": "probe p14"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "sortMismatch",
+   "message": "The excluded action must be an action in scope.",
+   "note": "not probed"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "blockedWording risk-every-cannot",
+   "message": "Choose whether no available action might lead to the harm",
+   "note": "`_RISK_EVERY_CANNOT`; not probed"
+  },
+  {
+   "call_sites": 1,
+   "class": "R",
+   "lean": "nestingLimit",
+   "message": "This statement exceeds the 64-level nesting limit.",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "L",
+   "lean": "textTooLong",
+   "message": "This document exceeds the 10000-node limit.",
+   "note": "every formula node consumes at least one character, so the node count never exceeds the collapsed length"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "pronounUnresolved",
+   "message": "The referent of it is incomplete.",
+   "note": "probe p6"
+  },
+  {
+   "call_sites": 1,
+   "class": "B",
+   "lean": "none",
+   "message": "Plural or possessive reference needs",
+   "note": "probe p12"
+  },
+  {
+   "call_sites": 3,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected a or an before",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "sortMismatch",
+   "message": "The source and destination of a step must have the same sort.",
+   "note": "probe p9"
+  },
+  {
+   "call_sites": 1,
+   "class": "S",
+   "lean": "blockedWording natural-negation",
+   "message": "Use an explicit for every clause for negation.",
+   "note": "probe p10"
+  },
+  {
+   "call_sites": 1,
+   "class": "G",
+   "lean": "none",
+   "message": "Expected a uniquely declared ownership clause.",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "L",
+   "lean": "emptyDocument",
+   "message": "Write at least one statement ending with a period.",
+   "note": ""
+  },
+  {
+   "call_sites": 1,
+   "class": "X",
+   "lean": "—",
+   "message": "English input must be UTF-8.",
+   "note": "the service receives a JSON string"
+  },
+  {
+   "call_sites": 1,
+   "class": "X",
+   "lean": "—",
+   "message": "source must be str or bytes",
+   "note": "API type check"
+  },
+  {
+   "call_sites": 1,
+   "class": "L",
+   "lean": "sourceTooLong",
+   "message": "English source exceeds 65536 bytes",
+   "note": ""
+  }
+ ]
+}

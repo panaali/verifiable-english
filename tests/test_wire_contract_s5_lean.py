@@ -1,6 +1,6 @@
 """Stage S5 item 1, the Lean side (docs/spec/wire-contract-s5.md 2.5, 5.2 and the fixtures of 8.1, 8.2, 8.6).
 
-`ve_diagnose norms@0` and `ve_diagnose norm-defaults@0` run the generated tables with the hand-written hooks of
+`ve_diagnose norms@0` and `ve_diagnose norm-defaults@0` (the service mode `diagnose`, lean-first batch 1) run the generated tables with the hand-written hooks of
 `lean/VE/WireContract/Hooks/Norms.lean` and `Hooks/NormDefaults.lean`. These tests check, on the spec's
 fixtures:
 
@@ -25,7 +25,7 @@ from pathlib import Path
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
 from ve.environment import Environment
 from ve.errors import VEError
 from ve.norm_defaults import UnspecifiedDocument
@@ -42,14 +42,10 @@ def revision(module):
 
 
 def binary(name):
-    if not (BIN / name).exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip(f"lake is required for {name}")
-        result = subprocess.run([lake, "build", name], cwd=ROOT / "lean", capture_output=True, text=True,
-                                timeout=3000)
-        assert result.returncode == 0, result.stdout + result.stderr
-    return BIN / name
+    """The one-shot executable `name`, which lean-first batch 1 made a service mode (`tests/lean_routes.py`)."""
+    if not lean_routes.SERVICE.exists():
+        pytest.skip("the Lean service is not built")
+    return name
 
 
 @pytest.fixture(scope="module")
@@ -58,10 +54,9 @@ def diagnose():
 
 
 def run(executable, args, cases):
-    result = subprocess.run([str(executable), *args, "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=HANG_TIMEOUT)
-    assert result.returncode in (0, 1), result.stderr
-    rows = json.loads(result.stdout)
+    """The rows the one-shot `executable` (`ve_diagnose` with its unit in `args`) printed for `cases`, from the
+    service mode that replaced it."""
+    rows = lean_routes.diagnose(args[0], cases) if executable == "ve_diagnose" else lean_routes.rows(executable, cases)
     assert len(rows) == len(cases)
     return rows
 
@@ -443,11 +438,8 @@ def test_l5_outside_the_domain(diagnose):
     cases = [{"id": "string", "kind": "norms-elaborate", "environment": environment, "norms": "x"},
              {"id": "closure", "kind": "norms-elaborate", "environment": closure, "norms": norms},
              {"id": "defaults", "kind": "norms-elaborate", "environment": defaults, "norms": norms}]
-    result = subprocess.run([str(diagnose), "norms@0", "-"], input=json.dumps(cases), text=True,
-                            capture_output=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == 1, result.stderr
     error = "UnsupportedProfile: the case is outside the unit's domain"
-    assert json.loads(result.stdout) == [{"id": c["id"], "status": "error", "error": error} for c in cases]
+    assert run(diagnose, ["norms@0"], cases) == [{"id": c["id"], "status": "error", "error": error} for c in cases]
     # The same refusals under `norm-defaults@0`: without the profile, or with a unit that is not an object.
     cases = [{"id": "plain", "kind": "norm-defaults-elaborate", "environment": environment, "norms": norms},
              {"id": "unit", "kind": "norm-defaults-elaborate", "environment": defaults, "norms": [7]},
