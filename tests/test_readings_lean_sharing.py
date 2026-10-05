@@ -7,6 +7,11 @@ plan F5b; batch 3b review B1, B2).
   each candidate's document once and keeps it in the request's table (`candidateStage`), and the table's reader
   (`oneOf`); `free D` is the document without readings, built once in admission. The same walk from the specified
   functions (`pairFactsSpec`, `candidateJsonSpec`, `admitReadingsSpec`) does reach `one`, so the walk can fail.
+  The S2a kinds keep S1's admission (`admitS2` reuses its `WellFormedDoc` through `wellFormedDoc_links`); `build`
+  is reached otherwise only by `choiceDoc`, a compatible choice's whole document (composition-s2 4.1), which is
+  not a candidate's. `free D` is built in admission and, for the certificate and model kinds, once more by
+  `sharedEnv` (the shared vocabulary those kinds decode formulas over): one document per request, a gap recorded in
+  docs/lean-first/b3b/DELTA.md (merge of ve-integration).
 * Admission stops at the first diagnostic (`firstSome` is `findSome?`): a document whose first set's candidate is
   ill-formed is refused without validating the 119 candidates after it (4.0 s of CPU before, 0.26 s after).
 * No pending candidate's document is built (batch 3b looprecheck B): admission builds the candidates with content
@@ -81,6 +86,8 @@ ONE = "VE.Readings.one"
 BUILD = "VE.Readings.build"
 TABLE = ("VE.Readings.Wire.candidateStage", "VE.Readings.Wire.oneOf")
 FREE = "VE.Readings.free"
+CHOICE = "VE.Readings.choiceDoc"
+SHARED = "VE.Readings.sharedEnv"
 ENTRY = "VE.Readings.Run.main"
 SPECIFIED = ("VE.Readings.Run.pairFactsSpec", "VE.Readings.Run.candidateJsonSpec",
              "VE.Readings.Wire.admitReadingsSpec")
@@ -114,15 +121,17 @@ def callers(edges, function):
 def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks):
     edges = walks[ENTRY]
     assert len(edges) > 1000  # the whole route, the chains' checks included
-    built = sorted(name for name in edges if named_under(name, ONE) or named_under(name, BUILD))
+    built = sorted(name for name in edges if named_under(name, ONE))
     assert built == [], [(name, sorted(callers(edges, name))) for name in built]
+    # `build` itself only for S2a's choice documents, never inlined into another caller.
+    assert {caller for caller in callers(edges, BUILD) if not named_under(caller, BUILD)} == {CHOICE}
     # The table is built by admission alone, once per admitted document, and read through `oneOf`.
     assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitReadings"}
     assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
     assert "VE.Readings.Wire.oneOf" in edges
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
         {"VE.Readings.Wire.Admitted.side"}
-    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText"}
+    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED}
 
 
 @pytest.mark.parametrize("specified", SPECIFIED)

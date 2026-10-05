@@ -110,7 +110,7 @@ theorem act_of_incompatible {M N : SoftNode} (h : Incompatible D M N = true) : a
 
 end Acts
 
-theorem incompatible_self (D : SoftDoc) (N : SoftNode) : Incompatible D N N = false := by
+theorem force_incompatible_self (D : SoftDoc) (N : SoftNode) : Incompatible D N N = false := by
   unfold Incompatible
   cases N.sign <;> simp
 
@@ -284,7 +284,7 @@ theorem Twin.dom_twin {M : SoftNode} (hM : M ∈ C.T.nodes) (hn : M.name = Nd.na
     rw [ha]; show actKey C (relaxTo Nd M).pred = actKey C Nd.pred
     rw [relaxTo_pred, hw.pred M hM hn])
   have he : M' = relaxTo Nd M := eq_of_key (·.name) hv.names hM' hT (by show M'.name = (relaxTo Nd M).name; rw [hn', relaxTo_name, hn])
-  rw [he, incompatible_self] at hi
+  rw [he, force_incompatible_self] at hi
   cases hi
 
 theorem Twin.eff_twin {M : SoftNode} (hM : M ∈ C.T.nodes) (hn : M.name = Nd.name) :

@@ -13,19 +13,26 @@ import VE.Route.Run
   and the fragment flag; or the shared diagnostic of `validate`.
 * `norms-conflict`: `norms` and `packages` (target → Python's conflict package)
   → `verdict` `CONFLICT-FREE` when every target's certificate is bound and
-  accepted over the regenerated `E_base` and `Background_base`, else `UNKNOWN`
-  with the first failing target (`Replay.norms_wire_conflict_sound`).
+  accepted (over the regenerated `E_base` and `Background_base` for a document
+  with neither flags nor definitions, otherwise over Python's base environment
+  and base Background), else `UNKNOWN` with the first failing target
+  (`Flagged.replayConflict`). CONFLICT-FREE means the spec's `ConflictFree` on
+  every base-admissible structure satisfying the flag premises
+  (`Flagged.norms_flagged_conflict_sound`, `FlaggedSpec.norms_flagged_conflict_free`,
+  and at this entry `FlaggedSpec.norms_wire_conflict_free`).
 * `norms-conflict` with `witness` (`target`, base `model`, `tuple` of entity ids
   in argument order) → `verdict` `CONFLICT` when the regenerated target formula
-  is true at the typed tuple of the validated base model, else `UNKNOWN`
-  (`Replay.norms_wire_conflict_witness_sound`).
+  is true at the typed tuple of the validated base model (flags included), else
+  `UNKNOWN` (`Flagged.norms_flagged_witness_sound`,
+  `FlaggedSpec.norms_wire_conflict_refuted`).
 * `norms-certificate`: `norms`, `premises`, `conclusion`, `certificate` →
   `valid`; the certificate binds the complete environment, the regenerated
-  `Background ++ layer premises` followed by `premises`, and the conclusion
-  (`Replay.norms_wire_acceptance`).
-* The three `norms-*` kinds accept `data@0` flags, whose regenerated premises
-  come first in Background; a conflict case with flags or definitions checks
-  over Python's base environment and base Background (`Flagged`).
+  `flags ++ Background ++ layer premises` followed by `premises`, and the
+  conclusion (`Flagged.norms_flagged_acceptance`).
+* The three `norms-*` kinds accept `data@0` flags and W3 definitions; flag
+  premises are regenerated and come first in Background (`Flagged`). The
+  `Replay.replayConflict`, `replayWitness` and `replayEntailment` functions
+  are not called here.
 * `admission`: a W2 FOL `document` containing norm units → a checked report,
   source-bound report id and unit kinds; the answer is exactly
   `encodeAdmitted` of the checked admission (`Run.norms_wire_acceptance`).

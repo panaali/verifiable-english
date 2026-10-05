@@ -10,9 +10,9 @@ public reexport facade, not an architectural dependency source.
 | Layer | Python `ve` modules | Lean modules | Rust |
 |---|---|---|---|
 | 1 kernel | `assurance`, `ast`, `environment`, `errors`, `identity`, `limits`, `model`, `wire`, `wire_contract` | `VE.Syntax`, `Semantics`, `Typing`, `Finite`, `Consequence`, `Bridge`, `RoundTrip`, `CertificateWire`, `ClaimGraph`, `GraphChecks`, `ModelProofs`, `EnvironmentProofs`, `Tableau*`, `VE.Core.*`, `VE.Json` except `VE.Core.Surface` | `ve-core` crate root and `ast`, `environment`, `model`, `wire`, `semantics`, `graph` (one crate holds all three groups until the crate split) |
-| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `softnorms_contract`, `norms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`eval`, `route`, `search`, `order`, `units`, `risk`, `discourse`); intra-crate module groups are checked by `tools/check_rust_deps.py` |
-| 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `readings_english`, `report_english`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
-| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_defaults`, `norm_defaults_contract`, `norm_defaults_english`, `norm_defaults_route`, `norm_strict`, `openterms`, `propose`, `readings`, `readings_route`, `readings_s1`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*` | `ve` binary crate |
+| 2 profiles | `alternatives`, `background`, `closure`, `definitions`, `entailment`, `evaluate`, `norms`, `order`, `profiles`, `reports`, `rights`, `softnorms`, `softnorms_contract`, `norms_contract`, `speech_acts`, `units` | `VE.Closure.*` except `VE.Closure.Surface`, `Order.*`, `Norms.*` except `Norms.FlaggedSpec`, `Definitions.*`, `Data.*`, `Route.*` except `Route.Run` and `Route.Checks`; other `VE.*` profile modules | Profile files inside `ve-core/src` (`eval`, `route`, `search`, `order`, `units`, `risk`, `discourse`); intra-crate module groups are checked by `tools/check_rust_deps.py` |
+| 3 surface | `english*`, `fluent`, `fol`, `grammar`, `natural`, `norm_english`, `parser`, `printer`, `readings_english`, `readings_s2_english`, `report_english`, `speech_english`, `surface.*`, `lexicon.*` | `VE.Surface*`, `LexicalProofs`, `ParserContracts`, `VE.English.*`, `VE.Order.Surface`, `VE.Core.Surface`, `VE.Closure.Surface` | `ve-core/src/surface.rs` (same crate limitation) |
+| 4 tools | `__main__`, `adapters.*`, `admission`, `argument`, `attacks`, `authoring`, `backends.*`, `bundle`, `check`, `document`, `equivalence`, `norm_admission`, `norm_defaults`, `norm_defaults_contract`, `norm_defaults_english`, `norm_defaults_route`, `norm_strict`, `openterms`, `propose`, `readings`, `readings_route`, `readings_s1`, `readings_sup`, `readings_verdicts`, `readings_s2_wording`, `search`, `stream_audit`, `vacuity`, `assist.*`, `discourse`, `quantity_admission`, `reports_route`, `risk`, `rights_route`, `soft_route`, `speech_document` | Entry points: every `lean_exe` root in `lean/lakefile.toml` (`Main`, `NormsMain`, `SoftNormsMain`, `RightsMain`, `SpeechActsMain`, `AlternativesMain`, `RiskMain`, `RiskEvalMain`, `QuantityMain`, `ReportsMain`, `DiscourseMain`, `Serve`, `ResponseDecode`, `VE.English.Run`) and every top-level `*Main`; `VE.*.Run`, `VE.Service.*`, `VE.Norms.FlaggedSpec` (theorems on `Norms.Run.runCase`) | `ve` binary crate |
 | 5 apps and measurements | `argument_fixtures`, `ve_experiments.*` | `VE`, `Iceberg`, `VE.Audit`, `VE.Checks`, `VE.Route.Checks` aggregation and audit targets | `rust/benchmark.py`, `rust/fuzz_closure.py`, reports |
 
 The exact assignments, including exceptions to these patterns, live in
@@ -62,6 +62,15 @@ the fallback; layers no longer decide selection. [`TESTING.md`](TESTING.md)
 describes the rules, the map and the evidence. Before any green tag, and
 nightly, run the full suite (`python3 tools/select_tests.py --full --run`, or
 `python3 tools/gate.py`); a selected run is not a green-tag gate.
+
+Nightly, after the full suite, also run the deep differential fuzz:
+`uv run python tools/difffuzz.py --deep 20 --report difffuzz-nightly.json`
+([conformance/DIFFFUZZ.md](../conformance/DIFFFUZZ.md)). It takes 20 times the
+CI sample from the date's seed. Exit 1 means one of three things: a new
+disagreement, which it reports minimised; a baseline entry that no longer
+reproduces; or an entry with no follow-up id. Triage each new disagreement:
+fix it, or add it to `conformance/difffuzz-baseline.json` with a follow-up id
+(`--update-baseline` writes it as `TODO`).
 
 ## Current exceptions
 

@@ -101,15 +101,17 @@ def _holds(reading_set):
 
 @pytest.fixture(scope="module")
 def corpus(tmp_path_factory):
-    """(case, row) for every genuine ok answer Lean gives on the corpus, recorded at the route's transport."""
+    """(case, row) for every genuine ok `readings-validate` answer Lean gives on the corpus, recorded at the route's
+    transport (S2's cases on the same transport, `readings-elaborate` and the verdict routes, are not S1's answer)."""
     if not LEAN.exists():
         pytest.skip("ve_readings_route is not built")
     recorded = []
     real = route.run_readings_cases
 
-    def recording(executable, cases):
-        rows = real(executable, cases)
-        recorded.extend((case, copy.deepcopy(row)) for case, row in zip(cases, rows) if row["status"] == "ok")
+    def recording(executable, cases, timeout=None):
+        rows = real(executable, cases, timeout=timeout)
+        recorded.extend((case, copy.deepcopy(row)) for case, row in zip(cases, rows)
+                        if row["status"] == "ok" and case["kind"] == "readings-validate")
         return rows
     with pytest.MonkeyPatch.context() as patch:
         patch.setattr(route, "run_readings_cases", recording)
@@ -346,8 +348,8 @@ def test_a_pair_lean_never_answers_is_not_rendered(tmp_path, monkeypatch, corpus
     path = s1_document(tmp_path, [strict(), default()])
     real = route.run_readings_cases
 
-    def unseparated(executable, cases):
-        rows = real(executable, cases)
+    def unseparated(executable, cases, timeout=None):
+        rows = real(executable, cases, timeout=timeout)
         for row in rows:
             for s in row.get("sets", []):
                 for p in s["pairs"]:
