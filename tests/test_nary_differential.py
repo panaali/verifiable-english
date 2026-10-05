@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.lean_build import lean_build
 from tools import rust_build
 from ve.ast import And, Atom, Body, Const, Eq, Forall, Implies, Reach, Var, formula_to_data
 from ve.ast import formula_from_data
@@ -65,18 +66,7 @@ def test_nary_route_regenerates_literal_background(lean_binary):
 
 @pytest.fixture(scope="module")
 def lean_binary():
-    binary = ROOT / "lean/.lake/build/bin/ve_conformance"
-    if os.environ.get("VE_LEAN_PREBUILT"):
-        assert binary.is_file(), f"gate Lean build missing: {binary}"
-        return binary
-    if not binary.exists():
-        lake = shutil.which("lake")
-        if lake is None:
-            pytest.skip("Lean is unavailable")
-        result = subprocess.run([lake, "build", "ve_conformance"], cwd=ROOT / "lean",
-                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        assert result.returncode == 0, result.stdout + result.stderr
-    return binary
+    return lean_build("ve_conformance") / "ve_conformance"
 
 
 @pytest.fixture(scope="module")

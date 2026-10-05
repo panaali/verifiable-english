@@ -1,19 +1,16 @@
 """Python entry point for the proved soft-norm admission route."""
 from __future__ import annotations
 
-from pathlib import Path
-
 from .ast import _Checker, _to_data, formula_to_data
 from .background import background
 from .errors import VEError
 from .softnorms import SoftEnvironment, SoftNormDocument, check_soft_source
-from .backends.lean import run_soft_case
-
-LEAN_ROUTE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_soft_norms_route"
+from .backends.relay import decide
 
 
 def _run(case):
-    return run_soft_case(LEAN_ROUTE, case)
+    """Lean's soft route row for `case` (service mode `soft-norms`); a rejection raises it."""
+    return decide("soft-norms", [case])[0]
 
 
 def elaborate_soft_document(soft_document: SoftNormDocument):

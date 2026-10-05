@@ -62,7 +62,7 @@ def test_python_and_lean_agree_on_m1_route_choices_and_vocabulary(lean):
 
     raw = env_k()
     document = k1(raw)
-    row = elaborate(raw, document["units"], document["reading_sets"], executable=lean)
+    row = elaborate(raw, document["units"], document["reading_sets"])
     assert row["route"] == "superposed"
     assert row["choices"] == [[["rs1", 0]], [["rs1", 1]]]
     assert row["slot"][0]["label"] == QUIET
@@ -95,7 +95,7 @@ def test_m2_slot_is_the_same_in_lean_python_and_rust(lean):
 
     raw = env_k()
     document = k1(raw)
-    slot = elaborate(raw, document["units"], document["reading_sets"], executable=lean)["slot"][0]["ast"]
+    slot = elaborate(raw, document["units"], document["reading_sets"])["slot"][0]["ast"]
     shadow_environment = {**raw, "profiles": ["relational-fol@0"], "vocabulary": {
         "sorts": {**raw["vocabulary"]["sorts"], "ve__reading": {"description": "reading"}},
         "constants": {"ve__here": {"sort": "ve__reading", "description": "here"}},
@@ -191,7 +191,7 @@ def test_m16_generated_name_over_64_bytes_in_sup_only(lean):
     assert elaborated["finding"] == {"text": "ReadingsNotSuperposable: rs1",
                                      "cause": "ResourceLimit: decision predicate soft__excepted__rd_2_" + name}
     from ve.readings_route import elaborate
-    checked = elaborate(raw, document["units"], document["reading_sets"], executable=lean)
+    checked = elaborate(raw, document["units"], document["reading_sets"])
     assert checked["route"] == "enumerated" and checked["finding"] == elaborated["finding"]
 
 
@@ -274,7 +274,7 @@ def test_m5_narrowing_slot_and_choice_match_python(lean):
     [lean_row] = run(lean, [case("readings-elaborate", raw,
                                 {**document, "narrowings": [narrowing]})])
     checked = elaborate(raw, document["units"], document["reading_sets"],
-                        narrowings=[narrowing], executable=lean)
+                        narrowings=[narrowing])
     assert checked == {key: value for key, value in lean_row.items() if key not in ("id", "status")}
     assert checked["route"] == "superposed" and checked["choices"] == [[["rs1", 0]]]
     assert [part["label"] for part in checked["slot"]] == [QUIET, "narrowing:n1"]
@@ -310,7 +310,7 @@ def test_m6_coupling_slot_agrees_in_three_evaluators(lean):
         {"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}],
         "by": "reviewer", "reason_spans": ["u1"]}
     checked = elaborate(raw, document["units"], document["reading_sets"],
-                        couplings=[coupling], executable=lean)
+                        couplings=[coupling])
     assert checked["route"] == "superposed"
     assert checked["choices"] == [[['rs1', 0], ['rs2', 0]], [['rs1', 1], ['rs2', 1]]]
     assert [part["label"] for part in checked["slot"]] == [
@@ -372,8 +372,8 @@ def test_m8_precedence_leak_forces_enumeration(lean):
              {"id": "u1"},
              {"id": "u3", "kind": "norm", "content": norm("stop-x", "avoid_required", False,
                                                          over=("waive-x",))}]
-    assert validate(raw, units, [reading_set_], executable=lean)["status"] == "ok"
-    checked = elaborate(raw, units, [reading_set_], executable=lean)
+    assert validate(raw, units, [reading_set_])["status"] == "ok"
+    checked = elaborate(raw, units, [reading_set_])
     assert checked == {"route": "enumerated", "finding": {
         "text": "ReadingsNotSuperposable: rs1", "cause": "precedence under waive-x"},
         "choice_count": 2, "choices": [[['rs1', 0]], [['rs1', 1]]], "choices_checked": 2, "narrowings_stale": []}
@@ -416,7 +416,7 @@ def test_a1_unsatisfiable_readings_refused_before_any_verdict(lean):
     assert all(row["status"] == "error" and row["error"] == text for row in rows), rows
     try:
         elaborate(raw, document["units"], document["reading_sets"], narrowings=document["narrowings"],
-                  executable=lean)
+                  )
     except VEError as exc:
         assert str(exc.message if hasattr(exc, "message") else exc) == text
     else:
@@ -442,7 +442,7 @@ def test_ruling5_every_choice_document_checked(lean):
     document = k1(raw)
     [row] = run(lean, [case("readings-elaborate", raw, document)])
     assert row["route"] == "superposed" and row["choices_checked"] == 2
-    checked = elaborate(raw, document["units"], document["reading_sets"], executable=lean)
+    checked = elaborate(raw, document["units"], document["reading_sets"])
     assert checked["choices_checked"] == 2
 
 

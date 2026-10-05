@@ -173,6 +173,9 @@ import VE.Grammar.Reading
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.EnglishGrammar.FoldAgree
+import VE.EnglishGrammar.Rules
+import VE.EnglishGrammar.Read
+import VE.EnglishGrammar.Extends
 
 #print axioms Iceberg.mul_sub
 #print axioms Iceberg.initial_mass_balance
@@ -2135,6 +2138,19 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Service.runMode_readings
 #print axioms VE.Service.runMode_bundle
 #print axioms VE.Service.runMode_familyNorms
+#print axioms VE.Service.runMode_softNorms
+#print axioms VE.Service.runMode_rights
+#print axioms VE.Service.runMode_speechActs
+#print axioms VE.Service.runMode_reports
+#print axioms VE.Service.runMode_alternatives
+#print axioms VE.Service.runMode_risk
+#print axioms VE.Service.runMode_riskEval
+#print axioms VE.Service.runMode_quantity
+#print axioms VE.Service.runMode_normDefaults
+#print axioms VE.Service.runMode_discourse
+#print axioms VE.Service.runMode_readingsRoute
+#print axioms VE.Service.runMode_diagnose
+#print axioms VE.Service.Diagnose.diagnoseCase_registered
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.runRequest_ok
 #print axioms VE.Service.results_eq
@@ -4221,3 +4237,37 @@ example (D : VE.SoftNorms.SoftDoc) (h : VE.SoftNorms.WellFormedSoft D = true)
 #print axioms VE.Grammar.verdict_one
 #print axioms VE.Grammar.verdict_many
 #print axioms VE.EnglishGrammar.foldChar_agrees
+#print axioms VE.EnglishGrammar.grammar_rules
+#print axioms VE.EnglishGrammar.start_sentence
+#print axioms VE.EnglishGrammar.valid_iff_no_failure
+#print axioms VE.EnglishGrammar.lexRules_terminatorFree
+#print axioms VE.EnglishGrammar.read_checks
+#print axioms VE.EnglishGrammar.read_eq
+#print axioms VE.EnglishGrammar.read_ok
+#print axioms VE.EnglishGrammar.read_complete_english
+#print axioms VE.EnglishGrammar.read_stopped
+#print axioms VE.EnglishGrammar.english_reading_unique
+#print axioms VE.EnglishGrammar.meaning_total
+#print axioms VE.EnglishGrammar.checked_rendering_exact
+#print axioms VE.EnglishGrammar.checked_rendering
+#print axioms VE.EnglishGrammar.translate_eq
+#print axioms VE.EnglishGrammar.translate_checks
+#print axioms VE.EnglishGrammar.translate_exact
+#print axioms VE.EnglishGrammar.translate_one_sentence
+#print axioms VE.EnglishGrammar.flatMap_sub
+#print axioms VE.EnglishGrammar.flatMap_mono
+#print axioms VE.EnglishGrammar.adjectiveRows_sub
+#print axioms VE.EnglishGrammar.decl_sub
+#print axioms VE.EnglishGrammar.lexRowsAll_sub
+#print axioms VE.EnglishGrammar.lexRows_sub
+#print axioms VE.EnglishGrammar.indexIn_get
+#print axioms VE.EnglishGrammar.nodup_index_inj
+#print axioms VE.EnglishGrammar.nodup_filter
+#print axioms VE.EnglishGrammar.lexRows_nodup
+#print axioms VE.EnglishGrammar.lexRules_get
+#print axioms VE.EnglishGrammar.lexActs_get
+#print axioms VE.EnglishGrammar.fixedActs_size
+#print axioms VE.EnglishGrammar.fixedRules_base
+#print axioms VE.EnglishGrammar.rename_id
+#print axioms VE.EnglishGrammar.map_rename_id
+#print axioms VE.EnglishGrammar.grammar_extension

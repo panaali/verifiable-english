@@ -46,7 +46,7 @@
     "ve/assist/session.py:AssistSession.apply": "CheckerUnavailable is caught with VEError and keeps its code; other RuntimeErrors are logged as BackendError",
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
-    "ve/backends/dispatch.py:execute": "shadow authority only: the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
+    "ve/backends/dispatch.py:_shadow": "shadow authority only (execute and shadowed): the Python result is returned (a Python exception is re-raised unchanged); a candidate backend exception, CheckerUnavailable included, is only recorded as a shadow difference and never becomes the returned verdict",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/printer.py:natural_document": "display only: retries with a different wording and re-raises when that fails too",
     "ve/search.py:_models_with_terminal_error": "buffers a terminal model-stream error for every scoped reader, which re-raises the original error before reporting a verdict",
@@ -54,7 +54,7 @@
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome"
   },
   "lean_decoders": {
-    "total_lines": 18351,
+    "total_lines": 18780,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {"file": "lean/VE/Json.lean", "lines": 136, "sha256": "c5891a586979d9710067f34448575a73cf8778be43458da36fa1427b2b0c108c",
@@ -129,11 +129,11 @@
       {"file": "lean/VE/Route/Decode.lean", "lines": 282, "sha256": "7cd23701ca9597d409c929dc679826da8ee2e5c5f2d5330a17a219255f69a8d7",
        "ranges": [[1, 282]], "declarations": ["modelLimits", "localIds"],
        "reason": "W6 route model decoder and optimized validation; the full file is pinned conservatively"},
-      {"file": "lean/VE/Time/Document.lean", "lines": 615, "sha256": "0f80c18de2195aeb41aff788f9f8d7598a5c7eec1a9e76b9c744b82d108799cf",
-       "ranges": [[1, 615]], "declarations": ["decodeDocument", "checkGraph"],
+      {"file": "lean/VE/Time/Document.lean", "lines": 613, "sha256": "4407e998d0073b5c1c7755d42d5ae6773e2d720c3c33cbfd7c436301e0bf407f",
+       "ranges": [[1, 613]], "declarations": ["decodeDocument", "checkGraph"],
        "reason": "W6 quantity document and citation decoder; the full file is pinned conservatively"},
-      {"file": "lean/VE/Time/Wire.lean", "lines": 863, "sha256": "c57241b6144d752d958269e0a54d7ebc4878607f8c11ba88abbdc73fc92fe847",
-       "ranges": [[1, 863]], "declarations": ["decodeEnvironment", "decodeQuantity", "runCase"],
+      {"file": "lean/VE/Time/Wire.lean", "lines": 843, "sha256": "7f9c8b54dc820197ad0e59033763a063ed75ff728542fcf094dc93bc5059f925",
+       "ranges": [[1, 843]], "declarations": ["decodeEnvironment", "decodeQuantity", "runCase"],
        "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"},
       {"file": "lean/VE/Attribution/Admission.lean", "lines": 327, "sha256": "357665dbfa39d9fb65f85e2829f593beb9f4451bd266fe1dd8924eda9d5af525",
        "ranges": [[1, 327]], "declarations": ["admissionReports"],
@@ -166,8 +166,8 @@
       {"file": "lean/VE/Risk/Admission.lean", "lines": 128, "sha256": "f3927135556b65898bcfe94e147b29349a5eed1ccaf0ad600e212013336a2aca",
        "ranges": [[1, 128]], "declarations": ["admitDocument"],
        "reason": "decodes the risk document graph and checks its bindings; the full file is pinned conservatively"},
-      {"file": "lean/VE/Risk/Run.lean", "lines": 651, "sha256": "dbfad8022806b033c58c9382cb6a963eb6eb2c04e0aca4c83722c659222a1a5e",
-       "ranges": [[1, 651]], "declarations": ["decodeRef", "queried", "riskBaseEnvironmentJson", "decodePackage", "decodeWitnessModel", "runCase"],
+      {"file": "lean/VE/Risk/Run.lean", "lines": 632, "sha256": "6d98b5de4c612db0dabb9349822e5d0cd0128128e4ec680ac4c13819a57606c8",
+       "ranges": [[1, 632]], "declarations": ["decodeRef", "queried", "riskBaseEnvironmentJson", "decodePackage", "decodeWitnessModel", "runCase"],
        "reason": "risk package bindings, audit references, witness models and ve_risk_route dispatch; the full file is pinned conservatively"},
       {"file": "lean/VE/Rights/Wire.lean", "lines": 698, "sha256": "fc25e57bed1adf2d72edcf7c0cd20409b427829d7eb5838028422151ca02e82f",
        "ranges": [[1, 698]], "declarations": ["decodeRightsEnvironment", "decodeRightsSource", "replayRightsConflict", "replayRightsEntailment"],
@@ -189,7 +189,13 @@
        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively"},
       {"file": "lean/VE/Readings/SupWire.lean", "lines": 378, "sha256": "f1efaaba3d67d4cdba675a9e40abe12e461124f324c3254ca6ab531bf8885937",
        "ranges": [[1, 378]], "declarations": ["decodeCouplings", "decodeNarrowings", "admitS2", "supReplayOf", "replaySup", "decodeChoice", "decodeSupModel", "decodeAssumed", "decodeShared", "decodeConflictCerts", "replayCertificate", "replayModel"],
-       "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"}
+       "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively"},
+      {"file": "lean/VE/EnglishGrammar/Encode.lean", "lines": 139, "sha256": "5fd6c65cffd9bb85b6cbd47a5069b68702599e4454399c16f8044538dd24f223",
+       "ranges": [[1, 139]], "declarations": ["typedCheck", "typedDocument", "optString", "optFields", "Env.decode"],
+       "reason": "english-lean S2 (docs/spec/english-lean-s2.md 2.3, 2.10): Env.decode reads the environment and an English vocabulary overlay into the reader's Env; typedDocument decides check_document's verdict through the standalone typing service's decoders; the full file is pinned conservatively"},
+      {"file": "lean/VE/EnglishGrammar/Run.lean", "lines": 331, "sha256": "1e0d02fad48418a1daaa74c0614ee0f2b9fa4161680cf2b682a4665780435ccb",
+       "ranges": [[1, 331]], "declarations": ["pairs", "triples", "decodeLexicon", "environmentId", "grammarId", "decodeCase", "readCase", "grammarCase"],
+       "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; the full file is pinned conservatively"}
     ],
     "other_json": {
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
@@ -224,9 +230,24 @@
       "lean/VE/Order/TableauChecks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
-      "lean/RiskEvalMain.lean": "test-only differential harness ve_risk_eval (risk.md 8.3): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem imports it",
+      "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
+      "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
+      "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
+      "lean/ResponseShape/Schemas/Norms.lean": "the norms mode's response shape; reads the case environment only to call Norms.Plain.layered beside its path selector (test tooling, not on any runner path)",
+      "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
+      "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
+      "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+      "lean/ResponseShape/Encoders/SoftNorms.lean": "theorems that the soft-norms mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Reports.lean": "theorems that the reports mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/ReadingsRoute.lean": "theorems that the readings-route mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/English.lean": "theorems that the english and diagnose modes' rows fit their shapes; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Envelope.lean": "theorems that the service's response lines fit envelope.json; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
+      "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
+      "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
-      "lean/VE/Service/Protocol.lean": "stage-1 service request decoder and dispatcher; additive and not yet on an assurance operation path",
+      "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
+      "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
       "lean/VE/Route/Steps.lean": "reads only a certificate case's optional max_steps field (the replay step cap, at most 1,000,000)",
       "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
       "lean/VE/Norms/Plain.lean":"stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",
@@ -588,7 +609,7 @@
                    "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
       "lean": {
         "bindings": [
-          {"executable": "ve_norms_route", "mode": "", "kinds": ["norms-elaborate"], "response": {"premises": "array<object>", "conflict_targets": "array<object>"}, "uncounted": {"premises": "one per norm symbol the environment registers", "conflict_targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {"executable": "ve_service", "mode": "norms", "kinds": ["norms-elaborate"], "response": {"premises": "array<object>", "conflict_targets": "array<object>"}, "uncounted": {"premises": "one per norm symbol the environment registers", "conflict_targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
         ],
         "planned_modes": [],
         "theorems": ["VE.Norms.elaborate_iff", "VE.Norms.elaborate_iff_at", "VE.Norms.norms_route_intended"],
@@ -617,7 +638,7 @@
                    "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
       "lean": {
         "bindings": [
-          {"executable": "ve_norms_route", "mode": "", "kinds": ["norms-conflict"], "response": {"verdict": "string", "targets": "array<string>"}, "uncounted": {"targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {"executable": "ve_service", "mode": "norms", "kinds": ["norms-conflict"], "response": {"verdict": "string", "targets": "array<string>"}, "uncounted": {"targets": "the conflict targets the environment registers"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
         ],
         "planned_modes": [],
         "theorems": ["VE.Service.FamilyNorms.closure_conflict_target_sound", "VE.Service.FamilyNorms.core_conflict_target_sound",
@@ -650,7 +671,7 @@
                    "rejection": ["InvalidInput"], "budget": ["ResourceLimit"], "operational": ["CheckerUnavailable"]},
       "lean": {
         "bindings": [
-          {"executable": "ve_norms_route", "mode": "", "kinds": ["norms-certificate"], "response": {"valid": "bool", "layers": "nat"}, "uncounted": {"layers": "the elaboration layers of the environment's norms"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
+          {"executable": "ve_service", "mode": "norms", "kinds": ["norms-certificate"], "response": {"valid": "bool", "layers": "nat"}, "uncounted": {"layers": "the elaboration layers of the environment's norms"}, "dispatch": ["lean/VE/Norms/Run.lean"]}
         ],
         "planned_modes": [],
         "theorems": ["VE.Service.FamilyNorms.closure_norms_certificate_sound", "VE.Service.FamilyNorms.core_norms_certificate_sound",
@@ -699,9 +720,9 @@
       "lean": {
         "bindings": [
           {"executable": "ve_conformance", "mode": "route", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Route/Run.lean"]},
-          {"executable": "ve_norms_route", "mode": "", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Norms/Run.lean"]},
-          {"executable": "ve_norm_defaults_route", "mode": "", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/NormDefaults/Run.lean"]},
-          {"executable": "ve_quantity", "mode": "", "kinds": ["document"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted quantity document uses"}, "dispatch": ["lean/VE/Time/Document.lean"]}
+          {"executable": "ve_service", "mode": "norms", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/Norms/Run.lean"]},
+          {"executable": "ve_service", "mode": "norm-defaults", "kinds": ["admission"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted document uses"}, "dispatch": ["lean/VE/NormDefaults/Run.lean"]},
+          {"executable": "ve_service", "mode": "quantity", "kinds": ["document"], "response": {"admitted": "bool", "report": "object", "report_id": "string", "kinds": "array<json>"}, "uncounted": {"kinds": "the content kinds the admitted quantity document uses"}, "dispatch": ["lean/VE/Time/Document.lean"]}
         ],
         "planned_modes": [],
         "theorems": ["VE.Route.Admission.admit_report_sound", "VE.Route.Admission.admit_string_sound",
@@ -897,8 +918,8 @@
                    "operational": ["CheckerUnavailable"]},
       "lean": {
         "bindings": [],
-        "planned_modes": [],
-        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it",
+        "planned_modes": ["english.read"],
+        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it. Shadow adapter ve/backends/english_lean.py (english-lean-s2.md 2.10): under VE_AUTHORITY_OVERRIDES=english.admission=shadow every call is recorded against ve_english_route english.read, and any other selection is refused (dispatch.SHADOW_ONLY, DRI ruling 6) (lean/EnglishMain.lean, VE.EnglishGrammar.Run; tests/test_english_lean_route.py), whose reader read is proved one reading per sentence (VE.EnglishGrammar.read_ok, english_reading_unique); english.read stays planned here until the authority moves (LEAN-FIRST E2)",
         "theorems": ["VE.English.checked_unique_derivation", "VE.English.checked_one_reading",
                      "VE.English.checked_parse_render", "VE.English.checked_render_injective",
                      "VE.English.admissible_sound", "VE.English.core_parse_sound"],
@@ -910,7 +931,7 @@
       "tests": ["tests/test_english_unambiguity.py::test_two_derivations_reject_before_ast_admission",
                 "tests/test_english_unambiguity.py::test_earley_time_budget_rejects_in_worker_thread",
                 "tests/test_english_evidence.py::test_full_english_report_gate"],
-      "trusted": ["python:implementation", "python:surface"],
+      "trusted": ["python:implementation", "python:surface", "python:backend-adapter"],
       "notes": ["Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
                 "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."]
     },
@@ -1001,18 +1022,12 @@
       "outcomes": {"verdict": [], "unknown": [], "rejection": [], "budget": [],
                    "operational": ["CheckerUnavailable"]},
       "lean": {"bindings": [
-        {"executable": "ve_diagnose", "mode": "soft-norms@0",
-         "kinds": ["soft-elaborate", "admission"],
+        {"executable": "ve_service", "mode": "diagnose",
+         "kinds": ["soft-elaborate", "admission", "norms-elaborate", "norms-conflict", "norms-certificate",
+                   "norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-certificate"],
          "response": {"outcome": "string"},
-         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean"]},
-        {"executable": "ve_diagnose", "mode": "norms@0",
-         "kinds": ["norms-elaborate", "norms-conflict", "norms-certificate", "admission"],
-         "response": {"outcome": "string"},
-         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/Norms.lean"]},
-        {"executable": "ve_diagnose", "mode": "norm-defaults@0",
-         "kinds": ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-certificate", "admission"],
-         "response": {"outcome": "string"},
-         "dispatch": ["lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/NormDefaults.lean", "lean/VE/WireContract/Hooks/Norms.lean"]}
+         "dispatch": ["lean/VE/Service/Diagnose.lean", "lean/VE/WireContract/Diagnose.lean", "lean/VE/WireContract/Hooks/SoftNorms.lean",
+                      "lean/VE/WireContract/Hooks/Norms.lean", "lean/VE/WireContract/Hooks/NormDefaults.lean"]}
       ], "planned_modes": [], "theorems": [], "planned_theorems": [], "decoders": []},
       "rust": null,
       "lean_call_sites": [],
