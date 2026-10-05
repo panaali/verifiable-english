@@ -220,3 +220,24 @@ in this draft.
     severity class spelled like an adjective, gives two derivations (spec 8.7). Both sides reject. V4 does not
     refuse such a lexicon, because a property is named by its identifier and not by a wording. Whether V4 should
     grow is for the statement review.
+
+## 6. The statement review of the spec: corrections applied
+
+The review is `manage-agents/debates/english-lean-s3-spec/` (Astra and Fable, three rounds on 2026-10-05,
+converged on FIX). Spec section 13 lists each correction with its source and where it landed in the spec; the
+ids below are the spec's. This table gives where each lands in this plan.
+
+| # | Correction | Where applied in this plan |
+|---|---|---|
+| A1 | Profile admission at the JSON boundary: declarations validated as submitted, family decoders and typed check over the typing view with `riskReduced`, `environment_id` over the submitted environment, `decodeEnvelope` not edited | S3.1, its content and its "done when" (the real JSON of `FA`, `FR`, `FM` and of a unit-bearing risk environment; the malformed declarations refused) |
+| A2 | Quoted names: rows spelled with `textSyms`, never by splitting at spaces | S3.2, its content and its "done when" (spec or37, al36 to al38); S3.3 through spec 2.7 (`altHead` spells the reference text from those terminals) |
+| A3 | An idiom licenses syntax only; `IDIOM_UNRELATED` still refuses; `PredDecl.description` | S3.1 (the field); E2.1 (the idiom branch); question 5 |
+| F1 | The risk wordings are reserved for the symbols the profile fixes them for | E2.1 (the third part of V6) |
+| F2 | A modal predicate has one honest wording, its modal form, and no negative | S3.1 (V2) and its "done when" (spec lx9b to lx9d); section 2, edit 6 (the three bypasses in the mutation replay) |
+| F3 | The risk flag is read from the profile list; ri16 is an action test | S3.1; S3.3 |
+| F4 | `valueSorts E` is empty without `data@0`; `ty_property` at `51 + i` | no plan text: S3.2 builds `ty` from spec 2.4 and S3.4 proves spec 5.5 as stated |
+| F5 | The third class of spec 2.11: a term too deep before a malformed part, Python `ResourceLimit`, Lean no reading | gate G3's listed items; section 2, edit 3; question 2 |
+| F6 | The modal form reads the canonical act of `Norms.Wire` | S3.1 |
+| V6 | No lint code that refuses a declared wording today becomes a warning without the DRI's signature | section 0, item 3; E2.1; question 5 |
+| N1, N2 | `noPremise` has index 0; two of Python's hints are lost | no plan text (spec 2.10, 4.3); N2's two rows are `wording` rows of GE2's `DELTA.md` |
+| Order | S3.0 and S3.5's harness at once; S3.1 to S3.3 on spec draft 2; S3.4's proofs and E2.1 after the bounded re-check; V6's tables reviewed separately before the flip | section 1, "Order"; S3.4 and E2.1, "done when" |
