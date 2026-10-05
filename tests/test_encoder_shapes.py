@@ -74,7 +74,7 @@ def test_the_genuine_encoder_is_proved(lake, tmp_path):
     CERTIFICATE.replace(', ("layers", toJson l)', ""),                # a field dropped
     CERTIFICATE.replace('"layers"', '"layer"'),                       # a field renamed
     CERTIFICATE.replace(']', ', ("valid", .bool v)]'),                # a field written twice
-])
+], ids=["field-added", "field-dropped", "field-renamed", "field-twice"])
 def test_a_mutated_encoder_fails(lake, tmp_path, mutant):
     assert not _passes(lake, tmp_path, _certificate(mutant))
 
