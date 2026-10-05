@@ -116,6 +116,29 @@ theorem kind_of_lacks {j : Json} (h : (CaseCond.lacks "kind").holds j = true) (k
   simp only [holds, hd]
   rfl
 
+theorem path_ok {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : (CaseCond.path [k]).holds j = true := by
+  cases j <;> simp_all [holds, objectHas, Json.getObjVal?]
+
+/-- A case that is an object (it has the field `k'`) and lacks the field `k`. -/
+theorem path_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = .ok w) (h : j.getObjVal? k = .error e) :
+    (CaseCond.path [k]).holds j = false := by
+  cases j <;> simp_all [holds, Json.getObjVal?]
+
+theorem objectHas_cons {j v : Json} {k : String} {ks : List String} (h : j.getObjVal? k = .ok v) :
+    objectHas j (k :: ks) = objectHas v ks := by
+  cases j <;> simp_all [objectHas, Json.getObjVal?]
+
+theorem holds_path_cons {j v : Json} {k : String} {ks : List String} (h : j.getObjVal? k = .ok v) :
+    (CaseCond.path (k :: ks)).holds j = objectHas v ks := by
+  cases j <;> simp_all [holds, Json.getObjVal?]
+
+/-- One field of an object: present or not. -/
+theorem objectHas_one {raw : Json} {m : Std.TreeMap.Raw String Json compare} (hobj : raw = .obj m) (k : String) :
+    objectHas raw [k] = (raw.getObjVal? k).toBool := by
+  subst hobj
+  simp only [objectHas]
+  split <;> simp_all [objectHas, Except.toBool]
+
 /-- A case that is an object without the field `k`. -/
 theorem lacks_of_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = .ok w) (h : j.getObjVal? k = .error e) :
     (CaseCond.lacks k).holds j = true := by

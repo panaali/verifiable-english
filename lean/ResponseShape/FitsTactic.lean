@@ -274,8 +274,21 @@ elab "kind_subst" : tactic => do
     let g ← getMainGoal
     for d in ← getLCtx do
       if d.isImplementationDetail then continue
-      -- `¬ ("a" == "a") = true`
       let ty := (← instantiateMVars d.type).consumeMData
+      -- A closed Boolean fact that is false (`["day", "civil"].contains "admission" = true`).
+      if !ty.hasFVar && !ty.hasMVar && (← isProp ty) then
+        let closed ← try
+            let r ← withDefault <| whnf (← mkDecide (mkNot ty))
+            if r.isConstOf ``Bool.true then
+              let nh ← mkDecideProof (mkNot ty)
+              g.assign (← mkAbsurd (← g.getType) d.toExpr nh)
+              pure true
+            else pure false
+          catch _ => pure false
+        if closed then
+          replaceMainGoal []
+          return false
+      -- `¬ ("a" == "a") = true`
       if ty.isAppOfArity ``Not 1 then
         if let some (a, b) ← strBeqTrue? ty.appArg! then
           if isStrLit a && isStrLit b && strLit? a == strLit? b then
@@ -319,6 +332,8 @@ macro "case_cond_atom" : tactic =>
     | (case_kind_rw; first | decide | bool_hyp | rfl | (kind_subst; decide))
     | with_reducible exact CaseCond.kind_of_lacks ‹_› _
     | with_reducible exact CaseCond.lacks_of_kind ‹_›
+    | with_reducible exact CaseCond.path_ok ‹_›
+    | with_reducible exact CaseCond.path_error ‹_› ‹_›
     | (simp only [CaseCond.holds_decided, CaseDecider.fn]; bool_hyp)
     | (simp only [CaseCond.holds]; bool_hyp))
 
