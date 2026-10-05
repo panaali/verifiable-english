@@ -183,8 +183,9 @@ def ok1 (A : EFormula) : R := .ok [(A, false)]
 #guard ntNames.size == 37 && ranks.size == 37
 #guard (relationalFolRows.toList.map (·.rhs.length)).foldl max 0 == 28
 -- every fixed action fits its row: no fixed rule is refused by the typed check
-#guard (relationalFolRows.toList.zip fixedActs.toList).all fun (r, a) =>
-  @decide (a.args = rhsTys r.rhs) (@instDecidableEqList _ sig.decEq _ _) && @decide (a.out = ntTy r.lhs) (sig.decEq _ _)
+#guard (relationalFolRows.toList.zip (fixedActs F.profiles).toList).all fun (r, a) =>
+  @decide (a.args = rhsTys ntTy r.rhs) (@instDecidableEqList _ sig.decEq _ _) &&
+    @decide (a.out = ntTy r.lhs) (sig.decEq _ _)
 -- the tags of the fixed table are distinct
 #guard (relationalFolRows.toList.map (·.tag)).eraseDups.length == 98
 
@@ -378,19 +379,18 @@ def negations (k : Nat) : String :=
 #guard rd F3 LF3 "For every person, legacy, beta and gamma are deployed." == rej .coordinationForm
 #guard rd F3 LF3 "The legacy, beta and gamma are deployed." == rej .coordinationForm
 #guard rd F LF "Legacy is deployed. It, alice and legacy are deployed." == rej .coordinationForm 1
--- e51 to e53: the subject relatives of wordings that do not begin with `{0}`
-#guard L51.valid F51 {}
+-- e51 to e53: the subject relatives of wordings that do not begin with `{0}`. S3's subject first (V3,
+-- docs/spec/english-lean-s3.md 2.9, lx13) makes the three lexicons invalid, so `read` refuses them before it
+-- reads; the grammars, which validity does not build, keep their verdicts.
+#guard !L51.valid F51 {} && L51.failures F51 {} == [("V3", "predicate", "owner_of")]
 #guard verdicts F51 L51 "Every service that the owner of that service is alice is reviewed." == one
-#guard rd F51 L51 "Every service that the owner of that service is alice is reviewed." == .illTyped
-#guard L52.valid F52 {}
+#guard rd F51 L51 "Every service that the owner of that service is alice is reviewed." == .invalid .lexicon
+#guard !L52.valid F52 {} && L52.failures F52 {} == [("V3", "predicate", "follows")]
 #guard verdicts F52 L52 "Every person who follows alice owns legacy." == one
-#guard rd F52 L52 "Every person who follows alice owns legacy." == rej .relativeForm
-#guard rd F52 L52 "Bob follows alice." == .stopped 0 .none
-#guard rd F52 L52 "Alice follows alice." == ok1 (b "follows" (c "alice") (c "alice"))
-#guard L53.valid F53 {}
+#guard rd F52 L52 "Alice follows alice." == .invalid .lexicon
+#guard !L53.valid F53 {} && L53.failures F53 {} == [("V3", "predicate", "related")]
 #guard verdicts F53 L53 "Every person alice bob are related." == one
-#guard rd F53 L53 "Every person alice bob are related." == rej .relativeForm
-#guard rd F53 L53 "Bob alice are related." == ok1 (b "related" (c "alice") (c "bob"))
+#guard rd F53 L53 "Bob alice are related." == .invalid .lexicon
 
 /-! ## 8.3 Lexicon and mutation replay -/
 
@@ -470,11 +470,13 @@ def steps (E : Env) (L : Lexicon) (s : String) : List (Option Nat) :=
 
 /-! ## 8.7 Extensions, on the decidable parts of `Extends` -/
 
-/-- `envSub` and `lexiconSub` as Boolean checks, for the fixtures. -/
+/-- `envSub` (S3 spec 5.4: the profile list and the block kept, the flags kept) and `lexiconSub` as Boolean
+checks, for the fixtures. -/
 def envSubB (E E2 : Env) : Bool :=
-  E.profiles == ["relational-fol@0"] && E2.profiles == E.profiles &&
+  E2.profiles == E.profiles && E2.alternatives == E.alternatives &&
   E.sorts.all (fun s => E2.sorts.any (·.name == s.name)) &&
-  E.predicates.all (fun p => E2.predicates.any fun q => q.name == p.name && q.arity == p.arity && q.args == p.args) &&
+  E.predicates.all (fun p => E2.predicates.any fun q => q.name == p.name && q.arity == p.arity && q.args == p.args &&
+    q.functional == p.functional && q.total == p.total) &&
   E.constants.all (fun d => E2.constants.any fun d2 => d2.name == d.name && d2.sort == d.sort)
 
 def lexiconSubB (L L2 : Lexicon) : Bool :=
