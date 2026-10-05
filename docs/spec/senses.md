@@ -2,7 +2,8 @@
 
 > Status: statement specification, draft 2 (2026-10-05), branch `design/senses`. Draft 2 applies the
 > statement review's FIX (`manage-agents/debates/senses-spec/`, Astra and Fable, converged in round 3); section
-> 0.1 lists every edit and where it lands, and section 13.3 the applier's choices and the plan's alignment. **Nothing was run for draft 2**: the rows it adds or
+> 0.1 lists every edit and where it lands, and section 13.3 the applier's choices, the two corrections from the
+> verification of draft 2 and the plan's alignment. **Nothing was run for draft 2**: the rows it adds or
 > changes are marked *hand-derived* or *computed by a reviewer*, and the statements it changes have not been
 > re-elaborated; both are the remaining conditions of G-S0 (7). The rest of this note describes draft 1.
 >
@@ -67,7 +68,7 @@ approval, versioning and regression gate (6.2). Every edit below is applied in t
 | R7 | **Candidate discovery treated explicit switches as unresolved.** `Both the riddle is odd and the riddle is funny (meaning strange).` gave two candidates with one formula, differing in an idle choice for `funny` (Astra r1 2, computed) | `unresolvedIn` keeps a word without a default only when one of its occurrences is not switched (a token rule); `usedWords` unchanged | 2.6, 5.2, s22, 9 (L11) |
 | R8 | **R3 as written differed from its simulation.** The request tested the end of the wording; the stub twinned every lexical row that ends in a mark. The object relative of `{0} tells (meaning says aloud) {1}` ends in `)` once ` {1}` is cut (`Rules.lean:96–98`) (Astra r1 3, Fable r2 3) | R3 tests each row after its cut; the simulation twins rows of `clauseRows` only; the R3 column is recomputed; "always" holds for the clause position only | 2.3, 3.1, 6.2, 12, c17, L12 |
 | R9 | **Q4 had no favourable answer.** `Every joke that is funny, in the sense of strange, and is odd, in the sense of strange, and is funny is not funny.` has two derivations with R3: `guard.three-left` with `funny`'s closing-comma alias, and `guard.three-right` with `odd`'s (`RelationalFol.lean:198–199`) (Fable r1 5, Astra r2 1: 0 as merged, 2 with R3) | c16; Q4's rule, stated once: drop the comma forms if any c fixture is `many` in the column that ships; the DRI may revise the rule only with a fixture showing `one` | 2.3, 8.5, 11 |
-| R10 | j13's text said "one kind under different nouns" for two kinds under one noun; 3.2 had no total map from `collision` to a text (Fable r1 6) | the map from `collision kind name sense` to its text, with a text for a pack kind whose noun the document uses | 3.2, j13 |
+| R10 | j13's text said "one kind under different nouns" for two kinds under one noun; 3.2 had no total map from `collision` to a text (Fable r1 6) | the map from `collision kind name sense` to its text, with a text for a pack kind whose noun the document uses. After verification: step 6 names one colliding pair from `clashes`, so `{wording}` always exists, and a text covers step 6 with no pair | 2.5 (step 6), 3.2, 5.2, j13, j15, j17 |
 | R11 | The one-candidate text claimed a typing reason: in s20 `near` loses a candidate by derivation, not by kind (Astra r1 4) | "only {gloss} gives a reading of this sentence" | 3.2 |
 | R12 | The two hints had no Lean function (Fable r1 7) | `noSenseFitsText`, `glossedNaturalRewrite` | 5.2 |
 | R13 | A same-sort binary sense gets S2's quoted `relation.` row (`Rules.lean:182–190`), which has no headword token, so the span of 2.6 cannot cover it and "every sense its formula uses" overclaimed (Fable r1 7, r3 3; Astra r2 5) | a reader fault `quotedSense`: a sentence whose derivation uses that row of a sense predicate is refused, so `senseOccurrences`, `mixed_exact` and `senseMap_ids` hold as stated on accepted documents | 2.6, 3.2, 5.2, 5.4, s23 |
@@ -304,10 +305,19 @@ has a sort of its name and **fresh** otherwise, the steps are, in order:
    `maxPredicates` (256) predicates: `limit "predicates"`. The counts are `E.sorts.length` plus the fresh
    sorts, and `E.predicates.length` plus the senses of the used words; the bounds are Python's
    (`ve/limits.py:6–7`, checked at `ve/environment.py:465`);
-6. the projection is built (below) and S2's `Lexicon.failures` is run on it. No failure: `ok`. Otherwise
-   `collision kind name sense`, where `(kind, name)` is the first failure that names a symbol of the document
-   (else the first failure) and `sense` the first failing name that is a sense symbol or a fresh sort (else
-   empty). No rule of V1 to V5 is re-implemented.
+6. the projection is built (below) and S2's `Lexicon.failures` is run on it. No failure: `ok`. Otherwise the
+   fault names one **colliding pair**, taken from `clashes P.env P.lexicon` (5.2): for each selection of
+   `P.lexicon` in S2's V4 order (wordings, negatives, aliases, nouns, spellings, each list sorted by symbol),
+   each other symbol that declares or selects a text with the same `wordingKey`, as `(kind, name, kind₂,
+   name₂, text)`, with `text` the selection's. The pair is the first in which one side is a symbol of the
+   document and the other a sense symbol or a fresh sort, else the first: `collision kind name sense`, with
+   `(kind, name)` the document's side (else the selection's) and `sense` the other side's name; the pair's
+   `text` is the shared wording of 3.2. When `clashes` is empty, so that every failure is of V1, V2, V3 or V5
+   (no fixture reaches this): `collision cond name ""`, with `(cond, kind, name)` the first failure. Whether
+   the projection is refused is decided by S2's `Lexicon.failures` alone; `clashes` repeats V4's comparison
+   (S2's `owners` and `selections` are local to `Lexicon.failures`) only to name the pair, and the symbol of
+   every V4 failure is the selection side of some clash (tested). No rule of V1 to V5 is re-implemented as a
+   decision.
 
 | Part | Content |
 |---|---|
@@ -359,7 +369,7 @@ parenthetical forms (j8, computed on the Lean side).
 
    **Switched occurrences (R7).** An occurrence of a headword token of a word in sentence `w` (a word token
    whose folded text is one of the word's `headwordTokens`) is **switched** when the tokens after it are `(`
-   and a word folding to `meaning`, or a comma and three words folding to `in`, `the`, `sense`, `of`.
+   and a word folding to `meaning`, or a comma and four words folding to `in`, `the`, `sense`, `of`.
    `unresolvedIn D A w` keeps a used word of `w` with no default under `A` only when one of its occurrences in
    `w` is not switched. A glossed occurrence names its sense whatever the assignment, so a choice for it would
    only add candidates that differ in nothing (s22). `usedWords` is unchanged: a switched occurrence still
@@ -481,17 +491,22 @@ not measured here (L1).
 
 **The `collision` map (R10).** Every `fault (collision kind name sense)` has exactly one text, chosen by the
 first row that applies. `{pack}` is the pack that declares the sort or sense named; `{word}` a sense's word;
-`{wording}` the selection of `name` whose `wordingKey` a form of `sense` has, recomputed by the text function
-from the projection.
+`{wording}` the shared text of the colliding pair that step 6 chose (the `text` of the first entry of
+`clashes P.env P.lexicon` whose two names are `name` and `sense`), recomputed by the text function from the
+projection that step 6 built. It always exists, because step 6 takes `name` and `sense` from one entry of
+that list. The rows are disjoint: steps 1 and 4 leave `sense` empty and use the kinds `sort` and `name`;
+steps 2 and 3 use the kind `letter`, which no clash has; a step-6 pair never leaves `sense` empty; and step 6
+without a pair uses an S2 condition as its kind.
 
 | Fault | From | Text |
 |---|---|---|
 | `collision "sort" name ""` | step 1 | `The kind {name} is both in the vocabulary pack {pack} and in this document, under different nouns. Use one noun.` (j14) |
 | `collision "letter" letter sort` | steps 2, 3 | `The label letter {letter} is used both by the vocabulary pack {pack} (for {sort}) and by this document. Change one.` (j12, j12b) |
 | `collision "name" name ""` | step 4 | `The name {name} is used both by the vocabulary pack {pack} and by this document. Rename one.` |
-| `collision kind name sense`, `sense` a fresh pack sort | step 6 | `The kind {sense} of the vocabulary pack {pack} has the noun {wording}, which this document already uses for {name}. Change one.` (j13: two kinds under one noun) |
-| `collision kind name sense`, `sense` a sense symbol and `name` a symbol of the document | step 6 | `The wording {wording} is both in the vocabulary pack {pack} (for {word}) and declared by this document for {name}. Keep one.` (j6) |
-| any other `collision` | step 6 | `The vocabulary packs give the wording {wording} to two of their meanings, so they cannot be used together as they are.` `readWithSenses` with a well-formed dictionary is not known to reach this row, and `project_total`'s premises exclude it; j15 reaches it by calling `project` on d26's dictionary, which W6 refuses. It exists so that the map is total |
+| `collision kind name sense`, `sense` a fresh pack sort and `name` a symbol of the document | step 6 | `The kind {sense} of the vocabulary pack {pack} has the noun {wording}, which this document already uses for {name}. Change one.` (j13: two kinds under one noun) |
+| `collision kind name sense`, `sense` a sense symbol and `name` a symbol of the document | step 6 | `The wording {wording} is both in the vocabulary pack {pack} (for {word}) and declared by this document for {name}. Keep one.` (j6, j17) |
+| `collision cond name ""`, `cond` one of S2's conditions `V1`, `V2`, `V3`, `V5` | step 6, no colliding pair | `The vocabulary packs cannot be used with this document as they are: the wordings they give for {word} do not pass the checks of this document's vocabulary.`, with `{word}` the word of `name` when it is a sense symbol, else `name`. No fixture reaches this row; it exists so that the map is total |
+| any other `collision` (a pair with no side in the document) | step 6 | `The vocabulary packs give the wording {wording} to two of their meanings, so they cannot be used together as they are.` `readWithSenses` with a well-formed dictionary is not known to reach this row, and `project_total`'s premises exclude it; j15 reaches it by calling `project` on d26's dictionary, which W6 refuses. It exists so that the map is total |
 
 A text with no body sentence shows S2's `EmptyDocument` text. S2's codes and texts for the body are unchanged.
 
@@ -663,7 +678,7 @@ inductive SenseFault where
   | preambleBudget (line : Nat)
   | repeatedDefault (line : Nat) (word : String)
   | preambleLate (sentence : Nat)
-  | collision (kind name : String) (sense : String)   -- kind: sort, letter, name, or a kind of S2's failures
+  | collision (kind name : String) (sense : String)   -- kind: sort, letter, name, a kind of a V4 pair, or an S2 condition (2.5)
   | limit (what : String)                             -- "sorts" or "predicates"; draft 2
   | tooManyCandidates (sentence : Nat) (words : List String)
   | candidatesDiverge (sentence : Nat) (words : List String) (why : Divergence)
@@ -684,6 +699,9 @@ def Projection.wordOf (P : Projection) (id : String) : Option String :=
   (P.map.find? (·.1 == id)).map (·.2.1.word)
 def maxSorts : Nat := 32                       -- `ve/limits.py:6`; draft 2
 def maxPredicates : Nat := 256                 -- `ve/limits.py:7`; draft 2
+/-- The colliding pairs of a lexicon in S2's V4 order: a selection's kind and name, the kind and name of another
+symbol that declares or selects a text with its `wordingKey`, and the selection's text (2.5, step 6). -/
+def clashes (E : Env) (L : Lexicon) : List (String × String × String × String × String)   -- draft 2
 def project (D : Dictionary) (A : Assignment) (E : Env) (L : Lexicon) (used : List String) :
     Except SenseFault Projection
 
@@ -980,8 +998,9 @@ statement of 5.3 against the merged S2 build, and every counterexample fixture t
 present with a computed value (d1, d17, d18, d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18). The statement
 review converged on FIX (0.1), applied in this draft. G-S0 passes after **one bounded re-review by both
 reviewers** of: the diff from draft 1; the three changed statements and the draft-2 lines of 5.2,
-re-elaborated against the merged S2 build; and the recomputed rows (d2, d26, j13's text, j15, j16, c16, c17,
-s22, s23, the whole R3 column under the narrowed simulation, and every *hand-derived* row of section 8). No
+re-elaborated against the merged S2 build; and the recomputed rows (d2, d26, j6 and j13 under step 6's pair
+rule, j13's text, j15, j16, j17, c16, c17, s22, s23, the whole R3 column under the narrowed simulation, and
+every *hand-derived* row of section 8). No
 second full review. **B1 to B4 start when G-S0 passes. B5 additionally waits for the DRI's decision on R3
 and for Q4, which its rule then decides on the column that ships (11).** G-S0b: met for draft 1's statements;
 it is re-run when S2 changes, R3 in particular. The W1, soft and P0 contracts are untouched; R3 keeps its
@@ -1081,7 +1100,7 @@ Plan 6.2, p1 to p6, unchanged; not computed (decoder, digest and Python).
 | j3 | j1 with `used = [tells]` | `ok`, valid: `sense__tells_1` only |
 | j4 | j1 with `used = [funny, tells, access]` | `ok`, valid: `sense__access_1` worded `{0} may access {1}`, no declared negative in the environment, `forms.negatives` has `(sense__access_1, {0} may not access {1})`, the lexicon selects it |
 | j5 | j4 with the default `(access, 1)` added | the same environment JSON, lexicon and aliases as j4 |
-| j6 | `EJ` plus an own predicate `funny` worded `{0} is funny`, default `(funny, 1)` | `collision "predicate" "funny" "sense__funny_1"` |
+| j6 | `EJ` plus an own predicate `funny` worded `{0} is funny`, default `(funny, 1)` | `collision "predicate" "funny" "sense__funny_1"`. Step 6's pair rule gives the same value, with the shared wording `{0} is funny` (***hand-derived***) |
 | j6b | j6 with no default | `ok`, valid: the bare wording is the document's alone |
 | j7 | `EJ` plus an own predicate `peculiar` worded `{0} is strange` | `ok`, valid; `The riddle is funny (meaning strange).` reads `sense__funny_2(riddle)`, `The riddle is strange.` reads `peculiar(riddle)` |
 | j8 | j1's `envJson` decoded by `Env.decode`, with j1's lexicon without its aliases, read by S2's `read` | valid; `The riddle is funny (meaning strange). Alice tells the riddle. The riddle is not funny.` reads `sense__funny_2(riddle)`, `sense__tells_1(alice, riddle)`, `not sense__funny_1(riddle)`. That Python's `Environment` loads the JSON and that its `environment_id` equals Lean's: obligation |
@@ -1090,10 +1109,11 @@ Plan 6.2, p1 to p6, unchanged; not computed (decoder, digest and Python).
 | j11 | `usedWords F` on `Alice does not tell the riddle.`; on `Alice is funny.`; on `The riddle is strange.` | `[tells]`; `[funny]`; `[]` |
 | j12 | `EJ` plus a sort `story` with the letter `S` | `collision "letter" "S" "service"` (step 3) |
 | j12b | `LJ` with `joke`'s letter `K`; with `person`'s letter `S` | `collision "letter" "J" "joke"`; `collision "letter" "P" "person"` (step 2) |
-| j13 | a pack with one sort `gag` whose noun is `joke`, under `EJ`, `LJ` (F4) | the pack is well-formed and every premise of the plan's `project_valid` holds; `collision "sort" "joke" "gag"` from S2's V4. Its text (R10, ***hand-derived***): `The kind gag of the vocabulary pack {pack} has the noun joke, which this document already uses for joke. Change one.` |
+| j13 | a pack with one sort `gag` whose noun is `joke`, under `EJ`, `LJ` (F4) | the pack is well-formed and every premise of the plan's `project_valid` holds; `collision "sort" "joke" "gag"` from S2's V4; step 6's pair rule gives the same value (`gag`'s noun selection against the document's `joke`), with the shared wording `joke`. Its text (R10, ***hand-derived***): `The kind gag of the vocabulary pack {pack} has the noun joke, which this document already uses for joke. Change one.` |
 | j14 | `LJ` with the noun `gag` for `joke` | `collision "sort" "joke" ""` (step 1); its text is the shared-kind text of 3.2 |
-| j15 | `project Fd [] EJn LJn [near]`, the dictionary of d26 (R1) | ***hand-derived:*** `collision "predicate" "sense__near_1" "sense__near_1"`, from S2's V4 on the shared comma alias; the last row of the `collision` map. `readWithSenses` stops before it, at d26's `invalidDictionary` |
+| j15 | `project Fd [] EJn LJn [near]`, the dictionary of d26 (R1) | ***hand-derived:*** `collision "predicate" "sense__near_1" "sense__near_2"`, from S2's V4 on the shared comma alias: the first clash is `near` 1's alias `{0} is near, in the sense of beside bob` (its wording's comma form without the closing comma) against the same alias of `near` 2, which is the shared wording; the last row of the `collision` map. `readWithSenses` stops before it, at d26's `invalidDictionary` |
 | j16 | a pack with one sort over an environment of 32 sorts, with its lexicon (R4) | ***hand-derived:*** `limit "sorts"` (step 5) |
+| j17 | `EJ` plus own predicates `a` worded `{0} is funny` and `b` worded `{0} is calm`, over `joke`; a pack with the sort `joke` as `F` declares it and the words `funny` and `calm`, one sense each over `joke`, worded `{0} is funny` and `{0} is calm`; both words used (verification) | ***hand-derived:*** `collision "predicate" "a" "sense__funny_1"`, shared wording `{0} is funny`: `a`'s wording is the first selection with a clash. Draft 2's independent choice of the two names gave `collision "predicate" "a" "sense__calm_1"`, whose names share no wording |
 
 ### 8.5 The gloss forms (c), computed
 
@@ -1215,7 +1235,9 @@ on R3.
 | | gives none: declared or absent, accepted | d10, d9 |
 | `project` returns a projection exactly when its six checks pass | pass | j1, j6b, j7 |
 | | fail, one per step | j14, j12b, j12, (step 4: obligation), j16, j6 and j13 |
-| `collision` has one text per fault | each row of the map | j14, j12, (step 4: obligation), j13, j6, j15 |
+| `collision` has one text per fault | each row of the map | j14, j12, (step 4: obligation), j13, j6 and j17, (step 6 without a pair: obligation), j15 |
+| step 6 names a pair that collides | the document's symbol and the sense share a wording | j6, j13, j17 |
+| | no side in the document | j15 |
 | a used word with no default is unresolved exactly when it has an unswitched occurrence | bare occurrence | s16, s2 (unit 0) |
 | | switched occurrences only | s22 (`funny`) |
 | an accepted derivation never uses a sense's quoted name | used: refused | s23 |
@@ -1348,9 +1370,9 @@ lean/SpecStubs_senses.lean`, Lean 4.24.0, 2026-10-05). It contained:
   valuations of s2 and n7.
 
 For G-S0 the stub also gains draft 2's definitions (the W2 to W4 bounds, `schemaReserved`, W6 over
-same-word decorated forms, `switchedAt` and `unswitchedIn`, the `limit` step, the `quotedSense` check), the
-three changed statements, and the rows d2, d26, d27, j15, j16, c16, c17, s22 and s23. None of this was run for
-draft 2.
+same-word decorated forms, `switchedAt` and `unswitchedIn`, the `limit` step, `clashes` and step 6's pair
+rule, the `quotedSense` check), the three changed statements, and the rows d2, d26, d27, j6, j13, j15, j16,
+j17, c16, c17, s22 and s23. None of this was run for draft 2.
 
 The final run of draft 1's whole file reported no error and no warning, and the file has no `sorry`. It is not
 part of the repository; B1 re-creates its definitions module by module, and each computed row of section 8
@@ -1431,6 +1453,15 @@ to the applier:
 - **W6's failures.** One failure per pair of senses, so d2 reports one W6 failure after its W2 one, as d11 and
   d17 report one.
 
+**The verification of draft 2** (`manage-agents/senses-p3ver1.final.md`, read-only, no model call) found two
+defects, both corrected here. (1) R10's map was not total: step 6 chose the document's symbol and the sense
+independently, so the two need not collide (j17), and `{wording}` could not be filled. Step 6 now takes both
+names from one entry of `clashes`, the colliding pairs of S2's V4 comparison, whose shared text is
+`{wording}`; S2's `Lexicon.failures` still alone decides refusal; a failure list with no V4 entry gets its
+own row, so the map is total. j15's value changes accordingly (`sense__near_2` in place of
+`sense__near_1`); j6 and j13 keep theirs. (2) R7's switch rule said "three words" before the four words
+`in the sense of`; it says four. Nothing else changed.
+
 **The plan (`senses-PLAN.md`)** is aligned in its operative text: its status note, W2, W4 and W6 (2.2), the
 Q4 rule (2.3, Q4), the switch rule (2.4, 2.6), the `limit` and `quotedSense` faults (2.5, 2.6), the
-one-candidate text (2.8), B5, G-S0 and G-S1. Where the two still differ, this specification governs.
+colliding pair of a `collision` (2.5), the one-candidate text (2.8), B5, G-S0 and G-S1. Where the two still differ, this specification governs.
