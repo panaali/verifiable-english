@@ -27,6 +27,7 @@ import tempfile
 import time
 
 from layer_policy import ROOT, lean_default_targets, lean_executables
+from pytest_run import pytest_command, pytest_environment
 
 # 2: directory listings by the import system and pytest are not recorded.
 # 3: a test's own reads and listings count even though pytest runs it (version 2
@@ -54,12 +55,12 @@ def units(root: Path = ROOT) -> list[str]:
 
 
 def unit_command(unit: str) -> list[str]:
-    return EXTRA_UNITS.get(unit) or ["uv", "run", "--frozen", "--group", "dev", "python", "-m",
-                                     "pytest", "-q", "-p", "no:cacheprovider", unit]
+    return EXTRA_UNITS.get(unit) or pytest_command(["uv", "run", "--frozen", "--group", "dev", "python"],
+                                                   "-q", "-p", "no:cacheprovider", unit)
 
 
 def environment(out: Path | None = None) -> dict[str, str]:
-    env = dict(os.environ)
+    env = pytest_environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     if out is not None:

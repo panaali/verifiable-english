@@ -35,16 +35,23 @@ How a change selects tests:
   (tools/source_graph.py), which is also the whole answer without a usable map.
 * Unknown files, `tests/conftest.py`, `pyproject.toml` and `uv.lock` select
   everything. Anything selected beyond documentation also runs SMOKE.
+
+``--impacted`` is the other, map-free fast path: only the tests whose static
+dependencies (imports, conftest files, named data and native checkers) changed,
+plus ALWAYS; it runs them in one plain pytest process (docs/TESTING.md).
 """
 from __future__ import annotations
 
 import argparse
+import ast
 from dataclasses import dataclass
+from functools import cache
 import hashlib
 import json
 import os
 from pathlib import Path
 import posixpath
+import re
 import shutil
 import subprocess
 import sys
@@ -52,7 +59,8 @@ import tempfile
 import time
 
 from change_units import Summary, delta
-from layer_policy import ROOT, lean_default_targets, lean_executables
+from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
+from pytest_run import pytest_command, pytest_environment
 import source_graph
 import test_map
 
@@ -60,7 +68,10 @@ TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 EXTRA_UNITS = test_map.EXTRA_UNITS
 # Fast tests across parser, environment, wire and both native backends.
 SMOKE = ("tests/test_conformance.py", "tests/test_surface_registry.py", "tests/test_definitions.py")
-CHECK_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python", "tools/check_python_layers.py")
+UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
+# Every pytest run the plan prints starts with this (tools/pytest_run.py).
+PYTEST = pytest_command(UV_PYTHON)
+CHECK_PYTHON = (*UV_PYTHON, "tools/check_python_layers.py")
 CHECK_LEAN = ("python3", "tools/check_lean_imports.py")
 CHECK_RUST = ("python3", "tools/check_rust_deps.py")
 AUDIT = ("python3", "lean/audit.py")
@@ -678,8 +689,7 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
     for unit in extra:
         commands.append(list(EXTRA_UNITS[unit]))
     if pytest_files:
-        commands.append(["uv", "run", "--frozen", "--group", "dev", "python", "-m",
-                         "pytest", "-q", *pytest_files])
+        commands.append([*PYTEST, "-q", *pytest_files])
     return {"changed": paths, "selected": selected, "selected_count": len(selected),
             "full_count": len(sel.all_units), "full": full, "full_reasons": sel.full,
             "smoke": list(SMOKE), "reasons": {t: sorted(r) for t, r in sorted(sel.reasons.items())},
@@ -689,6 +699,259 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
             "unmapped": sorted(sel.unmapped) if cov is not None else "all (static graph only)",
             "commands": commands, "lean_build": lean, "rust_build": sel.rust,
             "seconds": round(time.monotonic() - started, 2)}
+
+
+# --- Impacted mode: the fast path for local iteration (docs/TESTING.md) ---
+#
+# A test runs when a file it depends on changed: a local Python module in its import
+# closure (tests, their helpers, conformance, tools, ve and ve_experiments), a Lean module
+# in an executable that code in that closure names, the Rust checker when that code names
+# it, or a data path that code names. A change no test reaches selects the full suite,
+# except a Python file outside the product (a script or report generator), which selects
+# only ALWAYS and is reported. The gate still runs everything.
+
+PYTHON_ROOTS = ("ve", "ve_experiments", "conformance", "tools", "tests", "usecases", "experiments")
+# Path components too generic to tie a data file to the tests naming it.
+GENERIC = {"ve", "tests", "tools", "conformance", "usecases", "experiments", "docs", "lean", "rust",
+           "src", "data", "examples", "json", "README.md", "VE", "spec"}
+# Trees whose directories tests name one component at a time (`ROOT / "usecases" / "asimov-laws"`).
+NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "examples", "data", "paper"}
+# Test-side code that names these starts (or configures) a native checker: Rust, any
+# Lean executable (the service under the Lean authority), or reads the Lean sources.
+RUST_SIGNALS = ("rust/target", "VE_RUST", "VE_W5_RUST_BIN", "rust_jsonl", "cargo", "VE_AUTHORITY")
+LEAN_SIGNALS = ("LeanService", "lean_service", "lean_runner", "VE_AUTHORITY", ".lake", "lake",
+                '*.lean', '.lean"', ".lean'", "lean/VE")
+# Sources of a test file that neither its imports nor its text name (none so far):
+# tests/test_select_tests.py fails for a test file no source path reaches.
+EXTRA_SOURCES: dict[str, tuple[str, ...]] = {}
+# Product modules that start a native checker only when a test selects its authority or
+# builds a client itself (which the test-side code then names), never on their own.
+ON_REQUEST = {"ve/backends/lean_service.py", "ve/backends/lean_runner.py", "ve/backends/rust_jsonl.py",
+              "ve/backends/dispatch.py", "ve/ast.py", "ve/evaluate.py", "ve/search.py"}
+# These exercise the public wire across languages, routes, and frozen fixtures.
+ALWAYS = {
+    "tests/test_conformance.py", "tests/test_lean_conformance.py",
+    "tests/test_replay_conservativity.py", "tests/test_p0_three_way.py",
+}
+IMPACTED_CHECKS = (CHECK_PYTHON, CHECK_LEAN, CHECK_RUST, ("python3", "tools/test_layer_policy.py"))
+EXPORTS = python_exports(ROOT)
+
+
+def native_commands(paths: list[str], selected: list[str], fallback: bool) -> tuple[list[list[str]], bool, bool]:
+    """The checks, the native builds the selection needs, and the pytest run of `selected`."""
+    selected_sources = [(ROOT / p).read_text() for p in selected]
+    lean = (fallback or any(p.startswith("lean/") or p.startswith("conformance/") for p in paths)
+            or not (ROOT / "lean/.lake/build/bin/ve_conformance").exists()
+            or any(any(name in source for source in selected_sources)
+                   and not (ROOT / "lean/.lake/build/bin" / name).exists()
+                   for name in lean_executables()))
+    rust = fallback or any(p.startswith("rust/") or p.startswith("conformance/") for p in paths)
+    rust_release_binary = (rust or (any("rust/target/release/ve" in source or "VE_W5_RUST_BIN" in source
+                                        for source in selected_sources)
+                                    and not (ROOT / "rust/target/release/ve").exists()))
+    rust_debug_binary = (rust or (any("rust/target/debug/ve" in source for source in selected_sources)
+                                  and not (ROOT / "rust/target/debug/ve").exists()))
+    commands = [list(cmd) for cmd in IMPACTED_CHECKS]
+    if lean:
+        commands.append(["lake", "build"])
+        # Harness executables such as ve_risk_eval are outside defaultTargets.
+        named = sorted(name for name in lean_executables()
+                       if name not in lean_default_targets()
+                       and any(name in source for source in selected_sources))
+        if named:
+            commands.append(["lake", "build", *named])
+    commands.append(list(AUDIT))
+    if rust:
+        commands.append([*CARGO, "test", "--locked", "--all-features", "--manifest-path",
+                         "rust/Cargo.toml", "--", "--test-threads=1"])
+    if rust_release_binary:
+        commands.append([*CARGO, "build", "--locked", "--release", "--manifest-path",
+                         "rust/Cargo.toml", "-p", "ve"])
+    if rust_debug_binary:
+        commands.append([*CARGO, "build", "--locked", "--manifest-path",
+                         "rust/Cargo.toml", "-p", "ve"])
+    commands.append([*PYTEST, "-q", *selected])
+    return commands, lean, rust
+
+
+def module_file(name: str) -> str | None:
+    """The repository file a dotted module name is, if local (`ve.ast`, `tests.subprocesses`)."""
+    path = ROOT.joinpath(*name.split("."))
+    for candidate in (path.with_suffix(".py"), path / "__init__.py"):
+        if candidate.is_file():
+            return candidate.relative_to(ROOT).as_posix()
+    return None
+
+
+@cache
+def python_dependencies(relative: str) -> frozenset[str]:
+    """The local Python files `relative` imports directly, function-level imports included
+    (they run when the function does)."""
+    path = ROOT / relative
+    try:
+        tree = ast.parse(path.read_text(), relative)
+    except (SyntaxError, UnicodeDecodeError):
+        return frozenset()
+    package = Path(relative).parent.parts
+    names = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            names += [alias.name for alias in node.names]
+        elif isinstance(node, ast.ImportFrom):
+            base = node.module or ""
+            if node.level:
+                anchor = package[:len(package) - node.level + 1]
+                base = ".".join((*anchor, *([base] if base else [])))
+            names.append(base)
+            names += [f"{base}.{alias.name}" for alias in node.names]
+            if base == "ve":
+                names += [EXPORTS[alias.name] for alias in node.names if alias.name in EXPORTS]
+    found = set()
+    for name in filter(None, names):
+        parts = name.split(".")
+        for end in range(len(parts), 0, -1):
+            prefix = ".".join(parts[:end])
+            # A bare name is also a sibling (tools/ scripts import one another bare), a tests/
+            # helper (pytest's rootdir import) or a tools/ script (a test puts tools/ on the path).
+            target = next(filter(None, (module_file(candidate) for candidate in (
+                prefix, ".".join((*package, prefix)), f"tests.{prefix}", f"tools.{prefix}"))), None)
+            if target:
+                found.add(target)
+                break
+    found.discard(relative)
+    # The `ve` facade imports every module for its reexports; a name taken from it
+    # resolves to its defining module above, so the facade itself is not a dependency.
+    found.discard("ve/__init__.py")
+    return frozenset(found)
+
+
+@cache
+def closure(relative: str) -> frozenset[str]:
+    """`relative` and every local Python file it imports, transitively."""
+    seen, todo = set(), [relative]
+    while todo:
+        current = todo.pop()
+        if current not in seen:
+            seen.add(current)
+            todo.extend(python_dependencies(current))
+    return frozenset(seen)
+
+
+@cache
+def test_closure(test: str) -> frozenset[str]:
+    """What pytest loads for the test file `test`: its closure and the closure of every
+    conftest.py from the repository root down to its directory, which pytest imports
+    for each test below it without the test naming it."""
+    directories = [ROOT, *(ROOT / part for part in Path(test).parents[:-1][::-1])]
+    conftests = [(directory / "conftest.py").relative_to(ROOT).as_posix() for directory in directories
+                 if (directory / "conftest.py").is_file()]
+    return closure(test).union(*(closure(conftest) for conftest in conftests))
+
+
+@cache
+def text(relative: str) -> str:
+    return (ROOT / relative).read_text(errors="replace")
+
+
+@cache
+def strings(relative: str) -> str:
+    """The string literals of a Python file's code, docstrings left out, one per line: what
+    it can name a path, an executable or a setting with."""
+    tree = ast.parse(text(relative), relative)
+    docstrings = {id(node.body[0].value) for node in ast.walk(tree)
+                  if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+                  and node.body and isinstance(node.body[0], ast.Expr)
+                  and isinstance(node.body[0].value, ast.Constant)}
+    return "\n".join(node.value for node in ast.walk(tree) if isinstance(node, ast.Constant)
+                     and isinstance(node.value, str) and id(node) not in docstrings)
+
+
+@cache
+def literals(relative: str) -> str:
+    """Every string literal of a Python file, docstrings included, comments left out."""
+    try:
+        tree = ast.parse(text(relative), relative)
+    except SyntaxError:
+        return text(relative)
+    return "\n".join(node.value for node in ast.walk(tree)
+                     if isinstance(node, ast.Constant) and isinstance(node.value, str))
+
+
+def names_any(body: str, names) -> bool:
+    return any(re.search(rf"(?<![\w]){re.escape(name)}(?![\w])", body) for name in names)
+
+
+@cache
+def static_graph() -> source_graph.Graph:
+    return source_graph.load(ROOT)
+
+
+@cache
+def lean_executables_of(module: str) -> frozenset[str]:
+    """The Lean executables whose import closure holds `module`."""
+    return frozenset(static_graph().executables_using(module))
+
+
+def reaches(test: str, changed: str) -> bool:
+    """Whether a change to `changed` can change the outcome of the test file `test`."""
+    if changed in test_closure(test) or changed in EXTRA_SOURCES.get(test, ()):
+        return True
+    # A conftest's imports run for every test, so a change to one reaches them all (above).
+    # Native checkers are another matter: the conftest builds them once per session (the
+    # plan's own build command covers a native change) and starts none, so whether a test
+    # runs one is decided by its own closure.
+    native = changed.startswith(("lean/", "rust/"))
+    files = closure(test) if native else test_closure(test)
+    # Data paths and checker configuration are named by the test side (tests, the harness,
+    # tools); a product module names the executables it starts on its own.
+    harness = [literals(f) for f in files if not f.startswith(("ve/", "ve_experiments/"))]
+    product = [strings(f) for f in files if f.startswith(("ve/", "ve_experiments/")) and f not in ON_REQUEST]
+    if changed.startswith("lean/"):
+        if Path(changed).suffix == ".lean":
+            module = ".".join(Path(changed).with_suffix("").parts[1:])
+            names = lean_executables_of(module)
+        else:  # lakefile, toolchain or manifest: every executable
+            names = frozenset(lean_executables())
+        return any(names_any(body, names) for body in harness + product) or \
+            any(signal in body for body in harness for signal in LEAN_SIGNALS)
+    if changed.startswith("rust/"):
+        return any(signal in body for body in harness for signal in RUST_SIGNALS) or \
+            "ve/readings_route.py" in files
+    # The path, its file name, its directories' paths, and (in a use case, experiment or
+    # data tree, whose directories are named on their own) its directories' names.
+    path = Path(changed)
+    names = {changed, *(parent.as_posix() for parent in path.parents if len(parent.parts) >= 2)}
+    if path.name not in GENERIC and len(path.name) >= 4:
+        names.add(path.name)
+    if path.parts[0] in NAMED_TREES:
+        names.update(part for part in path.parts[1:-1] if part not in GENERIC and len(part) >= 4)
+    pattern = re.compile("|".join(rf"(?<![\w.-]){re.escape(name)}(?![\w-])" for name in sorted(names))) \
+        if names else None
+    return any(changed in body or (pattern and pattern.search(body)) for body in harness)
+
+
+def impacted(paths: list[str], *, full: bool = False) -> dict:
+    paths = sorted(set(path.removeprefix("./") for path in paths))
+    tests = [path.relative_to(ROOT).as_posix() for path in TESTS]
+    reached, unreached, scripts = {}, [], []
+    for changed in paths:
+        hits = [test for test in tests if (ROOT / changed).exists() and reaches(test, changed)] \
+            if not changed.startswith("tests/test_") else [changed] * (ROOT / changed).exists()
+        if changed.startswith("tests/test_"):
+            hits += [test for test in tests if changed in test_closure(test)]
+        reached[changed] = sorted(set(hits))
+        if changed == "ve/__init__.py" or not (ROOT / changed).exists():
+            unreached.append(changed)  # the facade reexports every layer; a deletion has no reader left
+        elif not hits:
+            product = not changed.endswith(".py") or changed.startswith("ve/")
+            (unreached if product else scripts).append(changed)
+    fallback = full or not paths or bool(unreached)
+    selected = sorted(tests if fallback else {t for hits in reached.values() for t in hits} | ALWAYS)
+    commands, lean, rust = native_commands(paths, selected, fallback)
+    return {"mode": "impacted", "changed": paths, "reached": reached, "unreached": unreached,
+            "scripts_without_tests": scripts, "fallback": fallback, "selected": selected,
+            "selected_count": len(selected), "full_count": len(TESTS), "always": sorted(ALWAYS),
+            "commands": commands, "lean_build": lean, "rust_build": rust}
 
 
 def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | None, str | None]]]:
@@ -744,13 +1007,13 @@ def run_recorded(plan: dict, jobs: int) -> int:
 
 
 def run(plan: dict, *, record: bool = True, jobs: int = 8) -> int:
-    env = dict(os.environ)
+    env = pytest_environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     if plan["lean_build"]:
         env["VE_LEAN_PREBUILT"] = "1"
     for command in plan["commands"]:
-        if record and (command in [list(c) for c in EXTRA_UNITS.values()] or command[6:8] == ["-m", "pytest"]):
+        if record and (command in [list(c) for c in EXTRA_UNITS.values()] or command[:len(PYTEST)] == PYTEST):
             continue  # recorded below, one process per unit
         print("+", " ".join(command), flush=True)
         cwd = ROOT / "lean" if command[:2] == ["lake", "build"] else ROOT
@@ -770,7 +1033,10 @@ def main() -> int:
     source.add_argument("--commit", help="one historical commit")
     source.add_argument("--paths", nargs="+", help="explicit changed paths")
     parser.add_argument("--full", action="store_true")
-    parser.add_argument("--map", help="coverage map (default: newest cached ancestor map)")
+    parser.add_argument("--impacted", action="store_true",
+                        help="the map-free fast path: only the tests whose static dependencies "
+                             "changed, run in one plain pytest process")
+    parser.add_argument("--map",help="coverage map (default: newest cached ancestor map)")
     parser.add_argument("--static", action="store_true", help="ignore the coverage map")
     parser.add_argument("--assume-fresh", action="store_true",
                         help="treat the map as recorded at the base (an estimate for reports; "
@@ -785,6 +1051,21 @@ def main() -> int:
     parser.add_argument("--jobs", type=int, default=8, help="parallel test files for --run")
     args = parser.parse_args()
     paths = args.paths if args.paths is not None else changed_paths(args.base, args.commit)
+    if args.impacted:
+        plan = impacted(paths, full=args.full)
+        if args.json:
+            print(json.dumps(plan, indent=2))
+            return run(plan, record=False) if args.run else 0
+        print(f"impacted{' (full fallback)' if plan['fallback'] else ''}: "
+              f"{plan['selected_count']}/{plan['full_count']} Python test files")
+        for path in plan["unreached"]:
+            print(f"no test reaches {path}: full suite")
+        for path in plan["scripts_without_tests"]:
+            print(f"warning: no test reaches {path}")
+        print("changed:", ", ".join(paths) or "(none; full fallback)")
+        for command in plan["commands"]:
+            print("+", " ".join(command))
+        return run(plan, record=False) if args.run else 0
     if args.commit:
         base, after = f"{args.commit}^", args.commit
     elif args.base:

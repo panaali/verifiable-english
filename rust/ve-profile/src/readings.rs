@@ -1,8 +1,9 @@
 //! Evaluation-only shadow of S1 separation. The formulas and per-reading
 //! environments arrive already elaborated; Rust neither builds readings nor
 //! decides whether a situation separates them.
-use crate::{Document, Environment, Error, FiniteModel, MAX_EVALUATIONS, Result, error, evaluate_formula};
+use crate::evaluate_formula;
 use serde_json::{Value, json};
+use ve_kernel::{Document, Environment, Error, FiniteModel, MAX_EVALUATIONS, Result, internal::error};
 
 pub fn readings_evaluate_case(v: &Value) -> Result<Value> {
     if v.get("kind").and_then(Value::as_str) != Some("readings-evaluate") {

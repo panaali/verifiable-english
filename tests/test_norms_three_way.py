@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 
 from tools import rust_build
 from ve.ast import Const, Exists, Not, Top, Unary, Var, _to_data, formula_to_data
@@ -42,7 +42,7 @@ def lean_executable():
         if lake is None:
             pytest.skip("lake is required for the W1 wire gate")
         built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True,
-                               text=True, timeout=600)
+                               text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 
@@ -58,7 +58,7 @@ def rust_executable():
     env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           cwd=ROOT, env=env, capture_output=True, text=True, timeout=600)
+                           cwd=ROOT, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return RUST
 

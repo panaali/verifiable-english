@@ -35,6 +35,7 @@ import tempfile
 import time
 
 from layer_policy import ROOT
+from pytest_run import pytest_command, pytest_environment
 import select_tests
 
 EVIDENCE = ROOT / "docs/testselect-evidence.json"
@@ -163,7 +164,7 @@ def mutate(source: str, qualname: str, seed: str) -> tuple[str, str] | None:
 
 
 def run_command(worktree: Path, command, log: Path) -> int:
-    env = dict(os.environ)
+    env = pytest_environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     with log.open("w") as handle:
@@ -172,12 +173,12 @@ def run_command(worktree: Path, command, log: Path) -> int:
 
 
 def run_pytest(worktree: Path, files: list[str], log: Path, *, first_failure: bool, workers: int = 14) -> int:
-    env = dict(os.environ)
+    env = pytest_environment(os.environ)
     env.setdefault("UV_CACHE_DIR", "/tmp/ve-layers-uv-cache")
     env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
-    command = ["uv", "run", "--frozen", "--group", "dev", "python", "-m", "pytest", "-q",
-               *(["-n", str(min(workers, len(files)))] if workers > 1 else []),
-               *(["--maxfail=1"] if first_failure else []), *files]
+    command = pytest_command(["uv", "run", "--frozen", "--group", "dev", "python"], "-q",
+                             *(["-n", str(min(workers, len(files)))] if workers > 1 else []),
+                             *(["--maxfail=1"] if first_failure else []), *files)
     with log.open("w") as handle:
         return subprocess.run(command, cwd=worktree, env=env, stdout=handle, stderr=subprocess.STDOUT,
                               check=False).returncode

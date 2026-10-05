@@ -227,7 +227,31 @@ class Graph:
                 parent = posixpath.dirname(parent)
 
     def closure(self, start: str) -> tuple[set[str], set[str]]:
-        """Files a test reaches through imports and named scripts, and every mention."""
+        """Files a test reaches through imports and named scripts, and every mention.
+
+        pytest imports every conftest.py from the root down to a test's directory
+        for each test below it, so what those reach is the test's too. Their
+        native mentions are not: the conftest builds the checkers once per
+        session and starts none, so the test's own code decides whether it runs one.
+        """
+        seen, mentioned = self._reach(start)
+        conftests = [posixpath.join(directory, "conftest.py") if directory else "conftest.py"
+                     for directory in self._directories_down_to(start)]
+        for conftest in conftests:
+            if conftest != start and conftest in self.summaries:
+                files, tokens = self._reach(conftest)
+                seen |= files
+                mentioned |= {token for token in tokens if token not in ("rust", "lean-tool")
+                              and not token.startswith("lean-exe:")}
+        return seen, mentioned
+
+    @staticmethod
+    def _directories_down_to(path: str) -> list[str]:
+        """The root ("") and each directory above `path`, outermost first."""
+        parts = path.split("/")[:-1]
+        return ["/".join(parts[:end]) for end in range(len(parts) + 1)]
+
+    def _reach(self, start: str) -> tuple[set[str], set[str]]:
         seen, mentioned, stack = {start}, set(), [start]
         while stack:
             path = stack.pop()
