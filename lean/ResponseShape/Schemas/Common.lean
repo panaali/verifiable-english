@@ -266,6 +266,10 @@ def nonempty_strings : Shape :=
 def string_map : Shape :=
   c "An object with string values." [obj, .object [] (some str)]
 
+/-- The predicate entry required of source, decision and rights-generated environment fields. -/
+def environment_predicate : Shape :=
+  n [obj, .required ["arguments"], props [("arguments", ref "#/$defs/strings")]]
+
 def string_pair : Shape :=
   n [arr, .prefixItems [str, str], .minItems 2, .maxItems 2]
 
@@ -366,7 +370,7 @@ def route_path_error : Shape :=
       closed [("id", .echo "/id"), ("status", constS "error"), ("error", ref "#/$defs/text")]]
 
 def environment : Shape :=
-  copied "the request's environment (its fields passed the envelope check), canonicalized by Norms.Wire.canonicalEnvironmentJson" <| c
+  encodedEnvironment (c
     "Norms.Wire.canonicalEnvironmentJson and its extensions (SoftNorms.Wire.primeJson, Rights.Wire.primeJsonR): the request environment after its envelope check (exactly language, profiles, spec_revision and vocabulary), with decision and generated predicates added. Its content is compared with Python's regeneration by the caller."
     [
       obj,
@@ -383,12 +387,12 @@ def environment : Shape :=
             ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
             ("predicates", n [
               obj,
-              .object [] (some (n [obj, .required ["arguments"], props [("arguments", ref "#/$defs/strings")]]))]),
+              .object [] (some (ref "#/$defs/environment_predicate"))]),
             ("soft", n [obj, .equals "/environment/vocabulary/soft"]),
             ("rights", n [obj, .equals "/environment/vocabulary/rights"])],
           .allOf [
             .ite (.onCase (ref "#/$defs/request_block/soft")) (.required ["soft"]) (.bool true),
-            .ite (.onCase (ref "#/$defs/request_block/rights")) (.required ["rights"]) (.bool true)]])]]
+            .ite (.onCase (ref "#/$defs/request_block/rights")) (.required ["rights"]) (.bool true)]])]])
 
 def request_block : Def :=
   .group (some "Selectors over the request case: its environment's vocabulary declares the block.") [
@@ -441,6 +445,7 @@ def file : File where
     ("hex64_or_empty", .schema hex64_or_empty),
     ("nonempty_strings", .schema nonempty_strings),
     ("string_map", .schema string_map),
+    ("environment_predicate", .schema environment_predicate),
     ("string_pair", .schema string_pair),
     ("report", .schema report),
     ("bound_report", .schema bound_report),

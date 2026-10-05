@@ -6,6 +6,7 @@ module Iceberg
 module Main
 module ResponseDecode
 module ResponseShape.Audit
+module ResponseShape.CaseDeciders
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
@@ -397,6 +398,7 @@ ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRou
 ResponseShape.Encoders.SoftNorms.Classified@ResponseShape.Encoders.SoftNorms
 ResponseShape.Fits.below@ResponseShape.Skeleton
 ResponseShape.Fits@ResponseShape.Skeleton
+ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background

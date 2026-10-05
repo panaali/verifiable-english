@@ -149,9 +149,9 @@ def test_a_mutated_shape_fails(lake, tmp_path):
 
 def _route_error(valid: bool, certificate: bool) -> str:
     fields = '[("id", .str id), ("status", .str "error"), ("error", .str m)' + (', ("valid", .bool false)]' if valid else "]")
-    test = "= true" if certificate else "≠ true"
+    kind = "certificate" if certificate else "evaluate"
     return f"""
-example (req : Json) (id m : String) (h : (req.getObjValD "kind" == .str "certificate") {test}) :
+example (req : Json) (id m : String) (h : req.getObjValD "kind" = .str "{kind}") :
     Fits req Skeletons.route (Json.mkObj {fields}) := by
   fits
   all_goals case_cond
@@ -164,3 +164,53 @@ def test_a_field_tied_to_the_case_is_checked(lake, tmp_path):
     assert _passes(lake, tmp_path, _route_error(valid=False, certificate=False))
     assert not _passes(lake, tmp_path, _route_error(valid=False, certificate=True))
     assert not _passes(lake, tmp_path, _route_error(valid=True, certificate=False))
+
+
+def _quantity_lower(field: str) -> str:
+    return f'''
+example (id x : String) :
+    Fits (Json.mkObj [("kind", .str "lower")]) Skeletons.quantity
+      (VE.Time.Wire.ok id [("{field}", .str x)]) := by
+  simp only [VE.Time.Wire.ok]
+  fits
+  all_goals decide
+'''
+
+
+def test_quantity_select_keeps_the_request_kind(lake, tmp_path):
+    """A lower answer must have coordinate; render's amount cannot satisfy the lower selector."""
+    assert _passes(lake, tmp_path, _quantity_lower("coordinate"))
+    assert not _passes(lake, tmp_path, _quantity_lower("amount"))
+
+
+def _generated_predicate(fields: str) -> str:
+    return f'''
+example (req : Json) (ss : List String) :
+    Fits req (skel% "common.json#/$defs/environment_predicate")
+      (Json.mkObj {fields}) := by
+  fits
+'''
+
+
+def test_generated_environment_predicate_has_arguments(lake, tmp_path):
+    assert _passes(lake, tmp_path, _generated_predicate('[ ("arguments", toJson ss), ("description", .str "generated") ]'))
+    assert not _passes(lake, tmp_path, _generated_predicate('[ ("description", .str "generated") ]'))
+
+
+def _prime_environment(value: str) -> str:
+    return f'''
+example (req : Json) (D : VE.SoftNorms.SoftDoc) (env : Json) :
+    Fits req (skel% "common.json#/$defs/environment") {value} := by
+  first
+    | (apply Fits.softEnvironment D env
+       intro p hp
+       unfold VE.SoftNorms.Wire.decisionEntry
+       fits)
+    | skip
+'''
+
+
+def test_environment_field_is_bound_to_the_prime_encoder(lake, tmp_path):
+    prime = '((VE.SoftNorms.Wire.primeJson D env).toOption.getD .null)'
+    assert _passes(lake, tmp_path, _prime_environment(prime))
+    assert not _passes(lake, tmp_path, _prime_environment('(Json.mkObj [])'))

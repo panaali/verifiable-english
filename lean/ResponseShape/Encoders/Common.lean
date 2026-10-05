@@ -65,6 +65,20 @@ theorem reportJson_fits (r : VE.Graph.Report) :
   fits
   all_goals exact claimJson_fits _
 
+/-- A decision predicate added to the regenerated environment has the predicate-entry shape. -/
+theorem decisionEntry_fits (sorts : List String) :
+    Fits req (skel% "common.json#/$defs/environment_predicate")
+      (VE.SoftNorms.Wire.decisionEntry sorts) := by
+  unfold VE.SoftNorms.Wire.decisionEntry
+  fits
+
+/-- A rights predicate added to the regenerated environment has the same entry shape. -/
+theorem generatedEntry_fits (sorts : List String) (description verbalisation : String) :
+    Fits req (skel% "common.json#/$defs/environment_predicate")
+      (VE.Rights.Wire.generatedEntry sorts description verbalisation) := by
+  unfold VE.Rights.Wire.generatedEntry
+  fits
+
 end ResponseShape.Encoders.Common
 
 namespace ResponseShape

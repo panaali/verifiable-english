@@ -9,6 +9,19 @@ open VE.SoftNorms VE.SoftNorms.Wire VE.SoftNorms.Run
 
 variable {req : Json}
 
+/-- Every newly generated decision entry uses the environment's predicate-entry shape. -/
+theorem decision_entries_fit (D : SoftDoc) :
+    ∀ p ∈ decisions D,
+      Fits req (skel% "common.json#/$defs/environment_predicate") (decisionEntry p.2) := by
+  intro p _
+  exact Common.decisionEntry_fits _
+
+/-- The environment field of elaboration is the prime environment encoded from its source. -/
+theorem regenerated_environment (D : SoftDoc) (env : Json) :
+    (regenerated D env).lookup "environment_prime" =
+      some ((primeJson D env).toOption.getD .null) := by
+  rfl
+
 /-- Every soft premise label is a nonempty `soft:...` label (so `bgEntry` gives it a `label`). -/
 theorem softLabelled_nonempty (D : SoftDoc) : ∀ x ∈ softLabelled D, x.1.isEmpty = false := by
   intro x hx
@@ -27,7 +40,9 @@ theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) :
     Fits req (skel% "soft-norms.json#/$defs/elaborate") (VE.Route.Wire.ok id (regenerated D env)) := by
   unfold VE.Route.Wire.ok regenerated bgEntry
   fits
-  all_goals (exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all)
+  all_goals first
+    | exact Fits.softEnvironment D env (decision_entries_fit D)
+    | (exfalso; rename_i x hx h; have := softLabelled_nonempty D x hx; simp_all)
 
 /-- A pair's status and detail: a detail exactly beside a weighing point or UNKNOWN. -/
 def Classified (r : PairStatus × String) : Prop :=

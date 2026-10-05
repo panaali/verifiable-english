@@ -12,6 +12,9 @@ depends on another field's string value (an `if`/`then`/`else`), that value; and
 depends on the request case (an `if` over `x-case`), that condition (`CaseCond`). Everything
 else a shape checks (patterns, numbers, echoes, counts, grammars without objects) is `any`
 here, and a value the runner copies from the request (`Shape.copied`) is `any`.
+An encoded environment instead retains an encoder obligation: its value is the prime
+environment of its source, and every generated predicate entry fits the entry shape
+extracted from the environment schema. The decoded source fields remain the request decoder's.
 
 `skeleton files s` extracts the skeleton of a shape. It describes at least every value valid
 under the shape (it may allow more: a condition on a field's value it cannot express is
@@ -228,6 +231,9 @@ inductive Skel where
   | alt (ss : List Skel)
   /-- `t` when the request case meets `c`, else `e`. -/
   | onCase (c : CaseCond) (t e : Skel)
+  /-- A prime environment produced by the soft-norms or rights encoder. Its generated
+  predicate entries must fit the schema-derived `entry` skeleton. -/
+  | encodedEnvironment (entry : Skel)
   deriving Inhabited, Repr, BEq, Lean.ToExpr
 
 namespace Skel
@@ -270,6 +276,13 @@ inductive Fits (c : Json) : Skel → Json → Prop where
   | alt {ss : List Skel} {s : Skel} {v : Json} : s ∈ ss → Fits c s v → Fits c (.alt ss) v
   | onCaseT {cond : CaseCond} {t e : Skel} {v : Json} : cond.holds c = true → Fits c t v → Fits c (.onCase cond t e) v
   | onCaseE {cond : CaseCond} {t e : Skel} {v : Json} : cond.holds c = false → Fits c e v → Fits c (.onCase cond t e) v
+  | softEnvironment {entry : Skel} (D : VE.SoftNorms.SoftDoc) (env : Json) :
+      (∀ p ∈ VE.SoftNorms.decisions D,
+        Fits c entry (VE.SoftNorms.Wire.decisionEntry p.2)) →
+      Fits c (.encodedEnvironment entry) ((VE.SoftNorms.Wire.primeJson D env).toOption.getD .null)
+  | rightsEnvironment {entry : Skel} (D : VE.Rights.RightsDoc) (env : Json) :
+      (∀ p ∈ VE.Rights.Wire.genEntries D, Fits c entry p.2) →
+      Fits c (.encodedEnvironment entry) ((VE.Rights.Wire.primeJsonR D env).toOption.getD .null)
 
 namespace Fits
 
@@ -645,6 +658,7 @@ def condsOk (p : CaseCond → Bool) : Nat → Skel → Bool
     | .arr pre it => pre.all (condsOk p n) && condsOk p n it
     | .all ss | .alt ss => ss.all (condsOk p n)
     | .onCase c t e => p c && condsOk p n t && condsOk p n e
+    | .encodedEnvironment entry => condsOk p n entry
     | _ => true
 
 theorem lookup_mem {fs : List (String × Skel)} {k : String} {s : Skel} (h : fs.lookup k = some s) :
@@ -736,6 +750,18 @@ theorem congr {p : CaseCond → Bool} {c c' : Json} (hp : ∀ cond, p cond = tru
     | succ n =>
       simp only [Skel.condsOk, Bool.and_eq_true] at hn
       exact Fits.onCaseE ((hp _ hn.1.1).symm.trans hc) (ih n hn.2)
+  | softEnvironment D env he ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      exact Fits.softEnvironment D env (fun p hm => ih p hm n hn)
+  | rightsEnvironment D env he ih =>
+    intro n hn
+    cases n with
+    | zero => cases hn
+    | succ n =>
+      exact Fits.rightsEnvironment D env (fun p hm => ih p hm n hn)
 
 end Fits
 
@@ -834,7 +860,22 @@ def simp : Nat → Skel → Skel
       let t := simp fuel t
       let e := simp fuel e
       if t == e then t else .onCase c t e
+    | .encodedEnvironment entry => .encodedEnvironment (simp fuel entry)
     | k => k
+
+/-- The same generated-predicate entry skeleton in every request-selected vocabulary branch.
+Extraction fails if the environment shape stops describing these entries or its branches disagree. -/
+def environmentEntry : Nat → Skel → Option Skel
+  | 0, _ => none
+  | fuel + 1, .obj fields _ _ _ =>
+    match fields.lookup "predicates" with
+    | some (.obj [] (some entry) [] []) => some entry
+    | _ => (fields.lookup "vocabulary").bind (environmentEntry fuel)
+  | fuel + 1, .onCase _ t e => do
+    let a ← environmentEntry fuel t
+    let b ← environmentEntry fuel e
+    if a == b then some a else none
+  | _, _ => none
 
 end Skel
 
@@ -849,6 +890,7 @@ def objectFree (files : List File) : Nat → List String → Shape → Bool
     | .required _ | .object _ _ => false
     | .prefixItems ss | .anyOf ss | .allOf ss => ss.all go
     | .items x | .contains x | .not x | .zip _ x | .rows x | .lean _ x _ | .copied _ x => go x
+    | .encodedEnvironment x => go x
     | .ite _ t e => go t && go e
     | .tagged table => table.all fun (_, slots) => slots.all go
     | .select cs => cs.all fun (_, t) => go t
@@ -978,6 +1020,11 @@ def skeletonOf (files : List File) : Nat → Bool → Shape → StateT Extract (
       pure out
     | .lean _ x _ => go cond x
     | .copied _ _ => pure .any
+    | .encodedEnvironment raw => do
+      let k ← go cond raw
+      let some entry := Skel.environmentEntry depth k
+        | throw "the encoded environment has no common generated-predicate entry shape"
+      pure (.encodedEnvironment entry)
     | .node _ keywords => do
       let skip := keywords.any fun | .prefixItems _ => true | _ => false
       let parts ← keywords.mapM fun k => match k, skip with
