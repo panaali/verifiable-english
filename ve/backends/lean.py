@@ -192,12 +192,14 @@ def _size(value) -> int:
     return value if type(value) is int else len(value)
 
 
-def row_problem(case: dict, row, index: int, response: dict, counts: dict | None = None) -> str | None:
+def row_problem(case: dict, row, index: int, response: dict, counts: dict | None = None, *,
+                coded: bool = False) -> str | None:
     """Why `row` is not a well-formed answer to `case`, or None.
 
-    `response` and `counts` are the binding's manifest schema for `ok` rows.
+    `response` and `counts` are the binding's manifest schema for `ok` rows; `coded` is
+    `identity_problem`'s (a route whose error rows name codes).
     """
-    problem = identity_problem(case, row, index)
+    problem = identity_problem(case, row, index, coded=coded)
     if problem or row["status"] == "error":
         return problem
     for name, spec in response.items():

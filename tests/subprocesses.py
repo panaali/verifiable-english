@@ -33,18 +33,19 @@ class ChildCPU:
         return False
 
 
-def run_cpu_bounded(command, stdin, cpu_seconds):
+def run_cpu_bounded(command, stdin, cpu_seconds, env=None):
     """Run `command` on `stdin` under a kernel CPU-time limit of `cpu_seconds`.
 
     The limit (RLIMIT_CPU) stops a runaway child while it runs, whatever the
     load; HANG_TIMEOUT only catches a child that blocks without computing.
+    `env`, when given, is the child's whole environment.
     Returns the completed process and the CPU seconds it spent; a child the
     limit stopped ends by SIGXCPU or SIGKILL, which the caller reports."""
     def limit():
         resource.setrlimit(resource.RLIMIT_CPU, (int(cpu_seconds), int(cpu_seconds) + 1))
     with ChildCPU() as cpu:
         completed = subprocess.run(command, input=stdin, text=True, capture_output=True,
-                                   timeout=HANG_TIMEOUT, preexec_fn=limit)
+                                   timeout=HANG_TIMEOUT, preexec_fn=limit, env=env)
     log = os.environ.get("VE_BENCH_CPU_LOG")
     if log:  # tools/bench/test_perf.py benchmarks what each bounded child spends
         with open(log, "a") as stream:
