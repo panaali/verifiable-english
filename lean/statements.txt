@@ -25750,20 +25750,75 @@ theorem VE.Service.coding_of_status
   ∀ (result : Lean.Json), result.getObjValD "status" ≠ Lean.Json.str "error" → VE.Service.coding result = []
   -- uses VE.Service.coding@VE.Service.Protocol
   -- expr 3882396647
+theorem VE.Service.expandCases_unexpanded
+  ∀ (h : VE.Service.Handles) (m : VE.Service.Mode) (cases : Array (Except String Lean.Json)),
+    m = VE.Service.Mode.english ∨ m = VE.Service.Mode.riskEval → VE.Service.expandCases h m cases = Except.ok cases
+  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Protocol VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol
+  -- expr 3871372086
+theorem VE.Service.expand_hit
+  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (env : Lean.Json),
+    (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
+      (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
+        h.table[d]? = Option.some env →
+          h.expand (Lean.Json.obj kvs) =
+            Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" env))
+  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 3036323980
+theorem VE.Service.expand_miss
+  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String),
+    (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
+      (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
+        h.table[d]? = Option.none →
+          h.expand (Lean.Json.obj kvs) =
+            Except.error
+              (ToString.toString "CheckerUnavailable: environment handle " ++ ToString.toString d ++
+                ToString.toString " is not registered")
+  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 2688008507
+theorem VE.Service.expand_plain
+  ∀ (h : VE.Service.Handles) (j : Lean.Json),
+    (∀ (d : String), j.getObjVal? VE.Service.handleKey ≠ Except.ok (Lean.Json.str d)) → h.expand j = Except.ok j
+  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 1413960625
+theorem VE.Service.registerOne_digest
+  ∀ (h : VE.Service.Handles) (key raw digest : String),
+    VE.Service.decodeString "environment handle" key = Except.ok digest →
+      VE.Service.caseDigest raw ≠ digest →
+        VE.Service.registerOne h (key, raw) =
+          Except.error
+            (ToString.toString "InvalidInput: environment handle " ++ ToString.toString digest ++
+              ToString.toString " is not the SHA-256 of its text")
+  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.caseDigest@VE.Service.Protocol VE.Service.decodeString@VE.Service.Protocol VE.Service.registerOne@VE.Service.Protocol
+  -- expr 965477195
+theorem VE.Service.registerOne_ok
+  ∀ (h : VE.Service.Handles) (key raw : String) (env : Lean.Json),
+    VE.Service.decodeString "environment handle" key = Except.ok (VE.Service.caseDigest raw) →
+      VE.JsonInput.parse raw.trim 254 = Except.ok env →
+        VE.Service.registerOne h (key, raw) = Except.ok (h.insert (VE.Service.caseDigest raw) env raw.trim.utf8ByteSize)
+  -- uses VE.JsonInput.parse@VE.Json VE.Service.Handles.insert@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.caseDigest@VE.Service.Protocol VE.Service.decodeString@VE.Service.Protocol VE.Service.registerOne@VE.Service.Protocol
+  -- expr 3632852210
+theorem VE.Service.register_none
+  ∀ (h : VE.Service.Handles) (r : VE.Service.Request),
+    r.environmentsText = Option.none → VE.Service.register h r = Except.ok h
+  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Request.environmentsText@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.register@VE.Service.Protocol
+  -- expr 2117551308
 theorem VE.Service.rejectionCode_mem
   ∀ (m : String), VE.Service.rejectionCode m ∈ VE.Service.rejectionCodes
   -- uses VE.Service.rejectionCode@VE.Service.Protocol VE.Service.rejectionCodes@VE.Service.Protocol
   -- expr 3222032837
 theorem VE.Service.respond_decoded
-  ∀ (line : String) (members : Array (String × String)) (r : VE.Service.Request),
+  ∀ (h : VE.Service.Handles) (line : String) (members : Array (String × String)) (r : VE.Service.Request),
     VE.Service.objectMembers line = Except.ok members →
       VE.Service.decodeRequest members = Except.ok r →
-        VE.Service.respond line =
-          match VE.Service.runRequest r with
-          | Except.ok answer => answer
+        (VE.Service.respond h line).fst =
+          match VE.Service.register h r with
           | Except.error message => VE.Service.requestError r message
-  -- uses VE.Service.Request@VE.Service.Protocol VE.Service.decodeRequest@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.objectMembers@VE.Service.Protocol VE.Service.requestError@VE.Service.Protocol VE.Service.respond@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
-  -- expr 2337814173
+          | Except.ok h' =>
+            match VE.Service.runRequest h' r with
+            | Except.ok answer => answer
+            | Except.error message => VE.Service.requestError r message
+  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.decodeRequest@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.objectMembers@VE.Service.Protocol VE.Service.register@VE.Service.Protocol VE.Service.requestError@VE.Service.Protocol VE.Service.respond.match_1@VE.Service.Protocol VE.Service.respond@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
+  -- expr 1165328922
 theorem VE.Service.results_eq
   ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (i : Nat) (h : i < cases.size),
     (VE.Service.results r cases)[i]? = Option.some (VE.Service.caseResult r.mode i cases[i])
@@ -25896,17 +25951,19 @@ theorem VE.Service.runMode_speechActs
   -- uses VE.Service.Mode.speechActs@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
   -- expr 4195833241
 theorem VE.Service.runRequest_ok
-  ∀ (r : VE.Service.Request) (budget : VE.Service.Budget) (cases : Array (Except String Lean.Json))
-    (digests : Array String),
+  ∀ (h : VE.Service.Handles) (r : VE.Service.Request) (budget : VE.Service.Budget)
+    (cases expanded : Array (Except String Lean.Json)) (digests : Array String),
     r.budget = Except.ok budget →
       r.cases.utf8ByteSize ≤ budget.bytes →
         r.cases.trim.startsWith "[" = Bool.true →
           VE.Service.decodeCases r = Except.ok cases →
             cases.size ≤ budget.cases →
               VE.Service.caseDigests r.cases = Except.ok digests →
-                digests.size = cases.size → VE.Service.runRequest r = Except.ok (VE.Service.response r cases digests)
-  -- uses VE.Service.Budget.bytes@VE.Service.Protocol VE.Service.Budget.cases@VE.Service.Protocol VE.Service.Budget@VE.Service.Protocol VE.Service.Request.budget@VE.Service.Protocol VE.Service.Request.cases@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseDigests@VE.Service.Protocol VE.Service.decodeCases@VE.Service.Protocol VE.Service.response@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
-  -- expr 1258966576
+                digests.size = cases.size →
+                  VE.Service.expandCases h r.mode cases = Except.ok expanded →
+                    VE.Service.runRequest h r = Except.ok (VE.Service.response r expanded digests)
+  -- uses VE.Service.Budget.bytes@VE.Service.Protocol VE.Service.Budget.cases@VE.Service.Protocol VE.Service.Budget@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Request.budget@VE.Service.Protocol VE.Service.Request.cases@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseDigests@VE.Service.Protocol VE.Service.decodeCases@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol VE.Service.response@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
+  -- expr 1959429401
 theorem VE.SoftNorms.Admission.admitDocument_spec
   ∀ (environment document : Lean.Json) (res : VE.SoftNorms.Admission.Admitted),
     VE.SoftNorms.Admission.admitDocument environment document = Except.ok res →
