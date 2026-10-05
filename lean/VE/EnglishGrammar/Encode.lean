@@ -2,6 +2,8 @@ import VE.EnglishGrammar.Actions
 import VE.Route.Gate
 import VE.Route.Wire
 import VE.Core.Bridge
+import VE.Norms.Plain
+import VE.Risk.Wire
 
 /-! The wire form of a reading, the typed check of a document, and the environment decoder of the
 English instance (docs/spec/english-lean-s2.md 2.3, 2.10 and 2.15).
@@ -17,6 +19,18 @@ environment JSON the request carried (`Env.source`) and on the encoded formulas.
 `Env.decode` reads the lexical view and the signatures from the environment and applies an English
 vocabulary overlay as Python's `display_environment` does: a sort's noun, a predicate's wording (with
 its negative, which never survives a changed positive) and a constant's display form.
+
+S3 (docs/spec/english-lean-s3.md 2.3): `Env.decode` also reads a predicate's `functional` and `total` flags and
+description, the `alternatives` block (present exactly when `alternatives@0` is named), and adds what the
+profile blocks generate, as Python's display environment does: the four `alternatives@0` words and their forms
+and aliases, the severity sort, its classes and the five risk predicates with their forms and negatives, and
+under `norms@0` the modal form of each predicate regulated as a permission or an obligation, read from the
+canonical act of `Norms.Wire` (F6). The typed check reads the typing view of the environment (2.3, part 2):
+under `risk@0` the risk declarations removed as `Risk.Wire.riskNormsView` removes them and the generated risk
+symbols declared (`riskView`), under `alternatives@0` the block removed and its four words declared
+(`alternativesView`), under `norms@0` the `regulated` extension checked and removed. `riskView` and
+`alternativesView` are `VE.Service.Standalone.riskReduced` and `alternativesReduced`, which this layer may not
+import; `VE.EnglishGrammar.Run` proves each equal to its original (`riskView_eq`, `alternativesView_eq`).
 -/
 
 namespace VE.EnglishGrammar
@@ -51,8 +65,72 @@ def EFormula.encode : EFormula → Json
   | .reachBody k s a t u =>
     .arr #[.str "reach", reachKind k, .arr #[.str "body", .str s, a.encode], t.encode, u.encode]
 
+/-! ## The typing view (S3 spec 2.3, part 2) -/
+
+/-- `VE.Service.Standalone.alternativesReduced`, word for word (`Run.alternativesView_eq`). -/
+def alternativesView (environment : Json) : Except String Json := do
+  let block ← environment.getObjVal? "alternatives"
+  let chooser ← VE.Bridge.stringField block "chooser"
+  let action ← VE.Bridge.stringField block "action"
+  let harm ← VE.Bridge.stringField block "harm"
+  let word := fun (args : List String) => Json.mkObj [("arguments", toJson args),
+    ("description", .str "alternatives@0 profile word")]
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let words := [("avoidable", word [harm, chooser]), ("unavoidable", word [harm, chooser]),
+    ("allows", word [action, harm]), ("prevents", word [action, harm])]
+  let profiles := (← VE.Route.Gate.profilesOf environment).erase "alternatives@0"
+  let fields := (← VE.Bridge.fields environment).filter (·.1 != "alternatives")
+  pure (((Json.mkObj fields).setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    (vocabulary.setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
+
+/-- `VE.Service.Standalone.riskReduced`, word for word (`Run.riskView_eq`). -/
+def riskView (environment : Json) : Except String Json := do
+  let ps ← VE.Route.Gate.profilesOf environment
+  let block ← environment.getObjVal? "alternatives"
+  let severity ← (← environment.getObjVal? "risk").getObjVal? "severity"
+  let sort ← VE.Bridge.stringField severity "sort"
+  let classes ← VE.Bridge.strings (← severity.getObjVal? "classes")
+  let action ← VE.Bridge.stringField block "action"
+  let harm ← VE.Bridge.stringField block "harm"
+  let view ← VE.Risk.Wire.riskNormsView environment ps
+  let view := (view.setObjVal! "alternatives" block).setObjVal! "profiles" (toJson (ps.erase "risk@0"))
+  let vocabulary ← view.getObjVal? "vocabulary"
+  let sorts ← VE.Bridge.fields (← vocabulary.getObjVal? "sorts")
+  let constants ← VE.Bridge.fields (← vocabulary.getObjVal? "constants")
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  let word := fun (args : List String) => Json.mkObj [("arguments", toJson args),
+    ("description", .str "risk@0 generated word")]
+  let words := [("risk__might_lead_to", word [action, harm]), ("risk__class", word [harm, sort]),
+    ("risk__more_severe", word [sort, sort]), ("risk__or_worse", word [harm, sort]),
+    ("risk__less_worst", word [action, action])]
+  let severityClasses := classes.map fun c => (c, Json.mkObj [("sort", .str sort),
+    ("description", .str "risk severity class")])
+  pure (view.setObjVal! "vocabulary" (((vocabulary.setObjVal! "sorts"
+    (Json.mkObj (sorts ++ [(sort, Json.mkObj [("description", .str "risk severity")])]))).setObjVal! "constants"
+    (Json.mkObj (constants ++ severityClasses))).setObjVal! "predicates" (Json.mkObj (predicates ++ words))))
+
+/-- The `regulated` extension checked as `Standalone.validated` checks it, then removed. -/
+def regulatedView (environment : Json) : Except String Json := do
+  let vocabulary ← environment.getObjVal? "vocabulary"
+  let predicates ← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")
+  if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
+    let _ ← VE.Norms.Plain.decodeRegulatedAll predicates
+    let stripped := predicates.map fun (p, entry) => (p, VE.Risk.Wire.dropField "regulated" entry)
+    pure (environment.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj stripped)))
+  else pure environment
+
+/-- The typing view of an environment (S3 spec 2.3, part 2): `riskView` under `risk@0`, then
+`alternativesView` under `alternatives@0`, then `regulatedView` under `norms@0`. An environment without these
+profiles is its own view. -/
+def typingView (environment : Json) : Except String Json := do
+  let ps := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  let env ← if ps.contains "risk@0" then riskView environment else pure environment
+  let env ← if ps.contains "alternatives@0" then alternativesView env else pure env
+  if ps.contains "norms@0" then regulatedView env else pure env
+
 /-- The typed check of a document of encoded formulas against an environment JSON, by the standalone
-typing service's decoders, family by family. -/
+typing service's decoders, family by family, over the environment's typing view (S3 spec 2.3). -/
 def typedCheck (environment ast : Json) : Except String Unit := do
   let language ← VE.Bridge.stringField environment "language"
   if language == "ve.core@0" then
@@ -69,7 +147,7 @@ def typedCheck (environment ast : Json) : Except String Unit := do
       let _ ← VE.Closure.Bridge.decodeFormulas v.environment ast
       pure ()
   else
-    let e ← VE.Route.Gate.decodeEnvelope environment
+    let e ← VE.Route.Gate.decodeEnvelope (← typingView environment)
     VE.Route.AstLimit.check (← ast.getArr?).toList
     match e.family with
     | .fol =>
@@ -109,6 +187,73 @@ def optFields (j : Json) (name : String) : Except String (List (String × Json))
   | .ok o => VE.Bridge.fields o
   | .error _ => pure []
 
+/-- An optional Boolean field, `false` when absent. -/
+def optBool (j : Json) (name : String) : Except String Bool :=
+  match j.getObjVal? name with
+  | .ok b => b.getBool?
+  | .error _ => pure false
+
+/-- The `alternatives@0` block of an environment (S3 spec 2.3): present exactly when the profile is named. -/
+def decodeAltBlock (environment : Json) (profiles : List String) : Except String (Option AltBlock) := do
+  match environment.getObjVal? "alternatives", profiles.contains "alternatives@0" with
+  | .ok b, true =>
+    let action ← VE.Bridge.stringField b "action"
+    let chooser ← VE.Bridge.stringField b "chooser"
+    let harm ← VE.Bridge.stringField b "harm"
+    let available ← VE.Bridge.stringField b "available"
+    let leadsTo ← VE.Bridge.stringField b "leads_to"
+    pure (some { action, chooser, harm, available, leadsTo })
+  | .error _, false => pure none
+  | _, true => throw "InvalidInput: alternatives@0 is named without its block"
+  | _, false => throw "UnsupportedProfile: an alternatives block requires alternatives@0"
+
+/-- The modal form of a regulated predicate (S3 spec 2.3, F6): the canonical act with `{0} ` replaced once by
+`{0} may ` or `{0} must `; none for a predicate that is not a permission or an obligation. -/
+def modalForm (name : String) (args : List String) (entry : Json) : Except String (Option String) := do
+  match entry.getObjVal? "regulated" with
+  | .error _ => pure none
+  | .ok raw =>
+    let r ← VE.Norms.Wire.decodeRegulated name args raw
+    match r.role, r.act with
+    | .permission, some act => pure (some (replaceFirst act "{0} " "{0} may "))
+    | .obligation, some act => pure (some (replaceFirst act "{0} " "{0} must "))
+    | _, _ => pure none
+
+/-- What the profile blocks generate (S3 spec 2.3; `ve/environment.py:658–680`, `english.py:393–468`): the
+sorts, predicates and constants, and the forms they fix. `roles` are the block's role predicates with their
+decoded wordings. -/
+def blockSymbols (environment : Json) (block : Option AltBlock) (risk : Bool)
+    (roles : List (String × String)) :
+    Except String (List SortDecl × List PredDecl × List ConstDecl × ProfileForms) := do
+  match block with
+  | none => pure ([], [], [], {})
+  | some B =>
+    let gen := fun (name : String) (args : List String) => ({ name, arity := args.length, args } : PredDecl)
+    let altPreds := [gen "avoidable" [B.harm, B.chooser], gen "unavoidable" [B.harm, B.chooser],
+      gen "allows" [B.action, B.harm], gen "prevents" [B.action, B.harm]]
+    let altForms : ProfileForms := {
+      wordings := roles ++ [("avoidable", "{0} is avoidable by {1}"), ("unavoidable", "{0} is unavoidable by {1}"),
+        ("allows", "{0} allows {1} to happen"),
+        ("prevents", if risk then "{0} might prevent {1}" else "{0} prevents {1}")],
+      aliases := [("avoidable", "{0} is preventable by {1}", false), ("allows", "{0} lets {1} happen", false)] ++
+        (if risk then [] else [(B.leadsTo, "{0} does not lead to {1}", true)]) }
+    if !risk then pure ([], altPreds, [], altForms)
+    else
+      let severity ← (← environment.getObjVal? "risk").getObjVal? "severity"
+      let sort ← VE.Bridge.stringField severity "sort"
+      let classes ← VE.Bridge.strings (← severity.getObjVal? "classes")
+      let riskPreds := [gen "risk__might_lead_to" [B.action, B.harm], gen "risk__class" [B.harm, sort],
+        gen "risk__more_severe" [sort, sort], gen "risk__or_worse" [B.harm, sort],
+        gen "risk__less_worst" [B.action, B.action]]
+      pure ([{ name := sort }], altPreds ++ riskPreds, classes.map fun c => ({ name := c, sort } : ConstDecl),
+        { altForms with
+          wordings := altForms.wordings ++ [("risk__might_lead_to", "{0} might lead to {1}"),
+            ("risk__class", "{0} is {1}"), ("risk__or_worse", "{0} is {1} or worse"),
+            ("risk__less_worst", "{0} has a less severe worst case than {1}"),
+            ("risk__more_severe", "{0} is more severe than {1}")],
+          negatives := [(B.leadsTo, "{0} might not lead to {1}"), ("risk__might_lead_to", "{0} cannot lead to {1}")],
+          nouns := [(sort, "severity")] })
+
 /-- The environment of the English reader, from the environment JSON and an English vocabulary overlay
 (an object with `sorts`, `predicates` and `constants`, or `{}` for none). -/
 def Env.decode (environment overlay : Json) : Except String Env := do
@@ -124,16 +269,29 @@ def Env.decode (environment overlay : Json) : Except String Env := do
       | some o => (o.getObjValD "verbalisation").getObjValD "singular" |>.getStr?.toOption
       | none => (entry.getObjValD "verbalisation").getObjValD "singular" |>.getStr?.toOption
     pure ({ name, noun } : SortDecl)
-  let predicates ← (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")).mapM fun (name, entry) => do
+  let decoded ← (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates")).mapM fun (name, entry) => do
     let args ← VE.Bridge.strings (← entry.getObjVal? "arguments")
     let (wording, negative) := match VE.Bridge.lookup oPreds name with
       | some o => (optString o "verbalisation", optString o "negative_verbalisation")
       | none => (optString entry "verbalisation", optString entry "negative_verbalisation")
-    pure ({ name, arity := args.length, wording, negative, args } : PredDecl)
+    let modal ← if profiles.contains "norms@0" then modalForm name args entry else pure none
+    pure (({ name, arity := args.length, wording, negative, args, functional := ← optBool entry "functional",
+             total := ← optBool entry "total", modal := modal.isSome,
+             description := (optString entry "description").getD "" } : PredDecl), modal)
+  let predicates := decoded.map (·.1)
+  let modalForms := decoded.filterMap fun (d, m) => m.map (d.name, ·)
+  let alternatives ← decodeAltBlock environment profiles
+  let roles := match alternatives with
+    | some _ => (["available", "leads_to", "inaction", "taken", "proximate"].filterMap fun r =>
+        optString (environment.getObjValD "alternatives") r).filterMap fun p =>
+          ((predicates.find? (·.name == p)).bind (·.wording)).map (p, ·)
+    | none => []
+  let (gSorts, gPreds, gConsts, forms) ← blockSymbols environment alternatives (profiles.contains "risk@0") roles
   let constants ← (← VE.Bridge.fields (← vocabulary.getObjVal? "constants")).mapM fun (name, entry) => do
     let sort ← VE.Bridge.stringField entry "sort"
     let display := (VE.Bridge.lookup oConsts name).bind (optString · "verbalisation")
     pure ({ name, display, sort } : ConstDecl)
-  pure { sorts, predicates, constants, profiles, source := environment }
+  pure { sorts := sorts ++ gSorts, predicates := predicates ++ gPreds, constants := constants ++ gConsts, profiles,
+         forms := { forms with wordings := forms.wordings ++ modalForms }, source := environment, alternatives }
 
 end VE.EnglishGrammar
