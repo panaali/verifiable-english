@@ -240,7 +240,7 @@ def test_lean_background_is_asked_once_per_request(monkeypatch):
     from ve.environment import Environment
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
-    monkeypatch.setattr(background_module, "_LEAN_BACKGROUND", {})
+    monkeypatch.setattr(relay, "_answers", __import__("weakref").WeakKeyDictionary())
     described = json.loads(json.dumps(POLICY))
     sort = next(iter(described["vocabulary"]["sorts"].values()))
     sort["description"] = "another description"
@@ -251,3 +251,6 @@ def test_lean_background_is_asked_once_per_request(monkeypatch):
     assert background_module.background(env) == first and background_module.background(same) == first
     assert asked == ["norms"] and first
     assert background_module.background(other) == first and asked == ["norms", "norms"]
+    # Another pool (another build) is asked again.
+    monkeypatch.setattr(relay, "_pool", None)
+    assert background_module.background(env) == first and asked == ["norms", "norms", "norms"]
