@@ -46,4 +46,4 @@ theorem.
 260) and the `RiskEvalMain` harness moved (54 out, 57 in as `VE/Risk/Eval.lean`); added are
 `Service/Protocol.lean` (+71: twelve modes, their pins, `parseLeanCases`), `Service/Diagnose.lean` (+34) and
 `Audit.lean` (+13); `lakefile.toml` lost 52 lines. Twelve response schemas (JSON) were added. Tests: 341
-deleted, 668 added (`tests/lean_routes.py` 113, `tests/route_case_recorder.py` 48, 32 new test IDs).
+deleted, 668 added (`tests/lean_routes.py` 113, `tests/route_case_recorder.py` 48, 31 new test IDs).
