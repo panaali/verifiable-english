@@ -1,4 +1,5 @@
 import VE.Readings.Wire
+import VE.Readings.Scan
 import VE.NormDefaults.Run
 import VE.Rights.Run
 
@@ -80,13 +81,13 @@ def candidateJsonSpec (a : Admitted) (R : ReadingSet) (i : Nat) : Except String 
       ("shared", Json.arr ((keys.filter (fun k => !owned a.D R.id i k)).map (keyEntry X)).toArray),
       ("findings", toJson (chainFindings a R i))])
 
-/-- A candidate's row, its document built once (plan F5b). -/
+/-- A candidate's row, its document read once from the request's table (plan F5b). -/
 def candidateJson (a : Admitted) (R : ReadingSet) (i : Nat) : Except String Json := do
   let some c := R.candidates[i]? | throw "InvalidInput: invalid reading"
   match c.content with
   | none => pure (Json.mkObj [("id", .str c.id), ("index", toJson i), ("pending", .bool true)])
   | some _ =>
-    let X := (one a.D R.id i).1
+    let X := (a.side R.id i).1
     let keys := VE.SoftNorms.dedup ((genKeys X).map (·.1))
     pure (Json.mkObj [("id", .str c.id), ("index", toJson i), ("pending", .bool false),
       ("document_hash", .str (← documentHash a R.id i)),
@@ -95,7 +96,8 @@ def candidateJson (a : Admitted) (R : ReadingSet) (i : Nat) : Except String Json
       ("findings", toJson (findingsOf a R i X))])
 
 theorem candidateJson_eq (a : Admitted) (R : ReadingSet) (i : Nat) :
-    candidateJson a R i = candidateJsonSpec a R i := rfl
+    candidateJson a R i = candidateJsonSpec a R i := by
+  simp only [candidateJson, candidateJsonSpec, chainFindings, Admitted.side_eq]
 
 /-! ## Per pair -/
 
@@ -113,53 +115,36 @@ structure PairFacts where
 def pairFactsSpec (a : Admitted) (s : String) (sid other : String) : Except String PairFacts := do
   let (r, sj) ← replayPair a s sid other
   let M := r.σ.base
-  let Ti := tablesFor r.D s r.witness (r.σ.fixed ++ r.σ.decisions)
-  if cells r.D s r.other M > maxCells then throw "ResourceLimit: decision assignments"
-  let Tj := tablesFor r.D s r.other r.σ.fixed
-  pure ⟨r, sj.witness, separates r.D s r.witness r.other r.σ, sideValid r.D s r.witness M Ti,
-    sideValue r.D s r.witness M Ti r.σ.probe,
-    (assignments r.D s r.other M).any (fun G => sideValid r.D s r.other M (Tj ++ G)),
-    if ownedKeys r.D s r.other = [] then sideValue r.D s r.other M Tj r.σ.probe else none⟩
+  let Ti := tablesFor r.D r.set r.witness (r.σ.fixed ++ r.σ.decisions)
+  if cells r.D r.set r.other M > maxCells then throw "ResourceLimit: decision assignments"
+  let Tj := tablesFor r.D r.set r.other r.σ.fixed
+  pure ⟨r, sj.witness, separates r.D r.set r.witness r.other r.σ, sideValid r.D r.set r.witness M Ti,
+    sideValue r.D r.set r.witness M Ti r.σ.probe,
+    (assignments r.D r.set r.other M).any (fun G => sideValid r.D r.set r.other M (Tj ++ G)),
+    if ownedKeys r.D r.set r.other = [] then sideValue r.D r.set r.other M Tj r.σ.probe else none⟩
 
-/-- Candidate j's completions over M: per assignment G of its owned tables, whether it is admissible with the
-    tables T ++ G, and the probe's value, evaluated when first asked for and then kept. -/
-def completions {α : Type} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α)
-    (T : List (GenKey × List (List α))) (q : Probe α) : List (Bool × Thunk (Option Bool)) :=
-  (assignments D s j M).map (fun G => (sideValid D s j M (T ++ G), Thunk.mk (fun _ => sideValue D s j M (T ++ G) q)))
-
-/-- `separates` with the witness's completion and the other side's completions given. -/
-def separatesWith {α : Type} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α)
-    (valid : Bool) (value : Option Bool) (others : List (Bool × Thunk (Option Bool))) : Bool :=
-  situationWF D s i j σ && valid && value == some σ.value && decide (cells D s j σ.base ≤ maxCells) &&
-  others.all (fun o => !(o.1 && o.2.get == some σ.value))
-
-theorem separatesWith_eq {α : Type} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) :
-    separatesWith D s i j σ (sideValid D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)))
-      (sideValue D s i σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) σ.probe)
-      (completions D s j σ.base (tablesFor D s j σ.fixed) σ.probe) = separates D s i j σ := by
-  simp only [separatesWith, separates, completions, List.all_map, Function.comp_def]
-  rfl
-
-theorem assignments_of_ownedKeys_nil {α : Type} [DecidableEq α] (D : Doc) (s : String) (j : Nat)
-    (M : VE.FiniteModel α) (h : ownedKeys D s j = []) : assignments D s j M = [[]] := by
-  unfold assignments
-  rw [h]
-  rfl
-
-/-- The facts of one pair, each side's completion evaluated once (plan F5b): the witness's for `separates` and for
-    its two fields, the other side's for `separates`, `other_admissible` and `other_value`. -/
+/-- The facts of one pair, each side's documents read from the request's table and each completion evaluated at
+    most once and only when needed (plan F5b): the witness's for `separated` and its two fields; with no owned key
+    the other side's one completion for `separated`, `other_admissible` and `other_value`; otherwise the other
+    side's completions through `otherScan`. `situationWF` is the replay's `shape` and the bound was checked, so
+    neither is evaluated again. -/
 def pairFacts (a : Admitted) (s : String) (sid other : String) : Except String PairFacts := do
   let (r, sj) ← replayPair a s sid other
   let M := r.σ.base
-  let Ti := tablesFor r.D s r.witness (r.σ.fixed ++ r.σ.decisions)
-  if cells r.D s r.other M > maxCells then throw "ResourceLimit: decision assignments"
-  let Tj := tablesFor r.D s r.other r.σ.fixed
-  let valid := sideValid r.D s r.witness M Ti
-  let value := sideValue r.D s r.witness M Ti r.σ.probe
-  let others := completions r.D s r.other M Tj r.σ.probe
-  pure ⟨r, sj.witness, separatesWith r.D s r.witness r.other r.σ valid value others, valid, value,
-    others.any (·.1),
-    if ownedKeys r.D s r.other = [] then (others.head?.map (·.2.get)).getD none else none⟩
+  let ks := ownedKeysOf r.D r.set r.other r.Xj.1
+  if cellsOf ks r.Xj.1 M > maxCells then throw "ResourceLimit: decision assignments"
+  let Ti := tablesForOf r.Xi.1 (r.σ.fixed ++ r.σ.decisions)
+  let Tj := tablesForOf r.Xj.1 r.σ.fixed
+  let valid := sideValidOf r.Xi.1 M Ti
+  let value := sideValueOf r.Xi M Ti r.σ.probe
+  let want := valid && value == some r.σ.value
+  if ks = [] then
+    let ok := sideValidOf r.Xj.1 M Tj
+    let v := sideValueOf r.Xj M Tj r.σ.probe
+    pure ⟨r, sj.witness, want && !(ok && v == some r.σ.value), valid, value, ok, v⟩
+  else
+    let o := otherScan (m := Id) (pure ()) (pure ()) r.Xj M Tj r.σ.probe r.σ.value want (assignmentsOf ks r.Xj.1 M)
+    pure ⟨r, sj.witness, want && !o.1, valid, value, o.2, none⟩
 
 theorem pairFacts_eq (a : Admitted) (s : String) (sid other : String) :
     pairFacts a s sid other = pairFactsSpec a s sid other := by
@@ -170,25 +155,28 @@ theorem pairFacts_eq (a : Admitted) (s : String) (sid other : String) :
   · rename_i v _
     obtain ⟨r, sj⟩ := v
     dsimp only
+    have hs := r.shape
+    rw [r.hXi, r.hXj]
+    simp only [cells, ownedKeys, tablesFor, sideValid, sideValue, assignments, separates, hs, Bool.true_and]
     split
     · rfl
-    · rw [separatesWith_eq]
-      have hany : (completions r.D s r.other r.σ.base (tablesFor r.D s r.other r.σ.fixed) r.σ.probe).any (·.1) =
-          (assignments r.D s r.other r.σ.base).any
-            (fun G => sideValid r.D s r.other r.σ.base (tablesFor r.D s r.other r.σ.fixed ++ G)) := by
-        simp only [completions, List.any_map, Function.comp_def]
-      rw [hany]
-      by_cases ho : ownedKeys r.D s r.other = []
-      · simp only [ho, if_true, completions, assignments_of_ownedKeys_nil _ _ _ _ ho, List.map_cons, List.map_nil,
-          List.head?_cons, Option.map_some, Option.getD_some, List.append_nil]
-        rfl
+    · rename_i hc
+      have hc' : decide (cellsOf (ownedKeysOf r.D r.set r.other (one r.D r.set r.other).1)
+          (one r.D r.set r.other).1 r.σ.base ≤ maxCells) = true := by simpa using hc
+      by_cases ho : ownedKeysOf r.D r.set r.other (one r.D r.set r.other).1 = []
+      · simp only [ho, if_true, assignmentsOf, cellsOf, List.foldr_nil, List.all_cons, List.all_nil, List.any_cons,
+          List.any_nil, List.append_nil, Bool.and_true, Bool.or_false, List.map_nil, List.sum_nil, Nat.zero_le,
+          decide_true]
       · simp only [ho, if_false]
+        rw [otherScan_id]
+        simp only [hc', Bool.and_true, and_not_and_any]
 
 def pairJson (f : PairFacts) (sid : String) : Json :=
   Json.mkObj ([("situation", .str sid), ("witness", .str f.witnessName), ("separated", .bool f.separated),
     ("witness_admissible", .bool f.witnessValid), ("witness_value", optBool f.witnessValue),
     ("other_admissible", .bool f.otherAdmissible)] ++
-    (if ownedKeys f.replay.D f.replay.set f.replay.other = [] then [("other_value", optBool f.otherValue)] else []))
+    (if ownedKeysOf f.replay.D f.replay.set f.replay.other f.replay.Xj.1 = [] then [("other_value", optBool f.otherValue)]
+     else []))
 
 /-- 4.5 for every pair of a set, neither pending, in index order: each must be separated by its situation. -/
 def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List Json) := do
@@ -218,13 +206,25 @@ def setPairs (a : Admitted) (R : ReadingSet) (RJ : SetJ) : Except String (List J
 def decisionOnlyText (s : String) (i j : Nat) : String :=
   s!"SeparatedByDecisionOnly: {s}: {i}, {j} (not certified)"
 
-/-- 4.6: the findings of an admitted set, per unordered pair. -/
-def setFindings (a : Admitted) (R : ReadingSet) : List String :=
+/-- 4.6: the findings of an admitted set, per unordered pair, as specified. -/
+def setFindingsSpec (a : Admitted) (R : ReadingSet) : List String :=
   let n := R.candidates.length
   (List.range n).flatMap (fun i => ((List.range n).filter (i < ·)).flatMap (fun j =>
     (if (decisionOnly a.D R.id i j).isSome then [decisionOnlyText R.id i j]
      else if (decisionOnly a.D R.id j i).isSome then [decisionOnlyText R.id j i] else []) ++
     (if (actOnly a.D R.id i j).isSome then [s!"SeparatedByActOnly: {R.id}: {i}, {j}"] else [])))
+
+/-- 4.6, each candidate's document read from the request's table. -/
+def setFindings (a : Admitted) (R : ReadingSet) : List String :=
+  let n := R.candidates.length
+  let X := a.side R.id
+  (List.range n).flatMap (fun i => ((List.range n).filter (i < ·)).flatMap (fun j =>
+    (if (decisionOnlyOf a.D R.id i j (X i) (X j)).isSome then [decisionOnlyText R.id i j]
+     else if (decisionOnlyOf a.D R.id j i (X j) (X i)).isSome then [decisionOnlyText R.id j i] else []) ++
+    (if (actOnlyOf a.D R.id i j (X i) (X j)).isSome then [s!"SeparatedByActOnly: {R.id}: {i}, {j}"] else [])))
+
+theorem setFindings_eq (a : Admitted) (R : ReadingSet) : setFindings a R = setFindingsSpec a R := by
+  simp only [setFindings, setFindingsSpec, decisionOnly, actOnly, Admitted.side_eq]
 
 def validateResult (a : Admitted) : Except String (List (String × Json)) := do
   let sets := a.D.sets.filter contentBearing
