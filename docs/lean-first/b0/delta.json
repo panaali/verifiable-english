@@ -129,5 +129,14 @@
  ],
  "order": [],
  "verdict": [],
- "availability": []
+ "availability": [],
+ "unavailable": [
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261003T0600Z:usecases/udhr-pilot/run-20261003T0600Z/translation.ve.md",
+   "op": "document_check",
+   "reason": "U1 of DELTA.md: the readings route needs far longer than its 120 s runner timeout on this document, on base and head alike, so the record is CheckerUnavailable on both sides and shows nothing about preservation."
+  }
+ ]
 }

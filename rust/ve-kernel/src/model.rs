@@ -1,8 +1,8 @@
 use crate::{
     Environment, Error, Formula, MAX_EVALUATIONS, Result, Term, digest,
-    eval::Evaluator,
     environment::{identifier, string},
     error, loads_json,
+    semantics::Evaluator,
     wire::{fields, object},
 };
 use serde_json::{Value, json};
