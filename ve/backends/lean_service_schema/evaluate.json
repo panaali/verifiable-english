@@ -1,26 +1,40 @@
 {
   "$id": "evaluate.json",
   "$comment": "Mode evaluate: Order.runEvaluationCaseReported (Bridge.runCase, Closure.Bridge.runCase). A kind field selects a countermodel request and must be exactly countermodel.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"$ref": "common.json#/$defs/error"},
-    {"x-select": [
-      {"when": {"$ref": "common.json#/$defs/no_kind"}, "then": {"$ref": "#/$defs/document"}},
-      {"when": {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "countermodel"}}},
-       "then": {"$ref": "#/$defs/countermodel"}}]}]},
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "x-select": [
+          {"then": {"$ref": "#/$defs/document"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
+          {
+            "then": {"$ref": "#/$defs/countermodel"},
+            "when": {"properties": {"kind": {"const": "countermodel"}}, "required": ["kind"], "type": "object"}
+          }
+        ]
+      }
+    ]
+  },
   "$defs": {
-    "document": {"type": "object", "required": ["id", "status", "values", "value", "canonical"], "additionalProperties": false,
+    "countermodel": {
+      "additionalProperties": false,
+      "properties": {"id": {"type": "string", "x-equals": "/id"}, "refutes": {"type": "boolean"}, "status": {"const": "ok"}},
+      "required": ["id", "status", "refutes"],
+      "type": "object"
+    },
+    "document": {
+      "$comment": "That value is the conjunction of values is the service's.",
+      "additionalProperties": false,
       "properties": {
+        "canonical": {"type": "string"},
         "id": {"type": "string", "x-equals": "/id"},
         "status": {"const": "ok"},
-        "values": {"$ref": "common.json#/$defs/values"},
         "value": {"type": "boolean"},
-        "canonical": {"type": "string"}},
-      "$comment": "That value is the conjunction of values is the service's."},
-    "countermodel": {"type": "object", "required": ["id", "status", "refutes"], "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "refutes": {"type": "boolean"}}}
+        "values": {"$ref": "common.json#/$defs/values"}
+      },
+      "required": ["id", "status", "values", "value", "canonical"],
+      "type": "object"
+    }
   }
 }

@@ -1,8 +1,7 @@
 import VE.Risk.Admission
 import VE.Alternatives.Run
 
-/-! The `ve_risk_route` executable (docs/spec/risk.md 7.3), invoked as
-`lean/.lake/build/bin/ve_risk_route <cases.json|->`. Each case is
+/-! The `ve_service` mode `risk` (docs/spec/risk.md 7.3), formerly the one-shot `ve_risk_route`. Each case is
 `{"id", "kind", "environment", "document", ...}` with the `alternatives` and
 `risk` blocks in the environment, `risk@0`, `alternatives@0` and `norms@0`
 among its profiles, and `document` = `{"norms", "units"?}` (the norm objects
@@ -629,23 +628,5 @@ def runCaseReported (j : Json) : Json :=
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
   else VE.Alternatives.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_risk_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"), ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.Risk.Run

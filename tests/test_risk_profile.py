@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
+
 from ve.environment import Environment
 from ve.english import parse_english_with_metadata
 from ve.norm_english import parse_english as parse_norm_english
@@ -128,8 +129,11 @@ def test_excludes_and_route_unavailable(monkeypatch, tmp_path):
     with pytest.raises(CheckerUnavailable, match="Lean checker"):
         run_case(case)
     monkeypatch.delenv("VE_AUTHORITY")
-    with pytest.raises(CheckerUnavailable, match="unavailable"):
-        run_case(case, binary=tmp_path / "absent")
+    from ve.backends import relay
+    from ve.backends.lean_service import LeanServicePool
+    monkeypatch.setattr(relay, "_pool", LeanServicePool(size=1, executable=tmp_path / "absent"))
+    with pytest.raises(CheckerUnavailable, match="missing Lean service executable"):
+        run_case(case)
 
 
 def _decision_cases():
@@ -167,16 +171,12 @@ def test_python_authority_gives_no_record_verdict(monkeypatch):
         run_case({"id": "x", "kind": [], "environment": {}})
 
 
-@pytest.mark.skipif(not (Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route").exists(),
-                    reason="ve_risk_route is not built")
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(),
+                    reason="the Lean service is not built")
 def test_record_diagnostics_are_the_routes():
     """risk.md 6: record diagnostics come from the Lean route; Python only dispatches."""
-    import json
-    import subprocess
-    binary = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_risk_route"
     cases = _decision_cases()
-    direct = json.loads(subprocess.run([str(binary), "-"], input=json.dumps(list(cases.values())), text=True,
-                                       capture_output=True, timeout=HANG_TIMEOUT).stdout)
+    direct = lean_routes.rows("risk", list(cases.values()))
     for (name, case), expected in zip(cases.items(), direct):
         assert run_case(case) == expected, name
     errors = {name: row["error"] for name, row in zip(cases, direct)}

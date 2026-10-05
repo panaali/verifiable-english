@@ -1,8 +1,7 @@
 import VE.SoftNorms.Admission
 import VE.Norms.Run
 
-/-! The `ve_soft_norms_route` executable (docs/spec/soft-norms.md 9.4), invoked as
-`lean/.lake/build/bin/ve_soft_norms_route <cases.json|->`. Each case is
+/-! The `ve_service` mode `soft-norms` (docs/spec/soft-norms.md 9.4), formerly the one-shot `ve_soft_norms_route`. Each case is
 `{"id", "environment", "kind", ...}`; a `soft-norms@0` environment must also
 enable `norms@0`.
 
@@ -358,24 +357,5 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message), ("code", .str (reportedCode j message))]
   else Norms.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_soft_norms_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.SoftNorms.Run

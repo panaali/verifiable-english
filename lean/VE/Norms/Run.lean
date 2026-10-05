@@ -3,8 +3,7 @@ import VE.Norms.Flagged
 import VE.Norms.Plain
 import VE.Route.Run
 
-/-! The `ve_norms_route` executable (docs/spec/norms.md 11.4), invoked as
-`lean/.lake/build/bin/ve_norms_route <cases.json|->`. Each case is
+/-! The `ve_service` mode `norms` (docs/spec/norms.md 11.4), formerly the one-shot `ve_norms_route`. Each case is
 `{"id", "environment", "kind", ...}`.
 
 * `norms-elaborate`: `norms` (an array of norm objects, 3.2) → the regenerated
@@ -198,24 +197,5 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]
   else VE.Route.Run.runCaseReported j
-
-def main (paths : List String) : IO UInt32 := do
-  let input ← match paths with
-    | [] | ["-"] => (← IO.getStdin).readToEnd
-    | [path] => IO.FS.readFile path
-    | _ =>
-      (← IO.getStderr).putStrLn "usage: ve_norms_route [cases.json|-]"
-      return 2
-  match VE.JsonInput.parseCases input with
-  | .error message =>
-    (← IO.getStderr).putStrLn message
-    return 2
-  | .ok cases =>
-    let results := cases.mapIdx fun index c => match c with
-      | .ok j => runCaseReported j
-      | .error message => Json.mkObj [("status", .str "error"),
-          ("case_index", toJson index), ("error", .str message)]
-    (← IO.getStdout).putStrLn (Json.arr results).compress
-    return if results.any (fun r => r.getObjValD "status" == .str "error") then 1 else 0
 
 end VE.Norms.Run

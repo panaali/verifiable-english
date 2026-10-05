@@ -1,14 +1,21 @@
 {
   "$id": "bundle.json",
   "$comment": "Lemma bundle over any family (Service.FamilyBundle.bundleCase): every requested lemma is checked, in order, under its meaning id (binding to the request's lemmas); citation soundness is FamilyBundle.bundle_sound.",
-  "row": {"anyOf": [
-    {"$ref": "common.json#/$defs/case_error"},
-    {"$ref": "common.json#/$defs/error"},
-    {"type": "object", "required": ["id", "status", "checked", "lemmas"],
-      "additionalProperties": false,
-      "properties": {
-        "id": {"type": "string", "x-equals": "/id"},
-        "status": {"const": "ok"},
-        "checked": {"$ref": "common.json#/$defs/nat", "x-count": "/lemmas"},
-        "lemmas": {"type": "array", "items": {"$ref": "common.json#/$defs/hex64"}, "x-equals": "/lemmas/*/meaning_id"}}}]}
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {
+        "additionalProperties": false,
+        "properties": {
+          "checked": {"$ref": "common.json#/$defs/nat", "x-count": "/lemmas"},
+          "id": {"type": "string", "x-equals": "/id"},
+          "lemmas": {"items": {"$ref": "common.json#/$defs/hex64"}, "type": "array", "x-equals": "/lemmas/*/meaning_id"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "checked", "lemmas"],
+        "type": "object"
+      }
+    ]
+  }
 }

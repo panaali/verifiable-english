@@ -1,0 +1,445 @@
+{
+  "$id": "rights.json",
+  "$comment": "Mode rights: Rights.Run.runCaseReported (formerly ve_rights_route). A case on the rights path (Rights.Run.usesRightsPath) is answered by the rights runner (runRightsKind); every other case is delegated unchanged to the soft-norms mode's runner.",
+  "row": {
+    "x-select": [
+      {
+        "then": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/case_error"},
+            {"$ref": "common.json#/$defs/route_path_error"},
+            {
+              "x-select": [
+                {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+                {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/rights-elaborate"}},
+                {"then": {"$ref": "#/$defs/projections"}, "when": {"$ref": "#/$defs/kind/rights-projections"}},
+                {"then": {"$ref": "#/$defs/scope"}, "when": {"$ref": "#/$defs/kind/rights-scope"}},
+                {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/rights-certificate"}},
+                {"then": {"$ref": "#/$defs/bar"}, "when": {"$ref": "#/$defs/kind/rights-bar"}},
+                {
+                  "then": {"$ref": "soft-norms.json#/$defs/witness"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/rights-conflict"}, {"required": ["witness"]}]}
+                },
+                {"then": {"$ref": "#/$defs/packages"}, "when": {"$ref": "#/$defs/kind/rights-conflict"}}
+              ]
+            }
+          ]
+        },
+        "when": {"$ref": "#/$defs/rights_path"}
+      },
+      {"then": {"$ref": "soft-norms.json#/row"}, "when": true}
+    ]
+  },
+  "$defs": {
+    "admission": {
+      "$comment": "Rights.Run.encodeAdmitted: W2's admission answer; kinds are the units' kinds as written (rights units included), and the open premises the report assumes.",
+      "additionalProperties": false,
+      "properties": {
+        "admitted": {"const": true},
+        "conditional_on": {"$ref": "#/$defs/conditional_labels"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "kinds": {"type": "array", "x-equals": "/document/units/*/kind"},
+        "report": {"$ref": "common.json#/$defs/bound_report"},
+        "report_id": {"$ref": "common.json#/$defs/hex64"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "admitted", "report", "report_id", "kinds", "conditional_on"],
+      "type": "object"
+    },
+    "bar": {
+      "$comment": "Rights.Run.barResult: one row per barred predicate, under the rule reading or the query reading.",
+      "additionalProperties": false,
+      "properties": {
+        "bars": {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "aimed": {"pattern": "rights__bar__.*", "type": "string"},
+                  "barred": {"$ref": "common.json#/$defs/strings"},
+                  "blocked_defaults": {"$ref": "common.json#/$defs/strings"},
+                  "composition_candidates": {"$ref": "common.json#/$defs/strings"},
+                  "composition_conflicts": {"maxItems": 0, "type": "array"},
+                  "predicate": {"type": "string"},
+                  "reading": {"const": "rule"}
+                },
+                "required": [
+                  "predicate",
+                  "aimed",
+                  "reading",
+                  "barred",
+                  "blocked_defaults",
+                  "composition_candidates",
+                  "composition_conflicts"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "aimed": {"pattern": "rights__bar__.*", "type": "string"},
+                  "entailed": {"type": "boolean"},
+                  "predicate": {"type": "string"},
+                  "reading": {"const": "query"},
+                  "target": {"$ref": "common.json#/$defs/generated_formula"}
+                },
+                "required": ["predicate", "aimed", "reading", "target"],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "bars"],
+      "type": "object"
+    },
+    "certificate": {
+      "$comment": "Rights.Run.runRightsKind rights-certificate.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "common.json#/$defs/nat"},
+        "conditional_on": {"$ref": "#/$defs/conditional_labels"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "layers": {"$ref": "common.json#/$defs/nat"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"}
+      },
+      "required": ["id", "status", "valid", "background", "layers", "conditional_on"],
+      "type": "object"
+    },
+    "conditional_labels": {
+      "$comment": "Open coherence premises and limitation premises (Rights.Wire.openCoherence, limPremisesLabelled).",
+      "items": {"pattern": "(soft:coherence:|rights:limitation:).*", "type": "string"},
+      "type": "array"
+    },
+    "elaborate": {
+      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regenerated field over the correlated document but its environment_prime.",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"$ref": "soft-norms.json#/$defs/background"},
+        "bars": {"items": {"$ref": "#/$defs/node"}, "type": "array"},
+        "colliding_pairs": {"$ref": "soft-norms.json#/$defs/elaborated/colliding_pairs"},
+        "conditional_on": {"$ref": "soft-norms.json#/$defs/coherence_labels"},
+        "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
+        "decisions": {"$ref": "soft-norms.json#/$defs/elaborated/decisions"},
+        "derived": {"$ref": "soft-norms.json#/$defs/elaborated/derived"},
+        "distinction": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "hits": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "cited": {"type": "boolean"},
+                    "protected": {"type": "string"},
+                    "right": {"type": "string"},
+                    "rule": {"type": "string"}
+                  },
+                  "required": ["rule", "right", "protected", "cited"],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "independent": {"type": "boolean"},
+              "predicate": {"type": "string"}
+            },
+            "required": ["predicate", "independent", "hits"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "environment_prime": {"$ref": "common.json#/$defs/environment"},
+        "findings": {"$ref": "#/$defs/findings"},
+        "fragment": {"type": "boolean"},
+        "generated": {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "act": {"type": "string"},
+                  "kind": {"const": "lim"},
+                  "limitation": {"type": "string"},
+                  "name": {"pattern": "rights__lim__.*", "type": "string"}
+                },
+                "required": ["name", "kind", "limitation", "act"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "act": {"type": "string"},
+                  "condition": {"type": "string"},
+                  "kind": {"const": "cond"},
+                  "limitation": {"type": "string"},
+                  "name": {"pattern": "rights__cond__.*", "type": "string"}
+                },
+                "required": ["name", "kind", "limitation", "act", "condition"],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {"const": "aimed"},
+                  "name": {"pattern": "rights__bar__.*", "type": "string"},
+                  "predicate": {"type": "string"}
+                },
+                "required": ["name", "kind", "predicate"],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "limitations": {
+          "items": {"$ref": "common.json#/$defs/labelled", "properties": {"label": {"pattern": "rights:limitation:.*"}}},
+          "type": "array"
+        },
+        "lines": {
+          "items": {
+            "additionalProperties": false,
+            "else": {"not": {"required": ["source_line"]}},
+            "if": {"required": ["bearer"]},
+            "properties": {
+              "bearer": {"type": "string"},
+              "holder_slot": {"$ref": "common.json#/$defs/nat"},
+              "instance": {"$ref": "#/$defs/instance"},
+              "kind": {"enum": ["claim", "liberty", "immunity", "power"]},
+              "node": {"$ref": "#/$defs/node"},
+              "predicate": {"type": "string"},
+              "right": {"type": "string"},
+              "rule": {"type": "string"},
+              "source_line": {"type": "string"}
+            },
+            "required": ["right", "kind", "instance", "rule", "predicate", "holder_slot", "node"],
+            "then": {"required": ["source_line"]},
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "narrowings": {"$ref": "#/$defs/narrowings"},
+        "order": {"$ref": "common.json#/$defs/strings"},
+        "premises": {"$ref": "common.json#/$defs/layer_premises"},
+        "rights_background": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "generator": {"const": "rights"},
+              "label": {"pattern": "rights:limitation:.*", "type": "string"}
+            },
+            "required": ["generator", "ast", "label"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"},
+        "warnings": {"$ref": "common.json#/$defs/nonempty_strings"}
+      },
+      "required": [
+        "id",
+        "status",
+        "environment_prime",
+        "generated",
+        "lines",
+        "limitations",
+        "bars",
+        "rights_background",
+        "narrowings",
+        "distinction",
+        "findings",
+        "decisions",
+        "derived",
+        "order",
+        "background",
+        "premises",
+        "colliding_pairs",
+        "conflict_targets",
+        "conditional_on",
+        "fragment",
+        "warnings"
+      ],
+      "type": "object"
+    },
+    "entries": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "instance": {"$ref": "#/$defs/instance"},
+          "right": {"type": "string"},
+          "rule": {"type": "string"},
+          "tuple": {"$ref": "common.json#/$defs/strings"}
+        },
+        "required": ["right", "rule", "instance", "tuple"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "findings": {"items": {"$ref": "common.json#/$defs/text"}, "type": "array"},
+    "instance": {"enum": ["claim", "liberty", "immunity", "powerLiberty", "powerRecognition"]},
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "rights-bar": {"properties": {"kind": {"const": "rights-bar"}}, "required": ["kind"], "type": "object"},
+      "rights-certificate": {"properties": {"kind": {"const": "rights-certificate"}}, "required": ["kind"], "type": "object"},
+      "rights-conflict": {"properties": {"kind": {"const": "rights-conflict"}}, "required": ["kind"], "type": "object"},
+      "rights-elaborate": {"properties": {"kind": {"const": "rights-elaborate"}}, "required": ["kind"], "type": "object"},
+      "rights-projections": {"properties": {"kind": {"const": "rights-projections"}}, "required": ["kind"], "type": "object"},
+      "rights-scope": {"properties": {"kind": {"const": "rights-scope"}}, "required": ["kind"], "type": "object"}
+    },
+    "narrowings": {
+      "$comment": "Rights.Run.narrowingsJson: per line, whether a limitation scopes it and each narrowing mechanism with its licence (null when none).",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "in_scope": {"type": "boolean"},
+          "mechanisms": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "conclusion": {"$ref": "common.json#/$defs/generated_formula"},
+                "licence": {"anyOf": [{"const": null}, {"$ref": "common.json#/$defs/text"}]},
+                "mechanism": {"$ref": "common.json#/$defs/text"},
+                "target": {"$ref": "common.json#/$defs/text"}
+              },
+              "required": ["mechanism", "target", "conclusion", "licence"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "right": {"type": "string"},
+          "rule": {"type": "string"}
+        },
+        "required": ["right", "rule", "in_scope", "mechanisms"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "node": {
+      "$comment": "Rights.Run.nodeJson.",
+      "additionalProperties": false,
+      "properties": {
+        "guard": {"$ref": "common.json#/$defs/generated_formula"},
+        "hard": {"type": "boolean"},
+        "mode": {"enum": ["strict", "default"]},
+        "name": {"type": "string"},
+        "over": {"$ref": "common.json#/$defs/strings"},
+        "predicate": {"type": "string"},
+        "sign": {"type": "boolean"},
+        "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+      },
+      "required": ["name", "predicate", "sign", "mode", "guard", "unless", "over", "hard"],
+      "type": "object"
+    },
+    "packages": {
+      "$comment": "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN.",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["detail"]}},
+      "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
+      "properties": {
+        "conditional_on": {"$ref": "#/$defs/conditional_labels"},
+        "detail": {"$ref": "common.json#/$defs/text"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"},
+        "status_text": {"$ref": "common.json#/$defs/text"},
+        "targets": {"$ref": "common.json#/$defs/strings"},
+        "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "status_text", "targets", "conditional_on"],
+      "then": {"required": ["detail"]},
+      "type": "object"
+    },
+    "projections": {
+      "$comment": "Rights.Run.projectionsResult: the selected line instances by holder and by bearer (entryJson).",
+      "additionalProperties": false,
+      "properties": {
+        "duties_of": {"$ref": "#/$defs/entries"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "rights_of": {"$ref": "#/$defs/entries"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "rights_of", "duties_of"],
+      "type": "object"
+    },
+    "rights_path": {
+      "$comment": "Rights.Run.usesRightsPath: the rights@0 profile, the vocabulary's rights block, a rights-* kind, or a rights unit (right, right_lines, limitation or bar) in a document array or in a document's units' content.",
+      "anyOf": [
+        {
+          "properties": {
+            "environment": {
+              "properties": {"profiles": {"contains": {"const": "rights@0"}, "type": "array"}},
+              "required": ["profiles"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {
+          "properties": {
+            "environment": {
+              "properties": {"vocabulary": {"required": ["rights"], "type": "object"}},
+              "required": ["vocabulary"],
+              "type": "object"
+            }
+          },
+          "required": ["environment"]
+        },
+        {"properties": {"kind": {"pattern": "rights-.*", "type": "string"}}, "required": ["kind"]},
+        {
+          "properties": {"document": {"contains": {"$ref": "#/$defs/rights_unit"}, "type": "array"}},
+          "required": ["document"]
+        },
+        {
+          "properties": {
+            "document": {
+              "properties": {
+                "units": {
+                  "contains": {
+                    "properties": {"content": {"$ref": "#/$defs/rights_unit"}},
+                    "required": ["content"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": ["units"],
+              "type": "object"
+            }
+          },
+          "required": ["document"]
+        }
+      ],
+      "type": "object"
+    },
+    "rights_unit": {
+      "anyOf": [
+        {"required": ["right"]},
+        {"required": ["right_lines"]},
+        {"required": ["limitation"]},
+        {"required": ["bar"]}
+      ],
+      "type": "object"
+    },
+    "scope": {
+      "$comment": "Rights.Run.runRightsKind rights-scope: the unlicensed-limitation findings, whether there are none, and the narrowings with certified licences.",
+      "additionalProperties": false,
+      "else": {"properties": {"licensed": {"const": false}}},
+      "if": {"properties": {"findings": {"maxItems": 0}}},
+      "properties": {
+        "findings": {"$ref": "#/$defs/findings"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "licensed": {"type": "boolean"},
+        "narrowings": {"$ref": "#/$defs/narrowings"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "findings", "licensed", "narrowings"],
+      "then": {"properties": {"licensed": {"const": true}}},
+      "type": "object"
+    }
+  }
+}

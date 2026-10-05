@@ -19,8 +19,11 @@ import json
 import os
 from pathlib import Path
 import random
+import time
 
 import pytest
+
+from tests import lean_routes
 
 from conformance.p0 import envelope
 from subprocesses import HANG_TIMEOUT, run_cpu_bounded
@@ -35,11 +38,11 @@ from ve.search import check_countermodel
 from ve.units import elaborate_quantity, erased_environment, quantity_countermodel
 
 ROOT = Path(__file__).resolve().parents[1]
-QUANTITY = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_quantity"
+QUANTITY = "ve_quantity"  # its service mode, through tests/lean_routes.py
 ROUTE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
 SERVICE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_service"
 RUST = Path(os.environ.get("VE_RUST_BINARY", str(ROOT / "rust" / "target" / "release" / "ve")))
-pytestmark = pytest.mark.skipif(not (QUANTITY.exists() and ROUTE.exists() and RUST.exists()),
+pytestmark = pytest.mark.skipif(not (lean_routes.SERVICE.exists() and ROUTE.exists() and RUST.exists()),
                                 reason="build the Lean runners and the Rust release binary")
 SEEDS = range(3)
 CPU = 60  # the runaway guard: CPU seconds per backend per batch; each spends under 10 alone
@@ -275,8 +278,13 @@ def meter_python(monkeypatch):
 
 def run(command, cases):
     # The kernel stops a batch that spends CPU seconds past the limit (a runaway guard: it
-    # then exits by a signal, which fails here). What each batch spends is a benchmark
-    # against a stored baseline (tools/bench/test_perf.py), not a test criterion.
+    # then exits by a signal, which fails here); the service stops a request past its mode's CPU
+    # deadline (`lean_service.DEADLINES`). What each batch spends is a benchmark against a stored
+    # baseline (tools/bench/test_perf.py), not a test criterion.
+    if command[0] == str(QUANTITY):
+        results = lean_routes.rows(QUANTITY, cases)
+        assert len(results) == len(cases)
+        return results
     completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
     assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
     results = json.loads(completed.stdout)
@@ -324,23 +332,26 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
     Lean-authority evaluation asks Rust first. Under load (a 2 h 14 min suite)
     one such call outlasted the Rust client's 5-second default; every Rust call
     and Lean service request here must wait the suite's hang guard instead
-    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`)."""
+    (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`: a request's wall-clock cap beside
+    its mode's CPU deadline, lean-first batch 1)."""
     monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     calls = []
     monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
     waits, lean_waits = [], []
-    checker, roundtrip = rust_jsonl._run_checker, LeanService._roundtrip
+    checker, deadline = rust_jsonl._run_checker, LeanService._deadline
 
     def recorded(argv, *, input, timeout):
         waits.append(timeout)
         return checker(argv, input=input, timeout=timeout)
 
-    def lean_recorded(self, mode, cases_text, count, timeout, *rest):
-        lean_waits.append(timeout)
-        return roundtrip(self, mode, cases_text, count, timeout, *rest)
+    def lean_recorded(self, mode, size, cases, timeout):
+        start = time.monotonic()
+        result = deadline(self, mode, size, cases, timeout)
+        lean_waits.append(round(result.wall - start))
+        return result
     monkeypatch.setattr(rust_jsonl, "_run_checker", recorded)
-    monkeypatch.setattr(LeanService, "_roundtrip", lean_recorded)
+    monkeypatch.setattr(LeanService, "_deadline", lean_recorded)
     dispatched = set()
     for name, verdict, _, _, _ in generate(seed):
         calls.clear()

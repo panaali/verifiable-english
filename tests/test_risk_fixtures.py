@@ -9,15 +9,15 @@ from __future__ import annotations
 
 import json
 import random
-import subprocess
 from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
+from tests import lean_routes
+
 from conformance.risk import (Log, agent_ops, agent_ops_rules, asimov_risk, asimov_rules, cell_env, dec, decision_17,
                               estimate, log_l17, q, record, statement)
-from tests.subprocesses import HANG_TIMEOUT
 from tests.test_risk_lean_route import (A1, A1_ALTS, A1_STATEMENTS, A2, A2_ALTS, A2_STATEMENTS, BIN, decide, dimless,
                                         leads, might, one, policy_of, rule_, run, statuses)
 from ve.ast import Not, _Decoder
@@ -26,9 +26,9 @@ from ve.environment import Environment
 from ve.norms import _bind
 
 ROOT = Path(__file__).resolve().parents[1]
-ALT_BIN = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_alternatives_route"
+ALT_BIN = "ve_alternatives_route"  # its service mode, through tests/lean_routes.py
 
-pytestmark = pytest.mark.skipif(not BIN.exists(), reason="ve_risk_route is not built")
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="the Lean service is not built")
 
 NONE_PERMITTED = "NONE-PERMITTED: every available action is forbidden"
 
@@ -481,7 +481,7 @@ def test_k23_identity_without_the_risk_block():
                 "outcomes": [{"action": "nothing", "harm": h, "leads_to": False, "support": "testimony"}
                              for h in harms]}
     case = {"id": "a", "kind": "alt-validate", "environment": env, "norms": [], "scenario": scenario}
-    out = subprocess.run([str(ALT_BIN), "-"], input=json.dumps([case]), text=True, capture_output=True, timeout=HANG_TIMEOUT)
+    out = lean_routes.completed(ALT_BIN, [case])
     lean = json.loads(out.stdout)[0]
     assert lean["status"] == "ok", lean
     python_id = Environment(env).environment_id
