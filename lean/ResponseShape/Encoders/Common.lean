@@ -26,6 +26,34 @@ theorem stringField_obj {j : Json} {k s : String} (h : VE.Bridge.stringField j k
   | error e => rw [hv] at h; cases h
   | ok w => exact ⟨w, rfl⟩
 
+theorem str_of_getStr {v : Json} {s : String} (h : v.getStr? = .ok s) : v = .str s := by
+  cases v <;> simp_all [Json.getStr?] <;> cases h <;> rfl
+
+theorem getObjValD_of_as {j : Json} {k s : String} (h : j.getObjValAs? String k = .ok s) : j.getObjValD k = .str s :=
+  str_of_getStr h
+
+theorem getObjValD_of_stringField {j : Json} {k s : String} (h : VE.Bridge.stringField j k = .ok s) :
+    j.getObjValD k = .str s := by
+  unfold VE.Bridge.stringField at h
+  cases hv : j.getObjVal? k with
+  | error e => rw [hv] at h; cases h
+  | ok v =>
+    rw [hv] at h
+    exact CaseCond.getObjValD_of_str hv h
+
+/-- The case's `kind` value, tested as the runner tests it. -/
+theorem kind_holds_of_val {j v : Json} {k : String} (h : j.getObjVal? "kind" = .ok v)
+    (hs : (v.getStr?.toOption == some k) = true) : (CaseCond.kind k).holds j = true := by
+  simp only [CaseCond.holds, CaseCond.getObjValD_eq, h]
+  exact hs
+
+/-- An object case with no `kind` (an `if let .ok kind := ...` that failed). -/
+theorem lacks_of_none {j w : Json} {k k' : String} (hobj : j.getObjVal? k' = .ok w)
+    (h : ∀ v, j.getObjVal? k = .ok v → False) : (CaseCond.lacks k).holds j = true := by
+  cases hv : j.getObjVal? k with
+  | ok v => exact (h v hv).elim
+  | error e => exact CaseCond.lacks_of_error hobj hv
+
 theorem claimJson_fits (c : VE.Graph.Claim) :
     Fits req (skel% "common.json#/$defs/claim") (VE.Route.Run.claimJson c) := by
   unfold VE.Route.Run.claimJson

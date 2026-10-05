@@ -144,6 +144,10 @@ theorem lacks_of_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = 
     (CaseCond.lacks k).holds j = true := by
   cases j <;> simp_all [holds, Json.getObjVal?, Except.toBool]
 
+/-- A case with the field `k` does not lack it. -/
+theorem lacks_of_val {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : (CaseCond.lacks k).holds j = false := by
+  cases j <;> simp_all [holds, Json.getObjVal?, Except.toBool]
+
 /-- A field read as a string is the case's `getObjValD` of it. -/
 theorem getObjValD_of_str {j v : Json} {k s : String} (h : j.getObjVal? k = .ok v) (hs : v.getStr? = .ok s) :
     j.getObjValD k = .str s := by
