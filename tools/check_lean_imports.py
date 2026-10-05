@@ -27,6 +27,8 @@ HEADER_WORDS = ("import", "prelude", "module", "public", "meta")
 KEYWORD_NAMES = {"import", "prelude", "module", "public", "meta", "all"}
 # `lean --deps` has this long in total to confirm the staged headers.
 ORACLE_BUDGET = 3.0
+# Each toolchain probe (`elan toolchain list`, `lean --print-prefix`, `lean --version`) waits this long.
+PROBE_WAIT = 2.0
 
 
 # docs/spec/wire-contract.md 7.3: the wire contract engine chooses diagnostics and never a verdict, so no
@@ -118,32 +120,32 @@ def _block_comment(lines: list[str], first: int, column: int) -> int:
     return last + 1
 
 
-def pinned_lean(toolchain: str) -> list[str] | None:
+def pinned_lean(toolchain: str, *, wait: float = PROBE_WAIT) -> list[str] | None:
     """The command that runs the pinned toolchain's `lean`, or None if it is not installed.
 
     Never installs anything: elan's `lean +TOOLCHAIN` would download a missing
     toolchain, so it is used only for one `elan toolchain list` shows, and
     only to find that toolchain's own binary (a timeout then kills `lean`
-    itself, not elan's proxy).
+    itself, not elan's proxy). Each probe waits `wait` seconds.
     """
     toolchain = toolchain.strip()
     try:
         elan = shutil.which("elan")
         if elan is not None:
             listed = subprocess.run([elan, "toolchain", "list"], capture_output=True, text=True,
-                                    timeout=2, check=False).stdout
+                                    timeout=wait, check=False).stdout
             proxy = Path(elan).with_name("lean")
             if toolchain not in {line.split()[0] for line in listed.splitlines() if line.split()} \
                     or not proxy.exists():
                 return None
             prefix = subprocess.run([str(proxy), f"+{toolchain}", "--print-prefix"], capture_output=True,
-                                    text=True, timeout=2, check=False).stdout.strip()
+                                    text=True, timeout=wait, check=False).stdout.strip()
             lean = Path(prefix) / "bin/lean"
             return [str(lean)] if prefix and lean.exists() else None
         lean = shutil.which("lean")
         version = toolchain.rpartition(":v")[2]
         if lean is not None and version and f"(version {version}," in subprocess.run(
-                [lean, "--version"], capture_output=True, text=True, timeout=2, check=False).stdout:
+                [lean, "--version"], capture_output=True, text=True, timeout=wait, check=False).stdout:
             return [lean]
     except (OSError, subprocess.TimeoutExpired):
         pass

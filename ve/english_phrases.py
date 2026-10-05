@@ -46,10 +46,17 @@ def lexical(text):
                     if w not in {'0', '1', 'is', 'not', 'a', 'an'})
 
 
-def wording_key(text):
-    """Display spelling has no lexical identity; quoted identifiers still do."""
-    return ''.join(part if part.startswith('"') else re.sub(r'[\s-]+', ' ', part.casefold())
-                   for part in re.split(r'("(?:[^"\\]|\\.)*")', text)).strip()
+# A quoted part runs from `"` to the next `"` not escaped by `\` (the escaped character may be a line
+# break); a `"` with no closing quote is an ordinary character. Lean's `wordingKey` reads the same.
+_QUOTED = re.compile(r'("(?:[^"\\]|\\.)*")', re.S)
+
+
+def wording_key(text, fold=str.casefold):
+    """Display spelling has no lexical identity; quoted identifiers still do. Outside quoted parts,
+    fold and turn each run of whitespace and hyphens into one space; then trim. `re.split` puts the
+    quoted parts at odd positions, so text after an unmatched `"` is folded like any other."""
+    return ''.join(part if i % 2 else re.sub(r'[\s-]+', ' ', fold(part))
+                   for i, part in enumerate(_QUOTED.split(text))).strip()
 
 
 def content_tokens(text):

@@ -33,7 +33,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import lean_build
-from tests.lean_service_corpus import corpus
+from tests.lean_service_corpus import ERROR_REQUESTS, corpus
 from tests.test_lean_service import fake
 from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
 from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
@@ -72,30 +72,18 @@ def genuine(executables):
     """[(mode, request, response)] from the real service, in 16-case requests."""
     service_executable, _ = executables
     exchanges = []
-    with LeanService(service_executable, timeout=600) as service:
+    with LeanService(service_executable, timeout=HANG_TIMEOUT) as service:
         for mode, cases in corpus().items():
             for start in range(0, len(cases), 16):
                 chunk = cases[start:start + 16]
                 text = _text(chunk)
-                _, response = service.exchange(mode, text, len(chunk), timeout=600)
+                _, response = service.exchange(mode, text, len(chunk), timeout=HANG_TIMEOUT)
                 request = {"id": response["id"], "mode": mode, "cases": chunk,
                            "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
                 assert rebind(request, response) == (request, response)
                 exchanges.append((mode, request, response))
         assert service.stats["retries"] == 0
     return exchanges
-
-
-# Request errors of every kind: (mode, cases text, count, budget).
-ERROR_REQUESTS = [
-    ("evaluate", '[{"id":"a","ast":[]},{"id":"b","ast":[]}]', 2, {"cases": 1}),
-    ("route", '[{"id":"a","kind":"evaluate"}]', 1, {"bytes": 3}),
-    ("evaluate", '[{},{}]', 2, {"steps": 1}),
-    ("order", '[{"id":1,}]', 1, None),
-    ("check-certificate", '[{"id":null}, {"id":"b"}]', 2, None),
-    ("english", '[{"cases":[],}]', 1, None),
-    ("norms", '{}', 0, {"cases": 1}),
-]
 
 
 @pytest.fixture(scope="module")
@@ -363,6 +351,64 @@ def fuzz(genuine, genuine_errors, executables):
     items += kind_items(genuine) + label_items(genuine) + depth_items(genuine)
     items += error_items(genuine_errors, rng)
     return items, lean_verdicts(executables[1], items)
+
+
+# Each field dropped, emptied ("" [] {}), nulled and retyped (7, true, a string): build checklist line 4.
+_DROP = object()
+FIELD_FAULTS = {"drop": _DROP, "empty-text": "", "empty-array": [], "empty-object": {}, "null": None,
+                "number": 7, "true": True, "text": "x"}
+
+
+def field_faults(response):
+    """Every field of `response` (a list through its first element, results to depth 4 below the
+    bound entry) dropped, emptied, nulled and retyped."""
+    def nodes(value, path=()):
+        yield path, value
+        if len(path) < 7:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    yield from nodes(item, path + (key,))
+            elif isinstance(value, list) and value:
+                yield from nodes(value[0], path + (0,))
+    out = []
+    for path, value in nodes(response):
+        if not path:
+            continue
+        for new in FIELD_FAULTS.values():
+            if new is _DROP:
+                if isinstance(path[-1], str):
+                    copy = deepcopy(response)
+                    node = copy
+                    for step in path[:-1]:
+                        node = node[step]
+                    del node[path[-1]]
+                    out.append(copy)
+            elif not (type(new) is type(value) and new == value):
+                out.append(_replace(response, path, new))
+    return out
+
+
+def test_every_field_dropped_emptied_nulled_and_retyped_agrees_with_lean(genuine, genuine_errors, executables):
+    """Table-driven over one genuine response of each mode, case kind and outcome (and every request
+    error): the schema accepts a mutant exactly when the Lean decoders do, and refuses every drop or
+    null of the binding (nonce, mode, index, digest, a rejection's code and text)."""
+    shapes = {}
+    for mode, request, response in singles(genuine):
+        case, row = request["cases"][0], response["results"][0]["result"]
+        kind = case.get("kind", "evaluate") if isinstance(case, dict) else "?"
+        shapes.setdefault((mode, kind, row.get("status"), "case_index" in row), (mode, request, response))
+    items = [(mode, request, field_faults(response)) for mode, request, response in
+             [*shapes.values(), *genuine_errors]]
+    verdicts = assert_agreement(executables[1], items)
+    assert 0 < sum(v == "accept" for v in verdicts) < len(verdicts) // 10
+    for mode, request, response in [*shapes.values(), *genuine_errors]:
+        bound = response["results"][0] if response.get("status") != "error" else None
+        binding = [("id",), ("mode",)] + ([("results", 0, "index"), ("results", 0, "digest")] if bound else [])
+        if bound is None or bound["result"].get("status") == "error":
+            binding += [("results", 0, "code"), ("results", 0, "result", "error")] if bound else [("code",), ("error",)]
+        for path in binding:
+            for new in (None, ""):
+                assert schema_verdict(mode, request, _replace(response, path, new)) != "accept", (mode, path, new)
 
 
 def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
@@ -831,8 +877,8 @@ def test_service_norms_content_matches_python_regeneration(executables):
     docs = [*norms_corpus(160), *pair_corpus(60)]
     cases = [lean_case(i, doc) for i, doc in enumerate(docs)]
     text = _text(cases)
-    with LeanService(executables[0], timeout=600) as service:
-        _, response = service.exchange("norms", text, len(cases), timeout=600)
+    with LeanService(executables[0], timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("norms", text, len(cases), timeout=HANG_TIMEOUT)
         assert service.stats["retries"] == 0
     for i, (doc, bound) in enumerate(zip(docs, response["results"], strict=True)):
         got = bound["result"]

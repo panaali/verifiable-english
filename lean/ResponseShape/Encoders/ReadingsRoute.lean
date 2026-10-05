@@ -17,8 +17,8 @@ theorem keyJson_fits (k : GenKey) : Fits req (skel% "readings-route.json#/$defs/
   | _ => unfold Wire.keyJson; fits
 
 theorem candidate_fits (a : Wire.Admitted) (R : ReadingSet) (i : Nat) :
-    OkFits req (skel% "readings-route.json#/$defs/candidate") (candidateJson a R i) := by
-  unfold candidateJson
+    OkFits req (skel% "readings-route.json#/$defs/candidate") (Run.candidateJson a R i) := by
+  unfold Run.candidateJson
   okfits
   all_goals (try simp only [keyEntry])
   all_goals fits using keyJson_fits
@@ -84,12 +84,66 @@ theorem validate_fits (id : String) (a : Wire.Admitted) :
   · obtain ⟨r, o, f, sid, rfl⟩ := hp _ ‹_›
     fits using pair_fits
 
+/-! The S2a kinds (`runS2`). -/
+
+theorem elaborate_fits (id : String) (j : Json) : OkFits req Skeletons.readingsRoute (runElaborate id j) := by
+  unfold runElaborate
+  okfits
+  simp only [okWith, VE.Route.Wire.ok, elaborateFields]
+  split <;> (try simp only [choicesJson]) <;> (try split) <;>
+    simp only [List.cons_append, List.nil_append, List.append_nil, vocabularyJson, slotJson, sizesJson]
+  all_goals fits
+
+theorem conflict_fits (id : String) (j : Json) : OkFits req Skeletons.readingsRoute (runConflict id j) := by
+  unfold runConflict
+  okfits
+  all_goals (try simp only [okWith, VE.Route.Wire.ok])
+  all_goals fits
+
+theorem certificate_fits (id : String) (j : Json) : OkFits req Skeletons.readingsRoute (runCertificate id j) := by
+  unfold runCertificate
+  okfits
+  simp only [okWith, VE.Route.Wire.ok]
+  fits
+
+theorem model_fits (id : String) (j : Json) : OkFits req Skeletons.readingsRoute (runModel id j) := by
+  unfold runModel
+  okfits
+  all_goals (try simp only [okWith, VE.Route.Wire.ok])
+  all_goals fits
+
+theorem dead_fits (id : String) (j : Json) : OkFits req Skeletons.readingsRoute (runDead id j) := by
+  unfold runDead
+  okfits
+  all_goals (try simp only [okWith, VE.Route.Wire.ok])
+  all_goals fits
+
+theorem choice_fits (lower : List String → Json → Json) (id : String) (j : Json) :
+    OkFits req Skeletons.readingsRoute (runChoice lower id j) := by
+  unfold runChoice
+  okfits
+  all_goals (try simp only [okWith, VE.Route.Wire.ok])
+  all_goals fits
+
+theorem runS2_fits (lower : List String → Json → Json) (id kind : String) (j : Json) :
+    OkFits req Skeletons.readingsRoute (runS2 lower id kind j) := by
+  unfold runS2
+  okfits
+  all_goals first
+    | exact elaborate_fits _ _
+    | exact conflict_fits _ _
+    | exact certificate_fits _ _
+    | exact model_fits _ _
+    | exact dead_fits _ _
+    | exact choice_fits _ _ _
+
 theorem runCase_fits (j : Json) : OkFits req Skeletons.readingsRoute (runCase j) := by
   unfold runCase
   okfits
   · exact validate_fits _ _ _ ‹_›
   · simp only [VE.Route.Wire.ok]
     fits using pair_fits
+  · exact runS2_fits _ _ _ _
 
 theorem of_rights {v : Json} (h : Fits req Skeletons.rights v) : Fits req Skeletons.readingsRoute v := by
   refine Fits.altSub ?_ h
@@ -149,11 +203,10 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.readi
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
-    · fits
-  · split
-    · exact runCase_fits j _ ‹_›
-    · fits
+    · split
+      · exact runCase_fits j _ ‹_›
+      · fits
+    · exact runLower_fits j hj
   · exact runLower_fits j hj
 
 end ResponseShape.Encoders.ReadingsRoute

@@ -2,12 +2,17 @@
 
 The pinned toolchain/build cache under .lake is trusted, not project source.
 This is a source/dependency policy check, not an untrusted-code sandbox.
+
+The audit output of every manifest, in order, is the committed record `axioms.txt`; the audit fails when the
+record differs from it, so a new theorem cannot leave the record stale. `python3 lean/audit.py --write` regenerates it.
 """
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parent
+RECORD = ROOT / "axioms.txt"
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 FORBIDDEN = re.compile(r"\b(sorry|sorryAx|admit|axiom|unsafe|native_decide|implemented_by|partial|opaque|extern)\b")
 
@@ -100,13 +105,21 @@ def recorded_in(manifest):
     return set(re.findall(r"^#print axioms (\S+)", code_only((ROOT / manifest).read_text()), re.M))
 
 
-def main():
+def recorded_names(text):
+    """The theorem names of an audit record such as `axioms.txt`."""
+    return re.findall(r"^'([^']+)' (?:does not depend on any axioms|depends on axioms)", text, re.M)
+
+
+def main(argv=()):
+    write = list(argv) == ["--write"]
+    if list(argv) and not write:
+        raise SystemExit("usage: python3 lean/audit.py [--write]")
     actual, sources = scan_sources(ROOT)
     recorded = [recorded_in(manifest) for manifest in MANIFESTS]
     assert not set.intersection(*recorded), {"listed twice": set.intersection(*recorded)}
     assert actual == set.union(*recorded), {"missing": actual - set.union(*recorded),
                                            "extra": set.union(*recorded) - actual}
-    seen = set()
+    seen, output = set(), ""
     for manifest in MANIFESTS:
         result = subprocess.run(["lake", "env", "lean", manifest], cwd=ROOT,
                                 text=True, capture_output=True, check=True)
@@ -118,11 +131,17 @@ def main():
             seen.add(name)
             axioms = set(dependencies.split(", ")) if dependencies else set()
             assert axioms <= ALLOWED, (name, axioms - ALLOWED)
-        print(result.stdout, end="")
+        output += result.stdout
     assert seen == actual
+    print(output, end="")
+    if write:
+        RECORD.write_text(output)
+    elif RECORD.read_text() != output:
+        raise AssertionError(f"{RECORD.name} is stale: {len(recorded_names(RECORD.read_text()))} entries, "
+                             f"{len(seen)} audited; regenerate with python3 lean/audit.py --write")
     print(f"PASS: {len(sources)} source files; {len(seen)} named theorem declarations audited "
           "(headline results and helper lemmas); only the declared standard axiom allowlist.")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

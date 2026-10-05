@@ -22,6 +22,7 @@ import pytest
 
 from tests import lean_routes
 
+from tests.subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment
@@ -41,7 +42,7 @@ def lean():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the reports Lean route")
-        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=600)
+        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 
@@ -706,7 +707,7 @@ def test_rust_report_witness_replays_in_lean(lean):
         assert binary.is_file(), f"gate Rust build missing: {binary}"
     if not binary.exists():
         built = subprocess.run(["cargo", "build", "-q", "-p", "ve"], cwd=ROOT / "rust",
-                               env=rust_build.cargo_env(), capture_output=True, text=True, timeout=600)
+                               env=rust_build.cargo_env(), capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     cases = [
         (doc(report("the_article", "says", "c3", ast(U("safe", "service")))), U("safe", "service")),
@@ -737,7 +738,7 @@ def test_rust_report_witness_replays_in_lean(lean):
     payloads = [ReportsDocument(Environment(E0()), d["contexts"], d["assessments"], d["units"])
                 .search_payload(conclusion) for d, conclusion in cases]
     searched = subprocess.run([str(binary), "conformance", "-"], input=json.dumps(payloads),
-                              capture_output=True, text=True, timeout=120)
+                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert searched.returncode == 0, searched.stderr
     witnesses = json.loads(searched.stdout)
     for (d, conclusion), payload, witness in zip(cases, payloads, witnesses, strict=True):

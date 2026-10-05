@@ -14,7 +14,7 @@ import re
 from typing import NamedTuple
 
 from .assurance import semantic_entry
-from .ast import Or, formula_from_data, formula_to_data
+from .ast import Or, decimal_text, decimal_value, formula_from_data, formula_to_data
 from .background import HOOKS, _DEPENDENCY_ENVIRONMENT, background
 from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, UnsupportedProfile, VEError
@@ -54,7 +54,8 @@ class Label(NamedTuple):
                 "background": lambda: f"background:{a[0]}",
                 "cite": lambda: f"cite:{a[0]}/{a[1]}",
                 "open": lambda: f"open:{a[0]}",
-                "readings": lambda: f"readings:{a[0]}@{a[1]}:{'all' if a[2] is None else a[2]}",
+                "readings": lambda: (f"readings:{a[0]}@{decimal_text(a[1])}:"
+                                     f"{'all' if a[2] is None else decimal_text(a[2])}"),
                 "narrowing": lambda: f"narrowing:{a[0]}"}[self.kind]()
 
 
@@ -78,9 +79,11 @@ def _parse_raw(s: str) -> Label | None:
         rest = parts[1].split(":")
         if len(rest) != 2 or not token(parts[0]) or not _NAT.fullmatch(rest[0]):
             return None
+        # Lean's `String.toNat?`: an index of any length
         if rest[1] == "all":
-            return Label("readings", (parts[0], int(rest[0]), None))
-        return Label("readings", (parts[0], int(rest[0]), int(rest[1]))) if _NAT.fullmatch(rest[1]) else None
+            return Label("readings", (parts[0], decimal_value(rest[0]), None))
+        return (Label("readings", (parts[0], decimal_value(rest[0]), decimal_value(rest[1])))
+                if _NAT.fullmatch(rest[1]) else None)
     if s.startswith("narrowing:"):
         return Label("narrowing", (s[10:],)) if token(s[10:]) else None
     return None

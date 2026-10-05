@@ -25,63 +25,155 @@
   },
   "$defs": {
     "admission": {
-      "$comment": "Discourse.Run.encodeAdmission: the wrapper's admission (ve-document@2, or a lifted ve-document@1 text whose identities are empty and whose joint is the missing manifest).",
-      "additionalProperties": false,
-      "properties": {
-        "admitted": {"enum": [true, "UNKNOWN"]},
-        "bound": {"additionalProperties": {"$ref": "common.json#/$defs/generated_formula"}, "type": "object"},
-        "definitions_version": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "id": {"$ref": "common.json#/$defs/id_ok"},
-        "inner_report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "joint": {"$ref": "#/$defs/joint_count"},
-        "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
-        "meaning_ids": {"additionalProperties": {"$ref": "common.json#/$defs/hex64"}, "type": "object"},
-        "pending": {
-          "items": {
-            "maxItems": 2,
-            "minItems": 2,
-            "prefixItems": [{"type": "string"}, {"pattern": "PresuppositionUnresolved: .*", "type": "string"}],
-            "type": "array"
+      "$comment": "Discourse.Run.encodeAdmission: the wrapper's admission (ve-document@2, or a lifted ve-document@1 text whose identities are empty and whose joint is the missing manifest). A completed joint set has its count, its choices and their disjunction (Discourse.Run.jointFields); a set over its budget has its diagnostic and neither.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "admitted": {"enum": [true, "UNKNOWN"]},
+            "bound": {"additionalProperties": {"$ref": "common.json#/$defs/generated_formula"}, "type": "object"},
+            "definitions_version": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "inner_report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "joint": {"minimum": 1, "type": "integer"},
+            "joint_choices": {"$ref": "#/$defs/choices"},
+            "joint_formula": {"$ref": "common.json#/$defs/generated_formula"},
+            "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
+            "meaning_ids": {"additionalProperties": {"$ref": "common.json#/$defs/hex64"}, "type": "object"},
+            "pending": {
+              "items": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [{"type": "string"}, {"pattern": "PresuppositionUnresolved: .*", "type": "string"}],
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "presuppositions": {
+              "additionalProperties": {"pattern": "discourse:presupposition:.*", "type": "string"},
+              "type": "object"
+            },
+            "reading_verdicts": {"additionalProperties": {"const": "UNKNOWN (joint choices)"}, "type": "object"},
+            "references": {"items": {"$ref": "#/$defs/reference"}, "type": "array"},
+            "report": {"$ref": "common.json#/$defs/report"},
+            "report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "self_truth": {"$ref": "common.json#/$defs/strings"},
+            "source_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "status": {"const": "ok"},
+            "statuses": {
+              "additionalProperties": {"enum": ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]},
+              "type": "object"
+            },
+            "validity": {"$ref": "#/$defs/validity_map"}
           },
+          "required": [
+            "id",
+            "status",
+            "admitted",
+            "reading_verdicts",
+            "report",
+            "report_id",
+            "inner_report_id",
+            "document_id",
+            "source_id",
+            "environment_id",
+            "definitions_version",
+            "kinds",
+            "references",
+            "bound",
+            "meaning_ids",
+            "presuppositions",
+            "pending",
+            "validity",
+            "self_truth",
+            "statuses",
+            "joint",
+            "joint_choices",
+            "joint_formula"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "admitted": {"enum": [true, "UNKNOWN"]},
+            "bound": {"additionalProperties": {"$ref": "common.json#/$defs/generated_formula"}, "type": "object"},
+            "definitions_version": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "document_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "environment_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "inner_report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "joint": {"$ref": "common.json#/$defs/text"},
+            "kinds": {"items": {"$ref": "common.json#/$defs/kind"}, "type": "array"},
+            "meaning_ids": {"additionalProperties": {"$ref": "common.json#/$defs/hex64"}, "type": "object"},
+            "pending": {
+              "items": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [{"type": "string"}, {"pattern": "PresuppositionUnresolved: .*", "type": "string"}],
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "presuppositions": {
+              "additionalProperties": {"pattern": "discourse:presupposition:.*", "type": "string"},
+              "type": "object"
+            },
+            "reading_verdicts": {"additionalProperties": {"const": "UNKNOWN (joint choices)"}, "type": "object"},
+            "references": {"items": {"$ref": "#/$defs/reference"}, "type": "array"},
+            "report": {"$ref": "common.json#/$defs/report"},
+            "report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "self_truth": {"$ref": "common.json#/$defs/strings"},
+            "source_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+            "status": {"const": "ok"},
+            "statuses": {
+              "additionalProperties": {"enum": ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]},
+              "type": "object"
+            },
+            "validity": {"$ref": "#/$defs/validity_map"}
+          },
+          "required": [
+            "id",
+            "status",
+            "admitted",
+            "reading_verdicts",
+            "report",
+            "report_id",
+            "inner_report_id",
+            "document_id",
+            "source_id",
+            "environment_id",
+            "definitions_version",
+            "kinds",
+            "references",
+            "bound",
+            "meaning_ids",
+            "presuppositions",
+            "pending",
+            "validity",
+            "self_truth",
+            "statuses",
+            "joint"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "choices": {
+      "$comment": "Discourse.Run.choicesJson: per compatible choice, [set, version, reading index] for each active open set.",
+      "items": {
+        "items": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
           "type": "array"
         },
-        "presuppositions": {"additionalProperties": {"pattern": "discourse:presupposition:.*", "type": "string"}, "type": "object"},
-        "reading_verdicts": {"additionalProperties": {"const": "UNKNOWN (joint choices)"}, "type": "object"},
-        "references": {"items": {"$ref": "#/$defs/reference"}, "type": "array"},
-        "report": {"$ref": "common.json#/$defs/report"},
-        "report_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "self_truth": {"$ref": "common.json#/$defs/strings"},
-        "source_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
-        "status": {"const": "ok"},
-        "statuses": {"additionalProperties": {"enum": ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]}, "type": "object"},
-        "validity": {"$ref": "#/$defs/validity_map"}
+        "type": "array"
       },
-      "required": [
-        "id",
-        "status",
-        "admitted",
-        "reading_verdicts",
-        "report",
-        "report_id",
-        "inner_report_id",
-        "document_id",
-        "source_id",
-        "environment_id",
-        "definitions_version",
-        "kinds",
-        "references",
-        "bound",
-        "meaning_ids",
-        "presuppositions",
-        "pending",
-        "validity",
-        "self_truth",
-        "statuses",
-        "joint"
-      ],
-      "type": "object"
+      "minItems": 1,
+      "type": "array"
     },
     "discourse_path": {
       "$comment": "Discourse.Run.usesDiscoursePath: a document text, the ve.discourse@1 profile in a profile list of strings (Route.Gate.profilesOf), or a discourse-* kind.",
@@ -109,19 +201,7 @@
         {
           "additionalProperties": false,
           "properties": {
-            "choices": {
-              "items": {
-                "items": {
-                  "maxItems": 3,
-                  "minItems": 3,
-                  "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
-                  "type": "array"
-                },
-                "type": "array"
-              },
-              "minItems": 1,
-              "type": "array"
-            },
+            "choices": {"$ref": "#/$defs/choices"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "joint": {"$ref": "common.json#/$defs/generated_formula"},
             "status": {"const": "ok"},

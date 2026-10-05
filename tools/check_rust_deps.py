@@ -6,8 +6,11 @@ assigned a group (1 kernel, 2 profile, 3 surface) and every path it writes, in
 must point inward unless the exact edge is in MODULE_LEDGER, which rejects
 stale keys as the other ledgers do.
 
-This is a stopgap until the crate split (plan R1-R3), after which cargo
-enforces the boundary, so it does not re-implement Rust's name resolution. It
+Since the crate split (plan R3) each library crate holds one group's modules
+and cargo's crate graph enforces the boundary between groups; the module map
+still names every module of every crate, so a module filed in the wrong crate,
+or code added to the `ve-core` facade, fails as unmapped. The module check was
+a stopgap until the split, so it does not re-implement Rust's name resolution. It
 is fail-closed on a strict subset whose dependencies can be read off the
 source: paths `crate::<module>::...` (also `super::` reaching the crate root,
 raw identifiers, Unicode identifiers compared after NFC; the source is
@@ -44,13 +47,17 @@ import unicodedata
 from layer_policy import ROOT
 
 WORKSPACE = ROOT / "rust"
-CRATE_LAYERS = {"ve-core": 1, "ve": 4}
+# `ve-core` is a facade over the three library crates, declared at the surface layer so it may
+# re-export all of them; `ve` is the binary.
+CRATE_LAYERS = {"ve-kernel": 1, "ve-profile": 2, "ve-surface": 3, "ve-core": 3, "ve": 4}
 MODULE_LEDGER = ROOT / "tools/rust-module-exceptions.json"
-MODULE_GROUPS = {"ve-core": {
-    **dict.fromkeys(("lib", "ast", "environment", "model", "wire", "semantics", "graph"), 1),
-    **dict.fromkeys(("eval", "route", "search", "order", "units", "risk", "readings", "discourse"), 2),
-    "surface": 3,
-}}
+MODULE_GROUPS = {
+    "ve-kernel": dict.fromkeys(("lib", "ast", "environment", "graph", "internal", "model", "semantics",
+                                "wire"), 1),
+    "ve-profile": dict.fromkeys(("lib", "eval", "order", "risk", "route", "search", "units"), 2),
+    "ve-surface": dict.fromkeys(("lib", "surface"), 3),
+    "ve-core": {"lib": 3},
+}
 # What rustc skips between tokens (Pattern_White_Space, line comments), string literals
 # (kept as tokens, escapes decoded: a proc macro may expand one into a path), and the other
 # literals, lifetimes and numbers. A raw string ends at a quote with as many `#`.

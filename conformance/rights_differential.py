@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import json
 import random
-import subprocess
 import sys
 import tempfile
 from copy import deepcopy

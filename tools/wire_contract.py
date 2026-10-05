@@ -6,6 +6,7 @@ or identity path. ``--write`` updates lock hashes; ``--check`` is read-only.
 
 import argparse
 import hashlib
+import importlib
 import json
 from pathlib import Path
 import re
@@ -49,6 +50,44 @@ def _hash(value):
     return hashlib.sha256(canonical_json(value)).hexdigest()
 
 
+# The shipped units (wire-contract-s5.md 7.1): each contract of `ve/wire_contract/` with the module of its
+# registry and the legacy validation that must accept each of its examples, `(module, function)`. Every
+# other path of a unit is named from the unit (`unit_paths`).
+UNITS = {
+    "soft-norms@0": ("ve.softnorms_contract", ("ve.softnorms", "load_soft_document")),
+    "norms@0": ("ve.norms_contract", ("ve.norms_contract", "legacy_validation")),
+    "norm-defaults@0": ("ve.norm_defaults_contract", ("ve.norm_defaults_contract", "legacy_validation")),
+}
+
+
+def unit_label(unit):
+    """The Lean name of a unit's table module: the words of the unit's name, capitalised and joined."""
+    return "".join(word.capitalize() for word in unit.split("@", 1)[0].split("-"))
+
+
+def unit_paths(unit):
+    """The paths of a unit, relative to the checkout: its examples, its English table, its generated Lean
+    module and its fault catalogue's index."""
+    return {"examples": f"ve/wire_contract/examples/{unit}",
+            "english": f"docs/spec/{unit.split('@', 1)[0]}-wire-table.md",
+            "lean": f"lean/VE/WireContract/Tables/{unit_label(unit)}.lean",
+            "catalogue": f"conformance/wire-contract/{unit}-catalogue.json"}
+
+
+def _included(contract):
+    """The contracts a contract includes, anywhere in its table, in order of first occurrence."""
+    found = []
+    def walk(entries):
+        for entry in entries:
+            if "each" in entry:
+                walk(entry["checks"])
+            elif entry.get("kind") == "include" and entry["contract"] not in found:
+                found.append(entry["contract"])
+    for phase in contract["phases"]:
+        walk(phase["checks"])
+    return found
+
+
 def generated_lean(contracts, limits, names):
     """The Lean modules are determined by locked contract data alone."""
     limits_hash, names_hash = _hash(limits), _hash(names)
@@ -67,10 +106,17 @@ def generated_lean(contracts, limits, names):
                                for key, val in sorted(names.items())),
             "ve/wire_contract/names.json", names_hash),
     }
-    soft = contracts["soft-norms@0"]
-    rendered["lean/VE/WireContract/Tables/SoftNorms.lean"] = lean_module(
-        "SoftNorms", f"def table : VE.WireContract.Table :=\n  {lean_table(soft, contracts, limits, names)}\n",
-        "ve/wire_contract/soft-norms@0.json", soft["revision"], _hash(soft), limits_hash, names_hash)
+    for unit in UNITS:
+        if unit not in contracts:
+            continue
+        value = contracts[unit]
+        # An included contract's entries are inlined (`tools/wire_contract_lean.py`), so its hash is named
+        # in the header too: a revision of it regenerates the including module (wire-contract-s5.md 2.10).
+        includes = [(name, _hash(contracts[name])) for name in _included(value) if name in contracts]
+        rendered[unit_paths(unit)["lean"]] = lean_module(
+            unit_label(unit), f"def table : VE.WireContract.Table :=\n  {lean_table(value, contracts, limits, names)}\n",
+            f"ve/wire_contract/{unit}.json", value["revision"], _hash(value), limits_hash, names_hash,
+            includes=includes)
     corpus_dir = ROOT / "conformance/wire-contract/contracts"
     corpus = {unit: loads_json((corpus_dir / f"{unit}.json").read_bytes()) for unit, _ in CORPUS}
     corpus_limits = loads_json((corpus_dir / "limits.json").read_bytes())
@@ -499,21 +545,86 @@ def lint(contract, *, limits, names, known=None, catalogue=None):
 
 
 def default_catalogue(directory):
-    """The checks with a fault in the fault catalogue (8.3), per contract: the index of the pilot's
-    catalogue (`conformance/wire_contract_faults.py`, kept current by a test) for the shipped contracts,
-    and the hand-derived records of the engine corpus for the corpus contracts."""
+    """The checks with a fault in the fault catalogue (8.3), per contract: the index of each shipped unit's
+    catalogue (`conformance/wire_contract_faults.py` dispatches to it, kept current by a test) for the shipped
+    contracts, and the hand-derived records of the engine corpus for the corpus contracts."""
     if directory.resolve() == DATA.resolve():
-        index = ROOT / "conformance/wire-contract/soft-norms@0-catalogue.json"
-        if not index.exists():
-            return {}
-        value = json.loads(index.read_text())
-        return {value["contract"]: set(value["faults"]) | set(value["unreached"])}
+        found = {}
+        for unit in UNITS:
+            index = ROOT / unit_paths(unit)["catalogue"]
+            if index.exists():
+                value = json.loads(index.read_text())
+                found[value["contract"]] = set(value["faults"]) | set(value["unreached"])
+        return found
     golden = directory.parent / "engine-golden.json"
     if not golden.exists():
         return None
     records = json.loads(golden.read_text())
     return {unit: {r["check"] for r in cases.values() if type(r) is dict and "check" in r}
             for unit, cases in records.items() if unit.endswith("@0") and type(cases) is dict}
+
+
+def _through_includes(catalogue, contracts):
+    """A check whose fault only an including unit's catalogue holds, as `<include id>/<check>`, has a fault
+    for the included contract too (wire-contract-s5.md 4.4: gap G3 of 8.4)."""
+    result = {unit: set(checks) for unit, checks in catalogue.items()}
+    for unit, checks in catalogue.items():
+        sites = {}
+        def walk(entries):
+            for entry in entries:
+                if "each" in entry:
+                    walk(entry["checks"])
+                elif entry.get("kind") == "include":
+                    sites[entry["id"]] = entry["contract"]
+        for phase in contracts.get(unit, {}).get("phases", []):
+            walk(phase["checks"])
+        for check in checks:
+            head, _, rest = check.partition("/")
+            if rest and head in sites:
+                result.setdefault(sites[head], set()).add(rest)
+    return result
+
+
+def _check_unit(unit, contracts, directory, limits, names, write, findings, issue):
+    """The checks of one shipped unit (7.1): every hook, classifier, view and adapter its table names is in
+    its registry, its examples are accepted by its legacy validation and found clean by the engine, and its
+    English table is the generated one."""
+    module, (legacy_module, legacy_name) = UNITS[unit]
+    registry = importlib.import_module(module).REGISTRY
+    legacy = getattr(importlib.import_module(legacy_module), legacy_name)
+    path = directory / f"{unit}.json"
+    def registered(entries):
+        for entry in entries:
+            if "each" in entry:
+                registered(entry["checks"])
+            elif entry["kind"] == "hook" and entry["hook"] not in registry.hooks:
+                issue(path, "WC08", f"unregistered hook {entry['hook']}")
+            elif entry["kind"] == "classifier" and entry["classifier"] not in registry.classifiers:
+                issue(path, "WC08", f"unregistered classifier {entry['classifier']}")
+            elif entry["kind"] == "include" and "view" in entry and entry["view"] not in registry.views:
+                issue(path, "WC08", f"unregistered view {entry['view']}")
+    for phase in contracts[unit]["phases"]:
+        registered(phase["checks"])
+    if contracts[unit].get("adapter") not in registry.adapters:
+        issue(path, "WC08", "unregistered adapter")
+    examples = sorted((directory / "examples" / unit).glob("*.json"))
+    if len(examples) < 2:
+        issue(directory / "examples" / unit, "WC10", "fewer than two examples")
+    for example in examples:
+        try:
+            root = loads_json(example.read_bytes())
+            legacy(root["environment"], root["norms"])
+            if run(contracts[unit], root, registry=registry, contracts=contracts,
+                   limits=limits, names=names) is not CLEAN:
+                issue(example, "WC10", "engine does not report clean")
+        except Exception as exc:
+            issue(example, "WC10", f"example is not accepted: {exc}")
+    generated = english_table(contracts[unit], limits=limits)
+    target = ROOT / unit_paths(unit)["english"]
+    if write and not findings:
+        target.write_text(generated)
+    elif not write and (not target.exists() or target.read_text() != generated):
+        issue(target, "WC11", "generated English table differs")
 
 
 def process(directory=DATA, *, write=False, catalogue=None):
@@ -555,6 +666,8 @@ def process(directory=DATA, *, write=False, catalogue=None):
     for unit in graph:
         if cycle(unit, unit, {unit}):
             issue(directory / f"{unit}.json", "WC09", "include cycle")
+    if catalogue is not None:
+        catalogue = _through_includes(catalogue, contracts)
     for path in files:
         try:
             value = loads_json(path.read_bytes())
@@ -580,63 +693,34 @@ def process(directory=DATA, *, write=False, catalogue=None):
                 lock[path.name] = wanted
         elif lock.get(path.name) != wanted:
             issue(path, "WC10", "lock hash or revision differs")
-    if directory.resolve() == DATA.resolve() and "soft-norms@0" in contracts:
-        from ve.softnorms import load_soft_document
-        from ve.softnorms_contract import REGISTRY
-        def registered(entries):
-            for entry in entries:
-                if "each" in entry:
-                    registered(entry["checks"])
-                elif entry["kind"] == "hook" and entry["hook"] not in REGISTRY.hooks:
-                    issue(directory / "soft-norms@0.json", "WC08", f"unregistered hook {entry['hook']}")
-                elif entry["kind"] == "classifier" and entry["classifier"] not in REGISTRY.classifiers:
-                    issue(directory / "soft-norms@0.json", "WC08", f"unregistered classifier {entry['classifier']}")
-                elif entry["kind"] == "include" and "view" in entry and entry["view"] not in REGISTRY.views:
-                    issue(directory / "soft-norms@0.json", "WC08", f"unregistered view {entry['view']}")
-        for phase in contracts["soft-norms@0"]["phases"]:
-            registered(phase["checks"])
-        if contracts["soft-norms@0"].get("adapter") not in REGISTRY.adapters:
-            issue(directory / "soft-norms@0.json", "WC08", "unregistered adapter")
-        examples = sorted((directory / "examples/soft-norms@0").glob("*.json"))
-        if len(examples) < 2:
-            issue(directory / "examples/soft-norms@0", "WC10", "fewer than two examples")
-        for example in examples:
-            try:
-                root = loads_json(example.read_bytes())
-                load_soft_document(root["environment"], root["norms"])
-                if run(contracts["soft-norms@0"], root, registry=REGISTRY,
-                       limits=limits, names=names) is not CLEAN:
-                    issue(example, "WC10", "engine does not report clean")
-            except Exception as exc:
-                issue(example, "WC10", f"example is not accepted: {exc}")
-        generated = english_table(contracts["soft-norms@0"], limits=limits)
-        target = ROOT / "docs/spec/soft-norms-wire-table.md"
-        if write and not findings:
-            target.write_text(generated)
-        elif not write and (not target.exists() or target.read_text() != generated):
-            issue(target, "WC11", "generated English table differs")
-        if not findings:
-            rendered = generated_lean(contracts, limits, names)
-            inventory = ROOT / "lean/VE/Route/frozen-sources.sha256"
-            inventory_lines = inventory.read_text().splitlines()
-            inventory_map = {line.split("  ", 1)[1]: line.split("  ", 1)[0]
-                             for line in inventory_lines if "  " in line}
-            for relative, source in rendered.items():
-                target = ROOT / relative
-                inventory_key = relative.removeprefix("lean/")
-                digest = hashlib.sha256(source.encode()).hexdigest()
-                if write:
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_text(source)
-                    inventory_map[inventory_key] = digest
-                else:
-                    if not target.exists() or target.read_text() != source:
-                        issue(target, "WC11", "generated Lean module differs")
-                    if inventory_map.get(inventory_key) != digest:
-                        issue(inventory, "WC11", f"generated module hash differs: {inventory_key}")
+    shipped = [unit for unit in UNITS if unit in contracts] if directory.resolve() == DATA.resolve() else []
+    for unit in contracts if directory.resolve() == DATA.resolve() else ():
+        if unit not in UNITS:
+            issue(directory / f"{unit}.json", "WC08", "no registry for the unit in tools/wire_contract.py")
+    for unit in shipped:
+        _check_unit(unit, contracts, directory, limits, names, write, findings, issue)
+    if shipped and not findings:
+        rendered = generated_lean(contracts, limits, names)
+        inventory = ROOT / "lean/VE/Route/frozen-sources.sha256"
+        inventory_lines = inventory.read_text().splitlines()
+        inventory_map = {line.split("  ", 1)[1]: line.split("  ", 1)[0]
+                         for line in inventory_lines if "  " in line}
+        for relative, source in rendered.items():
+            target = ROOT / relative
+            inventory_key = relative.removeprefix("lean/")
+            digest = hashlib.sha256(source.encode()).hexdigest()
             if write:
-                inventory.write_text("".join(f"{digest}  {path}\n"
-                                             for path, digest in sorted(inventory_map.items())))
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(source)
+                inventory_map[inventory_key] = digest
+            else:
+                if not target.exists() or target.read_text() != source:
+                    issue(target, "WC11", "generated Lean module differs")
+                if inventory_map.get(inventory_key) != digest:
+                    issue(inventory, "WC11", f"generated module hash differs: {inventory_key}")
+        if write:
+            inventory.write_text("".join(f"{digest}  {path}\n"
+                                         for path, digest in sorted(inventory_map.items())))
     if write and not findings:
         lock_path.write_bytes(canonical_json(lock) + b"\n")
     return findings

@@ -78,42 +78,68 @@ def joint_count : Shape :=
   c "The number of compatible joint choices, or the joint error." [
     .anyOf [n [.type ["integer"], .minimum 1], ref "common.json#/$defs/text"]]
 
+/-- The members of every admission, its joint set's aside. -/
+def admissionFields : List (String × Shape) := [
+  ("id", ref "common.json#/$defs/id_ok"),
+  ("status", constS "ok"),
+  ("admitted", .enum [(.bool true), (.str "UNKNOWN")]),
+  ("reading_verdicts", n [obj, .object [] (some (constS "UNKNOWN (joint choices)"))]),
+  ("report", ref "common.json#/$defs/report"),
+  ("report_id", ref "common.json#/$defs/hex64_or_empty"),
+  ("inner_report_id", ref "common.json#/$defs/hex64_or_empty"),
+  ("document_id", ref "common.json#/$defs/hex64_or_empty"),
+  ("source_id", ref "common.json#/$defs/hex64_or_empty"),
+  ("environment_id", ref "common.json#/$defs/hex64_or_empty"),
+  ("definitions_version", ref "common.json#/$defs/hex64_or_empty"),
+  ("kinds", n [arr, .items (ref "common.json#/$defs/kind")]),
+  ("references", n [arr, .items (ref "#/$defs/reference")]),
+  ("bound", n [obj, .object [] (some (ref "common.json#/$defs/generated_formula"))]),
+  ("meaning_ids", n [obj, .object [] (some (ref "common.json#/$defs/hex64"))]),
+  ("presuppositions", n [
+    obj,
+    .object [] (some (n [str, .pattern (Re.prefixes ["discourse:presupposition:"])]))]),
+  ("pending", n [
+    arr,
+    .items (n [
+        arr,
+        .minItems 2,
+        .maxItems 2,
+        .prefixItems [str, n [str, .pattern (Re.prefixes ["PresuppositionUnresolved: "])]]])]),
+  ("validity", ref "#/$defs/validity_map"),
+  ("self_truth", ref "common.json#/$defs/strings"),
+  ("statuses", n [obj, .object [] (some (enumS ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]))])]
+
+def admissionRequired : List String :=
+  ["id", "status", "admitted", "reading_verdicts", "report", "report_id", "inner_report_id", "document_id", "source_id", "environment_id", "definitions_version", "kinds", "references", "bound", "meaning_ids", "presuppositions", "pending", "validity", "self_truth", "statuses", "joint"]
+
 def admission : Shape :=
   c
-    "Discourse.Run.encodeAdmission: the wrapper's admission (ve-document@2, or a lifted ve-document@1 text whose identities are empty and whose joint is the missing manifest)."
+    "Discourse.Run.encodeAdmission: the wrapper's admission (ve-document@2, or a lifted ve-document@1 text whose identities are empty and whose joint is the missing manifest). A completed joint set has its count, its choices and their disjunction (Discourse.Run.jointFields); a set over its budget has its diagnostic and neither."
     [
-      obj,
-      .required ["id", "status", "admitted", "reading_verdicts", "report", "report_id", "inner_report_id", "document_id", "source_id", "environment_id", "definitions_version", "kinds", "references", "bound", "meaning_ids", "presuppositions", "pending", "validity", "self_truth", "statuses", "joint"],
-      closed [
-        ("id", ref "common.json#/$defs/id_ok"),
-        ("status", constS "ok"),
-        ("admitted", .enum [(.bool true), (.str "UNKNOWN")]),
-        ("reading_verdicts", n [obj, .object [] (some (constS "UNKNOWN (joint choices)"))]),
-        ("report", ref "common.json#/$defs/report"),
-        ("report_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("inner_report_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("document_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("source_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("environment_id", ref "common.json#/$defs/hex64_or_empty"),
-        ("definitions_version", ref "common.json#/$defs/hex64_or_empty"),
-        ("kinds", n [arr, .items (ref "common.json#/$defs/kind")]),
-        ("references", n [arr, .items (ref "#/$defs/reference")]),
-        ("bound", n [obj, .object [] (some (ref "common.json#/$defs/generated_formula"))]),
-        ("meaning_ids", n [obj, .object [] (some (ref "common.json#/$defs/hex64"))]),
-        ("presuppositions", n [
+      .anyOf [
+        n [
           obj,
-          .object [] (some (n [str, .pattern (Re.prefixes ["discourse:presupposition:"])]))]),
-        ("pending", n [
-          arr,
-          .items (n [
-              arr,
-              .minItems 2,
-              .maxItems 2,
-              .prefixItems [str, n [str, .pattern (Re.prefixes ["PresuppositionUnresolved: "])]]])]),
-        ("validity", ref "#/$defs/validity_map"),
-        ("self_truth", ref "common.json#/$defs/strings"),
-        ("statuses", n [obj, .object [] (some (enumS ["CHECKED", "OPEN", "LABELLED", "UNFORMALISED"]))]),
-        ("joint", ref "#/$defs/joint_count")]]
+          .required (admissionRequired ++ ["joint_choices", "joint_formula"]),
+          closed (admissionFields ++ [
+            ("joint", n [.type ["integer"], .minimum 1]),
+            ("joint_choices", ref "#/$defs/choices"),
+            ("joint_formula", ref "common.json#/$defs/generated_formula")])],
+        n [
+          obj,
+          .required admissionRequired,
+          closed (admissionFields ++ [("joint", ref "common.json#/$defs/text")])]]]
+
+def choices : Shape :=
+  c "Discourse.Run.choicesJson: per compatible choice, [set, version, reading index] for each active open set." [
+    arr,
+    .minItems 1,
+    .items (n [
+        arr,
+        .items (n [
+            arr,
+            .minItems 3,
+            .maxItems 3,
+            .prefixItems [str, ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"]])])]
 
 def validity : Shape :=
   c "Discourse.Run discourse-validity: each validity claim's verdict." [
@@ -183,16 +209,7 @@ def joint : Shape :=
           ("id", ref "common.json#/$defs/id_ok"),
           ("status", constS "ok"),
           ("verdict", constS "COMPLETE"),
-          ("choices", n [
-            arr,
-            .minItems 1,
-            .items (n [
-                arr,
-                .items (n [
-                    arr,
-                    .minItems 3,
-                    .maxItems 3,
-                    .prefixItems [str, ref "common.json#/$defs/nat", ref "common.json#/$defs/nat"]])])]),
+          ("choices", ref "#/$defs/choices"),
           ("joint", ref "common.json#/$defs/generated_formula")]],
       n [
         obj,
@@ -226,6 +243,7 @@ def file : File where
     ("reference", .schema reference),
     ("validity_map", .schema validity_map),
     ("joint_count", .schema joint_count),
+    ("choices", .schema choices),
     ("admission", .schema admission),
     ("validity", .schema validity),
     ("resolved_target", .schema resolved_target),

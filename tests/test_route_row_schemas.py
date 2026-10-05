@@ -24,6 +24,7 @@ import shutil
 
 import pytest
 
+from tests.subprocesses import HANG_TIMEOUT
 from tests.lean_build import lean_build
 from tests.test_lean_service import fake
 from tests.test_lean_service_schema import (
@@ -40,7 +41,12 @@ ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives",
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
         "units", "mentions"}
 # Top-level fields whose domain is a union across JSON types (field: the types beside the genuine one).
-UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}}
+UNIONS = {"joint": {"string", "integer"}, "admitted": {"boolean", "string"}, "finding": {"object", "null"},
+          "first_failing": {"string", "null"}}
+# Top-level fields whose value the schema leaves to another mode: `readings-choice`'s `inner` is the lower
+# route's own row for the inner case, whose kind is not the request's, so no row shape selects it
+# (readings-route.json `choice_answer`); the caller reads it as that route's answer. It is still required.
+OPAQUE = {"inner"}
 
 
 @pytest.fixture(scope="module")
@@ -61,12 +67,12 @@ def corpus() -> dict[str, list]:
 def genuine(executables):
     """[(mode, request, response)] of the real service over the corpus, in 16-case requests."""
     exchanges = []
-    with LeanService(executables[0], timeout=600) as service:
+    with LeanService(executables[0], timeout=HANG_TIMEOUT) as service:
         for mode, cases in corpus().items():
             for start in range(0, len(cases), 16):
                 chunk = cases[start:start + 16]
                 text = _text(chunk)
-                _, response = service.exchange(mode, text, len(chunk), timeout=600)
+                _, response = service.exchange(mode, text, len(chunk), timeout=HANG_TIMEOUT)
                 request = {"id": response["id"], "mode": mode, "cases": chunk,
                            "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
                 exchanges.append((mode, request, response))
@@ -122,6 +128,8 @@ def must_reject(row):
     out = [("no payload", {k: row[k] for k in ("id", "status") if k in row})] if payload else []
     for key in row:
         out.append((f"drop {key}", {k: v for k, v in row.items() if k != key}))
+        if key in OPAQUE:
+            continue
         for other in (7, True, None, "x", [None], {}):
             kind = _kind_of(other)
             if kind == _kind_of(row[key]) or kind in UNIONS.get(key, ()):
@@ -243,7 +251,7 @@ def test_fuzz_detects_a_weakened_route_schema(tmp_path, fuzz, weaken):
      "risk-decision-open": lambda: defs("risk.json",
         lambda d: d["decision"]["anyOf"][1].pop("additionalProperties")),
      "discourse-statuses-free": lambda: defs("discourse.json",
-        lambda d: d["admission"]["properties"].update(statuses={"type": "object"})),
+        lambda d: [branch["properties"].update(statuses={"type": "object"}) for branch in d["admission"]["anyOf"]]),
      "reports-kind-acts": lambda: defs("reports.json",
         lambda d: d["report_kind"]["anyOf"][1]["x-tagged"]["attributed"].__setitem__(1, {"type": "string"})),
      "readings-pair-open": lambda: defs("readings-route.json", lambda d: d["pair"].pop("additionalProperties")),

@@ -142,7 +142,8 @@ signature: **the baseline does not grow.** The fuzzer's child processes used 1,5
   (`ve/backends/lean_service_schema/<mode>.json`, each field the encoder writes, typed to the leaves, the
   route's own dispatch test as the selector) with `ve_response_decode` deciding the same responses with
   the runners' dispatch tests (`ResponseDecode.Routes`). `tests/test_route_row_schemas.py` runs a recorded
-  corpus of every answer kind (`tests/data/route-cases.jsonl`, 248 cases) through the service: every
+  corpus of every answer kind (`tests/data/route-cases.jsonl`, 282 cases; the last 34, compose-s2's
+  six S2a readings kinds, were recorded from `tests/test_readings_s2_lean.py` at the merge of ve-integration) through the service: every
   genuine answer is accepted, every drop, empty and retype of every field (to depth 4) gets the same
   verdict from both sides, no alteration of a field leaves a valid answer, the review's three soft-norms
   mutants raise `CheckerUnavailable` through `relay.decide` and the public elaboration, twelve schema

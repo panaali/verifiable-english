@@ -30,3 +30,7 @@ root = "VE.English.Run"
 [[lean_exe]]
 name = "ve_response_decode"
 root = "ResponseDecode"
+
+[[lean_exe]]
+name = "ve_english_lean_bench"
+root = "EnglishLeanBenchMain"

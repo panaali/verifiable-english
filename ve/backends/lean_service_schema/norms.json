@@ -64,7 +64,7 @@
       "type": "object"
     },
     "norms-conflict": {
-      "$comment": "Norms.Replay.replayConflict (the verdict, its detail and the targets are the service's).",
+      "$comment": "Norms.Flagged.replayConflict (norms_flagged_conflict_free; the verdict, its detail and the targets are the service's).",
       "additionalProperties": false,
       "properties": {
         "detail": {"type": "string"},
@@ -126,7 +126,7 @@
       "type": "object"
     },
     "norms-witness": {
-      "$comment": "Norms.Replay.witnessFrom: the requested target; the regenerated targets are the service's.",
+      "$comment": "Norms.Flagged.witnessFrom (norms_flagged_witness_sound): the requested target; the regenerated targets are the service's.",
       "additionalProperties": false,
       "properties": {
         "id": {"type": "string", "x-equals": "/id"},

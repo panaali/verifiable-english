@@ -5,6 +5,9 @@
 premises/conclusion/model requests. Every committed case is checked by both
 Python, Lean and Rust; no failed case is dropped from the comparison.
 
+The cross-language differential fuzzer, which mutates these fixtures and the use cases and compares Python,
+the Lean routes and Rust against a reviewed baseline, is described in [DIFFFUZZ.md](DIFFFUZZ.md).
+
 ## Stable evaluation format
 
 The existing evaluation envelope is unchanged for consumers, including Rust.

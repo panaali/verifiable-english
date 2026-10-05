@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from conformance.alternatives import base_environment, cases, scenario
+from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.alternatives import run_case
 from ve.ast import Not, _Decoder, formula_from_data
@@ -335,7 +336,7 @@ def rust_binary():
     env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(REPO / "rust/Cargo.toml")],
-                           env=env, capture_output=True, text=True, timeout=600)
+                           env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return REPO / "rust/target/release/ve"
 
@@ -372,7 +373,7 @@ def test_followability_agrees_across_python_rust_and_source_reading(rust_binary)
             {"id": str(i), "kind": "evaluate", "environment": base, "ast": formulas,
              "model": situation["model"]}
             for i, situation in enumerate(situations[start:start + 100], start)]),
-            capture_output=True, text=True, timeout=300)
+            capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert rust.returncode == 0, rust.stdout + rust.stderr
         rust_values += [row["values"] for row in json.loads(rust.stdout)]
     assert rust_values == python

@@ -1,0 +1,672 @@
+{
+ "format": "ve.english-lean-corpus-seal@1",
+ "generated": [
+  {
+   "corpus_sha256": "37b905fdbdb20d558a8da071b0b15441cf1f44bc812491d355a1716d72a2a5a0",
+   "document_corpus_sha256": "433c406b238e5736e3232df0cb764af2d2e08217800ef56fa7fce3dab027c621",
+   "environment_id": "5dc3ed0a1fd9158bce6aa4760681a327838d5586210b1c9ff4a5145256199b97",
+   "grammar_sha256": "b4dc46a7c76cd373da41761b7a64a402fb2569ac45629ed3db3fb3e7f2f1a0a8",
+   "random_earley_corpus_sha256": "433c406b238e5736e3232df0cb764af2d2e08217800ef56fa7fce3dab027c621",
+   "seed": 2026092107,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "ordinary"
+  },
+  {
+   "corpus_sha256": "90a778acbc422a80a3a79419eafe5d52b5c904fd90ddf5d372ce931ae0ffe3d7",
+   "document_corpus_sha256": "4cc13c274511603418e57fb2c62e69aad30e464f9ba1fb411a0cea3ab57d85b5",
+   "environment_id": "2c22626bf7cef0a86ddc4046202f811bdb8d6f63e1a4c3ae4e21a3ebaa2d59a0",
+   "grammar_sha256": "b4dc46a7c76cd373da41761b7a64a402fb2569ac45629ed3db3fb3e7f2f1a0a8",
+   "random_earley_corpus_sha256": "4cc13c274511603418e57fb2c62e69aad30e464f9ba1fb411a0cea3ab57d85b5",
+   "seed": 2026092108,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "closure"
+  },
+  {
+   "corpus_sha256": "fd0c851e92fb64365fb21ccb721c6105dee8df774b76d9a231fede5d578c34f2",
+   "document_corpus_sha256": "7757f22642f00c78032bd30dfbb6d58fdb81935cf150d31b6aec9cbabf994b76",
+   "environment_id": "35839fea488199bfc210ecebb67bc8ac28ddec42c0749acb5b27b7ce2f7d8bd9",
+   "grammar_sha256": "2a0c784758dd7dc480bd582cff3e1d34593f9adaaad894abd3ab66b256143ba2",
+   "random_earley_corpus_sha256": "7757f22642f00c78032bd30dfbb6d58fdb81935cf150d31b6aec9cbabf994b76",
+   "seed": 2026092109,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "colliding_aliases"
+  },
+  {
+   "corpus_sha256": "4e25c87b1c16139828d32ad516c5acbfc8f96805f8e971e2d702c40d1fb60f11",
+   "document_corpus_sha256": "d9b142cd2cc48935908dba0283b3b14bd8f51300b167673f73fa3a6cfddbef40",
+   "environment_id": "60a3aa181cde157f02a28ac4a8600cfdafabb2dcabf1ead31fce2be22eb05f45",
+   "grammar_sha256": "e4bf8f47d64429797221ffb97d2ed6e317534086fb3c76a309f9ad8481efd97f",
+   "random_earley_corpus_sha256": "d9b142cd2cc48935908dba0283b3b14bd8f51300b167673f73fa3a6cfddbef40",
+   "seed": 2026092110,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "function_words"
+  },
+  {
+   "corpus_sha256": "3833399ff2cd9608241628852217b2526b761c34a05fac860d52444d81eed438",
+   "document_corpus_sha256": "475c48709704ad1274d7c1a0edcd815dc5d9b193f4e855bd35b86402b285cc7d",
+   "environment_id": "595ff19388c63ebec4d3a324ccaf00d5a261ef4a710df6360bd989cf6c9f678c",
+   "grammar_sha256": "d93e3a95b671f3e5bbfbd49bddf64da5eab6cbe11a41d21c9857bda7af4096b5",
+   "random_earley_corpus_sha256": "475c48709704ad1274d7c1a0edcd815dc5d9b193f4e855bd35b86402b285cc7d",
+   "seed": 2026092111,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "function_identifiers"
+  },
+  {
+   "corpus_sha256": "b7bf58dc6aa60596a9e00b8b9679cd097330ca7be23611eaf64ba872ee676848",
+   "document_corpus_sha256": "4ddaa8862eb97a378fd0a42325600c8a945e3d35c8f71fb9b621754c30f9c8f3",
+   "environment_id": "3953bdcd7da45cb8a8ae6a723592fa10cf6b6e40f99228eb685a1002ac84b884",
+   "grammar_sha256": "26d85f17a9baaad52f2908eb6085d79561eac31bf3b38d408f71e688161e5599",
+   "random_earley_corpus_sha256": "4ddaa8862eb97a378fd0a42325600c8a945e3d35c8f71fb9b621754c30f9c8f3",
+   "seed": 2026092112,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "precision_templates"
+  },
+  {
+   "corpus_sha256": "9596263af6e37d81f28b1dcbcd09f60c05521566c68f4933b0a73e3755e14745",
+   "document_corpus_sha256": "cd5dde1bb4768eb789c055a925770c0f348794b2148f15e3c30a9e0d5876f828",
+   "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
+   "grammar_sha256": "ced29010328c59af33d3e8b971c92efb90312d7fecf162f38616da907ee74331",
+   "random_earley_corpus_sha256": "cd5dde1bb4768eb789c055a925770c0f348794b2148f15e3c30a9e0d5876f828",
+   "seed": 2026092113,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "birthright-citizenship-debate"
+  },
+  {
+   "corpus_sha256": "1826ace287a929fdfa54d0d9863966aca2df07ea267d11f6a9ae3704751b6264",
+   "document_corpus_sha256": "9c952fb154087b334f900c724d3b0db0e05cb40a44f5f5cd2eedb7365a290c2d",
+   "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
+   "grammar_sha256": "d28958cb4890eb58bc315b189270ffe4adb41a0b67cb2cce486d908e9c3b5d62",
+   "random_earley_corpus_sha256": "9c952fb154087b334f900c724d3b0db0e05cb40a44f5f5cd2eedb7365a290c2d",
+   "seed": 2026092114,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "claude-constitution-excerpt"
+  },
+  {
+   "corpus_sha256": "4432791e3362cdc9d701a6237145127dce662462d4520c005d44e8aa82f201fb",
+   "document_corpus_sha256": "b503dff3dcd95d1d225e62574df5e5ec5262c59f66e76dc05213ada425373d43",
+   "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
+   "grammar_sha256": "488db59084a4e56ce4ed35476eeb7703d72fd31e423f28a33a54f89f61aab5aa",
+   "random_earley_corpus_sha256": "b503dff3dcd95d1d225e62574df5e5ec5262c59f66e76dc05213ada425373d43",
+   "seed": 2026092115,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "news-article"
+  },
+  {
+   "corpus_sha256": "ec5b4345682713be91bfe5b851320c37dafa4e8435bff2d62062a21c97638d77",
+   "document_corpus_sha256": "e8c6e00ce82f349796e62976abd4520fea9ab02d849ef856b4588917f6c51a2b",
+   "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
+   "grammar_sha256": "2d8c745b06ee95d43abea8f37b9053f15ad13fefd621475ecd15c775563e1610",
+   "random_earley_corpus_sha256": "e8c6e00ce82f349796e62976abd4520fea9ab02d849ef856b4588917f6c51a2b",
+   "seed": 2026092116,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "us-constitution-14th-s1"
+  },
+  {
+   "corpus_sha256": "b27f0ae0719880b143fe8ccc4a32cbbcc983cf0bb88e3d5c211f49715b97fecc",
+   "document_corpus_sha256": "80e5366013ff04d098006b2b6c67a639642695a51f7b03a641145f05f7135bfc",
+   "environment_id": "8937bcba42188c0dab8fe6d85252d527e99cc0c91a6f9ff9f62d42e6f029b3d5",
+   "grammar_sha256": "c2602304c8917b86582c2900c75e70c84fa01f3c99d88ccece7810cf522fbe08",
+   "random_earley_corpus_sha256": "80e5366013ff04d098006b2b6c67a639642695a51f7b03a641145f05f7135bfc",
+   "seed": 2026092117,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "birthright-citizenship-debate-reviewed"
+  },
+  {
+   "corpus_sha256": "cbdda48ef431b2923d779f37103eff838083ab267802804fa70b836cf891a7fd",
+   "document_corpus_sha256": "46bb9ef9ddd762d653fcd40be09ecfcef3f2010ab3be6dec6ffd3bab475cadf9",
+   "environment_id": "98dbed69e9ed29c573756d4658b1fae39223466f3cb525f994648b7a5d4622cb",
+   "grammar_sha256": "6109f4d4cb1021e091eabad39f3048ea446e62cffd87375ee710cbc6746aa8e2",
+   "random_earley_corpus_sha256": "46bb9ef9ddd762d653fcd40be09ecfcef3f2010ab3be6dec6ffd3bab475cadf9",
+   "seed": 2026092118,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "claude-constitution-excerpt-reviewed"
+  },
+  {
+   "corpus_sha256": "f4a160f549e8ad1dc52a1b07a711295aa52b3d231294e1c4a8e2a7404b27b866",
+   "document_corpus_sha256": "b0e19b922aa4ae259cfd87cb4531f713c6f6a28f16f317a65c8bda068f8c7482",
+   "environment_id": "b3f7afa3f97f000698d6fd0e9cd7024a7d7aed4773d2ed0241dabf9f26616371",
+   "grammar_sha256": "af4e51b640ddcc61d3c1a239d2e6cd5d70b47e30f2c279acf973efa16adb867b",
+   "random_earley_corpus_sha256": "b0e19b922aa4ae259cfd87cb4531f713c6f6a28f16f317a65c8bda068f8c7482",
+   "seed": 2026092119,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "news-article-reviewed"
+  },
+  {
+   "corpus_sha256": "b9a5646ebcaa5cce5b0e15e7dca41853ae3b86152414e24f597ca0036c74d848",
+   "document_corpus_sha256": "f0e0a1594fde3893757aa2540762d1b3d32d82cac9ab01e883859d891fb93996",
+   "environment_id": "49d16fe885310c0b43a882958da6799a89e926e925b42cc1da49e27d3de8fe15",
+   "grammar_sha256": "c4f867c307b9a9bc37f62356f3b65075e1323140646643ee2b4e948f0edb1aa8",
+   "random_earley_corpus_sha256": "f0e0a1594fde3893757aa2540762d1b3d32d82cac9ab01e883859d891fb93996",
+   "seed": 2026092120,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "us-constitution-14th-s1-reviewed"
+  },
+  {
+   "corpus_sha256": "54d49514d1092952a67eff92d17a48e186f45160a1cf4cdb46dd5b0df4c551c7",
+   "document_corpus_sha256": "4dffb251e62b17ef6d9281d98ce00995e143da09bb1db1085d9de8d46f70eab6",
+   "environment_id": "2d84b403957a06235861cecb1e2d97373caa346fa9b72117eefe4c93672281b5",
+   "grammar_sha256": "20a325132ff9fe7dbe869a2ced7d696854206a4ea2c40542d7bb3f7864c02788",
+   "random_earley_corpus_sha256": "4dffb251e62b17ef6d9281d98ce00995e143da09bb1db1085d9de8d46f70eab6",
+   "seed": 2026092121,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "accepted-suggestions"
+  },
+  {
+   "corpus_sha256": "5aa822f69995c452af5ac2a279be1fdb134f2acedd06c6987d01e06f20a9932f",
+   "document_corpus_sha256": "10ff2320c5ed03957c2db3c5c89edb366f6b053e11c25dc9b522be7c2d8fc4ae",
+   "environment_id": "a5df375e45b81944f76843584e74c030fa50f4f66e7ca396ee03334c43c0a88b",
+   "grammar_sha256": "1777761d1201d09cede6e696715358e98c6d6b64fc5d81bfc04d1533318d4735",
+   "random_earley_corpus_sha256": "10ff2320c5ed03957c2db3c5c89edb366f6b053e11c25dc9b522be7c2d8fc4ae",
+   "seed": 2026092122,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "adopted-unary"
+  },
+  {
+   "corpus_sha256": "3166dc2dc248dac690a5a7ef01a64b38cd17dba2b534d87c4e93cdb2b2c52d08",
+   "document_corpus_sha256": "ed503e6dccd3b6d3ce650819b350092052e2f2655e6bcc71004d79e8c85bd2f2",
+   "environment_id": "7c95b110c8219bc172c23b4be91c3761ed2fbe24f8011416010c4a2e8504c84a",
+   "grammar_sha256": "789f434de8cbe0d6e5dc3f632be8a90c13e2f30c17d9745a477f2ab524feab25",
+   "random_earley_corpus_sha256": "ed503e6dccd3b6d3ce650819b350092052e2f2655e6bcc71004d79e8c85bd2f2",
+   "seed": 2026092123,
+   "stream": "english-surface",
+   "unique_asts_roundtripped": 5000,
+   "vocabulary": "order"
+  },
+  {
+   "seed": 2026792107,
+   "stream": "english-mixed",
+   "texts": 6757
+  },
+  {
+   "statements": 1220,
+   "stream": "natural-view"
+  }
+ ],
+ "pilots": [
+  {
+   "pilot": "/home/seyran/code/ve-bluedot/usecases/bluedot-grant/document.ve.md",
+   "pin": {
+    "input_sha256": "35dc211fa21e6085947688ddcf6d7b79341a8c34329f23c280eb92a4e83a9420",
+    "output_sha256": "af218071aa281cdfd334dcc2171fecafbcaf7f86095f88d2c7c60e24ee6f3e6a"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-pilot-20260926T2321Z/usecases/claude-constitution-pilot/run-20260926T2321Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "475c67ae4936e911d4b9accc98d7703ff5e9123967df99d8845c02de49ecbb72",
+    "output_sha256": "6df2c5cec7750619b0fa047fac744961c918c4e9a60b0f3f40adcc712b4515c0"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-pilot-20260927T0407Z/usecases/claude-constitution-pilot/run-20260927T0407Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "475c67ae4936e911d4b9accc98d7703ff5e9123967df99d8845c02de49ecbb72",
+    "output_sha256": "6df2c5cec7750619b0fa047fac744961c918c4e9a60b0f3f40adcc712b4515c0"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-pilot-20260927T0600Z/usecases/claude-constitution-pilot/run-20260927T0600Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "5fc671178092dcf5ad5dcb5859ca96083f9483877903017226f9f2110056a640",
+    "output_sha256": "6fda04043f926512ebb905b6f42e7689292ebf3326ecac5ce28eaab89055f792"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-pilot-20260927T1800Z/usecases/claude-constitution-pilot/run-20260927T1800Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "f9147016532bfc89eac68332881b01472c8a53762b53b6c8ef417539da174ea5",
+    "output_sha256": "c227b673ee388d195c33a6b2704e87cfb98f2fe37386068b662f8120194c1699"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-pilot-20260928T0600Z/usecases/claude-constitution-pilot/run-20260928T0600Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "038c04cb9d7a6d21f457b4d6b7c2784e0f6c4f50a9c9ce5dcc3419025731f6bc",
+    "output_sha256": "6addc1323868b66c394fbb208d3e922c01632f994d9b54d6c3b39720f994fc7b"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-udhr-20260927T0646Z/usecases/udhr-pilot/run-20260927T0646Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "b68eaf6f24b252ac3e0d3a53f0485310543641d149a5e476d9f087cd2e88c959",
+    "output_sha256": "ab6ea1181e9a1549a16304c4a9a590827ce1fcf14b939c43ba607c0d421c51c5"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-udhr-20260927T1800Z/usecases/udhr-pilot/run-20260927T1800Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "44787cee639b8f7c9364dfc8ae3498ada6a991b21aa378b75faaf54e6087fdb9",
+    "output_sha256": "56dbf330ff606374cd7e0dfdd052ba04a430adffce15b570e7ffbaca5c4b721b"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-udhr-20260928T0600Z/usecases/udhr-pilot/run-20260928T0600Z/translation.ve.md",
+   "pin": {
+    "input_sha256": "f5703877614e5fbe52d64f291e18baa419d439b1c7dc10c39c7513e84c7386be",
+    "output_sha256": "08b01e4673c2899651bb3f556ebba7e76f6589bc4294ebd03617ec6a85eefb0f"
+   }
+  },
+  {
+   "pilot": "/home/seyran/code/ve-w6a/usecases/news-article/news-w6a.ve.md",
+   "pin": {
+    "error": "VEError",
+    "input_sha256": "6a9564230958516c9b362e0e5fac7e5cf2cd5723e83c3af6f1941df8590aebf1",
+    "message": "Incorrect fields (missing=[], unknown=['unit_schema', 'units'])"
+   }
+  }
+ ],
+ "seal_id": "071cf5ecd39f44a0773f1843bacb7976435f6fbc980d85e2ff42e352e5e208ff",
+ "sources": [
+  {
+   "kind": "corpus source",
+   "path": "bench/PROFILE-GOLDEN.json",
+   "sha256": "61f62c4aef76b22f6982f07049da7cef933973cd9e2a5df406912a164e122b0e"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "bench/profile_english.py",
+   "sha256": "dd252514a6597efa74ca94c6f62c9f621dda1a6910d25a5ce7bf189ce7f295c1"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/english-lean-report.json",
+   "sha256": "ee84c262563c3c8f26a361378ad703ea31870c72a5bc437fbb3e81014270b6ee"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/english-lean/engine.json",
+   "sha256": "d783346b2aa78c67e3f6fad26d58c4df54eacc29509c8be0731ba4e3b9ff6ced"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/english-lean/lexer.json",
+   "sha256": "1a13d8c26595ed33aee51677218c592f736932b805ffca7220132a6929b7bb78"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/english-lean/lexicon.json",
+   "sha256": "038f5a1176e2bc40acf59c1c803da9199e8008e5db69a56863d1329029eb20b0"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/english-mixed-report.json",
+   "sha256": "905cb8d93a2251b90963b9b31b69840e78bbc16b3318651154638c4e95580ce8"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/english-surface-report.json",
+   "sha256": "f56a57334ea2391add1ff0fbfad7f45d0011a9eac7c96e6820dd6326761056fb"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "conformance/english_artifacts.py",
+   "sha256": "92efb92f76e91d9c62cb54231c0b8a0b834d9f0e49a153a292157360d680447f"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "conformance/english_mixed.py",
+   "sha256": "9b398054449b6235d9e07fc4cf0f69ec5b4c216a7d78feaccafa6a675ce92a3a"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "conformance/english_surface.py",
+   "sha256": "3bb4744ebfb8a0b02e5876a15c56fd9f2584cc5c582ebd0c533b3e7c15f8244d"
+  },
+  {
+   "kind": "corpus source",
+   "path": "conformance/natural-view-report.json",
+   "sha256": "8f4eaed2becca2623b3a6279d0534022885a533b9c9b494b01dfdee28a51f595"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "conformance/natural_surface.py",
+   "sha256": "9149cc7872336b853f8b14dd983f08203dabee1763510691c707438d846e7c0f"
+  },
+  {
+   "kind": "corpus source",
+   "path": "examples/environment.json",
+   "sha256": "5831d53f373939976073ab69f2f7424ab07b6871477b5c2c612e2d57facb9f06"
+  },
+  {
+   "kind": "corpus source",
+   "path": "examples/fluent/environment.json",
+   "sha256": "e1b0a2b8aaf01d624a412ffeba5791fd2162d439e96e25490aa45f6380f78e7f"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/lean_service_corpus.py",
+   "sha256": "024aae462f1d7f679a31d2dfea1e2061f5dbb3649c7aed9e8d6568e781e036e8"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/probe_matrix.py",
+   "sha256": "3f1d05049a92ccc6e920da6ca10c22d1c9a22636c51bc00bb4e263ebfd33fdb3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_agent_policy.py",
+   "sha256": "79be7d7b126221d6b5a10bfa0c810da3ff1e41912bd5ebe124d9d2504605659f"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_alternatives_profile.py",
+   "sha256": "bdf3892f8860853c073b4455b8a3133b9ebc06cf079911db9b5db40225f9dd8f"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_asimov_extended.py",
+   "sha256": "2cd4f3e952635d7c8b465c5ca6c3c3bfc7d0e92771c1d7eb783676aef60d51f8"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_asimov_laws.py",
+   "sha256": "8d09ee5ee3cbe506a9f2d6c142f7ac95cbdce913210882638a90fd50e2fe8ff4"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_assist.py",
+   "sha256": "9dcb789b1c3bdbdf6e65bd7e08631a25595763e1310ab9ea1ac2e83b3f558d2c"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_assist_deadline.py",
+   "sha256": "0f66a0e09d8a5bd98dc8bd9b5fd51283b999d4df405f6a613a86cb34d0223fde"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_assist_recovery.py",
+   "sha256": "c3b4556e4aecdf4570d62884d36b2442c2f96ba82920d92b3024bb906333a2c1"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_cli.py",
+   "sha256": "a29e65ed7f7f634863c49f87ca749846f7613034ca8ff93152a98ed8693a2a31"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_data_surface.py",
+   "sha256": "5b99d0392eb44b355cef036f6f9076ee01801c1e8c16e94a3f7e3da253fd38dd"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_definitions_english.py",
+   "sha256": "43b59a25fffe8e4ba65a5f9cbeba604bf1d90be5e27e0ef635f395fcdce54b3e"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_discourse_lean.py",
+   "sha256": "a7f952bb3b0b6ff600d2fe0430083aa2297da4aae89d9e4938b687646cfddbb3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_discourse_three_way.py",
+   "sha256": "e7856e47de5ed99b40416665559d984ab8ff74da35888a39b9657aa8bc251d3c"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english.py",
+   "sha256": "e86fce355df2a2776b2543d43d4da63deccdfa433f46f229cc8cd38d121efea3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_evidence.py",
+   "sha256": "153ba6597b63dd472bde03605ef17e6ffeb1184c14a6760e935f165e91335ce7"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_english_unambiguity.py",
+   "sha256": "ac11b11ba4c1aa29fd78238e76c63d6ef578a6733ad7814a323b8638b53fb7b3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_lexicon.py",
+   "sha256": "cd71e66087fa3e4ee134a4dc1d6c82903d63056028126db1bb1b841802212b5e"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_nary.py",
+   "sha256": "f3ad0bfea108b3d1a312e45d6c9203a02692a82635de668e6285fa10a0dc0cd0"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_natural.py",
+   "sha256": "2ec2e13ed6ed054ed358b3a9a0327afa2004d737a69b2b1106d051cfe53e2f2a"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_norm_defaults.py",
+   "sha256": "7c6b5d22412e4366cbb31fdf9d9148d91a4978c63db9c723460a0ee5e385be11"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_norm_english.py",
+   "sha256": "587e8130affd46b128ebac2fe471e05f141571cb7edeaf181b9f18ad313f6ab3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_order.py",
+   "sha256": "662abf5ef98cec234a650985ca9e51ca1d6b822fc98ba423f4f82c867a3b3198"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_propose.py",
+   "sha256": "7ed53df74b089048cb00f529b432d1a6c415b9d1fa69265d0a238392a7ca4964"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_risk_english.py",
+   "sha256": "c7e606be13838828babf0a90fddf2f41799583867ceca227d26a592a388ad666"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_risk_profile.py",
+   "sha256": "2c5b8df2e6ead622e92c9e6d7c5d85d274a601e7a07b3efeff6d5ee08d2a0fdb"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "tests/test_soft_review_regressions.py",
+   "sha256": "58e77913af4e3110d6a9c32b97df05c5090d55c5af876f2e9c800d83efc520a3"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/agent-policy/check.py",
+   "sha256": "8de84231334dd7d64a14808b9f1346cc235ed8dd487db95218e5fa7c8ef4b49d"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.allow-must.json",
+   "sha256": "03b9bc588bd32287b0dce63392578daf211ededec3f735ad3e04ab7c03bdddfa"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.allow-neednot.json",
+   "sha256": "d8d44d1f2384f136d6119f01226ff6217b42387ba7452d24eab9b288a20e2a28"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.deny-must.json",
+   "sha256": "6bd3254238f2e8189823fb732809700133b770c5a6f805d6a0ecb8b81c9cbc73"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.deny-neednot.json",
+   "sha256": "98959f16204ab7ca6b785a4a4347625c4312d8431b085dc3f594f6311a86aa81"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.lean.json",
+   "sha256": "7cb441ba826d1a0087ff86348aab412e80835f072ff8ba5e4fbae34c7d7e1241"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.unspecified.json",
+   "sha256": "204b4f0d6fea015084f17378ad70411b28e0ba8631c7277b07a49ecc53b6e30d"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/agent-policy/environment.unspecified.lean.json",
+   "sha256": "a8ca7af10afd6b1105e363754a91e58ee0edd0da96c281eab4092d1d23891e2a"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/asimov-extended/asimov_extended_cases.py",
+   "sha256": "7a82d50c073d384b9b8ef9028dc120dea03df4a0edd8d8b0e3bf68e5b5531941"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/asimov-extended/environment.json",
+   "sha256": "6c8596b99b8ae5bfc01d4f78fc560e3387b4e496600cca401196be01543db7ec"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/asimov-laws/environment.json",
+   "sha256": "9deb0549202d105142cbf3da0b28dd6583bfab144f0a1e344842c1ec7220eeb3"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/birthright-citizenship-debate/claims.ve",
+   "sha256": "9f30848f751c1ebf6296c144da2e6b97a13d8d79e208c4650fe33b3cb2e89695"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/birthright-citizenship-debate/environment.english.json",
+   "sha256": "3c1858f4910e2c80e6813480d91185385e3c3c4014d25f7c85cdd351e09fe639"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/birthright-citizenship-debate/environment.json",
+   "sha256": "f316c04ea5f892633b3cd0843f79da460225c3b7c97decbc78d8addad752ad65"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/birthright-citizenship-debate/rendered-english.md",
+   "sha256": "a6b72a7e16915a9b440804ebd12a441018a7b84c1c0e6910f9e187833f93d63f"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/bluedot-grant/build_document.py",
+   "sha256": "1638c241049db99dc21aeab27854601c1111464dad8765776a1cde5327b96b97"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/bluedot-grant/causal.ve.md",
+   "sha256": "e9dbd3bc211f3e554e3274349b447e9facafb7aa8c482f00a7f2ad66a9ffeb5f"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/bluedot-grant/document.ve.md",
+   "sha256": "4ec8652552c84fb44c78ec9b6c756bec67d8ed4faed628d8ed9b2efff1a80173"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/cedar-attributes/environment.json",
+   "sha256": "6697336948b16ddbdd5dbd3d4674b610909669f598810e07f67a73f4b5197a6a"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/claude-constitution-excerpt/claims.ve",
+   "sha256": "fb18c9d2dc5e1200ebaa58999ebe4283619bb49c2d404d193c57fe368cf87e36"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/claude-constitution-excerpt/environment.english.json",
+   "sha256": "f7fcfd90fa499f554241dd63a1d2df02db649f9de402e2c7712668315ee2fbb2"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/claude-constitution-excerpt/environment.json",
+   "sha256": "f8560dedba6e5b04f057597703b0d7f373131196538c107d084b80c1b4efac9f"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/claude-constitution-excerpt/rendered-english.md",
+   "sha256": "dd294195eb0b427412b6bcd308f1d6ae72c59603df889e4b9b3f04a48fa5a5fc"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/eligibility/environment.json",
+   "sha256": "74b7e5351fb3e3a0bfa8c745e41c11ee7b3585acd65877a91acc9b36acffcd54"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/math-mini-paper/environment-closure.json",
+   "sha256": "9d4b3d1a1376a16d234e5a36153659a71d6721e678a016dde918d7163a467ca7"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/math-mini-paper/environment.json",
+   "sha256": "9075b574eaffe19cba475c1f3461a650e9aa393943570808582c9ec0ee828dde"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/news-article/claims.ve",
+   "sha256": "4005e4839201c8d427dfa05da15c3798ed48476a553c51a5f972e643ac6ca9c9"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/news-article/environment.english.json",
+   "sha256": "2e1df2e0fee78b81fec54abcd1712588ce1d376457f5d7bb1009d78c47595fc1"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/news-article/environment.json",
+   "sha256": "16fb6596c9d06cf2673b0f5671b85d0d53c64a11a0ebd310fea8ae93ba7739b8"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/news-article/news-w6a.ve.md",
+   "sha256": "6a9564230958516c9b362e0e5fac7e5cf2cd5723e83c3af6f1941df8590aebf1"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/news-article/rendered-english.md",
+   "sha256": "86fae8f353cbe163c0340fdb8ef2a6dc60f8617ca979cd6bfb400e894a7eb4e5"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/safety-framework/environment.d1.json",
+   "sha256": "931b7a1df901c943bbfc029f4fbf5bd517b5753d72e37b048c2ad58a38edb2f6"
+  },
+  {
+   "kind": "entry-point caller",
+   "path": "usecases/safety-framework/translation.py",
+   "sha256": "cd780dc599906b5ea713864211c8c22c4e07b6e4b80e1a12fd606ea763a6ba3f"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/us-constitution-14th-s1/claims.ve",
+   "sha256": "c02cd84577db009e10a8a9ec6211e12399e7c8b456455609554cdb80146a0bc6"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/us-constitution-14th-s1/environment.english.json",
+   "sha256": "cff0b7ba4a3454ef366dbef33eaacc3d659b8dc5e4d3ca54f09d2a4094ce9330"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/us-constitution-14th-s1/environment.json",
+   "sha256": "87cfbc6255d3a2bad2b1cba54ada3b2d4f542cee18ebb2a0f72673f4b27ae78c"
+  },
+  {
+   "kind": "corpus source",
+   "path": "usecases/us-constitution-14th-s1/rendered-english.md",
+   "sha256": "7c423e070829749f6575d4c660c2eb5be95d4475a93692338179a210f660d242"
+  }
+ ]
+}

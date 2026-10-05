@@ -1,0 +1,120 @@
+{
+  "contract": "norm-defaults@0",
+  "faults": {
+    "5.1": [
+      "filled-vocabulary"
+    ],
+    "5.2": [
+      "filled-rules"
+    ],
+    "5.3": [
+      "unspecified-name"
+    ],
+    "6.1": [
+      "filled-nodes"
+    ],
+    "6.2": [
+      "filled-depth"
+    ],
+    "6.3": [
+      "fill-premise"
+    ],
+    "w1-environment/1.1": [
+      "environment-defined",
+      "environment-language"
+    ],
+    "w1-shape/3.1": [
+      "unit-field"
+    ],
+    "w1-shape/3.2": [
+      "norm-shape"
+    ],
+    "w1-shape/3.3": [
+      "norm-fields"
+    ],
+    "w1-shape/3.4": [
+      "unless-shape"
+    ],
+    "w1-shape/3.5": [
+      "over-shape"
+    ],
+    "w1-shape/3.6": [
+      "predicate-type"
+    ],
+    "w1-shape/3.7": [
+      "over-item"
+    ],
+    "w1-shape/3.8a": [
+      "guard-depth",
+      "guard-depth-first"
+    ],
+    "w1-shape/3.8b": [
+      "guard-index",
+      "guard-reach-first",
+      "guard-shape"
+    ],
+    "w1-shape/3.9a": [
+      "carve-out-depth"
+    ],
+    "w1-shape/3.9b": [
+      "carve-out-shape"
+    ],
+    "w1/2.2": [
+      "rules-limit"
+    ],
+    "w1/4.1": [
+      "name-class"
+    ],
+    "w1/4.2": [
+      "name-repeat"
+    ],
+    "w1/4.3": [
+      "reserved-name"
+    ],
+    "w1/4.4": [
+      "predicate-unregulated"
+    ],
+    "w1/4.5": [
+      "sign-type"
+    ],
+    "w1/4.6": [
+      "carve-out-limit"
+    ],
+    "w1/4.7a": [
+      "guard-arity"
+    ],
+    "w1/4.7b": [
+      "carve-out-predicate",
+      "guard-constant",
+      "guard-predicate",
+      "guard-predicate-name",
+      "guard-sort"
+    ],
+    "w1/4.7c": [
+      "guard-scope"
+    ],
+    "w1/4.7d": [
+      "nodes-before-type",
+      "rules-nodes"
+    ],
+    "w1/4.7e": [
+      "string-binder"
+    ],
+    "w1/5.1": [
+      "over-unknown"
+    ],
+    "w1/5.2": [
+      "over-predicate"
+    ],
+    "w1/6.1": [
+      "precedence-cycle"
+    ],
+    "w1/6.2": [
+      "precedence-depth"
+    ],
+    "w1/6.3": [
+      "layer-cycle"
+    ]
+  },
+  "unreached": {}
+}

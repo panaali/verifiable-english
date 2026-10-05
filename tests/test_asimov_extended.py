@@ -12,6 +12,8 @@ import json
 import sys
 from pathlib import Path
 
+from types import SimpleNamespace
+
 import pytest
 
 REPO = Path(__file__).resolve().parents[1]
@@ -258,13 +260,89 @@ def test_the_committed_permission_default_results_agree_with_the_reading():
     assert deny["records"]["lean_vs_reading_disagreements"] == deny["sampled"]["lean_vs_reading_disagreements"] == []
 
 
-@pytest.mark.skipif(not check.SERVICE.exists(), reason="the Lean service is not built")
-def test_rerun_equals_the_committed_results():
-    results = check.compute()
-    results["comparison"] = check.compare(results, KEY)
+# The rerun, one section per test so that the sections (and each mutant) run in parallel.
+# Corpus scale (8,070 CPU seconds of Lean, 42% of the suite's, docs/testing-profile.md): the
+# document checks, the mutants and the 300 sampled records run with `-m nightly` and in
+# tools/gate.py; the records section, the 51 records under both rules, runs by default.
+needs_lean = pytest.mark.skipif(not check.SERVICE.exists(), reason="the Lean service is not built")
+
+
+def _plain(value):
+    return json.loads(json.dumps(value, sort_keys=True))
+
+
+@pytest.mark.nightly
+@needs_lean
+def test_rerun_document_equals_the_committed_results():
+    document = check.document_section(cases.environment(), cases.norms(True), cases.norms(False), {})
+    assert _plain(document) == RESULTS["document"]
+
+
+@pytest.mark.nightly
+@needs_lean
+@pytest.mark.parametrize("name", check.MUTANTS)
+def test_rerun_mutant_equals_the_committed_results(name):
+    result = check.mutant(name, cases.environment(), cases.norms(True))
+    result.pop("seconds")
+    assert _plain(result) == RESULTS["mutants"][name]
+
+
+@needs_lean
+def test_rerun_records_equal_the_committed_results():
+    env, ext_rules, base_rules, records = cases.environment(), cases.norms(True), cases.norms(False), \
+        cases.all_records()
+    per_record, lean = check.records_section(env, base_rules, ext_rules, records, {})
+    assert _plain(per_record) == RESULTS["records"]
+    deny = check.permission_default(env, base_rules, ext_rules, records, lean)
+    assert _plain(deny) == RESULTS["permission_default_deny"]["records"]
+
+
+@pytest.mark.nightly
+@needs_lean
+def test_rerun_sample_equals_the_committed_results():
+    env, ext_rules, base_rules = cases.environment(), cases.norms(True), cases.norms(False)
+    specs, sample_lean, result = check.sampled_section(env, base_rules, ext_rules, check.SAMPLE, {})
+    assert _plain(result) == RESULTS["sampled"]
+    deny = check.permission_default(env, base_rules, ext_rules, specs, sample_lean)
+    assert _plain(deny) == RESULTS["permission_default_deny"]["sampled"]
+
+
+def test_the_committed_comparison_is_the_answer_key_comparison_of_the_committed_sections():
+    """With every section equal to the committed one (above), the rerun's comparison is this."""
+    assert _plain(check.compare(RESULTS, KEY)) == RESULTS["comparison"]
+    assert set(RESULTS) == {"document", "records", "mutants", "sampled", "permission_default_deny",
+                            "comparison", "timing"}
+
+
+def test_the_whole_run_joins_the_sections(monkeypatch):
+    """compute(), which writes results.json, is the sections the tests above check."""
+    class Pool:
+        def __init__(self, *_):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return False
+
+        def starmap_async(self, function, jobs):
+            return type("Done", (), {"get": lambda _: [function(*job) for job in jobs]})()
+
+        close = join = lambda self: None
+    monkeypatch.setattr(check, "multiprocessing", SimpleNamespace(get_context=lambda _: SimpleNamespace(Pool=Pool)))
+    monkeypatch.setattr(check, "document_section", lambda *args: {"doc": True})
+    monkeypatch.setattr(check, "mutant", lambda name, *_: {"verdict": name, "seconds": 1.0})
+    monkeypatch.setattr(check, "records_section", lambda *args: ({"R": 1}, "lean"))
+    monkeypatch.setattr(check, "sampled_section", lambda env, b, e, sample, timing: ({"S": sample}, "sample-lean",
+                                                                                      {"sampled": sample}))
+    monkeypatch.setattr(check, "permission_default", lambda env, b, e, specs, lean: [sorted(specs), lean])
+    results = check.compute(sample=7)
     results.pop("timing")
-    committed = {k: v for k, v in RESULTS.items() if k != "timing"}
-    assert json.loads(json.dumps(results, sort_keys=True)) == committed
+    assert results == {"document": {"doc": True}, "records": {"R": 1},
+                       "mutants": {name: {"verdict": name} for name in check.MUTANTS}, "sampled": {"sampled": 7},
+                       "permission_default_deny": {"records": [sorted(cases.all_records()), "lean"],
+                                                   "sampled": [["S"], "sample-lean"]}}
 
 
 def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_and_alternatives():

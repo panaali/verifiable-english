@@ -158,10 +158,16 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 - Each request carries a fresh nonce id; a response with another id or mode, a result not bound to its
   case (position or digest), a request error not bound to the request's mode and case digests, a
   malformed or short response, a
-  timeout (5 s interactive default, 60 s for batch callers), a crash, end of output or a bad handshake is an
+  deadline (the mode's CPU deadline with its wall-clock cap, or a caller's explicit timeout; 30 s to start;
+  `VE_LEAN_SERVICE_TIMEOUT` replaces the wall-clock cap and `VE_LEAN_SERVICE_STARTUP_TIMEOUT` the 30 s, and
+  the test suite sets them to its hang guard `tests/subprocesses.py` `HANG_TIMEOUT`), a crash, end of output or a bad handshake is an
   operational failure: the process is killed and the batch retried once on a fresh process; a second
   failure raises `CheckerUnavailable` (code `CheckerUnavailable`, never `ResourceLimit`, never a verdict). No
   fallback to Python. Cancellation is out of band only (the kill).
+- The one-shot runner calls that remain (`ve/backends/lean.py` `run`, for `ve_conformance`) have the same
+  rule: each caller's wall-clock default is a hang guard, `VE_LEAN_TIMEOUT` replaces every one
+  (`configured_timeout`), an explicit timeout is kept, a value that is not a positive finite number of seconds
+  is `CheckerUnavailable` before the runner starts, and the test suite sets it to `HANG_TIMEOUT`.
 - Response shapes have one source, in Lean: `lean/ResponseShape/Schemas/` (one module per schema file, in the
   dialect of `lean/ResponseShape.lean`), rendered to `ve/backends/lean_service_schema/` (one JSON schema
   file per mode plus the envelope and shared Lean value domains; dialect in its `README.md`) by
