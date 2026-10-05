@@ -38,6 +38,21 @@ def test_the_ab_found_no_difference_over_every_corpus():
     assert records["base"]["by_corpus"] == records["head"]["by_corpus"] == compare["records"]
 
 
+def test_fourteen_date_seeds_preserve_the_differential_result():
+    evidence = _evidence("fuzzer-seeds.json")
+    assert evidence["base_commit"].startswith("2ce1134e")
+    assert evidence["baseline_sha256"]
+    assert [row["seed"] for row in evidence["seeds"]] == [*range(20260921, 20260931),
+                                                           *range(20261001, 20261005)]
+    assert all(not row["differences"] for row in evidence["seeds"])
+    assert all(row["base_exit"] == row["head_exit"] for row in evidence["seeds"])
+    assert all(row["base_new"] == row["head_new"] for row in evidence["seeds"])
+    assert all(row["base_not_reproduced"] == row["head_not_reproduced"] == 0
+               for row in evidence["seeds"])
+    assert all(sum(sum(counts.values()) for counts in row["mutants"].values()) > 25000
+               for row in evidence["seeds"])
+
+
 def test_every_timed_run_exited_cleanly_on_both_sides():
     runs = _evidence("timing-route.json")["runs"] + _evidence("timing.json")["runs"]
     assert runs and all(run["exit"] == 0 for run in runs)

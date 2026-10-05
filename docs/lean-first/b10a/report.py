@@ -81,8 +81,25 @@ def seeded_rows():
     return rows
 
 
+def fuzzer_rows():
+    data = load("fuzzer-seeds.json")
+    rows = ["| Date seed | Mutants per side | New signatures per side | Baseline entries not reproduced | Differences |",
+            "|---:|---:|---:|---:|---:|"]
+    for row in data["seeds"]:
+        mutants = sum(sum(counts.values()) for counts in row["mutants"].values())
+        rows.append(f"| {row['seed']} | {mutants:,} | {row['base_new']} / {row['head_new']} | "
+                    f"{row['base_not_reproduced']} / {row['head_not_reproduced']} | "
+                    f"{', '.join(row['differences']) or 'none'} |")
+    rows += ["", f"Base `{data['base_commit'][:12]}`, head `{data['head_commit'][:12]}`; "
+             f"baseline SHA-256 `{data['baseline_sha256'][:12]}…` on both sides. "
+             "Compared corpus, mutant counts, answers, finding counts, new signature sets, "
+             "and baseline replay per seed. The baseline was not updated."]
+    return rows
+
+
 def render():
     parts = ["### Gate item 2: corpus A/B", "", *ab_rows(), "",
+             "### Gate item 2: fourteen date-seeded differential comparisons", "", *fuzzer_rows(), "",
              "### Gate item 4: latency (paired, base and head alternating)", "", *timing_rows(), "",
              "### Seeded bugs (build checklist 13)", "", *seeded_rows()]
     return "\n".join(parts) + "\n"
