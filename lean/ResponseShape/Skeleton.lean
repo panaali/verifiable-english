@@ -144,6 +144,12 @@ theorem lacks_of_error {j w : Json} {k k' e : String} (hobj : j.getObjVal? k' = 
     (CaseCond.lacks k).holds j = true := by
   cases j <;> simp_all [holds, Json.getObjVal?, Except.toBool]
 
+/-- In an object case, `path [k]` is whether the field is there. -/
+theorem path_toBool {j w : Json} {k' : String} (hobj : j.getObjVal? k' = .ok w) (k : String) :
+    (CaseCond.path [k]).holds j = (j.getObjVal? k).toBool := by
+  cases j <;> simp_all [holds, objectHas, Json.getObjVal?]
+  split <;> simp_all [Except.toBool, objectHas]
+
 /-- A case with the field `k` does not lack it. -/
 theorem lacks_of_val {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : (CaseCond.lacks k).holds j = false := by
   cases j <;> simp_all [holds, Json.getObjVal?, Except.toBool]
@@ -161,6 +167,8 @@ for a case that is an object without one. The conditions of a mode's selection o
 decided from it (`case_cond`). -/
 def KindRead (d : String) (c : Json) (k : String) : Prop :=
   c.getObjValD "kind" = .str k ∨ ((CaseCond.lacks "kind").holds c = true ∧ k = d)
+
+theorem KindRead.of_str {d k : String} {c : Json} (h : c.getObjValD "kind" = .str k) : KindRead d c k := Or.inl h
 
 namespace CaseCond
 
@@ -187,6 +195,18 @@ theorem kind_setObjVal {j : Json} (hj : CaseWF j) {k : String} (hk : k ≠ "kind
       simpa [hne] using h
     rw [this]
   | _ => rfl
+
+/-- Setting another field keeps a field of the case. -/
+theorem getObjVal_setObjVal {j : Json} (hj : CaseWF j) {m : Std.TreeMap.Raw String Json compare} (hm : j = .obj m)
+    {k k' : String} (hk : k ≠ k') (v : Json) : (j.setObjVal! k v).getObjVal? k' = j.getObjVal? k' := by
+  subst hm
+  have wf := hj _ rfl
+  simp only [Json.setObjVal!, Json.getObjVal?]
+  have : (m.insert k v).get? k' = m.get? k' := by
+    have h := Std.TreeMap.Raw.getElem?_insert (k := k) (v := v) (a := k') wf
+    have hne : ¬ compare k k' = .eq := fun h => hk ((Std.LawfulEqCmp.compare_eq_iff_eq (cmp := compare)).mp h)
+    simpa [hne] using h
+  rw [this]
 
 inductive Skel where
   /-- Any value. -/
@@ -425,6 +445,16 @@ theorem altSub {ss ts : List Skel} {v : Json} (hs : ∀ s ∈ ss, s ∈ ts) (h :
 
 theorem ofAlt {s : Skel} {ss : List Skel} {v : Json} (hs : s ∈ ss) (h : Fits c s v) : Fits c (.alt ss) v :=
   Fits.alt hs h
+
+theorem alt_inv {ss : List Skel} {v : Json} (h : Fits c (.alt ss) v) : ∃ s ∈ ss, Fits c s v := by
+  cases h with
+  | alt hm h => exact ⟨_, hm, h⟩
+
+theorem onCase_inv {cond : CaseCond} {t e : Skel} {v : Json} (h : Fits c (.onCase cond t e) v) :
+    (cond.holds c = true ∧ Fits c t v) ∨ (cond.holds c = false ∧ Fits c e v) := by
+  cases h with
+  | onCaseT hc h => exact .inl ⟨hc, h⟩
+  | onCaseE hc h => exact .inr ⟨hc, h⟩
 
 end Fits
 
