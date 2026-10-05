@@ -6,7 +6,9 @@ definition the statements read, every theorem in plain words, where the Lean dev
 schemata, and what is not done. `lean/audit.py` audits every theorem below: no `sorry`, only `propext`,
 `Classical.choice` and `Quot.sound`. No frozen P0 file, no `lean/VE/Route/*` and no `lean/VE/Norms/*` source
 changed; `VE.lean` and `VE/Audit.lean` gained imports and audit entries only, and `lakefile.toml` gained the
-`ve_speech_acts_route` target (root `SpeechActsMain.lean`) without changing existing targets.
+`ve_speech_acts_route` target (root `SpeechActsMain.lean`) without changing existing targets. Lean-first batch 11a
+(docs/LEAN-FIRST-PLAN.md on `design/lean-first`, row 11a) added `Source/Run.lean` and changed
+`Discourse/Loader.lean`, the one W2 loader both routes read (below).
 
 ## Files
 
@@ -17,7 +19,8 @@ changed; `VE.lean` and `VE/Audit.lean` gained imports and audit entries only, an
 | `Answer.lean` | `presupposition`, `tokens`, `correct`, `AnswersAt`, `answerEval`; the section 8.3 theorems |
 | `Consequence.lean` | the section 8.4 theorems; `entails_lower` (a structure lifted along `ULift`) |
 | `Wire.lean` | the profile allowlist, the strict scope block, the canonical environment, `decodeSpeechEnvironment`, `scope_in_identity`, the unit and document decoder (`Decoded`) |
-| `Run.lean`, `../SpeechActsMain.lean` | the `ve_speech_acts_route` executable and the soundness of its replays |
+| `Run.lean` | the case kinds of the core and the soundness of their replays |
+| `Source/Run.lean`, `../SpeechActsMain.lean` | the decoded-source wrapper of 8.5 (`speech-source`): `decodeSpeechSource` over a `ve-document@2` payload, the coverage projection of 6, the answer, nomination and compliance records of 3.3; the executable's entry point |
 
 `eqGuard`, `demand`, `policy` and `premises` live in `Tree.lean` rather than `Demand.lean` (spec 8's file list)
 because `WellFormedSpeech` checks W1's `WellFormed (policy D)`.
@@ -72,6 +75,10 @@ Names have prefix `VE.SpeechActs.`.
 | `Run.speech_wire_conflict_witness_sound` | A `CONFLICT` witness on the regenerated policy refutes its conflict-freedom and the document property. |
 | `Run.speech_wire_conflict_free_sound` | A `CONFLICT-FREE` package replay makes every base-admissible structure conflict-free for the regenerated policy (W1's `conflictFreeCheck_sound`), the hypothesis of `speech_route_acceptance`. |
 | `Run.premiseStatus_sound` | A model status is a model of the checked list; an inconsistency certificate refutes every admissible model of it. |
+| `Source.source_retained` | The wrapper keeps W2's identity payload verbatim: its metadata and source are the payload's, and its document id is the 3.5 digest of `{metadata without weights, source, fences}` of that payload. |
+| `Source.coverage_partition` | Every unit's class is the one its W2 status maps to (CHECKED ↦ C, OPEN ↦ R/O/U, LABELLED ↦ L, UNFORMALISED ↦ U), and the class and status tables both total the source byte count. |
+| `Source.answers_sound` | A certificate answer record of a decoded source makes its stated answer an answer in every admissible model of the regenerated premises (conditionally on `H` for a conditional record); a model record's answers are exactly `AnswersAt` in that model. |
+| `Source.query_records_sound` | Every `follows` judgment record and every proof task's compliance certificate is entailment of the query's target by its pinned `Π_q`. |
 
 The remaining theorems are helper lemmas (formula typing and closedness, `eqsFrom` denotation, sublists and
 pairs, JSON object lookup after insertion, the `ULift` lift) audited with the same allowlist.
@@ -133,6 +140,21 @@ candidates cannot reach the route, and an authored choice needs its content.
 | `speech-consequence` | `query`, `certificate` and/or `model`, optional `premise_status` (as `speech-answer`) and `model_id` | `follows (certificate; premises: <status>; vacuous: <no, yes or unknown>)`, `gap (model <id>)`, `unresolved (no accepted evidence)`; `CheckerConflict` when both hold |
 | `speech-conflict` | `packages` (target → `{"environment_id", "document_hash", "target", "certificate"}`) | `CONFLICT-FREE`, or `UNKNOWN` with the first target lacking an accepted certificate; the outer binding is the canonical environment id, the document hash `ve-speech-acts-<identity version>` over `{"environment_id", "document"}` and the target; the inner certificate binds the regenerated base environment (scope block, regulated predicates, `speech-acts@0` and `norms@0` removed), `Background_base` and `∀x̄. ¬conflict` |
 | `speech-conflict` | `witness` (W1's shape) | `CONFLICT` or `UNKNOWN` on the regenerated policy |
+| `speech-source` | `document`: the payload `{"metadata", "source", "fences"}` of a `ve-document@2` text (`Discourse.Loader.payload`); optional `premise_status`: `{"answers": {"<i>": {"model"} or {"inconsistent"}}, "compliance": {...}}`, evidence an untrusted search found for record `i`'s checked list | every `speech-elaborate` field, `document_id`, `source_id`, `units` (bytes, W2 status, class, `MIXED` parent), `coverage` (`bytes_by_class`, `bytes_by_status`, `residual`), `answers` (status, evidence, answer, the 5.3 line), `nominations` (the 5.3 line and, for one nomination, its narrowing), `compliance` (the 5.4 line), `status_text` (5.5) |
+
+`speech-source` follows Python's `SpeechSource` (`ve/speech_document.py`) check by check, in its order, and reads the
+same W2 decoders the discourse route reads (`Discourse.Loader`: `partsOf`, `meaningStatus`, `openTermNames`,
+`compileSets`, `narrowingIds`, `w2Status`, `documentId`, `sourceId`, `modelId`), so W2's front-matter logic has one
+owner. Speech candidates of a reading set keep W2's schema (`speechReadings`); the core then checks each as its unit
+would be were it chosen. A record's certificate is bound and replayed exactly as `speech-answer` and
+`speech-consequence` do; a record whose evidence does not establish it is `AnswerMismatch: <u>` (answers) or
+`QueryMismatch: <q>` (judgments and compliance), as in Python. A nomination (`{"question", "by", "support":
+"testimony", "nominate": i}`) names candidate `i` of the reading question's set version (`NominationOutsideSet: <u>`
+otherwise); one distinct nomination is `<i> by <agent> (testimony)` with its W2 narrowing, none or several
+`CLARIFICATION-OPEN (none | multiple)`. Premise statuses are UNKNOWN unless the case supplies evidence, which Lean
+checks; the policy line of 5.5 says `UNKNOWN (no conflict evidence; see speech-conflict)`.
+`tests/test_speech_source_lean.py` compares every field with Python on seven template documents and every
+single-fault mutant of them.
 
 Cases without a speech-act construct (profile, block, `speech-*` kind, `binding` unit, command or question
 content) delegate unchanged to `Norms.Run.runCase`. A query whose target is one of its pinned premises carries
@@ -144,15 +166,21 @@ source file through Python's experimental inspection path; Rust has no speech-ac
 
 ## Not done
 
-* **Section 8.5's wrapper and admission.** `SpeechSource` (W2's identity payload, source bytes and fences,
-  structured open terms, reading sets and narrowings), `SpeechAdmitted`, `source_retained`, `active_commands`
-  over `SpeechSource` (`Wire.decoded_active_commands` is the analogue over the present decoder),
-  `bindings_withheld` and `speech_wire_acceptance` are not implemented; the `admission` kind on a speech-act
-  input is rejected with `UnsupportedProfile: case kind admission is not available on the speech-acts route`.
-  It needs the `ve-document@2` JSON (front matter, source, fences) as the route input and Lean decoders
-  mirroring `ve/readings.py`'s `validate_reading_sets` and `validate_narrowings`.
-* **Records.** Answer, compliance and nomination records are accepted as document keys but not decoded; there
-  is no compliance line and no nomination status; binding units have no meaning id.
+* **Section 8.5's admission.** The wrapper is `Source.SpeechSource` (`speech-source`), which keeps the payload and
+  the validated W2 structure as JSON with typed projections rather than 8.5's `OpenTerm`, `SpeechReading` and
+  `Narrowing` structures, and states `source_retained` over that payload (a weaker form of 8.5's, which also
+  re-decodes the reading sets and narrowings). `SpeechAdmitted` (P0 `admit_document` over the projection with the
+  claim graph and the two route-local leaves), `bindings_withheld`, `active_commands` over `SpeechSource`
+  (`Wire.decoded_active_commands` holds for `src.dec`) and `speech_wire_acceptance` are not implemented, and the
+  `admission` kind on a speech-act input is still rejected with `UnsupportedProfile: case kind admission is not
+  available on the speech-acts route`. Python's wrapper does not check the claim graph either.
+* **Fences.** An English fence needs the speech parser, Python's English layer (plan track E3): `speech-source`
+  answers `NotImplemented: fenced English content` unless a signed choice replaces the fence. Python's
+  `_check_wordings` (each instruction and question wording parsed and compared with its content) is likewise
+  English-layer and has no Lean counterpart; the differential test names the cases.
+* **Records.** External compliance evidence (an asserted `done` unit, 5.4) is rejected as Python rejects it
+  (`QueryMismatch: <u>`): no checker derives an act's `done` predicate. Binding units have no meaning id in the
+  report. `CLARIFICATION-OPEN (outside set)` never arises: a nomination outside the set is an error (3.3).
 * **Route-wide conformance and English fidelity.** Python's experimental `SpeechDocument`, `SpeechSource` and
   restricted English parser are present. The section 9 shared fixtures above cover a subset of semantic results;
   Rust still has no speech-act parser or admission route. W8 replay/approval, all-derivations English checks and
