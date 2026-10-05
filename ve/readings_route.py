@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .backends.lean import run_readings_cases
+from .backends.lean import configured_timeout as lean_timeout, run_readings_cases
 from .errors import CheckerUnavailable, VEError
 from .readings_s1 import Admission, answer, wire
 
@@ -50,7 +50,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
     [row] = run_lean([{"id": "readings-s2", "kind": "readings-elaborate",
                        "environment": environment, "document": document}], executable=executable,
-                     timeout=300)
+                     timeout=lean_timeout(300.0))
     try:
         senv = S1Environment(environment)
         source = Document(senv, document)
@@ -136,7 +136,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def run_lean(cases, *, executable=LEAN_ROUTE, timeout=120):
+def run_lean(cases, *, executable=LEAN_ROUTE, timeout=None):
+    """Without a `timeout`, the call waits `VE_LEAN_TIMEOUT` seconds, else the route's default."""
     return run_readings_cases(executable, wire(cases), timeout=timeout)
 
 
@@ -204,7 +205,7 @@ def validate(environment, units, reading_sets, *, executable=LEAN_ROUTE, rust=Tr
     # One normalised input (`wire`: an explicit null is an absent field) for Lean and Python alike.
     environment, document = wire(environment), wire(document_wire(units, reading_sets))
     case = {"id": "readings-s1", "kind": "readings-validate", "environment": environment, "document": document}
-    rows = run_lean([case], executable=executable, timeout=300)
+    rows = run_lean([case], executable=executable, timeout=lean_timeout(300.0))
     row = rows[0]
     if row["status"] == "ok" and (type(row.get("content_bearing")) is not bool or
                                   row["content_bearing"] and type(row.get("sets")) is not list):

@@ -8,7 +8,7 @@ import pytest
 from tests.probe_matrix import model_wire, raw_environment
 from ve import Environment, FiniteModel, Top
 from ve.ast import formula_to_data
-from ve.backends.lean_runner import run
+from ve.backends.relay import decide as run
 from ve.identity import meaning_id, source_id
 
 SERVICE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_service"

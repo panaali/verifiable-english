@@ -585,14 +585,15 @@ def _known_text_difference(name, path):
     class and not changed: a required field missing (the environment decoders' texts differ: `fields do not match`
     against `Incorrect fields`, `invalid signature` against `Undeclared predicate argument sort`), and a candidate's
     content made ill-typed by the environment (Lean's content decoder refuses it before any candidate label, or with
-    its code, `UnknownSymbol: `, before the text: the malformed-contents limitation of the earlier rechecks)."""
+    its code, `UnknownSymbol: `, before the text: the malformed-contents limitation of the earlier rechecks).
+    The rights document's `arbitrary_arrest` line left the class in lean-first batch 0: Python's text now carries
+    Lean's `UnknownSymbol: ` too, so the route answers Lean's diagnostic (`docs/lean-first/b0/DELTA.md` A1)."""
     required = (path[-1] in ("arguments", "description") or path[:2] == ("vocabulary", "sorts") and len(path) == 3
                 or name == "norms" and len(path) <= 2 and path not in (("profiles",), ("vocabulary", "soft"),
                                                                        ("vocabulary", "rights"))
                 or name == "rights" and path == ("vocabulary",))
     ill_typed = path in (("vocabulary", "predicates", "avoid_required"),
-                         ("vocabulary", "predicates", "avoid_required", "regulated")) and name != "norms" or \
-        name == "rights" and path == ("vocabulary", "predicates", "arbitrary_arrest")
+                         ("vocabulary", "predicates", "avoid_required", "regulated")) and name != "norms"
     return required or ill_typed
 
 
@@ -644,6 +645,20 @@ def test_explicit_null_is_absent_in_the_environment(lean, name, path):
     else:
         assert python == row
         assert routed == row
+
+
+def test_a_text_that_differed_only_by_the_code_prefix_gets_leans_diagnostic(lean):
+    """Lean-first batch 0, `DELTA.md` A1 (`availability`): the rights document over an environment without
+    `arbitrary_arrest` was `CheckerUnavailable` on the route, Python writing `Unknown predicate ...` and Lean
+    `UnknownSymbol: Unknown predicate ...`. Python's text is Lean's now, so the route rejects with it."""
+    make, make_document, unit_kind = NULL_ENVIRONMENTS["rights"]
+    absent = wire(_nulled(make(), ("vocabulary", "predicates", "arbitrary_arrest")))
+    document = make_document(make())
+    text = "UnknownSymbol: Unknown predicate 'arbitrary_arrest' under rs9@1:0"
+    assert {k: v for k, v in validate(lean, absent, document).items() if k != "id"} == {"status": "error",
+                                                                                       "error": text}
+    assert _python_answer(absent, document) == {"status": "error", "error": text}
+    assert _route(absent, document, unit_kind) == {"status": "error", "error": text}
 
 
 def test_environment_nulls_cover_the_reported_fields():

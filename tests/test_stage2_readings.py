@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from ve.backends import dispatch, lean_runner
+from ve.backends import dispatch, relay
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.readings import check_readings
@@ -35,7 +35,7 @@ def env():
 
 def cases(monkeypatch):
     calls = []
-    real = lean_runner.run
+    real = relay.decide
 
     def spy(mode, batch, **kw):
         rows = real(mode, batch, **kw)
@@ -43,7 +43,7 @@ def cases(monkeypatch):
             calls.extend(zip(batch, rows))
         return rows
 
-    monkeypatch.setattr(lean_runner, "run", spy)
+    monkeypatch.setattr(relay, "decide", spy)
     return calls
 
 
@@ -82,24 +82,24 @@ def submitted(monkeypatch, verdict):
 ])
 def test_lean_rebuilds_premises_and_checks_evidence(monkeypatch, verdict, change, message):
     case = submitted(monkeypatch, verdict)
-    assert lean_runner.run("readings", [case])[0]["verdict"] == verdict
+    assert relay.decide("readings", [case])[0]["verdict"] == verdict
     change(case)
     with pytest.raises(VEError, match=message):
-        lean_runner.run("readings", [case])
+        relay.decide("readings", [case])
 
 
 def test_a_verdict_lean_does_not_confirm_is_unavailable(monkeypatch):
     from ve.backends.diagnostics import checker_error
     sets, conclusion, fixed = QUERIES["ALL"]
     monkeypatch.setenv("VE_AUTHORITY", "lean")
-    real = lean_runner.run
+    real = relay.decide
 
     def refuse(mode, batch, **kw):
         if mode == "readings":
             raise checker_error("the ALL evidence does not check")
         return real(mode, batch, **kw)
 
-    monkeypatch.setattr(lean_runner, "run", refuse)
+    monkeypatch.setattr(relay, "decide", refuse)
     with pytest.raises(CheckerUnavailable, match="does not check"):
         check_readings(env(), sets, conclusion, fixed=fixed)
 
@@ -107,7 +107,7 @@ def test_a_verdict_lean_does_not_confirm_is_unavailable(monkeypatch):
         rows = real(mode, batch, **kw)
         return [{**row, "verdict": "NONE"} for row in rows] if mode == "readings" else rows
 
-    monkeypatch.setattr(lean_runner, "run", other)
+    monkeypatch.setattr(relay, "decide", other)
     with pytest.raises(CheckerUnavailable):
         check_readings(env(), sets, conclusion, fixed=fixed)
 
@@ -145,7 +145,7 @@ def test_readings_on_the_closure_core_and_order_families(monkeypatch, family, ve
         case = copy.deepcopy(case)
         case["evidence"]["model"]["relations"]["base"] = []
         with pytest.raises(VEError, match="does not check"):
-            lean_runner.run("readings", [case])
+            relay.decide("readings", [case])
 
 
 @pytest.mark.parametrize("kind", ["v0", "closure", "order"])

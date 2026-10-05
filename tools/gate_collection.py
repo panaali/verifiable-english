@@ -20,7 +20,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from tools.gate import COLLECTION, collection_command, collection_difference  # noqa: E402
-from tools.pytest_run import pytest_environment  # noqa: E402
+from tools import nested_pytest  # noqa: E402
 
 # Variables the collection inherits; pytest options and plugins never do.
 INHERITED = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR")
@@ -38,12 +38,12 @@ def collect(root: Path = ROOT, *, prebuilt: bool = False) -> list[str]:
         # Bytecode is checked only against its source's size and whole-second
         # mtime, so a same-size edit within the second would load the earlier
         # source. An empty cache, never the tree's __pycache__, compiles it fresh.
-        env.update(VE_GATE_PYTEST_RESULT=str(output),
-                   PYTHONPATH=str(ROOT), PYTHONPYCACHEPREFIX=str(Path(directory) / "pycache"))
+        env.update(PYTHONPATH=str(ROOT), PYTHONPYCACHEPREFIX=str(Path(directory) / "pycache"))
         if prebuilt:
             # Inside a running suite, whose session holds the shared build lock.
             env["VE_NATIVE_PREBUILT"] = "1"
-        run = subprocess.run(collection_command([sys.executable]), cwd=root, env=pytest_environment(env),
+        run = subprocess.run(collection_command([sys.executable]), cwd=root,
+                             env=nested_pytest.environment(env, VE_GATE_PYTEST_RESULT=str(output)),
                              text=True, capture_output=True)
         events = json.loads(output.read_text()) if output.exists() else None
     if events and events["collection_reports"]:
