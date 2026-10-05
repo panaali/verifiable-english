@@ -200,8 +200,9 @@ It also has an asserted unit over `warn_required`. It passes on the base and the
 
 ## Not done here
 
-- The DRI's signature for A1.
-- Statement review: no approved statement changed. The 30 new lemmas are equalities between a specified and an
-  optimised computation, listed above and in `lean/READINGS.md`, for the reviewers.
-- A measurement on an idle host: the pilot and whole-document runs were at load ~6 to 19 on 32 cores.
-- Profiling inside the candidate rows (31% of the remainder).
+- **HUMAN (DRI):** the signature for A1.
+- **HUMAN (reviewers):** statement review. No approved statement changed; the 30 new lemmas are equalities between
+  a specified and an optimised computation, listed above and in `lean/READINGS.md`.
+- **AGENT, when a host is idle:** the pilot and whole-document measurement on an idle host. These runs were at
+  one-minute load ~6 to 19 on 32 cores.
+- **AGENT, if the DRI keeps 3c or 3e:** profiling inside the candidate rows (31% of the remainder).
