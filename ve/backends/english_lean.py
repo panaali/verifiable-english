@@ -50,6 +50,7 @@ FAULTS = ("lexicon", "notWellFormed", "notTyped")
 ILL_TYPED = ("UnknownSymbol", "TypeMismatch", "UnsupportedProfile")
 # The Python classes each Lean rejection code maps onto: base 4.2 with this stage's four codes and its
 # amended `IllTyped` row (spec 4.2). `RelativeForm` maps onto two classes by the text (2.8): either agrees.
+# `CoefficientNotNumeral` is `order@0`'s (S3 2.8; Python's `SyntaxError`, `english.py:1213–1214`).
 CLASSES = {
     "SourceTooLong": ("ResourceLimit",), "TextTooLong": ("ResourceLimit",),
     "BadCharacter": ("SyntaxError",), "OpenQuote": ("SyntaxError",), "BadNumeral": ("SyntaxError",),
@@ -57,6 +58,7 @@ CLASSES = {
     "BadSpacing": ("SyntaxError",),
     "UnboundReference": ("SyntaxError",), "ShadowedName": ("SyntaxError",), "SortMismatch": ("SyntaxError",),
     "MarkerDepth": ("SyntaxError",), "NestingLimit": ("ResourceLimit",), "NumeralBound": ("ResourceLimit",),
+    "CoefficientNotNumeral": ("SyntaxError",),
     "PronounUnresolved": ("SyntaxError",), "BlockedWording": ("SyntaxError",), "IllTyped": ILL_TYPED,
     "CoordinationRepeated": ("SyntaxError",), "CoordinationForm": ("SyntaxError",),
     "NaturalScoped": ("SyntaxError",), "RelativeForm": ("SyntaxError", *ILL_TYPED),
