@@ -16,6 +16,15 @@ ruling of the same day on the three points Astra held; section 12 lists every ed
 answers. The verdict is BUILD with mandatory B0 corrections: the corrections are in this draft, and B0's
 statement review (D16) gates the amended text before any proof.
 
+**Status note, 2026-10-05 (no design edit).** B0's statement spec is [senses.md](senses.md) draft 1. Its stub
+ran against the S2 build that `main` now carries (merged into this branch at `7746f24a`), so the fixtures of
+section 6 that the Lean side decides were computed there, not derived by hand. Six computed results differ
+from this plan's hand-derived text (the gloss forms in mid-sentence, label letters, the pack sort fields and
+arity, `project_valid`, the typed check on an empty list, several fixture values); spec section 0 lists them
+as findings F1 to F6 for the statement review and the DRI. Where the two documents differ on a computed value, the spec is the measurement and this plan
+is the expectation it overturned; nothing else in this plan changed after draft 2 except that n3 is named in
+the two counterexample lists (5.1 B0, G-S0), as the review's joint position has it.
+
 **Evidence for the need** (ARCH-ROADMAP, 2026-10-04): writing a small VE joke needed about five declaration
 lines per word in the environment file (name, argument sorts, description, wording, negative wording), the
 negatives were written by hand, and the text hit the "No X that …" gap (S2's W12, `No service that is
@@ -806,7 +815,7 @@ interface (D19).
 
 **B0.** Fixtures: the S1 stub elaborates; the interim S2 stub elaborates (a shape check, D19); a1 to a8
 computed; every counterexample fixture of draft 2 is present with its expected value (d1's note, d17, d18,
-d19, a11, a12, j11, j12, n7, s15, s16, s17, s18). Deletes nothing. Done when the review converges with its
+d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18). Deletes nothing. Done when the review converges with its
 FIX list applied and both stubs re-elaborate.
 
 **B1.** Fixtures d1 to d19. Not duplicated: `reservedWords` is the one list (D13); `wordingKey`,
@@ -1050,7 +1059,7 @@ without it (`GF`):
 
 | Gate | After | Passes when |
 |---|---|---|
-| G-S0 | B0 | the statement review converges on FIX or PASS with its list applied; the S1 stub elaborates the dictionary, assignment, preamble and projection statements; the interim S2 stub elaborates the five reading statements (a shape check, D19, with its interim names listed); a1 to a8 computed; every counterexample fixture of draft 2 is present with its expected value: d1's note, d17, d18, d19, a11, a12, j11, j12, n7, s15, s16, s17, s18 |
+| G-S0 | B0 | the statement review converges on FIX or PASS with its list applied; the S1 stub elaborates the dictionary, assignment, preamble and projection statements; the interim S2 stub elaborates the five reading statements (a shape check, D19, with its interim names listed); a1 to a8 computed; every counterexample fixture of draft 2 is present with its expected value: d1's note, d17, d18, d19, a11, a12, j11, j12, n3, n7, s15, s16, s17, s18 |
 | G-S0b | before B5 is accepted | the five S2-dependent statements (`project_extends`, `senses_resolved_one_reading`, `senses_candidate_sound`, `candidates_complete`, `senseMap_ids`) re-elaborate against the **merged** S2.3 build, unchanged, or with every difference listed, re-reviewed by the statement reviewers and signed by the DRI; no S2-dependent proof counts before this gate |
 | G-S1 | B5 | every fixture of 6.1 to 6.6 holds, s15 to s18 and n7 included; `lean/audit.py` clean, standard axioms only; the theorems of 4.3 proved, or each deferral signed by the DRI and listed in the report; Q4 decided by c1 to c8 |
 | G-S2 | B7, B8, B9 | the joke reads, renders and re-reads (g1); the four packs pinned; the measurement of 7.2 in the report; no Python decision site in the relay or the display (lint); latency: `senses.read` on `J` and on each use-case document within S2's `english.read` budget plus 10 ms for the preamble and projection, warm, measured as S1 measured (`bench/english_lean_g1a.py`'s method) |
