@@ -15,10 +15,12 @@ import ResponseShape.Encoders.Envelope
 /-! # Every encoder against its shape
 
 For every mode of the service (every constructor of `VE.Service.Mode`, so a new mode fails the
-build until it is proved), every row its runner returns fits the skeleton of the mode's row
-shape (`ResponseShape.Skeletons.row`, extracted from `ResponseShape.Schemas`): each object the
-runner builds has exactly the fields the shape allows, every field the shape requires, none it
-forbids, and a field the shape ties to another field's value exactly with that value. A field an
+build until it is proved), every row its runner returns for a case fits the skeleton of the
+mode's row shape (`ResponseShape.Skeletons.row`, extracted from `ResponseShape.Schemas`): each
+object the runner builds has exactly the fields the shape allows, every field the shape
+requires, none it forbids, and a field the shape ties to another field's value, or to the case,
+exactly when the shape has it. The case is one the service decodes (`CaseWF`: its object map is
+well formed), which the readings-route mode needs to read the case's kind through its rewrite. A field an
 encoder adds or drops, or a shape that lists another field, fails the build until the two agree.
 The proofs are per mode in `ResponseShape.Encoders.*`; values the runners copy from the request
 are marked in the shapes (`Shape.copied`). The service's own lines (each result bound to its
@@ -28,7 +30,9 @@ position and case digest, the response, a request error) are proved against `env
 namespace ResponseShape.Encoders
 open Lean ResponseShape ResponseShape.Skeletons
 
-theorem runMode_fits (m : VE.Service.Mode) (j : Json) : Fits Γ (row m) (VE.Service.runMode m j) := by
+variable {req : Json}
+
+theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (row m) (VE.Service.runMode m j) := by
   cases m
   · exact Conformance.evaluate_fits j
   · exact Conformance.checkCertificate_fits j
@@ -55,7 +59,7 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) : Fits Γ (row m) (VE.Serv
   · exact Quantity.runCaseReported_fits j
   · exact NormDefaults.runCaseReported_fits j
   · exact Discourse.runCaseReported_fits j
-  · exact ReadingsRoute.runCaseReported_fits j
+  · exact ReadingsRoute.runCaseReported_fits j hj
   · exact English.diagnose_fits j
 
 end ResponseShape.Encoders

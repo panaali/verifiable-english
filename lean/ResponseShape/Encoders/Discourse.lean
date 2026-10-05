@@ -7,19 +7,21 @@ namespace ResponseShape.Encoders.Discourse
 open Lean ResponseShape ResponseShape.Skeletons
 open VE.Discourse VE.Discourse.Run
 
-theorem of_route {v : Json} (h : Fits Γ Skeletons.route v) : Fits Γ Skeletons.discourse v := by
+variable {req : Json}
+
+theorem of_route {v : Json} (h : Fits req Skeletons.route v) : Fits req Skeletons.discourse v := by
   refine Fits.altSub ?_ h
   alt_sub
 
 theorem references_fits (front : Json) (pending : List (String × String)) :
-    Fits Γ (.arr [] (skel% "discourse.json#/$defs/reference")) (referencesJson front pending) := by
+    Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) (referencesJson front pending) := by
   unfold referencesJson
   fits
 
 /-- Every admission's reference lines are `referencesJson`'s (or none, for a `@1` document). -/
 theorem admitDiscourse_references (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
     (j : Json) (n : Nat) :
-    OkP (fun res : Admitted => Fits Γ (.arr [] (skel% "discourse.json#/$defs/reference")) res.references)
+    OkP (fun res : Admitted => Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) res.references)
       (admitDiscourse profiles environment rv j n) := by
   cases n <;> unfold admitDiscourse admitAt <;> simp only [] <;> okfits
   all_goals first
@@ -27,8 +29,8 @@ theorem admitDiscourse_references (profiles : List String) (environment : Json) 
     | (unfold admit2; okfits; exact references_fits _ _)
 
 theorem encodeAdmission_fits (id : String) (res : Admitted)
-    (hr : Fits Γ (.arr [] (skel% "discourse.json#/$defs/reference")) res.references) :
-    OkFits Γ (skel% "discourse.json#/$defs/admission") (encodeAdmission id res) := by
+    (hr : Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) res.references) :
+    OkFits req (skel% "discourse.json#/$defs/admission") (encodeAdmission id res) := by
   unfold encodeAdmission
   okfits
   simp only [VE.Route.Wire.ok, admittedJson, reportJson, claimJson]
@@ -44,12 +46,12 @@ theorem encodeAdmission_fits (id : String) (res : Admitted)
        all_goals fits)
 
 theorem targetJson_fits (t : Target) :
-    Fits Γ (skel% "discourse.json#/$defs/resolved_target") (targetJson t) := by
+    Fits req (skel% "discourse.json#/$defs/resolved_target") (targetJson t) := by
   unfold targetJson
   fits
 
 theorem resolve_fits (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
-    (j : Json) : OkFits Γ (skel% "discourse.json#/$defs/resolve") (runResolve profiles environment rv id j) := by
+    (j : Json) : OkFits req (skel% "discourse.json#/$defs/resolve") (runResolve profiles environment rv id j) := by
   unfold runResolve
   okfits
   simp only [VE.Route.Wire.ok]
@@ -62,13 +64,13 @@ theorem resolve_fits (profiles : List String) (environment : Json) (rv : VE.Rout
     all_goals fits
 
 theorem joint_fits (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
-    (j : Json) : OkFits Γ (skel% "discourse.json#/$defs/joint") (runJoint profiles environment rv id j) := by
+    (j : Json) : OkFits req (skel% "discourse.json#/$defs/joint") (runJoint profiles environment rv id j) := by
   unfold runJoint
   okfits
   all_goals simp only [VE.Route.Wire.ok]
   all_goals fits
 
-theorem runCase_fits (j : Json) : OkFits Γ Skeletons.discourse (runCase j) := by
+theorem runCase_fits (j : Json) : OkFits req Skeletons.discourse (runCase j) := by
   unfold runCase
   simp only []
   okfits
@@ -80,7 +82,7 @@ theorem runCase_fits (j : Json) : OkFits Γ Skeletons.discourse (runCase j) := b
     | with_reducible exact OkP.of (joint_fits _ _ _ _ _) fun _ h => Fits.altSub (by alt_sub) h
     | (simp only [VE.Route.Wire.ok]; fits)
 
-theorem runCaseReported_fits (j : Json) : Fits Γ Skeletons.discourse (runCaseReported j) := by
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.discourse (runCaseReported j) := by
   unfold runCaseReported
   split
   · split

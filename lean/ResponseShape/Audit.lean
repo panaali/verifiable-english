@@ -4,15 +4,25 @@ import ResponseShape.Encoders
 use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every theorem of
 `ResponseShape` to be listed here and to depend on the standard axioms only. -/
 
+#print axioms ResponseShape.CaseCond.holds_path_cons
+#print axioms ResponseShape.CaseCond.objectHas_cons
+#print axioms ResponseShape.CaseCond.objectHas_one
+#print axioms ResponseShape.CaseCond.path_error
+#print axioms ResponseShape.CaseCond.path_ok
 #print axioms ResponseShape.Encoders.Alternatives.admission_fits
 #print axioms ResponseShape.Encoders.Alternatives.chooser_fits
 #print axioms ResponseShape.Encoders.Alternatives.conflict_fits
+#print axioms ResponseShape.Encoders.Alternatives.decodeAltSource_taken
+#print axioms ResponseShape.Encoders.Alternatives.decodeBlock_taken
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_fits
+#print axioms ResponseShape.Encoders.Alternatives.fields_obj
 #print axioms ResponseShape.Encoders.Alternatives.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.Alternatives.followable_fits
 #print axioms ResponseShape.Encoders.Alternatives.of_norms
+#print axioms ResponseShape.Encoders.Alternatives.optString_isSome
 #print axioms ResponseShape.Encoders.Alternatives.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Alternatives.runCase_fits
+#print axioms ResponseShape.Encoders.Alternatives.sourceOf_taken
 #print axioms ResponseShape.Encoders.Alternatives.validate_fits
 #print axioms ResponseShape.Encoders.Common.claimJson_fits
 #print axioms ResponseShape.Encoders.Common.reportJson_fits
@@ -65,6 +75,11 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Quantity.runDocument_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.candidate_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.keyJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.lower
+#print axioms ResponseShape.Encoders.ReadingsRoute.lower_normDefaults
+#print axioms ResponseShape.Encoders.ReadingsRoute.lower_norms
+#print axioms ResponseShape.Encoders.ReadingsRoute.lower_rights
+#print axioms ResponseShape.Encoders.ReadingsRoute.lower_softNorms
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_normDefaults
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_norms
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_rights
@@ -154,6 +169,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Fits.arrList
 #print axioms ResponseShape.Fits.arrMap
 #print axioms ResponseShape.Fits.arrOf
+#print axioms ResponseShape.Fits.congr
 #print axioms ResponseShape.Fits.isSome_of_mem
 #print axioms ResponseShape.Fits.mkObj
 #print axioms ResponseShape.Fits.mkObjAlt
@@ -182,9 +198,12 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.OkP.pure_ok
 #print axioms ResponseShape.OkP.throw
 #print axioms ResponseShape.OkP.throw_bind
+#print axioms ResponseShape.Skel.condsOk_field
+#print axioms ResponseShape.Skel.lookup_mem
 #print axioms ResponseShape.getArr_arr
 #print axioms ResponseShape.isEmpty_append
 #print axioms ResponseShape.isEmpty_empty
 #print axioms ResponseShape.isEmpty_iff_data
+#print axioms ResponseShape.kind_setObjVal
 #print axioms ResponseShape.setObjVal_mkObj
 #print axioms ResponseShape.toOption_ok
