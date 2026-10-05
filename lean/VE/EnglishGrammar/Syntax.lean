@@ -9,6 +9,13 @@ section 8, on branch `english-lean/py`) and as the DRI ruled on 2026-10-04:
 - The `blockedWording` identifiers are `natural-negation` (`Every deployed service is not reviewed.`)
   and `risk-every-cannot`. Every other blocked wording of the hand parser fires only when no rule
   matches, so Lean's outcome is `noDerivation` with Python's advice as the diagnostic.
+
+S2 (docs/spec/english-lean-s2.md 2.4 and 2.8) closes the two lists for the base profile:
+
+- `Reject` gains `coordinationRepeated`, `coordinationForm`, `naturalScoped` and `relativeForm`: the
+  hand parser's restrictions on a derivation that Lark's grammar has, written as side conditions.
+- `Ty` gains the types of the base profile's nonterminals: `marker`, `unit`, `listMarker`, `noun`,
+  `label`, `constant`, `adjective`, `natSubject`, `count`, `relation`.
 -/
 
 namespace VE.EnglishGrammar
@@ -48,6 +55,7 @@ inductive Reject where
   | unboundReference | shadowedName | sortMismatch | markerDepth | nestingLimit | numeralBound
   | coefficientNotNumeral
   | pronounUnresolved | blockedWording (id : String)
+  | coordinationRepeated | coordinationForm | naturalScoped | relativeForm
   | internal
   deriving DecidableEq, Repr
 
@@ -73,6 +81,10 @@ def Reject.code : Reject → String
   | .coefficientNotNumeral => "CoefficientNotNumeral"
   | .pronounUnresolved => "PronounUnresolved"
   | .blockedWording _ => "BlockedWording"
+  | .coordinationRepeated => "CoordinationRepeated"
+  | .coordinationForm => "CoordinationForm"
+  | .naturalScoped => "NaturalScoped"
+  | .relativeForm => "RelativeForm"
   | .internal => "Internal"
 
 /-- The state of the `it` rule. `referents` is sorted and has no duplicate. -/
@@ -83,9 +95,10 @@ structure DState where
 
 def DState.init : DState := ⟨[], false⟩
 
-/-- The semantic types. Tier B: S2 closes the list with the action library. -/
+/-- The semantic types (spec S2 2.4). `intTerm` is S3's. -/
 inductive Ty where
   | tok | sentence | formula | term | intTerm | declaration | guard | relative
+  | marker | unit | listMarker | noun | label | constant | adjective | natSubject | count | relation
   deriving DecidableEq, Repr
 
 end VE.EnglishGrammar
