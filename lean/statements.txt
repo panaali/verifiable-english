@@ -10456,6 +10456,46 @@ theorem VE.Norms.Run.runAdmission_sound
       VE.Norms.Run.AdmissionAnswer id environment document answer
   -- uses VE.Norms.Run.AdmissionAnswer@VE.Norms.Run VE.Norms.Run.runAdmission@VE.Norms.Run
   -- expr 3081730087
+theorem VE.Norms.RunSound.norms_wire_certificate_acceptance
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-certificate" →
+        answer.getObjValD "valid" = Lean.Json.bool Bool.true →
+          ∃ r,
+            VE.Norms.Flagged.replayEntailment j = Except.ok r ∧
+              VE.Norms.Wire.decodeSource (j.getObjValD "environment") (j.getObjValD "norms") Bool.true = Except.ok r.src ∧
+                (∀ (S : VE.Structure),
+                    S.Admissible (VE.Norms.envAt r.src.D (VE.Norms.size r.src.D)) →
+                      VE.Norms.Sat S (VE.Norms.Flagged.flagPremises r.src) →
+                        VE.Norms.holdsCatala r.src.D.T S →
+                          VE.Norms.definitionsHold r.src.D S →
+                            VE.Norms.profileHold r.src.D S →
+                              VE.Norms.Sat S (VE.Norms.backgroundBase r.src.D) →
+                                VE.Norms.Sat S r.premises → VE.Formula.denote S [] r.conclusion) ∧
+                  (VE.Norms.Flagged.flagPremises r.src = [] →
+                    (∀ (B : VE.Structure), VE.Norms.BaseAdmissible r.src.D B → VE.Norms.ConflictFree r.src.D B) →
+                      (∀ (a : VE.Formula), a ∈ r.premises → VE.Formula.WellFormed (VE.Norms.envAt r.src.D 0) [] a) →
+                        VE.Formula.WellFormed (VE.Norms.envAt r.src.D 0) [] r.conclusion →
+                          ∀ (B : VE.Structure),
+                            VE.Norms.BaseAdmissible r.src.D B →
+                              VE.Norms.Sat B r.premises → VE.Formula.denote B [] r.conclusion)
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Flagged.flagPremises@VE.Norms.Flagged VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay.conclusion@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.premises@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay.src@VE.Norms.Replay VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Wire.Source.D@VE.Norms.Wire VE.Norms.Wire.Source@VE.Norms.Wire VE.Norms.Wire.decodeSource@VE.Norms.Wire VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.envAt@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.Route.Run.caseKind@VE.Route.Run VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3327095928
+theorem VE.Norms.RunSound.runCase_certificate
+  ∀ (j answer : Lean.Json),
+    VE.Norms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "norms-certificate" →
+        ∃ r,
+          VE.Norms.Flagged.replayEntailment j = Except.ok r ∧
+            answer.getObjValD "valid" = Lean.Json.bool (VE.Norms.Flagged.valid r)
+  -- uses VE.Norms.Flagged.replayEntailment@VE.Norms.Flagged VE.Norms.Flagged.valid@VE.Norms.Flagged VE.Norms.Replay.EntailmentReplay@VE.Norms.Replay VE.Norms.Run.runCase@VE.Norms.Run VE.Route.Run.caseKind@VE.Route.Run
+  -- expr 670460400
+theorem VE.Norms.RunSound.valid_field
+  ∀ (id : String) (b : Bool) (n m : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n), ("layers", m)]).getObjValD "valid" =
+      Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 540553084
 theorem VE.Norms.agreesBelow_of_meanings
   ∀ {D : VE.Norms.Doc} {k : Nat} {S : VE.Structure}, VE.Norms.MeaningsBelow D k S → VE.Norms.AgreesBelow D k S
   -- uses VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc@VE.Norms.Tree VE.Norms.MeaningsBelow@VE.Norms.Prefix VE.Structure@VE.Semantics
@@ -25140,6 +25180,189 @@ theorem VE.Route.Run.route_rejects_before_checking
         VE.Route.Gate.decodeEnvelope env = Except.error message → VE.Route.Run.runCase j = Except.error message
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.runCase@VE.Route.Run
   -- expr 167621404
+theorem VE.Route.RunSound.decodeRouteVocabulary_flagsBase
+  ∀ (e : VE.Route.Gate.Envelope) (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.Run.decodeRouteVocabulary e = Except.ok rv → VE.Route.WireSound.FlagsBase rv
+  -- uses VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound
+  -- expr 3335060808
+theorem VE.Route.RunSound.dispatch_closure
+  ∀ (id : String) (environment : Lean.Json) (e : VE.Route.Gate.Envelope) (j out : Lean.Json) (k : String),
+    VE.Route.Run.caseKind j = Except.ok k →
+      VE.Route.RunSound.RunnerKind k →
+        e.family = VE.Route.Gate.Family.closure →
+          VE.Route.Run.dispatch id environment e j = Except.ok out →
+            ∃ rv,
+              VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                VE.Route.Wire.runClosure e.profiles environment rv id k j = Except.ok out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.dispatch@VE.Route.Run VE.Route.RunSound.RunnerKind@VE.Route.RunSound VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire
+  -- expr 2618790435
+theorem VE.Route.RunSound.dispatch_fol
+  ∀ (id : String) (environment : Lean.Json) (e : VE.Route.Gate.Envelope) (j out : Lean.Json) (k : String),
+    VE.Route.Run.caseKind j = Except.ok k →
+      VE.Route.RunSound.RunnerKind k →
+        e.family = VE.Route.Gate.Family.fol →
+          VE.Route.Run.dispatch id environment e j = Except.ok out →
+            ∃ rv,
+              VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                VE.Route.Wire.runFol e.profiles environment rv id k j = Except.ok out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.dispatch@VE.Route.Run VE.Route.RunSound.RunnerKind@VE.Route.RunSound VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire
+  -- expr 1658574300
+theorem VE.Route.RunSound.dispatch_order
+  ∀ (id : String) (environment : Lean.Json) (e : VE.Route.Gate.Envelope) (j out : Lean.Json) (k : String),
+    VE.Route.Run.caseKind j = Except.ok k →
+      VE.Route.RunSound.RunnerKind k →
+        e.family = VE.Route.Gate.Family.order →
+          VE.Route.Run.dispatch id environment e j = Except.ok out →
+            ∃ rv,
+              VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                VE.Route.Wire.runOrder e.profiles environment rv id k j = Except.ok out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.dispatch@VE.Route.Run VE.Route.RunSound.RunnerKind@VE.Route.RunSound VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire
+  -- expr 3310273661
+theorem VE.Route.RunSound.route_closure_certificate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "certificate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.closure →
+              out.getObjValD "valid" = Lean.Json.bool Bool.true →
+                ∃ rv,
+                  VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                    ∃ hb,
+                      (∃ cert,
+                          VE.CertificateWire.decodeClosureCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+                            VE.Route.WireSound.closureRunner.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
+                        VE.Route.WireSound.CertificateClaim VE.Route.WireSound.closureFamily rv j ∧
+                          VE.Route.WireSound.BaseClaim VE.Route.WireSound.closureFamily rv hb j
+  -- uses VE.CertificateWire.decodeClosureCertificate@VE.CertificateWire VE.Closure.Tableau.Certificate@VE.TableauExtended VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 2438111179
+theorem VE.Route.RunSound.route_closure_countermodel
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "countermodel" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.closure →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv
+                    j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 4105909426
+theorem VE.Route.RunSound.route_closure_evaluate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "evaluate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.closure →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 7420587
+theorem VE.Route.RunSound.route_fol_certificate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "certificate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.fol →
+              out.getObjValD "valid" = Lean.Json.bool Bool.true →
+                ∃ rv,
+                  VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                    ∃ hb,
+                      (∃ cert,
+                          VE.CertificateWire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+                            VE.Route.WireSound.folRunner.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
+                        VE.Route.WireSound.CertificateClaim VE.Route.WireSound.folFamily rv j ∧
+                          VE.Route.WireSound.BaseClaim VE.Route.WireSound.folFamily rv hb j
+  -- uses VE.CertificateWire.decodeCertificate@VE.CertificateWire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound VE.Tableau.Certificate@VE.Tableau
+  -- expr 1910566409
+theorem VE.Route.RunSound.route_fol_countermodel
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "countermodel" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.fol →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j
+                    out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 3493062199
+theorem VE.Route.RunSound.route_fol_evaluate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "evaluate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.fol →
+              ∃ rv,
+                VE.Route.Run.decodeRouteVocabulary e = Except.ok rv ∧
+                  VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.decodeRouteVocabulary@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2574941502
+theorem VE.Route.RunSound.route_order_certificate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "certificate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.order →
+              out.getObjValD "valid" = Lean.Json.bool Bool.true →
+                ∃ rv,
+                  VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                    (∃ cert,
+                        VE.Order.Wire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+                          VE.Route.WireSound.orderRunner.Bound e.profiles (j.getObjValD "environment") rv j cert) ∧
+                      VE.Route.WireSound.CertificateClaim VE.Route.WireSound.orderFamily rv j ∧
+                        VE.Route.WireSound.BaseClaim VE.Route.WireSound.orderFamily rv trivial j
+  -- uses VE.Order.Tableau.Certificate@VE.Order.Tableau VE.Order.Wire.decodeCertificate@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 2338235649
+theorem VE.Route.RunSound.route_order_countermodel
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "countermodel" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.order →
+              ∃ rv,
+                VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                  VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j
+                    out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 1084559992
+theorem VE.Route.RunSound.route_order_evaluate
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      VE.Route.Run.caseKind j = Except.ok "evaluate" →
+        ∀ (e : VE.Route.Gate.Envelope),
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e →
+            e.family = VE.Route.Gate.Family.order →
+              ∃ rv,
+                VE.Route.Wire.decodeOrderVocabulary e.vocabulary = Except.ok rv ∧
+                  VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j out
+  -- uses VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.caseKind@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 1729054581
+theorem VE.Route.RunSound.runCase_dispatch
+  ∀ (j out : Lean.Json),
+    VE.Route.Run.runCase j = Except.ok out →
+      ∃ id e,
+        VE.Bridge.stringField j "id" = Except.ok id ∧
+          VE.Route.Gate.decodeEnvelope (j.getObjValD "environment") = Except.ok e ∧
+            VE.Route.Run.dispatch id (j.getObjValD "environment") e j = Except.ok out
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate VE.Route.Run.dispatch@VE.Route.Run VE.Route.Run.runCase@VE.Route.Run
+  -- expr 4068013763
+theorem VE.Route.RunSound.runnerKind_ne
+  ∀ {k : String},
+    VE.Route.RunSound.RunnerKind k →
+      (k == "dependency-order") = Bool.false ∧
+        (k == "label") = Bool.false ∧
+          (k == "admission") = Bool.false ∧ (k == "background") = Bool.false ∧ (k == "bundle") = Bool.false
+  -- uses VE.Route.RunSound.RunnerKind@VE.Route.RunSound
+  -- expr 1173996312
 theorem VE.Route.Semantics.sat_append
   ∀ (L : VE.Route.Semantics) (S : L.Model) (as bs : List L.Formula), L.Sat S (as ++ bs) ↔ L.Sat S as ∧ L.Sat S bs
   -- uses VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Semantics.Sat@VE.Route.Layer VE.Route.Semantics@VE.Route.Layer
@@ -25201,6 +25424,362 @@ theorem VE.Route.Wire.definitionsCheck_ok
         VE.Route.Wire.definitionsCheck mem M as = Except.ok () → (as.all fun a => VE.Formula.eval M [] a) = Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Wire.definitionsCheck@VE.Route.Wire
   -- expr 1431424931
+theorem VE.Route.WireSound.Family.Sound.expands_intended
+  ∀ {F : VE.Route.WireSound.Family},
+    F.Sound →
+      ∀ (rv : F.Vocab) (hd : F.Decoded rv) (S₀ : F.L.Model),
+        (F.layer rv hd).Admissible_in S₀ → VE.Route.Unique fun S => (F.layer rv hd).restrict S = S₀ ∧ F.Intended rv S
+  -- uses VE.Route.Layer.Admissible_in@VE.Route.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Unique@VE.Route.Layer VE.Route.WireSound.Family.Decoded@VE.Route.WireSound VE.Route.WireSound.Family.Intended@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family.layer@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound
+  -- expr 2576035853
+theorem VE.Route.WireSound.Runner.acceptance
+  ∀ {F : VE.Route.WireSound.Family} (R : VE.Route.WireSound.Runner F),
+    R.Sound →
+      ∀ (profiles : List String) (environment : Lean.Json) (rv : F.Vocab) (hd : F.Decoded rv) (id : String)
+        (j out : Lean.Json),
+        R.run profiles environment rv id "certificate" j = Except.ok out →
+          out.getObjValD "valid" = Lean.Json.bool Bool.true →
+            (∃ cert,
+                R.decodeCertificate rv (j.getObjValD "certificate") = Except.ok cert ∧
+                  R.Bound profiles environment rv j cert) ∧
+              VE.Route.WireSound.CertificateClaim F rv j ∧ VE.Route.WireSound.BaseClaim F rv hd j
+  -- uses VE.Route.Checker.Cert@VE.Route.Checker VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.Family.Decoded@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family.env@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.Runner.checker@VE.Route.WireSound VE.Route.WireSound.Runner.decodeCertificate@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.Runner@VE.Route.WireSound
+  -- expr 1602709921
+theorem VE.Route.WireSound.certificate_countermodel_exclusive
+  ∀ (F : VE.Route.WireSound.Family) (decodeModel : F.Vocab → Lean.Json → Except String F.L.Model) (rv : F.Vocab)
+    (j₁ j₂ : Lean.Json),
+    F.decodePremises rv j₁ = F.decodePremises rv j₂ →
+      F.decodeConclusion rv j₁ = F.decodeConclusion rv j₂ →
+        VE.Route.WireSound.CertificateClaim F rv j₁ → ¬VE.Route.WireSound.CountermodelClaim F decodeModel rv j₂
+  -- uses VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family.decodeConclusion@VE.Route.WireSound VE.Route.WireSound.Family.decodePremises@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound
+  -- expr 2239043241
+theorem VE.Route.WireSound.chain_environment
+  ∀ (rv : VE.Route.Wire.RouteVocabulary), VE.Definitions.Chain rv.environment rv.definitions
+  -- uses VE.Definitions.Chain@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3982306247
+theorem VE.Route.WireSound.chain_sorts
+  ∀ (E : VE.Environment) (xs : List String) (ds : List VE.Definitions.Def),
+    VE.Definitions.Chain E ds →
+      VE.Definitions.Chain { sorts := E.sorts ++ xs, predicates := E.predicates, constants := E.constants } ds
+  -- uses VE.Definitions.Chain@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Environment.constants@VE.Syntax VE.Environment.mk@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 2121627954
+theorem VE.Route.WireSound.closureFamily_sound
+  VE.Route.WireSound.closureFamily.Sound
+  -- uses VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound
+  -- expr 768663563
+theorem VE.Route.WireSound.closureRunner_run
+  VE.Route.WireSound.closureRunner.run = VE.Route.Wire.runClosure
+  -- uses VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 2330337687
+theorem VE.Route.WireSound.closureRunner_sound
+  VE.Route.WireSound.closureRunner.Sound
+  -- uses VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 1279640154
+theorem VE.Route.WireSound.closure_denote_forget
+  ∀ (E : VE.Environment) (ns : List String) (S : VE.Structure) (a : VE.Closure.Formula) (Γ : List String)
+    (ρ : VE.Valuation S),
+    VE.Closure.Formula.WellFormed (VE.Definitions.hide E ns) Γ a →
+      (VE.Closure.Formula.denote (VE.Definitions.forget ns S) ρ a ↔ VE.Closure.Formula.denote S ρ a)
+  -- uses VE.Closure.Formula.WellFormed@VE.Closure.Syntax VE.Closure.Formula.denote@VE.Closure.Syntax VE.Closure.Formula@VE.Closure.Syntax VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.hide@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1609178500
+theorem VE.Route.WireSound.closure_wellFormed_hide
+  ∀ (E : VE.Environment) (ns : List String) (a : VE.Closure.Formula) (Γ : List String),
+    VE.Closure.Formula.WellFormed (VE.Definitions.hide E ns) Γ a → VE.Closure.Formula.WellFormed E Γ a
+  -- uses VE.Closure.Formula.WellFormed@VE.Closure.Syntax VE.Closure.Formula@VE.Closure.Syntax VE.Definitions.hide@VE.Definitions.Layer VE.Environment@VE.Syntax
+  -- expr 1355352461
+theorem VE.Route.WireSound.countermodelAnswer_refutes
+  ∀ (F : VE.Route.WireSound.Family) (decodeModel : F.Vocab → Lean.Json → Except String F.L.Model) (rv : F.Vocab)
+    (j answer : Lean.Json),
+    VE.Route.WireSound.CountermodelAnswer F decodeModel rv j answer →
+      answer.getObjValD "refutes" = Lean.Json.bool Bool.true → VE.Route.WireSound.CountermodelClaim F decodeModel rv j
+  -- uses VE.Route.Semantics.Model@VE.Route.Layer VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound VE.Route.WireSound.Family.L@VE.Route.WireSound VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Family@VE.Route.WireSound
+  -- expr 4059294946
+theorem VE.Route.WireSound.decodeClosed_data
+  ∀ (E : VE.Environment) (j : Lean.Json) (data : Bool) (a : VE.Formula),
+    VE.Route.Wire.decodeClosed E j data = Except.ok a → VE.Route.Wire.decodeClosed E j = Except.ok a
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeClosed@VE.Route.Wire
+  -- expr 342686743
+theorem VE.Route.WireSound.decodeFormulas_data
+  ∀ (E : VE.Environment) (j : Lean.Json) (data : Bool) (fs : List VE.Formula),
+    VE.Route.Wire.decodeFormulas E j data = Except.ok fs → VE.Route.Wire.decodeFormulas E j = Except.ok fs
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
+  -- expr 464798113
+theorem VE.Route.WireSound.decodeOrderModel_intended
+  ∀ (rv : VE.Route.Wire.RouteOrderVocabulary) (j : Lean.Json) (d : VE.Order.ModelData VE.Order.Wire.Entity),
+    VE.Route.Wire.decodeOrderModel rv j = Except.ok d → VE.Route.WireSound.orderFamily.Intended rv d.toModel.asStructure
+  -- uses VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Route.WireSound.Family.Intended@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound
+  -- expr 4117912950
+theorem VE.Route.WireSound.decodeOrderModel_validFast
+  ∀ (v : VE.Order.Vocabulary) (j : Lean.Json) (d : VE.Order.ModelData VE.Order.Wire.Entity),
+    VE.Route.Decode.decodeOrderModel v j = Except.ok d → VE.Route.Decode.validOrderFast v d = Bool.true
+  -- uses VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Decode.decodeOrderModel@VE.Route.Decode VE.Route.Decode.validOrderFast@VE.Route.Decode
+  -- expr 1168237585
+theorem VE.Route.WireSound.definitionsLayer_restrict
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (S : VE.Structure),
+    (VE.Route.WireSound.definitionsLayer rv).restrict S = VE.Definitions.forget (VE.Definitions.names rv.definitions) S
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.names@VE.Definitions.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.definitionsLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 993243778
+theorem VE.Route.WireSound.embed_sat
+  ∀ (S : VE.Structure) (as : List VE.Formula),
+    VE.Route.closure.Sat S (List.map VE.Closure.embed as) ↔ VE.Route.fol.Sat S as
+  -- uses VE.Closure.embed@VE.Closure.Syntax VE.Formula@VE.Syntax VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Semantics.Sat@VE.Route.Layer VE.Route.closure@VE.Route.Checker VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 1033528939
+theorem VE.Route.WireSound.embed_wellFormed
+  ∀ (E : VE.Environment) (a : VE.Formula) (Γ : List String),
+    VE.Formula.WellFormed E Γ a → VE.Closure.Formula.WellFormed E Γ (VE.Closure.embed a)
+  -- uses VE.Closure.Formula.WellFormed@VE.Closure.Syntax VE.Closure.embed@VE.Closure.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3742949803
+theorem VE.Route.WireSound.flagsHold_forget
+  ∀ (rv : VE.Route.Wire.RouteVocabulary),
+    VE.Route.WireSound.FlagsBase rv →
+      ∀ (S : VE.Structure),
+        VE.Route.WireSound.FlagsHold rv (VE.Definitions.forget (VE.Definitions.names rv.definitions) S) ↔
+          VE.Route.WireSound.FlagsHold rv S
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.names@VE.Definitions.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.FlagsHold@VE.Route.WireSound VE.Structure@VE.Semantics
+  -- expr 1336837740
+theorem VE.Route.WireSound.folFamily_sound
+  VE.Route.WireSound.folFamily.Sound
+  -- uses VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound
+  -- expr 1539636234
+theorem VE.Route.WireSound.folRunner_run
+  VE.Route.WireSound.folRunner.run = VE.Route.Wire.runFol
+  -- uses VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound
+  -- expr 2030690894
+theorem VE.Route.WireSound.folRunner_sound
+  VE.Route.WireSound.folRunner.Sound
+  -- uses VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound
+  -- expr 3221943970
+theorem VE.Route.WireSound.forIn_yield_ok
+  ∀ {α : Type} (f : α → PUnit → Except String (ForInStep PUnit)),
+    (∀ (x : α) (r : PUnit) (s : ForInStep PUnit), f x r = Except.ok s → s = ForInStep.yield PUnit.unit) →
+      ∀ (l : List α) (u : PUnit),
+        ForIn.forIn l PUnit.unit f = Except.ok u →
+          ∀ (x : α), x ∈ l → f x PUnit.unit = Except.ok (ForInStep.yield PUnit.unit)
+  -- uses 
+  -- expr 2683945154
+theorem VE.Route.WireSound.fullBackground_formulas
+  ∀ (rv : VE.Route.Wire.RouteVocabulary),
+    List.map Prod.fst (VE.Route.Wire.fullBackground rv) =
+      VE.Data.Background.generate rv.flags ++ VE.Definitions.expand rv.definitions ++
+        VE.Route.Background.literals rv.literals
+  -- uses VE.Data.Background.generate@VE.Data.Background VE.Definitions.expand@VE.Definitions.Layer VE.Formula@VE.Syntax VE.Route.Background.literals@VE.Route.Background VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.fullBackground@VE.Route.Wire
+  -- expr 132050718
+theorem VE.Route.WireSound.fullLayer_E_out
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv),
+    (VE.Route.WireSound.fullLayer rv hd).E_out = rv.environment
+  -- uses VE.Route.Layer.E_out@VE.Route.Layer VE.Route.Semantics.Env@VE.Route.Layer VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker
+  -- expr 4240082216
+theorem VE.Route.WireSound.fullLayer_admissible_in
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    (VE.Route.WireSound.fullLayer rv hd).Admissible_in S ↔ VE.Route.WireSound.BaseAdmissible rv S
+  -- uses VE.Route.Layer.Admissible_in@VE.Route.Layer VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.BaseAdmissible@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 3478975827
+theorem VE.Route.WireSound.fullLayer_admissible_out
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    (VE.Route.WireSound.fullLayer rv hd).Admissible_out S ↔
+      VE.Route.Background.StringAdmissible rv.environment rv.literals S ∧ VE.Route.WireSound.FlagsHold rv S
+  -- uses VE.Route.Background.StringAdmissible@VE.Route.Background VE.Route.Layer.Admissible_out@VE.Route.Layer VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.literals@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.FlagsHold@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 3878249649
+theorem VE.Route.WireSound.fullLayer_background_sound
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv),
+    VE.Route.BackgroundSound (VE.Route.WireSound.fullLayer rv hd) (List.map Prod.fst (VE.Route.Wire.fullBackground rv))
+  -- uses VE.Route.BackgroundSound@VE.Route.Route VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.fullBackground@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker
+  -- expr 1571512028
+theorem VE.Route.WireSound.fullLayer_intended
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    VE.Route.WireSound.RouteIntended rv S ↔
+      (VE.Route.WireSound.fullLayer rv hd).Admissible_out S ∧ (VE.Route.WireSound.fullLayer rv hd).Intended () S
+  -- uses VE.Route.Layer.Admissible_out@VE.Route.Layer VE.Route.Layer.Intended@VE.Route.Layer VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.RouteIntended@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 3834723145
+theorem VE.Route.WireSound.fullLayer_premises
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv),
+    (VE.Route.WireSound.fullLayer rv hd).premises () = VE.Definitions.expand rv.definitions
+  -- uses VE.Definitions.expand@VE.Definitions.Layer VE.Route.Layer.premises@VE.Route.Layer VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker
+  -- expr 1019101274
+theorem VE.Route.WireSound.fullLayer_restrict
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (hd : VE.Route.WireSound.FlagsBase rv) (S : VE.Structure),
+    (VE.Route.WireSound.fullLayer rv hd).restrict S = VE.Definitions.forget (VE.Definitions.names rv.definitions) S
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Definitions.names@VE.Definitions.Layer VE.Route.Layer.restrict@VE.Route.Layer VE.Route.Semantics.Model@VE.Route.Layer VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.fullLayer@VE.Route.WireSound VE.Route.fol@VE.Route.Checker VE.Structure@VE.Semantics
+  -- expr 1048279558
+theorem VE.Route.WireSound.getObjValD_of_ok
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
+  -- uses 
+  -- expr 2586305039
+theorem VE.Route.WireSound.hide_predicates_some
+  ∀ {E : VE.Environment} {ns : List String} {p : String} {ss : List String},
+    (VE.Definitions.hide E ns).predicates p = Option.some ss → ¬p ∈ ns ∧ E.predicates p = Option.some ss
+  -- uses VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 364531215
+theorem VE.Route.WireSound.mem_zip_map
+  ∀ {α β : Type} (f : α → β) (l : List α) (p : α × β), p ∈ l.zip (List.map f l) → p.snd = f p.fst
+  -- uses 
+  -- expr 1190237451
+theorem VE.Route.WireSound.orderFamily_sound
+  VE.Route.WireSound.orderFamily.Sound
+  -- uses VE.Route.WireSound.Family.Sound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound
+  -- expr 496218438
+theorem VE.Route.WireSound.orderModel_ok
+  ∀ (rv : VE.Route.Wire.RouteOrderVocabulary) (j m : Lean.Json) (d : VE.Order.ModelData VE.Order.Wire.Entity),
+    j.getObjVal? "model" = Except.ok m →
+      VE.Route.Wire.decodeOrderModel rv m = Except.ok d →
+        VE.Route.WireSound.orderModel rv j = Except.ok d.toModel.asStructure
+  -- uses VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Structure@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 2788587040
+theorem VE.Route.WireSound.orderRunner_run
+  VE.Route.WireSound.orderRunner.run = VE.Route.Wire.runOrder
+  -- uses VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.Family.Vocab@VE.Route.WireSound VE.Route.WireSound.Runner.run@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 4087763139
+theorem VE.Route.WireSound.orderRunner_sound
+  VE.Route.WireSound.orderRunner.Sound
+  -- uses VE.Route.WireSound.Runner.Sound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 3456146370
+theorem VE.Route.WireSound.orderVocabulary_no_definitions
+  ∀ (v : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary),
+    VE.Route.Wire.decodeOrderVocabulary v = Except.ok rv →
+      ∀ (ps : List (String × Lean.Json)),
+        VE.Bridge.fields (v.getObjValD "predicates") = Except.ok ps →
+          ∀ (p : String × Lean.Json), p ∈ ps → (p.snd.getObjVal? "defined").isOk = Bool.false
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderVocabulary@VE.Route.Wire
+  -- expr 3356087206
+theorem VE.Route.WireSound.refutes_field
+  ∀ (id : String) (b : Bool),
+    (VE.Route.Wire.ok id [("refutes", Lean.Json.bool b)]).getObjValD "refutes" = Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 282003940
+theorem VE.Route.WireSound.routeIntended_background
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (S : VE.Structure),
+    VE.Route.WireSound.RouteIntended rv S →
+      ∀ (a : VE.Formula), a ∈ List.map Prod.fst (VE.Route.Wire.fullBackground rv) → VE.Formula.denote S [] a
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.fullBackground@VE.Route.Wire VE.Route.WireSound.RouteIntended@VE.Route.WireSound VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4164888829
+theorem VE.Route.WireSound.routeModel_ok
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (j m : Lean.Json) (M : VE.FiniteModel VE.Bridge.Entity),
+    j.getObjVal? "model" = Except.ok m →
+      VE.Route.Wire.decodeDataModel rv m = Except.ok M → VE.Route.WireSound.routeModel rv j = Except.ok M.asStructure
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.WireSound.routeModel@VE.Route.WireSound VE.Structure@VE.Semantics
+  -- expr 756454322
+theorem VE.Route.WireSound.runClosure_accepted
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        VE.Route.WireSound.closureRunner.Accepted profiles environment rv j
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 4203474208
+theorem VE.Route.WireSound.runClosure_certificate_acceptance
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (hd : VE.Route.WireSound.FlagsBase rv) (id : String) (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        (∃ cert,
+            VE.CertificateWire.decodeClosureCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+              VE.Route.WireSound.closureRunner.Bound profiles environment rv j cert) ∧
+          VE.Route.WireSound.CertificateClaim VE.Route.WireSound.closureFamily rv j ∧
+            VE.Route.WireSound.BaseClaim VE.Route.WireSound.closureFamily rv hd j
+  -- uses VE.CertificateWire.decodeClosureCertificate@VE.CertificateWire VE.Closure.Tableau.Certificate@VE.TableauExtended VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.closureRunner@VE.Route.WireSound
+  -- expr 754930426
+theorem VE.Route.WireSound.runClosure_countermodel
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "countermodel" j = Except.ok out →
+      VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 1035956557
+theorem VE.Route.WireSound.runClosure_evaluate
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runClosure profiles environment rv id "evaluate" j = Except.ok out →
+      VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.closureFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runClosure@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.closureFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2869260472
+theorem VE.Route.WireSound.runFol_accepted
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true → VE.Route.WireSound.folRunner.Accepted profiles environment rv j
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound
+  -- expr 961581477
+theorem VE.Route.WireSound.runFol_certificate_acceptance
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary)
+    (hd : VE.Route.WireSound.FlagsBase rv) (id : String) (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        (∃ cert,
+            VE.CertificateWire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+              VE.Route.WireSound.folRunner.Bound profiles environment rv j cert) ∧
+          VE.Route.WireSound.CertificateClaim VE.Route.WireSound.folFamily rv j ∧
+            VE.Route.WireSound.BaseClaim VE.Route.WireSound.folFamily rv hd j
+  -- uses VE.CertificateWire.decodeCertificate@VE.CertificateWire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.FlagsBase@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.folRunner@VE.Route.WireSound VE.Tableau.Certificate@VE.Tableau
+  -- expr 3929513869
+theorem VE.Route.WireSound.runFol_countermodel
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "countermodel" j = Except.ok out →
+      VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2823912357
+theorem VE.Route.WireSound.runFol_evaluate
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runFol profiles environment rv id "evaluate" j = Except.ok out →
+      VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.folFamily VE.Route.WireSound.routeModel rv j out
+  -- uses VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.runFol@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.folFamily@VE.Route.WireSound VE.Route.WireSound.routeModel@VE.Route.WireSound
+  -- expr 2539253995
+theorem VE.Route.WireSound.runOrder_accepted
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        VE.Route.WireSound.orderRunner.Accepted profiles environment rv j
+  -- uses VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 778182594
+theorem VE.Route.WireSound.runOrder_certificate_acceptance
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "certificate" j = Except.ok out →
+      out.getObjValD "valid" = Lean.Json.bool Bool.true →
+        (∃ cert,
+            VE.Order.Wire.decodeCertificate (j.getObjValD "certificate") = Except.ok cert ∧
+              VE.Route.WireSound.orderRunner.Bound profiles environment rv j cert) ∧
+          VE.Route.WireSound.CertificateClaim VE.Route.WireSound.orderFamily rv j ∧
+            VE.Route.WireSound.BaseClaim VE.Route.WireSound.orderFamily rv trivial j
+  -- uses VE.Order.Tableau.Certificate@VE.Order.Tableau VE.Order.Wire.decodeCertificate@VE.Order.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.BaseClaim@VE.Route.WireSound VE.Route.WireSound.CertificateClaim@VE.Route.WireSound VE.Route.WireSound.Runner.Bound@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderRunner@VE.Route.WireSound
+  -- expr 3607858085
+theorem VE.Route.WireSound.runOrder_countermodel
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "countermodel" j = Except.ok out →
+      VE.Route.WireSound.CountermodelAnswer VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j out
+  -- uses VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 2529267789
+theorem VE.Route.WireSound.runOrder_evaluate
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteOrderVocabulary) (id : String)
+    (j out : Lean.Json),
+    VE.Route.Wire.runOrder profiles environment rv id "evaluate" j = Except.ok out →
+      VE.Route.WireSound.EvaluateClaim VE.Route.WireSound.orderFamily VE.Route.WireSound.orderModel rv j out
+  -- uses VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.runOrder@VE.Route.Wire VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound VE.Route.WireSound.orderFamily@VE.Route.WireSound VE.Route.WireSound.orderModel@VE.Route.WireSound
+  -- expr 578414335
+theorem VE.Route.WireSound.term_denote_forget
+  ∀ (ns : List String) (S : VE.Structure) (ρ : VE.Valuation S) (t : VE.Term),
+    VE.Term.denote (VE.Definitions.forget ns S) ρ t = VE.Term.denote S ρ t
+  -- uses VE.Definitions.forget@VE.Definitions.Layer VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2129548524
+theorem VE.Route.WireSound.valid_field
+  ∀ (id : String) (b : Bool) (n : Lean.Json),
+    (VE.Route.Wire.ok id [("valid", Lean.Json.bool b), ("background", n)]).getObjValD "valid" = Lean.Json.bool b
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 3006534112
+theorem VE.Route.WireSound.values_field
+  ∀ (id : String) (v : Lean.Json), (VE.Route.Wire.ok id [("values", v)]).getObjValD "values" = v
+  -- uses VE.Route.Wire.ok@VE.Route.Wire
+  -- expr 2300293659
+theorem VE.Route.WireSound.wellFormed_sorts
+  ∀ {E E' : VE.Environment},
+    (∀ (s : String), s ∈ E.sorts → s ∈ E'.sorts) →
+      E'.predicates = E.predicates →
+        E'.constants = E.constants →
+          ∀ (a : VE.Formula) (Γ : List String), VE.Formula.WellFormed E Γ a → VE.Formula.WellFormed E' Γ a
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3819914996
 theorem VE.Route.closureValid_certificateSound
   ∀ (E : VE.Environment), VE.Route.CertificateSound VE.Route.closure id E (VE.Route.closureValid E)
   -- uses VE.Closure.Tableau.Certificate@VE.TableauExtended VE.Environment@VE.Syntax VE.Route.CertificateSound@VE.Route.Checker VE.Route.Semantics.Formula@VE.Route.Layer VE.Route.closure@VE.Route.Checker VE.Route.closureValid@VE.Route.Checker

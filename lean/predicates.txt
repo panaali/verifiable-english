@@ -228,6 +228,7 @@ module VE.Norms.Plain
 module VE.Norms.Prefix
 module VE.Norms.Replay
 module VE.Norms.Run
+module VE.Norms.RunSound
 module VE.Norms.SmallModel
 module VE.Norms.Subst
 module VE.Norms.Tree
@@ -334,8 +335,10 @@ module VE.Route.Layer
 module VE.Route.Readings
 module VE.Route.Route
 module VE.Route.Run
+module VE.Route.RunSound
 module VE.Route.Steps
 module VE.Route.Wire
+module VE.Route.WireSound
 module VE.Semantics
 module VE.Service.Diagnose
 module VE.Service.EnglishRun
@@ -796,12 +799,28 @@ VE.Route.Layer.Compatible@VE.Route.Layer
 VE.Route.Layer.Intended@VE.Route.Layer
 VE.Route.ReadingChoices.below@VE.Route.Readings
 VE.Route.ReadingChoices@VE.Route.Readings
+VE.Route.RunSound.RunnerKind@VE.Route.RunSound
 VE.Route.Semantics.Admissible@VE.Route.Layer
 VE.Route.Semantics.Entails@VE.Route.Layer
 VE.Route.Semantics.Holds@VE.Route.Layer
 VE.Route.Semantics.Sat@VE.Route.Layer
 VE.Route.Semantics.WellFormed@VE.Route.Layer
 VE.Route.Unique@VE.Route.Layer
+VE.Route.WireSound.BaseAdmissible@VE.Route.WireSound
+VE.Route.WireSound.BaseClaim@VE.Route.WireSound
+VE.Route.WireSound.CertificateClaim@VE.Route.WireSound
+VE.Route.WireSound.CountermodelAnswer@VE.Route.WireSound
+VE.Route.WireSound.CountermodelClaim@VE.Route.WireSound
+VE.Route.WireSound.EvaluateClaim@VE.Route.WireSound
+VE.Route.WireSound.Family.Decoded@VE.Route.WireSound
+VE.Route.WireSound.Family.Intended@VE.Route.WireSound
+VE.Route.WireSound.Family.Sound@VE.Route.WireSound
+VE.Route.WireSound.FlagsBase@VE.Route.WireSound
+VE.Route.WireSound.FlagsHold@VE.Route.WireSound
+VE.Route.WireSound.RouteIntended@VE.Route.WireSound
+VE.Route.WireSound.Runner.Accepted@VE.Route.WireSound
+VE.Route.WireSound.Runner.Bound@VE.Route.WireSound
+VE.Route.WireSound.Runner.Sound@VE.Route.WireSound
 VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker

@@ -266,10 +266,13 @@ theorem covers all three parts, and none names a runner. `Core.Wire.run_certific
 
 **2a. Theorems on the runners as they are.** New file `lean/VE/Route/WireSound.lean`.
 
-1. `fullLayer rv : Layer fol Unit`: the definitions layer composed over the identity layer whose
+1. `fullLayer rv hd : Layer fol Unit`: the definitions layer composed over the identity layer whose
    admissibility is "structurally admissible, flags hold, literals distinct", with
-   `BackgroundSound (fullLayer rv) ((fullBackground rv).map Prod.fst)`. `RouteVocabulary` already
-   carries `chain` and `nodup` (`Route/Wire.lean:33,36`), so no decoder fact is needed.
+   `BackgroundSound (fullLayer rv hd) ((fullBackground rv).map Prod.fst)`. `RouteVocabulary` already
+   carries `chain` and `nodup` (`Route/Wire.lean:33,36`). One decoder fact is needed, `hd :
+   FlagsBase rv`: no flag names a defined predicate, so forgetting the defined tables keeps the
+   flags and every base structure has its expansion (`Norms.FlaggedSpec.
+   decodeVocabulary_flag_not_defined`, discharged at `Route.Run.runCase`).
 2. One record and three claim predicates, which are what the reviewer reads instead of the
    runners. The fol family's `Intended` is `Definitions.Intended ∧` the flags' `Intended`, as
    `decodeDataModel_combined` states, not `Sat S fullBackground`:
@@ -637,8 +640,7 @@ and untied [V]) under the reviewed side table, crediting each declaration to the
 names it. Lines the step names that are already untrusted (C, P, T, [R], [I], tied) earn nothing.
 It validates the side table exactly as `--check` does (one shared pass and trust rule) and
 prints no ledger while any classification or tie problem stands.
-`Adds (est.)` is the only estimate left: the trusted lines a step introduces (2a's `Family` and
-claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
+`Adds (est.)` is the only estimate left: the trusted lines a step introduces (3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtracted in `Net`.
 Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
 88,757 lines; step 5 remeasured after the 2026-10-05 merge of ve-integration, whose
 `VE.Discourse.Run` rewrite moved 3 of its tied lines, and again after the merge into lean-first/b3b, whose
@@ -661,7 +663,7 @@ its 33 trusted lines to batch 1's 551:
 | Step | Removed | Tied | Reclassified [V]→[R] | Adds (est.) | Net | Days | Risk | Score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
-| 2a | 0 | 114 | 0 | 30 | 84 | 4 | 1 | 21.0 |
+| 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
@@ -694,9 +696,26 @@ What the measurement changes:
 * **Step 1:** 1a and 1b are done; the nine `Flagged` definitions are C, and `BaseConflictFree` is
   tied by `conflictFree_of_base` in the side table. The remaining 23 lines are 1c's
   `FamilyNorms.conflictCase`.
-* Steps 1 to 4 keep the DRI's order (section 4 above). The measured total before 8b is 2,536
-  trusted lines removed or tied (net 1,956 after 580 estimated additions) out of 25,641, against the
-  estimate of about 4,300.
+* **Step 2a:** done (`VE.Route.WireSound`, `VE.Route.RunSound`, `VE.Norms.RunSound`). The side
+  table ties `runFol`, `runClosure` and `runOrder` (114 G[V] lines) to their certificate,
+  countermodel and evaluate theorems, so the row now measures 0. `Runner.acceptance` goes through
+  each family's layer: `fullLayer` (item 1) for FOL, the same layer over closure formulas for
+  closure, the identity layer of `OrderStringAdmissible` for order; with `BackgroundSound` of the
+  layer it gives `CertificateClaim` (`route_intended`) and `BaseClaim` (`route_base`, unique
+  expansion, which step 5b reuses). Measured with `tools/trust_map.py --since` against the parent
+  tree, not estimated, the step adds 128 S lines (`Family`, `CertificateClaim`, `BaseClaim`,
+  `CountermodelAnswer`, `CountermodelClaim`, `EvaluateClaim`, `RouteIntended`, `FlagsBase`,
+  `FlagsHold`, `BaseAdmissible`, `Runner.Bound` and the three family instances, docstrings
+  included), covered by a signed allowance in `docs/trust-baseline.json`, and no K or untied [V]
+  line: the model decoders the claims name (`routeModel`, `orderModel`, D[V] 16) are offset by
+  the 114 tied lines. The layer constructions (`fullLayer`, `Layer.within`, `Layer.toClosure`)
+  are C: their meaning is stated by `fullLayer_admissible_in`, `fullLayer_admissible_out`,
+  `fullLayer_intended` and `fullLayer_premises`. Net +30 trusted lines, against the estimated
+  −84: the claims cover all three kinds of all three runners and the expansion, not the
+  certificate kind alone, and the family instances are read.
+* Steps 1 to 4 keep the DRI's order (section 4 above). After step 2a the measured total before 8b
+  is 2,575 trusted lines removed or tied (net 2,025 after 550 estimated additions) out of 25,641,
+  against the estimate of about 4,300.
 
 The budget check (step 0) now also fails a predicate (a declaration whose type ends in `Prop`,
 listed in `lean/predicates.txt`) classed C, [R] or [I] without a tie: such a class took
