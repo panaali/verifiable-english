@@ -3990,14 +3990,18 @@
   "VE/Readings/Run.lean": {
    "D[V]": [
     "VE.Readings.Run.candidateJson",
+    "VE.Readings.Run.findingsOf",
     "VE.Readings.Run.keyEntry",
     "VE.Readings.Run.oneJson",
     "VE.Readings.Run.optBool",
+    "VE.Readings.Run.pairFactsSpec",
     "VE.Readings.Run.pairJson",
+    "VE.Readings.Run.pendingIn",
     "VE.Readings.Run.runLowerWith"
    ],
    "G[V]": [
     "VE.Readings.Run.PairFacts",
+    "VE.Readings.Run.candidateJsonSpec",
     "VE.Readings.Run.chainFindings",
     "VE.Readings.Run.decisionOnlyText",
     "VE.Readings.Run.main",
@@ -4006,11 +4010,34 @@
     "VE.Readings.Run.runCaseReported",
     "VE.Readings.Run.runLower",
     "VE.Readings.Run.setFindings",
+    "VE.Readings.Run.setFindingsSpec",
     "VE.Readings.Run.setPairs",
     "VE.Readings.Run.validateResult"
    ],
    "G[I]": [
     "VE.Readings.Run.documentHash"
+   ]
+  },
+  "VE/Readings/RunExamples.lean": {
+   "G[V]": [
+    "VE.Readings.RunExamples.Counted",
+    "VE.Readings.RunExamples.K15",
+    "VE.Readings.RunExamples.m4",
+    "VE.Readings.RunExamples.scanned",
+    "VE.Readings.RunExamples.tickValue",
+    "VE.Readings.RunExamples.users4",
+    "VE.Readings.RunExamples.σHelp",
+    "VE.Readings.RunExamples.σWrong"
+   ],
+   "G[I]": [
+    "VE.Readings.RunExamples.tickValid",
+    "VE.Readings.RunExamples.σAvoid"
+   ]
+  },
+  "VE/Readings/Scan.lean": {
+   "G[V]": [
+    "VE.Readings.otherScan",
+    "VE.Readings.scanOthers"
    ]
   },
   "VE/Readings/Separate.lean": {
@@ -4024,13 +4051,16 @@
     "VE.Readings.Situation",
     "VE.Readings.actOnly",
     "VE.Readings.assignments",
+    "VE.Readings.assignmentsOf",
     "VE.Readings.authorEnv",
+    "VE.Readings.cellsOf",
     "VE.Readings.contentActs",
     "VE.Readings.declaredTyped",
     "VE.Readings.kindWord",
     "VE.Readings.observeAll",
     "VE.Readings.owned",
     "VE.Readings.ownedKeys",
+    "VE.Readings.ownedKeysOf",
     "VE.Readings.probeKinds",
     "VE.Readings.probeTyped",
     "VE.Readings.probesOf",
@@ -4045,8 +4075,10 @@
     "VE.Readings.GenKey",
     "VE.Readings.GenKey.source",
     "VE.Readings.Tables",
+    "VE.Readings.actOnlyOf",
     "VE.Readings.cells",
     "VE.Readings.decisionOnly",
+    "VE.Readings.decisionOnlyOf",
     "VE.Readings.expand",
     "VE.Readings.forceTwins",
     "VE.Readings.genKeys",
@@ -4060,13 +4092,18 @@
     "VE.Readings.selectable",
     "VE.Readings.separates",
     "VE.Readings.sideValid",
+    "VE.Readings.sideValidOf",
+    "VE.Readings.sideValueOf",
     "VE.Readings.situationWF",
+    "VE.Readings.situationWFOf",
     "VE.Readings.strictTwin",
     "VE.Readings.tableOf",
     "VE.Readings.tablesFor",
+    "VE.Readings.tablesForOf",
     "VE.Readings.tablesModel",
     "VE.Readings.tablesTyped",
     "VE.Readings.twinDocs",
+    "VE.Readings.twinDocsOf",
     "VE.Readings.twinLineLists",
     "VE.Readings.twinLines",
     "VE.Readings.twinNodes",
@@ -4186,13 +4223,21 @@
   },
   "VE/Readings/Wire.lean": {
    "C": [
-    "VE.Readings.Wire.replayPair"
+    "VE.Readings.Wire.candidatesOf",
+    "VE.Readings.Wire.frameWF",
+    "VE.Readings.Wire.oneOf",
+    "VE.Readings.Wire.replayPair",
+    "VE.Readings.Wire.stageOf"
    ],
    "D[V]": [
+    "VE.Readings.Wire.Admitted.side",
     "VE.Readings.Wire.Decoded",
     "VE.Readings.Wire.ReadingJ",
     "VE.Readings.Wire.ReadingsEnvironment",
+    "VE.Readings.Wire.admitReadingsSpec",
     "VE.Readings.Wire.attachmentText",
+    "VE.Readings.Wire.candidateStage",
+    "VE.Readings.Wire.candidateText",
     "VE.Readings.Wire.chainText",
     "VE.Readings.Wire.decodeCandidate",
     "VE.Readings.Wire.decodeContent",
@@ -4210,6 +4255,7 @@
     "VE.Readings.Wire.interfaceText",
     "VE.Readings.Wire.keyJson",
     "VE.Readings.Wire.keyText",
+    "VE.Readings.Wire.pendingAt",
     "VE.Readings.Wire.reservedText"
    ],
    "G[V]": [
@@ -4222,6 +4268,7 @@
     "VE.Readings.Wire.SituationJ",
     "VE.Readings.Wire.abstention",
     "VE.Readings.Wire.active",
+    "VE.Readings.Wire.activeOf",
     "VE.Readings.Wire.admissionText",
     "VE.Readings.Wire.admitReadings",
     "VE.Readings.Wire.authorVocabulary",
@@ -4233,8 +4280,10 @@
     "VE.Readings.Wire.emptySoft",
     "VE.Readings.Wire.firstSome",
     "VE.Readings.Wire.frameOf",
+    "VE.Readings.Wire.frontText",
     "VE.Readings.Wire.inForce",
     "VE.Readings.Wire.keySorts",
+    "VE.Readings.Wire.onesOf",
     "VE.Readings.Wire.placeholderFrame",
     "VE.Readings.Wire.readingIndex",
     "VE.Readings.Wire.readingsProfile",

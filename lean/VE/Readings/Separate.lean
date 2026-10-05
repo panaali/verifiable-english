@@ -86,8 +86,10 @@ def owned (D : Doc) (s : String) (i : Nat) (k : GenKey) : Bool :=
   match (candidate D s i).bind (·.content), k.source with
   | some c, some n => c.declared.contains n
   | _, _ => false
-def ownedKeys (D : Doc) (s : String) (i : Nat) : List GenKey :=
-  ((genKeys (one D s i).1).map (·.1)).filter (owned D s i)
+/-- The keys of X that candidate i owns, X its document `one D s i` built once by the caller. -/
+def ownedKeysOf (D : Doc) (s : String) (i : Nat) (X : RightsDoc) : List GenKey :=
+  ((genKeys X).map (·.1)).filter (owned D s i)
+def ownedKeys (D : Doc) (s : String) (i : Nat) : List GenKey := ownedKeysOf D s i (one D s i).1
 
 /-! ## Completions and probes (1.6) -/
 
@@ -197,12 +199,19 @@ def observe {α : Type u} [DecidableEq α] (X : RightsDoc) (A : List VE.Formula)
       (circ (correlate X) (selects' (correlate X) N)).eval M (tupleVal vs)))
   | .holds => some (A.all (fun a => (circ (correlate X) a).eval M []))
 
+/-- `sideValid` and `sideValue` on a candidate's document X (and assertions), built once by the caller. -/
+def sideValidOf {α : Type u} [DecidableEq α] (X : RightsDoc) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) : Bool :=
+  tablesTyped X M T && backgroundValidR X (tablesModel X M T)
+def sideValueOf {α : Type u} [DecidableEq α] (X : RightsDoc × List VE.Formula) (M : VE.FiniteModel α)
+    (T : List (GenKey × List (List α))) (q : Probe α) : Option Bool :=
+  observe X.1 X.2 (tablesModel X.1 M T) q
 def sideValid {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
     (T : List (GenKey × List (List α))) : Bool :=
-  tablesTyped (one D s i).1 M T && backgroundValidR (one D s i).1 (tablesModel (one D s i).1 M T)
+  sideValidOf (one D s i).1 M T
 def sideValue {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i : Nat) (M : VE.FiniteModel α)
     (T : List (GenKey × List (List α))) (q : Probe α) : Option Bool :=
-  observe (one D s i).1 (one D s i).2 (tablesModel (one D s i).1 M T) q
+  sideValueOf (one D s i) M T q
 /-- Every typed tuple over M's domains. -/
 def tuplesOf {α : Type u} (M : VE.FiniteModel α) : List String → List (List α)
   | [] => [[]]
@@ -220,22 +229,28 @@ def keyTuples {α : Type u} [DecidableEq α] (X : RightsDoc) (M : VE.FiniteModel
       | none => []
     else []))
 /-- The cells of candidate j's owned tables over M: per owned key, the number of typed tuples. -/
+def cellsOf {α : Type u} [DecidableEq α] (ks : List GenKey) (X : RightsDoc) (M : VE.FiniteModel α) : Nat :=
+  (ks.map (fun k => (keyTuples X M k).length)).sum
 def cells {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α) : Nat :=
-  ((ownedKeys D s j).map (fun k => (keyTuples (one D s j).1 M k).length)).sum
+  cellsOf (ownedKeys D s j) (one D s j).1 M
 /-- Every sublist of a list, keeping order. -/
 def subsets {β : Type u} : List β → List (List β)
   | [] => [[]]
   | x :: xs => (subsets xs).map (x :: ·) ++ subsets xs
 /-- Every assignment of tables to candidate j's owned keys over M's typed tuples: `2 ^ cells` of them. -/
+def assignmentsOf {α : Type u} [DecidableEq α] (ks : List GenKey) (X : RightsDoc) (M : VE.FiniteModel α) :
+    List (List (GenKey × List (List α))) :=
+  ks.foldr (fun k acc => (subsets (keyTuples X M k)).flatMap (fun tbl => acc.map ((k, tbl) :: ·))) [[]]
 def assignments {α : Type u} [DecidableEq α] (D : Doc) (s : String) (j : Nat) (M : VE.FiniteModel α) :
     List (List (GenKey × List (List α))) :=
-  (ownedKeys D s j).foldr (fun k acc =>
-    (subsets (keyTuples (one D s j).1 M k)).flatMap (fun tbl => acc.map ((k, tbl) :: ·))) [[]]
+  assignmentsOf (ownedKeys D s j) (one D s j).1 M
 def maxCells : Nat := 12
 /-- The tables of T on keys that candidate i's document generates: a reading reads no other. -/
+def tablesForOf {α : Type u} (X : RightsDoc) (T : List (GenKey × List (List α))) : List (GenKey × List (List α)) :=
+  T.filter (fun t => (genKeys X).any (·.1 == t.1))
 def tablesFor {α : Type u} (D : Doc) (s : String) (i : Nat) (T : List (GenKey × List (List α))) :
     List (GenKey × List (List α)) :=
-  T.filter (fun t => (genKeys (one D s i).1).any (·.1 == t.1))
+  tablesForOf (one D s i).1 T
 /-- The tables of T as relations: the table of key k, empty when T has none. -/
 def tablesOf {α : Type u} (T : List (GenKey × List (List α))) : Tables α :=
   fun k vs => ∃ t ∈ T, t.1 = k ∧ vs ∈ t.2
@@ -243,14 +258,17 @@ def tablesOf {α : Type u} (T : List (GenKey × List (List α))) : Tables α :=
     `valid` of `separates_sound`), i the witness: no key listed twice; every shared key owned by neither reading
     and generated in i's or in j's document; every decision key owned by i and generated in i's document; the
     tables each reading reads typed over the base; the probe typed. -/
-def situationWF {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) : Bool :=
+def situationWFOf {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (Xi Xj : RightsDoc)
+    (σ : Situation α) : Bool :=
   decide (((σ.fixed ++ σ.decisions).map (·.1)).Nodup) &&
   σ.fixed.all (fun t => !owned D s i t.1 && !owned D s j t.1 &&
-    ((genKeys (one D s i).1).any (·.1 == t.1) || (genKeys (one D s j).1).any (·.1 == t.1))) &&
-  σ.decisions.all (fun t => owned D s i t.1 && (genKeys (one D s i).1).any (·.1 == t.1)) &&
-  tablesTyped (one D s i).1 σ.base (tablesFor D s i (σ.fixed ++ σ.decisions)) &&
-  tablesTyped (one D s j).1 σ.base (tablesFor D s j σ.fixed) &&
-  probeTyped (one D s i).1 σ.base σ.probe
+    ((genKeys Xi).any (·.1 == t.1) || (genKeys Xj).any (·.1 == t.1))) &&
+  σ.decisions.all (fun t => owned D s i t.1 && (genKeys Xi).any (·.1 == t.1)) &&
+  tablesTyped Xi σ.base (tablesForOf Xi (σ.fixed ++ σ.decisions)) &&
+  tablesTyped Xj σ.base (tablesForOf Xj σ.fixed) &&
+  probeTyped Xi σ.base σ.probe
+def situationWF {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat) (σ : Situation α) : Bool :=
+  situationWFOf D s i j (one D s i).1 (one D s j).1 σ
 
 /-- i is the witness. False on a situation that fails `situationWF`, and when the bound is exceeded. It does not
     test whether the base is valid over the author's vocabulary: `separates_sound` takes that as `valid`. -/
@@ -320,9 +338,7 @@ def relaxTo (Nd M : SoftNode) : SoftNode :=
     the strict reading's through `relaxTo`, where the twin's name is strict; the generated keys differ by the
     twin's exception key only, which is the one key named by the twin's exception predicate; the selectable rules
     correspond through `relaxTo`; and no definition takes the exception predicate's name. -/
-def twinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : SoftNode) : Bool :=
-  let Xs := one D s i
-  let Xd := one D s j
+def twinDocsOf (Xs Xd : RightsDoc × List VE.Formula) (ci cj : Content) (Nd : SoftNode) : Bool :=
   let k₀ := GenKey.excepted Nd.name none
   decide (ci.declared = cj.declared) && cj.declared.contains ("rule", Nd.name) && decide (Xs.2 = Xd.2) &&
   decide (VE.Rights.genDecls Xs.1 = VE.Rights.genDecls Xd.1) &&
@@ -335,27 +351,30 @@ def twinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : SoftNode
   decide ((linesOf Xd.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, nodeOf Xd.1 RN.2)) =
     (linesOf Xs.1).map (fun RN => (RN.2.ikind, RN.2.node.pred, relaxTo Nd (nodeOf Xs.1 RN.2)))) &&
   (correlate Xd.1).T.definitions.all (·.name != VE.SoftNorms.exceptedName Nd)
+def twinDocs (D : Doc) (s : String) (i j : Nat) (ci cj : Content) (Nd : SoftNode) : Bool :=
+  twinDocsOf (one D s i) (one D s j) ci cj Nd
 /-- The criterion of 1.7 with i the strict twin: the default twin's exception key. -/
-def decisionOnly (D : Doc) (s : String) (i j : Nat) : Option GenKey :=
+def decisionOnlyOf (D : Doc) (s : String) (i j : Nat) (Xi Xj : RightsDoc × List VE.Formula) : Option GenKey :=
   match (candidate D s i).bind (·.content), (candidate D s j).bind (·.content) with
   | some ci, some cj =>
     match forceTwins ci cj with
     | some (_, Nd) =>
-      let C := correlate (one D s j).1
+      let C := correlate Xj.1
       if (Nd.exception.all (·.sufficient.isEmpty)) &&
           C.T.nodes.any (fun M => M.name == Nd.name && M.pred == Nd.pred) &&
           C.T.nodes.all (fun M => VE.SoftNorms.act C M != VE.SoftNorms.act C Nd || M.name == Nd.name) &&
-          twinDocs D s i j ci cj Nd
+          twinDocsOf Xi Xj ci cj Nd
       then some (.excepted Nd.name none) else none
     | none => none
   | _, _ => none
+def decisionOnly (D : Doc) (s : String) (i j : Nat) : Option GenKey := decisionOnlyOf D s i j (one D s i) (one D s j)
 theorem decisionOnly_spec (D : Doc) (s : String) (i j : Nat) (k : GenKey) (h : decisionOnly D s i j = some k) :
   ∃ ci cj Ns Nd, (candidate D s i).bind (·.content) = some ci ∧ (candidate D s j).bind (·.content) = some cj ∧
     forceTwins ci cj = some (Ns, Nd) ∧ k = .excepted Nd.name none ∧
     (∀ e, Nd.exception = some e → e.sufficient = []) ∧
     ∀ M ∈ (correlate (one D s j).1).T.nodes,
       VE.SoftNorms.act (correlate (one D s j).1) M = VE.SoftNorms.act (correlate (one D s j).1) Nd → M.name = Nd.name := by
-  unfold decisionOnly at h
+  unfold decisionOnly decisionOnlyOf at h
   dsimp only at h
   split at h
   · rename_i ci cj hi hj
@@ -395,13 +414,14 @@ def contentActs (C : SoftDoc) (c : Content) : List String :=
     | _ => []
   VE.SoftNorms.dedup (ps.map (VE.SoftNorms.actKey C))
 /-- The two act keys of 1.7's `SeparatedByActOnly`; `none` otherwise. -/
-def actOnly (D : Doc) (s : String) (i j : Nat) : Option (String × String) :=
+def actOnlyOf (D : Doc) (s : String) (i j : Nat) (Xi Xj : RightsDoc × List VE.Formula) : Option (String × String) :=
   match (candidate D s i).bind (·.content), (candidate D s j).bind (·.content) with
   | some ci, some cj =>
-    match contentActs (correlate (one D s i).1) ci, contentActs (correlate (one D s j).1) cj with
+    match contentActs (correlate Xi.1) ci, contentActs (correlate Xj.1) cj with
     | [a], [b] => if a == b then none else some (a, b)
     | _, _ => none
   | _, _ => none
+def actOnly (D : Doc) (s : String) (i j : Nat) : Option (String × String) := actOnlyOf D s i j (one D s i) (one D s j)
 
 /-! ## Proofs: the finite evaluation -/
 
@@ -1013,7 +1033,7 @@ theorem separates_witness {α : Type u} [DecidableEq α] (D : Doc) (hD : WellFor
   have hAi : ∀ a ∈ (one D s i).2, a.WellFormed (envAt (soften (correlate (one D s i).1))
       (size (soften (correlate (one D s i).1)))) [] :=
     fun a ha => (VE.check_iff_wellFormed _ _ _).mp (hwi.2 a ha)
-  simp only [sideValid, Bool.and_eq_true] at hsvi
+  simp only [sideValid, sideValidOf, Bool.and_eq_true] at hsvi
   obtain ⟨httT, hbgi⟩ := hsvi
   have hvalT := valid_tablesModel D (one D s i).1 (keepsFrame_one D s i) σ.base valid _ httT
   have hGi : ∀ p g, (genKeys (one D s i).1).find? (·.2.1 == p) = some g → ∀ vs,
@@ -1130,7 +1150,7 @@ theorem separates_other {α : Type u} [DecidableEq α] (D : Doc) (hD : WellForme
     simp only [tablesTyped, List.all_append, Bool.and_eq_true] at htyj htyG' ⊢
     exact ⟨htyj, htyG'⟩
   have hsvj : sideValid D s j σ.base (tablesFor D s j σ.fixed ++ G') = true := by
-    simp only [sideValid, Bool.and_eq_true]
+    simp only [sideValid, sideValidOf, Bool.and_eq_true]
     exact ⟨htyT', hbgj⟩
   have hwj := sideWF_one D hD hj
   simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hwj
@@ -1147,7 +1167,7 @@ theorem separates_other {α : Type u} [DecidableEq α] (D : Doc) (hD : WellForme
   have hsvalj := (observe_sound D.chain (one D s j).1 (one D s j).2 hwj.1 hAj _ hvalj hbgj σ.probe hptj
     σ.value).mpr hobsj
   have := hall G' hG'mem
-  simp only [sideValue] at this
+  simp only [sideValue, sideValueOf] at this
   rw [hsvj, hsvalj] at this
   simp at this
 
@@ -1156,7 +1176,7 @@ theorem separates_sound {α : Type u} [DecidableEq α] (D : Doc) (hD : WellForme
     (σ : Situation α) (valid : σ.base.Valid (authorEnv D)) (h : separates D s i j σ = true) :
   Achieves D s i σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value ∧
     ¬ Achieves D s j σ.base.asStructure (tablesOf σ.fixed) σ.probe σ.value := by
-  simp only [separates, situationWF, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, beq_iff_eq,
+  simp only [separates, situationWF, situationWFOf, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, beq_iff_eq,
     Bool.not_eq_true', Bool.or_eq_true] at h
   obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨hnd, hfx⟩, hdec⟩, htyi⟩, htyj⟩, hpt⟩, hsvi⟩, hvi⟩, _⟩, hall⟩ := h
   have hndf : (σ.fixed.map (·.1)).Nodup := by
@@ -1192,11 +1212,11 @@ theorem probesOf_typed {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i 
 
 theorem cells_nil {α : Type u} [DecidableEq α] {D : Doc} {s : String} {j : Nat} (M : VE.FiniteModel α)
     (h : ownedKeys D s j = []) : cells D s j M = 0 := by
-  simp [cells, h]
+  simp [cells, cellsOf, h]
 
 theorem assignments_nil {α : Type u} [DecidableEq α] {D : Doc} {s : String} {j : Nat} (M : VE.FiniteModel α)
     (h : ownedKeys D s j = []) : assignments D s j M = [[]] := by
-  simp [assignments, h]
+  simp [assignments, assignmentsOf, h]
 
 theorem separates_noKeys {α : Type u} [DecidableEq α] (D : Doc) (s : String) (i j : Nat)
     (M : VE.FiniteModel α) (F : List (GenKey × List (List α))) (q : Probe α) (v : Bool)
@@ -1208,11 +1228,11 @@ theorem separates_noKeys {α : Type u} [DecidableEq α] (D : Doc) (s : String) (
     separates D s i j ⟨M, F, [], q, v⟩ = true ↔
       sideValue D s i M (tablesFor D s i F) q = some v ∧ sideValue D s j M (tablesFor D s j F) q ≠ some v := by
   have hti : tablesTyped (one D s i).1 M (tablesFor D s i F) = true := by
-    simp only [sideValid, Bool.and_eq_true] at hvi; exact hvi.1
+    simp only [sideValid, sideValidOf, Bool.and_eq_true] at hvi; exact hvi.1
   have htj : tablesTyped (one D s j).1 M (tablesFor D s j F) = true := by
-    simp only [sideValid, Bool.and_eq_true] at hvj; exact hvj.1
+    simp only [sideValid, sideValidOf, Bool.and_eq_true] at hvj; exact hvj.1
   have hwf : situationWF D s i j ⟨M, F, [], q, v⟩ = true := by
-    simp only [situationWF, List.append_nil, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true,
+    simp only [situationWF, situationWFOf, List.append_nil, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true,
       List.not_mem_nil, false_implies, implies_true, and_true, Bool.not_eq_true']
     refine ⟨⟨⟨⟨hu, fun t ht => ⟨⟨(hF t ht).1, (hF t ht).2.1⟩, by simpa using (hF t ht).2.2⟩⟩, hti⟩, htj⟩,
       probesOf_typed D s i M q hq⟩

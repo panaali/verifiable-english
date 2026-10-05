@@ -122,6 +122,28 @@ def unitIdsOf (document : Json) : List String :=
   | .arr us => us.toList.filterMap (fun u => match u.getObjValD "id" with | .str s => some s | _ => none)
   | _ => []
 
+/-- `WellFormedDoc` reads the chain, the frame and the items alone: a document's couplings and narrowings leave it
+    unchanged (`wellFormedDoc_links`), so the S2a admission keeps S1's check instead of building every candidate's
+    document again (lean-first plan F5b: once per request). -/
+theorem attachedIter_links (D : Doc) (cs : List Coupling) (ns : List Narrowing) :
+    ∀ (n : Nat) (tbl : List (String × List String)),
+      attachedIter ⟨D.chain, D.frame, D.items, cs, ns⟩ n tbl = attachedIter D n tbl
+  | 0, _ => rfl
+  | n + 1, tbl => by
+    simp only [attachedIter, attachedIter_links D cs ns n]
+    rfl
+
+theorem attached_links (D : Doc) (cs : List Coupling) (ns : List Narrowing) (u : String) :
+    attached ⟨D.chain, D.frame, D.items, cs, ns⟩ u = attached D u := by
+  unfold attached
+  rw [attachedIter_links]
+  rfl
+
+theorem wellFormedDoc_links (D : Doc) (cs : List Coupling) (ns : List Narrowing) :
+    WellFormedDoc ⟨D.chain, D.frame, D.items, cs, ns⟩ = WellFormedDoc D := by
+  simp only [WellFormedDoc, singlyAttached, sideWF, free, one, attached_links]
+  rfl
+
 def admitS2 (environment document : Json) : Except String Admitted2 := do
   let ids := unitIdsOf document
   unless decide ids.Nodup do throw "duplicate or invalid unit id"
@@ -136,10 +158,8 @@ def admitS2 (environment document : Json) : Except String Admitted2 := do
   if !cs.isEmpty && (search Dc Dc.sets [] 1).isEmpty then
     throw ("CouplingUnsatisfiable: " ++ ", ".intercalate (VE.Route.sortStrings (cs.map (·.id))))
   let ns ← decodeNarrowings document sets a.doc.units
-  let D : Doc := ⟨a.re.chain, frameOf a.re a.doc.units, a.doc.items, cs, ns⟩
-  -- `WellFormedDoc` reads no coupling or narrowing; it is re-run on the document that carries them.
-  if h : WellFormedDoc D = true then pure ⟨a, D, h, rfl⟩
-  else throw "InvalidInput: readings document is not well-formed"
+  -- `WellFormedDoc` reads no coupling or narrowing: S1's check holds of the document that carries them.
+  pure ⟨a, ⟨a.D.chain, a.D.frame, a.D.items, cs, ns⟩, (wellFormedDoc_links a.D cs ns).trans a.wf, rfl⟩
 
 /-! ## A superposed document -/
 
