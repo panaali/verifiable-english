@@ -116,3 +116,15 @@ def test_the_four_codes_have_their_public_names():
 def test_fixed_table_has_88_rows_with_distinct_tags():
     rows = re.findall(r'\{ tag := "([^"]+)"', (LEAN / 'Fixed/RelationalFol.lean').read_text())
     assert len(rows) == 88 and len(set(rows)) == 88
+
+
+@pytest.mark.parametrize('wording, arity, ok', [
+    ('{0} is deployed', 1, True),
+    ('{0} is v1.2 compliant', 1, False),       # l4: two sentences
+    ('{0} is {x} compliant', 1, False),        # a brace the lexer refuses
+    ('{0} has the recorded relation "owns" to {1}', 2, True),
+])
+def test_reference_v3_requires_one_sentence(wording, arity, ok):
+    """The Python reference of `Lexicon.valid` keeps the V3 condition of `shapeOk` (spec 2.6, Q6)."""
+    from conformance.english_lean_lexicon import _shape_ok
+    assert _shape_ok(wording, arity) is ok
