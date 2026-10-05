@@ -104,7 +104,7 @@ def «norms-certificate» : Shape :=
       ("layers", ref "common.json#/$defs/nat")]]
 
 def «norms-witness» : Shape :=
-  c "Norms.Replay.witnessFrom: the requested target; the regenerated targets are the service's." [
+  c "Norms.Flagged.witnessFrom (norms_flagged_witness_sound): the requested target; the regenerated targets are the service's." [
     obj,
     .required ["id", "status", "verdict", "target", "targets"],
     closed [
@@ -115,7 +115,7 @@ def «norms-witness» : Shape :=
       ("targets", ref "common.json#/$defs/strings")]]
 
 def «norms-conflict» : Shape :=
-  c "Norms.Replay.replayConflict (the verdict, its detail and the targets are the service's)." [
+  c "Norms.Flagged.replayConflict (norms_flagged_conflict_free; the verdict, its detail and the targets are the service's)." [
     obj,
     .required ["id", "status", "verdict", "targets"],
     closed [

@@ -113,10 +113,13 @@ def test_margins_agree_with_brute_force(shard):
     rng = random.Random(9000 + shard)
     records = []
     while len(records) < RECORDS // SHARDS:
-        estimates, conditions = draw(rng)
-        res = route([build(policy, estimates, conditions)])[0]
-        if res["status"] == "ok" and res.get("verdict") != "CONFLICT":
-            records.append((estimates, conditions, res))
+        # Candidates are drawn in batches and decided in one route call; the records kept are
+        # the first acceptable ones in draw order, as when each was decided on its own.
+        drawn = [draw(rng) for _ in range(2 * (RECORDS // SHARDS - len(records)))]
+        for (estimates, conditions), res in zip(drawn, route([build(policy, *d) for d in drawn])):
+            if (len(records) < RECORDS // SHARDS and res["status"] == "ok"
+                    and res.get("verdict") != "CONFLICT"):
+                records.append((estimates, conditions, res))
     probes, keys = [], []
     for index, (estimates, conditions, _) in enumerate(records):
         for name, eid in (("q", "Eq"), ("r", "Er")):

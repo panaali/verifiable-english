@@ -25,6 +25,7 @@ import subprocess
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
 from ve.backends.diagnostics import checker_error
 from tests import lean_routes
 from ve.backends.relay import rejection
@@ -181,16 +182,19 @@ def test_python_rejects_every_wrong_type_with_a_diagnostic(monkeypatch, base, fi
 def test_every_python_entry_taking_environment_json_raises_only_diagnostics(monkeypatch, tmp_path,
                                                                             base, field, data):
     """The routing that reads an environment's profiles or language before its
-    decoder runs (documents, bundles, admission, the soft, rights and readings
-    environments) never raises past the decoder's diagnostic."""
+    decoder runs (documents, bundles, admission, the soft and rights
+    environments) never raises past the decoder's diagnostic. The readings
+    environment (`S1Environment`) is no entry since lean-first batch 3: it only
+    builds what Lean's readings route admitted, and the route decides
+    (`test_readings_route_relay.py`); it still never crashes
+    (`test_every_nested_value_of_every_kind_raises_only_diagnostics`)."""
     from ve.admission import admit_document
     from ve.bundle import check_bundle
     from ve.document import load_document, stored_identities
-    from ve.readings_s1 import S1Environment
     from ve.rights import RightsEnvironment
     from ve.softnorms import SoftEnvironment
     monkeypatch.setenv("VE_AUTHORITY", "python")
-    for build in (SoftEnvironment, RightsEnvironment, S1Environment,
+    for build in (SoftEnvironment, RightsEnvironment,
                   lambda d: admit_document(d, {"units": []}),
                   lambda d: check_bundle({"version": "ve-bundle@0", "environment": d, "lemmas": []})):
         outcome(lambda: build(deepcopy(data)))
@@ -568,7 +572,7 @@ def _answer(binary, batch):
     if binary != "ve_conformance":
         return lean_routes.run(binary, batch)
     done = subprocess.run([str(BIN / binary), "-"], input=json.dumps(batch).encode(), capture_output=True,
-                          timeout=600)
+                          timeout=HANG_TIMEOUT)
     return done.returncode, json.loads(done.stdout), done.stderr.decode(errors="replace")
 
 
@@ -594,14 +598,14 @@ def test_rust_rejects_every_wrong_type_without_crashing(rust_executable):
         case = {"id": f"{base}-{field}-{kind}", "kind": "check", "environment": data, "ast": ["top"]}
         (nulls if kind == "null" else cases).append(case)
     done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps(cases),
-                          capture_output=True, text=True, timeout=600)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert done.returncode == 1, done.stderr
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [case["id"] for case in cases]
     assert [row["id"] for row in rows if row["status"] != "error"] == []
     for case in nulls:
         done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps([case]),
-                              capture_output=True, text=True, timeout=60)
+                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert done.returncode == 2 and "null" in done.stderr.lower(), (case["id"], done.stderr)
 
 
@@ -628,7 +632,7 @@ def test_rust_reads_every_nested_value_of_every_kind_without_crashing(rust_execu
              for base in sorted(NESTED_BASES) for path in _paths(NESTED_BASES[base]())
              for kind, value in NESTED_KINDS.items()]
     done = subprocess.run([str(rust_executable), "conformance", "-"], input=json.dumps(cases),
-                          capture_output=True, text=True, timeout=600)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert done.returncode in (0, 1) and "panicked" not in done.stderr, done.stderr[-2000:]
     rows = json.loads(done.stdout)
     assert [row["id"] for row in rows] == [case["id"] for case in cases]
@@ -647,6 +651,6 @@ def rust_executable():
         pytest.skip("cargo is required for the Rust decoder")
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           cwd=ROOT, env=rust_build.cargo_env(), capture_output=True, text=True, timeout=600)
+                           cwd=ROOT, env=rust_build.cargo_env(), capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return RUST

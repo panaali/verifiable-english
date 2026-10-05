@@ -31,10 +31,11 @@ theorem admitDiscourse_references (profiles : List String) (environment : Json) 
 theorem encodeAdmission_fits (id : String) (res : Admitted)
     (hr : Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) res.references) :
     OkFits req (skel% "discourse.json#/$defs/admission") (encodeAdmission id res) := by
-  unfold encodeAdmission
+  unfold encodeAdmission jointFields
   okfits
   simp only [VE.Route.Wire.ok, admittedJson, reportJson, claimJson]
-  fits
+  split <;> simp only [List.cons_append, List.nil_append, List.append_nil, choicesJson, jointJson]
+  all_goals fits
   all_goals first
     | exact Common.claimJson_fits _
     | exact hr
@@ -76,7 +77,7 @@ theorem runCase_fits (j : Json) : OkFits req Skeletons.discourse (runCase j) := 
   okfits
   all_goals first
     | with_reducible exact OkP.of (Route.runCase_fits _) fun _ => of_route
-    | (refine OkP.of (encodeAdmission_fits _ _ ?_) fun _ h => Fits.ofAlt (by alt_mem) h
+    | (refine OkP.of (encodeAdmission_fits _ _ ?_) fun _ h => Fits.altSub (by alt_sub) h
        exact admitDiscourse_references _ _ _ _ _ _ ‹_›)
     | with_reducible exact OkP.of (resolve_fits _ _ _ _ _) fun _ h => Fits.ofAlt (by alt_mem) h
     | with_reducible exact OkP.of (joint_fits _ _ _ _ _) fun _ h => Fits.altSub (by alt_sub) h

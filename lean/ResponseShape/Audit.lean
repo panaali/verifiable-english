@@ -76,12 +76,18 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.Quantity.runCount_fits
 #print axioms ResponseShape.Encoders.Quantity.runDocument_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.candidate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.certificate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.choice_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.conflict_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.dead_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborate_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.keyJson_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.lower
 #print axioms ResponseShape.Encoders.ReadingsRoute.lower_normDefaults
 #print axioms ResponseShape.Encoders.ReadingsRoute.lower_norms
 #print axioms ResponseShape.Encoders.ReadingsRoute.lower_rights
 #print axioms ResponseShape.Encoders.ReadingsRoute.lower_softNorms
+#print axioms ResponseShape.Encoders.ReadingsRoute.model_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_normDefaults
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_norms
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_rights
@@ -90,6 +96,7 @@ use): `lean/audit.py` runs this file beside `VE/Audit.lean` and requires every t
 #print axioms ResponseShape.Encoders.ReadingsRoute.runCaseReported_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runCase_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runLower_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runS2_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.setPairs_entries
 #print axioms ResponseShape.Encoders.ReadingsRoute.validate_fits
 #print axioms ResponseShape.Encoders.Reports.admission_fits

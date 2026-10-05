@@ -12,6 +12,7 @@ of the fault of least position (`expected_first`).
 import argparse
 from copy import deepcopy
 from dataclasses import dataclass, field, replace
+import importlib
 import json
 from pathlib import Path
 import re
@@ -21,6 +22,7 @@ from conformance.soft_norms import (_doubled, _exception, multi_fault_base, mult
                                    soft3_reproducers, soft4_aggregate_reproducers, soft4_reproducers)
 
 INDEX = Path(__file__).resolve().parent / "wire-contract/soft-norms@0-catalogue.json"
+PILOT = "soft-norms@0"
 S = "/environment/vocabulary/soft"
 P = "/environment/vocabulary/predicates"
 
@@ -35,9 +37,13 @@ class Fault:
     key: tuple = ()                   # order key inside a classifier set; () is the member's index
     readers: str = "both"             # "python": only the in-process reader carries it (a `null`)
     reads: tuple = ()                 # locations its expected outcome depends on beyond those it changes
+    # Another unit's faults (wire-contract-s5.md 7.1) name their base source and their expected `args`;
+    # the pilot's use `multi_fault_base` and `ARGS`.
+    base: Callable = field(default=None, compare=False)
+    args: dict = field(default=None, compare=False)
 
     def source(self):
-        raw, rules = multi_fault_base()
+        raw, rules = (self.base or multi_fault_base)()
         root = {"environment": raw, "norms": rules}
         self.apply(root)
         return root["environment"], root["norms"]
@@ -385,8 +391,20 @@ def _python_only():
                   frozenset({"exception-decider"}), readers="python")]
 
 
-def catalogue():
-    """Every fault: `multi_faults()`, then the derived faults, the reproducers and the Python-only ones."""
+def unit_module(unit):
+    """The module of a unit's fault catalogue: this one for the pilot, `wire_contract_faults_<name>` for
+    another unit (wire-contract-s5.md 7.1)."""
+    if unit == PILOT:
+        return importlib.import_module(__name__)
+    return importlib.import_module("conformance.wire_contract_faults_" +
+                                   unit.split("@", 1)[0].replace("-", "_"))
+
+
+def catalogue(unit=PILOT):
+    """Every fault of a unit; for the pilot, `multi_faults()`, then the derived faults, the reproducers and
+    the Python-only ones."""
+    if unit != PILOT:
+        return unit_module(unit).catalogue()
     expected = _multi_expected()
     faults = []
     for name, group, _, _, apply in multi_faults():
@@ -413,33 +431,44 @@ def legacy_codes():
 UNREACHED = {}
 
 
-def catalogue_checks():
+def unreached(unit=PILOT):
+    """The members of a unit declared unreached, each with its reason."""
+    return UNREACHED if unit == PILOT else unit_module(unit).UNREACHED
+
+
+def index_path(unit=PILOT):
+    return INDEX if unit == PILOT else INDEX.parent / f"{unit}-catalogue.json"
+
+
+def catalogue_checks(unit=PILOT):
     """The checks and classifier members with a fault in the catalogue, and those declared unreached with a
     reason (the `WC08` catalogue clause)."""
-    return {f.check for f in catalogue()} | set(UNREACHED)
+    return {f.check for f in catalogue(unit)} | set(unreached(unit))
 
 
-def catalogue_index():
+def catalogue_index(unit=PILOT):
     """The catalogue's index, which `tools/wire_contract.py` reads for the `WC08` clause without importing
     the conformance suite: each check with the names of its faults, and the unreached members."""
     faults = {}
-    for fault in catalogue():
+    for fault in catalogue(unit):
         faults.setdefault(fault.check, []).append(fault.name)
-    return {"contract": "soft-norms@0", "faults": {check: sorted(names) for check, names in faults.items()},
-            "unreached": UNREACHED}
+    return {"contract": unit, "faults": {check: sorted(names) for check, names in faults.items()},
+            "unreached": unreached(unit)}
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--unit", default=PILOT)
     args = parser.parse_args()
-    rendered = json.dumps(catalogue_index(), indent=2, sort_keys=True) + "\n"
+    rendered = json.dumps(catalogue_index(args.unit), indent=2, sort_keys=True) + "\n"
+    target = index_path(args.unit)
     if args.check:
-        if not INDEX.exists() or INDEX.read_text() != rendered:
+        if not target.exists() or target.read_text() != rendered:
             print("fault catalogue index differs")
             return 1
     else:
-        INDEX.write_text(rendered)
+        target.write_text(rendered)
     return 0
 
 
@@ -462,9 +491,40 @@ def _pattern_tokens(pattern, items):
     return pattern.split("/")[1:] if pattern else []
 
 
+def _include(contract, include_id):
+    """The include entry of `contract` with the id `include_id`, its phase index and its own index there."""
+    for phase_index, phase in enumerate(contract["phases"]):
+        for index, entry in enumerate(phase["checks"]):
+            if entry.get("kind") == "include" and entry["id"] == include_id:
+                return phase_index, index, entry
+    raise KeyError(include_id)
+
+
+def owner(contract, check):
+    """The contract that declares `check`: the included one for an include path (`w1/4.2`)."""
+    if "/" not in check:
+        return contract
+    from ve.wire_contract.engine import load
+    return load(_include(contract, check.split("/", 1)[0])[2]["contract"])
+
+
 def route(contract, check):
     """The phase index and the entries from the phase down to `check`: [(index, entry), …] and, for a
-    classifier member, its index in `emits` last."""
+    classifier member, its index in `emits` last. For an included check (`w1/4.2`, an include at the root
+    without `at`), the include entry, then the included phase's position among the phases it includes,
+    then the entries inside it."""
+    if "/" in check:
+        head, tail = check.split("/", 1)
+        phase_index, index, entry = _include(contract, head)
+        inner = owner(contract, check)
+        included = [phase for phase in inner["phases"] if phase["name"] in entry["phases"]]
+        for ordinal, phase in enumerate(included):
+            try:
+                _, steps = route({"phases": [phase]}, tail)
+            except KeyError:
+                continue
+            return phase_index, [(index, entry), (ordinal, {"phase": phase["name"]})] + steps
+        raise KeyError(check)
     def find(entries):
         for index, entry in enumerate(entries):
             if "each" in entry:
@@ -538,9 +598,10 @@ def expected_record(contract, fault):
     code = member["code"]
     record = {"contract": contract["contract"], "revision": contract["revision"], "check": fault.check,
               "phase": contract["phases"][phase_index]["name"], "code": code,
-              "class": contract["codes"][code]["class"], "path": fault.path}
+              "class": owner(contract, fault.check)["codes"][code]["class"], "path": fault.path}
     if not member.get("inherited"):
-        args = dict(ARGS[fault.name][0]) if fault.name in ARGS else {}
+        args = (dict(fault.args) if fault.args is not None else
+                dict(ARGS[fault.name][0]) if fault.name in ARGS else {})
         record["text"], record["args"] = rendered(member["text"], args), args
     return record
 
@@ -571,7 +632,7 @@ def changed_paths(before, after, prefix=()):
 def footprint(fault):
     """A fault's hand-declared labels, the locations it writes (those where its source differs from the
     base, and those it replaces whole) and the further locations its expected outcome reads."""
-    base = multi_fault_base()
+    base = (fault.base or multi_fault_base)()
     raw, rules = fault.source()
     writes = changed_paths({"environment": base[0], "norms": base[1]}, {"environment": raw, "norms": rules})
     writes |= set(getattr(fault.apply, "replaces", ()))

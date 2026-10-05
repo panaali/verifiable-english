@@ -13,6 +13,7 @@ import pytest
 from tests import lean_routes
 
 from conformance.alternatives import base_environment, cases, environment as fixture_environment, rules
+from subprocesses import HANG_TIMEOUT
 from tools import rust_build
 from ve.alternatives import run_case
 from ve.admission import AdmissionError, admit_document
@@ -45,7 +46,7 @@ def rust_binary():
     env = rust_build.cargo_env()
     built = subprocess.run([cargo, "build", "-j", "2", "--locked", "--release",
                             "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                           env=env, capture_output=True, text=True, timeout=600)
+                           env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert built.returncode == 0, built.stdout + built.stderr
     return ROOT / "rust/target/release/ve"
 
@@ -79,7 +80,7 @@ def test_spec_scenario_followability_three_way(case, rust_binary):
                           input=json.dumps([{"id": case["id"], "kind": "evaluate",
                                              "environment": base, "ast": formulas,
                                              "model": model_data}]),
-                          capture_output=True, text=True, timeout=120)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     rust_values = json.loads(rust.stdout)[0]["values"]
     expected = [bool(report["clear"]), *(bool(report[name]) for name in names)]
@@ -106,7 +107,7 @@ def test_mapped_violation_requires_a_taken_action_and_failed_fulfilment(rust_bin
                               input=json.dumps([{"id": "mapped", "kind": "evaluate",
                                                  "environment": base, "ast": [failed_fulfilment],
                                                  "model": model_data}]),
-                              capture_output=True, text=True, timeout=120)
+                              capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert rust.returncode == 0, rust.stdout + rust.stderr
         assert json.loads(rust.stdout)[0]["values"] == [expected]
 
@@ -290,7 +291,7 @@ def test_spec_s2_conflict_three_way(rust_binary):
     rust = subprocess.run([str(rust_binary), "conformance"],
                           input=json.dumps([{"id": "s2", "kind": "evaluate", "environment": base,
                                              "ast": [formula], "model": model_data}]),
-                          capture_output=True, text=True, timeout=120)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     assert json.loads(rust.stdout)[0]["values"] == [True]
 
@@ -319,7 +320,7 @@ def test_spec_bprime_unrelated_permission_conflict_three_way(with_rule_five, rus
     rust = subprocess.run([str(rust_binary), "conformance"],
                           input=json.dumps([{"id": case["id"], "kind": "evaluate", "environment": base,
                                              "ast": [formula], "model": model_data}]),
-                          capture_output=True, text=True, timeout=120)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     assert json.loads(rust.stdout)[0]["values"] == [True]
 
@@ -361,7 +362,7 @@ def test_spec_p_outcome_completion_and_document_binding_three_way(rust_binary):
     rust = subprocess.run([str(rust_binary), "conformance"],
                           input=json.dumps([{"id": "p2", "kind": "evaluate", "environment": base,
                                              "ast": formulas, "model": model_data}]),
-                          capture_output=True, text=True, timeout=120)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     assert python_values == json.loads(rust.stdout)[0]["values"] == [True, True, True]
 
@@ -394,7 +395,7 @@ def test_spec_h3_proximate_claim_requires_leading_to_harm(rust_binary):
     rust = subprocess.run([str(rust_binary), "conformance"],
                           input=json.dumps([{"id": "h3", "kind": "evaluate", "environment": base,
                                              "ast": [proximate], "model": model_data}]),
-                          capture_output=True, text=True, timeout=120)
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert rust.returncode == 0, rust.stdout + rust.stderr
     assert json.loads(rust.stdout)[0]["values"] == [False]
 

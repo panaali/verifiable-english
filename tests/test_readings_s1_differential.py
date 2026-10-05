@@ -1,15 +1,19 @@
-"""The differential of docs/spec/composition-s1.md 9.3, seeded.
+"""The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
 
 Generated sets (strict and default twins with random exception conditions and fixed units beside them, mixed
 kinds, two acts, renamed twins that must not separate, rights candidates under a fixed limitation, the norms
 chain) and faulty sources (each check of 4.1 broken once, malformed and misattributed situations). For each
-document Python's search records a situation per pair; Lean's `readings-validate` and Python's regenerated answer
-must be byte for byte the same, faulty sources are rejected by both with one text, every situation Python finds is
-accepted by Lean, and a set for which the search finds none is rejected by both. A sample is replayed by Rust,
-untrusted. The count is 1,000 (9.3); `VE_S1_DIFFERENTIAL_COUNT` lowers it for a quick run.
+document Python's search, an untrusted generator (docs/LEAN-FIRST-PLAN.md rule 3), records a situation per pair,
+and Lean's `readings-validate` is the only answer: every situation the search finds is accepted by Lean, a set for
+which the search finds none is refused, each fault is refused with the text of the check it breaks, and the route
+(`ve.readings_route.validate`) relays every row, Lean's answer or its diagnostic with Lean's text. Python's
+regeneration of the answer and Rust's replay of the situations were deleted in batch 3, so nothing else is
+compared. The count is 1,000 (9.3), in a nightly test; the default run checks the first 200;
+`VE_S1_DIFFERENTIAL_COUNT` lowers both for a quick run.
 
-`test_separation_conservative_shadow` is 9.3's shadow of `separation_conservative`: on pairs in which neither
-side owns a key, some probe separates exactly when the two observation lists differ.
+`test_separation_conservative_shadow` is 9.3's shadow of `separation_conservative` on the search's own evaluation
+(the rule-3 duplicate of Lean's `sideValid` and `sideValue`): on pairs in which neither side owns a key, some
+probe separates exactly when the two observation lists differ.
 """
 from __future__ import annotations
 
@@ -24,12 +28,14 @@ import pytest
 from tests import lean_routes
 
 from tests.test_readings_s1_lean import LEAN, SOFT_PROFILES, env_k, env_rights, norm_object
-from ve.errors import VEError
-from ve.readings_route import rights_findings, run_lean, rust_check
-from ve.readings_s1 import Admission, answer, record_situations, search
+from ve.errors import CheckerUnavailable, VEError
+from ve.readings_route import run_lean, validate as route_validate
+from ve.readings_s1 import Decoded, record_situations, search
 
 SEED = 20261002
 COUNT = int(os.environ.get("VE_S1_DIFFERENTIAL_COUNT", "1000"))
+# The default run's prefix of those documents, which still breaks every check and exercises every generator.
+QUICK_COUNT = min(COUNT, 200)
 ASKS = ["binary", "asks", ["var", 1], ["var", 0]]
 ASKS_ALL = ["forall", "agent", ["forall", "user", ASKS]]
 NOT_ASKS_ALL = ["forall", "agent", ["forall", "user", ["not", ASKS]]]
@@ -150,7 +156,7 @@ def two_acts(rng):
 def decoded_variant(rng, line):
     """`line` as written differently, decoded the same by Lean (`decodeLine`): an empty or null `cites` or
     `fan_out`, a strict norm's soft fields at their defaults or null, the keys in another order. Lean's input has no
-    null (`wire` omits it), so an explicit null is the field's default to both (review finding B, looprecheck2)."""
+    null (`wire` omits it), so an explicit null is the field's default (review finding B, looprecheck2)."""
     line = copy.deepcopy(line)
     if rng.random() < 0.3:
         line["cites"] = rng.choice([{}, None])
@@ -194,7 +200,7 @@ def rights(rng):
         limitation = {"name": "l29", "scope": "all", "kinds": "all", "decided_by": "unstated", "factors": [],
                       "conditions": conditions}
         if rng.random() < 0.2:
-            # MissingExceptionDecider, from both, whether the decider is absent or null.
+            # MissingExceptionDecider, whether the decider is absent or null.
             limitation["decided_by"] = None
             if rng.random() < 0.5:
                 del limitation["decided_by"]
@@ -313,18 +319,17 @@ def mutate_situation(raw, document, fault):
                     r["admission"]["distinguishing_models"][o] = new
 
 
-def python_answer(raw, document, *, with_rust):
-    try:
-        return {"status": "ok", **answer(raw, document, chain_findings=rights_findings,
-                                         rust=rust_check if with_rust else None)}
-    except VEError as exc:
-        return {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
+# The search proposes before Lean has seen the document: on a source Lean refuses it may fail in any way, and
+# then proposes nothing (rule 3: a generator's failure is never a verdict).
+SEARCH_FAILURES = (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError, StopIteration)
 
 
-def test_generated_sets_agree_with_lean(lean):
+def generated_cases(count=COUNT):
+    """The seeded documents with the situations the search found recorded, as `readings-validate` cases, and per
+    case (generator, fault, whether every pair has a situation, whether some pair has none)."""
     rng = random.Random(SEED)
     cases, expectations = [], []
-    for n in range(COUNT):
+    for n in range(count):
         name, raw, document, fault = generate(rng)
         # Its own generator, so that the documents are the ones generated without the nulls.
         raw = environment_nulled(random.Random(f"{SEED}-environment-{n}"), raw)
@@ -332,28 +337,57 @@ def test_generated_sets_agree_with_lean(lean):
         found = {}
         try:
             found = search(raw, document, rs["id"])
-        except VEError:
-            pass  # a faulty source: refused before any separation, by both
+        except SEARCH_FAILURES:
+            pass
         document["reading_sets"][0] = record_situations(rs, {k: v for k, v in found.items() if v is not None})
         if fault in ("witness", "situation-id", "decides", "arity"):
             mutate_situation(raw, document, fault)
         complete = bool(found) and all(v is not None for v in found.values())
         cases.append({"id": f"c{n}", "kind": "readings-validate", "environment": raw, "document": document})
         expectations.append((name, fault, complete, bool(found) and not complete))
+    return cases, expectations
+
+
+def routed(case):
+    """The route's outcome on a case: Lean's row without its id, its diagnostic, or `CheckerUnavailable`."""
+    units = [{"id": u["id"], "kind": u.get("kind"), **({"content": u["content"]} if "content" in u else {})}
+             for u in case["document"]["units"]]
+    try:
+        row = route_validate(case["environment"], units, case["document"]["reading_sets"])
+    except CheckerUnavailable:
+        return "CheckerUnavailable"
+    except VEError as exc:
+        return {"status": "error", "error": exc.message if hasattr(exc, "message") else str(exc)}
+    return {k: v for k, v in row.items() if k != "id"}
+
+
+def test_generated_sets_lean_answers(lean):
+    """The first QUICK_COUNT documents of the nightly run (the same seeds, in order)."""
+    generated_sets_lean_answers(QUICK_COUNT)
+
+
+@pytest.mark.nightly
+def test_all_generated_sets_lean_answers(lean):
+    """9.3's 1,000 documents: runs with `-m nightly` and in tools/gate.py."""
+    generated_sets_lean_answers(COUNT)
+
+
+def generated_sets_lean_answers(count):
+    cases, expectations = generated_cases(count)
     rows = []
     for start in range(0, len(cases), 50):
         rows.extend(run_lean(cases[start:start + 50]))
     kinds = {}
     texts = {}
     for n, (case, row, (name, fault, complete, missing)) in enumerate(zip(cases, rows, expectations)):
-        lean_answer = {key: value for key, value in row.items() if key != "id"}
-        python = python_answer(case["environment"], case["document"], with_rust=n % 40 == 0)
-        assert python == lean_answer, (n, name, fault, lean_answer, python)
+        if n % 20 == 0:
+            # The route relays Lean's row (a sample: one route process per case).
+            assert routed(case) == {key: value for key, value in row.items() if key != "id"}, (n, name, fault)
         if fault is None and complete:
-            # Every situation Python finds is accepted by Lean.
+            # Every situation the search finds is accepted by Lean.
             assert row["status"] == "ok", (n, name, row)
         if fault is None and missing:
-            # A pair for which the search finds none is rejected by both.
+            # A pair for which the search finds none is rejected.
             assert row["status"] == "error", (n, name, row)
         if fault is not None:
             assert row["status"] == "error" or fault in ("witness", "situation-id", "decides", "arity"), \
@@ -380,8 +414,7 @@ def test_generated_sets_agree_with_lean(lean):
 
 
 def test_separation_conservative_shadow(lean):
-    """9.3: where neither reading owns a key, some probe separates exactly when the observation lists differ;
-    one separating probe per pair is confirmed by Lean's `readings-separate`."""
+    """9.3: where neither reading owns a key, some probe separates exactly when the observation lists differ."""
     rng = random.Random(SEED + 1)
     checked = 0
     for _ in range(60):
@@ -391,7 +424,7 @@ def test_separation_conservative_shadow(lean):
             for r in document["reading_sets"][0]["readings"]:
                 r["content"]["norm"]["mode"] = "strict"
                 r["content"]["norm"].pop("exception", None)
-        admission = Admission(raw, document)
+        admission = Decoded(raw, document)
         R = admission.doc.sets[0]
         pairs = [(i, j) for i in range(len(R.candidates)) for j in range(len(R.candidates)) if i < j]
         for i, j in pairs:

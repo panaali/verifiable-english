@@ -38,12 +38,11 @@ def backend_rejection(error: VEError) -> VEError:
 
 
 def require_ok(record: dict) -> dict:
-    """Return a successful runner record or raise its classified diagnostic."""
-    if record.get("status") == "error":
-        error = record.get("error", "checker rejected request")
-        if isinstance(error, dict):
-            raise backend_rejection(checker_error(
-                error.get("message", "checker rejected request"), code=error.get("code"),
-                span=error.get("span"), generator=record.get("generator")))
-        raise backend_rejection(checker_error(str(error), generator=record.get("generator")))
+    """Return a successful Rust record or raise its classified diagnostic.
+
+    `record` has passed `rust_jsonl.record_problem`: a rejection carries its complete
+    diagnostic (`code`, `message`, optional `span`), so nothing here supplies a default."""
+    if record["status"] == "error":
+        error = record["error"]
+        raise backend_rejection(checker_error(error["message"], code=error["code"], span=error.get("span")))
     return record

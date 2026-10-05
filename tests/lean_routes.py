@@ -97,17 +97,3 @@ def completed(route, cases: list, *, text: bool = True, timeout: float | None = 
     stdout = "" if rows is None else json.dumps(rows, ensure_ascii=False)
     return subprocess.CompletedProcess([str(route)], status, stdout if text else stdout.encode(),
                                        stderr if text else stderr.encode())
-
-
-def bounded(route, cases: list, cpu_seconds: float) -> tuple[list, float]:
-    """The rows of `route` for `cases` and the service's CPU seconds for them, which must stay below
-    `cpu_seconds` (the one-shot ran under that kernel CPU limit; the service's own bound is its mode's
-    deadline, `lean_service.DEADLINES`)."""
-    service = _started()
-    before = service.cpu_seconds()
-    result = _service_rows(mode(route), cases, None)
-    after = service.cpu_seconds()
-    assert before is not None and after is not None and after >= before, "no CPU time for the service"
-    used = after - before
-    assert used < cpu_seconds, (route, used)
-    return result, used

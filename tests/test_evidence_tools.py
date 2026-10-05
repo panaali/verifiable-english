@@ -12,12 +12,12 @@ from pathlib import Path
 
 import pytest
 
-from tools import lean_service_latency, lean_service_parity, rust_output_diff, stage2_parity
+from tools import lean_service_latency as service_bench, lean_service_parity, rust_output_diff, stage2_parity
 
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location("b1_latency", ROOT / "docs/lean-first/b1/latency.py")
-b1_latency = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(b1_latency)
+b1_bench = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(b1_bench)
 
 
 @pytest.fixture
@@ -68,10 +68,10 @@ def two_checkouts(tmp_path):
 def test_b1_latency_refuses_inputs_that_compare_nothing(two_checkouts, tmp_path):
     """Two equal failures (a bad root, a missing document) were `same_output` and exit 0."""
     base, head, document = two_checkouts
-    assert b1_latency.main([str(base), str(base), str(document)]) == 2
-    assert b1_latency.main([str(tmp_path), str(head), str(document)]) == 2
-    assert b1_latency.main([str(base), str(head), str(tmp_path / "missing.ve.md")]) == 2
-    assert b1_latency.main([str(base), str(head), str(document), "--runs", "0"]) == 2
+    assert b1_bench.main([str(base), str(base), str(document)]) == 2
+    assert b1_bench.main([str(tmp_path), str(head), str(document)]) == 2
+    assert b1_bench.main([str(base), str(head), str(tmp_path / "missing.ve.md")]) == 2
+    assert b1_bench.main([str(base), str(head), str(document), "--runs", "0"]) == 2
 
 
 @pytest.mark.parametrize("outputs, status", [
@@ -82,8 +82,8 @@ def test_b1_latency_refuses_inputs_that_compare_nothing(two_checkouts, tmp_path)
 def test_b1_latency_fails_unless_every_output_matches(two_checkouts, monkeypatch, outputs, status):
     base, head, document = two_checkouts
     side = {base: "base", head: "head"}
-    monkeypatch.setattr(b1_latency, "check", lambda root, doc: (0.1, 0.1, *outputs[side[root]]))
-    assert b1_latency.main([str(base), str(head), str(document), "--runs", "2"]) == status
+    monkeypatch.setattr(b1_bench, "check", lambda root, doc: (0.1, 0.1, *outputs[side[root]]))
+    assert b1_bench.main([str(base), str(head), str(document), "--runs", "2"]) == status
 
 
 @pytest.mark.parametrize("order", [("a", "b"), ("b", "a")])
@@ -101,17 +101,17 @@ def test_b1_latency_keeps_every_document_with_the_same_name(two_checkouts, monke
         differs = document == documents["a"].resolve() and side[root] == "head"
         return 0.1, 0.1, 0, "other\n" if differs else "ok\n"
 
-    monkeypatch.setattr(b1_latency, "check", check)
+    monkeypatch.setattr(b1_bench, "check", check)
     argv = [str(base), str(head), *(str(documents[d]) for d in order), "--runs", "1"]
-    assert b1_latency.main(argv) == 1
+    assert b1_bench.main(argv) == 1
     rows = json.loads(capsys.readouterr().out)
     assert [row["document"] for row in rows] == [str(documents[d]) for d in order]
     assert [row["same_output"] for row in rows] == [d == "b" for d in order]
 
 
 def test_b1_latency_compares_every_run_not_the_last():
-    assert not b1_latency.same_output({"base": {(0, "a"), (0, "b")}, "head": {(0, "a"), (0, "b")}})
-    assert b1_latency.same_output({"base": {(0, "a")}, "head": {(0, "a")}})
+    assert not b1_bench.same_output({"base": {(0, "a"), (0, "b")}, "head": {(0, "a"), (0, "b")}})
+    assert b1_bench.same_output({"base": {(0, "a")}, "head": {(0, "a")}})
 
 
 def test_lean_service_latency_refuses_a_bench_without_workloads(monkeypatch, tmp_path, capsys):
@@ -126,11 +126,11 @@ def test_lean_service_latency_refuses_a_bench_without_workloads(monkeypatch, tmp
 
         def close(self):
             pass
-    monkeypatch.setattr(lean_service_latency, "LeanService", Service)
-    monkeypatch.setattr(lean_service_latency, "workloads", lambda root, quick: [])
-    monkeypatch.setattr(lean_service_latency, "machine", lambda: {"commit": "test", "cpu": "test", "logical_cpus": 1,
+    monkeypatch.setattr(service_bench, "LeanService", Service)
+    monkeypatch.setattr(service_bench, "workloads", lambda root, quick: [])
+    monkeypatch.setattr(service_bench, "machine", lambda: {"commit": "test", "cpu": "test", "logical_cpus": 1,
                                                                   "loadavg": [0], "python": "test"})
-    assert lean_service_latency.main(["--out", str(tmp_path / "out"), "--bench-root", str(tmp_path),
+    assert service_bench.main(["--out", str(tmp_path / "out"), "--bench-root", str(tmp_path),
                                       "--cold-starts", "1"]) == 2
     assert "no workload" in capsys.readouterr().err
 

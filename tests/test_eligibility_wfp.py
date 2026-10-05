@@ -25,6 +25,7 @@ sys.path.insert(0, str(HERE))
 import reference  # noqa: E402
 import run  # noqa: E402
 import translation as T  # noqa: E402
+from subprocesses import HANG_TIMEOUT  # noqa: E402
 from ve import ast  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.entailment import prove_entailment  # noqa: E402
@@ -443,7 +444,7 @@ def _python_lean_rust(cases_and_expected):
         rows.append((cid, python, expected))
         cases.append({"id": cid, "environment": raw, "quantity": quantity, "model": model_data})
     lean_values = [r.get("value") for r in run.lean(cases)]
-    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=600,
+    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=HANG_TIMEOUT,
                              input=json.dumps([{**c, "kind": "quantity"} for c in cases]))
     rust_values = [r.get("value") for r in json.loads(process.stdout)]
     assert [(cid, p) for cid, p, _ in rows] == [(cid, e) for cid, _, e in rows]
@@ -546,7 +547,7 @@ def test_care_end_rule_evaluates_alike_in_python_lean_and_rust():
             rows.append((pid, mutant, python, expected))
             cases.append({"id": f"{pid}/{mutant}", "environment": raw, "quantity": quantity, "model": model_data})
     lean_values = [r.get("value") for r in run.lean(cases)]
-    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=600,
+    process = subprocess.run([str(RUST), "conformance", "-"], text=True, capture_output=True, timeout=HANG_TIMEOUT,
                              input=json.dumps([{**c, "kind": "quantity"} for c in cases]))
     rust_values = [r.get("value") for r in json.loads(process.stdout)]
     assert [(pid, m, p) for pid, m, p, _ in rows] == [(pid, m, e) for pid, m, _, e in rows]

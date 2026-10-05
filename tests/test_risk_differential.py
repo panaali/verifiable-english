@@ -21,6 +21,7 @@ import pytest
 from tests import lean_routes
 
 from conformance.risk import cell_env
+from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = "ve_risk_eval"  # its service mode, through tests/lean_routes.py
@@ -156,11 +157,17 @@ def shard(seed):
     return boxes, conditions, kinds
 
 
-def lean_eval(boxes, conditions):
+def lean_cases(boxes, conditions):
+    """The `risk-eval` input for the boxes and their conditions (also replayed by
+    tools/lean_output_diff.py)."""
     env = cell_env()
-    cases = [{"environment": env, "quantities": [{"name": n, "tag": D, "lo": lo, "hi": hi}
-                                                 for n, (lo, hi) in box.items()],
-              "conditions": rows} for box, rows in zip(boxes, conditions)]
+    return [{"environment": env, "quantities": [{"name": n, "tag": D, "lo": lo, "hi": hi}
+                                                for n, (lo, hi) in box.items()],
+             "conditions": rows} for box, rows in zip(boxes, conditions)]
+
+
+def lean_eval(boxes, conditions):
+    cases = lean_cases(boxes, conditions)
     out = lean_routes.completed(LEAN, cases)
     assert out.returncode == 0, out.stderr
     rows = json.loads(out.stdout)
@@ -174,7 +181,7 @@ def rust_eval(boxes, conditions):
               "scales": {}}
              for i, (box, rows) in enumerate(zip(boxes, conditions)) for j, tree in enumerate(rows)]
     out = subprocess.run([str(RUST), "conformance"], input=json.dumps(cases), text=True, capture_output=True,
-                         timeout=500)
+                         timeout=HANG_TIMEOUT)
     rows = json.loads(out.stdout)
     it = iter(rows)
     return [[next(it) for _ in box_rows] for box_rows in conditions]

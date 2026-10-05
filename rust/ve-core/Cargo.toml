@@ -6,14 +6,16 @@ license.workspace = true
 
 [features]
 # Exposes only a checked, prepared evaluator for separating benchmark layers.
-bench-internals = []
+bench-internals = ["ve-profile/bench-internals"]
 
 [[example]]
 name = "bench"
 required-features = ["bench-internals"]
 
 [dependencies]
-serde.workspace = true
+ve-kernel.workspace = true
+ve-profile.workspace = true
+ve-surface.workspace = true
+
+[dev-dependencies]
 serde_json.workspace = true
-sha2.workspace = true
-num-bigint = "0.4"

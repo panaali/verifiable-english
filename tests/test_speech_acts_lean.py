@@ -18,6 +18,7 @@ import pytest
 
 from tests import lean_routes
 
+from subprocesses import HANG_TIMEOUT
 from ve.ast import _Decoder
 from ve.entailment import prove_entailment
 from ve.environment import Environment
@@ -34,7 +35,7 @@ def lean():
         lake = shutil.which("lake")
         if lake is None:
             pytest.skip("lake is required for the speech-acts Lean route")
-        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=600)
+        built = subprocess.run([lake, "build"], cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT)
         assert built.returncode == 0, built.stdout + built.stderr
     return LEAN
 
