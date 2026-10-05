@@ -416,3 +416,19 @@ def test_grammar_id_covers_the_table_sources_of_the_profiles():
 
 def test_actions_version_is_the_lock_files():
     assert EG.actions_version() == json.loads((EG.HERE / "LOCK.json").read_text())["actions_version"]
+
+
+def test_the_class_map_covers_the_codes_lean_gives():
+    """The adapter's map (spec 4.2) has every code of Lean's `Reject.code` that the base profile reaches, and
+    `IllTyped`, the code of the typed check's outcome; `Internal` (never constructed, spec 5.7) and
+    `CoefficientNotNumeral` (order@0, S3) stay outside it, so an answer naming them fails closed. The status
+    codes are the ones `VE.EnglishGrammar.Run` writes. Spec 5.7's text search, on the Lean source."""
+    import re
+    root = Path(__file__).resolve().parents[1] / "lean/VE/EnglishGrammar"
+    syntax = (root / "Syntax.lean").read_text()
+    body = syntax[syntax.index("def Reject.code"):syntax.index("structure DState")]
+    codes = set(re.findall(r'=> "(\w+)"', body))
+    assert codes - set(L.CLASSES) == {"Internal", "CoefficientNotNumeral"}
+    assert set(L.CLASSES) - codes == {"IllTyped"}
+    run = (root / "Run.lean").read_text()
+    assert all(f'coded "{code}"' in run for code in [*L.STATUS_CODES.values(), "IllTyped"])
