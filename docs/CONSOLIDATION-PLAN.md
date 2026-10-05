@@ -642,7 +642,7 @@ claims, 3c's aliases, 4b's kit, 7's skeleton, 8a's canonical encoders), subtract
 Measured on the table after consolidate-b1 fix 4 (K 978, S 7,550, trusted 25,641 of
 88,757 lines; step 5 remeasured after the 2026-10-05 merge of ve-integration, whose
 `VE.Discourse.Run` rewrite moved 3 of its tied lines, and again after the merge into lean-first/b3b, whose
-`Readings.Run.setFindings` and `Readings.Separate.actOnly` rewrites (each side built once) moved 4 more; steps 6 and 7 remeasured after the second
+`Readings.Run.setFindings` and `Readings.Separate.actOnly` rewrites (each side built once) moved 4 more, and after the merge into lean-first/b3d, whose `Readings.Run` pair rewrite (each candidate's layers built once, `pairFactsIn`) adds 1; steps 6 and 7 remeasured after the second
 2026-10-05 merge, which brought english-lean, compose-s2 and difffuzz. Step 7's `*Main.lean`
 selector now also names `EnglishLeanBenchMain.lean`, english-lean's measurement executable (156 of
 the 159 added lines; no admission path reads it, and the seeded table counts it untied [V] by
@@ -657,7 +657,7 @@ the DRI. Step 6 counts 503 more [V] diagnostic lines than at fix 4, from the two
 | 2b | 94 | 0 | 0 | 0 | 94 | 2 | 2 | 23.5 |
 | 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
 | 4 | 718 | 0 | 0 | 420 | 298 | 14 | 2 | 10.6 |
-| 5 | 0 | 484 | 0 | 0 | 484 | 14 | 1 | 34.6 |
+| 5 | 0 | 485 | 0 | 0 | 485 | 14 | 1 | 34.6 |
 | 6 | 35 | 0 | 1787 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 762 | 0 | 0 | 60 | 702 | 6 | 2 | 58.5 |
 | 8a | 106 | 225 | 0 | 60 | 271 | 10 | 1.5 | 18.1 |
@@ -671,7 +671,7 @@ What the measurement changes:
   9 (2.4), 10. Step 8b's 3,480 is an upper bound (every untied line of the eight units' `Wire.lean`
   files, on the assumption that every decoder gets `exact`), not a forecast; it stays ranked by its
   pilot (Alternatives) as section 3 says. Against the estimates, 7 overtakes 5 (762 trusted
-  dispatch and `main` lines, not 340; 603 before the bench executable) and 5 is smaller than estimated (484 measured against 1,500 to
+  dispatch and `main` lines, not 340; 603 before the bench executable) and 5 is smaller than estimated (485 measured against 1,500 to
   2,000): most of the rows' targets are short runners, and `scopedVerdict` and `weighingWitness`
   are already C.
 * **Step 6** removes almost nothing trusted: the SHA-256 copy and the `maxNodes` sites are [I] and
