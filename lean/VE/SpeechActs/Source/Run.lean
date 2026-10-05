@@ -349,6 +349,64 @@ structure QueryRecord (dec : Wire.Decoded) where
   accepted : VE.Tableau.checkCertificate (En dec.D) (queryPremises dec.D qr) qr.target cert = true
   status : Run.PremiseStatus dec.D (queryPremises dec.D qr)
 
+/-- A `gap` judgment replayed: a validated model of `Π_q` (completed in layer order) in which the target is false. -/
+structure GapRecord (dec : Wire.Decoded) where
+  unit : String
+  qr : Query
+  mem : qr ∈ dec.D.queries
+  modelId : String
+  m : Run.CheckedModel dec.D (queryPremises dec.D qr)
+  refutes : qr.target.eval m.M [] = false
+
+/-- A judgment record of a `follows` question (3.3): `follows` by certificate or `gap` by model. -/
+inductive Judgment (dec : Wire.Decoded)
+  | follows (r : QueryRecord dec)
+  | gap (r : GapRecord dec)
+
+/-- One answer or judgment record, in the document's order. -/
+inductive Record (dec : Wire.Decoded)
+  | answer (r : AnswerRecord dec)
+  | judgment (r : Judgment dec)
+
+/-- The verb of an act phrase (`{0} click {1}` ↦ `click`): its first word after slot 0. -/
+def actVerb (act : String) : Option String :=
+  if act.startsWith "{0} " then ((act.drop 4).splitOn " ").head?.filter token else none
+
+/-- The act's `done` fact of a command (3.3, 5.4; norms.md 4.3): the base predicate `done_<verb>` of its act phrase,
+declared with the act's argument sorts and not regulated, at the command's bound constants (the addressee, then
+the arguments). `none` when the environment declares no such predicate. -/
+def doneFact (D : SpeechDoc) (c : Command) : Option VE.Formula :=
+  match actVerb (((regOf D c.act).bind VE.Norms.Regulated.act).getD "") with
+  | none => none
+  | some verb =>
+    let p := "done_" ++ verb
+    if D.E.predicates p == some (actSorts D c) && (regOf D p).isNone then
+      match slotConsts D c with
+      | [y] => some (.unary p (.const y))
+      | [y, a] => some (.binary p (.const y) (.const a))
+      | _ => none
+    else none
+
+/-- `φ` is the command's `done` fact. (A named proposition: the structure elaborator would otherwise reduce
+`doneFact` while reading the field's type.) -/
+def DoneFact (D : SpeechDoc) (c : Command) (φ : VE.Formula) : Prop := doneFact D c = some φ
+
+/-- External compliance evidence (5.4): an asserted unit of the document whose content is exactly the command's
+`done` fact, with that unit's own support kind. The checker generates no `done` fact; it only finds the author's. -/
+structure ExternalRecord (dec : Wire.Decoded) where
+  command : String
+  c : Command
+  mem : c ∈ dec.D.commands
+  entry : String × VE.Formula
+  asserted : entry ∈ dec.D.asserted
+  fact : DoneFact dec.D c entry.2
+  support : String
+
+/-- One compliance record (3.3): external evidence, or a proof task's replayed certificate. -/
+inductive Compliance (dec : Wire.Decoded)
+  | external (r : ExternalRecord dec)
+  | certificate (r : QueryRecord dec)
+
 /-- A recorded nomination (4.6): candidate `index` of the bound set version, by `agent`, on testimony. -/
 structure Nomination where
   question : String
@@ -447,18 +505,33 @@ def queryRecord (dec : Wire.Decoded) (unit qid : String) (cj status : Json) : Ex
     pure ⟨unit, qr, hq, c, h, s⟩
   else throw mismatch
 
-/-- The answer records, in order: answers, `follows` judgments and nominations. -/
+/-- A `gap` judgment record: a model of exactly `Π_q` in which the target is false; a model in which it holds does
+not establish the judgment (`AnswerMismatch: <u>`, 3.3). -/
+def gapRecord (dec : Wire.Decoded) (unit qid : String) (mj : Json) : Except String (GapRecord dec) := do
+  let ⟨qr, hq⟩ ← match Run.findQuery dec.D qid with
+    | .ok r => pure r
+    | .error _ => throw s!"QueryMismatch: {qid}"
+  let m ← Run.decodeCheckedModel dec (queryPremises dec.D qr) mj
+  if h : qr.target.eval m.M [] = false then pure ⟨unit, qr, hq, completedModelId dec mj, m, h⟩
+  else throw s!"AnswerMismatch: {unit}"
+
+/-- The answer records: answers and judgments in document order, and the nominations. -/
 structure Answers (dec : Wire.Decoded) where
-  answers : List (AnswerRecord dec)
-  judgments : List (QueryRecord dec)
+  records : List (Record dec)
   nominations : List Nomination
+
+def Answers.answers {dec : Wire.Decoded} (a : Answers dec) : List (AnswerRecord dec) :=
+  a.records.filterMap fun | .answer r => some r | .judgment _ => none
+
+def Answers.judgments {dec : Wire.Decoded} (a : Answers dec) : List (Judgment dec) :=
+  a.records.filterMap fun | .judgment r => some r | .answer _ => none
 
 def answerRecords (dec : Wire.Decoded) (sets : List SetInfo) (evidence j : Json) :
     Except String (Answers dec) := do
   let records ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: answers"
-  let mut out : Answers dec := ⟨[], [], []⟩
+  let mut out : Answers dec := ⟨[], []⟩
   for (record, index) in records.zipIdx do
     let status := statusEvidence evidence "answers" index
     let keys := keysOf record
@@ -491,20 +564,44 @@ def answerRecords (dec : Wire.Decoded) (sets : List SetInfo) (evidence j : Json)
     unless isObj (record.getObjValD "evidence") do throw s!"AnswerMismatch: {uid}"
     match q.mode with
     | .follows =>
+      -- 3.3: `follows` by certificate over `Π_q`, or `gap` by a model of `Π_q`; `refuted` is no judgment.
       let ev := record.getObjValD "evidence"
-      unless record.getObjValD "judgment" == .str "follows" && record.getObjValD "support" == .str "certificate" &&
-          isObj ev && keysOf ev == ["certificate"] do
-        throw "InvalidInput: judgment"
-      let r ← queryRecord dec uid (q.query.getD "") (ev.getObjValD "certificate") status
-      out := { out with judgments := out.judgments ++ [r] }
+      let qid := q.query.getD ""
+      match record.getObjValD "judgment", record.getObjValD "support", keysOf ev with
+      | .str "follows", .str "certificate", ["certificate"] =>
+        let r ← queryRecord dec uid qid (ev.getObjValD "certificate") status
+        out := { out with records := out.records ++ [.judgment (.follows r)] }
+      | .str "gap", .str "model", ["model"] =>
+        let r ← gapRecord dec uid qid (ev.getObjValD "model")
+        out := { out with records := out.records ++ [.judgment (.gap r)] }
+      | _, _, _ => throw "InvalidInput: judgment"
     | .reading => throw s!"NominationOutsideSet: {uid}"
     | _ =>
       let r ← answerRecord dec q hq record status
-      out := { out with answers := out.answers ++ [r] }
+      out := { out with records := out.records ++ [.answer r] }
   pure out
 
-/-- The compliance records (Python's `_compliance_records`): a proof task's certificate for its pinned query. -/
-def complianceRecords (dec : Wire.Decoded) (evidence j : Json) : Except String (List (QueryRecord dec)) := do
+/-- External compliance evidence: `unit` names an asserted unit whose content is the command's `done` fact. -/
+def externalRecord (dec : Wire.Decoded) (units : List SourceUnit) (c : Command) (hc : c ∈ dec.D.commands)
+    (unit : Json) : Except String (ExternalRecord dec) := do
+  let bad := "InvalidInput: compliance record"
+  let some uid := (unit.getStr?).toOption | throw bad
+  match hf : doneFact dec.D c with
+  | none => throw bad
+  | some fact =>
+    match h : dec.D.asserted.find? (fun p => p.1 == uid && decide (p.2 = fact)) with
+    | some entry =>
+      have hp := List.find?_some h
+      have he : entry.2 = fact := by simp only [Bool.and_eq_true, decide_eq_true_eq] at hp; exact hp.2
+      let support := ((units.find? (·.id == uid)).bind fun u =>
+        ((u.raw.getObjValD "support").getStr?).toOption).getD ""
+      pure ⟨c.unit, c, hc, entry, List.mem_of_find?_eq_some h, by rw [DoneFact, he]; exact hf, support⟩
+    | none => throw bad
+
+/-- The compliance records (Python's `_compliance_records`, with 5.4's external evidence): an asserted `done` unit
+(`{"unit"}`), or a proof task's certificate for its pinned query (`{"certificate"}`). -/
+def complianceRecords (dec : Wire.Decoded) (units : List SourceUnit) (evidence j : Json) :
+    Except String (List (Compliance dec)) := do
   let records ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: compliance"
@@ -513,15 +610,20 @@ def complianceRecords (dec : Wire.Decoded) (evidence j : Json) : Except String (
     let keys := keysOf record
     unless isObj record && keys.length == 2 && ["command", "evidence"].all keys.contains do throw bad
     let some uid := ((record.getObjValD "command").getStr?).toOption | throw bad
-    let some c := dec.D.commands.find? (·.unit == uid) | throw bad
+    let ⟨c, hc⟩ ← match h : dec.D.commands.find? (·.unit == uid) with
+      | some c => pure (⟨c, List.mem_of_find?_eq_some h⟩ : { c : Command // c ∈ dec.D.commands })
+      | none => throw bad
     let ev := record.getObjValD "evidence"
     unless isObj ev do throw bad
+    if keysOf ev == ["unit"] then
+      return .external (← externalRecord dec units c hc (ev.getObjValD "unit"))
     let qid : Option String := match dec.D.E.predicates c.act with
       | some (_ :: ss) => ((ss.zip c.args).find? (·.1 == "query")).map Prod.snd
       | _ => none
     let some qid := qid | throw s!"QueryMismatch: {uid}"
-    unless isObj ev && keysOf ev == ["certificate"] do throw s!"QueryMismatch: {uid}"
-    queryRecord dec uid qid (ev.getObjValD "certificate") (statusEvidence evidence "compliance" index)
+    unless keysOf ev == ["certificate"] do throw s!"QueryMismatch: {uid}"
+    return .certificate (← queryRecord dec uid qid (ev.getObjValD "certificate")
+      (statusEvidence evidence "compliance" index))
 
 /-! ## The wrapper -/
 
@@ -540,7 +642,7 @@ structure SpeechSource where
   dec : Wire.Decoded
   cov : Coverage source.utf8ByteSize
   answers : Answers dec
-  compliance : List (QueryRecord dec)
+  compliance : List (Compliance dec)
 
 /-- W2's identity payload and the `ve-document@2` document id (3.5), from the retained payload alone. -/
 def SpeechSource.identityPayload (src : SpeechSource) : Json :=
@@ -609,7 +711,7 @@ def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechS
   unless fm.getObjValD "weights" matches .arr _ || !(fm.getObjVal? "weights").isOk do
     throw "invalid removable reading weights"
   let answers ← answerRecords dec sets evidence (Loader.optionalList fm "answers")
-  let compliance ← complianceRecords dec evidence (Loader.optionalList fm "compliance")
+  let compliance ← complianceRecords dec units evidence (Loader.optionalList fm "compliance")
   let cov ← coverage source.utf8ByteSize units sets
   pure ⟨⟨payload, fm, source, fences, rfl, rfl, units, sets, (match terms with | .arr ts => ts.toList | _ => []),
     dec, cov, answers, compliance⟩, rfl⟩
@@ -630,6 +732,31 @@ def answerJson {dec : Wire.Decoded} (r : AnswerRecord dec) : Json :=
 def queryJson {dec : Wire.Decoded} (key : String) (r : QueryRecord dec) : Json :=
   Json.mkObj [(key, .str r.unit), ("query", .str r.qr.id),
     ("line", .str s!"{if key == "command" then "certificate: query " ++ r.qr.id ++ " (" else "follows (certificate; "}premises: {r.status.text})")]
+
+/-- One answer or judgment line (5.3), in record order. -/
+def recordJson {dec : Wire.Decoded} : Record dec → Json
+  | .answer r => answerJson r
+  | .judgment (.follows r) => queryJson "question" r
+  | .judgment (.gap r) => Json.mkObj [("question", .str r.unit), ("query", .str r.qr.id), ("status", .str "gap"),
+      ("line", .str s!"gap (model {r.modelId})")]
+
+/-- One compliance line (5.4). -/
+def complianceJson {dec : Wire.Decoded} : Compliance dec → Json
+  | .external r => Json.mkObj [("command", .str r.command), ("unit", .str r.entry.1),
+      ("line", .str s!"external: unit {r.entry.1} ({r.support})")]
+  | .certificate r => queryJson "command" r
+
+def Compliance.command {dec : Wire.Decoded} : Compliance dec → String
+  | .external r => r.command
+  | .certificate r => r.unit
+
+def Compliance.isExternal {dec : Wire.Decoded} : Compliance dec → Bool
+  | .external _ => true
+  | .certificate _ => false
+
+def Judgment.unit {dec : Wire.Decoded} : Judgment dec → String
+  | .follows r => r.unit
+  | .gap r => r.unit
 
 /-- The nomination line of each asked reading question (5.3). -/
 def nominationLines (src : SpeechSource) : List Json :=
@@ -655,9 +782,10 @@ def statusText (src : SpeechSource) : List String :=
   let asked := D.questions.filter (·.mode != .reading)
   let byCert := asked.filter fun q => src.answers.answers.any (fun r => r.q.unit == q.unit &&
       (match r.replay with | .certificate .. | .conditional .. => true | _ => false)) ||
-    src.answers.judgments.any (·.unit == q.unit)
-  let inModel := asked.filter fun q => !byCert.contains q && src.answers.answers.any (fun r => r.q.unit == q.unit &&
-      (match r.replay with | .model _ m => (presupposition D r.q).eval m.M [] | _ => false))
+    src.answers.judgments.any (fun | .follows r => r.unit == q.unit | .gap _ => false)
+  let inModel := asked.filter fun q => !byCert.contains q && (src.answers.answers.any (fun r => r.q.unit == q.unit &&
+      (match r.replay with | .model _ m => (presupposition D r.q).eval m.M [] | _ => false)) ||
+    src.answers.judgments.any (fun | .gap r => r.unit == q.unit | .follows _ => false))
   let failed := asked.filter fun q => !byCert.contains q && !inModel.contains q &&
     src.answers.answers.any (·.q.unit == q.unit)
   let unanswered := asked.length - byCert.length - inModel.length - failed.length
@@ -669,8 +797,9 @@ def statusText (src : SpeechSource) : List String :=
      s!"{D.commands.length} commands active, {dormant.length} dormant",
    s!"questions: {byCert.length + inModel.length} answered ({byCert.length} by certificate, " ++
      s!"{inModel.length} in a model), {failed.length} presupposition failures, 0 unknown, {unanswered} unanswered",
-   s!"compliance: {(src.compliance.map (·.unit)).eraseDups.length} of {D.commands.length} commands with evidence " ++
-     s!"(0 external, {src.compliance.length} certificates)"]
+   s!"compliance: {(src.compliance.map (·.command)).eraseDups.length} of {D.commands.length} commands with " ++
+     s!"evidence ({(src.compliance.filter (·.isExternal)).length} external, " ++
+     s!"{(src.compliance.filter (!·.isExternal)).length} certificates)"]
 
 def countsJson (xs : List (String × Nat)) : Json := Json.mkObj (xs.map fun (k, n) => (k, toJson n))
 
@@ -688,10 +817,9 @@ def report (src : SpeechSource) : List (String × Json) :=
       ("bytes_by_status", countsJson (totals Row.status src.cov.rows)),
       ("residual", Json.mkObj [("open_terms", toJson src.openTerms.length),
         ("unresolved_sets", toJson (latest.filter (!·.authored)).length)])]),
-   ("answers", Json.arr ((src.answers.answers.map answerJson) ++
-      (src.answers.judgments.map (queryJson "question"))).toArray),
+   ("answers", Json.arr (src.answers.records.map recordJson).toArray),
    ("nominations", Json.arr (nominationLines src).toArray),
-   ("compliance", Json.arr (src.compliance.map (queryJson "command")).toArray),
+   ("compliance", Json.arr (src.compliance.map complianceJson).toArray),
    ("status_text", toJson (statusText src))]
 
 /-! ## The entry point -/
@@ -776,8 +904,23 @@ theorem answers_sound (src : SpeechSource) (r : AnswerRecord src.dec) (_ : r ∈
 /-- Every `follows` judgment and every proof task's compliance certificate of a decoded source is entailment of the
 query's target by its pinned premises `Π_q` (`follows_sound`); the certificate adds no premise to the document. -/
 theorem query_records_sound (src : SpeechSource) (r : QueryRecord src.dec)
-    (_ : r ∈ src.answers.judgments ∨ r ∈ src.compliance) :
+    (_ : Judgment.follows r ∈ src.answers.judgments ∨ Compliance.certificate r ∈ src.compliance) :
     VE.Entails.{u} (En src.dec.D) (queryPremises src.dec.D r.qr) r.qr.target :=
   follows_sound src.dec.D src.dec.wf r.qr r.mem r.cert r.accepted
+
+/-- Every `gap` judgment of a decoded source refutes the entailment of the query's target by `Π_q` (`gap_sound`):
+its model satisfies every pinned premise and falsifies the target. -/
+theorem gap_records_sound (src : SpeechSource) (r : GapRecord src.dec)
+    (_ : Judgment.gap r ∈ src.answers.judgments) :
+    ¬ VE.Entails.{u} (En src.dec.D) (queryPremises src.dec.D r.qr) r.qr.target :=
+  gap_sound src.dec.D src.dec.wf r.qr r.mem r.m.M r.m.valid r.m.background r.m.sat (by simpa using r.refutes)
+
+/-- Every external compliance record names an asserted unit of the document (a fixed premise of `premises D`) whose
+content is exactly the command's `done` fact; nothing is generated (5.4, 8.7). -/
+theorem external_records_sound (src : SpeechSource) (r : ExternalRecord src.dec)
+    (_ : Compliance.external r ∈ src.compliance) :
+    r.c ∈ src.dec.D.commands ∧ r.entry ∈ src.dec.D.asserted ∧ DoneFact src.dec.D r.c r.entry.2 ∧
+      r.entry.2 ∈ premises src.dec.D :=
+  ⟨r.mem, r.asserted, r.fact, List.mem_append_right _ (List.mem_map_of_mem r.asserted)⟩
 
 end VE.SpeechActs.Source

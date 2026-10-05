@@ -174,7 +174,7 @@ def lean_outcome(result):
     return {"ok": True, "document_id": result["document_id"], "source_id": result["source_id"],
             "environment_id": result["environment_id"], "coverage": result["coverage"],
             "answers": [(a["question"], a.get("status", "follows")) for a in result["answers"]],
-            "compliance": [(c["command"], c["query"]) for c in result["compliance"]],
+            "compliance": [(c["command"], c.get("query", c.get("unit"))) for c in result["compliance"]],
             "meaning_ids": dict(sorted(meaning_ids.items()))}
 
 
@@ -376,6 +376,126 @@ def test_answer_records_replay_their_evidence(lean):
     refuted["answers"][0]["evidence"]["model"] = model()
     assert run_source(refuted, answered[1])["error"] == py_outcome(refuted, answered[1])["error"] == \
         "AnswerMismatch: u2"
+
+
+def judged(env):
+    """A follows question whose query does not follow (Pi_q is `reviewed(atlas)` only) and a polar question, the
+    judgment record first: records keep the document's order (review 11a C1)."""
+    lines = ["Atlas is reviewed.\n", "Does it follow from these premises that tom is a cat?\n", "Is atlas reviewed?\n"]
+    units = placed(lines, [unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+                           unit("f", 0, "question", {"question": {"mode": "follows", "query": "q1"}}),
+                           unit("p", 0, "question", polar(U("reviewed", "atlas")))])
+    queries = [{"id": "q1", "premises": ["a"], "target": {"ast": U("cat", "tom")}}]
+    gap = {"question": "f", "by": "checker", "support": "model", "judgment": "gap",
+           "evidence": {"model": model(reviewed=[["atlas"]])}}
+    answer = {"question": "p", "by": "checker", "support": "model", "answer": "yes",
+              "evidence": {"model": model(reviewed=[["atlas"]])}}
+    metadata = {"format": "ve-document@2", "environment": env, "units": units, "queries": queries,
+                "answers": [gap, answer]}
+    return metadata, "".join(lines)
+
+
+def test_gap_judgment_records_replay_their_model(lean):
+    """Review 11a B3: a model-backed `gap` record (3.3) is replayed as `speech-consequence` replays it, and the two
+    entry points give the same judgment for the same document and model."""
+    env = base_env()
+    metadata, source = judged(env)
+    result = run_source(metadata, source)
+    assert result["status"] == "ok", result
+    [gap, answer] = result["answers"]
+    assert gap["question"] == "f" and gap["status"] == "gap" and gap["line"].startswith("gap (model ")
+    assert answer["question"] == "p" and answer["line"].startswith("evaluated yes in model ")
+    document = {"units": [{k: v for k, v in u.items() if k != "span"} | {"span": [i, i + 1]}
+                          for i, u in enumerate(metadata["units"])], "queries": metadata["queries"]}
+    [consequence] = run([{"id": "c", "kind": "speech-consequence", "environment": env, "document": document,
+                          "query": "q1", "model": metadata["answers"][0]["evidence"]["model"],
+                          "model_id": gap["line"][len("gap (model "):-1]}])
+    assert consequence["judgment"] == gap["line"]
+    assert result["status_text"][2] == \
+        "questions: 2 answered (0 by certificate, 2 in a model), 0 presupposition failures, 0 unknown, 0 unanswered"
+    # The model must satisfy Pi_q and falsify the target; the judgment must be the one its evidence supports.
+    holds = copy.deepcopy(metadata)
+    holds["answers"][0]["evidence"]["model"] = model(reviewed=[["atlas"]], cat=[["tom"]])
+    assert run_source(holds, source)["error"] == "AnswerMismatch: f"
+    unsatisfied = copy.deepcopy(metadata)
+    unsatisfied["answers"][0]["evidence"]["model"] = model()
+    assert run_source(unsatisfied, source)["error"].startswith("InvalidModel(premises)")
+    for field, value in (("support", "certificate"), ("judgment", "refuted"), ("judgment", 7),
+                         ("evidence", {"certificate": {}})):
+        bad = copy.deepcopy(metadata)
+        bad["answers"][0][field] = value
+        assert run_source(bad, source)["error"] == "InvalidInput: judgment", (field, value)
+    # Python does not replay gap records yet (it rejects them); Lean's answer is the specified one (3.3, 5.3).
+    assert py_outcome(metadata, source)["error"] == "InvalidInput: judgment"
+
+
+def done_document(env, done=("binary", "done_click", ["const", "alice"], ["const", "check"]), support="observation"):
+    lines = ["Click check.\n", "Alice clicked check.\n"]
+    units = placed(lines, [unit("u1", 0, "instruction", command("require", "click_required", ["check"])),
+                           {**unit("d", 0, "asserted", {"ast": list(done)}), "support": support}])
+    return {"format": "ve-document@2", "environment": env, "units": units,
+            "compliance": [{"command": "u1", "evidence": {"unit": "d"}}]}, "".join(lines)
+
+
+def test_external_compliance_names_an_asserted_done_unit(lean):
+    """Review 11a B3: external compliance evidence (3.3, 5.4) is an asserted unit whose content is exactly the act's
+    `done` fact at the command's bound constants, reported with that unit's own support kind."""
+    env = base_env()
+    metadata, source = done_document(env)
+    result = run_source(metadata, source)
+    assert result["status"] == "ok", result
+    assert result["compliance"] == [{"command": "u1", "unit": "d", "line": "external: unit d (observation)"}]
+    assert result["status_text"][3] == "compliance: 1 of 1 commands with evidence (1 external, 0 certificates)"
+    for done in (("not", ["binary", "done_click", ["const", "alice"], ["const", "check"]]),  # not the fact
+                 ("binary", "done_open", ["const", "alice"], ["const", "desk1"]),  # another act
+                 ("unary", "reviewed", ["const", "atlas"])):
+        changed, text = done_document(env, done)
+        assert run_source(changed, text)["error"] == "InvalidInput: compliance record", done
+    for evidence in ({"unit": "u1"}, {"unit": "nowhere"}, {"unit": 7}, {"unit": "d", "certificate": {}}):
+        changed = copy.deepcopy(metadata)
+        changed["compliance"][0]["evidence"] = evidence
+        error = run_source(changed, source)["error"]
+        assert error in ("InvalidInput: compliance record", "QueryMismatch: u1"), (evidence, error)
+    # Python does not read external evidence yet (it rejects the record); Lean's answer is the specified one.
+    assert py_outcome(metadata, source)["error"] == "QueryMismatch: u1"
+
+
+def conditional(env):
+    """The certified document with its polar answer recorded conditionally (3.3's `conditional: true`)."""
+    metadata, source = certified(env)
+    py = core(env, {"units": metadata["units"], "queries": metadata["queries"]})
+    question = py.questions[0]
+    found = prove_entailment(py.env, [*py._caller_premises(), py.presupposition(question)],
+                             py.correct(question, "yes"))
+    assert found.certificate is not None
+    metadata = copy.deepcopy(metadata)
+    metadata["answers"][0] = {**metadata["answers"][0], "conditional": True,
+                              "evidence": {"certificate": found.certificate}}
+    return metadata, source
+
+
+# Every record kind of section 3.3 (and the two compliance kinds of 5.4), with a document whose record of that kind
+# is valid and the report line it must give: an unimplemented branch fails here (review 11a B3's class).
+RECORD_KINDS = {
+    "answer certificate": (lambda env: certified(env), "answers", 0, "supported yes (certificate; "),
+    "answer conditional": (conditional, "answers", 0, "supported yes given the presupposition (certificate; "),
+    "answer model": (lambda env: templates()[2][1:], "answers", 0, "evaluated yes in model "),
+    "judgment follows": (lambda env: certified(env), "answers", 1, "follows (certificate; "),
+    "judgment gap": (judged, "answers", 0, "gap (model "),
+    "nomination": (lambda env: nominated([{"question": "r", "by": "alice", "support": "testimony", "nominate": 0}]),
+                   "nominations", 0, "0 by alice (testimony)"),
+    "compliance certificate": (lambda env: certified(env), "compliance", 0, "certificate: query q1 ("),
+    "compliance external": (done_document, "compliance", 0, "external: unit d (observation)"),
+}
+
+
+@pytest.mark.parametrize("kind", sorted(RECORD_KINDS))
+def test_every_record_kind_is_replayed(lean, kind):
+    build, key, index, line = RECORD_KINDS[kind]
+    metadata, source = build(base_env())
+    result = run_source(metadata, source)
+    assert result["status"] == "ok", (kind, result)
+    assert result[key][index]["line"].startswith(line), (kind, result[key])
 
 
 def test_premise_status_evidence_comes_from_the_case(lean):
