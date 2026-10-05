@@ -1,5 +1,6 @@
 import VE.Discourse.Manifest
 import VE.Route.Run
+import VE.Norms.Tree
 
 /-! # Loading a `ve-document` text (docs/spec/discourse.md 3.1 to 3.3, document.md)
 
@@ -302,9 +303,11 @@ def compileUnits (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (
     if xs.any fun x => (rest.map Unit₀.id).contains x.id then throw "duplicate or invalid unit id"
     pure (xs ++ rest)
 
-/-- `validate_open_terms`: the declared open-term names, with Python's texts for every malformed field. The
-conditions are read for their structure only (Python also types them against the environment). -/
-def openTermNames (_rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except String (List String) := do
+/-- `validate_open_terms`: the declared open-term names, with Python's texts for every malformed field. Every
+necessary and sufficient condition is a closed formula over the environment (document.md), typed as Python's
+`formula_from_data` types it, with its first diagnostic. -/
+def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (data : Bool := false) :
+    Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "open_terms must be a list"
@@ -328,7 +331,9 @@ def openTermNames (_rv : VE.Route.Wire.RouteVocabulary) (j : Json) : Except Stri
       let fs ← match item.getObjValD field with
         | .arr xs => pure xs.toList
         | _ => throw s!"{field} must be a list"
-      for f in fs do let _ ← VE.Bridge.decodeFormula 64 f; pure ()
+      for f in fs do
+        VE.Norms.typeDiagnostic rv.environment [] (← VE.Bridge.decodeFormula 64 f)
+        let _ ← VE.Route.Wire.decodeClosed rv.environment f data
     match strings (item.getObjValD "factors"), strings (item.getObjValD "precedents") with
     | .ok factors, .ok precedents =>
       unless factors.all (!·.isEmpty) && precedents.all (!·.isEmpty) do
@@ -515,7 +520,7 @@ def loadFront (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (env
   let _ ← match front.getObjVal? "environment" with
     | .ok (.obj _) => pure ()
     | _ => throw "document needs an embedded environment"
-  let openNames ← openTermNames rv (optionalList front "open_terms")
+  let openNames ← openTermNames rv (optionalList front "open_terms") (profiles.contains "data@0")
   let unitsJ ← match front.getObjVal? "units" with
     | .ok (.arr xs) => if xs.isEmpty then throw "document needs units" else pure xs.toList
     | _ => throw "document needs units"

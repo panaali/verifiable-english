@@ -653,3 +653,22 @@ def test_python_follows_a_lean_verdict_it_would_not_reach(tmp_path, monkeypatch)
     with pytest.raises(VEError, match="^StaleTarget: m1$") as caught:
         check_document(original)
     assert caught.value.code == "StaleTarget"
+
+
+@pytest.mark.parametrize("condition, text", [
+    (["unary", "nonexistent", ["const", "api"]], "UnknownSymbol: Unknown predicate 'nonexistent'"),
+    (["unary", "reviewed", ["const", "nobody"]], "UnknownSymbol: Unknown constant 'nobody'"),
+    (["unary", "reviewed", ["var", 0]], "UnboundVariable: Variable index 0 is outside its scope")])
+def test_ill_typed_open_term_condition_is_leans_rejection(tmp_path, condition, text):
+    # Discrepancy fixture (lean-first batch 11a, `availability`): an open term's conditions are closed
+    # formulas over the environment (document.md). Lean's loader read only their structure and admitted
+    # the document, which Python's `validate_open_terms` then rejected: CheckerUnavailable. The one loader
+    # (`Discourse.Loader.openTermNames`, shared with the speech-act source wrapper) now types them, so the
+    # answer is Lean's rejection, with Python's text.
+    source, front = _sample(tmp_path)
+    term = {**OPEN_TERM, "necessary": [condition]}
+    path = _write(tmp_path, {**front, "graph": OPEN_GRAPH, "open_terms": [term]}, source)
+    with pytest.raises(VEError) as raised:
+        load_document(path)
+    assert not isinstance(raised.value, CheckerUnavailable)
+    assert str(raised.value) == text

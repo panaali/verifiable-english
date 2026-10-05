@@ -447,6 +447,20 @@ def test_narrowing_references_are_typed_before_resolution(lean):
         assert run_source(changed, source)["error"] == py_outcome(changed, source)["error"] == text
 
 
+@pytest.mark.parametrize("condition", [["unary", "nonexistent", ["const", "atlas"]],
+                                       ["unary", "reviewed", ["const", "nobody"]], ["unary", "reviewed", ["var", 0]],
+                                       ["binary", "reviewed", ["const", "atlas"], ["const", "atlas"]]])
+def test_open_term_conditions_are_typed(lean, condition):
+    """An open term's conditions are closed formulas over the environment (document.md), in both checkers."""
+    name, metadata, source = templates()[1]
+    changed = copy.deepcopy(metadata)
+    changed["open_terms"].append({"name": "extra", "arguments": [], "decided_by": "alice", "jurisdiction": "t1",
+                                  "version": 1, "necessary": [condition], "sufficient": [], "factors": [],
+                                  "precedents": []})
+    py, le = py_outcome(changed, source), lean_outcome(run_source(changed, source))
+    assert not py["ok"] and py == le
+
+
 def test_reading_question_needs_its_derived_open_term(lean):
     name, metadata, source = templates()[1]
     for field, value in (("decided_by", "bob"), ("version", 2), ("factors", ["other"]), ("jurisdiction", "t2")):
