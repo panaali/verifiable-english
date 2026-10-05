@@ -12,8 +12,8 @@ from copy import deepcopy
 import pytest
 
 from conformance.norm_defaults_report import compare, python_rows, report_case, search_evidence
-from conformance.norm_defaults import _norm
 from conformance.norm_defaults_three_way import fixtures
+from tests.test_norm_defaults_differential import case as differential_case
 from tests.test_norm_defaults_three_way import lean_executable  # noqa: F401  (the route fixture)
 from ve import norm_defaults as nd
 from ve import norm_defaults_route as route
@@ -224,19 +224,26 @@ def test_tampered_evidence_never_becomes_a_line(lean_executable):
 
 
 def test_the_atom_budget_bounds_lean_like_python(lean_executable):
-    """b2-wide: each point's cone is one atom of 13; a guard reading every unsaid atom puts
-    13 in one cone, past `MAX_UNSAID_ATOMS`, so neither side searches it."""
+    """A recorded differential source has two unsaid atoms per act. At six acts its
+    closed cone meets the limit; at seven it exceeds it, so neither side searches it."""
     doc, situations = _document("b2-wide")
     lines = nd.report(doc, model=situations[0])
     (row,) = _run([report_case(doc, model=situations[0])], lean_executable)
     assert compare(lines, row) == []
-    env = deepcopy(doc.env.to_dict())
-    wide = NormDocument._decode(_norm("r", "x_permitted", True, ["forall", "act", ["unary", "y_permitted", ["var", 0]]]))
-    tight = nd.UnspecifiedDocument(Environment(env), [wide])
-    lines = nd.report(tight, model=situations[0])
-    (row,) = _run([report_case(tight, model=situations[0])], lean_executable)
-    assert compare(lines, row) == []
-    assert row["report"][[r["predicate"] for r in row["report"]].index("x_permitted")]["reached"] == "unknown"
+    env, rules, situation = differential_case(26)
+    tight = nd.UnspecifiedDocument(env, rules)
+    cases, expected = [], []
+    for size in (6, 7):
+        model = deepcopy(situation)
+        model["domains"]["act"] = ["a", "b"] + [f"a{i}" for i in range(2, size)]
+        cone = tight.cone(tight.situation(model), tight.reached("x_permitted"), ("act",), ("a",))[1]
+        assert len(cone) == 2 * size
+        cases.append(report_case(tight, model=model))
+        expected.append(nd.report(tight, model=model))
+    rows = _run(cases, lean_executable)
+    assert [compare(lines, row) for lines, row in zip(expected, rows)] == [[], []]
+    assert [[entry["reached"] for entry in row["report"] if entry["predicate"] == "x_permitted"]
+            for row in rows] == [["reachable"], ["unknown"]]
 
 
 def test_predicates_restrict_the_report(lean_executable):
