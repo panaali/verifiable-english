@@ -55,6 +55,7 @@ import VE.SpeechActs.Answer
 import VE.SpeechActs.Consequence
 import VE.SpeechActs.Wire
 import VE.SpeechActs.Run
+import VE.SpeechActs.Source.Run
 import VE.SoftNorms.Run
 import VE.Rights.Run
 import VE.Attribution.Content
@@ -1309,6 +1310,10 @@ import VE.EnglishGrammar.FoldAgree
 #print axioms VE.SpeechActs.Wire.decoded_active_commands
 #print axioms VE.SpeechActs.Wire.decoded_premises
 #print axioms VE.SpeechActs.Run.speech_wire_conflict_free_sound
+#print axioms VE.SpeechActs.Source.source_retained
+#print axioms VE.SpeechActs.Source.coverage_partition
+#print axioms VE.SpeechActs.Source.answers_sound
+#print axioms VE.SpeechActs.Source.query_records_sound
 #print axioms VE.SoftNorms.Admission.admitDocument_spec
 #print axioms VE.SoftNorms.Admission.admitNodes_ok
 #print axioms VE.SoftNorms.Admission.layerLeaf_formula
