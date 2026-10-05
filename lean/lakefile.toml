@@ -1,6 +1,6 @@
 name = "veReference"
 version = "0.1.0"
-defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_service", "ve_english_run", "ve_response_decode"]
+defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_service", "ve_english_run", "ve_response_decode", "ResponseShape"]
 
 [[lean_lib]]
 name = "VE"
@@ -12,7 +12,9 @@ root = "Main"
 [[lean_lib]]
 name = "Iceberg"
 
-# The service's response shapes (test tooling and the client's schema source; not trusted, no theorems).
+# The service's response shapes (the client's schema source and test tooling, outside the trusted VE tree)
+# and the theorems that every runner's rows fit them (ResponseShape.Encoders); a default target, so a
+# plain `lake build` checks them.
 [[lean_lib]]
 name = "ResponseShape"
 globs = ["ResponseShape.*"]

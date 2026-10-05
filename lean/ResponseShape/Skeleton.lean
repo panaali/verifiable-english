@@ -75,7 +75,7 @@ inductive Fits (Γ : String → Skel) : Skel → Json → Prop where
   | obj {fields : List (String × Skel)} {extra : Option Skel} {required absent : List String}
       {m : Std.TreeMap.Raw String Json} :
       (∀ k v, m[k]? = some v → Fits Γ (Skel.field fields extra k) v) →
-      (∀ k ∈ required, k ∈ m) → (∀ k ∈ absent, k ∉ m) →
+      (∀ k ∈ required, (m[k]?).isSome) → (∀ k ∈ absent, m[k]? = none) →
       Fits Γ (.obj fields extra required absent) (.obj m)
   | arr {pre : List Skel} {items : Skel} {xs : Array Json} :
       (∀ i (h : i < xs.size), Fits Γ (Skel.item pre items i) xs[i]) → Fits Γ (.arr pre items) (.arr xs)
@@ -110,7 +110,7 @@ theorem ofList_get {l : List (String × Json)} (hd : (l.map Prod.fst).Nodup) {k 
     exact hm
 
 /-- A field of an object built from a list holds the value of some element of the list. -/
-theorem ofList_get' {l : List (String × Json)} {k : String} {v : Json}
+theorem ofList_value {l : List (String × Json)} {k : String} {v : Json}
     (h : (Std.TreeMap.Raw.ofList l compare)[k]? = some v) : ∃ k', (k', v) ∈ l := by
   rw [Std.TreeMap.Raw.ofList_eq_insertMany_empty,
     Std.TreeMap.Raw.getElem?_insertMany_list Std.TreeMap.Raw.WF.emptyc] at h
@@ -126,8 +126,16 @@ theorem ofList_get' {l : List (String × Json)} {k : String} {v : Json}
 theorem mkObjExtra {s : Skel} {l : List (String × Json)} (hv : ∀ p ∈ l, Fits Γ s p.2) :
     Fits Γ (.obj [] (some s) [] []) (Json.mkObj l) := by
   refine Fits.obj (fun k v h => ?_) (fun _ h => by cases h) (fun _ h => by cases h)
-  obtain ⟨k', hm⟩ := ofList_get' h
+  obtain ⟨k', hm⟩ := ofList_value h
   exact hv _ hm
+
+theorem isSome_of_mem {m : Std.TreeMap.Raw String Json} (wf : m.WF) {k : String} (h : k ∈ m) :
+    (m[k]?).isSome = true :=
+  (Std.TreeMap.Raw.mem_iff_isSome_getElem? wf).mp h
+
+theorem none_of_not_mem {m : Std.TreeMap.Raw String Json} (wf : m.WF) {k : String} (h : k ∉ m) :
+    m[k]? = none :=
+  Option.not_isSome_iff_eq_none.mp fun hs => h ((Std.TreeMap.Raw.mem_iff_isSome_getElem? wf).mpr hs)
 
 /-- An object built from a list of fields (`Json.mkObj`): its field names pass `keysOk` and each
 value fits the skeleton of its field. -/
@@ -137,9 +145,10 @@ theorem mkObj {fields : List (String × Skel)} {extra : Option Skel} {required a
     Fits Γ (.obj fields extra required absent) (Json.mkObj l) := by
   simp only [Skel.keysOk, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hk
   obtain ⟨⟨⟨hd, _⟩, hreq⟩, hab⟩ := hk
+  have wf : (Std.TreeMap.Raw.ofList l compare).WF := Std.TreeMap.Raw.WF.ofList
   refine Fits.obj (fun k v h => hv (k, v) (ofList_get hd h)) (fun k hk => ?_) (fun k hk => ?_)
-  · exact Std.TreeMap.Raw.mem_ofList.mpr (hreq k hk)
-  · intro hm
+  · exact isSome_of_mem wf (Std.TreeMap.Raw.mem_ofList.mpr (hreq k hk))
+  · refine none_of_not_mem wf fun hm => ?_
     have := hab k hk
     simp only [Bool.not_eq_true'] at this
     rw [Std.TreeMap.Raw.mem_ofList.mp hm] at this
@@ -157,7 +166,8 @@ theorem setObj {fields : List (String × Skel)} {extra : Option Skel} {required 
   simp only [Skel.distinct, Bool.and_eq_true, decide_eq_true_eq, Skel.keysOk, List.all_eq_true] at hk
   obtain ⟨hd, ⟨⟨_, _⟩, hreq⟩, hab⟩ := hk
   have wf : (Std.TreeMap.Raw.ofList l compare).WF := Std.TreeMap.Raw.WF.ofList
-  refine Fits.obj (fun k' v' h => ?_) (fun k' hk' => ?_) (fun k' hk' => ?_)
+  have wf' := Std.TreeMap.Raw.WF.insert (a := k) (b := v) wf
+  refine Fits.obj (fun k' v' h => ?_) (fun k' hk' => isSome_of_mem wf' ?_) (fun k' hk' => none_of_not_mem wf' ?_)
   · rw [Std.TreeMap.Raw.getElem?_insert wf] at h
     split at h
     · rename_i he
@@ -400,7 +410,7 @@ theorem setObjVal_mkObj (l : List (String × Json)) (k : String) (v : Json) :
   rw [Std.TreeMap.Raw.ofList_eq_insertMany_empty, Std.TreeMap.Raw.ofList_eq_insertMany_empty,
     Std.TreeMap.Raw.insertMany_append, Std.TreeMap.Raw.insertMany_list_singleton]
 
-theorem getArr?_arr (a : Array Json) : (Json.arr a).getArr? = .ok a := rfl
+theorem getArr_arr (a : Array Json) : (Json.arr a).getArr? = .ok a := rfl
 
 theorem toOption_ok {α : Type} (a : α) : (Except.ok a : Except String α).toOption = some a := rfl
 
