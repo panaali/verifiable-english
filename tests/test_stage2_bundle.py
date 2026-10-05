@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from ve.backends import dispatch, lean_runner, validation
+from ve.backends import dispatch, relay, validation
 from ve.bundle import check_bundle
 from ve.errors import VEError
 from tests.test_bundle import bundle, _cyclic, _other_version
@@ -45,14 +45,14 @@ def test_a_lean_only_bundle_rejection_is_leans(monkeypatch):
     from ve.backends.diagnostics import checker_error
     data = bundle()
     routed(monkeypatch, "lean")
-    real = lean_runner.run
+    real = relay.decide
 
     def reject(mode, cases, **kw):
         if cases and cases[0].get("kind") == "bundle":
             raise checker_error("lemma second: certificate rejected by Lean")
         return real(mode, cases, **kw)
 
-    monkeypatch.setattr(lean_runner, "run", reject)
+    monkeypatch.setattr(relay, "decide", reject)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
     with pytest.raises(VEError, match="certificate rejected by Lean"):
         check_bundle(data)
@@ -108,13 +108,13 @@ def test_bundles_on_every_family_and_over_norms_are_leans(monkeypatch, family, c
     assert (expected.get("status") == "Checked") == (change is None), expected
     seen = routed(monkeypatch, "lean")
     modes = []
-    real = lean_runner.run
+    real = relay.decide
 
     def spy(mode, cases, **kw):
         modes.append(mode)
         return real(mode, cases, **kw)
 
-    monkeypatch.setattr(lean_runner, "run", spy)
+    monkeypatch.setattr(relay, "decide", spy)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
     assert outcome(data) == expected
     assert ("bundle", "lean") in seen and "bundle" in modes
@@ -123,10 +123,10 @@ def test_bundles_on_every_family_and_over_norms_are_leans(monkeypatch, family, c
 def test_a_family_bundle_with_a_forged_certificate_is_rejected_by_lean(monkeypatch):
     data = family_bundle(("closure@0",))
     case = {"id": "b", "environment": data["environment"], "lemmas": data["lemmas"]}
-    assert lean_runner.run("bundle", [case])[0]["checked"] == 2
+    assert relay.decide("bundle", [case])[0]["checked"] == 2
     data["lemmas"][1]["certificate"] = data["lemmas"][0]["certificate"]
     with pytest.raises(VEError, match="stale|certificate failed"):
-        lean_runner.run("bundle", [case])
+        relay.decide("bundle", [case])
 
 
 def test_the_bundle_container_is_decoded_before_lean(monkeypatch):
