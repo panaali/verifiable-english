@@ -1,0 +1,23 @@
+{
+ "case": "udhr-case.json",
+ "runs": [
+  {
+   "head": {
+    "wall": 830.64,
+    "user": 758.67,
+    "sys": 0.31,
+    "exit": 0
+   },
+   "base": {
+    "wall": 1460.71,
+    "user": 1375.29,
+    "sys": 0.37,
+    "exit": 0
+   },
+   "identical": true,
+   "answer_bytes": 262097,
+   "load_before": 34.8,
+   "load_after": 35.6
+  }
+ ]
+}

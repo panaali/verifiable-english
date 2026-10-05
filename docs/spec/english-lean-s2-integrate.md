@@ -97,3 +97,41 @@ Reviews `manage-agents/english-lean-s2-review-astra.final.md` and `manage-agents
 | A2 (Astra): `english.admission=lean` replaced Python's admission | `dispatch.SHADOW_ONLY` and `dispatch.shadowed`: a shadow-only operation returns Python's result under every selection, records under `shadow`, and refuses `lean` and `rust-experimental` with `CheckerUnavailable`; `execute` refuses it, so no sibling caller can route it | `test_no_named_override_makes_the_english_reader_the_authority`, `test_a_lying_reader_never_changes_the_admitted_document` (shadow and pins), `test_execute_refuses_a_shadow_only_operation`, `test_admission_refuses_to_make_the_reader_the_authority`; the adapter's fail-closed tests now call Lean's leg directly |
 | B1 (Fable): `Actions.lean` `actionsVersion := "1"` | the definition names `Fixed.actionsVersion`, the one generated constant; `actions_version` 4 | `test_actions_version_has_one_literal_and_it_is_generated` |
 | C1, C2, C4 (Fable) | C1: the fixtures row of section 3; C2: with F1; C4: the comment went with A2 | as above |
+
+## 7. Merge of ve-integration 2ce1134e (2026-10-05)
+
+ve-integration brought readings S2a (`Readings/SupWire.lean` and the superposed admission), lean-first b3b and b3d,
+consolidate-b1's statement dumps, trust table and ledger, and `Norms/FlaggedSpec.lean` and `Compose/Adjoin.lean`.
+Conflicts and their resolution (both sides kept):
+
+| File | Resolution |
+|---|---|
+| `.importlinter`, `tools/layer_policy.py` | union: this branch's `ve.english_grammar` and ve-integration's `ve.readings_sup`, `ve.readings_verdicts`, `ve.readings_s2_wording` (layer 4) and `ve.readings_s2_english` (layer 3) |
+| `ve/assurance-manifest.json` | union of the decoder pins: ve-integration's `Readings/Wire.lean` (988 lines) and `Readings/SupWire.lean`, this branch's `EnglishGrammar/Encode.lean` and `Run.lean`; `total_lines` 18,821; `docs/spec/assurance-manifest.md` regenerated |
+| `lean/VE/Route/frozen-sources.sha256` | union of both inventories, rehashed from the merged tree, sorted by path |
+
+Composition fixes the merge needed (the two sides' features meet here for the first time):
+
+- `tools/lean_output_diff.py`: `ve_english_route` (this branch) had no inputs in consolidate-b1's output differential
+  (`test_output_diff_every_executable_has_inputs`). It is a harness executable now, with every spec fixture of
+  `tests/test_english_lean_route.py` as an `english.read` case and each of its environments as an
+  `english.grammar` case.
+- `docs/CONSOLIDATION-PLAN.md` section 4: step 7 remeasured (762 → 795 removed, score 58.5 → 61.2); the 33 lines are
+  `ve_english_route`'s `runCaseReported` and `main` and `EnglishMain.lean`.
+- `lean/statements.txt`, `lean/predicates.txt`, `lean/declarations.txt` regenerated (`tools/lean_statements.py`); the
+  trust table seeded for this branch's declarations (`tools/trust_map.py --seed`, unclassified 0).
+
+Gap left open for the DRI: `tools/trust_map.py --check` fails its budget on ve-integration 2ce1134e itself (S 7,550 → 7,806,
+untied [V] 17,113 → 20,797, no signed allowance); after the merge it reads S 7,827 and [V] 22,473, of which this
+branch adds S 21 and [V] 1,676 (the English grammar's lexicon, actions, rules and route). The baseline is not
+rewritten here: that needs a signed entry.
+
+Checked at the merge: `lake build` (and `ve_english_lean_bench`); `lean/audit.py` passes (3,966 theorems);
+`VE/Route/frozen.py` passes; `tools/english_grammar_gen.py --check`, `tools/wire_contract.py --check`,
+`tools/gate_collection.py --check --prebuilt`, `tools/lean_statements.py --check`, the Python, Lean and Rust layer
+checks and `tools/test_layer_policy.py`; Rust tests and builds. Targeted tests (this branch's English-Lean tests and
+the readings, lean-first, norms, norm-defaults, rights, soft-norms, compose, stage-2, document, service, relay,
+manifest, gate-collection, consolidation, precommit, wire-contract and difffuzz files, then the files
+`tools/select_tests.py` selects for the two composition fixes): 4,957 + 728 passed, 1 skipped; the first run's two
+consolidation failures above pass after the fixes (340 passed in those two files). `tools/select_tests.py` selects
+233 of 251 files for the merge as a whole, because core Lean modules changed; that full suite is left to the merge train.

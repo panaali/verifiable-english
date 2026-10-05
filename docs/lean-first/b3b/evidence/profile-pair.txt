@@ -1,0 +1,16 @@
+decodeEnvironment: wall 0.002259 s, cpu 0.000000 s
+decodeDocument: wall 0.006973 s, cpu 0.000000 s
+items 51, fixed units 1, sets 50, content-bearing 39
+admitReadings: wall 663.725725 s, cpu 455.290000 s
+replayPair: wall 0.018237 s, cpu 0.020000 s
+situationWF: wall 0.004569 s, cpu 0.010000 s
+sideValid witness: wall 0.004445 s, cpu 0.000000 s
+sideValue witness: wall 0.414483 s, cpu 0.420000 s
+other side: 1 assignments
+sideValid other, every assignment: wall 0.000078 s, cpu 0.000000 s
+sideValue other, every assignment: wall 0.233487 s, cpu 0.230000 s
+conflict formula, built: wall 0.221485 s, cpu 0.220000 s
+outcome formula, built: wall 0.223163 s, cpu 0.220000 s
+conflict formula, evaluated: wall 0.000091 s, cpu 0.000000 s
+outcome formula, evaluated: wall 0.000038 s, cpu 0.000000 s
+pairFacts: wall 0.696985 s, cpu 0.700000 s

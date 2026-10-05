@@ -1,0 +1,41 @@
+{
+ "case": "corpus-cases.json",
+ "runs": [
+  {
+   "head": {
+    "wall": 2.19,
+    "user": 2.14,
+    "sys": 0.05,
+    "exit": 1
+   },
+   "base": {
+    "wall": 2.53,
+    "user": 2.47,
+    "sys": 0.06,
+    "exit": 1
+   },
+   "identical": true,
+   "answer_bytes": 791221,
+   "load_before": 13.4,
+   "load_after": 13.4
+  },
+  {
+   "head": {
+    "wall": 2.14,
+    "user": 2.04,
+    "sys": 0.1,
+    "exit": 1
+   },
+   "base": {
+    "wall": 2.3,
+    "user": 2.18,
+    "sys": 0.12,
+    "exit": 1
+   },
+   "identical": true,
+   "answer_bytes": 791221,
+   "load_before": 13.4,
+   "load_after": 13.2
+  }
+ ]
+}

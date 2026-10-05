@@ -151,6 +151,42 @@ def test_k1_strict_witness_does_not_separate(lean):
     assert row == {"id": "v", "status": "error", "error": "distinguishing model does not separate readings"}
 
 
+def test_outcome_probe_through_two_layers(lean):
+    """Lean-first plan F5d: a probe whose outcome reads a layer symbol whose meaning reads another one.
+
+    `avoid_required` (the readings) reads `warn_required`, whose fixed rule reads `help_required`, whose fixed rule
+    reads the base predicate `asks`. The witness's value is true only when the expansion table expands each
+    symbol's meaning under the symbols before it (`expAt_expEntries`). The asserted unit reads `warn_required`, so
+    it is typed over the complete environment, which admission computes once per document (`chainText_eq`)."""
+    raw = env_k()
+    raw["vocabulary"]["predicates"]["warn_required"] = obligation(
+        "deny", None, act="{0} warn {1}", args=("agent", "user"))
+    asks = ["binary", "asks", ["var", 1], ["var", 0]]
+    helps = ["binary", "help_required", ["var", 1], ["var", 0]]
+    warns = ["binary", "warn_required", ["var", 1], ["var", 0]]
+    base = {**M0, "relations": {"asks": [["a", "u"]]}}
+    sigma = entry(base, "nested", Q0, True)
+    sid = situation_id(raw, sigma)
+    rs1 = reading_set("rs1", "u1", [
+        reading("nested", norm("avoid-when-warning", "avoid_required", True, guard=warns), {"never": sid}),
+        reading("never", norm("avoid-never", "avoid_required", True, guard=["bottom"]), {"nested": sid})],
+        {sid: sigma})
+    units = [{"id": "u1"}, {"id": "u2", "kind": "norm", "content": norm("help-when-asked", "help_required", True,
+                                                                          guard=asks)},
+             {"id": "u3", "kind": "norm", "content": norm("warn-when-helping", "warn_required", True, guard=helps)},
+             {"id": "u4", "kind": "asserted", "content": ["forall", "agent", ["forall", "user",
+                                                                              ["implies", asks, warns]]]}]
+    document = {"units": units, "reading_sets": [rs1]}
+    row = validate(lean, raw, document)
+    assert row["status"] == "ok", row
+    pair = row["sets"][0]["pairs"][0]["pair"]
+    assert pair == {"situation": sid, "witness": "nested", "separated": True, "witness_admissible": True,
+                    "witness_value": True, "other_admissible": True, "other_value": False}
+    separate = run(lean, [{"id": "s", "kind": "readings-separate", "environment": raw, "document": document,
+                           "set": "rs1", "situation": sid, "other": "never"}])[0]
+    assert separate["status"] == "ok" and separate["pair"] == pair
+
+
 def test_k2b_base_outside_the_author_vocabulary(lean):
     raw = env_k()
     base = {**M0, "relations": {"asks": [], "soft__excepted__no_deception": [["a", "u"]]}}
