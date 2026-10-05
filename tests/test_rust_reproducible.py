@@ -12,6 +12,7 @@ import pwd
 import re
 import shutil
 import subprocess
+import tomllib
 
 import pytest
 
@@ -97,7 +98,8 @@ def test_a_copy_of_the_workspace_elsewhere_builds_the_same_binary(tmp_path):
     shutil.copyfile(ROOT / "rust-toolchain.toml", other / "rust-toolchain.toml")
     for name in ("Cargo.toml", "Cargo.lock"):
         shutil.copyfile(ROOT / "rust" / name, other / "rust" / name)
-    for crate in ("ve", "ve-core"):
+    workspace = tomllib.loads((ROOT / "rust/Cargo.toml").read_text())["workspace"]
+    for crate in workspace["members"]:
         shutil.copytree(ROOT / "rust" / crate, other / "rust" / crate,
                         ignore=shutil.ignore_patterns("target"))
     cargo_home = tmp_path / "cargo home"

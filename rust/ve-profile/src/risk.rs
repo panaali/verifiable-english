@@ -1,10 +1,10 @@
 //! Untrusted stage-A condition evaluator for differential checks against Lean.
 //! Coordinates are integers on their declared W6 grid; this module neither
 //! admits a decision nor certifies a policy verdict.
-use crate::{error, Error, Result};
 use num_bigint::{BigInt, Sign};
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
+use ve_kernel::{internal::error, Error, Result};
 
 #[derive(Clone, Debug)]
 pub struct Range {

@@ -25,7 +25,6 @@ import collections
 import errno
 import hashlib
 from itertools import product
-import json
 import os
 from pathlib import Path
 import re
@@ -1344,11 +1343,12 @@ def lean_admission(raw, directory):
         raise VEError("InvalidInput: the document is not UTF-8 text") from None
     files, binary = import_files(raw, directory)
     case = {"id": _CASE_ID, "kind": "admission", "document": text, "files": files}
-    from .backends.lean import run_discourse_case
+    from .backends.lean import configured_timeout, run_discourse_case
     # The transport binds the row to the case (an error row included) and contains every malformed answer.
-    row = run_discourse_case(executable, case, timeout=_ROUTE_TIMEOUT)
+    row = run_discourse_case(executable, case, timeout=configured_timeout(_ROUTE_TIMEOUT))
     status = row["status"]
-    well_formed = status == "error" or (
+    # A row naming the case by position is Lean's reader refusing the case Python wrote: no answer.
+    well_formed = "case_index" not in row and status == "error" or status == "ok" and (
         # `in (True, ...)` would let 1 through: True == 1 is no JSON equality.
         (row.get("admitted") is True or row.get("admitted") == "UNKNOWN") and type(row.get("report_id")) is str
         and type(row.get("references")) is list and type(row.get("statuses")) is dict

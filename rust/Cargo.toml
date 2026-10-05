@@ -1,5 +1,5 @@
 [workspace]
-members = ["ve-core", "ve"]
+members = ["ve-kernel", "ve-profile", "ve-surface", "ve-core", "ve"]
 resolver = "2"
 
 [workspace.package]
@@ -12,3 +12,6 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
 ve-core = { path = "ve-core" }
+ve-kernel = { path = "ve-kernel" }
+ve-profile = { path = "ve-profile" }
+ve-surface = { path = "ve-surface" }

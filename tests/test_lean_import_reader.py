@@ -16,13 +16,14 @@ import random
 import shutil
 import subprocess
 import sys
-import time
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from check_lean_imports import HeaderError, imports, lean_disagreements, pinned_lean  # noqa: E402
+
+from subprocesses import HANG_TIMEOUT  # noqa: E402
 
 REJECT = "reject"
 # precommit-loop.final.md B: Lean reads VE.Surface after the comment `/-/-/`.
@@ -150,7 +151,7 @@ def lean_reads(tmp_path_factory):
         files.append(folder / f"case{number}.lean")
         files[-1].write_bytes(source.encode())
     result = subprocess.run([lean, "--run", str(ROOT / "tools/lean_header_imports.lean"), *map(str, files)],
-                            cwd=ROOT / "lean", capture_output=True, text=True, timeout=300, check=False)
+                            cwd=ROOT / "lean", capture_output=True, text=True, timeout=HANG_TIMEOUT, check=False)
     assert result.returncode == 0, result.stdout + result.stderr
     verdicts = [json.loads(line) for line in result.stdout.splitlines()]
     assert len(verdicts) == len(sources)
@@ -207,7 +208,7 @@ def test_every_tree_module_is_plain_and_read_as_lean_reads_it(lean_reads):
 
 @pytest.fixture(scope="module")
 def lean_command():
-    command = pinned_lean((ROOT / "lean/lean-toolchain").read_text())
+    command = pinned_lean((ROOT / "lean/lean-toolchain").read_text(), wait=HANG_TIMEOUT)
     assert command is not None, "the pinned Lean toolchain is required for the complete test suite"
     return command
 
@@ -223,11 +224,21 @@ def test_pinned_lean_is_the_toolchain_binary_not_a_proxy(lean_command):
                                                     text=True, check=True).stdout
 
 
-def test_pinned_lean_never_installs_a_toolchain():
-    started = time.monotonic()
-    assert pinned_lean("leanprover/lean4:v0.0.1-not-installed") is None
-    assert pinned_lean("") is None
-    assert time.monotonic() - started < 5
+def test_pinned_lean_never_installs_a_toolchain(tmp_path, monkeypatch):
+    assert pinned_lean("leanprover/lean4:v0.0.1-not-installed", wait=HANG_TIMEOUT) is None
+    assert pinned_lean("", wait=HANG_TIMEOUT) is None
+    # What it runs, not how long it takes (load stretches any interval): elan only lists
+    # toolchains, and the proxy, whose `+TOOLCHAIN` would download one, never runs.
+    calls = tmp_path / "calls"
+    for tool in ("elan", "lean"):
+        script = tmp_path / tool
+        script.write_text(f"#!/bin/sh\necho {tool} \"$@\" >> {calls}\n"
+                          "echo 'leanprover/lean4:v4.0.0 (default)'\n")
+        script.chmod(0o755)
+    monkeypatch.setenv("PATH", str(tmp_path))
+    assert pinned_lean("leanprover/lean4:v0.0.1-not-installed", wait=HANG_TIMEOUT) is None
+    assert pinned_lean("", wait=HANG_TIMEOUT) is None
+    assert calls.read_text().splitlines() == ["elan toolchain list"] * 2
 
 
 def test_lean_deps_confirms_every_accepted_header(lean_command, tmp_path):
@@ -237,7 +248,7 @@ def test_lean_deps_confirms_every_accepted_header(lean_command, tmp_path):
         files[source][0].write_bytes(source.encode())
     for path in TREE:
         files[str(path)] = (path, imports(path.read_text()))
-    wrong, checked = lean_disagreements(lean_command, files, budget=120)
+    wrong, checked = lean_disagreements(lean_command, files, budget=HANG_TIMEOUT)
     assert wrong == {}
     assert checked == len(files)
 
@@ -250,7 +261,7 @@ def test_lean_deps_refutes_a_wrong_reading(lean_command, tmp_path):
     for number, (source, claimed) in enumerate(claims.items()):
         files[source] = (tmp_path / f"case{number}.lean", claimed)
         files[source][0].write_bytes(source.encode())
-    wrong, checked = lean_disagreements(lean_command, files, budget=120)
+    wrong, checked = lean_disagreements(lean_command, files, budget=HANG_TIMEOUT)
     assert checked == 3
     assert wrong[STACKED[0]] == "the pinned Lean reads imports ['VE.Surface'], not []"
     assert wrong[STACKED[1]] == ("the pinned Lean reads imports ['VE.Core.Bridge', 'VE.Surface'], "
