@@ -150,7 +150,6 @@ REVIEWED = {
     ('ve/norms_contract.py', 'int(token)'): 'a path the contract engine built from list positions',
     ('ve/norms_contract.py', 'int(items[1][-1])'): 'a path the contract engine built from list positions',
     ('ve/norms_contract.py', 'int(items[0][-1])'): 'a path the contract engine built from list positions',
-    ('ve/readings_route.py', 'int(x)'): "indices in Lean's own finding text",
     ('ve/softnorms_contract.py', 'int(token)'): 'a path the contract engine built from list positions',
     ('ve/softnorms_contract.py', 'int(items[1][-1])'): 'a path the contract engine built from list positions',
     ('ve/softnorms_contract.py', 'int(items[0][-1])'): 'a path the contract engine built from list positions',
