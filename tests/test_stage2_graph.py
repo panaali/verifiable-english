@@ -8,7 +8,7 @@ import pytest
 
 from ve import ArgumentGraph, Claim, Deduction, check_argument, deduction_identity
 from ve.ast import Const, Top, Unary, formula_to_data
-from ve.backends import dispatch, lean_runner
+from ve.backends import dispatch, relay
 from ve.entailment import prove_entailment
 from ve.environment import Environment
 from ve.errors import VEError
@@ -61,7 +61,7 @@ def routed(monkeypatch, authority):
 
 def graph_calls(monkeypatch):
     calls = []
-    real = lean_runner.run
+    real = relay.decide
 
     def spy(mode, cases, **kw):
         rows = real(mode, cases, **kw)
@@ -69,7 +69,7 @@ def graph_calls(monkeypatch):
             calls.append((cases, rows))
         return rows
 
-    monkeypatch.setattr(lean_runner, "run", spy)
+    monkeypatch.setattr(relay, "decide", spy)
     return calls
 
 
@@ -118,24 +118,24 @@ def lean_case(graph):
 def test_lean_graph_mode_rechecks_identities_and_bindings(monkeypatch, change, message):
     monkeypatch.setenv("VE_AUTHORITY", "python")
     case = lean_case(packages()["shared"])
-    assert lean_runner.run("graph", [case])[0]["assumptions"] == ["a"]
+    assert relay.decide("graph", [case])[0]["assumptions"] == ["a"]
     change(case)
     with pytest.raises(VEError, match=message):
-        lean_runner.run("graph", [case])
+        relay.decide("graph", [case])
 
 
 def test_a_lean_refusal_or_different_projection_is_unavailable(monkeypatch):
     from ve.backends.diagnostics import checker_error
     graph = packages()["shared"]
     routed(monkeypatch, "lean")
-    real = lean_runner.run
+    real = relay.decide
 
     def refuse(mode, cases, **kw):
         if mode == "graph":
             raise checker_error("graph rejected: a certificate in the root's cone does not check")
         return real(mode, cases, **kw)
 
-    monkeypatch.setattr(lean_runner, "run", refuse)
+    monkeypatch.setattr(relay, "decide", refuse)
     assert check_argument(graph, search=False).status == "CheckerUnavailable"
 
     def reorder(mode, cases, **kw):
@@ -143,7 +143,7 @@ def test_a_lean_refusal_or_different_projection_is_unavailable(monkeypatch):
         return [{**row, "supporting_edges": row["supporting_edges"][::-1]} for row in rows] \
             if mode == "graph" else rows
 
-    monkeypatch.setattr(lean_runner, "run", reorder)
+    monkeypatch.setattr(relay, "decide", reorder)
     result = check_argument(graph, search=False)
     assert result.status == "CheckerUnavailable" and "projection" in result.errors[0]["message"]
 
@@ -184,7 +184,7 @@ def test_a_family_certificate_bound_elsewhere_is_rejected_by_lean(monkeypatch):
     [([case], _)] = calls
     case["edges"][0]["certificate"]["premise_meaning_ids"] = ["0" * 64]
     with pytest.raises(VEError, match="stale"):
-        lean_runner.run("graph", [case])
+        relay.decide("graph", [case])
 
 
 def legacy_environment(kind):

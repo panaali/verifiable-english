@@ -1,6 +1,6 @@
 {
   "class_rule_exempt": {
-    "1.1": 188,
+    "1.1": 192,
     "3.8b": 93
   },
   "continuation_coverage_met": true,
@@ -314,7 +314,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -347,7 +347,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -358,7 +358,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -369,7 +369,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -380,7 +380,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -391,7 +391,7 @@
         ],
         "python": [
           "ResourceLimit",
-          "AST exceeds 10,000 nodes"
+          "ResourceLimit: AST exceeds 10,000 nodes"
         ]
       },
       {
@@ -424,7 +424,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -468,7 +468,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -501,7 +501,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -545,7 +545,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -589,7 +589,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -633,7 +633,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -655,7 +655,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -677,7 +677,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -688,7 +688,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -699,7 +699,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -710,7 +710,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -787,7 +787,7 @@
         ],
         "python": [
           "TypeMismatch",
-          "Predicate 'c' has arity 1, not 2"
+          "TypeMismatch: Predicate 'c' has arity 1, not 2"
         ]
       },
       {
@@ -798,7 +798,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 'd'"
+          "UnknownSymbol: Unknown predicate 'd'"
         ]
       },
       {
@@ -809,7 +809,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Variable index 1 is outside its scope"
+          "UnboundVariable: Variable index 1 is outside its scope"
         ]
       },
       {
@@ -820,7 +820,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -831,7 +831,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -842,7 +842,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -853,7 +853,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -864,7 +864,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -875,7 +875,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -886,7 +886,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -897,7 +897,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -908,7 +908,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -919,7 +919,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -930,7 +930,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -941,7 +941,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -974,7 +974,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -985,7 +985,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -1051,7 +1051,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -1095,7 +1095,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1139,7 +1139,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1172,7 +1172,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -1205,7 +1205,7 @@
         ],
         "python": [
           "ResourceLimit",
-          "AST exceeds 10,000 nodes"
+          "ResourceLimit: AST exceeds 10,000 nodes"
         ]
       },
       {
@@ -1227,7 +1227,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -1260,7 +1260,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1337,7 +1337,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1381,7 +1381,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -1414,7 +1414,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -1447,7 +1447,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1469,7 +1469,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -1491,7 +1491,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -1524,7 +1524,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -1579,7 +1579,7 @@
         ],
         "python": [
           "ResourceLimit",
-          "AST exceeds 10,000 nodes"
+          "ResourceLimit: AST exceeds 10,000 nodes"
         ]
       },
       {
@@ -1612,7 +1612,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -1634,7 +1634,7 @@
         ],
         "python": [
           "ResourceLimit",
-          "AST exceeds 10,000 nodes"
+          "ResourceLimit: AST exceeds 10,000 nodes"
         ]
       },
       {
@@ -1766,7 +1766,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1810,7 +1810,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -1854,7 +1854,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -1953,7 +1953,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2008,7 +2008,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -2052,7 +2052,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2063,7 +2063,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -2151,7 +2151,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2217,7 +2217,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2250,7 +2250,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2283,7 +2283,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2327,7 +2327,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 'd'"
+          "UnknownSymbol: Unknown predicate 'd'"
         ]
       },
       {
@@ -2393,7 +2393,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -2426,7 +2426,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2459,7 +2459,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2558,7 +2558,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -2690,7 +2690,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2811,7 +2811,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -2954,7 +2954,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -2965,7 +2965,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Variable index 1 is outside its scope"
+          "UnboundVariable: Variable index 1 is outside its scope"
         ]
       },
       {
@@ -3119,7 +3119,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3130,7 +3130,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3273,7 +3273,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3317,7 +3317,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3361,7 +3361,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3372,7 +3372,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3449,7 +3449,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown predicate 7"
+          "UnknownSymbol: Unknown predicate 7"
         ]
       },
       {
@@ -3493,7 +3493,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3548,7 +3548,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3559,7 +3559,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3647,7 +3647,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -3713,7 +3713,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -3757,7 +3757,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -3834,7 +3834,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3856,7 +3856,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3933,7 +3933,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown binder sort 5"
+          "UnknownSymbol: Unknown binder sort 5"
         ]
       },
       {
@@ -3966,7 +3966,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -3977,7 +3977,7 @@
         ],
         "python": [
           "ResourceLimit",
-          "AST exceeds 10,000 nodes"
+          "ResourceLimit: AST exceeds 10,000 nodes"
         ]
       },
       {
@@ -3988,7 +3988,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -3999,7 +3999,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4010,7 +4010,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -4131,7 +4131,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4241,7 +4241,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "$string quantification requires data stage 2"
+          "UnsupportedProfile: $string quantification requires data stage 2"
         ]
       },
       {
@@ -4274,7 +4274,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4296,7 +4296,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4318,7 +4318,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4340,7 +4340,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4417,7 +4417,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4428,7 +4428,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4483,7 +4483,7 @@
         ],
         "python": [
           "UnboundVariable",
-          "Invalid variable index"
+          "UnboundVariable: Invalid variable index"
         ]
       },
       {
@@ -4527,7 +4527,7 @@
         ],
         "python": [
           "UnknownSymbol",
-          "Unknown constant 5"
+          "UnknownSymbol: Unknown constant 5"
         ]
       },
       {
@@ -4604,7 +4604,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4626,7 +4626,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4648,7 +4648,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4703,7 +4703,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4714,7 +4714,7 @@
         ],
         "python": [
           "TypeMismatch",
-          "Predicate 'c' expects ('user',), received ('assistant',)"
+          "TypeMismatch: Predicate 'c' expects ('user',), received ('assistant',)"
         ]
       },
       {
@@ -4736,7 +4736,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4813,7 +4813,7 @@
         ],
         "python": [
           "TypeMismatch",
-          "Predicate 'c' has arity 2, not 1"
+          "TypeMismatch: Predicate 'c' has arity 2, not 1"
         ]
       },
       {
@@ -4824,7 +4824,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4846,7 +4846,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4912,7 +4912,7 @@
         ],
         "python": [
           "TypeMismatch",
-          "Predicate 'c' expects ('user',), received ('assistant',)"
+          "TypeMismatch: Predicate 'c' expects ('user',), received ('assistant',)"
         ]
       },
       {
@@ -4956,7 +4956,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -4967,7 +4967,7 @@
         ],
         "python": [
           "TypeMismatch",
-          "Predicate 'c' expects ('user',), received ('assistant',)"
+          "TypeMismatch: Predicate 'c' expects ('user',), received ('assistant',)"
         ]
       },
       {
@@ -5033,7 +5033,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -5044,7 +5044,7 @@
         ],
         "python": [
           "UnsupportedProfile",
-          "Comparisons require order@0"
+          "UnsupportedProfile: Comparisons require order@0"
         ]
       },
       {
@@ -5137,28 +5137,7 @@
       }
     ],
     "detail": "conformance/wire-contract/s5-pre.md",
-    "python_crashes": [
-      {
-        "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
-        "lean": "UnsupportedProfile: profiles must be a sorted unique array",
-        "python": "TypeError: argument of type 'int' is not a container or iterable"
-      },
-      {
-        "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]",
-        "lean": "UnsupportedProfile: profiles must be a sorted unique array",
-        "python": "TypeError: argument of type 'bool' is not a container or iterable"
-      },
-      {
-        "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]",
-        "lean": "UnsupportedProfile: profiles must be a sorted unique array",
-        "python": "TypeError: argument of type 'int' is not a container or iterable"
-      },
-      {
-        "case": "R:test:recorded:tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]",
-        "lean": "UnsupportedProfile: profiles must be a sorted unique array",
-        "python": "TypeError: argument of type 'bool' is not a container or iterable"
-      }
-    ],
+    "python_crashes": [],
     "status": "open: a legacy verdict difference is not fixed (s5-pre.md)",
     "verdict_differences": [
       {

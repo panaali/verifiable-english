@@ -38,7 +38,18 @@ class AmbiguousDerivation(SyntaxError):
     """A distinct exception type while preserving the public SyntaxError code."""
 
 
-class UnknownSymbol(VEError):
+class _CodeWorded(VEError):
+    """A diagnostic whose text starts with its code, `Code: text`, as Lean writes it.
+
+    Lean's texts are canonical (docs/LEAN-FIRST-PLAN.md, DRI answer 3) and the relay shows
+    them verbatim (batch 0), so Python's own checkers write these codes' texts the same way."""
+
+    def __init__(self, message: str, **kwargs):
+        prefix = f"{self.code}: "
+        super().__init__(message if message.startswith(prefix) else prefix + message, **kwargs)
+
+
+class UnknownSymbol(_CodeWorded):
     code = "UnknownSymbol"
 
 
@@ -46,7 +57,7 @@ class DuplicateDeclaration(VEError):
     code = "DuplicateDeclaration"
 
 
-class UnboundVariable(VEError):
+class UnboundVariable(_CodeWorded):
     code = "UnboundVariable"
 
 
@@ -54,7 +65,7 @@ class ShadowedVariable(VEError):
     code = "ShadowedVariable"
 
 
-class TypeMismatch(VEError):
+class TypeMismatch(_CodeWorded):
     code = "TypeMismatch"
 
 
@@ -73,7 +84,7 @@ class InvalidModel(VEError):
         return result
 
 
-class UnsupportedProfile(VEError):
+class UnsupportedProfile(_CodeWorded):
     code = "UnsupportedProfile"
 
 
