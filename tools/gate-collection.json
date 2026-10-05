@@ -2523,6 +2523,7 @@
   "tests/test_english_lean_s3_compare.py::test_comparison_refuses_an_empty_corpus",
   "tests/test_english_lean_s3_compare.py::test_comparison_rejects_a_response_for_a_different_request",
   "tests/test_english_lean_s3_compare.py::test_fixture_corpus_covers_every_spec_fixture_and_its_selected_wording",
+  "tests/test_english_lean_s3_compare.py::test_spec_report_numbers_follow_the_committed_case_records",
   "tests/test_english_lean_seal.py::test_seal_identity_covers_its_content",
   "tests/test_english_lean_tables.py::test_idiom_tables_equal_python",
   "tests/test_english_lean_tables.py::test_irregular_verbs_equal_python",
