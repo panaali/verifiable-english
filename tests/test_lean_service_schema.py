@@ -33,7 +33,7 @@ import subprocess
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tests.lean_service_corpus import corpus
+from tests.lean_service_corpus import ERROR_REQUESTS, corpus
 from tests.test_lean_service import fake
 from ve.backends.lean_service import CheckerUnavailable, LeanService, case_digest, case_texts, request_context
 from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Invalid, check_response
@@ -91,18 +91,6 @@ def genuine(executables):
                 exchanges.append((mode, request, response))
         assert service.stats["retries"] == 0
     return exchanges
-
-
-# Request errors of every kind: (mode, cases text, count, budget).
-ERROR_REQUESTS = [
-    ("evaluate", '[{"id":"a","ast":[]},{"id":"b","ast":[]}]', 2, {"cases": 1}),
-    ("route", '[{"id":"a","kind":"evaluate"}]', 1, {"bytes": 3}),
-    ("evaluate", '[{},{}]', 2, {"steps": 1}),
-    ("order", '[{"id":1,}]', 1, None),
-    ("check-certificate", '[{"id":null}, {"id":"b"}]', 2, None),
-    ("english", '[{"cases":[],}]', 1, None),
-    ("norms", '{}', 0, {"cases": 1}),
-]
 
 
 @pytest.fixture(scope="module")

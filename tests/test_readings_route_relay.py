@@ -45,7 +45,7 @@ def k1(lean):
 
 def answering(monkeypatch, row):
     """The route's transport answers `row` (one case), as Lean's runner would."""
-    monkeypatch.setattr(route, "run_readings_cases", lambda executable, cases: [copy.deepcopy(row)])
+    monkeypatch.setattr(route, "run_readings_cases", lambda executable, cases, timeout=None: [copy.deepcopy(row)])
 
 
 def test_a_genuine_row_is_returned_as_lean_wrote_it(k1):
@@ -220,8 +220,8 @@ def _filtered(monkeypatch, code):
     """The route with Lean's findings of `code` removed from its rows, as if Lean had not found them."""
     real = route.run_readings_cases
 
-    def run(executable, cases):
-        rows = real(executable, cases)
+    def run(executable, cases, timeout=None):
+        rows = real(executable, cases, timeout=timeout)
         for row in rows:
             for entry in row.get("sets", []):
                 entry["findings"] = [f for f in entry["findings"] if not f.startswith(code + ":")]
