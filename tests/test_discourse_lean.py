@@ -501,6 +501,15 @@ def test_omicron_joint_set(lean):
     row = joint(joint_doc(correlated))
     assert row["verdict"] == "COMPLETE"
     assert row["choices"] == [[["rs5", 1, 0], ["rs6", 1, 0]], [["rs5", 1, 1], ["rs6", 1, 1]]]
+    # the admission answers the same choices and disjunction, which the Python relay reads
+    # (Run.lean `jointFields`), and neither when the joint set is over its budget
+    admitted = admit(joint_doc(correlated))
+    assert admitted["admitted"] is True and admitted["joint"] == 2, admitted
+    assert admitted["joint_choices"] == row["choices"] and admitted["joint_formula"] == row["joint"]
+    assert row["joint"] == ["or", ["and", unary("safe", "api"), unary("safe", "api")],
+                            ["and", unary("deployed", "api"), unary("deployed", "api")]]
+    over = admit(joint_doc([], sets=7))
+    assert over["admitted"] == "UNKNOWN" and not {"joint_choices", "joint_formula"} & set(over), over
     excludes = [{"kind": "excludes", "a": ["rs5", 1, i], "b": ["rs6", 1, k]} for i in ("r0", "r1") for k in ("r0", "r1")]
     row = joint(joint_doc(excludes))
     assert row["verdict"] == "INVALID" and row["diagnostic"] == "InvalidCompatibility: rs5, rs6"
@@ -844,11 +853,10 @@ def test_pending_unit_readings_never_reach_w2(lean, tmp_path):
             assert all(leaf["ast"] != claim for leaf in result["report"]["assumptions"])
         else:
             assert result["error"] == "AdmissionError: node n is not admitted under label readings:rs1@1:0"
-        # Python does not elaborate descriptions: its abstention is a hint, the verdict Lean's
+        # the relay's verdict is Lean's, with nothing of Python's beside it
         python = python_outcome(doc, tmp_path, env(PERSON))
         if graph is None:
-            assert python["discourse_hints"] == [
-                "UnsupportedProfile: ve.discourse@1 definite, possessive elaboration is not implemented in Python (u2)"]
+            assert "discourse_hints" not in python
             assert python["report_id"] == result["report_id"]
         else:
             assert python == result["error"]
@@ -920,15 +928,15 @@ def test_stored_block_decodes_or_rejects_the_importer(lean, tmp_path):
     assert claim(False, import_docs(source_id, document_id), {"policy2.ve.md": body})["validity"] == {"u1": "refuted"}
 
 
-def test_own_block_decodes_as_strictly_in_python(lean, tmp_path):
-    """The same class on the importing document: Python decodes its own block with the stored
-    decoder, so a field Lean's strict decoder rejects is rejected in Python too."""
+def test_own_block_decodes_as_strictly_as_a_stored_one(lean, tmp_path):
+    """The same class on the importing document: Lean decodes its own block with the stored
+    decoder, so a field the strict decoder rejects is rejected, with Lean's diagnostic."""
     doc = document(["Api is reviewed.", "It is deployed."], [("m1", "u2", "It", "pronoun", entity("api"))],
                    names=PY_NAMES, contents={"u1": unary("reviewed", "api"), "u2": unary("deployed", "api")})
     assert isinstance(python_outcome(doc, tmp_path), dict)
     doc["discourse"]["mentions"][0]["note"] = "free text"
     assert admit(doc)["error"].startswith("fields do not match")
-    assert python_outcome(doc, tmp_path) == "InvalidInput: discourse fields"
+    assert python_outcome(doc, tmp_path) == admit(doc)["error"]
 
 
 def test_location_binding_never_covers_a_slot(lean, tmp_path):
@@ -1018,10 +1026,9 @@ def test_definition_pins_are_checked(lean, tmp_path):
         assert python_outcome(iota(version), tmp_path) == f"StaleTarget: m1: eligible@{version}"
     unpinned = admit(iota())
     assert unpinned["status"] == "ok" and unpinned["statuses"]["u2"] == "CHECKED", unpinned
-    # Python does not elaborate definition references: its abstention is a hint, the verdict and
-    # the statuses Lean's
+    # the verdict and the statuses are Lean's, with nothing of Python's beside them
     python = python_outcome(iota(), tmp_path)
-    assert python["discourse_hints"][0].startswith("UnsupportedProfile: ve.discourse@1 definition_ref")
+    assert "discourse_hints" not in python
     assert python["coverage"]["bytes_by_status"].get("CHECKED")
     pinned_pronoun = document(["Api is reviewed.", "It is deployed."],
                               [("m1", "u2", "It", "pronoun", {**entity("api"), "version": 1})], names=PY_NAMES,
@@ -1600,14 +1607,12 @@ def test_unparseable_recorded_reference_wording(lean, tmp_path):
         doc = wording_doc(opening, folded, surface.replace("i", "ı", 1) if form != "pronoun" else "İt",
                           form, target, content)
         assert agree(doc, tmp_path) == "InvalidInput: discourse wording of u2", folded
-    # the known limitation (docs/spec/discourse.md 8): in discourse wording, a unit outside both
-    # grammars is rejected by both, with different codes (Lean: outside the fragment; Python: the
-    # recorded expansion does not parse)
+    # the known limitation (docs/spec/discourse.md 8): a unit outside the grammar had Python's code
+    # (the recorded expansion does not parse) when both rejected; it is Lean's (batch 4)
     doc = document(["It is safe (v2.1)."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
                    contents=safe)
     row, python = admit(doc), python_outcome(doc, tmp_path)
-    assert row["error"] == "InvalidInput: unit u1 is outside the supported discourse fragment"
-    assert python == "IllTypedTarget: m1: api"
+    assert row["error"] == python == "InvalidInput: unit u1 is outside the supported discourse fragment"
 
 
 def test_expansions_never_read_a_display(lean, tmp_path):
@@ -1692,18 +1697,19 @@ FORMER = {"kind": "entity", "name": "alice", "pair": ["alice", "bob"]}
 
 
 def lean_verdict(doc, tmp_path, environment=None):
-    """Lean's and Python's outcomes on one document, which must be the same verdict: `admitted`
-    with Lean's report id, references and statuses in Python's result, or both rejecting (with
-    Python's diagnostic, which may differ in code only, docs/spec/discourse.md 8). Returns
-    (`admitted` or Lean's diagnostic, Python's hints or diagnostic)."""
+    """Lean's and the relay's outcomes on one document, which must be the same: `admitted` with
+    Lean's report id, references and statuses in the relay's result and nothing of Python's beside
+    them, or Lean's diagnostic, relayed verbatim (batch 4). Returns (`admitted` or Lean's
+    diagnostic, the relay's diagnostic or `[]`)."""
     row, python = admit(doc, environment), python_outcome(doc, tmp_path, environment)
     if row["status"] == "ok":
         assert isinstance(python, dict), (doc["_source"], python)
         assert (python["report_id"], python["references"]) == (row["report_id"], row["references"])
+        assert "discourse_hints" not in python
         loaded = load_document(tmp_path / "doc.ve.md")
         assert {u["id"]: u["status"] for u in loaded["units"]} == row["statuses"]
-        return "admitted", python.get("discourse_hints", [])
-    assert isinstance(python, str) and not python.startswith("CheckerUnavailable"), (doc["_source"], python)
+        return "admitted", []
+    assert python == row["error"], (doc["_source"], python)
     return row["error"], python
 
 
@@ -1711,7 +1717,7 @@ def test_absent_spaces_beside_quotes_follow_lean(lean, tmp_path):
     """A (discourse.py:359): `She owns"web_api".` with `She` recorded at [0, 3) for `alice` and
     `web_api` displayed `"web_api"` passes discourse wording and is CHECKED in Lean, but Python's
     parser rejected the expansion (`IllTypedTarget: m1: alice`). Demonstratives and ordinals did the
-    same. Python now admits it as Lean does; its parser's rejection is a hint."""
+    same. Python now admits it as Lean does, and its parser no longer runs (batch 4)."""
     environment = env(QUOTED_ENV, QUOTED_CONSTANTS)
     names_bob = [*QUOTED_NAMES, {"constant": "bob", "display": "Bob", "scope": "doc"}]
     for sentences, surface, form, target, names in [
@@ -1721,8 +1727,8 @@ def test_absent_spaces_beside_quotes_follow_lean(lean, tmp_path):
              names_bob)]:
         uid = f"u{len(sentences)}"
         doc = document(sentences, [("m1", uid, surface, form, target)], names=names, contents={uid: OWNS})
-        assert lean_verdict(doc, tmp_path, environment) == ("admitted", ["IllTypedTarget: m1: alice"]), sentences
-        # with the space, Python's parser agrees and gives no hint
+        assert lean_verdict(doc, tmp_path, environment) == ("admitted", []), sentences
+        # with the space too
         spaced = document([s.replace('owns"', 'owns "') for s in sentences], [("m1", uid, surface, form, target)],
                           names=names, contents={uid: OWNS})
         assert lean_verdict(spaced, tmp_path, environment) == ("admitted", []), sentences
@@ -1743,7 +1749,7 @@ def test_displays_outside_replaced_mentions_follow_lean(lean, tmp_path):
     content = {"u1": ["binary", "owns", ["const", "alice"], ["const", "api"]]}
     doc = document(["She owns the API."], [("m1", "u1", "She", "pronoun", entity("alice"))], names=names,
                    contents=content)
-    assert lean_verdict(doc, tmp_path, environment) == ("admitted", ["IllTypedTarget: m1: alice"])
+    assert lean_verdict(doc, tmp_path, environment) == ("admitted", [])
     for display in ["The API", "the  API", "API", "Api"]:
         other = [{**names[0], "display": display}, names[1]]
         variant = document([f"She owns {display}."], [("m1", "u1", "She", "pronoun", entity("alice"))],
@@ -1764,17 +1770,17 @@ def test_agreement_follows_lean(lean, tmp_path):
              unary("ready", "alice"))]:
         doc = document([opening, sentence], [("m1", "u2", surface, form, target)], names=PY_NAMES,
                        contents={"u2": content})
-        assert lean_verdict(doc, tmp_path) == ("admitted", [f"IllTypedTarget: m1: {target['name']}"]), sentence
+        assert lean_verdict(doc, tmp_path) == ("admitted", []), sentence
 
 
 def test_python_never_adds_an_admission(lean, tmp_path):
     """The other direction of the class: what Python's parser reads but Lean's discourse fragment
     does not is Lean's rejection, never a Python-only admission. `It is safe (v2.1).` (the recorded
-    known limitation) keeps Python's diagnostic, since both reject."""
+    known limitation) had Python's diagnostic when both rejected; it is Lean's (batch 4)."""
     doc = document(["It is safe (v2.1)."], [("m1", "u1", "It", "pronoun", entity("api"))], names=PY_NAMES,
                    contents={"u1": unary("safe", "api")})
-    assert lean_verdict(doc, tmp_path) == ("InvalidInput: unit u1 is outside the supported discourse fragment",
-                                           "IllTypedTarget: m1: api")
+    fragment = "InvalidInput: unit u1 is outside the supported discourse fragment"
+    assert lean_verdict(doc, tmp_path) == (fragment, fragment)
     # a predicate verbalisation Python's parser reads (`is active` for `deployed`): Lean's fragment
     # reads predicates by name
     environment = env({"deployed": ["service"]})
@@ -1787,15 +1793,14 @@ def test_python_never_adds_an_admission(lean, tmp_path):
 
 def test_graphless_document_is_an_abstention(lean, tmp_path):
     """A `@2` document without a claim graph is loaded but never admitted by Python (document.md),
-    and the Lean route's admission needs a graph: Lean abstains (`NotImplemented`), and so does
-    Python (`UnsupportedProfile`), never a Python-only CHECKED."""
+    and the Lean route's admission needs a graph: Lean abstains (`NotImplemented`), relayed as an
+    abstention (`UnsupportedProfile`, with Lean's text), never a Python-only CHECKED."""
     doc = document(["Api is reviewed.", "It is safe."], [IT_API], names=PY_NAMES,
                    contents={"u1": unary("reviewed", "api"), **SAFE_U2})
     doc.pop("graph")
     doc.pop("open_terms")
     assert admit(doc)["error"] == "NotImplemented: a document without a claim graph"
-    assert python_outcome(doc, tmp_path) == ("UnsupportedProfile: the Lean discourse route abstains "
-                                             "(NotImplemented: a document without a claim graph)")
+    assert python_outcome(doc, tmp_path) == "UnsupportedProfile: NotImplemented: a document without a claim graph"
 
 
 def test_validity_verdicts_are_lean_verdicts(lean, tmp_path):
@@ -1847,16 +1852,17 @@ def test_python_verdict_is_lean_verdict_on_wording_variants(lean, tmp_path):
     rng = __import__("random").Random(20261002)
     docs = [authority_document(rng) for _ in range(300)]
     rows = run([case("admission", doc, environment) for doc in docs])
-    outcomes = {"admitted": 0, "admitted over Python's parser": 0, "rejected": 0}
+    outcomes = {"admitted": 0, "rejected": 0}
     for doc, row in zip(docs, rows):
         python = python_outcome(doc, tmp_path, environment)
         where = (doc["_source"], doc["discourse"]["names"][0]["display"], row.get("error"), python)
         if row["status"] == "ok":
             assert isinstance(python, dict), where
             assert (python["report_id"], python["references"]) == (row["report_id"], row["references"]), where
-            outcomes["admitted over Python's parser" if python.get("discourse_hints") else "admitted"] += 1
+            assert "discourse_hints" not in python, where
+            outcomes["admitted"] += 1
         else:
-            assert isinstance(python, str) and not python.startswith("CheckerUnavailable"), where
+            assert python == row["error"], where
             outcomes["rejected"] += 1
     assert all(n > 20 for n in outcomes.values()), outcomes
 
@@ -1904,7 +1910,7 @@ def test_line_breaks_split_the_body_as_python_does(lean, tmp_path):
                   "```ve u9\r\nApi is safe.\r\n\x0c```\r\n"]:
         lean_error, python = text_verdicts(text(doc) + fence, tmp_path)
         assert lean_error == "NotImplemented: fenced English or strict content", fence
-        assert python.startswith("UnsupportedProfile: the Lean discourse route abstains"), fence
+        assert python == "UnsupportedProfile: " + lean_error, fence
 
 
 def test_malformed_metadata_reaches_lean(lean, tmp_path):
@@ -2141,8 +2147,6 @@ def test_form_kind_table_is_one_table(lean, tmp_path):
     `rule`, Python only to `anchor`. Every form and kind now gets the same answer in both: a pair
     outside the table is `TargetKindMismatch` (a pronoun or demonstrative naming a claim is
     `UnsupportedTarget`), a pair inside it never is."""
-    from ve.discourse import _FORM_KINDS
-    assert _FORM_KINDS == FITS
     pairs, docs = [], []
     for form in FITS:
         for kind, fields in KIND_TARGETS.items():

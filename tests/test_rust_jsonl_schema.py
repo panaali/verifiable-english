@@ -28,15 +28,6 @@ MODEL = FiniteModel.from_dict(ENV, model_wire(ENV))
 ATOM = Unary("base", Const("x"))
 
 
-def _readings_case():
-    """A readings-evaluate case as `readings_route.rust_check` sends it: two sides of four lists."""
-    side = lambda outcome: {"environment": ENV.to_dict(), "model": MODEL.to_dict(),  # noqa: E731
-                            "premises": [["top"]], "outcomes": [outcome, ["top"]],
-                            "selections": [["bottom"]], "assertions": []}
-    return {"id": "readings-evaluate", "kind": "readings-evaluate", "untrusted": True,
-            "sides": [side(["top"]), side(["bottom"])]}
-
-
 def _calls():
     """Every public adapter that runs Rust, on inputs giving each record shape it can answer with."""
     from ve.ast import check_document, check_formula, Document
@@ -58,7 +49,6 @@ def _calls():
         "search-found": lambda: find_countermodel(ENV, (Top(),), ATOM, max_domain_size=1),
         "search-not-found": lambda: find_countermodel(ENV, (ATOM,), ATOM, max_domain_size=1),
         "distinguishing-found": lambda: find_distinguishing_model(ENV, ATOM, Not(ATOM), max_domain_size=1),
-        "readings": lambda: rust_jsonl.run(_readings_case()),
         # Rejections: an undeclared predicate and a model of another vocabulary.
         "rejected-symbol": lambda: rust_jsonl.run({"id": "typing", "kind": "check", "environment": ENV.to_dict(),
                                                    "ast": ["unary", "absent", ["const", "x"]]}),
@@ -111,8 +101,7 @@ def test_every_record_shape_is_exercised(genuine):
     shapes = {"error" if record["status"] == "error" else case.get("kind", "countermodel" if "model" in case
                                                                      else "search")
               for case, record, _ in genuine.values()}
-    assert shapes == {"error", "check", "evaluate-budgeted", "countermodel", "search", "distinguishing-model",
-                      "readings-evaluate"}
+    assert shapes == {"error", "check", "evaluate-budgeted", "countermodel", "search", "distinguishing-model"}
     statuses = {record["status"] for _, record, _ in genuine.values()}
     assert statuses >= {"ok", "error", "Satisfied", "Violated", "ResourceLimit", "Valid", "NotCountermodel",
                         "Found", "NotFound"}

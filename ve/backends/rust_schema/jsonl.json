@@ -5,7 +5,6 @@
     "if": {"type": "object", "required": ["status"], "properties": {"status": {"const": "error"}}},
     "then": {"$ref": "#/$defs/error"},
     "else": {"x-select": [
-      {"when": {"$ref": "#/$defs/kind/readings-evaluate"}, "then": {"$ref": "#/$defs/readings"}},
       {"when": {"$ref": "#/$defs/kind/check"}, "then": {"$ref": "#/$defs/typing"}},
       {"when": {"$ref": "#/$defs/kind/evaluate-budgeted"}, "then": {"$ref": "#/$defs/evaluation"}},
       {"when": {"$ref": "#/$defs/kind/distinguishing-model"}, "then": {"$ref": "#/$defs/search"}},
@@ -17,7 +16,6 @@
   },
   "$defs": {
     "kind": {
-      "readings-evaluate": {"required": ["kind"], "properties": {"kind": {"const": "readings-evaluate"}}},
       "check": {"required": ["kind"], "properties": {"kind": {"const": "check"}}},
       "evaluate-budgeted": {"required": ["kind"], "properties": {"kind": {"const": "evaluate-budgeted"}}},
       "distinguishing-model": {"required": ["kind"], "properties": {"kind": {"const": "distinguishing-model"}}}
@@ -123,19 +121,6 @@
                         "premise_values": {"minItems": 1, "contains": {"const": false}}}},
         {"properties": {"status": {"const": "ResourceLimit"}, "valid": {"const": false}, "conclusion_value": {"const": null},
                         "premise_values": {"items": {"const": true}}}}]},
-    "premises_held": {"$comment": "Every premise evaluated, and true.", "items": {"const": true}, "x-length": "/premises"},
-    "readings": {"$comment": "readings.rs `readings_evaluate_case`: untrusted, one value per formula of each of the two sides' four lists.",
-      "type": "object", "required": ["id", "status", "untrusted", "sides"], "additionalProperties": false,
-      "properties": {
-        "id": {"$ref": "#/$defs/id"},
-        "status": {"const": "ok"},
-        "untrusted": {"const": true},
-        "sides": {"x-zip": {"of": "/sides", "items": {
-          "type": "object", "required": ["premises", "outcomes", "selections", "assertions"], "additionalProperties": false,
-          "properties": {
-            "premises": {"type": "array", "items": {"type": "boolean"}, "x-length": "/premises"},
-            "outcomes": {"type": "array", "items": {"type": "boolean"}, "x-length": "/outcomes"},
-            "selections": {"type": "array", "items": {"type": "boolean"}, "x-length": "/selections"},
-            "assertions": {"type": "array", "items": {"type": "boolean"}, "x-length": "/assertions"}}}}}}}
+    "premises_held": {"$comment": "Every premise evaluated, and true.", "items": {"const": true}, "x-length": "/premises"}
   }
 }
