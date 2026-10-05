@@ -877,8 +877,8 @@
                    "operational": ["CheckerUnavailable"]},
       "lean": {
         "bindings": [],
-        "planned_modes": [],
-        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it",
+        "planned_modes": ["english.read"],
+        "harness": "lake env lean --run VE/English/Run.lean (conformance/english_lean.py); no theorem depends on it. Shadow adapter ve/backends/english_lean.py (english-lean-s2.md 2.10): under VE_AUTHORITY_OVERRIDES=english.admission=shadow every call is recorded against ve_english_route english.read (S2.4, not built: recorded as CheckerUnavailable)",
         "theorems": ["VE.English.checked_unique_derivation", "VE.English.checked_one_reading",
                      "VE.English.checked_parse_render", "VE.English.checked_render_injective",
                      "VE.English.admissible_sound", "VE.English.core_parse_sound"],
@@ -890,7 +890,7 @@
       "tests": ["tests/test_english_unambiguity.py::test_two_derivations_reject_before_ast_admission",
                 "tests/test_english_unambiguity.py::test_earley_time_budget_rejects_in_worker_thread",
                 "tests/test_english_evidence.py::test_full_english_report_gate"],
-      "trusted": ["python:implementation", "python:surface"],
+      "trusted": ["python:implementation", "python:surface", "python:backend-adapter"],
       "notes": ["Recorded conflation, not changed: the Earley wall-clock budget (surface/unambiguity.py EARLEY_SECONDS) reports ResourceLimit, while the migration plan reserves ResourceLimit for deterministic budgets. Changing a public code needs the plan's section-2.3 product decision.",
                 "Recorded conflation, not changed: a marked English conclusion whose bounded proof search returns NotFound or ResourceLimit is rejected as SyntaxError (english.py _check_conclusions), so search UNKNOWN surfaces as a rejection; the search result is not replayed there."]
     },
