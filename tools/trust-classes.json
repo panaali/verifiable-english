@@ -26,6 +26,11 @@
     "EnglishLeanBench.rejectJson"
    ]
   },
+  "EnglishMain.lean": {
+   "G[V]": [
+    "main"
+   ]
+  },
   "Iceberg.lean": {
    "P": [
     "Iceberg.Process",
@@ -2758,6 +2763,89 @@
     "VE.English.coreSurface"
    ]
   },
+  "VE/EnglishGrammar/Actions.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Conn.make",
+    "VE.EnglishGrammar.ConstVal",
+    "VE.EnglishGrammar.Ctx",
+    "VE.EnglishGrammar.Ctx.bind",
+    "VE.EnglishGrammar.Ctx.deeper",
+    "VE.EnglishGrammar.Ctx.inner",
+    "VE.EnglishGrammar.Ctx.innerSort",
+    "VE.EnglishGrammar.Ctx.it",
+    "VE.EnglishGrammar.Ctx.listed",
+    "VE.EnglishGrammar.Ctx.lookup",
+    "VE.EnglishGrammar.Ctx.push",
+    "VE.EnglishGrammar.Ctx.start",
+    "VE.EnglishGrammar.DState.after",
+    "VE.EnglishGrammar.EFormula.consts",
+    "VE.EnglishGrammar.EFormula.hasBinder",
+    "VE.EnglishGrammar.ETerm.consts",
+    "VE.EnglishGrammar.FixedAct.action",
+    "VE.EnglishGrammar.LexAct.action",
+    "VE.EnglishGrammar.Scope",
+    "VE.EnglishGrammar.Sem",
+    "VE.EnglishGrammar.TermVal",
+    "VE.EnglishGrammar.TermVal.name?",
+    "VE.EnglishGrammar.actionsVersion",
+    "VE.EnglishGrammar.acts",
+    "VE.EnglishGrammar.build",
+    "VE.EnglishGrammar.constant",
+    "VE.EnglishGrammar.fixedActs",
+    "VE.EnglishGrammar.lexActs",
+    "VE.EnglishGrammar.markersAt",
+    "VE.EnglishGrammar.negatedTail",
+    "VE.EnglishGrammar.ofTerms",
+    "VE.EnglishGrammar.ofToken",
+    "VE.EnglishGrammar.permute",
+    "VE.EnglishGrammar.polarity",
+    "VE.EnglishGrammar.rhsTys",
+    "VE.EnglishGrammar.runCoordAdjectives",
+    "VE.EnglishGrammar.runCoordSubjects",
+    "VE.EnglishGrammar.runReachBody",
+    "VE.EnglishGrammar.runTerms",
+    "VE.EnglishGrammar.sig",
+    "VE.EnglishGrammar.strip",
+    "VE.EnglishGrammar.stripArgs",
+    "VE.EnglishGrammar.termsOf",
+    "VE.EnglishGrammar.tokText",
+    "VE.EnglishGrammar.unfit"
+   ]
+  },
+  "VE/EnglishGrammar/Catalogue.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Conn",
+    "VE.EnglishGrammar.Conn.name",
+    "VE.EnglishGrammar.FixedAct",
+    "VE.EnglishGrammar.FixedRow",
+    "VE.EnglishGrammar.ntAdjective",
+    "VE.EnglishGrammar.ntAtom",
+    "VE.EnglishGrammar.ntConstant",
+    "VE.EnglishGrammar.ntCopulaAdjective",
+    "VE.EnglishGrammar.ntCopulaRelative",
+    "VE.EnglishGrammar.ntLabel",
+    "VE.EnglishGrammar.ntNaturalSubject",
+    "VE.EnglishGrammar.ntNoun",
+    "VE.EnglishGrammar.ntObjectRelative",
+    "VE.EnglishGrammar.ntOwnerClause",
+    "VE.EnglishGrammar.ntRelation",
+    "VE.EnglishGrammar.ntRelative",
+    "VE.EnglishGrammar.ntTerm",
+    "VE.EnglishGrammar.ntTy"
+   ]
+  },
+  "VE/EnglishGrammar/Encode.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.EFormula.encode",
+    "VE.EnglishGrammar.ETerm.encode",
+    "VE.EnglishGrammar.Env.decode",
+    "VE.EnglishGrammar.optFields",
+    "VE.EnglishGrammar.optString",
+    "VE.EnglishGrammar.reachKind",
+    "VE.EnglishGrammar.typedCheck",
+    "VE.EnglishGrammar.typedDocument"
+   ]
+  },
   "VE/EnglishGrammar/EngineExamples.lean": {
    "G[V]": [
     "VE.EnglishGrammar.EngineExamples.G1",
@@ -2826,11 +2914,40 @@
     "VE.EnglishGrammar.Examples.rejects"
    ]
   },
+  "VE/EnglishGrammar/Extends.lean": {
+   "S": [
+    "VE.EnglishGrammar.Extends",
+    "VE.EnglishGrammar.envSub",
+    "VE.EnglishGrammar.lexiconSub"
+   ],
+   "G[V]": [
+    "VE.EnglishGrammar.extensionMap",
+    "VE.EnglishGrammar.indexIn"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/RelationalFol.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ntNames",
+    "VE.EnglishGrammar.ranks",
+    "VE.EnglishGrammar.relationalFolActs",
+    "VE.EnglishGrammar.relationalFolRows"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.relationalFolSha256"
+   ]
+  },
+  "VE/EnglishGrammar/Fixed/Version.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Fixed.actionsVersion"
+   ]
+  },
   "VE/EnglishGrammar/Lexer.lean": {
    "G[V]": [
+    "VE.EnglishGrammar.Item",
     "VE.EnglishGrammar.Mode",
     "VE.EnglishGrammar.Scan",
     "VE.EnglishGrammar.Spanned",
+    "VE.EnglishGrammar.begin",
     "VE.EnglishGrammar.chunkChar",
     "VE.EnglishGrammar.chunkToken",
     "VE.EnglishGrammar.collapsedGo",
@@ -2848,6 +2965,8 @@
     "VE.EnglishGrammar.punctChars",
     "VE.EnglishGrammar.scanGo",
     "VE.EnglishGrammar.spaceCodes",
+    "VE.EnglishGrammar.spacing",
+    "VE.EnglishGrammar.spacingOk",
     "VE.EnglishGrammar.startsWith"
    ],
    "G[R]": [
@@ -2877,12 +2996,16 @@
     "VE.EnglishGrammar.SortDecl",
     "VE.EnglishGrammar.coverage",
     "VE.EnglishGrammar.fallbackWording",
+    "VE.EnglishGrammar.fillHoles",
     "VE.EnglishGrammar.findSub",
+    "VE.EnglishGrammar.holeChar",
+    "VE.EnglishGrammar.holeMark",
     "VE.EnglishGrammar.holes",
     "VE.EnglishGrammar.idioms",
     "VE.EnglishGrammar.idioms1",
     "VE.EnglishGrammar.idioms2",
     "VE.EnglishGrammar.irregularVerbs",
+    "VE.EnglishGrammar.isHoleWord",
     "VE.EnglishGrammar.jsonQuote",
     "VE.EnglishGrammar.keysOf",
     "VE.EnglishGrammar.mechanicalWording",
@@ -2891,11 +3014,14 @@
     "VE.EnglishGrammar.noHole",
     "VE.EnglishGrammar.pastVerbs",
     "VE.EnglishGrammar.replaceFirst",
+    "VE.EnglishGrammar.reprJson",
+    "VE.EnglishGrammar.sentenceTokens",
     "VE.EnglishGrammar.shapeOk",
     "VE.EnglishGrammar.splitWs",
     "VE.EnglishGrammar.stripWs",
     "VE.EnglishGrammar.verbBase",
     "VE.EnglishGrammar.wordingKey",
+    "VE.EnglishGrammar.wordingTokens",
     "VE.EnglishGrammar.workBudget"
    ],
    "G[I]": [
@@ -2908,6 +3034,155 @@
     "VE.EnglishGrammar.LexiconFixtures.envF2",
     "VE.EnglishGrammar.LexiconFixtures.envF3",
     "VE.EnglishGrammar.LexiconFixtures.failureSet"
+   ]
+  },
+  "VE/EnglishGrammar/Read.lean": {
+   "S": [
+    "VE.EnglishGrammar.EnglishOneReading"
+   ],
+   "G[V]": [
+    "VE.EnglishGrammar.ReadOutcome",
+    "VE.EnglishGrammar.TranslateOutcome",
+    "VE.EnglishGrammar.checkRendering",
+    "VE.EnglishGrammar.meaning",
+    "VE.EnglishGrammar.read",
+    "VE.EnglishGrammar.translate"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.GrammarFault"
+   ]
+  },
+  "VE/EnglishGrammar/ReadExamples.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.ReadExamples.F",
+    "VE.EnglishGrammar.ReadExamples.F2",
+    "VE.EnglishGrammar.ReadExamples.F3",
+    "VE.EnglishGrammar.ReadExamples.F4",
+    "VE.EnglishGrammar.ReadExamples.F51",
+    "VE.EnglishGrammar.ReadExamples.F52",
+    "VE.EnglishGrammar.ReadExamples.F53",
+    "VE.EnglishGrammar.ReadExamples.F6",
+    "VE.EnglishGrammar.ReadExamples.F7",
+    "VE.EnglishGrammar.ReadExamples.FC",
+    "VE.EnglishGrammar.ReadExamples.FD",
+    "VE.EnglishGrammar.ReadExamples.Fapi",
+    "VE.EnglishGrammar.ReadExamples.GFw",
+    "VE.EnglishGrammar.ReadExamples.GW4bad",
+    "VE.EnglishGrammar.ReadExamples.GW4ok",
+    "VE.EnglishGrammar.ReadExamples.L4",
+    "VE.EnglishGrammar.ReadExamples.L51",
+    "VE.EnglishGrammar.ReadExamples.L52",
+    "VE.EnglishGrammar.ReadExamples.L53",
+    "VE.EnglishGrammar.ReadExamples.L6",
+    "VE.EnglishGrammar.ReadExamples.LF",
+    "VE.EnglishGrammar.ReadExamples.LF2fb",
+    "VE.EnglishGrammar.ReadExamples.LF3",
+    "VE.EnglishGrammar.ReadExamples.LFD",
+    "VE.EnglishGrammar.ReadExamples.LFv2",
+    "VE.EnglishGrammar.ReadExamples.LFv3",
+    "VE.EnglishGrammar.ReadExamples.Lapi",
+    "VE.EnglishGrammar.ReadExamples.O",
+    "VE.EnglishGrammar.ReadExamples.PredSpec",
+    "VE.EnglishGrammar.ReadExamples.R",
+    "VE.EnglishGrammar.ReadExamples.V",
+    "VE.EnglishGrammar.ReadExamples.b",
+    "VE.EnglishGrammar.ReadExamples.c",
+    "VE.EnglishGrammar.ReadExamples.constsF",
+    "VE.EnglishGrammar.ReadExamples.emptyEnv",
+    "VE.EnglishGrammar.ReadExamples.env",
+    "VE.EnglishGrammar.ReadExamples.envJson",
+    "VE.EnglishGrammar.ReadExamples.envSubB",
+    "VE.EnglishGrammar.ReadExamples.extendsB",
+    "VE.EnglishGrammar.ReadExamples.lexWith",
+    "VE.EnglishGrammar.ReadExamples.lexiconSubB",
+    "VE.EnglishGrammar.ReadExamples.many",
+    "VE.EnglishGrammar.ReadExamples.negations",
+    "VE.EnglishGrammar.ReadExamples.ok1",
+    "VE.EnglishGrammar.ReadExamples.one",
+    "VE.EnglishGrammar.ReadExamples.predsF",
+    "VE.EnglishGrammar.ReadExamples.rd",
+    "VE.EnglishGrammar.ReadExamples.rej",
+    "VE.EnglishGrammar.ReadExamples.sortsF",
+    "VE.EnglishGrammar.ReadExamples.steps",
+    "VE.EnglishGrammar.ReadExamples.summary",
+    "VE.EnglishGrammar.ReadExamples.tr",
+    "VE.EnglishGrammar.ReadExamples.u",
+    "VE.EnglishGrammar.ReadExamples.v",
+    "VE.EnglishGrammar.ReadExamples.verdicts",
+    "VE.EnglishGrammar.ReadExamples.widenings",
+    "VE.EnglishGrammar.ReadExamples.withPred",
+    "VE.EnglishGrammar.ReadExamples.wverdict",
+    "VE.EnglishGrammar.ReadExamples.zero"
+   ]
+  },
+  "VE/EnglishGrammar/Rules.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.LexAct",
+    "VE.EnglishGrammar.LexRow",
+    "VE.EnglishGrammar.LexRow.terminatorFree",
+    "VE.EnglishGrammar.adjectiveOf",
+    "VE.EnglishGrammar.adjectiveRows",
+    "VE.EnglishGrammar.baseProfile",
+    "VE.EnglishGrammar.clauseRows",
+    "VE.EnglishGrammar.contentTerminal",
+    "VE.EnglishGrammar.declsOf",
+    "VE.EnglishGrammar.fixedRules",
+    "VE.EnglishGrammar.fixedTable",
+    "VE.EnglishGrammar.grammar",
+    "VE.EnglishGrammar.keywordTerminal",
+    "VE.EnglishGrammar.lexRows",
+    "VE.EnglishGrammar.lexRowsAll",
+    "VE.EnglishGrammar.lexRules",
+    "VE.EnglishGrammar.lowerWord",
+    "VE.EnglishGrammar.nameForm",
+    "VE.EnglishGrammar.occurs",
+    "VE.EnglishGrammar.spellingRows",
+    "VE.EnglishGrammar.textSyms",
+    "VE.EnglishGrammar.ty",
+    "VE.EnglishGrammar.wordingSyms"
+   ]
+  },
+  "VE/EnglishGrammar/Run.lean": {
+   "G[V]": [
+    "VE.EnglishGrammar.Run.Case",
+    "VE.EnglishGrammar.Run.authoring",
+    "VE.EnglishGrammar.Run.boolText",
+    "VE.EnglishGrammar.Run.budgetFields",
+    "VE.EnglishGrammar.Run.coded",
+    "VE.EnglishGrammar.Run.decodeCase",
+    "VE.EnglishGrammar.Run.decodeLexicon",
+    "VE.EnglishGrammar.Run.derivations",
+    "VE.EnglishGrammar.Run.failureJson",
+    "VE.EnglishGrammar.Run.grammarCase",
+    "VE.EnglishGrammar.Run.illTypedText",
+    "VE.EnglishGrammar.Run.kidsRows",
+    "VE.EnglishGrammar.Run.lexActText",
+    "VE.EnglishGrammar.Run.lexiconFormat",
+    "VE.EnglishGrammar.Run.main",
+    "VE.EnglishGrammar.Run.notOneSentenceText",
+    "VE.EnglishGrammar.Run.pairs",
+    "VE.EnglishGrammar.Run.q",
+    "VE.EnglishGrammar.Run.readCase",
+    "VE.EnglishGrammar.Run.readingJson",
+    "VE.EnglishGrammar.Run.runCaseReported",
+    "VE.EnglishGrammar.Run.status",
+    "VE.EnglishGrammar.Run.symJson",
+    "VE.EnglishGrammar.Run.tables",
+    "VE.EnglishGrammar.Run.tokJson",
+    "VE.EnglishGrammar.Run.translation",
+    "VE.EnglishGrammar.Run.treeJson",
+    "VE.EnglishGrammar.Run.treeRows",
+    "VE.EnglishGrammar.Run.triples"
+   ],
+   "G[R]": [
+    "VE.EnglishGrammar.Run.faultName",
+    "VE.EnglishGrammar.Run.invalidFields",
+    "VE.EnglishGrammar.Run.invalidGrammarText",
+    "VE.EnglishGrammar.Run.rejectText"
+   ],
+   "G[I]": [
+    "VE.EnglishGrammar.Run.environmentId",
+    "VE.EnglishGrammar.Run.grammarId"
    ]
   },
   "VE/EnglishGrammar/Syntax.lean": {

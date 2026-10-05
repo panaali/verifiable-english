@@ -2,6 +2,7 @@
 -- type ends in Prop, as name@Module, over the modules listed. tools/trust_map.py keeps them
 -- out of the executable classes C, D, G.
 module EnglishLeanBenchMain
+module EnglishMain
 module Iceberg
 module Main
 module ResponseDecode
@@ -165,12 +166,22 @@ module VE.English.Render
 module VE.English.RenderProofs
 module VE.English.Run
 module VE.English.Statements
+module VE.EnglishGrammar.Actions
+module VE.EnglishGrammar.Catalogue
+module VE.EnglishGrammar.Encode
 module VE.EnglishGrammar.EngineExamples
 module VE.EnglishGrammar.Examples
+module VE.EnglishGrammar.Extends
+module VE.EnglishGrammar.Fixed.RelationalFol
+module VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree
 module VE.EnglishGrammar.Lexer
 module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
+module VE.EnglishGrammar.Read
+module VE.EnglishGrammar.ReadExamples
+module VE.EnglishGrammar.Rules
+module VE.EnglishGrammar.Run
 module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
@@ -513,6 +524,10 @@ VE.English.Surface.admitted@VE.English.Statements
 VE.English.Surface.derives@VE.English.Statements
 VE.English.Tree.Syntactic@VE.English.Grammar
 VE.English.UniqueDerivation@VE.English.Statements
+VE.EnglishGrammar.EnglishOneReading@VE.EnglishGrammar.Read
+VE.EnglishGrammar.Extends@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
+VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable

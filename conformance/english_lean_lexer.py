@@ -16,6 +16,10 @@ Draft choices that the spec leaves to S0, recorded in `docs/spec/english-lean-me
 - **Initial words**: the first word of a sentence, and the first word after a conclusion marker at the
   start of a sentence (`therefore`, `so`, `hence`, `it follows that`, the first word of the marker
   possibly capitalised, as the `kw` terminal accepts it).
+- **Spacing** (DRI ruling 1, finding F1 of `docs/spec/english-lean-s2-integrate.md`): `SPACING` is Lean's
+  `spacing` table. No whitespace before the first item or before a terminator, whitespace after a
+  terminator unless the text ends, whitespace between two tokens of the word kinds; around punctuation
+  the `glued` flags carry the spacing to the rules. A breach is `badSpacing` at the item that starts.
 """
 from __future__ import annotations
 
@@ -31,6 +35,19 @@ WHITESPACE = frozenset(map(chr, (
 PUNCTUATION = frozenset(',;:()[]+-*')
 MARKERS = ('(ii)', '(a)', '(b)', '(i)')
 CONCLUSION_MARKERS = (('therefore',), ('so',), ('hence',), ('it', 'follows', 'that'))
+
+# Lean's `Item` and `spacing` (`lean/VE/EnglishGrammar/Lexer.lean`): for the item read last and the item that
+# starts, whether whitespace must (True), must not (False) or may (None) come between them; the first row
+# that matches decides ('*' matches any item).
+ITEMS = ('start', 'word', 'punct', 'stop')
+SPACING = (('start', '*', False), ('*', 'stop', False), ('stop', '*', True), ('word', 'word', True))
+
+
+def spacing(last: str, nxt: str) -> bool | None:
+    for a, b, required in SPACING:
+        if a in ('*', last) and b in ('*', nxt):
+            return required
+    return None
 
 
 class LexError(Exception):
@@ -113,12 +130,22 @@ def lex_spans(source: str) -> list[list[tuple[tuple, int, int]]]:
         after = end < n and source[end] not in WHITESPACE
         return ('punct', text, before, after)
 
+    last = 'start'
+
+    def begin(item: str, at: int) -> None:
+        nonlocal last
+        required = spacing(last, item)
+        if required is not None and required != (at > 0 and source[at - 1] in WHITESPACE):
+            raise LexError('badSpacing', offsets[at])
+        last = item
+
     while i < n:
         c = source[i]
         if c in WHITESPACE:
             i += 1
             continue
         if c == '"':
+            begin('word', i)
             j = i + 1
             escaped = False
             while j < n:
@@ -135,6 +162,7 @@ def lex_spans(source: str) -> list[list[tuple[tuple, int, int]]]:
             i = j + 1
             continue
         if _chunk_char(c):
+            begin('word', i)
             j = i
             while j < n and _chunk_char(source[j]):
                 j += 1
@@ -144,16 +172,19 @@ def lex_spans(source: str) -> list[list[tuple[tuple, int, int]]]:
         if c == '.':
             if not current:
                 raise LexError('emptySentence', len(sentences))
+            begin('stop', i)
             sentences.append(current)
             current = []
             i += 1
             continue
         marker = next((m for m in MARKERS if source.startswith(m, i)), None)
         if marker:
+            begin('punct', i)
             current.append((punct(marker, i, i + len(marker)), offsets[i], offsets[i + len(marker)]))
             i += len(marker)
             continue
         if c in PUNCTUATION:
+            begin('punct', i)
             current.append((punct(c, i, i + 1), offsets[i], offsets[i + 1]))
             i += 1
             continue

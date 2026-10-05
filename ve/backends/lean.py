@@ -230,3 +230,23 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
         if problem:
             raise unavailable(problem)
     return rows
+
+
+
+def run_english_cases(executable, mode: str, cases: list[dict], *, timeout: float | None = None) -> list[dict]:
+    """Transport cases to `ve_english_route MODE` (docs/spec/english-lean-s2.md 2.10): one row per case,
+    in order (`read_rows`, VE's restricted JSON). A route that cannot start, does not answer in time or
+    gives no answer is `CheckerUnavailable`, never a rejection. Without a `timeout`, the call waits
+    `configured_timeout(ROUTE_TIMEOUT)` seconds."""
+    if timeout is None:
+        timeout = configured_timeout(ROUTE_TIMEOUT)
+    try:
+        proc = subprocess.run([str(executable), mode], input=canonical_json(cases), capture_output=True,
+                              timeout=timeout, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: ve_english_route {mode} is unavailable") from exc
+    try:
+        return read_rows(proc.returncode, proc.stdout, cases, restricted=True)
+    except NoAnswer as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: ve_english_route {mode} returned an invalid response "
+                                 f"({exc})") from None

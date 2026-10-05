@@ -1,6 +1,6 @@
 name = "veReference"
 version = "0.1.0"
-defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_service", "ve_english_run", "ve_response_decode", "ResponseShape"]
+defaultTargets = ["VE", "ve_conformance", "Iceberg", "ve_service", "ve_english_run", "ve_response_decode", "ResponseShape", "ve_english_route"]
 
 [[lean_lib]]
 name = "VE"
@@ -34,3 +34,7 @@ root = "ResponseDecode"
 [[lean_exe]]
 name = "ve_english_lean_bench"
 root = "EnglishLeanBenchMain"
+
+[[lean_exe]]
+name = "ve_english_route"
+root = "EnglishMain"
