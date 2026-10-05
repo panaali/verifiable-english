@@ -547,27 +547,54 @@ end ResponseShape
 namespace ResponseShape.FitsTactic
 open Lean Meta Elab Tactic
 
-/-- `fits_from h` with `h : Fits c s v` (a term, its holes filled from the goal): the goal
-`Fits c k v` for a skeleton `k` of which `s` is
-a member, reached through `k`'s alternatives (each tried) and its conditions on the case (each
-decided by `case_cond`). -/
-def fitsFrom (h : Syntax) : Nat → TacticM Unit
+/-- `fits_from h` with `h : Fits c s v` (a term, elaborated once, its holes filled from the goal):
+the goal `Fits c k v` for a skeleton `k` of which `s` is a member, reached through `k`'s
+alternatives (each tried) and its conditions on the case (each decided by `case_cond`). -/
+def fitsFrom (h : Expr) : Nat → TacticM Unit
   | 0 => throwError "fits_from: too deep"
   | fuel + 1 => withMainContext do
-    if ← (try evalTactic (← `(tactic| exact $(⟨h⟩))); pure true catch _ => pure false) then return
+    let g ← getMainGoal
+    let s ← saveState
+    if ← isDefEq (← g.getType) (← inferType h) then
+      g.assign h
+      replaceMainGoal []
+      return
+    s.restore
     try evalTactic (← `(tactic| skel_norm)) catch _ => pure ()
     let (k, _) ← fitsGoal
     if k.isAppOfArity ``Skel.onCase 3 then
-      let s ← saveState
-      try
-        evalTactic (← `(tactic| refine Fits.onCaseT (by case_cond) ?_))
+      -- The branch whose condition `case_cond` proves.
+      let branch (thm : Name) : TacticM Unit := do
+        let gs ← (← getMainGoal).apply (mkConst thm)
+        let some gc ← gs.findM? (fun g => do return (← instantiateMVars (← g.getType)).isAppOf ``Eq)
+          | throwError "fits_from: no condition"
+        let rest := gs.filter (· != gc)
+        setGoals [gc]
+        evalTactic (← `(tactic| case_cond))
+        unless (← getGoals).isEmpty do throwError "fits_from: condition not decided"
+        setGoals rest
         fitsFrom h fuel
+      let s ← saveState
+      try branch ``Fits.onCaseT
       catch _ =>
         s.restore
-        evalTactic (← `(tactic| refine Fits.onCaseE (by case_cond) ?_))
-        fitsFrom h fuel
+        branch ``Fits.onCaseE
       return
-    unless k.isAppOfArity ``Skel.alt 1 do throwError "fits_from: {h} does not fit here"
+    unless k.isAppOfArity ``Skel.alt 1 do throwError "fits_from: the term does not fit here"
+    -- The term's skeleton an alternative whose members are all members of this one.
+    let s ← saveState
+    try
+      let gs ← (← getMainGoal).apply (mkConst ``Fits.altSub)
+      let some gh ← gs.findM? (fun g => do return (← instantiateMVars (← g.getType)).isAppOf ``Fits)
+        | throwError "fits_from: no row goal"
+      unless ← isDefEq (← gh.getType) (← inferType h) do throwError "fits_from: not a sub-alternative"
+      gh.assign h
+      let rest := gs.filter (· != gh)
+      setGoals rest
+      evalTactic (← `(tactic| alt_sub))
+      unless (← getGoals).isEmpty do throwError "fits_from: not a sub-alternative"
+      return
+    catch _ => s.restore
     let some members := listElems bound k.appArg! | throwError "fits_from: members are not a literal list"
     for (_, i) in members.zipIdx do
       let s ← saveState
@@ -577,8 +604,10 @@ def fitsFrom (h : Syntax) : Nat → TacticM Unit
         fitsFrom h fuel
         return
       catch _ => s.restore
-    throwError "fits_from: no member of the alternative takes {h}"
+    throwError "fits_from: no member of the alternative takes the term"
 
-elab "fits_from " h:term : tactic => withoutRecover (fitsFrom h 64)
+elab "fits_from " h:term : tactic => withoutRecover <| withMainContext do
+  let e ← Term.withoutErrToSorry <| elabTerm h none (mayPostpone := true)
+  fitsFrom (← instantiateMVars e) 64
 
 end ResponseShape.FitsTactic

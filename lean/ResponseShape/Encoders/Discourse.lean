@@ -9,9 +9,10 @@ open VE.Discourse VE.Discourse.Run
 
 variable {req : Json}
 
-theorem of_route {v : Json} (h : Fits req Skeletons.route v) : Fits req Skeletons.discourse v := by
-  refine Fits.altSub ?_ h
-  alt_sub
+/-- The route mode's rows, off the discourse path, are rows of this mode. -/
+theorem of_route {v : Json} (hp : usesDiscoursePath req = false) (h : Fits req Skeletons.route v) :
+    Fits req Skeletons.discourse v :=
+  Fits.onCaseE (by simpa [CaseCond.holds, CaseDecider.fn] using hp) h
 
 theorem references_fits (front : Json) (pending : List (String × String)) :
     Fits req (.arr [] (skel% "discourse.json#/$defs/reference")) (referencesJson front pending) := by
@@ -71,24 +72,25 @@ theorem joint_fits (profiles : List String) (environment : Json) (rv : VE.Route.
   all_goals simp only [VE.Route.Wire.ok]
   all_goals fits
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.discourse (runCase j) := by
+theorem runCase_fits (j : Json) (hp : usesDiscoursePath j = true) : OkFits j Skeletons.discourse (runCase j) := by
   unfold runCase
   simp only []
   okfits
+  all_goals read_kind
+  all_goals (try contra)
   all_goals first
-    | with_reducible exact OkP.of (Route.runCase_fits _) fun _ => of_route
-    | (refine OkP.of (encodeAdmission_fits _ _ ?_) fun _ h => Fits.altSub (by alt_sub) h
-       exact admitDiscourse_references _ _ _ _ _ _ ‹_›)
-    | with_reducible exact OkP.of (resolve_fits _ _ _ _ _) fun _ h => Fits.ofAlt (by alt_mem) h
-    | with_reducible exact OkP.of (joint_fits _ _ _ _ _) fun _ h => Fits.altSub (by alt_sub) h
+    | (intro v hv
+       fits_from encodeAdmission_fits _ _ (admitDiscourse_references _ _ _ _ _ _ ‹_›) v hv)
+    | (intro v hv; fits_from resolve_fits _ _ _ _ _ v hv)
+    | (intro v hv; fits_from joint_fits _ _ _ _ _ v hv)
     | (simp only [VE.Route.Wire.ok]; fits)
 
 theorem runCaseReported_fits (j : Json) : Fits j Skeletons.discourse (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j _ ‹_›
+    · exact runCase_fits j ‹_› _ ‹_›
     · fits
-  · exact of_route (Route.runCaseReported_fits j)
+  · exact of_route (Bool.eq_false_iff.mpr ‹_›) (Route.runCaseReported_fits j)
 
 end ResponseShape.Encoders.Discourse

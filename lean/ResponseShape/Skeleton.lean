@@ -178,16 +178,16 @@ def isKind : CaseCond → Bool
 
 end CaseCond
 
-/-- A case whose object map is well formed, as every case the service decodes is (its maps are
-built by insertion). -/
-def CaseWF (j : Json) : Prop := ∀ m, j = .obj m → m.WF
+/-- A case whose object map, and its environment's, are well formed, as every case the service
+decodes is (its maps are built by insertion). -/
+def CaseWF (j : Json) : Prop := (∀ m, j = .obj m → m.WF) ∧ (∀ m, j.getObjValD "environment" = .obj m → m.WF)
 
 /-- Setting a field other than `kind` keeps the case's kind. -/
 theorem kind_setObjVal {j : Json} (hj : CaseWF j) {k : String} (hk : k ≠ "kind") (v : Json) :
     (j.setObjVal! k v).getObjValD "kind" = j.getObjValD "kind" := by
   cases j with
   | obj m =>
-    have wf := hj m rfl
+    have wf := hj.1 m rfl
     simp only [Json.setObjVal!, Json.getObjValD, Json.getObjVal?]
     have : (m.insert k v).get? "kind" = m.get? "kind" := by
       have h := Std.TreeMap.Raw.getElem?_insert (k := k) (v := v) (a := "kind") wf
@@ -197,8 +197,8 @@ theorem kind_setObjVal {j : Json} (hj : CaseWF j) {k : String} (hk : k ≠ "kind
   | _ => rfl
 
 /-- Setting another field keeps a field of the case. -/
-theorem getObjVal_setObjVal {j : Json} (hj : CaseWF j) {m : Std.TreeMap.Raw String Json compare} (hm : j = .obj m)
-    {k k' : String} (hk : k ≠ k') (v : Json) : (j.setObjVal! k v).getObjVal? k' = j.getObjVal? k' := by
+theorem getObjVal_setObjVal {j : Json} (hj : ∀ m, j = .obj m → m.WF) {m : Std.TreeMap.Raw String Json compare}
+    (hm : j = .obj m) {k k' : String} (hk : k ≠ k') (v : Json) : (j.setObjVal! k v).getObjVal? k' = j.getObjVal? k' := by
   subst hm
   have wf := hj _ rfl
   simp only [Json.setObjVal!, Json.getObjVal?]
