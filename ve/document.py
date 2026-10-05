@@ -286,7 +286,7 @@ def _s1_attached(environment_data, meta):
         units = [{"id": u["id"], "kind": u.get("kind"), "content": u.get("content")}
                  for u, _ in _parts(meta.get("units", []))]
         attached = S1Document(S1Environment(environment_data), {"units": units, "reading_sets": sets}).attached()
-    except (VEError, KeyError, TypeError):
+    except (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError):
         return frozenset()
     return frozenset(u for u, owners in attached.items() if owners)
 
@@ -311,33 +311,49 @@ def stored_identities(raw: bytes):
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
-    from .discourse import base_environment
     env = _environment(base_environment(meta))
     return meta, source_id(source, env), _document_id(meta, source, fences)
 
 
+def base_environment(meta):
+    """The environment data the frozen environment and document routes receive: a `@1`
+    document's own (its profile gate of discourse.md 1.1 only), a `@2` document's without
+    `ve.discourse@1` (docs/spec/discourse.md 3.4; Lean has admitted the `@2` document first)."""
+    from .discourse import PROFILE
+    data = meta["environment"]
+    if meta["format"] == "ve-document@1":
+        if type(data) is dict and type(data.get("profiles")) is list and PROFILE in data["profiles"]:
+            raise VEError("UnsupportedProfile: ve.discourse@1 requires ve-document@2")
+        return data
+    if (type(data) is not dict or type(data.get("profiles")) is not list
+            or any(type(p) is not str for p in data["profiles"])):
+        raise VEError("invalid environment profiles")
+    profiles = data["profiles"]
+    if profiles != sorted(set(profiles)) or PROFILE not in profiles or "relational-fol@0" not in profiles:
+        raise VEError("UnsupportedProfile: ve.discourse@1 requires a sorted profile list with relational-fol@0")
+    if "discourse" not in meta:
+        raise VEError("InvalidInput: missing discourse block")
+    return {**data, "profiles": [p for p in profiles if p != PROFILE]}
+
+
 def load_document(path: str | Path):
     """Load and check a document. A `ve-document@2` document's admission is Lean's
-    (`ve_discourse_route` on the same bytes, docs/spec/discourse.md 3.4): Python's checks give
-    the diagnostic text of a document Lean rejects too, and a document Lean admits that Python
-    cannot load is `CheckerUnavailable`, never a Python-only verdict. Python's checks may fail in
-    any way on metadata Lean rejects (a `TypeError` on `"units": 7`): Lean's diagnostic then."""
+    (`ve_discourse_route` on the same bytes, docs/spec/discourse.md 3.4): a document Lean rejects
+    raises Lean's diagnostic before any Python check runs, and a document Lean admits that Python
+    cannot load is `CheckerUnavailable`, never a Python-only verdict."""
     raw = Path(path).read_bytes()
     from .discourse import is_discourse_text, lean_admission, rejection, unavailable_report
     if not is_discourse_text(raw):
         return _load_document(raw, path, None)
     lean = lean_admission(raw, Path(path).parent)
+    if lean["status"] == "error":
+        raise rejection(lean)
     try:
         return _load_document(raw, path, lean)
     except CheckerUnavailable:
         raise
     except Exception as exc:
-        if lean["status"] != "error":
-            raise unavailable_report(exc) from exc
-        error = rejection(lean, exc if isinstance(exc, VEError) else None)
-        if error is exc:
-            raise
-        raise error from exc
+        raise unavailable_report(exc) from exc
 
 
 def _load_document(raw: bytes, path: str | Path, lean):
@@ -346,7 +362,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
         raise VEError("document source is empty")
     if type(meta.get("environment")) is not dict:
         raise VEError("document needs an embedded environment")
-    from .discourse import base_environment, validate_discourse
+    from .discourse import validate_discourse
     environment_data = base_environment(meta)
     profiles = listed_profiles(environment_data)
     rights_enabled = "rights@0" in profiles
@@ -1194,9 +1210,6 @@ def _report(doc):
             result["admission"] = admit_document(doc["environment"], admission)
         else:
             result["admission"] = admit_document(env, admission)
-        if joint is not None:
-            from .discourse import check_joint_extensions
-            check_joint_extensions(doc["meta"], result["admission"]["report"], joint)
         latest = {}
         for rs in doc["meta"].get("reading_sets", []):
             latest[rs["id"]] = max(latest.get(rs["id"], 0), rs["version"])
@@ -1216,9 +1229,13 @@ def _report(doc):
             {"environment_id": env.environment_id, "document": doc["document_id"],
              "report": result["admission"]["report"]})
     if joint is not None and joint["constraints"]:
-        from .discourse import joint_assertion
-        joint_formula = joint_assertion(env, active, joint)
-        if joint_formula is not None:
+        # the joint disjunction is Lean's (`Joint(K)`, docs/spec/discourse.md 4.8); a premise only
+        # when every reading of an open set is an assertion with content
+        joint_formula = None
+        if joint["status"] == "complete" and all(c["kind"] == "asserted" and c["content"] is not None
+                                                 for r in active if r["status"] == "open"
+                                                 for c in r["readings"]):
+            joint_formula = formula_from_data(env, doc["discourse"]["joint_formula"])
             assertions.append(joint_formula)
     else:
         assertions.extend(_assertion_disjunctions(env, active))
@@ -1439,7 +1456,7 @@ def main(argv=None):
                     raise VEError("--narrowing applies to W2's route; on the superposed and enumerated routes "
                                   "every narrowing in force is a premise")
                 from .readings_verdicts import context
-                from .readings_route import query_english
+                from .readings_s2_wording import query_english
                 assumed = None
                 if args.under:
                     assumed = []

@@ -353,7 +353,7 @@ def test_readings_command_across_readings(tmp_path, capsys):
 # The English of 2.3 through W7's gate (review B4): 9.4's N1 to N8 on checked evidence, G5, G6, G9
 
 def _wording(path):
-    from ve.readings_route import S2Wording
+    from ve.readings_s2_wording import S2Wording
     from ve.readings_verdicts import context
     doc = load_document(path)
     return doc, context(doc), S2Wording(doc, context(doc))
@@ -632,7 +632,7 @@ def test_review_a_named_readings_keep_their_restriction_in_english(tmp_path, cap
 def test_review_a_class_every_reading_wordings_need_no_assumption(tmp_path):
     """The class: E10, E26, E27 and E28 claim every reading; a verdict carrying `assumed` gets E12 lines only, on
     either route, and the enumerated route refuses readings no compatible choice takes as the superposed one does."""
-    from ve.readings_route import S2Wording
+    from ve.readings_s2_wording import S2Wording
     path = _m9(tmp_path)
     doc, route, wording = _wording(path)
     phi = every("warn_required", guard=ASKS)
@@ -1370,7 +1370,7 @@ def test_fix4_a2_class_every_line_kind_has_owner_discovery():
     the owner discovery of countermodel rendering, both for a candidate of the choice and for a fixed sentence."""
     from types import SimpleNamespace
     from ve import rights
-    from ve.readings_route import S2Wording
+    from ve.readings_s2_wording import S2Wording
     from ve.readings_s1 import Content, line_value
     lean_kinds, lean_fields = _lean_line_schema()
     assert lean_kinds == set(rights.LINE_RULE_FIELDS) == set(rights._KINDS), lean_kinds

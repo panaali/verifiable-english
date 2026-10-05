@@ -95,9 +95,6 @@ fn route_case(v: &Value, kind: &str) -> Result<Value> {
     Ok(json!({"id":id,"status":"ok","order":dependency_order(&nodes)?}))
 }
 fn case(v: &Value) -> Result<Value> {
-    if v.get("kind") == Some(&json!("readings-evaluate")) {
-        return readings_evaluate_case(v);
-    }
     if v.get("kind") == Some(&json!("readings-superposed-evaluate")) {
         return readings_superposed_evaluate_case(v);
     }
@@ -133,8 +130,8 @@ fn case(v: &Value) -> Result<Value> {
     if v.get("kind") == Some(&json!("quantity")) {
         return quantity_case(v);
     }
-    // A reports case names its profile; any other elaborated document is a discourse case
-    // (docs/spec/discourse.md 11), checked below by `elaborated_document_case`.
+    // A reports case names its profile. Rust checks no discourse elaboration: the Lean discourse
+    // route owns the profile (docs/LEAN-FIRST-PLAN.md, batch 4), so any other family is refused.
     if v.get("family") == Some(&json!("elaborated-document")) && v.get("profile") == Some(&json!("reports@0")) {
         if v.get("untrusted") != Some(&json!(true))
             || v.get("envelope").is_none()
@@ -153,7 +150,7 @@ fn case(v: &Value) -> Result<Value> {
         return route_case(v, kind);
     }
     if v.get("family").is_some() {
-        return elaborated_document_case(v);
+        return Err(Error::new("UnsupportedProfile", "Rust checks no elaborated-document family but reports@0"));
     }
     if v.get("kind").and_then(Value::as_str) == Some("check") {
         let env = Environment::from_value(field(v, "environment")?)?;
@@ -392,6 +389,11 @@ mod reports_tests {
         let mut unmarked = input.clone();
         unmarked["untrusted"] = json!(false);
         assert!(case(&unmarked).is_err());
+        // a discourse elaboration (no reports profile) is the Lean discourse route's: refused
+        let mut discourse = input.clone();
+        discourse.as_object_mut().unwrap().remove("profile");
+        discourse["formulas"] = json!([["unary","safe",["const","alice"]]]);
+        assert_eq!(case(&discourse).unwrap_err().code, "UnsupportedProfile");
     }
 
     #[test]
